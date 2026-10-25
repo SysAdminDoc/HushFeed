@@ -7,7 +7,7 @@
 package app.morphe.patches.tiktok.misc.featuregatelab
 
 import app.morphe.util.addInstruction
-import app.morphe.patcher.patch.bytecodePatch
+import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch

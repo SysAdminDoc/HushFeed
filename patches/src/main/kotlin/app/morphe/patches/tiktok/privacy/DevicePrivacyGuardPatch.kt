@@ -13,7 +13,7 @@ import app.morphe.patcher.InstructionFilter
 import app.morphe.patcher.fieldAccess
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
-import app.morphe.patcher.patch.bytecodePatch
+import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patcher.string
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.HostApplicationAttachBaseContextFingerprint

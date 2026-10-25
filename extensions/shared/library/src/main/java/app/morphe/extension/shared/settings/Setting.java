@@ -165,6 +165,11 @@ public abstract class Setting<T> {
     public final T defaultValue;
 
     /**
+     * The neutral answer while paused, independent of a customized APK default.
+     */
+    private final T stockDefaultValue;
+
+    /**
      * If the app should be rebooted, if this setting is changed
      */
     public final boolean rebootApp;
@@ -268,7 +273,8 @@ public abstract class Setting<T> {
                    @Nullable Availability availability
     ) {
         this.key = Objects.requireNonNull(key);
-        this.value = this.defaultValue = Objects.requireNonNull(defaultValue);
+        this.stockDefaultValue = Objects.requireNonNull(defaultValue);
+        this.value = this.defaultValue = PatchDefaults.resolve(key, stockDefaultValue);
         this.rebootApp = rebootApp;
         this.includeWithImportExport = includeWithImportExport;
         this.userDialogMessage = (userDialogMessage == null) ? null : new StringRef(userDialogMessage);
@@ -485,7 +491,7 @@ public abstract class Setting<T> {
      */
     @NonNull
     protected T pausedValue() {
-        return defaultValue;
+        return stockDefaultValue;
     }
 
     /**

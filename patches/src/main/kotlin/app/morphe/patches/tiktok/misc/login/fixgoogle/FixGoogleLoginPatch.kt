@@ -5,7 +5,7 @@
 package app.morphe.patches.tiktok.misc.login.fixgoogle
 
 import app.morphe.patches.shared.compat.AppCompatibilities
-import app.morphe.patcher.patch.bytecodePatch
+import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.registerForBuildDetails
 import app.morphe.util.returnEarly

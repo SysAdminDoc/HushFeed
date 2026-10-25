@@ -130,6 +130,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -184,7 +185,287 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "download_video_quality",
+          "title": "Default: download video quality",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "auto",
+          "values": null
+        },
+        {
+          "key": "download_ask_quality",
+          "title": "Default: download ask quality",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "download_original_photos",
+          "title": "Default: download original photos",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "keep_photos_as_sent",
+          "title": "Default: keep photos as sent",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "download_photos_as_video",
+          "title": "Default: download photos as video",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "photo_video_seconds",
+          "title": "Default: photo video seconds",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 3,
+          "values": null
+        },
+        {
+          "key": "download_audio_track",
+          "title": "Default: download audio track",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "download_sound_format",
+          "title": "Default: download sound format",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "original",
+          "values": null
+        },
+        {
+          "key": "download_watermark_fallback",
+          "title": "Default: download watermark fallback",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "download_cover",
+          "title": "Default: download cover",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "save_cover_button",
+          "title": "Default: save cover button",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "download_without_sound",
+          "title": "Default: download without sound",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "download_progress",
+          "title": "Default: download progress",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "download_saves_at_once",
+          "title": "Default: download saves at once",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "3",
+          "values": null
+        },
+        {
+          "key": "download_details",
+          "title": "Default: download details",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "download_details_json",
+          "title": "Default: download details json",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "download_tags",
+          "title": "Default: download tags",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "download_burn_caption",
+          "title": "Default: download burn caption",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "check_saved_videos",
+          "title": "Default: check saved videos",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "mark_saved_videos",
+          "title": "Default: mark saved videos",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "external_downloader_package",
+          "title": "Default: external downloader package",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "ytdlnis_download_type",
+          "title": "Default: ytdlnis download type",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "video",
+          "values": null
+        },
+        {
+          "key": "ytdlnis_background",
+          "title": "Default: ytdlnis background",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "save_profile_picture",
+          "title": "Default: save profile picture",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "save_story",
+          "title": "Default: save story",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "save_story_from_share",
+          "title": "Default: save story from share",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "pick_grid_videos",
+          "title": "Default: pick grid videos",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "download_video_path",
+          "title": "Default: download video path",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "DCIM/TikTok",
+          "values": null
+        },
+        {
+          "key": "download_photo_path",
+          "title": "Default: download photo path",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "DCIM/TikTok",
+          "values": null
+        },
+        {
+          "key": "download_video_filename_template",
+          "title": "Default: download video filename template",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "{creator}_{date}_{video_id}",
+          "values": null
+        },
+        {
+          "key": "download_photo_filename_template",
+          "title": "Default: download photo filename template",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "{creator}_{date}_{video_id}_{index}",
+          "values": null
+        }
+      ]
     },
     {
       "name": "Allow Duet and Stitch",
@@ -193,6 +474,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -247,7 +529,26 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "allow_duet_and_stitch",
+          "title": "Default: allow duet and stitch",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "allow_add_to_story",
+          "title": "Default: allow add to story",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Allow photo comments",
@@ -256,6 +557,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "ResourcePatch",
         "Settings"
       ],
@@ -287,7 +589,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "pinedrama_comment_photos",
+          "title": "Default: pinedrama comment photos",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Allow screenshots and Circle to Search",
@@ -296,6 +608,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -350,7 +663,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "allow_screen_capture",
+          "title": "Default: allow screen capture",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Always show publish date",
@@ -359,6 +682,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -413,7 +737,71 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "always_show_publish_date",
+          "title": "Default: always show publish date",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
+          "key": "publish_date_exact_time",
+          "title": "Default: publish date exact time",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "publish_date_time_zone",
+          "title": "Default: publish date time zone",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
+          "key": "publish_date_short_date",
+          "title": "Default: publish date short date",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "publish_date_on_grid",
+          "title": "Default: publish date on grid",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "video_length_on_grid",
+          "title": "Default: video length on grid",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "profile_grid_sort",
+          "title": "Default: profile grid sort",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "off",
+          "values": null
+        }
+      ]
     },
     {
       "name": "Always upload in HD",
@@ -422,6 +810,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -452,7 +841,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "always_upload_hd",
+          "title": "Default: always upload hd",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "App lock",
@@ -461,6 +860,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -491,7 +891,26 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "app_lock",
+          "title": "Default: app lock",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "app_lock_timeout",
+          "title": "Default: app lock timeout",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "0",
+          "values": null
+        }
+      ]
     },
     {
       "name": "Automatic video advance",
@@ -500,6 +919,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -554,7 +974,44 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "auto_advance",
+          "title": "Default: auto advance",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "auto_advance_limit",
+          "title": "Default: auto advance limit",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 0,
+          "values": null
+        },
+        {
+          "key": "auto_advance_hide_panel_action",
+          "title": "Default: auto advance hide panel action",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "auto_advance_search",
+          "title": "Default: auto advance search",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Block P2P video relay",
@@ -625,6 +1082,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -655,7 +1113,215 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "no_resume_on_foreground",
+          "title": "Default: no resume on foreground",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "pause_first_video",
+          "title": "Default: pause first video",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "keep_paused_on_return",
+          "title": "Default: keep paused on return",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "leave_on_rest_reminder",
+          "title": "Default: leave on rest reminder",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "session_budget_videos",
+          "title": "Default: session budget videos",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 0,
+          "values": null
+        },
+        {
+          "key": "session_budget_minutes",
+          "title": "Default: session budget minutes",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 0,
+          "values": null
+        },
+        {
+          "key": "session_budget_lock_minutes",
+          "title": "Default: session budget lock minutes",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 0,
+          "values": null
+        },
+        {
+          "key": "session_budget_reset_hour",
+          "title": "Default: session budget reset hour",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 4,
+          "values": null
+        },
+        {
+          "key": "session_budget_lock",
+          "title": "Default: session budget lock",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "session_budget_passes_per_day",
+          "title": "Default: session budget passes per day",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 0,
+          "values": null
+        },
+        {
+          "key": "session_budget_wait_to_loosen",
+          "title": "Default: session budget wait to loosen",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "session_budget_ramp",
+          "title": "Default: session budget ramp",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "session_budget_finish_video",
+          "title": "Default: session budget finish video",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "feed_lock",
+          "title": "Default: feed lock",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "shared_video_alone",
+          "title": "Default: shared video alone",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "session_budget_cue",
+          "title": "Default: session budget cue",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "session_budget_notice_minutes",
+          "title": "Default: session budget notice minutes",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 0,
+          "values": null
+        },
+        {
+          "key": "block_author_button",
+          "title": "Default: block author button",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "local_hide_button",
+          "title": "Default: local hide button",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "block_sound_button",
+          "title": "Default: block sound button",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "block_author_button_position",
+          "title": "Default: block author button position",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "local_hide_button_position",
+          "title": "Default: local hide button position",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "block_sound_button_position",
+          "title": "Default: block sound button position",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        }
+      ]
     },
     {
       "name": "Block contact list access",
@@ -664,6 +1330,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -718,7 +1385,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "block_contact_list",
+          "title": "Default: block contact list",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Block installed app scanning",
@@ -727,6 +1404,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -781,7 +1459,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "block_installed_apps",
+          "title": "Default: block installed apps",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Block popups",
@@ -790,6 +1478,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -820,7 +1509,35 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "popup_label_picks",
+          "title": "Default: popup label picks",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "hide_live_bubble",
+          "title": "Default: hide live bubble",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_wind_down_screens",
+          "title": "Default: hide wind down screens",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Block suggested video notifications",
@@ -829,6 +1546,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -883,7 +1601,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "block_suggested_video_notifications",
+          "title": "Default: block suggested video notifications",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Camera and microphone indicator",
@@ -892,6 +1620,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -946,7 +1675,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "camera_mic_indicator",
+          "title": "Default: camera mic indicator",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Change app name",
@@ -1152,6 +1891,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -1206,7 +1946,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "comment_sort_controls",
+          "title": "Default: comment sort controls",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Comment tools",
@@ -1216,6 +1966,7 @@
       "dependencies": [
         "BytecodePatch",
         "Double-tap controls",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -1246,7 +1997,197 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "pause_on_comments",
+          "title": "Default: pause on comments",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "comment_keyword_filter",
+          "title": "Default: comment keyword filter",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "comment_blocked_keywords",
+          "title": "Default: comment blocked keywords",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "comment_blocked_users",
+          "title": "Default: comment blocked users",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "block_from_comment",
+          "title": "Default: block from comment",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "block_from_comment_menu",
+          "title": "Default: block from comment menu",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "comment_search",
+          "title": "Default: comment search",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "comment_export",
+          "title": "Default: comment export",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "comment_links",
+          "title": "Default: comment links",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_comment_media",
+          "title": "Default: hide comment media",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_spam_comments",
+          "title": "Default: hide spam comments",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_comment_polls",
+          "title": "Default: hide comment polls",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_comment_reply_previews",
+          "title": "Default: hide comment reply previews",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_comment_surveys",
+          "title": "Default: hide comment surveys",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_comment_box_buttons",
+          "title": "Default: hide comment box buttons",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "show_poll_results",
+          "title": "Default: show poll results",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "caption_opens_comments",
+          "title": "Default: caption opens comments",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "caption_above_comments",
+          "title": "Default: caption above comments",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_comment_search_suggestions",
+          "title": "Default: hide comment search suggestions",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "compact_comment_header",
+          "title": "Default: compact comment header",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "larger_comment_like_target",
+          "title": "Default: larger comment like target",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Confirm feed interactions",
@@ -1256,6 +2197,7 @@
       "dependencies": [
         "Block author button",
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -1286,7 +2228,53 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "confirm_follow",
+          "title": "Default: confirm follow",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "confirm_like",
+          "title": "Default: confirm like",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "confirm_comment_like",
+          "title": "Default: confirm comment like",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "confirm_story_like",
+          "title": "Default: confirm story like",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "confirm_quick_repost",
+          "title": "Default: confirm quick repost",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Copy bio and IDs",
@@ -1295,6 +2283,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -1325,7 +2314,26 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "copy_ids",
+          "title": "Default: copy ids",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
+          "key": "account_facts",
+          "title": "Default: account facts",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Copy comments without username",
@@ -1334,6 +2342,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -1388,7 +2397,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "copy_comments_without_username",
+          "title": "Default: copy comments without username",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Custom launcher icon",
@@ -1459,6 +2478,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -1513,7 +2533,35 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "custom_offline_videos",
+          "title": "Default: custom offline videos",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "custom_offline_video_limit",
+          "title": "Default: custom offline video limit",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 500,
+          "values": null
+        },
+        {
+          "key": "keep_offline_videos",
+          "title": "Default: keep offline videos",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Device privacy guard",
@@ -1522,6 +2570,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -1576,7 +2625,44 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "block_clipboard_reads",
+          "title": "Default: block clipboard reads",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_vpn",
+          "title": "Default: hide vpn",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "block_advertising_id",
+          "title": "Default: block advertising id",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_root",
+          "title": "Default: hide root",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Diagnostic tools",
@@ -1585,6 +2671,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -1639,7 +2726,53 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "morphe_debug",
+          "title": "Default: morphe debug",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "morphe_debug_log_filters",
+          "title": "Default: morphe debug log filters",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "all",
+          "values": null
+        },
+        {
+          "key": "morphe_capture_java_crashes",
+          "title": "Default: morphe capture java crashes",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "morphe_debug_stacktrace",
+          "title": "Default: morphe debug stacktrace",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "morphe_debug_toast_on_error",
+          "title": "Default: morphe debug toast on error",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Disable login requirement",
@@ -1772,6 +2905,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -1802,7 +2936,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "disable_analytics",
+          "title": "Default: disable analytics",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Disable the long press quick share",
@@ -1811,6 +2955,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -1865,7 +3010,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "disable_long_press_quick_share",
+          "title": "Default: disable long press quick share",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Disable the long press repost",
@@ -1874,6 +3029,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -1928,7 +3084,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "disable_long_press_repost",
+          "title": "Default: disable long press repost",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Double-tap controls",
@@ -1938,6 +3104,7 @@
       "dependencies": [
         "Block author button",
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -1968,7 +3135,62 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "double_tap_split_zones",
+          "title": "Default: double tap split zones",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "double_tap_action",
+          "title": "Default: double tap action",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "default",
+          "values": null
+        },
+        {
+          "key": "double_tap_top_left_action",
+          "title": "Default: double tap top left action",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "default",
+          "values": null
+        },
+        {
+          "key": "double_tap_top_right_action",
+          "title": "Default: double tap top right action",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "default",
+          "values": null
+        },
+        {
+          "key": "double_tap_bottom_left_action",
+          "title": "Default: double tap bottom left action",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "default",
+          "values": null
+        },
+        {
+          "key": "double_tap_bottom_right_action",
+          "title": "Default: double tap bottom right action",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "default",
+          "values": null
+        }
+      ]
     },
     {
       "name": "Downloads",
@@ -1977,6 +3199,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -2031,7 +3254,98 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "keep_photos_as_sent",
+          "title": "Default: keep photos as sent",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "download_saves_at_once",
+          "title": "Default: download saves at once",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "3",
+          "values": null
+        },
+        {
+          "key": "download_sticker_format",
+          "title": "Default: download sticker format",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "mp4",
+          "values": null
+        },
+        {
+          "key": "download_video_path",
+          "title": "Default: download video path",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "DCIM/TikTok",
+          "values": null
+        },
+        {
+          "key": "download_photo_path",
+          "title": "Default: download photo path",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "DCIM/TikTok",
+          "values": null
+        },
+        {
+          "key": "download_sticker_path",
+          "title": "Default: download sticker path",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "DCIM/TikTok",
+          "values": null
+        },
+        {
+          "key": "download_video_filename_template",
+          "title": "Default: download video filename template",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "{creator}_{date}_{video_id}",
+          "values": null
+        },
+        {
+          "key": "download_photo_filename_template",
+          "title": "Default: download photo filename template",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "{creator}_{date}_{video_id}_{index}",
+          "values": null
+        },
+        {
+          "key": "download_comment_media_filename_template",
+          "title": "Default: download comment media filename template",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "comment_{date}_{media_id}",
+          "values": null
+        },
+        {
+          "key": "down_watermark",
+          "title": "Default: down watermark",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Drop the animated image cache",
@@ -2040,6 +3354,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -2094,7 +3409,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "drop_animated_image_cache",
+          "title": "Default: drop animated image cache",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Enable voice comments",
@@ -2103,6 +3428,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -2157,7 +3483,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "enable_voice_comments",
+          "title": "Default: enable voice comments",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Expand activity list",
@@ -2166,6 +3502,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -2220,7 +3557,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "expand_activity_list",
+          "title": "Default: expand activity list",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Feature Gate Lab",
@@ -2354,6 +3701,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -2384,7 +3732,530 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "blocked_caption_words",
+          "title": "Default: blocked caption words",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "blocked_words_in_stickers",
+          "title": "Default: blocked words in stickers",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "blocked_creators",
+          "title": "Default: blocked creators",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "local_hidden_creators",
+          "title": "Default: local hidden creators",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "creator_filter_exceptions",
+          "title": "Default: creator filter exceptions",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "region_only_from",
+          "title": "Default: region only from",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "caption_languages",
+          "title": "Default: caption languages",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "region_never_from",
+          "title": "Default: region never from",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "min_video_seconds",
+          "title": "Default: min video seconds",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 0,
+          "values": null
+        },
+        {
+          "key": "max_video_seconds",
+          "title": "Default: max video seconds",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 0,
+          "values": null
+        },
+        {
+          "key": "max_publication_age_days",
+          "title": "Default: max publication age days",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 0,
+          "values": null
+        },
+        {
+          "key": "max_views_per_like",
+          "title": "Default: max views per like",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 0,
+          "values": null
+        },
+        {
+          "key": "max_views_per_comment",
+          "title": "Default: max views per comment",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 0,
+          "values": null
+        },
+        {
+          "key": "hide_promotional_music",
+          "title": "Default: hide promotional music",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_live_replays",
+          "title": "Default: hide live replays",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_unpersonalized_for_you",
+          "title": "Default: hide unpersonalized for you",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "friends_mutuals_only",
+          "title": "Default: friends mutuals only",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "following_latest_first",
+          "title": "Default: following latest first",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "remove_ads",
+          "title": "Default: remove ads",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
+          "key": "hide_live",
+          "title": "Default: hide live",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_shop",
+          "title": "Default: hide shop",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_search_shop",
+          "title": "Default: hide search shop",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_story",
+          "title": "Default: hide story",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_image",
+          "title": "Default: hide image",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "min_max_views",
+          "title": "Default: min max views",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "0-9223372036854775807",
+          "values": null
+        },
+        {
+          "key": "min_max_likes",
+          "title": "Default: min max likes",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "0-9223372036854775807",
+          "values": null
+        },
+        {
+          "key": "min_max_comments",
+          "title": "Default: min max comments",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "0-9223372036854775807",
+          "values": null
+        },
+        {
+          "key": "min_max_favourites",
+          "title": "Default: min max favourites",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "0-9223372036854775807",
+          "values": null
+        },
+        {
+          "key": "min_max_shares",
+          "title": "Default: min max shares",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "0-9223372036854775807",
+          "values": null
+        },
+        {
+          "key": "hide_offline_videos",
+          "title": "Default: hide offline videos",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "filter_cached_offline_videos",
+          "title": "Default: filter cached offline videos",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
+          "key": "feed_filter_count_pill",
+          "title": "Default: feed filter count pill",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_bottom_search_bar",
+          "title": "Default: hide bottom search bar",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "local_hide_button",
+          "title": "Default: local hide button",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "block_sound_button",
+          "title": "Default: block sound button",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_blocked_sounds",
+          "title": "Default: hide blocked sounds",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
+          "key": "blocked_sound_ids",
+          "title": "Default: blocked sound ids",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "blocked_sound_names",
+          "title": "Default: blocked sound names",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "hide_paid_partnership",
+          "title": "Default: hide paid partnership",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "filter_location_videos",
+          "title": "Default: filter location videos",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_ai_generated",
+          "title": "Default: hide ai generated",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_verified",
+          "title": "Default: hide verified",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_series",
+          "title": "Default: hide series",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_mini_dramas",
+          "title": "Default: hide mini dramas",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_playlist_bar",
+          "title": "Default: hide playlist bar",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_event_badge",
+          "title": "Default: hide event badge",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_inserted_cards",
+          "title": "Default: hide inserted cards",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_playlist_videos",
+          "title": "Default: hide playlist videos",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_subscriber_only",
+          "title": "Default: hide subscriber only",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "live_feed_filter",
+          "title": "Default: live feed filter",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "live_hide_gaming",
+          "title": "Default: live hide gaming",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "live_hide_shopping",
+          "title": "Default: live hide shopping",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "live_hide_sponsored",
+          "title": "Default: live hide sponsored",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "live_hide_verified",
+          "title": "Default: live hide verified",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "live_hidden_categories",
+          "title": "Default: live hidden categories",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "live_min_max_viewers",
+          "title": "Default: live min max viewers",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "0-9223372036854775807",
+          "values": null
+        },
+        {
+          "key": "live_min_max_followers",
+          "title": "Default: live min max followers",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "0-9223372036854775807",
+          "values": null
+        },
+        {
+          "key": "hide_ai_cast",
+          "title": "Default: hide ai cast",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Feed tab navigation",
@@ -2393,6 +4264,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -2423,7 +4295,206 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "feed_navigation",
+          "title": "Default: feed navigation",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "feed_navigation_tabs",
+          "title": "Default: feed navigation tabs",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "HOT,EXPLORE,FOLLOWING,MALL,NEARBY,FRIENDS,LIVE,POPULAR,STEM,SERIES",
+          "values": null
+        },
+        {
+          "key": "feed_navigation_block_new_tabs",
+          "title": "Default: feed navigation block new tabs",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "bottom_navigation",
+          "title": "Default: bottom navigation",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "bottom_navigation_tabs",
+          "title": "Default: bottom navigation tabs",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "HOME,FRIENDS,PUBLISH,INBOX,PROFILE,MALL",
+          "values": null
+        },
+        {
+          "key": "bottom_navigation_block_new_tabs",
+          "title": "Default: bottom navigation block new tabs",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_tab_badges",
+          "title": "Default: hide tab badges",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_bottom_tab_labels",
+          "title": "Default: hide bottom tab labels",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "bottom_tab_name_home",
+          "title": "Default: bottom tab name home",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "bottom_tab_name_friends",
+          "title": "Default: bottom tab name friends",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "bottom_tab_name_inbox",
+          "title": "Default: bottom tab name inbox",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "bottom_tab_name_profile",
+          "title": "Default: bottom tab name profile",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "bottom_tab_name_shop",
+          "title": "Default: bottom tab name shop",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "keep_for_you_on_tab_tap",
+          "title": "Default: keep for you on tab tap",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "keep_for_you_on_pull_down",
+          "title": "Default: keep for you on pull down",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "home_tab_opens_settings",
+          "title": "Default: home tab opens settings",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
+          "key": "profile_tab_opens_watch_history",
+          "title": "Default: profile tab opens watch history",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "start_page",
+          "title": "Default: start page",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "tiktok",
+          "values": null
+        },
+        {
+          "key": "show_feed_buttons",
+          "title": "Default: show feed buttons",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_tako_ai",
+          "title": "Default: hide tako ai",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "shared_video_alone",
+          "title": "Default: shared video alone",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_feed_tab_strip",
+          "title": "Default: hide feed tab strip",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Feed text sizes",
@@ -2432,6 +4503,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -2462,7 +4534,26 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "feed_description_text_size",
+          "title": "Default: feed description text size",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 0,
+          "values": null
+        },
+        {
+          "key": "feed_author_text_size",
+          "title": "Default: feed author text size",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 0,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Fit the video to the screen",
@@ -2471,6 +4562,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -2525,7 +4617,26 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "fit_video_to_screen",
+          "title": "Default: fit video to screen",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "fill_video_to_screen",
+          "title": "Default: fill video to screen",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Fix Google login",
@@ -2596,6 +4707,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -2626,7 +4738,26 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "foldable_split_view",
+          "title": "Default: foldable split view",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "foldable_split_view_min_width_dp",
+          "title": "Default: foldable split view min width dp",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 600,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Follow diagnostics",
@@ -2673,6 +4804,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -2727,7 +4859,26 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "ghost_mode",
+          "title": "Default: ghost mode",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "ghost_hide_online_status",
+          "title": "Default: ghost hide online status",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Hide CAPTCHA popups",
@@ -2736,6 +4887,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -2766,7 +4918,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "hide_browsing_captcha_popups",
+          "title": "Default: hide browsing captcha popups",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Hide Play Store update offer",
@@ -2838,6 +5000,7 @@
       "dependencies": [
         "BytecodePatch",
         "Feed filter",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -2868,7 +5031,35 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "hide_seen_videos",
+          "title": "Default: hide seen videos",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "seen_video_retention_days",
+          "title": "Default: seen video retention days",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 30,
+          "values": null
+        },
+        {
+          "key": "seen_video_mark_percent",
+          "title": "Default: seen video mark percent",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 0,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Hide comment popup ads",
@@ -2877,6 +5068,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -2931,7 +5123,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "hide_comment_eggs",
+          "title": "Default: hide comment eggs",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Hide comment typing suggestions",
@@ -2940,6 +5142,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -2994,7 +5197,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "hide_comment_quick_reactions",
+          "title": "Default: hide comment quick reactions",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Hide feed LIVE button",
@@ -3003,6 +5216,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -3033,7 +5247,35 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "hide_live_entrance",
+          "title": "Default: hide live entrance",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_feed_sidebar_button",
+          "title": "Default: hide feed sidebar button",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "disable_feed_sidebar_swipe",
+          "title": "Default: disable feed sidebar swipe",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Hide feed follow button",
@@ -3042,6 +5284,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -3096,7 +5339,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "hide_feed_follow_button",
+          "title": "Default: hide feed follow button",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Hide feed save button",
@@ -3105,6 +5358,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -3159,7 +5413,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "hide_feed_save_button",
+          "title": "Default: hide feed save button",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Hide feed search button",
@@ -3168,6 +5432,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -3222,7 +5487,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "hide_feed_search_button",
+          "title": "Default: hide feed search button",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Hide floating promotions",
@@ -3231,6 +5506,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -3285,7 +5561,26 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "hide_homepage_coin",
+          "title": "Default: hide homepage coin",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_profile_rewards_shortcut",
+          "title": "Default: hide profile rewards shortcut",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Hide inbox items",
@@ -3294,6 +5589,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -3348,7 +5644,197 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "hide_inbox_stories",
+          "title": "Default: hide inbox stories",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_inbox_new_followers",
+          "title": "Default: hide inbox new followers",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_inbox_activity",
+          "title": "Default: hide inbox activity",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_inbox_archive",
+          "title": "Default: hide inbox archive",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_inbox_tako",
+          "title": "Default: hide inbox tako",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_inbox_shop",
+          "title": "Default: hide inbox shop",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_inbox_bulletin_boards",
+          "title": "Default: hide inbox bulletin boards",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_inbox_suggested_accounts",
+          "title": "Default: hide inbox suggested accounts",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_inbox_message_requests",
+          "title": "Default: hide inbox message requests",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_inbox_conversations",
+          "title": "Default: hide inbox conversations",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_inbox_add_people",
+          "title": "Default: hide inbox add people",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_inbox_search",
+          "title": "Default: hide inbox search",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "inbox_loaded_search",
+          "title": "Default: inbox loaded search",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_inbox_activity_status",
+          "title": "Default: hide inbox activity status",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_inbox_group_chat_banner",
+          "title": "Default: hide inbox group chat banner",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_chat_call_buttons",
+          "title": "Default: hide chat call buttons",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_chat_sticker_banner",
+          "title": "Default: hide chat sticker banner",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_chat_ai_replies",
+          "title": "Default: hide chat ai replies",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "turn_off_chat_double_tap",
+          "title": "Default: turn off chat double tap",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "turn_off_chat_swipe_reply",
+          "title": "Default: turn off chat swipe reply",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_inbox_custom_titles",
+          "title": "Default: hide inbox custom titles",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        }
+      ]
     },
     {
       "name": "Hide inbox stories",
@@ -3357,6 +5843,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -3411,7 +5898,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "hide_inbox_stories",
+          "title": "Default: hide inbox stories",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Hide profile shortcuts",
@@ -3420,6 +5917,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -3474,7 +5972,62 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "hide_profile_menu_balance",
+          "title": "Default: hide profile menu balance",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_profile_menu_minis_icons",
+          "title": "Default: hide profile menu minis icons",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hidden_profile_shortcuts",
+          "title": "Default: hidden profile shortcuts",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "profile_shortcut_picks",
+          "title": "Default: profile shortcut picks",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "hide_profile_thoughts",
+          "title": "Default: hide profile thoughts",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "enable_thoughts",
+          "title": "Default: enable thoughts",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Hide search suggestions",
@@ -3483,6 +6036,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -3537,7 +6091,26 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "hide_search_rewards",
+          "title": "Default: hide search rewards",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_search_suggestions",
+          "title": "Default: hide search suggestions",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Hide suggested accounts",
@@ -3546,6 +6119,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -3600,7 +6174,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "hide_inbox_suggested_accounts",
+          "title": "Default: hide inbox suggested accounts",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Hide the launcher shortcuts",
@@ -3609,6 +6193,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -3663,7 +6248,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "hide_launcher_shortcuts",
+          "title": "Default: hide launcher shortcuts",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Hide the risk control CAPTCHA",
@@ -3711,6 +6306,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -3741,7 +6337,395 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "swipe_levels",
+          "title": "Default: swipe levels",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "swipe_levels_strip_percent",
+          "title": "Default: swipe levels strip percent",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 15,
+          "values": null
+        },
+        {
+          "key": "swipe_levels_left",
+          "title": "Default: swipe levels left",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "brightness",
+          "values": null
+        },
+        {
+          "key": "swipe_levels_right",
+          "title": "Default: swipe levels right",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "volume",
+          "values": null
+        },
+        {
+          "key": "hide_feed_caption",
+          "title": "Default: hide feed caption",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_feed_music",
+          "title": "Default: hide feed music",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_feed_action_bar",
+          "title": "Default: hide feed action bar",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_feed_surveys",
+          "title": "Default: hide feed surveys",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_footnotes",
+          "title": "Default: hide footnotes",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_detail_comment_bar",
+          "title": "Default: hide detail comment bar",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_clear_display_controls",
+          "title": "Default: hide clear display controls",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "fade_controls_opacity",
+          "title": "Default: fade controls opacity",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 100,
+          "values": null
+        },
+        {
+          "key": "fade_in_clear_display",
+          "title": "Default: fade in clear display",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
+          "key": "see_through_bottom_bar",
+          "title": "Default: see through bottom bar",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "floating_bottom_bar",
+          "title": "Default: floating bottom bar",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "liquid_glass_bottom_bar",
+          "title": "Default: liquid glass bottom bar",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "glass_tab_lens",
+          "title": "Default: glass tab lens",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "glass_video_blur",
+          "title": "Default: glass video blur",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "see_through_status_bar",
+          "title": "Default: see through status bar",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "burn_in_guard",
+          "title": "Default: burn in guard",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "off",
+          "values": null
+        },
+        {
+          "key": "hide_share_guide",
+          "title": "Default: hide share guide",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_rail_follow",
+          "title": "Default: hide rail follow",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_rail_like",
+          "title": "Default: hide rail like",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_rail_comments",
+          "title": "Default: hide rail comments",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_rail_favourite",
+          "title": "Default: hide rail favourite",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_rail_music",
+          "title": "Default: hide rail music",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_rail_share",
+          "title": "Default: hide rail share",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_rail_counts",
+          "title": "Default: hide rail counts",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "stop_music_disc_spin",
+          "title": "Default: stop music disc spin",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "spin_music_disc",
+          "title": "Default: spin music disc",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_status_bar",
+          "title": "Default: hide status bar",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_status_bar_in_live",
+          "title": "Default: hide status bar in live",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "live_under_status_bar",
+          "title": "Default: live under status bar",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "touch_target_scale",
+          "title": "Default: touch target scale",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "1",
+          "values": null
+        },
+        {
+          "key": "hide_opened_video_search",
+          "title": "Default: hide opened video search",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_profile_views_button",
+          "title": "Default: hide profile views button",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_profile_add_friends",
+          "title": "Default: hide profile add friends",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_visual_search",
+          "title": "Default: hide visual search",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_fullscreen_button",
+          "title": "Default: hide fullscreen button",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_feed_report_button",
+          "title": "Default: hide feed report button",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_location_labels",
+          "title": "Default: hide location labels",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_creation_tags",
+          "title": "Default: hide creation tags",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_live_entrance",
+          "title": "Default: hide live entrance",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Hold-and-slide 2x lock",
@@ -3750,6 +6734,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -3804,7 +6789,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "enable_long_press_speed_lock",
+          "title": "Default: enable long press speed lock",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "In-app browser privacy guard",
@@ -3813,6 +6808,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -3867,7 +6863,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "block_webview_js_interfaces",
+          "title": "Default: block webview js interfaces",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Keep a streak going",
@@ -3876,6 +6882,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "ResourcePatch",
         "Settings"
       ],
@@ -3931,7 +6938,44 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "auto_streak",
+          "title": "Default: auto streak",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "auto_streak_recipient",
+          "title": "Default: auto streak recipient",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "auto_streak_minute",
+          "title": "Default: auto streak minute",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 720,
+          "values": null
+        },
+        {
+          "key": "auto_streak_message",
+          "title": "Default: auto streak message",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "🔥",
+          "values": null
+        }
+      ]
     },
     {
       "name": "Keep playing in the background",
@@ -3940,6 +6984,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -3994,7 +7039,26 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "background_play",
+          "title": "Default: background play",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "background_replay",
+          "title": "Default: background replay",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Keep pulled sounds",
@@ -4003,6 +7067,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -4057,7 +7122,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "keep_pulled_sounds",
+          "title": "Default: keep pulled sounds",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Keep the Favorites tab",
@@ -4066,6 +7141,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -4120,7 +7196,26 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "keep_favorites_tab",
+          "title": "Default: keep favorites tab",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
+          "key": "dark_quick_favorites",
+          "title": "Default: dark quick favorites",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Keep the app language",
@@ -4129,6 +7224,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -4183,7 +7279,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "keep_app_language",
+          "title": "Default: keep app language",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Keep the screen's brightness in the camera",
@@ -4192,6 +7298,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -4222,7 +7329,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "keep_camera_brightness",
+          "title": "Default: keep camera brightness",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Keep the screen's refresh rate",
@@ -4231,6 +7348,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -4285,7 +7403,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "uncap_refresh_rate",
+          "title": "Default: uncap refresh rate",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "LIVE controls",
@@ -4294,6 +7422,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "ResourcePatch",
         "Settings"
       ],
@@ -4325,7 +7454,98 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "stop_live_auto_enter",
+          "title": "Default: stop live auto enter",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "show_exact_live_viewers",
+          "title": "Default: show exact live viewers",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "offer_live_quality",
+          "title": "Default: offer live quality",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "remember_live_quality",
+          "title": "Default: remember live quality",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "offer_live_clear_screen",
+          "title": "Default: offer live clear screen",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "dark_live_panels",
+          "title": "Default: dark live panels",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "record_live",
+          "title": "Default: record live",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "live_record_quality",
+          "title": "Default: live record quality",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "room",
+          "values": null
+        },
+        {
+          "key": "live_record_source",
+          "title": "Default: live record source",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "stream",
+          "values": null
+        },
+        {
+          "key": "remembered_live_quality",
+          "title": "Default: remembered live quality",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        }
+      ]
     },
     {
       "name": "Lift text length limits",
@@ -4334,6 +7554,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -4364,7 +7585,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "lift_length_limits",
+          "title": "Default: lift length limits",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Limit background traffic",
@@ -4373,6 +7604,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -4432,6 +7664,15 @@
           "key": "skipPushSetup",
           "title": "Skip notification setup",
           "description": "With this on, the Limit background traffic switch in Hushfeed settings also stops TikTok setting up notifications, so you won't get any, messages included. Turn the switch off or pause Hushfeed to get them back.",
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "limit_background_traffic",
+          "title": "Default: limit background traffic",
+          "description": null,
           "required": false,
           "type": "kotlin.Boolean",
           "default": false,
@@ -4508,6 +7749,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -4562,7 +7804,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "block_location",
+          "title": "Default: block location",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Long-press controls",
@@ -4572,6 +7824,7 @@
       "dependencies": [
         "Block author button",
         "Double-tap controls",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -4602,7 +7855,89 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "long_press_action",
+          "title": "Default: long press action",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "default",
+          "values": null
+        },
+        {
+          "key": "long_press_sides_only",
+          "title": "Default: long press sides only",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "rail_hold_comment",
+          "title": "Default: rail hold comment",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "rail_hold_share",
+          "title": "Default: rail hold share",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "rail_hold_favorites",
+          "title": "Default: rail hold favorites",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "long_press_full_menu_on_profiles",
+          "title": "Default: long press full menu on profiles",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "long_press_full_menu_in_search",
+          "title": "Default: long press full menu in search",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "edge_seek",
+          "title": "Default: edge seek",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "edge_seek_seconds",
+          "title": "Default: edge seek seconds",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 5,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Look like the store app",
@@ -4611,6 +7946,7 @@
       "use": false,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -4665,7 +8001,26 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "store_identity",
+          "title": "Default: store identity",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
+          "key": "store_identity_installer",
+          "title": "Default: store identity installer",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "com.android.vending",
+          "values": null
+        }
+      ]
     },
     {
       "name": "Mute feed videos",
@@ -4675,6 +8030,7 @@
       "dependencies": [
         "Block author button",
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -4705,7 +8061,35 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "feed_muted",
+          "title": "Default: feed muted",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "feed_mute_button",
+          "title": "Default: feed mute button",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "feed_mute_button_position",
+          "title": "Default: feed mute button position",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        }
+      ]
     },
     {
       "name": "Network proxy",
@@ -4714,6 +8098,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -4768,7 +8153,62 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "network_proxy",
+          "title": "Default: network proxy",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "network_proxy_type",
+          "title": "Default: network proxy type",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "http",
+          "values": null
+        },
+        {
+          "key": "network_proxy_host",
+          "title": "Default: network proxy host",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "network_proxy_port",
+          "title": "Default: network proxy port",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "network_proxy_user",
+          "title": "Default: network proxy user",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "network_proxy_password",
+          "title": "Default: network proxy password",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        }
+      ]
     },
     {
       "name": "Network request report",
@@ -4840,6 +8280,7 @@
       "dependencies": [
         "Block author button",
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -4870,7 +8311,26 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "not_interested_button",
+          "title": "Default: not interested button",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "not_interested_button_position",
+          "title": "Default: not interested button position",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        }
+      ]
     },
     {
       "name": "Notification controls",
@@ -4879,6 +8339,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -4933,7 +8394,35 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "hide_follower_notifications",
+          "title": "Default: hide follower notifications",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "turn_off_push_notifications",
+          "title": "Default: turn off push notifications",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_message_streaks",
+          "title": "Default: hide message streaks",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Open external links directly",
@@ -4942,6 +8431,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -4996,7 +8486,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "open_external_links",
+          "title": "Default: open external links",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Open the comments at full height",
@@ -5005,6 +8505,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -5059,7 +8560,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "comments_full_height",
+          "title": "Default: comments full height",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Picture-in-picture",
@@ -5068,6 +8579,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "ResourcePatch",
         "Settings"
       ],
@@ -5099,7 +8611,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "picture_in_picture",
+          "title": "Default: picture in picture",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Play SDR instead of HDR",
@@ -5108,6 +8630,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -5162,7 +8685,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "play_sdr",
+          "title": "Default: play sdr",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Playback quality",
@@ -5171,6 +8704,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -5225,7 +8759,26 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "playback_quality",
+          "title": "Default: playback quality",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "auto",
+          "values": null
+        },
+        {
+          "key": "playback_quality_metered",
+          "title": "Default: playback quality metered",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "off",
+          "values": null
+        }
+      ]
     },
     {
       "name": "Playback speed",
@@ -5234,6 +8787,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -5288,7 +8842,62 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "remember_playback_speed",
+          "title": "Default: remember playback speed",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
+          "key": "default_speed_enabled",
+          "title": "Default: default speed enabled",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "default_speed",
+          "title": "Default: default speed",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "1.5",
+          "values": null
+        },
+        {
+          "key": "custom_speeds",
+          "title": "Default: custom speeds",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "hold_speed",
+          "title": "Default: hold speed",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "2",
+          "values": null
+        },
+        {
+          "key": "remembered_speed_v2",
+          "title": "Default: remembered speed v2",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Float",
+          "default": 1.0,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Prefer H.264 playback",
@@ -5297,6 +8906,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -5351,7 +8961,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "prefer_h264",
+          "title": "Default: prefer h264",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Profile background",
@@ -5360,6 +8980,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -5414,7 +9035,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "profile_background",
+          "title": "Default: profile background",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Region spoof",
@@ -5422,6 +9053,7 @@
       "category": "Settings",
       "use": false,
       "dependencies": [
+        "RawResourcePatch",
         "SIM spoof",
         "Settings"
       ],
@@ -5477,7 +9109,80 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "region_spoof",
+          "title": "Default: region spoof",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "region_store_spoof",
+          "title": "Default: region store spoof",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "region_request_spoof",
+          "title": "Default: region request spoof",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "simspoof",
+          "title": "Default: simspoof",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "simspoof_iso",
+          "title": "Default: simspoof iso",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "us",
+          "values": null
+        },
+        {
+          "key": "simspoof_mccmnc",
+          "title": "Default: simspoof mccmnc",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "310260",
+          "values": null
+        },
+        {
+          "key": "simspoof_op_name",
+          "title": "Default: simspoof op name",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "T-Mobile",
+          "values": null
+        },
+        {
+          "key": "simspoof_feed_real",
+          "title": "Default: simspoof feed real",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Remember clear display",
@@ -5486,6 +9191,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -5540,7 +9246,44 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "automatic_clear_display",
+          "title": "Default: automatic clear display",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "automatic_clear_display_delay",
+          "title": "Default: automatic clear display delay",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 1000,
+          "values": null
+        },
+        {
+          "key": "remember_clear_display_on_scroll",
+          "title": "Default: remember clear display on scroll",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
+          "key": "clear_display",
+          "title": "Default: clear display",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Remove LIVE extras",
@@ -5588,6 +9331,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -5618,7 +9362,35 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "hide_story_rings",
+          "title": "Default: hide story rings",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_live_ring",
+          "title": "Default: hide live ring",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "open_story_over_live",
+          "title": "Default: open story over live",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Remove content credential and card scanner assets",
@@ -5815,6 +9587,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -5845,7 +9618,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "report_newer_phone_to_effects",
+          "title": "Default: report newer phone to effects",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Repost diagnostics",
@@ -5893,6 +9676,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -5947,7 +9731,26 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "block_motion_sensors",
+          "title": "Default: block motion sensors",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "stop_benchmark_runs",
+          "title": "Default: stop benchmark runs",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Resume videos after scrolling",
@@ -5956,6 +9759,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -6010,7 +9814,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "resume_video_after_scroll",
+          "title": "Default: resume video after scroll",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Run beside the store app",
@@ -6057,6 +9871,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -6111,7 +9926,53 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "simspoof",
+          "title": "Default: simspoof",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "simspoof_iso",
+          "title": "Default: simspoof iso",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "us",
+          "values": null
+        },
+        {
+          "key": "simspoof_mccmnc",
+          "title": "Default: simspoof mccmnc",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "310260",
+          "values": null
+        },
+        {
+          "key": "simspoof_op_name",
+          "title": "Default: simspoof op name",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "T-Mobile",
+          "values": null
+        },
+        {
+          "key": "simspoof_feed_real",
+          "title": "Default: simspoof feed real",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Sanitize sharing links",
@@ -6120,6 +9981,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -6174,7 +10036,35 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "custom_share_domain",
+          "title": "Default: custom share domain",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "expand_short_share_links",
+          "title": "Default: expand short share links",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "morphe_sanitize_sharing_links",
+          "title": "Default: morphe sanitize sharing links",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Settings",
@@ -6182,7 +10072,8 @@
       "category": "Settings",
       "use": true,
       "dependencies": [
-        "BytecodePatch"
+        "BytecodePatch",
+        "RawResourcePatch"
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
@@ -6236,7 +10127,112 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "morphe_language",
+          "title": "Default: morphe language",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "DEFAULT",
+          "values": {
+            "DEFAULT": "DEFAULT",
+            "GA": "GA",
+            "AF": "AF",
+            "AM": "AM",
+            "AR": "AR",
+            "AS": "AS",
+            "AZ": "AZ",
+            "BE": "BE",
+            "BG": "BG",
+            "BN": "BN",
+            "BS": "BS",
+            "CA": "CA",
+            "CS": "CS",
+            "DA": "DA",
+            "DE": "DE",
+            "EL": "EL",
+            "EN": "EN",
+            "ES": "ES",
+            "ET": "ET",
+            "EU": "EU",
+            "FA": "FA",
+            "FI": "FI",
+            "FR": "FR",
+            "GL": "GL",
+            "GU": "GU",
+            "HE": "HE",
+            "HI": "HI",
+            "HR": "HR",
+            "HU": "HU",
+            "HY": "HY",
+            "ID": "ID",
+            "IS": "IS",
+            "IT": "IT",
+            "JA": "JA",
+            "KA": "KA",
+            "KK": "KK",
+            "KM": "KM",
+            "KN": "KN",
+            "KO": "KO",
+            "KY": "KY",
+            "LO": "LO",
+            "LT": "LT",
+            "LV": "LV",
+            "MK": "MK",
+            "ML": "ML",
+            "MN": "MN",
+            "MR": "MR",
+            "MS": "MS",
+            "MY": "MY",
+            "NB": "NB",
+            "NE": "NE",
+            "NL": "NL",
+            "OR": "OR",
+            "PA": "PA",
+            "PL": "PL",
+            "PT": "PT",
+            "RO": "RO",
+            "RU": "RU",
+            "SI": "SI",
+            "SK": "SK",
+            "SL": "SL",
+            "SQ": "SQ",
+            "SR": "SR",
+            "SV": "SV",
+            "SW": "SW",
+            "TA": "TA",
+            "TE": "TE",
+            "TH": "TH",
+            "TL": "TL",
+            "TR": "TR",
+            "UK": "UK",
+            "UR": "UR",
+            "UZ": "UZ",
+            "VI": "VI",
+            "ZH": "ZH",
+            "ZU": "ZU"
+          }
+        },
+        {
+          "key": "morphe_show_menu_icons",
+          "title": "Default: morphe show menu icons",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
+          "key": "hushfeed_hide_quick_setups",
+          "title": "Default: hushfeed hide quick setups",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Share sheet tools",
@@ -6245,6 +10241,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -6275,7 +10272,89 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "hide_share_channels",
+          "title": "Default: hide share channels",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_share_actions",
+          "title": "Default: hide share actions",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "share_block_author",
+          "title": "Default: share block author",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_share_contacts",
+          "title": "Default: hide share contacts",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "share_tap_copies_link",
+          "title": "Default: share tap copies link",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "share_hidden_items",
+          "title": "Default: share hidden items",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "share_hidden_items_profile",
+          "title": "Default: share hidden items profile",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "@video",
+          "values": null
+        },
+        {
+          "key": "share_hidden_items_live",
+          "title": "Default: share hidden items live",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "@video",
+          "values": null
+        },
+        {
+          "key": "share_added_apps",
+          "title": "Default: share added apps",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        }
+      ]
     },
     {
       "name": "Show LIVE search",
@@ -6283,7 +10362,8 @@
       "category": "Search",
       "use": true,
       "dependencies": [
-        "BytecodePatch"
+        "BytecodePatch",
+        "RawResourcePatch"
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
@@ -6337,7 +10417,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "enable_live_search",
+          "title": "Default: enable live search",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Show author region",
@@ -6346,6 +10436,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -6376,7 +10467,35 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "show_author_region",
+          "title": "Default: show author region",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "region_as_flag",
+          "title": "Default: region as flag",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "show_author_handle",
+          "title": "Default: show author handle",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Show commenter handle and region",
@@ -6385,6 +10504,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -6439,7 +10559,44 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "region_as_flag",
+          "title": "Default: region as flag",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "show_commenter_handle",
+          "title": "Default: show commenter handle",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "show_commenter_region",
+          "title": "Default: show commenter region",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "color_commenter_names",
+          "title": "Default: color commenter names",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Show engagement rate",
@@ -6448,6 +10605,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -6478,7 +10636,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "show_engagement_rate",
+          "title": "Default: show engagement rate",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Show exact counts",
@@ -6487,6 +10655,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -6517,7 +10686,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "show_exact_counts",
+          "title": "Default: show exact counts",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Show follow status",
@@ -6526,6 +10705,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -6556,7 +10736,53 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "show_follow_status",
+          "title": "Default: show follow status",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
+          "key": "local_profile_counts",
+          "title": "Default: local profile counts",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "local_profile_verified_badge",
+          "title": "Default: local profile verified badge",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_own_profile_restriction_notice",
+          "title": "Default: hide own profile restriction notice",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "local_profile_count_values",
+          "title": "Default: local profile count values",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        }
+      ]
     },
     {
       "name": "Show the progress bar",
@@ -6565,6 +10791,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -6619,7 +10846,71 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "show_seekbar",
+          "title": "Default: show seekbar",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
+          "key": "seekbar_time",
+          "title": "Default: seekbar time",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "seekbar_time_placement",
+          "title": "Default: seekbar time placement",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "beside",
+          "values": null
+        },
+        {
+          "key": "seekbar_full_width",
+          "title": "Default: seekbar full width",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "seekbar_big_handle",
+          "title": "Default: seekbar big handle",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "story_seekbar",
+          "title": "Default: story seekbar",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "sound_seekbar",
+          "title": "Default: sound seekbar",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Show the progress bar thumbnail",
@@ -6627,7 +10918,8 @@
       "category": "Playback",
       "use": true,
       "dependencies": [
-        "BytecodePatch"
+        "BytecodePatch",
+        "RawResourcePatch"
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
@@ -6681,7 +10973,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "show_seekbar_thumbnail",
+          "title": "Default: show seekbar thumbnail",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Skip content warnings",
@@ -6690,6 +10992,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -6744,7 +11047,35 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "hide_sensitive_warnings",
+          "title": "Default: hide sensitive warnings",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_unverified_notices",
+          "title": "Default: hide unverified notices",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_check_your_sources",
+          "title": "Default: hide check your sources",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Skip first-launch setup",
@@ -6753,6 +11084,7 @@
       "use": false,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -6807,7 +11139,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "skip_first_launch_setup",
+          "title": "Default: skip first launch setup",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Skip passkey sign-in",
@@ -6816,6 +11158,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -6870,7 +11213,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "skip_passkey_sign_in",
+          "title": "Default: skip passkey sign in",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Skip the splash ad",
@@ -6879,6 +11232,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -6933,7 +11287,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "skip_splash_ad",
+          "title": "Default: skip splash ad",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Skip update checks",
@@ -6942,6 +11306,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -6996,7 +11361,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "skip_update_checks",
+          "title": "Default: skip update checks",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Stay on the video in full screen",
@@ -7005,6 +11380,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -7059,7 +11435,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "full_screen_hold",
+          "title": "Default: full screen hold",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Stop on-device AI profiling",
@@ -7068,6 +11454,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -7122,7 +11509,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "stop_ai_profiling",
+          "title": "Default: stop ai profiling",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Stop recording watch history",
@@ -7131,6 +11528,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -7185,7 +11583,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "stop_watch_history",
+          "title": "Default: stop watch history",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Stop saving search history",
@@ -7194,6 +11602,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -7248,7 +11657,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "stop_search_history",
+          "title": "Default: stop search history",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Stop search autoplay",
@@ -7257,6 +11676,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -7311,7 +11731,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "stop_search_autoplay",
+          "title": "Default: stop search autoplay",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Stop video looping",
@@ -7320,6 +11750,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -7350,7 +11781,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "stop_video_looping",
+          "title": "Default: stop video looping",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Story controls",
@@ -7359,6 +11800,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -7389,7 +11831,26 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "story_loop",
+          "title": "Default: story loop",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "story_photo_hold",
+          "title": "Default: story photo hold",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Subtitle tools",
@@ -7400,6 +11861,7 @@
         "Advanced downloads",
         "Block author button",
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -7430,7 +11892,98 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "download_subtitles",
+          "title": "Default: download subtitles",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "subtitle_language",
+          "title": "Default: subtitle language",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "original",
+          "values": null
+        },
+        {
+          "key": "caption_text_size",
+          "title": "Default: caption text size",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 0,
+          "values": null
+        },
+        {
+          "key": "caption_bottom_offset",
+          "title": "Default: caption bottom offset",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 0,
+          "values": null
+        },
+        {
+          "key": "caption_landscape_offset",
+          "title": "Default: caption landscape offset",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 0,
+          "values": null
+        },
+        {
+          "key": "caption_font_weight",
+          "title": "Default: caption font weight",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "default",
+          "values": null
+        },
+        {
+          "key": "caption_background",
+          "title": "Default: caption background",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "default",
+          "values": null
+        },
+        {
+          "key": "keep_captions_clear_display",
+          "title": "Default: keep captions clear display",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "caption_clear_display_offset",
+          "title": "Default: caption clear display offset",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 0,
+          "values": null
+        },
+        {
+          "key": "keep_captions_available",
+          "title": "Default: keep captions available",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Swipe-left controls",
@@ -7441,6 +11994,7 @@
         "Block author button",
         "BytecodePatch",
         "Double-tap controls",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -7471,7 +12025,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "swipe_left_action",
+          "title": "Default: swipe left action",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "default",
+          "values": null
+        }
+      ]
     },
     {
       "name": "Translate comments",
@@ -7480,6 +12044,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -7534,7 +12099,80 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "comment_batch_translation",
+          "title": "Default: comment batch translation",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "dm_translation_preview",
+          "title": "Default: dm translation preview",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "received_dm_translation_preview",
+          "title": "Default: received dm translation preview",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "dont_auto_translate_languages",
+          "title": "Default: dont auto translate languages",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "no_video_auto_translate",
+          "title": "Default: no video auto translate",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "translate_into",
+          "title": "Default: translate into",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "comment_translate_button",
+          "title": "Default: comment translate button",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "show_translation_settings",
+          "title": "Default: show translation settings",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Trust user certificates",
@@ -7605,6 +12243,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -7659,7 +12298,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "turn_off_haptics",
+          "title": "Default: turn off haptics",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Turn off screen transitions",
@@ -7668,6 +12317,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -7722,7 +12372,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "turn_off_screen_transitions",
+          "title": "Default: turn off screen transitions",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Use non-personalized search",
@@ -7731,6 +12391,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -7785,7 +12446,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "enable_non_personalized_search",
+          "title": "Default: enable non personalized search",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Use system font",
@@ -7794,6 +12465,7 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
+        "RawResourcePatch",
         "Settings"
       ],
       "compatiblePackages": {
@@ -7848,7 +12520,35 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "system_font",
+          "title": "Default: system font",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "system_emoji",
+          "title": "Default: system emoji",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "imported_font",
+          "title": "Default: imported font",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     }
   ]
 }

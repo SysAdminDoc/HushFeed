@@ -6,7 +6,7 @@ package app.morphe.patches.tiktok.misc.theme
 
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.patch.PatchException
-import app.morphe.patcher.patch.bytecodePatch
+import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.util.addInstructionsAtControlFlowLabel

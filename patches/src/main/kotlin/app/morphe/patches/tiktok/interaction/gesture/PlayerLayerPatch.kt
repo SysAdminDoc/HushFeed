@@ -5,7 +5,7 @@
 package app.morphe.patches.tiktok.interaction.gesture
 
 import app.morphe.patcher.Fingerprint
-import app.morphe.patcher.patch.bytecodePatch
+import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.util.addInstruction
 import com.android.tools.smali.dexlib2.AccessFlags

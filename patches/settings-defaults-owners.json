@@ -1,0 +1,747 @@
+{
+  "patches": {
+    "Advanced downloads": [
+      "DOWNLOAD_VIDEO_QUALITY",
+      "DOWNLOAD_ASK_QUALITY",
+      "DOWNLOAD_ORIGINAL_PHOTOS",
+      "KEEP_PHOTOS_AS_SENT",
+      "DOWNLOAD_PHOTOS_AS_VIDEO",
+      "PHOTO_VIDEO_SECONDS",
+      "DOWNLOAD_AUDIO_TRACK",
+      "DOWNLOAD_SOUND_FORMAT",
+      "DOWNLOAD_WATERMARK_FALLBACK",
+      "DOWNLOAD_COVER",
+      "SAVE_COVER_BUTTON",
+      "DOWNLOAD_WITHOUT_SOUND",
+      "DOWNLOAD_PROGRESS",
+      "DOWNLOAD_SAVES_AT_ONCE",
+      "DOWNLOAD_DETAILS",
+      "DOWNLOAD_DETAILS_JSON",
+      "DOWNLOAD_TAGS",
+      "DOWNLOAD_BURN_CAPTION",
+      "CHECK_SAVED_VIDEOS",
+      "MARK_SAVED_VIDEOS",
+      "EXTERNAL_DOWNLOADER_PACKAGE",
+      "YTDLNIS_DOWNLOAD_TYPE",
+      "YTDLNIS_BACKGROUND",
+      "SAVE_PROFILE_PICTURE",
+      "SAVE_STORY",
+      "SAVE_STORY_FROM_SHARE",
+      "PICK_GRID_VIDEOS",
+      "DOWNLOAD_VIDEO_PATH",
+      "DOWNLOAD_PHOTO_PATH",
+      "DOWNLOAD_VIDEO_FILENAME_TEMPLATE",
+      "DOWNLOAD_PHOTO_FILENAME_TEMPLATE"
+    ],
+    "Allow Duet and Stitch": [
+      "ALLOW_DUET_AND_STITCH",
+      "ALLOW_ADD_TO_STORY"
+    ],
+    "Allow photo comments": [
+      "PINEDRAMA_COMMENT_PHOTOS"
+    ],
+    "Allow screenshots and Circle to Search": [
+      "ALLOW_SCREEN_CAPTURE"
+    ],
+    "Always show publish date": [
+      "ALWAYS_SHOW_PUBLISH_DATE",
+      "PUBLISH_DATE_EXACT_TIME",
+      "PUBLISH_DATE_TIME_ZONE",
+      "PUBLISH_DATE_SHORT_DATE",
+      "PUBLISH_DATE_ON_GRID",
+      "VIDEO_LENGTH_ON_GRID",
+      "PROFILE_GRID_SORT"
+    ],
+    "Always upload in HD": [
+      "ALWAYS_UPLOAD_HD"
+    ],
+    "App lock": [
+      "APP_LOCK",
+      "APP_LOCK_TIMEOUT"
+    ],
+    "Automatic video advance": [
+      "AUTO_ADVANCE",
+      "AUTO_ADVANCE_LIMIT",
+      "AUTO_ADVANCE_HIDE_PANEL_ACTION",
+      "AUTO_ADVANCE_SEARCH"
+    ],
+    "Block author button": [
+      "NO_RESUME_ON_FOREGROUND",
+      "PAUSE_FIRST_VIDEO",
+      "KEEP_PAUSED_ON_RETURN",
+      "LEAVE_ON_REST_REMINDER",
+      "SESSION_BUDGET_VIDEOS",
+      "SESSION_BUDGET_MINUTES",
+      "SESSION_BUDGET_LOCK_MINUTES",
+      "SESSION_BUDGET_RESET_HOUR",
+      "SESSION_BUDGET_LOCK",
+      "SESSION_BUDGET_PASSES_PER_DAY",
+      "SESSION_BUDGET_WAIT_TO_LOOSEN",
+      "SESSION_BUDGET_RAMP",
+      "SESSION_BUDGET_FINISH_VIDEO",
+      "FEED_LOCK",
+      "SHARED_VIDEO_ALONE",
+      "SESSION_BUDGET_CUE",
+      "SESSION_BUDGET_NOTICE_MINUTES",
+      "BLOCK_AUTHOR_BUTTON",
+      "LOCAL_HIDE_BUTTON",
+      "BLOCK_SOUND_BUTTON",
+      "BLOCK_AUTHOR_BUTTON_POSITION",
+      "LOCAL_HIDE_BUTTON_POSITION",
+      "BLOCK_SOUND_BUTTON_POSITION"
+    ],
+    "Block contact list access": [
+      "BLOCK_CONTACT_LIST"
+    ],
+    "Block installed app scanning": [
+      "BLOCK_INSTALLED_APPS"
+    ],
+    "Block popups": [
+      "POPUP_LABEL_PICKS",
+      "HIDE_LIVE_BUBBLE",
+      "HIDE_WIND_DOWN_SCREENS"
+    ],
+    "Block suggested video notifications": [
+      "BLOCK_SUGGESTED_VIDEO_NOTIFICATIONS"
+    ],
+    "Camera and microphone indicator": [
+      "CAMERA_MIC_INDICATOR"
+    ],
+    "Comment sort controls": [
+      "COMMENT_SORT_CONTROLS"
+    ],
+    "Comment tools": [
+      "PAUSE_ON_COMMENTS",
+      "COMMENT_KEYWORD_FILTER",
+      "COMMENT_BLOCKED_KEYWORDS",
+      "COMMENT_BLOCKED_USERS",
+      "BLOCK_FROM_COMMENT",
+      "BLOCK_FROM_COMMENT_MENU",
+      "COMMENT_SEARCH",
+      "COMMENT_EXPORT",
+      "COMMENT_LINKS",
+      "HIDE_COMMENT_MEDIA",
+      "HIDE_SPAM_COMMENTS",
+      "HIDE_COMMENT_POLLS",
+      "HIDE_COMMENT_REPLY_PREVIEWS",
+      "HIDE_COMMENT_SURVEYS",
+      "HIDE_COMMENT_BOX_BUTTONS",
+      "SHOW_POLL_RESULTS",
+      "CAPTION_OPENS_COMMENTS",
+      "CAPTION_ABOVE_COMMENTS",
+      "HIDE_COMMENT_SEARCH_SUGGESTIONS",
+      "COMPACT_COMMENT_HEADER",
+      "LARGER_COMMENT_LIKE_TARGET"
+    ],
+    "Confirm feed interactions": [
+      "CONFIRM_FOLLOW",
+      "CONFIRM_LIKE",
+      "CONFIRM_COMMENT_LIKE",
+      "CONFIRM_STORY_LIKE",
+      "CONFIRM_QUICK_REPOST"
+    ],
+    "Copy bio and IDs": [
+      "COPY_IDS",
+      "ACCOUNT_FACTS"
+    ],
+    "Copy comments without username": [
+      "COPY_COMMENTS_WITHOUT_USERNAME"
+    ],
+    "Custom offline videos limit": [
+      "CUSTOM_OFFLINE_VIDEOS",
+      "CUSTOM_OFFLINE_VIDEO_LIMIT",
+      "KEEP_OFFLINE_VIDEOS"
+    ],
+    "Device privacy guard": [
+      "BLOCK_CLIPBOARD_READS",
+      "HIDE_VPN",
+      "BLOCK_ADVERTISING_ID",
+      "HIDE_ROOT"
+    ],
+    "Diagnostic tools": [
+      "DEBUG",
+      "DEBUG_LOG_FILTERS",
+      "CAPTURE_JAVA_CRASHES",
+      "DEBUG_STACKTRACE",
+      "DEBUG_TOAST_ON_ERROR"
+    ],
+    "Disable telemetry": [
+      "DISABLE_ANALYTICS"
+    ],
+    "Disable the long press quick share": [
+      "DISABLE_LONG_PRESS_QUICK_SHARE"
+    ],
+    "Disable the long press repost": [
+      "DISABLE_LONG_PRESS_REPOST"
+    ],
+    "Double-tap controls": [
+      "DOUBLE_TAP_SPLIT_ZONES",
+      "DOUBLE_TAP_ACTION",
+      "DOUBLE_TAP_TOP_LEFT_ACTION",
+      "DOUBLE_TAP_TOP_RIGHT_ACTION",
+      "DOUBLE_TAP_BOTTOM_LEFT_ACTION",
+      "DOUBLE_TAP_BOTTOM_RIGHT_ACTION"
+    ],
+    "Downloads": [
+      "KEEP_PHOTOS_AS_SENT",
+      "DOWNLOAD_SAVES_AT_ONCE",
+      "DOWNLOAD_STICKER_FORMAT",
+      "DOWNLOAD_VIDEO_PATH",
+      "DOWNLOAD_PHOTO_PATH",
+      "DOWNLOAD_STICKER_PATH",
+      "DOWNLOAD_VIDEO_FILENAME_TEMPLATE",
+      "DOWNLOAD_PHOTO_FILENAME_TEMPLATE",
+      "DOWNLOAD_COMMENT_MEDIA_FILENAME_TEMPLATE",
+      "REMOVE_DOWNLOAD_WATERMARK"
+    ],
+    "Drop the animated image cache": [
+      "DROP_ANIMATED_IMAGE_CACHE"
+    ],
+    "Enable voice comments": [
+      "ENABLE_VOICE_COMMENTS"
+    ],
+    "Expand activity list": [
+      "EXPAND_ACTIVITY_LIST"
+    ],
+    "Feed filter": [
+      "BLOCKED_CAPTION_WORDS",
+      "BLOCKED_WORDS_IN_STICKERS",
+      "BLOCKED_CREATORS",
+      "LOCAL_HIDDEN_CREATORS",
+      "CREATOR_FILTER_EXCEPTIONS",
+      "REGION_ONLY_FROM",
+      "CAPTION_LANGUAGES",
+      "REGION_NEVER_FROM",
+      "MIN_VIDEO_SECONDS",
+      "MAX_VIDEO_SECONDS",
+      "MAX_PUBLICATION_AGE_DAYS",
+      "MAX_VIEWS_PER_LIKE",
+      "MAX_VIEWS_PER_COMMENT",
+      "HIDE_PROMOTIONAL_MUSIC",
+      "HIDE_LIVE_REPLAYS",
+      "HIDE_UNPERSONALIZED_FOR_YOU",
+      "FRIENDS_MUTUALS_ONLY",
+      "FOLLOWING_LATEST_FIRST",
+      "REMOVE_ADS",
+      "HIDE_LIVE",
+      "HIDE_SHOP",
+      "HIDE_SEARCH_SHOP",
+      "HIDE_STORY",
+      "HIDE_IMAGE",
+      "MIN_MAX_VIEWS",
+      "MIN_MAX_LIKES",
+      "MIN_MAX_COMMENTS",
+      "MIN_MAX_FAVOURITES",
+      "MIN_MAX_SHARES",
+      "HIDE_OFFLINE_VIDEOS",
+      "FILTER_OFFLINE_FALLBACK_VIDEOS",
+      "FILTERED_COUNT_PILL",
+      "HIDE_BOTTOM_SEARCH_BAR",
+      "LOCAL_HIDE_BUTTON",
+      "BLOCK_SOUND_BUTTON",
+      "HIDE_BLOCKED_SOUNDS",
+      "BLOCKED_SOUND_IDS",
+      "BLOCKED_SOUND_NAMES",
+      "HIDE_PAID_PARTNERSHIP",
+      "FILTER_LOCATION_VIDEOS",
+      "HIDE_AI_GENERATED",
+      "HIDE_VERIFIED",
+      "HIDE_SERIES",
+      "HIDE_MINI_DRAMAS",
+      "HIDE_PLAYLIST_BAR",
+      "HIDE_EVENT_BADGE",
+      "HIDE_INSERTED_CARDS",
+      "HIDE_PLAYLIST_VIDEOS",
+      "HIDE_SUBSCRIBER_ONLY",
+      "LIVE_FEED_FILTER",
+      "LIVE_HIDE_GAMING",
+      "LIVE_HIDE_SHOPPING",
+      "LIVE_HIDE_SPONSORED",
+      "LIVE_HIDE_VERIFIED",
+      "LIVE_HIDDEN_CATEGORIES",
+      "LIVE_MIN_MAX_VIEWERS",
+      "LIVE_MIN_MAX_FOLLOWERS",
+      "HIDE_AI_CAST"
+    ],
+    "Feed tab navigation": [
+      "FEED_NAVIGATION",
+      "FEED_NAVIGATION_TABS",
+      "FEED_NAVIGATION_BLOCK_NEW_TABS",
+      "BOTTOM_NAVIGATION",
+      "BOTTOM_NAVIGATION_TABS",
+      "BOTTOM_NAVIGATION_BLOCK_NEW_TABS",
+      "HIDE_TAB_BADGES",
+      "HIDE_BOTTOM_TAB_LABELS",
+      "BOTTOM_TAB_NAME_HOME",
+      "BOTTOM_TAB_NAME_FRIENDS",
+      "BOTTOM_TAB_NAME_INBOX",
+      "BOTTOM_TAB_NAME_PROFILE",
+      "BOTTOM_TAB_NAME_SHOP",
+      "KEEP_FOR_YOU_ON_TAB_TAP",
+      "KEEP_FOR_YOU_ON_PULL_DOWN",
+      "HOME_TAB_OPENS_SETTINGS",
+      "PROFILE_TAB_OPENS_WATCH_HISTORY",
+      "START_PAGE",
+      "SHOW_FEED_BUTTONS",
+      "HIDE_TAKO_AI",
+      "SHARED_VIDEO_ALONE",
+      "HIDE_FEED_TAB_STRIP"
+    ],
+    "Feed text sizes": [
+      "FEED_DESCRIPTION_TEXT_SIZE",
+      "FEED_AUTHOR_TEXT_SIZE"
+    ],
+    "Fit the video to the screen": [
+      "FIT_VIDEO_TO_SCREEN",
+      "FILL_VIDEO_TO_SCREEN"
+    ],
+    "Foldable split comment view": [
+      "FOLDABLE_SPLIT_VIEW",
+      "FOLDABLE_SPLIT_VIEW_MIN_WIDTH_DP"
+    ],
+    "Ghost mode": [
+      "GHOST_MODE",
+      "GHOST_HIDE_ONLINE_STATUS"
+    ],
+    "Hide already seen videos": [
+      "HIDE_SEEN_VIDEOS",
+      "SEEN_VIDEO_RETENTION_DAYS",
+      "SEEN_VIDEO_MARK_PERCENT"
+    ],
+    "Hide CAPTCHA popups": [
+      "HIDE_CAPTCHA_POPUPS"
+    ],
+    "Hide comment popup ads": [
+      "HIDE_COMMENT_EGGS"
+    ],
+    "Hide comment typing suggestions": [
+      "HIDE_COMMENT_QUICK_REACTIONS"
+    ],
+    "Hide feed follow button": [
+      "HIDE_FEED_FOLLOW_BUTTON"
+    ],
+    "Hide feed LIVE button": [
+      "HIDE_LIVE_ENTRANCE",
+      "HIDE_FEED_SIDEBAR_BUTTON",
+      "DISABLE_FEED_SIDEBAR_SWIPE"
+    ],
+    "Hide feed save button": [
+      "HIDE_FEED_SAVE_BUTTON"
+    ],
+    "Hide feed search button": [
+      "HIDE_FEED_SEARCH_BUTTON"
+    ],
+    "Hide floating promotions": [
+      "HIDE_HOMEPAGE_COIN",
+      "HIDE_PROFILE_REWARDS_SHORTCUT"
+    ],
+    "Hide inbox items": [
+      "HIDE_INBOX_STORIES",
+      "HIDE_INBOX_NEW_FOLLOWERS",
+      "HIDE_INBOX_ACTIVITY",
+      "HIDE_INBOX_ARCHIVE",
+      "HIDE_INBOX_TAKO",
+      "HIDE_INBOX_SHOP",
+      "HIDE_INBOX_BULLETIN_BOARDS",
+      "HIDE_INBOX_SUGGESTED_ACCOUNTS",
+      "HIDE_INBOX_MESSAGE_REQUESTS",
+      "HIDE_INBOX_CONVERSATIONS",
+      "HIDE_INBOX_ADD_PEOPLE",
+      "HIDE_INBOX_SEARCH",
+      "INBOX_LOADED_SEARCH",
+      "HIDE_INBOX_ACTIVITY_STATUS",
+      "HIDE_INBOX_GROUP_CHAT_BANNER",
+      "HIDE_CHAT_CALL_BUTTONS",
+      "HIDE_CHAT_STICKER_BANNER",
+      "HIDE_CHAT_AI_REPLIES",
+      "TURN_OFF_CHAT_DOUBLE_TAP",
+      "TURN_OFF_CHAT_SWIPE_REPLY",
+      "HIDE_INBOX_CUSTOM_TITLES"
+    ],
+    "Hide inbox stories": [
+      "HIDE_INBOX_STORIES"
+    ],
+    "Hide profile shortcuts": [
+      "HIDE_PROFILE_MENU_BALANCE",
+      "HIDE_PROFILE_MENU_MINIS_ICONS",
+      "HIDDEN_PROFILE_SHORTCUTS",
+      "PROFILE_SHORTCUT_PICKS",
+      "HIDE_PROFILE_THOUGHTS",
+      "ENABLE_THOUGHTS"
+    ],
+    "Hide search suggestions": [
+      "HIDE_SEARCH_REWARDS",
+      "HIDE_SEARCH_SUGGESTIONS"
+    ],
+    "Hide suggested accounts": [
+      "HIDE_INBOX_SUGGESTED_ACCOUNTS"
+    ],
+    "Hide the launcher shortcuts": [
+      "HIDE_LAUNCHER_SHORTCUTS"
+    ],
+    "Hide video overlays": [
+      "SWIPE_LEVELS",
+      "SWIPE_LEVELS_STRIP_PERCENT",
+      "SWIPE_LEVELS_LEFT",
+      "SWIPE_LEVELS_RIGHT",
+      "HIDE_FEED_CAPTION",
+      "HIDE_FEED_MUSIC",
+      "HIDE_FEED_ACTION_BAR",
+      "HIDE_FEED_SURVEYS",
+      "HIDE_FOOTNOTES",
+      "HIDE_DETAIL_COMMENT_BAR",
+      "HIDE_CLEAR_DISPLAY_CONTROLS",
+      "FADE_CONTROLS_OPACITY",
+      "FADE_IN_CLEAR_DISPLAY",
+      "SEE_THROUGH_BOTTOM_BAR",
+      "FLOATING_BOTTOM_BAR",
+      "LIQUID_GLASS_BOTTOM_BAR",
+      "GLASS_TAB_LENS",
+      "GLASS_VIDEO_BLUR",
+      "SEE_THROUGH_STATUS_BAR",
+      "BURN_IN_GUARD",
+      "HIDE_SHARE_GUIDE",
+      "HIDE_RAIL_FOLLOW",
+      "HIDE_RAIL_LIKE",
+      "HIDE_RAIL_COMMENTS",
+      "HIDE_RAIL_FAVOURITE",
+      "HIDE_RAIL_MUSIC",
+      "HIDE_RAIL_SHARE",
+      "HIDE_RAIL_COUNTS",
+      "STOP_MUSIC_DISC_SPIN",
+      "SPIN_MUSIC_DISC",
+      "HIDE_STATUS_BAR",
+      "HIDE_STATUS_BAR_IN_LIVE",
+      "LIVE_UNDER_STATUS_BAR",
+      "TOUCH_TARGET_SCALE",
+      "HIDE_OPENED_VIDEO_SEARCH",
+      "HIDE_PROFILE_VIEWS_BUTTON",
+      "HIDE_PROFILE_ADD_FRIENDS",
+      "HIDE_VISUAL_SEARCH",
+      "HIDE_FULLSCREEN_BUTTON",
+      "HIDE_FEED_REPORT_BUTTON",
+      "HIDE_LOCATION_LABELS",
+      "HIDE_CREATION_TAGS",
+      "HIDE_LIVE_ENTRANCE"
+    ],
+    "Hold-and-slide 2x lock": [
+      "ENABLE_LONG_PRESS_SPEED_LOCK"
+    ],
+    "In-app browser privacy guard": [
+      "BLOCK_WEBVIEW_JS_INTERFACES"
+    ],
+    "Keep a streak going": [
+      "AUTO_STREAK",
+      "AUTO_STREAK_RECIPIENT",
+      "AUTO_STREAK_MINUTE",
+      "AUTO_STREAK_MESSAGE"
+    ],
+    "Keep playing in the background": [
+      "BACKGROUND_PLAY",
+      "BACKGROUND_REPLAY"
+    ],
+    "Keep pulled sounds": [
+      "KEEP_PULLED_SOUNDS"
+    ],
+    "Keep the app language": [
+      "KEEP_APP_LANGUAGE"
+    ],
+    "Keep the Favorites tab": [
+      "KEEP_FAVORITES_TAB",
+      "DARK_QUICK_FAVORITES"
+    ],
+    "Keep the screen's brightness in the camera": [
+      "KEEP_CAMERA_BRIGHTNESS"
+    ],
+    "Keep the screen's refresh rate": [
+      "UNCAP_REFRESH_RATE"
+    ],
+    "Lift text length limits": [
+      "LIFT_LENGTH_LIMITS"
+    ],
+    "Limit background traffic": [
+      "LIMIT_BACKGROUND_TRAFFIC"
+    ],
+    "LIVE controls": [
+      "STOP_LIVE_AUTO_ENTER",
+      "SHOW_EXACT_LIVE_VIEWERS",
+      "OFFER_LIVE_QUALITY",
+      "REMEMBER_LIVE_QUALITY",
+      "OFFER_LIVE_CLEAR_SCREEN",
+      "DARK_LIVE_PANELS",
+      "RECORD_LIVE",
+      "LIVE_RECORD_QUALITY",
+      "LIVE_RECORD_SOURCE",
+      "REMEMBERED_LIVE_QUALITY"
+    ],
+    "Location access governor": [
+      "BLOCK_LOCATION"
+    ],
+    "Long-press controls": [
+      "LONG_PRESS_ACTION",
+      "LONG_PRESS_SIDES_ONLY",
+      "RAIL_HOLD_COMMENT",
+      "RAIL_HOLD_SHARE",
+      "RAIL_HOLD_FAVORITES",
+      "LONG_PRESS_FULL_MENU_ON_PROFILES",
+      "LONG_PRESS_FULL_MENU_IN_SEARCH",
+      "EDGE_SEEK",
+      "EDGE_SEEK_SECONDS"
+    ],
+    "Look like the store app": [
+      "STORE_IDENTITY",
+      "STORE_IDENTITY_INSTALLER"
+    ],
+    "Mute feed videos": [
+      "FEED_MUTED",
+      "FEED_MUTE_BUTTON",
+      "FEED_MUTE_BUTTON_POSITION"
+    ],
+    "Network proxy": [
+      "NETWORK_PROXY",
+      "NETWORK_PROXY_TYPE",
+      "NETWORK_PROXY_HOST",
+      "NETWORK_PROXY_PORT",
+      "NETWORK_PROXY_USER",
+      "NETWORK_PROXY_PASSWORD"
+    ],
+    "Not interested button": [
+      "NOT_INTERESTED_BUTTON",
+      "NOT_INTERESTED_BUTTON_POSITION"
+    ],
+    "Notification controls": [
+      "HIDE_FOLLOWER_NOTIFICATIONS",
+      "TURN_OFF_PUSH_NOTIFICATIONS",
+      "HIDE_MESSAGE_STREAKS"
+    ],
+    "Open external links directly": [
+      "OPEN_EXTERNAL_LINKS"
+    ],
+    "Open the comments at full height": [
+      "COMMENTS_FULL_HEIGHT"
+    ],
+    "Picture-in-picture": [
+      "PICTURE_IN_PICTURE"
+    ],
+    "Play SDR instead of HDR": [
+      "PLAY_SDR"
+    ],
+    "Playback quality": [
+      "PLAYBACK_QUALITY",
+      "PLAYBACK_QUALITY_METERED"
+    ],
+    "Playback speed": [
+      "REMEMBER_SPEED",
+      "DEFAULT_SPEED_ENABLED",
+      "DEFAULT_SPEED",
+      "CUSTOM_SPEEDS",
+      "HOLD_SPEED",
+      "REMEMBERED_SPEED"
+    ],
+    "Prefer H.264 playback": [
+      "PREFER_H264"
+    ],
+    "Profile background": [
+      "PROFILE_BACKGROUND"
+    ],
+    "Region spoof": [
+      "REGION_SPOOF",
+      "REGION_STORE_SPOOF",
+      "REGION_REQUEST_SPOOF",
+      "SIM_SPOOF",
+      "SIM_SPOOF_ISO",
+      "SIMSPOOF_MCCMNC",
+      "SIMSPOOF_OP_NAME",
+      "SIM_SPOOF_FEED_REAL"
+    ],
+    "Remember clear display": [
+      "AUTOMATIC_CLEAR_DISPLAY",
+      "AUTOMATIC_CLEAR_DISPLAY_DELAY",
+      "REMEMBER_CLEAR_DISPLAY_ON_SCROLL",
+      "CLEAR_DISPLAY"
+    ],
+    "Remove avatar rings": [
+      "HIDE_STORY_RINGS",
+      "HIDE_LIVE_RING",
+      "OPEN_STORY_OVER_LIVE"
+    ],
+    "Report a newer phone to effects": [
+      "REPORT_NEWER_PHONE_TO_EFFECTS"
+    ],
+    "Resource and battery governor": [
+      "BLOCK_MOTION_SENSORS",
+      "STOP_BENCHMARK_RUNS"
+    ],
+    "Resume videos after scrolling": [
+      "RESUME_VIDEO_AFTER_SCROLL"
+    ],
+    "Sanitize sharing links": [
+      "CUSTOM_SHARE_DOMAIN",
+      "EXPAND_SHORT_SHARE_LINKS",
+      "SANITIZE_SHARING_LINKS"
+    ],
+    "Settings": [
+      "MORPHE_LANGUAGE",
+      "SHOW_MENU_ICONS",
+      "HIDE_QUICK_SETUPS"
+    ],
+    "Share sheet tools": [
+      "HIDE_SHARE_CHANNELS",
+      "HIDE_SHARE_ACTIONS",
+      "SHARE_BLOCK_AUTHOR",
+      "HIDE_SHARE_CONTACTS",
+      "SHARE_TAP_COPIES_LINK",
+      "SHARE_HIDDEN_ITEMS",
+      "SHARE_HIDDEN_ITEMS_PROFILE",
+      "SHARE_HIDDEN_ITEMS_LIVE",
+      "SHARE_ADDED_APPS"
+    ],
+    "Show author region": [
+      "SHOW_AUTHOR_REGION",
+      "REGION_AS_FLAG",
+      "SHOW_AUTHOR_HANDLE"
+    ],
+    "Show commenter handle and region": [
+      "REGION_AS_FLAG",
+      "SHOW_COMMENTER_HANDLE",
+      "SHOW_COMMENTER_REGION",
+      "COLOR_COMMENTER_NAMES"
+    ],
+    "Show engagement rate": [
+      "SHOW_ENGAGEMENT_RATE"
+    ],
+    "Show exact counts": [
+      "SHOW_EXACT_COUNTS"
+    ],
+    "Show follow status": [
+      "SHOW_FOLLOW_STATUS",
+      "LOCAL_PROFILE_COUNTS",
+      "LOCAL_PROFILE_VERIFIED_BADGE",
+      "HIDE_OWN_PROFILE_RESTRICTION_NOTICE",
+      "LOCAL_PROFILE_COUNT_VALUES"
+    ],
+    "Show LIVE search": [
+      "ENABLE_LIVE_SEARCH"
+    ],
+    "Show the progress bar": [
+      "SHOW_SEEKBAR",
+      "SEEKBAR_TIME",
+      "SEEKBAR_TIME_PLACEMENT",
+      "SEEKBAR_FULL_WIDTH",
+      "SEEKBAR_BIG_HANDLE",
+      "STORY_SEEKBAR",
+      "SOUND_SEEKBAR"
+    ],
+    "Show the progress bar thumbnail": [
+      "SHOW_SEEKBAR_THUMBNAIL"
+    ],
+    "SIM spoof": [
+      "SIM_SPOOF",
+      "SIM_SPOOF_ISO",
+      "SIMSPOOF_MCCMNC",
+      "SIMSPOOF_OP_NAME",
+      "SIM_SPOOF_FEED_REAL"
+    ],
+    "Skip content warnings": [
+      "HIDE_SENSITIVE_WARNINGS",
+      "HIDE_UNVERIFIED_NOTICES",
+      "HIDE_CHECK_YOUR_SOURCES"
+    ],
+    "Skip first-launch setup": [
+      "SKIP_FIRST_LAUNCH_SETUP"
+    ],
+    "Skip passkey sign-in": [
+      "SKIP_PASSKEY_SIGN_IN"
+    ],
+    "Skip the splash ad": [
+      "SKIP_SPLASH_AD"
+    ],
+    "Skip update checks": [
+      "SKIP_UPDATE_CHECKS"
+    ],
+    "Stay on the video in full screen": [
+      "FULL_SCREEN_HOLD"
+    ],
+    "Stop on-device AI profiling": [
+      "STOP_AI_PROFILING"
+    ],
+    "Stop recording watch history": [
+      "STOP_WATCH_HISTORY"
+    ],
+    "Stop saving search history": [
+      "STOP_SEARCH_HISTORY"
+    ],
+    "Stop search autoplay": [
+      "STOP_SEARCH_AUTOPLAY"
+    ],
+    "Stop video looping": [
+      "STOP_VIDEO_LOOPING"
+    ],
+    "Story controls": [
+      "STORY_LOOP",
+      "STORY_PHOTO_HOLD"
+    ],
+    "Subtitle tools": [
+      "DOWNLOAD_SUBTITLES",
+      "SUBTITLE_LANGUAGE",
+      "CAPTION_TEXT_SIZE",
+      "CAPTION_BOTTOM_OFFSET",
+      "CAPTION_LANDSCAPE_OFFSET",
+      "CAPTION_FONT_WEIGHT",
+      "CAPTION_BACKGROUND",
+      "KEEP_CAPTIONS_CLEAR_DISPLAY",
+      "CAPTION_CLEAR_DISPLAY_OFFSET",
+      "KEEP_CAPTIONS_AVAILABLE"
+    ],
+    "Swipe-left controls": [
+      "SWIPE_LEFT_ACTION"
+    ],
+    "Translate comments": [
+      "COMMENT_BATCH_TRANSLATION",
+      "DM_TRANSLATION_PREVIEW",
+      "RECEIVED_DM_TRANSLATION_PREVIEW",
+      "DONT_AUTO_TRANSLATE_LANGUAGES",
+      "NO_VIDEO_AUTO_TRANSLATE",
+      "TRANSLATE_INTO",
+      "COMMENT_TRANSLATE_BUTTON",
+      "SHOW_TRANSLATION_SETTINGS"
+    ],
+    "Turn off haptics": [
+      "TURN_OFF_HAPTICS"
+    ],
+    "Turn off screen transitions": [
+      "TURN_OFF_SCREEN_TRANSITIONS"
+    ],
+    "Use non-personalized search": [
+      "ENABLE_NON_PERSONALIZED_SEARCH"
+    ],
+    "Use system font": [
+      "SYSTEM_FONT",
+      "SYSTEM_EMOJI",
+      "IMPORTED_FONT"
+    ]
+  },
+  "excluded": {
+    "CAPTION_REGULAR_WEIGHT": "Runtime state or legacy migration data; not a configurable feature default.",
+    "RECENT_SETTINGS_SEARCHES": "Runtime state or legacy migration data; not a configurable feature default.",
+    "LAUNCHER_SHORTCUTS_REMOVED": "Runtime state or legacy migration data; not a configurable feature default.",
+    "AUTO_STREAK_STATE": "Runtime state or legacy migration data; not a configurable feature default.",
+    "FEED_NAVIGATION_OBSERVED_TABS": "Runtime state or legacy migration data; not a configurable feature default.",
+    "BOTTOM_NAVIGATION_OBSERVED_TABS": "Runtime state or legacy migration data; not a configurable feature default.",
+    "COMMENT_TRANSLATE_BUTTON_TURNED_ON": "Runtime state or legacy migration data; not a configurable feature default.",
+    "DOWNLOAD_PATH": "Runtime state or legacy migration data; not a configurable feature default.",
+    "DOWNLOAD_PATHS_MIGRATED": "Runtime state or legacy migration data; not a configurable feature default.",
+    "SESSION_BUDGET_PENDING": "Runtime state or legacy migration data; not a configurable feature default.",
+    "SESSION_BUDGET_STATE": "Runtime state or legacy migration data; not a configurable feature default.",
+    "SHARE_ACTION_CATALOG": "Runtime state or legacy migration data; not a configurable feature default.",
+    "PROFILE_SHORTCUT_CATALOG": "Runtime state or legacy migration data; not a configurable feature default.",
+    "POPUP_LABEL_CATALOG": "Runtime state or legacy migration data; not a configurable feature default.",
+    "DIAGNOSTIC_REPORT_SALT": "Runtime state or legacy migration data; not a configurable feature default.",
+    "DEBUG_CAPTURE": "Runtime state or legacy migration data; not a configurable feature default.",
+    "CHECK_ENVIRONMENT_WARNINGS_ISSUED": "Runtime state or legacy migration data; not a configurable feature default.",
+    "FIRST_TIME_APP_LAUNCHED": "Runtime state or legacy migration data; not a configurable feature default.",
+    "EXPERIMENTAL_APP_CONFIRMED": "Runtime state or legacy migration data; not a configurable feature default.",
+    "PAUSED": "Runtime state or legacy migration data; not a configurable feature default.",
+    "SAFE_MODE": "Runtime state or legacy migration data; not a configurable feature default."
+  }
+}

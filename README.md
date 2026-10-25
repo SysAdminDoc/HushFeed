@@ -63,6 +63,35 @@ The block, hide, sound and Not interested buttons Hushfeed can put on a video:
 
 The patches that take files out of TikTok do it while patching, so Pause and a settings import can't put those files back. Read the [native-language recovery steps](#tiktok-stays-in-english-after-removing-language-packs) before you remove languages.
 
+## Choose defaults while patching
+
+Every configurable patch exposes typed options for its in-app settings in Morphe. These become
+the APK's defaults: they apply when no saved value exists, and resetting a setting restores them.
+Updating an installed app preserves choices you already saved. Options use the stable setting
+keys listed in [the patch catalog](patches-list.json). Patches that change the APK directly keep
+their existing build options.
+
+For example, show the author's country as a flag beside their name:
+
+```powershell
+java -jar morphe-desktop-all.jar patch -p patches.mpp -e "Show author region" -Oshow_author_region=true -Oregion_as_flag=true tiktok.apk
+```
+
+For repeatable builds, generate a file with every patch and its typed defaults, edit the
+`options` object under each patch, then use it when patching:
+
+```powershell
+java -jar morphe-desktop-all.jar options-create -p patches.mpp -o options.json
+java -jar morphe-desktop-all.jar patch -p patches.mpp --options-file options.json tiktok.apk
+```
+
+For example, in the `Show author region` entry, set `"show_author_region": true` and
+`"region_as_flag": true` to show country flags beside authors' names.
+Some settings belong to more than one patch. If you customize a shared setting in both,
+use the same value; differing overrides stop patching with a conflict message. Omitting an
+option or leaving its stock value adds no override. Saved settings remain editable
+in Hushfeed, and Pause Hushfeed still uses the original neutral values.
+
 ## Settings
 
 Besides the row at the top of TikTok's **Settings and privacy**, two shortcuts skip Profile and work while you're signed out: press and hold **For You** at the top of the feed, or long-press **Home** on the bottom bar. A quick tap on either still does what it always did. The Home shortcut needs **Feed tab navigation** selected along with **Settings** when you patch, and it's the one to use if you've hidden the tab names at the top of the feed.
@@ -373,9 +402,11 @@ The release also carries `release-receipt-<version>.json`. It records the tag an
 You need JDK 21 or newer, an Android SDK set in `local.properties`, and `GITHUB_ACTOR` plus a `GITHUB_TOKEN` with `read:packages` for the Morphe dependencies on GitHub Packages. On Windows, run the runtime tests on JDK 25, since JDK 21 there couldn't replace a file through `File.renameTo`.
 
 ```bash
+pwsh -File scripts/gen-patch-defaults.ps1
+./gradlew :patches:generatePatchesList
+pwsh -File scripts/test-patch-defaults.ps1
 ./gradlew :extensions:tiktok:test
 ./gradlew :patches:test
-./gradlew :patches:generatePatchesList
 pwsh -File scripts/validate-release-facts.ps1
 ./gradlew :patches:buildAndroid
 ```

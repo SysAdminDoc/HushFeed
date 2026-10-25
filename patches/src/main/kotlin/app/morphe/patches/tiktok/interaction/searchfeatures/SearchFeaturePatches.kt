@@ -8,7 +8,7 @@ import app.morphe.patcher.Fingerprint
 import app.morphe.util.addInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.patch.BytecodePatchContext
-import app.morphe.patcher.patch.bytecodePatch
+import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.absettings.hookAppAbIntBoundary
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch

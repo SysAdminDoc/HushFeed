@@ -11,7 +11,7 @@
 package app.morphe.patches.tiktok.misc.extension
 
 import app.morphe.patcher.Fingerprint
-import app.morphe.patcher.patch.bytecodePatch
+import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patches.shared.misc.extension.ExtensionHook
 import app.morphe.patches.shared.misc.extension.sharedExtensionPatch as extendShared
 import app.morphe.patches.tiktok.misc.diagnostics.buildDetailsPatch

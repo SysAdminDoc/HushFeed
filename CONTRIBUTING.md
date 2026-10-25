@@ -126,6 +126,15 @@ this checkout built, so it has to come from a clean checkout of the commit it pu
 
 ## Settings for your machine
 
+Native patch options for runtime defaults come from `patches/settings-defaults-owners.json`.
+Assign each configurable Java setting to its owning patch there; internal state and legacy keys
+need an explicit exclusion reason. `scripts/gen-patch-defaults.ps1` reads the setting declarations
+and emits their types, defaults and numeric ranges into the bundle's settings catalog. After
+changing a setting or its ownership, run `pwsh -File scripts/gen-patch-defaults.ps1`,
+`pwsh -File scripts/test-patch-defaults.ps1`, and regenerate `patches-list.json` with the usual Gradle
+task. `pwsh -File scripts/gen-patch-defaults.ps1 -Check` verifies the checked-in catalog without
+changing it. These helpers require PowerShell 7 and no additional dependencies.
+
 Nothing in the repository points at a folder or a phone on anybody's machine. These variables do
 that instead, and none of them has a default:
 

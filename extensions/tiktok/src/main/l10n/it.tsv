@@ -2232,7 +2232,34 @@ Show the main feed's tabs on a rounded, see-through dark pill that floats over t
 Liquid glass look	Aspetto vetro liquido
 Draw the main feed's floating pill as glass, lighter and more see-through, with a bright rim along its top edge. Needs Floating bottom bar.	Disegna la pillola fluttuante del feed principale come vetro, più chiara e più trasparente, con un bordo luminoso lungo il lato superiore. Richiede Barra inferiore fluttuante.
 Glass lens on the current tab	Lente di vetro sulla scheda attuale
-On the main feed, a smaller piece of glass sits behind the tab you're on and slides to the next tab you pick. Needs Liquid glass look.	Nel feed principale, un pezzo di vetro più piccolo sta dietro la scheda in cui sei e scivola sulla prossima scheda che scegli. Richiede Aspetto vetro liquido.
+Pill height	Altezza della pillola
+Compact	Compatta
+Standard	Standard
+How tall the main feed's floating pill is inside the bar. Compact leaves more of the video showing around it. The tabs keep their size and their taps.	Quanto è alta la pillola fluttuante del feed principale dentro la barra. Compatta lascia vedere più video intorno. Le schede mantengono le loro dimensioni e i loro tocchi.
+Pill corners	Angoli della pillola
+Rounder	Più arrotondati
+Fully round	Completamente rotondi
+How round the main feed's floating pill and its glass lens are. Fully round gives them half circle ends.	Quanto sono arrotondate la pillola fluttuante del feed principale e la sua lente di vetro. Completamente rotondi dà loro estremità a semicerchio.
+Glass opacity	Opacità del vetro
+Most see-through	Il più trasparente
+More see-through	Più trasparente
+Frosted	Smerigliato
+How much of the video shows through the glass pill on the main feed. Most see-through shows the most and Frosted the least.	Quanto video si vede attraverso la pillola di vetro nel feed principale. Il più trasparente ne mostra di più e Smerigliato di meno.
+On the main feed, a raised bubble of glass sits behind the tab you're on and slides to the next tab you pick. Needs Liquid glass look.	Nel feed principale, una bolla di vetro in rilievo sta dietro la scheda in cui sei e scivola sulla prossima scheda che scegli. Richiede Aspetto vetro liquido.
+Slide across the tabs	Scorri tra le schede
+On the main feed, slide a finger along the glass pill and the lens follows it. Let go and that tab opens. Taps and long presses work as before. Needs Glass lens on the current tab.	Nel feed principale, fai scorrere un dito lungo la pillola di vetro e la lente lo segue. Lascia e si apre quella scheda. I tocchi e le pressioni lunghe funzionano come prima. Richiede Lente di vetro sulla scheda attuale.
+Haptics on the tabs	Vibrazione sulle schede
+On the main feed, a light tick each time the glass lens passes a tab, as it slides after a tap or under your finger. Needs Glass lens on the current tab.	Nel feed principale, un leggero tic ogni volta che la lente di vetro passa su una scheda, mentre scivola dopo un tocco o sotto il tuo dito. Richiede Lente di vetro sulla scheda attuale.
+Haptic style	Stile della vibrazione
+Short pulse	Impulso breve
+Phone's click	Clic del telefono
+Soft tick	Tic leggero
+Full tick	Tic pieno
+The tick on the main feed's tabs. Short pulse is one quick tap of the motor. Phone's click is the click your phone makes elsewhere. Soft tick rings a little longer. Full tick is the phone's strongest tick.	Il tic sulle schede del feed principale. Impulso breve è un colpo rapido del motore. Clic del telefono è il clic che il telefono fa altrove. Tic leggero dura un po' di più. Tic pieno è il tic più forte del telefono.
+Blur strength	Intensità della sfocatura
+Soft blur	Sfocatura leggera
+Strong blur	Sfocatura forte
+How much the video behind the glass pill on the main feed is blurred.	Quanto viene sfocato il video dietro la pillola di vetro nel feed principale.
 # context: a switch on the Comments page. Language, Settings and privacy and App language are TikTok's own labels: its language page, the menu that page sits in, and the page's first row
 Bring back TikTok's translation	Riporta la traduzione di TikTok
 Brings back the translation rows on TikTok's Language page, under Settings and privacy, for accounts that only see App language there.	Riporta le righe di traduzione nella pagina Lingua di TikTok, in Impostazioni e privacy, per gli account che lì vedono solo Lingua dell'app.

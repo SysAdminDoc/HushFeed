@@ -5,14 +5,19 @@
 package app.morphe.extension.tiktok.feed;
 
 import android.animation.ValueAnimator;
+import android.app.Activity;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.LinearGradient;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.RenderNode;
 import android.graphics.Shader;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -23,9 +28,13 @@ import android.os.SystemClock;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 
-import app.morphe.extension.tiktok.settings.preference.SettingsUi;
+import app.morphe.extension.tiktok.settings.Settings;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -54,27 +63,201 @@ final class SeeThroughBottomBar {
     static final int PILL_COLOR = 0x99000000;
     /** The pill's hairline, light enough to find the pill's edge over a dark video. */
     static final int PILL_EDGE_COLOR = 0x40FFFFFF;
-    /** How far the pill stays in from the bar's sides and bottom, and from its top, in dp. */
-    static final int PILL_SIDE_DP = 12, PILL_BOTTOM_DP = 6, PILL_TOP_DP = 2;
+    /**
+     * The floating pill's proportions, HushGram's glass tab bar's: 5% of the bar's width clear on
+     * each side, at least 16dp, and never wider than 420dp on a wide screen.
+     */
+    static final float PILL_SIDE_SHARE = 0.05f;
+    static final int PILL_MIN_SIDE_DP = 16, PILL_MAX_WIDTH_DP = 420;
+    /** The clear space above and under the pill, in dp: a hairline, so the pill is as tall as the bar. */
+    static final int PILL_GAP_DP = 1;
+    /** How much slimmer a compact pill is on each side, and the shortest one is drawn, in dp. */
+    static final int COMPACT_INSET_DP = 4, MIN_PILL_DP = 40;
+    /** How far the first and last tabs' slots stay in from the pill's ends, in dp. */
+    static final int TAB_INNER_DP = 7;
+
+    /** How far the pill keeps from each side of a bar {@code width} pixels wide. */
+    static int sidePx(int width, float density) {
+        int minimum = Math.round(PILL_MIN_SIDE_DP * density);
+        int byShare = Math.round(width * PILL_SIDE_SHARE);
+        int byWidth = Math.round((width - PILL_MAX_WIDTH_DP * density) / 2f);
+        return Math.max(minimum, Math.max(byShare, byWidth));
+    }
+
+    /**
+     * The pill inside a bar with {@code bar} bounds, put in {@code out}: in from the sides by
+     * {@link #sidePx}, a hairline in from the top and the bottom, and for a {@code compact} pill
+     * {@link #COMPACT_INSET_DP} more, less if that would leave it shorter than {@link #MIN_PILL_DP}.
+     */
+    static void pillBounds(Rect bar, float density, boolean compact, Rect out) {
+        int side = sidePx(bar.width(), density);
+        int gap = Math.round(PILL_GAP_DP * density);
+        int inset = 0;
+        if (compact) {
+            int room = (bar.height() - 2 * gap - Math.round(MIN_PILL_DP * density)) / 2;
+            inset = Math.max(0, Math.min(Math.round(COMPACT_INSET_DP * density), room));
+        }
+        out.set(bar.left + side, bar.top + gap + inset, bar.right - side, bar.bottom - gap - inset);
+    }
+
+    /**
+     * The corner radius Pill corners gives the pill, or the lens with {@code lens}, for a shape
+     * {@code height} tall: 12dp and 8dp for "standard", 20dp and 14dp for "rounder", and half the
+     * height otherwise, which is never passed.
+     */
+    static float cornerPx(String corners, boolean lens, float height, float density) {
+        float half = Math.max(0f, height / 2f);
+        if ("standard".equals(corners)) return Math.min((lens ? 8 : 12) * density, half);
+        if ("rounder".equals(corners)) return Math.min((lens ? 14 : 20) * density, half);
+        return half;
+    }
+
+    /** What Glass opacity multiplies the glass's tint by. */
+    static float opacityScale(String opacity) {
+        if ("clear".equals(opacity)) return 0.5f;
+        if ("light".equals(opacity)) return 0.75f;
+        if ("frosted".equals(opacity)) return 1.35f;
+        return 1f;
+    }
+
+    /** {@code color} with an alpha of {@code alpha}, held between 0 and 255. */
+    static int withAlpha(int color, float alpha) {
+        return (color & 0x00FFFFFF) | (Math.max(0, Math.min(255, Math.round(alpha))) << 24);
+    }
+
+    /** The middle of the {@code index}th of {@code count} slots spread evenly from {@code from} to {@code to}. */
+    static float slotMiddle(float from, float to, int count, int index) {
+        return from + (to - from) * (index + 0.5f) / count;
+    }
+
+    /** The bar's shown tabs, left to right. */
+    static List<View> shownTabs(ViewGroup bar) {
+        List<View> tabs = new ArrayList<>();
+        for (int i = 0; i < bar.getChildCount(); i++) {
+            View tab = bar.getChildAt(i);
+            if (tab.getVisibility() == View.VISIBLE && tab.getWidth() > 0) tabs.add(tab);
+        }
+        Collections.sort(tabs, (one, other) -> Integer.compare(one.getLeft(), other.getLeft()));
+        return tabs;
+    }
+
+    /** Tabs this class moved to spread them over the pill, with the offset it gave each. */
+    private static final Map<View, Float> MOVED = new WeakHashMap<>();
+
+    /**
+     * Spreads the bar's shown tabs evenly over {@code pill}, from {@link #TAB_INNER_DP} in from one
+     * end to as far in from the other, as HushGram's glass tab bar does. TikTok lays them out over
+     * the bar's whole width, which left the outer icons near the pill's ends and the lens off
+     * their middles. They move by translation, so nothing is laid out again and each tab's taps
+     * move with it. A tab TikTok offset itself keeps its offset.
+     *
+     * <p>With Hide the bottom tab names the name under each icon is gone, but TikTok keeps the
+     * icon where it sat above the name, so the icons rode high in the pill with the empty room
+     * under them. Each tab then also moves up or down so its icon sits in the pill's middle.
+     */
+    static void placeTabs(ViewGroup bar, Rect pill, float density) {
+        if (pill.isEmpty()) return;
+        List<View> tabs = shownTabs(bar);
+        float inner = TAB_INNER_DP * density;
+        boolean centerIcons = Settings.HIDE_BOTTOM_TAB_LABELS.get();
+        for (int k = 0; k < tabs.size(); k++) {
+            View tab = tabs.get(k);
+            float middle = (tab.getLeft() + tab.getRight()) / 2f;
+            offset(tab, Math.round(slotMiddle(pill.left + inner, pill.right - inner, tabs.size(), k) - middle),
+                    MOVED, true);
+            float icon = centerIcons ? iconMiddle(tab) : Float.NaN;
+            offset(tab, Float.isNaN(icon) ? 0f : Math.round(pill.exactCenterY() - (tab.getTop() + icon)),
+                    LIFTED, false);
+        }
+    }
+
+    /** Tabs this class moved up or down to put their icons in the pill's middle, with the offset each got. */
+    private static final Map<View, Float> LIFTED = new WeakHashMap<>();
+
+    /**
+     * Gives {@code tab} a sideways ({@code across}) or up and down offset of {@code shift},
+     * noting it in {@code moved}. An offset of TikTok's own, one {@code moved} doesn't hold, stays.
+     */
+    private static void offset(View tab, float shift, Map<View, Float> moved, boolean across) {
+        Float ours = moved.get(tab);
+        float now = across ? tab.getTranslationX() : tab.getTranslationY();
+        if (now != 0f && (ours == null || ours != now)) return;
+        if (now != shift) {
+            if (across) tab.setTranslationX(shift);
+            else tab.setTranslationY(shift);
+        }
+        if (shift == 0f) moved.remove(tab);
+        else moved.put(tab, shift);
+    }
+
+    /**
+     * The middle of {@code tab}'s icon, from the tab's top: the largest shown view in it that
+     * isn't text, so a count badge or a name never counts. NaN when it has none.
+     */
+    static float iconMiddle(View tab) {
+        float[] best = {0f, Float.NaN};
+        largestPicture(tab, 0f, best, 0);
+        return best[1];
+    }
+
+    private static void largestPicture(View view, float top, float[] best, int depth) {
+        if (view.getVisibility() != View.VISIBLE || depth > 8) return;
+        if (view instanceof ViewGroup && ((ViewGroup) view).getChildCount() > 0) {
+            ViewGroup group = (ViewGroup) view;
+            for (int i = 0; i < group.getChildCount(); i++) {
+                View child = group.getChildAt(i);
+                largestPicture(child, top + child.getTop() + child.getTranslationY(), best, depth + 1);
+            }
+            return;
+        }
+        if (view instanceof android.widget.TextView) return;
+        float area = (float) view.getWidth() * view.getHeight();
+        if (area > best[0]) {
+            best[0] = area;
+            best[1] = top + view.getHeight() / 2f;
+        }
+    }
+
+    /** Takes back the offsets {@link #placeTabs} gave the bar's tabs, where nothing changed them since. */
+    static void putTabsBack(ViewGroup bar) {
+        for (int i = 0; i < bar.getChildCount(); i++) {
+            View tab = bar.getChildAt(i);
+            Float ours = MOVED.remove(tab);
+            if (ours != null && tab.getTranslationX() == ours) tab.setTranslationX(0f);
+            Float lifted = LIFTED.remove(tab);
+            if (lifted != null && tab.getTranslationY() == lifted) tab.setTranslationY(0f);
+        }
+    }
 
     /**
      * Floating bottom bar (#124): a rounded see-through pill drawn inside the bar, in from its
-     * sides and bottom, so the tabs float over the video. Only the background changes: the bar
-     * keeps its place and size, so every tab is where TikTok put it and takes its taps.
+     * sides by HushGram's proportions and a hairline from its top and bottom, so the tabs float
+     * over the video. The bar keeps its place and size; before each frame its tabs are spread
+     * over the pill ({@link #placeTabs}), and they go back once the bar has another background.
      */
     static class FloatingBackground extends InsetDrawable {
+        final float density;
+        /** The pill's bounds in the bar, as last laid out. */
+        final Rect pillRect = new Rect();
+        /** The Pill height and Pill corners the pill was last laid out with. */
+        private String height, corners;
+        private final ViewTreeObserver.OnPreDrawListener frame = this::beforeFrame;
+        private ViewTreeObserver watched;
+        /** The bar this listens on, kept after the bar drops this as its background. */
+        private WeakReference<ViewGroup> watchedBar = new WeakReference<>(null);
+
         FloatingBackground(float density) {
             this(pill(density), density);
         }
 
         FloatingBackground(Drawable pill, float density) {
-            super(pill, Math.round(PILL_SIDE_DP * density), Math.round(PILL_TOP_DP * density),
-                    Math.round(PILL_SIDE_DP * density), Math.round(PILL_BOTTOM_DP * density));
+            super(pill, 0);
+            this.density = density;
         }
 
         /**
          * No padding: a background's padding becomes the view's, which would squeeze the tabs and
-         * outlive the pill when TikTok's background comes back. The insets only place the drawing.
+         * outlive the pill when TikTok's background comes back. The pill's place is drawing only.
          */
         @Override
         public boolean getPadding(Rect padding) {
@@ -82,10 +265,83 @@ final class SeeThroughBottomBar {
             return false;
         }
 
+        @Override
+        protected void onBoundsChange(Rect bounds) {
+            layOut(bounds);
+        }
+
+        /** Places the pill in {@code bounds} by the Pill height and Pill corners picked. */
+        private void layOut(Rect bounds) {
+            height = Settings.GLASS_BAR_HEIGHT.get();
+            corners = Settings.GLASS_CORNERS.get();
+            pillBounds(bounds, density, "compact".equals(height), pillRect);
+            Drawable inner = getDrawable();
+            if (inner instanceof GradientDrawable) {
+                ((GradientDrawable) inner).setCornerRadius(cornerPx(corners, false, pillRect.height(), density));
+            }
+            inner.setBounds(pillRect);
+        }
+
+        @Override
+        public void draw(Canvas canvas) {
+            if (!Settings.GLASS_BAR_HEIGHT.get().equals(height) || !Settings.GLASS_CORNERS.get().equals(corners)) {
+                layOut(getBounds());
+            }
+            ViewGroup bar = bar();
+            if (bar != null) {
+                watch(bar);
+                // Also here, so the first frame already has them in place.
+                placeTabs(bar, pillRect, density);
+            }
+            drawBehindPill(canvas);
+            super.draw(canvas);
+        }
+
+        /** What goes under the pill: nothing for the plain one. */
+        void drawBehindPill(Canvas canvas) {
+        }
+
+        /**
+         * Before each frame: spreads the tabs over the pill, and lets go of the bar once it has
+         * another background, giving the tabs back their places unless that is another pill.
+         */
+        boolean beforeFrame() {
+            ViewGroup bar = watchedBar.get();
+            if (bar == null || bar.getBackground() != this) {
+                if (bar != null && !(bar.getBackground() instanceof FloatingBackground)) putTabsBack(bar);
+                unwatch();
+                return true;
+            }
+            placeTabs(bar, pillRect, density);
+            return true;
+        }
+
+        ViewGroup bar() {
+            Callback callback = getCallback();
+            return callback instanceof ViewGroup ? (ViewGroup) callback : null;
+        }
+
+        private void watch(ViewGroup bar) {
+            ViewTreeObserver observer = bar.getViewTreeObserver();
+            if (observer == watched || !observer.isAlive()) return;
+            unwatch();
+            // Attaching the bar merges its detached observer's listeners into the window's, so
+            // the listener may already be there: never hold it twice.
+            observer.removeOnPreDrawListener(frame);
+            observer.addOnPreDrawListener(frame);
+            watched = observer;
+            watchedBar = new WeakReference<>(bar);
+        }
+
+        private void unwatch() {
+            if (watched != null && watched.isAlive()) watched.removeOnPreDrawListener(frame);
+            watched = null;
+        }
+
         private static GradientDrawable pill(float density) {
             GradientDrawable pill = new GradientDrawable();
             pill.setShape(GradientDrawable.RECTANGLE);
-            pill.setCornerRadius(SettingsUi.RADIUS_ROUND_ENDS * density);
+            pill.setCornerRadius(app.morphe.extension.tiktok.settings.preference.SettingsUi.RADIUS_ROUND_ENDS * density);
             pill.setColor(PILL_COLOR);
             pill.setStroke(Math.max(1, Math.round(density)), PILL_EDGE_COLOR);
             return pill;
@@ -125,17 +381,17 @@ final class SeeThroughBottomBar {
         }
 
         @Override
-        public void draw(Canvas canvas) {
+        void drawBehindPill(Canvas canvas) {
             Callback callback = getCallback();
             if (blur != null && callback instanceof View) {
-                blur.drawBehind(canvas, (View) callback, getDrawable().getBounds());
+                blur.drawBehind(canvas, (View) callback, pillRect,
+                        cornerPx(Settings.GLASS_CORNERS.get(), false, pillRect.height(), density));
             }
-            super.draw(canvas);
         }
     }
 
     static final class GlassPill extends Drawable {
-        private final float cornerRadius;
+        private final float density;
         private final float rim;
         private final Paint tint = new Paint(Paint.ANTI_ALIAS_FLAG);
         private final Paint frost = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -145,9 +401,8 @@ final class SeeThroughBottomBar {
         private int alpha = 255;
 
         GlassPill(float density) {
-            cornerRadius = SettingsUi.RADIUS_ROUND_ENDS * density;
+            this.density = density;
             rim = Math.max(1f, density);
-            tint.setColor(GLASS_TINT);
             edge.setStyle(Paint.Style.STROKE);
             edge.setStrokeWidth(rim);
         }
@@ -169,7 +424,12 @@ final class SeeThroughBottomBar {
             Rect bounds = getBounds();
             if (bounds.isEmpty()) return;
             box.set(bounds);
-            float radius = Math.min(cornerRadius, box.height() / 2f);
+            float radius = cornerPx(Settings.GLASS_CORNERS.get(), false, box.height(), density);
+            // Glass opacity scales the tint and, up to its full strength, the frost; a shader's
+            // colors are scaled by its paint's alpha, the tint's own alpha is scaled here.
+            float scale = opacityScale(Settings.GLASS_OPACITY.get());
+            tint.setColor(withAlpha(GLASS_TINT, Color.alpha(GLASS_TINT) * alpha / 255f * scale));
+            frost.setAlpha(Math.round(alpha * Math.min(1f, scale)));
             canvas.drawRoundRect(box, radius, radius, tint);
             canvas.drawRoundRect(box, radius, radius, frost);
             // The sheen sits inside the rim.
@@ -185,9 +445,6 @@ final class SeeThroughBottomBar {
         public void setAlpha(int alpha) {
             if (this.alpha == alpha) return;
             this.alpha = alpha;
-            // A shader's colors are scaled by the paint's alpha; the tint's own alpha is scaled here.
-            tint.setColor((GLASS_TINT & 0x00FFFFFF) | ((Color.alpha(GLASS_TINT) * alpha / 255) << 24));
-            frost.setAlpha(alpha);
             sheen.setAlpha(alpha);
             edge.setAlpha(alpha);
             invalidateSelf();
@@ -213,12 +470,16 @@ final class SeeThroughBottomBar {
         }
     }
 
-    /** The lens's frost, brighter than the glass pill's, so the tab you're on reads as raised glass. */
-    static final int LENS_FILL = 0x2EFFFFFF;
-    /** The lens's rim: bright along its top where the light catches it, faint along its bottom. */
-    static final int LENS_RIM_TOP = 0x8CFFFFFF, LENS_RIM_BOTTOM = 0x1AFFFFFF;
-    /** How far the lens stays in from the pill's top and bottom and from the tab's sides, in dp. */
-    static final int LENS_INSET_DP = 4;
+    /** The lens's fill, HushGram's highlight on dark glass, so the tab you're on reads as raised glass. */
+    static final int LENS_FILL = 0x40FFFFFF;
+    /** The bubble's sheen, from its top edge fading down inside it. */
+    static final int LENS_SHEEN = 0x40FFFFFF;
+    /** The bubble's rim: bright along its top where the light catches it, faint along its bottom. */
+    static final int LENS_RIM_TOP = 0xB0FFFFFF, LENS_RIM_BOTTOM = 0x28FFFFFF;
+    /** How far the lens stays in from the pill's top, bottom and ends, and how far past the tab's slot it stands, in dp. */
+    static final int LENS_INSET_DP = 4, LENS_GROW_DP = 4;
+    /** How much larger the bubble is midway through a slide and under a finger. */
+    static final float BUBBLE_SWELL = 0.08f;
     /** How long the lens takes to slide to a newly picked tab. */
     static final long LENS_SLIDE_MS = 280;
     /** How long a bar remembers where its last lens was, for the lens that replaces it. */
@@ -229,29 +490,73 @@ final class SeeThroughBottomBar {
     static final long LENS_FRAME_MS = 16;
 
     /**
-     * Glass lens (#231): the glass pill with a smaller piece of glass behind the tab you're on,
-     * sliding to the next tab you pick. TikTok marks the current tab with View.isSelected() and
-     * nothing else (S22, 47.4.3: no indicator view, no alpha), so the lens follows the bar's first
-     * selected child. A bar with no selected tab shows the glass pill alone. The lens is part of
-     * the bar's background, so it sits under the tabs and never takes a tap. A selection change
-     * redraws no background by itself, so a pre-draw listener on the bar's window asks for one
-     * when the selected tab moved, and drops itself once the bar has another background.
+     * Where the lens goes behind a selected tab spanning {@code tab}, put in {@code out}: as wide
+     * as the tab's slot on the pill and {@link #LENS_GROW_DP} more each side, on the tab's middle,
+     * kept {@link #LENS_INSET_DP} inside the pill. False when there's no room for it.
+     */
+    static boolean lensSpan(RectF tab, Rect pill, int tabs, float density, RectF out) {
+        float inset = LENS_INSET_DP * density;
+        float slot = tabs <= 0 ? tab.width() : (pill.width() - 2f * TAB_INNER_DP * density) / tabs;
+        float half = Math.min(tab.width(), slot) / 2f + LENS_GROW_DP * density;
+        float left = Math.max(pill.left + inset, tab.centerX() - half);
+        float right = Math.min(pill.right - inset, tab.centerX() + half);
+        if (right - left < inset * 2f) return false;
+        out.set(left, pill.top + inset, right, pill.bottom - inset);
+        return true;
+    }
+
+    /**
+     * The bubble's size {@code elapsed} ms into a slide that began at size {@code from}: it swells
+     * to {@link #BUBBLE_SWELL} over 1 mid-slide, eases back to 1 as it settles, and carries on from
+     * {@code from} when it was already bigger, such as a finger letting go of it.
+     */
+    static float bubbleScale(long elapsed, float from) {
+        if (elapsed >= LENS_SLIDE_MS) return 1f;
+        float t = Math.max(0f, elapsed) / (float) LENS_SLIDE_MS;
+        float swell = 1f + BUBBLE_SWELL * (float) Math.sin(Math.PI * t);
+        float carried = 1f + Math.max(0f, from - 1f) * (1f - t);
+        return Math.max(swell, carried);
+    }
+
+    /**
+     * Where the lens's left edge goes under a finger sliding across the tabs: {@code width} wide,
+     * centered on {@code finger}, kept between {@code min} and {@code max}.
+     */
+    static float followLeft(float finger, float width, float min, float max) {
+        if (max - min <= width) return min;
+        return Math.max(min, Math.min(max - width, finger - width / 2f));
+    }
+
+    /**
+     * Glass lens (#231): the glass pill with a raised bubble of glass behind the tab you're on,
+     * sliding to the next tab you pick, drawn the way HushGram's liquid glass tab bar draws it: a
+     * lighter fill, a sheen and a rim brightest along its top, a little swell while it moves, and
+     * with Blur the video behind the bar, the blurred video under it magnified ({@link GlassLens}).
+     * TikTok marks the current tab with View.isSelected() and nothing else (S22, 47.4.3: no
+     * indicator view, no alpha), so the lens follows the bar's first selected child. A bar with
+     * no selected tab shows the glass pill alone. The lens is part of the bar's background, so it
+     * sits under the tabs and never takes a tap. A selection change redraws no background by
+     * itself, so the pre-draw listener asks for one when the selected tab moved.
      * Picking a tab can also hand the bar a new lens (the overlay pass swaps the background when
      * the bar's look changes), and a new lens has no slide of its own to continue, so each bar
      * remembers where its last lens was drawn and a new one slides on from there when that was
-     * moments ago (S22, 2026-10-21: the lens jumped between tabs with animations on).
+     * moments ago (S22, 2026-10-21: the lens jumped between tabs with animations on). With Slide
+     * across the tabs the lens follows a finger ({@link GlassTabSlide}), and with Glass haptics
+     * it ticks each time its middle passes a tab ({@link GlassBarHaptics}).
      */
     static final class GlassLensBackground extends GlassBackground {
         /** Where each bar's lens was last drawn, kept only as long as the bar is. */
         private static final Map<View, LensSpot> LAST_SPOT = new WeakHashMap<>();
-        private final float inset;
         private final Paint lensFill = new Paint(Paint.ANTI_ALIAS_FLAG);
-        private final Paint lensRim = new Paint(Paint.ANTI_ALIAS_FLAG);
-        private final RectF lens = new RectF();
+        private final Paint magnifiedTint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        private final Paint bubbleSheen = new Paint(Paint.ANTI_ALIAS_FLAG);
+        private final Paint bubbleRim = new Paint(Paint.ANTI_ALIAS_FLAG);
+        private final Matrix shade = new Matrix();
+        private final RectF target = new RectF();
         private final RectF shown = new RectF();
+        private final RectF capsule = new RectF();
         private final RectF span = new RectF();
-        private final ViewTreeObserver.OnPreDrawListener follow = this::followSelection;
-        private ViewTreeObserver watched;
+        private GlassLens magnifier;
         /** The bar's remembered spot this lens last wrote, null before its first lens. */
         private LensSpot written;
         /** The selected tab's span the last draw used, NaN before a draw that found one. */
@@ -261,6 +566,12 @@ final class SeeThroughBottomBar {
         private long slideStart;
         /** When this lens last drew itself, 0 before its first lens. */
         private long lastDraw;
+        /** The bubble's size now, and at the start of the slide it is in. */
+        private float bubbleNow = 1f, bubbleFrom = 1f;
+        /** Where a finger sliding across the tabs holds the lens's middle, NaN without one. */
+        float dragX = Float.NaN;
+        /** The tab the lens's middle was over at the last draw, null before the first. */
+        private View tickedTab;
 
         GlassLensBackground(float density) {
             this(density, false);
@@ -268,17 +579,12 @@ final class SeeThroughBottomBar {
 
         GlassLensBackground(float density, boolean blurVideo) {
             super(density, blurVideo);
-            inset = LENS_INSET_DP * density;
-            lensRim.setStyle(Paint.Style.STROKE);
-            lensRim.setStrokeWidth(Math.max(1f, density));
-        }
-
-        @Override
-        protected void onBoundsChange(Rect bounds) {
-            super.onBoundsChange(bounds);
-            Rect pill = getDrawable().getBounds();
-            lensRim.setShader(new LinearGradient(0, pill.top + inset, 0, pill.bottom - inset,
-                    LENS_RIM_TOP, LENS_RIM_BOTTOM, Shader.TileMode.CLAMP));
+            bubbleSheen.setShader(new LinearGradient(0, 0, 0, 1, LENS_SHEEN, LENS_SHEEN & 0x00FFFFFF,
+                    Shader.TileMode.CLAMP));
+            bubbleRim.setStyle(Paint.Style.STROKE);
+            bubbleRim.setStrokeWidth(Math.max(1f, density * 1.25f));
+            bubbleRim.setShader(new LinearGradient(0, 0, 0, 1, LENS_RIM_TOP, LENS_RIM_BOTTOM,
+                    Shader.TileMode.CLAMP));
         }
 
         @Override
@@ -286,24 +592,31 @@ final class SeeThroughBottomBar {
             super.draw(canvas);
             ViewGroup bar = bar();
             if (bar == null) return;
-            watch(bar);
-            Rect pill = getDrawable().getBounds();
-            if (pill.isEmpty() || !selectedSpan(bar, span)) {
+            keepSlide(bar);
+            Rect pill = pillRect;
+            if (pill.isEmpty() || !selectedSpan(bar, span)
+                    || !lensSpan(span, pill, shownTabs(bar).size(), density, target)) {
                 drawnLeft = drawnRight = Float.NaN;
                 return;
             }
-            float left = Math.max(pill.left + inset, span.left + inset);
-            float right = Math.min(pill.right - inset, span.right - inset);
-            if (right - left < inset * 2f) {
-                drawnLeft = drawnRight = Float.NaN;
-                return;
-            }
+            float left = target.left, right = target.right;
+            float inset = LENS_INSET_DP * density;
             long now = SystemClock.uptimeMillis();
             holdOverStall(now);
-            if (Float.isNaN(drawnLeft)) {
+            if (!Float.isNaN(dragX)) {
+                // Under a finger: on it, swollen, and no slide of its own.
+                float width = right - left;
+                left = followLeft(dragX, width, pill.left + inset, pill.right - inset);
+                right = left + width;
+                fromLeft = toLeft = left;
+                fromRight = toRight = right;
+                slideStart = now - LENS_SLIDE_MS;
+                bubbleNow = bubbleFrom = 1f + BUBBLE_SWELL;
+            } else if (Float.isNaN(drawnLeft)) {
                 LensSpot last = LAST_SPOT.get(bar);
                 toLeft = left;
                 toRight = right;
+                bubbleFrom = 1f;
                 if (last != null && now - last.at < LENS_MEMORY_MS
                         && (last.left != left || last.right != right)) {
                     // A lens this bar showed moments ago: carry on from where that one was.
@@ -324,27 +637,95 @@ final class SeeThroughBottomBar {
                 toLeft = left;
                 toRight = right;
                 slideStart = now;
+                bubbleFrom = bubbleNow;
             }
             drawnLeft = span.left;
             drawnRight = span.right;
             float done = progress(now);
-            shown.set(lerp(fromLeft, toLeft, done), pill.top + inset, lerp(fromRight, toRight, done), pill.bottom - inset);
+            if (Float.isNaN(dragX)) {
+                bubbleNow = animatorsEnabled() ? bubbleScale(now - slideStart, bubbleFrom) : 1f;
+            }
+            shown.set(lerp(fromLeft, toLeft, done), target.top, lerp(fromRight, toRight, done), target.bottom);
             LensSpot spot = LAST_SPOT.get(bar);
             if (spot == null) LAST_SPOT.put(bar, spot = new LensSpot());
             written = spot;
             spot.left = shown.left;
             spot.right = shown.right;
             spot.at = now;
+            tick(bar, shown.centerX());
+            paintBubble(canvas, bar, pill);
+            if (done < 1f || bubbleNow != 1f) invalidateSelf();
+        }
+
+        /**
+         * The bubble at {@link #shown}, swollen by {@link #bubbleNow}: the magnified video where
+         * the pill blurs it, the fill, then the sheen and the rim, all at the pill's alpha.
+         */
+        private void paintBubble(Canvas canvas, ViewGroup bar, Rect pill) {
             int alpha = getDrawable().getAlpha();
-            lensFill.setColor((LENS_FILL & 0x00FFFFFF) | ((Color.alpha(LENS_FILL) * alpha / 255) << 24));
-            lensRim.setAlpha(alpha);
-            float radius = shown.height() / 2f;
-            canvas.drawRoundRect(shown, radius, radius, lensFill);
-            float half = lensRim.getStrokeWidth() / 2f;
-            lens.set(shown);
-            lens.inset(half, half);
-            canvas.drawRoundRect(lens, radius - half, radius - half, lensRim);
-            if (done < 1f) invalidateSelf();
+            float corner = cornerPx(Settings.GLASS_CORNERS.get(), true, shown.height(), density);
+            capsule.set(shown);
+            if (bubbleNow != 1f) {
+                float swell = (bubbleNow - 1f) / 2f;
+                capsule.inset(-capsule.width() * swell, -capsule.height() * swell);
+                corner *= bubbleNow;
+            }
+            RenderNode backdrop = blur == null ? null : blur.drawnBackdrop();
+            // Only at full strength: a faded bar would show the magnified video solid.
+            if (backdrop != null && alpha == 255 && GlassLens.supported()) {
+                if (magnifier == null) magnifier = new GlassLens();
+                if (magnifier.paint(canvas, backdrop, pill.left, pill.top, bar.getWidth(), bar.getHeight(),
+                        capsule, corner)) {
+                    // The pill's tint goes back over it so the bubble reads as part of the pill.
+                    magnifiedTint.setColor(withAlpha(GLASS_TINT,
+                            Color.alpha(GLASS_TINT) * opacityScale(Settings.GLASS_OPACITY.get())));
+                    canvas.drawRoundRect(capsule, corner, corner, magnifiedTint);
+                }
+            }
+            lensFill.setColor(withAlpha(LENS_FILL, Color.alpha(LENS_FILL) * alpha / 255f));
+            canvas.drawRoundRect(capsule, corner, corner, lensFill);
+            shade.setScale(1f, Math.max(1f, capsule.height()));
+            shade.postTranslate(0f, capsule.top);
+            bubbleSheen.getShader().setLocalMatrix(shade);
+            bubbleRim.getShader().setLocalMatrix(shade);
+            bubbleSheen.setAlpha(alpha);
+            bubbleRim.setAlpha(alpha);
+            canvas.drawRoundRect(capsule, corner, corner, bubbleSheen);
+            float half = bubbleRim.getStrokeWidth() / 2f;
+            capsule.inset(half, half);
+            canvas.drawRoundRect(capsule, Math.max(0f, corner - half), Math.max(0f, corner - half), bubbleRim);
+        }
+
+        /** With Glass haptics, a tick each time the lens's middle passes over a different tab. */
+        private void tick(ViewGroup bar, float middle) {
+            View over = null;
+            float best = Float.MAX_VALUE;
+            for (View tab : shownTabs(bar)) {
+                float off = Math.abs(middle - ((tab.getLeft() + tab.getRight()) / 2f + tab.getTranslationX()));
+                if (off < best) {
+                    best = off;
+                    over = tab;
+                }
+            }
+            if (tickedTab != null && over != tickedTab && Settings.GLASS_HAPTICS.get()) {
+                GlassBarHaptics.tick(bar, Settings.GLASS_HAPTIC_STYLE.get());
+            }
+            tickedTab = over;
+        }
+
+        /**
+         * With Slide across the tabs, makes sure the bar's window hands its touches to a slide for
+         * this bar. One slide serves every lens the bar wears ({@link LensHost}).
+         */
+        private void keepSlide(ViewGroup bar) {
+            if (!Settings.GLASS_TAB_SLIDE.get()) return;
+            Activity activity = activityOf(bar.getContext());
+            Window window = activity == null ? null : activity.getWindow();
+            if (window == null) return;
+            GlassTabSlide installed = GlassTabSlide.installedIn(window);
+            if (installed != null && installed.bar() == bar) return;
+            GlassTabSlide.install(window, new GlassTabSlide(bar, new LensHost(bar),
+                    () -> Settings.GLASS_TAB_SLIDE.get() && bar.getBackground() instanceof GlassLensBackground));
         }
 
         /** Where the last draw put the lens; empty when that draw found no tab to put it behind. */
@@ -358,43 +739,23 @@ final class SeeThroughBottomBar {
             return span.left != drawnLeft || span.right != drawnRight;
         }
 
-        private boolean followSelection() {
+        @Override
+        boolean beforeFrame() {
             // A still screen draws nothing, so a lens still showing is as current as this frame,
             // whatever its last draw's time. The lens that replaces it (the bar has already
             // dropped this one as its callback by then) or this lens after a frame with no tab
             // slides on from it (S22, 2026-10-23: a lens jumped after a second on one tab).
             if (written != null && !Float.isNaN(drawnLeft)) written.at = SystemClock.uptimeMillis();
+            super.beforeFrame();
             ViewGroup bar = bar();
             if (bar == null || bar.getBackground() != this) {
                 // Off the bar, so off the screen. A listener the window kept anyway (unwatch can't
                 // reach one merged in from a detached observer) then leaves the memory alone.
                 drawnLeft = drawnRight = Float.NaN;
-                unwatch();
                 return true;
             }
             if (selectionMoved(bar)) invalidateSelf();
             return true;
-        }
-
-        private ViewGroup bar() {
-            Callback callback = getCallback();
-            return callback instanceof ViewGroup ? (ViewGroup) callback : null;
-        }
-
-        private void watch(View bar) {
-            ViewTreeObserver observer = bar.getViewTreeObserver();
-            if (observer == watched || !observer.isAlive()) return;
-            unwatch();
-            // Attaching the bar merges its detached observer's listeners into the window's, so
-            // the listener may already be there: never hold it twice.
-            observer.removeOnPreDrawListener(follow);
-            observer.addOnPreDrawListener(follow);
-            watched = observer;
-        }
-
-        private void unwatch() {
-            if (watched != null && watched.isAlive()) watched.removeOnPreDrawListener(follow);
-            watched = null;
         }
 
         /**
@@ -431,6 +792,40 @@ final class SeeThroughBottomBar {
             float left, right;
             long at;
         }
+    }
+
+    /** What Slide across the tabs moves: whichever lens the bar wears now, since a new look hands it a new one. */
+    private static final class LensHost implements GlassTabSlide.Host {
+        private final ViewGroup bar;
+
+        LensHost(ViewGroup bar) {
+            this.bar = bar;
+        }
+
+        @Override
+        public boolean onPill(float x, float y) {
+            Drawable background = bar.getBackground();
+            return background instanceof GlassLensBackground
+                    && ((GlassLensBackground) background).pillRect.contains(Math.round(x), Math.round(y));
+        }
+
+        @Override
+        public void follow(float x) {
+            Drawable background = bar.getBackground();
+            if (!(background instanceof GlassLensBackground)) return;
+            ((GlassLensBackground) background).dragX = x;
+            background.invalidateSelf();
+        }
+    }
+
+    /** The activity {@code context} belongs to, or null. */
+    static Activity activityOf(Context context) {
+        for (int depth = 0; context != null && depth < 10; depth++) {
+            if (context instanceof Activity) return (Activity) context;
+            if (!(context instanceof ContextWrapper)) return null;
+            context = ((ContextWrapper) context).getBaseContext();
+        }
+        return null;
     }
 
     /** False when the phone's animator duration scale is 0, so the lens jumps instead of sliding. */
@@ -549,11 +944,13 @@ final class SeeThroughBottomBar {
                     : wanted == GLASS ? new GlassBackground(density, blur)
                     : wanted == FLOATING ? new FloatingBackground(density)
                     : new ClearBackground());
+            if (wanted == CLEAR && bar instanceof ViewGroup) putTabsBack((ViewGroup) bar);
             return;
         }
         if (!BACKGROUNDS.containsKey(bar)) return;
         Drawable original = BACKGROUNDS.remove(bar);
         if (kind != THEIRS) bar.setBackground(original);
+        if (bar instanceof ViewGroup) putTabsBack((ViewGroup) bar);
     }
 
     /**

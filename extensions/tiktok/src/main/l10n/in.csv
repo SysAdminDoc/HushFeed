@@ -2209,7 +2209,34 @@ Floating bottom bar,Bilah bawah mengambang
 Liquid glass look,Tampilan kaca cair
 "Draw the main feed's floating pill as glass, lighter and more see-through, with a bright rim along its top edge. Needs Floating bottom bar.","Gambar kapsul mengambang di feed utama sebagai kaca, lebih terang dan lebih transparan, dengan tepi terang di sisi atasnya. Perlu Bilah bawah mengambang."
 Glass lens on the current tab,Lensa kaca di tab saat ini
-"On the main feed, a smaller piece of glass sits behind the tab you're on and slides to the next tab you pick. Needs Liquid glass look.","Di feed utama, sepotong kaca yang lebih kecil ada di belakang tab yang sedang kamu buka dan bergeser ke tab berikutnya yang kamu pilih. Perlu Tampilan kaca cair."
+Pill height,Tinggi kapsul
+Compact,Ringkas
+Standard,Standar
+How tall the main feed's floating pill is inside the bar. Compact leaves more of the video showing around it. The tabs keep their size and their taps.,Seberapa tinggi kapsul mengambang di feed utama di dalam bilah. Ringkas menyisakan lebih banyak video di sekitarnya. Tab tetap dengan ukuran dan area ketuknya.
+Pill corners,Sudut kapsul
+Rounder,Lebih bulat
+Fully round,Bulat penuh
+How round the main feed's floating pill and its glass lens are. Fully round gives them half circle ends.,Seberapa bulat kapsul mengambang di feed utama dan lensa kacanya. Bulat penuh membuat ujungnya setengah lingkaran.
+Glass opacity,Kepekatan kaca
+Most see-through,Paling tembus pandang
+More see-through,Lebih tembus pandang
+Frosted,Buram
+How much of the video shows through the glass pill on the main feed. Most see-through shows the most and Frosted the least.,Seberapa banyak video yang terlihat lewat kapsul kaca di feed utama. Paling tembus pandang memperlihatkan paling banyak dan Buram paling sedikit.
+"On the main feed, a raised bubble of glass sits behind the tab you're on and slides to the next tab you pick. Needs Liquid glass look.","Di feed utama, gelembung kaca yang menonjol ada di belakang tab yang sedang kamu buka dan bergeser ke tab berikutnya yang kamu pilih. Perlu Tampilan kaca cair."
+Slide across the tabs,Geser di sepanjang tab
+"On the main feed, slide a finger along the glass pill and the lens follows it. Let go and that tab opens. Taps and long presses work as before. Needs Glass lens on the current tab.","Di feed utama, geser jari di sepanjang kapsul kaca dan lensanya ikut. Lepas jari dan tab itu terbuka. Ketuk dan tekan lama tetap seperti biasa. Perlu Lensa kaca di tab saat ini."
+Haptics on the tabs,Getaran di tab
+"On the main feed, a light tick each time the glass lens passes a tab, as it slides after a tap or under your finger. Needs Glass lens on the current tab.","Di feed utama, getaran ringan setiap kali lensa kaca melewati sebuah tab, saat bergeser setelah ketukan atau di bawah jarimu. Perlu Lensa kaca di tab saat ini."
+Haptic style,Gaya getaran
+Short pulse,Denyut singkat
+Phone's click,Klik bawaan HP
+Soft tick,Ketukan lembut
+Full tick,Ketukan penuh
+The tick on the main feed's tabs. Short pulse is one quick tap of the motor. Phone's click is the click your phone makes elsewhere. Soft tick rings a little longer. Full tick is the phone's strongest tick.,Getaran di tab feed utama. Denyut singkat adalah satu ketukan cepat dari motor. Klik bawaan HP adalah klik yang biasa dibuat HP kamu di tempat lain. Ketukan lembut bergetar sedikit lebih lama. Ketukan penuh adalah ketukan terkuat HP kamu.
+Blur strength,Kekuatan blur
+Soft blur,Blur lembut
+Strong blur,Blur kuat
+How much the video behind the glass pill on the main feed is blurred.,Seberapa kuat video di belakang kapsul kaca di feed utama diburamkan.
 Bring back TikTok's translation,Kembalikan terjemahan TikTok
 "Brings back the translation rows on TikTok's Language page, under Settings and privacy, for accounts that only see App language there.","Mengembalikan baris terjemahan di halaman Bahasa TikTok, di Pengaturan dan privasi, untuk akun yang di sana hanya melihat Bahasa aplikasi."
 For accounts TikTok took translation away from. Brings back See translation under video descriptions and in captions. Restart TikTok to see the change.,Untuk akun yang terjemahannya dihapus TikTok. Mengembalikan Lihat terjemahan di bawah deskripsi video dan di teks video. Mulai ulang TikTok untuk melihat perubahannya.

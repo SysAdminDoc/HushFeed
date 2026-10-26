@@ -1632,7 +1632,34 @@ Show the hide button on videos,在视频上显示隐藏按钮
 Liquid glass look,液态玻璃外观
 "Draw the main feed's floating pill as glass, lighter and more see-through, with a bright rim along its top edge. Needs Floating bottom bar.",将主信息流的浮动药丸绘制成玻璃效果，更浅、更透明，顶部边缘带有明亮的轮廓。需要浮动底栏.
 Glass lens on the current tab,当前选项卡上的玻璃透镜
-"On the main feed, a smaller piece of glass sits behind the tab you're on and slides to the next tab you pick. Needs Liquid glass look.",在主信息流上，一块较小的玻璃位于你所在的选项卡后面，并滑到你选择的下一个选项卡。需要液态玻璃外观.
+Pill height,药丸高度
+Compact,紧凑
+Standard,标准
+How tall the main feed's floating pill is inside the bar. Compact leaves more of the video showing around it. The tabs keep their size and their taps.,主信息流的浮动药丸在底栏内的高度。紧凑会在它周围露出更多视频。选项卡保持原来的大小和点按区域.
+Pill corners,药丸圆角
+Rounder,更圆
+Fully round,完全圆形
+How round the main feed's floating pill and its glass lens are. Fully round gives them half circle ends.,主信息流的浮动药丸和它的玻璃透镜的圆角程度。完全圆形会让两端变成半圆.
+Glass opacity,玻璃不透明度
+Most see-through,最透明
+More see-through,更透明
+Frosted,磨砂
+How much of the video shows through the glass pill on the main feed. Most see-through shows the most and Frosted the least.,在主信息流上透过玻璃药丸能看到多少视频。最透明露出的最多，磨砂最少.
+"On the main feed, a raised bubble of glass sits behind the tab you're on and slides to the next tab you pick. Needs Liquid glass look.",在主信息流上，一个凸起的玻璃气泡位于你所在的选项卡后面，并滑到你选择的下一个选项卡。需要液态玻璃外观.
+Slide across the tabs,在选项卡上滑动
+"On the main feed, slide a finger along the glass pill and the lens follows it. Let go and that tab opens. Taps and long presses work as before. Needs Glass lens on the current tab.",在主信息流上，手指沿玻璃药丸滑动，透镜会跟着手指移动。松开手指就会打开那个选项卡。点按和长按照常使用。需要当前选项卡上的玻璃透镜.
+Haptics on the tabs,选项卡触感反馈
+"On the main feed, a light tick each time the glass lens passes a tab, as it slides after a tap or under your finger. Needs Glass lens on the current tab.",在主信息流上，玻璃透镜每经过一个选项卡就轻震一下，无论是点按后滑动还是在手指下滑动。需要当前选项卡上的玻璃透镜.
+Haptic style,触感样式
+Short pulse,短脉冲
+Phone's click,手机自带点击
+Soft tick,轻柔震动
+Full tick,完整震动
+The tick on the main feed's tabs. Short pulse is one quick tap of the motor. Phone's click is the click your phone makes elsewhere. Soft tick rings a little longer. Full tick is the phone's strongest tick.,主信息流选项卡上的震动。短脉冲是马达的一次快速轻击。手机自带点击是手机在其他地方使用的点击感。轻柔震动的余震稍长一些。完整震动是手机最强的震动.
+Blur strength,模糊强度
+Soft blur,轻度模糊
+Strong blur,强烈模糊
+How much the video behind the glass pill on the main feed is blurred.,主信息流上玻璃药丸后面的视频被模糊的程度.
 Show the mute button on videos,在视频上显示静音按钮
 Show the progress bar,显示进度条
 Show the progress bar thumbnail,显示进度条缩略图

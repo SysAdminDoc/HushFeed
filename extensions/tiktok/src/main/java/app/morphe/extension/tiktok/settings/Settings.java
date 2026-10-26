@@ -935,6 +935,43 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting GLASS_VIDEO_BLUR = new BooleanSetting(
             "glass_video_blur", FALSE, false, Setting.parent(LIQUID_GLASS_BOTTOM_BAR));
     /**
+     * With Blur the video behind the bar, how strongly it blurs: "light", "standard" or "strong",
+     * the three strengths of HushGram's glass tab bar. Read on each draw.
+     */
+    public static final StringSetting GLASS_BLUR_STRENGTH = new StringSetting(
+            "glass_blur_strength", "standard", false, Setting.parent(GLASS_VIDEO_BLUR));
+    /**
+     * With Liquid glass look, how solid the glass's tint is: "clear", "light", "standard" or
+     * "frosted", which scale the tint by a half, three quarters, one and 1.35. Read on each draw.
+     */
+    public static final StringSetting GLASS_OPACITY = new StringSetting(
+            "glass_opacity", "standard", false, Setting.parent(LIQUID_GLASS_BOTTOM_BAR));
+    /**
+     * With Floating bottom bar, how tall the pill is inside the bar: "standard" fills the bar but
+     * for a hairline above and under, "compact" is 4dp slimmer on each side. The bar keeps its
+     * size, so the tabs keep their taps. Read on each draw.
+     */
+    public static final StringSetting GLASS_BAR_HEIGHT = new StringSetting(
+            "glass_bar_height", "standard", false, Setting.parent(FLOATING_BOTTOM_BAR));
+    /**
+     * With Floating bottom bar, the corners of the pill and the lens: "standard" (12dp and 8dp),
+     * "rounder" (20dp and 14dp) or "round" (half circle ends). Read on each draw.
+     */
+    public static final StringSetting GLASS_CORNERS = new StringSetting(
+            "glass_corners", "round", false, Setting.parent(FLOATING_BOTTOM_BAR));
+    /**
+     * With Glass lens on the current tab, a finger slid along the pill carries the lens, and
+     * lifting it opens the tab it ended on (GlassTabSlide). Read on each touch.
+     */
+    public static final BooleanSetting GLASS_TAB_SLIDE = new BooleanSetting(
+            "glass_tab_slide", FALSE, false, Setting.parent(GLASS_TAB_LENS));
+    /** With Glass lens on the current tab, a tick each time the lens passes a tab. Read on each draw. */
+    public static final BooleanSetting GLASS_HAPTICS = new BooleanSetting(
+            "glass_haptics", FALSE, false, Setting.parent(GLASS_TAB_LENS));
+    /** The tick Glass haptics plays: "short", "system", "soft" or "full" (GlassBarHaptics). */
+    public static final StringSetting GLASS_HAPTIC_STYLE = new StringSetting(
+            "glass_haptic_style", "system", false, Setting.parent(GLASS_HAPTICS));
+    /**
      * Lets the main feed's video draw up under the status bar, with the clock over it (#145).
      * VideoOverlayHider collapses the spacer TikTok keeps above each video for the bar and
      * SeeThroughStatusBar clears the bar's color while the feed is in front; both go back when

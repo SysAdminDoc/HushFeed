@@ -2412,7 +2412,34 @@ Show the main feed's tabs on a rounded, see-through dark pill that floats over t
 Liquid glass look	Эффект жидкого стекла
 Draw the main feed's floating pill as glass, lighter and more see-through, with a bright rim along its top edge. Needs Floating bottom bar.	Плавающая плашка основной ленты рисуется как стекло, светлее и прозрачнее, с яркой кромкой по верхнему краю. Нужна «Плавающая нижняя панель».
 Glass lens on the current tab	Стеклянная линза на текущей вкладке
-On the main feed, a smaller piece of glass sits behind the tab you're on and slides to the next tab you pick. Needs Liquid glass look.	В основной ленте за открытой вкладкой лежит кусочек стекла поменьше, и он переезжает к следующей вкладке, которую вы выберете. Нужен «Эффект жидкого стекла».
+Pill height	Высота плашки
+Compact	Компактная
+Standard	Стандартная
+How tall the main feed's floating pill is inside the bar. Compact leaves more of the video showing around it. The tabs keep their size and their taps.	Насколько высокая плавающая плашка основной ленты внутри панели. Компактная оставляет вокруг неё больше видео. Вкладки сохраняют свой размер и нажатия.
+Pill corners	Углы плашки
+Rounder	Круглее
+Fully round	Полностью круглые
+How round the main feed's floating pill and its glass lens are. Fully round gives them half circle ends.	Насколько скруглены плавающая плашка основной ленты и её стеклянная линза. «Полностью круглые» дают им концы в виде полукруга.
+Glass opacity	Прозрачность стекла
+Most see-through	Самое прозрачное
+More see-through	Прозрачнее
+Frosted	Матовое
+How much of the video shows through the glass pill on the main feed. Most see-through shows the most and Frosted the least.	Сколько видео видно сквозь стеклянную плашку в основной ленте. «Самое прозрачное» показывает больше всего, «Матовое» меньше всего.
+On the main feed, a raised bubble of glass sits behind the tab you're on and slides to the next tab you pick. Needs Liquid glass look.	В основной ленте за открытой вкладкой лежит выпуклый стеклянный пузырь, и он переезжает к следующей вкладке, которую вы выберете. Нужен «Эффект жидкого стекла».
+Slide across the tabs	Скольжение по вкладкам
+On the main feed, slide a finger along the glass pill and the lens follows it. Let go and that tab opens. Taps and long presses work as before. Needs Glass lens on the current tab.	В основной ленте проведите пальцем по стеклянной плашке, и линза последует за ним. Отпустите, и откроется эта вкладка. Нажатия и долгие нажатия работают как раньше. Нужна «Стеклянная линза на текущей вкладке».
+Haptics on the tabs	Вибрация на вкладках
+On the main feed, a light tick each time the glass lens passes a tab, as it slides after a tap or under your finger. Needs Glass lens on the current tab.	В основной ленте лёгкий щелчок каждый раз, когда стеклянная линза проходит вкладку, после нажатия или под вашим пальцем. Нужна «Стеклянная линза на текущей вкладке».
+Haptic style	Стиль вибрации
+Short pulse	Короткий импульс
+Phone's click	Щелчок телефона
+Soft tick	Мягкий щелчок
+Full tick	Полный щелчок
+The tick on the main feed's tabs. Short pulse is one quick tap of the motor. Phone's click is the click your phone makes elsewhere. Soft tick rings a little longer. Full tick is the phone's strongest tick.	Щелчок на вкладках основной ленты. «Короткий импульс» это одно быстрое касание мотора. «Щелчок телефона» это щелчок, который телефон издаёт в других местах. «Мягкий щелчок» звучит чуть дольше. «Полный щелчок» самый сильный щелчок телефона.
+Blur strength	Сила размытия
+Soft blur	Мягкое размытие
+Strong blur	Сильное размытие
+How much the video behind the glass pill on the main feed is blurred.	Насколько сильно размыто видео за стеклянной плашкой в основной ленте.
 # context: a switch on the Comments page. Language, Settings and privacy and App language are TikTok's own labels: its language page, the menu that page sits in, and the page's first row
 Bring back TikTok's translation	Вернуть перевод TikTok
 Brings back the translation rows on TikTok's Language page, under Settings and privacy, for accounts that only see App language there.	Возвращает строки перевода на страницу «Язык» в TikTok (Настройки и конфиденциальность) для аккаунтов, которые видят там только «Язык приложения».

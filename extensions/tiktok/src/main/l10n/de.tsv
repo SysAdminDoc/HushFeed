@@ -2235,7 +2235,34 @@ Show the main feed's tabs on a rounded, see-through dark pill that floats over t
 Liquid glass look	Liquid-Glass-Look
 Draw the main feed's floating pill as glass, lighter and more see-through, with a bright rim along its top edge. Needs Floating bottom bar.	Zeichnet die schwebende Pille im Haupt-Feed als Glas, heller und durchsichtiger, mit einem hellen Rand an der Oberkante. Braucht Schwebende untere Leiste.
 Glass lens on the current tab	Glaslinse auf dem aktuellen Tab
-On the main feed, a smaller piece of glass sits behind the tab you're on and slides to the next tab you pick. Needs Liquid glass look.	Im Haupt-Feed liegt ein kleineres Stück Glas hinter dem Tab, auf dem du bist, und gleitet zum nächsten Tab, den du wählst. Braucht Liquid-Glass-Look.
+Pill height	Pillenhöhe
+Compact	Kompakt
+Standard	Standard
+How tall the main feed's floating pill is inside the bar. Compact leaves more of the video showing around it. The tabs keep their size and their taps.	Wie hoch die schwebende Pille im Haupt-Feed in der Leiste ist. Kompakt lässt mehr vom Video um sie herum frei. Die Tabs behalten ihre Größe und ihre Tippflächen.
+Pill corners	Pillenecken
+Rounder	Runder
+Fully round	Ganz rund
+How round the main feed's floating pill and its glass lens are. Fully round gives them half circle ends.	Wie rund die schwebende Pille im Haupt-Feed und ihre Glaslinse sind. Ganz rund gibt ihnen halbkreisförmige Enden.
+Glass opacity	Glasdeckkraft
+Most see-through	Am durchsichtigsten
+More see-through	Durchsichtiger
+Frosted	Milchglas
+How much of the video shows through the glass pill on the main feed. Most see-through shows the most and Frosted the least.	Wie viel vom Video im Haupt-Feed durch die Glaspille scheint. Am durchsichtigsten zeigt am meisten und Milchglas am wenigsten.
+On the main feed, a raised bubble of glass sits behind the tab you're on and slides to the next tab you pick. Needs Liquid glass look.	Im Haupt-Feed liegt eine gewölbte Glasblase hinter dem Tab, auf dem du bist, und gleitet zum nächsten Tab, den du wählst. Braucht Liquid-Glass-Look.
+Slide across the tabs	Über die Tabs gleiten
+On the main feed, slide a finger along the glass pill and the lens follows it. Let go and that tab opens. Taps and long presses work as before. Needs Glass lens on the current tab.	Zieh im Haupt-Feed einen Finger über die Glaspille und die Linse folgt ihm. Lass los und dieser Tab öffnet sich. Tippen und langes Drücken funktionieren wie bisher. Braucht Glaslinse auf dem aktuellen Tab.
+Haptics on the tabs	Haptik auf den Tabs
+On the main feed, a light tick each time the glass lens passes a tab, as it slides after a tap or under your finger. Needs Glass lens on the current tab.	Im Haupt-Feed ein leichtes Ticken, jedes Mal wenn die Glaslinse an einem Tab vorbeikommt, ob sie nach einem Tippen oder unter deinem Finger gleitet. Braucht Glaslinse auf dem aktuellen Tab.
+Haptic style	Haptikstil
+Short pulse	Kurzer Impuls
+Phone's click	Klick des Handys
+Soft tick	Sanftes Ticken
+Full tick	Volles Ticken
+The tick on the main feed's tabs. Short pulse is one quick tap of the motor. Phone's click is the click your phone makes elsewhere. Soft tick rings a little longer. Full tick is the phone's strongest tick.	Das Ticken auf den Tabs im Haupt-Feed. Kurzer Impuls ist ein schnelles Antippen des Motors. Klick des Handys ist der Klick, den dein Handy auch sonst macht. Sanftes Ticken klingt etwas länger nach. Volles Ticken ist das stärkste Ticken des Handys.
+Blur strength	Unschärfestärke
+Soft blur	Sanfte Unschärfe
+Strong blur	Starke Unschärfe
+How much the video behind the glass pill on the main feed is blurred.	Wie stark das Video hinter der Glaspille im Haupt-Feed unscharf wird.
 # context: a switch on the Comments page. Language, Settings and privacy and App language are TikTok's own labels: its language page, the menu that page sits in, and the page's first row
 Bring back TikTok's translation	TikToks Übersetzung zurückholen
 Brings back the translation rows on TikTok's Language page, under Settings and privacy, for accounts that only see App language there.	Holt die Übersetzungszeilen auf TikToks Seite Sprache unter Einstellungen und Datenschutz zurück, für Konten, die dort nur App-Sprache sehen.

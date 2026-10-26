@@ -8,9 +8,15 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 
+import app.morphe.extension.shared.Utils;
+import app.morphe.extension.tiktok.settings.Settings;
+
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.annotation.GraphicsMode;
 
@@ -25,6 +31,17 @@ import org.robolectric.annotation.GraphicsMode;
 public class GlassPillDrawingTest {
     private static final int GRAY = 0xFF808080;
     private static final int W = 400, H = 100;
+
+    /** The pill reads Pill corners and Glass opacity as it draws. */
+    @Before
+    public void setUp() {
+        Utils.setContext(RuntimeEnvironment.getApplication());
+    }
+
+    @After
+    public void tearDown() {
+        Settings.GLASS_OPACITY.save("standard");
+    }
 
     private static Bitmap drawn(Drawable pill) {
         Bitmap bitmap = Bitmap.createBitmap(W, H, Bitmap.Config.ARGB_8888);
@@ -58,6 +75,18 @@ public class GlassPillDrawingTest {
         assertTrue("glass " + Integer.toHexString(glass) + " not lighter than the plain pill "
                 + Integer.toHexString(plain), light(glass) > light(plain) + 60);
         assertTrue("the glass hid the video", light(glass) < light(0xFFFFFFFF));
+    }
+
+    /** Glass opacity: Most see-through lets more of the video through than Frosted. */
+    @Test
+    public void glassOpacityChangesHowMuchOfTheVideoShows() {
+        Settings.GLASS_OPACITY.save("clear");
+        int clear = drawn(new SeeThroughBottomBar.GlassPill(1f)).getPixel(W / 2, H / 2);
+        Settings.GLASS_OPACITY.save("frosted");
+        int frosted = drawn(new SeeThroughBottomBar.GlassPill(1f)).getPixel(W / 2, H / 2);
+        assertTrue("clear " + Integer.toHexString(clear) + " not closer to the video than frosted "
+                + Integer.toHexString(frosted),
+                Math.abs(light(clear) - light(GRAY)) < Math.abs(light(frosted) - light(GRAY)));
     }
 
     @Test

@@ -64,8 +64,18 @@ final class GlassVideoBlur {
     static final int MAX_FAILURES = 3;
     /** How long the plain glass stays after those failures. */
     static final long RETRY_MS = 3000;
-    /** The blur's size in dp, at the pill's own size. */
+    /** The blur's size in dp, at the pill's own size, for the standard strength. */
     static final float BLUR_DP = 10f;
+
+    /**
+     * The blur's size in dp for Blur strength: half of {@link #BLUR_DP} for "light" and five
+     * thirds of it for "strong", the steps of HushGram's glass tab bar.
+     */
+    static float blurDp(String strength) {
+        if ("light".equals(strength)) return BLUR_DP / 2f;
+        if ("strong".equals(strength)) return BLUR_DP * 5f / 3f;
+        return BLUR_DP;
+    }
 
     /** Tells a read finished; java.util.function needs API 24. */
     interface Done {
@@ -103,6 +113,8 @@ final class GlassVideoBlur {
     private int[] pixels = new int[0];
     private int[] before = new int[0];
     private Painter painter;
+    /** The strip the last draw put in the pill, null when it drew none. */
+    private RenderNode drawn;
     private boolean hasFrame;
     private boolean copying;
     private boolean running;
@@ -187,6 +199,14 @@ final class GlassVideoBlur {
         return hasFrame;
     }
 
+    /**
+     * The blurred strip the last {@link #drawBehind} drew into the pill, pill-sized and drawn at
+     * the pill's corner, or null when it drew none. The glass lens magnifies it.
+     */
+    RenderNode drawnBackdrop() {
+        return drawn;
+    }
+
     /** True while the sampling loop is scheduled. */
     boolean sampling() {
         return running;
@@ -195,9 +215,11 @@ final class GlassVideoBlur {
     /**
      * Called from the glass background's draw, with the pill's bounds in the bar. Starts the
      * sampling when it isn't running, and draws the blurred strip into the pill's shape once
-     * there is a picture. Draws nothing when the blur can't run, which leaves the plain glass.
+     * there is a picture, clipped to the pill's {@code radius} corners. Draws nothing when the
+     * blur can't run, which leaves the plain glass.
      */
-    void drawBehind(Canvas canvas, View view, Rect pill) {
+    void drawBehind(Canvas canvas, View view, Rect pill, float radius) {
+        drawn = null;
         if (!wanted() || pill.isEmpty()) return;
         bar = new WeakReference<>(view);
         watch(view);
@@ -205,9 +227,8 @@ final class GlassVideoBlur {
         if (!hasFrame || sample == null || !canvas.isHardwareAccelerated()
                 || Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return;
         if (painter == null) painter = new Painter();
-        float radius = Math.min(app.morphe.extension.tiktok.settings.preference.SettingsUi.RADIUS_ROUND_ENDS * density,
-                pill.height() / 2f);
-        painter.draw(canvas, sample, pill, radius, BLUR_DP * density);
+        painter.draw(canvas, sample, pill, radius, blurDp(Settings.GLASS_BLUR_STRENGTH.get()) * density);
+        drawn = painter.node;
     }
 
     /** Starts the loop when it isn't already going. */

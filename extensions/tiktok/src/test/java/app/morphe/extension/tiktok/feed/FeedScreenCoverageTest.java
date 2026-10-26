@@ -241,6 +241,14 @@ public class FeedScreenCoverageTest {
         put("glass_tab_lens", YES, NONE, NONE);
         // And of the blur behind that pill (#231).
         put("glass_video_blur", YES, NONE, NONE);
+        // The pill's height, corners, opacity and blur strength, and the lens's slide and ticks.
+        put("glass_bar_height", YES, NONE, NONE);
+        put("glass_corners", YES, NONE, NONE);
+        put("glass_opacity", YES, NONE, NONE);
+        put("glass_blur_strength", YES, NONE, NONE);
+        put("glass_tab_slide", YES, NONE, NONE);
+        put("glass_haptics", YES, NONE, NONE);
+        put("glass_haptic_style", YES, NONE, NONE);
         // The main feed only: an opened video keeps the strip under its own top bar (#145).
         put("see_through_status_bar", YES, NONE, NONE);
         // The guard runs with the overlay pass, which walks both windows and no LIVE room.

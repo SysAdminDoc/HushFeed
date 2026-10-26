@@ -2232,7 +2232,34 @@ Show the main feed's tabs on a rounded, see-through dark pill that floats over t
 Liquid glass look	Maye şüşə görünüşü
 Draw the main feed's floating pill as glass, lighter and more see-through, with a bright rim along its top edge. Needs Floating bottom bar.	Əsas lentdəki üzən kapsulu daha açıq və daha şəffaf şüşə kimi, üst kənarında parlaq haşiyə ilə çəkir. Üzən alt panel açıq olmalıdır.
 Glass lens on the current tab	Cari tabda şüşə linza
-On the main feed, a smaller piece of glass sits behind the tab you're on and slides to the next tab you pick. Needs Liquid glass look.	Əsas lentdə olduğunuz tabın arxasında daha kiçik bir şüşə parçası durur və seçdiyiniz növbəti taba sürüşür. Maye şüşə görünüşü açıq olmalıdır.
+Pill height	Kapsulun hündürlüyü
+Compact	Yığcam
+Standard	Standart
+How tall the main feed's floating pill is inside the bar. Compact leaves more of the video showing around it. The tabs keep their size and their taps.	Əsas lentdəki üzən kapsulun panelin içində nə qədər hündür olduğu. Yığcam onun ətrafında videonun daha çox hissəsini açıq qoyur. Tablar ölçülərini və toxunuşlarını saxlayır.
+Pill corners	Kapsulun küncləri
+Rounder	Daha dairəvi
+Fully round	Tam dairəvi
+How round the main feed's floating pill and its glass lens are. Fully round gives them half circle ends.	Əsas lentdəki üzən kapsulun və onun şüşə linzasının nə qədər dairəvi olduğu. Tam dairəvi onlara yarımdairə uclar verir.
+Glass opacity	Şüşənin qeyri-şəffaflığı
+Most see-through	Ən şəffaf
+More see-through	Daha şəffaf
+Frosted	Buzlu
+How much of the video shows through the glass pill on the main feed. Most see-through shows the most and Frosted the least.	Əsas lentdə şüşə kapsulun arxasından videonun nə qədərinin göründüyü. Ən şəffaf ən çoxunu, Buzlu isə ən azını göstərir.
+On the main feed, a raised bubble of glass sits behind the tab you're on and slides to the next tab you pick. Needs Liquid glass look.	Əsas lentdə olduğunuz tabın arxasında qabarıq şüşə qabarcığı durur və seçdiyiniz növbəti taba sürüşür. Maye şüşə görünüşü açıq olmalıdır.
+Slide across the tabs	Tablar boyunca sürüşdür
+On the main feed, slide a finger along the glass pill and the lens follows it. Let go and that tab opens. Taps and long presses work as before. Needs Glass lens on the current tab.	Əsas lentdə barmağınızı şüşə kapsul boyunca sürüşdürün və linza onu izləyir. Buraxın və həmin tab açılır. Toxunuşlar və uzun basmalar əvvəlki kimi işləyir. Cari tabda şüşə linza açıq olmalıdır.
+Haptics on the tabs	Tablarda vibrasiya
+On the main feed, a light tick each time the glass lens passes a tab, as it slides after a tap or under your finger. Needs Glass lens on the current tab.	Əsas lentdə şüşə linza hər dəfə bir tabın üstündən keçəndə, toxunuşdan sonra və ya barmağınızın altında sürüşəndə yüngül tıqqıltı. Cari tabda şüşə linza açıq olmalıdır.
+Haptic style	Vibrasiya üslubu
+Short pulse	Qısa impuls
+Phone's click	Telefonun klik səsi
+Soft tick	Yumşaq tıqqıltı
+Full tick	Tam tıqqıltı
+The tick on the main feed's tabs. Short pulse is one quick tap of the motor. Phone's click is the click your phone makes elsewhere. Soft tick rings a little longer. Full tick is the phone's strongest tick.	Əsas lentin tablarındakı tıqqıltı. Qısa impuls mühərrikin bir sürətli toxunuşudur. Telefonun klik səsi telefonunuzun başqa yerlərdə etdiyi klikdir. Yumşaq tıqqıltı bir az uzun səslənir. Tam tıqqıltı telefonun ən güclü tıqqıltısıdır.
+Blur strength	Bulanıqlıq gücü
+Soft blur	Yumşaq bulanıqlıq
+Strong blur	Güclü bulanıqlıq
+How much the video behind the glass pill on the main feed is blurred.	Əsas lentdə şüşə kapsulun arxasındakı videonun nə qədər bulanıqlaşdığı.
 # context: a switch on the Comments page. Language, Settings and privacy and App language are TikTok's own labels: its language page, the menu that page sits in, and the page's first row
 Bring back TikTok's translation	TikTok-un tərcüməsini geri qaytar
 Brings back the translation rows on TikTok's Language page, under Settings and privacy, for accounts that only see App language there.	TikTok-un Settings and privacy altındakı Language səhifəsində yalnız App language görən hesablar üçün tərcümə sətirlərini geri qaytarır.

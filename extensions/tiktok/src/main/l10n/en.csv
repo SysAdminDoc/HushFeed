@@ -305,6 +305,7 @@ Blocked sound ids,Blocked sound ids
 Blocked sound names,Blocked sound names
 Blocked sounds,Blocked sounds
 Blocking,Blocking
+Blur strength,Blur strength
 "Blur the part of the video that sits behind the glass pill on the main feed, so it looks like frosted glass. Needs Liquid glass look and Android 12 and up.","Blur the part of the video that sits behind the glass pill on the main feed, so it looks like frosted glass. Needs Liquid glass look and Android 12 and up."
 Blur the video behind the bar,Blur the video behind the bar
 Bold,Bold
@@ -393,6 +394,7 @@ Comments aren't available for this video,Comments aren't available for this vide
 Comments beside the video,Comments beside the video
 "Comments only scroll on videos TikTok has turned them on for, so most videos stay the same.","Comments only scroll on videos TikTok has turned them on for, so most videos stay the same."
 Comments range,Comments range
+Compact,Compact
 Compact comment header,Compact comment header
 Compare gate reads with their previous values.,Compare gate reads with their previous values.
 Completed an interrupted settings change. Restart TikTok to apply this.,Completed an interrupted settings change. Restart TikTok to apply this.
@@ -652,6 +654,7 @@ Frame saved to %1$s,Frame saved to %1$s
 Friends,Friends
 Friends tab name,Friends tab name
 "Friends won't see a green dot or Active now while you're in TikTok. Needs Ghost mode on. Their status may stop updating for you, and your last status can linger.","Friends won't see a green dot or Active now while you're in TikTok. Needs Ghost mode on. Their status may stop updating for you, and your last status can linger."
+Frosted,Frosted
 Full changelog,Full changelog
 Full comment sort options,Full comment sort options
 Full license,Full license
@@ -659,7 +662,9 @@ Full link copied,Full link copied
 Full long-press menu in search results,Full long-press menu in search results
 Full long-press menu on a creator's videos,Full long-press menu on a creator's videos
 Full report saved to %1$s,Full report saved to %1$s
+Full tick,Full tick
 Full-width progress bar,Full-width progress bar
+Fully round,Fully round
 GIF,GIF
 Galaxy Store,Galaxy Store
 Gate data unavailable,Gate data unavailable
@@ -671,12 +676,15 @@ Ghost mode diagnostics,Ghost mode diagnostics
 "Give each commenter's name a color of its own, the same one every time you see that account, so a long thread is easier to follow.","Give each commenter's name a color of its own, the same one every time you see that account, so a long thread is easier to follow."
 Give each quarter of the video its own double tap choice. The Double tap row above is used while this is off.,Give each quarter of the video its own double tap choice. The Double tap row above is used while this is off.
 Glass lens on the current tab,Glass lens on the current tab
+Glass opacity,Glass opacity
 Go to the screen now. Hushfeed records its layout in %1$d seconds.,Go to the screen now. Hushfeed records its layout in %1$d seconds.
 Got it,Got it
 "HDR videos light the screen extra bright. This plays the standard (SDR) version instead, so the screen doesn't jump to full brightness. Videos with no standard version still play in HDR.","HDR videos light the screen extra bright. This plays the standard (SDR) version instead, so the screen doesn't jump to full brightness. Videos with no standard version still play in HDR."
 HTTP,HTTP
 Hand-off,Hand-off
 Handle or id,Handle or id
+Haptic style,Haptic style
+Haptics on the tabs,Haptics on the tabs
 Hidden %1$s on this phone,Hidden %1$s on this phone
 Hidden LIVE categories,Hidden LIVE categories
 Hidden commenters,Hidden commenters
@@ -886,6 +894,10 @@ How far each edge press moves the video.,How far each edge press moves the video
 How long each photo stays on screen in a video made from a photo post.,How long each photo stays on screen in a video made from a photo post.
 How many saves run at the same time. The others wait in line and start as each one ends.,How many saves run at the same time. The others wait in line and start as each one ends.
 How much of a video you watch before it's hidden next time. Zero counts it after a few seconds.,How much of a video you watch before it's hidden next time. Zero counts it after a few seconds.
+How much of the video shows through the glass pill on the main feed. Most see-through shows the most and Frosted the least.,How much of the video shows through the glass pill on the main feed. Most see-through shows the most and Frosted the least.
+How much the video behind the glass pill on the main feed is blurred.,How much the video behind the glass pill on the main feed is blurred.
+How round the main feed's floating pill and its glass lens are. Fully round gives them half circle ends.,How round the main feed's floating pill and its glass lens are. Fully round gives them half circle ends.
+How tall the main feed's floating pill is inside the bar. Compact leaves more of the video showing around it. The tabs keep their size and their taps.,How tall the main feed's floating pill is inside the bar. Compact leaves more of the video showing around it. The tabs keep their size and their taps.
 "How wide each edge strip is, as a percent of the screen width.","How wide each edge strip is, as a percent of the screen width."
 Hushfeed,Hushfeed
 Hushfeed blocked TikTok's reports here. It hasn't confirmed that you stay off viewer lists.,Hushfeed blocked TikTok's reports here. It hasn't confirmed that you stay off viewer lists.
@@ -1084,8 +1096,10 @@ More hashtags per post,More hashtags per post
 More items are available.,More items are available.
 More opens the comments,More opens the comments
 More options,More options
+More see-through,More see-through
 "More than %1$d comments were loaded, so the rest aren't in the file.","More than %1$d comments were loaded, so the rest aren't in the file."
 Most liked first,Most liked first
+Most see-through,Most see-through
 Most viewed first,Most viewed first
 Move down,Move down
 Move left,Move left
@@ -1187,7 +1201,9 @@ On,On
 On mobile data,On mobile data
 On or off,On or off
 "On the Friends tab, hide posts, reposts and LIVEs from accounts that aren't a mutual follow, suggested accounts included. Your own posts stay.","On the Friends tab, hide posts, reposts and LIVEs from accounts that aren't a mutual follow, suggested accounts included. Your own posts stay."
-"On the main feed, a smaller piece of glass sits behind the tab you're on and slides to the next tab you pick. Needs Liquid glass look.","On the main feed, a smaller piece of glass sits behind the tab you're on and slides to the next tab you pick. Needs Liquid glass look."
+"On the main feed, a light tick each time the glass lens passes a tab, as it slides after a tap or under your finger. Needs Glass lens on the current tab.","On the main feed, a light tick each time the glass lens passes a tab, as it slides after a tap or under your finger. Needs Glass lens on the current tab."
+"On the main feed, a raised bubble of glass sits behind the tab you're on and slides to the next tab you pick. Needs Liquid glass look.","On the main feed, a raised bubble of glass sits behind the tab you're on and slides to the next tab you pick. Needs Liquid glass look."
+"On the main feed, slide a finger along the glass pill and the lens follows it. Let go and that tab opens. Taps and long presses work as before. Needs Glass lens on the current tab.","On the main feed, slide a finger along the glass pill and the lens follows it. Let go and that tab opens. Taps and long presses work as before. Needs Glass lens on the current tab."
 On. Hushfeed hasn't seen TikTok send any reports since it started.,On. Hushfeed hasn't seen TikTok send any reports since it started.
 On. Restore puts back the feed setup you had before.,On. Restore puts back the feed setup you had before.
 "Once today's budget runs out, the hold stays and can't be dismissed. The budget settings are locked until the day starts over. Turn this off any time before the budget runs out.","Once today's budget runs out, the hold stays and can't be dismissed. The budget settings are locked until the day starts over. Turn this off any time before the budget runs out."
@@ -1269,6 +1285,7 @@ Paused,Paused
 Pauses the video behind the comment sheet while you read. It plays on from the same spot when the sheet closes.,Pauses the video behind the comment sheet while you read. It plays on from the same spot when the sheet closes.
 "People, shortcuts and sending controls","People, shortcuts and sending controls"
 Performance,Performance
+Phone's click,Phone's click
 Photo,Photo
 Photo and image posts,Photo and image posts
 Photo destination,Photo destination
@@ -1287,6 +1304,8 @@ Pick videos to save from profile grids,Pick videos to save from profile grids
 "Picked the first %1$s. Save them, then tap Pick all again for the rest.","Picked the first %1$s. Save them, then tap Pick all again for the rest."
 Picked videos,Picked videos
 Picks the older H.264 video format when TikTok also offers a newer one (HEVC or ByteVC2). It helps phones that stutter or run hot. Videos without an H.264 version still play.,Picks the older H.264 video format when TikTok also offers a newer one (HEVC or ByteVC2). It helps phones that stutter or run hot. Videos without an H.264 version still play.
+Pill corners,Pill corners
+Pill height,Pill height
 Play,Play
 Play SDR instead of HDR,Play SDR instead of HDR
 Play Store,Play Store
@@ -1445,6 +1464,7 @@ Reviewed presets for TikTok %1$s,Reviewed presets for TikTok %1$s
 Right away,Right away
 Right column,Right column
 Right edge strip,Right edge strip
+Rounder,Rounder
 Rows,Rows
 "Run the progress bar from one screen edge to the other, without the gap TikTok leaves at each end.","Run the progress bar from one screen edge to the other, without the gap TikTok leaves at each end."
 SIM country preset,SIM country preset
@@ -1621,6 +1641,7 @@ Shop order updates and coupon messages no longer take up rows in the Inbox. Your
 Shop posts,Shop posts
 Shop tab name,Shop tab name
 Short date,Short date
+Short pulse,Short pulse
 Shortest first,Shortest first
 Show,Show
 Show @username beside a video instead of the display name the creator chose.,Show @username beside a video instead of the display name the creator chose.
@@ -1714,6 +1735,9 @@ Skip update checks,Skip update checks
 "Skipped entries are invalid, expired, already recorded, or older than the newest %1$s videos.","Skipped entries are invalid, expired, already recorded, or older than the newest %1$s videos."
 Skipping videos with %1$s,Skipping videos with %1$s
 Sleep timer off,Sleep timer off
+Slide across the tabs,Slide across the tabs
+Soft blur,Soft blur
+Soft tick,Soft tick
 Some Calm feed settings changed. Restore still puts back your earlier setup.,Some Calm feed settings changed. Restore still puts back your earlier setup.
 Some of these notes are in English.,Some of these notes are in English.
 Something is missing from %1$s. Tap for the whole report.,Something is missing from %1$s. Tap for the whole report.
@@ -1735,6 +1759,7 @@ Speed menu choices,Speed menu choices
 Speed while you hold the video,Speed while you hold the video
 Spin the music disc,Spin the music disc
 Split comment minimum width,Split comment minimum width
+Standard,Standard
 Start each new video at your default. A manual choice lasts until the video changes.,Start each new video at your default. A manual choice lasts until the video changes.
 Start feature gate recording,Start feature gate recording
 Start recording,Start recording
@@ -1806,6 +1831,7 @@ Story saved to %1$s,Story saved to %1$s
 Streak,Streak
 Stream only,Stream only
 "Stream only saves the room's own video, as before. Screen records what your phone shows while you watch, with the sound the app plays when TikTok has the microphone permission. Android asks you to allow screen recording each time, and shows its own notice while it records.","Stream only saves the room's own video, as before. Screen records what your phone shows while you watch, with the sound the app plays when TikTok has the microphone permission. Android asks you to allow screen recording each time, and shows its own notice while it records."
+Strong blur,Strong blur
 Structured value observed,Structured value observed
 Subscriber-only posts,Subscriber-only posts
 Subtitle language,Subtitle language
@@ -1960,6 +1986,7 @@ The sticker couldn't be saved. Try again.,The sticker couldn't be saved. Try aga
 The sticker suggestion banner stops showing in a chat. Your own stickers are still in the sticker picker.,The sticker suggestion banner stops showing in a chat. Your own stickers are still in the sticker picker.
 The story couldn't be saved. Try again.,The story couldn't be saved. Try again.
 "The thumbs down on each comment blocks the commenter instead of disliking. The comment dims, an undo banner follows, and a second tap unblocks.","The thumbs down on each comment blocks the commenter instead of disliking. The comment dims, an undo banner follows, and a second tap unblocks."
+The tick on the main feed's tabs. Short pulse is one quick tap of the motor. Phone's click is the click your phone makes elsewhere. Soft tick rings a little longer. Full tick is the phone's strongest tick.,The tick on the main feed's tabs. Short pulse is one quick tap of the motor. Phone's click is the click your phone makes elsewhere. Soft tick rings a little longer. Full tick is the phone's strongest tick.
 The time of day the message goes out.,The time of day the message goes out.
 The video couldn't be made from these photos. Try again.,The video couldn't be made from these photos. Try again.
 "The video couldn't be saved. Try again, or choose Automatic.","The video couldn't be saved. Try again, or choose Automatic."

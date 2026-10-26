@@ -2232,7 +2232,34 @@ Show the main feed's tabs on a rounded, see-through dark pill that floats over t
 Liquid glass look	Sıvı cam görünümü
 Draw the main feed's floating pill as glass, lighter and more see-through, with a bright rim along its top edge. Needs Floating bottom bar.	Ana akıştaki yüzen kapsülü daha açık ve daha şeffaf bir cam gibi, üst kenarında parlak bir çerçeveyle çizer. Yüzen alt çubuk açık olmalıdır.
 Glass lens on the current tab	Geçerli sekmede cam mercek
-On the main feed, a smaller piece of glass sits behind the tab you're on and slides to the next tab you pick. Needs Liquid glass look.	Ana akışta, bulunduğun sekmenin arkasında daha küçük bir cam parçası durur ve seçtiğin sonraki sekmeye kayar. Sıvı cam görünümü açık olmalıdır.
+Pill height	Kapsül yüksekliği
+Compact	Kompakt
+Standard	Standart
+How tall the main feed's floating pill is inside the bar. Compact leaves more of the video showing around it. The tabs keep their size and their taps.	Ana akıştaki yüzen kapsülün çubuğun içinde ne kadar yüksek olduğu. Kompakt, çevresinde videonun daha fazlasını gösterir. Sekmeler boyutlarını ve dokunuşlarını korur.
+Pill corners	Kapsül köşeleri
+Rounder	Daha yuvarlak
+Fully round	Tam yuvarlak
+How round the main feed's floating pill and its glass lens are. Fully round gives them half circle ends.	Ana akıştaki yüzen kapsülün ve cam merceğinin ne kadar yuvarlak olduğu. Tam yuvarlak, onlara yarım daire uçlar verir.
+Glass opacity	Cam opaklığı
+Most see-through	En şeffaf
+More see-through	Daha şeffaf
+Frosted	Buzlu
+How much of the video shows through the glass pill on the main feed. Most see-through shows the most and Frosted the least.	Ana akışta cam kapsülün arkasından videonun ne kadarının göründüğü. En şeffaf en çoğunu, Buzlu en azını gösterir.
+On the main feed, a raised bubble of glass sits behind the tab you're on and slides to the next tab you pick. Needs Liquid glass look.	Ana akışta, bulunduğun sekmenin arkasında kabarık bir cam kabarcığı durur ve seçtiğin sonraki sekmeye kayar. Sıvı cam görünümü açık olmalıdır.
+Slide across the tabs	Sekmeler boyunca kaydır
+On the main feed, slide a finger along the glass pill and the lens follows it. Let go and that tab opens. Taps and long presses work as before. Needs Glass lens on the current tab.	Ana akışta parmağını cam kapsül boyunca kaydır, mercek onu takip eder. Bırakınca o sekme açılır. Dokunmalar ve uzun basmalar eskisi gibi çalışır. Geçerli sekmede cam mercek açık olmalıdır.
+Haptics on the tabs	Sekmelerde titreşim
+On the main feed, a light tick each time the glass lens passes a tab, as it slides after a tap or under your finger. Needs Glass lens on the current tab.	Ana akışta cam mercek her sekmenin üzerinden geçtiğinde, bir dokunuştan sonra ya da parmağının altında kayarken hafif bir tık. Geçerli sekmede cam mercek açık olmalıdır.
+Haptic style	Titreşim stili
+Short pulse	Kısa darbe
+Phone's click	Telefonun tıklaması
+Soft tick	Yumuşak tık
+Full tick	Tam tık
+The tick on the main feed's tabs. Short pulse is one quick tap of the motor. Phone's click is the click your phone makes elsewhere. Soft tick rings a little longer. Full tick is the phone's strongest tick.	Ana akıştaki sekmelerde çalan tık. Kısa darbe, motorun tek bir hızlı vuruşudur. Telefonun tıklaması, telefonunun başka yerlerde yaptığı tıklamadır. Yumuşak tık biraz daha uzun sürer. Tam tık, telefonun en güçlü tıkıdır.
+Blur strength	Bulanıklık gücü
+Soft blur	Yumuşak bulanıklık
+Strong blur	Güçlü bulanıklık
+How much the video behind the glass pill on the main feed is blurred.	Ana akışta cam kapsülün arkasındaki videonun ne kadar bulanıklaştığı.
 # context: a switch on the Comments page. Language, Settings and privacy and App language are TikTok's own labels: its language page, the menu that page sits in, and the page's first row
 Bring back TikTok's translation	TikTok'un çevirisini geri getir
 Brings back the translation rows on TikTok's Language page, under Settings and privacy, for accounts that only see App language there.	TikTok'un Ayarlar ve gizlilik altındaki Dil sayfasında yalnızca Uygulama dilini gören hesaplar için çeviri satırlarını geri getirir.

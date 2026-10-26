@@ -2232,7 +2232,34 @@ Show the main feed's tabs on a rounded, see-through dark pill that floats over t
 Liquid glass look	Visual de vidro líquido
 Draw the main feed's floating pill as glass, lighter and more see-through, with a bright rim along its top edge. Needs Floating bottom bar.	Desenha a pílula flutuante do feed principal como vidro, mais clara e mais transparente, com uma borda brilhante no topo. Precisa de Barra inferior flutuante.
 Glass lens on the current tab	Lente de vidro na aba atual
-On the main feed, a smaller piece of glass sits behind the tab you're on and slides to the next tab you pick. Needs Liquid glass look.	No feed principal, um pedaço menor de vidro fica atrás da aba em que você está e desliza para a próxima aba que você escolher. Precisa de Visual de vidro líquido.
+Pill height	Altura da pílula
+Compact	Compacta
+Standard	Padrão
+How tall the main feed's floating pill is inside the bar. Compact leaves more of the video showing around it. The tabs keep their size and their taps.	A altura da pílula flutuante do feed principal dentro da barra. Compacta deixa mais do vídeo aparecendo em volta dela. As abas mantêm o tamanho e os toques.
+Pill corners	Cantos da pílula
+Rounder	Mais arredondados
+Fully round	Totalmente redondos
+How round the main feed's floating pill and its glass lens are. Fully round gives them half circle ends.	O quanto a pílula flutuante do feed principal e a sua lente de vidro são arredondadas. Totalmente redondos dá a elas pontas em meio círculo.
+Glass opacity	Opacidade do vidro
+Most see-through	O mais transparente
+More see-through	Mais transparente
+Frosted	Fosco
+How much of the video shows through the glass pill on the main feed. Most see-through shows the most and Frosted the least.	Quanto do vídeo aparece através da pílula de vidro no feed principal. O mais transparente mostra mais e Fosco mostra menos.
+On the main feed, a raised bubble of glass sits behind the tab you're on and slides to the next tab you pick. Needs Liquid glass look.	No feed principal, uma bolha de vidro em relevo fica atrás da aba em que você está e desliza para a próxima aba que você escolher. Precisa de Visual de vidro líquido.
+Slide across the tabs	Deslizar pelas abas
+On the main feed, slide a finger along the glass pill and the lens follows it. Let go and that tab opens. Taps and long presses work as before. Needs Glass lens on the current tab.	No feed principal, deslize um dedo pela pílula de vidro e a lente acompanha. Solte e essa aba abre. Toques e toques longos funcionam como antes. Precisa de Lente de vidro na aba atual.
+Haptics on the tabs	Vibração nas abas
+On the main feed, a light tick each time the glass lens passes a tab, as it slides after a tap or under your finger. Needs Glass lens on the current tab.	No feed principal, um toque leve cada vez que a lente de vidro passa por uma aba, ao deslizar depois de um toque ou sob o seu dedo. Precisa de Lente de vidro na aba atual.
+Haptic style	Estilo da vibração
+Short pulse	Pulso curto
+Phone's click	Clique do celular
+Soft tick	Toque suave
+Full tick	Toque completo
+The tick on the main feed's tabs. Short pulse is one quick tap of the motor. Phone's click is the click your phone makes elsewhere. Soft tick rings a little longer. Full tick is the phone's strongest tick.	O toque nas abas do feed principal. Pulso curto é uma batida rápida do motor. Clique do celular é o clique que o seu celular faz em outros lugares. Toque suave dura um pouco mais. Toque completo é o toque mais forte do celular.
+Blur strength	Intensidade do desfoque
+Soft blur	Desfoque suave
+Strong blur	Desfoque forte
+How much the video behind the glass pill on the main feed is blurred.	O quanto o vídeo atrás da pílula de vidro no feed principal fica desfocado.
 # context: a switch on the Comments page. Language, Settings and privacy and App language are TikTok's own labels: its language page, the menu that page sits in, and the page's first row
 Bring back TikTok's translation	Trazer de volta a tradução do TikTok
 Brings back the translation rows on TikTok's Language page, under Settings and privacy, for accounts that only see App language there.	Traz de volta as linhas de tradução na página Idioma do TikTok, em Configurações e privacidade, para contas que ali só veem Idioma do app.

@@ -104,6 +104,12 @@ public final class VideoOverlayHider {
     private static final String[] VISUAL_SEARCH_LAYER_IDS = {"47.5.3:ft"};
     private static final String[] VISUAL_SEARCH_PILL_IDS = {"47.5.3:d6"};
     private static final String[] LIVE_ENTRANCE_IDS = {"47.5.3:ka3"};
+    /**
+     * The block under a LIVE preview in the main feed: the "Tap to watch LIVE" line, the badges,
+     * the host's name and the title (47.5.3, read off the Flip7's tree). A LIVE cell has no
+     * widget layer and no spacer, so nothing else lifts it over the see-through bar.
+     */
+    private static final String[] LIVE_CAPTION_IDS = {"47.5.3:o5c"};
 
     /** The caption under the creator's name. */
     private static final String[] CAPTION_IDS = {"desc"};
@@ -685,6 +691,7 @@ public final class VideoOverlayHider {
                     || statusBar || seeThroughStatusBar || SeeThroughStatusBar.anyFilled()
                     || seeThroughBar || SeeThroughBottomBar.holdsBackground()
                     || anyRail || !HIDDEN_HERE.isEmpty() || !FADED_HERE.isEmpty() || !WIDGETS_LIFTED.isEmpty()
+                    || !LIVE_CAPTIONS_LIFTED.isEmpty()
                     || fadeLevel != 100 || !FADED_TO.isEmpty() || !BAR_ROWS_MOVED.isEmpty()
                     || !CAPTIONS_LIFTED.isEmpty() || !DISCS_LIFTED.isEmpty() || !RAILS_LIFTED.isEmpty()
                     || touchScale != 1f || scaledLastPass || roomAbove > 0) {
@@ -775,6 +782,7 @@ public final class VideoOverlayHider {
                     List<View> roomLayers = selectedViews(found, TRAVERSAL.selected, WIDGET_LAYER_TARGET);
                     // Before the guard, so it measures the caption where this pass leaves it.
                     liftWidgetLayers(strips, seeThroughBar, layerId, cellId, roomLayers, roomAbove);
+                    liftLiveCaptions(activity, root, seeThroughBar, cellId);
                     guardBottomSpacer(hidden, found, TRAVERSAL.selected, seeThroughBar, cellId);
                     gateClearControls(hidden, found, TRAVERSAL.selected, carry);
                     applySelectedTargets(ids, hidden, found, TRAVERSAL.selected,
@@ -1591,6 +1599,58 @@ public final class VideoOverlayHider {
     }
 
     /** Each cell's widget layer under {@code view}: column, wrapper, pager, cell at the most. */
+    /** LIVE preview captions lifted over the see-through bar, with the offset written. */
+    private static final Map<View, Float> LIVE_CAPTIONS_LIFTED = new WeakHashMap<>();
+
+    /**
+     * With See-through bottom bar the main feed's pager runs down behind the tabs, and a LIVE
+     * preview's caption block, which no widget layer carries, sat behind the bar with it. Each
+     * block that reaches under the bar goes up until its bottom meets the bar's top. The reach is
+     * measured inside its own cell against where the bar sits over the pager, so the cell being
+     * swiped in gets the same lift as the one on screen. Every block goes back down with the
+     * switch off, and one TikTok offset itself is left alone.
+     */
+    private static void liftLiveCaptions(Activity activity, View root, boolean seeThroughBar, int cellId) {
+        Map<View, Float> lifts = new HashMap<>();
+        int captionId = seeThroughBar && cellId != 0 ? identifier(activity, activity.getPackageName(), LIVE_CAPTION_IDS[0]) : 0;
+        int barId = captionId != 0 ? identifier(activity, activity.getPackageName(), BOTTOM_TABS_IDS[0]) : 0;
+        View bar = barId != 0 ? root.findViewById(barId) : null;
+        if (bar != null && bar.isShown() && bar.getHeight() > 0) {
+            float barTop = SeeThroughBottomBar.topInWindow(bar);
+            List<View> cells = new ArrayList<>();
+            collectCells(root, cellId, 0, cells);
+            for (View cell : cells) {
+                if (!(cell.getParent() instanceof View)) continue;
+                View block = cell.findViewById(captionId);
+                if (block == null || block.getHeight() == 0) continue;
+                Float ours = LIVE_CAPTIONS_LIFTED.get(block);
+                float bottomInCell = SeeThroughBottomBar.topInWindow(block) - (ours == null ? 0f : ours)
+                        + block.getHeight() - SeeThroughBottomBar.topInWindow(cell);
+                float barInPager = barTop - SeeThroughBottomBar.topInWindow((View) cell.getParent());
+                float reach = bottomInCell - barInPager;
+                if (reach > 0f) lifts.put(block, (float) Math.round(reach));
+            }
+        }
+        for (Map.Entry<View, Float> lift : lifts.entrySet()) {
+            offsetOwned(LIVE_CAPTIONS_LIFTED, lift.getKey(), -lift.getValue());
+        }
+        for (View block : new ArrayList<>(LIVE_CAPTIONS_LIFTED.keySet())) {
+            if (!lifts.containsKey(block)) offsetOwned(LIVE_CAPTIONS_LIFTED, block, 0f);
+        }
+    }
+
+    /** The feed's cells under [view], looked for a few levels down as the widget layers are. */
+    private static void collectCells(View view, int cellId, int depth, List<View> out) {
+        if (!(view instanceof ViewGroup)) return;
+        if (view.getId() == cellId) {
+            out.add(view);
+            return;
+        }
+        if (depth >= 24) return;
+        ViewGroup group = (ViewGroup) view;
+        for (int i = 0; i < group.getChildCount(); i++) collectCells(group.getChildAt(i), cellId, depth + 1, out);
+    }
+
     private static void collectWidgetLayers(View view, int layerId, int cellId, int depth, List<View> out) {
         if (!(view instanceof ViewGroup)) return;
         ViewGroup group = (ViewGroup) view;

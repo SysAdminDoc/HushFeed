@@ -983,7 +983,7 @@ final class SeeThroughBottomBar {
         return top < barTop && bottom > barTop + SLACK_PX;
     }
 
-    private static float topInWindow(View view) {
+    static float topInWindow(View view) {
         float top = view.getTop() + view.getTranslationY();
         android.view.ViewParent parent = view.getParent();
         while (parent instanceof View) {

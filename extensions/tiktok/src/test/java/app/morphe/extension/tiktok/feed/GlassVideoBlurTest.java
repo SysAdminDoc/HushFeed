@@ -50,6 +50,12 @@ public class GlassVideoBlurTest {
         final Rect bounds;
         final List<Rect> reads = new ArrayList<>();
         boolean answer = true;
+        /** False once a swipe has put another video on screen. */
+        boolean current = true;
+
+        @Override public boolean current() {
+            return current;
+        }
 
         Video(Rect bounds) {
             this.bounds = bounds;
@@ -122,6 +128,46 @@ public class GlassVideoBlurTest {
             SeeThroughBottomBar.setBackgroundClear(bar, true, true, true, false, true);
             SeeThroughBottomBar.GlassBackground glass = (SeeThroughBottomBar.GlassBackground) bar.getBackground();
             assertNull("the plain glass, with the switch on", glass.blur);
+        }
+    }
+
+    /** A landscape video shows fitted across with black under it, and a pill over that black reads nothing. */
+    @Test
+    public void aPillUnderALandscapeVideoReadsNothing() {
+        Rect screen = new Rect(0, 0, 1080, 2400);
+        assertEquals(new Rect(0, 896, 1080, 1504), GlassVideoBlur.picture(screen, 1920, 1080));
+        assertEquals("a portrait video fills the view", screen, GlassVideoBlur.picture(screen, 576, 1280));
+        assertNull(GlassVideoBlur.sourceRect(new Rect(54, 2250, 1026, 2380), screen, 1920, 1080));
+        assertNotNull("the same pill over a portrait video",
+                GlassVideoBlur.sourceRect(new Rect(54, 2250, 1026, 2380), screen, 576, 1280));
+    }
+
+    /**
+     * A swipe puts another video on screen, often under the same SurfaceView, while the last
+     * one keeps its final frame. The blur drops the old picture at the next read and reads the
+     * new video, rather than blurring the video before into the pill until the next search.
+     */
+    @Test
+    public void afterASwipeTheBlurLetsGoOfTheVideoBefore() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            View bar = bar(controller.get());
+            Settings.GLASS_VIDEO_BLUR.save(true);
+            SeeThroughBottomBar.setBackgroundClear(bar, true, true, true, false, true);
+            SeeThroughBottomBar.GlassBackground glass = (SeeThroughBottomBar.GlassBackground) bar.getBackground();
+            glass.setBounds(0, 0, WIDTH, HEIGHT);
+            glass.draw(new Canvas(Bitmap.createBitmap(WIDTH, HEIGHT, Bitmap.Config.ARGB_8888)));
+            glass.blur.step(1000);
+            assertTrue(glass.blur.hasFrame());
+            Video before = video;
+
+            Video next = new Video(new Rect(0, 0, WIDTH, 2400));
+            next.answer = false;
+            video = next;
+            before.current = false;
+            glass.blur.step(1000 + GlassVideoBlur.SAMPLE_MS);
+            assertFalse("the video before stayed in the pill", glass.blur.hasFrame());
+            assertEquals("the video before was read again", 1, before.reads.size());
+            assertEquals("the new video wasn't read", 1, next.reads.size());
         }
     }
 

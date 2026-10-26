@@ -41,6 +41,7 @@
 feed/VideoOverlayHider.java|VISUAL_SEARCH_LAYER_IDS|47.5.3:ft|df_search_biz|com.ss.android.ugc.aweme.search.entry.visualsearch.v2.ui.SearchVisualSearchContainerComponentV2|-
 feed/VideoOverlayHider.java|VISUAL_SEARCH_PILL_IDS|47.5.3:d6|df_search_biz|com.ss.android.ugc.aweme.search.entry.visualsearch.v2.tagv3.impl.AlgoVTagProcessorV3|on:View#1
 feed/VideoOverlayHider.java|LIVE_ENTRANCE_IDS|47.5.3:ka3|app|com.bytedance.tiktok.homepage.mainfragment.inflate.HomepageIconServiceImpl|on:TuxIconView#1
+feed/VideoOverlayHider.java|LIVE_CAPTION_IDS|47.5.3:o5c|app|com.ss.android.ugc.aweme.feed.adapter.widget.enterroom.EnterRoomDecisionWidget|-
 feed/VideoOverlayHider.java|CAPTION_IDS|desc|app|com.ss.android.ugc.aweme.feed.assem.desc.VideoDescAssem|on:View
 feed/VideoOverlayHider.java|MUSIC_IDS|47.5.3:o8s|app|com.ss.android.ugc.aweme.feed.assem.music.VideoMusicTitleAssem|on:LinearLayout#1
 feed/VideoOverlayHider.java|ACTION_BAR_IDS|47.5.3:lke|app|com.ss.android.ugc.feed.platform.cell.interact.InteractAreaComponent|on:View#5

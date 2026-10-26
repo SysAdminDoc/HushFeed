@@ -54,7 +54,41 @@ public class SeeThroughBottomBarTest {
         VideoOverlayHider.resolveForTests("47.5.3:du1", SPACER_ID);
         VideoOverlayHider.resolveForTests("47.5.3:op9", BAR_ID);
         VideoOverlayHider.resolveForTests("47.5.3:bqj", ANCHOR_ID);
+        VideoOverlayHider.resolveForTests("47.5.3:o5c", LIVE_CAPTION_ID);
         SeeThroughBottomBar.reset();
+    }
+
+    private static final int LIVE_CAPTION_ID = 0x7f0a0c24;
+
+    /**
+     * A LIVE preview in the feed has no widget layer, so with the see-through bar its caption
+     * block sat behind the tabs. It goes up until its bottom meets the bar's top, and back down
+     * with the switch off.
+     */
+    @Test
+    public void aLivePreviewsCaptionStaysAboveTheSeeThroughBar() {
+        Settings.SEE_THROUGH_BOTTOM_BAR.save(true);
+        try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            Scene scene = new Scene(activity, View.GONE, Color.BLACK);
+            FrameLayout cell = (FrameLayout) scene.root.getChildAt(0);
+            View caption = new View(activity);
+            caption.setId(LIVE_CAPTION_ID);
+            cell.addView(caption);
+            cell.layout(0, 0, 1080, 1000);
+            caption.layout(0, 700, 1080, 950);
+            scene.bar.layout(0, 900, 1080, 1000);
+
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("the caption still reaches under the bar", -50f, caption.getTranslationY(), 0f);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("a second pass lifted it again", -50f, caption.getTranslationY(), 0f);
+
+            Settings.SEE_THROUGH_BOTTOM_BAR.save(false);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(0f, caption.getTranslationY(), 0f);
+        }
     }
 
     @After

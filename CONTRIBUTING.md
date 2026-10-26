@@ -55,6 +55,10 @@ only during that first step. During the index push, it checks the artifact times
 published version tag, not the later index commit. It won't compare a new artifact with an old
 release.
 
+The unreleased receipt format qualifies every package/version pair in `patches-list.json`. Run the build stage from PowerShell with explicit inputs when the APKs live in separate folders, for example `& ./scripts/release/release.ps1 -Stage build -Fixture @('C:\fixtures\tiktok.apk', 'C:\fixtures\pinedrama-merged.apk')`. Each source must match that package's manifest, hash and exact patch selection. Native audits must independently match those inputs and the build's options. Historical receipts can't authorize a new publication. The current whole-app walk profile covers global TikTok only, so PineDrama's missing audit and walk still prevent publication.
+
+`pinedrama-47.5.3-capabilities-v1` is a separate read-only prerequisite inspection. Build its probe with `tools/verification-probe/build.ps1 -Profile pinedrama-47.5.3-capabilities-v1` and the target's signing key. `New-PineDramaInspectionPlan` in `tools/verification-probe/probe-log.ps1` requires the exact stock/patched APK, device-build receipt and bundle. It refuses split-required APKs and UI commands. Its result is always incomplete and cannot replace native feature checks or a whole-app walk.
+
 Immutable publications must pass both `gh release verify` and `gh release verify-asset`.
 Add `-RequireImmutableRelease` to the published-asset check when preparing that publication.
 Prepare a draft with every final asset attached before publishing, since an immutable release

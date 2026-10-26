@@ -37,6 +37,7 @@
 #>
 [CmdletBinding()]
 param(
+    [ValidateSet('tiktok-whole-app-v1', 'pinedrama-47.5.3-capabilities-v1', IgnoreCase = $false)][string]$Profile = 'tiktok-whole-app-v1',
     [string]$Serial,
     [string]$LeaseDir = $env:HUSHFEED_DEVICE_LEASE_DIR,
     [string]$ChatIdentity = $env:HUSHFEED_CHAT_IDENTITY,
@@ -60,6 +61,8 @@ $root = Split-Path -Parent (Split-Path -Parent $here)
 . (Join-Path $root 'scripts/Resolve-Java.ps1')
 . (Join-Path $root 'scripts/apk-signing.ps1')
 . (Join-Path $root 'scripts/device-install.ps1')
+. (Join-Path $here 'profile.ps1')
+$probeProfile = Get-VerificationProbeProfile $Profile
 
 function Initialize-ProbeOutputDirectory {
     param([string]$Path, [string]$RepositoryRoot)
@@ -111,7 +114,7 @@ function Initialize-ProbeOutputDirectory {
                 if ($child.PSIsContainer) {
                     $generated = $relative -in @('classes', 'dex') -or $inClasses
                 } else {
-                    $generated = $relative -in @('.hushfeed-probe-output', 'd8-inputs.args', 'probe-unsigned.apk', 'probe-aligned.apk',
+                    $generated = $relative -in @('.hushfeed-probe-output', 'AndroidManifest.xml', 'd8-inputs.args', 'probe-unsigned.apk', 'probe-aligned.apk',
                         'hushfeed-verification-probe.apk', 'hushfeed-verification-probe.apk.idsig') -or
                         ($inClasses -and $child.Extension -eq '.class') -or $relative -match '^dex\\classes\d*\.dex$'
                 }
@@ -145,7 +148,7 @@ if ($Uninstall) {
         $deviceLease = New-DeviceLease -LeaseDir $LeaseDir -Serial $Serial -Project 'hushfeed' `
             -ChatIdentity $ChatIdentity -Purpose 'verification probe uninstall' -LeaseMinutes $LeaseMinutes
         # pm path first: uninstalling a probe that isn't there fails with DELETE_FAILED_INTERNAL_ERROR.
-        [void](Remove-AndroidPackageIfInstalled -Adb $adb -Serial $Serial -PackageName 'app.hushfeed.verification' -Lease $deviceLease)
+        [void](Remove-AndroidPackageIfInstalled -Adb $adb -Serial $Serial -PackageName $probeProfile.ProbePackage -Lease $deviceLease)
     } finally { Remove-DeviceLease -Lease $deviceLease -WarnOnFailure }
     return
 }
@@ -206,9 +209,11 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'd8 failed.' }
 } finally { Remove-Item -LiteralPath $dexInputs -Force -ErrorAction SilentlyContinue }
 
+$manifestPath = Join-Path $OutDir 'AndroidManifest.xml'
+Write-VerificationProbeManifest -Template (Join-Path $here 'AndroidManifest.xml') -Destination $manifestPath -Profile $Profile
 $unsigned = Join-Path $OutDir 'probe-unsigned.apk'
 & (Join-Path $buildTools.FullName 'aapt2.exe') link -I $androidJar `
-    --manifest (Join-Path $here 'AndroidManifest.xml') -o $unsigned --auto-add-overlay
+    --manifest $manifestPath -o $unsigned --auto-add-overlay
 if ($LASTEXITCODE -ne 0) { throw 'aapt2 link failed.' }
 
 # aapt2 writes the manifest and resource table; the dex goes in afterwards with the zip tool,
@@ -246,16 +251,20 @@ if ($Install) {
     $adb = Resolve-Adb
     $deviceLease = New-DeviceLease -LeaseDir $LeaseDir -Serial $Serial -Project 'hushfeed' `
         -ChatIdentity $ChatIdentity -Purpose 'verification probe install' -LeaseMinutes $LeaseMinutes
-    Assert-InstalledApkSigner -Adb $adb -Serial $Serial -PackageName 'app.hushfeed.verification' -SigningSession $signingSession -Lease $deviceLease
-    Assert-InstalledApkSigner -Adb $adb -Serial $Serial -PackageName 'com.zhiliaoapp.musically' `
+    Assert-InstalledApkSigner -Adb $adb -Serial $Serial -PackageName $probeProfile.ProbePackage -SigningSession $signingSession -Lease $deviceLease
+    Assert-InstalledApkSigner -Adb $adb -Serial $Serial -PackageName $probeProfile.Package `
         -SigningSession $signingSession -RequireInstalled -Lease $deviceLease
     Assert-DeviceLease -Lease $deviceLease -Serial $Serial
     & $adb -s $Serial install -r $signed | Out-Host
     if ($LASTEXITCODE -ne 0) { throw "adb install failed on $Serial. The output above says why." }
-    Write-Host '[probe] installed. Load it into TikTok, then send it work:'
-    Write-Host "  adb -s $Serial shell am instrument app.hushfeed.verification/.Probe"
-    Write-Host "  adb -s $Serial shell am broadcast -a app.hushfeed.verification.PROBE -p com.zhiliaoapp.musically -e action dump"
-    Write-Host "  adb -s $Serial logcat -d | Select-String HushfeedProbe"
+    Write-Host "[probe] installed for $($probeProfile.Name). Load its instrumentation:"
+    Write-Host "  adb -s $Serial shell am instrument $($probeProfile.ProbePackage)/$($probeProfile.Instrumentation)"
+    if ($probeProfile.Restricted) {
+        Write-Host '[probe] PineDrama permits only a bound capabilities inspection through Invoke-ProbeAction -Profile. This cannot qualify a release.'
+    } else {
+        Write-Host "  adb -s $Serial shell am broadcast -a app.hushfeed.verification.PROBE -p $($probeProfile.Package) -e action dump"
+    }
+    Write-Host "  adb -s $Serial logcat -d -s $($probeProfile.LogTag):V -v raw"
 }
 } finally {
     try { Remove-DeviceLease -Lease $deviceLease -WarnOnFailure }

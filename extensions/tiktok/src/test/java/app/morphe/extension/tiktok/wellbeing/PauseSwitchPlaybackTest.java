@@ -3,6 +3,7 @@ package app.morphe.extension.tiktok.wellbeing;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
@@ -295,7 +296,97 @@ public class PauseSwitchPlaybackTest {
         player.bind("free");
         BlockAuthorPatch.onFirstFrame(player);
         idle();
+        assertEquals("free", SessionPlaybackHold.currentAwemeId());
         assertEquals(0, player.manager.pauses);
+        assertEquals(0, player.manager.resumes);
+    }
+
+    @Test public void aNonplayingPreloadFirstFrameDoesNotReplaceThePlayingOwner() {
+        NativeController player = playing("visible");
+        NativeController preload = new NativeController();
+        preload.bind("preload");
+        preload.manager.playing = false;
+
+        BlockAuthorPatch.onFirstFrame(preload);
+        idle();
+
+        assertEquals("visible", SessionPlaybackHold.currentAwemeId());
+        assertSame(player.currentClip(), SessionPlaybackHold.currentPlayingAweme());
+        assertEquals(0, player.manager.pauses);
+        assertEquals(0, preload.manager.pauses);
+    }
+
+    @Test public void newerProgressSupersedesAQueuedFirstFrame() {
+        playing("previous");
+        NativeController pending = new NativeController();
+        pending.bind("old-frame");
+        BlockAuthorPatch.onFirstFrame(pending);
+        NativeController newer = new NativeController();
+        newer.bind("newer-progress");
+        newer.reportProgress();
+        idle();
+
+        assertEquals("newer-progress", SessionPlaybackHold.currentAwemeId());
+        assertSame(newer.currentClip(), SessionPlaybackHold.currentPlayingAweme());
+        assertEquals(0, pending.manager.pauses);
+        assertEquals(0, newer.manager.pauses);
+    }
+
+    @Test public void anotherProgressReportFromTheSameOwnerSupersedesAQueuedFirstFrame() {
+        NativeController player = playing("visible");
+        NativeController pending = new NativeController();
+        pending.bind("old-frame");
+        BlockAuthorPatch.onFirstFrame(pending);
+        player.reportProgress();
+        idle();
+
+        assertEquals("visible", SessionPlaybackHold.currentAwemeId());
+        assertSame(player.currentClip(), SessionPlaybackHold.currentPlayingAweme());
+        assertEquals(0, pending.manager.pauses);
+    }
+
+    @Test public void aQueuedFirstFrameCannotClaimAReboundVideo() {
+        NativeController player = playing("visible");
+        NativeController pending = new NativeController();
+        pending.bind("frame-video");
+        BlockAuthorPatch.onFirstFrame(pending);
+        pending.bind("rebound-video");
+        idle();
+
+        assertEquals("visible", SessionPlaybackHold.currentAwemeId());
+        assertSame(player.currentClip(), SessionPlaybackHold.currentPlayingAweme());
+        assertEquals(0, pending.manager.pauses);
+    }
+
+    @Test public void aQueuedFirstFrameCannotClaimAReplacementManager() {
+        NativeController player = playing("visible");
+        NativeController pending = new NativeController();
+        pending.bind("frame-video");
+        SessionPlaybackHoldTest.NativeManager original = pending.manager;
+        BlockAuthorPatch.onFirstFrame(pending);
+        pending.manager = new SessionPlaybackHoldTest.NativeManager();
+        idle();
+
+        assertEquals("visible", SessionPlaybackHold.currentAwemeId());
+        assertSame(player.currentClip(), SessionPlaybackHold.currentPlayingAweme());
+        assertEquals(0, original.pauses);
+        assertEquals(0, pending.manager.pauses);
+    }
+
+    @Test public void aFirstFrameForTheSameVideoPreservesItsPauseOwner() {
+        NativeController player = playing("visible");
+        Object target = ReflectionHelpers.getStaticField(SessionPlaybackHold.class, "current");
+
+        BlockAuthorPatch.onFirstFrame(player);
+        idle();
+
+        assertSame(target, ReflectionHelpers.getStaticField(SessionPlaybackHold.class, "current"));
+        SessionPlaybackHold.pauseForSwitch();
+        idle();
+        SessionPlaybackHold.releaseForSwitch(true);
+        idle();
+        assertEquals(1, player.manager.pauses);
+        assertEquals(1, player.manager.resumes);
     }
 
     @Test public void goingAwayLeavesTheVideoToTikTokAndASheetStillOpenStopsItAgain() {
@@ -548,6 +639,37 @@ public class PauseSwitchPlaybackTest {
             sheet.getViewTreeObserver().dispatchOnGlobalLayout();
             idle();
             assertEquals("a sheet with nothing to bind left the video playing", 2, player.manager.pauses);
+        }
+    }
+
+    @Test public void commentsAfterTheFirstFramePauseBeforeAnyProgressReport() {
+        Settings.PAUSE_ON_COMMENTS.save(true);
+        // A cold process has no progress owner. Do not use playing(), which reports progress.
+        ReflectionHelpers.setStaticField(SessionPlaybackHold.class, "current", null);
+        try (var owner = Robolectric.buildActivity(FeedActivity.class).create()) {
+            PausePlayback.install(owner.get());
+            owner.start().resume().visible();
+            Activity activity = owner.get();
+            Utils.setActivity(activity);
+            NativeController player = new NativeController();
+            player.bind("cold");
+            BlockAuthorPatch.onFirstFrame(player);
+            idle();
+            assertEquals("the first frame alone paused the video", 0, player.manager.pauses);
+
+            FrameLayout sheet = panelIn(activity, true);
+            idle();
+            assertEquals("comments waited for a progress report to pause the video",
+                    1, player.manager.pauses);
+            long stoppedAt = player.manager.position;
+            player.manager.advance(2_000);
+            assertEquals(stoppedAt, player.manager.position);
+
+            park(sheet);
+            idleFor(300);
+            assertEquals("closing comments did not return the first-frame owner",
+                    1, player.manager.resumes);
+            assertEquals(1, player.manager.pauses);
         }
     }
 

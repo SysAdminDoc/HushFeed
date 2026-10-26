@@ -1,6 +1,19 @@
 ## Unreleased
 
+* **Diagnostica:** I record della callback del primo fotogramma conservano la fonte e i tempi monotoni per controllare l’avvio (#150).
+* **Controlli della build:** I controlli di rilascio richiedono prove native e APK corrispondenti per ogni pacchetto dichiarato. I controlli nell’app verificano la build installata e le opzioni delle patch.
+* **TikTok:** Recording recovery exports use bulk writes to avoid long waits when saving large files.
+* **TikTok:** Recovery Retry keeps the recording's original stop reason instead of saying TikTok closed. Recovery dialogs follow Hushfeed's theme.
+* **TikTok:** Screen recordings check storage as they run and keep recovery files until the saved copy is verified. Interrupted recordings can be retried, exported or deleted.
+* **Build checks:** Patch audits now check the installed APK and selected patches. Results from a different package or an excluded patch stay historical.
+* **Controlli della build:** Le verifiche controllano che la diagnostica sia completa prima di segnalare interruttori mancanti. Senza un video, i controlli dipendenti restano inconcludenti. La verifica della regione del commentatore usa la traccia attuale della cache.
+* **TikTok:** La registrazione dello schermo mantiene timestamp distinti per i primi fotogrammi mentre si avvia il suono.
+* **TikTok:** Le registrazioni dello schermo mantengono i primi fotogrammi mentre si avvia il codificatore audio.
+* **Controlli della build:** Una verifica delle patch non convalida più una build quando cambiano gli input eseguibili. Le ripetizioni parziali lasciano storici i controlli precedenti.
+* **TikTok:** La registrazione dello schermo libera le risorse audio se il suono non può avviarsi. L'avviso di salvataggio ora indica quando la registrazione è senza audio.
+* **TikTok:** La registrazione dello schermo ora chiede ad Android di acquisire solo l'audio dell'app modificata.
 * **TikTok:** La pulizia di Service+ ora controlla la prima voce dell'anteprima LIVE, come fa TikTok (#94).
+* **TikTok:** La pausa dei commenti può identificare il primo fotogramma in riproduzione prima che arrivi il primo aggiornamento di avanzamento (#151).
 
 ## 0.79.0 (2026-10-24)
 

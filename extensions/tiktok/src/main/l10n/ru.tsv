@@ -2396,7 +2396,6 @@ Bold	Жирная
 Extra bold	Сверхжирная
 Caption height in Clear display	Высота субтитров в чистом виде
 Lifts the kept caption above its usual spot in Clear display. Use 0 for the usual spot, or up to %1$d.	Поднимает оставленную строку субтитров в чистом виде над её обычным местом. Укажите 0 для обычного места или до %1$d.
-The LIVE recording TikTok closed on couldn't be saved. Its unfinished file was cleared.	Не удалось сохранить запись LIVE, прерванную закрытием TikTok. Незавершённый файл удалён.
 Also on opened videos	Также в открытых видео
 Hide the search bar at the top of videos you open from search, a profile or your watch history. The Back button stays.	Скрывать строку поиска вверху видео, открытых из поиска, профиля или истории просмотров. Кнопка «Назад» остаётся.
 Hide profile views	Скрывать просмотры профиля
@@ -2503,3 +2502,15 @@ Recording this LIVE's screen from now	Запись экрана этого LIVE 
 Recording this LIVE's screen from now, without sound	Запись экрана этого LIVE началась, без звука
 Allow photo comments	Разрешить комментарии с фото
 Show the gallery tab in the comment box, so you can add a photo to a comment like on TikTok. PineDrama turns it off for everyone. TikTok's server still decides whether your account can post one.	Показывает вкладку галереи в поле комментария, чтобы можно было добавить фото к комментарию, как в TikTok. PineDrama отключает её для всех. Может ли ваш аккаунт его опубликовать, всё равно решает сервер TikTok.
+This screen recording has no sound.	В этой записи экрана нет звука.
+Export recording files	Экспортировать файлы записи
+Delete recording files	Удалить файлы записи
+The publication state of these older recording files is unknown. Export a copy or delete the retained files.	Статус публикации этих старых файлов записи неизвестен. Экспортируйте копию или удалите сохранённые файлы.
+The screen recording did not finish. Its files can be exported but may not play.	Запись экрана не завершилась. Файлы можно экспортировать, но они могут не воспроизводиться.
+Recording files need recovery	Файлы записи требуют восстановления
+The recovery record is damaged. Export a copy of the recording files or delete them.	Запись восстановления повреждена. Экспортируйте копию файлов записи или удалите их.
+The export may be incomplete. The original recording files are still kept.	Экспорт может быть неполным. Исходные файлы записи по-прежнему сохранены.
+Some recording files remain. Try deleting them again.	Некоторые файлы записи остались. Попробуйте удалить их ещё раз.
+
+# context: Explicit recording Retry when the original stop reason was not retained.
+Recovered recording saved to %1$s	Восстановленная запись сохранена в %1$s

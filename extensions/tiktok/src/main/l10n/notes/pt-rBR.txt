@@ -1,6 +1,19 @@
 ## Unreleased
 
+* **Diagnóstico:** Os registros da chamada do primeiro quadro mantêm a origem e tempos monotônicos para verificar o início da reprodução (#150).
+* **Verificações da compilação:** As verificações de lançamento exigem APK e testes nativos correspondentes para cada pacote anunciado. Os testes de navegação verificam a compilação instalada e as opções dos patches.
+* **TikTok:** Recording recovery exports use bulk writes to avoid long waits when saving large files.
+* **TikTok:** Recovery Retry keeps the recording's original stop reason instead of saying TikTok closed. Recovery dialogs follow Hushfeed's theme.
+* **TikTok:** Screen recordings check storage as they run and keep recovery files until the saved copy is verified. Interrupted recordings can be retried, exported or deleted.
+* **Build checks:** Patch audits now check the installed APK and selected patches. Results from a different package or an excluded patch stay historical.
+* **Verificações de compilação:** As auditorias conferem o diagnóstico completo antes de apontar opções ausentes. Sem um vídeo, as verificações dependentes ficam inconclusivas. A região do comentarista usa o registro atual do cache.
+* **TikTok:** A gravação de tela mantém tempos distintos para os primeiros quadros enquanto o áudio inicia.
+* **TikTok:** As gravações de tela mantêm os primeiros quadros enquanto o codificador de áudio inicia.
+* **Verificações de compilação:** Uma auditoria de patches deixa de validar uma compilação quando suas entradas executáveis mudam. Execuções parciais mantêm as verificações anteriores como históricas.
+* **TikTok:** A gravação de tela libera os recursos de áudio quando o som não consegue iniciar. O aviso de salvamento agora informa quando a gravação está sem som.
+* **TikTok:** A gravação de tela agora pede ao Android para capturar apenas o som do aplicativo modificado.
 * **TikTok:** A limpeza do Service+ agora verifica a primeira entrada da prévia da LIVE, como o próprio TikTok (#94).
+* **TikTok:** A pausa dos comentários pode identificar o primeiro quadro em reprodução antes da primeira atualização de progresso (#151).
 
 ## 0.79.0 (2026-10-24)
 

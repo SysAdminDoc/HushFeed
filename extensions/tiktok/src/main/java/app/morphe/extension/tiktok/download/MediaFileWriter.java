@@ -31,6 +31,19 @@ final class MediaFileWriter {
         void copied(long bytes);
     }
 
+    interface CopyGuard { void before(long copied,int count)throws IOException; }
+
+    interface Publication {
+        void intent(String key, String collection, String temporaryName, String folder) throws IOException;
+        void located(Uri uri) throws IOException;
+        String legacyName(String name);
+        void legacyIntent(File file) throws IOException;
+        void legacyLocated(File file) throws IOException;
+        default void beforeCopy(long copied,int count,File destination)throws IOException { }
+        void verify(Saved saved) throws IOException;
+        void acknowledged(Saved saved) throws IOException;
+    }
+
     static final class Saved {
         final String name;
         /** Null below API 29, where the file goes straight to disk and only the scanner sees it. */
@@ -60,6 +73,11 @@ final class MediaFileWriter {
     /** As above, for a file that may be larger than a post's download is allowed to be. */
     static Saved publishForResult(Context context, File source, String name, String mime, String path, boolean video,
             long maxBytes) throws IOException {
+        return publishForResult(context, source, name, mime, path, video, maxBytes, null);
+    }
+
+    static Saved publishForResult(Context context, File source, String name, String mime, String path, boolean video,
+            long maxBytes, Publication owner) throws IOException {
         MediaBudget.check(null);
         File destinationDirectory = path == null
                 ? Environment.getExternalStorageDirectory()
@@ -82,15 +100,17 @@ final class MediaFileWriter {
             } else {
                 collection = DownloadDestination.collectionUri(path, video);
             }
-            Uri uri = MediaCache.insertPending(context, resolver, collection, values);
+            Uri uri = MediaCache.insertPending(context, resolver, collection, values, owner);
             // On disk before the copy, so the next start can look the row up should the process
             // die anywhere between here and the save hearing that it landed.
             SaveRecords.Slot slot = SaveRecords.located(uri);
+            boolean committing = false;
             try {
                 try (InputStream input = new FileInputStream(source); OutputStream output = resolver.openOutputStream(uri, "w")) {
                     if (output == null) throw new IOException("Could not open gallery entry");
-                    copy(input, output, maxBytes, null,
-                            destinationDirectory);
+                    copy(input, output, maxBytes, null,destinationDirectory,null,owner==null?null:(copied,count)->owner.beforeCopy(copied,count,destinationDirectory));
+                    output.flush();
+                    if (owner != null && output instanceof FileOutputStream) ((FileOutputStream) output).getFD().sync();
                 }
                 MediaBudget.check(null);
                 // The row went in under a name MediaStore could not collide with, so this is
@@ -100,6 +120,7 @@ final class MediaFileWriter {
                 values.clear();
                 values.put(MediaStore.MediaColumns.DISPLAY_NAME, name);
                 values.put(MediaStore.MediaColumns.IS_PENDING, 0);
+                committing = true;
                 if (resolver.update(uri, values, null, null) != 1) throw new IOException("Could not publish gallery entry");
                 // Read after the rename, not before it: MediaStore may still have had to make
                 // the reader's name unique, and what is reported has to be what landed.
@@ -112,16 +133,29 @@ final class MediaFileWriter {
                 if (savedName.startsWith(MediaCache.TEMPORARY_NAME_PREFIX)) {
                     throw new IOException("Gallery entry kept its placeholder name");
                 }
+                Saved saved = new Saved(savedName, uri);
+                if (owner != null) owner.verify(saved);
+                boolean acknowledged = true;
+                if (owner != null) {
+                    try { owner.acknowledged(saved); }
+                    catch (IOException failure) {
+                        acknowledged = false;
+                        Logger.printException(() -> "The recording was published but its recovery acknowledgement is pending", failure);
+                    }
+                }
                 try {
-                    MediaCache.clearPending(context, uri);
+                    if (acknowledged) MediaCache.clearPending(context, uri);
                 } catch (IOException journalError) {
                     // Reconciliation checks IS_PENDING before deleting a journaled URI, so a
                     // completed row remains safe if this final cleanup write is interrupted.
                     Logger.printException(() -> "Could not clear media publication journal", journalError);
                 }
                 SaveRecords.published(slot);
-                return new Saved(savedName, uri);
+                return saved;
             } catch (IOException | RuntimeException exception) {
+                // A commit may have landed even if the provider threw. Its recording owner
+                // keeps the exact URI and source until a later read can settle that fact.
+                if (owner != null && committing) { SaveRecords.abandoned(slot); throw exception; }
                 boolean deleted = false;
                 try {
                     deleted = resolver.delete(uri, null, null) > 0;
@@ -142,19 +176,28 @@ final class MediaFileWriter {
         } else {
             File directory = new File(Environment.getExternalStorageDirectory(), path);
             if (!directory.isDirectory() && !directory.mkdirs()) throw new IOException("Could not create download folder");
-            File target = claim(directory, name);
+            File target = claim(directory, owner == null ? name : owner.legacyName(name), owner);
             // With the size a complete copy has, so the next start can tell it from a cut-off one.
             SaveRecords.Slot slot = SaveRecords.located(target, source.length());
             boolean landed = false;
             try {
+                if (owner != null) owner.legacyLocated(target);
                 try (InputStream input = new FileInputStream(source); OutputStream output = new FileOutputStream(target)) {
-                    copy(input, output, maxBytes, null, directory);
+                    copy(input, output, maxBytes, null,directory,null,owner==null?null:(copied,count)->owner.beforeCopy(copied,count,directory));
+                    output.flush();
+                    if (owner != null && output instanceof FileOutputStream) ((FileOutputStream) output).getFD().sync();
                 } catch (IOException exception) {
                     if (!target.delete()) exception.addSuppressed(new IOException("Could not remove incomplete download"));
                     throw exception;
                 }
+                Saved verified = new Saved(target.getName(), null, target);
+                if (owner != null) owner.verify(verified);
                 MediaScannerConnection.scanFile(context, new String[]{target.getAbsolutePath()}, new String[]{mime}, null);
                 landed = true;
+                if (owner != null) {
+                    try { owner.acknowledged(new Saved(target.getName(), null, target)); }
+                    catch (IOException failure) { Logger.printException(() -> "The recording file is saved but its recovery acknowledgement is pending", failure); }
+                }
             } finally {
                 if (landed) SaveRecords.published(slot);
                 else SaveRecords.abandoned(slot);
@@ -169,12 +212,18 @@ final class MediaFileWriter {
      * then name_3, rather than replacing the one already there.
      */
     static File claim(File directory, String name) throws IOException {
+        return claim(directory, name, null);
+    }
+
+    private static File claim(File directory, String name, Publication owner) throws IOException {
         int dot = name.lastIndexOf('.');
         String stem = dot < 0 ? name : name.substring(0, dot);
         String extension = dot < 0 ? "" : name.substring(dot);
         File target = new File(directory, name);
         int suffix = 1;
-        while (!target.createNewFile()) {
+        while (true) {
+            if (owner != null) owner.legacyIntent(target);
+            if (target.createNewFile()) break;
             if (++suffix > 1000) throw new IOException("Too many files with that name");
             target = new File(directory, stem + "_" + suffix + extension);
         }
@@ -241,6 +290,11 @@ final class MediaFileWriter {
     static long copy(InputStream input, OutputStream output, long limit,
             MediaBudget.Deadline deadline, File targetDirectory,
             CopyProgress copied) throws IOException {
+        return copy(input,output,limit,deadline,targetDirectory,copied,null);
+    }
+
+    static long copy(InputStream input,OutputStream output,long limit,
+            MediaBudget.Deadline deadline,File targetDirectory,CopyProgress copied,CopyGuard guard)throws IOException {
         byte[] buffer = new byte[65536];
         long total = 0;
         long spaceAllowance = 0;
@@ -258,6 +312,7 @@ final class MediaFileWriter {
                 MediaBudget.checkStreamingDiskSpace(targetDirectory, deadline);
                 spaceAllowance = MediaBudget.STREAM_SPACE_CHECK_BYTES;
             }
+            if(guard!=null)guard.before(total-count,count);
             output.write(buffer, 0, count);
             if (copied != null) copied.copied(total);
             if (targetDirectory != null) spaceAllowance -= count;

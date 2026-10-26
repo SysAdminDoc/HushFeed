@@ -212,3 +212,19 @@ function Get-WalkVerdict {
     elseif (-not $full) { 'PARTIAL' } else { 'PASS' }
     [pscustomobject]@{ Result = $result; Full = $full; Missing = $missing; Problems = $problems.ToArray() }
 }
+
+function ConvertFrom-WalkPackageDump {
+    param([string]$Text, [string]$ExpectedPackage = $WalkPackage)
+    $packages = [regex]::Matches($Text, '(?m)^\s*Package \[([A-Za-z0-9_.]+)\]\s*\(')
+    $versions = [regex]::Matches($Text, '(?m)^\s*versionName=(\S+)\s*$')
+    $codes = [regex]::Matches($Text, '(?m)^\s*versionCode=([0-9]+)\b')
+    [long]$code = 0
+    if ($packages.Count -ne 1 -or $packages[0].Groups[1].Value -cne $ExpectedPackage -or
+            $versions.Count -ne 1 -or $codes.Count -ne 1 -or
+            -not [long]::TryParse($codes[0].Groups[1].Value, [ref]$code) -or $code -le 0) {
+        throw 'The installed package dump has no unambiguous package/version identity.'
+    }
+    return [pscustomobject]@{
+        package = $packages[0].Groups[1].Value; versionName = $versions[0].Groups[1].Value; versionCode = $codes[0].Groups[1].Value
+    }
+}

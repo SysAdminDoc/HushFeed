@@ -30,6 +30,7 @@ import com.ss.android.ugc.aweme.common.widget.VerticalViewPager;
 import com.ss.android.ugc.aweme.feed.assem.ability.IVideoCommentAbility;
 import com.ss.android.ugc.feed.platform.cell.ability.VideoDiggAssemAbility;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.After;
@@ -98,6 +99,8 @@ public class DoubleTapCommentsTest {
 
     private android.app.Activity activity;
     private FrameLayout root;
+    /** Native cells own their assems and bound models while the views are alive. */
+    private final List<Object> cellBindings = new ArrayList<>();
 
     @Before public void setUp() {
         var controller = Robolectric.buildActivity(android.app.Activity.class).setup().visible();
@@ -203,12 +206,14 @@ public class DoubleTapCommentsTest {
     }
 
     /** Registers the comment button of the pager's cell at this index, as TikTok's assem does. */
-    private static CommentAssem assem(VerticalViewPager pager, int index, String id) {
+    private CommentAssem assem(VerticalViewPager pager, int index, String id) {
         return assem(pager, index, new GestureActionsTest.Clip(id));
     }
 
-    private static CommentAssem assem(VerticalViewPager pager, int index, GestureActionsTest.Clip clip) {
+    private CommentAssem assem(VerticalViewPager pager, int index, GestureActionsTest.Clip clip) {
         CommentAssem assem = new CommentAssem();
+        cellBindings.add(assem);
+        cellBindings.add(clip);
         View button = rail(pager, index).getChildAt(0);
         GestureActions.registerCommentView(assem, button);
         GestureActions.bindCommentView(assem, new Params(clip));
@@ -544,6 +549,9 @@ public class DoubleTapCommentsTest {
         playing(new GestureActionsTest.Clip("one"));
         Settings.EDGE_SEEK.save(true);
         Settings.EDGE_SEEK_SECONDS.save(5);
+        // The real cell keeps its binding alive even when another allocation triggers GC.
+        System.gc();
+        System.runFinalization();
         try {
             ShadowToast.reset();
             assertTrue(GestureActions.onLongPress(activity.getResources().getDisplayMetrics().widthPixels * 0.9f));

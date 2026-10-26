@@ -604,6 +604,7 @@
   "checks": [
    {
     "id": "stays-off-tiktok",
+    "patchSelection": "absent",
     "what": "PineDrama only, so on TikTok the patch must not run: the shared extension still ships the switch's class, but the probe's registered switches list has no commentPhotos, and TikTok's own comment box is left as TikTok built it. (The PineDrama side was checked by hand on the S22, since this audit drives TikTok.)",
     "steps": [
      {
@@ -13845,12 +13846,19 @@
      {
       "probe": "seed-commenter-region",
       "extras": {
+       "region": "clear"
+      },
+      "expect": "ok seed-commenter-region cleared"
+     },
+     {
+      "probe": "seed-commenter-region",
+      "extras": {
        "region": "AQ"
       },
       "expect": "ok seed-commenter-region AQ for [1-9][0-9]* commenters, rebound 1 list"
      },
      {
-      "log": "Commenter region: the comment's account carried none, showing (?-i:AQ)\\b",
+      "log": "Commenter region: remembered by (?:uid|handle) answered, showing (?-i:AQ)\\b",
       "within": 4000
      },
      {
@@ -13891,7 +13899,7 @@
     "auto": true
    }
   ],
-  "notes": "The commenter's country comes from the Show author region cache for creators seen in the feed, which is why Show author region is switched on. A commenter whose country is unknown shows no flag. TikTok 47.5.3 sends no country with any comment account (a heap check on 2026-10-23 found no other source in the client), so sheet-text seeds that cache through the probe's seed-commenter-region action and clears it after. The action also has the open sheet's list bind its rows again, because closing and reopening a video's sheet shows TikTok's cached rows without binding them, so a reopen never reached the region code. Debug line when a region is looked up: 'Commenter region: the comment's account ...' (printDebug, CommenterDetails.java:500)."
+  "notes": "The commenter's country comes from the Show author region cache for creators seen in the feed, which is why Show author region is switched on. A commenter whose country is unknown shows no flag. TikTok 47.5.3 sends no country with any comment account (a heap check on 2026-10-23 found no other source in the client), so sheet-text clears the remembered UID and handle countries before seeding AQ through the probe's seed-commenter-region action, then clears them after. The action also has the open sheet's list bind its rows again, because closing and reopening a video's sheet shows TikTok's cached rows without binding them, so a reopen never reached the region code. Debug line for the seeded fallback: 'Commenter region: remembered by handle answered, showing AQ' (printDebug, CommenterDetails.regionOf)."
  },
  {
   "name": "Show engagement rate",

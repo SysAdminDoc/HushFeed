@@ -140,6 +140,11 @@ public final class MediaCache {
             Uri collection,
             ContentValues values
     ) throws IOException {
+        return insertPending(context, resolver, collection, values, null);
+    }
+
+    static Uri insertPending(Context context, ContentResolver resolver, Uri collection, ContentValues values,
+            MediaFileWriter.Publication owner) throws IOException {
         String displayName = values == null
                 ? null : values.getAsString(MediaStore.MediaColumns.DISPLAY_NAME);
         if (displayName == null || displayName.isEmpty()) {
@@ -156,10 +161,12 @@ public final class MediaCache {
         String token = beginPending(context, collection, temporaryName, relativePath);
         Uri uri = null;
         try {
+            if (owner != null) owner.intent(token, collection.toString(), temporaryName, relativePath);
             ContentValues pending = new ContentValues(values);
             pending.put(MediaStore.MediaColumns.DISPLAY_NAME, temporaryName);
             uri = resolver.insert(collection, pending);
             if (uri == null) throw new IOException("MediaStore returned no URI");
+            if (owner != null) owner.located(uri);
             markPending(context, token, uri);
             return uri;
         } catch (IOException | RuntimeException error) {
@@ -263,6 +270,7 @@ public final class MediaCache {
             Context app = applicationOr(context);
             synchronized (LOCK) {
                 File directory = directory(app);
+                RecordingRetention retained = RecordingRetention.in(app);
                 long cutoff = System.currentTimeMillis() - STALE_AFTER_MS;
                 File pendingBase = new File(directory, PENDING_FILE_NAME);
                 File pendingBackup = new File(directory, PENDING_FILE_NAME + ".bak");
@@ -273,6 +281,7 @@ public final class MediaCache {
                         if (!file.isFile() || file.equals(pendingBase) || file.equals(pendingBackup)
                                 || file.equals(pendingNew)
                                 || ACTIVE_FILES.contains(file.getAbsolutePath())) continue;
+                        if (RecordingRetention.legacyCandidate(file) || retained.protectsCache(file)) continue;
                         if (file.lastModified() < cutoff && !file.delete()) {
                             Logger.printInfo(() -> "Could not remove stale media file " + file.getName());
                         }
@@ -288,7 +297,7 @@ public final class MediaCache {
                     Iterator<Map.Entry<String, Long>> iterator = records.entrySet().iterator();
                     while (iterator.hasNext()) {
                         Map.Entry<String, Long> entry = iterator.next();
-                        if (entry.getValue() >= cutoff) continue;
+                        if (entry.getValue() >= cutoff || retained.protectsPending(entry.getKey())) continue;
                         if (reconcilePendingEntry(app.getContentResolver(), entry.getKey())) {
                             iterator.remove();
                             changed = true;

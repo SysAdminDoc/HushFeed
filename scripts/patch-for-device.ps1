@@ -52,6 +52,7 @@ param(
     [string]$Apk,
     [string]$DesktopJar,
     [string]$Java,
+    [string]$Aapt2,
     [string]$Sdk = "$env:LOCALAPPDATA\Android\Sdk",
     [string]$Keystore = "$HOME\.android\sideload-release.jks",
     [string]$KeyAlias = 'sideload',
@@ -118,6 +119,11 @@ $signingSession = $null
 $deviceLease = $null
 $outputInitialized = $false
 try {
+$Aapt2 = Resolve-Aapt2 -Explicit $Aapt2 -Root $root
+$sourceApkFacts = Get-ApkManifestFacts -Apk $Apk -Aapt2 $Aapt2
+if ($sourceApkFacts.package -cne $target.PackageName -or $sourceApkFacts.versionName -cnotin @($target.PackageVersions)) {
+    throw "The source APK is $($sourceApkFacts.package) $($sourceApkFacts.versionName), not a declared target for $($target.PackageName)."
+}
 $signingSession = New-ApkSigningSession -BoundParameters $PSBoundParameters -Root $root -Sdk $Sdk `
     -Java $Java -Keystore $Keystore -KeyAlias $KeyAlias -KeystoreType $KeystoreType -OutputDirectory $OutDir
 
@@ -183,10 +189,18 @@ if ($auditBundleHash -ine (Get-FileHash -LiteralPath $bundle -Algorithm SHA256).
     $auditInputHash -ine (Get-FileHash -LiteralPath $Apk -Algorithm SHA256).Hash) {
     throw 'The bundle or original APK changed during patching; no audit build receipt can be issued.'
 }
+$patchedApkFacts = Get-ApkManifestFacts -Apk $out -Aapt2 $Aapt2
 # This describes the APK just produced, not the checkout running the audit later.
 $auditBuildReceipt = [ordered]@{
-    schemaVersion = 1; kind = 'hushfeed-device-build'
-    apk = [ordered]@{ sha256 = (Get-FileHash -LiteralPath $out -Algorithm SHA256).Hash.ToLowerInvariant() }
+    schemaVersion = 2; kind = 'hushfeed-device-build'
+    apk = [ordered]@{
+        package = $patchedApkFacts.package; versionName = $patchedApkFacts.versionName; versionCode = $patchedApkFacts.versionCode
+        sha256 = (Get-FileHash -LiteralPath $out -Algorithm SHA256).Hash.ToLowerInvariant()
+    }
+    sourceApk = [ordered]@{
+        package = $sourceApkFacts.package; versionName = $sourceApkFacts.versionName; versionCode = $sourceApkFacts.versionCode
+        sha256 = $auditInputHash
+    }
     sourceApkSha256 = $auditInputHash
     bundle = [ordered]@{ sha256 = $auditBundleHash }
     source = $auditBundleSource

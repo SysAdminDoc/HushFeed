@@ -1,6 +1,19 @@
 ## Unreleased
 
+* **Tanılama:** İlk kare geri çağrısı kayıtları, başlangıç kontrolleri için kaynak bağını ve monoton zaman damgalarını korur (#150).
+* **Derleme kontrolleri:** Sürüm kontrolleri, belirtilen her paket için eşleşen APK ve uygulama içi test kanıtı gerektirir. Gezinme testleri kurulu derlemeyi ve yama seçeneklerini doğrular.
+* **TikTok:** Recording recovery exports use bulk writes to avoid long waits when saving large files.
+* **TikTok:** Recovery Retry keeps the recording's original stop reason instead of saying TikTok closed. Recovery dialogs follow Hushfeed's theme.
+* **TikTok:** Screen recordings check storage as they run and keep recovery files until the saved copy is verified. Interrupted recordings can be retried, exported or deleted.
+* **Build checks:** Patch audits now check the installed APK and selected patches. Results from a different package or an excluded patch stay historical.
+* **Derleme kontrolleri:** Yama denetimleri, eksik anahtar bildirmeden önce tanılama verilerinin tamlığını kontrol eder. Video yoksa ilgili kontroller sonuçsuz kalır. Yorumcu bölgesi kontrolü güncel önbellek kaydını kullanır.
+* **TikTok:** Ses başlarken ekran kaydının ilk karelerinin ayrı zaman damgaları korunur.
+* **TikTok:** Ses kodlayıcısı başlarken ekran kayıtlarının ilk video kareleri korunur.
+* **Derleme kontrolleri:** Çalıştırılabilir girdiler değiştiğinde yama denetimi artık derlemeyi doğrulamaz. Kısmi tekrarlar eski kontrolleri geçmiş kayıt olarak bırakır.
+* **TikTok:** Ses başlatılamadığında ekran kaydı ses kaynaklarını serbest bırakır. Kayıtta ses yoksa kaydetme bildirimi artık bunu belirtir.
+* **TikTok:** Ekran kaydı artık Android’den yalnızca yamalanmış uygulamanın sesini yakalamasını istiyor.
 * **TikTok:** Service+ temizliği artık LIVE önizlemesinin ilk öğesini TikTok'un kendi gösterim mantığına göre kontrol eder (#94).
+* **TikTok:** Yorumlar açıldığındaki duraklatma, ilk ilerleme bildirimi gelmeden önce oynatılan ilk kareyi belirleyebilir (#151).
 
 ## 0.79.0 (2026-10-24)
 

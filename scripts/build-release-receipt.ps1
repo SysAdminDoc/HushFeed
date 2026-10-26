@@ -44,6 +44,7 @@ param(
     # fixture whose stamp names this bundle, this APK, this patch list and this CLI is read from
     # there, the same report and patched APK this script's own run would produce, instead of
     # being patched a second time. Anything else is patched here as before.
+    [string[]]$Option = @(),
     [string]$AppliedDir
 )
 
@@ -76,9 +77,12 @@ if (-not $OutputPath) { $OutputPath = Join-Path $Root "release-receipt-$releaseV
 
 $catalog = Get-Content -LiteralPath $PatchList -Raw | ConvertFrom-Json
 $expectedTarget = Get-PatchTarget -PatchList $catalog
-$patchNames = @(Get-PackagePatchNames -PatchList $catalog -PackageName $expectedTarget.PackageName)
+$expectedTargets = @(Get-DeclaredPatchTargets -PatchList $catalog)
+$patchNames = @($catalog.patches | ForEach-Object { [string]$_.name })
 if ($patchNames.Count -eq 0) { throw "No patches listed in $PatchList." }
-$dependencyNames = @(Get-PatchDependencyNames -PatchList $catalog -RequestedNames $patchNames)
+foreach ($override in $Option) {
+    if ($override -cnotmatch '^([^|]+)\|([^=]+)=(.*)$' -or $Matches[1] -cnotin $patchNames) { throw 'A fixture option names no catalog patch.' }
+}
 
 $catalogText = Get-Content -LiteralPath (Join-Path $Root 'gradle/libs.versions.toml') -Raw
 $patcherMatch = [regex]::Match($catalogText, '(?m)^\s*morphe-patcher\s*=\s*"([^"]+)"')
@@ -93,18 +97,15 @@ if ($commit -notmatch '^[0-9a-f]{40}$') { throw "git did not answer with a commi
 $commitTimestamp = [long]((Invoke-RepoGit -Root $Root -Arguments @('log', '-1', '--format=%ct') |
     Select-Object -First 1))
 
-# The device audit of each declared version, held to today's catalog. A bundle whose audit never
-# ran or went stale after a catalog edit stops here, before any fixture is patched.
-$audit = Test-AuditResults -Root $Root -PackageName $expectedTarget.PackageName `
-    -PackageVersions @($expectedTarget.PackageVersions) -Head $commit
-if (-not $audit.Valid) { throw "The device audit doesn't back this bundle: $($audit.Reason)" }
-
 # The bundle is read once, here, before any fixture is patched. Measuring it at the end instead
 # would describe whatever the release path holds when the run finishes, which is not necessarily
 # what the patch runs used: a run takes long enough for another buildAndroid to replace it.
-$bundleManifest = Get-BundleManifestFacts -BundlePath $Bundle
 $bundleSize = (Get-Item -LiteralPath $Bundle).Length
 $bundleHash = Get-Sha256Hex -Path $Bundle
+$bundleManifest = Get-BundleManifestFacts -BundlePath $Bundle
+if ((Get-Sha256Hex -Path $Bundle) -cne $bundleHash -or (Get-Item -LiteralPath $Bundle).Length -ne $bundleSize) {
+    throw 'The bundle changed while its source manifest was read.'
+}
 
 # New receipt creation always uses the current provenance contract, including for an old version
 # label. Historical schema 1 reading is confined to validation of frozen published documents.
@@ -217,15 +218,42 @@ New-Item -ItemType Directory -Force -Path $WorkDir | Out-Null
 $workRoot = (Resolve-Path -LiteralPath $WorkDir).Path
 $targets = New-Object System.Collections.Generic.List[object]
 
+$fixtureInputs = New-Object System.Collections.Generic.List[object]
+$prepared = New-Object System.Collections.Generic.List[object]
 foreach ($apk in $Fixture) {
     if (-not (Test-Path -LiteralPath $apk -PathType Leaf)) { throw "Fixture not found: $apk" }
-    $label = Split-Path -Leaf $apk
-
+    $inputHash = (Get-Sha256Hex -Path $apk).ToLowerInvariant()
     $stock = Get-ApkManifestFacts -Apk $apk -Aapt2 $Aapt2
-    if ($stock.package -ne $expectedTarget.PackageName) {
-        throw "$label is $($stock.package), not the catalog's target $($expectedTarget.PackageName)."
+    if ((Get-Sha256Hex -Path $apk).ToLowerInvariant() -cne $inputHash) { throw 'A fixture changed while its manifest was read.' }
+    $packageTarget = @($expectedTargets | Where-Object { $_.PackageName -ceq $stock.package })
+    if ($packageTarget.Count -ne 1) { throw 'A fixture package is not declared in the catalog.' }
+    $selected = @($packageTarget[0].PatchNames)
+    $options = @($Option | Where-Object { ($_ -split '\|', 2)[0] -cin $selected })
+    $source = [ordered]@{ file = Split-Path -Leaf $apk; package = $stock.package; versionName = $stock.versionName
+        versionCode = $stock.versionCode; sha256 = $inputHash
+        forced = $stock.versionName -cnotin @($packageTarget[0].PackageVersions) }
+    $selection = [ordered]@{ patches = $selected; options = $options; dependencies = @($packageTarget[0].DependencyNames) }
+    $fixtureInputs.Add([ordered]@{ source = $source; selection = $selection })
+    $prepared.Add([pscustomobject]@{ path = $apk; stock = $stock; source = $source; selection = $selection; target = $packageTarget[0] })
+}
+foreach ($declared in $expectedTargets) {
+    foreach ($declaredVersion in @($declared.PackageVersions)) {
+        if (@($prepared | Where-Object { $_.source.package -ceq $declared.PackageName -and $_.source.versionName -ceq $declaredVersion -and -not $_.source.forced }).Count -eq 0) {
+            throw "Missing exact fixture for $($declared.PackageName) $declaredVersion."
+        }
     }
-
+}
+$auditFacts = New-Object System.Collections.Generic.List[object]
+foreach ($declared in $expectedTargets) {
+    $audit = Test-AuditResults -Root $Root -PackageName $declared.PackageName -PackageVersions @($declared.PackageVersions) -Head $commit
+    if (-not $audit.Valid) { throw "The native audit does not back $($declared.PackageName): $($audit.Reason)" }
+    foreach ($fact in $audit.Facts) { $auditFacts.Add($fact) }
+}
+foreach ($fixtureInput in $prepared) {
+    $apk = $fixtureInput.path; $stock = $fixtureInput.stock; $label = $fixtureInput.source.file
+    $packageTarget = $fixtureInput.target
+    $fixturePatchNames = @($fixtureInput.selection.patches); $fixtureOptions = @($fixtureInput.selection.options)
+    $dependencyNames = @(Get-PatchDependencyNames -PatchList $catalog -RequestedNames $fixturePatchNames)
     $runId = [guid]::NewGuid().ToString('N')
     $runDir = Resolve-WithinRoot -Path (Join-Path $workRoot "receipt-$runId") -Root $workRoot
     New-Item -ItemType Directory -Force -Path $runDir | Out-Null
@@ -237,11 +265,14 @@ foreach ($apk in $Fixture) {
         # The bundle declares its compatible versions. A fixture of any other build is patched
         # under -f, which is the whole point of keeping the other builds around, and the receipt
         # says so rather than letting a forced run read like a declared-compatible one.
-        $forced = $stock.versionName -cnotin @($expectedTarget.PackageVersions)
+        $forced = $stock.versionName -cnotin @($packageTarget.PackageVersions)
 
         $keptRun = $null
-        if ($AppliedDir) {
-            $keptDir = Join-Path $AppliedDir $stock.versionName
+        if ($AppliedDir -and $fixtureOptions.Count -eq 0) {
+            $keptDir = Join-Path (Join-Path $AppliedDir $stock.package) $stock.versionName
+            if (-not (Test-Path -LiteralPath $keptDir) -and $stock.package -ceq $expectedTarget.PackageName) {
+                $keptDir = Join-Path $AppliedDir $stock.versionName
+            }
             $stampPath = Join-Path $keptDir 'stamp.json'
             if (Test-Path -LiteralPath $stampPath -PathType Leaf) {
                 $stamp = Get-Content -LiteralPath $stampPath -Raw | ConvertFrom-Json
@@ -263,9 +294,14 @@ foreach ($apk in $Fixture) {
             $cliOutput = @()
             $cliExitCode = 0
         } else {
-            Write-Host "[receipt] patching $label with $($patchNames.Count) patches"
+            Write-Host "[receipt] patching $label with $($fixturePatchNames.Count) patches"
             $enable = @()
-            foreach ($name in $patchNames) { $enable += '-e'; $enable += $name }
+            foreach ($name in $fixturePatchNames) {
+                $enable += '-e'; $enable += $name
+                foreach ($override in $fixtureOptions) {
+                    if ($override.StartsWith($name + '|', [StringComparison]::Ordinal)) { $enable += '-O'; $enable += $override.Substring($name.Length + 1) }
+                }
+            }
             $arguments = @('patch', '--exclusive', '--continue-on-error', '--unsigned', '-p', $Bundle,
                 '-o', $out, '-t', $temp, '-r', $resultPath)
             if ($forced) { $arguments += '-f' }
@@ -288,9 +324,9 @@ foreach ($apk in $Fixture) {
                 "What it printed last:`n$(Get-CliOutputTail -Output $cliOutput)")
         }
         $report = Get-Content -LiteralPath $resultPath -Raw | ConvertFrom-Json
-        $validation = Test-PatchingReport -Report $report -ExpectedNames $patchNames `
+        $validation = Test-PatchingReport -Report $report -ExpectedNames $fixturePatchNames `
             -AllowedDependencyNames $dependencyNames -OutputPath $out `
-            -ExpectedPackageName $expectedTarget.PackageName `
+            -ExpectedPackageName $packageTarget.PackageName `
             -ExpectedPackageVersion $stock.versionName
         if (-not $validation.Valid) { throw "$label did not patch cleanly: $($validation.Reason)" }
         if ($cliExitCode -ne 0) {
@@ -300,29 +336,28 @@ foreach ($apk in $Fixture) {
 
         $patched = Get-ApkManifestFacts -Apk $out -Aapt2 $Aapt2
         $delta = Get-ManifestDelta -Stock $stock -Patched $patched
-        $verdicts = Get-PatchVerdicts -Report $report -Names $patchNames
+        $verdicts = Get-PatchVerdicts -Report $report -Names $fixturePatchNames
         $changes = @(ConvertTo-ManifestDeltaEntries -Delta $delta)
         Write-Host ("[receipt] $label" + ": $(@($verdicts | Where-Object { $_.applied }).Count)/" +
-            "$($patchNames.Count) applied, $($changes.Count) manifest changes")
+            "$($fixturePatchNames.Count) applied, $($changes.Count) manifest changes")
         foreach ($change in $changes) { Write-Host "[receipt]   $change" }
 
-        $targets.Add([ordered]@{
-            source        = [ordered]@{
-                file        = $label
-                package     = $stock.package
-                versionName = $stock.versionName
-                versionCode = $stock.versionCode
-                sha256      = Get-Sha256Hex -Path $apk
-                forced      = $forced
-            }
-            patches       = $verdicts
+        if ((Get-Sha256Hex -Path $apk).ToLowerInvariant() -cne $fixtureInput.source.sha256 -or
+                (Get-Sha256Hex -Path $Bundle) -cne $bundleHash) { throw 'A fixture or bundle changed during patching.' }
+        $patched | Add-Member -NotePropertyName sha256 -NotePropertyValue ((Get-Sha256Hex -Path $out).ToLowerInvariant()) -Force
+        $proof = New-ReleaseFixtureBinding -Source $fixtureInput.source -Patched $patched -Patches $fixturePatchNames -Options $fixtureOptions `
+            -BundleSha256 $bundleHash -BuildSource $bundleManifest.source -PatchReportSha256 ((Get-Sha256Hex -Path $resultPath).ToLowerInvariant()) `
+            -AppliedPatchNames @(Get-ReportPatchNames -Entries $report.appliedPatches) -DependencyNames $dependencyNames
+        $record = [ordered]@{
+            source = $fixtureInput.source; patches = $verdicts
+            selection = $proof.selection; actualAppliedPatches = $proof.actualAppliedPatches; patched = $proof.patched; binding = $proof.binding
             manifestDelta = [ordered]@{
-                permissionsAdded          = @($delta.permissionsAdded)
-                permissionsRemoved        = @($delta.permissionsRemoved)
-                exportedComponentsAdded   = @($delta.exportedComponentsAdded)
-                exportedComponentsRemoved = @($delta.exportedComponentsRemoved)
+                permissionsAdded = @($delta.permissionsAdded); permissionsRemoved = @($delta.permissionsRemoved)
+                exportedComponentsAdded = @($delta.exportedComponentsAdded); exportedComponentsRemoved = @($delta.exportedComponentsRemoved)
             }
-        })
+        }
+        $record['qualificationSha256'] = Get-ReleaseFixtureQualificationHash ([pscustomobject]$record)
+        $targets.Add($record)
     } finally {
         if ($runDir.StartsWith($workRoot, [System.StringComparison]::OrdinalIgnoreCase) -and
             (Test-Path -LiteralPath $runDir)) {
@@ -353,8 +388,10 @@ $receipt = [ordered]@{
     }
     source        = $bundleManifest.source
     extension     = [ordered]@{ dexPayloads = $extensionPayloads }
+    declaredTargets = @($expectedTargets)
+    fixtureInputs = $fixtureInputs.ToArray()
     targets       = $targets.ToArray()
-    audit         = @($audit.Facts)
+    audit         = $auditFacts.ToArray()
 }
 
 # The receipt is checked before it is written. A file that fails the gate it exists to pass is
@@ -364,7 +401,7 @@ $check = Test-ReleaseReceipt -Receipt ($receipt | ConvertTo-Json -Depth 12 | Con
     -ExpectedVersion $releaseVersion -ExpectedPatchNames $patchNames `
     -ExpectedPatcherVersion $patcherMatch.Groups[1].Value `
     -ExpectedManagerFloor $floorMatch.Groups[1].Value `
-    -ExpectedPackageName $expectedTarget.PackageName `
+    -ExpectedTargets $expectedTargets -RequireCurrentContract -ExpectedPackageName $expectedTarget.PackageName `
     -ExpectedPackageVersions @($expectedTarget.PackageVersions) -BundlePath $Bundle `
     -ApprovedManifestDelta $approved
 if (-not $check.Valid) { throw "The receipt this run produced does not pass validation: $($check.Reason)" }

@@ -2216,7 +2216,6 @@ Bold	Grassetto
 Extra bold	Extra grassetto
 Caption height in Clear display	Altezza dei sottotitoli nella vista pulita
 Lifts the kept caption above its usual spot in Clear display. Use 0 for the usual spot, or up to %1$d.	Alza il sottotitolo mantenuto nella vista pulita sopra la sua posizione abituale. Usa 0 per la posizione abituale, o fino a %1$d.
-The LIVE recording TikTok closed on couldn't be saved. Its unfinished file was cleared.	Non è stato possibile salvare la registrazione LIVE interrotta dalla chiusura di TikTok. Il file incompleto è stato eliminato.
 Also on opened videos	Anche nei video aperti
 Hide the search bar at the top of videos you open from search, a profile or your watch history. The Back button stays.	Nascondi la barra di ricerca in cima ai video che apri dalla ricerca, da un profilo o dalla cronologia delle visualizzazioni. Il pulsante Indietro resta.
 Hide profile views	Nascondi le visualizzazioni del profilo
@@ -2323,3 +2322,15 @@ Recording this LIVE's screen from now	Registro lo schermo di questa LIVE da ora
 Recording this LIVE's screen from now, without sound	Registro lo schermo di questa LIVE da ora, senza audio
 Allow photo comments	Consenti i commenti con foto
 Show the gallery tab in the comment box, so you can add a photo to a comment like on TikTok. PineDrama turns it off for everyone. TikTok's server still decides whether your account can post one.	Mostra la scheda Galleria nella casella dei commenti, così puoi aggiungere una foto a un commento come su TikTok. PineDrama la disattiva per tutti. È comunque il server di TikTok a decidere se il tuo account può pubblicarne una.
+This screen recording has no sound.	Questa registrazione dello schermo non ha audio.
+Export recording files	Esporta i file della registrazione
+Delete recording files	Elimina i file della registrazione
+The publication state of these older recording files is unknown. Export a copy or delete the retained files.	Lo stato di pubblicazione di questi vecchi file di registrazione è sconosciuto. Esporta una copia o elimina i file conservati.
+The screen recording did not finish. Its files can be exported but may not play.	La registrazione dello schermo non è terminata. I file possono essere esportati, ma potrebbero non essere riproducibili.
+Recording files need recovery	I file della registrazione richiedono il recupero
+The recovery record is damaged. Export a copy of the recording files or delete them.	Il registro di recupero è danneggiato. Esporta una copia dei file della registrazione oppure eliminali.
+The export may be incomplete. The original recording files are still kept.	L’esportazione potrebbe essere incompleta. I file originali della registrazione sono ancora conservati.
+Some recording files remain. Try deleting them again.	Alcuni file della registrazione sono ancora presenti. Prova a eliminarli di nuovo.
+
+# context: Explicit recording Retry when the original stop reason was not retained.
+Recovered recording saved to %1$s	Registrazione recuperata salvata in %1$s

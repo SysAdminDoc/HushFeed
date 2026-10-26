@@ -11,6 +11,8 @@
     PackageVersions lists them oldest first; PackageVersion is the newest, for one-line text.
 #>
 
+. (Join-Path $PSScriptRoot 'patch-report.ps1')
+
 function Get-PatchTarget {
     [CmdletBinding()]
     param(
@@ -63,15 +65,16 @@ function Get-PatchTarget {
     # code (PineDrama, #156) is declared by the patches that apply to it, a few of them its own
     # (Allow photo comments), and is listed beside it. A tie names no target.
     $packages = @($targets.Keys | Sort-Object)
-    $most = ($packages | ForEach-Object { $declaredBy[$_] } | Measure-Object -Maximum).Maximum
-    $leading = @($packages | Where-Object { $declaredBy[$_] -eq $most })
-    if ($leading.Count -ne 1) {
-        throw "Expected one package the most patches declare, found a tie among $($leading -join ', ')."
-    }
-    $chosen = $leading[0]
     if (-not [string]::IsNullOrEmpty($PackageName)) {
         if ($PackageName -cnotin $packages) { throw "No patch declares $PackageName." }
         $chosen = $PackageName
+    } else {
+        $most = ($packages | ForEach-Object { $declaredBy[$_] } | Measure-Object -Maximum).Maximum
+        $leading = @($packages | Where-Object { $declaredBy[$_] -eq $most })
+        if ($leading.Count -ne 1) {
+            throw "Expected one package the most patches declare, found a tie among $($leading -join ', ')."
+        }
+        $chosen = $leading[0]
     }
     foreach ($package in $packages) {
         if ($versionSets[$package].Count -ne 1) {
@@ -85,6 +88,40 @@ function Get-PatchTarget {
         PackageVersions = $versions
         PackageVersion = $versions[-1]
         OtherPackages = @($packages | Where-Object { $_ -ne $chosen })
+    }
+}
+
+function Get-DeclaredPatchTargets {
+    <# Every advertised package and its exact versions, without choosing a dominant app. #>
+    [CmdletBinding()]
+    param([Parameter(Mandatory = $true)][object]$PatchList)
+
+    $packages = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    foreach ($patch in @($PatchList.patches)) {
+        if ($null -eq $patch) { throw 'patches-list.json contains a null patch.' }
+        $compatible = $patch.PSObject.Properties['compatiblePackages']
+        if ($null -eq $compatible -or $null -eq $compatible.Value) {
+            throw "$($patch.name) has no compatible package in patches-list.json."
+        }
+        foreach ($property in $compatible.Value.PSObject.Properties) {
+            if ($property.Name -cnotmatch '^[A-Za-z][A-Za-z0-9_]*(\.[A-Za-z][A-Za-z0-9_]*)+$') {
+                throw "Invalid declared Android package: $($property.Name)."
+            }
+            [void]$packages.Add($property.Name)
+        }
+    }
+    if ($packages.Count -eq 0) { throw 'patches-list.json contains no declared packages.' }
+    $names = [string[]]@($packages)
+    [Array]::Sort($names, [StringComparer]::Ordinal)
+    foreach ($name in $names) {
+        $target = Get-PatchTarget -PatchList $PatchList -PackageName $name
+        [pscustomobject]@{
+            PackageName = $target.PackageName
+            PackageVersions = @($target.PackageVersions)
+            PackageVersion = $target.PackageVersion
+            PatchNames = @(Get-PackagePatchNames -PatchList $PatchList -PackageName $name)
+            DependencyNames = @(Get-PatchDependencyNames -PatchList $PatchList -RequestedNames @(Get-PackagePatchNames -PatchList $PatchList -PackageName $name))
+        }
     }
 }
 

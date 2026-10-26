@@ -1,6 +1,19 @@
 ## Unreleased
 
+* **Diagnostik:** Catatan callback frame pertama menyimpan keterkaitan sumber dan waktu monoton untuk pemeriksaan saat pemutaran dimulai (#150).
+* **Pemeriksaan build:** Pemeriksaan rilis mewajibkan bukti APK dan pengujian aplikasi yang sesuai untuk setiap paket yang dinyatakan. Penelusuran memverifikasi build terpasang dan opsi patch.
+* **TikTok:** Recording recovery exports use bulk writes to avoid long waits when saving large files.
+* **TikTok:** Recovery Retry keeps the recording's original stop reason instead of saying TikTok closed. Recovery dialogs follow Hushfeed's theme.
+* **TikTok:** Screen recordings check storage as they run and keep recovery files until the saved copy is verified. Interrupted recordings can be retried, exported or deleted.
+* **Build checks:** Patch audits now check the installed APK and selected patches. Results from a different package or an excluded patch stay historical.
+* **Pemeriksaan build:** Audit patch memeriksa kelengkapan diagnostik sebelum melaporkan sakelar yang hilang. Tanpa video, pemeriksaan terkait tetap tidak dapat disimpulkan. Pemeriksaan wilayah komentator memakai jejak cache saat ini.
+* **TikTok:** Rekaman layar mempertahankan waktu yang berbeda untuk frame awal saat perekaman suara dimulai.
+* **TikTok:** Rekaman layar mempertahankan frame video pertama saat encoder audio mulai bekerja.
+* **Pemeriksaan build:** Audit patch tidak lagi memvalidasi build jika input yang dapat dijalankan berubah. Pengujian ulang sebagian tetap menyimpan pemeriksaan lama sebagai riwayat.
+* **TikTok:** Perekaman layar melepaskan sumber daya audio saat suara gagal dimulai. Pemberitahuan penyimpanan kini menyatakan jika rekaman tidak memiliki suara.
+* **TikTok:** Perekaman layar kini meminta Android menangkap suara aplikasi yang dipatch saja.
 * **TikTok:** Pembersihan Service+ kini memeriksa entri pertama pratinjau LIVE, sesuai dengan cara TikTok menampilkannya (#94).
+* **TikTok:** Jeda saat komentar dibuka dapat mengenali bingkai pertama yang sedang diputar sebelum laporan progres pertama tiba (#151).
 
 ## 0.79.0 (2026-10-24)
 

@@ -37,6 +37,8 @@ param(
     # Walk the build already installed, described by the .audit-build.json patch-for-device.ps1
     # left beside its APK, instead of patching and installing a new one.
     [string]$AuditBuild,
+    # The exact signed APK beside -AuditBuild, or an explicit path if the receipt was renamed.
+    [string]$PatchedApk,
     [string]$LeaseDir = $env:HUSHFEED_DEVICE_LEASE_DIR,
     [string]$ChatIdentity = $env:HUSHFEED_CHAT_IDENTITY,
     [string]$Out,
@@ -99,7 +101,17 @@ $build = Get-Content -LiteralPath $AuditBuild -Raw | ConvertFrom-Json
 if ([string]$build.bundle.sha256 -ine $bundleSha256) {
     throw "The installed build was patched with bundle $($build.bundle.sha256), not $bundleSha256 ($Bundle)."
 }
-$apkSha256 = ([string]$build.apk.sha256).ToLowerInvariant()
+if ($build.schemaVersion -ne 2) { throw 'The walk needs a schema 2 device-build receipt with complete native APK identity.' }
+if (-not $PatchedApk) {
+    if (-not $AuditBuild.EndsWith('.audit-build.json', [StringComparison]::OrdinalIgnoreCase)) {
+        throw '-PatchedApk is required when the device-build receipt has been renamed.'
+    }
+    $PatchedApk = $AuditBuild.Substring(0, $AuditBuild.Length - '.audit-build.json'.Length)
+}
+$walkBuild = Read-AuditBuildIdentity -ApkPath $PatchedApk -ReceiptPath $AuditBuild -BundlePath $Bundle -GitRoot $root `
+    -App ([pscustomobject]@{ package = $WalkPackage; version = $build.apk.versionName; versionCode = $build.apk.versionCode })
+if ($walkBuild.status -cne 'verified') { throw 'The walk has no verified native build identity.' }
+$apkSha256 = ([string]$walkBuild.apk.sha256).ToLowerInvariant()
 
 $planned = [Collections.Generic.List[string]]::new()
 $reached = [Collections.Generic.List[string]]::new()
@@ -123,6 +135,19 @@ function Get-WalkForeground {
     $m = [regex]::Match($said, 'ActivityRecord\{\S+ \S+ ([\w.]+)/([\w.$]+)')
     if ($m.Success) { return "$($m.Groups[1].Value)/$($m.Groups[2].Value)" }
     return ''
+}
+
+
+function Get-WalkInstalledIdentity {
+    $paths = @(Invoke-WalkAdb shell pm path $WalkPackage | Where-Object { $_ -match '^package:' })
+    if ($paths.Count -ne 1 -or $paths[0] -notmatch '^package:.*base\.apk$') {
+        throw 'The walk needs one unambiguous installed base APK and no split APKs.'
+    }
+    $hash = ((Invoke-WalkAdb shell sha256sum $paths[0].Substring(8)) -join '').Trim().Split(' ')[0].ToLowerInvariant()
+    if ($hash -cnotmatch '^[a-f0-9]{64}$') { throw 'The installed APK hash could not be read.' }
+    $facts = ConvertFrom-WalkPackageDump -Text ((Invoke-WalkAdb shell dumpsys package $WalkPackage) -join [string][char]10)
+    $facts | Add-Member -NotePropertyName sha256 -NotePropertyValue $hash
+    return $facts
 }
 
 function Get-WalkPid {
@@ -305,20 +330,21 @@ foreach ($screen in @('launch', 'feed: For You', 'sheet: comments', 'sheet: shar
 foreach ($page in $hushfeedPages) { $planned.Add("settings: $page") }
 
 $started = [DateTimeOffset]::UtcNow
-$device = ''; $appVersion = ''; $installedSha256 = ''
+$device = ''; $appVersion = ''; $installedSha256 = ''; $installedPackage = ''; $installedVersionCode = ''
 $crashes = @()
 $script:lease = New-DeviceLease -LeaseDir $LeaseDir -Serial $Serial -Project 'hushfeed' -ChatIdentity $ChatIdentity `
     -Purpose 'whole-app walk' -LeaseMinutes 30
 try {
     Invoke-WalkAdb shell input keyevent KEYCODE_WAKEUP | Out-Null
     $device = ((Invoke-WalkAdb shell getprop ro.product.model) -join '').Trim()
-    $apkPath = (Invoke-WalkAdb shell pm path $WalkPackage | Where-Object { $_ -match '^package:.*base\.apk$' } | Select-Object -First 1)
-    if (-not $apkPath) { throw "$WalkPackage isn't installed on $Serial." }
-    $installedSha256 = ((Invoke-WalkAdb shell sha256sum $apkPath.Substring(8)) -join '').Trim().Split(' ')[0].ToLowerInvariant()
-    if ($installedSha256 -cne $apkSha256) { $faults.Add("the installed APK is $installedSha256, not the walked build $apkSha256") }
-    # grep -m1 closes the pipe early, so dumpsys's "Broken pipe" goes to /dev/null, not the version.
-    $said = (Invoke-WalkAdb shell "dumpsys package $WalkPackage 2>/dev/null | grep -m1 versionName") -join ''
-    $appVersion = [regex]::Match($said, 'versionName=(\S+)').Groups[1].Value
+    $installed = Get-WalkInstalledIdentity
+    $installedSha256 = $installed.sha256; $installedPackage = $installed.package
+    $appVersion = $installed.versionName; $installedVersionCode = $installed.versionCode
+    foreach ($field in @('package','versionName','versionCode','sha256')) {
+        if ([string]$installed.$field -cne [string]$walkBuild.apk.$field) {
+            throw "The installed app $field does not match the verified walked build."
+        }
+    }
     Write-WalkLog "$device, TikTok $appVersion, APK $installedSha256"
 
     Invoke-WalkAdb shell am force-stop $WalkPackage | Out-Null
@@ -485,6 +511,11 @@ try {
     Start-Sleep -Seconds 5
     [void](Test-WalkAlive 'the end of the walk')
 
+    $finishedInstall = Get-WalkInstalledIdentity
+    foreach ($field in @('package','versionName','versionCode','sha256')) {
+        if ([string]$finishedInstall.$field -cne [string]$installed.$field) { $faults.Add("the installed app $field changed during the walk") }
+    }
+
     $logcat = @(Invoke-WalkAdb logcat -d -b crash -t "$logSince.000") +
         @(Invoke-WalkAdb logcat -d -b main -b system -t "$logSince.000" -s 'AndroidRuntime:E' 'ActivityManager:E' 'libc:F' 'DEBUG:F')
     Set-Content -LiteralPath (Join-Path $work 'logcat-crashes.txt') -Value $logcat -Encoding UTF8
@@ -502,9 +533,10 @@ try {
 $verdict = Get-WalkVerdict -Planned $planned -Reached $reached -Crashes $crashes -Faults $faults
 if (-not $device) { $device = 'unknown' }
 $receipt = New-WalkReceipt -Result $verdict.Result -Full $verdict.Full -Serial $Serial -Device $device -AppVersion $appVersion `
+    -InstalledPackage $installedPackage -InstalledVersionCode $installedVersionCode -NativeBuild $walkBuild `
     -BundleSha256 $bundleSha256 -InstalledApkSha256 $installedSha256 -Started $started -Finished ([DateTimeOffset]::UtcNow) `
     -Screens $reached.Count -Crashes $crashes.Count -Problems $verdict.Problems
-[IO.File]::WriteAllText($Out, (($receipt | ConvertTo-Json -Depth 4) -replace "`r`n", "`n") + "`n", [Text.UTF8Encoding]::new($false))
+[IO.File]::WriteAllText($Out, (($receipt | ConvertTo-Json -Depth 20) -replace "`r`n", "`n") + "`n", [Text.UTF8Encoding]::new($false))
 foreach ($problem in $verdict.Problems) { Write-WalkLog "problem: $problem" }
 Write-WalkLog "$($reached.Count) of $($planned.Count) screens, $($crashes.Count) crashes. Receipt: $Out"
 Write-WalkLog $verdict.Result

@@ -33,6 +33,7 @@ final class FlvReader {
         void onVideo(byte[] annexB, long presentationUs, boolean keyFrame) throws IOException;
 
         void onAudio(byte[] aac, long presentationUs) throws IOException;
+        default void onVideoEnd(long presentationUs)throws IOException { }
     }
 
     /** Raised for a stream this reader can't turn into an MP4, such as enhanced FLV video. */
@@ -59,8 +60,8 @@ final class FlvReader {
     private int nalLengthSize = 4;
     private long firstMillis = Long.MIN_VALUE;
 
-    private FlvReader(boolean hevc) {
-        this.hevc = hevc;
+    private FlvReader(boolean hevc,boolean relativeOrigin) {
+        this.hevc = hevc;if(relativeOrigin)firstMillis=0;
     }
 
     /** Reads all of {@code input}. */
@@ -70,7 +71,11 @@ final class FlvReader {
 
     /** Reads all of {@code input}; HEVC video is refused when {@code hevc} is false. */
     static void read(InputStream input, Listener listener, boolean hevc) throws IOException {
-        new FlvReader(hevc).run(new DataInputStream(input), listener);
+        read(input,listener,hevc,false);
+    }
+
+    static void read(InputStream input,Listener listener,boolean hevc,boolean relativeOrigin)throws IOException {
+        new FlvReader(hevc,relativeOrigin).run(new DataInputStream(input),listener);
     }
 
     private void run(DataInputStream in, Listener listener) throws IOException {
@@ -125,7 +130,7 @@ final class FlvReader {
             if (annexB.length == 0) return;
             long pts = Math.max(0, timestamp + composition);
             listener.onVideo(annexB, micros(pts), frameType == 1);
-        }
+        } else if(packet==2)listener.onVideoEnd(micros(timestamp));
     }
 
     private void config(byte[] body, Listener listener) throws IOException {

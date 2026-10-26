@@ -989,9 +989,13 @@ function Test-ReleaseReceiptHere {
     $resolvedList = Resolve-ReceiptCatalog -Root $rootPath -Commit $receiptCommit -WorkingPatchList $patchList
     if ($resolvedList.Note) { Write-Host "[release] $($resolvedList.Note)" }
     $receiptTarget = Get-PatchTarget -PatchList $resolvedList.PatchList
+    $receiptTargets = @(Get-DeclaredPatchTargets -PatchList $resolvedList.PatchList)
+    $receiptPatchNames = if ([int]$receiptDocument.schemaVersion -ge 3) {
+        @($resolvedList.PatchList.patches | ForEach-Object { [string]$_.name })
+    } else { @(Get-PackagePatchNames -PatchList $resolvedList.PatchList -PackageName $receiptTarget.PackageName) }
 
     $receiptCheck = Test-ReleaseReceipt -Receipt $receiptDocument -ExpectedVersion $releaseVersion `
-        -ExpectedPatchNames @(Get-PackagePatchNames -PatchList $resolvedList.PatchList -PackageName $receiptTarget.PackageName) `
+        -ExpectedPatchNames $receiptPatchNames -ExpectedTargets $receiptTargets `
         -ExpectedPatcherVersion $expectedToolchain.PatcherVersion `
         -ExpectedManagerFloor $expectedToolchain.ManagerFloor `
         -ExpectedPackageName $receiptTarget.PackageName -ExpectedPackageVersions @($receiptTarget.PackageVersions) `

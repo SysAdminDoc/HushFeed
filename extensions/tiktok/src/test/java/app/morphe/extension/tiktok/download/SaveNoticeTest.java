@@ -14,9 +14,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import app.morphe.extension.shared.Utils;
+import app.morphe.extension.tiktok.SettingsContextRule;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -34,6 +36,8 @@ import org.robolectric.shadows.ShadowToast;
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE, sdk = 28)
 public class SaveNoticeTest {
+    @Rule public final SettingsContextRule settingsContext = new SettingsContextRule();
+
     public static class HostActivity extends Activity {
     }
 
@@ -77,6 +81,64 @@ public class SaveNoticeTest {
             assertEquals("the viewer can't read the row",
                     Intent.FLAG_GRANT_READ_URI_PERMISSION,
                     started.getFlags() & Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }
+    }
+
+    @Test @Config(qualifiers = "en")
+    public void aVideoOnlyScreenRecordingKeepsItsVisibleNoticeAndOpenAction() {
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setActivity(activity);
+            Uri row = Uri.parse("content://media/external/video/media/78");
+            MediaFileWriter.Saved saved = new MediaFileWriter.Saved("live.mp4", row);
+            for (LiveRecorder.Outcome outcome : new LiveRecorder.Outcome[]{
+                    LiveRecorder.Outcome.SAVED, LiveRecorder.Outcome.SAVED_PARTIAL}) {
+                LiveRecorder.Result result = new LiveRecorder.Result(outcome, LiveRecorder.End.STORAGE,
+                        61_000, "live.mp4", saved, null).withScreenAudio(LiveRecorder.ScreenAudio.VIDEO_ONLY);
+                LiveRecordingSaver.announce(result);
+                idlePastTheSheetSettle();
+                String message = outcome == LiveRecorder.Outcome.SAVED
+                        ? "LIVE recording saved to " + LiveRecordingSaver.folder()
+                        : LiveRecordingSaver.partialText(LiveRecorder.End.STORAGE, LiveRecordingSaver.folder());
+                ViewGroup root = activity.findViewById(android.R.id.content);
+                assertNotNull("the visible notice lost the audio status",
+                        find(root, message + "\nThis screen recording has no sound."));
+                TextView open = find(root, "Open");
+                assertNotNull(open);
+                View clickable = open;
+                while (clickable != null && !clickable.hasOnClickListeners()) {
+                    clickable = clickable.getParent() instanceof View ? (View) clickable.getParent() : null;
+                }
+                assertNotNull(clickable);
+                assertTrue(clickable.performClick());
+                Shadows.shadowOf(Looper.getMainLooper()).idle();
+                Intent started = Shadows.shadowOf(activity).getNextStartedActivity();
+                assertNotNull(started);
+                assertEquals(row, started.getData());
+            }
+        }
+    }
+
+    @Test @Config(qualifiers = "en")
+    public void retainedVideoOnlyPartialSaveKeepsItsStopReasonAndBothActions() {
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setActivity(activity);
+            MediaFileWriter.Saved saved = new MediaFileWriter.Saved("live.mp4",
+                    Uri.parse("content://media/external/video/media/79"));
+            LiveRecorder.Result result = new LiveRecorder.Result(LiveRecorder.Outcome.SAVED_PARTIAL,
+                    LiveRecorder.End.DISCONNECTED, 4_000, "live.mp4", saved, null)
+                    .withScreenAudio(LiveRecorder.ScreenAudio.VIDEO_ONLY).withRetainedId("a".repeat(32));
+
+            LiveRecordingSaver.announce(result);
+            idlePastTheSheetSettle();
+
+            ViewGroup root = activity.findViewById(android.R.id.content);
+            assertNotNull("the recovery banner lost the stop reason or audio status", find(root,
+                    "The LIVE ended or the connection dropped. What was recorded is saved to "
+                            + LiveRecordingSaver.folder() + "\nThis screen recording has no sound."));
+            assertNotNull("the saved recording cannot be opened", find(root, "Open"));
+            assertNotNull("the retained source has no recovery action", find(root, "Retry"));
         }
     }
 

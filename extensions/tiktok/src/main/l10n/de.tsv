@@ -2219,7 +2219,6 @@ Bold	Fett
 Extra bold	Extrafett
 Caption height in Clear display	Untertitelhöhe in der freien Ansicht
 Lifts the kept caption above its usual spot in Clear display. Use 0 for the usual spot, or up to %1$d.	Hebt den behaltenen Untertitel in der freien Ansicht über seine übliche Stelle. 0 für die übliche Stelle, oder bis zu %1$d.
-The LIVE recording TikTok closed on couldn't be saved. Its unfinished file was cleared.	Die LIVE-Aufnahme, bei der TikTok geschlossen wurde, konnte nicht gespeichert werden. Die unfertige Datei wurde gelöscht.
 Also on opened videos	Auch bei geöffneten Videos
 Hide the search bar at the top of videos you open from search, a profile or your watch history. The Back button stays.	Blende die Suchleiste oben in Videos aus, die du aus der Suche, einem Profil oder deinem Wiedergabeverlauf öffnest. Die Zurück-Schaltfläche bleibt.
 Hide profile views	Profilaufrufe ausblenden
@@ -2326,3 +2325,15 @@ Recording this LIVE's screen from now	Der Bildschirm dieses LIVE wird ab jetzt a
 Recording this LIVE's screen from now, without sound	Der Bildschirm dieses LIVE wird ab jetzt ohne Ton aufgenommen
 Allow photo comments	Fotokommentare erlauben
 Show the gallery tab in the comment box, so you can add a photo to a comment like on TikTok. PineDrama turns it off for everyone. TikTok's server still decides whether your account can post one.	Zeigt den Galerie-Tab im Kommentarfeld, damit du wie bei TikTok ein Foto an einen Kommentar anhängen kannst. PineDrama schaltet ihn für alle aus. Ob dein Konto eins posten darf, entscheidet weiterhin der TikTok-Server.
+This screen recording has no sound.	Diese Bildschirmaufnahme hat keinen Ton.
+Export recording files	Aufnahmedateien exportieren
+Delete recording files	Aufnahmedateien löschen
+The publication state of these older recording files is unknown. Export a copy or delete the retained files.	Der Veröffentlichungsstatus dieser älteren Aufnahmedateien ist unbekannt. Exportiere eine Kopie oder lösche die aufbewahrten Dateien.
+The screen recording did not finish. Its files can be exported but may not play.	Die Bildschirmaufnahme wurde nicht abgeschlossen. Ihre Dateien können exportiert werden, sind aber möglicherweise nicht abspielbar.
+Recording files need recovery	Aufnahmedateien müssen wiederhergestellt werden
+The recovery record is damaged. Export a copy of the recording files or delete them.	Der Wiederherstellungseintrag ist beschädigt. Exportiere eine Kopie der Aufnahmedateien oder lösche sie.
+The export may be incomplete. The original recording files are still kept.	Der Export ist möglicherweise unvollständig. Die ursprünglichen Aufnahmedateien bleiben erhalten.
+Some recording files remain. Try deleting them again.	Einige Aufnahmedateien sind noch vorhanden. Versuche erneut, sie zu löschen.
+
+# context: Explicit recording Retry when the original stop reason was not retained.
+Recovered recording saved to %1$s	Wiederhergestellte Aufnahme in %1$s gespeichert

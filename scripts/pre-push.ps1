@@ -426,7 +426,7 @@ try {
         'scripts/patch-for-device.ps1', 'scripts/device-install.ps1', 'scripts/device-lease.ps1',
         'scripts/common.ps1', 'scripts/Resolve-Java.ps1',
         'scripts/patch-target.ps1', 'scripts/patch-report.ps1',
-        'tools/verification-probe/build.ps1', 'tools/verification-probe/AndroidManifest.xml',
+        'tools/verification-probe/build.ps1', 'tools/verification-probe/AndroidManifest.xml', 'tools/verification-probe/profile.ps1',
         'gradle/libs.versions.toml', 'gradle/verification-metadata.xml'
     )
     $touchesApkSigning = @($paths | Where-Object {

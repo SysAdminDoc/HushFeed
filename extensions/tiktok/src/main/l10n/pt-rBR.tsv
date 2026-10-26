@@ -2216,7 +2216,6 @@ Bold	Negrito
 Extra bold	Extranegrito
 Caption height in Clear display	Altura das legendas com a tela limpa
 Lifts the kept caption above its usual spot in Clear display. Use 0 for the usual spot, or up to %1$d.	Sobe a legenda mantida com a tela limpa acima da posição de costume. Use 0 para a posição de costume, ou até %1$d.
-The LIVE recording TikTok closed on couldn't be saved. Its unfinished file was cleared.	Não foi possível salvar a gravação de LIVE interrompida quando o TikTok fechou. O arquivo incompleto foi apagado.
 Also on opened videos	Também nos vídeos abertos
 Hide the search bar at the top of videos you open from search, a profile or your watch history. The Back button stays.	Oculte a barra de pesquisa no topo dos vídeos que você abre pela pesquisa, por um perfil ou pelo seu histórico de exibição. O botão Voltar continua.
 Hide profile views	Esconder as visualizações do perfil
@@ -2323,3 +2322,15 @@ Recording this LIVE's screen from now	Gravando a tela desta LIVE a partir de ago
 Recording this LIVE's screen from now, without sound	Gravando a tela desta LIVE a partir de agora, sem som
 Allow photo comments	Permitir comentários com foto
 Show the gallery tab in the comment box, so you can add a photo to a comment like on TikTok. PineDrama turns it off for everyone. TikTok's server still decides whether your account can post one.	Mostra a aba de galeria na caixa de comentários para você adicionar uma foto a um comentário como no TikTok. O PineDrama a desativa para todos. O servidor do TikTok ainda decide se a sua conta pode publicar uma.
+This screen recording has no sound.	Esta gravação de tela não tem som.
+Export recording files	Exportar arquivos da gravação
+Delete recording files	Excluir arquivos da gravação
+The publication state of these older recording files is unknown. Export a copy or delete the retained files.	O estado de publicação destes arquivos de gravação antigos é desconhecido. Exporte uma cópia ou exclua os arquivos mantidos.
+The screen recording did not finish. Its files can be exported but may not play.	A gravação da tela não terminou. Os arquivos podem ser exportados, mas talvez não possam ser reproduzidos.
+Recording files need recovery	Os arquivos de gravação precisam ser recuperados
+The recovery record is damaged. Export a copy of the recording files or delete them.	O registro de recuperação está danificado. Exporte uma cópia dos arquivos de gravação ou exclua-os.
+The export may be incomplete. The original recording files are still kept.	A exportação pode estar incompleta. Os arquivos originais da gravação continuam guardados.
+Some recording files remain. Try deleting them again.	Alguns arquivos de gravação ainda estão presentes. Tente excluí-los novamente.
+
+# context: Explicit recording Retry when the original stop reason was not retained.
+Recovered recording saved to %1$s	Gravação recuperada salva em %1$s

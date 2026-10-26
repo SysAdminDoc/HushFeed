@@ -12,6 +12,8 @@ import android.media.MediaMuxer;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FilterInputStream;
+import java.io.InputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -36,6 +38,8 @@ final class LiveRemux {
         void start() throws IOException;
 
         void write(int track, byte[] data, long presentationUs, boolean keyFrame) throws IOException;
+
+        default void endVideo(long presentationUs)throws IOException { }
 
         /** Closes the file so it plays. */
         void finish() throws IOException;
@@ -68,6 +72,8 @@ final class LiveRemux {
     static final class MuxerWriter implements Mp4Writer {
         private final MediaMuxer muxer;
         private boolean started;
+        private boolean released;
+        private int videoTrack=-1;
 
         MuxerWriter(File output) throws IOException {
             muxer = new MediaMuxer(output.getAbsolutePath(), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
@@ -77,7 +83,7 @@ final class LiveRemux {
             MediaFormat format = MediaFormat.createVideoFormat(mime, width, height);
             format.setByteBuffer("csd-0", ByteBuffer.wrap(csd0));
             if (csd1 != null) format.setByteBuffer("csd-1", ByteBuffer.wrap(csd1));
-            return muxer.addTrack(format);
+            videoTrack=muxer.addTrack(format);return videoTrack;
         }
 
         @Override public int addAudioTrack(byte[] specific, int sampleRate, int channels) {
@@ -97,19 +103,27 @@ final class LiveRemux {
             muxer.writeSampleData(track, ByteBuffer.wrap(data), info);
         }
 
-        @Override public void finish() {
-            if (started) muxer.stop();
-            muxer.release();
+        @Override public void endVideo(long presentationUs) {
+            if(videoTrack<0 || !started || released)return;
+            MediaCodec.BufferInfo info=new MediaCodec.BufferInfo();info.set(0,0,presentationUs,MediaCodec.BUFFER_FLAG_END_OF_STREAM);
+            muxer.writeSampleData(videoTrack,ByteBuffer.allocate(0),info);
         }
 
+        @Override public void finish() {
+            try { if (started) muxer.stop(); } finally { started=false; release(); }
+        }
+
+        private void release() { if(!released){released=true;muxer.release();} }
+
         @Override public void abort() {
+            if(released)return;
             try {
                 if (started) muxer.stop();
             } catch (RuntimeException ignored) {
                 // The file is being thrown away.
             }
             try {
-                muxer.release();
+                started=false;release();
             } catch (RuntimeException ignored) {
                 // Same.
             }
@@ -120,6 +134,7 @@ final class LiveRemux {
     private static final int AUDIO_WAIT_SAMPLES = 150;
     /** Samples held while waiting for the other track's settings. */
     private static final int HELD_LIMIT = 600;
+    private static final long HELD_BYTES_LIMIT = 16L * 1024 * 1024;
 
     /**
      * Rewrites an FLV file as an MP4 through {@code writer}. The first video sample written is a key
@@ -127,9 +142,15 @@ final class LiveRemux {
      * when no video sample made it.
      */
     static Summary fromFlv(File flv, Mp4Writer writer) throws IOException {
+        return fromFlv(flv,writer,flv.length());
+    }
+
+    static Summary fromFlv(File flv,Mp4Writer writer,long completeBytes)throws IOException {return fromFlv(flv,writer,completeBytes,false);}
+
+    static Summary fromFlv(File flv,Mp4Writer writer,long completeBytes,boolean relativeOrigin)throws IOException {
         FlvSink sink = new FlvSink(writer);
-        try (BufferedInputStream input = new BufferedInputStream(new FileInputStream(flv), 1 << 16)) {
-            FlvReader.read(input, sink);
+        try (BufferedInputStream input = new BufferedInputStream(prefixInput(flv,completeBytes), 1 << 16)) {
+            FlvReader.read(input,sink,true,relativeOrigin);
         } catch (IOException | RuntimeException failure) {
             writer.abort();
             throw failure;
@@ -140,6 +161,18 @@ final class LiveRemux {
             writer.abort();
             throw failure;
         }
+    }
+
+    private static InputStream prefixInput(File file,long completeBytes)throws IOException {
+        if(completeBytes<0 || completeBytes>file.length())throw new IOException("Recording prefix exceeds its source");
+        return new FilterInputStream(new FileInputStream(file)) {
+            private long remaining=completeBytes;
+            @Override public int read()throws IOException {if(remaining==0)return -1;int value=super.read();if(value>=0)remaining--;return value;}
+            @Override public int read(byte[] bytes,int offset,int count)throws IOException {
+                if(count==0)return 0;if(remaining==0)return -1;int read=super.read(bytes,offset,(int)Math.min(count,remaining));if(read>0)remaining-=read;return read;
+            }
+            @Override public long skip(long count)throws IOException {long skipped=super.skip(Math.min(Math.max(0,count),remaining));remaining-=skipped;return skipped;}
+        };
     }
 
     private static final class Held {
@@ -176,6 +209,8 @@ final class LiveRemux {
         private int audioSamples;
         private int videoSinceConfig;
         private long lastUs;
+        private long videoEndUs=-1,lastVideoUs=-1;
+        private long heldBytes;
 
         FlvSink(Mp4Writer writer) {
             this.writer = writer;
@@ -221,6 +256,8 @@ final class LiveRemux {
         }
 
         private void hold(Held sample) throws IOException {
+            if(sample.data.length>HELD_BYTES_LIMIT-heldBytes)throw new IOException("Recording codec startup exceeds the memory bound");
+            heldBytes+=sample.data.length;
             held.add(sample);
             if (held.size() >= HELD_LIMIT) openWriter();
         }
@@ -238,18 +275,22 @@ final class LiveRemux {
                 else if (audioTrack >= 0) put(audioTrack, sample.data, sample.presentationUs, false, false);
             }
             held.clear();
+            heldBytes=0;
         }
 
         private void put(int track, byte[] data, long presentationUs, boolean key, boolean video) throws IOException {
             writer.write(track, data, presentationUs, key);
-            if (video) videoSamples++;
+            if (video) {videoSamples++;lastVideoUs=presentationUs;}
             else audioSamples++;
             if (presentationUs > lastUs) lastUs = presentationUs;
         }
 
+        @Override public void onVideoEnd(long presentationUs){videoEndUs=Math.max(videoEndUs,presentationUs);}
+
         Summary finish() throws IOException {
             if (!open && csd0 != null && sawKey) openWriter();
             if (!open || videoSamples == 0) throw new NothingRecorded("No video was recorded");
+            if(videoEndUs>lastVideoUs){writer.endVideo(videoEndUs);lastUs=Math.max(lastUs,videoEndUs);}
             writer.finish();
             return new Summary(videoSamples, audioSamples, lastUs);
         }

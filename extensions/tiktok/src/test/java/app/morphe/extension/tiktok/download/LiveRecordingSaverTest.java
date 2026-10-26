@@ -3,6 +3,7 @@ package app.morphe.extension.tiktok.download;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import app.morphe.extension.tiktok.SettingsContextRule;
@@ -102,5 +103,52 @@ public class LiveRecordingSaverTest {
         LiveRecordingSaver.announce(result(LiveRecorder.Outcome.SAVED_PARTIAL, LiveRecorder.End.STORAGE, "handle"));
         shadowOf(Looper.getMainLooper()).idle();
         assertTrue(ShadowToast.getTextOfLatestToast().startsWith("The phone is running out of room."));
+    }
+
+    @Test public void streamAndEnabledScreenAudioKeepTheOriginalCompletionMessage() {
+        LiveRecorder.Result result = result(LiveRecorder.Outcome.SAVED, LiveRecorder.End.STOPPED, "handle");
+        assertEquals(LiveRecorder.ScreenAudio.NOT_APPLICABLE, result.screenAudio);
+        LiveRecordingSaver.announce(result);
+        shadowOf(Looper.getMainLooper()).idle();
+        String streamMessage = ShadowToast.getTextOfLatestToast();
+        assertFalse(streamMessage.contains("This screen recording has no sound."));
+
+        LiveRecordingSaver.announce(result.withScreenAudio(LiveRecorder.ScreenAudio.ENABLED));
+        shadowOf(Looper.getMainLooper()).idle();
+        assertEquals(streamMessage, ShadowToast.getTextOfLatestToast());
+    }
+
+    @Test public void aVideoOnlyCompletionKeepsItsSavedFileAndPartialReason() {
+        Object saved = new Object();
+        LiveRecorder.Result original = new LiveRecorder.Result(LiveRecorder.Outcome.SAVED_PARTIAL,
+                LiveRecorder.End.STORAGE, 61_000, "live.mp4", saved, "storage reserve reached");
+        LiveRecorder.Result result = original.withScreenAudio(LiveRecorder.ScreenAudio.VIDEO_ONLY);
+        assertSame(saved, result.saved);
+        assertEquals(original.detail, result.detail);
+        assertEquals(original.end, result.end);
+        assertEquals(original.outcome, result.outcome);
+        LiveRecordingSaver.announce(result);
+        shadowOf(Looper.getMainLooper()).idle();
+        assertTrue(ShadowToast.getTextOfLatestToast().startsWith("The phone is running out of room."));
+        assertTrue(ShadowToast.getTextOfLatestToast().endsWith("\nThis screen recording has no sound."));
+    }
+
+    @Test public void aVideoOnlyFullSaveDisclosesTheMissingSound() {
+        LiveRecordingSaver.announce(result(LiveRecorder.Outcome.SAVED, LiveRecorder.End.STOPPED, "handle")
+                .withScreenAudio(LiveRecorder.ScreenAudio.VIDEO_ONLY));
+        shadowOf(Looper.getMainLooper()).idle();
+        assertTrue(ShadowToast.getTextOfLatestToast().startsWith("LIVE recording saved to "));
+        assertTrue(ShadowToast.getTextOfLatestToast().endsWith("\nThis screen recording has no sound."));
+    }
+
+    @Test public void videoOnlyStatusDoesNotTurnAFailedOrEmptyRecordingIntoASave() {
+        LiveRecordingSaver.announce(result(LiveRecorder.Outcome.FAILED, LiveRecorder.End.STOPPED, null)
+                .withScreenAudio(LiveRecorder.ScreenAudio.VIDEO_ONLY));
+        shadowOf(Looper.getMainLooper()).idle();
+        assertEquals("The recording couldn't be saved. Try again.", ShadowToast.getTextOfLatestToast());
+        LiveRecordingSaver.announce(result(LiveRecorder.Outcome.NOTHING_SAVED, LiveRecorder.End.DISCONNECTED, null)
+                .withScreenAudio(LiveRecorder.ScreenAudio.VIDEO_ONLY));
+        shadowOf(Looper.getMainLooper()).idle();
+        assertEquals("Nothing was recorded", ShadowToast.getTextOfLatestToast());
     }
 }

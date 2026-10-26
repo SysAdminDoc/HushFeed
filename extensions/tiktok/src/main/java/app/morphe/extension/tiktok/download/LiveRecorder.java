@@ -49,7 +49,9 @@ public final class LiveRecorder {
         /** TikTok is closing. */
         APP_EXIT,
         /** Something else went wrong. */
-        ERROR
+        ERROR,
+        /** A retained recording has no known original stop reason. */
+        RECOVERED
     }
 
     /** What the viewer ended up with. */
@@ -62,6 +64,13 @@ public final class LiveRecorder {
         NOTHING_SAVED,
         /** There was a recording but it could not be published; the leftovers were removed. */
         FAILED
+    }
+
+    /** Whether optional screen audio started; enabled does not guarantee the source is audible. */
+    public enum ScreenAudio {
+        NOT_APPLICABLE,
+        ENABLED,
+        VIDEO_ONLY
     }
 
     /** What to record. */
@@ -95,14 +104,31 @@ public final class LiveRecorder {
         public final Object saved;
         /** A short English reason when something went wrong; may be null. */
         public final String detail;
+        public final ScreenAudio screenAudio;
+        public final String retainedId;
 
         Result(Outcome outcome, End end, long durationMs, String fileName, Object saved, String detail) {
+            this(outcome, end, durationMs, fileName, saved, detail, ScreenAudio.NOT_APPLICABLE, null);
+        }
+
+        private Result(Outcome outcome, End end, long durationMs, String fileName, Object saved,
+                       String detail, ScreenAudio screenAudio, String retainedId) {
             this.outcome = outcome;
             this.end = end;
             this.durationMs = durationMs;
             this.fileName = fileName;
             this.saved = saved;
             this.detail = detail;
+            this.screenAudio = screenAudio;
+            this.retainedId = retainedId;
+        }
+
+        Result withRetainedId(String id) {
+            return new Result(outcome, end, durationMs, fileName, saved, detail, screenAudio, id);
+        }
+
+        Result withScreenAudio(ScreenAudio audio) {
+            return new Result(outcome, end, durationMs, fileName, saved, detail, audio, retainedId);
         }
     }
 
@@ -114,6 +140,7 @@ public final class LiveRecorder {
     /** Where the spool's bytes are written. */
     interface Output {
         void write(byte[] bytes, int offset, int length) throws IOException;
+        default void checkpoint() throws IOException { }
     }
 
     /** What a {@link Source} can ask of the recorder. */
@@ -133,12 +160,16 @@ public final class LiveRecorder {
     /** Pulls the stream and writes it to {@code out} until it ends, fails or is stopped. */
     interface Source {
         void pump(Output out, Control control) throws IOException;
+        default void abandon() { }
     }
 
     /** What a finished spool is turned into. */
     interface Finisher {
         /** Publishes the spool; returns the file name and what to open it with. */
         Published finish(File spool, Target target, long startedAtMs) throws IOException;
+        default boolean ownsFiles() { return false; }
+        default boolean usefulWithoutSpool() { return false; }
+        default boolean partial() { return false; }
     }
 
     static final class Published {
@@ -350,6 +381,7 @@ public final class LiveRecorder {
         } finally {
             endedAtMs = clock.now();
             pumping = false;
+            if(spool==null)try{source.abandon();}catch(RuntimeException failure){Logger.printException(()->"Could not release unused recording source",failure);}
             if (spool != null) {
                 try {
                     spool.close();
@@ -371,21 +403,21 @@ public final class LiveRecorder {
 
     private Result conclude(End end, String detail, long bytes) {
         long duration = Math.max(0, endedAtMs - startedAtMs);
-        if (bytes < MIN_USEFUL_BYTES || end == End.UNSUPPORTED) {
-            discard();
+        if ((bytes < MIN_USEFUL_BYTES && !finisher.usefulWithoutSpool()) || end == End.UNSUPPORTED) {
+            if (!finisher.ownsFiles()) discard();
             return new Result(Outcome.NOTHING_SAVED, end, duration, null, null, detail);
         }
         try {
             Published published = finisher.finish(spoolFile, target, startedAtMs);
-            boolean whole = end == End.STOPPED || end == End.LEFT_ROOM;
+            boolean whole = (end == End.STOPPED || end == End.LEFT_ROOM) && !finisher.partial();
             return new Result(whole ? Outcome.SAVED : Outcome.SAVED_PARTIAL, end, duration,
                     published.name, published.saved, detail);
         } catch (LiveRemux.NothingRecorded nothing) {
-            discard();
+            if (!finisher.ownsFiles()) discard();
             return new Result(Outcome.NOTHING_SAVED, end, duration, null, null, nothing.getMessage());
         } catch (IOException | RuntimeException failure) {
             Logger.printException(() -> "Could not save a LIVE recording", failure);
-            discard();
+            if (!finisher.ownsFiles()) discard();
             return new Result(Outcome.FAILED, end, duration, null, null, failure.getMessage());
         }
     }
@@ -438,8 +470,10 @@ public final class LiveRecorder {
             }
         }
 
+        @Override public void checkpoint() throws IOException { stream.flush(); stream.getFD().sync(); }
+
         @Override public void close() throws IOException {
-            stream.close();
+            try { checkpoint(); } finally { stream.close(); }
         }
     }
 }

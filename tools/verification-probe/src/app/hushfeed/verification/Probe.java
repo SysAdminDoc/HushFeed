@@ -1457,11 +1457,21 @@ public final class Probe extends Instrumentation {
                         String text = String.valueOf(loader.loadClass(
                                 "app.morphe.extension.shared.settings.preference.LogBufferManager")
                                 .getMethod("buildExportText").invoke(null));
-                        int pieces = 0;
-                        for (int at = 0; at < text.length(); at += 3000, pieces++) {
-                            Log.i(TAG, "report[" + pieces + "] " + text.substring(at, Math.min(text.length(), at + 3000)));
+                        // ASCII frames preserve trailing newlines and cannot split a UTF-8 log entry.
+                        if (text.length() > 1_048_576) throw new IllegalStateException("report character bound");
+                        byte[] bytes = text.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+                        if (bytes.length > 4_194_304) throw new IllegalStateException("report byte bound");
+                        String encoded = android.util.Base64.encodeToString(bytes, android.util.Base64.NO_WRAP);
+                        StringBuilder hash = new StringBuilder();
+                        for (byte value : java.security.MessageDigest.getInstance("SHA-256").digest(bytes)) {
+                            hash.append(Character.forDigit((value >>> 4) & 15, 16)).append(Character.forDigit(value & 15, 16));
                         }
-                        Log.i(TAG, "ok report " + text.length() + " chars in " + pieces + " pieces");
+                        int pieces = 0;
+                        for (int at = 0; at < encoded.length(); at += 3000, pieces++) {
+                            Log.i(TAG, "report64[" + pieces + "] " + encoded.substring(at, Math.min(encoded.length(), at + 3000)));
+                        }
+                        Log.i(TAG, "ok report " + text.length() + " chars in " + pieces
+                                + " pieces encoding=base64-utf8 bytes=" + bytes.length + " sha256=" + hash);
                         break;
                     }
                     case "get": {

@@ -2193,7 +2193,6 @@ Bold,Tebal
 Extra bold,Sangat tebal
 Caption height in Clear display,Tinggi keterangan saat tampilan bersih
 "Lifts the kept caption above its usual spot in Clear display. Use 0 for the usual spot, or up to %1$d.","Menaikkan keterangan yang dipertahankan saat tampilan bersih di atas posisi biasanya. Pakai 0 untuk posisi biasa, atau hingga %1$d."
-The LIVE recording TikTok closed on couldn't be saved. Its unfinished file was cleared.,Rekaman LIVE yang terpotong saat TikTok tertutup tidak bisa disimpan. File yang belum selesai sudah dihapus.
 Also on opened videos,Juga di video yang dibuka
 "Hide the search bar at the top of videos you open from search, a profile or your watch history. The Back button stays.","Sembunyikan bilah pencarian di bagian atas video yang kamu buka dari pencarian, profil, atau riwayat tontonanmu. Tombol Kembali tetap ada."
 Hide profile views,Sembunyikan tayangan profil
@@ -2301,3 +2300,13 @@ Recording this LIVE's screen from now,Merekam layar LIVE ini mulai sekarang
 "Recording this LIVE's screen from now, without sound","Merekam layar LIVE ini mulai sekarang, tanpa suara"
 Allow photo comments,Izinkan komentar foto
 "Show the gallery tab in the comment box, so you can add a photo to a comment like on TikTok. PineDrama turns it off for everyone. TikTok's server still decides whether your account can post one.",Tampilkan tab galeri di kotak komentar agar kamu bisa menambahkan foto ke komentar seperti di TikTok. PineDrama mematikannya untuk semua orang. Server TikTok tetap menentukan apakah akunmu bisa mempostingnya.
+"This screen recording has no sound.","Rekaman layar ini tidak memiliki suara."
+Export recording files,Ekspor berkas rekaman
+Delete recording files,Hapus berkas rekaman
+The publication state of these older recording files is unknown. Export a copy or delete the retained files.,Status publikasi berkas rekaman lama ini tidak diketahui. Ekspor salinan atau hapus berkas yang disimpan.
+The screen recording did not finish. Its files can be exported but may not play.,"Rekaman layar tidak selesai. Berkasnya dapat diekspor, tetapi mungkin tidak dapat diputar."
+Recording files need recovery,File rekaman perlu dipulihkan
+The recovery record is damaged. Export a copy of the recording files or delete them.,Catatan pemulihan rusak. Ekspor salinan file rekaman atau hapus file tersebut.
+The export may be incomplete. The original recording files are still kept.,Hasil ekspor mungkin tidak lengkap. File rekaman asli tetap disimpan.
+Some recording files remain. Try deleting them again.,Beberapa file rekaman masih tersisa. Coba hapus lagi.
+"Recovered recording saved to %1$s","Rekaman yang dipulihkan disimpan ke %1$s"

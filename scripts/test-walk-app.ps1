@@ -3,6 +3,7 @@
 param()
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'walk-receipt.ps1')
+. (Join-Path $PSScriptRoot 'fixtures/walk-native-fixture.ps1')
 . (Join-Path $PSScriptRoot 'walk-app-core.ps1')
 
 function Assert-WalkContract([bool]$Condition, [string]$Message) {
@@ -127,20 +128,105 @@ Assert-WalkContract ($faulted.Result -eq 'FAIL') "A walk where TikTok left the f
 Assert-WalkContract ((Get-WalkVerdict -Planned $planned -Reached @()).Result -eq 'FAIL') 'A walk that reached nothing was not FAIL.'
 Assert-WalkContract ((Get-WalkVerdict -Planned @() -Reached @('launch')).Result -eq 'PARTIAL') 'A walk with no plan passed.'
 
+# Read the installed package tuple rather than assuming the queried package/version.
+$packageDump = @('Packages:', '  Package [com.zhiliaoapp.musically] (fixture):',
+    '    versionCode=2147483647 minSdk=23 targetSdk=36', '    versionName=47.5.3') -join [string][char]10
+$installedFacts = ConvertFrom-WalkPackageDump $packageDump
+Assert-WalkContract ($installedFacts.package -ceq $WalkPackage -and $installedFacts.versionName -ceq '47.5.3' -and
+    $installedFacts.versionCode -ceq '2147483647') 'The installed package tuple lost the version-code override.'
+foreach ($badDump in @('', ($packageDump -replace 'com.zhiliaoapp.musically', 'com.ss.android.ttmd.video'),
+        ($packageDump -replace '2147483647', '0'), ($packageDump -replace '2147483647', '9223372036854775808'),
+        ($packageDump + [char]10 + 'versionName=47.5.3'), ($packageDump + [char]10 + 'Package [com.zhiliaoapp.musically] (duplicate):'))) {
+    $rejected = $false
+    try { $null = ConvertFrom-WalkPackageDump $badDump } catch { $rejected = $true }
+    Assert-WalkContract $rejected 'An ambiguous or wrong-package installed identity was accepted.'
+}
+$walkTokens = $null; $walkErrors = $null
+$walkSyntax = [Management.Automation.Language.Parser]::ParseFile((Join-Path $PSScriptRoot 'walk-app.ps1'), [ref]$walkTokens, [ref]$walkErrors)
+Assert-WalkContract ($walkErrors.Count -eq 0) 'The native walk producer has a syntax error.'
+$installedReader = $walkSyntax.Find({ param($n) $n -is [Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq 'Get-WalkInstalledIdentity' }, $true)
+. ([scriptblock]::Create($installedReader.Extent.Text))
+$script:fixtureApkPaths = @('package:/data/app/fixture/base.apk')
+$script:fixtureInstalledHash = '4' * 64
+$script:fixturePackageDump = $packageDump
+function Invoke-WalkAdb {
+    param([Parameter(ValueFromRemainingArguments = $true)][string[]]$Call)
+    if ($Call[0] -cne 'shell') { throw 'No native command is permitted in this fixture.' }
+    switch ($Call[1]) {
+        'pm' { return $script:fixtureApkPaths }
+        'sha256sum' { return ($script:fixtureInstalledHash + '  /data/app/fixture/base.apk') }
+        'dumpsys' { return $script:fixturePackageDump }
+        default { throw 'Unexpected installed-identity request.' }
+    }
+}
+$observed = Get-WalkInstalledIdentity
+Assert-WalkContract ($observed.sha256 -ceq $script:fixtureInstalledHash -and $observed.package -ceq $WalkPackage -and
+    $observed.versionCode -ceq '2147483647') 'The walk discarded observed installed APK facts.'
+$script:fixtureApkPaths += 'package:/data/app/fixture/split.apk'
+$splitRejected = $false
+try { $null = Get-WalkInstalledIdentity } catch { $splitRejected = $true }
+Assert-WalkContract $splitRejected 'A base-only hash qualified an installed split APK set.'
+$script:fixtureApkPaths = @('package:/data/app/fixture/base.apk'); $script:fixtureInstalledHash = 'unknown'
+$hashRejected = $false
+try { $null = Get-WalkInstalledIdentity } catch { $hashRejected = $true }
+Assert-WalkContract $hashRejected 'An unreadable installed APK hash was accepted.'
+Remove-Item -LiteralPath 'Function:\Invoke-WalkAdb', 'Function:\Get-WalkInstalledIdentity'
+
 $work = Join-Path ([IO.Path]::GetTempPath()) ('hushfeed-walk-app-contract-' + [guid]::NewGuid().ToString('N'))
 [void][IO.Directory]::CreateDirectory($work)
 try {
-    $bundle = Join-Path $work 'patches-0.78.0.mpp'
-    [IO.File]::WriteAllText($bundle, 'the signed bundle')
+    $native = New-WalkNativeFixture $work
+    $bundle = $native.Bundle
+    $expected = $native.Expected
     $sha = (Get-FileHash -LiteralPath $bundle -Algorithm SHA256).Hash
+    # Exercise the producer's actual preflight against synthetic APK bytes and a real bundle manifest.
+    function Test-WalkProducerPreflight([string]$Directory) {
+        $fixtureBuild = New-WalkNativeFixture $Directory
+        $localApk = Join-Path $Directory 'native.apk'
+        [IO.File]::WriteAllText($localApk, 'synthetic signed APK bytes, no native execution')
+        $receiptFile = $localApk + '.audit-build.json'
+        $nativeApk = $fixtureBuild.Installed | ConvertTo-Json | ConvertFrom-Json
+        $nativeApk.sha256 = (Get-FileHash -LiteralPath $localApk -Algorithm SHA256).Hash.ToLowerInvariant()
+        $rawBuild = [ordered]@{
+            schemaVersion = 2; kind = 'hushfeed-device-build'; apk = $nativeApk
+            sourceApk = $fixtureBuild.SourceApk; sourceApkSha256 = $fixtureBuild.SourceApk.sha256
+            bundle = $fixtureBuild.Build.bundle; source = $fixtureBuild.Build.source
+            patches = $fixtureBuild.Build.patches; options = @(); patchReportSha256 = $fixtureBuild.Build.patchReportSha256
+        }
+        [IO.File]::WriteAllText($receiptFile, ($rawBuild | ConvertTo-Json -Depth 20))
+        $source = [IO.File]::ReadAllText((Join-Path $PSScriptRoot 'walk-app.ps1'))
+        $first = $source.IndexOf('if (-not (Test-Path -LiteralPath $AuditBuild -PathType Leaf))')
+        $last = $source.IndexOf('$planned = ', $first)
+        Assert-WalkContract ($first -ge 0 -and $last -gt $first) 'The walk no longer has a pre-device build-identity preflight.'
+        $read = [scriptblock]::Create($source.Substring($first, $last - $first) + [char]10 + 'return $walkBuild')
+        function Get-AuditExecutableInputs { param($GitRoot, $Commit); return [pscustomobject]@{ schemaVersion = 1; scope = 'global-executable-v1'; fileCount = 1; sha256 = 'f' * 64 } }
+        $AuditBuild = $receiptFile; $PatchedApk = ''; $Bundle = $fixtureBuild.Bundle
+        $bundleSha256 = $fixtureBuild.Build.bundle.sha256; $root = Split-Path -Parent $PSScriptRoot
+        $verified = & $read
+        Assert-WalkContract ($verified.status -ceq 'verified' -and $verified.nativeBuildSchema -eq 2 -and
+            $verified.apk.sha256 -ceq $nativeApk.sha256 -and $verified.sourceApk.sha256 -ceq $fixtureBuild.SourceApk.sha256) 'The walk discarded the verified native build receipt.'
+        [IO.File]::AppendAllText($localApk, ' changed')
+        $changed = $false
+        try { $null = & $read } catch { $changed = $true }
+        Assert-WalkContract $changed 'The walk trusted a receipt for different local signed APK bytes.'
+        $rawBuild.schemaVersion = 1
+        [IO.File]::WriteAllText($receiptFile, ($rawBuild | ConvertTo-Json -Depth 20))
+        $legacy = $false
+        try { $null = & $read } catch { $legacy = $true }
+        Assert-WalkContract $legacy 'A schema 1 device-build receipt entered the native walk.'
+    }
+    Test-WalkProducerPreflight (Join-Path $work 'producer')
+    Remove-Item -LiteralPath 'Function:\Test-WalkProducerPreflight'
+
     foreach ($case in @(@($clean, $true), @($skipped, $false), @($crashed, $false))) {
         $verdict = $case[0]
         $receipt = New-WalkReceipt -Result $verdict.Result -Full $verdict.Full -Serial 'TESTPHONE01' -Device 'SM-S908U1' `
+            -InstalledPackage $native.Installed.package -InstalledVersionCode $native.Installed.versionCode -NativeBuild $native.Build `
             -AppVersion '47.5.3' -BundleSha256 $sha -InstalledApkSha256 ('4' * 64) -Started '2026-10-22T21:00:00Z' `
             -Finished '2026-10-22T21:20:00Z' -Screens 3 -Crashes $(if ($verdict.Result -eq 'FAIL') { 1 } else { 0 }) -Problems $verdict.Problems
         $path = Join-Path $work 'walk-receipt.json'
-        [IO.File]::WriteAllText($path, ($receipt | ConvertTo-Json -Depth 4))
-        $tested = Test-WalkReceipt -Path $path -BundlePath $bundle
+        [IO.File]::WriteAllText($path, ($receipt | ConvertTo-Json -Depth 20))
+        $tested = Test-WalkReceipt -Path $path -BundlePath $bundle @expected
         Assert-WalkContract ($tested.Valid -eq $case[1]) "Publish $(if ($case[1]) { 'refused' } else { 'took' }) a $($verdict.Result) walk: $($tested.Reason)"
     }
 } finally {

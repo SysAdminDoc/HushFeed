@@ -6,7 +6,20 @@ Every Hushfeed release, newest first.
 
 ### Fixes
 
+* **Diagnostics:** First-frame callback records keep source ownership and monotonic timestamps for startup checks (#150).
+* **Build checks:** Release checks require matching APK and native evidence for every advertised package. Walks verify the installed build and patch options.
+* **TikTok:** Recording recovery exports use bulk writes to avoid long waits when saving large files.
+* **TikTok:** Recovery Retry keeps the recording's original stop reason instead of saying TikTok closed. Recovery dialogs follow Hushfeed's theme.
+* **TikTok:** Screen recordings check storage as they run and keep recovery files until the saved copy is verified. Interrupted recordings can be retried, exported or deleted.
+* **Build checks:** Patch audits now check the installed APK and selected patches. Results from a different package or an excluded patch stay historical.
+* **Build checks:** Patch audits check complete diagnostics before reporting missing switches. Missing videos leave dependent checks inconclusive, and the commenter-region check uses the current cache trace.
+* **TikTok:** Screen recording keeps distinct timestamps for its earliest frames while sound starts.
+* **TikTok:** Screen recordings keep their first video frames while the audio encoder starts.
+* **Build checks:** A patch audit now stops qualifying a build when its executable inputs change. Partial reruns leave older checks historical.
+* **TikTok:** Screen recording releases audio resources when sound can't start. Its save notice now says when the recording has no sound.
+* **TikTok:** Screen recording now asks Android to capture only the patched app's sound.
 * **TikTok:** Service+ cleanup now checks the first entry in a LIVE preview, matching TikTok's own display logic (#94).
+* **TikTok:** The comment pause can identify a playing first frame before the first progress report arrives (#151).
 
 ## 0.79.0 (2026-10-24)
 

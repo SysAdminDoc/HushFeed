@@ -25,6 +25,49 @@ public final class SessionPlaybackHold {
     private static final Handler MAIN = new Handler(Looper.getMainLooper());
     private static final AtomicBoolean syncQueued = new AtomicBoolean();
     private static volatile Target current;
+    // Progress can arrive off main while a first-frame observation waits on main. Only these
+    // two writers take the lock; native reads and playback commands stay outside it.
+    private static final Object OWNER_LOCK = new Object();
+    private static long progressRevision;
+
+    // Private, bounded callback receipts. Host owners stay weak; reading them calls no host code.
+    private static final Object FRAME_RECEIPT_LOCK = new Object();
+    private static final FirstFrameReceipt[] FRAME_RECEIPTS = new FirstFrameReceipt[32];
+    private static int nextFrameReceipt;
+
+    private static final class FirstFrameReceipt {
+        final WeakReference<Object> controller, aweme, manager;
+        final String sourceId;
+        final long elapsedRealtimeMs;
+
+        FirstFrameReceipt(Object controller, Object aweme, Object manager, String sourceId, long at) {
+            this.controller = new WeakReference<>(controller);
+            this.aweme = new WeakReference<>(aweme);
+            this.manager = new WeakReference<>(manager);
+            this.sourceId = sourceId;
+            this.elapsedRealtimeMs = at;
+        }
+    }
+
+    /** Reflection-only private verification access. Copying never asks the native player anything. */
+    private static FirstFrameReceipt[] snapshotFirstFrameReceipts() {
+        synchronized (FRAME_RECEIPT_LOCK) {
+            return FRAME_RECEIPTS.clone();
+        }
+    }
+
+    private static void rememberFirstFrame(
+            Object controller, Object aweme, Object manager, String aid, Object sourceAtEntry, long at) {
+        // mCurrentSourceId is the native 47.5.3 source key. A missing/renamed field is no evidence.
+        // Read it directly: never populate a native cache or substitute an unkeyed frame scalar.
+        if (at <= 0 || aid.length() > 128 || !aid.equals(sourceAtEntry)
+                || !sourceAtEntry.equals(Reflect.readField(controller, "mCurrentSourceId"))) return;
+        FirstFrameReceipt receipt = new FirstFrameReceipt(controller, aweme, manager, aid, at);
+        synchronized (FRAME_RECEIPT_LOCK) {
+            FRAME_RECEIPTS[nextFrameReceipt] = receipt;
+            nextFrameReceipt = (nextFrameReceipt + 1) % FRAME_RECEIPTS.length;
+        }
+    }
     // Accessed only on the main thread, where the panel changes and native playback is controlled.
     private static Target held;
     // Published by main-thread release; progress can prove an independent resume before focus returns.
@@ -181,10 +224,14 @@ public final class SessionPlaybackHold {
     /** Called with p0 and p1 from PlayerController.onPlayProgressChange(String, long, long). */
     public static void onPlayerProgress(Object controller, String awemeId) {
         if (controller == null || awemeId == null || awemeId.isEmpty()) return;
-        Target previous = current;
-        if (previous == null || previous.controller.get() != controller
-                || !awemeId.equals(previous.awemeId)) {
-            current = new Target(controller, awemeId);
+        synchronized (OWNER_LOCK) {
+            // Even another report from the same owner supersedes a queued first frame.
+            progressRevision++;
+            Target previous = current;
+            if (previous == null || previous.controller.get() != controller
+                    || !awemeId.equals(previous.awemeId)) {
+                current = new Target(controller, awemeId);
+            }
         }
         FeedLock.onVideo(awemeId);
         if (!SessionBudget.isLocked()) {
@@ -233,39 +280,61 @@ public final class SessionPlaybackHold {
     }
 
     /**
-     * Called with p0 from PlayerController.onRenderFirstFrame. A start's first video plays from
-     * its first frame, and its first progress report comes a second or two later (#83), so while a
-     * pause switch or the app lock wants the feed stopped, the player is stopped here rather than
-     * after that report. Only a playing player counts: a preloaded neighbour draws its first frame
-     * without playing.
+     * Called with p0 from PlayerController.onRenderFirstFrame. Remember the playing owner even
+     * before a hold is wanted: comments can open between this frame and the first progress report
+     * (#151). A preloaded neighbour's frame does not make it current. A wanted hold still pauses
+     * here rather than waiting for progress (#83).
      */
     public static void onFirstFrame(Object controller) {
-        if (controller == null || !(switchWanted || lockWanted)) return;
-        WeakReference<Object> owner = new WeakReference<>(controller);
-        // Not inside the native callback, for the reason the progress report posts its pause.
-        MAIN.post(() -> pauseAtFirstFrame(owner.get()));
-    }
-
-    private static void pauseAtFirstFrame(Object controller) {
-        if (controller == null || !(switchWanted || lockWanted) || SessionBudget.isLocked()) return;
-        if (!Boolean.TRUE.equals(Reflect.invoke(Reflect.invoke(controller, "getPlayerManager"), "isPlaying"))) {
-            return;
+        if (controller == null) return;
+        // Callback receipt, before native reads or queued main work. Not a displayed-frame time.
+        long receivedAt = android.os.SystemClock.elapsedRealtime();
+        Object sourceAtEntry = Reflect.readField(controller, "mCurrentSourceId");
+        long revision;
+        synchronized (OWNER_LOCK) {
+            revision = progressRevision;
         }
         Object aid;
+        Object aweme;
+        Object manager;
         try {
-            aid = Reflect.invoke(currentAweme(controller), "getAid");
+            aweme = currentAweme(controller);
+            aid = Reflect.invoke(aweme, "getAid");
+            manager = Reflect.invoke(controller, "getPlayerManager");
         } catch (RuntimeException notAController) {
             return;
         }
-        if (!(aid instanceof String) || ((String) aid).isEmpty()) return;
-        // The player's own video, as a progress report would name it, so the tap that ends the
-        // hold finds this player still current and hands the video back.
-        Target previous = current;
-        if (previous == null || previous.controller.get() != controller
-                || !aid.equals(previous.awemeId)) {
-            current = new Target(controller, (String) aid);
+        if (!(aid instanceof String) || ((String) aid).isEmpty() || manager == null) return;
+        rememberFirstFrame(controller, aweme, manager, (String) aid, sourceAtEntry, receivedAt);
+        // Snapshot identity now: a recycled controller can have another video or manager by the
+        // time main runs. Neither the controller nor the manager is retained by the queued work.
+        Target frame = new Target(controller, (String) aid);
+        WeakReference<Object> frameManager = new WeakReference<>(manager);
+        MAIN.post(() -> pauseAtFirstFrame(frame, frameManager, revision));
+    }
+
+    private static void pauseAtFirstFrame(
+            Target frame, WeakReference<Object> frameManager, long revision) {
+        if (SessionBudget.isLocked()) return;
+        Object controller = frame.controller.get();
+        Object manager = frameManager.get();
+        if (controller == null || manager == null || !frame.isCurrentCell(controller)
+                || Reflect.invoke(controller, "getPlayerManager") != manager
+                || !Boolean.TRUE.equals(Reflect.invoke(manager, "isPlaying"))) {
+            return;
         }
-        if (pauseForSwitchIfPlaying()) log("paused at the first frame of " + aid);
+        synchronized (OWNER_LOCK) {
+            // Check and publish together: progress on another thread must not be overwritten
+            // between the revision check and the assignment.
+            if (progressRevision != revision) return;
+            Target previous = current;
+            if (previous == null || previous.controller.get() != controller
+                    || !frame.awemeId.equals(previous.awemeId)) {
+                current = frame;
+            }
+        }
+        // This also checks the current hold state, so observing a frame alone never pauses it.
+        if (pauseForSwitchIfPlaying()) log("paused at the first frame of " + frame.awemeId);
     }
 
     /**

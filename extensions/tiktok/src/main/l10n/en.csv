@@ -508,6 +508,7 @@ Days to remember a video. Zero removes the age limit. History keeps at most %1$s
 "Days. Zero keeps every age. Posts without a usable timestamp, including future posts, stay visible.","Days. Zero keeps every age. Posts without a usable timestamp, including future posts, stay visible."
 Default,Default
 Default playback speed,Default playback speed
+Delete recording files,Delete recording files
 Delete search,Delete search
 Deletes %1$s from TikTok's storage.,Deletes %1$s from TikTok's storage.
 Delivery unconfirmed: %1$d/%2$d chats. Remaining chats still need a message.,Delivery unconfirmed: %1$d/%2$d chats. Remaining chats still need a message.
@@ -583,6 +584,7 @@ Export JSON,Export JSON
 Export comments,Export comments
 Export diagnostic report,Export diagnostic report
 Export loaded values,Export loaded values
+Export recording files,Export recording files
 Exported %1$d comments and %2$d replies,Exported %1$d comments and %2$d replies
 Exported %1$d loaded values,Exported %1$d loaded values
 Exported 1 loaded value,Exported 1 loaded value
@@ -1394,6 +1396,7 @@ Record LIVEs you watch,Record LIVEs you watch
 Record a screen's layout,Record a screen's layout
 Record this LIVE from now,Record this LIVE from now
 Recorded gate reads (%1$d),Recorded gate reads (%1$d)
+Recording files need recovery,Recording files need recovery
 "Recording gate reads. Use a feature, then return here to stop.","Recording gate reads. Use a feature, then return here to stop."
 Recording stopped early. What was recorded is saved to %1$s,Recording stopped early. What was recorded is saved to %1$s
 Recording this LIVE from now,Recording this LIVE from now
@@ -1402,6 +1405,7 @@ Recording this LIVE's screen from now,Recording this LIVE's screen from now
 "Recording this LIVE's screen from now, without sound","Recording this LIVE's screen from now, without sound"
 Recording what the feed filters keep and hide. Tap to stop and save it in %1$s.,Recording what the feed filters keep and hide. Tap to stop and save it in %1$s.
 Recovered an interrupted settings change. Restart TikTok to apply this.,Recovered an interrupted settings change. Restart TikTok to apply this.
+Recovered recording saved to %1$s,Recovered recording saved to %1$s
 Refresh values,Refresh values
 Refreshing TikTok's current values…,Refreshing TikTok's current values…
 Region,Region
@@ -1740,6 +1744,7 @@ Soft blur,Soft blur
 Soft tick,Soft tick
 Some Calm feed settings changed. Restore still puts back your earlier setup.,Some Calm feed settings changed. Restore still puts back your earlier setup.
 Some of these notes are in English.,Some of these notes are in English.
+Some recording files remain. Try deleting them again.,Some recording files remain. Try deleting them again.
 Something is missing from %1$s. Tap for the whole report.,Something is missing from %1$s. Tap for the whole report.
 Sort loaded videos on profile grids,Sort loaded videos on profile grids
 Sort this grid,Sort this grid
@@ -1911,7 +1916,6 @@ The Archive row leaves the Inbox. Archived chats are kept.,The Archive row leave
 The Bulletin board rows TikTok adds to the Inbox leave the list. Chats and the other rows stay where they are.,The Bulletin board rows TikTok adds to the Inbox leave the list. Chats and the other rows stay where they are.
 The Following and For You names above the feed go away. Swiping between the feeds and the search button stay as they are.,The Following and For You names above the feed go away. Swiping between the feeds and the search button stay as they are.
 The LIVE ended or the connection dropped. What was recorded is saved to %1$s,The LIVE ended or the connection dropped. What was recorded is saved to %1$s
-The LIVE recording TikTok closed on couldn't be saved. Its unfinished file was cleared.,The LIVE recording TikTok closed on couldn't be saved. Its unfinished file was cleared.
 The Lab can't check this. TikTok gets it exactly as typed.,The Lab can't check this. TikTok gets it exactly as typed.
 The Lab couldn't open. Go back and open it again.,The Lab couldn't open. Go back and open it again.
 "The Lab keeps at most %1$s rules. This change would make %2$s, so nothing was changed.","The Lab keeps at most %1$s rules. This change would make %2$s, so nothing was changed."
@@ -1932,6 +1936,7 @@ The cover couldn't be saved. Try again.,The cover couldn't be saved. Try again.
 The diagnostic report couldn't be saved yet. Try again in a moment.,The diagnostic report couldn't be saved yet. Try again in a moment.
 The diagnostic report couldn't be saved. Try again.,The diagnostic report couldn't be saved. Try again.
 The downloader app you chose isn't installed. Check Send links to another app under Downloads.,The downloader app you chose isn't installed. Check Send links to another app under Downloads.
+The export may be incomplete. The original recording files are still kept.,The export may be incomplete. The original recording files are still kept.
 The export wasn't saved. Export again when the file app is ready.,The export wasn't saved. Export again when the file app is ready.
 The feed capture couldn't be saved. Tap the row to try again.,The feed capture couldn't be saved. Tap the row to try again.
 The feed capture is still being saved,The feed capture is still being saved
@@ -1968,15 +1973,18 @@ The presets couldn't load. Open the Lab again.,The presets couldn't load. Open t
 The profile picture couldn't be saved. Try again.,The profile picture couldn't be saved. Try again.
 "The proxy at %1$s asks for a password, and TikTok can't send one. Use a proxy that doesn't need one.","The proxy at %1$s asks for a password, and TikTok can't send one. Use a proxy that doesn't need one."
 "The proxy's address, like 192.168.1.20 or proxy.example.com.","The proxy's address, like 192.168.1.20 or proxy.example.com."
+The publication state of these older recording files is unknown. Export a copy or delete the retained files.,The publication state of these older recording files is unknown. Export a copy or delete the retained files.
 The quality choice is still open,The quality choice is still open
 "The record of an interrupted settings change couldn't be read, so it was set aside. Check your settings.","The record of an interrupted settings change couldn't be read, so it was set aside. Check your settings."
 The recording couldn't be saved. Try again.,The recording couldn't be saved. Try again.
 The recording reached its size limit and was saved to %1$s,The recording reached its size limit and was saved to %1$s
+The recovery record is damaged. Export a copy of the recording files or delete them.,The recovery record is damaged. Export a copy of the recording files or delete them.
 The report couldn't be saved. Try again.,The report couldn't be saved. Try again.
 The request timed out. The list may be incomplete.,The request timed out. The list may be incomplete.
 The row of story avatars across the top of the Inbox goes. Stories still play from the feed and from profiles.,The row of story avatars across the top of the Inbox goes. Stories still play from the feed and from profiles.
 The saved-video choice couldn't open. Try again.,The saved-video choice couldn't open. Try again.
 The saved-video choice is still open,The saved-video choice is still open
+The screen recording did not finish. Its files can be exported but may not play.,The screen recording did not finish. Its files can be exported but may not play.
 The server asked us to wait. Try again later.,The server asked us to wait. Try again later.
 The setting couldn't finish updating. Its saved value is shown.,The setting couldn't finish updating. Its saved value is shown.
 The settings backup was rejected. Nothing was altered.,The settings backup was rejected. Nothing was altered.
@@ -2025,6 +2033,7 @@ This preset doesn't match the installed gates. Nothing changed.,This preset does
 This preset isn't available for your installed TikTok version.,This preset isn't available for your installed TikTok version.
 This profile picture isn't available to save,This profile picture isn't available to save
 "This quality isn't available as a complete file, so TikTok's own save runs instead","This quality isn't available as a complete file, so TikTok's own save runs instead"
+This screen recording has no sound.,This screen recording has no sound.
 "This setting's value can't be copied on this build, so it can't be overridden. Reset the override.","This setting's value can't be copied on this build, so it can't be overridden. Reset the override."
 This story isn't available to save,This story isn't available to save
 This value is required.,This value is required.

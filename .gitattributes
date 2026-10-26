@@ -13,3 +13,4 @@
 # The historical receipt fixture is verified by its published byte digest.
 /scripts/fixtures/legacy-receipt-0.61.0.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 
+/scripts/fixtures/legacy-receipt-0.79.0.json -text -diff whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

@@ -42,6 +42,8 @@ param(
     [string]$Checked,
     # publish: the walk-receipt.json a whole-app walk of this exact bundle left.
     [string]$Walk,
+    # Exact source APKs for every declared package/version when building release provenance.
+    [string[]]$Fixture = @(),
     [string]$ReadmeSummary,
     [string]$BundleSummary,
     [string]$DeviceLine = '',
@@ -546,13 +548,17 @@ switch ($Stage) {
         if ($stamp -ne "${seconds}000") { throw "The bundle's Timestamp $stamp isn't pinned to the release commit ($seconds)." }
         if (-not $hasDex) { throw 'The bundle has no classes.dex, so Manager would load no patches.' }
         Step 'receipt over every declared fixture'
-        # The bundle's own target, the builds the gate applied: PineDrama (#156) declares its own
-        # version beside it, and no TikTok APK of that version exists.
-        $target = Get-PatchTarget -PatchList (Get-Content -LiteralPath (Join-Path $root 'patches-list.json') -Raw | ConvertFrom-Json)
-        $fixtures = foreach ($v in @($target.PackageVersions)) {
-            $match = @(Get-ChildItem -LiteralPath $env:HUSHFEED_FIXTURE_DIR -Filter "$($target.PackageName)_$v-*.apk" -File)
-            if ($match.Count -ne 1) { throw "Expected one $v APK in $env:HUSHFEED_FIXTURE_DIR, found $($match.Count)." }
-            $match[0].FullName
+        # Each package selects its own versions and APKs, including matching version labels.
+        $declaredTargets = @(Get-DeclaredPatchTargets -PatchList (Get-Content -LiteralPath (Join-Path $root 'patches-list.json') -Raw | ConvertFrom-Json))
+        $fixtures = @($Fixture)
+        if ($fixtures.Count -eq 0) {
+            $fixtures = foreach ($declared in $declaredTargets) {
+                foreach ($v in @($declared.PackageVersions)) {
+                    $match = @(Get-ChildItem -LiteralPath $env:HUSHFEED_FIXTURE_DIR -Filter "$($declared.PackageName)_$v-*.apk" -File)
+                    if ($match.Count -ne 1) { throw "Pass -Fixture with the exact source APK for $($declared.PackageName) $v." }
+                    $match[0].FullName
+                }
+            }
         }
         $work = Join-Path ([IO.Path]::GetTempPath()) "hushfeed-receipt-$Version"
         New-Item -ItemType Directory -Force -Path $work | Out-Null
@@ -579,10 +585,20 @@ switch ($Stage) {
             if (-not (Test-Path -LiteralPath (Join-Path $assets $name))) { throw "No $name in $assets. Run -Stage build first." }
         }
         $receipt = Get-Content -LiteralPath (Join-Path $assets $receiptName) -Raw | ConvertFrom-Json
+        if ([int]$receipt.schemaVersion -ne (Get-ReleaseReceiptSchemaVersion)) { throw 'Historical receipts cannot authorize a new publication.' }
         if ($receipt.source.commit -and $receipt.source.commit -ne $head) { throw "The receipt is for $($receipt.source.commit), HEAD is $head." }
         # Nothing goes public until the whole app has been walked with this exact bundle.
         if (-not $Walk) { throw '-Walk names the walk-receipt.json a whole-app walk of this bundle left on a release phone or an emulator.' }
-        $walked = Test-WalkReceipt -Path $Walk -BundlePath (Join-Path $assets $bundleName)
+        $target = Get-PatchTarget -PatchList (Get-Content -LiteralPath (Join-Path $root 'patches-list.json') -Raw | ConvertFrom-Json)
+        $coverageProblem = Get-WalkPublicationProblem $target
+        if ($coverageProblem) { throw $coverageProblem }
+        $walkTargets = @($receipt.targets | Where-Object {
+            $_.source.package -ceq $target.PackageName -and $_.source.versionName -cin @($target.PackageVersions) -and -not $_.source.forced
+        })
+        if ($walkTargets.Count -ne 1) { throw 'Publication needs one explicit qualified target per walk; this receipt has no unambiguous walk target.' }
+        $walked = Test-WalkReceipt -Path $Walk -BundlePath (Join-Path $assets $bundleName) `
+            -ExpectedSourceApk $walkTargets[0].source -ExpectedCommit $head `
+            -ExpectedPatches @($walkTargets[0].selection.patches) -ExpectedOptions @($walkTargets[0].selection.options)
         if (-not $walked.Valid) {
             throw ("The whole-app walk doesn't back $bundleName, so nothing was published: $($walked.Reason). " +
                 'Patch an APK from this bundle, walk the whole app on a release phone or an emulator, and pass its walk-receipt.json as -Walk.')
@@ -590,11 +606,10 @@ switch ($Stage) {
         Step "walked on $($walked.Receipt.device): $($walked.Receipt.screens) screens, no crash"
         # Nor while the device audit of a declared TikTok version is missing or older than the
         # catalog, and the receipt has to name the results this commit carries.
-        $target = Get-PatchTarget -PatchList (Get-Content -LiteralPath (Join-Path $root 'patches-list.json') -Raw | ConvertFrom-Json)
         $audited = Test-AuditResults -Root $root -PackageName $target.PackageName -PackageVersions @($target.PackageVersions) -Head $head
         if (-not $audited.Valid) { throw "The device audit doesn't back this release, so nothing was published: $($audited.Reason)" }
         foreach ($fact in $audited.Facts) {
-            $recorded = @(@($receipt.audit) | Where-Object { $null -ne $_ -and $_.appVersion -ceq $fact.appVersion })
+            $recorded = @(@($receipt.audit) | Where-Object { $null -ne $_ -and $_.package -ceq $fact.package -and $_.appVersion -ceq $fact.appVersion })
             if ($recorded.Count -ne 1 -or $recorded[0].sha256 -cne $fact.sha256) {
                 throw "$receiptName doesn't name this commit's $($fact.results). Run -Stage build again."
             }

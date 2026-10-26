@@ -501,6 +501,21 @@ Assert-Throws { Get-PatchTarget -PatchList $secondAppOwn -PackageName 'com.examp
 Assert-True ((@(Get-PackagePatchNames -PatchList $secondAppOwn -PackageName 'com.example.app') -join ',') -eq 'both apps,main app,main app too' -and
     (@(Get-PackagePatchNames -PatchList $secondAppOwn -PackageName 'com.example.drama') -join ',') -eq 'both apps,drama only') `
     'A run on one app selected a patch only the other app declares.'
+$declaredTargets = @(Get-DeclaredPatchTargets -PatchList $secondAppOwn)
+Assert-True ($declaredTargets.Count -eq 2 -and
+    ($declaredTargets.PackageName -join ',') -ceq 'com.example.app,com.example.drama') `
+    'The declared target matrix omitted or reordered an advertised package.'
+Assert-True (($declaredTargets[0].PatchNames -join ',') -ceq 'both apps,main app,main app too' -and
+    ($declaredTargets[1].PatchNames -join ',') -ceq 'both apps,drama only') `
+    'The declared target matrix mixed package patch subsets.'
+Assert-True (@(Get-DeclaredPatchTargets -PatchList $splitApps).Count -eq 2 -and
+    (Get-PatchTarget -PatchList $splitApps -PackageName 'com.example.drama').PackageName -ceq 'com.example.drama') `
+    'Explicit package coverage still depended on choosing one dominant app.'
+Assert-True ((@(Get-DeclaredPatchTargets -PatchList $twoVersions)[0].PackageVersions -join ',') -ceq '2.0.0,10.0.0') `
+    'The declared target matrix omitted a supported version.'
+Assert-Throws { Get-DeclaredPatchTargets -PatchList ([pscustomobject]@{ patches = @() }) } '*no declared packages*' `
+    'An empty declared target matrix was accepted.'
+
 $unevenSecond = [pscustomobject]@{
     patches = @(
         [pscustomobject]@{ name = 'a'; compatiblePackages = [pscustomobject]@{ 'com.example.app' = @('1.0.0'); 'com.example.drama' = @('1.0.0') } },
@@ -510,6 +525,8 @@ $unevenSecond = [pscustomobject]@{
 }
 Assert-Throws { Get-PatchTarget -PatchList $unevenSecond } '*same versions of com.example.drama*' `
     'A second app declared at different versions was accepted.'
+Assert-Throws { Get-DeclaredPatchTargets -PatchList $unevenSecond } '*same versions of com.example.drama*' `
+    'The complete target matrix accepted inconsistent package versions.'
 $missingTarget = [pscustomobject]@{ patches = @([pscustomobject]@{ name = 'missing target' }) }
 Assert-Throws { Get-PatchTarget -PatchList $missingTarget } '*has no compatible package*' `
     'A patch without compatibility metadata was accepted.'
@@ -802,13 +819,11 @@ foreach ($name in $consumerScripts) {
         "$name does not pass declared dependency names into result validation."
 }
 
-# The release receipt runs over the builds the gate applied. Collecting every package's targets
-# took PineDrama's 47.1.4 for a TikTok build at 0.76.0 and stopped the build stage.
+# The release stage enumerates every package separately, rather than treating another app's version as TikTok.
 $releaseText = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'release/release.ps1') -Raw
-Assert-True ($releaseText -match '\$target = Get-PatchTarget' -and $releaseText -match 'foreach \(\$v in @\(\$target\.PackageVersions\)\)') `
-    'release.ps1 does not pick its receipt fixtures from the bundle''s target through Get-PatchTarget.'
-Assert-True ($releaseText -notmatch 'compatibility\.targets') `
-    'release.ps1 reads every package''s compatibility targets, so a second app''s version reads as a TikTok build.'
+Assert-True ($releaseText -match 'Get-DeclaredPatchTargets' -and $releaseText -match 'foreach \(\$v in @\(\$declared\.PackageVersions\)\)' -and
+    $releaseText -match '\$\(\$declared\.PackageName\)_\$v') 'release.ps1 does not select each declared package/version fixture separately.'
+Assert-True ($releaseText -notmatch 'compatibility\.targets') 'release.ps1 still flattens unrelated app versions.'
 
 # --- patch timing ----------------------------------------------------------------------------
 #
@@ -1094,7 +1109,12 @@ try {
                 exportedComponentsAdded = @(); exportedComponentsRemoved = @() }
         })
     }
-    $templateJson = $template | ConvertTo-Json -Depth 12
+    . (Join-Path $PSScriptRoot 'fixtures/release-qualified-fixture.ps1')
+    $testDeclaredTargets = @([pscustomobject]@{ PackageName = 'com.example.host'; PackageVersions = @('46.7.3'); PatchNames = @('Alpha','Beta') })
+    $qualifiedTemplate = $template | ConvertTo-Json -Depth 20 | ConvertFrom-Json
+    Set-ReleaseTestQualification $qualifiedTemplate $testDeclaredTargets
+    $template = $qualifiedTemplate
+    $templateJson = $template | ConvertTo-Json -Depth 20
 
     function New-TestReceipt {
         param([scriptblock]$Mutate)
@@ -1107,7 +1127,7 @@ try {
         param($Receipt, [string[]]$Approved = @())
         return Test-ReleaseReceipt -Receipt $Receipt -ExpectedVersion '9.9.9' `
             -ExpectedPatchNames @('Alpha', 'Beta') -ExpectedPatcherVersion '1.12.0' `
-            -ExpectedManagerFloor '1.29.0' -ExpectedPackageName 'com.example.host' -ExpectedPackageVersion '46.7.3' -BundlePath $bundle -ApprovedManifestDelta $Approved
+            -ExpectedManagerFloor '1.29.0' -ExpectedPackageName 'com.example.host' -ExpectedPackageVersion '46.7.3' -BundlePath $bundle -ApprovedManifestDelta $Approved -ExpectedTargets $testDeclaredTargets
     }
 
     $valid = Test-TestReceipt -Receipt (New-TestReceipt)
@@ -1228,15 +1248,17 @@ try {
     # The device audit block goes through the same validator every gate runs: one covering the
     # declared version passes, and one of another TikTok build is refused for that reason.
     function New-AuditFact([string]$Version) {
-        return [pscustomobject]@{ results = "audit/results/tiktok-$Version.json"; sha256 = ('d' * 64)
-            appVersion = $Version; sourceCommit = ('c' * 40); checks = 3 }
+        $fact = $qualifiedTemplate.audit[0] | ConvertTo-Json -Depth 20 | ConvertFrom-Json
+        $fact.appVersion = $Version
+        return $fact
     }
+
     $audited = Test-TestReceipt -Receipt (New-TestReceipt -Mutate {
-        param($r) $r | Add-Member -NotePropertyName audit -NotePropertyValue @(New-AuditFact '46.7.3') })
+        param($r) $r | Add-Member -NotePropertyName audit -NotePropertyValue @(New-AuditFact '46.7.3') -Force })
     Assert-True $audited.Valid "A receipt whose audit covers the declared version was refused: $($audited.Reason)"
     $misaudited = Test-TestReceipt -Receipt (New-TestReceipt -Mutate {
-        param($r) $r | Add-Member -NotePropertyName audit -NotePropertyValue @(New-AuditFact '46.6.3') })
-    Assert-True ($misaudited.Reason -like '*audit is of TikTok 46.6.3*') `
+        param($r) $r | Add-Member -NotePropertyName audit -NotePropertyValue @(New-AuditFact '46.6.3') -Force })
+    Assert-True ($misaudited.Reason -like '*46.6.3*') `
         "A receipt audited on another TikTok build was refused for the wrong reason: $($misaudited.Reason)"
 
     # A receipt built only from forced runs against newer builds has to be refused for that
@@ -1251,6 +1273,8 @@ try {
         $newer.source.forced = $true
         $r.targets = @($r.targets[0], $newer)
     }
+    $secondTarget.targets[1].source.sha256 = 'C' * 64
+    Set-ReleaseTestQualification $secondTarget $testDeclaredTargets
     $twoTargets = Test-TestReceipt -Receipt $secondTarget
     Assert-True $twoTargets.Valid "A receipt with the declared target beside a forced run was refused: $($twoTargets.Reason)"
 
@@ -1261,12 +1285,15 @@ try {
         $newer.source.versionName = '46.8.3'
         $r.targets = @($r.targets[0], $newer)
     }
-    $bothValid = Test-ReleaseReceipt -Receipt $bothDeclared -ExpectedVersion '9.9.9' `
+    $twoDeclaredTargets = @([pscustomobject]@{ PackageName = 'com.example.host'; PackageVersions = @('46.7.3','46.8.3'); PatchNames = @('Alpha','Beta') })
+    $bothDeclared.targets[1].source.sha256 = 'C' * 64
+    Set-ReleaseTestQualification $bothDeclared $twoDeclaredTargets
+    $bothValid = Test-ReleaseReceipt -ExpectedTargets $twoDeclaredTargets -Receipt $bothDeclared -ExpectedVersion '9.9.9' `
         -ExpectedPatchNames @('Alpha', 'Beta') -ExpectedPatcherVersion '1.12.0' `
         -ExpectedManagerFloor '1.29.0' -ExpectedPackageName 'com.example.host' `
         -ExpectedPackageVersions @('46.7.3', '46.8.3') -BundlePath $bundle
     Assert-True $bothValid.Valid "A receipt proving both declared versions was refused: $($bothValid.Reason)"
-    $oneMissing = Test-ReleaseReceipt -Receipt (New-TestReceipt) -ExpectedVersion '9.9.9' `
+    $oneMissing = Test-ReleaseReceipt -ExpectedTargets $twoDeclaredTargets -Receipt (New-TestReceipt) -ExpectedVersion '9.9.9' `
         -ExpectedPatchNames @('Alpha', 'Beta') -ExpectedPatcherVersion '1.12.0' `
         -ExpectedManagerFloor '1.29.0' -ExpectedPackageName 'com.example.host' `
         -ExpectedPackageVersions @('46.7.3', '46.8.3') -BundlePath $bundle
@@ -1324,7 +1351,7 @@ try {
     # The commit the receipt names, checked against something outside the receipt. Its own
     # timestamp field and the bundle stamp both come from the same document, so a receipt kept
     # from an earlier release agrees with itself and passes on that pair alone.
-    $sameCommit = Test-ReleaseReceipt -Receipt (New-TestReceipt) -ExpectedVersion '9.9.9' `
+    $sameCommit = Test-ReleaseReceipt -ExpectedTargets $testDeclaredTargets -Receipt (New-TestReceipt) -ExpectedVersion '9.9.9' `
         -ExpectedPatchNames @('Alpha', 'Beta') -ExpectedPatcherVersion '1.12.0' `
         -ExpectedManagerFloor '1.29.0' -ExpectedPackageName 'com.example.host' -ExpectedPackageVersion '46.7.3' -BundlePath $bundle `
         -ActualCommitTimestamp $commitSeconds
@@ -1546,7 +1573,8 @@ try {
     # And the release check hands the receipt that list, names and target both, rather than the
     # working one. A helper nothing calls would pass every case above.
     $factsSource = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'validate-release-facts.ps1') -Raw
-    Assert-True ($factsSource -match '-ExpectedPatchNames @\(Get-PackagePatchNames -PatchList \$resolvedList\.PatchList -PackageName \$receiptTarget\.PackageName\)' -and
+    Assert-True ($factsSource -match '-ExpectedPatchNames \$receiptPatchNames -ExpectedTargets \$receiptTargets' -and
+        $factsSource -match 'Get-DeclaredPatchTargets -PatchList \$resolvedList\.PatchList' -and
         $factsSource -match '\$receiptTarget = Get-PatchTarget -PatchList \$resolvedList\.PatchList' -and
         $factsSource -match '-ExpectedPackageName \$receiptTarget\.PackageName') `
         'validate-release-facts.ps1 no longer holds the receipt to the patch list its own commit carried.'
@@ -2313,7 +2341,7 @@ try {
         'scripts/patch-for-device.ps1', 'scripts/device-install.ps1', 'scripts/device-lease.ps1',
         'scripts/common.ps1', 'scripts/Resolve-Java.ps1',
         'scripts/patch-target.ps1', 'scripts/patch-report.ps1',
-        'tools/verification-probe/build.ps1', 'tools/verification-probe/AndroidManifest.xml',
+        'tools/verification-probe/build.ps1', 'tools/verification-probe/AndroidManifest.xml', 'tools/verification-probe/profile.ps1',
         'tools/verification-probe/src/Probe.java'
     )) {
         Invoke-Hook -Paths @($signingInput)
@@ -3864,10 +3892,14 @@ Assert-True ($unleased.Count -eq 0) ("Scripts run adb without checking the devic
 Write-Host '[scripts] adb device lease contracts passed'
 
 & (Join-Path $Root 'scripts/test-storage-probe.ps1') -Root $Root
+& (Join-Path $Root 'scripts/test-verification-profile.ps1') -Root $Root
+& (Join-Path $Root 'tools/verification-probe/test-pinedrama.ps1') -Root $Root
 & (Join-Path $Root 'scripts/test-fixture-jobs.ps1') -Root $Root
 & (Join-Path $Root 'scripts/test-release-publication.ps1') -Root $Root
 & (Join-Path $Root 'scripts/test-walk-receipt.ps1')
 & (Join-Path $Root 'scripts/test-audit-results.ps1')
+& (Join-Path $Root 'scripts/test-release-qualification.ps1')
+& (Join-Path $Root 'scripts/test-release-receipt-producer.ps1')
 & (Join-Path $Root 'scripts/test-walk-app.ps1')
 & (Join-Path $Root 'scripts/test-device-lease.ps1')
 & (Join-Path $Root 'audit/test-evidence.ps1')

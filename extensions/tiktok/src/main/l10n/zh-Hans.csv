@@ -1867,7 +1867,6 @@ The Archive row leaves the Inbox. Archived chats are kept.,存档行离开收件
 The Bulletin board rows TikTok adds to the Inbox leave the list. Chats and the other rows stay where they are.,公告板行 TikTok 添加到收件箱离开列表。聊天和其他行保留在原处.
 The Following and For You names above the feed go away. Swiping between the feeds and the search button stay as they are.,信息流上方的“关注”和“为您推荐”名称将消失。在信息流和搜索按钮之间滑动保持原样.
 The LIVE ended or the connection dropped. What was recorded is saved to %1$s,LIVE 结束或连接断开。录制的内容保存到 %1$s
-The LIVE recording TikTok closed on couldn't be saved. Its unfinished file was cleared.,无法保存关闭的 LIVE 录音 TikTok。其未完成的文件已被清除.
 The Lab can't check this. TikTok gets it exactly as typed.,实验室无法检查这一点。 TikTok 完全按照键入的方式获取它.
 The Lab couldn't open. Go back and open it again.,实验室无法打开。返回并再次打开它.
 "The Lab keeps at most %1$s rules. This change would make %2$s, so nothing was changed.",实验室最多保留 %1$s 条规则。此更改将生成 %2$s，因此没有任何更改.
@@ -2299,3 +2298,13 @@ Recording this LIVE's screen from now,现在开始录制此直播的屏幕
 "Recording this LIVE's screen from now, without sound",现在开始录制此直播的屏幕，不带声音
 Allow photo comments,允许图片评论
 "Show the gallery tab in the comment box, so you can add a photo to a comment like on TikTok. PineDrama turns it off for everyone. TikTok's server still decides whether your account can post one.",在评论框中显示图库标签，让您可以像在 TikTok 上一样在评论中添加图片。PineDrama 对所有人关闭了此功能。您的帐户能否发布仍由 TikTok 的服务器决定.
+"This screen recording has no sound.","这段屏幕录制没有声音."
+Export recording files,导出录制文件
+Delete recording files,删除录制文件
+The publication state of these older recording files is unknown. Export a copy or delete the retained files.,这些旧录制文件的发布状态未知。请导出副本或删除保留的文件.
+The screen recording did not finish. Its files can be exported but may not play.,屏幕录制未完成。文件可以导出，但可能无法播放.
+Recording files need recovery,录制文件需要恢复
+The recovery record is damaged. Export a copy of the recording files or delete them.,恢复记录已损坏。请导出录制文件的副本或将其删除.
+The export may be incomplete. The original recording files are still kept.,导出文件可能不完整。原始录制文件仍然保留.
+Some recording files remain. Try deleting them again.,仍有录制文件未删除。请再次尝试删除.
+"Recovered recording saved to %1$s","已恢复的录制保存到 %1$s"

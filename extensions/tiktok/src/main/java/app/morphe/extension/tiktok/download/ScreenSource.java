@@ -14,9 +14,9 @@ import android.media.AudioRecord;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
-import android.media.MediaMuxer;
 import android.media.projection.MediaProjection;
 import android.os.Build;
+import android.os.Process;
 import android.util.DisplayMetrics;
 import android.view.Surface;
 
@@ -24,102 +24,106 @@ import app.morphe.extension.shared.Logger;
 import app.morphe.extension.tiktok.live.ScreenCapture;
 
 import java.io.Closeable;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-/**
- * Records what the phone's screen shows, with the app's own sound when it can (#37), as the source of
- * a {@link LiveRecorder}. It encodes H.264 and AAC into an MP4 of its own while the recording runs,
- * then feeds that file into the recorder's spool, so the recorder's limits, its notices and its crash
- * recovery all apply as they do to a stream recording. It runs on the recorder's thread.
- */
+/** Encodes AVC/AAC directly into complete recoverable FLV tags on the recorder's bounded spool. */
 final class ScreenSource implements LiveRecorder.Source {
-    /** The longest side of the recorded picture, in pixels. */
     static final int MAX_SIDE = 1920;
-    private static final int FRAME_RATE = 30;
-    private static final int SAMPLE_RATE = 44100;
-    private static final int AUDIO_BITRATE = 128_000;
-    private static final long POLL_MS = 8;
-    private static final long END_WAIT_MS = 4000;
-    private static final int COPY_BUFFER = 64 * 1024;
+    private static final int FRAME_RATE = 30, SAMPLE_RATE = 44100, AUDIO_BITRATE = 128_000;
+    private static final long POLL_MS = 8,
+            END_WAIT_MS = 4000,
+            FORMAT_WAIT_MS = 4000,
+            OUTPUT_WAIT_MS = 1500;
+
+    interface SinkFactory {
+        CaptureFlv.Sink open(LiveRecorder.Output output, LiveRecorder.ScreenAudio audio)
+                throws IOException;
+    }
 
     private final Context app;
-    private final File video;
-    private final int width;
-    private final int height;
-    private final int dpi;
+    private final int width, height, dpi;
     private final boolean wantAudio;
+    private final SinkFactory factory;
+    private final MediaProjection expected;
+    private LiveRecorder.ScreenAudio screenAudio = LiveRecorder.ScreenAudio.VIDEO_ONLY;
 
-    ScreenSource(Context app, File video, DisplayMetrics metrics, boolean audio) {
+    ScreenSource(Context app, DisplayMetrics metrics, boolean audio, SinkFactory factory) {
         int[] size = captureSize(metrics.widthPixels, metrics.heightPixels);
         this.app = app;
-        this.video = video;
         this.width = size[0];
         this.height = size[1];
         this.dpi = metrics.densityDpi;
-        this.wantAudio = audio;
+        wantAudio = audio;
+        this.factory = factory;
+        expected = ScreenCapture.pending();
     }
 
-    /**
-     * The picture's size: the screen's, scaled down so its longer side is at most {@link #MAX_SIDE},
-     * and each side even, which H.264 needs.
-     */
+    ScreenSource(Context app, DisplayMetrics metrics, boolean audio) {
+        this(app, metrics, audio, null);
+    }
+
     static int[] captureSize(int screenWidth, int screenHeight) {
         double scale = Math.min(1.0, (double) MAX_SIDE / Math.max(screenWidth, screenHeight));
-        int w = Math.max(2, (int) Math.round(screenWidth * scale)) & ~1;
-        int h = Math.max(2, (int) Math.round(screenHeight * scale)) & ~1;
-        return new int[]{w, h};
+        return new int[] {
+            Math.max(2, (int) Math.round(screenWidth * scale)) & ~1,
+            Math.max(2, (int) Math.round(screenHeight * scale)) & ~1
+        };
+    }
+
+    @android.annotation.TargetApi(29)
+    static AudioPlaybackCaptureConfiguration captureConfiguration(MediaProjection projection) {
+        return new AudioPlaybackCaptureConfiguration.Builder(projection)
+                .addMatchingUid(Process.myUid())
+                .addMatchingUsage(AudioAttributes.USAGE_MEDIA)
+                .addMatchingUsage(AudioAttributes.USAGE_GAME)
+                .addMatchingUsage(AudioAttributes.USAGE_UNKNOWN)
+                .build();
+    }
+
+    LiveRecorder.ScreenAudio screenAudio() {
+        return screenAudio;
     }
 
     @Override
-    public void pump(LiveRecorder.Output out, LiveRecorder.Control control) throws IOException {
-        MediaProjection projection = ScreenCapture.take();
+    public void abandon() {
+        ScreenCapture.discardUnused(expected);
+    }
+
+    @Override
+    public void pump(LiveRecorder.Output output, LiveRecorder.Control control) throws IOException {
+        MediaProjection projection = ScreenCapture.take(expected);
         if (projection == null) throw new IOException("Screen recording was not allowed");
         Encoder encoder = new Encoder(projection);
         control.onStop(encoder);
         try {
-            encoder.run(control);
+            encoder.run(output, control);
         } finally {
             control.release(encoder);
-            encoder.release();
-            ScreenCapture.release(projection);
-        }
-        copy(out);
-    }
-
-    private void copy(LiveRecorder.Output out) throws IOException {
-        if (!video.exists()) return;
-        try (FileInputStream in = new FileInputStream(video)) {
-            byte[] buffer = new byte[COPY_BUFFER];
-            int read;
-            while ((read = in.read(buffer)) > 0) out.write(buffer, 0, read);
-        } finally {
-            if (!video.delete()) Logger.printInfo(() -> "Could not remove a screen recording's work file");
+            try {
+                try {
+                    if (encoder.writer != null) encoder.writer.checkpoint();
+                } finally {
+                    encoder.release();
+                }
+            } finally {
+                ScreenCapture.release(projection);
+            }
         }
     }
 
-    /** The encoders, the muxer and the display feeding them, driven by one loop. */
-    private final class Encoder implements Closeable {
+    final class Encoder implements Closeable {
         private final MediaProjection projection;
         private volatile boolean stopRequested;
-        private MediaCodec videoCodec;
-        private MediaCodec audioCodec;
-        private MediaMuxer muxer;
+        private MediaCodec videoCodec, audioCodec;
         private VirtualDisplay display;
         private Surface surface;
         private AudioRecord audioRecord;
-        private int videoTrack = -1;
-        private int audioTrack = -1;
-        private boolean muxerStarted;
-        private boolean videoDone;
-        private boolean audioDone;
-        private boolean audioInputDone;
-        private long originUs;
-        private long lastVideoUs;
-        private long lastAudioUs;
-        private long audioFrames;
+        private MediaFormat videoFormat, audioFormat;
+        private Frame videoFrame, audioFrame;
+        private CaptureFlv.Writer writer;
+        private boolean videoDone, audioDone, audioInputDone, formatsReady;
+        private long originUs, audioBaseUs, audioFrames;
 
         Encoder(MediaProjection projection) {
             this.projection = projection;
@@ -130,218 +134,492 @@ final class ScreenSource implements LiveRecorder.Source {
             stopRequested = true;
         }
 
-        void run(LiveRecorder.Control control) throws IOException {
-            setUp();
+        void run(LiveRecorder.Output output, LiveRecorder.Control control) throws IOException {
             originUs = System.nanoTime() / 1000L;
             ScreenCapture.whenEnded(this::close);
-            MediaCodec.BufferInfo videoInfo = new MediaCodec.BufferInfo();
-            MediaCodec.BufferInfo audioInfo = new MediaCodec.BufferInfo();
+            if (control.stopRequested() || stopRequested) return;
+            setUp();
+            long formatDeadline = System.nanoTime() / 1_000_000L + FORMAT_WAIT_MS,
+                    firstOutputDeadline = Long.MAX_VALUE,
+                    firstIdrDeadline = Long.MAX_VALUE,
+                    endAt = 0,
+                    endUs = 0;
+            boolean ending = false;
             byte[] pcm = new byte[4096];
-            long endAt = 0;
-            boolean endSignalled = false;
             while (!(videoDone && audioDone)) {
-                if (stopRequested && !endSignalled) {
-                    endSignalled = true;
+                long now = System.nanoTime() / 1_000_000L;
+                if ((stopRequested || control.stopRequested()) && !ending) {
+                    ending = true;
+                    endUs = System.nanoTime() / 1000L - originUs;
                     videoCodec.signalEndOfInputStream();
-                    endAt = System.nanoTime() / 1_000_000L + END_WAIT_MS;
+                    endAt = now + END_WAIT_MS;
                 }
-                if (endSignalled && System.nanoTime() / 1_000_000L > endAt) break;
-                boolean moved = drainVideo(videoInfo);
+                if (writer == null && now > formatDeadline) {
+                    if (videoFormat == null)
+                        throw new IOException("Screen encoder did not provide video settings");
+                    if (audioCodec != null && audioFormat == null) {
+                        releaseAudio();
+                        audioDone = true;
+                        screenAudio = LiveRecorder.ScreenAudio.VIDEO_ONLY;
+                    }
+                }
+                if (ending && now > endAt)
+                    throw new IOException("Screen encoder did not finish all output");
+                boolean moved = readVideo();
                 if (audioCodec != null) {
-                    moved |= feedAudio(pcm, endSignalled);
-                    moved |= drainAudio(audioInfo);
+                    moved |= feedAudio(pcm, ending);
+                    moved |= readAudio();
                 }
-                if (!moved && !control.pause(POLL_MS) && !stopRequested) stopRequested = true;
+                if (!formatsReady
+                        && videoFormat != null
+                        && (audioCodec == null || audioFormat != null)) {
+                    formatsReady = true;
+                    firstOutputDeadline = now + OUTPUT_WAIT_MS;
+                }
+                if (writer == null
+                        && formatsReady
+                        && videoFrame == null
+                        && now > firstOutputDeadline)
+                    throw new IOException("Screen encoder did not produce its first video sample");
+                checkStall(now);
+                if (writer == null
+                        && formatsReady
+                        && videoFrame != null
+                        && (audioDone || audioFrame != null)) {
+                    if (audioDone && audioFrame == null) {
+                        releaseAudio();
+                        audioFormat = null;
+                        screenAudio = LiveRecorder.ScreenAudio.VIDEO_ONLY;
+                    }
+                    beginWriter(output);
+                    firstIdrDeadline = now + FORMAT_WAIT_MS;
+                    moved = true;
+                }
+                if (writer != null) {
+                    moved |= emitReady();
+                    if (writer.videoSamples == 0 && now > firstIdrDeadline)
+                        throw new IOException("Screen encoder did not produce an IDR frame");
+                }
+                if (!moved) {
+                    if (ending)
+                        try {
+                            Thread.sleep(POLL_MS);
+                        } catch (InterruptedException interrupted) {
+                            Thread.currentThread().interrupt();
+                            throw new IOException("Screen encoder drain interrupted", interrupted);
+                        }
+                    else if (!control.pause(POLL_MS)) stopRequested = true;
+                }
             }
+            if (writer != null)
+                writer.end(
+                        Math.max(
+                                writer.lastPresentationUs(),
+                                endUs > 0 ? endUs : System.nanoTime() / 1000L - originUs));
+        }
+
+        private void beginWriter(LiveRecorder.Output output) throws IOException {
+            byte[] specific = null;
+            int rate = 0, channels = 0;
+            if (audioFormat != null) {
+                try {
+                    rate = audioFormat.getInteger(MediaFormat.KEY_SAMPLE_RATE);
+                    channels = audioFormat.getInteger(MediaFormat.KEY_CHANNEL_COUNT);
+                    if (rate != SAMPLE_RATE || channels != 2)
+                        throw new IOException(
+                                "Screen AAC output disagrees with the PCM input clock");
+                    specific =
+                            CaptureFlv.audioConfiguration(
+                                    audioFormat.getByteBuffer("csd-0"), rate, channels);
+                    if (audioFrame != null)
+                        CaptureFlv.rawAudio(audioFrame.buffer, audioFrame.offset, audioFrame.size);
+                } catch (IOException | RuntimeException failure) {
+                    Logger.printInfo(() -> "Screen recording without valid AAC output: " + failure);
+                    specific = null;
+                    rate = 0;
+                    channels = 0;
+                    releaseFrame(audioFrame);
+                    audioFrame = null;
+                    releaseAudio();
+                    audioFormat = null;
+                    audioDone = true;
+                    screenAudio = LiveRecorder.ScreenAudio.VIDEO_ONLY;
+                }
+            }
+            CaptureFlv.Config config =
+                    new CaptureFlv.Config(
+                            videoFormat.getByteBuffer("csd-0"),
+                            videoFormat.getByteBuffer("csd-1"),
+                            specific == null ? null : ByteBuffer.wrap(specific),
+                            rate,
+                            channels);
+            if (config.width != width || config.height != height)
+                throw new IOException("Screen AVC dimensions disagree with the configured display");
+            if (factory == null) throw new IOException("Screen capture journal is missing");
+            writer = new CaptureFlv.Writer(factory.open(output, screenAudio), config);
         }
 
         private void setUp() throws IOException {
-            MediaFormat format = MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC, width, height);
-            format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
-            format.setInteger(MediaFormat.KEY_BIT_RATE, Math.min(12_000_000, Math.max(2_000_000, width * height * 4)));
+            MediaFormat format =
+                    MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC, width, height);
+            format.setInteger(
+                    MediaFormat.KEY_COLOR_FORMAT,
+                    MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
+            format.setInteger(
+                    MediaFormat.KEY_BIT_RATE,
+                    Math.min(12_000_000, Math.max(2_000_000, width * height * 4)));
             format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE);
             format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 2);
+            format.setInteger(
+                    MediaFormat.KEY_PROFILE, MediaCodecInfo.CodecProfileLevel.AVCProfileBaseline);
+            format.setInteger(MediaFormat.KEY_LEVEL, captureLevel(width, height));
+            if (Build.VERSION.SDK_INT >= 29) format.setInteger(MediaFormat.KEY_MAX_B_FRAMES, 0);
             videoCodec = MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_VIDEO_AVC);
             videoCodec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
             surface = videoCodec.createInputSurface();
             videoCodec.start();
-            muxer = new MediaMuxer(video.getAbsolutePath(), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
-            display = projection.createVirtualDisplay("hushfeed-live", width, height, dpi,
-                    DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, surface, null, null);
-            if (wantAudio) setUpAudio(projection);
+            display =
+                    projection.createVirtualDisplay(
+                            "hushfeed-live",
+                            width,
+                            height,
+                            dpi,
+                            DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
+                            surface,
+                            null,
+                            null);
+            setUpAudio(projection);
             audioDone = audioCodec == null;
         }
 
         /** Sound is optional: any failure here leaves a recording of the picture alone. */
-        private void setUpAudio(MediaProjection projection) {
-            if (Build.VERSION.SDK_INT < 29) return;
+        void setUpAudio(MediaProjection projection) {
+            screenAudio = LiveRecorder.ScreenAudio.VIDEO_ONLY;
+            if (!wantAudio || Build.VERSION.SDK_INT < 29) return;
             try {
-                AudioPlaybackCaptureConfiguration capture = new AudioPlaybackCaptureConfiguration.Builder(projection)
-                        .addMatchingUsage(AudioAttributes.USAGE_MEDIA)
-                        .addMatchingUsage(AudioAttributes.USAGE_GAME)
-                        .addMatchingUsage(AudioAttributes.USAGE_UNKNOWN)
-                        .build();
-                AudioFormat pcmFormat = new AudioFormat.Builder()
-                        .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
-                        .setSampleRate(SAMPLE_RATE)
-                        .setChannelMask(AudioFormat.CHANNEL_IN_STEREO)
-                        .build();
-                AudioRecord record = new AudioRecord.Builder()
-                        .setAudioPlaybackCaptureConfig(capture)
-                        .setAudioFormat(pcmFormat)
-                        .setBufferSizeInBytes(SAMPLE_RATE * 4)
-                        .build();
-                if (record.getState() != AudioRecord.STATE_INITIALIZED) {
-                    record.release();
-                    return;
+                AudioPlaybackCaptureConfiguration capture = captureConfiguration(projection);
+                AudioFormat pcmFormat =
+                        new AudioFormat.Builder()
+                                .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
+                                .setSampleRate(SAMPLE_RATE)
+                                .setChannelMask(AudioFormat.CHANNEL_IN_STEREO)
+                                .build();
+                audioRecord =
+                        new AudioRecord.Builder()
+                                .setAudioPlaybackCaptureConfig(capture)
+                                .setAudioFormat(pcmFormat)
+                                .setBufferSizeInBytes(SAMPLE_RATE * 4)
+                                .build();
+                if (audioRecord.getState() != AudioRecord.STATE_INITIALIZED) {
+                    throw new IllegalStateException("Playback capture was not initialized");
                 }
-                MediaFormat format = MediaFormat.createAudioFormat(MediaFormat.MIMETYPE_AUDIO_AAC, SAMPLE_RATE, 2);
-                format.setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectLC);
+                MediaFormat format =
+                        MediaFormat.createAudioFormat(
+                                MediaFormat.MIMETYPE_AUDIO_AAC, SAMPLE_RATE, 2);
+                format.setInteger(
+                        MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectLC);
                 format.setInteger(MediaFormat.KEY_BIT_RATE, AUDIO_BITRATE);
                 format.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, 16384);
-                MediaCodec codec = MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_AUDIO_AAC);
-                codec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
-                codec.start();
-                record.startRecording();
-                audioRecord = record;
-                audioCodec = codec;
+                audioCodec = MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_AUDIO_AAC);
+                audioCodec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
+                audioCodec.start();
+                audioBaseUs = System.nanoTime() / 1000L - originUs;
+                audioRecord.startRecording();
+                if (audioRecord.getRecordingState() != AudioRecord.RECORDSTATE_RECORDING) {
+                    throw new IllegalStateException("Playback capture did not start");
+                }
+                screenAudio = LiveRecorder.ScreenAudio.ENABLED;
             } catch (IOException | RuntimeException failure) {
                 Logger.printInfo(() -> "Screen recording without sound: " + failure);
                 releaseAudio();
             }
         }
 
-        private boolean drainVideo(MediaCodec.BufferInfo info) {
-            if (videoDone) return false;
+        private boolean readVideo() throws IOException {
+            if (videoDone || videoFrame != null || videoFormat != null && !formatsReady)
+                return false;
+            MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
             boolean moved = false;
             while (true) {
                 int index = videoCodec.dequeueOutputBuffer(info, 0);
                 if (index == MediaCodec.INFO_TRY_AGAIN_LATER) return moved;
                 moved = true;
                 if (index == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
-                    videoTrack = muxer.addTrack(videoCodec.getOutputFormat());
-                    startMuxerWhenReady();
-                    continue;
-                }
-                if (index < 0) continue;
-                ByteBuffer data = videoCodec.getOutputBuffer(index);
-                boolean config = (info.flags & MediaCodec.BUFFER_FLAG_CODEC_CONFIG) != 0;
-                if (data != null && !config && info.size > 0 && muxerStarted) {
-                    info.presentationTimeUs = Math.max(lastVideoUs, info.presentationTimeUs - originUs);
-                    lastVideoUs = info.presentationTimeUs;
-                    data.position(info.offset);
-                    data.limit(info.offset + info.size);
-                    muxer.writeSampleData(videoTrack, data, info);
-                }
-                videoCodec.releaseOutputBuffer(index, false);
-                if ((info.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) {
-                    videoDone = true;
+                    if (videoFormat != null) throw new IOException("Screen video format changed");
+                    videoFormat = videoCodec.getOutputFormat();
                     return true;
                 }
-            }
-        }
-
-        /** Moves captured sound into the AAC encoder; once the recording ends, signals its end. */
-        private boolean feedAudio(byte[] pcm, boolean ending) {
-            if (audioInputDone) return false;
-            int index = audioCodec.dequeueInputBuffer(0);
-            if (index < 0) return false;
-            ByteBuffer input = audioCodec.getInputBuffer(index);
-            int read = ending ? 0 : audioRecord.read(pcm, 0, Math.min(pcm.length, input.capacity()),
-                    AudioRecord.READ_NON_BLOCKING);
-            long timeUs = System.nanoTime() / 1000L - originUs;
-            if (ending) {
-                audioCodec.queueInputBuffer(index, 0, 0, Math.max(timeUs, 0), MediaCodec.BUFFER_FLAG_END_OF_STREAM);
-                audioInputDone = true;
+                if (index < 0) continue;
+                boolean end = (info.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0;
+                if ((info.flags & MediaCodec.BUFFER_FLAG_CODEC_CONFIG) != 0 || info.size == 0) {
+                    videoCodec.releaseOutputBuffer(index, false);
+                    if (end) videoDone = true;
+                    if (end) return true;
+                    continue;
+                }
+                try {
+                    if (info.size > CaptureFlv.MAX_TAG_BYTES - 5)
+                        throw new IOException("Screen video sample exceeds the capture bound");
+                    videoFrame =
+                            new Frame(
+                                    videoCodec,
+                                    index,
+                                    info,
+                                    Math.subtractExact(info.presentationTimeUs, originUs));
+                } catch (IOException | RuntimeException failure) {
+                    videoCodec.releaseOutputBuffer(index, false);
+                    throw failure;
+                }
                 return true;
             }
-            if (read <= 0) {
-                audioCodec.queueInputBuffer(index, 0, 0, 0, 0);
-                return false;
-            }
-            input.clear();
-            input.put(pcm, 0, read);
-            audioCodec.queueInputBuffer(index, 0, read, Math.max(timeUs, 0), 0);
-            audioFrames += read / 4;
-            return true;
         }
 
-        private boolean drainAudio(MediaCodec.BufferInfo info) {
-            if (audioDone) return false;
+        private boolean readAudio() throws IOException {
+            if (audioDone || audioFrame != null || audioFormat != null && !formatsReady)
+                return false;
+            MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
             boolean moved = false;
             while (true) {
                 int index = audioCodec.dequeueOutputBuffer(info, 0);
                 if (index == MediaCodec.INFO_TRY_AGAIN_LATER) return moved;
                 moved = true;
                 if (index == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
-                    audioTrack = muxer.addTrack(audioCodec.getOutputFormat());
-                    startMuxerWhenReady();
-                    continue;
-                }
-                if (index < 0) continue;
-                ByteBuffer data = audioCodec.getOutputBuffer(index);
-                boolean config = (info.flags & MediaCodec.BUFFER_FLAG_CODEC_CONFIG) != 0;
-                if (data != null && !config && info.size > 0 && muxerStarted) {
-                    info.presentationTimeUs = Math.max(lastAudioUs, info.presentationTimeUs);
-                    lastAudioUs = info.presentationTimeUs;
-                    data.position(info.offset);
-                    data.limit(info.offset + info.size);
-                    muxer.writeSampleData(audioTrack, data, info);
-                }
-                audioCodec.releaseOutputBuffer(index, false);
-                if ((info.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) {
-                    audioDone = true;
+                    if (audioFormat != null) throw new IOException("Screen audio format changed");
+                    audioFormat = audioCodec.getOutputFormat();
                     return true;
                 }
+                if (index < 0) continue;
+                boolean end = (info.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0;
+                if ((info.flags & MediaCodec.BUFFER_FLAG_CODEC_CONFIG) != 0 || info.size == 0) {
+                    audioCodec.releaseOutputBuffer(index, false);
+                    if (end) audioDone = true;
+                    if (end) return true;
+                    continue;
+                }
+                try {
+                    if (info.size > CaptureFlv.MAX_AUDIO_BYTES)
+                        throw new IOException("Screen audio sample exceeds the capture bound");
+                    audioFrame = new Frame(audioCodec, index, info, info.presentationTimeUs);
+                } catch (IOException | RuntimeException failure) {
+                    audioCodec.releaseOutputBuffer(index, false);
+                    throw failure;
+                }
+                return true;
             }
         }
 
-        private void startMuxerWhenReady() {
-            if (muxerStarted || videoTrack < 0 || (audioCodec != null && audioTrack < 0)) return;
-            muxer.start();
-            muxerStarted = true;
+        private void checkStall(long now) throws IOException {
+            if (writer != null) return;
+            if (videoFrame != null
+                    && !audioDone
+                    && audioFrame == null
+                    && now - videoFrame.waitingAt > OUTPUT_WAIT_MS) {
+                // Optional sound may fail after format setup but before its first sample.
+                // The first IDR stays codec-owned until this bounded video-only decision.
+                releaseAudio();
+                audioFormat = null;
+                audioDone = true;
+                screenAudio = LiveRecorder.ScreenAudio.VIDEO_ONLY;
+            }
+            if (audioFrame != null
+                    && !videoDone
+                    && videoFrame == null
+                    && now - audioFrame.waitingAt > OUTPUT_WAIT_MS)
+                throw new IOException("Screen video encoder output stalled");
         }
 
-        private void releaseAudio() {
-            if (audioRecord != null) {
-                try {
-                    audioRecord.stop();
-                } catch (RuntimeException ignored) {
-                    // Not started.
-                }
-                audioRecord.release();
-                audioRecord = null;
+        private boolean emitReady() throws IOException {
+            Frame frame;
+            boolean video;
+            if (videoFrame != null && audioFrame != null)
+                video = videoFrame.timeUs <= audioFrame.timeUs;
+            else if (videoFrame != null && (audioDone || writer.audioSamples > 0)) video = true;
+            else if (audioFrame != null && (videoDone || writer.videoSamples > 0)) video = false;
+            else return false;
+            frame = video ? videoFrame : audioFrame;
+            try {
+                if (video) writer.video(frame.buffer, frame.offset, frame.size, frame.timeUs);
+                else writer.audio(frame.buffer, frame.offset, frame.size, frame.timeUs);
+            } finally {
+                frame.release();
+                if (video) videoFrame = null;
+                else audioFrame = null;
             }
-            if (audioCodec != null) {
+            if (frame.end) {
+                if (video) videoDone = true;
+                else audioDone = true;
+            }
+            return true;
+        }
+
+        private boolean feedAudio(byte[] pcm, boolean ending) throws IOException {
+            if (audioInputDone) return false;
+            int index = audioCodec.dequeueInputBuffer(0);
+            if (index < 0) return false;
+            ByteBuffer input = audioCodec.getInputBuffer(index);
+            if (input == null) throw new IOException("Screen audio input is unavailable");
+            long time = audioTimeUs(audioBaseUs, audioFrames, SAMPLE_RATE);
+            if (ending) {
+                audioCodec.queueInputBuffer(
+                        index, 0, 0, time, MediaCodec.BUFFER_FLAG_END_OF_STREAM);
+                audioInputDone = true;
+                return true;
+            }
+            int size = Math.min(pcm.length, input.capacity()) & ~3;
+            if (size < 4) throw new IOException("Screen audio buffer cannot hold one PCM frame");
+            int read = audioRecord.read(pcm, 0, size, AudioRecord.READ_NON_BLOCKING);
+            if (read < 0 || read > size || read % 4 != 0)
+                throw new IOException("Playback capture read failed: " + read);
+            if (read == 0) {
+                audioCodec.queueInputBuffer(index, 0, 0, time, 0);
+                return false;
+            }
+            input.clear();
+            input.put(pcm, 0, read);
+            audioCodec.queueInputBuffer(index, 0, read, time, 0);
+            audioFrames += read / 4;
+            return true;
+        }
+
+        void releaseAudio() {
+            AudioRecord record = audioRecord;
+            MediaCodec codec = audioCodec;
+            audioRecord = null;
+            audioCodec = null;
+            if (record != null) {
                 try {
-                    audioCodec.stop();
+                    record.stop();
                 } catch (RuntimeException ignored) {
                     // Not started.
                 }
-                audioCodec.release();
-                audioCodec = null;
+                try {
+                    record.release();
+                } catch (RuntimeException failure) {
+                    Logger.printInfo(() -> "Could not release playback capture: " + failure);
+                }
+            }
+            if (codec != null) {
+                try {
+                    codec.stop();
+                } catch (RuntimeException ignored) {
+                    // Not started.
+                }
+                try {
+                    codec.release();
+                } catch (RuntimeException failure) {
+                    Logger.printInfo(
+                            () ->
+                                    "Could not release a screen recording's audio encoder: "
+                                            + failure);
+                }
             }
         }
 
         void release() {
-            if (display != null) display.release();
-            if (surface != null) surface.release();
-            releaseAudio();
-            if (videoCodec != null) {
+            releaseFrame(videoFrame);
+            videoFrame = null;
+            releaseFrame(audioFrame);
+            audioFrame = null;
+            VirtualDisplay ownedDisplay = display;
+            display = null;
+            if (ownedDisplay != null)
                 try {
-                    videoCodec.stop();
-                } catch (RuntimeException ignored) {
-                    // Not started.
-                }
-                videoCodec.release();
-            }
-            if (muxer != null) {
-                try {
-                    if (muxerStarted) muxer.stop();
+                    ownedDisplay.release();
                 } catch (RuntimeException failure) {
-                    Logger.printInfo(() -> "Could not finish a screen recording's file: " + failure);
+                    Logger.printInfo(() -> "Could not release screen display: " + failure);
                 }
-                muxer.release();
+            Surface ownedSurface = surface;
+            surface = null;
+            if (ownedSurface != null)
+                try {
+                    ownedSurface.release();
+                } catch (RuntimeException failure) {
+                    Logger.printInfo(() -> "Could not release screen surface: " + failure);
+                }
+            releaseAudio();
+            MediaCodec codec = videoCodec;
+            videoCodec = null;
+            if (codec != null) {
+                try {
+                    codec.stop();
+                } catch (RuntimeException ignored) {
+                }
+                try {
+                    codec.release();
+                } catch (RuntimeException failure) {
+                    Logger.printInfo(() -> "Could not release screen encoder: " + failure);
+                }
+            }
+        }
+    }
+
+    static int captureLevel(int width, int height) {
+        long blocks = ((width + 15L) / 16) * ((height + 15L) / 16), perSecond = blocks * FRAME_RATE;
+        if (blocks <= 3600 && perSecond <= 108000)
+            return MediaCodecInfo.CodecProfileLevel.AVCLevel31;
+        if (blocks <= 5120 && perSecond <= 216000)
+            return MediaCodecInfo.CodecProfileLevel.AVCLevel32;
+        if (blocks <= 8192 && perSecond <= 245760)
+            return MediaCodecInfo.CodecProfileLevel.AVCLevel4;
+        if (blocks <= 8704 && perSecond <= 522240)
+            return MediaCodecInfo.CodecProfileLevel.AVCLevel42;
+        return MediaCodecInfo.CodecProfileLevel.AVCLevel5;
+    }
+
+    static long audioTimeUs(long start, long frames, int rate) throws IOException {
+        if (start < 0 || frames < 0 || rate < 1)
+            throw new IOException("Invalid capture audio clock");
+        try {
+            return Math.addExact(
+                    start,
+                    Math.addExact(
+                            Math.multiplyExact(frames / rate, 1_000_000L),
+                            (frames % rate) * 1_000_000L / rate));
+        } catch (ArithmeticException overflow) {
+            throw new IOException("Capture audio clock overflow", overflow);
+        }
+    }
+
+    private static void releaseFrame(Frame frame) {
+        if (frame != null)
+            try {
+                frame.release();
+            } catch (RuntimeException failure) {
+                Logger.printInfo(() -> "Could not release screen output: " + failure);
+            }
+    }
+
+    private static final class Frame {
+        final MediaCodec codec;
+        final int index, offset, size;
+        final long timeUs, waitingAt;
+        final boolean end;
+        final ByteBuffer buffer;
+        private boolean released;
+
+        Frame(MediaCodec codec, int index, MediaCodec.BufferInfo info, long time)
+                throws IOException {
+            if (time < 0
+                    || info.size < 1
+                    || Build.VERSION.SDK_INT >= 26
+                            && (info.flags & MediaCodec.BUFFER_FLAG_PARTIAL_FRAME) != 0)
+                throw new IOException("Screen encoder produced incomplete or untimed output");
+            this.codec = codec;
+            this.index = index;
+            offset = info.offset;
+            size = info.size;
+            timeUs = time;
+            end = (info.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0;
+            buffer = codec.getOutputBuffer(index);
+            if (buffer == null || offset < 0 || offset > buffer.capacity() - size)
+                throw new IOException("Screen output buffer range is invalid");
+            waitingAt = System.nanoTime() / 1_000_000L;
+        }
+
+        void release() {
+            if (!released) {
+                released = true;
+                codec.releaseOutputBuffer(index, false);
             }
         }
     }

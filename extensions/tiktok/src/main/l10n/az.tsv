@@ -2216,7 +2216,6 @@ Bold	Qalın
 Extra bold	Çox qalın
 Caption height in Clear display	Təmiz ekranda başlıq hündürlüyü
 Lifts the kept caption above its usual spot in Clear display. Use 0 for the usual spot, or up to %1$d.	Təmiz ekranda saxlanan başlığı adi yerindən yuxarı qaldırır. Adi yer üçün 0, ən çox %1$d yazın.
-The LIVE recording TikTok closed on couldn't be saved. Its unfinished file was cleared.	TikTok bağlananda yarımçıq qalan LIVE yazısı saxlanıla bilmədi. Yarımçıq fayl silindi.
 Also on opened videos	Açılmış videolarda da
 Hide the search bar at the top of videos you open from search, a profile or your watch history. The Back button stays.	Axtarışdan, profildən və ya baxış tarixçənizdən açdığınız videoların yuxarısındakı axtarış çubuğunu gizlədin. Geri düyməsi qalır.
 Hide profile views	Profil baxışlarını gizlədin
@@ -2323,3 +2322,15 @@ Recording this LIVE's screen from now	Bu LIVE-ın ekranı indi yazılır
 Recording this LIVE's screen from now, without sound	Bu LIVE-ın ekranı indi səssiz yazılır
 Allow photo comments	Foto şərhlərə icazə ver
 Show the gallery tab in the comment box, so you can add a photo to a comment like on TikTok. PineDrama turns it off for everyone. TikTok's server still decides whether your account can post one.	Şərh qutusunda qalereya bölməsini göstərir ki, TikTok-da olduğu kimi şərhə foto əlavə edə biləsiniz. PineDrama onu hamı üçün söndürür. Hesabınızın foto paylaşa bilib-bilməyəcəyinə yenə də TikTok-un serveri qərar verir.
+This screen recording has no sound.	Bu ekran yazısında səs yoxdur.
+Export recording files	Qeyd fayllarını ixrac et
+Delete recording files	Qeyd fayllarını sil
+The publication state of these older recording files is unknown. Export a copy or delete the retained files.	Bu köhnə qeyd fayllarının yayımlanma vəziyyəti məlum deyil. Bir nüsxə ixrac edin və ya saxlanılan faylları silin.
+The screen recording did not finish. Its files can be exported but may not play.	Ekran qeydi tamamlanmadı. Faylları ixrac etmək olar, lakin onlar açılmaya bilər.
+Recording files need recovery	Yazı fayllarını bərpa etmək lazımdır
+The recovery record is damaged. Export a copy of the recording files or delete them.	Bərpa qeydi zədələnib. Yazı fayllarının surətini ixrac edin və ya onları silin.
+The export may be incomplete. The original recording files are still kept.	İxrac natamam ola bilər. Orijinal yazı faylları hələ də saxlanılır.
+Some recording files remain. Try deleting them again.	Bəzi yazı faylları qalır. Onları yenidən silməyə çalışın.
+
+# context: Explicit recording Retry when the original stop reason was not retained.
+Recovered recording saved to %1$s	Bərpa edilmiş çəkiliş %1$s qovluğunda saxlanıldı

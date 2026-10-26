@@ -20,6 +20,8 @@
     reason stops being a review.
 #>
 
+. (Join-Path $PSScriptRoot 'release-qualification.ps1')
+
 function Get-ReleaseReceiptSchemaVersion {
     <#
     .SYNOPSIS
@@ -30,7 +32,7 @@ function Get-ReleaseReceiptSchemaVersion {
         several scripts, and a script-scoped variable in a dot-sourced file belongs to whichever
         one sourced it.
     #>
-    return 2
+    return 3
 }
 
 function Test-BuildSourceFacts {
@@ -66,6 +68,34 @@ function Test-FrozenLegacyReceipt {
         return $false
     }
     $identityPath = Join-Path $PSScriptRoot 'legacy-release-receipts.tsv'
+    $receiptHash = Get-Sha256Hex -Path $ReceiptPath
+    $identity = @(Get-Content -LiteralPath $identityPath | Where-Object {
+        $_ -and -not $_.StartsWith('#') -and ($_ -split "`t")[0] -eq $receiptHash
+    })
+    if ($identity.Count -ne 1) { return $false }
+    $fields = $identity[0] -split "`t"
+    if ($fields.Count -ne 4 -or $Receipt.bundle.sha256 -ne $fields[1] -or
+            $Receipt.release.commit -ne $fields[2] -or $Receipt.release.tag -ne $fields[3]) {
+        return $false
+    }
+    # The caller's parsed object must describe those exact bytes too, not a different document
+    # accompanied by the path of a valid historical one.
+    $frozen = Get-Content -LiteralPath $ReceiptPath -Raw | ConvertFrom-Json
+    return ($frozen | ConvertTo-Json -Depth 20 -Compress) -ceq
+        ($Receipt | ConvertTo-Json -Depth 20 -Compress)
+}
+
+function Test-FrozenSchema2Receipt {
+    <#
+        Only the exact already-published schema 2 documents may use the historical reader.
+        Neither an old version label nor a supplied switch can exempt a new artifact.
+    #>
+    param($Receipt, [string]$ReceiptPath)
+
+    if (-not $ReceiptPath -or -not (Test-Path -LiteralPath $ReceiptPath -PathType Leaf)) {
+        return $false
+    }
+    $identityPath = Join-Path $PSScriptRoot 'frozen-schema2-release-receipts.tsv'
     $receiptHash = Get-Sha256Hex -Path $ReceiptPath
     $identity = @(Get-Content -LiteralPath $identityPath | Where-Object {
         $_ -and -not $_.StartsWith('#') -and ($_ -split "`t")[0] -eq $receiptHash
@@ -801,17 +831,27 @@ function Test-ReleaseReceipt {
         [long]$ActualCommitTimestamp = 0,
         # The commit this run is about. Only a release is held to it: on an ordinary push the
         # receipt legitimately describes the commit it was generated at, not HEAD.
-        [string]$ExpectedCommit
+        [string]$ExpectedCommit,
+        [object[]]$ExpectedTargets = @(),
+        [switch]$RequireCurrentContract
     )
 
     function Fail { param([string]$Reason) return [pscustomobject]@{ Valid = $false; Reason = $Reason } }
 
     if ($null -eq $Receipt) { return Fail 'There is no receipt to check.' }
+    if ($Receipt.schemaVersion -isnot [int] -and $Receipt.schemaVersion -isnot [long]) { return Fail 'The receipt has no integer schema version.' }
     $legacy = [int]$Receipt.schemaVersion -eq 1
     if ($legacy -and -not (Test-FrozenLegacyReceipt -Receipt $Receipt -ReceiptPath $ReceiptPath)) {
         return Fail 'Schema 1 is read-only for exact published receipts; a new receipt requires build-time source provenance.'
     }
-    if (-not $legacy -and [int]$Receipt.schemaVersion -ne (Get-ReleaseReceiptSchemaVersion)) {
+    $frozen2 = [int]$Receipt.schemaVersion -eq 2
+    if ($frozen2 -and -not (Test-FrozenSchema2Receipt -Receipt $Receipt -ReceiptPath $ReceiptPath)) {
+        return Fail 'Schema 2 is read-only for exact published receipts; new receipts require the complete target matrix.'
+    }
+    $historical = $legacy -or $frozen2
+    if ($historical -and $RequireCurrentContract) { return Fail 'Historical receipts cannot authorize a new artifact or publication.' }
+    $matrix = [int]$Receipt.schemaVersion -eq 3
+    if (-not $historical -and [int]$Receipt.schemaVersion -ne (Get-ReleaseReceiptSchemaVersion)) {
         return Fail ("The receipt is schema version $($Receipt.schemaVersion); this checkout " +
             "reads version $(Get-ReleaseReceiptSchemaVersion).")
     }
@@ -926,16 +966,23 @@ function Test-ReleaseReceipt {
     $produced = New-Object System.Collections.Generic.List[string]
     $provedVersions = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
     foreach ($target in $targets) {
+        $targetNames = $ExpectedPatchNames; $targetPackage = $ExpectedPackageName; $targetVersions = $ExpectedPackageVersions
+        if ($matrix -and $ExpectedTargets.Count -gt 0) {
+            $declared = @($ExpectedTargets | Where-Object { $_.PackageName -ceq $target.source.package })
+            if ($declared.Count -ne 1) { return Fail 'The receipt records a fixture of an undeclared package.' }
+            $targetNames = @($declared[0].PatchNames); $targetPackage = $declared[0].PackageName; $targetVersions = @($declared[0].PackageVersions)
+            $expected = [Collections.Generic.HashSet[string]]::new([string[]]$targetNames, [StringComparer]::Ordinal)
+        }
         $label = "$($target.source.package) $($target.source.versionName)"
         if ([string]$target.source.sha256 -notmatch '^[0-9A-F]{64}$') {
             return Fail "The receipt records no source APK hash for $label."
         }
-        if ([string]$target.source.package -ne $ExpectedPackageName) {
+        if ([string]$target.source.package -ne $targetPackage) {
             return Fail ("The receipt records a run against $($target.source.package); the " +
-                "catalog targets $ExpectedPackageName.")
+                "catalog targets $targetPackage.")
         }
         if ([string]::IsNullOrWhiteSpace([string]$target.source.versionName)) {
-            return Fail "The receipt records a $ExpectedPackageName run with no version name."
+            return Fail "The receipt records a $targetPackage run with no version name."
         }
         # Whether the CLI was told to ignore the declared version. Recorded as a boolean by the
         # builder; a receipt that leaves it out cannot say which of its runs were the real one.
@@ -943,17 +990,17 @@ function Test-ReleaseReceipt {
         if ($null -eq $forcedProperty -or $forcedProperty.Value -isnot [bool]) {
             return Fail "The receipt does not say whether $label was patched under -f."
         }
-        $atDeclaredVersion = [string]$target.source.versionName -cin $ExpectedPackageVersions
+        $atDeclaredVersion = [string]$target.source.versionName -cin $targetVersions
         if ($forcedProperty.Value -eq $atDeclaredVersion) {
             return Fail ("The receipt says $label was " +
                 $(if ($forcedProperty.Value) { 'forced past' } else { 'patched without -f at' }) +
-                " a declared version, but the catalog targets $($ExpectedPackageVersions -join ', ').")
+                " a declared version, but the catalog targets $($targetVersions -join ', ').")
         }
-        if ($atDeclaredVersion) { [void]$provedVersions.Add([string]$target.source.versionName) }
+        if ($atDeclaredVersion) { [void]$provedVersions.Add($(if ($matrix) { "$($target.source.package)|$($target.source.versionName)" } else { [string]$target.source.versionName })) }
         $verdicts = @($target.patches)
-        if ($verdicts.Count -ne $ExpectedPatchNames.Count) {
+        if ($verdicts.Count -ne $targetNames.Count) {
             return Fail ("The receipt records $($verdicts.Count) patch verdicts for $label; " +
-                "the catalog has $($ExpectedPatchNames.Count).")
+                "the catalog has $($targetNames.Count).")
         }
         $seen = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
         foreach ($verdict in $verdicts) {
@@ -972,13 +1019,27 @@ function Test-ReleaseReceipt {
             $produced.Add($entry)
         }
     }
-    $unproved = @($ExpectedPackageVersions | Where-Object { -not $provedVersions.Contains($_) })
-    if ($unproved.Count -gt 0) {
-        $ran = @($targets | ForEach-Object { [string]$_.source.versionName }) -join ', '
-        return Fail ("No target in the receipt is the declared $ExpectedPackageName " +
-            "$($unproved -join ', ') patched without -f; it only records $ran.")
+    if ($matrix -and $ExpectedTargets.Count -gt 0) {
+        foreach ($declared in $ExpectedTargets) {
+            foreach ($version in @($declared.PackageVersions)) {
+                if (-not $provedVersions.Contains("$($declared.PackageName)|$version")) {
+                    $ran = @($targets | ForEach-Object { "$($_.source.package) $($_.source.versionName)" }) -join ', '
+                    return Fail "No target in the receipt is the declared $($declared.PackageName) $version patched without -f; it only records $ran."
+                }
+            }
+        }
+        $auditProblem = Get-ReleaseQualificationProblem -Receipt $Receipt -ExpectedTargets $ExpectedTargets
+    } elseif ($matrix) {
+        return Fail 'Schema 3 requires the complete declared package/version matrix.'
+    } else {
+        $unproved = @($ExpectedPackageVersions | Where-Object { -not $provedVersions.Contains($_) })
+        if ($unproved.Count -gt 0) {
+            $ran = @($targets | ForEach-Object { [string]$_.source.versionName }) -join ', '
+            return Fail ("No target in the receipt is the declared $ExpectedPackageName " +
+                "$($unproved -join ', ') patched without -f; it only records $ran.")
+        }
+        $auditProblem = Test-ReceiptAuditFacts -Audit $Receipt.audit -PackageVersions $ExpectedPackageVersions
     }
-    $auditProblem = Test-ReceiptAuditFacts -Audit $Receipt.audit -PackageVersions $ExpectedPackageVersions
     if ($auditProblem) { return Fail $auditProblem }
 
     # A PowerShell function that returns an empty array hands back nothing, so an allowlist with
@@ -1000,5 +1061,5 @@ function Test-ReleaseReceipt {
             ($stale -join ', '))
     }
 
-    return [pscustomobject]@{ Valid = $true; Reason = $null }
+    return [pscustomobject]@{ Valid = $true; Reason = $null; Historical = $historical; EligibleForPublication = -not $historical }
 }

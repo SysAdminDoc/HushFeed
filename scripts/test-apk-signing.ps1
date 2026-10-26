@@ -134,7 +134,7 @@ exit /b %errorlevel%
             'extensions/tiktok/src/main/java/app/morphe/extension/tiktok/inbox')) {
         New-Item -ItemType Directory -Path (Join-Path $fixtureProject $directory) -Force | Out-Null
     }
-    foreach ($leaf in @('patch-for-device.ps1', 'apk-signing.ps1', 'SigningCertificateCheck.java', 'common.ps1', 'Resolve-Java.ps1', 'patch-target.ps1', 'patch-report.ps1', 'device-install.ps1', 'device-lease.ps1', 'release-receipt.ps1')) {
+    foreach ($leaf in @('patch-for-device.ps1', 'apk-signing.ps1', 'SigningCertificateCheck.java', 'common.ps1', 'Resolve-Java.ps1', 'patch-target.ps1', 'patch-report.ps1', 'device-install.ps1', 'device-lease.ps1', 'release-receipt.ps1', 'release-qualification.ps1')) {
         Copy-Item -LiteralPath (Join-Path $Root "scripts/$leaf") -Destination (Join-Path $fixtureProject "scripts/$leaf")
     }
     foreach ($leaf in @('libs.versions.toml', 'verification-metadata.xml')) {
@@ -142,6 +142,7 @@ exit /b %errorlevel%
     }
     Copy-Item -LiteralPath (Join-Path $Root 'tools/verification-probe/build.ps1') -Destination (Join-Path $fixtureProject 'tools/verification-probe/build.ps1')
     Copy-Item -LiteralPath (Join-Path $Root 'tools/verification-probe/AndroidManifest.xml') -Destination (Join-Path $fixtureProject 'tools/verification-probe/AndroidManifest.xml')
+    Copy-Item -LiteralPath (Join-Path $Root 'tools/verification-probe/profile.ps1') -Destination (Join-Path $fixtureProject 'tools/verification-probe/profile.ps1')
     Copy-Item -LiteralPath (Join-Path $Root 'tools/verification-probe/src') -Destination (Join-Path $fixtureProject 'tools/verification-probe') -Recurse -Force
     Copy-Item -LiteralPath (Join-Path $Root 'extensions/tiktok/src/main/java/app/morphe/extension/tiktok/inbox/InboxRenderedModels.java') `
         -Destination (Join-Path $fixtureProject 'extensions/tiktok/src/main/java/app/morphe/extension/tiktok/inbox/InboxRenderedModels.java')

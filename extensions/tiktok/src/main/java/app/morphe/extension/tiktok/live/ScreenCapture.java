@@ -89,6 +89,17 @@ public final class ScreenCapture {
         }
     }
 
+    /** Snapshot the pending owner without consuming Android's one-shot projection. */
+    public static MediaProjection pending() { synchronized(LOCK){return projection;} }
+
+    /** Transfer only the projection seen by this recorder's construction. */
+    public static MediaProjection take(MediaProjection expected) {
+        synchronized(LOCK){if(expected==null || projection!=expected)return null;projection=null;return expected;}
+    }
+
+    /** A setup failure must not discard a newer recorder's pending consent. */
+    public static void discardUnused(MediaProjection expected) {MediaProjection owned=take(expected);if(owned!=null)release(owned);}
+
     /** Something to run when Android ends the projection by itself, such as its status bar chip. */
     public static void whenEnded(Runnable ended) {
         synchronized (LOCK) {

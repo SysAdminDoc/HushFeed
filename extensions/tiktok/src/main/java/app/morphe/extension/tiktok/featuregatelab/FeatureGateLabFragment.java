@@ -1946,7 +1946,22 @@ public final class FeatureGateLabFragment extends Fragment {
      *         for a change that never ran.
      */
     private boolean runLabChange(ReportingLabChange change) {
-        return runLabChange(change, Utils::showToastLong);
+        return runLabChange(change, FeatureGateLabFragment::toastNotice);
+    }
+
+    /** Runs {@code change} the way a Lab action does, told with the default toast. */
+    boolean runLabChangeForTests(java.util.concurrent.Callable<String> change) {
+        return runLabChange(change::call);
+    }
+
+    /**
+     * The default way a finished change is told. A change with nothing to say shows nothing:
+     * handed an empty string, a toast is a blank pill. The import's dialog still gets its call,
+     * since it shows counts rather than the notice.
+     */
+    private static void toastNotice(String notice) {
+        if (notice == null || notice.trim().isEmpty()) return;
+        Utils.showToastLong(notice);
     }
 
     private boolean runLabChange(ReportingLabChange change, NoticePresenter presenter) {
@@ -1970,11 +1985,13 @@ public final class FeatureGateLabFragment extends Fragment {
                 if (refused) Logger.printInfo(() -> "Lab change refused", error);
                 else Logger.printException(() -> "Lab change failed", error);
                 // A refusal already carries its reason in the reader's words. Swapped for the
-                // retry line, the reader was told to try again what would fail the same way.
-                result = refused
-                        ? error.getMessage()
+                // retry line, the reader was told to try again what would fail the same way. One
+                // built with no reason gets the retry line, which beats a toast with nothing in it.
+                String reason = refused ? error.getMessage() : null;
+                result = reason != null && !reason.trim().isEmpty()
+                        ? reason
                         : L10n.t(Utils.getContext(), "Couldn't change the Lab settings. Try again.");
-                tell = Utils::showToastLong;
+                tell = FeatureGateLabFragment::toastNotice;
             }
             String notice = result;
             NoticePresenter presenting = tell;

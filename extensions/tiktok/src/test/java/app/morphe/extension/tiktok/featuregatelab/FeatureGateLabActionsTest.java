@@ -1150,6 +1150,37 @@ public class FeatureGateLabActionsTest {
     }
 
     /**
+     * A change with nothing to say shows no toast. Handed an empty string, the default toast was
+     * a blank pill. A refusal built with no reason says to try again rather than nothing.
+     */
+    @Test public void aChangeWithNoNoticeShowsNoToast() throws Exception {
+        try (var controller = Robolectric.buildActivity(TestActivity.class).setup().visible()) {
+            var fragment = attach(controller.get());
+            settle();
+
+            ShadowToast.reset();
+            assertTrue(fragment.runLabChangeForTests(() -> "Lab notice"));
+            settle();
+            assertEquals("a notice is still told", 1, ShadowToast.shownToastCount());
+            assertEquals("Lab notice", ShadowToast.getTextOfLatestToast());
+
+            ShadowToast.reset();
+            assertTrue(fragment.runLabChangeForTests(() -> null));
+            settle();
+            assertTrue(fragment.runLabChangeForTests(() -> " "));
+            settle();
+            assertEquals("no notice, no toast", 0, ShadowToast.shownToastCount());
+
+            assertTrue(fragment.runLabChangeForTests(() -> {
+                throw new FeatureGateLabStore.RuleLimitRefused(null);
+            }));
+            settle();
+            assertEquals("Couldn't change the Lab settings. Try again.",
+                    ShadowToast.getTextOfLatestToast());
+        }
+    }
+
+    /**
      * The selection actions fit the bar they sit in, and Cancel does not read like Enable.
      *
      * <p>Four bold labels with 24dp of side padding in a horizontal row that cannot wrap: at 2x

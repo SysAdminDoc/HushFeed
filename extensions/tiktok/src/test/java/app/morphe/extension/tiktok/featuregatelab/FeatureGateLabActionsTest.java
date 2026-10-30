@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,6 +44,14 @@ import org.robolectric.shadows.ShadowToast;
 @Config(sdk = 28, qualifiers = "night")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class FeatureGateLabActionsTest {
+    /** The Lab's restart debt lives in the settings' shared set, so no test leaves it behind. */
+    @After public void clearRestartDebt() throws Exception {
+        FeatureGateLabFragment.awaitFileIoForTests();
+        Utils.awaitBackgroundTasksForTests();
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        FeatureGateLabSession.resetForTests();
+    }
+
     @Before public void setup() throws Exception {
         Utils.setContext(RuntimeEnvironment.getApplication());
         Utils.setIsDarkModeEnabled(true);

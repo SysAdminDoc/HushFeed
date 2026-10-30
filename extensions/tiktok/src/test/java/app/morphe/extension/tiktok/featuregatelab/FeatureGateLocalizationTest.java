@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -66,6 +67,15 @@ public class FeatureGateLocalizationTest {
         FeatureGateLabStore.resetAllLabData();
         FeatureGateLabSession.begin();
         ShadowToast.reset();
+    }
+
+    /** The Lab's restart debt lives in the settings' shared set, so no test leaves it behind. */
+    @After public void clearRestartDebt() throws Exception {
+        FeatureGateLabFragment.awaitFileIoForTests();
+        Utils.awaitBackgroundTasksForTests();
+        FeatureGateDetailFragment.awaitChangesForTests();
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        FeatureGateLabSession.resetForTests();
     }
 
     @Test

@@ -10,9 +10,11 @@ import android.content.Intent;
 import android.net.Uri;
 
 import app.morphe.extension.shared.settings.PausedProcess;
+import app.morphe.extension.tiktok.SettingsContextRule;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -25,6 +27,9 @@ import org.robolectric.annotation.Config;
 @Config(sdk = 28)
 public class LinkTaskGuardTest {
     private static final String LINK = "https://vm.tiktok.com/ZMabc/";
+
+    // PausedProcess reads Settings, which can't load without a context when this class runs alone.
+    @Rule public final SettingsContextRule settingsContext = new SettingsContextRule();
 
     @Before public void setUp() {
         PausedProcess.set(false);

@@ -2,6 +2,7 @@ package app.morphe.extension.tiktok.wellbeing;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -10,6 +11,7 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.os.Looper;
 import android.os.SystemClock;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 
 import app.morphe.extension.shared.Utils;
@@ -43,10 +45,11 @@ import java.util.List;
 public class IdleLeaveTest {
     public static final class HostActivity extends Activity {
         final List<Boolean> movedBack = new ArrayList<>();
+        boolean canGoBack = true;
 
         @Override public boolean moveTaskToBack(boolean nonRoot) {
             movedBack.add(nonRoot);
-            return true;
+            return canGoBack;
         }
     }
 
@@ -146,6 +149,45 @@ public class IdleLeaveTest {
         assertEquals(List.of(activity), left);
     }
 
+    /** A panel taking the focus mid-press doesn't lose the press: the lift still comes here. */
+    @Test public void aHeldFingerStaysHeldAcrossAFocusChange() {
+        Settings.IDLE_LEAVE_MINUTES.save(10);
+        ActivityController<HostActivity> controller = shown();
+        HostActivity activity = controller.get();
+        IdleLeave.resumed(activity);
+        touch(activity, MotionEvent.ACTION_DOWN);
+        controller.windowFocusChanged(false);
+        idleFor(Duration.ofMinutes(1));
+        controller.windowFocusChanged(true);
+        idleFor(Duration.ofMinutes(30));
+        assertEquals("the press counted as lifted once the focus came back", List.of(), left);
+        touch(activity, MotionEvent.ACTION_UP);
+        idleFor(Duration.ofMinutes(10).plusSeconds(1));
+        assertEquals(List.of(activity), left);
+    }
+
+    /** A keyboard, a page turner or a mouse wheel (DeX) is someone there as much as a finger. */
+    @Test public void aKeyOrAWheelStartsTheWaitOver() {
+        Settings.IDLE_LEAVE_MINUTES.save(10);
+        HostActivity activity = front();
+        idleFor(Duration.ofMinutes(9));
+        activity.getWindow().getCallback().dispatchKeyEvent(
+                new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_PAGE_DOWN));
+        idleFor(Duration.ofMinutes(9));
+        assertEquals("the key at 9 minutes didn't move the wait", List.of(), left);
+        long now = SystemClock.uptimeMillis();
+        MotionEvent wheel = MotionEvent.obtain(now, now, MotionEvent.ACTION_SCROLL, 10f, 10f, 0);
+        try {
+            activity.getWindow().getCallback().dispatchGenericMotionEvent(wheel);
+        } finally {
+            wheel.recycle();
+        }
+        idleFor(Duration.ofMinutes(9));
+        assertEquals("the wheel at 18 minutes didn't move the wait", List.of(), left);
+        idleFor(Duration.ofMinutes(1).plusSeconds(1));
+        assertEquals(List.of(activity), left);
+    }
+
     /** The share sheet and the comment menu have windows of their own, out of this one's sight. */
     @Test public void aPanelWithItsOwnWindowHoldsTheWait() {
         Settings.IDLE_LEAVE_MINUTES.save(10);
@@ -237,5 +279,25 @@ public class IdleLeaveTest {
         assertEquals(AudioManager.AUDIOFOCUS_GAIN, request.durationHint);
         assertEquals("the focus wasn't handed straight back",
                 request.listener, audio.getLastAbandonedAudioFocusListener());
+    }
+
+    /**
+     * A task that can't go back leaves TikTok in front: no toast, no silenced player, and the
+     * screen is watched still, so the next wait tries again.
+     */
+    @Test public void aScreenThatCannotGoBackIsWatchedStill() {
+        IdleLeave.resetForTests();
+        Settings.IDLE_LEAVE_MINUTES.save(1);
+        HostActivity activity = front();
+        activity.canGoBack = false;
+        idleFor(Duration.ofMinutes(1).plusSeconds(1));
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+
+        assertEquals(List.of(true), activity.movedBack);
+        assertNull("a toast said TikTok left while it stayed", ShadowToast.getLatestToast());
+        assertNull("the player was told to stop while TikTok stayed in front", Shadows.shadowOf(
+                (AudioManager) activity.getSystemService(Context.AUDIO_SERVICE)).getLastAudioFocusRequest());
+        idleFor(Duration.ofMinutes(1));
+        assertEquals("the wait didn't start again", List.of(true, true), activity.movedBack);
     }
 }

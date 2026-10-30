@@ -35,10 +35,11 @@ import java.util.WeakHashMap;
  * toast saying why.
  *
  * <p>The wait runs only while a TikTok screen is in front. Any screen counts, not only the feed,
- * and any touch on it starts the wait over, as does a screen coming to the front. A finger held
- * still is still a touch, so a press and hold for speed never runs it out. The clock is the
- * looper's, which stands still while the phone sleeps, and a phone with TikTok in front sleeps
- * only when the screen goes off, which pauses the screen and stops the wait anyway.
+ * and any touch on it starts the wait over, as does a screen coming to the front or a key or
+ * mouse wheel (a keyboard, a page turner, DeX). A finger held still is still a touch, so a press
+ * and hold for speed never runs it out, even when a panel takes the focus meanwhile. The clock
+ * is the looper's, which stands still while the phone sleeps, and a phone with TikTok in front
+ * sleeps only when the screen goes off, which pauses the screen and stops the wait anyway.
  *
  * <p>The share sheet, the comment menu and the LIVE panels have windows of their own, and their
  * touches never pass through the screen's window. While one of those has the focus the wait
@@ -51,7 +52,8 @@ import java.util.WeakHashMap;
  */
 public final class IdleLeave {
     interface Leaver {
-        void leave(Activity activity);
+        /** Answers whether TikTok went to the back. */
+        boolean leave(Activity activity);
     }
 
     private static final Handler MAIN = new Handler(Looper.getMainLooper());
@@ -132,11 +134,16 @@ public final class IdleLeave {
         }
     }
 
+    /** A key or a mouse wheel on a TikTok screen: someone is there, as with a touch. */
+    static void stirred() {
+        touchedAt = SystemClock.uptimeMillis();
+    }
+
     /** The screen's window lost the focus to a panel of its own, or got it back. */
     static void focusChanged() {
         touchedAt = SystemClock.uptimeMillis();
-        // A press that ended in the other window never sends this one its lift.
-        fingerDown = false;
+        // A finger already down stays down: its touches stay with this window, which still gets
+        // the lift, or a cancel when a panel takes the press over.
         if (!checking) schedule();
     }
 
@@ -167,10 +174,17 @@ public final class IdleLeave {
         }
         front = new WeakReference<>(null);
         Logger.printInfo(() -> "No touch for " + wait / 60_000L + " minutes: leaving TikTok");
-        leaver.leave(activity);
+        if (leaver.leave(activity)) return;
+        // The task couldn't go back, so the screen is still in front and the wait starts over.
+        Logger.printInfo(() -> "Idle wait: TikTok's screen could not go to the back");
+        front = new WeakReference<>(activity);
+        touchedAt = SystemClock.uptimeMillis();
+        schedule();
     }
 
-    private static void leaveNow(Activity activity) {
+    private static boolean leaveNow(Activity activity) {
+        // False means the task cannot go back (screen pinning, say), and TikTok stays in front.
+        if (!activity.moveTaskToBack(true)) return false;
         Utils.showToastShort(L10n.t("Left TikTok after no touch"));
         try {
             AudioManager audio = (AudioManager) activity.getSystemService(Context.AUDIO_SERVICE);
@@ -182,7 +196,7 @@ public final class IdleLeave {
         } catch (RuntimeException failure) {
             Logger.printException(() -> "Idle wait: could not stop the player", failure);
         }
-        activity.moveTaskToBack(true);
+        return true;
     }
 
     /** Wraps {@code activity}'s window callback once, as the burn-in guard does, to see touches. */
@@ -194,10 +208,13 @@ public final class IdleLeave {
             if (inner == null) return;
             InvocationHandler watcher = (proxy, method, args) -> {
                 try {
+                    String name = method.getName();
                     if (args != null && args.length == 1 && args[0] instanceof MotionEvent
-                            && "dispatchTouchEvent".equals(method.getName())) {
+                            && "dispatchTouchEvent".equals(name)) {
                         touched(((MotionEvent) args[0]).getActionMasked());
-                    } else if ("onWindowFocusChanged".equals(method.getName())) {
+                    } else if ("dispatchKeyEvent".equals(name) || "dispatchGenericMotionEvent".equals(name)) {
+                        stirred();
+                    } else if ("onWindowFocusChanged".equals(name)) {
                         focusChanged();
                     }
                     return method.invoke(inner, args);

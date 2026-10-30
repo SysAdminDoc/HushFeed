@@ -341,7 +341,8 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                     new String[]{"1.25", "1.5", "1.75", "2", "2.5", "3"}));
             if (SettingsStatus.holdSpeedSlideEnabled) {
                 addPreference(new TogglePreference(context, "Slide to change the hold speed",
-                        "While you hold a video, slide left or right to change its speed, and a bubble shows it. "
+                        "While you hold a video, slide left or right to step through the speed menu's speeds, "
+                                + "and a bubble shows the one you're on. Your next hold starts there. "
                                 + "Letting go goes back to normal. A pull-down lock keeps the speed you slid to.",
                         Settings.HOLD_SPEED_SLIDE));
             }

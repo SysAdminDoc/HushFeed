@@ -6,6 +6,7 @@ package app.morphe.patches.tiktok.interaction.speed
 
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
+import app.morphe.util.addInstructionsAtControlFlowLabel
 import app.morphe.util.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.patch.BytecodePatchContext
@@ -28,6 +29,8 @@ import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 
 private const val EXTENSION = "Lapp/morphe/extension/tiktok/speed/PlaybackSpeedPatch;"
 private const val CHAR_SEQUENCE = "Ljava/lang/CharSequence;"
+private const val STRING = "Ljava/lang/String;"
+private const val AWEME = "Lcom/ss/android/ugc/aweme/feed/model/Aweme;"
 
 /** Whether [instruction] is `Context.getString(int)`, the way TikTok reads its hold texts. */
 internal fun isGetString(instruction: Instruction): Boolean =
@@ -43,33 +46,92 @@ internal fun isGetString(instruction: Instruction): Boolean =
  * refuses here instead of crashing TikTok.
  */
 internal fun Method.holdSpeedLiterals(where: String): List<Pair<Int, Int>> {
-    val literals = implementation?.instructions?.withIndex()?.filter { (_, instruction) ->
-        instruction.opcode == Opcode.CONST_HIGH16 &&
-            (instruction as NarrowLiteralInstruction).narrowLiteral == 2.0f.toRawBits()
-    }?.map { (index, instruction) -> index to (instruction as OneRegisterInstruction).registerA }.orEmpty()
+    val literals = speedLiterals(2.0f)
     if (literals.isEmpty()) throw PatchException("Playback speed: no 2x literal in $where.")
-    literals.forEach { (index, register) ->
-        val reads = literalReads(index)
-        val stray = reads.filterNot { readsRegisterAsFloat(it, register) }
-        if (reads.isEmpty() || stray.isNotEmpty()) {
-            throw PatchException(
-                "Playback speed: the 2x literal at $index of $where is read as something other " +
-                    "than a speed (at $stray), so it cannot carry the hold speed.",
-            )
-        }
-    }
+    literals.forEach { (index, register) -> requireFloatReads(index, register, "the 2x literal at $index of $where") }
     return literals
 }
 
+/**
+ * The 1.0f literal the release method undoes the pull-down lock with, as its index and register:
+ * TikTok hands it to the selection boundary (float, Aweme, String, String) with "Back to normal
+ * speed" and keeps it as the gesture's speed. It is the 1x literal among whose reads that call
+ * is, and like the 2x ones every read of it has to be a float read.
+ */
+internal fun Method.unlockSpeedLiteral(): Pair<Int, Int> {
+    val instructions = implementation!!.instructions.toList()
+    val (index, register) = speedLiterals(1.0f).filter { (index, _) ->
+        literalReads(index).any { read ->
+            instructions[read].getReference<MethodReference>()?.let {
+                it.parameterTypes == listOf("F", AWEME, STRING, STRING) && it.returnType == "V"
+            } == true
+        }
+    }.singleOrPatchException("Playback speed: the pull-down lock's undo speed")
+    requireFloatReads(index, register, "the lock's 1x literal at $index of the release method")
+    return index to register
+}
+
+/** The CONST_HIGH16 literals of [value], each as its index and the register it loads. */
+private fun Method.speedLiterals(value: Float): List<Pair<Int, Int>> =
+    implementation?.instructions?.withIndex()?.filter { (_, instruction) ->
+        instruction.opcode == Opcode.CONST_HIGH16 &&
+            (instruction as NarrowLiteralInstruction).narrowLiteral == value.toRawBits()
+    }?.map { (index, instruction) -> index to (instruction as OneRegisterInstruction).registerA }.orEmpty()
+
+private fun Method.requireFloatReads(index: Int, register: Int, what: String) {
+    val reads = literalReads(index)
+    val stray = reads.filterNot { readsRegisterAsFloat(it, register) }
+    if (reads.isEmpty() || stray.isNotEmpty()) {
+        throw PatchException(
+            "Playback speed: $what is read as something other than a speed (at $stray), so it " +
+                "cannot carry the hold speed.",
+        )
+    }
+}
+
 /** Each literal from [holdSpeedLiterals] replaced, right after it loads, by the hold speed. */
-internal fun MutableMethod.routeThroughHoldSpeed(literals: List<Pair<Int, Int>>) {
+internal fun MutableMethod.routeThroughHoldSpeed(literals: List<Pair<Int, Int>>) =
+    routeThrough(literals, "holdSpeed")
+
+/** The literal from [unlockSpeedLiteral] replaced, right after it loads, by the speed undoing the lock plays. */
+internal fun MutableMethod.routeThroughUnlockSpeed(literal: Pair<Int, Int>) =
+    routeThrough(listOf(literal), "holdUnlockSpeed")
+
+private fun MutableMethod.routeThrough(literals: List<Pair<Int, Int>>, helper: String) {
     literals.asReversed().forEach { (index, register) ->
         addInstructions(
             index + 1,
             """
-                invoke-static/range {v$register .. v$register}, $EXTENSION->holdSpeed(F)F
+                invoke-static/range {v$register .. v$register}, $EXTENSION->$helper(F)F
                 move-result v$register
             """,
+        )
+    }
+}
+
+/**
+ * Slide to change the hold speed shows its own padlock, so the lock banner is hidden as its show
+ * method returns: that method sets it visible and nothing after it does. The banner is the
+ * method's `this`, which has to reach every return unchanged.
+ */
+internal fun MutableMethod.hideHoldLockBannerOnShow() {
+    val code = implementation!!
+    val wide = parameterTypes.count { it.toString() == "J" || it.toString() == "D" }
+    val self = code.registerCount - parameterTypes.size - wide - 1
+    val written = code.instructions.withIndex().filter { (_, instruction) ->
+        instruction.opcode.setsRegister() && (instruction as? OneRegisterInstruction)?.registerA?.let {
+            it == self || (instruction.opcode.setsWideRegister() && it + 1 == self)
+        } == true
+    }.map { it.index }
+    if (written.isNotEmpty()) {
+        throw PatchException("Playback speed: the hold lock banner's show method writes its own register at $written.")
+    }
+    val returns = code.instructions.withIndex().filter { it.value.opcode == Opcode.RETURN_VOID }.map { it.index }
+    if (returns.isEmpty()) throw PatchException("Playback speed: the hold lock banner's show method never returns.")
+    returns.asReversed().forEach { index ->
+        addInstructionsAtControlFlowLabel(
+            index,
+            "invoke-static/range {p0 .. p0}, $EXTENSION->holdLockBanner(Landroid/view/View;)V",
         )
     }
 }
@@ -132,9 +194,9 @@ private fun ClassDef.textSetter(): String? = methods.singleOrNull {
  * of which is reworded, and compares the speed before the hold with a 2.0f of its own to pick
  * "for normal speed" over "to lock 2x speed", which goes through the hold speed like the
  * gesture's own. The plain banner builds its label once, so it is reworded as it is shown and
- * hidden.
+ * hidden. Returns the lock banner's show method, for [hideHoldLockBannerOnShow].
  */
-internal fun BytecodePatchContext.rewordHoldSpeedBanners(receiver: Method) {
+internal fun BytecodePatchContext.rewordHoldSpeedBanners(receiver: Method): MutableMethod {
     val calls = receiver.implementation!!.instructions.mapNotNull { instruction ->
         instruction.getReference<MethodReference>()?.let { instruction.opcode to it }
     }
@@ -190,4 +252,5 @@ internal fun BytecodePatchContext.rewordHoldSpeedBanners(receiver: Method) {
             "invoke-static/range {p0 .. p0}, $EXTENSION->holdSpeedBanner(Landroid/view/ViewGroup;)V",
         )
     }
+    return lockShow
 }

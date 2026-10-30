@@ -88,6 +88,17 @@ internal object EdgeSpeedupReleaseFingerprint : Fingerprint(
 )
 
 /**
+ * The pull-down lock's signal: posts whether the held finger is down far enough to lock on
+ * release, under the "pull_down" key. The component's other (Z)V methods don't name it.
+ */
+internal object EdgeSpeedupPullDownFingerprint : Fingerprint(
+    definingClass = "/feed/longvideo/edgespeedup/EdgeSpeedupAssem;",
+    returnType = "V",
+    parameters = listOf("Z"),
+    strings = listOf("pull_down"),
+)
+
+/**
  * The hold gesture's touch listener: the feed's onTouch that hands the finger's position to the
  * edge speed-up ability, (F, F)V. It sees every move while the video is held (it reads them for
  * the pull-down lock), and no other onTouch calls the ability that way.

@@ -100,24 +100,11 @@ class HoldSpeedAnchorsTest {
             }
 
             // The banners, from the receiver of the press method's event.
-            // Lazily: every method of every class in one list does not fit the test's heap.
-            val receivers = app.values.asSequence().flatMap { it.methods.asSequence() }.filter { method ->
-                method.returnType == "V" && strings(method).containsAll(HOLD_BANNER_RECEIVER_STRINGS)
-            }.toList()
-            assertEquals("banner receivers: ${receivers.map { it.definingClass + "->" + it.name }}", 1, receivers.size)
-            val receiverCalls = receivers.single().implementation!!.instructions.mapNotNull { instruction ->
+            val (receiver, lockBanner, lockShow) = banners(app)
+            val receiverCalls = receiver.implementation!!.instructions.mapNotNull { instruction ->
                 instruction.getReference<MethodReference>()?.let { instruction.opcode to it }
             }
-            val lockCall = receiverCalls.filter { (opcode, reference) ->
-                opcode == Opcode.INVOKE_INTERFACE && reference.parameterTypes == listOf("F", "Z") && reference.returnType == "V"
-            }.map { it.second.toString() }.distinct()
-            assertEquals("lock banner calls: $lockCall", 1, lockCall.size)
-            val lockInterface = receiverCalls.first { it.second.toString() == lockCall.single() }.second
-            val lockBanners = app.values.filter { lockInterface.definingClass in it.interfaces }
-            assertEquals("lock banner implementations", 1, lockBanners.size)
-            val lockShow = lockBanners.single().methods.single {
-                it.name == lockInterface.name && it.parameterTypes == listOf("F", "Z")
-            }
+            val lockBanners = listOf(lockBanner)
             assertEquals("2x literals in the lock banner", 1, floatLiterals(lockShow).size)
             // The four hold texts ("Pull down to lock 2x speed", "Release to lock 2x speed", "Pull down
             // for normal speed", "Release for normal speed"): read once each by the constructor to
@@ -139,7 +126,7 @@ class HoldSpeedAnchorsTest {
             assertTrue("every id is a constant: $textIds", textIds.none { it == null })
             val plain = receiverCalls.filter { (opcode, reference) ->
                 opcode == Opcode.INVOKE_VIRTUAL && reference.parameterTypes.isEmpty() && reference.returnType == "V" &&
-                    reference.definingClass != receivers.single().definingClass &&
+                    reference.definingClass != receiver.definingClass &&
                     app[reference.definingClass]?.superclass == "Landroid/widget/LinearLayout;"
             }.map { it.second.toString() }.distinct()
             assertEquals("the plain banner's show and hide: $plain", 2, plain.size)
@@ -225,6 +212,64 @@ class HoldSpeedAnchorsTest {
             assertEquals("${apk.name}: touch listeners ${touches.map { it.definingClass }}", 1, touches.size)
             assertTrue("${apk.name}: the touch listener is an instance method", touches.single().accessFlags and 0x8 == 0)
         }
+    }
+
+    @Test
+    fun `each declared build carries the pull-down lock's sites (#248)`() {
+        Fixtures.forEachDeclared { apk ->
+            val app = load(apk)
+            val (_, release) = gestureMethods(app, apk)
+            // One instance (Z)V on the component names the pull: the slide freezes while it's armed.
+            val pulls = app.getValue(component).methods.filter { method ->
+                method.returnType == "V" && method.parameterTypes == listOf("Z") && "pull_down" in strings(method)
+            }
+            assertEquals("${apk.name}: pull-down signals ${pulls.map { it.name }}", 1, pulls.size)
+            assertTrue("${apk.name}: the pull-down signal is an instance method", pulls.single().accessFlags and 0x8 == 0)
+            // Undoing the lock: one 1x literal reaching the selection boundary, read only as a float.
+            val (index, register) = release.unlockSpeedLiteral()
+            assertTrue(
+                "${apk.name}: the unlock literal at $index reaches the selection boundary",
+                release.literalReads(index).any { read ->
+                    release.at(read).getReference<MethodReference>()?.parameterTypes ==
+                        listOf("F", aweme, "Ljava/lang/String;", "Ljava/lang/String;")
+                },
+            )
+            release.literalReads(index).forEach { read ->
+                assertTrue("${apk.name}: the unlock literal is read as a float at $read", release.readsRegisterAsFloat(read, register))
+            }
+            // The lock banner's show method keeps `this` in p0 to every return, where it gets hidden.
+            val (_, _, lockShow) = banners(app)
+            val code = lockShow.implementation!!
+            val self = code.registerCount - lockShow.parameterTypes.size - 1
+            assertTrue("${apk.name}: the show method takes no wide parameter", lockShow.parameterTypes.none { it == "J" || it == "D" })
+            val writes = code.instructions.withIndex().filter { (_, instruction) ->
+                instruction.opcode.setsRegister() && (instruction as? OneRegisterInstruction)?.registerA == self
+            }.map { it.index }
+            assertEquals("${apk.name}: writes to p0 in the lock banner's show method", emptyList<Int>(), writes)
+            assertTrue("${apk.name}: the show method returns", code.instructions.any { it.opcode == Opcode.RETURN_VOID })
+        }
+    }
+
+    /** The receiver of the press method's event, the lock banner class and its show method. */
+    private fun banners(app: Map<String, ClassDef>): Triple<Method, ClassDef, Method> {
+        // Lazily: every method of every class in one list does not fit the test's heap.
+        val receivers = app.values.asSequence().flatMap { it.methods.asSequence() }.filter { method ->
+            method.returnType == "V" && strings(method).containsAll(HOLD_BANNER_RECEIVER_STRINGS)
+        }.toList()
+        assertEquals("banner receivers: ${receivers.map { it.definingClass + "->" + it.name }}", 1, receivers.size)
+        val lockCalls = receivers.single().implementation!!.instructions.mapNotNull { instruction ->
+            instruction.getReference<MethodReference>()?.takeIf {
+                instruction.opcode == Opcode.INVOKE_INTERFACE && it.parameterTypes == listOf("F", "Z") && it.returnType == "V"
+            }
+        }.distinctBy(MethodReference::toString)
+        assertEquals("lock banner calls: $lockCalls", 1, lockCalls.size)
+        val lockInterface = lockCalls.single()
+        val lockBanners = app.values.filter { lockInterface.definingClass in it.interfaces }
+        assertEquals("lock banner implementations", 1, lockBanners.size)
+        val lockShow = lockBanners.single().methods.single {
+            it.name == lockInterface.name && it.parameterTypes == listOf("F", "Z")
+        }
+        return Triple(receivers.single(), lockBanners.single(), lockShow)
     }
 
     @Test

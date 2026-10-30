@@ -122,7 +122,12 @@ internal fun Method.holdApplyCall(): MethodReference =
     }.distinctBy { it.toString() }.singleOrPatchException("Playback speed: the hold gesture's apply call")
 
 /** Slide to change the hold speed: the touch listener, the apply call and the extension stub. */
-private class HoldHudSites(val touch: MutableMethod, val apply: MethodReference, val stub: MutableMethod)
+private class HoldHudSites(
+    val touch: MutableMethod,
+    val apply: MethodReference,
+    val stub: MutableMethod,
+    val pullDown: MutableMethod,
+)
 
 /** The body of the bridge that answers which video a PlayerController has, for the same getter. */
 internal fun liveAwemeBridgeBody(controller: String, awemeGetter: MethodReference): String = """
@@ -201,13 +206,17 @@ val playbackSpeedPatch = bytecodePatch(
             check(!AccessFlags.STATIC.isSet(touch.accessFlags)) {
                 "Playback speed: the hold gesture's onTouch became static, so p2 is not the event."
             }
+            val pullDown = EdgeSpeedupPullDownFingerprint.method
+            check(!AccessFlags.STATIC.isSet(pullDown.accessFlags)) {
+                "Playback speed: the hold's pull-down signal became static, so p1 is not the flag."
+            }
             val stub = mutableClassDefBy(HOLD_HUD).methods.filter { it.name == "applyNative" }
                 .singleOrPatchException("Playback speed: extension applyNative bridge")
             check(
                 AccessFlags.STATIC.isSet(stub.accessFlags) && stub.returnType == "V" &&
                     stub.parameterTypes.map(CharSequence::toString) == listOf("Ljava/lang/Object;", "F"),
             ) { "Playback speed: the extension's applyNative stub is not static (Object, float)V." }
-            HoldHudSites(touch, apply, stub)
+            HoldHudSites(touch, apply, stub, pullDown)
         } catch (problem: Exception) {
             if (packageMetadata.buildName in declaredVersions()) throw problem
             println("[Playback speed] Left out sliding the hold speed on ${packageMetadata.buildName}: ${problem.message}")
@@ -442,11 +451,22 @@ val playbackSpeedPatch = bytecodePatch(
         press.routeThroughHoldSpeed(press.holdSpeedLiterals("the hold gesture's press method"))
         release.routeThroughHoldSpeed(release.holdSpeedLiterals("the hold gesture's release method"))
         rewordHoldSpeedToasts(release)
-        rewordHoldSpeedBanners(HoldBannerReceiverFingerprint.method)
+        val lockShow = rewordHoldSpeedBanners(HoldBannerReceiverFingerprint.method)
+
+        // Undoing the lock plays a literal 1x, "Back to normal speed"; with a default speed on,
+        // normal is the default (#248). An add-on like the live change, so only a declared build
+        // has to have it.
+        try {
+            release.routeThroughUnlockSpeed(release.unlockSpeedLiteral())
+        } catch (problem: PatchException) {
+            if (packageMetadata.buildName in declaredVersions()) throw problem
+            println("[Playback speed] Left out the default speed on unlock on ${packageMetadata.buildName}: ${problem.message}")
+        }
 
         // Slide to change the hold speed: the press and release tell the extension a hold began
         // and ended (past their guards, so once each), the touch listener hands it the finger's
-        // moves, and its stub plays a slid speed through the gesture's own apply call.
+        // moves, the pull-down signal says when a lock is armed, its stub plays a slid speed
+        // through the gesture's own apply call, and the lock banner gives way to the bubble.
         if (holdHud != null) {
             holdHud.stub.addInstructions(0, """
                 check-cast p0, ${press.definingClass}
@@ -465,6 +485,20 @@ val playbackSpeedPatch = bytecodePatch(
                 0,
                 "invoke-static/range {p2 .. p2}, $HOLD_HUD->onHoldTouch(Landroid/view/MotionEvent;)V",
             )
+            // The flag goes over as an int: a boolean register passes for one, and a Z parameter
+            // on an extension hook is refused.
+            holdHud.pullDown.addInstruction(
+                0,
+                "invoke-static/range {p1 .. p1}, $HOLD_HUD->onPullDown(I)V",
+            )
+            // Checked before anything goes in, so a build that leaves it out keeps the banner
+            // whole and only shows it beside the bubble.
+            try {
+                lockShow.hideHoldLockBannerOnShow()
+            } catch (problem: PatchException) {
+                if (packageMetadata.buildName in declaredVersions()) throw problem
+                println("[Playback speed] Left out hiding the hold lock banner on ${packageMetadata.buildName}: ${problem.message}")
+            }
             SettingsStatusLoadFingerprint.method.addInstruction(
                 0,
                 "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableHoldSpeedSlide()V",

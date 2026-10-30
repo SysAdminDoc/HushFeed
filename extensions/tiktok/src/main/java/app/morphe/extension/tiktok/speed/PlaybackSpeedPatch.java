@@ -430,7 +430,8 @@ public final class PlaybackSpeedPatch {
      * The speed the hold gesture plays at and its pull-down lock keeps (upstream #52). TikTok
      * writes it as a literal 2x in the gesture, in its banner's "already at that speed" check
      * and in the lock's telemetry; each of those literals comes through here. A speed slid to
-     * during the hold (#248) stands over the row's, so the lock keeps what the bubble showed.
+     * (#248) stands over the row's, so the lock keeps what the bubble showed and the next hold
+     * plays at it too.
      */
     public static float holdSpeed(float nativeSpeed) {
         float slid = HoldSpeedHud.slidSpeed();
@@ -452,7 +453,7 @@ public final class PlaybackSpeedPatch {
      * 2x speed", "Locked at 2× speed". With another hold speed chosen, the one standalone 2 in
      * such a text becomes that speed, whatever the language puts around it. A text with no 2 in
      * it ("Back to normal speed") or with more than one is left as TikTok wrote it. A speed slid
-     * to during the hold names itself, so "Locked at 2.5× speed" follows the slide.
+     * to names itself, so "Locked at 2.5× speed" follows the slide.
      */
     public static String holdSpeedText(String text) {
         float slid = HoldSpeedHud.slidSpeed();
@@ -533,6 +534,35 @@ public final class PlaybackSpeedPatch {
             }
             String wanted = holdSpeedText(String.valueOf(original));
             if (!TextUtils.equals(wanted, label.getText())) label.setText(wanted);
+        }
+    }
+
+    /**
+     * The pill TikTok shows over a hold when the lock is on, telling you to pull down and that
+     * letting go there locks. With Slide to change the hold speed on, the bubble's padlock says
+     * that, so the pill is hidden as its show method ends. Nothing after that method sets it
+     * visible, and its background is its own, so it goes whole rather than part by part.
+     */
+    public static void holdLockBanner(View banner) {
+        try {
+            if (banner != null && HoldSpeedHud.enabled()) banner.setVisibility(View.INVISIBLE);
+        } catch (RuntimeException ex) {
+            Logger.printException(() -> "Could not hide the hold lock banner", ex);
+        }
+    }
+
+    /**
+     * The speed undoing the pull-down lock goes back to, TikTok's "Back to normal speed". With Use
+     * a default playback speed on, normal is the default, so the video goes back to it, not 1x
+     * (#248). TikTok's toast still says normal speed.
+     */
+    public static float holdUnlockSpeed(float nativeSpeed) {
+        try {
+            if (Setting.isPaused() || !Settings.DEFAULT_SPEED_ENABLED.get()) return nativeSpeed;
+            float value = Float.parseFloat(Settings.DEFAULT_SPEED.get());
+            return isValidSpeed(value) && value >= MIN_SPEED && value <= MAX_SPEED ? value : nativeSpeed;
+        } catch (RuntimeException unreadable) {
+            return nativeSpeed;
         }
     }
 

@@ -632,6 +632,149 @@ public class SettingsL10nTest {
     }
 
     /**
+     * A text toast shows at most two lines on Android 12 and later and cuts the rest off with no
+     * sign. A 384 dp phone fits about 34 characters a line and word wrap breaks before that, so
+     * every toast, in English and every table, has to fit two lines of 28. The toasts that were
+     * already longer when this check came in are listed in toast-wrap-baseline.txt, and that
+     * list only gets shorter: a new toast has to fit, and one that fits now comes off the list.
+     */
+    @Test public void everyToastFitsTwoLines() throws Exception {
+        java.io.File root = new java.io.File("src/main/java/app/morphe/extension/tiktok");
+        if (!root.isDirectory()) root = new java.io.File(
+                "extensions/tiktok/src/main/java/app/morphe/extension/tiktok");
+        assertTrue(root.isDirectory());
+        java.util.Set<String> messages = new java.util.TreeSet<>();
+        try (java.util.stream.Stream<java.nio.file.Path> files = java.nio.file.Files.walk(root.toPath())) {
+            for (java.nio.file.Path file : files.filter(p -> p.toString().endsWith(".java"))
+                    .collect(java.util.stream.Collectors.toList())) {
+                if (file.getFileName().toString().startsWith("L10nTranslations")) continue;
+                messages.addAll(toastLiteralsIn(new String(java.nio.file.Files.readAllBytes(file),
+                        java.nio.charset.StandardCharsets.UTF_8), false));
+            }
+        }
+        assertTrue("the scan found too few toasts to mean anything: " + messages.size(),
+                messages.size() > 40);
+
+        java.util.Set<String> over = new java.util.TreeSet<>();
+        for (String message : messages) {
+            if (toastLines(message) > 2) over.add(ENGLISH_BASE + "\t" + message);
+        }
+        for (String language : L10nTranslations.LANGUAGES) {
+            java.util.Map<String, String> table = readTable(language);
+            for (String message : messages) {
+                String shown = table.get(message);
+                if (shown != null && toastLines(shown) > 2) over.add(language + "\t" + message);
+            }
+        }
+        java.util.Set<String> known = toastWrapBaseline();
+        java.util.Set<String> added = new java.util.TreeSet<>(over);
+        added.removeAll(known);
+        java.util.Set<String> fixed = new java.util.TreeSet<>(known);
+        fixed.removeAll(over);
+        assertTrue("these toasts wrap past two lines of 28 characters, and a phone cuts off the "
+                + "rest. Shorten them, or show one toast per line:\n" + baselineLines(added),
+                added.isEmpty());
+        assertTrue("these toasts fit two lines now, so take them off toast-wrap-baseline.txt:\n"
+                + baselineLines(fixed), fixed.isEmpty());
+    }
+
+    /** The wrap count breaks where a toast does, and a long toast fails it. */
+    @Test public void theToastWrapCountCanActuallyFail() {
+        assertEquals(1, toastLines("Left TikTok after no touch"));
+        assertEquals(2, toastLines("Couldn't undo the clear. Try again."));
+        assertEquals(3, toastLines("A field value couldn't be read. Check the values and try again."));
+        assertEquals("a value counts as five characters",
+                3, toastLines("%1$s is imported. Turn on Use an imported font to see it."));
+        assertEquals("a written line break starts a line", 3, toastLines("One\nTwo\nThree"));
+        // A Chinese character is about two Latin ones wide, and a line can break between any two.
+        assertEquals(1, toastLines("因无触摸已离开 TikTok"));
+        assertEquals(2, toastLines("零将其关闭。屏幕在这么多分钟内没有被触摸时"));
+        assertEquals(3, toastLines("零将其关闭。屏幕在这么多分钟内没有被触摸时，视频会停止，TikTok"));
+    }
+
+    /** Columns a toast line holds before word wrap moves on. A wide character takes two. */
+    private static final int TOAST_COLUMNS = 28;
+
+    /** The lines {@code message} takes in a toast, with each value shown as five characters. */
+    static int toastLines(String message) {
+        String text = message.replaceAll("%\\d+\\$[sd]", "00000");
+        int lines = 0;
+        for (String paragraph : text.split("\n", -1)) {
+            // Each piece is a word, or one wide character, which a line can end on either side
+            // of: {columns, 1 when a space comes before it}.
+            java.util.List<int[]> pieces = new java.util.ArrayList<>();
+            int word = 0;
+            boolean space = false;
+            for (int index = 0; index < paragraph.length(); index++) {
+                char character = paragraph.charAt(index);
+                if (Character.isWhitespace(character)) {
+                    if (word > 0) pieces.add(new int[]{word, space ? 1 : 0});
+                    word = 0;
+                    space = true;
+                } else if (isWide(character)) {
+                    if (word > 0) {
+                        pieces.add(new int[]{word, space ? 1 : 0});
+                        word = 0;
+                        space = false;
+                    }
+                    pieces.add(new int[]{2, space ? 1 : 0});
+                    space = false;
+                } else {
+                    word++;
+                }
+            }
+            if (word > 0) pieces.add(new int[]{word, space ? 1 : 0});
+            lines++;
+            int column = 0;
+            for (int[] piece : pieces) {
+                int width = piece[0] + (column > 0 ? piece[1] : 0);
+                if (column > 0 && column + width > TOAST_COLUMNS) {
+                    lines++;
+                    column = 0;
+                    width = piece[0];
+                }
+                column += width;
+                while (column > TOAST_COLUMNS) {
+                    lines++;
+                    column -= TOAST_COLUMNS;
+                }
+            }
+        }
+        return lines;
+    }
+
+    private static boolean isWide(char character) {
+        Character.UnicodeScript script = Character.UnicodeScript.of(character);
+        return script == Character.UnicodeScript.HAN || script == Character.UnicodeScript.HIRAGANA
+                || script == Character.UnicodeScript.KATAKANA || script == Character.UnicodeScript.HANGUL
+                || (character >= 0x3000 && character <= 0x303F)
+                || (character >= 0xFF00 && character <= 0xFFEF);
+    }
+
+    /** Language, a tab, then the English message, with a line break written as the two characters \n. */
+    private static java.util.Set<String> toastWrapBaseline() throws Exception {
+        java.io.File file = new java.io.File("src/test/resources/toast-wrap-baseline.txt");
+        if (!file.isFile()) file = new java.io.File(
+                "extensions/tiktok/src/test/resources/toast-wrap-baseline.txt");
+        assertTrue("could not find toast-wrap-baseline.txt", file.isFile());
+        String body = new String(java.nio.file.Files.readAllBytes(file.toPath()),
+                java.nio.charset.StandardCharsets.UTF_8);
+        java.util.Set<String> known = new java.util.TreeSet<>();
+        for (String line : body.split("\n")) {
+            String text = line.replace("\r", "");
+            if (text.isEmpty() || text.startsWith("#")) continue;
+            known.add(text.replace("\\n", "\n"));
+        }
+        return known;
+    }
+
+    private static String baselineLines(java.util.Set<String> entries) {
+        StringBuilder out = new StringBuilder();
+        for (String entry : entries) out.append(entry.replace("\n", "\\n")).append('\n');
+        return out.toString();
+    }
+
+    /**
      * Every literal handed to L10n.t or L10n.f directly inside a toast call.
      *
      * <p>The context argument may be a name, a call such as {@code getContext()} or a
@@ -641,12 +784,18 @@ public class SettingsL10nTest {
      * between two messages with a ternary has two.
      */
     private static java.util.List<String> toastLiteralsIn(String text) {
+        return toastLiteralsIn(text, true);
+    }
+
+    /** {@code banners} false leaves out the settings and undo banners, which aren't toasts. */
+    private static java.util.List<String> toastLiteralsIn(String text, boolean banners) {
         byte[] kind = classify(text);
         java.util.List<String> found = new java.util.ArrayList<>();
         // The settings banners (showNotice, showUndo) and the feed's undo banner are toasts in
         // every way that matters to a reader, so they answer to the same rule.
         java.util.regex.Matcher call = java.util.regex.Pattern
-                .compile("(?:\\b\\w*[Tt]oast\\w*|Toast\\s*\\.\\s*makeText|\\bshowNotice|\\bshowUndo(?:Banner)?)\\s*\\(")
+                .compile("(?:\\b\\w*[Tt]oast\\w*|Toast\\s*\\.\\s*makeText"
+                        + (banners ? "|\\bshowNotice|\\bshowUndo(?:Banner)?" : "") + ")\\s*\\(")
                 .matcher(text);
         while (call.find()) {
             int open = call.end() - 1;

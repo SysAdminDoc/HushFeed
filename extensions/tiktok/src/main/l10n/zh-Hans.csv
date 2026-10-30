@@ -1901,7 +1901,7 @@ Storage almost full. Recording saved to %1$s,存储空间快满了，录制已�
 "The port the proxy listens on, like 8080 or 1080.",代理侦听的端口，例如 8080 或 1080.
 The presets couldn't load. Open the Lab again.,无法加载预设。再次打开实验室.
 The profile picture couldn't be saved. Try again.,无法保存个人资料图片。再试一次.
-TikTok can't send a password to proxy %1$s. Use another.,TikTok 无法登录代理 %1$s，请换一个.
+TikTok can't send a password to proxy %1$s. Use another.,TikTok 无法向代理 %1$s 发送密码，请换一个.
 "The proxy's address, like 192.168.1.20 or proxy.example.com.",代理的地址，例如 192.168.1.20 或 proxy.example.com.
 The quality choice is still open,品质选择依然开放
 "The record of an interrupted settings change couldn't be read, so it was set aside. Check your settings.",中断的设置更改记录无法读取，因此被搁置。检查你的设置.

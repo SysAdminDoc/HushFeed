@@ -1811,7 +1811,7 @@ Proxy password	Proxy şifresi
 Optional, used with the user name. It isn't shown, logged or put in a backup.	İsteğe bağlı, kullanıcı adıyla birlikte kullanılır. Gösterilmez, günlüğe yazılmaz ve yedeğe konmaz.
 Enter a server name or IP address, without http:// or a port number	Bir sunucu adı veya IP adresi gir, http:// ve bağlantı noktası numarası olmadan
 A port is a whole number from 1 to 65535	Bağlantı noktası 1 ile 65535 arasında bir tam sayıdır
-TikTok can't send a password to proxy %1$s. Use another.	TikTok %1$s proxy'sine giremiyor. Başkasını kullan.
+TikTok can't send a password to proxy %1$s. Use another.	%1$s proxy'sine şifre gönderilemiyor. Başka seç.
 Proxy %1$s is down. Turn it off if TikTok won't load.	Proxy %1$s çalışmıyor. TikTok yüklenmezse kapat.
 Word rules only, not every feed filter:	Yalnızca kelime kuralları, akıştaki her filtre değil:
 This list is too long to preview here. Saving still follows the usual limit.	Bu liste burada önizlemek için çok uzun. Kaydederken olağan sınır geçerli olmaya devam eder.

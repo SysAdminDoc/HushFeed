@@ -1952,7 +1952,7 @@ Proxy password	Пароль прокси
 Optional, used with the user name. It isn't shown, logged or put in a backup.	Необязательно, используется вместе с именем пользователя. Он не показывается, не пишется в журнал и не попадает в резервную копию.
 Enter a server name or IP address, without http:// or a port number	Введите имя сервера или IP-адрес без http:// и номера порта
 A port is a whole number from 1 to 65535	Порт должен быть целым числом от 1 до 65535
-TikTok can't send a password to proxy %1$s. Use another.	TikTok не входит в прокси %1$s. Выберите другой.
+TikTok can't send a password to proxy %1$s. Use another.	Пароль не доходит до прокси %1$s. Выберите другой.
 Proxy %1$s is down. Turn it off if TikTok won't load.	Прокси %1$s упал. Выключите его, если TikTok завис.
 Word rules only, not every feed filter:	Только правила для слов, а не все фильтры ленты:
 This list is too long to preview here. Saving still follows the usual limit.	Этот список слишком длинный для предпросмотра. При сохранении действует обычный лимит.

@@ -1811,7 +1811,7 @@ Proxy password	Proksi parolu
 Optional, used with the user name. It isn't shown, logged or put in a backup.	İstəyə bağlı, istifadəçi adı ilə istifadə olunur. Göstərilmir, jurnala yazılmır və ehtiyat nüsxəyə düşmür.
 Enter a server name or IP address, without http:// or a port number	Server adı və ya IP ünvanı daxil edin, http:// və port nömrəsi olmadan
 A port is a whole number from 1 to 65535	Port 1 ilə 65535 arasında tam ədəddir
-TikTok can't send a password to proxy %1$s. Use another.	TikTok %1$s proksisinə girə bilmir. Başqasını seçin.
+TikTok can't send a password to proxy %1$s. Use another.	%1$s proksisinə parol göndərilmir. Başqa seçin.
 Proxy %1$s is down. Turn it off if TikTok won't load.	Proksi %1$s işləmir. TikTok açılmasa, söndürün.
 Word rules only, not every feed filter:	Yalnız söz qaydaları, lentdəki bütün filtrlər deyil:
 This list is too long to preview here. Saving still follows the usual limit.	Bu siyahı burada önbaxış üçün çox uzundur. Saxlayanda adi limit keçərli qalır.

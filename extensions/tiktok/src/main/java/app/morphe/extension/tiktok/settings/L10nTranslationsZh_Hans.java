@@ -4294,7 +4294,7 @@ final class L10nTranslationsZh_Hans {
         table.put("TikTok can't lock without a phone screen lock",
                 "手机没有锁屏，TikTok 无法锁定");
         table.put("TikTok can't send a password to proxy %1$s. Use another.",
-                "TikTok 无法登录代理 %1$s，请换一个.");
+                "TikTok 无法向代理 %1$s 发送密码，请换一个.");
         table.put("TikTok checks how it was signed and installed. This answers those checks the way the Play Store version would. Try it if follows or likes undo themselves after a refresh. It may not help, since TikTok has other checks.",
                 "TikTok 检查它是如何签名和安装的。这将按照 Play 商店版本的方式回答这些检查。如果关注或喜欢在刷新后自行撤消，请尝试一下。它可能没有帮助，因为 TikTok 还有其他检查.");
         table.put("TikTok closed during these saves",

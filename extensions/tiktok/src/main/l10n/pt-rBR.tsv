@@ -1811,7 +1811,7 @@ Proxy password	Senha do proxy
 Optional, used with the user name. It isn't shown, logged or put in a backup.	Opcional, usada com o usuário. Ela não é mostrada, registrada nem colocada em um backup.
 Enter a server name or IP address, without http:// or a port number	Digite um nome de servidor ou um endereço IP, sem http:// e sem número de porta
 A port is a whole number from 1 to 65535	Uma porta é um número inteiro de 1 a 65535
-TikTok can't send a password to proxy %1$s. Use another.	O TikTok não entra no proxy %1$s. Use outro.
+TikTok can't send a password to proxy %1$s. Use another.	O TikTok não envia senha ao proxy %1$s. Use outro.
 Proxy %1$s is down. Turn it off if TikTok won't load.	Proxy %1$s caiu. Desligue se o TikTok não carregar.
 Word rules only, not every feed filter:	Só regras de palavras, não todos os filtros do feed:
 This list is too long to preview here. Saving still follows the usual limit.	Esta lista é longa demais para a prévia aqui. Ao salvar, o limite de sempre continua valendo.

@@ -4294,7 +4294,7 @@ final class L10nTranslationsIt {
         table.put("TikTok can't lock without a phone screen lock",
                 "Impossibile bloccare TikTok senza blocco schermo");
         table.put("TikTok can't send a password to proxy %1$s. Use another.",
-                "TikTok non accede al proxy %1$s. Usane un altro.");
+                "TikTok non invia password al proxy %1$s. Usane un altro.");
         table.put("TikTok checks how it was signed and installed. This answers those checks the way the Play Store version would. Try it if follows or likes undo themselves after a refresh. It may not help, since TikTok has other checks.",
                 "TikTok controlla come è stato firmato e installato. Questo risponde a quei controlli come farebbe la versione del Play Store. Provalo se i follow o i Mi piace si annullano da soli dopo un aggiornamento. Potrebbe non servire, perché TikTok ha altri controlli.");
         table.put("TikTok closed during these saves",

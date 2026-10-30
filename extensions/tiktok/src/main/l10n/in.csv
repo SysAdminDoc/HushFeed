@@ -1798,7 +1798,7 @@ Proxy password,Kata sandi proksi
 "Optional, used with the user name. It isn't shown, logged or put in a backup.","Opsional, dipakai bersama nama pengguna. Tidak ditampilkan, dicatat, atau dimasukkan ke cadangan."
 "Enter a server name or IP address, without http:// or a port number","Masukkan nama server atau alamat IP, tanpa http:// dan tanpa nomor port"
 A port is a whole number from 1 to 65535,Port adalah bilangan bulat dari 1 sampai 65535
-TikTok can't send a password to proxy %1$s. Use another.,TikTok tak bisa masuk proksi %1$s. Pakai lainnya.
+TikTok can't send a password to proxy %1$s. Use another.,Sandi tak bisa dikirim ke proksi %1$s. Pakai lainnya.
 Proxy %1$s is down. Turn it off if TikTok won't load.,Proksi %1$s mati. Matikan jika TikTok tak termuat.
 "Word rules only, not every feed filter:","Hanya aturan kata, bukan semua filter feed:"
 This list is too long to preview here. Saving still follows the usual limit.,"Daftar ini terlalu panjang untuk dipratinjau di sini. Saat disimpan, batas yang biasa tetap berlaku."

@@ -4294,7 +4294,7 @@ final class L10nTranslationsTr {
         table.put("TikTok can't lock without a phone screen lock",
                 "Telefonda ekran kilidi yok, TikTok kilitlenemez");
         table.put("TikTok can't send a password to proxy %1$s. Use another.",
-                "TikTok %1$s proxy'sine giremiyor. Başkasını kullan.");
+                "%1$s proxy'sine şifre gönderilemiyor. Başka seç.");
         table.put("TikTok checks how it was signed and installed. This answers those checks the way the Play Store version would. Try it if follows or likes undo themselves after a refresh. It may not help, since TikTok has other checks.",
                 "TikTok nasıl imzalandığını ve yüklendiğini kontrol eder. Bu, söz konusu kontrollere Play Store sürümünün vereceği gibi yanıt verir. Takipler veya beğeniler yenilemeden sonra kendiliğinden geri alınıyorsa dene. TikTok'un başka kontrolleri de olduğu için işe yaramayabilir.");
         table.put("TikTok closed during these saves",

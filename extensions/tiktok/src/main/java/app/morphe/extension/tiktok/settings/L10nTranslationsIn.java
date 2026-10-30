@@ -4294,7 +4294,7 @@ final class L10nTranslationsIn {
         table.put("TikTok can't lock without a phone screen lock",
                 "TikTok tak bisa mengunci tanpa kunci layar ponsel");
         table.put("TikTok can't send a password to proxy %1$s. Use another.",
-                "TikTok tak bisa masuk proksi %1$s. Pakai lainnya.");
+                "Sandi tak bisa dikirim ke proksi %1$s. Pakai lainnya.");
         table.put("TikTok checks how it was signed and installed. This answers those checks the way the Play Store version would. Try it if follows or likes undo themselves after a refresh. It may not help, since TikTok has other checks.",
                 "TikTok memeriksa bagaimana aplikasinya ditandatangani dan dipasang. Ini menjawab pemeriksaan itu seperti versi Play Store. Coba jika ikuti atau suka membatal sendiri setelah dimuat ulang. Mungkin tidak membantu karena TikTok punya pemeriksaan lain.");
         table.put("TikTok closed during these saves",

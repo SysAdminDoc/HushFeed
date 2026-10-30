@@ -30,6 +30,8 @@ public class AttachedCommentTranslationTest {
 
     @After public void tearDown() {
         Settings.COMMENT_BATCH_TRANSLATION.save(savedSwitch);
+        Settings.COMMENT_TRANSLATION_TURNED_OFF.save(false);
+        Settings.COMMENT_TRANSLATE_BUTTON_TURNED_ON.save(false);
     }
 
     @Test public void aForeignCommentIsTranslatedOnceAndNotAskedAgainWhenItScrollsBackIn() {
@@ -76,6 +78,19 @@ public class AttachedCommentTranslationTest {
         CommentBatchTranslator.onTranslationControllerAttached(controller);
 
         assertEquals(0, controller.translates);
+    }
+
+    @Test public void nothingHappensOnceTheReaderTurnedTranslationOff() {
+        // The header's toggle off resets every cell to no override, so the override can't say it.
+        CommentTranslateButton.onToggleWritten(Boolean.FALSE, null);
+        Controller controller = new Controller(new Comment("zh", false));
+
+        CommentBatchTranslator.onTranslationControllerAttached(controller);
+        assertEquals(0, controller.translates);
+
+        CommentTranslateButton.onToggleWritten(Boolean.TRUE, null);
+        CommentBatchTranslator.onTranslationControllerAttached(controller);
+        assertEquals("turned back on, it translates again", 1, controller.translates);
     }
 
     @Test public void aControllerWithoutAnOverrideStatusIsNeverAsked() {

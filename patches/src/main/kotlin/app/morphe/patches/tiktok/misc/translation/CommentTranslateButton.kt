@@ -173,12 +173,50 @@ internal fun findCommentTranslateButtonTargets(
 }
 
 /**
- * The write tells the extension what the toggle is being set to and where from, before TikTok
- * stores it. That is how the extension knows which toggle Hushfeed's button turned on.
+ * Where the write's report goes: right after the write reads the toggle through [stateRead] to
+ * compare the stored state with, so null when the write doesn't open with that read and its
+ * move-result into a register that isn't a parameter. TikTok refreshes the comment list only when
+ * the read after storing differs from that first one, and the report can change what the read
+ * answers (#282), so it has to come after the first read.
  */
-internal fun MutableMethod.reportToggleWrite() {
-    addInstructions(
-        0,
+internal fun Method.toggleWriteReportIndex(stateRead: Method): Int? {
+    val instructions = implementation?.instructions?.toList() ?: return null
+    if (instructions.size < 2) return null
+    val call = instructions[0]
+    val target = call.getReference<MethodReference>() ?: return null
+    if (call.opcode != Opcode.INVOKE_STATIC || target.definingClass != stateRead.definingClass ||
+        target.name != stateRead.name || target.parameterTypes.isNotEmpty() || target.returnType != "Z"
+    ) {
+        return null
+    }
+    val result = instructions[1]
+    if (result.opcode != Opcode.MOVE_RESULT) return null
+    val firstParameter = implementation!!.registerCount - 2
+    if ((result as OneRegisterInstruction).registerA >= firstParameter) return null
+    return 2
+}
+
+/** Refuses a write that doesn't read the toggle first, before anything is hooked. */
+internal fun Method.checkToggleStateWrite(stateRead: Method) {
+    if (toggleWriteReportIndex(stateRead) == null) {
+        throw PatchException(
+            "$PATCH_NAME: $definingClass->$name doesn't open with a read of the toggle " +
+                "(${stateRead.definingClass}->${stateRead.name}) to report the write after.",
+        )
+    }
+}
+
+/**
+ * The write tells the extension what the toggle is being set to and where from, right after
+ * TikTok reads the toggle to compare with and before it stores the new state. That is how the
+ * extension knows which toggle Hushfeed's button turned on, and when the reader turned comment
+ * translation off.
+ */
+internal fun MutableMethod.reportToggleWrite(stateRead: Method) {
+    val index = toggleWriteReportIndex(stateRead)
+        ?: throw PatchException("$PATCH_NAME: $definingClass->$name has no read of the toggle to report the write after.")
+    addInstructionsAtControlFlowLabel(
+        index,
         """
             invoke-static/range {p0 .. p1}, $COMMENT_TRANSLATE_BUTTON->onToggleWritten(Ljava/lang/Boolean;Ljava/lang/Object;)V
         """,
@@ -222,7 +260,10 @@ internal fun MutableMethod.sendToggleStateThroughExtension() {
  * <p>The toggle is TikTok's too, and it stays where TikTok stores it when the switch goes off.
  * A toggle left on would keep TikTok translating comments with no button left to turn it off, so
  * the read goes through the extension, which answers off for a toggle Hushfeed's button turned
- * on once the switch is off. Fails closed: everything is found before anything is changed.
+ * on once the switch is off. The toggle is also the one switch for comment translation across the
+ * app (#282), and the extension's answer to the read can change with a write, so the write is
+ * reported after TikTok's own comparison read: a change still refreshes the comment list. Fails
+ * closed: everything is found and checked before anything is changed.
  */
 internal fun BytecodePatchContext.commentTranslateButtonTargets(): CommentTranslateButtonTargets {
     val (gate, enabledRead) = findLazyAbGate(
@@ -268,14 +309,15 @@ internal fun installCommentTranslateButton() {
     val styleAnswer = mutable(targets.styleAnswer)
     val stateRead = mutable(targets.stateRead)
     val stateWrite = mutable(targets.stateWrite)
-    // Both gates and the toggle's read are checked before anything is hooked, so a refusal leaves
-    // no hook behind. The write's shape was checked when it was found.
+    // Both gates and the toggle's read and write are checked before anything is hooked, so a
+    // refusal leaves no hook behind.
     enabledRead.checkBooleanWhenOn(PATCH_NAME)
     styleAnswer.checkBooleanWhenOn(PATCH_NAME)
     stateRead.checkToggleStateRead()
+    stateWrite.checkToggleStateWrite(targets.stateRead)
 
     enabledRead.returnBooleanWhenOn(PATCH_NAME, COMMENT_TRANSLATE_BUTTON_SWITCH, true)
     styleAnswer.returnBooleanWhenOn(PATCH_NAME, COMMENT_TRANSLATE_BUTTON_SWITCH, true)
-    stateWrite.reportToggleWrite()
+    stateWrite.reportToggleWrite(targets.stateRead)
     stateRead.sendToggleStateThroughExtension()
 }

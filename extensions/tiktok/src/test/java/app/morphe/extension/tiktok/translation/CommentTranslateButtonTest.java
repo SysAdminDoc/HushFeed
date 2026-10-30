@@ -35,6 +35,8 @@ import org.robolectric.annotation.Config;
  * TikTok's translate button in the comment header (#85): its gates answer TikTok's own values
  * until the reader turns the switch on, and a toggle the button turned on reads off again once
  * the switch is off or Hushfeed is paused, while a toggle TikTok set itself keeps TikTok's answer.
+ * With Auto translate comments on, the toggle reads on, and the reader turning it off stops the
+ * translating everywhere until it's turned back on (#282).
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 28)
@@ -51,6 +53,8 @@ public class CommentTranslateButtonTest {
         Settings.COMMENT_TRANSLATE_BUTTON.save(false);
         saveInTheFile(Settings.COMMENT_TRANSLATE_BUTTON.key, false);
         Settings.COMMENT_TRANSLATE_BUTTON_TURNED_ON.save(false);
+        Settings.COMMENT_TRANSLATION_TURNED_OFF.save(false);
+        Settings.COMMENT_BATCH_TRANSLATION.save(false);
         SettingsStatus.commentTranslateButtonEnabled = false;
     }
 
@@ -160,6 +164,100 @@ public class CommentTranslateButtonTest {
                 Settings.COMMENT_TRANSLATE_BUTTON_TURNED_ON.isKeptWhenPaused());
         assertTrue(Settings.COMMENT_TRANSLATE_BUTTON.includeWithImportExport);
         assertFalse(Settings.COMMENT_TRANSLATE_BUTTON.isKeptWhenPaused());
+    }
+
+    /** #282: the toggle is the app's one switch for comment translation, so auto translate answers it on. */
+    @Test public void autoTranslateShowsTheToggleOn() {
+        Settings.COMMENT_BATCH_TRANSLATION.save(true);
+        assertTrue(CommentTranslateButton.toggleOn(false));
+        assertTrue(CommentBatchTranslator.translatesComments());
+
+        PausedProcess.set(true);
+        assertFalse("paused, TikTok's own answer", CommentTranslateButton.toggleOn(false));
+        assertFalse(CommentBatchTranslator.translatesComments());
+    }
+
+    @Test public void turningTheToggleOffStopsAutoTranslateUntilItIsTurnedBackOn() {
+        Settings.COMMENT_BATCH_TRANSLATION.save(true);
+        CommentTranslateButton.onToggleWritten(Boolean.FALSE, null);
+        assertTrue(Settings.COMMENT_TRANSLATION_TURNED_OFF.get());
+        assertFalse("every video stays original", CommentBatchTranslator.translatesComments());
+        assertFalse("the toggle reads TikTok's off", CommentTranslateButton.toggleOn(false));
+
+        CommentTranslateButton.onToggleWritten(Boolean.TRUE, null);
+        assertFalse(Settings.COMMENT_TRANSLATION_TURNED_OFF.get());
+        assertTrue(CommentBatchTranslator.translatesComments());
+        assertTrue(CommentTranslateButton.toggleOn(true));
+
+        CommentTranslateButton.onToggleWritten(Boolean.FALSE, null);
+        CommentTranslateButton.onToggleWritten(null, null);
+        assertFalse("an erased toggle is TikTok's default again", Settings.COMMENT_TRANSLATION_TURNED_OFF.get());
+    }
+
+    @Test public void onlyTheReadersOwnOffCounts() {
+        Settings.COMMENT_BATCH_TRANSLATION.save(true);
+        CommentTranslateButton.onToggleWritten(Boolean.FALSE, TIKTOKS_OWN_SOURCE);
+        assertFalse("TikTok's server sync isn't the reader", Settings.COMMENT_TRANSLATION_TURNED_OFF.get());
+
+        CommentTranslateButton.onToggleWritten(Boolean.FALSE, null);
+        CommentTranslateButton.onToggleWritten(Boolean.FALSE, TIKTOKS_OWN_SOURCE);
+        assertTrue("and its off leaves the reader's as it was", Settings.COMMENT_TRANSLATION_TURNED_OFF.get());
+        CommentTranslateButton.onToggleWritten(Boolean.TRUE, TIKTOKS_OWN_SOURCE);
+        assertFalse("any on clears it", Settings.COMMENT_TRANSLATION_TURNED_OFF.get());
+
+        Settings.COMMENT_BATCH_TRANSLATION.save(false);
+        CommentTranslateButton.onToggleWritten(Boolean.FALSE, null);
+        assertFalse("with auto translate off there is nothing to stop", Settings.COMMENT_TRANSLATION_TURNED_OFF.get());
+    }
+
+    @Test public void pausedTheOffChoiceIsLeftAlone() {
+        Settings.COMMENT_BATCH_TRANSLATION.save(true);
+        PausedProcess.set(true);
+        CommentTranslateButton.onToggleWritten(Boolean.FALSE, null);
+        PausedProcess.set(false);
+        assertFalse("an off while paused isn't remembered", Settings.COMMENT_TRANSLATION_TURNED_OFF.get());
+
+        CommentTranslateButton.onToggleWritten(Boolean.FALSE, null);
+        PausedProcess.set(true);
+        CommentTranslateButton.onToggleWritten(Boolean.FALSE, null);
+        PausedProcess.set(false);
+        assertTrue("nor does it clear one", Settings.COMMENT_TRANSLATION_TURNED_OFF.get());
+
+        PausedProcess.set(true);
+        CommentTranslateButton.onToggleWritten(Boolean.TRUE, null);
+        PausedProcess.set(false);
+        assertFalse("turning it on while paused still counts", Settings.COMMENT_TRANSLATION_TURNED_OFF.get());
+    }
+
+    @Test public void aButtonTapWhileAutoTranslatingIsHushfeeds() {
+        Settings.COMMENT_BATCH_TRANSLATION.save(true);
+        CommentTranslateButton.onToggleWritten(Boolean.TRUE, null);
+        assertTrue(Settings.COMMENT_TRANSLATE_BUTTON_TURNED_ON.get());
+
+        Settings.COMMENT_BATCH_TRANSLATION.save(false);
+        assertFalse("auto translate off hands the toggle back off", CommentTranslateButton.toggleOn(true));
+    }
+
+    @Test public void flippingAutoTranslateClearsTheOffChoice() {
+        Settings.COMMENT_BATCH_TRANSLATION.save(true);
+        CommentTranslateButton.onToggleWritten(Boolean.FALSE, null);
+        CommentTranslateButton.onAutoTranslateChanged();
+        assertFalse(Settings.COMMENT_TRANSLATION_TURNED_OFF.get());
+        assertTrue(CommentBatchTranslator.translatesComments());
+
+        CommentTranslateButton.onToggleWritten(Boolean.FALSE, null);
+        PausedProcess.set(true);
+        CommentTranslateButton.onAutoTranslateChanged();
+        PausedProcess.set(false);
+        assertFalse("cleared even while paused", Settings.COMMENT_TRANSLATION_TURNED_OFF.get());
+    }
+
+    @Test public void theOffChoiceIsThisPhonesOwnState() {
+        assertEquals(Boolean.FALSE, Settings.COMMENT_TRANSLATION_TURNED_OFF.defaultValue);
+        assertFalse(Settings.COMMENT_TRANSLATION_TURNED_OFF.includeWithImportExport);
+        assertFalse("a pause stops the translating anyway",
+                Settings.COMMENT_TRANSLATION_TURNED_OFF.isKeptWhenPaused());
+        assertFalse(Settings.COMMENT_TRANSLATION_TURNED_OFF.rebootApp);
     }
 
     /** The row shows only where the patch hooked the button's gates, on the Comments page. */

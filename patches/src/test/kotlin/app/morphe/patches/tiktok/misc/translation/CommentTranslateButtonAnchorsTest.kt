@@ -32,8 +32,9 @@ import org.junit.Test
  * What the translate button hooks (#85), held to each declared build: one class whose lazy value
  * reads [AUTO_TRANSLATION_KEY], with one enabled read and one answer to whether the header shows
  * the button on it, and one read and one write of the toggle's key on one class. The write tells
- * the extension what it is about to store before TikTok's first instruction, and every answer of
- * the read goes through the extension, with TikTok's own instructions left in their order.
+ * the extension what it is about to store right after TikTok reads the toggle to compare with
+ * (#282), and every answer of the read goes through the extension, with TikTok's own instructions
+ * left in their order.
  *
  * <p>That both gates ask the switch first and keep TikTok's code behind it is read back by
  * SwitchedReturnFixturesTest, with the real hook put on each build.
@@ -59,20 +60,23 @@ class CommentTranslateButtonAnchorsTest {
             assertNotEquals("$version: the gate and the toggle are different classes",
                 targets.enabledRead.definingClass, targets.stateRead.definingClass)
 
-            assertWriteReported(version, targets.stateWrite)
+            assertWriteReported(version, targets.stateWrite, targets.stateRead)
             assertReadPassedThrough(version, targets.stateRead)
         }
     }
 
-    private fun assertWriteReported(version: String, write: Method) {
+    private fun assertWriteReported(version: String, write: Method, read: Method) {
         val before = write.implementation!!.instructions.toList()
+        assertEquals("$version: the write opens with a read of the toggle to compare with",
+            2, write.toggleWriteReportIndex(read))
         val hooked = MutableMethod(write)
-        hooked.reportToggleWrite()
+        hooked.reportToggleWrite(read)
         val after = hooked.implementation!!.instructions.toList()
         assertEquals("$version: one instruction added to the write", before.size + 1, after.size)
 
-        val call = after[0]
-        assertEquals("$version: the write is reported first", Opcode.INVOKE_STATIC_RANGE, call.opcode)
+        val call = after[2]
+        assertEquals("$version: the write is reported after TikTok's comparison read (#282)",
+            Opcode.INVOKE_STATIC_RANGE, call.opcode)
         call as RegisterRangeInstruction
         val firstParameter = hooked.implementation!!.registerCount - 2
         assertEquals("$version: hands over the value and the source as TikTok got them",
@@ -83,8 +87,38 @@ class CommentTranslateButtonAnchorsTest {
         assertEquals("onToggleWritten", target.name)
         assertEquals("V", target.returnType)
         assertEquals(listOf("Ljava/lang/Boolean;", "Ljava/lang/Object;"), target.parameterTypes.map { it.toString() })
-        assertEquals("$version: TikTok's own write follows untouched",
-            before.map { it.opcode }, after.drop(1).map { it.opcode })
+        assertEquals("$version: TikTok's own write keeps its order",
+            before.map { it.opcode }, after.filterIndexed { index, _ -> index != 2 }.map { it.opcode })
+    }
+
+    @Test
+    fun `the write is reported after it reads the toggle, and only then`() {
+        val read = toggleRead()
+        assertEquals(2, toggleWrite(opening = READS_TOGGLE).toggleWriteReportIndex(read))
+        val hooked = toggleWrite(opening = READS_TOGGLE)
+        hooked.checkToggleStateWrite(read)
+        hooked.reportToggleWrite(read)
+        val after = hooked.implementation!!.instructions.toList()
+        assertEquals(Opcode.INVOKE_STATIC, after[0].opcode)
+        assertEquals(Opcode.MOVE_RESULT, after[1].opcode)
+        assertEquals("onToggleWritten", after[2].getReference<MethodReference>()!!.name)
+        assertEquals("the value and the source, as TikTok got them",
+            hooked.implementation!!.registerCount - 2, (after[2] as RegisterRangeInstruction).startRegister)
+
+        refused("no read first") { toggleWrite().checkToggleStateWrite(read) }
+        refused("a read of another method") {
+            toggleWrite(opening = "invoke-static {}, $TOGGLE_OWNER->LJI()Z\nmove-result v1").checkToggleStateWrite(read)
+        }
+        refused("a read on another class") {
+            toggleWrite(opening = "invoke-static {}, LX/0Else;->LIZLLL()Z\nmove-result v1").checkToggleStateWrite(read)
+        }
+        refused("the answer left unread") {
+            toggleWrite(opening = "invoke-static {}, $TOGGLE_OWNER->LIZLLL()Z\nnop").checkToggleStateWrite(read)
+        }
+        refused("the answer over the value") {
+            toggleWrite(opening = "invoke-static {}, $TOGGLE_OWNER->LIZLLL()Z\nmove-result p0").checkToggleStateWrite(read)
+        }
+        refused("hooking a write with no read") { toggleWrite().reportToggleWrite(read) }
     }
 
     private fun assertReadPassedThrough(version: String, read: Method) {
@@ -263,10 +297,12 @@ class CommentTranslateButtonAnchorsTest {
         static: Boolean = true,
         parameters: List<String> = listOf("Ljava/lang/Boolean;", "LX/0lRs;"),
         owner: String = TOGGLE_OWNER,
+        opening: String = "",
     ) = method("LJIIL", parameters, "V", 4, owner = owner, static = static).apply {
         addInstructionsWithLabels(
             0,
             """
+                $opening
                 const-string v0, "$key"
                 return-void
             """,
@@ -307,6 +343,7 @@ class CommentTranslateButtonAnchorsTest {
     private companion object {
         const val GATE_OWNER = "LX/0Gate;"
         const val TOGGLE_OWNER = "LX/0Toggle;"
+        const val READS_TOGGLE = "invoke-static {}, $TOGGLE_OWNER->LIZLLL()Z\nmove-result v1"
         const val BOOLEAN_UNWRAP =
             "check-cast v0, Ljava/lang/Boolean;\ninvoke-virtual { v0 }, Ljava/lang/Boolean;->booleanValue()Z\nmove-result v0"
         const val NUMBER_UNWRAP =

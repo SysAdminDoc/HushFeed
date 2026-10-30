@@ -144,9 +144,19 @@ public final class CommentBatchTranslator {
     private CommentBatchTranslator() {
     }
 
+    /**
+     * Whether comments are translated: Auto translate comments is on and the comment header's
+     * translate toggle wasn't last turned off with its button (#282). That toggle is TikTok's one
+     * switch for comment translation across the app, so off holds for every video, the pages
+     * that load later included, until it is turned back on. See {@link CommentTranslateButton}.
+     */
+    static boolean translatesComments() {
+        return Settings.COMMENT_BATCH_TRANSLATION.get() && !Settings.COMMENT_TRANSLATION_TURNED_OFF.get();
+    }
+
     public static void registerCommentCell(View itemView, Object manager) {
         if (itemView == null || manager == null) return;
-        if (disabledForSession || !Settings.COMMENT_BATCH_TRANSLATION.get()) return;
+        if (disabledForSession || !translatesComments()) return;
 
         try {
             AnchorParts parts = resolveAnchorParts(manager);
@@ -237,9 +247,13 @@ public final class CommentBatchTranslator {
      *
      * <p>Not before the controller is on: the controller ignores a translate while it is off,
      * and the cell binds before it attaches.
+     *
+     * <p>Not once the header's translate toggle is turned off either ({@link #translatesComments}).
+     * Turning it off puts every cell on screen back to no override, and the cells that attach
+     * after it carry none, so the override alone can't tell those from comments nobody flipped.
      */
     public static void onTranslationControllerAttached(Object controller) {
-        if (controller == null || !Settings.COMMENT_BATCH_TRANSLATION.get()) return;
+        if (controller == null || !translatesComments()) return;
         try {
             ControllerMembers members = controllerMembers(controller.getClass());
             if (members == NO_CONTROLLER_MEMBERS) return;
@@ -341,7 +355,7 @@ public final class CommentBatchTranslator {
     }
 
     public static void onCommentListLoaded(Object commentItemList) {
-        if (!Settings.COMMENT_BATCH_TRANSLATION.get()) return;
+        if (!translatesComments()) return;
         if (commentItemList == null) return;
 
         try {
@@ -535,7 +549,7 @@ public final class CommentBatchTranslator {
 
     private static void translateLoadedBatchIfReady(Object anchor, boolean allowVisibleFallback) {
         if (disabledForSession) return;
-        if (!Settings.COMMENT_BATCH_TRANSLATION.get()) return;
+        if (!translatesComments()) return;
         Batch batch = buildLoadedBatch(anchor, allowVisibleFallback);
         if (batch.comments.isEmpty()) {
             return;
@@ -562,7 +576,7 @@ public final class CommentBatchTranslator {
         }
 
         try {
-            if (!Settings.COMMENT_BATCH_TRANSLATION.get()) {
+            if (!translatesComments()) {
                 removePendingRequest(effectiveRequestKey, pending);
                 return;
             }
@@ -574,7 +588,7 @@ public final class CommentBatchTranslator {
                 );
             }
             method.setAccessible(true);
-            if (!Settings.COMMENT_BATCH_TRANSLATION.get()) {
+            if (!translatesComments()) {
                 removePendingRequest(effectiveRequestKey, pending);
                 return;
             }

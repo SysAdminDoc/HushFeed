@@ -462,6 +462,9 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         if (!applySettingToPreference && setting == Settings.KEEP_CAPTIONS_CLEAR_DISPLAY) {
             CaptionTools.onSettingChanged();
         }
+        if (!applySettingToPreference && setting == Settings.COMMENT_BATCH_TRANSLATION) {
+            app.morphe.extension.tiktok.translation.CommentTranslateButton.onAutoTranslateChanged();
+        }
         if (!applySettingToPreference && (setting == Settings.SHOW_COMMENTER_HANDLE
                 || setting == Settings.SHOW_COMMENTER_REGION || setting == Settings.COLOR_COMMENTER_NAMES
                 || setting == Settings.REGION_AS_FLAG || setting == BaseSettings.PAUSED)) {

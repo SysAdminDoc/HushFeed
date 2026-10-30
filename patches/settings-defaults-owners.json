@@ -750,6 +750,7 @@
     "FEED_NAVIGATION_OBSERVED_TABS": "Runtime state or legacy migration data; not a configurable feature default.",
     "BOTTOM_NAVIGATION_OBSERVED_TABS": "Runtime state or legacy migration data; not a configurable feature default.",
     "COMMENT_TRANSLATE_BUTTON_TURNED_ON": "Runtime state or legacy migration data; not a configurable feature default.",
+    "COMMENT_TRANSLATION_TURNED_OFF": "Runtime state or legacy migration data; not a configurable feature default.",
     "DOWNLOAD_PATH": "Runtime state or legacy migration data; not a configurable feature default.",
     "DOWNLOAD_PATHS_MIGRATED": "Runtime state or legacy migration data; not a configurable feature default.",
     "SESSION_BUDGET_PENDING": "Runtime state or legacy migration data; not a configurable feature default.",

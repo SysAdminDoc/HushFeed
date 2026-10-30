@@ -559,6 +559,16 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting COMMENT_TRANSLATE_BUTTON_TURNED_ON =
             new BooleanSetting("comment_translate_button_turned_on", FALSE, false, false);
     /**
+     * Whether the comment header's translate toggle was last turned off by its button while
+     * {@link #COMMENT_BATCH_TRANSLATION} was on (#282). No row of its own: it is how Auto
+     * translate comments stops for the whole app, the way TikTok's toggle does, until the button
+     * or the switch turns it back on. Not kept when paused: a pause stops the translating anyway.
+     * Turning the toggle back on clears it, paused or not, and an off while paused leaves it as it
+     * was. Kept out of import and export like the mark above.
+     */
+    public static final BooleanSetting COMMENT_TRANSLATION_TURNED_OFF =
+            new BooleanSetting("comment_translation_turned_off", FALSE, false, false);
+    /**
      * TikTok's translation for accounts it takes it away from (#143): the rows on its own Settings
      * and privacy > Language page, and See translation on videos. Restart-gated: the Language page
      * asks each time it opens, but the videos' answer is read once per process.

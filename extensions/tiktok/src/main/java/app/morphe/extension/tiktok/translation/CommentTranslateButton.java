@@ -31,7 +31,8 @@ import app.morphe.extension.tiktok.settings.Settings;
  * Auto translate comments answers it on. The header's icon then shows what the reader sees, one
  * tap shows the originals, and that tap is remembered as {@link Settings#COMMENT_TRANSLATION_TURNED_OFF}
  * so the comments that load after it stay original too, on every video, until the button or the
- * switch turns translation back on. A button tap made while Auto translate comments is on counts
+ * switch turns translation back on. TikTok erases the toggle each time the comment page closes,
+ * and that erase leaves the remembered off in place. A button tap made while Auto translate comments is on counts
  * as Hushfeed's for the mark above as well, so turning the switch off hands the toggle back off.
  */
 @SuppressWarnings("unused")
@@ -64,10 +65,13 @@ public final class CommentTranslateButton {
             if (Settings.COMMENT_TRANSLATE_BUTTON_TURNED_ON.get() != ours) {
                 Settings.COMMENT_TRANSLATE_BUTTON_TURNED_ON.save(ours);
             }
-            if (!Boolean.FALSE.equals(value)) {
+            // A null is TikTok erasing the toggle, which it does each time the comment page closes,
+            // so it leaves the reader's off as it was.
+            if (Boolean.TRUE.equals(value)) {
                 // Saved whatever it reads: paused, the mark reads off while its stored value is on.
                 Settings.COMMENT_TRANSLATION_TURNED_OFF.save(false);
-            } else if (source == null && autoTranslating && !Settings.COMMENT_TRANSLATION_TURNED_OFF.get()) {
+            } else if (value != null && source == null && autoTranslating
+                    && !Settings.COMMENT_TRANSLATION_TURNED_OFF.get()) {
                 // Only the reader's own off counts. TikTok's (its server sync) leaves the mark as
                 // it was, and so does any off while the switch is off or Hushfeed is paused.
                 Settings.COMMENT_TRANSLATION_TURNED_OFF.save(true);
@@ -91,14 +95,18 @@ public final class CommentTranslateButton {
     }
 
     /**
-     * The toggle as TikTok's code sees it. On while Auto translate comments translates, otherwise
-     * TikTok's own answer, except that a toggle Hushfeed turned on reads off while neither the
-     * button's switch nor Auto translate comments is on, or Hushfeed is paused.
+     * The toggle as TikTok's code sees it. On while Auto translate comments translates and off
+     * while the reader has turned it off, since TikTok's erase leaves its default in its place.
+     * Otherwise TikTok's own answer, except that a toggle Hushfeed turned on reads off while
+     * neither the button's switch nor Auto translate comments is on, or Hushfeed is paused.
      */
     public static boolean toggleOn(boolean tiktoks) {
         if (Utils.getContext() == null) return tiktoks;
         try {
             if (CommentBatchTranslator.translatesComments()) return true;
+            if (Settings.COMMENT_BATCH_TRANSLATION.get() && Settings.COMMENT_TRANSLATION_TURNED_OFF.get()) {
+                return false;
+            }
             if (!tiktoks) return false;
             if (isOn()) return true;
             return !Settings.COMMENT_TRANSLATE_BUTTON_TURNED_ON.get();

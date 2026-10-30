@@ -188,10 +188,24 @@ public class CommentTranslateButtonTest {
         assertFalse(Settings.COMMENT_TRANSLATION_TURNED_OFF.get());
         assertTrue(CommentBatchTranslator.translatesComments());
         assertTrue(CommentTranslateButton.toggleOn(true));
+    }
 
+    /** #282: TikTok erases the toggle whenever the comment page closes, and its default comes back on. */
+    @Test public void closingTheCommentsKeepsTheReadersOff() {
+        Settings.COMMENT_BATCH_TRANSLATION.save(true);
+        Settings.COMMENT_TRANSLATE_BUTTON.save(true);
         CommentTranslateButton.onToggleWritten(Boolean.FALSE, null);
         CommentTranslateButton.onToggleWritten(null, null);
-        assertFalse("an erased toggle is TikTok's default again", Settings.COMMENT_TRANSLATION_TURNED_OFF.get());
+        assertTrue(Settings.COMMENT_TRANSLATION_TURNED_OFF.get());
+        assertFalse(CommentBatchTranslator.translatesComments());
+        assertFalse("TikTok's default after the erase reads off", CommentTranslateButton.toggleOn(true));
+
+        CommentTranslateButton.onToggleWritten(Boolean.TRUE, null);
+        assertTrue("the next list's on tap still works", CommentTranslateButton.toggleOn(false));
+
+        CommentTranslateButton.onToggleWritten(Boolean.FALSE, null);
+        PausedProcess.set(true);
+        assertTrue("paused, TikTok's own answer", CommentTranslateButton.toggleOn(true));
     }
 
     @Test public void onlyTheReadersOwnOffCounts() {

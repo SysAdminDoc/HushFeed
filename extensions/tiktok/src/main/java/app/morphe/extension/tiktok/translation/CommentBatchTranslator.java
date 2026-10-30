@@ -239,10 +239,11 @@ public final class CommentBatchTranslator {
      * and the cell binds before it attaches.
      *
      * <p>The newer sheet has its own translate switch for the whole list. Turned off, it flips
-     * the comments already loaded to their originals, and the next page that loads arrives with
-     * no override at all. So a video whose comments come back flipped to original is remembered,
-     * and its later pages are left in their own language too, until one comes back flipped to
-     * translated again.
+     * the comments on screen to their originals, and comments that attach later arrive with no
+     * override at all. So a video whose comments come back flipped to original is remembered,
+     * and its later comments are left in their own language too. Turned back on, TikTok
+     * translates that video's comments itself. A comment flipped to translated is no reason to
+     * forget the video: the translate asked for here leaves that same override behind.
      */
     public static void onTranslationControllerAttached(Object controller) {
         if (controller == null || !Settings.COMMENT_BATCH_TRANSLATION.get()) return;
@@ -258,7 +259,7 @@ public final class CommentBatchTranslator {
             String status = ((Enum<?>) override).name();
             String aid = invokeStringQuiet(comment, "getAwemeId");
             if (!NOT_OVERRIDDEN.equals(status)) {
-                rememberChoice(aid, OVERRIDE_TO_ORIGINAL.equals(status));
+                if (OVERRIDE_TO_ORIGINAL.equals(status)) rememberOriginals(aid);
                 return;
             }
             if (isTranslated(comment) || choseOriginals(aid)) return;
@@ -279,11 +280,10 @@ public final class CommentBatchTranslator {
     /** A cap, because the key is a video id and a long scroll would otherwise keep every one. */
     private static final int MAX_ORIGINALS_CHOSEN = 64;
 
-    private static void rememberChoice(String aid, boolean original) {
+    private static void rememberOriginals(String aid) {
         if (isBlank(aid)) return;
         synchronized (ORIGINALS_CHOSEN) {
             ORIGINALS_CHOSEN.remove(aid);
-            if (!original) return;
             ORIGINALS_CHOSEN.add(aid);
             Iterator<String> oldest = ORIGINALS_CHOSEN.iterator();
             while (ORIGINALS_CHOSEN.size() > MAX_ORIGINALS_CHOSEN) {

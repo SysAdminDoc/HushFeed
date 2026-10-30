@@ -66,17 +66,20 @@ public class AttachedCommentTranslationTest {
         assertEquals(1, otherVideo.translates);
     }
 
-    @Test public void turningTheSheetBackToTranslatedTranslatesLaterPagesAgain() {
-        Controller flipped = new Controller(new Comment("zh", false, "video-c"));
+    @Test public void aCommentThisTranslatedEarlierDoesNotUndoTheChoiceOfOriginals() {
+        // Our own translate leaves OVERRIDE_TO_TRANSLATED behind, so it says nothing about the viewer.
+        Controller translatedEarlier = new Controller(new Comment("zh", false, "video-c"));
+        CommentBatchTranslator.onTranslationControllerAttached(translatedEarlier);
+        Controller flipped = new Controller(new Comment("es", false, "video-c"));
         flipped.override = Override.OVERRIDE_TO_ORIGINAL;
         CommentBatchTranslator.onTranslationControllerAttached(flipped);
-        flipped.override = Override.OVERRIDE_TO_TRANSLATED;
-        CommentBatchTranslator.onTranslationControllerAttached(flipped);
 
+        CommentBatchTranslator.onTranslationControllerAttached(translatedEarlier);
         Controller nextPage = new Controller(new Comment("pt", false, "video-c"));
         CommentBatchTranslator.onTranslationControllerAttached(nextPage);
 
-        assertEquals(1, nextPage.translates);
+        assertEquals(1, translatedEarlier.translates);
+        assertEquals(0, nextPage.translates);
     }
 
     @Test public void anAlreadyTranslatedCommentIsLeftAlone() {

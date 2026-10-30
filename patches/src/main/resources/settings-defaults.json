@@ -473,6 +473,10 @@
     "Keep the screen's refresh rate": [
       "uncap_refresh_rate"
     ],
+    "Keep unsent messages": [
+      "keep_unsent_messages",
+      "mark_kept_unsent_messages"
+    ],
     "LIVE controls": [
       "stop_live_auto_enter",
       "show_exact_live_viewers",
@@ -2572,6 +2576,12 @@
       "type": "boolean",
       "default": false
     },
+    "keep_unsent_messages": {
+      "field": "KEEP_UNSENT_MESSAGES",
+      "key": "keep_unsent_messages",
+      "type": "boolean",
+      "default": false
+    },
     "larger_comment_like_target": {
       "field": "LARGER_COMMENT_LIKE_TARGET",
       "key": "larger_comment_like_target",
@@ -2733,6 +2743,12 @@
       "key": "long_press_sides_only",
       "type": "boolean",
       "default": false
+    },
+    "mark_kept_unsent_messages": {
+      "field": "MARK_KEPT_UNSENT_MESSAGES",
+      "key": "mark_kept_unsent_messages",
+      "type": "boolean",
+      "default": true
     },
     "mark_saved_videos": {
       "field": "MARK_SAVED_VIDEOS",

@@ -2346,3 +2346,17 @@ The last one is still waiting for Wi-Fi	El anterior todavía está esperando Wi-
 Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.	Se dejó de esperar Wi-Fi tras 30 minutos. Vuelve a guardarlo cuando tengas Wi-Fi.
 Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.	Se guardaron %1$s de %2$s. El resto se detuvo al salir del Wi-Fi. Vuelve a guardar con Wi-Fi.
 The save stopped when you left Wi-Fi. Save it again on Wi-Fi.	El guardado se detuvo al salir del Wi-Fi. Vuelve a guardarlo con Wi-Fi.
+Keep unsent messages	Conservar mensajes retirados
+When someone unsends a message, it stays in your chat instead of disappearing. Messages you unsend yourself are still removed.	Cuando alguien retira un mensaje, se queda en tu chat en lugar de desaparecer. Los mensajes que retiras tú mismo se siguen eliminando.
+Unsent messages	Mensajes retirados
+Mark kept messages	Marcar los mensajes conservados
+Adds (unsent) after the text of a message that was kept, so you can tell it apart from the rest.	Añade (retirado) después del texto de un mensaje conservado, para que lo distingas de los demás.
+(unsent)	(retirado)
+Clear kept messages	Borrar mensajes conservados
+Removes every message that was kept. Each chat shows TikTok's usual notice that a message was unsent.	Elimina todos los mensajes conservados. Cada chat muestra el aviso habitual de TikTok de que se retiró un mensaje.
+Kept so far: %1$d	Conservados hasta ahora: %1$d
+Nothing has been kept	No se ha conservado nada
+TikTok isn't ready yet. Open your Inbox, then try again.	TikTok aún no está listo. Abre tu bandeja de entrada y vuelve a intentarlo.
+Removed: %1$d	Eliminados: %1$d
+Removed: %1$d. The other %2$d are still there. Open your Inbox, then try again.	Eliminados: %1$d. Los otros %2$d siguen ahí. Abre tu bandeja de entrada y vuelve a intentarlo.
+Removing the kept messages	Eliminando los mensajes conservados

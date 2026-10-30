@@ -2523,3 +2523,17 @@ The last one is still waiting for Wi-Fi	Последнее всё ещё ждё�
 Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.	Ожидание Wi-Fi прекращено через 30 минут. Сохраните снова, когда будете в сети Wi-Fi.
 Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.	Сохранено %1$s из %2$s. Остальное остановилось, когда вы вышли из Wi-Fi. Сохраните снова по Wi-Fi.
 The save stopped when you left Wi-Fi. Save it again on Wi-Fi.	Сохранение остановилось, когда вы вышли из Wi-Fi. Сохраните снова по Wi-Fi.
+Keep unsent messages	Сохранять отозванные сообщения
+When someone unsends a message, it stays in your chat instead of disappearing. Messages you unsend yourself are still removed.	Когда кто-то отзывает сообщение, оно остаётся в вашем чате и не исчезает. Сообщения, которые вы отзываете сами, по-прежнему удаляются.
+Unsent messages	Отозванные сообщения
+Mark kept messages	Помечать сохранённые сообщения
+Adds (unsent) after the text of a message that was kept, so you can tell it apart from the rest.	Добавляет (отозвано) после текста сохранённого сообщения, чтобы вы отличали его от остальных.
+(unsent)	(отозвано)
+Clear kept messages	Удалить сохранённые сообщения
+Removes every message that was kept. Each chat shows TikTok's usual notice that a message was unsent.	Удаляет все сохранённые сообщения. В каждом чате появится обычное уведомление TikTok о том, что сообщение отозвано.
+Kept so far: %1$d	Сохранено на данный момент: %1$d
+Nothing has been kept	Ничего не сохранено
+TikTok isn't ready yet. Open your Inbox, then try again.	TikTok пока не готов. Откройте входящие и повторите попытку.
+Removed: %1$d	Удалено: %1$d
+Removed: %1$d. The other %2$d are still there. Open your Inbox, then try again.	Удалено: %1$d. Остальные %2$d всё ещё на месте. Откройте входящие и повторите попытку.
+Removing the kept messages	Удаляем сохранённые сообщения

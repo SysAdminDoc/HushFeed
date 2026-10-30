@@ -2320,3 +2320,17 @@ The last one is still waiting for Wi-Fi,Yang sebelumnya masih menunggu Wi-Fi
 Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.,Berhenti menunggu Wi-Fi setelah 30 menit. Simpan lagi saat kamu terhubung ke Wi-Fi.
 Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.,Tersimpan %1$s dari %2$s. Sisanya berhenti saat kamu keluar dari Wi-Fi. Simpan lagi lewat Wi-Fi.
 The save stopped when you left Wi-Fi. Save it again on Wi-Fi.,Penyimpanan berhenti saat kamu keluar dari Wi-Fi. Simpan lagi lewat Wi-Fi.
+Keep unsent messages,Simpan pesan yang ditarik
+"When someone unsends a message, it stays in your chat instead of disappearing. Messages you unsend yourself are still removed.","Saat seseorang menarik pesan, pesan itu tetap ada di obrolanmu dan tidak hilang. Pesan yang kamu tarik sendiri tetap dihapus."
+Unsent messages,Pesan yang ditarik
+Mark kept messages,Tandai pesan yang disimpan
+"Adds (unsent) after the text of a message that was kept, so you can tell it apart from the rest.","Menambahkan (ditarik) setelah teks pesan yang disimpan, agar kamu bisa membedakannya dari yang lain."
+(unsent),(ditarik)
+Clear kept messages,Hapus pesan yang disimpan
+Removes every message that was kept. Each chat shows TikTok's usual notice that a message was unsent.,Menghapus semua pesan yang disimpan. Setiap obrolan menampilkan pemberitahuan biasa dari TikTok bahwa sebuah pesan telah ditarik.
+Kept so far: %1$d,Disimpan sejauh ini: %1$d
+Nothing has been kept,Belum ada yang disimpan
+"TikTok isn't ready yet. Open your Inbox, then try again.","TikTok belum siap. Buka Kotak Masuk, lalu coba lagi."
+Removed: %1$d,Dihapus: %1$d
+"Removed: %1$d. The other %2$d are still there. Open your Inbox, then try again.","Dihapus: %1$d. Sisanya, %2$d, masih ada. Buka Kotak Masuk, lalu coba lagi."
+Removing the kept messages,Menghapus pesan yang disimpan

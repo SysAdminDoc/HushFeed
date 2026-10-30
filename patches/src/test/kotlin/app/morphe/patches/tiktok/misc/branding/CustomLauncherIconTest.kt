@@ -1,6 +1,7 @@
 package app.morphe.patches.tiktok.misc.branding
 
 import app.morphe.patcher.patch.PatchException
+import app.morphe.patches.tiktok.misc.theme.appendColorEntries
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -217,6 +218,105 @@ class CustomLauncherIconTest {
     }
 
     @Test
+    fun `Material You draws the note and its background from colors the system fills in`() {
+        assertEquals(IconStyle.MATERIAL_YOU, iconStyle("Material You"))
+        assertEquals(IconStyle.MATERIAL_YOU, iconStyle("material-you"))
+        assertEquals("material-you", customLauncherIconPatch.options["iconStyle"].values!!["Material You"])
+
+        val icon = parse(ADAPTIVE_ICON)
+        assertTrue(restyleAdaptiveIcon(icon, layers(), IconStyle.MATERIAL_YOU))
+        val root = icon.documentElement
+        assertEquals(listOf(SQUARE to "@color/$ICON_BACKGROUND_COLOR"), paths(inlineVector(layer(root, "background"))))
+        assertEquals(listOf(WHITE_NOTE to "@color/$ICON_GLYPH_COLOR"), paths(inlineVector(layer(root, "foreground"))))
+        assertEquals(listOf(WHITE_NOTE to GLYPH_FILL), paths(inlineVector(layer(root, "monochrome"))))
+
+        // White on black before Android 12, then the system's own light and dark pairs.
+        assertEquals(listOf("values", "values-v31", "values-night-v31"), MATERIAL_YOU_COLORS.keys.toList())
+        assertEquals("#ff000000" to "#ffffffff", MATERIAL_YOU_COLORS["values"])
+        val system = Regex("@android:color/system_(accent|neutral)[12]_(100|700|800)")
+        for (folder in listOf("values-v31", "values-night-v31")) {
+            val (background, glyph) = MATERIAL_YOU_COLORS.getValue(folder)
+            assertTrue(background, system.matches(background))
+            assertTrue(glyph, system.matches(glyph))
+            assertTrue("the note stands out from its background in $folder", background != glyph)
+        }
+    }
+
+    @Test
+    fun `the Material You colors join each values folder's colors file, or start one`() {
+        val res = folder.newFolder("res")
+        write(res, "values/colors.xml", "<resources>\n    <color name=\"c1\">#ff161823</color>\n</resources>\n")
+        write(res, "values-night-v31/colors.xml", "<resources><color name=\"c2\">#ff000000</color></resources>")
+        val files = materialYouColorFiles(res)
+        assertEquals(MATERIAL_YOU_COLORS.keys.toList(), files.keys.toList())
+        assertFalse(files.getValue("values-v31").exists())
+
+        for ((folder, file) in files) appendColorEntries(file, materialYouColorEntries(folder))
+
+        for ((folder, pair) in MATERIAL_YOU_COLORS) {
+            val file = res.resolve("$folder/colors.xml")
+            assertEquals(folder, pair.first, colorValue(file, ICON_BACKGROUND_COLOR))
+            assertEquals(folder, pair.second, colorValue(file, ICON_GLYPH_COLOR))
+        }
+        assertEquals("TikTok's own colors stay", "#ff161823", colorValue(res.resolve("values/colors.xml"), "c1"))
+        assertEquals("#ff000000", colorValue(res.resolve("values-night-v31/colors.xml"), "c2"))
+
+        // A file that already has the colors, or can't take more, is refused before anything is written.
+        val again = assertThrows(PatchException::class.java) { materialYouColorFiles(res) }.message!!
+        assertTrue(again, again.contains("values/colors.xml") && again.contains("Nothing was changed"))
+        val broken = folder.newFolder("broken")
+        write(broken, "values/colors.xml", "<resources>")
+        assertThrows(PatchException::class.java) { materialYouColorFiles(broken) }
+        assertFalse(broken.resolve("values-v31").exists())
+    }
+
+    @Test
+    fun `the background color takes RRGGBB and refuses anything else`() {
+        val option = customLauncherIconPatch.options["iconBackground"]
+        assertNull(option.default)
+        assertFalse(option.required)
+        assertEquals("the default style is unchanged", IconStyle.TIKTOK.key, customLauncherIconPatch.options["iconStyle"].default)
+
+        assertNull(iconBackground(null))
+        assertNull(iconBackground("  "))
+        for (written in listOf("#1E88E5", "1e88e5", " #1e88e5 ", "#FF1E88E5", "ff1E88e5")) {
+            assertEquals(written, "#ff1e88e5", iconBackground(written))
+        }
+        for (wrong in listOf("blue", "#12345", "#1234567", "#GG88E5", "#801E88E5", "#1E88E5FF", "##1E88E5")) {
+            val message = assertThrows(wrong, PatchException::class.java) { iconBackground(wrong) }.message!!
+            assertTrue(message, message.contains("isn't a color") && message.contains("Nothing was changed"))
+        }
+    }
+
+    @Test
+    fun `a background color goes behind the note or the picture in any style`() {
+        val color = "#ff1e88e5"
+        val tiktok = parse(ADAPTIVE_ICON)
+        assertTrue(restyleAdaptiveIcon(tiktok, layers(), IconStyle.TIKTOK, background = color))
+        assertEquals(listOf(SQUARE to color), paths(inlineVector(layer(tiktok.documentElement, "background"))))
+        assertEquals("TikTok's colored note stays", "@drawable/c27", layer(tiktok.documentElement, "foreground").getAttribute("android:drawable"))
+        assertNotNull(layer(tiktok.documentElement, "monochrome"))
+
+        val materialYou = parse(ADAPTIVE_ICON)
+        restyleAdaptiveIcon(materialYou, layers(), IconStyle.MATERIAL_YOU, background = color)
+        assertEquals(listOf(SQUARE to color), paths(inlineVector(layer(materialYou.documentElement, "background"))))
+        assertEquals(listOf(WHITE_NOTE to "@color/$ICON_GLYPH_COLOR"), paths(inlineVector(layer(materialYou.documentElement, "foreground"))))
+
+        val picture = parse(ADAPTIVE_ICON)
+        restyleAdaptiveIcon(picture, layers(), IconStyle.BLACK_ON_WHITE, "@drawable/$PICTURE_NAME", color)
+        assertEquals(listOf(SQUARE to color), paths(inlineVector(layer(picture.documentElement, "background"))))
+        assertEquals("@drawable/$PICTURE_NAME", layer(picture.documentElement, "foreground").getAttribute("android:drawable"))
+
+        // A background that isn't a vector can't take the color either, and the refusal says which.
+        val untouched = parse(ADAPTIVE_ICON)
+        val refusal = assertThrows(PatchException::class.java) {
+            restyleAdaptiveIcon(untouched, IconLayers(null, parse(FOREGROUND).documentElement), IconStyle.TIKTOK, background = color)
+        }.message!!
+        assertTrue(refusal, refusal.contains("background color $color"))
+        assertEquals(serialize(parse(ADAPTIVE_ICON)), serialize(untouched))
+    }
+
+    @Test
     fun `a real PNG's size is read off its header`() {
         assertEquals(432 to 432, pngSize(png(432, 432)))
         assertEquals(500 to 300, pngSize(png(500, 300)))
@@ -422,6 +522,10 @@ class CustomLauncherIconTest {
 
     private fun parse(xml: String): Document =
         DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xml.trim().byteInputStream())
+
+    private fun colorValue(file: File, name: String): String? =
+        parse(file.readText()).getElementsByTagName("color").elements()
+            .singleOrNull { it.getAttribute("name") == name }?.textContent
 
     private fun serialize(document: Document): String = StringWriter().also {
         TransformerFactory.newInstance().newTransformer().transform(DOMSource(document), StreamResult(it))

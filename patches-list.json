@@ -2465,7 +2465,7 @@
     },
     {
       "name": "Custom launcher icon",
-      "description": "Gives TikTok's home screen icon a themed version that takes your wallpaper's color on Android 13 and up. The options can also make it black, plain or your own picture. Only patching again without it puts the old icon back.",
+      "description": "Gives TikTok's home screen icon a themed version that takes your wallpaper's color on Android 13 and up. The options can also make it black, plain, Material You, any background color or your own picture. Only patching again without it puts the old icon back.",
       "category": "Interface",
       "use": false,
       "dependencies": [
@@ -2503,7 +2503,7 @@
         {
           "key": "iconStyle",
           "title": "Icon style",
-          "description": "TikTok colors keeps the icon as it is. Black background puts TikTok's note on pure black, and the two plain styles draw only the note in one color. Every style gets the themed icon.",
+          "description": "TikTok colors keeps the icon as it is. Black background puts TikTok's note on pure black, and the two plain styles draw only the note in one color. Material You colors the note and its background from your wallpaper on Android 12 and up, light or dark with the system, even with themed icons off, and is white on black before that. Every style gets the themed icon.",
           "required": true,
           "type": "kotlin.String",
           "default": "tiktok",
@@ -2511,8 +2511,18 @@
             "TikTok colors": "tiktok",
             "Black background": "black",
             "White on black": "white-on-black",
-            "Black on white": "black-on-white"
+            "Black on white": "black-on-white",
+            "Material You": "material-you"
           }
+        },
+        {
+          "key": "iconBackground",
+          "title": "Icon background color",
+          "description": "A color like #1E88E5 to put behind the note, or behind your picture, instead of the style's own. Leave it empty to keep the style's.",
+          "required": false,
+          "type": "kotlin.String",
+          "default": null,
+          "values": null
         },
         {
           "key": "iconPicture",

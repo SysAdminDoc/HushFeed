@@ -280,6 +280,15 @@ val commentTranslationPatch = bytecodePatch(
             )
         }
 
+        // Comments on TikTok's newer comment path, which never reach the batch above (#282).
+        // Required on a declared build, where AttachedCommentTranslationAnchorsTest holds it.
+        try {
+            hookAttachedCommentTranslation()
+        } catch (problem: Exception) {
+            if (packageMetadata.buildName in declaredVersions()) throw problem
+            println("[Translate comments] Left out the newer comment path on ${packageMetadata.buildName}: ${problem.message}")
+        }
+
         // The languages TikTok's automatic translation leaves alone (#121). Required on a declared
         // build, where DoNotAutoTranslateAnchorsTest holds it, and left out with a note on any
         // other, so a reworked translation service doesn't take comment translation down with it.

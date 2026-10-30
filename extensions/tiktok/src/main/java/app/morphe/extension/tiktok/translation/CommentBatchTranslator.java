@@ -224,6 +224,122 @@ public final class CommentBatchTranslator {
         }
     }
 
+    /**
+     * Called right after a comment cell on TikTok's newer comment path switches its per-comment
+     * translation controller on (#282).
+     *
+     * <p>Accounts in that experiment bind comment cells without the manager
+     * {@link #registerCommentCell} reads, so the batch never saw their comments and nothing was
+     * translated. This asks the controller to translate the way the cell's own See translation
+     * does. A comment the viewer already flipped either way carries an override and is left as
+     * they set it, so See original sticks when the cell scrolls back in. One already translated,
+     * with no language, or in a language TikTok shouldn't translate is left alone too.
+     *
+     * <p>Not before the controller is on: the controller ignores a translate while it is off,
+     * and the cell binds before it attaches.
+     */
+    public static void onTranslationControllerAttached(Object controller) {
+        if (controller == null || !Settings.COMMENT_BATCH_TRANSLATION.get()) return;
+        try {
+            ControllerMembers members = controllerMembers(controller.getClass());
+            if (members == NO_CONTROLLER_MEMBERS) return;
+            HookStatus.bound(FAMILY, "translation controller");
+
+            Object comment = members.comment.get(controller);
+            if (comment == null || isTranslated(comment)) return;
+            Object override = members.override.invoke(controller);
+            if (!(override instanceof Enum) || !NOT_OVERRIDDEN.equals(((Enum<?>) override).name())) return;
+            if (isBlank(invokeStringQuiet(comment, "getCommentLanguage")) || shouldSkipTranslation(comment)) return;
+
+            members.translate.invoke(controller);
+        } catch (Throwable ex) {
+            Logger.printDebug(() -> "[Morphe CommentBatchTranslator] controller translate failed", asException(ex));
+        }
+    }
+
+    /** The override TikTok keeps for a comment nobody flipped, by its enum constant's name. */
+    private static final String NOT_OVERRIDDEN = "NOT_OVERWRITTEN";
+
+    /** Each controller class's members, or {@link #NO_CONTROLLER_MEMBERS}, so a class is searched once. */
+    private static final Map<Class<?>, ControllerMembers> CONTROLLER_MEMBERS = new ConcurrentHashMap<>();
+    private static final ControllerMembers NO_CONTROLLER_MEMBERS = new ControllerMembers(null, null, null);
+
+    private static final class ControllerMembers {
+        final Field comment;
+        final Method override;
+        final Method translate;
+
+        ControllerMembers(Field comment, Method override, Method translate) {
+            this.comment = comment;
+            this.override = override;
+            this.translate = translate;
+        }
+    }
+
+    /**
+     * Finds the controller's comment (a field whose type has {@code getCid}), its override
+     * status (a no-argument getter of an enum with a {@code NOT_OVERWRITTEN} constant) and its
+     * public {@code translate()}. All three are matched by shape, not by R8 name.
+     */
+    private static ControllerMembers controllerMembers(Class<?> type) {
+        ControllerMembers known = CONTROLLER_MEMBERS.get(type);
+        if (known != null) return known;
+
+        Field comment = null;
+        Method override = null;
+        Method translate = null;
+        try {
+            Method candidate = type.getMethod("translate");
+            if (candidate.getReturnType() == void.class) translate = candidate;
+        } catch (NoSuchMethodException ignored) {
+        }
+        for (Class<?> current = type; current != null && current != Object.class; current = current.getSuperclass()) {
+            for (Field field : current.getDeclaredFields()) {
+                if (comment == null && !Modifier.isStatic(field.getModifiers()) && hasCidGetter(field.getType())) {
+                    field.setAccessible(true);
+                    comment = field;
+                }
+            }
+            for (Method method : current.getDeclaredMethods()) {
+                if (override == null && !Modifier.isStatic(method.getModifiers())
+                        && method.getParameterTypes().length == 0 && isOverrideStatus(method.getReturnType())) {
+                    method.setAccessible(true);
+                    override = method;
+                }
+            }
+        }
+
+        ControllerMembers found;
+        if (comment != null && override != null && translate != null) {
+            found = new ControllerMembers(comment, override, translate);
+        } else {
+            found = NO_CONTROLLER_MEMBERS;
+            HookStatus.missingMember(FAMILY, "member", type.getName(),
+                    comment == null ? "comment" : override == null ? "override status" : "translate()");
+        }
+        CONTROLLER_MEMBERS.put(type, found);
+        return found;
+    }
+
+    private static boolean hasCidGetter(Class<?> type) {
+        if (type.isPrimitive() || type.isArray()) return false;
+        try {
+            return type.getMethod("getCid").getReturnType() == String.class;
+        } catch (Throwable ignored) {
+            return false;
+        }
+    }
+
+    private static boolean isOverrideStatus(Class<?> type) {
+        if (!type.isEnum()) return false;
+        Object[] constants = type.getEnumConstants();
+        if (constants == null) return false;
+        for (Object constant : constants) {
+            if (NOT_OVERRIDDEN.equals(((Enum<?>) constant).name())) return true;
+        }
+        return false;
+    }
+
     public static void onCommentListLoaded(Object commentItemList) {
         if (!Settings.COMMENT_BATCH_TRANSLATION.get()) return;
         if (commentItemList == null) return;

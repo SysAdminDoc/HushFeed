@@ -42,6 +42,10 @@ object BundleVerifier {
                 "Bundle version does not match ${args[2]}"
             }
             requireTargetDescription(jar.manifest.mainAttributes.getValue("Description"))
+            val tooNew = classesNewerThanJava17(jar)
+            require(tooNew.isEmpty()) {
+                "Bundle classes are newer than Java 17, which Morphe patcher 2.1 refuses to load: $tooNew"
+            }
         }
         val expectedDigest = File(args[3]).readText().trim()
         val actualDigest = MessageDigest.getInstance("SHA-256").digest(bundle.readBytes())
@@ -63,6 +67,28 @@ object BundleVerifier {
         }
         println("Verified ${bundle.name}: ${bundled.size} patches and all three non-empty DEX payloads")
     }
+
+    /** Java 17's class file major version, the newest Morphe patcher 2.1 loads. */
+    const val NEWEST_CLASS_MAJOR = 61
+
+    /**
+     * Every class in the bundle compiled for something newer than Java 17, as "entry (major N)".
+     *
+     * Patcher 2.1.0-dev.2 refuses a bundle holding one. The patch classes target Java 11 on a
+     * JDK 25 toolchain, so a single target bump would build cleanly here and ship a bundle the
+     * next Manager won't open. The extensions ride along as DEX and carry no class version.
+     */
+    fun classesNewerThanJava17(jar: JarFile): List<String> = jar.entries().asSequence()
+        .filter { !it.isDirectory && it.name.endsWith(".class") }
+        .mapNotNull { entry ->
+            val header = jar.getInputStream(entry).use { it.readNBytes(8) }
+            if (header.size < 8 || !header.copyOfRange(0, 4).contentEquals(CLASS_MAGIC)) return@mapNotNull null
+            val major = ((header[6].toInt() and 0xff) shl 8) or (header[7].toInt() and 0xff)
+            if (major > NEWEST_CLASS_MAJOR) "${entry.name} (major $major)" else null
+        }
+        .toList()
+
+    private val CLASS_MAGIC = byteArrayOf(0xCA.toByte(), 0xFE.toByte(), 0xBA.toByte(), 0xBE.toByte())
 
     /** The delivered description must name every declared host as an exact version. */
     fun requireTargetDescription(description: String?) {

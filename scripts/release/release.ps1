@@ -122,7 +122,19 @@ function Assert-PushedHead {
     return $head
 }
 
-function Get-SourceVersion { ((Get-Content -LiteralPath (Join-Path $root 'gradle.properties')) -match '^version\s*=' -replace '^version\s*=\s*', '').Trim() }
+function Get-LocalOnlyTag {
+    # A tag only this clone has never reaches a release, since publish pushes refs/tags/$tag alone,
+    # but git describe and a version guessed from tags still read it (v1.0.0 sat here unnoticed).
+    param([string[]]$Local, [string[]]$RemoteRefs)
+    $remote = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    foreach ($line in $RemoteRefs) {
+        $ref = ([string]$line -split '\s+')[1]
+        if ($ref -match '^refs/tags/(.+?)(\^\{\})?$') { [void]$remote.Add($Matches[1]) }
+    }
+    @($Local | Where-Object { $_ -and -not $remote.Contains($_) })
+}
+
+function Get-SourceVersion {((Get-Content -LiteralPath (Join-Path $root 'gradle.properties')) -match '^version\s*=' -replace '^version\s*=\s*', '').Trim() }
 
 function Get-TestCount([string[]]$Directories) {
     $count = 0
@@ -531,6 +543,11 @@ switch ($Stage) {
     'build' {
         $head = Assert-PushedHead
         if ((Get-SourceVersion) -ne $Version) { throw "gradle.properties says $(Get-SourceVersion), not $Version." }
+        $remoteTags = @(git -C $root ls-remote --tags origin)
+        if ($LASTEXITCODE -ne 0) { throw "git ls-remote --tags origin failed (exit $LASTEXITCODE)" }
+        $strays = @(Get-LocalOnlyTag -Local @(git -C $root tag -l) -RemoteRefs $remoteTags)
+        if ($strays.Count) { Write-Warning "local tags origin doesn't have: $($strays -join ', '). git describe reads them, so delete them with git tag -d." }
+        else { Step 'local tags: none missing from origin' }
         # A rebuild overwrites the local assets that -Stage index later copies from.
         $existing = Get-PublicationRelease -Repository $Repository -Tag $tag -AllowMissing
         if ($null -ne $existing -and -not $existing.draft) { throw "$tag is already published. Its assets are final, so a rebuild would only diverge from them." }

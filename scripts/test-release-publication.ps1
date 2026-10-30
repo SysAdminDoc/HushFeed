@@ -13,7 +13,8 @@ $ast = [Management.Automation.Language.Parser]::ParseFile($ReleaseScript, [ref]$
 if ($parseErrors.Count) { throw ($parseErrors -join "`n") }
 foreach ($name in @('Step', 'Invoke-PublicationCommand', 'Get-PublicationApi', 'Get-PublicationRelease',
         'Assert-PublicationTag', 'Assert-PublicationRelease', 'Get-PublishedReleaseDate', 'Assert-ImmutablePublicationEnabled',
-        'Assert-PublicationDownloads', 'Assert-SingleTagRelease', 'Remove-UnfinishedDraftAsset', 'Invoke-ReleasePublication')) {
+        'Assert-PublicationDownloads', 'Assert-SingleTagRelease', 'Remove-UnfinishedDraftAsset', 'Invoke-ReleasePublication',
+        'Get-LocalOnlyTag')) {
     $definition = $ast.Find({ param($node)
         $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -eq $name
     }, $false)
@@ -144,6 +145,8 @@ function git {
     switch -Exact ($command) {
         'rev-parse|--verify|HEAD' { $script:state.Head; return }
         'tag|--list|v1.2.3' { if ($script:state.LocalTag) { 'v1.2.3' }; return }
+        'tag|-l' { if ($script:state.LocalTag) { 'v1.2.3' }; return }
+        'ls-remote|--tags|origin' { if ($script:state.RemoteTag) { "$($script:state.RemoteTag)`trefs/tags/v1.2.3" }; return }
         'rev-parse|refs/tags/v1.2.3^{commit}' { $script:state.LocalTag; return }
         'ls-remote|--tags|origin|refs/tags/v1.2.3|refs/tags/v1.2.3^{}' {
             if ($script:state.RemoteTagObject) {
@@ -808,6 +811,7 @@ try {
             $Repository = 'example/project'
             $tag = 'v1.2.3'
             $Version = '1.2.3'
+            $root = $script:invoke.Root
             function Assert-PushedHead { return $commit }
             function Get-SourceVersion { return '1.2.3' }
             function Invoke-Gradle { throw 'REACHED-GRADLE' }
@@ -928,6 +932,18 @@ try {
         }
         Assert-Throws { Invoke-ReleasePublication @script:invoke } 'Local release notes changed'
         Assert-NoPublish
+    }
+    Test-Case 'Local tags origin lacks are named, peeled and case-different tags are not' {
+        $remoteRefs = @(
+            "$commit`trefs/tags/v0.79.0",
+            "$commit`trefs/tags/v0.78.0",
+            "$commit`trefs/tags/v0.78.0^{}",
+            "$commit`trefs/tags/Mixed")
+        $strays = @(Get-LocalOnlyTag -Local @('v0.78.0', 'v0.79.0', 'v1.0.0', 'mixed') -RemoteRefs $remoteRefs)
+        Assert-True (($strays -join ',') -ceq 'v1.0.0,mixed') "Expected v1.0.0 and mixed, got '$($strays -join ',')'."
+        $none = @(Get-LocalOnlyTag -Local @('v0.79.0') -RemoteRefs $remoteRefs)
+        Assert-True ($none.Count -eq 0) 'A tag origin has was reported as missing.'
+        Assert-True (@(Get-LocalOnlyTag -Local @() -RemoteRefs @()).Count -eq 0) 'No tags at all reported something.'
     }
     Test-Case 'Native command exit codes and stderr cannot pass as success' {
         $native = Join-Path $script:invoke.Root 'native boundary with spaces.cmd'

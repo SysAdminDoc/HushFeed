@@ -26,6 +26,7 @@ import app.morphe.extension.shared.settings.BaseSettings;
 import app.morphe.extension.shared.settings.BooleanSetting;
 import app.morphe.extension.shared.settings.IntegerSetting;
 import app.morphe.extension.shared.settings.StringSetting;
+import app.morphe.extension.tiktok.seen.SeenVideoHistory;
 import app.morphe.extension.tiktok.settings.Settings;
 
 import com.ss.android.ugc.aweme.feed.model.Aweme;
@@ -697,27 +698,34 @@ public class DeepFeedFilterBoundaryTest {
 
     /**
      * A LIVE that TikTok slots into a For You page already on screen meets Hide LIVE videos
-     * (#277). Every other rule still leaves a fresh insert alone.
+     * (#277). Every other rule still leaves a fresh insert alone, Hide seen videos included (#117).
      */
     @Test
     public void aFreshlyInsertedLiveLeavesForYouWhileOtherFreshInsertsStay() {
         Settings.HIDE_LIVE.save(true);
         Settings.REMOVE_ADS.save(true);
+        Settings.HIDE_SEEN_VIDEOS.save(true);
         Video live = new Video("fresh-live", false, 500, "").asLive();
         Video ad = new Video("fresh-ad", false, 500, "").withRawAd();
         Video ordinary = new Video("fresh-ordinary", false, 500, "");
         List<Aweme> inserted = Arrays.asList(live, ad, ordinary);
         // No cache source: TikTok made these for this page, it didn't replay them.
         for (Video video : List.of(live, ad, ordinary)) video.cacheSourceType = -1;
+        // Watched to the threshold, so Hide seen videos would take it anywhere it runs.
+        SeenVideoHistory.onPlayProgressChange("fresh-ordinary", 9_000, 10_000);
+        try {
+            assertTrue(SeenVideoHistory.shouldHide("fresh-ordinary"));
+            assertEquals(List.of(ad, ordinary), FeedItemsFilter.filterInsertedFeedItems(
+                    new ForYouPanel(), 3, "realtime_insert", inserted));
+            assertTrue("counted on its route: " + FeedFilterCounters.report(), FeedFilterCounters.report().contains(
+                    FeedItemsFilter.FINAL_INSERT_SOURCE + "realtime_insert: 1 lists, 3 items, 1 removed. Last reason: LiveFilter"));
 
-        assertEquals(List.of(ad, ordinary), FeedItemsFilter.filterInsertedFeedItems(
-                new ForYouPanel(), 3, "realtime_insert", inserted));
-        assertTrue("counted on its route: " + FeedFilterCounters.report(), FeedFilterCounters.report().contains(
-                FeedItemsFilter.FINAL_INSERT_SOURCE + "realtime_insert: 1 lists, 3 items, 1 removed. Last reason: LiveFilter"));
-
-        Settings.HIDE_LIVE.save(false);
-        assertSame(inserted, FeedItemsFilter.filterInsertedFeedItems(
-                new ForYouPanel(), 3, "realtime_insert", inserted));
+            Settings.HIDE_LIVE.save(false);
+            assertSame(inserted, FeedItemsFilter.filterInsertedFeedItems(
+                    new ForYouPanel(), 3, "realtime_insert", inserted));
+        } finally {
+            SeenVideoHistory.clear();
+        }
     }
 
     @Test

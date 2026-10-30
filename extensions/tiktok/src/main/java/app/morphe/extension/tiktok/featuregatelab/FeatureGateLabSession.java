@@ -5,11 +5,16 @@
 package app.morphe.extension.tiktok.featuregatelab;
 
 import android.app.Activity;
+import app.morphe.extension.shared.settings.preference.AbstractPreferenceFragment;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.shared.Utils;
 
 public final class FeatureGateLabSession {
-    private static volatile boolean restartNeeded;
+    /**
+     * The Lab's restart debt lives in the settings pages' own set, as one change, so the
+     * restart row on those pages counts it and the Lab's row and theirs never disagree.
+     */
+    static final String RESTART_KEY = "hushfeed_feature_gate_lab";
     private static boolean noticeShown;
 
     private FeatureGateLabSession() {}
@@ -19,21 +24,21 @@ public final class FeatureGateLabSession {
     }
 
     static void resetForTests() {
-        restartNeeded = false;
+        AbstractPreferenceFragment.restartPending.remove(RESTART_KEY);
         noticeShown = false;
     }
 
     public static void markRestartNeeded() {
-        restartNeeded = true;
+        AbstractPreferenceFragment.restartPending.add(RESTART_KEY);
     }
 
     public static boolean restartNeeded() {
-        return restartNeeded;
+        return AbstractPreferenceFragment.restartPending.contains(RESTART_KEY);
     }
 
     /**
-     * Retained entry point for callers leaving the Lab. Every action already toasts
-     * "Restart TikTok to apply." so the exit toast was a duplicate.
+     * Retained entry point for callers leaving the Lab. The Lab page shows a restart row once
+     * a change owes one, and the settings pages show it after leaving.
      */
     public static void showRestartDialog(Activity activity) {
     }

@@ -77,15 +77,21 @@ public final class FeatureGateLabStore {
         return prefs != null && prefs.getBoolean(MASTER_KEY, false);
     }
 
+    /**
+     * Rules reach TikTok only while overrides are on, so every write below owes a restart only
+     * when overrides were on before it or are on after it. A preset saved with them off changes
+     * nothing TikTok has read.
+     */
     public static void setMasterEnabled(boolean enabled) {
         if (!canWrite()) return;
+        boolean wasLive = masterEnabled();
         SharedPreferences prefs = prefs();
         if (prefs != null) {
             prefs.edit().putBoolean(MASTER_KEY, enabled).apply();
         }
         FeatureGateLabRuntime.clearTriggered();
         FeatureGateLabRuntime.reloadRules();
-        FeatureGateLabSession.markRestartNeeded();
+        if (wasLive != enabled) FeatureGateLabSession.markRestartNeeded();
     }
 
     public static boolean warningAcknowledged() {
@@ -183,7 +189,7 @@ public final class FeatureGateLabStore {
                 .apply();
         FeatureGateLabRuntime.resetTriggered(id);
         FeatureGateLabRuntime.reloadRules();
-        FeatureGateLabSession.markRestartNeeded();
+        if (masterEnabled()) FeatureGateLabSession.markRestartNeeded();
         return true;
     }
 
@@ -193,6 +199,7 @@ public final class FeatureGateLabStore {
 
     public static void resetAllLabData() {
         if (!canWrite()) return;
+        boolean wasLive = masterEnabled();
         SettingsManagerObservationRecorder.clear();
         SharedPreferences prefs = prefs();
         if (prefs != null) {
@@ -203,7 +210,7 @@ public final class FeatureGateLabStore {
         }
         FeatureGateLabRuntime.clearTriggered();
         FeatureGateLabRuntime.reloadRules();
-        FeatureGateLabSession.markRestartNeeded();
+        if (wasLive) FeatureGateLabSession.markRestartNeeded();
     }
 
     public static String exportProfile() throws JSONException {
@@ -323,6 +330,7 @@ public final class FeatureGateLabStore {
         }
         SharedPreferences prefs = prefs();
         if (prefs == null) throw new java.io.IOException("Lab storage unavailable");
+        boolean wasLive = masterEnabled();
         boolean saved = prefs.edit()
                 .clear()
                 .putString(STORED_TARGET_VERSION_KEY, targetVersion())
@@ -331,7 +339,7 @@ public final class FeatureGateLabStore {
         SettingsManagerObservationRecorder.clear();
         FeatureGateLabRuntime.clearTriggered();
         FeatureGateLabRuntime.reloadRules();
-        FeatureGateLabSession.markRestartNeeded();
+        if (wasLive) FeatureGateLabSession.markRestartNeeded();
     }
 
     /**
@@ -429,6 +437,7 @@ public final class FeatureGateLabStore {
         }
         SharedPreferences prefs = prefs();
         if (prefs == null) throw new java.io.IOException("Lab storage unavailable");
+        boolean wasLive = masterEnabled();
         SharedPreferences.Editor editor = prefs.edit();
         for (String id : ruleIds(prefs)) removeRuleFields(editor, id);
         List<String> ids = new ArrayList<>();
@@ -451,7 +460,7 @@ public final class FeatureGateLabStore {
         if (!saved) throw new java.io.IOException("Could not save Lab settings");
         if (!puttingBack) FeatureGateLabRuntime.clearTriggered();
         FeatureGateLabRuntime.reloadRules();
-        FeatureGateLabSession.markRestartNeeded();
+        if (wasLive || master) FeatureGateLabSession.markRestartNeeded();
     }
 
     public static ImportReview reviewProfile(String text, Map<String, FeatureGateCatalog.Entry> catalog) throws JSONException {
@@ -812,7 +821,7 @@ public final class FeatureGateLabStore {
         editor.apply();
         FeatureGateLabRuntime.resetTriggered(id);
         FeatureGateLabRuntime.reloadRules();
-        FeatureGateLabSession.markRestartNeeded();
+        if (masterEnabled()) FeatureGateLabSession.markRestartNeeded();
     }
 
     private static void removeRuleFields(SharedPreferences.Editor editor, String id) {

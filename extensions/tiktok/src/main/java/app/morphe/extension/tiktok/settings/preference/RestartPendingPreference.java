@@ -31,7 +31,7 @@ import app.morphe.extension.tiktok.settings.SettingsReturn;
 @SuppressWarnings("deprecation")
 public final class RestartPendingPreference extends Preference {
     public static final String KEY = "hushfeed_restart_pending";
-    static final String ROW_TAG = "hushfeed_restart_pending_row";
+    public static final String ROW_TAG = "hushfeed_restart_pending_row";
 
     /** What the press does with the context it is given. */
     public interface Restarter {
@@ -62,9 +62,11 @@ public final class RestartPendingPreference extends Preference {
                 "Restart TikTok to apply this change", "Restart TikTok to apply %1$d changes");
     }
 
-    @Override
-    protected View onCreateView(ViewGroup parent) {
-        Context context = getContext();
+    /**
+     * The row itself, which the Feature Gate Lab also shows on its own page, so a restart owed
+     * there looks and reads the same as one owed on a settings page.
+     */
+    public static TextView button(Context context, View.OnClickListener press) {
         TextView row = SettingsUi.text(context, label(context), SettingsUi.TEXT_BODY, SettingsUi.accent(),
                 Typeface.BOLD);
         row.setTag(ROW_TAG);
@@ -77,7 +79,14 @@ public final class RestartPendingPreference extends Preference {
         row.setFocusable(true);
         // A TextView with a click listener is read as text; the role has to be said.
         SettingsUi.markAsButton(row);
-        row.setOnClickListener(view -> restart(view.getContext()));
+        row.setOnClickListener(press);
+        return row;
+    }
+
+    @Override
+    protected View onCreateView(ViewGroup parent) {
+        Context context = getContext();
+        TextView row = button(context, view -> restart(view.getContext()));
 
         FrameLayout holder = new FrameLayout(context);
         holder.setBackgroundColor(SettingsUi.background());
@@ -107,8 +116,12 @@ public final class RestartPendingPreference extends Preference {
      */
     static void restart(Context context) {
         TikTokPreferenceFragment open = TikTokPreferenceFragment.active();
-        SettingsReturn.rememberBeforeRestart(open == null
-                ? TikTokPreferenceFragment.PAGE_HOME : open.returnMarker());
+        restartTo(context, open == null ? TikTokPreferenceFragment.PAGE_HOME : open.returnMarker());
+    }
+
+    /** Notes the page the next start should land on, then relaunches. */
+    public static void restartTo(Context context, String page) {
+        SettingsReturn.rememberBeforeRestart(page);
         restarter.restart(context);
     }
 }

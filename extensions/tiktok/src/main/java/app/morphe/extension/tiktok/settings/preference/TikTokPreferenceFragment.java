@@ -90,6 +90,8 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
     private static final char ROW_MARK = '#';
     /** The page names a restart's return marker carries ({@link #pageKey}). */
     public static final String PAGE_HOME = "home";
+    /** The Feature Gate Lab, which the settings screen opens over home after a restart from it. */
+    public static final String PAGE_LAB = "lab";
     static final String REPORT_PROBLEM_KEY = "action_report_problem";
     static final String SUPPORT_KEY = "action_support_hushfeed";
     static final String SUPPORT_URL = "https://ko-fi.com/X8K126YVER";

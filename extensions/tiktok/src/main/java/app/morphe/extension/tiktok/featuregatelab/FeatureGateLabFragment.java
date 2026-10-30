@@ -65,9 +65,11 @@ import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.settings.SettingsJson;
 import app.morphe.extension.tiktok.settings.SettingsOperationJournal;
 import app.morphe.extension.tiktok.settings.preference.DocumentOperation;
+import app.morphe.extension.tiktok.settings.preference.RestartPendingPreference;
 import app.morphe.extension.tiktok.settings.preference.SettingsActionBanner;
 import app.morphe.extension.tiktok.settings.preference.SettingsUi;
 import app.morphe.extension.tiktok.settings.preference.SettingsMenuPreference;
+import app.morphe.extension.tiktok.settings.preference.TikTokPreferenceFragment;
 
 @SuppressWarnings({"deprecation", "SetTextI18n"})
 public final class FeatureGateLabFragment extends Fragment {
@@ -171,6 +173,8 @@ public final class FeatureGateLabFragment extends Fragment {
     private final View[] sourceTabIndicators = new View[SOURCE_LABELS.length];
     private TextView filterButton;
     private Switch master;
+    /** The settings pages' restart row, shown here while a Lab change waits on a restart. */
+    private TextView restartRow;
     private ListView list;
     private LinearLayout selectionBar;
     private TextView selectionCount;
@@ -269,6 +273,15 @@ public final class FeatureGateLabFragment extends Fragment {
                 FeatureGateLabUi.dp(context, 8)
         );
         root.addView(controls, FeatureGateLabUi.matchWrap());
+
+        // A change TikTok has already read only takes after a restart, and a toast saying so
+        // left nothing to press. This lands back on the Lab after the restart.
+        restartRow = RestartPendingPreference.button(context, view ->
+                RestartPendingPreference.restartTo(view.getContext(), TikTokPreferenceFragment.PAGE_LAB));
+        LinearLayout.LayoutParams restartParams = FeatureGateLabUi.matchWrap();
+        restartParams.bottomMargin = FeatureGateLabUi.dp(context, 8);
+        controls.addView(restartRow, restartParams);
+        refreshRestartRow();
 
         master = new Switch(context);
         master.setChecked(FeatureGateLabStore.masterEnabled());
@@ -647,6 +660,7 @@ public final class FeatureGateLabFragment extends Fragment {
         viewTabs = null;
         filterButton = null;
         master = null;
+        restartRow = null;
         list = null;
         selectionBar = null;
         selectionCount = null;
@@ -1049,6 +1063,14 @@ public final class FeatureGateLabFragment extends Fragment {
      * takes long enough to leave the screen during, and {@link #onDestroyView} has cleared the
      * switch by then.
      */
+    /** Shows the restart row while a restart is owed, counting every change waiting on one. */
+    private void refreshRestartRow() {
+        if (restartRow == null) return;
+        boolean owed = FeatureGateLabSession.restartNeeded();
+        restartRow.setVisibility(owed ? View.VISIBLE : View.GONE);
+        if (owed) restartRow.setText(RestartPendingPreference.label(restartRow.getContext()));
+    }
+
     private void syncMasterSwitch() {
         if (master == null) return;
         master.setChecked(FeatureGateLabStore.masterEnabled());
@@ -2001,6 +2023,7 @@ public final class FeatureGateLabFragment extends Fragment {
                 // until TikTok was restarted.
                 CHANGING.set(false);
                 syncMasterSwitch();
+                refreshRestartRow();
                 rebuild();
                 if (notice != null) presenting.present(notice);
                 else presenting.present("");

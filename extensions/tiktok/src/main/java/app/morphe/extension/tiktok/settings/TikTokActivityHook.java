@@ -136,6 +136,16 @@ public class TikTokActivityHook {
             }
             base.getFragmentManager().beginTransaction()
                     .replace(fragmentId, preferenceFragment, SETTINGS_ROOT_TAG).commit();
+            // A restart pressed in the Lab comes back to the Lab, over home so Back still lands
+            // there. The Lab finds its container by the page inside it, so it opens once the
+            // home page has been put in, which the post waits for.
+            if (TikTokPreferenceFragment.PAGE_LAB.equals(intent.getStringExtra(SETTINGS_PAGE_EXTRA))) {
+                settingsSurface.post(() -> {
+                    if (!base.isFinishing() && !base.isDestroyed()) {
+                        app.morphe.extension.tiktok.featuregatelab.FeatureGateLabFragment.open(base);
+                    }
+                });
+            }
         }
 
         // Back here rode entirely on the host's onBackPressed, which stops being called once

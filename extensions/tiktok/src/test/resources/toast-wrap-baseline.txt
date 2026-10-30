@@ -2,6 +2,7 @@
 # everyToastFitsTwoLines came in: the language, a tab, then the English message.
 # This list only gets shorter.
 # Lines added 2026-10-30 are older toasts whose message is built in a local variable, which the scan follows since then.
+# Lines added 2026-10-30 later the same day are toasts whose message variable is declared without a value, or is read inside an anonymous class.
 az	%1$d overrides were turned off because the Lab couldn't confirm their gates are unchanged in TikTok %2$s. Review them before turning them back on.
 az	1 override was turned off because the Lab couldn't confirm its gate is unchanged in TikTok %2$s. Review it before turning it back on.
 az	A field value couldn't be read. Check the values and try again.
@@ -20,6 +21,7 @@ az	Couldn't open the file picker to export. Try again.
 az	Couldn't open the file picker to import. Try again.
 az	Couldn't reach the proxy at %1$s. TikTok may not load until it's back or you turn the proxy off.
 az	Couldn't read who posted this comment. Open their profile and block them there.
+az	Couldn't record the screen's layout. Start again from Diagnostics.
 az	Couldn't start saving the feed capture. Try again in a moment.
 az	Couldn't start the Lab change. Try again in a moment.
 az	Couldn't start the report export. Try again in a moment.
@@ -37,12 +39,14 @@ az	Kept to %1$s, the nearest value this row allows
 az	Loaded values are still being read. Try again in a moment.
 az	No presets have been reviewed for TikTok %1$s yet
 az	None of the picked videos could be saved. Try again.
+az	Nothing was recorded because Hushfeed settings were still open. Start again, then leave settings.
 az	Opus didn't work on this phone. Saving the sound as TikTok sent it instead.
 az	Picked the first %1$s. Save them, then tap Pick all again for the rest.
 az	Recording gate reads. Use a feature, then return here to stop.
 az	Saved %1$s of %2$s photos before the story failed
 az	Saved. Restart TikTok to apply this.
 az	Saving a frame from this video needs Android 7 or newer
+az	Screen layout recorded. Export the diagnostic report to send it.
 az	Some recording files remain. Try deleting them again.
 az	Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.
 az	That creator pattern could stall the feed, so it was skipped: %1$s
@@ -71,6 +75,8 @@ az	This video is already saved. Open TikTok to save another copy.
 az	This video isn't available as a complete file. Try again later.
 az	Those photos can't be tried again now. Save the post again to get the rest.
 az	TikTok isn't locked because this phone has no screen lock
+az	TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.
+az	TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.
 az	TikTok's search page couldn't be opened. Restart TikTok and try again.
 az	Too many media saves are already running. Try again in a moment.
 az	Use Save report for this large report
@@ -92,6 +98,7 @@ de	Couldn't open the file picker to export. Try again.
 de	Couldn't open the file picker to import. Try again.
 de	Couldn't reach the proxy at %1$s. TikTok may not load until it's back or you turn the proxy off.
 de	Couldn't read who posted this comment. Open their profile and block them there.
+de	Couldn't record the screen's layout. Start again from Diagnostics.
 de	Couldn't save the change. Try again.
 de	Couldn't save these choices. Try again.
 de	Couldn't send the feedback. Try again in a moment.
@@ -114,12 +121,14 @@ de	Kept to %1$s, the nearest value this row allows
 de	Loaded values are still being read. Try again in a moment.
 de	None of the photos could be saved. Try again.
 de	None of the picked videos could be saved. Try again.
+de	Nothing was recorded because Hushfeed settings were still open. Start again, then leave settings.
 de	Opus didn't work on this phone. Saving the sound as TikTok sent it instead.
 de	Picked the first %1$s. Save them, then tap Pick all again for the rest.
 de	Recording gate reads. Use a feature, then return here to stop.
 de	Recording this LIVE's screen from now, without sound
 de	Saved %1$s of %2$s photos before the story failed
 de	Saving a frame from this video needs Android 7 or newer
+de	Screen layout recorded. Export the diagnostic report to send it.
 de	Sign in to edit your own profile counts
 de	Some recording files remain. Try deleting them again.
 de	Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.
@@ -164,6 +173,8 @@ de	This video's sound has no title to look for
 de	Those photos can't be tried again now. Save the post again to get the rest.
 de	TikTok didn't accept the feedback. Try again later.
 de	TikTok isn't locked because this phone has no screen lock
+de	TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.
+de	TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.
 de	TikTok's search page couldn't be opened. Restart TikTok and try again.
 de	Too many media saves are already running. Try again in a moment.
 de	YouTube Music couldn't be opened. Open it yourself and search for the sound.
@@ -183,6 +194,7 @@ en	Couldn't copy the build details. Use Save build details instead.
 en	Couldn't find this LIVE's stream to record. Leave the room and open it again.
 en	Couldn't reach the proxy at %1$s. TikTok may not load until it's back or you turn the proxy off.
 en	Couldn't read who posted this comment. Open their profile and block them there.
+en	Couldn't record the screen's layout. Start again from Diagnostics.
 en	Couldn't start saving the feed capture. Try again in a moment.
 en	Couldn't start the Lab change. Try again in a moment.
 en	Couldn't start the report export. Try again in a moment.
@@ -196,10 +208,12 @@ en	Hushfeed hid a TikTok CAPTCHA. Turn off Hide CAPTCHA popups if something stop
 en	Imported %1$d values. Undo last Lab change is in the menu.
 en	Loaded values are still being read. Try again in a moment.
 en	No presets have been reviewed for TikTok %1$s yet
+en	Nothing was recorded because Hushfeed settings were still open. Start again, then leave settings.
 en	Opus didn't work on this phone. Saving the sound as TikTok sent it instead.
 en	Picked the first %1$s. Save them, then tap Pick all again for the rest.
 en	Recording gate reads. Use a feature, then return here to stop.
 en	Saving a frame from this video needs Android 7 or newer
+en	Screen layout recorded. Export the diagnostic report to send it.
 en	Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.
 en	That creator pattern could stall the feed, so it was skipped: %1$s
 en	That creator pattern is too long to use, so it was skipped: %1$s
@@ -226,6 +240,8 @@ en	This video is already saved. Open TikTok to save another copy.
 en	This video isn't available as a complete file. Try again later.
 en	Those photos can't be tried again now. Save the post again to get the rest.
 en	TikTok isn't locked because this phone has no screen lock
+en	TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.
+en	TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.
 en	TikTok's search page couldn't be opened. Restart TikTok and try again.
 en	Too many media saves are already running. Try again in a moment.
 en	YouTube Music couldn't be opened. Open it yourself and search for the sound.
@@ -246,6 +262,7 @@ es	Couldn't open the file picker to export. Try again.
 es	Couldn't open the file picker to import. Try again.
 es	Couldn't reach the proxy at %1$s. TikTok may not load until it's back or you turn the proxy off.
 es	Couldn't read who posted this comment. Open their profile and block them there.
+es	Couldn't record the screen's layout. Start again from Diagnostics.
 es	Couldn't save these choices. Try again.
 es	Couldn't send the feedback. Try again in a moment.
 es	Couldn't start saving the feed capture. Try again in a moment.
@@ -266,11 +283,13 @@ es	Loaded values are still being read. Try again in a moment.
 es	No presets have been reviewed for TikTok %1$s yet
 es	None of the photos could be saved. Try again.
 es	None of the picked videos could be saved. Try again.
+es	Nothing was recorded because Hushfeed settings were still open. Start again, then leave settings.
 es	Opus didn't work on this phone. Saving the sound as TikTok sent it instead.
 es	Picked the first %1$s. Save them, then tap Pick all again for the rest.
 es	Recording gate reads. Use a feature, then return here to stop.
 es	Saved %1$s of %2$s photos before the story failed
 es	Saving a frame from this video needs Android 7 or newer
+es	Screen layout recorded. Export the diagnostic report to send it.
 es	Some recording files remain. Try deleting them again.
 es	Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.
 es	That creator pattern could stall the feed, so it was skipped: %1$s
@@ -308,6 +327,9 @@ es	This video isn't available as a complete file. Try again later.
 es	Those photos can't be tried again now. Save the post again to get the rest.
 es	TikTok didn't accept the feedback. Try again later.
 es	TikTok isn't locked because this phone has no screen lock
+es	TikTok refused the follow with code %1$s
+es	TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.
+es	TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.
 es	TikTok's search page couldn't be opened. Restart TikTok and try again.
 es	Too many media saves are already running. Try again in a moment.
 es	YouTube Music couldn't be opened. Open it yourself and search for the sound.
@@ -323,6 +345,7 @@ in	Couldn't open the file picker to export. Try again.
 in	Couldn't open the file picker to import. Try again.
 in	Couldn't reach the proxy at %1$s. TikTok may not load until it's back or you turn the proxy off.
 in	Couldn't read who posted this comment. Open their profile and block them there.
+in	Couldn't record the screen's layout. Start again from Diagnostics.
 in	Couldn't start saving the feed capture. Try again in a moment.
 in	Couldn't tell which folder to update. Choose it again.
 in	Couldn't translate this draft. Try again in a moment.
@@ -340,11 +363,13 @@ in	Loaded values are still being read. Try again in a moment.
 in	No app on this phone opens that file
 in	No video selected. Open a video first.
 in	None of the picked videos could be saved. Try again.
+in	Nothing was recorded because Hushfeed settings were still open. Start again, then leave settings.
 in	Opus didn't work on this phone. Saving the sound as TikTok sent it instead.
 in	Picked the first %1$s. Save them, then tap Pick all again for the rest.
 in	Recording gate reads. Use a feature, then return here to stop.
 in	Saved %1$s of %2$s photos before the story failed
 in	Saving a frame from this video needs Android 7 or newer
+in	Screen layout recorded. Export the diagnostic report to send it.
 in	Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.
 in	That creator pattern could stall the feed, so it was skipped: %1$s
 in	That creator pattern is too long to use, so it was skipped: %1$s
@@ -370,6 +395,8 @@ in	This video is already saved. Open TikTok to save another copy.
 in	This video isn't available as a complete file. Try again later.
 in	Those photos can't be tried again now. Save the post again to get the rest.
 in	TikTok isn't locked because this phone has no screen lock
+in	TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.
+in	TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.
 in	TikTok's search page couldn't be opened. Restart TikTok and try again.
 in	Too many media saves are already running. Try again in a moment.
 in	YouTube Music couldn't be opened. Open it yourself and search for the sound.
@@ -391,6 +418,7 @@ it	Couldn't open the file picker to export. Try again.
 it	Couldn't open the file picker to import. Try again.
 it	Couldn't reach the proxy at %1$s. TikTok may not load until it's back or you turn the proxy off.
 it	Couldn't read who posted this comment. Open their profile and block them there.
+it	Couldn't record the screen's layout. Start again from Diagnostics.
 it	Couldn't save the change. Try again.
 it	Couldn't save these choices. Try again.
 it	Couldn't send the feedback. Try again in a moment.
@@ -411,11 +439,13 @@ it	Kept to %1$s, the nearest value this row allows
 it	Loaded values are still being read. Try again in a moment.
 it	None of the photos could be saved. Try again.
 it	None of the picked videos could be saved. Try again.
+it	Nothing was recorded because Hushfeed settings were still open. Start again, then leave settings.
 it	Opus didn't work on this phone. Saving the sound as TikTok sent it instead.
 it	Picked the first %1$s. Save them, then tap Pick all again for the rest.
 it	Recording gate reads. Use a feature, then return here to stop.
 it	Recording this LIVE's screen from now, without sound
 it	Saving a frame from this video needs Android 7 or newer
+it	Screen layout recorded. Export the diagnostic report to send it.
 it	Screen recording wasn't allowed
 it	Some recording files remain. Try deleting them again.
 it	Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.
@@ -461,6 +491,8 @@ it	This video is already saved. Open TikTok to save another copy.
 it	This video isn't available as a complete file. Try again later.
 it	Those photos can't be tried again now. Save the post again to get the rest.
 it	TikTok isn't locked because this phone has no screen lock
+it	TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.
+it	TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.
 it	TikTok's search page couldn't be opened. Restart TikTok and try again.
 it	Too many media saves are already running. Try again in a moment.
 it	Use Save report for this large report
@@ -483,6 +515,7 @@ pt-rbr	Couldn't open the file picker to export. Try again.
 pt-rbr	Couldn't open the file picker to import. Try again.
 pt-rbr	Couldn't reach the proxy at %1$s. TikTok may not load until it's back or you turn the proxy off.
 pt-rbr	Couldn't read who posted this comment. Open their profile and block them there.
+pt-rbr	Couldn't record the screen's layout. Start again from Diagnostics.
 pt-rbr	Couldn't save these choices. Try again.
 pt-rbr	Couldn't send the feedback. Try again in a moment.
 pt-rbr	Couldn't start saving the feed capture. Try again in a moment.
@@ -502,11 +535,13 @@ pt-rbr	Kept to %1$s, the nearest value this row allows
 pt-rbr	Loaded values are still being read. Try again in a moment.
 pt-rbr	No presets have been reviewed for TikTok %1$s yet
 pt-rbr	None of the picked videos could be saved. Try again.
+pt-rbr	Nothing was recorded because Hushfeed settings were still open. Start again, then leave settings.
 pt-rbr	Opus didn't work on this phone. Saving the sound as TikTok sent it instead.
 pt-rbr	Picked the first %1$s. Save them, then tap Pick all again for the rest.
 pt-rbr	Recording gate reads. Use a feature, then return here to stop.
 pt-rbr	Saved %1$s of %2$s photos before the story failed
 pt-rbr	Saving a frame from this video needs Android 7 or newer
+pt-rbr	Screen layout recorded. Export the diagnostic report to send it.
 pt-rbr	Some recording files remain. Try deleting them again.
 pt-rbr	Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.
 pt-rbr	That creator pattern could stall the feed, so it was skipped: %1$s
@@ -537,6 +572,8 @@ pt-rbr	This video is already saved. Open TikTok to save another copy.
 pt-rbr	This video isn't available as a complete file. Try again later.
 pt-rbr	Those photos can't be tried again now. Save the post again to get the rest.
 pt-rbr	TikTok isn't locked because this phone has no screen lock
+pt-rbr	TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.
+pt-rbr	TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.
 pt-rbr	TikTok's search page couldn't be opened. Restart TikTok and try again.
 pt-rbr	Too many media saves are already running. Try again in a moment.
 pt-rbr	YouTube Music couldn't be opened. Open it yourself and search for the sound.
@@ -559,6 +596,7 @@ ru	Couldn't open the file picker to export. Try again.
 ru	Couldn't open the file picker to import. Try again.
 ru	Couldn't reach the proxy at %1$s. TikTok may not load until it's back or you turn the proxy off.
 ru	Couldn't read who posted this comment. Open their profile and block them there.
+ru	Couldn't record the screen's layout. Start again from Diagnostics.
 ru	Couldn't save the change. Try again.
 ru	Couldn't send the feedback. Try again in a moment.
 ru	Couldn't start saving the feed capture. Try again in a moment.
@@ -580,11 +618,13 @@ ru	Loaded values are still being read. Try again in a moment.
 ru	No app on this phone opens that file
 ru	None of the photos could be saved. Try again.
 ru	None of the picked videos could be saved. Try again.
+ru	Nothing was recorded because Hushfeed settings were still open. Start again, then leave settings.
 ru	Opus didn't work on this phone. Saving the sound as TikTok sent it instead.
 ru	Picked the first %1$s. Save them, then tap Pick all again for the rest.
 ru	Recording gate reads. Use a feature, then return here to stop.
 ru	Saved %1$s of %2$s photos before the story failed
 ru	Saving a frame from this video needs Android 7 or newer
+ru	Screen layout recorded. Export the diagnostic report to send it.
 ru	Some recording files remain. Try deleting them again.
 ru	Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.
 ru	That creator pattern could stall the feed, so it was skipped: %1$s
@@ -619,6 +659,8 @@ ru	This video is already saved. Open TikTok to save another copy.
 ru	This video isn't available as a complete file. Try again later.
 ru	Those photos can't be tried again now. Save the post again to get the rest.
 ru	TikTok isn't locked because this phone has no screen lock
+ru	TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.
+ru	TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.
 ru	TikTok's search page couldn't be opened. Restart TikTok and try again.
 ru	Too many media saves are already running. Try again in a moment.
 ru	Use Save report for this large report
@@ -639,6 +681,7 @@ tr	Couldn't copy the report. Use Save report instead.
 tr	Couldn't find this LIVE's stream to record. Leave the room and open it again.
 tr	Couldn't reach the proxy at %1$s. TikTok may not load until it's back or you turn the proxy off.
 tr	Couldn't read who posted this comment. Open their profile and block them there.
+tr	Couldn't record the screen's layout. Start again from Diagnostics.
 tr	Couldn't start saving the feed capture. Try again in a moment.
 tr	Couldn't start the Lab change. Try again in a moment.
 tr	Couldn't start the report export. Try again in a moment.
@@ -655,12 +698,14 @@ tr	Kept to %1$s, the nearest value this row allows
 tr	Loaded values are still being read. Try again in a moment.
 tr	None of the photos could be saved. Try again.
 tr	None of the picked videos could be saved. Try again.
+tr	Nothing was recorded because Hushfeed settings were still open. Start again, then leave settings.
 tr	Opus didn't work on this phone. Saving the sound as TikTok sent it instead.
 tr	Picked the first %1$s. Save them, then tap Pick all again for the rest.
 tr	Recording gate reads. Use a feature, then return here to stop.
 tr	Saved %1$s of %2$s photos before the story failed
 tr	Saved. Restart TikTok to apply this.
 tr	Saving a frame from this video needs Android 7 or newer
+tr	Screen layout recorded. Export the diagnostic report to send it.
 tr	Some recording files remain. Try deleting them again.
 tr	Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.
 tr	That creator pattern could stall the feed, so it was skipped: %1$s
@@ -689,6 +734,8 @@ tr	This video isn't available as a complete file. Try again later.
 tr	Those photos can't be tried again now. Save the post again to get the rest.
 tr	TikTok didn't accept the feedback. Try again later.
 tr	TikTok isn't locked because this phone has no screen lock
+tr	TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.
+tr	TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.
 tr	TikTok's search page couldn't be opened. Restart TikTok and try again.
 tr	Too many media saves are already running. Try again in a moment.
 tr	Your account changed. Open the count editor again.
@@ -698,9 +745,12 @@ zh-hans	Couldn't reach the proxy at %1$s. TikTok may not load until it's back or
 zh-hans	Couldn't read who posted this comment. Open their profile and block them there.
 zh-hans	Everything this list has loaded is picked or saved. Scroll down to load more.
 zh-hans	Hushfeed hid a TikTok CAPTCHA. Turn off Hide CAPTCHA popups if something stops working.
+zh-hans	Nothing was recorded because Hushfeed settings were still open. Start again, then leave settings.
 zh-hans	Picked the first %1$s. Save them, then tap Pick all again for the rest.
 zh-hans	The downloader app you chose isn't installed. Check Send links to another app under Downloads.
 zh-hans	The photos saved, but their details file couldn't be written. Check your storage and save the post again to get it.
 zh-hans	The proxy at %1$s asks for a password, and TikTok can't send one. Use a proxy that doesn't need one.
 zh-hans	The video was saved, but its record couldn't be updated. A later save may make another copy.
 zh-hans	The video without the watermark couldn't be fetched, so TikTok's watermarked copy was saved to %1$s. Try again later for the clean copy.
+zh-hans	TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.
+zh-hans	TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.

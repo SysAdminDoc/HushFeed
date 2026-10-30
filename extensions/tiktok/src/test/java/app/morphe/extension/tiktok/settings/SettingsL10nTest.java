@@ -708,9 +708,27 @@ public class SettingsL10nTest {
                 + "    // String text = L10n.t(\"In a comment\");\n"
                 + "    toastInstead(text);\n"
                 + "  }\n"
+                + "  void d() {\n"
+                + "    String note;\n"
+                + "    if (ok) note = L10n.t(\"First\"); else note = L10n.t(\"Second\");\n"
+                + "    Utils.showToastLong(note);\n"
+                + "  }\n"
+                + "  void e() // a note before the brace\n"
+                + "  {\n"
+                + "    Utils.showToastShort(message);\n"
+                + "  }\n"
+                + "  void f() {\n"
+                + "    final String later = L10n.t(\"Captured\");\n"
+                + "    handler.post(new Runnable() {\n"
+                + "      @Override public void run() { Utils.showToastShort(later); }\n"
+                + "    });\n"
+                + "  }\n"
+                + "  static {\n"
+                + "    Utils.showToastShort(message);\n"
+                + "  }\n"
                 + "}\n";
         assertEquals(java.util.Arrays.asList("Stopped waiting for Wi-Fi.", "Saved", "Failed: %1$s",
-                "Too late"), toastVariableLiteralsIn(source));
+                "Too late", "First", "Second", "Captured"), toastVariableLiteralsIn(source));
     }
 
     /** Columns a toast line holds before word wrap moves on. A wide character takes two. */
@@ -825,9 +843,6 @@ public class SettingsL10nTest {
             if (close < 0) continue;
             // Every L10n call inside the toast's brackets, and every literal inside each of
             // those calls: t and f carry one, quantity carries the one and the other form.
-            java.util.regex.Matcher lookup = java.util.regex.Pattern
-                    .compile("L10n\\s*\\.\\s*(?:t|f|quantity)\\s*\\(").matcher(text);
-            lookup.region(open, close);
             found.addAll(l10nLiteralsBetween(text, kind, open, close));
         }
         return found;
@@ -853,8 +868,10 @@ public class SettingsL10nTest {
     /**
      * Every L10n literal that reaches a toast through a local variable, as in
      * {@code String message = L10n.t(...); Utils.showToastLong(message);}. A variable declared in
-     * the toast's own method is followed through each assignment between its declaration and the
-     * call. A message a helper method builds, or one handed in as a parameter, still walks past.
+     * the toast's own method, with a value or without one, is followed through each assignment
+     * between its declaration and the call. A toast in an anonymous class's method follows the
+     * enclosing method's variables too, as a lambda's does. A message a helper method builds, or
+     * one handed in as a parameter, still walks past.
      */
     private static java.util.List<String> toastVariableLiteralsIn(String text) {
         byte[] kind = classify(text);
@@ -871,7 +888,7 @@ public class SettingsL10nTest {
                 String name = argument.trim();
                 if (!name.matches("[a-z]\\w*")) continue;
                 java.util.regex.Matcher declared = java.util.regex.Pattern
-                        .compile("\\b(?:String|CharSequence)\\s+" + name + "\\s*=(?!=)").matcher(text);
+                        .compile("\\b(?:String|CharSequence)\\s+" + name + "\\s*(?:=(?!=)|;)").matcher(text);
                 declared.region(body, call.start());
                 int from = -1;
                 while (declared.find()) if (kind[declared.start()] == CODE) from = declared.start();
@@ -894,20 +911,54 @@ public class SettingsL10nTest {
             "\\b(?!(?:if|for|while|switch|catch|synchronized|try)\\b)\\w+\\s*\\([^()]*(?:\\([^()]*\\)[^()]*)*\\)"
                     + "\\s*(?:throws\\s+[\\w.,\\s]+)?$");
 
-    /** Where the body of the method holding {@code at} opens, or 0 when no method head is found. */
+    /** An anonymous class's head, {@code new Runnable()}, which METHOD_HEAD would take for a method. */
+    private static final java.util.regex.Pattern ANONYMOUS_HEAD = java.util.regex.Pattern.compile(
+            "\\bnew\\s+[\\w.]+\\s*(?:<[^{};]*>)?\\s*\\([^()]*(?:\\([^()]*\\)[^()]*)*\\)\\s*$");
+
+    /** A static initializer's head, which holds statements as a method does. */
+    private static final java.util.regex.Pattern STATIC_HEAD = java.util.regex.Pattern.compile("\\bstatic\\s*$");
+
+    /**
+     * Where the body of the method holding {@code at} opens, or 0 when no method head is found.
+     * A method of an anonymous class counts as part of the method around that class, whose
+     * variables it can read.
+     */
     private static int methodBodyStart(String text, byte[] kind, int at) {
         int inner = 0;
+        int method = 0;
+        boolean inMethod = false;
         for (int i = at - 1; i >= 0; i--) {
             if (kind[i] != CODE) continue;
             char c = text.charAt(i);
             if (c == '}') {
                 inner++;
             } else if (c == '{') {
-                if (inner > 0) inner--;
-                else if (METHOD_HEAD.matcher(text.substring(Math.max(0, i - 300), i)).find()) return i;
+                if (inner > 0) {
+                    inner--;
+                    continue;
+                }
+                String head = codeBefore(text, kind, i, 600);
+                boolean anonymous = ANONYMOUS_HEAD.matcher(head).find();
+                if (inMethod) {
+                    // The block around a method is its class: an anonymous one sends the walk on
+                    // to the method around it, a named one ends it.
+                    if (!anonymous) return method;
+                    inMethod = false;
+                } else if (!anonymous && (METHOD_HEAD.matcher(head).find() || STATIC_HEAD.matcher(head).find())) {
+                    method = i;
+                    inMethod = true;
+                }
             }
         }
-        return 0;
+        return method;
+    }
+
+    /** The {@code length} characters before {@code end}, with comments and literals blanked out. */
+    private static String codeBefore(String text, byte[] kind, int end, int length) {
+        int start = Math.max(0, end - length);
+        StringBuilder code = new StringBuilder(end - start);
+        for (int i = start; i < end; i++) code.append(kind[i] == CODE ? text.charAt(i) : ' ');
+        return code.toString();
     }
 
     /** The semicolon ending the statement that runs on from {@code from}, or -1. */

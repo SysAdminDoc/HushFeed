@@ -437,7 +437,7 @@ public class GridPickerTest {
             ShadowToast.reset();
             barText("Pick all").performClick();
             assertEquals(1, GridPicker.pickedCount());
-            assertEquals("All loaded items are picked. Scroll for more.",
+            assertEquals("All loaded items are picked or saved. Scroll for more.",
                     ShadowToast.getTextOfLatestToast());
         } finally {
             Utils.awaitBackgroundTasksForTests();

@@ -49,7 +49,7 @@ public final class FeedCapturePreference extends Preference implements Immediate
             } else {
                 FeedCapture.start();
                 Utils.showToastLong(L10n.t(context,
-                        "Feed capture on. Scroll to the problem, then return."));
+                        "Capturing. Find the problem, then come back to stop."));
             }
             refresh();
             return true;

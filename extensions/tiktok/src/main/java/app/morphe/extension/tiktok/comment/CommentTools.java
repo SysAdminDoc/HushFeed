@@ -760,7 +760,7 @@ public final class CommentTools {
         try {
             View cell = cellOf(touched);
             if (cell == null) {
-                Utils.showToastShort(L10n.t("Unknown commenter. Block them from their profile."));
+                Utils.showToastShort(L10n.t("Can't tell who wrote this. Block them on their profile."));
                 return;
             }
             toggleBlock(cell);
@@ -938,7 +938,7 @@ public final class CommentTools {
         }
         Object user = comment == null ? null : Reflect.property(comment, "getUser", "user");
         if (user == null) {
-            Utils.showToastShort(L10n.t("Unknown commenter. Block them from their profile."));
+            Utils.showToastShort(L10n.t("Can't tell who wrote this. Block them on their profile."));
             return;
         }
 
@@ -950,7 +950,7 @@ public final class CommentTools {
                         Reflect.string(user, "getNickname", "nickname")),
                 Reflect.string(comment, "getCid", "cid"));
         if (!author.isUsable()) {
-            Utils.showToastShort(L10n.t("Unknown commenter. Block them from their profile."));
+            Utils.showToastShort(L10n.t("Can't tell who wrote this. Block them on their profile."));
             return;
         }
 

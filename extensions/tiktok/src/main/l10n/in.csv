@@ -58,7 +58,7 @@ That file has more than %1$s watch-history entries.,Berkas berisi lebih dari %1$
 %1$d fields will be overridden when requested,%1$d kolom akan ditimpa saat diminta
 %1$d gates selected,%1$d gate dipilih
 %1$d minutes left,%1$d menit lagi
-Turned off %1$d overrides. Recheck for TikTok %2$s.,%1$d penggantian dimatikan. Cek ulang TikTok %2$s.
+Turned off %1$d overrides. Check them for TikTok %2$s.,%1$d penggantian dimatikan. Tinjau untuk TikTok %2$s.
 %1$d rejected,%1$d ditolak
 %1$d results,%1$d hasil
 %1$d results so far,%1$d hasil sejauh ini
@@ -107,7 +107,7 @@ Turned off %1$d overrides. Recheck for TikTok %2$s.,%1$d penggantian dimatikan. 
 1 field will be overridden when requested,1 kolom akan ditimpa saat diminta
 1 gate selected,1 gate dipilih
 1 min left,Sisa 1 mnt
-Turned off 1 override. Recheck for TikTok %2$s.,1 penggantian dimatikan. Cek ulang TikTok %2$s.
+Turned off 1 override. Check it for TikTok %2$s.,1 penggantian dimatikan. Tinjau untuk TikTok %2$s.
 1 result,1 hasil
 1 result so far,1 hasil sejauh ini
 1 video left,Sisa 1 video
@@ -349,7 +349,7 @@ Stop and save the feed capture,Hentikan dan simpan rekaman feed
 Recording what the feed filters keep and hide. Tap to stop and save it in %1$s.,Merekam apa yang dipertahankan dan disembunyikan filter feed. Ketuk untuk berhenti dan menyimpannya di %1$s.
 Save the feed capture,Simpan rekaman feed
 The last feed capture wasn't saved. Tap to try again.,Rekaman feed terakhir tidak tersimpan. Ketuk untuk mencoba lagi.
-"Feed capture on. Scroll to the problem, then return.","Rekaman feed aktif. Gulir ke masalahnya, lalu kembali."
+"Capturing. Find the problem, then come back to stop.","Merekam. Cari masalahnya, lalu kembali untuk berhenti."
 The feed capture is still being saved,Rekaman feed masih disimpan
 Feed capture saved to %1$s. Read it before you share it.,Rekaman feed disimpan di %1$s. Baca sebelum berbagi.
 Feed capture not saved. Tap the row to retry.,Rekaman feed gagal disimpan. Ketuk baris untuk ulang.
@@ -366,7 +366,7 @@ Couldn't clear suggestions. Reopen Inbox to retry.,Saran tidak bisa dihapus. Buk
 Couldn't open the file picker to export. Try again.,Pemilih berkas ekspor gagal dibuka. Coba lagi.
 Couldn't open the file picker to import. Try again.,Pemilih berkas impor gagal dibuka. Coba lagi.
 Couldn't put back the diagnostic data. Try again.,Data diagnostik tidak bisa dikembalikan. Coba lagi.
-Unknown commenter. Block them from their profile.,Komentator tak dikenal. Blokir dari profilnya.
+Can't tell who wrote this. Block them on their profile.,Penulisnya tak terbaca. Blokir dari profilnya.
 Couldn't reset this override. Try again.,Penggantian ini tidak bisa diatur ulang. Coba lagi.
 Couldn't restore the settings. Try again.,Pengaturan tidak bisa dipulihkan. Coba lagi.
 Couldn't reset the settings. Try again.,Pengaturan tidak bisa diatur ulang. Coba lagi.
@@ -651,7 +651,7 @@ Home,Beranda
 Hook status,Pemeriksaan fitur
 How far each edge press moves the video.,Seberapa jauh setiap tekanan di tepi memindahkan video.
 Hushfeed can't read the creator pattern %1$s,Hushfeed tidak bisa membaca pola kreator %1$s
-Hid a CAPTCHA. Stuck? Turn off Hide CAPTCHA popups.,Tersembunyi. Matikan Sembunyikan popup CAPTCHA.
+Hid a CAPTCHA. Stuck? Turn off Hide CAPTCHA popups.,Macet? Matikan Sembunyikan popup CAPTCHA.
 Hushfeed is active,Hushfeed aktif
 Shows the Duet and Stitch options even when the creator turned them off. TikTok may still refuse to accept the result.,Menampilkan opsi Duet dan Stitch meskipun kreator mematikannya. TikTok masih bisa menolak hasilnya.
 Shows Add to Story in the share sheet and on stories even when the creator turned off content reuse. TikTok may still refuse to post it.,Menampilkan Tambahkan ke Cerita di menu bagikan dan pada cerita meskipun kreatornya mematikan penggunaan ulang konten. TikTok masih bisa menolak mengunggahnya.
@@ -887,7 +887,7 @@ Quality,Kualitas
 Pause the video while comments are open,Jeda video saat komentar terbuka
 Reading,Membaca
 Recorded gate reads (%1$d),Pembacaan gate yang terekam (%1$d)
-Recording gate reads. Come back here to stop.,Merekam pembacaan gate. Kembali untuk berhenti.
+"Recording. Use a feature, then come back to stop.","Merekam. Pakai sebuah fitur, lalu kembali untuk berhenti."
 Put back the settings saved before the last restore or reset.,Kembalikan pengaturan yang tersimpan sebelum pemulihan atau penyetelan ulang terakhir.
 Recovered an interrupted settings change. Restart TikTok to apply this.,Perubahan pengaturan yang terhenti telah dipulihkan. Mulai ulang TikTok agar berlaku.
 Refresh values,Segarkan nilai
@@ -1445,7 +1445,7 @@ Creator exceptions,Pengecualian kreator
 Find the sound on YouTube Music,Cari suaranya di YouTube Music
 YouTube Music isn't installed,YouTube Music belum terpasang
 This video's sound has no title to look for,Suara video ini tidak punya judul untuk dicari
-YouTube Music didn't open. Search for the sound there.,YouTube Music tak terbuka. Cari suaranya di sana.
+YouTube Music didn't open. Open it yourself to search.,YouTube Music tak terbuka. Buka sendiri lalu cari.
 Allow storage for TikTok to save the clip,Beri TikTok izin penyimpanan untuk menyimpan klip
 This original sound isn't on YouTube Music,Suara asli ini tidak ada di YouTube Music
 "Not a handle or id, so ignored: %1$s","Bukan nama akun atau id, jadi diabaikan: %1$s"
@@ -1466,7 +1466,7 @@ About overrides,Tentang penggantian
 "Use {creator}, {date} and {video_id} to build the name. Start with {creator}/ to put each creator in a folder. The file ending is added for you.","Pakai {creator}, {date}, dan {video_id} untuk menyusun nama. Awali dengan {creator}/ agar setiap kreator masuk ke foldernya sendiri. Ekstensi file ditambahkan otomatis."
 Save details beside the video,Simpan detail di samping video
 "Saves the caption, creator, link and post date in a text file next to the video, or one file for a photo post's original photos. On Android 10 and later, they go in Download or Documents under the same folder name. Applies to saves made by Hushfeed.","Menyimpan keterangan, kreator, tautan, dan tanggal unggah dalam file teks di samping video, atau satu file untuk foto asli dari unggahan foto. Di Android 10 ke atas, file itu masuk ke Download atau Documents dengan nama folder yang sama. Berlaku untuk penyimpanan yang dilakukan Hushfeed."
-"Photos saved, but not their details file","Foto tersimpan, file detailnya gagal ditulis"
+Couldn't write the details file. Save the post again.,File detail gagal ditulis. Simpan postingan lagi.
 Check for already-saved videos,Periksa video yang sudah disimpan
 Forget saved videos,Lupakan video tersimpan
 Undo forgetting saved videos,Batalkan melupakan video tersimpan
@@ -1798,8 +1798,8 @@ Proxy password,Kata sandi proksi
 "Optional, used with the user name. It isn't shown, logged or put in a backup.","Opsional, dipakai bersama nama pengguna. Tidak ditampilkan, dicatat, atau dimasukkan ke cadangan."
 "Enter a server name or IP address, without http:// or a port number","Masukkan nama server atau alamat IP, tanpa http:// dan tanpa nomor port"
 A port is a whole number from 1 to 65535,Port adalah bilangan bulat dari 1 sampai 65535
-Proxy %1$s wants a password TikTok can't send,Proksi %1$s minta password yang tak bisa dikirim TikTok
-Can't reach proxy %1$s. TikTok may not load.,Proksi %1$s tak terjangkau. TikTok mungkin tak termuat.
+TikTok can't send a password to proxy %1$s. Use another.,TikTok tak bisa masuk proksi %1$s. Pakai lainnya.
+Proxy %1$s is down. Turn it off if TikTok won't load.,Proksi %1$s mati. Matikan jika TikTok tak termuat.
 "Word rules only, not every feed filter:","Hanya aturan kata, bukan semua filter feed:"
 This list is too long to preview here. Saving still follows the usual limit.,"Daftar ini terlalu panjang untuk dipratinjau di sini. Saat disimpan, batas yang biasa tetap berlaku."
 Can't check yet: %1$s,Belum bisa diperiksa: %1$s
@@ -1901,7 +1901,7 @@ Show video length on profile grids,Tampilkan durasi video di kisi profil
 Show how long each video runs under its view count on profile grids. Photo posts and videos TikTok sent no length for show none.,Tampilkan berapa lama setiap video berjalan di bawah jumlah tayangannya di kisi profil. Postingan foto dan video yang durasinya tidak dikirim TikTok tidak menampilkan apa pun.
 Fall back to the watermarked copy,Gunakan salinan bertanda air sebagai cadangan
 "When the video without the watermark can't be fetched, save TikTok's own watermarked copy instead and say so. It's the size TikTok's own save uses, so it may be smaller than the quality you picked.","Jika video tanpa tanda air tidak bisa diambil, simpan salinan bertanda air milik TikTok sebagai gantinya dan beri tahu. Ukurannya sama dengan yang dipakai penyimpanan TikTok sendiri, jadi bisa lebih kecil dari kualitas yang kamu pilih."
-No clean copy yet. Saved the watermarked one to %1$s,Belum ada versi bersih. Watermark disimpan di %1$s
+No clean copy yet. Saved the watermarked one to %1$s,Belum ada versi bersih. Versi ber-watermark di %1$s
 Match text stickers too,Cocokkan stiker teks juga
 Also hide videos whose text stickers match a blocked caption word. Text stickers are the words a creator types over the video in TikTok's editor. Text that's part of the picture itself can't be read.,Sembunyikan juga video yang stiker teksnya cocok dengan kata yang diblokir di keterangan. Stiker teks adalah kata-kata yang diketik kreator di atas video di editor TikTok. Teks yang menjadi bagian dari gambarnya sendiri tidak bisa dibaca.
 Text sticker words,Kata di stiker teks
@@ -2122,7 +2122,7 @@ One was already saved,Satu sudah tersimpan sebelumnya
 Picked videos,Video terpilih
 Pick all,Pilih semua
 "Picked %1$s. Save, then tap Pick all for more.","%1$s dipilih. Simpan, lalu ketuk Pilih semua lagi."
-All loaded items are picked. Scroll for more.,Semua item termuat dipilih. Gulir untuk lainnya.
+All loaded items are picked or saved. Scroll for more.,Semua dipilih atau disimpan. Gulir untuk lainnya.
 
 "Record LIVEs you watch","Rekam LIVE yang kamu tonton"
 "Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.","Menambahkan tombol Rekam ke ruang LIVE. Rekaman dimulai saat kamu mengetuknya dan berakhir saat kamu mengetuk Berhenti atau keluar dari ruang. Apa pun sebelum itu tidak disimpan."

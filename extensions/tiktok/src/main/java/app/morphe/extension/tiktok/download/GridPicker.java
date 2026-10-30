@@ -339,7 +339,7 @@ public final class GridPicker {
                         String.valueOf(MAX_PICKED)));
             } else if (added == 0) {
                 Utils.showToastLong(L10n.t(cell.getContext(),
-                        "All loaded items are picked. Scroll for more."));
+                        "All loaded items are picked or saved. Scroll for more."));
             }
         } catch (Throwable failure) {
             Logger.printException(() -> "Could not pick a whole grid", failure);

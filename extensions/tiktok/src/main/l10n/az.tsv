@@ -60,7 +60,7 @@ That watch-history file is damaged. Nothing was imported.	Bu izləmə tarixçəs
 %1$d fields will be overridden when requested	Tələb olunduqda %1$d sahə əvəzlənəcək
 %1$d gates selected	%1$d funksiya qapısı seçildi
 %1$d minutes left	%1$d dəqiqə qalıb
-Turned off %1$d overrides. Recheck for TikTok %2$s.	TikTok %2$s: %1$d əvəzləmə söndürüldü. Yenidən baxın.
+Turned off %1$d overrides. Check them for TikTok %2$s.	%1$d əvəzləmə söndürüldü. TikTok %2$s üçün yoxlayın.
 %1$d rejected	%1$d rədd edildi
 %1$d results	%1$d nəticə
 %1$d results so far	Hələlik %1$d nəticə
@@ -109,7 +109,7 @@ Turned off %1$d overrides. Recheck for TikTok %2$s.	TikTok %2$s: %1$d əvəzləm
 1 field will be overridden when requested	Tələb olunduqda 1 sahə əvəzlənəcək
 1 gate selected	1 funksiya qapısı seçildi
 1 min left	1 dəq qalıb
-Turned off 1 override. Recheck for TikTok %2$s.	TikTok %2$s: 1 əvəzləmə söndürüldü. Yenidən baxın.
+Turned off 1 override. Check it for TikTok %2$s.	1 əvəzləmə söndürüldü. TikTok %2$s üçün yoxlayın.
 1 result	1 nəticə
 1 result so far	Hələlik 1 nəticə
 1 video left	1 video qalıb
@@ -352,7 +352,7 @@ Stop and save the feed capture	Lent qeydini dayandırın və saxlayın
 Recording what the feed filters keep and hide. Tap to stop and save it in %1$s.	Lent filtrlərinin saxladığı və gizlətdiyi qeydə alınır. Dayandırıb %1$s qovluğunda saxlamaq üçün toxunun.
 Save the feed capture	Lent qeydini saxlayın
 The last feed capture wasn't saved. Tap to try again.	Son lent qeydi saxlanılmadı. Yenidən cəhd etmək üçün toxunun.
-Feed capture on. Scroll to the problem, then return.	Lent qeydi işləyir. Problemə qədər sürüşdürün, qayıdın.
+Capturing. Find the problem, then come back to stop.	Qeyd edilir. Problemi tapın, sonra qayıdıb dayandırın.
 The feed capture is still being saved	Lent qeydi hələ saxlanılır
 Feed capture saved to %1$s. Read it before you share it.	Lent qeydi saxlandı: %1$s. Paylaşmazdan əvvəl oxuyun.
 Feed capture not saved. Tap the row to retry.	Lent qeydi saxlanmadı. Təkrar üçün sətirə toxunun.
@@ -369,7 +369,7 @@ Couldn't clear suggestions. Reopen Inbox to retry.	Təkliflər silinmədi. Gəl�
 Couldn't open the file picker to export. Try again.	İxrac üçün fayl seçicisi açılmadı. Yenidən cəhd edin.
 Couldn't open the file picker to import. Try again.	İdxal üçün fayl seçicisi açılmadı. Yenidən cəhd edin.
 Couldn't put back the diagnostic data. Try again.	Diaqnostik məlumatları geri qaytarmaq alınmadı. Yenidən cəhd edin.
-Unknown commenter. Block them from their profile.	Şərh müəllifi bilinmir. Profilindən bloklayın.
+Can't tell who wrote this. Block them on their profile.	Şərhin müəllifi oxunmadı. Profilindən bloklayın.
 Couldn't reset this override. Try again.	Bu əvəzləməni sıfırlamaq alınmadı. Yenidən cəhd edin.
 Couldn't restore the settings. Try again.	Ayarları bərpa etmək alınmadı. Yenidən cəhd edin.
 Couldn't reset the settings. Try again.	Ayarları sıfırlamaq alınmadı. Yenidən cəhd edin.
@@ -675,7 +675,7 @@ Home	Ana səhifə
 Hook status	Qoşulma statusu
 How far each edge press moves the video.	Hər kənar basışının videonu nə qədər irəli çəkdiyi.
 Hushfeed can't read the creator pattern %1$s	Hushfeed %1$s yaradıcı şablonunu oxuya bilmir
-Hid a CAPTCHA. Stuck? Turn off Hide CAPTCHA popups.	Gizləndi. Söndürün: CAPTCHA pəncərələrini gizlədin.
+Hid a CAPTCHA. Stuck? Turn off Hide CAPTCHA popups.	İlişsə, söndürün: CAPTCHA pəncərələrini gizlədin.
 Hushfeed is active	Hushfeed aktivdir
 Shows the Duet and Stitch options even when the creator turned them off. TikTok may still refuse to accept the result.	Yaradıcı onları söndürsə belə Duet və Stitch seçimlərini göstərir. TikTok nəticəni yenə də qəbul etməyə bilər.
 Shows Add to Story in the share sheet and on stories even when the creator turned off content reuse. TikTok may still refuse to post it.	Yaradıcı məzmundan təkrar istifadəni söndürsə belə paylaşım menyusunda və hekayələrdə Hekayəyə əlavə et seçimini göstərir. TikTok yerləşdirməni yenə də rədd edə bilər.
@@ -910,7 +910,7 @@ Quality, files, subtitles and hand-off	Keyfiyyət, fayllar, altyazılar və öt�
 Quality, speed and auto-advance	Keyfiyyət, sürət və avtomatik keçid
 Reading	Oxunuş
 Recorded gate reads (%1$d)	Qeydə alınmış qapı oxunuşları (%1$d)
-Recording gate reads. Come back here to stop.	Qapı oxunuşları yazılır. Dayandırmaq üçün qayıdın.
+Recording. Use a feature, then come back to stop.	Yazılır. Funksiyanı işlədin, sonra qayıdıb dayandırın.
 Put back the settings saved before the last restore or reset.	Son bərpa və ya sıfırlamadan əvvəl saxlanılmış ayarları geri qaytarın.
 Recovered an interrupted settings change. Restart TikTok to apply this.	Yarımçıq qalmış ayar dəyişikliyi bərpa edildi. Tətbiq etmək üçün TikTok-u yenidən başladın.
 Refresh values	Dəyərləri yeniləyin
@@ -1450,7 +1450,7 @@ Also on a block list, so still hidden: %1$s	Həm də bloklama siyahısındadır,
 Find the sound on YouTube Music	Səsi YouTube Music-də tapın
 YouTube Music isn't installed	YouTube Music quraşdırılmayıb
 This video's sound has no title to look for	Bu videonun səsində axtarılacaq ad yoxdur
-YouTube Music didn't open. Search for the sound there.	YouTube Music açılmadı. Səsi orada axtarın.
+YouTube Music didn't open. Open it yourself to search.	YouTube Music açılmadı. Özünüz açıb axtarın.
 Allow storage for TikTok to save the clip	Klipi saxlamaq üçün TikTok-a yaddaşa icazə verin
 This original sound isn't on YouTube Music	Bu orijinal səs YouTube Music-də yoxdur
 Not a handle or id, so ignored: %1$s	İstifadəçi adı və ya ID deyil, ona görə nəzərə alınmadı: %1$s
@@ -1471,7 +1471,7 @@ About overrides	Əvəzləmələr haqqında
 Use {creator}, {date} and {video_id} to build the name. Start with {creator}/ to put each creator in a folder. The file ending is added for you.	Adı qurmaq üçün {creator}, {date} və {video_id} istifadə edin. Hər yaradıcını ayrıca qovluğa qoymaq üçün {creator}/ ilə başlayın. Fayl uzantısı sizin üçün əlavə olunur.
 Save details beside the video	Təfərrüatları videonun yanında saxlayın
 Saves the caption, creator, link and post date in a text file next to the video, or one file for a photo post's original photos. On Android 10 and later, they go in Download or Documents under the same folder name. Applies to saves made by Hushfeed.	Başlığı, yaradıcını, linki və paylaşım tarixini videonun yanında mətn faylında, foto paylaşımının orijinal fotoları üçün isə bir faylda saxlayır. Android 10 və daha yenisində onlar Download və ya Documents içində eyni qovluq adı ilə qalır. Hushfeed-in etdiyi saxlamalara aiddir.
-Photos saved, but not their details file	Fotolar saxlanıldı, təfərrüat faylı yazılmadı
+Couldn't write the details file. Save the post again.	Təfərrüat faylı yazılmadı. Postu yenidən saxlayın.
 Check for already-saved videos	Artıq saxlanılmış videoları yoxlayın
 Forget saved videos	Saxlanılmış videoları unudun
 Undo forgetting saved videos	Saxlanılmış videoların unudulmasını geri qaytarın
@@ -1811,8 +1811,8 @@ Proxy password	Proksi parolu
 Optional, used with the user name. It isn't shown, logged or put in a backup.	İstəyə bağlı, istifadəçi adı ilə istifadə olunur. Göstərilmir, jurnala yazılmır və ehtiyat nüsxəyə düşmür.
 Enter a server name or IP address, without http:// or a port number	Server adı və ya IP ünvanı daxil edin, http:// və port nömrəsi olmadan
 A port is a whole number from 1 to 65535	Port 1 ilə 65535 arasında tam ədəddir
-Proxy %1$s wants a password TikTok can't send	Proksi %1$s parol istəyir, TikTok göndərə bilmir
-Can't reach proxy %1$s. TikTok may not load.	Proksi əlçatmazdır: %1$s. TikTok yüklənməyə bilər.
+TikTok can't send a password to proxy %1$s. Use another.	TikTok %1$s proksisinə girə bilmir. Başqasını seçin.
+Proxy %1$s is down. Turn it off if TikTok won't load.	Proksi %1$s işləmir. TikTok açılmasa, söndürün.
 Word rules only, not every feed filter:	Yalnız söz qaydaları, lentdəki bütün filtrlər deyil:
 This list is too long to preview here. Saving still follows the usual limit.	Bu siyahı burada önbaxış üçün çox uzundur. Saxlayanda adi limit keçərli qalır.
 Can't check yet: %1$s	Hələ yoxlamaq olmur: %1$s
@@ -2145,7 +2145,7 @@ One was already saved	Biri artıq saxlanılmışdı
 Picked videos	Seçilmiş videolar
 Pick all	Hamısını seç
 Picked %1$s. Save, then tap Pick all for more.	%1$s seçildi. Saxlayın, sonra yenə Hamısını seç.
-All loaded items are picked. Scroll for more.	Hamısı seçildi. Daha çoxu üçün sürüşdürün.
+All loaded items are picked or saved. Scroll for more.	Hamısı seçilib və ya saxlanılıb. Sürüşdürün.
 
 Record LIVEs you watch	Baxdığın LIVE-ları yaz
 Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.	LIVE otaqlarına Yaz düyməsi əlavə edir. Yazı ona toxunanda başlayır, Dayandır düyməsinə toxunanda və ya otaqdan çıxanda bitir. Ondan əvvəlki heç nə saxlanmır.

@@ -201,7 +201,7 @@ After 5 minutes,After 5 minutes
 All,All
 All available languages,All available languages
 All events,All events
-All loaded items are picked. Scroll for more.,All loaded items are picked. Scroll for more.
+All loaded items are picked or saved. Scroll for more.,All loaded items are picked or saved. Scroll for more.
 All loaded tabs,All loaded tabs
 Allow Add to Story anyway,Allow Add to Story anyway
 Allow Duet and Stitch anyway,Allow Duet and Stitch anyway
@@ -325,8 +325,8 @@ Buttons on videos,Buttons on videos
 Camera and microphone in use,Camera and microphone in use
 Camera in use,Camera in use
 Can't check yet: %1$s,Can't check yet: %1$s
-Can't reach proxy %1$s. TikTok may not load.,Can't reach proxy %1$s. TikTok may not load.
 Can't retry those photos. Save the post again.,Can't retry those photos. Save the post again.
+Can't tell who wrote this. Block them on their profile.,Can't tell who wrote this. Block them on their profile.
 Cancel,Cancel
 Caption above comments,Caption above comments
 Caption background,Caption background
@@ -340,6 +340,7 @@ Captions,Captions
 "Captions, gestures and on-screen controls","Captions, gestures and on-screen controls"
 Capture crash reports locally,Capture crash reports locally
 Capture the feed,Capture the feed
+"Capturing. Find the problem, then come back to stop.","Capturing. Find the problem, then come back to stop."
 Changes in Hushfeed %1$s,Changes in Hushfeed %1$s
 Changes to %1$s at %2$s,Changes to %1$s at %2$s
 Check for already-saved videos,Check for already-saved videos
@@ -469,6 +470,7 @@ Couldn't translate this message. Try again.,Couldn't translate this message. Try
 Couldn't undo that. Try again.,Couldn't undo that. Try again.
 Couldn't undo the clear. Try again.,Couldn't undo the clear. Try again.
 Couldn't undo the last change. Try again.,Couldn't undo the last change. Try again.
+Couldn't write the details file. Save the post again.,Couldn't write the details file. Save the post again.
 Count a video as seen after,Count a video as seen after
 Country and network preferences,Country and network preferences
 Country code,Country code
@@ -596,7 +598,6 @@ Feature gate report copied,Feature gate report copied
 Feed and navigation,Feed and navigation
 Feed button size,Feed button size
 Feed capture not saved. Tap the row to retry.,Feed capture not saved. Tap the row to retry.
-"Feed capture on. Scroll to the problem, then return.","Feed capture on. Scroll to the problem, then return."
 Feed capture saved to %1$s. Read it before you share it.,Feed capture saved to %1$s. Read it before you share it.
 Feed filter,Feed filter
 Feed screen,Feed screen
@@ -1316,7 +1317,6 @@ Photo destination,Photo destination
 Photo filename,Photo filename
 Photos and stickers,Photos and stickers
 "Photos can't be saved to the folder in that file, so your photo folder was kept","Photos can't be saved to the folder in that file, so your photo folder was kept"
-"Photos saved, but not their details file","Photos saved, but not their details file"
 Pick a .ttf or .otf file of up to %1$s MB.,Pick a .ttf or .otf file of up to %1$s MB.
 "Pick a folder on internal storage, not an SD card","Pick a folder on internal storage, not an SD card"
 Pick all,Pick all
@@ -1381,7 +1381,7 @@ Profile tab name,Profile tab name
 Promotional music,Promotional music
 Proof,Proof
 Protect external pages in TikTok's browser,Protect external pages in TikTok's browser
-Proxy %1$s wants a password TikTok can't send,Proxy %1$s wants a password TikTok can't send
+Proxy %1$s is down. Turn it off if TikTok won't load.,Proxy %1$s is down. Turn it off if TikTok won't load.
 Proxy host,Proxy host
 Proxy password,Proxy password
 Proxy port,Proxy port
@@ -1416,13 +1416,13 @@ Record a screen's layout,Record a screen's layout
 Record this LIVE from now,Record this LIVE from now
 Recorded gate reads (%1$d),Recorded gate reads (%1$d)
 Recording files need recovery,Recording files need recovery
-Recording gate reads. Come back here to stop.,Recording gate reads. Come back here to stop.
 Recording stopped early. Saved to %1$s,Recording stopped early. Saved to %1$s
 Recording this LIVE from now,Recording this LIVE from now
 Recording this LIVE's screen,Recording this LIVE's screen
 Recording this LIVE's screen from now,Recording this LIVE's screen from now
 "Recording this LIVE's screen from now, without sound","Recording this LIVE's screen from now, without sound"
 Recording what the feed filters keep and hide. Tap to stop and save it in %1$s.,Recording what the feed filters keep and hide. Tap to stop and save it in %1$s.
+"Recording. Use a feature, then come back to stop.","Recording. Use a feature, then come back to stop."
 Recovered an interrupted settings change. Restart TikTok to apply this.,Recovered an interrupted settings change. Restart TikTok to apply this.
 Recovered recording saved to %1$s,Recovered recording saved to %1$s
 Refresh values,Refresh values
@@ -2065,6 +2065,7 @@ Three at once,Three at once
 Thumbs down blocks the commenter,Thumbs down blocks the commenter
 TikTok account facts,TikTok account facts
 TikTok can't lock without a phone screen lock,TikTok can't lock without a phone screen lock
+TikTok can't send a password to proxy %1$s. Use another.,TikTok can't send a password to proxy %1$s. Use another.
 "TikTok checks how it was signed and installed. This answers those checks the way the Play Store version would. Try it if follows or likes undo themselves after a refresh. It may not help, since TikTok has other checks.","TikTok checks how it was signed and installed. This answers those checks the way the Play Store version would. Try it if follows or likes undo themselves after a refresh. It may not help, since TikTok has other checks."
 TikTok closed during these saves,TikTok closed during these saves
 "TikTok closed three times within a minute of starting, so Hushfeed paused itself. Your settings stay as they are.","TikTok closed three times within a minute of starting, so Hushfeed paused itself. Your settings stay as they are."
@@ -2156,10 +2157,10 @@ Turn on overrides,Turn on overrides
 "Turn the music disc at the bottom of the right column while a video plays, the way TikTok used to.","Turn the music disc at the bottom of the right column while a video plays, the way TikTok used to."
 Turned off %1$d gates of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.,Turned off %1$d gates of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.
 Turned off %1$d gates. Restart TikTok to apply this.,Turned off %1$d gates. Restart TikTok to apply this.
-Turned off %1$d overrides. Recheck for TikTok %2$s.,Turned off %1$d overrides. Recheck for TikTok %2$s.
+Turned off %1$d overrides. Check them for TikTok %2$s.,Turned off %1$d overrides. Check them for TikTok %2$s.
 Turned off 1 gate of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.,Turned off 1 gate of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.
 Turned off 1 gate. Restart TikTok to apply this.,Turned off 1 gate. Restart TikTok to apply this.
-Turned off 1 override. Recheck for TikTok %2$s.,Turned off 1 override. Recheck for TikTok %2$s.
+Turned off 1 override. Check it for TikTok %2$s.,Turned off 1 override. Check it for TikTok %2$s.
 "Turns off TikTok's notification service, so nothing it sends reaches your notification shade and it can't wake your phone. You won't hear about new messages until you open TikTok. Notifications hidden while this is on don't come back. Ongoing ones like media controls stay.","Turns off TikTok's notification service, so nothing it sends reaches your notification shade and it can't wake your phone. You won't hear about new messages until you open TikTok. Notifications hidden while this is on don't come back. Ongoing ones like media controls stay."
 Turns off at %1$s,Turns off at %1$s
 Two at once,Two at once
@@ -2183,7 +2184,6 @@ Undo forgetting saved videos,Undo forgetting saved videos
 Undo last Lab change,Undo last Lab change
 Undo last restore or reset,Undo last restore or reset
 Undoing the last change,Undoing the last change
-Unknown commenter. Block them from their profile.,Unknown commenter. Block them from their profile.
 Unknown resolution,Unknown resolution
 Unlock,Unlock
 Unlock TikTok,Unlock TikTok
@@ -2293,7 +2293,7 @@ YTDLnis background mode,YTDLnis background mode
 YTDLnis download type,YTDLnis download type
 Yes,Yes
 You can pick up to %1$s at a time,You can pick up to %1$s at a time
-YouTube Music didn't open. Search for the sound there.,YouTube Music didn't open. Search for the sound there.
+YouTube Music didn't open. Open it yourself to search.,YouTube Music didn't open. Open it yourself to search.
 YouTube Music isn't installed,YouTube Music isn't installed
 Your Long press choice runs only on the left and right thirds of the video. A press in the middle still opens TikTok's own menu. It needs a Long press choice other than TikTok default.,Your Long press choice runs only on the left and right thirds of the video. A press in the middle still opens TikTok's own menu. It needs a Long press choice other than TikTok default.
 Your TikTok account changed. Choose the file again for this account.,Your TikTok account changed. Choose the file again for this account.

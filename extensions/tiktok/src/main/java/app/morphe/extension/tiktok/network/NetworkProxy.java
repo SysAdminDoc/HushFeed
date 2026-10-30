@@ -535,11 +535,11 @@ public final class NetworkProxy {
         if (!reported.compareAndSet(false, true)) return;
         if (probe == Probe.NEEDS_PASSWORD) {
             Logger.printInfo(() -> "Network proxy: the " + config.describe() + " wants a sign-in TikTok's network stack can't give");
-            Utils.showToastLong(L10n.f("Proxy %1$s wants a password TikTok can't send",
+            Utils.showToastLong(L10n.f("TikTok can't send a password to proxy %1$s. Use another.",
                     config.hostPort()));
         } else {
             Logger.printInfo(() -> "Network proxy: the " + config.describe() + " didn't answer");
-            Utils.showToastLong(L10n.f("Can't reach proxy %1$s. TikTok may not load.",
+            Utils.showToastLong(L10n.f("Proxy %1$s is down. Turn it off if TikTok won't load.",
                     config.hostPort()));
         }
     }

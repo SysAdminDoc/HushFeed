@@ -60,7 +60,7 @@ That watch-history file is damaged. Nothing was imported.	İzleme geçmişi dosy
 %1$d fields will be overridden when requested	İstendiğinde %1$d alan geçersiz kılınacak
 %1$d gates selected	%1$d özellik kapısı seçildi
 %1$d minutes left	%1$d dakika kaldı
-Turned off %1$d overrides. Recheck for TikTok %2$s.	TikTok %2$s: %1$d geçersiz kılma kapatıldı. Tekrar bak.
+Turned off %1$d overrides. Check them for TikTok %2$s.	%1$d geçersiz kılma kapalı. TikTok %2$s için incele.
 %1$d rejected	%1$d reddedildi
 %1$d results	%1$d sonuç
 %1$d results so far	Şimdiye kadar %1$d sonuç
@@ -109,7 +109,7 @@ Turned off %1$d overrides. Recheck for TikTok %2$s.	TikTok %2$s: %1$d geçersiz 
 1 field will be overridden when requested	İstendiğinde 1 alan geçersiz kılınacak
 1 gate selected	1 özellik kapısı seçildi
 1 min left	1 dk kaldı
-Turned off 1 override. Recheck for TikTok %2$s.	TikTok %2$s: 1 geçersiz kılma kapatıldı. Tekrar bak.
+Turned off 1 override. Check it for TikTok %2$s.	1 geçersiz kılma kapalı. TikTok %2$s için incele.
 1 result	1 sonuç
 1 result so far	Şimdiye kadar 1 sonuç
 1 video left	1 video kaldı
@@ -352,7 +352,7 @@ Stop and save the feed capture	Akış kaydını durdur ve kaydet
 Recording what the feed filters keep and hide. Tap to stop and save it in %1$s.	Akış filtrelerinin bıraktıkları ve gizledikleri kaydediliyor. Durdurup %1$s konumuna kaydetmek için dokun.
 Save the feed capture	Akış kaydını kaydet
 The last feed capture wasn't saved. Tap to try again.	Son akış kaydı kaydedilmedi. Yeniden denemek için dokun.
-Feed capture on. Scroll to the problem, then return.	Akış kaydı açık. Soruna kadar kaydır, sonra dön.
+Capturing. Find the problem, then come back to stop.	Kaydediliyor. Sorunu bul, durdurmak için buraya dön.
 The feed capture is still being saved	Akış kaydı hâlâ kaydediliyor
 Feed capture saved to %1$s. Read it before you share it.	Akış kaydı kaydedildi: %1$s. Paylaşmadan önce oku.
 Feed capture not saved. Tap the row to retry.	Akış kaydı kaydedilmedi. Tekrar için satıra dokun.
@@ -369,7 +369,7 @@ Couldn't clear suggestions. Reopen Inbox to retry.	Öneriler temizlenemedi. Gele
 Couldn't open the file picker to export. Try again.	Dışa aktarma dosya seçicisi açılamadı. Tekrar dene.
 Couldn't open the file picker to import. Try again.	İçe aktarma dosya seçicisi açılamadı. Tekrar dene.
 Couldn't put back the diagnostic data. Try again.	Tanılama verileri geri konamadı. Tekrar dene.
-Unknown commenter. Block them from their profile.	Yorumcu bilinmiyor. Profilinden engelle.
+Can't tell who wrote this. Block them on their profile.	Yazan kişi okunamadı. Profilinden engelle.
 Couldn't reset this override. Try again.	Bu geçersiz kılma sıfırlanamadı. Tekrar dene.
 Couldn't restore the settings. Try again.	Ayarlar geri yüklenemedi. Tekrar dene.
 Couldn't reset the settings. Try again.	Ayarlar sıfırlanamadı. Tekrar dene.
@@ -910,7 +910,7 @@ Quality, files, subtitles and hand-off	Kalite, dosyalar, altyazılar ve başka u
 Quality, speed and auto-advance	Kalite, hız ve otomatik geçiş
 Reading	Okuma
 Recorded gate reads (%1$d)	Kaydedilen özellik kapısı okumaları (%1$d)
-Recording gate reads. Come back here to stop.	Kapı okumaları kaydediliyor. Durdurmak için buraya dön.
+Recording. Use a feature, then come back to stop.	Kaydediliyor. Bir özellik kullan, durdurmak için dön.
 Put back the settings saved before the last restore or reset.	Son geri yükleme veya sıfırlamadan önce kaydedilen ayarları geri koy.
 Recovered an interrupted settings change. Restart TikTok to apply this.	Yarıda kalan bir ayar değişikliği kurtarıldı. Bunu uygulamak için TikTok'u yeniden başlat.
 Refresh values	Değerleri yenile
@@ -1450,7 +1450,7 @@ Also on a block list, so still hidden: %1$s	Bir engelleme listesinde de var, bu 
 Find the sound on YouTube Music	Sesi YouTube Music'te bul
 YouTube Music isn't installed	YouTube Music yüklü değil
 This video's sound has no title to look for	Bu videonun sesinin aranacak bir başlığı yok
-YouTube Music didn't open. Search for the sound there.	YouTube Music açılmadı. Sesi orada ara.
+YouTube Music didn't open. Open it yourself to search.	YouTube Music açılmadı. Kendin açıp sesi ara.
 Allow storage for TikTok to save the clip	Klibi kaydetmek için TikTok'a depolama izni ver
 This original sound isn't on YouTube Music	Bu orijinal ses YouTube Music'te yok
 Not a handle or id, so ignored: %1$s	Hesap adı veya kimlik değil, bu yüzden yok sayıldı: %1$s
@@ -1471,7 +1471,7 @@ About overrides	Geçersiz kılmalar hakkında
 Use {creator}, {date} and {video_id} to build the name. Start with {creator}/ to put each creator in a folder. The file ending is added for you.	Adı oluşturmak için {creator}, {date} ve {video_id} kullan. Her içerik üreticisini ayrı klasöre koymak için {creator}/ ile başla. Dosya uzantısı otomatik eklenir.
 Save details beside the video	Ayrıntıları videonun yanına kaydet
 Saves the caption, creator, link and post date in a text file next to the video, or one file for a photo post's original photos. On Android 10 and later, they go in Download or Documents under the same folder name. Applies to saves made by Hushfeed.	Açıklamayı, içerik üreticisini, bağlantıyı ve paylaşım tarihini videonun yanında bir metin dosyasına, fotoğraf gönderisinin orijinal fotoğrafları için ise tek bir dosyaya kaydeder. Android 10 ve üzerinde bunlar aynı klasör adıyla Download veya Documents içine gider. Hushfeed'in yaptığı kayıtlar için geçerlidir.
-Photos saved, but not their details file	Fotoğraflar kaydedildi, ayrıntı dosyası yazılamadı
+Couldn't write the details file. Save the post again.	Ayrıntı dosyası yazılamadı. Gönderiyi yeniden kaydet.
 Check for already-saved videos	Önceden kaydedilen videoları kontrol et
 Forget saved videos	Kaydedilen videoları unut
 Undo forgetting saved videos	Kaydedilen videoları unutmayı geri al
@@ -1811,8 +1811,8 @@ Proxy password	Proxy şifresi
 Optional, used with the user name. It isn't shown, logged or put in a backup.	İsteğe bağlı, kullanıcı adıyla birlikte kullanılır. Gösterilmez, günlüğe yazılmaz ve yedeğe konmaz.
 Enter a server name or IP address, without http:// or a port number	Bir sunucu adı veya IP adresi gir, http:// ve bağlantı noktası numarası olmadan
 A port is a whole number from 1 to 65535	Bağlantı noktası 1 ile 65535 arasında bir tam sayıdır
-Proxy %1$s wants a password TikTok can't send	Proxy %1$s parola istiyor, TikTok gönderemez
-Can't reach proxy %1$s. TikTok may not load.	Proxy erişilemiyor: %1$s. TikTok yüklenmeyebilir.
+TikTok can't send a password to proxy %1$s. Use another.	TikTok %1$s proxy'sine giremiyor. Başkasını kullan.
+Proxy %1$s is down. Turn it off if TikTok won't load.	Proxy %1$s çalışmıyor. TikTok yüklenmezse kapat.
 Word rules only, not every feed filter:	Yalnızca kelime kuralları, akıştaki her filtre değil:
 This list is too long to preview here. Saving still follows the usual limit.	Bu liste burada önizlemek için çok uzun. Kaydederken olağan sınır geçerli olmaya devam eder.
 Can't check yet: %1$s	Henüz denetlenemiyor: %1$s
@@ -2145,7 +2145,7 @@ One was already saved	Biri zaten kaydedilmişti
 Picked videos	Seçilen videolar
 Pick all	Tümünü seç
 Picked %1$s. Save, then tap Pick all for more.	%1$s seçildi. Kaydet, sonra Tümünü seç'e yine dokun.
-All loaded items are picked. Scroll for more.	Yüklenenlerin hepsi seçildi. Daha fazlası için kaydır.
+All loaded items are picked or saved. Scroll for more.	Yüklenenlerin hepsi seçildi ya da kaydedildi. Kaydır.
 
 Record LIVEs you watch	İzlediğin LIVE'ları kaydet
 Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.	LIVE odalarına bir Kaydet düğmesi ekler. Kayıt ona dokunduğunda başlar, Durdur'a dokunduğunda veya odadan çıktığında biter. Öncesinde olanlar kaydedilmez.

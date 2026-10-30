@@ -67,7 +67,7 @@ public class FeedCapturePreferenceTest {
         assertTrue(String.valueOf(row.getSummary()), String.valueOf(row.getSummary())
                 .endsWith("Tap to stop and save it in " + GateReportExport.FOLDER + "."));
         Shadows.shadowOf(Looper.getMainLooper()).idle();
-        assertEquals("Feed capture on. Scroll to the problem, then return.",
+        assertEquals("Capturing. Find the problem, then come back to stop.",
                 String.valueOf(ShadowToast.getTextOfLatestToast()));
 
         tap(row);

@@ -7,7 +7,7 @@ source,target
 %1$d filtered out,%1$d 已过滤掉
 %1$d gates selected,已选择 %1$d 门
 %1$d minutes left,还剩 %1$d 分钟
-Turned off %1$d overrides. Recheck for TikTok %2$s.,已关闭 %1$d 个覆盖。请重新检查 TikTok %2$s.
+Turned off %1$d overrides. Check them for TikTok %2$s.,已关闭 %1$d 个覆盖，请针对 TikTok %2$s 重新检查.
 %1$d rejected,%1$d 被拒绝
 %1$d results,%1$d 结果
 %1$d results so far,到目前为止 %1$d 结果
@@ -115,7 +115,7 @@ Turned off %1$d overrides. Recheck for TikTok %2$s.,已关闭 %1$d 个覆盖。�
 1 filtered out,1 过滤掉
 1 gate selected,已选择 1 个登机门
 1 min left,还剩 1 分钟
-Turned off 1 override. Recheck for TikTok %2$s.,已关闭 1 个覆盖。请重新检查 TikTok %2$s.
+Turned off 1 override. Check it for TikTok %2$s.,已关闭 1 个覆盖，请针对 TikTok %2$s 重新检查.
 1 result,1 个结果
 1 result so far,到目前为止 1 个结果
 1 video left,还剩 1 个视频
@@ -424,11 +424,11 @@ Couldn't open the file picker to export. Try again.,无法打开要导出的文�
 Couldn't open the file picker to import. Try again.,无法打开要导入的文件选择器。再试一次.
 Couldn't put back the diagnostic data. Try again.,无法恢复诊断数据。再试一次.
 Couldn't put the saved videos back. Try again.,无法恢复保存的视频。再试一次.
-Can't reach proxy %1$s. TikTok may not load.,无法连接代理 %1$s，TikTok 可能无法加载.
+Proxy %1$s is down. Turn it off if TikTok won't load.,代理 %1$s 无法连接。TikTok 无法加载时请关闭代理.
 Couldn't read TikTok's current values (%1$s). Refresh values from the menu to try again.,无法读取 TikTok 的当前值 (%1$s)。从菜单中刷新值以重试.
 Couldn't read that file. Choose it again.,无法读取该文件。再选择一次.
 Couldn't read this list. Close it and try again.,无法阅读此列表。关闭它并重试.
-Unknown commenter. Block them from their profile.,评论者未知，请在其主页拉黑.
+Can't tell who wrote this. Block them on their profile.,无法识别评论者，请在其主页拉黑.
 Layout not recorded. Try again from Diagnostics.,未记录布局，请从“诊断”重试.
 Couldn't remove the imported font. Try again.,无法删除导入的字体。再试一次.
 Couldn't reset the settings. Try again.,无法重置设置。再试一次.
@@ -553,7 +553,7 @@ Enter who to message below to start.,在下方输入要向谁发送消息即可�
 Entry %1$d has a field with the wrong data type.,条目 %1$d 有一个数据类型错误的字段.
 Entry %1$d isn't an object.,条目 %1$d 不是对象.
 Errors,错误
-All loaded items are picked. Scroll for more.,已加载的项目全部已选，向下滚动查看更多.
+All loaded items are picked or saved. Scroll for more.,已加载的项目均已选中或保存，向下滚动查看更多.
 Expand activity list,展开活动列表
 Explore or Community,探索或社区
 Export CSV,导出CSV
@@ -576,7 +576,7 @@ Feature gate report copied,已复制功能门报告
 Feed and navigation,信息流和导航
 Feed button size,信息流按钮尺寸
 Feed capture saved to %1$s. Read it before you share it.,信息流捕获保存到 %1$s。在分享之前先阅读它.
-"Feed capture on. Scroll to the problem, then return.",信息流捕获已开启，滚动到问题处后返回.
+"Capturing. Find the problem, then come back to stop.",正在捕获。找到问题后返回此处即可停止.
 Feed filter,信息流过滤器
 Feed screen,信息流界面
 Feed tabs,信息流标签页
@@ -1328,7 +1328,7 @@ Record LIVEs you watch,录制你观看的 LIVE
 Record a screen's layout,记录屏幕布局
 Record this LIVE from now,从现在开始记录这个LIVE
 Recorded gate reads (%1$d),记录的门读数 (%1$d)
-Recording gate reads. Come back here to stop.,正在记录开关读取，返回此处即可停止.
+"Recording. Use a feature, then come back to stop.",正在记录。使用一个功能后返回此处即可停止.
 Recording stopped early. Saved to %1$s,录制提前停止，已保存到 %1$s
 Recording this LIVE from now,从现在开始记录这个LIVE
 Recording what the feed filters keep and hide. Tap to stop and save it in %1$s.,记录信息流过滤器保留和隐藏的内容。点击停止并将其保存在 %1$s 中.
@@ -1462,7 +1462,7 @@ Saved. Restart TikTok to apply this.,已保存。重新启动 TikTok 以应用�
 Saves TikTok's latest crash report on this phone so it can go in the diagnostic report.,在此手机上保存 TikTok 的最新崩溃报告，以便将其纳入诊断报告中.
 "Saves subtitle (SRT) files with the video. They go to Movies on Android 11 and newer, Download on Android 10, and your video folder on older versions. On Android 11 and newer with Save details on, the video moves to Download or Documents and the subtitles stay in Movies.",与视频一起保存字幕 (SRT) 文件。他们会在 Android 11 及更高版本上转到“电影”，在 Android 10 上转到“下载”，在旧版本上会转到你的视频文件夹。在 Android 11 及更高版本上，如果打开“保存详细信息”，视频将移至“下载”或“文档”，而字幕仍保留在“电影”中.
 "Saves the caption, creator, link and post date in a text file next to the video, or one file for a photo post's original photos. On Android 10 and later, they go in Download or Documents under the same folder name. Applies to saves made by Hushfeed.",将标题、创建者、链接和发布日期保存在视频旁边的文本文件中，图片帖子的原图则共用一个文件。在 Android 10 及更高版本上，它们会进入同一文件夹名称下的“下载”或“文档”。适用于 Hushfeed 进行的保存.
-"Photos saved, but not their details file",照片已保存，但详情文件未能写入
+Couldn't write the details file. Save the post again.,详情文件未能写入，请重新保存该帖子.
 Saves the details file in JSON format instead of plain text. Useful if another tool will read it.,以 JSON 格式而不是纯文本格式保存详细信息文件。如果其他工具可以读取它，则很有用.
 Saves your Hushfeed settings and Feature Gate Lab rules to a file.,将 Hushfeed 设置和功能门实验室规则保存到文件中.
 Saving,节省
@@ -1901,7 +1901,7 @@ Storage almost full. Recording saved to %1$s,存储空间快满了，录制已�
 "The port the proxy listens on, like 8080 or 1080.",代理侦听的端口，例如 8080 或 1080.
 The presets couldn't load. Open the Lab again.,无法加载预设。再次打开实验室.
 The profile picture couldn't be saved. Try again.,无法保存个人资料图片。再试一次.
-Proxy %1$s wants a password TikTok can't send,代理 %1$s 需要密码，TikTok 无法发送
+TikTok can't send a password to proxy %1$s. Use another.,TikTok 无法登录代理 %1$s，请换一个.
 "The proxy's address, like 192.168.1.20 or proxy.example.com.",代理的地址，例如 192.168.1.20 或 proxy.example.com.
 The quality choice is still open,品质选择依然开放
 "The record of an interrupted settings change couldn't be read, so it was set aside. Check your settings.",中断的设置更改记录无法读取，因此被搁置。检查你的设置.
@@ -2190,7 +2190,7 @@ YTDLnis background mode,YTDLnis后台模式
 YTDLnis download type,YTDLnis 下载类型
 Yes,是的
 You can pick up to %1$s at a time,你一次最多可以领取 %1$s
-YouTube Music didn't open. Search for the sound there.,YouTube Music 未打开。请在其中搜索该声音.
+YouTube Music didn't open. Open it yourself to search.,YouTube Music 未打开。请自行打开后搜索.
 YouTube Music isn't installed,未安装 YouTube 音乐
 Your TikTok account changed. Choose the file again for this account.,你的 TikTok 账号已更改。再次为此账号选择文件.
 Your account changed. Close this list and open it again.,你的账号已更改。关闭此列表并再次打开它.

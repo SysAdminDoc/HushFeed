@@ -593,8 +593,8 @@ public final class FeatureGateLabFragment extends Fragment {
         }
         // Both forms take (count, build); the one form leaves the count unused.
         Utils.showToastLong(L10n.quantity(Utils.getContext(), turnedOff,
-                "Turned off 1 override. Recheck for TikTok %2$s.",
-                "Turned off %1$d overrides. Recheck for TikTok %2$s.",
+                "Turned off 1 override. Check it for TikTok %2$s.",
+                "Turned off %1$d overrides. Check them for TikTok %2$s.",
                 turnedOff, FeatureGateLabStore.targetVersion()));
     }
 

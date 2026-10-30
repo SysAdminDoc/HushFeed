@@ -60,7 +60,7 @@ That watch-history file is damaged. Nothing was imported.	El archivo del histori
 %1$d fields will be overridden when requested	%1$d campos se sobrescribirán cuando se soliciten
 %1$d gates selected	%1$d interruptores seleccionados
 %1$d minutes left	Quedan %1$d minutos
-Turned off %1$d overrides. Recheck for TikTok %2$s.	Sustituciones desactivadas: %1$d. Revisa TikTok %2$s.
+Turned off %1$d overrides. Check them for TikTok %2$s.	Revisa %1$d sustituciones apagadas en TikTok %2$s.
 %1$d rejected	%1$d rechazados
 %1$d results	%1$d resultados
 %1$d results so far	%1$d resultados hasta ahora
@@ -109,7 +109,7 @@ Turned off %1$d overrides. Recheck for TikTok %2$s.	Sustituciones desactivadas: 
 1 field will be overridden when requested	1 campo se sobrescribirá cuando se solicite
 1 gate selected	1 interruptor seleccionado
 1 min left	Queda 1 min
-Turned off 1 override. Recheck for TikTok %2$s.	1 sustitución desactivada. Revisa TikTok %2$s.
+Turned off 1 override. Check it for TikTok %2$s.	1 sustitución desactivada. Revísala para TikTok %2$s.
 1 result	1 resultado
 1 result so far	1 resultado hasta ahora
 1 video left	Queda 1 video
@@ -354,7 +354,7 @@ Stop and save the feed capture	Detener y guardar la grabación del feed
 Recording what the feed filters keep and hide. Tap to stop and save it in %1$s.	Grabando lo que los filtros del feed dejan y ocultan. Toca para detener y guardar en %1$s.
 Save the feed capture	Guardar la grabación del feed
 The last feed capture wasn't saved. Tap to try again.	La última grabación del feed no se guardó. Toca para intentarlo otra vez.
-Feed capture on. Scroll to the problem, then return.	Grabación del feed activa. Ve al problema y vuelve.
+Capturing. Find the problem, then come back to stop.	Capturando. Busca el fallo y vuelve para parar.
 The feed capture is still being saved	Todavía se está guardando la grabación del feed
 Feed capture saved to %1$s. Read it before you share it.	Grabación guardada en %1$s. Léela antes de compartir.
 Feed capture not saved. Tap the row to retry.	Grabación no guardada. Toca la fila para reintentar.
@@ -371,7 +371,7 @@ Couldn't clear suggestions. Reopen Inbox to retry.	Sugerencias no borradas. Reab
 Couldn't open the file picker to export. Try again.	No se pudo abrir el selector para exportar. Reintenta.
 Couldn't open the file picker to import. Try again.	No se pudo abrir el selector para importar. Reintenta.
 Couldn't put back the diagnostic data. Try again.	No se pudieron recuperar los datos de diagnóstico. Inténtalo de nuevo.
-Unknown commenter. Block them from their profile.	Autor desconocido. Bloquéalo desde su perfil.
+Can't tell who wrote this. Block them on their profile.	No sé quién lo escribió. Bloquéalo desde su perfil.
 Couldn't reset this override. Try again.	No se restableció la sustitución. Reintenta.
 Couldn't restore the settings. Try again.	No se pudieron restaurar los ajustes. Inténtalo de nuevo.
 Couldn't reset the settings. Try again.	No se pudieron restablecer los ajustes. Inténtalo de nuevo.
@@ -890,7 +890,7 @@ Quality, speed and auto-advance	Calidad, velocidad y avance automático
 Pause the video while comments are open	Pausar el video mientras los comentarios están abiertos
 Reading	Lectura
 Recorded gate reads (%1$d)	Lecturas de interruptores registradas (%1$d)
-Recording gate reads. Come back here to stop.	Registrando interruptores. Vuelve aquí para parar.
+Recording. Use a feature, then come back to stop.	Grabando. Usa una función y vuelve aquí para parar.
 Put back the settings saved before the last restore or reset.	Recuperar los ajustes guardados antes de la última restauración o reinicio.
 Recovered an interrupted settings change. Restart TikTok to apply this.	Se recuperó un cambio de ajustes interrumpido. Reinicia TikTok para que se aplique.
 Refresh values	Actualizar los valores
@@ -1450,7 +1450,7 @@ Also on a block list, so still hidden: %1$s	También está en una lista de bloqu
 Find the sound on YouTube Music	Buscar el sonido en YouTube Music
 YouTube Music isn't installed	YouTube Music no está instalado
 This video's sound has no title to look for	El sonido de este video no tiene título que buscar
-YouTube Music didn't open. Search for the sound there.	No abrió YouTube Music. Busca el sonido allí.
+YouTube Music didn't open. Open it yourself to search.	No abrió YouTube Music. Ábrelo tú y busca allí.
 Allow storage for TikTok to save the clip	Permite el almacenamiento de TikTok para guardar el clip
 This original sound isn't on YouTube Music	Este sonido original no está en YouTube Music
 Not a handle or id, so ignored: %1$s	No es un nombre de cuenta ni un id, así que se ignora: %1$s
@@ -1471,7 +1471,7 @@ About overrides	Acerca de las sustituciones
 Use {creator}, {date} and {video_id} to build the name. Start with {creator}/ to put each creator in a folder. The file ending is added for you.	Usa {creator}, {date} y {video_id} para formar el nombre. Empieza con {creator}/ para poner a cada creador en su propia carpeta. La extensión del archivo se añade sola.
 Save details beside the video	Guardar detalles junto al video
 Saves the caption, creator, link and post date in a text file next to the video, or one file for a photo post's original photos. On Android 10 and later, they go in Download or Documents under the same folder name. Applies to saves made by Hushfeed.	Guarda la descripción, el creador, el enlace y la fecha de publicación en un archivo de texto junto al video, o en un solo archivo para las fotos originales de una publicación de fotos. En Android 10 y posteriores, van a Download o Documents con el mismo nombre de carpeta. Se aplica a los guardados hechos por Hushfeed.
-Photos saved, but not their details file	Fotos guardadas, pero no su archivo de detalles
+Couldn't write the details file. Save the post again.	No se escribió el archivo de detalles. Guarda otra vez.
 Check for already-saved videos	Comprobar videos ya guardados
 Forget saved videos	Olvidar los vídeos guardados
 Undo forgetting saved videos	Deshacer el olvido de los vídeos guardados
@@ -1811,8 +1811,8 @@ Proxy password	Contraseña del proxy
 Optional, used with the user name. It isn't shown, logged or put in a backup.	Opcional, se usa con el usuario. No se muestra, no se registra ni se guarda en una copia de seguridad.
 Enter a server name or IP address, without http:// or a port number	Introduce un nombre de servidor o una dirección IP, sin http:// ni número de puerto
 A port is a whole number from 1 to 65535	Un puerto es un número entero del 1 al 65535
-Proxy %1$s wants a password TikTok can't send	Proxy %1$s pide contraseña y TikTok no puede enviarla
-Can't reach proxy %1$s. TikTok may not load.	Proxy %1$s inaccesible. Puede que TikTok no cargue.
+TikTok can't send a password to proxy %1$s. Use another.	TikTok no puede entrar al proxy %1$s. Usa otro.
+Proxy %1$s is down. Turn it off if TikTok won't load.	Proxy %1$s caído. Si TikTok no carga, apágalo.
 Word rules only, not every feed filter:	Solo reglas de palabras, no todos los filtros del feed:
 This list is too long to preview here. Saving still follows the usual limit.	Esta lista es demasiado larga para previsualizarla aquí. Al guardar sigue valiendo el límite de siempre.
 Can't check yet: %1$s	Aún no se puede comprobar: %1$s
@@ -2145,7 +2145,7 @@ One was already saved	Uno ya estaba guardado
 Picked videos	Videos elegidos
 Pick all	Elegir todos
 Picked %1$s. Save, then tap Pick all for more.	Elegidos %1$s. Guarda y toca Elegir todos para más.
-All loaded items are picked. Scroll for more.	Todo lo cargado está elegido. Baja para ver más.
+All loaded items are picked or saved. Scroll for more.	Todo lo cargado está elegido o guardado. Baja para más.
 
 Record LIVEs you watch	Grabar los LIVE que ves
 Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.	Añade un botón Grabar a las salas LIVE. La grabación empieza cuando lo tocas y termina cuando tocas Detener o sales de la sala. Lo anterior no se guarda.

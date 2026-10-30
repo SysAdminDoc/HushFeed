@@ -54,7 +54,7 @@ public final class FeatureGateRecorderPreference extends Preference implements I
         FeatureGateLearnMode.begin();
         app.morphe.extension.shared.Utils.showToastShort(
                 app.morphe.extension.tiktok.settings.L10n.t(
-                        "Recording gate reads. Come back here to stop."));
+                        "Recording. Use a feature, then come back to stop."));
     }
 
     /**

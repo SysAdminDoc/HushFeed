@@ -246,7 +246,7 @@ public final class OriginalPhotos {
                             "Saved one original photo", "Saved %1$s original photos")), last[0],
                             failed == null ? null : () -> retry(failed));
                     if (!detailsWritten) {
-                        Utils.showToastLong(L10n.t("Photos saved, but not their details file"));
+                        Utils.showToastLong(L10n.t("Couldn't write the details file. Save the post again."));
                     }
                 }
             } catch (RuntimeException exception) {

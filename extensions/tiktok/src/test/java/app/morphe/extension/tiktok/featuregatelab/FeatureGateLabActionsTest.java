@@ -359,7 +359,7 @@ public class FeatureGateLabActionsTest {
             app.morphe.extension.shared.BuildNames.setRunningBuildForTests("47.5.3");
             try (var owner = Robolectric.buildActivity(TestActivity.class).setup().visible()) {
                 attach(owner.get());
-                waitFor("Turned off 2 overrides. Recheck for TikTok 47.5.3.");
+                waitFor("Turned off 2 overrides. Check them for TikTok 47.5.3.");
                 assertTrue(FeatureGateLabStore.rule("abmock", "1005_max_limit_count_daily", "INT").enabled);
             }
         } finally {

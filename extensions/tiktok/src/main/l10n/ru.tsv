@@ -81,10 +81,10 @@ That watch-history file is damaged. Nothing was imported.	Файл истори�
 %1$d minutes left|one	Осталась %1$d минута
 %1$d minutes left|few	Осталось %1$d минуты
 %1$d minutes left|many	Осталось %1$d минут
-Turned off %1$d overrides. Recheck for TikTok %2$s.	Снято %1$d переопределений. Проверьте TikTok %2$s.
-Turned off %1$d overrides. Recheck for TikTok %2$s.|one	Снято %1$d переопределение. Проверьте TikTok %2$s.
-Turned off %1$d overrides. Recheck for TikTok %2$s.|few	Снято %1$d переопределения. Проверьте TikTok %2$s.
-Turned off %1$d overrides. Recheck for TikTok %2$s.|many	Снято %1$d переопределений. Проверьте TikTok %2$s.
+Turned off %1$d overrides. Check them for TikTok %2$s.	Выкл. %1$d переопределений. Проверьте для TikTok %2$s.
+Turned off %1$d overrides. Check them for TikTok %2$s.|one	Выкл. %1$d переопределение. Проверьте для TikTok %2$s.
+Turned off %1$d overrides. Check them for TikTok %2$s.|few	Выкл. %1$d переопределения. Проверьте для TikTok %2$s.
+Turned off %1$d overrides. Check them for TikTok %2$s.|many	Выкл. %1$d переопределений. Проверьте для TikTok %2$s.
 %1$d rejected	Отклонено: %1$d
 %1$d results	%1$d результатов
 %1$d results|one	%1$d результат
@@ -148,7 +148,7 @@ Turned off %1$d overrides. Recheck for TikTok %2$s.|many	Снято %1$d пер�
 1 field will be overridden when requested	1 поле будет переопределено при запросе
 1 gate selected	1 переключатель выбран
 1 min left	Ещё 1 мин.
-Turned off 1 override. Recheck for TikTok %2$s.	Снято 1 переопределение. Проверьте TikTok %2$s.
+Turned off 1 override. Check it for TikTok %2$s.	Выкл. 1 переопределение. Проверьте для TikTok %2$s.
 1 result	1 результат
 1 result so far	Пока 1 результат
 1 video left	Ещё 1 видео
@@ -402,7 +402,7 @@ Stop and save the feed capture	Остановить и сохранить зап
 Recording what the feed filters keep and hide. Tap to stop and save it in %1$s.	Идёт запись того, что фильтры ленты оставляют и скрывают. Нажмите, чтобы остановить и сохранить её в %1$s.
 Save the feed capture	Сохранить запись ленты
 The last feed capture wasn't saved. Tap to try again.	Последняя запись ленты не сохранена. Нажмите, чтобы повторить попытку.
-Feed capture on. Scroll to the problem, then return.	Запись ленты идёт. Листайте до проблемы и вернитесь.
+Capturing. Find the problem, then come back to stop.	Запись. Найдите проблему и вернитесь, чтобы остановить.
 The feed capture is still being saved	Запись ленты всё ещё сохраняется
 Feed capture saved to %1$s. Read it before you share it.	Запись ленты сохранена в %1$s. Прочтите до отправки.
 Feed capture not saved. Tap the row to retry.	Запись ленты не сохранена. Нажмите строку для повтора.
@@ -419,7 +419,7 @@ Couldn't clear suggestions. Reopen Inbox to retry.	Предложения не �
 Couldn't open the file picker to export. Try again.	Выбор файла для экспорта не открылся. Повторите.
 Couldn't open the file picker to import. Try again.	Выбор файла для импорта не открылся. Повторите.
 Couldn't put back the diagnostic data. Try again.	Не удалось восстановить диагностические данные. Попробуйте снова.
-Unknown commenter. Block them from their profile.	Автор неизвестен. Заблокируйте через профиль.
+Can't tell who wrote this. Block them on their profile.	Не удалось узнать автора. Заблокируйте через профиль.
 Couldn't reset this override. Try again.	Переопределение не сброшено. Повторите.
 Couldn't restore the settings. Try again.	Не удалось восстановить настройки. Попробуйте снова.
 Couldn't reset the settings. Try again.	Не удалось сбросить настройки. Попробуйте снова.
@@ -953,7 +953,7 @@ Quality, speed and auto-advance	Качество, скорость и автоп
 Pause the video while comments are open	Ставить видео на паузу, пока открыты комментарии
 Reading	Чтение
 Recorded gate reads (%1$d)	Зафиксированные обращения к переключателям (%1$d)
-Recording gate reads. Come back here to stop.	Запись переключателей. Вернитесь, чтобы остановить.
+Recording. Use a feature, then come back to stop.	Запись. Откройте функцию и вернитесь, чтобы остановить.
 Put back the settings saved before the last restore or reset.	Вернуть настройки, сохранённые перед последним восстановлением или сбросом.
 Recovered an interrupted settings change. Restart TikTok to apply this.	Восстановлено прерванное изменение настроек. Перезапустите TikTok, чтобы это применить.
 Refresh values	Обновить значения
@@ -1588,7 +1588,7 @@ Also on a block list, so still hidden: %1$s	Также в списке блок�
 Find the sound on YouTube Music	Найти звук в YouTube Music
 YouTube Music isn't installed	YouTube Music не установлен
 This video's sound has no title to look for	У звука этого видео нет названия для поиска
-YouTube Music didn't open. Search for the sound there.	YouTube Music не открылся. Найдите звук там.
+YouTube Music didn't open. Open it yourself to search.	YouTube Music не открылся. Откройте его сами и найдите.
 Allow storage for TikTok to save the clip	Дайте TikTok доступ к памяти для сохранения клипа
 This original sound isn't on YouTube Music	Этого оригинального звука нет в YouTube Music
 Not a handle or id, so ignored: %1$s	Не имя аккаунта и не id, поэтому проигнорировано: %1$s
@@ -1609,7 +1609,7 @@ About overrides	О переопределениях
 Use {creator}, {date} and {video_id} to build the name. Start with {creator}/ to put each creator in a folder. The file ending is added for you.	Составьте имя из {creator}, {date} и {video_id}. Начните с {creator}/, чтобы класть каждого автора в отдельную папку. Расширение файла добавляется само.
 Save details beside the video	Сохранять детали рядом с видео
 Saves the caption, creator, link and post date in a text file next to the video, or one file for a photo post's original photos. On Android 10 and later, they go in Download or Documents under the same folder name. Applies to saves made by Hushfeed.	Сохраняет описание, автора, ссылку и дату публикации в текстовом файле рядом с видео или в одном файле для оригинальных фото фотопоста. На Android 10 и новее они попадают в Download или Documents под тем же именем папки. Действует для сохранений, сделанных Hushfeed.
-Photos saved, but not their details file	Фото сохранены, но без файла данных
+Couldn't write the details file. Save the post again.	Файл данных не записан. Сохраните публикацию снова.
 Check for already-saved videos	Проверять уже сохранённые видео
 Forget saved videos	Забыть сохранённые видео
 Undo forgetting saved videos	Отменить забывание сохранённых видео
@@ -1952,8 +1952,8 @@ Proxy password	Пароль прокси
 Optional, used with the user name. It isn't shown, logged or put in a backup.	Необязательно, используется вместе с именем пользователя. Он не показывается, не пишется в журнал и не попадает в резервную копию.
 Enter a server name or IP address, without http:// or a port number	Введите имя сервера или IP-адрес без http:// и номера порта
 A port is a whole number from 1 to 65535	Порт должен быть целым числом от 1 до 65535
-Proxy %1$s wants a password TikTok can't send	Прокси %1$s просит пароль, который TikTok не отправит
-Can't reach proxy %1$s. TikTok may not load.	Прокси %1$s недоступен. TikTok может не загрузиться.
+TikTok can't send a password to proxy %1$s. Use another.	TikTok не входит в прокси %1$s. Выберите другой.
+Proxy %1$s is down. Turn it off if TikTok won't load.	Прокси %1$s упал. Выключите его, если TikTok завис.
 Word rules only, not every feed filter:	Только правила для слов, а не все фильтры ленты:
 This list is too long to preview here. Saving still follows the usual limit.	Этот список слишком длинный для предпросмотра. При сохранении действует обычный лимит.
 Can't check yet: %1$s	Пока нельзя проверить: %1$s
@@ -2322,7 +2322,7 @@ One was already saved	Одно уже было сохранено
 Picked videos	Выбранные видео
 Pick all	Выбрать все
 Picked %1$s. Save, then tap Pick all for more.	Выбрано %1$s. Сохраните и снова нажмите «Выбрать все».
-All loaded items are picked. Scroll for more.	Все загруженные выбраны. Прокрутите дальше.
+All loaded items are picked or saved. Scroll for more.	Всё загруженное выбрано или сохранено. Листайте дальше.
 
 Record LIVEs you watch	Записывать LIVE, которые вы смотрите
 Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.	Добавляет в комнаты LIVE кнопку записи. Запись начинается, когда вы нажимаете её, и заканчивается, когда вы нажимаете «Стоп» или выходите из комнаты. Всё, что было до этого, не сохраняется.

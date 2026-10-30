@@ -63,7 +63,7 @@ That watch-history file is damaged. Nothing was imported.	Die Datei mit dem Wied
 %1$d fields will be overridden when requested	%1$d Felder werden bei der Abfrage überschrieben
 %1$d gates selected	%1$d Schalter ausgewählt
 %1$d minutes left	Noch %1$d Minuten
-Turned off %1$d overrides. Recheck for TikTok %2$s.	%1$d Überschreibungen aus. Prüfe sie für TikTok %2$s.
+Turned off %1$d overrides. Check them for TikTok %2$s.	%1$d Überschreibungen aus. Prüfe sie für TikTok %2$s.
 %1$d rejected	%1$d abgelehnt
 %1$d results	%1$d Ergebnisse
 %1$d results so far	%1$d Ergebnisse bisher
@@ -112,7 +112,7 @@ Turned off %1$d overrides. Recheck for TikTok %2$s.	%1$d Überschreibungen aus. 
 1 field will be overridden when requested	1 Feld wird bei der Abfrage überschrieben
 1 gate selected	1 Schalter ausgewählt
 1 min left	Noch 1 Min.
-Turned off 1 override. Recheck for TikTok %2$s.	1 Überschreibung aus. Prüfe sie für TikTok %2$s.
+Turned off 1 override. Check it for TikTok %2$s.	1 Überschreibung aus. Prüfe sie für TikTok %2$s.
 1 result	1 Ergebnis
 1 result so far	1 Ergebnis bisher
 1 video left	Noch 1 Video
@@ -357,7 +357,7 @@ Stop and save the feed capture	Feed-Aufzeichnung beenden und speichern
 Recording what the feed filters keep and hide. Tap to stop and save it in %1$s.	Es wird aufgezeichnet, was die Feed-Filter behalten und ausblenden. Tippe, um die Aufzeichnung zu beenden und unter %1$s zu speichern.
 Save the feed capture	Feed-Aufzeichnung speichern
 The last feed capture wasn't saved. Tap to try again.	Die letzte Feed-Aufzeichnung wurde nicht gespeichert. Tippe, um es noch einmal zu versuchen.
-Feed capture on. Scroll to the problem, then return.	Aufzeichnung läuft. Scrolle zum Problem, dann zurück.
+Capturing. Find the problem, then come back to stop.	Läuft. Such das Problem, dann zurück zum Beenden.
 The feed capture is still being saved	Die Feed-Aufzeichnung wird noch gespeichert
 Feed capture saved to %1$s. Read it before you share it.	Aufzeichnung gespeichert: %1$s. Vor dem Teilen lesen.
 Feed capture not saved. Tap the row to retry.	Nicht gespeichert. Zeile antippen und wiederholen.
@@ -374,7 +374,7 @@ Couldn't clear suggestions. Reopen Inbox to retry.	Vorschläge nicht entfernt. �
 Couldn't open the file picker to export. Try again.	Export-Dateiauswahl nicht geöffnet. Versuch es erneut.
 Couldn't open the file picker to import. Try again.	Import-Dateiauswahl nicht geöffnet. Versuch es erneut.
 Couldn't put back the diagnostic data. Try again.	Die Diagnosedaten ließen sich nicht zurückholen. Versuch es noch einmal.
-Unknown commenter. Block them from their profile.	Unbekannte Person. Blockiere sie über das Profil.
+Can't tell who wrote this. Block them on their profile.	Autor nicht erkennbar. Blockiere über das Profil.
 Couldn't reset this override. Try again.	Zurücksetzen fehlgeschlagen. Versuch es erneut.
 Couldn't restore the settings. Try again.	Die Einstellungen ließen sich nicht wiederherstellen. Versuch es noch einmal.
 Couldn't reset the settings. Try again.	Die Einstellungen ließen sich nicht zurücksetzen. Versuch es noch einmal.
@@ -464,7 +464,7 @@ Enter a whole number, or one like 20K, 1.5M or 2B	Gib eine ganze Zahl ein, oder 
 Enter a whole number.	Gib eine ganze Zahl ein.
 Enter true or false.	Gib true oder false ein.
 Enter up to %1$d comma-separated speeds from %2$s to %3$s	Bis zu %1$d durch Kommas getrennte Geschwindigkeiten von %2$s bis %3$s eingeben
-That isn't valid JSON. Check the brackets and quotes.	Kein gültiges JSON. Prüfe Klammern und Gänsefüßchen.
+That isn't valid JSON. Check the brackets and quotes.	JSON ungültig. Prüfe Klammern, Anführungszeichen.
 Entry %1$d has a field with the wrong data type.	Eintrag %1$d enthält ein Feld mit dem falschen Datentyp.
 Entry %1$d isn't an object.	Eintrag %1$d ist kein Objekt.
 Errors	Fehler
@@ -893,7 +893,7 @@ Quality, speed and auto-advance	Qualität, Tempo und automatisches Weiterschalte
 Pause the video while comments are open	Video anhalten, solange Kommentare offen sind
 Reading	Lesen
 Recorded gate reads (%1$d)	Aufgezeichnete Gate-Zugriffe (%1$d)
-Recording gate reads. Come back here to stop.	Gate-Zugriffe: Aufzeichnung läuft. Zum Beenden zurück.
+Recording. Use a feature, then come back to stop.	Läuft. Nutze eine Funktion, dann zurück zum Beenden.
 Put back the settings saved before the last restore or reset.	Die Einstellungen zurückholen, die vor der letzten Wiederherstellung oder Zurücksetzung gespeichert wurden.
 Recovered an interrupted settings change. Restart TikTok to apply this.	Eine unterbrochene Einstellungsänderung wurde wiederhergestellt. TikTok neu starten, damit das gilt.
 Refresh values	Werte aktualisieren
@@ -1453,7 +1453,7 @@ Also on a block list, so still hidden: %1$s	Steht auch auf einer Sperrliste und 
 Find the sound on YouTube Music	Den Sound auf YouTube Music suchen
 YouTube Music isn't installed	YouTube Music ist nicht installiert
 This video's sound has no title to look for	Der Sound dieses Videos hat keinen Titel zum Suchen
-YouTube Music didn't open. Search for the sound there.	YouTube Music öffnet nicht. Suche dort nach dem Sound.
+YouTube Music didn't open. Open it yourself to search.	YouTube Music öffnet nicht. Öffne es selbst und suche.
 Allow storage for TikTok to save the clip	Erlaube TikTok Speicher für den Clip
 This original sound isn't on YouTube Music	Dieser Originalsound ist nicht auf YouTube Music
 Not a handle or id, so ignored: %1$s	Kein Konto-Name und keine ID, daher ignoriert: %1$s
@@ -1474,7 +1474,7 @@ About overrides	Über Überschreibungen
 Use {creator}, {date} and {video_id} to build the name. Start with {creator}/ to put each creator in a folder. The file ending is added for you.	Baue den Namen aus {creator}, {date} und {video_id}. Beginne mit {creator}/, um jeden Creator in einen eigenen Ordner zu legen. Die Dateiendung wird automatisch angehängt.
 Save details beside the video	Details neben dem Video speichern
 Saves the caption, creator, link and post date in a text file next to the video, or one file for a photo post's original photos. On Android 10 and later, they go in Download or Documents under the same folder name. Applies to saves made by Hushfeed.	Speichert Beschreibung, Creator, Link und Veröffentlichungsdatum in einer Textdatei neben dem Video, bei einem Fotobeitrag in einer Datei für die Originalfotos. Ab Android 10 landen sie in Download oder Documents unter demselben Ordnernamen. Gilt für Speicherungen durch Hushfeed.
-Photos saved, but not their details file	Fotos gespeichert, aber nicht die Detaildatei
+Couldn't write the details file. Save the post again.	Detaildatei fehlt. Speichere den Beitrag erneut.
 Check for already-saved videos	Bereits gespeicherte Videos prüfen
 Forget saved videos	Gespeicherte Videos vergessen
 Undo forgetting saved videos	Vergessen der gespeicherten Videos rückgängig machen
@@ -1814,8 +1814,8 @@ Proxy password	Proxy-Passwort
 Optional, used with the user name. It isn't shown, logged or put in a backup.	Optional, zusammen mit dem Benutzernamen. Es wird nicht angezeigt, nicht protokolliert und nicht in eine Sicherung übernommen.
 Enter a server name or IP address, without http:// or a port number	Gib einen Servernamen oder eine IP-Adresse ein, ohne http:// und ohne Portnummer
 A port is a whole number from 1 to 65535	Ein Port ist eine ganze Zahl von 1 bis 65535
-Proxy %1$s wants a password TikTok can't send	Passwort für Proxy %1$s? TikTok kann keins senden
-Can't reach proxy %1$s. TikTok may not load.	Proxy %1$s antwortet nicht. TikTok lädt eventuell nicht.
+TikTok can't send a password to proxy %1$s. Use another.	TikTok kommt nicht in Proxy %1$s. Nimm einen anderen.
+Proxy %1$s is down. Turn it off if TikTok won't load.	Proxy %1$s antwortet nicht. Schalt ihn aus, falls nötig.
 Word rules only, not every feed filter:	Nur Wortregeln, nicht jeder Feed-Filter:
 This list is too long to preview here. Saving still follows the usual limit.	Diese Liste ist zu lang für die Vorschau. Beim Speichern gilt weiter das übliche Limit.
 Can't check yet: %1$s	Noch nicht prüfbar: %1$s
@@ -2148,7 +2148,7 @@ One was already saved	Eins war schon gespeichert
 Picked videos	Ausgewählte Videos
 Pick all	Alle auswählen
 Picked %1$s. Save, then tap Pick all for more.	%1$s gewählt. Speichern, mehr mit „Alle auswählen“.
-All loaded items are picked. Scroll for more.	Alle geladenen Einträge sind gewählt. Scrolle für mehr.
+All loaded items are picked or saved. Scroll for more.	Alles ist gewählt oder gespeichert. Scroll weiter.
 
 Record LIVEs you watch	LIVEs aufnehmen, die du schaust
 Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.	Fügt LIVE-Räumen eine Aufnahme-Taste hinzu. Die Aufnahme beginnt, wenn du sie antippst, und endet bei Stopp oder wenn du den Raum verlässt. Was davor lief, wird nicht gespeichert.

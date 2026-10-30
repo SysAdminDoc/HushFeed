@@ -58,7 +58,7 @@ public final class YouTubeMusicSearch {
             return false;
         } catch (RuntimeException failure) {
             Logger.printException(() -> "Could not open YouTube Music", failure);
-            Utils.showToastLong(L10n.t("YouTube Music didn't open. Search for the sound there."));
+            Utils.showToastLong(L10n.t("YouTube Music didn't open. Open it yourself to search."));
             return false;
         }
     }

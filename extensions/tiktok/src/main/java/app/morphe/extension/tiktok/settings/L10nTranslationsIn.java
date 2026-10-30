@@ -1367,14 +1367,14 @@ final class L10nTranslationsIn {
                 "Untuk akun yang terjemahannya dihapus TikTok. Mengembalikan Lihat terjemahan di bawah deskripsi video dan di teks video, serta baris terjemahan di halaman Bahasa, di Pengaturan dan privasi. Mulai ulang TikTok untuk melihatnya di video.");
         table.put("For accounts TikTok took translation away from. Brings back See translation under video descriptions and in captions. Restart TikTok to see the change.",
                 "Untuk akun yang terjemahannya dihapus TikTok. Mengembalikan Lihat terjemahan di bawah deskripsi video dan di teks video. Mulai ulang TikTok untuk melihat perubahannya.");
-        table.put("Forced %1$d gates. Restart TikTok to apply.",
-                "%1$d gate dipaksakan. Mulai ulang TikTok.");
-        table.put("Forced %1$d of %2$d gates. Restart TikTok to apply.",
-                "%1$d dari %2$d dipaksakan. Mulai ulang TikTok.");
-        table.put("Forced 1 gate. Restart TikTok to apply.",
-                "1 gate dipaksakan. Mulai ulang TikTok.");
-        table.put("Forced 1 of %2$d gates. Restart TikTok to apply.",
-                "1 dari %2$d dipaksakan. Mulai ulang TikTok.");
+        table.put("Forced %1$d gates",
+                "%1$d gate dipaksakan");
+        table.put("Forced %1$d of %2$d gates",
+                "%1$d dari %2$d dipaksakan");
+        table.put("Forced 1 gate",
+                "1 gate dipaksakan");
+        table.put("Forced 1 of %2$d gates",
+                "1 dari %2$d dipaksakan");
         table.put("Forced result",
                 "Hasil yang dipaksakan");
         table.put("Forget saved videos",
@@ -2087,14 +2087,14 @@ final class L10nTranslationsIn {
                 "Video LIVE");
         table.put("LIVE viewers range",
                 "Rentang penonton LIVE");
-        table.put("Lab data reset with no undo. Restart TikTok to apply.",
-                "Data Lab disetel ulang tanpa batal. Mulai ulang TikTok.");
-        table.put("Lab data reset. Restart TikTok to apply.",
-                "Data Lab disetel ulang. Mulai ulang TikTok.");
-        table.put("Lab overrides reset. Restart TikTok to apply.",
-                "Penggantian Lab disetel ulang. Mulai ulang TikTok.");
-        table.put("Lab settings put back. Restart TikTok to apply.",
-                "Pengaturan Lab dikembalikan. Mulai ulang TikTok.");
+        table.put("Lab data reset",
+                "Data Lab disetel ulang");
+        table.put("Lab data reset with no undo",
+                "Data Lab disetel ulang tanpa batal");
+        table.put("Lab overrides reset",
+                "Penggantian Lab disetel ulang");
+        table.put("Lab settings put back",
+                "Pengaturan Lab dikembalikan");
         table.put("Language",
                 "Bahasa");
         table.put("Larger (1.25x)",
@@ -2833,8 +2833,8 @@ final class L10nTranslationsIn {
                 "Memposting");
         table.put("Prefer H.264 video",
                 "Utamakan video H.264");
-        table.put("Preset applied. Restart TikTok to use it.",
-                "Preset diterapkan. Mulai ulang TikTok.");
+        table.put("Preset applied",
+                "Preset diterapkan");
         table.put("Preset doesn't match the gates. Nothing changed.",
                 "Preset tidak cocok dengan gate. Tidak ada perubahan.");
         table.put("Preset saved. Turn on overrides to use it.",
@@ -3041,14 +3041,14 @@ final class L10nTranslationsIn {
                 "Nilai hasil riset");
         table.put("Reset",
                 "Atur ulang");
-        table.put("Reset %1$d gates. Restart TikTok to apply.",
-                "%1$d gate diatur ulang. Mulai ulang TikTok.");
-        table.put("Reset %1$d of %2$d gates. Restart TikTok to apply.",
-                "%1$d dari %2$d gate diatur ulang. Mulai ulang TikTok.");
-        table.put("Reset 1 gate. Restart TikTok to apply.",
-                "1 gate diatur ulang. Mulai ulang TikTok.");
-        table.put("Reset 1 of %2$d gates. Restart TikTok to apply.",
-                "1 dari %2$d gate diatur ulang. Mulai ulang TikTok.");
+        table.put("Reset %1$d gates",
+                "%1$d gate diatur ulang");
+        table.put("Reset %1$d of %2$d gates",
+                "%1$d dari %2$d gate diatur ulang");
+        table.put("Reset 1 gate",
+                "1 gate diatur ulang");
+        table.put("Reset 1 of %2$d gates",
+                "1 dari %2$d gate diatur ulang");
         table.put("Reset didn't finish. Some settings may still be changed.",
                 "Atur ulang tidak selesai. Beberapa pengaturan mungkin masih berubah.");
         table.put("Reset didn't finish. Some settings may still be changed. Use Undo to put them back.",
@@ -4472,16 +4472,16 @@ final class L10nTranslationsIn {
                 "Nyalakan penimpaan");
         table.put("Turn the music disc at the bottom of the right column while a video plays, the way TikTok used to.",
                 "Putar piringan musik di bagian bawah kolom kanan saat video berjalan, seperti yang dulu dilakukan TikTok.");
-        table.put("Turned off %1$d gates. Restart TikTok to apply.",
-                "%1$d gate dimatikan. Mulai ulang TikTok.");
-        table.put("Turned off %1$d of %2$d. Restart TikTok to apply.",
-                "%1$d dari %2$d dimatikan. Mulai ulang TikTok.");
+        table.put("Turned off %1$d gates",
+                "%1$d gate dimatikan");
+        table.put("Turned off %1$d of %2$d gates",
+                "%1$d dari %2$d dimatikan");
         table.put("Turned off %1$d overrides. Check them for TikTok %2$s.",
                 "%1$d penggantian dimatikan. Tinjau untuk TikTok %2$s.");
-        table.put("Turned off 1 gate. Restart TikTok to apply.",
-                "1 gate dimatikan. Mulai ulang TikTok.");
-        table.put("Turned off 1 of %2$d gates. Restart TikTok to apply.",
-                "1 dari %2$d gate dimatikan. Mulai ulang TikTok.");
+        table.put("Turned off 1 gate",
+                "1 gate dimatikan");
+        table.put("Turned off 1 of %2$d gates",
+                "1 dari %2$d gate dimatikan");
         table.put("Turned off 1 override. Check it for TikTok %2$s.",
                 "1 penggantian dimatikan. Tinjau untuk TikTok %2$s.");
     }

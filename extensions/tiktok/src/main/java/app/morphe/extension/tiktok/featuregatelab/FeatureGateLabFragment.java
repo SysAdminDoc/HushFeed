@@ -1205,28 +1205,31 @@ public final class FeatureGateLabFragment extends Fragment {
             // Eight whole sentences rather than a verb, a count and two tails glued together.
             // A table row holds a sentence: assembled here, the plural rule of the language
             // never got a say and neither did the order the pieces go in.
+            //
+            // None of them says restart. With overrides off nothing waits on one, and with
+            // them on the restart row above the list says it and carries the button.
             android.content.Context context = Utils.getContext();
             if (written == total) {
                 if (value) {
                     return L10n.quantity(context, written,
-                            "Forced 1 gate. Restart TikTok to apply.",
-                            "Forced %1$d gates. Restart TikTok to apply.");
+                            "Forced 1 gate",
+                            "Forced %1$d gates");
                 }
                 return L10n.quantity(context, written,
-                        "Turned off 1 gate. Restart TikTok to apply.",
-                        "Turned off %1$d gates. Restart TikTok to apply.");
+                        "Turned off 1 gate",
+                        "Turned off %1$d gates");
             }
             // Both forms take (written, total); the one form leaves the first unused. Saying
             // why the rest were skipped took a third line, which a toast cuts off.
             if (value) {
                 return L10n.quantity(context, written,
-                        "Forced 1 of %2$d gates. Restart TikTok to apply.",
-                        "Forced %1$d of %2$d gates. Restart TikTok to apply.",
+                        "Forced 1 of %2$d gates",
+                        "Forced %1$d of %2$d gates",
                         written, total);
             }
             return L10n.quantity(context, written,
-                    "Turned off 1 of %2$d gates. Restart TikTok to apply.",
-                    "Turned off %1$d of %2$d. Restart TikTok to apply.",
+                    "Turned off 1 of %2$d gates",
+                    "Turned off %1$d of %2$d gates",
                     written, total);
         });
         if (started) {
@@ -1250,12 +1253,12 @@ public final class FeatureGateLabFragment extends Fragment {
             android.content.Context context = Utils.getContext();
             if (dropped == total) {
                 return L10n.quantity(context, dropped,
-                        "Reset 1 gate. Restart TikTok to apply.",
-                        "Reset %1$d gates. Restart TikTok to apply.");
+                        "Reset 1 gate",
+                        "Reset %1$d gates");
             }
             return L10n.quantity(context, dropped,
-                    "Reset 1 of %2$d gates. Restart TikTok to apply.",
-                    "Reset %1$d of %2$d gates. Restart TikTok to apply.",
+                    "Reset 1 of %2$d gates",
+                    "Reset %1$d of %2$d gates",
                     dropped, total);
         });
         if (started) {
@@ -1338,7 +1341,7 @@ public final class FeatureGateLabFragment extends Fragment {
                         case 5: showPresets(); break;
                         default:
                             runLabChange(FeatureGateLabUndo::undo, L10n.t(getContext(),
-                                    "Lab settings put back. Restart TikTok to apply."));
+                                    "Lab settings put back"));
                             break;
                     }
                 })
@@ -1424,7 +1427,7 @@ public final class FeatureGateLabFragment extends Fragment {
             if (compatible) builder.setPositiveButton(L10n.t(getContext(), "Apply"), (ignored, which) ->
                     runLabChange(() -> FeatureGateLabUndo.applyPreset(build, id, snapshot.byIdentity),
                             L10n.t(getContext(), FeatureGateLabStore.masterEnabled()
-                                    ? "Preset applied. Restart TikTok to use it."
+                                    ? "Preset applied"
                                     : "Preset saved. Turn on overrides to use it.")));
             showStyled(builder.create());
         } catch (Exception error) {
@@ -1813,7 +1816,7 @@ public final class FeatureGateLabFragment extends Fragment {
         if (accepted > 0) {
             builder.setNegativeButton(L10n.t(activity, "Undo"), (ignored, which) -> runLabChange(
                     FeatureGateLabUndo::undo,
-                    L10n.t(activity, "Lab settings put back. Restart TikTok to apply.")));
+                    L10n.t(activity, "Lab settings put back")));
         }
         showStyled(builder.create());
     }
@@ -1917,12 +1920,11 @@ public final class FeatureGateLabFragment extends Fragment {
             // Over the rule limit there's no undo copy. The undo hint the other two carried took
             // a third line, and the menu still lists Undo last Lab change.
             if (allData && !undoAvailable) {
-                return L10n.t(Utils.getContext(),
-                        "Lab data reset with no undo. Restart TikTok to apply.");
+                return L10n.t(Utils.getContext(), "Lab data reset with no undo");
             }
             return allData
-                    ? L10n.t(Utils.getContext(), "Lab data reset. Restart TikTok to apply.")
-                    : L10n.t(Utils.getContext(), "Lab overrides reset. Restart TikTok to apply.");
+                    ? L10n.t(Utils.getContext(), "Lab data reset")
+                    : L10n.t(Utils.getContext(), "Lab overrides reset");
         });
     }
 

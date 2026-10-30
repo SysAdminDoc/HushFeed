@@ -1367,14 +1367,14 @@ final class L10nTranslationsTr {
                 "TikTok'un çeviriyi kaldırdığı hesaplar için. Video açıklamalarının altında ve altyazılarda Çeviriyi gör seçeneğini, ayrıca Ayarlar ve gizlilik altındaki Dil sayfasında çeviri satırlarını geri getirir. Videolarda görmek için TikTok'u yeniden başlat.");
         table.put("For accounts TikTok took translation away from. Brings back See translation under video descriptions and in captions. Restart TikTok to see the change.",
                 "TikTok'un çeviriyi kaldırdığı hesaplar için. Video açıklamalarının altında ve altyazılarda Çeviriyi gör seçeneğini geri getirir. Değişikliği görmek için TikTok'u yeniden başlat.");
-        table.put("Forced %1$d gates. Restart TikTok to apply.",
-                "%1$d kapı zorlandı. TikTok'u yeniden başlat.");
-        table.put("Forced %1$d of %2$d gates. Restart TikTok to apply.",
-                "%1$d/%2$d kapı zorlandı. TikTok'u yeniden başlat.");
-        table.put("Forced 1 gate. Restart TikTok to apply.",
-                "1 kapı zorlandı. TikTok'u yeniden başlat.");
-        table.put("Forced 1 of %2$d gates. Restart TikTok to apply.",
-                "1/%2$d kapı zorlandı. TikTok'u yeniden başlat.");
+        table.put("Forced %1$d gates",
+                "%1$d kapı zorlandı");
+        table.put("Forced %1$d of %2$d gates",
+                "%1$d/%2$d kapı zorlandı");
+        table.put("Forced 1 gate",
+                "1 kapı zorlandı");
+        table.put("Forced 1 of %2$d gates",
+                "1/%2$d kapı zorlandı");
         table.put("Forced result",
                 "Zorlanan sonuç");
         table.put("Forget saved videos",
@@ -2087,14 +2087,14 @@ final class L10nTranslationsTr {
                 "CANLI videoları");
         table.put("LIVE viewers range",
                 "CANLI izleyici aralığı");
-        table.put("Lab data reset with no undo. Restart TikTok to apply.",
-                "Lab kalıcı sıfırlandı. TikTok'u yeniden başlat.");
-        table.put("Lab data reset. Restart TikTok to apply.",
-                "Lab verileri sıfırlandı. TikTok'u yeniden başlat.");
-        table.put("Lab overrides reset. Restart TikTok to apply.",
-                "Geçersiz kılmalar silindi. TikTok'u yeniden başlat.");
-        table.put("Lab settings put back. Restart TikTok to apply.",
-                "Lab ayarları geri kondu. TikTok'u yeniden başlat.");
+        table.put("Lab data reset",
+                "Lab verileri sıfırlandı");
+        table.put("Lab data reset with no undo",
+                "Lab kalıcı sıfırlandı");
+        table.put("Lab overrides reset",
+                "Geçersiz kılmalar silindi");
+        table.put("Lab settings put back",
+                "Lab ayarları geri kondu");
         table.put("Language",
                 "Dil");
         table.put("Larger (1.25x)",
@@ -2833,8 +2833,8 @@ final class L10nTranslationsTr {
                 "Paylaşım");
         table.put("Prefer H.264 video",
                 "H.264 videoyu tercih et");
-        table.put("Preset applied. Restart TikTok to use it.",
-                "Hazır ayar uygulandı. TikTok'u yeniden başlat.");
+        table.put("Preset applied",
+                "Hazır ayar uygulandı");
         table.put("Preset doesn't match the gates. Nothing changed.",
                 "Hazır ayar kapılarla eşleşmiyor. Değişiklik yok.");
         table.put("Preset saved. Turn on overrides to use it.",
@@ -3041,14 +3041,14 @@ final class L10nTranslationsTr {
                 "Araştırılmış değerler");
         table.put("Reset",
                 "Sıfırla");
-        table.put("Reset %1$d gates. Restart TikTok to apply.",
-                "%1$d kapı sıfırlandı. TikTok'u yeniden başlat.");
-        table.put("Reset %1$d of %2$d gates. Restart TikTok to apply.",
-                "%1$d/%2$d kapı sıfırlandı. TikTok'u yeniden başlat.");
-        table.put("Reset 1 gate. Restart TikTok to apply.",
-                "1 kapı sıfırlandı. TikTok'u yeniden başlat.");
-        table.put("Reset 1 of %2$d gates. Restart TikTok to apply.",
-                "1/%2$d kapı sıfırlandı. TikTok'u yeniden başlat.");
+        table.put("Reset %1$d gates",
+                "%1$d kapı sıfırlandı");
+        table.put("Reset %1$d of %2$d gates",
+                "%1$d/%2$d kapı sıfırlandı");
+        table.put("Reset 1 gate",
+                "1 kapı sıfırlandı");
+        table.put("Reset 1 of %2$d gates",
+                "1/%2$d kapı sıfırlandı");
         table.put("Reset didn't finish. Some settings may still be changed.",
                 "Sıfırlama tamamlanmadı. Bazı ayarlar yine de değişmiş olabilir.");
         table.put("Reset didn't finish. Some settings may still be changed. Use Undo to put them back.",
@@ -4472,16 +4472,16 @@ final class L10nTranslationsTr {
                 "Geçersiz kılmaları aç");
         table.put("Turn the music disc at the bottom of the right column while a video plays, the way TikTok used to.",
                 "Video oynarken sağ sütunun altındaki müzik diskini TikTok'un eskiden yaptığı gibi döndür.");
-        table.put("Turned off %1$d gates. Restart TikTok to apply.",
-                "%1$d kapı kapatıldı. TikTok'u yeniden başlat.");
-        table.put("Turned off %1$d of %2$d. Restart TikTok to apply.",
-                "%1$d/%2$d kapı kapatıldı. TikTok'u yeniden başlat.");
+        table.put("Turned off %1$d gates",
+                "%1$d kapı kapatıldı");
+        table.put("Turned off %1$d of %2$d gates",
+                "%1$d/%2$d kapı kapatıldı");
         table.put("Turned off %1$d overrides. Check them for TikTok %2$s.",
                 "%1$d geçersiz kılma kapalı. TikTok %2$s için incele.");
-        table.put("Turned off 1 gate. Restart TikTok to apply.",
-                "1 kapı kapatıldı. TikTok'u yeniden başlat.");
-        table.put("Turned off 1 of %2$d gates. Restart TikTok to apply.",
-                "1/%2$d kapı kapatıldı. TikTok'u yeniden başlat.");
+        table.put("Turned off 1 gate",
+                "1 kapı kapatıldı");
+        table.put("Turned off 1 of %2$d gates",
+                "1/%2$d kapı kapatıldı");
         table.put("Turned off 1 override. Check it for TikTok %2$s.",
                 "1 geçersiz kılma kapalı. TikTok %2$s için incele.");
     }

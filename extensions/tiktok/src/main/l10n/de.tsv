@@ -506,10 +506,10 @@ Following	Gefolgt
 For You	Für dich
 Works only with YTDLnis (com.deniscerri.ytdl). Picks audio or video when the save button sends it a link.	Funktioniert nur mit YTDLnis (com.deniscerri.ytdl). Wählt Audio oder Video, wenn die Speichern-Schaltfläche ihm einen Link schickt.
 Works only with YTDLnis (com.deniscerri.ytdl). Starts the download in the background without showing its download card.	Funktioniert nur mit YTDLnis (com.deniscerri.ytdl). Startet den Download im Hintergrund, ohne seine Download-Karte zu zeigen.
-Forced %1$d of %2$d gates. Restart TikTok to apply.	%1$d von %2$d erzwungen. TikTok neu starten.
-Forced %1$d gates. Restart TikTok to apply.	%1$d Schalter erzwungen. TikTok neu starten.
-Forced 1 of %2$d gates. Restart TikTok to apply.	1 von %2$d erzwungen. TikTok neu starten.
-Forced 1 gate. Restart TikTok to apply.	1 Schalter erzwungen. TikTok neu starten.
+Forced %1$d of %2$d gates	%1$d von %2$d erzwungen
+Forced %1$d gates	%1$d Schalter erzwungen
+Forced 1 of %2$d gates	1 von %2$d erzwungen
+Forced 1 gate	1 Schalter erzwungen
 Forced result	Erzwungenes Ergebnis
 Forget seen videos after	Gesehene Videos vergessen nach
 Forget the %1$s seen videos.	Die %1$s gesehenen Videos vergessen.
@@ -695,9 +695,9 @@ LIVE replays	LIVE-Wiederholungen
 LIVE settings	Live-Einstellungen
 LIVE share actions	Share-Aktionen bei LIVE
 LIVE videos	LIVE-Videos
-Lab data reset. Restart TikTok to apply.	Lab-Daten zurückgesetzt. TikTok neu starten.
-Lab data reset with no undo. Restart TikTok to apply.	Lab endgültig zurückgesetzt. TikTok neu starten.
-Lab overrides reset. Restart TikTok to apply.	Überschreibungen gelöscht. TikTok neu starten.
+Lab data reset	Lab-Daten zurückgesetzt
+Lab data reset with no undo	Lab endgültig zurückgesetzt
+Lab overrides reset	Überschreibungen gelöscht
 Larger (1.25x)	Größer (1,25x)
 Last original value	Letzter Originalwert
 Last recording: %1$d gates.	Letzte Aufzeichnung: %1$d Gates.
@@ -918,10 +918,10 @@ Required	Erforderlich
 Researched	Recherchiert
 Researched values	Recherchierte Werte
 Reset	Zurücksetzen
-Reset %1$d of %2$d gates. Restart TikTok to apply.	%1$d/%2$d auf Standard. TikTok neu starten.
-Reset %1$d gates. Restart TikTok to apply.	%1$d Schalter auf Standard. TikTok neu starten.
-Reset 1 of %2$d gates. Restart TikTok to apply.	1 von %2$d auf Standard. TikTok neu starten.
-Reset 1 gate. Restart TikTok to apply.	1 Schalter auf Standard. TikTok neu starten.
+Reset %1$d of %2$d gates	%1$d/%2$d auf Standard
+Reset %1$d gates	%1$d Schalter auf Standard
+Reset 1 of %2$d gates	1 von %2$d auf Standard
+Reset 1 gate	1 Schalter auf Standard
 Reset override	Überschreibung zurücksetzen
 Reset position	Position zurücksetzen
 Reset settings	Einstellungen zurücksetzen
@@ -938,7 +938,7 @@ Undo didn't finish. Some settings may still be changed. Try Undo again.	Rückgä
 Undo didn't finish. Some settings may still be changed.	Rückgängig wurde nicht abgeschlossen. Einige Einstellungen können noch geändert sein.
 Restore failed. Some settings may still be changed. Use Undo to put them back.	Wiederherstellung fehlgeschlagen. Einige Einstellungen können noch geändert sein. Nutze „Rückgängig“, um sie zurückzuholen.
 Restore settings	Einstellungen wiederherstellen
-Lab settings put back. Restart TikTok to apply.	Lab-Einstellungen wieder da. TikTok neu starten.
+Lab settings put back	Lab-Einstellungen wieder da
 Restoring your settings	Einstellungen werden wiederhergestellt
 Resume videos after scrolling	Videos nach dem Scrollen fortsetzen
 Retry	Erneut versuchen
@@ -1265,10 +1265,10 @@ Try again, or go back to TikTok.	Versuche es erneut oder kehre zu TikTok zurück
 Turn on %1$s first.	Zuerst %1$s einschalten.
 Put %1$s in %2$s first.	Trag zuerst %1$s in %2$s ein.
 Turn on overrides	Überschreibungen einschalten
-Turned off %1$d of %2$d. Restart TikTok to apply.	%1$d von %2$d deaktiviert. TikTok neu starten.
-Turned off %1$d gates. Restart TikTok to apply.	%1$d Schalter deaktiviert. TikTok neu starten.
-Turned off 1 of %2$d gates. Restart TikTok to apply.	1 von %2$d deaktiviert. TikTok neu starten.
-Turned off 1 gate. Restart TikTok to apply.	1 Schalter deaktiviert. TikTok neu starten.
+Turned off %1$d of %2$d gates	%1$d von %2$d deaktiviert
+Turned off %1$d gates	%1$d Schalter deaktiviert
+Turned off 1 of %2$d gates	1 von %2$d deaktiviert
+Turned off 1 gate	1 Schalter deaktiviert
 Two letters, like us, gb or jp.	Zwei Buchstaben, etwa us, gb oder jp.
 Type	Typ
 Start typing	Tippe zum Suchen
@@ -1466,7 +1466,7 @@ The presets couldn't load. Open the Lab again.	Vorlagen nicht geladen. Öffne da
 Apply enables these overrides. Undo last Lab change puts your previous rules back until you change anything else in the Lab.	Anwenden aktiviert diese Überschreibungen. „Letzte Lab-Änderung rückgängig machen“ holt deine bisherigen Regeln zurück, bis du im Lab etwas anderes änderst.
 Apply saves these overrides. Turn on overrides in the Lab to use them. Turning them on is a Lab change too, so after that Undo turns them off rather than putting your previous rules back.	Anwenden speichert diese Überschreibungen. Aktiviere Überschreibungen im Lab, um sie zu nutzen. Das Einschalten ist auch eine Lab-Änderung, danach schaltet „Rückgängig“ sie also wieder aus, statt deine bisherigen Regeln zurückzuholen.
 This preset isn't available for your installed TikTok version.	Diese Vorlage ist für deine installierte TikTok-Version nicht verfügbar.
-Preset applied. Restart TikTok to use it.	Vorlage angewendet. TikTok neu starten.
+Preset applied	Vorlage angewendet
 Preset saved. Turn on overrides to use it.	Vorlage gespeichert. Überschreiben einschalten.
 Preset doesn't match the gates. Nothing changed.	Vorlage passt nicht zu den Gates. Nichts geändert.
 About overrides	Über Überschreibungen

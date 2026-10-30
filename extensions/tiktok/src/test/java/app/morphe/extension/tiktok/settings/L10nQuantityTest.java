@@ -116,6 +116,46 @@ public class L10nQuantityTest {
                 "Reset 1 of %2$d gates.", "Reset %1$d of %2$d gates.", 3, 4));
     }
 
+    /**
+     * The Lab's change toasts are one sentence in every language. They used to end in a restart
+     * sentence, which was wrong with overrides off, and the Lab's restart row says it otherwise.
+     * A translation that keeps its old tail, or a plural row left behind, fails here.
+     */
+    @Test
+    public void theLabsChangeToastsCarryNoRestartInAnyLanguage() {
+        String[] keys = {
+                "Forced 1 gate", "Forced %1$d gates", "Forced 1 of %2$d gates", "Forced %1$d of %2$d gates",
+                "Turned off 1 gate", "Turned off %1$d gates", "Turned off 1 of %2$d gates",
+                "Turned off %1$d of %2$d gates", "Reset 1 gate", "Reset %1$d gates",
+                "Reset 1 of %2$d gates", "Reset %1$d of %2$d gates", "Lab settings put back",
+                "Preset applied", "Lab data reset with no undo", "Lab data reset", "Lab overrides reset"};
+        java.util.List<String> problems = new java.util.ArrayList<>();
+        for (String language : L10nTranslations.LANGUAGES) {
+            Map<String, String> table = L10nTranslations.of(language);
+            for (Map.Entry<String, String> row : table.entrySet()) {
+                String key = row.getKey();
+                int bar = key.indexOf('|');
+                String base = bar < 0 ? key : key.substring(0, bar);
+                boolean lab = java.util.Arrays.asList(keys).contains(base);
+                if (!lab && base.matches(
+                        "(Forced|Turned off|Reset|Lab|Preset) [^.]*\\. Restart TikTok to (apply|use it)\\.")) {
+                    problems.add(language + " keeps the old row " + key);
+                }
+                if (!lab) continue;
+                String text = row.getValue();
+                if (text.contains("TikTok") || text.endsWith(".") || text.endsWith("。")
+                        || text.contains(". ") || text.contains("。")) {
+                    problems.add(language + " " + key + ": " + text);
+                }
+            }
+            for (String key : keys) {
+                String text = table.get(key);
+                if (text == null || text.isEmpty()) problems.add(language + " has no " + key);
+            }
+        }
+        assertEquals(String.join("\n", problems), 0, problems.size());
+    }
+
     @Test @Config(sdk = {23, 24, 28}, qualifiers = "in")
     public void indonesianHasNoOneFormSoOneTakesTheOtherRow() {
         Context context = RuntimeEnvironment.getApplication();

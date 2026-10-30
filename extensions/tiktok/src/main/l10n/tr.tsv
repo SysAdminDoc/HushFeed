@@ -508,10 +508,10 @@ Following	Takip Edilenler
 For You	Senin İçin
 Works only with YTDLnis (com.deniscerri.ytdl). Picks audio or video when the save button sends it a link.	Yalnızca YTDLnis (com.deniscerri.ytdl) ile çalışır. Kaydet düğmesi ona bağlantı gönderdiğinde ses veya video seçer.
 Works only with YTDLnis (com.deniscerri.ytdl). Starts the download in the background without showing its download card.	Yalnızca YTDLnis (com.deniscerri.ytdl) ile çalışır. İndirmeyi indirme kartını göstermeden arka planda başlatır.
-Forced %1$d of %2$d gates. Restart TikTok to apply.	%1$d/%2$d kapı zorlandı. TikTok'u yeniden başlat.
-Forced %1$d gates. Restart TikTok to apply.	%1$d kapı zorlandı. TikTok'u yeniden başlat.
-Forced 1 of %2$d gates. Restart TikTok to apply.	1/%2$d kapı zorlandı. TikTok'u yeniden başlat.
-Forced 1 gate. Restart TikTok to apply.	1 kapı zorlandı. TikTok'u yeniden başlat.
+Forced %1$d of %2$d gates	%1$d/%2$d kapı zorlandı
+Forced %1$d gates	%1$d kapı zorlandı
+Forced 1 of %2$d gates	1/%2$d kapı zorlandı
+Forced 1 gate	1 kapı zorlandı
 Forced result	Zorlanan sonuç
 Forget seen videos after	Görülen videoları şu süreden sonra unut
 Forget the %1$s seen videos.	Görülen %1$s videoyu unut.
@@ -710,9 +710,9 @@ LIVE replays	CANLI tekrarları
 LIVE settings	CANLI ayarları
 LIVE share actions	CANLI paylaşım eylemleri
 LIVE videos	CANLI videoları
-Lab data reset. Restart TikTok to apply.	Lab verileri sıfırlandı. TikTok'u yeniden başlat.
-Lab data reset with no undo. Restart TikTok to apply.	Lab kalıcı sıfırlandı. TikTok'u yeniden başlat.
-Lab overrides reset. Restart TikTok to apply.	Geçersiz kılmalar silindi. TikTok'u yeniden başlat.
+Lab data reset	Lab verileri sıfırlandı
+Lab data reset with no undo	Lab kalıcı sıfırlandı
+Lab overrides reset	Geçersiz kılmalar silindi
 Larger (1.25x)	Daha büyük (1.25x)
 Last original value	Son özgün değer
 Last recording: %1$d gates.	Son kayıt: %1$d kapı.
@@ -936,10 +936,10 @@ Required	Gerekli
 Researched	Araştırıldı
 Researched values	Araştırılmış değerler
 Reset	Sıfırla
-Reset %1$d of %2$d gates. Restart TikTok to apply.	%1$d/%2$d kapı sıfırlandı. TikTok'u yeniden başlat.
-Reset %1$d gates. Restart TikTok to apply.	%1$d kapı sıfırlandı. TikTok'u yeniden başlat.
-Reset 1 of %2$d gates. Restart TikTok to apply.	1/%2$d kapı sıfırlandı. TikTok'u yeniden başlat.
-Reset 1 gate. Restart TikTok to apply.	1 kapı sıfırlandı. TikTok'u yeniden başlat.
+Reset %1$d of %2$d gates	%1$d/%2$d kapı sıfırlandı
+Reset %1$d gates	%1$d kapı sıfırlandı
+Reset 1 of %2$d gates	1/%2$d kapı sıfırlandı
+Reset 1 gate	1 kapı sıfırlandı
 Reset override	Geçersiz kılmayı sıfırla
 Reset position	Konumu sıfırla
 Reset settings	Ayarları sıfırla
@@ -956,7 +956,7 @@ Undo didn't finish. Some settings may still be changed. Try Undo again.	Geri alm
 Undo didn't finish. Some settings may still be changed.	Geri alma tamamlanmadı. Bazı ayarlar yine de değişmiş olabilir.
 Restore failed. Some settings may still be changed. Use Undo to put them back.	Geri yükleme başarısız oldu. Bazı ayarlar yine de değişmiş olabilir. Geri koymak için Geri al'ı kullan.
 Restore settings	Ayarları geri yükle
-Lab settings put back. Restart TikTok to apply.	Lab ayarları geri kondu. TikTok'u yeniden başlat.
+Lab settings put back	Lab ayarları geri kondu
 Restoring your settings	Ayarların geri yükleniyor
 Resume videos after scrolling	Kaydırdıktan sonra videoları sürdür
 Retry	Yeniden dene
@@ -1284,10 +1284,10 @@ Try again, or go back to TikTok.	Yeniden dene ya da TikTok'a geri dön.
 Turn on %1$s first.	Önce %1$s ayarını aç.
 Put %1$s in %2$s first.	Önce %2$s alanına %1$s yaz.
 Turn on overrides	Geçersiz kılmaları aç
-Turned off %1$d of %2$d. Restart TikTok to apply.	%1$d/%2$d kapı kapatıldı. TikTok'u yeniden başlat.
-Turned off %1$d gates. Restart TikTok to apply.	%1$d kapı kapatıldı. TikTok'u yeniden başlat.
-Turned off 1 of %2$d gates. Restart TikTok to apply.	1/%2$d kapı kapatıldı. TikTok'u yeniden başlat.
-Turned off 1 gate. Restart TikTok to apply.	1 kapı kapatıldı. TikTok'u yeniden başlat.
+Turned off %1$d of %2$d gates	%1$d/%2$d kapı kapatıldı
+Turned off %1$d gates	%1$d kapı kapatıldı
+Turned off 1 of %2$d gates	1/%2$d kapı kapatıldı
+Turned off 1 gate	1 kapı kapatıldı
 Two letters, like us, gb or jp.	us, gb veya jp gibi iki harf.
 Type	Tür
 Unavailable	Kullanılamıyor
@@ -1463,7 +1463,7 @@ The presets couldn't load. Open the Lab again.	Hazır ayarlar yüklenemedi. Labo
 Apply enables these overrides. Undo last Lab change puts your previous rules back until you change anything else in the Lab.	Uygula bu geçersiz kılmaları etkinleştirir. Son Lab değişikliğini geri al, Lab'da başka bir şey değiştirene kadar önceki kurallarını geri getirir.
 Apply saves these overrides. Turn on overrides in the Lab to use them. Turning them on is a Lab change too, so after that Undo turns them off rather than putting your previous rules back.	Uygula bu geçersiz kılmaları kaydeder. Kullanmak için Lab'da geçersiz kılmaları aç. Onları açmak da bir Lab değişikliğidir, bu yüzden ondan sonra Geri al önceki kurallarını geri getirmek yerine onları kapatır.
 This preset isn't available for your installed TikTok version.	Bu hazır ayar, yüklü TikTok sürümünüz için kullanılamıyor.
-Preset applied. Restart TikTok to use it.	Hazır ayar uygulandı. TikTok'u yeniden başlat.
+Preset applied	Hazır ayar uygulandı
 Preset saved. Turn on overrides to use it.	Hazır ayar kaydedildi. Geçersiz kılmaları aç.
 Preset doesn't match the gates. Nothing changed.	Hazır ayar kapılarla eşleşmiyor. Değişiklik yok.
 About overrides	Geçersiz kılmalar hakkında

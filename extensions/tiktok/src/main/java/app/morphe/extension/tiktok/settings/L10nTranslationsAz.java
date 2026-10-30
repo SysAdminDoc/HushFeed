@@ -1367,14 +1367,14 @@ final class L10nTranslationsAz {
                 "TikTok-un tərcüməni götürdüyü hesablar üçün. Video təsvirlərinin altında və altyazılarda See translation-ı, həmçinin Settings and privacy altındakı Language səhifəsində tərcümə sətirlərini geri qaytarır. Videolarda görmək üçün TikTok-u yenidən başladın.");
         table.put("For accounts TikTok took translation away from. Brings back See translation under video descriptions and in captions. Restart TikTok to see the change.",
                 "TikTok-un tərcüməni götürdüyü hesablar üçün. Video təsvirlərinin altında və altyazılarda See translation-ı geri qaytarır. Dəyişikliyi görmək üçün TikTok-u yenidən başladın.");
-        table.put("Forced %1$d gates. Restart TikTok to apply.",
-                "%1$d qapı məcbur edildi. TikTok-u yenidən başladın.");
-        table.put("Forced %1$d of %2$d gates. Restart TikTok to apply.",
-                "%1$d/%2$d məcbur edildi. TikTok-u yenidən başladın.");
-        table.put("Forced 1 gate. Restart TikTok to apply.",
-                "1 qapı məcbur edildi. TikTok-u yenidən başladın.");
-        table.put("Forced 1 of %2$d gates. Restart TikTok to apply.",
-                "1/%2$d məcbur edildi. TikTok-u yenidən başladın.");
+        table.put("Forced %1$d gates",
+                "%1$d qapı məcbur edildi");
+        table.put("Forced %1$d of %2$d gates",
+                "%1$d/%2$d məcbur edildi");
+        table.put("Forced 1 gate",
+                "1 qapı məcbur edildi");
+        table.put("Forced 1 of %2$d gates",
+                "1/%2$d məcbur edildi");
         table.put("Forced result",
                 "Məcburi nəticə");
         table.put("Forget saved videos",
@@ -2087,14 +2087,14 @@ final class L10nTranslationsAz {
                 "LIVE videolar");
         table.put("LIVE viewers range",
                 "LIVE izləyici aralığı");
-        table.put("Lab data reset with no undo. Restart TikTok to apply.",
-                "Lab birdəfəlik sıfırlandı. TikTok-u yenidən başladın.");
-        table.put("Lab data reset. Restart TikTok to apply.",
-                "Lab məlumatları sıfırlandı. TikTok-u yenidən başladın.");
-        table.put("Lab overrides reset. Restart TikTok to apply.",
-                "Lab əvəzləmələri sıfırlandı. TikTok-u yenidən başladın.");
-        table.put("Lab settings put back. Restart TikTok to apply.",
-                "Lab ayarları qaytarıldı. TikTok-u yenidən başladın.");
+        table.put("Lab data reset",
+                "Lab məlumatları sıfırlandı");
+        table.put("Lab data reset with no undo",
+                "Lab birdəfəlik sıfırlandı");
+        table.put("Lab overrides reset",
+                "Lab əvəzləmələri sıfırlandı");
+        table.put("Lab settings put back",
+                "Lab ayarları qaytarıldı");
         table.put("Language",
                 "Dil");
         table.put("Larger (1.25x)",
@@ -2833,8 +2833,8 @@ final class L10nTranslationsAz {
                 "Paylaşım");
         table.put("Prefer H.264 video",
                 "H.264 videoya üstünlük ver");
-        table.put("Preset applied. Restart TikTok to use it.",
-                "Hazır ayar tətbiq edildi. TikTok-u yenidən başladın.");
+        table.put("Preset applied",
+                "Hazır ayar tətbiq edildi");
         table.put("Preset doesn't match the gates. Nothing changed.",
                 "Hazır ayar qapılara uyğun deyil. Dəyişiklik yoxdur.");
         table.put("Preset saved. Turn on overrides to use it.",
@@ -3041,14 +3041,14 @@ final class L10nTranslationsAz {
                 "Araşdırılmış dəyərlər");
         table.put("Reset",
                 "Sıfırlayın");
-        table.put("Reset %1$d gates. Restart TikTok to apply.",
-                "%1$d qapı sıfırlandı. TikTok-u yenidən başladın.");
-        table.put("Reset %1$d of %2$d gates. Restart TikTok to apply.",
-                "%1$d/%2$d sıfırlandı. TikTok-u yenidən başladın.");
-        table.put("Reset 1 gate. Restart TikTok to apply.",
-                "1 qapı sıfırlandı. TikTok-u yenidən başladın.");
-        table.put("Reset 1 of %2$d gates. Restart TikTok to apply.",
-                "1/%2$d sıfırlandı. TikTok-u yenidən başladın.");
+        table.put("Reset %1$d gates",
+                "%1$d qapı sıfırlandı");
+        table.put("Reset %1$d of %2$d gates",
+                "%1$d/%2$d sıfırlandı");
+        table.put("Reset 1 gate",
+                "1 qapı sıfırlandı");
+        table.put("Reset 1 of %2$d gates",
+                "1/%2$d sıfırlandı");
         table.put("Reset didn't finish. Some settings may still be changed.",
                 "Sıfırlama tamamlanmadı. Bəzi ayarlar hələ də dəyişmiş ola bilər.");
         table.put("Reset didn't finish. Some settings may still be changed. Use Undo to put them back.",
@@ -4472,16 +4472,16 @@ final class L10nTranslationsAz {
                 "Əvəzləmələri yandırın");
         table.put("Turn the music disc at the bottom of the right column while a video plays, the way TikTok used to.",
                 "Video oynayarkən sağ sütunun altındakı musiqi diskini TikTok-un əvvəllər etdiyi kimi fırladın.");
-        table.put("Turned off %1$d gates. Restart TikTok to apply.",
-                "%1$d qapı söndürüldü. TikTok-u yenidən başladın.");
-        table.put("Turned off %1$d of %2$d. Restart TikTok to apply.",
-                "%1$d/%2$d söndürüldü. TikTok-u yenidən başladın.");
+        table.put("Turned off %1$d gates",
+                "%1$d qapı söndürüldü");
+        table.put("Turned off %1$d of %2$d gates",
+                "%1$d/%2$d söndürüldü");
         table.put("Turned off %1$d overrides. Check them for TikTok %2$s.",
                 "%1$d əvəzləmə söndürüldü. TikTok %2$s üçün yoxlayın.");
-        table.put("Turned off 1 gate. Restart TikTok to apply.",
-                "1 qapı söndürüldü. TikTok-u yenidən başladın.");
-        table.put("Turned off 1 of %2$d gates. Restart TikTok to apply.",
-                "1/%2$d söndürüldü. TikTok-u yenidən başladın.");
+        table.put("Turned off 1 gate",
+                "1 qapı söndürüldü");
+        table.put("Turned off 1 of %2$d gates",
+                "1/%2$d söndürüldü");
         table.put("Turned off 1 override. Check it for TikTok %2$s.",
                 "1 əvəzləmə söndürüldü. TikTok %2$s üçün yoxlayın.");
     }

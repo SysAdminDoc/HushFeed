@@ -610,10 +610,10 @@ Follows you,跟着你
 "For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to a quarter, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes.",对于OLED屏幕。 5 秒没有触摸后，视频上的按钮、标题和选项卡会变暗四分之一，你的下一次触摸会将它们恢复。 Shift 还会每 2 分钟将信息流上的所有内容移动几个像素.
 For You,为你
 "For You, Following and the other feed tabs stay behind a calm panel and won't swipe. Messages, profiles and search work as usual, a link to one video still opens that video, and the app opens on Inbox instead of the feed.",对于你来说，关注和其他信息流选项卡保留在平静的面板后面并且不会滑动。消息、个人资料和搜索照常工作，指向一个视频的链接仍然会打开该视频，并且应用程序会在收件箱而不是信息流中打开.
-Forced %1$d of %2$d gates. Restart TikTok to apply.,已强制 %2$d 个门中的 %1$d 个。重启 TikTok 以生效.
-Forced %1$d gates. Restart TikTok to apply.,已强制 %1$d 个门。重启 TikTok 以生效.
-Forced 1 of %2$d gates. Restart TikTok to apply.,已强制 %2$d 个门中的 1 个。重启 TikTok 以生效.
-Forced 1 gate. Restart TikTok to apply.,已强制 1 个门。重启 TikTok 以生效.
+Forced %1$d of %2$d gates,已强制 %2$d 个门中的 %1$d 个
+Forced %1$d gates,已强制 %1$d 个门
+Forced 1 of %2$d gates,已强制 %2$d 个门中的 1 个
+Forced 1 gate,已强制 1 个门
 Forced result,强制结果
 Forget saved videos,忘记保存的视频
 Forget seen videos after,忘记看过的视频
@@ -939,10 +939,10 @@ LIVE settings,LIVE 设置
 LIVE share actions,LIVE 分享操作
 LIVE videos,LIVE 视频
 LIVE viewers range,LIVE 观众范围
-Lab data reset. Restart TikTok to apply.,实验室数据已重置。重启 TikTok 以生效.
-Lab data reset with no undo. Restart TikTok to apply.,实验室数据已重置，无法撤销。重启 TikTok 以生效.
-Lab overrides reset. Restart TikTok to apply.,实验室覆盖已重置。重启 TikTok 以生效.
-Lab settings put back. Restart TikTok to apply.,实验室设置已恢复。重启 TikTok 以生效.
+Lab data reset,实验室数据已重置
+Lab data reset with no undo,实验室数据已重置，无法撤销
+Lab overrides reset,实验室覆盖已重置
+Lab settings put back,实验室设置已恢复
 Language,语言
 Larger (1.25x),更大 (1.25x)
 Last change put back. Restart TikTok to apply all changes.,上次更改已放回。重新启动 TikTok 以应用所有更改.
@@ -1268,7 +1268,7 @@ Hide the AI Cast button,隐藏 AI Cast 按钮
 Takes TikTok's AI Cast button off the camera's side toolbar. Open the camera again to see the change.,从相机侧边工具栏移除 TikTok 的 AI Cast 按钮。重新打开相机即可看到变化.
 Posting,发帖
 Prefer H.264 video,更喜欢 H.264 视频
-Preset applied. Restart TikTok to use it.,应用预设。重新启动 TikTok 即可使用它.
+Preset applied,预设已应用
 Preset saved. Turn on overrides to use it.,预设已保存。打开覆盖即可使用.
 Press and hold a comment to find Block this commenter in its menu. Their comments leave the list right away and an undo banner follows.,按住评论可在其菜单中找到“阻止此评论者”。他们的评论立即离开列表，随后出现撤消横幅.
 Press and hold a profile picture to save the full size original to your photo destination.,按住个人资料图片可将全尺寸原件保存到你的照片目的地.
@@ -1359,10 +1359,10 @@ Required,必填
 Researched,研究过
 Researched values,研究值
 Reset,重置
-Reset %1$d of %2$d gates. Restart TikTok to apply.,已重置 %2$d 个门中的 %1$d 个。重启 TikTok 以生效.
-Reset %1$d gates. Restart TikTok to apply.,已重置 %1$d 个门。重启 TikTok 以生效.
-Reset 1 of %2$d gates. Restart TikTok to apply.,已重置 %2$d 个门中的 1 个。重启 TikTok 以生效.
-Reset 1 gate. Restart TikTok to apply.,已重置 1 个门。重启 TikTok 以生效.
+Reset %1$d of %2$d gates,已重置 %2$d 个门中的 %1$d 个
+Reset %1$d gates,已重置 %1$d 个门
+Reset 1 of %2$d gates,已重置 %2$d 个门中的 1 个
+Reset 1 gate,已重置 1 个门
 Reset didn't finish. Some settings may still be changed.,重置未完成。某些设置可能仍会更改.
 Reset didn't finish. Some settings may still be changed. Use Undo to put them back.,重置未完成。某些设置可能仍会更改。使用撤消将它们放回去.
 Reset override,重置覆盖
@@ -2059,10 +2059,10 @@ Turn on %1$s first.,首先打开 %1$s.
 Turn on Keep a streak going first,首先打开“保持连胜”
 Turn on overrides,打开覆盖
 "Turn the music disc at the bottom of the right column while a video plays, the way TikTok used to.",播放视频时，转动右栏底部的音乐光盘，就像 TikTok 以前那样.
-Turned off %1$d of %2$d. Restart TikTok to apply.,已关闭 %2$d 个门中的 %1$d 个。重启 TikTok 以生效.
-Turned off %1$d gates. Restart TikTok to apply.,已关闭 %1$d 个门。重启 TikTok 以生效.
-Turned off 1 of %2$d gates. Restart TikTok to apply.,已关闭 %2$d 个门中的 1 个。重启 TikTok 以生效.
-Turned off 1 gate. Restart TikTok to apply.,已关闭 1 个门。重启 TikTok 以生效.
+Turned off %1$d of %2$d gates,已关闭 %2$d 个门中的 %1$d 个
+Turned off %1$d gates,已关闭 %1$d 个门
+Turned off 1 of %2$d gates,已关闭 %2$d 个门中的 1 个
+Turned off 1 gate,已关闭 1 个门
 "Turns off TikTok's notification service, so nothing it sends reaches your notification shade and it can't wake your phone. You won't hear about new messages until you open TikTok. Notifications hidden while this is on don't come back. Ongoing ones like media controls stay.",关闭 TikTok 的通知服务，因此它发送的任何内容都不会到达你的通知栏，并且无法唤醒你的手机。在打开 TikTok 之前，你不会听到新消息。开启此功能时隐藏的通知不会再出现。诸如媒体控制之类的持续性措施将保留.
 Turns off at %1$s,于 %1$s 关闭
 "Two letters, like us, gb or jp.",两个字母，例如 us，gb 或 jp.

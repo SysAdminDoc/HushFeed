@@ -554,16 +554,16 @@ Following	Подписки
 For You	Рекомендации
 Works only with YTDLnis (com.deniscerri.ytdl). Picks audio or video when the save button sends it a link.	Работает только с YTDLnis (com.deniscerri.ytdl). Выбирает аудио или видео, когда кнопка сохранения отправляет ему ссылку.
 Works only with YTDLnis (com.deniscerri.ytdl). Starts the download in the background without showing its download card.	Работает только с YTDLnis (com.deniscerri.ytdl). Запускает загрузку в фоне, не показывая его карточку загрузки.
-Forced %1$d of %2$d gates. Restart TikTok to apply.	Включено: %1$d из %2$d. Перезапустите TikTok.
-Forced %1$d of %2$d gates. Restart TikTok to apply.|one	Включено: %1$d из %2$d. Перезапустите TikTok.
-Forced %1$d of %2$d gates. Restart TikTok to apply.|few	Включено: %1$d из %2$d. Перезапустите TikTok.
-Forced %1$d of %2$d gates. Restart TikTok to apply.|many	Включено: %1$d из %2$d. Перезапустите TikTok.
-Forced %1$d gates. Restart TikTok to apply.	Переключателей включено: %1$d. Перезапустите TikTok.
-Forced %1$d gates. Restart TikTok to apply.|one	Переключателей включено: %1$d. Перезапустите TikTok.
-Forced %1$d gates. Restart TikTok to apply.|few	Переключателей включено: %1$d. Перезапустите TikTok.
-Forced %1$d gates. Restart TikTok to apply.|many	Переключателей включено: %1$d. Перезапустите TikTok.
-Forced 1 of %2$d gates. Restart TikTok to apply.	Включено: 1 из %2$d. Перезапустите TikTok.
-Forced 1 gate. Restart TikTok to apply.	Включён 1 переключатель. Перезапустите TikTok.
+Forced %1$d of %2$d gates	Включено: %1$d из %2$d
+Forced %1$d of %2$d gates|one	Включено: %1$d из %2$d
+Forced %1$d of %2$d gates|few	Включено: %1$d из %2$d
+Forced %1$d of %2$d gates|many	Включено: %1$d из %2$d
+Forced %1$d gates	Переключателей включено: %1$d
+Forced %1$d gates|one	Переключателей включено: %1$d
+Forced %1$d gates|few	Переключателей включено: %1$d
+Forced %1$d gates|many	Переключателей включено: %1$d
+Forced 1 of %2$d gates	Включено: 1 из %2$d
+Forced 1 gate	Включён 1 переключатель
 Forced result	Принудительный результат
 Forget seen videos after	Забывать просмотренные видео через
 Forget the %1$s seen videos.	Забыть %1$s просмотренных видео.
@@ -752,9 +752,9 @@ LIVE replays	Повторы LIVE
 LIVE settings	Настройки LIVE
 LIVE share actions	Действия «Поделиться» в LIVE
 LIVE videos	Видео LIVE
-Lab data reset. Restart TikTok to apply.	Данные Lab сброшены. Перезапустите TikTok.
-Lab data reset with no undo. Restart TikTok to apply.	Lab сброшен без отмены. Перезапустите TikTok.
-Lab overrides reset. Restart TikTok to apply.	Переопределения сброшены. Перезапустите TikTok.
+Lab data reset	Данные Lab сброшены
+Lab data reset with no undo	Lab сброшен без отмены
+Lab overrides reset	Переопределения сброшены
 Larger (1.25x)	Крупнее (1,25x)
 Last original value	Последнее исходное значение
 Last recording: %1$d gates.	Последняя запись: %1$d переключателей.
@@ -978,16 +978,16 @@ Required	Обязательно
 Researched	Исследовано
 Researched values	Исследованные значения
 Reset	Сбросить
-Reset %1$d of %2$d gates. Restart TikTok to apply.	Сброшено: %1$d из %2$d. Перезапустите TikTok.
-Reset %1$d of %2$d gates. Restart TikTok to apply.|one	Сброшено: %1$d из %2$d. Перезапустите TikTok.
-Reset %1$d of %2$d gates. Restart TikTok to apply.|few	Сброшено: %1$d из %2$d. Перезапустите TikTok.
-Reset %1$d of %2$d gates. Restart TikTok to apply.|many	Сброшено: %1$d из %2$d. Перезапустите TikTok.
-Reset %1$d gates. Restart TikTok to apply.	Переключателей сброшено: %1$d. Перезапустите TikTok.
-Reset %1$d gates. Restart TikTok to apply.|one	Переключателей сброшено: %1$d. Перезапустите TikTok.
-Reset %1$d gates. Restart TikTok to apply.|few	Переключателей сброшено: %1$d. Перезапустите TikTok.
-Reset %1$d gates. Restart TikTok to apply.|many	Переключателей сброшено: %1$d. Перезапустите TikTok.
-Reset 1 of %2$d gates. Restart TikTok to apply.	Сброшено: 1 из %2$d. Перезапустите TikTok.
-Reset 1 gate. Restart TikTok to apply.	Сброшен 1 переключатель. Перезапустите TikTok.
+Reset %1$d of %2$d gates	Сброшено: %1$d из %2$d
+Reset %1$d of %2$d gates|one	Сброшено: %1$d из %2$d
+Reset %1$d of %2$d gates|few	Сброшено: %1$d из %2$d
+Reset %1$d of %2$d gates|many	Сброшено: %1$d из %2$d
+Reset %1$d gates	Переключателей сброшено: %1$d
+Reset %1$d gates|one	Переключателей сброшено: %1$d
+Reset %1$d gates|few	Переключателей сброшено: %1$d
+Reset %1$d gates|many	Переключателей сброшено: %1$d
+Reset 1 of %2$d gates	Сброшено: 1 из %2$d
+Reset 1 gate	Сброшен 1 переключатель
 Reset override	Сбросить переопределение
 Reset position	Сбросить положение
 Reset settings	Сбросить настройки
@@ -1007,7 +1007,7 @@ Undo didn't finish. Some settings may still be changed. Try Undo again.	Отме
 Undo didn't finish. Some settings may still be changed.	Отмена не завершилась. Некоторые настройки могут остаться изменёнными.
 Restore failed. Some settings may still be changed. Use Undo to put them back.	Восстановление не удалось. Некоторые настройки могут остаться изменёнными. Используйте «Отменить», чтобы вернуть их обратно.
 Restore settings	Восстановить настройки
-Lab settings put back. Restart TikTok to apply.	Настройки Lab возвращены. Перезапустите TikTok.
+Lab settings put back	Настройки Lab возвращены
 Restoring your settings	Настройки восстанавливаются
 Resume videos after scrolling	Возобновлять видео после прокрутки
 Retry	Повторить
@@ -1352,16 +1352,16 @@ Try again, or go back to TikTok.	Повторите попытку или вер
 Turn on %1$s first.	Сначала включите %1$s.
 Put %1$s in %2$s first.	Сначала укажите %1$s в %2$s.
 Turn on overrides	Включить переопределения
-Turned off %1$d of %2$d. Restart TikTok to apply.	Выключено: %1$d из %2$d. Перезапустите TikTok.
-Turned off %1$d of %2$d. Restart TikTok to apply.|one	Выключено: %1$d из %2$d. Перезапустите TikTok.
-Turned off %1$d of %2$d. Restart TikTok to apply.|few	Выключено: %1$d из %2$d. Перезапустите TikTok.
-Turned off %1$d of %2$d. Restart TikTok to apply.|many	Выключено: %1$d из %2$d. Перезапустите TikTok.
-Turned off %1$d gates. Restart TikTok to apply.	Переключателей выключено: %1$d. Перезапустите TikTok.
-Turned off %1$d gates. Restart TikTok to apply.|one	Переключателей выключено: %1$d. Перезапустите TikTok.
-Turned off %1$d gates. Restart TikTok to apply.|few	Переключателей выключено: %1$d. Перезапустите TikTok.
-Turned off %1$d gates. Restart TikTok to apply.|many	Переключателей выключено: %1$d. Перезапустите TikTok.
-Turned off 1 of %2$d gates. Restart TikTok to apply.	Выключено: 1 из %2$d. Перезапустите TikTok.
-Turned off 1 gate. Restart TikTok to apply.	Выключен 1 переключатель. Перезапустите TikTok.
+Turned off %1$d of %2$d gates	Выключено: %1$d из %2$d
+Turned off %1$d of %2$d gates|one	Выключено: %1$d из %2$d
+Turned off %1$d of %2$d gates|few	Выключено: %1$d из %2$d
+Turned off %1$d of %2$d gates|many	Выключено: %1$d из %2$d
+Turned off %1$d gates	Переключателей выключено: %1$d
+Turned off %1$d gates|one	Переключателей выключено: %1$d
+Turned off %1$d gates|few	Переключателей выключено: %1$d
+Turned off %1$d gates|many	Переключателей выключено: %1$d
+Turned off 1 of %2$d gates	Выключено: 1 из %2$d
+Turned off 1 gate	Выключен 1 переключатель
 Two letters, like us, gb or jp.	Две буквы, например us, gb или jp.
 Type	Тип
 Start typing	Начните вводить текст
@@ -1601,7 +1601,7 @@ The presets couldn't load. Open the Lab again.	Предустановки не �
 Apply enables these overrides. Undo last Lab change puts your previous rules back until you change anything else in the Lab.	«Применить» включает эти переопределения. «Отменить последнее изменение Lab» вернёт ваши прежние правила, пока вы не измените что-то ещё в Lab.
 Apply saves these overrides. Turn on overrides in the Lab to use them. Turning them on is a Lab change too, so after that Undo turns them off rather than putting your previous rules back.	«Применить» сохраняет эти переопределения. Включите переопределения в Lab, чтобы их использовать. Их включение тоже считается изменением в Lab, поэтому после этого «Отменить» выключит их, а не вернёт прежние правила.
 This preset isn't available for your installed TikTok version.	Эта предустановка недоступна для установленной версии TikTok.
-Preset applied. Restart TikTok to use it.	Предустановка применена. Перезапустите TikTok.
+Preset applied	Предустановка применена
 Preset saved. Turn on overrides to use it.	Предустановка сохранена. Включите переопределения.
 Preset doesn't match the gates. Nothing changed.	Предустановка не подходит. Ничего не изменено.
 About overrides	О переопределениях

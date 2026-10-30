@@ -1367,14 +1367,14 @@ final class L10nTranslationsDe {
                 "Für Konten, denen TikTok die Übersetzung weggenommen hat. Holt „Übersetzung anzeigen“ unter Videobeschreibungen und in Untertiteln zurück, dazu die Übersetzungszeilen auf der Seite Sprache unter Einstellungen und Datenschutz. Starte TikTok neu, um es bei Videos zu sehen.");
         table.put("For accounts TikTok took translation away from. Brings back See translation under video descriptions and in captions. Restart TikTok to see the change.",
                 "Für Konten, denen TikTok die Übersetzung weggenommen hat. Holt „Übersetzung anzeigen“ unter Videobeschreibungen und in Untertiteln zurück. Starte TikTok neu, um die Änderung zu sehen.");
-        table.put("Forced %1$d gates. Restart TikTok to apply.",
-                "%1$d Schalter erzwungen. TikTok neu starten.");
-        table.put("Forced %1$d of %2$d gates. Restart TikTok to apply.",
-                "%1$d von %2$d erzwungen. TikTok neu starten.");
-        table.put("Forced 1 gate. Restart TikTok to apply.",
-                "1 Schalter erzwungen. TikTok neu starten.");
-        table.put("Forced 1 of %2$d gates. Restart TikTok to apply.",
-                "1 von %2$d erzwungen. TikTok neu starten.");
+        table.put("Forced %1$d gates",
+                "%1$d Schalter erzwungen");
+        table.put("Forced %1$d of %2$d gates",
+                "%1$d von %2$d erzwungen");
+        table.put("Forced 1 gate",
+                "1 Schalter erzwungen");
+        table.put("Forced 1 of %2$d gates",
+                "1 von %2$d erzwungen");
         table.put("Forced result",
                 "Erzwungenes Ergebnis");
         table.put("Forget saved videos",
@@ -2087,14 +2087,14 @@ final class L10nTranslationsDe {
                 "LIVE-Videos");
         table.put("LIVE viewers range",
                 "Spanne der LIVE-Zuschauer");
-        table.put("Lab data reset with no undo. Restart TikTok to apply.",
-                "Lab endgültig zurückgesetzt. TikTok neu starten.");
-        table.put("Lab data reset. Restart TikTok to apply.",
-                "Lab-Daten zurückgesetzt. TikTok neu starten.");
-        table.put("Lab overrides reset. Restart TikTok to apply.",
-                "Überschreibungen gelöscht. TikTok neu starten.");
-        table.put("Lab settings put back. Restart TikTok to apply.",
-                "Lab-Einstellungen wieder da. TikTok neu starten.");
+        table.put("Lab data reset",
+                "Lab-Daten zurückgesetzt");
+        table.put("Lab data reset with no undo",
+                "Lab endgültig zurückgesetzt");
+        table.put("Lab overrides reset",
+                "Überschreibungen gelöscht");
+        table.put("Lab settings put back",
+                "Lab-Einstellungen wieder da");
         table.put("Language",
                 "Sprache");
         table.put("Larger (1.25x)",
@@ -2833,8 +2833,8 @@ final class L10nTranslationsDe {
                 "Posten");
         table.put("Prefer H.264 video",
                 "H.264-Video bevorzugen");
-        table.put("Preset applied. Restart TikTok to use it.",
-                "Vorlage angewendet. TikTok neu starten.");
+        table.put("Preset applied",
+                "Vorlage angewendet");
         table.put("Preset doesn't match the gates. Nothing changed.",
                 "Vorlage passt nicht zu den Gates. Nichts geändert.");
         table.put("Preset saved. Turn on overrides to use it.",
@@ -3041,14 +3041,14 @@ final class L10nTranslationsDe {
                 "Recherchierte Werte");
         table.put("Reset",
                 "Zurücksetzen");
-        table.put("Reset %1$d gates. Restart TikTok to apply.",
-                "%1$d Schalter auf Standard. TikTok neu starten.");
-        table.put("Reset %1$d of %2$d gates. Restart TikTok to apply.",
-                "%1$d/%2$d auf Standard. TikTok neu starten.");
-        table.put("Reset 1 gate. Restart TikTok to apply.",
-                "1 Schalter auf Standard. TikTok neu starten.");
-        table.put("Reset 1 of %2$d gates. Restart TikTok to apply.",
-                "1 von %2$d auf Standard. TikTok neu starten.");
+        table.put("Reset %1$d gates",
+                "%1$d Schalter auf Standard");
+        table.put("Reset %1$d of %2$d gates",
+                "%1$d/%2$d auf Standard");
+        table.put("Reset 1 gate",
+                "1 Schalter auf Standard");
+        table.put("Reset 1 of %2$d gates",
+                "1 von %2$d auf Standard");
         table.put("Reset didn't finish. Some settings may still be changed.",
                 "Das Zurücksetzen wurde nicht abgeschlossen. Einige Einstellungen können noch geändert sein.");
         table.put("Reset didn't finish. Some settings may still be changed. Use Undo to put them back.",
@@ -4472,16 +4472,16 @@ final class L10nTranslationsDe {
                 "Überschreibungen einschalten");
         table.put("Turn the music disc at the bottom of the right column while a video plays, the way TikTok used to.",
                 "Die Musikscheibe unten in der rechten Spalte drehen lassen, während ein Video läuft, so wie TikTok es früher tat.");
-        table.put("Turned off %1$d gates. Restart TikTok to apply.",
-                "%1$d Schalter deaktiviert. TikTok neu starten.");
-        table.put("Turned off %1$d of %2$d. Restart TikTok to apply.",
-                "%1$d von %2$d deaktiviert. TikTok neu starten.");
+        table.put("Turned off %1$d gates",
+                "%1$d Schalter deaktiviert");
+        table.put("Turned off %1$d of %2$d gates",
+                "%1$d von %2$d deaktiviert");
         table.put("Turned off %1$d overrides. Check them for TikTok %2$s.",
                 "%1$d Überschreibungen aus. Prüfe sie für TikTok %2$s.");
-        table.put("Turned off 1 gate. Restart TikTok to apply.",
-                "1 Schalter deaktiviert. TikTok neu starten.");
-        table.put("Turned off 1 of %2$d gates. Restart TikTok to apply.",
-                "1 von %2$d deaktiviert. TikTok neu starten.");
+        table.put("Turned off 1 gate",
+                "1 Schalter deaktiviert");
+        table.put("Turned off 1 of %2$d gates",
+                "1 von %2$d deaktiviert");
         table.put("Turned off 1 override. Check it for TikTok %2$s.",
                 "1 Überschreibung aus. Prüfe sie für TikTok %2$s.");
     }

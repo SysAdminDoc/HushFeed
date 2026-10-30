@@ -508,10 +508,10 @@ Following	İzlənilənlər
 For You	Sənin üçün
 Works only with YTDLnis (com.deniscerri.ytdl). Picks audio or video when the save button sends it a link.	Yalnız YTDLnis (com.deniscerri.ytdl) ilə işləyir. Saxla düyməsi ona link göndərəndə səs və ya video seçir.
 Works only with YTDLnis (com.deniscerri.ytdl). Starts the download in the background without showing its download card.	Yalnız YTDLnis (com.deniscerri.ytdl) ilə işləyir. Yükləməni yükləmə kartını göstərmədən arxa planda başladır.
-Forced %1$d of %2$d gates. Restart TikTok to apply.	%1$d/%2$d məcbur edildi. TikTok-u yenidən başladın.
-Forced %1$d gates. Restart TikTok to apply.	%1$d qapı məcbur edildi. TikTok-u yenidən başladın.
-Forced 1 of %2$d gates. Restart TikTok to apply.	1/%2$d məcbur edildi. TikTok-u yenidən başladın.
-Forced 1 gate. Restart TikTok to apply.	1 qapı məcbur edildi. TikTok-u yenidən başladın.
+Forced %1$d of %2$d gates	%1$d/%2$d məcbur edildi
+Forced %1$d gates	%1$d qapı məcbur edildi
+Forced 1 of %2$d gates	1/%2$d məcbur edildi
+Forced 1 gate	1 qapı məcbur edildi
 Forced result	Məcburi nəticə
 Forget seen videos after	İzlənmiş videoları bu müddətdən sonra unudun
 Forget the %1$s seen videos.	%1$s izlənmiş videonu unudun.
@@ -710,9 +710,9 @@ LIVE replays	LIVE təkrarları
 LIVE settings	LIVE ayarları
 LIVE share actions	LIVE paylaşma əməliyyatları
 LIVE videos	LIVE videolar
-Lab data reset. Restart TikTok to apply.	Lab məlumatları sıfırlandı. TikTok-u yenidən başladın.
-Lab data reset with no undo. Restart TikTok to apply.	Lab birdəfəlik sıfırlandı. TikTok-u yenidən başladın.
-Lab overrides reset. Restart TikTok to apply.	Lab əvəzləmələri sıfırlandı. TikTok-u yenidən başladın.
+Lab data reset	Lab məlumatları sıfırlandı
+Lab data reset with no undo	Lab birdəfəlik sıfırlandı
+Lab overrides reset	Lab əvəzləmələri sıfırlandı
 Larger (1.25x)	Daha böyük (1.25x)
 Last original value	Son orijinal dəyər
 Last recording: %1$d gates.	Son qeyd: %1$d qapı.
@@ -936,10 +936,10 @@ Required	Tələb olunur
 Researched	Araşdırılıb
 Researched values	Araşdırılmış dəyərlər
 Reset	Sıfırlayın
-Reset %1$d of %2$d gates. Restart TikTok to apply.	%1$d/%2$d sıfırlandı. TikTok-u yenidən başladın.
-Reset %1$d gates. Restart TikTok to apply.	%1$d qapı sıfırlandı. TikTok-u yenidən başladın.
-Reset 1 of %2$d gates. Restart TikTok to apply.	1/%2$d sıfırlandı. TikTok-u yenidən başladın.
-Reset 1 gate. Restart TikTok to apply.	1 qapı sıfırlandı. TikTok-u yenidən başladın.
+Reset %1$d of %2$d gates	%1$d/%2$d sıfırlandı
+Reset %1$d gates	%1$d qapı sıfırlandı
+Reset 1 of %2$d gates	1/%2$d sıfırlandı
+Reset 1 gate	1 qapı sıfırlandı
 Reset override	Əvəzləməni sıfırlayın
 Reset position	Mövqeyi sıfırlayın
 Reset settings	Ayarları sıfırlayın
@@ -956,7 +956,7 @@ Undo didn't finish. Some settings may still be changed. Try Undo again.	Geri qay
 Undo didn't finish. Some settings may still be changed.	Geri qaytarma tamamlanmadı. Bəzi ayarlar hələ də dəyişmiş ola bilər.
 Restore failed. Some settings may still be changed. Use Undo to put them back.	Bərpa alınmadı. Bəzi ayarlar hələ də dəyişmiş ola bilər. Onları geri qaytarmaq üçün Geri qaytar seçimini istifadə edin.
 Restore settings	Ayarları bərpa edin
-Lab settings put back. Restart TikTok to apply.	Lab ayarları qaytarıldı. TikTok-u yenidən başladın.
+Lab settings put back	Lab ayarları qaytarıldı
 Restoring your settings	Ayarlarınız bərpa edilir
 Resume videos after scrolling	Sürüşdürdükdən sonra videoları davam etdirin
 Retry	Yenidən cəhd edin
@@ -1284,10 +1284,10 @@ Try again, or go back to TikTok.	Yenidən cəhd edin və ya TikTok-a qayıdın.
 Turn on %1$s first.	Əvvəlcə %1$s seçimini yandırın.
 Put %1$s in %2$s first.	Əvvəlcə %1$s dəyərini %2$s sahəsinə yazın.
 Turn on overrides	Əvəzləmələri yandırın
-Turned off %1$d of %2$d. Restart TikTok to apply.	%1$d/%2$d söndürüldü. TikTok-u yenidən başladın.
-Turned off %1$d gates. Restart TikTok to apply.	%1$d qapı söndürüldü. TikTok-u yenidən başladın.
-Turned off 1 of %2$d gates. Restart TikTok to apply.	1/%2$d söndürüldü. TikTok-u yenidən başladın.
-Turned off 1 gate. Restart TikTok to apply.	1 qapı söndürüldü. TikTok-u yenidən başladın.
+Turned off %1$d of %2$d gates	%1$d/%2$d söndürüldü
+Turned off %1$d gates	%1$d qapı söndürüldü
+Turned off 1 of %2$d gates	1/%2$d söndürüldü
+Turned off 1 gate	1 qapı söndürüldü
 Two letters, like us, gb or jp.	İki hərf, məsələn us, gb və ya jp.
 Type	Növ
 Unavailable	Əlçatan deyil
@@ -1463,7 +1463,7 @@ The presets couldn't load. Open the Lab again.	Hazır ayarlar yüklənə bilməd
 Apply enables these overrides. Undo last Lab change puts your previous rules back until you change anything else in the Lab.	Tətbiq etmək bu əvəzləmələri yandırır. Son Lab dəyişikliyini geri qaytarın seçimi Lab-da başqa bir şeyi dəyişənə qədər əvvəlki qaydalarınızı geri qaytarır.
 Apply saves these overrides. Turn on overrides in the Lab to use them. Turning them on is a Lab change too, so after that Undo turns them off rather than putting your previous rules back.	Tətbiq etmək bu əvəzləmələri saxlayır. Onlardan istifadə etmək üçün Lab-da əvəzləmələri yandırın. Onları yandırmaq da Lab dəyişikliyidir, ona görə bundan sonra Geri qaytar əvvəlki qaydalarınızı qaytarmaq əvəzinə onları söndürür.
 This preset isn't available for your installed TikTok version.	Bu hazır ayar quraşdırılmış TikTok versiyanız üçün əlçatan deyil.
-Preset applied. Restart TikTok to use it.	Hazır ayar tətbiq edildi. TikTok-u yenidən başladın.
+Preset applied	Hazır ayar tətbiq edildi
 Preset saved. Turn on overrides to use it.	Hazır ayar saxlanıldı. Əvəzləmələri yandırın.
 Preset doesn't match the gates. Nothing changed.	Hazır ayar qapılara uyğun deyil. Dəyişiklik yoxdur.
 About overrides	Əvəzləmələr haqqında

@@ -1367,14 +1367,14 @@ final class L10nTranslationsIt {
                 "Per gli account a cui TikTok ha tolto la traduzione. Riporta Visualizza traduzione sotto le descrizioni dei video e nei sottotitoli, e le righe di traduzione nella pagina Lingua, in Impostazioni e privacy. Riavvia TikTok per vederlo nei video.");
         table.put("For accounts TikTok took translation away from. Brings back See translation under video descriptions and in captions. Restart TikTok to see the change.",
                 "Per gli account a cui TikTok ha tolto la traduzione. Riporta Visualizza traduzione sotto le descrizioni dei video e nei sottotitoli. Riavvia TikTok per vedere la modifica.");
-        table.put("Forced %1$d gates. Restart TikTok to apply.",
-                "Forzati %1$d gate. Riavvia TikTok.");
-        table.put("Forced %1$d of %2$d gates. Restart TikTok to apply.",
-                "Forzati %1$d gate su %2$d. Riavvia TikTok.");
-        table.put("Forced 1 gate. Restart TikTok to apply.",
-                "Forzato 1 gate. Riavvia TikTok.");
-        table.put("Forced 1 of %2$d gates. Restart TikTok to apply.",
-                "Forzato 1 gate su %2$d. Riavvia TikTok.");
+        table.put("Forced %1$d gates",
+                "Forzati %1$d gate");
+        table.put("Forced %1$d of %2$d gates",
+                "Forzati %1$d gate su %2$d");
+        table.put("Forced 1 gate",
+                "Forzato 1 gate");
+        table.put("Forced 1 of %2$d gates",
+                "Forzato 1 gate su %2$d");
         table.put("Forced result",
                 "Risultato forzato");
         table.put("Forget saved videos",
@@ -2087,14 +2087,14 @@ final class L10nTranslationsIt {
                 "Video LIVE");
         table.put("LIVE viewers range",
                 "Intervallo degli spettatori LIVE");
-        table.put("Lab data reset with no undo. Restart TikTok to apply.",
-                "Lab azzerato per sempre. Riavvia TikTok.");
-        table.put("Lab data reset. Restart TikTok to apply.",
-                "Dati del Lab reimpostati. Riavvia TikTok.");
-        table.put("Lab overrides reset. Restart TikTok to apply.",
-                "Sovrascritture del Lab reimpostate. Riavvia TikTok.");
-        table.put("Lab settings put back. Restart TikTok to apply.",
-                "Lab ripristinato. Riavvia TikTok.");
+        table.put("Lab data reset",
+                "Dati del Lab reimpostati");
+        table.put("Lab data reset with no undo",
+                "Lab azzerato per sempre");
+        table.put("Lab overrides reset",
+                "Sovrascritture del Lab reimpostate");
+        table.put("Lab settings put back",
+                "Lab ripristinato");
         table.put("Language",
                 "Lingua");
         table.put("Larger (1.25x)",
@@ -2833,8 +2833,8 @@ final class L10nTranslationsIt {
                 "Pubblicazione");
         table.put("Prefer H.264 video",
                 "Preferisci video H.264");
-        table.put("Preset applied. Restart TikTok to use it.",
-                "Preset applicato. Riavvia TikTok per usarlo.");
+        table.put("Preset applied",
+                "Preset applicato");
         table.put("Preset doesn't match the gates. Nothing changed.",
                 "Preset non corrisponde ai gate. Nulla cambiato.");
         table.put("Preset saved. Turn on overrides to use it.",
@@ -3041,14 +3041,14 @@ final class L10nTranslationsIt {
                 "Valori verificati");
         table.put("Reset",
                 "Reimposta");
-        table.put("Reset %1$d gates. Restart TikTok to apply.",
-                "Reimpostati %1$d gate. Riavvia TikTok.");
-        table.put("Reset %1$d of %2$d gates. Restart TikTok to apply.",
-                "Reimpostati %1$d gate su %2$d. Riavvia TikTok.");
-        table.put("Reset 1 gate. Restart TikTok to apply.",
-                "Reimpostato 1 gate. Riavvia TikTok.");
-        table.put("Reset 1 of %2$d gates. Restart TikTok to apply.",
-                "Reimpostato 1 gate su %2$d. Riavvia TikTok.");
+        table.put("Reset %1$d gates",
+                "Reimpostati %1$d gate");
+        table.put("Reset %1$d of %2$d gates",
+                "Reimpostati %1$d gate su %2$d");
+        table.put("Reset 1 gate",
+                "Reimpostato 1 gate");
+        table.put("Reset 1 of %2$d gates",
+                "Reimpostato 1 gate su %2$d");
         table.put("Reset didn't finish. Some settings may still be changed.",
                 "Il reset non è stato completato. Alcune impostazioni potrebbero essere ancora modificate.");
         table.put("Reset didn't finish. Some settings may still be changed. Use Undo to put them back.",
@@ -4472,16 +4472,16 @@ final class L10nTranslationsIt {
                 "Attiva le sovrascritture");
         table.put("Turn the music disc at the bottom of the right column while a video plays, the way TikTok used to.",
                 "Fai girare il disco musicale in fondo alla colonna di destra mentre il video va, come faceva TikTok prima.");
-        table.put("Turned off %1$d gates. Restart TikTok to apply.",
-                "Disattivati %1$d gate. Riavvia TikTok.");
-        table.put("Turned off %1$d of %2$d. Restart TikTok to apply.",
-                "Disattivati %1$d gate su %2$d. Riavvia TikTok.");
+        table.put("Turned off %1$d gates",
+                "Disattivati %1$d gate");
+        table.put("Turned off %1$d of %2$d gates",
+                "Disattivati %1$d gate su %2$d");
         table.put("Turned off %1$d overrides. Check them for TikTok %2$s.",
                 "%1$d sovrascritture spente. Rivedile per TikTok %2$s.");
-        table.put("Turned off 1 gate. Restart TikTok to apply.",
-                "Disattivato 1 gate. Riavvia TikTok.");
-        table.put("Turned off 1 of %2$d gates. Restart TikTok to apply.",
-                "Disattivato 1 gate su %2$d. Riavvia TikTok.");
+        table.put("Turned off 1 gate",
+                "Disattivato 1 gate");
+        table.put("Turned off 1 of %2$d gates",
+                "Disattivato 1 gate su %2$d");
         table.put("Turned off 1 override. Check it for TikTok %2$s.",
                 "1 sovrascrittura spenta. Rivedila per TikTok %2$s.");
     }

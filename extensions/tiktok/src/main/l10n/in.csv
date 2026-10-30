@@ -498,10 +498,10 @@ Following,Mengikuti
 For You,Untuk Kamu
 Works only with YTDLnis (com.deniscerri.ytdl). Picks audio or video when the save button sends it a link.,Hanya berfungsi dengan YTDLnis (com.deniscerri.ytdl). Memilih audio atau video saat tombol simpan mengirimkan tautan ke sana.
 Works only with YTDLnis (com.deniscerri.ytdl). Starts the download in the background without showing its download card.,Hanya berfungsi dengan YTDLnis (com.deniscerri.ytdl). Memulai unduhan di latar belakang tanpa menampilkan kartu unduhannya.
-Forced %1$d of %2$d gates. Restart TikTok to apply.,%1$d dari %2$d dipaksakan. Mulai ulang TikTok.
-Forced %1$d gates. Restart TikTok to apply.,%1$d gate dipaksakan. Mulai ulang TikTok.
-Forced 1 of %2$d gates. Restart TikTok to apply.,1 dari %2$d dipaksakan. Mulai ulang TikTok.
-Forced 1 gate. Restart TikTok to apply.,1 gate dipaksakan. Mulai ulang TikTok.
+Forced %1$d of %2$d gates,%1$d dari %2$d dipaksakan
+Forced %1$d gates,%1$d gate dipaksakan
+Forced 1 of %2$d gates,1 dari %2$d dipaksakan
+Forced 1 gate,1 gate dipaksakan
 Forced result,Hasil yang dipaksakan
 Forget seen videos after,Lupakan video yang sudah ditonton setelah
 Forget the %1$s seen videos.,Lupakan %1$s video yang dilihat.
@@ -688,9 +688,9 @@ LIVE replays,Putar ulang LIVE
 LIVE settings,Pengaturan Live
 LIVE share actions,Tindakan berbagi LIVE
 LIVE videos,Video LIVE
-Lab data reset. Restart TikTok to apply.,Data Lab disetel ulang. Mulai ulang TikTok.
-Lab data reset with no undo. Restart TikTok to apply.,Data Lab disetel ulang tanpa batal. Mulai ulang TikTok.
-Lab overrides reset. Restart TikTok to apply.,Penggantian Lab disetel ulang. Mulai ulang TikTok.
+Lab data reset,Data Lab disetel ulang
+Lab data reset with no undo,Data Lab disetel ulang tanpa batal
+Lab overrides reset,Penggantian Lab disetel ulang
 Larger (1.25x),"Lebih besar (1,25x)"
 Last original value,Nilai asli terakhir
 Last recording: %1$d gates.,Rekaman terakhir: %1$d gate.
@@ -912,10 +912,10 @@ Required,Wajib
 Researched,Hasil riset
 Researched values,Nilai hasil riset
 Reset,Atur ulang
-Reset %1$d of %2$d gates. Restart TikTok to apply.,%1$d dari %2$d gate diatur ulang. Mulai ulang TikTok.
-Reset %1$d gates. Restart TikTok to apply.,%1$d gate diatur ulang. Mulai ulang TikTok.
-Reset 1 of %2$d gates. Restart TikTok to apply.,1 dari %2$d gate diatur ulang. Mulai ulang TikTok.
-Reset 1 gate. Restart TikTok to apply.,1 gate diatur ulang. Mulai ulang TikTok.
+Reset %1$d of %2$d gates,%1$d dari %2$d gate diatur ulang
+Reset %1$d gates,%1$d gate diatur ulang
+Reset 1 of %2$d gates,1 dari %2$d gate diatur ulang
+Reset 1 gate,1 gate diatur ulang
 Reset override,Setel ulang penggantian
 Reset position,Atur ulang posisi
 Reset settings,Setel ulang pengaturan
@@ -932,7 +932,7 @@ Undo didn't finish. Some settings may still be changed. Try Undo again.,Urungkan
 Undo didn't finish. Some settings may still be changed.,Urungkan tidak selesai. Beberapa pengaturan mungkin masih berubah.
 Restore failed. Some settings may still be changed. Use Undo to put them back.,Pemulihan gagal. Beberapa pengaturan mungkin masih berubah. Gunakan Urungkan untuk mengembalikannya.
 Restore settings,Pulihkan pengaturan
-Lab settings put back. Restart TikTok to apply.,Pengaturan Lab dikembalikan. Mulai ulang TikTok.
+Lab settings put back,Pengaturan Lab dikembalikan
 Restoring your settings,Memulihkan pengaturan kamu
 Resume videos after scrolling,Lanjutkan video setelah menggulir
 Retry,Coba lagi
@@ -1261,10 +1261,10 @@ Try a different word or clear the search.,Coba kata lain atau hapus pencarian.
 Turn on %1$s first.,Nyalakan %1$s dulu.
 Put %1$s in %2$s first.,Isi %2$s dengan %1$s dulu.
 Turn on overrides,Nyalakan penimpaan
-Turned off %1$d of %2$d. Restart TikTok to apply.,%1$d dari %2$d dimatikan. Mulai ulang TikTok.
-Turned off %1$d gates. Restart TikTok to apply.,%1$d gate dimatikan. Mulai ulang TikTok.
-Turned off 1 of %2$d gates. Restart TikTok to apply.,1 dari %2$d gate dimatikan. Mulai ulang TikTok.
-Turned off 1 gate. Restart TikTok to apply.,1 gate dimatikan. Mulai ulang TikTok.
+Turned off %1$d of %2$d gates,%1$d dari %2$d dimatikan
+Turned off %1$d gates,%1$d gate dimatikan
+Turned off 1 of %2$d gates,1 dari %2$d gate dimatikan
+Turned off 1 gate,1 gate dimatikan
 "Two letters, like us, gb or jp.","Dua huruf, misalnya us, gb atau jp."
 Type,Tipe
 Start typing,Mulai mengetik
@@ -1458,7 +1458,7 @@ The presets couldn't load. Open the Lab again.,Preset tidak dapat dimuat. Buka L
 Apply enables these overrides. Undo last Lab change puts your previous rules back until you change anything else in the Lab.,Terapkan mengaktifkan penggantian ini. Batalkan perubahan Lab terakhir mengembalikan aturan sebelumnya sampai kamu mengubah hal lain di Lab.
 "Apply saves these overrides. Turn on overrides in the Lab to use them. Turning them on is a Lab change too, so after that Undo turns them off rather than putting your previous rules back.","Terapkan menyimpan penggantian ini. Aktifkan penggantian di Lab untuk menggunakannya. Mengaktifkannya juga perubahan Lab, jadi setelah itu Urungkan mematikannya, bukan mengembalikan aturan sebelumnya."
 This preset isn't available for your installed TikTok version.,Preset ini tidak tersedia untuk versi TikTok yang terpasang.
-Preset applied. Restart TikTok to use it.,Preset diterapkan. Mulai ulang TikTok.
+Preset applied,Preset diterapkan
 Preset saved. Turn on overrides to use it.,Preset disimpan. Aktifkan penggantian dulu.
 Preset doesn't match the gates. Nothing changed.,Preset tidak cocok dengan gate. Tidak ada perubahan.
 About overrides,Tentang penggantian

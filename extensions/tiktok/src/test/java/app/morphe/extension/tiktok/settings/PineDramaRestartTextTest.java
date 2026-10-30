@@ -51,7 +51,8 @@ public class PineDramaRestartTextTest {
         for (String key : L10nTranslations.of("de").keySet()) {
             if (ENGLISH_RESTART.matcher(key).find()) keys.add(key);
         }
-        assertTrue("restart keys: " + keys.size(), keys.size() >= 50);
+        // A floor so a scan that finds nothing can't pass; the Lab's gate toasts dropped 17 of these.
+        assertTrue("restart keys: " + keys.size(), keys.size() >= 40);
 
         List<String> problems = new ArrayList<>();
         for (String key : keys) {

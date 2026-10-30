@@ -1367,14 +1367,14 @@ final class L10nTranslationsZh_Hans {
                 "适用于被 TikTok 取消翻译的账号。恢复视频描述下方和字幕中的“查看翻译”，以及“设置和隐私”下语言页面上的翻译行。重新启动 TikTok 以在视频中查看.");
         table.put("For accounts TikTok took translation away from. Brings back See translation under video descriptions and in captions. Restart TikTok to see the change.",
                 "适用于被 TikTok 取消翻译的账号。恢复视频描述下方和字幕中的“查看翻译”。重新启动 TikTok 以查看更改.");
-        table.put("Forced %1$d gates. Restart TikTok to apply.",
-                "已强制 %1$d 个门。重启 TikTok 以生效.");
-        table.put("Forced %1$d of %2$d gates. Restart TikTok to apply.",
-                "已强制 %2$d 个门中的 %1$d 个。重启 TikTok 以生效.");
-        table.put("Forced 1 gate. Restart TikTok to apply.",
-                "已强制 1 个门。重启 TikTok 以生效.");
-        table.put("Forced 1 of %2$d gates. Restart TikTok to apply.",
-                "已强制 %2$d 个门中的 1 个。重启 TikTok 以生效.");
+        table.put("Forced %1$d gates",
+                "已强制 %1$d 个门");
+        table.put("Forced %1$d of %2$d gates",
+                "已强制 %2$d 个门中的 %1$d 个");
+        table.put("Forced 1 gate",
+                "已强制 1 个门");
+        table.put("Forced 1 of %2$d gates",
+                "已强制 %2$d 个门中的 1 个");
         table.put("Forced result",
                 "强制结果");
         table.put("Forget saved videos",
@@ -2087,14 +2087,14 @@ final class L10nTranslationsZh_Hans {
                 "LIVE 视频");
         table.put("LIVE viewers range",
                 "LIVE 观众范围");
-        table.put("Lab data reset with no undo. Restart TikTok to apply.",
-                "实验室数据已重置，无法撤销。重启 TikTok 以生效.");
-        table.put("Lab data reset. Restart TikTok to apply.",
-                "实验室数据已重置。重启 TikTok 以生效.");
-        table.put("Lab overrides reset. Restart TikTok to apply.",
-                "实验室覆盖已重置。重启 TikTok 以生效.");
-        table.put("Lab settings put back. Restart TikTok to apply.",
-                "实验室设置已恢复。重启 TikTok 以生效.");
+        table.put("Lab data reset",
+                "实验室数据已重置");
+        table.put("Lab data reset with no undo",
+                "实验室数据已重置，无法撤销");
+        table.put("Lab overrides reset",
+                "实验室覆盖已重置");
+        table.put("Lab settings put back",
+                "实验室设置已恢复");
         table.put("Language",
                 "语言");
         table.put("Larger (1.25x)",
@@ -2833,8 +2833,8 @@ final class L10nTranslationsZh_Hans {
                 "发帖");
         table.put("Prefer H.264 video",
                 "更喜欢 H.264 视频");
-        table.put("Preset applied. Restart TikTok to use it.",
-                "应用预设。重新启动 TikTok 即可使用它.");
+        table.put("Preset applied",
+                "预设已应用");
         table.put("Preset doesn't match the gates. Nothing changed.",
                 "预设与开关不匹配，未做任何更改.");
         table.put("Preset saved. Turn on overrides to use it.",
@@ -3041,14 +3041,14 @@ final class L10nTranslationsZh_Hans {
                 "研究值");
         table.put("Reset",
                 "重置");
-        table.put("Reset %1$d gates. Restart TikTok to apply.",
-                "已重置 %1$d 个门。重启 TikTok 以生效.");
-        table.put("Reset %1$d of %2$d gates. Restart TikTok to apply.",
-                "已重置 %2$d 个门中的 %1$d 个。重启 TikTok 以生效.");
-        table.put("Reset 1 gate. Restart TikTok to apply.",
-                "已重置 1 个门。重启 TikTok 以生效.");
-        table.put("Reset 1 of %2$d gates. Restart TikTok to apply.",
-                "已重置 %2$d 个门中的 1 个。重启 TikTok 以生效.");
+        table.put("Reset %1$d gates",
+                "已重置 %1$d 个门");
+        table.put("Reset %1$d of %2$d gates",
+                "已重置 %2$d 个门中的 %1$d 个");
+        table.put("Reset 1 gate",
+                "已重置 1 个门");
+        table.put("Reset 1 of %2$d gates",
+                "已重置 %2$d 个门中的 1 个");
         table.put("Reset didn't finish. Some settings may still be changed.",
                 "重置未完成。某些设置可能仍会更改.");
         table.put("Reset didn't finish. Some settings may still be changed. Use Undo to put them back.",
@@ -4472,16 +4472,16 @@ final class L10nTranslationsZh_Hans {
                 "打开覆盖");
         table.put("Turn the music disc at the bottom of the right column while a video plays, the way TikTok used to.",
                 "播放视频时，转动右栏底部的音乐光盘，就像 TikTok 以前那样.");
-        table.put("Turned off %1$d gates. Restart TikTok to apply.",
-                "已关闭 %1$d 个门。重启 TikTok 以生效.");
-        table.put("Turned off %1$d of %2$d. Restart TikTok to apply.",
-                "已关闭 %2$d 个门中的 %1$d 个。重启 TikTok 以生效.");
+        table.put("Turned off %1$d gates",
+                "已关闭 %1$d 个门");
+        table.put("Turned off %1$d of %2$d gates",
+                "已关闭 %2$d 个门中的 %1$d 个");
         table.put("Turned off %1$d overrides. Check them for TikTok %2$s.",
                 "已关闭 %1$d 个覆盖，请针对 TikTok %2$s 重新检查.");
-        table.put("Turned off 1 gate. Restart TikTok to apply.",
-                "已关闭 1 个门。重启 TikTok 以生效.");
-        table.put("Turned off 1 of %2$d gates. Restart TikTok to apply.",
-                "已关闭 %2$d 个门中的 1 个。重启 TikTok 以生效.");
+        table.put("Turned off 1 gate",
+                "已关闭 1 个门");
+        table.put("Turned off 1 of %2$d gates",
+                "已关闭 %2$d 个门中的 1 个");
         table.put("Turned off 1 override. Check it for TikTok %2$s.",
                 "已关闭 1 个覆盖，请针对 TikTok %2$s 重新检查.");
     }

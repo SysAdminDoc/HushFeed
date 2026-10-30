@@ -1604,26 +1604,26 @@ final class L10nTranslationsRu {
                 "Для аккаунтов, у которых TikTok убрал перевод. Возвращает «Показать перевод» под описаниями видео и в субтитрах, а также строки перевода на странице «Язык» (Настройки и конфиденциальность). Перезапустите TikTok, чтобы увидеть это в видео.");
         table.put("For accounts TikTok took translation away from. Brings back See translation under video descriptions and in captions. Restart TikTok to see the change.",
                 "Для аккаунтов, у которых TikTok убрал перевод. Возвращает «Показать перевод» под описаниями видео и в субтитрах. Перезапустите TikTok, чтобы увидеть изменение.");
-        table.put("Forced %1$d gates. Restart TikTok to apply.",
-                "Переключателей включено: %1$d. Перезапустите TikTok.");
-        table.put("Forced %1$d gates. Restart TikTok to apply.|few",
-                "Переключателей включено: %1$d. Перезапустите TikTok.");
-        table.put("Forced %1$d gates. Restart TikTok to apply.|many",
-                "Переключателей включено: %1$d. Перезапустите TikTok.");
-        table.put("Forced %1$d gates. Restart TikTok to apply.|one",
-                "Переключателей включено: %1$d. Перезапустите TikTok.");
-        table.put("Forced %1$d of %2$d gates. Restart TikTok to apply.",
-                "Включено: %1$d из %2$d. Перезапустите TikTok.");
-        table.put("Forced %1$d of %2$d gates. Restart TikTok to apply.|few",
-                "Включено: %1$d из %2$d. Перезапустите TikTok.");
-        table.put("Forced %1$d of %2$d gates. Restart TikTok to apply.|many",
-                "Включено: %1$d из %2$d. Перезапустите TikTok.");
-        table.put("Forced %1$d of %2$d gates. Restart TikTok to apply.|one",
-                "Включено: %1$d из %2$d. Перезапустите TikTok.");
-        table.put("Forced 1 gate. Restart TikTok to apply.",
-                "Включён 1 переключатель. Перезапустите TikTok.");
-        table.put("Forced 1 of %2$d gates. Restart TikTok to apply.",
-                "Включено: 1 из %2$d. Перезапустите TikTok.");
+        table.put("Forced %1$d gates",
+                "Переключателей включено: %1$d");
+        table.put("Forced %1$d gates|few",
+                "Переключателей включено: %1$d");
+        table.put("Forced %1$d gates|many",
+                "Переключателей включено: %1$d");
+        table.put("Forced %1$d gates|one",
+                "Переключателей включено: %1$d");
+        table.put("Forced %1$d of %2$d gates",
+                "Включено: %1$d из %2$d");
+        table.put("Forced %1$d of %2$d gates|few",
+                "Включено: %1$d из %2$d");
+        table.put("Forced %1$d of %2$d gates|many",
+                "Включено: %1$d из %2$d");
+        table.put("Forced %1$d of %2$d gates|one",
+                "Включено: %1$d из %2$d");
+        table.put("Forced 1 gate",
+                "Включён 1 переключатель");
+        table.put("Forced 1 of %2$d gates",
+                "Включено: 1 из %2$d");
         table.put("Forced result",
                 "Принудительный результат");
         table.put("Forget saved videos",
@@ -2348,14 +2348,14 @@ final class L10nTranslationsRu {
                 "Видео LIVE");
         table.put("LIVE viewers range",
                 "Диапазон зрителей LIVE");
-        table.put("Lab data reset with no undo. Restart TikTok to apply.",
-                "Lab сброшен без отмены. Перезапустите TikTok.");
-        table.put("Lab data reset. Restart TikTok to apply.",
-                "Данные Lab сброшены. Перезапустите TikTok.");
-        table.put("Lab overrides reset. Restart TikTok to apply.",
-                "Переопределения сброшены. Перезапустите TikTok.");
-        table.put("Lab settings put back. Restart TikTok to apply.",
-                "Настройки Lab возвращены. Перезапустите TikTok.");
+        table.put("Lab data reset",
+                "Данные Lab сброшены");
+        table.put("Lab data reset with no undo",
+                "Lab сброшен без отмены");
+        table.put("Lab overrides reset",
+                "Переопределения сброшены");
+        table.put("Lab settings put back",
+                "Настройки Lab возвращены");
         table.put("Language",
                 "Язык");
         table.put("Larger (1.25x)",
@@ -3100,8 +3100,8 @@ final class L10nTranslationsRu {
                 "Публикация");
         table.put("Prefer H.264 video",
                 "Предпочитать видео H.264");
-        table.put("Preset applied. Restart TikTok to use it.",
-                "Предустановка применена. Перезапустите TikTok.");
+        table.put("Preset applied",
+                "Предустановка применена");
         table.put("Preset doesn't match the gates. Nothing changed.",
                 "Предустановка не подходит. Ничего не изменено.");
         table.put("Preset saved. Turn on overrides to use it.",
@@ -3308,26 +3308,26 @@ final class L10nTranslationsRu {
                 "Исследованные значения");
         table.put("Reset",
                 "Сбросить");
-        table.put("Reset %1$d gates. Restart TikTok to apply.",
-                "Переключателей сброшено: %1$d. Перезапустите TikTok.");
-        table.put("Reset %1$d gates. Restart TikTok to apply.|few",
-                "Переключателей сброшено: %1$d. Перезапустите TikTok.");
-        table.put("Reset %1$d gates. Restart TikTok to apply.|many",
-                "Переключателей сброшено: %1$d. Перезапустите TikTok.");
-        table.put("Reset %1$d gates. Restart TikTok to apply.|one",
-                "Переключателей сброшено: %1$d. Перезапустите TikTok.");
-        table.put("Reset %1$d of %2$d gates. Restart TikTok to apply.",
-                "Сброшено: %1$d из %2$d. Перезапустите TikTok.");
-        table.put("Reset %1$d of %2$d gates. Restart TikTok to apply.|few",
-                "Сброшено: %1$d из %2$d. Перезапустите TikTok.");
-        table.put("Reset %1$d of %2$d gates. Restart TikTok to apply.|many",
-                "Сброшено: %1$d из %2$d. Перезапустите TikTok.");
-        table.put("Reset %1$d of %2$d gates. Restart TikTok to apply.|one",
-                "Сброшено: %1$d из %2$d. Перезапустите TikTok.");
-        table.put("Reset 1 gate. Restart TikTok to apply.",
-                "Сброшен 1 переключатель. Перезапустите TikTok.");
-        table.put("Reset 1 of %2$d gates. Restart TikTok to apply.",
-                "Сброшено: 1 из %2$d. Перезапустите TikTok.");
+        table.put("Reset %1$d gates",
+                "Переключателей сброшено: %1$d");
+        table.put("Reset %1$d gates|few",
+                "Переключателей сброшено: %1$d");
+        table.put("Reset %1$d gates|many",
+                "Переключателей сброшено: %1$d");
+        table.put("Reset %1$d gates|one",
+                "Переключателей сброшено: %1$d");
+        table.put("Reset %1$d of %2$d gates",
+                "Сброшено: %1$d из %2$d");
+        table.put("Reset %1$d of %2$d gates|few",
+                "Сброшено: %1$d из %2$d");
+        table.put("Reset %1$d of %2$d gates|many",
+                "Сброшено: %1$d из %2$d");
+        table.put("Reset %1$d of %2$d gates|one",
+                "Сброшено: %1$d из %2$d");
+        table.put("Reset 1 gate",
+                "Сброшен 1 переключатель");
+        table.put("Reset 1 of %2$d gates",
+                "Сброшено: 1 из %2$d");
         table.put("Reset didn't finish. Some settings may still be changed.",
                 "Сброс не завершился. Некоторые настройки могут остаться изменёнными.");
         table.put("Reset didn't finish. Some settings may still be changed. Use Undo to put them back.",
@@ -4814,22 +4814,22 @@ final class L10nTranslationsRu {
                 "Включить переопределения");
         table.put("Turn the music disc at the bottom of the right column while a video plays, the way TikTok used to.",
                 "Вращать музыкальный диск внизу правой колонки, пока идёт видео, как TikTok делал раньше.");
-        table.put("Turned off %1$d gates. Restart TikTok to apply.",
-                "Переключателей выключено: %1$d. Перезапустите TikTok.");
-        table.put("Turned off %1$d gates. Restart TikTok to apply.|few",
-                "Переключателей выключено: %1$d. Перезапустите TikTok.");
-        table.put("Turned off %1$d gates. Restart TikTok to apply.|many",
-                "Переключателей выключено: %1$d. Перезапустите TikTok.");
-        table.put("Turned off %1$d gates. Restart TikTok to apply.|one",
-                "Переключателей выключено: %1$d. Перезапустите TikTok.");
-        table.put("Turned off %1$d of %2$d. Restart TikTok to apply.",
-                "Выключено: %1$d из %2$d. Перезапустите TikTok.");
-        table.put("Turned off %1$d of %2$d. Restart TikTok to apply.|few",
-                "Выключено: %1$d из %2$d. Перезапустите TikTok.");
-        table.put("Turned off %1$d of %2$d. Restart TikTok to apply.|many",
-                "Выключено: %1$d из %2$d. Перезапустите TikTok.");
-        table.put("Turned off %1$d of %2$d. Restart TikTok to apply.|one",
-                "Выключено: %1$d из %2$d. Перезапустите TikTok.");
+        table.put("Turned off %1$d gates",
+                "Переключателей выключено: %1$d");
+        table.put("Turned off %1$d gates|few",
+                "Переключателей выключено: %1$d");
+        table.put("Turned off %1$d gates|many",
+                "Переключателей выключено: %1$d");
+        table.put("Turned off %1$d gates|one",
+                "Переключателей выключено: %1$d");
+        table.put("Turned off %1$d of %2$d gates",
+                "Выключено: %1$d из %2$d");
+        table.put("Turned off %1$d of %2$d gates|few",
+                "Выключено: %1$d из %2$d");
+        table.put("Turned off %1$d of %2$d gates|many",
+                "Выключено: %1$d из %2$d");
+        table.put("Turned off %1$d of %2$d gates|one",
+                "Выключено: %1$d из %2$d");
         table.put("Turned off %1$d overrides. Check them for TikTok %2$s.",
                 "Выкл. %1$d переопределений. Проверьте для TikTok %2$s.");
         table.put("Turned off %1$d overrides. Check them for TikTok %2$s.|few",
@@ -4838,10 +4838,10 @@ final class L10nTranslationsRu {
                 "Выкл. %1$d переопределений. Проверьте для TikTok %2$s.");
         table.put("Turned off %1$d overrides. Check them for TikTok %2$s.|one",
                 "Выкл. %1$d переопределение. Проверьте для TikTok %2$s.");
-        table.put("Turned off 1 gate. Restart TikTok to apply.",
-                "Выключен 1 переключатель. Перезапустите TikTok.");
-        table.put("Turned off 1 of %2$d gates. Restart TikTok to apply.",
-                "Выключено: 1 из %2$d. Перезапустите TikTok.");
+        table.put("Turned off 1 gate",
+                "Выключен 1 переключатель");
+        table.put("Turned off 1 of %2$d gates",
+                "Выключено: 1 из %2$d");
         table.put("Turned off 1 override. Check it for TikTok %2$s.",
                 "Выкл. 1 переопределение. Проверьте для TikTok %2$s.");
         table.put("Turns off TikTok's notification service, so nothing it sends reaches your notification shade and it can't wake your phone. You won't hear about new messages until you open TikTok. Notifications hidden while this is on don't come back. Ongoing ones like media controls stay.",

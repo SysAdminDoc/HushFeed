@@ -503,10 +503,10 @@ Following	Siguiendo
 For You	Para ti
 Works only with YTDLnis (com.deniscerri.ytdl). Picks audio or video when the save button sends it a link.	Solo funciona con YTDLnis (com.deniscerri.ytdl). Elige audio o video cuando el botón de guardar le envía un enlace.
 Works only with YTDLnis (com.deniscerri.ytdl). Starts the download in the background without showing its download card.	Solo funciona con YTDLnis (com.deniscerri.ytdl). Inicia la descarga en segundo plano sin mostrar su tarjeta de descarga.
-Forced %1$d of %2$d gates. Restart TikTok to apply.	%1$d de %2$d interruptores forzados. Reinicia TikTok.
-Forced %1$d gates. Restart TikTok to apply.	%1$d interruptores forzados. Reinicia TikTok.
-Forced 1 of %2$d gates. Restart TikTok to apply.	1 de %2$d interruptores forzado. Reinicia TikTok.
-Forced 1 gate. Restart TikTok to apply.	1 interruptor forzado. Reinicia TikTok.
+Forced %1$d of %2$d gates	%1$d de %2$d interruptores forzados
+Forced %1$d gates	%1$d interruptores forzados
+Forced 1 of %2$d gates	1 de %2$d interruptores forzado
+Forced 1 gate	1 interruptor forzado
 Forced result	Resultado forzado
 Forget seen videos after	Olvidar los vídeos vistos después de
 Forget the %1$s seen videos.	Olvidar los %1$s vídeos vistos.
@@ -692,9 +692,9 @@ LIVE replays	Repeticiones de LIVE
 LIVE settings	Ajustes de Live
 LIVE share actions	Acciones de compartir de LIVE
 LIVE videos	Vídeos LIVE
-Lab data reset. Restart TikTok to apply.	Datos del Lab restablecidos. Reinicia TikTok.
-Lab data reset with no undo. Restart TikTok to apply.	Lab restablecido sin deshacer. Reinicia TikTok.
-Lab overrides reset. Restart TikTok to apply.	Sustituciones restablecidas. Reinicia TikTok.
+Lab data reset	Datos del Lab restablecidos
+Lab data reset with no undo	Lab restablecido sin deshacer
+Lab overrides reset	Sustituciones restablecidas
 Larger (1.25x)	Más grande (1,25x)
 Last original value	Último valor original
 Last recording: %1$d gates.	Última grabación: %1$d interruptores.
@@ -915,10 +915,10 @@ Required	Obligatorio
 Researched	Investigado
 Researched values	Valores investigados
 Reset	Restablecer
-Reset %1$d of %2$d gates. Restart TikTok to apply.	%1$d de %2$d reseteados. Reinicia TikTok.
-Reset %1$d gates. Restart TikTok to apply.	%1$d interruptores reseteados. Reinicia TikTok.
-Reset 1 of %2$d gates. Restart TikTok to apply.	1 de %2$d reseteado. Reinicia TikTok.
-Reset 1 gate. Restart TikTok to apply.	1 interruptor reseteado. Reinicia TikTok.
+Reset %1$d of %2$d gates	%1$d de %2$d reseteados
+Reset %1$d gates	%1$d interruptores reseteados
+Reset 1 of %2$d gates	1 de %2$d reseteado
+Reset 1 gate	1 interruptor reseteado
 Reset override	Restablecer la sustitución
 Reset position	Restablecer la posición
 Reset settings	Reiniciar los ajustes
@@ -935,7 +935,7 @@ Undo didn't finish. Some settings may still be changed. Try Undo again.	Deshacer
 Undo didn't finish. Some settings may still be changed.	Deshacer no terminó. Puede que algunos ajustes hayan cambiado igualmente.
 Restore failed. Some settings may still be changed. Use Undo to put them back.	La restauración falló. Puede que algunos ajustes hayan cambiado igualmente. Usa Deshacer para recuperarlos.
 Restore settings	Restaurar los ajustes
-Lab settings put back. Restart TikTok to apply.	Ajustes del Lab recuperados. Reinicia TikTok.
+Lab settings put back	Ajustes del Lab recuperados
 Restoring your settings	Restaurando tus ajustes
 Resume videos after scrolling	Continuar los vídeos después de desplazarte
 Retry	Reintentar
@@ -1262,10 +1262,10 @@ Try again, or go back to TikTok.	Inténtalo de nuevo o vuelve a TikTok.
 Turn on %1$s first.	Activa antes %1$s.
 Put %1$s in %2$s first.	Escribe antes %1$s en %2$s.
 Turn on overrides	Activar las sustituciones
-Turned off %1$d of %2$d. Restart TikTok to apply.	%1$d de %2$d apagados. Reinicia TikTok.
-Turned off %1$d gates. Restart TikTok to apply.	%1$d interruptores apagados. Reinicia TikTok.
-Turned off 1 of %2$d gates. Restart TikTok to apply.	1 de %2$d interruptores apagado. Reinicia TikTok.
-Turned off 1 gate. Restart TikTok to apply.	1 interruptor apagado. Reinicia TikTok.
+Turned off %1$d of %2$d gates	%1$d de %2$d apagados
+Turned off %1$d gates	%1$d interruptores apagados
+Turned off 1 of %2$d gates	1 de %2$d interruptores apagado
+Turned off 1 gate	1 interruptor apagado
 Two letters, like us, gb or jp.	Dos letras, como us, gb o jp.
 Type	Tipo
 Start typing	Empieza a escribir
@@ -1463,7 +1463,7 @@ The presets couldn't load. Open the Lab again.	No se cargaron los ajustes. Reabr
 Apply enables these overrides. Undo last Lab change puts your previous rules back until you change anything else in the Lab.	Aplicar activa estas modificaciones. Deshacer el último cambio del Lab recupera tus reglas anteriores hasta que cambies otra cosa en el Lab.
 Apply saves these overrides. Turn on overrides in the Lab to use them. Turning them on is a Lab change too, so after that Undo turns them off rather than putting your previous rules back.	Aplicar guarda estas modificaciones. Actívalas en el Lab para usarlas. Activarlas también es un cambio del Lab, así que después Deshacer las desactiva en vez de recuperar tus reglas anteriores.
 This preset isn't available for your installed TikTok version.	Este ajuste no está disponible para tu versión instalada de TikTok.
-Preset applied. Restart TikTok to use it.	Ajuste aplicado. Reinicia TikTok para usarlo.
+Preset applied	Ajuste aplicado
 Preset saved. Turn on overrides to use it.	Ajuste guardado. Activa las sustituciones para usarlo.
 Preset doesn't match the gates. Nothing changed.	Ajuste incompatible con los interruptores. Sin cambios.
 About overrides	Acerca de las sustituciones

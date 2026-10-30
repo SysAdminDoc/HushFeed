@@ -1367,14 +1367,14 @@ final class L10nTranslationsEs {
                 "Para cuentas a las que TikTok les quitó la traducción. Recupera Ver traducción bajo las descripciones de los videos y en los subtítulos, y las filas de traducción en la página Idioma, en Ajustes y privacidad. Reinicia TikTok para verlo en los videos.");
         table.put("For accounts TikTok took translation away from. Brings back See translation under video descriptions and in captions. Restart TikTok to see the change.",
                 "Para cuentas a las que TikTok les quitó la traducción. Recupera Ver traducción bajo las descripciones de los videos y en los subtítulos. Reinicia TikTok para ver el cambio.");
-        table.put("Forced %1$d gates. Restart TikTok to apply.",
-                "%1$d interruptores forzados. Reinicia TikTok.");
-        table.put("Forced %1$d of %2$d gates. Restart TikTok to apply.",
-                "%1$d de %2$d interruptores forzados. Reinicia TikTok.");
-        table.put("Forced 1 gate. Restart TikTok to apply.",
-                "1 interruptor forzado. Reinicia TikTok.");
-        table.put("Forced 1 of %2$d gates. Restart TikTok to apply.",
-                "1 de %2$d interruptores forzado. Reinicia TikTok.");
+        table.put("Forced %1$d gates",
+                "%1$d interruptores forzados");
+        table.put("Forced %1$d of %2$d gates",
+                "%1$d de %2$d interruptores forzados");
+        table.put("Forced 1 gate",
+                "1 interruptor forzado");
+        table.put("Forced 1 of %2$d gates",
+                "1 de %2$d interruptores forzado");
         table.put("Forced result",
                 "Resultado forzado");
         table.put("Forget saved videos",
@@ -2087,14 +2087,14 @@ final class L10nTranslationsEs {
                 "Vídeos LIVE");
         table.put("LIVE viewers range",
                 "Rango de espectadores de LIVE");
-        table.put("Lab data reset with no undo. Restart TikTok to apply.",
-                "Lab restablecido sin deshacer. Reinicia TikTok.");
-        table.put("Lab data reset. Restart TikTok to apply.",
-                "Datos del Lab restablecidos. Reinicia TikTok.");
-        table.put("Lab overrides reset. Restart TikTok to apply.",
-                "Sustituciones restablecidas. Reinicia TikTok.");
-        table.put("Lab settings put back. Restart TikTok to apply.",
-                "Ajustes del Lab recuperados. Reinicia TikTok.");
+        table.put("Lab data reset",
+                "Datos del Lab restablecidos");
+        table.put("Lab data reset with no undo",
+                "Lab restablecido sin deshacer");
+        table.put("Lab overrides reset",
+                "Sustituciones restablecidas");
+        table.put("Lab settings put back",
+                "Ajustes del Lab recuperados");
         table.put("Language",
                 "Idioma");
         table.put("Larger (1.25x)",
@@ -2833,8 +2833,8 @@ final class L10nTranslationsEs {
                 "Publicar");
         table.put("Prefer H.264 video",
                 "Preferir vídeo H.264");
-        table.put("Preset applied. Restart TikTok to use it.",
-                "Ajuste aplicado. Reinicia TikTok para usarlo.");
+        table.put("Preset applied",
+                "Ajuste aplicado");
         table.put("Preset doesn't match the gates. Nothing changed.",
                 "Ajuste incompatible con los interruptores. Sin cambios.");
         table.put("Preset saved. Turn on overrides to use it.",
@@ -3041,14 +3041,14 @@ final class L10nTranslationsEs {
                 "Valores investigados");
         table.put("Reset",
                 "Restablecer");
-        table.put("Reset %1$d gates. Restart TikTok to apply.",
-                "%1$d interruptores reseteados. Reinicia TikTok.");
-        table.put("Reset %1$d of %2$d gates. Restart TikTok to apply.",
-                "%1$d de %2$d reseteados. Reinicia TikTok.");
-        table.put("Reset 1 gate. Restart TikTok to apply.",
-                "1 interruptor reseteado. Reinicia TikTok.");
-        table.put("Reset 1 of %2$d gates. Restart TikTok to apply.",
-                "1 de %2$d reseteado. Reinicia TikTok.");
+        table.put("Reset %1$d gates",
+                "%1$d interruptores reseteados");
+        table.put("Reset %1$d of %2$d gates",
+                "%1$d de %2$d reseteados");
+        table.put("Reset 1 gate",
+                "1 interruptor reseteado");
+        table.put("Reset 1 of %2$d gates",
+                "1 de %2$d reseteado");
         table.put("Reset didn't finish. Some settings may still be changed.",
                 "El restablecimiento no terminó. Puede que algunos ajustes hayan cambiado igualmente.");
         table.put("Reset didn't finish. Some settings may still be changed. Use Undo to put them back.",
@@ -4472,16 +4472,16 @@ final class L10nTranslationsEs {
                 "Activar las sustituciones");
         table.put("Turn the music disc at the bottom of the right column while a video plays, the way TikTok used to.",
                 "Hacer girar el disco de música al final de la columna derecha mientras se reproduce un video, como lo hacía TikTok antes.");
-        table.put("Turned off %1$d gates. Restart TikTok to apply.",
-                "%1$d interruptores apagados. Reinicia TikTok.");
-        table.put("Turned off %1$d of %2$d. Restart TikTok to apply.",
-                "%1$d de %2$d apagados. Reinicia TikTok.");
+        table.put("Turned off %1$d gates",
+                "%1$d interruptores apagados");
+        table.put("Turned off %1$d of %2$d gates",
+                "%1$d de %2$d apagados");
         table.put("Turned off %1$d overrides. Check them for TikTok %2$s.",
                 "Revisa %1$d sustituciones apagadas en TikTok %2$s.");
-        table.put("Turned off 1 gate. Restart TikTok to apply.",
-                "1 interruptor apagado. Reinicia TikTok.");
-        table.put("Turned off 1 of %2$d gates. Restart TikTok to apply.",
-                "1 de %2$d interruptores apagado. Reinicia TikTok.");
+        table.put("Turned off 1 gate",
+                "1 interruptor apagado");
+        table.put("Turned off 1 of %2$d gates",
+                "1 de %2$d interruptores apagado");
         table.put("Turned off 1 override. Check it for TikTok %2$s.",
                 "1 sustitución desactivada. Revísala para TikTok %2$s.");
     }

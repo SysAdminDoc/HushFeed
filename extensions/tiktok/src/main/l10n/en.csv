@@ -638,10 +638,10 @@ For You,For You
 "For You, Following and the other feed tabs stay behind a calm panel and won't swipe. Messages, profiles and search work as usual, a link to one video still opens that video, and the app opens on Inbox instead of the feed.","For You, Following and the other feed tabs stay behind a calm panel and won't swipe. Messages, profiles and search work as usual, a link to one video still opens that video, and the app opens on Inbox instead of the feed."
 "For accounts TikTok took translation away from. Brings back See translation under video descriptions and in captions, and the translation rows on the Language page in Settings and privacy. Restart TikTok to see it on videos.","For accounts TikTok took translation away from. Brings back See translation under video descriptions and in captions, and the translation rows on the Language page in Settings and privacy. Restart TikTok to see it on videos."
 For accounts TikTok took translation away from. Brings back See translation under video descriptions and in captions. Restart TikTok to see the change.,For accounts TikTok took translation away from. Brings back See translation under video descriptions and in captions. Restart TikTok to see the change.
-Forced %1$d gates. Restart TikTok to apply.,Forced %1$d gates. Restart TikTok to apply.
-Forced %1$d of %2$d gates. Restart TikTok to apply.,Forced %1$d of %2$d gates. Restart TikTok to apply.
-Forced 1 gate. Restart TikTok to apply.,Forced 1 gate. Restart TikTok to apply.
-Forced 1 of %2$d gates. Restart TikTok to apply.,Forced 1 of %2$d gates. Restart TikTok to apply.
+Forced %1$d gates,Forced %1$d gates
+Forced %1$d of %2$d gates,Forced %1$d of %2$d gates
+Forced 1 gate,Forced 1 gate
+Forced 1 of %2$d gates,Forced 1 of %2$d gates
 Forced result,Forced result
 Forget saved videos,Forget saved videos
 Forget seen videos after,Forget seen videos after
@@ -989,10 +989,10 @@ LIVE settings,LIVE settings
 LIVE share actions,LIVE share actions
 LIVE videos,LIVE videos
 LIVE viewers range,LIVE viewers range
-Lab data reset with no undo. Restart TikTok to apply.,Lab data reset with no undo. Restart TikTok to apply.
-Lab data reset. Restart TikTok to apply.,Lab data reset. Restart TikTok to apply.
-Lab overrides reset. Restart TikTok to apply.,Lab overrides reset. Restart TikTok to apply.
-Lab settings put back. Restart TikTok to apply.,Lab settings put back. Restart TikTok to apply.
+Lab data reset,Lab data reset
+Lab data reset with no undo,Lab data reset with no undo
+Lab overrides reset,Lab overrides reset
+Lab settings put back,Lab settings put back
 Language,Language
 Larger (1.25x),Larger (1.25x)
 Last change put back. Restart TikTok to apply all changes.,Last change put back. Restart TikTok to apply all changes.
@@ -1353,7 +1353,7 @@ Post dates in the feed,Post dates in the feed
 Post every video as if you'd turned on TikTok's own HD upload on the post page. A clip TikTok doesn't count as high quality posts as before.,Post every video as if you'd turned on TikTok's own HD upload on the post page. A clip TikTok doesn't count as high quality posts as before.
 Posting,Posting
 Prefer H.264 video,Prefer H.264 video
-Preset applied. Restart TikTok to use it.,Preset applied. Restart TikTok to use it.
+Preset applied,Preset applied
 Preset doesn't match the gates. Nothing changed.,Preset doesn't match the gates. Nothing changed.
 Preset saved. Turn on overrides to use it.,Preset saved. Turn on overrides to use it.
 Press and hold a comment to find Block this commenter in its menu. Their comments leave the list right away and an undo banner follows.,Press and hold a comment to find Block this commenter in its menu. Their comments leave the list right away and an undo banner follows.
@@ -1454,10 +1454,10 @@ Required,Required
 Researched,Researched
 Researched values,Researched values
 Reset,Reset
-Reset %1$d gates. Restart TikTok to apply.,Reset %1$d gates. Restart TikTok to apply.
-Reset %1$d of %2$d gates. Restart TikTok to apply.,Reset %1$d of %2$d gates. Restart TikTok to apply.
-Reset 1 gate. Restart TikTok to apply.,Reset 1 gate. Restart TikTok to apply.
-Reset 1 of %2$d gates. Restart TikTok to apply.,Reset 1 of %2$d gates. Restart TikTok to apply.
+Reset %1$d gates,Reset %1$d gates
+Reset %1$d of %2$d gates,Reset %1$d of %2$d gates
+Reset 1 gate,Reset 1 gate
+Reset 1 of %2$d gates,Reset 1 of %2$d gates
 Reset didn't finish. Some settings may still be changed.,Reset didn't finish. Some settings may still be changed.
 Reset didn't finish. Some settings may still be changed. Use Undo to put them back.,Reset didn't finish. Some settings may still be changed. Use Undo to put them back.
 Reset override,Reset override
@@ -2153,11 +2153,11 @@ Turn on Keep a streak going first,Turn on Keep a streak going first
 Turn on Thoughts,Turn on Thoughts
 Turn on overrides,Turn on overrides
 "Turn the music disc at the bottom of the right column while a video plays, the way TikTok used to.","Turn the music disc at the bottom of the right column while a video plays, the way TikTok used to."
-Turned off %1$d gates. Restart TikTok to apply.,Turned off %1$d gates. Restart TikTok to apply.
-Turned off %1$d of %2$d. Restart TikTok to apply.,Turned off %1$d of %2$d. Restart TikTok to apply.
+Turned off %1$d gates,Turned off %1$d gates
+Turned off %1$d of %2$d gates,Turned off %1$d of %2$d gates
 Turned off %1$d overrides. Check them for TikTok %2$s.,Turned off %1$d overrides. Check them for TikTok %2$s.
-Turned off 1 gate. Restart TikTok to apply.,Turned off 1 gate. Restart TikTok to apply.
-Turned off 1 of %2$d gates. Restart TikTok to apply.,Turned off 1 of %2$d gates. Restart TikTok to apply.
+Turned off 1 gate,Turned off 1 gate
+Turned off 1 of %2$d gates,Turned off 1 of %2$d gates
 Turned off 1 override. Check it for TikTok %2$s.,Turned off 1 override. Check it for TikTok %2$s.
 "Turns off TikTok's notification service, so nothing it sends reaches your notification shade and it can't wake your phone. You won't hear about new messages until you open TikTok. Notifications hidden while this is on don't come back. Ongoing ones like media controls stay.","Turns off TikTok's notification service, so nothing it sends reaches your notification shade and it can't wake your phone. You won't hear about new messages until you open TikTok. Notifications hidden while this is on don't come back. Ongoing ones like media controls stay."
 Turns off at %1$s,Turns off at %1$s

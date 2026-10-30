@@ -644,16 +644,19 @@ public class SettingsL10nTest {
                 "extensions/tiktok/src/main/java/app/morphe/extension/tiktok");
         assertTrue(root.isDirectory());
         java.util.Set<String> messages = new java.util.TreeSet<>();
+        Map<java.nio.file.Path, String> sources = new LinkedHashMap<>();
         try (java.util.stream.Stream<java.nio.file.Path> files = java.nio.file.Files.walk(root.toPath())) {
             for (java.nio.file.Path file : files.filter(p -> p.toString().endsWith(".java"))
                     .collect(java.util.stream.Collectors.toList())) {
                 if (file.getFileName().toString().startsWith("L10nTranslations")) continue;
                 String source = new String(java.nio.file.Files.readAllBytes(file),
                         java.nio.charset.StandardCharsets.UTF_8);
+                sources.put(file, source);
                 messages.addAll(toastLiteralsIn(source, false));
                 messages.addAll(toastVariableLiteralsIn(source));
             }
         }
+        messages.addAll(toastHelperLiteralsIn(sources));
         assertTrue("the scan found too few toasts to mean anything: " + messages.size(),
                 messages.size() > 40);
 
@@ -743,6 +746,79 @@ public class SettingsL10nTest {
                 + "}\n";
         assertEquals(java.util.Arrays.asList("Stopped waiting for Wi-Fi.", "Saved", "Failed: %1$s",
                 "Too late", "First", "Second", "Captured", "Kept"), toastVariableLiteralsIn(source));
+    }
+
+    /**
+     * A message a helper method returns, or one handed to a method that toasts it, is measured
+     * too: through the helper's own returns, a local it returns and the helpers it calls, and
+     * through wrappers two deep. A helper's answer shown on a label, logged, or filling part of
+     * another message isn't a toast, a call on a value can't be placed, and a banner's stand-in
+     * toast is left out as the banners are.
+     */
+    @Test public void theToastScanFollowsAHelpersAnswer() {
+        Map<java.nio.file.Path, String> sources = new LinkedHashMap<>();
+        sources.put(java.nio.file.Paths.get("Messages.java"), "class Messages {\n"
+                + "  static String busy(String key) {\n"
+                + "    if (key == null) return L10n.t(\"Nothing to save\");\n"
+                + "    return key.isEmpty() ? L10n.f(\"Busy with %1$s\", key) : later();\n"
+                + "  }\n"
+                + "  private static String later() {\n"
+                + "    String text = L10n.t(\"Try again later\");\n"
+                + "    return text;\n"
+                + "  }\n"
+                + "  static String waiting() { return L10n.t(\"Waiting for Wi-Fi\"); }\n"
+                + "  static String loop(int n) { return n > 0 ? loop(n - 1) : L10n.t(\"Bottom\"); }\n"
+                + "  static String quiet() {\n"
+                + "    post(new Callable<String>() { public String call() { return L10n.t(\"Inner answer\"); } });\n"
+                + "    return L10n.t(\"Outer answer\");\n"
+                + "  }\n"
+                + "}\n");
+        sources.put(java.nio.file.Paths.get("Screen.java"), "class Screen {\n"
+                + "  void a() { Utils.showToastLong(Messages.busy(key)); }\n"
+                + "  void b() {\n"
+                + "    String own = Messages.waiting();\n"
+                + "    Utils.showToastShort(own);\n"
+                + "  }\n"
+                + "  void c() { Utils.showToastShort(failure()); }\n"
+                + "  private String failure() {\n"
+                + "    String why = L10n.t(\"Couldn't save\");\n"
+                + "    return why;\n"
+                + "  }\n"
+                + "  void d() {\n"
+                + "    label.setText(shownElsewhere());\n"
+                + "    log(L10n.t(\"Logged only\"));\n"
+                + "    Utils.showToastShort(L10n.f(\"Saved %1$s\", partOf()));\n"
+                + "  }\n"
+                + "  private String shownElsewhere() { return L10n.t(\"On a label\"); }\n"
+                + "  private String partOf() { return L10n.t(\"A part\"); }\n"
+                + "  void e() {\n"
+                + "    Utils.showToastShort(Messages.loop(3));\n"
+                + "    Utils.showToastShort(Messages.quiet());\n"
+                + "  }\n"
+                + "  void f() {\n"
+                + "    notice(L10n.t(\"Through a wrapper\"));\n"
+                + "    Notices.tell(L10n.t(\"Two wrappers deep\"));\n"
+                + "  }\n"
+                + "  private static void notice(String message) { Utils.showToastShort(message); }\n"
+                + "  void g() { value.notice(L10n.t(\"On some value\")); }\n"
+                + "  void h() { SettingsActionBanner.showNotice(context, L10n.t(\"A banner\")); }\n"
+                + "}\n");
+        sources.put(java.nio.file.Paths.get("Notices.java"), "class Notices {\n"
+                + "  static void tell(String text) { relay(text, 1); }\n"
+                + "  private static void relay(String message, int times) {\n"
+                + "    Toast.makeText(context, message, times).show();\n"
+                + "  }\n"
+                + "}\n");
+        sources.put(java.nio.file.Paths.get("SettingsActionBanner.java"), "class SettingsActionBanner {\n"
+                + "  static void showNotice(Context context, String message) { show(context, message); }\n"
+                + "  private static void show(Context context, String message) {\n"
+                + "    if (root == null) Utils.showToastShort(message);\n"
+                + "  }\n"
+                + "}\n");
+        assertEquals(new java.util.TreeSet<>(java.util.Arrays.asList("Nothing to save",
+                        "Busy with %1$s", "Try again later", "Waiting for Wi-Fi", "Couldn't save",
+                        "Saved %1$s", "Bottom", "Outer answer", "Through a wrapper", "Two wrappers deep")),
+                new java.util.TreeSet<>(toastHelperLiteralsIn(sources)));
     }
 
     /** Columns a toast line holds before word wrap moves on. A wide character takes two. */
@@ -887,55 +963,312 @@ public class SettingsL10nTest {
      * enclosing method's variables too, as a lambda's does, unless a parameter of its own method
      * hides them. A declaration in a block that closed before the call, such as a sibling
      * anonymous class's method, is another variable and is left out. A message a helper method
-     * builds, or one handed in as a parameter, still walks past.
+     * builds, or one handed in as a parameter, is toastHelperLiteralsIn's to find.
      */
     private static java.util.List<String> toastVariableLiteralsIn(String text) {
         byte[] kind = classify(text);
         java.util.List<String> found = new java.util.ArrayList<>();
-        java.util.regex.Matcher call = java.util.regex.Pattern
-                .compile("(?:\\b\\w*[Tt]oast\\w*|Toast\\s*\\.\\s*makeText)\\s*\\(").matcher(text);
+        java.util.regex.Matcher call = java.util.regex.Pattern.compile(TOAST_CALL).matcher(text);
         while (call.find()) {
             int open = call.end() - 1;
             if (kind[call.start()] != CODE) continue;
             int close = closingBracket(text, kind, open);
             if (close < 0) continue;
-            int body = methodBodyStart(text, kind, call.start());
-            int own = methodBodyStart(text, kind, call.start(), false);
             for (String argument : text.substring(open + 1, close).split(",")) {
                 String name = argument.trim();
                 if (!name.matches("[a-z]\\w*")) continue;
-                java.util.regex.Matcher declared = java.util.regex.Pattern
-                        .compile("\\b(?:String|CharSequence)\\s+" + name + "\\s*(?:=(?!=)|;)").matcher(text);
-                declared.region(body, call.start());
-                // The last declaration whose block is still open at the call is the one it reads.
-                // Any other one after it sits in a block that closed first, a sibling anonymous
-                // class's method say, and holds a variable of its own.
-                int from = -1;
-                java.util.List<Integer> shadows = new java.util.ArrayList<>();
-                while (declared.find()) {
-                    if (kind[declared.start()] != CODE) continue;
-                    if (inScope(text, kind, declared.start(), call.start())) {
-                        from = declared.start();
-                        shadows.clear();
-                    } else if (from >= 0) {
-                        shadows.add(declared.start());
-                    }
-                }
-                if (from < 0) continue;
-                // A parameter of the toast's own method hides a variable of the method around it.
-                if (from < own && takesParameter(text, kind, own, name)) continue;
-                java.util.regex.Matcher assigned = java.util.regex.Pattern
-                        .compile("\\b" + name + "\\s*\\+?=(?!=)").matcher(text);
-                assigned.region(from, call.start());
-                while (assigned.find()) {
-                    if (kind[assigned.start()] != CODE) continue;
-                    if (shadowed(text, kind, shadows, assigned.start())) continue;
-                    int end = statementEnd(text, kind, assigned.end());
-                    if (end > 0) found.addAll(l10nLiteralsBetween(text, kind, assigned.end(), end));
+                for (int[] assignment : assignmentsReaching(text, kind, name, call.start())) {
+                    found.addAll(l10nLiteralsBetween(text, kind, assignment[0], assignment[1]));
                 }
             }
         }
         return found;
+    }
+
+    /** A toast call: a method with toast in its name, or Toast.makeText. */
+    private static final String TOAST_CALL = "(?:\\b\\w*[Tt]oast\\w*|Toast\\s*\\.\\s*makeText)\\s*\\(";
+
+    /**
+     * Where each assignment to the local String {@code name} that the read at {@code use} can
+     * see runs, from just after its = to its semicolon, by the rules toastVariableLiteralsIn
+     * gives. Empty when {@code name} is no such variable, a parameter for one.
+     */
+    private static java.util.List<int[]> assignmentsReaching(String text, byte[] kind, String name, int use) {
+        java.util.List<int[]> spans = new java.util.ArrayList<>();
+        int body = methodBodyStart(text, kind, use);
+        int own = methodBodyStart(text, kind, use, false);
+        java.util.regex.Matcher declared = java.util.regex.Pattern
+                .compile("\\b(?:String|CharSequence)\\s+" + name + "\\s*(?:=(?!=)|;)").matcher(text);
+        declared.region(body, use);
+        // The last declaration whose block is still open at the read is the one it reads. Any
+        // other one after it sits in a block that closed first, a sibling anonymous class's
+        // method say, and holds a variable of its own.
+        int from = -1;
+        java.util.List<Integer> shadows = new java.util.ArrayList<>();
+        while (declared.find()) {
+            if (kind[declared.start()] != CODE) continue;
+            if (inScope(text, kind, declared.start(), use)) {
+                from = declared.start();
+                shadows.clear();
+            } else if (from >= 0) {
+                shadows.add(declared.start());
+            }
+        }
+        if (from < 0) return spans;
+        // A parameter of the reading method hides a variable of the method around it.
+        if (from < own && takesParameter(text, kind, own, name)) return spans;
+        java.util.regex.Matcher assigned = java.util.regex.Pattern
+                .compile("\\b" + name + "\\s*\\+?=(?!=)").matcher(text);
+        assigned.region(from, use);
+        while (assigned.find()) {
+            if (kind[assigned.start()] != CODE) continue;
+            if (shadowed(text, kind, shadows, assigned.start())) continue;
+            int end = statementEnd(text, kind, assigned.end());
+            if (end > 0) spans.add(new int[]{assigned.end(), end});
+        }
+        return spans;
+    }
+
+    /**
+     * Methods whose toast stands in for a banner that couldn't be drawn. The banners aren't held
+     * to two lines, so a message that reaches a toast only through one of these isn't either.
+     */
+    private static final Set<String> BANNER_FALLBACKS = new LinkedHashSet<>(java.util.Arrays.asList(
+            "BlockAuthorOverlay#toastInstead", "SettingsActionBanner#show", "SettingsActionBanner#addAction"));
+
+    /** A method being called or declared: its name and the bracket after it. */
+    private static final java.util.regex.Pattern CALLED = java.util.regex.Pattern.compile("\\b([a-z]\\w*)\\s*\\(");
+
+    /**
+     * Every L10n literal that reaches a toast through another method: one whose answer the toast
+     * shows, as in {@code Utils.showToastLong(MediaJobScheduler.busyMessage(key))} or a local set
+     * from one, and one that hands a String it was given on to a toast, as in
+     * {@code SaveNotice.saved(L10n.t(...), saved)}. TikTok's 23 toasts written as a call and the
+     * wrappers SaveNotice, notice and acknowledge all walked past the scan before this.
+     *
+     * <p>A call is followed when it names its class or none, so it lands in that class's file or
+     * its own; a call on a value can't be placed and is left out. A method's answer is read from
+     * each return in its own body, through a local it returns and every method it calls in turn.
+     * A call inside another call's brackets, an L10n call's included, builds part of a message
+     * that the %1$s it fills is already counted for, so it is left out too.
+     */
+    private static java.util.List<String> toastHelperLiteralsIn(Map<java.nio.file.Path, String> texts) {
+        ToastSources sources = new ToastSources(texts);
+        Set<String> wrappers = toastWrappers(sources);
+        java.util.List<String> found = new java.util.ArrayList<>();
+        for (java.nio.file.Path path : texts.keySet()) {
+            String text = texts.get(path);
+            byte[] kind = sources.kinds.get(path);
+            java.util.regex.Matcher call = CALLED.matcher(text);
+            while (call.find()) {
+                if (kind[call.start()] != CODE) continue;
+                int open = call.end() - 1;
+                int close = closingBracket(text, kind, open);
+                if (close < 0 || openingBraceAfter(text, kind, close) >= 0) continue;
+                List<int[]> arguments = argumentsOf(text, kind, open, close);
+                for (int index : sources.shownArguments(path, call.start(), call.group(1),
+                        arguments.size(), wrappers)) {
+                    found.addAll(sources.shown(path, arguments.get(index)[0], arguments.get(index)[1],
+                            new java.util.HashSet<>()));
+                }
+            }
+        }
+        return found;
+    }
+
+    /**
+     * Every method that hands a String parameter to a toast, as Class#method#position. Found the
+     * way helpersThatPutTextOnTheScreen finds view helpers: a method whose parameter reaches a
+     * toast, or reaches a method already found, is one, and that repeats until a pass finds
+     * nothing new. Keyed by class rather than by name alone, since show and saved are common.
+     */
+    private static Set<String> toastWrappers(ToastSources sources) {
+        Map<java.nio.file.Path, List<Method>> methods = new LinkedHashMap<>();
+        for (java.nio.file.Path path : sources.texts.keySet()) {
+            methods.put(path, methodsIn(sources.texts.get(path), sources.kinds.get(path)));
+        }
+        Set<String> wrappers = new LinkedHashSet<>();
+        boolean grew = true;
+        while (grew) {
+            grew = false;
+            for (java.nio.file.Path path : sources.texts.keySet()) {
+                String text = sources.texts.get(path);
+                byte[] kind = sources.kinds.get(path);
+                byte[] outside = sources.outside.get(path);
+                String owner = ToastSources.className(path);
+                for (Method method : methods.get(path)) {
+                    if (BANNER_FALLBACKS.contains(owner + "#" + method.name)) continue;
+                    java.util.regex.Matcher call = CALLED.matcher(text);
+                    call.region(method.bodyStart, method.bodyEnd);
+                    while (call.find()) {
+                        if (kind[call.start()] != CODE) continue;
+                        int open = call.end() - 1;
+                        int close = closingBracket(text, kind, open);
+                        if (close < 0) continue;
+                        List<int[]> arguments = argumentsOf(text, kind, open, close);
+                        for (int index : sources.shownArguments(path, call.start(), call.group(1),
+                                arguments.size(), wrappers)) {
+                            for (int position : identifiersIn(text, outside,
+                                    arguments.get(index)[0], arguments.get(index)[1])) {
+                                int declared = method.parameterAt(text, position);
+                                if (declared >= 0 && wrappers.add(owner + "#" + method.name + "#" + declared)) {
+                                    grew = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return wrappers;
+    }
+
+    /** The sources a toast scan reads, each classified once, and the files of each class name. */
+    private static final class ToastSources {
+        final Map<java.nio.file.Path, String> texts;
+        final Map<java.nio.file.Path, byte[]> kinds = new LinkedHashMap<>();
+        final Map<java.nio.file.Path, byte[]> outside = new LinkedHashMap<>();
+        final Map<String, List<java.nio.file.Path>> classes = new LinkedHashMap<>();
+
+        ToastSources(Map<java.nio.file.Path, String> texts) {
+            this.texts = texts;
+            for (Map.Entry<java.nio.file.Path, String> source : texts.entrySet()) {
+                byte[] kind = classify(source.getValue());
+                kinds.put(source.getKey(), kind);
+                outside.put(source.getKey(), withoutL10nCalls(source.getValue(), kind));
+                classes.computeIfAbsent(className(source.getKey()), name -> new ArrayList<>())
+                        .add(source.getKey());
+            }
+        }
+
+        static String className(java.nio.file.Path path) {
+            String file = path.getFileName().toString();
+            return file.endsWith(".java") ? file.substring(0, file.length() - ".java".length()) : file;
+        }
+
+        /** The word before a call's dot: null when it has no dot, "" when no single word is there. */
+        String receiver(java.nio.file.Path path, int start) {
+            String text = texts.get(path);
+            int dot = start - 1;
+            while (dot >= 0 && Character.isWhitespace(text.charAt(dot))) dot--;
+            if (dot < 0 || text.charAt(dot) != '.') return null;
+            int end = dot;
+            while (end > 0 && Character.isWhitespace(text.charAt(end - 1))) end--;
+            int begin = end;
+            while (begin > 0 && Character.isJavaIdentifierPart(text.charAt(begin - 1))) begin--;
+            int before = begin - 1;
+            while (before >= 0 && Character.isWhitespace(text.charAt(before))) before--;
+            return before >= 0 && text.charAt(before) == '.' ? "" : text.substring(begin, end);
+        }
+
+        /** The files a call at {@code start} can land in: its own, the named class's, or none. */
+        List<java.nio.file.Path> targets(java.nio.file.Path path, int start) {
+            String receiver = receiver(path, start);
+            if (receiver == null || receiver.equals("this")) return java.util.Collections.singletonList(path);
+            if (receiver.isEmpty() || !Character.isUpperCase(receiver.charAt(0))) {
+                return java.util.Collections.emptyList();
+            }
+            List<java.nio.file.Path> named = classes.get(receiver);
+            return named == null ? java.util.Collections.<java.nio.file.Path>emptyList() : named;
+        }
+
+        /** Which arguments of a call a toast shows: all of a toast's, the wrapped ones of a wrapper's. */
+        List<Integer> shownArguments(java.nio.file.Path path, int start, String name, int count,
+                                     Set<String> wrappers) {
+            List<java.nio.file.Path> targets = targets(path, start);
+            List<Integer> shown = new ArrayList<>();
+            for (java.nio.file.Path target : targets) {
+                if (BANNER_FALLBACKS.contains(className(target) + "#" + name)) return shown;
+            }
+            boolean toast = name.matches("\\w*[Tt]oast\\w*")
+                    || name.equals("makeText") && "Toast".equals(receiver(path, start));
+            for (int index = 0; index < count; index++) {
+                if (toast) {
+                    shown.add(index);
+                    continue;
+                }
+                for (java.nio.file.Path target : targets) {
+                    if (wrappers.contains(className(target) + "#" + name + "#" + index)) {
+                        shown.add(index);
+                        break;
+                    }
+                }
+            }
+            return shown;
+        }
+
+        /**
+         * Every L10n literal in an expression a toast shows, and in what it reads: the local it
+         * is, when it's one name, and the answer of each method it calls outside any brackets.
+         */
+        List<String> shown(java.nio.file.Path path, int from, int to, Set<String> seen) {
+            String text = texts.get(path);
+            byte[] kind = kinds.get(path);
+            byte[] code = outside.get(path);
+            List<String> found = new ArrayList<>(l10nLiteralsBetween(text, kind, from, to));
+            String whole = text.substring(from, to).trim();
+            if (whole.matches("[a-z]\\w*")) {
+                for (int[] assignment : assignmentsReaching(text, kind, whole, from)) {
+                    if (seen.add(path + "@" + assignment[0])) {
+                        found.addAll(shown(path, assignment[0], assignment[1], seen));
+                    }
+                }
+                return found;
+            }
+            java.util.regex.Matcher call = CALLED.matcher(text);
+            int at = from;
+            while (at < to && call.find(at) && call.start() < to) {
+                at = call.end();
+                if (code[call.start()] != CODE) continue;
+                int close = closingBracket(text, kind, call.end() - 1);
+                if (close < 0 || close >= to) continue;
+                at = close + 1;
+                for (java.nio.file.Path target : targets(path, call.start())) {
+                    for (int[] body : bodiesOf(target, call.group(1))) {
+                        if (!seen.add(target + "#" + body[0])) continue;
+                        for (int[] answer : returnsIn(target, body)) {
+                            found.addAll(shown(target, answer[0], answer[1], seen));
+                        }
+                    }
+                }
+            }
+            return found;
+        }
+
+        /** The body of each method called {@code name} that {@code path} declares, as its two braces. */
+        List<int[]> bodiesOf(java.nio.file.Path path, String name) {
+            String text = texts.get(path);
+            byte[] kind = kinds.get(path);
+            List<int[]> bodies = new ArrayList<>();
+            java.util.regex.Matcher match = java.util.regex.Pattern
+                    .compile("\\b" + java.util.regex.Pattern.quote(name) + "\\s*\\(").matcher(text);
+            while (match.find()) {
+                if (kind[match.start()] != CODE || receiver(path, match.start()) != null) continue;
+                int close = closingBracket(text, kind, match.end() - 1);
+                if (close < 0) continue;
+                int brace = openingBraceAfter(text, kind, close);
+                if (brace < 0) continue;
+                int end = closingBrace(text, kind, brace);
+                if (end > 0) bodies.add(new int[]{brace, end});
+            }
+            return bodies;
+        }
+
+        /** What each return in a method body hands back, leaving out an anonymous class's own methods. */
+        List<int[]> returnsIn(java.nio.file.Path path, int[] body) {
+            String text = texts.get(path);
+            byte[] kind = kinds.get(path);
+            List<int[]> answers = new ArrayList<>();
+            java.util.regex.Matcher match = java.util.regex.Pattern.compile("\\breturn\\b").matcher(text);
+            match.region(body[0], body[1]);
+            while (match.find()) {
+                if (kind[match.start()] != CODE) continue;
+                if (methodBodyStart(text, kind, match.start(), false) != body[0]) continue;
+                int end = statementEnd(text, kind, match.end());
+                if (end > match.end()) answers.add(new int[]{match.end(), end});
+            }
+            return answers;
+        }
     }
 
     /** A method or constructor head just before its body's brace; if, for, catch and the rest aren't. */

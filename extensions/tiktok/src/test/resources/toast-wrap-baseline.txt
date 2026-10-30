@@ -3,6 +3,7 @@
 # This list only gets shorter.
 # Lines added 2026-10-30 are older toasts whose message is built in a local variable, which the scan follows since then.
 # Lines added 2026-10-30 later the same day are toasts whose message variable is declared without a value, or is read inside an anonymous class.
+# Lines added 2026-10-30 at the end of the day are toasts whose message a helper method returns, or that reach a toast through a method's parameter, which the scan follows since then.
 az	%1$d overrides were turned off because the Lab couldn't confirm their gates are unchanged in TikTok %2$s. Review them before turning them back on.
 az	1 override was turned off because the Lab couldn't confirm its gate is unchanged in TikTok %2$s. Review it before turning it back on.
 az	A field value couldn't be read. Check the values and try again.
@@ -14,6 +15,9 @@ az	Allow storage for TikTok in Android settings to save sounds
 az	Allow storage for TikTok in Android settings to save stories
 az	Allow storage for TikTok in Android settings to save the live photo's clip
 az	Choose a folder on internal storage. SD cards aren't supported.
+az	Couldn't clear the suggested accounts. Reopen the Inbox and try again.
+az	Couldn't confirm the block for %1$s. Open their profile to check.
+az	Couldn't confirm the unblock for %1$s. Open their profile to check.
 az	Couldn't copy the build details. Use Save build details instead.
 az	Couldn't copy the report. Use Save report instead.
 az	Couldn't find this LIVE's stream to record. Leave the room and open it again.
@@ -41,9 +45,18 @@ az	No presets have been reviewed for TikTok %1$s yet
 az	None of the picked videos could be saved. Try again.
 az	Nothing was recorded because Hushfeed settings were still open. Start again, then leave settings.
 az	Opus didn't work on this phone. Saving the sound as TikTok sent it instead.
+az	Overrides enabled. Restart TikTok to apply this.
 az	Picked the first %1$s. Save them, then tap Pick all again for the rest.
 az	Recording gate reads. Use a feature, then return here to stop.
+az	Recording stopped early. What was recorded is saved to %1$s
 az	Saved %1$s of %2$s photos before the story failed
+az	Saved %1$s of %2$s, %3$s skipped and the rest cancelled
+az	Saved %1$s of %2$s, the rest cancelled
+az	Saved %1$s of %2$s, the rest need more free space
+az	Saved %1$s of %2$s, the rest ran out of time
+az	Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.
+az	Saved %1$s of %2$s. The server asked us to wait. Try again later.
+az	Saved the photos as a video in %1$s. The sound couldn't be added, so it's silent.
 az	Saved. Restart TikTok to apply this.
 az	Saving a frame from this video needs Android 7 or newer
 az	Screen layout recorded. Export the diagnostic report to send it.
@@ -51,13 +64,17 @@ az	Some recording files remain. Try deleting them again.
 az	Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.
 az	That creator pattern could stall the feed, so it was skipped: %1$s
 az	That creator pattern is too long to use, so it was skipped: %1$s
+az	That isn't valid JSON. Check the brackets and quotes.
+az	The LIVE ended or the connection dropped. What was recorded is saved to %1$s
 az	The downloader app you chose isn't installed. Check Send links to another app under Downloads.
+az	The export may be incomplete. The original recording files are still kept.
 az	The export wasn't saved. Export again when the file app is ready.
 az	The feed capture couldn't be saved. Tap the row to try again.
 az	The live photo's clip couldn't be saved. Try again.
 az	The loaded-values file you chose couldn't be read. Try again.
 az	The original photos aren't available, so TikTok's own save runs instead
 az	The original photos aren't available. No video was saved.
+az	The phone is running out of room. What was recorded is saved to %1$s
 az	The photos saved, but their details file couldn't be written. Check your storage and save the post again to get it.
 az	The proxy at %1$s asks for a password, and TikTok can't send one. Use a proxy that doesn't need one.
 az	The save stopped when you left Wi-Fi. Save it again on Wi-Fi.
@@ -74,12 +91,17 @@ az	This video has no link to send, so TikTok's own save runs instead
 az	This video is already saved. Open TikTok to save another copy.
 az	This video isn't available as a complete file. Try again later.
 az	Those photos can't be tried again now. Save the post again to get the rest.
+az	TikTok closed. What was recorded is saved to %1$s
+az	TikTok didn't block %1$s. Try again in a moment.
+az	TikTok didn't unblock %1$s. Try again in a moment.
 az	TikTok isn't locked because this phone has no screen lock
+az	TikTok only had its watermarked copy of this story, so that copy was saved to %1$s
 az	TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.
 az	TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.
 az	TikTok's search page couldn't be opened. Restart TikTok and try again.
 az	Too many media saves are already running. Try again in a moment.
 az	Use Save report for this large report
+az	Video saved in %1$s, but only %2$s of %3$s subtitles came with it
 az	YouTube Music couldn't be opened. Open it yourself and search for the sound.
 de	%1$d overrides were turned off because the Lab couldn't confirm their gates are unchanged in TikTok %2$s. Review them before turning them back on.
 de	1 override was turned off because the Lab couldn't confirm its gate is unchanged in TikTok %2$s. Review it before turning it back on.
@@ -91,6 +113,10 @@ de	Allow storage for TikTok in Android settings to save profile pictures
 de	Allow storage for TikTok in Android settings to save sounds
 de	Allow storage for TikTok in Android settings to save stories
 de	Allow storage for TikTok in Android settings to save the live photo's clip
+de	Couldn't change the Lab settings. Try again.
+de	Couldn't clear the suggested accounts. Reopen the Inbox and try again.
+de	Couldn't confirm the block for %1$s. Open their profile to check.
+de	Couldn't confirm the unblock for %1$s. Open their profile to check.
 de	Couldn't copy the build details. Use Save build details instead.
 de	Couldn't copy the report. Use Save report instead.
 de	Couldn't find this LIVE's stream to record. Leave the room and open it again.
@@ -99,8 +125,10 @@ de	Couldn't open the file picker to import. Try again.
 de	Couldn't reach the proxy at %1$s. TikTok may not load until it's back or you turn the proxy off.
 de	Couldn't read who posted this comment. Open their profile and block them there.
 de	Couldn't record the screen's layout. Start again from Diagnostics.
+de	Couldn't reset this override. Try again.
 de	Couldn't save the change. Try again.
 de	Couldn't save these choices. Try again.
+de	Couldn't save this override. Try again.
 de	Couldn't send the feedback. Try again in a moment.
 de	Couldn't start saving the feed capture. Try again in a moment.
 de	Couldn't start the Lab change. Try again in a moment.
@@ -117,16 +145,26 @@ de	Go to the screen now. Hushfeed records its layout in %1$d seconds.
 de	Hushfeed can't read the creator pattern %1$s
 de	Hushfeed hid a TikTok CAPTCHA. Turn off Hide CAPTCHA popups if something stops working.
 de	Imported %1$d values. Undo last Lab change is in the menu.
+de	Keep this structured value to %1$s KB or less.
 de	Kept to %1$s, the nearest value this row allows
 de	Loaded values are still being read. Try again in a moment.
+de	No suggested accounts to clear
 de	None of the photos could be saved. Try again.
 de	None of the picked videos could be saved. Try again.
 de	Nothing was recorded because Hushfeed settings were still open. Start again, then leave settings.
 de	Opus didn't work on this phone. Saving the sound as TikTok sent it instead.
+de	Overrides enabled. Restart TikTok to apply this.
 de	Picked the first %1$s. Save them, then tap Pick all again for the rest.
 de	Recording gate reads. Use a feature, then return here to stop.
+de	Recording stopped early. What was recorded is saved to %1$s
 de	Recording this LIVE's screen from now, without sound
 de	Saved %1$s of %2$s photos before the story failed
+de	Saved %1$s of %2$s, %3$s skipped and the rest cancelled
+de	Saved %1$s of %2$s, the rest need more free space
+de	Saved %1$s of %2$s, the rest ran out of time
+de	Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.
+de	Saved %1$s of %2$s. The server asked us to wait. Try again later.
+de	Saved the photos as a video in %1$s. The sound couldn't be added, so it's silent.
 de	Saving a frame from this video needs Android 7 or newer
 de	Screen layout recorded. Export the diagnostic report to send it.
 de	Sign in to edit your own profile counts
@@ -134,11 +172,14 @@ de	Some recording files remain. Try deleting them again.
 de	Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.
 de	That creator pattern could stall the feed, so it was skipped: %1$s
 de	That creator pattern is too long to use, so it was skipped: %1$s
+de	That isn't valid JSON. Check the brackets and quotes.
 de	That sticker is in a format Hushfeed can't read
+de	The LIVE ended or the connection dropped. What was recorded is saved to %1$s
 de	The Lab couldn't open. Go back and open it again.
 de	The already-saved check failed. Try again.
 de	The cover couldn't be saved. Try again.
 de	The downloader app you chose isn't installed. Check Send links to another app under Downloads.
+de	The export may be incomplete. The original recording files are still kept.
 de	The export wasn't saved. Export again when the file app is ready.
 de	The feed capture couldn't be saved. Tap the row to try again.
 de	The frame couldn't be read. Try again.
@@ -147,13 +188,16 @@ de	The live photo's clip couldn't be saved. Try again.
 de	The loaded-values file you chose couldn't be read. Try again.
 de	The original photos aren't available, so TikTok's own save runs instead
 de	The original photos aren't available. No video was saved.
+de	The phone is running out of room. What was recorded is saved to %1$s
 de	The photos saved, but their details file couldn't be written. Check your storage and save the post again to get it.
 de	The presets couldn't load. Open the Lab again.
 de	The proxy at %1$s asks for a password, and TikTok can't send one. Use a proxy that doesn't need one.
 de	The recording couldn't be saved. Try again.
+de	The recording reached its size limit and was saved to %1$s
 de	The report couldn't be saved. Try again.
 de	The save stopped when you left Wi-Fi. Save it again on Wi-Fi.
 de	The saved-video choice couldn't open. Try again.
+de	The saved-video choice is still open
 de	The sound couldn't be saved. Try again.
 de	The sticker couldn't be saved. Try again.
 de	The video couldn't be made from these photos. Try again.
@@ -171,12 +215,17 @@ de	This video is already saved. Open TikTok to save another copy.
 de	This video isn't available as a complete file. Try again later.
 de	This video's sound has no title to look for
 de	Those photos can't be tried again now. Save the post again to get the rest.
+de	TikTok closed. What was recorded is saved to %1$s
 de	TikTok didn't accept the feedback. Try again later.
+de	TikTok didn't block %1$s. Try again in a moment.
+de	TikTok didn't unblock %1$s. Try again in a moment.
 de	TikTok isn't locked because this phone has no screen lock
+de	TikTok only had its watermarked copy of this story, so that copy was saved to %1$s
 de	TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.
 de	TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.
 de	TikTok's search page couldn't be opened. Restart TikTok and try again.
 de	Too many media saves are already running. Try again in a moment.
+de	Video saved in %1$s, but only %2$s of %3$s subtitles came with it
 de	YouTube Music couldn't be opened. Open it yourself and search for the sound.
 de	Your account changed. Open the count editor again.
 en	%1$d overrides were turned off because the Lab couldn't confirm their gates are unchanged in TikTok %2$s. Review them before turning them back on.
@@ -190,6 +239,9 @@ en	Allow storage for TikTok in Android settings to save sounds
 en	Allow storage for TikTok in Android settings to save stories
 en	Allow storage for TikTok in Android settings to save the live photo's clip
 en	Choose a folder on internal storage. SD cards aren't supported.
+en	Couldn't clear the suggested accounts. Reopen the Inbox and try again.
+en	Couldn't confirm the block for %1$s. Open their profile to check.
+en	Couldn't confirm the unblock for %1$s. Open their profile to check.
 en	Couldn't copy the build details. Use Save build details instead.
 en	Couldn't find this LIVE's stream to record. Leave the room and open it again.
 en	Couldn't reach the proxy at %1$s. TikTok may not load until it's back or you turn the proxy off.
@@ -212,20 +264,29 @@ en	Nothing was recorded because Hushfeed settings were still open. Start again, 
 en	Opus didn't work on this phone. Saving the sound as TikTok sent it instead.
 en	Picked the first %1$s. Save them, then tap Pick all again for the rest.
 en	Recording gate reads. Use a feature, then return here to stop.
+en	Recording stopped early. What was recorded is saved to %1$s
+en	Saved %1$s of %2$s, %3$s skipped and the rest cancelled
+en	Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.
+en	Saved %1$s of %2$s. The server asked us to wait. Try again later.
+en	Saved the photos as a video in %1$s. The sound couldn't be added, so it's silent.
 en	Saving a frame from this video needs Android 7 or newer
 en	Screen layout recorded. Export the diagnostic report to send it.
 en	Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.
 en	That creator pattern could stall the feed, so it was skipped: %1$s
 en	That creator pattern is too long to use, so it was skipped: %1$s
+en	The LIVE ended or the connection dropped. What was recorded is saved to %1$s
 en	The downloader app you chose isn't installed. Check Send links to another app under Downloads.
+en	The export may be incomplete. The original recording files are still kept.
 en	The export wasn't saved. Export again when the file app is ready.
 en	The feed capture couldn't be saved. Tap the row to try again.
 en	The live photo's clip couldn't be saved. Try again.
 en	The loaded-values file you chose couldn't be read. Try again.
 en	The original photos aren't available, so TikTok's own save runs instead
 en	The original photos aren't available. No video was saved.
+en	The phone is running out of room. What was recorded is saved to %1$s
 en	The photos saved, but their details file couldn't be written. Check your storage and save the post again to get it.
 en	The proxy at %1$s asks for a password, and TikTok can't send one. Use a proxy that doesn't need one.
+en	The recording reached its size limit and was saved to %1$s
 en	The save stopped when you left Wi-Fi. Save it again on Wi-Fi.
 en	The video couldn't be made from these photos. Try again.
 en	The video couldn't be saved. Try again, or choose Automatic.
@@ -240,10 +301,12 @@ en	This video is already saved. Open TikTok to save another copy.
 en	This video isn't available as a complete file. Try again later.
 en	Those photos can't be tried again now. Save the post again to get the rest.
 en	TikTok isn't locked because this phone has no screen lock
+en	TikTok only had its watermarked copy of this story, so that copy was saved to %1$s
 en	TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.
 en	TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.
 en	TikTok's search page couldn't be opened. Restart TikTok and try again.
 en	Too many media saves are already running. Try again in a moment.
+en	Video saved in %1$s, but only %2$s of %3$s subtitles came with it
 en	YouTube Music couldn't be opened. Open it yourself and search for the sound.
 es	%1$d overrides were turned off because the Lab couldn't confirm their gates are unchanged in TikTok %2$s. Review them before turning them back on.
 es	1 override was turned off because the Lab couldn't confirm its gate is unchanged in TikTok %2$s. Review it before turning it back on.
@@ -255,6 +318,10 @@ es	Allow storage for TikTok in Android settings to save profile pictures
 es	Allow storage for TikTok in Android settings to save sounds
 es	Allow storage for TikTok in Android settings to save stories
 es	Allow storage for TikTok in Android settings to save the live photo's clip
+es	Couldn't change the Lab settings. Try again.
+es	Couldn't clear the suggested accounts. Reopen the Inbox and try again.
+es	Couldn't confirm the block for %1$s. Open their profile to check.
+es	Couldn't confirm the unblock for %1$s. Open their profile to check.
 es	Couldn't copy the build details. Use Save build details instead.
 es	Couldn't copy the report. Use Save report instead.
 es	Couldn't find this LIVE's stream to record. Leave the room and open it again.
@@ -263,7 +330,9 @@ es	Couldn't open the file picker to import. Try again.
 es	Couldn't reach the proxy at %1$s. TikTok may not load until it's back or you turn the proxy off.
 es	Couldn't read who posted this comment. Open their profile and block them there.
 es	Couldn't record the screen's layout. Start again from Diagnostics.
+es	Couldn't reset this override. Try again.
 es	Couldn't save these choices. Try again.
+es	Couldn't save this override. Try again.
 es	Couldn't send the feedback. Try again in a moment.
 es	Couldn't start saving the feed capture. Try again in a moment.
 es	Couldn't start the Lab change. Try again in a moment.
@@ -278,6 +347,7 @@ es	Feed capture started. Scroll until the problem shows up, then come back here 
 es	Go to the screen now. Hushfeed records its layout in %1$d seconds.
 es	Hushfeed hid a TikTok CAPTCHA. Turn off Hide CAPTCHA popups if something stops working.
 es	Imported %1$d values. Undo last Lab change is in the menu.
+es	Keep this structured value to %1$s KB or less.
 es	Kept to %1$s, the nearest value this row allows
 es	Loaded values are still being read. Try again in a moment.
 es	No presets have been reviewed for TikTok %1$s yet
@@ -285,19 +355,30 @@ es	None of the photos could be saved. Try again.
 es	None of the picked videos could be saved. Try again.
 es	Nothing was recorded because Hushfeed settings were still open. Start again, then leave settings.
 es	Opus didn't work on this phone. Saving the sound as TikTok sent it instead.
+es	Overrides enabled. Restart TikTok to apply this.
 es	Picked the first %1$s. Save them, then tap Pick all again for the rest.
 es	Recording gate reads. Use a feature, then return here to stop.
+es	Recording stopped early. What was recorded is saved to %1$s
 es	Saved %1$s of %2$s photos before the story failed
+es	Saved %1$s of %2$s, %3$s skipped and the rest cancelled
+es	Saved %1$s of %2$s, the rest need more free space
+es	Saved %1$s of %2$s, the rest ran out of time
+es	Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.
+es	Saved %1$s of %2$s. The server asked us to wait. Try again later.
+es	Saved the photos as a video in %1$s. The sound couldn't be added, so it's silent.
 es	Saving a frame from this video needs Android 7 or newer
 es	Screen layout recorded. Export the diagnostic report to send it.
 es	Some recording files remain. Try deleting them again.
 es	Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.
 es	That creator pattern could stall the feed, so it was skipped: %1$s
 es	That creator pattern is too long to use, so it was skipped: %1$s
+es	That isn't valid JSON. Check the brackets and quotes.
 es	That sticker is in a format Hushfeed can't read
+es	The LIVE ended or the connection dropped. What was recorded is saved to %1$s
 es	The Lab couldn't open. Go back and open it again.
 es	The already-saved check failed. Try again.
 es	The downloader app you chose isn't installed. Check Send links to another app under Downloads.
+es	The export may be incomplete. The original recording files are still kept.
 es	The export wasn't saved. Export again when the file app is ready.
 es	The feed capture couldn't be saved. Tap the row to try again.
 es	The frame couldn't be read. Try again.
@@ -306,10 +387,12 @@ es	The live photo's clip couldn't be saved. Try again.
 es	The loaded-values file you chose couldn't be read. Try again.
 es	The original photos aren't available, so TikTok's own save runs instead
 es	The original photos aren't available. No video was saved.
+es	The phone is running out of room. What was recorded is saved to %1$s
 es	The photos saved, but their details file couldn't be written. Check your storage and save the post again to get it.
 es	The presets couldn't load. Open the Lab again.
 es	The proxy at %1$s asks for a password, and TikTok can't send one. Use a proxy that doesn't need one.
 es	The recording couldn't be saved. Try again.
+es	The recording reached its size limit and was saved to %1$s
 es	The save stopped when you left Wi-Fi. Save it again on Wi-Fi.
 es	The saved-video choice couldn't open. Try again.
 es	The video couldn't be made from these photos. Try again.
@@ -326,12 +409,16 @@ es	This video is already saved. Open TikTok to save another copy.
 es	This video isn't available as a complete file. Try again later.
 es	Those photos can't be tried again now. Save the post again to get the rest.
 es	TikTok didn't accept the feedback. Try again later.
+es	TikTok didn't block %1$s. Try again in a moment.
+es	TikTok didn't unblock %1$s. Try again in a moment.
 es	TikTok isn't locked because this phone has no screen lock
+es	TikTok only had its watermarked copy of this story, so that copy was saved to %1$s
 es	TikTok refused the follow with code %1$s
 es	TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.
 es	TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.
 es	TikTok's search page couldn't be opened. Restart TikTok and try again.
 es	Too many media saves are already running. Try again in a moment.
+es	Video saved in %1$s, but only %2$s of %3$s subtitles came with it
 es	YouTube Music couldn't be opened. Open it yourself and search for the sound.
 es	Your account changed. Open the count editor again.
 in	%1$d overrides were turned off because the Lab couldn't confirm their gates are unchanged in TikTok %2$s. Review them before turning them back on.
@@ -339,6 +426,9 @@ in	1 override was turned off because the Lab couldn't confirm its gate is unchan
 in	A field value couldn't be read. Check the values and try again.
 in	Allow storage for TikTok in Android settings to record LIVEs
 in	Allow storage for TikTok in Android settings to save the live photo's clip
+in	Couldn't clear the suggested accounts. Reopen the Inbox and try again.
+in	Couldn't confirm the block for %1$s. Open their profile to check.
+in	Couldn't confirm the unblock for %1$s. Open their profile to check.
 in	Couldn't copy the build details. Use Save build details instead.
 in	Couldn't find this LIVE's stream to record. Leave the room and open it again.
 in	Couldn't open the file picker to export. Try again.
@@ -365,20 +455,31 @@ in	No video selected. Open a video first.
 in	None of the picked videos could be saved. Try again.
 in	Nothing was recorded because Hushfeed settings were still open. Start again, then leave settings.
 in	Opus didn't work on this phone. Saving the sound as TikTok sent it instead.
+in	Overrides enabled. Restart TikTok to apply this.
 in	Picked the first %1$s. Save them, then tap Pick all again for the rest.
 in	Recording gate reads. Use a feature, then return here to stop.
+in	Recording stopped early. What was recorded is saved to %1$s
 in	Saved %1$s of %2$s photos before the story failed
+in	Saved %1$s of %2$s, %3$s skipped and the rest cancelled
+in	Saved %1$s of %2$s, the rest need more free space
+in	Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.
+in	Saved %1$s of %2$s. The server asked us to wait. Try again later.
+in	Saved the photos as a video in %1$s. The sound couldn't be added, so it's silent.
 in	Saving a frame from this video needs Android 7 or newer
 in	Screen layout recorded. Export the diagnostic report to send it.
 in	Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.
 in	That creator pattern could stall the feed, so it was skipped: %1$s
 in	That creator pattern is too long to use, so it was skipped: %1$s
+in	That isn't valid JSON. Check the brackets and quotes.
+in	The LIVE ended or the connection dropped. What was recorded is saved to %1$s
 in	The downloader app you chose isn't installed. Check Send links to another app under Downloads.
+in	The export may be incomplete. The original recording files are still kept.
 in	The export wasn't saved. Export again when the file app is ready.
 in	The feed capture couldn't be saved. Tap the row to try again.
 in	The loaded-values file you chose couldn't be read. Try again.
 in	The original photos aren't available, so TikTok's own save runs instead
 in	The original photos aren't available. No video was saved.
+in	The phone is running out of room. What was recorded is saved to %1$s
 in	The photos saved, but their details file couldn't be written. Check your storage and save the post again to get it.
 in	The proxy at %1$s asks for a password, and TikTok can't send one. Use a proxy that doesn't need one.
 in	The save stopped when you left Wi-Fi. Save it again on Wi-Fi.
@@ -394,11 +495,15 @@ in	This video has no link to send, so TikTok's own save runs instead
 in	This video is already saved. Open TikTok to save another copy.
 in	This video isn't available as a complete file. Try again later.
 in	Those photos can't be tried again now. Save the post again to get the rest.
+in	TikTok didn't block %1$s. Try again in a moment.
+in	TikTok didn't unblock %1$s. Try again in a moment.
 in	TikTok isn't locked because this phone has no screen lock
+in	TikTok only had its watermarked copy of this story, so that copy was saved to %1$s
 in	TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.
 in	TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.
 in	TikTok's search page couldn't be opened. Restart TikTok and try again.
 in	Too many media saves are already running. Try again in a moment.
+in	Video saved in %1$s, but only %2$s of %3$s subtitles came with it
 in	YouTube Music couldn't be opened. Open it yourself and search for the sound.
 it	%1$d overrides were turned off because the Lab couldn't confirm their gates are unchanged in TikTok %2$s. Review them before turning them back on.
 it	1 override was turned off because the Lab couldn't confirm its gate is unchanged in TikTok %2$s. Review it before turning it back on.
@@ -411,6 +516,10 @@ it	Allow storage for TikTok in Android settings to save sounds
 it	Allow storage for TikTok in Android settings to save stories
 it	Allow storage for TikTok in Android settings to save the live photo's clip
 it	Choose a folder on internal storage. SD cards aren't supported.
+it	Couldn't change the Lab settings. Try again.
+it	Couldn't clear the suggested accounts. Reopen the Inbox and try again.
+it	Couldn't confirm the block for %1$s. Open their profile to check.
+it	Couldn't confirm the unblock for %1$s. Open their profile to check.
 it	Couldn't copy the build details. Use Save build details instead.
 it	Couldn't copy the report. Use Save report instead.
 it	Couldn't find this LIVE's stream to record. Leave the room and open it again.
@@ -419,8 +528,10 @@ it	Couldn't open the file picker to import. Try again.
 it	Couldn't reach the proxy at %1$s. TikTok may not load until it's back or you turn the proxy off.
 it	Couldn't read who posted this comment. Open their profile and block them there.
 it	Couldn't record the screen's layout. Start again from Diagnostics.
+it	Couldn't reset this override. Try again.
 it	Couldn't save the change. Try again.
 it	Couldn't save these choices. Try again.
+it	Couldn't save this override. Try again.
 it	Couldn't send the feedback. Try again in a moment.
 it	Couldn't start saving the feed capture. Try again in a moment.
 it	Couldn't start the Lab change. Try again in a moment.
@@ -441,22 +552,33 @@ it	None of the photos could be saved. Try again.
 it	None of the picked videos could be saved. Try again.
 it	Nothing was recorded because Hushfeed settings were still open. Start again, then leave settings.
 it	Opus didn't work on this phone. Saving the sound as TikTok sent it instead.
+it	Overrides enabled. Restart TikTok to apply this.
 it	Picked the first %1$s. Save them, then tap Pick all again for the rest.
 it	Recording gate reads. Use a feature, then return here to stop.
+it	Recording stopped early. What was recorded is saved to %1$s
 it	Recording this LIVE's screen from now, without sound
+it	Saved %1$s of %2$s, %3$s skipped and the rest cancelled
+it	Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.
+it	Saved %1$s of %2$s. The server asked us to wait. Try again later.
+it	Saved the photos as a video in %1$s. The sound couldn't be added, so it's silent.
 it	Saving a frame from this video needs Android 7 or newer
 it	Screen layout recorded. Export the diagnostic report to send it.
 it	Screen recording wasn't allowed
 it	Some recording files remain. Try deleting them again.
+it	Stopped after dismissing %1$s suggested accounts
+it	Stopped after dismissing one suggested account
 it	Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.
 it	That creator pattern could stall the feed, so it was skipped: %1$s
 it	That creator pattern is too long to use, so it was skipped: %1$s
+it	That isn't valid JSON. Check the brackets and quotes.
 it	That preset isn't recognized. Choose another.
 it	That sticker is in a format Hushfeed can't read
+it	The LIVE ended or the connection dropped. What was recorded is saved to %1$s
 it	The Lab couldn't open. Go back and open it again.
 it	The already-saved check failed. Try again.
 it	The cover couldn't be saved. Try again.
 it	The downloader app you chose isn't installed. Check Send links to another app under Downloads.
+it	The export may be incomplete. The original recording files are still kept.
 it	The export wasn't saved. Export again when the file app is ready.
 it	The feed capture couldn't be saved. Tap the row to try again.
 it	The feed capture is still being saved
@@ -466,11 +588,13 @@ it	The live photo's clip couldn't be saved. Try again.
 it	The loaded-values file you chose couldn't be read. Try again.
 it	The original photos aren't available, so TikTok's own save runs instead
 it	The original photos aren't available. No video was saved.
+it	The phone is running out of room. What was recorded is saved to %1$s
 it	The photos saved, but their details file couldn't be written. Check your storage and save the post again to get it.
 it	The presets couldn't load. Open the Lab again.
 it	The profile picture couldn't be saved. Try again.
 it	The proxy at %1$s asks for a password, and TikTok can't send one. Use a proxy that doesn't need one.
 it	The recording couldn't be saved. Try again.
+it	The recording reached its size limit and was saved to %1$s
 it	The report couldn't be saved. Try again.
 it	The save stopped when you left Wi-Fi. Save it again on Wi-Fi.
 it	The saved-video choice couldn't open. Try again.
@@ -490,12 +614,15 @@ it	This video has no link to send, so TikTok's own save runs instead
 it	This video is already saved. Open TikTok to save another copy.
 it	This video isn't available as a complete file. Try again later.
 it	Those photos can't be tried again now. Save the post again to get the rest.
+it	TikTok closed. What was recorded is saved to %1$s
 it	TikTok isn't locked because this phone has no screen lock
+it	TikTok only had its watermarked copy of this story, so that copy was saved to %1$s
 it	TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.
 it	TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.
 it	TikTok's search page couldn't be opened. Restart TikTok and try again.
 it	Too many media saves are already running. Try again in a moment.
 it	Use Save report for this large report
+it	Video saved in %1$s, but only %2$s of %3$s subtitles came with it
 it	YouTube Music couldn't be opened. Open it yourself and search for the sound.
 pt-rbr	%1$d overrides were turned off because the Lab couldn't confirm their gates are unchanged in TikTok %2$s. Review them before turning them back on.
 pt-rbr	1 override was turned off because the Lab couldn't confirm its gate is unchanged in TikTok %2$s. Review it before turning it back on.
@@ -508,6 +635,10 @@ pt-rbr	Allow storage for TikTok in Android settings to save sounds
 pt-rbr	Allow storage for TikTok in Android settings to save stories
 pt-rbr	Allow storage for TikTok in Android settings to save the live photo's clip
 pt-rbr	Build details copied to the clipboard
+pt-rbr	Couldn't change the Lab settings. Try again.
+pt-rbr	Couldn't clear the suggested accounts. Reopen the Inbox and try again.
+pt-rbr	Couldn't confirm the block for %1$s. Open their profile to check.
+pt-rbr	Couldn't confirm the unblock for %1$s. Open their profile to check.
 pt-rbr	Couldn't copy the build details. Use Save build details instead.
 pt-rbr	Couldn't copy the report. Use Save report instead.
 pt-rbr	Couldn't find this LIVE's stream to record. Leave the room and open it again.
@@ -516,6 +647,7 @@ pt-rbr	Couldn't open the file picker to import. Try again.
 pt-rbr	Couldn't reach the proxy at %1$s. TikTok may not load until it's back or you turn the proxy off.
 pt-rbr	Couldn't read who posted this comment. Open their profile and block them there.
 pt-rbr	Couldn't record the screen's layout. Start again from Diagnostics.
+pt-rbr	Couldn't reset this override. Try again.
 pt-rbr	Couldn't save these choices. Try again.
 pt-rbr	Couldn't send the feedback. Try again in a moment.
 pt-rbr	Couldn't start saving the feed capture. Try again in a moment.
@@ -531,32 +663,45 @@ pt-rbr	Feed capture started. Scroll until the problem shows up, then come back h
 pt-rbr	Go to the screen now. Hushfeed records its layout in %1$d seconds.
 pt-rbr	Hushfeed hid a TikTok CAPTCHA. Turn off Hide CAPTCHA popups if something stops working.
 pt-rbr	Imported %1$d values. Undo last Lab change is in the menu.
+pt-rbr	Keep this structured value to %1$s KB or less.
 pt-rbr	Kept to %1$s, the nearest value this row allows
 pt-rbr	Loaded values are still being read. Try again in a moment.
 pt-rbr	No presets have been reviewed for TikTok %1$s yet
 pt-rbr	None of the picked videos could be saved. Try again.
 pt-rbr	Nothing was recorded because Hushfeed settings were still open. Start again, then leave settings.
 pt-rbr	Opus didn't work on this phone. Saving the sound as TikTok sent it instead.
+pt-rbr	Overrides enabled. Restart TikTok to apply this.
 pt-rbr	Picked the first %1$s. Save them, then tap Pick all again for the rest.
 pt-rbr	Recording gate reads. Use a feature, then return here to stop.
+pt-rbr	Recording stopped early. What was recorded is saved to %1$s
 pt-rbr	Saved %1$s of %2$s photos before the story failed
+pt-rbr	Saved %1$s of %2$s, %3$s skipped and the rest cancelled
+pt-rbr	Saved %1$s of %2$s, the rest need more free space
+pt-rbr	Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.
+pt-rbr	Saved %1$s of %2$s. The server asked us to wait. Try again later.
+pt-rbr	Saved the photos as a video in %1$s. The sound couldn't be added, so it's silent.
 pt-rbr	Saving a frame from this video needs Android 7 or newer
 pt-rbr	Screen layout recorded. Export the diagnostic report to send it.
 pt-rbr	Some recording files remain. Try deleting them again.
 pt-rbr	Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.
 pt-rbr	That creator pattern could stall the feed, so it was skipped: %1$s
 pt-rbr	That creator pattern is too long to use, so it was skipped: %1$s
+pt-rbr	That isn't valid JSON. Check the brackets and quotes.
 pt-rbr	That sticker is in a format Hushfeed can't read
+pt-rbr	The LIVE ended or the connection dropped. What was recorded is saved to %1$s
 pt-rbr	The downloader app you chose isn't installed. Check Send links to another app under Downloads.
+pt-rbr	The export may be incomplete. The original recording files are still kept.
 pt-rbr	The export wasn't saved. Export again when the file app is ready.
 pt-rbr	The feed capture couldn't be saved. Tap the row to try again.
 pt-rbr	The live photo's clip couldn't be saved. Try again.
 pt-rbr	The loaded-values file you chose couldn't be read. Try again.
 pt-rbr	The original photos aren't available, so TikTok's own save runs instead
 pt-rbr	The original photos aren't available. No video was saved.
+pt-rbr	The phone is running out of room. What was recorded is saved to %1$s
 pt-rbr	The photos saved, but their details file couldn't be written. Check your storage and save the post again to get it.
 pt-rbr	The presets couldn't load. Open the Lab again.
 pt-rbr	The proxy at %1$s asks for a password, and TikTok can't send one. Use a proxy that doesn't need one.
+pt-rbr	The recording reached its size limit and was saved to %1$s
 pt-rbr	The save stopped when you left Wi-Fi. Save it again on Wi-Fi.
 pt-rbr	The saved-video choice couldn't open. Try again.
 pt-rbr	The video couldn't be made from these photos. Try again.
@@ -571,11 +716,15 @@ pt-rbr	This video has no link to send, so TikTok's own save runs instead
 pt-rbr	This video is already saved. Open TikTok to save another copy.
 pt-rbr	This video isn't available as a complete file. Try again later.
 pt-rbr	Those photos can't be tried again now. Save the post again to get the rest.
+pt-rbr	TikTok closed. What was recorded is saved to %1$s
+pt-rbr	TikTok didn't unblock %1$s. Try again in a moment.
 pt-rbr	TikTok isn't locked because this phone has no screen lock
+pt-rbr	TikTok only had its watermarked copy of this story, so that copy was saved to %1$s
 pt-rbr	TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.
 pt-rbr	TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.
 pt-rbr	TikTok's search page couldn't be opened. Restart TikTok and try again.
 pt-rbr	Too many media saves are already running. Try again in a moment.
+pt-rbr	Video saved in %1$s, but only %2$s of %3$s subtitles came with it
 pt-rbr	YouTube Music couldn't be opened. Open it yourself and search for the sound.
 pt-rbr	Your account changed. Open the count editor again.
 ru	%1$d overrides were turned off because the Lab couldn't confirm their gates are unchanged in TikTok %2$s. Review them before turning them back on.
@@ -589,6 +738,10 @@ ru	Allow storage for TikTok in Android settings to save sounds
 ru	Allow storage for TikTok in Android settings to save stories
 ru	Allow storage for TikTok in Android settings to save the live photo's clip
 ru	Choose a folder on internal storage. SD cards aren't supported.
+ru	Couldn't change the Lab settings. Try again.
+ru	Couldn't clear the suggested accounts. Reopen the Inbox and try again.
+ru	Couldn't confirm the block for %1$s. Open their profile to check.
+ru	Couldn't confirm the unblock for %1$s. Open their profile to check.
 ru	Couldn't copy the build details. Use Save build details instead.
 ru	Couldn't copy the report. Use Save report instead.
 ru	Couldn't find this LIVE's stream to record. Leave the room and open it again.
@@ -597,7 +750,9 @@ ru	Couldn't open the file picker to import. Try again.
 ru	Couldn't reach the proxy at %1$s. TikTok may not load until it's back or you turn the proxy off.
 ru	Couldn't read who posted this comment. Open their profile and block them there.
 ru	Couldn't record the screen's layout. Start again from Diagnostics.
+ru	Couldn't reset this override. Try again.
 ru	Couldn't save the change. Try again.
+ru	Couldn't save this override. Try again.
 ru	Couldn't send the feedback. Try again in a moment.
 ru	Couldn't start saving the feed capture. Try again in a moment.
 ru	Couldn't start the Lab change. Try again in a moment.
@@ -613,6 +768,7 @@ ru	Feed capture started. Scroll until the problem shows up, then come back here 
 ru	Go to the screen now. Hushfeed records its layout in %1$d seconds.
 ru	Hushfeed hid a TikTok CAPTCHA. Turn off Hide CAPTCHA popups if something stops working.
 ru	Imported %1$d values. Undo last Lab change is in the menu.
+ru	Keep this structured value to %1$s KB or less.
 ru	Kept to %1$s, the nearest value this row allows
 ru	Loaded values are still being read. Try again in a moment.
 ru	No app on this phone opens that file
@@ -620,24 +776,37 @@ ru	None of the photos could be saved. Try again.
 ru	None of the picked videos could be saved. Try again.
 ru	Nothing was recorded because Hushfeed settings were still open. Start again, then leave settings.
 ru	Opus didn't work on this phone. Saving the sound as TikTok sent it instead.
+ru	Overrides enabled. Restart TikTok to apply this.
 ru	Picked the first %1$s. Save them, then tap Pick all again for the rest.
 ru	Recording gate reads. Use a feature, then return here to stop.
+ru	Recording stopped early. What was recorded is saved to %1$s
 ru	Saved %1$s of %2$s photos before the story failed
+ru	Saved %1$s of %2$s, %3$s skipped and the rest cancelled
+ru	Saved %1$s of %2$s, the rest need more free space
+ru	Saved %1$s of %2$s, the rest ran out of time
+ru	Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.
+ru	Saved %1$s of %2$s. The server asked us to wait. Try again later.
+ru	Saved the photos as a video in %1$s. The sound couldn't be added, so it's silent.
 ru	Saving a frame from this video needs Android 7 or newer
 ru	Screen layout recorded. Export the diagnostic report to send it.
 ru	Some recording files remain. Try deleting them again.
+ru	Stopped after dismissing %1$s suggested accounts
+ru	Stopped after dismissing one suggested account
 ru	Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.
 ru	That creator pattern could stall the feed, so it was skipped: %1$s
 ru	That creator pattern is too long to use, so it was skipped: %1$s
 ru	That sticker is in a format Hushfeed can't read
+ru	The LIVE ended or the connection dropped. What was recorded is saved to %1$s
 ru	The Lab couldn't open. Go back and open it again.
 ru	The downloader app you chose isn't installed. Check Send links to another app under Downloads.
+ru	The export may be incomplete. The original recording files are still kept.
 ru	The export wasn't saved. Export again when the file app is ready.
 ru	The feed capture couldn't be saved. Tap the row to try again.
 ru	The live photo's clip couldn't be saved. Try again.
 ru	The loaded-values file you chose couldn't be read. Try again.
 ru	The original photos aren't available, so TikTok's own save runs instead
 ru	The original photos aren't available. No video was saved.
+ru	The phone is running out of room. What was recorded is saved to %1$s
 ru	The photos saved, but their details file couldn't be written. Check your storage and save the post again to get it.
 ru	The presets couldn't load. Open the Lab again.
 ru	The proxy at %1$s asks for a password, and TikTok can't send one. Use a proxy that doesn't need one.
@@ -658,12 +827,16 @@ ru	This video has no original sound to save
 ru	This video is already saved. Open TikTok to save another copy.
 ru	This video isn't available as a complete file. Try again later.
 ru	Those photos can't be tried again now. Save the post again to get the rest.
+ru	TikTok didn't block %1$s. Try again in a moment.
+ru	TikTok didn't unblock %1$s. Try again in a moment.
 ru	TikTok isn't locked because this phone has no screen lock
+ru	TikTok only had its watermarked copy of this story, so that copy was saved to %1$s
 ru	TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.
 ru	TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.
 ru	TikTok's search page couldn't be opened. Restart TikTok and try again.
 ru	Too many media saves are already running. Try again in a moment.
 ru	Use Save report for this large report
+ru	Video saved in %1$s, but only %2$s of %3$s subtitles came with it
 ru	YouTube Music couldn't be opened. Open it yourself and search for the sound.
 tr	%1$d overrides were turned off because the Lab couldn't confirm their gates are unchanged in TikTok %2$s. Review them before turning them back on.
 tr	1 override was turned off because the Lab couldn't confirm its gate is unchanged in TikTok %2$s. Review it before turning it back on.
@@ -676,6 +849,10 @@ tr	Allow storage for TikTok in Android settings to save sounds
 tr	Allow storage for TikTok in Android settings to save stories
 tr	Allow storage for TikTok in Android settings to save the live photo's clip
 tr	Choose a folder on internal storage. SD cards aren't supported.
+tr	Couldn't change the Lab settings. Try again.
+tr	Couldn't clear the suggested accounts. Reopen the Inbox and try again.
+tr	Couldn't confirm the block for %1$s. Open their profile to check.
+tr	Couldn't confirm the unblock for %1$s. Open their profile to check.
 tr	Couldn't copy the build details. Use Save build details instead.
 tr	Couldn't copy the report. Use Save report instead.
 tr	Couldn't find this LIVE's stream to record. Leave the room and open it again.
@@ -700,9 +877,18 @@ tr	None of the photos could be saved. Try again.
 tr	None of the picked videos could be saved. Try again.
 tr	Nothing was recorded because Hushfeed settings were still open. Start again, then leave settings.
 tr	Opus didn't work on this phone. Saving the sound as TikTok sent it instead.
+tr	Overrides enabled. Restart TikTok to apply this.
 tr	Picked the first %1$s. Save them, then tap Pick all again for the rest.
 tr	Recording gate reads. Use a feature, then return here to stop.
+tr	Recording stopped early. What was recorded is saved to %1$s
 tr	Saved %1$s of %2$s photos before the story failed
+tr	Saved %1$s of %2$s, %3$s skipped and the rest cancelled
+tr	Saved %1$s of %2$s, the rest cancelled
+tr	Saved %1$s of %2$s, the rest need more free space
+tr	Saved %1$s of %2$s, the rest ran out of time
+tr	Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.
+tr	Saved %1$s of %2$s. The server asked us to wait. Try again later.
+tr	Saved the photos as a video in %1$s. The sound couldn't be added, so it's silent.
 tr	Saved. Restart TikTok to apply this.
 tr	Saving a frame from this video needs Android 7 or newer
 tr	Screen layout recorded. Export the diagnostic report to send it.
@@ -710,14 +896,18 @@ tr	Some recording files remain. Try deleting them again.
 tr	Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.
 tr	That creator pattern could stall the feed, so it was skipped: %1$s
 tr	That creator pattern is too long to use, so it was skipped: %1$s
+tr	That isn't valid JSON. Check the brackets and quotes.
+tr	The LIVE ended or the connection dropped. What was recorded is saved to %1$s
 tr	The already-saved check failed. Try again.
 tr	The downloader app you chose isn't installed. Check Send links to another app under Downloads.
+tr	The export may be incomplete. The original recording files are still kept.
 tr	The export wasn't saved. Export again when the file app is ready.
 tr	The feed capture couldn't be saved. Tap the row to try again.
 tr	The live photo's clip couldn't be saved. Try again.
 tr	The loaded-values file you chose couldn't be read. Try again.
 tr	The original photos aren't available, so TikTok's own save runs instead
 tr	The original photos aren't available. No video was saved.
+tr	The phone is running out of room. What was recorded is saved to %1$s
 tr	The photos saved, but their details file couldn't be written. Check your storage and save the post again to get it.
 tr	The proxy at %1$s asks for a password, and TikTok can't send one. Use a proxy that doesn't need one.
 tr	The save stopped when you left Wi-Fi. Save it again on Wi-Fi.
@@ -732,12 +922,17 @@ tr	This video has no link to send, so TikTok's own save runs instead
 tr	This video is already saved. Open TikTok to save another copy.
 tr	This video isn't available as a complete file. Try again later.
 tr	Those photos can't be tried again now. Save the post again to get the rest.
+tr	TikTok closed. What was recorded is saved to %1$s
 tr	TikTok didn't accept the feedback. Try again later.
+tr	TikTok didn't block %1$s. Try again in a moment.
+tr	TikTok didn't unblock %1$s. Try again in a moment.
 tr	TikTok isn't locked because this phone has no screen lock
+tr	TikTok only had its watermarked copy of this story, so that copy was saved to %1$s
 tr	TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.
 tr	TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.
 tr	TikTok's search page couldn't be opened. Restart TikTok and try again.
 tr	Too many media saves are already running. Try again in a moment.
+tr	Video saved in %1$s, but only %2$s of %3$s subtitles came with it
 tr	Your account changed. Open the count editor again.
 zh-hans	%1$d overrides were turned off because the Lab couldn't confirm their gates are unchanged in TikTok %2$s. Review them before turning them back on.
 zh-hans	1 override was turned off because the Lab couldn't confirm its gate is unchanged in TikTok %2$s. Review it before turning it back on.
@@ -747,6 +942,8 @@ zh-hans	Everything this list has loaded is picked or saved. Scroll down to load 
 zh-hans	Hushfeed hid a TikTok CAPTCHA. Turn off Hide CAPTCHA popups if something stops working.
 zh-hans	Nothing was recorded because Hushfeed settings were still open. Start again, then leave settings.
 zh-hans	Picked the first %1$s. Save them, then tap Pick all again for the rest.
+zh-hans	Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.
+zh-hans	Saved the photos as a video in %1$s. The sound couldn't be added, so it's silent.
 zh-hans	The downloader app you chose isn't installed. Check Send links to another app under Downloads.
 zh-hans	The photos saved, but their details file couldn't be written. Check your storage and save the post again to get it.
 zh-hans	The proxy at %1$s asks for a password, and TikTok can't send one. Use a proxy that doesn't need one.

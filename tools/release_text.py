@@ -41,7 +41,8 @@ FOREIGN = {
     "pt-rBR": r"[Ѐ-ӿ]|ə|ğ|ı|ş|ß|ä|ñ",
     "ru": r"ə|ğ|ı|ş|ß|ä|ñ|ã|õ|ç|é|ü|ö",
     "tr": r"[Ѐ-ӿ]|ə|ß|ä|ñ|ã|õ",
-    "zh-Hans": r"[Ѐ-ӿ]|ə|ğ|ı|ş|ß|ä|ñ|ã|õ|ç|é|ü|ö",
+    # Chinese has no use for any accented Latin letter, capitals included.
+    "zh-Hans": r"[Ѐ-ӿ]|[À-ÖØ-öø-ɏ]|ə",
 }
 # Every table but zh-Hans writes decimals with a comma, so an English "10,000" or "6.7 MB" is
 # untranslated there. Chinese writes both the way English does.

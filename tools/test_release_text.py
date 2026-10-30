@@ -142,8 +142,11 @@ class ReleaseTextTest(unittest.TestCase):
 
     def translate_all(self, bullet_one: str = "* **TikTok:** Hinweise (#5).", bullet_two: str = "* **TikTok:** 6,7 MB.") -> None:
         for lang in release_text.LANGUAGES:
-            self.write(f"extensions/tiktok/src/main/l10n/notes/{lang}.txt",
-                       f"## Unreleased\n\n{bullet_one}\n\n{bullet_two}\n\n## 0.1.0 (2026-01-01)\n\n* **TikTok:** x\n")
+            self.translate(lang, bullet_one, bullet_two)
+
+    def translate(self, lang: str, bullet_one: str, bullet_two: str) -> None:
+        self.write(f"extensions/tiktok/src/main/l10n/notes/{lang}.txt",
+                   f"## Unreleased\n\n{bullet_one}\n\n{bullet_two}\n\n## 0.1.0 (2026-01-01)\n\n* **TikTok:** x\n")
 
     def test_cut_dates_the_unreleased_bullets_and_renames_every_translated_table(self):
         self.translate_all()
@@ -223,6 +226,23 @@ class ReleaseTextTest(unittest.TestCase):
                          (("* **TikTok:** Hinweise (#5) — x.", "* **TikTok:** 6,7 MB."), "dash")):
             self.translate_all(*bad)
             with self.assertRaises(SystemExit) as caught:
+                self.run_command(release_text.check_translations, version=None, unreleased=True)
+            self.assertIn(why, str(caught.exception))
+
+    def test_check_translations_holds_each_table_to_its_own_numbers_and_letters(self):
+        # Chinese writes decimals and thousands the English way. German can't.
+        self.translate_all()
+        self.translate("zh-Hans", "* **TikTok:** 提示 (#5).", "* **TikTok:** 6.7 MB，10,000 条.")
+        self.run_command(release_text.check_translations, version=None, unreleased=True)
+        for lang, bad, why in (
+                ("de", ("* **TikTok:** Hinweise (#5).", "* **TikTok:** 6.7 MB."), "de bullet 2: English number format"),
+                ("zh-Hans", ("* **TikTok:** Подсказки (#5).", "* **TikTok:** 6.7 MB."), "zh-Hans bullet 1: letter 'П'"),
+                ("zh-Hans", ("* **TikTok:** 提示 (#5).", "* **TikTok:** Ayarlar ğ."), "zh-Hans bullet 2: letter 'ğ'"),
+                ("zh-Hans", ("* **TikTok:** Árbol (#5).", "* **TikTok:** 6.7 MB."), "zh-Hans bullet 1: letter 'Á'"),
+                ("de", ("* **TikTok:** Hinweise (#5).", "* **TikTok:** Подсказки."), "de bullet 2: letter 'П'")):
+            self.translate_all()
+            self.translate(lang, *bad)
+            with self.subTest(lang=lang, bad=bad), self.assertRaises(SystemExit) as caught:
                 self.run_command(release_text.check_translations, version=None, unreleased=True)
             self.assertIn(why, str(caught.exception))
 

@@ -6,6 +6,7 @@ import io
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -14,6 +15,9 @@ ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location("release_notes", ROOT / "tools/gen-release-notes.py")
 generator = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(generator)
+# py -I leaves the script's own folder off the path.
+sys.path.insert(0, str(ROOT / "tools"))
+import release_text  # pyright: ignore[reportMissingImports]
 
 
 class ReleaseNotesGeneratorTest(unittest.TestCase):
@@ -126,8 +130,18 @@ class TranslatedNotesGateTest(unittest.TestCase):
         self.assertTrue(found["de"].startswith("## 0.68.0 (date)"))
 
     def test_a_release_translated_for_one_table_only_fails(self):
-        with self.assertRaisesRegex(ValueError, "but not az, es, in, it, pt-rBR, ru, tr"):
+        with self.assertRaisesRegex(ValueError, "but not az, es, in, it, pt-rBR, ru, tr, zh-Hans: "):
             self.notes({"de": self.SECTION})
+
+    def test_both_tools_name_every_settings_table_and_each_has_its_notes(self):
+        # A new language adds its table, its notes and a line in each tool's LANGUAGES together.
+        l10n = ROOT / "extensions/tiktok/src/main/l10n"
+        tables = {path.stem for path in l10n.iterdir() if path.suffix in (".tsv", ".csv")} - {"en"}
+        notes = {path.stem for path in (l10n / "notes").glob("*.txt")} - {"en"}
+        self.assertEqual(tables, set(generator.LANGUAGES))
+        self.assertEqual(notes, set(generator.LANGUAGES))
+        self.assertEqual(generator.LANGUAGES, release_text.LANGUAGES)
+        self.assertEqual(set(release_text.FOREIGN), set(release_text.LANGUAGES))
 
     def test_a_translation_missing_a_bullet_fails(self):
         files = {language: self.SECTION for language in generator.LANGUAGES}

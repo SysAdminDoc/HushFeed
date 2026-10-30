@@ -239,6 +239,8 @@ class ReleaseTextTest(unittest.TestCase):
                 ("zh-Hans", ("* **TikTok:** Подсказки (#5).", "* **TikTok:** 6.7 MB."), "zh-Hans bullet 1: letter 'П'"),
                 ("zh-Hans", ("* **TikTok:** 提示 (#5).", "* **TikTok:** Ayarlar ğ."), "zh-Hans bullet 2: letter 'ğ'"),
                 ("zh-Hans", ("* **TikTok:** Árbol (#5).", "* **TikTok:** 6.7 MB."), "zh-Hans bullet 1: letter 'Á'"),
+                ("zh-Hans", ("* **TikTok:** 提示 (#5).", "* **TikTok:** café."), "zh-Hans bullet 2: letter 'é'"),
+                ("zh-Hans", ("* **TikTok:** Ayarlar ə (#5).", "* **TikTok:** 6.7 MB."), "zh-Hans bullet 1: letter 'ə'"),
                 ("de", ("* **TikTok:** Hinweise (#5).", "* **TikTok:** Подсказки."), "de bullet 2: letter 'П'")):
             self.translate_all()
             self.translate(lang, *bad)

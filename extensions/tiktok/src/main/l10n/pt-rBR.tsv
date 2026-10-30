@@ -1041,6 +1041,8 @@ Muted	Silenciado
 Sound on	Som ativado
 Sound	Som
 Play feed videos without sound and leave the phone's volume alone. Music from another app keeps playing while it's on. DMs, stories and LIVE keep their sound.	Reproduz os vídeos do feed sem som e não mexe no volume do celular. A música de outro app continua tocando enquanto isso estiver ativado. DMs, stories e LIVE mantêm o som.
+Let other apps play until a video starts	Deixar outros apps tocarem até um vídeo começar
+Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound once a video starts playing.	Abrir o TikTok ou suas mensagens não pausa mais a música de outro app. O TikTok assume o som quando um vídeo começa a tocar.
 Show the mute button on videos	Mostrar o botão de silenciar nos vídeos
 Add a button beside the block control that turns the feed's sound off and on.	Adiciona um botão ao lado do controle de bloqueio que desliga e liga o som do feed.
 Show the country a video was posted from next to the creator's name.	Mostrar o país de onde o vídeo foi publicado ao lado do nome do criador.

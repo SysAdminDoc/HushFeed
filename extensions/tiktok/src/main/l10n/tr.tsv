@@ -1056,6 +1056,8 @@ Muted	Sessiz
 Sound on	Ses açık
 Sound	Ses
 Play feed videos without sound and leave the phone's volume alone. Music from another app keeps playing while it's on. DMs, stories and LIVE keep their sound.	Akış videolarını sessiz oynatır ve telefonun ses düzeyine dokunmaz. Açıkken başka bir uygulamadaki müzik çalmaya devam eder. DM'ler, hikayeler ve LIVE yayınlar seslerini korur.
+Let other apps play until a video starts	Bir video başlayana kadar diğer uygulamalar çalmaya devam etsin
+Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound once a video starts playing.	TikTok'u veya mesajlarını açmak artık başka bir uygulamadaki müziği duraklatmaz. TikTok sesi ancak bir video oynamaya başlayınca alır.
 Show the mute button on videos	Videolarda sesi kapatma düğmesini göster
 Add a button beside the block control that turns the feed's sound off and on.	Engelleme düğmesinin yanına, akışın sesini kapatıp açan bir düğme ekle.
 Show the block button on videos	Videolarda engelle düğmesini göster

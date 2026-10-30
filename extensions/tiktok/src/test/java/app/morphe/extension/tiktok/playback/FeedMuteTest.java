@@ -97,6 +97,7 @@ public class FeedMuteTest {
         FeedMute.resetForTests();
         Settings.FEED_MUTED.resetToDefault();
         Settings.FEED_MUTE_BUTTON.resetToDefault();
+        Settings.FOCUS_WAITS_FOR_VIDEO.resetToDefault();
         SettingsStatus.feedMuteEnabled = wasEnabled;
         feed.pause().stop().destroy();
     }
@@ -155,11 +156,13 @@ public class FeedMuteTest {
         assertEquals("FEED MUTE", FeedMute.Report.INSTANCE.title());
         // The button is opt-in: a fresh install draws nothing on the video.
         assertEquals(List.of("Mute feed videos: off", "Mute button on the feed: turned off",
+                "Other apps play until a video starts: off",
                 "Feed players muted since TikTok started: 0", "Audio focus requests turned down: 0"),
                 FeedMute.Report.INSTANCE.lines());
 
         Settings.FEED_MUTED.save(true);
         Settings.FEED_MUTE_BUTTON.save(true);
+        Settings.FOCUS_WAITS_FOR_VIDEO.save(true);
         FeedMute.onControllerPlay(new Controller(feed.get()), video("501"));
         Object engine = engine("A", "501");
         FeedMute.onEnginePlay(engine);
@@ -167,6 +170,7 @@ public class FeedMuteTest {
         assertTrue(FeedMute.holdSessionFocus("helper"));
 
         assertEquals(List.of("Mute feed videos: on", "Mute button on the feed: shown",
+                "Other apps play until a video starts: on",
                 "Feed players muted since TikTok started: 1", "Audio focus requests turned down: 1"),
                 FeedMute.Report.INSTANCE.lines());
     }
@@ -183,6 +187,7 @@ public class FeedMuteTest {
             assertEquals(List.of("Mute feed videos: on",
                     "Hushfeed is paused, so the feed plays with its sound",
                     "Mute button on the feed: shown",
+                    "Other apps play until a video starts: off",
                     "Feed players muted since TikTok started: 0", "Audio focus requests turned down: 0"),
                     FeedMute.Report.INSTANCE.lines());
         } finally {
@@ -616,6 +621,72 @@ public class FeedMuteTest {
         assertEquals("A sound", lastFor("A"));
         other.pause().stop().destroy();
         feed.start().resume();
+    }
+
+    /**
+     * TikTok asks for the focus on every resume, a DM chat included, and that paused another
+     * app's music with nothing playing (#283). With the switch on, the requests wait for a video
+     * and are asked for again when one starts; the next return to TikTok waits again.
+     */
+    @Test public void aReturnWithNoVideoPlayingLeavesOtherAppsPlayingUntilOneStarts() {
+        Settings.FOCUS_WAITS_FOR_VIDEO.save(true);
+        assertTrue("the page's resume request took the focus", FeedMute.holdPageFocus("page"));
+        assertTrue("the session request took the focus", FeedMute.holdSessionFocus("session"));
+        assertTrue("the daily hold would wait for a grant that isn't coming", FeedMute.isHoldingFocus());
+        idleMain();
+        assertEquals(List.of(), calls);
+
+        FeedMute.onControllerPlay(new Controller(feed.get()), video("801"));
+        idleMain();
+        assertEquals(List.of("request session session", "request page page"), calls);
+        assertFalse(FeedMute.isHoldingFocus());
+        assertFalse("a video already played", FeedMute.holdPageFocus("page"));
+
+        calls.clear();
+        feed.pause().stop();
+        feed.start().resume();
+        assertTrue("back from another app, it waits again", FeedMute.holdPageFocus("page"));
+        FeedMute.onVideoPlaying();
+        idleMain();
+        assertEquals(List.of("request page page"), calls);
+    }
+
+    /** A progress report or a play on another screen counts; a play nothing can place doesn't. */
+    @Test public void aVideoOnAnyScreenEndsTheWaitButAnUnknownHostDoesNot() {
+        Settings.FOCUS_WAITS_FOR_VIDEO.save(true);
+        assertTrue(FeedMute.holdPageFocus("page"));
+        FeedMute.onControllerPlay(new Object(), video("811"));
+        idleMain();
+        assertEquals(List.of(), calls);
+
+        ActivityController<OtherScreen> other = Robolectric.buildActivity(OtherScreen.class).setup();
+        try {
+            FeedMute.onControllerPlay(new Controller(other.get()), video("812"));
+            idleMain();
+            assertEquals(List.of("request page page"), calls);
+        } finally {
+            other.pause().stop().destroy();
+        }
+    }
+
+    @Test public void withTheSwitchOffTheFocusGoesThroughAsBefore() {
+        assertFalse(FeedMute.holdPageFocus("page"));
+        assertFalse(FeedMute.holdSessionFocus("session"));
+        assertFalse(FeedMute.isHoldingFocus());
+
+        // Turned off while a request waited: nothing is left owed.
+        Settings.FOCUS_WAITS_FOR_VIDEO.save(true);
+        assertTrue(FeedMute.holdPageFocus("page"));
+        Settings.FOCUS_WAITS_FOR_VIDEO.save(false);
+        assertFalse(FeedMute.holdPageFocus("page"));
+        assertFalse(FeedMute.isHoldingFocus());
+        FeedMute.onVideoPlaying();
+        idleMain();
+        assertEquals(List.of(), calls);
+    }
+
+    private static void idleMain() {
+        org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
     }
 
     private Object engine(String name, String id) {

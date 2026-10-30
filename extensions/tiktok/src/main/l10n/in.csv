@@ -1038,6 +1038,8 @@ Muted,Senyap
 Sound on,Suara aktif
 Sound,Suara
 "Play feed videos without sound and leave the phone's volume alone. Music from another app keeps playing while it's on. DMs, stories and LIVE keep their sound.","Putar video feed tanpa suara dan biarkan volume ponsel tetap. Musik dari aplikasi lain tetap diputar selama ini aktif. DM, cerita, dan LIVE tetap bersuara."
+Let other apps play until a video starts,Biarkan aplikasi lain tetap diputar sampai video mulai
+Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound once a video starts playing.,Membuka TikTok atau pesanmu tidak lagi menjeda musik dari aplikasi lain. TikTok baru mengambil suara saat video mulai diputar.
 Show the mute button on videos,Tampilkan tombol senyap di video
 Add a button beside the block control that turns the feed's sound off and on.,Tambahkan tombol di samping kontrol blokir yang mematikan dan menyalakan suara feed.
 Show the country a video was posted from next to the creator's name.,Tampilkan negara asal unggahan video di sebelah nama kreator.

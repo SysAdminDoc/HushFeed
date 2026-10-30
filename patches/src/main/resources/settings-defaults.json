@@ -513,7 +513,8 @@
     "Mute feed videos": [
       "feed_muted",
       "feed_mute_button",
-      "feed_mute_button_position"
+      "feed_mute_button_position",
+      "focus_waits_for_video"
     ],
     "Network proxy": [
       "network_proxy",
@@ -1705,6 +1706,12 @@
     "floating_bottom_bar": {
       "field": "FLOATING_BOTTOM_BAR",
       "key": "floating_bottom_bar",
+      "type": "boolean",
+      "default": false
+    },
+    "focus_waits_for_video": {
+      "field": "FOCUS_WAITS_FOR_VIDEO",
+      "key": "focus_waits_for_video",
       "type": "boolean",
       "default": false
     },

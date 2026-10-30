@@ -107,6 +107,16 @@ public final class FeedMute {
      * another app; the next feed video to play asks instead.
      */
     private static volatile boolean focusOwed;
+    /**
+     * Let other apps play until a video starts (#283). TikTok's page helper asks for the focus on
+     * every resume, its inbox and a DM chat included, and that paused another app's music with
+     * nothing playing. Requests made before a video plays are turned down and kept here, newest
+     * of each kind, and asked for again when one does. Written under OWED.
+     */
+    private static final Object OWED = new Object();
+    private static volatile boolean videoPlayed;
+    private static volatile WeakReference<Object> owedSession = new WeakReference<>(null);
+    private static volatile WeakReference<Object> owedPage = new WeakReference<>(null);
     private static WeakReference<Application> followed = new WeakReference<>(null);
     /** Feed engines this silenced, and focus requests it turned down, since TikTok started. */
     private static final AtomicLong SILENCED = new AtomicLong();
@@ -152,9 +162,13 @@ public final class FeedMute {
                 if (isFeedHost(started)) feedInFront = true;
             }
             @Override public void onActivityStopped(Activity stopped) {
+                boolean left;
                 synchronized (STARTED) {
                     STARTED.remove(stopped);
+                    left = STARTED.isEmpty();
                 }
+                // The next return waits for a video again; TikTok gave its focus up as it left.
+                if (left) forgetPlayedVideo();
             }
             @Override public void onActivitySaveInstanceState(Activity activity, Bundle state) { }
             @Override public void onActivityDestroyed(Activity destroyed) {
@@ -247,6 +261,7 @@ public final class FeedMute {
                 record(id, feed, isFeedHost(Reflect.readField(controller, "activity")));
                 settle(id, feed && feedInFront);
             }
+            if (playsOnScreen(controller)) onVideoPlaying();
             HookStatus.bound(HOOK_FAMILY, "controller play");
         } catch (Throwable failure) {
             HookStatus.threw(HOOK_FAMILY, "controller play", failure);
@@ -330,6 +345,50 @@ public final class FeedMute {
                 FEED_ENGINES.put(engine, id);
             }
             apply(engine);
+        }
+    }
+
+    /**
+     * The controller's video is the one showing, not the feed's behind the inbox tab. A host
+     * that can't be read answers no; the first progress report still counts the video.
+     */
+    private static boolean playsOnScreen(Object controller) {
+        Object host = Reflect.readField(controller, "activity");
+        if (!(host instanceof Activity)) return false;
+        return host.getClass() != feedActivity || FeedVisibility.isOnFeed((Activity) host);
+    }
+
+    /**
+     * A video started: a controller's play on screen, or its player's progress. The focus asked
+     * for since TikTok came to the front is asked for again, so the video takes the sound as
+     * TikTok meant it to. Any thread.
+     */
+    public static void onVideoPlaying() {
+        if (videoPlayed || !SettingsStatus.feedMuteEnabled) return;
+        Object session;
+        Object page;
+        synchronized (OWED) {
+            if (videoPlayed) return;
+            videoPlayed = true;
+            session = owedSession.get();
+            page = owedPage.get();
+            owedSession = new WeakReference<>(null);
+            owedPage = new WeakReference<>(null);
+        }
+        if (session == null && page == null) return;
+        Utils.runOnMainThread(() -> {
+            // Through TikTok's own requests, so a muted feed still turns them down below.
+            if (session != null) requestSessionFocus(session);
+            Context context = Utils.getContext();
+            if (page != null && context != null) requestPageFocus(page, context);
+        });
+    }
+
+    private static void forgetPlayedVideo() {
+        synchronized (OWED) {
+            videoPlayed = false;
+            owedSession = new WeakReference<>(null);
+            owedPage = new WeakReference<>(null);
         }
     }
 
@@ -452,7 +511,9 @@ public final class FeedMute {
 
     /** SimAudioFocusManager's per-session request. True turns it down. Any thread. */
     public static boolean holdSessionFocus(Object helper) {
-        if (helper == null || !SettingsStatus.feedMuteEnabled || !feedInFront || !lastPlayFeed) return false;
+        if (helper == null || !SettingsStatus.feedMuteEnabled) return false;
+        if (waitForVideo(helper, false)) return true;
+        if (!feedInFront || !lastPlayFeed) return false;
         synchronized (SESSION_HELPERS) {
             SESSION_HELPERS.put(helper, Boolean.TRUE);
             lastSessionHelper = new WeakReference<>(helper);
@@ -462,12 +523,31 @@ public final class FeedMute {
 
     /** The page helper's transient request, made on each resume. True turns it down. Any thread. */
     public static boolean holdPageFocus(Object helper) {
-        if (helper == null || !SettingsStatus.feedMuteEnabled || !feedInFront || !lastPlayFeed) return false;
+        if (helper == null || !SettingsStatus.feedMuteEnabled) return false;
+        if (waitForVideo(helper, true)) return true;
+        if (!feedInFront || !lastPlayFeed) return false;
         synchronized (PAGE_HELPERS) {
             PAGE_HELPERS.put(helper, Boolean.TRUE);
             lastPageHelper = new WeakReference<>(helper);
         }
         return holdBack("page focus held back");
+    }
+
+    /** Keeps a request for when a video plays, if none has since TikTok came to the front. */
+    private static boolean waitForVideo(Object helper, boolean page) {
+        synchronized (OWED) {
+            if (videoPlayed || !Settings.FOCUS_WAITS_FOR_VIDEO.get()) {
+                // Switched off while one waited: TikTok's next request goes through as it is.
+                owedSession = new WeakReference<>(null);
+                owedPage = new WeakReference<>(null);
+                return false;
+            }
+            if (page) owedPage = new WeakReference<>(helper);
+            else owedSession = new WeakReference<>(helper);
+        }
+        FOCUS_HELD.incrementAndGet();
+        HookStatus.bound(HOOK_FAMILY, page ? "page focus kept for a video" : "session focus kept for a video");
+        return true;
     }
 
     private static boolean holdBack(String what) {
@@ -477,9 +557,12 @@ public final class FeedMute {
         return true;
     }
 
-    /** The daily hold waits for TikTok's focus before resuming; while muted it never comes. */
+    /**
+     * The daily hold waits for TikTok's focus before resuming; while muted it never comes, and
+     * while it waits for a video only the hold's resume brings it.
+     */
     public static boolean isHoldingFocus() {
-        return feedInFront && lastPlayFeed && isMuted();
+        return (feedInFront && lastPlayFeed && isMuted()) || owedPage.get() != null;
     }
 
     private static List<Object> keys(WeakHashMap<Object, ?> map) {
@@ -508,6 +591,7 @@ public final class FeedMute {
             // The saved choice, like the line above: Pause reads every switch as off, which would
             // report a button the reader never turned off.
             lines.add("Mute button on the feed: " + (Settings.FEED_MUTE_BUTTON.savedValue() ? "shown" : "turned off"));
+            lines.add("Other apps play until a video starts: " + (Settings.FOCUS_WAITS_FOR_VIDEO.savedValue() ? "on" : "off"));
             // One player plays many videos, so this counts players, not videos.
             lines.add("Feed players muted since TikTok started: " + SILENCED.get());
             lines.add("Audio focus requests turned down: " + FOCUS_HELD.get());
@@ -586,6 +670,7 @@ public final class FeedMute {
         lastPlayFeed = false;
         refreshOwed = false;
         focusOwed = false;
+        forgetPlayedVideo();
         feedActivity = null;
         nativeForTests = null;
         SILENCED.set(0);

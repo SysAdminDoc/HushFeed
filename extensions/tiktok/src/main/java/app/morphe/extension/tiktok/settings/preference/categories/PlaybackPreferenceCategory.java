@@ -269,6 +269,10 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                             + "from another app keeps playing while it's on. DMs, stories and LIVE "
                             + "keep their sound.",
                     Settings.FEED_MUTED));
+            addPreference(new TogglePreference(context, "Let other apps play until a video starts",
+                    "Opening TikTok or your messages no longer pauses music from another app. "
+                            + "TikTok takes the sound once a video starts playing.",
+                    Settings.FOCUS_WAITS_FOR_VIDEO));
         }
         if (SettingsStatus.keepPulledSoundsEnabled) {
             addPreference(new TogglePreference(context, "Play sounds TikTok pulled",

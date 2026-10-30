@@ -1041,6 +1041,8 @@ Muted	Silenciado
 Sound on	Sonido activado
 Sound	Sonido
 Play feed videos without sound and leave the phone's volume alone. Music from another app keeps playing while it's on. DMs, stories and LIVE keep their sound.	Reproduce los videos del feed sin sonido y no cambia el volumen del teléfono. La música de otra app sigue sonando mientras esté activado. Los mensajes directos, las historias y los LIVE conservan su sonido.
+Let other apps play until a video starts	Dejar sonar otras apps hasta que empiece un video
+Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound once a video starts playing.	Abrir TikTok o tus mensajes ya no pausa la música de otra app. TikTok toma el sonido cuando empieza a reproducirse un video.
 Show the mute button on videos	Mostrar el botón de silencio en los videos
 Add a button beside the block control that turns the feed's sound off and on.	Añade un botón junto al control de bloqueo que apaga y enciende el sonido del feed.
 Show the country a video was posted from next to the creator's name.	Mostrar el país desde el que se publicó un vídeo junto al nombre del creador.

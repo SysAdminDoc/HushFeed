@@ -1044,6 +1044,8 @@ Muted	Stumm
 Sound on	Ton an
 Sound	Ton
 Play feed videos without sound and leave the phone's volume alone. Music from another app keeps playing while it's on. DMs, stories and LIVE keep their sound.	Feed-Videos ohne Ton abspielen und die Lautstärke des Telefons unverändert lassen. Musik aus einer anderen App läuft weiter, solange das an ist. DMs, Stories und LIVE behalten ihren Ton.
+Let other apps play until a video starts	Andere Apps spielen lassen, bis ein Video startet
+Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound once a video starts playing.	Wenn du TikTok oder deine Nachrichten öffnest, pausiert Musik aus einer anderen App nicht mehr. TikTok übernimmt den Ton erst, wenn ein Video abgespielt wird.
 Show the mute button on videos	Stummschalt-Schaltfläche auf Videos anzeigen
 Add a button beside the block control that turns the feed's sound off and on.	Neben der Blockieren-Schaltfläche eine Schaltfläche hinzufügen, die den Ton des Feeds aus- und einschaltet.
 Show the country a video was posted from next to the creator's name.	Das Land, aus dem ein Video veröffentlicht wurde, neben dem Namen des Creators anzeigen.

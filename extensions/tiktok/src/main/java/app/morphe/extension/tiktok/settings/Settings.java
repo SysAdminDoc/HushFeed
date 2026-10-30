@@ -897,6 +897,8 @@ public class Settings extends BaseSettings {
      */
     public static final BooleanSetting FEED_MUTED = new BooleanSetting("feed_muted", FALSE, false, false);
     public static final BooleanSetting FEED_MUTE_BUTTON = new BooleanSetting("feed_mute_button", FALSE);
+    /** TikTok's audio focus waits for a video to play, so opening the app or a chat leaves other apps' music alone (#283). */
+    public static final BooleanSetting FOCUS_WAITS_FOR_VIDEO = new BooleanSetting("focus_waits_for_video", FALSE);
     public static final BooleanSetting HIDE_FEED_CAPTION = new BooleanSetting("hide_feed_caption", FALSE);
     /** Native description and creator name, independently of spoken subtitles. Zero keeps TikTok's size. */
     public static final IntegerSetting FEED_DESCRIPTION_TEXT_SIZE =

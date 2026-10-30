@@ -1119,6 +1119,8 @@ Muted	Звук выключен
 Sound on	Звук включён
 Sound	Звук
 Play feed videos without sound and leave the phone's volume alone. Music from another app keeps playing while it's on. DMs, stories and LIVE keep their sound.	Воспроизводить видео в ленте без звука, не трогая громкость телефона. Музыка из другого приложения продолжает играть, пока это включено. Личные сообщения, истории и LIVE сохраняют свой звук.
+Let other apps play until a video starts	Не прерывать другие приложения, пока не начнётся видео
+Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound once a video starts playing.	Открытие TikTok или ваших сообщений больше не ставит на паузу музыку из другого приложения. TikTok забирает звук, только когда начинается видео.
 Show the mute button on videos	Показывать кнопку отключения звука на видео
 Add a button beside the block control that turns the feed's sound off and on.	Добавлять рядом с кнопкой блокировки кнопку, включающую и выключающую звук ленты.
 Show the country a video was posted from next to the creator's name.	Показывать страну, откуда опубликовано видео, рядом с именем автора.

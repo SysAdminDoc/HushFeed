@@ -224,6 +224,8 @@ public final class SessionPlaybackHold {
     /** Called with p0 and p1 from PlayerController.onPlayProgressChange(String, long, long). */
     public static void onPlayerProgress(Object controller, String awemeId) {
         if (controller == null || awemeId == null || awemeId.isEmpty()) return;
+        // A video that started without a play on screen still takes the focus it waits for (#283).
+        FeedMute.onVideoPlaying();
         synchronized (OWNER_LOCK) {
             // Even another report from the same owner supersedes a queued first frame.
             progressRevision++;

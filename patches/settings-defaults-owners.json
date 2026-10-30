@@ -513,7 +513,8 @@
     "Mute feed videos": [
       "FEED_MUTED",
       "FEED_MUTE_BUTTON",
-      "FEED_MUTE_BUTTON_POSITION"
+      "FEED_MUTE_BUTTON_POSITION",
+      "FOCUS_WAITS_FOR_VIDEO"
     ],
     "Network proxy": [
       "NETWORK_PROXY",

@@ -28,7 +28,7 @@ import org.robolectric.annotation.Config;
 @Config(sdk = 28)
 public class FeatureGateLabRuleLimitTest {
     private static final String LIMIT_MESSAGE =
-            "The Lab keeps at most 1,024 rules. This change would make 1,025, so nothing was changed.";
+            "1,025 rules, but the limit is 1,024. Nothing changed.";
 
     private Context context;
 

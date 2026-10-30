@@ -592,18 +592,31 @@ public class SettingsL10nTest {
         java.util.List<String> offenders = new java.util.ArrayList<>();
         int toasts = 0;
         java.nio.file.Path base = root.toPath();
+        Map<java.nio.file.Path, String> sources = new LinkedHashMap<>();
         try (java.util.stream.Stream<java.nio.file.Path> files = java.nio.file.Files.walk(base)) {
             for (java.nio.file.Path file : files.filter(p -> p.toString().endsWith(".java"))
                     .collect(java.util.stream.Collectors.toList())) {
                 if (file.getFileName().toString().startsWith("L10nTranslations")) continue;
                 String text = new String(java.nio.file.Files.readAllBytes(file),
                         java.nio.charset.StandardCharsets.UTF_8);
-                for (String message : toastLiteralsIn(text)) {
+                sources.put(file, text);
+                java.util.List<String> messages = new java.util.ArrayList<>(toastLiteralsIn(text));
+                messages.addAll(toastVariableLiteralsIn(text));
+                for (String message : messages) {
                     toasts++;
                     String fault = punctuationFault(message);
                     if (fault != null) offenders.add(base.relativize(file) + ": " + fault + "  \"" + message + "\"");
                 }
             }
+        }
+        // A message handed over in a variable, through a helper or as a Lab refusal reaches the
+        // same toast, and the wrap check already follows all three.
+        java.util.Set<String> passedOn = new java.util.TreeSet<>(toastHelperLiteralsIn(sources));
+        passedOn.addAll(refusalLiteralsIn(sources));
+        for (String message : passedOn) {
+            toasts++;
+            String fault = punctuationFault(message);
+            if (fault != null) offenders.add("(passed on): " + fault + "  \"" + message + "\"");
         }
         assertTrue("the scan found too few toasts to mean anything: " + toasts, toasts > 40);
         assertTrue("one sentence takes no full stop, several take one each:\n"
@@ -629,6 +642,9 @@ public class SettingsL10nTest {
         assertNull(punctuationFault("Seen videos put back"));
         assertNull(punctuationFault("Couldn't undo the clear. Try again."));
         assertNull(punctuationFault("Enter a whole number, or one like 20K, 1.5M or 2B"));
+        assertNull(punctuationFault("Size limit reached. Recording saved to %1$s"));
+        assertNotNull(punctuationFault("Size limit reached. Recording saved to %1$s folder"));
+        assertNotNull(punctuationFault("Saved to %1$s."));
     }
 
     /**
@@ -657,6 +673,7 @@ public class SettingsL10nTest {
             }
         }
         messages.addAll(toastHelperLiteralsIn(sources));
+        messages.addAll(refusalLiteralsIn(sources));
         assertTrue("the scan found too few toasts to mean anything: " + messages.size(),
                 messages.size() > 40);
 
@@ -746,6 +763,80 @@ public class SettingsL10nTest {
                 + "}\n";
         assertEquals(java.util.Arrays.asList("Stopped waiting for Wi-Fi.", "Saved", "Failed: %1$s",
                 "Too late", "First", "Second", "Captured", "Kept"), toastVariableLiteralsIn(source));
+    }
+
+    /**
+     * A method a toast is handed to, as the Lab's runLabChange is, shows what its calls build in
+     * their brackets or hand it in a local, the retry line in its own body, and the sentence of
+     * each refusal it names, in the file that names it. A local filled in a switch and translated
+     * where it's shown is measured too. A toast kept in a variable names no method, and a label or
+     * a same-named refusal of another class is left alone.
+     */
+    @Test public void theToastScanFollowsTheLabsNoticesAndTheJournal() {
+        Map<java.nio.file.Path, String> sources = new LinkedHashMap<>();
+        sources.put(java.nio.file.Paths.get("Lab.java"), "class Lab {\n"
+                + "  void force() {\n"
+                + "    runLabChange(() -> {\n"
+                + "      if (none) throw new Refused(L10n.t(context, \"Nothing to force.\"));\n"
+                + "      return L10n.t(context, \"Forced 3 gates of 5. The rest don't take a true or false value.\");\n"
+                + "    });\n"
+                + "  }\n"
+                + "  void undo() { runLabChange(Undo::undo, L10n.t(context, \"Put back\")); }\n"
+                + "  void imported() {\n"
+                + "    String message = L10n.f(context, \"Imported %1$d\", count);\n"
+                + "    runLabChange(() -> Undo.importRules(review), message);\n"
+                + "  }\n"
+                + "  void check() { if (bad) throw new Refused(L10n.t(context, \"Not an export\")); }\n"
+                + "  void label() { title.setText(L10n.t(context, \"Not a toast\")); }\n"
+                + "  private boolean runLabChange(Change change) { return runLabChange(change, Utils::showToastLong); }\n"
+                + "  private boolean runLabChange(Change change, Presenter presenter) {\n"
+                + "    Presenter tell = presenter;\n"
+                + "    try { result = change.run(); } catch (Exception error) {\n"
+                + "      result = error instanceof Refused || error instanceof Store.LimitRefused\n"
+                + "          ? error.getMessage() : L10n.t(context, \"Couldn't change it\");\n"
+                + "      tell = Utils::showToastLong;\n"
+                + "    }\n"
+                + "    return true;\n"
+                + "  }\n"
+                + "  private static final class Refused extends RuntimeException { Refused(String s) { super(s); } }\n"
+                + "}\n");
+        sources.put(java.nio.file.Paths.get("Store.java"), "class Store {\n"
+                + "  void add() { if (full) throw new LimitRefused(limitMessage(9)); }\n"
+                + "  static String limitMessage(int count) { return L10n.f(\"At most %1$s rules\", count); }\n"
+                + "  static final class LimitRefused extends IOException { LimitRefused(String s) { super(s); } }\n"
+                + "}\n");
+        sources.put(java.nio.file.Paths.get("Accounts.java"), "class Accounts {\n"
+                + "  void read() { throw new Refused(L10n.t(context, \"Another class's refusal\")); }\n"
+                + "  static final class Refused extends RuntimeException { Refused(String s) { super(s); } }\n"
+                + "}\n");
+        String lab = sources.get(java.nio.file.Paths.get("Lab.java"));
+        List<String> called = toastLiteralsIn(lab, false);
+        assertEquals(java.util.Arrays.asList("Nothing to force.",
+                "Forced 3 gates of 5. The rest don't take a true or false value.", "Put back"), called);
+        assertEquals("a long Lab notice counts as more than two lines",
+                3, toastLines(called.get(1)));
+        assertEquals(java.util.Collections.singletonList("Imported %1$d"), toastVariableLiteralsIn(lab));
+        assertEquals(java.util.Arrays.asList("Couldn't change it", "Nothing to force.", "Not an export",
+                "At most %1$s rules"), refusalLiteralsIn(sources));
+        assertTrue("an assigned toast names no method",
+                toastPresentersIn(lab, classify(lab)).equals(java.util.Collections.singleton("runLabChange")));
+
+        String journal = "class Journal {\n"
+                + "  static void notice(Context context) {\n"
+                + "    String message;\n"
+                + "    switch (recovery) {\n"
+                + "      case DONE: message = \"Recovered a change. \"\n"
+                + "          + \"Restart TikTok to apply.\"; break;\n"
+                + "      case BAD: message = ok ? \"Set aside\" : \"Couldn't read it\"; break;\n"
+                + "      case OTHER: message = L10n.t(context, \"Already translated\"); break;\n"
+                + "      default: return;\n"
+                + "    }\n"
+                + "    Utils.showToastLong(L10n.t(context, message));\n"
+                + "    Utils.showToastShort(L10n.t(context, title));\n"
+                + "  }\n"
+                + "}\n";
+        assertEquals(java.util.Arrays.asList("Recovered a change. Restart TikTok to apply.", "Set aside",
+                "Couldn't read it", "Already translated"), toastLiteralsIn(journal, false));
     }
 
     /**
@@ -927,7 +1018,8 @@ public class SettingsL10nTest {
         // every way that matters to a reader, so they answer to the same rule.
         java.util.regex.Matcher call = java.util.regex.Pattern
                 .compile("(?:\\b\\w*[Tt]oast\\w*|Toast\\s*\\.\\s*makeText"
-                        + (banners ? "|\\bshowNotice|\\bshowUndo(?:Banner)?" : "") + ")\\s*\\(")
+                        + (banners ? "|\\bshowNotice|\\bshowUndo(?:Banner)?" : "")
+                        + presenterCalls(text, kind) + ")\\s*\\(")
                 .matcher(text);
         while (call.find()) {
             int open = call.end() - 1;
@@ -941,11 +1033,16 @@ public class SettingsL10nTest {
         return found;
     }
 
-    /** Every literal handed to an L10n call that sits wholly between {@code start} and {@code end}. */
+    /**
+     * Every literal handed to an L10n call that sits wholly between {@code start} and {@code end}.
+     * An L10n.t handed a local String instead of a literal takes the literals that local is set
+     * to, as in {@code String message; switch (...) { case A: message = "..."; } L10n.t(context,
+     * message)}: the settings journal's four recovery toasts are written that way.
+     */
     private static java.util.List<String> l10nLiteralsBetween(String text, byte[] kind, int start, int end) {
         java.util.List<String> found = new java.util.ArrayList<>();
         java.util.regex.Matcher lookup = java.util.regex.Pattern
-                .compile("L10n\\s*\\.\\s*(?:t|f|quantity)\\s*\\(").matcher(text);
+                .compile("L10n\\s*\\.\\s*(t|f|quantity)\\s*\\(").matcher(text);
         lookup.region(start, end);
         while (lookup.find()) {
             int lookupOpen = lookup.end() - 1;
@@ -953,7 +1050,131 @@ public class SettingsL10nTest {
             if (lookupClose < 0 || lookupClose > end) continue;
             // arguments, not literalsIn: a message written across lines with a plus is one
             // message, and its halves would each fail the rule on their own.
-            found.addAll(arguments(text, kind, lookupOpen, lookupClose));
+            List<String> literals = arguments(text, kind, lookupOpen, lookupClose);
+            if (literals.isEmpty() && lookup.group(1).equals("t")) {
+                List<int[]> parts = argumentsOf(text, kind, lookupOpen, lookupClose);
+                int[] key = parts.get(parts.size() - 1);
+                String name = text.substring(key[0], key[1]).trim();
+                if (name.matches("[a-z]\\w*")) {
+                    for (int[] assignment : assignmentsReaching(text, kind, name, lookup.start())) {
+                        // A value already translated is that call's literal, not a key.
+                        boolean translated = java.util.regex.Pattern.compile("L10n\\s*\\.").matcher(text)
+                                .region(assignment[0], assignment[1]).find();
+                        literals.addAll(translated
+                                ? l10nLiteralsBetween(text, kind, assignment[0], assignment[1])
+                                : arguments(text, kind, assignment[0], assignment[1]));
+                    }
+                }
+            }
+            found.addAll(literals);
+        }
+        return found;
+    }
+
+    /**
+     * The methods a file hands a toast to as the way to tell the reader, as in
+     * {@code runLabChange(change, Utils::showToastLong)}, written as alternatives for a toast
+     * call's pattern. Whatever such a call is given or builds inside its brackets ends up in that
+     * toast: the Lab's change notices, each a lambda's answer, a refusal it throws or a message
+     * handed in, all reached the reader that way unmeasured. A toast assigned to a variable,
+     * {@code tell = Utils::showToastLong}, isn't handed to anything. Kept to the file, since
+     * runLabChange is private.
+     */
+    private static String presenterCalls(String text, byte[] kind) {
+        StringBuilder calls = new StringBuilder();
+        for (String name : toastPresentersIn(text, kind)) calls.append("|\\b").append(name);
+        return calls.toString();
+    }
+
+    private static Set<String> toastPresentersIn(String text, byte[] kind) {
+        Set<String> names = new LinkedHashSet<>();
+        java.util.regex.Matcher reference = java.util.regex.Pattern
+                .compile("::\\s*\\w*[Tt]oast\\w*").matcher(text);
+        while (reference.find()) {
+            if (kind[reference.start()] != CODE) continue;
+            // Back over whole brackets to the one the reference sits in. An = or ; first means
+            // it is assigned or stands alone, and a brace or square bracket that it is no
+            // call's argument.
+            int depth = 0;
+            for (int at = reference.start() - 1; at >= 0; at--) {
+                if (kind[at] != CODE) continue;
+                char c = text.charAt(at);
+                if (c == ')' || c == ']' || c == '}') {
+                    depth++;
+                } else if (depth > 0 && (c == '(' || c == '[' || c == '{')) {
+                    depth--;
+                } else if (c == '(') {
+                    int nameEnd = at;
+                    while (nameEnd > 0 && Character.isWhitespace(text.charAt(nameEnd - 1))) nameEnd--;
+                    int nameStart = nameEnd;
+                    while (nameStart > 0 && Character.isJavaIdentifierPart(text.charAt(nameStart - 1))) nameStart--;
+                    String name = text.substring(nameStart, nameEnd);
+                    if (name.matches("[a-z]\\w*") && !NOT_A_HELPER.contains(name)) names.add(name);
+                    break;
+                } else if (c == '[' || c == '{' || c == ';' || c == '=') {
+                    break;
+                }
+            }
+        }
+        return names;
+    }
+
+    /**
+     * What a toast presenter shows that no call of it holds. runLabChange answers a failure with
+     * {@code error instanceof Refused ? error.getMessage() : L10n.t(...)}, so the retry line in
+     * its own body is a toast, and so is the sentence of every refusal it names: each
+     * {@code new Refused(...)} in its own file, and each {@code new RuleLimitRefused(...)} in
+     * FeatureGateLabStore, which the instanceof names. A class of the same name elsewhere is
+     * another class.
+     */
+    private static java.util.List<String> refusalLiteralsIn(Map<java.nio.file.Path, String> texts) {
+        ToastSources sources = new ToastSources(texts);
+        java.util.List<String> found = new java.util.ArrayList<>();
+        Map<String, Set<java.nio.file.Path>> refusals = new LinkedHashMap<>();
+        java.util.regex.Pattern instance = java.util.regex.Pattern
+                .compile("\\binstanceof\\s+((?:\\w+\\s*\\.\\s*)*)(\\w+)");
+        java.util.regex.Pattern told = java.util.regex.Pattern.compile("\\.\\s*getMessage\\s*\\(");
+        for (java.nio.file.Path path : texts.keySet()) {
+            String text = texts.get(path);
+            byte[] kind = sources.kinds.get(path);
+            for (String presenter : toastPresentersIn(text, kind)) {
+                for (int[] body : sources.bodiesOf(path, presenter)) {
+                    java.util.regex.Matcher message = told.matcher(text).region(body[0], body[1]);
+                    boolean tells = false;
+                    while (!tells && message.find()) tells = kind[message.start()] == CODE;
+                    if (!tells) continue;
+                    found.addAll(l10nLiteralsBetween(text, kind, body[0], body[1]));
+                    java.util.regex.Matcher type = instance.matcher(text).region(body[0], body[1]);
+                    while (type.find()) {
+                        if (kind[type.start()] != CODE) continue;
+                        String[] qualifier = type.group(1).replaceAll("[\\s.]+$", "").split("\\s*\\.\\s*");
+                        String owner = qualifier[qualifier.length - 1];
+                        Set<java.nio.file.Path> where = refusals.computeIfAbsent(type.group(2),
+                                name -> new LinkedHashSet<>());
+                        if (owner.isEmpty()) {
+                            where.add(path);
+                            where.addAll(sources.classes.getOrDefault(type.group(2), new ArrayList<>()));
+                        } else {
+                            where.addAll(sources.classes.getOrDefault(owner, new ArrayList<>()));
+                        }
+                    }
+                }
+            }
+        }
+        for (Map.Entry<String, Set<java.nio.file.Path>> refusal : refusals.entrySet()) {
+            java.util.regex.Pattern made = java.util.regex.Pattern
+                    .compile("\\bnew\\s+(?:\\w+\\s*\\.\\s*)*" + refusal.getKey() + "\\s*\\(");
+            for (java.nio.file.Path path : refusal.getValue()) {
+                String text = texts.get(path);
+                byte[] kind = sources.kinds.get(path);
+                java.util.regex.Matcher construction = made.matcher(text);
+                while (construction.find()) {
+                    if (kind[construction.start()] != CODE) continue;
+                    int open = construction.end() - 1;
+                    int close = closingBracket(text, kind, open);
+                    if (close > 0) found.addAll(sources.shown(path, open + 1, close, new java.util.HashSet<>()));
+                }
+            }
         }
         return found;
     }
@@ -971,7 +1192,8 @@ public class SettingsL10nTest {
     private static java.util.List<String> toastVariableLiteralsIn(String text) {
         byte[] kind = classify(text);
         java.util.List<String> found = new java.util.ArrayList<>();
-        java.util.regex.Matcher call = java.util.regex.Pattern.compile(TOAST_CALL).matcher(text);
+        java.util.regex.Matcher call = java.util.regex.Pattern
+                .compile(TOAST_CALL.replace(")\\s*\\(", presenterCalls(text, kind) + ")\\s*\\(")).matcher(text);
         while (call.find()) {
             int open = call.end() - 1;
             if (kind[call.start()] != CODE) continue;
@@ -1388,7 +1610,11 @@ public class SettingsL10nTest {
         boolean several = trimmed.matches("(?s).*[.!?][\"”']?\\s+[A-Za-z0-9\"“%].*");
         boolean ends = trimmed.matches("(?s).*[.!?][\"”']?$");
         if (!several && ends) return "one sentence ends with a stop";
-        if (several && !ends) return "several sentences and the last has no stop";
+        // A message that ends on a placeholder ends on a path or a name, and a stop after it
+        // reads as part of the path, so "Saved. Recording saved to %1$s" keeps its last stop off.
+        if (several && !ends && !trimmed.matches("(?s).*%\\d+\\$[sd]$")) {
+            return "several sentences and the last has no stop";
+        }
         return null;
     }
 

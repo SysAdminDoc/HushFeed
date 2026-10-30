@@ -183,7 +183,7 @@ public class NumberInputPreferenceTest {
             preference.save();
             assertNull("the inline failure was duplicated in a toast",
                     ShadowToast.getTextOfLatestToast());
-            assertEquals("Enter a number.", preference.getEditText().getError().toString());
+            assertEquals("Enter a number", preference.getEditText().getError().toString());
             assertEquals("Summary\n0 to 600 minutes\nCurrent: 45 minutes",
                     preference.getSummary().toString());
         }
@@ -210,7 +210,7 @@ public class NumberInputPreferenceTest {
 
             assertEquals("the dialog closed after refusing the empty value", true,
                     dialog.isShowing());
-            assertEquals("Enter a number.",
+            assertEquals("Enter a number",
                     inlineError(preference.getEditText()).getText().toString());
             assertEquals("Summary\n0 to 600 minutes\nCurrent: 30 minutes",
                     preference.getSummary().toString());

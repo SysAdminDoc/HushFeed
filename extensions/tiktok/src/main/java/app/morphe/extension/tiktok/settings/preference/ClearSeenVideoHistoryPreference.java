@@ -80,7 +80,7 @@ public final class ClearSeenVideoHistoryPreference extends Preference
                         NumberFormat.getInstance().format(retained),
                         NumberFormat.getInstance().format(requested));
             } else if (result == SeenVideoHistory.UndoResult.NONE_RETAINED) {
-                message = "No cleared videos fit the current history limits.";
+                message = "No cleared videos fit the current history limits";
             } else if (result == SeenVideoHistory.UndoResult.FAILED) {
                 message = FAILED;
             } else if (result == SeenVideoHistory.UndoResult.EMPTY) {

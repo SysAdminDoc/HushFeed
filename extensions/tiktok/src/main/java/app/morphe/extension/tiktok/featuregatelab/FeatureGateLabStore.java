@@ -303,7 +303,7 @@ public final class FeatureGateLabStore {
 
     static String ruleLimitMessage(int resultingCount) {
         NumberFormat numbers = NumberFormat.getIntegerInstance(Locale.getDefault());
-        return L10n.f("The Lab keeps at most %1$s rules. This change would make %2$s, so nothing was changed.",
+        return L10n.f("%2$s rules, but the limit is %1$s. Nothing changed.",
                 numbers.format(MAX_RULES), numbers.format(resultingCount));
     }
 

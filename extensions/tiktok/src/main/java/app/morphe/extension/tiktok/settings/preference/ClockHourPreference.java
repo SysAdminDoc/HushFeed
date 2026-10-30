@@ -54,7 +54,7 @@ public class ClockHourPreference extends NumberInputPreference {
 
     @Override
     protected String unreadableMessage() {
-        return L10n.t(getContext(), "Enter an hour, like 6 or 06:00.");
+        return L10n.t(getContext(), "Enter an hour, like 6 or 06:00");
     }
 
     /** A time keyboard, which has the colon a number keyboard leaves out. */

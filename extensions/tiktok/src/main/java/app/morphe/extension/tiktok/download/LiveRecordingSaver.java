@@ -271,7 +271,7 @@ public final class LiveRecordingSaver {
                         ? partialText(result.end, folder)
                         : result.outcome == LiveRecorder.Outcome.SAVED
                         ? L10n.f("LIVE recording saved to %1$s", folder) : L10n.t("The recording couldn't be saved. Try again.");
-                if (result.saved != null && result.screenAudio == LiveRecorder.ScreenAudio.VIDEO_ONLY) message += "\n" + L10n.t("This screen recording has no sound.");
+                if (result.saved != null && result.screenAudio == LiveRecorder.ScreenAudio.VIDEO_ONLY) message += "\n" + L10n.t("This screen recording has no sound");
                 SaveNotice.saved(message, result.saved instanceof MediaFileWriter.Saved ? (MediaFileWriter.Saved) result.saved : null,
                         () -> showRetained(Utils.getContext()));
                 return;
@@ -298,7 +298,7 @@ public final class LiveRecordingSaver {
 
     private static void saved(String message, LiveRecorder.Result result) {
         if (result.screenAudio == LiveRecorder.ScreenAudio.VIDEO_ONLY) {
-            message += "\n" + L10n.t("This screen recording has no sound.");
+            message += "\n" + L10n.t("This screen recording has no sound");
         }
         if (result.saved instanceof MediaFileWriter.Saved) {
             SaveNotice.saved(message, (MediaFileWriter.Saved) result.saved);

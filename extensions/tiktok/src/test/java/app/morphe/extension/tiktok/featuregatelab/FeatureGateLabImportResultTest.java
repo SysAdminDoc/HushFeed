@@ -48,6 +48,16 @@ public class FeatureGateLabImportResultTest {
         assertEquals("0 rejected", text(lines, 3));
     }
 
+    /** The dialog's title already says nothing came in, so the list starts at what matched. */
+    @Test public void anImportThatTookNothingHasNoImportedLine() {
+        Context context = RuntimeEnvironment.getApplication();
+        Utils.setContext(context);
+        LinearLayout lines = FeatureGateLabFragment.importResultView(context, 0, 1, 14999, 0, null);
+        assertEquals(3, lines.getChildCount());
+        assertEquals("1 already matched", text(lines, 0));
+        assertEquals("0 rejected", text(lines, 2));
+    }
+
     private static String text(LinearLayout lines, int index) {
         return ((TextView) lines.getChildAt(index)).getText().toString();
     }

@@ -110,7 +110,7 @@ Turned off %1$d overrides. Check them for TikTok %2$s.|many	Выкл. %1$d пе�
 %1$s destinations must start with %2$s	Места назначения %1$s должны начинаться с %2$s
 %1$s is too long for a settings backup. Shorten it, then save the backup again.	%1$s слишком длинный для резервной копии настроек. Сократите его и сохраните копию снова.
 %1$s isn't a language code, so no video would ever match it. Use two letters, like en, es or de.	%1$s не является кодом языка, поэтому ни одно видео никогда не будет ему соответствовать. Используйте две буквы, например en, es или de.
-%1$s needs fixing. %2$s	%1$s нужно исправить. %2$s
+%1$s needs fixing. %2$s.	%1$s нужно исправить. %2$s.
 %1$s is a kind of value the Lab can't override.	Lab не может переопределять значения типа %1$s.
 %1$s has type %2$s, but the file says %3$s.	%1$s имеет тип %2$s, но в файле указано %3$s.
 %1$s isn't a country code, so no video would ever match it. Use two letters, like GB, IE or US.	%1$s не является кодом страны, поэтому ни одно видео никогда не будет ему соответствовать. Используйте две буквы, например GB, IE или US.
@@ -255,7 +255,7 @@ Also change the region TikTok reports internally and set TikTok to the country's
 Always show publish date	Всегда показывать дату публикации
 Always show the publish date in video author information. Restart TikTok to apply this.	Всегда показывать дату публикации в информации об авторе видео. Перезапустите TikTok, чтобы это применить.
 Type the other app's ID, like com.dv.adm. The save button sends the video's link there instead of saving. Leave empty to save here.	Введите идентификатор другого приложения, например com.dv.adm. Кнопка сохранения отправит туда ссылку на видео вместо сохранения. Оставьте пустым, чтобы сохранять здесь.
-An interrupted settings change couldn't be recovered, so its record was set aside. Check your settings or restore a backup.	Прерванное изменение настроек не удалось восстановить, поэтому его запись была отложена. Проверьте свои настройки или восстановите резервную копию.
+Couldn't recover a change. Restore a backup if needed.	Правку не восстановить. Если надо, верните копию.
 An operator code is five or six digits, like 310260	Код оператора состоит из пяти или шести цифр, например 310260
 An override changes the value TikTok reads from this gate. It doesn't change TikTok's saved copy or prove the named feature changed.	Переопределение меняет значение, которое TikTok читает из этого переключателя. Оно не меняет сохранённую копию TikTok и не доказывает, что названная функция изменилась.
 Animated sticker format	Формат анимированных стикеров
@@ -384,7 +384,7 @@ Turn Clear display on or off	Включить или выключить чист
 Clear display isn't available for this video	Чистый вид недоступен для этого видео
 Comments beside the video	Комментарии рядом с видео
 Compare gate reads with their previous values.	Сравнивать считанные значения переключателей с их предыдущими значениями.
-Completed an interrupted settings change. Restart TikTok to apply this.	Прерванное изменение настроек завершено. Перезапустите TikTok, чтобы это применить.
+Kept an interrupted change. Restart TikTok to apply.	Прерванная правка сохранена. Перезапустите TikTok.
 Config	Конфигурация
 Config (Settings Manager)	Конфигурация (Settings Manager)
 Confirm before a quick repost	Подтверждать перед быстрым репостом
@@ -498,18 +498,18 @@ Log diagnostics	Записывать диагностику
 Lock the hold speed with a pull down	Закреплять скорость удержания свайпом вниз
 Apply overrides	Применять переопределения
 Enabled	Включено
-Enter a JSON object or array.	Введите объект или массив JSON.
+Enter a JSON object or array	Введите объект или массив JSON
 Enter a creator handle or id	Введите имя автора или ID
-Enter a finite number.	Введите конечное число.
-Enter a number.	Введите число.
-Enter an hour, like 6 or 06:00.	Введите час, например 6 или 06:00.
-Enter a valid structured value.	Введите корректное структурированное значение.
+Enter a finite number	Введите конечное число
+Enter a number	Введите число
+Enter an hour, like 6 or 06:00	Введите час, например 6 или 06:00
+Enter a valid structured value	Введите корректное структурированное значение
 Enter a valid two-letter country code	Введите корректный двухбуквенный код страны
 Enter a whole number, or one like 20K, 1.5M or 2B	Введите целое число или число вида 20K, 1.5M или 2B
-Enter a whole number.	Введите целое число.
-Enter true or false.	Введите true или false.
+Enter a whole number	Введите целое число
+Enter true or false	Введите true или false
 Enter up to %1$d comma-separated speeds from %2$s to %3$s	Введите до %1$d значений скорости через запятую, от %2$s до %3$s
-That isn't valid JSON. Check the brackets and quotes.	Это некорректный JSON. Проверьте скобки и кавычки.
+Check the brackets and quotes in this JSON	Проверьте скобки и кавычки в JSON
 Entry %1$d has a field with the wrong data type.	В записи %1$d поле имеет неверный тип данных.
 Entry %1$d isn't an object.	Запись %1$d не является объектом.
 Errors	Ошибки
@@ -554,16 +554,16 @@ Following	Подписки
 For You	Рекомендации
 Works only with YTDLnis (com.deniscerri.ytdl). Picks audio or video when the save button sends it a link.	Работает только с YTDLnis (com.deniscerri.ytdl). Выбирает аудио или видео, когда кнопка сохранения отправляет ему ссылку.
 Works only with YTDLnis (com.deniscerri.ytdl). Starts the download in the background without showing its download card.	Работает только с YTDLnis (com.deniscerri.ytdl). Запускает загрузку в фоне, не показывая его карточку загрузки.
-Forced %1$d gates of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.	Принудительно задано %1$d переключателей из %2$d. Остальные не принимают значение true или false. Перезапустите TikTok, чтобы это применить.
-Forced %1$d gates of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.|one	Принудительно задан %1$d переключатель из %2$d. Остальные не принимают значение true или false. Перезапустите TikTok, чтобы это применить.
-Forced %1$d gates of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.|few	Принудительно заданы %1$d переключателя из %2$d. Остальные не принимают значение true или false. Перезапустите TikTok, чтобы это применить.
-Forced %1$d gates of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.|many	Принудительно задано %1$d переключателей из %2$d. Остальные не принимают значение true или false. Перезапустите TikTok, чтобы это применить.
-Forced %1$d gates. Restart TikTok to apply this.	Принудительно задано %1$d переключателей. Перезапустите TikTok, чтобы это применить.
-Forced %1$d gates. Restart TikTok to apply this.|one	Принудительно задан %1$d переключатель. Перезапустите TikTok, чтобы это применить.
-Forced %1$d gates. Restart TikTok to apply this.|few	Принудительно заданы %1$d переключателя. Перезапустите TikTok, чтобы это применить.
-Forced %1$d gates. Restart TikTok to apply this.|many	Принудительно задано %1$d переключателей. Перезапустите TikTok, чтобы это применить.
-Forced 1 gate of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.	Принудительно задан 1 переключатель из %2$d. Остальные не принимают значение true или false. Перезапустите TikTok, чтобы это применить.
-Forced 1 gate. Restart TikTok to apply this.	Принудительно задан 1 переключатель. Перезапустите TikTok, чтобы это применить.
+Forced %1$d of %2$d gates. Restart TikTok to apply.	Включено: %1$d из %2$d. Перезапустите TikTok.
+Forced %1$d of %2$d gates. Restart TikTok to apply.|one	Включено: %1$d из %2$d. Перезапустите TikTok.
+Forced %1$d of %2$d gates. Restart TikTok to apply.|few	Включено: %1$d из %2$d. Перезапустите TikTok.
+Forced %1$d of %2$d gates. Restart TikTok to apply.|many	Включено: %1$d из %2$d. Перезапустите TikTok.
+Forced %1$d gates. Restart TikTok to apply.	Переключателей включено: %1$d. Перезапустите TikTok.
+Forced %1$d gates. Restart TikTok to apply.|one	Переключателей включено: %1$d. Перезапустите TikTok.
+Forced %1$d gates. Restart TikTok to apply.|few	Переключателей включено: %1$d. Перезапустите TikTok.
+Forced %1$d gates. Restart TikTok to apply.|many	Переключателей включено: %1$d. Перезапустите TikTok.
+Forced 1 of %2$d gates. Restart TikTok to apply.	Включено: 1 из %2$d. Перезапустите TikTok.
+Forced 1 gate. Restart TikTok to apply.	Включён 1 переключатель. Перезапустите TikTok.
 Forced result	Принудительный результат
 Forget seen videos after	Забывать просмотренные видео через
 Forget the %1$s seen videos.	Забыть %1$s просмотренных видео.
@@ -743,8 +743,8 @@ When TikTok is in dark mode, the list of collections you get by holding the Favo
 Keep the clock and status icons off the screen while TikTok is open. Swipe down from the top to peek at them.	Держать часы и значки статуса скрытыми, пока открыт TikTok. Проведите вниз от верхнего края, чтобы увидеть их.
 Keep the screen's refresh rate	Сохранять частоту обновления экрана
 Keep the speed you chose for the next video. Off, each new video starts at 1x and a manual choice lasts for that video only.	Сохранять выбранную скорость для следующего видео. При выключении каждое новое видео начинается на 1x, а ручной выбор действует только для текущего видео.
-Keep this string to %1$s characters or fewer.	Сократите эту строку до %1$s символов или меньше.
-Keep this structured value to %1$s KB or less.	Структурированное значение: не более %1$s КБ.
+Keep this string to %1$s characters or fewer	Сократите эту строку до %1$s символов или меньше
+Keep this structured value to %1$s KB or less	Структурированное значение: не более %1$s КБ
 Kept to %1$s, the nearest value this row allows	Для строки взято ближайшее допустимое: %1$s
 Kinds of post	Типы публикаций
 LIVE	LIVE
@@ -752,9 +752,9 @@ LIVE replays	Повторы LIVE
 LIVE settings	Настройки LIVE
 LIVE share actions	Действия «Поделиться» в LIVE
 LIVE videos	Видео LIVE
-Lab data reset. Undo last Lab change is in the menu. Restart TikTok to apply this.	Данные Lab сброшены. Пункт «Отменить последнее изменение Lab» находится в меню. Перезапустите TikTok, чтобы это применить.
-Lab data was over its rule limit, so it was cleared without an undo copy. Restart TikTok to apply this.	Данные Lab превысили лимит правил, поэтому они были очищены без копии для отмены. Перезапустите TikTok, чтобы это применить.
-Lab overrides reset. Undo last Lab change is in the menu. Restart TikTok to apply this.	Переопределения Lab сброшены. Пункт «Отменить последнее изменение Lab» находится в меню. Перезапустите TikTok, чтобы это применить.
+Lab data reset. Restart TikTok to apply.	Данные Lab сброшены. Перезапустите TikTok.
+Lab data reset with no undo. Restart TikTok to apply.	Lab сброшен без отмены. Перезапустите TikTok.
+Lab overrides reset. Restart TikTok to apply.	Переопределения сброшены. Перезапустите TikTok.
 Larger (1.25x)	Крупнее (1,25x)
 Last original value	Последнее исходное значение
 Last recording: %1$d gates.	Последняя запись: %1$d переключателей.
@@ -854,8 +854,8 @@ No share actions match this search	Ни одно действие «Подели
 No sound to block on this video	В этом видео нет звука для блокировки
 No suggested accounts to clear	Нет предложенных аккаунтов для очистки
 No video selected. Open a video first.	Видео не выбрано. Сначала откройте видео.
-None of these gates had an override to reset.	Ни у одного из этих переключателей не было переопределения для сброса.
-None of these gates takes a true or false value.	Ни один из этих переключателей не принимает значение true или false.
+None of these gates had an override to reset	У этих переключателей нет переопределений
+None of these gates takes a true or false value	Эти переключатели не берут true или false
 None recorded	Ничего не записано
 Normal	Обычная
 Not blocked	Не заблокирован
@@ -869,8 +869,7 @@ Nothing has been checked yet, so there's nothing to report.	Пока ничег�
 Nothing has been looked up yet. Use the app for a moment, then come back.	Пока ничего не найдено. Воспользуйтесь приложением немного, затем возвращайтесь.
 Nothing hidden.	Ничего не скрыто.
 Nothing is playing to seek	Нет воспроизведения для перемотки
-Nothing new was imported. %1$d already matched, %2$d unavailable, %3$d rejected.	Ничего нового не импортировано. Совпало: %1$d, недоступно: %2$d, отклонено: %3$d.
-Nothing new was imported. %1$d already matched, %2$d unavailable, %3$d rejected. First rejection: %4$s	Ничего нового не импортировано. Совпало: %1$d, недоступно: %2$d, отклонено: %3$d. Первое отклонение: %4$s
+Nothing new was imported	Ничего нового не импортировано
 Nothing on this page changes what TikTok does until they are on.	Ничего на этой странице не влияет на поведение TikTok, пока это не включено.
 Nothing to undo yet.	Пока нечего отменять.
 Notices from this project and the ones it's built on	Уведомления этого проекта и проектов, на которых он основан
@@ -917,7 +916,7 @@ Override store region (experimental)	Переопределять регион �
 Override this configuration	Переопределить эту конфигурацию
 Override this gate	Переопределить этот переключатель
 Overrides are disabled in the Feature Gate Lab.	Переопределения отключены в Feature Gate Lab.
-Overrides disabled. Restart TikTok to apply this.	Переопределения отключены. Перезапустите TikTok, чтобы это применить.
+Overrides disabled. Restart TikTok to apply this.	Переопределения отключены. Перезапустите TikTok.
 Overrides enabled. Restart TikTok to apply this.	Переопределения включены. Перезапустите TikTok.
 Paid partnerships	Платные партнёрства
 People, shortcuts and sending controls	Люди, ярлыки и настройки отправки
@@ -955,7 +954,7 @@ Reading	Чтение
 Recorded gate reads (%1$d)	Зафиксированные обращения к переключателям (%1$d)
 Recording. Use a feature, then come back to stop.	Запись. Откройте функцию и вернитесь, чтобы остановить.
 Put back the settings saved before the last restore or reset.	Вернуть настройки, сохранённые перед последним восстановлением или сбросом.
-Recovered an interrupted settings change. Restart TikTok to apply this.	Восстановлено прерванное изменение настроек. Перезапустите TikTok, чтобы это применить.
+Undid an interrupted change. Restart TikTok to apply.	Прерванная правка отменена. Перезапустите TikTok.
 Refresh values	Обновить значения
 Region	Регион
 Country filters	Фильтры по странам
@@ -979,16 +978,16 @@ Required	Обязательно
 Researched	Исследовано
 Researched values	Исследованные значения
 Reset	Сбросить
-Reset %1$d gates of %2$d. Restart TikTok to apply this.	Сброшено %1$d переключателей из %2$d. Перезапустите TikTok, чтобы это применить.
-Reset %1$d gates of %2$d. Restart TikTok to apply this.|one	Сброшен %1$d переключатель из %2$d. Перезапустите TikTok, чтобы это применить.
-Reset %1$d gates of %2$d. Restart TikTok to apply this.|few	Сброшено %1$d переключателя из %2$d. Перезапустите TikTok, чтобы это применить.
-Reset %1$d gates of %2$d. Restart TikTok to apply this.|many	Сброшено %1$d переключателей из %2$d. Перезапустите TikTok, чтобы это применить.
-Reset %1$d gates. Restart TikTok to apply this.	Сброшено %1$d переключателей. Перезапустите TikTok, чтобы это применить.
-Reset %1$d gates. Restart TikTok to apply this.|one	Сброшен %1$d переключатель. Перезапустите TikTok, чтобы это применить.
-Reset %1$d gates. Restart TikTok to apply this.|few	Сброшено %1$d переключателя. Перезапустите TikTok, чтобы это применить.
-Reset %1$d gates. Restart TikTok to apply this.|many	Сброшено %1$d переключателей. Перезапустите TikTok, чтобы это применить.
-Reset 1 gate of %2$d. Restart TikTok to apply this.	Сброшен 1 переключатель из %2$d. Перезапустите TikTok, чтобы это применить.
-Reset 1 gate. Restart TikTok to apply this.	Сброшен 1 переключатель. Перезапустите TikTok, чтобы это применить.
+Reset %1$d of %2$d gates. Restart TikTok to apply.	Сброшено: %1$d из %2$d. Перезапустите TikTok.
+Reset %1$d of %2$d gates. Restart TikTok to apply.|one	Сброшено: %1$d из %2$d. Перезапустите TikTok.
+Reset %1$d of %2$d gates. Restart TikTok to apply.|few	Сброшено: %1$d из %2$d. Перезапустите TikTok.
+Reset %1$d of %2$d gates. Restart TikTok to apply.|many	Сброшено: %1$d из %2$d. Перезапустите TikTok.
+Reset %1$d gates. Restart TikTok to apply.	Переключателей сброшено: %1$d. Перезапустите TikTok.
+Reset %1$d gates. Restart TikTok to apply.|one	Переключателей сброшено: %1$d. Перезапустите TikTok.
+Reset %1$d gates. Restart TikTok to apply.|few	Переключателей сброшено: %1$d. Перезапустите TikTok.
+Reset %1$d gates. Restart TikTok to apply.|many	Переключателей сброшено: %1$d. Перезапустите TikTok.
+Reset 1 of %2$d gates. Restart TikTok to apply.	Сброшено: 1 из %2$d. Перезапустите TikTok.
+Reset 1 gate. Restart TikTok to apply.	Сброшен 1 переключатель. Перезапустите TikTok.
 Reset override	Сбросить переопределение
 Reset position	Сбросить положение
 Reset settings	Сбросить настройки
@@ -1008,7 +1007,7 @@ Undo didn't finish. Some settings may still be changed. Try Undo again.	Отме
 Undo didn't finish. Some settings may still be changed.	Отмена не завершилась. Некоторые настройки могут остаться изменёнными.
 Restore failed. Some settings may still be changed. Use Undo to put them back.	Восстановление не удалось. Некоторые настройки могут остаться изменёнными. Используйте «Отменить», чтобы вернуть их обратно.
 Restore settings	Восстановить настройки
-Lab settings put back. Restart TikTok to apply this.	Настройки Lab возвращены. Перезапустите TikTok, чтобы это применить.
+Lab settings put back. Restart TikTok to apply.	Настройки Lab возвращены. Перезапустите TikTok.
 Restoring your settings	Настройки восстанавливаются
 Resume videos after scrolling	Возобновлять видео после прокрутки
 Retry	Повторить
@@ -1081,7 +1080,7 @@ Seen videos	Просмотренные видео
 Seen videos cleared. You can undo until TikTok closes.	Просмотренные видео очищены. Вы можете отменить это, пока TikTok не закрыт.
 Seen videos put back	Просмотренные видео возвращены
 Select	Выбрать
-Select at least one field.	Выберите хотя бы одно поле.
+Select at least one field	Выберите хотя бы одно поле
 Select every tab	Выбрать все вкладки
 Selected	Выбрано
 Send links to another app	Отправлять ссылки в другое приложение
@@ -1242,7 +1241,7 @@ That settings change didn't go through. Nothing was altered.	Это измене
 That sticker is in a format Hushfeed can't read	Hushfeed не читает формат этого стикера
 The Lab can't check this. TikTok gets it exactly as typed.	Lab не может это проверить. TikTok получает именно то, что вы ввели.
 The Lab couldn't open. Go back and open it again.	Lab не открылся. Вернитесь и откройте снова.
-The Lab keeps at most %1$s rules. This change would make %2$s, so nothing was changed.	Lab хранит не более %1$s правил. После этого изменения их стало бы %2$s, поэтому ничего не изменено.
+%2$s rules, but the limit is %1$s. Nothing changed.	Правил было бы %2$s, лимит %1$s. Ничего не изменено.
 The catalog says this key is %1$s and this override is %2$s. Reset the override and make a new one.	Каталог указывает для этого ключа значение %1$s, а для этого переопределения значение %2$s. Сбросьте переопределение и создайте новое.
 The diagnostic report couldn't be saved yet. Try again in a moment.	Диагностический отчёт пока не удалось сохранить. Повторите попытку через момент.
 The diagnostic report couldn't be saved. Try again.	Не удалось сохранить диагностический отчёт. Повторите попытку.
@@ -1265,7 +1264,7 @@ The override changes no fields. Edit the field values, or reset the override.	Э
 The override couldn't be applied: %1$s. Edit the field values, or reset the override.	Не удалось применить переопределение: %1$s. Измените значения полей или сбросьте переопределение.
 The override doesn't say what list to return. Edit the field values, or reset the override.	Переопределение не указывает, какой список возвращать. Измените значения полей или сбросьте переопределение.
 The profile picture couldn't be saved. Try again.	Не удалось сохранить фото профиля. Повторите попытку.
-The record of an interrupted settings change couldn't be read, so it was set aside. Check your settings.	Запись о прерванном изменении настроек не удалось прочитать, поэтому она отложена. Проверьте свои настройки.
+Couldn't read an interrupted change. Check your settings.	Не удалось прочесть правку. Проверьте настройки.
 The report couldn't be saved. Try again.	Не удалось сохранить отчёт. Повторите попытку.
 Couldn't read that file. Try again.	Файл не прочитан. Повторите.
 The setting couldn't finish updating. Its saved value is shown.	Настройка не смогла полностью обновиться. Показано её сохранённое значение.
@@ -1280,13 +1279,13 @@ There is no Lab change to undo.	Нет изменений Lab, которые м
 There is no diagnostic data to clear	Нет диагностических данных для очистки
 There is no diagnostic data to put back	Нет диагностических данных для восстановления
 There was nothing to put back	Нечего было возвращать
-These loaded values are for a different TikTok version.	Эти загруженные значения относятся к другой версии TikTok.
+These loaded values are for a different TikTok version	Эти значения для другой версии TikTok
 This catalog entry is no longer available. Refresh the Lab and try again.	Эта запись каталога больше не доступна. Обновите Lab и повторите попытку.
 This change couldn't be saved. Try again.	Изменение не сохранено. Повторите.
 This configuration has no fields that can be copied and changed safely on this build.	В этой конфигурации нет полей, которые можно безопасно скопировать и изменить в этой сборке.
-This file has no loaded values in it.	В этом файле нет загруженных значений.
-This file isn't a loaded-values export from the Feature Gate Lab.	Этот файл не является экспортом загруженных значений из Feature Gate Lab.
-This gate type isn't supported.	Этот тип переключателя не поддерживается.
+This file has no loaded values in it	В этом файле нет загруженных значений
+This file isn't a loaded-values export	Этот файл не экспорт загруженных значений
+This gate type isn't supported	Этот тип переключателя не поддерживается
 This line opens a rule and doesn't finish it: %1$s. Write two phrases as "a" & "b" for both, or "a" !& "b" for the first without the second.	Эта строка начинает правило и не завершает его: %1$s. Запишите две фразы как "a" & "b", чтобы совпадали обе, или как "a" !& "b", чтобы совпадала первая без второй.
 This phone has no file picker, so there's no way to choose a file here	На этом телефоне нет выбора файлов, поэтому выбрать файл здесь невозможно
 No folder picker here. Type the folder in the row.	Выбора папки здесь нет. Введите папку в строке.
@@ -1294,7 +1293,7 @@ This profile picture isn't available to save	Это фото профиля не
 No full file at this quality, so TikTok saves it	Нет полного файла такого качества. Сохраняет TikTok
 This setting's value can't be copied on this build, so it can't be overridden. Reset the override.	Значение этой настройки нельзя скопировать в этой сборке, поэтому его нельзя переопределить. Сбросьте переопределение.
 This story isn't available to save	Эта история недоступна для сохранения
-This value is required.	Это значение обязательно.
+This value is required	Это значение обязательно
 This video has no link to copy	У этого видео нет ссылки для копирования
 No link to send, so TikTok saves it instead	Нет ссылки для отправки, сохраняет TikTok
 This video has no original sound to save	У видео нет оригинального звука для сохранения
@@ -1353,16 +1352,16 @@ Try again, or go back to TikTok.	Повторите попытку или вер
 Turn on %1$s first.	Сначала включите %1$s.
 Put %1$s in %2$s first.	Сначала укажите %1$s в %2$s.
 Turn on overrides	Включить переопределения
-Turned off %1$d gates of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.	Выключено %1$d переключателей из %2$d. Остальные не принимают значение true или false. Перезапустите TikTok, чтобы это применить.
-Turned off %1$d gates of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.|one	Выключен %1$d переключатель из %2$d. Остальные не принимают значение true или false. Перезапустите TikTok, чтобы это применить.
-Turned off %1$d gates of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.|few	Выключено %1$d переключателя из %2$d. Остальные не принимают значение true или false. Перезапустите TikTok, чтобы это применить.
-Turned off %1$d gates of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.|many	Выключено %1$d переключателей из %2$d. Остальные не принимают значение true или false. Перезапустите TikTok, чтобы это применить.
-Turned off %1$d gates. Restart TikTok to apply this.	Выключено %1$d переключателей. Перезапустите TikTok, чтобы это применить.
-Turned off %1$d gates. Restart TikTok to apply this.|one	Выключен %1$d переключатель. Перезапустите TikTok, чтобы это применить.
-Turned off %1$d gates. Restart TikTok to apply this.|few	Выключено %1$d переключателя. Перезапустите TikTok, чтобы это применить.
-Turned off %1$d gates. Restart TikTok to apply this.|many	Выключено %1$d переключателей. Перезапустите TikTok, чтобы это применить.
-Turned off 1 gate of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.	Выключен 1 переключатель из %2$d. Остальные не принимают значение true или false. Перезапустите TikTok, чтобы это применить.
-Turned off 1 gate. Restart TikTok to apply this.	Выключен 1 переключатель. Перезапустите TikTok, чтобы это применить.
+Turned off %1$d of %2$d. Restart TikTok to apply.	Выключено: %1$d из %2$d. Перезапустите TikTok.
+Turned off %1$d of %2$d. Restart TikTok to apply.|one	Выключено: %1$d из %2$d. Перезапустите TikTok.
+Turned off %1$d of %2$d. Restart TikTok to apply.|few	Выключено: %1$d из %2$d. Перезапустите TikTok.
+Turned off %1$d of %2$d. Restart TikTok to apply.|many	Выключено: %1$d из %2$d. Перезапустите TikTok.
+Turned off %1$d gates. Restart TikTok to apply.	Переключателей выключено: %1$d. Перезапустите TikTok.
+Turned off %1$d gates. Restart TikTok to apply.|one	Переключателей выключено: %1$d. Перезапустите TikTok.
+Turned off %1$d gates. Restart TikTok to apply.|few	Переключателей выключено: %1$d. Перезапустите TikTok.
+Turned off %1$d gates. Restart TikTok to apply.|many	Переключателей выключено: %1$d. Перезапустите TikTok.
+Turned off 1 of %2$d gates. Restart TikTok to apply.	Выключено: 1 из %2$d. Перезапустите TikTok.
+Turned off 1 gate. Restart TikTok to apply.	Выключен 1 переключатель. Перезапустите TikTok.
 Two letters, like us, gb or jp.	Две буквы, например us, gb или jp.
 Type	Тип
 Start typing	Начните вводить текст
@@ -1504,7 +1503,7 @@ this creator	этот автор
 %1$s, %2$s or %3$s	%1$s, %2$s или %3$s
 TikTok refused the follow with code %1$s	TikTok отклонил подписку с кодом %1$s
 Follow refused, code %1$s. Maybe a hidden CAPTCHA.	Отказ в подписке, код %1$s. Возможно, скрытая CAPTCHA.
-Follow refused: %1$s Maybe a hidden CAPTCHA.	Подписка отклонена: %1$s Возможно, скрытая CAPTCHA.
+Follow refused (%1$s). Maybe a hidden CAPTCHA.	Подписка отклонена (%1$s). Возможно, скрытая CAPTCHA.
 Hushfeed is paused	Hushfeed на паузе
 Hushfeed's switches are paused. Your settings stay saved. Changes made when you patched, like the app's name or icon, stay.	Переключатели Hushfeed приостановлены. Ваши настройки сохранены. Изменения, сделанные при патчинге, например название или значок приложения, остаются.
 TikTok closed three times within a minute of starting, so Hushfeed paused itself. Your settings stay as they are.	TikTok закрылся три раза в течение минуты после запуска, поэтому Hushfeed поставил себя на паузу. Ваши настройки остаются как есть.
@@ -1602,8 +1601,8 @@ The presets couldn't load. Open the Lab again.	Предустановки не �
 Apply enables these overrides. Undo last Lab change puts your previous rules back until you change anything else in the Lab.	«Применить» включает эти переопределения. «Отменить последнее изменение Lab» вернёт ваши прежние правила, пока вы не измените что-то ещё в Lab.
 Apply saves these overrides. Turn on overrides in the Lab to use them. Turning them on is a Lab change too, so after that Undo turns them off rather than putting your previous rules back.	«Применить» сохраняет эти переопределения. Включите переопределения в Lab, чтобы их использовать. Их включение тоже считается изменением в Lab, поэтому после этого «Отменить» выключит их, а не вернёт прежние правила.
 This preset isn't available for your installed TikTok version.	Эта предустановка недоступна для установленной версии TikTok.
-Preset applied. Restart TikTok to use it.	Предустановка применена. Перезапустите TikTok, чтобы её использовать.
-Preset saved. Turn on overrides in the Lab to use it.	Предустановка сохранена. Включите переопределения в Lab, чтобы её использовать.
+Preset applied. Restart TikTok to use it.	Предустановка применена. Перезапустите TikTok.
+Preset saved. Turn on overrides to use it.	Предустановка сохранена. Включите переопределения.
 Preset doesn't match the gates. Nothing changed.	Предустановка не подходит. Ничего не изменено.
 About overrides	О переопределениях
 Use {creator}, {date} and {video_id} to build the name. Start with {creator}/ to put each creator in a folder. The file ending is added for you.	Составьте имя из {creator}, {date} и {video_id}. Начните с {creator}/, чтобы класть каждого автора в отдельную папку. Расширение файла добавляется само.
@@ -1738,7 +1737,7 @@ Stop the notifications TikTok sends about popular videos it picked for you. Mess
 Buttons on videos	Кнопки на видео
 
 Seen videos put back: %1$s of %2$s	Восстановлено просмотренных видео: %1$s из %2$s
-No cleared videos fit the current history limits.	Ни одно удалённое видео не укладывается в текущие ограничения истории.
+No cleared videos fit the current history limits	Ни одно удалённое видео не укладывается в лимиты
 Putting seen videos back	Восстановление просмотренных видео
 # context: a line above the What's new release notes, which come from the English changelog and are not translated.
 These notes are in English.	Эти заметки на английском языке.
@@ -2475,7 +2474,7 @@ Recording this LIVE's screen from now	Запись экрана этого LIVE 
 Recording this LIVE's screen from now, without sound	Запись экрана этого LIVE началась, без звука
 Allow photo comments	Разрешить комментарии с фото
 Show the gallery tab in the comment box, so you can add a photo to a comment like on TikTok. PineDrama turns it off for everyone. TikTok's server still decides whether your account can post one.	Показывает вкладку галереи в поле комментария, чтобы можно было добавить фото к комментарию, как в TikTok. PineDrama отключает её для всех. Может ли ваш аккаунт его опубликовать, всё равно решает сервер TikTok.
-This screen recording has no sound.	В этой записи экрана нет звука.
+This screen recording has no sound	В этой записи экрана нет звука
 Export recording files	Экспортировать файлы записи
 Delete recording files	Удалить файлы записи
 The publication state of these older recording files is unknown. Export a copy or delete the retained files.	Статус публикации этих старых файлов записи неизвестен. Экспортируйте копию или удалите сохранённые файлы.

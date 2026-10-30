@@ -91,16 +91,16 @@ public final class SettingsOperationJournal {
         String message;
         switch (recovery) {
             case RECOVERED_PRIOR:
-                message = "Recovered an interrupted settings change. Restart TikTok to apply this.";
+                message = "Undid an interrupted change. Restart TikTok to apply.";
                 break;
             case ALREADY_COMMITTED:
-                message = "Completed an interrupted settings change. Restart TikTok to apply this.";
+                message = "Kept an interrupted change. Restart TikTok to apply.";
                 break;
             case MALFORMED:
-                message = "The record of an interrupted settings change couldn't be read, so it was set aside. Check your settings.";
+                message = "Couldn't read an interrupted change. Check your settings.";
                 break;
             case FAILED:
-                message = "An interrupted settings change couldn't be recovered, so its record was set aside. Check your settings or restore a backup.";
+                message = "Couldn't recover a change. Restore a backup if needed.";
                 break;
             default:
                 return;

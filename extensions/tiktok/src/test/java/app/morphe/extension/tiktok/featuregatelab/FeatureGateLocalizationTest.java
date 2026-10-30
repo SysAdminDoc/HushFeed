@@ -72,7 +72,7 @@ public class FeatureGateLocalizationTest {
     @Config(sdk = 28, qualifiers = "de-w480dp-h960dp-night-mdpi")
     public void germanOwnsEveryFeatureGateFailureAndStateSentence() throws Exception {
         verifyFeatureGateLanguage(new Expected(
-                "Gib eine ganze Zahl ein.",
+                "Gib eine ganze Zahl ein",
                 "Kein aktueller Wert und keine aktive Überschreibung",
                 "11 (wird bei der Abfrage zurückgegeben)",
                 "App-AB · von TikTok deklariert, mit aktuellem Wert",
@@ -85,9 +85,9 @@ public class FeatureGateLocalizationTest {
                 "payload muss korrigiert werden. Gib ein JSON-Objekt oder -Array ein.",
                 "Das Feld raw_missing_field lässt sich in diesem Build nicht ändern. Nimm es"
                         + " aus der Überschreibung heraus oder setze die Überschreibung zurück.",
-                "Nichts Neues wurde importiert. Bereits identisch: 0. Nicht verfügbar: 0. "
-                        + "Abgelehnt: 2. Erste Ablehnung: raw_import_key hat "
-                        + "den Typ INT, in der Datei steht string."
+                List.of("Nichts Neues importiert", "0 stimmten bereits überein",
+                        "0 nicht verfügbar", "2 abgelehnt", "Erste Ablehnung:",
+                        "raw_import_key hat den Typ INT, in der Datei steht string.")
         ));
     }
 
@@ -95,7 +95,7 @@ public class FeatureGateLocalizationTest {
     @Config(sdk = 28, qualifiers = "in-rID-w480dp-h960dp-night-mdpi")
     public void indonesianOwnsEveryFeatureGateFailureAndStateSentence() throws Exception {
         verifyFeatureGateLanguage(new Expected(
-                "Masukkan bilangan bulat.",
+                "Masukkan bilangan bulat",
                 "Tidak ada nilai saat ini dan tidak ada penimpaan aktif",
                 "11 (akan dikembalikan saat diminta)",
                 "AB aplikasi · dideklarasikan TikTok, dengan nilai saat ini",
@@ -108,9 +108,9 @@ public class FeatureGateLocalizationTest {
                 "Nilai payload perlu diperbaiki. Masukkan objek atau larik JSON.",
                 "Field raw_missing_field tidak bisa diubah di build ini. Keluarkan dari"
                         + " penimpaan, atau setel ulang penimpaan.",
-                "Tidak ada hal baru yang diimpor. 0 sudah cocok, 0 tidak tersedia, 2 ditolak. "
-                        + "Penolakan pertama: raw_import_key bertipe INT, tetapi file "
-                        + "menyebutkan string."
+                List.of("Tidak ada yang baru diimpor", "0 sudah cocok", "0 tidak tersedia",
+                        "2 ditolak", "Penolakan pertama:",
+                        "raw_import_key bertipe INT, tetapi file menyebutkan string.")
         ));
     }
 
@@ -249,9 +249,17 @@ public class FeatureGateLocalizationTest {
             review.invoke(lab, importFile, shown.get(lab));
             Utils.awaitBackgroundTasksForTests();
             Shadows.shadowOf(Looper.getMainLooper()).idle();
-            assertEquals(expected.importRejection, ShadowToast.getTextOfLatestToast());
+            // Nothing came in, so the counts and the rejection go in the results dialog, the
+            // same as for an import that took something.
+            AlertDialog result = org.robolectric.shadows.ShadowAlertDialog.getLatestAlertDialog();
+            assertNotNull("an import that took nothing showed no results dialog", result);
+            List<String> shownLines = new ArrayList<>();
+            shownLines.add(String.valueOf(Shadows.shadowOf(result).getTitle()));
+            shownLines.addAll(texts(Shadows.shadowOf(result).getView()));
+            assertEquals(String.join("\n", expected.importRejection), String.join("\n", shownLines));
             assertTrue("the rejected raw key was translated or dropped",
-                    String.valueOf(ShadowToast.getTextOfLatestToast()).contains("raw_import_key"));
+                    shownLines.get(shownLines.size() - 1).contains("raw_import_key"));
+            assertNull("the counts went in a toast as well", ShadowToast.getTextOfLatestToast());
         }
     }
 
@@ -335,7 +343,8 @@ public class FeatureGateLocalizationTest {
         final String selected;
         final String invalidStructured;
         final String unsupportedField;
-        final String importRejection;
+        /** The results dialog's title, then each of its lines. */
+        final List<String> importRejection;
 
         Expected(
                 String invalidInteger,
@@ -350,7 +359,7 @@ public class FeatureGateLocalizationTest {
                 String selected,
                 String invalidStructured,
                 String unsupportedField,
-                String importRejection
+                List<String> importRejection
         ) {
             this.invalidInteger = invalidInteger;
             this.unloaded = unloaded;

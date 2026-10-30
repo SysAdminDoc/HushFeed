@@ -110,10 +110,10 @@ public class L10nQuantityTest {
         assertEquals("2 results", L10n.quantity(context, 2, "1 result", "%1$d results"));
         assertEquals("21 results", L10n.quantity(context, 21, "1 result", "%1$d results"));
         // Both forms take the same values; the one form leaves the count unused.
-        assertEquals("Reset 1 gate of 4.", L10n.quantity(context, 1,
-                "Reset 1 gate of %2$d.", "Reset %1$d gates of %2$d.", 1, 4));
-        assertEquals("Reset 3 gates of 4.", L10n.quantity(context, 3,
-                "Reset 1 gate of %2$d.", "Reset %1$d gates of %2$d.", 3, 4));
+        assertEquals("Reset 1 of 4 gates.", L10n.quantity(context, 1,
+                "Reset 1 of %2$d gates.", "Reset %1$d of %2$d gates.", 1, 4));
+        assertEquals("Reset 3 of 4 gates.", L10n.quantity(context, 3,
+                "Reset 1 of %2$d gates.", "Reset %1$d of %2$d gates.", 3, 4));
     }
 
     @Test @Config(sdk = {23, 24, 28}, qualifiers = "in")

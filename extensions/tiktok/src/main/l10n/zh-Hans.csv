@@ -53,7 +53,7 @@ Turned off %1$d overrides. Check them for TikTok %2$s.,已关闭 %1$d 个覆盖�
 %1$s minute,%1$s 分钟
 %1$s minutes,%1$s 分钟
 %1$s more saves waiting,%1$s 更节省等待
-%1$s needs fixing. %2$s,%1$s 需要修复。 %2$s
+%1$s needs fixing. %2$s.,%1$s 需要修复。 %2$s.
 %1$s of %2$s,%1$s 的 %2$s
 %1$s older seen video was dropped to keep the newest %2$s.,%1$s 旧的观看视频已被删除，以保留最新的 %2$s.
 %1$s older seen videos were dropped to keep the newest %2$s.,%1$s 较旧的观看视频已被删除，以保留最新的 %2$s.
@@ -225,7 +225,7 @@ Always upload in HD,始终以高清格式上传
 Amazon Appstore,亚马逊应用商店
 "An exception names one creator, so a pattern can't be one: %1$s",异常指定了一位创建者，因此模式不能是：%1$s
 "An exception takes a handle or id, not a display name: %1$s",异常采用句柄或 ID，而不是显示名称：%1$s
-"An interrupted settings change couldn't be recovered, so its record was set aside. Check your settings or restore a backup.",中断的设置更改无法恢复，因此其记录被搁置。检查你的设置或恢复备份.
+Couldn't recover a change. Restore a backup if needed.,无法恢复一项更改。如有需要，请恢复备份.
 "An operator code is five or six digits, like 310260",操作员代码为五位或六位数字，例如 310260
 An override changes the value TikTok reads from this gate. It doesn't change TikTok's saved copy or prove the named feature changed.,覆盖会更改 TikTok 从此门读取的值。它不会更改 TikTok 的已保存副本或证明指定功能已更改.
 And %1$s more saves,并且 %1$s 更多节省
@@ -381,7 +381,7 @@ Comments beside the video,视频旁边的评论
 Comments range,评论范围
 Compact comment header,紧凑的评论标题
 Compare gate reads with their previous values.,将门读数与其之前的值进行比较.
-Completed an interrupted settings change. Restart TikTok to apply this.,完成了中断的设置更改。重新启动 TikTok 以应用此操作.
+Kept an interrupted change. Restart TikTok to apply.,已保留中断的更改。重启 TikTok 以生效.
 Config,配置
 Config (Settings Manager),配置（设置管理器）
 Confirm before a quick repost,快速重新发布之前先确认
@@ -537,17 +537,17 @@ Empty,空
 "Empty the menu that opens when you press and hold TikTok's icon on the home screen. Turning this off asks TikTok to build them again. Tapping the icon still opens the app, and a shortcut you pinned yourself stays where you put it.",清空按住主屏幕上的 TikTok 图标时打开的菜单。关闭此功能会要求 TikTok 再次构建它们。点击图标仍然会打开应用程序，并且你自己固定的快捷方式会保留在你放置的位置.
 Enable,启用
 Enabled,启用
-Enter a JSON object or array.,输入 JSON 对象或数组.
+Enter a JSON object or array,输入 JSON 对象或数组
 Enter a creator handle or id,输入创建者句柄或 ID
-Enter a finite number.,输入一个有限的数字.
-Enter a number.,输入一个数字.
+Enter a finite number,输入一个有限的数字
+Enter a number,输入一个数字
 "Enter a server name or IP address, without http:// or a port number",输入服务器名称或 IP 地址，不带 http:// 或端口号
-Enter a valid structured value.,输入有效的结构化值.
+Enter a valid structured value,输入有效的结构化值
 Enter a valid two-letter country code,输入有效的两个字母的国家/地区代码
 "Enter a whole number, or one like 20K, 1.5M or 2B",输入整数，或 20K、1.5M 或 2B 等数字
-Enter a whole number.,输入一个整数.
-"Enter an hour, like 6 or 06:00.",输入一个小时，例如 6 或 06:00.
-Enter true or false.,输入真或假.
+Enter a whole number,输入一个整数
+"Enter an hour, like 6 or 06:00",输入一个小时，例如 6 或 06:00
+Enter true or false,输入真或假
 Enter up to %1$d comma-separated speeds from %2$s to %3$s,输入从 %2$s 到 %3$s 的最多 %1$d 逗号分隔速度
 Enter who to message below to start.,在下方输入要向谁发送消息即可开始.
 Entry %1$d has a field with the wrong data type.,条目 %1$d 有一个数据类型错误的字段.
@@ -610,10 +610,10 @@ Follows you,跟着你
 "For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to a quarter, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes.",对于OLED屏幕。 5 秒没有触摸后，视频上的按钮、标题和选项卡会变暗四分之一，你的下一次触摸会将它们恢复。 Shift 还会每 2 分钟将信息流上的所有内容移动几个像素.
 For You,为你
 "For You, Following and the other feed tabs stay behind a calm panel and won't swipe. Messages, profiles and search work as usual, a link to one video still opens that video, and the app opens on Inbox instead of the feed.",对于你来说，关注和其他信息流选项卡保留在平静的面板后面并且不会滑动。消息、个人资料和搜索照常工作，指向一个视频的链接仍然会打开该视频，并且应用程序会在收件箱而不是信息流中打开.
-Forced %1$d gates of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.,强制 %2$d 的 %1$d 门。其余的不采用 true 或 false 值。重新启动 TikTok 以应用此操作.
-Forced %1$d gates. Restart TikTok to apply this.,强制 %1$d 门。重新启动 TikTok 以应用此操作.
-Forced 1 gate of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.,强制 %2$d 的 1 个门。其余的不采用 true 或 false 值。重新启动 TikTok 以应用此操作.
-Forced 1 gate. Restart TikTok to apply this.,强行1门。重新启动 TikTok 以应用此操作.
+Forced %1$d of %2$d gates. Restart TikTok to apply.,已强制 %2$d 个门中的 %1$d 个。重启 TikTok 以生效.
+Forced %1$d gates. Restart TikTok to apply.,已强制 %1$d 个门。重启 TikTok 以生效.
+Forced 1 of %2$d gates. Restart TikTok to apply.,已强制 %2$d 个门中的 1 个。重启 TikTok 以生效.
+Forced 1 gate. Restart TikTok to apply.,已强制 1 个门。重启 TikTok 以生效.
 Forced result,强制结果
 Forget saved videos,忘记保存的视频
 Forget seen videos after,忘记看过的视频
@@ -919,8 +919,8 @@ Keep the language picked in TikTok,将所选语言保留在 TikTok 中
 Keep the music disc still,保持音乐光盘静止
 Keep the screen's refresh rate,保持屏幕刷新率
 "Keep the speed you chose for the next video. Off, each new video starts at 1x and a manual choice lasts for that video only.",保持你为下一个视频选择的速度。关闭时，每个新视频都会以 1x 开始，并且手动选择仅适用于该视频.
-Keep this string to %1$s characters or fewer.,将此字符串保留为 %1$s 个字符或更少.
-Keep this structured value to %1$s KB or less.,将此结构化值保持在 %1$s KB 或更小.
+Keep this string to %1$s characters or fewer,将此字符串保留为 %1$s 个字符或更少
+Keep this structured value to %1$s KB or less,将此结构化值保持在 %1$s KB 或更小
 Keep videos out of Watch history,将视频排除在观看历史记录之外
 Keep watching in a small window,继续在小窗口观看
 "Keep what you search for out of the search history TikTok saves on this phone. Searches already there stay until you delete them, and TikTok's servers may still keep their own record.",将你搜索的内容保留在此手机上保存的搜索历史记录 TikTok 之外。已有的搜索将一直保留到你删除它们为止，并且 TikTok 的服务器可能仍保留其自己的记录.
@@ -939,10 +939,10 @@ LIVE settings,LIVE 设置
 LIVE share actions,LIVE 分享操作
 LIVE videos,LIVE 视频
 LIVE viewers range,LIVE 观众范围
-Lab data reset. Undo last Lab change is in the menu. Restart TikTok to apply this.,实验室数据重置。撤消上次实验室更改位于菜单中。重新启动 TikTok 以应用此操作.
-"Lab data was over its rule limit, so it was cleared without an undo copy. Restart TikTok to apply this.",实验室数据超出了其规则限制，因此在没有撤消副本的情况下被清除。重新启动 TikTok 以应用此操作.
-Lab overrides reset. Undo last Lab change is in the menu. Restart TikTok to apply this.,实验室覆盖重置。撤消上次实验室更改位于菜单中。重新启动 TikTok 以应用此操作.
-Lab settings put back. Restart TikTok to apply this.,放回实验室设置。重新启动 TikTok 以应用此操作.
+Lab data reset. Restart TikTok to apply.,实验室数据已重置。重启 TikTok 以生效.
+Lab data reset with no undo. Restart TikTok to apply.,实验室数据已重置，无法撤销。重启 TikTok 以生效.
+Lab overrides reset. Restart TikTok to apply.,实验室覆盖已重置。重启 TikTok 以生效.
+Lab settings put back. Restart TikTok to apply.,实验室设置已恢复。重启 TikTok 以生效.
 Language,语言
 Larger (1.25x),更大 (1.25x)
 Last change put back. Restart TikTok to apply all changes.,上次更改已放回。重新启动 TikTok 以应用所有更改.
@@ -1068,7 +1068,7 @@ No app on this phone opens that file,此手机上没有应用程序可以打开�
 No app on this phone opens web links,此手机上的应用程序无法打开网络链接
 No apps match this search,没有与此搜索匹配的应用
 "No chat with @%1$s turned up on this account. Open your chat with them once, then try again.",此账号未显示与@%1$s 的聊天记录。打开与他们的聊天一次，然后重试.
-No cleared videos fit the current history limits.,没有已清除的视频符合当前历史记录限制.
+No cleared videos fit the current history limits,没有已清除的视频符合当前历史记录限制
 No comments are loaded to export yet.,尚未加载要导出的评论.
 No creator to block on this video,没有创作者可以屏蔽该视频
 No creator to hide on this video,此视频没有可隐藏的创作者
@@ -1104,8 +1104,8 @@ No video selected. Open a video first.,未选择视频。先打开一个视频.
 "Nobody was signed in to TikTok. Sign in, and it tries again at %1$s.",没有人登录 TikTok。登录后，它会在 %1$s 处再次尝试.
 None of the photos could be saved. Try again.,所有照片都无法保存。再试一次.
 None of the picked videos could be saved. Try again.,所选视频均无法保存。再试一次.
-None of these gates had an override to reset.,这些门都没有可以重置的超控权.
-None of these gates takes a true or false value.,这些门都不采用 true 或 false 值.
+None of these gates had an override to reset,这些门都没有可重置的覆盖
+None of these gates takes a true or false value,这些门都不采用 true 或 false 值
 None recorded,没有记录
 Normal,正常
 Caption height,字幕高度
@@ -1135,8 +1135,7 @@ Not sent,未发送
 Nothing hidden.,没有什么隐藏的.
 Nothing is playing to seek,没有什么是在玩寻求的
 Nothing is playing to speed up,没有播放任何内容来加快速度
-"Nothing new was imported. %1$d already matched, %2$d unavailable, %3$d rejected.",没有进口任何新东西。 %1$d 已匹配，%2$d 不可用，%3$d 被拒绝.
-"Nothing new was imported. %1$d already matched, %2$d unavailable, %3$d rejected. First rejection: %4$s",没有进口任何新东西。 %1$d 已匹配，%2$d 不可用，%3$d 被拒绝。第一次拒绝：%4$s
+Nothing new was imported,没有导入任何新内容
 Nothing on this page changes what TikTok does until they are on.,在它们打开之前，此页面上的任何内容都不会改变 TikTok 的功能.
 Nothing to undo yet.,还没有什么可以撤消的.
 Nothing was recorded,没有记录任何内容
@@ -1270,7 +1269,7 @@ Takes TikTok's AI Cast button off the camera's side toolbar. Open the camera aga
 Posting,发帖
 Prefer H.264 video,更喜欢 H.264 视频
 Preset applied. Restart TikTok to use it.,应用预设。重新启动 TikTok 即可使用它.
-Preset saved. Turn on overrides in the Lab to use it.,预设已保存。在实验室中打开覆盖即可使用它.
+Preset saved. Turn on overrides to use it.,预设已保存。打开覆盖即可使用.
 Press and hold a comment to find Block this commenter in its menu. Their comments leave the list right away and an undo banner follows.,按住评论可在其菜单中找到“阻止此评论者”。他们的评论立即离开列表，随后出现撤消横幅.
 Press and hold a profile picture to save the full size original to your photo destination.,按住个人资料图片可将全尺寸原件保存到你的照片目的地.
 "Press and hold a story to save it. Stories have no save button of their own, and holding one is how TikTok pauses it, so this takes that gesture over.",按住一个故事即可保存它。故事没有自己的保存按钮，按住一个按钮就是 TikTok 暂停它的方式，所以这会接管该手势.
@@ -1332,7 +1331,7 @@ Recorded gate reads (%1$d),记录的门读数 (%1$d)
 Recording stopped early. Saved to %1$s,录制提前停止，已保存到 %1$s
 Recording this LIVE from now,从现在开始记录这个LIVE
 Recording what the feed filters keep and hide. Tap to stop and save it in %1$s.,记录信息流过滤器保留和隐藏的内容。点击停止并将其保存在 %1$s 中.
-Recovered an interrupted settings change. Restart TikTok to apply this.,恢复了中断的设置更改。重新启动 TikTok 以应用此操作.
+Undid an interrupted change. Restart TikTok to apply.,已撤销中断的更改。重启 TikTok 以生效.
 Refresh values,刷新值
 Refreshing TikTok's current values…,正在刷新 TikTok 的当前值…
 Region,地区
@@ -1360,10 +1359,10 @@ Required,必填
 Researched,研究过
 Researched values,研究值
 Reset,重置
-Reset %1$d gates of %2$d. Restart TikTok to apply this.,重置 %2$d 的 %1$d 门。重新启动 TikTok 以应用此操作.
-Reset %1$d gates. Restart TikTok to apply this.,重置 %1$d 门。重新启动 TikTok 以应用此操作.
-Reset 1 gate of %2$d. Restart TikTok to apply this.,重置 %2$d 的 1 个门。重新启动 TikTok 以应用此操作.
-Reset 1 gate. Restart TikTok to apply this.,重置 1 个门。重新启动 TikTok 以应用此操作.
+Reset %1$d of %2$d gates. Restart TikTok to apply.,已重置 %2$d 个门中的 %1$d 个。重启 TikTok 以生效.
+Reset %1$d gates. Restart TikTok to apply.,已重置 %1$d 个门。重启 TikTok 以生效.
+Reset 1 of %2$d gates. Restart TikTok to apply.,已重置 %2$d 个门中的 1 个。重启 TikTok 以生效.
+Reset 1 gate. Restart TikTok to apply.,已重置 1 个门。重启 TikTok 以生效.
 Reset didn't finish. Some settings may still be changed.,重置未完成。某些设置可能仍会更改.
 Reset didn't finish. Some settings may still be changed. Use Undo to put them back.,重置未完成。某些设置可能仍会更改。使用撤消将它们放回去.
 Reset override,重置覆盖
@@ -1516,7 +1515,7 @@ Seen videos cleared. You can undo until TikTok closes.,看过的视频都清除�
 Seen videos put back,看过的视频已放回
 Seen videos put back: %1$s of %2$s,放回的已观看视频：%1$s（共 %2$s）
 Select,选择
-Select at least one field.,至少选择一个字段.
+Select at least one field,至少选择一个字段
 Select every tab,选择每个选项卡
 Selected,已选择
 Send TikTok through a proxy,通过代理发送 TikTok
@@ -1828,7 +1827,7 @@ That is one video today,这是今天的一个视频
 That isn't a Hushfeed settings backup. Nothing was altered.,这不是 Hushfeed 设置备份。一切都没有改变.
 "That isn't a seen-history file saved by Hushfeed. For TikTok's own data export, use Import watch history.",这不是 Hushfeed 保存的可见历史文件。对于 TikTok 自己的数据导出，请使用导入观察历史记录.
 "That isn't an app name. Try something like com.example.downloader, or leave the box empty to keep saving in TikTok.",这不是应用程序名称。尝试类似 com.example.downloader 的内容，或者将框留空以继续保存在 TikTok 中.
-That isn't valid JSON. Check the brackets and quotes.,这不是有效的 JSON。检查括号和引号.
+Check the brackets and quotes in this JSON,检查此 JSON 的括号和引号
 That list has too many entries. Keep it to %1$s or fewer.,该列表的条目太多。将其保持在 %1$s 或更少.
 That list is too large. Keep it to %1$s KB or less.,该列表太大了。将其保持在 %1$s KB 或更小.
 That loosens the budget. It waits until %1$s.,这会放松预算。它会等到 %1$s.
@@ -1850,7 +1849,7 @@ The Following and For You names above the feed go away. Swiping between the feed
 LIVE ended or dropped. Recording saved to %1$s,LIVE 已结束或中断，录制已保存到 %1$s
 The Lab can't check this. TikTok gets it exactly as typed.,实验室无法检查这一点。 TikTok 完全按照键入的方式获取它.
 The Lab couldn't open. Go back and open it again.,实验室无法打开。返回并再次打开它.
-"The Lab keeps at most %1$s rules. This change would make %2$s, so nothing was changed.",实验室最多保留 %1$s 条规则。此更改将生成 %2$s，因此没有任何更改.
+"%2$s rules, but the limit is %1$s. Nothing changed.",将有 %2$s 条规则，上限为 %1$s。未做任何更改.
 The Message requests row leaves the Inbox. Requests keep arriving and wait there until you turn this off.,消息请求行离开收件箱。请求不断到达并在那里等待，直到你将其关闭.
 The New followers row leaves the top of the Inbox. The accounts still follow you.,新关注者行离开收件箱顶部。账号仍然跟着你.
 The Tako assistant's conversation leaves the Inbox list. The Tako bubble on the feed has its own switch under Feed tabs.,Tako 助理的对话离开收件箱列表。 信息流上的 Tako 气泡在信息流选项卡下有自己的开关.
@@ -1904,7 +1903,7 @@ The profile picture couldn't be saved. Try again.,无法保存个人资料图片
 TikTok can't send a password to proxy %1$s. Use another.,TikTok 无法向代理 %1$s 发送密码，请换一个.
 "The proxy's address, like 192.168.1.20 or proxy.example.com.",代理的地址，例如 192.168.1.20 或 proxy.example.com.
 The quality choice is still open,品质选择依然开放
-"The record of an interrupted settings change couldn't be read, so it was set aside. Check your settings.",中断的设置更改记录无法读取，因此被搁置。检查你的设置.
+Couldn't read an interrupted change. Check your settings.,无法读取中断的更改。请检查你的设置.
 The recording couldn't be saved. Try again.,录音无法保存。再试一次.
 Size limit reached. Recording saved to %1$s,已达大小上限，录制已保存到 %1$s
 The report couldn't be saved. Try again.,无法保存报告。再试一次.
@@ -1938,15 +1937,15 @@ There was nothing to put back,没有什么可以放回去的
 There were no saved videos to forget,没有可忘记的已保存视频
 There's no video on screen to save a frame from,屏幕上没有视频可保存帧
 These are posts saved by your signed-in account. Other Favorites categories aren't included.,这些是你登录账号保存的帖子。不包括其他收藏夹类别.
-These loaded values are for a different TikTok version.,这些加载的值适用于不同的 TikTok 版本.
+These loaded values are for a different TikTok version,这些加载的值适用于不同的 TikTok 版本
 These notes are in English.,这些注释是英文的.
 This LIVE's stream can't be saved,无法保存此 LIVE 的流
 This catalog entry is no longer available. Refresh the Lab and try again.,该目录条目不再可用。刷新实验室并重试.
 This change couldn't be saved. Try again.,无法保存此更改。再试一次.
 This configuration has no fields that can be copied and changed safely on this build.,此配置没有可以在此版本上安全复制和更改的字段.
-This file has no loaded values in it.,该文件中没有加载的值.
-This file isn't a loaded-values export from the Feature Gate Lab.,此文件不是从功能门实验室导出的加载值.
-This gate type isn't supported.,不支持此门类型.
+This file has no loaded values in it,该文件中没有加载的值
+This file isn't a loaded-values export,此文件不是加载值的导出文件
+This gate type isn't supported,不支持此门类型
 This original sound isn't on YouTube Music,此原声不在 YouTube Music 上
 "This key isn't in Hushfeed's list, so its type can't be checked. Reset the override.",该键不在 Hushfeed 的列表中，因此无法检查其类型。重置覆盖.
 "This key touches account safety. Forcing it can change login, region, payment or security checks.",这个键涉及账号安全。强制设置它可能会改变登录、地区、付款或安全检查.
@@ -1961,7 +1960,7 @@ This profile picture isn't available to save,该个人资料照片无法保存
 "No full file at this quality, so TikTok saves it",此画质没有完整文件，改由 TikTok 保存
 "This setting's value can't be copied on this build, so it can't be overridden. Reset the override.",无法在此版本上复制此设置的值，因此无法覆盖它。重置覆盖.
 This story isn't available to save,该故事无法保存
-This value is required.,该值是必需的.
+This value is required,该值是必需的
 This video has no cover to save,该视频没有可保存的封面
 This video has no link to copy,该视频没有可复制的链接
 "No link to send, so TikTok saves it instead",没有可发送的链接，改由 TikTok 保存
@@ -1999,7 +1998,7 @@ TikTok read it,TikTok 阅读它
 TikTok refused the follow with code %1$s,TikTok 拒绝了以下代码 %1$s
 "Follow refused, code %1$s. Maybe a hidden CAPTCHA.",关注被拒绝，代码 %1$s。可能是隐藏的 CAPTCHA.
 TikTok refused the follow: %1$s,TikTok 拒绝以下内容：%1$s
-Follow refused: %1$s Maybe a hidden CAPTCHA.,关注被拒绝：%1$s 可能是隐藏的 CAPTCHA.
+Follow refused (%1$s). Maybe a hidden CAPTCHA.,关注被拒绝（%1$s）。可能是隐藏的 CAPTCHA.
 TikTok refused this request (%1$s).,TikTok 拒绝了此请求 (%1$s).
 "TikTok removes videos saved for offline viewing after a set time, sometimes only two days, watched or not. With this on they stay until you delete them in TikTok's Offline videos settings. TikTok can still clear watched ones when your phone is low on space.",TikTok 在设定的时间（有时仅两天）后删除保存用于离线观看的视频，无论观看与否。启用此功能后，它们会一直保留，直到你在 TikTok 的离线视频设置中删除它们为止。当你的手机空间不足时，TikTok 仍然可以清除观看的内容.
 TikTok reports additional filtered accounts. This list is incomplete.,TikTok 报告其他已过滤的账号。此列表不完整.
@@ -2060,10 +2059,10 @@ Turn on %1$s first.,首先打开 %1$s.
 Turn on Keep a streak going first,首先打开“保持连胜”
 Turn on overrides,打开覆盖
 "Turn the music disc at the bottom of the right column while a video plays, the way TikTok used to.",播放视频时，转动右栏底部的音乐光盘，就像 TikTok 以前那样.
-Turned off %1$d gates of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.,关闭了 %2$d 的 %1$d 门。其余的不采用 true 或 false 值。重新启动 TikTok 以应用此操作.
-Turned off %1$d gates. Restart TikTok to apply this.,关闭 %1$d 门。重新启动 TikTok 以应用此操作.
-Turned off 1 gate of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.,关闭了 %2$d 的 1 个门。其余的不采用 true 或 false 值。重新启动 TikTok 以应用此操作.
-Turned off 1 gate. Restart TikTok to apply this.,关闭 1 个门。重新启动 TikTok 以应用此操作.
+Turned off %1$d of %2$d. Restart TikTok to apply.,已关闭 %2$d 个门中的 %1$d 个。重启 TikTok 以生效.
+Turned off %1$d gates. Restart TikTok to apply.,已关闭 %1$d 个门。重启 TikTok 以生效.
+Turned off 1 of %2$d gates. Restart TikTok to apply.,已关闭 %2$d 个门中的 1 个。重启 TikTok 以生效.
+Turned off 1 gate. Restart TikTok to apply.,已关闭 1 个门。重启 TikTok 以生效.
 "Turns off TikTok's notification service, so nothing it sends reaches your notification shade and it can't wake your phone. You won't hear about new messages until you open TikTok. Notifications hidden while this is on don't come back. Ongoing ones like media controls stay.",关闭 TikTok 的通知服务，因此它发送的任何内容都不会到达你的通知栏，并且无法唤醒你的手机。在打开 TikTok 之前，你不会听到新消息。开启此功能时隐藏的通知不会再出现。诸如媒体控制之类的持续性措施将保留.
 Turns off at %1$s,于 %1$s 关闭
 "Two letters, like us, gb or jp.",两个字母，例如 us，gb 或 jp.
@@ -2274,7 +2273,7 @@ Recording this LIVE's screen from now,现在开始录制此直播的屏幕
 "Recording this LIVE's screen from now, without sound",现在开始录制此直播的屏幕，不带声音
 Allow photo comments,允许图片评论
 "Show the gallery tab in the comment box, so you can add a photo to a comment like on TikTok. PineDrama turns it off for everyone. TikTok's server still decides whether your account can post one.",在评论框中显示图库标签，让你可以像在 TikTok 上一样在评论中添加图片。PineDrama 对所有人关闭了此功能。你的账号能否发布仍由 TikTok 的服务器决定.
-"This screen recording has no sound.","这段屏幕录制没有声音."
+This screen recording has no sound,这段屏幕录制没有声音
 Export recording files,导出录制文件
 Delete recording files,删除录制文件
 The publication state of these older recording files is unknown. Export a copy or delete the retained files.,这些旧录制文件的发布状态未知。请导出副本或删除保留的文件.

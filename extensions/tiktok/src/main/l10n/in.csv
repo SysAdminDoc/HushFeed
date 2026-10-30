@@ -78,7 +78,7 @@ Turned off %1$d overrides. Check them for TikTok %2$s.,%1$d penggantian dimatika
 %1$s destinations must start with %2$s,Tujuan %1$s harus diawali %2$s
 "%1$s is too long for a settings backup. Shorten it, then save the backup again.","%1$s terlalu panjang untuk cadangan pengaturan. Persingkat, lalu simpan cadangan lagi."
 "%1$s isn't a language code, so no video would ever match it. Use two letters, like en, es or de.","%1$s bukan kode bahasa, jadi tidak ada video yang akan cocok. Gunakan dua huruf, seperti en, es, atau de."
-%1$s needs fixing. %2$s,Nilai %1$s perlu diperbaiki. %2$s
+%1$s needs fixing. %2$s.,Nilai %1$s perlu diperbaiki. %2$s.
 %1$s is a kind of value the Lab can't override.,%1$s adalah jenis nilai yang tidak bisa ditimpa Lab.
 "%1$s has type %2$s, but the file says %3$s.","%1$s bertipe %2$s, tetapi file menyebutkan %3$s."
 "%1$s isn't a country code, so no video would ever match it. Use two letters, like GB, IE or US.","%1$s bukan kode negara, jadi tidak ada video yang akan cocok. Gunakan dua huruf, seperti GB, IE, atau US."
@@ -206,7 +206,7 @@ Also change the region TikTok reports internally and set TikTok to the country's
 Always show publish date,Selalu tampilkan tanggal unggah
 Always show the publish date in video author information. Restart TikTok to apply this.,Selalu tampilkan tanggal publikasi di informasi penulis video. Mulai ulang TikTok agar berlaku.
 "Type the other app's ID, like com.dv.adm. The save button sends the video's link there instead of saving. Leave empty to save here.","Ketik ID aplikasi lain, misalnya com.dv.adm. Tombol simpan mengirim tautan video ke sana, bukan menyimpannya. Kosongkan untuk menyimpan di sini."
-"An interrupted settings change couldn't be recovered, so its record was set aside. Check your settings or restore a backup.","Perubahan pengaturan yang terputus tidak bisa dipulihkan, jadi catatannya disisihkan. Periksa pengaturan kamu atau pulihkan cadangan."
+Couldn't recover a change. Restore a backup if needed.,Proses gagal dipulihkan. Pakai cadangan bila perlu.
 "An operator code is five or six digits, like 310260","Kode operator itu lima atau enam angka, misalnya 310260"
 An override changes the value TikTok reads from this gate. It doesn't change TikTok's saved copy or prove the named feature changed.,Penimpaan mengubah nilai yang dibaca TikTok dari gate ini. Penimpaan tidak mengubah salinan tersimpan TikTok dan tidak membuktikan fitur yang disebut berubah.
 Animated sticker format,Format stiker animasi
@@ -332,7 +332,7 @@ Turn Clear display on or off,Nyalakan atau matikan tampilan bersih
 Clear display isn't available for this video,Tampilan bersih tidak tersedia untuk video ini
 Comments beside the video,Komentar di samping video
 Compare gate reads with their previous values.,Bandingkan pembacaan gate dengan nilai sebelumnya.
-Completed an interrupted settings change. Restart TikTok to apply this.,Perubahan pengaturan yang terhenti telah diselesaikan. Mulai ulang TikTok agar berlaku.
+Kept an interrupted change. Restart TikTok to apply.,Proses terputus disimpan. Mulai ulang TikTok.
 Config,Konfigurasi
 Config (Settings Manager),Konfigurasi (Settings Manager)
 Confirm before a quick repost,Konfirmasi sebelum repost cepat
@@ -445,18 +445,18 @@ Log diagnostics,Catat diagnostik
 Lock the hold speed with a pull down,Kunci kecepatan tahan dengan tarik ke bawah
 Apply overrides,Terapkan penggantian
 Enabled,Aktif
-Enter a JSON object or array.,Masukkan objek atau larik JSON.
+Enter a JSON object or array,Masukkan objek atau larik JSON
 Enter a creator handle or id,Masukkan handle atau ID kreator
-Enter a finite number.,Masukkan angka terbatas.
-Enter a number.,Masukkan angka.
-"Enter an hour, like 6 or 06:00.","Masukkan jam, misalnya 6 atau 06:00."
-Enter a valid structured value.,Masukkan nilai terstruktur yang valid.
+Enter a finite number,Masukkan angka terbatas
+Enter a number,Masukkan angka
+"Enter an hour, like 6 or 06:00","Masukkan jam, misalnya 6 atau 06:00"
+Enter a valid structured value,Masukkan nilai terstruktur yang valid
 Enter a valid two-letter country code,Masukkan kode negara dua huruf yang sah
 "Enter a whole number, or one like 20K, 1.5M or 2B","Masukkan bilangan bulat atau seperti 20K, 1.5M, atau 2B"
-Enter a whole number.,Masukkan bilangan bulat.
-Enter true or false.,Masukkan true atau false.
+Enter a whole number,Masukkan bilangan bulat
+Enter true or false,Masukkan true atau false
 Enter up to %1$d comma-separated speeds from %2$s to %3$s,"Masukkan sampai %1$d kecepatan dari %2$s hingga %3$s, dipisahkan koma"
-That isn't valid JSON. Check the brackets and quotes.,JSON tidak valid. Periksa tanda kurung dan kutip.
+Check the brackets and quotes in this JSON,Periksa tanda kurung dan kutip di JSON
 Entry %1$d has a field with the wrong data type.,Entri %1$d memiliki kolom dengan tipe data yang salah.
 Entry %1$d isn't an object.,Entri %1$d bukan objek.
 Errors,Kesalahan
@@ -498,10 +498,10 @@ Following,Mengikuti
 For You,Untuk Kamu
 Works only with YTDLnis (com.deniscerri.ytdl). Picks audio or video when the save button sends it a link.,Hanya berfungsi dengan YTDLnis (com.deniscerri.ytdl). Memilih audio atau video saat tombol simpan mengirimkan tautan ke sana.
 Works only with YTDLnis (com.deniscerri.ytdl). Starts the download in the background without showing its download card.,Hanya berfungsi dengan YTDLnis (com.deniscerri.ytdl). Memulai unduhan di latar belakang tanpa menampilkan kartu unduhannya.
-Forced %1$d gates of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.,%1$d dari %2$d gate dipaksakan. Sisanya tidak menerima nilai true atau false. Mulai ulang TikTok agar berlaku.
-Forced %1$d gates. Restart TikTok to apply this.,%1$d gate dipaksakan. Mulai ulang TikTok agar berlaku.
-Forced 1 gate of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.,1 dari %2$d gate dipaksakan. Sisanya tidak menerima nilai true atau false. Mulai ulang TikTok agar berlaku.
-Forced 1 gate. Restart TikTok to apply this.,1 gate dipaksakan. Mulai ulang TikTok agar berlaku.
+Forced %1$d of %2$d gates. Restart TikTok to apply.,%1$d dari %2$d dipaksakan. Mulai ulang TikTok.
+Forced %1$d gates. Restart TikTok to apply.,%1$d gate dipaksakan. Mulai ulang TikTok.
+Forced 1 of %2$d gates. Restart TikTok to apply.,1 dari %2$d dipaksakan. Mulai ulang TikTok.
+Forced 1 gate. Restart TikTok to apply.,1 gate dipaksakan. Mulai ulang TikTok.
 Forced result,Hasil yang dipaksakan
 Forget seen videos after,Lupakan video yang sudah ditonton setelah
 Forget the %1$s seen videos.,Lupakan %1$s video yang dilihat.
@@ -679,8 +679,8 @@ Dark Favorites popup,Popup Favorit gelap
 Keep the clock and status icons off the screen while TikTok is open. Swipe down from the top to peek at them.,Sembunyikan jam dan ikon status selama TikTok terbuka. Geser dari atas untuk mengintipnya.
 Keep the screen's refresh rate,Pertahankan laju penyegaran layar
 "Keep the speed you chose for the next video. Off, each new video starts at 1x and a manual choice lasts for that video only.","Menyimpan kecepatan yang dipilih untuk video berikutnya. Mati, setiap video baru dimulai dari 1x dan pilihan manual hanya berlaku untuk video itu."
-Keep this string to %1$s characters or fewer.,Jaga string ini %1$s karakter atau kurang.
-Keep this structured value to %1$s KB or less.,Batasi nilai terstruktur ini hingga %1$s KB atau kurang.
+Keep this string to %1$s characters or fewer,Jaga string ini %1$s karakter atau kurang
+Keep this structured value to %1$s KB or less,Batasi nilai terstruktur ini hingga %1$s KB atau kurang
 "Kept to %1$s, the nearest value this row allows","Diatur ke %1$s, nilai terdekat yang diizinkan"
 Kinds of post,Jenis postingan
 LIVE,LIVE
@@ -688,9 +688,9 @@ LIVE replays,Putar ulang LIVE
 LIVE settings,Pengaturan Live
 LIVE share actions,Tindakan berbagi LIVE
 LIVE videos,Video LIVE
-Lab data reset. Undo last Lab change is in the menu. Restart TikTok to apply this.,Data Lab disetel ulang. Batalkan perubahan Lab terakhir ada di menu. Mulai ulang TikTok agar berlaku.
-"Lab data was over its rule limit, so it was cleared without an undo copy. Restart TikTok to apply this.","Data Lab melebihi batas aturan, jadi data dihapus tanpa salinan untuk dibatalkan. Mulai ulang TikTok agar berlaku."
-Lab overrides reset. Undo last Lab change is in the menu. Restart TikTok to apply this.,Penggantian Lab disetel ulang. Batalkan perubahan Lab terakhir ada di menu. Mulai ulang TikTok agar berlaku.
+Lab data reset. Restart TikTok to apply.,Data Lab disetel ulang. Mulai ulang TikTok.
+Lab data reset with no undo. Restart TikTok to apply.,Data Lab disetel ulang tanpa batal. Mulai ulang TikTok.
+Lab overrides reset. Restart TikTok to apply.,Penggantian Lab disetel ulang. Mulai ulang TikTok.
 Larger (1.25x),"Lebih besar (1,25x)"
 Last original value,Nilai asli terakhir
 Last recording: %1$d gates.,Rekaman terakhir: %1$d gate.
@@ -788,8 +788,8 @@ No share actions match this search,Tidak ada tindakan berbagi yang cocok dengan 
 No sound to block on this video,Tidak ada suara untuk diblokir di video ini
 No suggested accounts to clear,Tidak ada akun saran yang bisa dihapus
 No video selected. Open a video first.,Belum ada video dipilih. Buka video dulu.
-None of these gates had an override to reset.,Tidak satu pun gate ini punya penggantian untuk diatur ulang.
-None of these gates takes a true or false value.,Tidak satu pun gate ini menerima nilai true atau false.
+None of these gates had an override to reset,Tak satu pun gate ini punya penggantian
+None of these gates takes a true or false value,Tak satu pun gate ini menerima true atau false
 None recorded,Tidak ada yang tercatat
 Normal,Normal
 Not blocked,Tidak diblokir
@@ -803,8 +803,7 @@ Not seen yet,Belum terlihat
 "Nothing has been looked up yet. Use the app for a moment, then come back.","Belum ada yang dicari. Gunakan aplikasi sebentar, lalu kembali ke sini."
 Nothing hidden.,Tidak ada yang disembunyikan.
 Nothing is playing to seek,Tidak ada yang diputar untuk dilompati
-"Nothing new was imported. %1$d already matched, %2$d unavailable, %3$d rejected.","Tidak ada yang baru diimpor. %1$d sudah cocok, %2$d tidak tersedia, %3$d ditolak."
-"Nothing new was imported. %1$d already matched, %2$d unavailable, %3$d rejected. First rejection: %4$s","Tidak ada hal baru yang diimpor. %1$d sudah cocok, %2$d tidak tersedia, %3$d ditolak. Penolakan pertama: %4$s"
+Nothing new was imported,Tidak ada yang baru diimpor
 Nothing on this page changes what TikTok does until they are on.,Tidak ada di halaman ini yang mengubah perilaku TikTok selama itu mati.
 Nothing to undo yet.,Belum ada yang bisa dibatalkan.
 Notices from this project and the ones it's built on,Pemberitahuan dari proyek ini dan proyek yang menjadinya
@@ -851,7 +850,7 @@ Override store region (experimental),Timpa wilayah toko (eksperimental)
 Override this configuration,Ganti konfigurasi ini
 Override this gate,Ganti gate ini
 Overrides are disabled in the Feature Gate Lab.,Penggantian dimatikan di Feature Gate Lab.
-Overrides disabled. Restart TikTok to apply this.,Penggantian dinonaktifkan. Mulai ulang TikTok agar berlaku.
+Overrides disabled. Restart TikTok to apply this.,Penggantian nonaktif. Mulai ulang TikTok agar berlaku.
 Overrides enabled. Restart TikTok to apply this.,Penggantian aktif. Mulai ulang TikTok agar berlaku.
 Paid partnerships,Kemitraan berbayar
 "People, shortcuts and sending controls","Orang, pintasan, dan kontrol pengiriman"
@@ -889,7 +888,7 @@ Reading,Membaca
 Recorded gate reads (%1$d),Pembacaan gate yang terekam (%1$d)
 "Recording. Use a feature, then come back to stop.","Merekam. Pakai sebuah fitur, lalu kembali untuk berhenti."
 Put back the settings saved before the last restore or reset.,Kembalikan pengaturan yang tersimpan sebelum pemulihan atau penyetelan ulang terakhir.
-Recovered an interrupted settings change. Restart TikTok to apply this.,Perubahan pengaturan yang terhenti telah dipulihkan. Mulai ulang TikTok agar berlaku.
+Undid an interrupted change. Restart TikTok to apply.,Proses terputus dibatalkan. Mulai ulang TikTok.
 Refresh values,Segarkan nilai
 Region,Wilayah
 Country filters,Filter negara
@@ -913,10 +912,10 @@ Required,Wajib
 Researched,Hasil riset
 Researched values,Nilai hasil riset
 Reset,Atur ulang
-Reset %1$d gates of %2$d. Restart TikTok to apply this.,%1$d dari %2$d gate diatur ulang. Mulai ulang TikTok agar berlaku.
-Reset %1$d gates. Restart TikTok to apply this.,%1$d gate diatur ulang. Mulai ulang TikTok agar berlaku.
-Reset 1 gate of %2$d. Restart TikTok to apply this.,1 dari %2$d gate diatur ulang. Mulai ulang TikTok agar berlaku.
-Reset 1 gate. Restart TikTok to apply this.,1 gate diatur ulang. Mulai ulang TikTok agar berlaku.
+Reset %1$d of %2$d gates. Restart TikTok to apply.,%1$d dari %2$d gate diatur ulang. Mulai ulang TikTok.
+Reset %1$d gates. Restart TikTok to apply.,%1$d gate diatur ulang. Mulai ulang TikTok.
+Reset 1 of %2$d gates. Restart TikTok to apply.,1 dari %2$d gate diatur ulang. Mulai ulang TikTok.
+Reset 1 gate. Restart TikTok to apply.,1 gate diatur ulang. Mulai ulang TikTok.
 Reset override,Setel ulang penggantian
 Reset position,Atur ulang posisi
 Reset settings,Setel ulang pengaturan
@@ -933,7 +932,7 @@ Undo didn't finish. Some settings may still be changed. Try Undo again.,Urungkan
 Undo didn't finish. Some settings may still be changed.,Urungkan tidak selesai. Beberapa pengaturan mungkin masih berubah.
 Restore failed. Some settings may still be changed. Use Undo to put them back.,Pemulihan gagal. Beberapa pengaturan mungkin masih berubah. Gunakan Urungkan untuk mengembalikannya.
 Restore settings,Pulihkan pengaturan
-Lab settings put back. Restart TikTok to apply this.,Pengaturan Lab dikembalikan. Mulai ulang TikTok agar berlaku.
+Lab settings put back. Restart TikTok to apply.,Pengaturan Lab dikembalikan. Mulai ulang TikTok.
 Restoring your settings,Memulihkan pengaturan kamu
 Resume videos after scrolling,Lanjutkan video setelah menggulir
 Retry,Coba lagi
@@ -1000,7 +999,7 @@ Seen videos,Video yang sudah dilihat
 Seen videos cleared. You can undo until TikTok closes.,Video yang dilihat sudah dihapus. Kamu bisa mengurungkannya sampai TikTok ditutup.
 Seen videos put back,Video yang dilihat dikembalikan
 Select,Pilih
-Select at least one field.,Pilih setidaknya satu kolom.
+Select at least one field,Pilih setidaknya satu kolom
 Select every tab,Pilih semua tab
 Selected,Dipilih
 Send links to another app,Kirim tautan ke aplikasi lain
@@ -1155,7 +1154,7 @@ That settings change didn't go through. Nothing was altered.,Perubahan itu tidak
 That sticker is in a format Hushfeed can't read,Stiker itu formatnya tidak bisa dibaca Hushfeed
 The Lab can't check this. TikTok gets it exactly as typed.,Lab tidak bisa memeriksa ini. TikTok menerimanya persis seperti yang kamu ketik.
 The Lab couldn't open. Go back and open it again.,Lab tidak bisa dibuka. Kembali lalu buka lagi.
-"The Lab keeps at most %1$s rules. This change would make %2$s, so nothing was changed.","Lab menyimpan paling banyak %1$s aturan. Perubahan ini akan membuat jumlahnya %2$s, jadi tidak ada yang diubah."
+"%2$s rules, but the limit is %1$s. Nothing changed.","%2$s aturan, batasnya %1$s. Tak ada yang berubah."
 The catalog says this key is %1$s and this override is %2$s. Reset the override and make a new one.,Katalog menyebut kunci ini %1$s dan penimpaan ini %2$s. Setel ulang penimpaan lalu buat yang baru.
 The diagnostic report couldn't be saved yet. Try again in a moment.,Laporan diagnostik belum bisa disimpan. Coba lagi sebentar.
 The diagnostic report couldn't be saved. Try again.,Laporan diagnostik tidak bisa disimpan. Coba lagi.
@@ -1178,7 +1177,7 @@ No video saved. The original photos are missing.,Video tidak tersimpan. Foto asl
 "The override couldn't be applied: %1$s. Edit the field values, or reset the override.","Penimpaan tidak bisa diterapkan: %1$s. Ubah nilai field, atau setel ulang penimpaan."
 "The override doesn't say what list to return. Edit the field values, or reset the override.","Penimpaan tidak menyebutkan daftar mana yang harus dikembalikan. Ubah nilai field, atau setel ulang penimpaan."
 The profile picture couldn't be saved. Try again.,Foto profilnya tidak bisa disimpan.
-"The record of an interrupted settings change couldn't be read, so it was set aside. Check your settings.","Catatan perubahan pengaturan yang terputus tidak bisa dibaca, jadi disisihkan. Periksa pengaturan kamu."
+Couldn't read an interrupted change. Check your settings.,Proses terputus tak terbaca. Periksa pengaturan.
 The report couldn't be saved. Try again.,Laporan tidak bisa disimpan. Coba lagi.
 Couldn't read that file. Try again.,File tidak bisa dibaca. Coba lagi.
 The setting couldn't finish updating. Its saved value is shown.,Pengaturan ini tidak dapat selesai diperbarui. Nilai yang tersimpan ditampilkan.
@@ -1193,13 +1192,13 @@ There is no Lab change to undo.,Tidak ada perubahan Lab yang bisa dibatalkan.
 There is no diagnostic data to clear,Tidak ada data diagnostik yang perlu dihapus
 There is no diagnostic data to put back,Tidak ada data diagnostik yang dapat dikembalikan
 There was nothing to put back,Tidak ada yang bisa dikembalikan
-These loaded values are for a different TikTok version.,Nilai yang dimuat ini untuk versi TikTok yang berbeda.
+These loaded values are for a different TikTok version,Nilai yang dimuat ini untuk versi TikTok yang berbeda
 This catalog entry is no longer available. Refresh the Lab and try again.,Entri katalog ini sudah tidak tersedia. Segarkan Lab dan coba lagi.
 This change couldn't be saved. Try again.,Perubahan ini tidak dapat disimpan. Coba lagi.
 This configuration has no fields that can be copied and changed safely on this build.,Konfigurasi ini tidak punya bidang yang bisa disalin dan diubah dengan aman di build ini.
-This file has no loaded values in it.,Berkas ini tidak berisi nilai yang dimuat.
-This file isn't a loaded-values export from the Feature Gate Lab.,Berkas ini bukan ekspor nilai yang dimuat dari Feature Gate Lab.
-This gate type isn't supported.,Tipe gate ini tidak didukung.
+This file has no loaded values in it,Berkas ini tidak berisi nilai yang dimuat
+This file isn't a loaded-values export,Berkas ini bukan ekspor nilai yang dimuat
+This gate type isn't supported,Tipe gate ini tidak didukung
 "This line opens a rule and doesn't finish it: %1$s. Write two phrases as ""a"" & ""b"" for both, or ""a"" !& ""b"" for the first without the second.","Baris ini memulai sebuah aturan dan tidak menyelesaikannya: %1$s. Tulis dua frasa sebagai ""a"" & ""b"" untuk keduanya, atau ""a"" !& ""b"" untuk yang pertama tanpa yang kedua."
 "This phone has no file picker, so there's no way to choose a file here","Ponsel ini tidak punya pemilih berkas, jadi tidak ada cara memilih berkas di sini"
 No folder picker here. Type the folder in the row.,Tidak ada pemilih folder. Ketik folder di baris.
@@ -1207,7 +1206,7 @@ This profile picture isn't available to save,Foto profil ini tidak bisa disimpan
 "No full file at this quality, so TikTok saves it","File utuh kualitas ini tak ada, TikTok menyimpan"
 "This setting's value can't be copied on this build, so it can't be overridden. Reset the override.","Nilai setelan ini tidak bisa disalin di build ini, jadi tidak bisa ditimpa. Setel ulang penimpaan."
 This story isn't available to save,Story ini tidak bisa disimpan
-This value is required.,Nilai ini wajib diisi.
+This value is required,Nilai ini wajib diisi
 This video has no link to copy,Video ini tidak punya tautan untuk disalin
 "No link to send, so TikTok saves it instead","Tak ada tautan untuk dikirim, TikTok menyimpan"
 This video has no original sound to save,Video ini tidak punya suara asli untuk disimpan
@@ -1262,10 +1261,10 @@ Try a different word or clear the search.,Coba kata lain atau hapus pencarian.
 Turn on %1$s first.,Nyalakan %1$s dulu.
 Put %1$s in %2$s first.,Isi %2$s dengan %1$s dulu.
 Turn on overrides,Nyalakan penimpaan
-Turned off %1$d gates of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.,%1$d dari %2$d gate dimatikan. Sisanya tidak menerima nilai true atau false. Mulai ulang TikTok agar berlaku.
-Turned off %1$d gates. Restart TikTok to apply this.,%1$d gate dimatikan. Mulai ulang TikTok agar berlaku.
-Turned off 1 gate of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.,1 dari %2$d gate dimatikan. Sisanya tidak menerima nilai true atau false. Mulai ulang TikTok agar berlaku.
-Turned off 1 gate. Restart TikTok to apply this.,1 gate dimatikan. Mulai ulang TikTok agar berlaku.
+Turned off %1$d of %2$d. Restart TikTok to apply.,%1$d dari %2$d dimatikan. Mulai ulang TikTok.
+Turned off %1$d gates. Restart TikTok to apply.,%1$d gate dimatikan. Mulai ulang TikTok.
+Turned off 1 of %2$d gates. Restart TikTok to apply.,1 dari %2$d gate dimatikan. Mulai ulang TikTok.
+Turned off 1 gate. Restart TikTok to apply.,1 gate dimatikan. Mulai ulang TikTok.
 "Two letters, like us, gb or jp.","Dua huruf, misalnya us, gb atau jp."
 Type,Tipe
 Start typing,Mulai mengetik
@@ -1380,7 +1379,7 @@ this creator,kreator ini
 "%1$s, %2$s or %3$s","%1$s, %2$s, atau %3$s"
 TikTok refused the follow with code %1$s,TikTok menolak permintaan mengikuti dengan kode %1$s
 "Follow refused, code %1$s. Maybe a hidden CAPTCHA.","Gagal mengikuti, kode %1$s. Mungkin CAPTCHA tersembunyi."
-Follow refused: %1$s Maybe a hidden CAPTCHA.,Gagal mengikuti: %1$s Mungkin CAPTCHA tersembunyi.
+Follow refused (%1$s). Maybe a hidden CAPTCHA.,Gagal mengikuti (%1$s). Mungkin CAPTCHA tersembunyi.
 Hushfeed is paused,Hushfeed dijeda
 "Hushfeed's switches are paused. Your settings stay saved. Changes made when you patched, like the app's name or icon, stay.","Sakelar Hushfeed sedang dijeda. Pengaturanmu tetap tersimpan. Perubahan yang dibuat saat kamu mem-patch, seperti nama atau ikon aplikasi, tetap ada."
 "TikTok closed three times within a minute of starting, so Hushfeed paused itself. Your settings stay as they are.","TikTok tertutup tiga kali dalam satu menit setelah dibuka, jadi Hushfeed menjeda dirinya sendiri. Pengaturanmu tetap seperti semula."
@@ -1459,8 +1458,8 @@ The presets couldn't load. Open the Lab again.,Preset tidak dapat dimuat. Buka L
 Apply enables these overrides. Undo last Lab change puts your previous rules back until you change anything else in the Lab.,Terapkan mengaktifkan penggantian ini. Batalkan perubahan Lab terakhir mengembalikan aturan sebelumnya sampai kamu mengubah hal lain di Lab.
 "Apply saves these overrides. Turn on overrides in the Lab to use them. Turning them on is a Lab change too, so after that Undo turns them off rather than putting your previous rules back.","Terapkan menyimpan penggantian ini. Aktifkan penggantian di Lab untuk menggunakannya. Mengaktifkannya juga perubahan Lab, jadi setelah itu Urungkan mematikannya, bukan mengembalikan aturan sebelumnya."
 This preset isn't available for your installed TikTok version.,Preset ini tidak tersedia untuk versi TikTok yang terpasang.
-Preset applied. Restart TikTok to use it.,Preset diterapkan. Mulai ulang TikTok untuk menggunakannya.
-Preset saved. Turn on overrides in the Lab to use it.,Preset disimpan. Aktifkan penggantian di Lab untuk menggunakannya.
+Preset applied. Restart TikTok to use it.,Preset diterapkan. Mulai ulang TikTok.
+Preset saved. Turn on overrides to use it.,Preset disimpan. Aktifkan penggantian dulu.
 Preset doesn't match the gates. Nothing changed.,Preset tidak cocok dengan gate. Tidak ada perubahan.
 About overrides,Tentang penggantian
 "Use {creator}, {date} and {video_id} to build the name. Start with {creator}/ to put each creator in a folder. The file ending is added for you.","Pakai {creator}, {date}, dan {video_id} untuk menyusun nama. Awali dengan {creator}/ agar setiap kreator masuk ke foldernya sendiri. Ekstensi file ditambahkan otomatis."
@@ -1594,7 +1593,7 @@ Block suggested video notifications,Blokir notifikasi video yang disarankan
 "Stop the notifications TikTok sends about popular videos it picked for you. Messages, comments, likes, follows and videos from accounts you follow still come through.","Hentikan notifikasi yang dikirim TikTok tentang video populer yang dipilihkan untukmu. Pesan, komentar, suka, pengikut baru, dan video dari akun yang kamu ikuti tetap masuk."
 Buttons on videos,Tombol di video
 Seen videos put back: %1$s of %2$s,Video ditonton yang dipulihkan: %1$s dari %2$s
-No cleared videos fit the current history limits.,Tidak ada video yang dihapus yang memenuhi batas riwayat saat ini.
+No cleared videos fit the current history limits,Tak ada video terhapus yang muat di riwayat
 Putting seen videos back,Memulihkan video yang ditonton
 These notes are in English.,Catatan ini dalam bahasa Inggris.
 Still waiting for the file app. Tap to stop waiting.,Masih menunggu aplikasi file. Ketuk untuk berhenti menunggu.
@@ -2276,7 +2275,7 @@ Recording this LIVE's screen from now,Merekam layar LIVE ini mulai sekarang
 "Recording this LIVE's screen from now, without sound","Merekam layar LIVE ini mulai sekarang, tanpa suara"
 Allow photo comments,Izinkan komentar foto
 "Show the gallery tab in the comment box, so you can add a photo to a comment like on TikTok. PineDrama turns it off for everyone. TikTok's server still decides whether your account can post one.",Tampilkan tab galeri di kotak komentar agar kamu bisa menambahkan foto ke komentar seperti di TikTok. PineDrama mematikannya untuk semua orang. Server TikTok tetap menentukan apakah akunmu bisa mempostingnya.
-"This screen recording has no sound.","Rekaman layar ini tidak memiliki suara."
+This screen recording has no sound,Rekaman layar ini tidak memiliki suara
 Export recording files,Ekspor berkas rekaman
 Delete recording files,Hapus berkas rekaman
 The publication state of these older recording files is unknown. Export a copy or delete the retained files.,Status publikasi berkas rekaman lama ini tidak diketahui. Ekspor salinan atau hapus berkas yang disimpan.

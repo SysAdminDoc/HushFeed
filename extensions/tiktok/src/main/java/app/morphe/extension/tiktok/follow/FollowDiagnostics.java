@@ -769,9 +769,10 @@ public final class FollowDiagnostics {
                             context.statusCode)
                     : L10n.f("TikTok refused the follow with code %1$s", context.statusCode);
         } else {
+            // TikTok's own reason usually ends in a stop, which reads wrong inside the brackets.
+            String reason = context.statusMsg.trim().replaceAll("[.!。]+$", "");
             message = captcha
-                    ? L10n.f("Follow refused: %1$s Maybe a hidden CAPTCHA.",
-                            context.statusMsg)
+                    ? L10n.f("Follow refused (%1$s). Maybe a hidden CAPTCHA.", reason)
                     : L10n.f("TikTok refused the follow: %1$s", context.statusMsg);
         }
         Utils.showToastLong(message);

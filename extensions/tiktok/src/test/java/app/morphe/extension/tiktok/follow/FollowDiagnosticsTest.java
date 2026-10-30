@@ -152,7 +152,9 @@ public class FollowDiagnosticsTest {
         Shadows.shadowOf(Looper.getMainLooper()).idle();
 
         String message = ShadowToast.getTextOfLatestToast();
-        assertTrue(String.valueOf(message), message.contains("You are following too fast."));
+        // The server's reason keeps its words and drops its own stop inside the brackets.
+        assertEquals("Follow refused (You are following too fast). Maybe a hidden CAPTCHA.",
+                message);
         // A hidden CAPTCHA is the first thing to check when a follow does not land, and the
         // message calls it what the switch calls it.
         assertTrue(String.valueOf(message), message.contains("Maybe a hidden CAPTCHA."));

@@ -74,34 +74,34 @@ final class FeatureGateLabText {
         if (failure == null) return "";
         switch (failure.code) {
             case VALUE_MISSING:
-                return L10n.t(context, "This value is required.");
+                return L10n.t(context, "This value is required");
             case EXPECTED_TRUE_OR_FALSE:
-                return L10n.t(context, "Enter true or false.");
+                return L10n.t(context, "Enter true or false");
             case INVALID_NUMBER:
                 return "INT".equals(failure.technicalType)
-                        ? L10n.t(context, "Enter a whole number.")
-                        : L10n.t(context, "Enter a number.");
+                        ? L10n.t(context, "Enter a whole number")
+                        : L10n.t(context, "Enter a number");
             case VALUE_MUST_BE_FINITE:
-                return L10n.t(context, "Enter a finite number.");
+                return L10n.t(context, "Enter a finite number");
             case STRING_TOO_LONG:
                 return L10n.f(context,
-                        "Keep this string to %1$s characters or fewer.",
+                        "Keep this string to %1$s characters or fewer",
                         java.text.NumberFormat.getInstance().format(FeatureGateLabStore.MAX_STRING_CHARS));
             case STRUCTURED_VALUE_TOO_LARGE:
                 return L10n.f(context,
-                        "Keep this structured value to %1$s KB or less.",
+                        "Keep this structured value to %1$s KB or less",
                         java.text.NumberFormat.getInstance().format(FeatureGateLabStore.MAX_STRUCTURED_CHARS / 1024));
             case SELECT_AT_LEAST_ONE_FIELD:
-                return L10n.t(context, "Select at least one field.");
+                return L10n.t(context, "Select at least one field");
             case UNSUPPORTED_TYPE:
-                return L10n.t(context, "This gate type isn't supported.");
+                return L10n.t(context, "This gate type isn't supported");
             case INVALID_JSON:
-                return L10n.t(context, "That isn't valid JSON. Check the brackets and quotes.");
+                return L10n.t(context, "Check the brackets and quotes in this JSON");
             case EXPECTED_JSON_OBJECT_OR_ARRAY:
-                return L10n.t(context, "Enter a JSON object or array.");
+                return L10n.t(context, "Enter a JSON object or array");
             case INVALID_STRUCTURED_VALUE:
             default:
-                return L10n.t(context, "Enter a valid structured value.");
+                return L10n.t(context, "Enter a valid structured value");
         }
     }
 
@@ -110,7 +110,7 @@ final class FeatureGateLabText {
             String fieldName,
             FeatureGateLabStore.ValidationFailure failure
     ) {
-        return L10n.f(context, "%1$s needs fixing. %2$s",
+        return L10n.f(context, "%1$s needs fixing. %2$s.",
                 fieldName, validation(context, failure));
     }
 

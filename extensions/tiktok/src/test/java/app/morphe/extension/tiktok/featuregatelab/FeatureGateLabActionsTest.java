@@ -381,7 +381,7 @@ public class FeatureGateLabActionsTest {
                     .contents(root.toString().getBytes(StandardCharsets.UTF_8));
             LogBufferManager.clearLogBuffer();
             fragment.onActivityResult(started.requestCode, Activity.RESULT_OK, new Intent().setData(provider.uri));
-            waitFor("These loaded values are for a different TikTok version.");
+            waitFor("These loaded values are for a different TikTok version");
             assertTrue(FeatureGateLabStore.rules().isEmpty());
             assertLoggedOnce("INFO", "Loaded-value file import refused", "Loaded-value file import failed");
         }
@@ -462,7 +462,18 @@ public class FeatureGateLabActionsTest {
             started = Shadows.shadowOf(activity).getNextStartedActivityForResult();
             provider = DocumentExportProvider.register(activity).contents(plain);
             fragment.onActivityResult(started.requestCode, Activity.RESULT_OK, new Intent().setData(provider.uri));
-            waitFor("Nothing new was imported. 1 already matched, 14999 unavailable, 0 rejected.");
+            // The counts went in the dialog the first import got. As one toast they ran to four
+            // lines and lost the last two.
+            FeatureGateLabFragment.awaitFileIoForTests();
+            Utils.awaitBackgroundTasksForTests();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            var nothing = (android.app.AlertDialog) ShadowDialog.getLatestDialog();
+            assertEquals("Nothing new was imported", String.valueOf(Shadows.shadowOf(nothing).getTitle()));
+            // Nothing came in, so there's nothing for Undo to take back but the first import.
+            var undo = nothing.getButton(android.content.DialogInterface.BUTTON_NEGATIVE);
+            assertTrue("Undo offered for an import that took nothing",
+                    undo == null || undo.getVisibility() != View.VISIBLE);
+            waitForImportDialog("1 already matched", "14999 unavailable", "0 rejected");
             assertEquals(1, FeatureGateLabStore.rules().size());
         }
     }
@@ -490,7 +501,7 @@ public class FeatureGateLabActionsTest {
                     .contents(loadedValues(rules).toString().getBytes(StandardCharsets.UTF_8));
             LogBufferManager.clearLogBuffer();
             fragment.onActivityResult(started.requestCode, Activity.RESULT_OK, new Intent().setData(provider.uri));
-            waitFor("The Lab keeps at most 1,024 rules. This change would make 1,030, so nothing was changed.");
+            waitFor("1,030 rules, but the limit is 1,024. Nothing changed.");
             assertTrue(FeatureGateLabStore.rules().isEmpty());
             assertLoggedOnce("INFO", "Lab change refused", "Lab change failed");
         }
@@ -955,10 +966,9 @@ public class FeatureGateLabActionsTest {
                 assertNull("the same reset could not be retried",
                         FeatureGateLabStore.rule("abmock", "gate", "BOOLEAN"));
                 assertFalse(changing.get());
-                // "Restart TikTok to apply this." is the one sentence the whole settings screen
-                // uses now; this message said it a ninth way.
-                assertEquals("Lab overrides reset. Undo last Lab change is in the menu."
-                                + " Restart TikTok to apply this.",
+                // A toast keeps two lines, so the Lab says "Restart TikTok to apply." and leaves
+                // the undo hint to the menu, which lists Undo last Lab change.
+                assertEquals("Lab overrides reset. Restart TikTok to apply.",
                         ShadowToast.getTextOfLatestToast());
             }
         }
@@ -1134,7 +1144,7 @@ public class FeatureGateLabActionsTest {
             ShadowToast.reset();
             selectionAction(fragment, "Reset").performClick();
             settle();
-            assertEquals("None of these gates had an override to reset.",
+            assertEquals("None of these gates had an override to reset",
                     ShadowToast.getTextOfLatestToast());
         }
     }

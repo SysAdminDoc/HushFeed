@@ -1574,7 +1574,7 @@ public class FeatureGatePagesTest {
 
     /** The rule cap is told to the reader and logged at info; any other failure stays a patch error. */
     @Test public void aDetailChangePastTheRuleCapIsLoggedAsARefusal() throws Exception {
-        String limit = "The Lab keeps at most 1,024 rules. This change would make 1,025, so nothing was changed.";
+        String limit = "1,025 rules, but the limit is 1,024. Nothing changed.";
         try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
             Activity activity = owner.get();
             Utils.setContext(activity);

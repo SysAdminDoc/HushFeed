@@ -330,7 +330,7 @@ public class NumberInputPreference extends EditTextPreference {
 
     /** What the field says under it when nothing in it can be read. */
     protected String unreadableMessage() {
-        return L10n.t(getContext(), "Enter a number.");
+        return L10n.t(getContext(), "Enter a number");
     }
 
     /** The keyboard the field asks for. Called from the constructor, so it reads no fields. */

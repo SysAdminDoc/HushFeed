@@ -79,7 +79,7 @@ Turned off %1$d overrides. Check them for TikTok %2$s.	%1$d geçersiz kılma kap
 %1$s destinations must start with %2$s	%1$s hedefleri %2$s ile başlamalı
 %1$s is too long for a settings backup. Shorten it, then save the backup again.	%1$s bir ayar yedeği için çok uzun. Kısaltın, ardından yedeği yeniden kaydedin.
 %1$s isn't a language code, so no video would ever match it. Use two letters, like en, es or de.	%1$s bir dil kodu değil, bu yüzden hiçbir video eşleşmez. en, es veya de gibi iki harf kullan.
-%1$s needs fixing. %2$s	%1$s düzeltilmeli. %2$s
+%1$s needs fixing. %2$s.	%1$s düzeltilmeli. %2$s.
 %1$s is a kind of value the Lab can't override.	%1$s, Lab'in geçersiz kılamayacağı bir değer türü.
 %1$s has type %2$s, but the file says %3$s.	%1$s türü %2$s, ama dosyada %3$s yazıyor.
 %1$s is already hidden	%1$s zaten gizli
@@ -204,7 +204,7 @@ Also change the region TikTok reports internally and set TikTok to the country's
 Always show publish date	Yayın tarihini her zaman göster
 Always show the publish date in video author information. Restart TikTok to apply this.	Video sahibi bilgilerinde yayın tarihini her zaman göster. Bunu uygulamak için TikTok'u yeniden başlat.
 Type the other app's ID, like com.dv.adm. The save button sends the video's link there instead of saving. Leave empty to save here.	Diğer uygulamanın kimliğini yaz, örneğin com.dv.adm. Kaydet düğmesi kaydetmek yerine videonun bağlantısını oraya gönderir. Burada kaydetmek için boş bırak.
-An interrupted settings change couldn't be recovered, so its record was set aside. Check your settings or restore a backup.	Yarıda kalan bir ayar değişikliği kurtarılamadı, bu yüzden kaydı bir kenara ayrıldı. Ayarlarını kontrol et veya bir yedeği geri yükle.
+Couldn't recover a change. Restore a backup if needed.	İşlem kurtarılamadı. Gerekirse yedeği geri yükle.
 An operator code is five or six digits, like 310260	Operatör kodu beş veya altı hanelidir, örneğin 310260
 An override changes the value TikTok reads from this gate. It doesn't change TikTok's saved copy or prove the named feature changed.	Bir geçersiz kılma, TikTok'un bu geçitten okuduğu değeri değiştirir. TikTok'un kayıtlı kopyasını değiştirmez ve adı geçen özelliğin değiştiğini kanıtlamaz.
 Animated sticker format	Hareketli çıkartma biçimi
@@ -334,7 +334,7 @@ Clear display isn't available for this video	Bu video için temiz ekran kullanı
 Comments beside the video	Yorumlar videonun yanında
 Compact comment header	Kompakt yorum başlığı
 Compare gate reads with their previous values.	Özellik kapısı okumalarını önceki değerleriyle karşılaştır.
-Completed an interrupted settings change. Restart TikTok to apply this.	Yarıda kalan bir ayar değişikliği tamamlandı. Bunu uygulamak için TikTok'u yeniden başlat.
+Kept an interrupted change. Restart TikTok to apply.	Kesilen işlem korundu. TikTok'u yeniden başlat.
 Config	Yapılandırma
 Config (Settings Manager)	Yapılandırma (Settings Manager)
 Confirm before a quick repost	Hızlı yeniden yayınlamadan önce onay iste
@@ -452,18 +452,18 @@ Log diagnostics	Tanılamayı günlüğe kaydet
 Lock the hold speed with a pull down	Basılı tutma hızını aşağı çekerek kilitle
 Apply overrides	Geçersiz kılmaları uygula
 Enabled	Etkin
-Enter a JSON object or array.	Bir JSON nesnesi veya dizisi gir.
+Enter a JSON object or array	Bir JSON nesnesi veya dizisi gir
 Enter a creator handle or id	İçerik üreticisinin kullanıcı adını veya kimliğini gir
-Enter a finite number.	Sonlu bir sayı gir.
-Enter a number.	Bir sayı gir.
-Enter an hour, like 6 or 06:00.	Bir saat gir, örneğin 6 veya 06:00.
-Enter a valid structured value.	Geçerli bir yapılandırılmış değer gir.
+Enter a finite number	Sonlu bir sayı gir
+Enter a number	Bir sayı gir
+Enter an hour, like 6 or 06:00	Bir saat gir, örneğin 6 veya 06:00
+Enter a valid structured value	Geçerli bir yapılandırılmış değer gir
 Enter a valid two-letter country code	Geçerli bir iki harfli ülke kodu gir
 Enter a whole number, or one like 20K, 1.5M or 2B	Bir tam sayı ya da 20K, 1.5M veya 2B gibi bir değer gir
-Enter a whole number.	Bir tam sayı gir.
-Enter true or false.	true veya false gir.
+Enter a whole number	Bir tam sayı gir
+Enter true or false	true veya false gir
 Enter up to %1$d comma-separated speeds from %2$s to %3$s	%2$s ile %3$s arasında, virgülle ayrılmış en fazla %1$d hız gir
-That isn't valid JSON. Check the brackets and quotes.	Geçersiz JSON. Parantez ve tırnakları kontrol et.
+Check the brackets and quotes in this JSON	JSON'daki parantezleri ve tırnakları kontrol et
 Entry %1$d has a field with the wrong data type.	%1$d numaralı girdide veri türü yanlış olan bir alan var.
 Entry %1$d isn't an object.	%1$d numaralı girdi bir nesne değil.
 Errors	Hatalar
@@ -508,10 +508,10 @@ Following	Takip Edilenler
 For You	Senin İçin
 Works only with YTDLnis (com.deniscerri.ytdl). Picks audio or video when the save button sends it a link.	Yalnızca YTDLnis (com.deniscerri.ytdl) ile çalışır. Kaydet düğmesi ona bağlantı gönderdiğinde ses veya video seçer.
 Works only with YTDLnis (com.deniscerri.ytdl). Starts the download in the background without showing its download card.	Yalnızca YTDLnis (com.deniscerri.ytdl) ile çalışır. İndirmeyi indirme kartını göstermeden arka planda başlatır.
-Forced %1$d gates of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.	%1$d / %2$d kapı zorlandı. Geri kalanı true veya false değeri almıyor. Uygulamak için TikTok'u yeniden başlat.
-Forced %1$d gates. Restart TikTok to apply this.	%1$d kapı zorlandı. Uygulamak için TikTok'u yeniden başlat.
-Forced 1 gate of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.	1 / %2$d kapı zorlandı. Geri kalanı true veya false değeri almıyor. Uygulamak için TikTok'u yeniden başlat.
-Forced 1 gate. Restart TikTok to apply this.	1 kapı zorlandı. Uygulamak için TikTok'u yeniden başlat.
+Forced %1$d of %2$d gates. Restart TikTok to apply.	%1$d/%2$d kapı zorlandı. TikTok'u yeniden başlat.
+Forced %1$d gates. Restart TikTok to apply.	%1$d kapı zorlandı. TikTok'u yeniden başlat.
+Forced 1 of %2$d gates. Restart TikTok to apply.	1/%2$d kapı zorlandı. TikTok'u yeniden başlat.
+Forced 1 gate. Restart TikTok to apply.	1 kapı zorlandı. TikTok'u yeniden başlat.
 Forced result	Zorlanan sonuç
 Forget seen videos after	Görülen videoları şu süreden sonra unut
 Forget the %1$s seen videos.	Görülen %1$s videoyu unut.
@@ -701,8 +701,8 @@ When TikTok is in dark mode, the list of collections you get by holding the Favo
 Keep the clock and status icons off the screen while TikTok is open. Swipe down from the top to peek at them.	TikTok açıkken saati ve durum simgelerini ekrandan uzak tut. Onlara göz atmak için üstten aşağı kaydır.
 Keep the screen's refresh rate	Ekranın yenileme hızını koru
 Keep the speed you chose for the next video. Off, each new video starts at 1x and a manual choice lasts for that video only.	Seçtiğin hızı sonraki videoda da koru. Kapalıyken her yeni video 1x hızında başlar ve elle yapılan seçim yalnızca o video için geçerli olur.
-Keep this string to %1$s characters or fewer.	Bu metni en fazla %1$s karakterle sınırla.
-Keep this structured value to %1$s KB or less.	Bu yapılandırılmış değeri en fazla %1$s KB ile sınırla.
+Keep this string to %1$s characters or fewer	Bu metni en fazla %1$s karakterle sınırla
+Keep this structured value to %1$s KB or less	Bu yapılandırılmış değeri en fazla %1$s KB ile sınırla
 Kept to %1$s, the nearest value this row allows	Satır için en yakın izinli değer: %1$s
 Kinds of post	Gönderi türleri
 LIVE	CANLI
@@ -710,9 +710,9 @@ LIVE replays	CANLI tekrarları
 LIVE settings	CANLI ayarları
 LIVE share actions	CANLI paylaşım eylemleri
 LIVE videos	CANLI videoları
-Lab data reset. Undo last Lab change is in the menu. Restart TikTok to apply this.	Lab verileri sıfırlandı. Son Lab değişikliğini geri al seçeneği menüde. Uygulamak için TikTok'u yeniden başlat.
-Lab data was over its rule limit, so it was cleared without an undo copy. Restart TikTok to apply this.	Lab verileri kural sınırını aştığı için geri alma kopyası olmadan temizlendi. Uygulamak için TikTok'u yeniden başlat.
-Lab overrides reset. Undo last Lab change is in the menu. Restart TikTok to apply this.	Lab geçersiz kılmaları sıfırlandı. Son Lab değişikliğini geri al seçeneği menüde. Uygulamak için TikTok'u yeniden başlat.
+Lab data reset. Restart TikTok to apply.	Lab verileri sıfırlandı. TikTok'u yeniden başlat.
+Lab data reset with no undo. Restart TikTok to apply.	Lab kalıcı sıfırlandı. TikTok'u yeniden başlat.
+Lab overrides reset. Restart TikTok to apply.	Geçersiz kılmalar silindi. TikTok'u yeniden başlat.
 Larger (1.25x)	Daha büyük (1.25x)
 Last original value	Son özgün değer
 Last recording: %1$d gates.	Son kayıt: %1$d kapı.
@@ -812,8 +812,8 @@ No share actions match this search	Bu aramayla eşleşen paylaşım eylemi yok
 No sound to block on this video	Bu videoda engellenecek ses yok
 No suggested accounts to clear	Temizlenecek önerilen hesap yok
 No video selected. Open a video first.	Video seçilmedi. Önce bir video aç.
-None of these gates had an override to reset.	Bu özellik kapılarının hiçbirinde sıfırlanacak bir geçersiz kılma yoktu.
-None of these gates takes a true or false value.	Bu özellik kapılarının hiçbiri true veya false değeri almıyor.
+None of these gates had an override to reset	Bu kapıların hiçbirinde geçersiz kılma yoktu
+None of these gates takes a true or false value	Bu kapıların hiçbiri true veya false almıyor
 None recorded	Kayıt yok
 Normal	Normal
 Not blocked	Engellenmedi
@@ -827,8 +827,7 @@ Nothing has been checked yet, so there's nothing to report.	Henüz hiçbir şey 
 Nothing has been looked up yet. Use the app for a moment, then come back.	Henüz hiçbir şey sorgulanmadı. Uygulamayı biraz kullan, sonra geri gel.
 Nothing hidden.	Gizlenen bir şey yok.
 Nothing is playing to seek	Sarılacak bir şey oynatılmıyor
-Nothing new was imported. %1$d already matched, %2$d unavailable, %3$d rejected.	Yeni bir şey içe aktarılmadı. %1$d zaten eşleşiyordu, %2$d kullanılamıyor, %3$d reddedildi.
-Nothing new was imported. %1$d already matched, %2$d unavailable, %3$d rejected. First rejection: %4$s	Yeni bir şey içe aktarılmadı. %1$d zaten eşleşiyordu, %2$d kullanılamıyor, %3$d reddedildi. İlk ret: %4$s
+Nothing new was imported	Yeni bir şey içe aktarılmadı
 Nothing on this page changes what TikTok does until they are on.	Bunlar açılana kadar bu sayfadaki hiçbir şey TikTok'un davranışını değiştirmez.
 Nothing to undo yet.	Henüz geri alınacak bir şey yok.
 Notices from this project and the ones it's built on	Bu projenin ve temel aldığı projelerin bildirimleri
@@ -875,7 +874,7 @@ Override store region (experimental)	Mağaza bölgesini geçersiz kıl (deneysel
 Override this configuration	Bu yapılandırmayı geçersiz kıl
 Override this gate	Bu özellik kapısını geçersiz kıl
 Overrides are disabled in the Feature Gate Lab.	Geçersiz kılmalar Feature Gate Lab'de devre dışı.
-Overrides disabled. Restart TikTok to apply this.	Geçersiz kılmalar devre dışı bırakıldı. Bunu uygulamak için TikTok'u yeniden başlat.
+Overrides disabled. Restart TikTok to apply this.	Geçersiz kılmalar kapatıldı. TikTok'u yeniden başlat.
 Overrides enabled. Restart TikTok to apply this.	Geçersiz kılmalar açıldı. TikTok'u yeniden başlat.
 Paid partnerships	Ücretli ortaklıklar
 People, shortcuts and sending controls	Kişiler, kısayollar ve gönderme kontrolleri
@@ -912,7 +911,7 @@ Reading	Okuma
 Recorded gate reads (%1$d)	Kaydedilen özellik kapısı okumaları (%1$d)
 Recording. Use a feature, then come back to stop.	Kaydediliyor. Bir özellik kullan, durdurmak için dön.
 Put back the settings saved before the last restore or reset.	Son geri yükleme veya sıfırlamadan önce kaydedilen ayarları geri koy.
-Recovered an interrupted settings change. Restart TikTok to apply this.	Yarıda kalan bir ayar değişikliği kurtarıldı. Bunu uygulamak için TikTok'u yeniden başlat.
+Undid an interrupted change. Restart TikTok to apply.	Kesilen işlem geri alındı. TikTok'u yeniden başlat.
 Refresh values	Değerleri yenile
 Region	Bölge
 Country filters	Ülke filtreleri
@@ -937,10 +936,10 @@ Required	Gerekli
 Researched	Araştırıldı
 Researched values	Araştırılmış değerler
 Reset	Sıfırla
-Reset %1$d gates of %2$d. Restart TikTok to apply this.	%1$d / %2$d özellik kapısı sıfırlandı. Bunu uygulamak için TikTok'u yeniden başlat.
-Reset %1$d gates. Restart TikTok to apply this.	%1$d özellik kapısı sıfırlandı. Bunu uygulamak için TikTok'u yeniden başlat.
-Reset 1 gate of %2$d. Restart TikTok to apply this.	1 / %2$d özellik kapısı sıfırlandı. Bunu uygulamak için TikTok'u yeniden başlat.
-Reset 1 gate. Restart TikTok to apply this.	1 özellik kapısı sıfırlandı. Bunu uygulamak için TikTok'u yeniden başlat.
+Reset %1$d of %2$d gates. Restart TikTok to apply.	%1$d/%2$d kapı sıfırlandı. TikTok'u yeniden başlat.
+Reset %1$d gates. Restart TikTok to apply.	%1$d kapı sıfırlandı. TikTok'u yeniden başlat.
+Reset 1 of %2$d gates. Restart TikTok to apply.	1/%2$d kapı sıfırlandı. TikTok'u yeniden başlat.
+Reset 1 gate. Restart TikTok to apply.	1 kapı sıfırlandı. TikTok'u yeniden başlat.
 Reset override	Geçersiz kılmayı sıfırla
 Reset position	Konumu sıfırla
 Reset settings	Ayarları sıfırla
@@ -957,7 +956,7 @@ Undo didn't finish. Some settings may still be changed. Try Undo again.	Geri alm
 Undo didn't finish. Some settings may still be changed.	Geri alma tamamlanmadı. Bazı ayarlar yine de değişmiş olabilir.
 Restore failed. Some settings may still be changed. Use Undo to put them back.	Geri yükleme başarısız oldu. Bazı ayarlar yine de değişmiş olabilir. Geri koymak için Geri al'ı kullan.
 Restore settings	Ayarları geri yükle
-Lab settings put back. Restart TikTok to apply this.	Lab ayarları geri kondu. Bunu uygulamak için TikTok'u yeniden başlat.
+Lab settings put back. Restart TikTok to apply.	Lab ayarları geri kondu. TikTok'u yeniden başlat.
 Restoring your settings	Ayarların geri yükleniyor
 Resume videos after scrolling	Kaydırdıktan sonra videoları sürdür
 Retry	Yeniden dene
@@ -1023,7 +1022,7 @@ Seen videos	Görülen videolar
 Seen videos cleared. You can undo until TikTok closes.	Görülen videolar temizlendi. TikTok kapanana kadar geri alabilirsin.
 Seen videos put back	Görülen videolar geri kondu
 Select	Seç
-Select at least one field.	En az bir alan seç.
+Select at least one field	En az bir alan seç
 Select every tab	Tüm sekmeleri seç
 Selected	Seçildi
 Send links to another app	Bağlantıları başka bir uygulamaya gönder
@@ -1180,7 +1179,7 @@ That settings change didn't go through. Nothing was altered.	Bu ayar değişikli
 That sticker is in a format Hushfeed can't read	Bu çıkartma Hushfeed'in okuyamadığı bir biçimde
 The Lab can't check this. TikTok gets it exactly as typed.	Lab bunu denetleyemiyor. TikTok bunu tam yazıldığı gibi alır.
 The Lab couldn't open. Go back and open it again.	Lab açılamadı. Geri dön ve yeniden aç.
-The Lab keeps at most %1$s rules. This change would make %2$s, so nothing was changed.	Lab en fazla %1$s kural tutar. Bu değişiklikle %2$s olacaktı, bu yüzden hiçbir şey değiştirilmedi.
+%2$s rules, but the limit is %1$s. Nothing changed.	%2$s kural olurdu, sınır %1$s. Hiçbir şey değişmedi.
 The catalog says this key is %1$s and this override is %2$s. Reset the override and make a new one.	Kataloğa göre bu anahtar %1$s, bu geçersiz kılma ise %2$s. Geçersiz kılmayı sıfırla ve yenisini oluştur.
 The diagnostic report couldn't be saved yet. Try again in a moment.	Tanılama raporu henüz kaydedilemedi. Birazdan yeniden dene.
 The diagnostic report couldn't be saved. Try again.	Tanılama raporu kaydedilemedi. Yeniden dene.
@@ -1203,7 +1202,7 @@ The override changes no fields. Edit the field values, or reset the override.	Ge
 The override couldn't be applied: %1$s. Edit the field values, or reset the override.	Geçersiz kılma uygulanamadı: %1$s. Alan değerlerini düzenle ya da geçersiz kılmayı sıfırla.
 The override doesn't say what list to return. Edit the field values, or reset the override.	Geçersiz kılma hangi listenin döndürüleceğini belirtmiyor. Alan değerlerini düzenle ya da geçersiz kılmayı sıfırla.
 The profile picture couldn't be saved. Try again.	Profil fotoğrafı kaydedilemedi. Yeniden dene.
-The record of an interrupted settings change couldn't be read, so it was set aside. Check your settings.	Yarıda kalan bir ayar değişikliğinin kaydı okunamadığı için bir kenara ayrıldı. Ayarlarını kontrol et.
+Couldn't read an interrupted change. Check your settings.	Kesilen işlem okunamadı. Ayarlarını kontrol et.
 The report couldn't be saved. Try again.	Rapor kaydedilemedi. Yeniden dene.
 Couldn't read that file. Try again.	Dosya okunamadı. Tekrar dene.
 The setting couldn't finish updating. Its saved value is shown.	Ayarın güncellenmesi tamamlanamadı. Kayıtlı değeri gösteriliyor.
@@ -1218,13 +1217,13 @@ There is no Lab change to undo.	Geri alınacak bir Lab değişikliği yok.
 There is no diagnostic data to clear	Temizlenecek tanılama verisi yok
 There is no diagnostic data to put back	Geri konacak tanılama verisi yok
 There was nothing to put back	Geri konacak bir şey yoktu
-These loaded values are for a different TikTok version.	Bu yüklenen değerler farklı bir TikTok sürümüne ait.
+These loaded values are for a different TikTok version	Bu yüklenen değerler farklı bir TikTok sürümüne ait
 This catalog entry is no longer available. Refresh the Lab and try again.	Bu katalog girişi artık kullanılamıyor. Lab'i yenile ve yeniden dene.
 This change couldn't be saved. Try again.	Bu değişiklik kaydedilemedi. Yeniden dene.
 This configuration has no fields that can be copied and changed safely on this build.	Bu yapılandırmada, bu sürümde güvenle kopyalanıp değiştirilebilecek bir alan yok.
-This file has no loaded values in it.	Bu dosyada hiç yüklenen değer yok.
-This file isn't a loaded-values export from the Feature Gate Lab.	Bu dosya Feature Gate Lab'den alınmış bir yüklenen değerler dışa aktarımı değil.
-This gate type isn't supported.	Bu özellik kapısı türü desteklenmiyor.
+This file has no loaded values in it	Bu dosyada hiç yüklenen değer yok
+This file isn't a loaded-values export	Bu dosya bir yüklenen değerler dışa aktarımı değil
+This gate type isn't supported	Bu özellik kapısı türü desteklenmiyor
 This line opens a rule and doesn't finish it: %1$s. Write two phrases as "a" & "b" for both, or "a" !& "b" for the first without the second.	Bu satır bir kural açıyor ama bitirmiyor: %1$s. İki ifadeyi, ikisi birden için "a" & "b", ikincisi olmadan birincisi için "a" !& "b" biçiminde yaz.
 This phone has no file picker, so there's no way to choose a file here	Bu telefonda dosya seçici yok, bu yüzden burada dosya seçmenin bir yolu yok
 No folder picker here. Type the folder in the row.	Klasör seçici yok. Klasörü satıra yaz.
@@ -1232,7 +1231,7 @@ This profile picture isn't available to save	Bu profil fotoğrafı kaydedilemiyo
 No full file at this quality, so TikTok saves it	Bu kalitede tam dosya yok, TikTok kaydediyor
 This setting's value can't be copied on this build, so it can't be overridden. Reset the override.	Bu ayarın değeri bu sürümde kopyalanamıyor, bu yüzden geçersiz kılınamaz. Geçersiz kılmayı sıfırla.
 This story isn't available to save	Bu hikaye kaydedilemiyor
-This value is required.	Bu değer gerekli.
+This value is required	Bu değer gerekli
 This video has no link to copy	Bu videonun kopyalanacak bağlantısı yok
 No link to send, so TikTok saves it instead	Gönderilecek bağlantı yok, TikTok kaydediyor
 This video has no original sound to save	Bu videonun kaydedilecek orijinal sesi yok
@@ -1285,10 +1284,10 @@ Try again, or go back to TikTok.	Yeniden dene ya da TikTok'a geri dön.
 Turn on %1$s first.	Önce %1$s ayarını aç.
 Put %1$s in %2$s first.	Önce %2$s alanına %1$s yaz.
 Turn on overrides	Geçersiz kılmaları aç
-Turned off %1$d gates of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.	%1$d / %2$d özellik kapısı kapatıldı. Geri kalanı true veya false değeri almıyor. Bunu uygulamak için TikTok'u yeniden başlat.
-Turned off %1$d gates. Restart TikTok to apply this.	%1$d özellik kapısı kapatıldı. Bunu uygulamak için TikTok'u yeniden başlat.
-Turned off 1 gate of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.	1 / %2$d özellik kapısı kapatıldı. Geri kalanı true veya false değeri almıyor. Bunu uygulamak için TikTok'u yeniden başlat.
-Turned off 1 gate. Restart TikTok to apply this.	1 özellik kapısı kapatıldı. Bunu uygulamak için TikTok'u yeniden başlat.
+Turned off %1$d of %2$d. Restart TikTok to apply.	%1$d/%2$d kapı kapatıldı. TikTok'u yeniden başlat.
+Turned off %1$d gates. Restart TikTok to apply.	%1$d kapı kapatıldı. TikTok'u yeniden başlat.
+Turned off 1 of %2$d gates. Restart TikTok to apply.	1/%2$d kapı kapatıldı. TikTok'u yeniden başlat.
+Turned off 1 gate. Restart TikTok to apply.	1 kapı kapatıldı. TikTok'u yeniden başlat.
 Two letters, like us, gb or jp.	us, gb veya jp gibi iki harf.
 Type	Tür
 Unavailable	Kullanılamıyor
@@ -1384,7 +1383,7 @@ this creator	bu içerik üreticisi
 %1$s, %2$s or %3$s	%1$s, %2$s veya %3$s
 TikTok refused the follow with code %1$s	TikTok takibi %1$s koduyla reddetti
 Follow refused, code %1$s. Maybe a hidden CAPTCHA.	Takip reddedildi, kod %1$s. Gizli CAPTCHA olabilir.
-Follow refused: %1$s Maybe a hidden CAPTCHA.	Takip reddedildi: %1$s Gizli CAPTCHA olabilir.
+Follow refused (%1$s). Maybe a hidden CAPTCHA.	Takip reddedildi (%1$s). Gizli CAPTCHA olabilir.
 Hushfeed is paused	Hushfeed duraklatıldı
 Hushfeed's switches are paused. Your settings stay saved. Changes made when you patched, like the app's name or icon, stay.	Hushfeed'in anahtarları duraklatıldı. Ayarların kayıtlı kalır. Yamalarken yapılan değişiklikler, uygulamanın adı ya da simgesi gibi, kalır.
 TikTok closed three times within a minute of starting, so Hushfeed paused itself. Your settings stay as they are.	TikTok açıldıktan sonraki bir dakika içinde üç kez kapandı, bu yüzden Hushfeed kendini duraklattı. Ayarların olduğu gibi kalır.
@@ -1464,8 +1463,8 @@ The presets couldn't load. Open the Lab again.	Hazır ayarlar yüklenemedi. Labo
 Apply enables these overrides. Undo last Lab change puts your previous rules back until you change anything else in the Lab.	Uygula bu geçersiz kılmaları etkinleştirir. Son Lab değişikliğini geri al, Lab'da başka bir şey değiştirene kadar önceki kurallarını geri getirir.
 Apply saves these overrides. Turn on overrides in the Lab to use them. Turning them on is a Lab change too, so after that Undo turns them off rather than putting your previous rules back.	Uygula bu geçersiz kılmaları kaydeder. Kullanmak için Lab'da geçersiz kılmaları aç. Onları açmak da bir Lab değişikliğidir, bu yüzden ondan sonra Geri al önceki kurallarını geri getirmek yerine onları kapatır.
 This preset isn't available for your installed TikTok version.	Bu hazır ayar, yüklü TikTok sürümünüz için kullanılamıyor.
-Preset applied. Restart TikTok to use it.	Hazır ayar uygulandı. Kullanmak için TikTok'u yeniden başlatın.
-Preset saved. Turn on overrides in the Lab to use it.	Hazır ayar kaydedildi. Kullanmak için laboratuvarda geçersiz kılmaları açın.
+Preset applied. Restart TikTok to use it.	Hazır ayar uygulandı. TikTok'u yeniden başlat.
+Preset saved. Turn on overrides to use it.	Hazır ayar kaydedildi. Geçersiz kılmaları aç.
 Preset doesn't match the gates. Nothing changed.	Hazır ayar kapılarla eşleşmiyor. Değişiklik yok.
 About overrides	Geçersiz kılmalar hakkında
 Use {creator}, {date} and {video_id} to build the name. Start with {creator}/ to put each creator in a folder. The file ending is added for you.	Adı oluşturmak için {creator}, {date} ve {video_id} kullan. Her içerik üreticisini ayrı klasöre koymak için {creator}/ ile başla. Dosya uzantısı otomatik eklenir.
@@ -1600,7 +1599,7 @@ Stop the notifications TikTok sends about popular videos it picked for you. Mess
 Buttons on videos	Videolardaki düğmeler
 
 Seen videos put back: %1$s of %2$s	Geri yüklenen izlenen videolar: %1$s / %2$s
-No cleared videos fit the current history limits.	Silinen videoların hiçbiri geçerli geçmiş sınırlarına uymuyor.
+No cleared videos fit the current history limits	Silinen hiçbir video sınırlara uymuyor
 Putting seen videos back	İzlenen videolar geri yükleniyor
 # context: a line above the What's new release notes, which come from the English changelog and are not translated.
 These notes are in English.	Bu notlar İngilizcedir.
@@ -2298,7 +2297,7 @@ Recording this LIVE's screen from now	Bu LIVE'ın ekranı şimdi kaydediliyor
 Recording this LIVE's screen from now, without sound	Bu LIVE'ın ekranı şimdi sessiz kaydediliyor
 Allow photo comments	Fotoğraflı yorumlara izin ver
 Show the gallery tab in the comment box, so you can add a photo to a comment like on TikTok. PineDrama turns it off for everyone. TikTok's server still decides whether your account can post one.	Yorum kutusunda galeri sekmesini gösterir, böylece TikTok'taki gibi bir yoruma fotoğraf ekleyebilirsin. PineDrama bunu herkes için kapatır. Hesabının fotoğraf paylaşıp paylaşamayacağına yine TikTok'un sunucusu karar verir.
-This screen recording has no sound.	Bu ekran kaydında ses yok.
+This screen recording has no sound	Bu ekran kaydında ses yok
 Export recording files	Kayıt dosyalarını dışa aktar
 Delete recording files	Kayıt dosyalarını sil
 The publication state of these older recording files is unknown. Export a copy or delete the retained files.	Bu eski kayıt dosyalarının yayımlanma durumu bilinmiyor. Bir kopyasını dışa aktarın veya saklanan dosyaları silin.

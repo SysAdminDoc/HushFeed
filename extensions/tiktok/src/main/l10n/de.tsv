@@ -83,7 +83,7 @@ Turned off %1$d overrides. Check them for TikTok %2$s.	%1$d Überschreibungen au
 %1$s destinations must start with %2$s	%1$s-Ziele müssen mit %2$s beginnen
 %1$s is too long for a settings backup. Shorten it, then save the backup again.	%1$s ist zu lang für eine Einstellungssicherung. Kürze die Liste und speichere die Sicherung dann erneut.
 %1$s isn't a language code, so no video would ever match it. Use two letters, like en, es or de.	%1$s ist kein Sprachcode, deshalb würde kein Video dazu passen. Nutze zwei Buchstaben, etwa en, es oder de.
-%1$s needs fixing. %2$s	%1$s muss korrigiert werden. %2$s
+%1$s needs fixing. %2$s.	%1$s muss korrigiert werden. %2$s.
 %1$s is a kind of value the Lab can't override.	%1$s ist eine Art von Wert, die das Lab nicht überschreiben kann.
 %1$s has type %2$s, but the file says %3$s.	%1$s hat den Typ %2$s, in der Datei steht %3$s.
 %1$s isn't a country code, so no video would ever match it. Use two letters, like GB, IE or US.	%1$s ist kein Ländercode, also würde kein Video jemals dazu passen. Nimm zwei Buchstaben, etwa GB, IE oder US.
@@ -213,7 +213,7 @@ Also change the region TikTok reports internally and set TikTok to the country's
 Always show publish date	Veröffentlichungsdatum immer anzeigen
 Always show the publish date in video author information. Restart TikTok to apply this.	Das Veröffentlichungsdatum immer bei den Angaben zum Video anzeigen. TikTok neu starten, damit das gilt.
 Type the other app's ID, like com.dv.adm. The save button sends the video's link there instead of saving. Leave empty to save here.	Gib die ID der anderen App ein, zum Beispiel com.dv.adm. Die Speichern-Schaltfläche schickt den Videolink dorthin, statt zu speichern. Leer lassen, um hier zu speichern.
-An interrupted settings change couldn't be recovered, so its record was set aside. Check your settings or restore a backup.	Eine unterbrochene Einstellungsänderung ließ sich nicht wiederherstellen, ihre Aufzeichnung wurde beiseitegelegt. Prüfe deine Einstellungen oder stelle eine Sicherung wieder her.
+Couldn't recover a change. Restore a backup if needed.	Änderung nicht gerettet. Notfalls Sicherung laden.
 An operator code is five or six digits, like 310260	Ein Betreibercode hat fünf oder sechs Ziffern, zum Beispiel 310260
 An override changes the value TikTok reads from this gate. It doesn't change TikTok's saved copy or prove the named feature changed.	Eine Überschreibung ändert den Wert, den TikTok von diesem Gate liest. Sie ändert nicht TikToks gespeicherte Kopie und beweist nicht, dass sich die genannte Funktion geändert hat.
 Animated sticker format	Format animierter Sticker
@@ -339,7 +339,7 @@ Turn Clear display on or off	Freie Ansicht ein- oder ausschalten
 Clear display isn't available for this video	Für dieses Video gibt es keine freie Ansicht
 Comments beside the video	Kommentare neben dem Video
 Compare gate reads with their previous values.	Gate-Zugriffe mit ihren vorherigen Werten vergleichen.
-Completed an interrupted settings change. Restart TikTok to apply this.	Eine unterbrochene Einstellungsänderung wurde abgeschlossen. TikTok neu starten, damit das gilt.
+Kept an interrupted change. Restart TikTok to apply.	Änderung beibehalten. TikTok neu starten.
 Config	Konfiguration
 Config (Settings Manager)	Konfiguration (Settings Manager)
 Confirm before a quick repost	Vor einem schnellen Repost bestätigen
@@ -453,18 +453,18 @@ Log diagnostics	Diagnose protokollieren
 Lock the hold speed with a pull down	Halte-Geschwindigkeit per Herunterziehen sperren
 Apply overrides	Überschreibungen anwenden
 Enabled	Eingeschaltet
-Enter a JSON object or array.	Gib ein JSON-Objekt oder -Array ein.
+Enter a JSON object or array	Gib ein JSON-Objekt oder -Array ein
 Enter a creator handle or id	Gib einen Creator-Handle oder eine ID ein
-Enter a finite number.	Gib eine endliche Zahl ein.
-Enter a number.	Gib eine Zahl ein.
-Enter an hour, like 6 or 06:00.	Gib eine Stunde ein, etwa 6 oder 06:00.
-Enter a valid structured value.	Gib einen gültigen strukturierten Wert ein.
+Enter a finite number	Gib eine endliche Zahl ein
+Enter a number	Gib eine Zahl ein
+Enter an hour, like 6 or 06:00	Gib eine Stunde ein, etwa 6 oder 06:00
+Enter a valid structured value	Gib einen gültigen strukturierten Wert ein
 Enter a valid two-letter country code	Gib einen gültigen Ländercode aus zwei Buchstaben ein
 Enter a whole number, or one like 20K, 1.5M or 2B	Gib eine ganze Zahl ein, oder etwa 20K, 1.5M, 2B
-Enter a whole number.	Gib eine ganze Zahl ein.
-Enter true or false.	Gib true oder false ein.
+Enter a whole number	Gib eine ganze Zahl ein
+Enter true or false	Gib true oder false ein
 Enter up to %1$d comma-separated speeds from %2$s to %3$s	Bis zu %1$d durch Kommas getrennte Geschwindigkeiten von %2$s bis %3$s eingeben
-That isn't valid JSON. Check the brackets and quotes.	JSON ungültig. Prüfe Klammern, Anführungszeichen.
+Check the brackets and quotes in this JSON	Prüfe Klammern und Anführungszeichen im JSON
 Entry %1$d has a field with the wrong data type.	Eintrag %1$d enthält ein Feld mit dem falschen Datentyp.
 Entry %1$d isn't an object.	Eintrag %1$d ist kein Objekt.
 Errors	Fehler
@@ -506,10 +506,10 @@ Following	Gefolgt
 For You	Für dich
 Works only with YTDLnis (com.deniscerri.ytdl). Picks audio or video when the save button sends it a link.	Funktioniert nur mit YTDLnis (com.deniscerri.ytdl). Wählt Audio oder Video, wenn die Speichern-Schaltfläche ihm einen Link schickt.
 Works only with YTDLnis (com.deniscerri.ytdl). Starts the download in the background without showing its download card.	Funktioniert nur mit YTDLnis (com.deniscerri.ytdl). Startet den Download im Hintergrund, ohne seine Download-Karte zu zeigen.
-Forced %1$d gates of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.	%1$d von %2$d Schaltern erzwungen. Die übrigen nehmen kein true oder false. TikTok neu starten, damit das gilt.
-Forced %1$d gates. Restart TikTok to apply this.	%1$d Schalter erzwungen. TikTok neu starten, damit das gilt.
-Forced 1 gate of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.	1 von %2$d Schaltern erzwungen. Die übrigen nehmen kein true oder false. TikTok neu starten, damit das gilt.
-Forced 1 gate. Restart TikTok to apply this.	1 Schalter erzwungen. TikTok neu starten, damit das gilt.
+Forced %1$d of %2$d gates. Restart TikTok to apply.	%1$d von %2$d erzwungen. TikTok neu starten.
+Forced %1$d gates. Restart TikTok to apply.	%1$d Schalter erzwungen. TikTok neu starten.
+Forced 1 of %2$d gates. Restart TikTok to apply.	1 von %2$d erzwungen. TikTok neu starten.
+Forced 1 gate. Restart TikTok to apply.	1 Schalter erzwungen. TikTok neu starten.
 Forced result	Erzwungenes Ergebnis
 Forget seen videos after	Gesehene Videos vergessen nach
 Forget the %1$s seen videos.	Die %1$s gesehenen Videos vergessen.
@@ -686,8 +686,8 @@ When TikTok is in dark mode, the list of collections you get by holding the Favo
 Keep the clock and status icons off the screen while TikTok is open. Swipe down from the top to peek at them.	Uhr und Statussymbole ausblenden, solange TikTok geöffnet ist. Wische von oben nach unten, um sie kurz zu sehen.
 Keep the screen's refresh rate	Bildwiederholrate des Bildschirms behalten
 Keep the speed you chose for the next video. Off, each new video starts at 1x and a manual choice lasts for that video only.	Behalte die gewählte Geschwindigkeit für das nächste Video. Aus, startet jedes neue Video mit 1x und eine manuelle Wahl gilt nur für dieses Video.
-Keep this string to %1$s characters or fewer.	Halte diese Zeichenkette bei %1$s Zeichen oder weniger.
-Keep this structured value to %1$s KB or less.	Strukturierter Wert: höchstens %1$s KB.
+Keep this string to %1$s characters or fewer	Halte diese Zeichenkette bei %1$s Zeichen oder weniger
+Keep this structured value to %1$s KB or less	Strukturierter Wert: höchstens %1$s KB
 Kept to %1$s, the nearest value this row allows	Auf %1$s gesetzt, nächster Wert dieser Zeile
 Kinds of post	Beitragsarten
 LIVE	LIVE
@@ -695,9 +695,9 @@ LIVE replays	LIVE-Wiederholungen
 LIVE settings	Live-Einstellungen
 LIVE share actions	Share-Aktionen bei LIVE
 LIVE videos	LIVE-Videos
-Lab data reset. Undo last Lab change is in the menu. Restart TikTok to apply this.	Lab-Daten zurückgesetzt. Letzte Lab-Änderung rückgängig machen steht im Menü. TikTok neu starten, damit das gilt.
-Lab data was over its rule limit, so it was cleared without an undo copy. Restart TikTok to apply this.	Die Lab-Daten überschritten das Regellimit und wurden daher ohne Rückgängig-Kopie gelöscht. TikTok neu starten, damit das gilt.
-Lab overrides reset. Undo last Lab change is in the menu. Restart TikTok to apply this.	Lab-Überschreibungen zurückgesetzt. Letzte Lab-Änderung rückgängig machen steht im Menü. TikTok neu starten, damit das gilt.
+Lab data reset. Restart TikTok to apply.	Lab-Daten zurückgesetzt. TikTok neu starten.
+Lab data reset with no undo. Restart TikTok to apply.	Lab endgültig zurückgesetzt. TikTok neu starten.
+Lab overrides reset. Restart TikTok to apply.	Überschreibungen gelöscht. TikTok neu starten.
 Larger (1.25x)	Größer (1,25x)
 Last original value	Letzter Originalwert
 Last recording: %1$d gates.	Letzte Aufzeichnung: %1$d Gates.
@@ -794,8 +794,8 @@ No share actions match this search	Keine Share-Aktionen passen zu dieser Suche
 No sound to block on this video	Bei diesem Video gibt es keinen Sound zum Blockieren
 No suggested accounts to clear	Keine Kontovorschläge zu entfernen
 No video selected. Open a video first.	Kein Video ausgewaehlt. Oeffne zuerst ein Video.
-None of these gates had an override to reset.	Keiner dieser Schalter hatte eine Überschreibung zum Zurücksetzen.
-None of these gates takes a true or false value.	Keiner dieser Schalter nimmt einen true- oder false-Wert.
+None of these gates had an override to reset	Keiner dieser Schalter war überschrieben
+None of these gates takes a true or false value	Keiner dieser Schalter nimmt einen true- oder false-Wert
 None recorded	Nichts aufgezeichnet
 Normal	Normal
 Not blocked	Nicht blockiert
@@ -809,8 +809,7 @@ Nothing has been checked yet, so there's nothing to report.	Es wurde noch nichts
 Nothing has been looked up yet. Use the app for a moment, then come back.	Bisher wurde nichts nachgeschlagen. Nutze die App einen Moment und komm dann zurück.
 Nothing hidden.	Nichts ausgeblendet.
 Nothing is playing to seek	Es läuft gerade nichts zum Springen
-Nothing new was imported. %1$d already matched, %2$d unavailable, %3$d rejected.	Nichts Neues importiert. %1$d stimmten bereits überein, %2$d sind nicht verfügbar, %3$d wurden abgelehnt.
-Nothing new was imported. %1$d already matched, %2$d unavailable, %3$d rejected. First rejection: %4$s	Nichts Neues wurde importiert. Bereits identisch: %1$d. Nicht verfügbar: %2$d. Abgelehnt: %3$d. Erste Ablehnung: %4$s
+Nothing new was imported	Nichts Neues importiert
 Nothing on this page changes what TikTok does until they are on.	Nichts auf dieser Seite ändert etwas an TikTok, solange sie aus sind.
 Nothing to undo yet.	Noch nichts rückgängig zu machen.
 Notices from this project and the ones it's built on	Hinweise aus diesem Projekt und aus den Projekten, auf denen es aufbaut
@@ -857,7 +856,7 @@ Override store region (experimental)	Store-Region überschreiben (experimentell)
 Override this configuration	Diese Konfiguration überschreiben
 Override this gate	Diesen Schalter überschreiben
 Overrides are disabled in the Feature Gate Lab.	Überschreibungen sind im Feature Gate Lab abgeschaltet.
-Overrides disabled. Restart TikTok to apply this.	Überschreibungen deaktiviert. TikTok neu starten, damit das gilt.
+Overrides disabled. Restart TikTok to apply this.	Überschreiben deaktiviert. TikTok neu starten.
 Overrides enabled. Restart TikTok to apply this.	Überschreibungen aktiviert. TikTok neu starten.
 Paid partnerships	Bezahlte Partnerschaften
 People, shortcuts and sending controls	Kontakte, Verknüpfungen und Versandoptionen
@@ -895,7 +894,7 @@ Reading	Lesen
 Recorded gate reads (%1$d)	Aufgezeichnete Gate-Zugriffe (%1$d)
 Recording. Use a feature, then come back to stop.	Läuft. Nutze eine Funktion, dann zurück zum Beenden.
 Put back the settings saved before the last restore or reset.	Die Einstellungen zurückholen, die vor der letzten Wiederherstellung oder Zurücksetzung gespeichert wurden.
-Recovered an interrupted settings change. Restart TikTok to apply this.	Eine unterbrochene Einstellungsänderung wurde wiederhergestellt. TikTok neu starten, damit das gilt.
+Undid an interrupted change. Restart TikTok to apply.	Änderung zurückgenommen. TikTok neu starten.
 Refresh values	Werte aktualisieren
 Region	Region
 Country filters	Länderfilter
@@ -919,10 +918,10 @@ Required	Erforderlich
 Researched	Recherchiert
 Researched values	Recherchierte Werte
 Reset	Zurücksetzen
-Reset %1$d gates of %2$d. Restart TikTok to apply this.	%1$d von %2$d Schaltern zurückgesetzt. TikTok neu starten, damit das gilt.
-Reset %1$d gates. Restart TikTok to apply this.	%1$d Schalter zurückgesetzt. TikTok neu starten, damit das gilt.
-Reset 1 gate of %2$d. Restart TikTok to apply this.	1 von %2$d Schaltern zurückgesetzt. TikTok neu starten, damit das gilt.
-Reset 1 gate. Restart TikTok to apply this.	1 Schalter zurückgesetzt. TikTok neu starten, damit das gilt.
+Reset %1$d of %2$d gates. Restart TikTok to apply.	%1$d/%2$d auf Standard. TikTok neu starten.
+Reset %1$d gates. Restart TikTok to apply.	%1$d Schalter auf Standard. TikTok neu starten.
+Reset 1 of %2$d gates. Restart TikTok to apply.	1 von %2$d auf Standard. TikTok neu starten.
+Reset 1 gate. Restart TikTok to apply.	1 Schalter auf Standard. TikTok neu starten.
 Reset override	Überschreibung zurücksetzen
 Reset position	Position zurücksetzen
 Reset settings	Einstellungen zurücksetzen
@@ -939,7 +938,7 @@ Undo didn't finish. Some settings may still be changed. Try Undo again.	Rückgä
 Undo didn't finish. Some settings may still be changed.	Rückgängig wurde nicht abgeschlossen. Einige Einstellungen können noch geändert sein.
 Restore failed. Some settings may still be changed. Use Undo to put them back.	Wiederherstellung fehlgeschlagen. Einige Einstellungen können noch geändert sein. Nutze „Rückgängig“, um sie zurückzuholen.
 Restore settings	Einstellungen wiederherstellen
-Lab settings put back. Restart TikTok to apply this.	Lab-Einstellungen zurückgeholt. TikTok neu starten, damit das gilt.
+Lab settings put back. Restart TikTok to apply.	Lab-Einstellungen wieder da. TikTok neu starten.
 Restoring your settings	Einstellungen werden wiederhergestellt
 Resume videos after scrolling	Videos nach dem Scrollen fortsetzen
 Retry	Erneut versuchen
@@ -1006,7 +1005,7 @@ Seen videos	Bereits gesehene Videos
 Seen videos cleared. You can undo until TikTok closes.	Gesehene Videos gelöscht. Bis TikTok geschlossen wird, kannst du dies rückgängig machen.
 Seen videos put back	Gesehene Videos zurückgeholt
 Select	Auswählen
-Select at least one field.	Wähle mindestens ein Feld aus.
+Select at least one field	Wähle mindestens ein Feld aus
 Select every tab	Jeden Tab auswählen
 Selected	Ausgewählt
 Send links to another app	Links an eine andere App senden
@@ -1161,7 +1160,7 @@ That settings change didn't go through. Nothing was altered.	Diese Änderung hat
 That sticker is in a format Hushfeed can't read	Hushfeed kann das Format dieses Stickers nicht lesen
 The Lab can't check this. TikTok gets it exactly as typed.	Das Lab kann das nicht prüfen. TikTok bekommt es genau so, wie du es tippst.
 The Lab couldn't open. Go back and open it again.	Lab nicht geöffnet. Geh zurück und öffne es neu.
-The Lab keeps at most %1$s rules. This change would make %2$s, so nothing was changed.	Das Lab speichert höchstens %1$s Regeln. Diese Änderung würde %2$s ergeben, daher wurde nichts geändert.
+%2$s rules, but the limit is %1$s. Nothing changed.	%2$s Regeln, aber das Limit ist %1$s. Nichts geändert.
 The catalog says this key is %1$s and this override is %2$s. Reset the override and make a new one.	Der Katalog nennt für diesen Schlüssel %1$s, diese Überschreibung ist %2$s. Setze die Überschreibung zurück und leg eine neue an.
 The diagnostic report couldn't be saved yet. Try again in a moment.	Der Diagnosebericht ließ sich noch nicht speichern. Versuche es gleich noch einmal.
 The diagnostic report couldn't be saved. Try again.	Der Diagnosebericht ließ sich nicht speichern. Versuch es noch einmal.
@@ -1184,7 +1183,7 @@ The override changes no fields. Edit the field values, or reset the override.	Di
 The override couldn't be applied: %1$s. Edit the field values, or reset the override.	Die Überschreibung konnte nicht angewendet werden: %1$s. Bearbeite die Feldwerte oder setze die Überschreibung zurück.
 The override doesn't say what list to return. Edit the field values, or reset the override.	Die Überschreibung gibt nicht an, welche Liste zurückgegeben werden soll. Bearbeite die Feldwerte oder setze die Überschreibung zurück.
 The profile picture couldn't be saved. Try again.	Das Profilbild konnte nicht gespeichert werden.
-The record of an interrupted settings change couldn't be read, so it was set aside. Check your settings.	Die Aufzeichnung einer unterbrochenen Einstellungsänderung ließ sich nicht lesen und wurde beiseitegelegt. Prüfe deine Einstellungen.
+Couldn't read an interrupted change. Check your settings.	Änderung nicht lesbar. Prüfe die Einstellungen.
 The report couldn't be saved. Try again.	Bericht nicht gespeichert. Versuch es erneut.
 Couldn't read that file. Try again.	Datei nicht gelesen. Versuch es erneut.
 The setting couldn't finish updating. Its saved value is shown.	Die Einstellung konnte nicht vollständig aktualisiert werden. Der gespeicherte Wert wird angezeigt.
@@ -1199,13 +1198,13 @@ There is no Lab change to undo.	Es gibt keine Lab-Änderung, die sich rückgäng
 There is no diagnostic data to clear	Es gibt keine Diagnosedaten zum Löschen
 There is no diagnostic data to put back	Es gibt keine Diagnosedaten zum Wiederherstellen
 There was nothing to put back	Es gab nichts zurückzuholen
-These loaded values are for a different TikTok version.	Diese geladenen Werte gehören zu einer anderen TikTok-Version.
+These loaded values are for a different TikTok version	Diese Werte gehören zu einer anderen TikTok-Version
 This catalog entry is no longer available. Refresh the Lab and try again.	Dieser Katalogeintrag ist nicht mehr verfügbar. Das Labor aktualisieren und es erneut versuchen.
 This change couldn't be saved. Try again.	Änderung nicht gespeichert. Versuch es erneut.
 This configuration has no fields that can be copied and changed safely on this build.	Diese Konfiguration hat keine Felder, die sich in diesem Build gefahrlos kopieren und ändern lassen.
-This file has no loaded values in it.	Diese Datei enthält keine geladenen Werte.
-This file isn't a loaded-values export from the Feature Gate Lab.	Diese Datei ist kein Export geladener Werte aus dem Feature Gate Lab.
-This gate type isn't supported.	Dieser Gate-Typ wird nicht unterstützt.
+This file has no loaded values in it	Diese Datei enthält keine geladenen Werte
+This file isn't a loaded-values export	Diese Datei ist kein Export geladener Werte
+This gate type isn't supported	Dieser Gate-Typ wird nicht unterstützt
 This line opens a rule and doesn't finish it: %1$s. Write two phrases as "a" & "b" for both, or "a" !& "b" for the first without the second.	Diese Zeile beginnt eine Regel und beendet sie nicht: %1$s. Schreib zwei Wendungen als "a" & "b" für beide oder als "a" !& "b" für die erste ohne die zweite.
 This phone has no file picker, so there's no way to choose a file here	Dieses Telefon hat keine Dateiauswahl, hier lässt sich also keine Datei wählen
 No folder picker here. Type the folder in the row.	Keine Ordnerauswahl. Gib den Ordner in der Zeile ein.
@@ -1213,7 +1212,7 @@ This profile picture isn't available to save	Dieses Profilbild lässt sich nicht
 No full file at this quality, so TikTok saves it	Keine ganze Datei in dieser Qualität. TikTok speichert
 This setting's value can't be copied on this build, so it can't be overridden. Reset the override.	Der Wert dieser Einstellung lässt sich in diesem Build nicht kopieren und deshalb nicht überschreiben. Setze die Überschreibung zurück.
 This story isn't available to save	Diese Story lässt sich nicht speichern
-This value is required.	Dieser Wert ist erforderlich.
+This value is required	Dieser Wert ist erforderlich
 This video has no link to copy	Dieses Video hat keinen Link zum Kopieren
 No link to send, so TikTok saves it instead	Kein Link zum Senden, also speichert TikTok selbst
 This video has no original sound to save	Dieses Video hat keinen Originalsound zum Speichern
@@ -1266,10 +1265,10 @@ Try again, or go back to TikTok.	Versuche es erneut oder kehre zu TikTok zurück
 Turn on %1$s first.	Zuerst %1$s einschalten.
 Put %1$s in %2$s first.	Trag zuerst %1$s in %2$s ein.
 Turn on overrides	Überschreibungen einschalten
-Turned off %1$d gates of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.	%1$d von %2$d Schaltern ausgeschaltet. Die übrigen nehmen kein true oder false. TikTok neu starten, damit das gilt.
-Turned off %1$d gates. Restart TikTok to apply this.	%1$d Schalter ausgeschaltet. TikTok neu starten, damit das gilt.
-Turned off 1 gate of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.	1 von %2$d Schaltern ausgeschaltet. Die übrigen nehmen kein true oder false. TikTok neu starten, damit das gilt.
-Turned off 1 gate. Restart TikTok to apply this.	1 Schalter ausgeschaltet. TikTok neu starten, damit das gilt.
+Turned off %1$d of %2$d. Restart TikTok to apply.	%1$d von %2$d deaktiviert. TikTok neu starten.
+Turned off %1$d gates. Restart TikTok to apply.	%1$d Schalter deaktiviert. TikTok neu starten.
+Turned off 1 of %2$d gates. Restart TikTok to apply.	1 von %2$d deaktiviert. TikTok neu starten.
+Turned off 1 gate. Restart TikTok to apply.	1 Schalter deaktiviert. TikTok neu starten.
 Two letters, like us, gb or jp.	Zwei Buchstaben, etwa us, gb oder jp.
 Type	Typ
 Start typing	Tippe zum Suchen
@@ -1387,7 +1386,7 @@ this creator	dieser Creator
 %1$s, %2$s or %3$s	%1$s, %2$s oder %3$s
 TikTok refused the follow with code %1$s	TikTok hat das Folgen mit Code %1$s abgelehnt
 Follow refused, code %1$s. Maybe a hidden CAPTCHA.	Folgen abgelehnt (%1$s). Evtl. CAPTCHA ausgeblendet.
-Follow refused: %1$s Maybe a hidden CAPTCHA.	Folgen abgelehnt: %1$s Evtl. CAPTCHA ausgeblendet.
+Follow refused (%1$s). Maybe a hidden CAPTCHA.	Folgen abgelehnt (%1$s). Evtl. CAPTCHA ausgeblendet.
 Hushfeed is paused	Hushfeed ist pausiert
 Hushfeed's switches are paused. Your settings stay saved. Changes made when you patched, like the app's name or icon, stay.	Hushfeeds Schalter sind pausiert. Deine Einstellungen bleiben gespeichert. Was du beim Patchen geändert hast, etwa Name oder Symbol der App, bleibt.
 TikTok closed three times within a minute of starting, so Hushfeed paused itself. Your settings stay as they are.	TikTok wurde dreimal innerhalb einer Minute nach dem Start beendet, deshalb hat sich Hushfeed selbst pausiert. Deine Einstellungen bleiben, wie sie sind.
@@ -1467,8 +1466,8 @@ The presets couldn't load. Open the Lab again.	Vorlagen nicht geladen. Öffne da
 Apply enables these overrides. Undo last Lab change puts your previous rules back until you change anything else in the Lab.	Anwenden aktiviert diese Überschreibungen. „Letzte Lab-Änderung rückgängig machen“ holt deine bisherigen Regeln zurück, bis du im Lab etwas anderes änderst.
 Apply saves these overrides. Turn on overrides in the Lab to use them. Turning them on is a Lab change too, so after that Undo turns them off rather than putting your previous rules back.	Anwenden speichert diese Überschreibungen. Aktiviere Überschreibungen im Lab, um sie zu nutzen. Das Einschalten ist auch eine Lab-Änderung, danach schaltet „Rückgängig“ sie also wieder aus, statt deine bisherigen Regeln zurückzuholen.
 This preset isn't available for your installed TikTok version.	Diese Vorlage ist für deine installierte TikTok-Version nicht verfügbar.
-Preset applied. Restart TikTok to use it.	Vorlage angewendet. Starte TikTok neu, um sie zu nutzen.
-Preset saved. Turn on overrides in the Lab to use it.	Vorlage gespeichert. Aktiviere Überschreibungen im Lab, um sie zu nutzen.
+Preset applied. Restart TikTok to use it.	Vorlage angewendet. TikTok neu starten.
+Preset saved. Turn on overrides to use it.	Vorlage gespeichert. Überschreiben einschalten.
 Preset doesn't match the gates. Nothing changed.	Vorlage passt nicht zu den Gates. Nichts geändert.
 About overrides	Über Überschreibungen
 Use {creator}, {date} and {video_id} to build the name. Start with {creator}/ to put each creator in a folder. The file ending is added for you.	Baue den Namen aus {creator}, {date} und {video_id}. Beginne mit {creator}/, um jeden Creator in einen eigenen Ordner zu legen. Die Dateiendung wird automatisch angehängt.
@@ -1603,7 +1602,7 @@ Stop the notifications TikTok sends about popular videos it picked for you. Mess
 Buttons on videos	Schaltflächen auf Videos
 
 Seen videos put back: %1$s of %2$s	Gesehene Videos zurückgeholt: %1$s von %2$s
-No cleared videos fit the current history limits.	Keine gelöschten Videos passen in die aktuellen Verlaufslimits.
+No cleared videos fit the current history limits	Kein gelöschtes Video passt ins Verlaufslimit
 Putting seen videos back	Gesehene Videos werden zurückgeholt
 # context: a line above the What's new release notes, which come from the English changelog and are not translated.
 These notes are in English.	Diese Hinweise sind auf Englisch.
@@ -2301,7 +2300,7 @@ Recording this LIVE's screen from now	Der Bildschirm dieses LIVE wird ab jetzt a
 Recording this LIVE's screen from now, without sound	LIVE-Bildschirm wird ab jetzt ohne Ton aufgenommen
 Allow photo comments	Fotokommentare erlauben
 Show the gallery tab in the comment box, so you can add a photo to a comment like on TikTok. PineDrama turns it off for everyone. TikTok's server still decides whether your account can post one.	Zeigt den Galerie-Tab im Kommentarfeld, damit du wie bei TikTok ein Foto an einen Kommentar anhängen kannst. PineDrama schaltet ihn für alle aus. Ob dein Konto eins posten darf, entscheidet weiterhin der TikTok-Server.
-This screen recording has no sound.	Diese Bildschirmaufnahme hat keinen Ton.
+This screen recording has no sound	Diese Bildschirmaufnahme hat keinen Ton
 Export recording files	Aufnahmedateien exportieren
 Delete recording files	Aufnahmedateien löschen
 The publication state of these older recording files is unknown. Export a copy or delete the retained files.	Der Veröffentlichungsstatus dieser älteren Aufnahmedateien ist unbekannt. Exportiere eine Kopie oder lösche die aufbewahrten Dateien.

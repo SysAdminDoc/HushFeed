@@ -185,7 +185,7 @@ public final class L10n {
 
     /**
      * As above, with the values both forms are formatted from. Both keys number their
-     * placeholders the same way ("Reset 1 gate of %2$d." beside "Reset %1$d gates of %2$d."),
+     * placeholders the same way ("Reset 1 of %2$d gates." beside "Reset %1$d of %2$d gates."),
      * so the one form simply leaves the count unused.
      */
     public static String quantity(Context context, long count, String one, String other, Object... args) {

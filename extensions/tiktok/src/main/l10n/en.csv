@@ -52,7 +52,7 @@ source,target
 %1$s minute,%1$s minute
 %1$s minutes,%1$s minutes
 %1$s more saves waiting,%1$s more saves waiting
-%1$s needs fixing. %2$s,%1$s needs fixing. %2$s
+%1$s needs fixing. %2$s.,%1$s needs fixing. %2$s.
 %1$s of %2$s,%1$s of %2$s
 %1$s older seen video was dropped to keep the newest %2$s.,%1$s older seen video was dropped to keep the newest %2$s.
 %1$s older seen videos were dropped to keep the newest %2$s.,%1$s older seen videos were dropped to keep the newest %2$s.
@@ -109,6 +109,7 @@ source,target
 %1$s: might not have finished,%1$s: might not have finished
 %1$s: one of %3$s files didn't finish,%1$s: one of %3$s files didn't finish
 %1$s: one of %3$s files might not have finished,%1$s: one of %3$s files might not have finished
+"%2$s rules, but the limit is %1$s. Nothing changed.","%2$s rules, but the limit is %1$s. Nothing changed."
 1 comment or reply loaded,1 comment or reply loaded
 1 field overridden,1 field overridden
 1 field will be overridden when requested,1 field will be overridden when requested
@@ -231,7 +232,6 @@ Amazon Appstore,Amazon Appstore
 An @username in a profile's bio opens that profile when you tap it. The rest of the bio still translates on a tap.,An @username in a profile's bio opens that profile when you tap it. The rest of the bio still translates on a tap.
 "An exception names one creator, so a pattern can't be one: %1$s","An exception names one creator, so a pattern can't be one: %1$s"
 "An exception takes a handle or id, not a display name: %1$s","An exception takes a handle or id, not a display name: %1$s"
-"An interrupted settings change couldn't be recovered, so its record was set aside. Check your settings or restore a backup.","An interrupted settings change couldn't be recovered, so its record was set aside. Check your settings or restore a backup."
 "An operator code is five or six digits, like 310260","An operator code is five or six digits, like 310260"
 An override changes the value TikTok reads from this gate. It doesn't change TikTok's saved copy or prove the named feature changed.,An override changes the value TikTok reads from this gate. It doesn't change TikTok's saved copy or prove the named feature changed.
 And %1$s more saves,And %1$s more saves
@@ -344,6 +344,7 @@ Capture the feed,Capture the feed
 Changes in Hushfeed %1$s,Changes in Hushfeed %1$s
 Changes to %1$s at %2$s,Changes to %1$s at %2$s
 Check for already-saved videos,Check for already-saved videos
+Check the brackets and quotes in this JSON,Check the brackets and quotes in this JSON
 Choose %1$d to %2$d videos. Values outside this range use the nearest valid limit. Restart TikTok to apply this.,Choose %1$d to %2$d videos. Values outside this range use the nearest valid limit. Restart TikTok to apply this.
 Choose a backup file. Your current settings are kept for Undo.,Choose a backup file. Your current settings are kept for Undo.
 Choose a preset to fill the SIM details.,Choose a preset to fill the SIM details.
@@ -392,7 +393,6 @@ Comments range,Comments range
 Compact,Compact
 Compact comment header,Compact comment header
 Compare gate reads with their previous values.,Compare gate reads with their previous values.
-Completed an interrupted settings change. Restart TikTok to apply this.,Completed an interrupted settings change. Restart TikTok to apply this.
 Config,Config
 Config (Settings Manager),Config (Settings Manager)
 Confirm before a quick repost,Confirm before a quick repost
@@ -439,9 +439,11 @@ Couldn't put the saved videos back. Try again.,Couldn't put the saved videos bac
 Couldn't read %1$s. Write days and hours like Mon-Fri 21:00-07:00.,Couldn't read %1$s. Write days and hours like Mon-Fri 21:00-07:00.
 Couldn't read TikTok's current values (%1$s). Refresh values from the menu to try again.,Couldn't read TikTok's current values (%1$s). Refresh values from the menu to try again.
 Couldn't read a field value. Check and try again.,Couldn't read a field value. Check and try again.
+Couldn't read an interrupted change. Check your settings.,Couldn't read an interrupted change. Check your settings.
 Couldn't read that file. Choose it again.,Couldn't read that file. Choose it again.
 Couldn't read that file. Try again.,Couldn't read that file. Try again.
 Couldn't read this list. Close it and try again.,Couldn't read this list. Close it and try again.
+Couldn't recover a change. Restore a backup if needed.,Couldn't recover a change. Restore a backup if needed.
 Couldn't remove the imported font. Try again.,Couldn't remove the imported font. Try again.
 Couldn't reset the settings. Try again.,Couldn't reset the settings. Try again.
 Couldn't reset this override. Try again.,Couldn't reset this override. Try again.
@@ -556,17 +558,17 @@ Empty,Empty
 "Empty the menu that opens when you press and hold TikTok's icon on the home screen. Turning this off asks TikTok to build them again. Tapping the icon still opens the app, and a shortcut you pinned yourself stays where you put it.","Empty the menu that opens when you press and hold TikTok's icon on the home screen. Turning this off asks TikTok to build them again. Tapping the icon still opens the app, and a shortcut you pinned yourself stays where you put it."
 Enable,Enable
 Enabled,Enabled
-Enter a JSON object or array.,Enter a JSON object or array.
+Enter a JSON object or array,Enter a JSON object or array
 Enter a creator handle or id,Enter a creator handle or id
-Enter a finite number.,Enter a finite number.
-Enter a number.,Enter a number.
+Enter a finite number,Enter a finite number
+Enter a number,Enter a number
 "Enter a server name or IP address, without http:// or a port number","Enter a server name or IP address, without http:// or a port number"
-Enter a valid structured value.,Enter a valid structured value.
+Enter a valid structured value,Enter a valid structured value
 Enter a valid two-letter country code,Enter a valid two-letter country code
+Enter a whole number,Enter a whole number
 "Enter a whole number, or one like 20K, 1.5M or 2B","Enter a whole number, or one like 20K, 1.5M or 2B"
-Enter a whole number.,Enter a whole number.
-"Enter an hour, like 6 or 06:00.","Enter an hour, like 6 or 06:00."
-Enter true or false.,Enter true or false.
+"Enter an hour, like 6 or 06:00","Enter an hour, like 6 or 06:00"
+Enter true or false,Enter true or false
 Enter up to %1$d comma-separated speeds from %2$s to %3$s,Enter up to %1$d comma-separated speeds from %2$s to %3$s
 Enter who to message below to start.,Enter who to message below to start.
 Entry %1$d has a field with the wrong data type.,Entry %1$d has a field with the wrong data type.
@@ -626,8 +628,8 @@ Floating bottom bar,Floating bottom bar
 Focus,Focus
 Fold the search into a button,Fold the search into a button
 Follow probe,Follow probe
+Follow refused (%1$s). Maybe a hidden CAPTCHA.,Follow refused (%1$s). Maybe a hidden CAPTCHA.
 "Follow refused, code %1$s. Maybe a hidden CAPTCHA.","Follow refused, code %1$s. Maybe a hidden CAPTCHA."
-Follow refused: %1$s Maybe a hidden CAPTCHA.,Follow refused: %1$s Maybe a hidden CAPTCHA.
 Followers,Followers
 Following,Following
 Follows you,Follows you
@@ -636,10 +638,10 @@ For You,For You
 "For You, Following and the other feed tabs stay behind a calm panel and won't swipe. Messages, profiles and search work as usual, a link to one video still opens that video, and the app opens on Inbox instead of the feed.","For You, Following and the other feed tabs stay behind a calm panel and won't swipe. Messages, profiles and search work as usual, a link to one video still opens that video, and the app opens on Inbox instead of the feed."
 "For accounts TikTok took translation away from. Brings back See translation under video descriptions and in captions, and the translation rows on the Language page in Settings and privacy. Restart TikTok to see it on videos.","For accounts TikTok took translation away from. Brings back See translation under video descriptions and in captions, and the translation rows on the Language page in Settings and privacy. Restart TikTok to see it on videos."
 For accounts TikTok took translation away from. Brings back See translation under video descriptions and in captions. Restart TikTok to see the change.,For accounts TikTok took translation away from. Brings back See translation under video descriptions and in captions. Restart TikTok to see the change.
-Forced %1$d gates of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.,Forced %1$d gates of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.
-Forced %1$d gates. Restart TikTok to apply this.,Forced %1$d gates. Restart TikTok to apply this.
-Forced 1 gate of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.,Forced 1 gate of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.
-Forced 1 gate. Restart TikTok to apply this.,Forced 1 gate. Restart TikTok to apply this.
+Forced %1$d gates. Restart TikTok to apply.,Forced %1$d gates. Restart TikTok to apply.
+Forced %1$d of %2$d gates. Restart TikTok to apply.,Forced %1$d of %2$d gates. Restart TikTok to apply.
+Forced 1 gate. Restart TikTok to apply.,Forced 1 gate. Restart TikTok to apply.
+Forced 1 of %2$d gates. Restart TikTok to apply.,Forced 1 of %2$d gates. Restart TikTok to apply.
 Forced result,Forced result
 Forget saved videos,Forget saved videos
 Forget seen videos after,Forget seen videos after
@@ -965,12 +967,13 @@ Keep the progress bar,Keep the progress bar
 Keep the screen's brightness in the camera,Keep the screen's brightness in the camera
 Keep the screen's refresh rate,Keep the screen's refresh rate
 "Keep the speed you chose for the next video. Off, each new video starts at 1x and a manual choice lasts for that video only.","Keep the speed you chose for the next video. Off, each new video starts at 1x and a manual choice lasts for that video only."
-Keep this string to %1$s characters or fewer.,Keep this string to %1$s characters or fewer.
-Keep this structured value to %1$s KB or less.,Keep this structured value to %1$s KB or less.
+Keep this string to %1$s characters or fewer,Keep this string to %1$s characters or fewer
+Keep this structured value to %1$s KB or less,Keep this structured value to %1$s KB or less
 Keep videos out of Watch history,Keep videos out of Watch history
 Keep watching in a small window,Keep watching in a small window
 "Keep what you search for out of the search history TikTok saves on this phone. Searches already there stay until you delete them, and TikTok's servers may still keep their own record.","Keep what you search for out of the search history TikTok saves on this phone. Searches already there stay until you delete them, and TikTok's servers may still keep their own record."
 "Keeps logging until you turn it off, even after a restart. TikTok can feel slower while it's on.","Keeps logging until you turn it off, even after a restart. TikTok can feel slower while it's on."
+Kept an interrupted change. Restart TikTok to apply.,Kept an interrupted change. Restart TikTok to apply.
 "Kept to %1$s, the nearest value this row allows","Kept to %1$s, the nearest value this row allows"
 Kinds of post,Kinds of post
 LIVE,LIVE
@@ -986,10 +989,10 @@ LIVE settings,LIVE settings
 LIVE share actions,LIVE share actions
 LIVE videos,LIVE videos
 LIVE viewers range,LIVE viewers range
-Lab data reset. Undo last Lab change is in the menu. Restart TikTok to apply this.,Lab data reset. Undo last Lab change is in the menu. Restart TikTok to apply this.
-"Lab data was over its rule limit, so it was cleared without an undo copy. Restart TikTok to apply this.","Lab data was over its rule limit, so it was cleared without an undo copy. Restart TikTok to apply this."
-Lab overrides reset. Undo last Lab change is in the menu. Restart TikTok to apply this.,Lab overrides reset. Undo last Lab change is in the menu. Restart TikTok to apply this.
-Lab settings put back. Restart TikTok to apply this.,Lab settings put back. Restart TikTok to apply this.
+Lab data reset with no undo. Restart TikTok to apply.,Lab data reset with no undo. Restart TikTok to apply.
+Lab data reset. Restart TikTok to apply.,Lab data reset. Restart TikTok to apply.
+Lab overrides reset. Restart TikTok to apply.,Lab overrides reset. Restart TikTok to apply.
+Lab settings put back. Restart TikTok to apply.,Lab settings put back. Restart TikTok to apply.
 Language,Language
 Larger (1.25x),Larger (1.25x)
 Last change put back. Restart TikTok to apply all changes.,Last change put back. Restart TikTok to apply all changes.
@@ -1140,7 +1143,7 @@ No app on this phone opens web links,No app on this phone opens web links
 No apps match this search,No apps match this search
 "No chat with @%1$s turned up on this account. Open your chat with them once, then try again.","No chat with @%1$s turned up on this account. Open your chat with them once, then try again."
 No clean copy yet. Saved the watermarked one to %1$s,No clean copy yet. Saved the watermarked one to %1$s
-No cleared videos fit the current history limits.,No cleared videos fit the current history limits.
+No cleared videos fit the current history limits,No cleared videos fit the current history limits
 No comments are loaded to export yet.,No comments are loaded to export yet.
 No creator to block on this video,No creator to block on this video
 No creator to hide on this video,No creator to hide on this video
@@ -1183,8 +1186,8 @@ No video selected. Open a video first.,No video selected. Open a video first.
 "Nobody was signed in to TikTok. Sign in, and it tries again at %1$s.","Nobody was signed in to TikTok. Sign in, and it tries again at %1$s."
 None of the photos could be saved. Try again.,None of the photos could be saved. Try again.
 None of the picked videos could be saved. Try again.,None of the picked videos could be saved. Try again.
-None of these gates had an override to reset.,None of these gates had an override to reset.
-None of these gates takes a true or false value.,None of these gates takes a true or false value.
+None of these gates had an override to reset,None of these gates had an override to reset
+None of these gates takes a true or false value,None of these gates takes a true or false value
 None recorded,None recorded
 Normal,Normal
 "Not a handle or id, so ignored: %1$s","Not a handle or id, so ignored: %1$s"
@@ -1203,8 +1206,7 @@ Nothing hidden.,Nothing hidden.
 Nothing is playing to seek,Nothing is playing to seek
 Nothing is playing to speed up,Nothing is playing to speed up
 Nothing is saving right now,Nothing is saving right now
-"Nothing new was imported. %1$d already matched, %2$d unavailable, %3$d rejected.","Nothing new was imported. %1$d already matched, %2$d unavailable, %3$d rejected."
-"Nothing new was imported. %1$d already matched, %2$d unavailable, %3$d rejected. First rejection: %4$s","Nothing new was imported. %1$d already matched, %2$d unavailable, %3$d rejected. First rejection: %4$s"
+Nothing new was imported,Nothing new was imported
 Nothing on this page changes what TikTok does until they are on.,Nothing on this page changes what TikTok does until they are on.
 "Nothing recorded. Start, then leave settings.","Nothing recorded. Start, then leave settings."
 Nothing to undo yet.,Nothing to undo yet.
@@ -1353,7 +1355,7 @@ Posting,Posting
 Prefer H.264 video,Prefer H.264 video
 Preset applied. Restart TikTok to use it.,Preset applied. Restart TikTok to use it.
 Preset doesn't match the gates. Nothing changed.,Preset doesn't match the gates. Nothing changed.
-Preset saved. Turn on overrides in the Lab to use it.,Preset saved. Turn on overrides in the Lab to use it.
+Preset saved. Turn on overrides to use it.,Preset saved. Turn on overrides to use it.
 Press and hold a comment to find Block this commenter in its menu. Their comments leave the list right away and an undo banner follows.,Press and hold a comment to find Block this commenter in its menu. Their comments leave the list right away and an undo banner follows.
 Press and hold a profile picture to save the full size original to your photo destination.,Press and hold a profile picture to save the full size original to your photo destination.
 "Press and hold a story to save it. Stories have no save button of their own, and holding one is how TikTok pauses it, so this takes that gesture over.","Press and hold a story to save it. Stories have no save button of their own, and holding one is how TikTok pauses it, so this takes that gesture over."
@@ -1423,7 +1425,6 @@ Recording this LIVE's screen from now,Recording this LIVE's screen from now
 "Recording this LIVE's screen from now, without sound","Recording this LIVE's screen from now, without sound"
 Recording what the feed filters keep and hide. Tap to stop and save it in %1$s.,Recording what the feed filters keep and hide. Tap to stop and save it in %1$s.
 "Recording. Use a feature, then come back to stop.","Recording. Use a feature, then come back to stop."
-Recovered an interrupted settings change. Restart TikTok to apply this.,Recovered an interrupted settings change. Restart TikTok to apply this.
 Recovered recording saved to %1$s,Recovered recording saved to %1$s
 Refresh values,Refresh values
 Refreshing TikTok's current values…,Refreshing TikTok's current values…
@@ -1453,10 +1454,10 @@ Required,Required
 Researched,Researched
 Researched values,Researched values
 Reset,Reset
-Reset %1$d gates of %2$d. Restart TikTok to apply this.,Reset %1$d gates of %2$d. Restart TikTok to apply this.
-Reset %1$d gates. Restart TikTok to apply this.,Reset %1$d gates. Restart TikTok to apply this.
-Reset 1 gate of %2$d. Restart TikTok to apply this.,Reset 1 gate of %2$d. Restart TikTok to apply this.
-Reset 1 gate. Restart TikTok to apply this.,Reset 1 gate. Restart TikTok to apply this.
+Reset %1$d gates. Restart TikTok to apply.,Reset %1$d gates. Restart TikTok to apply.
+Reset %1$d of %2$d gates. Restart TikTok to apply.,Reset %1$d of %2$d gates. Restart TikTok to apply.
+Reset 1 gate. Restart TikTok to apply.,Reset 1 gate. Restart TikTok to apply.
+Reset 1 of %2$d gates. Restart TikTok to apply.,Reset 1 of %2$d gates. Restart TikTok to apply.
 Reset didn't finish. Some settings may still be changed.,Reset didn't finish. Some settings may still be changed.
 Reset didn't finish. Some settings may still be changed. Use Undo to put them back.,Reset didn't finish. Some settings may still be changed. Use Undo to put them back.
 Reset override,Reset override
@@ -1624,7 +1625,7 @@ Seen videos cleared. You can undo until TikTok closes.,Seen videos cleared. You 
 Seen videos put back,Seen videos put back
 Seen videos put back: %1$s of %2$s,Seen videos put back: %1$s of %2$s
 Select,Select
-Select at least one field.,Select at least one field.
+Select at least one field,Select at least one field
 Select every tab,Select every tab
 Selected,Selected
 Semi-bold,Semi-bold
@@ -1928,7 +1929,6 @@ That is one video today,That is one video today
 That isn't a Hushfeed settings backup. Nothing was altered.,That isn't a Hushfeed settings backup. Nothing was altered.
 "That isn't a seen-history file saved by Hushfeed. For TikTok's own data export, use Import watch history.","That isn't a seen-history file saved by Hushfeed. For TikTok's own data export, use Import watch history."
 "That isn't an app name. Try something like com.example.downloader, or leave the box empty to keep saving in TikTok.","That isn't an app name. Try something like com.example.downloader, or leave the box empty to keep saving in TikTok."
-That isn't valid JSON. Check the brackets and quotes.,That isn't valid JSON. Check the brackets and quotes.
 That list has too many entries. Keep it to %1$s or fewer.,That list has too many entries. Keep it to %1$s or fewer.
 That list is too large. Keep it to %1$s KB or less.,That list is too large. Keep it to %1$s KB or less.
 That loosens the budget. It waits until %1$s.,That loosens the budget. It waits until %1$s.
@@ -1949,7 +1949,6 @@ The Bulletin board rows TikTok adds to the Inbox leave the list. Chats and the o
 The Following and For You names above the feed go away. Swiping between the feeds and the search button stay as they are.,The Following and For You names above the feed go away. Swiping between the feeds and the search button stay as they are.
 The Lab can't check this. TikTok gets it exactly as typed.,The Lab can't check this. TikTok gets it exactly as typed.
 The Lab couldn't open. Go back and open it again.,The Lab couldn't open. Go back and open it again.
-"The Lab keeps at most %1$s rules. This change would make %2$s, so nothing was changed.","The Lab keeps at most %1$s rules. This change would make %2$s, so nothing was changed."
 The Message requests row leaves the Inbox. Requests keep arriving and wait there until you turn this off.,The Message requests row leaves the Inbox. Requests keep arriving and wait there until you turn this off.
 The New followers row leaves the top of the Inbox. The accounts still follow you.,The New followers row leaves the top of the Inbox. The accounts still follow you.
 The Tako assistant's conversation leaves the Inbox list. The Tako bubble on the feed has its own switch under Feed tabs.,The Tako assistant's conversation leaves the Inbox list. The Tako bubble on the feed has its own switch under Feed tabs.
@@ -2000,7 +1999,6 @@ The profile picture couldn't be saved. Try again.,The profile picture couldn't b
 "The proxy's address, like 192.168.1.20 or proxy.example.com.","The proxy's address, like 192.168.1.20 or proxy.example.com."
 The publication state of these older recording files is unknown. Export a copy or delete the retained files.,The publication state of these older recording files is unknown. Export a copy or delete the retained files.
 The quality choice is still open,The quality choice is still open
-"The record of an interrupted settings change couldn't be read, so it was set aside. Check your settings.","The record of an interrupted settings change couldn't be read, so it was set aside. Check your settings."
 The recording couldn't be saved. Try again.,The recording couldn't be saved. Try again.
 The recovery record is damaged. Export a copy of the recording files or delete them.,The recovery record is damaged. Export a copy of the recording files or delete them.
 The report couldn't be saved. Try again.,The report couldn't be saved. Try again.
@@ -2032,15 +2030,15 @@ There was nothing to put back,There was nothing to put back
 There were no saved videos to forget,There were no saved videos to forget
 There's no video on screen to save a frame from,There's no video on screen to save a frame from
 These are posts saved by your signed-in account. Other Favorites categories aren't included.,These are posts saved by your signed-in account. Other Favorites categories aren't included.
-These loaded values are for a different TikTok version.,These loaded values are for a different TikTok version.
+These loaded values are for a different TikTok version,These loaded values are for a different TikTok version
 These notes are in English.,These notes are in English.
 This LIVE's stream can't be saved,This LIVE's stream can't be saved
 This catalog entry is no longer available. Refresh the Lab and try again.,This catalog entry is no longer available. Refresh the Lab and try again.
 This change couldn't be saved. Try again.,This change couldn't be saved. Try again.
 This configuration has no fields that can be copied and changed safely on this build.,This configuration has no fields that can be copied and changed safely on this build.
-This file has no loaded values in it.,This file has no loaded values in it.
-This file isn't a loaded-values export from the Feature Gate Lab.,This file isn't a loaded-values export from the Feature Gate Lab.
-This gate type isn't supported.,This gate type isn't supported.
+This file has no loaded values in it,This file has no loaded values in it
+This file isn't a loaded-values export,This file isn't a loaded-values export
+This gate type isn't supported,This gate type isn't supported
 "This key isn't in Hushfeed's list, so its type can't be checked. Reset the override.","This key isn't in Hushfeed's list, so its type can't be checked. Reset the override."
 "This key touches account safety. Forcing it can change login, region, payment or security checks.","This key touches account safety. Forcing it can change login, region, payment or security checks."
 "This line opens a rule and doesn't finish it: %1$s. Write two phrases as ""a"" & ""b"" for both, or ""a"" !& ""b"" for the first without the second.","This line opens a rule and doesn't finish it: %1$s. Write two phrases as ""a"" & ""b"" for both, or ""a"" !& ""b"" for the first without the second."
@@ -2050,11 +2048,11 @@ This original sound isn't on YouTube Music,This original sound isn't on YouTube 
 "This phone has no file picker, so there's no way to choose a file here","This phone has no file picker, so there's no way to choose a file here"
 This preset isn't available for your installed TikTok version.,This preset isn't available for your installed TikTok version.
 This profile picture isn't available to save,This profile picture isn't available to save
-This screen recording has no sound.,This screen recording has no sound.
+This screen recording has no sound,This screen recording has no sound
 This setting isn't available. Search for another setting.,This setting isn't available. Search for another setting.
 "This setting's value can't be copied on this build, so it can't be overridden. Reset the override.","This setting's value can't be copied on this build, so it can't be overridden. Reset the override."
 This story isn't available to save,This story isn't available to save
-This value is required.,This value is required.
+This value is required,This value is required
 This video has no cover to save,This video has no cover to save
 This video has no link to copy,This video has no link to copy
 This video has no original sound to save,This video has no original sound to save
@@ -2155,11 +2153,11 @@ Turn on Keep a streak going first,Turn on Keep a streak going first
 Turn on Thoughts,Turn on Thoughts
 Turn on overrides,Turn on overrides
 "Turn the music disc at the bottom of the right column while a video plays, the way TikTok used to.","Turn the music disc at the bottom of the right column while a video plays, the way TikTok used to."
-Turned off %1$d gates of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.,Turned off %1$d gates of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.
-Turned off %1$d gates. Restart TikTok to apply this.,Turned off %1$d gates. Restart TikTok to apply this.
+Turned off %1$d gates. Restart TikTok to apply.,Turned off %1$d gates. Restart TikTok to apply.
+Turned off %1$d of %2$d. Restart TikTok to apply.,Turned off %1$d of %2$d. Restart TikTok to apply.
 Turned off %1$d overrides. Check them for TikTok %2$s.,Turned off %1$d overrides. Check them for TikTok %2$s.
-Turned off 1 gate of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.,Turned off 1 gate of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.
-Turned off 1 gate. Restart TikTok to apply this.,Turned off 1 gate. Restart TikTok to apply this.
+Turned off 1 gate. Restart TikTok to apply.,Turned off 1 gate. Restart TikTok to apply.
+Turned off 1 of %2$d gates. Restart TikTok to apply.,Turned off 1 of %2$d gates. Restart TikTok to apply.
 Turned off 1 override. Check it for TikTok %2$s.,Turned off 1 override. Check it for TikTok %2$s.
 "Turns off TikTok's notification service, so nothing it sends reaches your notification shade and it can't wake your phone. You won't hear about new messages until you open TikTok. Notifications hidden while this is on don't come back. Ongoing ones like media controls stay.","Turns off TikTok's notification service, so nothing it sends reaches your notification shade and it can't wake your phone. You won't hear about new messages until you open TikTok. Notifications hidden while this is on don't come back. Ongoing ones like media controls stay."
 Turns off at %1$s,Turns off at %1$s
@@ -2176,6 +2174,7 @@ Unblock this commenter,Unblock this commenter
 Unblocked %1$s,Unblocked %1$s
 "Under the @username on a profile, say whether it follows you or doesn't follow you back. Follower and following lists mark the accounts you follow that don't follow you back.","Under the @username on a profile, say whether it follows you or doesn't follow you back. Follower and following lists mark the accounts you follow that don't follow you back."
 "Under the @username on someone else's profile, show the month and year the account was made. It's read from the account's ID, so very old accounts show nothing.","Under the @username on someone else's profile, show the month and year the account was made. It's read from the account's ID, so very old accounts show nothing."
+Undid an interrupted change. Restart TikTok to apply.,Undid an interrupted change. Restart TikTok to apply.
 Undo,Undo
 Undo clearing seen videos,Undo clearing seen videos
 Undo didn't finish. Some settings may still be changed.,Undo didn't finish. Some settings may still be changed.

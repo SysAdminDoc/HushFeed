@@ -196,7 +196,7 @@ public class RetainedStopReasonTest {
             retry();
             assertMessage(
                     LiveRecordingSaver.partialText(end, LiveRecordingSaver.folder())
-                            + "\nThis screen recording has no sound.");
+                            + "\nThis screen recording has no sound");
             assertTrue(store.ids().isEmpty());
         }
     }
@@ -211,7 +211,7 @@ public class RetainedStopReasonTest {
         assertMessage(
                 "Storage almost full. Recording saved to "
                         + LiveRecordingSaver.folder()
-                        + "\nThis screen recording has no sound.");
+                        + "\nThis screen recording has no sound");
     }
 
     @Test
@@ -232,7 +232,7 @@ public class RetainedStopReasonTest {
                             ? "Recording stopped early. Saved to "
                             : "LIVE recording saved to ";
             assertMessage(
-                    text + LiveRecordingSaver.folder() + "\nThis screen recording has no sound.");
+                    text + LiveRecordingSaver.folder() + "\nThis screen recording has no sound");
         }
     }
 
@@ -247,7 +247,7 @@ public class RetainedStopReasonTest {
             assertMessage(
                     "Recovered recording saved to "
                             + LiveRecordingSaver.folder()
-                            + "\nThis screen recording has no sound.");
+                            + "\nThis screen recording has no sound");
         }
     }
 
@@ -267,7 +267,7 @@ public class RetainedStopReasonTest {
         assertMessage(
                 "TikTok closed. What was recorded is saved to "
                         + LiveRecordingSaver.folder()
-                        + "\nThis screen recording has no sound.");
+                        + "\nThis screen recording has no sound");
     }
 
     @Test
@@ -324,7 +324,7 @@ public class RetainedStopReasonTest {
         assertMessage(
                 LiveRecordingSaver.partialText(
                                 LiveRecorder.End.DISCONNECTED, LiveRecordingSaver.folder())
-                        + "\nThis screen recording has no sound.");
+                        + "\nThis screen recording has no sound");
         assertNotNull(find(root(), "Retry"));
         assertEquals(1, RecordingRetentionTest.Provider.rows.size());
         assertTrue(obstruction.delete());
@@ -353,7 +353,7 @@ public class RetainedStopReasonTest {
         assertMessage(
                 LiveRecordingSaver.partialText(
                                 LiveRecorder.End.STORAGE, LiveRecordingSaver.folder())
-                        + "\nThis screen recording has no sound.");
+                        + "\nThis screen recording has no sound");
         assertNotNull(find(root(), "Retry"));
         assertTrue(obstruction.delete());
     }

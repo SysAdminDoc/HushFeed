@@ -244,9 +244,10 @@ class ReleaseTextTest(unittest.TestCase):
                 ("de", ("* **TikTok:** Hinweise (#5).", "* **TikTok:** Подсказки."), "de bullet 2: letter 'П'")):
             self.translate_all()
             self.translate(lang, *bad)
-            with self.subTest(lang=lang, bad=bad), self.assertRaises(SystemExit) as caught:
-                self.run_command(release_text.check_translations, version=None, unreleased=True)
-            self.assertIn(why, str(caught.exception))
+            with self.subTest(lang=lang, bad=bad):
+                with self.assertRaises(SystemExit) as caught:
+                    self.run_command(release_text.check_translations, version=None, unreleased=True)
+                self.assertIn(why, str(caught.exception))
 
     def test_github_notes_carry_every_bullet_without_the_scope_tag(self):
         self.run_command(release_text.cut, version="0.2.0", date="2026-10-09")

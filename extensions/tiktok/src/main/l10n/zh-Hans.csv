@@ -2318,3 +2318,17 @@ The last one is still waiting for Wi-Fi,上一个还在等待 Wi-Fi
 Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.,等待 Wi-Fi 30 分钟后已停止。连上 Wi-Fi 后再保存一次.
 Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.,已保存 %1$s 个，共 %2$s 个。其余的在你离开 Wi-Fi 时停止了。请在 Wi-Fi 下再保存一次.
 The save stopped when you left Wi-Fi. Save it again on Wi-Fi.,你离开 Wi-Fi 时保存停止了。请在 Wi-Fi 下再保存一次.
+Keep unsent messages,保留已撤回的消息
+"When someone unsends a message, it stays in your chat instead of disappearing. Messages you unsend yourself are still removed.",有人撤回消息时，该消息会保留在你的聊天中，而不是消失。你自己撤回的消息仍会被删除.
+Unsent messages,已撤回的消息
+Mark kept messages,标记保留的消息
+"Adds (unsent) after the text of a message that was kept, so you can tell it apart from the rest.",在保留的消息文字后面加上（已撤回），方便你把它和其他消息区分开.
+(unsent),(已撤回)
+Clear kept messages,清除保留的消息
+Removes every message that was kept. Each chat shows TikTok's usual notice that a message was unsent.,删除所有保留的消息。每个聊天都会显示 TikTok 惯常的“消息已撤回”提示.
+Kept so far: %1$d,目前已保留：%1$d
+Nothing has been kept,没有保留任何消息
+"TikTok isn't ready yet. Open your Inbox, then try again.",TikTok 尚未准备好。请先打开收件箱，然后重试.
+Removed: %1$d,已删除：%1$d
+"Removed: %1$d. The other %2$d are still there. Open your Inbox, then try again.",已删除：%1$d。其余 %2$d 条仍在。请先打开收件箱，然后重试.
+Removing the kept messages,正在删除保留的消息

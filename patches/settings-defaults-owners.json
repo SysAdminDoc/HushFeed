@@ -526,6 +526,10 @@
       "NOT_INTERESTED_BUTTON",
       "NOT_INTERESTED_BUTTON_POSITION"
     ],
+    "Keep unsent messages": [
+      "KEEP_UNSENT_MESSAGES",
+      "MARK_KEPT_UNSENT_MESSAGES"
+    ],
     "Notification controls": [
       "HIDE_FOLLOWER_NOTIFICATIONS",
       "TURN_OFF_PUSH_NOTIFICATIONS",

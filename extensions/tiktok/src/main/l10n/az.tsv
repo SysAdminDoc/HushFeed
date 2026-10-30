@@ -2346,3 +2346,17 @@ The last one is still waiting for Wi-Fi	Sonuncu hələ Wi-Fi gözləyir
 Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.	30 dəqiqədən sonra Wi-Fi gözləməsi dayandırıldı. Wi-Fi-a qoşulanda yenidən saxlayın.
 Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.	%2$s fayldan %1$s saxlanıldı. Qalanları Wi-Fi-dan çıxanda dayandı. Wi-Fi ilə yenidən saxlayın.
 The save stopped when you left Wi-Fi. Save it again on Wi-Fi.	Wi-Fi-dan çıxanda saxlama dayandı. Wi-Fi ilə yenidən saxlayın.
+Keep unsent messages	Geri götürülən mesajları saxlayın
+When someone unsends a message, it stays in your chat instead of disappearing. Messages you unsend yourself are still removed.	Kimsə mesajı geri götürəndə, o yox olmaq əvəzinə söhbətinizdə qalır. Özünüzün geri götürdüyünüz mesajlar yenə də silinir.
+Unsent messages	Geri götürülən mesajlar
+Mark kept messages	Saxlanan mesajları işarələ
+Adds (unsent) after the text of a message that was kept, so you can tell it apart from the rest.	Saxlanan mesajın mətninin sonuna (geri götürülüb) əlavə edir ki, onu digərlərindən ayıra biləsiniz.
+(unsent)	(geri götürülüb)
+Clear kept messages	Saxlanan mesajları təmizlə
+Removes every message that was kept. Each chat shows TikTok's usual notice that a message was unsent.	Saxlanan bütün mesajları silir. Hər söhbətdə TikTok-un mesajın geri götürüldüyünü bildirən adi bildirişi görünür.
+Kept so far: %1$d	İndiyə qədər saxlanan: %1$d
+Nothing has been kept	Heç nə saxlanmayıb
+TikTok isn't ready yet. Open your Inbox, then try again.	TikTok hələ hazır deyil. Gələnlər qutusunu açın, sonra yenidən cəhd edin.
+Removed: %1$d	Silindi: %1$d
+Removed: %1$d. The other %2$d are still there. Open your Inbox, then try again.	Silindi: %1$d. Qalan %2$d hələ də yerindədir. Gələnlər qutusunu açın, sonra yenidən cəhd edin.
+Removing the kept messages	Saxlanan mesajlar silinir

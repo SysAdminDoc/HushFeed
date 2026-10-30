@@ -2349,3 +2349,17 @@ The last one is still waiting for Wi-Fi	Das letzte wartet noch auf WLAN
 Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.	Nach 30 Minuten wird nicht mehr auf WLAN gewartet. Speichere es erneut, wenn du im WLAN bist.
 Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.	%1$s von %2$s gespeichert. Der Rest stoppte, als du das WLAN verlassen hast. Speichere erneut im WLAN.
 The save stopped when you left Wi-Fi. Save it again on Wi-Fi.	Das Speichern stoppte, als du das WLAN verlassen hast. Speichere es erneut im WLAN.
+Keep unsent messages	Zurückgezogene Nachrichten behalten
+When someone unsends a message, it stays in your chat instead of disappearing. Messages you unsend yourself are still removed.	Wenn jemand eine Nachricht zurückzieht, bleibt sie in deinem Chat, statt zu verschwinden. Nachrichten, die du selbst zurückziehst, werden weiterhin entfernt.
+Unsent messages	Zurückgezogene Nachrichten
+Mark kept messages	Behaltene Nachrichten markieren
+Adds (unsent) after the text of a message that was kept, so you can tell it apart from the rest.	Fügt hinter dem Text einer behaltenen Nachricht (zurückgezogen) an, damit du sie von den übrigen unterscheiden kannst.
+(unsent)	(zurückgezogen)
+Clear kept messages	Behaltene Nachrichten entfernen
+Removes every message that was kept. Each chat shows TikTok's usual notice that a message was unsent.	Entfernt alle behaltenen Nachrichten. In jedem Chat erscheint TikToks übliche Meldung, dass eine Nachricht zurückgezogen wurde.
+Kept so far: %1$d	Bisher behalten: %1$d
+Nothing has been kept	Es wurde nichts behalten
+TikTok isn't ready yet. Open your Inbox, then try again.	TikTok ist noch nicht bereit. Öffne deinen Posteingang und versuche es dann erneut.
+Removed: %1$d	Entfernt: %1$d
+Removed: %1$d. The other %2$d are still there. Open your Inbox, then try again.	Entfernt: %1$d. Die übrigen %2$d sind noch da. Öffne deinen Posteingang und versuche es dann erneut.
+Removing the kept messages	Behaltene Nachrichten werden entfernt

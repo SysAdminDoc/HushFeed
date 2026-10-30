@@ -110,6 +110,7 @@ source,target
 %1$s: might not have finished,%1$s: might not have finished
 %1$s: one of %3$s files didn't finish,%1$s: one of %3$s files didn't finish
 %1$s: one of %3$s files might not have finished,%1$s: one of %3$s files might not have finished
+(unsent),(unsent)
 1 comment or reply loaded,1 comment or reply loaded
 1 field overridden,1 field overridden
 1 field will be overridden when requested,1 field will be overridden when requested
@@ -189,6 +190,7 @@ Added 1 seen video,Added 1 seen video
 Added 1 seen video.,Added 1 seen video.
 Added one older seen video to this account,Added one older seen video to this account
 Added to this account.,Added to this account.
+"Adds (unsent) after the text of a message that was kept, so you can tell it apart from the rest.","Adds (unsent) after the text of a message that was kept, so you can tell it apart from the rest."
 "Adds Export CSV and Export JSON buttons under the search box, so Search within comments must be on. They save the comments and replies loaded so far to a file you pick. Open the reply threads you want first.","Adds Export CSV and Export JSON buttons under the search box, so Search within comments must be on. They save the comments and replies loaded so far to a file you pick. Open the reply threads you want first."
 "Adds Save cover next to Download when you share a video, so you save the cover only when you want it. While this is on, Download saves just the video, even with Save the cover as well on.","Adds Save cover next to Download when you share a video, so you save the cover only when you want it. While this is on, Download saves just the video, even with Save the cover as well on."
 "Adds TikTok's translate button next to the comment count. One tap translates every comment, and another shows the originals again.","Adds TikTok's translate button next to the comment count. One tap translates every comment, and another shows the originals again."
@@ -362,6 +364,7 @@ Clear display,Clear display
 Clear display delay,Clear display delay
 Clear display isn't available for this video,Clear display isn't available for this video
 "Clear display you turn on stays on as you swipe to the next video. Off, each new video starts with its controls showing.","Clear display you turn on stays on as you swipe to the next video. Off, each new video starts with its controls showing."
+Clear kept messages,Clear kept messages
 Clear preset,Clear preset
 "Clear screen hides a LIVE's chat, gifts and buttons so only the stream shows. TikTok puts it in the menu of only some rooms. This adds it to the others.","Clear screen hides a LIVE's chat, gifts and buttons so only the stream shows. TikTok puts it in the menu of only some rooms. This adds it to the others."
 Clear search,Clear search
@@ -961,10 +964,12 @@ Keep the screen's refresh rate,Keep the screen's refresh rate
 "Keep the speed you chose for the next video. Off, each new video starts at 1x and a manual choice lasts for that video only.","Keep the speed you chose for the next video. Off, each new video starts at 1x and a manual choice lasts for that video only."
 Keep this string to %1$s characters or fewer.,Keep this string to %1$s characters or fewer.
 Keep this structured value to %1$s KB or less.,Keep this structured value to %1$s KB or less.
+Keep unsent messages,Keep unsent messages
 Keep videos out of Watch history,Keep videos out of Watch history
 Keep watching in a small window,Keep watching in a small window
 "Keep what you search for out of the search history TikTok saves on this phone. Searches already there stay until you delete them, and TikTok's servers may still keep their own record.","Keep what you search for out of the search history TikTok saves on this phone. Searches already there stay until you delete them, and TikTok's servers may still keep their own record."
 "Keeps logging until you turn it off, even after a restart. TikTok can feel slower while it's on.","Keeps logging until you turn it off, even after a restart. TikTok can feel slower while it's on."
+Kept so far: %1$d,Kept so far: %1$d
 "Kept to %1$s, the nearest value this row allows","Kept to %1$s, the nearest value this row allows"
 Kinds of post,Kinds of post
 LIVE,LIVE
@@ -1074,6 +1079,7 @@ Make it yours.,Make it yours.
 Making a video of the photos,Making a video of the photos
 Manage topics,Manage topics
 Manager,Manager
+Mark kept messages,Mark kept messages
 Mark saved videos,Mark saved videos
 Marked as not interested,Marked as not interested
 Match locale and timezone to country,Match locale and timezone to country
@@ -1179,6 +1185,7 @@ Not seen,Not seen
 Not seen yet,Not seen yet
 Not sent,Not sent
 "Nothing has been checked yet, so there's nothing to report.","Nothing has been checked yet, so there's nothing to report."
+Nothing has been kept,Nothing has been kept
 "Nothing has been looked up yet. Use the app for a moment, then come back.","Nothing has been looked up yet. Use the app for a moment, then come back."
 Nothing hidden.,Nothing hidden.
 Nothing is playing to seek,Nothing is playing to seek
@@ -1418,6 +1425,10 @@ Remove the LIVE ring,Remove the LIVE ring
 Remove the imported font,Remove the imported font
 Remove watermark,Remove watermark
 Removed %1$s,Removed %1$s
+Removed: %1$d,Removed: %1$d
+"Removed: %1$d. The other %2$d are still there. Open your Inbox, then try again.","Removed: %1$d. The other %2$d are still there. Open your Inbox, then try again."
+Removes every message that was kept. Each chat shows TikTok's usual notice that a message was unsent.,Removes every message that was kept. Each chat shows TikTok's usual notice that a message was unsent.
+Removing the kept messages,Removing the kept messages
 "Reopen Hushfeed settings, then choose the file","Reopen Hushfeed settings, then choose the file"
 Replace values when TikTok asks for them,Replace values when TikTok asks for them
 Replay a story from the start when it ends instead of moving to the next one. Tap or swipe to move on.,Replay a story from the start when it ends instead of moving to the next one. Tap or swipe to move on.
@@ -2076,6 +2087,7 @@ TikTok gets no location from your phone. The Region settings change your country
 "TikTok hasn't loaded this setting yet. Open the part of the app that uses it, then come back.","TikTok hasn't loaded this setting yet. Open the part of the app that uses it, then come back."
 TikTok is locked,TikTok is locked
 TikTok isn't locked because this phone has no screen lock,TikTok isn't locked because this phone has no screen lock
+"TikTok isn't ready yet. Open your Inbox, then try again.","TikTok isn't ready yet. Open your Inbox, then try again."
 "TikTok lets you pick a LIVE's quality only in some rooms. This adds Video quality to the menu in most of the others, and the next room opens at the quality you picked last.","TikTok lets you pick a LIVE's quality only in some rooms. This adds Video quality to the menu in most of the others, and the next room opens at the quality you picked last."
 "TikTok may have taken this message. Delivery isn't confirmed, so it won't be retried today.","TikTok may have taken this message. Delivery isn't confirmed, so it won't be retried today."
 "TikTok only had its watermarked copy of this story, so that copy was saved to %1$s","TikTok only had its watermarked copy of this story, so that copy was saved to %1$s"
@@ -2183,6 +2195,7 @@ Unknown resolution,Unknown resolution
 Unlock,Unlock
 Unlock TikTok,Unlock TikTok
 Unpersonalized For You videos,Unpersonalized For You videos
+Unsent messages,Unsent messages
 "Until you choose here, this sheet follows your choices under Hide share actions.","Until you choose here, this sheet follows your choices under Hide share actions."
 "Up to %1$d speeds from %2$s to %3$s, separated by commas. Example: 0.5, 1, 1.5, 2, 2.5, 3. Leave empty for TikTok's list. Restart TikTok to apply this.","Up to %1$d speeds from %2$s to %3$s, separated by commas. Example: 0.5, 1, 1.5, 2, 2.5, 3. Leave empty for TikTok's list. Restart TikTok to apply this."
 "Use 0 for TikTok's size, or %1$d to %2$d. Applies to the next caption.","Use 0 for TikTok's size, or %1$d to %2$d. Applies to the next caption."
@@ -2261,6 +2274,7 @@ What's new,What's new
 "When a creator who's LIVE also has a Story, tapping their picture on their profile or on your chat with them in the Inbox opens the Story. Tap the picture again to join the LIVE.","When a creator who's LIVE also has a Story, tapping their picture on their profile or on your chat with them in the Inbox opens the Story. Tap the picture again to join the LIVE."
 "When a video ends in full screen, stay on it instead of moving to the next one. Swiping still moves on.","When a video ends in full screen, stay on it instead of moving to the next one. Swiping still moves on."
 "When a video ends while TikTok plays in the background, it starts over instead of waiting for you to press Play in the notification. A call or another app's sound still pauses it.","When a video ends while TikTok plays in the background, it starts over instead of waiting for you to press Play in the notification. A call or another app's sound still pauses it."
+"When someone unsends a message, it stays in your chat instead of disappearing. Messages you unsend yourself are still removed.","When someone unsends a message, it stays in your chat instead of disappearing. Messages you unsend yourself are still removed."
 "When the budget runs out, the video on screen plays to its end before the hold starts, and you can't swipe to another video meanwhile. If the fade already dimmed the feed, the hold starts right away. Needs a hold. It waits %1$d minutes at most.","When the budget runs out, the video on screen plays to its end before the hold starts, and you can't swipe to another video meanwhile. If the fade already dimmed the feed, the hold starts right away. Needs a hold. It waits %1$d minutes at most."
 "When the video without the watermark can't be fetched, save TikTok's own watermarked copy instead and say so. It's the size TikTok's own save uses, so it may be smaller than the quality you picked.","When the video without the watermark can't be fetched, save TikTok's own watermarked copy instead and say so. It's the size TikTok's own save uses, so it may be smaller than the quality you picked."
 When to send,When to send

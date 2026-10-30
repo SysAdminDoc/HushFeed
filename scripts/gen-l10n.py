@@ -279,6 +279,11 @@ def main():
         tables[lang] = read(os.path.join(L10N, name))
     if not tables:
         sys.exit("no .tsv or .csv tables in " + L10N)
+    # Translators read a language's release notes beside its table, and the release text checks
+    # every table's notes, so a table with none is a language the notes skip without a word.
+    missing = [lang for lang in tables if not os.path.isfile(os.path.join(L10N, "notes", lang + ".txt"))]
+    if missing:
+        sys.exit(f"no notes/<lang>.txt for {', '.join(missing)}: translate notes/{ENGLISH_BASE}.txt for it")
 
     lines = HEADER + [
         "import java.util.Map;",

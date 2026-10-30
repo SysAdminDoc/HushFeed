@@ -453,12 +453,12 @@ public class ReleaseNotesTest {
     @Test
     public void everyTableTranslatesTheSameReleases() throws Exception {
         java.util.Set<String> expected = null;
-        for (String tag : new String[]{"az", "de", "es", "in", "it", "pt-rbr", "ru", "tr"}) {
+        for (String tag : new String[]{"az", "de", "es", "in", "it", "pt-rbr", "ru", "tr", "zh-hans"}) {
             java.util.Set<String> versions = versions(ReleaseNotesData.translated(tag));
             if (expected == null) expected = versions;
             assertEquals(tag + " translates different releases", expected, versions);
         }
-        // Release prepare holds each release to all eight tables or none, so the newest can be
+        // Release prepare holds each release to all nine tables or none, so the newest can be
         // English only. The tables carry each bundled release the notes files translate.
         Path cursor = Path.of(System.getProperty("user.dir")).toAbsolutePath();
         while (!Files.isDirectory(cursor.resolve("extensions/tiktok/src/main/l10n/notes"))) {

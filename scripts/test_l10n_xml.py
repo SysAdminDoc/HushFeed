@@ -61,6 +61,9 @@ class TranslationXmlTest(unittest.TestCase):
         self.assertEqual("Один результат", entries["1 result"])
         self.assertEqual("%1$d результата", entries["%1$d results|few"])
         self.assertIn("# context: Results on the search page", self.table.read_text(encoding="utf-8"))
+        # The generator refuses a table with no release notes beside it.
+        (self.root / "notes").mkdir()
+        (self.root / "notes" / "ru.txt").write_text("", encoding="utf-8")
         old = XML.GEN.L10N, XML.GEN.JAVA
         XML.GEN.L10N, XML.GEN.JAVA = str(self.root), str(self.root / "L10nTranslations.java")
         try:
@@ -74,6 +77,16 @@ class TranslationXmlTest(unittest.TestCase):
         self.assertIn('"Один результат"', generated)
         self.assertIn('"%1$d results|few"', generated)
         self.assertIn('"Количество %2$d, привет %1$s"', generated)
+
+    def test_generator_refuses_a_table_without_release_notes(self):
+        old = XML.GEN.L10N, XML.GEN.JAVA
+        XML.GEN.L10N, XML.GEN.JAVA = str(self.root), str(self.root / "L10nTranslations.java")
+        try:
+            with self.assertRaisesRegex(SystemExit, r"no notes/<lang>\.txt for ru"):
+                XML.GEN.main()
+        finally:
+            XML.GEN.L10N, XML.GEN.JAVA = old
+        self.assertFalse((self.root / "L10nTranslations.java").exists())
 
     def test_unicode_entities_newlines_and_export_order_round_trip(self):
         XML.export_xml(self.table, self.exchange)

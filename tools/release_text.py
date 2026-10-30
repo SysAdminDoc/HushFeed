@@ -26,7 +26,7 @@ from typing import NoReturn
 ROOT = Path(__file__).resolve().parents[1]
 CHANGELOG = ROOT / "CHANGELOG.md"
 NOTES = ROOT / "extensions/tiktok/src/main/l10n/notes"
-LANGUAGES = ("az", "de", "es", "in", "it", "pt-rBR", "ru", "tr")
+LANGUAGES = ("az", "de", "es", "in", "it", "pt-rBR", "ru", "tr", "zh-Hans")
 SCOPE = "* **TikTok:** "
 VERSION = re.compile(r"^\d+\.\d+\.\d+$")
 DASHES = ("—", "–")
@@ -41,8 +41,11 @@ FOREIGN = {
     "pt-rBR": r"[Ѐ-ӿ]|ə|ğ|ı|ş|ß|ä|ñ",
     "ru": r"ə|ğ|ı|ş|ß|ä|ñ|ã|õ|ç|é|ü|ö",
     "tr": r"[Ѐ-ӿ]|ə|ß|ä|ñ|ã|õ",
+    "zh-Hans": r"[Ѐ-ӿ]|ə|ğ|ı|ş|ß|ä|ñ|ã|õ|ç|é|ü|ö",
 }
-# Every table writes decimals with a comma, so an English "10,000" or "6.7 MB" is untranslated.
+# Every table but zh-Hans writes decimals with a comma, so an English "10,000" or "6.7 MB" is
+# untranslated there. Chinese writes both the way English does.
+POINT_DECIMALS = ("zh-Hans",)
 ENGLISH_NUMBER = re.compile(r"\b\d{1,3}(?:,\d{3})+\b|\b\d+\.\d+ ?(?:MB|GB|KB|K|M|x|%)(?!\w)")
 # The README's Supported target lines, and the line naming the build the next release patches.
 SUPPORTED_VERSION = re.compile(
@@ -266,7 +269,7 @@ def check_translations(args) -> None:
             hit = pattern.search(b)
             if hit:
                 problems.append(f"{where}: letter {hit.group()!r} from another table")
-            numbers = ENGLISH_NUMBER.findall(b)
+            numbers = [] if lang in POINT_DECIMALS else ENGLISH_NUMBER.findall(b)
             if numbers:
                 problems.append(f"{where}: English number format {sorted(set(numbers))}")
     if found not in (0, len(LANGUAGES)):

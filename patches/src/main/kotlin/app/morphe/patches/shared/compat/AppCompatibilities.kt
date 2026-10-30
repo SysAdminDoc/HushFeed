@@ -1,6 +1,9 @@
 /*
  * Forked from:
- * https://gitlab.com/ReVanced/revanced-patches/-/blob/main/patches/src/main/kotlin/app/revanced/patches/shared/compat/AppCompatibilities.kt
+ * https://github.com/RookieEnough/De-Vanced/blob/9ac979883a6b6eeab5cefb4fc5d955073f2f2bc2/patches/src/main/kotlin/app/morphe/patches/shared/compat/AppCompatibilities.kt
+ * (GPL-3.0), by way of
+ * https://github.com/icysymmetra/tiktok-patches-for-morphe/blob/ebf6296845cb889608cdc6681348ccb2e550f2bc/patches/src/main/kotlin/app/morphe/patches/shared/compat/AppCompatibilities.kt
+ * That copy cites a ReVanced path that never held this file; `AppTarget` is Morphe's own API.
  *
  * Central Morphe `Compatibility` metadata so Morphe Manager shows human-readable app names.
  */

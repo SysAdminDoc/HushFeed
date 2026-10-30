@@ -8,13 +8,17 @@ the full licence text, see the LICENSE file or:
 https://www.gnu.org/licenses/gpl-3.0.html
 
 Hushfeed is built on icysymmetra/tiktok-patches-for-morphe, which is built on
-Morphe, which hard forked ReVanced. The notices below are reproduced from those
+Morphe, which hard forked ReVanced. A few build files, among them the list of
+supported TikTok builds and the patch list generator, reached
+tiktok-patches-for-morphe from De-Vanced, which is licensed under the GNU
+General Public License v3.0 too. The notices below are reproduced from those
 projects. Morphe requires its text to be carried in derivative works and shown
 to the person using the software, so it is also reachable in the app itself,
 under Settings, About, Licenses.
 
   Hushfeed                https://github.com/SysAdminDoc/hushfeed
   tiktok-patches-for-morphe  https://github.com/icysymmetra/tiktok-patches-for-morphe
+  De-Vanced               https://github.com/RookieEnough/De-Vanced
   morphe-patches          https://github.com/MorpheApp/morphe-patches
   morphe-patches-library  https://github.com/MorpheApp/morphe-patches-library
   ReVanced                https://gitlab.com/ReVanced/revanced-patches

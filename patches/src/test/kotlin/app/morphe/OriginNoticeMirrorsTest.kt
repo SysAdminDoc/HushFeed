@@ -32,14 +32,21 @@ import org.junit.Test
  * <p>A 429 says nothing about the files. A wait GitLab names within two minutes is taken and the
  * question asked again; a longer one is the hourly limit, and the run fails with the time GitLab
  * gives rather than sleeping out the hour.
+ *
+ * <p>The patch sources are read as well as the extensions. Six of their notices named ReVanced
+ * paths that never held the file (copied from De-Vanced and hxreborn's headers, 2026-10-30), and
+ * nothing fetched them while the walk stopped at `extensions/`. This file is left out so a sample
+ * URL in a comment here never counts as a notice.
  */
 class OriginNoticeMirrorsTest {
     @Test
     fun `every mirror cited by a source notice names a file GitLab has`() {
         val root = generateSequence(File("").absoluteFile) { it.parentFile }
             .first { File(it, "extensions").isDirectory && File(it, "CONTRIBUTING.md").isFile }
-        val mirrors = File(root, "extensions").walkTopDown().onEnter { it.name != "build" }
+        val mirrors = listOf(File(root, "extensions"), File(root, "patches/src")).asSequence()
+            .flatMap { tree -> tree.walkTopDown().onEnter { it.name != "build" } }
             .filter { it.isFile && (it.extension == "java" || it.extension == "kt") }
+            .filter { it.name != "OriginNoticeMirrorsTest.kt" }
             .flatMap { file -> MIRROR.findAll(file.readText()).map { it.value } }
             .toSortedSet()
         assertTrue("no source notice cites a mirror, so the block has nothing beside it", mirrors.isNotEmpty())

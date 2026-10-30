@@ -1,6 +1,8 @@
 /*
  * Forked from:
- * https://gitlab.com/ReVanced/revanced-patches/-/blob/main/patches/src/main/kotlin/app/revanced/patches/tiktok/misc/telemetry/Fingerprints.kt
+ * https://github.com/hxreborn/hxreborn-tiktok-patches/blob/56a335ce780de6da2d03d2b6dd8b00b98f22e26c/patches/src/main/kotlin/app/morphe/patches/tiktok/misc/telemetry/Fingerprints.kt
+ * (GPL-3.0, a fork of tiktok-patches-for-morphe). Its header cites a ReVanced path that never
+ * held this file.
  * Npth task selectors adapted from kveld9/kveld-morphe-patches at
  * fcb1768620b8f98a6dd31e801074589ce9a63356 (GPL-3.0):
  * https://github.com/kveld9/kveld-morphe-patches/tree/fcb1768620b8f98a6dd31e801074589ce9a63356

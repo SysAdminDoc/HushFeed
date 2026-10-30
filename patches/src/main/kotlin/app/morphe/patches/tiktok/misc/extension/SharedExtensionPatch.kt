@@ -5,8 +5,12 @@
  */
 
 /*
- * Forked from:
- * https://gitlab.com/ReVanced/revanced-patches/-/blob/main/patches/src/main/kotlin/app/revanced/patches/tiktok/misc/extension/SharedExtensionPatch.kt
+ * By way of
+ * https://github.com/RookieEnough/De-Vanced/blob/9ac979883a6b6eeab5cefb4fc5d955073f2f2bc2/patches/src/main/kotlin/app/morphe/patches/tiktok/misc/extension/SharedExtensionPatch.kt
+ * (GPL-3.0) and
+ * https://github.com/icysymmetra/tiktok-patches-for-morphe/blob/ebf6296845cb889608cdc6681348ccb2e550f2bc/patches/src/main/kotlin/app/morphe/patches/tiktok/misc/extension/SharedExtensionPatch.kt
+ * The tiktok-patches-for-morphe copy adds a second Forked from line naming a ReVanced
+ * SharedExtensionPatch.kt that never existed.
  */
 package app.morphe.patches.tiktok.misc.extension
 

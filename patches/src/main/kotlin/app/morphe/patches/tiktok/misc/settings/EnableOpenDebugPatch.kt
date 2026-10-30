@@ -1,6 +1,7 @@
 /*
  * Forked from:
- * https://gitlab.com/ReVanced/revanced-patches/-/blob/main/patches/src/main/kotlin/app/revanced/patches/tiktok/misc/settings/EnableOpenDebugPatch.kt
+ * https://gitlab.com/ReVanced/revanced-patches/-/blob/377d4e15016296b45d809697f7f69bce74badd3a/patches/src/main/kotlin/app/revanced/patches/tiktok/misc/settings/EnableOpenDebugPatch.kt
+ * (the revision De-Vanced cites; ReVanced's main has since dropped the file)
  *
  * TikTok 43.6.2: ReVanced MR !6535. OpenDebug hooks use heavy obfuscation; names differ by APK variant.
  * State class: many short LX/… UI states reuse obfuscated field names like LLILLL—selection is driven by the

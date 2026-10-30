@@ -47,6 +47,7 @@ Every Hushfeed release, newest first.
 ### Build
 
 * **TikTok:** The patch bundle carries Gson 2.15.0, up from 2.14.0. Morphe Manager uses it while patching to read the patch defaults.
+* The Licenses page under About and the NOTICE file now credit De-Vanced, where a few of the build files came from. Those files, and the telemetry patch taken from hxreborn's fork, now link the copies they were actually taken from instead of ReVanced pages that never held them. The check that opens every credited link reads the patch sources too now, so a dead one there gets caught.
 
 ## 0.80.0 (2026-10-27)
 

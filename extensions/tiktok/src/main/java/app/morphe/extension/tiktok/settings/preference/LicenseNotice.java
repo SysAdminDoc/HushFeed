@@ -36,13 +36,17 @@ public final class LicenseNotice {
             "https://www.gnu.org/licenses/gpl-3.0.html\n" +
             "\n" +
             "Hushfeed is built on icysymmetra/tiktok-patches-for-morphe, which is built on\n" +
-            "Morphe, which hard forked ReVanced. The notices below are reproduced from those\n" +
+            "Morphe, which hard forked ReVanced. A few build files, among them the list of\n" +
+            "supported TikTok builds and the patch list generator, reached\n" +
+            "tiktok-patches-for-morphe from De-Vanced, which is licensed under the GNU\n" +
+            "General Public License v3.0 too. The notices below are reproduced from those\n" +
             "projects. Morphe requires its text to be carried in derivative works and shown\n" +
             "to the person using the software, so it is also reachable in the app itself,\n" +
             "under Settings, About, Licenses.\n" +
             "\n" +
             "  Hushfeed                https://github.com/SysAdminDoc/hushfeed\n" +
             "  tiktok-patches-for-morphe  https://github.com/icysymmetra/tiktok-patches-for-morphe\n" +
+            "  De-Vanced               https://github.com/RookieEnough/De-Vanced\n" +
             "  morphe-patches          https://github.com/MorpheApp/morphe-patches\n" +
             "  morphe-patches-library  https://github.com/MorpheApp/morphe-patches-library\n" +
             "  ReVanced                https://gitlab.com/ReVanced/revanced-patches\n" +

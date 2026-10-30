@@ -23,7 +23,7 @@ object BundleVerifier {
         val bundle = File(args[0])
         require(bundle.isFile) { "Bundle not found: $bundle" }
         JarFile(bundle).use { jar ->
-            for (name in listOf("classes.dex", "extensions/tiktok.mpe", "extensions/shared.mpe")) {
+            for (name in DEX_PAYLOADS) {
                 val entry = requireNotNull(jar.getJarEntry(name)) { "Bundle is missing $name" }
                 require(entry.size > 0) { "Bundle entry is empty: $name" }
                 jar.getInputStream(entry).use { stream ->
@@ -67,6 +67,9 @@ object BundleVerifier {
         }
         println("Verified ${bundle.name}: ${bundled.size} patches and all three non-empty DEX payloads")
     }
+
+    /** The DEX files every bundle carries: the patches, then the two extensions. */
+    val DEX_PAYLOADS = listOf("classes.dex", "extensions/tiktok.mpe", "extensions/shared.mpe")
 
     /** Java 17's class file major version, the newest Morphe patcher 2.1 loads. */
     const val NEWEST_CLASS_MAJOR = 61

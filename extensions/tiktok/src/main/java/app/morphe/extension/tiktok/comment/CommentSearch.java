@@ -899,6 +899,10 @@ public final class CommentSearch {
      * already in the wanted state.
      */
     private static void setRowHidden(View row, boolean hidden) {
+        // The keyword filter binds first and collapses a translated comment it blocks, width
+        // included. Showing that row again would undo it on every bind and leave it zero wide,
+        // and the filter keeps the row's own size to give back once it lets the comment through.
+        if (TranslatedCommentFilter.collapsed(row)) return;
         hidden |= Boolean.TRUE.equals(COLLAPSED_REPLY_ROWS.get(row));
         ViewGroup.LayoutParams params = row.getLayoutParams();
         if (params == null) {

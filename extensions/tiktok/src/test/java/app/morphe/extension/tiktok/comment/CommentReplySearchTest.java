@@ -245,6 +245,9 @@ public class CommentReplySearchTest {
         @Override public void close() {
             controller.close();
             CommentSearch.setQuery("");
+            // Settings outlive the class, and a later one binding a comment cell found search on.
+            Settings.COMMENT_SEARCH.resetToDefault();
+            Settings.BLOCK_FROM_COMMENT.resetToDefault();
         }
     }
 

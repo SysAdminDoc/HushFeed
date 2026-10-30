@@ -85,6 +85,13 @@ public final class TranslatedCommentFilter {
         }
     }
 
+    /** Whether this cell is one the filter collapsed, which only the filter gives back. */
+    public static boolean collapsed(View cell) {
+        synchronized (LOCK) {
+            return COLLAPSED.containsKey(cell);
+        }
+    }
+
     /**
      * A cell was bound to {@code comment}. Remembers the pair, collapses the cell when the
      * comment is shown translated and the translation is blocked, and gives a collapsed cell

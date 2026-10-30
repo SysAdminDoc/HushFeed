@@ -372,6 +372,42 @@ public class TranslatedCommentFilterTest {
         assertFalse(TranslatedCommentFilter.anyCollapsed());
     }
 
+    /**
+     * Comment search binds right after the filter, and with an empty box every comment matches.
+     * It used to show the collapsed cell again, zero wide, so the filter hid nothing while
+     * search was on. Once the filter lets the comment through, search owns the row again.
+     */
+    @Test public void commentSearchLeavesACellTheFilterCollapsedAlone() {
+        Settings.BLOCK_FROM_COMMENT.save(false);
+        Settings.COMMENT_LINKS.save(false);
+        Settings.COMMENT_SEARCH.save(true);
+        CommentSearch.setQuery("");
+        try {
+            CellComment comment = new CellComment("cid-1", "the cat");
+            comment.isTranslated = true;
+            View cell = cell();
+
+            CommentTools.registerCommentCell(cell, new CellManager(comment));
+            assertCollapsed(cell);
+
+            CommentSearch.setQuery("cat");
+            CommentTools.registerCommentCell(cell, new CellManager(comment));
+            assertCollapsed(cell);
+
+            Settings.COMMENT_KEYWORD_FILTER.save(false);
+            CommentTools.registerCommentCell(cell, new CellManager(new CellComment("cid-2", "un gato")));
+            assertEquals("search showed a row its box doesn't match", View.GONE, cell.getVisibility());
+
+            CommentSearch.setQuery("");
+            CommentTools.registerCommentCell(cell, new CellManager(new CellComment("cid-2", "un gato")));
+            assertShowing(cell);
+            assertFalse(TranslatedCommentFilter.anyCollapsed());
+        } finally {
+            Settings.COMMENT_SEARCH.resetToDefault();
+            CommentSearch.setQuery("");
+        }
+    }
+
     /** The comment a bound cell's state holder carries, with the members Comment tools looks for. */
     public static class CellComment extends Comment {
         CellComment(String cid, String text) {

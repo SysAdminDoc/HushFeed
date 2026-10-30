@@ -735,6 +735,7 @@ public class SettingsL10nTest {
             String why = toast.unmeasured(sources);
             if (why != null) unmeasured.add(why);
         }
+        refusalLiteralsIn(sources.texts, unmeasured);
         assertTrue("the scan found too few message toasts to mean anything: " + toasts.size(),
                 toasts.size() >= 2);
         assertTrue("these toasts show an exception's message the wrap check can't read. Throw one "
@@ -777,6 +778,77 @@ public class SettingsL10nTest {
         assertTrue(unmeasured.get(0), unmeasured.get(0).startsWith("Picker:4 "));
         assertTrue(refusalLiteralsIn(texts).contains(sentence));
         assertTrue(toastLines(sentence) > 2);
+    }
+
+    /**
+     * A message read through a cause, a cast or a field chain names no exception a catch could
+     * say, and one kept in a field, or in a local joined to other text, is still found and traced.
+     * An instanceof guarding some other variable says nothing about the caught exception. A
+     * refusal built from another exception's message, or handed a value the scan can't read,
+     * fails where it's built. Each of these passed as measured before.
+     */
+    @Test public void theMessageToastScanFailsOnEveryShapeItCantTrace() {
+        Map<java.nio.file.Path, String> texts = new LinkedHashMap<>();
+        texts.put(java.nio.file.Paths.get("Shapes.java"), "class Shapes {\n"
+                + "  String last;\n"
+                + "  void cause() {\n"
+                + "    try { run(); }\n"
+                + "    catch (Refusals.Refused error) { Utils.showToastLong(error.getCause().getMessage()); }\n"
+                + "  }\n"
+                + "  void cast(Exception error) {\n"
+                + "    Utils.showToastLong(((Refusals.Refused) error).getMessage());\n"
+                + "  }\n"
+                + "  void field() {\n"
+                + "    Utils.showToastLong(this.holder.failure.getMessage());\n"
+                + "  }\n"
+                + "  void remember() {\n"
+                + "    try { run(); }\n"
+                + "    catch (IOException error) { last = error.getMessage(); }\n"
+                + "  }\n"
+                + "  void tell() { Utils.showToastLong(L10n.t(\"Failed\") + \" \" + last); }\n"
+                + "  void local() {\n"
+                + "    try { run(); }\n"
+                + "    catch (IllegalStateException error) {\n"
+                + "      String why = error.getMessage();\n"
+                + "      Utils.showToastLong(L10n.t(\"Stopped\") + \": \" + why);\n"
+                + "    }\n"
+                + "  }\n"
+                + "  void placed() {\n"
+                + "    try { new Refusals().check(); }\n"
+                + "    catch (Refusals.Refused | Refusals.Wrapped error) { Utils.showToastLong(error.getMessage()); }\n"
+                + "  }\n"
+                + "  void guarded(Object holder) {\n"
+                + "    try { run(); }\n"
+                + "    catch (IOException error) { if (holder instanceof Refusals.Refused) Utils.showToastLong(error.getMessage()); }\n"
+                + "  }\n"
+                + "}\n");
+        texts.put(java.nio.file.Paths.get("Refusals.java"), "class Refusals {\n"
+                + "  String reason;\n"
+                + "  void check() throws Exception {\n"
+                + "    if (bad) throw new Refused(L10n.t(\"Not allowed\"));\n"
+                + "    if (late) throw new Refused(reason);\n"
+                + "    try { read(); } catch (IOException cause) { throw new Wrapped(cause); }\n"
+                + "  }\n"
+                + "  static final class Refused extends Exception { Refused(String why) { super(why); } }\n"
+                + "  static final class Wrapped extends Exception {\n"
+                + "    Wrapped(Throwable cause) { super(cause.getMessage(), cause); }\n"
+                + "  }\n"
+                + "}\n");
+        ToastSources sources = new ToastSources(texts);
+        List<String> unmeasured = new ArrayList<>();
+        for (MessageToast toast : messageToastsIn(sources)) {
+            String why = toast.unmeasured(sources);
+            if (why != null) unmeasured.add(why);
+        }
+        List<String> literals = refusalLiteralsIn(texts, unmeasured);
+        List<String> places = new ArrayList<>();
+        for (String why : unmeasured) places.add(why.substring(0, why.indexOf(' ')));
+        // The cause, the cast and the field chain; the field, the joined local and the catch whose
+        // instanceof tests another variable, none of whose catches name a class here; then Refused
+        // handed a field, and Wrapped built from a cause's message.
+        assertEquals(String.join("\n", unmeasured), java.util.Arrays.asList("Shapes:5", "Shapes:8",
+                "Shapes:11", "Shapes:15", "Shapes:21", "Shapes:31", "Refusals:5", "Refusals:10"), places);
+        assertTrue(literals.toString(), literals.contains("Not allowed"));
     }
 
     /** A message handed to a toast through a variable is measured too, only from its own method. */
@@ -1194,6 +1266,12 @@ public class SettingsL10nTest {
      * names, placed the same way (messageToastsIn).
      */
     private static java.util.List<String> refusalLiteralsIn(Map<java.nio.file.Path, String> texts) {
+        return refusalLiteralsIn(texts, new ArrayList<>());
+    }
+
+    /** As above, adding to {@code unmeasured} each refusal construction whose sentence can't be found. */
+    private static java.util.List<String> refusalLiteralsIn(Map<java.nio.file.Path, String> texts,
+                                                            java.util.List<String> unmeasured) {
         ToastSources sources = new ToastSources(texts);
         java.util.List<String> found = new java.util.ArrayList<>();
         Map<String, Set<java.nio.file.Path>> refusals = new LinkedHashMap<>();
@@ -1221,7 +1299,7 @@ public class SettingsL10nTest {
         for (MessageToast toast : messageToastsIn(sources)) {
             for (String[] type : toast.types) placeRefusal(sources, toast.path, type[0], type[1], refusals);
         }
-        found.addAll(constructionLiterals(sources, refusals));
+        found.addAll(constructionLiterals(sources, refusals, unmeasured));
         return found;
     }
 
@@ -1246,22 +1324,31 @@ public class SettingsL10nTest {
      * Every L10n literal a refusal can carry: the arguments of each {@code new Type(...)} in the
      * files it is placed in, and of each {@code super(...)} in its own class, where a refusal
      * that builds its own sentence holds it.
+     *
+     * <p>Adds to {@code unmeasured} each construction whose sentence that can't find: one that
+     * reads another exception's message, as {@code super(cause.getMessage())} does, a
+     * {@code super(...)} that neither builds a sentence nor hands on a parameter, and a
+     * {@code new Type(...)} with no sentence in it, as {@code new Refused(field)}, of a refusal
+     * whose {@code super(...)} hands one on. Each of those passed as measured with nothing in it.
      */
     private static java.util.List<String> constructionLiterals(ToastSources sources,
-                                                               Map<String, Set<java.nio.file.Path>> refusals) {
+                                                               Map<String, Set<java.nio.file.Path>> refusals,
+                                                               java.util.List<String> unmeasured) {
         java.util.List<String> found = new java.util.ArrayList<>();
         for (Map.Entry<String, Set<java.nio.file.Path>> refusal : refusals.entrySet()) {
+            String name = refusal.getKey();
             java.util.regex.Pattern made = java.util.regex.Pattern
-                    .compile("\\bnew\\s+(?:\\w+\\s*\\.\\s*)*" + refusal.getKey() + "\\s*\\(");
+                    .compile("\\bnew\\s+(?:\\w+\\s*\\.\\s*)*" + name + "\\s*\\(");
             java.util.regex.Pattern declared = java.util.regex.Pattern
-                    .compile("\\bclass\\s+" + refusal.getKey() + "\\b[^{;]*\\{");
+                    .compile("\\bclass\\s+" + name + "\\b[^{;]*\\{");
+            List<Construction> constructions = new ArrayList<>();
             for (java.nio.file.Path path : refusal.getValue()) {
                 String text = sources.texts.get(path);
                 byte[] kind = sources.kinds.get(path);
                 List<int[]> calls = new ArrayList<>();
                 java.util.regex.Matcher construction = made.matcher(text);
                 while (construction.find()) {
-                    if (kind[construction.start()] == CODE) calls.add(new int[]{construction.end() - 1});
+                    if (kind[construction.start()] == CODE) calls.add(new int[]{construction.end() - 1, 0});
                 }
                 java.util.regex.Matcher type = declared.matcher(text);
                 while (type.find()) {
@@ -1270,24 +1357,111 @@ public class SettingsL10nTest {
                     if (end < 0) continue;
                     java.util.regex.Matcher handed = SUPER_CALL.matcher(text).region(type.end(), end);
                     while (handed.find()) {
-                        if (kind[handed.start()] == CODE) calls.add(new int[]{handed.end() - 1});
+                        if (kind[handed.start()] == CODE) calls.add(new int[]{handed.end() - 1, 1});
                     }
                 }
                 for (int[] call : calls) {
                     int close = closingBracket(text, kind, call[0]);
-                    if (close > 0) found.addAll(sources.shown(path, call[0] + 1, close, new java.util.HashSet<>()));
+                    if (close < 0) continue;
+                    List<String> literals = sources.shown(path, call[0] + 1, close, new java.util.HashSet<>());
+                    found.addAll(literals);
+                    constructions.add(new Construction(path, call[0], close, call[1] == 1, literals));
+                }
+            }
+            // Whether the refusal's sentence is handed in decides what each new Type(...) owes.
+            boolean handsOn = false;
+            for (Construction construction : constructions) {
+                if (construction.handed && construction.literals.isEmpty()
+                        && !readsMessage(sources, construction) && construction.handsOnParameter(sources)) {
+                    handsOn = true;
+                }
+            }
+            for (Construction construction : constructions) {
+                String place = placeOf(construction.path, sources.texts.get(construction.path), construction.open);
+                if (readsMessage(sources, construction)) {
+                    unmeasured.add(place + " builds " + name + " from another exception's message, so what it"
+                            + " says can't be found");
+                } else if (!construction.literals.isEmpty()) {
+                    continue;
+                } else if (construction.handed) {
+                    if (!construction.empty(sources) && !construction.handsOnParameter(sources)) {
+                        unmeasured.add(place + " builds " + name + "'s message from something the scan can't read");
+                    }
+                } else if (handsOn) {
+                    unmeasured.add(place + " builds " + name + " from something the scan can't read, so its"
+                            + " sentence can't be measured");
                 }
             }
         }
         return found;
     }
 
+    /** A {@code new Type(...)} or a {@code super(...)} of a refusal, as its brackets, and the literals it carries. */
+    private static final class Construction {
+        final java.nio.file.Path path;
+        final int open;
+        final int close;
+        final boolean handed;
+        final List<String> literals;
+
+        Construction(java.nio.file.Path path, int open, int close, boolean handed, List<String> literals) {
+            this.path = path;
+            this.open = open;
+            this.close = close;
+            this.handed = handed;
+            this.literals = literals;
+        }
+
+        /** The message argument, the first, as written. */
+        String message(ToastSources sources) {
+            String text = sources.texts.get(path);
+            int[] first = argumentsOf(text, sources.kinds.get(path), open, close).get(0);
+            return text.substring(first[0], first[1]).trim();
+        }
+
+        /** Whether it's handed nothing, which leaves the message null rather than a sentence. */
+        boolean empty(ToastSources sources) {
+            return message(sources).isEmpty();
+        }
+
+        /** Whether a {@code super(...)} hands on a parameter of its constructor as the message. */
+        boolean handsOnParameter(ToastSources sources) {
+            String text = sources.texts.get(path);
+            byte[] kind = sources.kinds.get(path);
+            String message = message(sources);
+            return message.matches("[a-z]\\w*")
+                    && takesParameter(text, kind, methodBodyStart(text, kind, open, false), message);
+        }
+    }
+
+    /** Whether a construction's brackets read an exception's message. */
+    private static boolean readsMessage(ToastSources sources, Construction construction) {
+        byte[] kind = sources.kinds.get(construction.path);
+        java.util.regex.Matcher read = MESSAGE_READ.matcher(sources.texts.get(construction.path))
+                .region(construction.open, construction.close);
+        while (read.find()) {
+            if (kind[read.start()] == CODE) return true;
+        }
+        return false;
+    }
+
+    /** Where {@code at} is in {@code path}, as its class and line. */
+    private static String placeOf(java.nio.file.Path path, String text, int at) {
+        int line = 1;
+        for (int index = 0; index < at; index++) if (text.charAt(index) == '\n') line++;
+        return ToastSources.className(path) + ":" + line;
+    }
+
     /** A constructor handing its superclass what it was built with. */
     private static final java.util.regex.Pattern SUPER_CALL = java.util.regex.Pattern.compile("\\bsuper\\s*\\(");
 
-    /** A read of an exception's message, as {@code error.getMessage()}, and the name it reads. */
+    /**
+     * A read of an exception's message. ToastSources.receiver says what it reads: one name, as in
+     * {@code error.getMessage()}, or none, as in {@code error.getCause().getMessage()}, a cast or
+     * {@code this.failure.getMessage()}, whose exception no catch can name.
+     */
     private static final java.util.regex.Pattern MESSAGE_READ = java.util.regex.Pattern
-            .compile("\\b([a-z]\\w*)\\s*\\.\\s*get(?:Localized)?Message\\s*\\(");
+            .compile("\\bget(?:Localized)?Message\\s*\\(");
 
     /**
      * A toast that shows an exception's message: where it reads it, the name it reads, and the
@@ -1308,14 +1482,15 @@ public class SettingsL10nTest {
         }
 
         String where(ToastSources sources) {
-            String text = sources.texts.get(path);
-            int line = 1;
-            for (int index = 0; index < at; index++) if (text.charAt(index) == '\n') line++;
-            return ToastSources.className(path) + ":" + line;
+            return placeOf(path, sources.texts.get(path), at);
         }
 
         /** Why the wrap scan can't measure what this toast shows, or null when it can. */
         String unmeasured(ToastSources sources) {
+            if (exception.isEmpty()) {
+                return where(sources) + " shows a message read through a call, a cast or a field,"
+                        + " so no catch can say what exception it is";
+            }
             if (types.isEmpty()) {
                 return where(sources) + " shows " + exception + ".getMessage(), and no catch around it"
                         + " says what " + exception + " is";
@@ -1359,9 +1534,11 @@ public class SettingsL10nTest {
     /**
      * What the catch around a read of {@code name}'s message at {@code at} says the exception
      * is: each type its block tests {@code name} against with instanceof, or else each type it
-     * catches. Empty when {@code name} is no catch's exception there.
+     * catches. Empty when {@code name} is no catch's exception there, or is no name at all.
      */
     private static List<String[]> caughtTypes(String text, byte[] kind, String name, int at) {
+        if (name.isEmpty()) return new ArrayList<>();
+        name = java.util.regex.Pattern.quote(name);
         java.util.regex.Matcher caught = java.util.regex.Pattern
                 .compile("\\bcatch\\s*\\(\\s*(?:final\\s+)?([\\w.|\\s]+?)\\s+" + name + "\\s*\\)\\s*\\{")
                 .matcher(text);
@@ -1486,6 +1663,83 @@ public class SettingsL10nTest {
         }
         return spans;
     }
+
+    /**
+     * Where each value the String field {@code name} can hold is set, when the read at {@code use}
+     * is of that field: its initializer and each assignment to it in its file that no local or
+     * parameter of that name hides. Empty when the file declares no such field. {@code qualified}
+     * says the read wrote {@code this.}, which only a field can be.
+     */
+    private static java.util.List<int[]> fieldAssignments(String text, byte[] kind, String name, int use,
+                                                          boolean qualified) {
+        java.util.List<int[]> spans = new java.util.ArrayList<>();
+        if (!qualified && hidesField(text, kind, name, use)) return spans;
+        String quoted = java.util.regex.Pattern.quote(name);
+        java.util.regex.Matcher field = java.util.regex.Pattern
+                .compile("\\b(?:String|CharSequence)\\s+" + quoted + "\\s*(?:=(?!=)|;)").matcher(text);
+        boolean declared = false;
+        while (!declared && field.find()) {
+            declared = kind[field.start()] == CODE && methodBodyStart(text, kind, field.start()) == 0;
+        }
+        if (!declared) return spans;
+        java.util.regex.Matcher assigned = java.util.regex.Pattern
+                .compile("(?<![\\w$])" + quoted + "\\s*\\+?=(?!=)").matcher(text);
+        while (assigned.find()) {
+            if (kind[assigned.start()] != CODE) continue;
+            int dot = assigned.start() - 1;
+            while (dot >= 0 && Character.isWhitespace(text.charAt(dot))) dot--;
+            boolean ours = dot >= 0 && text.charAt(dot) == '.'
+                    ? thisBefore(text, dot)
+                    : !hidesField(text, kind, name, assigned.start());
+            if (!ours) continue;
+            int end = statementEnd(text, kind, assigned.end());
+            if (end > 0) spans.add(new int[]{assigned.end(), end});
+        }
+        return spans;
+    }
+
+    /** Whether {@code name} at {@code at} is a parameter or a local of the method around it rather than a field. */
+    private static boolean hidesField(String text, byte[] kind, String name, int at) {
+        int body = methodBodyStart(text, kind, at);
+        if (body == 0) return false;
+        if (takesParameter(text, kind, body, name)
+                || takesParameter(text, kind, methodBodyStart(text, kind, at, false), name)) {
+            return true;
+        }
+        // A type and the name, as a declaration, a catch, a for-each or a lambda's typed parameter
+        // writes them. A statement can't otherwise put a word before a name, bar these keywords.
+        java.util.regex.Matcher local = java.util.regex.Pattern.compile(
+                "(?<![\\w$.])(?!(?:return|throw|else|case|new|yield|assert|do)\\b)[A-Za-z_$][\\w$.]*"
+                        + "(?:\\s*<[^;(){}]*>)?(?:\\s*\\[\\s*\\])*\\s+" + java.util.regex.Pattern.quote(name)
+                        + "(?=\\s*(?:=(?!=)|;|,|:|\\)))").matcher(text);
+        local.region(body, Math.min(text.length(), at + name.length())).useTransparentBounds(true);
+        while (local.find()) {
+            if (kind[local.start()] == CODE && inScope(text, kind, local.start(), at)) return true;
+        }
+        return false;
+    }
+
+    /** Whether the dot at {@code dot} follows {@code this}. */
+    private static boolean thisBefore(String text, int dot) {
+        int end = dot;
+        while (end > 0 && Character.isWhitespace(text.charAt(end - 1))) end--;
+        int begin = end;
+        while (begin > 0 && Character.isJavaIdentifierPart(text.charAt(begin - 1))) begin--;
+        return text.substring(begin, end).equals("this") && (begin == 0 || text.charAt(begin - 1) != '.');
+    }
+
+    /** Whether the bracket at {@code open} is a call's: a name, or a type argument's close, just before it. */
+    private static boolean callBracket(String text, int from, int open) {
+        int before = open - 1;
+        while (before >= from && Character.isWhitespace(text.charAt(before))) before--;
+        if (before < from) return false;
+        char c = text.charAt(before);
+        return Character.isJavaIdentifierPart(c) || c == '>' && (before == 0 || text.charAt(before - 1) != '-');
+    }
+
+    /** Words an expression holds that name no value. */
+    private static final Set<String> NOT_VALUES = new LinkedHashSet<>(java.util.Arrays.asList(
+            "this", "super", "null", "true", "false", "new", "instanceof"));
 
     /**
      * Methods whose toast stands in for a banner that couldn't be drawn. The banners aren't held
@@ -1661,8 +1915,9 @@ public class SettingsL10nTest {
         }
 
         /**
-         * Every L10n literal in an expression a toast shows, and in what it reads: the local it
-         * is, when it's one name, and the answer of each method it calls outside any brackets.
+         * Every L10n literal in an expression a toast shows, and in what it reads: each local or
+         * String field it names outside any call's brackets, and the answer of each method it
+         * calls outside any brackets.
          */
         List<String> shown(java.nio.file.Path path, int from, int to, Set<String> seen) {
             noteMessageReads(path, from, to);
@@ -1670,14 +1925,8 @@ public class SettingsL10nTest {
             byte[] kind = kinds.get(path);
             byte[] code = outside.get(path);
             List<String> found = new ArrayList<>(l10nLiteralsBetween(text, kind, from, to));
-            String whole = text.substring(from, to).trim();
-            if (whole.matches("[a-z]\\w*")) {
-                for (int[] assignment : assignmentsReaching(text, kind, whole, from)) {
-                    if (seen.add(path + "@" + assignment[0])) {
-                        found.addAll(shown(path, assignment[0], assignment[1], seen));
-                    }
-                }
-                return found;
+            for (int[] value : valuesRead(path, from, to)) {
+                if (seen.add(path + "@" + value[0])) found.addAll(shown(path, value[0], value[1], seen));
             }
             java.util.regex.Matcher call = CALLED.matcher(text);
             int at = from;
@@ -1699,14 +1948,72 @@ public class SettingsL10nTest {
             return found;
         }
 
-        /** Records each read of an exception's message between {@code from} and {@code to}. */
+        /**
+         * Where each value an expression reads outside any call's brackets is set: a local String
+         * through the assignments that reach it, or else a String field of its file through all of
+         * its own. A message kept in a local and joined to other text, as in
+         * {@code L10n.t(...) + ": " + why}, walked past the scan when only an expression of one
+         * name was followed. A name in a call's brackets builds part of what that call answers,
+         * and the call is what's followed.
+         */
+        List<int[]> valuesRead(java.nio.file.Path path, int from, int to) {
+            String text = texts.get(path);
+            byte[] kind = kinds.get(path);
+            byte[] code = outside.get(path);
+            List<int[]> values = new ArrayList<>();
+            // Each open bracket, and whether it's a call's or an index's rather than a grouping's or a cast's.
+            java.util.ArrayDeque<Boolean> brackets = new java.util.ArrayDeque<>();
+            int calls = 0;
+            int at = from;
+            while (at < to) {
+                char c = text.charAt(at);
+                if (code[at] != CODE) {
+                    at++;
+                } else if (c == '(' || c == '[' || c == '{') {
+                    boolean call = c != '(' || callBracket(text, from, at);
+                    brackets.push(call);
+                    if (call) calls++;
+                    at++;
+                } else if (c == ')' || c == ']' || c == '}') {
+                    if (!brackets.isEmpty() && brackets.pop()) calls--;
+                    at++;
+                } else if (!Character.isJavaIdentifierStart(c)
+                        || at > 0 && Character.isJavaIdentifierPart(text.charAt(at - 1))) {
+                    at++;
+                } else {
+                    int end = at;
+                    while (end < to && Character.isJavaIdentifierPart(text.charAt(end))) end++;
+                    String name = text.substring(at, end);
+                    int next = end;
+                    while (next < to && Character.isWhitespace(text.charAt(next))) next++;
+                    int dot = at - 1;
+                    while (dot >= from && Character.isWhitespace(text.charAt(dot))) dot--;
+                    boolean member = dot >= from && text.charAt(dot) == '.';
+                    boolean ofThis = member && thisBefore(text, dot);
+                    if (calls == 0 && (!member || ofThis) && !(next < to && text.charAt(next) == '(')
+                            && name.matches("[a-z]\\w*") && !NOT_VALUES.contains(name)) {
+                        List<int[]> set = ofThis ? new ArrayList<>() : assignmentsReaching(text, kind, name, at);
+                        values.addAll(set.isEmpty() ? fieldAssignments(text, kind, name, at, ofThis) : set);
+                    }
+                    at = end;
+                }
+            }
+            return values;
+        }
+
+        /**
+         * Records each read of an exception's message between {@code from} and {@code to}, with
+         * the name it reads, or "" when it reads one through a call, a cast or a chain of fields.
+         */
         void noteMessageReads(java.nio.file.Path path, int from, int to) {
             byte[] kind = kinds.get(path);
             java.util.regex.Matcher read = MESSAGE_READ.matcher(texts.get(path)).region(from, to);
             while (read.find()) {
                 if (kind[read.start()] != CODE) continue;
-                messageReads.computeIfAbsent(path, key -> new java.util.TreeMap<>())
-                        .put(read.start(), read.group(1));
+                String name = receiver(path, read.start());
+                // A getMessage() with nothing before it is an exception reading its own.
+                if (name == null) continue;
+                messageReads.computeIfAbsent(path, key -> new java.util.TreeMap<>()).put(read.start(), name);
             }
         }
 

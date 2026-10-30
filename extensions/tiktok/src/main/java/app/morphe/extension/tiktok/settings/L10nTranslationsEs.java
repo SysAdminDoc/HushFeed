@@ -2722,9 +2722,9 @@ final class L10nTranslationsEs {
                 "Sustituir este interruptor");
         table.put("Overrides are disabled in the Feature Gate Lab.",
                 "Las sustituciones están desactivadas en el Laboratorio de interruptores.");
-        table.put("Overrides disabled. Restart TikTok to apply this.",
+        table.put("Overrides disabled. Restart TikTok to apply.",
                 "Sustituciones desactivadas. Reinicia TikTok.");
-        table.put("Overrides enabled. Restart TikTok to apply this.",
+        table.put("Overrides enabled. Restart TikTok to apply.",
                 "Sustituciones activadas. Reinicia TikTok.");
         table.put("Own profile counts",
                 "Cifras de tu perfil");

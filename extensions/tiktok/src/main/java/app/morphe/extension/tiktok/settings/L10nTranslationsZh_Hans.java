@@ -2722,10 +2722,10 @@ final class L10nTranslationsZh_Hans {
                 "覆盖此门");
         table.put("Overrides are disabled in the Feature Gate Lab.",
                 "覆盖在功能门实验室中被禁用.");
-        table.put("Overrides disabled. Restart TikTok to apply this.",
-                "覆盖禁用。重新启动 TikTok 以应用此操作.");
-        table.put("Overrides enabled. Restart TikTok to apply this.",
-                "覆盖已启用。重新启动 TikTok 以应用此操作.");
+        table.put("Overrides disabled. Restart TikTok to apply.",
+                "覆盖已禁用。重启 TikTok 以生效.");
+        table.put("Overrides enabled. Restart TikTok to apply.",
+                "覆盖已启用。重启 TikTok 以生效.");
         table.put("Own profile counts",
                 "自己的个人资料计数");
         table.put("Paid partnerships",

@@ -2722,9 +2722,9 @@ final class L10nTranslationsAz {
                 "Bu qapını əvəzləyin");
         table.put("Overrides are disabled in the Feature Gate Lab.",
                 "Feature Gate Lab-da əvəzləmələr qapalıb.");
-        table.put("Overrides disabled. Restart TikTok to apply this.",
+        table.put("Overrides disabled. Restart TikTok to apply.",
                 "Əvəzləmələr söndürüldü. TikTok-u yenidən başladın.");
-        table.put("Overrides enabled. Restart TikTok to apply this.",
+        table.put("Overrides enabled. Restart TikTok to apply.",
                 "Əvəzləmələr yandırıldı. TikTok-u yenidən başladın.");
         table.put("Own profile counts",
                 "Öz profilinizin sayları");

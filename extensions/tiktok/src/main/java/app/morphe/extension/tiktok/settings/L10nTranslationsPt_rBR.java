@@ -2722,9 +2722,9 @@ final class L10nTranslationsPt_rBR {
                 "Substituir este gate");
         table.put("Overrides are disabled in the Feature Gate Lab.",
                 "As substituições estão desligadas no Laboratório de gates.");
-        table.put("Overrides disabled. Restart TikTok to apply this.",
+        table.put("Overrides disabled. Restart TikTok to apply.",
                 "Substituições desativadas. Reinicie o TikTok.");
-        table.put("Overrides enabled. Restart TikTok to apply this.",
+        table.put("Overrides enabled. Restart TikTok to apply.",
                 "Substituições ativadas. Reinicie o TikTok.");
         table.put("Own profile counts",
                 "Contagens do seu perfil");

@@ -2722,10 +2722,10 @@ final class L10nTranslationsIn {
                 "Ganti gate ini");
         table.put("Overrides are disabled in the Feature Gate Lab.",
                 "Penggantian dimatikan di Feature Gate Lab.");
-        table.put("Overrides disabled. Restart TikTok to apply this.",
-                "Penggantian nonaktif. Mulai ulang TikTok agar berlaku.");
-        table.put("Overrides enabled. Restart TikTok to apply this.",
-                "Penggantian aktif. Mulai ulang TikTok agar berlaku.");
+        table.put("Overrides disabled. Restart TikTok to apply.",
+                "Penggantian nonaktif. Mulai ulang TikTok.");
+        table.put("Overrides enabled. Restart TikTok to apply.",
+                "Penggantian aktif. Mulai ulang TikTok.");
         table.put("Own profile counts",
                 "Jumlah profil sendiri");
         table.put("Paid partnerships",

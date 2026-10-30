@@ -33,7 +33,7 @@ public final class FeatureGateLabSession {
 
     /**
      * Retained entry point for callers leaving the Lab. Every action already toasts
-     * "Restart TikTok to apply this." so the exit toast was a duplicate.
+     * "Restart TikTok to apply." so the exit toast was a duplicate.
      */
     public static void showRestartDialog(Activity activity) {
     }

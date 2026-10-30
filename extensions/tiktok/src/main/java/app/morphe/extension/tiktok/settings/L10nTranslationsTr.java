@@ -2722,9 +2722,9 @@ final class L10nTranslationsTr {
                 "Bu özellik kapısını geçersiz kıl");
         table.put("Overrides are disabled in the Feature Gate Lab.",
                 "Geçersiz kılmalar Feature Gate Lab'de devre dışı.");
-        table.put("Overrides disabled. Restart TikTok to apply this.",
+        table.put("Overrides disabled. Restart TikTok to apply.",
                 "Geçersiz kılmalar kapatıldı. TikTok'u yeniden başlat.");
-        table.put("Overrides enabled. Restart TikTok to apply this.",
+        table.put("Overrides enabled. Restart TikTok to apply.",
                 "Geçersiz kılmalar açıldı. TikTok'u yeniden başlat.");
         table.put("Own profile counts",
                 "Kendi profil sayılarınız");

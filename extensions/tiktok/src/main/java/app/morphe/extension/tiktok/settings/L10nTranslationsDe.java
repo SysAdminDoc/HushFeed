@@ -2722,9 +2722,9 @@ final class L10nTranslationsDe {
                 "Diesen Schalter überschreiben");
         table.put("Overrides are disabled in the Feature Gate Lab.",
                 "Überschreibungen sind im Feature Gate Lab abgeschaltet.");
-        table.put("Overrides disabled. Restart TikTok to apply this.",
+        table.put("Overrides disabled. Restart TikTok to apply.",
                 "Überschreiben deaktiviert. TikTok neu starten.");
-        table.put("Overrides enabled. Restart TikTok to apply this.",
+        table.put("Overrides enabled. Restart TikTok to apply.",
                 "Überschreibungen aktiviert. TikTok neu starten.");
         table.put("Own profile counts",
                 "Zahlen des eigenen Profils");

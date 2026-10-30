@@ -874,8 +874,8 @@ Override store region (experimental)	Mağaza bölgesini geçersiz kıl (deneysel
 Override this configuration	Bu yapılandırmayı geçersiz kıl
 Override this gate	Bu özellik kapısını geçersiz kıl
 Overrides are disabled in the Feature Gate Lab.	Geçersiz kılmalar Feature Gate Lab'de devre dışı.
-Overrides disabled. Restart TikTok to apply this.	Geçersiz kılmalar kapatıldı. TikTok'u yeniden başlat.
-Overrides enabled. Restart TikTok to apply this.	Geçersiz kılmalar açıldı. TikTok'u yeniden başlat.
+Overrides disabled. Restart TikTok to apply.	Geçersiz kılmalar kapatıldı. TikTok'u yeniden başlat.
+Overrides enabled. Restart TikTok to apply.	Geçersiz kılmalar açıldı. TikTok'u yeniden başlat.
 Paid partnerships	Ücretli ortaklıklar
 People, shortcuts and sending controls	Kişiler, kısayollar ve gönderme kontrolleri
 Photo	Fotoğraf

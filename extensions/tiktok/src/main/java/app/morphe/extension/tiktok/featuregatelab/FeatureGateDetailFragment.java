@@ -615,7 +615,7 @@ public final class FeatureGateDetailFragment extends Fragment {
                     setControlsEditable(true);
                     updateStatus();
                 },
-                L10n.t(Utils.getContext(), "Overrides enabled. Restart TikTok to apply this."),
+                L10n.t(Utils.getContext(), "Overrides enabled. Restart TikTok to apply."),
                 L10n.t(Utils.getContext(), "Couldn't change the Lab settings. Try again."));
     }
 

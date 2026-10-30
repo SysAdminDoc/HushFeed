@@ -1069,8 +1069,8 @@ public final class FeatureGateLabFragment extends Fragment {
         // the main thread, and a settings restore holding the journal lock froze the screen
         // until it finished. runLabChange puts the switch back for us either way.
         runLabChange(() -> FeatureGateLabUndo.setMasterEnabled(checked),
-                checked ? L10n.t(getContext(), "Overrides enabled. Restart TikTok to apply this.")
-                        : L10n.t(getContext(), "Overrides disabled. Restart TikTok to apply this."));
+                checked ? L10n.t(getContext(), "Overrides enabled. Restart TikTok to apply.")
+                        : L10n.t(getContext(), "Overrides disabled. Restart TikTok to apply."));
     }
 
     /**

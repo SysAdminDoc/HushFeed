@@ -44,6 +44,7 @@ public class LinkTaskGuardTest {
         return new Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(flags);
     }
 
+    /** CLEAR_TOP and SINGLE_TOP keep each relaunch from leaving a For You feed under the link (#276). */
     @Test public void foreignTaskRelaunchesWithNewTaskAndFinishes() {
         Intent original = view(LINK, 0).putExtra("k", "v");
         Activity activity = activityWith(original);
@@ -55,6 +56,10 @@ public class LinkTaskGuardTest {
         assertEquals("v", started.getStringExtra("k"));
         assertTrue((started.getFlags() & Intent.FLAG_ACTIVITY_NEW_TASK) != 0);
         assertTrue(activity.isFinishing());
+        assertEquals(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP
+                | Intent.FLAG_ACTIVITY_SINGLE_TOP, started.getFlags()
+                & (Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP
+                | Intent.FLAG_ACTIVITY_SINGLE_TOP));
         assertEquals(Intent.ACTION_MAIN, activity.getIntent().getAction());
         assertNull(activity.getIntent().getData());
         assertEquals(activity.getPackageName(), activity.getIntent().getPackage());

@@ -59,7 +59,14 @@ public final class LinkTaskGuard {
                 return false;
             }
             Intent relaunch = new Intent(intent);
-            relaunch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            // Started from TikTok's own process onto a page other than the main screen, the link
+            // alias got a new MainActivity that TikTok never finished after opening the link: a
+            // whole For You feed under every profile, memory growing with each link and Back
+            // landing on one feed after another (#276, 47.5.3). CLEAR_TOP with SINGLE_TOP hands
+            // the link to the MainActivity already at the bottom of TikTok's task as onNewIntent
+            // and drops the pages above it, the way the first link after a cold start goes.
+            relaunch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             // This instance still runs the rest of onCreate. Give it nothing to open.
             activity.setIntent(new Intent(Intent.ACTION_MAIN).setPackage(activity.getPackageName()));
             // Finish first. The link alias is singleTop, so while this instance is still the

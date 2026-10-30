@@ -245,8 +245,8 @@ public class InboxClearControlTest {
         clear.performClick();
         assertEquals(List.of(), dismissed);
         assertIdle(clear, "after a run that dismissed nothing");
-        assertEquals("Couldn't clear the suggested accounts. Reopen the Inbox and try again.", ShadowToast.getTextOfLatestToast());
-        assertEquals(List.of("Couldn't clear the suggested accounts. Reopen the Inbox and try again."), header.announcements);
+        assertEquals("Couldn't clear suggestions. Reopen Inbox to retry.", ShadowToast.getTextOfLatestToast());
+        assertEquals(List.of("Couldn't clear suggestions. Reopen Inbox to retry."), header.announcements);
     }
 
     @Test public void belowApiThirtyTheDescriptionCarriesTheProgressTheLabelCannot() {

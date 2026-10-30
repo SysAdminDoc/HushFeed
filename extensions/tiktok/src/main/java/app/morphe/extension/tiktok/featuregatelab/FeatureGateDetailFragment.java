@@ -1195,7 +1195,7 @@ public final class FeatureGateDetailFragment extends Fragment {
         } catch (Throwable failure) {
             Logger.printException(() -> "Could not collect Feature Gate field values", failure);
             Utils.showToastLong(L10n.t(getContext(),
-                    "A field value couldn't be read. Check the values and try again."));
+                    "Couldn't read a field value. Check and try again."));
             return null;
         }
         return result.toString();

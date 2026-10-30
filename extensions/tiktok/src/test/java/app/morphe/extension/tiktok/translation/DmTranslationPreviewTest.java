@@ -218,7 +218,7 @@ public class DmTranslationPreviewTest {
         AlertDialog failure = start();
         calls.get(1).finish(null);
         assertFalse(failure.isShowing());
-        assertEquals("Couldn't translate this draft. Try again in a moment.", ShadowToast.getTextOfLatestToast());
+        assertEquals("Couldn't translate this draft. Try again.", ShadowToast.getTextOfLatestToast());
         assertEquals("draft original", editor.getText().toString());
     }
 
@@ -557,7 +557,7 @@ public class DmTranslationPreviewTest {
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
         assertEquals("draft original", editor.getText().toString());
         assertFalse(dialog.isShowing());
-        assertEquals("Couldn't translate this draft. Try again in a moment.", ShadowToast.getTextOfLatestToast());
+        assertEquals("Couldn't translate this draft. Try again.", ShadowToast.getTextOfLatestToast());
     }
 
     @Test public void aStatefulNativeFilterIsRolledBackExactlyAndRemainsInstalled() {
@@ -575,7 +575,7 @@ public class DmTranslationPreviewTest {
         assertEquals(2, editor.getSelectionStart()); assertEquals(7, editor.getSelectionEnd());
         assertSame(stateful, editor.getFilters()[0]);
         assertEquals(1, invocations[0]);
-        assertEquals("Couldn't translate this draft. Try again in a moment.", ShadowToast.getTextOfLatestToast());
+        assertEquals("Couldn't translate this draft. Try again.", ShadowToast.getTextOfLatestToast());
         assertFalse(dialog.isShowing());
     }
 
@@ -609,7 +609,7 @@ public class DmTranslationPreviewTest {
         AlertDialog dialog = start(); calls.get(0).finish("translated draft");
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
         assertEquals("draft original", editor.getText().toString());
-        assertEquals("Couldn't translate this draft. Try again in a moment.", ShadowToast.getTextOfLatestToast());
+        assertEquals("Couldn't translate this draft. Try again.", ShadowToast.getTextOfLatestToast());
         assertFalse(dialog.isShowing());
     }
 

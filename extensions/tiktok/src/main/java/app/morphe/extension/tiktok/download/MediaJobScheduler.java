@@ -224,7 +224,7 @@ final class MediaJobScheduler {
             synchronized (PARKED) {
                 if (!parked || !state.compareAndSet(WAITING, OVER)) return false;
             }
-            String message = L10n.t("Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.");
+            String message = L10n.t("No Wi-Fi for 30 minutes. Save again on Wi-Fi.");
             remember(new Ended(label, message, false, false));
             end();
             Utils.showToastLong(message);
@@ -283,7 +283,7 @@ final class MediaJobScheduler {
             // Never listed as ended: it was never accepted. A cancel that got in first ended it.
             if (job.state.compareAndSet(Job.WAITING, Job.OVER)) job.end();
             Logger.printException(() -> "Media job queue is full for " + label, error);
-            Utils.showToastLong(L10n.t("Too many media saves are already running. Try again in a moment."));
+            Utils.showToastLong(L10n.t("Too many saves running. Try again soon."));
             return null;
         }
     }

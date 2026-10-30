@@ -326,7 +326,7 @@ public class SlideshowVideoTest {
         assertTrue(OriginalPhotos.startImageAsVideo(post));
         drainPool();
         idle();
-        assertEquals("The video couldn't be made from these photos. Try again.", ShadowToast.getTextOfLatestToast());
+        assertEquals("Couldn't make the video. Try again.", ShadowToast.getTextOfLatestToast());
         assertFalse(videoIds().contains(post.getAid()));
         assertNull(MediaJobScheduler.job("photo video " + post.getAid()));
         assertEquals("No temporary file stays in the cache", List.of(),
@@ -337,7 +337,7 @@ public class SlideshowVideoTest {
         var post = post("slideshow-missing", List.of(photo(null)));
         assertTrue(OriginalPhotos.startImageAsVideo(post));
         idle();
-        assertEquals("The original photos aren't available. No video was saved.", ShadowToast.getTextOfLatestToast());
+        assertEquals("No video saved. The original photos are missing.", ShadowToast.getTextOfLatestToast());
         assertNull(MediaJobScheduler.job("photo video " + post.getAid()));
         assertFalse(videoIds().contains(post.getAid()));
     }

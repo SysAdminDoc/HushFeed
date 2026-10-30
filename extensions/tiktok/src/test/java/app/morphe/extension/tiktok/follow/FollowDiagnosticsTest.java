@@ -155,7 +155,7 @@ public class FollowDiagnosticsTest {
         assertTrue(String.valueOf(message), message.contains("You are following too fast."));
         // A hidden CAPTCHA is the first thing to check when a follow does not land, and the
         // message calls it what the switch calls it.
-        assertTrue(String.valueOf(message), message.contains("A hidden CAPTCHA may be the cause."));
+        assertTrue(String.valueOf(message), message.contains("Maybe a hidden CAPTCHA."));
 
         int shown = ShadowToast.shownToastCount();
         FollowDiagnostics.warnAboutRefusedFollowOnce(refused);

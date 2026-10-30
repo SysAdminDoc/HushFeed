@@ -219,10 +219,10 @@ public class QualityChoiceTest {
             VideoPost post = new VideoPost("6", FULL, MID);
             post.video.dash = true;
             assertTrue(VideoDownloads.startPicked(post, activity, MID));
-            assertEquals("This video isn't available as a complete file. Try again later.",
+            assertEquals("No full file for this video. Try again later.",
                     ShadowToast.getTextOfLatestToast());
             assertFalse(ShadowToast.showedToast(
-                    "This quality isn't available as a complete file, so TikTok's own save runs instead"));
+                    "No full file at this quality, so TikTok saves it"));
             assertFalse("nothing holds the video afterwards", VideoDownloads.saving("6"));
         } finally {
             Settings.DOWNLOAD_DETAILS.save(details);

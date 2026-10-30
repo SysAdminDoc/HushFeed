@@ -385,10 +385,10 @@ final class SaveProgress {
         String skipped = String.valueOf(outcome.skipped);
         if (outcome.stop == Stop.NO_SPACE) return L10n.f("Saved %1$s of %2$s, the rest need more free space", saved, total);
         if (outcome.stop == Stop.NO_TIME) return L10n.f("Saved %1$s of %2$s, the rest ran out of time", saved, total);
-        if (outcome.stop == Stop.SERVER_WAIT) return L10n.f("Saved %1$s of %2$s. The server asked us to wait. Try again later.", saved, total);
-        if (outcome.stop == Stop.NETWORK) return L10n.f("Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.", saved, total);
+        if (outcome.stop == Stop.SERVER_WAIT) return L10n.f("Saved %1$s of %2$s. Try the rest later.", saved, total);
+        if (outcome.stop == Stop.NETWORK) return L10n.f("Saved %1$s of %2$s. Save the rest on Wi-Fi.", saved, total);
         if (outcome.cancelled > 0 && outcome.skipped > 0) {
-            return L10n.f("Saved %1$s of %2$s, %3$s skipped and the rest cancelled", saved, total, skipped);
+            return L10n.f("Saved %1$s of %2$s, %3$s skipped, rest cancelled", saved, total, skipped);
         }
         if (outcome.cancelled > 0) return L10n.f("Saved %1$s of %2$s, the rest cancelled", saved, total);
         return L10n.f("Saved %1$s of %2$s, %3$s skipped", saved, total, skipped);

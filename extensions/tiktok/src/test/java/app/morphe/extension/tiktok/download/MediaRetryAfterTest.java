@@ -229,7 +229,7 @@ public class MediaRetryAfterTest {
             assertEquals(0, outcome.skipped);
             assertEquals(2, outcome.cancelled);
             assertEquals(SaveProgress.Stop.SERVER_WAIT, outcome.stop);
-            assertEquals("Saved 1 of 3. The server asked us to wait. Try again later.",
+            assertEquals("Saved 1 of 3. Try the rest later.",
                     SaveProgress.message(outcome, "complete"));
             assertEquals(2, requests.get());
             assertEquals(2, closed.get());

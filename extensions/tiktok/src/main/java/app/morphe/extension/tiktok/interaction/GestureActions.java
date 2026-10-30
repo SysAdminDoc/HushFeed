@@ -448,7 +448,7 @@ public final class GestureActions {
             return true;
         } catch (RuntimeException failure) {
             Logger.printException(() -> "Could not open the search page", failure);
-            Utils.showToastShort(L10n.t("TikTok's search page couldn't be opened. Restart TikTok and try again."));
+            Utils.showToastShort(L10n.t("Search didn't open. Restart TikTok and try again."));
             return false;
         }
     }

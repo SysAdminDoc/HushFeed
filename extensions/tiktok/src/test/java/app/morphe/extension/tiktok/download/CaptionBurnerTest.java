@@ -180,7 +180,7 @@ public class CaptionBurnerTest {
             assertFalse(CaptionBurner.burnOrKeep(source, output, "@alice", "Hello", null));
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertEquals(1, ShadowToast.shownToastCount());
-            assertEquals(L10n.t("Couldn't write the caption on this video. Saving it without."),
+            assertEquals(L10n.t("Couldn't add the caption. Saving without it."),
                     ShadowToast.getTextOfLatestToast());
             assertArrayEquals(VIDEO, Files.readAllBytes(source.toPath()));
         }
@@ -230,7 +230,7 @@ public class CaptionBurnerTest {
         assertTrue(kept[0]);
         assertFalse("the rest of the save has time again", deadline.expired());
         Shadows.shadowOf(Looper.getMainLooper()).idle();
-        assertEquals(L10n.t("Couldn't write the caption on this video. Saving it without."),
+        assertEquals(L10n.t("Couldn't add the caption. Saving without it."),
                 ShadowToast.getTextOfLatestToast());
         assertArrayEquals(VIDEO, Files.readAllBytes(source.toPath()));
     }

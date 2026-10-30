@@ -135,7 +135,7 @@ public class SaveNoticeTest {
 
             ViewGroup root = activity.findViewById(android.R.id.content);
             assertNotNull("the recovery banner lost the stop reason or audio status", find(root,
-                    "The LIVE ended or the connection dropped. What was recorded is saved to "
+                    "LIVE ended or dropped. Recording saved to "
                             + LiveRecordingSaver.folder() + "\nThis screen recording has no sound."));
             assertNotNull("the saved recording cannot be opened", find(root, "Open"));
             assertNotNull("the retained source has no recovery action", find(root, "Retry"));

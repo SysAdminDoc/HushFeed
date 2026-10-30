@@ -359,8 +359,7 @@ public class FeatureGateLabActionsTest {
             app.morphe.extension.shared.BuildNames.setRunningBuildForTests("47.5.3");
             try (var owner = Robolectric.buildActivity(TestActivity.class).setup().visible()) {
                 attach(owner.get());
-                waitFor("2 overrides were turned off because the Lab couldn't confirm their gates are "
-                        + "unchanged in TikTok 47.5.3. Review them before turning them back on.");
+                waitFor("Turned off 2 overrides. Recheck for TikTok 47.5.3.");
                 assertTrue(FeatureGateLabStore.rule("abmock", "1005_max_limit_count_daily", "INT").enabled);
             }
         } finally {
@@ -534,7 +533,7 @@ public class FeatureGateLabActionsTest {
             action(fragment, 2);
             Shadows.shadowOf(Looper.getMainLooper()).idle();
 
-            assertEquals("Loaded values are still being read. Try again in a moment.",
+            assertEquals("Still reading loaded values. Try again soon.",
                     ShadowToast.getTextOfLatestToast());
             assertNull("an empty export still opened a file picker",
                     Shadows.shadowOf(activity).getNextStartedActivityForResult());
@@ -629,7 +628,7 @@ public class FeatureGateLabActionsTest {
                     "readLoadedValuesFile", android.net.Uri.class);
             read.setAccessible(true);
             read.invoke(fragment, uri);
-            waitFor("Loaded values are still being read. Try again in a moment.");
+            waitFor("Still reading loaded values. Try again soon.");
             assertTrue(FeatureGateLabStore.rules().isEmpty());
         }
     }
@@ -656,7 +655,7 @@ public class FeatureGateLabActionsTest {
 
             // With the Lab gone there is nothing to hang the dialog on, so the one line goes
             // out as a toast, with the way back named.
-            waitFor("Imported 1 values. Undo last Lab change is in the menu.");
+            waitFor("Imported 1 values. The menu can undo it.");
             assertEquals("true", FeatureGateLabStore.rule(
                     "abmock", "gate", "BOOLEAN").value);
         }
@@ -725,7 +724,7 @@ public class FeatureGateLabActionsTest {
             } finally {
                 release.countDown();
             }
-            assertEquals("The export wasn't saved. Export again when the file app is ready.", settledBanner(activity));
+            assertEquals("The export wasn't saved. Try again.", settledBanner(activity));
             DocumentOperationTest.assertStopLoggedAsInfo("Loaded-value file export failed");
             assertFalse("the empty document the export never filled was left behind", provider.exists);
             assertFalse(DocumentOperation.busy(DocumentOperation.Kind.LAB_FILE));
@@ -751,7 +750,7 @@ public class FeatureGateLabActionsTest {
                 assertTrue(bannerAction(activity).performClick());
                 // Settled before the open is let go, so the file app has given up rather than
                 // opened the file "wt", which would have emptied it.
-                assertEquals("The export wasn't saved. Export again when the file app is ready.", settledBanner(activity));
+                assertEquals("The export wasn't saved. Try again.", settledBanner(activity));
             } finally {
                 release.countDown();
             }
@@ -943,7 +942,7 @@ public class FeatureGateLabActionsTest {
                 reset.invoke(fragment, false);
                 Shadows.shadowOf(Looper.getMainLooper()).idle();
 
-                assertEquals("Couldn't start the Lab change. Try again in a moment.",
+                assertEquals("Couldn't start the Lab change. Try again.",
                         ShadowToast.getTextOfLatestToast());
                 assertFalse("the Lab remained busy after rejected scheduling", changing.get());
                 assertNotNull("the rejected reset changed Lab storage",
@@ -978,7 +977,7 @@ public class FeatureGateLabActionsTest {
                 master.performClick();
                 Shadows.shadowOf(Looper.getMainLooper()).idle();
 
-                assertEquals("Couldn't start the Lab change. Try again in a moment.",
+                assertEquals("Couldn't start the Lab change. Try again.",
                         ShadowToast.getTextOfLatestToast());
                 assertFalse("the rejected change altered storage",
                         FeatureGateLabStore.masterEnabled());

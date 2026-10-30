@@ -123,7 +123,7 @@ public class YouTubeMusicSearchTest {
                 ShadowToast.reset();
                 assertFalse(sound.title, YouTubeMusicSearch.open(new Video(sound), activity));
                 assertNull(Shadows.shadowOf(activity).getNextStartedActivity());
-                assertEquals(L10n.t("This is the video's own sound, so YouTube Music won't have it"),
+                assertEquals(L10n.t("This original sound isn't on YouTube Music"),
                         ShadowToast.getTextOfLatestToast());
             }
             // A song whose title merely mentions the words is still searched.

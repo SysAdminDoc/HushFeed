@@ -102,7 +102,7 @@ public class CreatorPatternTest {
         }
         Shadows.shadowOf(Looper.getMainLooper()).idle();
         assertEquals("the reader is told once, and not once per video", 1, ShadowToast.shownToastCount());
-        assertTrue(ShadowToast.getTextOfLatestToast().contains("could stall the feed"));
+        assertTrue(ShadowToast.getTextOfLatestToast().startsWith("Skipped a creator pattern that could stall: "));
 
         // Written to match a handle, a pattern keeps working.
         Settings.BLOCKED_CREATORS.save("/(shop|store|deals|discount|promo|sale)/");

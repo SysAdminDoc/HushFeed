@@ -320,7 +320,7 @@ public final class ReceivedDmTranslationPreview {
             boolean visible = current();
             View view = snapshot.view.get();
             if (owner.pending == this) owner.cancel();
-            if (visible && view != null) Utils.showToastShort(L10n.t(view.getContext(), "Couldn't translate this message. Try again in a moment."));
+            if (visible && view != null) Utils.showToastShort(L10n.t(view.getContext(), "Couldn't translate this message. Try again."));
         }
         @Override public void run() {
             if (!current()) { if (owner.pending == this) owner.cancel(); return; }

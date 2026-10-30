@@ -3,7 +3,7 @@ Adds Save cover next to Download when you share a video, so you save the cover o
 Applies to Save the sound as well and to Save the original sound on a long press. Opus makes a smaller file, but the sound is encoded again from TikTok's copy.	Относится к «Сохранять звук тоже» и к «Сохранять оригинальный звук» по долгому нажатию. Opus даёт файл поменьше, но звук заново кодируется из копии TikTok.
 As TikTok sent it (M4A or MP3)	Как прислал TikTok (M4A или MP3)
 Burn-in guard	Защита от выгорания экрана
-Couldn't write the caption on this video. Saving it without.	Не удалось написать описание на этом видео. Оно сохраняется без него.
+Couldn't add the caption. Saving without it.	Описание не добавлено. Сохраняется без него.
 Dim when idle	Затемнять при бездействии
 Dim when idle and shift	Затемнять при бездействии и сдвигать
 For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to a quarter, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes.	Для OLED-экранов. Через 5 секунд без касаний кнопки, подпись и вкладки поверх видео затемняются до четверти, а следующее касание возвращает их. Сдвиг также смещает всё в ленте на несколько пикселей каждые 2 минуты.
@@ -18,7 +18,7 @@ Keep the language picked in TikTok	Сохранять язык, выбранны
 Nothing is playing to speed up	Нет воспроизведения для ускорения
 One language code, like en or es. Comments and captions TikTok translates come out in this language instead of the app's. Leave it empty to keep TikTok's choice.	Один код языка, например en или es. Комментарии и описания, которые переводит TikTok, будут на этом языке, а не на языке приложения. Оставьте поле пустым, чтобы TikTok выбирал сам.
 Opus (.ogg), a smaller file	Opus (.ogg), файл поменьше
-Opus didn't work on this phone. Saving the sound as TikTok sent it instead.	Opus не сработал на этом телефоне. Звук сохраняется в том виде, в каком его прислал TikTok.
+Opus didn't work. Saving TikTok's own file.	Opus не сработал. Сохраняется оригинал TikTok.
 Opus needs Android 10 or later, so sounds save as TikTok sent them.	Для Opus нужен Android 10 или новее, поэтому звук сохраняется так, как прислал TikTok.
 Playing at %1$sx	Скорость %1$sx
 Puts a save button in the sheet a story's Share button opens. It saves the story you're watching, and holding a story still pauses it.	Добавляет кнопку сохранения в меню, которое открывает кнопка «Поделиться» в истории. Она сохраняет историю, которую вы смотрите, а удержание истории по-прежнему ставит её на паузу.
@@ -28,7 +28,7 @@ Save cover button in the share sheet	Кнопка «Сохранить обло�
 Saved videos show the @username and the first line of the caption in the bottom left corner. The phone encodes the whole video again to do it, so saving takes longer. Applies to saves made by Hushfeed.	На сохранённых видео внизу слева видны @имя пользователя и первая строка описания. Для этого телефон заново кодирует всё видео, поэтому сохранение занимает больше времени. Действует для сохранений через Hushfeed.
 Sound format	Формат звука
 Speed up this video, double tap again to undo	Ускорить это видео, двойное нажатие ещё раз отменяет
-TikTok only had its watermarked copy of this story, so that copy was saved to %1$s	У TikTok была только копия этой истории с водяным знаком, поэтому в %1$s сохранена эта копия
+Only a watermarked copy existed. Saved to %1$s	Была только копия с водяным знаком. Сохранено: %1$s
 Translate button in comments	Кнопка перевода в комментариях
 Adds TikTok's translate button next to the comment count. One tap translates every comment, and another shows the originals again.	Добавляет кнопку перевода TikTok рядом с числом комментариев. Одно нажатие переводит все комментарии, следующее снова показывает оригиналы.
 Translate into	Переводить на
@@ -81,10 +81,10 @@ That watch-history file is damaged. Nothing was imported.	Файл истори�
 %1$d minutes left|one	Осталась %1$d минута
 %1$d minutes left|few	Осталось %1$d минуты
 %1$d minutes left|many	Осталось %1$d минут
-%1$d overrides were turned off because the Lab couldn't confirm their gates are unchanged in TikTok %2$s. Review them before turning them back on.	%1$d переопределений было отключено, потому что Lab не удалось подтвердить, что их переключатели не изменились в TikTok %2$s. Проверьте их, прежде чем включать снова.
-%1$d overrides were turned off because the Lab couldn't confirm their gates are unchanged in TikTok %2$s. Review them before turning them back on.|one	%1$d переопределение было отключено, потому что Lab не удалось подтвердить, что его переключатель не изменился в TikTok %2$s. Проверьте его, прежде чем включать снова.
-%1$d overrides were turned off because the Lab couldn't confirm their gates are unchanged in TikTok %2$s. Review them before turning them back on.|few	%1$d переопределения были отключены, потому что Lab не удалось подтвердить, что их переключатели не изменились в TikTok %2$s. Проверьте их, прежде чем включать снова.
-%1$d overrides were turned off because the Lab couldn't confirm their gates are unchanged in TikTok %2$s. Review them before turning them back on.|many	%1$d переопределений было отключено, потому что Lab не удалось подтвердить, что их переключатели не изменились в TikTok %2$s. Проверьте их, прежде чем включать снова.
+Turned off %1$d overrides. Recheck for TikTok %2$s.	Снято %1$d переопределений. Проверьте TikTok %2$s.
+Turned off %1$d overrides. Recheck for TikTok %2$s.|one	Снято %1$d переопределение. Проверьте TikTok %2$s.
+Turned off %1$d overrides. Recheck for TikTok %2$s.|few	Снято %1$d переопределения. Проверьте TikTok %2$s.
+Turned off %1$d overrides. Recheck for TikTok %2$s.|many	Снято %1$d переопределений. Проверьте TikTok %2$s.
 %1$d rejected	Отклонено: %1$d
 %1$d results	%1$d результатов
 %1$d results|one	%1$d результат
@@ -148,14 +148,14 @@ That watch-history file is damaged. Nothing was imported.	Файл истори�
 1 field will be overridden when requested	1 поле будет переопределено при запросе
 1 gate selected	1 переключатель выбран
 1 min left	Ещё 1 мин.
-1 override was turned off because the Lab couldn't confirm its gate is unchanged in TikTok %2$s. Review it before turning it back on.	1 переопределение было отключено, потому что Lab не удалось подтвердить, что его переключатель не изменился в TikTok %2$s. Проверьте его, прежде чем включать снова.
+Turned off 1 override. Recheck for TikTok %2$s.	Снято 1 переопределение. Проверьте TikTok %2$s.
 1 result	1 результат
 1 result so far	Пока 1 результат
 1 video left	Ещё 1 видео
 A Lab change is already running	Изменение в Lab уже выполняется
 A diagnostic report is already being saved	Диагностический отчёт уже сохраняется
 A few seconds	Несколько секунд
-A field value couldn't be read. Check the values and try again.	Не удалось прочитать значение поля. Проверьте значения и попробуйте снова.
+Couldn't read a field value. Check and try again.	Не удалось прочитать поле. Проверьте и повторите.
 A good place to stop, if you want one.	Хороший момент, чтобы остановиться, если вам нужен повод.
 A green square in the top corner while TikTok has the camera open, and an orange diamond while it records sound. They go when the access ends.	Зелёный квадрат в верхнем углу, пока у TikTok открыта камера, и оранжевый ромб, пока идёт запись звука. Они исчезают, когда доступ заканчивается.
 Type a website name to use instead of tiktok.com in links you share or copy, like vxtiktok.com. Leave empty to share TikTok's own links. Only TikTok links change, and only the website name.	Введите имя сайта, которое будет вместо tiktok.com в ссылках, которые вы отправляете или копируете, например vxtiktok.com. Оставьте пустым, чтобы отправлять обычные ссылки TikTok. Меняются только ссылки TikTok и только имя сайта.
@@ -177,8 +177,8 @@ Separate handles or user IDs with commas. Their videos stay when a filter on pos
 Separate language codes with commas, like en, es. A video whose original caption is in another language is hidden. Videos with no caption, or only translated ones, always stay.	Разделяйте коды языков запятыми, например en, es. Видео, у которого исходное описание на другом языке, скрывается. Видео без описания или только с переведённым остаются всегда.
 Comma separated names exactly as the row under a profile's bio shows them, such as TikTok Studio or Your orders. Restart TikTok to apply this.	Названия через запятую, точно как в строке под описанием профиля, например TikTok Studio или «Ваши заказы». Перезапустите TikTok, чтобы это применить.
 Couldn't add the older seen videos. Try again.	Не удалось добавить старые просмотренные видео. Попробуйте снова.
-Couldn't copy the build details. Use Save build details instead.	Не удалось скопировать сведения о сборке. Используйте вместо этого «Сохранить сведения о сборке».
-Couldn't copy the report. Use Save report instead.	Не удалось скопировать отчёт. Используйте вместо этого «Сохранить отчёт».
+Couldn't copy. Use Save build details instead.	Не вышло. Нажмите «Сохранить сведения о сборке».
+Couldn't copy the report. Use Save report instead.	Отчёт не скопирован. Нажмите «Сохранить отчёт».
 Couldn't read TikTok's current values (%1$s). Refresh values from the menu to try again.	Не удалось прочитать текущие значения TikTok (%1$s). Обновите значения через меню, чтобы попробовать снова.
 Couldn't restart TikTok. Close it and open it again.	Не удалось перезапустить TikTok. Закройте приложение и откройте его снова.
 Couldn't undo that. Try again.	Не удалось отменить это действие. Попробуйте снова.
@@ -201,7 +201,7 @@ Show a LIVE under the status bar	Показывать LIVE под строкой
 Let a LIVE reach the top edge with the clock and status icons over it, instead of a black strip. Hide the status bar in LIVE rooms takes them away instead.	LIVE доходит до верхнего края, а часы и значки состояния остаются поверх него вместо чёрной полосы. Скрывать строку состояния в LIVE-трансляциях убирает их совсем.
 Loading the gate list and TikTok's current values…	Загрузка списка переключателей и текущих значений TikTok…
 New value	Новое значение
-No app on this phone opens that file	Ни одно приложение на этом телефоне не открывает такой файл
+No app on this phone opens that file	На телефоне нет приложения для этого файла
 No profile shortcuts have been seen yet	Ярлыки профиля пока не встречались
 One video was recorded before each account kept its own list. It hides nothing until you add it here.	Одно видео было записано до того, как у каждого аккаунта появился свой список. Оно ничего не скрывает, пока вы не добавите его сюда.
 Only these caption languages	Только эти языки субтитров
@@ -216,7 +216,7 @@ Save report	Сохранить отчёт
 Stay on the video in full screen	Оставаться на видео в полноэкранном режиме
 Stickers can't be saved to the folder in that file, so your sticker folder was kept	Стикеры нельзя сохранить в папку из этого файла, поэтому ваша папка для стикеров осталась прежней
 Stop TikTok's speed tests	Остановить тесты скорости TikTok
-That creator pattern could stall the feed, so it was skipped: %1$s	Этот шаблон автора мог замедлить ленту, поэтому он был пропущен: %1$s
+Skipped a creator pattern that could stall: %1$s	Пропущен шаблон автора, который мог зависнуть: %1$s
 That creator pattern could stall the feed, so it wasn't added: %1$s	Этот шаблон автора мог замедлить ленту, поэтому он не был добавлен: %1$s
 This key isn't in Hushfeed's list, so its type can't be checked. Reset the override.	Этого ключа нет в списке Hushfeed, поэтому его тип нельзя проверить. Сбросьте переопределение.
 This key touches account safety. Forcing it can change login, region, payment or security checks.	Этот ключ связан с безопасностью аккаунта. Принудительное значение может изменить проверки входа, региона, оплаты или безопасности.
@@ -245,9 +245,9 @@ All loaded tabs	Все загруженные вкладки
 Allow Duet and Stitch anyway	Всё равно разрешить Дуэт и Stitch
 Allow Add to Story anyway	Всё равно разрешить «Добавить в историю»
 Allow screenshots and Circle to Search	Разрешить скриншоты и Circle to Search
-Allow storage for TikTok in Android settings to save profile pictures	Разрешите TikTok доступ к хранилищу в настройках Android, чтобы сохранять фото профиля
-Allow storage for TikTok in Android settings to save sounds	Разрешите TikTok доступ к хранилищу в настройках Android, чтобы сохранять звуки
-Allow storage for TikTok in Android settings to save stories	Разрешите TikTok доступ к хранилищу в настройках Android, чтобы сохранять истории
+Allow storage for TikTok to save profile pictures	Дайте TikTok доступ к памяти для сохранения фото профиля
+Allow storage for TikTok to save sounds	Дайте TikTok доступ к памяти для сохранения звуков
+Allow storage for TikTok to save stories	Дайте TikTok доступ к памяти для сохранения историй
 Bottom tabs to keep	Нижние вкладки, которые нужно оставить
 Already marked as not interested	Уже отмечено как «не интересно»
 Also apply these filters to downloaded videos TikTok uses when the feed can't load enough new items.	Также применять эти фильтры к загруженным видео, которые TikTok использует, когда ленте не хватает новых материалов.
@@ -306,7 +306,7 @@ Block this sound	Заблокировать этот звук
 Blocked	Заблокировано
 Blocked %1$s	Заблокировано: %1$s
 Blocked %1$s. Unblock	Заблокировано: %1$s. Разблокировать
-Couldn't confirm the block for %1$s. Open their profile to check.	Не удалось подтвердить блокировку %1$s. Откройте профиль, чтобы проверить.
+Couldn't confirm blocking %1$s. Check their profile.	Не подтверждена блокировка %1$s. Проверьте профиль.
 Blocked caption words	Заблокированные слова в подписях
 Blocked comment words	Заблокированные слова в комментариях
 Blocked creators	Заблокированные авторы
@@ -330,7 +330,7 @@ Captions, gestures and on-screen controls	Субтитры, жесты и эле
 Capture crash reports locally	Сохранять отчёты о сбоях локально
 Choose %1$d to %2$d videos. Values outside this range use the nearest valid limit. Restart TikTok to apply this.	Выберите значение от %1$d до %2$d видео. Значения вне этого диапазона округляются до ближайшей допустимой границы. Перезапустите TikTok, чтобы это применить.
 Choose a backup file. Your current settings are kept for Undo.	Выберите файл резервной копии. Текущие настройки сохраняются для отмены.
-Choose a folder on internal storage. SD cards aren't supported.	Выберите папку на внутреннем накопителе. Карты памяти не поддерживаются.
+Pick a folder on internal storage, not an SD card	Выберите папку во внутренней памяти, не на SD-карте
 Choose a preset to fill the SIM details.	Выберите пресет, чтобы заполнить данные SIM.
 Choose a subfolder under %1$s.	Выберите подпапку в %1$s.
 Pick the actions to remove from the share sheet. Names you typed by hand that TikTok hasn't shown yet stay in the list above.	Выберите действия, которые нужно убрать из меню «Поделиться». Введённые вручную названия, которые TikTok ещё не показывал, остаются в списке выше.
@@ -346,10 +346,10 @@ Record a screen's layout	Записать раскладку экрана
 Tap, then go to the screen with what you want hidden. After %1$d seconds Hushfeed records how that screen is built, without any of its text, for the diagnostic report.	Нажмите, затем перейдите к экрану с тем, что нужно скрыть. Через %1$d секунд Hushfeed запишет, как устроен этот экран, без какого-либо его текста, для диагностического отчёта.
 Waiting to record. Go to the screen you want recorded.	Ожидание записи. Перейдите к экрану, который нужно записать.
 A screen's layout is recorded. Export the diagnostic report to send it, or tap to record another.	Раскладка экрана записана. Экспортируйте диагностический отчёт, чтобы отправить её, или нажмите, чтобы записать другую.
-Go to the screen now. Hushfeed records its layout in %1$d seconds.	Перейдите к экрану сейчас. Hushfeed запишет его раскладку через %1$d секунд.
-Screen layout recorded. Export the diagnostic report to send it.	Раскладка экрана записана. Экспортируйте диагностический отчёт, чтобы отправить её.
-Nothing was recorded because Hushfeed settings were still open. Start again, then leave settings.	Ничего не было записано, потому что настройки Hushfeed были ещё открыты. Начните заново и закройте настройки.
-Couldn't record the screen's layout. Start again from Diagnostics.	Не удалось записать раскладку экрана. Начните заново в разделе «Диагностика».
+Go to the screen. Recording in %1$d seconds.	Перейдите на экран. Запись через %1$d сек.
+Layout recorded. Export the report to send it.	Раскладка записана. Экспорт отчёта для отправки.
+Nothing recorded. Start, then leave settings.	Ничего не записано. Начните и закройте настройки.
+Layout not recorded. Try again from Diagnostics.	Раскладка не записана. Повторите из «Диагностика».
 Clear diagnostic data	Очистить диагностические данные
 Clear display	Чистый вид
 Clear display delay	Задержка чистого вида
@@ -402,11 +402,11 @@ Stop and save the feed capture	Остановить и сохранить зап
 Recording what the feed filters keep and hide. Tap to stop and save it in %1$s.	Идёт запись того, что фильтры ленты оставляют и скрывают. Нажмите, чтобы остановить и сохранить её в %1$s.
 Save the feed capture	Сохранить запись ленты
 The last feed capture wasn't saved. Tap to try again.	Последняя запись ленты не сохранена. Нажмите, чтобы повторить попытку.
-Feed capture started. Scroll until the problem shows up, then come back here to stop.	Запись ленты началась. Листайте, пока не появится проблема, затем вернитесь сюда, чтобы остановить её.
+Feed capture on. Scroll to the problem, then return.	Запись ленты идёт. Листайте до проблемы и вернитесь.
 The feed capture is still being saved	Запись ленты всё ещё сохраняется
-Feed capture saved to %1$s. Read it before you share it.	Запись ленты сохранена в %1$s. Прочитайте её, прежде чем делиться.
-The feed capture couldn't be saved. Tap the row to try again.	Не удалось сохранить запись ленты. Нажмите на строку, чтобы повторить попытку.
-Couldn't start saving the feed capture. Try again in a moment.	Не удалось начать сохранение записи ленты. Попробуйте снова через минуту.
+Feed capture saved to %1$s. Read it before you share it.	Запись ленты сохранена в %1$s. Прочтите до отправки.
+Feed capture not saved. Tap the row to retry.	Запись ленты не сохранена. Нажмите строку для повтора.
+Couldn't save the feed capture. Try again.	Запись ленты не сохранена. Повторите.
 Copy a quick report or save the full report as a file.	Скопируйте краткий отчёт или сохраните полный отчёт в файл.
 Copy comments without username	Копировать комментарии без имени пользователя
 Copy only the comment text when using TikTok's copy comment action.	Копировать только текст комментария при использовании функции TikTok «Копировать комментарий».
@@ -414,23 +414,23 @@ Copy quick report	Скопировать краткий отчёт
 Copy report	Скопировать отчёт
 Copy the sound link	Скопировать ссылку на звук
 Copy the video link	Скопировать ссылку на видео
-Couldn't change the Lab settings. Try again.	Не удалось изменить настройки Lab. Попробуйте снова.
-Couldn't clear the suggested accounts. Reopen the Inbox and try again.	Не удалось очистить предложенные аккаунты. Откройте Входящие заново и попробуйте снова.
-Couldn't open the file picker to export. Try again.	Не удалось открыть выбор файла для экспорта. Попробуйте снова.
-Couldn't open the file picker to import. Try again.	Не удалось открыть выбор файла для импорта. Попробуйте снова.
+Couldn't change the Lab settings. Try again.	Настройки Lab не изменены. Повторите.
+Couldn't clear suggestions. Reopen Inbox to retry.	Предложения не очищены. Откройте Входящие снова.
+Couldn't open the file picker to export. Try again.	Выбор файла для экспорта не открылся. Повторите.
+Couldn't open the file picker to import. Try again.	Выбор файла для импорта не открылся. Повторите.
 Couldn't put back the diagnostic data. Try again.	Не удалось восстановить диагностические данные. Попробуйте снова.
-Couldn't read who posted this comment. Open their profile and block them there.	Не удалось определить, кто оставил этот комментарий. Откройте профиль и заблокируйте там.
-Couldn't reset this override. Try again.	Не удалось сбросить это переопределение. Попробуйте снова.
+Unknown commenter. Block them from their profile.	Автор неизвестен. Заблокируйте через профиль.
+Couldn't reset this override. Try again.	Переопределение не сброшено. Повторите.
 Couldn't restore the settings. Try again.	Не удалось восстановить настройки. Попробуйте снова.
 Couldn't reset the settings. Try again.	Не удалось сбросить настройки. Попробуйте снова.
 Couldn't undo the last change. Try again.	Не удалось отменить последнее изменение. Попробуйте снова.
 Couldn't save the settings backup. Try again.	Не удалось сохранить резервную копию настроек. Попробуйте снова.
-Couldn't save this override. Try again.	Не удалось сохранить это переопределение. Попробуйте снова.
-Couldn't send the feedback. Try again in a moment.	Не удалось отправить отзыв. Попробуйте снова через минуту.
-Couldn't start the Lab change. Try again in a moment.	Не удалось начать изменение в Lab. Попробуйте снова через минуту.
-Couldn't start the report export. Try again in a moment.	Не удалось начать экспорт отчёта. Попробуйте снова через минуту.
+Couldn't save this override. Try again.	Переопределение не сохранено. Повторите.
+Couldn't send the feedback. Try again in a moment.	Отзыв не отправлен. Повторите чуть позже.
+Couldn't start the Lab change. Try again.	Изменение в Lab не запущено. Повторите.
+Couldn't start the report export. Try again.	Экспорт отчёта не запущен. Повторите.
 Couldn't start the settings change. Try again in a moment.	Не удалось начать изменение настроек. Попробуйте снова через минуту.
-Couldn't tell which folder to update. Choose it again.	Не удалось определить, какую папку обновлять. Выберите её снова.
+Couldn't tell which folder to update. Choose it again.	Папка не определена. Выберите снова.
 Couldn't undo the clear. Try again.	Не удалось отменить очистку. Попробуйте снова.
 Country code	Код страны
 Country and network preferences	Настройки страны и сети
@@ -486,7 +486,7 @@ Bottom right double tap	Двойное нажатие внизу справа
 Download original photos	Загружать оригиналы фото
 Destination updated	Место назначения обновлено
 Downloads	Загрузки
-Drag to move, release to place	Перетащите, чтобы переместить, отпустите, чтобы разместить
+Drag to move, release to place	Перетащите, чтобы сдвинуть, отпустите, чтобы поставить
 Drama and Series	Драма и сериалы
 Shows TikTok's text in your phone's font instead of TikTok Sans. Icons and gift animations keep their own fonts. Restart TikTok to see the change.	Показывает текст TikTok шрифтом вашего телефона вместо TikTok Sans. Значки и анимации подарков сохраняют свои шрифты. Перезапустите TikTok, чтобы увидеть изменение.
 Hide the notification saying somebody new followed you before it reaches the drawer. Every other notification is left alone, and the follower still appears in the Inbox.	Скрывать уведомление о новом подписчике до того, как оно попадёт в шторку. Остальные уведомления не затрагиваются, а подписчик по-прежнему появляется во Входящих.
@@ -716,14 +716,14 @@ Home	Главная
 Hook status	Статус перехвата
 How far each edge press moves the video.	На сколько каждое нажатие у края сдвигает видео.
 Hushfeed can't read the creator pattern %1$s	Hushfeed не может прочитать шаблон автора %1$s
-Hushfeed hid a TikTok CAPTCHA. Turn off Hide CAPTCHA popups if something stops working.	Hushfeed скрыл CAPTCHA TikTok. Выключите «Скрывать всплывающие окна CAPTCHA», если что-то перестало работать.
+Hid a CAPTCHA. Stuck? Turn off Hide CAPTCHA popups.	Сбой? Выключите «Скрывать всплывающие окна CAPTCHA».
 Hushfeed is active	Hushfeed активен
 Shows the Duet and Stitch options even when the creator turned them off. TikTok may still refuse to accept the result.	Показывает варианты «Дуэт» и Stitch, даже если автор их отключил. TikTok всё равно может не принять результат.
 Shows Add to Story in the share sheet and on stories even when the creator turned off content reuse. TikTok may still refuse to post it.	Показывает «Добавить в историю» в меню «Поделиться» и у историй, даже если автор отключил повторное использование контента. TikTok всё равно может отказать в публикации.
 Import finished	Импорт завершён
 Import loaded values	Импортировать загруженные значения
 Imported %1$d values	Импортировано значений: %1$d
-Imported %1$d values. Undo last Lab change is in the menu.	Импортировано значений: %1$d. Пункт «Отменить последнее изменение Lab» находится в меню.
+Imported %1$d values. The menu can undo it.	Импортировано значений: %1$d. Отмена в меню.
 Inbox	Входящие
 Include diagnostic events	Включать диагностические события
 Included diagnostics	Включённая диагностика
@@ -744,8 +744,8 @@ Keep the clock and status icons off the screen while TikTok is open. Swipe down 
 Keep the screen's refresh rate	Сохранять частоту обновления экрана
 Keep the speed you chose for the next video. Off, each new video starts at 1x and a manual choice lasts for that video only.	Сохранять выбранную скорость для следующего видео. При выключении каждое новое видео начинается на 1x, а ручной выбор действует только для текущего видео.
 Keep this string to %1$s characters or fewer.	Сократите эту строку до %1$s символов или меньше.
-Keep this structured value to %1$s KB or less.	Сократите это структурированное значение до %1$s КБ или меньше.
-Kept to %1$s, the nearest value this row allows	Ограничено значением %1$s, ближайшим из допустимых для этой строки
+Keep this structured value to %1$s KB or less.	Структурированное значение: не более %1$s КБ.
+Kept to %1$s, the nearest value this row allows	Для строки взято ближайшее допустимое: %1$s
 Kinds of post	Типы публикаций
 LIVE	LIVE
 LIVE replays	Повторы LIVE
@@ -781,7 +781,7 @@ Tapping more under a video opens its comments with the whole caption at the top 
 Caption above comments	Подпись над комментариями
 The comment button also opens a video's comments with its caption at the top. The caption over the video goes away while this is on.	Кнопка комментариев тоже открывает комментарии видео с подписью сверху. Подпись поверх видео исчезает, пока это включено.
 Loaded current values. Loading all known gates…	Текущие значения загружены. Загрузка всех известных переключателей…
-Loaded values are still being read. Try again in a moment.	Загруженные значения всё ещё считываются. Попробуйте снова через минуту.
+Still reading loaded values. Try again soon.	Значения ещё читаются. Повторите позже.
 Loaded-value file export failed	Не удалось экспортировать файл загруженных значений
 Loading gates…	Загрузка переключателей…
 Creators hidden on this phone	Авторы, скрытые на этом телефоне
@@ -813,7 +813,7 @@ Favorites range	Диапазон избранного
 Likes aren't available for this video	Лайки недоступны для этого видео
 Likes range	Диапазон лайков
 Shares range	Диапазон репостов
-Use Save report for this large report	Используйте «Сохранить отчёт» для этого большого отчёта
+Use Save report for this large report	Для этого большого отчёта нажмите «Сохранить отчёт»
 Video player settings	Настройки видеоплеера
 The network proxy from that file is off. Check its address before you turn it on	Сетевой прокси из этого файла выключен. Проверьте его адрес, прежде чем включать
 Your network proxy was kept, since a backup can't change it	Ваш сетевой прокси сохранён, так как резервная копия не может его менять
@@ -918,7 +918,7 @@ Override this configuration	Переопределить эту конфигур
 Override this gate	Переопределить этот переключатель
 Overrides are disabled in the Feature Gate Lab.	Переопределения отключены в Feature Gate Lab.
 Overrides disabled. Restart TikTok to apply this.	Переопределения отключены. Перезапустите TikTok, чтобы это применить.
-Overrides enabled. Restart TikTok to apply this.	Переопределения включены. Перезапустите TikTok, чтобы это применить.
+Overrides enabled. Restart TikTok to apply this.	Переопределения включены. Перезапустите TikTok.
 Paid partnerships	Платные партнёрства
 People, shortcuts and sending controls	Люди, ярлыки и настройки отправки
 Photo	Фото
@@ -953,7 +953,7 @@ Quality, speed and auto-advance	Качество, скорость и автоп
 Pause the video while comments are open	Ставить видео на паузу, пока открыты комментарии
 Reading	Чтение
 Recorded gate reads (%1$d)	Зафиксированные обращения к переключателям (%1$d)
-Recording gate reads. Use a feature, then return here to stop.	Запись обращений к переключателям идёт. Воспользуйтесь функцией, затем вернитесь сюда, чтобы остановить.
+Recording gate reads. Come back here to stop.	Запись переключателей. Вернитесь, чтобы остановить.
 Put back the settings saved before the last restore or reset.	Вернуть настройки, сохранённые перед последним восстановлением или сбросом.
 Recovered an interrupted settings change. Restart TikTok to apply this.	Восстановлено прерванное изменение настроек. Перезапустите TikTok, чтобы это применить.
 Refresh values	Обновить значения
@@ -1039,7 +1039,7 @@ Save videos without sound	Сохранять видео без звука
 Save, restore, reset and undo your settings	Сохранение, восстановление, сброс и отмена настроек
 Saved	Сохранено
 Saved %1$s	Сохранено: %1$s
-Saved %1$s of %2$s photos before the story failed	Сохранено %1$s из %2$s фото, прежде чем история завершилась с ошибкой
+Saved %1$s of %2$s photos before the story failed	Сохранено %1$s из %2$s фото до сбоя истории
 Saved %1$s original photos	Сохранено %1$s оригинальных фото
 Saved %1$s original photos|one	Сохранено %1$s оригинальное фото
 Saved %1$s original photos|few	Сохранено %1$s оригинальных фото
@@ -1189,8 +1189,8 @@ Stop the bubble that asks you to share a video with friends after you like it.	�
 Stops websites you open from inside TikTok from reaching back into the app. TikTok's own pages, such as Activity center, Watch history, shop checkout and CAPTCHA, keep working.	Не даёт сайтам, которые вы открываете из TikTok, обращаться обратно к приложению. Собственные страницы TikTok, такие как Activity center, история просмотров, оплата в магазине и CAPTCHA, продолжают работать.
 Stop video looping	Останавливать зацикливание видео
 Stop videos at the end instead of replaying them.	Останавливать видео в конце вместо повторного воспроизведения.
-Stopped after dismissing %1$s suggested accounts	Остановлено после %1$s отклонённых предложенных аккаунтов
-Stopped after dismissing one suggested account	Остановлено после одного отклонённого предложенного аккаунта
+Stopped after dismissing %1$s suggested accounts	Остановлено после %1$s отклонённых предложений
+Stopped after dismissing one suggested account	Остановлено после одного отклонённого предложения
 Stories	Истории
 Story saved to %1$s	История сохранена в %1$s
 Structured value observed	Обнаружено структурированное значение
@@ -1212,7 +1212,7 @@ Technical details	Технические сведения
 Technical details, %1$s	Технические сведения, %1$s
 That backup was written by a newer Hushfeed than this one. Nothing was altered.	Эта резервная копия создана более новой версией Hushfeed, чем эта. Ничего не изменено.
 That creator is already in the list	Этот автор уже есть в списке
-That creator pattern is too long to use, so it was skipped: %1$s	Этот шаблон автора слишком длинный, поэтому он пропущен: %1$s
+Skipped a creator pattern that's too long: %1$s	Пропущен слишком длинный шаблон автора: %1$s
 That creator pattern is too long, so it wasn't added: %1$s	Этот шаблон автора слишком длинный, поэтому он не добавлен: %1$s
 That file isn't a loaded-values export, or it's larger than the Lab accepts	Этот файл не является экспортом загруженных значений или превышает размер, который принимает Lab
 That file isn't readable text, so it may have been damaged in transit. Nothing was altered.	Этот файл не является читаемым текстом и мог быть повреждён при передаче. Ничего не изменено.
@@ -1239,14 +1239,14 @@ That settings backup holds more Feature Gate Lab rules than the Lab takes. Nothi
 That settings backup is damaged or only partly downloaded. Nothing was altered.	Эта резервная копия настроек повреждена или загружена только частично. Ничего не изменено.
 That settings backup is incomplete, so it may have been cut short. Nothing was altered.	Эта резервная копия настроек неполная и могла быть обрезана. Ничего не изменено.
 That settings change didn't go through. Nothing was altered.	Это изменение настроек не прошло. Ничего не изменено.
-That sticker is in a format Hushfeed can't read	Этот стикер в формате, который Hushfeed не может прочитать
+That sticker is in a format Hushfeed can't read	Hushfeed не читает формат этого стикера
 The Lab can't check this. TikTok gets it exactly as typed.	Lab не может это проверить. TikTok получает именно то, что вы ввели.
-The Lab couldn't open. Go back and open it again.	Не удалось открыть Lab. Вернитесь назад и откройте его ещё раз.
+The Lab couldn't open. Go back and open it again.	Lab не открылся. Вернитесь и откройте снова.
 The Lab keeps at most %1$s rules. This change would make %2$s, so nothing was changed.	Lab хранит не более %1$s правил. После этого изменения их стало бы %2$s, поэтому ничего не изменено.
 The catalog says this key is %1$s and this override is %2$s. Reset the override and make a new one.	Каталог указывает для этого ключа значение %1$s, а для этого переопределения значение %2$s. Сбросьте переопределение и создайте новое.
 The diagnostic report couldn't be saved yet. Try again in a moment.	Диагностический отчёт пока не удалось сохранить. Повторите попытку через момент.
 The diagnostic report couldn't be saved. Try again.	Не удалось сохранить диагностический отчёт. Повторите попытку.
-The downloader app you chose isn't installed. Check Send links to another app under Downloads.	Выбранное приложение-загрузчик не установлено. Проверьте «Отправлять ссылки в другое приложение» в разделе «Загрузки».
+Your downloader app isn't installed. Check Downloads.	Загрузчик не установлен. Проверьте «Загрузки».
 The feed slowly dims during the last 45 seconds before the hold, so it doesn't come as a sudden stop. Needs a time budget and a hold.	Лента постепенно тускнеет в последние 45 секунд перед блокировкой, чтобы она не наступала как резкая остановка. Нужны лимит времени и блокировка.
 The feed doesn't end. This is a fine time to leave it.	Лента не заканчивается. Сейчас как раз подходящий момент, чтобы её покинуть.
 The feed is open again	Лента снова открыта
@@ -1259,15 +1259,15 @@ Show only videos with this many favorites.	Показывать только в�
 Show only videos with this many likes.	Показывать только видео с таким количеством лайков.
 Show only videos with this many shares.	Показывать только видео, которыми поделились столько раз.
 Show only videos with this many views.	Показывать только видео с таким количеством просмотров.
-The original photos aren't available, so TikTok's own save runs instead	Оригинальные фото недоступны, поэтому вместо этого используется сохранение средствами TikTok
-The original photos aren't available. No video was saved.	Оригинальные фото недоступны. Видео не было сохранено.
+No original photos, so TikTok saves it instead	Оригиналов фото нет, поэтому сохраняет TikTok
+No video saved. The original photos are missing.	Видео не сохранено. Нет оригиналов фото.
 The override changes no fields. Edit the field values, or reset the override.	Это переопределение не меняет ни одного поля. Измените значения полей или сбросьте переопределение.
 The override couldn't be applied: %1$s. Edit the field values, or reset the override.	Не удалось применить переопределение: %1$s. Измените значения полей или сбросьте переопределение.
 The override doesn't say what list to return. Edit the field values, or reset the override.	Переопределение не указывает, какой список возвращать. Измените значения полей или сбросьте переопределение.
 The profile picture couldn't be saved. Try again.	Не удалось сохранить фото профиля. Повторите попытку.
 The record of an interrupted settings change couldn't be read, so it was set aside. Check your settings.	Запись о прерванном изменении настроек не удалось прочитать, поэтому она отложена. Проверьте свои настройки.
 The report couldn't be saved. Try again.	Не удалось сохранить отчёт. Повторите попытку.
-The loaded-values file you chose couldn't be read. Try again.	Не удалось прочитать выбранный файл загруженных значений. Повторите попытку.
+Couldn't read that file. Try again.	Файл не прочитан. Повторите.
 The setting couldn't finish updating. Its saved value is shown.	Настройка не смогла полностью обновиться. Показано её сохранённое значение.
 The settings backup was rejected. Nothing was altered.	Резервная копия настроек отклонена. Ничего не изменено.
 The smallest value is above the largest	Наименьшее значение больше наибольшего
@@ -1275,37 +1275,37 @@ The sound couldn't be saved. Try again.	Не удалось сохранить �
 The sticker couldn't be saved. Try again.	Не удалось сохранить стикер. Повторите попытку.
 The story couldn't be saved. Try again.	Не удалось сохранить историю. Повторите попытку.
 The thumbs down on each comment blocks the commenter instead of disliking. The comment dims, an undo banner follows, and a second tap unblocks.	Палец вниз на любом комментарии блокирует автора комментария вместо того, чтобы выразить «не нравится». Комментарий гаснет, появляется баннер отмены, а повторное нажатие снимает блокировку.
-The video couldn't be saved. Try again, or choose Automatic.	Не удалось сохранить видео. Повторите попытку или выберите «Автоматически».
+Couldn't save. Try again, or choose Automatic.	Не сохранено. Повторите или выберите «Автоматически».
 There is no Lab change to undo.	Нет изменений Lab, которые можно было бы отменить.
 There is no diagnostic data to clear	Нет диагностических данных для очистки
 There is no diagnostic data to put back	Нет диагностических данных для восстановления
 There was nothing to put back	Нечего было возвращать
 These loaded values are for a different TikTok version.	Эти загруженные значения относятся к другой версии TikTok.
 This catalog entry is no longer available. Refresh the Lab and try again.	Эта запись каталога больше не доступна. Обновите Lab и повторите попытку.
-This change couldn't be saved. Try again.	Не удалось сохранить это изменение. Повторите попытку.
+This change couldn't be saved. Try again.	Изменение не сохранено. Повторите.
 This configuration has no fields that can be copied and changed safely on this build.	В этой конфигурации нет полей, которые можно безопасно скопировать и изменить в этой сборке.
 This file has no loaded values in it.	В этом файле нет загруженных значений.
 This file isn't a loaded-values export from the Feature Gate Lab.	Этот файл не является экспортом загруженных значений из Feature Gate Lab.
 This gate type isn't supported.	Этот тип переключателя не поддерживается.
 This line opens a rule and doesn't finish it: %1$s. Write two phrases as "a" & "b" for both, or "a" !& "b" for the first without the second.	Эта строка начинает правило и не завершает его: %1$s. Запишите две фразы как "a" & "b", чтобы совпадали обе, или как "a" !& "b", чтобы совпадала первая без второй.
 This phone has no file picker, so there's no way to choose a file here	На этом телефоне нет выбора файлов, поэтому выбрать файл здесь невозможно
-This phone has no folder picker. Type the folder into the row instead.	На этом телефоне нет выбора папки. Введите папку в строку вручную.
+No folder picker here. Type the folder in the row.	Выбора папки здесь нет. Введите папку в строке.
 This profile picture isn't available to save	Это фото профиля недоступно для сохранения
-This quality isn't available as a complete file, so TikTok's own save runs instead	Это качество недоступно в виде полного файла, поэтому вместо этого используется сохранение средствами TikTok
+No full file at this quality, so TikTok saves it	Нет полного файла такого качества. Сохраняет TikTok
 This setting's value can't be copied on this build, so it can't be overridden. Reset the override.	Значение этой настройки нельзя скопировать в этой сборке, поэтому его нельзя переопределить. Сбросьте переопределение.
 This story isn't available to save	Эта история недоступна для сохранения
 This value is required.	Это значение обязательно.
 This video has no link to copy	У этого видео нет ссылки для копирования
-This video has no link to send, so TikTok's own save runs instead	У этого видео нет ссылки для отправки, поэтому вместо этого используется сохранение средствами TikTok
-This video has no original sound to save	У этого видео нет оригинального звука для сохранения
+No link to send, so TikTok saves it instead	Нет ссылки для отправки, сохраняет TikTok
+This video has no original sound to save	У видео нет оригинального звука для сохранения
 This video has no sound of its own	У этого видео нет собственного звука
 Thumbs down blocks the commenter	Палец вниз блокирует автора комментария
 Block from a comment's menu	Блокировка из меню комментария
 Press and hold a comment to find Block this commenter in its menu. Their comments leave the list right away and an undo banner follows.	Нажмите и удерживайте комментарий, чтобы найти в меню пункт «Заблокировать этого комментирующего». Его комментарии сразу исчезнут из списка, а затем появится баннер отмены.
 TikTok default	Стандарт TikTok
 TikTok default (hold to speed up, quick share)	Стандарт TikTok (удержание ускоряет, быстрая отправка)
-TikTok didn't block %1$s. Try again in a moment.	TikTok не заблокировал %1$s. Повторите попытку через момент.
-TikTok didn't unblock %1$s. Try again in a moment.	TikTok не снял блокировку с %1$s. Повторите попытку через момент.
+TikTok didn't block %1$s. Try again in a moment.	TikTok не заблокировал %1$s. Повторите позже.
+TikTok didn't unblock %1$s. Try again in a moment.	TikTok не снял блокировку с %1$s. Повторите позже.
 TikTok didn't accept the feedback. Try again later.	TikTok не принял отзыв. Повторите попытку позже.
 TikTok hasn't loaded this setting yet. Open the part of the app that uses it, then come back.	TikTok ещё не загрузил эту настройку. Откройте раздел приложения, который её использует, и вернитесь.
 TikTok read it	TikTok прочитал его
@@ -1343,7 +1343,7 @@ Today: %1$d videos|few	Сегодня: %1$d видео
 Today: %1$d videos|many	Сегодня: %1$d видео
 Use {creator}, {date}, {video_id} and {index} to build the name. {index} numbers the photos of a slideshow saved with Download original photos. TikTok's own save button numbers files by folder instead. The file ending is added for you.	Составьте имя из {creator}, {date}, {video_id} и {index}. {index} нумерует фото слайд-шоу, сохранённого через «Загружать оригиналы фото». Собственная кнопка сохранения TikTok нумерует файлы по папке. Расширение файла добавляется само.
 Use {date} and {media_id} to build the name. Works for image and video stickers.	Составьте имя из {date} и {media_id}. Работает для стикеров-изображений и видеостикеров.
-Too many media saves are already running. Try again in a moment.	Уже выполняется слишком много сохранений медиафайлов. Повторите попытку через момент.
+Too many saves running. Try again soon.	Слишком много сохранений. Повторите позже.
 Tracking	Трекинг
 Tracking, device access and links	Трекинг, доступ к устройству и ссылки
 Translate comments as they load, using TikTok's own translator.	Переводить комментарии по мере загрузки, используя встроенный переводчик TikTok.
@@ -1369,7 +1369,7 @@ Start typing	Начните вводить текст
 Unavailable	Недоступно
 Unblock this commenter	Снять блокировку с этого автора комментария
 Unblocked %1$s	Блокировка снята: %1$s
-Couldn't confirm the unblock for %1$s. Open their profile to check.	Не удалось подтвердить снятие блокировки с %1$s. Откройте профиль, чтобы проверить.
+Couldn't confirm unblocking %1$s. Check their profile.	Разблокировка %1$s под вопросом. Проверьте профиль.
 Undo	Отменить
 Undo clearing seen videos	Отменить очистку просмотренных видео
 Undo last Lab change	Отменить последнее изменение Lab
@@ -1403,7 +1403,7 @@ Video filename	Имя файла видео
 Video info	Информация о видео
 Video playback quality	Качество воспроизведения видео
 Video saved	Видео сохранено
-Video saved in %1$s, but only %2$s of %3$s subtitles came with it	Видео сохранено в %1$s, но из %3$s субтитров пришло только %2$s
+Saved in %1$s with %2$s of %3$s subtitles	Сохранено в %1$s с субтитрами: %2$s из %3$s
 Video saved with %1$s subtitles in %2$s	Видео с %1$s субтитрами сохранено в %2$s
 Wait before hiding the controls.	Задержка перед скрытием элементов управления.
 WebP, exactly as TikTok sent it	WebP, точно как прислал TikTok
@@ -1503,8 +1503,8 @@ this creator	этот автор
 %1$s, %2$s, %3$s or %4$s	%1$s, %2$s, %3$s или %4$s
 %1$s, %2$s or %3$s	%1$s, %2$s или %3$s
 TikTok refused the follow with code %1$s	TikTok отклонил подписку с кодом %1$s
-TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.	TikTok отклонил подписку с кодом %1$s. Причиной может быть скрытая CAPTCHA.
-TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.	TikTok отклонил подписку: %1$s Причиной может быть скрытая CAPTCHA.
+Follow refused, code %1$s. Maybe a hidden CAPTCHA.	Отказ в подписке, код %1$s. Возможно, скрытая CAPTCHA.
+Follow refused: %1$s Maybe a hidden CAPTCHA.	Подписка отклонена: %1$s Возможно, скрытая CAPTCHA.
 Hushfeed is paused	Hushfeed на паузе
 Hushfeed's switches are paused. Your settings stay saved. Changes made when you patched, like the app's name or icon, stay.	Переключатели Hushfeed приостановлены. Ваши настройки сохранены. Изменения, сделанные при патчинге, например название или значок приложения, остаются.
 TikTok closed three times within a minute of starting, so Hushfeed paused itself. Your settings stay as they are.	TikTok закрылся три раза в течение минуты после запуска, поэтому Hushfeed поставил себя на паузу. Ваши настройки остаются как есть.
@@ -1537,7 +1537,7 @@ Waiting to save %1$s files|many	%1$s файлов ожидают сохране�
 Waiting to save one file	Один файл ожидает сохранения
 Save cancelled. Nothing was saved.	Сохранение отменено. Ничего не сохранено.
 The server asked us to wait. Try again later.	Сервер попросил подождать. Попробуйте позже.
-Saved %1$s of %2$s. The server asked us to wait. Try again later.	Сохранено %1$s из %2$s. Сервер попросил подождать. Попробуйте позже.
+Saved %1$s of %2$s. Try the rest later.	Сохранено %1$s из %2$s. Остальное попробуйте позже.
 One more save waiting	Ещё одно сохранение в очереди
 %1$s more saves waiting	Ещё %1$s сохранений в очереди
 %1$s more saves waiting|one	Ещё %1$s сохранение в очереди
@@ -1575,12 +1575,12 @@ Live photo clip	Клип live-фото
 Media save	Сохранение медиафайла
 Saved %1$s of %2$s, the rest cancelled	Сохранено %1$s из %2$s, остальное отменено
 Saved %1$s of %2$s, %3$s skipped	Сохранено %1$s из %2$s, %3$s пропущено
-Saved %1$s of %2$s, %3$s skipped and the rest cancelled	Сохранено %1$s из %2$s, %3$s пропущено, остальное отменено
-None of the photos could be saved. Try again.	Не удалось сохранить ни одного фото. Повторите попытку.
-Saved %1$s of %2$s, the rest need more free space	Сохранено %1$s из %2$s, для остального не хватает свободного места
-Saved %1$s of %2$s, the rest ran out of time	Сохранено %1$s из %2$s, для остального закончилось время
+Saved %1$s of %2$s, %3$s skipped, rest cancelled	Сохранено %1$s из %2$s, пропущено %3$s, отмена
+None of the photos could be saved. Try again.	Ни одно фото не сохранено. Повторите.
+Saved %1$s of %2$s, the rest need more free space	Сохранено %1$s из %2$s, остальному не хватило места
+Saved %1$s of %2$s, the rest ran out of time	Сохранено %1$s из %2$s, для остального время вышло
 Live photo clip saved to %1$s	Клип live-фото сохранён в %1$s
-The live photo's clip couldn't be saved. Try again.	Не удалось сохранить клип live-фото. Повторите попытку.
+Couldn't save the live photo's clip. Try again.	Клип live-фото не сохранён. Повторите.
 Creator exceptions	Исключения для авторов
 An exception names one creator, so a pattern can't be one: %1$s	Исключение называет одного автора, поэтому шаблон не подходит: %1$s
 An exception takes a handle or id, not a display name: %1$s	Исключение принимает имя аккаунта или id, а не отображаемое имя: %1$s
@@ -1588,9 +1588,9 @@ Also on a block list, so still hidden: %1$s	Также в списке блок�
 Find the sound on YouTube Music	Найти звук в YouTube Music
 YouTube Music isn't installed	YouTube Music не установлен
 This video's sound has no title to look for	У звука этого видео нет названия для поиска
-YouTube Music couldn't be opened. Open it yourself and search for the sound.	Не удалось открыть YouTube Music. Откройте его самостоятельно и найдите звук.
-Allow storage for TikTok in Android settings to save the live photo's clip	Разрешите TikTok доступ к хранилищу в настройках Android, чтобы сохранить клип live-фото
-This is the video's own sound, so YouTube Music won't have it	Это собственный звук видео, поэтому в YouTube Music его нет
+YouTube Music didn't open. Search for the sound there.	YouTube Music не открылся. Найдите звук там.
+Allow storage for TikTok to save the clip	Дайте TikTok доступ к памяти для сохранения клипа
+This original sound isn't on YouTube Music	Этого оригинального звука нет в YouTube Music
 Not a handle or id, so ignored: %1$s	Не имя аккаунта и не id, поэтому проигнорировано: %1$s
 What's new	Что нового
 Changes in Hushfeed %1$s	Изменения в Hushfeed %1$s
@@ -1598,18 +1598,18 @@ Reviewed presets	Проверенные предустановки
 Show See translation	Показывать «Посмотреть перевод»
 Reviewed for TikTok %1$s	Проверено для TikTok %1$s
 Value: %1$s to %2$s	Значение: от %1$s до %2$s
-The presets couldn't load. Open the Lab again.	Не удалось загрузить предустановки. Откройте Lab ещё раз.
+The presets couldn't load. Open the Lab again.	Предустановки не загрузились. Откройте Lab.
 Apply enables these overrides. Undo last Lab change puts your previous rules back until you change anything else in the Lab.	«Применить» включает эти переопределения. «Отменить последнее изменение Lab» вернёт ваши прежние правила, пока вы не измените что-то ещё в Lab.
 Apply saves these overrides. Turn on overrides in the Lab to use them. Turning them on is a Lab change too, so after that Undo turns them off rather than putting your previous rules back.	«Применить» сохраняет эти переопределения. Включите переопределения в Lab, чтобы их использовать. Их включение тоже считается изменением в Lab, поэтому после этого «Отменить» выключит их, а не вернёт прежние правила.
 This preset isn't available for your installed TikTok version.	Эта предустановка недоступна для установленной версии TikTok.
 Preset applied. Restart TikTok to use it.	Предустановка применена. Перезапустите TikTok, чтобы её использовать.
 Preset saved. Turn on overrides in the Lab to use it.	Предустановка сохранена. Включите переопределения в Lab, чтобы её использовать.
-This preset doesn't match the installed gates. Nothing changed.	Эта предустановка не соответствует установленным переключателям. Ничего не изменено.
+Preset doesn't match the gates. Nothing changed.	Предустановка не подходит. Ничего не изменено.
 About overrides	О переопределениях
 Use {creator}, {date} and {video_id} to build the name. Start with {creator}/ to put each creator in a folder. The file ending is added for you.	Составьте имя из {creator}, {date} и {video_id}. Начните с {creator}/, чтобы класть каждого автора в отдельную папку. Расширение файла добавляется само.
 Save details beside the video	Сохранять детали рядом с видео
 Saves the caption, creator, link and post date in a text file next to the video, or one file for a photo post's original photos. On Android 10 and later, they go in Download or Documents under the same folder name. Applies to saves made by Hushfeed.	Сохраняет описание, автора, ссылку и дату публикации в текстовом файле рядом с видео или в одном файле для оригинальных фото фотопоста. На Android 10 и новее они попадают в Download или Documents под тем же именем папки. Действует для сохранений, сделанных Hushfeed.
-The photos saved, but their details file couldn't be written. Check your storage and save the post again to get it.	Фото сохранены, но файл с их данными записать не удалось. Проверьте память и сохраните публикацию ещё раз, чтобы получить его.
+Photos saved, but not their details file	Фото сохранены, но без файла данных
 Check for already-saved videos	Проверять уже сохранённые видео
 Forget saved videos	Забыть сохранённые видео
 Undo forgetting saved videos	Отменить забывание сохранённых видео
@@ -1624,15 +1624,15 @@ Saved videos put back	Сохранённые видео возвращены
 Couldn't put the saved videos back. Try again.	Не удалось вернуть сохранённые видео. Повторите попытку.
 Too late to put the saved videos back	Слишком поздно, чтобы вернуть сохранённые видео
 Remembers up to %1$s videos you saved here. If the file is still there, you get Open or Save again instead of a second copy.	Запоминает до %1$s видео, сохранённых здесь. Если файл всё ещё на месте, вместо второй копии вы увидите «Открыть» или «Сохранить снова».
-This video is already saved. Open TikTok to save another copy.	Это видео уже сохранено. Откройте TikTok, чтобы сохранить ещё одну копию.
+Already saved. Open TikTok to save another copy.	Уже сохранено. Для новой копии откройте TikTok.
 This video is already saved	Это видео уже сохранено
 Save again	Сохранить снова
-The saved-video choice couldn't open. Try again.	Не удалось открыть выбор для сохранённого видео. Повторите попытку.
+The saved-video choice couldn't open. Try again.	Выбор сохранённого видео не открылся. Повторите.
 The saved-video choice is still open	Выбор для сохранённого видео всё ещё открыт
-This video isn't available as a complete file. Try again later.	Это видео недоступно в виде полного файла. Повторите попытку позже.
+No full file for this video. Try again later.	Полного файла нет. Повторите позже.
 Saving video to %1$s	Видео сохраняется в %1$s
 Video and details saved to %1$s	Видео и детали сохранены в %1$s
-The video was saved, but its record couldn't be updated. A later save may make another copy.	Видео сохранено, но его запись не удалось обновить. Последующее сохранение может создать ещё одну копию.
+Saved, but a later save may make a second copy	Сохранено. Новое сохранение может создать вторую копию
 The already-saved check failed. Try again.	Проверка уже сохранённых не удалась. Повторите попытку.
 Show download progress	Показывать прогресс скачивания
 Show a progress bar while a video saves.	Показывать полосу прогресса во время сохранения видео.
@@ -1642,7 +1642,7 @@ Saving video	Видео сохраняется
 Waiting to save video	Видео ожидает сохранения
 Saving video: %1$s	Видео сохраняется: %1$s
 Saving %1$s of %2$s: %3$s	Сохраняется %1$s из %2$s: %3$s
-Couldn't save the change. Try again.	Не удалось сохранить изменение. Повторите попытку.
+Couldn't save the change. Try again.	Изменение не сохранено. Повторите.
 Off. TikTok can report views and typing.	Выкл. TikTok может сообщать о просмотрах и наборе текста.
 Hushfeed is paused. Ghost mode isn't active.	Hushfeed на паузе. Режим призрака не активен.
 Problem detected. Story views may still be reported. Check Ghost mode diagnostics. The warning stays until TikTok restarts.	Обнаружена проблема. Просмотры историй всё ещё могут отправляться. Проверьте диагностику режима призрака. Предупреждение остаётся до перезапуска TikTok.
@@ -1754,12 +1754,12 @@ Still waiting for the file app.	Приложение для файлов всё 
 Stop waiting	Перестать ждать
 Stopped waiting for the file app. Nothing was exported.	Ожидание приложения для файлов остановлено. Ничего не экспортировано.
 Stopped waiting for the file app. It hasn't said yet whether the export was saved.	Ожидание приложения для файлов остановлено. Оно ещё не сообщило, сохранён ли экспорт.
-The export wasn't saved. Export again when the file app is ready.	Экспорт не сохранён. Экспортируйте снова, когда приложение для файлов будет готово.
+The export wasn't saved. Try again.	Экспорт не сохранён. Повторите.
 Hide unpersonalized For You videos	Скрывать неперсонализированные видео в Рекомендациях
 Hide the fill-in videos TikTok sends to For You without picking them for you. When a whole batch is fill-in, it stays so the feed doesn't run dry.	Скрывать видео-заполнители, которые TikTok отправляет в Рекомендации, не подбирая их для вас. Если вся партия состоит из заполнителей, она остаётся, чтобы лента не опустела.
 Unpersonalized For You videos	Неперсонализированные видео в Рекомендациях
 Reviewed presets for TikTok %1$s	Проверенные предустановки для TikTok %1$s
-No presets have been reviewed for TikTok %1$s yet	Для TikTok %1$s пока нет проверенных предустановок
+No reviewed presets for TikTok %1$s yet	Для TikTok %1$s пока нет проверенных предустановок
 Repost with a comment	Репост с комментарием
 Profile banner	Баннер профиля
 Profile banner and new profile layout	Баннер профиля и новый вид профиля
@@ -1820,7 +1820,7 @@ Unlock TikTok	Разблокировать TikTok
 Use screen lock	Использовать блокировку экрана
 TikTok is locked	TikTok заблокирован
 Unlock	Разблокировать
-TikTok isn't locked because this phone has no screen lock	TikTok не заблокирован, потому что на этом телефоне нет блокировки экрана
+TikTok can't lock without a phone screen lock	Без блокировки экрана TikTok не заблокируется
 Save photo posts as a video	Сохранять фотопубликации как видео
 On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video.	В посте с одним фото «Скачать видео» делает MP4 со звуком поста, без логотипа TikTok и заключительной заставки. В посте с несколькими фото «Скачать» спрашивает, нужны ли оригиналы или одно видео.
 Seconds per photo	Секунд на фото
@@ -1830,8 +1830,8 @@ Save photos	Сохранить фото
 Save as video	Сохранить как видео
 Making a video of the photos	Создаём видео из фото
 Saved the photos as a video in %1$s	Фото сохранены как видео в %1$s
-Saved the photos as a video in %1$s. The sound couldn't be added, so it's silent.	Фото сохранены как видео в %1$s. Не удалось добавить звук, поэтому видео без звука.
-The video couldn't be made from these photos. Try again.	Не удалось создать видео из этих фото. Попробуйте ещё раз.
+Saved to %1$s, but without sound	Сохранено в %1$s, но без звука
+Couldn't make the video. Try again.	Видео не создано. Повторите.
 Video of photos	Видео из фото
 # context: search words for the Log diagnostics switch. Never shown, only matched when someone searches settings. Give the words people type for debug logging in this language, separated by spaces.
 debug debugging logs logging	отладка дебаг логи журналы
@@ -1952,8 +1952,8 @@ Proxy password	Пароль прокси
 Optional, used with the user name. It isn't shown, logged or put in a backup.	Необязательно, используется вместе с именем пользователя. Он не показывается, не пишется в журнал и не попадает в резервную копию.
 Enter a server name or IP address, without http:// or a port number	Введите имя сервера или IP-адрес без http:// и номера порта
 A port is a whole number from 1 to 65535	Порт должен быть целым числом от 1 до 65535
-The proxy at %1$s asks for a password, and TikTok can't send one. Use a proxy that doesn't need one.	Прокси по адресу %1$s требует пароль, а TikTok не может его отправить. Используйте прокси без пароля.
-Couldn't reach the proxy at %1$s. TikTok may not load until it's back or you turn the proxy off.	Не удалось подключиться к прокси %1$s. TikTok может не загружаться, пока прокси не заработает или пока вы его не выключите.
+Proxy %1$s wants a password TikTok can't send	Прокси %1$s просит пароль, который TikTok не отправит
+Can't reach proxy %1$s. TikTok may not load.	Прокси %1$s недоступен. TikTok может не загрузиться.
 Word rules only, not every feed filter:	Только правила для слов, а не все фильтры ленты:
 This list is too long to preview here. Saving still follows the usual limit.	Этот список слишком длинный для предпросмотра. При сохранении действует обычный лимит.
 Can't check yet: %1$s	Пока нельзя проверить: %1$s
@@ -2037,9 +2037,9 @@ Stop the short vibrations TikTok plays on its own taps and gestures. Your keyboa
 Turn off screen transitions	Отключить анимацию переходов
 Open and close TikTok's screens without their slide. Swipes inside a screen still follow your finger.	Экраны TikTok открываются и закрываются без анимации сдвига. Свайпы внутри экрана по-прежнему следуют за пальцем.
 Save the frame on screen as a photo	Сохранять кадр с экрана как фото
-There's no video on screen to save a frame from	На экране нет видео, из которого можно сохранить кадр
-Saving a frame from this video needs Android 7 or newer	Чтобы сохранить кадр из этого видео, нужен Android 7 или новее
-Allow storage for TikTok in Android settings to save frames	Разрешите TikTok доступ к хранилищу в настройках Android, чтобы сохранять кадры
+There's no video on screen to save a frame from	На экране нет видео для сохранения кадра
+Saving frames needs Android 7 or newer	Для сохранения кадров нужен Android 7 или новее
+Allow storage for TikTok to save frames	Дайте TikTok доступ к памяти для сохранения кадров
 The frame couldn't be read. Try again.	Не удалось прочитать кадр. Повторите попытку.
 Saving the frame	Кадр сохраняется
 Frame saved to %1$s	Кадр сохранён в %1$s
@@ -2067,7 +2067,7 @@ Save the video's cover	Сохранять обложку видео
 Save the cover as well	Сохранять обложку тоже
 Save the video's cover picture at the largest size TikTok has, each time you tap Download. It goes to your photo folder, named after the video.	Сохранять обложку видео в самом большом размере, какой есть у TikTok, каждый раз, когда вы нажимаете «Скачать». Она попадает в папку с фото и называется как видео.
 This video has no cover to save	У этого видео нет обложки для сохранения
-Allow storage for TikTok in Android settings to save covers	Разрешите TikTok доступ к хранилищу в настройках Android, чтобы сохранять обложки
+Allow storage for TikTok to save covers	Дайте TikTok доступ к памяти для сохранения обложек
 The cover couldn't be saved. Try again.	Не удалось сохранить обложку. Повторите попытку.
 Cover saved to %1$s	Обложка сохранена в %1$s
 Saving the cover	Обложка сохраняется
@@ -2079,7 +2079,7 @@ Show video length on profile grids	Показывать длительность
 Show how long each video runs under its view count on profile grids. Photo posts and videos TikTok sent no length for show none.	Показывать длительность каждого видео под числом просмотров в сетке профиля. У фотопубликаций и видео, для которых TikTok не прислал длительность, она не показывается.
 Fall back to the watermarked copy	Сохранять копию с водяным знаком, если иначе нельзя
 When the video without the watermark can't be fetched, save TikTok's own watermarked copy instead and say so. It's the size TikTok's own save uses, so it may be smaller than the quality you picked.	Если видео без водяного знака не удаётся загрузить, сохраняется собственная копия TikTok с водяным знаком, и об этом сообщается. У неё размер, который использует сохранение TikTok, поэтому она может быть меньше выбранного качества.
-The video without the watermark couldn't be fetched, so TikTok's watermarked copy was saved to %1$s. Try again later for the clean copy.	Не удалось загрузить видео без водяного знака, поэтому копия TikTok с водяным знаком сохранена в %1$s. Повторите попытку позже, чтобы получить чистую копию.
+No clean copy yet. Saved the watermarked one to %1$s	Чистой копии нет. Сохранено с водяным знаком: %1$s
 Match text stickers too	Проверять и текстовые стикеры
 Also hide videos whose text stickers match a blocked caption word. Text stickers are the words a creator types over the video in TikTok's editor. Text that's part of the picture itself can't be read.	Скрывает и видео, в текстовых стикерах которых есть заблокированное слово из подписей. Текстовыми стикерами называются слова, которые автор пишет поверх видео в редакторе TikTok. Текст, который является частью самого изображения, прочитать нельзя.
 Text sticker words	Слова в текстовых стикерах
@@ -2207,7 +2207,7 @@ Translate draft	Перевести черновик
 Translation preview	Предпросмотр перевода
 Use translation	Использовать перевод
 Translating…	Перевод…
-Couldn't translate this draft. Try again in a moment.	Не удалось перевести этот черновик. Повторите попытку чуть позже.
+Couldn't translate this draft. Try again.	Черновик не переведён. Повторите.
 Received message translation	Перевод входящих сообщений
 Preview a translation from a received text message's menu. The original message stays unchanged.	Просмотр перевода через меню полученного текстового сообщения. Исходное сообщение не меняется.
 Preview translation	Посмотреть перевод
@@ -2215,7 +2215,7 @@ Original message	Исходное сообщение
 Translated message	Переведённое сообщение
 Show original	Показать оригинал
 Show translation	Показать перевод
-Couldn't translate this message. Try again in a moment.	Не удалось перевести это сообщение. Повторите попытку чуть позже.
+Couldn't translate this message. Try again.	Сообщение не переведено. Повторите.
 Saved posts	Сохранённые публикации
 Blocked accounts	Заблокированные аккаунты
 These are posts saved by your signed-in account. Other Favorites categories aren't included.	Это публикации, сохранённые вашим аккаунтом, в который выполнен вход. Другие категории Избранного не включены.
@@ -2308,7 +2308,7 @@ One picked	Выбрано одно
 %1$s picked|one	Выбрано: %1$s
 %1$s picked|few	Выбрано: %1$s
 %1$s picked|many	Выбрано: %1$s
-None of the picked videos could be saved. Try again.	Не удалось сохранить ни одно из выбранных видео. Повторите попытку.
+None of the picked videos could be saved. Try again.	Ни одно видео не сохранено. Повторите.
 Saved one video	Сохранено одно видео
 Saved %1$s videos	Сохранено %1$s видео
 Saved %1$s videos|one	Сохранено %1$s видео
@@ -2321,8 +2321,8 @@ One was already saved	Одно уже было сохранено
 %1$s were already saved|many	%1$s уже были сохранены
 Picked videos	Выбранные видео
 Pick all	Выбрать все
-Picked the first %1$s. Save them, then tap Pick all again for the rest.	Выбраны первые %1$s. Сохраните их, затем снова нажмите «Выбрать все», чтобы выбрать остальные.
-Everything this list has loaded is picked or saved. Scroll down to load more.	Всё, что загрузил этот список, уже выбрано или сохранено. Прокрутите вниз, чтобы загрузить ещё.
+Picked %1$s. Save, then tap Pick all for more.	Выбрано %1$s. Сохраните и снова нажмите «Выбрать все».
+All loaded items are picked. Scroll for more.	Все загруженные выбраны. Прокрутите дальше.
 
 Record LIVEs you watch	Записывать LIVE, которые вы смотрите
 Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.	Добавляет в комнаты LIVE кнопку записи. Запись начинается, когда вы нажимаете её, и заканчивается, когда вы нажимаете «Стоп» или выходите из комнаты. Всё, что было до этого, не сохраняется.
@@ -2332,19 +2332,19 @@ Stop recording this LIVE	Остановить запись этого LIVE
 Record this LIVE from now	Записать этот LIVE с этого момента
 Recording this LIVE from now	Этот LIVE записывается с этого момента
 Saving the recording	Запись сохраняется
-Couldn't find this LIVE's stream to record. Leave the room and open it again.	Не удалось найти трансляцию этого LIVE для записи. Выйдите из комнаты и откройте её снова.
-Allow storage for TikTok in Android settings to record LIVEs	Разрешите TikTok доступ к памяти в настройках Android, чтобы записывать LIVE
+No stream found to record. Reopen the LIVE.	Поток для записи не найден. Откройте LIVE заново.
+Allow storage for TikTok to record LIVEs	Дайте TikTok доступ к памяти для записи LIVE
 LIVE recording saved to %1$s	Запись LIVE сохранена в %1$s
-The LIVE ended or the connection dropped. What was recorded is saved to %1$s	LIVE закончился или пропало соединение. Записанное сохранено в %1$s
-The phone is running out of room. What was recorded is saved to %1$s	На телефоне заканчивается место. Записанное сохранено в %1$s
-The recording reached its size limit and was saved to %1$s	Запись достигла предела размера и сохранена в %1$s
+LIVE ended or dropped. Recording saved to %1$s	LIVE завершён или прерван. Запись сохранена: %1$s
+Storage almost full. Recording saved to %1$s	Память почти заполнена. Запись сохранена: %1$s
+Size limit reached. Recording saved to %1$s	Достигнут лимит размера. Запись сохранена: %1$s
 TikTok closed. What was recorded is saved to %1$s	TikTok закрылся. Записанное сохранено в %1$s
-Recording stopped early. What was recorded is saved to %1$s	Запись остановилась раньше времени. Записанное сохранено в %1$s
+Recording stopped early. Saved to %1$s	Запись остановлена раньше. Сохранено в %1$s
 This LIVE's stream can't be saved	Трансляцию этого LIVE нельзя сохранить
 There isn't enough room on the phone to record	На телефоне не хватает места для записи
 Nothing was recorded	Ничего не записано
 The recording couldn't be saved. Try again.	Не удалось сохранить запись. Попробуйте ещё раз.
-Those photos can't be tried again now. Save the post again to get the rest.	Сейчас эти фото нельзя попробовать снова. Сохраните публикацию ещё раз, чтобы получить остальные.
+Can't retry those photos. Save the post again.	Эти фото нельзя повторить. Сохраните публикацию снова.
 Show the time zone	Показывать часовой пояс
 Puts your time zone after the time to the second, like EDT.	Добавляет ваш часовой пояс после времени до секунды, например EDT.
 Short date	Короткая дата
@@ -2482,8 +2482,8 @@ The publication state of these older recording files is unknown. Export a copy o
 The screen recording did not finish. Its files can be exported but may not play.	Запись экрана не завершилась. Файлы можно экспортировать, но они могут не воспроизводиться.
 Recording files need recovery	Файлы записи требуют восстановления
 The recovery record is damaged. Export a copy of the recording files or delete them.	Запись восстановления повреждена. Экспортируйте копию файлов записи или удалите их.
-The export may be incomplete. The original recording files are still kept.	Экспорт может быть неполным. Исходные файлы записи по-прежнему сохранены.
-Some recording files remain. Try deleting them again.	Некоторые файлы записи остались. Попробуйте удалить их ещё раз.
+Export may be incomplete. The recordings are kept.	Экспорт может быть неполным. Записи сохранены.
+Some recording files remain. Try deleting them again.	Часть файлов записи осталась. Удалите снова.
 
 # context: Explicit recording Retry when the original stop reason was not retained.
 Recovered recording saved to %1$s	Восстановленная запись сохранена в %1$s
@@ -2496,7 +2496,7 @@ This setting isn't available. Search for another setting.	Эта настрой�
 Hide the Hushfeed row	Скрыть строку Hushfeed
 Take Hushfeed out of TikTok's Settings and privacy. To open these settings, press and hold For You at the top of the feed, or Home if Long-press Home for Hushfeed settings is on.	Убирает Hushfeed из раздела «Настройки и конфиденциальность» TikTok. Чтобы открыть эти настройки, удерживайте «Рекомендации» вверху ленты или «Главная», если включено «Долгое нажатие на Главная открывает настройки Hushfeed».
 Open the search page	Открыть страницу поиска
-TikTok's search page couldn't be opened. Restart TikTok and try again.	Не удалось открыть страницу поиска TikTok. Перезапустите TikTok и попробуйте снова.
+Search didn't open. Restart TikTok and try again.	Поиск не открылся. Перезапустите TikTok.
 Fold the search into a button	Свернуть поиск в кнопку
 Shows a search button at the top left of the comments instead of the box, so the comments get that room back. Tap it to search, and tap it again to put the box away. Search within comments must be on.	Показывает кнопку поиска слева вверху комментариев вместо поля, и комментариям возвращается это место. Нажмите её, чтобы искать, и нажмите ещё раз, чтобы убрать поле. «Поиск по комментариям» должен быть включён.
 Put the comment search away	Убрать поиск по комментариям
@@ -2520,9 +2520,9 @@ Save only on Wi-Fi	Сохранять только по Wi-Fi
 Saves wait for Wi-Fi or another network that isn't metered, for up to 30 minutes, and stop if you leave it. Saving a frame still works anywhere.	Сохранения ждут Wi-Fi или другую безлимитную сеть до 30 минут и останавливаются, если вы из неё выйдете. Сохранение кадра работает везде.
 Waiting for Wi-Fi	Ожидание Wi-Fi
 The last one is still waiting for Wi-Fi	Последнее всё ещё ждёт Wi-Fi
-Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.	Ожидание Wi-Fi прекращено через 30 минут. Сохраните снова, когда будете в сети Wi-Fi.
-Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.	Сохранено %1$s из %2$s. Остальное остановилось, когда вы вышли из Wi-Fi. Сохраните снова по Wi-Fi.
-The save stopped when you left Wi-Fi. Save it again on Wi-Fi.	Сохранение остановилось, когда вы вышли из Wi-Fi. Сохраните снова по Wi-Fi.
+No Wi-Fi for 30 minutes. Save again on Wi-Fi.	30 минут без Wi-Fi. Сохраните снова по Wi-Fi.
+Saved %1$s of %2$s. Save the rest on Wi-Fi.	Сохранено %1$s из %2$s. Остальное по Wi-Fi.
+Save stopped when Wi-Fi dropped. Retry on Wi-Fi.	Сохранение прервалось без Wi-Fi. Повторите по Wi-Fi.
 Leave after no touch	Выходить, если нет касаний
 Zero switches this off. After that many minutes with no touch on the screen, the video stops and TikTok goes to the background, for when you fall asleep watching. Any touch starts the wait over.	Ноль отключает это. Если столько минут не касаться экрана, видео останавливается и TikTok уходит в фон, на случай если вы уснули за просмотром. Любое касание начинает ожидание заново.
 Left TikTok after no touch	TikTok свёрнут: не было касаний

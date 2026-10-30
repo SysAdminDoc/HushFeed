@@ -102,7 +102,7 @@ public class LiveRecordingSaverTest {
         ShadowToast.reset();
         LiveRecordingSaver.announce(result(LiveRecorder.Outcome.SAVED_PARTIAL, LiveRecorder.End.STORAGE, "handle"));
         shadowOf(Looper.getMainLooper()).idle();
-        assertTrue(ShadowToast.getTextOfLatestToast().startsWith("The phone is running out of room."));
+        assertTrue(ShadowToast.getTextOfLatestToast().startsWith("Storage almost full."));
     }
 
     @Test public void streamAndEnabledScreenAudioKeepTheOriginalCompletionMessage() {
@@ -129,7 +129,7 @@ public class LiveRecordingSaverTest {
         assertEquals(original.outcome, result.outcome);
         LiveRecordingSaver.announce(result);
         shadowOf(Looper.getMainLooper()).idle();
-        assertTrue(ShadowToast.getTextOfLatestToast().startsWith("The phone is running out of room."));
+        assertTrue(ShadowToast.getTextOfLatestToast().startsWith("Storage almost full."));
         assertTrue(ShadowToast.getTextOfLatestToast().endsWith("\nThis screen recording has no sound."));
     }
 

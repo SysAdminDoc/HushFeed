@@ -151,12 +151,12 @@ public final class OriginalPhotos {
         List<List<String>> photos = sources(aweme);
         if (photos.isEmpty()) {
             if (conversion) {
-                Utils.showToastShort(L10n.t("The original photos aren't available. No video was saved."));
+                Utils.showToastShort(L10n.t("No video saved. The original photos are missing."));
             } else if (asked) {
                 Utils.showToastLong(L10n.t("None of the photos could be saved. Try again."));
             } else {
                 Utils.showToastShort(L10n.t(
-                        "The original photos aren't available, so TikTok's own save runs instead"));
+                        "No original photos, so TikTok saves it instead"));
             }
             return owned;
         }
@@ -246,8 +246,7 @@ public final class OriginalPhotos {
                             "Saved one original photo", "Saved %1$s original photos")), last[0],
                             failed == null ? null : () -> retry(failed));
                     if (!detailsWritten) {
-                        Utils.showToastLong(L10n.t("The photos saved, but their details file couldn't be written. "
-                                + "Check your storage and save the post again to get it."));
+                        Utils.showToastLong(L10n.t("Photos saved, but not their details file"));
                     }
                 }
             } catch (RuntimeException exception) {
@@ -294,7 +293,7 @@ public final class OriginalPhotos {
             return;
         }
         if (!failed.stillUsable()) {
-            Utils.showToastLong(L10n.t("Those photos can't be tried again now. Save the post again to get the rest."));
+            Utils.showToastLong(L10n.t("Can't retry those photos. Save the post again."));
             return;
         }
         Context context = Utils.getContext();

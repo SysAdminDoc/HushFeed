@@ -130,7 +130,7 @@ public class CommentLivePhotoSaverTest {
         CommentLivePhotoSaver.saveClip(live("7000000000000000002", "https://v.example/clip.mp4"), 0);
         // Marker names never reach the export; the count is what it renders.
         assertTrue(report(), report().contains("comment live photo: 1 found, 0 missing"));
-        assertEquals(L10n.t("Allow storage for TikTok in Android settings to save the live photo's clip"),
+        assertEquals(L10n.t("Allow storage for TikTok to save the clip"),
                 ShadowToast.getTextOfLatestToast());
         assertEquals("a fetch was submitted without the permission", 0,
                 MediaJobScheduler.queuedJobs() + MediaJobScheduler.runningJobs());
@@ -186,7 +186,7 @@ public class CommentLivePhotoSaverTest {
         }
         Shadows.shadowOf(Looper.getMainLooper()).idle();
         assertFalse("the photo was not released after the fetch", CommentLivePhotoSaver.activeForTests("7000000000000000003", 0));
-        assertEquals(L10n.t("The live photo's clip couldn't be saved. Try again."), ShadowToast.getTextOfLatestToast());
+        assertEquals(L10n.t("Couldn't save the live photo's clip. Try again."), ShadowToast.getTextOfLatestToast());
         assertEquals("a test media worker was left running", 0, MediaJobScheduler.runningJobs());
     }
 

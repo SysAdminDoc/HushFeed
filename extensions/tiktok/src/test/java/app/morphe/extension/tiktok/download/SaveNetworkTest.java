@@ -139,7 +139,7 @@ public class SaveNetworkTest {
         assertEquals("it gave up early", 0, ended.get());
         Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(2000));
         assertEquals(1, ended.get());
-        String message = "Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.";
+        String message = "No Wi-Fi for 30 minutes. Save again on Wi-Fi.";
         assertEquals(message, ShadowToast.getTextOfLatestToast());
         assertEquals(message, MediaJobScheduler.ended().get(0).said);
         onWifi();
@@ -245,7 +245,7 @@ public class SaveNetworkTest {
 
     @Test public void aRunStoppedByTheNetworkSaysSo() {
         SaveProgress.Outcome outcome = new SaveProgress.Outcome(5, 2, 0, 3, SaveProgress.Stop.NETWORK);
-        assertEquals("Saved 2 of 5. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.",
+        assertEquals("Saved 2 of 5. Save the rest on Wi-Fi.",
                 SaveProgress.message(outcome, "all"));
     }
 

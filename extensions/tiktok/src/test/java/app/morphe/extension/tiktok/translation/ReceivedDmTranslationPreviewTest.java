@@ -462,7 +462,7 @@ public class ReceivedDmTranslationPreviewTest {
         expired.finish("too late");
         assertFalse(second.isShowing());
         assertEquals(1, expired.canceled);
-        assertEquals("Couldn't translate this message. Try again in a moment.", ShadowToast.getTextOfLatestToast());
+        assertEquals("Couldn't translate this message. Try again.", ShadowToast.getTextOfLatestToast());
         idle();
         assertEquals(1, expired.canceled);
         assertEquals("received original", text.getText().toString());
@@ -514,7 +514,7 @@ public class ReceivedDmTranslationPreviewTest {
         action().click.run(); Call failed = calls.get(1);
         failed.finish(null);
         assertEquals(1, failed.canceled);
-        assertEquals("Couldn't translate this message. Try again in a moment.", ShadowToast.getTextOfLatestToast());
+        assertEquals("Couldn't translate this message. Try again.", ShadowToast.getTextOfLatestToast());
         action().click.run(); AlertDialog timeout = dialog(); Call pending = calls.get(2);
         Shadows.shadowOf(Looper.getMainLooper()).idleFor(DmTranslationPreview.TIMEOUT_MS, TimeUnit.MILLISECONDS);
         assertEquals(1, pending.canceled); assertFalse(timeout.isShowing()); assertFalse(pending.guard.current());

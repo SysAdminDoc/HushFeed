@@ -261,7 +261,7 @@ public final class SeenHistoryFilePreference extends Preference {
             String message = failure instanceof SeenVideoHistory.AccountChanged
                     ? L10n.t(context, ACCOUNT_CHANGED)
                     : file.stage() == DocumentOperation.Stage.STOPPED_WHILE_PUBLISHING
-                    ? L10n.t(context, "The export wasn't saved. Export again when the file app is ready.")
+                    ? L10n.t(context, "The export wasn't saved. Try again.")
                     : L10n.t(context, "Couldn't save the seen-history file. Try again.");
             if (!DocumentOperation.removeUnsaved(resolver, uri, opened)) {
                 message += " " + L10n.t(context,

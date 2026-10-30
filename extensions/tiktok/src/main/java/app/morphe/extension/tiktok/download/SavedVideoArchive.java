@@ -393,7 +393,7 @@ public final class SavedVideoArchive {
             Activity activity = Utils.getVisibleActivity();
             if (activity == null || activity.isFinishing() || activity.isDestroyed()) {
                 release.run();
-                Utils.showToastLong(L10n.t("This video is already saved. Open TikTok to save another copy."));
+                Utils.showToastLong(L10n.t("Already saved. Open TikTok to save another copy."));
                 return;
             }
             AtomicBoolean saving = new AtomicBoolean();

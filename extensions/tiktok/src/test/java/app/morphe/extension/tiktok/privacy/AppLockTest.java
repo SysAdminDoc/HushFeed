@@ -218,7 +218,7 @@ public class AppLockTest {
             idleFor(AppLock.ASK_DELAY_MS + 50);
             assertNull(coverOf(screen.get()));
             assertTrue(asked.isEmpty());
-            assertEquals(L10n.t("TikTok isn't locked because this phone has no screen lock"),
+            assertEquals(L10n.t("TikTok can't lock without a phone screen lock"),
                     ShadowToast.getTextOfLatestToast());
         }
     }

@@ -170,7 +170,7 @@ public class BuildDetailsPreferenceTest {
             ShadowToast.reset();
             ShadowAlertDialog.getLatestAlertDialog().getButton(AlertDialog.BUTTON_POSITIVE).performClick();
             Shadows.shadowOf(Looper.getMainLooper()).idle();
-            assertEquals("Couldn't copy the build details. Use Save build details instead.",
+            assertEquals("Couldn't copy. Use Save build details instead.",
                     String.valueOf(ShadowToast.getTextOfLatestToast()));
         }
     }

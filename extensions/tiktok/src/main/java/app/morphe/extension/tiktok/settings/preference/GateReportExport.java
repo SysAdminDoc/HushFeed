@@ -69,7 +69,7 @@ final class GateReportExport {
         // nor the failure sentence.
         if (!started) {
             SAVING.set(false);
-            Utils.showToastShort(L10n.t("Couldn't start the report export. Try again in a moment."));
+            Utils.showToastShort(L10n.t("Couldn't start the report export. Try again."));
         }
     }
 

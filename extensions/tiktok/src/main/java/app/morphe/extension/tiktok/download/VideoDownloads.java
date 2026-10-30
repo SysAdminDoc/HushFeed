@@ -184,11 +184,11 @@ final class VideoDownloads {
             // progress row alone is no reason to refuse one TikTok could still have made. After a
             // pick there's no TikTok save left to run.
             if (withDetails || pick != null) {
-                Utils.showToastLong(L10n.t("This video isn't available as a complete file. Try again later."));
+                Utils.showToastLong(L10n.t("No full file for this video. Try again later."));
                 return true;
             }
             Utils.showToastShort(L10n.t(
-                    "This quality isn't available as a complete file, so TikTok's own save runs instead"));
+                    "No full file at this quality, so TikTok saves it"));
             return false;
         }
         String id = Reflect.string(aweme, "getAid", "aid");
@@ -207,7 +207,7 @@ final class VideoDownloads {
             // Working out the name is reflection over TikTok's model, so it can throw. Leaving
             // the id in ACTIVE here would refuse every later attempt on this video in silence.
             Logger.printException(() -> "Could not work out the download name", exception);
-            if (extras) Utils.showToastLong(L10n.t("The video couldn't be saved. Try again, or choose Automatic."));
+            if (extras) Utils.showToastLong(L10n.t("Couldn't save. Try again, or choose Automatic."));
             return extras;
         }
         String audioName = null;
@@ -242,7 +242,7 @@ final class VideoDownloads {
             // A source is needed for a new copy, but a remembered file can still be opened
             // after TikTok stops supplying a download address for this post.
             if (unavailable) {
-                Utils.showToastLong(L10n.t("This video isn't available as a complete file. Try again later."));
+                Utils.showToastLong(L10n.t("No full file for this video. Try again later."));
                 return;
             }
             Utils.showToastShort(L10n.f("Saving video to %1$s", path));
@@ -350,26 +350,26 @@ final class VideoDownloads {
                     Utils.showToastLong(outcome.stop == SaveProgress.Stop.SERVER_WAIT
                             ? SaveProgress.message(outcome, "")
                             : outcome.stop == SaveProgress.Stop.NETWORK
-                            ? L10n.t("The save stopped when you left Wi-Fi. Save it again on Wi-Fi.")
-                            : L10n.t("The video couldn't be saved. Try again, or choose Automatic."));
+                            ? L10n.t("Save stopped when Wi-Fi dropped. Retry on Wi-Fi.")
+                            : L10n.t("Couldn't save. Try again, or choose Automatic."));
                 } else {
                     // The video's own words when everything landed or only a track is missing,
                     // since they name the tracks that came; the count for anything else.
                     String own = subtitleResult(captionSnapshot.size(), subtitles[0], path);
                     if (details != null) own = L10n.f("Video and details saved to %1$s", path);
                     // Said over everything else, since it's not the file that was asked for.
-                    if (stamped[0]) own = L10n.f("The video without the watermark couldn't be fetched, so TikTok's watermarked copy was saved to %1$s. Try again later for the clean copy.", path);
+                    if (stamped[0]) own = L10n.f("No clean copy yet. Saved the watermarked one to %1$s", path);
                     boolean onlyTracks = details == null && outcome.cancelled == 0
                             && outcome.stop == SaveProgress.Stop.NONE && !soundSkipped[0];
                     String said = onlyTracks ? own : SaveProgress.message(outcome, own);
                     SaveNotice.saved(said, published[0]);
                     // A count took the banner, so the watermark is said on its own.
                     if (stamped[0] && !said.equals(own)) Utils.showToastLong(own);
-                    if (!remembered[0]) Utils.showToastLong(L10n.t("The video was saved, but its record couldn't be updated. A later save may make another copy."));
+                    if (!remembered[0]) Utils.showToastLong(L10n.t("Saved, but a later save may make a second copy"));
                 }
             } catch (RuntimeException exception) {
                 Logger.printException(() -> "Selected-quality download failed", exception);
-                Utils.showToastLong(L10n.t("The video couldn't be saved. Try again, or choose Automatic."));
+                Utils.showToastLong(L10n.t("Couldn't save. Try again, or choose Automatic."));
             } finally {
                 for (File file : temporary) if (!MediaCache.delete(file)) Logger.printInfo(() -> "Could not remove video temporary file");
             }
@@ -424,7 +424,7 @@ final class VideoDownloads {
         if (saved == wanted) {
             return L10n.f("Video saved with %1$s subtitles in %2$s", saved, path);
         }
-        return L10n.f("Video saved in %1$s, but only %2$s of %3$s subtitles came with it",
+        return L10n.f("Saved in %1$s with %2$s of %3$s subtitles",
                 path, saved, wanted);
     }
 

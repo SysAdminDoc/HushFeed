@@ -159,7 +159,7 @@ public class MediaJobSchedulerTest {
                 refusedRan::incrementAndGet, refusedEnded::incrementAndGet));
         idle();
         assertEquals("the refusal's cleanup did not run exactly once", 1, refusedEnded.get());
-        assertEquals("Too many media saves are already running. Try again in a moment.",
+        assertEquals("Too many saves running. Try again soon.",
                 ShadowToast.getTextOfLatestToast());
         assertNull("the refused save kept its name", MediaJobScheduler.job("refused"));
         assertEquals("Still saving the last one", MediaJobScheduler.busyMessage("refused"));

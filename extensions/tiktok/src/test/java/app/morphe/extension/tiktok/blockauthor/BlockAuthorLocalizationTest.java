@@ -57,14 +57,11 @@ public class BlockAuthorLocalizationTest {
     public void germanOwnsEveryBlockAndUnblockResult() {
         verify(new Expected(
                 NAME + " blockiert",
-                "TikTok hat " + NAME + " nicht blockiert. Versuch es gleich noch einmal.",
-                "Die Blockierung von " + NAME + " konnte nicht bestätigt werden. Öffne das Profil,"
-                        + " um nachzusehen.",
+                "TikTok hat " + NAME + " nicht blockiert. Gleich nochmal.",
+                "Blockierung von " + NAME + " nicht bestätigt. Prüfe das Profil.",
                 NAME + " entblockt",
-                "TikTok hat die Blockierung von " + NAME + " nicht aufgehoben. Versuch es gleich"
-                        + " noch einmal.",
-                "Die Aufhebung der Blockierung von " + NAME + " konnte nicht bestätigt werden."
-                        + " Öffne das Profil, um nachzusehen."
+                "Blockierung von " + NAME + " nicht aufgehoben. Gleich nochmal.",
+                "Entblocken von " + NAME + " nicht bestätigt. Prüfe das Profil."
         ));
     }
 
@@ -72,12 +69,11 @@ public class BlockAuthorLocalizationTest {
     public void indonesianOwnsEveryBlockAndUnblockResult() {
         verify(new Expected(
                 NAME + " diblokir",
-                "TikTok tidak memblokir " + NAME + ". Coba lagi sebentar lagi.",
-                "Pemblokiran " + NAME + " tidak dapat dikonfirmasi. Buka profilnya untuk memeriksa.",
+                "TikTok tidak memblokir " + NAME + ". Coba lagi.",
+                "Tak bisa memastikan blokir " + NAME + ". Cek profilnya.",
                 NAME + " dibuka blokirnya",
-                "TikTok tidak membuka blokir " + NAME + ". Coba lagi sebentar lagi.",
-                "Pembukaan blokir " + NAME + " tidak dapat dikonfirmasi. Buka profilnya untuk"
-                        + " memeriksa."
+                "TikTok tidak membuka blokir " + NAME + ". Coba lagi.",
+                "Tak bisa memastikan buka blokir " + NAME + ". Cek profilnya."
         ));
     }
 

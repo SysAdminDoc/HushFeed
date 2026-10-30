@@ -404,7 +404,7 @@ public class GridPickerTest {
         assertEquals(GridPicker.MAX_PICKED, GridPicker.pickedCount());
         assertTrue(GridPicker.isPicked("p49"));
         assertFalse(GridPicker.isPicked("p50"));
-        assertEquals("Picked the first 50. Save them, then tap Pick all again for the rest.",
+        assertEquals("Picked 50. Save, then tap Pick all for more.",
                 ShadowToast.getTextOfLatestToast());
     }
 
@@ -437,7 +437,7 @@ public class GridPickerTest {
             ShadowToast.reset();
             barText("Pick all").performClick();
             assertEquals(1, GridPicker.pickedCount());
-            assertEquals("Everything this list has loaded is picked or saved. Scroll down to load more.",
+            assertEquals("All loaded items are picked. Scroll for more.",
                     ShadowToast.getTextOfLatestToast());
         } finally {
             Utils.awaitBackgroundTasksForTests();

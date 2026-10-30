@@ -264,7 +264,7 @@ public final class StoryDownloads {
         if (android.os.Build.VERSION.SDK_INT < 29
                 && context.checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != android.content.pm.PackageManager.PERMISSION_GRANTED) {
-            Utils.showToastLong(L10n.t("Allow storage for TikTok in Android settings to save stories"));
+            Utils.showToastLong(L10n.t("Allow storage for TikTok to save stories"));
             return false;
         }
 
@@ -395,7 +395,7 @@ public final class StoryDownloads {
             // later, took it down before anyone saw it (refutation review of 3d5395f2).
             if (audioName != null) saveSound(app, audioName, temp, path);
             SaveNotice.saved(stamped
-                    ? L10n.f("TikTok only had its watermarked copy of this story, so that copy was saved to %1$s", path)
+                    ? L10n.f("Only a watermarked copy existed. Saved to %1$s", path)
                     : L10n.f("Story saved to %1$s", path), saved);
         } finally {
             if (!MediaCache.delete(temp)) Logger.printInfo(() -> "Could not remove story temporary file");

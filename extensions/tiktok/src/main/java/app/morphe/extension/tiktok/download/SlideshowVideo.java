@@ -127,7 +127,7 @@ public final class SlideshowVideo {
                 != android.content.pm.PackageManager.PERMISSION_GRANTED) return failed();
         List<List<String>> photos = OriginalPhotos.sources(aweme);
         if (photos.isEmpty()) {
-            Utils.showToastShort(L10n.t("The original photos aren't available. No video was saved."));
+            Utils.showToastShort(L10n.t("No video saved. The original photos are missing."));
             return true;
         }
         List<Integer> chosen = OriginalPhotos.positions(indices, photos.size());
@@ -181,17 +181,17 @@ public final class SlideshowVideo {
                     Utils.showToastLong(outcome.stop == SaveProgress.Stop.SERVER_WAIT
                             ? SaveProgress.message(outcome, "")
                             : outcome.stop == SaveProgress.Stop.NETWORK
-                            ? L10n.t("The save stopped when you left Wi-Fi. Save it again on Wi-Fi.")
-                            : L10n.t("The video couldn't be made from these photos. Try again."));
+                            ? L10n.t("Save stopped when Wi-Fi dropped. Retry on Wi-Fi.")
+                            : L10n.t("Couldn't make the video. Try again."));
                 } else {
                     if (checkSaved) SavedVideoArchive.rememberQuietly(app, id, saved[0], archiveGeneration);
                     SaveNotice.saved(silent[0]
-                            ? L10n.f("Saved the photos as a video in %1$s. The sound couldn't be added, so it's silent.", path)
+                            ? L10n.f("Saved to %1$s, but without sound", path)
                             : L10n.f("Saved the photos as a video in %1$s", path), saved[0]);
                 }
             } catch (RuntimeException exception) {
                 Logger.printException(() -> "Photo video failed", exception);
-                Utils.showToastLong(L10n.t("The video couldn't be made from these photos. Try again."));
+                Utils.showToastLong(L10n.t("Couldn't make the video. Try again."));
             }
         }, () -> {
             if (!asking.get()) ACTIVE.remove(id);
@@ -228,7 +228,7 @@ public final class SlideshowVideo {
     }
 
     private static boolean failed() {
-        Utils.showToastLong(L10n.t("The video couldn't be made from these photos. Try again."));
+        Utils.showToastLong(L10n.t("Couldn't make the video. Try again."));
         return true;
     }
 

@@ -110,7 +110,7 @@ public final class FrameSaver {
                 if (!(video instanceof SurfaceView)) readable.add(video);
             }
             if (readable.isEmpty()) {
-                Utils.showToastShort(L10n.t("Saving a frame from this video needs Android 7 or newer"));
+                Utils.showToastShort(L10n.t("Saving frames needs Android 7 or newer"));
                 return;
             }
             videos = readable;
@@ -120,7 +120,7 @@ public final class FrameSaver {
         if (Build.VERSION.SDK_INT < 29
                 && activity.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
-            Utils.showToastLong(L10n.t("Allow storage for TikTok in Android settings to save frames"));
+            Utils.showToastLong(L10n.t("Allow storage for TikTok to save frames"));
             return;
         }
         Context app = activity.getApplicationContext();

@@ -355,7 +355,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
     public static void openDownloadPathFolderPicker(DownloadPathPreference preference) {
         if (activeFragment == null) {
             app.morphe.extension.shared.Utils.showToastLong(L10n.t(
-                    "This phone has no folder picker. Type the folder into the row instead."));
+                    "No folder picker here. Type the folder in the row."));
             return;
         }
 
@@ -369,7 +369,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         } catch (ActivityNotFoundException exception) {
             pendingDownloadPathKey = null;
             app.morphe.extension.shared.Utils.showToastLong(L10n.t(
-                    "This phone has no folder picker. Type the folder into the row instead."));
+                    "No folder picker here. Type the folder in the row."));
         }
     }
 
@@ -598,7 +598,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         app.morphe.extension.shared.settings.preference.LogBufferManager.savedToMessage =
                 L10n.t(context, "Full report saved to %1$s");
         app.morphe.extension.shared.settings.preference.LogBufferManager.couldNotStartMessage =
-                L10n.t(context, "Couldn't start the report export. Try again in a moment.");
+                L10n.t(context, "Couldn't start the report export. Try again.");
         // Four whole sentences rather than five fragments, so each one is a row a translator
         // can move the numbers around inside. The context is asked for when a line is written
         // rather than captured here: this writer is a static and outlives the screen.

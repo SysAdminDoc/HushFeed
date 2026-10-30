@@ -67,7 +67,7 @@ public class FeedCapturePreferenceTest {
         assertTrue(String.valueOf(row.getSummary()), String.valueOf(row.getSummary())
                 .endsWith("Tap to stop and save it in " + GateReportExport.FOLDER + "."));
         Shadows.shadowOf(Looper.getMainLooper()).idle();
-        assertEquals("Feed capture started. Scroll until the problem shows up, then come back here to stop.",
+        assertEquals("Feed capture on. Scroll to the problem, then return.",
                 String.valueOf(ShadowToast.getTextOfLatestToast()));
 
         tap(row);
@@ -102,8 +102,8 @@ public class FeedCapturePreferenceTest {
         ShadowToast.reset();
         tap(row);
         assertFalse(FeedCapture.isRecording());
-        assertEquals("The feed capture couldn't be saved. Tap the row to try again.",
-                awaitToast("The feed capture couldn't"));
+        assertEquals("Feed capture not saved. Tap the row to retry.",
+                awaitToast("Feed capture not saved"));
         settle();
         assertEquals("Save the feed capture", String.valueOf(row.getTitle()));
         assertEquals("The last feed capture wasn't saved. Tap to try again.", String.valueOf(row.getSummary()));

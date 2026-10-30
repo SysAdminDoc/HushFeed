@@ -699,7 +699,7 @@ public final class InboxFilter {
         } catch (Throwable ex) {
             // Logged first so the reader's outcome is the message left on screen: with
             // debugging on, printException puts the stack trace in a toast of its own.
-            Logger.printException(() -> "Couldn't clear the suggested accounts. Reopen the Inbox and try again.", ex);
+            Logger.printException(() -> "Couldn't clear suggestions. Reopen Inbox to retry.", ex);
             finishRun(failureMessage(dismissed));
         }
     }
@@ -729,7 +729,7 @@ public final class InboxFilter {
     }
 
     private static String failureMessage(int cleared) {
-        if (cleared == 0) return L10n.t("Couldn't clear the suggested accounts. Reopen the Inbox and try again.");
+        if (cleared == 0) return L10n.t("Couldn't clear suggestions. Reopen Inbox to retry.");
         if (cleared == 1) return L10n.t("Stopped after dismissing one suggested account");
         return L10n.f("Stopped after dismissing %1$s suggested accounts", cleared);
     }

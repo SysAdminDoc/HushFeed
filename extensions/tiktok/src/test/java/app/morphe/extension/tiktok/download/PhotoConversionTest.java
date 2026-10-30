@@ -104,7 +104,7 @@ public class PhotoConversionTest {
         assertTrue("An empty Photo Mode source must stop conversion with an error",
                 OriginalPhotos.startImageAsVideo(empty));
         idle();
-        assertEquals("The original photos aren't available. No video was saved.",
+        assertEquals("No video saved. The original photos are missing.",
                 ShadowToast.getTextOfLatestToast());
     }
 
@@ -116,7 +116,7 @@ public class PhotoConversionTest {
             assertTrue("The requested original save must not fall through to MP4 conversion",
                     OriginalPhotos.startImageAsVideo(post));
             idle();
-            assertEquals("The original photos aren't available. No video was saved.",
+            assertEquals("No video saved. The original photos are missing.",
                     ShadowToast.getTextOfLatestToast());
             assertNull(MediaJobScheduler.job("photos " + post.getAid()));
             assertFalse(photoIds().contains(post.getAid()));
@@ -230,7 +230,7 @@ public class PhotoConversionTest {
                 assertFalse(photoIds().contains(post.getAid()));
                 assertNull(MediaJobScheduler.job("photos " + post.getAid()));
                 assertNull("Refused jobs must not leave a progress row", root.findViewWithTag("hushfeed_save_progress"));
-                assertEquals("Too many media saves are already running. Try again in a moment.",
+                assertEquals("Too many saves running. Try again soon.",
                         ShadowToast.getTextOfLatestToast());
             }
         } finally {

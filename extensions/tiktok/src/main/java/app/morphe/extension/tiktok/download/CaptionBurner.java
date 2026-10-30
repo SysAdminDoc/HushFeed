@@ -107,7 +107,7 @@ final class CaptionBurner {
 
     private static boolean keep(Throwable failure) {
         Logger.printException(() -> "Could not write the caption on the video, so it's saved without", failure);
-        Utils.showToastLong(L10n.t("Couldn't write the caption on this video. Saving it without."));
+        Utils.showToastLong(L10n.t("Couldn't add the caption. Saving without it."));
         return false;
     }
 

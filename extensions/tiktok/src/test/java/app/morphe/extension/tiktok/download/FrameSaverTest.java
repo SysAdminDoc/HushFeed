@@ -369,7 +369,7 @@ public class FrameSaverTest {
 
         assertNothingSaved();
         assertTrue("asked before the frame is read", video.asked.isEmpty());
-        assertEquals("Allow storage for TikTok in Android settings to save frames",
+        assertEquals("Allow storage for TikTok to save frames",
                 ShadowToast.getTextOfLatestToast());
     }
 
@@ -382,7 +382,7 @@ public class FrameSaverTest {
         FrameSaver.save(activity, new Post("7350000000000000007", 1080, 1920), 0);
 
         assertNothingSaved();
-        assertEquals("Saving a frame from this video needs Android 7 or newer",
+        assertEquals("Saving frames needs Android 7 or newer",
                 ShadowToast.getTextOfLatestToast());
     }
 

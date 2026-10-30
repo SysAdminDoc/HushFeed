@@ -156,7 +156,7 @@ public class ProfileAvatarPermissionTest {
                 avatar.getContext().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE));
         assertTrue("the installed avatar listener did not consume the press", avatar.performLongClick());
         Shadows.shadowOf(Looper.getMainLooper()).idle();
-        assertEquals("Allow storage for TikTok in Android settings to save profile pictures", ShadowToast.getTextOfLatestToast());
+        assertEquals("Allow storage for TikTok to save profile pictures", ShadowToast.getTextOfLatestToast());
         assertEquals(1, ShadowToast.shownToastCount());
         assertEquals("denied storage still submitted media work", 0, MediaJobScheduler.queuedJobs());
         assertEquals(MediaJobScheduler.MAX_RUNNING_JOBS, MediaJobScheduler.runningJobs());

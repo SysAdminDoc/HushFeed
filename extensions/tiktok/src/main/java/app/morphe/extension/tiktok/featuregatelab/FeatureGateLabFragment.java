@@ -593,8 +593,8 @@ public final class FeatureGateLabFragment extends Fragment {
         }
         // Both forms take (count, build); the one form leaves the count unused.
         Utils.showToastLong(L10n.quantity(Utils.getContext(), turnedOff,
-                "1 override was turned off because the Lab couldn't confirm its gate is unchanged in TikTok %2$s. Review it before turning it back on.",
-                "%1$d overrides were turned off because the Lab couldn't confirm their gates are unchanged in TikTok %2$s. Review them before turning them back on.",
+                "Turned off 1 override. Recheck for TikTok %2$s.",
+                "Turned off %1$d overrides. Recheck for TikTok %2$s.",
                 turnedOff, FeatureGateLabStore.targetVersion()));
     }
 
@@ -1333,7 +1333,7 @@ public final class FeatureGateLabFragment extends Fragment {
             String build = app.morphe.extension.shared.BuildNames.runningBuild();
             JSONObject version = FeatureGateLabStore.reviewedPresets().optJSONObject(build);
             if (version == null || version.length() == 0) {
-                postToast(L10n.f(getContext(), "No presets have been reviewed for TikTok %1$s yet", build));
+                postToast(L10n.f(getContext(), "No reviewed presets for TikTok %1$s yet", build));
                 return;
             }
             List<String> ids = new ArrayList<>();
@@ -1362,7 +1362,7 @@ public final class FeatureGateLabFragment extends Fragment {
         // The first snapshot holds only the values TikTok has stored. A preset reviewed against
         // it found gates TikTok never sent missing and refused as not matching this build.
         if (snapshot == null || !snapshot.catalogComplete) {
-            postToast(L10n.t(getContext(), "Loaded values are still being read. Try again in a moment."));
+            postToast(L10n.t(getContext(), "Still reading loaded values. Try again soon."));
             return;
         }
         try {
@@ -1406,7 +1406,7 @@ public final class FeatureGateLabFragment extends Fragment {
             showStyled(builder.create());
         } catch (Exception error) {
             Logger.printException(() -> "Could not review a bundled Lab preset", error);
-            postToast(L10n.t(getContext(), "This preset doesn't match the installed gates. Nothing changed."));
+            postToast(L10n.t(getContext(), "Preset doesn't match the gates. Nothing changed."));
         }
     }
 
@@ -1419,7 +1419,7 @@ public final class FeatureGateLabFragment extends Fragment {
             if (fileSlotTaken()) return;
             if (snapshot == null) {
                 postToast(L10n.t(Utils.getContext(),
-                        "Loaded values are still being read. Try again in a moment."));
+                        "Still reading loaded values. Try again soon."));
                 return;
             }
             // The stamp every other export takes, UTC, so the Lab's file sorts beside them.
@@ -1464,7 +1464,7 @@ public final class FeatureGateLabFragment extends Fragment {
         Context context = activity == null ? null : activity.getApplicationContext();
         if (context == null) {
             postToast(L10n.t(Utils.getContext(),
-                    "The loaded-values file you chose couldn't be read. Try again."));
+                    "Couldn't read that file. Try again."));
             return;
         }
         startFileOperation(context, uri, false, file -> importFrom(context, uri, file));
@@ -1495,7 +1495,7 @@ public final class FeatureGateLabFragment extends Fragment {
         if (DocumentOperation.busy(DocumentOperation.Kind.LAB_FILE)) {
             tellFileOut();
         } else {
-            fileNotice(L10n.t(context, "Couldn't start the Lab change. Try again in a moment."));
+            fileNotice(L10n.t(context, "Couldn't start the Lab change. Try again."));
         }
     }
 
@@ -1529,7 +1529,7 @@ public final class FeatureGateLabFragment extends Fragment {
             }
             DocumentOperation.logFailure(file, () -> "Loaded-value file export failed", error);
             String message = file.stage() == DocumentOperation.Stage.STOPPED_WHILE_PUBLISHING
-                    ? L10n.t(context, "The export wasn't saved. Export again when the file app is ready.")
+                    ? L10n.t(context, "The export wasn't saved. Try again.")
                     : L10n.t(context, "Loaded-value file export failed");
             if (!DocumentOperation.removeUnsaved(resolver, uri, opened)) {
                 message += " " + L10n.t(context,
@@ -1667,7 +1667,7 @@ public final class FeatureGateLabFragment extends Fragment {
         if (context == null) context = Utils.getContext();
         if (currentSnapshot == null) {
             throw new Refused(L10n.t(context,
-                    "Loaded values are still being read. Try again in a moment."));
+                    "Still reading loaded values. Try again soon."));
         }
         if (!"loaded_values".equals(imported.optString("payload_kind"))) {
             throw new Refused(L10n.t(context, "This file isn't a loaded-values export from the Feature Gate Lab."));
@@ -1787,7 +1787,7 @@ public final class FeatureGateLabFragment extends Fragment {
             // The Lab was closed while the file was being read. There is nothing to hang a
             // dialog on, so the one line that matters goes out the way every other change is told.
             Utils.showToastLong(L10n.f(Utils.getContext(),
-                    "Imported %1$d values. Undo last Lab change is in the menu.", accepted));
+                    "Imported %1$d values. The menu can undo it.", accepted));
             return;
         }
         AlertDialog dialog = new AlertDialog.Builder(activity)
@@ -2001,7 +2001,7 @@ public final class FeatureGateLabFragment extends Fragment {
             // the reader has to tap a third time before the requested change is submitted.
             syncMasterSwitch();
             postToast(L10n.t(Utils.getContext(),
-                    "Couldn't start the Lab change. Try again in a moment."));
+                    "Couldn't start the Lab change. Try again."));
             return false;
         }
         return true;

@@ -209,7 +209,7 @@ public class RetainedStopReasonTest {
         record.close();
         retry();
         assertMessage(
-                "The phone is running out of room. What was recorded is saved to "
+                "Storage almost full. Recording saved to "
                         + LiveRecordingSaver.folder()
                         + "\nThis screen recording has no sound.");
     }
@@ -229,7 +229,7 @@ public class RetainedStopReasonTest {
             retry();
             String text =
                     partial
-                            ? "Recording stopped early. What was recorded is saved to "
+                            ? "Recording stopped early. Saved to "
                             : "LIVE recording saved to ";
             assertMessage(
                     text + LiveRecordingSaver.folder() + "\nThis screen recording has no sound.");

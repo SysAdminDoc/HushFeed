@@ -103,7 +103,7 @@ public class CommentDislikeGestureTest {
                 assertTrue(cell.button.performClick());
                 Shadows.shadowOf(Looper.getMainLooper()).idle();
                 assertTrue("a rejected block left the control silently busy",
-                        String.valueOf(ShadowToast.getTextOfLatestToast()).startsWith("Couldn't confirm the block for "));
+                        String.valueOf(ShadowToast.getTextOfLatestToast()).startsWith("Couldn't confirm blocking "));
                 assertEquals(java.util.List.of(), service.types);
 
                 saturation.release();

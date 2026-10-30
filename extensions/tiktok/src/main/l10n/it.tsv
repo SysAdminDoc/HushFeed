@@ -3,7 +3,7 @@ Adds Save cover next to Download when you share a video, so you save the cover o
 Applies to Save the sound as well and to Save the original sound on a long press. Opus makes a smaller file, but the sound is encoded again from TikTok's copy.	Vale per Salva anche l'audio e per Salva l'audio originale con la pressione prolungata. Opus crea un file più piccolo, ma l'audio viene ricodificato dalla copia di TikTok.
 As TikTok sent it (M4A or MP3)	Come lo invia TikTok (M4A o MP3)
 Burn-in guard	Protezione dal burn-in
-Couldn't write the caption on this video. Saving it without.	Non è stato possibile scrivere la descrizione su questo video. Viene salvato senza.
+Couldn't add the caption. Saving without it.	Descrizione non aggiunta. Viene salvato senza.
 Dim when idle	Attenua quando inattivo
 Dim when idle and shift	Attenua quando inattivo e sposta
 For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to a quarter, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes.	Per schermi OLED. Dopo 5 secondi senza tocchi, i pulsanti, la didascalia e le schede sopra il video si attenuano a un quarto, e il tocco successivo li riporta. Sposta muove anche tutto il feed di qualche pixel ogni 2 minuti.
@@ -15,7 +15,7 @@ Keep the language picked in TikTok	Mantieni la lingua scelta in TikTok
 Nothing is playing to speed up	Nessun video in riproduzione da accelerare
 One language code, like en or es. Comments and captions TikTok translates come out in this language instead of the app's. Leave it empty to keep TikTok's choice.	Un codice lingua, come en o es. I commenti e le didascalie che TikTok traduce escono in questa lingua invece che in quella dell'app. Lascialo vuoto per tenere la scelta di TikTok.
 Opus (.ogg), a smaller file	Opus (.ogg), file più piccolo
-Opus didn't work on this phone. Saving the sound as TikTok sent it instead.	Opus non ha funzionato su questo telefono. Salvo l'audio come l'ha inviato TikTok.
+Opus didn't work. Saving TikTok's own file.	Opus non ha funzionato. Salvo il file di TikTok.
 Opus needs Android 10 or later, so sounds save as TikTok sent them.	Opus richiede Android 10 o successivo, quindi l'audio viene salvato come lo invia TikTok.
 Playing at %1$sx	In riproduzione a %1$sx
 Puts a save button in the sheet a story's Share button opens. It saves the story you're watching, and holding a story still pauses it.	Aggiunge un pulsante di salvataggio al menu che si apre dal pulsante Condividi di una storia. Salva la storia che stai guardando, e tenere premuta una storia la mette ancora in pausa.
@@ -25,7 +25,7 @@ Save cover button in the share sheet	Pulsante Salva copertina nel menu di condiv
 Saved videos show the @username and the first line of the caption in the bottom left corner. The phone encodes the whole video again to do it, so saving takes longer. Applies to saves made by Hushfeed.	I video salvati mostrano il @nome utente e la prima riga della descrizione nell'angolo in basso a sinistra. Per farlo il telefono ricodifica tutto il video, quindi il salvataggio richiede più tempo. Vale per i salvataggi fatti da Hushfeed.
 Sound format	Formato audio
 Speed up this video, double tap again to undo	Accelera questo video, doppio tocco di nuovo per annullare
-TikTok only had its watermarked copy of this story, so that copy was saved to %1$s	TikTok aveva solo la copia con filigrana di questa storia, quindi è stata salvata quella copia in %1$s
+Only a watermarked copy existed. Saved to %1$s	Esisteva solo la copia con filigrana. Salvata in %1$s
 Translate button in comments	Pulsante Traduci nei commenti
 Adds TikTok's translate button next to the comment count. One tap translates every comment, and another shows the originals again.	Aggiunge il pulsante Traduci di TikTok accanto al numero di commenti. Un tocco traduce tutti i commenti, un altro mostra di nuovo gli originali.
 Translate into	Traduci in
@@ -63,7 +63,7 @@ That watch-history file is damaged. Nothing was imported.	Il file della cronolog
 %1$d fields will be overridden when requested	%1$d campi verranno sovrascritti quando richiesti
 %1$d gates selected	%1$d gate selezionati
 %1$d minutes left	Ancora %1$d minuti
-%1$d overrides were turned off because the Lab couldn't confirm their gates are unchanged in TikTok %2$s. Review them before turning them back on.	%1$d sovrascrizioni sono state disattivate perché il Lab non è riuscito a confermare che i loro gate sono invariati in TikTok %2$s. Controllale prima di riattivarle.
+Turned off %1$d overrides. Recheck for TikTok %2$s.	Spente %1$d sovrascritture. Controlla TikTok %2$s.
 %1$d rejected	%1$d rifiutati
 %1$d results	%1$d risultati
 %1$d results so far	%1$d risultati finora
@@ -112,14 +112,14 @@ That watch-history file is damaged. Nothing was imported.	Il file della cronolog
 1 field will be overridden when requested	1 campo verrà sovrascritto quando richiesto
 1 gate selected	1 gate selezionato
 1 min left	Ancora 1 min
-1 override was turned off because the Lab couldn't confirm its gate is unchanged in TikTok %2$s. Review it before turning it back on.	1 sovrascrizione è stata disattivata perché il Lab non è riuscito a confermare che il suo gate è invariato in TikTok %2$s. Controllala prima di riattivarla.
+Turned off 1 override. Recheck for TikTok %2$s.	1 sovrascrittura spenta. Controlla TikTok %2$s.
 1 result	1 risultato
 1 result so far	1 risultato finora
 1 video left	Ancora 1 video
 A Lab change is already running	Una modifica al Lab è già in corso
 A diagnostic report is already being saved	Un rapporto diagnostico è già in fase di salvataggio
 A few seconds	Pochi secondi
-A field value couldn't be read. Check the values and try again.	Non è stato possibile leggere un valore di campo. Controlla i valori e riprova.
+Couldn't read a field value. Check and try again.	Valore illeggibile. Controlla e riprova.
 A good place to stop, if you want one.	Un buon punto per fermarti, se ne vuoi uno.
 A green square in the top corner while TikTok has the camera open, and an orange diamond while it records sound. They go when the access ends.	Un quadrato verde nell'angolo in alto mentre TikTok ha la fotocamera aperta, e un rombo arancione mentre registra audio. Scompaiono quando l'accesso termina.
 Type a website name to use instead of tiktok.com in links you share or copy, like vxtiktok.com. Leave empty to share TikTok's own links. Only TikTok links change, and only the website name.	Scrivi il nome di un sito da usare al posto di tiktok.com nei link che condividi o copi, come vxtiktok.com. Lascia vuoto per condividere i link originali di TikTok. Cambiano solo i link di TikTok, e solo il nome del sito.
@@ -138,8 +138,8 @@ Separate handles or user IDs with commas. Their videos stay when a filter on pos
 Separate language codes with commas, like en, es. A video whose original caption is in another language is hidden. Videos with no caption, or only translated ones, always stay.	Separa i codici lingua con virgole, come en, es. Un video la cui didascalia originale è in un'altra lingua viene nascosto. I video senza didascalia, o con solo quella tradotta, restano sempre.
 Comma separated names exactly as the row under a profile's bio shows them, such as TikTok Studio or Your orders. Restart TikTok to apply this.	Nomi separati da virgole, esattamente come li mostra la riga sotto la bio di un profilo, come TikTok Studio o I tuoi ordini. Riavvia TikTok per applicare la modifica.
 Couldn't add the older seen videos. Try again.	Non è stato possibile aggiungere i video già visti più vecchi. Riprova.
-Couldn't copy the build details. Use Save build details instead.	Non è stato possibile copiare i dettagli della build. Usa invece Salva dettagli della build.
-Couldn't copy the report. Use Save report instead.	Non è stato possibile copiare il rapporto. Usa invece Salva rapporto.
+Couldn't copy. Use Save build details instead.	Copia fallita. Usa invece Salva dettagli della build.
+Couldn't copy the report. Use Save report instead.	Rapporto non copiato. Usa invece Salva rapporto.
 Couldn't read TikTok's current values (%1$s). Refresh values from the menu to try again.	Non è stato possibile leggere i valori attuali di TikTok (%1$s). Aggiorna i valori dal menu per riprovare.
 Couldn't restart TikTok. Close it and open it again.	Non è stato possibile riavviare TikTok. Chiudi l'app e riaprila.
 Couldn't undo that. Try again.	Non è stato possibile annullare l'operazione. Riprova.
@@ -174,7 +174,7 @@ Save report	Salva rapporto
 Stay on the video in full screen	Resta sul video a schermo intero
 Stickers can't be saved to the folder in that file, so your sticker folder was kept	Gli sticker non possono essere salvati nella cartella indicata in quel file, quindi è stata mantenuta la tua cartella sticker
 Stop TikTok's speed tests	Blocca i test di velocità di TikTok
-That creator pattern could stall the feed, so it was skipped: %1$s	Quel pattern di creator potrebbe bloccare il feed, quindi è stato saltato: %1$s
+Skipped a creator pattern that could stall: %1$s	Pattern di creator saltato, può bloccarsi: %1$s
 That creator pattern could stall the feed, so it wasn't added: %1$s	Quel pattern di creator potrebbe bloccare il feed, quindi non è stato aggiunto: %1$s
 This key isn't in Hushfeed's list, so its type can't be checked. Reset the override.	Questa chiave non è nella lista di Hushfeed, quindi non è possibile controllarne il tipo. Reimposta la sovrascrizione.
 This key touches account safety. Forcing it can change login, region, payment or security checks.	Questa chiave riguarda la sicurezza dell'account. Forzarla può modificare i controlli di accesso, regione, pagamento o sicurezza.
@@ -203,9 +203,9 @@ All loaded tabs	Tutte le schede caricate
 Allow Duet and Stitch anyway	Consenti comunque Duetto e Stitch
 Allow Add to Story anyway	Consenti comunque Aggiungi alla storia
 Allow screenshots and Circle to Search	Consenti screenshot e Circle to Search
-Allow storage for TikTok in Android settings to save profile pictures	Consenti l'archiviazione per TikTok nelle impostazioni Android per salvare le immagini del profilo
-Allow storage for TikTok in Android settings to save sounds	Consenti l'archiviazione per TikTok nelle impostazioni Android per salvare gli audio
-Allow storage for TikTok in Android settings to save stories	Consenti l'archiviazione per TikTok nelle impostazioni Android per salvare le storie
+Allow storage for TikTok to save profile pictures	Consenti l'archiviazione a TikTok per foto del profilo
+Allow storage for TikTok to save sounds	Consenti l'archiviazione a TikTok per salvare audio
+Allow storage for TikTok to save stories	Consenti l'archiviazione a TikTok per salvare storie
 Bottom tabs to keep	Schede inferiori da mantenere
 Already marked as not interested	Già contrassegnato come “non mi interessa”
 Also apply these filters to downloaded videos TikTok uses when the feed can't load enough new items.	Applica questi filtri anche ai video scaricati che TikTok usa quando il feed non riesce a caricare abbastanza nuovi contenuti.
@@ -261,7 +261,7 @@ Block this sound	Blocca questo audio
 Blocked	Bloccato
 Blocked %1$s	%1$s bloccato
 Blocked %1$s. Unblock	%1$s bloccato. Sblocca
-Couldn't confirm the block for %1$s. Open their profile to check.	Non è stato possibile confermare il blocco di %1$s. Apri il suo profilo per controllare.
+Couldn't confirm blocking %1$s. Check their profile.	Blocco non confermato per %1$s. Controlla il profilo.
 Blocked caption words	Parole bloccate nelle descrizioni
 Blocked comment words	Parole bloccate nei commenti
 Blocked creators	Creator bloccati
@@ -285,7 +285,7 @@ Captions, gestures and on-screen controls	Sottotitoli, gesti e controlli sullo s
 Capture crash reports locally	Salva le segnalazioni di arresto anomalo in locale
 Choose %1$d to %2$d videos. Values outside this range use the nearest valid limit. Restart TikTok to apply this.	Scegli da %1$d a %2$d video. I valori fuori da questo intervallo usano il limite valido più vicino. Riavvia TikTok per applicare la modifica.
 Choose a backup file. Your current settings are kept for Undo.	Scegli un file di backup. Le tue impostazioni attuali vengono conservate per Annulla.
-Choose a folder on internal storage. SD cards aren't supported.	Scegli una cartella nella memoria interna. Le schede SD non sono supportate.
+Pick a folder on internal storage, not an SD card	Scegli una cartella nella memoria interna, non su SD
 Choose a preset to fill the SIM details.	Scegli un preset per compilare i dati della SIM.
 Choose a subfolder under %1$s.	Scegli una sottocartella in %1$s.
 Pick the actions to remove from the share sheet. Names you typed by hand that TikTok hasn't shown yet stay in the list above.	Scegli le azioni da rimuovere dal menu di condivisione. I nomi digitati a mano che TikTok non ha ancora mostrato restano nell'elenco qui sopra.
@@ -301,10 +301,10 @@ Record a screen's layout	Registra il layout di una schermata
 Tap, then go to the screen with what you want hidden. After %1$d seconds Hushfeed records how that screen is built, without any of its text, for the diagnostic report.	Tocca, poi vai alla schermata con ciò che vuoi nascondere. Dopo %1$d secondi Hushfeed registra come è costruita quella schermata, senza alcun suo testo, per il rapporto diagnostico.
 Waiting to record. Go to the screen you want recorded.	In attesa di registrare. Vai alla schermata che vuoi registrare.
 A screen's layout is recorded. Export the diagnostic report to send it, or tap to record another.	Il layout di una schermata è stato registrato. Esporta il rapporto diagnostico per inviarlo, oppure tocca per registrarne un'altra.
-Go to the screen now. Hushfeed records its layout in %1$d seconds.	Vai ora alla schermata. Hushfeed ne registra il layout tra %1$d secondi.
-Screen layout recorded. Export the diagnostic report to send it.	Layout della schermata registrato. Esporta il rapporto diagnostico per inviarlo.
-Nothing was recorded because Hushfeed settings were still open. Start again, then leave settings.	Non è stato registrato nulla perché le impostazioni di Hushfeed erano ancora aperte. Ricomincia, poi esci dalle impostazioni.
-Couldn't record the screen's layout. Start again from Diagnostics.	Non è stato possibile registrare il layout della schermata. Ricomincia da Diagnostica.
+Go to the screen. Recording in %1$d seconds.	Vai alla schermata. Registro tra %1$d secondi.
+Layout recorded. Export the report to send it.	Layout registrato. Esporta il rapporto per inviarlo.
+Nothing recorded. Start, then leave settings.	Nulla registrato. Avvia, poi esci dalle impostazioni.
+Layout not recorded. Try again from Diagnostics.	Layout non registrato. Riprova da Diagnostica.
 Clear diagnostic data	Cancella i dati diagnostici
 Clear display	Vista pulita
 Clear display delay	Ritardo della vista pulita
@@ -357,11 +357,11 @@ Stop and save the feed capture	Ferma e salva la registrazione del feed
 Recording what the feed filters keep and hide. Tap to stop and save it in %1$s.	Registrazione di ciò che i filtri del feed mantengono e nascondono. Tocca per fermarla e salvarla in %1$s.
 Save the feed capture	Salva la registrazione del feed
 The last feed capture wasn't saved. Tap to try again.	L'ultima registrazione del feed non è stata salvata. Tocca per riprovare.
-Feed capture started. Scroll until the problem shows up, then come back here to stop.	Registrazione del feed avviata. Scorri finché non compare il problema, poi torna qui per fermarla.
-The feed capture is still being saved	La registrazione del feed è ancora in fase di salvataggio
-Feed capture saved to %1$s. Read it before you share it.	Registrazione del feed salvata in %1$s. Leggila prima di condividerla.
-The feed capture couldn't be saved. Tap the row to try again.	Non è stato possibile salvare la registrazione del feed. Tocca la riga per riprovare.
-Couldn't start saving the feed capture. Try again in a moment.	Non è stato possibile avviare il salvataggio della registrazione del feed. Riprova tra poco.
+Feed capture on. Scroll to the problem, then return.	Registrazione attiva. Vai al problema, poi torna.
+The feed capture is still being saved	Registrazione ancora in salvataggio
+Feed capture saved to %1$s. Read it before you share it.	Salvata in %1$s. Leggila prima di condividerla.
+Feed capture not saved. Tap the row to retry.	Registrazione non salvata. Tocca la riga per riprovare.
+Couldn't save the feed capture. Try again.	Registrazione del feed non salvata. Riprova.
 Copy a quick report or save the full report as a file.	Copia un rapporto rapido oppure salva il rapporto completo come file.
 Copy comments without username	Copia i commenti senza nome utente
 Copy only the comment text when using TikTok's copy comment action.	Copia solo il testo del commento quando usi la funzione di copia commento di TikTok.
@@ -369,23 +369,23 @@ Copy quick report	Copia rapporto rapido
 Copy report	Copia rapporto
 Copy the sound link	Copia il link dell'audio
 Copy the video link	Copia il link del video
-Couldn't change the Lab settings. Try again.	Non è stato possibile modificare le impostazioni del Lab. Riprova.
-Couldn't clear the suggested accounts. Reopen the Inbox and try again.	Non è stato possibile cancellare gli account suggeriti. Riapri la Posta in arrivo e riprova.
-Couldn't open the file picker to export. Try again.	Non è stato possibile aprire il selettore di file per esportare. Riprova.
-Couldn't open the file picker to import. Try again.	Non è stato possibile aprire il selettore di file per importare. Riprova.
+Couldn't change the Lab settings. Try again.	Impostazioni del Lab non modificate. Riprova.
+Couldn't clear suggestions. Reopen Inbox to retry.	Suggerimenti non cancellati. Riapri Posta in arrivo.
+Couldn't open the file picker to export. Try again.	Selettore file per esportare non aperto. Riprova.
+Couldn't open the file picker to import. Try again.	Selettore file per importare non aperto. Riprova.
 Couldn't put back the diagnostic data. Try again.	Non è stato possibile ripristinare i dati diagnostici. Riprova.
-Couldn't read who posted this comment. Open their profile and block them there.	Non è stato possibile leggere chi ha pubblicato questo commento. Apri il suo profilo e bloccalo da lì.
-Couldn't reset this override. Try again.	Non è stato possibile reimpostare questa sovrascrizione. Riprova.
+Unknown commenter. Block them from their profile.	Autore sconosciuto. Bloccalo dal suo profilo.
+Couldn't reset this override. Try again.	Sovrascrittura non reimpostata. Riprova.
 Couldn't restore the settings. Try again.	Non è stato possibile ripristinare le impostazioni. Riprova.
 Couldn't reset the settings. Try again.	Non è stato possibile reimpostare le impostazioni. Riprova.
 Couldn't undo the last change. Try again.	Non è stato possibile annullare l'ultima modifica. Riprova.
 Couldn't save the settings backup. Try again.	Non è stato possibile salvare il backup delle impostazioni. Riprova.
-Couldn't save this override. Try again.	Non è stato possibile salvare questa sovrascrizione. Riprova.
-Couldn't send the feedback. Try again in a moment.	Non è stato possibile inviare il feedback. Riprova tra poco.
-Couldn't start the Lab change. Try again in a moment.	Non è stato possibile avviare la modifica al Lab. Riprova tra poco.
-Couldn't start the report export. Try again in a moment.	Non è stato possibile avviare l'esportazione del rapporto. Riprova tra poco.
+Couldn't save this override. Try again.	Sovrascrittura non salvata. Riprova.
+Couldn't send the feedback. Try again in a moment.	Feedback non inviato. Riprova tra poco.
+Couldn't start the Lab change. Try again.	Modifica del Lab non avviata. Riprova.
+Couldn't start the report export. Try again.	Esportazione del rapporto non avviata. Riprova.
 Couldn't start the settings change. Try again in a moment.	Non è stato possibile avviare la modifica delle impostazioni. Riprova tra poco.
-Couldn't tell which folder to update. Choose it again.	Non è stato possibile stabilire quale cartella aggiornare. Scegli di nuovo.
+Couldn't tell which folder to update. Choose it again.	Cartella non riconosciuta. Scegli di nuovo.
 Couldn't undo the clear. Try again.	Non è stato possibile annullare la cancellazione. Riprova.
 Country code	Codice paese
 Country and network preferences	Preferenze di paese e rete
@@ -460,11 +460,11 @@ Enter a number.	Inserisci un numero.
 Enter an hour, like 6 or 06:00.	Inserisci un'ora, ad esempio 6 o 06:00.
 Enter a valid structured value.	Inserisci un valore strutturato valido.
 Enter a valid two-letter country code	Inserisci un codice paese valido di due lettere
-Enter a whole number, or one like 20K, 1.5M or 2B	Inserisci un numero intero, oppure uno come 20K, 1.5M o 2B
+Enter a whole number, or one like 20K, 1.5M or 2B	Inserisci un numero intero, oppure tipo 20K, 1.5M o 2B
 Enter a whole number.	Inserisci un numero intero.
 Enter true or false.	Inserisci true o false.
 Enter up to %1$d comma-separated speeds from %2$s to %3$s	Inserisci fino a %1$d velocità separate da virgole, da %2$s a %3$s
-That isn't valid JSON. Check the brackets and quotes.	Non è JSON valido. Controlla le parentesi e le virgolette.
+That isn't valid JSON. Check the brackets and quotes.	JSON non valido. Controlla parentesi e virgolette.
 Entry %1$d has a field with the wrong data type.	La voce %1$d ha un campo con il tipo di dati sbagliato.
 Entry %1$d isn't an object.	La voce %1$d non è un oggetto.
 Errors	Errori
@@ -658,15 +658,15 @@ Hold the feed after the budget	Blocca il feed dopo il budget
 Home	Home
 Hook status	Stato dell'hook
 How far each edge press moves the video.	Quanto sposta il video ogni pressione sul bordo.
-Hushfeed can't read the creator pattern %1$s	Hushfeed non riesce a leggere il pattern di creator %1$s
-Hushfeed hid a TikTok CAPTCHA. Turn off Hide CAPTCHA popups if something stops working.	Hushfeed ha nascosto un CAPTCHA di TikTok. Disattiva Nascondi i popup CAPTCHA se qualcosa smette di funzionare.
+Hushfeed can't read the creator pattern %1$s	Hushfeed non legge il pattern di creator %1$s
+Hid a CAPTCHA. Stuck? Turn off Hide CAPTCHA popups.	Problemi? Disattiva Nascondi i popup CAPTCHA.
 Hushfeed is active	Hushfeed è attivo
 Shows the Duet and Stitch options even when the creator turned them off. TikTok may still refuse to accept the result.	Mostra le opzioni Duetto e Stitch anche quando il creator le ha disattivate. TikTok potrebbe comunque rifiutare il risultato.
 Shows Add to Story in the share sheet and on stories even when the creator turned off content reuse. TikTok may still refuse to post it.	Mostra Aggiungi alla storia nel menu di condivisione e sulle storie anche se il creator ha disattivato il riutilizzo dei contenuti. TikTok potrebbe comunque rifiutare la pubblicazione.
 Import finished	Importazione completata
 Import loaded values	Importa i valori caricati
 Imported %1$d values	%1$d valori importati
-Imported %1$d values. Undo last Lab change is in the menu.	%1$d valori importati. Annulla l'ultima modifica del Lab si trova nel menu.
+Imported %1$d values. The menu can undo it.	%1$d valori importati. Puoi annullare dal menu.
 Inbox	Posta in arrivo
 Include diagnostic events	Includi eventi diagnostici
 Included diagnostics	Diagnostica inclusa
@@ -688,7 +688,7 @@ Keep the screen's refresh rate	Mantieni la frequenza di aggiornamento dello sche
 Keep the speed you chose for the next video. Off, each new video starts at 1x and a manual choice lasts for that video only.	Mantieni la velocità che hai scelto per il video successivo. Se disattivato, ogni nuovo video parte a 1x e una scelta manuale vale solo per quel video.
 Keep this string to %1$s characters or fewer.	Mantieni questo testo entro %1$s caratteri.
 Keep this structured value to %1$s KB or less.	Mantieni questo valore strutturato entro %1$s KB.
-Kept to %1$s, the nearest value this row allows	Mantenuto a %1$s, il valore più vicino consentito da questa riga
+Kept to %1$s, the nearest value this row allows	Impostato a %1$s, il valore più vicino consentito
 Kinds of post	Tipi di post
 LIVE	LIVE
 LIVE replays	Repliche LIVE
@@ -721,7 +721,7 @@ Tapping more under a video opens its comments with the whole caption at the top 
 Caption above comments	Descrizione sopra i commenti
 The comment button also opens a video's comments with its caption at the top. The caption over the video goes away while this is on.	Anche il pulsante dei commenti apre i commenti di un video con la sua descrizione in alto. La descrizione sopra il video scompare mentre questa opzione è attiva.
 Loaded current values. Loading all known gates…	Valori attuali caricati. Caricamento di tutti i gate conosciuti…
-Loaded values are still being read. Try again in a moment.	I valori caricati sono ancora in fase di lettura. Riprova tra poco.
+Still reading loaded values. Try again soon.	Lettura dei valori in corso. Riprova tra poco.
 Loaded-value file export failed	Esportazione del file dei valori caricati non riuscita
 Loading gates…	Caricamento dei gate…
 Creators hidden on this phone	Creator nascosti su questo telefono
@@ -753,7 +753,7 @@ Favorites range	Intervallo dei preferiti
 Likes aren't available for this video	I Mi piace non sono disponibili per questo video
 Likes range	Intervallo dei Mi piace
 Shares range	Intervallo delle condivisioni
-Use Save report for this large report	Usa Salva rapporto per questo rapporto di grandi dimensioni
+Use Save report for this large report	Usa Salva rapporto per questo rapporto grande
 Video player settings	Impostazioni del lettore video
 The network proxy from that file is off. Check its address before you turn it on	Il proxy di rete di quel file è spento. Controlla il suo indirizzo prima di attivarlo
 Your network proxy was kept, since a backup can't change it	Il tuo proxy di rete è stato mantenuto, perché un backup non può cambiarlo
@@ -858,7 +858,7 @@ Override this configuration	Sovrascrivi questa configurazione
 Override this gate	Sovrascrivi questo gate
 Overrides are disabled in the Feature Gate Lab.	Le sovrascritture sono disattivate nel Feature Gate Lab.
 Overrides disabled. Restart TikTok to apply this.	Sovrascritture disattivate. Riavvia TikTok per applicare la modifica.
-Overrides enabled. Restart TikTok to apply this.	Sovrascritture attivate. Riavvia TikTok per applicare la modifica.
+Overrides enabled. Restart TikTok to apply this.	Sovrascritture attivate. Riavvia TikTok.
 Paid partnerships	Collaborazioni a pagamento
 People, shortcuts and sending controls	Persone, scorciatoie e opzioni di invio
 Photo	Foto
@@ -893,7 +893,7 @@ Quality, speed and auto-advance	Qualità, velocità e avanzamento automatico
 Pause the video while comments are open	Metti in pausa il video quando i commenti sono aperti
 Reading	Lettura
 Recorded gate reads (%1$d)	Accessi ai gate registrati (%1$d)
-Recording gate reads. Use a feature, then return here to stop.	Registrazione degli accessi ai gate in corso. Usa una funzione, poi torna qui per fermarla.
+Recording gate reads. Come back here to stop.	Registro gli accessi ai gate. Torna qui per fermare.
 Put back the settings saved before the last restore or reset.	Riporta le impostazioni salvate prima dell'ultimo ripristino o reset.
 Recovered an interrupted settings change. Restart TikTok to apply this.	Modifica delle impostazioni interrotta recuperata. Riavvia TikTok per applicare la modifica.
 Refresh values	Aggiorna i valori
@@ -1114,8 +1114,8 @@ Stop the bubble that asks you to share a video with friends after you like it.	B
 Stops websites you open from inside TikTok from reaching back into the app. TikTok's own pages, such as Activity center, Watch history, shop checkout and CAPTCHA, keep working.	Impedisce ai siti web che apri da TikTok di accedere all'app. Le pagine di TikTok, come Activity center, Cronologia visualizzazioni, pagamento dello shop e CAPTCHA, continuano a funzionare.
 Stop video looping	Interrompi la riproduzione in loop dei video
 Stop videos at the end instead of replaying them.	Ferma i video alla fine invece di farli ripartire.
-Stopped after dismissing %1$s suggested accounts	Interrotto dopo aver ignorato %1$s account suggeriti
-Stopped after dismissing one suggested account	Interrotto dopo aver ignorato un account suggerito
+Stopped after dismissing %1$s suggested accounts	Fermato dopo %1$s account suggeriti ignorati
+Stopped after dismissing one suggested account	Fermato dopo un account suggerito ignorato
 Stories	Storie
 Story saved to %1$s	Storia salvata in %1$s
 Structured value observed	Valore strutturato osservato
@@ -1137,7 +1137,7 @@ Technical details	Dettagli tecnici
 Technical details, %1$s	Dettagli tecnici, %1$s
 That backup was written by a newer Hushfeed than this one. Nothing was altered.	Questo backup è stato creato da una versione di Hushfeed più recente di questa. Non è stato modificato nulla.
 That creator is already in the list	Questo creator è già nella lista
-That creator pattern is too long to use, so it was skipped: %1$s	Questo pattern creator è troppo lungo da usare ed è stato ignorato: %1$s
+Skipped a creator pattern that's too long: %1$s	Pattern di creator troppo lungo, saltato: %1$s
 That creator pattern is too long, so it wasn't added: %1$s	Questo pattern creator è troppo lungo e non è stato aggiunto: %1$s
 That file isn't a loaded-values export, or it's larger than the Lab accepts	Questo file non è un'esportazione di valori caricati, oppure è più grande di quanto il Lab accetti
 That file isn't readable text, so it may have been damaged in transit. Nothing was altered.	Questo file non è testo leggibile e potrebbe essere stato danneggiato durante il trasferimento. Non è stato modificato nulla.
@@ -1151,21 +1151,21 @@ That is one minute today	È un minuto oggi
 That is one video today	È un video oggi
 That list has too many entries. Keep it to %1$s or fewer.	Questa lista ha troppe voci. Mantienila a %1$s o meno.
 That list is too large. Keep it to %1$s KB or less.	Questa lista è troppo grande. Mantienila a %1$s KB o meno.
-That preset isn't recognized. Choose another.	Questo preset non è riconosciuto. Scegline un altro.
+That preset isn't recognized. Choose another.	Preset non riconosciuto. Scegline un altro.
 That settings backup contains a feed rule list larger than Hushfeed accepts. Nothing was altered.	Questo backup delle impostazioni contiene un elenco di regole del feed più grande di quanto Hushfeed accetti. Non è stato modificato nulla.
 That settings backup holds a value Hushfeed can't read. Nothing was altered.	Questo backup delle impostazioni contiene un valore che Hushfeed non riesce a leggere. Non è stato modificato nulla.
 That settings backup holds more Feature Gate Lab rules than the Lab takes. Nothing was altered.	Questo backup delle impostazioni contiene più regole del Feature Gate Lab di quante il Lab ne accetti. Non è stato modificato nulla.
 That settings backup is damaged or only partly downloaded. Nothing was altered.	Questo backup delle impostazioni è danneggiato o scaricato solo in parte. Non è stato modificato nulla.
 That settings backup is incomplete, so it may have been cut short. Nothing was altered.	Questo backup delle impostazioni è incompleto e potrebbe essere stato interrotto. Non è stato modificato nulla.
 That settings change didn't go through. Nothing was altered.	Questa modifica delle impostazioni non è andata a buon fine. Non è stato modificato nulla.
-That sticker is in a format Hushfeed can't read	Questo sticker è in un formato che Hushfeed non riesce a leggere
+That sticker is in a format Hushfeed can't read	Hushfeed non legge il formato di questo sticker
 The Lab can't check this. TikTok gets it exactly as typed.	Il Lab non può verificarlo. TikTok lo riceve esattamente come lo digiti.
-The Lab couldn't open. Go back and open it again.	Non è stato possibile aprire il Lab. Torna indietro e riprova ad aprirlo.
+The Lab couldn't open. Go back and open it again.	Lab non aperto. Torna indietro e riaprilo.
 The Lab keeps at most %1$s rules. This change would make %2$s, so nothing was changed.	Il Lab conserva al massimo %1$s regole. Questa modifica ne produrrebbe %2$s, quindi non è stato cambiato nulla.
 The catalog says this key is %1$s and this override is %2$s. Reset the override and make a new one.	Il catalogo indica che questa chiave è %1$s, mentre questa sovrascrittura è %2$s. Reimposta la sovrascrittura e creane una nuova.
 The diagnostic report couldn't be saved yet. Try again in a moment.	Il rapporto diagnostico non è ancora stato salvato. Riprova tra poco.
 The diagnostic report couldn't be saved. Try again.	Il rapporto diagnostico non è stato salvato. Riprova.
-The downloader app you chose isn't installed. Check Send links to another app under Downloads.	L'app di download scelta non è installata. Controlla "Invia i link a un'altra app" in Download.
+Your downloader app isn't installed. Check Downloads.	Manca l'app di download. Controlla Download.
 The feed slowly dims during the last 45 seconds before the hold, so it doesn't come as a sudden stop. Needs a time budget and a hold.	Il feed si oscura gradualmente negli ultimi 45 secondi prima del blocco, così non arriva come uno stop improvviso. Richiede un budget di tempo e un blocco.
 The feed doesn't end. This is a fine time to leave it.	Il feed non finisce mai. Questo è un buon momento per uscirne.
 The feed is open again	Il feed è di nuovo aperto
@@ -1178,15 +1178,15 @@ Show only videos with this many favorites.	Mostra solo i video con questo numero
 Show only videos with this many likes.	Mostra solo i video con questo numero di Mi piace.
 Show only videos with this many shares.	Mostra solo i video condivisi questo numero di volte.
 Show only videos with this many views.	Mostra solo i video con questo numero di visualizzazioni.
-The original photos aren't available, so TikTok's own save runs instead	Le foto originali non sono disponibili, quindi viene eseguito il salvataggio di TikTok
-The original photos aren't available. No video was saved.	Le foto originali non sono disponibili. Non è stato salvato alcun video.
+No original photos, so TikTok saves it instead	Niente foto originali, salva TikTok
+No video saved. The original photos are missing.	Nessun video salvato. Mancano le foto originali.
 The override changes no fields. Edit the field values, or reset the override.	La sovrascrittura non modifica alcun campo. Modifica i valori dei campi oppure reimposta la sovrascrittura.
 The override couldn't be applied: %1$s. Edit the field values, or reset the override.	Non è stato possibile applicare la sovrascrittura: %1$s. Modifica i valori dei campi oppure reimposta la sovrascrittura.
 The override doesn't say what list to return. Edit the field values, or reset the override.	La sovrascrittura non specifica quale lista restituire. Modifica i valori dei campi oppure reimposta la sovrascrittura.
-The profile picture couldn't be saved. Try again.	Non è stato possibile salvare la foto del profilo. Riprova.
+The profile picture couldn't be saved. Try again.	Foto del profilo non salvata. Riprova.
 The record of an interrupted settings change couldn't be read, so it was set aside. Check your settings.	Non è stato possibile leggere il registro di una modifica delle impostazioni interrotta, perciò è stato accantonato. Controlla le tue impostazioni.
-The report couldn't be saved. Try again.	Non è stato possibile salvare il rapporto. Riprova.
-The loaded-values file you chose couldn't be read. Try again.	Non è stato possibile leggere il file di valori caricati che hai scelto. Riprova.
+The report couldn't be saved. Try again.	Rapporto non salvato. Riprova.
+Couldn't read that file. Try again.	File non letto. Riprova.
 The setting couldn't finish updating. Its saved value is shown.	Non è stato possibile completare l'aggiornamento dell'impostazione. Viene mostrato il valore salvato.
 The settings backup was rejected. Nothing was altered.	Il backup delle impostazioni è stato rifiutato. Non è stato modificato nulla.
 The smallest value is above the largest	Il valore minimo è superiore al massimo
@@ -1194,28 +1194,28 @@ The sound couldn't be saved. Try again.	Non è stato possibile salvare l'audio. 
 The sticker couldn't be saved. Try again.	Non è stato possibile salvare lo sticker. Riprova.
 The story couldn't be saved. Try again.	Non è stato possibile salvare la storia. Riprova.
 The thumbs down on each comment blocks the commenter instead of disliking. The comment dims, an undo banner follows, and a second tap unblocks.	Il pollice verso su ogni commento blocca chi ha commentato invece di esprimere un dislike. Il commento si oscura, compare un banner per annullare, e un secondo tocco sblocca.
-The video couldn't be saved. Try again, or choose Automatic.	Non è stato possibile salvare il video. Riprova oppure scegli Automatico.
+Couldn't save. Try again, or choose Automatic.	Non salvato. Riprova o scegli Automatico.
 There is no Lab change to undo.	Non c'è nessuna modifica del Lab da annullare.
 There is no diagnostic data to clear	Non ci sono dati diagnostici da eliminare
 There is no diagnostic data to put back	Non ci sono dati diagnostici da ripristinare
 There was nothing to put back	Non c'era nulla da ripristinare
 These loaded values are for a different TikTok version.	Questi valori caricati sono per una versione diversa di TikTok.
 This catalog entry is no longer available. Refresh the Lab and try again.	Questa voce del catalogo non è più disponibile. Aggiorna il Lab e riprova.
-This change couldn't be saved. Try again.	Non è stato possibile salvare questa modifica. Riprova.
+This change couldn't be saved. Try again.	Modifica non salvata. Riprova.
 This configuration has no fields that can be copied and changed safely on this build.	Questa configurazione non ha campi che si possano copiare e modificare in sicurezza in questa build.
 This file has no loaded values in it.	Questo file non contiene valori caricati.
 This file isn't a loaded-values export from the Feature Gate Lab.	Questo file non è un'esportazione di valori caricati dal Feature Gate Lab.
 This gate type isn't supported.	Questo tipo di gate non è supportato.
 This line opens a rule and doesn't finish it: %1$s. Write two phrases as "a" & "b" for both, or "a" !& "b" for the first without the second.	Questa riga apre una regola e non la chiude: %1$s. Scrivi due frasi come "a" & "b" per entrambe, oppure "a" !& "b" per la prima senza la seconda.
 This phone has no file picker, so there's no way to choose a file here	Questo telefono non ha un selettore di file, quindi qui non è possibile sceglierne uno
-This phone has no folder picker. Type the folder into the row instead.	Questo telefono non ha un selettore di cartelle. Digita invece il percorso della cartella nel campo.
-This profile picture isn't available to save	Questa foto del profilo non è disponibile per il salvataggio
-This quality isn't available as a complete file, so TikTok's own save runs instead	Questa qualità non è disponibile come file completo, quindi viene eseguito il salvataggio di TikTok
+No folder picker here. Type the folder in the row.	Nessun selettore cartelle. Scrivila nel campo.
+This profile picture isn't available to save	Questa foto del profilo non è salvabile
+No full file at this quality, so TikTok saves it	Qualità senza file completo, salva TikTok
 This setting's value can't be copied on this build, so it can't be overridden. Reset the override.	Il valore di questa impostazione non può essere copiato in questa build e quindi non può essere sovrascritto. Reimposta la sovrascrittura.
-This story isn't available to save	Questa storia non è disponibile per il salvataggio
+This story isn't available to save	Questa storia non è salvabile
 This value is required.	Questo valore è obbligatorio.
 This video has no link to copy	Questo video non ha un link da copiare
-This video has no link to send, so TikTok's own save runs instead	Questo video non ha un link da inviare, quindi viene eseguito il salvataggio di TikTok
+No link to send, so TikTok saves it instead	Nessun link da inviare, quindi salva TikTok
 This video has no original sound to save	Questo video non ha un audio originale da salvare
 This video has no sound of its own	Questo video non ha un audio proprio
 Thumbs down blocks the commenter	Il pollice verso blocca chi ha commentato
@@ -1256,7 +1256,7 @@ Today: %1$d video	Oggi: %1$d video
 Today: %1$d videos	Oggi: %1$d video
 Use {creator}, {date}, {video_id} and {index} to build the name. {index} numbers the photos of a slideshow saved with Download original photos. TikTok's own save button numbers files by folder instead. The file ending is added for you.	Usa {creator}, {date}, {video_id} e {index} per comporre il nome. {index} numera le foto di una presentazione salvata con «Scarica le foto originali». Il pulsante di salvataggio di TikTok numera invece i file per cartella. L'estensione del file viene aggiunta in automatico.
 Use {date} and {media_id} to build the name. Works for image and video stickers.	Usa {date} e {media_id} per comporre il nome. Funziona con sticker immagine e video.
-Too many media saves are already running. Try again in a moment.	Ci sono già troppi salvataggi di contenuti multimediali in corso. Riprova tra poco.
+Too many saves running. Try again soon.	Troppi salvataggi in corso. Riprova tra poco.
 Tracking	Tracciamento
 Tracking, device access and links	Tracciamento, accesso al dispositivo e link
 Translate comments as they load, using TikTok's own translator.	Traduce i commenti mentre vengono caricati, usando il traduttore integrato di TikTok.
@@ -1276,7 +1276,7 @@ Start typing	Inizia a digitare
 Unavailable	Non disponibile
 Unblock this commenter	Sblocca chi ha commentato
 Unblocked %1$s	%1$s sbloccato
-Couldn't confirm the unblock for %1$s. Open their profile to check.	Non è stato possibile confermare lo sblocco di %1$s. Apri il suo profilo per controllare.
+Couldn't confirm unblocking %1$s. Check their profile.	Sblocco non confermato per %1$s. Controlla il profilo.
 Undo	Annulla
 Undo clearing seen videos	Annulla l'eliminazione dei video visti
 Undo last Lab change	Annulla l'ultima modifica del Lab
@@ -1310,7 +1310,7 @@ Video filename	Nome file video
 Video info	Informazioni sul video
 Video playback quality	Qualità di riproduzione video
 Video saved	Video salvato
-Video saved in %1$s, but only %2$s of %3$s subtitles came with it	Video salvato in %1$s, ma solo %2$s sottotitoli su %3$s sono stati inclusi
+Saved in %1$s with %2$s of %3$s subtitles	Salvato in %1$s con %2$s sottotitoli su %3$s
 Video saved with %1$s subtitles in %2$s	Video salvato con %1$s sottotitoli in %2$s
 Wait before hiding the controls.	Tempo di attesa prima di nascondere i controlli.
 WebP, exactly as TikTok sent it	WebP, esattamente come l'ha inviato TikTok
@@ -1383,8 +1383,8 @@ this creator	questo creator
 %1$s, %2$s, %3$s or %4$s	%1$s, %2$s, %3$s o %4$s
 %1$s, %2$s or %3$s	%1$s, %2$s o %3$s
 TikTok refused the follow with code %1$s	TikTok ha rifiutato il follow con codice %1$s
-TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.	TikTok ha rifiutato il follow con codice %1$s. La causa potrebbe essere un CAPTCHA nascosto.
-TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.	TikTok ha rifiutato il follow: %1$s La causa potrebbe essere un CAPTCHA nascosto.
+Follow refused, code %1$s. Maybe a hidden CAPTCHA.	Follow rifiutato (%1$s). Forse CAPTCHA nascosto.
+Follow refused: %1$s Maybe a hidden CAPTCHA.	Follow rifiutato: %1$s Forse CAPTCHA nascosto.
 Hushfeed is paused	Hushfeed è in pausa
 Hushfeed's switches are paused. Your settings stay saved. Changes made when you patched, like the app's name or icon, stay.	Gli interruttori di Hushfeed sono in pausa. Le impostazioni restano salvate. Le modifiche fatte con la patch, come il nome o l'icona dell'app, restano.
 TikTok closed three times within a minute of starting, so Hushfeed paused itself. Your settings stay as they are.	TikTok si è chiuso tre volte entro un minuto dall'avvio, quindi Hushfeed si è messo in pausa da solo. Le tue impostazioni restano come sono.
@@ -1414,7 +1414,7 @@ Waiting to save %1$s files	%1$s file in attesa di essere salvati
 Waiting to save one file	Un file in attesa di essere salvato
 Save cancelled. Nothing was saved.	Salvataggio annullato. Non è stato salvato nulla.
 The server asked us to wait. Try again later.	Il server ci ha chiesto di aspettare. Riprova più tardi.
-Saved %1$s of %2$s. The server asked us to wait. Try again later.	Salvati %1$s di %2$s. Il server ci ha chiesto di aspettare. Riprova più tardi.
+Saved %1$s of %2$s. Try the rest later.	Salvati %1$s di %2$s. Prova il resto più tardi.
 One more save waiting	Un altro salvataggio in attesa
 %1$s more saves waiting	%1$s altri salvataggi in attesa
 Starts after one other save	Inizia dopo un altro salvataggio
@@ -1437,12 +1437,12 @@ Live photo clip	Clip della Live Photo
 Media save	Salvataggio media
 Saved %1$s of %2$s, the rest cancelled	Salvati %1$s di %2$s, il resto annullato
 Saved %1$s of %2$s, %3$s skipped	Salvati %1$s di %2$s, %3$s saltati
-Saved %1$s of %2$s, %3$s skipped and the rest cancelled	Salvati %1$s di %2$s, %3$s saltati e il resto annullato
-None of the photos could be saved. Try again.	Non è stato possibile salvare nessuna foto. Riprova.
+Saved %1$s of %2$s, %3$s skipped, rest cancelled	Salvati %1$s/%2$s, %3$s saltati, resto annullato
+None of the photos could be saved. Try again.	Nessuna foto salvata. Riprova.
 Saved %1$s of %2$s, the rest need more free space	Salvati %1$s di %2$s, per il resto manca spazio libero
 Saved %1$s of %2$s, the rest ran out of time	Salvati %1$s di %2$s, per il resto è scaduto il tempo
 Live photo clip saved to %1$s	Clip della Live Photo salvato in %1$s
-The live photo's clip couldn't be saved. Try again.	Non è stato possibile salvare il clip della Live Photo. Riprova.
+Couldn't save the live photo's clip. Try again.	Clip della Live Photo non salvato. Riprova.
 Creator exceptions	Eccezioni creator
 An exception names one creator, so a pattern can't be one: %1$s	Un'eccezione indica un singolo creator, quindi non può essere un pattern: %1$s
 An exception takes a handle or id, not a display name: %1$s	Un'eccezione richiede un nome utente o un ID, non un nome visualizzato: %1$s
@@ -1450,9 +1450,9 @@ Also on a block list, so still hidden: %1$s	Presente anche in una lista di blocc
 Find the sound on YouTube Music	Cerca l'audio su YouTube Music
 YouTube Music isn't installed	YouTube Music non è installata
 This video's sound has no title to look for	L'audio di questo video non ha un titolo da cercare
-YouTube Music couldn't be opened. Open it yourself and search for the sound.	Non è stato possibile aprire YouTube Music. Aprila manualmente e cerca l'audio.
-Allow storage for TikTok in Android settings to save the live photo's clip	Consenti l'accesso all'archiviazione a TikTok nelle impostazioni Android per salvare il clip della Live Photo
-This is the video's own sound, so YouTube Music won't have it	Questo è l'audio originale del video, quindi YouTube Music non lo avrà
+YouTube Music didn't open. Search for the sound there.	YouTube Music non si è aperta. Cerca lì l'audio.
+Allow storage for TikTok to save the clip	Consenti l'archiviazione a TikTok per salvare il clip
+This original sound isn't on YouTube Music	Questo audio originale non è su YouTube Music
 Not a handle or id, so ignored: %1$s	Non è un nome utente né un ID, quindi è stato ignorato: %1$s
 What's new	Novità
 Changes in Hushfeed %1$s	Novità in Hushfeed %1$s
@@ -1460,18 +1460,18 @@ Reviewed presets	Preset verificati
 Show See translation	Mostra "Vedi traduzione"
 Reviewed for TikTok %1$s	Verificato per TikTok %1$s
 Value: %1$s to %2$s	Valore: da %1$s a %2$s
-The presets couldn't load. Open the Lab again.	Non è stato possibile caricare i preset. Apri di nuovo il Lab.
+The presets couldn't load. Open the Lab again.	Preset non caricati. Riapri il Lab.
 Apply enables these overrides. Undo last Lab change puts your previous rules back until you change anything else in the Lab.	Applica attiva queste sovrascritture. "Annulla l'ultima modifica del Lab" ripristina le tue regole precedenti finché non cambi qualcos'altro nel Lab.
 Apply saves these overrides. Turn on overrides in the Lab to use them. Turning them on is a Lab change too, so after that Undo turns them off rather than putting your previous rules back.	Applica salva queste sovrascritture. Attiva le sovrascritture nel Lab per usarle. Anche attivarle è una modifica del Lab, quindi dopo "Annulla" le disattiva invece di ripristinare le tue regole precedenti.
 This preset isn't available for your installed TikTok version.	Questo preset non è disponibile per la versione di TikTok installata.
 Preset applied. Restart TikTok to use it.	Preset applicato. Riavvia TikTok per usarlo.
 Preset saved. Turn on overrides in the Lab to use it.	Preset salvato. Attiva le sovrascritture nel Lab per usarlo.
-This preset doesn't match the installed gates. Nothing changed.	Questo preset non corrisponde ai gate installati. Non è stato cambiato nulla.
+Preset doesn't match the gates. Nothing changed.	Preset non corrisponde ai gate. Nulla cambiato.
 About overrides	Informazioni sulle sovrascritture
 Use {creator}, {date} and {video_id} to build the name. Start with {creator}/ to put each creator in a folder. The file ending is added for you.	Usa {creator}, {date} e {video_id} per comporre il nome. Inizia con {creator}/ per mettere ogni creator in una cartella. L'estensione del file viene aggiunta in automatico.
 Save details beside the video	Salva i dettagli insieme al video
 Saves the caption, creator, link and post date in a text file next to the video, or one file for a photo post's original photos. On Android 10 and later, they go in Download or Documents under the same folder name. Applies to saves made by Hushfeed.	Salva didascalia, creator, link e data di pubblicazione in un file di testo accanto al video, o in un unico file per le foto originali di un post di foto. Da Android 10 in poi, vanno in Download o Documents con lo stesso nome di cartella. Vale per i salvataggi fatti da Hushfeed.
-The photos saved, but their details file couldn't be written. Check your storage and save the post again to get it.	Le foto sono state salvate, ma non è stato possibile scrivere il loro file dei dettagli. Controlla lo spazio di archiviazione e salva di nuovo il post per ottenerlo.
+Photos saved, but not their details file	Foto salvate, ma non il file dei dettagli
 Check for already-saved videos	Controlla i video già salvati
 Forget saved videos	Dimentica i video salvati
 Undo forgetting saved videos	Annulla "Dimentica i video salvati"
@@ -1486,16 +1486,16 @@ Saved videos put back	Video salvati ripristinati
 Couldn't put the saved videos back. Try again.	Non è stato possibile ripristinare i video salvati. Riprova.
 Too late to put the saved videos back	Troppo tardi per ripristinare i video salvati
 Remembers up to %1$s videos you saved here. If the file is still there, you get Open or Save again instead of a second copy.	Ricorda fino a %1$s video che hai salvato qui. Se il file c'è ancora, vedi Apri o Salva di nuovo invece di una seconda copia.
-This video is already saved. Open TikTok to save another copy.	Questo video è già stato salvato. Apri TikTok per salvarne un'altra copia.
+Already saved. Open TikTok to save another copy.	Già salvato. Apri TikTok per salvarne un'altra copia.
 This video is already saved	Questo video è già stato salvato
 Save again	Salva di nuovo
-The saved-video choice couldn't open. Try again.	Non è stato possibile aprire la scelta per il video salvato. Riprova.
+The saved-video choice couldn't open. Try again.	Scelta per il video salvato non aperta. Riprova.
 The saved-video choice is still open	La scelta per il video salvato è ancora aperta
-This video isn't available as a complete file. Try again later.	Questo video non è disponibile come file completo. Riprova più tardi.
+No full file for this video. Try again later.	Niente file completo. Riprova più tardi.
 Saving video to %1$s	Salvataggio del video in %1$s in corso
 Video and details saved to %1$s	Video e dettagli salvati in %1$s
-The video was saved, but its record couldn't be updated. A later save may make another copy.	Il video è stato salvato, ma non è stato possibile aggiornare il suo registro. Un salvataggio successivo potrebbe crearne un'altra copia.
-The already-saved check failed. Try again.	Il controllo dei video già salvati non è riuscito. Riprova.
+Saved, but a later save may make a second copy	Salvato. Salvare di nuovo può creare un'altra copia
+The already-saved check failed. Try again.	Controllo dei già salvati non riuscito. Riprova.
 Show download progress	Mostra l'avanzamento del download
 Show a progress bar while a video saves.	Mostra una barra di avanzamento durante il salvataggio di un video.
 Skip the Share to sheet after a save	Salta il menu di condivisione dopo il salvataggio
@@ -1504,7 +1504,7 @@ Saving video	Salvataggio del video in corso
 Waiting to save video	Video in attesa di essere salvato
 Saving video: %1$s	Salvataggio del video in corso: %1$s
 Saving %1$s of %2$s: %3$s	Salvataggio di %1$s di %2$s in corso: %3$s
-Couldn't save the change. Try again.	Non è stato possibile salvare la modifica. Riprova.
+Couldn't save the change. Try again.	Modifica non salvata. Riprova.
 Off. TikTok can report views and typing.	Disattivato. TikTok può segnalare le visualizzazioni e l'attività di digitazione.
 Hushfeed is paused. Ghost mode isn't active.	Hushfeed è in pausa. La modalità fantasma non è attiva.
 Problem detected. Story views may still be reported. Check Ghost mode diagnostics. The warning stays until TikTok restarts.	Problema rilevato. Le visualizzazioni delle storie potrebbero continuare a essere segnalate. Controlla la diagnostica della modalità fantasma. L'avviso resta finché TikTok non viene riavviato.
@@ -1514,7 +1514,7 @@ Ghost mode diagnostics	Diagnostica della modalità fantasma
 The partial file couldn't be removed. Delete it from the folder you chose.	Non è stato possibile rimuovere il file parziale. Eliminalo dalla cartella che hai scelto.
 The backup didn't start and its partial file couldn't be removed. Delete it from the folder you chose.	Il backup non è stato avviato e non è stato possibile rimuovere il suo file parziale. Eliminalo dalla cartella che hai scelto.
 Problem detected.	Problema rilevato.
-Couldn't save these choices. Try again.	Non è stato possibile salvare queste scelte. Riprova.
+Couldn't save these choices. Try again.	Scelte non salvate. Riprova.
 Clearing seen videos	Eliminazione dei video visti in corso
 Couldn't clear seen videos. Try again.	Non è stato possibile eliminare i video visti. Riprova.
 Keep playing in the background	Continua la riproduzione in background
@@ -1616,12 +1616,12 @@ Still waiting for the file app.	Ancora in attesa dell'app dei file.
 Stop waiting	Smetti di aspettare
 Stopped waiting for the file app. Nothing was exported.	Attesa dell'app dei file interrotta. Non è stato esportato nulla.
 Stopped waiting for the file app. It hasn't said yet whether the export was saved.	Attesa dell'app dei file interrotta. Non ha ancora detto se l'esportazione è stata salvata.
-The export wasn't saved. Export again when the file app is ready.	L'esportazione non è stata salvata. Esporta di nuovo quando l'app dei file è pronta.
+The export wasn't saved. Try again.	Esportazione non salvata. Riprova.
 Hide unpersonalized For You videos	Nascondi i video di “Per te” non personalizzati
 Hide the fill-in videos TikTok sends to For You without picking them for you. When a whole batch is fill-in, it stays so the feed doesn't run dry.	Nasconde i video di riempimento che TikTok manda in “Per te” senza sceglierli per te. Se un intero blocco è di riempimento, resta, così il feed non rimane vuoto.
 Unpersonalized For You videos	Video di “Per te” non personalizzati
 Reviewed presets for TikTok %1$s	Preset verificati per TikTok %1$s
-No presets have been reviewed for TikTok %1$s yet	Non ci sono ancora preset verificati per TikTok %1$s
+No reviewed presets for TikTok %1$s yet	Ancora nessun preset verificato per TikTok %1$s
 Repost with a comment	Ripubblica con un commento
 Profile banner	Banner del profilo
 Profile banner and new profile layout	Banner del profilo e nuovo layout del profilo
@@ -1682,7 +1682,7 @@ Unlock TikTok	Sblocca TikTok
 Use screen lock	Usa il blocco schermo
 TikTok is locked	TikTok è bloccato
 Unlock	Sblocca
-TikTok isn't locked because this phone has no screen lock	TikTok non è bloccato perché questo telefono non ha un blocco schermo
+TikTok can't lock without a phone screen lock	Impossibile bloccare TikTok senza blocco schermo
 Save photo posts as a video	Salva i post di foto come video
 On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video.	In un post con una sola foto, Scarica video crea un MP4 con l'audio del post e senza logo TikTok né scheda finale. In un post con più foto, Scarica chiede se vuoi gli originali o un solo video.
 Seconds per photo	Secondi per foto
@@ -1692,8 +1692,8 @@ Save photos	Salva le foto
 Save as video	Salva come video
 Making a video of the photos	Creazione di un video dalle foto
 Saved the photos as a video in %1$s	Foto salvate come video in %1$s
-Saved the photos as a video in %1$s. The sound couldn't be added, so it's silent.	Foto salvate come video in %1$s. Non è stato possibile aggiungere l'audio, quindi è muto.
-The video couldn't be made from these photos. Try again.	Non è stato possibile creare il video da queste foto. Riprova.
+Saved to %1$s, but without sound	Salvato in %1$s, ma senza audio
+Couldn't make the video. Try again.	Video non creato. Riprova.
 Video of photos	Video di foto
 # context: search words for the Log diagnostics switch. Never shown, only matched when someone searches settings. Give the words people type for debug logging in this language, separated by spaces.
 debug debugging logs logging	debug risoluzione problemi registri log
@@ -1811,8 +1811,8 @@ Proxy password	Password del proxy
 Optional, used with the user name. It isn't shown, logged or put in a backup.	Facoltativa, usata con il nome utente. Non viene mostrata, registrata o inserita in un backup.
 Enter a server name or IP address, without http:// or a port number	Inserisci il nome di un server o un indirizzo IP, senza http:// né numero di porta
 A port is a whole number from 1 to 65535	Una porta è un numero intero da 1 a 65535
-The proxy at %1$s asks for a password, and TikTok can't send one. Use a proxy that doesn't need one.	Il proxy su %1$s richiede una password e TikTok non può inviarla. Usa un proxy che non ne richieda una.
-Couldn't reach the proxy at %1$s. TikTok may not load until it's back or you turn the proxy off.	Impossibile raggiungere il proxy su %1$s. TikTok potrebbe non caricarsi finché non torna attivo o non disattivi il proxy.
+Proxy %1$s wants a password TikTok can't send	Proxy %1$s chiede password, TikTok non può inviarla
+Can't reach proxy %1$s. TikTok may not load.	Proxy %1$s irraggiungibile. TikTok potrebbe non aprirsi.
 Word rules only, not every feed filter:	Solo regole di parole, non tutti i filtri del feed:
 This list is too long to preview here. Saving still follows the usual limit.	Questo elenco è troppo lungo per l'anteprima. Il salvataggio segue comunque il limite consueto.
 Can't check yet: %1$s	Non si può ancora controllare: %1$s
@@ -1872,13 +1872,13 @@ Stop the short vibrations TikTok plays on its own taps and gestures. Your keyboa
 Turn off screen transitions	Disattiva le transizioni tra schermate
 Open and close TikTok's screens without their slide. Swipes inside a screen still follow your finger.	Apre e chiude le schermate di TikTok senza la loro animazione di scorrimento. Gli scorrimenti dentro una schermata seguono ancora il tuo dito.
 Save the frame on screen as a photo	Salva il fotogramma sullo schermo come foto
-There's no video on screen to save a frame from	Non c'è nessun video sullo schermo da cui salvare un fotogramma
-Saving a frame from this video needs Android 7 or newer	Per salvare un fotogramma da questo video serve Android 7 o successivo
-Allow storage for TikTok in Android settings to save frames	Consenti l'archiviazione per TikTok nelle impostazioni Android per salvare i fotogrammi
-The frame couldn't be read. Try again.	Non è stato possibile leggere il fotogramma. Riprova.
+There's no video on screen to save a frame from	Nessun video sullo schermo per salvare un fotogramma
+Saving frames needs Android 7 or newer	Salvare fotogrammi richiede Android 7 o successivo
+Allow storage for TikTok to save frames	Consenti l'archiviazione a TikTok per i fotogrammi
+The frame couldn't be read. Try again.	Fotogramma non letto. Riprova.
 Saving the frame	Salvataggio del fotogramma in corso
 Frame saved to %1$s	Fotogramma salvato in %1$s
-The frame couldn't be saved. Try again.	Non è stato possibile salvare il fotogramma. Riprova.
+The frame couldn't be saved. Try again.	Fotogramma non salvato. Riprova.
 Video frame	Fotogramma del video
 Hide the LIVE bubble	Nascondi la bolla LIVE
 Stop the bubble TikTok floats at the top of the feed to point you to a LIVE.	Ferma la bolla che TikTok fa comparire in cima al feed per portarti a una LIVE.
@@ -1902,8 +1902,8 @@ Save the video's cover	Salva la copertina del video
 Save the cover as well	Salva anche la copertina
 Save the video's cover picture at the largest size TikTok has, each time you tap Download. It goes to your photo folder, named after the video.	Salva l'immagine di copertina del video alla dimensione più grande che TikTok ha, ogni volta che tocchi Scarica. Finisce nella tua cartella delle foto, con il nome del video.
 This video has no cover to save	Questo video non ha una copertina da salvare
-Allow storage for TikTok in Android settings to save covers	Consenti l'archiviazione per TikTok nelle impostazioni Android per salvare le copertine
-The cover couldn't be saved. Try again.	Non è stato possibile salvare la copertina. Riprova.
+Allow storage for TikTok to save covers	Consenti l'archiviazione a TikTok per salvare copertine
+The cover couldn't be saved. Try again.	Copertina non salvata. Riprova.
 Cover saved to %1$s	Copertina salvata in %1$s
 Saving the cover	Salvataggio della copertina in corso
 Show the time to the second	Mostra l'ora al secondo
@@ -1914,7 +1914,7 @@ Show video length on profile grids	Mostra la durata nella griglia del profilo
 Show how long each video runs under its view count on profile grids. Photo posts and videos TikTok sent no length for show none.	Mostra quanto dura ogni video sotto il numero di visualizzazioni nella griglia del profilo. I post di foto e i video di cui TikTok non ha inviato la durata non mostrano nulla.
 Fall back to the watermarked copy	Ripiega sulla copia con filigrana
 When the video without the watermark can't be fetched, save TikTok's own watermarked copy instead and say so. It's the size TikTok's own save uses, so it may be smaller than the quality you picked.	Se il video senza filigrana non si riesce a scaricare, salva invece la copia con filigrana di TikTok e avvisa. Ha la dimensione usata dal salvataggio di TikTok, quindi può essere più piccola della qualità che hai scelto.
-The video without the watermark couldn't be fetched, so TikTok's watermarked copy was saved to %1$s. Try again later for the clean copy.	Non è stato possibile scaricare il video senza filigrana, quindi la copia con filigrana di TikTok è stata salvata in %1$s. Riprova più tardi per avere la copia pulita.
+No clean copy yet. Saved the watermarked one to %1$s	Niente copia pulita. Salvata con filigrana in %1$s
 Match text stickers too	Controlla anche gli sticker di testo
 Also hide videos whose text stickers match a blocked caption word. Text stickers are the words a creator types over the video in TikTok's editor. Text that's part of the picture itself can't be read.	Nasconde anche i video i cui sticker di testo contengono una parola bloccata nelle descrizioni. Gli sticker di testo sono le parole che qualcuno scrive sopra il video nell'editor di TikTok. Il testo che fa parte dell'immagine stessa non si può leggere.
 Text sticker words	Parole negli sticker di testo
@@ -2039,7 +2039,7 @@ Translate draft	Traduci bozza
 Translation preview	Anteprima traduzione
 Use translation	Usa traduzione
 Translating…	Traduzione in corso…
-Couldn't translate this draft. Try again in a moment.	Impossibile tradurre questa bozza. Riprova tra poco.
+Couldn't translate this draft. Try again.	Bozza non tradotta. Riprova.
 Received message translation	Traduzione dei messaggi ricevuti
 Preview a translation from a received text message's menu. The original message stays unchanged.	Visualizza una traduzione dal menu di un messaggio di testo ricevuto. Il messaggio originale resta invariato.
 Preview translation	Anteprima della traduzione
@@ -2047,7 +2047,7 @@ Original message	Messaggio originale
 Translated message	Messaggio tradotto
 Show original	Mostra l'originale
 Show translation	Mostra la traduzione
-Couldn't translate this message. Try again in a moment.	Impossibile tradurre questo messaggio. Riprova tra poco.
+Couldn't translate this message. Try again.	Messaggio non tradotto. Riprova.
 Saved posts	Post salvati
 Blocked accounts	Account bloccati
 These are posts saved by your signed-in account. Other Favorites categories aren't included.	Questi sono i post salvati dal tuo account connesso. Le altre categorie dei Preferiti non sono incluse.
@@ -2137,15 +2137,15 @@ Pick for saving	Scegli da salvare
 You can pick up to %1$s at a time	Puoi sceglierne fino a %1$s alla volta
 One picked	Uno scelto
 %1$s picked	%1$s scelti
-None of the picked videos could be saved. Try again.	Non è stato possibile salvare nessuno dei video scelti. Riprova.
+None of the picked videos could be saved. Try again.	Nessun video scelto salvato. Riprova.
 Saved one video	Salvato un video
 Saved %1$s videos	Salvati %1$s video
 One was already saved	Uno era già salvato
 %1$s were already saved	%1$s erano già salvati
 Picked videos	Video scelti
 Pick all	Scegli tutti
-Picked the first %1$s. Save them, then tap Pick all again for the rest.	Scelti i primi %1$s. Salvali, poi tocca di nuovo Scegli tutti per il resto.
-Everything this list has loaded is picked or saved. Scroll down to load more.	Tutto ciò che questa lista ha caricato è già scelto o salvato. Scorri verso il basso per caricarne altri.
+Picked %1$s. Save, then tap Pick all for more.	Scelti %1$s. Salva, poi tocca Scegli tutti ancora.
+All loaded items are picked. Scroll for more.	Tutti gli elementi caricati sono scelti. Scorri ancora.
 
 Record LIVEs you watch	Registra i LIVE che guardi
 Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.	Aggiunge un pulsante Registra alle stanze LIVE. La registrazione inizia quando lo tocchi e finisce quando tocchi Interrompi o esci dalla stanza. Quello che c'era prima non viene salvato.
@@ -2155,19 +2155,19 @@ Stop recording this LIVE	Interrompi la registrazione di questo LIVE
 Record this LIVE from now	Registra questo LIVE da ora
 Recording this LIVE from now	Registrazione di questo LIVE da ora
 Saving the recording	Salvataggio della registrazione
-Couldn't find this LIVE's stream to record. Leave the room and open it again.	Non è stato possibile trovare lo stream di questo LIVE da registrare. Esci dalla stanza e riaprila.
-Allow storage for TikTok in Android settings to record LIVEs	Consenti l'archiviazione a TikTok nelle impostazioni di Android per registrare i LIVE
+No stream found to record. Reopen the LIVE.	Nessuno stream da registrare. Riapri il LIVE.
+Allow storage for TikTok to record LIVEs	Consenti l'archiviazione a TikTok per registrare i LIVE
 LIVE recording saved to %1$s	Registrazione del LIVE salvata in %1$s
-The LIVE ended or the connection dropped. What was recorded is saved to %1$s	Il LIVE è finito o la connessione è caduta. Quello che è stato registrato è salvato in %1$s
-The phone is running out of room. What was recorded is saved to %1$s	Lo spazio sul telefono sta finendo. Quello che è stato registrato è salvato in %1$s
-The recording reached its size limit and was saved to %1$s	La registrazione ha raggiunto il limite di dimensioni ed è stata salvata in %1$s
-TikTok closed. What was recorded is saved to %1$s	TikTok si è chiuso. Quello che è stato registrato è salvato in %1$s
-Recording stopped early. What was recorded is saved to %1$s	La registrazione si è fermata in anticipo. Quello che è stato registrato è salvato in %1$s
+LIVE ended or dropped. Recording saved to %1$s	LIVE finito o caduto. Salvata in %1$s
+Storage almost full. Recording saved to %1$s	Memoria quasi piena. Salvata in %1$s
+Size limit reached. Recording saved to %1$s	Limite di dimensione raggiunto. Salvata in %1$s
+TikTok closed. What was recorded is saved to %1$s	TikTok chiuso. Registrazione salvata in %1$s
+Recording stopped early. Saved to %1$s	Registrazione fermata in anticipo. Salvata in %1$s
 This LIVE's stream can't be saved	Lo stream di questo LIVE non può essere salvato
 There isn't enough room on the phone to record	Non c'è abbastanza spazio sul telefono per registrare
 Nothing was recorded	Non è stato registrato nulla
-The recording couldn't be saved. Try again.	Non è stato possibile salvare la registrazione. Riprova.
-Those photos can't be tried again now. Save the post again to get the rest.	Ora non si può riprovare con quelle foto. Salva di nuovo il post per avere il resto.
+The recording couldn't be saved. Try again.	Registrazione non salvata. Riprova.
+Can't retry those photos. Save the post again.	Impossibile riprovare. Salva di nuovo il post.
 Show the time zone	Mostra il fuso orario
 Puts your time zone after the time to the second, like EDT.	Mette il tuo fuso orario dopo l'ora al secondo, come EDT.
 Short date	Data breve
@@ -2293,9 +2293,9 @@ Screen	Schermo
 Stream only saves the room's own video, as before. Screen records what your phone shows while you watch, with the sound the app plays when TikTok has the microphone permission. Android asks you to allow screen recording each time, and shows its own notice while it records.	Solo stream salva il video della stanza, come prima. Schermo registra ciò che mostra il telefono mentre guardi, con l'audio dell'app se TikTok ha il permesso del microfono. Android chiede ogni volta di consentire la registrazione dello schermo e mostra un suo avviso mentre registra.
 Recording this LIVE's screen	Registrazione dello schermo di questa LIVE
 Open the room and tap Stop to save it.	Apri la stanza e tocca Stop per salvarla.
-Screen recording wasn't allowed	La registrazione dello schermo non è stata consentita
+Screen recording wasn't allowed	Registrazione schermo non consentita
 Recording this LIVE's screen from now	Registro lo schermo di questa LIVE da ora
-Recording this LIVE's screen from now, without sound	Registro lo schermo di questa LIVE da ora, senza audio
+Recording this LIVE's screen from now, without sound	Registro lo schermo del LIVE da ora, senza audio
 Allow photo comments	Consenti i commenti con foto
 Show the gallery tab in the comment box, so you can add a photo to a comment like on TikTok. PineDrama turns it off for everyone. TikTok's server still decides whether your account can post one.	Mostra la scheda Galleria nella casella dei commenti, così puoi aggiungere una foto a un commento come su TikTok. PineDrama la disattiva per tutti. È comunque il server di TikTok a decidere se il tuo account può pubblicarne una.
 This screen recording has no sound.	Questa registrazione dello schermo non ha audio.
@@ -2305,8 +2305,8 @@ The publication state of these older recording files is unknown. Export a copy o
 The screen recording did not finish. Its files can be exported but may not play.	La registrazione dello schermo non è terminata. I file possono essere esportati, ma potrebbero non essere riproducibili.
 Recording files need recovery	I file della registrazione richiedono il recupero
 The recovery record is damaged. Export a copy of the recording files or delete them.	Il registro di recupero è danneggiato. Esporta una copia dei file della registrazione oppure eliminali.
-The export may be incomplete. The original recording files are still kept.	L’esportazione potrebbe essere incompleta. I file originali della registrazione sono ancora conservati.
-Some recording files remain. Try deleting them again.	Alcuni file della registrazione sono ancora presenti. Prova a eliminarli di nuovo.
+Export may be incomplete. The recordings are kept.	Forse manca qualcosa. Registrazioni conservate.
+Some recording files remain. Try deleting them again.	File di registrazione rimasti. Eliminali di nuovo.
 
 # context: Explicit recording Retry when the original stop reason was not retained.
 Recovered recording saved to %1$s	Registrazione recuperata salvata in %1$s
@@ -2319,7 +2319,7 @@ This setting isn't available. Search for another setting.	Questa impostazione no
 Hide the Hushfeed row	Nascondi la riga di Hushfeed
 Take Hushfeed out of TikTok's Settings and privacy. To open these settings, press and hold For You at the top of the feed, or Home if Long-press Home for Hushfeed settings is on.	Toglie Hushfeed da Impostazioni e privacy di TikTok. Per aprire queste impostazioni, tieni premuto Per te in alto nel feed, oppure Home se Tieni premuto su Home per le impostazioni di Hushfeed è attivo.
 Open the search page	Apri la pagina di ricerca
-TikTok's search page couldn't be opened. Restart TikTok and try again.	Non è stato possibile aprire la pagina di ricerca di TikTok. Riavvia TikTok e riprova.
+Search didn't open. Restart TikTok and try again.	Ricerca non aperta. Riavvia TikTok e riprova.
 Fold the search into a button	Riduci la ricerca a un pulsante
 Shows a search button at the top left of the comments instead of the box, so the comments get that room back. Tap it to search, and tap it again to put the box away. Search within comments must be on.	Mostra un pulsante di ricerca in alto a sinistra nei commenti al posto della casella, così i commenti riprendono quello spazio. Toccalo per cercare e toccalo di nuovo per chiudere la casella. Cerca nei commenti deve essere attivo.
 Put the comment search away	Chiudi la ricerca nei commenti
@@ -2343,9 +2343,9 @@ Save only on Wi-Fi	Salva solo con Wi-Fi
 Saves wait for Wi-Fi or another network that isn't metered, for up to 30 minutes, and stop if you leave it. Saving a frame still works anywhere.	I salvataggi aspettano fino a 30 minuti il Wi-Fi o un'altra rete senza limiti di traffico, e si fermano se la lasci. Salvare un fotogramma funziona ovunque.
 Waiting for Wi-Fi	In attesa del Wi-Fi
 The last one is still waiting for Wi-Fi	L'ultimo è ancora in attesa del Wi-Fi
-Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.	Smesso di aspettare il Wi-Fi dopo 30 minuti. Salvalo di nuovo quando sei in Wi-Fi.
-Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.	Salvati %1$s di %2$s. Il resto si è fermato quando hai lasciato il Wi-Fi. Salva di nuovo in Wi-Fi.
-The save stopped when you left Wi-Fi. Save it again on Wi-Fi.	Il salvataggio si è fermato quando hai lasciato il Wi-Fi. Salvalo di nuovo in Wi-Fi.
+No Wi-Fi for 30 minutes. Save again on Wi-Fi.	Niente Wi-Fi per 30 minuti. Salva di nuovo in Wi-Fi.
+Saved %1$s of %2$s. Save the rest on Wi-Fi.	Salvati %1$s di %2$s. Salva il resto in Wi-Fi.
+Save stopped when Wi-Fi dropped. Retry on Wi-Fi.	Salvataggio fermo senza Wi-Fi. Riprova in Wi-Fi.
 Leave after no touch	Esci se lo schermo non viene toccato
 Zero switches this off. After that many minutes with no touch on the screen, the video stops and TikTok goes to the background, for when you fall asleep watching. Any touch starts the wait over.	Zero disattiva questa funzione. Dopo quel numero di minuti senza tocchi sullo schermo, il video si ferma e TikTok passa in background, per quando ti addormenti guardando. Qualsiasi tocco fa ripartire l'attesa.
 Left TikTok after no touch	Uscito da TikTok per inattività

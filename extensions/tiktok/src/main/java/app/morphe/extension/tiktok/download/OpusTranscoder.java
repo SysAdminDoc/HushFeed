@@ -85,7 +85,7 @@ final class OpusTranscoder {
             throw refusal;
         } catch (IOException | RuntimeException failure) {
             Logger.printException(() -> "Opus encode failed, keeping the sound as TikTok sent it", failure);
-            Utils.showToastLong(L10n.t("Opus didn't work on this phone. Saving the sound as TikTok sent it instead."));
+            Utils.showToastLong(L10n.t("Opus didn't work. Saving TikTok's own file."));
             return false;
         }
     }

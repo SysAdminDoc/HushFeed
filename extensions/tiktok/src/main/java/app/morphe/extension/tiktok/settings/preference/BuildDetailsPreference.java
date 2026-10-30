@@ -61,7 +61,7 @@ public final class BuildDetailsPreference extends Preference implements Immediat
         } catch (Exception failure) {
             Logger.printException(() -> "Failed to copy build details", failure);
             Utils.showToastLong(L10n.t(context,
-                    "Couldn't copy the build details. Use Save build details instead."));
+                    "Couldn't copy. Use Save build details instead."));
         }
     }
 

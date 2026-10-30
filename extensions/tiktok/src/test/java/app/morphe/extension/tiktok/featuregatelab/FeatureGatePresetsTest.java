@@ -187,7 +187,7 @@ public class FeatureGatePresetsTest {
             show.setAccessible(true);
             show.invoke(lab, "47.5.3", "see_translation");
             Shadows.shadowOf(Looper.getMainLooper()).idle();
-            assertEquals("Loaded values are still being read. Try again in a moment.",
+            assertEquals("Still reading loaded values. Try again soon.",
                     org.robolectric.shadows.ShadowToast.getTextOfLatestToast());
             assertTrue(FeatureGateLabStore.rules().isEmpty());
         }

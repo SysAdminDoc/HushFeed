@@ -765,12 +765,12 @@ public final class FollowDiagnostics {
         String message;
         if (FollowVerdict.UNKNOWN.equals(context.statusMsg)) {
             message = captcha
-                    ? L10n.f("TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.",
+                    ? L10n.f("Follow refused, code %1$s. Maybe a hidden CAPTCHA.",
                             context.statusCode)
                     : L10n.f("TikTok refused the follow with code %1$s", context.statusCode);
         } else {
             message = captcha
-                    ? L10n.f("TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.",
+                    ? L10n.f("Follow refused: %1$s Maybe a hidden CAPTCHA.",
                             context.statusMsg)
                     : L10n.f("TikTok refused the follow: %1$s", context.statusMsg);
         }

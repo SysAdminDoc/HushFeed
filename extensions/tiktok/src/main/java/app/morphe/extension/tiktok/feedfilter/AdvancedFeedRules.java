@@ -378,7 +378,7 @@ public final class AdvancedFeedRules {
         if (source.length() > MAX_PATTERN_LENGTH) {
             COMPILED.put(entry, INVALID);
             Utils.showToastLong(L10n.f(
-                    "That creator pattern is too long to use, so it was skipped: %1$s", entry));
+                    "Skipped a creator pattern that's too long: %1$s", entry));
             return null;
         }
         Pattern pattern;
@@ -392,7 +392,7 @@ public final class AdvancedFeedRules {
         if (couldStall(source)) {
             COMPILED.put(entry, INVALID);
             Utils.showToastLong(L10n.f(
-                    "That creator pattern could stall the feed, so it was skipped: %1$s",
+                    "Skipped a creator pattern that could stall: %1$s",
                     L10n.isolate(entry)));
             return null;
         }

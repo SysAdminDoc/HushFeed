@@ -40,7 +40,7 @@ public final class ExternalDownloader {
         String url = shareUrl(aweme);
         if (url == null) {
             Utils.showToastShort(L10n.t(
-                    "This video has no link to send, so TikTok's own save runs instead"));
+                    "No link to send, so TikTok saves it instead"));
             return false;
         }
 
@@ -62,7 +62,7 @@ public final class ExternalDownloader {
             String label = appLabel(context, target);
             Utils.showToastShort(label != null
                     ? L10n.f("%1$s isn't installed or doesn't take links", label)
-                    : L10n.t("The downloader app you chose isn't installed. Check Send links to another app under Downloads."));
+                    : L10n.t("Your downloader app isn't installed. Check Downloads."));
             return false;
         } catch (RuntimeException exception) {
             Logger.printException(() -> "Could not hand the link to " + target, exception);

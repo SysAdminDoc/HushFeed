@@ -73,7 +73,7 @@ public class DownloadPathPreference extends DialogPreference {
     public void applyPickedPath(String path) {
         if (path == null) {
             String error = app.morphe.extension.tiktok.settings.L10n.t(
-                    "Choose a folder on internal storage. SD cards aren't supported.");
+                    "Pick a folder on internal storage, not an SD card");
             if (pathField != null && getDialog() != null && getDialog().isShowing()) {
                 SettingsUi.reportFieldError(pathField, error);
             } else {

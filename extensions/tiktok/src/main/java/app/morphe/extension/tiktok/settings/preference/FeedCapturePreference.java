@@ -49,7 +49,7 @@ public final class FeedCapturePreference extends Preference implements Immediate
             } else {
                 FeedCapture.start();
                 Utils.showToastLong(L10n.t(context,
-                        "Feed capture started. Scroll until the problem shows up, then come back here to stop."));
+                        "Feed capture on. Scroll to the problem, then return."));
             }
             refresh();
             return true;
@@ -84,7 +84,7 @@ public final class FeedCapturePreference extends Preference implements Immediate
             } catch (IOException | RuntimeException error) {
                 Logger.printException(() -> "Could not save the feed capture", error);
                 Utils.showToastLong(L10n.t(app,
-                        "The feed capture couldn't be saved. Tap the row to try again."));
+                        "Feed capture not saved. Tap the row to retry."));
             } finally {
                 SAVING.set(false);
                 Utils.runOnMainThread(row::refresh);
@@ -93,7 +93,7 @@ public final class FeedCapturePreference extends Preference implements Immediate
         if (!started) {
             SAVING.set(false);
             Utils.showToastShort(L10n.t(context,
-                    "Couldn't start saving the feed capture. Try again in a moment."));
+                    "Couldn't save the feed capture. Try again."));
         }
     }
 

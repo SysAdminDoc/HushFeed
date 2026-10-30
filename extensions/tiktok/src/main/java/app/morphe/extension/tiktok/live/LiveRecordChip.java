@@ -315,7 +315,7 @@ public final class LiveRecordChip {
         if (Build.VERSION.SDK_INT < 29
                 && activity.checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
-            Utils.showToastLong(L10n.t("Allow storage for TikTok in Android settings to record LIVEs"));
+            Utils.showToastLong(L10n.t("Allow storage for TikTok to record LIVEs"));
             return;
         }
         Object room = roomOf(fragment);
@@ -327,7 +327,7 @@ public final class LiveRecordChip {
                 LiveRoomStream.forRecording(Settings.LIVE_RECORD_QUALITY.get(), LiveControls.lastQualityPick()));
         if (pick.target == null) {
             Logger.printInfo(() -> "LIVE record: no stream to record (" + pick.problem + ", room offers [" + pick.offered + "])");
-            Utils.showToastShort(L10n.t("Couldn't find this LIVE's stream to record. Leave the room and open it again."));
+            Utils.showToastShort(L10n.t("No stream found to record. Reopen the LIVE."));
             return;
         }
         Logger.printInfo(() -> "LIVE record: " + pick.target.quality + " over " + pick.target.transport
@@ -350,7 +350,7 @@ public final class LiveRecordChip {
     private static void startScreen(Activity activity, Object fragment, Object room) throws Exception {
         LiveRoomStream.Pick pick = LiveRoomStream.screenTarget(room);
         if (pick.target == null) {
-            Utils.showToastShort(L10n.t("Couldn't find this LIVE's stream to record. Leave the room and open it again."));
+            Utils.showToastShort(L10n.t("No stream found to record. Reopen the LIVE."));
             return;
         }
         boolean audio = LiveRecordSource.audioAllowed(Build.VERSION.SDK_INT,

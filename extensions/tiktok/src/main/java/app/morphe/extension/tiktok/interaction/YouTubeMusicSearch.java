@@ -44,7 +44,7 @@ public final class YouTubeMusicSearch {
         if (isOriginal(music)) {
             // "original sound - handle" is the video's own audio. Searched, it finds nothing or
             // somebody else's song, so it is said instead of sent.
-            Utils.showToastShort(L10n.t("This is the video's own sound, so YouTube Music won't have it"));
+            Utils.showToastShort(L10n.t("This original sound isn't on YouTube Music"));
             return false;
         }
         Intent view = new Intent(Intent.ACTION_VIEW, Uri.parse(SEARCH_URL + Uri.encode(query)));
@@ -58,7 +58,7 @@ public final class YouTubeMusicSearch {
             return false;
         } catch (RuntimeException failure) {
             Logger.printException(() -> "Could not open YouTube Music", failure);
-            Utils.showToastLong(L10n.t("YouTube Music couldn't be opened. Open it yourself and search for the sound."));
+            Utils.showToastLong(L10n.t("YouTube Music didn't open. Search for the sound there."));
             return false;
         }
     }

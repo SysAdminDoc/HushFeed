@@ -361,7 +361,7 @@ public class CommentExportTest {
                 assertTrue(stop.performClick());
                 awaitWorker(DocumentOperation.Kind.COMMENT_FILE);
                 // The write was at the file app's open, past the gate, so the stop can't say it was clean.
-                assertEquals("The export wasn't saved. Export again when the file app is ready.",
+                assertEquals("The export wasn't saved. Try again.",
                         bannerText(activity));
                 DocumentOperationTest.assertStopLoggedAsInfo("Comment export failed");
             } finally {

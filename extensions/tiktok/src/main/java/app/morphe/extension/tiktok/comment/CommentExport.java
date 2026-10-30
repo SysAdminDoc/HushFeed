@@ -443,7 +443,7 @@ public final class CommentExport {
             }
             DocumentOperation.logFailure(file, () -> "Comment export failed", error);
             String message = file.stage() == DocumentOperation.Stage.STOPPED_WHILE_PUBLISHING
-                    ? L10n.t(context, "The export wasn't saved. Export again when the file app is ready.")
+                    ? L10n.t(context, "The export wasn't saved. Try again.")
                     : L10n.t(context, "Comment export failed");
             if (!DocumentOperation.removeUnsaved(resolver, uri, opened)) {
                 message += " " + L10n.t(context,

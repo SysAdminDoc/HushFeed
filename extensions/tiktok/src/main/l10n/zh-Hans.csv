@@ -7,7 +7,7 @@ source,target
 %1$d filtered out,%1$d 已过滤掉
 %1$d gates selected,已选择 %1$d 门
 %1$d minutes left,还剩 %1$d 分钟
-%1$d overrides were turned off because the Lab couldn't confirm their gates are unchanged in TikTok %2$s. Review them before turning them back on.,%1$d 覆盖已关闭，因为实验室无法确认其门在 TikTok %2$s 中未更改。在重新打开它们之前检查它们.
+Turned off %1$d overrides. Recheck for TikTok %2$s.,已关闭 %1$d 个覆盖。请重新检查 TikTok %2$s.
 %1$d rejected,%1$d 被拒绝
 %1$d results,%1$d 结果
 %1$d results so far,到目前为止 %1$d 结果
@@ -115,7 +115,7 @@ source,target
 1 filtered out,1 过滤掉
 1 gate selected,已选择 1 个登机门
 1 min left,还剩 1 分钟
-1 override was turned off because the Lab couldn't confirm its gate is unchanged in TikTok %2$s. Review it before turning it back on.,1 覆盖已关闭，因为实验室无法确认其门在 TikTok %2$s 中未更改。重新打开之前请先检查一下.
+Turned off 1 override. Recheck for TikTok %2$s.,已关闭 1 个覆盖。请重新检查 TikTok %2$s.
 1 result,1 个结果
 1 result so far,到目前为止 1 个结果
 1 video left,还剩 1 个视频
@@ -129,7 +129,7 @@ A diagnostic report is already being saved,诊断报告已保存
 "A different account is signed in. Switch back to the one you set this up on, or enter who to message again.",已登录另一账号。切换回你设置的账号，或再次输入要向谁发送消息.
 A double tap on a message no longer adds a heart to it. A single tap and a long press work as before.,双击消息不再为其添加爱心。单击并长按即可像以前一样工作.
 A few seconds,几秒钟
-A field value couldn't be read. Check the values and try again.,无法读取字段值。检查这些值并重试.
+Couldn't read a field value. Check and try again.,无法读取字段值，请检查后重试.
 A file named hushfeed-safe-mode in TikTok's folder under Android/data paused Hushfeed. Your settings stay as they are.,Android/data 下 TikTok 的文件夹中名为 hushfeed-safe-mode 的文件已暂停 Hushfeed。你的设置保持原样.
 A forced value applies to this copy of TikTok whichever account is signed in. It can't get past a check the server makes.,无论登录哪个账号，强制值都会应用于 TikTok 的此副本。它无法通过服务器进行的检查.
 "A good place to stop, if you want one.",如果你想要的话，这是一个停下来的好地方.
@@ -203,13 +203,13 @@ All loaded tabs,所有加载的选项卡
 Allow Duet and Stitch anyway,无论如何都允许 Duet 和 Stitch
 Allow Add to Story anyway,无论如何都允许添加到故事
 Allow screenshots and Circle to Search,允许截图和圈选即搜
-Allow storage for TikTok in Android settings to record LIVEs,允许在 Android 设置中存储 TikTok 以录制 LIVE
-Allow storage for TikTok in Android settings to save covers,允许在 Android 设置中存储 TikTok 以保存封面
-Allow storage for TikTok in Android settings to save frames,允许在 Android 设置中存储 TikTok 以保存帧
-Allow storage for TikTok in Android settings to save profile pictures,允许在 Android 设置中存储 TikTok 以保存个人资料图片
-Allow storage for TikTok in Android settings to save sounds,允许在 Android 设置中存储 TikTok 以保存声音
-Allow storage for TikTok in Android settings to save stories,允许在 Android 设置中存储 TikTok 以保存故事
-Allow storage for TikTok in Android settings to save the live photo's clip,允许在 Android 设置中存储 TikTok 以保存实时照片的剪辑
+Allow storage for TikTok to record LIVEs,允许 TikTok 访问存储空间，以录制 LIVE
+Allow storage for TikTok to save covers,允许 TikTok 访问存储空间，以保存封面
+Allow storage for TikTok to save frames,允许 TikTok 访问存储空间，以保存帧
+Allow storage for TikTok to save profile pictures,允许 TikTok 访问存储空间，以保存头像
+Allow storage for TikTok to save sounds,允许 TikTok 访问存储空间，以保存声音
+Allow storage for TikTok to save stories,允许 TikTok 访问存储空间，以保存故事
+Allow storage for TikTok to save the clip,允许 TikTok 访问存储空间，以保存片段
 Allow voice comments,允许语音评论
 Already marked as not interested,已标记为不感兴趣
 Also apply these filters to downloaded videos TikTok uses when the feed can't load enough new items.,当信息流无法加载足够的新项目时，还可以将这些过滤器应用于 TikTok 使用的下载视频.
@@ -331,7 +331,7 @@ Changes to %1$s at %2$s,更改为 %1$s（位于 %2$s）
 Check for already-saved videos,检查已保存的视频
 Choose %1$d to %2$d videos. Values outside this range use the nearest valid limit. Restart TikTok to apply this.,选择 %1$d 到 %2$d 视频。超出此范围的值使用最接近的有效限值。重新启动 TikTok 以应用此操作.
 Choose a backup file. Your current settings are kept for Undo.,选择一个备份文件。你当前的设置将保留以供撤消.
-Choose a folder on internal storage. SD cards aren't supported.,选择内部存储上的文件夹。不支持 SD 卡.
+"Pick a folder on internal storage, not an SD card",请选择内部存储中的文件夹，不要选 SD 卡
 Choose a preset to fill the SIM details.,选择一个预设来填充 SIM 卡详细信息.
 Choose a subfolder under %1$s.,选择 %1$s 下的子文件夹.
 Choose counts for this signed-in account. Leave a field empty to use TikTok's count. Zero shows zero. Choices stay on this phone.,选择此登录账号的计数。将字段留空以使用 TikTok 的计数。零表示零。选择保留在这款手机上.
@@ -411,12 +411,12 @@ Copy video ID,复制视频 ID
 Couldn't add the older seen videos. Try again.,无法添加较早看过的视频。再试一次.
 Couldn't change the Lab settings. Try again.,无法更改实验室设置。再试一次.
 Couldn't clear seen videos. Try again.,无法清除已看过的视频。再试一次.
-Couldn't clear the suggested accounts. Reopen the Inbox and try again.,无法清除建议的账号。重新打开收件箱并重试.
-Couldn't confirm the block for %1$s. Open their profile to check.,无法确认 %1$s 的区块。打开他们的个人资料进行检查.
-Couldn't confirm the unblock for %1$s. Open their profile to check.,无法确认 %1$s 的解锁。打开他们的个人资料进行检查.
-Couldn't copy the build details. Use Save build details instead.,无法复制构建详细信息。请改用“保存构建详细信息”.
+Couldn't clear suggestions. Reopen Inbox to retry.,无法清除建议。请重新打开收件箱重试.
+Couldn't confirm blocking %1$s. Check their profile.,无法确认是否已拉黑 %1$s。请查看其主页.
+Couldn't confirm unblocking %1$s. Check their profile.,无法确认是否已取消拉黑 %1$s。请查看其主页.
+Couldn't copy. Use Save build details instead.,无法复制，请改用“保存构建详细信息”.
 Couldn't copy the report. Use Save report instead.,无法复制报告。请改用“保存报告”.
-Couldn't find this LIVE's stream to record. Leave the room and open it again.,找不到要录制的 LIVE 流。离开房间并再次打开它.
+No stream found to record. Reopen the LIVE.,未找到可录制的直播流，请重新打开 LIVE.
 Couldn't forget the saved videos. Try again.,无法忘记保存的视频。再试一次.
 Couldn't import watch history. Your saved history is unchanged.,无法导入观看历史记录。你保存的历史记录没有改变.
 Couldn't list your apps. Tap here to try again.,无法列出你的应用。点击此处重试.
@@ -424,12 +424,12 @@ Couldn't open the file picker to export. Try again.,无法打开要导出的文�
 Couldn't open the file picker to import. Try again.,无法打开要导入的文件选择器。再试一次.
 Couldn't put back the diagnostic data. Try again.,无法恢复诊断数据。再试一次.
 Couldn't put the saved videos back. Try again.,无法恢复保存的视频。再试一次.
-Couldn't reach the proxy at %1$s. TikTok may not load until it's back or you turn the proxy off.,无法到达 %1$s 的代理。 TikTok 可能无法加载，直到它返回或你关闭代理.
+Can't reach proxy %1$s. TikTok may not load.,无法连接代理 %1$s，TikTok 可能无法加载.
 Couldn't read TikTok's current values (%1$s). Refresh values from the menu to try again.,无法读取 TikTok 的当前值 (%1$s)。从菜单中刷新值以重试.
 Couldn't read that file. Choose it again.,无法读取该文件。再选择一次.
 Couldn't read this list. Close it and try again.,无法阅读此列表。关闭它并重试.
-Couldn't read who posted this comment. Open their profile and block them there.,无法读取谁发表了此评论。打开他们的个人资料并在那里阻止他们.
-Couldn't record the screen's layout. Start again from Diagnostics.,无法记录屏幕布局。从诊断重新开始.
+Unknown commenter. Block them from their profile.,评论者未知，请在其主页拉黑.
+Layout not recorded. Try again from Diagnostics.,未记录布局，请从“诊断”重试.
 Couldn't remove the imported font. Try again.,无法删除导入的字体。再试一次.
 Couldn't reset the settings. Try again.,无法重置设置。再试一次.
 Couldn't reset this override. Try again.,无法重置此覆盖。再试一次.
@@ -443,19 +443,19 @@ Couldn't save the settings backup. Try again.,无法保存设置备份。再试�
 Couldn't save these choices. Try again.,无法保存这些选择。再试一次.
 Couldn't save this override. Try again.,无法保存此覆盖。再试一次.
 Couldn't send the feedback. Try again in a moment.,无法发送反馈。稍后再试一次.
-Couldn't start saving the feed capture. Try again in a moment.,无法开始保存信息流捕获。稍后再试一次.
-Couldn't start the Lab change. Try again in a moment.,无法开始实验室更改。稍后再试一次.
+Couldn't save the feed capture. Try again.,无法保存信息流捕获，请重试.
+Couldn't start the Lab change. Try again.,无法开始实验室更改，请重试.
 Couldn't start the export. Try again in a moment.,无法开始导出。稍后再试一次.
 Couldn't start the import. Try again in a moment.,无法开始导入。稍后再试一次.
-Couldn't start the report export. Try again in a moment.,无法开始报告导出。稍后再试一次.
+Couldn't start the report export. Try again.,无法开始导出报告，请重试.
 Couldn't start the settings change. Try again in a moment.,无法开始设置更改。稍后再试一次.
 Couldn't tell which folder to update. Choose it again.,无法判断要更新哪个文件夹。再选择一次.
-Couldn't translate this draft. Try again in a moment.,无法翻译此草稿。稍后再试一次.
-Couldn't translate this message. Try again in a moment.,无法翻译此消息。稍后再试一次.
+Couldn't translate this draft. Try again.,无法翻译此草稿，请重试.
+Couldn't translate this message. Try again.,无法翻译此消息，请重试.
 Couldn't undo that. Try again.,无法撤消该操作。再试一次.
 Couldn't undo the clear. Try again.,无法撤消清除。再试一次.
 Couldn't undo the last change. Try again.,无法撤消最后的更改。再试一次.
-Couldn't write the caption on this video. Saving it without.,无法为此视频编写字幕。保存它没有.
+Couldn't add the caption. Saving without it.,无法添加说明文字，将不带说明保存.
 Count a video as seen after,统计一段视频后看到的内容
 Country and network preferences,国家和网络偏好
 Country code,国家代码
@@ -553,7 +553,7 @@ Enter who to message below to start.,在下方输入要向谁发送消息即可�
 Entry %1$d has a field with the wrong data type.,条目 %1$d 有一个数据类型错误的字段.
 Entry %1$d isn't an object.,条目 %1$d 不是对象.
 Errors,错误
-Everything this list has loaded is picked or saved. Scroll down to load more.,此列表已加载的所有内容都会被选取或保存。向下滚动以加载更多.
+All loaded items are picked. Scroll for more.,已加载的项目全部已选，向下滚动查看更多.
 Expand activity list,展开活动列表
 Explore or Community,探索或社区
 Export CSV,导出CSV
@@ -576,7 +576,7 @@ Feature gate report copied,已复制功能门报告
 Feed and navigation,信息流和导航
 Feed button size,信息流按钮尺寸
 Feed capture saved to %1$s. Read it before you share it.,信息流捕获保存到 %1$s。在分享之前先阅读它.
-"Feed capture started. Scroll until the problem shows up, then come back here to stop.",信息流捕获开始。滚动直到出现问题，然后返回此处停止.
+"Feed capture on. Scroll to the problem, then return.",信息流捕获已开启，滚动到问题处后返回.
 Feed filter,信息流过滤器
 Feed screen,信息流界面
 Feed tabs,信息流标签页
@@ -646,7 +646,7 @@ Gestures,手势
 Ghost mode,幽灵模式
 Ghost mode diagnostics,幽灵模式诊断
 "Give each commenter's name a color of its own, the same one every time you see that account, so a long thread is easier to follow.",为每个评论者的名字赋予自己的颜色，每次你看到该账号时都使用相同的颜色，这样很长的线索就更容易理解.
-Go to the screen now. Hushfeed records its layout in %1$d seconds.,现在转到屏幕。 Hushfeed 在 %1$d 秒内记录其布局.
+Go to the screen. Recording in %1$d seconds.,请前往该屏幕，%1$d 秒后开始记录.
 Got it,明白了
 "HDR videos light the screen extra bright. This plays the standard (SDR) version instead, so the screen doesn't jump to full brightness. Videos with no standard version still play in HDR.",HDR 视频使屏幕显得格外明亮。这会播放标准 (SDR) 版本，因此屏幕不会跳至全亮度。无标准版本的视频仍以 HDR 格式播放.
 HTTP,HTTP协议
@@ -867,7 +867,7 @@ How much of a video you watch before it's hidden next time. Zero counts it after
 Hushfeed,Hushfeed
 Hushfeed blocked TikTok's reports here. It hasn't confirmed that you stay off viewer lists.,Hushfeed 在此屏蔽了 TikTok 的报告。它尚未确认你是否不在观看者列表中.
 Hushfeed can't read the creator pattern %1$s,Hushfeed 无法读取创建者模式 %1$s
-Hushfeed hid a TikTok CAPTCHA. Turn off Hide CAPTCHA popups if something stops working.,Hushfeed 隐藏了 TikTok 验证码。如果某些功能停止工作，请关闭隐藏验证码弹出窗口.
+Hid a CAPTCHA. Stuck? Turn off Hide CAPTCHA popups.,已隐藏 CAPTCHA，卡住请关闭“隐藏验证码弹出窗口”.
 Hushfeed is active,Hushfeed 处于活动状态
 Hushfeed is paused,Hushfeed 已暂停
 Hushfeed is paused. Ghost mode isn't active.,Hushfeed 已暂停。幽灵模式未激活.
@@ -882,7 +882,7 @@ Import finished,导入完成
 Import loaded values,导入加载的值
 Import watch history,导入观看记录
 Imported %1$d values,导入的 %1$d 值
-Imported %1$d values. Undo last Lab change is in the menu.,导入的 %1$d 值。撤消上次实验室更改位于菜单中.
+Imported %1$d values. The menu can undo it.,已导入 %1$d 个值，可在菜单中撤销.
 Imported: %1$s. Pick another file to replace it.,进口：%1$s。选择另一个文件来替换它.
 Importing new history ended Undo for the earlier clear. You can clear the imported history.,导入新历史记录结束 撤消之前的清除。你可以清除导入的历史记录.
 Importing watch history,导入观看历史记录
@@ -986,7 +986,7 @@ Live photo clip saved to %1$s,实时照片剪辑保存至 %1$s
 Live photo clips: %1$s,实时照片剪辑：%1$s
 Load more,加载更多
 Loaded current values. Loading all known gates…,加载当前值。正在加载所有已知的门…
-Loaded values are still being read. Try again in a moment.,仍在读取加载的值。稍后再试一次.
+Still reading loaded values. Try again soon.,仍在读取已加载的值，请稍后重试.
 Loaded-value file export failed,加载值文件导出失败
 Loading cancelled. The list is incomplete.,加载已取消。该列表不完整.
 Loading gates…,装载门…
@@ -1090,7 +1090,7 @@ No matching settings,没有匹配的设置
 No other app takes shared text,没有其他应用程序接受共享文本
 No popups have been seen yet,尚未看到弹出窗口
 No preset selected. Choose a preset above.,未选择预设。选择上面的预设.
-No presets have been reviewed for TikTok %1$s yet,尚未审核 TikTok %1$s 的预设
+No reviewed presets for TikTok %1$s yet,TikTok %1$s 暂无已审核的预设
 No profile shortcuts have been seen yet,尚未看到个人资料快捷方式
 "No recording yet. Start one, use a feature, then return here.",还没有录音。启动一个，使用一项功能，然后返回此处.
 No rule matches this text.,没有规则与此文本匹配.
@@ -1140,7 +1140,7 @@ Nothing is playing to speed up,没有播放任何内容来加快速度
 Nothing on this page changes what TikTok does until they are on.,在它们打开之前，此页面上的任何内容都不会改变 TikTok 的功能.
 Nothing to undo yet.,还没有什么可以撤消的.
 Nothing was recorded,没有记录任何内容
-"Nothing was recorded because Hushfeed settings were still open. Start again, then leave settings.",由于 Hushfeed 设置仍处于打开状态，因此未记录任何内容。重新开始，然后保留设置.
+"Nothing recorded. Start, then leave settings.",未记录任何内容，请开始后退出设置.
 Nothing was sent. Check the streak settings and try again.,没有发送任何内容。检查条纹设置并重试.
 Notices from this project and the ones it's built on,来自该项目及其构建基础的通知
 OK,好的
@@ -1200,7 +1200,7 @@ Operator name,操作员名称
 "Optional, used with the user name. It isn't shown, logged or put in a backup.",可选，与用户名一起使用。它不会被显示、记录或放入备份中.
 "Optional. Only connections made by Android itself can sign in to a proxy, not TikTok's own. Leave empty for a proxy without a password.",可选。只有 Android 本身建立的连接才能登录到代理，而 TikTok 自己的连接则不能。对于没有密码的代理，留空.
 "Opus (.ogg), a smaller file",Opus (.ogg)，较小的文件
-Opus didn't work on this phone. Saving the sound as TikTok sent it instead.,Opus 无法在这款手机上运行。将声音保存为 TikTok 来发送.
+Opus didn't work. Saving TikTok's own file.,Opus 无法使用，将保存 TikTok 的原文件.
 "Opus needs Android 10 or later, so sounds save as TikTok sent them.",Opus 需要 Android 10 或更高版本，因此声音保存为 TikTok 发送.
 Original,原画
 Original language,原语言
@@ -1245,7 +1245,7 @@ Pick the buttons to take off the column. The rest stay where they are.,选择按
 "Pick the popups to stop. The list holds the ones TikTok has tried to show on this phone, so a popup appears here after its first showing. CAPTCHA, verification, sign-in, age, ban and legal consent screens are never listed or blocked.",选择弹出窗口以停止。该列表包含 TikTok 尝试在此手机上显示的内容，因此在首次显示后，此处会出现一个弹出窗口。验证码、验证、登录、年龄、禁令和法律同意屏幕永远不会列出或阻止.
 "Pick the shortcuts to remove from the row under a profile's bio, such as TikTok Studio or Your orders. Restart TikTok to apply this.",选择要从个人资料简介下的行中删除的快捷方式，例如 TikTok Studio 或你的订单。重新启动 TikTok 以应用此操作.
 Pick videos to save from profile grids,从个人资料网格中选择要保存的视频
-"Picked the first %1$s. Save them, then tap Pick all again for the rest.",选择了第一个 %1$s。保存它们，然后再次点击“全选”以完成其余的操作.
+"Picked %1$s. Save, then tap Pick all for more.",已选 %1$s 个，请先保存，再点“选择全部”继续.
 Picked videos,精选视频
 Picks the older H.264 video format when TikTok also offers a newer one (HEVC or ByteVC2). It helps phones that stutter or run hot. Videos without an H.264 version still play.,当 TikTok 还提供较新的视频格式（HEVC 或 ByteVC2）时，选择较旧的 H.264 视频格式。它可以帮助那些卡顿或发热的手机。没有 H.264 版本的视频仍然可以播放.
 Play,玩
@@ -1328,8 +1328,8 @@ Record LIVEs you watch,录制你观看的 LIVE
 Record a screen's layout,记录屏幕布局
 Record this LIVE from now,从现在开始记录这个LIVE
 Recorded gate reads (%1$d),记录的门读数 (%1$d)
-"Recording gate reads. Use a feature, then return here to stop.",记录门读取。使用一项功能，然后返回此处停止.
-Recording stopped early. What was recorded is saved to %1$s,录音提前停止。录制的内容保存到 %1$s
+Recording gate reads. Come back here to stop.,正在记录开关读取，返回此处即可停止.
+Recording stopped early. Saved to %1$s,录制提前停止，已保存到 %1$s
 Recording this LIVE from now,从现在开始记录这个LIVE
 Recording what the feed filters keep and hide. Tap to stop and save it in %1$s.,记录信息流过滤器保留和隐藏的内容。点击停止并将其保存在 %1$s 中.
 Recovered an interrupted settings change. Restart TikTok to apply this.,恢复了中断的设置更改。重新启动 TikTok 以应用此操作.
@@ -1439,11 +1439,11 @@ Saved,已保存
 Saved %1$s,已保存%1$s
 Saved %1$s of %2$s photos before the story failed,在故事失败之前已保存 %1$s 张 %2$s 张照片
 "Saved %1$s of %2$s, %3$s skipped",已保存 %2$s 的 %1$s，已跳过 %3$s
-"Saved %1$s of %2$s, %3$s skipped and the rest cancelled",已保存 %2$s 的 %1$s，跳过 %3$s，其余取消
+"Saved %1$s of %2$s, %3$s skipped, rest cancelled",已保存 %1$s/%2$s，跳过 %3$s，其余取消
 "Saved %1$s of %2$s, the rest cancelled",已保存 %2$s 的 %1$s，其余已取消
 "Saved %1$s of %2$s, the rest need more free space",已保存 %2$s 的 %1$s，其余部分需要更多可用空间
 "Saved %1$s of %2$s, the rest ran out of time",已保存 %2$s 的 %1$s，其余时间已用完
-Saved %1$s of %2$s. The server asked us to wait. Try again later.,已保存 %2$s 的 %1$s。服务员要求我们稍等。稍后再试.
+Saved %1$s of %2$s. Try the rest later.,已保存 %1$s/%2$s，其余请稍后再试.
 Saved %1$s original photos,已保存%1$s原始照片
 Saved %1$s seen videos to the file,已将 %1$s 看过的视频保存到文件中
 Saved %1$s videos,已保存 %1$s 视频
@@ -1453,7 +1453,7 @@ Saved one video,已保存一个视频
 Saved post,已保存的帖子
 Saved posts,已保存的帖子
 Saved the photos as a video in %1$s,将照片另存为 %1$s 中的视频
-"Saved the photos as a video in %1$s. The sound couldn't be added, so it's silent.",将照片另存为 %1$s 中的视频。声音无法添加，所以一片寂静.
+"Saved to %1$s, but without sound",已保存到 %1$s，但没有声音
 Saved videos forgotten. The files are still there.,已保存的视频被遗忘。文件还在那里.
 Saved videos put back,保存的视频放回
 "Saved videos show the @username and the first line of the caption in the bottom left corner. The phone encodes the whole video again to do it, so saving takes longer. Applies to saves made by Hushfeed.",保存的视频在左下角显示@用户名和标题的第一行。手机会再次对整个视频进行编码来完成此操作，因此保存时间会更长。适用于 Hushfeed 进行的保存.
@@ -1462,14 +1462,14 @@ Saved. Restart TikTok to apply this.,已保存。重新启动 TikTok 以应用�
 Saves TikTok's latest crash report on this phone so it can go in the diagnostic report.,在此手机上保存 TikTok 的最新崩溃报告，以便将其纳入诊断报告中.
 "Saves subtitle (SRT) files with the video. They go to Movies on Android 11 and newer, Download on Android 10, and your video folder on older versions. On Android 11 and newer with Save details on, the video moves to Download or Documents and the subtitles stay in Movies.",与视频一起保存字幕 (SRT) 文件。他们会在 Android 11 及更高版本上转到“电影”，在 Android 10 上转到“下载”，在旧版本上会转到你的视频文件夹。在 Android 11 及更高版本上，如果打开“保存详细信息”，视频将移至“下载”或“文档”，而字幕仍保留在“电影”中.
 "Saves the caption, creator, link and post date in a text file next to the video, or one file for a photo post's original photos. On Android 10 and later, they go in Download or Documents under the same folder name. Applies to saves made by Hushfeed.",将标题、创建者、链接和发布日期保存在视频旁边的文本文件中，图片帖子的原图则共用一个文件。在 Android 10 及更高版本上，它们会进入同一文件夹名称下的“下载”或“文档”。适用于 Hushfeed 进行的保存.
-"The photos saved, but their details file couldn't be written. Check your storage and save the post again to get it.",照片已保存，但无法写入它们的详情文件。请检查存储空间，然后重新保存该帖子以获取它.
+"Photos saved, but not their details file",照片已保存，但详情文件未能写入
 Saves the details file in JSON format instead of plain text. Useful if another tool will read it.,以 JSON 格式而不是纯文本格式保存详细信息文件。如果其他工具可以读取它，则很有用.
 Saves your Hushfeed settings and Feature Gate Lab rules to a file.,将 Hushfeed 设置和功能门实验室规则保存到文件中.
 Saving,节省
 Saving %1$s of %2$s,节省 %2$s 的 %1$s
 Saving %1$s of %2$s: %3$s,保存 %2$s 的 %1$s： %3$s
 Saving %1$s original photos,保存%1$s原始照片
-Saving a frame from this video needs Android 7 or newer,保存该视频的帧需要 Android 7 或更高版本
+Saving frames needs Android 7 or newer,保存帧需要 Android 7 或更高版本
 Saving and sharing,保存和分享
 Saving one original photo,保存一张原始照片
 Saving seen history,保存查看的历史记录
@@ -1485,7 +1485,7 @@ Saving the story,保存故事
 Saving video,保存视频
 Saving video to %1$s,将视频保存到 %1$s
 Saving video: %1$s,保存视频：%1$s
-Screen layout recorded. Export the diagnostic report to send it.,记录屏幕布局。导出诊断报告以发送.
+Layout recorded. Export the report to send it.,已记录布局，导出报告即可发送.
 Screen time,屏幕时间
 Scrolling comments on videos,滚动视频评论
 Search,搜索
@@ -1806,9 +1806,9 @@ Text sticker words,文字贴纸字
 That JSON file doesn't contain the supported TikTok watch history.,该 JSON 文件不包含受支持的 TikTok 观看历史记录.
 That backup was written by a newer Hushfeed than this one. Nothing was altered.,该备份是由比这个更新的 Hushfeed 编写的。一切都没有改变.
 That creator is already in the list,该创建者已在列表中
-"That creator pattern could stall the feed, so it was skipped: %1$s",该创建者模式可能会阻止信息流，因此它被跳过：%1$s
+Skipped a creator pattern that could stall: %1$s,已跳过可能卡住的创作者模式：%1$s
 "That creator pattern could stall the feed, so it wasn't added: %1$s",该创建者模式可能会导致信息流停止，因此未添加它：%1$s
-"That creator pattern is too long to use, so it was skipped: %1$s",该创建者模式太长而无法使用，因此被跳过：%1$s
+Skipped a creator pattern that's too long: %1$s,已跳过过长的创作者模式：%1$s
 "That creator pattern is too long, so it wasn't added: %1$s",该创建者模式太长，因此未添加：%1$s
 That file has more than %1$s watch-history entries.,该文件具有超过 %1$s 观看历史记录条目.
 That file is larger than %1$s MB. Choose a seen-history file saved by Hushfeed.,该文件大于 %1$s MB。选择 Hushfeed 保存的查看历史记录文件.
@@ -1847,7 +1847,7 @@ The Activity row of likes and comments on your posts leaves the Inbox. Notificat
 The Archive row leaves the Inbox. Archived chats are kept.,存档行离开收件箱。存档的聊天记录将被保留.
 The Bulletin board rows TikTok adds to the Inbox leave the list. Chats and the other rows stay where they are.,公告板行 TikTok 添加到收件箱离开列表。聊天和其他行保留在原处.
 The Following and For You names above the feed go away. Swiping between the feeds and the search button stay as they are.,信息流上方的“关注”和“为你推荐”名称将消失。在信息流和搜索按钮之间滑动保持原样.
-The LIVE ended or the connection dropped. What was recorded is saved to %1$s,LIVE 结束或连接断开。录制的内容保存到 %1$s
+LIVE ended or dropped. Recording saved to %1$s,LIVE 已结束或中断，录制已保存到 %1$s
 The Lab can't check this. TikTok gets it exactly as typed.,实验室无法检查这一点。 TikTok 完全按照键入的方式获取它.
 The Lab couldn't open. Go back and open it again.,实验室无法打开。返回并再次打开它.
 "The Lab keeps at most %1$s rules. This change would make %2$s, so nothing was changed.",实验室最多保留 %1$s 条规则。此更改将生成 %2$s，因此没有任何更改.
@@ -1866,9 +1866,9 @@ The comment button also opens a video's comments with its caption at the top. Th
 The cover couldn't be saved. Try again.,封面无法保存。再试一次.
 The diagnostic report couldn't be saved yet. Try again in a moment.,诊断报告尚无法保存。稍后再试一次.
 The diagnostic report couldn't be saved. Try again.,无法保存诊断报告。再试一次.
-The downloader app you chose isn't installed. Check Send links to another app under Downloads.,你选择的下载器应用程序未安装。选中“下载”下的“发送链接到另一个应用程序”.
-The export wasn't saved. Export again when the file app is ready.,导出未保存。当文件应用程序准备就绪时再次导出.
-The feed capture couldn't be saved. Tap the row to try again.,无法保存信息流捕获。点击该行重试.
+Your downloader app isn't installed. Check Downloads.,未安装下载器应用，请检查“下载”.
+The export wasn't saved. Try again.,导出未保存，请重试.
+Feed capture not saved. Tap the row to retry.,信息流捕获未保存，点击该行重试.
 The feed capture is still being saved,信息流捕获仍在保存中
 The feed doesn't end. This is a fine time to leave it.,信息流还没有结束。这是离开它的好时机.
 The feed is locked,信息流已锁定
@@ -1887,26 +1887,26 @@ The last report is still being saved,最新报告仍在保存中
 The list changed while loading. Results are incomplete.,加载时列表发生变化。结果不完整.
 The list reached its limit. More items may remain.,该列表已达到极限。可能会留下更多物品.
 The list stopped making progress. Results are incomplete.,该清单停止取得进展。结果不完整.
-The live photo's clip couldn't be saved. Try again.,无法保存实时照片的剪辑。再试一次.
-The loaded-values file you chose couldn't be read. Try again.,无法读取你选择的加载值文件。再试一次.
+Couldn't save the live photo's clip. Try again.,无法保存实时照片的片段，请重试.
+Couldn't read that file. Try again.,无法读取该文件，请重试.
 The message didn't go through. It tries again at %1$s.,消息没有传出去。它在 %1$s 再次尝试.
 The network proxy from that file is off. Check its address before you turn it on,该文件的网络代理已关闭。打开之前检查其地址
-"The original photos aren't available, so TikTok's own save runs instead",原始照片不可用，因此 TikTok 自己的保存运行
-The original photos aren't available. No video was saved.,原始照片不可用。没有保存视频.
+"No original photos, so TikTok saves it instead",没有原始照片，改由 TikTok 保存
+No video saved. The original photos are missing.,未保存视频，缺少原始照片.
 "The override changes no fields. Edit the field values, or reset the override.",覆盖不会更改任何字段。编辑字段值，或重置覆盖.
 "The override couldn't be applied: %1$s. Edit the field values, or reset the override.",无法应用覆盖：%1$s。编辑字段值，或重置覆盖.
 "The override doesn't say what list to return. Edit the field values, or reset the override.",覆盖没有说明要返回什么列表。编辑字段值，或重置覆盖.
 The partial file couldn't be removed. Delete it from the folder you chose.,无法删除部分文件。从你选择的文件夹中将其删除.
-The phone is running out of room. What was recorded is saved to %1$s,电话空间不足。录制的内容保存到 %1$s
+Storage almost full. Recording saved to %1$s,存储空间快满了，录制已保存到 %1$s
 "The port the proxy listens on, like 8080 or 1080.",代理侦听的端口，例如 8080 或 1080.
 The presets couldn't load. Open the Lab again.,无法加载预设。再次打开实验室.
 The profile picture couldn't be saved. Try again.,无法保存个人资料图片。再试一次.
-"The proxy at %1$s asks for a password, and TikTok can't send one. Use a proxy that doesn't need one.",%1$s 处的代理要求输入密码，而 TikTok 无法发送密码。使用不需要的代理.
+Proxy %1$s wants a password TikTok can't send,代理 %1$s 需要密码，TikTok 无法发送
 "The proxy's address, like 192.168.1.20 or proxy.example.com.",代理的地址，例如 192.168.1.20 或 proxy.example.com.
 The quality choice is still open,品质选择依然开放
 "The record of an interrupted settings change couldn't be read, so it was set aside. Check your settings.",中断的设置更改记录无法读取，因此被搁置。检查你的设置.
 The recording couldn't be saved. Try again.,录音无法保存。再试一次.
-The recording reached its size limit and was saved to %1$s,录音达到其大小限制并保存到 %1$s
+Size limit reached. Recording saved to %1$s,已达大小上限，录制已保存到 %1$s
 The report couldn't be saved. Try again.,无法保存报告。再试一次.
 The request timed out. The list may be incomplete.,请求超时。该列表可能不完整.
 The row of story avatars across the top of the Inbox goes. Stories still play from the feed and from profiles.,收件箱顶部的一排故事头像出现了。故事仍然通过信息流和个人资料播放.
@@ -1922,10 +1922,10 @@ The sticker suggestion banner stops showing in a chat. Your own stickers are sti
 The story couldn't be saved. Try again.,故事无法保存。再试一次.
 "The thumbs down on each comment blocks the commenter instead of disliking. The comment dims, an undo banner follows, and a second tap unblocks.",对每条评论的“大拇指朝下”会阻止评论者，而不是不喜欢。评论变暗，随后出现撤消横幅，然后再点按即可解锁.
 The time of day the message goes out.,消息发出的时间.
-The video couldn't be made from these photos. Try again.,无法根据这些照片制作视频。再试一次.
-"The video couldn't be saved. Try again, or choose Automatic.",视频无法保存。再试一次，或选择“自动”.
-"The video was saved, but its record couldn't be updated. A later save may make another copy.",视频已保存，但无法更新其记录。稍后保存可能会制作另一个副本.
-"The video without the watermark couldn't be fetched, so TikTok's watermarked copy was saved to %1$s. Try again later for the clean copy.",无法获取没有水印的视频，因此TikTok的带水印副本保存到%1$s。稍后重试以获得干净的副本.
+Couldn't make the video. Try again.,无法制作视频，请重试.
+"Couldn't save. Try again, or choose Automatic.",无法保存，请重试，或选择“自动”.
+"Saved, but a later save may make a second copy",已保存，但之后再保存可能产生第二份副本
+No clean copy yet. Saved the watermarked one to %1$s,暂无无水印版本，已保存带水印版到 %1$s
 "The video you're watching keeps playing to its end after you leave TikTok or turn the screen off, with TikTok's own media notification to pause it. TikTok's background play switch stays on while this is on. Restart TikTok to apply this.",在你离开 TikTok 或关闭屏幕后，你正在观看的视频将继续播放到最后，并通过 TikTok 自己的媒体通知来暂停。当此功能打开时，TikTok 的后台播放开关保持打开状态。重新启动 TikTok 以应用此操作.
 "The voice and video call buttons leave the top of a chat. Calls still ring, and the chat details button stays.",语音和视频通话按钮离开了聊天的顶部。来电仍然响起，并且聊天详细信息按钮仍然保留.
 "The words under the bottom tab icons go away. The icons stay, and each tab opens what it always did.",底部选项卡图标下方的文字消失。图标保留下来，每个选项卡都会像往常一样打开.
@@ -1947,31 +1947,31 @@ This configuration has no fields that can be copied and changed safely on this b
 This file has no loaded values in it.,该文件中没有加载的值.
 This file isn't a loaded-values export from the Feature Gate Lab.,此文件不是从功能门实验室导出的加载值.
 This gate type isn't supported.,不支持此门类型.
-"This is the video's own sound, so YouTube Music won't have it",这是视频自己的声音，因此 YouTube Music 不会有它
+This original sound isn't on YouTube Music,此原声不在 YouTube Music 上
 "This key isn't in Hushfeed's list, so its type can't be checked. Reset the override.",该键不在 Hushfeed 的列表中，因此无法检查其类型。重置覆盖.
 "This key touches account safety. Forcing it can change login, region, payment or security checks.",这个键涉及账号安全。强制设置它可能会改变登录、地区、付款或安全检查.
 "This line opens a rule and doesn't finish it: %1$s. Write two phrases as ""a"" & ""b"" for both, or ""a"" !& ""b"" for the first without the second.",此行打开一条规则但未完成它：%1$s。将两个短语写为“a”和“b”，或者将第一个短语写为“a”！&“b”，而没有第二个.
 This list is too long to preview here. Saving still follows the usual limit.,此列表太长，无法在此处预览。储蓄仍遵循通常的限额.
 This list isn't available on this TikTok build.,此列表在此 TikTok 版本上不可用.
 "This phone has no file picker, so there's no way to choose a file here",这款手机没有文件选择器，因此无法在此处选择文件
-This phone has no folder picker. Type the folder into the row instead.,此手机没有文件夹选择器。请在该行中键入文件夹.
-This preset doesn't match the installed gates. Nothing changed.,此预设与已安装的门不匹配。一切都没有改变.
+No folder picker here. Type the folder in the row.,此处没有文件夹选择器，请在该行中输入文件夹.
+Preset doesn't match the gates. Nothing changed.,预设与开关不匹配，未做任何更改.
 This preset isn't available for your installed TikTok version.,此预设不适用于你安装的 TikTok 版本.
 This profile picture isn't available to save,该个人资料照片无法保存
-"This quality isn't available as a complete file, so TikTok's own save runs instead",此质量无法作为完整文件使用，因此 TikTok 自己的保存会运行
+"No full file at this quality, so TikTok saves it",此画质没有完整文件，改由 TikTok 保存
 "This setting's value can't be copied on this build, so it can't be overridden. Reset the override.",无法在此版本上复制此设置的值，因此无法覆盖它。重置覆盖.
 This story isn't available to save,该故事无法保存
 This value is required.,该值是必需的.
 This video has no cover to save,该视频没有可保存的封面
 This video has no link to copy,该视频没有可复制的链接
-"This video has no link to send, so TikTok's own save runs instead",该视频没有要发送的链接，因此 TikTok 自己的保存会运行
+"No link to send, so TikTok saves it instead",没有可发送的链接，改由 TikTok 保存
 This video has no original sound to save,该视频没有可保存的原声
 This video has no sound of its own,该视频没有自己的声音
 This video is already saved,该视频已保存
-This video is already saved. Open TikTok to save another copy.,该视频已保存。打开 TikTok 以保存另一个副本.
-This video isn't available as a complete file. Try again later.,该视频不提供完整文件。稍后再试.
+Already saved. Open TikTok to save another copy.,已保存。打开 TikTok 可再保存一份副本.
+No full file for this video. Try again later.,此视频没有完整文件，请稍后再试.
 This video's sound has no title to look for,该视频的声音没有可查找的标题
-Those photos can't be tried again now. Save the post again to get the rest.,现在无法再次尝试这些照片。再次保存帖子以获取其余内容.
+Can't retry those photos. Save the post again.,无法重试这些照片，请再次保存该帖子.
 Thumbs down blocks the commenter,大拇指朝下屏蔽评论者
 TikTok account facts,TikTok 账号事实
 "TikTok checks how it was signed and installed. This answers those checks the way the Play Store version would. Try it if follows or likes undo themselves after a refresh. It may not help, since TikTok has other checks.",TikTok 检查它是如何签名和安装的。这将按照 Play 商店版本的方式回答这些检查。如果关注或喜欢在刷新后自行撤消，请尝试一下。它可能没有帮助，因为 TikTok 还有其他检查.
@@ -1990,16 +1990,16 @@ TikTok forgets the LIVE quality you picked when it closes. This starts rooms at 
 TikTok gets no location from your phone. The Region settings change your country and time zone. This switch stops the exact position.,TikTok 无法从你的手机获取位置信息。“地区”设置会更改你的国家/地区和时区。这个开关会阻止获取精确位置.
 "TikTok hasn't loaded this setting yet. Open the part of the app that uses it, then come back.",TikTok 尚未加载此设置。打开使用它的应用程序部分，然后返回.
 TikTok is locked,TikTok 已锁定
-TikTok isn't locked because this phone has no screen lock,TikTok 未锁定，因为此手机没有屏幕锁定
+TikTok can't lock without a phone screen lock,手机没有锁屏，TikTok 无法锁定
 "TikTok lets you pick a LIVE's quality only in some rooms. This adds Video quality to the menu in most of the others, and the next room opens at the quality you picked last.",TikTok 允许你仅在某些房间中选择 LIVE 的品质。这会将视频质量添加到大多数其他房间的菜单中，并且下一个房间会以你上次选择的质量打开.
 "TikTok may have taken this message. Delivery isn't confirmed, so it won't be retried today.",TikTok 可能已收到此消息。交货尚未确认，因此今天不会重试.
-"TikTok only had its watermarked copy of this story, so that copy was saved to %1$s",TikTok 只有该故事的带水印副本，因此该副本被保存到 %1$s
+Only a watermarked copy existed. Saved to %1$s,只有带水印的副本，已保存到 %1$s
 TikTok read it,TikTok 阅读它
 "TikTok read it, but the override couldn't be applied. Reset it and save it again.",TikTok 读取它，但无法应用覆盖。重置并再次保存.
 TikTok refused the follow with code %1$s,TikTok 拒绝了以下代码 %1$s
-TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.,TikTok 拒绝了以下代码，代码为 %1$s。隐藏的验证码可能是原因.
+"Follow refused, code %1$s. Maybe a hidden CAPTCHA.",关注被拒绝，代码 %1$s。可能是隐藏的 CAPTCHA.
 TikTok refused the follow: %1$s,TikTok 拒绝以下内容：%1$s
-TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.,TikTok 拒绝了以下内容： %1$s 隐藏的验证码可能是原因.
+Follow refused: %1$s Maybe a hidden CAPTCHA.,关注被拒绝：%1$s 可能是隐藏的 CAPTCHA.
 TikTok refused this request (%1$s).,TikTok 拒绝了此请求 (%1$s).
 "TikTok removes videos saved for offline viewing after a set time, sometimes only two days, watched or not. With this on they stay until you delete them in TikTok's Offline videos settings. TikTok can still clear watched ones when your phone is low on space.",TikTok 在设定的时间（有时仅两天）后删除保存用于离线观看的视频，无论观看与否。启用此功能后，它们会一直保留，直到你在 TikTok 的离线视频设置中删除它们为止。当你的手机空间不足时，TikTok 仍然可以清除观看的内容.
 TikTok reports additional filtered accounts. This list is incomplete.,TikTok 报告其他已过滤的账号。此列表不完整.
@@ -2035,7 +2035,7 @@ Today: %1$d minutes,今天：%1$d 分钟
 Today: %1$d video,今天：%1$d 视频
 Today: %1$d videos,今天：%1$d 视频
 Too late to put the saved videos back,为时已晚，无法恢复已保存的视频
-Too many media saves are already running. Try again in a moment.,正在运行的媒体保存过多。稍后再试一次.
+Too many saves running. Try again soon.,同时保存过多，请稍后再试.
 Tracking,追踪
 "Tracking, device access and links",跟踪、设备访问和链接
 Translate button in comments,评论中的翻译按钮
@@ -2138,7 +2138,7 @@ Video of photos,照片视频
 Video playback quality,视频播放质量
 Video player settings,视频播放器设置
 Video saved,视频已保存
-"Video saved in %1$s, but only %2$s of %3$s subtitles came with it",视频保存在 %1$s 中，但仅附带 %2$s（共 %3$s 字幕）
+Saved in %1$s with %2$s of %3$s subtitles,已保存到 %1$s，含 %2$s 个字幕（共 %3$s 个）
 Video saved with %1$s subtitles in %2$s,视频以 %1$s 字幕保存在 %2$s 中
 "Videos can't be saved to the folder in that file, so your video folder was kept",视频无法保存到该文件中的文件夹中，因此你的视频文件夹被保留
 Videos in search results show their cover and play when you open them. The feed and the videos you open play as usual.,搜索结果中的视频会显示其封面并在你打开时播放。你打开的信息流和视频照常播放.
@@ -2190,7 +2190,7 @@ YTDLnis background mode,YTDLnis后台模式
 YTDLnis download type,YTDLnis 下载类型
 Yes,是的
 You can pick up to %1$s at a time,你一次最多可以领取 %1$s
-YouTube Music couldn't be opened. Open it yourself and search for the sound.,无法打开 YouTube Music。自己打开，搜索声音.
+YouTube Music didn't open. Search for the sound there.,YouTube Music 未打开。请在其中搜索该声音.
 YouTube Music isn't installed,未安装 YouTube 音乐
 Your TikTok account changed. Choose the file again for this account.,你的 TikTok 账号已更改。再次为此账号选择文件.
 Your account changed. Close this list and open it again.,你的账号已更改。关闭此列表并再次打开它.
@@ -2281,7 +2281,7 @@ The publication state of these older recording files is unknown. Export a copy o
 The screen recording did not finish. Its files can be exported but may not play.,屏幕录制未完成。文件可以导出，但可能无法播放.
 Recording files need recovery,录制文件需要恢复
 The recovery record is damaged. Export a copy of the recording files or delete them.,恢复记录已损坏。请导出录制文件的副本或将其删除.
-The export may be incomplete. The original recording files are still kept.,导出文件可能不完整。原始录制文件仍然保留.
+Export may be incomplete. The recordings are kept.,导出可能不完整，录制文件仍保留.
 Some recording files remain. Try deleting them again.,仍有录制文件未删除。请再次尝试删除.
 "Recovered recording saved to %1$s","已恢复的录制保存到 %1$s"
 "Open setting location","打开设置所在页面"
@@ -2291,7 +2291,7 @@ This setting isn't available. Search for another setting.,此设置不可用. �
 Hide the Hushfeed row,隐藏 Hushfeed 入口
 "Take Hushfeed out of TikTok's Settings and privacy. To open these settings, press and hold For You at the top of the feed, or Home if Long-press Home for Hushfeed settings is on.",从 TikTok 的“设置和隐私”中移除 Hushfeed。要打开这些设置，请长按信息流顶部的“为你”，如果已开启“长按 Home 进行 Hushfeed 设置”，也可以长按 Home.
 Open the search page,打开搜索页面
-TikTok's search page couldn't be opened. Restart TikTok and try again.,无法打开 TikTok 的搜索页面。请重启 TikTok 后再试.
+Search didn't open. Restart TikTok and try again.,搜索未打开。请重启 TikTok 后重试.
 Fold the search into a button,将搜索收起为按钮
 "Shows a search button at the top left of the comments instead of the box, so the comments get that room back. Tap it to search, and tap it again to put the box away. Search within comments must be on.",在评论左上角显示一个搜索按钮来代替搜索框，把这块空间还给评论。点按它即可搜索，再点按一次即可收起搜索框。必须打开“在评论中搜索”.
 Put the comment search away,收起评论搜索
@@ -2315,9 +2315,9 @@ Save only on Wi-Fi,仅在 Wi-Fi 下保存
 "Saves wait for Wi-Fi or another network that isn't metered, for up to 30 minutes, and stop if you leave it. Saving a frame still works anywhere.",保存会等待 Wi-Fi 或其他不计流量的网络，最多 30 分钟，离开该网络就会停止。保存画面在任何网络下都可以.
 Waiting for Wi-Fi,正在等待 Wi-Fi
 The last one is still waiting for Wi-Fi,上一个还在等待 Wi-Fi
-Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.,等待 Wi-Fi 30 分钟后已停止。连上 Wi-Fi 后再保存一次.
-Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.,已保存 %1$s 个，共 %2$s 个。其余的在你离开 Wi-Fi 时停止了。请在 Wi-Fi 下再保存一次.
-The save stopped when you left Wi-Fi. Save it again on Wi-Fi.,你离开 Wi-Fi 时保存停止了。请在 Wi-Fi 下再保存一次.
+No Wi-Fi for 30 minutes. Save again on Wi-Fi.,30 分钟内没有 Wi-Fi，请连上 Wi-Fi 后再保存.
+Saved %1$s of %2$s. Save the rest on Wi-Fi.,已保存 %1$s/%2$s，其余请在 Wi-Fi 下保存.
+Save stopped when Wi-Fi dropped. Retry on Wi-Fi.,Wi-Fi 断开，保存已停止，请在 Wi-Fi 下重试.
 Leave after no touch,无触摸时离开
 "Zero switches this off. After that many minutes with no touch on the screen, the video stops and TikTok goes to the background, for when you fall asleep watching. Any touch starts the wait over.",零将其关闭。屏幕在这么多分钟内没有被触摸时，视频会停止，TikTok 会转到后台，适合看着看着睡着的时候。任何触摸都会重新开始等待.
 Left TikTok after no touch,因无触摸已离开 TikTok

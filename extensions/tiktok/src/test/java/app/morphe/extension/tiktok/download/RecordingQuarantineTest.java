@@ -187,7 +187,7 @@ public class RecordingQuarantineTest {
             assertTrue(record.quarantined);
             record.close();
             assertEquals(
-                    "The export may be incomplete. The original recording files are still kept.",
+                    "Export may be incomplete. The recordings are kept.",
                     RecordingExport.failureMessage());
         }
     }

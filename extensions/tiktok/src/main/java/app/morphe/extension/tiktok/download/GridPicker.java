@@ -335,11 +335,11 @@ public final class GridPicker {
             showBar(cell);
             if (full) {
                 Utils.showToastLong(L10n.f(cell.getContext(),
-                        "Picked the first %1$s. Save them, then tap Pick all again for the rest.",
+                        "Picked %1$s. Save, then tap Pick all for more.",
                         String.valueOf(MAX_PICKED)));
             } else if (added == 0) {
                 Utils.showToastLong(L10n.t(cell.getContext(),
-                        "Everything this list has loaded is picked or saved. Scroll down to load more."));
+                        "All loaded items are picked. Scroll for more."));
             }
         } catch (Throwable failure) {
             Logger.printException(() -> "Could not pick a whole grid", failure);

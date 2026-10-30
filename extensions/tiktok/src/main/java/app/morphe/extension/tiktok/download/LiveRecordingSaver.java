@@ -311,17 +311,17 @@ public final class LiveRecordingSaver {
     static String partialText(LiveRecorder.End end, String folder) {
         switch (end) {
             case DISCONNECTED:
-                return L10n.f("The LIVE ended or the connection dropped. What was recorded is saved to %1$s", folder);
+                return L10n.f("LIVE ended or dropped. Recording saved to %1$s", folder);
             case STORAGE:
-                return L10n.f("The phone is running out of room. What was recorded is saved to %1$s", folder);
+                return L10n.f("Storage almost full. Recording saved to %1$s", folder);
             case SIZE_LIMIT:
-                return L10n.f("The recording reached its size limit and was saved to %1$s", folder);
+                return L10n.f("Size limit reached. Recording saved to %1$s", folder);
             case APP_EXIT:
                 return L10n.f("TikTok closed. What was recorded is saved to %1$s", folder);
             case RECOVERED:
                 return L10n.f("Recovered recording saved to %1$s", folder);
             default:
-                return L10n.f("Recording stopped early. What was recorded is saved to %1$s", folder);
+                return L10n.f("Recording stopped early. Saved to %1$s", folder);
         }
     }
 

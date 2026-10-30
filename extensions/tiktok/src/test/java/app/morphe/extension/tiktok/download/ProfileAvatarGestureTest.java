@@ -177,7 +177,7 @@ public class ProfileAvatarGestureTest {
         assertEquals("the enabled avatar hold still ran the native action", 0, gesture.nativeActions);
         // This requires both the current identity and a usable avatar URL. Storage denial then
         // ends the real save path before media work, so the test never downloads anything.
-        assertEquals("Allow storage for TikTok in Android settings to save profile pictures", ShadowToast.getTextOfLatestToast());
+        assertEquals("Allow storage for TikTok to save profile pictures", ShadowToast.getTextOfLatestToast());
         assertTrue("the gesture did not read its owner's current user", owner.reads > 0);
     }
 

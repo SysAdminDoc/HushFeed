@@ -368,7 +368,7 @@ public class SaveProgressTest {
     }
 
     @Test public void theMessageNamesSkippedAndCancelledTogether() {
-        assertEquals("Saved 2 of 6, 1 skipped and the rest cancelled",
+        assertEquals("Saved 2 of 6, 1 skipped, rest cancelled",
                 SaveProgress.message(new SaveProgress.Outcome(6, 2, 1, 3), "all"));
         assertEquals("all", SaveProgress.message(new SaveProgress.Outcome(6, 6, 0, 0), "all"));
     }

@@ -338,7 +338,7 @@ public final class DmTranslationPreview {
         }
         void fail() {
             if (owner.pending != this) return;
-            if (current()) Utils.showToastShort(L10n.t(owner.editor().getContext(), "Couldn't translate this draft. Try again in a moment."));
+            if (current()) Utils.showToastShort(L10n.t(owner.editor().getContext(), "Couldn't translate this draft. Try again."));
             owner.cancel();
         }
         void apply() {
@@ -361,7 +361,7 @@ public final class DmTranslationPreview {
                             editable.replace(0, editable.length(), source);
                         } finally { editable.setFilters(retained); }
                         Selection.setSelection(editable, Math.max(0, Math.min(start, editable.length())), Math.max(0, Math.min(end, editable.length())));
-                        Utils.showToastShort(L10n.t(editor.getContext(), "Couldn't translate this draft. Try again in a moment."));
+                        Utils.showToastShort(L10n.t(editor.getContext(), "Couldn't translate this draft. Try again."));
                     }
                     fail();
                     return;

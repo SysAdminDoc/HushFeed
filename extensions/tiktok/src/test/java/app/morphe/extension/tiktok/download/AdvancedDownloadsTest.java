@@ -519,7 +519,7 @@ public class AdvancedDownloadsTest {
                     OriginalPhotos.start(post, RuntimeEnvironment.getApplication()));
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertEquals("A native fallback must explain why the originals were not saved",
-                    "The original photos aren't available, so TikTok's own save runs instead",
+                    "No original photos, so TikTok saves it instead",
                     org.robolectric.shadows.ShadowToast.getTextOfLatestToast());
         } finally {
             videos.remove(post.getAid());

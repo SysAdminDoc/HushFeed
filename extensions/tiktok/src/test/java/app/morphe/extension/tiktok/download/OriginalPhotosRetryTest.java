@@ -198,8 +198,7 @@ public class OriginalPhotosRetryTest {
         assertTrue(detailWrites.get(0)[0].toString().endsWith(".json"));
         assertNotNull("the photos still say they saved", find(root, "Saved 2 original photos"));
         assertNull("the photos all landed, so there's nothing to retry", find(root, "Retry"));
-        assertEquals("The photos saved, but their details file couldn't be written. "
-                + "Check your storage and save the post again to get it.", ShadowToast.getTextOfLatestToast());
+        assertEquals("Photos saved, but not their details file", ShadowToast.getTextOfLatestToast());
     }
 
     @Test public void noDetailsFileWithTheSwitchOffOrWhenNoPhotoLanded() throws Exception {
@@ -229,7 +228,7 @@ public class OriginalPhotosRetryTest {
         finish();
         assertEquals(List.of(), tried);
         assertNull(MediaJobScheduler.job("photos " + post.getAid()));
-        assertEquals("Those photos can't be tried again now. Save the post again to get the rest.",
+        assertEquals("Can't retry those photos. Save the post again.",
                 ShadowToast.getTextOfLatestToast());
     }
 

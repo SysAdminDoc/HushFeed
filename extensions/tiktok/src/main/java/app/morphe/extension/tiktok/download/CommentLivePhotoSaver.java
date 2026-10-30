@@ -60,7 +60,7 @@ public final class CommentLivePhotoSaver {
             if (android.os.Build.VERSION.SDK_INT < 29
                     && context.checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     != android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                Utils.showToastLong(L10n.t("Allow storage for TikTok in Android settings to save the live photo's clip"));
+                Utils.showToastLong(L10n.t("Allow storage for TikTok to save the clip"));
                 return;
             }
             String id = Reflect.string(comment, "getCid", "cid");
@@ -84,7 +84,7 @@ public final class CommentLivePhotoSaver {
                     SaveNotice.saved(L10n.f("Live photo clip saved to %1$s", path), saved);
                 } catch (IOException | RuntimeException failure) {
                     Logger.printException(() -> "Could not save the live photo clip", failure);
-                    Utils.showToastLong(L10n.t("The live photo's clip couldn't be saved. Try again."));
+                    Utils.showToastLong(L10n.t("Couldn't save the live photo's clip. Try again."));
                 } finally {
                     if (temp != null && !MediaCache.delete(temp)) {
                         Logger.printInfo(() -> "Could not remove the live photo temporary file");

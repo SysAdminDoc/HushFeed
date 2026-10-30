@@ -337,7 +337,7 @@ public class SeenHistoryFilePreferenceTest {
         assertEquals("Stopped waiting for the file app. It hasn't said yet whether the export was saved.",
                 bannerMessage());
         finishWorkers();
-        assertEquals("The export wasn't saved. Export again when the file app is ready.", bannerMessage());
+        assertEquals("The export wasn't saved. Try again.", bannerMessage());
         DocumentOperationTest.assertStopLoggedAsInfo("Could not save the seen-history file");
         assertEquals("the partly written file was left behind", 1, provider.deleteCalls);
         assertFalse(provider.exists);

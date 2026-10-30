@@ -36,19 +36,19 @@ public final class ScreenLayoutPreference extends Preference
                 String message;
                 if (result == ScreenLayout.Result.RECORDED) {
                     message = L10n.t(Utils.getContext(),
-                            "Screen layout recorded. Export the diagnostic report to send it.");
+                            "Layout recorded. Export the report to send it.");
                 } else if (result == ScreenLayout.Result.STILL_HERE) {
                     message = L10n.t(Utils.getContext(),
-                            "Nothing was recorded because Hushfeed settings were still open. Start again, then leave settings.");
+                            "Nothing recorded. Start, then leave settings.");
                 } else {
                     message = L10n.t(Utils.getContext(),
-                            "Couldn't record the screen's layout. Start again from Diagnostics.");
+                            "Layout not recorded. Try again from Diagnostics.");
                 }
                 Utils.showToastLong(message);
                 applyState();
             });
             Utils.showToastLong(L10n.f(Utils.getContext(),
-                    "Go to the screen now. Hushfeed records its layout in %1$d seconds.", seconds()));
+                    "Go to the screen. Recording in %1$d seconds.", seconds()));
             applyState();
             return true;
         });

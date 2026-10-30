@@ -171,7 +171,7 @@ public class SavedVideoArchiveTest {
             assertEquals("123.mp4", SavedVideoArchive.find(owner.get(), "123").name);
             assertEquals("audio mirrors or later files were attempted", 2, requests.get());
             assertEquals(List.of("123.mp4"), List.of(new File(root, "alice").list()));
-            assertEquals("Saved 1 of 3. The server asked us to wait. Try again later.",
+            assertEquals("Saved 1 of 3. Try the rest later.",
                     ShadowToast.getTextOfLatestToast());
         } finally {
             app.morphe.extension.tiktok.settings.SettingsStatus.advancedDownloadsEnabled = advanced;
@@ -271,7 +271,7 @@ public class SavedVideoArchiveTest {
         choice.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
         Shadows.shadowOf(Looper.getMainLooper()).idle();
         awaitJobs();
-        assertEquals("This video isn't available as a complete file. Try again later.",
+        assertEquals("No full file for this video. Try again later.",
                 org.robolectric.shadows.ShadowToast.getTextOfLatestToast());
         assertEquals(1, requests.get());
         assertArrayEquals(VIDEO, Files.readAllBytes(first.toPath()));
@@ -469,7 +469,7 @@ public class SavedVideoArchiveTest {
         try {
             choice.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
             Shadows.shadowOf(Looper.getMainLooper()).idle();
-            assertEquals("Too many media saves are already running. Try again in a moment.",
+            assertEquals("Too many saves running. Try again soon.",
                     ShadowToast.getTextOfLatestToast());
             assertFalse(choice.isShowing());
         } finally {
@@ -521,7 +521,7 @@ public class SavedVideoArchiveTest {
                     VideoDownloads.start(new Post(), owner.get()));
             Shadows.shadowOf(Looper.getMainLooper()).idleFor(SaveNotice.SHEET_SETTLE_MS + 1, TimeUnit.MILLISECONDS);
             assertEquals(1, ShadowToast.shownToastCount());
-            assertEquals("Too many media saves are already running. Try again in a moment.",
+            assertEquals("Too many saves running. Try again soon.",
                     ShadowToast.getTextOfLatestToast());
             assertNull("a refused save left a row", owner.get().findViewById(android.R.id.content)
                     .findViewWithTag("hushfeed_save_progress"));
@@ -638,7 +638,7 @@ public class SavedVideoArchiveTest {
             assertTrue(VideoDownloads.start(new Post(), owner.get()));
             awaitJobs();
             assertArrayEquals(VIDEO, Files.readAllBytes(new File(root, "alice/123.mp4").toPath()));
-            assertTrue(ShadowToast.showedToast("Couldn't write the caption on this video. Saving it without."));
+            assertTrue(ShadowToast.showedToast("Couldn't add the caption. Saving without it."));
         } finally {
             CaptionBurner.burner = before;
             Settings.DOWNLOAD_BURN_CAPTION.resetToDefault();
@@ -666,9 +666,9 @@ public class SavedVideoArchiveTest {
             assertFalse(new File(root, "alice/123.mp4").exists());
             assertTrue(ShadowToast.showedToast("Save cancelled. Nothing was saved."));
             assertFalse("a cancel read as a failure",
-                    ShadowToast.showedToast("The video couldn't be saved. Try again, or choose Automatic."));
+                    ShadowToast.showedToast("Couldn't save. Try again, or choose Automatic."));
             assertFalse("a cancel read as an encoder failure",
-                    ShadowToast.showedToast("Couldn't write the caption on this video. Saving it without."));
+                    ShadowToast.showedToast("Couldn't add the caption. Saving without it."));
         } finally {
             CaptionBurner.burner = before;
             Settings.DOWNLOAD_BURN_CAPTION.resetToDefault();
@@ -858,8 +858,8 @@ public class SavedVideoArchiveTest {
             awaitJobs();
             assertArrayEquals(VIDEO, Files.readAllBytes(new File(root, "alice/126.mp4").toPath()));
             assertEquals("126.mp4", SavedVideoArchive.find(owner.get(), "126").name);
-            assertEquals("The video without the watermark couldn't be fetched, so TikTok's watermarked copy was saved to "
-                    + FOLDER + "/alice. Try again later for the clean copy.", ShadowToast.getTextOfLatestToast());
+            assertEquals("No clean copy yet. Saved the watermarked one to " + FOLDER + "/alice",
+                    ShadowToast.getTextOfLatestToast());
         } finally {
             refusePath = null;
             Settings.REMOVE_DOWNLOAD_WATERMARK.save(watermark);

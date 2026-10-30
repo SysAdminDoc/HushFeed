@@ -453,7 +453,7 @@ public class ShareBlockAuthorTest {
         }
         assertEquals(2, requests.size());
         assertTrue(notices.get(0).startsWith("TikTok didn't block"));
-        assertTrue(notices.get(1).startsWith("Couldn't confirm the block"));
+        assertTrue(notices.get(1).startsWith("Couldn't confirm blocking "));
         ShareBlockAuthor.transportForTests = (author, account, undo, callback) -> { throw new IllegalStateException("queue"); };
         ShareBlockAuthor.click(action, activity, sheet);
         assertEquals(3, notices.size());

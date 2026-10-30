@@ -115,7 +115,7 @@ public final class CoverSaver {
         if (android.os.Build.VERSION.SDK_INT < 29
                 && context.checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != android.content.pm.PackageManager.PERMISSION_GRANTED) {
-            if (asked) Utils.showToastLong(L10n.t("Allow storage for TikTok in Android settings to save covers"));
+            if (asked) Utils.showToastLong(L10n.t("Allow storage for TikTok to save covers"));
             return;
         }
         String id = Reflect.string(aweme, "getAid", "aid");

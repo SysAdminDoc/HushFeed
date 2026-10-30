@@ -358,7 +358,7 @@ public final class CaptchaGate {
         Logger.printInfo(() -> "Hid risk check " + checkId);
 
         if (!warnedThisSession.compareAndSet(false, true)) return;
-        Utils.showToastLong(L10n.t("Hushfeed hid a TikTok CAPTCHA. Turn off Hide CAPTCHA popups if something stops working."));
+        Utils.showToastLong(L10n.t("Hid a CAPTCHA. Stuck? Turn off Hide CAPTCHA popups."));
     }
 
     /** The id of the last hidden check, or null when none was hidden recently. */

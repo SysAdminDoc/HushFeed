@@ -387,7 +387,7 @@ public final class AppLock {
     private static void tellNoScreenLock() {
         if (toldNoScreenLock) return;
         toldNoScreenLock = true;
-        Utils.showToastLong(L10n.t("TikTok isn't locked because this phone has no screen lock"));
+        Utils.showToastLong(L10n.t("TikTok can't lock without a phone screen lock"));
     }
 
     private static boolean deviceSecure(Context context) {

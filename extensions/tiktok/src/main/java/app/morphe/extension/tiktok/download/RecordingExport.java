@@ -60,10 +60,7 @@ public final class RecordingExport {
                         0x4c52);
             } catch (RuntimeException failure) {
                 leave();
-                Utils.showToastLong(
-                        L10n.t(
-                                "The export wasn't saved. Export again when the file app is"
-                                    + " ready."));
+                Utils.showToastLong(L10n.t("The export wasn't saved. Try again."));
             }
         }
 
@@ -154,7 +151,7 @@ public final class RecordingExport {
     }
 
     static String failureMessage() {
-        return L10n.t("The export may be incomplete. The original recording files are still kept.");
+        return L10n.t("Export may be incomplete. The recordings are kept.");
     }
 
     static void exportTo(Context app, String id, Uri destination) throws IOException {

@@ -228,7 +228,7 @@ final class QualityChoice {
     private static void save(Object aweme, Context context, Object pick) {
         if (!VideoDownloads.savesTheCover()) CoverSaver.beside(context, aweme);
         if (!VideoDownloads.startPicked(aweme, context, pick)) {
-            Utils.showToastLong(L10n.t("The video couldn't be saved. Try again, or choose Automatic."));
+            Utils.showToastLong(L10n.t("Couldn't save. Try again, or choose Automatic."));
         }
     }
 

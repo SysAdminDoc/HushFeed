@@ -803,7 +803,13 @@ public final class FeatureGateDetailFragment extends Fragment {
                     // covered the reason.
                     if (refused) Logger.printInfo(() -> "Feature Gate detail change refused", error);
                     else Logger.printException(() -> "Feature Gate detail change failed", error);
-                    failure = refused ? error.getMessage() : translatedFailurePrefix;
+                    // A refusal built with no reason gets the failure line. A null here would
+                    // read as success and leave the controls showing the refused change. The
+                    // message is read in place so the toast wrap scan still finds it.
+                    failure = refused && error.getMessage() != null
+                            && !error.getMessage().trim().isEmpty()
+                            ? error.getMessage()
+                            : translatedFailurePrefix;
                 } finally {
                     detailChangeFinished();
                 }

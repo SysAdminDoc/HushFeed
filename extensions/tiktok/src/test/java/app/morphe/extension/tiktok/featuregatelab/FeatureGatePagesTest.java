@@ -19,6 +19,7 @@ import app.morphe.extension.tiktok.settings.preference.SettingsUi;
 import java.util.List;
 import java.util.Map;
 import org.junit.Test;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -45,6 +46,15 @@ public class FeatureGatePagesTest {
         FeatureGateLabSession.resetForTests();
         FeatureGateLabUndo.resetForTests();
         SettingsManagerObservationRecorder.clear();
+    }
+
+    /** The Lab's restart debt lives in the settings' shared set, so no test leaves it behind. */
+    @After public void clearRestartDebt() throws Exception {
+        Utils.awaitBackgroundTasksForTests();
+        FeatureGateDetailFragment.awaitChangesForTests();
+        FeatureGateLabFragment.awaitSearchForTests();
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        FeatureGateLabSession.resetForTests();
     }
 
     @Test public void darkLabSearchAndOverrideEditorWork() throws Exception { exercise("dark"); }
@@ -1607,6 +1617,14 @@ public class FeatureGatePagesTest {
                 assertEquals("Couldn't save this override. Try again.", ShadowToast.getTextOfLatestToast());
                 FeatureGateLabActionsTest.assertLoggedOnce("ERROR",
                         "Feature Gate detail change failed", "Feature Gate detail change refused");
+
+                // A refusal built with no reason is still a failure, never the saved toast.
+                next[0] = new FeatureGateLabStore.RuleLimitRefused(null);
+                ShadowToast.reset();
+                save.performClick();
+                FeatureGateDetailFragment.awaitChangesForTests();
+                Shadows.shadowOf(Looper.getMainLooper()).idle();
+                assertEquals("Couldn't save this override. Try again.", ShadowToast.getTextOfLatestToast());
             } finally {
                 FeatureGateDetailFragment.setDetailChangeTestHookForTests(null);
             }

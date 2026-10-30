@@ -237,6 +237,12 @@ public final class CommentBatchTranslator {
      *
      * <p>Not before the controller is on: the controller ignores a translate while it is off,
      * and the cell binds before it attaches.
+     *
+     * <p>The newer sheet has its own translate switch for the whole list. Turned off, it flips
+     * the comments already loaded to their originals, and the next page that loads arrives with
+     * no override at all. So a video whose comments come back flipped to original is remembered,
+     * and its later pages are left in their own language too, until one comes back flipped to
+     * translated again.
      */
     public static void onTranslationControllerAttached(Object controller) {
         if (controller == null || !Settings.COMMENT_BATCH_TRANSLATION.get()) return;
@@ -246,9 +252,16 @@ public final class CommentBatchTranslator {
             HookStatus.bound(FAMILY, "translation controller");
 
             Object comment = members.comment.get(controller);
-            if (comment == null || isTranslated(comment)) return;
+            if (comment == null) return;
             Object override = members.override.invoke(controller);
-            if (!(override instanceof Enum) || !NOT_OVERRIDDEN.equals(((Enum<?>) override).name())) return;
+            if (!(override instanceof Enum)) return;
+            String status = ((Enum<?>) override).name();
+            String aid = invokeStringQuiet(comment, "getAwemeId");
+            if (!NOT_OVERRIDDEN.equals(status)) {
+                rememberChoice(aid, OVERRIDE_TO_ORIGINAL.equals(status));
+                return;
+            }
+            if (isTranslated(comment) || choseOriginals(aid)) return;
             if (isBlank(invokeStringQuiet(comment, "getCommentLanguage")) || shouldSkipTranslation(comment)) return;
 
             members.translate.invoke(controller);
@@ -259,6 +272,33 @@ public final class CommentBatchTranslator {
 
     /** The override TikTok keeps for a comment nobody flipped, by its enum constant's name. */
     private static final String NOT_OVERRIDDEN = "NOT_OVERWRITTEN";
+    private static final String OVERRIDE_TO_ORIGINAL = "OVERRIDE_TO_ORIGINAL";
+
+    /** Videos whose comments the viewer last flipped to original, oldest first. */
+    private static final LinkedHashSet<String> ORIGINALS_CHOSEN = new LinkedHashSet<>();
+    /** A cap, because the key is a video id and a long scroll would otherwise keep every one. */
+    private static final int MAX_ORIGINALS_CHOSEN = 64;
+
+    private static void rememberChoice(String aid, boolean original) {
+        if (isBlank(aid)) return;
+        synchronized (ORIGINALS_CHOSEN) {
+            ORIGINALS_CHOSEN.remove(aid);
+            if (!original) return;
+            ORIGINALS_CHOSEN.add(aid);
+            Iterator<String> oldest = ORIGINALS_CHOSEN.iterator();
+            while (ORIGINALS_CHOSEN.size() > MAX_ORIGINALS_CHOSEN) {
+                oldest.next();
+                oldest.remove();
+            }
+        }
+    }
+
+    private static boolean choseOriginals(String aid) {
+        if (isBlank(aid)) return false;
+        synchronized (ORIGINALS_CHOSEN) {
+            return ORIGINALS_CHOSEN.contains(aid);
+        }
+    }
 
     /** Each controller class's members, or {@link #NO_CONTROLLER_MEMBERS}, so a class is searched once. */
     private static final Map<Class<?>, ControllerMembers> CONTROLLER_MEMBERS = new ConcurrentHashMap<>();

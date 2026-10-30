@@ -50,6 +50,35 @@ public class AttachedCommentTranslationTest {
         assertEquals(0, controller.translates);
     }
 
+    @Test public void turningTheSheetToOriginalsKeepsThatVideosLaterPagesOriginal() {
+        // TikTok's sheet switch flips the loaded comments; the next page arrives unflipped.
+        Controller flipped = new Controller(new Comment("zh", false, "video-a"));
+        flipped.override = Override.OVERRIDE_TO_ORIGINAL;
+        Controller nextPage = new Controller(new Comment("pt", false, "video-a"));
+        Controller otherVideo = new Controller(new Comment("pt", false, "video-b"));
+
+        CommentBatchTranslator.onTranslationControllerAttached(flipped);
+        CommentBatchTranslator.onTranslationControllerAttached(nextPage);
+        CommentBatchTranslator.onTranslationControllerAttached(otherVideo);
+
+        assertEquals(0, flipped.translates);
+        assertEquals(0, nextPage.translates);
+        assertEquals(1, otherVideo.translates);
+    }
+
+    @Test public void turningTheSheetBackToTranslatedTranslatesLaterPagesAgain() {
+        Controller flipped = new Controller(new Comment("zh", false, "video-c"));
+        flipped.override = Override.OVERRIDE_TO_ORIGINAL;
+        CommentBatchTranslator.onTranslationControllerAttached(flipped);
+        flipped.override = Override.OVERRIDE_TO_TRANSLATED;
+        CommentBatchTranslator.onTranslationControllerAttached(flipped);
+
+        Controller nextPage = new Controller(new Comment("pt", false, "video-c"));
+        CommentBatchTranslator.onTranslationControllerAttached(nextPage);
+
+        assertEquals(1, nextPage.translates);
+    }
+
     @Test public void anAlreadyTranslatedCommentIsLeftAlone() {
         Controller controller = new Controller(new Comment("zh", true));
 
@@ -92,15 +121,24 @@ public class AttachedCommentTranslationTest {
     enum Override { NOT_OVERWRITTEN, OVERRIDE_TO_TRANSLATED, OVERRIDE_TO_ORIGINAL }
 
     public static final class Comment {
+        private static int videos;
         private final String language;
         private final boolean translated;
+        private final String aid;
 
+        /** On a video of its own, so one test's choice of originals never reaches another. */
         Comment(String language, boolean translated) {
+            this(language, translated, "video-" + ++videos);
+        }
+
+        Comment(String language, boolean translated, String aid) {
             this.language = language;
             this.translated = translated;
+            this.aid = aid;
         }
 
         public String getCid() { return "cid-" + language; }
+        public String getAwemeId() { return aid; }
         public String getCommentLanguage() { return language; }
         public boolean isTranslated() { return translated; }
     }

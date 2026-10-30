@@ -1056,13 +1056,6 @@ public final class FeatureGateLabFragment extends Fragment {
         dialog.show();
     }
 
-    /**
-     * Puts the switch back where the store is, when the screen is still up.
-     *
-     * <p>The null check is the point: a Lab change finishes on the main thread after work that
-     * takes long enough to leave the screen during, and {@link #onDestroyView} has cleared the
-     * switch by then.
-     */
     /** Shows the restart row while a restart is owed, counting every change waiting on one. */
     private void refreshRestartRow() {
         if (restartRow == null) return;
@@ -1071,6 +1064,13 @@ public final class FeatureGateLabFragment extends Fragment {
         if (owed) restartRow.setText(RestartPendingPreference.label(restartRow.getContext()));
     }
 
+    /**
+     * Puts the switch back where the store is, when the screen is still up.
+     *
+     * <p>The null check is the point: a Lab change finishes on the main thread after work that
+     * takes long enough to leave the screen during, and {@link #onDestroyView} has cleared the
+     * switch by then.
+     */
     private void syncMasterSwitch() {
         if (master == null) return;
         master.setChecked(FeatureGateLabStore.masterEnabled());

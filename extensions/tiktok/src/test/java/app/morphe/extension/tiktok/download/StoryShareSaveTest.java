@@ -323,4 +323,55 @@ public class StoryShareSaveTest {
             Settings.DOWNLOAD_WITHOUT_SOUND.save(muted);
         }
     }
+
+    /**
+     * With a switch like Show download progress on, the story's save went through the video save
+     * first, which took TikTok's clean address: on 47.5.3 a 720p H.264 copy beside a 1080p HEVC
+     * gear the story player streams. Every source is ranked together now, tallest first, then the
+     * larger file at that height, and ByteVC2 and a photo story's music are never the file.
+     */
+    @Test public void aStorySaveTakesTheTallestFileAnyPlayerOpens() {
+        AdvancedDownloadsTest.Gear hevc = new AdvancedDownloadsTest.Gear("adapt_lowest_1080_1", 400, "https://example.com/1080-hevc").codec(1);
+        AdvancedDownloadsTest.Gear vc2 = new AdvancedDownloadsTest.Gear("adapt_lower_720_2", 900, "https://example.com/720-bvc2").codec(2);
+        QualityChoiceTest.VideoPost post = new QualityChoiceTest.VideoPost("240", vc2, hevc);
+        post.video.downloadNoWatermarkAddr = new AdvancedDownloadsTest.Address("https://example.com/clean-720", 9000).frame(720, 1280);
+        assertSame("the shorter clean copy beat the gear on screen", hevc, VideoDownloads.storyBest(post.video));
+
+        // As tall and a larger file: TikTok's own clean copy, which is H.264.
+        AdvancedDownloadsTest.Address tallClean = new AdvancedDownloadsTest.Address("https://example.com/clean-1080", 9000).frame(1080, 1920);
+        post.video.downloadNoWatermarkAddr = tallClean;
+        Object best = VideoDownloads.storyBest(post.video);
+        assertTrue(best instanceof QualitySelector.SourceGear);
+        assertSame(tallClean, ((QualitySelector.SourceGear) best).getPlayAddr());
+
+        // Only ByteVC2 beside the clean copy: the clean copy, never the file no other player opens.
+        QualityChoiceTest.VideoPost onlyVc2 = new QualityChoiceTest.VideoPost("241", vc2);
+        best = VideoDownloads.storyBest(onlyVc2.video);
+        assertTrue(best instanceof QualitySelector.SourceGear);
+        assertSame(onlyVc2.video.downloadNoWatermarkAddr, ((QualitySelector.SourceGear) best).getPlayAddr());
+
+        // A photo story's Video holds its music: nothing here is a video file.
+        QualityChoiceTest.VideoPost music = new QualityChoiceTest.VideoPost("242");
+        music.video.downloadNoWatermarkAddr = new AdvancedDownloadsTest.Address("https://example.com/sound.mp3", 0);
+        assertNull(VideoDownloads.storyBest(music.video));
+
+        post.video.dash = true;
+        assertNull("a DASH story keeps its own path", VideoDownloads.storyBest(post.video));
+        assertNull(VideoDownloads.storyBest(null));
+    }
+
+    /** A chosen quality keeps the save it had: the story's best file is for Automatic only. */
+    @Test public void aChosenQualityLeavesTheStorySaveAsItWas() {
+        String quality = Settings.DOWNLOAD_VIDEO_QUALITY.get();
+        try {
+            Settings.DOWNLOAD_VIDEO_QUALITY.save("720");
+            AdvancedDownloadsTest.Gear hevc = new AdvancedDownloadsTest.Gear("adapt_lowest_1080_1", 400, "https://example.com/1080-hevc").codec(1);
+            QualityChoiceTest.VideoPost post = new QualityChoiceTest.VideoPost("243", hevc);
+            assertFalse(VideoDownloads.startStoryBest(post, activity));
+            assertFalse(VideoDownloads.saving("243"));
+            assertNull(ShadowToast.getTextOfLatestToast());
+        } finally {
+            Settings.DOWNLOAD_VIDEO_QUALITY.save(quality);
+        }
+    }
 }

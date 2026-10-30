@@ -95,6 +95,102 @@ final class VideoDownloads {
     }
 
     /**
+     * The best file a story's Automatic save can be made from: the rendition TikTok's story player
+     * streams, or anything better that other players open. Every candidate the story carries is
+     * ranked together, so the result is never shorter than what the player shows when the player's
+     * pick is a codec other players open:
+     *
+     * <ul>
+     *   <li>each gear in the raw rendition list (H.264 or HEVC; ByteVC2 only TikTok decodes),</li>
+     *   <li>the Video's own H.264 and HEVC play addresses,</li>
+     *   <li>the clean download address.</li>
+     * </ul>
+     *
+     * Taller wins, then the larger file at that height (the same story at the same height, so more
+     * bytes are more bits), then the higher listed bitrate. On 47.5.3 the story player can stream
+     * a 1080p HEVC gear while the clean address is a 720p H.264 copy. Null for a DASH story, which
+     * has its own path, for a story with no duration (a photo story whose play address is its
+     * music), or when nothing usable is listed.
+     */
+    static Object storyBest(Object video) {
+        if (video == null) return null;
+        if (Boolean.TRUE.equals(Reflect.invoke(video, "hasDashBitrate"))) return null;
+        // A photo story carries its music as the Video's play address and lists no duration.
+        Object duration = Reflect.invoke(video, "getDuration");
+        if (duration instanceof Number && ((Number) duration).intValue() <= 0) return null;
+        List<Object> candidates = new ArrayList<>();
+        Object rates = QualitySelector.rawGears(video);
+        if (rates instanceof List<?>) {
+            for (Object gear : (List<?>) rates) {
+                if (QualitySelector.hasUsableAddress(gear) && QualitySelector.playable(gear)
+                        && videoAddress(gear)) candidates.add(gear);
+            }
+        }
+        for (QualitySelector.SourceGear source : QualitySelector.sources(video)) {
+            if (source.getPlayAddr() != null && QualitySelector.hasUsableAddress(source)
+                    && videoAddress(source)) candidates.add(source);
+        }
+        Object clean = Reflect.property(video, "getDownloadNoWatermarkAddr", "downloadNoWatermarkAddr");
+        if (clean != null) {
+            QualitySelector.SourceGear cleanGear = new QualitySelector.SourceGear("download_no_watermark", clean, 0);
+            if (QualitySelector.hasUsableAddress(cleanGear) && videoAddress(cleanGear)) candidates.add(cleanGear);
+        }
+        Object best = null;
+        for (Object candidate : candidates) {
+            if (best == null || storyBetter(candidate, best)) best = candidate;
+        }
+        if (best != null) {
+            Object chosen = best;
+            Logger.printInfo(() -> "[Story save] " + candidates.size() + " candidates, saving "
+                    + QualitySelector.describe(chosen) + " codec=" + QualitySelector.codec(chosen)
+                    + " size=" + QualitySelector.size(chosen));
+        }
+        return best;
+    }
+
+    /**
+     * Whether a candidate's address is a video file other players open: not an audio track, and
+     * not a ByteVC2 file filed under another name (its key names the codec it holds).
+     */
+    private static boolean videoAddress(Object gear) {
+        Object address = Reflect.property(gear, "getPlayAddr", "playAddr");
+        String key = Reflect.string(address, "getUrlKey", "urlKey");
+        if (key != null && key.contains("bytevc2")) return false;
+        List<String> list = urls(address);
+        String first = list.isEmpty() ? "" : list.get(0);
+        return !first.contains(".mp3") && !first.contains("mime_type=audio");
+    }
+
+    /**
+     * A story's save on Automatic at {@link #storyBest}, with the progress row, details, tags and
+     * the other switches the save honors. False when another quality is set (that save keeps
+     * {@link #start}'s choice), on a photo story, or when no rendition is usable, so the story's
+     * older paths run.
+     */
+    static boolean startStoryBest(Object aweme, Context context) {
+        if (!"auto".equals(Settings.DOWNLOAD_VIDEO_QUALITY.get())) return false;
+        if (Reflect.property(aweme, "getPhotoModeImageInfo", "photoModeImageInfo") != null) return false;
+        if (!OriginalPhotos.sources(aweme).isEmpty()) return false;
+        Object best = storyBest(Reflect.property(aweme, "getVideo", "video"));
+        if (best == null || urls(Reflect.property(best, "getPlayAddr", "playAddr")).isEmpty()) return false;
+        return start(aweme, context, false, best);
+    }
+
+    private static boolean storyBetter(Object candidate, Object current) {
+        int a = QualitySelector.heightOf(candidate), b = QualitySelector.heightOf(current);
+        if (a != b) return a > b;
+        long sizeA = QualitySelector.size(candidate), sizeB = QualitySelector.size(current);
+        if (sizeA != sizeB) return sizeA > sizeB;
+        return gearBitrate(candidate) > gearBitrate(current);
+    }
+
+    private static long gearBitrate(Object gear) {
+        if (gear instanceof QualitySelector.SourceGear) return 0;
+        Object rate = Reflect.property(gear, "getBitRate", "bitRate");
+        return rate instanceof Number ? ((Number) rate).longValue() : 0;
+    }
+
+    /**
      * A story's save at {@link #storyGear}. False, with nothing said, when that rendition can't
      * make a complete file, so the story's own save runs from its addresses instead.
      */

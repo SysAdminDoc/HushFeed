@@ -70,6 +70,8 @@ public class DeepFeedFilterBoundaryTest {
         public String commercialVideoInfo;
         /** Aweme's is_sub_only_video field on 47.4.3, read by its own name. */
         public boolean isSubOnlyVideo;
+        /** The aweme type LiveFilter reads by name; 101 is a LIVE. */
+        public int awemeType;
 
         Video(String id, boolean ad, long durationMs, String caption) {
             this(id, ad, durationMs, caption, null);
@@ -88,6 +90,9 @@ public class DeepFeedFilterBoundaryTest {
         @Override public boolean isSoftAd() { return false; }
         @Override public AwemeRawAd getAwemeRawAd() { return rawAd; }
         @Override public boolean isWithPromotionalMusic() { return false; }
+        @Override public long getLiveId() { return 0; }
+        @Override public boolean isLiveReplay() { return false; }
+        @Override public String getLiveType() { return null; }
         public String getAnchorsExtras() { return anchorsExtras; }
         public Object getContentModel() { return contentModel; }
         public List<?> getAnchors() { return anchors; }
@@ -104,6 +109,11 @@ public class DeepFeedFilterBoundaryTest {
 
         Video withRawAd() {
             rawAd = new AwemeRawAd();
+            return this;
+        }
+
+        Video asLive() {
+            awemeType = 101;
             return this;
         }
 
@@ -683,6 +693,31 @@ public class DeepFeedFilterBoundaryTest {
         page.items = new ArrayList<>(Arrays.asList(fresh, offline, cached));
         FeedItemsFilter.filter(page);
         assertEquals(Arrays.asList(fresh, cached), page.items);
+    }
+
+    /**
+     * A LIVE that TikTok slots into a For You page already on screen meets Hide LIVE videos
+     * (#277). Every other rule still leaves a fresh insert alone.
+     */
+    @Test
+    public void aFreshlyInsertedLiveLeavesForYouWhileOtherFreshInsertsStay() {
+        Settings.HIDE_LIVE.save(true);
+        Settings.REMOVE_ADS.save(true);
+        Video live = new Video("fresh-live", false, 500, "").asLive();
+        Video ad = new Video("fresh-ad", false, 500, "").withRawAd();
+        Video ordinary = new Video("fresh-ordinary", false, 500, "");
+        List<Aweme> inserted = Arrays.asList(live, ad, ordinary);
+        // No cache source: TikTok made these for this page, it didn't replay them.
+        for (Video video : List.of(live, ad, ordinary)) video.cacheSourceType = -1;
+
+        assertEquals(List.of(ad, ordinary), FeedItemsFilter.filterInsertedFeedItems(
+                new ForYouPanel(), 3, "realtime_insert", inserted));
+        assertTrue("counted on its route: " + FeedFilterCounters.report(), FeedFilterCounters.report().contains(
+                FeedItemsFilter.FINAL_INSERT_SOURCE + "realtime_insert: 1 lists, 3 items, 1 removed. Last reason: LiveFilter"));
+
+        Settings.HIDE_LIVE.save(false);
+        assertSame(inserted, FeedItemsFilter.filterInsertedFeedItems(
+                new ForYouPanel(), 3, "realtime_insert", inserted));
     }
 
     @Test

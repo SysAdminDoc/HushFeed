@@ -8,9 +8,13 @@ import android.view.View;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.tiktok.SignedInUser;
@@ -31,14 +35,24 @@ import app.morphe.extension.tiktok.settings.Settings;
  * <p>A chat's picture in the Inbox works the same way through {@link #openChatStory}, except that
  * its tap checks the chat row's LIVE room id instead of the map, so that's where the hook sits.
  *
+ * <p>The map only holds what wins each part of the picture, and LIVE outranks STORY there, so a
+ * LIVE creator's map usually has no STORY entry at all. TikTok still keeps every contender: the
+ * picture's delegate (getAvatarDelegate) has a view model whose state machine lists, for each
+ * part, every candidate with its business and state. When the map has no Story, the opener comes
+ * from a STORY candidate there ({@link #rankedOutStoryOpener}).
+ *
  * <p>The enum and the story state are renamed every build, so both are found by what they hold:
  * the enum constants keep their names, and the state's opener is its one field that is a
- * View.OnClickListener.
+ * View.OnClickListener. The state machine is the view model's getter whose type keeps its
+ * candidates in ConcurrentHashMaps, and the candidate lists are the map whose values are lists.
  */
 public final class StoryOverLive {
     private static final String LIVE = "LIVE";
     private static final String STORY = "STORY";
     static final String BINDING_UID_METHOD = "getUid";
+    /** AvatarComponentView's private getter for the delegate that owns its view model. */
+    static final String DELEGATE_GETTER = "getAvatarDelegate";
+    private static final String VIEW_MODEL = "androidx.lifecycle.ViewModel";
 
     /** The picture the last Story opened from, so the next tap there goes to the LIVE. */
     private static WeakReference<View> storyOpenedFrom = new WeakReference<>(null);
@@ -95,10 +109,14 @@ public final class StoryOverLive {
     }
 
     private static boolean open(Map<?, ?> business, View avatar, boolean live,
-                                String uid, String account) throws IllegalAccessException {
+                                String uid, String account) throws ReflectiveOperationException {
         boolean secondTap = storyOpenedFrom.get() == avatar &&
                 Objects.equals(storyOpenedFor, uid) && Objects.equals(storyOpenedBy, account);
         View.OnClickListener opener = storyOpener(business);
+        if (opener == null && live && !secondTap) {
+            opener = rankedOutStoryOpener(avatar);
+            if (opener != null) Logger.printDebug(() -> "Story over LIVE: the Story came from TikTok's ranked-out candidates");
+        }
         if (!storyFirst(live, opener != null, secondTap)) {
             if (secondTap) reset();
             return false;
@@ -146,18 +164,121 @@ public final class StoryOverLive {
     /** The View.OnClickListener the map's STORY entry holds, or null without one. */
     static View.OnClickListener storyOpener(Map<?, ?> business) throws IllegalAccessException {
         Map.Entry<?, ?> story = entryNamed(business, STORY);
-        Object state = story == null ? null : story.getValue();
-        if (state == null) return null;
-        for (Class<?> type = state.getClass(); type != null && type != Object.class;
-                type = type.getSuperclass()) {
-            for (Field field : type.getDeclaredFields()) {
-                if (Modifier.isStatic(field.getModifiers()) || field.getType().isPrimitive()) continue;
-                field.setAccessible(true);
-                Object value = field.get(state);
-                if (value instanceof View.OnClickListener) return (View.OnClickListener) value;
+        return story == null ? null : openerIn(story.getValue());
+    }
+
+    /**
+     * The opener of a STORY candidate that lost its part of the picture to a higher one (LIVE),
+     * read from the state machine behind the picture: delegate, view model, state machine, then
+     * the candidate lists. Null when any step is missing or no STORY candidate holds an opener.
+     */
+    static View.OnClickListener rankedOutStoryOpener(View avatar) throws ReflectiveOperationException {
+        Method delegateGetter = declaredGetter(avatar.getClass(), DELEGATE_GETTER);
+        Object delegate = delegateGetter == null ? null : delegateGetter.invoke(avatar);
+        Method modelGetter = delegate == null ? null : getterReturning(delegate.getClass(), StoryOverLive::isViewModel);
+        Object model = modelGetter == null ? null : modelGetter.invoke(delegate);
+        Method machineGetter = model == null ? null : getterReturning(model.getClass(), StoryOverLive::keepsConcurrentMaps);
+        Object machine = machineGetter == null ? null : machineGetter.invoke(model);
+        if (machine == null) return null;
+        for (Field field : instanceFields(machine.getClass())) {
+            Object value = field.get(machine);
+            if (!(value instanceof ConcurrentHashMap)) continue;
+            // TikTok edits the lists under this map's lock (X.0M6G), so they're read under it too.
+            List<Object> candidates = new ArrayList<>();
+            synchronized (value) {
+                for (Object list : ((ConcurrentHashMap<?, ?>) value).values()) {
+                    if (list instanceof List) candidates.addAll((List<?>) list);
+                }
+            }
+            for (Object candidate : candidates) {
+                if (candidate == null || !holdsEnumNamed(candidate, STORY)) continue;
+                for (Field part : instanceFields(candidate.getClass())) {
+                    View.OnClickListener opener = openerIn(part.get(candidate));
+                    if (opener != null) return opener;
+                }
             }
         }
         return null;
+    }
+
+    /** The first View.OnClickListener among a state's fields, its superclasses' included. */
+    private static View.OnClickListener openerIn(Object state) throws IllegalAccessException {
+        if (state == null || state instanceof Enum || state instanceof String) return null;
+        for (Field field : instanceFields(state.getClass())) {
+            Object value = field.get(state);
+            if (value instanceof View.OnClickListener) return (View.OnClickListener) value;
+        }
+        return null;
+    }
+
+    /** Whether one of the object's fields holds the enum constant with this name. */
+    private static boolean holdsEnumNamed(Object owner, String name) throws IllegalAccessException {
+        for (Field field : instanceFields(owner.getClass())) {
+            Object value = field.get(owner);
+            if (value instanceof Enum && name.equals(((Enum<?>) value).name())) return true;
+        }
+        return false;
+    }
+
+    /** The non-static, non-primitive fields of a class and its superclasses, made readable. */
+    private static List<Field> instanceFields(Class<?> owner) {
+        List<Field> fields = new ArrayList<>();
+        for (Class<?> type = owner; type != null && type != Object.class; type = type.getSuperclass()) {
+            for (Field field : type.getDeclaredFields()) {
+                if (Modifier.isStatic(field.getModifiers()) || field.getType().isPrimitive()) continue;
+                field.setAccessible(true);
+                fields.add(field);
+            }
+        }
+        return fields;
+    }
+
+    /** A no-argument method with this name on the class or a superclass, made callable. */
+    private static Method declaredGetter(Class<?> owner, String name) {
+        for (Class<?> type = owner; type != null && type != Object.class; type = type.getSuperclass()) {
+            for (Method method : type.getDeclaredMethods()) {
+                if (method.getName().equals(name) && method.getParameterTypes().length == 0) {
+                    method.setAccessible(true);
+                    return method;
+                }
+            }
+        }
+        return null;
+    }
+
+    /** A check on a getter's return type (java.util.function is API 24, above the floor). */
+    private interface TypeCheck {
+        boolean test(Class<?> type);
+    }
+
+    /** The one no-argument instance method whose return type passes the check, or null. */
+    private static Method getterReturning(Class<?> owner, TypeCheck returns) {
+        for (Class<?> type = owner; type != null && type != Object.class; type = type.getSuperclass()) {
+            for (Method method : type.getDeclaredMethods()) {
+                if (Modifier.isStatic(method.getModifiers()) || method.getParameterTypes().length != 0
+                        || method.isSynthetic() || !returns.test(method.getReturnType())) continue;
+                method.setAccessible(true);
+                return method;
+            }
+        }
+        return null;
+    }
+
+    /** AvatarControllerVM is the delegate's one getter that returns an AndroidX ViewModel. */
+    private static boolean isViewModel(Class<?> type) {
+        for (Class<?> step = type; step != null; step = step.getSuperclass()) {
+            if (VIEW_MODEL.equals(step.getName())) return true;
+        }
+        return false;
+    }
+
+    /** The state machine keeps its candidates, winners and ranks in ConcurrentHashMaps. */
+    private static boolean keepsConcurrentMaps(Class<?> type) {
+        if (type.isPrimitive() || type.isInterface() || type.getName().startsWith("java.")) return false;
+        for (Field field : type.getDeclaredFields()) {
+            if (!Modifier.isStatic(field.getModifiers()) && field.getType() == ConcurrentHashMap.class) return true;
+        }
+        return false;
     }
 
     private static Map.Entry<?, ?> entryNamed(Map<?, ?> business, String name) {

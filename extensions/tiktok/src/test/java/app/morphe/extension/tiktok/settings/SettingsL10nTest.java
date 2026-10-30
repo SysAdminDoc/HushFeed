@@ -751,7 +751,7 @@ public class SettingsL10nTest {
     /**
      * A message a helper method returns, or one handed to a method that toasts it, is measured
      * too: through the helper's own returns, a local it returns and the helpers it calls, and
-     * through wrappers two deep. A helper's answer shown on a label, logged, or filling part of
+     * through wrappers two deep, a helper's answer handed to one included. A helper's answer shown on a label, logged, or filling part of
      * another message isn't a toast, a call on a value can't be placed, and a banner's stand-in
      * toast is left out as the banners are.
      */
@@ -767,6 +767,7 @@ public class SettingsL10nTest {
                 + "    return text;\n"
                 + "  }\n"
                 + "  static String waiting() { return L10n.t(\"Waiting for Wi-Fi\"); }\n"
+                + "  static String offline() { return L10n.t(\"No connection\"); }\n"
                 + "  static String loop(int n) { return n > 0 ? loop(n - 1) : L10n.t(\"Bottom\"); }\n"
                 + "  static String quiet() {\n"
                 + "    post(new Callable<String>() { public String call() { return L10n.t(\"Inner answer\"); } });\n"
@@ -798,6 +799,7 @@ public class SettingsL10nTest {
                 + "  void f() {\n"
                 + "    notice(L10n.t(\"Through a wrapper\"));\n"
                 + "    Notices.tell(L10n.t(\"Two wrappers deep\"));\n"
+                + "    notice(Messages.offline());\n"
                 + "  }\n"
                 + "  private static void notice(String message) { Utils.showToastShort(message); }\n"
                 + "  void g() { value.notice(L10n.t(\"On some value\")); }\n"
@@ -817,7 +819,8 @@ public class SettingsL10nTest {
                 + "}\n");
         assertEquals(new java.util.TreeSet<>(java.util.Arrays.asList("Nothing to save",
                         "Busy with %1$s", "Try again later", "Waiting for Wi-Fi", "Couldn't save",
-                        "Saved %1$s", "Bottom", "Outer answer", "Through a wrapper", "Two wrappers deep")),
+                        "Saved %1$s", "Bottom", "Outer answer", "Through a wrapper", "Two wrappers deep",
+                        "No connection")),
                 new java.util.TreeSet<>(toastHelperLiteralsIn(sources)));
     }
 

@@ -648,8 +648,10 @@ public class SettingsL10nTest {
             for (java.nio.file.Path file : files.filter(p -> p.toString().endsWith(".java"))
                     .collect(java.util.stream.Collectors.toList())) {
                 if (file.getFileName().toString().startsWith("L10nTranslations")) continue;
-                messages.addAll(toastLiteralsIn(new String(java.nio.file.Files.readAllBytes(file),
-                        java.nio.charset.StandardCharsets.UTF_8), false));
+                String source = new String(java.nio.file.Files.readAllBytes(file),
+                        java.nio.charset.StandardCharsets.UTF_8);
+                messages.addAll(toastLiteralsIn(source, false));
+                messages.addAll(toastVariableLiteralsIn(source));
             }
         }
         assertTrue("the scan found too few toasts to mean anything: " + messages.size(),
@@ -690,6 +692,25 @@ public class SettingsL10nTest {
         assertEquals(1, toastLines("因无触摸已离开 TikTok"));
         assertEquals(2, toastLines("零将其关闭。屏幕在这么多分钟内没有被触摸时"));
         assertEquals(3, toastLines("零将其关闭。屏幕在这么多分钟内没有被触摸时，视频会停止，TikTok"));
+    }
+
+    /** A message handed to a toast through a variable is measured too, only from its own method. */
+    @Test public void theToastScanFollowsAMessageVariable() {
+        String source = "class T {\n"
+                + "  void a() {\n"
+                + "    String message = L10n.t(\"Stopped waiting for Wi-Fi.\");\n"
+                + "    Utils.showToastLong(message);\n"
+                + "  }\n"
+                + "  void b(String message) throws IOException { Utils.showToastShort(message); }\n"
+                + "  void c() {\n"
+                + "    String text = ok ? L10n.t(\"Saved\") : L10n.f(\"Failed: %1$s\", why);\n"
+                + "    if (late) { text = L10n.t(\"Too late\"); }\n"
+                + "    // String text = L10n.t(\"In a comment\");\n"
+                + "    toastInstead(text);\n"
+                + "  }\n"
+                + "}\n";
+        assertEquals(java.util.Arrays.asList("Stopped waiting for Wi-Fi.", "Saved", "Failed: %1$s",
+                "Too late"), toastVariableLiteralsIn(source));
     }
 
     /** Columns a toast line holds before word wrap moves on. A wide character takes two. */
@@ -807,16 +828,100 @@ public class SettingsL10nTest {
             java.util.regex.Matcher lookup = java.util.regex.Pattern
                     .compile("L10n\\s*\\.\\s*(?:t|f|quantity)\\s*\\(").matcher(text);
             lookup.region(open, close);
-            while (lookup.find()) {
-                int lookupOpen = lookup.end() - 1;
-                int lookupClose = closingBracket(text, kind, lookupOpen);
-                if (lookupClose < 0 || lookupClose > close) continue;
-                // arguments, not literalsIn: a message written across lines with a plus is one
-                // message, and its halves would each fail the rule on their own.
-                found.addAll(arguments(text, kind, lookupOpen, lookupClose));
+            found.addAll(l10nLiteralsBetween(text, kind, open, close));
+        }
+        return found;
+    }
+
+    /** Every literal handed to an L10n call that sits wholly between {@code start} and {@code end}. */
+    private static java.util.List<String> l10nLiteralsBetween(String text, byte[] kind, int start, int end) {
+        java.util.List<String> found = new java.util.ArrayList<>();
+        java.util.regex.Matcher lookup = java.util.regex.Pattern
+                .compile("L10n\\s*\\.\\s*(?:t|f|quantity)\\s*\\(").matcher(text);
+        lookup.region(start, end);
+        while (lookup.find()) {
+            int lookupOpen = lookup.end() - 1;
+            int lookupClose = closingBracket(text, kind, lookupOpen);
+            if (lookupClose < 0 || lookupClose > end) continue;
+            // arguments, not literalsIn: a message written across lines with a plus is one
+            // message, and its halves would each fail the rule on their own.
+            found.addAll(arguments(text, kind, lookupOpen, lookupClose));
+        }
+        return found;
+    }
+
+    /**
+     * Every L10n literal that reaches a toast through a local variable, as in
+     * {@code String message = L10n.t(...); Utils.showToastLong(message);}. A variable declared in
+     * the toast's own method is followed through each assignment between its declaration and the
+     * call. A message a helper method builds, or one handed in as a parameter, still walks past.
+     */
+    private static java.util.List<String> toastVariableLiteralsIn(String text) {
+        byte[] kind = classify(text);
+        java.util.List<String> found = new java.util.ArrayList<>();
+        java.util.regex.Matcher call = java.util.regex.Pattern
+                .compile("(?:\\b\\w*[Tt]oast\\w*|Toast\\s*\\.\\s*makeText)\\s*\\(").matcher(text);
+        while (call.find()) {
+            int open = call.end() - 1;
+            if (kind[call.start()] != CODE) continue;
+            int close = closingBracket(text, kind, open);
+            if (close < 0) continue;
+            int body = methodBodyStart(text, kind, call.start());
+            for (String argument : text.substring(open + 1, close).split(",")) {
+                String name = argument.trim();
+                if (!name.matches("[a-z]\\w*")) continue;
+                java.util.regex.Matcher declared = java.util.regex.Pattern
+                        .compile("\\b(?:String|CharSequence)\\s+" + name + "\\s*=(?!=)").matcher(text);
+                declared.region(body, call.start());
+                int from = -1;
+                while (declared.find()) if (kind[declared.start()] == CODE) from = declared.start();
+                if (from < 0) continue;
+                java.util.regex.Matcher assigned = java.util.regex.Pattern
+                        .compile("\\b" + name + "\\s*\\+?=(?!=)").matcher(text);
+                assigned.region(from, call.start());
+                while (assigned.find()) {
+                    if (kind[assigned.start()] != CODE) continue;
+                    int end = statementEnd(text, kind, assigned.end());
+                    if (end > 0) found.addAll(l10nLiteralsBetween(text, kind, assigned.end(), end));
+                }
             }
         }
         return found;
+    }
+
+    /** A method or constructor head just before its body's brace; if, for, catch and the rest aren't. */
+    private static final java.util.regex.Pattern METHOD_HEAD = java.util.regex.Pattern.compile(
+            "\\b(?!(?:if|for|while|switch|catch|synchronized|try)\\b)\\w+\\s*\\([^()]*(?:\\([^()]*\\)[^()]*)*\\)"
+                    + "\\s*(?:throws\\s+[\\w.,\\s]+)?$");
+
+    /** Where the body of the method holding {@code at} opens, or 0 when no method head is found. */
+    private static int methodBodyStart(String text, byte[] kind, int at) {
+        int inner = 0;
+        for (int i = at - 1; i >= 0; i--) {
+            if (kind[i] != CODE) continue;
+            char c = text.charAt(i);
+            if (c == '}') {
+                inner++;
+            } else if (c == '{') {
+                if (inner > 0) inner--;
+                else if (METHOD_HEAD.matcher(text.substring(Math.max(0, i - 300), i)).find()) return i;
+            }
+        }
+        return 0;
+    }
+
+    /** The semicolon ending the statement that runs on from {@code from}, or -1. */
+    private static int statementEnd(String text, byte[] kind, int from) {
+        int depth = 0;
+        for (int at = from; at < text.length(); at++) {
+            if (kind[at] != CODE) continue;
+            char c = text.charAt(at);
+            if (c == '(' || c == '{' || c == '[') depth++;
+            else if (c == ')' || c == '}' || c == ']') depth--;
+            else if (c == ';' && depth == 0) return at;
+            if (depth < 0) return -1;
+        }
+        return -1;
     }
 
     /** Null when the message follows the rule, otherwise what it gets wrong. */

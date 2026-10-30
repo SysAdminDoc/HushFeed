@@ -1,6 +1,7 @@
 # Toasts that already wrapped past two lines of 28 characters when SettingsL10nTest's
 # everyToastFitsTwoLines came in: the language, a tab, then the English message.
 # This list only gets shorter.
+# Lines added 2026-10-30 are older toasts whose message is built in a local variable, which the scan follows since then.
 az	%1$d overrides were turned off because the Lab couldn't confirm their gates are unchanged in TikTok %2$s. Review them before turning them back on.
 az	1 override was turned off because the Lab couldn't confirm its gate is unchanged in TikTok %2$s. Review it before turning it back on.
 az	A field value couldn't be read. Check the values and try again.
@@ -11,6 +12,7 @@ az	Allow storage for TikTok in Android settings to save profile pictures
 az	Allow storage for TikTok in Android settings to save sounds
 az	Allow storage for TikTok in Android settings to save stories
 az	Allow storage for TikTok in Android settings to save the live photo's clip
+az	Choose a folder on internal storage. SD cards aren't supported.
 az	Couldn't copy the build details. Use Save build details instead.
 az	Couldn't copy the report. Use Save report instead.
 az	Couldn't find this LIVE's stream to record. Leave the room and open it again.
@@ -42,6 +44,7 @@ az	Saved %1$s of %2$s photos before the story failed
 az	Saved. Restart TikTok to apply this.
 az	Saving a frame from this video needs Android 7 or newer
 az	Some recording files remain. Try deleting them again.
+az	Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.
 az	That creator pattern could stall the feed, so it was skipped: %1$s
 az	That creator pattern is too long to use, so it was skipped: %1$s
 az	The downloader app you chose isn't installed. Check Send links to another app under Downloads.
@@ -58,6 +61,7 @@ az	The saved-video choice couldn't open. Try again.
 az	The video couldn't be made from these photos. Try again.
 az	The video couldn't be saved. Try again, or choose Automatic.
 az	The video was saved, but its record couldn't be updated. A later save may make another copy.
+az	The video without the watermark couldn't be fetched, so TikTok's watermarked copy was saved to %1$s. Try again later for the clean copy.
 az	This is the video's own sound, so YouTube Music won't have it
 az	This phone has no folder picker. Type the folder into the row instead.
 az	This preset doesn't match the installed gates. Nothing changed.
@@ -118,6 +122,7 @@ de	Saved %1$s of %2$s photos before the story failed
 de	Saving a frame from this video needs Android 7 or newer
 de	Sign in to edit your own profile counts
 de	Some recording files remain. Try deleting them again.
+de	Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.
 de	That creator pattern could stall the feed, so it was skipped: %1$s
 de	That creator pattern is too long to use, so it was skipped: %1$s
 de	That sticker is in a format Hushfeed can't read
@@ -145,6 +150,7 @@ de	The sticker couldn't be saved. Try again.
 de	The video couldn't be made from these photos. Try again.
 de	The video couldn't be saved. Try again, or choose Automatic.
 de	The video was saved, but its record couldn't be updated. A later save may make another copy.
+de	The video without the watermark couldn't be fetched, so TikTok's watermarked copy was saved to %1$s. Try again later for the clean copy.
 de	There's no video on screen to save a frame from
 de	This change couldn't be saved. Try again.
 de	This is the video's own sound, so YouTube Music won't have it
@@ -172,6 +178,7 @@ en	Allow storage for TikTok in Android settings to save profile pictures
 en	Allow storage for TikTok in Android settings to save sounds
 en	Allow storage for TikTok in Android settings to save stories
 en	Allow storage for TikTok in Android settings to save the live photo's clip
+en	Choose a folder on internal storage. SD cards aren't supported.
 en	Couldn't copy the build details. Use Save build details instead.
 en	Couldn't find this LIVE's stream to record. Leave the room and open it again.
 en	Couldn't reach the proxy at %1$s. TikTok may not load until it's back or you turn the proxy off.
@@ -193,6 +200,7 @@ en	Opus didn't work on this phone. Saving the sound as TikTok sent it instead.
 en	Picked the first %1$s. Save them, then tap Pick all again for the rest.
 en	Recording gate reads. Use a feature, then return here to stop.
 en	Saving a frame from this video needs Android 7 or newer
+en	Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.
 en	That creator pattern could stall the feed, so it was skipped: %1$s
 en	That creator pattern is too long to use, so it was skipped: %1$s
 en	The downloader app you chose isn't installed. Check Send links to another app under Downloads.
@@ -208,6 +216,7 @@ en	The save stopped when you left Wi-Fi. Save it again on Wi-Fi.
 en	The video couldn't be made from these photos. Try again.
 en	The video couldn't be saved. Try again, or choose Automatic.
 en	The video was saved, but its record couldn't be updated. A later save may make another copy.
+en	The video without the watermark couldn't be fetched, so TikTok's watermarked copy was saved to %1$s. Try again later for the clean copy.
 en	This is the video's own sound, so YouTube Music won't have it
 en	This phone has no folder picker. Type the folder into the row instead.
 en	This preset doesn't match the installed gates. Nothing changed.
@@ -263,6 +272,7 @@ es	Recording gate reads. Use a feature, then return here to stop.
 es	Saved %1$s of %2$s photos before the story failed
 es	Saving a frame from this video needs Android 7 or newer
 es	Some recording files remain. Try deleting them again.
+es	Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.
 es	That creator pattern could stall the feed, so it was skipped: %1$s
 es	That creator pattern is too long to use, so it was skipped: %1$s
 es	That sticker is in a format Hushfeed can't read
@@ -286,6 +296,7 @@ es	The saved-video choice couldn't open. Try again.
 es	The video couldn't be made from these photos. Try again.
 es	The video couldn't be saved. Try again, or choose Automatic.
 es	The video was saved, but its record couldn't be updated. A later save may make another copy.
+es	The video without the watermark couldn't be fetched, so TikTok's watermarked copy was saved to %1$s. Try again later for the clean copy.
 es	There's no video on screen to save a frame from
 es	This is the video's own sound, so YouTube Music won't have it
 es	This phone has no folder picker. Type the folder into the row instead.
@@ -334,6 +345,7 @@ in	Picked the first %1$s. Save them, then tap Pick all again for the rest.
 in	Recording gate reads. Use a feature, then return here to stop.
 in	Saved %1$s of %2$s photos before the story failed
 in	Saving a frame from this video needs Android 7 or newer
+in	Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.
 in	That creator pattern could stall the feed, so it was skipped: %1$s
 in	That creator pattern is too long to use, so it was skipped: %1$s
 in	The downloader app you chose isn't installed. Check Send links to another app under Downloads.
@@ -348,6 +360,7 @@ in	The save stopped when you left Wi-Fi. Save it again on Wi-Fi.
 in	The saved-video choice couldn't open. Try again.
 in	The video couldn't be saved. Try again, or choose Automatic.
 in	The video was saved, but its record couldn't be updated. A later save may make another copy.
+in	The video without the watermark couldn't be fetched, so TikTok's watermarked copy was saved to %1$s. Try again later for the clean copy.
 in	This is the video's own sound, so YouTube Music won't have it
 in	This phone has no folder picker. Type the folder into the row instead.
 in	This preset doesn't match the installed gates. Nothing changed.
@@ -370,6 +383,7 @@ it	Allow storage for TikTok in Android settings to save profile pictures
 it	Allow storage for TikTok in Android settings to save sounds
 it	Allow storage for TikTok in Android settings to save stories
 it	Allow storage for TikTok in Android settings to save the live photo's clip
+it	Choose a folder on internal storage. SD cards aren't supported.
 it	Couldn't copy the build details. Use Save build details instead.
 it	Couldn't copy the report. Use Save report instead.
 it	Couldn't find this LIVE's stream to record. Leave the room and open it again.
@@ -404,6 +418,7 @@ it	Recording this LIVE's screen from now, without sound
 it	Saving a frame from this video needs Android 7 or newer
 it	Screen recording wasn't allowed
 it	Some recording files remain. Try deleting them again.
+it	Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.
 it	That creator pattern could stall the feed, so it was skipped: %1$s
 it	That creator pattern is too long to use, so it was skipped: %1$s
 it	That preset isn't recognized. Choose another.
@@ -432,6 +447,7 @@ it	The saved-video choice couldn't open. Try again.
 it	The video couldn't be made from these photos. Try again.
 it	The video couldn't be saved. Try again, or choose Automatic.
 it	The video was saved, but its record couldn't be updated. A later save may make another copy.
+it	The video without the watermark couldn't be fetched, so TikTok's watermarked copy was saved to %1$s. Try again later for the clean copy.
 it	There's no video on screen to save a frame from
 it	This change couldn't be saved. Try again.
 it	This is the video's own sound, so YouTube Music won't have it
@@ -492,6 +508,7 @@ pt-rbr	Recording gate reads. Use a feature, then return here to stop.
 pt-rbr	Saved %1$s of %2$s photos before the story failed
 pt-rbr	Saving a frame from this video needs Android 7 or newer
 pt-rbr	Some recording files remain. Try deleting them again.
+pt-rbr	Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.
 pt-rbr	That creator pattern could stall the feed, so it was skipped: %1$s
 pt-rbr	That creator pattern is too long to use, so it was skipped: %1$s
 pt-rbr	That sticker is in a format Hushfeed can't read
@@ -510,6 +527,7 @@ pt-rbr	The saved-video choice couldn't open. Try again.
 pt-rbr	The video couldn't be made from these photos. Try again.
 pt-rbr	The video couldn't be saved. Try again, or choose Automatic.
 pt-rbr	The video was saved, but its record couldn't be updated. A later save may make another copy.
+pt-rbr	The video without the watermark couldn't be fetched, so TikTok's watermarked copy was saved to %1$s. Try again later for the clean copy.
 pt-rbr	This is the video's own sound, so YouTube Music won't have it
 pt-rbr	This phone has no folder picker. Type the folder into the row instead.
 pt-rbr	This preset doesn't match the installed gates. Nothing changed.
@@ -533,6 +551,7 @@ ru	Allow storage for TikTok in Android settings to save profile pictures
 ru	Allow storage for TikTok in Android settings to save sounds
 ru	Allow storage for TikTok in Android settings to save stories
 ru	Allow storage for TikTok in Android settings to save the live photo's clip
+ru	Choose a folder on internal storage. SD cards aren't supported.
 ru	Couldn't copy the build details. Use Save build details instead.
 ru	Couldn't copy the report. Use Save report instead.
 ru	Couldn't find this LIVE's stream to record. Leave the room and open it again.
@@ -567,6 +586,7 @@ ru	Recording gate reads. Use a feature, then return here to stop.
 ru	Saved %1$s of %2$s photos before the story failed
 ru	Saving a frame from this video needs Android 7 or newer
 ru	Some recording files remain. Try deleting them again.
+ru	Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.
 ru	That creator pattern could stall the feed, so it was skipped: %1$s
 ru	That creator pattern is too long to use, so it was skipped: %1$s
 ru	That sticker is in a format Hushfeed can't read
@@ -586,6 +606,7 @@ ru	The saved-video choice couldn't open. Try again.
 ru	The video couldn't be made from these photos. Try again.
 ru	The video couldn't be saved. Try again, or choose Automatic.
 ru	The video was saved, but its record couldn't be updated. A later save may make another copy.
+ru	The video without the watermark couldn't be fetched, so TikTok's watermarked copy was saved to %1$s. Try again later for the clean copy.
 ru	There's no video on screen to save a frame from
 ru	This change couldn't be saved. Try again.
 ru	This is the video's own sound, so YouTube Music won't have it
@@ -612,6 +633,7 @@ tr	Allow storage for TikTok in Android settings to save profile pictures
 tr	Allow storage for TikTok in Android settings to save sounds
 tr	Allow storage for TikTok in Android settings to save stories
 tr	Allow storage for TikTok in Android settings to save the live photo's clip
+tr	Choose a folder on internal storage. SD cards aren't supported.
 tr	Couldn't copy the build details. Use Save build details instead.
 tr	Couldn't copy the report. Use Save report instead.
 tr	Couldn't find this LIVE's stream to record. Leave the room and open it again.
@@ -640,6 +662,7 @@ tr	Saved %1$s of %2$s photos before the story failed
 tr	Saved. Restart TikTok to apply this.
 tr	Saving a frame from this video needs Android 7 or newer
 tr	Some recording files remain. Try deleting them again.
+tr	Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.
 tr	That creator pattern could stall the feed, so it was skipped: %1$s
 tr	That creator pattern is too long to use, so it was skipped: %1$s
 tr	The already-saved check failed. Try again.
@@ -655,6 +678,7 @@ tr	The proxy at %1$s asks for a password, and TikTok can't send one. Use a proxy
 tr	The save stopped when you left Wi-Fi. Save it again on Wi-Fi.
 tr	The video couldn't be made from these photos. Try again.
 tr	The video was saved, but its record couldn't be updated. A later save may make another copy.
+tr	The video without the watermark couldn't be fetched, so TikTok's watermarked copy was saved to %1$s. Try again later for the clean copy.
 tr	This is the video's own sound, so YouTube Music won't have it
 tr	This phone has no folder picker. Type the folder into the row instead.
 tr	This preset doesn't match the installed gates. Nothing changed.
@@ -679,3 +703,4 @@ zh-hans	The downloader app you chose isn't installed. Check Send links to anothe
 zh-hans	The photos saved, but their details file couldn't be written. Check your storage and save the post again to get it.
 zh-hans	The proxy at %1$s asks for a password, and TikTok can't send one. Use a proxy that doesn't need one.
 zh-hans	The video was saved, but its record couldn't be updated. A later save may make another copy.
+zh-hans	The video without the watermark couldn't be fetched, so TikTok's watermarked copy was saved to %1$s. Try again later for the clean copy.

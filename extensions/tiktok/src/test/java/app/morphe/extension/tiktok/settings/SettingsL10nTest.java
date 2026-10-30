@@ -726,9 +726,23 @@ public class SettingsL10nTest {
                 + "  static {\n"
                 + "    Utils.showToastShort(message);\n"
                 + "  }\n"
+                + "  String note;\n"
+                + "  void g() {\n"
+                + "    post(new Runnable() { public void run() { String note = L10n.t(\"Sibling's own\"); log(note); } });\n"
+                + "    post(new Runnable() { public void run() { Utils.showToastShort(note); } });\n"
+                + "  }\n"
+                + "  void h() {\n"
+                + "    String later = L10n.t(\"Hidden by a parameter\");\n"
+                + "    listen(new Callback() { public void onResult(String later) { Utils.showToastShort(later); } });\n"
+                + "  }\n"
+                + "  void i() {\n"
+                + "    String text = L10n.t(\"Kept\");\n"
+                + "    post(new Runnable() { public void run() { String text = L10n.t(\"Shadowed\"); text = L10n.t(\"Still shadowed\"); } });\n"
+                + "    Utils.showToastShort(text);\n"
+                + "  }\n"
                 + "}\n";
         assertEquals(java.util.Arrays.asList("Stopped waiting for Wi-Fi.", "Saved", "Failed: %1$s",
-                "Too late", "First", "Second", "Captured"), toastVariableLiteralsIn(source));
+                "Too late", "First", "Second", "Captured", "Kept"), toastVariableLiteralsIn(source));
     }
 
     /** Columns a toast line holds before word wrap moves on. A wide character takes two. */
@@ -870,8 +884,10 @@ public class SettingsL10nTest {
      * {@code String message = L10n.t(...); Utils.showToastLong(message);}. A variable declared in
      * the toast's own method, with a value or without one, is followed through each assignment
      * between its declaration and the call. A toast in an anonymous class's method follows the
-     * enclosing method's variables too, as a lambda's does. A message a helper method builds, or
-     * one handed in as a parameter, still walks past.
+     * enclosing method's variables too, as a lambda's does, unless a parameter of its own method
+     * hides them. A declaration in a block that closed before the call, such as a sibling
+     * anonymous class's method, is another variable and is left out. A message a helper method
+     * builds, or one handed in as a parameter, still walks past.
      */
     private static java.util.List<String> toastVariableLiteralsIn(String text) {
         byte[] kind = classify(text);
@@ -884,20 +900,36 @@ public class SettingsL10nTest {
             int close = closingBracket(text, kind, open);
             if (close < 0) continue;
             int body = methodBodyStart(text, kind, call.start());
+            int own = methodBodyStart(text, kind, call.start(), false);
             for (String argument : text.substring(open + 1, close).split(",")) {
                 String name = argument.trim();
                 if (!name.matches("[a-z]\\w*")) continue;
                 java.util.regex.Matcher declared = java.util.regex.Pattern
                         .compile("\\b(?:String|CharSequence)\\s+" + name + "\\s*(?:=(?!=)|;)").matcher(text);
                 declared.region(body, call.start());
+                // The last declaration whose block is still open at the call is the one it reads.
+                // Any other one after it sits in a block that closed first, a sibling anonymous
+                // class's method say, and holds a variable of its own.
                 int from = -1;
-                while (declared.find()) if (kind[declared.start()] == CODE) from = declared.start();
+                java.util.List<Integer> shadows = new java.util.ArrayList<>();
+                while (declared.find()) {
+                    if (kind[declared.start()] != CODE) continue;
+                    if (inScope(text, kind, declared.start(), call.start())) {
+                        from = declared.start();
+                        shadows.clear();
+                    } else if (from >= 0) {
+                        shadows.add(declared.start());
+                    }
+                }
                 if (from < 0) continue;
+                // A parameter of the toast's own method hides a variable of the method around it.
+                if (from < own && takesParameter(text, kind, own, name)) continue;
                 java.util.regex.Matcher assigned = java.util.regex.Pattern
                         .compile("\\b" + name + "\\s*\\+?=(?!=)").matcher(text);
                 assigned.region(from, call.start());
                 while (assigned.find()) {
                     if (kind[assigned.start()] != CODE) continue;
+                    if (shadowed(text, kind, shadows, assigned.start())) continue;
                     int end = statementEnd(text, kind, assigned.end());
                     if (end > 0) found.addAll(l10nLiteralsBetween(text, kind, assigned.end(), end));
                 }
@@ -924,6 +956,11 @@ public class SettingsL10nTest {
      * variables it can read.
      */
     private static int methodBodyStart(String text, byte[] kind, int at) {
+        return methodBodyStart(text, kind, at, true);
+    }
+
+    /** {@code throughAnonymous} false stops at the innermost method, an anonymous class's own. */
+    private static int methodBodyStart(String text, byte[] kind, int at, boolean throughAnonymous) {
         int inner = 0;
         int method = 0;
         boolean inMethod = false;
@@ -946,11 +983,41 @@ public class SettingsL10nTest {
                     inMethod = false;
                 } else if (!anonymous && (METHOD_HEAD.matcher(head).find() || STATIC_HEAD.matcher(head).find())) {
                     method = i;
+                    if (!throughAnonymous) return method;
                     inMethod = true;
                 }
             }
         }
         return method;
+    }
+
+    /** Whether the block holding {@code declaration} is still open at {@code use}. */
+    private static boolean inScope(String text, byte[] kind, int declaration, int use) {
+        int depth = 0;
+        for (int i = declaration; i < use; i++) {
+            if (kind[i] != CODE) continue;
+            char c = text.charAt(i);
+            if (c == '{') depth++;
+            else if (c == '}' && --depth < 0) return false;
+        }
+        return true;
+    }
+
+    /** Whether an assignment at {@code at} is to one of {@code shadows}, a variable of its own block. */
+    private static boolean shadowed(String text, byte[] kind, java.util.List<Integer> shadows, int at) {
+        for (int shadow : shadows) {
+            if (shadow <= at && inScope(text, kind, shadow, at)) return true;
+        }
+        return false;
+    }
+
+    /** Whether the method whose body opens at {@code body} takes a parameter called {@code name}. */
+    private static boolean takesParameter(String text, byte[] kind, int body, String name) {
+        String head = codeBefore(text, kind, body, 600);
+        java.util.regex.Matcher method = METHOD_HEAD.matcher(head);
+        if (!method.find()) return false;
+        String parameters = head.substring(head.indexOf('(', method.start()), method.end());
+        return java.util.regex.Pattern.compile("[\\w>\\]]\\s+" + name + "\\s*[,)]").matcher(parameters).find();
     }
 
     /** The {@code length} characters before {@code end}, with comments and literals blanked out. */

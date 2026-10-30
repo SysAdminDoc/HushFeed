@@ -44,6 +44,10 @@ Every Hushfeed release, newest first.
 * **TikTok:** The floating tab pill blurs a LIVE preview in For You behind it too. Ordinary videos were already blurred there, but a LIVE's stream showed sharp through the glass (#259).
 * **TikTok:** PineDrama gets `Feed filter`, so `Remove feed ads` now takes the ads out of its For You feed and its drama tab. PineDrama only had the comment, floating and splash ad patches before. The drama tab loads its feed on its own, so it gets its own ad check too (#294).
 
+### Build
+
+* **TikTok:** The patch bundle carries Gson 2.15.0, up from 2.14.0. Morphe Manager uses it while patching to read the patch defaults.
+
 ## 0.80.0 (2026-10-27)
 
 ### Features

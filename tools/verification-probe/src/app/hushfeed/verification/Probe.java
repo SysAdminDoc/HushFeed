@@ -2746,6 +2746,51 @@ public final class Probe extends Instrumentation {
                         }, "hushfeed-probe-holdslide").start();
                         break;
                     }
+                    case "holdpath": {
+                        // A held press that follows waypoints, "x,y,ms;x,y,ms;...": down at the
+                        // first point and held there for its ms, then a move to each next point
+                        // over its ms. After each point it logs what the hold speed bubble holds,
+                        // so a sideways slide's steps are read from Hushfeed rather than a shot.
+                        // adb's input can't slide sideways from the edge without the system's Back
+                        // gesture taking it.
+                        String[] points = required(intent, "path").split(";");
+                        Class<?> hud = loader.loadClass("app.morphe.extension.tiktok.speed.HoldSpeedHud");
+                        new Thread(() -> {
+                            try {
+                                Instrumentation input = new Instrumentation();
+                                float[] at = holdPoint(points[0]);
+                                long down = android.os.SystemClock.uptimeMillis();
+                                input.sendPointerSync(android.view.MotionEvent.obtain(
+                                        down, down, android.view.MotionEvent.ACTION_DOWN, at[0], at[1], 0));
+                                android.os.SystemClock.sleep((long) at[2]);
+                                Log.i(TAG, "ok holdpath 0 at " + at[0] + "," + at[1] + " " + holdState(hud));
+                                for (int point = 1; point < points.length; point++) {
+                                    float[] to = holdPoint(points[point]);
+                                    int steps = Math.max(1, (int) (to[2] / 16));
+                                    for (int step = 1; step <= steps; step++) {
+                                        input.sendPointerSync(android.view.MotionEvent.obtain(down,
+                                                android.os.SystemClock.uptimeMillis(),
+                                                android.view.MotionEvent.ACTION_MOVE,
+                                                at[0] + (to[0] - at[0]) * step / steps,
+                                                at[1] + (to[1] - at[1]) * step / steps, 0));
+                                        android.os.SystemClock.sleep((long) (to[2] / steps));
+                                    }
+                                    android.os.SystemClock.sleep(250);
+                                    at = to;
+                                    Log.i(TAG, "ok holdpath " + point + " at " + at[0] + "," + at[1] + " "
+                                            + holdState(hud));
+                                }
+                                input.sendPointerSync(android.view.MotionEvent.obtain(down,
+                                        android.os.SystemClock.uptimeMillis(),
+                                        android.view.MotionEvent.ACTION_UP, at[0], at[1], 0));
+                                android.os.SystemClock.sleep(400);
+                                Log.i(TAG, "ok holdpath released " + holdState(hud));
+                            } catch (RuntimeException | ReflectiveOperationException error) {
+                                Log.e(TAG, "failed holdpath", error);
+                            }
+                        }, "hushfeed-probe-holdpath").start();
+                        break;
+                    }
                     case "tabbadges": {
                         // TikTok's bottom tab icons draw their unread badges through their own
                         // setters (setCountDotText, setCountDotVisibility, setTabDotVisibility),
@@ -5118,6 +5163,24 @@ public final class Probe extends Instrumentation {
             Field field = owner.getDeclaredField(name);
             field.setAccessible(true);
             return field.get(null);
+        }
+
+        /** One holdpath waypoint, "x,y,ms". */
+        private static float[] holdPoint(String point) {
+            String[] parts = point.trim().split(",");
+            if (parts.length != 3) throw new IllegalArgumentException("waypoint is not x,y,ms: " + point);
+            return new float[]{Float.parseFloat(parts[0]), Float.parseFloat(parts[1]), Float.parseFloat(parts[2])};
+        }
+
+        /** What the hold speed bubble holds: the step speed it's on, and the hold's flags. */
+        private static String holdState(Class<?> hud) throws ReflectiveOperationException {
+            float[] steps = (float[]) staticField(hud, "steps");
+            int index = (Integer) staticField(hud, "index");
+            Object shown = ((java.lang.ref.Reference<?>) staticField(hud, "bubble")).get();
+            return "speed=" + (index >= 0 && index < steps.length ? String.valueOf(steps[index]) : "none")
+                    + " holding=" + staticField(hud, "holding") + " sliding=" + staticField(hud, "sliding")
+                    + " vertical=" + staticField(hud, "vertical") + " pulled=" + staticField(hud, "pulled")
+                    + " slid=" + staticField(hud, "slidSpeed") + " bubble=" + (shown != null);
         }
 
         private static String safeResourceName(android.view.View view) {

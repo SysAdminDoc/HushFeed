@@ -15,6 +15,9 @@ import android.widget.TextView;
 
 import com.ss.android.ugc.aweme.profile.model.User;
 
+import java.util.Locale;
+import java.util.TimeZone;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,7 +39,11 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
 public class FollowStatusTest {
     private ActivityController<Activity> owner;
     private Activity activity;
-    private boolean previousSetting, previousStatus;
+    private boolean previousSetting, previousJoinDate, previousStatus;
+    private TimeZone previousZone;
+
+    /** 2020-01-31T23:59:59 UTC, so the month turns over an hour east of Greenwich. */
+    private static final String JANUARY_2020 = "6788261090535932003";
 
     /** A profile header's common info, with the members the extension reads by name. */
     public static final class Profile {
@@ -64,8 +71,11 @@ public class FollowStatusTest {
     @Before public void setUp() {
         Utils.setContext(RuntimeEnvironment.getApplication());
         previousSetting = Settings.SHOW_FOLLOW_STATUS.get();
+        previousJoinDate = Settings.SHOW_JOIN_DATE.get();
         previousStatus = SettingsStatus.followStatusEnabled;
+        previousZone = TimeZone.getDefault();
         Settings.SHOW_FOLLOW_STATUS.save(true);
+        Settings.SHOW_JOIN_DATE.save(false);
         SettingsStatus.followStatusEnabled = true;
         SignedInUser.idForTests = "me";
         owner = Robolectric.buildActivity(Activity.class).setup();
@@ -74,7 +84,9 @@ public class FollowStatusTest {
 
     @After public void tearDown() {
         Settings.SHOW_FOLLOW_STATUS.save(previousSetting);
+        Settings.SHOW_JOIN_DATE.save(previousJoinDate);
         SettingsStatus.followStatusEnabled = previousStatus;
+        TimeZone.setDefault(previousZone);
         SignedInUser.idForTests = null;
         if (owner != null) owner.close();
     }
@@ -144,6 +156,71 @@ public class FollowStatusTest {
         FollowStatus.onHeaderText(handle, info("2", "me_myself", 0, 1));
         idle();
         assertEquals(View.GONE, header.getChildAt(1).getVisibility());
+    }
+
+    @Test public void anAccountsIdGivesTheMonthItWasMade() {
+        long now = 1_700_000_000_000L;
+        TimeZone utc = TimeZone.getTimeZone("UTC");
+        // The pattern is the locale's own (Robolectric hands the skeleton back as it is), so only
+        // its parts are checked: the month, then the year.
+        String january = FollowStatus.joinMonth(JANUARY_2020, now, Locale.US, utc);
+        assertTrue(january, january.matches("Jan\\W*2020"));
+        String february = FollowStatus.joinMonth(JANUARY_2020, now, Locale.US, TimeZone.getTimeZone("GMT+01:00"));
+        assertTrue(february, february.matches("Feb\\W*2020"));
+        assertNull("musical.ly's short IDs carry no time", FollowStatus.joinMonth("107955", now, Locale.US, utc));
+        assertNull("a time after now isn't one", FollowStatus.joinMonth(JANUARY_2020, 1_500_000_000_000L, Locale.US, utc));
+        assertNull(FollowStatus.joinMonth("nasa", now, Locale.US, utc));
+        assertNull(FollowStatus.joinMonth(null, now, Locale.US, utc));
+    }
+
+    @Test public void theJoinDateSharesTheLabelAndShowsWithFollowStatusOff() {
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+        Settings.SHOW_JOIN_DATE.save(true);
+        LinearLayout header = column();
+        TextView handle = text(header, "@nasa");
+
+        FollowStatus.onHeaderText(handle, info(JANUARY_2020, "nasa", 0, 1));
+        idle();
+        assertEquals(2, header.getChildCount());
+        TextView label = (TextView) header.getChildAt(1);
+        String joined = "Joined " + FollowStatus.joinMonth(JANUARY_2020, System.currentTimeMillis(), Locale.getDefault(), TimeZone.getDefault());
+        assertTrue(joined, joined.matches("Joined Jan\\W*2020"));
+        assertEquals("Follows you · " + joined, label.getText().toString());
+
+        // No follow relation leaves the date alone.
+        FollowStatus.onHeaderText(handle, info(JANUARY_2020, "nasa", 0, 0));
+        idle();
+        assertEquals(joined, label.getText().toString());
+        assertEquals(View.VISIBLE, label.getVisibility());
+
+        Settings.SHOW_FOLLOW_STATUS.save(false);
+        FollowStatus.onHeaderText(handle, info(JANUARY_2020, "nasa", 0, 1));
+        idle();
+        assertEquals(joined, label.getText().toString());
+
+        // An ID with no time in it has nothing to add.
+        FollowStatus.onHeaderText(handle, info("107955", "nasa", 0, 1));
+        idle();
+        assertEquals(View.GONE, label.getVisibility());
+
+        // Your own profile shows neither.
+        Settings.SHOW_FOLLOW_STATUS.save(true);
+        SignedInUser.idForTests = JANUARY_2020;
+        FollowStatus.onHeaderText(handle, info(JANUARY_2020, "nasa", 0, 1));
+        idle();
+        assertEquals(View.GONE, label.getVisibility());
+
+        // Both switches off hides it.
+        SignedInUser.idForTests = "me";
+        FollowStatus.onHeaderText(handle, info(JANUARY_2020, "nasa", 0, 1));
+        idle();
+        assertEquals(View.VISIBLE, label.getVisibility());
+        Settings.SHOW_FOLLOW_STATUS.save(false);
+        Settings.SHOW_JOIN_DATE.save(false);
+        FollowStatus.onHeaderText(handle, info(JANUARY_2020, "nasa", 0, 1));
+        idle();
+        assertEquals(View.GONE, label.getVisibility());
+        assertEquals(2, header.getChildCount());
     }
 
     @Test public void aHandleInAHorizontalRowGetsTheLabelInTheColumnAbove() {

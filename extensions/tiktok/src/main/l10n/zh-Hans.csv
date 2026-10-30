@@ -2321,3 +2321,6 @@ The save stopped when you left Wi-Fi. Save it again on Wi-Fi.,你离开 Wi-Fi �
 Leave after no touch,无触摸时离开
 "Zero switches this off. After that many minutes with no touch on the screen, the video stops and TikTok goes to the background, for when you fall asleep watching. Any touch starts the wait over.",零将其关闭。屏幕在这么多分钟内没有被触摸时，视频会停止，TikTok 会转到后台，适合看着看着睡着的时候。任何触摸都会重新开始等待.
 Left TikTok after no touch,因无触摸已离开 TikTok
+Show when an account was made,显示帐户的创建时间
+"Under the @username on someone else's profile, show the month and year the account was made. It's read from the account's ID, so very old accounts show nothing.",在别人个人资料的@用户名下方显示该帐户创建的年月。这是从帐户 ID 中读出的，所以很老的帐户不显示任何内容.
+Joined %s,%s加入

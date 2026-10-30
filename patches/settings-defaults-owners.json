@@ -634,6 +634,7 @@
     ],
     "Show follow status": [
       "SHOW_FOLLOW_STATUS",
+      "SHOW_JOIN_DATE",
       "LOCAL_PROFILE_COUNTS",
       "LOCAL_PROFILE_VERIFIED_BADGE",
       "HIDE_OWN_PROFILE_RESTRICTION_NOTICE",

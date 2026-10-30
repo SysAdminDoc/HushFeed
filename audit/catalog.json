@@ -14310,6 +14310,12 @@
     "row": "Show follow status"
    },
    {
+    "key": "show_join_date",
+    "default": false,
+    "type": "bool",
+    "row": "Show when an account was made"
+   },
+   {
     "key": "local_profile_counts",
     "default": false,
     "type": "bool",

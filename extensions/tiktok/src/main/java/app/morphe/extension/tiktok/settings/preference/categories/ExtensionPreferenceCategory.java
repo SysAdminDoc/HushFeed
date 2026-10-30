@@ -222,6 +222,11 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                             + "that don't follow you back.",
                     Settings.SHOW_FOLLOW_STATUS
             ));
+            addPreference(new TogglePreference(context, "Show when an account was made",
+                    "Under the @username on someone else's profile, show the month and year the "
+                            + "account was made. It's read from the account's ID, so very old "
+                            + "accounts show nothing.",
+                    Settings.SHOW_JOIN_DATE));
             addPreference(new TogglePreference(context, "Local profile counts",
                     "Show chosen counts on your own profile on this phone. Other people see the real counts.",
                     Settings.LOCAL_PROFILE_COUNTS));

@@ -4,8 +4,10 @@
  */
 package app.morphe.extension.tiktok.profile;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.text.TextUtils;
+import android.text.format.DateFormat;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -17,12 +19,17 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.tiktok.SignedInUser;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
+import app.morphe.extension.tiktok.publishdate.AlwaysShowPublishDatePatch;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
@@ -38,12 +45,17 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
  * the account's {@code User}, which carries the same two numbers. The label is a small text view
  * of ours placed under the @username, or beside it when the row it sits in is horizontal. Where
  * the layout is something else, nothing is added.
+ *
+ * <p>The same header label can also say the month the account was made ("Joined Jan 2020"). The
+ * profile response doesn't send that, but the account's ID carries it in its top 32 bits, the way
+ * a post ID carries its posting time.
  */
 public final class FollowStatus {
     static final int FOLLOWING = 1;
     static final int MUTUAL = 2;
     static final String FOLLOWS_YOU = "Follows you";
     static final String NOT_FOLLOWING_BACK = "Doesn't follow you back";
+    static final String JOINED = "Joined %s";
     /** Marks the label views this class adds, so a rebind finds and reuses them. */
     static final String LABEL_TAG = "hushfeed_follow_status";
     private static final int MAX_CLIMB = 4;
@@ -56,6 +68,37 @@ public final class FollowStatus {
 
     static boolean enabled() {
         return SettingsStatus.followStatusEnabled && Settings.SHOW_FOLLOW_STATUS.get();
+    }
+
+    /** A profile header gets a label while either of its two switches is on. */
+    static boolean headerEnabled() {
+        return SettingsStatus.followStatusEnabled
+                && (Settings.SHOW_FOLLOW_STATUS.get() || Settings.SHOW_JOIN_DATE.get());
+    }
+
+    /**
+     * The month and year the account with this ID was made, the way the phone's language writes
+     * them ("Jan 2020"), or null for an ID that carries no time.
+     */
+    @Nullable
+    static String joinMonth(@Nullable String uid, long nowMillis, Locale locale, TimeZone zone) {
+        long seconds = AlwaysShowPublishDatePatch.fromId(uid, nowMillis);
+        if (seconds <= 0) return null;
+        SimpleDateFormat format = new SimpleDateFormat(DateFormat.getBestDateTimePattern(locale, "MMMy"), locale);
+        format.setTimeZone(zone);
+        return format.format(new Date(seconds * 1000L));
+    }
+
+    /**
+     * The header label in the phone's language: the follow label, the join month, both with a
+     * dot between, or null when neither has anything to say.
+     */
+    @Nullable
+    static String headerText(Context context, @Nullable String label, @Nullable String month) {
+        String follow = label == null ? null : L10n.t(context, label);
+        String joined = month == null ? null : L10n.f(context, JOINED, month);
+        if (follow == null) return joined;
+        return joined == null ? follow : follow + " · " + joined;
     }
 
     /** The header label for a relation, or null when there is nothing to say. */
@@ -83,7 +126,7 @@ public final class FollowStatus {
     public static void onHeaderText(View view, Object commonInfo) {
         try {
             if (!(view instanceof TextView)) return;
-            if (!enabled()) {
+            if (!headerEnabled()) {
                 hideLabels(view);
                 return;
             }
@@ -93,14 +136,19 @@ public final class FollowStatus {
             String username = Reflect.string(profile, "getUsername", "username");
             if (username == null) return;
             String uid = Reflect.string(profile, "getUid", "uid");
-            String label = isSignedInUser(uid) ? null : headerLabel(
+            boolean own = isSignedInUser(uid);
+            String label = own || !Settings.SHOW_FOLLOW_STATUS.get() ? null : headerLabel(
                     asInteger(Reflect.property(relation, "getFollowStatus", "followStatus")),
                     asInteger(Reflect.property(relation, "getFollowerStatus", "followerStatus")));
+            String month = own || !Settings.SHOW_JOIN_DATE.get() ? null
+                    : joinMonth(uid, System.currentTimeMillis(), Locale.getDefault(), TimeZone.getDefault());
             TextView text = (TextView) view;
             // The item sets its text after this call returns, so read it once the bind is done.
             text.post(() -> {
                 try {
-                    if (isHandle(text.getText(), username)) place(text, label, null);
+                    if (isHandle(text.getText(), username)) {
+                        place(text, headerText(text.getContext(), label, month), null);
+                    }
                 } catch (Throwable error) {
                     Logger.printException(() -> "Follow status: could not label the profile header", error);
                 }
@@ -132,7 +180,7 @@ public final class FollowStatus {
                     if (label == null) return;
                     TextView anchor = findText(root, handle, true);
                     if (anchor == null) anchor = findText(root, nickname, false);
-                    if (anchor != null) place(anchor, label, root);
+                    if (anchor != null) place(anchor, L10n.t(anchor.getContext(), label), root);
                 } catch (Throwable error) {
                     Logger.printException(() -> "Follow status: could not label a follow list cell", error);
                 }
@@ -222,7 +270,7 @@ public final class FollowStatus {
      * or beside the anchor when the only LinearLayout is a horizontal one. Any other layout gets
      * nothing, since a view added there without its own rules would land on top of something.
      * The climb never goes past {@code limit}, so a list cell's label stays inside the cell, where its
-     * next bind can find it again.
+     * next bind can find it again. {@code label} is already in the phone's language; null hides it.
      */
     static void place(TextView anchor, @Nullable String label, @Nullable View limit) {
         View child = anchor;
@@ -279,7 +327,7 @@ public final class FollowStatus {
                 Color.red(color), Color.green(color), Color.blue(color)));
         view.setTextSize(TypedValue.COMPLEX_UNIT_PX, anchor.getTextSize() * 0.85f);
         view.setTypeface(anchor.getTypeface());
-        view.setText(L10n.t(anchor.getContext(), label));
+        view.setText(label);
         view.setVisibility(View.VISIBLE);
     }
 

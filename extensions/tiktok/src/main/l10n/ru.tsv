@@ -2526,3 +2526,6 @@ The save stopped when you left Wi-Fi. Save it again on Wi-Fi.	Сохранени
 Leave after no touch	Выходить, если нет касаний
 Zero switches this off. After that many minutes with no touch on the screen, the video stops and TikTok goes to the background, for when you fall asleep watching. Any touch starts the wait over.	Ноль отключает это. Если столько минут не касаться экрана, видео останавливается и TikTok уходит в фон, на случай если вы уснули за просмотром. Любое касание начинает ожидание заново.
 Left TikTok after no touch	TikTok свёрнут: не было касаний
+Show when an account was made	Показывать дату создания аккаунта
+Under the @username on someone else's profile, show the month and year the account was made. It's read from the account's ID, so very old accounts show nothing.	Под @именем пользователя в чужом профиле показывать месяц и год создания аккаунта. Дата берётся из ID аккаунта, поэтому у очень старых аккаунтов ничего не показывается.
+Joined %s	Создан: %s

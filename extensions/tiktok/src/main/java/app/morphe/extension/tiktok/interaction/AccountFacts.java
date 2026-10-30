@@ -26,6 +26,7 @@ import java.util.TimeZone;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
+import app.morphe.extension.tiktok.publishdate.AlwaysShowPublishDatePatch;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
@@ -40,7 +41,8 @@ import app.morphe.extension.tiktok.settings.preference.SettingsUi;
  * A date or name the server didn't send says so rather than guessing. secret and
  * has_open_favorite can't say that, so they only get a line when they're true. When the
  * profile's model lacks the join date, region or language, the same account's author model on
- * one of the videos behind the sheet gives it.
+ * one of the videos behind the sheet gives it. A join date no model holds comes from the
+ * account's ID, whose top 32 bits are the time TikTok made it.
  */
 public final class AccountFacts {
     static final String SHOW_FACTS = "Account facts";
@@ -86,6 +88,7 @@ public final class AccountFacts {
         List<Fact> facts = new ArrayList<>();
         // 47.4.3 renamed the boxed join time to _createTime.
         Long joined = seconds(sources, "_createTime", "createTime", "registerTime");
+        if (joined == null) joined = madeAt(Reflect.string(user, "getUid", "uid"));
         facts.add(new Fact("Joined", date(joined, locale, zone)));
         String region = text(sources, "region");
         facts.add(new Fact("Region", country(region, locale)));
@@ -158,6 +161,13 @@ public final class AccountFacts {
         long raw = ((Number) value).longValue();
         if (raw <= 0) return null;
         return raw > LARGEST_SECONDS ? raw / 1000L : raw;
+    }
+
+    /** When TikTok made the account with this ID, in Unix seconds, or null for an ID that carries no time. */
+    @Nullable
+    static Long madeAt(@Nullable String uid) {
+        long seconds = AlwaysShowPublishDatePatch.fromId(uid, System.currentTimeMillis());
+        return seconds > 0 ? seconds : null;
     }
 
     static String date(@Nullable Long seconds, Locale locale, TimeZone zone) {

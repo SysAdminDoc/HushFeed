@@ -136,8 +136,11 @@ public final class AlwaysShowPublishDatePatch {
         return fromId(id, nowMillis);
     }
 
-    /** The posting time a post ID carries, in Unix seconds, or 0 when it isn't one. */
-    static long fromId(String id, long nowMillis) {
+    /**
+     * The posting time a post ID carries, in Unix seconds, or 0 when it isn't one. An account's
+     * ID carries the time it was made the same way, except musical.ly's short ones, which give 0.
+     */
+    public static long fromId(String id, long nowMillis) {
         if (id == null) {
             return 0;
         }

@@ -2349,3 +2349,6 @@ The save stopped when you left Wi-Fi. Save it again on Wi-Fi.	Wi-Fi-dan çıxand
 Leave after no touch	Toxunuş olmadıqda çıxın
 Zero switches this off. After that many minutes with no touch on the screen, the video stops and TikTok goes to the background, for when you fall asleep watching. Any touch starts the wait over.	Sıfır bunu söndürür. Ekrana bu qədər dəqiqə toxunulmadıqda video dayanır və TikTok arxa plana keçir, izləyərkən yuxuya getdiyiniz hallar üçün. İstənilən toxunuş gözləməni yenidən başladır.
 Left TikTok after no touch	Toxunuş olmadığı üçün TikTok-dan çıxıldı
+Show when an account was made	Hesabın nə vaxt yaradıldığını göstər
+Under the @username on someone else's profile, show the month and year the account was made. It's read from the account's ID, so very old accounts show nothing.	Başqasının profilində @istifadəçi adının altında hesabın yaradıldığı ayı və ili göstərin. Bu, hesabın ID-sindən oxunur, ona görə çox köhnə hesablarda heç nə görünmür.
+Joined %s	Qoşulub: %s

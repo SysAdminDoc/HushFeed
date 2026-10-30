@@ -2323,3 +2323,6 @@ The save stopped when you left Wi-Fi. Save it again on Wi-Fi.,Penyimpanan berhen
 Leave after no touch,Keluar jika layar tidak disentuh
 "Zero switches this off. After that many minutes with no touch on the screen, the video stops and TikTok goes to the background, for when you fall asleep watching. Any touch starts the wait over.","Nol mematikan ini. Setelah sekian menit layar tidak disentuh, video berhenti dan TikTok pindah ke latar belakang, untuk saat kamu tertidur sambil menonton. Sentuhan apa pun memulai ulang waktu tunggu."
 Left TikTok after no touch,Keluar dari TikTok karena tidak disentuh
+Show when an account was made,Tampilkan kapan akun dibuat
+"Under the @username on someone else's profile, show the month and year the account was made. It's read from the account's ID, so very old accounts show nothing.","Di bawah @nama pengguna pada profil orang lain, tampilkan bulan dan tahun akun itu dibuat. Ini dibaca dari ID akun, jadi akun yang sangat lama tidak menampilkan apa pun."
+Joined %s,Bergabung %s

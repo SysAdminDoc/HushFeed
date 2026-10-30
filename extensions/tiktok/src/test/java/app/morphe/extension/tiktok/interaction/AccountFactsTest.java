@@ -114,6 +114,19 @@ public class AccountFactsTest {
         assertEquals("Account region=United Kingdom (GB)", lines.get(2));
     }
 
+    @Test public void anAccountWithNoJoinTimeTakesItFromItsId() {
+        // TikTok's profile answer leaves the time out, but the ID's top 32 bits are 2020-01-22 00:50:08 UTC.
+        assertEquals("Joined=" + when(1_579_654_208L), lines(account("6784563164518679557")).get(0));
+
+        User sent = account("6784563164518679557");
+        sent.registerTime = 1_500_000_000L;
+        assertEquals("a time the server sent still wins", "Joined=" + when(1_500_000_000L), lines(sent).get(0));
+
+        assertEquals("musical.ly's short IDs carry no time", "Joined=Not sent", lines(account("107955")).get(0));
+        assertNull(AccountFacts.madeAt(null));
+        assertEquals(Long.valueOf(1_579_000_000L), AccountFacts.madeAt("6781753360689441741"));
+    }
+
     @Test public void theSheetCopiesAsOneLabelledLineEach() {
         List<AccountFacts.Fact> facts = List.of(
                 new AccountFacts.Fact("Region", "Germany (DE)"),

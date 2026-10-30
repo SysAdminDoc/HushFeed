@@ -2349,3 +2349,6 @@ The save stopped when you left Wi-Fi. Save it again on Wi-Fi.	O salvamento parou
 Leave after no touch	Sair se a tela não for tocada
 Zero switches this off. After that many minutes with no touch on the screen, the video stops and TikTok goes to the background, for when you fall asleep watching. Any touch starts the wait over.	Zero desliga isso. Depois desses minutos sem nenhum toque na tela, o vídeo para e o TikTok vai para segundo plano, para quando você dorme assistindo. Qualquer toque recomeça a espera.
 Left TikTok after no touch	Saiu do TikTok por inatividade
+Show when an account was made	Mostrar quando a conta foi criada
+Under the @username on someone else's profile, show the month and year the account was made. It's read from the account's ID, so very old accounts show nothing.	Abaixo do @usuário no perfil de outra pessoa, mostrar o mês e o ano em que a conta foi criada. Isso vem do ID da conta, então contas muito antigas não mostram nada.
+Joined %s	Entrou em %s

@@ -130,6 +130,58 @@ public class DownloadFolderPickerTest {
         assertTrue(String.valueOf(stored), String.valueOf(stored).contains("Restored"));
     }
 
+    /**
+     * A refused folder used to be a toast, and the reason lists the allowed folders, which ran
+     * past the two lines a toast shows. The screen behind the picker is usually rebuilt, so the
+     * folder box opens again holding the pick with the reason under it.
+     */
+    @Test public void aRefusedFolderReopensTheBoxWithTheReason() {
+        Activity activity = Robolectric.buildActivity(Activity.class).setup().get();
+        TikTokPreferenceFragment page = attach(activity, "DOWNLOADS");
+        Preference path = firstDownloadPath(page);
+        assertNotNull(path);
+        String before = path.getSharedPreferences().getString(path.getKey(), null);
+
+        TikTokPreferenceFragment.openDownloadPathFolderPicker(
+                (app.morphe.extension.tiktok.settings.preference.DownloadPathPreference) path);
+        page.onActivityResult(REQUEST_DOWNLOAD_PATH_FOLDER, Activity.RESULT_OK, treeIntent("primary:Music/Chosen"));
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+
+        assertNull("the refusal was toasted", ShadowToast.getTextOfLatestToast());
+        android.app.Dialog dialog = ((android.preference.DialogPreference) path).getDialog();
+        assertNotNull("the folder box didn't open again", dialog);
+        assertTrue(dialog.isShowing());
+        android.view.View root = dialog.getWindow().getDecorView();
+        android.widget.EditText field = firstEditText(root);
+        assertNotNull(field);
+        assertEquals("Music/Chosen", field.getText().toString());
+        android.widget.TextView error = root.findViewWithTag("hushfeed_field_error");
+        assertNotNull("no reason under the box", error);
+        assertEquals(android.view.View.VISIBLE, error.getVisibility());
+        String reason = null;
+        try {
+            app.morphe.extension.tiktok.download.DownloadDestination.validate("Music/Chosen",
+                    app.morphe.extension.tiktok.download.DownloadDestination.Kind.VIDEO);
+        } catch (IllegalArgumentException refused) {
+            reason = refused.getMessage();
+        }
+        assertNotNull("Music is no longer refused, so this test proves nothing", reason);
+        assertEquals(reason, error.getText().toString());
+        assertEquals(before, path.getSharedPreferences().getString(path.getKey(), null));
+    }
+
+    private static android.widget.EditText firstEditText(android.view.View view) {
+        if (view instanceof android.widget.EditText) return (android.widget.EditText) view;
+        if (view instanceof android.view.ViewGroup) {
+            android.view.ViewGroup group = (android.view.ViewGroup) view;
+            for (int index = 0; index < group.getChildCount(); index++) {
+                android.widget.EditText found = firstEditText(group.getChildAt(index));
+                if (found != null) return found;
+            }
+        }
+        return null;
+    }
+
     @Test public void aResultWithNothingWaitingSaysSo() {
         Activity activity = Robolectric.buildActivity(Activity.class).setup().get();
         TikTokPreferenceFragment page = attach(activity, "DOWNLOADS");

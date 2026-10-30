@@ -72,13 +72,8 @@ public class DownloadPathPreference extends DialogPreference {
 
     public void applyPickedPath(String path) {
         if (path == null) {
-            String error = app.morphe.extension.tiktok.settings.L10n.t(
-                    "Pick a folder on internal storage, not an SD card");
-            if (pathField != null && getDialog() != null && getDialog().isShowing()) {
-                SettingsUi.reportFieldError(pathField, error);
-            } else {
-                app.morphe.extension.shared.Utils.showToastLong(error);
-            }
+            refusePickedPath(null, app.morphe.extension.tiktok.settings.L10n.t(
+                    "Pick a folder on internal storage, not an SD card"));
             return;
         }
         try {
@@ -92,12 +87,22 @@ public class DownloadPathPreference extends DialogPreference {
                 app.morphe.extension.tiktok.settings.L10n.t("Destination updated"));
             }
         } catch (IllegalArgumentException ex) {
-            if (pathField != null && getDialog() != null && getDialog().isShowing()) {
-                SettingsUi.reportFieldError(pathField, ex.getMessage());
-            } else {
-                app.morphe.extension.shared.Utils.showToastLong(ex.getMessage());
-            }
+            refusePickedPath(path, ex.getMessage());
         }
+    }
+
+    /**
+     * Says why a picked folder can't be used, under the folder box. The picker is its own
+     * activity, so the screen behind it is usually rebuilt and this dialog gone by the time it
+     * answers. It opens again holding the folder, rather than a toast: the reason lists the
+     * allowed folders and ran past the two lines a toast shows.
+     */
+    private void refusePickedPath(String path, String problem) {
+        if (pathField == null || getDialog() == null || !getDialog().isShowing()) {
+            showDialog(null);
+        }
+        if (path != null) pathField.setText(path);
+        SettingsUi.reportFieldError(pathField, problem);
     }
 
     @Override

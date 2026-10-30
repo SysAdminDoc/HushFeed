@@ -655,22 +655,11 @@ public class SettingsL10nTest {
      * list only gets shorter: a new toast has to fit, and one that fits now comes off the list.
      */
     @Test public void everyToastFitsTwoLines() throws Exception {
-        java.io.File root = new java.io.File("src/main/java/app/morphe/extension/tiktok");
-        if (!root.isDirectory()) root = new java.io.File(
-                "extensions/tiktok/src/main/java/app/morphe/extension/tiktok");
-        assertTrue(root.isDirectory());
         java.util.Set<String> messages = new java.util.TreeSet<>();
-        Map<java.nio.file.Path, String> sources = new LinkedHashMap<>();
-        try (java.util.stream.Stream<java.nio.file.Path> files = java.nio.file.Files.walk(root.toPath())) {
-            for (java.nio.file.Path file : files.filter(p -> p.toString().endsWith(".java"))
-                    .collect(java.util.stream.Collectors.toList())) {
-                if (file.getFileName().toString().startsWith("L10nTranslations")) continue;
-                String source = new String(java.nio.file.Files.readAllBytes(file),
-                        java.nio.charset.StandardCharsets.UTF_8);
-                sources.put(file, source);
-                messages.addAll(toastLiteralsIn(source, false));
-                messages.addAll(toastVariableLiteralsIn(source));
-            }
+        Map<java.nio.file.Path, String> sources = toastScanSources();
+        for (String source : sources.values()) {
+            messages.addAll(toastLiteralsIn(source, false));
+            messages.addAll(toastVariableLiteralsIn(source));
         }
         messages.addAll(toastHelperLiteralsIn(sources));
         messages.addAll(refusalLiteralsIn(sources));
@@ -712,6 +701,82 @@ public class SettingsL10nTest {
         assertEquals(1, toastLines("因无触摸已离开 TikTok"));
         assertEquals(2, toastLines("零将其关闭。屏幕在这么多分钟内没有被触摸时"));
         assertEquals(3, toastLines("零将其关闭。屏幕在这么多分钟内没有被触摸时，视频会停止，TikTok"));
+    }
+
+    /** The extension's Java a toast scan reads, without the generated translation tables. */
+    private static Map<java.nio.file.Path, String> toastScanSources() throws java.io.IOException {
+        java.io.File root = new java.io.File("src/main/java/app/morphe/extension/tiktok");
+        if (!root.isDirectory()) root = new java.io.File(
+                "extensions/tiktok/src/main/java/app/morphe/extension/tiktok");
+        assertTrue(root.isDirectory());
+        Map<java.nio.file.Path, String> sources = new LinkedHashMap<>();
+        try (java.util.stream.Stream<java.nio.file.Path> files = java.nio.file.Files.walk(root.toPath())) {
+            for (java.nio.file.Path file : files.filter(p -> p.toString().endsWith(".java"))
+                    .collect(java.util.stream.Collectors.toList())) {
+                if (file.getFileName().toString().startsWith("L10nTranslations")) continue;
+                sources.put(file, new String(java.nio.file.Files.readAllBytes(file),
+                        java.nio.charset.StandardCharsets.UTF_8));
+            }
+        }
+        return sources;
+    }
+
+    /**
+     * A toast of {@code error.getMessage()} shows whatever sentence the exception was built
+     * with, and the wrap check can only measure the extension's own refusals, whose
+     * constructions it reads. The download path picker toasted IllegalArgumentException's
+     * message, and the allowed-folder list in it ran past two lines with nothing to catch it.
+     */
+    @Test public void everyToastedExceptionMessageIsARefusalTheScanReads() throws Exception {
+        ToastSources sources = new ToastSources(toastScanSources());
+        List<MessageToast> toasts = messageToastsIn(sources);
+        List<String> unmeasured = new ArrayList<>();
+        for (MessageToast toast : toasts) {
+            String why = toast.unmeasured(sources);
+            if (why != null) unmeasured.add(why);
+        }
+        assertTrue("the scan found too few message toasts to mean anything: " + toasts.size(),
+                toasts.size() >= 2);
+        assertTrue("these toasts show an exception's message the wrap check can't read. Throw one "
+                + "of the extension's own refusals, or show the reason somewhere it can wrap:\n"
+                + String.join("\n", unmeasured), unmeasured.isEmpty());
+    }
+
+    /** A message toast is traced to the refusals its catch names, and one it can't trace fails. */
+    @Test public void theMessageToastScanCanActuallyFail() {
+        String sentence = "Destinations must start with Download, Movies, Pictures, DCIM or Documents";
+        Map<java.nio.file.Path, String> texts = new LinkedHashMap<>();
+        texts.put(java.nio.file.Paths.get("Picker.java"), "class Picker {\n"
+                + "  void pick(String path) {\n"
+                + "    try { check(path); }\n"
+                + "    catch (IllegalArgumentException ex) { Utils.showToastLong(ex.getMessage()); }\n"
+                + "  }\n"
+                + "}\n");
+        texts.put(java.nio.file.Paths.get("Lab.java"), "class Lab {\n"
+                + "  void change() {\n"
+                + "    String notice;\n"
+                + "    try { notice = run(); }\n"
+                + "    catch (Exception error) {\n"
+                + "      boolean refused = error instanceof Refused;\n"
+                + "      notice = refused ? error.getMessage() : L10n.t(\"Try again.\");\n"
+                + "    }\n"
+                + "    Utils.showToastLong(notice);\n"
+                + "  }\n"
+                + "  String run() throws Refused { throw new Refused(L10n.t(\"" + sentence + "\")); }\n"
+                + "  static final class Refused extends Exception { Refused(String why) { super(why); } }\n"
+                + "}\n");
+        ToastSources sources = new ToastSources(texts);
+        List<MessageToast> toasts = messageToastsIn(sources);
+        assertEquals(2, toasts.size());
+        List<String> unmeasured = new ArrayList<>();
+        for (MessageToast toast : toasts) {
+            String why = toast.unmeasured(sources);
+            if (why != null) unmeasured.add(why);
+        }
+        assertEquals(unmeasured.toString(), 1, unmeasured.size());
+        assertTrue(unmeasured.get(0), unmeasured.get(0).startsWith("Picker:4 "));
+        assertTrue(refusalLiteralsIn(texts).contains(sentence));
+        assertTrue(toastLines(sentence) > 2);
     }
 
     /** A message handed to a toast through a variable is measured too, only from its own method. */
@@ -1125,7 +1190,8 @@ public class SettingsL10nTest {
      * its own body is a toast, and so is the sentence of every refusal it names: each
      * {@code new Refused(...)} in its own file, and each {@code new RuleLimitRefused(...)} in
      * FeatureGateLabStore, which the instanceof names. A class of the same name elsewhere is
-     * another class.
+     * another class. Every other toast of an exception's message adds the refusals its catch
+     * names, placed the same way (messageToastsIn).
      */
     private static java.util.List<String> refusalLiteralsIn(Map<java.nio.file.Path, String> texts) {
         ToastSources sources = new ToastSources(texts);
@@ -1147,36 +1213,203 @@ public class SettingsL10nTest {
                     java.util.regex.Matcher type = instance.matcher(text).region(body[0], body[1]);
                     while (type.find()) {
                         if (kind[type.start()] != CODE) continue;
-                        String[] qualifier = type.group(1).replaceAll("[\\s.]+$", "").split("\\s*\\.\\s*");
-                        String owner = qualifier[qualifier.length - 1];
-                        Set<java.nio.file.Path> where = refusals.computeIfAbsent(type.group(2),
-                                name -> new LinkedHashSet<>());
-                        if (owner.isEmpty()) {
-                            where.add(path);
-                            where.addAll(sources.classes.getOrDefault(type.group(2), new ArrayList<>()));
-                        } else {
-                            where.addAll(sources.classes.getOrDefault(owner, new ArrayList<>()));
-                        }
+                        placeRefusal(sources, path, type.group(1), type.group(2), refusals);
                     }
                 }
             }
         }
+        for (MessageToast toast : messageToastsIn(sources)) {
+            for (String[] type : toast.types) placeRefusal(sources, toast.path, type[0], type[1], refusals);
+        }
+        found.addAll(constructionLiterals(sources, refusals));
+        return found;
+    }
+
+    /**
+     * The files a refusal type, written at {@code path} as {@code qualifier} then {@code name}, is
+     * built in: the named owner's, or with no owner its own file and any file of its name.
+     */
+    private static void placeRefusal(ToastSources sources, java.nio.file.Path path, String qualifier,
+                                     String name, Map<String, Set<java.nio.file.Path>> refusals) {
+        String[] parts = qualifier.replaceAll("[\\s.]+$", "").split("\\s*\\.\\s*");
+        String owner = parts[parts.length - 1];
+        Set<java.nio.file.Path> where = refusals.computeIfAbsent(name, key -> new LinkedHashSet<>());
+        if (owner.isEmpty()) {
+            where.add(path);
+            where.addAll(sources.classes.getOrDefault(name, new ArrayList<>()));
+        } else {
+            where.addAll(sources.classes.getOrDefault(owner, new ArrayList<>()));
+        }
+    }
+
+    /**
+     * Every L10n literal a refusal can carry: the arguments of each {@code new Type(...)} in the
+     * files it is placed in, and of each {@code super(...)} in its own class, where a refusal
+     * that builds its own sentence holds it.
+     */
+    private static java.util.List<String> constructionLiterals(ToastSources sources,
+                                                               Map<String, Set<java.nio.file.Path>> refusals) {
+        java.util.List<String> found = new java.util.ArrayList<>();
         for (Map.Entry<String, Set<java.nio.file.Path>> refusal : refusals.entrySet()) {
             java.util.regex.Pattern made = java.util.regex.Pattern
                     .compile("\\bnew\\s+(?:\\w+\\s*\\.\\s*)*" + refusal.getKey() + "\\s*\\(");
+            java.util.regex.Pattern declared = java.util.regex.Pattern
+                    .compile("\\bclass\\s+" + refusal.getKey() + "\\b[^{;]*\\{");
             for (java.nio.file.Path path : refusal.getValue()) {
-                String text = texts.get(path);
+                String text = sources.texts.get(path);
                 byte[] kind = sources.kinds.get(path);
+                List<int[]> calls = new ArrayList<>();
                 java.util.regex.Matcher construction = made.matcher(text);
                 while (construction.find()) {
-                    if (kind[construction.start()] != CODE) continue;
-                    int open = construction.end() - 1;
-                    int close = closingBracket(text, kind, open);
-                    if (close > 0) found.addAll(sources.shown(path, open + 1, close, new java.util.HashSet<>()));
+                    if (kind[construction.start()] == CODE) calls.add(new int[]{construction.end() - 1});
+                }
+                java.util.regex.Matcher type = declared.matcher(text);
+                while (type.find()) {
+                    if (kind[type.start()] != CODE) continue;
+                    int end = closingBrace(text, kind, type.end() - 1);
+                    if (end < 0) continue;
+                    java.util.regex.Matcher handed = SUPER_CALL.matcher(text).region(type.end(), end);
+                    while (handed.find()) {
+                        if (kind[handed.start()] == CODE) calls.add(new int[]{handed.end() - 1});
+                    }
+                }
+                for (int[] call : calls) {
+                    int close = closingBracket(text, kind, call[0]);
+                    if (close > 0) found.addAll(sources.shown(path, call[0] + 1, close, new java.util.HashSet<>()));
                 }
             }
         }
         return found;
+    }
+
+    /** A constructor handing its superclass what it was built with. */
+    private static final java.util.regex.Pattern SUPER_CALL = java.util.regex.Pattern.compile("\\bsuper\\s*\\(");
+
+    /** A read of an exception's message, as {@code error.getMessage()}, and the name it reads. */
+    private static final java.util.regex.Pattern MESSAGE_READ = java.util.regex.Pattern
+            .compile("\\b([a-z]\\w*)\\s*\\.\\s*get(?:Localized)?Message\\s*\\(");
+
+    /**
+     * A toast that shows an exception's message: where it reads it, the name it reads, and the
+     * types the catch around the read says the exception is, each as its written qualifier
+     * ("" or "FeatureGateLabStore.") and its name.
+     */
+    private static final class MessageToast {
+        final java.nio.file.Path path;
+        final int at;
+        final String exception;
+        final List<String[]> types;
+
+        MessageToast(java.nio.file.Path path, int at, String exception, List<String[]> types) {
+            this.path = path;
+            this.at = at;
+            this.exception = exception;
+            this.types = types;
+        }
+
+        String where(ToastSources sources) {
+            String text = sources.texts.get(path);
+            int line = 1;
+            for (int index = 0; index < at; index++) if (text.charAt(index) == '\n') line++;
+            return ToastSources.className(path) + ":" + line;
+        }
+
+        /** Why the wrap scan can't measure what this toast shows, or null when it can. */
+        String unmeasured(ToastSources sources) {
+            if (types.isEmpty()) {
+                return where(sources) + " shows " + exception + ".getMessage(), and no catch around it"
+                        + " says what " + exception + " is";
+            }
+            for (String[] type : types) {
+                if (!declares(sources, path, type[0], type[1])) {
+                    return where(sources) + " shows the message of " + type[0].replaceAll("\\s", "")
+                            + type[1] + ", which isn't a class here, so what it says can't be found";
+                }
+            }
+            return null;
+        }
+    }
+
+    /**
+     * Every toast that shows an exception's message: a read in what a toast or a wrapper is
+     * handed, followed through locals and method answers as toastHelperLiteralsIn follows them,
+     * and a read in a toast presenter's body, whose answer it can be. A catch that tests its
+     * exception with instanceof, as runLabChange does, is taken to show the message of what it
+     * tests; otherwise of what it catches.
+     */
+    private static List<MessageToast> messageToastsIn(ToastSources sources) {
+        toastHelperLiteralsIn(sources);
+        for (java.nio.file.Path path : sources.texts.keySet()) {
+            for (String presenter : toastPresentersIn(sources.texts.get(path), sources.kinds.get(path))) {
+                for (int[] body : sources.bodiesOf(path, presenter)) sources.noteMessageReads(path, body[0], body[1]);
+            }
+        }
+        List<MessageToast> toasts = new ArrayList<>();
+        for (Map.Entry<java.nio.file.Path, java.util.TreeMap<Integer, String>> reads : sources.messageReads.entrySet()) {
+            String text = sources.texts.get(reads.getKey());
+            byte[] kind = sources.kinds.get(reads.getKey());
+            for (Map.Entry<Integer, String> read : reads.getValue().entrySet()) {
+                toasts.add(new MessageToast(reads.getKey(), read.getKey(), read.getValue(),
+                        caughtTypes(text, kind, read.getValue(), read.getKey())));
+            }
+        }
+        return toasts;
+    }
+
+    /**
+     * What the catch around a read of {@code name}'s message at {@code at} says the exception
+     * is: each type its block tests {@code name} against with instanceof, or else each type it
+     * catches. Empty when {@code name} is no catch's exception there.
+     */
+    private static List<String[]> caughtTypes(String text, byte[] kind, String name, int at) {
+        java.util.regex.Matcher caught = java.util.regex.Pattern
+                .compile("\\bcatch\\s*\\(\\s*(?:final\\s+)?([\\w.|\\s]+?)\\s+" + name + "\\s*\\)\\s*\\{")
+                .matcher(text);
+        caught.region(methodBodyStart(text, kind, at), at);
+        int open = -1;
+        int close = -1;
+        String named = null;
+        // The last catch still open at the read is the one around it.
+        while (caught.find()) {
+            if (kind[caught.start()] != CODE) continue;
+            int end = closingBrace(text, kind, caught.end() - 1);
+            if (end > at) {
+                open = caught.end() - 1;
+                close = end;
+                named = caught.group(1);
+            }
+        }
+        List<String[]> types = new ArrayList<>();
+        if (named == null) return types;
+        java.util.regex.Matcher tested = java.util.regex.Pattern
+                .compile("\\b" + name + "\\s+instanceof\\s+((?:\\w+\\s*\\.\\s*)*)(\\w+)").matcher(text);
+        tested.region(open, close);
+        while (tested.find()) {
+            if (kind[tested.start()] == CODE) types.add(new String[]{tested.group(1), tested.group(2)});
+        }
+        if (!types.isEmpty()) return types;
+        for (String type : named.split("\\|")) {
+            java.util.regex.Matcher parts = java.util.regex.Pattern
+                    .compile("((?:\\w+\\s*\\.\\s*)*)(\\w+)").matcher(type.trim());
+            if (parts.matches()) types.add(new String[]{parts.group(1), parts.group(2)});
+        }
+        return types;
+    }
+
+    /** Whether a type written at {@code path} as {@code qualifier} then {@code name} is declared in the sources. */
+    private static boolean declares(ToastSources sources, java.nio.file.Path path, String qualifier, String name) {
+        Map<String, Set<java.nio.file.Path>> placed = new LinkedHashMap<>();
+        placeRefusal(sources, path, qualifier, name, placed);
+        java.util.regex.Pattern declared = java.util.regex.Pattern.compile("\\bclass\\s+" + name + "\\b");
+        for (java.nio.file.Path file : placed.get(name)) {
+            String text = sources.texts.get(file);
+            byte[] kind = sources.kinds.get(file);
+            java.util.regex.Matcher type = declared.matcher(text);
+            while (type.find()) {
+                if (kind[type.start()] == CODE) return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -1278,11 +1511,14 @@ public class SettingsL10nTest {
      * that the %1$s it fills is already counted for, so it is left out too.
      */
     private static java.util.List<String> toastHelperLiteralsIn(Map<java.nio.file.Path, String> texts) {
-        ToastSources sources = new ToastSources(texts);
+        return toastHelperLiteralsIn(new ToastSources(texts));
+    }
+
+    private static java.util.List<String> toastHelperLiteralsIn(ToastSources sources) {
         Set<String> wrappers = toastWrappers(sources);
         java.util.List<String> found = new java.util.ArrayList<>();
-        for (java.nio.file.Path path : texts.keySet()) {
-            String text = texts.get(path);
+        for (java.nio.file.Path path : sources.texts.keySet()) {
+            String text = sources.texts.get(path);
             byte[] kind = sources.kinds.get(path);
             java.util.regex.Matcher call = CALLED.matcher(text);
             while (call.find()) {
@@ -1354,6 +1590,8 @@ public class SettingsL10nTest {
         final Map<java.nio.file.Path, byte[]> kinds = new LinkedHashMap<>();
         final Map<java.nio.file.Path, byte[]> outside = new LinkedHashMap<>();
         final Map<String, List<java.nio.file.Path>> classes = new LinkedHashMap<>();
+        /** Each read of an exception's message that shown walked past, by place, with the name it reads. */
+        final Map<java.nio.file.Path, java.util.TreeMap<Integer, String>> messageReads = new LinkedHashMap<>();
 
         ToastSources(Map<java.nio.file.Path, String> texts) {
             this.texts = texts;
@@ -1427,6 +1665,7 @@ public class SettingsL10nTest {
          * is, when it's one name, and the answer of each method it calls outside any brackets.
          */
         List<String> shown(java.nio.file.Path path, int from, int to, Set<String> seen) {
+            noteMessageReads(path, from, to);
             String text = texts.get(path);
             byte[] kind = kinds.get(path);
             byte[] code = outside.get(path);
@@ -1458,6 +1697,17 @@ public class SettingsL10nTest {
                 }
             }
             return found;
+        }
+
+        /** Records each read of an exception's message between {@code from} and {@code to}. */
+        void noteMessageReads(java.nio.file.Path path, int from, int to) {
+            byte[] kind = kinds.get(path);
+            java.util.regex.Matcher read = MESSAGE_READ.matcher(texts.get(path)).region(from, to);
+            while (read.find()) {
+                if (kind[read.start()] != CODE) continue;
+                messageReads.computeIfAbsent(path, key -> new java.util.TreeMap<>())
+                        .put(read.start(), read.group(1));
+            }
         }
 
         /** The body of each method called {@code name} that {@code path} declares, as its two braces. */

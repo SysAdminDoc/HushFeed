@@ -1169,6 +1169,15 @@
           "values": null
         },
         {
+          "key": "idle_leave_minutes",
+          "title": "Default: idle leave minutes",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 0,
+          "values": null
+        },
+        {
           "key": "session_budget_videos",
           "title": "Default: session budget videos",
           "description": null,

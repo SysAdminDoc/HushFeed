@@ -2346,3 +2346,6 @@ The last one is still waiting for Wi-Fi	Bir önceki hâlâ Wi-Fi bekliyor
 Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.	30 dakika sonra Wi-Fi beklemesi bırakıldı. Wi-Fi'a bağlanınca yeniden kaydet.
 Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.	%2$s dosyadan %1$s kaydedildi. Kalanlar Wi-Fi'dan çıkınca durdu. Wi-Fi ile yeniden kaydet.
 The save stopped when you left Wi-Fi. Save it again on Wi-Fi.	Wi-Fi'dan çıkınca kayıt durdu. Wi-Fi ile yeniden kaydet.
+Leave after no touch	Dokunulmazsa uygulamadan çık
+Zero switches this off. After that many minutes with no touch on the screen, the video stops and TikTok goes to the background, for when you fall asleep watching. Any touch starts the wait over.	Sıfır bunu kapatır. Ekrana o kadar dakika dokunulmazsa video durur ve TikTok arka plana geçer, izlerken uyuyakaldığın durumlar için. Herhangi bir dokunuş beklemeyi baştan başlatır.
+Left TikTok after no touch	Dokunulmadığı için TikTok'tan çıkıldı

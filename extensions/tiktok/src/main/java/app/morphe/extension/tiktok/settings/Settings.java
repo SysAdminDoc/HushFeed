@@ -786,6 +786,12 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting LEAVE_ON_REST_REMINDER = new BooleanSetting(
             "leave_on_rest_reminder", FALSE);
     /**
+     * Minutes a TikTok screen can go without a touch before TikTok goes to the background, or
+     * zero for never. Off by default. See IdleLeave.
+     */
+    public static final IntegerSetting IDLE_LEAVE_MINUTES = new IntegerSetting(
+            "idle_leave_minutes", 0).withRange(0, 240);
+    /**
      * A daily budget for the feed, off at zero. The two counts are independent of
      * {@link #AUTO_ADVANCE_LIMIT}, which only ever counted videos Hushfeed itself advanced past.
      */

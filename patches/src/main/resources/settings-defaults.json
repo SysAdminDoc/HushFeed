@@ -72,6 +72,7 @@
       "pause_first_video",
       "keep_paused_on_return",
       "leave_on_rest_reminder",
+      "idle_leave_minutes",
       "session_budget_videos",
       "session_budget_minutes",
       "session_budget_lock_minutes",
@@ -2487,6 +2488,14 @@
       "key": "home_tab_opens_settings",
       "type": "boolean",
       "default": true
+    },
+    "idle_leave_minutes": {
+      "field": "IDLE_LEAVE_MINUTES",
+      "key": "idle_leave_minutes",
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "maximum": 240
     },
     "imported_font": {
       "field": "IMPORTED_FONT",

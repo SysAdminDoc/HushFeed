@@ -19,6 +19,7 @@ import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsReturn;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 import app.morphe.extension.tiktok.settings.TikTokActivityHook;
+import app.morphe.extension.tiktok.wellbeing.IdleLeave;
 
 /**
  * A long press on the Home tab opens Hushfeed's settings (#45), which otherwise sit behind
@@ -87,6 +88,9 @@ public final class HomeTabSettingsShortcut {
         // moved to TikTok's own (#227). Always on, so it has no patch or setting of its own.
         if (context instanceof Activity) LinkTaskGuard.onMainActivityCreate((Activity) context);
         if (context instanceof Activity) SettingsReturn.onMainActivityCreated();
+        // And the wait under Screen time that leaves TikTok after no touch, which follows every
+        // screen from here.
+        if (context instanceof Activity) IdleLeave.onMainActivityCreate((Activity) context);
         try {
             if (!(context instanceof Activity) || !SettingsStatus.feedNavigationEnabled) return;
             FRONT.add((Activity) context);

@@ -116,6 +116,11 @@ public final class ScreenTimePreferenceCategory extends ConditionalPreferenceCat
                         + "reminder on screen, so the limit stays reachable. Needs a daily limit "
                         + "set under TikTok's Settings and privacy, under Time and well-being.",
                 Settings.LEAVE_ON_REST_REMINDER));
+        addPreference(new NumberInputPreference(context, "Leave after no touch",
+                "Zero switches this off. After that many minutes with no touch on the screen, the "
+                        + "video stops and TikTok goes to the background, for when you fall asleep "
+                        + "watching. Any touch starts the wait over.",
+                Settings.IDLE_LEAVE_MINUTES, "%1$s minute", "%1$s minutes").zeroMeansOff());
 
         addPreference(new SectionHeadingPreference(context, "Daily budget"));
         addPreference(new NumberInputPreference(context, "Daily video budget",

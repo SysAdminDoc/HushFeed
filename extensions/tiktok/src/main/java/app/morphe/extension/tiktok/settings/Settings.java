@@ -381,6 +381,15 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_MESSAGE_STREAKS =
             new BooleanSetting("hide_message_streaks", FALSE);
     /**
+     * Leaves a message in the chat when the other person unsends it. Messages you unsend
+     * yourself are still removed. Off by default. See KeepUnsent.
+     */
+    public static final BooleanSetting KEEP_UNSENT_MESSAGES =
+            new BooleanSetting("keep_unsent_messages", FALSE);
+    /** Adds "unsent" after the text of a message Keep unsent messages kept. On by default. See KeepUnsent. */
+    public static final BooleanSetting MARK_KEPT_UNSENT_MESSAGES =
+            new BooleanSetting("mark_kept_unsent_messages", TRUE);
+    /**
      * Dispatches one message per selected chat a day at {@link #AUTO_STREAK_MINUTE},
      * so a streak with them keeps going on a day nobody opens the app. Off by default. See
      * AutoStreak.

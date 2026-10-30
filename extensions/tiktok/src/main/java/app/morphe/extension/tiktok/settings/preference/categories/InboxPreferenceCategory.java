@@ -11,8 +11,10 @@ import android.preference.PreferenceScreen;
 
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.inbox.AutoStreak;
+import app.morphe.extension.tiktok.inbox.KeepUnsent;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
+import app.morphe.extension.tiktok.settings.preference.ClearKeptMessagesPreference;
 import app.morphe.extension.tiktok.settings.preference.ClockTimePreference;
 import app.morphe.extension.tiktok.settings.preference.InputTextPreference;
 import app.morphe.extension.tiktok.settings.preference.SectionHeadingPreference;
@@ -34,6 +36,7 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
                 || SettingsStatus.chatDeclutterEnabled
                 || SettingsStatus.expandActivityListEnabled
                 || SettingsStatus.notificationControlsEnabled
+                || SettingsStatus.keepUnsentEnabled
                 || SettingsStatus.suggestedVideoPushBlockEnabled
                 || SettingsStatus.autoStreakEnabled
                 || SettingsStatus.dmTranslationPreviewEnabled
@@ -252,6 +255,9 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
         if (SettingsStatus.autoStreakEnabled) {
             addStreakRows(context);
         }
+        if (SettingsStatus.keepUnsentEnabled) {
+            addKeepUnsentRows(context);
+        }
     }
 
     private void addStreakRows(Context context) {
@@ -314,5 +320,27 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
                 Settings.AUTO_STREAK_MESSAGE
         ));
         addPreference(new SendStreakNowPreference(context, refresh));
+    }
+
+    private void addKeepUnsentRows(Context context) {
+        addPreference(new SectionHeadingPreference(context, "Unsent messages"));
+        TogglePreference keep = new TogglePreference(
+                context,
+                "Keep unsent messages",
+                "When someone unsends a message, it stays in your chat instead of disappearing. "
+                        + "Messages you unsend yourself are still removed.",
+                Settings.KEEP_UNSENT_MESSAGES
+        );
+        Runnable refresh = () -> keep.showExtraLine(KeepUnsent.statusLine());
+        refresh.run();
+        addPreference(keep);
+        addPreference(new TogglePreference(
+                context,
+                "Mark kept messages",
+                "Adds (unsent) after the text of a message that was kept, so you can tell it apart "
+                        + "from the rest.",
+                Settings.MARK_KEPT_UNSENT_MESSAGES
+        ));
+        addPreference(new ClearKeptMessagesPreference(context, refresh));
     }
 }

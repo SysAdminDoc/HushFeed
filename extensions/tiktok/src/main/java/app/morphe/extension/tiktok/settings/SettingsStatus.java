@@ -127,6 +127,7 @@ public class SettingsStatus {
     public static boolean firstLaunchSetupEnabled = false;
     public static boolean duetStitchEnabled = false;
     public static boolean notificationControlsEnabled = false;
+    public static boolean keepUnsentEnabled = false;
     public static boolean suggestedVideoPushBlockEnabled = false;
     public static boolean autoStreakEnabled = false;
     public static boolean hideSuggestedAccountsEnabled = false;
@@ -537,6 +538,10 @@ public class SettingsStatus {
 
     public static void enableNotificationControls() {
         notificationControlsEnabled = true;
+    }
+
+    public static void enableKeepUnsent() {
+        keepUnsentEnabled = true;
     }
 
     public static void enableSuggestedVideoPushBlock() {

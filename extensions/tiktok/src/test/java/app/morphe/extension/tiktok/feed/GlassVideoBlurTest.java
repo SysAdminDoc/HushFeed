@@ -11,9 +11,11 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.view.TextureView;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -29,6 +31,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.annotation.GraphicsMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -438,6 +441,75 @@ public class GlassVideoBlurTest {
             glass.blur.step(4000);
             assertFalse("TikTok's own background came back", glass.blur.sampling());
             assertEquals(0, video.reads.size());
+        }
+    }
+
+    /**
+     * A LIVE preview in For You plays in a TextureView, which PixelCopy can't read (PR #259). With
+     * no SurfaceView on screen the blur reads it through its own copy, an eighth of its size, and
+     * cuts the pill's strip from that, the sample's own size so nothing is stretched.
+     */
+    @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    public void aTextureViewPlayerIsReadWhenNoSurfaceViewIsThere() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            Activity activity = controller.get();
+            FrameLayout root = new FrameLayout(activity);
+            Player player = new Player(activity);
+            root.addView(player, new FrameLayout.LayoutParams(WIDTH, 2400));
+            FrameLayout bar = new Bar(activity);
+            root.addView(bar, new FrameLayout.LayoutParams(WIDTH, HEIGHT));
+            activity.setContentView(root);
+            root.measure(View.MeasureSpec.makeMeasureSpec(WIDTH, View.MeasureSpec.EXACTLY),
+                    View.MeasureSpec.makeMeasureSpec(2400, View.MeasureSpec.EXACTLY));
+            root.layout(0, 0, WIDTH, 2400);
+
+            GlassVideoBlur.Source source = GlassVideoBlur.findSource(bar);
+            assertNotNull(source);
+            Rect video = source.bounds();
+            assertEquals(GlassVideoBlur.boundsInWindow(player), video);
+            assertEquals(WIDTH / GlassVideoBlur.SAMPLE_DIVISOR, source.bufferWidth());
+            assertEquals(2400 / GlassVideoBlur.SAMPLE_DIVISOR, source.bufferHeight());
+
+            Rect pill = new Rect(54, video.top + 2250, 1026, video.top + 2380);
+            Rect from = GlassVideoBlur.sourceRect(pill, video, source.bufferWidth(), source.bufferHeight());
+            int[] size = GlassVideoBlur.sampleSize(pill.width(), pill.height());
+            assertEquals(size[0], from.width(), 1);
+            assertEquals(size[1], from.height(), 1);
+            Bitmap sample = Bitmap.createBitmap(size[0], size[1], Bitmap.Config.ARGB_8888);
+            boolean[] copied = {false};
+            source.read(from, sample, done -> copied[0] = done);
+            assertTrue(copied[0]);
+            assertEquals("the bottom of the picture, where the pill sits",
+                    Color.BLUE, sample.getPixel(size[0] / 2, size[1] / 2));
+            assertTrue(source.current());
+
+            player.available = false;
+            assertFalse("the player let its picture go", source.current());
+            source.read(from, sample, done -> copied[0] = done);
+            assertFalse(copied[0]);
+            assertNull("nothing to read, so the plain glass stays", GlassVideoBlur.findSource(bar));
+        }
+    }
+
+    /** A TextureView player whose picture the test paints: red, with a blue band along its bottom tenth. */
+    private static final class Player extends TextureView {
+        boolean available = true;
+
+        Player(Activity activity) {
+            super(activity);
+        }
+
+        @Override public boolean isAvailable() {
+            return available;
+        }
+
+        @Override public Bitmap getBitmap(Bitmap bitmap) {
+            bitmap.eraseColor(Color.RED);
+            Paint blue = new Paint();
+            blue.setColor(Color.BLUE);
+            new Canvas(bitmap).drawRect(0, bitmap.getHeight() * 0.9f, bitmap.getWidth(), bitmap.getHeight(), blue);
+            return bitmap;
         }
     }
 

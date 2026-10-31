@@ -21,6 +21,7 @@ import android.os.SystemClock;
 import android.view.PixelCopy;
 import android.view.Surface;
 import android.view.SurfaceView;
+import android.view.TextureView;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
@@ -42,8 +43,10 @@ import java.util.List;
  *
  * <p>The video is found the way the frame save finds it: the player's own layer under the feed's
  * SurfaceView ({@link PlayerLayers}) when it draws into one, else the SurfaceView itself, measured
- * as drawn (TikTok scales it up a little). A TextureView, or a window with no video under most of
- * the pill, has nothing to read, and the plain glass stays. One bitmap is kept and written in
+ * as drawn (TikTok scales it up a little). With no SurfaceView to read, a TextureView player (a
+ * LIVE preview in For You) is read whole and small through its own copy instead, and the pill's
+ * strip cut from that. A window with no video under most of the pill has nothing to read, and
+ * the plain glass stays. One bitmap is kept and written in
  * place. It is sampled at an eighth of the pill's size about 20 times a second while the bar is on
  * screen and the window has focus, a few times a second once the picture has stopped changing (a
  * paused video), and not at all once the switch is off, Hushfeed is paused, the bar is hidden or
@@ -383,7 +386,11 @@ final class GlassVideoBlur {
         Logger.printDebug(() -> "Glass blur: " + line);
     }
 
-    /** The video behind the bar: the player's layer under the SurfaceView it draws into, else the SurfaceView. */
+    /**
+     * The video behind the bar: the player's layer under the SurfaceView it draws into, else the
+     * SurfaceView, else a TextureView with a picture in it. The SurfaceViews go first, so the
+     * ordinary feed video reads the way it always has.
+     */
     @android.annotation.TargetApi(26)
     static Source findSource(View bar) {
         List<View> videos = PictureInPicture.videoViews(bar.getRootView());
@@ -400,12 +407,30 @@ final class GlassVideoBlur {
                 return new ViewSource(surface, bounds, frame.width(), frame.height());
             }
         }
+        for (View video : videos) {
+            if (!(video instanceof TextureView) || !((TextureView) video).isAvailable()) continue;
+            Rect bounds = boundsInWindow(video);
+            if (!bounds.isEmpty()) return new TextureSource((TextureView) video, bounds);
+        }
         return null;
     }
 
     /** Whether {@code view} is shown and still draws where it did at {@code bounds}. */
-    private static boolean stillAt(SurfaceView view, Rect bounds) {
+    private static boolean stillAt(View view, Rect bounds) {
         return view.isShown() && boundsInWindow(view).equals(bounds);
+    }
+
+    /** The whole-frame copy a TextureView is read into: its drawn size cut by {@link #SAMPLE_DIVISOR}, at least a pixel. */
+    static int[] frameSize(Rect bounds) {
+        return sampleSize(bounds.width(), bounds.height());
+    }
+
+    private static final Paint STRIP_PAINT = new Paint(Paint.FILTER_BITMAP_FLAG);
+
+    /** Draws the part {@code from} of {@code frame} over all of {@code into}, smoothed. */
+    static void copyStrip(Bitmap frame, Rect from, Bitmap into) {
+        into.eraseColor(0);
+        new Canvas(into).drawBitmap(frame, from, new Rect(0, 0, into.getWidth(), into.getHeight()), STRIP_PAINT);
     }
 
     private static Handler mainHandler() {
@@ -483,6 +508,49 @@ final class GlassVideoBlur {
 
         @Override public void read(Rect from, Bitmap into, Done done) {
             PixelCopy.request(view, from, into, result -> done.done(result == PixelCopy.SUCCESS), mainHandler());
+        }
+    }
+
+    /**
+     * A TextureView player. PixelCopy takes only surfaces and windows, so its own getBitmap copies
+     * the whole picture, small, into one kept bitmap, and the pill's strip is cut from that. The
+     * buffer this source reports is that small copy, so the strip maps straight onto it.
+     */
+    private static final class TextureSource implements Source {
+        private final TextureView view;
+        private final Rect bounds;
+        private final Bitmap frame;
+
+        TextureSource(TextureView view, Rect bounds) {
+            this.view = view;
+            this.bounds = bounds;
+            int[] size = frameSize(bounds);
+            frame = Bitmap.createBitmap(size[0], size[1], Bitmap.Config.ARGB_8888);
+        }
+
+        @Override public Rect bounds() {
+            return bounds;
+        }
+
+        @Override public int bufferWidth() {
+            return frame.getWidth();
+        }
+
+        @Override public int bufferHeight() {
+            return frame.getHeight();
+        }
+
+        @Override public boolean current() {
+            return view.isAvailable() && stillAt(view, bounds);
+        }
+
+        @Override public void read(Rect from, Bitmap into, Done done) {
+            if (!view.isAvailable() || view.getBitmap(frame) == null) {
+                done.done(false);
+                return;
+            }
+            copyStrip(frame, from, into);
+            done.done(true);
         }
     }
 

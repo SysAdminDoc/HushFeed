@@ -7,6 +7,7 @@ package app.morphe.patches.tiktok.misc.comment
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
+import app.morphe.patcher.util.proxy.mutableTypes.MutableClass
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
@@ -183,11 +184,14 @@ private fun stickerBridge(name: String, parameters: List<String>, returnType: St
     ).apply { addInstructions(0, smali) }
 
 /** The bridge bodies StickerCreator's stubs get, by name. Each passes its arguments straight on. */
-internal fun stickerCreatorBridges(calls: StickerCreatorCalls, accessFlags: Int = AccessFlags.STATIC.value): List<MutableMethod> {
+internal fun stickerCreatorBridges(
+    calls: StickerCreatorCalls,
+    flagsFor: (String) -> Int = { AccessFlags.STATIC.value },
+): List<MutableMethod> {
     val continuation = calls.continuation
     return listOf(
         stickerBridge(
-            "uploadConfig", listOf(STICKER_OBJECT), STICKER_OBJECT, 1, accessFlags,
+            "uploadConfig", listOf(STICKER_OBJECT), STICKER_OBJECT, 1, flagsFor("uploadConfig"),
             """
                 check-cast p0, $continuation
                 invoke-static { p0 }, ${calls.uploadConfig.stickerDescriptor()}
@@ -196,7 +200,7 @@ internal fun stickerCreatorBridges(calls: StickerCreatorCalls, accessFlags: Int 
             """,
         ),
         stickerBridge(
-            "uploadServerParameter", listOf(), STICKER_STRING, 1, accessFlags,
+            "uploadServerParameter", listOf(), STICKER_STRING, 1, flagsFor("uploadServerParameter"),
             """
                 invoke-static { }, ${calls.serverParameter.stickerDescriptor()}
                 move-result-object v0
@@ -207,7 +211,7 @@ internal fun stickerCreatorBridges(calls: StickerCreatorCalls, accessFlags: Int 
         stickerBridge(
             "saveSticker",
             listOf("I", STICKER_STRING, "I", "I", "Ljava/util/List;", STICKER_STRING, "Ljava/lang/Integer;", STICKER_OBJECT),
-            STICKER_OBJECT, 1, accessFlags,
+            STICKER_OBJECT, 1, flagsFor("saveSticker"),
             """
                 invoke-static { }, ${calls.stickerApi.reference.stickerDescriptor()}
                 move-result-object v0
@@ -218,7 +222,7 @@ internal fun stickerCreatorBridges(calls: StickerCreatorCalls, accessFlags: Int 
             """,
         ),
         stickerBridge(
-            "addToSaved", listOf(STICKER_OBJECT), "V", 1, accessFlags,
+            "addToSaved", listOf(STICKER_OBJECT), "V", 1, flagsFor("addToSaved"),
             """
                 sget-object v0, ${calls.storeHolder.stickerDescriptor()}
                 ${calls.storeApi.invoke} { v0 }, ${calls.storeApi.reference.stickerDescriptor()}
@@ -231,13 +235,34 @@ internal fun stickerCreatorBridges(calls: StickerCreatorCalls, accessFlags: Int 
             """,
         ),
         stickerBridge(
-            "continuationType", listOf(), "Ljava/lang/Class;", 1, accessFlags,
+            "continuationType", listOf(), "Ljava/lang/Class;", 1, flagsFor("continuationType"),
             """
                 const-class v0, $continuation
                 return-object v0
             """,
         ),
     )
+}
+
+/**
+ * Puts the bridges in place of StickerCreator's stubs. Each bridge keeps its stub's flags: R8 makes
+ * the Java package-private stubs public, and the extension's callers were built against that.
+ */
+internal fun MutableClass.swapStickerStubs(calls: StickerCreatorCalls) {
+    val stubs = stickerCreatorBridges(calls).associate { shape ->
+        val stub = methods.singleOrNull {
+            it.name == shape.name && it.returnType == shape.returnType &&
+                it.parameterTypes.map { type -> type.toString() } == shape.parameterTypes.map { type -> type.toString() }
+        } ?: throw PatchException("Create stickers: StickerCreator has no ${shape.name} stub")
+        if (!AccessFlags.STATIC.isSet(stub.accessFlags)) {
+            throw PatchException("Create stickers: the ${shape.name} stub isn't static")
+        }
+        shape.name to stub
+    }
+    for (bridge in stickerCreatorBridges(calls) { name -> stubs.getValue(name).accessFlags }) {
+        methods.remove(stubs.getValue(bridge.name))
+        methods.add(bridge)
+    }
 }
 
 /** Hands the Saved page to StickerCreator as it's returned, so Create goes on every new page. */
@@ -271,18 +296,7 @@ val createStickersPatch = bytecodePatch(
             StickerServerParameterFingerprint.originalMethod,
             CanvasStickerSaverFingerprint.originalMethod,
         )
-        val extension = mutableClassDefBy(STICKER_CREATOR)
-        for (bridge in stickerCreatorBridges(calls)) {
-            val stub = extension.methods.singleOrNull {
-                it.name == bridge.name && it.returnType == bridge.returnType &&
-                    it.parameterTypes.map { type -> type.toString() } == bridge.parameterTypes.map { type -> type.toString() }
-            } ?: throw PatchException("Create stickers: StickerCreator has no ${bridge.name} stub")
-            if (stub.accessFlags != bridge.accessFlags) {
-                throw PatchException("Create stickers: the ${bridge.name} stub isn't package-private static")
-            }
-            extension.methods.remove(stub)
-            extension.methods.add(bridge)
-        }
+        mutableClassDefBy(STICKER_CREATOR).swapStickerStubs(calls)
         FavouriteStickerPageFingerprint.method.addStickerCreatorButton()
         registerForBuildDetails("enableStickerCreator")
     }

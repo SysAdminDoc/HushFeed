@@ -3,6 +3,8 @@ package app.morphe.patches.tiktok.misc.comment
 import app.morphe.BridgeTypeFlow
 import app.morphe.Fixtures
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.patch.PatchException
+import app.morphe.patcher.util.proxy.mutableTypes.MutableClass
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.takes
 import app.morphe.util.addInstructions
@@ -17,10 +19,12 @@ import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+import com.android.tools.smali.dexlib2.immutable.ImmutableClassDef
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -72,6 +76,40 @@ class StickerCreatorPatchTest {
             assertTrue("$apk: the continuation ${calls.continuation}", classes.any { it.type == calls.continuation })
         }
     }
+
+    /** The shipped dex has R8's public static stubs, not the source's package-private ones. */
+    @Test
+    fun `the bridges replace public static stubs with their flags kept and refuse an instance stub`() {
+        val publicStatic = AccessFlags.PUBLIC.value or AccessFlags.STATIC.value
+        fixtures { apk, classes ->
+            val calls = stickerCreatorCalls(
+                taken(StickerUploadConfigFingerprint, classes).single(),
+                taken(StickerServerParameterFingerprint, classes).single(),
+                taken(CanvasStickerSaverFingerprint, classes).single(),
+            )
+            val stubs = stickerCreatorBridges(calls) { publicStatic }
+            val extension = MutableClass(stickerCreator(stubs))
+            extension.swapStickerStubs(calls)
+            assertEquals(apk, stubs.map { it.name }.toSet(), extension.methods.map { it.name }.toSet())
+            for (bridge in extension.methods) {
+                assertEquals("$apk: ${bridge.name}", publicStatic, bridge.accessFlags)
+                assertTrue("$apk: ${bridge.name} is the bridge", stubs.none { stub -> stub === bridge })
+            }
+
+            val instance = stickerCreatorBridges(calls) { name ->
+                if (name == "addToSaved") AccessFlags.PUBLIC.value else publicStatic
+            }
+            val refused = assertThrows(PatchException::class.java) {
+                MutableClass(stickerCreator(instance)).swapStickerStubs(calls)
+            }
+            assertEquals(apk, "Create stickers: the addToSaved stub isn't static", refused.message)
+        }
+    }
+
+    private fun stickerCreator(methods: List<MutableMethod>) = ImmutableClassDef(
+        STICKER_CREATOR, AccessFlags.PUBLIC.value or AccessFlags.FINAL.value, "Ljava/lang/Object;",
+        emptyList(), null, emptySet(), emptyList(), methods,
+    )
 
     @Test
     fun `the Saved page goes to StickerCreator right before it's returned`() {

@@ -90,14 +90,14 @@ The Morphe Gradle plugin and the default extension namespace are configured in s
 
 The runtime code is grouped by feature under extensions/tiktok/src/main/java/app/morphe/extension/tiktok/. Current package folders are accountmanagement, blockauthor, captions, capture, cleardisplay, comment, commentsort, diagnostics, download, externalbrowser, favorites, featurecontrols, featuregatelab, feed, feedfilter, foldable, follow, font, ghostmode, inbox, interaction, live, misc, navigation, network, notinterested, offline, playback, popups, privacy, profile, publishdate, repost, search, seekbar, seen, settings, share, speed, spoof, storage, telemetry, theme, translation, upload, and wellbeing. Search the generated patch catalog by display name first, then follow its dependencies into the Kotlin and Java sources.
 
-The current catalog's 141 patches are grouped as follows:
+The current catalog's 142 patches are grouped as follows:
 
 | Manager category | Patches |
 | --- | ---: |
 | Comments | 15 |
 | Downloads | 5 |
 | Feed | 20 |
-| Inbox | 7 |
+| Inbox | 8 |
 | Interaction | 18 |
 | Interface | 10 |
 | Performance | 11 |

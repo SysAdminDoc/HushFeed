@@ -447,6 +447,9 @@
     "In-app browser privacy guard": [
       "BLOCK_WEBVIEW_JS_INTERFACES"
     ],
+    "Hide read receipts": [
+      "HIDE_READ_RECEIPTS"
+    ],
     "Keep a streak going": [
       "AUTO_STREAK",
       "AUTO_STREAK_RECIPIENT",

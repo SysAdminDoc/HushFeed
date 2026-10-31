@@ -6102,6 +6102,56 @@
       ]
     },
     {
+      "name": "Hide read receipts",
+      "description": "Stops TikTok telling people you've read their messages. Your own unread badges still clear as usual. Starts off. Turn it on in Hushfeed settings > Inbox.",
+      "category": "Inbox",
+      "use": true,
+      "dependencies": [
+        "BytecodePatch",
+        "RawResourcePatch",
+        "Settings"
+      ],
+      "compatiblePackages": {
+        "com.zhiliaoapp.musically": [
+          "47.5.3"
+        ]
+      },
+      "compatibility": [
+        {
+          "name": "TikTok",
+          "packageName": "com.zhiliaoapp.musically",
+          "description": null,
+          "appIconColor": 16657493,
+          "signatures": [
+            "9041803e91bcb814b4b4399fb5c85a91640b755e5e8ba76813814bf4cf2ab5ba"
+          ],
+          "targets": [
+            {
+              "version": "47.5.3",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 2024705030,
+                "ARMEABI_V7A": 2024705030,
+                "X86": 2024705030,
+                "X86_64": 2024705030
+              }
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "hide_read_receipts",
+          "title": "Default: hide read receipts",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
+    },
+    {
       "name": "Hide search suggestions",
       "description": "Hides the searches TikTok suggests before you type, and can hide the search rewards banner. Your own search history stays. Starts off. Turn it on in Hushfeed settings > App.",
       "category": "Search",

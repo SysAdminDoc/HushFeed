@@ -459,7 +459,7 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             addPreference(new TogglePreference(
                     context,
                     "Hide surveys",
-                    "Hide the question cards TikTok slides over a video near its end.",
+                    "Hide the question cards TikTok slides over a video near its end, and the buttons that ask if you're interested in it.",
                     Settings.HIDE_FEED_SURVEYS
             ));
             if (SettingsStatus.footnotesEnabled) {

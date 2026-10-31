@@ -1798,8 +1798,8 @@ final class L10nTranslationsDe {
                 "Blende die Schaltfläche für Profilaufrufe oben in deinem Profil aus. Deine Einstellung für den Verlauf der Profilaufrufe bleibt unverändert.");
         table.put("Hide the purple rewards button beside Add friends on your profile.",
                 "Die violette Belohnungs-Schaltfläche neben „Freunde hinzufügen“ in deinem Profil ausblenden.");
-        table.put("Hide the question cards TikTok slides over a video near its end.",
-                "Die Fragekarten ausblenden, die TikTok gegen Ende eines Videos einblendet.");
+        table.put("Hide the question cards TikTok slides over a video near its end, and the buttons that ask if you're interested in it.",
+                "Die Fragekarten ausblenden, die TikTok gegen Ende eines Videos einblendet, und die Buttons, die fragen, ob dich das Video interessiert.");
         table.put("Hide the question cards TikTok sometimes puts in a comment list to ask what you think.",
                 "Blende die Fragekarten aus, die TikTok manchmal in die Kommentarliste setzt, um nach deiner Meinung zu fragen.");
         table.put("Hide the quick emoji row and automatic sticker suggestions that appear while you type. The emoji and sticker buttons still work.",

@@ -112,6 +112,32 @@ public class FeedOverlayControlsTest {
         }
     }
 
+    /**
+     * Issue #293: the Not interested and Interested buttons go with Hide surveys. Another
+     * component type stays unmatched whatever the switch says, and Pause hands TikTok's match back.
+     */
+    @Test public void theInterestButtonsGoWithSurveysAndHonourPause() {
+        try {
+            assertEquals(Boolean.FALSE, Settings.HIDE_FEED_SURVEYS.defaultValue);
+            Settings.HIDE_FOOTNOTES.save(true);
+            assertTrue("another overlay switch dropped the buttons", FeedOverlayControls.interestButtonsShown(1));
+            assertFalse(FeedOverlayControls.interestButtonsShown(0));
+            Settings.HIDE_FOOTNOTES.save(false);
+            Settings.HIDE_FEED_SURVEYS.save(true);
+            assertFalse(FeedOverlayControls.interestButtonsShown(1));
+            assertFalse("another component turned into the button group", FeedOverlayControls.interestButtonsShown(0));
+            PausedProcess.set(true);
+            assertTrue("a paused Hushfeed still dropped the buttons", FeedOverlayControls.interestButtonsShown(1));
+            PausedProcess.set(false);
+            assertTrue(String.join(" ", HookStatus.report()).contains("interest buttons"));
+        } finally {
+            PausedProcess.set(false);
+            HookStatus.clear();
+            Settings.HIDE_FEED_SURVEYS.resetToDefault();
+            Settings.HIDE_FOOTNOTES.resetToDefault();
+        }
+    }
+
     @Test public void fullscreenOnlyHidesItsDedicatedRootAndKeepsNativeClickOnRestore() {
         try(Fixture f=new Fixture()) {
             int[] clicks={0};

@@ -1798,8 +1798,8 @@ final class L10nTranslationsTr {
                 "Profilinin üstündeki profil görüntülemeleri düğmesini gizle. Profil görüntüleme geçmişi ayarın değişmez.");
         table.put("Hide the purple rewards button beside Add friends on your profile.",
                 "Profilinde Arkadaş ekle'nin yanındaki mor ödül düğmesini gizle.");
-        table.put("Hide the question cards TikTok slides over a video near its end.",
-                "TikTok'un bir videonun sonuna doğru üzerine kaydırdığı soru kartlarını gizle.");
+        table.put("Hide the question cards TikTok slides over a video near its end, and the buttons that ask if you're interested in it.",
+                "TikTok'un bir videonun sonuna doğru üzerine kaydırdığı soru kartlarını ve videoyla ilgilenip ilgilenmediğini soran düğmeleri gizle.");
         table.put("Hide the question cards TikTok sometimes puts in a comment list to ask what you think.",
                 "TikTok'un fikrini sormak için bazen yorum listesine koyduğu soru kartlarını gizle.");
         table.put("Hide the quick emoji row and automatic sticker suggestions that appear while you type. The emoji and sticker buttons still work.",

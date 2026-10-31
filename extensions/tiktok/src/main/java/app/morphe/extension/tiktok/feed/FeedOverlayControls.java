@@ -63,6 +63,20 @@ public final class FeedOverlayControls {
         return show && !hide;
     }
 
+    /**
+     * Whether the Not interested and Interested buttons TikTok sometimes lays over a feed video
+     * are built (#293). Asked with TikTok's own answer to "is this component the button group",
+     * so false skips it the way TikTok skips a component type it doesn't know. Hide surveys
+     * covers them: like the survey card, they're TikTok asking what you think of the video. The
+     * answer is an int because the register is one the verifier may type as int.
+     */
+    public static boolean interestButtonsShown(int matched) {
+        if (matched == 0) return false;
+        boolean hide = Settings.HIDE_FEED_SURVEYS.get();
+        HookStatus.bound("interest buttons", hide ? "group skipped" : "group left");
+        return !hide;
+    }
+
     private static void bind(View view, BooleanSetting setting, boolean location, String name) {
         if (view == null) return;
         HookStatus.bound(name, "native control bind");

@@ -1798,8 +1798,8 @@ final class L10nTranslationsAz {
                 "Profilinizin yuxarısındakı profil baxışları düyməsini gizlədin. Profil baxış tarixçəsi ayarınız dəyişmir.");
         table.put("Hide the purple rewards button beside Add friends on your profile.",
                 "Profilinizdə Add friends yanındakı bənövşəyi mükafat düyməsini gizlədin.");
-        table.put("Hide the question cards TikTok slides over a video near its end.",
-                "TikTok-un videonun sonuna yaxın üstünə sürüşdürdüyü sual kartlarını gizlədin.");
+        table.put("Hide the question cards TikTok slides over a video near its end, and the buttons that ask if you're interested in it.",
+                "TikTok-un videonun sonuna yaxın üstünə sürüşdürdüyü sual kartlarını və videonun sizə maraqlı olub-olmadığını soruşan düymələri gizlədin.");
         table.put("Hide the question cards TikTok sometimes puts in a comment list to ask what you think.",
                 "TikTok-un fikrinizi soruşmaq üçün bəzən şərh siyahısına qoyduğu sual kartlarını gizlədin.");
         table.put("Hide the quick emoji row and automatic sticker suggestions that appear while you type. The emoji and sticker buttons still work.",

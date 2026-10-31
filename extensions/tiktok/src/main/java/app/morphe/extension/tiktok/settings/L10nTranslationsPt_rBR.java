@@ -1798,8 +1798,8 @@ final class L10nTranslationsPt_rBR {
                 "Oculte o botão de visualizações do perfil no topo do seu perfil. A configuração do histórico de visualizações do perfil não muda.");
         table.put("Hide the purple rewards button beside Add friends on your profile.",
                 "Ocultar o botão roxo de recompensas ao lado de Adicionar amigos no seu perfil.");
-        table.put("Hide the question cards TikTok slides over a video near its end.",
-                "Esconder os cards com perguntas que o TikTok desliza sobre o vídeo perto do fim.");
+        table.put("Hide the question cards TikTok slides over a video near its end, and the buttons that ask if you're interested in it.",
+                "Esconder os cards com perguntas que o TikTok desliza sobre o vídeo perto do fim e os botões que perguntam se você tem interesse nele.");
         table.put("Hide the question cards TikTok sometimes puts in a comment list to ask what you think.",
                 "Oculte os cartões de perguntas que o TikTok às vezes coloca na lista de comentários para pedir sua opinião.");
         table.put("Hide the quick emoji row and automatic sticker suggestions that appear while you type. The emoji and sticker buttons still work.",

@@ -2059,8 +2059,8 @@ final class L10nTranslationsRu {
                 "Скрывать кнопку просмотров профиля вверху вашего профиля. Настройка истории просмотров профиля не меняется.");
         table.put("Hide the purple rewards button beside Add friends on your profile.",
                 "Скрывать фиолетовую кнопку наград рядом с «Добавить друзей» в вашем профиле.");
-        table.put("Hide the question cards TikTok slides over a video near its end.",
-                "Скрывать карточки с вопросами, которые TikTok показывает поверх видео ближе к концу.");
+        table.put("Hide the question cards TikTok slides over a video near its end, and the buttons that ask if you're interested in it.",
+                "Скрывать карточки с вопросами, которые TikTok показывает поверх видео ближе к концу, и кнопки с вопросом, интересно ли вам это видео.");
         table.put("Hide the question cards TikTok sometimes puts in a comment list to ask what you think.",
                 "Скрывать карточки с вопросами, которые TikTok иногда вставляет в список комментариев, чтобы узнать ваше мнение.");
         table.put("Hide the quick emoji row and automatic sticker suggestions that appear while you type. The emoji and sticker buttons still work.",

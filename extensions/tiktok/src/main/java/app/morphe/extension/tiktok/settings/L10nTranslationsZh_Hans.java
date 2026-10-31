@@ -1798,8 +1798,8 @@ final class L10nTranslationsZh_Hans {
                 "隐藏个人资料顶部的个人资料视图按钮。你的个人资料查看历史记录设置不会更改.");
         table.put("Hide the purple rewards button beside Add friends on your profile.",
                 "隐藏个人资料中“添加朋友”旁边的紫色奖励按钮.");
-        table.put("Hide the question cards TikTok slides over a video near its end.",
-                "将问题卡 TikTok 隐藏在视频接近结尾处的幻灯片上.");
+        table.put("Hide the question cards TikTok slides over a video near its end, and the buttons that ask if you're interested in it.",
+                "隐藏 TikTok 在视频快结束时弹出的问题卡片，以及询问你是否感兴趣的按钮.");
         table.put("Hide the question cards TikTok sometimes puts in a comment list to ask what you think.",
                 "隐藏问题卡 TikTok 有时会放入评论列表来询问你的想法.");
         table.put("Hide the quick emoji row and automatic sticker suggestions that appear while you type. The emoji and sticker buttons still work.",

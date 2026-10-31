@@ -93,6 +93,19 @@ val hideVideoOverlaysPatch = bytecodePatch(
             println("[$PATCH_NAME] Left out the Following LIVE row on ${packageMetadata.buildName}: ${problem.message}")
             null
         }
+        // The Not interested and Interested buttons (#293), the same way: required where
+        // InterestButtonsAnchorsTest holds the factory's check, left out with a note anywhere else.
+        val interestButtons = try {
+            InterestButtonGroupFingerprint.method.also {
+                if (interestGroupBranch(it.implementation!!.instructions.toList()) < 0) {
+                    throw PatchException("$PATCH_NAME: ${it.definingClass} no longer checks $INTEREST_BUTTON_GROUP the way it did.")
+                }
+            }
+        } catch (problem: Exception) {
+            if (packageMetadata.buildName in declaredVersions()) throw problem
+            println("[$PATCH_NAME] Left out the interest buttons on ${packageMetadata.buildName}: ${problem.message}")
+            null
+        }
         // The music disc's two switches (#68), the same way: required where MusicDiscSpinAnchorsTest
         // holds every hold on the disc's way, left out with a note anywhere else.
         val musicDisc = try {
@@ -149,6 +162,8 @@ val hideVideoOverlaysPatch = bytecodePatch(
                 "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableFollowingSkylight()V",
             )
         }
+        // The interest buttons go with Hide surveys; the switch decides in the extension.
+        interestButtons?.dropInterestButtons(PATCH_NAME)
         // The music disc. 47.1.4 ships music_animation_close_exp at 3, which keeps the disc from
         // turning; each lazy read hands its value to MusicDiscSpin before boxing it. The holds
         // past it (anim_opt, the high frame rate hold, the play animation's load downgrade and

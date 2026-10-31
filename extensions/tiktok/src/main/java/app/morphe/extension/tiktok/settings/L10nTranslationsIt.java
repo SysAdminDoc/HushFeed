@@ -1798,8 +1798,8 @@ final class L10nTranslationsIt {
                 "Nascondi il pulsante delle visualizzazioni del profilo in cima al tuo profilo. L'impostazione della cronologia delle visualizzazioni del profilo non cambia.");
         table.put("Hide the purple rewards button beside Add friends on your profile.",
                 "Nascondi il pulsante viola delle ricompense accanto ad Aggiungi amici nel tuo profilo.");
-        table.put("Hide the question cards TikTok slides over a video near its end.",
-                "Nascondi le card con domande che TikTok mostra scorrendo sopra un video verso la fine.");
+        table.put("Hide the question cards TikTok slides over a video near its end, and the buttons that ask if you're interested in it.",
+                "Nascondi le card con domande che TikTok mostra scorrendo sopra un video verso la fine e i pulsanti che chiedono se ti interessa.");
         table.put("Hide the question cards TikTok sometimes puts in a comment list to ask what you think.",
                 "Nasconde le schede con domande che TikTok a volte inserisce nell'elenco dei commenti per chiedere la tua opinione.");
         table.put("Hide the quick emoji row and automatic sticker suggestions that appear while you type. The emoji and sticker buttons still work.",

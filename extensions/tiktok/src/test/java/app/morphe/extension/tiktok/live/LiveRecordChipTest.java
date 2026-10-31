@@ -2,6 +2,7 @@ package app.morphe.extension.tiktok.live;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
@@ -44,6 +45,32 @@ public class LiveRecordChipTest {
         assertFalse(LiveRecordChip.hidesChip(new LiveRecorder.Target("u", LiveRecorder.Transport.FLV, "c", "1", "hd")));
         assertFalse(LiveRecordChip.hidesChip(new LiveRecorder.Target("u", LiveRecorder.Transport.HLS, "c", "1", "hd")));
         assertFalse(LiveRecordChip.hidesChip(null));
+    }
+
+    @Test public void liveClearScreenHidesTheChipRegardlessOfRecordingSource() {
+        LiveRecorder.Target flv = new LiveRecorder.Target("u", LiveRecorder.Transport.FLV, "c", "1", "hd");
+        LiveRecorder.Target hls = new LiveRecorder.Target("u", LiveRecorder.Transport.HLS, "c", "1", "hd");
+        assertTrue(LiveRecordChip.hidesChip(flv, true));
+        assertTrue(LiveRecordChip.hidesChip(hls, true));
+        assertTrue(LiveRecordChip.hidesChip(null, true));
+        assertFalse(LiveRecordChip.hidesChip(flv, false));
+        assertFalse(LiveRecordChip.hidesChip(hls, false));
+    }
+
+    private static final class RoomIdentity {
+        public String idStr;
+        public long id;
+
+        RoomIdentity(String text, long numeric) {
+            idStr = text;
+            id = numeric;
+        }
+    }
+
+    @Test public void clearScreenEventsUseTheRoomsStableId() {
+        assertEquals("123", LiveRecordChip.roomKey(new RoomIdentity("123", 456)));
+        assertEquals("456", LiveRecordChip.roomKey(new RoomIdentity(null, 456)));
+        assertNull(LiveRecordChip.roomKey(null));
     }
 
     @Test public void aRoomBesideTheOneInFrontDoesNot() {

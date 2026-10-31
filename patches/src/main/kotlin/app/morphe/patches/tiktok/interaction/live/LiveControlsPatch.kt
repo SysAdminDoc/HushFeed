@@ -156,6 +156,36 @@ internal object LiveClearScreenEntryFingerprint : Fingerprint(
     parameters = listOf(),
 )
 
+/** LIVE's per-room controller. It owns the actual clear state, including swipe gestures. */
+internal const val LIVE_CLEAR_SCREEN_CONTROLLER = "LX/0Kni;"
+
+/** The controller sets its own state here, regardless of how Clear screen was triggered. */
+internal fun liveClearStateChange(method: Method): Boolean =
+    method.definingClass == LIVE_CLEAR_SCREEN_CONTROLLER && method.name == "LJIIIIZZ" &&
+        method.returnType == "V" &&
+        method.parameterTypes.map(CharSequence::toString) == listOf("Z", "LX/0Kng;", "Z", "Z", "Z")
+
+/** The constructor may restore Clear screen before the room page has resumed. */
+internal fun liveClearStateConstructor(method: Method): Boolean =
+    method.definingClass == LIVE_CLEAR_SCREEN_CONTROLLER && method.name == "<init>" &&
+        method.returnType == "V" && method.parameterTypes.map(CharSequence::toString) == listOf(
+            "Landroidx/fragment/app/Fragment;",
+            "Lcom/bytedance/ies/sdk/datachannel/DataChannel;",
+            "Landroid/view/View;",
+            "Lcom/bytedance/ies/sdk/widgets/LayeredElementManager;",
+            "LX/0SUu;",
+            "Lcom/bytedance/ies/sdk/widgets/RecyclableWidgetManager;",
+        )
+
+/** Hook the single return, including any branches that jump straight to its label. */
+internal fun nativeClearReturn(method: Method): Int {
+    val code = method.implementation?.instructions?.toList()
+        ?: throw PatchException("LIVE clear screen: ${method.name} has no body")
+    val returns = code.indices.filter { code[it].opcode == Opcode.RETURN_VOID }
+    if (returns.size != 1) throw PatchException("LIVE clear screen: ${method.name} has ${returns.size} returns")
+    return returns.single()
+}
+
 /** The host side of the LIVE SDK's resources, real-named on 47.1.4. */
 internal const val LIVE_HOST_RESOURCE = "Lcom/ss/android/ugc/aweme/live/livehostimpl/LiveHostResource;"
 
@@ -1991,6 +2021,25 @@ val liveControlsPatch = bytecodePatch(
         LivePlayFragmentResumeFingerprint.method.addInstruction(
             0,
             "invoke-static/range {p0 .. p0}, $RECORD_EXTENSION->noteRoomFragment(Ljava/lang/Object;)V",
+        )
+
+        // TikTok's LIVE Clear screen is separate from the feed's Clear display. The room's
+        // controller changes state for both the menu and swipe gestures. Its constructor also
+        // restores a saved state before the page resumes. Neither hook touches the recording.
+        val clearController = classDefByOrNull(LIVE_CLEAR_SCREEN_CONTROLLER)
+            ?: throw PatchException("LIVE controls: LIVE clear screen controller not found")
+        val changed = clearController.methods.singleOrNull(::liveClearStateChange)
+            ?: throw PatchException("LIVE controls: LIVE clear screen state change not found")
+        val initialized = clearController.methods.singleOrNull(::liveClearStateConstructor)
+            ?: throw PatchException("LIVE controls: LIVE clear screen constructor not found")
+        val mutableClearController = mutableClassDefBy(LIVE_CLEAR_SCREEN_CONTROLLER)
+        mutableClearController.findMutableMethodOf(changed).addInstructionsAtControlFlowLabel(
+            nativeClearReturn(changed),
+            "invoke-static/range {p0 .. p1}, $RECORD_EXTENSION->onNativeClearScreenChanged(Ljava/lang/Object;Z)V",
+        )
+        mutableClearController.findMutableMethodOf(initialized).addInstructionsAtControlFlowLabel(
+            nativeClearReturn(initialized),
+            "invoke-static/range {p0 .. p0}, $RECORD_EXTENSION->onNativeClearScreenInitialized(Ljava/lang/Object;)V",
         )
 
         // The formatter's result lands in the upper half of the long it was given, so the count

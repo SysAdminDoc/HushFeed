@@ -1536,8 +1536,8 @@ final class L10nTranslationsEs {
     }
 
     private static void fill12(Map<String, String> table) {
-        table.put("Hide TikTok Shop posts from the feed.",
-                "Ocultar las publicaciones de TikTok Shop en el feed.");
+        table.put("Hide TikTok Shop posts from the feed, and the shop buttons under captions.",
+                "Ocultar las publicaciones de TikTok Shop en el feed y los botones de la tienda bajo las descripciones.");
         table.put("Hide TikTok's \"Search: ...\" banner above the comment count. This doesn't hide the comments or Hushfeed's comment-search box.",
                 "Oculta el banner «Buscar: ...» de TikTok sobre el número de comentarios. No oculta los comentarios ni el cuadro de búsqueda de comentarios de Hushfeed.");
         table.put("Hide TikTok's Auto scroll button",

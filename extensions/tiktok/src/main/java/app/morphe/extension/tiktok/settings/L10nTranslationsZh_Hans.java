@@ -1536,8 +1536,8 @@ final class L10nTranslationsZh_Hans {
     }
 
     private static void fill12(Map<String, String> table) {
-        table.put("Hide TikTok Shop posts from the feed.",
-                "隐藏信息流中的 TikTok 商店帖子.");
+        table.put("Hide TikTok Shop posts from the feed, and the shop buttons under captions.",
+                "隐藏信息流中的 TikTok 商店帖子，以及说明文字下方的商店按钮.");
         table.put("Hide TikTok's \"Search: ...\" banner above the comment count. This doesn't hide the comments or Hushfeed's comment-search box.",
                 "隐藏评论计数上方 TikTok 的“搜索：...”横幅。这不会隐藏评论或 Hushfeed 的评论搜索框.");
         table.put("Hide TikTok's Auto scroll button",

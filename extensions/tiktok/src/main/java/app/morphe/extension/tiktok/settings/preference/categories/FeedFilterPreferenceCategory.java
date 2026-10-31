@@ -72,7 +72,7 @@ public class FeedFilterPreferenceCategory extends ConditionalPreferenceCategory 
         addPreference(new SectionHeadingPreference(context, "Kinds of post"));
         addPreference(new TogglePreference(
                 context,
-                "Hide TikTok Shop", "Hide TikTok Shop posts from the feed.",
+                "Hide TikTok Shop", "Hide TikTok Shop posts from the feed, and the shop buttons under captions.",
                 Settings.HIDE_SHOP
         ));
         addPreference(new TogglePreference(

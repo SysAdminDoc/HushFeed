@@ -1536,8 +1536,8 @@ final class L10nTranslationsIn {
     }
 
     private static void fill12(Map<String, String> table) {
-        table.put("Hide TikTok Shop posts from the feed.",
-                "Sembunyikan kiriman TikTok Shop dari feed.");
+        table.put("Hide TikTok Shop posts from the feed, and the shop buttons under captions.",
+                "Sembunyikan kiriman TikTok Shop dari feed, juga tombol toko di bawah keterangan.");
         table.put("Hide TikTok's \"Search: ...\" banner above the comment count. This doesn't hide the comments or Hushfeed's comment-search box.",
                 "Sembunyikan banner \"Cari: ...\" TikTok di atas jumlah komentar. Ini tidak menyembunyikan komentar atau kotak pencarian komentar Hushfeed.");
         table.put("Hide TikTok's Auto scroll button",

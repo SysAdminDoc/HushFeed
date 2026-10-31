@@ -1797,8 +1797,8 @@ final class L10nTranslationsRu {
                 "Скрывать TikTok Shop");
         table.put("Hide TikTok Shop in search",
                 "Скрывать TikTok Shop в поиске");
-        table.put("Hide TikTok Shop posts from the feed.",
-                "Скрывать публикации TikTok Shop из ленты.");
+        table.put("Hide TikTok Shop posts from the feed, and the shop buttons under captions.",
+                "Скрывать публикации TikTok Shop из ленты и кнопки магазина под подписями.");
         table.put("Hide TikTok's \"Search: ...\" banner above the comment count. This doesn't hide the comments or Hushfeed's comment-search box.",
                 "Скрывать баннер TikTok «Поиск: ...» над счётчиком комментариев. Это не скрывает комментарии и поле поиска по комментариям Hushfeed.");
         table.put("Hide TikTok's Auto scroll button",

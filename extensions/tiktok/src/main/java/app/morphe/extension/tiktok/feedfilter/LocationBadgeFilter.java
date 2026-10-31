@@ -36,6 +36,17 @@ public final class LocationBadgeFilter implements IFilter {
             "anchor_capcut", "anchor_hypic", "anchor_editor_pro", "anchor_auto_cut",
             "anchor_ai_style", "anchor_ai_group_shot", "anchor_ai_portrait", "anchor_ai_remix",
             "anchor_aigc_avatar", "anchor_text_to_image");
+    static final String SHOP_REASON = "shopTag";
+    /**
+     * Strips that sell something: a TikTok Shop link, a product, a "Find ..." shop search with the
+     * bag icon (#271) or an ad's buy button. Every key is one TikTok 47.5.3's own code names. The
+     * plain Search strip (anchor_search, anchor_keyword) stays, so a search tag still works.
+     */
+    static final Set<String> SHOP_KEYS = Set.of(
+            "anchor_shop", "anchor_auto_shop", "anchor_complex_shop", "anchor_to_shop",
+            "anchor_shop_showcase", "anchor_product", "anchor_ba_product_link",
+            "anchor_cta_shop", "anchor_cta_shop_now", "anchor_cta_buy_now", "anchor_cta_buy_here",
+            "anchor_cta_buy_today");
     private static final FeedServedKinds STRIP_KINDS = new FeedServedKinds("Caption strip");
 
     @Override public boolean getEnabled() { return Settings.FILTER_LOCATION_VIDEOS.get(); }
@@ -68,20 +79,24 @@ public final class LocationBadgeFilter implements IFilter {
         countStrips(anchors);
         boolean places = Settings.HIDE_LOCATION_LABELS.get();
         boolean tools = Settings.HIDE_CREATION_TAGS.get();
-        if (!places && !tools || anchors == null || anchors.isEmpty()) return anchors;
+        boolean shops = Settings.HIDE_SHOP.get();
+        if (!places && !tools && !shops || anchors == null || anchors.isEmpty()) return anchors;
         try {
             ArrayList<Object> kept = null;
             int placesHidden = 0;
             int toolsHidden = 0;
+            int shopsHidden = 0;
             for (int i = 0; i < anchors.size(); i++) {
                 Object anchor = anchors.get(i);
                 Object key = Reflect.required(anchor, "getComponentKey", FAMILY);
                 boolean place = places && isLocationKey(key);
                 boolean tool = tools && !place && key instanceof String && CREATION_TOOL_KEYS.contains(key);
-                if (place || tool) {
+                boolean shop = shops && key instanceof String && SHOP_KEYS.contains(key);
+                if (place || tool || shop) {
                     if (kept == null) kept = new ArrayList<>(anchors.subList(0, i));
                     if (place) placesHidden++;
-                    else toolsHidden++;
+                    else if (tool) toolsHidden++;
+                    else shopsHidden++;
                 } else if (kept != null) {
                     kept.add(anchor);
                 }
@@ -94,6 +109,10 @@ public final class LocationBadgeFilter implements IFilter {
             if (toolsHidden > 0) {
                 HookStatus.bound(FAMILY, "creation tags hidden");
                 FeedFilterCounters.removed(STRIP_SOURCE, toolsHidden, TOOL_REASON);
+            }
+            if (shopsHidden > 0) {
+                HookStatus.bound(FAMILY, "shop tags hidden");
+                FeedFilterCounters.removed(STRIP_SOURCE, shopsHidden, SHOP_REASON);
             }
             return kept;
         } catch (RuntimeException error) {

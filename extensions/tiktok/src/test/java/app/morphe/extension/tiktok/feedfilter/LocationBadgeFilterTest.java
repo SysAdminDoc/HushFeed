@@ -24,7 +24,7 @@ import org.robolectric.annotation.Config;
 @Config(sdk = {23, 35})
 public class LocationBadgeFilterTest {
     @Rule public final SettingsContextRule context = new SettingsContextRule();
-    private boolean hide, filter, tools;
+    private boolean hide, filter, tools, shop;
     public static class Anchor {
         String key;
         public String getComponentKey() { return key; }
@@ -45,8 +45,10 @@ public class LocationBadgeFilterTest {
         hide = Settings.HIDE_LOCATION_LABELS.get();
         filter = Settings.FILTER_LOCATION_VIDEOS.get();
         tools = Settings.HIDE_CREATION_TAGS.get();
+        shop = Settings.HIDE_SHOP.get();
         Settings.HIDE_LOCATION_LABELS.save(false);
         Settings.HIDE_CREATION_TAGS.save(false);
+        Settings.HIDE_SHOP.save(false);
         Settings.FILTER_LOCATION_VIDEOS.save(false);
         FeedItemsFilter.resetDiagnosticsForTests();
         LocationBadgeFilter.resetStripKindsForTests();
@@ -56,6 +58,7 @@ public class LocationBadgeFilterTest {
         Settings.HIDE_LOCATION_LABELS.save(hide);
         Settings.FILTER_LOCATION_VIDEOS.save(filter);
         Settings.HIDE_CREATION_TAGS.save(tools);
+        Settings.HIDE_SHOP.save(shop);
         BaseSettings.DEBUG.resetToDefault();
         FeedItemsFilter.resetDiagnosticsForTests();
         LocationBadgeFilter.resetStripKindsForTests();
@@ -249,5 +252,49 @@ public class LocationBadgeFilterTest {
 
         String report = String.join("|", FeedFilterCounters.report());
         assertTrue(report, report.contains("CaptionStrip: 1 lists, 2 items, 1 removed. Last reason: creationTag."));
+    }
+
+    @Test public void shopStripsStayWhileHideTikTokShopIsOff() {
+        assertFalse(Settings.HIDE_SHOP.defaultValue);
+        List<?> anchors = List.of(new Anchor("anchor_auto_shop"), new Anchor("anchor_product"), new Anchor("anchor_cta_shop"));
+        assertSame(anchors, LocationBadgeFilter.visibleAnchors(anchors));
+    }
+
+    @Test public void hideTikTokShopTakesOutSellingStripsAndKeepsSearchAndTheRestInOrder() {
+        Settings.HIDE_SHOP.save(true);
+        Anchor search = new TypedAnchor("anchor_search", 46), keyword = new Anchor("anchor_keyword");
+        Anchor place = new Anchor("anchor_poi"), effect = new Anchor("anchor_effect"), lemon = new Anchor("anchor_lemon");
+        List<?> anchors = Arrays.asList(new Anchor("anchor_auto_shop"), search, new Anchor("anchor_shop"), place,
+                new Anchor("anchor_product"), null, keyword, new Anchor("anchor_cta_buy_now"), effect,
+                new Anchor("anchor_to_shop"), lemon, new Anchor("anchor_ba_product_link"));
+        Video video = new Video(anchors);
+
+        assertEquals(Arrays.asList(search, place, null, keyword, effect, lemon), LocationBadgeFilter.visibleAnchors(anchors));
+        assertSame(anchors, video.anchors);
+        assertEquals(12, anchors.size());
+
+        String report = String.join("|", FeedFilterCounters.report());
+        assertTrue(report, report.contains("CaptionStrip: 1 lists, 12 items, 6 removed. Last reason: shopTag. "));
+    }
+
+    @Test public void onlyExactShopKeysCount() {
+        Settings.HIDE_SHOP.save(true);
+        List<?> lookalikes = Arrays.asList(new Anchor("shop"), new Anchor("ANCHOR_SHOP"), new Anchor("anchor_shop_bag_list_preload_enable"),
+                new Anchor("anchor_product_cnt"), new Anchor("anchor_to_shop_experiment_disable"), new Anchor("anchor_search"),
+                new Anchor(null), new Object());
+        assertSame(lookalikes, LocationBadgeFilter.visibleAnchors(lookalikes));
+    }
+
+    @Test public void shopPlaceAndToolSwitchesEachTakeOnlyTheirOwnStrips() {
+        Settings.HIDE_SHOP.save(true);
+        Anchor place = new Anchor("anchor_poi"), tool = new Anchor("anchor_capcut");
+        assertEquals(List.of(place, tool), LocationBadgeFilter.visibleAnchors(
+                Arrays.asList(place, new Anchor("anchor_complex_shop"), tool)));
+
+        Settings.HIDE_LOCATION_LABELS.save(true);
+        Settings.HIDE_CREATION_TAGS.save(true);
+        assertTrue(LocationBadgeFilter.visibleAnchors(Arrays.asList(place, new Anchor("anchor_cta_shop_now"), tool)).isEmpty());
+        String report = String.join("|", FeedFilterCounters.report());
+        assertTrue(report, report.contains("CaptionStrip: 2 lists, 6 items, 4 removed. Last reason: shopTag. "));
     }
 }

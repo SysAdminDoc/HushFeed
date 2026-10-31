@@ -1536,8 +1536,8 @@ final class L10nTranslationsTr {
     }
 
     private static void fill12(Map<String, String> table) {
-        table.put("Hide TikTok Shop posts from the feed.",
-                "TikTok Shop gönderilerini akıştan gizle.");
+        table.put("Hide TikTok Shop posts from the feed, and the shop buttons under captions.",
+                "TikTok Shop gönderilerini akıştan, mağaza düğmelerini de açıklamaların altından gizle.");
         table.put("Hide TikTok's \"Search: ...\" banner above the comment count. This doesn't hide the comments or Hushfeed's comment-search box.",
                 "Yorum sayısının üzerindeki TikTok'un \"Ara: ...\" bandını gizle. Bu, yorumları veya Hushfeed'in yorum arama kutusunu gizlemez.");
         table.put("Hide TikTok's Auto scroll button",

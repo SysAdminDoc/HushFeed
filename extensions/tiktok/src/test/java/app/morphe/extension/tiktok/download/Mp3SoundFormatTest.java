@@ -164,7 +164,7 @@ public class Mp3SoundFormatTest {
         ShadowToast.reset();
         assertFalse(Mp3Transcoder.transcodeOrKeep(source, output));
         Shadows.shadowOf(Looper.getMainLooper()).idle();
-        assertEquals(L10n.t("MP3 didn't work on this phone. Saving the sound as TikTok sent it instead."),
+        assertEquals(L10n.t("MP3 didn't work. Saving TikTok's own file."),
                 ShadowToast.getTextOfLatestToast());
     }
 

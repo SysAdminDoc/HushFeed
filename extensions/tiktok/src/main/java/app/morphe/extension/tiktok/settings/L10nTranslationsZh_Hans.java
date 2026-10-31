@@ -2304,8 +2304,8 @@ final class L10nTranslationsZh_Hans {
                 "最低");
         table.put("MP3 (.mp3), plays anywhere",
                 "MP3 (.mp3)，随处可播放");
-        table.put("MP3 didn't work on this phone. Saving the sound as TikTok sent it instead.",
-                "MP3 无法在这款手机上运行。将声音保存为 TikTok 来发送.");
+        table.put("MP3 didn't work. Saving TikTok's own file.",
+                "MP3 无法使用，将保存 TikTok 的原文件.");
         table.put("Make a sticker from a photo",
                 "用照片制作贴纸");
         table.put("Make it yours.",

@@ -2304,8 +2304,8 @@ final class L10nTranslationsEs {
                 "La más baja");
         table.put("MP3 (.mp3), plays anywhere",
                 "MP3 (.mp3), suena en cualquier sitio");
-        table.put("MP3 didn't work on this phone. Saving the sound as TikTok sent it instead.",
-                "MP3 no funcionó en este teléfono. Guardando el sonido tal como lo envió TikTok.");
+        table.put("MP3 didn't work. Saving TikTok's own file.",
+                "MP3 falló. Se guarda el archivo original de TikTok.");
         table.put("Make a sticker from a photo",
                 "Crea un sticker con una foto");
         table.put("Make it yours.",

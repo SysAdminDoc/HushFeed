@@ -112,7 +112,7 @@ final class Mp3Transcoder {
             throw refusal;
         } catch (IOException | RuntimeException failure) {
             Logger.printException(() -> "MP3 encode failed, keeping the sound as TikTok sent it", failure);
-            Utils.showToastLong(L10n.t("MP3 didn't work on this phone. Saving the sound as TikTok sent it instead."));
+            Utils.showToastLong(L10n.t("MP3 didn't work. Saving TikTok's own file."));
             return false;
         }
     }

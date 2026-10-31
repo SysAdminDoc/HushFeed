@@ -1942,17 +1942,28 @@ try {
     # went in unchanged, the check passed as it should have, and this case failed with "No error
     # was raised" while the gate it covers was working perfectly. A version literal in a test
     # goes stale on the next bump, and does it silently until something reads the message.
-    $fixtureFloor = ([regex]::Match(
-        (Get-Content -LiteralPath (Join-Path $factsRoot 'gradle/libs.versions.toml') -Raw),
+    $fixtureCatalog = Get-Content -LiteralPath (Join-Path $factsRoot 'gradle/libs.versions.toml') -Raw
+    $fixtureFloor = ([regex]::Match($fixtureCatalog,
         '(?m)^\s*manager-floor\s*=\s*"([^"]+)"')).Groups[1].Value
+    # Between releases the README names readme-manager-floor, when the catalog carries one.
+    $fixtureReadmeFloor = ([regex]::Match($fixtureCatalog,
+        '(?m)^\s*readme-manager-floor\s*=\s*"([^"]+)"')).Groups[1].Value
+    if (-not $fixtureReadmeFloor) { $fixtureReadmeFloor = $fixtureFloor }
     Assert-True ($fixtureFloor -match '^\d+\.\d+\.\d+$') `
         "The fixture catalog does not pin a Manager floor, so this case would prove nothing: $fixtureFloor"
     Set-FactsFile 'README.md' {
-        param($text) $text -replace ('Morphe Manager ' + [regex]::Escape($fixtureFloor) + ' or newer'),
+        param($text) $text -replace ('Morphe Manager ' + [regex]::Escape($fixtureReadmeFloor) + ' or newer'),
             'Morphe Manager 1.20.0 or newer'
     }
     Assert-Throws { Invoke-Facts } '*' 'A README naming a Manager older than the patcher needs was accepted.'
     Reset-FactsFile 'README.md'
+
+    # With a readme-manager-floor in the catalog, the README keeps the published release's floor
+    # between releases and a release run moves it to manager-floor.
+    if ($fixtureReadmeFloor -ne $fixtureFloor) {
+        Assert-Throws { & $factsScript -Root $factsRoot -SkipDescriptionTestCount -SkipUrlCheck -VerifyPublishedAsset 6> $null } '*README Manager floor*' `
+            'A release run accepted a README that still names the previous Manager floor.'
+    }
 
     # The heading that says this version shipped. Renaming it is what happened on 2026-09-14,
     # and the file is read by this check and by nothing else.

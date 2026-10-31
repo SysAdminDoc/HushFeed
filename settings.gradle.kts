@@ -40,7 +40,7 @@ pluginManagement {
 // nothing to rewrite: the version has to be forced on the settings classpath itself. Take this
 // out when the plugin moves past 2.4.21 on its own; gradle/verification-metadata.xml is what
 // says which version actually resolved. It does not reach :patches:patcherProvidedClasspath,
-// where patcher 2.0.1 keeps its own Kotlin 2.4.21 runtime.
+// where patcher 2.1.0 keeps its own Kotlin 2.4.21 runtime.
 //
 // The same classpath brings Bouncy Castle 1.79, by way of the patcher's 1.77 pin and the
 // Android build tools' own 1.79 request: 1.77 is inside all seven advisories (CVE-2025-8916

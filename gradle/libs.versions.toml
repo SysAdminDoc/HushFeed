@@ -1,17 +1,24 @@
 [versions]
 # Align with morphe-patches-template (Compatibility / Manager display names). Hold the patcher
 # at the version the stable Morphe Manager bundles: a newer pin trips the manager's
-# Patcher-Version gate and it refuses the bundle. Stable Manager 2.2.0 bundles 2.0.1, and so does
-# desktop CLI 1.19.1. Patcher 2.0.1 went stable on 2026-10-25 and needs less memory to patch.
-morphe-patcher = "2.0.1"
+# Patcher-Version gate and it refuses the bundle. Stable Manager 2.3.0 bundles 2.1.0, and so does
+# desktop CLI 1.20.0. Patcher 2.1.0 went stable on 2026-10-30 with the same dependencies as 2.0.1,
+# and adds bundle signing and a refusal of classes newer than Java 17.
+morphe-patcher = "2.1.0"
 # First stable Manager release that bundled the patcher above. The release fact check holds the
-# README's stated floor to this value, so the README moves to it with the next release.
-manager-floor = "2.2.0"
+# README's stated floor to this value on a release run.
+manager-floor = "2.3.0"
+# The Manager floor the README names between releases: the README intro describes the published
+# release, so it keeps the floor that release needs until the next release moves it. Delete this
+# line (or set it to manager-floor) once the README names manager-floor. Between releases the fact
+# check holds the README and the bug form to this value; a release run
+# (validate-release-facts.ps1 -VerifyPublishedAsset) holds them to manager-floor.
+readme-manager-floor = "2.2.0"
 # Read by the app.morphe.patches settings plugin, not by anything in this repo: remove it and
 # configuration fails with "Version with alias smali not found in version catalog". The commit
 # resolves as com.github.MorpheApp.smali through JitPack. It is not waiting on an official
 # release, which google/smali 3.0.10 delivered on 2026-08-20: the pin has to match whatever the
-# patcher above was built against (2.0.1 asks for ac700e1942, 2.0.0 asked for 4220ae75f7), because
+# patcher above was built against (2.1.0 and 2.0.1 ask for ac700e1942, 2.0.0 asked for 4220ae75f7), because
 # a mismatch puts two copies of dexlib2 on the R8 classpath and buildAndroid fails with
 # "Classpath type already present".
 #noinspection GradleDependency

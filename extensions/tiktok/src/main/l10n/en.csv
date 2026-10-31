@@ -1290,7 +1290,6 @@ Open the feed anyway,Open the feed anyway
 Open the feed once so Hushfeed can see which bottom tabs TikTok loaded.,Open the feed once so Hushfeed can see which bottom tabs TikTok loaded.
 Open the feed once so Hushfeed can see which tabs TikTok loaded.,Open the feed once so Hushfeed can see which tabs TikTok loaded.
 Open the profile again and try once more,Open the profile again and try once more
-Open the room and tap Stop to save it.,Open the room and tap Stop to save it.
 Open the search page,Open the search page
 Open the story again and try once more,Open the story again and try once more
 "Open your profile once, then return here to choose its shortcuts.","Open your profile once, then return here to choose its shortcuts."
@@ -1572,7 +1571,6 @@ Saved %1$s of %2$s photos before the story failed,Saved %1$s of %2$s photos befo
 "Saved %1$s of %2$s, the rest need more free space","Saved %1$s of %2$s, the rest need more free space"
 "Saved %1$s of %2$s, the rest ran out of time","Saved %1$s of %2$s, the rest ran out of time"
 Saved %1$s of %2$s. Save the rest on Wi-Fi.,Saved %1$s of %2$s. Save the rest on Wi-Fi.
-Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.,Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.
 Saved %1$s of %2$s. Try the rest later.,Saved %1$s of %2$s. Try the rest later.
 Saved %1$s original photos,Saved %1$s original photos
 Saved %1$s seen videos to the file,Saved %1$s seen videos to the file
@@ -1876,7 +1874,6 @@ Stop waiting,Stop waiting
 Stopped after dismissing %1$s suggested accounts,Stopped after dismissing %1$s suggested accounts
 Stopped after dismissing one suggested account,Stopped after dismissing one suggested account
 Stopped by an unexpected error,Stopped by an unexpected error
-Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.,Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.
 Stopped waiting for the file app. It hasn't said yet whether the backup was saved.,Stopped waiting for the file app. It hasn't said yet whether the backup was saved.
 Stopped waiting for the file app. It hasn't said yet whether the export was saved.,Stopped waiting for the file app. It hasn't said yet whether the export was saved.
 Stopped waiting for the file app. Nothing was changed.,Stopped waiting for the file app. Nothing was changed.
@@ -2036,7 +2033,6 @@ The recovery record is damaged. Export a copy of the recording files or delete t
 The report couldn't be saved. Try again.,The report couldn't be saved. Try again.
 The request timed out. The list may be incomplete.,The request timed out. The list may be incomplete.
 The row of story avatars across the top of the Inbox goes. Stories still play from the feed and from profiles.,The row of story avatars across the top of the Inbox goes. Stories still play from the feed and from profiles.
-The save stopped when you left Wi-Fi. Save it again on Wi-Fi.,The save stopped when you left Wi-Fi. Save it again on Wi-Fi.
 The saved-video choice couldn't open. Try again.,The saved-video choice couldn't open. Try again.
 The saved-video choice is still open,The saved-video choice is still open
 The screen recording did not finish. Its files can be exported but may not play.,The screen recording did not finish. Its files can be exported but may not play.
@@ -2054,7 +2050,6 @@ The time of day the message goes out.,The time of day the message goes out.
 "The video you're watching keeps playing to its end after you leave TikTok or turn the screen off, with TikTok's own media notification to pause it. TikTok's background play switch stays on while this is on. Restart TikTok to apply this.","The video you're watching keeps playing to its end after you leave TikTok or turn the screen off, with TikTok's own media notification to pause it. TikTok's background play switch stays on while this is on. Restart TikTok to apply this."
 "The voice and video call buttons leave the top of a chat. Calls still ring, and the chat details button stays.","The voice and video call buttons leave the top of a chat. Calls still ring, and the chat details button stays."
 "The words under the bottom tab icons go away. The icons stay, and each tab opens what it always did.","The words under the bottom tab icons go away. The icons stay, and each tab opens what it always did."
-"Their usernames, separated by commas or new lines. Each person must already have a chat with you.","Their usernames, separated by commas or new lines. Each person must already have a chat with you."
 There is no Lab change to undo.,There is no Lab change to undo.
 There is no diagnostic data to clear,There is no diagnostic data to clear
 There is no diagnostic data to put back,There is no diagnostic data to put back
@@ -2121,9 +2116,7 @@ TikTok opens a Share to sheet a few seconds after it saves a video. This stops i
 TikTok read it,TikTok read it
 "TikTok read it, but the override couldn't be applied. Reset it and save it again.","TikTok read it, but the override couldn't be applied. Reset it and save it again."
 TikTok refused the follow with code %1$s,TikTok refused the follow with code %1$s
-TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.,TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.
 TikTok refused the follow: %1$s,TikTok refused the follow: %1$s
-TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.,TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.
 TikTok refused the like with code %1$s,TikTok refused the like with code %1$s
 TikTok refused the like: %1$s,TikTok refused the like: %1$s
 TikTok refused this request (%1$s).,TikTok refused this request (%1$s).
@@ -2136,7 +2129,6 @@ TikTok slips the videos it saved for offline viewing back into For You when it c
 TikTok sometimes tests a change that empties the Favorites tab on your profile. This keeps the tab and your saved videos.,TikTok sometimes tests a change that empties the Favorites tab on your profile. This keeps the tab and your saved videos.
 TikTok sometimes tests your phone's speed in a background process that can use a lot of memory. This stops that test from starting. One already running ends when TikTok restarts.,TikTok sometimes tests your phone's speed in a background process that can use a lot of memory. This stops that test from starting. One already running ends when TikTok restarts.
 TikTok starts as a new phone after the restart. Tap again to cancel.,TikTok starts as a new phone after the restart. Tap again to cancel.
-"TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app.","TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app."
 "TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app. If TikTok's 2-step check still wants only a passkey, add email or text as a way to verify on tiktok.com or another phone first.","TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app. If TikTok's 2-step check still wants only a passkey, add email or text as a way to verify on tiktok.com or another phone first."
 TikTok's background play and Auto scroll,TikTok's background play and Auto scroll
 TikTok's downloader: %1$s,TikTok's downloader: %1$s

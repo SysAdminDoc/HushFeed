@@ -1936,7 +1936,6 @@ No clean copy yet. Saved the watermarked one to %1$s,暂无无水印版本，已
 "The video you're watching keeps playing to its end after you leave TikTok or turn the screen off, with TikTok's own media notification to pause it. TikTok's background play switch stays on while this is on. Restart TikTok to apply this.",在你离开 TikTok 或关闭屏幕后，你正在观看的视频将继续播放到最后，并通过 TikTok 自己的媒体通知来暂停。当此功能打开时，TikTok 的后台播放开关保持打开状态。重新启动 TikTok 以应用此操作.
 "The voice and video call buttons leave the top of a chat. Calls still ring, and the chat details button stays.",语音和视频通话按钮离开了聊天的顶部。来电仍然响起，并且聊天详细信息按钮仍然保留.
 "The words under the bottom tab icons go away. The icons stay, and each tab opens what it always did.",底部选项卡图标下方的文字消失。图标保留下来，每个选项卡都会像往常一样打开.
-"Their usernames, separated by commas or new lines. Each person must already have a chat with you.",他们的用户名，以逗号或换行符分隔。每个人都必须已经与你聊天过.
 "Usernames or group chat names, separated by commas or new lines. Each chat must already exist. A group is found by the name your Inbox shows for it.",用户名或群聊名称，用逗号或换行分隔。每个聊天必须已存在。群聊按收件箱中显示的名称查找.
 There is no Lab change to undo.,没有可撤消的实验室更改.
 There is no diagnostic data to clear,没有要清除的诊断数据
@@ -2008,8 +2007,6 @@ TikTok refused the follow with code %1$s,TikTok 拒绝了关注，代码 %1$s
 "Follow refused, code %1$s. Maybe a hidden CAPTCHA.",关注被拒绝，代码 %1$s。可能是隐藏的 CAPTCHA.
 TikTok refused the follow: %1$s,TikTok 拒绝了关注：%1$s
 Follow refused (%1$s). Maybe a hidden CAPTCHA.,关注被拒绝（%1$s）。可能是隐藏的 CAPTCHA.
-TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.,TikTok 拒绝了关注，代码 %1$s。隐藏的验证码可能是原因.
-TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.,TikTok 拒绝了关注：%1$s 隐藏的验证码可能是原因.
 TikTok refused this request (%1$s).,TikTok 拒绝了此请求 (%1$s).
 "TikTok removes videos saved for offline viewing after a set time, sometimes only two days, watched or not. With this on they stay until you delete them in TikTok's Offline videos settings. TikTok can still clear watched ones when your phone is low on space.",TikTok 在设定的时间（有时仅两天）后删除保存用于离线观看的视频，无论观看与否。启用此功能后，它们会一直保留，直到你在 TikTok 的离线视频设置中删除它们为止。当你的手机空间不足时，TikTok 仍然可以清除观看的内容.
 TikTok reports additional filtered accounts. This list is incomplete.,TikTok 报告其他已过滤的账号。此列表不完整.
@@ -2019,7 +2016,6 @@ TikTok sees an empty contact list instead of yours. Find Friends and People you 
 TikTok slips the videos it saved for offline viewing back into For You when it can't load enough new ones. This takes them all out. Your offline list stays as it is.,当 TikTok 无法加载足够的新视频时，会将其保存的供离线观看的视频滑回到“For You”中。这会将他们全部带走。你的离线列表保持原样.
 TikTok sometimes tests a change that empties the Favorites tab on your profile. This keeps the tab and your saved videos.,TikTok 有时会测试一项更改，以清空你的个人资料上的“收藏夹”选项卡。这会保留该选项卡和你保存的视频.
 TikTok sometimes tests your phone's speed in a background process that can use a lot of memory. This stops that test from starting. One already running ends when TikTok restarts.,TikTok 有时会在可能使用大量内存的后台进程中测试手机的速度。这会阻止该测试开始。当 TikTok 重新启动时，已经运行的一个会结束.
-"TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app.",TikTok 将你的手机视为没有密钥的手机，因此登录时会要求你通过电子邮件或短信输入密码或代码。密码管理器不会将密钥交给已修补的应用程序.
 "TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app. If TikTok's 2-step check still wants only a passkey, add email or text as a way to verify on tiktok.com or another phone first.",TikTok 将你的手机视为没有密钥的手机，因此登录时会要求你通过电子邮件或短信输入密码或代码。密码管理器不会将密钥交给已修补的应用程序。如果 TikTok 的两步验证仍然只要求密钥，请先在 tiktok.com 或另一部手机上添加电子邮件或短信作为验证方式.
 TikTok's background play and Auto scroll,TikTok的后台播放和自动滚动
 TikTok's downloader: %1$s,TikTok 的下载器：%1$s
@@ -2335,9 +2331,6 @@ Left TikTok after no touch,因无触摸已离开 TikTok
 Show when an account was made,显示账号的创建时间
 "Under the @username on someone else's profile, show the month and year the account was made. It's read from the account's ID, so very old accounts show nothing.",在别人个人资料的@用户名下方显示该账号创建的年月。这是从账号 ID 中读出的，所以很老的账号不显示任何内容.
 Joined %s,%s加入
-Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.,等待 Wi-Fi 30 分钟后已停止。连上 Wi-Fi 后再保存一次.
-Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.,已保存 %1$s 个，共 %2$s 个。其余的在你离开 Wi-Fi 时停止了。请在 Wi-Fi 下再保存一次.
-The save stopped when you left Wi-Fi. Save it again on Wi-Fi.,你离开 Wi-Fi 时保存停止了。请在 Wi-Fi 下再保存一次.
 Keep unsent messages,保留已撤回的消息
 "When someone unsends a message, it stays in your chat instead of disappearing. Messages you unsend yourself are still removed.",有人撤回消息时，该消息会保留在你的聊天中，而不是消失。你自己撤回的消息仍会被删除.
 Unsent messages,已撤回的消息

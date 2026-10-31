@@ -2536,9 +2536,6 @@ Left TikTok after no touch	TikTok свёрнут: не было касаний
 Show when an account was made	Показывать дату создания аккаунта
 Under the @username on someone else's profile, show the month and year the account was made. It's read from the account's ID, so very old accounts show nothing.	Под @именем пользователя в чужом профиле показывать месяц и год создания аккаунта. Дата берётся из ID аккаунта, поэтому у очень старых аккаунтов ничего не показывается.
 Joined %s	Создан: %s
-Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.	Ожидание Wi-Fi прекращено через 30 минут. Сохраните снова, когда будете в сети Wi-Fi.
-Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.	Сохранено %1$s из %2$s. Остальное остановилось, когда вы вышли из Wi-Fi. Сохраните снова по Wi-Fi.
-The save stopped when you left Wi-Fi. Save it again on Wi-Fi.	Сохранение остановилось, когда вы вышли из Wi-Fi. Сохраните снова по Wi-Fi.
 Keep unsent messages	Сохранять отозванные сообщения
 When someone unsends a message, it stays in your chat instead of disappearing. Messages you unsend yourself are still removed.	Когда кто-то отзывает сообщение, оно остаётся в вашем чате и не исчезает. Сообщения, которые вы отзываете сами, по-прежнему удаляются.
 Unsent messages	Отозванные сообщения

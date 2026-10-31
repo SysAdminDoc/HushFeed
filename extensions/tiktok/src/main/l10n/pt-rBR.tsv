@@ -2359,9 +2359,6 @@ Left TikTok after no touch	Saiu do TikTok por inatividade
 Show when an account was made	Mostrar quando a conta foi criada
 Under the @username on someone else's profile, show the month and year the account was made. It's read from the account's ID, so very old accounts show nothing.	Abaixo do @usuário no perfil de outra pessoa, mostrar o mês e o ano em que a conta foi criada. Isso vem do ID da conta, então contas muito antigas não mostram nada.
 Joined %s	Entrou em %s
-Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.	Parou de esperar o Wi-Fi depois de 30 minutos. Salve de novo quando estiver no Wi-Fi.
-Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.	%1$s de %2$s salvos. O resto parou quando você saiu do Wi-Fi. Salve de novo no Wi-Fi.
-The save stopped when you left Wi-Fi. Save it again on Wi-Fi.	O salvamento parou quando você saiu do Wi-Fi. Salve de novo no Wi-Fi.
 Keep unsent messages	Manter mensagens retiradas
 When someone unsends a message, it stays in your chat instead of disappearing. Messages you unsend yourself are still removed.	Quando alguém retira uma mensagem, ela continua no seu chat em vez de sumir. As mensagens que você mesmo retira continuam sendo removidas.
 Unsent messages	Mensagens retiradas

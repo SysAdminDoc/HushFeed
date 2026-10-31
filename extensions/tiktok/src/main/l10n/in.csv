@@ -2333,9 +2333,6 @@ Left TikTok after no touch,Keluar dari TikTok karena tidak disentuh
 Show when an account was made,Tampilkan kapan akun dibuat
 "Under the @username on someone else's profile, show the month and year the account was made. It's read from the account's ID, so very old accounts show nothing.","Di bawah @nama pengguna pada profil orang lain, tampilkan bulan dan tahun akun itu dibuat. Ini dibaca dari ID akun, jadi akun yang sangat lama tidak menampilkan apa pun."
 Joined %s,Bergabung %s
-Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.,Berhenti menunggu Wi-Fi setelah 30 menit. Simpan lagi saat kamu terhubung ke Wi-Fi.
-Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.,Tersimpan %1$s dari %2$s. Sisanya berhenti saat kamu keluar dari Wi-Fi. Simpan lagi lewat Wi-Fi.
-The save stopped when you left Wi-Fi. Save it again on Wi-Fi.,Penyimpanan berhenti saat kamu keluar dari Wi-Fi. Simpan lagi lewat Wi-Fi.
 Keep unsent messages,Simpan pesan yang ditarik
 "When someone unsends a message, it stays in your chat instead of disappearing. Messages you unsend yourself are still removed.","Saat seseorang menarik pesan, pesan itu tetap ada di obrolanmu dan tidak hilang. Pesan yang kamu tarik sendiri tetap dihapus."
 Unsent messages,Pesan yang ditarik

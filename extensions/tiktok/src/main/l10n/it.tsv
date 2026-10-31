@@ -2299,7 +2299,6 @@ Stream only	Solo stream
 Screen	Schermo
 Stream only saves the room's own video, as before. Screen records what your phone shows while you watch, with the sound the app plays when TikTok has the microphone permission. Android asks you to allow screen recording each time, and shows its own notice while it records.	Solo stream salva il video della stanza, come prima. Schermo registra ciò che mostra il telefono mentre guardi, con l'audio dell'app se TikTok ha il permesso del microfono. Android chiede ogni volta di consentire la registrazione dello schermo e mostra un suo avviso mentre registra.
 Recording this LIVE's screen	Registrazione dello schermo di questa LIVE
-Open the room and tap Stop to save it.	Apri la stanza e tocca Stop per salvarla.
 Screen recording wasn't allowed	Registrazione schermo non consentita
 Tap Stop or leave the room to save it.	Tocca Interrompi o esci dalla stanza per salvarla.
 Recording this LIVE's screen from now	Registro lo schermo di questa LIVE da ora
@@ -2360,9 +2359,6 @@ Left TikTok after no touch	Uscito da TikTok per inattività
 Show when an account was made	Mostra quando è stato creato un account
 Under the @username on someone else's profile, show the month and year the account was made. It's read from the account's ID, so very old accounts show nothing.	Sotto il @nomeutente del profilo di un'altra persona, mostra il mese e l'anno in cui è stato creato l'account. Si legge dall'ID dell'account, quindi gli account molto vecchi non mostrano nulla.
 Joined %s	Iscritto da %s
-Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.	Smesso di aspettare il Wi-Fi dopo 30 minuti. Salvalo di nuovo quando sei in Wi-Fi.
-Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.	Salvati %1$s di %2$s. Il resto si è fermato quando hai lasciato il Wi-Fi. Salva di nuovo in Wi-Fi.
-The save stopped when you left Wi-Fi. Save it again on Wi-Fi.	Il salvataggio si è fermato quando hai lasciato il Wi-Fi. Salvalo di nuovo in Wi-Fi.
 Keep unsent messages	Conserva i messaggi ritirati
 When someone unsends a message, it stays in your chat instead of disappearing. Messages you unsend yourself are still removed.	Quando qualcuno ritira un messaggio, resta nella tua chat invece di sparire. I messaggi che ritiri tu vengono comunque rimossi.
 Unsent messages	Messaggi ritirati

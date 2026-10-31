@@ -2359,9 +2359,6 @@ Left TikTok after no touch	Dokunulmadığı için TikTok'tan çıkıldı
 Show when an account was made	Hesabın ne zaman açıldığını göster
 Under the @username on someone else's profile, show the month and year the account was made. It's read from the account's ID, so very old accounts show nothing.	Başka birinin profilinde @kullanıcı adının altında hesabın açıldığı ayı ve yılı göster. Bu bilgi hesabın kimliğinden okunur, bu yüzden çok eski hesaplarda hiçbir şey görünmez.
 Joined %s	Katıldı: %s
-Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.	30 dakika sonra Wi-Fi beklemesi bırakıldı. Wi-Fi'a bağlanınca yeniden kaydet.
-Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.	%2$s dosyadan %1$s kaydedildi. Kalanlar Wi-Fi'dan çıkınca durdu. Wi-Fi ile yeniden kaydet.
-The save stopped when you left Wi-Fi. Save it again on Wi-Fi.	Wi-Fi'dan çıkınca kayıt durdu. Wi-Fi ile yeniden kaydet.
 Keep unsent messages	Geri alınan mesajları koru
 When someone unsends a message, it stays in your chat instead of disappearing. Messages you unsend yourself are still removed.	Biri bir mesajı geri aldığında, mesaj kaybolmak yerine sohbetinizde kalır. Kendi geri aldığınız mesajlar yine de kaldırılır.
 Unsent messages	Geri alınan mesajlar

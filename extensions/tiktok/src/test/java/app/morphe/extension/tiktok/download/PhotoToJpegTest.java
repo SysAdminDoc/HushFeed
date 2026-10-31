@@ -75,6 +75,18 @@ public class PhotoToJpegTest {
         assertEquals("off converts again", "jpg", PhotoToJpeg.convert(context, webp, "webp"));
     }
 
+    /** Make sticker's cover (#88) is read by Hushfeed, not saved, so it's a JPEG whatever the switch says. */
+    @Test
+    public void rewriteIgnoresKeepPhotosAsSent() throws IOException {
+        Settings.KEEP_PHOTOS_AS_SENT.save(true);
+        File webp = encoded(48, 32, 0xFF3366CC, Bitmap.CompressFormat.WEBP_LOSSY);
+        assertEquals("jpg", PhotoToJpeg.rewrite(context, webp, "webp"));
+        byte[] saved = Files.readAllBytes(webp.toPath());
+        assertEquals("JPEG start of image", 0xFF, saved[0] & 0xFF);
+        assertEquals("JPEG start of image", 0xD8, saved[1] & 0xFF);
+        assertNoConversionFilesLeft();
+    }
+
     @Test
     public void aHeifPhotoIsSavedAgainAsAJpegOfTheSameSize() throws IOException {
         for (String extension : List.of("heif", "heic")) {

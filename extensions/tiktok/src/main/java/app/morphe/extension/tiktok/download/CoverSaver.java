@@ -91,6 +91,17 @@ public final class CoverSaver {
         return value instanceof Number ? ((Number) value).longValue() : 0;
     }
 
+    /**
+     * Fetches the largest still cover into {@code target} for Make sticker (#88), a HEIF or WebP
+     * one rewritten as a JPEG so Samsung's decoder reads it. False when the post has no cover.
+     */
+    public static boolean fetchStill(Context context, Object aweme, File target) throws IOException {
+        List<String> urls = coverUrls(aweme);
+        if (urls.isEmpty()) return false;
+        PhotoToJpeg.rewrite(context, target, RemoteMedia.fetch(urls, target, RemoteMedia.Kind.IMAGE));
+        return true;
+    }
+
     /** The Long press action: saves the cover of the video on screen, or says why it can't. */
     public static void save(Context context, Object aweme) {
         start(context, aweme, true);

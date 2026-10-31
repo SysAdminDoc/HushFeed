@@ -10,6 +10,9 @@ import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as byte
 import app.morphe.patcher.util.proxy.mutableTypes.MutableClass
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.shared.compat.AppCompatibilities
+import app.morphe.patches.tiktok.interaction.sharesheet.SHARE_MAKE_STICKER
+import app.morphe.patches.tiktok.interaction.sharesheet.addOwnedShareAction
+import app.morphe.patches.tiktok.interaction.sharesheet.ownedShareActionsPatch
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.registerForBuildDetails
 import app.morphe.util.addInstructions
@@ -281,14 +284,15 @@ internal fun MutableMethod.addStickerCreatorButton() {
 @Suppress("unused")
 val createStickersPatch = bytecodePatch(
     name = "Create stickers",
-    description = "Adds a Create button to the Saved page of PineDrama's comment sticker panel. Pick a " +
-        "photo and it turns into one of your saved stickers, like TikTok's own Create sticker. Works as " +
-        "soon as you patch it in, with no switch.",
+    description = "Adds a Create button to the Saved page of the comment sticker panel. Pick a photo and " +
+        "it turns into one of your saved stickers. Make sticker in a video's share sheet does the same " +
+        "with its cover. Works as soon as you patch it in, with no switch.",
     default = true,
 ) {
     category("Comments")
-    dependsOn(sharedExtensionPatch)
-    compatibleWith(*AppCompatibilities.pineDrama())
+    // The native Report carrier, for the share sheet's Make sticker (#88).
+    dependsOn(sharedExtensionPatch, ownedShareActionsPatch)
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
         val calls = stickerCreatorCalls(
@@ -298,6 +302,7 @@ val createStickersPatch = bytecodePatch(
         )
         mutableClassDefBy(STICKER_CREATOR).swapStickerStubs(calls)
         FavouriteStickerPageFingerprint.method.addStickerCreatorButton()
+        addOwnedShareAction(SHARE_MAKE_STICKER)
         registerForBuildDetails("enableStickerCreator")
     }
 }

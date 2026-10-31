@@ -26,7 +26,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
-/** Create on PineDrama's saved stickers page (#156): the button, its place and the photo's size. */
+/** Create on the comment panel's saved stickers page (#156): the button, its place and the photo's size. */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 28)
 public class StickerCreatorTest {

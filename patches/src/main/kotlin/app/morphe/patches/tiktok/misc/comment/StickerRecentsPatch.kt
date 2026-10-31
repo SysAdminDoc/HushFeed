@@ -281,13 +281,13 @@ private fun requirePublicRowClass(classDef: ClassDef?, type: String, parameter: 
 @Suppress("unused")
 val keepRecentStickersPatch = bytecodePatch(
     name = "Keep recent stickers",
-    description = "Adds Recently used above Saved in PineDrama's comment sticker panel, with the last stickers " +
+    description = "Adds Recently used above Saved in the comment sticker panel, with the last stickers " +
         "you sent, and keeps it when you close and reopen the app. Works as soon as you patch it in, with no switch.",
     default = true,
 ) {
     category("Comments")
     dependsOn(sharedExtensionPatch)
-    compatibleWith(*AppCompatibilities.pineDrama())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
         val add = RecentStickerAddFingerprint.method

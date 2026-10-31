@@ -1925,18 +1925,23 @@
   "kind": "runtime",
   "source": [
    "patches/src/main/kotlin/app/morphe/patches/tiktok/misc/comment/StickerCreatorPatch.kt",
-   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/comment/StickerCreator.java"
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/comment/StickerCreator.java",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/share/ShareMakeSticker.java"
   ],
   "settings": [],
   "surface": "comments",
   "checks": [
    {
     "id": "injected",
-    "what": "The patched dex carries the sticker creator and the patch registered itself. (The dex-string step shows the extension class is shipped; the registered-switch step is what shows the patch ran and wrote the bridges.)",
+    "what": "The patched dex carries the sticker creator and the share sheet's Make sticker, and the patch registered itself. (The dex-string steps show the extension classes are shipped; the registered-switch step is what shows the patch ran and wrote the bridges.)",
     "steps": [
      {
       "apk": "dex-string",
       "expect": "Lapp/morphe/extension/tiktok/comment/StickerCreator;"
+     },
+     {
+      "apk": "dex-string",
+      "expect": "Lapp/morphe/extension/tiktok/share/ShareMakeSticker;"
      },
      {
       "probe": "report",
@@ -1946,7 +1951,7 @@
     "auto": true
    }
   ],
-  "notes": "Issue #156. The Saved page of the comment sticker panel gets a red Create pill level with its Saved heading. Tapping it opens the photo picker; the photo is shrunk to 512 px on its longest side, uploaded to ImageX with the token im/upload_config hands the comment sticker uploader (scene 2), saved through StickerApiV2's im/sticker/save as type 9 and added to the sticker store, so it shows in Saved without a reload. The natural check is on a signed-in account: pick a photo, wait for 'Sticker added to Saved', and the new sticker sits first in Saved and sends in a comment. Remove it afterwards from Saved's own edit mode."
+  "notes": "Issues #156 and #88. The Saved page of the comment sticker panel gets a red Create pill level with its Saved heading. Tapping it opens the photo picker; the photo is shrunk to 512 px on its longest side, uploaded to ImageX with the token im/upload_config hands the comment sticker uploader (scene 2), saved through StickerApiV2's im/sticker/save as type 9 and added to the sticker store, so it shows in Saved without a reload. Make sticker (#88) sits in a video's share sheet after Save cover, or after Download when Save cover is off, with a smiling sticker glyph in Report's frame. Tapping it toasts 'Making your sticker', fetches the largest still cover (a HEIF or WebP one rewritten as a JPEG), sends it through the same upload and save and toasts 'Sticker added to Saved'. Photo posts have no cover, so the button stays off their sheet. The natural check is on a signed-in account: pick a photo, or tap Make sticker on a video, wait for 'Sticker added to Saved', and the new sticker sits first in Saved and sends in a comment. Remove it afterwards from Saved's own edit mode."
  },
  {
   "name": "Custom offline videos limit",

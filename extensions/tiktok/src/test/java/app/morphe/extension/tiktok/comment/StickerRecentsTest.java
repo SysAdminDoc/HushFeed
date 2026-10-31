@@ -28,7 +28,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
-/** Keep recent stickers on PineDrama (#156): the Recently used row above Saved, and what it held coming back after a restart. */
+/** Keep recent stickers (#156): the Recently used row above Saved, and what it held coming back after a restart. */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 28)
 public class StickerRecentsTest {

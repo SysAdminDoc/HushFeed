@@ -2388,3 +2388,5 @@ This account can't make stickers	Esta conta não pode criar adesivos
 Sticker added to Saved	Adesivo adicionado aos salvos
 # context: PineDrama's comment sticker panel. Recently used is a heading Hushfeed adds above Saved, over the last stickers you sent. TikTok's own label for it isn't in the APK, so this is the usual phone wording
 Recently used	Usados recentemente
+# context: A video's share sheet. Make sticker is a button Hushfeed adds after Save cover, and it turns the video's cover into one of your saved comment stickers. Keep it about as short as Save cover, since share sheet labels get two short lines under the icon
+Make sticker	Criar adesivo

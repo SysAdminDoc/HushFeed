@@ -255,9 +255,10 @@ class OwnedShareActionAnchorsTest {
             snapshot.addShareActionToSnapshot(fields, SHARE_BLOCK_AUTHOR)
             snapshot.addStorySaveToSnapshot(fields)
             snapshot.addShareActionToSnapshot(fields, SHARE_SAVE_COVER)
+            snapshot.addShareActionToSnapshot(fields, SHARE_MAKE_STICKER)
             snapshot.addShareActionToSnapshot(fields, SHARE_LIVE_QUALITY)
             val finished = snapshot.implementation!!.instructions.toList()
-            for (extension in listOf(SHARE_BLOCK_AUTHOR, STORY_SHARE_SAVE, SHARE_SAVE_COVER, SHARE_LIVE_QUALITY)) {
+            for (extension in listOf(SHARE_BLOCK_AUTHOR, STORY_SHARE_SAVE, SHARE_SAVE_COVER, SHARE_MAKE_STICKER, SHARE_LIVE_QUALITY)) {
                 val calls = finished.indices.filter { finished[it].getReference<MethodReference>()?.definingClass == extension }
                 assertEquals(returns, calls.size)
                 for (at in calls) {

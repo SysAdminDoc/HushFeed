@@ -26,6 +26,7 @@ import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.HushfeedPause;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
+import app.morphe.extension.tiktok.download.CoverSaver;
 import app.morphe.extension.tiktok.settings.L10n;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -48,10 +49,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Create on PineDrama's saved stickers page (#156): pick a photo and it becomes one of your saved
- * stickers, the way TikTok's own Create sticker does.
+ * Create on the comment panel's saved stickers page (#156): pick a photo and it becomes one of your
+ * saved stickers, the way TikTok's own Create sticker does. Make sticker in a video's share sheet
+ * (#88) does the same with the video's cover.
  *
- * <p>PineDrama ships everything this needs except the button. The DM canvas saves a drawing as a
+ * <p>The app ships everything this needs except the button. The DM canvas saves a drawing as a
  * sticker through {@code im/sticker/save} and then adds it to Saved, and the comment sticker
  * uploader asks {@code im/upload_config} for an ImageX token (upload scene 2). The patch copies
  * those calls into the bridges at the bottom of this class. This class adds the button, reads the
@@ -247,12 +249,48 @@ public final class StickerCreator {
 
     /** Makes a sticker from the photo at {@code uri} on the worker thread, one at a time. */
     static void create(Context context, Uri uri) {
-        if (!BUSY.compareAndSet(false, true)) return;
+        start(() -> make(context, uri));
+    }
+
+    /**
+     * Make sticker in a video's share sheet (#88): the video's cover becomes one of your saved
+     * stickers, since TikTok's own Create sticker needs the sticker module a patched app can't get.
+     */
+    public static void fromCover(Context context, Object aweme) {
+        if (context == null) return;
+        Context app = context.getApplicationContext();
+        start(() -> {
+            File cover = new File(app.getCacheDir(), "hushfeed-sticker-cover-" + System.nanoTime() + ".img");
+            try {
+                if (!coverFetcher.fetch(app, aweme, cover)) return L10n.t("Couldn't make the sticker. Try again.");
+                return make(app, Uri.fromFile(cover));
+            } finally {
+                if (cover.exists() && !cover.delete()) cover.deleteOnExit();
+            }
+        });
+    }
+
+    interface CoverFetcher {
+        boolean fetch(Context context, Object aweme, File target) throws IOException;
+    }
+
+    /** CoverSaver's fetch, which a test swaps for a picture on disk. */
+    static volatile CoverFetcher coverFetcher = CoverSaver::fetchStill;
+
+    interface Job {
+        String run() throws Exception;
+    }
+
+    private static void start(Job job) {
+        if (!BUSY.compareAndSet(false, true)) {
+            Utils.showToastShort(L10n.t("Making your sticker"));
+            return;
+        }
         Utils.showToastShort(L10n.t("Making your sticker"));
         WORKER.execute(() -> {
             String message;
             try {
-                message = make(context, uri);
+                message = job.run();
             } catch (Throwable error) {
                 Logger.printException(() -> "Could not make the sticker", error);
                 message = L10n.t("Couldn't make the sticker. Try again.");

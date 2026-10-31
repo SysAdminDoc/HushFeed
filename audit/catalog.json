@@ -2934,6 +2934,41 @@
   "notes": "The audit's step language has no long press, so the Copy gesture on a comment is a manual action; the injected-hook check is automatic and the copy check needs a person to long-press a comment and choose Copy, after which 'hookdetails family comment copy' answers 'menu prefix blanked'. With the switch off the same Copy puts 'username: text' on the clipboard (the clipboard is local; nothing is sent)."
  },
  {
+  "name": "Create stickers",
+  "category": "Comments",
+  "default": true,
+  "kind": "runtime",
+  "source": [
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/misc/comment/StickerCreatorPatch.kt",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/comment/StickerCreator.java",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/share/ShareMakeSticker.java"
+  ],
+  "settings": [],
+  "surface": "comments",
+  "checks": [
+   {
+    "id": "injected",
+    "what": "The patched dex carries the sticker creator and the share sheet's Make sticker, and the patch registered itself. (The dex-string steps show the extension classes are shipped; the registered-switch step is what shows the patch ran and wrote the bridges.)",
+    "steps": [
+     {
+      "apk": "dex-string",
+      "expect": "Lapp/morphe/extension/tiktok/comment/StickerCreator;"
+     },
+     {
+      "apk": "dex-string",
+      "expect": "Lapp/morphe/extension/tiktok/share/ShareMakeSticker;"
+     },
+     {
+      "probe": "report",
+      "expect": "registered_switches:[^\\n]*\\bstickerCreator\\b"
+     }
+    ],
+    "auto": true
+   }
+  ],
+  "notes": "Issues #156 and #88. TikTok's full sticker panel is the on-demand df_im_bootfinish module, which a patched install can't download, so patched TikTok shows the basic panel, whose Saved page has no Create of its own. The patch adds a red Create pill level with its Saved heading. Tapping it opens the photo picker; the photo is shrunk to 512 px on its longest side, uploaded to ImageX with the token im/upload_config hands the comment sticker uploader (scene 2), saved through StickerApiV2's im/sticker/save as type 9 and added to the sticker store, so it shows in Saved without a reload. Make sticker (#88) sits in a video's share sheet after Save cover, or after Download when Save cover is off, with a smiling sticker glyph in Report's frame. Tapping it toasts 'Making your sticker', fetches the largest still cover (a HEIF or WebP one rewritten as a JPEG), sends it through the same upload and save and toasts 'Sticker added to Saved'. Photo posts have no cover, so the button stays off their sheet. The natural check is on a signed-in account: pick a photo, or tap Make sticker on a video, wait for 'Sticker added to Saved', and the new sticker sits first in Saved and sends in a comment. Remove it afterwards from Saved's own edit mode."
+ },
+ {
   "name": "Custom launcher icon",
   "category": "Interface",
   "default": false,
@@ -9522,6 +9557,36 @@
    }
   ],
   "notes": "keepStatus(int) and keepMuted(boolean) take arguments, so only keepInSearch can be called; all three share keep() so one proves the switch. A real pulled sound (a copyright-muted video) is not something the audit can find on demand."
+ },
+ {
+  "name": "Keep recent stickers",
+  "category": "Comments",
+  "default": true,
+  "kind": "runtime",
+  "source": [
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/misc/comment/StickerRecentsPatch.kt",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/comment/StickerRecents.java"
+  ],
+  "settings": [],
+  "surface": "comments",
+  "checks": [
+   {
+    "id": "injected",
+    "what": "The patched dex carries the recent sticker store and the patch registered itself. (The dex-string step shows the extension class is shipped; the registered-switch step is what shows the patch ran and hooked the add, the reset and the Saved page's rows.)",
+    "steps": [
+     {
+      "apk": "dex-string",
+      "expect": "Lapp/morphe/extension/tiktok/comment/StickerRecents;"
+     },
+     {
+      "probe": "report",
+      "expect": "registered_switches:[^\\n]*\\bstickerRecents\\b"
+     }
+    ],
+    "auto": true
+   }
+  ],
+  "notes": "Issue #156. TikTok's full sticker panel is the on-demand df_im_bootfinish module, which a patched install can't download, so patched TikTok shows its basic panel, whose Saved page has no Recently used row. The patch puts up to four of the store's newest stickers and a Recently used heading above Saved each time the page builds its rows (StickerRecents.addRow). TikTok also keeps that list in memory only and empties it the first time its sticker store is used in each process and on every account result, so the row is blank after every restart. The patch hands each new list to StickerRecents.save as a sticker goes on it (one list per account in hushfeed_sticker_recents, tied to the app version) and puts this account's list back right after the reset. The natural check is on a signed-in account: send a sticker in a comment, reopen the sticker panel and it's first under Recently used, then force-stop and reopen TikTok and it's still there. A sticker whose image links have all expired is left out."
  },
  {
   "name": "Keep the Favorites tab",

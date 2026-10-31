@@ -63,6 +63,14 @@ final class PhotoToJpeg {
     static String convert(Context context, File file, String extension) {
         // Some people edit in apps that read HEIF or WebP and want the bytes TikTok served (#229).
         if (Settings.KEEP_PHOTOS_AS_SENT.get()) return extension;
+        return rewrite(context, file, extension);
+    }
+
+    /**
+     * {@link #convert} whatever Keep photos as TikTok sent them says, for a picture Hushfeed reads
+     * itself rather than saves, which Samsung's decoder would turn down as a HEIF.
+     */
+    static String rewrite(Context context, File file, String extension) {
         if (!"heif".equals(extension) && !"heic".equals(extension) && !"webp".equals(extension)) {
             return extension;
         }

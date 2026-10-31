@@ -29,7 +29,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * Keep recent stickers (#156) is a PineDrama patch, and PineDrama 47.5.3 is built from TikTok
+ * Keep recent stickers (#156) patches TikTok and PineDrama, and PineDrama 47.5.3 is built from TikTok
  * 47.5.3's code: the recently used store has the same add, reset and holder there (14gj.LJ,
  * 14gj.LIZIZ and 0mnM.LIZ on TikTok, Xf3 and Xf8 on PineDrama), and the basic Saved page builds
  * its rows the same way (emit$0 with 0zfW and 14gH on TikTok, emit$22 with Q1n and QRQ on

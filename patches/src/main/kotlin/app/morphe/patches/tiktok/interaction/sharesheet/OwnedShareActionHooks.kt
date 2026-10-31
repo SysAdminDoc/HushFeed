@@ -35,6 +35,7 @@ internal const val OWNED_SHARE_ACTIONS = "Lapp/morphe/extension/tiktok/share/Own
 internal const val SHARE_BLOCK_AUTHOR = "Lapp/morphe/extension/tiktok/share/ShareBlockAuthor;"
 internal const val SHARE_SAVE_COVER = "Lapp/morphe/extension/tiktok/share/ShareSaveCover;"
 internal const val SHARE_LIVE_QUALITY = "Lapp/morphe/extension/tiktok/share/ShareLiveQuality;"
+internal const val SHARE_MAKE_STICKER = "Lapp/morphe/extension/tiktok/share/ShareMakeSticker;"
 private const val BLOCK = "Owned share actions"
 private const val AWEME = "Lcom/ss/android/ugc/aweme/feed/model/Aweme;"
 private const val BASE_PACKAGE = "Lcom/ss/android/ugc/aweme/share/base/model/BaseSharePackage;"
@@ -296,8 +297,9 @@ internal fun BytecodePatchContext.addOwnedShareAction(extension: String) {
 
 /**
  * The native Report carrier's key, label, click and icon hooks and its constructor bridge, which
- * Block this creator (Share sheet tools) and Save cover (Advanced downloads) share. A build with
- * both installs them once, and each patch adds its own action to the finished row.
+ * Block this creator (Share sheet tools), Save cover (Advanced downloads) and Make sticker (Create
+ * stickers) share. A build with several installs them once, and each patch adds its own action to
+ * the finished row.
  */
 internal val ownedShareActionsPatch = bytecodePatch {
     dependsOn(sharedExtensionPatch)

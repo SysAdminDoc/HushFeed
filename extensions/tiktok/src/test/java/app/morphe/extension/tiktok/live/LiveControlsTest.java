@@ -40,6 +40,7 @@ public class LiveControlsTest {
         setPaused(false);
         SettingsStatus.liveControlsEnabled = false;
         Settings.STOP_LIVE_AUTO_ENTER.save(Settings.STOP_LIVE_AUTO_ENTER.defaultValue);
+        Settings.HIDE_LIVE_SERVICE_PLUS.save(Settings.HIDE_LIVE_SERVICE_PLUS.defaultValue);
         Settings.SHOW_EXACT_LIVE_VIEWERS.save(Settings.SHOW_EXACT_LIVE_VIEWERS.defaultValue);
         Settings.OFFER_LIVE_QUALITY.save(Settings.OFFER_LIVE_QUALITY.defaultValue);
         Settings.REMEMBER_LIVE_QUALITY.save(Settings.REMEMBER_LIVE_QUALITY.defaultValue);
@@ -423,6 +424,72 @@ public class LiveControlsTest {
         setPaused(true);
         assertFalse("Pause leaves native handling in place",
                 LiveControls.hideStaleServicePlus(showing, new Preview(items)));
+    }
+
+    /**
+     * #94: the row's show runs without a bind too (a preview becoming visible, an overlay
+     * clearing, the recycle path), with the preview the last bind stored, which the recycle never
+     * clears. The show hook reads the current room's preview first. No room, or a room without a
+     * Service+ preview, answers null, which the next call hides. Paused, the stored one stays.
+     */
+    @Test public void theShowReadsTheCurrentRoomsServicePlusPreview() {
+        Row row = new Row(true);
+        Preview last = new Preview(Collections.singletonList(new Object()));
+        Preview current = new Preview(Collections.singletonList(new Object()));
+        assertSame("the current room's preview didn't replace the stored one", current,
+                LiveControls.servicePlusPreview(row, last, new Holder(new Room(current)), "room"));
+        assertNull("a room without a Service+ preview kept the last LIVE's",
+                LiveControls.servicePlusPreview(row, last, new Holder(new Room(null)), "room"));
+        assertNull("a holder without a room kept the last LIVE's",
+                LiveControls.servicePlusPreview(row, last, new Holder(null), "room"));
+        assertNull("no holder kept the last LIVE's", LiveControls.servicePlusPreview(row, last, null, "room"));
+        assertSame("no row changed the stored preview", last,
+                LiveControls.servicePlusPreview(null, last, new Holder(new Room(current)), "room"));
+        setPaused(true);
+        assertSame("paused, the stored preview changed", last,
+                LiveControls.servicePlusPreview(row, last, new Holder(new Room(current)), "room"));
+    }
+
+    /** #94: the show hides the row on the switch, or when the LIVE has no first Service+ item. */
+    @Test public void theShowHidesTheRowOnTheSwitchOrWithoutAnItem() {
+        Row row = new Row(true);
+        Preview own = new Preview(Collections.singletonList(new Object()));
+        assertTrue("a LIVE with its own Service+ item lost its row", LiveControls.showServicePlusRow(row, own));
+        assertFalse("no preview showed the row", LiveControls.showServicePlusRow(row, null));
+        assertFalse("no item list showed the row", LiveControls.showServicePlusRow(row, new Preview(null)));
+        assertFalse(LiveControls.showServicePlusRow(row, new Preview(new ArrayList<>())));
+        assertFalse("a null first item showed the row",
+                LiveControls.showServicePlusRow(row, new Preview(Collections.singletonList(null))));
+        assertTrue("no row changed TikTok's path", LiveControls.showServicePlusRow(null, null));
+
+        Settings.HIDE_LIVE_SERVICE_PLUS.save(true);
+        assertFalse("the switch left the row showing", LiveControls.showServicePlusRow(row, own));
+        SettingsStatus.liveControlsEnabled = false;
+        assertTrue("the switch counted without the patch", LiveControls.showServicePlusRow(row, own));
+        SettingsStatus.liveControlsEnabled = true;
+        setPaused(true);
+        assertTrue("paused, the switch hid the row", LiveControls.showServicePlusRow(row, own));
+        assertTrue("paused, a LIVE without an item hid the row", LiveControls.showServicePlusRow(row, null));
+    }
+
+    /** Stands in for the room holder the bind reads: one field, named by the patch. */
+    @SuppressWarnings("unused")
+    private static final class Holder {
+        private final Room room;
+
+        Holder(Room room) {
+            this.room = room;
+        }
+    }
+
+    /** Stands in for LiveRoomStruct: only {@code smbLivePreview} is read. */
+    @SuppressWarnings("unused")
+    private static final class Room {
+        private final Preview smbLivePreview;
+
+        Room(Preview preview) {
+            this.smbLivePreview = preview;
+        }
     }
 
     /** Stands in for TikTok's Widget: only {@code isShowing} is read. */

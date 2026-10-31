@@ -1893,6 +1893,8 @@ Hide online status	Скрыть статус «в сети»
 Friends won't see a green dot or Active now while you're in TikTok. Needs Ghost mode on. Their status may stop updating for you, and your last status can linger.	Друзья не увидят зелёную точку или Active now, пока вы в TikTok. Нужен включённый режим Ghost. Статус друзей у вас может перестать обновляться, а ваш последний статус ещё какое-то время может быть виден.
 Stop LIVE previews opening by themselves	Не открывать превью LIVE самостоятельно
 A LIVE in the feed can count down and take you into the room on its own. This keeps you in the feed until you tap it.	LIVE в ленте может начать обратный отсчёт и сам перевести вас в эфир. С этим вы остаётесь в ленте, пока не нажмёте на него.
+Hide the Service+ row under LIVE previews	Скрывать строку Service+ под превью LIVE
+A LIVE in the feed can show a Service+ line under the creator's name, such as Ask me anything. This keeps it hidden.	LIVE в ленте может показывать строку Service+ под именем автора, например «Спросите меня о чём угодно». С этим она остаётся скрытой.
 Play sounds TikTok pulled	Воспроизводить звуки, удалённые TikTok
 Play the audio on videos TikTok silenced because their sound was pulled for copyright or in your region. TikTok may still say the sound isn't available.	Воспроизводит звук в видео, которые TikTok заглушил, потому что их звук удалён из-за авторских прав или в вашем регионе. TikTok может по-прежнему писать, что звук недоступен.
 Match region fields in requests	Подменять поля региона в запросах

@@ -1752,6 +1752,8 @@ Hide online status	Çevrimiçi durumunu gizle
 Friends won't see a green dot or Active now while you're in TikTok. Needs Ghost mode on. Their status may stop updating for you, and your last status can linger.	TikTok'tayken arkadaşların yeşil nokta veya Active now görmez. Ghost mode açık olmalı. Onların durumu sende güncellenmeyebilir, senin son durumun da bir süre görünür kalabilir.
 Stop LIVE previews opening by themselves	LIVE önizlemelerinin kendiliğinden açılmasını durdur
 A LIVE in the feed can count down and take you into the room on its own. This keeps you in the feed until you tap it.	Akıştaki bir LIVE geri sayım yapıp seni kendiliğinden odaya götürebilir. Bu, ona dokunana kadar seni akışta tutar.
+Hide the Service+ row under LIVE previews	LIVE önizlemelerinin altındaki Service+ satırını gizle
+A LIVE in the feed can show a Service+ line under the creator's name, such as Ask me anything. This keeps it hidden.	Akıştaki bir LIVE, içerik üreticisinin adının altında Bana her şeyi sor gibi bir Service+ satırı gösterebilir. Bu onu gizli tutar.
 Play sounds TikTok pulled	TikTok'un kaldırdığı sesleri çal
 Play the audio on videos TikTok silenced because their sound was pulled for copyright or in your region. TikTok may still say the sound isn't available.	Sesi telif hakkı nedeniyle ya da bölgende kaldırıldığı için TikTok'un sessize aldığı videolarda sesi çalar. TikTok yine de sesin kullanılamadığını söyleyebilir.
 Match region fields in requests	İsteklerdeki bölge alanlarını eşleştir

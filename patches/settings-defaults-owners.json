@@ -482,6 +482,7 @@
     ],
     "LIVE controls": [
       "STOP_LIVE_AUTO_ENTER",
+      "HIDE_LIVE_SERVICE_PLUS",
       "SHOW_EXACT_LIVE_VIEWERS",
       "OFFER_LIVE_QUALITY",
       "REMEMBER_LIVE_QUALITY",

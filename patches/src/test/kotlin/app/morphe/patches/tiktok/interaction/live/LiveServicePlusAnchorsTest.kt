@@ -1,10 +1,14 @@
 package app.morphe.patches.tiktok.interaction.live
 
+import app.morphe.BridgeTypeFlow
 import app.morphe.Fixtures
+import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.iface.ClassDef
+import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
@@ -18,6 +22,10 @@ import org.junit.Test
  * a return, and one hide that clears the row's callbacks and hides it. The hide has to be the one
  * TikTok runs as a preview leaves the screen, or the hook would leave the row in a state TikTok
  * never puts it in.
+ *
+ * The show is also entered without a bind, with the stored preview, so its entry gets a hook that
+ * reads the current room through the bind's holder call and room field, stores that preview and
+ * hides the row when the LIVE has no Service+ item or the switch is on.
  */
 class LiveServicePlusAnchorsTest {
     @Test
@@ -50,13 +58,41 @@ class LiveServicePlusAnchorsTest {
             assertTrue("${apk.name}: nothing in the row runs ${bind.hide.name}", callers.size >= 2)
 
             // The show right after the store returns without hiding the row when the preview is
-            // null, which is the stale row this covers.
+            // null, which is the stale row this covers. It reads the stored preview, and the hook
+            // writes the current room's preview into it first, through the holder call and room
+            // field the bind uses.
             val show = (bind.method.implementation!!.instructions.toList()[bind.store + 1] as ReferenceInstruction)
                 .reference as MethodReference
-            val showBody = row.methods.single { it.name == show.name && it.parameterTypes.isEmpty() && it.returnType == "V" }
-                .implementation!!.instructions.toList()
-            assertTrue("${apk.name}: ${show.name} no longer reads the stored preview",
-                showBody.any { (it as? ReferenceInstruction)?.reference.toString().contains(SMB_LIVE_PREVIEW) })
+            assertEquals("${apk.name}: the show the bind runs", show.name, bind.show.name)
+            assertTrue("${apk.name}: ${bind.show.name} no longer reads the stored preview",
+                bind.show.implementation!!.instructions.any {
+                    ((it as? ReferenceInstruction)?.reference as? FieldReference)?.let { field ->
+                        field.name == bind.stored.name && field.definingClass == SERVICE_PLUS_ROW
+                    } == true
+                })
+            assertEquals("${apk.name}: the stored preview's type", SMB_LIVE_PREVIEW, bind.stored.type)
+            assertEquals("${apk.name}: the room field's owner", bind.roomHolder.returnType, bind.roomField.definingClass)
+            assertEquals("${apk.name}: the room field's type", LIVE_ROOM_STRUCT, bind.roomField.type)
+            assertTrue("${apk.name}: the holder call takes arguments", bind.roomHolder.parameterTypes.isEmpty())
+
+            // The show hook as the patch writes it: fourteen instructions, one branch (the hide)
+            // landing on TikTok's first instruction, and typing the verifier takes.
+            val original = bind.show.implementation!!.instructions.filter { it.opcode != Opcode.NOP }.toList()
+            val hooked = MutableMethod(bind.show)
+            hooked.hookServicePlusShow(bind)
+            val raw = hooked.implementation!!.instructions.toList()
+            val code = raw.filter { it.opcode != Opcode.NOP }
+            assertEquals("${apk.name}: hook length", original.size + 14, code.size)
+            assertEquals(Opcode.MOVE_OBJECT_FROM16, code[0].opcode)
+            val calls = code.take(14).mapNotNull { ((it as? ReferenceInstruction)?.reference as? MethodReference)?.name }
+            assertEquals("${apk.name}: the hook's calls",
+                listOf(bind.roomHolder.name, "servicePlusPreview", "showServicePlusRow", bind.hide.name), calls)
+            assertEquals("${apk.name}: one branch", 1, code.take(14).count { it is OffsetInstruction })
+            assertEquals("${apk.name}: TikTok's show follows the hook", original[0].opcode, code[14].opcode)
+            val landing = (14 until raw.size).first { raw[it].opcode != Opcode.NOP }
+            assertEquals("${apk.name}: the hide branch lands on TikTok's show",
+                raw.subList(11, landing).sumOf { it.codeUnits }, (raw[11] as OffsetInstruction).codeOffset)
+            assertEquals("${apk.name}: ${bind.show.name}", emptyList<BridgeTypeFlow.Problem>(), BridgeTypeFlow.check(hooked))
         }
     }
 }

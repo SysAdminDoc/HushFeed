@@ -2323,7 +2323,7 @@
     },
     {
       "name": "Copy bio and IDs",
-      "description": "Lets you long-press a bio to copy it, makes the @names in a bio open those profiles on a tap, and adds share sheet buttons that copy a username, user ID or video ID. On by default. Turn it off in Hushfeed settings > App.",
+      "description": "Lets you long-press a bio to copy it, makes the @names in a bio open those profiles on a tap, and adds share sheet buttons that copy a username, user ID or video ID. On a profile card inside a LIVE room, long-press the bio or the name to copy it, long-press the username for the user ID, or tap the copy mark by the username. On by default. Turn it off in Hushfeed settings > App.",
       "category": "Interaction",
       "use": true,
       "dependencies": [
@@ -7689,6 +7689,15 @@
         {
           "key": "stop_live_auto_enter",
           "title": "Default: stop live auto enter",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_live_service_plus",
+          "title": "Default: hide live service plus",
           "description": null,
           "required": false,
           "type": "kotlin.Boolean",

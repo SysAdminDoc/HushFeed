@@ -233,6 +233,54 @@ public final class LiveControls {
         }
     }
 
+    /**
+     * Called at the top of the Service+ row's show with the row, the preview the last bind
+     * stored, the current room holder and the name of its room field. Answers the preview the
+     * show should use: the current room's. TikTok enters the show without a bind too, when a
+     * preview becomes visible, when an overlay clears and from the recycle path, each with the
+     * stored preview, which the recycle never clears; a row showing the last LIVE's Service+
+     * line under this LIVE was that path (#94). Paused, the stored preview comes back unchanged.
+     */
+    public static Object servicePlusPreview(Object row, Object stored, Object holder, String roomField) {
+        if (row == null || Setting.isPaused()) return stored;
+        try {
+            Object room = Reflect.readField(holder, roomField);
+            Object current = Reflect.readField(room, "smbLivePreview");
+            if (current != stored) {
+                Logger.printDebug(() -> "LIVE preview: Service+ row showing with " + (stored == null ? "no" : "the last LIVE's")
+                        + " stored preview, this LIVE has " + (current == null ? "none" : "its own"));
+            }
+            return current;
+        } catch (Throwable failure) {
+            Logger.printException(() -> "Could not read the LIVE preview's Service+ item", failure);
+            return stored;
+        }
+    }
+
+    /**
+     * Called next with the row and the preview the show is about to use. False hides the row
+     * instead: when Hide the Service+ row under LIVE previews is on, or when the preview has no
+     * first item, which TikTok's show leaves as it was (#94). Paused, the row is TikTok's again.
+     */
+    public static boolean showServicePlusRow(Object row, Object preview) {
+        if (row == null || Setting.isPaused()) return true;
+        try {
+            if (SettingsStatus.liveControlsEnabled && Settings.HIDE_LIVE_SERVICE_PLUS.get()) {
+                Logger.printDebug(() -> "LIVE preview: Service+ row hidden by its switch");
+                return false;
+            }
+            Object items = preview == null ? null : Reflect.readField(preview, "previewItem");
+            List<?> entries = items instanceof List ? (List<?>) items : null;
+            boolean hasFirst = entries != null && !entries.isEmpty() && entries.get(0) != null;
+            Logger.printDebug(() -> "LIVE preview: Service+ row "
+                    + (hasFirst ? "shows this LIVE's item" : "hidden, this LIVE has no Service+ item"));
+            return hasFirst;
+        } catch (Throwable failure) {
+            Logger.printException(() -> "Could not check the LIVE preview's Service+ row", failure);
+            return true;
+        }
+    }
+
     private static final long NONE = -1;
     private static long pendingViewers = NONE;
 

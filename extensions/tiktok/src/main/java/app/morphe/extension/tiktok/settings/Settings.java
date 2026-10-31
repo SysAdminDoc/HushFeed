@@ -654,6 +654,11 @@ public class Settings extends BaseSettings {
      */
     public static final BooleanSetting STOP_LIVE_AUTO_ENTER = new BooleanSetting("stop_live_auto_enter", FALSE);
     /**
+     * Hides the Service+ row under a LIVE preview in the feed; the LIVE controls patch. Read each
+     * time the row would show, so no restart.
+     */
+    public static final BooleanSetting HIDE_LIVE_SERVICE_PLUS = new BooleanSetting("hide_live_service_plus", FALSE);
+    /**
      * Shows a LIVE's exact viewer count in its room instead of TikTok's rounded one; the LIVE
      * controls patch. Read each time the count is drawn, so no restart.
      */

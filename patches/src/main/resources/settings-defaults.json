@@ -480,6 +480,7 @@
     ],
     "LIVE controls": [
       "stop_live_auto_enter",
+      "hide_live_service_plus",
       "show_exact_live_viewers",
       "offer_live_quality",
       "remember_live_quality",
@@ -2180,6 +2181,12 @@
     "hide_live_ring": {
       "field": "HIDE_LIVE_RING",
       "key": "hide_live_ring",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_live_service_plus": {
+      "field": "HIDE_LIVE_SERVICE_PLUS",
+      "key": "hide_live_service_plus",
       "type": "boolean",
       "default": false
     },

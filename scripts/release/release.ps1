@@ -552,6 +552,15 @@ switch ($Stage) {
         $existing = Get-PublicationRelease -Repository $Repository -Tag $tag -AllowMissing
         if ($null -ne $existing -and -not $existing.draft) { throw "$tag is already published. Its assets are final, so a rebuild would only diverge from them." }
         Step "bundle from $head"
+        # The build signs the bundle (MorpheSig1) with this key. It lives in a User environment
+        # variable on the release machine, never in the repo; morphe-signing.pub is its public half.
+        if (-not $env:MORPHE_SIGNING_KEY) {
+            $signingKey = [Environment]::GetEnvironmentVariable('HUSHFEED_BUNDLE_SIGNING_KEY', 'User')
+            if ($signingKey) { $env:MORPHE_SIGNING_KEY = $signingKey }
+        }
+        if (-not $env:MORPHE_SIGNING_KEY) {
+            Write-Warning 'HUSHFEED_BUNDLE_SIGNING_KEY is not set, so this bundle will be built unsigned. A release needs it set; Manager then refuses a bundle whose signing key changes.'
+        }
         Invoke-Gradle @(':patches:buildAndroid')
         $bundle = Join-Path $root "patches/build/release/$bundleName"
         if (-not (Test-Path -LiteralPath $bundle)) { throw "No bundle at $bundle." }
@@ -566,6 +575,12 @@ switch ($Stage) {
         $seconds = (git -C $root log -1 --format=%ct).Trim()
         if ($stamp -ne "${seconds}000") { throw "The bundle's Timestamp $stamp isn't pinned to the release commit ($seconds)." }
         if (-not $hasDex) { throw 'The bundle has no classes.dex, so Manager would load no patches.' }
+        $signature = Get-BundleSignature -Path $bundle
+        if ($env:MORPHE_SIGNING_KEY) {
+            if ($null -eq $signature) { throw 'A signing key was set, but the bundle came out unsigned.' }
+            if ($signature.PublicKey -ne (Get-BundlePublicKey -Root $root)) { throw 'The bundle is signed by a key other than morphe-signing.pub.' }
+            Step "bundle signed by $($signature.PublicKey)"
+        }
         Step 'receipt over every declared fixture'
         # Each package selects its own versions and APKs, including matching version labels.
         $declaredTargets = @(Get-DeclaredPatchTargets -PatchList (Get-Content -LiteralPath (Join-Path $root 'patches-list.json') -Raw | ConvertFrom-Json))

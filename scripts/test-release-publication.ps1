@@ -945,6 +945,29 @@ try {
         Assert-True ($none.Count -eq 0) 'A tag origin has was reported as missing.'
         Assert-True (@(Get-LocalOnlyTag -Local @() -RemoteRefs @()).Count -eq 0) 'No tags at all reported something.'
     }
+    Test-Case 'The bundle signature reader accepts a MorpheSig1 comment and refuses anything else' {
+        $key = [Convert]::ToBase64String([byte[]](1..32))
+        $sig = [Convert]::ToBase64String([byte[]](1..64))
+        function New-CommentedZip([string]$Path, [string]$Comment) {
+            $text = [Text.Encoding]::ASCII.GetBytes($Comment)
+            $end = [byte[]](0x50, 0x4b, 5, 6) + [byte[]]::new(16) + [byte[]](($text.Length -band 255), ($text.Length -shr 8)) + $text
+            [IO.File]::WriteAllBytes($Path, $end)
+        }
+        $unsigned = Join-Path $testRoot 'unsigned.mpp'
+        New-CommentedZip $unsigned ''
+        Assert-True ($null -eq (Get-BundleSignature -Path $unsigned)) 'An archive with no comment must read as unsigned.'
+        $signed = Join-Path $testRoot 'signed.mpp'
+        New-CommentedZip $signed "MorpheSig1 $key $sig"
+        $read = Get-BundleSignature -Path $signed
+        Assert-True ($read.PublicKey -eq $key -and $read.Signature -eq $sig) 'The signature fields were misread.'
+        $foreign = Join-Path $testRoot 'foreign.mpp'
+        New-CommentedZip $foreign 'built by someone else'
+        Assert-Throws { Get-BundleSignature -Path $foreign } 'not a MorpheSig1 signature'
+        $notZip = Join-Path $testRoot 'not-a-zip.mpp'
+        [IO.File]::WriteAllBytes($notZip, [byte[]](1..40))
+        Assert-Throws { Get-BundleSignature -Path $notZip } 'not a zip archive'
+        Assert-True ((Get-BundlePublicKey -Root (Split-Path -Parent $PSScriptRoot)) -match '^[A-Za-z0-9+/]{43}=$') 'morphe-signing.pub must hold a Base64 Ed25519 key.'
+    }
     Test-Case 'Native command exit codes and stderr cannot pass as success' {
         $native = Join-Path $script:invoke.Root 'native boundary with spaces.cmd'
         [IO.File]::WriteAllText($native, @'

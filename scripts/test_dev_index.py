@@ -136,6 +136,12 @@ class DevIndexTest(unittest.TestCase):
         data["page_url"] = "https://github.com/SysAdminDoc/HushFeed/releases/tag/v0.71.3"
         DEV.validate_index(data, "dev")
 
+    def test_a_source_index_public_key_is_not_read_as_a_url(self):
+        data = dict(self.dev, public_key="oNniwVUSjkkB1zYAGQZGnUZE9mj66xOW7L0c0+uHyEM=")
+        DEV.validate_index(data, "dev")
+        with self.assertRaises(ValueError):
+            DEV.validate_index(dict(data, public_key=7), "dev")
+
     def test_unknown_missing_or_wrong_type_fields_are_rejected(self):
         mutations = (lambda data: data.update(channel="dev"), lambda data: data.pop("version"),
                      lambda data: data.update(version=71), lambda data: data.update(description=" "),

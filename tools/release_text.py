@@ -511,6 +511,10 @@ def index(args) -> None:
         "download_url": f"https://github.com/SysAdminDoc/hushfeed/releases/download/v{args.version}/patches-{args.version}.mpp",
         "version": args.version,
     })
+    # Manager pins the first key a source signs with and checks every bundle against it.
+    public_key = ROOT / "morphe-signing.pub"
+    if public_key.is_file():
+        bundle["public_key"] = read(public_key).strip()
     readme = ROOT / "README.md"
     edits = {readme: fold_next_release(read(readme), targets)}
     swap(edits, readme, r"^Hushfeed v\d+\.\d+\.\d+ contains \d+ patches for TikTok .*$",

@@ -22,7 +22,7 @@ REPOSITORY = "SysAdminDoc/HushFeed"
 LIMIT = 65_536
 VERSION = re.compile(r"(\d+)\.(\d+)\.(\d+)(?:-(dev|alpha|beta|rc|preview)\.(\d+))?\Z")
 REQUIRED = {"download_url", "created_at", "description", "version"}
-OPTIONAL = {"signature_download_url", "page_url"}
+OPTIONAL = {"signature_download_url", "page_url", "public_key"}
 
 
 def read_text(path: Path) -> str:
@@ -124,7 +124,7 @@ def validate_index(index: dict, branch: str, repository: str = REPOSITORY) -> No
         value = index[name]
         if value is not None and not isinstance(value, str):
             raise ValueError(f"{name} must be a string or null.")
-        if value:
+        if value and name.endswith("_url"):
             https_url(value, name)
 
 

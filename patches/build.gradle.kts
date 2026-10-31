@@ -1,7 +1,13 @@
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.nio.file.Files
+import java.security.KeyFactory
 import java.security.MessageDigest
+import java.security.Signature
+import java.security.spec.EdECPrivateKeySpec
+import java.security.spec.NamedParameterSpec
+import java.security.spec.X509EncodedKeySpec
+import java.util.Base64
 import java.util.Properties
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
@@ -192,6 +198,49 @@ abstract class CaptureBundleSource : DefaultTask() {
         output.outputStream().use { facts.store(it, "Build source before compilation") }
         if (!source.clean) logger.lifecycle("Bundle source is dirty or unreadable; a new release receipt will be refused.")
     }
+}
+
+/**
+ * MorpheSig1, the bundle signature morphe-patcher 2.1 checks and Morphe Manager 2.3 pins per
+ * source: Ed25519 over "MorpheSig1" and the SHA-256 of the archive with an empty comment, stored
+ * in the zip comment as "MorpheSig1 <public key> <signature>" (PatchBundleSignature.sign writes
+ * the same bytes). MORPHE_SIGNING_KEY is the Base64 raw private key; scripts/release/release.ps1
+ * loads it from HUSHFEED_BUNDLE_SIGNING_KEY. Without it the bundle stays unsigned, which a release
+ * run refuses. Ed25519 is deterministic, so the same bundle always gets the same signature.
+ */
+fun signBundle(bundle: File, privateKey: String?, publicKey: String) {
+    val bytes = bundle.readBytes()
+    fun length(at: Int) = (bytes[at].toInt() and 0xFF) or ((bytes[at + 1].toInt() and 0xFF) shl 8)
+    // The end of central directory record is the last one whose comment reaches the end.
+    val end = (bytes.size - 22 downTo maxOf(0, bytes.size - 22 - 0xFFFF)).firstOrNull {
+        bytes[it] == 0x50.toByte() && bytes[it + 1] == 0x4b.toByte() && bytes[it + 2] == 5.toByte() &&
+            bytes[it + 3] == 6.toByte() && length(it + 20) == bytes.size - it - 22
+    } ?: throw GradleException("$bundle is not a zip archive")
+    val unsigned = bytes.copyOf(end + 22).also { it[end + 20] = 0; it[end + 21] = 0 }
+    if (privateKey.isNullOrBlank()) {
+        if (unsigned.size != bytes.size) bundle.writeBytes(unsigned)
+        return
+    }
+    val message = "MorpheSig1".toByteArray(Charsets.US_ASCII) + MessageDigest.getInstance("SHA-256").digest(unsigned)
+    val keys = KeyFactory.getInstance("Ed25519")
+    val signature = Signature.getInstance("Ed25519").run {
+        initSign(keys.generatePrivate(EdECPrivateKeySpec(NamedParameterSpec.ED25519, Base64.getDecoder().decode(privateKey.trim()))))
+        update(message)
+        sign()
+    }
+    // A raw Ed25519 public key behind its fixed X.509 prefix.
+    val x509 = byteArrayOf(0x30, 0x2a, 0x30, 0x05, 0x06, 0x03, 0x2b, 0x65, 0x70, 0x03, 0x21, 0x00) +
+        Base64.getDecoder().decode(publicKey)
+    val matches = Signature.getInstance("Ed25519").run {
+        initVerify(keys.generatePublic(X509EncodedKeySpec(x509)))
+        update(message)
+        verify(signature)
+    }
+    if (!matches) throw GradleException("MORPHE_SIGNING_KEY is not the key morphe-signing.pub publishes")
+    val comment = "MorpheSig1 $publicKey ${Base64.getEncoder().encodeToString(signature)}".toByteArray(Charsets.US_ASCII)
+    unsigned[end + 20] = (comment.size and 0xFF).toByte()
+    unsigned[end + 21] = (comment.size shr 8).toByte()
+    bundle.writeBytes(unsigned + comment)
 }
 
 /**
@@ -798,6 +847,10 @@ tasks {
         val bundleFile = layout.buildDirectory.file("libs/$releaseBundleName")
         val releaseDirectory = layout.buildDirectory.dir("release")
         val pinnedEpoch = sourceDateEpoch
+        val signingKey = providers.environmentVariable("MORPHE_SIGNING_KEY")
+        val publicKeyFile = rootProject.layout.projectDirectory.file("morphe-signing.pub")
+        // Whether the bundle is signed changes the output, but the key itself is never an input.
+        inputs.property("bundleSigned", signingKey.map { it.isNotBlank() }.orElse(false))
         val sourceRoot = rootProject.layout.projectDirectory.asFile
         val sourceDirectories = bundleSourceDirectories
         val startFile = layout.buildDirectory.file("source-provenance/start.properties")
@@ -818,6 +871,8 @@ tasks {
             bundleFile.get().asFile.copyTo(releaseBundle)
             // Before the checksum, so what is recorded is what a rebuild will produce.
             pinBundleTimestamp(releaseBundle, pinnedEpoch, BundleSource.manifestFacts(start, end))
+            // Signed before the checksum too: the bundle a release publishes is the signed file.
+            signBundle(releaseBundle, signingKey.orNull, publicKeyFile.asFile.readText().trim())
             // Record only at the producer boundary. Standalone verification must not
             // bless a modified bundle by generating its own expected checksum.
             val digest = MessageDigest.getInstance("SHA-256")

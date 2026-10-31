@@ -289,6 +289,19 @@ class ReleaseTextTest(unittest.TestCase):
         # The source line belongs to prepare, which runs before the bundle exists.
         self.assertIn("\nSource snapshot: version 0.1.0, 1 patch entries.", guide)
 
+    def test_index_publishes_the_bundle_signing_key_when_the_repo_has_one(self):
+        self.cut_grouped_release()
+        for name, text in (("readme.txt", "a fade.\n"), ("bundle.txt", "Fade is new.\n")):
+            self.write(name, text)
+        arguments = dict(version="0.2.0", created="2026-10-09T17:03:42", readme_summary=str(self.root / "readme.txt"),
+                         bundle_summary=str(self.root / "bundle.txt"), device_line="", runtime=10, patch=4)
+        self.run_command(release_text.index, **arguments)
+        self.assertNotIn("public_key", json.loads(self.read("patches-bundle.json")))
+        self.write("morphe-signing.pub", "oNniwVUSjkkB1zYAGQZGnUZE9mj66xOW7L0c0+uHyEM=\n")
+        self.run_command(release_text.index, **arguments)
+        self.assertEqual(json.loads(self.read("patches-bundle.json"))["public_key"],
+                         "oNniwVUSjkkB1zYAGQZGnUZE9mj66xOW7L0c0+uHyEM=")
+
     def test_index_carries_the_current_releases_grouped_changelog(self):
         self.write("CHANGELOG.md", CHANGELOG.replace(
             "* **TikTok:** About 6.7 MB smaller.",

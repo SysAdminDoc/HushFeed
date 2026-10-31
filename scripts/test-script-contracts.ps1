@@ -1959,10 +1959,16 @@ try {
     Reset-FactsFile 'README.md'
 
     # With a readme-manager-floor in the catalog, the README keeps the published release's floor
-    # between releases and a release run moves it to manager-floor.
+    # between releases, so one that already names manager-floor is early and is refused until a
+    # release run (which needs the built bundle and the network) takes over.
     if ($fixtureReadmeFloor -ne $fixtureFloor) {
-        Assert-Throws { & $factsScript -Root $factsRoot -SkipDescriptionTestCount -SkipUrlCheck -VerifyPublishedAsset 6> $null } '*README Manager floor*' `
-            'A release run accepted a README that still names the previous Manager floor.'
+        Set-FactsFile 'README.md' {
+            param($text) $text -replace ('Morphe Manager ' + [regex]::Escape($fixtureReadmeFloor) + ' or newer'),
+                ('Morphe Manager ' + $fixtureFloor + ' or newer')
+        }
+        Assert-Throws { Invoke-Facts } '*README Manager floor*' `
+            'A README naming the new Manager floor before its release was accepted.'
+        Reset-FactsFile 'README.md'
     }
 
     # The heading that says this version shipped. Renaming it is what happened on 2026-09-14,

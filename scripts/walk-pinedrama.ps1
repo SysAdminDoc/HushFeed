@@ -4,7 +4,7 @@
 .DESCRIPTION
     Walks an already installed, signed, merged PineDrama build. Build/install the separate probe
     with tools/verification-probe/build.ps1 -Profile pinedrama-47.5.3-core-walk-v2 first. Requires
-    the complete declared 95-patch selection and exact reviewed merged stock APK. Does not post,
+    the complete declared 98-patch selection and exact reviewed merged stock APK. Does not post,
     follow, message, change preferences or qualify any served-content or server entitlement flow.
     The result is always INCOMPLETE and publication-ineligible, even when every core step passes.
     The owned entry hook is exercised directly; native Profile-to-settings entry remains owed.

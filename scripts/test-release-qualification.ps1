@@ -71,7 +71,7 @@ try {
     $actualCatalog=Get-Content -LiteralPath (Join-Path (Split-Path -Parent $PSScriptRoot) 'patches-list.json') -Raw|ConvertFrom-Json
     $actual=@(Get-DeclaredPatchTargets $actualCatalog)
     $pine=@($actual|Where-Object PackageName -CEQ 'com.ss.android.ttmd.video')
-    Assert-Matrix ($actual.Count -eq 2 -and $pine.Count -eq 1 -and $pine[0].PatchNames.Count -eq 95 -and $pine[0].PackageVersions -ccontains '47.5.3') 'The actual catalog did not retain PineDrama as its own exact 95-patch target.'
+    Assert-Matrix ($actual.Count -eq 2 -and $pine.Count -eq 1 -and $pine[0].PatchNames.Count -eq 98 -and $pine[0].PackageVersions -ccontains '47.5.3') 'The actual catalog did not retain PineDrama as its own exact 98-patch target.'
     $frozenPath=Join-Path $PSScriptRoot 'fixtures/legacy-receipt-0.79.0.json'
     $frozen=Get-Content -LiteralPath $frozenPath -Raw|ConvertFrom-Json
     $historicalArgs=@{ExpectedVersion='0.79.0';ExpectedPatchNames=@($frozen.targets[0].patches|ForEach-Object name);ExpectedPatcherVersion=$frozen.toolchain.patcherVersion;

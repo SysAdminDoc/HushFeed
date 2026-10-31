@@ -31,8 +31,8 @@ try{
     $captured=& $preflight
     $pine=@($captured.prepared|Where-Object {$_.source.package -ceq 'com.ss.android.ttmd.video'})
     $global=@($captured.prepared|Where-Object {$_.source.package -ceq 'com.zhiliaoapp.musically'})
-    Assert-Producer ($pine.Count -eq 1 -and $pine[0].selection.patches.Count -eq 95) 'PineDrama did not receive its own 95-patch subset.'
-    Assert-Producer ($global.Count -eq 1 -and $global[0].selection.patches.Count -gt 95 -and $global[0].source.sha256 -cne $pine[0].source.sha256) 'Same-version package inputs were merged.'
+    Assert-Producer ($pine.Count -eq 1 -and $pine[0].selection.patches.Count -eq 98) 'PineDrama did not receive its own 98-patch subset.'
+    Assert-Producer ($global.Count -eq 1 -and $global[0].selection.patches.Count -gt 98 -and $global[0].source.sha256 -cne $pine[0].source.sha256) 'Same-version package inputs were merged.'
     Assert-Producer ($pine[0].source.sha256 -ceq (Get-Sha256Hex $pinePath).ToLowerInvariant()) 'The producer did not capture actual source APK bytes.'
     $Fixture=@($globalPath);$missing=$false
     try{$null=& $preflight}catch{$missing=$true}

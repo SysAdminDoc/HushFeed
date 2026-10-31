@@ -70,8 +70,8 @@ try {
     $plan = [pscustomobject]@{ kind = 'hushfeed-pinedrama-core-plan'; schema = 1; profile = $definition.profile
         full = $false; eligibleForPublication = $false; inspection = $inspection; definition = $definition; sourceBytes = $definition.source.bytes }
     Assert-PineCore (-not (Get-PineDramaCorePlanProblem $plan -GitRoot $Root)) 'Exact source/subset core plan rejected.'
-    Assert-PineCore (-not (Get-PineDramaCoreCoverageProblem $definition $target.PatchNames)) 'Coverage map does not cover the exact 95.'
-    Assert-PineCore ($build.patches.Count -eq 95) 'PineDrama declared subset count changed.'
+    Assert-PineCore (-not (Get-PineDramaCoreCoverageProblem $definition $target.PatchNames)) 'Coverage map does not cover the exact 98.'
+    Assert-PineCore ($build.patches.Count -eq 98) 'PineDrama declared subset count changed.'
     $legacyPlan = Copy-PineValue $plan
     $legacyPlan.profile = 'pinedrama-47.5.3-core-walk-v1'
     $legacyPlan.definition = Get-PineDramaCoreDefinition -GitRoot $Root -Profile $legacyPlan.profile

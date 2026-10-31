@@ -39,8 +39,8 @@ function Get-PineDramaCoreCoverageProblem {
         $mapped = @($Definition.coverage | ForEach-Object { $_.patches })
         $names = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
         foreach ($name in $mapped) { if (-not $names.Add($name)) { return 'A PineDrama patch occurs in more than one coverage group.' } }
-        if ($mapped.Count -ne 95 -or (Get-AuditHash @($mapped | Sort-Object -CaseSensitive)) -cne
-                (Get-AuditHash @($ExpectedPatches | Sort-Object -CaseSensitive))) { return 'The PineDrama core coverage map is not the complete declared 95-patch subset.' }
+        if ($mapped.Count -ne 98 -or (Get-AuditHash @($mapped | Sort-Object -CaseSensitive)) -cne
+                (Get-AuditHash @($ExpectedPatches | Sort-Object -CaseSensitive))) { return 'The PineDrama core coverage map is not the complete declared 98-patch subset.' }
         foreach ($group in @($Definition.coverage)) {
             if ($group.status -cne 'pending-native-qualification' -or [string]::IsNullOrWhiteSpace($group.route) -or
                     [string]::IsNullOrWhiteSpace($group.prerequisites)) { return 'PineDrama coverage omitted a route or prerequisite, or claimed unsupported qualification.' }

@@ -32,7 +32,7 @@ Most switches start off, so a freshly patched TikTok looks and works the way it 
 
 Hushfeed v0.79.0 contains 141 patches for TikTok 47.5.3 and PineDrama 47.5.3. New in this one: PineDrama moves to 47.5.3, six more patches run on it, and imported fonts work there. TikTok gets a spam comment filter, screen recording for LIVEs and a blur behind the glass bar, and Hide videos you have already seen works on For You again. It needs Morphe Manager 2.0.0 or newer.
 
-The main branch contains 144 patches, the 141 in v0.79.0 plus Keep unsent messages and two for comment stickers, Create stickers and Keep recent stickers, which work in TikTok and PineDrama. Bundles built from main require Morphe Manager 2.2.0 or newer, or morphe-desktop 1.19.1 or newer.
+The main branch contains 144 patches, the 141 in v0.79.0 plus Keep unsent messages and two for comment stickers, Create stickers and Keep recent stickers, which work in TikTok and PineDrama. Feed filter runs on PineDrama too, so its feed ads go. Bundles built from main require Morphe Manager 2.2.0 or newer, or morphe-desktop 1.19.1 or newer.
 
 ## What it changes
 
@@ -367,7 +367,7 @@ Hushfeed includes the eight Kveld TikTok optimizers it didn't already have, and 
 - Version: [47.5.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-5-3-release/tiktok-47-5-3-2-android-apk-download/), on APKMirror since 2026-10-22.
 - Build: version code 2024705030, arm64-v8a and armeabi-v7a, nodpi, minSdk 23
 - SHA-256 of the APK every patch was verified against: `6670ca3f93bfea379658cad3c27f05d3a380b23a0d82569cce684b7453e8ff3e` (47.5.3)
-- Also [PineDrama 47.5.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/pinedrama-short-dramas/pinedrama-short-dramas-47-5-3-release/), TikTok's drama app (`com.ss.android.ttmd.video`, version code 2024705030). It's built from TikTok's code, and 95 of the patches apply to it. Morphe Manager lists only those. APKMirror has it as an `.apkm` bundle, which Manager merges for you.
+- Also [PineDrama 47.5.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/pinedrama-short-dramas/pinedrama-short-dramas-47-5-3-release/), TikTok's drama app (`com.ss.android.ttmd.video`, version code 2024705030). It's built from TikTok's code, and 98 of the patches apply to it. Morphe Manager lists only those. APKMirror has it as an `.apkm` bundle, which Manager merges for you.
 
 On Windows, check your download with `Get-FileHash -Algorithm SHA256 .\tiktok.apk`. On Linux or macOS it's `sha256sum tiktok.apk`.
 

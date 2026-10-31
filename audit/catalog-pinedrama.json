@@ -3384,6 +3384,577 @@
   "notes": "labreport begin answers recording=true only when the Recorder patch is in the build (begin does nothing otherwise), so that line is itself the applied check. Gate values are redacted in the report (addresses, tokens), so the check reads only the target and the count. The Diagnostics list may need a scroll to reach the recorder row on a short screen; findtext only sees rows that exist in the list, so scroll the page first if the check fails there."
  },
  {
+  "name": "Feed filter",
+  "category": "Feed",
+  "default": true,
+  "kind": "runtime",
+  "source": [
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/feedfilter/FeedFilterPatch.kt",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feedfilter/FeedItemsFilter.java",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feedfilter/AdsFilter.java",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feedfilter/ImageVideoFilter.java",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feedfilter/LiveFilter.java",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feedfilter/ContentMarkerFilters.java",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feedfilter/KeywordRules.java",
+   "extensions/shared/library/src/main/java/app/morphe/extension/shared/diagnostics/FeedFilterCounters.java"
+  ],
+  "settings": [
+   {
+    "key": "remove_ads",
+    "default": true,
+    "type": "bool",
+    "row": "Remove feed ads",
+    "restart": true
+   },
+   {
+    "key": "hide_image",
+    "default": false,
+    "type": "bool",
+    "row": "Hide photo posts",
+    "restart": true
+   },
+   {
+    "key": "hide_ai_generated",
+    "default": false,
+    "type": "bool",
+    "row": "Hide AI-generated videos",
+    "restart": true
+   },
+   {
+    "key": "hide_verified",
+    "default": false,
+    "type": "bool",
+    "row": "Hide verified accounts",
+    "restart": true
+   },
+   {
+    "key": "hide_live",
+    "default": false,
+    "type": "bool",
+    "row": "Hide LIVE videos",
+    "restart": true
+   },
+   {
+    "key": "hide_live_replays",
+    "default": false,
+    "type": "bool",
+    "row": "Hide LIVE replays"
+   },
+   {
+    "key": "hide_shop",
+    "default": false,
+    "type": "bool",
+    "row": "Hide TikTok Shop",
+    "restart": true
+   },
+   {
+    "key": "hide_series",
+    "default": false,
+    "type": "bool",
+    "row": "Hide Series",
+    "restart": true
+   },
+   {
+    "key": "hide_mini_dramas",
+    "default": false,
+    "type": "bool",
+    "row": "Hide mini dramas",
+    "restart": true
+   },
+   {
+    "key": "hide_playlist_videos",
+    "default": false,
+    "type": "bool",
+    "row": "Hide playlist videos",
+    "restart": true
+   },
+   {
+    "key": "hide_subscriber_only",
+    "default": false,
+    "type": "bool",
+    "row": "Hide subscriber-only videos",
+    "restart": true
+   },
+   {
+    "key": "hide_ai_cast",
+    "default": false,
+    "type": "bool",
+    "row": "Hide the AI Cast button"
+   },
+   {
+    "key": "hide_paid_partnership",
+    "default": false,
+    "type": "bool",
+    "row": "Hide paid partnerships",
+    "restart": true
+   },
+   {
+    "key": "hide_promotional_music",
+    "default": false,
+    "type": "bool",
+    "row": "Hide promotional music"
+   },
+   {
+    "key": "min_video_seconds",
+    "default": 0,
+    "type": "int",
+    "row": "Minimum video length"
+   },
+   {
+    "key": "max_video_seconds",
+    "default": 0,
+    "type": "int",
+    "row": "Maximum video length"
+   },
+   {
+    "key": "max_publication_age_days",
+    "default": 0,
+    "type": "int",
+    "row": "Maximum post age"
+   },
+   {
+    "key": "min_max_views",
+    "default": "0-9223372036854775807",
+    "type": "string",
+    "row": "Views range",
+    "restart": true
+   },
+   {
+    "key": "min_max_likes",
+    "default": "0-9223372036854775807",
+    "type": "string",
+    "row": "Likes range",
+    "restart": true
+   },
+   {
+    "key": "blocked_caption_words",
+    "default": "",
+    "type": "string",
+    "row": "Blocked caption words"
+   },
+   {
+    "key": "blocked_creators",
+    "default": "",
+    "type": "string",
+    "row": "Blocked creators"
+   },
+   {
+    "key": "blocked_sound_names",
+    "default": "",
+    "type": "string",
+    "row": "Blocked sound names"
+   },
+   {
+    "key": "hide_unpersonalized_for_you",
+    "default": false,
+    "type": "bool",
+    "row": "Hide unpersonalized For You videos"
+   },
+   {
+    "key": "following_latest_first",
+    "default": false,
+    "type": "bool",
+    "row": "Latest first on Following",
+    "restart": true
+   },
+   {
+    "key": "feed_filter_count_pill",
+    "default": false,
+    "type": "bool",
+    "row": "Show how many were filtered"
+   }
+  ],
+  "surface": "feed",
+  "checks": [
+   {
+    "id": "ads-removed",
+    "what": "With Remove feed ads on, none of eight videos swiped through is a native or soft ad, and the filter's counters show the main feed route ran.",
+    "steps": [
+     {
+      "set": {
+       "remove_ads": "true"
+      }
+     },
+     {
+      "restart": true
+     },
+     {
+      "open": "feed"
+     },
+     {
+      "wait": 2500
+     },
+     {
+      "wait": 1800
+     },
+     {
+      "probe": "ad-evidence",
+      "expectNot": "nativeAd=true|softAd=true"
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 1800
+     },
+     {
+      "probe": "ad-evidence",
+      "expectNot": "nativeAd=true|softAd=true"
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 1800
+     },
+     {
+      "probe": "ad-evidence",
+      "expectNot": "nativeAd=true|softAd=true"
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 1800
+     },
+     {
+      "probe": "ad-evidence",
+      "expectNot": "nativeAd=true|softAd=true"
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 1800
+     },
+     {
+      "probe": "ad-evidence",
+      "expectNot": "nativeAd=true|softAd=true"
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 1800
+     },
+     {
+      "probe": "ad-evidence",
+      "expectNot": "nativeAd=true|softAd=true"
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 1800
+     },
+     {
+      "probe": "ad-evidence",
+      "expectNot": "nativeAd=true|softAd=true"
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 1800
+     },
+     {
+      "probe": "ad-evidence",
+      "expectNot": "nativeAd=true|softAd=true"
+     },
+     {
+      "probe": "report",
+      "expect": "\\[FEED FILTER\\][\\s\\S]*\\d+ lists, \\d+ items, \\d+ removed"
+     }
+    ],
+    "auto": true
+   },
+   {
+    "id": "content-filters",
+    "what": "With photo, verified, AI-labelled and LIVE filters on, none of ten videos swiped through is any of those.",
+    "steps": [
+     {
+      "set": {
+       "hide_image": "true",
+       "hide_verified": "true",
+       "hide_ai_generated": "true",
+       "hide_live": "true"
+      }
+     },
+     {
+      "restart": true
+     },
+     {
+      "open": "feed"
+     },
+     {
+      "wait": 2500
+     },
+     {
+      "wait": 1800
+     },
+     {
+      "probe": "videoinfo",
+      "expectNot": "photo=true|verified=true|aiLabel=true|live=true"
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 1800
+     },
+     {
+      "probe": "videoinfo",
+      "expectNot": "photo=true|verified=true|aiLabel=true|live=true"
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 1800
+     },
+     {
+      "probe": "videoinfo",
+      "expectNot": "photo=true|verified=true|aiLabel=true|live=true"
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 1800
+     },
+     {
+      "probe": "videoinfo",
+      "expectNot": "photo=true|verified=true|aiLabel=true|live=true"
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 1800
+     },
+     {
+      "probe": "videoinfo",
+      "expectNot": "photo=true|verified=true|aiLabel=true|live=true"
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 1800
+     },
+     {
+      "probe": "videoinfo",
+      "expectNot": "photo=true|verified=true|aiLabel=true|live=true"
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 1800
+     },
+     {
+      "probe": "videoinfo",
+      "expectNot": "photo=true|verified=true|aiLabel=true|live=true"
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 1800
+     },
+     {
+      "probe": "videoinfo",
+      "expectNot": "photo=true|verified=true|aiLabel=true|live=true"
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 1800
+     },
+     {
+      "probe": "videoinfo",
+      "expectNot": "photo=true|verified=true|aiLabel=true|live=true"
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 1800
+     },
+     {
+      "probe": "videoinfo",
+      "expectNot": "photo=true|verified=true|aiLabel=true|live=true"
+     },
+     {
+      "set": {
+       "hide_image": "false",
+       "hide_verified": "false",
+       "hide_ai_generated": "false",
+       "hide_live": "false"
+      }
+     },
+     {
+      "restart": true
+     },
+     {
+      "open": "feed"
+     }
+    ],
+    "auto": true
+   },
+   {
+    "id": "length-limit",
+    "what": "With Maximum video length 3, the filter removes the videos over 3 seconds from what TikTok sends (its own item line says FILTER(QualityFilter)). Nearly every video runs longer, so the line doesn't depend on which videos the feed happens to serve.",
+    "steps": [
+     {
+      "set": {
+       "max_video_seconds": "3",
+       "morphe_debug": "true"
+      }
+     },
+     {
+      "restart": true
+     },
+     {
+      "open": "feed"
+     },
+     {
+      "wait": 2500
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 1800
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 1800
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 1800
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 1800
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 1800
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 1800
+     },
+     {
+      "log": "=> FILTER\\(QualityFilter\\)",
+      "fromStep": 2,
+      "within": 3000
+     },
+     {
+      "set": {
+       "max_video_seconds": "0"
+      }
+     },
+     {
+      "restart": true
+     },
+     {
+      "open": "feed"
+     }
+    ],
+    "auto": true
+   },
+   {
+    "id": "hooks-bound",
+    "what": "The filter's list hooks bound (HookStatus 'main feed' records FeedItemList.getItems).",
+    "steps": [
+     {
+      "open": "feed"
+     },
+     {
+      "wait": 2000
+     },
+     {
+      "probe": "hookdetails",
+      "extras": {
+       "family": "main feed"
+      },
+      "expect": "FeedItemList\\.getItems"
+     }
+    ],
+    "auto": true
+   },
+   {
+    "id": "count-pill",
+    "what": "Review: with Show how many were filtered on, a small count appears while the filters remove videos.",
+    "steps": [
+     {
+      "set": {
+       "feed_filter_count_pill": "true",
+       "hide_image": "true",
+       "hide_live": "true"
+      }
+     },
+     {
+      "restart": true
+     },
+     {
+      "open": "feed"
+     },
+     {
+      "wait": 3000
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 2500
+     },
+     {
+      "shot": "filter-count-pill",
+      "review": "A small pill over the feed shows how many videos were filtered out. A feed where nothing was removed shows no pill, so a quiet session is inconclusive."
+     },
+     {
+      "set": {
+       "feed_filter_count_pill": "false",
+       "hide_image": "false",
+       "hide_live": "false"
+      }
+     },
+     {
+      "restart": true
+     }
+    ],
+    "auto": false
+   },
+   {
+    "id": "registered",
+    "what": "The patch registered its switch.",
+    "steps": [
+     {
+      "probe": "report",
+      "expect": "registered_switches:[^\\n]*\\bfeedFilter\\b"
+     }
+    ],
+    "auto": true
+   }
+  ],
+  "notes": "The baseline is not asserted: whether a photo, verified, AI-labelled or LIVE item would have appeared in ten swipes is up to the For You feed, so a pass can be vacuous. Read the [FEED FILTER] lines in the export (probe report) for 'removed' counts to see the filter did work. The ads check is the most reliable because ads are served in nearly every session; if no ad is served in eight videos it is vacuous too. Keyword, creator, sound, region, language, view/like/comment/share ranges and Creator exceptions use text and numbers the probe does not expose per video, so they are not exercised; the unit tests in extensions/tiktok/src/test cover the rules. The settings rows are on Hushfeed settings > Feed filter. The restart is needed after changing a restart-flagged switch (remove_ads, hide_image, hide_ai_generated, hide_verified, hide_live). Maximum video length is soft by design: when everything one response sent would go, the video closest to the limit stays (the setting's summary says so), and 47.1.4's For You responses are often a single video, so a long one can still play. The length check reads the filter's own removals from the log (Log diagnostics on) instead of the durations on screen (2026-10-16). On PineDrama (#294) the Friends feed, LIVE page, Lemon8 card, play-lag cache insert and Tako entrance hooks have nothing to bind to, so the patch skips them there; the ad hooks, the main feed list and the inserted-item routes are the same as TikTok's."
+ },
+ {
   "name": "Fit the video to the screen",
   "category": "Playback",
   "default": true,

@@ -591,6 +591,57 @@ public class FollowDiagnosticsTest {
         assertFalse(lines.get(0), lines.get(0).contains("7300000000000000001"));
     }
 
+    /** TikTok's Request keeps the query out of getPath(), so the like's type comes from getUrl() (#269). */
+    @Test
+    public void aLikeTypeOnlyInTheUrlIsRead() {
+        BaseSettings.DEBUG.save(true);
+        org.robolectric.shadows.ShadowLog.clear();
+        ShadowToast.reset();
+
+        FollowDiagnostics.logParsedResponse(new UrlRequest(API_HOST
+                        + "/aweme/v1/commit/item/digg/?aweme_id=7300000000000000001&type=0&channel_id=0"),
+                new ParsedResponse(REFUSED_LIKE));
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+
+        assertEquals("a refused unlike stays quiet", 0, ShadowToast.shownToastCount());
+        List<String> lines = likeLines();
+        assertEquals(lines.toString(), 1, lines.size());
+        String line = lines.get(0);
+        assertTrue(line, line.contains("path=/aweme/v1/commit/item/digg/ "));
+        assertTrue(line, line.contains("type=0 "));
+        assertFalse("the video id stays out of the report", line.contains("7300000000000000001"));
+        assertFalse("the host stays out too", line.contains("tiktokv"));
+    }
+
+    @Test
+    public void aLiveEnterRouteOnlyInTheUrlIsRead() {
+        FollowDiagnostics.resetForTests();
+        BaseSettings.DEBUG.save(true);
+        org.robolectric.shadows.ShadowLog.clear();
+
+        FollowDiagnostics.logParsedResponse(new UrlRequest(API_HOST + "/webcast/room/enter/?room_id=7400000000000000001"
+                        + "&enter_from_merge=homepage_hot&enter_method=live_cell"),
+                new ParsedResponse(new EnterBody()));
+
+        List<String> enters = linesStarting("[Morphe TikTok FollowProbe] live room enter response ");
+        assertEquals(enters.toString(), 1, enters.size());
+        String enter = enters.get(0);
+        assertTrue(enter, enter.contains("room=noted "));
+        assertTrue(enter, enter.contains("route=enter_from_merge:homepage_hot,enter_method:live_cell "));
+        assertTrue(enter, enter.contains("queryKeys=room_id,enter_from_merge,enter_method"));
+        assertFalse("the room id stays out of the report", enter.contains("7400000000000000001"));
+    }
+
+    private static final String API_HOST = "https://api16-normal-c-useast2a.tiktokv.com";
+
+    /** Shaped like TikTok's com.bytedance.retrofit2.client.Request: getPath() is URI.getPath(). */
+    public static final class UrlRequest {
+        private final String url;
+        UrlRequest(String url) { this.url = url; }
+        public String getPath() { return java.net.URI.create(url).getPath(); }
+        public String getUrl() { return url; }
+    }
+
     public static final class CaptchaGateRequest {
         private final String path;
         CaptchaGateRequest(String path) { this.path = path; }

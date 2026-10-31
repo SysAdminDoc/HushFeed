@@ -343,7 +343,7 @@ public final class FollowDiagnostics {
 
         String fullPath = requestPath(request);
         if (fullPath != null && fullPath.toLowerCase(Locale.ROOT).contains("/webcast/room/enter/")) {
-            logLiveEnterResponse(fullPath, request, response);
+            logLiveEnterResponse(requestUrl(request), request, response);
             return;
         }
 
@@ -403,7 +403,7 @@ public final class FollowDiagnostics {
      * Only digits are reported; "none" when neither names it.
      */
     private static String likeType(Object request) {
-        String fullPath = requestPath(request);
+        String fullPath = requestUrl(request);
         String type = queryValue(fullPath, "type");
         if (type == null) type = queryValue(fullPath, "digg_type");
         if (type == null) {
@@ -437,8 +437,9 @@ public final class FollowDiagnostics {
         if (!reserveNetworkEvent()) return;
 
         try {
-            String room = liveRoomId(request, requestPath(request));
-            String fullPath = requestPath(request);            Object body = response == null ? null : readField(response, "LIZIZ");
+            String fullPath = requestUrl(request);
+            String room = liveRoomId(request, fullPath);
+            Object body = response == null ? null : readField(response, "LIZIZ");
             FollowVerdict verdict = FollowVerdict.of(body);
             String suppressed = CaptchaGate.recentlySuppressedCheckId();
             String line = "[Morphe TikTok FollowProbe] live comment response"
@@ -1472,6 +1473,18 @@ public final class FollowDiagnostics {
         if (!(value instanceof String)) return null;
 
         return (String) value;
+    }
+
+    /**
+     * The request's whole URL, for reading its query. TikTok's Request.getPath() is
+     * URI.getPath(), which leaves the query out, so every like read type=none and every LIVE
+     * enter route=none on a phone (#269). getUrl() keeps it. The path stands in where a
+     * request has no URL with a query.
+     */
+    private static String requestUrl(Object request) {
+        Object url = app.morphe.extension.tiktok.blockauthor.Reflect.invoke(request, "getUrl");
+        if (url instanceof String && ((String) url).indexOf('?') >= 0) return (String) url;
+        return requestPath(request);
     }
 
     private static String describeMapKeys(Map<?, ?> map) {

@@ -1221,6 +1221,29 @@ internal object SeriesRealtimeAdValidFingerprint : Fingerprint(
     returnType = "Z",
     parameters = listOf("Lcom/ss/android/ugc/aweme/feed/model/Aweme;"),
 )
+internal const val SERIES_FEED_RESP_CLASS_DESCRIPTOR =
+    "Lcom/ss/android/ugc/aweme/minidrama/common/component/topfeed/common/arch/SeriesFeedResp;"
+
+/**
+ * The drama tab's feed answer (#294). PineDrama fetches that feed with requests of its own and
+ * converts the answer straight into this object, so the list never reaches FeedItemList.getItems.
+ * Every converter, the preload, the end-of-drama picks and the copy helper build it through this
+ * one constructor. Real-named class and field, the same shape on TikTok 47.5.3 and PineDrama.
+ */
+internal object SeriesFeedRespConstructorFingerprint : Fingerprint(
+    definingClass = SERIES_FEED_RESP_CLASS_DESCRIPTOR,
+    name = "<init>",
+    returnType = "V",
+    filters = listOf(
+        fieldAccess(
+            opcode = Opcode.IPUT_OBJECT,
+            definingClass = SERIES_FEED_RESP_CLASS_DESCRIPTOR,
+            name = "feedItemList",
+            type = "Ljava/util/List;",
+        ),
+    ),
+)
+
 /** Attaches the floating promotional event badge to the feed. */
 internal object SpecActTouchpointAttachFingerprint : Fingerprint(
     definingClass = "/specact/SpecActServiceImpl;",

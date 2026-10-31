@@ -993,6 +993,24 @@ public final class FeedItemsFilter {
         return filterAdOnlyAwemeList("FeedInsertion:" + insertionSource, items);
     }
 
+    /**
+     * The drama tab's feed answer, as SeriesFeedResp's constructor finishes (#294). PineDrama's
+     * own feed requests build it straight from the server's answer, so the list never passes
+     * {@link #filter(FeedItemList)} and its ads reached the page. Ads only: every item on that
+     * page is an episode, so the series and drama rules would empty it.
+     */
+    @SuppressWarnings("rawtypes")
+    public static List filterDramaFeed(List items) {
+        try {
+            HookStatus.bound("drama feed", "SeriesFeedResp.<init>");
+            return filterAdOnlyAwemeList("DramaFeed", items);
+        } catch (Throwable ex) {
+            HookStatus.threw("drama feed", "SeriesFeedResp.<init>", ex);
+            Logger.printException(() -> "Could not filter the drama feed", ex);
+            return items;
+        }
+    }
+
     @SuppressWarnings("rawtypes")
     private static List filterAdOnlyAwemeList(String source, List items) {
         return filterAwemeList(source, items, AD_ONLY_FILTERS);

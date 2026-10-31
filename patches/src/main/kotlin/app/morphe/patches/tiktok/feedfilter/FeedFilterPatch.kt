@@ -36,6 +36,7 @@ import app.morphe.util.getFreeRegisterProvider
 import app.morphe.util.getReference
 import app.morphe.util.implementationOrPatchException
 import app.morphe.util.indexOfFirstInstructionOrThrow
+import app.morphe.util.numberOfParameterRegisters
 import app.morphe.util.singleOrPatchException
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
@@ -1016,6 +1017,8 @@ val feedFilterPatch = bytecodePatch(
                 return v0
             """,
         )
+        // The drama tab's own feed answer, which PineDrama builds without FeedItemList (#294).
+        SeriesFeedRespConstructorFingerprint.method.filterDramaFeedOnConstruct()
         SpecActTouchpointAttachFingerprint.method.requireLocals("Feed filter", 1)
         SpecActTouchpointAttachFingerprint.method.guardAtEntry(
             "Feed filter",
@@ -1199,6 +1202,41 @@ internal fun MutableMethod.hideSearchAnswerCardAtReturns(required: Boolean) {
         addInstructionsAtControlFlowLabel(
             returnIndex,
             "invoke-static {p1, p4}, $TAKO_AI_FILTER_CLASS_DESCRIPTOR->hideSearchAnswerCard(Landroid/view/View;Ljava/lang/Object;)V",
+        )
+    }
+}
+
+/**
+ * Hands the drama tab's feed list to the extension at every return of `SeriesFeedResp.<init>`
+ * and writes the answer back (#294). PineDrama's own feed requests convert their answer straight
+ * into this object, so the list never passes FeedItemList.getItems; the preload, the end-of-drama
+ * picks and the copy helper all come through this constructor too. The list parameter p1 carries
+ * the list at the return, where nothing reads it any more, so the hook needs no local. A build
+ * whose first parameter isn't the list, or whose p1 sits past v15 (the field instructions name
+ * four bits), fails the patch rather than writing over something else.
+ */
+internal fun MutableMethod.filterDramaFeedOnConstruct() {
+    val code = implementationOrPatchException("Feed filter drama feed")
+    if (parameterTypes.firstOrNull()?.toString() != "Ljava/util/List;") {
+        throw PatchException("Feed filter: SeriesFeedResp.<init> no longer takes the feed list first")
+    }
+    if (code.registerCount - numberOfParameterRegisters + 1 > 15) {
+        throw PatchException("Feed filter: SeriesFeedResp.<init> keeps its list parameter past v15")
+    }
+    val returnIndices = code.instructions.withIndex()
+        .filter { it.value.opcode == Opcode.RETURN_VOID }
+        .map { it.index }
+        .toList()
+    if (returnIndices.isEmpty()) throw PatchException("Feed filter: SeriesFeedResp.<init> has no return to hook")
+    returnIndices.asReversed().forEach { returnIndex ->
+        addInstructionsAtControlFlowLabel(
+            returnIndex,
+            """
+                iget-object p1, p0, $SERIES_FEED_RESP_CLASS_DESCRIPTOR->feedItemList:Ljava/util/List;
+                invoke-static/range {p1 .. p1}, $EXTENSION_CLASS_DESCRIPTOR->filterDramaFeed(Ljava/util/List;)Ljava/util/List;
+                move-result-object p1
+                iput-object p1, p0, $SERIES_FEED_RESP_CLASS_DESCRIPTOR->feedItemList:Ljava/util/List;
+            """,
         )
     }
 }

@@ -1855,7 +1855,8 @@ val liveControlsPatch = bytecodePatch(
         "show a LIVE's exact viewer count instead of a rounded one, offer a quality choice and " +
         "clear screen in more LIVE rooms, and keep your quality pick after TikTok restarts. " +
         "Starts off. Turn it on in Hushfeed settings > Playback. " +
-        "It also keeps a LIVE in the feed from showing the Service+ row of the LIVE before it, " +
+        "It also keeps a LIVE in the feed from showing the Service+ row of the LIVE before it " +
+        "(or hides that row altogether), " +
         "and can add a Record button to a LIVE room that saves what you watch from when you tap it.",
 ) {
     category("Playback")

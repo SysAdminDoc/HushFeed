@@ -190,9 +190,10 @@ final class BatchSave {
     }
 
     /**
-     * The rendition Download would take for {@code quality} (TikTok's file on Automatic), with
-     * its separate sound when the rendition is picture only and the sound is wanted. A picture-only
-     * rendition whose sound can't be found has no complete file, so it comes back empty.
+     * The rendition Download would take for {@code quality} (TikTok's file on Automatic, unless a
+     * taller one is listed), with its separate sound when the rendition is picture only and the
+     * sound is wanted. A picture-only rendition whose sound can't be found has no complete file,
+     * so it comes back empty.
      */
     static Source source(Object video, String quality, boolean muted) {
         Object gear = VideoDownloads.selectedGear(video, quality, false);

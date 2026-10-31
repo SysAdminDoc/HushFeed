@@ -230,9 +230,52 @@ public class AdvancedDownloadsTest {
             String shape = video.getClass().getSimpleName();
             assertSame(shape + ": the chosen quality", medium, VideoDownloads.selectedGear(video, "720", false));
             assertSame(shape + ": Automatic with captions takes the highest", high, VideoDownloads.selectedGear(video, "auto", true));
-            assertNull(shape + ": Automatic alone is TikTok's own save", VideoDownloads.selectedGear(video, "auto", false));
             Settings.DOWNLOAD_VIDEO_QUALITY.save("720");
             assertSame(shape + ": the address TikTok's save is handed", medium.playAddr, QualitySelector.download(video));
+        }
+    }
+
+    /**
+     * #240: Automatic saved TikTok's 720p H.264 copy with a 1080p HEVC listed beside it, and
+     * another downloader got the 1080p. It takes the taller one now, unless the watermark is kept,
+     * nothing taller opens elsewhere, or the rendition would be picture only with no sound to pair.
+     */
+    @Test public void automaticTakesARenditionTallerThanTikToksFile() {
+        boolean watermark = Settings.REMOVE_DOWNLOAD_WATERMARK.get();
+        boolean muted = Settings.DOWNLOAD_WITHOUT_SOUND.get();
+        try {
+            Settings.REMOVE_DOWNLOAD_WATERMARK.save(true);
+            Settings.DOWNLOAD_WITHOUT_SOUND.save(false);
+            Gear h264 = new Gear("normal_720_0", 200, "https://example.com/720").codec(0);
+            Gear hevc = new Gear("adapt_lowest_1080_1", 400, "https://example.com/1080-hevc").codec(1);
+            Gear bvc2 = new Gear("adapt_1440_2", 600, "https://example.com/1440-bvc2").codec(2);
+            VideoData video = new VideoData(List.of(h264, hevc, bvc2));
+
+            video.downloadNoWatermarkAddr = new Address("https://example.com/clean.mp4", 900).frame(720, 1280);
+            assertSame("the 1080p beats TikTok's 720p, and ByteVC2 stays out", hevc, VideoDownloads.selectedGear(video, "auto", false));
+            video.downloadNoWatermarkAddr = new Address("https://example.com/clean.mp4", 900).frame(1080, 1920);
+            assertNull("TikTok's file is as tall", VideoDownloads.selectedGear(video, "auto", false));
+            video.downloadNoWatermarkAddr = new Address("https://example.com/clean.mp4", 900);
+            assertSame("TikTok's height unknown, a rendition past 720p", hevc, VideoDownloads.selectedGear(video, "auto", false));
+            assertNull("TikTok's height unknown, nothing past 720p",
+                    VideoDownloads.selectedGear(new VideoData(List.of(h264)), "auto", false));
+
+            video.downloadNoWatermarkAddr = new Address("https://example.com/clean.mp4", 900).frame(720, 1280);
+            Settings.REMOVE_DOWNLOAD_WATERMARK.save(false);
+            assertNull("the watermark is kept, so the stamped copy stays", VideoDownloads.selectedGear(video, "auto", false));
+            Settings.REMOVE_DOWNLOAD_WATERMARK.save(true);
+
+            video.dash = true;
+            assertNull("split tracks with no sound to pair stay with TikTok", VideoDownloads.selectedGear(video, "auto", false));
+            Settings.DOWNLOAD_WITHOUT_SOUND.save(true);
+            assertSame("without sound they're complete", hevc, VideoDownloads.selectedGear(video, "auto", false));
+            video.dash = false;
+
+            assertSame("the picker's Automatic row stays TikTok's file",
+                    video.downloadNoWatermarkAddr, VideoDownloads.automaticSource(video));
+        } finally {
+            Settings.REMOVE_DOWNLOAD_WATERMARK.save(watermark);
+            Settings.DOWNLOAD_WITHOUT_SOUND.save(muted);
         }
     }
 

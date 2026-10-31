@@ -42,14 +42,33 @@ final class VideoDownloads {
 
     /**
      * The rendition a download takes: the chosen quality, or on Automatic the highest when
-     * captions need a file of our own; null leaves the save to TikTok. Read from every rendition
+     * captions need a file of our own, or one taller than TikTok's file
+     * ({@link #tallerThanTikToksFile}); null leaves the save to TikTok. Read from every rendition
      * TikTok received ({@link QualitySelector#rawGears}).
      */
     static Object selectedGear(Object video, String quality, boolean withCaptions) {
         Object rates = QualitySelector.rawGears(video);
         if (!(rates instanceof List<?>)) return null;
         if (!"auto".equals(quality)) return QualitySelector.chooseForFile(video, (List<?>) rates, quality);
-        return withCaptions ? QualitySelector.chooseForFile(video, (List<?>) rates, "highest") : null;
+        return withCaptions ? QualitySelector.chooseForFile(video, (List<?>) rates, "highest") : tallerThanTikToksFile(video);
+    }
+
+    /**
+     * The rendition an Automatic save takes in place of TikTok's file: the tallest other players
+     * open, when it's taller than TikTok's. TikTok's clean address is often its 720p H.264 copy
+     * with a 1080p HEVC listed beside it (#240). Null with the watermark kept, since only TikTok's
+     * stamped copy has the mark, when TikTok's height is unknown and the rendition isn't past the
+     * usual 720p (so an unknown file is never swapped for a shorter one), and for split tracks with
+     * no sound to pair, which would turn a save that works into a refusal.
+     */
+    private static Object tallerThanTikToksFile(Object video) {
+        if (!DownloadsPatch.shouldRemoveWatermark()) return null;
+        Object gear = storyGear(video);
+        if (gear == null || !videoAddress(gear)) return null;
+        if (QualitySelector.ownHeight(video) <= 0 && QualitySelector.heightOf(gear) <= QualitySelector.TALL_ENOUGH) return null;
+        boolean dash = Boolean.TRUE.equals(Reflect.invoke(video, "hasDashBitrate"));
+        if (dash && !Settings.DOWNLOAD_WITHOUT_SOUND.get() && audioUrls(video, gear).isEmpty()) return null;
+        return gear;
     }
 
     /** With the already-saved check on every video Download is this save's, and so is its cover. */
@@ -221,11 +240,11 @@ final class VideoDownloads {
     }
 
     /**
-     * The address an Automatic save of this video fetches: the highest rendition when captions
-     * need a file of our own, otherwise TikTok's file.
+     * The address the picker's Automatic row fetches: the highest rendition when captions need a
+     * file of our own, otherwise TikTok's file, as its label says.
      */
     static Object automaticSource(Object video) {
-        Object gear = selectedGear(video, "auto", !captions(video).isEmpty());
+        Object gear = captions(video).isEmpty() ? null : selectedGear(video, "auto", true);
         return gear != null ? Reflect.property(gear, "getPlayAddr", "playAddr") : automaticAddress(video);
     }
 
@@ -258,13 +277,11 @@ final class VideoDownloads {
         // Photo posts can carry a video model too. Quality, mute and subtitle choices must
         // not intercept their save before OriginalPhotos or TikTok's still/live-photo job.
         if (Reflect.property(aweme, "getPhotoModeImageInfo", "photoModeImageInfo") != null) return false;
-        boolean automatic = "auto".equals(quality);
-        // Automatic with nothing else asked for is TikTok's own download, which already does
-        // the right thing. Taking the sound off is a reason to take it over, but not a reason
-        // to fetch a different file: on Automatic the source stays the one TikTok would have
-        // used and only the sound is left out of it.
-        if (captions.isEmpty() && automatic && !muted && !extras) return false;
-        Object selected = pick == null || pick == AUTOMATIC ? selectedGear(video, quality, !captions.isEmpty()) : pick;
+        // The picker's Automatic row is TikTok's file by name. Off the picker, Automatic with
+        // nothing taller listed and nothing else asked for is TikTok's own download.
+        Object selected = pick == AUTOMATIC
+                ? (captions.isEmpty() ? null : selectedGear(video, quality, true))
+                : pick != null ? pick : selectedGear(video, quality, !captions.isEmpty());
         if (selected == null && captions.isEmpty() && !muted && !extras) return false;
         List<String> selectedUrls = urls(Reflect.property(selected, "getPlayAddr", "playAddr"));
         if (selected == null) {

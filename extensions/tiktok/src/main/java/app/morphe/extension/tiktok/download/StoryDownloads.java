@@ -284,12 +284,17 @@ public final class StoryDownloads {
         // then the story is fetched from whatever address it carries.
         // The same hand-off the save button gets, so one setting covers both.
         if (ExternalDownloader.handOff(aweme, context)) return true;
+        // On Automatic, the tallest rendition other players open, which is at least what the
+        // story player streams. The save below took TikTok's clean download address whenever a
+        // switch like the progress row took it over, and on a story that address can be a
+        // shorter H.264 copy than the one on screen (#155).
+        if (VideoDownloads.startStoryBest(aweme, context)) return true;
         if (VideoDownloads.start(aweme, context, false)) return true;
 
         List<List<String>> photos = OriginalPhotos.sources(aweme);
         Object storyVideo = Reflect.property(aweme, "getVideo", "video");
-        // On Automatic the quality download declines, and the addresses below are the copy the
-        // player streamed. The tallest rendition comes first when there is one (#155).
+        // Reached on Automatic only when no rendition above was usable, and with a chosen
+        // quality that left the save to the story. The tallest rendition comes first (#155).
         if (photos.isEmpty() && VideoDownloads.startStory(aweme, context, VideoDownloads.storyGear(storyVideo))) {
             return true;
         }

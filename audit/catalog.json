@@ -9940,6 +9940,51 @@
   "notes": "Issue #200. The camera is a page inside SplashActivity, opened from the + tab, and Back doesn't close it (its X does). With the switch off, `dumpsys window windows` shows sbrt= on TikTok's window while the camera is open (0.39 on the S22 at system brightness 50: the phone's level plus TikTok's step, over 255); with it on there's no sbrt. The front flash and fill light (47.5.3: the record screen's fill light and front flash, the flash button's screen flash, the Tako AI camera's flash and the avatar camera's flash) store their own full brightness: with the switch off, flash on with the front camera shows sbrt=1.0, and with it on the white overlay still comes up while sbrt stays where it was. Opening the camera needs a tap the audit doesn't script, so the device check is by hand."
  },
  {
+  "name": "Keep unsent messages",
+  "category": "Inbox",
+  "default": true,
+  "kind": "infrastructure",
+  "source": [
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/misc/inbox/KeepUnsentPatch.kt",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/inbox/KeepUnsent.java",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/inbox/KeptUnsentStore.java",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/settings/preference/ClearKeptMessagesPreference.java"
+  ],
+  "settings": [
+   {
+    "key": "keep_unsent_messages",
+    "default": false,
+    "type": "bool",
+    "row": "Keep unsent messages"
+   },
+   {
+    "key": "mark_kept_unsent_messages",
+    "default": true,
+    "type": "bool",
+    "row": "Mark kept messages"
+   }
+  ],
+  "surface": "apk",
+  "checks": [
+   {
+    "id": "registered",
+    "what": "The patch registered its switch and its extension class is shipped. (The dex-string step shows the class is in the dex, the whole extension is kept; the registered-switch step is what shows the patch ran.)",
+    "steps": [
+     {
+      "probe": "report",
+      "expect": "registered_switches:[^\\n]*\\bkeepUnsent\\b"
+     },
+     {
+      "apk": "dex-string",
+      "expect": "Lapp/morphe/extension/tiktok/inbox/KeepUnsent;"
+     }
+    ],
+    "auto": true
+   }
+  ],
+  "notes": "Only the other person unsending a message to the test account shows the patch at work, and the audit has no second account to send and unsend one, so only its registration is checked. Owed natural check with a controlled sender: the switch on, the sender unsends a message, it stays in the chat with \"(unsent)\" after it while Mark kept messages is on, survives a restart, and Clear kept messages turns it into TikTok's unsent notice. The contributor's 2026-10-30 phone run on 47.5.3 covered those; group chats and an unsend that arrives while TikTok is closed were not tried."
+ },
+ {
   "name": "Report a newer phone to effects",
   "category": "Interface",
   "default": true,

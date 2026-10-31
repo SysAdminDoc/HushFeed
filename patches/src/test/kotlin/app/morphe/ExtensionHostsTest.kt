@@ -97,7 +97,10 @@ class ExtensionHostsTest {
 
     private companion object {
         /** The hosts the README's Privacy section names. */
-        val ALLOWED_HOSTS = setOf("github.com", "ko-fi.com", "gitlab.com", "www.gnu.org", "www.tiktok.com", "music.youtube.com")
+        val ALLOWED_HOSTS = setOf(
+            "github.com", "ko-fi.com", "gitlab.com", "www.gnu.org", "www.tiktok.com", "music.youtube.com",
+            "git.iem.at", "central.sonatype.com",
+        )
         /**
          * The media transport (the client, and the connection it pins to a checked address), and
          * Network proxy's check, which asks the proxy the user set for a greeting or a tunnel and

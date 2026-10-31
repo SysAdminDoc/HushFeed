@@ -256,7 +256,6 @@ public class FollowDiagnosticsTest {
                 "/aweme/v1/feed/",
                 "/aweme/v1/user/profile/other/",
                 "/aweme/v1/user/",
-                "/aweme/v1/commit/item/digg/",
                 "/tiktok/v1/relation/list/",
                 "/aweme/v1/following/list/"}) {
             FollowDiagnostics.logParsedResponse(
@@ -498,6 +497,98 @@ public class FollowDiagnosticsTest {
         for (String comment : comments) {
             assertFalse(comment, comment.contains("740000000000000000"));
         }
+    }
+
+    private static final String REFUSED_LIKE = "{\"status_code\":2098,\"status_msg\":\"Try again later.\"}";
+
+    private static List<String> likeLines() {
+        return linesStarting("[Morphe TikTok FollowProbe] like response ");
+    }
+
+    /** #269: a like TikTok turns down keeps its heart until a restart, so the refusal is named. */
+    @Test
+    public void aRefusedLikeIsNamedOnceAndItsIdsStayOut() {
+        BaseSettings.DEBUG.save(true);
+        org.robolectric.shadows.ShadowLog.clear();
+        ShadowToast.reset();
+
+        for (int i = 0; i < 2; i++) {
+            FollowDiagnostics.logParsedResponse(new CaptchaGateRequest(
+                    "/aweme/v1/commit/item/digg/?aweme_id=7300000000000000001&type=1&channel_id=0"),
+                    new ParsedResponse(REFUSED_LIKE));
+        }
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+
+        assertEquals("one notice per process", 1, ShadowToast.shownToastCount());
+        assertEquals("TikTok refused the like: Try again later.", ShadowToast.getTextOfLatestToast());
+        List<String> lines = likeLines();
+        assertEquals(lines.toString(), 2, lines.size());
+        String line = lines.get(0);
+        assertTrue(line, line.contains("path=/aweme/v1/commit/item/digg/ "));
+        assertTrue(line, line.contains("type=1 "));
+        assertTrue(line, line.contains("status_code=2098"));
+        assertTrue(line, line.contains(" riskCheck="));
+        assertTrue(line, line.contains("outcome=refused"));
+        assertFalse("the video id stays out of the report", line.contains("7300000000000000001"));
+    }
+
+    @Test
+    public void aRefusedLikeWithoutAMessageNamesItsCodeWithLoggingOff() {
+        ShadowToast.reset();
+        org.robolectric.shadows.ShadowLog.clear();
+
+        FollowDiagnostics.logParsedResponse(
+                new CaptchaGateRequest("/aweme/v1/comment/digg/?cid=7300000000000000002&digg_type=1"),
+                new ParsedResponse("{\"status_code\":2149}"));
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+
+        assertEquals("TikTok refused the like with code 2149", ShadowToast.getTextOfLatestToast());
+        assertEquals("logging off writes no line", 0, likeLines().size());
+    }
+
+    @Test
+    public void anAcceptedLikeARefusedUnlikeAndARefusedRepostShowNothing() {
+        BaseSettings.DEBUG.save(true);
+        org.robolectric.shadows.ShadowLog.clear();
+        ShadowToast.reset();
+
+        FollowDiagnostics.logParsedResponse(
+                new CaptchaGateRequest("/aweme/v1/commit/item/digg/?aweme_id=7300000000000000001&type=1"),
+                new ParsedResponse("{\"status_code\":0}"));
+        FollowDiagnostics.logParsedResponse(
+                new CaptchaGateRequest("/aweme/v1/commit/item/digg/?aweme_id=7300000000000000001&type=0"),
+                new ParsedResponse(REFUSED_LIKE));
+        FollowDiagnostics.logParsedResponse(
+                new CaptchaGateRequest("/tiktok/v1/upvote/digg/?item_id=7300000000000000001"),
+                new ParsedResponse(REFUSED_LIKE));
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+
+        assertEquals(0, ShadowToast.shownToastCount());
+        List<String> lines = likeLines();
+        assertEquals(lines.toString(), 3, lines.size());
+        assertTrue(lines.get(0), lines.get(0).contains("outcome=server_accept"));
+        assertTrue(lines.get(1), lines.get(1).contains("type=0 "));
+        assertTrue(lines.get(1), lines.get(1).contains("outcome=refused"));
+        assertTrue(lines.get(2), lines.get(2).contains("type=none "));
+    }
+
+    /** TikTok may send the like's type in the form body; an unlike read there stays quiet too. */
+    @Test
+    public void aLikeTypeInTheFormBodyIsRead() {
+        BaseSettings.DEBUG.save(true);
+        org.robolectric.shadows.ShadowLog.clear();
+        ShadowToast.reset();
+
+        FollowDiagnostics.logParsedResponse(new LiveRoomHashTest.ChatRequest("/aweme/v1/commit/item/digg/",
+                        new LiveRoomHashTest.FormUrlEncodedTypedOutput("aweme_id=7300000000000000001&type=0")),
+                new ParsedResponse(REFUSED_LIKE));
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+
+        assertEquals(0, ShadowToast.shownToastCount());
+        List<String> lines = likeLines();
+        assertEquals(lines.toString(), 1, lines.size());
+        assertTrue(lines.get(0), lines.get(0).contains("type=0 "));
+        assertFalse(lines.get(0), lines.get(0).contains("7300000000000000001"));
     }
 
     public static final class CaptchaGateRequest {

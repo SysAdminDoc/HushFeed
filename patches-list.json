@@ -2464,6 +2464,44 @@
       ]
     },
     {
+      "name": "Create stickers",
+      "description": "Adds a Create button to the Saved page of PineDrama's comment sticker panel. Pick a photo and it turns into one of your saved stickers, like TikTok's own Create sticker. Works as soon as you patch it in, with no switch.",
+      "category": "Comments",
+      "use": true,
+      "dependencies": [
+        "BytecodePatch"
+      ],
+      "compatiblePackages": {
+        "com.ss.android.ttmd.video": [
+          "47.5.3"
+        ]
+      },
+      "compatibility": [
+        {
+          "name": "PineDrama",
+          "packageName": "com.ss.android.ttmd.video",
+          "description": null,
+          "appIconColor": 16657493,
+          "signatures": [
+            "e97ca0c8835c5a9e4f7702a0382b103ede9c5d51e5194c8db54f4c8833f54e18"
+          ],
+          "targets": [
+            {
+              "version": "47.5.3",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 2024705030,
+                "ARMEABI_V7A": 2024705030,
+                "X86": 2024705030,
+                "X86_64": 2024705030
+              }
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Custom launcher icon",
       "description": "Gives TikTok's home screen icon a themed version that takes your wallpaper's color on Android 13 and up. The options can also make it black, plain, Material You, any background color or your own picture, and put Hushfeed's H in the status bar. Only patching again without it puts the old icons back.",
       "category": "Interface",

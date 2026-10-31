@@ -2378,3 +2378,11 @@ Removed: %1$d. The other %2$d are still there. Open your Inbox, then try again.	
 Removing the kept messages	Saxlanan mesajlar silinir
 Hide the Back button there too	Oradakı Geri düyməsini də gizlədin
 Hide the Back button beside that search bar as well. Your phone's back gesture or button still takes you back.	O axtarış çubuğunun yanındakı Geri düyməsini də gizlədin. Telefonunuzun geri jesti və ya düyməsi sizi yenə geri aparır.
+# context: PineDrama's comment sticker panel. Create is a button on its Saved page that turns a photo into a sticker. These are its spoken label and its toasts. The panel's tab names come from TikTok's server, not the app, so the last toast describes the saved stickers instead of quoting the tab
+Make a sticker from a photo	Fotodan stiker yaradın
+Making your sticker	Stikeriniz hazırlanır
+Couldn't open your photos. Try again.	Fotoları açmaq alınmadı. Yenidən cəhd edin.
+Couldn't make the sticker. Try again.	Stikeri yaratmaq alınmadı. Yenidən cəhd edin.
+Couldn't read that photo. Try another one.	Bu fotonu oxumaq alınmadı. Başqa birini seçin.
+This account can't make stickers	Bu hesab stiker yarada bilməz
+Sticker added to Saved	Stiker saxlanılanlara əlavə edildi

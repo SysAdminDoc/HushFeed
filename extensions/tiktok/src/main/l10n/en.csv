@@ -435,9 +435,11 @@ Couldn't copy. Use Save build details instead.,Couldn't copy. Use Save build det
 Couldn't forget the saved videos. Try again.,Couldn't forget the saved videos. Try again.
 Couldn't import watch history. Your saved history is unchanged.,Couldn't import watch history. Your saved history is unchanged.
 Couldn't list your apps. Tap here to try again.,Couldn't list your apps. Tap here to try again.
+Couldn't make the sticker. Try again.,Couldn't make the sticker. Try again.
 Couldn't make the video. Try again.,Couldn't make the video. Try again.
 Couldn't open the file picker to export. Try again.,Couldn't open the file picker to export. Try again.
 Couldn't open the file picker to import. Try again.,Couldn't open the file picker to import. Try again.
+Couldn't open your photos. Try again.,Couldn't open your photos. Try again.
 Couldn't put back the diagnostic data. Try again.,Couldn't put back the diagnostic data. Try again.
 Couldn't put the saved videos back. Try again.,Couldn't put the saved videos back. Try again.
 Couldn't read %1$s. Write days and hours like Mon-Fri 21:00-07:00.,Couldn't read %1$s. Write days and hours like Mon-Fri 21:00-07:00.
@@ -446,6 +448,7 @@ Couldn't read a field value. Check and try again.,Couldn't read a field value. C
 Couldn't read an interrupted change. Check your settings.,Couldn't read an interrupted change. Check your settings.
 Couldn't read that file. Choose it again.,Couldn't read that file. Choose it again.
 Couldn't read that file. Try again.,Couldn't read that file. Try again.
+Couldn't read that photo. Try another one.,Couldn't read that photo. Try another one.
 Couldn't read this list. Close it and try again.,Couldn't read this list. Close it and try again.
 Couldn't recover a change. Restore a backup if needed.,Couldn't recover a change. Restore a backup if needed.
 Couldn't remove the imported font. Try again.,Couldn't remove the imported font. Try again.
@@ -1092,11 +1095,13 @@ Loop a story,Loop a story
 Lowest,Lowest
 "MP3 (.mp3), plays anywhere","MP3 (.mp3), plays anywhere"
 MP3 didn't work on this phone. Saving the sound as TikTok sent it instead.,MP3 didn't work on this phone. Saving the sound as TikTok sent it instead.
+Make a sticker from a photo,Make a sticker from a photo
 Make it yours.,Make it yours.
 "Makes TikTok see the country and carrier you pick as your SIM. Your IP address, account history and language don't change, and any one of them can make TikTok keep your current region. Restart TikTok to see the change.","Makes TikTok see the country and carrier you pick as your SIM. Your IP address, account history and language don't change, and any one of them can make TikTok keep your current region. Restart TikTok to see the change."
 "Makes TikTok see the country you pick as your SIM. Your IP address, account history and language don't change, and any one of them can make TikTok keep your current region. Restart TikTok to see the change.","Makes TikTok see the country you pick as your SIM. Your IP address, account history and language don't change, and any one of them can make TikTok keep your current region. Restart TikTok to see the change."
 "Makes the heart easier to tap by using the empty space around it. The icon and spacing look the same, and Reply and other buttons keep their own space.","Makes the heart easier to tap by using the empty space around it. The icon and spacing look the same, and Reply and other buttons keep their own space."
 Making a video of the photos,Making a video of the photos
+Making your sticker,Making your sticker
 Manage topics,Manage topics
 Manager,Manager
 Mark kept messages,Mark kept messages
@@ -1829,6 +1834,7 @@ Starts after one other save,Starts after one other save
 Stay on the video in full screen,Stay on the video in full screen
 Staying on a video,Staying on a video
 Sticker,Sticker
+Sticker added to Saved,Sticker added to Saved
 Sticker destination,Sticker destination
 Sticker saved to %1$s,Sticker saved to %1$s
 "Sticker search, PineDrama and the rest of TikTok still see the SIM above, while For You asks for videos with your phone's own SIM country and carrier. Your IP address and account history still count.","Sticker search, PineDrama and the rest of TikTok still see the SIM above, while For You asks for videos with your phone's own SIM country and carrier. Your IP address and account history still count."
@@ -2058,6 +2064,7 @@ These are posts saved by your signed-in account. Other Favorites categories aren
 These loaded values are for a different TikTok version,These loaded values are for a different TikTok version
 These notes are in English.,These notes are in English.
 This LIVE's stream can't be saved,This LIVE's stream can't be saved
+This account can't make stickers,This account can't make stickers
 This catalog entry is no longer available. Refresh the Lab and try again.,This catalog entry is no longer available. Refresh the Lab and try again.
 This change couldn't be saved. Try again.,This change couldn't be saved. Try again.
 This configuration has no fields that can be copied and changed safely on this build.,This configuration has no fields that can be copied and changed safely on this build.

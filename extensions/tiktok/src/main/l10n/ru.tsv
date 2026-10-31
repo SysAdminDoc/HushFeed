@@ -2555,3 +2555,11 @@ Removed: %1$d. The other %2$d are still there. Open your Inbox, then try again.	
 Removing the kept messages	Удаляем сохранённые сообщения
 Hide the Back button there too	Скрывать там и кнопку «Назад»
 Hide the Back button beside that search bar as well. Your phone's back gesture or button still takes you back.	Скрывать и кнопку «Назад» рядом с этой строкой поиска. Жест или кнопка «Назад» на телефоне по-прежнему возвращают обратно.
+# context: PineDrama's comment sticker panel. Create is a button on its Saved page that turns a photo into a sticker. These are its spoken label and its toasts. The panel's tab names come from TikTok's server, not the app, so the last toast describes the saved stickers instead of quoting the tab
+Make a sticker from a photo	Создать стикер из фото
+Making your sticker	Создаём стикер
+Couldn't open your photos. Try again.	Не удалось открыть фото. Повторите попытку.
+Couldn't make the sticker. Try again.	Не удалось создать стикер. Повторите попытку.
+Couldn't read that photo. Try another one.	Не удалось прочитать это фото. Выберите другое.
+This account can't make stickers	Этот аккаунт не может создавать стикеры
+Sticker added to Saved	Стикер добавлен в сохранённые

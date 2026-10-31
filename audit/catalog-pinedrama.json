@@ -1919,6 +1919,36 @@
   "notes": "The audit's step language has no long press, so the Copy gesture on a comment is a manual action; the injected-hook check is automatic and the copy check needs a person to long-press a comment and choose Copy, after which 'hookdetails family comment copy' answers 'menu prefix blanked'. With the switch off the same Copy puts 'username: text' on the clipboard (the clipboard is local; nothing is sent)."
  },
  {
+  "name": "Create stickers",
+  "category": "Comments",
+  "default": true,
+  "kind": "runtime",
+  "source": [
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/misc/comment/StickerCreatorPatch.kt",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/comment/StickerCreator.java"
+  ],
+  "settings": [],
+  "surface": "comments",
+  "checks": [
+   {
+    "id": "injected",
+    "what": "The patched dex carries the sticker creator and the patch registered itself. (The dex-string step shows the extension class is shipped; the registered-switch step is what shows the patch ran and wrote the bridges.)",
+    "steps": [
+     {
+      "apk": "dex-string",
+      "expect": "Lapp/morphe/extension/tiktok/comment/StickerCreator;"
+     },
+     {
+      "probe": "report",
+      "expect": "registered_switches:[^\\n]*\\bstickerCreator\\b"
+     }
+    ],
+    "auto": true
+   }
+  ],
+  "notes": "Issue #156. The Saved page of the comment sticker panel gets a red Create pill level with its Saved heading. Tapping it opens the photo picker; the photo is shrunk to 512 px on its longest side, uploaded to ImageX with the token im/upload_config hands the comment sticker uploader (scene 2), saved through StickerApiV2's im/sticker/save as type 9 and added to the sticker store, so it shows in Saved without a reload. The natural check is on a signed-in account: pick a photo, wait for 'Sticker added to Saved', and the new sticker sits first in Saved and sends in a comment. Remove it afterwards from Saved's own edit mode."
+ },
+ {
   "name": "Custom offline videos limit",
   "category": "Feed",
   "default": true,

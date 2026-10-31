@@ -25,14 +25,14 @@ Hushfeed is a set of [Morphe](https://github.com/MorpheApp/morphe-manager) patch
 
 Most switches start off, so a freshly patched TikTok looks and works the way it ships until you turn something on. What changed in each version is in the [changelog](CHANGELOG.md).
 
-**[Add Hushfeed to Morphe](https://morphe.software/add-source?github=SysAdminDoc%2Fhushfeed)** | [Download the latest bundle](https://github.com/SysAdminDoc/hushfeed/releases/latest) | [Browse the 141 source patches](#patches)
+**[Add Hushfeed to Morphe](https://morphe.software/add-source?github=SysAdminDoc%2Fhushfeed)** | [Download the latest bundle](https://github.com/SysAdminDoc/hushfeed/releases/latest) | [Browse the 142 source patches](#patches)
 
 > [!IMPORTANT]
 > Hushfeed targets the global TikTok package, `com.zhiliaoapp.musically`, version [47.5.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-5-3-release/tiktok-47-5-3-2-android-apk-download/). Patch that exact build, as the bundle or the APK ([step 1](#install) says which). See [Supported target](#supported-target) for the build details.
 
 Hushfeed v0.79.0 contains 141 patches for TikTok 47.5.3 and PineDrama 47.5.3. New in this one: PineDrama moves to 47.5.3, six more patches run on it, and imported fonts work there. TikTok gets a spam comment filter, screen recording for LIVEs and a blur behind the glass bar, and Hide videos you have already seen works on For You again. It needs Morphe Manager 2.0.0 or newer.
 
-The main branch contains 141 patches, the same set as v0.79.0. Bundles built from main require Morphe Manager 2.2.0 or newer, or morphe-desktop 1.19.1 or newer.
+The main branch contains 142 patches: the 141 in v0.79.0 and Hide read receipts. Bundles built from main require Morphe Manager 2.2.0 or newer, or morphe-desktop 1.19.1 or newer.
 
 ## What it changes
 
@@ -57,7 +57,7 @@ The block, hide, sound and Not interested buttons Hushfeed can put on a video:
    On Android 11 and newer, Morphe Manager checks that TikTok's own key signed the file and warns you if it didn't. That warning means the file was changed after TikTok published it, so download it again.
 2. Use Morphe Manager 2.2.0 or newer. Hushfeed bundles after v0.79.0 are built against patcher 2.0.1, which Manager 2.2.0 was the first to ship, and older Managers won't load them. morphe-desktop 1.19.1 or newer works from a computer. Give it 2 GB of memory (`java -Xmx2g -jar morphe-desktop-1.19.1-all.jar patch ...`), because with every patch picked it runs out at 1 GB, which is Java's default on a computer with 4 GB of RAM. Universal ReVanced Manager can't import a Morphe bundle at all ([its issue #733](https://github.com/Jman-Github/Universal-ReVanced-Manager/issues/733)).
 3. Add Hushfeed as a source. On the phone, open [Add Hushfeed to Morphe](https://morphe.software/add-source?github=SysAdminDoc%2Fhushfeed). If **Open in Morphe** leaves you in the browser, open Morphe Manager, tap **Sources**, tap **+**, and paste `https://github.com/SysAdminDoc/hushfeed`. You can also download the `.mpp` file from the [latest release](https://github.com/SysAdminDoc/hushfeed/releases/latest) and load it as a local bundle. It's a patch bundle, not a TikTok APK.
-4. Pick the patches. Simple mode in Morphe Manager selects 122 of the 141 Hushfeed patches. The other 19 need Expert mode in Manager settings, and [Patches](#patches) says why each one stays out. Manager 2.2.0 shows all 141 Hushfeed patches in eleven categories you can expand or collapse. Leave **Use embedded VM** on under **Settings > Patcher**, since it lets the patcher use whatever memory the phone can spare.
+4. Pick the patches. Simple mode in Morphe Manager selects 123 of the 142 Hushfeed patches. The other 19 need Expert mode in Manager settings, and [Patches](#patches) says why each one stays out. Manager 2.2.0 shows all 142 Hushfeed patches in eleven categories you can expand or collapse. Leave **Use embedded VM** on under **Settings > Patcher**, since it lets the patcher use whatever memory the phone can spare.
 5. Patch the original file from step 1. Hushfeed stops with an error on an APK it has already patched. Keep the manager's existing signing key, because an update only installs over your copy, with your login intact, when it's signed with the same key.
 6. Install the patched APK. If TikTok from Google Play is still on the phone, uninstall it first. Android won't put the patched app over it because they're signed with different keys. Uninstalling erases TikTok's data on the phone, so you'll log in again, and drafts you haven't posted go with it. Then open TikTok and go to **Settings and privacy**. Hushfeed is the first row, and [Settings](#settings) has two quicker ways in.
 
@@ -125,7 +125,7 @@ Unreleased settings use flat rows with the same controls in dark and light mode.
 
 ## Patches
 
-Simple mode in Morphe Manager selects 122 of these patches. Each row says what the patch does, whether its switch starts on or off, and where to find it. The other 19 stay out of the default selection, and you pick them in Expert mode:
+Simple mode in Morphe Manager selects 123 of these patches. Each row says what the patch does, whether its switch starts on or off, and where to find it. The other 19 stay out of the default selection, and you pick them in Expert mode:
 
 - Change app name, Custom launcher icon, Hide Play Store update offer, Look like the store app and Run beside the store app change the app's name, icon, signature, package or version code.
 - Accent color, AMOLED dark theme, Block P2P video relay, Remove content credential and card scanner assets, Remove creation tools, Remove LIVE extras, Remove unused language packs and Remove voice tools change TikTok's files while patching. Only a fresh patch takes that back.
@@ -193,6 +193,7 @@ Simple mode in Morphe Manager selects 122 of these patches. Each row says what t
 | `Hide feed search button` | Removes the search button from the top right of the feed, for a cleaner screen. Starts off. Turn it on in Hushfeed settings > Feed screen. |
 | `Hide floating promotions` | Hides the floating promotion badges, coins and timers on the feed, and can hide the rewards button on your profile. Starts off. Turn it on in Hushfeed settings > Feed screen, and App for the rewards button. |
 | `Hide inbox items` | Lets you hide Inbox rows you don't use, like message requests, TikTok Shop and the stories row, plus call buttons and suggested replies in chats. Each has its own switch. Also offers search in loaded Activity notifications. Starts off. Turn it on in Hushfeed settings > Inbox. |
+| `Hide read receipts` | Stops TikTok telling people you've read their messages. Your own unread badges still clear as usual. Starts off. Turn it on in Hushfeed settings > Inbox. |
 | `Hide inbox stories` | Hides the row of stories at the top of the Inbox. It uses the same switch as Hide inbox items. Starts off. Turn it on in Hushfeed settings > Inbox. |
 | `Hide comment typing suggestions` | Hides the emoji and sticker suggestions that pop up above the comment box while you type. The emoji and sticker buttons still work. Starts off. Turn it on in Hushfeed settings > Comments. |
 | `Hide profile shortcuts` | Hides the shortcuts you pick from the row under a profile's bio, like TikTok Studio or Your orders, and can hide the Thoughts bubble, and Balance and the TikTok Minis icons in your profile's menu. It can also turn Thoughts on for accounts TikTok left out. Starts off. Turn it on in Hushfeed settings > App, then restart TikTok. |

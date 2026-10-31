@@ -53,6 +53,18 @@ internal object FeedPlayProgressFingerprint : Fingerprint(
 // signature alone is unique across the app's 1,872,612 methods; the string is one of three
 // landscape tags it compares and is here so a build that renames the method still fails loudly
 // rather than binding to something else.
+/**
+ * PineDrama's answer to "where does this episode start", taken on a first play, an unpause and a
+ * new surface alike. With no start from the caller it asks the drama app-diff store, which answers
+ * with the series' start point. TikTok 47.5.3 has no such method, so only PineDrama resolves this.
+ */
+internal object SeriesResumeStartFingerprint : Fingerprint(
+    definingClass = "Lcom/ss/android/ugc/aweme/feed/controller/PlayerController;",
+    returnType = "I",
+    parameters = listOf("I", "Lcom/ss/android/ugc/aweme/feed/model/Aweme;", "Ljava/lang/String;"),
+    strings = listOf(" appDiff initialStartTimeMs="),
+)
+
 internal object FeedProgressResumePositionFingerprint : Fingerprint(
     returnType = "J",
     parameters = listOf("Lcom/ss/android/ugc/aweme/feed/model/Aweme;", "Ljava/lang/String;"),

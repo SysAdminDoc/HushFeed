@@ -1,4 +1,4 @@
-## Unreleased
+## 0.80.0 (2026-10-31)
 
 * **TikTok:** Temiz ekran kontrollerini gizle için yeni bir anahtar var. İlerleme çubuğunu ekranda tutuyor, böylece onu hâlâ görüp sürükleyebilirsin (#237).
 * **TikTok:** Çift dokunma artık beğenebiliyor ve beğeniyi geri alabiliyor. Zaten beğendiğin bir videoya çift dokunmak beğeniyi kaldırır (#248).

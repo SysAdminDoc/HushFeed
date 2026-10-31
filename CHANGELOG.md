@@ -4,6 +4,8 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+## 0.80.0 (2026-10-31)
+
 ### Features
 
 * **TikTok:** `Hide the Clear display controls` has a new `Keep the progress bar` switch under it. The exit and pause buttons still go, but the progress bar stays on screen so you can see where you are and drag it (#237).
@@ -33,7 +35,7 @@ Every Hushfeed release, newest first.
 * **TikTok:** `Hide TikTok Shop` takes the shop buttons out from under captions too, the ones that link to a product or open a shopping search with the bag icon. A plain search tag under a caption still shows (#271).
 * **TikTok:** `Custom launcher icon` has a `Notification icon` option now. Pick Hushfeed's H and TikTok's notifications show a sharp H in the status bar instead of the note. TikTok ships that note as one small picture that gets stretched on most phones, so it often looks soft. Leave the option alone and nothing changes (Discussion #114).
 * **TikTok:** `Sound format` has a third choice, MP3. Both sound saves (the one beside a video and the long-press `Save the original sound`) can come out as a plain .mp3 that plays anywhere. A sound TikTok already sent as MP3 is saved untouched, and anything else is converted on the phone at its own sample rate. MP3 works on every Android version, so the row doesn't grey out below Android 10 anymore. If a conversion fails you get the sound the way TikTok sent it (#273).
-* **TikTok:** `Also on opened videos` (under `Hide the search button on the feed`) has a `Hide the Back button there too` switch now. It takes away the Back arrow beside that hidden search bar too, so a video opened from search or a profile shows nothing at the top. Your phone's back gesture still works (#251).
+* **TikTok:** `Also on opened videos` (under `Hide the search button on the feed`) has a `Hide the Back button there too` switch now. It also takes away the Back arrow beside that hidden search bar, so a video opened from search or a profile shows nothing at the top. Your phone's back gesture still works (#251).
 * **TikTok:** With `Block author button` on, a LIVE that shows up in For You gets the block button too. One tap blocks its host, and the feed moves on like it does after a video. The sound, feedback and mute buttons stay off LIVEs, since they don't apply there (Discussion #138).
 * **TikTok:** New `Create stickers` patch for TikTok and PineDrama, on by default. A patched app only gets the basic comment sticker panel, which has no way to make a sticker, so its Saved page gets a Create button. Pick a photo and it shows up first in Saved a moment later, ready to send. A video's share sheet gets `Make sticker` after Download too, and that turns the video's picture into one of your saved stickers (#156, #88).
 * **TikTok:** New `Keep recent stickers` patch for TikTok and PineDrama. The sticker panel's Recently used row stays filled after a restart or an account switch now, and your four newest show above Saved. Each account keeps its own row, and nothing is kept while you're signed out (#156).

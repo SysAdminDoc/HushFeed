@@ -1,4 +1,4 @@
-## Unreleased
+## 0.80.0 (2026-10-31)
 
 * **TikTok:** Nascondi i controlli della Vista pulita ha un nuovo interruttore che tiene sullo schermo la barra di avanzamento, così puoi ancora vederla e trascinarla (#237).
 * **TikTok:** Il doppio tocco ora può mettere e togliere il Mi piace. Un doppio tocco su un video che hai già messo tra i Mi piace toglie il Mi piace (#248).

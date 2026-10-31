@@ -1,4 +1,4 @@
-## Unreleased
+## 0.80.0 (2026-10-31)
 
 * **TikTok:** Ocultar los controles de Pantalla limpia tiene un interruptor nuevo que deja a la vista la barra de progreso, para que puedas verla y arrastrarla (#237).
 * **TikTok:** El doble toque ahora puede dar y quitar el me gusta. Un doble toque en un video que ya te gusta le quita el me gusta (#248).

@@ -1,4 +1,4 @@
-## Unreleased
+## 0.80.0 (2026-10-31)
 
 * **TikTok:** Sembunyikan kontrol Tampilan bersih punya sakelar baru yang menjaga bilah progres tetap tampil, jadi kamu masih bisa melihat dan menggesernya (#237).
 * **TikTok:** Ketuk dua kali sekarang bisa menyukai dan membatalkan suka. Ketuk dua kali pada video yang sudah kamu sukai akan menarik kembali sukanya (#248).

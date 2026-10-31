@@ -1,4 +1,4 @@
-## Unreleased
+## 0.80.0 (2026-10-31)
 
 * **TikTok:** Təmiz ekran idarəetmələrini gizlət seçiminin yeni keçidi irəliləyiş çubuğunu ekranda saxlayır, beləliklə onu görə və sürüşdürə bilərsiniz (#237).
 * **TikTok:** İki dəfə toxunma artıq bəyənə və bəyənməni geri də ala bilir. Artıq bəyəndiyiniz videoya iki dəfə toxunsanız, bəyənmə geri götürülür (#248).

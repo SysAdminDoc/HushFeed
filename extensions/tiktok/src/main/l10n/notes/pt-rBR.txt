@@ -1,4 +1,4 @@
-## Unreleased
+## 0.80.0 (2026-10-31)
 
 * **TikTok:** Esconder os controles da Tela limpa ganhou uma chave nova que mantém a barra de progresso na tela, para você continuar vendo e arrastando ela (#237).
 * **TikTok:** O toque duplo agora pode curtir e descurtir. Um toque duplo num vídeo que você já curtiu tira a curtida (#248).

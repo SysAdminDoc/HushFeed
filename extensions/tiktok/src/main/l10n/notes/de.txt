@@ -1,4 +1,4 @@
-## Unreleased
+## 0.80.0 (2026-10-31)
 
 * **TikTok:** Steuerelemente der Freien Ansicht ausblenden hat einen neuen Schalter, der die Fortschrittsleiste sichtbar lässt, damit du sie weiter sehen und ziehen kannst (#237).
 * **TikTok:** Doppeltippen kann jetzt liken und das Like wieder zurücknehmen. Ein Doppeltippen auf ein Video, das du schon geliked hast, nimmt das Like zurück (#248).

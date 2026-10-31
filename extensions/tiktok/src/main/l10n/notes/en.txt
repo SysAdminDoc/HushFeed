@@ -1,4 +1,4 @@
-## Unreleased
+## 0.80.0 (2026-10-31)
 
 * **TikTok:** Hide the Clear display controls has a new switch that keeps the progress bar on screen, so you can still see and drag it (#237).
 * **TikTok:** Double tap can like or unlike now. A double tap on a video you already liked takes the like back off (#248).

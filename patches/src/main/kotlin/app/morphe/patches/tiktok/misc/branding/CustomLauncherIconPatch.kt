@@ -75,13 +75,37 @@ internal val MATERIAL_YOU_COLORS = linkedMapOf(
     "values-night-v31" to ("@android:color/system_neutral1_800" to "@android:color/system_accent1_100"),
 )
 
+/**
+ * The small icon every TikTok notification sets (the push builder and the compat builder both
+ * load it): a white note drawn only for xhdpi screens, so other screens scale it.
+ */
+internal const val STATUS_ICON = "status_icon_l"
+
+/** What the status bar shows for TikTok's notifications (Discussion #114). */
+internal enum class NotificationIcon(val key: String, val label: String) {
+    TIKTOK("tiktok", "TikTok's note"),
+    HUSHFEED("hushfeed", "Hushfeed's H"),
+}
+
+/**
+ * Hushfeed's H as a status bar icon, white on clear inside the 20dp middle a status bar icon
+ * keeps to. Android draws only the shape, in the status bar's own color, so it's one path.
+ */
+internal const val HUSHFEED_STATUS_ICON =
+    "<vector xmlns:android=\"http://schemas.android.com/apk/res/android\"\n" +
+        "    android:width=\"24dp\" android:height=\"24dp\"\n" +
+        "    android:viewportWidth=\"24\" android:viewportHeight=\"24\">\n" +
+        "    <path android:fillColor=\"#ffffffff\"\n" +
+        "        android:pathData=\"M5,4h4.3v6.6h5.4V4H19v16h-4.3v-6.1H9.3V20H5z\" />\n" +
+        "</vector>\n"
+
 @Suppress("unused")
 val customLauncherIconPatch = resourcePatch(
     name = "Custom launcher icon",
     description = "Gives TikTok's home screen icon a themed version that takes your " +
         "wallpaper's color on Android 13 and up. The options can also make it black, plain, " +
-        "Material You, any background color or your own picture. Only patching again without it " +
-        "puts the old icon back.",
+        "Material You, any background color or your own picture, and put Hushfeed's H in the " +
+        "status bar. Only patching again without it puts the old icons back.",
     default = false,
 ) {
     category("Interface")
@@ -118,12 +142,22 @@ val customLauncherIconPatch = resourcePatch(
             "Leave it empty to keep the note.",
         required = false,
     )
+    val notification by stringOption(
+        key = "notificationIcon",
+        default = NotificationIcon.TIKTOK.key,
+        values = NotificationIcon.entries.associate { it.label to it.key },
+        title = "Notification icon",
+        description = "The small icon TikTok's notifications show in the status bar. TikTok's " +
+            "note keeps it as it is. Hushfeed's H swaps it for a sharp H on every screen.",
+        required = false,
+    )
 
     execute {
         // Checked before anything is read, so a refused style, color or picture changes nothing.
         val chosen = iconStyle(style)
         val background = iconBackground(backgroundColor) ?: chosen.background
         val picture = launcherPicture(pictureFile)
+        val statusIcon = notificationIcon(notification)
         val packageRoot = get("res").parentFile
         val decodedRoots = decodedPackageRoots(packageRoot)
         val decodable by lazy { listDecodableFiles("res/**").toSet() }
@@ -157,6 +191,11 @@ val customLauncherIconPatch = resourcePatch(
         val layers = adaptiveIcons.associateWith { file ->
             IconLayers.of(res, readXml(file)).also { restyleAdaptiveIcon(readXml(file), it, chosen, pictureReference, background) }
         }
+        if (statusIcon != NotificationIcon.TIKTOK) {
+            decode("res/drawable*/$STATUS_ICON.png")
+            val drawables = res.listFiles().orEmpty().filter { it.isDirectory && it.name.startsWith("drawable") }
+            if (drawables.none { it.resolve("$STATUS_ICON.png").isFile }) throw PatchException(missingStatusIconRefusal())
+        }
         // One unscaled file: the launcher scales the layer to its icon size on every screen, and
         // Morphe Manager patches on the phone, where there's no image library to resize it with.
         picture?.let { res.resolve("drawable-nodpi/$PICTURE_NAME.png").apply { parentFile.mkdirs() }.writeBytes(it.bytes) }
@@ -166,9 +205,31 @@ val customLauncherIconPatch = resourcePatch(
                 restyleAdaptiveIcon(icon, layer, chosen, pictureReference, background)
             }
         }
+        if (statusIcon == NotificationIcon.HUSHFEED) {
+            // An anydpi file wins over TikTok's xhdpi picture on every screen, and the picture
+            // itself stays byte for byte, so only a configuration is added.
+            res.resolve("drawable-anydpi/$STATUS_ICON.xml").apply { parentFile.mkdirs() }
+                .writeText(HUSHFEED_STATUS_ICON, Charsets.UTF_8)
+        }
         BuildDetails.applied(get(BUILD_DETAILS_ASSET), "customLauncherIcon")
     }
 }
+
+/** The chosen notification icon. An empty option, which older saved options have, keeps TikTok's. */
+internal fun notificationIcon(raw: String?): NotificationIcon {
+    val key = raw?.trim().orEmpty()
+    if (key.isEmpty()) return NotificationIcon.TIKTOK
+    return NotificationIcon.entries.firstOrNull { it.key.equals(key, ignoreCase = true) || it.label.equals(key, ignoreCase = true) }
+        ?: throw PatchException(
+            "Custom launcher icon: \"$key\" isn't a notification icon. Pick one of " +
+                NotificationIcon.entries.joinToString { it.key } + ".",
+        )
+}
+
+internal fun missingStatusIconRefusal() =
+    "Custom launcher icon: this TikTok has no $STATUS_ICON picture, the status bar icon its " +
+        "notifications set, so there's nothing to swap. Nothing was changed. Patch with the " +
+        "notification icon left on TikTok's note."
 
 internal fun renamedIconPathsRefusal(collisions: Int) =
     "Custom launcher icon: this TikTok APK was merged from a split bundle in a way that moved " +

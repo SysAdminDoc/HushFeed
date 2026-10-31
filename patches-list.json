@@ -2465,7 +2465,7 @@
     },
     {
       "name": "Custom launcher icon",
-      "description": "Gives TikTok's home screen icon a themed version that takes your wallpaper's color on Android 13 and up. The options can also make it black, plain, Material You, any background color or your own picture. Only patching again without it puts the old icon back.",
+      "description": "Gives TikTok's home screen icon a themed version that takes your wallpaper's color on Android 13 and up. The options can also make it black, plain, Material You, any background color or your own picture, and put Hushfeed's H in the status bar. Only patching again without it puts the old icons back.",
       "category": "Interface",
       "use": false,
       "dependencies": [
@@ -2532,6 +2532,18 @@
           "type": "kotlin.String",
           "default": null,
           "values": null
+        },
+        {
+          "key": "notificationIcon",
+          "title": "Notification icon",
+          "description": "The small icon TikTok's notifications show in the status bar. TikTok's note keeps it as it is. Hushfeed's H swaps it for a sharp H on every screen.",
+          "required": false,
+          "type": "kotlin.String",
+          "default": "tiktok",
+          "values": {
+            "TikTok's note": "tiktok",
+            "Hushfeed's H": "hushfeed"
+          }
         }
       ]
     },

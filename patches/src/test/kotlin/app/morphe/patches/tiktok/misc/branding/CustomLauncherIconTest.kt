@@ -192,6 +192,48 @@ class CustomLauncherIconTest {
     }
 
     @Test
+    fun `the notification icon keeps TikTok's note unless Hushfeed's H is picked`() {
+        val option = customLauncherIconPatch.options["notificationIcon"]
+        assertEquals(NotificationIcon.TIKTOK.key, option.default)
+        assertFalse("older saved options have no value for it", option.required)
+        assertEquals(NotificationIcon.TIKTOK, notificationIcon(null))
+        assertEquals(NotificationIcon.TIKTOK, notificationIcon(" "))
+        assertEquals(NotificationIcon.HUSHFEED, notificationIcon("hushfeed"))
+        assertEquals(NotificationIcon.HUSHFEED, notificationIcon("Hushfeed's H"))
+        assertThrows(PatchException::class.java) { notificationIcon("purple") }
+    }
+
+    @Test
+    fun `Hushfeed's H is one white shape inside a status bar icon's middle`() {
+        val vector = parse(HUSHFEED_STATUS_ICON).documentElement
+        assertEquals("vector", vector.tagName)
+        assertEquals("24dp", vector.getAttribute("android:width"))
+        assertEquals("24", vector.getAttribute("android:viewportWidth"))
+        val (data, fill) = paths(vector).single()
+        assertEquals("Android draws only the shape, so it's white", GLYPH_FILL, fill)
+        // Walks the path's absolute and relative lines and keeps every corner it reaches.
+        var x = 0.0
+        var y = 0.0
+        val corners = Regex("""([MHVhvz])([\d.,-]*)""").findAll(data).map { step ->
+            val numbers = step.groupValues[2].split(',').filter { it.isNotEmpty() }.map(String::toDouble)
+            when (step.groupValues[1]) {
+                "M" -> { x = numbers[0]; y = numbers[1] }
+                "H" -> x = numbers[0]
+                "V" -> y = numbers[0]
+                "h" -> x += numbers[0]
+                "v" -> y += numbers[0]
+            }
+            x to y
+        }.toList()
+        assertEquals(13, corners.size)
+        assertEquals("z closes it with a straight line down the left edge", corners[0].first, corners[11].first, 0.0)
+        assertTrue(corners.toString(), corners.all { (cx, cy) -> cx in 2.0..22.0 && cy in 2.0..22.0 })
+        // The two bars are as wide as each other, and the crossbar sits in the H's middle.
+        assertEquals(corners[1].first - corners[0].first, corners[5].first - corners[7].first, 0.001)
+        assertEquals((corners[0].second + corners[11].second) / 2, (corners[2].second + corners[8].second) / 2, 0.5)
+    }
+
+    @Test
     fun `a picture replaces the note, keeps the style's background and drops the themed layer`() {
         val picture = "@drawable/$PICTURE_NAME"
         val kept = parse(ADAPTIVE_ICON.replace("<foreground android:drawable=\"@drawable/c27\"/>", "<foreground>$FOREGROUND_BODY</foreground>"))

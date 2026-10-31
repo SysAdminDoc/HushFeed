@@ -32,15 +32,16 @@ pluginManagement {
     }
 }
 
-// app.morphe:morphe-patches-gradle-plugin 1.3.4 brings kotlin-gradle-plugin 2.4.10 as a
-// runtimeElements dependency, and 2.4.10 is inside CVE-2026-53914 (GHSA-r937-wjx7-w2jp), a
-// deserialisation flaw in the Kotlin build cache. 2.4.20 is the first release outside it, and
-// 2.4.21 also fixes KT-88453, a scripting stream the compiler left open.
-// Nothing in this tree requests a Kotlin plugin by id, so pluginManagement's eachPlugin has
-// nothing to rewrite: the version has to be forced on the settings classpath itself. Take this
-// out when the plugin moves past 2.4.21 on its own; gradle/verification-metadata.xml is what
-// says which version actually resolved. It does not reach :patches:patcherProvidedClasspath,
-// where patcher 2.1.0 keeps its own Kotlin 2.4.21 runtime.
+// app.morphe:morphe-patches-gradle-plugin 2.0.0 brings kotlin-gradle-plugin 2.4.21, outside
+// CVE-2026-53914 (GHSA-r937-wjx7-w2jp); 1.3.4 brought 2.4.10, inside it. Without a force this
+// classpath still resolved kotlin-stdlib and kotlin-reflect 2.4.10, the Kotlin Gradle 9.8.2
+// embeds, and stdlib-jdk7/jdk8 2.2.10 for AGP 9.1.0's tools, under that 2.4.21 plugin. Every
+// org.jetbrains.kotlin request here is held to the plugin's 2.4.21 (which also fixes KT-88453, a
+// scripting stream the compiler left open), the runtime patcher 2.1.0 keeps in
+// :patches:patcherProvidedClasspath. Nothing in this tree requests a Kotlin plugin by id, so
+// pluginManagement's eachPlugin has nothing to rewrite: the version has to be forced on the
+// settings classpath itself. Move it with the plugin's kotlin-gradle-plugin;
+// gradle/verification-metadata.xml says which version actually resolved.
 //
 // The same classpath brings Bouncy Castle 1.79, by way of the patcher's 1.77 pin and the
 // Android build tools' own 1.79 request: 1.77 is inside all seven advisories (CVE-2025-8916
@@ -78,7 +79,7 @@ val allowMavenLocal = providers.gradleProperty("allowMavenLocal")
     .getOrElse(false)
 
 plugins {
-    id("app.morphe.patches") version "1.3.4"
+    id("app.morphe.patches") version "2.0.0"
 }
 
 settings {

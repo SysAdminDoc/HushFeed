@@ -43,7 +43,8 @@ import java.util.WeakHashMap;
  * the switch is on a small chip shows on that page. Tapping it starts a recording from that
  * moment, tapping it again stops, and leaving the room (another room, the app in the background,
  * the page gone) stops it too. A once-a-second check on the main thread is what notices leaving,
- * so a recording never runs on for more than a second without its room on screen.
+ * so a recording never runs on for more than a second without its room on screen. A screen
+ * recording hides the chip so it isn't filmed, and its notification's Stop ends it (#265).
  */
 @SuppressWarnings("unused")
 public final class LiveRecordChip {
@@ -249,6 +250,7 @@ public final class LiveRecordChip {
     private static void refresh() {
         TextView view = chip;
         if (view == null) return;
+        view.setVisibility(hidesChip(recorder == null ? null : recorder.target()) ? View.INVISIBLE : View.VISIBLE);
         if (saving) {
             view.setText(L10n.t("Saving the recording"));
             view.setContentDescription(L10n.t("Saving the recording"));
@@ -263,6 +265,15 @@ public final class LiveRecordChip {
             view.setText(L10n.t("Record"));
             view.setContentDescription(L10n.t("Record this LIVE from now"));
         }
+    }
+
+    /**
+     * Whether the chip stays out of sight for a recording of {@code target} (#265): a screen
+     * recording would film it, so it's hidden from the start until the file is saved, and the
+     * recording's notification carries the Stop. A stream recording never sees the chip.
+     */
+    static boolean hidesChip(LiveRecorder.Target target) {
+        return target != null && target.transport == LiveRecorder.Transport.SCREEN;
     }
 
     static String elapsed(long ms) {
@@ -294,18 +305,35 @@ public final class LiveRecordChip {
 
     private static void onChipTap() {
         try {
-            if (saving) return;
-            if (recorder != null && recorder.recording()) {
-                recorder.stop(LiveRecorder.End.STOPPED);
-                saving = true;
-                refresh();
-                return;
-            }
+            if (saving || stopRecording()) return;
             start();
         } catch (Throwable failure) {
             Logger.printException(() -> "Could not use the LIVE record button", failure);
             Utils.showToastShort(L10n.t("The recording couldn't be saved. Try again."));
         }
+    }
+
+    /** Stops a running recording so it's saved; false when none is running. */
+    private static boolean stopRecording() {
+        if (saving || recorder == null || !recorder.recording()) return false;
+        recorder.stop(LiveRecorder.End.STOPPED);
+        saving = true;
+        refresh();
+        return true;
+    }
+
+    /**
+     * The Stop on the screen recording's notification (#265), the way to end one while the chip
+     * is hidden. With nothing recording any more, the projection it still holds is let go.
+     */
+    static void stopFromNotification() {
+        Utils.runOnMainThread(() -> {
+            try {
+                if (!stopRecording() && !saving) ScreenCapture.discardUnused();
+            } catch (Throwable failure) {
+                Logger.printException(() -> "Could not stop the screen recording", failure);
+            }
+        });
     }
 
     private static void start() throws Exception {

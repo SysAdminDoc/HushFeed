@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import app.morphe.extension.tiktok.download.LiveRecorder;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -34,6 +36,14 @@ public class LiveRecordChipTest {
     @Test public void halfwayThroughASwipeThePageStillCounts() {
         assertTrue(LiveRecordChip.mostlyShown(1170, 2340));
         assertFalse(LiveRecordChip.mostlyShown(1169, 2340));
+    }
+
+    /** #265: a screen recording filmed the chip, so it's hidden for those and only those. */
+    @Test public void aScreenRecordingHidesTheChipAndAStreamRecordingDoesNot() {
+        assertTrue(LiveRecordChip.hidesChip(new LiveRecorder.Target(null, LiveRecorder.Transport.SCREEN, "c", "1", null)));
+        assertFalse(LiveRecordChip.hidesChip(new LiveRecorder.Target("u", LiveRecorder.Transport.FLV, "c", "1", "hd")));
+        assertFalse(LiveRecordChip.hidesChip(new LiveRecorder.Target("u", LiveRecorder.Transport.HLS, "c", "1", "hd")));
+        assertFalse(LiveRecordChip.hidesChip(null));
     }
 
     @Test public void aRoomBesideTheOneInFrontDoesNot() {

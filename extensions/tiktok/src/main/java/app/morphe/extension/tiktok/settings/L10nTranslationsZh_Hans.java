@@ -2677,8 +2677,6 @@ final class L10nTranslationsZh_Hans {
                 "打开一次信息流，以便 Hushfeed 可以看到 TikTok 加载了哪些选项卡.");
         table.put("Open the profile again and try once more",
                 "再次打开配置文件并再试一次");
-        table.put("Open the room and tap Stop to save it.",
-                "打开直播间并点按停止即可保存.");
         table.put("Open the search page",
                 "打开搜索页面");
         table.put("Open the story again and try once more",
@@ -2763,11 +2761,11 @@ final class L10nTranslationsZh_Hans {
                 "已暂停");
         table.put("Pauses the video behind the comment sheet while you read. It plays on from the same spot when the sheet closes.",
                 "当你阅读时，将视频暂停在评论表后面。当纸张关闭时，它会从同一位置播放.");
+        table.put("People, shortcuts and sending controls",
+                "人员、快捷方式和发送控件");
     }
 
     private static void fill22(Map<String, String> table) {
-        table.put("People, shortcuts and sending controls",
-                "人员、快捷方式和发送控件");
         table.put("Performance",
                 "性能");
         table.put("Phone's click",
@@ -2886,11 +2884,11 @@ final class L10nTranslationsZh_Hans {
                 "隐私和应用");
         table.put("Private account",
                 "私人账号");
+        table.put("Problem detected.",
+                "检测到问题.");
     }
 
     private static void fill23(Map<String, String> table) {
-        table.put("Problem detected.",
-                "检测到问题.");
         table.put("Problem detected. Story views may still be reported. Check Ghost mode diagnostics. The warning stays until TikTok restarts.",
                 "检测到问题。故事观看次数仍可能会被报告。检查幽灵模式诊断。该警告将一直持续到 TikTok 重新启动为止.");
         table.put("Profile",
@@ -3009,11 +3007,11 @@ final class L10nTranslationsZh_Hans {
                 "地区");
         table.put("Remember the last speed",
                 "记住最后的速度");
+        table.put("Remembers up to %1$s videos you saved here. If the file is still there, you get Open or Save again instead of a second copy.",
+                "最多记住你在此处保存的 %1$s 个视频。如果文件仍然存在，你将再次打开或保存，而不是第二个副本.");
     }
 
     private static void fill24(Map<String, String> table) {
-        table.put("Remembers up to %1$s videos you saved here. If the file is still there, you get Open or Save again instead of a second copy.",
-                "最多记住你在此处保存的 %1$s 个视频。如果文件仍然存在，你将再次打开或保存，而不是第二个副本.");
         table.put("Remind me every",
                 "每一次提醒我");
         table.put("Remove",
@@ -3132,11 +3130,11 @@ final class L10nTranslationsZh_Hans {
                 "右栏");
         table.put("Right edge strip",
                 "右边缘条");
+        table.put("Rounder",
+                "更圆");
     }
 
     private static void fill25(Map<String, String> table) {
-        table.put("Rounder",
-                "更圆");
         table.put("Rows",
                 "行数");
         table.put("Run the progress bar from one screen edge to the other, without the gap TikTok leaves at each end.",
@@ -3255,11 +3253,11 @@ final class L10nTranslationsZh_Hans {
                 "已保存 %1$s 个，共 %2$s 个。其余的在你离开 Wi-Fi 时停止了。请在 Wi-Fi 下再保存一次.");
         table.put("Saved %1$s of %2$s. Try the rest later.",
                 "已保存 %1$s/%2$s，其余请稍后再试.");
+        table.put("Saved %1$s original photos",
+                "已保存%1$s原始照片");
     }
 
     private static void fill26(Map<String, String> table) {
-        table.put("Saved %1$s original photos",
-                "已保存%1$s原始照片");
         table.put("Saved %1$s seen videos to the file",
                 "已将 %1$s 看过的视频保存到文件中");
         table.put("Saved %1$s videos",
@@ -3378,11 +3376,11 @@ final class L10nTranslationsZh_Hans {
                 "此屏幕上无法进行搜索");
         table.put("Search loaded activity",
                 "搜索加载的活动");
+        table.put("Search settings",
+                "搜索设置");
     }
 
     private static void fill27(Map<String, String> table) {
-        table.put("Search settings",
-                "搜索设置");
         table.put("Search share actions",
                 "搜索分享操作");
         table.put("Search these comments",
@@ -3501,11 +3499,11 @@ final class L10nTranslationsZh_Hans {
                 "分享表");
         table.put("Shares range",
                 "股票范围");
+        table.put("Shop",
+                "商店");
     }
 
     private static void fill28(Map<String, String> table) {
-        table.put("Shop",
-                "商店");
         table.put("Shop order updates and coupon messages no longer take up rows in the Inbox. Your orders are unchanged.",
                 "商店订单更新和优惠券消息不再占用收件箱中的行。你的订单没有变化.");
         table.put("Shop posts",
@@ -3624,11 +3622,11 @@ final class L10nTranslationsZh_Hans {
                 "显示进度条");
         table.put("Show the progress bar thumbnail",
                 "显示进度条缩略图");
+        table.put("Show the search entry inside TikTok's LIVE drawer, where available. This doesn't add a search box to video comments.",
+                "显示 TikTok 的 LIVE 抽屉内的搜索条目（如果有）。这不会向视频评论添加搜索框.");
     }
 
     private static void fill29(Map<String, String> table) {
-        table.put("Show the search entry inside TikTok's LIVE drawer, where available. This doesn't add a search box to video comments.",
-                "显示 TikTok 的 LIVE 抽屉内的搜索条目（如果有）。这不会向视频评论添加搜索框.");
         table.put("Show the switch",
                 "显示开关");
         table.put("Show the time beside the progress bar",
@@ -3747,11 +3745,11 @@ final class L10nTranslationsZh_Hans {
                 "声音链接已复制");
         table.put("Sound on",
                 "声音打开");
+        table.put("Sound position",
+                "声音位置");
     }
 
     private static void fill30(Map<String, String> table) {
-        table.put("Sound position",
-                "声音位置");
         table.put("Sound saved to %1$s",
                 "声音保存至 %1$s");
         table.put("Sound: %1$s",
@@ -3870,11 +3868,11 @@ final class L10nTranslationsZh_Hans {
                 "驳回 %1$s 建议账号后停止");
         table.put("Stopped after dismissing one suggested account",
                 "驳回一个建议账号后停止");
+        table.put("Stopped by an unexpected error",
+                "因意外错误而停止");
     }
 
     private static void fill31(Map<String, String> table) {
-        table.put("Stopped by an unexpected error",
-                "因意外错误而停止");
         table.put("Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.",
                 "等待 Wi-Fi 30 分钟后已停止。连上 Wi-Fi 后再保存一次.");
         table.put("Stopped waiting for the file app. It hasn't said yet whether the backup was saved.",
@@ -3967,6 +3965,8 @@ final class L10nTranslationsZh_Hans {
                 "点按简介中的 @用户名");
         table.put("Tap Repost on the bar under a video twice within %1$d seconds. A repost with a note is left alone.",
                 "在 %1$d 秒内点击视频下方栏上的重新发布两次。带注释的转发将被保留.");
+        table.put("Tap Stop or leave the room to save it.",
+                "点按停止或离开直播间即可保存.");
         table.put("Tap a comment's heart twice within %1$d seconds. A double tap on the comment needs a second one too. Removing a like stays immediate.",
                 "在 %1$d 秒内点击评论的心两次。双击评论还需要第二次。立即删除点赞.");
         table.put("Tap a story's heart twice within %1$d seconds. Removing a like stays immediate.",

@@ -2677,8 +2677,6 @@ final class L10nTranslationsAz {
                 "Hushfeed-in TikTok-un hansı nişanları yüklədiyini görməsi üçün lenti bir dəfə açın.");
         table.put("Open the profile again and try once more",
                 "Profili yenidən açın və bir dəfə də cəhd edin");
-        table.put("Open the room and tap Stop to save it.",
-                "Otağı açın və saxlamaq üçün Dayandır düyməsinə toxunun.");
         table.put("Open the search page",
                 "Axtarış səhifəsini aç");
         table.put("Open the story again and try once more",
@@ -2763,11 +2761,11 @@ final class L10nTranslationsAz {
                 "Dayandırılıb");
         table.put("Pauses the video behind the comment sheet while you read. It plays on from the same spot when the sheet closes.",
                 "Siz oxuyarkən şərh vərəqinin arxasındakı videonu dayandırır. Vərəq bağlananda eyni yerdən davam edir.");
+        table.put("People, shortcuts and sending controls",
+                "İnsanlar, qısayollar və göndərmə idarəetmələri");
     }
 
     private static void fill22(Map<String, String> table) {
-        table.put("People, shortcuts and sending controls",
-                "İnsanlar, qısayollar və göndərmə idarəetmələri");
         table.put("Performance",
                 "Performans");
         table.put("Phone's click",
@@ -2886,11 +2884,11 @@ final class L10nTranslationsAz {
                 "Məxfilik və tətbiq");
         table.put("Private account",
                 "Gizli hesab");
+        table.put("Problem detected.",
+                "Problem aşkarlandı.");
     }
 
     private static void fill23(Map<String, String> table) {
-        table.put("Problem detected.",
-                "Problem aşkarlandı.");
         table.put("Problem detected. Story views may still be reported. Check Ghost mode diagnostics. The warning stays until TikTok restarts.",
                 "Problem aşkarlandı. Hekayə baxışları hələ də bildirilə bilər. Xəyal rejimi diaqnostikasını yoxlayın. Xəbərdarlıq TikTok yenidən başlayana qədər qalır.");
         table.put("Profile",
@@ -3009,11 +3007,11 @@ final class L10nTranslationsAz {
                 "Region");
         table.put("Remember the last speed",
                 "Son sürəti xatırlayın");
+        table.put("Remembers up to %1$s videos you saved here. If the file is still there, you get Open or Save again instead of a second copy.",
+                "Burada saxladığınız %1$s videoya qədər yadda saxlayır. Fayl hələ də yerindədirsə, ikinci nüsxə əvəzinə Open və ya Save again seçimini görürsünüz.");
     }
 
     private static void fill24(Map<String, String> table) {
-        table.put("Remembers up to %1$s videos you saved here. If the file is still there, you get Open or Save again instead of a second copy.",
-                "Burada saxladığınız %1$s videoya qədər yadda saxlayır. Fayl hələ də yerindədirsə, ikinci nüsxə əvəzinə Open və ya Save again seçimini görürsünüz.");
         table.put("Remind me every",
                 "Mənə bu qədər tez-tez xatırladın");
         table.put("Remove",
@@ -3132,11 +3130,11 @@ final class L10nTranslationsAz {
                 "Sağ sütun");
         table.put("Right edge strip",
                 "Sağ kənar zolaq");
+        table.put("Rounder",
+                "Daha dairəvi");
     }
 
     private static void fill25(Map<String, String> table) {
-        table.put("Rounder",
-                "Daha dairəvi");
         table.put("Rows",
                 "Sətirlər");
         table.put("Run the progress bar from one screen edge to the other, without the gap TikTok leaves at each end.",
@@ -3255,11 +3253,11 @@ final class L10nTranslationsAz {
                 "%2$s fayldan %1$s saxlanıldı. Qalanları Wi-Fi-dan çıxanda dayandı. Wi-Fi ilə yenidən saxlayın.");
         table.put("Saved %1$s of %2$s. Try the rest later.",
                 "%1$s / %2$s saxlanıldı. Qalanını sonra yoxlayın.");
+        table.put("Saved %1$s original photos",
+                "%1$s orijinal foto saxlanıldı");
     }
 
     private static void fill26(Map<String, String> table) {
-        table.put("Saved %1$s original photos",
-                "%1$s orijinal foto saxlanıldı");
         table.put("Saved %1$s seen videos to the file",
                 "Fayla %1$s izlənmiş video saxlanıldı");
         table.put("Saved %1$s videos",
@@ -3378,11 +3376,11 @@ final class L10nTranslationsAz {
                 "Bu ekranda axtarış mövcud deyil");
         table.put("Search loaded activity",
                 "Yüklənmiş fəaliyyətdə axtarış");
+        table.put("Search settings",
+                "Ayarlarda axtarın");
     }
 
     private static void fill27(Map<String, String> table) {
-        table.put("Search settings",
-                "Ayarlarda axtarın");
         table.put("Search share actions",
                 "Paylaşma əməliyyatlarını axtarın");
         table.put("Search these comments",
@@ -3501,11 +3499,11 @@ final class L10nTranslationsAz {
                 "Paylaşma vərəqi");
         table.put("Shares range",
                 "Paylaşma aralığı");
+        table.put("Shop",
+                "Shop");
     }
 
     private static void fill28(Map<String, String> table) {
-        table.put("Shop",
-                "Shop");
         table.put("Shop order updates and coupon messages no longer take up rows in the Inbox. Your orders are unchanged.",
                 "Shop sifariş yenilikləri və kupon mesajları artıq Gələnlərdə yer tutmur. Sifarişləriniz dəyişmir.");
         table.put("Shop posts",
@@ -3624,11 +3622,11 @@ final class L10nTranslationsAz {
                 "İrəliləyiş panelini göstərin");
         table.put("Show the progress bar thumbnail",
                 "İrəliləyiş paneli önizləmə şəklini göstərin");
+        table.put("Show the search entry inside TikTok's LIVE drawer, where available. This doesn't add a search box to video comments.",
+                "Mövcud olduqda axtarış girişini TikTok-un LIVE çəkməcəsində göstərin. Bu, video şərhlərinə axtarış qutusu əlavə etmir.");
     }
 
     private static void fill29(Map<String, String> table) {
-        table.put("Show the search entry inside TikTok's LIVE drawer, where available. This doesn't add a search box to video comments.",
-                "Mövcud olduqda axtarış girişini TikTok-un LIVE çəkməcəsində göstərin. Bu, video şərhlərinə axtarış qutusu əlavə etmir.");
         table.put("Show the switch",
                 "Açarı göstərin");
         table.put("Show the time beside the progress bar",
@@ -3747,11 +3745,11 @@ final class L10nTranslationsAz {
                 "Səsin keçidi kopyalandı");
         table.put("Sound on",
                 "Səs açıq");
+        table.put("Sound position",
+                "Səsdəki mövqe");
     }
 
     private static void fill30(Map<String, String> table) {
-        table.put("Sound position",
-                "Səsdəki mövqe");
         table.put("Sound saved to %1$s",
                 "Səs %1$s yerinə saxlanıldı");
         table.put("Sound: %1$s",
@@ -3870,11 +3868,11 @@ final class L10nTranslationsAz {
                 "%1$s təklif olunan hesab bağlandıqdan sonra dayandı");
         table.put("Stopped after dismissing one suggested account",
                 "Bir təklif olunan hesab bağlandıqdan sonra dayandı");
+        table.put("Stopped by an unexpected error",
+                "Gözlənilməz xəta ilə dayandı");
     }
 
     private static void fill31(Map<String, String> table) {
-        table.put("Stopped by an unexpected error",
-                "Gözlənilməz xəta ilə dayandı");
         table.put("Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.",
                 "30 dəqiqədən sonra Wi-Fi gözləməsi dayandırıldı. Wi-Fi-a qoşulanda yenidən saxlayın.");
         table.put("Stopped waiting for the file app. It hasn't said yet whether the backup was saved.",
@@ -3967,6 +3965,8 @@ final class L10nTranslationsAz {
                 "Bioqrafiyalarda @adlara toxun");
         table.put("Tap Repost on the bar under a video twice within %1$d seconds. A repost with a note is left alone.",
                 "Videonun altındakı paneldə Repost düyməsinə %1$d saniyə ərzində iki dəfə toxunun. Qeydli yenidən paylaşmaya toxunulmur.");
+        table.put("Tap Stop or leave the room to save it.",
+                "Saxlamaq üçün Dayandır düyməsinə toxunun və ya otaqdan çıxın.");
         table.put("Tap a comment's heart twice within %1$d seconds. A double tap on the comment needs a second one too. Removing a like stays immediate.",
                 "Şərhin ürəyinə %1$d saniyə ərzində iki dəfə toxunun. Şərhə iki dəfə toxunmaq üçün də ikinci toxunuş lazımdır. Bəyənməni geri götürmək dərhal olur.");
         table.put("Tap a story's heart twice within %1$d seconds. Removing a like stays immediate.",

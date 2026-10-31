@@ -2677,8 +2677,6 @@ final class L10nTranslationsPt_rBR {
                 "Abra o feed inicial do TikTok para detectar as abas carregadas.");
         table.put("Open the profile again and try once more",
                 "Abra o perfil de novo e tente mais uma vez");
-        table.put("Open the room and tap Stop to save it.",
-                "Abra a sala e toque em Parar para salvar.");
         table.put("Open the search page",
                 "Abrir a página de busca");
         table.put("Open the story again and try once more",
@@ -2763,11 +2761,11 @@ final class L10nTranslationsPt_rBR {
                 "Pausado");
         table.put("Pauses the video behind the comment sheet while you read. It plays on from the same spot when the sheet closes.",
                 "Pausa o vídeo atrás dos comentários enquanto você lê. Ele continua do mesmo ponto quando os comentários fecham.");
+        table.put("People, shortcuts and sending controls",
+                "Pessoas, atalhos e controles de envio");
     }
 
     private static void fill22(Map<String, String> table) {
-        table.put("People, shortcuts and sending controls",
-                "Pessoas, atalhos e controles de envio");
         table.put("Performance",
                 "Desempenho");
         table.put("Phone's click",
@@ -2886,11 +2884,11 @@ final class L10nTranslationsPt_rBR {
                 "Privacidade e aplicativo");
         table.put("Private account",
                 "Conta privada");
+        table.put("Problem detected.",
+                "Um problema foi detectado.");
     }
 
     private static void fill23(Map<String, String> table) {
-        table.put("Problem detected.",
-                "Um problema foi detectado.");
         table.put("Problem detected. Story views may still be reported. Check Ghost mode diagnostics. The warning stays until TikTok restarts.",
                 "Um problema foi detectado. As visualizações de stories ainda podem ser informadas. Consulte o diagnóstico do modo fantasma. O aviso permanece até reiniciar o TikTok.");
         table.put("Profile",
@@ -3009,11 +3007,11 @@ final class L10nTranslationsPt_rBR {
                 "Região");
         table.put("Remember the last speed",
                 "Lembrar a última velocidade");
+        table.put("Remembers up to %1$s videos you saved here. If the file is still there, you get Open or Save again instead of a second copy.",
+                "Lembra até %1$s vídeos que você salvou aqui. Se o arquivo ainda existir, você vê Abrir ou Salvar de novo em vez de uma segunda cópia.");
     }
 
     private static void fill24(Map<String, String> table) {
-        table.put("Remembers up to %1$s videos you saved here. If the file is still there, you get Open or Save again instead of a second copy.",
-                "Lembra até %1$s vídeos que você salvou aqui. Se o arquivo ainda existir, você vê Abrir ou Salvar de novo em vez de uma segunda cópia.");
         table.put("Remind me every",
                 "Me lembrar a cada");
         table.put("Remove",
@@ -3132,11 +3130,11 @@ final class L10nTranslationsPt_rBR {
                 "Coluna da direita");
         table.put("Right edge strip",
                 "Faixa lateral direita");
+        table.put("Rounder",
+                "Mais arredondados");
     }
 
     private static void fill25(Map<String, String> table) {
-        table.put("Rounder",
-                "Mais arredondados");
         table.put("Rows",
                 "Linhas");
         table.put("Run the progress bar from one screen edge to the other, without the gap TikTok leaves at each end.",
@@ -3255,11 +3253,11 @@ final class L10nTranslationsPt_rBR {
                 "%1$s de %2$s salvos. O resto parou quando você saiu do Wi-Fi. Salve de novo no Wi-Fi.");
         table.put("Saved %1$s of %2$s. Try the rest later.",
                 "%1$s de %2$s salvos. Tente o resto depois.");
+        table.put("Saved %1$s original photos",
+                "%1$s fotos originais salvas");
     }
 
     private static void fill26(Map<String, String> table) {
-        table.put("Saved %1$s original photos",
-                "%1$s fotos originais salvas");
         table.put("Saved %1$s seen videos to the file",
                 "%1$s vídeos vistos salvos no arquivo");
         table.put("Saved %1$s videos",
@@ -3378,11 +3376,11 @@ final class L10nTranslationsPt_rBR {
                 "A busca não está disponível nesta tela");
         table.put("Search loaded activity",
                 "Pesquisar atividade carregada");
+        table.put("Search settings",
+                "Buscar nas configurações");
     }
 
     private static void fill27(Map<String, String> table) {
-        table.put("Search settings",
-                "Buscar nas configurações");
         table.put("Search share actions",
                 "Buscar ações de compartilhamento");
         table.put("Search these comments",
@@ -3501,11 +3499,11 @@ final class L10nTranslationsPt_rBR {
                 "Folha de compartilhamento");
         table.put("Shares range",
                 "Faixa de compartilhamentos");
+        table.put("Shop",
+                "Loja");
     }
 
     private static void fill28(Map<String, String> table) {
-        table.put("Shop",
-                "Loja");
         table.put("Shop order updates and coupon messages no longer take up rows in the Inbox. Your orders are unchanged.",
                 "As atualizações de pedidos e as mensagens de cupom da loja deixam de ocupar linhas na caixa de entrada. Seus pedidos não mudam.");
         table.put("Shop posts",
@@ -3624,11 +3622,11 @@ final class L10nTranslationsPt_rBR {
                 "Mostrar a barra de progresso");
         table.put("Show the progress bar thumbnail",
                 "Mostrar a miniatura da barra de progresso");
+        table.put("Show the search entry inside TikTok's LIVE drawer, where available. This doesn't add a search box to video comments.",
+                "Mostre a opção de pesquisa no painel LIVE do TikTok, quando disponível. Isso não adiciona uma caixa de pesquisa aos comentários de vídeos.");
     }
 
     private static void fill29(Map<String, String> table) {
-        table.put("Show the search entry inside TikTok's LIVE drawer, where available. This doesn't add a search box to video comments.",
-                "Mostre a opção de pesquisa no painel LIVE do TikTok, quando disponível. Isso não adiciona uma caixa de pesquisa aos comentários de vídeos.");
         table.put("Show the switch",
                 "Mostrar a opção");
         table.put("Show the time beside the progress bar",
@@ -3747,11 +3745,11 @@ final class L10nTranslationsPt_rBR {
                 "Link do som copiado");
         table.put("Sound on",
                 "Som ativado");
+        table.put("Sound position",
+                "Posição no som");
     }
 
     private static void fill30(Map<String, String> table) {
-        table.put("Sound position",
-                "Posição no som");
         table.put("Sound saved to %1$s",
                 "Som salvo em %1$s");
         table.put("Sound: %1$s",
@@ -3870,11 +3868,11 @@ final class L10nTranslationsPt_rBR {
                 "Parou após dispensar %1$s contas sugeridas");
         table.put("Stopped after dismissing one suggested account",
                 "Parou após dispensar uma conta sugerida");
+        table.put("Stopped by an unexpected error",
+                "Parou por um erro inesperado");
     }
 
     private static void fill31(Map<String, String> table) {
-        table.put("Stopped by an unexpected error",
-                "Parou por um erro inesperado");
         table.put("Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.",
                 "Parou de esperar o Wi-Fi depois de 30 minutos. Salve de novo quando estiver no Wi-Fi.");
         table.put("Stopped waiting for the file app. It hasn't said yet whether the backup was saved.",
@@ -3967,6 +3965,8 @@ final class L10nTranslationsPt_rBR {
                 "Tocar em @nomes nas bios");
         table.put("Tap Repost on the bar under a video twice within %1$d seconds. A repost with a note is left alone.",
                 "Toque em Repostar na barra abaixo de um vídeo duas vezes dentro de %1$d segundos. Um repost com nota fica como está.");
+        table.put("Tap Stop or leave the room to save it.",
+                "Toque em Parar ou saia da sala para salvar.");
         table.put("Tap a comment's heart twice within %1$d seconds. A double tap on the comment needs a second one too. Removing a like stays immediate.",
                 "Toque no coração de um comentário duas vezes dentro de %1$d segundos. Um toque duplo no comentário também precisa de um segundo. Tirar uma curtida continua sendo imediato.");
         table.put("Tap a story's heart twice within %1$d seconds. Removing a like stays immediate.",

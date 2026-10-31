@@ -7,9 +7,11 @@ package app.morphe.extension.tiktok.live;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Icon;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Build;
@@ -26,6 +28,8 @@ import app.morphe.extension.tiktok.settings.L10n;
 public final class ScreenRecordService extends Service {
     static final String EXTRA_CODE = "hushfeed_code";
     static final String EXTRA_DATA = "hushfeed_data";
+    /** The notification's Stop (#265); the Record chip is hidden while the screen is filmed. */
+    static final String ACTION_STOP = "app.morphe.extension.tiktok.live.STOP_SCREEN_RECORDING";
     private static final String CHANNEL = "hushfeed_screen_record";
     private static final int NOTIFICATION_ID = 3701;
     /** ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION, API 29. */
@@ -33,6 +37,11 @@ public final class ScreenRecordService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null && ACTION_STOP.equals(intent.getAction())) {
+            // Already in the foreground; this is no consent answer, so the projection stays.
+            LiveRecordChip.stopFromNotification();
+            return START_NOT_STICKY;
+        }
         try {
             startAsForeground();
             if (intent == null) {
@@ -73,10 +82,15 @@ public final class ScreenRecordService extends Service {
         } else {
             builder = new Notification.Builder(this);
         }
+        PendingIntent stop = PendingIntent.getService(this, 0,
+                new Intent(this, ScreenRecordService.class).setAction(ACTION_STOP),
+                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
         Notification notification = builder
                 .setSmallIcon(getApplicationInfo().icon)
                 .setContentTitle(L10n.t(this, "Recording this LIVE's screen"))
-                .setContentText(L10n.t(this, "Open the room and tap Stop to save it."))
+                .setContentText(L10n.t(this, "Tap Stop or leave the room to save it."))
+                .addAction(new Notification.Action.Builder(
+                        Icon.createWithResource(this, getApplicationInfo().icon), L10n.t(this, "Stop"), stop).build())
                 .setOngoing(true)
                 .build();
         if (Build.VERSION.SDK_INT >= 29) {

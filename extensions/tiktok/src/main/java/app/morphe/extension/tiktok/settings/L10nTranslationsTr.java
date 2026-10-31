@@ -2677,8 +2677,6 @@ final class L10nTranslationsTr {
                 "Hushfeed'in TikTok'un hangi sekmeleri yüklediğini görebilmesi için akışı bir kez aç.");
         table.put("Open the profile again and try once more",
                 "Profili yeniden aç ve bir kez daha dene");
-        table.put("Open the room and tap Stop to save it.",
-                "Odayı açın ve kaydetmek için Durdur'a dokunun.");
         table.put("Open the search page",
                 "Arama sayfasını aç");
         table.put("Open the story again and try once more",
@@ -2763,11 +2761,11 @@ final class L10nTranslationsTr {
                 "Duraklatıldı");
         table.put("Pauses the video behind the comment sheet while you read. It plays on from the same spot when the sheet closes.",
                 "Sen okurken yorum panelinin arkasındaki videoyu duraklatır. Panel kapanınca video kaldığı yerden devam eder.");
+        table.put("People, shortcuts and sending controls",
+                "Kişiler, kısayollar ve gönderme kontrolleri");
     }
 
     private static void fill22(Map<String, String> table) {
-        table.put("People, shortcuts and sending controls",
-                "Kişiler, kısayollar ve gönderme kontrolleri");
         table.put("Performance",
                 "Performans");
         table.put("Phone's click",
@@ -2886,11 +2884,11 @@ final class L10nTranslationsTr {
                 "Gizlilik ve uygulama");
         table.put("Private account",
                 "Gizli hesap");
+        table.put("Problem detected.",
+                "Sorun algılandı.");
     }
 
     private static void fill23(Map<String, String> table) {
-        table.put("Problem detected.",
-                "Sorun algılandı.");
         table.put("Problem detected. Story views may still be reported. Check Ghost mode diagnostics. The warning stays until TikTok restarts.",
                 "Sorun algılandı. Hikâye görüntülemeleri yine de bildirilebilir. Hayalet modu tanılamasına bak. Uyarı, TikTok yeniden başlatılana kadar kalır.");
         table.put("Profile",
@@ -3009,11 +3007,11 @@ final class L10nTranslationsTr {
                 "Bölge");
         table.put("Remember the last speed",
                 "Son hızı hatırla");
+        table.put("Remembers up to %1$s videos you saved here. If the file is still there, you get Open or Save again instead of a second copy.",
+                "Burada kaydettiğin en fazla %1$s videoyu hatırlar. Dosya hâlâ duruyorsa ikinci bir kopya yerine Aç veya Yeniden kaydet seçeneğini görürsün.");
     }
 
     private static void fill24(Map<String, String> table) {
-        table.put("Remembers up to %1$s videos you saved here. If the file is still there, you get Open or Save again instead of a second copy.",
-                "Burada kaydettiğin en fazla %1$s videoyu hatırlar. Dosya hâlâ duruyorsa ikinci bir kopya yerine Aç veya Yeniden kaydet seçeneğini görürsün.");
         table.put("Remind me every",
                 "Hatırlatma aralığı");
         table.put("Remove",
@@ -3132,11 +3130,11 @@ final class L10nTranslationsTr {
                 "Sağ sütun");
         table.put("Right edge strip",
                 "Sağ kenar şeridi");
+        table.put("Rounder",
+                "Daha yuvarlak");
     }
 
     private static void fill25(Map<String, String> table) {
-        table.put("Rounder",
-                "Daha yuvarlak");
         table.put("Rows",
                 "Satırlar");
         table.put("Run the progress bar from one screen edge to the other, without the gap TikTok leaves at each end.",
@@ -3255,11 +3253,11 @@ final class L10nTranslationsTr {
                 "%2$s dosyadan %1$s kaydedildi. Kalanlar Wi-Fi'dan çıkınca durdu. Wi-Fi ile yeniden kaydet.");
         table.put("Saved %1$s of %2$s. Try the rest later.",
                 "%1$s / %2$s kaydedildi. Kalanı sonra dene.");
+        table.put("Saved %1$s original photos",
+                "%1$s orijinal fotoğraf kaydedildi");
     }
 
     private static void fill26(Map<String, String> table) {
-        table.put("Saved %1$s original photos",
-                "%1$s orijinal fotoğraf kaydedildi");
         table.put("Saved %1$s seen videos to the file",
                 "Dosyaya %1$s görülen video kaydedildi");
         table.put("Saved %1$s videos",
@@ -3378,11 +3376,11 @@ final class L10nTranslationsTr {
                 "Bu ekranda arama kullanılamıyor");
         table.put("Search loaded activity",
                 "Yüklenmiş etkinlikte ara");
+        table.put("Search settings",
+                "Ayarlarda ara");
     }
 
     private static void fill27(Map<String, String> table) {
-        table.put("Search settings",
-                "Ayarlarda ara");
         table.put("Search share actions",
                 "Paylaşım eylemlerinde ara");
         table.put("Search these comments",
@@ -3501,11 +3499,11 @@ final class L10nTranslationsTr {
                 "Paylaşım menüsü");
         table.put("Shares range",
                 "Paylaşım aralığı");
+        table.put("Shop",
+                "Mağaza");
     }
 
     private static void fill28(Map<String, String> table) {
-        table.put("Shop",
-                "Mağaza");
         table.put("Shop order updates and coupon messages no longer take up rows in the Inbox. Your orders are unchanged.",
                 "Mağaza sipariş güncellemeleri ve kupon mesajları artık Gelen Kutusu'nda satır kaplamaz. Siparişlerin değişmez.");
         table.put("Shop posts",
@@ -3624,11 +3622,11 @@ final class L10nTranslationsTr {
                 "İlerleme çubuğunu göster");
         table.put("Show the progress bar thumbnail",
                 "İlerleme çubuğu küçük resmini göster");
+        table.put("Show the search entry inside TikTok's LIVE drawer, where available. This doesn't add a search box to video comments.",
+                "TikTok'un CANLI çekmecesindeki arama girişini, mümkün olan yerlerde göster. Bu, video yorumlarına bir arama kutusu eklemez.");
     }
 
     private static void fill29(Map<String, String> table) {
-        table.put("Show the search entry inside TikTok's LIVE drawer, where available. This doesn't add a search box to video comments.",
-                "TikTok'un CANLI çekmecesindeki arama girişini, mümkün olan yerlerde göster. Bu, video yorumlarına bir arama kutusu eklemez.");
         table.put("Show the switch",
                 "Ayarı göster");
         table.put("Show the time beside the progress bar",
@@ -3747,11 +3745,11 @@ final class L10nTranslationsTr {
                 "Ses bağlantısı kopyalandı");
         table.put("Sound on",
                 "Ses açık");
+        table.put("Sound position",
+                "Sesteki konum");
     }
 
     private static void fill30(Map<String, String> table) {
-        table.put("Sound position",
-                "Sesteki konum");
         table.put("Sound saved to %1$s",
                 "Ses şuraya kaydedildi: %1$s");
         table.put("Sound: %1$s",
@@ -3870,11 +3868,11 @@ final class L10nTranslationsTr {
                 "Önerilen %1$s hesap kapatıldıktan sonra durdu");
         table.put("Stopped after dismissing one suggested account",
                 "Önerilen bir hesap kapatıldıktan sonra durdu");
+        table.put("Stopped by an unexpected error",
+                "Beklenmeyen bir hata nedeniyle durdu");
     }
 
     private static void fill31(Map<String, String> table) {
-        table.put("Stopped by an unexpected error",
-                "Beklenmeyen bir hata nedeniyle durdu");
         table.put("Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.",
                 "30 dakika sonra Wi-Fi beklemesi bırakıldı. Wi-Fi'a bağlanınca yeniden kaydet.");
         table.put("Stopped waiting for the file app. It hasn't said yet whether the backup was saved.",
@@ -3967,6 +3965,8 @@ final class L10nTranslationsTr {
                 "Biyografilerdeki @adlara dokun");
         table.put("Tap Repost on the bar under a video twice within %1$d seconds. A repost with a note is left alone.",
                 "Bir videonun altındaki çubukta Yeniden yayınla düğmesine %1$d saniye içinde iki kez dokun. Not eklenmiş bir yeniden yayınlama olduğu gibi kalır.");
+        table.put("Tap Stop or leave the room to save it.",
+                "Kaydetmek için Durdur'a dokunun veya odadan çıkın.");
         table.put("Tap a comment's heart twice within %1$d seconds. A double tap on the comment needs a second one too. Removing a like stays immediate.",
                 "Bir yorumun kalbine %1$d saniye içinde iki kez dokun. Yoruma çift dokunmak da ikinci bir çift dokunma ister. Beğeniyi kaldırmak yine anında olur.");
         table.put("Tap a story's heart twice within %1$d seconds. Removing a like stays immediate.",

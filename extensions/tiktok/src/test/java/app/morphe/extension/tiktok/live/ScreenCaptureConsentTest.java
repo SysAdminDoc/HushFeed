@@ -3,6 +3,7 @@ package app.morphe.extension.tiktok.live;
 import static org.junit.Assert.*;
 
 import android.app.Activity;
+import android.app.Notification;
 import android.content.Intent;
 import android.os.Looper;
 import app.morphe.extension.tiktok.SettingsContextRule;
@@ -36,6 +37,45 @@ public class ScreenCaptureConsentTest {
     @Test @Config(sdk = {23, 33})
     public void displayOnlyConsentKeepsItsExistingRoute() {
         checkRequest(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+    }
+
+    /** #265: the Record chip hides while the screen is filmed, so the notification carries the Stop. */
+    @Test @Config(sdk = 34)
+    public void theRecordingNotificationCarriesAStopForTheService() {
+        var owner = Robolectric.buildService(ScreenRecordService.class, new Intent()).create();
+        try {
+            owner.startCommand(0, 1);
+            Notification shown = Shadows.shadowOf(owner.get()).getLastForegroundNotification();
+            assertNotNull(shown);
+            assertEquals(1, shown.actions.length);
+            assertEquals("Stop", String.valueOf(shown.actions[0].title));
+            Intent stop = Shadows.shadowOf(shown.actions[0].actionIntent).getSavedIntent();
+            assertEquals(ScreenRecordService.ACTION_STOP, stop.getAction());
+            assertEquals(ScreenRecordService.class.getName(), stop.getComponent().getClassName());
+            assertTrue(Shadows.shadowOf(shown.actions[0].actionIntent).isServiceIntent());
+        } finally {
+            ScreenCapture.discardUnused();
+            owner.destroy();
+        }
+    }
+
+    /** The notification's Stop reaches the same service, and must not read as a consent answer. */
+    @Test @Config(sdk = 34)
+    public void aStopFromTheNotificationIsNoConsentAnswer() {
+        try (var activityOwner = Robolectric.buildActivity(Activity.class).setup()) {
+            AtomicInteger answers = new AtomicInteger();
+            ScreenCapture.request(activityOwner.get(), granted -> answers.incrementAndGet());
+            var owner = Robolectric.buildService(ScreenRecordService.class,
+                    new Intent().setAction(ScreenRecordService.ACTION_STOP)).create();
+            owner.startCommand(0, 1);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertEquals(0, answers.get());
+            assertNull(Shadows.shadowOf(owner.get()).getLastForegroundNotification());
+            assertFalse(Shadows.shadowOf(owner.get()).isStoppedBySelf());
+            owner.destroy();
+        } finally {
+            LiveRecordChip.holdForTests(null, false);
+        }
     }
 
     private void checkRequest(int expectedFlags) {

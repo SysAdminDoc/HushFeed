@@ -16,7 +16,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -193,7 +192,8 @@ public final class KeepUnsent {
             for (Field field : made.getClass().getDeclaredFields()) {
                 if (!java.lang.reflect.Modifier.isStatic(field.getModifiers())) fields.add(field);
             }
-            Collections.sort(fields, Comparator.comparing(Field::getName));
+            // Comparator.comparing is API 24.
+            Collections.sort(fields, (a, b) -> a.getName().compareTo(b.getName()));
             JSONArray ints = new JSONArray();
             JSONObject json = new JSONObject().put("class", made.getClass().getName()).put("ints", ints);
             for (Field field : fields) {

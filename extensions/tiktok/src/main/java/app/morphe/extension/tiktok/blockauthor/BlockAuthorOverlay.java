@@ -145,6 +145,9 @@ public final class BlockAuthorOverlay {
         }
         // A control enabled from settings can be attached after a retained hold panel.
         visible = visible && !SessionBudget.isLocked();
+        // A LIVE preview has no sound, feedback or mute of a video to act on: the previous
+        // video's would be what a tap reached. Only the host block (and hiding the host) apply.
+        boolean video = !CurrentVideoAuthor.isLive();
         int wanted = visible && Settings.BLOCK_AUTHOR_BUTTON.get() ? View.VISIBLE : View.GONE;
         if (button.getVisibility() != wanted) {
             button.setVisibility(wanted);
@@ -155,7 +158,7 @@ public final class BlockAuthorOverlay {
         View soundButton = soundButtonReference.get();
         if (soundButton != null) {
             // The sound button needs a sound to act on, and a feed filter to act through.
-            boolean soundWanted = visible && Settings.BLOCK_SOUND_BUTTON.get()
+            boolean soundWanted = visible && video && Settings.BLOCK_SOUND_BUTTON.get()
                     && SettingsStatus.feedFilterEnabled
                     && CurrentVideoSound.get() != null && CurrentVideoSound.get().isUsable();
             int soundVisibility = soundWanted ? View.VISIBLE : View.GONE;
@@ -173,13 +176,13 @@ public final class BlockAuthorOverlay {
             }
         }
         View feedback = notInterestedReference.get();
-        if (feedback != null) feedback.setVisibility(visible && notInterestedEnabled() ? View.VISIBLE : View.GONE);
+        if (feedback != null) feedback.setVisibility(visible && video && notInterestedEnabled() ? View.VISIBLE : View.GONE);
         View mute = muteReference.get();
         if (mute != null) {
             // Not over a story or a LIVE replay, which play with their sound whatever it says.
             VideoAuthor playing = CurrentVideoAuthor.get();
             boolean governed = FeedMute.appliesTo(playing == null ? null : playing.awemeId);
-            mute.setVisibility(visible && muteButtonEnabled() && governed ? View.VISIBLE : View.GONE);
+            mute.setVisibility(visible && video && muteButtonEnabled() && governed ? View.VISIBLE : View.GONE);
             showMuteState(mute);
         }
     }
@@ -188,6 +191,7 @@ public final class BlockAuthorOverlay {
      * Re-checks the cached feed selection and the active hold on each layout pass.
      */
     private static void syncVisibility() {
+        LiveFeedCells.evaluate();
         Activity activity = controlsActivity();
         if (activity == null) {
             return;
@@ -885,6 +889,9 @@ public final class BlockAuthorOverlay {
             return;
         }
 
+        // A swipe in flight can leave a LIVE selected for a moment: ask the screen again, so the
+        // tap blocks what is in front of the reader and never the host just scrolled past.
+        LiveFeedCells.evaluate();
         VideoAuthor author = CurrentVideoAuthor.get();
         if (author == null || !author.isUsable()) {
             Utils.showToastShort(L10n.t("No creator to block on this video"));

@@ -134,6 +134,15 @@ val blockAuthorPatch = bytecodePatch(
                 "$EXTENSION_CLASS_DESCRIPTOR->setCurrentVideoParams(Ljava/lang/Object;)V",
         )
 
+        // A LIVE preview in For You: the player never names it and the bind above gives it no
+        // author, so its host is read where the LIVE cell holder takes its item. p0 is the
+        // holder and p1 the Aweme; /range keeps it valid whatever the frame size.
+        LiveFeedCellBindFingerprint.method.addInstruction(
+            0,
+            "invoke-static/range { p0 .. p1 }, " +
+                "$EXTENSION_CLASS_DESCRIPTOR->onLiveCellBound(Ljava/lang/Object;Ljava/lang/Object;)V",
+        )
+
         // The video actually playing, and the player's own pause and resume, come from
         // sessionPlaybackBridgePatch, which the app lock brings in as well.
 

@@ -67,6 +67,14 @@ public final class CurrentVideoAuthor {
     private static volatile String playingAwemeId;
 
     /**
+     * The LIVE preview on screen, or null. A LIVE is never named by the player and binds with no
+     * author, so without this the previous video's creator stayed current under it. While set, it
+     * is what {@link #get()} answers, with the host as the author (null when the host can't be
+     * blocked, which hides the button instead of arming the video before).
+     */
+    private static volatile Item liveItem;
+
+    /**
      * Held while one of the two signals decides what is current and applies it. They arrive on
      * different threads: a bind on the main thread, the player's id on its own. The player
      * could find nothing bound, the bind could then land and select the video, and the
@@ -177,13 +185,74 @@ public final class CurrentVideoAuthor {
             if (found == null) found = SELECTED.get(awemeId);
             Runnable hook = betweenLookupAndSelectForTests;
             if (hook != null) hook.run();
-            select(found);
+            // A video the player names that is not the LIVE on screen means the reader has moved
+            // on from it. The LIVE's own id is left alone: a preview can report through the player.
+            Item live = liveItem;
+            select(found, live != null && !awemeId.equals(live.awemeId));
         }
     }
 
-    /** Applies a new current item and tells everything that tracks the current video. */
+    /** The author the button acts on for {@code item}: the LIVE's host while one is on screen. */
+    private static VideoAuthor effectiveAuthor(Item item) {
+        Item live = liveItem;
+        if (live != null) return live.author;
+        return item == null ? null : item.author;
+    }
+
+    /**
+     * A LIVE preview is on screen.
+     *
+     * @param awemeId the LIVE item's id
+     * @param host the room owner, or one with no identifiers when the room names nobody
+     * @param aweme the LIVE item
+     */
+    static void selectLive(String awemeId, VideoAuthor host, Object aweme) {
+        synchronized (SELECTING) {
+            Item previous = liveItem;
+            if (previous != null && Objects.equals(previous.awemeId, awemeId)
+                    && previous.aweme == aweme) {
+                return;
+            }
+            VideoAuthor before = effectiveAuthor(current);
+            liveItem = new Item(awemeId, host != null && host.isUsable() ? host : null, aweme);
+            announce(before, effectiveAuthor(current));
+        }
+    }
+
+    /** No LIVE is on screen any more: the current video's author is current again. */
+    static void releaseLive() {
+        synchronized (SELECTING) {
+            if (liveItem == null) return;
+            VideoAuthor before = effectiveAuthor(current);
+            liveItem = null;
+            announce(before, effectiveAuthor(current));
+        }
+    }
+
+    /** True while the current item is a LIVE preview rather than a video. */
+    static boolean isLive() {
+        return liveItem != null;
+    }
+
+    private static void announce(VideoAuthor before, VideoAuthor after) {
+        if (Objects.equals(before, after)) return;
+        if (after == null) {
+            Logger.printDebug(() -> "Current item has no blockable author");
+        } else {
+            Logger.printDebug(() -> "Current video: " + after.reference() + " aweme=" + after.awemeId);
+        }
+        BlockAuthorOverlay.onAuthorChanged(after);
+    }
+
     private static void select(Item item) {
+        select(item, false);
+    }
+
+    /** Applies a new current item and tells everything that tracks the current video. */
+    private static void select(Item item, boolean releaseLive) {
         Item previous = current;
+        VideoAuthor previousAuthor = effectiveAuthor(previous);
+        if (releaseLive) liveItem = null;
         current = item;
         if (item != null && item.awemeId != null) SELECTED.put(item.awemeId, item);
 
@@ -216,21 +285,9 @@ public final class CurrentVideoAuthor {
             }
         }
 
-        VideoAuthor author = item == null ? null : item.author;
-        VideoAuthor previousAuthor = previous == null ? null : previous.author;
-        if (Objects.equals(author, previousAuthor)) {
-            return;
-        }
-
-        if (author == null) {
-            Logger.printDebug(() -> "Current item has no blockable author");
-        } else {
-            // "Current video:" rather than "author:", which the export's credential rule reads
-            // as a name to omit the value of, taking the pseudonym's first word with it.
-            Logger.printDebug(() -> "Current video: " + author.reference()
-                    + " aweme=" + author.awemeId);
-        }
-        BlockAuthorOverlay.onAuthorChanged(author);
+        // "Current video:" rather than "author:" in the log, which the export's credential rule
+        // reads as a name to omit the value of, taking the pseudonym's first word with it.
+        announce(previousAuthor, effectiveAuthor(item));
     }
 
     /**
@@ -240,12 +297,12 @@ public final class CurrentVideoAuthor {
      *         other screens is {@link FeedVisibility}'s job, not this one's.
      */
     public static VideoAuthor get() {
-        Item item = current;
-        return item == null ? null : item.author;
+        return effectiveAuthor(current);
     }
 
     public static Object getAweme() {
-        Item item = current;
+        Item item = liveItem;
+        if (item == null) item = current;
         return item == null ? null : item.aweme;
     }
 
@@ -259,7 +316,9 @@ public final class CurrentVideoAuthor {
         RECENT.clear();
         SELECTED.clear();
         current = null;
+        liveItem = null;
         playingAwemeId = null;
+        LiveFeedCells.resetForTests();
         CurrentVideoSound.clear();
     }
 

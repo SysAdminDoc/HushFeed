@@ -7,6 +7,8 @@
 package app.morphe.patches.tiktok.interaction.blockauthor
 
 import app.morphe.patcher.Fingerprint
+import com.android.tools.smali.dexlib2.AccessFlags
+import com.android.tools.smali.dexlib2.Opcode
 
 /**
  * Fires whenever a video becomes the current item in the feed, carrying the
@@ -88,3 +90,20 @@ internal object PlayerPlayFingerprint : Fingerprint(
 )
 
 internal const val PLAYED_AWEME = "Lcom/ss/android/ugc/aweme/feed/model/Aweme;"
+
+/**
+ * The setter every LIVE cell holder in a feed or a card list routes its item through: the holder
+ * keeps the `Aweme` and derives the room from it. It is the only place a For You LIVE preview
+ * reaches app code with its item, since the player never names a LIVE and the video bind carries
+ * no author for one. Its name is obfuscated, so it is the one public final `(Aweme)V` that opens
+ * by storing the item (the other `(Aweme)V` on the class is a synthetic empty bridge).
+ */
+internal object LiveFeedCellBindFingerprint : Fingerprint(
+    definingClass = "Lcom/ss/android/ugc/aweme/feed/adapter/BaseFeedLiveViewHolder;",
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
+    returnType = "V",
+    parameters = listOf(PLAYED_AWEME),
+    custom = { method, _ ->
+        method.implementation?.instructions?.firstOrNull()?.opcode == Opcode.IPUT_OBJECT
+    },
+)

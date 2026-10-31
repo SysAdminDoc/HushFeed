@@ -68,6 +68,21 @@ public final class BlockAuthorPatch {
         }
     }
 
+    /**
+     * Called when a LIVE cell holder in the feed is given its item, so the host can be blocked
+     * from the For You preview. The player never names a LIVE, so this is the only signal for it.
+     *
+     * @param holder the LIVE cell holder
+     * @param aweme the LIVE item it was given
+     */
+    public static void onLiveCellBound(Object holder, Object aweme) {
+        try {
+            LiveFeedCells.onBind(holder, aweme);
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Could not track the LIVE preview", ex);
+        }
+    }
+
     /** Compatibility entry for callers that only report the current video ID. */
     public static void setPlayingAweme(String awemeId) {
         try {

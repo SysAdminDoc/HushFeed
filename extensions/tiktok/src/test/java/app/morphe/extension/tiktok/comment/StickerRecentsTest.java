@@ -28,7 +28,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
-/** Keep recent stickers on PineDrama (#156): what the row held comes back after a restart. */
+/** Keep recent stickers on PineDrama (#156): the Recently used row above Saved, and what it held coming back after a restart. */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 28)
 public class StickerRecentsTest {
@@ -263,6 +263,63 @@ public class StickerRecentsTest {
         StickerRecents.restore(null);
         StickerRecents.restore(new Object());
         assertTrue(context.getSharedPreferences(StickerRecents.PREFS_NAME, Context.MODE_PRIVATE).getAll().isEmpty());
+    }
+
+    /** Stands in for the Saved page's heading and sticker cells. A sticker named "broken" gets no cell. */
+    static final class FakeCells implements StickerRecents.RowCells {
+        @Override public Object item(Object sticker) {
+            String id = ((FakeSticker) sticker).id;
+            return id.equals("broken") ? null : "cell " + id;
+        }
+
+        @Override public Object title(String heading) {
+            return "heading " + heading;
+        }
+    }
+
+    private static List<Object> savedRows() {
+        return new ArrayList<>(Arrays.<Object>asList("heading Saved", "cell saved1"));
+    }
+
+    @Test public void theRowPutsAHeadingAndTheFourNewestAboveSaved() {
+        List<Object> rows = savedRows();
+        List<FakeSticker> recents = Arrays.asList(new FakeSticker("1", "u"), null, new FakeSticker("2", "u"),
+                new FakeSticker("3", "u"), new FakeSticker("4", "u"), new FakeSticker("5", "u"));
+        assertEquals(5, StickerRecents.prepend(rows, recents, new FakeCells(), "Recently used"));
+        assertEquals(Arrays.<Object>asList("heading Recently used", "cell 1", "cell 2", "cell 3", "cell 4",
+                "heading Saved", "cell saved1"), rows);
+    }
+
+    @Test public void aShortListGetsAShortRow() {
+        List<Object> rows = savedRows();
+        assertEquals(2, StickerRecents.prepend(rows, Collections.singletonList(new FakeSticker("1", "u")), new FakeCells(), "Recently used"));
+        assertEquals(Arrays.<Object>asList("heading Recently used", "cell 1", "heading Saved", "cell saved1"), rows);
+    }
+
+    @Test public void noRecentsOrACellThatCantBeMadeLeavesSavedAlone() {
+        List<Object> rows = savedRows();
+        assertEquals(0, StickerRecents.prepend(rows, Collections.emptyList(), new FakeCells(), "Recently used"));
+        assertEquals(0, StickerRecents.prepend(rows, null, new FakeCells(), "Recently used"));
+        assertEquals(0, StickerRecents.prepend(rows, Arrays.asList(new FakeSticker("1", "u"), new FakeSticker("broken", "u")),
+                new FakeCells(), "Recently used"));
+        assertEquals(savedRows(), rows);
+    }
+
+    @Test public void unpatchedOrPausedTheSavedPageKeepsItsRows() {
+        List<Object> rows = savedRows();
+        StickerRecents.addRow(new Object(), rows);
+        assertEquals("the stubs answer nothing off the app", savedRows(), rows);
+        assertEquals(0, StickerRecents.rowsAbove());
+
+        PausedProcess.set(true);
+        StickerRecents.addRow(new Object(), rows);
+        assertEquals(savedRows(), rows);
+        assertEquals(0, StickerRecents.rowsAbove());
+
+        PausedProcess.set(false);
+        StickerRecents.addRow(null, "not a list");
+        StickerRecents.addRow(null, null);
+        assertEquals(0, StickerRecents.rowsAbove());
     }
 
     @Test public void gsonIsFoundByItsShapes() throws Exception {

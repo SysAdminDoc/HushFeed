@@ -3,6 +3,7 @@ package app.morphe.patches.tiktok.misc.comment
 import app.morphe.BridgeTypeFlow
 import app.morphe.Fixtures
 import app.morphe.patcher.patch.PatchException
+import app.morphe.patcher.util.proxy.mutableTypes.MutableClass
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.takes
 import app.morphe.util.addInstructions
@@ -17,6 +18,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+import com.android.tools.smali.dexlib2.immutable.ImmutableClassDef
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
@@ -29,8 +31,9 @@ import org.junit.Test
 /**
  * Keep recent stickers (#156) is a PineDrama patch, and PineDrama 47.5.3 is built from TikTok
  * 47.5.3's code: the recently used store has the same add, reset and holder there (14gj.LJ,
- * 14gj.LIZIZ and 0mnM.LIZ on TikTok, Xf3 and Xf8 on PineDrama), so TikTok's fixtures hold what the
- * patch relies on.
+ * 14gj.LIZIZ and 0mnM.LIZ on TikTok, Xf3 and Xf8 on PineDrama), and the basic Saved page builds
+ * its rows the same way (emit$0 with 0zfW and 14gH on TikTok, emit$22 with Q1n and QRQ on
+ * PineDrama), so TikTok's fixtures hold what the patch relies on.
  */
 class StickerRecentsPatchTest {
     @Test
@@ -120,6 +123,112 @@ class StickerRecentsPatchTest {
         val refused = assertThrows(PatchException::class.java) { method.recentStickersAddWrite() }
         assertEquals("Keep recent stickers: 0 list writes in the add, expected 1", refused.message)
     }
+
+    @Test
+    fun `the rows fingerprint takes the Saved page's one collector in every retained fixture`() {
+        fixtures { apk, classes ->
+            val collectors = classes.flatMap { classDef -> classDef.methods.filter { RecentStickerRowsFingerprint.takes(it, classDef) } }
+            assertEquals(apk, 1, collectors.size)
+            val rows = collectors.single().recentStickerRows()!!
+            val byType = classes.associateBy { it.type }
+            for (type in listOf(rows.pageType, rows.title, rows.item)) {
+                assertTrue("$apk: $type is public", AccessFlags.PUBLIC.isSet(byType.getValue(type).accessFlags))
+            }
+            assertTrue("$apk: the page's registers fit a plain invoke", rows.page <= 15 && rows.rows <= 15)
+        }
+    }
+
+    @Test
+    fun `the row bridges call what the Saved page reaches and pass the verifier's typing`() {
+        val lines = mapOf("recentStickers" to 8, "recentTitle" to 3, "recentItem" to 4)
+        fixtures { apk, classes ->
+            val byType = classes.associateBy { it.type }
+            val rows = rowsCollector(classes).recentStickerRows()!!
+            val store = recentStickerStore(byType.getValue(rows.pageType)) { byType[it] }
+            val methods = classes.flatMap { classDef -> classDef.methods.map { it.recentSignature() } }.toSet()
+            val bridges = recentRowBridges(rows, store)
+            assertEquals(apk, lines.keys, bridges.map { it.name }.toSet())
+            for (bridge in bridges) {
+                assertEquals("$apk: ${bridge.name} keeps every line", lines.getValue(bridge.name), bridge.implementation!!.instructions.count())
+                assertEquals("$apk: ${bridge.name}", emptyList<BridgeTypeFlow.Problem>(), BridgeTypeFlow.check(bridge))
+                for (reference in bridge.implementation!!.instructions.mapNotNull { (it as? ReferenceInstruction)?.reference as? MethodReference }) {
+                    assertTrue("$apk: ${bridge.name} calls ${reference.recentSignature()}", reference.recentSignature() in methods)
+                }
+            }
+            assertTrue("$apk: the store getter ${store.getter}", store.getter.startsWith(rows.pageType + "->"))
+            assertEquals(apk, "invoke-interface", store.storeInvoke)
+        }
+    }
+
+    @Test
+    fun `addRow gets the page and its rows right before the page takes them`() {
+        fixtures { apk, classes ->
+            val stock = rowsCollector(classes)
+            val rows = stock.recentStickerRows()!!
+            val hooked = MutableMethod(stock)
+            hooked.addRecentStickerRow(rows)
+            val code = hooked.implementation!!.instructions.filter { it.opcode != Opcode.NOP }
+            assertEquals("$apk gains one line", stock.implementation!!.instructions.count { it.opcode != Opcode.NOP } + 1, code.size)
+            val added = code.indexOfFirst { it.opcode == Opcode.INVOKE_STATIC && (it as ReferenceInstruction).reference.toString().contains("StickerRecents") }
+            val target = (code[added] as ReferenceInstruction).reference as MethodReference
+            assertEquals(apk, "Lapp/morphe/extension/tiktok/comment/StickerRecents;->addRow(Ljava/lang/Object;Ljava/lang/Object;)V", target.recentSignature())
+            val registers = code[added] as FiveRegisterInstruction
+            assertEquals(apk, listOf(rows.page, rows.rows), listOf(registers.registerC, registers.registerD))
+            val call = (code[added + 1] as ReferenceInstruction).reference as MethodReference
+            assertEquals("$apk: the page takes its rows next", "${rows.pageType}(Ljava/util/List;)V", "${call.definingClass}(${call.parameterTypes.joinToString("")})${call.returnType}")
+            assertEquals(apk, emptyList<BridgeTypeFlow.Problem>(), BridgeTypeFlow.check(hooked))
+        }
+    }
+
+    /** The shipped dex has R8's public static stubs, not the source's package-private ones. */
+    @Test
+    fun `the row bridges replace public static stubs with their flags kept and refuse an instance stub`() {
+        val publicStatic = AccessFlags.PUBLIC.value or AccessFlags.STATIC.value
+        fixtures { apk, classes ->
+            val byType = classes.associateBy { it.type }
+            val rows = rowsCollector(classes).recentStickerRows()!!
+            val store = recentStickerStore(byType.getValue(rows.pageType)) { byType[it] }
+            val stubs = recentRowBridges(rows, store) { publicStatic }
+            val extension = MutableClass(stickerRecents(stubs))
+            extension.swapRecentRowStubs(rows, store)
+            assertEquals(apk, stubs.map { it.name }.toSet(), extension.methods.map { it.name }.toSet())
+            for (bridge in extension.methods) {
+                assertEquals("$apk: ${bridge.name}", publicStatic, bridge.accessFlags)
+                assertTrue("$apk: ${bridge.name} is the bridge", stubs.none { stub -> stub === bridge })
+            }
+
+            val instance = recentRowBridges(rows, store) { name -> if (name == "recentItem") AccessFlags.PUBLIC.value else publicStatic }
+            val refused = assertThrows(PatchException::class.java) {
+                MutableClass(stickerRecents(instance)).swapRecentRowStubs(rows, store)
+            }
+            assertEquals(apk, "Keep recent stickers: the recentItem stub isn't static", refused.message)
+        }
+    }
+
+    @Test
+    fun `a rows call past v15 is refused rather than dropped`() {
+        val method = MutableMethod(
+            ImmutableMethod(
+                "LX/Rows;", "emit", emptyList(), "V", AccessFlags.PUBLIC.value or AccessFlags.STATIC.value,
+                null, null, ImmutableMethodImplementation(1, emptyList(), null, null),
+            ),
+        )
+        method.addInstructions(0, "return-void")
+        val refused = assertThrows(PatchException::class.java) {
+            method.addRecentStickerRow(RecentStickerRows(0, 16, 3, "LX/Page;", "LX/Title;", "LX/Item;"))
+        }
+        assertEquals("Keep recent stickers: the rows call uses v16 and v3, past v15", refused.message)
+    }
+
+    private fun rowsCollector(classes: List<ClassDef>): Method =
+        classes.flatMap { classDef -> classDef.methods.filter { RecentStickerRowsFingerprint.takes(it, classDef) } }.single()
+
+    private fun stickerRecents(methods: List<MutableMethod>) = ImmutableClassDef(
+        "Lapp/morphe/extension/tiktok/comment/StickerRecents;", AccessFlags.PUBLIC.value or AccessFlags.FINAL.value,
+        "Ljava/lang/Object;", emptyList(), null, emptySet(), emptyList(), methods,
+    )
+
+    private fun MethodReference.recentSignature() = "$definingClass->$name(${parameterTypes.joinToString("")})$returnType"
 
     private fun assertHookBeforeReturn(what: String, hooked: MutableMethod, stock: Method, hook: String, register: Int) {
         val code = hooked.implementation!!.instructions.filter { it.opcode != Opcode.NOP }

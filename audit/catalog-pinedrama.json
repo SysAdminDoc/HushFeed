@@ -6039,7 +6039,7 @@
   "checks": [
    {
     "id": "injected",
-    "what": "The patched dex carries the recent sticker store and the patch registered itself. (The dex-string step shows the extension class is shipped; the registered-switch step is what shows the patch ran and hooked the add and the reset.)",
+    "what": "The patched dex carries the recent sticker store and the patch registered itself. (The dex-string step shows the extension class is shipped; the registered-switch step is what shows the patch ran and hooked the add, the reset and the Saved page's rows.)",
     "steps": [
      {
       "apk": "dex-string",
@@ -6053,7 +6053,7 @@
     "auto": true
    }
   ],
-  "notes": "Issue #156. PineDrama keeps the comment sticker panel's Recently used row in memory only and empties it the first time its sticker store is used in each process and on every account result, so the row is blank after every restart. The patch hands each new list to StickerRecents.save as a sticker goes on it (one list per account in hushfeed_sticker_recents, tied to the app version) and puts this account's list back right after the reset. The natural check is on a signed-in account: send a sticker in a comment or a DM, force-stop and reopen PineDrama, and the sticker is still in Recently used. A sticker whose image links have all expired is left out."
+  "notes": "Issue #156. TikTok's full sticker panel is the on-demand df_im_bootfinish module, which a patched install can't download, so PineDrama shows its basic panel, whose Saved page has no Recently used row. The patch puts up to four of the store's newest stickers and a Recently used heading above Saved each time the page builds its rows (StickerRecents.addRow). PineDrama also keeps that list in memory only and empties it the first time its sticker store is used in each process and on every account result, so the row is blank after every restart. The patch hands each new list to StickerRecents.save as a sticker goes on it (one list per account in hushfeed_sticker_recents, tied to the app version) and puts this account's list back right after the reset. The natural check is on a signed-in account: send a sticker in a comment, reopen the sticker panel and it's first under Recently used, then force-stop and reopen PineDrama and it's still there. A sticker whose image links have all expired is left out."
  },
  {
   "name": "Keep the Favorites tab",

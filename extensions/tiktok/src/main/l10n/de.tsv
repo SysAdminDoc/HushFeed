@@ -2389,3 +2389,5 @@ Couldn't make the sticker. Try again.	Erstellen fehlgeschlagen. Versuch es noch 
 Couldn't read that photo. Try another one.	Das Foto ließ sich nicht lesen. Nimm ein anderes.
 This account can't make stickers	Dieses Konto kann keine Sticker erstellen
 Sticker added to Saved	Zu deinen Stickern hinzugefügt
+# context: PineDrama's comment sticker panel. Recently used is a heading Hushfeed adds above Saved, over the last stickers you sent. TikTok's own label for it isn't in the APK, so this is the usual phone wording
+Recently used	Zuletzt verwendet

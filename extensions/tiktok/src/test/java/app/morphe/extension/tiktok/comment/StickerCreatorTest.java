@@ -48,6 +48,7 @@ public class StickerCreatorTest {
 
     @After public void tearDown() {
         PausedProcess.set(false);
+        StickerRecents.rowsAboveForTests(0);
     }
 
     @Test public void fitKeepsTheShapeWithNeitherSideOverTheMax() {
@@ -102,6 +103,30 @@ public class StickerCreatorTest {
         assertEquals(View.INVISIBLE, pill.getVisibility());
         grid.scrolled = false;
         StickerCreator.place(grid, pill);
+        assertEquals(View.VISIBLE, pill.getVisibility());
+    }
+
+    @Test public void createSkipsRecentlyUsedForTheSavedHeading() {
+        RecyclerView grid = new RecyclerView(context());
+        View recentHeading = new View(context());
+        View recent = new View(context());
+        View savedHeading = new View(context());
+        grid.addView(recentHeading);
+        grid.addView(recent);
+        grid.layout(0, 100, 1000, 1100);
+        recentHeading.layout(0, 0, 1000, 120);
+        recent.layout(0, 120, 250, 370);
+        TextView pill = new TextView(context());
+        pill.layout(0, 0, 200, 60);
+
+        StickerRecents.rowsAboveForTests(2);
+        StickerCreator.place(grid, pill);
+        assertEquals("the Saved heading isn't drawn yet", View.INVISIBLE, pill.getVisibility());
+
+        grid.addView(savedHeading);
+        savedHeading.layout(0, 370, 1000, 490);
+        StickerCreator.place(grid, pill);
+        assertEquals(500f, pill.getTranslationY(), 0f);
         assertEquals(View.VISIBLE, pill.getVisibility());
     }
 

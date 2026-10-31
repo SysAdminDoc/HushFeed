@@ -2386,3 +2386,5 @@ Couldn't make the sticker. Try again.	Stikeri yaratmaq alınmadı. Yenidən cəh
 Couldn't read that photo. Try another one.	Bu fotonu oxumaq alınmadı. Başqa birini seçin.
 This account can't make stickers	Bu hesab stiker yarada bilməz
 Sticker added to Saved	Stiker saxlanılanlara əlavə edildi
+# context: PineDrama's comment sticker panel. Recently used is a heading Hushfeed adds above Saved, over the last stickers you sent. TikTok's own label for it isn't in the APK, so this is the usual phone wording
+Recently used	Son istifadə olunanlar

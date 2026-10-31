@@ -2386,3 +2386,5 @@ Couldn't make the sticker. Try again.	Não foi possível criar o adesivo. Tente 
 Couldn't read that photo. Try another one.	Não foi possível ler essa foto. Tente outra.
 This account can't make stickers	Esta conta não pode criar adesivos
 Sticker added to Saved	Adesivo adicionado aos salvos
+# context: PineDrama's comment sticker panel. Recently used is a heading Hushfeed adds above Saved, over the last stickers you sent. TikTok's own label for it isn't in the APK, so this is the usual phone wording
+Recently used	Usados recentemente

@@ -118,19 +118,22 @@ public final class StickerCreator {
     }
 
     /**
-     * Keeps Create at the right end of the grid's first row, the Saved heading, and hides it once
-     * the grid scrolls the heading away. An empty grid has no heading, so Create sits at its top.
+     * Keeps Create at the right end of the Saved heading's row, and hides it once the grid scrolls
+     * the top away. Recently used puts its rows above that heading, so Create skips them. An empty
+     * grid has no heading, so Create sits at its top.
      */
     static void place(ViewGroup grid, TextView pill) {
         try {
             boolean atTop = !grid.canScrollVertically(-1);
-            View heading = grid.getChildCount() > 0 ? grid.getChildAt(0) : null;
+            int above = StickerRecents.rowsAbove();
+            View heading = grid.getChildCount() > above ? grid.getChildAt(above) : null;
             float y = heading != null
                     ? grid.getTop() + heading.getTop() + (heading.getHeight() - pill.getHeight()) / 2f
                     : grid.getTop() + dp(grid.getContext(), 8);
             pill.setTranslationX(grid.getRight() - pill.getWidth());
             pill.setTranslationY(Math.max(0f, y));
-            int visibility = atTop ? View.VISIBLE : View.INVISIBLE;
+            // Until the grid has drawn past Recently used, the top would put Create on that heading.
+            int visibility = atTop && (heading != null || above == 0) ? View.VISIBLE : View.INVISIBLE;
             if (pill.getVisibility() != visibility) pill.setVisibility(visibility);
         } catch (Throwable error) {
             pill.setVisibility(View.INVISIBLE);

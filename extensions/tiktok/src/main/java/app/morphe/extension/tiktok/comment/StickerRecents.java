@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.HushfeedPause;
 import app.morphe.extension.tiktok.SignedInUser;
+import app.morphe.extension.tiktok.settings.L10n;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,12 +20,17 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- * Keeps Recently used on PineDrama's comment sticker panel across restarts (#156).
+ * Recently used on PineDrama's comment sticker panel (#156).
  *
- * <p>PineDrama keeps that row in memory only, and its sticker store empties it the first time the
+ * <p>TikTok's full sticker panel lives in an on-demand module that a patched install can't
+ * download, so PineDrama falls back to its basic panel, whose Saved page has no Recently used
+ * row. The store behind that row still fills as stickers are sent, so {@link #addRow} puts its
+ * newest stickers above Saved each time the page draws its rows.
+ *
+ * <p>PineDrama keeps that list in memory only, and its sticker store empties it the first time the
  * store is used in each process, since it takes the account it finds as a new one. So every
- * restart, the ones Hushfeed's settings ask for included, leaves the row empty. The patch hands
- * {@link #save} each new list as a sticker goes on the row, and {@link #restore} the row's flow
+ * restart, the ones Hushfeed's settings ask for included, leaves the list empty. The patch hands
+ * {@link #save} each new list as a sticker goes on it, and {@link #restore} the list's flow
  * right after the store empties it, which puts back what this account had.
  *
  * <p>The stickers are written with the app's own Gson, one list per account, and read back only
@@ -35,8 +41,10 @@ import org.json.JSONObject;
 public final class StickerRecents {
     public static final String PREFS_NAME = "hushfeed_sticker_recents";
     static final String VERSION_KEY = "app_version";
-    /** More than the row ever shows (12, or the server's page size when that's larger). */
+    /** More than the store ever holds (12, or the server's page size when that's larger). */
     static final int MOST = 50;
+    /** How many recent stickers the row shows: one line of the Saved grid, as on TikTok's panel. */
+    static final int ROW = 4;
     private static final String GSON = "com.google.gson.Gson";
     private static final Pattern EXPIRES = Pattern.compile("x-expires=(\\d{1,12})");
     /** How Gson writes '=' in a string, since it escapes it for HTML by default. */
@@ -58,8 +66,80 @@ public final class StickerRecents {
     private static volatile boolean noCodec;
     private static volatile Method setValue;
     private static volatile Class<?> setValueOwner;
+    /** How many rows {@link #addRow} put above the Saved heading the last time a Saved page drew. */
+    private static volatile int rowsAbove;
 
     private StickerRecents() {
+    }
+
+    /**
+     * Called with the Saved page and its rows (the Saved heading, then the saved stickers) right
+     * before the page draws them. Puts a Recently used heading and the newest stickers on top.
+     * Never throws.
+     */
+    public static void addRow(Object page, Object rows) {
+        int added = 0;
+        try {
+            if (HushfeedPause.isPaused() || !(rows instanceof List)) return;
+            @SuppressWarnings("unchecked")
+            List<Object> list = (List<Object>) rows;
+            added = prepend(list, recentStickers(page), BRIDGES, L10n.t("Recently used"));
+        } catch (Throwable ignored) {
+            // The page shows Saved alone, as it would without the patch.
+        } finally {
+            rowsAbove = added;
+        }
+    }
+
+    /** Makes the row's cells: the page's own heading and sticker cells in the app, fakes in tests. */
+    interface RowCells {
+        Object item(Object sticker);
+
+        Object title(String heading);
+    }
+
+    private static final RowCells BRIDGES = new RowCells() {
+        @Override
+        public Object item(Object sticker) {
+            return recentItem(sticker);
+        }
+
+        @Override
+        public Object title(String heading) {
+            return recentTitle(heading);
+        }
+    };
+
+    /**
+     * Puts the heading and a cell for each of the ROW newest stickers on top of the rows, and
+     * answers how many went on. Leaves the rows as they were when a cell can't be made.
+     */
+    static int prepend(List<Object> rows, Object recents, RowCells cells, String heading) {
+        if (!(recents instanceof List)) return 0;
+        List<Object> row = new ArrayList<>();
+        for (Object sticker : (List<?>) recents) {
+            if (row.size() == ROW) break;
+            if (sticker == null) continue;
+            Object item = cells.item(sticker);
+            if (item == null) return 0;
+            row.add(item);
+        }
+        if (row.isEmpty()) return 0;
+        Object title = cells.title(heading);
+        if (title == null) return 0;
+        row.add(0, title);
+        rows.addAll(0, row);
+        return row.size();
+    }
+
+    /** The rows above the Saved heading, so Create can stay level with that heading. */
+    static int rowsAbove() {
+        return rowsAbove;
+    }
+
+    /** So a test can stand in for a Saved page that drew Recently used. */
+    static void rowsAboveForTests(int rows) {
+        rowsAbove = rows;
     }
 
     /** Called with the row's new list each time a sticker goes on it. Never throws. */
@@ -239,5 +319,24 @@ public final class StickerRecents {
         noCodec = false;
         setValue = null;
         setValueOwner = null;
+        rowsAbove = 0;
+    }
+
+    // The bridges below are stubs. The patch writes each body from the Saved page PineDrama
+    // draws, and an unpatched build answers with nothing.
+
+    /** The page's sticker store's Recently used list, newest first. */
+    static Object recentStickers(Object page) {
+        return null;
+    }
+
+    /** A grid heading, like the page's own Saved heading. */
+    static Object recentTitle(String title) {
+        return null;
+    }
+
+    /** A grid cell for a sticker, like the page's own saved stickers. */
+    static Object recentItem(Object sticker) {
+        return null;
     }
 }

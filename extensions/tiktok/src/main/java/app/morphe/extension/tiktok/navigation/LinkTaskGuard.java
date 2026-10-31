@@ -68,6 +68,9 @@ public final class LinkTaskGuard {
             // and drops the pages above it, the way the first link after a cold start goes.
             relaunch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP
                     | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            // The sender's task, for LinkReturn to bring back. Read while this instance is still
+            // alive in it: a finished one can lose its task before the read.
+            int senderTask = activity.getTaskId();
             // This instance still runs the rest of onCreate. Give it nothing to open.
             activity.setIntent(new Intent(Intent.ACTION_MAIN).setPackage(activity.getPackageName()));
             // Finish first. The link alias is singleTop, so while this instance is still the
@@ -77,7 +80,7 @@ public final class LinkTaskGuard {
             activity.finish();
             activity.overridePendingTransition(0, 0);
             activity.startActivity(relaunch);
-            LinkReturn.arm(activity);
+            LinkReturn.arm(activity, senderTask);
             Logger.printInfo(() -> "A TikTok link joined another app's task; started it in TikTok's own");
             return true;
         } catch (Throwable error) {

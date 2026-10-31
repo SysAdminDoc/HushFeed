@@ -1,9 +1,11 @@
 package app.morphe.extension.tiktok.navigation;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.os.Looper;
 
 import org.junit.After;
@@ -12,17 +14,25 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 
 /** Back from a handed-over link's page goes back to the app the link came from (#276). */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 28)
 public class LinkReturnTest {
+    /** The chat's task in Telegram. */
+    private static final int SENDER_TASK = 41;
+
     private int taskSize;
+    /** What happened, in order: "front 41" for the sender's task, "back" for TikTok's. */
+    private static final List<String> moves = new ArrayList<>();
 
     /** Stands in for TikTok's MainActivity: the handed-over instance and the one in TikTok's task. */
     public static class Main extends Activity {
@@ -30,6 +40,7 @@ public class LinkReturnTest {
 
         @Override public boolean moveTaskToBack(boolean nonRoot) {
             movedBack = true;
+            moves.add("back");
             return true;
         }
     }
@@ -40,7 +51,9 @@ public class LinkReturnTest {
 
     @Before public void setUp() {
         taskSize = 2;
+        moves.clear();
         LinkReturn.taskSizeForTests = activity -> taskSize < 0 ? null : taskSize;
+        LinkReturn.taskFrontForTests = (activity, taskId) -> moves.add("front " + taskId);
     }
 
     @After public void tearDown() {
@@ -48,9 +61,13 @@ public class LinkReturnTest {
     }
 
     private static Main handOver() {
+        return handOver(SENDER_TASK);
+    }
+
+    private static Main handOver(int senderTask) {
         Main handed = Robolectric.buildActivity(Main.class).create().get();
         handed.finish();
-        LinkReturn.arm(handed);
+        LinkReturn.arm(handed, senderTask);
         return handed;
     }
 
@@ -79,6 +96,62 @@ public class LinkReturnTest {
         assertTrue(page.get().movedBack);
         assertFalse(main.get().movedBack);
         assertFalse(LinkReturn.armed());
+    }
+
+    /**
+     * Picked from Recents, TikTok's task sits right over the home screen, so moving it back alone
+     * showed the home screen (S22, 2026-10-31). The chat's task comes to the front first, while
+     * TikTok is still in front and allowed to ask.
+     */
+    @Test public void theSendersTaskComesBackBeforeTikTokMovesBack() {
+        handOver();
+        ActivityController<Page> page = page();
+        close(page);
+
+        assertEquals(List.of("front " + SENDER_TASK, "back"), moves);
+    }
+
+    @Test public void noSenderTaskStillMovesTikTokBack() {
+        handOver(-1);
+        ActivityController<Page> page = page();
+        close(page);
+
+        assertEquals(List.of("back"), moves);
+    }
+
+    @Test public void aPinnedScreenLeavesTheSendersTaskAlone() {
+        ActivityManager manager = RuntimeEnvironment.getApplication()
+                .getSystemService(ActivityManager.class);
+        Shadows.shadowOf(manager).setLockTaskModeState(ActivityManager.LOCK_TASK_MODE_PINNED);
+        handOver();
+        ActivityController<Page> page = page();
+        close(page);
+
+        assertEquals(List.of("back"), moves);
+    }
+
+    @Test public void aMoveThatThrowsStillMovesTikTokBack() {
+        LinkReturn.taskFrontForTests = (activity, taskId) -> {
+            throw new SecurityException("REORDER_TASKS");
+        };
+        handOver();
+        ActivityController<Page> page = page();
+        close(page);
+
+        assertTrue(page.get().movedBack);
+    }
+
+    @Test public void theNextLinkDoesNotReuseAnOldSender() {
+        handOver();
+        ActivityController<Page> first = page();
+        close(first);
+        moves.clear();
+
+        handOver(-1);
+        ActivityController<Page> second = page();
+        close(second);
+
+        assertEquals(List.of("back"), moves);
     }
 
     @Test public void aLoadingPageHandsOverToTheRealOne() {
@@ -187,7 +260,7 @@ public class LinkReturnTest {
     @Test public void theHandedOverInstanceTakesNoPart() {
         ActivityController<Main> handed = Robolectric.buildActivity(Main.class).create();
         handed.get().finish();
-        LinkReturn.arm(handed.get());
+        LinkReturn.arm(handed.get(), SENDER_TASK);
         ActivityController<Page> page = page();
         taskSize = -1;
         close(page);

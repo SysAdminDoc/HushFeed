@@ -22,11 +22,13 @@ import app.morphe.extension.shared.Logger;
  * You feed instead of the chat, and Back on the feed only refreshed it. Opened in the sender's
  * task, as before the guard, Back went straight back to the chat. This watches the first page of
  * TikTok's that comes up within {@link #PAGE_WINDOW_MS} of the handover. When that page closes
- * onto the main screen, TikTok's task moves behind the sender's: the chat comes back and TikTok
- * keeps its own Recents card with the feed in it. A short trip out of the app keeps the watch:
- * sharing the link's video to Telegram and switching back used to drop it, so Back from the
- * profile then landed on For You. Coming back after {@link #AWAY_MS}, or onto the main screen,
- * drops it, so Back inside TikTok later works as usual.
+ * onto the main screen, the sender's task comes to the front by id and TikTok's moves to the
+ * back: the chat comes back and TikTok keeps its own Recents card with the feed in it. Moving
+ * TikTok back alone isn't enough once it was picked from Recents, because the system puts the
+ * home screen right under it then, and that's what showed. A short trip out of the app keeps the
+ * watch: sharing the link's video to Telegram and switching back used to drop it, so Back from
+ * the profile then landed on For You. Coming back after {@link #AWAY_MS}, or onto the main
+ * screen, drops it, so Back inside TikTok later works as usual.
  */
 public final class LinkReturn {
     /** How long the link's page may take to come up after the handover. */
@@ -41,10 +43,19 @@ public final class LinkReturn {
 
     static volatile TaskSize taskSizeForTests;
 
+    /** Brings the task with this id to the front. */
+    interface TaskFront {
+        void move(Activity from, int taskId);
+    }
+
+    static volatile TaskFront taskFrontForTests;
+
     private static WeakReference<Application> registeredOn = new WeakReference<>(null);
     private static Class<?> mainClass;
     /** The finished instance in the sender's task. It takes no part. */
     private static WeakReference<Activity> handedOver = new WeakReference<>(null);
+    /** The sender's task, read before the handed-over instance finished, or -1. */
+    private static int senderTask = -1;
     private static WeakReference<Activity> page = new WeakReference<>(null);
     /** TikTok's activity resumed last. */
     private static WeakReference<Activity> front = new WeakReference<>(null);
@@ -78,7 +89,7 @@ public final class LinkReturn {
     }
 
     /** From the guard, once it has handed the link to TikTok's own task. */
-    static void arm(Activity handed) {
+    static void arm(Activity handed, int fromTask) {
         try {
             Application application = handed.getApplication();
             if (application == null) return;
@@ -90,6 +101,7 @@ public final class LinkReturn {
             }
             mainClass = handed.getClass();
             handedOver = new WeakReference<>(handed);
+            senderTask = fromTask;
             page = new WeakReference<>(null);
             pageClosed = false;
             awayAt = -1;
@@ -155,7 +167,16 @@ public final class LinkReturn {
     }
 
     private static void leave(Activity activity) {
+        int sender = senderTask;
         disarm();
+        try {
+            // First, while TikTok is still in front: the system refuses a task move from an app
+            // in the background. A task id that's gone by now is a quiet no-op, and TikTok
+            // moving back then shows what it did before.
+            if (sender >= 0 && !screenPinned(activity)) senderToFront(activity, sender);
+        } catch (Throwable error) {
+            Logger.printException(() -> "Could not bring back the app a link came from", error);
+        }
         try {
             if (activity.moveTaskToBack(true)) {
                 Logger.printInfo(() -> "A link's page closed; back to the app the link came from");
@@ -167,9 +188,28 @@ public final class LinkReturn {
         }
     }
 
+    /** TikTok and PineDrama both declare REORDER_TASKS, which moveTaskToFront needs. */
+    private static void senderToFront(Activity activity, int taskId) {
+        TaskFront forTests = taskFrontForTests;
+        if (forTests != null) {
+            forTests.move(activity, taskId);
+            return;
+        }
+        ActivityManager manager = activity.getSystemService(ActivityManager.class);
+        if (manager != null) manager.moveTaskToFront(taskId, 0);
+    }
+
+    /** A pinned screen refuses the move with a system message of its own, so don't ask. */
+    private static boolean screenPinned(Activity activity) {
+        ActivityManager manager = activity.getSystemService(ActivityManager.class);
+        return manager != null
+                && manager.getLockTaskModeState() != ActivityManager.LOCK_TASK_MODE_NONE;
+    }
+
     private static void disarm() {
         armedAt = -1;
         awayAt = -1;
+        senderTask = -1;
         handedOver = new WeakReference<>(null);
         page = new WeakReference<>(null);
         pageClosed = false;
@@ -199,6 +239,7 @@ public final class LinkReturn {
         mainClass = null;
         front = new WeakReference<>(null);
         taskSizeForTests = null;
+        taskFrontForTests = null;
         disarm();
     }
 }

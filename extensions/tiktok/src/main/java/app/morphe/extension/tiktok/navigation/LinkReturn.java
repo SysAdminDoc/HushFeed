@@ -23,12 +23,16 @@ import app.morphe.extension.shared.Logger;
  * task, as before the guard, Back went straight back to the chat. This watches the first page of
  * TikTok's that comes up within {@link #PAGE_WINDOW_MS} of the handover. When that page closes
  * onto the main screen, TikTok's task moves behind the sender's: the chat comes back and TikTok
- * keeps its own Recents card with the feed in it. Leaving the app any other way (Home, Recents,
- * the screen going off) drops the watch, so Back inside TikTok later works as usual.
+ * keeps its own Recents card with the feed in it. A short trip out of the app keeps the watch:
+ * sharing the link's video to Telegram and switching back used to drop it, so Back from the
+ * profile then landed on For You. Coming back after {@link #AWAY_MS}, or onto the main screen,
+ * drops it, so Back inside TikTok later works as usual.
  */
 public final class LinkReturn {
     /** How long the link's page may take to come up after the handover. */
     static final long PAGE_WINDOW_MS = 10_000;
+    /** How long TikTok may be out of sight (sharing the video, a look at another app) with the watch kept. */
+    static final long AWAY_MS = 5 * 60_000;
 
     /** Answers how many activities the task holds, or null when it can't say. */
     interface TaskSize {
@@ -45,6 +49,8 @@ public final class LinkReturn {
     /** TikTok's activity resumed last. */
     private static WeakReference<Activity> front = new WeakReference<>(null);
     private static long armedAt = -1;
+    /** When TikTok went out of sight with the watch on, or -1 while it's in sight. */
+    private static long awayAt = -1;
     /** The page closed onto more than the main screen, or the task couldn't be read. */
     private static boolean pageClosed;
 
@@ -86,6 +92,7 @@ public final class LinkReturn {
             handedOver = new WeakReference<>(handed);
             page = new WeakReference<>(null);
             pageClosed = false;
+            awayAt = -1;
             armedAt = SystemClock.uptimeMillis();
         } catch (Throwable error) {
             Logger.printException(() -> "Could not watch the page a link opened", error);
@@ -101,6 +108,15 @@ public final class LinkReturn {
         front = new WeakReference<>(activity);
         if (!armed()) return;
         boolean main = activity.getClass() == mainClass;
+        if (awayAt >= 0) {
+            long away = SystemClock.uptimeMillis() - awayAt;
+            awayAt = -1;
+            // Back on the feed (TikTok's icon can clear the page) or after a long while: as usual from here.
+            if (main || away > AWAY_MS) {
+                disarm();
+                return;
+            }
+        }
         if (pageClosed) {
             if (main) {
                 leave(activity);
@@ -135,7 +151,7 @@ public final class LinkReturn {
     private static void stopped(Activity activity) {
         if (!armed() || activity == null || activity.isFinishing()) return;
         // Stopped with nothing of TikTok's resumed after it: the app went out of sight.
-        if (front.get() == activity) disarm();
+        if (front.get() == activity) awayAt = SystemClock.uptimeMillis();
     }
 
     private static void leave(Activity activity) {
@@ -153,6 +169,7 @@ public final class LinkReturn {
 
     private static void disarm() {
         armedAt = -1;
+        awayAt = -1;
         handedOver = new WeakReference<>(null);
         page = new WeakReference<>(null);
         pageClosed = false;

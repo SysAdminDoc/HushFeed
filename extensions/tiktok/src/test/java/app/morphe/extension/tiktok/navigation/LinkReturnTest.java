@@ -124,15 +124,53 @@ public class LinkReturnTest {
         assertTrue(profile.get().movedBack);
     }
 
-    @Test public void leavingTheAppDropsTheWatch() {
+    /**
+     * Adam39k's steps: a profile from a Telegram link, a video from it, the video shared to
+     * Telegram and TikTok switched back to. Back from the video, then from the profile, leaves
+     * TikTok instead of landing on For You.
+     */
+    @Test public void sharingTheVideoAndComingBackKeepsTheWatch() {
+        handOver();
+        ActivityController<Page> profile = page();
+        profile.pause();
+        ActivityController<Page> video = page();
+        profile.stop();
+
+        video.pause().stop();
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(40));
+        video.start().resume();
+        assertTrue(LinkReturn.armed());
+
+        taskSize = 3;
+        close(video);
+        assertFalse(video.get().movedBack);
+        profile.start().resume();
+        taskSize = 2;
+        close(profile);
+        assertTrue(profile.get().movedBack);
+    }
+
+    @Test public void aLongTripOutDropsTheWatch() {
         handOver();
         ActivityController<Page> page = page();
         page.pause().stop();
+        Shadows.shadowOf(Looper.getMainLooper())
+                .idleFor(Duration.ofMillis(LinkReturn.AWAY_MS + 1_000));
+        page.start().resume();
         assertFalse(LinkReturn.armed());
 
-        page.start().resume();
         close(page);
         assertFalse(page.get().movedBack);
+    }
+
+    /** TikTok's icon can bring the feed back over the link's page: Back is TikTok's own from there. */
+    @Test public void comingBackToTheMainScreenDropsTheWatch() {
+        handOver();
+        ActivityController<Page> page = page();
+        page.pause().stop();
+        Main main = main().get();
+        assertFalse(main.movedBack);
+        assertFalse(LinkReturn.armed());
     }
 
     @Test public void aPageAfterTheWindowIsNotTheLinks() {

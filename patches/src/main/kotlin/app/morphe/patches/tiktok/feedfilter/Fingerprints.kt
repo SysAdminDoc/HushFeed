@@ -1211,6 +1211,16 @@ internal object DramaBlockingAdFingerprint : Fingerprint(
     parameters = listOf("Lcom/ss/android/ugc/aweme/feed/model/Aweme;"),
 )
 
+/**
+ * The series player's check that an advert its ad server returned is usable. A false answer is the
+ * app's own "no advert came back", and it moves on without inserting one.
+ */
+internal object SeriesRealtimeAdValidFingerprint : Fingerprint(
+    definingClass = "/innerfeed/realtimead/ShortDramaRealtimeAdRequester;",
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
+    returnType = "Z",
+    parameters = listOf("Lcom/ss/android/ugc/aweme/feed/model/Aweme;"),
+)
 /** Attaches the floating promotional event badge to the feed. */
 internal object SpecActTouchpointAttachFingerprint : Fingerprint(
     definingClass = "/specact/SpecActServiceImpl;",

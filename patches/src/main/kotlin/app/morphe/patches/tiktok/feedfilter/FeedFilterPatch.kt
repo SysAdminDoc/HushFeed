@@ -1000,6 +1000,16 @@ val feedFilterPatch = bytecodePatch(
             }
         }
 
+        // The series player's own ad slot, which Remove feed ads never reached because the ad
+        // comes from a request of its own and not from the feed list (#286).
+        SeriesRealtimeAdValidFingerprint.method.guardAtEntry(
+            "Feed filter",
+            "invoke-static {}, $CARD_FILTERS_CLASS_DESCRIPTOR->shouldRefuseSeriesRealtimeAd()Z",
+            """
+                const/4 v0, 0x0
+                return v0
+            """,
+        )
         SpecActTouchpointAttachFingerprint.method.requireLocals("Feed filter", 1)
         SpecActTouchpointAttachFingerprint.method.guardAtEntry(
             "Feed filter",

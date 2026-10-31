@@ -61,6 +61,15 @@ public final class CardFilters {
         return isBlockingAd;
     }
 
+    /**
+     * The series player asks TikTok's ad server for an advert to drop in every so many episodes
+     * (#286), and checks the answer with a validity test before it inserts one. With Remove feed
+     * ads on, every answer fails that test, which is the path the app takes when the ad server
+     * has nothing, and the player goes on to the next episode.
+     */
+    public static boolean shouldRefuseSeriesRealtimeAd() {
+        return Settings.REMOVE_ADS.get();
+    }
     /** The list side of {@link #shouldHideInsertedCards()}. */
     public static final class InsertedCardFilter implements IFilter {
         private static final int AWEME_TYPE_INSERT_CARD = 105;

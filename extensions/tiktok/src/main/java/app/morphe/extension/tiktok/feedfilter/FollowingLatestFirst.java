@@ -42,20 +42,28 @@ public final class FollowingLatestFirst {
      * Posts the first Following read asks for. TikTok asks for 20, and with a few hundred follows
      * it then fills the list over several reads within a second, so a newer post can arrive after
      * the video in slot 0 started playing. A larger first read brings the posts that decide slot
-     * 0 in together. Later pages keep TikTok's size.
+     * 0 in together.
      */
     static final int FIRST_READ_COUNT = 40;
+    /**
+     * Posts every later read asks for. A post that arrives in a later read can only rise to just
+     * below the video the reader is on, so the fewer reads a long list takes, the fewer times a
+     * newer post turns up after older ones were already scrolled past (#226).
+     */
+    static final int LATER_READ_COUNT = 30;
 
     private FollowingLatestFirst() {}
 
     /**
      * The count for a Following request, from the request builder just before the call goes out.
-     * Only the first read (cursor 0) of a list is raised, and only with the switch on.
+     * The first read (cursor 0) is raised to FIRST_READ_COUNT and later reads to LATER_READ_COUNT,
+     * only with the switch on. A count already larger is left alone.
      */
     public static int requestCount(long cursor, int level, int count) {
         try {
-            if (cursor == 0 && count > 0 && count < FIRST_READ_COUNT && enabled()) {
-                return FIRST_READ_COUNT;
+            int wanted = cursor == 0 ? FIRST_READ_COUNT : LATER_READ_COUNT;
+            if (count > 0 && count < wanted && enabled()) {
+                return wanted;
             }
         } catch (Throwable unknown) {
             // The request goes out with TikTok's own count.

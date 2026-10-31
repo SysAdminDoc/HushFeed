@@ -253,14 +253,55 @@ public class FollowingLatestFirstTest {
     }
 
     @Test
-    public void onlyTheFirstReadIsAskedForMorePosts() {
+    public void everyReadIsAskedForMorePostsAndTheFirstForTheMost() {
         Settings.FOLLOWING_LATEST_FIRST.save(true);
 
         assertEquals(FollowingLatestFirst.FIRST_READ_COUNT, FollowingLatestFirst.requestCount(0, 0, 20));
-        // Load more keeps TikTok's size, and so does a count already past ours.
-        assertEquals(20, FollowingLatestFirst.requestCount(1760000000L, 0, 20));
+        assertEquals(FollowingLatestFirst.LATER_READ_COUNT,
+                FollowingLatestFirst.requestCount(1760000000L, 0, 20));
+        // A count already past ours is left alone.
         assertEquals(60, FollowingLatestFirst.requestCount(0, 0, 60));
+        assertEquals(60, FollowingLatestFirst.requestCount(1760000000L, 0, 60));
         assertEquals(0, FollowingLatestFirst.requestCount(0, 0, 0));
+    }
+
+    @Test
+    public void severalLaterBatchesEndUpNewestFirstBelowTheReader() {
+        Settings.FOLLOWING_LATEST_FIRST.save(true);
+        FollowFeedList list = emptyList();
+
+        read(list, post("a", 5 * HOUR), post("b", 9 * HOUR));
+        FollowingLatestFirst.onCurrentVideo("a");
+        read(list, post("c", 7 * HOUR), post("d", HOUR));
+        assertEquals(List.of("a", "d", "c", "b"), aids(list));
+        // Batch three has the newest and an old one; the reader is still on "a".
+        assertEquals(List.of("a", "e", "d", "f", "c", "b"),
+                read(list, post("f", 3 * HOUR), post("e", 600)));
+        // The reader moves on to "d": "e" above it and "a" stay where they are.
+        FollowingLatestFirst.onCurrentVideo("d");
+        assertEquals(List.of("a", "e", "d", "g", "f", "c", "b"), read(list, post("g", 2 * HOUR)));
+    }
+
+    @Test
+    public void aPostTheListAlreadyHoldsIsKeptAndNeverLost() {
+        Settings.FOLLOWING_LATEST_FIRST.save(true);
+        FollowFeedList list = emptyList();
+
+        // No video on screen yet, so the first read sorts the whole list.
+        assertEquals(List.of("b", "a"), read(list, post("a", 5 * HOUR), post("b", 3 * HOUR)));
+        FollowingLatestFirst.onCurrentVideo("a");
+        // TikTok hands "b" again in the next batch: both copies stay, the one above "a" untouched.
+        assertEquals(List.of("b", "a", "c", "b"), read(list, post("b", 3 * HOUR), post("c", 600)));
+    }
+
+    @Test
+    public void offLeavesEveryBatchInTikToksOrder() {
+        FollowFeedList list = emptyList();
+
+        read(list, post("a", 5 * HOUR), post("b", 9 * HOUR));
+        FollowingLatestFirst.onCurrentVideo("a");
+        assertEquals(List.of("a", "b", "c", "d"), read(list, post("c", 7 * HOUR), post("d", HOUR)));
+        assertEquals(List.of("a", "b", "c", "d", "e"), read(list, post("e", 60)));
     }
 
     @Test

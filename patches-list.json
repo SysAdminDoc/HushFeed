@@ -6838,6 +6838,15 @@
           "values": null
         },
         {
+          "key": "hide_opened_video_back",
+          "title": "Default: hide opened video back",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "hide_profile_views_button",
           "title": "Default: hide profile views button",
           "description": null,

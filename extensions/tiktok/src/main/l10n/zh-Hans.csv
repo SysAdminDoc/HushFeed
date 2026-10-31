@@ -2350,3 +2350,5 @@ Nothing has been kept,没有保留任何消息
 Removed: %1$d,已删除：%1$d
 "Removed: %1$d. The other %2$d are still there. Open your Inbox, then try again.",已删除：%1$d。其余 %2$d 条仍在。请先打开收件箱，然后重试.
 Removing the kept messages,正在删除保留的消息
+Hide the Back button there too,同时隐藏那里的返回按钮
+Hide the Back button beside that search bar as well. Your phone's back gesture or button still takes you back.,同时隐藏该搜索栏旁边的返回按钮。手机的返回手势或返回键仍可返回.

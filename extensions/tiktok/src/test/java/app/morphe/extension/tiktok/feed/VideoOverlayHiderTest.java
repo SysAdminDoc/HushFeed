@@ -3766,6 +3766,72 @@ public class VideoOverlayHiderTest {
     }
 
     /**
+     * Its row under Also on opened videos (#251): Back in the bar goes invisible with the search
+     * box, only while both of those switches are on too. A Back of the same name outside the bar
+     * belongs to another page and stays, and the row off puts the bar's Back back.
+     */
+    @Test
+    public void theBackButtonBesideTheHiddenSearchBoxGoesWithItsRow() {
+        int barId = 0x7f0a0e12;
+        int boxId = 0x7f0a0e13;
+        int backId = 0x7f0a0e14;
+        VideoOverlayHider.resolveForTests("47.5.3:j2p", barId);
+        VideoOverlayHider.resolveForTests("47.5.3:o_l", boxId);
+        VideoOverlayHider.resolveForTests("47.5.3:bs2", backId);
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            FrameLayout root = new FrameLayout(activity);
+            FrameLayout bar = new FrameLayout(activity);
+            bar.setId(barId);
+            View back = new View(activity);
+            back.setId(backId);
+            back.setClickable(true);
+            LinearLayout box = new LinearLayout(activity);
+            box.setId(boxId);
+            bar.addView(back);
+            bar.addView(box);
+            View otherBack = new View(activity);
+            otherBack.setId(backId);
+            root.addView(bar);
+            root.addView(otherBack);
+            activity.setContentView(root);
+
+            Settings.HIDE_FEED_SEARCH_BUTTON.save(true);
+            Settings.HIDE_OPENED_VIDEO_SEARCH.save(true);
+            Settings.HIDE_OPENED_VIDEO_BACK.save(false);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(View.INVISIBLE, box.getVisibility());
+            assertEquals("Back stays until its own row is on", View.VISIBLE, back.getVisibility());
+
+            Settings.HIDE_OPENED_VIDEO_BACK.save(true);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(View.INVISIBLE, back.getVisibility());
+            assertEquals(View.INVISIBLE, box.getVisibility());
+            assertEquals("another page's Back is left alone", View.VISIBLE, otherBack.getVisibility());
+
+            Settings.HIDE_OPENED_VIDEO_SEARCH.save(false);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("it rides on the search box row", View.VISIBLE, back.getVisibility());
+
+            Settings.HIDE_OPENED_VIDEO_SEARCH.save(true);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(View.INVISIBLE, back.getVisibility());
+            Settings.HIDE_OPENED_VIDEO_BACK.save(false);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("off puts it back", View.VISIBLE, back.getVisibility());
+            assertEquals("the box stays hidden", View.INVISIBLE, box.getVisibility());
+        } finally {
+            Settings.HIDE_FEED_SEARCH_BUTTON.resetToDefault();
+            Settings.HIDE_OPENED_VIDEO_SEARCH.resetToDefault();
+            Settings.HIDE_OPENED_VIDEO_BACK.resetToDefault();
+            VideoOverlayHider.resolveForTests("47.5.3:j2p", 0);
+            VideoOverlayHider.resolveForTests("47.5.3:o_l", 0);
+            VideoOverlayHider.resolveForTests("47.5.3:bs2", 0);
+        }
+    }
+
+    /**
      * The Full screen button has no id to look up, so the patch hands the view over as TikTok binds
      * it. It fades with the controls, lets a finger through it in the faded Clear display, goes out
      * of sight at 0 without moving what is beside it, and comes back at 100.

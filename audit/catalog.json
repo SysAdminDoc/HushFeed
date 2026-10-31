@@ -6953,6 +6953,12 @@
     "default": false,
     "type": "bool",
     "row": "Also on opened videos"
+   },
+   {
+    "key": "hide_opened_video_back",
+    "default": false,
+    "type": "bool",
+    "row": "Hide the Back button there too"
    }
   ],
   "surface": "feed",

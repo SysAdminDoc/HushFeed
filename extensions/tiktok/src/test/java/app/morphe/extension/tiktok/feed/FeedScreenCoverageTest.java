@@ -194,6 +194,7 @@ public class FeedScreenCoverageTest {
         put("hide_detail_comment_bar", NONE, YES, NONE);
         // The search box in an opened video's top bar; the main feed has the home toolbar there (#158).
         put("hide_opened_video_search", NONE, YES, NONE);
+        put("hide_opened_video_back", NONE, YES, NONE);
         put("hide_bottom_search_bar", YES, YES, NONE);
         put("hide_playlist_bar", YES, UNCHECKED, NONE);
         put("hide_event_badge", YES, UNCHECKED, NONE);

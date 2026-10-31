@@ -433,6 +433,7 @@
       "live_under_status_bar",
       "touch_target_scale",
       "hide_opened_video_search",
+      "hide_opened_video_back",
       "hide_profile_views_button",
       "hide_profile_add_friends",
       "hide_visual_search",
@@ -2211,6 +2212,12 @@
     "hide_offline_videos": {
       "field": "HIDE_OFFLINE_VIDEOS",
       "key": "hide_offline_videos",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_opened_video_back": {
+      "field": "HIDE_OPENED_VIDEO_BACK",
+      "key": "hide_opened_video_back",
       "type": "boolean",
       "default": false
     },

@@ -71,6 +71,7 @@ feed/VideoOverlayHider.java|DETAIL_SOUND_BAR_IDS|47.5.3:cho|app|com.ss.android.u
 feed/VideoOverlayHider.java|TOP_SEARCH_BAR_IDS|47.5.3:j2p|app|com.by.andInflater.detail_feed_fragment_detail_page_opt|on:ConstraintLayout#1
 feed/VideoOverlayHider.java|TOP_SEARCH_SCRIM_IDS|47.5.3:g65|app|com.by.andInflater.detail_feed_fragment_detail_page_opt|on:View#1
 feed/VideoOverlayHider.java|DETAIL_SEARCH_BOX_IDS|47.5.3:o_l|app|com.ss.android.ugc.aweme.search.entry.core.viewmodel.DetailFeedSearchHelper|at:4
+feed/VideoOverlayHider.java|DETAIL_BACK_BUTTON_IDS|47.5.3:bs2|app|com.by.andInflater.detail_feed_fragment_detail_page_opt|at:8
 feed/VideoOverlayHider.java|CELL_ROOT_ID|view_rootview|app|com.ss.android.ugc.aweme.feed.adapter.VideoViewCell|at:3
 feed/VideoOverlayHider.java|PAGER_COLUMN_ID|viewpager_container|app|com.by.andInflater.common_feed_fragment_feed_base_opt|on:LinearLayout
 feed/VideoOverlayHider.java|WIDGET_LAYER_ID|widget_container|app|com.by.andInflater.common_feed_interaction_area_feed|on:InteractAreaRootLayout

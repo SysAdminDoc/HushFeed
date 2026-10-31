@@ -232,6 +232,11 @@ public final class VideoOverlayHider {
      * invisible, so Back keeps its place.
      */
     private static final String[] DETAIL_SEARCH_BOX_IDS = {"47.5.3:o_l"};
+    /**
+     * The Back button in that bar, its first child in all three of 47.5.3's detail page layouts
+     * (#251). Many other layouts reuse the name, so it too counts only as a child of the bar.
+     */
+    private static final String[] DETAIL_BACK_BUTTON_IDS = {"47.5.3:bs2"};
     private static final String[] DETAIL_COMMENT_BAR_IDS = {"47.5.3:qq5"};
     private static final String[] DETAIL_COMMENT_STRIP_IDS = {"47.5.3:cmy"};
     /**
@@ -385,6 +390,7 @@ public final class VideoOverlayHider {
     private static final int DETAIL_SOUND_BAR_TARGET = DETAIL_MESSAGE_BAR_TARGET + 1;
     private static final int WIDGET_LAYER_TARGET = DETAIL_SOUND_BAR_TARGET + 1;
     private static final int SKYLIGHT_TARGET = WIDGET_LAYER_TARGET + 1;
+    private static final int DETAIL_BACK_BUTTON_TARGET = SKYLIGHT_TARGET + 1;
     private static final String[][] TRAVERSAL_TARGET_IDS = traversalTargetIds();
     private static final int LOGICAL_TARGET_COUNT = TRAVERSAL_TARGET_IDS.length;
     private static final int TRAVERSAL_TARGET_COUNT = candidateCount(TRAVERSAL_TARGET_IDS);
@@ -689,6 +695,8 @@ public final class VideoOverlayHider {
             // when its own row says so too (#158).
             boolean detailSearchBox = Settings.HIDE_FEED_SEARCH_BUTTON.get()
                     && Settings.HIDE_OPENED_VIDEO_SEARCH.get();
+            // Back beside it goes along when its row under that one says so (#251).
+            boolean detailBackButton = detailSearchBox && Settings.HIDE_OPENED_VIDEO_BACK.get();
             boolean[] rail = TRAVERSAL.rail;
             updateRailButtonsWanted(rail);
             boolean anyRail = counts;
@@ -764,6 +772,7 @@ public final class VideoOverlayHider {
                 wanted[TOP_SEARCH_BAR_TARGET] = false;
                 wanted[TOP_SEARCH_SCRIM_TARGET] = false;
                 wanted[DETAIL_SEARCH_BOX_TARGET] = detailSearchBox;
+                wanted[DETAIL_BACK_BUTTON_TARGET] = detailBackButton;
                 wanted[STATUS_BAR_SPACER_TARGET] = statusBar || seeThroughStatusBar;
                 wanted[STATUS_BAR_SCRIM_TARGET] = statusBar || seeThroughStatusBar;
                 // Grown, not hidden: see SeeThroughStatusBar.fill. With the strip under the video
@@ -1060,7 +1069,7 @@ public final class VideoOverlayHider {
     }
 
     private static String[][] traversalTargetIds() {
-        String[][] targets = new String[SKYLIGHT_TARGET + 1][];
+        String[][] targets = new String[DETAIL_BACK_BUTTON_TARGET + 1][];
         targets[CAPTION_TARGET] = CAPTION_IDS;
         targets[MUSIC_TARGET] = MUSIC_IDS;
         targets[ACTION_BAR_TARGET] = ACTION_BAR_IDS;
@@ -1098,6 +1107,7 @@ public final class VideoOverlayHider {
         // Built here: this runs before the fields further down are set.
         targets[WIDGET_LAYER_TARGET] = new String[] {WIDGET_LAYER_ID};
         targets[SKYLIGHT_TARGET] = SKYLIGHT_IDS;
+        targets[DETAIL_BACK_BUTTON_TARGET] = DETAIL_BACK_BUTTON_IDS;
         return targets;
     }
 
@@ -1111,7 +1121,7 @@ public final class VideoOverlayHider {
                 || target == BOTTOM_TABS_DIVIDER_TARGET || target == TOP_SEARCH_BAR_TARGET
                 || target == TOP_SEARCH_SCRIM_TARGET || target == DETAIL_SEARCH_BOX_TARGET
                 || target == DETAIL_MESSAGE_BAR_TARGET || target == DETAIL_SOUND_BAR_TARGET
-                || target == SKYLIGHT_TARGET;
+                || target == SKYLIGHT_TARGET || target == DETAIL_BACK_BUTTON_TARGET;
     }
 
     private static int candidateCount(String[][] targets) {
@@ -1291,10 +1301,18 @@ public final class VideoOverlayHider {
         }
     }
 
-    /** Keeps only the search boxes that sit directly in an opened video's top bar (#158). */
+    /**
+     * Keeps only the search boxes (#158) and Back buttons (#251) that sit directly in an opened
+     * video's top bar.
+     */
     private static void keepTopBarSearchBoxes(List<List<View>> found, int barId) {
-        int at = firstCandidate(DETAIL_SEARCH_BOX_TARGET);
-        for (int i = 0; i < DETAIL_SEARCH_BOX_IDS.length; i++) {
+        keepTopBarChildren(found, barId, DETAIL_SEARCH_BOX_TARGET);
+        keepTopBarChildren(found, barId, DETAIL_BACK_BUTTON_TARGET);
+    }
+
+    private static void keepTopBarChildren(List<List<View>> found, int barId, int target) {
+        int at = firstCandidate(target);
+        for (int i = 0; i < TRAVERSAL_TARGET_IDS[target].length; i++) {
             List<View> boxes = found.get(at + i);
             for (int j = boxes.size() - 1; j >= 0; j--) {
                 android.view.ViewParent parent = boxes.get(j).getParent();
@@ -2292,9 +2310,11 @@ public final class VideoOverlayHider {
                         // The way back out of the page: faded like the tabs, never past the floor,
                         // and out of sight only until TikTok's own clear lands on the page.
                         setFaded(view, topBarHeld ? 0 : Math.max(NAVIGATION_FADE_FLOOR, fadeLevel), fadedClear);
-                    } else if (target == DETAIL_SEARCH_BOX_TARGET || target == STATUS_BAR_SCRIM_TARGET) {
+                    } else if (target == DETAIL_SEARCH_BOX_TARGET || target == STATUS_BAR_SCRIM_TARGET
+                            || target == DETAIL_BACK_BUTTON_TARGET) {
                         // Invisible, not gone: the bar keeps its shape and Back stays put, and
-                        // the cell's band keeps its place.
+                        // the cell's band keeps its place. Back itself goes the same way, so the
+                        // box it anchors doesn't move either.
                         setHidden(view, wanted, View.INVISIBLE);
                     } else if (target == DETAIL_COMMENT_BAR_TARGET || target == DETAIL_MESSAGE_BAR_TARGET) {
                         // Hidden with its strip by the switch, Clear display and a fade of 0;
@@ -2356,6 +2376,7 @@ public final class VideoOverlayHider {
             // hooks broken in #209's report. The Following LIVE row is the same: it's inflated
             // only on the Following tab. An id this build lacks is still reported.
             } else if (target != SURVEY_TARGET && target != DETAIL_SEARCH_BOX_TARGET
+                    && target != DETAIL_BACK_BUTTON_TARGET
                     && target != PLAYER_VIEW_TARGET && target != DETAIL_MESSAGE_BAR_TARGET
                     && !((target == FOLLOWING_STORY_TARGET || target == SKYLIGHT_TARGET)
                             && anyResolved(ids, candidateAt, names.length))

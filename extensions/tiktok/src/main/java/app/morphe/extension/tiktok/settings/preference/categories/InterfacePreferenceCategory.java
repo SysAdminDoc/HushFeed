@@ -423,6 +423,12 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                         "Hide the search bar at the top of videos you open from search, a profile or your watch history. The Back button stays.",
                         Settings.HIDE_OPENED_VIDEO_SEARCH
                 ));
+                addPreference(new TogglePreference(
+                        context,
+                        "Hide the Back button there too",
+                        "Hide the Back button beside that search bar as well. Your phone's back gesture or button still takes you back.",
+                        Settings.HIDE_OPENED_VIDEO_BACK
+                ));
             }
         }
         if (SettingsStatus.videoOverlaysEnabled) {

@@ -1267,6 +1267,9 @@ public class Settings extends BaseSettings {
     /** The search box at the top of an opened video, with the feed's search button (#158). Read on each layout. */
     public static final BooleanSetting HIDE_OPENED_VIDEO_SEARCH = new BooleanSetting(
             "hide_opened_video_search", FALSE, false, Setting.parent(HIDE_FEED_SEARCH_BUTTON));
+    /** The Back button beside that box, with it (#251). Read on each layout. */
+    public static final BooleanSetting HIDE_OPENED_VIDEO_BACK = new BooleanSetting(
+            "hide_opened_video_back", FALSE, false, Setting.parent(HIDE_OPENED_VIDEO_SEARCH));
     /** The profile views button and Add friends at the top of your Profile tab (#158). Read on each layout. */
     public static final BooleanSetting HIDE_PROFILE_VIEWS_BUTTON = new BooleanSetting("hide_profile_views_button", FALSE);
     public static final BooleanSetting HIDE_PROFILE_ADD_FRIENDS = new BooleanSetting("hide_profile_add_friends", FALSE);

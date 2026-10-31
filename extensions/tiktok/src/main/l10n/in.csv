@@ -1538,6 +1538,7 @@ Enter who to message below to start.,Isi siapa yang dikirimi pesan di bawah untu
 Next message: today at %1$s.,Pesan berikutnya: hari ini pukul %1$s.
 Next message: tomorrow at %1$s.,Pesan berikutnya: besok pukul %1$s.
 "No chat with @%1$s turned up on this account. Open your chat with them once, then try again.","Tidak ada obrolan dengan @%1$s di akun ini. Buka obrolanmu dengannya sekali, lalu coba lagi."
+"No group chat named %1$s turned up on this account. Open your Inbox once so TikTok loads it, then try again.","Obrolan grup bernama %1$s tidak ditemukan di akun ini. Buka kotak masuk sekali supaya TikTok memuatnya, lalu coba lagi."
 "Nobody was signed in to TikTok. Sign in, and it tries again at %1$s.","Tidak ada yang masuk ke TikTok. Masuklah, dan akan dicoba lagi pukul %1$s."
 "A different account is signed in. Switch back to the one you set this up on, or enter who to message again.","Akun lain sedang masuk. Kembali ke akun tempat kamu mengatur ini, atau isi lagi siapa yang dikirimi pesan."
 TikTok's messages didn't start in time. It tries again at %1$s.,Pesan TikTok tidak mulai tepat waktu. Akan dicoba lagi pukul %1$s.
@@ -1582,7 +1583,7 @@ Copy build details,Salin detail build
 Save build details,Simpan detail build
 Build details copied to the clipboard,Detail build disalin ke papan klip
 "Sends one message a day to each person below at the time below, so your streaks keep going on days you don't open TikTok.",Mengirim satu pesan per hari ke setiap orang di bawah pada waktu yang ditentukan agar streak tetap berjalan saat kamu tidak membuka TikTok.
-"Their usernames, separated by commas or new lines. Each person must already have a chat with you.","Nama pengguna mereka, dipisahkan dengan koma atau baris baru. Kamu harus sudah memiliki chat dengan setiap orang."
+"Usernames or group chat names, separated by commas or new lines. Each chat must already exist. A group is found by the name your Inbox shows for it.","Nama pengguna atau nama obrolan grup, dipisahkan dengan koma atau baris baru. Setiap obrolan harus sudah ada. Grup ditemukan lewat nama yang ditampilkan kotak masuk kamu."
 Delivery unconfirmed: %1$d/%2$d chats. Those chats won't be retried today.,Pengiriman belum terkonfirmasi: %1$d/%2$d chat. Chat tersebut tidak akan dicoba lagi hari ini.
 Delivery unconfirmed: %1$d/%2$d chats. Remaining chats still need a message.,Pengiriman belum terkonfirmasi: %1$d/%2$d chat. Chat lainnya masih memerlukan pesan.
 Sent to %1$d/%2$d chats. They won't get another message today.,Terkirim ke %1$d/%2$d chat. Hari ini tidak akan ada pesan lain.
@@ -1652,8 +1653,9 @@ Show follow status,Tampilkan status mengikuti
 Follows you,Mengikuti Anda
 Doesn't follow you back,Tidak mengikuti balik
 Copy bio and IDs,Salin bio dan ID
-"Long-press a bio to copy it. A profile's share sheet gets buttons that copy its username and user ID, and a video's share sheet one that copies the video ID.","Tekan lama bio untuk menyalinnya. Lembar bagikan profil mendapat tombol untuk menyalin nama pengguna dan ID penggunanya, dan lembar bagikan video mendapat tombol untuk menyalin ID video."
+"Long-press a bio to copy it. A profile's share sheet gets buttons that copy its username and user ID, and a video's share sheet one that copies the video ID. On a LIVE profile card, long-press the name, username or bio to copy it, or tap the copy mark by the username.","Tekan lama bio untuk menyalinnya. Lembar bagikan profil mendapat tombol untuk menyalin nama pengguna dan ID penggunanya, dan lembar bagikan video mendapat tombol untuk menyalin ID video. Pada kartu profil LIVE, tekan lama nama, nama pengguna, atau bio untuk menyalinnya, atau ketuk tanda salin di samping nama pengguna."
 Bio copied,Bio disalin
+Name copied,Nama disalin
 Username copied,Nama pengguna disalin
 User ID copied,ID pengguna disalin
 Video ID copied,ID video disalin

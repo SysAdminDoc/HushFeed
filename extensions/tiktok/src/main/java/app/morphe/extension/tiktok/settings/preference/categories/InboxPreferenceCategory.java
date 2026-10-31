@@ -285,9 +285,9 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
         InputTextPreference who = new InputTextPreference(
                 context,
                 "Who to message",
-                "Their usernames, separated by commas or new lines. Each person must already have a chat with you.",
+                "Usernames or group chat names, separated by commas or new lines. Each chat must already exist. A group is found by the name your Inbox shows for it.",
                 Settings.AUTO_STREAK_RECIPIENT
-        ).withNameKeyboard().withNote(value -> AutoStreak.recipientNote(context, value));
+        ).withFreeTextKeyboard().withNote(value -> AutoStreak.recipientNote(context, value));
         who.setOnPreferenceChangeListener((preference, value) -> {
             String before = Settings.AUTO_STREAK_RECIPIENT.get();
             Utils.runOnMainThread(() -> {

@@ -14,6 +14,7 @@ import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructionsWithLabels
+import app.morphe.util.addInstructionsAtControlFlowLabel
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.Method
@@ -23,6 +24,7 @@ import org.w3c.dom.Element
 
 private const val AUTO_STREAK = "Lapp/morphe/extension/tiktok/inbox/AutoStreak;"
 private const val MESSENGER = "Lapp/morphe/extension/tiktok/inbox/StreakMessenger;"
+private const val GROUP_CHATS = "Lapp/morphe/extension/tiktok/inbox/GroupChats;"
 private const val RECEIVER = "app.morphe.extension.tiktok.inbox.AutoStreakReceiver"
 internal const val QUICK_REPLY_RECEIVER = "Lcom/ss/android/ugc/aweme/im/sdk/notification/PushQuickActionReceiver;"
 internal const val IM_CORE_PROXY = "Lcom/bytedance/ies/im/core/api/proxy/IIMCoreProxyService;"
@@ -34,6 +36,22 @@ internal const val IM_CORE_PROXY = "Lcom/bytedance/ies/im/core/api/proxy/IIMCore
 internal object QuickReplySendFingerprint : Fingerprint(
     definingClass = QUICK_REPLY_RECEIVER,
     strings = listOf("conv_id", "reply_text"),
+)
+
+/**
+ * The IM core's conversation model: the setter TikTok calls with a chat's core info (its name
+ * among them) as the chat is loaded. The class is obfuscated but keeps its members' names, so it
+ * is found by those: the chat id, the core info and the group test.
+ */
+internal object ConversationCoreInfoSetterFingerprint : Fingerprint(
+    name = "setCoreInfo",
+    returnType = "V",
+    custom = { method, classDef ->
+        method.parameterTypes.size == 1 && method.parameterTypes[0].startsWith("L") &&
+            classDef.methods.any { it.name == "isGroupChat" && it.returnType == "Z" && it.parameterTypes.isEmpty() } &&
+            classDef.methods.any { it.name == "getConversationId" && it.returnType == "Ljava/lang/String;" } &&
+            classDef.methods.any { it.name == "getCoreInfo" && it.parameterTypes.isEmpty() }
+    },
 )
 
 /**
@@ -189,5 +207,19 @@ val autoStreakPatch = bytecodePatch(
             0,
             "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableAutoStreak()V",
         )
+
+        // Every group chat TikTok loads is noted by name and id, so a group can be messaged. After
+        // the setter's store, on its only return.
+        ConversationCoreInfoSetterFingerprint.method.let { setter ->
+            val returns = setter.implementation!!.instructions.withIndex()
+                .filter { it.value.opcode == Opcode.RETURN_VOID }.map { it.index }.toList()
+            if (returns.size != 1) {
+                throw PatchException("Keep a streak going: the chat setter has ${returns.size} returns, not one.")
+            }
+            setter.addInstructionsAtControlFlowLabel(
+                returns.single(),
+                "invoke-static { p0 }, $GROUP_CHATS->seen(Ljava/lang/Object;)V",
+            )
+        }
     }
 }

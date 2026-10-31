@@ -1543,6 +1543,7 @@ Enter who to message below to start.	Başlamak için aşağıya kime yazılacağ
 Next message: today at %1$s.	Sonraki mesaj: bugün, saat %1$s.
 Next message: tomorrow at %1$s.	Sonraki mesaj: yarın, saat %1$s.
 No chat with @%1$s turned up on this account. Open your chat with them once, then try again.	Bu hesapta @%1$s ile bir sohbet bulunamadı. Onunla olan sohbetini bir kez aç, sonra tekrar dene.
+No group chat named %1$s turned up on this account. Open your Inbox once so TikTok loads it, then try again.	Bu hesapta %1$s adlı grup sohbeti bulunamadı. TikTok yüklesin diye gelen kutunu bir kez aç, sonra yeniden dene.
 Nobody was signed in to TikTok. Sign in, and it tries again at %1$s.	TikTok'ta oturum açmış kimse yoktu. Oturum aç, saat %1$s olunca tekrar denenir.
 A different account is signed in. Switch back to the one you set this up on, or enter who to message again.	Başka bir hesapta oturum açık. Bunu kurduğun hesaba geri dön ya da kime yazılacağını yeniden gir.
 TikTok's messages didn't start in time. It tries again at %1$s.	TikTok'un mesajları zamanında başlamadı. Saat %1$s olunca tekrar denenir.
@@ -1587,7 +1588,7 @@ Copy build details	Derleme ayrıntılarını kopyala
 Save build details	Derleme ayrıntılarını kaydet
 Build details copied to the clipboard	Derleme ayrıntıları panoya kopyalandı
 Sends one message a day to each person below at the time below, so your streaks keep going on days you don't open TikTok.	Aşağıdaki herkese belirtilen saatte günde bir mesaj gönderir, böylece TikTok'u açmadığın günlerde de serilerin devam eder.
-Their usernames, separated by commas or new lines. Each person must already have a chat with you.	Kullanıcı adlarını virgülle veya yeni satırlarla ayır. Her kişiyle zaten bir sohbetin olmalı.
+Usernames or group chat names, separated by commas or new lines. Each chat must already exist. A group is found by the name your Inbox shows for it.	Kullanıcı adları veya grup sohbeti adları, virgülle veya yeni satırlarla ayır. Her sohbet zaten var olmalı. Grup, gelen kutunun gösterdiği adla bulunur.
 Delivery unconfirmed: %1$d/%2$d chats. Those chats won't be retried today.	Teslimat doğrulanmadı: %1$d/%2$d sohbet. Bugün bu sohbetlerde tekrar denenmeyecek.
 Delivery unconfirmed: %1$d/%2$d chats. Remaining chats still need a message.	Teslimat doğrulanmadı: %1$d/%2$d sohbet. Kalan sohbetlere hâlâ mesaj gönderilmesi gerekiyor.
 Sent to %1$d/%2$d chats. They won't get another message today.	%1$d/%2$d sohbete gönderildi. Bugün başka mesaj almayacaklar.
@@ -1659,8 +1660,9 @@ Under the @username on a profile, say whether it follows you or doesn't follow y
 Follows you	Seni takip ediyor
 Doesn't follow you back	Seni geri takip etmiyor
 Copy bio and IDs	Biyografiyi ve kimlikleri kopyala
-Long-press a bio to copy it. A profile's share sheet gets buttons that copy its username and user ID, and a video's share sheet one that copies the video ID.	Bir biyografiyi kopyalamak için üzerine uzun bas. Bir profilin paylaşım sayfasına kullanıcı adını ve kullanıcı kimliğini kopyalayan düğmeler, bir videonunkine de video kimliğini kopyalayan bir düğme eklenir.
+Long-press a bio to copy it. A profile's share sheet gets buttons that copy its username and user ID, and a video's share sheet one that copies the video ID. On a LIVE profile card, long-press the name, username or bio to copy it, or tap the copy mark by the username.	Bir biyografiyi kopyalamak için üzerine uzun bas. Bir profilin paylaşım sayfasına kullanıcı adını ve kullanıcı kimliğini kopyalayan düğmeler, bir videonunkine de video kimliğini kopyalayan bir düğme eklenir. Bir LIVE profil kartında adı, kullanıcı adını veya biyografiyi kopyalamak için uzun bas ya da kullanıcı adının yanındaki kopyalama işaretine dokun.
 Bio copied	Biyografi kopyalandı
+Name copied	Ad kopyalandı
 Username copied	Kullanıcı adı kopyalandı
 User ID copied	Kullanıcı kimliği kopyalandı
 Video ID copied	Video kimliği kopyalandı

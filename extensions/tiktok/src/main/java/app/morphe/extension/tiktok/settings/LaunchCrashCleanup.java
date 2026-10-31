@@ -28,6 +28,7 @@ public final class LaunchCrashCleanup {
             FeatureGateLabStore.PREFS_NAME,
             ReleaseNotes.PREFS_NAME,
             DeviceIdentity.PREFERENCES,
+            app.morphe.extension.tiktok.inbox.GroupChats.PREFS_NAME,
     };
 
     private LaunchCrashCleanup() {

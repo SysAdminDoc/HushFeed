@@ -604,8 +604,8 @@ public final class AutoStreak {
                     failure = Result.NOT_READY;
                     break; // Unvisited recipients keep their own retry allowance.
                 }
-                StreakMessenger.Contact peer = StreakMessenger.findContact(context, self, handle);
-                if (peer == null) {
+                StreakMessenger.Target target = StreakMessenger.resolve(context, self, handle);
+                if (target == null) {
                     recordResult(self, handle, Result.NOT_FOUND, count);
                     if (failure == Result.NONE) failure = Result.NOT_FOUND;
                     continue;
@@ -627,7 +627,7 @@ public final class AutoStreak {
                     SystemClock.sleep(Math.max(0, wait));
                     ready = true;
                 }
-                String conversation = StreakMessenger.conversationId(self, peer.uid);
+                String conversation = target.conversationId;
                 try {
                     long left = deadline - SystemClock.elapsedRealtime() - StreakMessenger.settleMillis;
                     StreakMessenger.deliver(context, conversation, message(),
@@ -635,7 +635,7 @@ public final class AutoStreak {
                             Math.min(StreakMessenger.handOffMillis, left));
                     recordResult(self, handle, Result.DISPATCHED, false);
                     handed = true;
-                    Logger.printInfo(() -> "Auto streak: handed to TikTok for @" + handle);
+                    Logger.printInfo(() -> "Auto streak: handed to TikTok for " + StreakMessenger.labelOf(handle));
                 } catch (Cancelled cancelled) {
                     if (cancelled.result != Result.NONE) {
                         recordResult(self, handle, cancelled.result, count && !cancelled.counted);
@@ -901,7 +901,7 @@ public final class AutoStreak {
         Set<String> uncertain = new HashSet<>();
         for (String handle : recipients()) {
             RecipientState record = state.recipient(handle);
-            String identity = record == null || record.conversation.isEmpty() ? "@" + handle : record.conversation;
+            String identity = record == null || record.conversation.isEmpty() ? StreakMessenger.labelOf(handle) : record.conversation;
             boolean reserved = wasDispatched(state, today, handle)
                     || (record != null && today.equals(record.dispatchDay));
             chats.put(identity, reserved || Boolean.TRUE.equals(chats.get(identity)));
@@ -914,6 +914,15 @@ public final class AutoStreak {
 
     private static String problem(Context context, Result result) {
         return problem(context, result, nextAlarm(state(), now(), Settings.AUTO_STREAK_MINUTE.get()));
+    }
+
+    private static String notFound(Context context, String key) {
+        if (StreakMessenger.isGroupKey(key)) {
+            return L10n.f(context, "No group chat named %1$s turned up on this account. "
+                    + "Open your Inbox once so TikTok loads it, then try again.", StreakMessenger.labelOf(key));
+        }
+        return L10n.f(context, "No chat with @%1$s turned up on this account. "
+                + "Open your chat with them once, then try again.", key);
     }
 
     static String problem(Context context, Result result, long next) {
@@ -930,8 +939,7 @@ public final class AutoStreak {
             case NO_RECIPIENT:
                 return L10n.t(context, "Enter who to message below to start.");
             case NOT_FOUND:
-                return L10n.f(context, "No chat with @%1$s turned up on this account. "
-                        + "Open your chat with them once, then try again.", handle);
+                return notFound(context, handle);
             case SIGNED_OUT:
                 return L10n.f(context, "Nobody was signed in to TikTok. Sign in, and it tries again at %1$s.",
                         time(context, next));
@@ -954,7 +962,7 @@ public final class AutoStreak {
      * found. The row is drawn again on every scroll, and the lookup opens a database.
      */
     private static String noteKey;
-    private static List<StreakMessenger.Contact> notePeers;
+    private static List<StreakMessenger.Target> notePeers;
     private static boolean noteMiss;
     private static long noteAt;
     /** How long a lookup that found nobody is kept, so a chat opened since turns up. */
@@ -972,7 +980,7 @@ public final class AutoStreak {
             notePeers = new ArrayList<>();
             noteMiss = false;
             for (String handle : handles) {
-                StreakMessenger.Contact peer = StreakMessenger.findContact(context, self, handle);
+                StreakMessenger.Target peer = StreakMessenger.resolve(context, self, handle);
                 notePeers.add(peer);
                 noteMiss |= peer == null;
             }
@@ -982,12 +990,11 @@ public final class AutoStreak {
         List<String> notes = new ArrayList<>();
         for (int index = 0; index < handles.size(); index++) {
             String handle = handles.get(index);
-            StreakMessenger.Contact peer = notePeers.get(index);
+            StreakMessenger.Target peer = notePeers.get(index);
             if (peer == null) {
-                notes.add(L10n.f(context, "No chat with @%1$s turned up on this account. "
-                        + "Open your chat with them once, then try again.", handle));
+                notes.add(notFound(context, handle));
             } else {
-                String name = peer.name == null || peer.name.isEmpty() ? "@" + handle : peer.name;
+                String name = peer.name == null || peer.name.isEmpty() ? StreakMessenger.labelOf(handle) : peer.name;
                 notes.add(L10n.f(context, "Found %1$s in your chats.", name));
             }
         }

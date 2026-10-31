@@ -357,6 +357,36 @@ public class AutoStreakTest {
         assertFalse(AutoStreak.isDue(state, at(2026, Calendar.SEPTEMBER, 30, 13, 0), NOON));
     }
 
+    @Test public void aGroupIsMessagedByTheNameTheInboxShowsWithEmojiIntact() throws Exception {
+        GroupChats.resetForTests();
+        GroupChats.remember(context, "200", "0:2:99", "Squad D83DDD25");
+        Settings.AUTO_STREAK.save(true);
+        Settings.AUTO_STREAK_RECIPIENT.save("squad D83DDD25");
+        Settings.AUTO_STREAK_MESSAGE.save("D83DDD25 streak");
+
+        assertTrue(sendNow().contains("Sent to 1/1 chats."));
+
+        assertEquals(1, PushQuickActionReceiver.RECEIVED.size());
+        Uri link = Uri.parse(PushQuickActionReceiver.RECEIVED.get(0).getStringExtra(StreakMessenger.REPLY_EXTRA));
+        assertEquals("0:2:99", link.getQueryParameter("conv_id"));
+        assertEquals("D83DDD25 streak", link.getQueryParameter("reply_text"));
+        assertEquals(AutoStreak.Result.DISPATCHED, AutoStreak.state().result);
+        GroupChats.resetForTests();
+        context.getSharedPreferences(GroupChats.PREFS_NAME, Context.MODE_PRIVATE).edit().clear().commit();
+    }
+
+    @Test public void aGroupNobodyLoadedIsNamedInTheAnswer() throws Exception {
+        GroupChats.resetForTests();
+        Settings.AUTO_STREAK.save(true);
+        Settings.AUTO_STREAK_RECIPIENT.save("Ghost Crew");
+
+        String toast = sendNow();
+
+        assertTrue(toast, toast.contains("ghost crew"));
+        assertTrue(PushQuickActionReceiver.RECEIVED.isEmpty());
+        assertEquals(AutoStreak.Result.NOT_FOUND, AutoStreak.state().result);
+    }
+
     @Test public void aHandOffTheMainThreadNeverTookIsCalledOffNotSentLate() throws Exception {
         StreakMessenger.handOffMillis = 200L;
         AtomicReference<Throwable> failure = new AtomicReference<>();

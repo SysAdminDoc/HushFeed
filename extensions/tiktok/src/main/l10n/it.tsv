@@ -1543,6 +1543,7 @@ Enter who to message below to start.	Inserisci qui sotto a chi scrivere per iniz
 Next message: today at %1$s.	Prossimo messaggio: oggi alle %1$s.
 Next message: tomorrow at %1$s.	Prossimo messaggio: domani alle %1$s.
 No chat with @%1$s turned up on this account. Open your chat with them once, then try again.	Non è stata trovata nessuna chat con @%1$s su questo account. Apri la vostra chat una volta, poi riprova.
+No group chat named %1$s turned up on this account. Open your Inbox once so TikTok loads it, then try again.	Su questo account non è stata trovata una chat di gruppo chiamata %1$s. Apri una volta la posta in arrivo così TikTok la carica, poi riprova.
 Nobody was signed in to TikTok. Sign in, and it tries again at %1$s.	Nessuno risultava connesso a TikTok. Accedi, e verrà ritentato alle %1$s.
 A different account is signed in. Switch back to the one you set this up on, or enter who to message again.	È connesso un account diverso. Torna a quello su cui hai configurato questa opzione, oppure inserisci di nuovo a chi scrivere.
 TikTok's messages didn't start in time. It tries again at %1$s.	I messaggi di TikTok non si sono avviati in tempo. Verrà ritentato alle %1$s.
@@ -1587,7 +1588,7 @@ Copy build details	Copia dettagli della build
 Save build details	Salva dettagli della build
 Build details copied to the clipboard	Dettagli della build copiati negli appunti
 Sends one message a day to each person below at the time below, so your streaks keep going on days you don't open TikTok.	Invia un messaggio al giorno a ciascuna persona qui sotto all'orario indicato, per mantenere le serie anche nei giorni in cui non apri TikTok.
-Their usernames, separated by commas or new lines. Each person must already have a chat with you.	I loro nomi utente, separati da virgole o righe nuove. Devi già avere una chat con ciascuna persona.
+Usernames or group chat names, separated by commas or new lines. Each chat must already exist. A group is found by the name your Inbox shows for it.	Nomi utente o nomi di chat di gruppo, separati da virgole o righe nuove. Ogni chat deve già esistere. Un gruppo si trova con il nome che mostra la tua posta in arrivo.
 Delivery unconfirmed: %1$d/%2$d chats. Those chats won't be retried today.	Consegna non confermata: %1$d/%2$d chat. Non verranno ritentate oggi.
 Delivery unconfirmed: %1$d/%2$d chats. Remaining chats still need a message.	Consegna non confermata: %1$d/%2$d chat. Le altre chat hanno ancora bisogno di un messaggio.
 Sent to %1$d/%2$d chats. They won't get another message today.	Inviato a %1$d/%2$d chat. Oggi non riceveranno un altro messaggio.
@@ -1659,8 +1660,9 @@ Under the @username on a profile, say whether it follows you or doesn't follow y
 Follows you	Ti segue
 Doesn't follow you back	Non ti segue
 Copy bio and IDs	Copia bio e ID
-Long-press a bio to copy it. A profile's share sheet gets buttons that copy its username and user ID, and a video's share sheet one that copies the video ID.	Tieni premuta una bio per copiarla. Il menu di condivisione di un profilo riceve pulsanti che copiano il nome utente e l'ID utente, quello di un video un pulsante che copia l'ID del video.
+Long-press a bio to copy it. A profile's share sheet gets buttons that copy its username and user ID, and a video's share sheet one that copies the video ID. On a LIVE profile card, long-press the name, username or bio to copy it, or tap the copy mark by the username.	Tieni premuta una bio per copiarla. Il menu di condivisione di un profilo riceve pulsanti che copiano il nome utente e l'ID utente, quello di un video un pulsante che copia l'ID del video. Sulla scheda profilo di una LIVE, tieni premuto nome, nome utente o bio per copiarli, oppure tocca il segno di copia accanto al nome utente.
 Bio copied	Bio copiata
+Name copied	Nome copiato
 Username copied	Nome utente copiato
 User ID copied	ID utente copiato
 Video ID copied	ID del video copiato

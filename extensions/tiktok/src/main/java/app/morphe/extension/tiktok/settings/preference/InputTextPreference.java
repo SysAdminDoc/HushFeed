@@ -223,6 +223,17 @@ public class InputTextPreference extends EditTextPreference {
     }
 
     /**
+     * For a field that holds names with spaces or emoji as well as handles, like a group chat's
+     * name. The URI keyboard of {@link #withNameKeyboard()} has no emoji key and fights a space,
+     * so this keeps only the no-suggestions flag: no autocorrect, and no capitals since nothing
+     * asks for them. Raw, for the same reason.
+     */
+    public InputTextPreference withFreeTextKeyboard() {
+        getEditText().setRawInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        return this;
+    }
+
+    /**
      * Hides the value: the row says one is saved without showing it, and the editor shows dots
      * as it's typed. Raw, for the same reason as {@link #withNameKeyboard()}.
      */

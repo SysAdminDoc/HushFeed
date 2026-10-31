@@ -1681,6 +1681,7 @@ Enter who to message below to start.	Укажите ниже, кому писа�
 Next message: today at %1$s.	Следующее сообщение: сегодня в %1$s.
 Next message: tomorrow at %1$s.	Следующее сообщение: завтра в %1$s.
 No chat with @%1$s turned up on this account. Open your chat with them once, then try again.	На этом аккаунте не найден чат с @%1$s. Откройте чат с ним один раз, затем повторите попытку.
+No group chat named %1$s turned up on this account. Open your Inbox once so TikTok loads it, then try again.	В этом аккаунте не найден групповой чат с названием %1$s. Откройте inbox один раз, чтобы TikTok его загрузил, и повторите попытку.
 Nobody was signed in to TikTok. Sign in, and it tries again at %1$s.	В TikTok никто не был авторизован. Войдите в аккаунт, и попытка повторится в %1$s.
 A different account is signed in. Switch back to the one you set this up on, or enter who to message again.	Авторизован другой аккаунт. Вернитесь к тому, на котором вы это настроили, или укажите получателя заново.
 TikTok's messages didn't start in time. It tries again at %1$s.	Сообщения TikTok не запустились вовремя. Попытка повторится в %1$s.
@@ -1725,7 +1726,7 @@ Copy build details	Копировать сведения о сборке
 Save build details	Сохранить сведения о сборке
 Build details copied to the clipboard	Сведения о сборке скопированы в буфер обмена
 Sends one message a day to each person below at the time below, so your streaks keep going on days you don't open TikTok.	Отправляет одно сообщение в день каждому из указанных ниже людей в выбранное время, чтобы ваши серии продолжались и в дни, когда вы не открываете TikTok.
-Their usernames, separated by commas or new lines. Each person must already have a chat with you.	Имена пользователей через запятую или с новой строки. У вас уже должен быть чат с каждым из них.
+Usernames or group chat names, separated by commas or new lines. Each chat must already exist. A group is found by the name your Inbox shows for it.	Имена пользователей или названия групповых чатов через запятую или с новой строки. Чат должен уже существовать. Группа ищется по названию, которое показывает ваш inbox.
 Delivery unconfirmed: %1$d/%2$d chats. Those chats won't be retried today.	Доставка не подтверждена: %1$d/%2$d чатов. Сегодня повторных попыток в этих чатах не будет.
 Delivery unconfirmed: %1$d/%2$d chats. Remaining chats still need a message.	Доставка не подтверждена: %1$d/%2$d чатов. В остальные чаты ещё нужно отправить сообщение.
 Sent to %1$d/%2$d chats. They won't get another message today.	Отправлено в %1$d/%2$d чатов. Сегодня они больше не получат сообщений.
@@ -1797,8 +1798,9 @@ Under the @username on a profile, say whether it follows you or doesn't follow y
 Follows you	Подписан на вас
 Doesn't follow you back	Не подписан в ответ
 Copy bio and IDs	Копировать био и ID
-Long-press a bio to copy it. A profile's share sheet gets buttons that copy its username and user ID, and a video's share sheet one that copies the video ID.	Нажмите и удерживайте био, чтобы скопировать его. В меню «Поделиться» профиля появляются кнопки для копирования имени пользователя и ID пользователя, а в меню видео кнопка для копирования ID видео.
+Long-press a bio to copy it. A profile's share sheet gets buttons that copy its username and user ID, and a video's share sheet one that copies the video ID. On a LIVE profile card, long-press the name, username or bio to copy it, or tap the copy mark by the username.	Нажмите и удерживайте био, чтобы скопировать его. В меню «Поделиться» профиля появляются кнопки для копирования имени пользователя и ID пользователя, а в меню видео кнопка для копирования ID видео. На карточке профиля в LIVE нажмите и удерживайте имя, имя пользователя или био, чтобы скопировать, или коснитесь значка копирования рядом с именем пользователя.
 Bio copied	Био скопировано
+Name copied	Имя скопировано
 Username copied	Имя пользователя скопировано
 User ID copied	ID пользователя скопирован
 Video ID copied	ID видео скопирован

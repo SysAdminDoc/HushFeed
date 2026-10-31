@@ -7,6 +7,7 @@ package app.morphe.patches.tiktok.misc.inbox
 import app.morphe.Fixtures
 import app.morphe.takes
 import com.android.tools.smali.dexlib2.AccessFlags
+import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import org.junit.Assert.assertEquals
@@ -93,6 +94,27 @@ class AutoStreakAnchorsTest {
                 it.name == "initIM" && it.parameterTypes == initialize.parameterTypes &&
                     AccessFlags.PUBLIC.isSet(it.accessFlags)
             })
+        }
+    }
+
+    @Test
+    fun `the chat setter that notes group chats is found once and returns once on each build`() {
+        Fixtures.forEachDeclared { apk ->
+            val version = Fixtures.versionOf(apk)
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            val hits = ArrayList<String>()
+            for (entry in container.dexEntryNames) {
+                for (classDef in container.getEntry(entry)!!.dexFile.classes) {
+                    for (method in classDef.methods) {
+                        if (!ConversationCoreInfoSetterFingerprint.takes(method, classDef)) continue
+                        hits.add(classDef.type)
+                        val returns = method.implementation!!.instructions.count { it.opcode == Opcode.RETURN_VOID }
+                        assertEquals("$version: returns in ${classDef.type}", 1, returns)
+                        assertTrue("$version: setter is static", !AccessFlags.STATIC.isSet(method.accessFlags))
+                    }
+                }
+            }
+            assertEquals("$version: chat setters matched: $hits", 1, hits.size)
         }
     }
 

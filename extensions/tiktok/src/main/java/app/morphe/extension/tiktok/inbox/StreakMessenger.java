@@ -111,16 +111,81 @@ final class StreakMessenger {
         return text.substring(0, end);
     }
 
-    /** Each comma or line-separated entry names one chat; case variants are the same handle. */
+    /**
+     * Starts the key of a group chat. A handle never holds a colon, so no handle can be taken
+     * for a group.
+     */
+    static final String GROUP_PREFIX = "group:";
+
+    /**
+     * What one entry names. A username, with or without its @ or as a profile link, gives the
+     * lowercase handle. Anything else (spaces, emoji, punctuation a handle can't hold) is a
+     * group chat's name and gives {@link #GROUP_PREFIX} and the name as {@link GroupChats#normalize}
+     * compares it. Cutting such an entry down to the handle characters at its front, as this used
+     * to, turned "Squad 🔥" into "squad" and "🔥" into nothing, so the message went nowhere.
+     */
+    static String keyOf(String entry) {
+        if (entry == null) return "";
+        String text = entry.trim();
+        if (text.isEmpty()) return "";
+        if (text.regionMatches(true, 0, "http", 0, 4)) return handleOf(text).toLowerCase(Locale.ROOT);
+        String bare = text.startsWith("@") ? text.substring(1) : text;
+        boolean handle = !bare.isEmpty();
+        for (int index = 0; handle && index < bare.length(); index++) {
+            char c = bare.charAt(index);
+            handle = (c < 128 && Character.isLetterOrDigit(c)) || c == '.' || c == '_';
+        }
+        if (handle) return bare.toLowerCase(Locale.ROOT);
+        String name = GroupChats.normalize(text);
+        return name.isEmpty() ? "" : GROUP_PREFIX + name;
+    }
+
+    static boolean isGroupKey(String key) {
+        return key.startsWith(GROUP_PREFIX);
+    }
+
+    /** How a key reads in a message: "@handle", or the group's name. */
+    static String labelOf(String key) {
+        return isGroupKey(key) ? key.substring(GROUP_PREFIX.length()) : "@" + key;
+    }
+
+    /** Each comma or line-separated entry names one chat; case variants are the same chat. */
     static List<String> handlesOf(String typed) {
-        LinkedHashSet<String> handles = new LinkedHashSet<>();
+        LinkedHashSet<String> keys = new LinkedHashSet<>();
         if (typed != null) {
             for (String entry : typed.split("[,\\r\\n]+")) {
-                String handle = handleOf(entry).toLowerCase(Locale.ROOT);
-                if (!handle.isEmpty()) handles.add(handle);
+                String key = keyOf(entry);
+                if (!key.isEmpty()) keys.add(key);
             }
         }
-        return new ArrayList<>(handles);
+        return new ArrayList<>(keys);
+    }
+
+    /** A chat to message: its id, and the name to call it by. */
+    static final class Target {
+        final String conversationId;
+        final String name;
+
+        Target(String conversationId, String name) {
+            this.conversationId = conversationId;
+            this.name = name;
+        }
+    }
+
+    /**
+     * The chat a key names on this account, or null. A group key is looked up among the groups
+     * TikTok loaded ({@link GroupChats}). A handle is looked up among the account's contacts
+     * for a one to one chat, and failing that among the groups, since a group can be called
+     * "squad" as well.
+     */
+    static Target resolve(Context context, String selfUid, String key) {
+        if (!isGroupKey(key)) {
+            Contact peer = findContact(context, selfUid, key);
+            if (peer != null) return new Target(conversationId(selfUid, peer.uid), peer.name);
+        }
+        GroupChats.Chat group = GroupChats.find(context, selfUid,
+                isGroupKey(key) ? key.substring(GROUP_PREFIX.length()) : key);
+        return group == null ? null : new Target(group.id, group.name);
     }
 
     /**

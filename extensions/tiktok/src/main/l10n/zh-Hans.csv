@@ -271,6 +271,7 @@ Back up settings,备份设置
 Backup and restore,备份和恢复
 Bigger progress bar handle,更大的进度条手柄
 Bio copied,简历已复制
+Name copied,名称已复制
 Black,黑色
 Block clipboard reads,阻止剪贴板读取
 Block contact list access,阻止联系人列表访问
@@ -1008,7 +1009,7 @@ Logging until %1$s. Tap to stop now.,记录直到 %1$s。点击立即停止.
 "Logs for 15 minutes, then stops on its own. Restarting TikTok doesn't move the end, and the switch above stays as you set it.",记录 15 分钟，然后自行停止。重新启动 TikTok 不会移动结尾，并且上面的开关保持你设置的状态.
 Long press,长按
 Long-press Home for Hushfeed settings,长按 Home 进行 Hushfeed 设置
-"Long-press a bio to copy it. A profile's share sheet gets buttons that copy its username and user ID, and a video's share sheet one that copies the video ID.",长按个人简介即可复制它。配置文件的共享表有复制其用户名和用户 ID 的按钮，视频的共享表有复制视频 ID 的按钮.
+"Long-press a bio to copy it. A profile's share sheet gets buttons that copy its username and user ID, and a video's share sheet one that copies the video ID. On a LIVE profile card, long-press the name, username or bio to copy it, or tap the copy mark by the username.",长按个人简介即可复制它。配置文件的共享表有复制其用户名和用户 ID 的按钮，视频的共享表有复制视频 ID 的按钮在 LIVE 个人资料卡上，长按名称、用户名或简介即可复制，也可点按用户名旁的复制标记.
 Long-press menu on every post,在每个帖子上长按菜单
 Looking for apps,寻找应用程序
 Loop a story,循环播放一个故事
@@ -1069,6 +1070,7 @@ No app on this phone opens web links,此手机上的应用程序无法打开网�
 No apps match this search,没有与此搜索匹配的应用
 "No chat with @%1$s turned up on this account. Open your chat with them once, then try again.",此账号未显示与@%1$s 的聊天记录。打开与他们的聊天一次，然后重试.
 No cleared videos fit the current history limits,没有已清除的视频符合当前历史记录限制
+"No group chat named %1$s turned up on this account. Open your Inbox once so TikTok loads it, then try again.",此账号中未找到名为 %1$s 的群聊。请先打开一次收件箱让 TikTok 加载它，然后重试.
 No comments are loaded to export yet.,尚未加载要导出的评论.
 No creator to block on this video,没有创作者可以屏蔽该视频
 No creator to hide on this video,此视频没有可隐藏的创作者
@@ -1931,6 +1933,7 @@ No clean copy yet. Saved the watermarked one to %1$s,暂无无水印版本，已
 "The voice and video call buttons leave the top of a chat. Calls still ring, and the chat details button stays.",语音和视频通话按钮离开了聊天的顶部。来电仍然响起，并且聊天详细信息按钮仍然保留.
 "The words under the bottom tab icons go away. The icons stay, and each tab opens what it always did.",底部选项卡图标下方的文字消失。图标保留下来，每个选项卡都会像往常一样打开.
 "Their usernames, separated by commas or new lines. Each person must already have a chat with you.",他们的用户名，以逗号或换行符分隔。每个人都必须已经与你聊天过.
+"Usernames or group chat names, separated by commas or new lines. Each chat must already exist. A group is found by the name your Inbox shows for it.",用户名或群聊名称，用逗号或换行分隔。每个聊天必须已存在。群聊按收件箱中显示的名称查找.
 There is no Lab change to undo.,没有可撤消的实验室更改.
 There is no diagnostic data to clear,没有要清除的诊断数据
 There is no diagnostic data to put back,没有可放回的诊断数据

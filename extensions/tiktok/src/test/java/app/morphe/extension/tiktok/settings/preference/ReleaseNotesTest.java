@@ -136,7 +136,8 @@ public class ReleaseNotesTest {
         java.util.regex.Matcher heading = java.util.regex.Pattern.compile("(?m)^## \\d+\\.\\d+\\.\\d+ ").matcher(summaries);
         assertTrue("release headings missing", heading.find());
         // Only the newest releases are bundled, so the text is whole sections from the top.
-        String all = summaries.substring(heading.start()).trim() + "\n";
+        // The generator leaves out the TikTok label the dialog drops anyway.
+        String all = summaries.substring(heading.start()).trim().replaceAll("(?m)^\\* \\*\\*TikTok:\\*\\* ", "* ") + "\n";
         String bundled = ReleaseNotesData.TEXT;
         assertTrue("run tools/gen-release-notes.py after summary edits",
                 bundled.startsWith("## ") && (all.equals(bundled) || all.startsWith(bundled.trim() + "\n\n## ")));

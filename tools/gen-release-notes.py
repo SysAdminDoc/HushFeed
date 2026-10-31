@@ -9,7 +9,9 @@ release in its own words and the next language the English.
 Every release from 0.60.0 on is checked, but only the newest ones that fit BUDGET are
 embedded, counting each release's English and all of its translations. Every release's
 notes and nine tables went in once, and the class reached 798 KB, about 14% of the bundle's
-extension. What's new links the full CHANGELOG for anything older.
+extension. What's new links the full CHANGELOG for anything older. The "**TikTok:** " label
+every summary opens with stays out too, since the dialog drops it: 0.80.0 alone carried it
+1,070 times and pushed the class past 150 KB.
 """
 
 import re
@@ -25,6 +27,7 @@ START = (0, 60, 0)
 # ReleaseNotesData under 150 KB. The newest release goes in even when it alone is larger.
 BUDGET = 140_000
 HEADING = re.compile(r"^## (\d+)\.(\d+)\.(\d+) \(", re.MULTILINE)
+LABEL = re.compile(r"^\* \*\*TikTok:\*\* ", re.MULTILINE)
 
 
 def published(text: str) -> str:
@@ -149,6 +152,11 @@ def width(character: str) -> int:
     return 1 if 0 < code < 128 else 2 if code < 2048 else 3 if code <= 65535 else 6
 
 
+def bare(text: str) -> str:
+    """The summaries without the TikTok label ReleaseNotes drops when it shows them."""
+    return LABEL.sub("* ", text)
+
+
 def size(text: str) -> int:
     return sum(width(character) for character in text)
 
@@ -201,7 +209,8 @@ def constant(language: str) -> str:
 
 def main() -> None:
     notes = summaries(published(CHANGELOG.read_text(encoding="utf-8")))
-    notes, translated = recent(notes, translations(notes))
+    notes, translated = recent(bare(notes), {language: bare(text)
+                                             for language, text in translations(notes).items()})
     lines = [
         "/*",
         " * Copyright 2026 Hushfeed contributors",

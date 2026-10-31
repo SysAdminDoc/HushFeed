@@ -76,7 +76,9 @@ class ReleaseNotesGeneratorTest(unittest.TestCase):
                     capture_output=True, text=True, encoding="utf-8", check=False,
                 )
                 self.assertEqual(0, result.returncode, result.stderr[-2000:])
-                self.assertEqual(generator.published(changelog).encode("utf-8"), restored.read_bytes())
+                self.assertEqual(generator.bare(generator.published(changelog)).encode("utf-8"),
+                                 restored.read_bytes())
+                self.assertNotIn(b"**TikTok:**", restored.read_bytes())
 
 
 class RecentReleasesTest(unittest.TestCase):

@@ -75,6 +75,19 @@ class ReviewedProfilesMatchFixturesTest {
     }
 
     @Test
+    fun `creation tools come out of the universal APK and stay whole on the split bundle`() {
+        // The bundle has no editor or effect libraries, and its face model alone broke face effects (#285).
+        val apks = fixtures()
+        assertTrue("no 47.5.3 universal APK and split bundle to compare", apks.map { it.extension }.toSet() == setOf("apk", "apkm"))
+        for (apk in apks) {
+            val present = digests(apk) { it.startsWith("lib/") }.keys
+            assertEquals(apk.name, apk.extension == "apk", stripsCreationTools { it in present })
+        }
+        assertTrue(stripsCreationTools { it == "lib/armeabi-v7a/libeffect_plugin.so" })
+        assertTrue(!stripsCreationTools { it.startsWith("assets/") })
+    }
+
+    @Test
     fun `no strip empties a feature dex TikTok loads at start-up`() {
         // Emptying Pitaya's, live cast's or the camera's dex left TikTok's own strings in English (#125).
         val dexes = groups.flatMap { (group, reviewed) ->

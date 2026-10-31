@@ -144,7 +144,7 @@ val studioCreationDebloatPatch = rawResourcePatch(
     description = "Removes TikTok's camera, editing and effects files, saving about 38 MB of " +
         "storage. The catch: the Create tab and every recording, editing and effects tool stop " +
         "working, and opening one, like effect search, can close TikTok. Leave it out if you " +
-        "make videos.",
+        "make videos. APKMirror's split bundle doesn't carry those files, so on it this changes nothing.",
     default = false,
 ) {
     category("Performance")
@@ -152,22 +152,20 @@ val studioCreationDebloatPatch = rawResourcePatch(
     dependsOn(buildChoicePatch(BuildChoice.CREATION))
 
     execute {
-        // The camera feature dex stays, like every lib/*/libdex_*.so: TikTok injects them all at
-        // start-up, and an empty one left its own strings in English on a Spanish phone (#125).
-        val nativeFiles = listOf(
-            "lib/arm64-v8a/libEffectCreatorJni.so",
-            "lib/arm64-v8a/libeffect_plugin.so",
-            "lib/arm64-v8a/libttvesdk_plugin.so",
-            "lib/armeabi-v7a/libEffectCreatorJni.so",
-            "lib/armeabi-v7a/libeffect_plugin.so",
-            "lib/armeabi-v7a/libttvesdk_plugin.so",
-        )
+        if (!stripsCreationTools { get(it).exists() }) {
+            BuildDetails.stripped(get(BUILD_DETAILS_ASSET), BuildChoice.CREATION, StripSummary(0, 0L, alreadyStripped = false))
+            println(
+                "[Studio & Creation De-bloat] This build carries none of the editor and effect libraries, so the " +
+                    "face model stays too. Emptied alone, it only stops face effects and Beauty from finding a face.",
+            )
+            return@execute
+        }
         decode("assets/model/ttfacemodel")
         val result = stripVerifiedResources(
             get("."),
             "Studio & Creation De-bloat",
             listOf("assets/model/ttfacemodel"),
-            nativeFiles,
+            studioNativeFiles,
             studioAssetProfiles,
             resolveStandaloneFile = { path -> get(path) },
         )
@@ -254,6 +252,25 @@ val voiceToolsDebloatPatch = rawResourcePatch(
         BuildDetails.applied(get(BUILD_DETAILS_ASSET), "voiceToolsDebloat")
     }
 }
+
+// The camera feature dex stays, like every lib/*/libdex_*.so: TikTok injects them all at
+// start-up, and an empty one left its own strings in English on a Spanish phone (#125).
+private val studioNativeFiles = listOf(
+    "lib/arm64-v8a/libEffectCreatorJni.so",
+    "lib/arm64-v8a/libeffect_plugin.so",
+    "lib/arm64-v8a/libttvesdk_plugin.so",
+    "lib/armeabi-v7a/libEffectCreatorJni.so",
+    "lib/armeabi-v7a/libeffect_plugin.so",
+    "lib/armeabi-v7a/libttvesdk_plugin.so",
+)
+
+/**
+ * Whether "Remove creation tools" has anything to take: the face model goes only with the
+ * editor and effect libraries. A build without them (APKMirror's split bundle) gets its camera
+ * and effects from libraries TikTok fetches itself, so emptying the model there saved under 1 MB
+ * and left face effects and Beauty unable to find a face (#285).
+ */
+internal fun stripsCreationTools(shipped: (String) -> Boolean) = studioNativeFiles.any(shipped)
 
 private fun StripSummary.report(patchName: String) {
     if (files == 0) {

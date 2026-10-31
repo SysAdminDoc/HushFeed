@@ -2018,6 +2018,7 @@ TikTok slips the videos it saved for offline viewing back into For You when it c
 TikTok sometimes tests a change that empties the Favorites tab on your profile. This keeps the tab and your saved videos.,TikTok 有时会测试一项更改，以清空你的个人资料上的“收藏夹”选项卡。这会保留该选项卡和你保存的视频.
 TikTok sometimes tests your phone's speed in a background process that can use a lot of memory. This stops that test from starting. One already running ends when TikTok restarts.,TikTok 有时会在可能使用大量内存的后台进程中测试手机的速度。这会阻止该测试开始。当 TikTok 重新启动时，已经运行的一个会结束.
 "TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app.",TikTok 将你的手机视为没有密钥的手机，因此登录时会要求你通过电子邮件或短信输入密码或代码。密码管理器不会将密钥交给已修补的应用程序.
+"TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app. If TikTok's 2-step check still wants only a passkey, add email or text as a way to verify on tiktok.com or another phone first.",TikTok 将你的手机视为没有密钥的手机，因此登录时会要求你通过电子邮件或短信输入密码或代码。密码管理器不会将密钥交给已修补的应用程序。如果 TikTok 的两步验证仍然只要求密钥，请先在 tiktok.com 或另一部手机上添加电子邮件或短信作为验证方式.
 TikTok's background play and Auto scroll,TikTok的后台播放和自动滚动
 TikTok's downloader: %1$s,TikTok 的下载器：%1$s
 TikTok's hold to speed up,TikTok 按住可加速

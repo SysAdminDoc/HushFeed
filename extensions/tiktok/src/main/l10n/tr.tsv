@@ -2011,7 +2011,7 @@ Stop TikTok's built-in AI engine from starting, so it doesn't get a copy of ever
 Allow voice comments	Sesli yorumlara izin ver
 Show TikTok's button for recording a spoken comment, on accounts that don't have it yet. It hasn't been tried on a real account, so it may not work.	Henüz sahip olmayan hesaplarda TikTok'un sesli yorum kaydetme düğmesini gösterir. Gerçek bir hesapta denenmedi, bu yüzden çalışmayabilir.
 Sign in without a passkey	Geçiş anahtarı olmadan giriş yap
-TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app.	TikTok telefonunu geçiş anahtarı olmayan bir telefon gibi görür, bu yüzden giriş yaparken bunun yerine şifreni ya da e-posta veya SMS ile gelen bir kodu ister. Şifre yöneticileri yamalı bir uygulamaya geçiş anahtarı vermez.
+TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app. If TikTok's 2-step check still wants only a passkey, add email or text as a way to verify on tiktok.com or another phone first.	TikTok telefonunu geçiş anahtarı olmayan bir telefon gibi görür, bu yüzden giriş yaparken bunun yerine şifreni ya da e-posta veya SMS ile gelen bir kodu ister. Şifre yöneticileri yamalı bir uygulamaya geçiş anahtarı vermez. TikTok'un iki adımlı doğrulaması hâlâ yalnızca geçiş anahtarı istiyorsa, önce tiktok.com'da veya başka bir telefonda doğrulama yolu olarak e-posta ya da SMS ekle.
 # context: opens the complete published changelog from the concise release summary dialog.
 Full changelog	Tüm değişiklikler
 More hashtags per post	Gönderi başına daha fazla etiket

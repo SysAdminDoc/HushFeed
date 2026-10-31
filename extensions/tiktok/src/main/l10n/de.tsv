@@ -2014,7 +2014,7 @@ Stop TikTok's built-in AI engine from starting, so it doesn't get a copy of ever
 Allow voice comments	Sprachkommentare erlauben
 Show TikTok's button for recording a spoken comment, on accounts that don't have it yet. It hasn't been tried on a real account, so it may not work.	Zeigt TikToks Schaltfläche zum Aufnehmen eines gesprochenen Kommentars bei Konten, die sie noch nicht haben. Das wurde noch nicht mit einem echten Konto ausprobiert, es funktioniert also vielleicht nicht.
 Sign in without a passkey	Ohne Passkey anmelden
-TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app.	TikTok behandelt dein Handy wie eines ohne Passkeys, also fragt die Anmeldung stattdessen nach deinem Passwort oder einem Code per E-Mail oder SMS. Passwortmanager geben einer gepatchten App keinen Passkey.
+TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app. If TikTok's 2-step check still wants only a passkey, add email or text as a way to verify on tiktok.com or another phone first.	TikTok behandelt dein Handy wie eines ohne Passkeys, also fragt die Anmeldung stattdessen nach deinem Passwort oder einem Code per E-Mail oder SMS. Passwortmanager geben einer gepatchten App keinen Passkey. Wenn TikToks Prüfung in zwei Schritten weiterhin nur einen Passkey will, füge zuerst auf tiktok.com oder einem anderen Handy E-Mail oder SMS als Weg zur Bestätigung hinzu.
 # context: opens the complete published changelog from the concise What's new dialog.
 Full changelog	Alle Änderungen
 More hashtags per post	Mehr Hashtags pro Beitrag

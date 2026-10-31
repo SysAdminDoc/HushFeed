@@ -2011,7 +2011,7 @@ Stop TikTok's built-in AI engine from starting, so it doesn't get a copy of ever
 Allow voice comments	Consenti i commenti vocali
 Show TikTok's button for recording a spoken comment, on accounts that don't have it yet. It hasn't been tried on a real account, so it may not work.	Mostra il pulsante di TikTok per registrare un commento vocale sugli account che non lo hanno ancora. Non è stato provato su un account reale, quindi potrebbe non funzionare.
 Sign in without a passkey	Accedi senza passkey
-TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app.	TikTok tratta il tuo telefono come uno senza passkey, quindi per accedere chiede la password o un codice via email o SMS. I gestori di password non danno una passkey a un'app modificata.
+TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app. If TikTok's 2-step check still wants only a passkey, add email or text as a way to verify on tiktok.com or another phone first.	TikTok tratta il tuo telefono come uno senza passkey, quindi per accedere chiede la password o un codice via email o SMS. I gestori di password non danno una passkey a un'app modificata. Se la verifica in due passaggi di TikTok chiede ancora solo una passkey, aggiungi prima email o SMS come metodo di verifica su tiktok.com o su un altro telefono.
 # context: opens the complete published changelog from the concise release summary dialog.
 Full changelog	Tutte le modifiche
 More hashtags per post	Più hashtag per post

@@ -4405,8 +4405,8 @@ final class L10nTranslationsPt_rBR {
                 "Às vezes o TikTok testa a velocidade do seu celular em um processo em segundo plano que pode usar muita memória. Isso impede que esse teste comece. Um que já esteja rodando termina quando o TikTok reinicia.");
         table.put("TikTok starts as a new phone after the restart. Tap again to cancel.",
                 "O TikTok inicia como um celular novo depois de reiniciar. Toque de novo para cancelar.");
-        table.put("TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app.",
-                "O TikTok trata seu celular como um aparelho sem chaves de acesso, então para entrar ele pede sua senha ou um código por e-mail ou SMS. Gerenciadores de senhas não entregam uma chave de acesso a um app modificado.");
+        table.put("TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app. If TikTok's 2-step check still wants only a passkey, add email or text as a way to verify on tiktok.com or another phone first.",
+                "O TikTok trata seu celular como um aparelho sem chaves de acesso, então para entrar ele pede sua senha ou um código por e-mail ou SMS. Gerenciadores de senhas não entregam uma chave de acesso a um app modificado. Se a verificação em duas etapas do TikTok ainda pedir só uma chave de acesso, adicione antes e-mail ou SMS como forma de verificação no tiktok.com ou em outro celular.");
         table.put("TikTok's background play and Auto scroll",
                 "Reprodução em segundo plano e rolagem automática do TikTok");
         table.put("TikTok's downloader: %1$s",

@@ -480,7 +480,9 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                     "Sign in without a passkey",
                     "TikTok treats your phone as one without passkeys, so signing in asks for your "
                             + "password or a code by email or text instead. Password managers won't "
-                            + "hand a passkey to a patched app.",
+                            + "hand a passkey to a patched app. If TikTok's 2-step check still wants "
+                            + "only a passkey, add email or text as a way to verify on tiktok.com or "
+                            + "another phone first.",
                     Settings.SKIP_PASSKEY_SIGN_IN
             ));
         }

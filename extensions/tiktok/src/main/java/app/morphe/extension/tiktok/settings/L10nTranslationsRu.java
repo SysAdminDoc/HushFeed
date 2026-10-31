@@ -4732,8 +4732,8 @@ final class L10nTranslationsRu {
                 "Иногда TikTok проверяет скорость телефона в фоновом процессе, который может занимать много памяти. Это не даёт такой проверке запуститься. Уже работающая проверка завершится при перезапуске TikTok.");
         table.put("TikTok starts as a new phone after the restart. Tap again to cancel.",
                 "После перезапуска TikTok запустится как на новом телефоне. Нажмите ещё раз, чтобы отменить.");
-        table.put("TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app.",
-                "TikTok считает ваш телефон устройством без ключей доступа, поэтому при входе запрашивает пароль или код по электронной почте или SMS. Менеджеры паролей не передают ключ доступа пропатченному приложению.");
+        table.put("TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app. If TikTok's 2-step check still wants only a passkey, add email or text as a way to verify on tiktok.com or another phone first.",
+                "TikTok считает ваш телефон устройством без ключей доступа, поэтому при входе запрашивает пароль или код по электронной почте или SMS. Менеджеры паролей не передают ключ доступа пропатченному приложению. Если двухэтапная проверка TikTok по-прежнему просит только ключ доступа, сначала добавьте электронную почту или SMS как способ подтверждения на tiktok.com или на другом телефоне.");
     }
 
     private static void fill38(Map<String, String> table) {

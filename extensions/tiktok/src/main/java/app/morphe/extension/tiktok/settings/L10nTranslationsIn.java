@@ -4405,8 +4405,8 @@ final class L10nTranslationsIn {
                 "TikTok kadang menguji kecepatan ponselmu di proses latar belakang yang bisa memakai banyak memori. Ini mencegah tes itu mulai. Tes yang sudah berjalan berakhir saat TikTok dimulai ulang.");
         table.put("TikTok starts as a new phone after the restart. Tap again to cancel.",
                 "TikTok mulai sebagai ponsel baru setelah dimulai ulang. Ketuk lagi untuk membatalkan.");
-        table.put("TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app.",
-                "TikTok menganggap ponselmu tidak punya kunci sandi, jadi saat masuk TikTok meminta kata sandimu atau kode lewat email atau SMS. Pengelola kata sandi tidak memberikan kunci sandi ke aplikasi yang sudah di-patch.");
+        table.put("TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app. If TikTok's 2-step check still wants only a passkey, add email or text as a way to verify on tiktok.com or another phone first.",
+                "TikTok menganggap ponselmu tidak punya kunci sandi, jadi saat masuk TikTok meminta kata sandimu atau kode lewat email atau SMS. Pengelola kata sandi tidak memberikan kunci sandi ke aplikasi yang sudah di-patch. Jika verifikasi dua langkah TikTok masih hanya meminta kunci sandi, tambahkan dulu email atau SMS sebagai cara verifikasi di tiktok.com atau ponsel lain.");
         table.put("TikTok's background play and Auto scroll",
                 "Putar di latar belakang dan gulir otomatis dari TikTok");
         table.put("TikTok's downloader: %1$s",

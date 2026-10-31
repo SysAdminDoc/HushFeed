@@ -4405,8 +4405,8 @@ final class L10nTranslationsTr {
                 "TikTok bazen telefonunun hızını çok bellek kullanabilen bir arka plan işleminde test eder. Bu, testin başlamasını engeller. Zaten çalışan bir test, TikTok yeniden başlayınca biter.");
         table.put("TikTok starts as a new phone after the restart. Tap again to cancel.",
                 "TikTok yeniden başlatmadan sonra yeni bir telefon gibi açılır. İptal etmek için tekrar dokun.");
-        table.put("TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app.",
-                "TikTok telefonunu geçiş anahtarı olmayan bir telefon gibi görür, bu yüzden giriş yaparken bunun yerine şifreni ya da e-posta veya SMS ile gelen bir kodu ister. Şifre yöneticileri yamalı bir uygulamaya geçiş anahtarı vermez.");
+        table.put("TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app. If TikTok's 2-step check still wants only a passkey, add email or text as a way to verify on tiktok.com or another phone first.",
+                "TikTok telefonunu geçiş anahtarı olmayan bir telefon gibi görür, bu yüzden giriş yaparken bunun yerine şifreni ya da e-posta veya SMS ile gelen bir kodu ister. Şifre yöneticileri yamalı bir uygulamaya geçiş anahtarı vermez. TikTok'un iki adımlı doğrulaması hâlâ yalnızca geçiş anahtarı istiyorsa, önce tiktok.com'da veya başka bir telefonda doğrulama yolu olarak e-posta ya da SMS ekle.");
         table.put("TikTok's background play and Auto scroll",
                 "TikTok'un arka planda oynatma ve otomatik kaydırması");
         table.put("TikTok's downloader: %1$s",

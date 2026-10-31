@@ -15,7 +15,7 @@ final class L10nTranslationsZh_Hans {
     }
 
     static Map<String, String> build() {
-        Map<String, String> table = new HashMap<>(4700);
+        Map<String, String> table = new HashMap<>(4702);
         fill0(table);
         fill1(table);
         fill2(table);
@@ -4409,6 +4409,8 @@ final class L10nTranslationsZh_Hans {
                 "重启后 TikTok 会以新手机的身份启动。再次点按可取消.");
         table.put("TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app.",
                 "TikTok 将你的手机视为没有密钥的手机，因此登录时会要求你通过电子邮件或短信输入密码或代码。密码管理器不会将密钥交给已修补的应用程序.");
+        table.put("TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app. If TikTok's 2-step check still wants only a passkey, add email or text as a way to verify on tiktok.com or another phone first.",
+                "TikTok 将你的手机视为没有密钥的手机，因此登录时会要求你通过电子邮件或短信输入密码或代码。密码管理器不会将密钥交给已修补的应用程序。如果 TikTok 的两步验证仍然只要求密钥，请先在 tiktok.com 或另一部手机上添加电子邮件或短信作为验证方式.");
         table.put("TikTok's background play and Auto scroll",
                 "TikTok的后台播放和自动滚动");
         table.put("TikTok's downloader: %1$s",
@@ -4483,11 +4485,11 @@ final class L10nTranslationsZh_Hans {
                 "翻译…");
         table.put("Translation preview",
                 "翻译预览");
-        table.put("Transparent",
-                "透明");
     }
 
     private static void fill36(Map<String, String> table) {
+        table.put("Transparent",
+                "透明");
         table.put("Try a different word or clear the search.",
                 "尝试使用不同的单词或清除搜索.");
         table.put("Try a different word or clear the search. Switches from patches you didn't tick in Morphe Manager aren't listed.",
@@ -4606,11 +4608,11 @@ final class L10nTranslationsZh_Hans {
                 "使用保存此大型报告的报告");
         table.put("Use TikTok for a while. A popup shows up here after TikTok first tries to show it.",
                 "使用 TikTok 一段时间。在 TikTok 首次尝试显示后，此处会出现一个弹出窗口.");
-        table.put("Use TikTok's own hold, pull down and release gesture to keep playing at the hold speed, 2x unless Playback sets another.",
-                "使用 TikTok 自己的按住、下拉和释放手势继续以按住速度 2 倍播放，除非播放设置另一个速度.");
     }
 
     private static void fill37(Map<String, String> table) {
+        table.put("Use TikTok's own hold, pull down and release gesture to keep playing at the hold speed, 2x unless Playback sets another.",
+                "使用 TikTok 自己的按住、下拉和释放手势继续以按住速度 2 倍播放，除非播放设置另一个速度.");
         table.put("Use a default playback speed",
                 "使用默认播放速度");
         table.put("Use a whole number from 0 to %1$s, or leave the field empty.",
@@ -4729,11 +4731,11 @@ final class L10nTranslationsZh_Hans {
                 "等待保存视频");
         table.put("Watch history was imported for the account that chose the file. Switch back to see it.",
                 "已为选择该文件的账号导入观看历史记录。切换回来看看.");
-        table.put("WebP, exactly as TikTok sent it",
-                "WebP，与 TikTok 发送的完全相同");
     }
 
     private static void fill38(Map<String, String> table) {
+        table.put("WebP, exactly as TikTok sent it",
+                "WebP，与 TikTok 发送的完全相同");
         table.put("What TikTok gets",
                 "TikTok 得到什么");
         table.put("What gets sent each day.",
@@ -4852,11 +4854,11 @@ final class L10nTranslationsZh_Hans {
                 "零显示通知并保留信息流。一旦达到预算，其他任何内容都会覆盖那么多分钟的信息流。消息、个人资料和搜索继续运行，信息流中的任何内容都不会丢失.");
         table.put("Zero switches this off. A short reminder after that many minutes of watching, and again after the same again. Time on messages, a profile or search doesn't count, and nothing is shown while the feed is on hold.",
                 "零将其关闭。在观看了几分钟之后的简短提醒，以及在同样的情况之后再次提醒。消息、个人资料或搜索的时间不计算在内，并且在信息流暂停时不会显示任何内容.");
-        table.put("Zero switches this off. After that many minutes with no touch on the screen, the video stops and TikTok goes to the background, for when you fall asleep watching. Any touch starts the wait over.",
-                "零将其关闭。屏幕在这么多分钟内没有被触摸时，视频会停止，TikTok 会转到后台，适合看着看着睡着的时候。任何触摸都会重新开始等待.");
     }
 
     private static void fill39(Map<String, String> table) {
+        table.put("Zero switches this off. After that many minutes with no touch on the screen, the video stops and TikTok goes to the background, for when you fall asleep watching. Any touch starts the wait over.",
+                "零将其关闭。屏幕在这么多分钟内没有被触摸时，视频会停止，TikTok 会转到后台，适合看着看着睡着的时候。任何触摸都会重新开始等待.");
         table.put("Zero switches this off. Count the minutes the player spends running in the feed. Time on messages, a profile or search doesn't count.",
                 "零将其关闭。计算玩家在信息流中运行的分钟数。消息、个人资料或搜索的时间不计算在内.");
         table.put("Zero switches this off. Counts every video that comes up in the feed and tells you when you reach the limit. Separate from the auto-advance session limit under Playback, which counts only videos Hushfeed moved past for you.",

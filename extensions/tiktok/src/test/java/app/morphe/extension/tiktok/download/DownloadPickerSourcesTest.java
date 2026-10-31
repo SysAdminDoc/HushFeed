@@ -44,6 +44,8 @@ public class DownloadPickerSourcesTest {
         public final List<Gear> bitRateList;
         public Address downloadNoWatermarkAddr = new Address("https://example.com/clean", 5000).frame(576, 1024);
         public Address playAddrValue, h264PlayAddrValue, playAddrBytevc1Value;
+        public Address newDownloadAddr;
+        public String miscDownloadAddrs;
         public boolean dash;
         SourcedVideo(Gear... gears) { bitRateList = List.of(gears); }
         public List<Gear> getRawBitRate() { return bitRateList; }
@@ -157,6 +159,24 @@ public class DownloadPickerSourcesTest {
         assertTrue(lines.toString(), lines.contains("source play_addr_h264: not on this video"));
         assertTrue(lines.toString(), lines.contains("source play_addr_bytevc1: not on this video"));
         for (String line : lines) assertFalse("no addresses in the report: " + line, line.contains("example.com"));
+    }
+
+    @Test public void theReportListsTikToksOtherAddressesWithoutTheirUrls() {
+        SourcedVideo video = new SourcedVideo(G540);
+        video.newDownloadAddr = new Address("https://example.com/new", 7000).frame(1080, 1920);
+        video.miscDownloadAddrs = "{\"suffix_scene\":{\"url_list\":[\"https://example.com/misc\"]}}";
+        QualityChoice.options(video, context);
+        List<String> lines = DownloadPickerReport.sectionForTests().lines();
+        assertEquals("TikTok's own file: 576p, gears listed: 1", lines.get(0));
+        assertTrue(lines.toString(), lines.contains("address downloadNoWatermarkAddr: 576p, 5000 bytes"));
+        assertTrue(lines.toString(), lines.contains("address newDownloadAddr: 1080p, 7000 bytes"));
+        assertTrue(lines.toString(), lines.contains("address miscDownloadAddrs: [\"suffix_scene\"]"));
+        for (String line : lines) assertFalse("no addresses in the report: " + line, line.contains("example.com"));
+
+        video.miscDownloadAddrs = "not json";
+        QualityChoice.options(video, context);
+        lines = DownloadPickerReport.sectionForTests().lines();
+        assertTrue(lines.toString(), lines.contains("address miscDownloadAddrs: not JSON, 8 characters"));
     }
 
     @Test public void theReportKeepsOnlyTheLastVideoAndIsBounded() {

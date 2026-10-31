@@ -23,6 +23,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Ask for the quality on each save: Download lists the renditions this video comes in and saves
@@ -35,6 +37,13 @@ import java.util.concurrent.ConcurrentHashMap;
 final class QualityChoice {
     /** The videos whose choice is on screen. */
     private static final Set<String> CHOOSING = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+    /** The addresses the report reads besides the gears, as getter and field. */
+    private static final String[][] OTHER_ADDRESSES = {
+            {"getDownloadNoWatermarkAddr", "downloadNoWatermarkAddr"},
+            {"getDownloadAddr", "downloadAddr"},
+            {"getNewDownloadAddr", "newDownloadAddr"},
+            {"getUIAlikeDownloadAddr", "uiAlikeAddr"},
+    };
 
     private QualityChoice() {}
 
@@ -101,6 +110,7 @@ final class QualityChoice {
         int own = QualitySelector.ownHeight(video);
         report.add("TikTok's own file: " + (own > 0 ? own + "p" : "height unknown") + ", gears listed: "
                 + ((List<?>) raw).size() + (dash ? ", separate sound track" : ""));
+        reportOtherAddresses(video, report);
         List<Object> gears = new ArrayList<>();
         int tallest = 0;
         for (Object gear : (List<?>) raw) {
@@ -160,6 +170,28 @@ final class QualityChoice {
         }
         DownloadPickerReport.record(report);
         return options;
+    }
+
+    /**
+     * Where TikTok lists a file apart from the gears, for the report: a copy better than the gears
+     * would show up here (#240). Sizes and names only, since a shared report has no use for the
+     * addresses.
+     */
+    private static void reportOtherAddresses(Object video, List<String> report) {
+        for (String[] names : OTHER_ADDRESSES) {
+            Object address = Reflect.property(video, names[0], names[1]);
+            if (address == null) continue;
+            int height = QualitySelector.dimension(address);
+            report.add("address " + names[1] + ": " + (height > 0 ? height + "p" : "height unknown")
+                    + ", " + QualitySelector.addressSize(address) + " bytes");
+        }
+        Object misc = Reflect.property(video, "getMiscDownloadAddrs", "miscDownloadAddrs");
+        if (!(misc instanceof String) || ((String) misc).isEmpty()) return;
+        try {
+            report.add("address miscDownloadAddrs: " + new JSONObject((String) misc).names());
+        } catch (JSONException notJson) {
+            report.add("address miscDownloadAddrs: not JSON, " + ((String) misc).length() + " characters");
+        }
     }
 
     private static String codecName(Object gear) {

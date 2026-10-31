@@ -212,7 +212,7 @@ public final class QualitySelector {
     }
 
     /** An address's size as the shorter side, or the one side it gives, or 0. */
-    private static int dimension(Object address) {
+    static int dimension(Object address) {
         long width = number(address, "getWidth", "width"), height = number(address, "getHeight", "height");
         return (int) (width > 0 && height > 0 ? Math.min(width, height) : Math.max(width, height));
     }

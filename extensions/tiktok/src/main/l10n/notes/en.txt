@@ -1,8 +1,8 @@
-## 0.80.0 (2026-10-27)
+## Unreleased
 
 * **TikTok:** Hide the Clear display controls has a new switch that keeps the progress bar on screen, so you can still see and drag it (#237).
 * **TikTok:** Double tap can like or unlike now. A double tap on a video you already liked takes the like back off (#248).
-* **TikTok:** Slide left or right while you hold a video to pick the hold speed, from half speed to three times. It's off by default (#248).
+* **TikTok:** Slide left or right while you hold a video to step through your speed menu choices. It's off by default (#248).
 * **TikTok:** Liked grids get their own sort, and the sort button on a Liked grid changes only that order (#180).
 * **TikTok:** Every Hushfeed title now shows TikTok's cyan and red in a slow moving gradient.
 * **TikTok:** The Calm feed preset is gone. Its filters are all still in Feed filter, and whatever it turned on stays on.
@@ -19,6 +19,26 @@
 * **TikTok:** Lock the feed at set times locks the feed by itself during the hours you pick, and the lock panel says when it opens again.
 * **TikTok:** Save only on Wi-Fi keeps saves off mobile data. A save waits for Wi-Fi for up to 30 minutes, and you can cancel it from Downloads.
 * **TikTok:** A new switch turns off Hushfeed's Save media box for chat stickers (#274).
+* **TikTok:** Let other apps play until a video starts keeps another app's music going when you open TikTok or your messages, until a video plays (#283).
+* **TikTok:** Keep unsent messages leaves a message someone unsends to you in the chat, with an optional mark. Thanks to @maayan080 (#291).
+* **TikTok:** A new switch hides the Service+ row under LIVE previews, and the row no longer carries over from the LIVE before (#94).
+* **TikTok:** With Latest first on Following on, Following loads 30 posts at a time, so fewer newer posts turn up after you've scrolled past (#226).
+* **TikTok:** In a LIVE room, a long press on the profile card's bio, name or username copies it, and a copy mark copies the handle (#268).
+* **TikTok:** Hide TikTok Shop also takes the shop buttons out from under captions (#271).
+* **TikTok:** Custom launcher icon can give TikTok's notifications a sharp Hushfeed H in the status bar (#114).
+* **TikTok:** Sound format has an MP3 choice, so saved sounds play anywhere, on every Android version (#273).
+* **TikTok:** A new switch also hides the Back arrow beside the hidden search bar on opened videos (#251).
+* **TikTok:** With Block author button on, LIVEs in For You get the block button too (#138).
+* **TikTok:** The new Create stickers patch for TikTok and PineDrama turns a photo, or a video's picture from the share sheet, into a saved sticker (#156, #88).
+* **TikTok:** The new Keep recent stickers patch keeps the Recently used sticker row filled after a restart or an account switch (#156).
+* **TikTok:** Hide surveys also hides the Not interested and Interested buttons TikTok sometimes puts over a video (#293).
+* **TikTok:** Custom launcher icon has a Material You style that follows your wallpaper, and a new option puts any color, like #1E88E5, behind the icon (#280).
+* **TikTok:** Leave after no touch stops the video and sends TikTok to the background once nobody has touched the screen for the minutes you set (#266).
+* **TikTok:** Show when an account was made adds a Joined date under the @username on other people's profiles.
+* **TikTok:** What's new comes in Simplified Chinese now.
+* **TikTok:** The Feature Gate Lab has a restart button now, and TikTok opens back on the Lab afterwards.
+* **TikTok:** Hushfeed builds on Morphe patcher 2.1.0 now, so it needs Morphe Manager 2.3.0 or newer, or morphe-desktop 1.20.0 on a computer.
+* **TikTok:** The patch bundle carries Morphe's bundle signature, so Manager can check that a later download really came from Hushfeed.
 * **TikTok:** On PineDrama, the Inbox switches work now, including Hide conversations (#156).
 * **TikTok:** On PineDrama, the version line in settings names PineDrama and its build instead of TikTok (#156).
 * **TikTok:** A settings search result far down a page now opens right at its row.
@@ -31,10 +51,6 @@
 * **TikTok:** Full-height comments stop below the status bar now, and they open full height on the first video after starting TikTok too (#261).
 * **TikTok:** Settings categories open and close right under their rows, and a category you opened stays open after a rotation or restart.
 * **TikTok:** The big cards on the settings home page are a compact list now, and Quick setups is gone.
-* **TikTok:** Hushfeed now needs Morphe Manager 2.2.0 or newer, or morphe-desktop 1.19.1 on a computer.
-* **TikTok:** The release walk covers PineDrama too, from its feeds and sheets to every Hushfeed section.
-* **TikTok:** PineDrama has its own patch audit, and a release needs a clean audit and walk for each app it supports.
-* **TikTok:** Every LIVE preview and drama label that See-through bottom bar moves is checked against the supported TikTok build.
 * **TikTok:** Country flags and codes stay next to names written right to left (#258).
 * **TikTok:** With See-through bottom bar on, the name and Tap to watch line of LIVE previews and mini dramas stay above the tabs (#250).
 * **TikTok:** The grid sort control is bigger, so it's easier to hit.
@@ -46,23 +62,51 @@
 * **TikTok:** The video stays paused when a link in its comments opens another page (#257).
 * **TikTok:** Notification reports in Diagnostics count notifications without saving what they said (#126, #222, #86).
 * **TikTok:** TikTok stays in the list Android shows when you record a single app.
-* **TikTok:** The auto-advance audit follows the video player itself instead of per-video labels.
 * **TikTok:** Hold a settings search switch to reveal and highlight its control in the main list (#248).
 * **TikTok:** Startup checks record which player drew the first frame (#150).
-* **TikTok:** A release needs matching evidence for every app it supports.
 * **TikTok:** Exporting a recovered recording is faster for large files.
 * **TikTok:** Recovery Retry keeps the recording's original stop reason, and recovery dialogs follow Hushfeed's theme.
 * **TikTok:** Screen recordings check storage as they run and keep recovery files until the saved copy is verified.
-* **TikTok:** Patch audits check the installed app and which patches were picked.
-* **TikTok:** A patch audit waits for the full diagnostics report before it calls a switch missing.
 * **TikTok:** The first frames of a screen recording each keep their own timestamp while the sound starts.
 * **TikTok:** Screen recordings keep their first video frames while the sound is starting up.
-* **TikTok:** A patch audit stops counting for a build once the code it ran against changes.
 * **TikTok:** Screen recording frees its audio when sound can't start, and the save notice says when there's no sound.
 * **TikTok:** Screen recording asks Android to capture only the patched app's sound.
 * **TikTok:** Service+ cleanup checks the same first LIVE preview entry TikTok shows (#94).
 * **TikTok:** The comment pause can tell the first frame is playing before TikTok's first progress update (#151).
 * **TikTok:** Hide TikTok's Auto scroll button also hides the round Auto scroll button at the video's top right (#234).
+* **TikTok:** With See-through status bar and See-through bottom bar on, the cover picture between videos grows with the video, so TikTok's bands no longer flash (#232).
+* **TikTok:** Remove feed ads also blocks the ads microseries load in their own player (#286).
+* **TikTok:** On the AMOLED dark theme, what you type in a LIVE room's comment box is light instead of dark on black (#267).
+* **TikTok:** Keep a streak going reaches names with emoji or spaces in them, and group chats (#289).
+* **TikTok:** Opening TikTok links from Telegram one after another no longer piles up feeds, and Back takes you to the chat (#276).
+* **TikTok:** Auto translate comments works again on accounts with TikTok's newer comment list (#282).
+* **TikTok:** Hide LIVE videos also catches LIVEs TikTok slips into a For You page that's already on screen (#277).
+* **TikTok:** Turning off the translate icon above the comments now keeps it off on every video until you turn it back on (#282).
+* **TikTok:** Open the Story when a creator is LIVE works on a creator's profile picture too (#233).
+* **TikTok:** Saving a story on Automatic takes the sharpest copy instead of a smaller 720p one. Thanks to @jutochoppa (#287, #155).
+* **TikTok:** Recording a LIVE's screen no longer films the Record button, and the notification has a Stop button (#265).
+* **TikTok:** Sign in without a passkey says what to do when TikTok's 2-step check asks only for a passkey (#102).
+* **TikTok:** Unpausing a PineDrama episode carries on from where you paused it (#156).
+* **TikTok:** Remove creation tools leaves APKMirror's split bundle alone, so face effects and Beauty find your face again (#285).
+* **TikTok:** When TikTok refuses a like, Hushfeed shows the reason the first time each session (#269).
+* **TikTok:** The Chinese message for a refused follow uses the right word now.
+* **TikTok:** The floating tab pill blurs LIVE previews behind it too (#259).
+* **TikTok:** PineDrama gets Feed filter, so Remove feed ads clears the ads from its For You feed and drama tab (#294).
+* **TikTok:** About 140 pop-up messages are shorter now, so they fit in the two lines Android 12 and later gives them.
+* **TikTok:** The Feature Gate Lab's pop-up messages fit in two lines too, and an import with nothing new still shows its results.
+* **TikTok:** The Simplified Chinese settings read more evenly and use the same word for the same thing throughout.
+* **TikTok:** Comment search no longer brings back translated comments the keyword filter hid.
+* **TikTok:** Picking a download folder that can't be used reopens the folder box with the reason under it.
+* **TikTok:** The release walk covers PineDrama too, from its feeds and sheets to every Hushfeed section.
+* **TikTok:** PineDrama has its own patch audit, and a release needs a clean audit and walk for each app it supports.
+* **TikTok:** Every LIVE preview and drama label that See-through bottom bar moves is checked against the supported TikTok build.
+* **TikTok:** The auto-advance audit follows the video player itself instead of per-video labels.
+* **TikTok:** A release needs matching evidence for every app it supports.
+* **TikTok:** Patch audits check the installed app and which patches were picked.
+* **TikTok:** A patch audit waits for the full diagnostics report before it calls a switch missing.
+* **TikTok:** A patch audit stops counting for a build once the code it ran against changes.
+* **TikTok:** The patch bundle carries Gson 2.15.0.
+* **TikTok:** The Licenses page and the NOTICE file credit De-Vanced, and credited links point at the copies actually used.
 
 ## 0.79.0 (2026-10-24)
 

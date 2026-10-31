@@ -1,8 +1,8 @@
-## 0.80.0 (2026-10-27)
+## Unreleased
 
 * **TikTok:** Təmiz ekran idarəetmələrini gizlət seçiminin yeni keçidi irəliləyiş çubuğunu ekranda saxlayır, beləliklə onu görə və sürüşdürə bilərsiniz (#237).
 * **TikTok:** İki dəfə toxunma artıq bəyənə və bəyənməni geri də ala bilir. Artıq bəyəndiyiniz videoya iki dəfə toxunsanız, bəyənmə geri götürülür (#248).
-* **TikTok:** Videonu basıb saxlayarkən sola və ya sağa sürüşdürüb saxlama sürətini seçin, yarım sürətdən üç qatadək. Standart olaraq söndürülüb (#248).
+* **TikTok:** Videonu basıb saxlayarkən sola və ya sağa sürüşdürərək sürət menyusu seçimləriniz arasında keçin. Defolt olaraq söndürülüb (#248).
 * **TikTok:** Bəyənilənlər torlarının öz sıralaması var və Bəyənilənlər torundakı sıralama düyməsi yalnız həmin sıranı dəyişir (#180).
 * **TikTok:** Hushfeed-in hər başlığı indi TikTok-un mavi və qırmızı rənglərini yavaş hərəkət edən gradientdə göstərir.
 * **TikTok:** Sakit lent hazır ayarı silinib. Onun bütün filtrləri hələ də Lent filtrindədir və onun açdığı hər şey açıq qalır.
@@ -19,6 +19,26 @@
 * **TikTok:** Lenti müəyyən saatlarda kilidlə seçdiyiniz saatlarda lenti özü kilidləyir və kilid paneli onun nə vaxt yenidən açılacağını göstərir.
 * **TikTok:** Yalnız Wi-Fi ilə yadda saxla yadda saxlamaları mobil məlumatdan kənarda saxlayır. Yadda saxlama Wi-Fi üçün 30 dəqiqəyə qədər gözləyir və onu Yükləmələrdən ləğv edə bilərsiniz.
 * **TikTok:** Yeni açar söhbət stikerləri üçün Hushfeed-in Medianı saxlayın qutusunu söndürür (#274).
+* **TikTok:** Video başlayana qədər digər tətbiqlər çalmağa davam etsin TikTok-u və ya mesajlarınızı açanda başqa tətbiqin musiqisini video oynayana qədər dayandırmır (#283).
+* **TikTok:** Geri götürülən mesajları saxlayın kiminsə sizə göndərib geri götürdüyü mesajı söhbətdə saxlayır və istəsəniz onu işarələyir. @maayan080-ə təşəkkürlər (#291).
+* **TikTok:** Yeni açar LIVE önizləmələrinin altındakı Service+ sətrini gizlədir və bu sətir artıq əvvəlki LIVE-dan qalmır (#94).
+* **TikTok:** İzlənilənlər lentində ən yenilər əvvəl açıq olanda İzlənilənlər bir dəfəyə 30 paylaşım yükləyir, ona görə köhnələri keçəndən sonra daha az yeni paylaşım çıxır (#226).
+* **TikTok:** LIVE otağında profil kartındakı bioya, ada və ya istifadəçi adına uzun basmaq onu kopyalayır, kopyalama işarəsi isə istifadəçi adını kopyalayır (#268).
+* **TikTok:** TikTok Shop-u gizlədin mağaza düymələrini başlıqların altından da götürür (#271).
+* **TikTok:** Xüsusi başlanğıc ikonu TikTok bildirişlərinə status panelində kəskin Hushfeed H hərfi verə bilər (#114).
+* **TikTok:** Səs formatı indi MP3 seçimini də təklif edir, ona görə yadda saxlanan səslər hər yerdə və hər Android versiyasında çalınır (#273).
+* **TikTok:** Yeni açar açılmış videolarda gizlədilmiş axtarış panelinin yanındakı Geri oxunu da gizlədir (#251).
+* **TikTok:** Müəllifi blokla düyməsi açıq olanda Sizin üçün lentindəki LIVE-lar da bloklama düyməsi alır (#138).
+* **TikTok:** TikTok və PineDrama üçün yeni Stikerlər yarat yaması şəkli və ya paylaşım pəncərəsindən videonun şəklini yadda saxlanmış stikerə çevirir (#156, #88).
+* **TikTok:** Yeni Son stikerləri saxla yaması Son istifadə edilənlər stiker sırasını yenidən başlatmadan və ya hesab dəyişəndən sonra da dolu saxlayır (#156).
+* **TikTok:** Sorğuları gizlədin TikTok-un bəzən videonun üstünə qoyduğu Maraqlı deyil və Maraqlıdır düymələrini də gizlədir (#293).
+* **TikTok:** Xüsusi başlanğıc ikonu divar kağızınıza uyğunlaşan Material You üslubu aldı, yeni seçim isə ikonun arxasına #1E88E5 kimi istənilən rəng qoyur (#280).
+* **TikTok:** Toxunuş olmadıqda çıxın təyin etdiyiniz dəqiqələr ərzində ekrana toxunulmasa videonu dayandırır və TikTok-u arxa plana göndərir (#266).
+* **TikTok:** Hesabın nə vaxt yaradıldığını göstər başqalarının profilində @istifadəçi adının altına qoşulma tarixini əlavə edir.
+* **TikTok:** Yeniliklər indi sadələşdirilmiş Çin dilində də var.
+* **TikTok:** Feature Gate Lab-da indi yenidən başlatma düyməsi var və TikTok bundan sonra yenidən Lab-da açılır.
+* **TikTok:** Hushfeed indi Morphe patcher 2.1.0 üzərində qurulur, ona görə Morphe Manager 2.3.0 və ya daha yenisi, kompüterdə isə morphe-desktop 1.20.0 lazımdır.
+* **TikTok:** Yamaq paketi Morphe-un paket imzasını daşıyır, belə ki Manager sonrakı yükləmənin həqiqətən Hushfeed-dən gəldiyini yoxlaya bilər.
 * **TikTok:** PineDrama-da Gələnlər qutusu açarları indi işləyir, Söhbətləri gizlət də daxil olmaqla (#156).
 * **TikTok:** PineDrama-da ayarlardakı versiya sətri TikTok əvəzinə PineDrama-nı və onun quruluşunu göstərir (#156).
 * **TikTok:** Səhifənin aşağısında olan ayar axtarışı nəticəsi indi birbaşa öz sətrində açılır.
@@ -31,10 +51,6 @@
 * **TikTok:** Tam hündürlükdə şərhlər indi status panelinin altında dayanır və TikTok-u açandan sonrakı ilk videoda da tam hündürlükdə açılır (#261).
 * **TikTok:** Ayar kateqoriyaları öz sətirlərinin altında açılıb bağlanır və açdığınız kateqoriya ekran fırlanandan və ya yenidən başladandan sonra da açıq qalır.
 * **TikTok:** Ayarların ana səhifəsindəki böyük kartlar indi yığcam siyahıdır və Sürətli quruluşlar silinib.
-* **TikTok:** Hushfeed indi Morphe Manager 2.2.0 və ya daha yenisini, kompüterdə isə morphe-desktop 1.19.1 tələb edir.
-* **TikTok:** Buraxılış gəzintisi indi PineDrama-nı da əhatə edir, onun lentlərindən və vərəqlərindən Hushfeed-in hər bölməsinə qədər.
-* **TikTok:** PineDrama-nın öz yamaq auditi var və buraxılış dəstəklədiyi hər tətbiq üçün təmiz audit və gəzinti tələb edir.
-* **TikTok:** Şəffaf alt panelin yerini dəyişdirdiyi hər LIVE önizləmə və dram yazısı dəstəklənən TikTok quruluşu ilə yoxlanılır.
 * **TikTok:** Ölkə bayraqları və kodları sağdan sola yazılan adların yanında qalır (#258).
 * **TikTok:** Şəffaf alt panel açıq olanda LIVE önizləmələrinin və mini dramların adı və Baxmaq üçün toxunun sətri tabların üstündə qalır (#250).
 * **TikTok:** Tor sıralama idarəetməsi böyüdülüb, beləliklə ona toxunmaq asandır.
@@ -46,23 +62,51 @@
 * **TikTok:** Şərhlərdəki keçid başqa səhifə açanda video fasilədə qalır (#257).
 * **TikTok:** Diaqnostikadakı bildiriş hesabatları bildirişlərin nə yazdığını yadda saxlamadan onları sayır (#126, #222, #86).
 * **TikTok:** Tək bir tətbiqi yazanda TikTok Android-in göstərdiyi siyahıda qalır.
-* **TikTok:** Avtomatik keçid auditi hər video üçün etiketlərə deyil, oynatıcının özünə əməl edir.
 * **TikTok:** Ayar axtarışındakı keçidi basıb saxlayın ki, onun idarəetməsi əsas siyahıda göstərilsin və vurğulansın (#248).
 * **TikTok:** Başlanğıc yoxlamaları ilk kadrı hansı oynatıcının çəkdiyini qeyd edir (#150).
-* **TikTok:** Buraxılış dəstəklədiyi hər tətbiq üçün uyğun sübut tələb edir.
 * **TikTok:** Bərpa edilmiş qeydi ixrac etmək böyük fayllar üçün daha sürətlidir.
 * **TikTok:** Bərpada Yenidən cəhd qeydin ilkin dayanma səbəbini saxlayır və bərpa dialoqları Hushfeed mövzusuna uyğun gəlir.
 * **TikTok:** Ekran yazıları işləyərkən yaddaşı yoxlayır və yadda saxlanmış nüsxə təsdiqlənənə qədər bərpa fayllarını saxlayır.
-* **TikTok:** Yamaq auditləri quraşdırılmış tətbiqi və hansı yamaqların seçildiyini yoxlayır.
-* **TikTok:** Yamaq auditi açarı çatışmır adlandırmazdan əvvəl diaqnostika hesabatının tam olmasını gözləyir.
 * **TikTok:** Ekran yazısının ilk kadrları səs başlayarkən hər biri öz vaxt nişanını saxlayır.
 * **TikTok:** Ekran yazıları səs başlayarkən ilk video kadrlarını saxlayır.
-* **TikTok:** Yamaq auditi işlədiyi kod dəyişən kimi quraşdırma üçün sayılmağı dayandırır.
 * **TikTok:** Ekran yazısı səs başlaya bilməyəndə səs resurslarını azad edir və saxlama bildirişi səs olmadığını bildirir.
 * **TikTok:** Ekran yazısı Android-dən yalnız yamaqlanmış tətbiqin səsini tutmağı istəyir.
 * **TikTok:** Service+ təmizlənməsi TikTok-un göstərdiyi eyni ilk LIVE önizləmə elementini yoxlayır (#94).
 * **TikTok:** Şərh fasiləsi TikTok-un ilk irəliləyiş yenilənməsindən əvvəl ilk kadrın oynadığını bilə bilir (#151).
 * **TikTok:** TikTok-un Auto scroll düyməsini gizlədin videonun sağ yuxarısındakı yumru Auto scroll düyməsini də gizlədir (#234).
+* **TikTok:** Şəffaf status paneli və Şəffaf alt panel açıq olanda videolar arasındakı örtük şəkli videoyla birlikdə böyüyür, ona görə TikTok-un zolaqları artıq yanıb-sönmür (#232).
+* **TikTok:** Lent reklamlarını silin mikroserialların öz pleyerində yüklədiyi reklamları da bloklayır (#286).
+* **TikTok:** AMOLED tünd mövzuda LIVE otağının şərh qutusuna yazdığınız mətn qara üzərində tünd deyil, açıq görünür (#267).
+* **TikTok:** Seriyanı davam etdirin emoji və ya boşluq olan adlara və qrup söhbətlərinə də çatır (#289).
+* **TikTok:** Telegram-dan TikTok linklərini bir-birinin ardınca açmaq artıq lentləri üst-üstə yığmır və Geri sizi söhbətə qaytarır (#276).
+* **TikTok:** Şərhləri avtomatik tərcümə edin TikTok-un yeni şərh siyahısı olan hesablarda yenidən işləyir (#282).
+* **TikTok:** LIVE videoları gizlədin TikTok-un artıq ekranda olan Sizin üçün səhifəsinə soxduğu LIVE-ları da tutur (#277).
+* **TikTok:** Şərhlərin üstündəki tərcümə ikonunu söndürsəniz, yenidən açana qədər hər videoda söndürülü qalır (#282).
+* **TikTok:** Yaradıcı LIVE-dadırsa Hekayəni aç yaradıcının profil şəklində də işləyir (#233).
+* **TikTok:** Avtomatik rejimdə hekayəni yadda saxlamaq daha kiçik 720p nüsxə əvəzinə ən kəskin nüsxəni götürür. @jutochoppa-ya təşəkkürlər (#287, #155).
+* **TikTok:** LIVE ekranını yazmaq artıq Yaz düyməsini çəkmir, bildirişdə isə Dayandır düyməsi var (#265).
+* **TikTok:** Passkey olmadan daxil olun TikTok-un 2 addımlı yoxlaması yalnız passkey istəyəndə nə edəcəyinizi deyir (#102).
+* **TikTok:** Dayandırılmış PineDrama epizodu dayandırdığınız yerdən davam edir (#156).
+* **TikTok:** Yaratma alətlərini silin APKMirror-un bölünmüş paketinə toxunmur, ona görə üz effektləri və Beauty üzünüzü yenidən tapır (#285).
+* **TikTok:** TikTok bəyənməni rədd edəndə Hushfeed hər seansda ilk dəfə səbəbini göstərir (#269).
+* **TikTok:** Rədd edilən izləmə üçün Çin dilindəki mesaj indi düzgün sözü işlədir.
+* **TikTok:** Üzən tab kapsulu arxasındakı LIVE önizləmələrini də bulanıqlaşdırır (#259).
+* **TikTok:** PineDrama Lent filtri alır, ona görə Lent reklamlarını silin onun Sizin üçün lentindən və drama tabından reklamları təmizləyir (#294).
+* **TikTok:** Təxminən 140 bildiriş mesajı indi daha qısadır, ona görə Android 12 və yenidə verilən iki sətrə sığır.
+* **TikTok:** Feature Gate Lab-ın bildiriş mesajları da iki sətrə sığır, yeni heç nə gətirməyən idxal isə yenə də nəticələrini göstərir.
+* **TikTok:** Sadələşdirilmiş Çin dilində ayarlar daha bərabər oxunur və eyni şey üçün hər yerdə eyni sözü işlədir.
+* **TikTok:** Şərh axtarışı açar söz filtrinin gizlətdiyi tərcümə olunmuş şərhləri artıq geri qaytarmır.
+* **TikTok:** İstifadə oluna bilməyən yükləmə qovluğu seçəndə qovluq pəncərəsi səbəbi altında yazılmış halda yenidən açılır.
+* **TikTok:** Buraxılış gəzintisi indi PineDrama-nı da əhatə edir, onun lentlərindən və vərəqlərindən Hushfeed-in hər bölməsinə qədər.
+* **TikTok:** PineDrama-nın öz yamaq auditi var və buraxılış dəstəklədiyi hər tətbiq üçün təmiz audit və gəzinti tələb edir.
+* **TikTok:** Şəffaf alt panelin yerini dəyişdirdiyi hər LIVE önizləmə və dram yazısı dəstəklənən TikTok quruluşu ilə yoxlanılır.
+* **TikTok:** Avtomatik keçid auditi hər video üçün etiketlərə deyil, oynatıcının özünə əməl edir.
+* **TikTok:** Buraxılış dəstəklədiyi hər tətbiq üçün uyğun sübut tələb edir.
+* **TikTok:** Yamaq auditləri quraşdırılmış tətbiqi və hansı yamaqların seçildiyini yoxlayır.
+* **TikTok:** Yamaq auditi açarı çatışmır adlandırmazdan əvvəl diaqnostika hesabatının tam olmasını gözləyir.
+* **TikTok:** Yamaq auditi işlədiyi kod dəyişən kimi quraşdırma üçün sayılmağı dayandırır.
+* **TikTok:** Yamaq paketi Gson 2.15.0 daşıyır.
+* **TikTok:** Lisenziyalar səhifəsi və NOTICE faylı De-Vanced-i qeyd edir, istinad edilən linklər isə həqiqətən istifadə olunan nüsxələrə aparır.
 
 ## 0.79.0 (2026-10-24)
 

@@ -8,12 +8,6 @@ morphe-patcher = "2.1.0"
 # First stable Manager release that bundled the patcher above. The release fact check holds the
 # README's stated floor to this value on a release run.
 manager-floor = "2.3.0"
-# The Manager floor the README names between releases: the README intro describes the published
-# release, so it keeps the floor that release needs until the next release moves it. Delete this
-# line (or set it to manager-floor) once the README names manager-floor. Between releases the fact
-# check holds the README and the bug form to this value; a release run
-# (validate-release-facts.ps1 -VerifyPublishedAsset) holds them to manager-floor.
-readme-manager-floor = "2.2.0"
 # Read by the app.morphe.patches settings plugin, not by anything in this repo: remove it and
 # configuration fails with "Version with alias smali not found in version catalog". The commit
 # resolves as com.github.MorpheApp.smali through JitPack. It is not waiting on an official

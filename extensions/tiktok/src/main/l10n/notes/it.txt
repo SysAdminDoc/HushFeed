@@ -1,8 +1,8 @@
-## 0.80.0 (2026-10-27)
+## Unreleased
 
 * **TikTok:** Nascondi i controlli della Vista pulita ha un nuovo interruttore che tiene sullo schermo la barra di avanzamento, così puoi ancora vederla e trascinarla (#237).
 * **TikTok:** Il doppio tocco ora può mettere e togliere il Mi piace. Un doppio tocco su un video che hai già messo tra i Mi piace toglie il Mi piace (#248).
-* **TikTok:** Scorri a sinistra o a destra mentre tieni premuto un video per scegliere la velocità, da mezza velocità a tre volte. È disattivato di base (#248).
+* **TikTok:** Scorri a sinistra o a destra mentre tieni premuto un video per passare tra le tue Opzioni del menu velocità. È disattivato di default (#248).
 * **TikTok:** Le griglie dei Mi piace hanno un ordinamento tutto loro, e il pulsante di ordinamento di una griglia dei Mi piace cambia solo quell'ordine (#180).
 * **TikTok:** Ogni titolo di Hushfeed ora mostra il ciano e il rosso di TikTok in un gradiente che si muove lentamente.
 * **TikTok:** Il preset Feed calmo non c'è più. Tutti i suoi filtri sono ancora nel Filtro del feed, e quello che aveva attivato resta attivo.
@@ -19,6 +19,26 @@
 * **TikTok:** Blocca il feed a orari fissi blocca il feed da solo nelle ore che scegli, e il pannello di blocco dice quando si riapre.
 * **TikTok:** Salva solo con Wi-Fi tiene i salvataggi lontani dai dati mobili. Un salvataggio aspetta il Wi-Fi per al massimo 30 minuti, e puoi annullarlo da Download.
 * **TikTok:** Un nuovo interruttore disattiva la finestra Salva i media di Hushfeed per gli sticker in chat (#274).
+* **TikTok:** Lascia suonare le altre app finché non parte un video tiene accesa la musica di un'altra app quando apri TikTok o i messaggi, finché non parte un video (#283).
+* **TikTok:** Conserva i messaggi ritirati lascia in chat un messaggio che qualcuno ti ritira, con un segno facoltativo. Grazie a @maayan080 (#291).
+* **TikTok:** Un nuovo interruttore nasconde la riga Service+ sotto le anteprime LIVE, e la riga non resta più dalla LIVE precedente (#94).
+* **TikTok:** Con Prima i più recenti in Seguiti attivo, Seguiti carica 30 post alla volta, così compaiono meno post nuovi dopo che hai già scorso oltre (#226).
+* **TikTok:** In una stanza LIVE, una pressione lunga su bio, nome o nome utente nella scheda profilo lo copia, e un segno di copia copia il nome utente (#268).
+* **TikTok:** Nascondi TikTok Shop toglie anche i pulsanti dello shop da sotto le didascalie (#271).
+* **TikTok:** Icona personalizzata del launcher può dare alle notifiche di TikTok una H di Hushfeed nitida nella barra di stato (#114).
+* **TikTok:** Formato audio ha la scelta MP3, così i suoni salvati si riproducono ovunque, su ogni versione di Android (#273).
+* **TikTok:** Un nuovo interruttore nasconde anche la freccia Indietro accanto alla barra di ricerca nascosta nei video aperti (#251).
+* **TikTok:** Con il Pulsante blocca autore attivo, anche le LIVE in Per te hanno il pulsante per bloccare (#138).
+* **TikTok:** La nuova patch Crea sticker per TikTok e PineDrama trasforma una foto, o l'immagine di un video dal foglio di condivisione, in uno sticker salvato (#156, #88).
+* **TikTok:** La nuova patch Mantieni gli sticker recenti tiene piena la riga Usati di recente dopo un riavvio o un cambio di account (#156).
+* **TikTok:** Nascondi i sondaggi nasconde anche i pulsanti Non mi interessa e Mi interessa che TikTok a volte mette sopra un video (#293).
+* **TikTok:** Icona personalizzata del launcher ha uno stile Material You che segue lo sfondo, e una nuova opzione mette qualsiasi colore, come #1E88E5, dietro l'icona (#280).
+* **TikTok:** Esci se lo schermo non viene toccato ferma il video e manda TikTok in background dopo i minuti che imposti senza tocchi (#266).
+* **TikTok:** Mostra quando è stato creato un account aggiunge una data di iscrizione sotto lo @nome utente nei profili degli altri.
+* **TikTok:** Novità arriva ora anche in cinese semplificato.
+* **TikTok:** Il Feature Gate Lab ora ha un pulsante di riavvio, e dopo TikTok si riapre sul Lab.
+* **TikTok:** Hushfeed ora si basa su Morphe patcher 2.1.0, quindi serve Morphe Manager 2.3.0 o successivo, oppure morphe-desktop 1.20.0 su un computer.
+* **TikTok:** Il pacchetto delle patch porta la firma dei pacchetti di Morphe, così Manager può verificare che un download successivo arrivi davvero da Hushfeed.
 * **TikTok:** Su PineDrama ora funzionano gli interruttori della Posta in arrivo, compreso Nascondi le conversazioni (#156).
 * **TikTok:** Su PineDrama, la riga della versione nelle impostazioni ora indica PineDrama e la sua build invece di TikTok (#156).
 * **TikTok:** Un risultato della ricerca nelle impostazioni che sta in fondo a una pagina ora si apre proprio sulla sua riga.
@@ -31,10 +51,6 @@
 * **TikTok:** I commenti a tutta altezza ora si fermano sotto la barra di stato, e si aprono a tutta altezza anche sul primo video dopo l'avvio di TikTok (#261).
 * **TikTok:** Le categorie delle impostazioni si aprono e si chiudono subito sotto le loro righe, e una categoria che hai aperto resta aperta dopo una rotazione o un riavvio.
 * **TikTok:** Le grandi schede della pagina iniziale delle impostazioni ora sono un elenco compatto, e le Configurazioni rapide non ci sono più.
-* **TikTok:** Hushfeed ora richiede Morphe Manager 2.2.0 o successivo, oppure morphe-desktop 1.19.1 sul computer.
-* **TikTok:** La verifica di rilascio ora copre anche PineDrama, dai feed ai fogli fino a ogni sezione di Hushfeed.
-* **TikTok:** PineDrama ha un suo controllo delle patch, e un rilascio richiede un controllo e una verifica puliti per ogni app supportata.
-* **TikTok:** Ogni anteprima LIVE e ogni etichetta di drama che la Barra inferiore trasparente sposta viene controllata sulla build di TikTok supportata.
 * **TikTok:** Bandiere e codici paese restano accanto ai nomi scritti da destra a sinistra (#258).
 * **TikTok:** Con la Barra inferiore trasparente attiva, il nome e la riga Tocca per guardare delle anteprime LIVE e dei mini drama restano sopra le schede (#250).
 * **TikTok:** Il controllo di ordinamento della griglia è più grande, quindi è più facile da toccare.
@@ -46,23 +62,51 @@
 * **TikTok:** Il video resta in pausa quando un link nei suoi commenti apre un'altra pagina (#257).
 * **TikTok:** I rapporti sulle notifiche in Diagnostica contano le notifiche senza salvare cosa dicevano (#126, #222, #86).
 * **TikTok:** TikTok resta nell'elenco che Android mostra quando registri una sola app.
-* **TikTok:** La verifica dell'avanzamento automatico segue il lettore video stesso invece delle etichette dei singoli video.
 * **TikTok:** Tieni premuto un interruttore nella ricerca delle impostazioni per mostrare ed evidenziare il suo controllo nell'elenco principale (#248).
 * **TikTok:** I controlli all'avvio registrano quale lettore ha disegnato il primo fotogramma (#150).
-* **TikTok:** Un rilascio richiede prove corrispondenti per ogni app che supporta.
 * **TikTok:** Esportare una registrazione recuperata è più veloce per i file grandi.
 * **TikTok:** Riprova nel recupero mantiene il motivo di arresto originale della registrazione, e le finestre di recupero seguono il tema di Hushfeed.
 * **TikTok:** Le registrazioni dello schermo controllano lo spazio mentre vanno e tengono i file di recupero finché la copia salvata non è verificata.
-* **TikTok:** I controlli delle patch verificano l'app installata e quali patch sono state scelte.
-* **TikTok:** Un controllo delle patch aspetta il rapporto diagnostico completo prima di dire che un interruttore manca.
 * **TikTok:** I primi fotogrammi di una registrazione dello schermo mantengono ciascuno il proprio timestamp mentre parte l'audio.
 * **TikTok:** Le registrazioni dello schermo mantengono i primi fotogrammi video mentre l'audio si sta avviando.
-* **TikTok:** Un controllo delle patch smette di valere per una build quando cambia il codice su cui è stato eseguito.
 * **TikTok:** La registrazione dello schermo libera l'audio se il suono non può partire, e l'avviso di salvataggio dice quando non c'è audio.
 * **TikTok:** La registrazione dello schermo chiede ad Android di catturare solo l'audio dell'app modificata.
 * **TikTok:** La pulizia di Service+ controlla la stessa prima voce dell'anteprima LIVE che mostra TikTok (#94).
 * **TikTok:** La pausa dei commenti capisce che il primo fotogramma è in riproduzione prima del primo aggiornamento di avanzamento di TikTok (#151).
 * **TikTok:** Nascondi il pulsante Scorrimento automatico di TikTok nasconde anche il pulsante tondo Auto scroll in alto a destra nel video (#234).
+* **TikTok:** Con Barra di stato trasparente e Barra inferiore trasparente, l'immagine di copertina tra un video e l'altro cresce insieme al video, così le bande di TikTok non lampeggiano più (#232).
+* **TikTok:** Rimuovi gli annunci dal feed blocca anche gli annunci che le microserie caricano nel loro lettore (#286).
+* **TikTok:** Con il tema scuro AMOLED, quello che scrivi nella casella dei commenti di una stanza LIVE è chiaro invece che scuro su nero (#267).
+* **TikTok:** Mantieni viva una serie raggiunge anche nomi con emoji o spazi e le chat di gruppo (#289).
+* **TikTok:** Aprire link di TikTok da Telegram uno dopo l'altro non accumula più feed, e Indietro ti riporta alla chat (#276).
+* **TikTok:** Traduci automaticamente i commenti funziona di nuovo sugli account con il nuovo elenco dei commenti di TikTok (#282).
+* **TikTok:** Nascondi i video LIVE prende anche le LIVE che TikTok infila in una pagina Per te già sullo schermo (#277).
+* **TikTok:** Se spegni l'icona di traduzione sopra i commenti, ora resta spenta su ogni video finché non la riaccendi (#282).
+* **TikTok:** Apri la storia quando qualcuno è in LIVE funziona anche sulla foto profilo del creator (#233).
+* **TikTok:** Salvare una storia in Automatico prende la copia più nitida invece di una più piccola a 720p. Grazie a @jutochoppa (#287, #155).
+* **TikTok:** Registrare lo schermo di una LIVE non riprende più il pulsante Registra, e la notifica ha un pulsante Ferma (#265).
+* **TikTok:** Accedi senza passkey spiega cosa fare quando la verifica in due passaggi di TikTok chiede solo una passkey (#102).
+* **TikTok:** Riprendere un episodio di PineDrama riparte da dove l'avevi messo in pausa (#156).
+* **TikTok:** Rimuovi gli strumenti di creazione lascia stare il pacchetto diviso di APKMirror, così gli effetti viso e Beauty ritrovano il tuo viso (#285).
+* **TikTok:** Quando TikTok rifiuta un mi piace, Hushfeed mostra il motivo la prima volta in ogni sessione (#269).
+* **TikTok:** Il messaggio in cinese per un segui rifiutato usa ora la parola giusta.
+* **TikTok:** La pillola delle schede fluttuante sfoca anche le anteprime LIVE dietro di sé (#259).
+* **TikTok:** PineDrama riceve Filtro del feed, così Rimuovi gli annunci dal feed toglie gli annunci dal suo feed Per te e dalla scheda dei drama (#294).
+* **TikTok:** Circa 140 messaggi pop-up ora sono più corti e stanno nelle due righe che Android 12 e successivi gli danno.
+* **TikTok:** Anche i messaggi pop-up del Feature Gate Lab stanno in due righe, e un'importazione senza niente di nuovo mostra comunque i risultati.
+* **TikTok:** Le impostazioni in cinese semplificato si leggono in modo più uniforme e usano la stessa parola per la stessa cosa ovunque.
+* **TikTok:** La ricerca nei commenti non riporta più i commenti tradotti nascosti dal filtro per parole chiave.
+* **TikTok:** Scegliere una cartella di download che non si può usare riapre la finestra della cartella con il motivo sotto.
+* **TikTok:** La verifica di rilascio ora copre anche PineDrama, dai feed ai fogli fino a ogni sezione di Hushfeed.
+* **TikTok:** PineDrama ha un suo controllo delle patch, e un rilascio richiede un controllo e una verifica puliti per ogni app supportata.
+* **TikTok:** Ogni anteprima LIVE e ogni etichetta di drama che la Barra inferiore trasparente sposta viene controllata sulla build di TikTok supportata.
+* **TikTok:** La verifica dell'avanzamento automatico segue il lettore video stesso invece delle etichette dei singoli video.
+* **TikTok:** Un rilascio richiede prove corrispondenti per ogni app che supporta.
+* **TikTok:** I controlli delle patch verificano l'app installata e quali patch sono state scelte.
+* **TikTok:** Un controllo delle patch aspetta il rapporto diagnostico completo prima di dire che un interruttore manca.
+* **TikTok:** Un controllo delle patch smette di valere per una build quando cambia il codice su cui è stato eseguito.
+* **TikTok:** Il pacchetto delle patch contiene Gson 2.15.0.
+* **TikTok:** La pagina Licenze e il file NOTICE citano De-Vanced, e i link delle fonti portano alle copie usate davvero.
 
 ## 0.79.0 (2026-10-24)
 

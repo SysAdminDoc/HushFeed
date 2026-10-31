@@ -242,7 +242,7 @@ App AB,应用程序AB
 App lock,应用锁
 AppGallery,华为应用市场
 Appearance,外观
-"Applies to Save the sound as well and to Save the original sound on a long press. Opus makes a smaller file, but the sound is encoded again from TikTok's copy.",也适用于保存声音以及长按时保存原始声音。 Opus 制作了一个较小的文件，但声音是从 TikTok 的副本中再次编码的.
+"Applies to Save the sound as well and to Save the original sound on a long press. Opus makes a smaller file. Opus and MP3 are encoded again from TikTok's copy, unless it's an MP3 already.",也适用于保存声音以及长按时保存原始声音。Opus 制作较小的文件。Opus 和 MP3 都会从 TikTok 的副本重新编码，除非副本已经是 MP3.
 Applies to both video and photo downloads.,适用于视频和照片下载.
 Apply,申请
 Apply enables these overrides. Undo last Lab change puts your previous rules back until you change anything else in the Lab.,应用启用这些覆盖。撤消上次实验室更改会恢复之前的规则，直到你更改实验室中的其他任何内容.
@@ -1202,9 +1202,11 @@ Operator code,操作员代码
 Operator name,操作员名称
 "Optional, used with the user name. It isn't shown, logged or put in a backup.",可选，与用户名一起使用。它不会被显示、记录或放入备份中.
 "Optional. Only connections made by Android itself can sign in to a proxy, not TikTok's own. Leave empty for a proxy without a password.",可选。只有 Android 本身建立的连接才能登录到代理，而 TikTok 自己的连接则不能。对于没有密码的代理，留空.
+"MP3 (.mp3), plays anywhere",MP3 (.mp3)，随处可播放
 "Opus (.ogg), a smaller file",Opus (.ogg)，较小的文件
 Opus didn't work. Saving TikTok's own file.,Opus 无法使用，将保存 TikTok 的原文件.
-"Opus needs Android 10 or later, so sounds save as TikTok sent them.",Opus 需要 Android 10 或更高版本，因此声音保存为 TikTok 发送.
+MP3 didn't work on this phone. Saving the sound as TikTok sent it instead.,MP3 无法在这款手机上运行。将声音保存为 TikTok 来发送.
+"Opus needs Android 10 or later, so it saves sounds as TikTok sent them. MP3 works on any phone.",Opus 需要 Android 10 或更高版本，因此声音保存为 TikTok 发送的原样。MP3 在任何手机上都能用.
 Original,原画
 Original language,原语言
 Original message,原始消息

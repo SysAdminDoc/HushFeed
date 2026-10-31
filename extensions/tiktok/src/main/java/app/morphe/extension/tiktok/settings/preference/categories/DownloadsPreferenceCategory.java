@@ -166,11 +166,11 @@ public class DownloadsPreferenceCategory extends ConditionalPreferenceCategory {
             addPreference(new TogglePreference(context, "Save the sound as well",
                     "Write the video's sound beside it, in the format picked under Sound format. Android 10 and later file audio separately, so it lands in Music under the same folder name as your videos.", Settings.DOWNLOAD_AUDIO_TRACK));
             addPreference(new ChoicePreference(context, "Sound format", Settings.DOWNLOAD_SOUND_FORMAT,
-                    new String[]{"As TikTok sent it (M4A or MP3)", "Opus (.ogg), a smaller file"},
-                    new String[]{SoundFormat.ORIGINAL, SoundFormat.OPUS})
+                    new String[]{"As TikTok sent it (M4A or MP3)", "Opus (.ogg), a smaller file", "MP3 (.mp3), plays anywhere"},
+                    new String[]{SoundFormat.ORIGINAL, SoundFormat.OPUS, SoundFormat.MP3})
                     .withNote(SoundFormat.opusPossible()
-                            ? "Applies to Save the sound as well and to Save the original sound on a long press. Opus makes a smaller file, but the sound is encoded again from TikTok's copy."
-                            : "Opus needs Android 10 or later, so sounds save as TikTok sent them."));
+                            ? "Applies to Save the sound as well and to Save the original sound on a long press. Opus makes a smaller file. Opus and MP3 are encoded again from TikTok's copy, unless it's an MP3 already."
+                            : "Opus needs Android 10 or later, so it saves sounds as TikTok sent them. MP3 works on any phone."));
             addPreference(new TogglePreference(context, "Save the cover as well",
                     "Save the video's cover picture at the largest size TikTok has, each time you tap Download. It goes to your photo folder, named after the video.",
                     Settings.DOWNLOAD_COVER));

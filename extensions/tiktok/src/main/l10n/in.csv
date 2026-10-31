@@ -1,7 +1,7 @@
 source,target
 "%1$s isn't a language code. Use two letters, like en, es or de.","%1$s bukan kode bahasa. Gunakan dua huruf, seperti en, es, atau de."
 "Adds Save cover next to Download when you share a video, so you save the cover only when you want it. While this is on, Download saves just the video, even with Save the cover as well on.","Menambahkan Simpan sampul di sebelah Unduh saat kamu membagikan video, jadi kamu menyimpan sampul hanya saat kamu mau. Selama ini aktif, Unduh hanya menyimpan videonya, meskipun Simpan sampulnya juga aktif."
-"Applies to Save the sound as well and to Save the original sound on a long press. Opus makes a smaller file, but the sound is encoded again from TikTok's copy.","Berlaku untuk Simpan suaranya juga dan Simpan suara asli saat tekan lama. Opus menghasilkan berkas lebih kecil, tapi suaranya dikodekan ulang dari salinan TikTok."
+"Applies to Save the sound as well and to Save the original sound on a long press. Opus makes a smaller file. Opus and MP3 are encoded again from TikTok's copy, unless it's an MP3 already.","Berlaku untuk Simpan suaranya juga dan Simpan suara asli saat tekan lama. Opus menghasilkan berkas lebih kecil. Opus dan MP3 dikodekan ulang dari salinan TikTok, kecuali salinannya sudah MP3."
 As TikTok sent it (M4A or MP3),Seperti yang dikirim TikTok (M4A atau MP3)
 Burn-in guard,Pelindung burn-in layar
 Couldn't add the caption. Saving without it.,Keterangan gagal ditambah. Disimpan tanpa itu.
@@ -15,9 +15,11 @@ Importing new history ended Undo for the earlier clear. You can clear the import
 Keep the language picked in TikTok,Pertahankan bahasa yang dipilih di TikTok
 Nothing is playing to speed up,Tidak ada yang diputar untuk dipercepat
 "One language code, like en or es. Comments and captions TikTok translates come out in this language instead of the app's. Leave it empty to keep TikTok's choice.","Satu kode bahasa, seperti en atau es. Komentar dan keterangan yang diterjemahkan TikTok muncul dalam bahasa ini, bukan bahasa aplikasi. Biarkan kosong untuk memakai pilihan TikTok."
+"MP3 (.mp3), plays anywhere","MP3 (.mp3), bisa diputar di mana saja"
 "Opus (.ogg), a smaller file","Opus (.ogg), berkas lebih kecil"
 Opus didn't work. Saving TikTok's own file.,Opus gagal. File asli TikTok disimpan.
-"Opus needs Android 10 or later, so sounds save as TikTok sent them.","Opus butuh Android 10 atau yang lebih baru, jadi suara disimpan seperti yang dikirim TikTok."
+MP3 didn't work on this phone. Saving the sound as TikTok sent it instead.,MP3 tidak berfungsi di ponsel ini. Menyimpan suaranya seperti yang dikirim TikTok.
+"Opus needs Android 10 or later, so it saves sounds as TikTok sent them. MP3 works on any phone.","Opus butuh Android 10 atau yang lebih baru, jadi suara disimpan seperti yang dikirim TikTok. MP3 berfungsi di ponsel mana pun."
 Playing at %1$sx,Diputar pada %1$sx
 Save cover,Simpan sampul
 Save cover button in the share sheet,Tombol Simpan sampul di menu bagikan

@@ -150,11 +150,11 @@ public class Settings extends BaseSettings {
             Setting.parent(DOWNLOAD_PHOTOS_AS_VIDEO)).withRange(1, 10);
     public static final BooleanSetting DOWNLOAD_AUDIO_TRACK = new BooleanSetting("download_audio_track", FALSE);
     /**
-     * "original" keeps a saved sound in TikTok's own container; "opus" makes an .ogg. The row
-     * greys where the phone can't make one, and says why itself, since no switch would help.
+     * "original" keeps a saved sound in TikTok's own container; "opus" makes an .ogg where the
+     * phone can; "mp3" makes an .mp3 on any phone. The row stays open everywhere, since MP3 is
+     * always possible, and its note says when Opus isn't.
      */
-    public static final StringSetting DOWNLOAD_SOUND_FORMAT = new StringSetting("download_sound_format", "original",
-            false, app.morphe.extension.tiktok.download.SoundFormat::opusPossible);
+    public static final StringSetting DOWNLOAD_SOUND_FORMAT = new StringSetting("download_sound_format", "original");
     /** TikTok's watermarked copy saved when the clean file can't be fetched, instead of nothing. */
     public static final BooleanSetting DOWNLOAD_WATERMARK_FALLBACK = new BooleanSetting("download_watermark_fallback", FALSE);
     /** The video's cover, at the largest size it comes in, saved with each Download. */

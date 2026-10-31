@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Saves a video's sound as its own .m4a, copied out of a container rather than re-encoded, or
- * as an .ogg encoded to Opus when {@link SoundFormat} says so.
+ * as an .ogg encoded to Opus or an .mp3 when {@link SoundFormat} says so.
  *
  * The bytes come from whatever has already been fetched wherever possible: when
  * {@link VideoDownloads} handles the download it hands its own temporary file over, which is
@@ -133,21 +133,34 @@ final class AudioDownloads {
         File output = null;
         // Read once, so the temporary file, the name and the type all agree.
         boolean opus = SoundFormat.opus();
+        boolean mp3 = SoundFormat.mp3();
         try {
-            output = MediaCache.createTempFile(app, "sound-", opus ? ".ogg" : ".m4a");
-            if (opus && !OpusTranscoder.transcodeOrKeep(source, output)) {
-                // A fresh file for the M4A: the muxer needn't cut off what the encoder left.
-                opus = false;
-                File failed = output;
-                output = null;
-                if (!MediaCache.delete(failed)) Logger.printInfo(() -> "Could not remove sound temporary file");
-                output = MediaCache.createTempFile(app, "sound-", ".m4a");
+            // Sound that is an MP3 already is published as it is. That file is the caller's, so
+            // it never becomes the temporary one the finally block deletes.
+            File publish;
+            if (mp3 && Mp3Transcoder.isMp3(source)) {
+                publish = source;
+            } else {
+                output = MediaCache.createTempFile(app, "sound-", opus ? ".ogg" : mp3 ? ".mp3" : ".m4a");
+                boolean encoded = opus ? OpusTranscoder.transcodeOrKeep(source, output)
+                        : mp3 && Mp3Transcoder.transcodeOrKeep(source, output);
+                if ((opus || mp3) && !encoded) {
+                    // A fresh file for the M4A: the muxer needn't cut off what the encoder left.
+                    opus = false;
+                    mp3 = false;
+                    File failed = output;
+                    output = null;
+                    if (!MediaCache.delete(failed)) Logger.printInfo(() -> "Could not remove sound temporary file");
+                    output = MediaCache.createTempFile(app, "sound-", ".m4a");
+                }
+                if (!opus && !mp3) TrackMuxer.audioOnly(source, output);
+                publish = output;
             }
-            if (!opus) TrackMuxer.audioOnly(source, output);
             String path = audioPath(videoPath);
-            String fileName = opus ? SoundFormat.withExtension(name, "ogg") : name;
-            MediaFileWriter.Saved saved = MediaFileWriter.publishForResult(app, output, fileName,
-                    opus ? "audio/ogg" : "audio/mp4", path, true);
+            String fileName = opus ? SoundFormat.withExtension(name, "ogg")
+                    : mp3 ? SoundFormat.withExtension(name, Mp3Transcoder.EXTENSION) : name;
+            MediaFileWriter.Saved saved = MediaFileWriter.publishForResult(app, publish, fileName,
+                    opus ? "audio/ogg" : mp3 ? Mp3Transcoder.MIME_TYPE : "audio/mp4", path, true);
             if (announce) SaveNotice.saved(L10n.f("Sound saved to %1$s", path), saved);
             else Utils.showToastShort(L10n.f("Sound saved to %1$s", path));
             return true;

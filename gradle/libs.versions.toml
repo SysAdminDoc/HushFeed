@@ -20,6 +20,10 @@ smali = "ac700e1942"
 # (1.3.4 brings AGP 9.1.0 and Kotlin 2.4.10); nothing here pins them.
 annotation = "1.10.0"
 gson = "2.15.0"
+# LAME as pure Java, LGPL 2.1 or later. Shipped inside the extension for the MP3 sound format; the
+# 1.0.5 jar and pom were checked against the SHA-1 Maven Central serves before their SHA-256 went
+# into verification-metadata.xml. Class files are Java 6, well under the bundle's Java 17 ceiling.
+jump3r = "1.0.5"
 # Every com.google.guava:guava request in this build is rewritten to this, on the settings
 # classpath (settings.gradle.kts spells it out) and in every project graph (build.gradle.kts).
 # CVE-2026-102554 (google/guava's repository advisory GHSA-xxph-c9ww-hj94, which GitHub's
@@ -46,6 +50,7 @@ bouncycastle = "1.86"
 morphe-patcher = { module = "app.morphe:morphe-patcher", version.ref = "morphe-patcher" }
 annotation = { module = "androidx.annotation:annotation", version.ref = "annotation" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+jump3r = { module = "de.sciss:jump3r", version.ref = "jump3r" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 
 [plugins]

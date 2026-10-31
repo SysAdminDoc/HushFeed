@@ -53,8 +53,8 @@ public class SoundFormatTest {
     @Rule public final TemporaryFolder files = new TemporaryFolder();
 
     private static final String APPLIES = "Applies to Save the sound as well and to Save the original sound on a long "
-            + "press. Opus makes a smaller file, but the sound is encoded again from TikTok's copy.";
-    private static final String NEEDS_ANDROID_10 = "Opus needs Android 10 or later, so sounds save as TikTok sent them.";
+            + "press. Opus makes a smaller file. Opus and MP3 are encoded again from TikTok's copy, unless it's an MP3 already.";
+    private static final String NEEDS_ANDROID_10 = "Opus needs Android 10 or later, so it saves sounds as TikTok sent them. MP3 works on any phone.";
 
     @Before public void prepare() {
         Utils.setActivity(null);
@@ -106,7 +106,7 @@ public class SoundFormatTest {
         Settings.DOWNLOAD_SOUND_FORMAT.save(SoundFormat.OPUS);
         assertFalse(SoundFormat.opusPossible());
         assertFalse(SoundFormat.opus());
-        assertFalse("the row stayed open on Android 9", Settings.DOWNLOAD_SOUND_FORMAT.isAvailable());
+        assertTrue("MP3 keeps the row open on Android 9", Settings.DOWNLOAD_SOUND_FORMAT.isAvailable());
 
         String folder = "DCIM/sound-format-" + System.nanoTime();
         Settings.DOWNLOAD_VIDEO_PATH.save(folder);
@@ -155,7 +155,7 @@ public class SoundFormatTest {
         Settings.DOWNLOAD_SOUND_FORMAT.save(SoundFormat.OPUS);
         assertFalse("no encoder, no Opus", SoundFormat.opusPossible());
         assertFalse(SoundFormat.opus());
-        assertFalse(Settings.DOWNLOAD_SOUND_FORMAT.isAvailable());
+        assertTrue("MP3 keeps the row open without an Opus encoder", Settings.DOWNLOAD_SOUND_FORMAT.isAvailable());
     }
 
     /**

@@ -165,5 +165,17 @@ public final class LicenseNotice {
             "dealings in these Data Files or Software without prior written\n" +
             "authorization of the copyright holder.\n" +
             "\n" +
-            "SPDX-License-Identifier: Unicode-3.0";
+            "SPDX-License-Identifier: Unicode-3.0\n" +
+            "\n" +
+            "jump3r (LAME)\n" +
+            "\n" +
+            "Copyright The LAME project, Ken Handel, Vadym Vikulin and Hanns Holger Rutz\n" +
+            "Source: https://git.iem.at/sciss/jump3r (also https://central.sonatype.com/artifact/de.sciss/jump3r/1.0.5)\n" +
+            "GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1 or later\n" +
+            "https://www.gnu.org/licenses/lgpl-2.1.txt\n" +
+            "\n" +
+            "The MP3 choice under Sound format uses jump3r 1.0.5, a Java port of the LAME MP3\n" +
+            "encoder, unmodified and carried as its own library inside the extension. You can\n" +
+            "replace it with your own build of that library. Hushfeed's own code stays under the\n" +
+            "GPLv3, which the LGPL allows.";
 }

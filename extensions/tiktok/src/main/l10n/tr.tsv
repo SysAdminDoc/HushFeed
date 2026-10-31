@@ -1,6 +1,6 @@
 %1$s isn't a language code. Use two letters, like en, es or de.	%1$s bir dil kodu değil. en, es veya de gibi iki harf kullan.
 Adds Save cover next to Download when you share a video, so you save the cover only when you want it. While this is on, Download saves just the video, even with Save the cover as well on.	Bir videoyu paylaşırken İndir'in yanına Kapağı kaydet ekler, böylece kapağı yalnızca istediğinde kaydedersin. Bu açıkken, Kapağı da kaydet açık olsa bile İndir yalnızca videoyu kaydeder.
-Applies to Save the sound as well and to Save the original sound on a long press. Opus makes a smaller file, but the sound is encoded again from TikTok's copy.	Sesi de kaydet ve uzun basmadaki Orijinal sesi kaydet için geçerlidir. Opus daha küçük bir dosya oluşturur, ama ses TikTok'un kopyasından yeniden kodlanır.
+Applies to Save the sound as well and to Save the original sound on a long press. Opus makes a smaller file. Opus and MP3 are encoded again from TikTok's copy, unless it's an MP3 already.	Sesi de kaydet ve uzun basmadaki Orijinal sesi kaydet için geçerlidir. Opus daha küçük bir dosya oluşturur. Opus ve MP3, TikTok'un kopyasından yeniden kodlanır, ama kopya zaten MP3 ise olduğu gibi kaydedilir.
 As TikTok sent it (M4A or MP3)	TikTok'un gönderdiği gibi (M4A veya MP3)
 Burn-in guard	Ekran yanması koruması
 Couldn't add the caption. Saving without it.	Açıklama eklenemedi. Açıklamasız kaydediliyor.
@@ -14,9 +14,11 @@ Import watch history	İzleme geçmişini içe aktar
 Keep the language picked in TikTok	TikTok'ta seçilen dili koru
 Nothing is playing to speed up	Hızlandırılacak bir şey oynatılmıyor
 One language code, like en or es. Comments and captions TikTok translates come out in this language instead of the app's. Leave it empty to keep TikTok's choice.	Tek bir dil kodu, örneğin en veya es. TikTok'un çevirdiği yorumlar ve açıklamalar uygulamanın dili yerine bu dilde çıkar. TikTok'un seçimini korumak için boş bırak.
+MP3 (.mp3), plays anywhere	MP3 (.mp3), her yerde çalar
 Opus (.ogg), a smaller file	Opus (.ogg), daha küçük dosya
 Opus didn't work. Saving TikTok's own file.	Opus çalışmadı. TikTok'un kendi dosyası kaydediliyor.
-Opus needs Android 10 or later, so sounds save as TikTok sent them.	Opus için Android 10 veya üstü gerekir, bu yüzden sesler TikTok'un gönderdiği gibi kaydedilir.
+MP3 didn't work on this phone. Saving the sound as TikTok sent it instead.	MP3 bu telefonda çalışmadı. Ses, TikTok'un gönderdiği haliyle kaydediliyor.
+Opus needs Android 10 or later, so it saves sounds as TikTok sent them. MP3 works on any phone.	Opus için Android 10 veya üstü gerekir, bu yüzden sesler TikTok'un gönderdiği gibi kaydedilir. MP3 her telefonda çalışır.
 Playing at %1$sx	%1$sx hızında oynatılıyor
 Puts a save button in the sheet a story's Share button opens. It saves the story you're watching, and holding a story still pauses it.	Bir hikayenin Paylaş düğmesinin açtığı menüye bir kaydet düğmesi ekler. İzlediğin hikayeyi kaydeder ve bir hikayeye basılı tutmak onu yine duraklatır.
 Save a story from its share sheet	Hikayeyi paylaşım menüsünden kaydet

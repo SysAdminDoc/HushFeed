@@ -1,6 +1,6 @@
 %1$s isn't a language code. Use two letters, like en, es or de.	%1$s não é um código de idioma. Use duas letras, como en, es ou de.
 Adds Save cover next to Download when you share a video, so you save the cover only when you want it. While this is on, Download saves just the video, even with Save the cover as well on.	Adiciona Salvar capa ao lado de Baixar quando você compartilha um vídeo, para você salvar a capa só quando quiser. Enquanto isso estiver ligado, Baixar salva só o vídeo, mesmo com Salvar a capa também ligado.
-Applies to Save the sound as well and to Save the original sound on a long press. Opus makes a smaller file, but the sound is encoded again from TikTok's copy.	Vale para Salvar o som também e para Salvar o som original ao tocar e segurar. O Opus gera um arquivo menor, mas o som é codificado de novo a partir da cópia do TikTok.
+Applies to Save the sound as well and to Save the original sound on a long press. Opus makes a smaller file. Opus and MP3 are encoded again from TikTok's copy, unless it's an MP3 already.	Vale para Salvar o som também e para Salvar o som original ao tocar e segurar. O Opus gera um arquivo menor. Opus e MP3 são codificados de novo a partir da cópia do TikTok, a menos que ela já seja um MP3.
 As TikTok sent it (M4A or MP3)	Como o TikTok enviou (M4A ou MP3)
 Burn-in guard	Proteção contra burn-in
 Couldn't add the caption. Saving without it.	Legenda não adicionada. Salvando sem ela.
@@ -14,9 +14,11 @@ Import watch history	Importar histórico de visualização
 Keep the language picked in TikTok	Manter o idioma escolhido no TikTok
 Nothing is playing to speed up	Não há nada tocando para acelerar
 One language code, like en or es. Comments and captions TikTok translates come out in this language instead of the app's. Leave it empty to keep TikTok's choice.	Um código de idioma, como en ou es. Os comentários e legendas que o TikTok traduz saem neste idioma em vez do idioma do app. Deixe vazio para manter a escolha do TikTok.
+MP3 (.mp3), plays anywhere	MP3 (.mp3), toca em qualquer lugar
 Opus (.ogg), a smaller file	Opus (.ogg), arquivo menor
 Opus didn't work. Saving TikTok's own file.	Opus falhou. Salvando o arquivo original do TikTok.
-Opus needs Android 10 or later, so sounds save as TikTok sent them.	O Opus precisa do Android 10 ou mais recente, então os sons são salvos como o TikTok enviou.
+MP3 didn't work on this phone. Saving the sound as TikTok sent it instead.	O MP3 não funcionou neste celular. Salvando o som do jeito que o TikTok enviou.
+Opus needs Android 10 or later, so it saves sounds as TikTok sent them. MP3 works on any phone.	O Opus precisa do Android 10 ou mais recente, então os sons são salvos como o TikTok enviou. O MP3 funciona em qualquer celular.
 Playing at %1$sx	Tocando a %1$sx
 Puts a save button in the sheet a story's Share button opens. It saves the story you're watching, and holding a story still pauses it.	Coloca um botão de salvar na folha que o botão Compartilhar de um story abre. Ele salva o story que você está vendo, e segurar um story ainda o pausa.
 Save a story from its share sheet	Salvar um story pela folha de compartilhamento

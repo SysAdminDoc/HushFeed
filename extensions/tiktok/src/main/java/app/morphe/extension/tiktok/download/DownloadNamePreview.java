@@ -81,7 +81,7 @@ public final class DownloadNamePreview {
             String saved = path + "/" + name;
             lines.add(L10n.f("Hushfeed's downloader: %1$s", saved));
             if (AudioDownloads.enabled()) {
-                String sound = AudioDownloads.audioPath(path) + "/" + stem + (SoundFormat.opus() ? ".ogg" : ".m4a");
+                String sound = AudioDownloads.audioPath(path) + "/" + stem + (SoundFormat.opus() ? ".ogg" : SoundFormat.mp3() ? ".mp3" : ".m4a");
                 lines.add(L10n.f("Sound: %1$s", sound));
             }
             if (details) {

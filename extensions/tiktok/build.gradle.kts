@@ -204,6 +204,7 @@ dependencies {
     compileOnly(project(":extensions:shared:library"))
     compileOnly(project(":extensions:tiktok:stub"))
     compileOnly(libs.annotation)
+    implementation(libs.jump3r)
     testImplementation(project(":extensions:shared:library"))
     testImplementation(project(":extensions:tiktok:stub"))
     testImplementation("junit:junit:4.13.2")

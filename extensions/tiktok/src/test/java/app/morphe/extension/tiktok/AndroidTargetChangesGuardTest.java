@@ -148,6 +148,8 @@ public class AndroidTargetChangesGuardTest {
                 "not fetched: printed inside the notice the Licenses row shows");
         REVIEWED_ADDRESSES.put("https://www.gnu.org/licenses/gpl-3.0.html",
                 "not fetched: printed inside the notice the Licenses row shows");
+        REVIEWED_ADDRESSES.put("https://www.gnu.org/licenses/lgpl-2.1.txt",
+                "not fetched: printed inside the notice the Licenses row shows (jump3r's license)");
         REVIEWED_ADDRESSES.put("https://github.com/SysAdminDoc/HushFeed/issues/new",
                 "not fetched: the bug form Report a problem fills in, opened in the reader's "
                         + "browser");

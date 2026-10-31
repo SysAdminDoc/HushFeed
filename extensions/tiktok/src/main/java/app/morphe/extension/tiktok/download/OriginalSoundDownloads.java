@@ -148,6 +148,17 @@ public final class OriginalSoundDownloads {
                         publish = encoded;
                         extension = "ogg";
                     }
+                } else if (SoundFormat.mp3()) {
+                    // Frames TikTok already sent as MP3 go out as they came, with no second encode.
+                    if (Mp3Transcoder.isMp3(fetched)) {
+                        extension = Mp3Transcoder.EXTENSION;
+                    } else {
+                        encoded = MediaCache.createTempFile(app, "original-sound-", ".mp3");
+                        if (Mp3Transcoder.transcodeOrKeep(fetched, encoded)) {
+                            publish = encoded;
+                            extension = Mp3Transcoder.EXTENSION;
+                        }
+                    }
                 }
                 String name = fileName(aweme, extension);
                 String path = AudioDownloads.audioPath(DownloadsPatch.getVideoDownloadPath());

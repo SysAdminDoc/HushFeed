@@ -11,15 +11,21 @@ import app.morphe.extension.shared.Logger;
 import app.morphe.extension.tiktok.settings.Settings;
 
 /**
- * Which file a saved sound becomes: the container TikTok's bytes came in, or Opus in an Ogg
- * file. The choice covers both sound saves, the track written beside a video and the original
- * sound saved from a long press.
+ * Which file a saved sound becomes: the container TikTok's bytes came in, Opus in an Ogg
+ * file, or an MP3. The choice covers both sound saves, the track written beside a video and the
+ * original sound saved from a long press.
  */
 public final class SoundFormat {
     public static final String ORIGINAL = "original";
     public static final String OPUS = "opus";
+    public static final String MP3 = "mp3";
 
     private SoundFormat() {}
+
+    /** MP3 is chosen. Unlike Opus it needs no encoder from the phone, so it is possible everywhere. */
+    static boolean mp3() {
+        return MP3.equals(Settings.DOWNLOAD_SOUND_FORMAT.get());
+    }
 
     /** Opus is chosen and this phone can make it. */
     static boolean opus() {

@@ -39,6 +39,8 @@ Every Hushfeed release, newest first.
 * **TikTok:** `Sign in without a passkey` says what to do when TikTok's 2-step check still asks only for a passkey. That page lists only the ways your account has set up, so add email or text as a way to verify on tiktok.com or another phone first, then sign in (#102).
 * **TikTok:** Unpausing a PineDrama episode carries on from where you paused it. It used to play the episode over from the series' start point, whether `Resume videos after scrolling` was on or off (#156).
 * **TikTok:** `Remove creation tools` leaves APKMirror's split bundle alone, which is what Morphe Manager patches for most people. That bundle doesn't carry the editor and effect files the patch takes out, so it only emptied the face model, and face effects and Beauty couldn't find a face (#285).
+* **TikTok:** When TikTok turns down a like, Hushfeed tells you. The heart still fills when you tap it, but a like the server refused is gone after a restart, so the first one each session now shows TikTok's reason, or its error code when it gives none. Comment likes count too. With logging on, the diagnostics report says whether each like went through (#269).
+* **TikTok:** The Chinese message for a refused follow says 关注 now. It used to read "follow" as "the following".
 
 ## 0.80.0 (2026-10-27)
 

@@ -15,7 +15,7 @@ final class L10nTranslationsZh_Hans {
     }
 
     static Map<String, String> build() {
-        Map<String, String> table = new HashMap<>(4728);
+        Map<String, String> table = new HashMap<>(4732);
         fill0(table);
         fill1(table);
         fill2(table);
@@ -4406,9 +4406,13 @@ final class L10nTranslationsZh_Hans {
         table.put("TikTok read it, but the override couldn't be applied. Reset it and save it again.",
                 "TikTok 读取它，但无法应用覆盖。重置并再次保存.");
         table.put("TikTok refused the follow with code %1$s",
-                "TikTok 拒绝了以下代码 %1$s");
+                "TikTok 拒绝了关注，代码 %1$s");
+        table.put("TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.",
+                "TikTok 拒绝了关注，代码 %1$s。隐藏的验证码可能是原因.");
         table.put("TikTok refused the follow: %1$s",
-                "TikTok 拒绝以下内容：%1$s");
+                "TikTok 拒绝了关注：%1$s");
+        table.put("TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.",
+                "TikTok 拒绝了关注：%1$s 隐藏的验证码可能是原因.");
         table.put("TikTok refused the like with code %1$s",
                 "TikTok 拒绝了点赞，代码 %1$s");
         table.put("TikTok refused the like: %1$s",
@@ -4481,13 +4485,13 @@ final class L10nTranslationsZh_Hans {
                 "今天：%1$d 分钟");
         table.put("Today: %1$d minutes",
                 "今天：%1$d 分钟");
+    }
+
+    private static void fill36(Map<String, String> table) {
         table.put("Today: %1$d video",
                 "今天：%1$d 视频");
         table.put("Today: %1$d videos",
                 "今天：%1$d 视频");
-    }
-
-    private static void fill36(Map<String, String> table) {
         table.put("Too late to put the saved videos back",
                 "为时已晚，无法恢复已保存的视频");
         table.put("Too many saves running. Try again soon.",
@@ -4604,13 +4608,13 @@ final class L10nTranslationsZh_Hans {
                 "撤消未完成。某些设置可能仍会更改。再次尝试撤消.");
         table.put("Undo forgetting saved videos",
                 "撤消忘记保存的视频");
+    }
+
+    private static void fill37(Map<String, String> table) {
         table.put("Undo last Lab change",
                 "撤消上次实验室更改");
         table.put("Undo last restore or reset",
                 "撤消上次恢复或重置");
-    }
-
-    private static void fill37(Map<String, String> table) {
         table.put("Undoing the last change",
                 "撤消最后一次更改");
         table.put("Unknown resolution",
@@ -4727,13 +4731,13 @@ final class L10nTranslationsZh_Hans {
                 "视频以 %1$s 字幕保存在 %2$s 中");
         table.put("Videos can't be saved to the folder in that file, so your video folder was kept",
                 "视频无法保存到该文件中的文件夹中，因此你的视频文件夹被保留");
+    }
+
+    private static void fill38(Map<String, String> table) {
         table.put("Videos in search results show their cover and play when you open them. The feed and the videos you open play as usual.",
                 "搜索结果中的视频会显示其封面并在你打开时播放。你打开的信息流和视频照常播放.");
         table.put("Views range",
                 "观看范围");
-    }
-
-    private static void fill38(Map<String, String> table) {
         table.put("Visual search",
                 "视觉搜索");
         table.put("Volume",
@@ -4850,13 +4854,13 @@ final class L10nTranslationsZh_Hans {
                 "你的 TikTok 账号已更改。再次为此账号选择文件.");
         table.put("Your account changed. Close this list and open it again.",
                 "你的账号已更改。关闭此列表并再次打开它.");
+    }
+
+    private static void fill39(Map<String, String> table) {
         table.put("Your account changed. Open the count editor again.",
                 "你的账号已更改。再次打开计数编辑器.");
         table.put("Your downloader app isn't installed. Check Downloads.",
                 "未安装下载器应用，请检查“下载”.");
-    }
-
-    private static void fill39(Map<String, String> table) {
         table.put("Your feed",
                 "你的信息流");
         table.put("Your feed. Your rules.",

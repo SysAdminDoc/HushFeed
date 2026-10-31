@@ -2121,7 +2121,9 @@ TikTok opens a Share to sheet a few seconds after it saves a video. This stops i
 TikTok read it,TikTok read it
 "TikTok read it, but the override couldn't be applied. Reset it and save it again.","TikTok read it, but the override couldn't be applied. Reset it and save it again."
 TikTok refused the follow with code %1$s,TikTok refused the follow with code %1$s
+TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.,TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.
 TikTok refused the follow: %1$s,TikTok refused the follow: %1$s
+TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.,TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.
 TikTok refused the like with code %1$s,TikTok refused the like with code %1$s
 TikTok refused the like: %1$s,TikTok refused the like: %1$s
 TikTok refused this request (%1$s).,TikTok refused this request (%1$s).

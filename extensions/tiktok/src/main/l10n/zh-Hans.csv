@@ -2004,10 +2004,12 @@ TikTok can't lock without a phone screen lock,手机没有锁屏，TikTok 无法
 Only a watermarked copy existed. Saved to %1$s,只有带水印的副本，已保存到 %1$s
 TikTok read it,TikTok 阅读它
 "TikTok read it, but the override couldn't be applied. Reset it and save it again.",TikTok 读取它，但无法应用覆盖。重置并再次保存.
-TikTok refused the follow with code %1$s,TikTok 拒绝了以下代码 %1$s
+TikTok refused the follow with code %1$s,TikTok 拒绝了关注，代码 %1$s
 "Follow refused, code %1$s. Maybe a hidden CAPTCHA.",关注被拒绝，代码 %1$s。可能是隐藏的 CAPTCHA.
-TikTok refused the follow: %1$s,TikTok 拒绝以下内容：%1$s
+TikTok refused the follow: %1$s,TikTok 拒绝了关注：%1$s
 Follow refused (%1$s). Maybe a hidden CAPTCHA.,关注被拒绝（%1$s）。可能是隐藏的 CAPTCHA.
+TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.,TikTok 拒绝了关注，代码 %1$s。隐藏的验证码可能是原因.
+TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.,TikTok 拒绝了关注：%1$s 隐藏的验证码可能是原因.
 TikTok refused this request (%1$s).,TikTok 拒绝了此请求 (%1$s).
 "TikTok removes videos saved for offline viewing after a set time, sometimes only two days, watched or not. With this on they stay until you delete them in TikTok's Offline videos settings. TikTok can still clear watched ones when your phone is low on space.",TikTok 在设定的时间（有时仅两天）后删除保存用于离线观看的视频，无论观看与否。启用此功能后，它们会一直保留，直到你在 TikTok 的离线视频设置中删除它们为止。当你的手机空间不足时，TikTok 仍然可以清除观看的内容.
 TikTok reports additional filtered accounts. This list is incomplete.,TikTok 报告其他已过滤的账号。此列表不完整.

@@ -6,10 +6,17 @@ package app.morphe.extension.tiktok.interaction;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.Paint;
+import android.graphics.PixelFormat;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -51,6 +58,7 @@ public final class CopyIds {
     static final String USERNAME_COPIED = "Username copied";
     static final String USER_ID_COPIED = "User ID copied";
     static final String VIDEO_ID_COPIED = "Video ID copied";
+    static final String NAME_COPIED = "Name copied";
     static final String COPY_USERNAME = "Copy username";
     static final String COPY_USER_ID = "Copy user ID";
     static final String COPY_VIDEO_ID = "Copy video ID";
@@ -129,6 +137,186 @@ public final class CopyIds {
         } catch (Throwable ex) {
             Logger.printException(() -> "Could not copy the bio", ex);
             return false;
+        }
+    }
+
+    // ---- LIVE profile card -------------------------------------------------------------
+
+    /**
+     * The viewer or host the LIVE profile card is showing, set as the card binds its user. The
+     * card's views are handed over right after, so the texts they get can be told apart.
+     */
+    private static volatile WeakReference<Object> liveUser = new WeakReference<>(null);
+    /** What each LIVE card view copies on a long press. Main thread only. */
+    private static final Map<View, String[]> LIVE_COPIES = new WeakHashMap<>();
+    private static final View.OnLongClickListener LIVE_LISTENER = CopyIds::copyLive;
+
+    /** Bidi marks the card wraps its texts in, which a copied bio doesn't want. */
+    private static String clean(CharSequence text) {
+        StringBuilder out = new StringBuilder(text.length());
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            boolean mark = c == 0x200e || c == 0x200f || (c >= 0x202a && c <= 0x202e) || (c >= 0x2066 && c <= 0x2069);
+            if (!mark) out.append(c);
+        }
+        return out.toString().trim();
+    }
+
+    /** From the card's user bind, with the user, before the card puts its name and username on screen. */
+    public static void onLiveUser(@Nullable Object user) {
+        liveUser = new WeakReference<>(user);
+    }
+
+    /** From the card's bio, with the view and the text it is about to show. */
+    public static void onLiveBio(@Nullable View view, @Nullable CharSequence text) {
+        try {
+            if (!(view instanceof TextView) || !enabled()) return;
+            String bio = text == null ? null : clean(text);
+            if (bio == null || bio.isEmpty()) {
+                LIVE_COPIES.remove(view);
+                return;
+            }
+            LIVE_COPIES.put(view, new String[]{"TikTok bio", bio, BIO_COPIED});
+            view.setOnLongClickListener(LIVE_LISTENER);
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Could not make the LIVE profile bio copyable", ex);
+        }
+    }
+
+    /**
+     * From the card's user bind, once for the display name and once for the username, with the view
+     * and the text it is about to show. The username is the text that equals the user's own; its
+     * long press copies the user ID and a copy mark beside it copies the username with one tap.
+     * The name's long press copies the name. TikTok's own taps stay as they were.
+     */
+    public static void onLiveText(@Nullable View view, @Nullable CharSequence text) {
+        try {
+            if (!(view instanceof TextView) || !enabled() || text == null) return;
+            Object user = liveUser.get();
+            String shown = clean(text);
+            if (user == null || shown.isEmpty()) return;
+            String handle = Reflect.string(user, "getUsername", "username");
+            String name = Reflect.string(user, "getNickName", "nickName");
+            if (shown.equals(handle == null ? null : handle.trim())) {
+                String uid = liveUserId(user);
+                if (uid != null) {
+                    LIVE_COPIES.put(view, new String[]{"TikTok ID", uid, USER_ID_COPIED});
+                    view.setOnLongClickListener(LIVE_LISTENER);
+                }
+                addCopyMark((TextView) view, shown);
+            } else if (shown.equals(name == null ? null : name.trim())) {
+                LIVE_COPIES.put(view, new String[]{"TikTok name", shown, NAME_COPIED});
+                view.setOnLongClickListener(LIVE_LISTENER);
+            }
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Could not make the LIVE profile card copyable", ex);
+        }
+    }
+
+    @Nullable
+    private static String liveUserId(Object user) {
+        String id = Reflect.string(user, "getIdStr", "idStr");
+        if (!isBlank(id) && !"0".equals(id.trim())) return id.trim();
+        Object number = Reflect.readField(user, "id");
+        return number instanceof Long && (Long) number > 0 ? String.valueOf(number) : null;
+    }
+
+    static boolean copyLive(View view) {
+        try {
+            if (!enabled()) return false;
+            String[] copy = LIVE_COPIES.get(view);
+            if (copy == null) return false;
+            copy(copy[0], copy[1], copy[2]);
+            return true;
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Could not copy from the LIVE profile card", ex);
+            return false;
+        }
+    }
+
+    /**
+     * A copy mark after the username that copies it on a tap. A tap anywhere else on the line goes
+     * on to TikTok's own handling. A line that already ends in a drawable of its own keeps it, and
+     * keeps the long press alone.
+     */
+    private static void addCopyMark(TextView line, String handle) {
+        Drawable[] drawables = line.getCompoundDrawablesRelative();
+        if (drawables[2] != null && !(drawables[2] instanceof CopyMark)) return;
+        CopyMark mark = drawables[2] instanceof CopyMark
+                ? (CopyMark) drawables[2]
+                : new CopyMark(dp(line.getContext(), 14));
+        mark.setColor(line.getCurrentTextColor());
+        line.setCompoundDrawablesRelativeWithIntrinsicBounds(drawables[0], drawables[1], mark, drawables[3]);
+        line.setCompoundDrawablePadding(dp(line.getContext(), 6));
+        line.setContentDescription(L10n.t(line.getContext(), COPY_USERNAME));
+        line.setOnTouchListener((touched, event) -> {
+            if (!enabled() || !(touched instanceof TextView) || !markHit((TextView) touched, event)) return false;
+            if (event.getActionMasked() == MotionEvent.ACTION_UP) {
+                copy("TikTok ID", handle, USERNAME_COPIED);
+            }
+            return true;
+        });
+    }
+
+    /** True when the touch is on the copy mark, at the end of the line. */
+    static boolean markHit(TextView line, MotionEvent event) {
+        int action = event.getActionMasked();
+        if (action != MotionEvent.ACTION_DOWN && action != MotionEvent.ACTION_UP) return false;
+        Drawable end = line.getCompoundDrawablesRelative()[2];
+        if (!(end instanceof CopyMark)) return false;
+        int reach = end.getIntrinsicWidth() + line.getCompoundDrawablePadding() + dp(line.getContext(), 10);
+        boolean rtl = line.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
+        float x = event.getX();
+        return rtl ? x <= line.getPaddingLeft() + reach : x >= line.getWidth() - line.getPaddingRight() - reach;
+    }
+
+    /** Two overlapping outlined squares, drawn in the text's own color. */
+    static final class CopyMark extends Drawable {
+        private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        private final int size;
+
+        CopyMark(int size) {
+            this.size = size;
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(Math.max(1f, size / 10f));
+        }
+
+        void setColor(int color) {
+            paint.setColor(Color.argb(170, Color.red(color), Color.green(color), Color.blue(color)));
+            invalidateSelf();
+        }
+
+        @Override public void draw(Canvas canvas) {
+            Rect bounds = getBounds();
+            float side = bounds.width() * 0.62f;
+            float inset = paint.getStrokeWidth();
+            float left = bounds.left + inset;
+            float top = bounds.top + inset;
+            float back = left + (bounds.width() - side) - 2 * inset;
+            float down = top + (bounds.height() - side) - 2 * inset;
+            float radius = side / 6f;
+            canvas.drawRoundRect(back, top, back + side, top + side, radius, radius, paint);
+            canvas.drawRoundRect(left, down, left + side, down + side, radius, radius, paint);
+        }
+
+        @Override public int getIntrinsicWidth() {
+            return size;
+        }
+
+        @Override public int getIntrinsicHeight() {
+            return size;
+        }
+
+        @Override public void setAlpha(int alpha) {
+            paint.setAlpha(alpha);
+        }
+
+        @Override public void setColorFilter(ColorFilter filter) {
+            paint.setColorFilter(filter);
+        }
+
+        @Override public int getOpacity() {
+            return PixelFormat.TRANSLUCENT;
         }
     }
 

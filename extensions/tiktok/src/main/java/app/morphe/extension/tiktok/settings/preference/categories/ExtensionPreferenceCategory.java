@@ -243,7 +243,9 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                     context,
                     "Copy bio and IDs",
                     "Long-press a bio to copy it. A profile's share sheet gets buttons that copy its "
-                            + "username and user ID, and a video's share sheet one that copies the video ID.",
+                            + "username and user ID, and a video's share sheet one that copies the video ID."
+                            + " On a LIVE profile card, long-press the name, username or bio to copy it, "
+                            + "or tap the copy mark by the username.",
                     Settings.COPY_IDS
             ));
             addPreference(new TogglePreference(

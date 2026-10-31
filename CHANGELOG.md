@@ -41,6 +41,7 @@ Every Hushfeed release, newest first.
 * **TikTok:** `Remove creation tools` leaves APKMirror's split bundle alone, which is what Morphe Manager patches for most people. That bundle doesn't carry the editor and effect files the patch takes out, so it only emptied the face model, and face effects and Beauty couldn't find a face (#285).
 * **TikTok:** When TikTok turns down a like, Hushfeed tells you. The heart still fills when you tap it, but a like the server refused is gone after a restart, so the first one each session now shows TikTok's reason, or its error code when it gives none. Comment likes count too. With logging on, the diagnostics report says whether each like went through (#269).
 * **TikTok:** The Chinese message for a refused follow says 关注 now. It used to read "follow" as "the following".
+* **TikTok:** The floating tab pill blurs a LIVE preview in For You behind it too. Ordinary videos were already blurred there, but a LIVE's stream showed sharp through the glass (#259).
 * **TikTok:** PineDrama gets `Feed filter`, so `Remove feed ads` now takes the ads out of its For You feed and its drama tab. PineDrama only had the comment, floating and splash ad patches before. The drama tab loads its feed on its own, so it gets its own ad check too (#294).
 
 ## 0.80.0 (2026-10-27)

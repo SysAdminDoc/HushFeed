@@ -831,6 +831,8 @@ public class SettingsStatus {
     public static void enableSavedStickers() { savedStickersEnabled = true; }
     public static boolean stickerCreatorEnabled = false;
     public static void enableStickerCreator() { stickerCreatorEnabled = true; }
+    public static boolean stickerRecentsEnabled = false;
+    public static void enableStickerRecents() { stickerRecentsEnabled = true; }
     public static boolean followDiagnosticsEnabled = false;
     public static void enableFollowDiagnostics() { followDiagnosticsEnabled = true; }
     public static boolean repostDiagnosticsEnabled = false;

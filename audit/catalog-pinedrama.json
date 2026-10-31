@@ -6026,6 +6026,36 @@
   "notes": "keepStatus(int) and keepMuted(boolean) take arguments, so only keepInSearch can be called; all three share keep() so one proves the switch. A real pulled sound (a copyright-muted video) is not something the audit can find on demand."
  },
  {
+  "name": "Keep recent stickers",
+  "category": "Comments",
+  "default": true,
+  "kind": "runtime",
+  "source": [
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/misc/comment/StickerRecentsPatch.kt",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/comment/StickerRecents.java"
+  ],
+  "settings": [],
+  "surface": "comments",
+  "checks": [
+   {
+    "id": "injected",
+    "what": "The patched dex carries the recent sticker store and the patch registered itself. (The dex-string step shows the extension class is shipped; the registered-switch step is what shows the patch ran and hooked the add and the reset.)",
+    "steps": [
+     {
+      "apk": "dex-string",
+      "expect": "Lapp/morphe/extension/tiktok/comment/StickerRecents;"
+     },
+     {
+      "probe": "report",
+      "expect": "registered_switches:[^\\n]*\\bstickerRecents\\b"
+     }
+    ],
+    "auto": true
+   }
+  ],
+  "notes": "Issue #156. PineDrama keeps the comment sticker panel's Recently used row in memory only and empties it the first time its sticker store is used in each process and on every account result, so the row is blank after every restart. The patch hands each new list to StickerRecents.save as a sticker goes on it (one list per account in hushfeed_sticker_recents, tied to the app version) and puts this account's list back right after the reset. The natural check is on a signed-in account: send a sticker in a comment or a DM, force-stop and reopen PineDrama, and the sticker is still in Recently used. A sticker whose image links have all expired is left out."
+ },
+ {
   "name": "Keep the Favorites tab",
   "category": "Settings",
   "default": true,

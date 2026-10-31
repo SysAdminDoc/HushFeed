@@ -37,6 +37,7 @@ public class LinkTaskGuardTest {
 
     @After public void tearDown() {
         PausedProcess.set(false);
+        LinkReturn.resetForTests();
     }
 
     private static Activity activityWith(Intent intent) {
@@ -68,6 +69,7 @@ public class LinkTaskGuardTest {
         assertEquals(Intent.ACTION_MAIN, activity.getIntent().getAction());
         assertNull(activity.getIntent().getData());
         assertEquals(activity.getPackageName(), activity.getIntent().getPackage());
+        assertTrue(LinkReturn.armed());
     }
 
     /** Remembers whether it was already finishing when it started the relaunch. */
@@ -96,6 +98,7 @@ public class LinkTaskGuardTest {
         assertFalse(LinkTaskGuard.redirectIfForeign(activity, false, Boolean.TRUE));
         assertNull(Shadows.shadowOf(activity).getNextStartedActivity());
         assertFalse(activity.isFinishing());
+        assertFalse(LinkReturn.armed());
     }
 
     @Test public void taskRootIsLeftAlone() {

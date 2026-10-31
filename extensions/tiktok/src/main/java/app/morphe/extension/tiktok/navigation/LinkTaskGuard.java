@@ -26,7 +26,8 @@ import app.morphe.extension.shared.settings.Setting;
  * nothing to stop it joining the sender's task. The hook runs at the start of
  * {@code MainActivity.onCreate} (the alias target), turns the instance already made into a plain
  * launch and finishes it, so TikTok doesn't also open the link in it, then starts the same intent
- * again with the flag, which finds TikTok's own task or makes one.
+ * again with the flag, which finds TikTok's own task or makes one. {@link LinkReturn} then sends
+ * Back from the link's page to the app it came from, the way it went before the guard.
  *
  * <p>{@code onNewIntent} needs no guard. A foreign task can only get a new intent if a
  * MainActivity is already on top of it, and this keeps one from ever being created there.
@@ -76,6 +77,7 @@ public final class LinkTaskGuard {
             activity.finish();
             activity.overridePendingTransition(0, 0);
             activity.startActivity(relaunch);
+            LinkReturn.arm(activity);
             Logger.printInfo(() -> "A TikTok link joined another app's task; started it in TikTok's own");
             return true;
         } catch (Throwable error) {

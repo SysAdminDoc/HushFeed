@@ -87,23 +87,51 @@ public final class SeeThroughStatusBar {
      * and scale. With no surface inside it, the player is the picture, and it grows inside the space
      * around it instead. Fit the video to the screen wins: a picture it shrank to show whole isn't
      * grown back.
+     *
+     * <p>TikTok keeps the video's cover still in a view of its own beside the player ({@code
+     * coverId}): a sibling of the player, or a sibling's child, the size of the cell with the still
+     * fitted inside. It shows the still for a frame as a video leaves and while the next one loads,
+     * and the still was never grown, so with the picture filled the bands came back for that frame
+     * on every swipe (#232). The cover takes the picture's scale, and goes back with it.
      */
-    static void fill(View player, boolean wanted) {
+    static void fill(View player, boolean wanted, int coverId) {
         if (!(player instanceof ViewGroup)) return;
         if (wanted && fitWins()) wanted = false;
         ViewGroup group = (ViewGroup) player;
         boolean surfaces = false;
+        float scale = 1f;
         for (int i = 0, count = group.getChildCount(); i < count; i++) {
             View surface = group.getChildAt(i);
             if (!(surface instanceof SurfaceView) && !(surface instanceof TextureView)) continue;
             surfaces = true;
-            grow(surface, wanted ? fillScale(group.getHeight(), surface) : 1f);
+            scale = grow(surface, wanted ? fillScale(group.getHeight(), surface) : 1f);
         }
-        // A player this grew keeps getting a pass after a surface shows up in it, so it goes back.
-        if (surfaces && !FILLED.containsKey(player)) return;
         ViewParent space = player.getParent();
-        boolean grows = wanted && !surfaces && space instanceof View;
-        grow(player, grows ? fillScale(((View) space).getHeight(), player, true) : 1f);
+        // A player this grew keeps getting a pass after a surface shows up in it, so it goes back.
+        if (!surfaces || FILLED.containsKey(player)) {
+            boolean grows = wanted && !surfaces && space instanceof View;
+            float own = grow(player, grows ? fillScale(((View) space).getHeight(), player, true) : 1f);
+            if (!surfaces) scale = own;
+        }
+        View cover = cover(space, coverId);
+        if (cover != null) grow(cover, scale);
+    }
+
+    /** The cell's cover still beside {@code player}: a sibling, or a sibling's child, with {@code coverId}. */
+    private static View cover(ViewParent space, int coverId) {
+        if (coverId == 0 || !(space instanceof ViewGroup)) return null;
+        ViewGroup around = (ViewGroup) space;
+        for (int i = 0, count = around.getChildCount(); i < count; i++) {
+            View beside = around.getChildAt(i);
+            if (beside.getId() == coverId) return beside;
+            if (!(beside instanceof ViewGroup)) continue;
+            ViewGroup wrapper = (ViewGroup) beside;
+            for (int j = 0, inner = wrapper.getChildCount(); j < inner; j++) {
+                View inside = wrapper.getChildAt(j);
+                if (inside.getId() == coverId) return inside;
+            }
+        }
+        return null;
     }
 
     /** Whether Fit the video to the screen is on, so a picture it shrank stays whole. */
@@ -111,19 +139,24 @@ public final class SeeThroughStatusBar {
         return SettingsStatus.videoFitEnabled && Settings.FIT_VIDEO_TO_SCREEN.get();
     }
 
-    /** Writes {@code scale} on {@code view} unless TikTok has written a scale of its own there. */
-    private static void grow(View view, float scale) {
+    /**
+     * Writes {@code scale} on {@code view} unless TikTok has written a scale of its own there, and
+     * answers the scale this now holds on it, 1 when none.
+     */
+    private static float grow(View view, float scale) {
         Float ours = FILLED.get(view);
         float current = view.getScaleY();
         if (current != (ours == null ? 1f : ours) || view.getScaleX() != current) {
             FILLED.remove(view);
-            return;
+            return 1f;
         }
-        if (scale == current) return;
-        view.setScaleX(scale);
-        view.setScaleY(scale);
+        if (scale != current) {
+            view.setScaleX(scale);
+            view.setScaleY(scale);
+        }
         if (scale == 1f) FILLED.remove(view);
         else FILLED.put(view, scale);
+        return scale;
     }
 
     /** {@link #fillScale(int, View, boolean)} for a surface TikTok centered by its layout. */

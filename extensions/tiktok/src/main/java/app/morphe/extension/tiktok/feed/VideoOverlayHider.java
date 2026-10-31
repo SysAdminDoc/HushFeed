@@ -259,6 +259,13 @@ public final class VideoOverlayHider {
      */
     private static final String CELL_ROOT_ID = "view_rootview";
     /**
+     * The video's cover still, beside the player in every feed cell: a sibling of
+     * {@code player_view} in the standalone cell layouts, one wrapper down in the feed's own.
+     * TikTok flashes it between videos, so it is grown with the picture (#232); see
+     * {@link SeeThroughStatusBar#fill}.
+     */
+    private static final String COVER_STILL_ID = "cover";
+    /**
      * The column the detail pager shares with the comment strip under it. The strip's id isn't
      * its own: on 47.1.4 it also names a Space in twenty other layouts, any of which
      * may be inflated in the detail window, so only the column's own child counts as the strip.
@@ -820,8 +827,11 @@ public final class VideoOverlayHider {
                     liftLiveCaptions(activity, root, seeThroughBar, cellId);
                     guardBottomSpacer(hidden, found, TRAVERSAL.selected, seeThroughBar, cellId);
                     gateClearControls(hidden, found, TRAVERSAL.selected, carry);
+                    // Looked up while the picture is grown or still carries a scale to put back.
+                    int coverId = wanted[PLAYER_VIEW_TARGET] || SeeThroughStatusBar.anyFilled()
+                            ? identifier(activity, activity.getPackageName(), COVER_STILL_ID) : 0;
                     applySelectedTargets(ids, hidden, found, TRAVERSAL.selected,
-                            touchScale != 1f, detailPager);
+                            touchScale != 1f, detailPager, coverId);
                     // After every target, so the like count is already gone when its row is weighed.
                     collapseRailWrappers(activity, found, TRAVERSAL.selected, hidden);
                     // TikTok shows the strip again as each new video settles, and once it has laid
@@ -2248,7 +2258,7 @@ public final class VideoOverlayHider {
 
     /** Applies each logical switch only to its selected version-specific candidate. */
     private static void applySelectedTargets(int[] ids, boolean[] hidden,
-            List<List<View>> found, int[] selected, boolean scaling, boolean detailPager) {
+            List<List<View>> found, int[] selected, boolean scaling, boolean detailPager, int coverId) {
         int candidateAt = 0;
         for (int target = 0; target < TRAVERSAL_TARGET_IDS.length; target++) {
             String[] names = TRAVERSAL_TARGET_IDS[target];
@@ -2264,7 +2274,7 @@ public final class VideoOverlayHider {
                     // controls. A native alpha write or comments rebind can bring the row back,
                     // so the pre-draw pass keeps the transparent row out of sight too.
                     if (target == PLAYER_VIEW_TARGET) {
-                        SeeThroughStatusBar.fill(view, wanted);
+                        SeeThroughStatusBar.fill(view, wanted, coverId);
                     } else if (target == CLEAR_SEEK_BAR_TARGET) {
                         // TikTok lays the progress line on the bar's top edge, so a floating pill
                         // standing above the bar would cover it: it goes up by the pill's rise

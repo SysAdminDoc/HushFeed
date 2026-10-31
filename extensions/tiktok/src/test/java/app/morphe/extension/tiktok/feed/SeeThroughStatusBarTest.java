@@ -41,6 +41,7 @@ public class SeeThroughStatusBarTest {
     private static final int SPACER_ID = 0x7f0a0d31;
     private static final int BAND_ID = 0x7f0a0d32;
     private static final int PLAYER_ID = 0x7f0a5f5e;
+    private static final int COVER_ID = 0x7f0a506c;
     private static final int OWN_BAR_COLOR = 0xFF121212;
 
     @Before
@@ -50,6 +51,7 @@ public class SeeThroughStatusBarTest {
         VideoOverlayHider.resolveForTests("47.5.3:dug", SPACER_ID);
         VideoOverlayHider.resolveForTests("47.5.3:wks", BAND_ID);
         VideoOverlayHider.resolveForTests("player_view", PLAYER_ID);
+        VideoOverlayHider.resolveForTests("cover", COVER_ID);
     }
 
     @After
@@ -65,6 +67,7 @@ public class SeeThroughStatusBarTest {
         VideoOverlayHider.resolveForTests("47.5.3:dug", 0);
         VideoOverlayHider.resolveForTests("47.5.3:wks", 0);
         VideoOverlayHider.resolveForTests("player_view", 0);
+        VideoOverlayHider.resolveForTests("cover", 0);
         Utils.setContext(RuntimeEnvironment.getApplication());
     }
 
@@ -350,6 +353,85 @@ public class SeeThroughStatusBarTest {
             assertEquals("off didn't put the player back", 1f, nextPlayer.getScaleX(), 0f);
             assertEquals(1f, nextPlayer.getScaleY(), 0f);
             assertEquals(1f, surface.getScaleY(), 0f);
+            assertFalse(SeeThroughStatusBar.anyFilled());
+        }
+    }
+
+    /**
+     * #232: TikTok flashes the video's cover still between videos, drawn by a view beside the
+     * player (one wrapper down in the feed cell, a plain sibling in the standalone cell), and the
+     * still was never grown, so every swipe showed the bands for a frame. The cover takes the
+     * picture's scale in both shapes, a scale TikTok wrote on it is left alone, and off puts it back.
+     */
+    @Test
+    public void theCoverStillGrowsWithThePicture() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            FrameLayout root = new FrameLayout(activity);
+            // The feed cell: the player and the cover's wrapper side by side in the visible area.
+            FrameLayout feedCell = new FrameLayout(activity);
+            feedCell.setId(CELL_ID);
+            FrameLayout visibleArea = new FrameLayout(activity);
+            FrameLayout player = new FrameLayout(activity);
+            player.setId(PLAYER_ID);
+            SurfaceView surface = new SurfaceView(activity);
+            player.addView(surface);
+            visibleArea.addView(player, new FrameLayout.LayoutParams(1080, 2181));
+            FrameLayout wrapper = new FrameLayout(activity);
+            View cover = new View(activity);
+            cover.setId(COVER_ID);
+            cover.setVisibility(View.GONE);
+            wrapper.addView(cover, new FrameLayout.LayoutParams(1080, 2181));
+            visibleArea.addView(wrapper, new FrameLayout.LayoutParams(1080, 2181));
+            feedCell.addView(visibleArea, new FrameLayout.LayoutParams(1080, 2181));
+            root.addView(feedCell);
+            // A SurfaceControl cell: the player is the picture, and the cover its plain sibling.
+            FrameLayout nextCell = new FrameLayout(activity);
+            nextCell.setId(CELL_ID);
+            FrameLayout space = new FrameLayout(activity);
+            FrameLayout nextPlayer = new FrameLayout(activity);
+            nextPlayer.setId(PLAYER_ID);
+            nextPlayer.addView(new View(activity), new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+            space.addView(nextPlayer, new FrameLayout.LayoutParams(1107, 1968));
+            View nextCover = new View(activity);
+            nextCover.setId(COVER_ID);
+            space.addView(nextCover, new FrameLayout.LayoutParams(1080, 2181));
+            nextCell.addView(space, new FrameLayout.LayoutParams(1080, 2181));
+            root.addView(nextCell);
+            activity.setContentView(root);
+            showVideo(player, surface, 1107, 1968);
+            layOut(space, 1080, 2181);
+            nextPlayer.setTranslationY(106f);
+
+            Settings.SEE_THROUGH_STATUS_BAR.save(true);
+            VideoOverlayHider.applyTo(activity);
+            float scale = surface.getScaleY();
+            assertTrue("the picture didn't fill", scale > 1f);
+            assertEquals("the feed cell's cover kept TikTok's size", scale, cover.getScaleY(), 0f);
+            assertEquals(scale, cover.getScaleX(), 0f);
+            float nextScale = nextPlayer.getScaleY();
+            assertTrue("the next picture didn't fill", nextScale > 1f);
+            assertEquals("the sibling cover kept TikTok's size", nextScale, nextCover.getScaleY(), 0f);
+
+            // A scale TikTok wrote on the cover stays, and comes back under this one's care only
+            // once TikTok puts it back.
+            nextCover.setScaleX(1.5f);
+            nextCover.setScaleY(1.5f);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("TikTok's own scale on the cover was overwritten", 1.5f, nextCover.getScaleY(), 0f);
+            nextCover.setScaleX(1f);
+            nextCover.setScaleY(1f);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(nextScale, nextCover.getScaleY(), 0f);
+
+            Settings.SEE_THROUGH_STATUS_BAR.save(false);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("off didn't put the feed cell's cover back", 1f, cover.getScaleY(), 0f);
+            assertEquals("off didn't put the sibling cover back", 1f, nextCover.getScaleY(), 0f);
+            assertEquals(1f, surface.getScaleY(), 0f);
+            assertEquals(1f, nextPlayer.getScaleY(), 0f);
             assertFalse(SeeThroughStatusBar.anyFilled());
         }
     }

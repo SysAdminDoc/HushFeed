@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,10 +44,10 @@ import java.util.WeakHashMap;
 /**
  * The Record button in a LIVE room (#37). The room's page tells this class it is resuming; while
  * the switch is on a small chip shows on that page. Tapping it starts a recording from that
- * moment, tapping it again stops, and leaving the room (another room, the app in the background,
- * the page gone) stops it too. A once-a-second check on the main thread is what notices leaving,
- * so a recording never runs on for more than a second without its room on screen. A screen
- * recording hides the chip so it isn't filmed, and its notification's Stop ends it (#265).
+ * moment, tapping it again stops, and leaving the room stops it too. Stream recordings also
+ * continue while the same LIVE is playing in Android's native picture-in-picture window.
+ * A once-a-second check on the main thread notices a room change or the window going away.
+ * Screen recordings hide the chip so it isn't filmed, and the notification's Stop ends them (#265).
  */
 @SuppressWarnings("unused")
 public final class LiveRecordChip {
@@ -54,6 +55,8 @@ public final class LiveRecordChip {
     }
 
     private static final long TICK_MS = 1000;
+    /** onPause can run before Android has entered its native PiP window. */
+    private static final long PIP_TRANSITION_MS = 1500;
 
     private static final Handler HANDLER = new Handler(Looper.getMainLooper());
 
@@ -74,6 +77,8 @@ public final class LiveRecordChip {
     private static boolean ticking;
     private static boolean callbacksRegistered;
     private static boolean clearScreen;
+    private static long pipTransitionUntil;
+    private static int pipTransitionGeneration;
 
     /** True while the switch is on and Hushfeed isn't paused. */
     public static boolean enabled() {
@@ -122,13 +127,27 @@ public final class LiveRecordChip {
         application.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
             @Override public void onActivityPaused(Activity paused) {
                 if (paused == host.get()) {
-                    leave(LiveRecorder.End.LEFT_ROOM);
                     removeChip();
+                    if (!streamRecording()) {
+                        leave(LiveRecorder.End.LEFT_ROOM);
+                    } else {
+                        // Wait briefly for Android to report native PiP before treating this as
+                        // a regular background exit. Never extend a screen capture into Home.
+                        pipTransitionUntil = SystemClock.uptimeMillis() + PIP_TRANSITION_MS;
+                        int generation = ++pipTransitionGeneration;
+                        HANDLER.postDelayed(() -> {
+                            if (generation != pipTransitionGeneration || paused != host.get()) return;
+                            pipTransitionUntil = 0;
+                            if (!nativePip(paused)) leave(LiveRecorder.End.LEFT_ROOM);
+                        }, PIP_TRANSITION_MS);
+                    }
                 }
             }
 
             @Override public void onActivityDestroyed(Activity destroyed) {
                 if (destroyed == host.get()) {
+                    pipTransitionGeneration++;
+                    pipTransitionUntil = 0;
                     leave(LiveRecorder.End.APP_EXIT);
                     removeChip();
                     clearScreen = false;
@@ -140,8 +159,19 @@ public final class LiveRecordChip {
 
             @Override public void onActivityCreated(Activity created, Bundle state) { }
             @Override public void onActivityStarted(Activity started) { }
-            @Override public void onActivityResumed(Activity resumed) { }
-            @Override public void onActivityStopped(Activity stopped) { }
+            @Override public void onActivityResumed(Activity resumed) {
+                if (resumed == host.get()) {
+                    pipTransitionGeneration++;
+                    pipTransitionUntil = 0;
+                    scheduleTick();
+                }
+            }
+            @Override public void onActivityStopped(Activity stopped) {
+                if (stopped == host.get() && !keepWhileHidden(stopped)) {
+                    leave(LiveRecorder.End.LEFT_ROOM);
+                    removeChip();
+                }
+            }
             @Override public void onActivitySaveInstanceState(Activity saved, Bundle state) { }
         });
     }
@@ -494,6 +524,28 @@ public final class LiveRecordChip {
         }
     }
 
+    /** Only stream sources can follow native PiP; a screen capture would record Home instead. */
+    private static boolean streamRecording() {
+        LiveRecorder running = recorder;
+        return running != null && running.active() && running.target().transport != LiveRecorder.Transport.SCREEN;
+    }
+
+    private static boolean nativePip(Activity activity) {
+        return activity != null && Build.VERSION.SDK_INT >= 26 && !activity.isFinishing()
+                && !activity.isDestroyed() && activity.isInPictureInPictureMode();
+    }
+
+    /** Grace covers only the enter-PiP race, not normal background recording. */
+    static boolean keepWhileHidden(boolean streamRecording, boolean nativePip,
+                                   long now, long transitionUntil) {
+        return streamRecording && (nativePip || (transitionUntil > 0 && now < transitionUntil));
+    }
+
+    private static boolean keepWhileHidden(Activity activity) {
+        return keepWhileHidden(streamRecording(), nativePip(activity),
+                SystemClock.uptimeMillis(), pipTransitionUntil);
+    }
+
     // ---- watching the room ----------------------------------------------------------------
 
     private static void scheduleTick() {
@@ -506,6 +558,17 @@ public final class LiveRecordChip {
         ticking = false;
         try {
             Activity activity = host.get();
+            if (keepWhileHidden(activity)) {
+                // A pinned LIVE has no full-size resumed page. Keep recording its stream, but
+                // still stop if TikTok replaces the recorded room while the window is pinned.
+                LiveRecorder running = recorder;
+                Object remembered = page.get();
+                if (running != null && running.active() && remembered != null
+                        && !sameRoom(running, remembered)) leave(LiveRecorder.End.LEFT_ROOM);
+                removeChip();
+                if (recorder != null) scheduleTick();
+                return;
+            }
             Object fragment = activity != null && enabled() ? pageInFront(activity) : null;
             boolean showing = fragment != null;
             if (!showing) {

@@ -103,6 +103,23 @@ public class LiveRecordChipTest {
         assertFalse(LiveRecordChip.mostlyShown(0, 0));
     }
 
+    @Test public void streamRecordingContinuesInNativePipAfterTransitionEnds() {
+        assertTrue(LiveRecordChip.keepWhileHidden(true, true, 20_000, 0));
+        assertTrue(LiveRecordChip.keepWhileHidden(true, true, 20_000, 10_000));
+    }
+
+    @Test public void enteringPipHasOnlyABriefGracePeriod() {
+        assertTrue(LiveRecordChip.keepWhileHidden(true, false, 9_999, 10_000));
+        assertFalse(LiveRecordChip.keepWhileHidden(true, false, 10_000, 10_000));
+        assertFalse(LiveRecordChip.keepWhileHidden(true, false, 15_000, 10_000));
+        assertFalse(LiveRecordChip.keepWhileHidden(true, false, 100, 0));
+    }
+
+    @Test public void screenRecordingNeverContinuesIntoPipOrTheLauncher() {
+        assertFalse(LiveRecordChip.keepWhileHidden(false, true, 1, 10_000));
+        assertFalse(LiveRecordChip.keepWhileHidden(false, false, 1, 10_000));
+    }
+
     // The chip is 200 wide at the right edge (880 to 1080), 120 tall, wanted at 330.
 
     @Test public void theChipStaysPutWhenNothingIsUnderIt() {

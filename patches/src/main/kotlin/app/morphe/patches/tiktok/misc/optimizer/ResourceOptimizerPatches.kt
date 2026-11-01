@@ -144,7 +144,7 @@ val studioCreationDebloatPatch = rawResourcePatch(
     description = "Removes TikTok's camera, editing and effects files, saving about 38 MB of " +
         "storage. The catch: the Create tab and every recording, editing and effects tool stop " +
         "working, and opening one, like effect search, can close TikTok. Leave it out if you " +
-        "make videos. APKMirror's split bundle doesn't carry those files, so on it this changes nothing.",
+        "make videos.",
     default = false,
 ) {
     category("Performance")
@@ -266,9 +266,9 @@ private val studioNativeFiles = listOf(
 
 /**
  * Whether "Remove creation tools" has anything to take: the face model goes only with the
- * editor and effect libraries. A build without them (APKMirror's split bundle) gets its camera
- * and effects from libraries TikTok fetches itself, so emptying the model there saved under 1 MB
- * and left face effects and Beauty unable to find a face (#285).
+ * editor and effect libraries. A build without them (APKMirror's split bundle on 47.5.3) gets its
+ * camera and effects from libraries TikTok fetches itself, so emptying the model there saved
+ * under 1 MB and left face effects and Beauty unable to find a face (#285).
  */
 internal fun stripsCreationTools(shipped: (String) -> Boolean) = studioNativeFiles.any(shipped)
 
@@ -308,32 +308,32 @@ private val microblinkFiles = listOf(
 // fixtures. The Microblink files and the C2PA debug libraries have been byte-identical on every
 // build read so far, and 47.4.3 rebuilt the main C2PA library. 47.5.3 kept 47.4.3's C2PA,
 // monitor, editor and speech libraries and rebuilt the link mic library, two LIVE scripts and
-// the arm64 and armeabi-v7a P2P video relay.
+// the arm64 and armeabi-v7a P2P video relay. 47.6.3 kept the editor and speech libraries and
+// both LIVE scripts and rebuilt the main C2PA, log monitor, link mic and avmdl relay libraries.
 private val c2paArm64Files = listOf(
-    file("lib/arm64-v8a/libtt_c2pa_sdk.so", "930a55727f14497d1e4bbc2756282eae8e11140e2495ab8bbed8c10099e80c45"),
+    file("lib/arm64-v8a/libtt_c2pa_sdk.so", "4b4b8e8435f9d1786b5e54c13690ca7b728bd976abd10c3ccf67a257fcd9b763"),
     file("lib/arm64-v8a/libtt_c2pa_sdk_d.so", "a64ce0fb43e7c22e2d95d8bbfcaede522d585c5d51dbae87d24db1359c27a01a"),
 )
 
 private val c2paArmeabiFiles = listOf(
-    file("lib/armeabi-v7a/libtt_c2pa_sdk.so", "1dd736b9620a9a6e01dc7692ed8a7f141ca6e344bf632b2d93cd0e88e0251957"),
+    file("lib/armeabi-v7a/libtt_c2pa_sdk.so", "f509e6e46878b09df48d40d1322a1e23bb331b77e36a3fb6a1e596be4a063286"),
     file("lib/armeabi-v7a/libtt_c2pa_sdk_d.so", "a96af4a99de68503234e3ab658d9702ac436ae1e0650dc5551e4e29a89700b0c"),
 )
 
-// 47.5.3 (APKMirror's universal APK, read on 2026-10-22). Its split bundle holds the universal
+// 47.6.3 (APKMirror's universal APK, read on 2026-11-01). Its split bundle holds the universal
 // APK's bytes for every file it carries.
 private val monitorFiles = listOf(
-    file("lib/arm64-v8a/libartlog_monitor.so", "58ef4dc22fbbfae9ed1099ceba0f9c8549bdf6ecdb46c7a52b92ad0102fb19d3"),
-    file("lib/armeabi-v7a/libartlog_monitor.so", "2f5810cf024b209e0c6de883af8ca92325217571a39d4ad58035cb8c3ea0c251"),
+    file("lib/arm64-v8a/libartlog_monitor.so", "886bdb40824e3f2712c304a080f1b3e6d23ae0f760f834095004e248070d6b21"),
+    file("lib/armeabi-v7a/libartlog_monitor.so", "fa4961c5254836f8fb8e0041f7f795d6d1e6da0dad6113c25b7f07630b717efe"),
 )
 
-// APKMirror also sells TikTok as a split bundle (tiktok-47-5-3, "arm64-v8a + armeabi-v7a",
-// 120-640dpi, read on 2026-10-22). Morphe Manager and the desktop CLI merge every split in one,
-// and every file the merged APK shares with the universal APK is byte-identical. 47.5.3's bundle
-// has 7 feature splits where 47.4.3's had 40, so it carries far less: no Microblink card scanner
-// (that lived in a feature split), no C2PA debug library, none of the six editor and effect
-// libraries (the face model stays in its base), no P2P relay library and neither ABI's speech
-// epg and spg libraries. Each bundle profile is the universal APK's profile less those files. It
-// keeps 25 languages.
+// APKMirror also sells TikTok as a split bundle (tiktok-47-6-3, "arm64-v8a + armeabi-v7a",
+// 120-640dpi, read on 2026-11-01). Morphe Manager and the desktop CLI merge every split in one,
+// and every file the merged APK shares with the universal APK is byte-identical. 47.6.3's bundle
+// has 33 feature splits where 47.5.3's had 7, and they only come with arm64 libraries. So it has
+// the Microblink card scanner, the editor and effect libraries, the P2P relay and the speech epg
+// and spg libraries again, on arm64, and lacks their armeabi-v7a copies. Each bundle profile is
+// the universal APK's profile less those armeabi-v7a files. It keeps 27 languages.
 
 /** [profile] without [absent], every one of which it must list: its build's split bundle. */
 private fun bundleOf(profile: ResourceProfile, vararg absent: String): ResourceProfile {
@@ -344,18 +344,13 @@ private fun bundleOf(profile: ResourceProfile, vararg absent: String): ResourceP
 }
 
 private val coreAssets = ResourceProfile(
-    "TikTok 47.5.3",
+    "TikTok 47.6.3",
     microblinkFiles + c2paArm64Files + c2paArmeabiFiles + monitorFiles,
 )
 
 internal val coreAssetProfiles = listOf(
     coreAssets,
-    bundleOf(
-        coreAssets,
-        *microblinkFiles.map { it.path }.toTypedArray(),
-        "lib/arm64-v8a/libtt_c2pa_sdk_d.so",
-        "lib/armeabi-v7a/libtt_c2pa_sdk_d.so",
-    ),
+    bundleOf(coreAssets, "lib/armeabi-v7a/libtt_c2pa_sdk_d.so"),
 )
 
 private val studioArm64Files = listOf(
@@ -366,7 +361,7 @@ private val studioArm64Files = listOf(
 )
 
 private val studioAssets = ResourceProfile(
-    "TikTok 47.5.3",
+    "TikTok 47.6.3",
     studioArm64Files +
         listOf(
             file("lib/armeabi-v7a/libEffectCreatorJni.so", "d3ae58712413c2d1d06dcf508eb7850452f58c93b9befd57867cd029421c9482"),
@@ -379,9 +374,6 @@ internal val studioAssetProfiles = listOf(
     studioAssets,
     bundleOf(
         studioAssets,
-        "lib/arm64-v8a/libEffectCreatorJni.so",
-        "lib/arm64-v8a/libeffect_plugin.so",
-        "lib/arm64-v8a/libttvesdk_plugin.so",
         "lib/armeabi-v7a/libEffectCreatorJni.so",
         "lib/armeabi-v7a/libeffect_plugin.so",
         "lib/armeabi-v7a/libttvesdk_plugin.so",
@@ -391,35 +383,34 @@ internal val studioAssetProfiles = listOf(
 internal val liveAssetProfiles = listOf(
     // The universal APK and the split bundle carry these five files byte for byte.
     ResourceProfile(
-        "TikTok 47.5.3",
+        "TikTok 47.6.3",
         listOf(
             file("assets/native_runtime_server/game/scripts/ttmg-core.js.zip", "9727cb446d3caa26e853e43efeedba6269ed95936e661d393a55a5a4e28c6331"),
             file("assets/offline/tiktok_live_tt_live_lynx_match_component_container/mainV12/template.js", "e7fcdda86f17ea09135f4b5c09c59cf3483d49b78f76215f4e63b0f35f3941c6"),
             file("assets/offline/tiktok_live_tt_live_lynx_match_component_container/match_invitee_v3/template.js", "8e84ec297249a771c9c9d56438f6c509d2a0f438c759ee65e212ab14ef7cb3eb"),
-            file("lib/arm64-v8a/liblink_mic_sdk.so", "1a35231af7c0b9214969c23174b6d2b538f332769631dcf4fee135c4e85a556e"),
-            file("lib/armeabi-v7a/liblink_mic_sdk.so", "db52586a2f4b22e7bdb2e9c4bdd2f5d49a45fa48b607df8166939a885baef890"),
+            file("lib/arm64-v8a/liblink_mic_sdk.so", "32ff13e8868600fc1a49fa2c37d2cb33276e11af0a724398438d006a8a20ef47"),
+            file("lib/armeabi-v7a/liblink_mic_sdk.so", "6589dd618fc7dfe7e38dee672f3490fe5d5d0af5d62eb592d8be6b7020bf365d"),
         ),
+    ),
+)
+
+private val p2pRelay = ResourceProfile(
+    "TikTok 47.6.3",
+    listOf(
+        file("lib/arm64-v8a/libavmdlp2pv2.so", "3611c75139020550b58b9cbb99eff6dfb72e0d301318fed62d0d01f84a4c9620"),
+        file("lib/arm64-v8a/libp2plivevdp.so", "ed35b032fac7c169860d3f37bc3be1933df9bddc8ac6785413f9608945946337"),
+        file("lib/armeabi-v7a/libavmdlp2pv2.so", "21473bda7be31d9b4b24e71414af86d741d6f383e2d163fd2e768a339ca5f01b"),
+        file("lib/armeabi-v7a/libp2plivevdp.so", "dd8a626f8b0efe36a883096923bed56ecb457e9408b26262c844442901dc1d09"),
     ),
 )
 
 internal val p2pRelayProfiles = listOf(
-    ResourceProfile(
-        "TikTok 47.5.3",
-        listOf(
-            file("lib/arm64-v8a/libavmdlp2pv2.so", "97195762415947622f099136c3eb48366f9aa14d76f9b58d5b706a69463c7160"),
-            file("lib/arm64-v8a/libp2plivevdp.so", "ed35b032fac7c169860d3f37bc3be1933df9bddc8ac6785413f9608945946337"),
-            file("lib/armeabi-v7a/libavmdlp2pv2.so", "26af5527faabd171fa0eb35f38c46301f3710b6ea534fe09eb48b0282f10848b"),
-            file("lib/armeabi-v7a/libp2plivevdp.so", "dd8a626f8b0efe36a883096923bed56ecb457e9408b26262c844442901dc1d09"),
-        ),
-    ),
-    // The split bundle ships no relay library at all, so there is nothing to empty. Only on
-    // 47.5.3: another build without these files has renamed or moved them, and the strip must
-    // refuse it.
-    ResourceProfile("TikTok 47.5.3 split bundle", emptyList(), onlyVersion = "47.5.3"),
+    p2pRelay,
+    bundleOf(p2pRelay, "lib/armeabi-v7a/libavmdlp2pv2.so", "lib/armeabi-v7a/libp2plivevdp.so"),
 )
 
 private val voiceTools = ResourceProfile(
-    "TikTok 47.5.3",
+    "TikTok 47.6.3",
     listOf(
         file("lib/arm64-v8a/libspeechengine.so", "66cdc8ec913a42e2e1c63531daff727a8bb09daf2a26f73dc6c1fd78c4c97a5e"),
         file("lib/arm64-v8a/libspeechepg.so", "47027d80c045d7232e4859ab9416f3684b36eefdb616e725da5c797eb424ff1e"),
@@ -436,8 +427,6 @@ internal val voiceToolsProfiles = listOf(
     voiceTools,
     bundleOf(
         voiceTools,
-        "lib/arm64-v8a/libspeechepg.so",
-        "lib/arm64-v8a/libspeechspg.so",
         "lib/armeabi-v7a/libspeechepg.so",
         "lib/armeabi-v7a/libspeechspg.so",
     ),
@@ -453,15 +442,15 @@ internal val languageInventories = listOf(
             "ru", "sk", "sl", "sq", "sv", "sw", "ta", "te", "th", "tr", "uk", "ur", "uz", "vi", "zh", "zu",
         ),
         pathManifestSha256 = "38f412319f00a31a025e03095ea9bf4266b412c2322d2a6b0b4a031a073b0c08",
-        contentManifestSha256 = setOf("4e43f40f655bd77faa64e8d0ec7c73908246415abf964a3a352c5d779c10d908"),
+        contentManifestSha256 = setOf("87f96868f76cc3cf83eb89928971db2e6acfbbe406eb5cca72362761aec36460"),
     ),
-    // The split bundle: 25 language splits and 102 files.
+    // The split bundle: 27 language splits and 106 files.
     LanguageInventoryContract(
         directories = setOf(
-            "ar", "de", "en", "es", "et", "fi", "fr", "hi", "hu", "id", "in", "it", "ja", "ko", "ms", "nl",
-            "pl", "pt", "ru", "sv", "th", "tr", "uk", "vi", "zh",
+            "ar", "de", "en", "es", "et", "fi", "fr", "he", "hi", "hu", "id", "in", "it", "iw", "ja", "ko",
+            "ms", "nl", "pl", "pt", "ru", "sv", "th", "tr", "uk", "vi", "zh",
         ),
-        pathManifestSha256 = "33aad0753feebf540e226b415eecfc59323d40f7b52dfc70a06bd278e7acc9a6",
-        contentManifestSha256 = setOf("115bb6f14ca58f5af762c4368f1c18c48d371ffdf73fad8f8fc685293718dcb3"),
+        pathManifestSha256 = "1b372a3b46779664920ebc1031ca38eb787dce81da9089a5867723290041dcac",
+        contentManifestSha256 = setOf("030331c888bdcb3e4e62bdb24aa10b1f1716d9118502228df510fea2b6447ac3"),
     ),
 )

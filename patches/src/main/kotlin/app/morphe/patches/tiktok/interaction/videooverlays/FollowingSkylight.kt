@@ -16,14 +16,15 @@ internal const val SKYLIGHT_TOGGLE_LOG = "toggleSkylightListShowStatus: isShow: 
 
 /**
  * The one place the Following tab's LIVE and stories row (TikTok's "skylight") opens or folds:
- * a static `(viewModel, isShow, enterMethod, needAnim, isRefresh, toggleCleanMode, String, mask)V`
+ * a static `(viewModel, isShow, enterMethod, needAnim, isRefresh, toggleCleanMode, String, mask)Z`
  * on the row's view model, called when the row's data arrives and from every swipe and clear
  * display toggle. The view model keeps its real name, the method is renamed on every build (Y23
- * on 47.5.3), and it logs its own isShow, which nothing else in the class does.
+ * on 47.5.3, H23 on 47.6.3, which also started returning a boolean), and it logs its own isShow,
+ * which nothing else in the class does.
  */
 internal object FollowingSkylightToggleFingerprint : Fingerprint(
     definingClass = SKYLIGHT_VIEW_MODEL,
-    returnType = "V",
+    returnType = "Z",
     parameters = listOf(SKYLIGHT_VIEW_MODEL, "Z", "Ljava/lang/String;", "Z", "Z", "Z", "Ljava/lang/String;", "I"),
     strings = listOf(SKYLIGHT_TOGGLE_LOG),
     custom = { method, _ -> isSkylightToggle(method) },
@@ -31,7 +32,7 @@ internal object FollowingSkylightToggleFingerprint : Fingerprint(
 
 internal fun isSkylightToggle(method: Method): Boolean =
     AccessFlags.STATIC.isSet(method.accessFlags) && method.definingClass == SKYLIGHT_VIEW_MODEL &&
-        method.returnType == "V" && method.parameterTypes.map(CharSequence::toString) ==
+        method.returnType == "Z" && method.parameterTypes.map(CharSequence::toString) ==
         listOf(SKYLIGHT_VIEW_MODEL, "Z", "Ljava/lang/String;", "Z", "Z", "Z", "Ljava/lang/String;", "I")
 
 /**

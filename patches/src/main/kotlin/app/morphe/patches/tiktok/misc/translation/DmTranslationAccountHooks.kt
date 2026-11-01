@@ -22,8 +22,8 @@ import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 
 internal const val DM_ACCOUNT_EVENTS = "Lapp/morphe/extension/tiktok/translation/DmTranslationAccountEvents;"
-internal const val DM_ACCOUNT_BROADCASTER = "LX/03Hj;"
-internal const val DM_ACCOUNT_LISTENER = "LX/03M9;"
+internal const val DM_ACCOUNT_BROADCASTER = "LX/03Ix;"
+internal const val DM_ACCOUNT_LISTENER = "LX/03NN;"
 private const val USER = "Lcom/ss/android/ugc/aweme/profile/model/User;"
 private const val ACCOUNT = "Translate comments (DM account transitions)"
 private const val CALLBACK = "$DM_ACCOUNT_LISTENER->onAccountResult(IZI$USER)V"
@@ -56,11 +56,11 @@ internal fun findDmAccountTargets(classOf: (String) -> ClassDef?): DmAccountTarg
         val calls = instructions.mapNotNull { it.getReference<MethodReference>()?.toString() }
         val expectedCalls = listOf("$LIST->iterator()$ITERATOR", "$ITERATOR->hasNext()Z",
             "$ITERATOR->next()Ljava/lang/Object;", CALLBACK)
-        val switch = name == "LJIIIZ"
+        val switch = name == "LJIIJ"
         val expected = if (switch) listOf("$METHOD_IDS->push(I)Z") + expectedCalls + "$METHOD_IDS->pop()V" else expectedCalls
         val loop = listOf(Opcode.SGET_OBJECT, Opcode.CHECK_CAST, Opcode.INVOKE_VIRTUAL, Opcode.MOVE_RESULT_OBJECT,
             Opcode.INVOKE_INTERFACE, Opcode.MOVE_RESULT, Opcode.IF_EQZ, Opcode.INVOKE_INTERFACE,
-            Opcode.MOVE_RESULT_OBJECT, Opcode.CHECK_CAST) + List(if (name == "LJII") 4 else 2) { Opcode.CONST_4 } +
+            Opcode.MOVE_RESULT_OBJECT, Opcode.CHECK_CAST) + List(if (name == "LJIIIIZZ") 4 else 2) { Opcode.CONST_4 } +
             listOf(Opcode.INVOKE_INTERFACE, Opcode.GOTO)
         val shape = if (switch) listOf(Opcode.CONST, Opcode.INVOKE_STATIC, Opcode.MOVE_RESULT) + loop +
             listOf(Opcode.IF_EQZ, Opcode.INVOKE_STATIC, Opcode.RETURN_VOID) else loop + Opcode.RETURN_VOID
@@ -81,9 +81,9 @@ internal fun findDmAccountTargets(classOf: (String) -> ClassDef?): DmAccountTarg
             throw PatchException("$ACCOUNT: changed synchronous $name dispatch or account arguments")
         return method
     }
-    val login = broadcast("LJI", listOf(USER), 5, listOf(2, 0, 0, 1, 4), listOf(1 to 0, 0 to 1))
-    val logout = broadcast("LJII", emptyList(), 6, listOf(4, 1, 0, 3, 2), listOf(3 to 0, 2 to 0, 1 to 4, 0 to 1))
-    val switch = broadcast("LJIIIZ", listOf(USER, "Z"), 7, listOf(2, 1, 6, 0, 5), listOf(0 to 71776, 1 to 2, 0 to 0))
+    val login = broadcast("LJII", listOf(USER), 5, listOf(2, 0, 0, 1, 4), listOf(1 to 0, 0 to 1))
+    val logout = broadcast("LJIIIIZZ", emptyList(), 6, listOf(4, 1, 0, 3, 2), listOf(3 to 0, 2 to 0, 1 to 4, 0 to 1))
+    val switch = broadcast("LJIIJ", listOf(USER, "Z"), 7, listOf(2, 1, 6, 0, 5), listOf(0 to 71776, 1 to 2, 0 to 0))
     return DmAccountTargets(login, logout, switch)
 }
 

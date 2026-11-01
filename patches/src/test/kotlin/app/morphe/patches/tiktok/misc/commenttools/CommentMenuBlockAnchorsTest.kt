@@ -62,7 +62,7 @@ class CommentMenuBlockAnchorsTest {
             val icon = commentMenuBlockIcon(items, reportActions, blockAction)
             assertEquals("${apk.name}: the block glyph is an app resource", 0x7f, icon ushr 24)
             // 47.5.3 asks User.isBlock() and returns 0x7f010062 when blocked, as 47.4.3 did.
-            assertEquals("${apk.name}: the not-blocked glyph", mapOf("47.5.3" to 0x7f01002c)[Fixtures.versionOf(apk)], icon)
+            assertEquals("${apk.name}: the not-blocked glyph", mapOf("47.6.3" to 0x7f01002c)[Fixtures.versionOf(apk)], icon)
             assertNotEquals("${apk.name}: the block glyph is not Report's", items.reportRowIcon(), icon)
 
             // The hook: the icon, then the rows through the extension and back into the parameter,

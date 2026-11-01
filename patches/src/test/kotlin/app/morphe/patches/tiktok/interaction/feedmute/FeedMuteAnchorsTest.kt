@@ -63,7 +63,7 @@ class FeedMuteAnchorsTest {
             // 47.5.3 inlined the session's give-up into the player's release(), so the patch adds
             // a copy of the block to the session. Every member it names must exist as named, and
             // the smali compiler must have kept all 33 instructions (it drops what won't fit).
-            val synthesized = version == "47.5.3"
+            val synthesized = version == "47.6.3"
             assertEquals("$version: the give-up is copied onto the session", synthesized, members.sessionAbandonBody != null)
             assertEquals("$version: the bridge's give-up name", if (synthesized) SESSION_ABANDON else abandon.name,
                 members.sessionAbandon)

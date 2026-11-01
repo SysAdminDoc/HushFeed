@@ -957,13 +957,13 @@ internal const val SHORT_VIDEO_CONTEXT = "Lcom/ss/android/ugc/aweme/shortvideo/S
  * The camera's AI Cast gate (AI Self; AI Theater in TikTok's code), X.0twO.LIZ on 47.4.3. The
  * recorder registers the AI Theater toolbar component, the AI Cast button, only when this says
  * yes. It already says no for minors, stories, duets, the DM camera, templates and the
- * add_yours, trend_button and anchor_combine_tts shoot ways, and logs its own name before a yes.
+ * trend_button and anchor_combine_tts shoot ways, and logs its own name before a yes.
  */
 internal object AiTheaterRecordEntranceFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC, AccessFlags.FINAL),
     returnType = "Z",
     parameters = listOf(SHORT_VIDEO_CONTEXT),
-    strings = listOf("enableAITheaterRecordEntrance", "add_yours", "trend_button", "anchor_combine_tts"),
+    strings = listOf("enableAITheaterRecordEntrance", "trend_button", "anchor_combine_tts"),
 )
 
 internal const val VISUAL_SEARCH_SERVICE =

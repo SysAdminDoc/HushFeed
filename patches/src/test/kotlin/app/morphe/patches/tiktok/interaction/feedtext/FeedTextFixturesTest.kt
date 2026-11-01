@@ -31,7 +31,7 @@ class FeedTextFixturesTest {
     @Test
     fun `all declared hosts resolve native owners and safely size before line breaking`() {
         val expected = mapOf(
-            "47.5.3" to Triple("LX/095y;", "LX/086l;", 0x7f0a2081 to 0x7f0a8872),
+            "47.6.3" to Triple("LX/0974;", "LX/087t;", 0x7f0a2081 to 0x7f0a8816),
         )
         assertEquals(Fixtures.declaredVersions().toSet(), expected.keys)
         Fixtures.forEachDeclared { apk ->
@@ -58,12 +58,12 @@ class FeedTextFixturesTest {
             assertEquals("LJLLI", native.refreshOriginal.name)
             assertEquals("LJLLJ", native.refreshTranslated.name)
             assertEquals("Oq", native.authorBind.name)
-            assertEquals("LLLII", native.authorView.name)
+            assertEquals("LLLIIII", native.authorView.name)
             assertTrue(native.authorLoader.implementation!!.instructions.any {
                 it is NarrowLiteralInstruction && it.narrowLiteral == ids.second
             })
             // The post date beside the name: the same owner loads it, as the same kind of text view.
-            assertEquals("LLLIIII", native.dateView.name)
+            assertEquals("LLLIIIIL", native.dateView.name)
             assertEquals(AUTHOR, native.dateView.definingClass)
             assertEquals(native.authorView.type, native.dateView.type)
             val loaderCode = native.authorLoader.implementation!!.instructions.toList()

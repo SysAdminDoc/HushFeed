@@ -47,8 +47,9 @@ class InboxQueryRequestFixturesTest {
                 assertSame(original[0], allowed.target.location.instruction)
                 assertEquals(if (spec.closure) 5 else 4, allowed.target.location.index)
                 assertEquals(1, (after[0] as RegisterRangeInstruction).registerCount)
-                val originalAfter = after.filter { candidate -> original.any { candidate === it } }
-                assertEquals(original, originalAfter)
+                // The builder re-pads a switch payload after the insert, so a padding nop in front of it can go.
+                val originalAfter = after.filter { candidate -> original.any { candidate === it } }.filterNot { it.opcode == Opcode.NOP }
+                assertEquals(original.filterNot { it.opcode == Opcode.NOP }, originalAfter)
                 assertEquals(if (spec.counted) returns.size else 0, after.count { it.getReference<MethodReference>()?.name in
                     listOf("returnedLoadedRequest", "returnedLoadedClosureRequest") })
                 if (spec.counted) {

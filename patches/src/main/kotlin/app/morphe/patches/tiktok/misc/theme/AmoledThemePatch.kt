@@ -160,7 +160,7 @@ internal fun renamedPathCollisions(
  * of its own and stays.
  */
 internal val DARK_BACKGROUND_COLORS: Map<String, Set<String>> = linkedMapOf(
-    "47.5.3" to setOf("a44", "a46", "a47", "a49", "a4g"),
+    "47.6.3" to setOf("a3w", "a3y", "a3z", "a41", "a49"),
 )
 
 /** This build's background grays, or a refusal: a name carried over from another build is a guess. */
@@ -182,7 +182,7 @@ internal fun declaredVersions(): Set<String> =
 
 /**
  * The dark style literals behind TikTok's sheets and pages per build, named by TikTok's own token
- * table (AmoledSheetTokensTest). On 47.5.3:
+ * table (AmoledSheetTokensTest). On 47.6.3:
  * - aig is UISheetFlat1's dark value (attr/a27), the fill of the comment panel, the share sheet
  *   and TikTok's other sheets, panels and modals.
  * - aim is UISheetGrouped1's (attr/a2c), the fill of the feed's long-press panel and the other
@@ -200,7 +200,7 @@ internal fun declaredVersions(): Set<String> =
  * another surface tier, which is why only a build whose names were read is patched.
  */
 internal val SURFACE_STYLE_ITEMS: Map<String, Set<String>> = linkedMapOf(
-    "47.5.3" to setOf("agq", "c3", "aig", "aim", "bx", "agt"),
+    "47.6.3" to setOf("agq", "c3", "aig", "aim", "bx", "agt"),
 )
 
 /** This build's surface style items, or a refusal like the palette's. */

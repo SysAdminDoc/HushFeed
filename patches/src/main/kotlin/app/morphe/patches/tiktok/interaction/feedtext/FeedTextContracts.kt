@@ -31,10 +31,10 @@ private const val TEXT_VIEW = "Landroid/widget/TextView;"
 private const val PAINT = "Landroid/graphics/Paint;"
 private const val VIDEO_ITEM_PARAMS = "Lcom/ss/android/ugc/aweme/feed/model/VideoItemParams;"
 private const val WHAT = "Feed text sizes"
-// 47.5.3's ids for the caption text, the creator name (`title`) and the post date beside it.
+// 47.6.3's ids for the caption text, the creator name (`title`) and the post date beside it.
 internal val DESCRIPTION_IDS = setOf(0x7f0a2081)
-internal val TITLE_IDS = setOf(0x7f0a8872)
-internal val POST_TIME_IDS = setOf(0x7f0a942a)
+internal val TITLE_IDS = setOf(0x7f0a8816)
+internal val POST_TIME_IDS = setOf(0x7f0a93ca)
 
 internal data class SizeInput(val index: Int, val builderRegister: Int, val ownerLocal: Int, val argumentLocal: Int)
 internal data class CacheBypass(val index: Int, val fallback: Int, val ownerRegister: Int, val resultLocal: Int)

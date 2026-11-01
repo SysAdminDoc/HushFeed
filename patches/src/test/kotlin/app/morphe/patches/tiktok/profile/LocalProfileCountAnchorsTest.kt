@@ -76,11 +76,11 @@ class LocalProfileCountAnchorsTest {
                 assertTrue(AccessFlags.PUBLIC.isSet(method.accessFlags))
             }
             val identity = found.legacy.first.legacyCountIdentity()
-            assertEquals("LLL", identity.attached.name)
+            assertEquals("LLLF", identity.attached.name)
             assertEquals(identity.holder.definingClass, identity.attached.type)
-            assertEquals("LLJJI", identity.holder.name)
+            assertEquals("LLJJIII", identity.holder.name)
             assertEquals("componentId", identity.key.name)
-            assertEquals("LLJLLIL", identity.fallback.name)
+            assertEquals("LLJLLL", identity.fallback.name)
         }
     }
 

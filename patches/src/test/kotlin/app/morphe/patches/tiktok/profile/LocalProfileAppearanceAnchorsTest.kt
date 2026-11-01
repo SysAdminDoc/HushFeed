@@ -64,7 +64,7 @@ class LocalProfileAppearanceAnchorsTest {
             assertEquals("LIZ", found.navbarRepaint.first.name)
             assertEquals("LIZ", found.navbarAddRepaint.name)
             assertNotNull(found.nickname.first.nicknameAddNameSite())
-            assertEquals("LLD", found.navbarAddName.first.name)
+            assertEquals("LLIFFJFJJ", found.navbarAddName.first.name)
             val (bind, refresh) = found.warnings.map { it.first }.partition { it.name == "LJJLIIIJJI" }
             assertEquals("Z", bind.single().returnType)
             assertEquals(listOf("Landroid/view/View;"), refresh.single().parameterTypes.map(CharSequence::toString))
@@ -101,7 +101,7 @@ class LocalProfileAppearanceAnchorsTest {
             assertTrue(before.none { !it.opcode.setsRegister() && it.getReference<FieldReference>()?.definingClass?.endsWith("/UserAccountInfo;") == true })
             val identity = found.classes.getValue(LEGACY_NICKNAME_OWNER).userNameIdentity()!!
             val fields = identity.implementation!!.instructions.mapNotNull { it.getReference<FieldReference>() }
-            assertEquals(listOf("LLL", "LLJJI", "componentName", "LLJLLIL"), fields.map { it.name })
+            assertEquals(listOf("LLLF", "LLJJIII", "componentName", "LLJLLL"), fields.map { it.name })
             assertEquals(listOf("user_account_user_name"), identity.implementation!!.instructions.mapNotNull { it.getReference<StringReference>()?.string })
         }
     }
@@ -217,7 +217,7 @@ class LocalProfileAppearanceAnchorsTest {
                 }
             }
             val notice = bridges.last().implementation!!.instructions.toList()
-            assertEquals("$PROFILE_PROTOCOL->LLJJJJJIL:Landroid/view/View;", notice.mapNotNull { it.getReference<FieldReference>() }.single().toString())
+            assertEquals("$PROFILE_PROTOCOL->LLJJJJLIIL:Landroid/view/View;", notice.mapNotNull { it.getReference<FieldReference>() }.single().toString())
             assertEquals(NOTICE_VISIBILITY, notice.mapNotNull { it.getReference<MethodReference>() }.last().toString())
             val legacy = bridges.first().implementation!!.instructions.toList()
             assertEquals(found.legacy.second.original.toString(), legacy.first().getReference<MethodReference>().toString())
@@ -366,9 +366,9 @@ class LocalProfileAppearanceAnchorsTest {
             val native = mutable.implementation!!.instructions.toList()
             mutable.replaceNavbarAddName(join)
             val decorated = mutable.implementation!!.instructions.toList()
-            assertEquals(22, mutable.implementation!!.registerCount)
+            assertEquals(21, mutable.implementation!!.registerCount)
             assertEquals(APPEARANCE_APPEND, decorated[join].getReference<MethodReference>()!!.name)
-            assertEquals(listOf(2, 4), decorated[join].namedRegisters())
+            assertEquals(listOf(3, 4), decorated[join].namedRegisters())
             native.forEachIndexed { at, instruction -> assertSame(instruction, decorated[at + if (at >= join) 2 else 0]) }
             assertEquals(1, native.take(join).count { it.opcode == Opcode.NEW_INSTANCE && it.getReference<TypeReference>()?.type == "Landroid/text/SpannableStringBuilder;" })
             val cache = nicknameCachedBridge().implementation!!.instructions.toList()
@@ -417,7 +417,7 @@ class LocalProfileAppearanceAnchorsTest {
             val incoming = before.indices.filter { at -> before[at] is OffsetInstruction && branchIndex(before, at) == join }
             assertEquals(1, incoming.size)
             assertEquals(Opcode.IF_EQZ, before[incoming.single()].opcode)
-            assertEquals(listOf(17), before[incoming.single()].namedRegisters())
+            assertEquals(listOf(9), before[incoming.single()].namedRegisters())
             mutable.replaceNavbarAddName(join)
             val after = mutable.implementation!!.instructions.toList()
             for (at in incoming) {

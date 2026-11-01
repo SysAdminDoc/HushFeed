@@ -31,7 +31,7 @@ class AmoledStyleItemsTest {
             """.trimIndent(),
         )
 
-        val changed = rewriteDarkStyleItems(styles, surfaceStyleItems("47.5.3"), "#000000")
+        val changed = rewriteDarkStyleItems(styles, surfaceStyleItems("47.6.3"), "#000000")
 
         assertEquals(setOf("agq", "c3", "aig", "aim", "bx", "agt"), changed)
         assertEquals(
@@ -48,7 +48,7 @@ class AmoledStyleItemsTest {
     @Test
     fun `nothing dark to rewrite is reported as nothing changed`() {
         val styles = parse("""<resources><style name="zb"><item name="c3">#ffffffff</item></style></resources>""")
-        assertTrue(rewriteDarkStyleItems(styles, surfaceStyleItems("47.5.3"), "#000000").isEmpty())
+        assertTrue(rewriteDarkStyleItems(styles, surfaceStyleItems("47.6.3"), "#000000").isEmpty())
     }
 
     /**
@@ -59,7 +59,7 @@ class AmoledStyleItemsTest {
      */
     @Test
     fun `the palette is read for exactly the declared builds`() {
-        assertEquals(setOf("47.5.3"), declaredVersions())
+        assertEquals(setOf("47.6.3"), declaredVersions())
         assertEquals(declaredVersions(), DARK_BACKGROUND_COLORS.keys)
         assertEquals(declaredVersions(), SURFACE_STYLE_ITEMS.keys)
     }
@@ -67,7 +67,7 @@ class AmoledStyleItemsTest {
     /** Each build moves the grays to new names, and an older build's names are an accent and overlays. */
     @Test
     fun `the palette is each build's own and a build never read is refused`() {
-        assertEquals(setOf("a44", "a46", "a47", "a49", "a4g"), darkBackgroundColors("47.5.3"))
+        assertEquals(setOf("a3w", "a3y", "a3z", "a41", "a49"), darkBackgroundColors("47.6.3"))
         declaredVersions().forEach { assertTrue("no palette for declared $it", darkBackgroundColors(it).size == 5) }
         listOf("46.9.3", "47.0.3", "47.1.3", "47.1.4", "47.4.3").forEach { version ->
             assertRefused { darkBackgroundColors(version) }
@@ -77,7 +77,7 @@ class AmoledStyleItemsTest {
         assertRefused { surfaceStyleItems(null) }
         val refusal = unreadPaletteRefusal("47.1.4")
         assertTrue(refusal, refusal.contains("TikTok 47.1.4") && refusal.contains("nothing was changed"))
-        assertTrue(refusal, refusal.endsWith("The palette is known for TikTok 47.5.3."))
+        assertTrue(refusal, refusal.endsWith("The palette is known for TikTok 47.6.3."))
         assertTrue(unreadPaletteRefusal(null).contains("this TikTok build"))
     }
 

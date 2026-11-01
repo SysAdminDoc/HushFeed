@@ -307,10 +307,12 @@ internal fun Method.coldStartTab(): ColdStartTab? {
     } ?: return null
     val switch = instructions[switchAt] as FiveRegisterInstruction
     if (switch.registerCount != 4) return null
-    val intentResult = instructions[switchAt - 2]
-    if (intentResult.opcode != Opcode.MOVE_RESULT_OBJECT) return null
-    if ((intentResult as OneRegisterInstruction).registerA != switch.registerD) return null
-    val getIntent = instructions[switchAt - 3]
+    // 47.6.3 checks a deferred tab handoff between reading the intent and the switch, so walk back to the read.
+    val intentAt = (switchAt - 2 downTo 1).firstOrNull { i ->
+        instructions[i].opcode.setsRegister() && (instructions[i] as? OneRegisterInstruction)?.registerA == switch.registerD
+    } ?: return null
+    if (instructions[intentAt].opcode != Opcode.MOVE_RESULT_OBJECT) return null
+    val getIntent = instructions[intentAt - 1]
     val readsIntent = getIntent.opcode == Opcode.INVOKE_VIRTUAL && getIntent.getReference<MethodReference>()?.let {
         it.name == "getIntent" && it.returnType == INTENT && it.parameterTypes.isEmpty()
     } == true

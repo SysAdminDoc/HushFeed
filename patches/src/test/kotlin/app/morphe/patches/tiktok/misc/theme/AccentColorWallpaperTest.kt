@@ -33,7 +33,7 @@ class AccentColorWallpaperTest {
         )
         val literals = mutableSetOf<String>()
 
-        val changed = recolorAccentItems(styles, accentTokens("47.5.3"), accentRecolor(true, TIKTOK_ACCENT, literals))
+        val changed = recolorAccentItems(styles, accentTokens("47.6.3"), accentRecolor(true, TIKTOK_ACCENT, literals))
 
         assertEquals("a see-through red still counts as found", setOf("ah9", "ah_", "ahc", "ayb", "aj1"), changed)
         assertEquals(
@@ -51,7 +51,7 @@ class AccentColorWallpaperTest {
         val styles = parse("""<resources><style name="zl"><item name="ah9">#fffe2c55</item></style></resources>""")
         val literals = mutableSetOf<String>()
 
-        recolorAccentItems(styles, accentTokens("47.5.3"), accentRecolor(false, "#2D7FF9", literals))
+        recolorAccentItems(styles, accentTokens("47.6.3"), accentRecolor(false, "#2D7FF9", literals))
 
         assertEquals(listOf("#ff2d7ff9"), values(styles))
         assertTrue(literals.isEmpty())

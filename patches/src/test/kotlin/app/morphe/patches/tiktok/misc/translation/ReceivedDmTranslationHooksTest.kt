@@ -73,7 +73,7 @@ class ReceivedDmTranslationHooksTest {
         val early = code.indexOfFirst { it.opcode == Opcode.RETURN_VOID }
         assertTrue(code[early - 1].getReference<MethodReference>()?.name != "bound")
         assertEquals(40, method.implementation!!.registerCount)
-        assertEquals(1, code.count { it.getReference<MethodReference>()?.let { call -> call.definingClass == RECEIVED_ASSEM && call.name == "cq" } == true })
+        assertEquals(1, code.count { it.getReference<MethodReference>()?.let { call -> call.definingClass == RECEIVED_ASSEM && call.name == "iq" } == true })
     }
 
     @Test fun `overwritten native receiver or model is rejected before any instruction changes`() {
@@ -86,7 +86,7 @@ class ReceivedDmTranslationHooksTest {
     }
 
     private fun menu(owner: String = RECEIVED_MENU, registers: Int = 13, result: String = "return-object v0", prefix: String = "") =
-        method(owner, "kq", listOf("LX/0BLT;"), "Ljava/util/List;", registers, """
+        method(owner, "pq", listOf("LX/0BMG;"), "Ljava/util/List;", registers, """
             if-eqz p1, :empty
             $prefix
             $nativeMenu
@@ -96,13 +96,13 @@ class ReceivedDmTranslationHooksTest {
             return-object v0
         """)
 
-    private fun bind(overwrite: String = "") = method(RECEIVED_ASSEM, "Sp", listOf("LX/14WN;", "Z"), "V", 40, """
-        invoke-virtual/range {p0 .. p0}, $RECEIVED_ASSEM->mq()LX/14ZV;
+    private fun bind(overwrite: String = "") = method(RECEIVED_ASSEM, "Wp", listOf("LX/0pjL;", "Z"), "V", 40, """
+        invoke-virtual/range {p0 .. p0}, $RECEIVED_ASSEM->qq()LX/0pnq;
         move-result-object v0
         if-nez v0, :ready
         return-void
         :ready
-        invoke-virtual/range {p0 .. p0}, $RECEIVED_ASSEM->cq()V
+        invoke-virtual/range {p0 .. p0}, $RECEIVED_ASSEM->iq()V
         $overwrite
         if-eqz p2, :original
         return-void
@@ -117,7 +117,7 @@ class ReceivedDmTranslationHooksTest {
 
     private companion object {
         const val nativeMenu = """
-            invoke-static/range {v1 .. v8}, LX/14WE;->LIZ(LX/0BLT;LX/14Wa;Landroid/content/Context;Landroidx/fragment/app/FragmentManager;Lcom/ss/android/ugc/aweme/im/sdk/chat/feature/IMMessageListTranslationViewModel;Lcom/ss/android/ugc/aweme/im/messagelist/api/select/IMSelectTextAbility;LX/14WH;Ljava/lang/CharSequence;)Ljava/util/List;
+            invoke-static/range {v1 .. v8}, LX/0pcV;->LIZ(LX/0BMG;LX/0plm;Landroid/content/Context;Landroidx/fragment/app/FragmentManager;Lcom/ss/android/ugc/aweme/im/sdk/chat/feature/IMMessageListTranslationViewModel;Lcom/ss/android/ugc/aweme/im/messagelist/api/select/IMSelectTextAbility;LX/0pcY;Ljava/lang/CharSequence;)Ljava/util/List;
             move-result-object v0
         """
     }

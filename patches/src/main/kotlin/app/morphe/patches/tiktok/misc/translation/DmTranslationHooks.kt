@@ -72,7 +72,7 @@ internal fun Method.dmEditorStore(): DmInputStore {
         val field = instruction.getReference<FieldReference>()
         val registers = instruction as? TwoRegisterInstruction
         if (instruction.opcode == Opcode.IPUT_OBJECT && registers != null && field?.definingClass == DM_INPUT &&
-            field.name == "LLJJIII" && field.type == EDITOR && registers.registerA != registers.registerB)
+            field.name == "LLJJIJI" && field.type == EDITOR && registers.registerA != registers.registerB)
             DmInputStore(index, registers.registerB, registers.registerA) else null
     }.orEmpty()
     return stores.singleOrNull() ?: throw PatchException("$DM: found ${stores.size} cached editor assignments")
@@ -83,25 +83,25 @@ internal fun findDmPreviewTargets(classOf: (String) -> ClassDef?): DmPreviewTarg
     fun owner(type: String) = classOf(type) ?: throw PatchException("$DM: missing $type")
     val input = owner(DM_INPUT)
     if (DM_ABILITY !in input.interfaces) throw PatchException("$DM: changed native input ability owner")
-    input.field("LLJJIII", EDITOR)
-    input.abi("x11", EDITOR, emptyList())
+    input.field("LLJJIJI", EDITOR)
+    input.abi("b21", EDITOR, emptyList())
     val assem = owner(DM_ASSEM)
-    assem.field("LLJLLL", "LX/0FBJ;")
+    assem.field("LLJZ", "LX/0FAy;")
     val created = assem.abi("onViewCreated", "V", listOf(VIEW))
     val store = created.dmEditorStore()
     if (created.implementation!!.instructions.withIndex().any { (index, instruction) ->
         instruction.opcode == Opcode.RETURN_VOID && index <= store.index
     }) throw PatchException("$DM: editor assignment no longer precedes every ready return")
     val composer = owner(DM_COMPOSER)
-    composer.field("LLJJJ", DM_ABILITY)
-    composer.field("LLJJJJLIIL", DM_SESSION)
-    val parameters = listOf(DM_ABILITY, "LX/14ej;", "LX/14Cd;", "LX/14ek;", DM_SESSION,
-        "LX/0cWO;", "LX/0ntn;", "LX/14z7;", "Lcom/ss/android/ugc/aweme/im/customize/api/ui/wallpaper/IChatWallpaperAbility;")
+    composer.field("LLJJJIL", DM_ABILITY)
+    composer.field("LLJJL", DM_SESSION)
+    val parameters = listOf(DM_ABILITY, "LX/0q0l;", "LX/0pGx;", "LX/0pUH;", DM_SESSION,
+        "LX/0czP;", "LX/0cAh;", "LX/0d17;", "Lcom/ss/android/ugc/aweme/im/customize/api/ui/wallpaper/IChatWallpaperAbility;")
     val constructor = composer.abi("<init>", "V", parameters)
     val code = constructor.implementation ?: throw PatchException("$DM: no composer constructor body")
     if (code.registerCount > 16) throw PatchException("$DM: composer parameters no longer fit the reviewed invoke")
     val receiver = code.registerCount - parameters.size - 1
-    for ((name, fieldType, parameter) in listOf(Triple("LLJJJ", DM_ABILITY, 1), Triple("LLJJJJLIIL", DM_SESSION, 5))) {
+    for ((name, fieldType, parameter) in listOf(Triple("LLJJJIL", DM_ABILITY, 1), Triple("LLJJL", DM_SESSION, 5))) {
         val assignments = code.instructions.filter { it.opcode == Opcode.IPUT_OBJECT &&
             it.getReference<FieldReference>()?.let { field -> field.definingClass == DM_COMPOSER && field.name == name && field.type == fieldType } == true }
         val assignment = assignments.singleOrNull() as? TwoRegisterInstruction
@@ -112,7 +112,7 @@ internal fun findDmPreviewTargets(classOf: (String) -> ClassDef?): DmPreviewTarg
     val session = owner(DM_SESSION)
     listOf("isSingleChat", "isPreviewMode", "isReportPage").forEach { session.abi(it, "Z", emptyList()) }
     session.abi("getConversationId", STRING, emptyList())
-    val single = owner("LX/14N8;")
+    val single = owner("LX/0pdx;")
     if (single.superclass != DM_SESSION) throw PatchException("$DM: changed single-peer session")
     single.abi("getSingleChatFromUserId", STRING, emptyList())
     validateNativeDmTranslation(classOf)
@@ -124,25 +124,25 @@ internal fun findDmPreviewTargets(classOf: (String) -> ClassDef?): DmPreviewTarg
 /** Both previews use this adapter, even when the other preview's UI owners are unavailable. */
 internal fun validateNativeDmTranslation(classOf: (String) -> ClassDef?) {
     fun owner(type: String) = classOf(type) ?: throw PatchException("Translate comments (DM transport): missing $type")
-    val service = owner("LX/0Byb;")
+    val service = owner("LX/0Byi;")
     service.field("LIZIZ", service.type, true)
-    service.abi("LJIILLIIL", "Z", emptyList())
-    val language = owner("LX/03bj;")
+    service.abi("LJIIZILJ", "Z", emptyList())
+    val language = owner("LX/03cx;")
     language.field("LIZIZ", language.type, true)
-    language.abi("LLILLIZIL", STRING, emptyList())
-    language.abi("LLFFF", "[Ljava/lang/String;", emptyList())
-    owner("LX/1OvL;").abi("LIZ", "LX/1OvX;", emptyList(), true)
-    val api = owner("LX/1OvX;")
+    language.abi("LLILL", STRING, emptyList())
+    language.abi("LL", "[Ljava/lang/String;", emptyList())
+    owner("LX/1Rym;").abi("LIZ", "LX/1Rz5;", emptyList(), true)
+    val api = owner("LX/1Rz5;")
     if (!AccessFlags.INTERFACE.isSet(api.accessFlags)) throw PatchException("$DM: changed native request interface")
-    api.abi("LJ", "LX/02sL;", listOf(STRING, STRING, STRING))
-    owner("LX/02sL;").abi("LIZIZ", "V", listOf("LX/02sR;"))
-    val observer = owner("LX/02sR;")
+    api.abi("LJ", "LX/02tZ;", listOf(STRING, STRING, STRING))
+    owner("LX/02tZ;").abi("LIZIZ", "V", listOf("LX/02tf;"))
+    val observer = owner("LX/02tf;")
     if (!AccessFlags.INTERFACE.isSet(observer.accessFlags)) throw PatchException("$DM: changed native observer")
-    observer.abi("onSubscribe", "V", listOf("LX/02sU;"))
+    observer.abi("onSubscribe", "V", listOf("LX/02ti;"))
     observer.abi("onNext", "V", listOf(OBJECT))
     observer.abi("onError", "V", listOf("Ljava/lang/Throwable;"))
     observer.abi("onComplete", "V", emptyList())
-    val disposable = owner("LX/02sU;")
+    val disposable = owner("LX/02ti;")
     if (!AccessFlags.INTERFACE.isSet(disposable.accessFlags)) throw PatchException("$DM: changed native cancellation")
     disposable.abi("dispose", "V", emptyList())
     disposable.abi("isDisposed", "Z", emptyList())

@@ -195,8 +195,8 @@ class AccentColorPaletteTest {
 
     @Test
     fun `the wallpaper follow plus keeps its name and tints its red layer`() {
-        val xml = wallpaperIconDrawable("buw", "@color/hushfeed_accent_fe2c55")
-        val (white, tint) = wallpaperIconLayers("buw")
+        val xml = wallpaperIconDrawable("buu", "@color/hushfeed_accent_fe2c55")
+        val (white, tint) = wallpaperIconLayers("buu")
         assertTrue(xml, "@drawable/$white" in xml)
         assertTrue(xml, "android:src=\"@drawable/$tint\" android:tint=\"@color/hushfeed_accent_fe2c55\"" in xml)
         assertTrue(xml, xml.indexOf(white) < xml.indexOf(tint))

@@ -383,7 +383,7 @@ APKMirror also offers some TikTok releases as bundles, using an `.apkm` file, an
 
 The [latest release](https://github.com/SysAdminDoc/hushfeed/releases/latest) ships `SHA256SUMS.txt` beside the `.mpp`. Hash your download with `Get-FileHash -Algorithm SHA256 .\patches-<version>.mpp` (or `sha256sum` elsewhere) and compare it with the line for that file.
 
-The release also carries `release-receipt-<version>.json`. It records the tag and full commit that built the bundle, the bundle's size and hash, and the TikTok APK every patch was applied to, with a verdict for each patch. The bundle is byte reproducible, so you can also build that commit yourself and compare the checksum.
+The bundle is byte reproducible, so you can also build the release's tag yourself and compare the checksum.
 
 ## Building from source
 
@@ -392,10 +392,8 @@ You need JDK 21 or newer, an Android SDK set in `local.properties`, and `GITHUB_
 ```bash
 pwsh -File scripts/gen-patch-defaults.ps1
 ./gradlew :patches:generatePatchesList
-pwsh -File scripts/test-patch-defaults.ps1
 ./gradlew :extensions:tiktok:test
 ./gradlew :patches:test
-pwsh -File scripts/validate-release-facts.ps1
 ./gradlew :patches:buildAndroid
 ```
 
@@ -407,7 +405,7 @@ To add a language to the settings screen, copy one of the tables under `extensio
 
 The patch audit's catalog check is `pwsh -File audit/run-audit.ps1 -Validate`. To check a saved report without changing it, use `-ValidateResults -Results <report> -OutDir <evidence folder>`. A current result needs its exact definition, build receipt and APK identity, unchanged evidence files, and the same executable inputs as the build being qualified. Each check keeps its own input digest, so a partial rerun cannot qualify older checks. Documentation changes alone leave the digest unchanged. Old or mixed-build records stay historical. The [audit routine](concepts/patch-development.md#patch-audit) covers the device builder's `.audit-build.json`, shared device leases and receipt-bound screenshot verdicts.
 
-Unreleased release checks require a separate fixture and native audit for every package and version in the catalog. Each record includes the source APK's manifest and hash, the selected patches and options, and the exact bundle and source commit. A whole-app walk also verifies the installed APK before and after navigation. Older published receipts remain readable as historical records. Walk PineDrama with `scripts/walk-app.ps1 -Package com.ss.android.ttmd.video` and its own `-Out`, and pass publish both receipts, comma separated, to `-Walk`. PineDrama's arm64 code barely runs on an x86_64 emulator, so its audit and walk go on a phone.
+Walk PineDrama with `scripts/walk-app.ps1 -Package com.ss.android.ttmd.video` and its own `-Out`. Its arm64 code barely runs on an x86_64 emulator, so its audit and walk go on a phone.
 
 PineDrama's partial `pinedrama-47.5.3-core-walk-v2` profile follows five steps. It launches the native MainActivity and opens Hushfeed with `TikTokActivityHook.openSettings()`. The Comments row expands its controls inline, then collapses them on the same settings page. Back returns to the original native activity. Each step needs a fresh boolean observation and a screenshot. The result retains installed APK identities before and after the walk and rejects a process change or native crash. Even if all five steps pass, it stays `INCOMPLETE`, with `full=false` and `eligibleForPublication=false`. Historical v1 page-navigation evidence remains tied to v1. Native Profile/settings entry, served comments and photo gallery or posting flows still need their own checks.
 
@@ -421,7 +419,7 @@ Where things live:
 
 - `patches/`: the Kotlin patches and their fingerprints.
 - `extensions/tiktok/`: the Java code that runs inside TikTok, with its Robolectric tests. The settings translations are in `src/main/l10n/`.
-- `scripts/`: patching and checking scripts. `release/release.ps1` runs a release in five stages (`prepare`, `preflight`, `build`, `publish` and `index`), and `validate-release-facts.ps1` holds this README and the index to the catalog.
+- `scripts/`: patching and checking scripts. `release/release.ps1` runs a release from one command and picks up from the step that stopped.
 - `tools/`: release text and What's new generation, plus the test-only verification probe a device check drives.
 - `audit/`: the patch audit. `catalog.json` says how to prove each patch works on a phone, `run-audit.ps1` runs those checks, and `results/` keeps what each TikTok version showed. The steps for a new version are in the [development map](concepts/patch-development.md#patch-audit).
 - `patches-list.json` is the generated patch catalog. `patches-bundle.json` is the Morphe source index for the published bundle and only changes at release time. Starting with the next release, its description includes that release's grouped change list so Morphe Manager can show it right away.

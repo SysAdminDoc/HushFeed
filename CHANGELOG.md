@@ -114,15 +114,16 @@ Every Hushfeed release, newest first.
 ### Build
 
 * **TikTok:** The whole-app walk covers PineDrama too. It swipes Short Video, Following and Drama, opens the comment and share sheets, search, Discover, Rewards, Inbox and Profile, and expands every Hushfeed section, reaching settings by a long press on Home when Profile's menu has no Hushfeed row.
-* **TikTok:** PineDrama has its own patch audit now, with checks that use its own tabs and links. A release needs an up-to-date audit and a whole-app walk for each app the bundle supports.
+* **TikTok:** PineDrama has its own patch audit now, with checks that use its own tabs and links. A release needs a whole-app walk for each app the bundle supports.
 * **TikTok:** Every LIVE preview and drama label that See-through bottom bar moves is checked against the supported TikTok APK.
 * **TikTok:** The auto-advance audit follows the video player itself instead of per-video labels. A clip that doesn't finish, or playback it can't read, leaves the check inconclusive.
-* **TikTok:** A release needs matching APK and on-device evidence for every app it supports, and the walk checks the installed build and its patch options.
+* **TikTok:** The whole-app walk checks the installed build and its patch options.
 * **TikTok:** Patch audits check the installed APK and which patches were picked. Results from another app, or from a patch left out of the build, only count as history.
 * **TikTok:** A patch audit waits for the full diagnostics report before it calls a switch missing. With no video to look at, the checks that need one stay inconclusive, and the commenter region check reads the current cache trace.
 * **TikTok:** A patch audit stops counting for a build once the code it ran against changes, and a partial rerun leaves the older checks as history.
 * **TikTok:** The patch bundle carries Gson 2.15.0, up from 2.14.0. Morphe Manager uses it while patching to read the patch defaults.
-* **TikTok:** The Licenses page under About and the NOTICE file now credit De-Vanced, where a few of the build files came from. Those files, and the telemetry patch taken from hxreborn's fork, now link the copies they were actually taken from instead of ReVanced pages that never held them. The check that opens every credited link reads the patch sources too now, so a dead one there gets caught.
+* **TikTok:** The Licenses page under About and the NOTICE file now credit De-Vanced, where a few of the build files came from. Those files, and the telemetry patch taken from hxreborn's fork, now link the copies they were actually taken from instead of ReVanced pages that never held them.
+* **TikTok:** Releases don't carry `release-receipt-<version>.json` anymore. The bundle is byte reproducible, so you can build the tag yourself and compare the checksum.
 
 ## 0.79.0 (2026-10-24)
 

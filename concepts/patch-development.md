@@ -1,6 +1,6 @@
 # App and patch development map
 
-This guide maps the TikTok app Hushfeed modifies to the code and release checks that make a patch. Its version and patch counts were last synced with the source on 2026-10-31, and `scripts/validate-release-facts.ps1` fails when they drift. The generated [patch catalog](../patches-list.json) is the current source of truth for patch names and compatibility.
+This guide maps the TikTok app Hushfeed modifies to the code and release checks that make a patch. Its version and patch counts were last synced with the source on 2026-10-31. The generated [patch catalog](../patches-list.json) is the current source of truth for patch names and compatibility.
 
 ## What Hushfeed ships
 
@@ -219,11 +219,10 @@ Treat a target update as a new reverse-engineering pass. TikTok can reuse short 
 | --- | --- |
 | :extensions:tiktok:test | Runtime Java behavior through Robolectric |
 | :extensions:tiktok:lint and :extensions:shared:library:lint | Android API-floor calls and guards |
-| :patches:test | Patch logic, contracts, generated documentation, and catalog consistency |
+| :patches:test | Patch logic, fingerprints against the fixtures, and catalog consistency |
 | :patches:generatePatchesList | Catalog generated from the compiled patch bundle |
 | :patches:buildAndroid plus :patches:verifyBundle | Bundle payloads, manifest version, checksum, compatibility description, and catalog match |
 | scripts/verify-all-patches.ps1 | Each patch applies through the Morphe desktop patcher to every declared APK fixture |
-| scripts/validate-release-facts.ps1 | README, catalog, bundle index, fixture results, and release facts agree |
 | audit/run-audit.ps1 | Every patch does what its description says on a phone running the full catalog |
 | Device acceptance | The injected runtime hook behaves in the real TikTok UI on the supported version |
 
@@ -248,13 +247,11 @@ To audit a new TikTok version:
 
 Run `audit/run-audit.ps1 -ValidateResults -Results <results file> -OutDir <evidence folder>` to check saved evidence without rewriting it. Add `-Apk <expected apk>` to qualify it against another artifact. Missing, duplicate, removed, unknown-status and changed or unversioned checks are reported by patch/check key. A partial run keeps old records, but each check must match its definition, build receipt, APK, available evidence and executable-input digest. The digest covers the committed runtime, patch resources, build tools and other executable inputs across the project. It changes conservatively when any of those inputs change. Documentation and audit outputs are excluded. Current-checkout validation refuses uncommitted or hidden executable inputs. Explicit historical-commit validation reads that committed tree. Legacy records without an input digest keep their verdicts but need a new bound run before they qualify. Without a verified build receipt, a run is explicitly unbound. Device-build receipts also retain the stock and patched manifest package, version and version code, both APK hashes, exact patch selection/options, bundle hash and patch-report hash. A version-code override may differ from stock. Every ordinary check requires its patch selected; a negative check must declare `patchSelection: absent`. Older device-build receipts remain historical.
 
-PineDrama gets its own audit. `audit/catalog-pinedrama.json` holds an entry for each of its patches, with checks that open PineDrama's own tabs (Home, Discover, Inbox, Profile, no Friends) and use its `snssdk845221` links. The runner picks the catalog, probe build, tabs and results name from the APK's package, so a PineDrama run writes `audit/results/pinedrama-<version>.json`. Build its probe with `tools/verification-probe/build.ps1 -Profile pinedrama-47.5.3-audit-v1`, and check the catalog without a device with `audit/run-audit.ps1 -Validate -CatalogPackage com.ss.android.ttmd.video`. A release needs a clean audit of every declared package: every check passed, none left in review, inconclusive, failed or skipped.
+PineDrama gets its own audit. `audit/catalog-pinedrama.json` holds an entry for each of its patches, with checks that open PineDrama's own tabs (Home, Discover, Inbox, Profile, no Friends) and use its `snssdk845221` links. The runner picks the catalog, probe build, tabs and results name from the APK's package, so a PineDrama run writes `audit/results/pinedrama-<version>.json`. Build its probe with `tools/verification-probe/build.ps1 -Profile pinedrama-47.5.3-audit-v1`, and check the catalog without a device with `audit/run-audit.ps1 -Validate -CatalogPackage com.ss.android.ttmd.video`.
 
 The verification probe sends diagnostic reports in encoded frames with byte counts and a SHA-256 digest. Missing or damaged frames leave the check inconclusive. Rebuild the probe before rerunning these report checks. A missing current video is also inconclusive when the check declares that video as a prerequisite; a probe exception or an observed expectation failure still fails.
 
-Release receipt schema 3 enumerates every declared package/version pair. Its pre-patching input ledger and patch results retain source and output APK manifests/hashes, requested patches/options, applied patch names and the raw CLI report hash. Every exact declared input needs an independently collected native audit of that package and input hash, run on a clean source build whose executable inputs match the release commit's. The audit has to account for every check, and publish lists any that failed or still need review. Forced probes don't supply missing declared coverage. Older published receipts remain historical and cannot authorize a new publication.
-
-Walk receipt schema 2 retains the verified native build receipt and installed APK identity before and after the walk. Publication compares its stock APK and exact patch/options selection with the release fixture. The global TikTok profile refuses other packages; PineDrama needs separate native audit and whole-app walk profiles.
+A whole-app walk writes a `walk-receipt.json` with the bundle's hash, the installed APK and the result, one per declared app. `scripts/release/release.ps1` won't publish until each app's walk comes back PASS.
 
 Unreleased startup checks can read 32 bounded first-frame callback records from `SessionPlaybackHold`. They keep weak controller/model/manager references and `elapsedRealtime` timestamps, with direct source-key validation around the existing native reads. The records stay in memory and produce no logs. Pair them only with the same source's stable keyed prepare timestamp. This measures receipt of the extension callback. Displayed-frame timing requires a separate observation.
 

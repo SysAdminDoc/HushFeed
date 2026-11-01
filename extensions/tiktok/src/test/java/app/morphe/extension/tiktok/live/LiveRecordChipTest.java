@@ -120,6 +120,14 @@ public class LiveRecordChipTest {
         assertFalse(LiveRecordChip.keepWhileHidden(false, false, 1, 10_000));
     }
 
+    @Test public void aRecreatedFragmentForTheSameLiveDoesNotMeanLeavingTheRoom() {
+        assertTrue(LiveRecordChip.sameRoomId("1234", "1234"));
+        assertFalse(LiveRecordChip.sameRoomId("1234", "5678"));
+        assertFalse(LiveRecordChip.sameRoomId("1234", null));
+        assertFalse(LiveRecordChip.sameRoomId(null, "1234"));
+        assertFalse(LiveRecordChip.sameRoomId(null, null));
+    }
+
     // The chip is 200 wide at the right edge (880 to 1080), 120 tall, wanted at 330.
 
     @Test public void theChipStaysPutWhenNothingIsUnderIt() {

@@ -79,6 +79,8 @@ public final class LiveRecordChip {
     private static boolean clearScreen;
     private static long pipTransitionUntil;
     private static int pipTransitionGeneration;
+    private static boolean recordingWasPinned;
+    private static long pipReturnUntil;
 
     /** True while the switch is on and Hushfeed isn't paused. */
     public static boolean enabled() {
@@ -127,6 +129,7 @@ public final class LiveRecordChip {
         application.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
             @Override public void onActivityPaused(Activity paused) {
                 if (paused == host.get()) {
+                    pipReturnUntil = 0;
                     removeChip();
                     if (!streamRecording()) {
                         leave(LiveRecorder.End.LEFT_ROOM);
@@ -148,6 +151,8 @@ public final class LiveRecordChip {
                 if (destroyed == host.get()) {
                     pipTransitionGeneration++;
                     pipTransitionUntil = 0;
+                    recordingWasPinned = false;
+                    pipReturnUntil = 0;
                     leave(LiveRecorder.End.APP_EXIT);
                     removeChip();
                     clearScreen = false;
@@ -163,6 +168,10 @@ public final class LiveRecordChip {
                 if (resumed == host.get()) {
                     pipTransitionGeneration++;
                     pipTransitionUntil = 0;
+                    // Returning from PiP can precede the room page becoming visible again.
+                    pipReturnUntil = recordingWasPinned && streamRecording()
+                            ? SystemClock.uptimeMillis() + PIP_TRANSITION_MS : 0;
+                    recordingWasPinned = false;
                     scheduleTick();
                 }
             }
@@ -499,6 +508,8 @@ public final class LiveRecordChip {
     private static void onFinished(LiveRecorder.Result result) {
         recorder = null;
         saving = false;
+        recordingWasPinned = false;
+        pipReturnUntil = 0;
         LiveRecordingSaver.announce(result);
         refresh();
     }
@@ -507,7 +518,11 @@ public final class LiveRecordChip {
     private static void follow(Object fragment) {
         Object previous = page.get();
         if (previous != null && previous != fragment) {
-            leave(LiveRecorder.End.LEFT_ROOM);
+            LiveRecorder running = recorder;
+            if (running != null && running.active()
+                    && !sameRoomId(running.target().room, roomKey(roomOf(fragment)))) {
+                leave(LiveRecorder.End.LEFT_ROOM);
+            }
         }
         if (previous != fragment) {
             clearScreen = Boolean.TRUE.equals(CLEAR_ROOM_STATES.get(roomKey(roomOf(fragment))));
@@ -546,6 +561,11 @@ public final class LiveRecordChip {
                 SystemClock.uptimeMillis(), pipTransitionUntil);
     }
 
+    /** A rebuilt page may still represent the same LIVE after returning from native PiP. */
+    static boolean sameRoomId(String recorded, String candidate) {
+        return recorded != null && candidate != null && recorded.equals(candidate);
+    }
+
     // ---- watching the room ----------------------------------------------------------------
 
     private static void scheduleTick() {
@@ -558,6 +578,7 @@ public final class LiveRecordChip {
         ticking = false;
         try {
             Activity activity = host.get();
+            if (streamRecording() && nativePip(activity)) recordingWasPinned = true;
             if (keepWhileHidden(activity)) {
                 // A pinned LIVE has no full-size resumed page. Keep recording its stream, but
                 // still stop if TikTok replaces the recorded room while the window is pinned.
@@ -571,10 +592,16 @@ public final class LiveRecordChip {
             }
             Object fragment = activity != null && enabled() ? pageInFront(activity) : null;
             boolean showing = fragment != null;
+            if (!showing && streamRecording() && pipReturnUntil > SystemClock.uptimeMillis()) {
+                removeChip();
+                scheduleTick();
+                return;
+            }
             if (!showing) {
                 leave(LiveRecorder.End.LEFT_ROOM);
                 removeChip();
             } else {
+                pipReturnUntil = 0;
                 follow(fragment);
                 LiveRecorder running = recorder;
                 if (running != null && running.active() && !sameRoom(running, fragment)) {

@@ -83,12 +83,14 @@
 * **TikTok:** LIVE-Videos ausblenden erwischt auch LIVEs, die TikTok in eine schon sichtbare Für-dich-Seite schiebt (#277).
 * **TikTok:** Schaltest du das Übersetzen-Symbol über den Kommentaren aus, bleibt es jetzt bei jedem Video aus, bis du es wieder einschaltest (#282).
 * **TikTok:** Story öffnen, wenn jemand LIVE ist funktioniert jetzt auch auf dem Profilbild (#233).
+* **TikTok:** Ein Video auf Automatisch zu speichern holt eine höhere Kopie wie 1080p HEVC, wenn TikToks eigene Datei nur 720p hat (#240).
 * **TikTok:** Eine Story auf Automatisch zu speichern holt die schärfste Kopie statt einer kleineren 720p-Kopie. Danke an @jutochoppa (#287, #155).
 * **TikTok:** Die Bildschirmaufnahme eines LIVE filmt die Aufnahme-Schaltfläche nicht mehr mit, und die Benachrichtigung hat eine Stopp-Schaltfläche (#265).
 * **TikTok:** Ohne Passkey anmelden sagt dir, was zu tun ist, wenn TikToks Bestätigung in zwei Schritten nur nach einem Passkey fragt (#102).
 * **TikTok:** Eine pausierte PineDrama-Folge läuft dort weiter, wo du sie angehalten hast (#156).
 * **TikTok:** Erstellungstools entfernen lässt das geteilte Paket von APKMirror in Ruhe, sodass Gesichtseffekte und Beauty dein Gesicht wieder finden (#285).
 * **TikTok:** Wenn TikTok ein Like ablehnt, zeigt Hushfeed beim ersten Mal pro Sitzung den Grund (#269).
+* **TikTok:** Videos, die du geliked oder gespeichert hast, bleiben in deinen Likes und Favoriten, auch mit Werbekennzeichnung (#269).
 * **TikTok:** Die chinesische Meldung für ein abgelehntes Folgen benutzt jetzt das richtige Wort.
 * **TikTok:** Die schwebende Tab-Kapsel macht auch LIVE-Vorschauen dahinter unscharf (#259).
 * **TikTok:** PineDrama bekommt den Feed-Filter, sodass Werbung im Feed entfernen die Werbung aus seinem Für-dich-Feed und dem Drama-Tab nimmt (#294).

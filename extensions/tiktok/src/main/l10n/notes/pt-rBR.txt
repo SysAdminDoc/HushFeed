@@ -83,12 +83,14 @@
 * **TikTok:** Esconder os vídeos LIVE também pega as LIVEs que o TikTok enfia numa página Para Você que já está na tela (#277).
 * **TikTok:** Desligar o ícone de tradução acima dos comentários agora vale para todos os vídeos até você ligar de novo (#282).
 * **TikTok:** Abrir o story quando alguém está em LIVE funciona também na foto de perfil do criador (#233).
+* **TikTok:** Salvar um vídeo no Automático pega uma cópia mais alta, como 1080p HEVC, quando o arquivo do próprio TikTok é só 720p (#240).
 * **TikTok:** Salvar um story no Automático pega a cópia mais nítida em vez de uma menor em 720p. Obrigado a @jutochoppa (#287, #155).
 * **TikTok:** Gravar a tela de uma LIVE não filma mais o botão Gravar, e a notificação tem um botão Parar (#265).
 * **TikTok:** Entrar sem chave de acesso diz o que fazer quando a verificação em duas etapas do TikTok pede só uma chave de acesso (#102).
 * **TikTok:** Retomar um episódio do PineDrama continua de onde você pausou (#156).
 * **TikTok:** Remover ferramentas de criação deixa o pacote dividido do APKMirror em paz, então os efeitos de rosto e o Beauty voltam a achar seu rosto (#285).
 * **TikTok:** Quando o TikTok recusa uma curtida, o Hushfeed mostra o motivo na primeira vez de cada sessão (#269).
+* **TikTok:** Vídeos que você curtiu ou salvou continuam nas grades de Curtidos e Favoritos, mesmo com marca de anúncio (#269).
 * **TikTok:** A mensagem em chinês para um seguir recusado usa a palavra certa agora.
 * **TikTok:** A pílula de abas flutuante também desfoca as prévias de LIVE atrás dela (#259).
 * **TikTok:** O PineDrama ganha o Filtro do feed, então Remover os anúncios do feed tira os anúncios do feed Para Você e da aba de dramas (#294).

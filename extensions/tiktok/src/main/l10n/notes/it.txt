@@ -83,12 +83,14 @@
 * **TikTok:** Nascondi i video LIVE prende anche le LIVE che TikTok infila in una pagina Per te già sullo schermo (#277).
 * **TikTok:** Se spegni l'icona di traduzione sopra i commenti, ora resta spenta su ogni video finché non la riaccendi (#282).
 * **TikTok:** Apri la storia quando qualcuno è in LIVE funziona anche sulla foto profilo del creator (#233).
+* **TikTok:** Salvare un video in Automatico prende una copia più alta, come 1080p HEVC, quando il file di TikTok è solo a 720p (#240).
 * **TikTok:** Salvare una storia in Automatico prende la copia più nitida invece di una più piccola a 720p. Grazie a @jutochoppa (#287, #155).
 * **TikTok:** Registrare lo schermo di una LIVE non riprende più il pulsante Registra, e la notifica ha un pulsante Ferma (#265).
 * **TikTok:** Accedi senza passkey spiega cosa fare quando la verifica in due passaggi di TikTok chiede solo una passkey (#102).
 * **TikTok:** Riprendere un episodio di PineDrama riparte da dove l'avevi messo in pausa (#156).
 * **TikTok:** Rimuovi gli strumenti di creazione lascia stare il pacchetto diviso di APKMirror, così gli effetti viso e Beauty ritrovano il tuo viso (#285).
 * **TikTok:** Quando TikTok rifiuta un mi piace, Hushfeed mostra il motivo la prima volta in ogni sessione (#269).
+* **TikTok:** I video a cui hai messo mi piace o che hai salvato restano nelle griglie Mi piace e Preferiti, anche con un segno di pubblicità (#269).
 * **TikTok:** Il messaggio in cinese per un segui rifiutato usa ora la parola giusta.
 * **TikTok:** La pillola delle schede fluttuante sfoca anche le anteprime LIVE dietro di sé (#259).
 * **TikTok:** PineDrama riceve Filtro del feed, così Rimuovi gli annunci dal feed toglie gli annunci dal suo feed Per te e dalla scheda dei drama (#294).

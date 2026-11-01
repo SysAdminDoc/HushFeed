@@ -83,12 +83,14 @@
 * **TikTok:** LIVE videoları gizlədin TikTok-un artıq ekranda olan Sizin üçün səhifəsinə soxduğu LIVE-ları da tutur (#277).
 * **TikTok:** Şərhlərin üstündəki tərcümə ikonunu söndürsəniz, yenidən açana qədər hər videoda söndürülü qalır (#282).
 * **TikTok:** Yaradıcı LIVE-dadırsa Hekayəni aç yaradıcının profil şəklində də işləyir (#233).
+* **TikTok:** Avtomatik rejimdə videonu yadda saxlamaq TikTok-un öz faylı yalnız 720p olanda daha hündür nüsxəni, məsələn 1080p HEVC, götürür (#240).
 * **TikTok:** Avtomatik rejimdə hekayəni yadda saxlamaq daha kiçik 720p nüsxə əvəzinə ən kəskin nüsxəni götürür. @jutochoppa-ya təşəkkürlər (#287, #155).
 * **TikTok:** LIVE ekranını yazmaq artıq Yaz düyməsini çəkmir, bildirişdə isə Dayandır düyməsi var (#265).
 * **TikTok:** Passkey olmadan daxil olun TikTok-un 2 addımlı yoxlaması yalnız passkey istəyəndə nə edəcəyinizi deyir (#102).
 * **TikTok:** Dayandırılmış PineDrama epizodu dayandırdığınız yerdən davam edir (#156).
 * **TikTok:** Yaratma alətlərini silin APKMirror-un bölünmüş paketinə toxunmur, ona görə üz effektləri və Beauty üzünüzü yenidən tapır (#285).
 * **TikTok:** TikTok bəyənməni rədd edəndə Hushfeed hər seansda ilk dəfə səbəbini göstərir (#269).
+* **TikTok:** Bəyəndiyiniz və ya yadda saxladığınız videolar reklam işarəsi olsa belə Bəyənilənlər və Seçilmişlər şəbəkəsində qalır (#269).
 * **TikTok:** Rədd edilən izləmə üçün Çin dilindəki mesaj indi düzgün sözü işlədir.
 * **TikTok:** Üzən tab kapsulu arxasındakı LIVE önizləmələrini də bulanıqlaşdırır (#259).
 * **TikTok:** PineDrama Lent filtri alır, ona görə Lent reklamlarını silin onun Sizin üçün lentindən və drama tabından reklamları təmizləyir (#294).

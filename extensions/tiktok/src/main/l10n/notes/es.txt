@@ -83,12 +83,14 @@
 * **TikTok:** Ocultar los vídeos LIVE también atrapa los LIVE que TikTok mete en una página Para ti que ya está en pantalla (#277).
 * **TikTok:** Si apagas el icono de traducir encima de los comentarios, ahora sigue apagado en cada video hasta que lo vuelvas a encender (#282).
 * **TikTok:** Abrir la historia cuando alguien está en LIVE funciona también en la foto de perfil del creador (#233).
+* **TikTok:** Guardar un video en Automático toma una copia más alta, como 1080p HEVC, cuando el archivo de TikTok es solo de 720p (#240).
 * **TikTok:** Guardar una historia en Automático toma la copia más nítida en lugar de una de 720p más pequeña. Gracias a @jutochoppa (#287, #155).
 * **TikTok:** Grabar la pantalla de un LIVE ya no graba el botón Grabar, y la notificación tiene un botón Detener (#265).
 * **TikTok:** Iniciar sesión sin llave de acceso explica qué hacer cuando la verificación en dos pasos de TikTok solo pide una llave de acceso (#102).
 * **TikTok:** Al reanudar un episodio de PineDrama, sigue desde donde lo pausaste (#156).
 * **TikTok:** Quitar las herramientas de creación deja en paz el paquete dividido de APKMirror, así los efectos de cara y Beauty vuelven a encontrar tu cara (#285).
 * **TikTok:** Cuando TikTok rechaza un me gusta, Hushfeed muestra el motivo la primera vez en cada sesión (#269).
+* **TikTok:** Los videos que te gustaron o guardaste se quedan en tus cuadrículas de Me gusta y Favoritos, aunque lleven marca de anuncio (#269).
 * **TikTok:** El mensaje en chino para un seguimiento rechazado usa ahora la palabra correcta.
 * **TikTok:** La píldora flotante de pestañas también desenfoca las vistas previas de LIVE que hay detrás (#259).
 * **TikTok:** PineDrama recibe Filtro del feed, así Quitar los anuncios del feed limpia los anuncios de su feed Para ti y de la pestaña de dramas (#294).

@@ -83,12 +83,14 @@
 * **TikTok:** Hide LIVE videos also catches LIVEs TikTok slips into a For You page that's already on screen (#277).
 * **TikTok:** Turning off the translate icon above the comments now keeps it off on every video until you turn it back on (#282).
 * **TikTok:** Open the Story when a creator is LIVE works on a creator's profile picture too (#233).
+* **TikTok:** Saving a video on Automatic takes a taller copy, like 1080p HEVC, when TikTok's own file is only 720p (#240).
 * **TikTok:** Saving a story on Automatic takes the sharpest copy instead of a smaller 720p one. Thanks to @jutochoppa (#287, #155).
 * **TikTok:** Recording a LIVE's screen no longer films the Record button, and the notification has a Stop button (#265).
 * **TikTok:** Sign in without a passkey says what to do when TikTok's 2-step check asks only for a passkey (#102).
 * **TikTok:** Unpausing a PineDrama episode carries on from where you paused it (#156).
 * **TikTok:** Remove creation tools leaves APKMirror's split bundle alone, so face effects and Beauty find your face again (#285).
 * **TikTok:** When TikTok refuses a like, Hushfeed shows the reason the first time each session (#269).
+* **TikTok:** Videos you liked or saved stay on your Liked and Favorites grids, even with an ad mark (#269).
 * **TikTok:** The Chinese message for a refused follow uses the right word now.
 * **TikTok:** The floating tab pill blurs LIVE previews behind it too (#259).
 * **TikTok:** PineDrama gets Feed filter, so Remove feed ads clears the ads from its For You feed and drama tab (#294).

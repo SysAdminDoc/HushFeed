@@ -83,12 +83,14 @@
 * **TikTok:** CANLI videolarını gizle, TikTok'un zaten ekranda olan bir Sana Özel sayfasına sıkıştırdığı LIVE'ları da yakalar (#277).
 * **TikTok:** Yorumların üstündeki çeviri simgesini kapatırsan artık tekrar açana kadar her videoda kapalı kalır (#282).
 * **TikTok:** Üretici LIVE'dayken hikâyeyi aç, üreticinin profil fotoğrafında da çalışır (#233).
+* **TikTok:** Bir videoyu Otomatik ile kaydetmek, TikTok'un kendi dosyası yalnızca 720p ise 1080p HEVC gibi daha yüksek bir kopyayı alır (#240).
 * **TikTok:** Bir hikâyeyi Otomatik ile kaydetmek daha küçük 720p kopya yerine en net kopyayı alır. @jutochoppa'ya teşekkürler (#287, #155).
 * **TikTok:** Bir LIVE'ın ekranını kaydetmek artık Kaydet düğmesini görüntüye almıyor ve bildirimde bir Durdur düğmesi var (#265).
 * **TikTok:** Geçiş anahtarı olmadan giriş yap, TikTok'un 2 adımlı doğrulaması yalnızca geçiş anahtarı istediğinde ne yapacağını söyler (#102).
 * **TikTok:** Duraklatılan bir PineDrama bölümü, durdurduğun yerden devam eder (#156).
 * **TikTok:** Oluşturma araçlarını kaldır, APKMirror'ın bölünmüş paketine dokunmaz, böylece yüz efektleri ve Beauty yüzünü yeniden bulur (#285).
 * **TikTok:** TikTok bir beğeniyi reddettiğinde Hushfeed her oturumda ilk seferinde nedenini gösterir (#269).
+* **TikTok:** Beğendiğin ya da kaydettiğin videolar reklam işareti taşısa bile Beğenilenler ve Favoriler ızgaralarında kalır (#269).
 * **TikTok:** Reddedilen takip için Çince mesaj artık doğru kelimeyi kullanıyor.
 * **TikTok:** Yüzen sekme hapı arkasındaki LIVE önizlemelerini de bulanıklaştırır (#259).
 * **TikTok:** PineDrama artık Akış filtresi alıyor, böylece Akış reklamlarını kaldır onun Sana Özel akışındaki ve dizi sekmesindeki reklamları temizler (#294).

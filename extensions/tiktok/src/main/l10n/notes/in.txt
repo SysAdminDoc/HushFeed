@@ -83,12 +83,14 @@
 * **TikTok:** Sembunyikan video LIVE juga menangkap LIVE yang diselipkan TikTok ke halaman Untuk Anda yang sudah tampil (#277).
 * **TikTok:** Mematikan ikon terjemahan di atas komentar kini membuatnya tetap mati di setiap video sampai kamu menyalakannya lagi (#282).
 * **TikTok:** Buka cerita saat kreator sedang LIVE kini juga berfungsi pada foto profil kreator (#233).
+* **TikTok:** Menyimpan video dengan Otomatis mengambil salinan yang lebih tinggi, misalnya 1080p HEVC, jika file TikTok sendiri hanya 720p (#240).
 * **TikTok:** Menyimpan cerita dengan Otomatis mengambil salinan paling tajam, bukan salinan 720p yang lebih kecil. Terima kasih kepada @jutochoppa (#287, #155).
 * **TikTok:** Merekam layar LIVE tidak lagi ikut merekam tombol Rekam, dan notifikasinya punya tombol Berhenti (#265).
 * **TikTok:** Masuk tanpa kunci sandi menjelaskan apa yang harus dilakukan saat verifikasi 2 langkah TikTok hanya meminta kunci sandi (#102).
 * **TikTok:** Melanjutkan episode PineDrama yang dijeda kini memutar dari titik kamu menjedanya (#156).
 * **TikTok:** Hapus alat kreasi tidak mengubah paket terpisah APKMirror, jadi efek wajah dan Beauty bisa menemukan wajahmu lagi (#285).
 * **TikTok:** Saat TikTok menolak suka, Hushfeed menampilkan alasannya pertama kali di setiap sesi (#269).
+* **TikTok:** Video yang kamu sukai atau simpan tetap ada di grid Disukai dan Favorit, meski punya tanda iklan (#269).
 * **TikTok:** Pesan bahasa Mandarin untuk ikuti yang ditolak kini memakai kata yang benar.
 * **TikTok:** Pil tab melayang juga memburamkan pratinjau LIVE di belakangnya (#259).
 * **TikTok:** PineDrama mendapat Filter feed, jadi Hapus iklan di feed membersihkan iklan dari feed Untuk Anda dan tab dramanya (#294).

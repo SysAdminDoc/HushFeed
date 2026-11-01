@@ -41,7 +41,7 @@ $ErrorActionPreference = 'Stop'
 
 # What differs from repo to repo.
 $Repo = @{
-    Name = 'hushfeed'; Title = 'Hushfeed'; Repository = 'SysAdminDoc/HushFeed'; Prefix = 'HUSHFEED'
+    Name = 'hushfeed'; Title = 'Hushfeed'; Repository = 'SysAdminDoc/HushFeed'; Prefix = 'HUSHFEED'; Verify = 'com.zhiliaoapp.musically'
     Tests = @('--continue', ':extensions:tiktok:test', ':patches:test', ':extensions:shared:library:lint', ':extensions:tiktok:lint')
 }
 
@@ -280,9 +280,11 @@ function Step-walk {
             Invoke-Queued "walk $package" {
                 & (Join-Path $work 'scripts/walk-app.ps1') -Serial $device.Serial -Package $package -Bundle $bundlePath -Out $receipt -PatchArgs $patchArgs
             }
+            # ART's verifier reads every class, so it sees a bad hook on a screen the walk never opened.
+            if ($package -eq $Repo.Verify) { Invoke-Queued "verify $package" { & (Join-Path $work 'scripts/verify-injected-registers.ps1') -CleanApk $patchArgs.Apk -PatchedApk (Resolve-Path (Join-Path $patchArgs.OutDir '*-signed.apk')).Path -Serial $device.Serial } }
         } catch {
             $why = if (Test-Path -LiteralPath $receipt) { @((Get-Content -LiteralPath $receipt -Raw | ConvertFrom-Json).problems) -join '; ' }
-            throw "The walk of $package didn't pass: $why ($($_.Exception.Message))"
+            throw "$package didn't pass the walk or the verifier: $why ($($_.Exception.Message))"
         } finally {
             if ($device.Started) { adb.exe -s $device.Serial emu kill 2>$null | Out-Null }
             Remove-Item -LiteralPath $patchArgs.OutDir -Recurse -Force -ErrorAction SilentlyContinue

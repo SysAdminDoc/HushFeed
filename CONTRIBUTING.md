@@ -28,7 +28,7 @@ when possible, and remove any private messages or account details from screensho
 
 A release is one command: `scripts/release/release.ps1 -Version <x.y.z> -Summary <file>`. It works in its own worktree and runs these steps in order: cut, test, bundle, apply, walk, publish, index. If a step fails, fix the cause and run it again with `-From <step>`. After the cut, only a fix for a failed test or a broken walk goes into the release.
 
-The steps run what actually proves the bundle: the runtime and patch tests once, lint, the bundle build, every patch applied to each APK the catalog declares, and a whole-app walk of each declared app patched from that exact bundle. Nothing goes public until the walks pass. The release assets go up before `patches-bundle.json` moves, so its `download_url` always points at a file that exists.
+The steps run what actually proves the bundle: the runtime and patch tests once, lint, the bundle build, every patch applied to each APK the catalog declares, a whole-app walk of each declared app patched from that exact bundle, and the Android runtime's own verifier over the patched TikTok. Nothing goes public until those pass. The release assets go up before `patches-bundle.json` moves, so its `download_url` always points at a file that exists.
 
 The local helpers are `scripts/gen-l10n.py`, `scripts/verify-all-patches.ps1` and `scripts/patch-for-device.ps1`. The last two need a Morphe desktop jar and a fixture APK. Anything more than one of them needs goes in `scripts/common.ps1`, which they all dot-source. The jar runs on JDK 21 or newer, so set `HUSHFEED_JAVA` or `JAVA_HOME` if that isn't the `java` first on your PATH. An explicit `-Java` directory must contain `bin/java.exe` or `bin/java`.
 

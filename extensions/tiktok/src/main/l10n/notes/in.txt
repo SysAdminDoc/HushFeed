@@ -100,7 +100,7 @@
 * **TikTok:** Pencarian komentar tidak lagi memunculkan kembali komentar terjemahan yang disembunyikan filter kata kunci.
 * **TikTok:** Memilih folder unduhan yang tidak bisa dipakai membuka lagi kotak folder dengan alasannya di bawah.
 * **TikTok:** Uji coba rilis kini mencakup PineDrama juga, dari feed dan lembarnya sampai setiap bagian Hushfeed.
-* **TikTok:** PineDrama punya audit patch sendiri, dan sebuah rilis butuh audit dan uji coba yang bersih untuk setiap aplikasi yang didukungnya.
+* **TikTok:** PineDrama punya audit patch sendiri, dan sebuah rilis butuh audit terbaru dan uji coba yang lolos untuk setiap aplikasi yang didukungnya.
 * **TikTok:** Setiap pratinjau LIVE dan label drama yang digeser Bilah bawah tembus pandang diperiksa terhadap build TikTok yang didukung.
 * **TikTok:** Audit perpindahan otomatis mengikuti pemutar video itu sendiri, bukan label per video.
 * **TikTok:** Sebuah rilis butuh bukti yang cocok untuk setiap aplikasi yang didukungnya.

@@ -100,7 +100,7 @@
 * **TikTok:** Yorum araması, anahtar kelime filtresinin gizlediği çevrilmiş yorumları artık geri getirmiyor.
 * **TikTok:** Kullanılamayan bir indirme klasörü seçmek, klasör kutusunu altında nedeniyle birlikte yeniden açar.
 * **TikTok:** Sürüm yürüyüşü artık PineDrama'yı da kapsıyor, akışlarından ve sayfalarından her Hushfeed bölümüne kadar.
-* **TikTok:** PineDrama'nın kendi yama denetimi var ve bir sürüm, desteklediği her uygulama için temiz bir denetim ve yürüyüş istiyor.
+* **TikTok:** PineDrama'nın kendi yama denetimi var ve bir sürüm, desteklediği her uygulama için güncel bir denetim ve başarılı bir yürüyüş istiyor.
 * **TikTok:** Şeffaf alt çubuğun taşıdığı her LIVE önizlemesi ve dizi etiketi, desteklenen TikTok derlemesinde kontrol ediliyor.
 * **TikTok:** Otomatik ilerleme denetimi, tek tek video etiketleri yerine video oynatıcının kendisini izliyor.
 * **TikTok:** Bir sürüm, desteklediği her uygulama için eşleşen kanıt istiyor.

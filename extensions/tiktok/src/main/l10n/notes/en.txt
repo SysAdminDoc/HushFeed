@@ -100,7 +100,7 @@
 * **TikTok:** Comment search no longer brings back translated comments the keyword filter hid.
 * **TikTok:** Picking a download folder that can't be used reopens the folder box with the reason under it.
 * **TikTok:** The release walk covers PineDrama too, from its feeds and sheets to every Hushfeed section.
-* **TikTok:** PineDrama has its own patch audit, and a release needs a clean audit and walk for each app it supports.
+* **TikTok:** PineDrama has its own patch audit, and a release needs an up-to-date audit and a passing walk for each app it supports.
 * **TikTok:** Every LIVE preview and drama label that See-through bottom bar moves is checked against the supported TikTok build.
 * **TikTok:** The auto-advance audit follows the video player itself instead of per-video labels.
 * **TikTok:** A release needs matching evidence for every app it supports.

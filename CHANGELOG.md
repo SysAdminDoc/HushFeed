@@ -114,7 +114,7 @@ Every Hushfeed release, newest first.
 ### Build
 
 * **TikTok:** The whole-app walk covers PineDrama too. It swipes Short Video, Following and Drama, opens the comment and share sheets, search, Discover, Rewards, Inbox and Profile, and expands every Hushfeed section, reaching settings by a long press on Home when Profile's menu has no Hushfeed row.
-* **TikTok:** PineDrama has its own patch audit now, with checks that use its own tabs and links. A release needs a clean audit and a whole-app walk for each app the bundle supports.
+* **TikTok:** PineDrama has its own patch audit now, with checks that use its own tabs and links. A release needs an up-to-date audit and a whole-app walk for each app the bundle supports.
 * **TikTok:** Every LIVE preview and drama label that See-through bottom bar moves is checked against the supported TikTok APK.
 * **TikTok:** The auto-advance audit follows the video player itself instead of per-video labels. A clip that doesn't finish, or playback it can't read, leaves the check inconclusive.
 * **TikTok:** A release needs matching APK and on-device evidence for every app it supports, and the walk checks the installed build and its patch options.

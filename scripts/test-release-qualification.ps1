@@ -50,21 +50,40 @@ try {
         wrongReport={param($r)$r.targets[1].binding.patchReportSha256='7'*64}
         missingNativePackage={param($r)$r.audit=@($r.audit[0])}
         wrongNativeSource={param($r)$r.audit[1].nativeBuild.sourceApk.sha256='8'*64}
-        wrongNativeBundle={param($r)$r.audit[1].nativeBuild.bundle.sha256='9'*64}
+        malformedNativeBundle={param($r)$r.audit[1].nativeBuild.bundle.sha256='9'*63}
+        wrongNativeInputs={param($r)$r.audit[1].nativeBuild.executionInputs.sha256='9'*64}
+        wrongNativeInputCount={param($r)$r.audit[1].executionInputs.fileCount=2}
+        missingNativeInputs={param($r)$r.audit[1].PSObject.Properties.Remove('executionInputs')}
+        otherNativeBuildCommit={param($r)$r.audit[1].nativeBuild.source.commit='c'*40}
+        dirtyNativeBuild={param($r)$r.audit[1].nativeBuild.source.clean=$false}
+        unorderedNativeCommit={param($r)$r.audit[1].PSObject.Properties.Remove('commitsSince')}
         wrongNativeSelection={param($r)$r.audit[1].nativeBuild.patches=@('Alpha','Beta')}
         wrongNativeOptions={param($r)$r.audit[1].nativeBuild.options=@('Alpha|flag=true')}
         wrongInstalledApk={param($r)$r.audit[1].installedApkSha256='a'*64}
         noNativeChecks={param($r)$r.audit[1].nativeChecks=0}
         historicalNativeBuild={param($r)$r.audit[1].nativeBuild.status='historical'}
         repeatedNative={param($r)$r.audit=@($r.audit[0],$r.audit[1],$r.audit[1])}
-        failedNativeCheck={param($r)$r.audit[1].summary.fail=1;$r.audit[1].summary.pass=2}
-        unreviewedNativeCheck={param($r)$r.audit[1].summary.review=1;$r.audit[1].summary.pass=2}
+        erroredNativeCheck={param($r)$r.audit[1].summary.error=1;$r.audit[1].summary.pass=2}
+        skippedNativeCheck={param($r)$r.audit[1].summary.skipped=1;$r.audit[1].summary.pass=2}
+        uncountedNativeCheck={param($r)$r.audit[1].summary.pass=2}
+        negativeNativeCount={param($r)$r.audit[1].summary.fail=-1;$r.audit[1].summary.pass=4}
         malformedSchema={param($r)$r.schemaVersion='3'}
     }
     foreach($case in $mutations.GetEnumerator()){
         $changed=$json|ConvertFrom-Json;& $case.Value $changed
         $bad=Test-ReleaseReceipt -Receipt $changed @arguments
         Assert-Matrix (-not $bad.Valid -and [bool]$bad.Reason) "A mismatched release matrix passed: $($case.Key)."
+    }
+    # The results commit always follows the audited build, and open checks are counted rather than refused.
+    $accepted=[ordered]@{
+        earlierAuditedBuild={param($r)foreach($fact in $r.audit){$fact.sourceCommit='c'*40;$fact.commitsSince=1;$fact.nativeBuild.source.commit='c'*40;$fact.nativeBuild.bundle.sha256='9'*64}}
+        openNativeChecks={param($r)$r.audit[1].summary.pass=1;$r.audit[1].summary.fail=1;$r.audit[1].summary.review=1}
+        inconclusiveNativeCheck={param($r)$r.audit[0].summary.pass=2;$r.audit[0].summary.inconclusive=1}
+    }
+    foreach($case in $accepted.GetEnumerator()){
+        $changed=$json|ConvertFrom-Json;& $case.Value $changed
+        $good=Test-ReleaseReceipt -Receipt $changed @arguments
+        Assert-Matrix ($good.Valid -and $good.EligibleForPublication) "A release matrix was refused: $($case.Key): $($good.Reason)"
     }
     $noExpectation=@{}+$arguments;$noExpectation.Remove('ExpectedTargets')
     Assert-Matrix (-not (Test-ReleaseReceipt -Receipt ($json|ConvertFrom-Json) @noExpectation).Valid) 'A current receipt passed without a complete catalog matrix expectation.'

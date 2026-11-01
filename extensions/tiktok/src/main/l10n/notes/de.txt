@@ -100,7 +100,7 @@
 * **TikTok:** Die Kommentarsuche holt keine übersetzten Kommentare mehr zurück, die der Stichwortfilter ausgeblendet hat.
 * **TikTok:** Wählst du einen Download-Ordner, der nicht geht, öffnet sich das Ordnerfenster wieder mit dem Grund darunter.
 * **TikTok:** Der Release-Durchlauf deckt jetzt auch PineDrama ab, von den Feeds und Fenstern bis zu jedem Hushfeed-Bereich.
-* **TikTok:** PineDrama hat eine eigene Patch-Prüfung, und ein Release braucht für jede unterstützte App eine saubere Prüfung und einen sauberen Durchlauf.
+* **TikTok:** PineDrama hat eine eigene Patch-Prüfung, und ein Release braucht für jede unterstützte App eine aktuelle Prüfung und einen bestandenen Durchlauf.
 * **TikTok:** Jede LIVE-Vorschau und jede Drama-Beschriftung, die die Durchsichtige untere Leiste verschiebt, wird gegen den unterstützten TikTok-Build geprüft.
 * **TikTok:** Die Prüfung des automatischen Weiterschaltens folgt dem Videoplayer selbst statt Beschriftungen pro Video.
 * **TikTok:** Ein Release braucht passende Nachweise für jede App, die es unterstützt.

@@ -100,7 +100,7 @@
 * **TikTok:** A busca nos comentários não traz mais de volta comentários traduzidos que o filtro de palavras-chave escondeu.
 * **TikTok:** Escolher uma pasta de download que não pode ser usada abre de novo a janela da pasta com o motivo embaixo.
 * **TikTok:** A verificação de lançamento agora cobre o PineDrama também, dos feeds e folhas até todas as seções do Hushfeed.
-* **TikTok:** O PineDrama tem sua própria auditoria de patches, e um lançamento precisa de auditoria e verificação limpas para cada app que ele suporta.
+* **TikTok:** O PineDrama tem sua própria auditoria de patches, e um lançamento precisa de auditoria atualizada e verificação aprovada para cada app que ele suporta.
 * **TikTok:** Toda prévia de LIVE e todo rótulo de drama que a Barra inferior transparente move é conferido na versão do TikTok suportada.
 * **TikTok:** A auditoria do avanço automático segue o próprio player de vídeo em vez de rótulos por vídeo.
 * **TikTok:** Um lançamento precisa de evidências correspondentes para cada app que ele suporta.

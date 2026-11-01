@@ -100,7 +100,7 @@
 * **TikTok:** Şərh axtarışı açar söz filtrinin gizlətdiyi tərcümə olunmuş şərhləri artıq geri qaytarmır.
 * **TikTok:** İstifadə oluna bilməyən yükləmə qovluğu seçəndə qovluq pəncərəsi səbəbi altında yazılmış halda yenidən açılır.
 * **TikTok:** Buraxılış gəzintisi indi PineDrama-nı da əhatə edir, onun lentlərindən və vərəqlərindən Hushfeed-in hər bölməsinə qədər.
-* **TikTok:** PineDrama-nın öz yamaq auditi var və buraxılış dəstəklədiyi hər tətbiq üçün təmiz audit və gəzinti tələb edir.
+* **TikTok:** PineDrama-nın öz yamaq auditi var və buraxılış dəstəklədiyi hər tətbiq üçün aktual audit və uğurlu gəzinti tələb edir.
 * **TikTok:** Şəffaf alt panelin yerini dəyişdirdiyi hər LIVE önizləmə və dram yazısı dəstəklənən TikTok quruluşu ilə yoxlanılır.
 * **TikTok:** Avtomatik keçid auditi hər video üçün etiketlərə deyil, oynatıcının özünə əməl edir.
 * **TikTok:** Buraxılış dəstəklədiyi hər tətbiq üçün uyğun sübut tələb edir.

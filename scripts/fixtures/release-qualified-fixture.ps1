@@ -17,16 +17,18 @@ function Set-ReleaseTestQualification($Receipt, [object[]]$DeclaredTargets) {
         if (-not $target.source.forced) {
             $nativeApk = $patched | ConvertTo-Json | ConvertFrom-Json
             $nativeApk.sha256 = Get-ReleaseIdentityHash @('synthetic-native-apk', [string]$index, [string]$target.source.package, [string]$target.source.versionName, [string]$target.source.sha256)
+            $executionInputs = [ordered]@{ schemaVersion = 1; scope = 'global-executable-v1'; fileCount = 1; sha256 = 'e' * 64 }
             $nativeBuild = [ordered]@{
                 status = 'verified'; nativeBuildSchema = 2; receiptSha256 = 'd' * 64; patchReportSha256 = 'f' * 64
-                source = $Receipt.source; sourceApk = ($target.source | ConvertTo-Json | ConvertFrom-Json)
+                source = $Receipt.source; executionInputs = $executionInputs; sourceApk = ($target.source | ConvertTo-Json | ConvertFrom-Json)
                 sourceApkSha256 = $target.source.sha256; apk = $nativeApk
                 bundle = [ordered]@{ sha256 = $Receipt.bundle.sha256 }
                 patches = @($declared.PatchNames); options = @()
             }
             $audits.Add([ordered]@{
                 package = $target.source.package; appVersion = $target.source.versionName; results = "audit/results/$($target.source.package)-$($target.source.versionName).json"
-                sha256 = 'd' * 64; sourceCommit = $Receipt.source.commit; checks = 3; nativeChecks = 1
+                sha256 = 'd' * 64; sourceCommit = $Receipt.source.commit; commitsSince = 0; executionInputs = $executionInputs
+                checks = 3; nativeChecks = 1
                 summary = [ordered]@{ pass = 3; fail = 0; review = 0; inconclusive = 0; error = 0; skipped = 0 }
                 apkSha256 = $nativeApk.sha256; installedApkSha256 = $nativeApk.sha256; nativeBuild = $nativeBuild
             })

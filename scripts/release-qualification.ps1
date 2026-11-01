@@ -121,20 +121,35 @@ function Get-ReleaseQualificationProblem($Receipt, [object[]]$ExpectedTargets) {
                     [void]$nativeCovered.Add("$($fact.package)|$($fact.appVersion)|$($build.sourceApk.sha256)")
                     if ($fact.results -cnotmatch '^audit/results/[A-Za-z0-9_.-]+\.json$' -or
                             ($fact.nativeChecks -isnot [int] -and $fact.nativeChecks -isnot [long])) { return 'A native audit has malformed evidence location or check counts.' }
-                    foreach ($state in @('fail','review','inconclusive','error','skipped')) {
-                        if ($null -eq $fact.summary -or $fact.summary.$state -ne 0) { return 'A native audit has unresolved or non-passing checks.' }
+                    # Open checks (fail, review, inconclusive) stay counted here, and publish prints them. An error
+                    # or a skipped check means the audit never ran that check at all.
+                    if ($null -eq $fact.summary) { return 'A native audit has no check summary.' }
+                    [long]$counted = 0
+                    foreach ($state in @('pass','fail','review','inconclusive','error','skipped')) {
+                        $stateCount = $fact.summary.$state
+                        if (($stateCount -isnot [int] -and $stateCount -isnot [long]) -or $stateCount -lt 0) { return 'A native audit has malformed check counts.' }
+                        if ($state -cin @('error','skipped') -and $stateCount -ne 0) { return 'A native audit has errored or skipped checks.' }
+                        $counted += $stateCount
                     }
-                    if ($fact.summary.pass -ne $fact.checks -or $fact.checks -lt $fact.nativeChecks) { return 'A native audit does not account for every check.' }
+                    if ($counted -ne $fact.checks -or $fact.checks -lt $fact.nativeChecks) { return 'A native audit does not account for every check.' }
                     if ($build.status -cne 'verified' -or $build.nativeBuildSchema -ne 2 -or $fact.nativeChecks -le 0 -or
                             $fact.installedApkSha256 -cne $fact.apkSha256 -or $build.apk.sha256 -cne $fact.apkSha256 -or
                             [string]$fact.apkSha256 -notmatch '\A[0-9a-f]{64}\z' -or [string]$fact.sha256 -notmatch '\A[0-9a-f]{64}\z' -or
                             [string]$build.receiptSha256 -notmatch '\A[0-9a-f]{64}\z' -or [string]$build.patchReportSha256 -notmatch '\A[0-9a-f]{64}\z') {
                         return 'A native audit has no complete installed/build/result identity.'
                     }
-                    if ($fact.sourceCommit -cne $Receipt.source.commit -or $build.source.commit -cne $Receipt.source.commit -or
+                    # Committing the results moves HEAD, so a current audit always ran on an earlier build. It binds
+                    # through the executable inputs that build shares with this commit: Test-AuditResults checked the
+                    # ancestry and recomputed those inputs here, and evidence and catalogs are not among them.
+                    if ($fact.sourceCommit -cne $build.source.commit -or
                             $build.source.clean -isnot [bool] -or -not $build.source.clean -or
-                            $build.source.startFingerprint -cne $Receipt.source.startFingerprint -or $build.source.endFingerprint -cne $Receipt.source.endFingerprint -or
-                            $build.bundle.sha256 -ine $Receipt.bundle.sha256) { return 'A native audit used a different bundle or build source.' }
+                            ($fact.commitsSince -isnot [int] -and $fact.commitsSince -isnot [long]) -or $fact.commitsSince -lt 0 -or
+                            [string]$build.bundle.sha256 -notmatch '\A[0-9a-f]{64}\z' -or
+                            [string]$fact.executionInputs.scope -cne 'global-executable-v1' -or
+                            [string]$fact.executionInputs.sha256 -cnotmatch '\A[0-9a-f]{64}\z' -or
+                            [string]$build.executionInputs.scope -cne [string]$fact.executionInputs.scope -or
+                            [string]$build.executionInputs.sha256 -cne [string]$fact.executionInputs.sha256 -or
+                            [string]$build.executionInputs.fileCount -cne [string]$fact.executionInputs.fileCount) { return 'A native audit used a different bundle or build source.' }
                     if ([string]$build.sourceApkSha256 -cne [string]$run.source.sha256) { return 'A native audit source hash alias disagrees with the fixture.' }
                     foreach ($field in @('package','versionName','versionCode','sha256')) {
                         if ([string]$build.sourceApk.$field -cne [string]$run.source.$field) { return 'A native audit source APK does not match the qualified fixture.' }

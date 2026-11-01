@@ -100,7 +100,7 @@
 * **TikTok:** La búsqueda de comentarios ya no devuelve los comentarios traducidos que ocultó el filtro de palabras clave.
 * **TikTok:** Elegir una carpeta de descargas que no se puede usar vuelve a abrir el cuadro de carpeta con el motivo debajo.
 * **TikTok:** El recorrido de versión ahora cubre también PineDrama, desde sus feeds y hojas hasta cada sección de Hushfeed.
-* **TikTok:** PineDrama tiene su propia auditoría de parches, y una versión necesita una auditoría y un recorrido limpios para cada app que admite.
+* **TikTok:** PineDrama tiene su propia auditoría de parches, y una versión necesita una auditoría al día y un recorrido sin fallos para cada app que admite.
 * **TikTok:** Cada vista previa de LIVE y cada etiqueta de drama que mueve la Barra inferior transparente se comprueba con la compilación de TikTok compatible.
 * **TikTok:** La auditoría del avance automático sigue al propio reproductor de video en vez de etiquetas por video.
 * **TikTok:** Una versión necesita pruebas que coincidan para cada app que admite.

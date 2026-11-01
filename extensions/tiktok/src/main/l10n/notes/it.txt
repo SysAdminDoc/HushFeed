@@ -100,7 +100,7 @@
 * **TikTok:** La ricerca nei commenti non riporta più i commenti tradotti nascosti dal filtro per parole chiave.
 * **TikTok:** Scegliere una cartella di download che non si può usare riapre la finestra della cartella con il motivo sotto.
 * **TikTok:** La verifica di rilascio ora copre anche PineDrama, dai feed ai fogli fino a ogni sezione di Hushfeed.
-* **TikTok:** PineDrama ha un suo controllo delle patch, e un rilascio richiede un controllo e una verifica puliti per ogni app supportata.
+* **TikTok:** PineDrama ha un suo controllo delle patch, e un rilascio richiede un controllo aggiornato e una verifica superata per ogni app supportata.
 * **TikTok:** Ogni anteprima LIVE e ogni etichetta di drama che la Barra inferiore trasparente sposta viene controllata sulla build di TikTok supportata.
 * **TikTok:** La verifica dell'avanzamento automatico segue il lettore video stesso invece delle etichette dei singoli video.
 * **TikTok:** Un rilascio richiede prove corrispondenti per ogni app che supporta.

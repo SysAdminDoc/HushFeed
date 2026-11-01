@@ -40,7 +40,9 @@ param(
     [string]$Java,
     [switch]$Force,
     [string]$Aapt2,
-    [string]$ProbePackage
+    [string]$ProbePackage,
+    # Which declared app the APK is. Empty means the catalog's first target.
+    [string]$Package
 )
 
 $ErrorActionPreference = 'Stop'
@@ -70,7 +72,7 @@ try {
 } catch {
     throw "Could not read patch list ${PatchList}: $($_.Exception.Message)"
 }
-$expectedTarget = Get-PatchTarget -PatchList $catalog
+$expectedTarget = Get-PatchTarget -PatchList $catalog -PackageName $Package
 $names = @(Get-PackagePatchNames -PatchList $catalog -PackageName $expectedTarget.PackageName)
 if ($names.Count -eq 0 -or @($names | Where-Object { [string]::IsNullOrWhiteSpace($_) }).Count -ne 0) {
     throw "No valid patches listed in $PatchList."

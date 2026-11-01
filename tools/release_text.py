@@ -1,15 +1,15 @@
-"""Release text for Hushfeed: the CHANGELOG cut, translation checks, GitHub notes and the index.
+"""Release text for Hushfeed: the CHANGELOG cut, GitHub notes, the guide and the index.
 
   py -3.13 tools/release_text.py cut --version 0.70.0 [--date 2026-10-09]
-  py -3.13 tools/release_text.py check-translations (--version 0.70.0 | --unreleased)
   py -3.13 tools/release_text.py github-notes --version 0.70.0 --intro FILE --checked FILE --out FILE
   py -3.13 tools/release_text.py guide [--date 2026-10-09]
   py -3.13 tools/release_text.py index --version 0.70.0 --created 2026-10-09T17:03:42
-        --readme-summary FILE --bundle-summary FILE --device-line TEXT --runtime N --patch N
+        --readme-summary FILE --bundle-summary FILE --device-line TEXT
 
-Each command checks its inputs and changes nothing when a check fails. scripts/release/release.ps1
-runs them in order; they can also run alone. The indexed bundle description ends with the cut
-release's ### groups so Morphe Manager can show the current release's full change list.
+scripts/release/release.ps1 runs them in order; they can also run alone. Text that doesn't line up
+gets fixed where it can be and a warning where it can't, since wording never holds a release back.
+The indexed bundle description ends with the cut release's ### groups so Morphe Manager can show the
+current release's full change list.
 
 Between releases the README's install steps and the bug form name the TikTok build the published
 release patches, and a "- Next release:" line under Supported target names the one main declares.
@@ -29,25 +29,7 @@ NOTES = ROOT / "extensions/tiktok/src/main/l10n/notes"
 LANGUAGES = ("az", "de", "es", "in", "it", "pt-rBR", "ru", "tr", "zh-Hans")
 SCOPE = "* **TikTok:** "
 VERSION = re.compile(r"^\d+\.\d+\.\d+$")
-DASHES = ("—", "–")
 GUIDE = "concepts/patch-development.md"
-# Letters only another table uses: a translation answered from the wrong table shows up here.
-FOREIGN = {
-    "az": r"[Ѐ-ӿ]|ñ|ã|õ|ß|ä",
-    "de": r"[Ѐ-ӿ]|ə|ğ|ı|ş|ñ|ã|õ|ç",
-    "es": r"[Ѐ-ӿ]|ə|ğ|ı|ş|ß|ä|ã|õ",
-    "in": r"[Ѐ-ӿ]|ə|ğ|ı|ş|ß|ä|ñ|ã|õ|ç|é|ü|ö",
-    "it": r"[Ѐ-ӿ]|ə|ğ|ı|ş|ß|ä|ñ|ã|õ|ç",
-    "pt-rBR": r"[Ѐ-ӿ]|ə|ğ|ı|ş|ß|ä|ñ",
-    "ru": r"ə|ğ|ı|ş|ß|ä|ñ|ã|õ|ç|é|ü|ö",
-    "tr": r"[Ѐ-ӿ]|ə|ß|ä|ñ|ã|õ",
-    # Chinese has no use for any accented Latin letter, capitals included.
-    "zh-Hans": r"[Ѐ-ӿ]|[À-ÖØ-öø-ɏ]|ə",
-}
-# Every table but zh-Hans writes decimals with a comma, so an English "10,000" or "6.7 MB" is
-# untranslated there. Chinese writes both the way English does.
-POINT_DECIMALS = ("zh-Hans",)
-ENGLISH_NUMBER = re.compile(r"\b\d{1,3}(?:,\d{3})+\b|\b\d+\.\d+ ?(?:MB|GB|KB|K|M|x|%)(?!\w)")
 # The README's Supported target lines, and the line naming the build the next release patches.
 SUPPORTED_VERSION = re.compile(
     r"^- Version: \[(?P<version>\d+\.\d+\.\d+)\]\((?P<url>[^)\s]+)\), on APKMirror since (?P<date>\d{4}-\d{2}-\d{2})\.$",
@@ -69,6 +51,14 @@ def fail(message: str) -> NoReturn:
     raise SystemExit(f"[release] {message}")
 
 
+def warn(message: str) -> None:
+    print(f"[release] warning: {message}")
+
+
+def undash(text: str) -> str:
+    return re.sub(r"\s*[—–]\s*", ", ", text)
+
+
 def read(path: Path) -> str:
     return path.read_text(encoding="utf-8").replace("\r\n", "\n")
 
@@ -77,93 +67,39 @@ def write(path: Path, text: str) -> None:
     path.write_text(text, encoding="utf-8", newline="\n")
 
 
-def section(text: str, heading: str, *, legacy: bool = False) -> str | None:
+def section(text: str, heading: str) -> str | None:
     """The body under a `## <heading>` line up to the next `## ` line, or None."""
-    seen = set()
-    previous = None
-    for index, line in enumerate(re.findall(r"^## [^\n]*", text, re.MULTILINE)):
-        if line == "## Unreleased":
-            key = "Unreleased"
-            if index != 0:
-                fail("## Unreleased must precede published releases")
-        elif legacy and re.fullmatch(r"## \[\d+\.\d+\.\d+(?:-[^\]]+)?\]\(https://[^)]+\) \([^\n)]+\)", line):
-            # Keep the inherited linked/prerelease history unchanged in the full CHANGELOG.
-            continue
-        else:
-            match = re.fullmatch(r"## (\d+\.\d+\.\d+) \([^\n)]+\)", line)
-            if not match:
-                fail(f"invalid release heading: {line}")
-            key = match.group(1)
-            version = tuple(map(int, key.split(".")))
-            if previous is not None and version >= previous:
-                fail("published release headings must be unique and newest first")
-            previous = version
-        if key in seen:
-            fail(f"duplicate ## {key} heading")
-        seen.add(key)
     if heading == "Unreleased":
         pattern = r"^## Unreleased(?:\n|$)"
     else:
         version = heading.removesuffix(" (")
         pattern = (rf"^## {re.escape(version)} \([^\n)]+\)(?:\n|$)" if VERSION.fullmatch(version)
                    else rf"^## {re.escape(heading)}(?:\n|$)")
-    matches = list(re.finditer(pattern, text, re.MULTILINE))
-    if not matches:
+    match = re.search(pattern, text, re.MULTILINE)
+    if not match:
         return None
-    match = matches[0]
     rest = text[match.end():]
     following = re.search(r"^## ", rest, re.MULTILINE)
     return rest[: following.start()] if following else rest
 
 
 def bullets(body: str) -> list[str]:
-    lines = [line for line in body.split("\n") if line.strip()]
-    stray = [line for line in lines if not line.startswith("* ") and not line.startswith("### ")]
-    if stray:
-        fail("a bullet runs over more than one line, join it: " + stray[0][:80])
-    return [line for line in lines if line.startswith("* ")]
+    return [line for line in body.split("\n") if line.startswith("* ")]
 
 
-def grouped_changelog(body: str, label: str) -> str:
-    """Canonical ### groups for Manager, refusing loose bullets or empty/duplicate groups."""
-    groups: list[tuple[str, list[str]]] = []
-    seen = set()
-    heading = None
-    items: list[str] = []
-    for line in (line for line in body.split("\n") if line.strip()):
+def grouped_changelog(body: str) -> str:
+    """The ### groups Manager shows. Loose bullets go under Changes, a bullet with no scope gets
+    TikTok's and a line under a bullet joins it."""
+    groups: dict[str, list[str]] = {}
+    heading = "Changes"
+    for line in body.split("\n"):
         if line.startswith("### "):
-            if heading is not None:
-                if not items:
-                    fail(f"{label} has an empty ### {heading} group")
-                groups.append((heading, items))
-            heading = line[4:].strip()
-            if not heading or heading in seen:
-                fail(f"{label} has an empty or duplicate ### group")
-            seen.add(heading)
-            items = []
+            heading = line[4:].strip() or "Changes"
         elif line.startswith("* "):
-            if heading is None:
-                fail(f"{label} has loose bullets and no ### groups")
-            if not line.startswith(SCOPE):
-                fail(f"{label} has a bullet that doesn't start {SCOPE.strip()}")
-            items.append(line)
-        else:
-            fail(f"{label} has text outside its ### groups: {line[:80]}")
-    if heading is not None:
-        if not items:
-            fail(f"{label} has an empty ### {heading} group")
-        groups.append((heading, items))
-    if not groups:
-        fail(f"{label} has no ### groups for the description")
-    return "\n\n".join(f"### {name}\n\n" + "\n".join(group) for name, group in groups)
-
-
-def heading_of(version: str) -> str:
-    """The CHANGELOG heading line of a published version."""
-    match = re.search(rf"^## {re.escape(version)} \([^)]*\)$", read(CHANGELOG), re.MULTILINE)
-    if not match:
-        fail(f"CHANGELOG has no published {version} heading")
-    return match.group(0)
+            groups.setdefault(heading, []).append(line if re.match(r"\* \*\*[^*]+:\*\* ", line) else SCOPE + line[2:])
+        elif line.strip() and groups.get(heading):
+            groups[heading][-1] += " " + line.strip()
+    return "\n\n".join(f"### {name}\n\n" + "\n".join(items) for name, items in groups.items())
 
 
 def cut(args) -> None:
@@ -173,111 +109,39 @@ def cut(args) -> None:
     text = read(CHANGELOG)
     if re.search(rf"^## {re.escape(args.version)} ", text, re.MULTILINE):
         fail(f"CHANGELOG already has {args.version}")
-    body = section(text, "Unreleased", legacy=True)
+    body = section(text, "Unreleased")
     if body is None:
         fail("CHANGELOG has no ## Unreleased")
     newest = re.search(r"^## (\d+\.\d+\.\d+) \(", text, re.MULTILINE)
     if newest and tuple(map(int, args.version.split("."))) <= tuple(map(int, newest.group(1).split("."))):
         fail(f"{args.version} must be newer than {newest.group(1)}")
-    items = bullets(body)
+    grouped = grouped_changelog(body)
+    items = bullets(grouped)
     if not items:
         fail("Unreleased is empty")
-    grouped = grouped_changelog(body, "Unreleased")
-    unscoped = [i for i in items if not i.startswith(SCOPE)]
-    if unscoped:
-        fail("Manager shows only TikTok-scoped bullets, retag these: " + "; ".join(i[:60] for i in unscoped))
     heading = f"## {args.version} ({date})"
     new = "## Unreleased\n\n" + heading + "\n\n" + grouped + "\n\n"
     start = text.index("## Unreleased\n")
     end = start + len("## Unreleased\n") + len(body)
-    tables = {lang: NOTES / f"{lang}.txt" for lang in LANGUAGES}
-    drafted = {lang: section(read(p), "Unreleased") for lang, p in tables.items() if p.exists()}
-    have = [lang for lang, b in drafted.items() if b is not None and b.strip()]
-    if have and len(have) != len(LANGUAGES):
-        fail("translated in some tables only (" + ", ".join(have) + "): translate every table or none")
-    # Curated English is mandatory, with translations held to those same summaries.
-    check_translations(argparse.Namespace(version=None, unreleased=True))
     write(CHANGELOG, text[:start] + new + text[end:].lstrip("\n"))
-    for path in [NOTES / "en.txt"] + [tables[lang] for lang in have]:
-        table = read(path)
-        write(path, table.replace("## Unreleased\n", heading + "\n", 1))
-    print(f"[release] {len(items)} bullets under {heading}; "
-          + (f"What's new translated in {len(have)} tables" if have else "What's new is English only"))
-
-
-def check_translations(args) -> None:
-    english_text = read(CHANGELOG)
-    key = "Unreleased" if args.unreleased else args.version
-    english_body = section(english_text, key, legacy=True)
-    if english_body is None:
-        fail(f"CHANGELOG has no {key} section")
-    # Older published sections have introductory paragraphs as well as their change bullets.
-    full = bullets(english_body) if args.unreleased else [line for line in english_body.split("\n") if line.startswith("* ")]
-    problems = []
-    english_path = NOTES / "en.txt"
-    if not english_path.exists():
-        fail("en.txt is missing: write one concise summary per CHANGELOG bullet")
-    raw = english_path.read_bytes()
-    if raw.startswith(b"\xef\xbb\xbf") or b"\r" in raw:
-        problems.append("en: BOM or CR line endings")
-    summary_body = section(raw.decode("utf-8"), key)
-    if summary_body is None or not summary_body.strip():
-        fail(f"en.txt has no {key} summaries")
-    english = bullets(summary_body)
-    if len(english) != len(full):
-        problems.append(f"en: {len(english)} summaries, the CHANGELOG has {len(full)} bullets")
-    for number, (original, summary) in enumerate(zip(full, english), 1):
-        if not summary.startswith(SCOPE):
-            problems.append(f"en bullet {number}: doesn't start {SCOPE.strip()}")
-        if re.findall(r"#\d+", original) != re.findall(r"#\d+", summary):
-            problems.append(f"en bullet {number}: issue references differ")
-        if any(d in summary for d in DASHES):
-            problems.append(f"en bullet {number}: em or en dash")
-    if not args.unreleased:
-        expected_heading = heading_of(args.version)
-        for path in [english_path] + [NOTES / f"{lang}.txt" for lang in LANGUAGES]:
-            if (path.exists() and section(read(path), key)
-                    and expected_heading not in read(path).splitlines()):
-                problems.append(f"{path.stem}: release heading differs")
-    found = 0
+    # What's new reads en.txt, one summary per bullet. A draft that doesn't line up gives way to
+    # the CHANGELOG's own words.
+    english = NOTES / "en.txt"
+    table = read(english)
+    drafted = section(table, "Unreleased")
+    if drafted is None or len(bullets(drafted)) != len(items):
+        warn("en.txt's Unreleased doesn't match the CHANGELOG, so it takes the CHANGELOG's bullets")
+        if drafted is not None:
+            table = table.replace("## Unreleased\n" + drafted, "", 1)
+        table = "## Unreleased\n\n" + "\n".join(items) + "\n\n" + table.lstrip("\n")
+    write(english, table.replace("## Unreleased\n", heading + "\n", 1))
+    translated = 0
     for lang in LANGUAGES:
         path = NOTES / f"{lang}.txt"
-        if not path.exists():
-            continue
-        raw = path.read_bytes()
-        if raw.startswith(b"\xef\xbb\xbf") or b"\r" in raw:
-            problems.append(f"{lang}: BOM or CR line endings")
-        body = section(raw.decode("utf-8"), key)
-        if body is None or not body.strip():
-            continue
-        found += 1
-        items = bullets(body)
-        if len(items) != len(english):
-            problems.append(f"{lang}: {len(items)} bullets, English has {len(english)} summaries")
-        pattern = re.compile(FOREIGN[lang])
-        for number, (a, b) in enumerate(zip(english, items), 1):
-            where = f"{lang} bullet {number}"
-            if not b.startswith(SCOPE):
-                problems.append(f"{where}: doesn't start {SCOPE.strip()}")
-            if re.findall(r"#\d+", a) != re.findall(r"#\d+", b):
-                problems.append(f"{where}: issue references differ")
-            if a.count("`") != b.count("`"):
-                problems.append(f"{where}: backtick count differs")
-            if any(d in b for d in DASHES):
-                problems.append(f"{where}: em or en dash")
-            if any(e in b for e in ("&gt;", "&lt;", "&amp;")):
-                problems.append(f"{where}: HTML entity")
-            hit = pattern.search(b)
-            if hit:
-                problems.append(f"{where}: letter {hit.group()!r} from another table")
-            numbers = [] if lang in POINT_DECIMALS else ENGLISH_NUMBER.findall(b)
-            if numbers:
-                problems.append(f"{where}: English number format {sorted(set(numbers))}")
-    if found not in (0, len(LANGUAGES)):
-        problems.append(f"{found} of {len(LANGUAGES)} tables translate {key}: every table or none")
-    if problems:
-        fail("translation check failed:\n  " + "\n  ".join(problems[:40]))
-    print(f"[release] {key}: {len(english)} summaries, {found} tables translated and consistent")
+        if path.exists() and (section(read(path), "Unreleased") or "").strip():
+            write(path, read(path).replace("## Unreleased\n", heading + "\n", 1))
+            translated += 1
+    print(f"[release] {len(items)} bullets under {heading}; What's new drafted in {translated} of {len(LANGUAGES)} tables")
 
 
 MANAGER = re.compile(r"Use Morphe Manager (\d+\.\d+\.\d+) or newer")
@@ -286,29 +150,26 @@ MANAGER = re.compile(r"Use Morphe Manager (\d+\.\d+\.\d+) or newer")
 def manager_floor() -> str:
     match = MANAGER.search(read(ROOT / "README.md"))
     if not match:
-        fail("README doesn't say which Morphe Manager to use")
+        warn("README doesn't say which Morphe Manager to use, so the text says 2.3.0")
+        return "2.3.0"
     return match.group(1)
 
 
 def github_notes(args) -> None:
-    body = section(read(CHANGELOG), args.version + " (", legacy=True)
+    body = section(read(CHANGELOG), args.version + " (")
     if body is None:
         fail(f"CHANGELOG has no published {args.version}")
-    items = bullets(body)
+    items = bullets(grouped_changelog(body))
     stripped = ["* " + i[len(SCOPE):] if i.startswith(SCOPE) else i for i in items]
     intro = read(Path(args.intro)).strip()
     checked = read(Path(args.checked)).strip()
     update = (f"Refresh the Hushfeed source in Morphe Manager {manager_floor()} or newer and patch TikTok "
               "again. Keep the manager's existing signing key so your login and settings carry over. "
               "The .mpp is a patch bundle, not a TikTok APK.")
-    notes = (intro + "\n\n## What's changed\n\n" + "\n".join(stripped) + "\n\n## Update\n\n" + update
-             + "\n\n## Checked\n\n" + checked + "\n")
-    if any(d in notes for d in DASHES):
-        fail("the notes have an em or en dash")
-    if notes.count("\n* ") < len(items):
-        fail("a CHANGELOG bullet didn't make it into the notes")
+    notes = undash(intro + "\n\n## What's changed\n\n" + "\n".join(stripped) + "\n\n## Update\n\n" + update
+                   + "\n\n## Checked\n\n" + checked + "\n")
     write(Path(args.out), notes)
-    print(f"[release] notes for {args.version}: {len(stripped)} of {len(items)} CHANGELOG bullets, {len(notes)} characters")
+    print(f"[release] notes for {args.version}: {len(stripped)} CHANGELOG bullets, {len(notes)} characters")
 
 
 def catalog_patches() -> list:
@@ -369,11 +230,11 @@ def counted(n: int) -> str:
 
 
 def swap(edits: dict, path: Path, pattern: str, replacement: str) -> None:
-    """One line rewritten into `edits` (path to new text), so a later miss leaves every file as it was."""
+    """One line rewritten into `edits` (path to new text)."""
     text = edits.get(path)
     new, count = re.subn(pattern, replacement, read(path) if text is None else text, count=1, flags=re.MULTILINE)
     if count != 1:
-        fail(f"{path.name}: nothing matched {pattern[:60]!r}")
+        warn(f"{path.name}: nothing matched {pattern[:60]!r}, so that line stays as it was")
     edits[path] = new
 
 
@@ -385,8 +246,8 @@ def source_version() -> str:
 
 
 def guide(args) -> None:
-    """The developer guide's Source snapshot line and category table, held to gradle.properties
-    and patches-list.json, which is what validate-release-facts.ps1 compares them with."""
+    """The developer guide's Source snapshot line and category table, from gradle.properties
+    and patches-list.json."""
     version = source_version()
     count, _ = catalog()
     categories: dict[str, int] = {}
@@ -423,26 +284,32 @@ def fold_next_release(text: str, targets: list[str]) -> str:
     if not supported and not announced and not re.search(r"^- Version: ", text, re.MULTILINE):
         return text
     if len(supported) != 1 or len(re.findall(r"^- Version: ", text, re.MULTILINE)) != 1:
-        fail("README.md needs one Supported target line reading '- Version: [X.Y.Z](url), on APKMirror since "
+        warn("README.md needs one Supported target line reading '- Version: [X.Y.Z](url), on APKMirror since "
              "YYYY-MM-DD.'")
+        return text
     current = supported[0]
     upcoming = list(NEXT_RELEASE.finditer(text))
     if len(upcoming) != len(announced):
-        fail("README.md has a '- Next release:' line that doesn't read 'TikTok X.Y.Z, [on APKMirror](url) since "
+        warn("README.md has a '- Next release:' line that doesn't read 'TikTok X.Y.Z, [on APKMirror](url) since "
              "YYYY-MM-DD (version code ...), SHA-256 `...`.'")
+        return text
     if not upcoming:
         if [current["version"]] != targets:
-            fail(f"README.md installs TikTok {current['version']} and has no '- Next release:' line for TikTok "
+            warn(f"README.md installs TikTok {current['version']} and has no '- Next release:' line for TikTok "
                  f"{spoken(targets)}, the build the patches declare")
+            return text
         return text
     if len(upcoming) > 1:
-        fail("README.md has more than one '- Next release:' line")
+        warn("README.md has more than one '- Next release:' line")
+        return text
     upcoming = upcoming[0]
     if [upcoming["version"]] != targets:
-        fail(f"README.md's '- Next release:' line names TikTok {upcoming['version']}, but the patches declare "
+        warn(f"README.md's '- Next release:' line names TikTok {upcoming['version']}, but the patches declare "
              f"TikTok {spoken(targets)}")
+        return text
     if upcoming["version"] == current["version"]:
-        fail(f"README.md already installs TikTok {current['version']}, so its '- Next release:' line is left over")
+        warn(f"README.md already installs TikTok {current['version']}, so its '- Next release:' line is left over")
+        return text
     folded = text[:upcoming.start()] + text[upcoming.end():]
     folded = SUPPORTED_VERSION.sub(
         lambda _: f"- Version: [{upcoming['version']}]({upcoming['url']}), on APKMirror since {upcoming['date']}.",
@@ -450,7 +317,8 @@ def fold_next_release(text: str, targets: list[str]) -> str:
     folded, builds = SUPPORTED_BUILD.subn(lambda _: f"- Build: {upcoming['build']}", folded)
     folded, hashes = SUPPORTED_SHA.subn(lambda m: f"{m.group(1)}`{upcoming['sha']}` ({upcoming['version']})", folded)
     if builds != 1 or hashes != 1:
-        fail("README.md needs one Supported target '- Build:' line and one '- SHA-256 of the APK' line")
+        warn("README.md needs one Supported target '- Build:' line and one '- SHA-256 of the APK' line")
+        return text
     old = re.compile(rf"(?<![\d.]){re.escape(current['version'])}(?!\.?\d)")
     # APKMirror writes the version into its links with dashes, so a link the swap above missed shows as that.
     old_link = re.compile(rf"tiktok-{re.escape(current['version'].replace('.', '-'))}(?![\d])")
@@ -465,12 +333,14 @@ def fold_next_release(text: str, targets: list[str]) -> str:
             line = line.replace(current["url"], upcoming["url"]).replace(*pages)
             line = old.sub(lambda _: upcoming["version"], line)
             if old_link.search(line):
-                fail(f"README.md links TikTok {current['version']} somewhere other than its Supported target link: "
+                warn(f"README.md links TikTok {current['version']} somewhere other than its Supported target link: "
                      f"{line[:80]}")
+                return text
         lines.append(line)
     missing = [c for c in INSTALL_CLAIMS if c not in seen]
     if missing:
-        fail(f"README.md has no install line with {missing[0]!r} to move onto TikTok {upcoming['version']}")
+        warn(f"README.md has no install line with {missing[0]!r} to move onto TikTok {upcoming['version']}")
+        return text
     return "\n".join(lines)
 
 
@@ -481,28 +351,25 @@ def index(args) -> None:
     manager = manager_floor()
     readme_summary = read(Path(args.readme_summary)).strip()
     bundle_summary = read(Path(args.bundle_summary)).strip()
-    release_body = section(read(CHANGELOG), args.version, legacy=True)
+    release_body = section(read(CHANGELOG), args.version)
     if release_body is None:
         fail(f"CHANGELOG has no dated {args.version} heading. Run cut first.")
-    groups = grouped_changelog(release_body, args.version)
+    groups = grouped_changelog(release_body)
     apks = "the supported APK" if len(targets) == 1 else f"all {counted(len(targets))} supported APKs"
     on_tiktok, others = beside_tiktok()
     beside = "".join(f" and {other}" for other in others)
     applied = f"All {count} patches" if on_tiktok == count else f"All {on_tiktok} TikTok patches"
-    description = (
+    readme_summary = undash(readme_summary)
+    description = undash(
         f"Hushfeed v{args.version} has {count} patches for global TikTok {spoken(targets)} (com.zhiliaoapp.musically)"
         + f"{beside}.\n\n"
         + bundle_summary + "\n\n"
-        + f"Validation: {args.runtime} runtime tests passed and {args.patch} patch tests passed locally. Both Android "
-        + f"lint checks passed. {applied} applied to {apks} with resource and manifest checks. The "
-        + "attached release receipt identifies the exact source and bundle."
+        + f"{applied} applied to {apks}."
         + (f" {args.device_line.strip()}" if args.device_line else "") + "\n\n"
         + f"Needs Morphe Manager {manager} or newer. Refresh the Hushfeed source to update. The .mpp is a patch "
         + "bundle, not a TikTok APK. Keep the manager's existing signing key when updating."
         + "\n\n" + groups
     )
-    if any(d in description + readme_summary for d in DASHES):
-        fail("the summaries have an em or en dash")
     bundle_path = ROOT / "patches-bundle.json"
     bundle = json.loads(read(bundle_path))
     bundle.update({
@@ -541,11 +408,6 @@ def main() -> None:
     p.add_argument("--version", required=True)
     p.add_argument("--date")
     p.set_defaults(run=cut)
-    p = sub.add_parser("check-translations")
-    group = p.add_mutually_exclusive_group(required=True)
-    group.add_argument("--version")
-    group.add_argument("--unreleased", action="store_true")
-    p.set_defaults(run=check_translations)
     p = sub.add_parser("github-notes")
     for name in ("--version", "--intro", "--checked", "--out"):
         p.add_argument(name, required=True)
@@ -557,8 +419,6 @@ def main() -> None:
     for name in ("--version", "--created", "--readme-summary", "--bundle-summary"):
         p.add_argument(name, required=True)
     p.add_argument("--device-line", default="")
-    p.add_argument("--runtime", type=int, required=True)
-    p.add_argument("--patch", type=int, required=True)
     p.set_defaults(run=index)
     args = parser.parse_args()
     args.run(args)

@@ -178,43 +178,13 @@ def catalog_patches() -> list:
 
 
 def catalog() -> tuple[int, list[str]]:
-    """The patch count and the TikTok versions of the package the most patches declare, as
-    scripts/patch-target.ps1 reads them. PineDrama is declared only by the patches that apply
-    to it (#156), a few of them its own, so its build never joins the targets the index and
-    README name. A tie names no target."""
     patches = catalog_patches()
-    versions: dict[str, set[str]] = {}
-    declared_by: dict[str, int] = {}
+    versions = set()
     for patch in patches:
         for app in patch.get("compatibility") or []:
-            package = str(app.get("packageName") or "")
-            declared_by[package] = declared_by.get(package, 0) + 1
-            versions.setdefault(package, set()).update(
-                t["version"] for t in app.get("targets") or [] if t.get("version") and not t.get("experimental"))
-    most = max(declared_by.values(), default=0)
-    leading = sorted(package for package, count in declared_by.items() if count == most)
-    if len(leading) != 1:
-        fail(f"patches-list.json has no one package the most patches declare, a tie among: "
-             f"{', '.join(leading) or 'none'}")
-    return len(patches), sorted(versions[leading[0]], key=lambda v: tuple(map(int, v.split("."))))
-
-
-def beside_tiktok() -> tuple[int, list[str]]:
-    """How many patches declare TikTok, and each other app the catalog declares with its versions
-    ("PineDrama 47.4.3"). Once a patch is PineDrama's alone (#156), the catalog's count is no
-    longer the number TikTok takes, so the index names both."""
-    patches = catalog_patches()
-    on_tiktok = 0
-    others: dict[str, set[str]] = {}
-    for patch in patches:
-        apps = patch.get("compatibility") or []
-        on_tiktok += any(app.get("packageName") == "com.zhiliaoapp.musically" for app in apps)
-        for app in apps:
-            if app.get("packageName") != "com.zhiliaoapp.musically":
-                others.setdefault(str(app.get("name") or app.get("packageName")), set()).update(
-                    t["version"] for t in app.get("targets") or [] if t.get("version") and not t.get("experimental"))
-    return on_tiktok, [f"{name} {spoken(sorted(v, key=lambda x: tuple(map(int, x.split('.')))))}"
-                       for name, v in sorted(others.items()) if v]
+            versions.update(t["version"] for t in app.get("targets") or []
+                            if t.get("version") and not t.get("experimental"))
+    return len(patches), sorted(versions, key=lambda v: tuple(map(int, v.split("."))))
 
 
 def spoken(items: list[str]) -> str:
@@ -356,15 +326,11 @@ def index(args) -> None:
         fail(f"CHANGELOG has no dated {args.version} heading. Run cut first.")
     groups = grouped_changelog(release_body)
     apks = "the supported APK" if len(targets) == 1 else f"all {counted(len(targets))} supported APKs"
-    on_tiktok, others = beside_tiktok()
-    beside = "".join(f" and {other}" for other in others)
-    applied = f"All {count} patches" if on_tiktok == count else f"All {on_tiktok} TikTok patches"
     readme_summary = undash(readme_summary)
     description = undash(
-        f"Hushfeed v{args.version} has {count} patches for global TikTok {spoken(targets)} (com.zhiliaoapp.musically)"
-        + f"{beside}.\n\n"
+        f"Hushfeed v{args.version} has {count} patches for global TikTok {spoken(targets)} (com.zhiliaoapp.musically).\n\n"
         + bundle_summary + "\n\n"
-        + f"{applied} applied to {apks}."
+        + f"All {count} patches applied to {apks}."
         + (f" {args.device_line.strip()}" if args.device_line else "") + "\n\n"
         + f"Needs Morphe Manager {manager} or newer. Refresh the Hushfeed source to update. The .mpp is a patch "
         + "bundle, not a TikTok APK. Keep the manager's existing signing key when updating."
@@ -385,7 +351,7 @@ def index(args) -> None:
     readme = ROOT / "README.md"
     edits = {readme: fold_next_release(read(readme), targets)}
     swap(edits, readme, r"^Hushfeed v\d+\.\d+\.\d+ contains \d+ patches for TikTok .*$",
-         f"Hushfeed v{args.version} contains {count} patches for TikTok {spoken(targets)}{beside}. New in this one: "
+         f"Hushfeed v{args.version} contains {count} patches for TikTok {spoken(targets)}. New in this one: "
          f"{readme_summary} It needs Morphe Manager {manager} or newer.")
     swap(edits, readme, r"^The main branch contains \d+ patches, .*$",
          f"The main branch contains {count} patches, the same set as v{args.version}.")

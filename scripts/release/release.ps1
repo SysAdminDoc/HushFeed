@@ -202,7 +202,7 @@ function Step-apply {
             New-Item -ItemType Directory -Force -Path $scratch | Out-Null
             Say "applying every patch to $($target.PackageName) $packageVersion"
             Invoke-Queued "apply $($target.PackageName)" {
-                & (Join-Path $work 'scripts/verify-all-patches.ps1') -Apk $apk -DesktopJar (Get-RepoEnv 'DESKTOP_JAR') -WorkDir $scratch -Bundle $bundlePath -Package $target.PackageName
+                & (Join-Path $work 'scripts/verify-all-patches.ps1') -Apk $apk -DesktopJar (Get-RepoEnv 'DESKTOP_JAR') -WorkDir $scratch -Bundle $bundlePath
             }
             Remove-Item -LiteralPath $scratch -Recurse -Force -ErrorAction SilentlyContinue
         }

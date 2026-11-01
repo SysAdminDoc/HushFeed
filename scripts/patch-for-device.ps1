@@ -43,9 +43,6 @@ param(
     # Patch option values, each '<patch name>|<key>=<value>' (for example
     # 'Accent color|accentColor=#2D7FF9'). Each one goes to the CLI as -O right after its patch's -e.
     [string[]]$Option = @(),
-    # Patch another app the catalog declares, such as PineDrama (com.ss.android.ttmd.video), with
-    # the patches that declare it and hold the report to that app. Pass its APK with -Apk.
-    [string]$Package,
     # Patch with the release bundle even when a source file is newer than it, for replaying
     # an earlier build on purpose. Without it a stale bundle stops the run.
     [switch]$AllowStaleBundle,
@@ -77,7 +74,7 @@ $catalogPath = Join-Path $root 'patches-list.json'
 if (-not (Test-Path -LiteralPath $catalogPath -PathType Leaf)) { throw "No patch list found: $catalogPath" }
 try { $catalog = Get-Content -LiteralPath $catalogPath -Raw | ConvertFrom-Json }
 catch { throw "Could not read patch list ${catalogPath}: $($_.Exception.Message)" }
-$target = Get-PatchTarget -PatchList $catalog -PackageName $Package
+$target = Get-PatchTarget -PatchList $catalog
 if (-not $Apk -and $env:HUSHFEED_FIXTURE_DIR -and (Test-Path -LiteralPath $env:HUSHFEED_FIXTURE_DIR -PathType Container)) {
     $Apk = (Get-ChildItem -LiteralPath $env:HUSHFEED_FIXTURE_DIR `
         -Filter "*$($target.PackageVersion)*.apk" -File | Select-Object -First 1).FullName
@@ -99,7 +96,7 @@ if (-not $AllowStaleBundle) {
             '(or pass -AllowStaleBundle to patch with it as it is).')
     }
 }
-$names = @(Get-PackagePatchNames -PatchList $catalog -PackageName $target.PackageName | Where-Object { $_ -notin $Exclude })
+$names = @($catalog.patches | ForEach-Object { $_.name } | Where-Object { $_ -notin $Exclude })
 foreach ($excluded in $Exclude) {
     if ($excluded -notin ($catalog.patches | ForEach-Object { $_.name })) { throw "No patch named '$excluded' to exclude." }
 }

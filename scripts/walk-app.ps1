@@ -1,17 +1,16 @@
 <#
 .SYNOPSIS
-    Walks the whole patched TikTok or PineDrama on a release phone or an emulator and writes the
-    walk-receipt.json release.ps1 reads, one per app the bundle declares.
+    Walks the whole patched TikTok on a release phone or an emulator and writes the
+    walk-receipt.json release.ps1 reads.
 
 .DESCRIPTION
     Patches -Package's app from the bundle being released with patch-for-device.ps1 and installs
     it (or, with -AuditBuild, walks the build already installed from that receipt), then opens
-    every screen the patches reach. On TikTok that's For You and Following with swipes, the
-    comment and share sheets, search, the Friends, Inbox and Profile tabs and Inbox's Activity
-    page. On PineDrama it's Short Video, Following and Drama, the same sheets and search, and the
-    Discover, Rewards, Inbox and Profile tabs. Both then expand every Hushfeed settings section,
-    scroll it to its end and collapse it, plus Search settings. Hushfeed opens from Profile's
-    menu or gear, or from a long press on Home when that route has no Hushfeed row. After each step
+    every screen the patches reach: For You and Following with swipes, the comment and share
+    sheets, search, the Friends, Inbox and Profile tabs and Inbox's Activity page. It then expands
+    every Hushfeed settings section, scrolls it to its end and collapses it, plus Search settings.
+    Hushfeed opens from Profile's menu, or from a long press on Home when that route has no
+    Hushfeed row. After each step
     the app has to still be the foreground app on the same process. Logcat's crash lines for it
     decide the rest.
 
@@ -22,9 +21,8 @@
     dumpsys) and dumps again.
 
     TikTok shows the language picked in its own settings whatever the phone or per-app locale
-    says, so the walk finds the app's screens through its profile's labels (walk-app-core.ps1;
-    TikTok's in English and Italian, PineDrama's in English) and Hushfeed's through its own
-    translation tables.
+    says, so the walk finds the app's screens through its profile's labels (walk-app-core.ps1, in
+    English and Italian) and Hushfeed's through its own translation tables.
 
     The receipt is PASS only when every planned screen was reached, the app never crashed, died
     or left the foreground, and the installed APK is the one patched from -Bundle.
@@ -33,10 +31,6 @@
     ./scripts/walk-app.ps1 -Serial $env:HUSHFEED_DEVICE_SERIAL -Bundle patches/build/release/patches-0.78.0.mpp `
         -PatchArgs @{ Apk = 'C:/fixtures/tiktok.apk'; Keystore = 'C:/keys/device.keystore'; KeyAlias = 'Morphe' }
 
-.EXAMPLE
-    ./scripts/walk-app.ps1 -Serial $env:HUSHFEED_DEVICE_SERIAL -Package com.ss.android.ttmd.video `
-        -Bundle patches/build/release/patches-0.80.0.mpp -Out build/walk-pinedrama/walk-receipt.json `
-        -PatchArgs @{ Apk = 'C:/fixtures/pinedrama.apk'; Keystore = 'C:/keys/device.keystore'; KeyAlias = 'Morphe' }
 #>
 [CmdletBinding()]
 param(
@@ -108,7 +102,7 @@ if (-not $adb) { throw 'No adb found. Put it on the PATH or install the platform
 
 if (-not $AuditBuild) {
     $patch = @{} + $PatchArgs
-    $patch.Serial = $Serial; $patch.LeaseDir = $LeaseDir; $patch.ChatIdentity = $ChatIdentity; $patch.Package = $WalkPackage
+    $patch.Serial = $Serial; $patch.LeaseDir = $LeaseDir; $patch.ChatIdentity = $ChatIdentity
     if (-not $patch.ContainsKey('OutDir')) { $patch.OutDir = Join-Path $work 'apk' }
     Write-WalkLog "patching and installing from $releaseBundle"
     & (Join-Path $PSScriptRoot 'patch-for-device.ps1') @patch
@@ -380,14 +374,11 @@ function Open-WalkHushfeed([string]$HubLabel, [int]$Width, [int]$Height) {
     if (-not $menu) { Write-WalkLog 'no Profile menu button' }
     else {
         Invoke-WalkTap $menu 'Profile menu' 2500
-        $settings = $null
-        if (-not $appProfile.GearOpensSettings) {
-            $sheet = Get-WalkScreen 'profile menu'
-            $settings = @(Find-UiNode -Nodes $sheet -Label $WalkLabels.SettingsAndPrivacy) | Select-Object -First 1
-        }
-        if (-not $settings -and -not $appProfile.GearOpensSettings) { Write-WalkLog 'no Settings and privacy in the profile menu' }
+        $sheet = Get-WalkScreen 'profile menu'
+        $settings = @(Find-UiNode -Nodes $sheet -Label $WalkLabels.SettingsAndPrivacy) | Select-Object -First 1
+        if (-not $settings) { Write-WalkLog 'no Settings and privacy in the profile menu' }
         else {
-            if ($settings) { Invoke-WalkTap $settings 'Settings and privacy' 3000 }
+            Invoke-WalkTap $settings 'Settings and privacy' 3000
             $row = Find-WalkRow '^Hushfeed$' $Width $Height 'settings and privacy'
             if (-not $row) { Write-WalkLog 'no Hushfeed row in Settings and privacy' }
             else {
@@ -410,8 +401,7 @@ function Open-WalkHushfeed([string]$HubLabel, [int]$Width, [int]$Height) {
 }
 
 $hushfeedPages = @('Feed filter', 'Feed tabs', 'Feed screen', 'Playback', 'Screen time', 'Comments', 'Downloads',
-    'Share sheet', 'Inbox', 'Privacy', 'Region', 'App', 'Diagnostics', 'Backup and restore', 'About Hushfeed') |
-    Where-Object { $_ -notin $appProfile.HiddenPages }
+    'Share sheet', 'Inbox', 'Privacy', 'Region', 'App', 'Diagnostics', 'Backup and restore', 'About Hushfeed')
 foreach ($screen in Get-WalkPlannedScreens -AppProfile $appProfile -HushfeedPages $hushfeedPages) { $planned.Add($screen) }
 
 $started = [DateTimeOffset]::UtcNow
@@ -489,7 +479,7 @@ try {
         $null = Restore-WalkTabs $sheet.Name $H
     }
 
-    # The other top feeds (Following, and PineDrama's Drama), each then back to the main feed.
+    # The other top feeds, each then back to the main feed.
     foreach ($other in $appProfile.OtherFeeds) {
         $nodes = Get-WalkScreen "before $other" -AllowPause
         $tabNode = @(Find-UiNode -Nodes $nodes -Label $WalkLabels[$other] | Where-Object { $_.Top -lt $H * 0.15 }) | Select-Object -First 1
@@ -519,24 +509,12 @@ try {
         $null = Restore-WalkTabs 'search' $H
     }
 
-    # The other tabs, TikTok Inbox's Activity page, and Profile.
+    # The other tabs, Inbox's Activity page, and Profile.
     foreach ($tab in $appProfile.Tabs) {
         $nodes = Restore-WalkTabs "before $tab" $H
         $nav = Find-WalkNav $nodes $WalkLabels[$tab] $H
         if (-not $nav) { Write-WalkLog "no $tab tab"; continue }
         Invoke-WalkTap $nav $tab 3500
-        if ($tab -in $appProfile.LynxTabs) {
-            # With no dump there's nothing to tap from, and PineDrama's Rewards opens on a terms
-            # dialog nothing here may answer. The view tree shows the page, and Back leaves it.
-            $lynx = $false
-            for ($i = 0; $i -lt 6 -and -not $lynx; $i++) {
-                $lynx = [bool]@(Invoke-WalkAdb shell dumpsys activity top | Where-Object { $_ -match 'com\.lynx\.tasm' })
-                if (-not $lynx) { Start-Sleep -Seconds 2 }
-            }
-            if ($lynx) { Complete-WalkScreen "tab: $tab" } else { Write-WalkLog "$tab opened no Lynx page" }
-            Invoke-WalkBack $tab
-            continue
-        }
         $page = Get-WalkScreen "tab $tab" -AllowPause
         if ($page) { Complete-WalkScreen "tab: $tab" }
         if ($tab -eq 'Inbox' -and $appProfile.Activity) {

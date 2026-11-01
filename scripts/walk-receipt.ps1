@@ -3,16 +3,14 @@
     The receipt a whole-app walk leaves.
 
 .DESCRIPTION
-    Dot-sourced by walk-app.ps1. Each declared package is walked on its own with its own profile
-    ($WalkProfilePackages). release/release.ps1 reads the receipt's result, screens and installed
-    package, and won't publish until every declared package has come back PASS from an APK patched
-    with the bundle being released.
+    Dot-sourced by walk-app.ps1. release/release.ps1 reads the receipt's result, screens and
+    installed package, and won't publish until the walk has come back PASS from an APK patched with
+    the bundle being released.
 #>
 
-# Each whole-app walk profile and the one package it walks (walk-app.ps1 -Package picks it).
+# The whole-app walk profile and the one package it walks.
 $WalkProfilePackages = [ordered]@{
     'tiktok-whole-app-v1' = 'com.zhiliaoapp.musically'
-    'pinedrama-whole-app-v1' = 'com.ss.android.ttmd.video'
 }
 . (Join-Path (Split-Path -Parent $PSScriptRoot) 'audit/evidence.ps1')
 . (Join-Path $PSScriptRoot 'apk-facts.ps1')

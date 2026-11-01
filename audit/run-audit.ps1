@@ -4,12 +4,9 @@
 
 .DESCRIPTION
     The catalog holds one entry per patch with the checks that prove it does what its
-    description says. Each declared app has its own: audit/catalog.json for TikTok and
-    audit/catalog-pinedrama.json for PineDrama, picked from the APK's package along with that
-    app's probe build, tabs and deep-link scheme (Get-AuditPackageProfile). This script executes
-    them and writes the results for the app version under test to audit/results/
-    (tiktok-<version>.json, pinedrama-<version>.json), so the next retarget can run the same
-    checks and compare.
+    description says, in audit/catalog.json. This script executes them and writes the results for
+    the app version under test to audit/results/ (tiktok-<version>.json), so the next retarget can
+    run the same checks and compare.
 
     Steps are data. "apk" steps read the patched APK itself (emptied files, the manifest, the
     resource table, strings in the dex) and need no phone. Every other step drives the phone
@@ -36,8 +33,7 @@
 
     Repeating it on a new app version: patch the full catalog with scripts/patch-for-device.ps1
     (signed with the phone's key), build and install the probe with
-    tools/verification-probe/build.ps1 -Install (-Profile pinedrama-47.5.3-audit-v1 for
-    PineDrama), run this with -Apk and -Install, review the
+    tools/verification-probe/build.ps1 -Install, run this with -Apk and -Install, review the
     screenshots, merge the verdicts, then diff the new results file against the previous one.
     concepts/patch-development.md has the whole routine.
 
@@ -51,7 +47,7 @@
     audit/run-audit.ps1 -Apk C:\scratch\hushfeed-0.74.0-signed.apk -Serial <serial> -Only 'Hide the LIVE button,category:Comments'
 
 .EXAMPLE
-    audit/run-audit.ps1 -Validate -CatalogPackage com.ss.android.ttmd.video
+    audit/run-audit.ps1 -Validate
 
 .EXAMPLE
     audit/run-audit.ps1 -ApplyVerdicts C:\scratch\verdicts.json -Results audit\results\tiktok-47.1.4.json -OutDir C:\scratch\evidence
@@ -78,7 +74,7 @@ param(
     [string]$Bundle,
     [switch]$Validate,
     # The package whose catalog -Validate checks. A run reads it from -Apk.
-    [ValidateSet('com.zhiliaoapp.musically', 'com.ss.android.ttmd.video')][string]$CatalogPackage = 'com.zhiliaoapp.musically'
+    [ValidateSet('com.zhiliaoapp.musically')][string]$CatalogPackage = 'com.zhiliaoapp.musically'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -93,7 +89,7 @@ function Import-AuditCatalog([string]$ForPackage) {
     $script:auditProfile = Get-AuditPackageProfile $ForPackage
     if ($null -eq $script:auditProfile) { throw "There is no audit profile for $ForPackage." }
     $script:package = $ForPackage
-    $script:probeProfile = Get-VerificationProbeProfile -Profile $script:auditProfile.ProbeProfile
+    $script:probeProfile = Get-VerificationProbeProfile
     if (-not $script:Catalog) { $script:Catalog = Join-Path $root $script:auditProfile.Catalog }
     $script:allCatalogEntries = @(Get-Content -LiteralPath $script:Catalog -Raw -Encoding UTF8 | ConvertFrom-Json)
     $keyProblems = @(Get-AuditCatalogProblems $script:allCatalogEntries)
@@ -159,11 +155,8 @@ if ($Validate) {
     $entries = $allCatalogEntries
     $patchList = Get-Content -LiteralPath (Join-Path $root 'patches-list.json') -Raw | ConvertFrom-Json
     . (Join-Path $root 'scripts/patch-target.ps1')
-    # TikTok's catalog covers every patch, the PineDrama-only one through a check that it stays
-    # out of TikTok. Another package's catalog covers the patches that declare it.
-    $declared = if ($package -ceq 'com.zhiliaoapp.musically') { @($patchList.patches | ForEach-Object { [string]$_.name }) }
-        else { @(Get-PackagePatchNames -PatchList $patchList -PackageName $package) }
-    $targetVersions = @((Get-PatchTarget -PatchList $patchList -PackageName $package).PackageVersions)
+    $declared = @($patchList.patches | ForEach-Object { [string]$_.name })
+    $targetVersions = @((Get-PatchTarget -PatchList $patchList).PackageVersions)
     $named = @($entries | ForEach-Object { [string]$_.name })
     foreach ($name in $declared) { if ($named -notcontains $name) { $problems.Add("no entry for the patch '$name'") } }
     foreach ($name in $named) { if ($declared -notcontains $name) { $problems.Add("'$name' is not a patch in patches-list.json") } }

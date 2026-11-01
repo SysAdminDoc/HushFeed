@@ -502,7 +502,7 @@ public final class Probe extends Instrumentation {
                         String aid = required(intent, "aid");
                         if (!aid.matches("[0-9]+")) throw new IllegalArgumentException("invalid public video id");
                         Intent video = new Intent(Intent.ACTION_VIEW,
-                                android.net.Uri.parse(deepLinkScheme(app) + "://aweme/detail/" + aid));
+                                android.net.Uri.parse("snssdk1233://aweme/detail/" + aid));
                         video.setPackage(app.getPackageName());
                         video.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         app.startActivity(video);
@@ -1209,7 +1209,7 @@ public final class Probe extends Instrumentation {
                         Object aid = optional(aweme, "getAid");
                         if (blank(aid)) throw new IllegalStateException("no current video");
                         android.content.Intent open = new android.content.Intent(android.content.Intent.ACTION_VIEW,
-                                android.net.Uri.parse(deepLinkScheme(context) + "://aweme/detail/" + aid));
+                                android.net.Uri.parse("snssdk1233://aweme/detail/" + aid));
                         open.setPackage(context.getPackageName());
                         open.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
                         context.startActivity(open);
@@ -3197,8 +3197,8 @@ public final class Probe extends Instrumentation {
                         int[] where = new int[2];
                         clickable.getLocationOnScreen(where);
                         // -e touch true: a press and release at the match's center through its own
-                        // window instead of performClick. PineDrama's comment count (cgg) answers
-                        // performClick with true and opens nothing; its sheet opens on a touch.
+                        // window instead of performClick. Some rows answer performClick with true
+                        // and open nothing; a touch opens them.
                         if ("true".equals(intent.getStringExtra("touch"))) {
                             int[] inWindow = new int[2];
                             target.getLocationInWindow(inWindow);
@@ -4193,7 +4193,7 @@ public final class Probe extends Instrumentation {
         /**
          * The video on screen. Hushfeed's own tracker answers when a patch feeds it (Block author
          * button binds it, and that patch is TikTok only), else the post the playback bridge's
-         * player has on screen (PineDrama's feed has no tracker hook), else the Aweme held by the
+         * player has on screen (a feed with no tracker hook), else the Aweme held by the
          * feed pager's on-screen cell.
          */
         private Object currentAweme() throws ReflectiveOperationException {
@@ -4237,8 +4237,8 @@ public final class Probe extends Instrumentation {
         }
 
         /**
-         * Every window's root view. PineDrama plays its feed in SplashActivity's window while
-         * Utils.getActivity() answers the MainActivity underneath it, whose pager stays empty.
+         * Every window's root view. A feed can play in another activity's window while
+         * Utils.getActivity() answers the one underneath it, whose pager stays empty.
          */
         private java.util.List<android.view.View> feedWindowRoots() throws ReflectiveOperationException {
             try {
@@ -4898,11 +4898,6 @@ public final class Probe extends Instrumentation {
 
         private static boolean blank(Object value) {
             return value == null || String.valueOf(value).trim().isEmpty();
-        }
-
-        /** The app's own deep-link scheme: PineDrama answers snssdk845221, TikTok snssdk1233. */
-        private static String deepLinkScheme(Context context) {
-            return "com.ss.android.ttmd.video".equals(context.getPackageName()) ? "snssdk845221" : "snssdk1233";
         }
 
         /** Whether the author has a LIVE room open, from the room id their model carries. */

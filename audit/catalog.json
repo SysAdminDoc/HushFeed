@@ -583,46 +583,6 @@
   "notes": "TikTok decides the duet and stitch buttons from three values (the video's setting, the creator's setting, the permission block); the patch answers the first two. The probe's videoinfo prints them through the same getters, so the on state hides every 1. The converse (finding a friends-only video with the switch off, then seeing it open with the switch on) depends on a creator who closed it; swiping eight videos usually finds none, so the check proves only that nothing closed gets through, and the owed natural check is a known friends-only video: duetSetting=1 with the switch off, 0 with it on, and the Duet button present. Setting 2 (music or partnership) is left alone on purpose. Actually making a duet is never done here."
  },
  {
-  "name": "Allow photo comments",
-  "category": "Comments",
-  "default": true,
-  "kind": "runtime",
-  "source": [
-   "patches/src/main/kotlin/app/morphe/patches/tiktok/misc/comment/CommentPhotosPatch.kt",
-   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/comment/CommentPhotos.java"
-  ],
-  "settings": [
-   {
-    "key": "pinedrama_comment_photos",
-    "default": false,
-    "type": "bool",
-    "row": "Allow photo comments",
-    "restart": true
-   }
-  ],
-  "surface": "comments",
-  "checks": [
-   {
-    "id": "stays-off-tiktok",
-    "patchSelection": "absent",
-    "what": "PineDrama only, so on TikTok the patch must not run: the shared extension still ships the switch's class, but the probe's registered switches list has no commentPhotos, and TikTok's own comment box is left as TikTok built it. (The PineDrama side was checked by hand on the S22, since this audit drives TikTok.)",
-    "steps": [
-     {
-      "apk": "dex-string",
-      "expect": "Lapp/morphe/extension/tiktok/comment/CommentPhotos;"
-     },
-     {
-      "probe": "report",
-      "expect": "registered_switches:",
-      "expectNot": "registered_switches:[^\\n]*\\bcommentPhotos\\b"
-     }
-    ],
-    "auto": true
-   }
-  ],
-  "notes": "PineDrama only. The comment box asks DramaCommentAppDiffProtocol whether to build its gallery tab, handing it bit 1 of comment_photo_publish (read per signed-in account, default on); TikTok's protocol answers with that bit and PineDrama's always answers no. With the switch on the patch answers with the bit. Natural check: PineDrama, switch on, restart, open a drama's comments and tap the box: the gallery icon sits beside the emoji and @ icons; off it doesn't."
- },
- {
   "name": "Allow screenshots and Circle to Search",
   "category": "Downloads",
   "default": true,
@@ -10448,7 +10408,7 @@
     "auto": true
    }
   ],
-  "notes": "The effect shows only on an account with more saved stickers than the server's first page (refreshCount, 100 by default): PineDrama's comment sticker panel never pages, so without the patch its Saved tab stops at 100. Natural check: with about 113 saved, a cold start's Saved tab ends on a row of 1 (113 cells) instead of a full row at 100."
+  "notes": "The effect shows only on an account with more saved stickers than the server's first page (refreshCount, 100 by default): the comment sticker panel never pages, so without the patch its Saved tab stops at 100. Natural check: with about 113 saved, a cold start's Saved tab ends on a row of 1 (113 cells) instead of a full row at 100."
  },
  {
   "name": "Location access governor",

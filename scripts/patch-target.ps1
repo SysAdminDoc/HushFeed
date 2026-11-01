@@ -15,18 +15,13 @@
 
 function Get-PatchTarget {
     [CmdletBinding()]
-    param(
-        [Parameter(Mandatory = $true)][object]$PatchList,
-        # Another app the catalog declares (PineDrama), for a run on its APK. Empty means the bundle's target.
-        [string]$PackageName
-    )
+    param([Parameter(Mandatory = $true)][object]$PatchList)
 
     $patches = @($PatchList.patches)
     if ($patches.Count -eq 0) { throw 'patches-list.json contains no patches.' }
 
     $targets = @{}
     $versionSets = @{}
-    $declaredBy = @{}
     foreach ($patch in $patches) {
         if ($null -eq $patch) { throw 'patches-list.json contains a null patch.' }
         $nameProperty = $patch.PSObject.Properties['name']
@@ -49,100 +44,44 @@ function Get-PatchTarget {
             if ($versions.Count -eq 0) {
                 throw "$patchName has no exact compatible version for $($property.Name)."
             }
-            if (-not $targets.ContainsKey($property.Name)) {
-                $targets[$property.Name] = @()
-                $versionSets[$property.Name] = @{}
-                $declaredBy[$property.Name] = 0
-            }
+            if (-not $targets.ContainsKey($property.Name)) { $targets[$property.Name] = @() }
             $targets[$property.Name] += $versions
-            $declaredBy[$property.Name]++
             $set = (@($versions | Sort-Object -Unique) -join ', ')
-            if (-not $versionSets[$property.Name].ContainsKey($set)) { $versionSets[$property.Name][$set] = $patchName }
+            if (-not $versionSets.ContainsKey($set)) { $versionSets[$set] = $patchName }
         }
     }
 
-    # The bundle's target is the package the most patches declare. Another app built from the same
-    # code (PineDrama, #156) is declared by the patches that apply to it, a few of them its own
-    # (Allow photo comments), and is listed beside it. A tie names no target.
     $packages = @($targets.Keys | Sort-Object)
-    if (-not [string]::IsNullOrEmpty($PackageName)) {
-        if ($PackageName -cnotin $packages) { throw "No patch declares $PackageName." }
-        $chosen = $PackageName
-    } else {
-        $most = ($packages | ForEach-Object { $declaredBy[$_] } | Measure-Object -Maximum).Maximum
-        $leading = @($packages | Where-Object { $declaredBy[$_] -eq $most })
-        if ($leading.Count -ne 1) {
-            throw "Expected one package the most patches declare, found a tie among $($leading -join ', ')."
-        }
-        $chosen = $leading[0]
+    if ($packages.Count -ne 1) {
+        throw "Expected one compatible package, found $($packages -join ', ')."
     }
-    foreach ($package in $packages) {
-        if ($versionSets[$package].Count -ne 1) {
-            $sets = @($versionSets[$package].Keys | Sort-Object | ForEach-Object { "$($versionSets[$package][$_]) declares $_" })
-            throw "Expected every patch to declare the same versions of ${package}: $($sets -join '; ')."
-        }
+    $packageName = $packages[0]
+    if ($versionSets.Count -ne 1) {
+        $sets = @($versionSets.Keys | Sort-Object | ForEach-Object { "$($versionSets[$_]) declares $_" })
+        throw "Expected every patch to declare the same versions of ${packageName}: $($sets -join '; ')."
     }
-    $versions = @($targets[$chosen] | Sort-Object -Unique | Sort-Object { [version]$_ })
+    $versions = @($targets[$packageName] | Sort-Object -Unique | Sort-Object { [version]$_ })
     return [pscustomobject]@{
-        PackageName = $chosen
+        PackageName = $packageName
         PackageVersions = $versions
         PackageVersion = $versions[-1]
-        OtherPackages = @($packages | Where-Object { $_ -ne $chosen })
     }
 }
 
 function Get-DeclaredPatchTargets {
-    <# Every advertised package and its exact versions, without choosing a dominant app. #>
+    <# The advertised package and its exact versions, with every patch in the catalog. #>
     [CmdletBinding()]
     param([Parameter(Mandatory = $true)][object]$PatchList)
 
-    $packages = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
-    foreach ($patch in @($PatchList.patches)) {
-        if ($null -eq $patch) { throw 'patches-list.json contains a null patch.' }
-        $compatible = $patch.PSObject.Properties['compatiblePackages']
-        if ($null -eq $compatible -or $null -eq $compatible.Value) {
-            throw "$($patch.name) has no compatible package in patches-list.json."
-        }
-        foreach ($property in $compatible.Value.PSObject.Properties) {
-            if ($property.Name -cnotmatch '^[A-Za-z][A-Za-z0-9_]*(\.[A-Za-z][A-Za-z0-9_]*)+$') {
-                throw "Invalid declared Android package: $($property.Name)."
-            }
-            [void]$packages.Add($property.Name)
-        }
+    $target = Get-PatchTarget -PatchList $PatchList
+    $names = @($PatchList.patches | ForEach-Object { [string]$_.name })
+    [pscustomobject]@{
+        PackageName = $target.PackageName
+        PackageVersions = @($target.PackageVersions)
+        PackageVersion = $target.PackageVersion
+        PatchNames = $names
+        DependencyNames = @(Get-PatchDependencyNames -PatchList $PatchList -RequestedNames $names)
     }
-    if ($packages.Count -eq 0) { throw 'patches-list.json contains no declared packages.' }
-    $names = [string[]]@($packages)
-    [Array]::Sort($names, [StringComparer]::Ordinal)
-    foreach ($name in $names) {
-        $target = Get-PatchTarget -PatchList $PatchList -PackageName $name
-        [pscustomobject]@{
-            PackageName = $target.PackageName
-            PackageVersions = @($target.PackageVersions)
-            PackageVersion = $target.PackageVersion
-            PatchNames = @(Get-PackagePatchNames -PatchList $PatchList -PackageName $name)
-            DependencyNames = @(Get-PatchDependencyNames -PatchList $PatchList -RequestedNames @(Get-PackagePatchNames -PatchList $PatchList -PackageName $name))
-        }
-    }
-}
-
-<#
-.SYNOPSIS
-    The names of the patches that declare a package, in catalog order. A run on the target's APK
-    selects these: a patch only another app declares (PineDrama's Allow photo comments, #156)
-    never applies to it, so the patcher leaves it out and a check expecting it would fail.
-#>
-function Get-PackagePatchNames {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory = $true)][object]$PatchList,
-        [Parameter(Mandatory = $true)][string]$PackageName
-    )
-
-    return @($PatchList.patches | Where-Object {
-            $compatible = $_.PSObject.Properties['compatiblePackages']
-            $null -ne $compatible -and $null -ne $compatible.Value -and
-                $null -ne $compatible.Value.PSObject.Properties[$PackageName]
-        } | ForEach-Object { [string]$_.name })
 }
 
 <#

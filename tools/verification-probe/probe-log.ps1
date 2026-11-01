@@ -25,19 +25,10 @@ function Invoke-ProbeAction {
         [Parameter(Mandatory = $true)][AllowNull()]$Lease,
         [int]$WaitMs = 1200,
         [string[]]$Extras = @(),
-        [ValidateSet('tiktok-whole-app-v1', 'pinedrama-47.5.3-capabilities-v1', IgnoreCase = $false)][string]$Profile = 'tiktok-whole-app-v1',
-        $InspectionPlan,
         # The fake-device fixtures name a command of their own here.
         [string]$Adb = 'adb'
     )
-    $target = Get-VerificationProbeProfile $Profile
-    if ($target.Restricted) {
-        if ($Action -cne 'capabilities' -or $Extras.Count -ne 0) { throw 'PineDrama permits only its read-only capability action, without caller extras.' }
-        $problem = Get-PineDramaInspectionProblem $InspectionPlan
-        if ($problem) { throw $problem }
-        $Extras = @('-e', 'profile', $Profile, '-e', 'versionCode', [string]$InspectionPlan.build.apk.versionCode,
-            '-e', 'apkSha256', [string]$InspectionPlan.build.apk.sha256)
-    }
+    $target = Get-VerificationProbeProfile
     $marker = "hushfeed-probe-$([guid]::NewGuid().ToString('N'))"
     Assert-DeviceLease -Lease $Lease -Serial $Serial
     & $Adb -s $Serial shell log -t $target.LogTag $marker

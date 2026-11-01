@@ -37,7 +37,6 @@
 #>
 [CmdletBinding()]
 param(
-    [ValidateSet('tiktok-whole-app-v1', 'pinedrama-47.5.3-audit-v1', 'pinedrama-47.5.3-capabilities-v1', 'pinedrama-47.5.3-core-walk-v1', 'pinedrama-47.5.3-core-walk-v2', IgnoreCase = $false)][string]$Profile = 'tiktok-whole-app-v1',
     [string]$Serial,
     [string]$LeaseDir = $env:HUSHFEED_DEVICE_LEASE_DIR,
     [string]$ChatIdentity = $env:HUSHFEED_CHAT_IDENTITY,
@@ -62,7 +61,7 @@ $root = Split-Path -Parent (Split-Path -Parent $here)
 . (Join-Path $root 'scripts/apk-signing.ps1')
 . (Join-Path $root 'scripts/device-install.ps1')
 . (Join-Path $here 'profile.ps1')
-$probeProfile = Get-VerificationProbeProfile $Profile
+$probeProfile = Get-VerificationProbeProfile
 
 function Initialize-ProbeOutputDirectory {
     param([string]$Path, [string]$RepositoryRoot)
@@ -210,7 +209,7 @@ try {
 } finally { Remove-Item -LiteralPath $dexInputs -Force -ErrorAction SilentlyContinue }
 
 $manifestPath = Join-Path $OutDir 'AndroidManifest.xml'
-Write-VerificationProbeManifest -Template (Join-Path $here 'AndroidManifest.xml') -Destination $manifestPath -Profile $Profile
+Copy-Item -LiteralPath (Join-Path $here 'AndroidManifest.xml') -Destination $manifestPath -Force
 $unsigned = Join-Path $OutDir 'probe-unsigned.apk'
 & (Join-Path $buildTools.FullName 'aapt2.exe') link -I $androidJar `
     --manifest $manifestPath -o $unsigned --auto-add-overlay
@@ -259,13 +258,7 @@ if ($Install) {
     if ($LASTEXITCODE -ne 0) { throw "adb install failed on $Serial. The output above says why." }
     Write-Host "[probe] installed for $($probeProfile.Name). Load its instrumentation:"
     Write-Host "  adb -s $Serial shell am instrument $($probeProfile.ProbePackage)/$($probeProfile.Instrumentation)"
-    if ($Profile -cin @('pinedrama-47.5.3-core-walk-v1', 'pinedrama-47.5.3-core-walk-v2')) {
-        Write-Host '[probe] Run scripts/walk-pinedrama.ps1 with the exact merged source, native build receipt and bundle. Its five-route result always remains INCOMPLETE and cannot qualify a release.'
-    } elseif ($probeProfile.Restricted) {
-        Write-Host '[probe] PineDrama permits only a bound capabilities inspection through Invoke-ProbeAction -Profile. This cannot qualify a release.'
-    } else {
-        Write-Host "  adb -s $Serial shell am broadcast -a app.hushfeed.verification.PROBE -p $($probeProfile.Package) -e action dump"
-    }
+    Write-Host "  adb -s $Serial shell am broadcast -a app.hushfeed.verification.PROBE -p $($probeProfile.Package) -e action dump"
     Write-Host "  adb -s $Serial logcat -d -s $($probeProfile.LogTag):V -v raw"
 }
 } finally {

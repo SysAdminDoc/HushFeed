@@ -44,7 +44,7 @@ final class SecurePopupProbe {
                 throw new IllegalStateException("host decor did not receive FLAG_SECURE");
             }
 
-            String[] names = composeNames(activity.getPackageName());
+            String[] names = composeNames();
             Class<?> propertiesClass = loader.loadClass(names[0]);
             Constructor<?> propertiesConstructor = propertiesClass.getConstructor(
                     boolean.class, boolean.class, boolean.class, int.class);
@@ -111,14 +111,10 @@ final class SecurePopupProbe {
     }
 
     /**
-     * Compose's PopupProperties, Density, PopupPositionProvider and PopupLayout as each app's R8
-     * named them (TikTok 47.5.3, PineDrama 47.5.3). PineDrama's PopupLayout takes the same
-     * constructor and its properties the same (ZZZI) one.
+     * Compose's PopupProperties, Density, PopupPositionProvider and PopupLayout as TikTok 47.5.3's
+     * R8 named them.
      */
-    private static String[] composeNames(String hostPackage) {
-        if ("com.ss.android.ttmd.video".equals(hostPackage)) {
-            return new String[]{"X.GWO", "X.Fnj", "X.Ges", "X.GcV"};
-        }
+    private static String[] composeNames() {
         return new String[]{"X.011c", "X.01oI", "X.011a", "X.01tG"};
     }
 

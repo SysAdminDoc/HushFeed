@@ -59,13 +59,15 @@ $PineDramaWalkLabels = @{
     CommentsSheet = $WalkLabels.CommentsSheet
     ShareButton = $WalkLabels.ShareButton
     ShareSheet = $WalkLabels.ShareSheet
-    ProfileMenu = $WalkLabels.ProfileMenu
+    ProfileMenu = '^Settings$'
     SettingsAndPrivacy = $WalkLabels.SettingsAndPrivacy
 }
 
 # What the walk opens in each app a bundle declares. MainFeed is swiped first, OtherFeeds are
-# visited from it and Tabs are the bottom tabs after Home. The receipt's profile name comes from
-# walk-receipt.ps1's $WalkProfilePackages.
+# visited from it and Tabs are the bottom tabs after Home. LynxTabs never go idle, so uiautomator
+# can't read them. GearOpensSettings is a Profile button that opens Settings and privacy itself,
+# not a sheet holding it. HiddenPages are Hushfeed pages whose patches this app doesn't take. The
+# receipt's profile name comes from walk-receipt.ps1's $WalkProfilePackages.
 $WalkProfiles = @{
     'com.zhiliaoapp.musically' = @{
         Package = 'com.zhiliaoapp.musically'; App = 'TikTok'; Labels = $WalkLabels
@@ -74,6 +76,7 @@ $WalkProfiles = @{
     'com.ss.android.ttmd.video' = @{
         Package = 'com.ss.android.ttmd.video'; App = 'PineDrama'; Labels = $PineDramaWalkLabels
         MainFeed = 'ShortVideo'; MainFeedName = 'Short Video'; OtherFeeds = @('Following', 'Drama'); Tabs = @('Discover', 'Rewards', 'Inbox', 'Profile'); Activity = $false
+        LynxTabs = @('Rewards'); GearOpensSettings = $true; HiddenPages = @('Feed tabs', 'Screen time')
     }
 }
 

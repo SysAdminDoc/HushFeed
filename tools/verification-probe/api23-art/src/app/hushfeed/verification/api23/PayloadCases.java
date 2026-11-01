@@ -38,7 +38,7 @@ final class PayloadCases {
         originalFallback = Settings.FILTER_OFFLINE_FALLBACK_VIDEOS.get();
         captured = true;
         // Only the helper's resource names model a host version; the payload DEX stays intact.
-        BuildNames.setRunningBuildForTests("47.5.3");
+        BuildNames.setRunningBuildForTests("47.6.3");
         Settings.CAPTION_TEXT_SIZE.save(0);
         Settings.CAPTION_BACKGROUND.save("default");
         TextPaint paint = new TextPaint();
@@ -59,8 +59,8 @@ final class PayloadCases {
                 + " beforePx=" + sourceSize + " afterPx=" + styled.getPaint().getTextSize());
         FrameLayout container = new FrameLayout(context), strip = new FrameLayout(context);
         TextView view = new TextView(context);
-        strip.setId(context.getResources().getIdentifier("dln", "id", context.getPackageName()));
-        view.setId(context.getResources().getIdentifier("dlu", "id", context.getPackageName()));
+        strip.setId(context.getResources().getIdentifier("dn7", "id", context.getPackageName()));
+        view.setId(context.getResources().getIdentifier("dnd", "id", context.getPackageName()));
         require(strip.getId() != 0 && view.getId() != 0, "helper native resource IDs are missing");
         view.setTextSize(TypedValue.COMPLEX_UNIT_PX, sourceSize);
         strip.setBackgroundColor(Color.BLUE); strip.addView(view); container.addView(strip);
@@ -68,7 +68,7 @@ final class PayloadCases {
         Settings.CAPTION_BACKGROUND.save("black"); apply.invoke(null, container); apply.invoke(null, container);
         require(Math.abs(view.getTextSize() - expected) < .01f && ((ColorDrawable) strip.getBackground()).getColor() == Color.BLACK,
                 "actual native caption views did not resize and recolor");
-        receipt.pass("caption-native-views", "real TextView/FrameLayout, helper dlu/dln resources, repeated apply");
+        receipt.pass("caption-native-views", "real TextView/FrameLayout, helper dnd/dn7 resources, repeated apply");
         Settings.CAPTION_TEXT_SIZE.save(0); Settings.CAPTION_BACKGROUND.save("default");
         apply.invoke(null, container); apply.invoke(null, container);
         require(view.getTextSize() == sourceSize && ((ColorDrawable) strip.getBackground()).getColor() == Color.BLUE

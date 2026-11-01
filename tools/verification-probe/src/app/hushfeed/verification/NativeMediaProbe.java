@@ -229,7 +229,7 @@ final class NativeMediaProbe {
         void execute() throws Exception {
             check();
             PackageInfo info = app.getPackageManager().getPackageInfo(TARGET, 0);
-            if (!"47.5.3".equals(info.versionName)) throw new IOException("unqualified native host");
+            if (!"47.6.3".equals(info.versionName)) throw new IOException("unqualified native host");
             String installed = digest(new File(app.getApplicationInfo().sourceDir), MAX_APK);
             if (!installed.equals(apkHash)) throw new IOException("installed APK identity mismatch");
             check();

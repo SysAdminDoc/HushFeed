@@ -112,16 +112,16 @@ final class InboxQuerySnapshot {
         Object query = required(owner, "query");
         Object root = required(fragment, "mView");
         if (!(root instanceof View)) throw new SchemaFailure("fragment view missing");
-        Object lazy = required(stub, "LLJJL");
-        if (!"X.02o6".equals(lazy.getClass().getName())) throw new SchemaFailure("native state cache schema changed");
-        Object cachedState = required(lazy, "LLJJI");
+        Object lazy = required(stub, "LLJJLIIIJLLLLLLLZ");
+        if (!"X.02pM".equals(lazy.getClass().getName())) throw new SchemaFailure("native state cache schema changed");
+        Object cachedState = required(lazy, "LLJJIII");
         boolean closed = bool(owner, "closed"), attached = list.isAttachedToWindow();
-        boolean fragmentList = required(fragment, "LLJJIJIIJIL") == list;
-        boolean fragmentContainer = required(fragment, "LLJJIJIL") == container;
+        boolean fragmentList = required(fragment, "LLJJIJIL") == list;
+        boolean fragmentContainer = required(fragment, "LLJJJ") == container;
         boolean listAdapter = required(list, "mAdapter") == adapter;
-        boolean nativeStub = required(adapter, "LLJJJJ") == stub;
-        boolean nativeState = bool(adapter, "LLJJJJLIIL") && cachedState == state;
-        boolean stubAdapter = required(stub, "LLJJIII") == adapter;
+        boolean nativeStub = required(adapter, "LLJJJJJIL") == stub;
+        boolean nativeState = bool(adapter, "LLJJL") && cachedState == state;
+        boolean stubAdapter = required(stub, "LLJJIJI") == adapter;
         boolean inRoot = inside(list, (View) root);
         row.put("closed", closed);
         row.put("attached", attached);
@@ -153,7 +153,7 @@ final class InboxQuerySnapshot {
         row.put("nativeBacking", rows(required(state, "LJ")));
         row.put("queryBasis", rows(required(query, "basis")));
         row.put("queryRendered", rows(required(query, "rendered")));
-        Object diff = required(adapter, "LLLFZ");
+        Object diff = required(adapter, "LLLI");
         InboxRenderedModels.Result displayed = InboxRenderedModels.read(adapter);
         row.put("nativeRendered", rows(displayed.models));
         row.put("differCached", rows(displayed.differCached));
@@ -183,7 +183,7 @@ final class InboxQuerySnapshot {
             row.put("editorTextLength", ((TextView) editor).length());
         } else if (editor != null) throw new SchemaFailure("editor without bar");
         Object spring = list.getParent();
-        if (spring == null || required(fragment, "LLJJIJI") != spring) throw new SchemaFailure("native spring ownership missing");
+        if (spring == null || required(fragment, "LLJJIJIIJIL") != spring) throw new SchemaFailure("native spring ownership missing");
         row.put("springClass", spring.getClass().getName());
         JSONObject refresh = new JSONObject();
         // R8 renames the refresh flags every build, so record every boolean the native layout declares.

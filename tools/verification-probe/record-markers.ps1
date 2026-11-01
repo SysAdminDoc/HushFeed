@@ -37,12 +37,12 @@
     -FirstTap is tapped once after the snapshot, for example a profile grid tile, so the viewer it
     opens binds that route's videos while the swipes move through them. Then:
 
-    tools/verification-probe/record-markers.ps1 -Write -TikTokVersion 47.5.3 -HushfeedBuild 0.78.0
+    tools/verification-probe/record-markers.ps1 -Write -TikTokVersion 47.6.3 -HushfeedBuild 0.80.0
 
     Routes recorded under different Hushfeed builds are written one build at a time with -Only,
     so each file names the build whose filters gave its verdicts:
 
-    tools/verification-probe/record-markers.ps1 -Write -TikTokVersion 47.5.3 -HushfeedBuild 0.78.0 -Only paid,series
+    tools/verification-probe/record-markers.ps1 -Write -TikTokVersion 47.6.3 -HushfeedBuild 0.80.0 -Only paid,series
 #>
 [CmdletBinding(DefaultParameterSetName = 'Record')]
 param(

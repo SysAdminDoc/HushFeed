@@ -30,8 +30,8 @@ final class HookBindings {
             }
             bindings.put(name, names);
         }
-        requireMember(bindings, "captions", "47.5.3:dlu");
-        requireMember(bindings, "captions", "47.5.3:dln");
+        requireMember(bindings, "captions", "47.6.3:dnd");
+        requireMember(bindings, "captions", "47.6.3:dn7");
         requireMember(bindings, "main feed", "FeedItemList.getItems");
         return "captions=" + bindings.get("captions") + "; main feed=" + bindings.get("main feed");
     }

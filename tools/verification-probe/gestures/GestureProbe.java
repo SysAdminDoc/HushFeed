@@ -61,8 +61,8 @@ public final class GestureProbe extends Instrumentation {
             if (!railPointer.equals("first") && !railPointer.equals("second")) {
                 throw new IllegalArgumentException("rail-pointer must be first or second");
             }
-            if (!"47.5.3".equals(getContext().getPackageManager().getPackageInfo(TARGET, 0).versionName)) {
-                throw new IllegalStateException("The resource anchors require TikTok 47.5.3");
+            if (!"47.6.3".equals(getContext().getPackageManager().getPackageInfo(TARGET, 0).versionName)) {
+                throw new IllegalStateException("The resource anchors require TikTok 47.6.3");
             }
             if (audio == null) throw new IllegalStateException("No audio service for restoration");
             audioState = new GestureAudio.Port() {
@@ -90,7 +90,7 @@ public final class GestureProbe extends Instrumentation {
             result.putString("bounds", bounds.toShortString());
             List<GestureSequence.Event> events = null;
             if (mode.equals("pinch")) {
-                Rect rail = anchor(root, "lke"), comment = anchor(root, "epr");
+                Rect rail = anchor(root, "ljl"), comment = anchor(root, "eqi");
                 if (!rail.contains(comment)) throw new IllegalStateException("Comment button is not on the observed rail");
                 float x = comment.exactCenterX(), y = comment.exactCenterY();
                 float otherX = bounds.exactCenterX();
@@ -104,7 +104,7 @@ public final class GestureProbe extends Instrumentation {
                 result.putString("railPointer", railPointer);
                 result.putFloat("scale", scale);
             } else if (mode.equals("photo-x")) {
-                Rect close = anchor(root, "v08");
+                Rect close = anchor(root, "uyr");
                 events = GestureSequence.tap(bounds.left, bounds.top, bounds.right, bounds.bottom,
                         close.exactCenterX(), close.exactCenterY());
                 result.putString("photoAnchor", "v08 " + close.toShortString());

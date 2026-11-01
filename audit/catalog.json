@@ -671,7 +671,7 @@
     "auto": true
    }
   ],
-  "notes": "SecurePopupProbe builds one of TikTok's own Compose popups with its obfuscated classes (X.011c, X.01oI, X.011a, X.01tG on 47.5.3), so a TikTok build that renames them makes the action fail with an exception line instead of 'ok'; that means the probe needs updating, not that the patch is broken. The popup is shown on top of the feed for a moment and removed by secure-popup-close; it is a controlled test view, not a screen capture. Circle to Search itself is a system gesture and is a review item."
+  "notes": "SecurePopupProbe builds one of TikTok's own Compose popups with its obfuscated classes (X.011c, X.01ov, X.011a, X.01tr on 47.6.3), so a TikTok build that renames them makes the action fail with an exception line instead of 'ok'; that means the probe needs updating, not that the patch is broken. The popup is shown on top of the feed for a moment and removed by secure-popup-close; it is a controlled test view, not a screen capture. Circle to Search itself is a system gesture and is a review item."
  },
  {
   "name": "Always show publish date",
@@ -2693,7 +2693,7 @@
      {
       "probe": "click",
       "extras": {
-       "find": "wbl"
+       "find": "w_q"
       },
       "expect": "^ok click",
       "waitMs": 2000
@@ -2785,7 +2785,7 @@
     "auto": true
    }
   ],
-  "notes": "The share sheet is opened with the probe click on the rail's Share button by its 47.5.3 view id wbl (SHARE_BUTTON_IDS in view-id-anchors.txt); no recipient or app is tapped and Back closes the sheet. If click answers \"no shown view matches\" the feed was not on a video cell yet; \"N shown views match\" means two cells are on screen (add -e index). A video's sheet gets only Copy video ID (seen 2026-10-16), and a profile's sheet gets Copy username and Copy user ID (CopyIds.targetsOf, itemType user), so the second half opens Share profile. On 47.1.4 the own profile has no Share profile button; the row is in Settings and privacy under Account, so the check goes Profile menu > Settings and privacy > Share profile (2026-10-16). That sheet has only Send to and the apps row, no action panel, so the row goes at the bottom of the apps panel (0IQ2 on 47.1.4, found by share_panel_channel); before 2026-10-16 it never showed there. Nothing on either sheet is tapped. The bio long-press half (profile bio copyable, \"Bio copied\" toast) is not automated: it needs a long press on the bio text of the own profile. Settings and privacy is a Compose page whose rows carry their words in the content description with an empty text, so its rows are tapped by label, which matches either (2026-10-16)."
+  "notes": "The share sheet is opened with the probe click on the rail's Share button by its 47.6.3 view id w_q (SHARE_BUTTON_IDS in view-id-anchors.txt); no recipient or app is tapped and Back closes the sheet. If click answers \"no shown view matches\" the feed was not on a video cell yet; \"N shown views match\" means two cells are on screen (add -e index). A video's sheet gets only Copy video ID (seen 2026-10-16), and a profile's sheet gets Copy username and Copy user ID (CopyIds.targetsOf, itemType user), so the second half opens Share profile. On 47.1.4 the own profile has no Share profile button; the row is in Settings and privacy under Account, so the check goes Profile menu > Settings and privacy > Share profile (2026-10-16). That sheet has only Send to and the apps row, no action panel, so the row goes at the bottom of the apps panel (0IQ2 on 47.1.4, found by share_panel_channel); before 2026-10-16 it never showed there. Nothing on either sheet is tapped. The bio long-press half (profile bio copyable, \"Bio copied\" toast) is not automated: it needs a long press on the bio text of the own profile. Settings and privacy is a Compose page whose rows carry their words in the content description with an empty text, so its rows are tapped by label, which matches either (2026-10-16)."
  },
  {
   "name": "Copy comments without username",
@@ -3274,7 +3274,7 @@
      },
      {
       "probe": "report",
-      "expect": "target_version: 47\\.5\\.3"
+      "expect": "target_version: 47\\.6\\.3"
      }
     ],
     "auto": true
@@ -4391,7 +4391,7 @@
      {
       "probe": "click",
       "extras": {
-       "find": "wbl"
+       "find": "w_q"
       },
       "expect": "^ok click",
       "waitMs": 2000
@@ -4464,7 +4464,7 @@
   "checks": [
    {
     "id": "record-and-report",
-    "what": "A recording starts, TikTok's gate reads during a few feed swipes are captured, and the report names the 47.5.3 target with at least one gate.",
+    "what": "A recording starts, TikTok's gate reads during a few feed swipes are captured, and the report names the 47.6.3 target with at least one gate.",
     "steps": [
      {
       "open": "feed"
@@ -4502,7 +4502,7 @@
       "extras": {
        "op": "stop"
       },
-      "expect": "\\\"target\\\": \\\"TikTok 47\\.5\\.3\\\"[\\s\\S]*\\\"gate_count\\\": [1-9]"
+      "expect": "\\\"target\\\": \\\"TikTok 47\\.6\\.3\\\"[\\s\\S]*\\\"gate_count\\\": [1-9]"
      }
     ],
     "auto": true
@@ -6567,9 +6567,9 @@
      {
       "probe": "views",
       "extras": {
-       "find": "ka3"
+       "find": "k_r"
       },
-      "expectNot": "id=ka3\\b[^\\n]* shown=true"
+      "expectNot": "id=k_r\\b[^\\n]* shown=true"
      },
      {
       "set": {
@@ -6706,7 +6706,7 @@
     "auto": true
    }
   ],
-  "notes": "Roadmap_Blocked.md (#128): the S22 account is not served TikTok's side menu arrow (LIVE sits alone at top left), so 'side-menu-gate' may find no 'side menu button' family at all; if the toolbar never asks the question on this account, mark that sub-check inconclusive rather than failed. The LIVE button check depends on the account being served a LIVE button (it was on the S22 on 2026-10-10). The ka3 view is the older overlay-hider route for the same switch; the LIVE button report is the stronger proof. Both switches act when the toolbar is built, so every phase restarts."
+  "notes": "Roadmap_Blocked.md (#128): the S22 account is not served TikTok's side menu arrow (LIVE sits alone at top left), so 'side-menu-gate' may find no 'side menu button' family at all; if the toolbar never asks the question on this account, mark that sub-check inconclusive rather than failed. The LIVE button check depends on the account being served a LIVE button (it was on the S22 on 2026-10-10). The k_r view is the older overlay-hider route for the same switch; the LIVE button report is the stronger proof. Both switches act when the toolbar is built, so every phase restarts."
  },
  {
   "name": "Hide feed follow button",
@@ -6831,7 +6831,7 @@
     "auto": false
    }
   ],
-  "notes": "The + under the avatar has no content description on 47.1.4; the only 'Follow' match on the feed is the Following tab at the top (seen 2026-10-16). The check counts the plus views by id instead: iy0 is the TuxIconView plus and iws the icon-res one, both in ixi under user_avatar (from dumpsys activity top on 47.5.3, 2026-10-23; 47.1.4 called them ixq, iwi and ix9). Ids are renamed every build, so a retarget takes them from a fresh windowviews of the feed: the views just below user_avatar in the avatar column. hasids counts a view as shown only when every parent is visible, so it reads 0 whichever of them the patch sets GONE."
+  "notes": "The + under the avatar has no content description on 47.1.4; the only 'Follow' match on the feed is the Following tab at the top (seen 2026-10-16). The check counts the plus views by id instead: iy0 is the TuxIconView plus and iws the icon-res one, both in ixi under user_avatar (from dumpsys activity top on 47.5.3, 2026-10-23, and the same names in 47.6.3's dex; 47.1.4 called them ixq, iwi and ix9). Ids are renamed every build, so a retarget takes them from a fresh windowviews of the feed: the views just below user_avatar in the avatar column. hasids counts a view as shown only when every parent is visible, so it reads 0 whichever of them the patch sets GONE."
  },
  {
   "name": "Hide feed save button",
@@ -6855,7 +6855,7 @@
   "checks": [
    {
     "id": "save-button-gone",
-    "what": "The Save (bookmark) button in the right column (i_5) is shown with the switch off and gone with it on.",
+    "what": "The Save (bookmark) button in the right column (i_4) is shown with the switch off and gone with it on.",
     "steps": [
      {
       "set": {
@@ -6875,9 +6875,9 @@
      {
       "probe": "views",
       "extras": {
-       "find": "i_5"
+       "find": "i_4"
       },
-      "expect": "id=i_5\\b[^\\n]* size=\\d+x[1-9]\\d*\\b[^\\n]* shown=true"
+      "expect": "id=i_4\\b[^\\n]* size=\\d+x[1-9]\\d*\\b[^\\n]* shown=true"
      },
      {
       "set": {
@@ -6896,9 +6896,9 @@
      {
       "probe": "views",
       "extras": {
-       "find": "i_5"
+       "find": "i_4"
       },
-      "expectNot": "id=i_5\\b[^\\n]* size=\\d+x[1-9]\\d*\\b[^\\n]* shown=true"
+      "expectNot": "id=i_4\\b[^\\n]* size=\\d+x[1-9]\\d*\\b[^\\n]* shown=true"
      },
      {
       "set": {
@@ -6924,7 +6924,7 @@
     "auto": true
    }
   ],
-  "notes": "i_5 is the favorite button id the overlay hider also uses for the Save entry of the right column list (hide_rail_favourite), so a failed 'on' phase can be the rail switch rather than this one; the check forces hide_rail_favourite off first. The patch targets VideoFavoriteAssem's root LinearLayout, which may be the parent of i_5: if i_5 stays shown=true with the switch on, read its 'under=' chain in the views output and check the parent's vis= is 8. Seen 2026-10-16 on 47.1.4: with the switch on, i93 stays vis=0 and shown=true but is 0 pixels high, since its child i94 (the assem's root) is GONE, and the bookmark is gone from the column. So the check reads 'drawn' as shown with a height above 0."
+  "notes": "i_4 is the favorite button id the overlay hider also uses for the Save entry of the right column list (hide_rail_favourite), so a failed 'on' phase can be the rail switch rather than this one; the check forces hide_rail_favourite off first. The patch targets VideoFavoriteAssem's root LinearLayout, which may be the parent of i_4: if i_4 stays shown=true with the switch on, read its 'under=' chain in the views output and check the parent's vis= is 8. Seen 2026-10-16 on 47.1.4: with the switch on, i93 stays vis=0 and shown=true but is 0 pixels high, since its child i94 (the assem's root) is GONE, and the bookmark is gone from the column. So the check reads 'drawn' as shown with a height above 0."
  },
  {
   "name": "Hide feed search button",
@@ -7324,7 +7324,7 @@
   "checks": [
    {
     "id": "header-buttons",
-    "what": "The three Inbox header controls (search kpy, add people fh0, activity status l8a) are on screen with their switches off and gone from the layout with them on.",
+    "what": "The three Inbox header controls (search kpb, add people fhp, activity status l7m) are on screen with their switches off and gone from the layout with them on.",
     "steps": [
      {
       "set": {
@@ -7345,23 +7345,23 @@
      {
       "probe": "views",
       "extras": {
-       "find": "kpy"
+       "find": "kpb"
       },
-      "expect": "id=kpy\\b[^\\n]* shown=true"
+      "expect": "id=kpb\\b[^\\n]* shown=true"
      },
      {
       "probe": "views",
       "extras": {
-       "find": "fh0"
+       "find": "fhp"
       },
-      "expect": "id=fh0\\b[^\\n]* shown=true"
+      "expect": "id=fhp\\b[^\\n]* shown=true"
      },
      {
       "probe": "views",
       "extras": {
-       "find": "l8a"
+       "find": "l7m"
       },
-      "expect": "id=l8a\\b[^\\n]* shown=true"
+      "expect": "id=l7m\\b[^\\n]* shown=true"
      },
      {
       "set": {
@@ -7382,23 +7382,23 @@
      {
       "probe": "views",
       "extras": {
-       "find": "kpy"
+       "find": "kpb"
       },
-      "expectNot": "id=kpy\\b[^\\n]* shown=true"
+      "expectNot": "id=kpb\\b[^\\n]* shown=true"
      },
      {
       "probe": "views",
       "extras": {
-       "find": "fh0"
+       "find": "fhp"
       },
-      "expectNot": "id=fh0\\b[^\\n]* shown=true"
+      "expectNot": "id=fhp\\b[^\\n]* shown=true"
      },
      {
       "probe": "views",
       "extras": {
-       "find": "l8a"
+       "find": "l7m"
       },
-      "expectNot": "id=l8a\\b[^\\n]* shown=true"
+      "expectNot": "id=l7m\\b[^\\n]* shown=true"
      },
      {
       "set": {
@@ -7490,7 +7490,7 @@
       "extras": {
        "family": "inbox"
       },
-      "expect": "bound=\\[.*l89.*\\]",
+      "expect": "bound=\\[.*l7k.*\\]",
       "expectNot": "missed="
      },
      {
@@ -7616,7 +7616,7 @@
     "auto": true
    }
   ],
-  "notes": "Row-level hiding is checked against the English labels 'Activity' and 'New followers' (the model-level category is FOLLOWER/ACTIVITY/SHOP, the label is only how the probe finds the row). Chat rows, Message requests, TikTok Shop, Bulletin board, Tako and the archive entrance depend on what the test account has, so conversations are a review check and the chat row ids (w3x, tv_request_unread_count, v0g, oo6) are named in InboxFilter.java for a person to look up with the views action. The header probe lines print shown=true/false for ids kpy, fh0 and l8a; the hide path sets those views GONE. Chat-screen switches (Hide call buttons, Hide suggested replies, Hide sticker suggestions) need an open chat; opening a chat to look is allowed but writing is not, and a test account with no chats cannot show them. Search loaded activity (inbox_loaded_search) adds a search box to Activity and is a visual check only. The hide runs on layout passes, which is why every phase leaves and re-enters the Inbox before reading. 'group-banner' binds only when TikTok draws its group chat prompt in the Inbox, which the S22 account wasn't shown on 47.5.3 (2026-10-23), so the check read inconclusive."
+  "notes": "Row-level hiding is checked against the English labels 'Activity' and 'New followers' (the model-level category is FOLLOWER/ACTIVITY/SHOP, the label is only how the probe finds the row). Chat rows, Message requests, TikTok Shop, Bulletin board, Tako and the archive entrance depend on what the test account has, so conversations are a review check and the chat row ids (w22, tv_request_unread_count, uz0, on0) are named in InboxFilter.java for a person to look up with the views action. The header probe lines print shown=true/false for ids kpb, fhp and l7m; the hide path sets those views GONE. Chat-screen switches (Hide call buttons, Hide suggested replies, Hide sticker suggestions) need an open chat; opening a chat to look is allowed but writing is not, and a test account with no chats cannot show them. Search loaded activity (inbox_loaded_search) adds a search box to Activity and is a visual check only. The hide runs on layout passes, which is why every phase leaves and re-enters the Inbox before reading. 'group-banner' binds only when TikTok draws its group chat prompt in the Inbox, which the S22 account wasn't shown on 47.5.3 (2026-10-23), so the check read inconclusive."
  },
  {
   "name": "Hide inbox stories",
@@ -7639,7 +7639,7 @@
   "checks": [
    {
     "id": "tray-hidden",
-    "what": "With the switch on the stories tray (title id wtk, inside the tray row) is not shown in the Inbox; the baseline line shows whether the tray was served at all.",
+    "what": "With the switch on the stories tray (title id wrs, inside the tray row) is not shown in the Inbox; the baseline line shows whether the tray was served at all.",
     "steps": [
      {
       "set": {
@@ -7658,7 +7658,7 @@
      {
       "probe": "views",
       "extras": {
-       "find": "wtk"
+       "find": "wrs"
       }
      },
      {
@@ -7678,9 +7678,9 @@
      {
       "probe": "views",
       "extras": {
-       "find": "wtk"
+       "find": "wrs"
       },
-      "expectNot": "id=wtk\\b[^\\n]* shown=true"
+      "expectNot": "id=wrs\\b[^\\n]* shown=true"
      },
      {
       "set": {
@@ -7702,7 +7702,7 @@
     "auto": true
    }
   ],
-  "notes": "The tray exists only when accounts the test account follows have stories, and the test account has no real followers, so the first (baseline) probe line will often print no wtk view and the expectNot passes vacuously. Read the baseline in the log: a wtk line with shown=true means the check is meaningful. Nothing is tapped in the tray (the audit never opens a stranger's story). With only this patch installed, the tray is the one thing InboxFilter touches (applyStoriesOnly); with Hide inbox items also installed the full filter runs and uses the same setting."
+  "notes": "The tray exists only when accounts the test account follows have stories, and the test account has no real followers, so the first (baseline) probe line will often print no wrs view and the expectNot passes vacuously. Read the baseline in the log: a wrs line with shown=true means the check is meaningful. Nothing is tapped in the tray (the audit never opens a stranger's story). With only this patch installed, the tray is the one thing InboxFilter touches (applyStoriesOnly); with Hide inbox items also installed the full filter runs and uses the same setting."
  },
  {
   "name": "Hide profile shortcuts",
@@ -8057,7 +8057,7 @@
   "checks": [
    {
     "id": "inbox-section",
-    "what": "In the Inbox, the Suggested accounts header (q5n/u4_) and account rows (remove button fyu) and 'Say hi to' rows (oo6) are not shown with the switch on.",
+    "what": "In the Inbox, the Suggested accounts header (q4m/u35) and account rows (remove button fza) and 'Say hi to' rows (on0) are not shown with the switch on.",
     "steps": [
      {
       "set": {
@@ -8076,19 +8076,19 @@
      {
       "probe": "views",
       "extras": {
-       "find": "q5n"
+       "find": "q4m"
       }
      },
      {
       "probe": "views",
       "extras": {
-       "find": "fyu"
+       "find": "fza"
       }
      },
      {
       "probe": "views",
       "extras": {
-       "find": "oo6"
+       "find": "on0"
       }
      },
      {
@@ -8108,23 +8108,23 @@
      {
       "probe": "views",
       "extras": {
-       "find": "q5n"
+       "find": "q4m"
       },
-      "expectNot": "id=q5n\\b[^\\n]* shown=true"
+      "expectNot": "id=q4m\\b[^\\n]* shown=true"
      },
      {
       "probe": "views",
       "extras": {
-       "find": "fyu"
+       "find": "fza"
       },
-      "expectNot": "id=fyu\\b[^\\n]* shown=true"
+      "expectNot": "id=fza\\b[^\\n]* shown=true"
      },
      {
       "probe": "views",
       "extras": {
-       "find": "oo6"
+       "find": "on0"
       },
-      "expectNot": "id=oo6\\b[^\\n]* shown=true"
+      "expectNot": "id=on0\\b[^\\n]* shown=true"
      },
      {
       "set": {
@@ -8462,7 +8462,7 @@
   "checks": [
    {
     "id": "right-column-hidden",
-    "what": "Hide the right column removes the whole rail (view lke) from the feed, and switching it off brings it back.",
+    "what": "Hide the right column removes the whole rail (view ljl) from the feed, and switching it off brings it back.",
     "steps": [
      {
       "set": {
@@ -8478,9 +8478,9 @@
      {
       "probe": "views",
       "extras": {
-       "find": "lke"
+       "find": "ljl"
       },
-      "expect": "id=lke\\b[^\\n]* shown=true"
+      "expect": "id=ljl\\b[^\\n]* shown=true"
      },
      {
       "set": {
@@ -8496,9 +8496,9 @@
      {
       "probe": "views",
       "extras": {
-       "find": "lke"
+       "find": "ljl"
       },
-      "expectNot": "id=lke\\b[^\\n]* shown=true"
+      "expectNot": "id=ljl\\b[^\\n]* shown=true"
      },
      {
       "set": {
@@ -8514,9 +8514,9 @@
      {
       "probe": "views",
       "extras": {
-       "find": "lke"
+       "find": "ljl"
       },
-      "expect": "id=lke\\b[^\\n]* shown=true"
+      "expect": "id=ljl\\b[^\\n]* shown=true"
      }
     ],
     "auto": true
@@ -8571,7 +8571,7 @@
    },
    {
     "id": "music-line-hidden",
-    "what": "Hide the music line removes the music title container (o8s).",
+    "what": "Hide the music line removes the music title container (o7p).",
     "steps": [
      {
       "set": {
@@ -8587,9 +8587,9 @@
      {
       "probe": "views",
       "extras": {
-       "find": "o8s"
+       "find": "o7p"
       },
-      "expect": "id=o8s\\b[^\\n]* shown=true",
+      "expect": "id=o7p\\b[^\\n]* shown=true",
       "retrySwipe": 8,
       "precondition": true
      },
@@ -8607,10 +8607,10 @@
      {
       "probe": "views",
       "extras": {
-       "find": "o8s"
+       "find": "o7p"
       },
-      "expectNot": "id=o8s\\b[^\\n]* shown=true",
-      "expect": "id=o8s vis=8 [^\\n]*under=ex9\\(vis=0",
+      "expectNot": "id=o7p\\b[^\\n]* shown=true",
+      "expect": "id=o7p vis=8 [^\\n]*under=ey3\\(vis=0",
       "retrySwipe": 4
      },
      {
@@ -8623,7 +8623,7 @@
    },
    {
     "id": "rail-buttons-hidden",
-    "what": "Ticking Like and Share in the right column list hides those two buttons (g90, wbl) and leaves the comment button (epr).",
+    "what": "Ticking Like and Share in the right column list hides those two buttons (g9f, w_q) and leaves the comment button (eqi).",
     "steps": [
      {
       "set": {
@@ -8641,16 +8641,16 @@
      {
       "probe": "views",
       "extras": {
-       "find": "g90"
+       "find": "g9f"
       },
-      "expect": "id=g90\\b[^\\n]* shown=true"
+      "expect": "id=g9f\\b[^\\n]* shown=true"
      },
      {
       "probe": "views",
       "extras": {
-       "find": "wbl"
+       "find": "w_q"
       },
-      "expect": "id=wbl\\b[^\\n]* shown=true"
+      "expect": "id=w_q\\b[^\\n]* shown=true"
      },
      {
       "set": {
@@ -8667,23 +8667,23 @@
      {
       "probe": "views",
       "extras": {
-       "find": "g90"
+       "find": "g9f"
       },
-      "expectNot": "id=g90\\b[^\\n]* shown=true"
+      "expectNot": "id=g9f\\b[^\\n]* shown=true"
      },
      {
       "probe": "views",
       "extras": {
-       "find": "wbl"
+       "find": "w_q"
       },
-      "expectNot": "id=wbl\\b[^\\n]* shown=true"
+      "expectNot": "id=w_q\\b[^\\n]* shown=true"
      },
      {
       "probe": "views",
       "extras": {
-       "find": "epr"
+       "find": "eqi"
       },
-      "expect": "id=epr\\b[^\\n]* shown=true"
+      "expect": "id=eqi\\b[^\\n]* shown=true"
      },
      {
       "set": {
@@ -8838,7 +8838,7 @@
    },
    {
     "id": "opened-video-like-count-clear",
-    "what": "An opened video with the comment bar hidden and only the avatar and Like left on the right: the heart's count ends above the progress bar and the time beside it (#145). The count is a row of its own under the heart (g92), not inside g90 the way the other buttons carry theirs.",
+    "what": "An opened video with the comment bar hidden and only the avatar and Like left on the right: the heart's count ends above the progress bar and the time beside it (#145). The count is a row of its own under the heart (g9h), not inside g9f the way the other buttons carry theirs.",
     "steps": [
      {
       "set": {
@@ -8871,7 +8871,7 @@
      {
       "probe": "overlap",
       "extras": {
-       "a": "g92",
+       "a": "g9h",
        "b": "video_seek_bar"
       },
       "expect": "shownA=[1-9]\\d* shownB=[1-9]\\d* crossing=0\\b"
@@ -8954,7 +8954,7 @@
     "auto": true
    }
   ],
-  "notes": "Nineteen switches in one patch; the checks above cover the ones with a view id or a HookStatus line. Not automated: Hide surveys (f98) and location labels / effect tags only exist on videos that carry them (naturally served; Roadmap_Blocked lists the visual-search and survey surfaces as unserved), and Hide full screen button needs a landscape video. Both are covered only by the registered check and the hookdetails 'overlay' family. View ids are 47.1.4 names read from VideoOverlayHider's id lists (obfuscated, they change every TikTok build). A hider acts on layout passes, so each 'on' phase swipes once and waits before it reads. 'morphe_debug' is the Log diagnostics setting; the Music disc log line only prints with it on. The right column list rows (hide_rail_*) have no row title of their own, they are items in the Right column checklist. Some videos have no music line (TikTok puts a search suggestion bar there and collapses ex9), so the music check first swipes to a video that shows one, and the hidden state it asks for is o8s GONE under a visible ex9 (2026-10-16; o97 under exn on 47.1.4). Keep the music disc still records 'held the disc' only when TikTok's music_animation_close_exp would let the disc turn; an account that gets 1 or 3 (the S22's gets 3, which the spin phase's log line names) is already held, so its hold phase shows installed alone (2026-10-16). music-line-hidden is inconclusive on 47.1.4 when TikTok shows no music line at all: on 2026-10-16 every video in eight swipes had `exn` (the music line's parent) gone and `o97` at 0x0 with the switch off, and the caption ran into a Search bar where the line used to be. That says nothing about the patch; rerun it on another day. opened-video-like-count-clear opens the first video on the official @tiktok profile and asks the probe's overlap action whether the like count row (g92) crosses the progress row (video_seek_bar) where they're drawn; the heart's count sits beside g90 rather than inside it, as it sat beside g85 on 47.1.4, which is what put it on the time before the rail's lift counted it (2026-10-16, #145)."
+  "notes": "Nineteen switches in one patch; the checks above cover the ones with a view id or a HookStatus line. Not automated: Hide surveys (f98) and location labels / effect tags only exist on videos that carry them (naturally served; Roadmap_Blocked lists the visual-search and survey surfaces as unserved), and Hide full screen button needs a landscape video. Both are covered only by the registered check and the hookdetails 'overlay' family. View ids are 47.1.4 names read from VideoOverlayHider's id lists (obfuscated, they change every TikTok build). A hider acts on layout passes, so each 'on' phase swipes once and waits before it reads. 'morphe_debug' is the Log diagnostics setting; the Music disc log line only prints with it on. The right column list rows (hide_rail_*) have no row title of their own, they are items in the Right column checklist. Some videos have no music line (TikTok puts a search suggestion bar there and collapses ey3), so the music check first swipes to a video that shows one, and the hidden state it asks for is o7p GONE under a visible ey3 (2026-10-16; o97 under exn on 47.1.4). Keep the music disc still records 'held the disc' only when TikTok's music_animation_close_exp would let the disc turn; an account that gets 1 or 3 (the S22's gets 3, which the spin phase's log line names) is already held, so its hold phase shows installed alone (2026-10-16). music-line-hidden is inconclusive on 47.1.4 when TikTok shows no music line at all: on 2026-10-16 every video in eight swipes had `exn` (the music line's parent) gone and `o97` at 0x0 with the switch off, and the caption ran into a Search bar where the line used to be. That says nothing about the patch; rerun it on another day. opened-video-like-count-clear opens the first video on the official @tiktok profile and asks the probe's overlap action whether the like count row (g9h) crosses the progress row (video_seek_bar) where they're drawn; the heart's count sits beside g9f rather than inside it, as it sat beside g85 on 47.1.4, which is what put it on the time before the rail's lift counted it (2026-10-16, #145)."
  },
  {
   "name": "Hold-and-slide 2x lock",
@@ -9047,8 +9047,8 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.037e",
-       "getter": "LJIILL",
+       "holder": "X.038s",
+       "getter": "LJIILIIL",
        "gap": "1200"
       },
       "expect": "speed=2\\.0 then 2\\.0.*rate=(1\\.[6-9]\\d|2\\.\\d\\d)",
@@ -9110,8 +9110,8 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.037e",
-       "getter": "LJIILL",
+       "holder": "X.038s",
+       "getter": "LJIILIIL",
        "gap": "1200"
       },
       "expect": "speed=1\\.0 then 1\\.0",
@@ -9432,8 +9432,8 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.037e",
-       "getter": "LJIILL",
+       "holder": "X.038s",
+       "getter": "LJIILIIL",
        "gap": "1500"
       },
       "expect": "moved=(-\\d{3,}|[6-9]\\d\\d|\\d{4,})ms",
@@ -9630,7 +9630,7 @@
      {
       "probe": "click",
       "extras": {
-       "find": "wbl"
+       "find": "w_q"
       },
       "expect": "^ok click",
       "waitMs": 2000
@@ -9715,7 +9715,7 @@
      {
       "probe": "click",
       "extras": {
-       "find": "wbl"
+       "find": "w_q"
       },
       "expect": "^ok click",
       "waitMs": 2000
@@ -9783,7 +9783,7 @@
     "auto": false
    }
   ],
-  "notes": "Whether a real account is in the server experiment that empties the tab is TikTok's decision; the Feature Gate Lab forces the gate on the S22 exactly as the Roadmap's issue #4 notes did. The 'gate-left-alone' check relies on HookStatus being per process; if a future build persists hook records across restarts it can fail spuriously, so read the line order. Always finishes with labclear. The gate is read as the Favorites tab builds its pages, so the checks tap the profile's Favorites tab (content-desc 'Favorites') after a lab recording starts; opening the profile alone reads nothing on 47.1.4 (seen 2026-10-16). On 47.1.4 TikTok reads favorite_reverse as the share sheet opens (caller X.034M#LIZ), not on the profile or its Favorites tab, so both gate checks open the share sheet on the feed (wbl) and back out; nothing on the sheet is tapped (2026-10-16)."
+  "notes": "Whether a real account is in the server experiment that empties the tab is TikTok's decision; the Feature Gate Lab forces the gate on the S22 exactly as the Roadmap's issue #4 notes did. The 'gate-left-alone' check relies on HookStatus being per process; if a future build persists hook records across restarts it can fail spuriously, so read the line order. Always finishes with labclear. The gate is read as the Favorites tab builds its pages, so the checks tap the profile's Favorites tab (content-desc 'Favorites') after a lab recording starts; opening the profile alone reads nothing on 47.1.4 (seen 2026-10-16). On 47.1.4 TikTok reads favorite_reverse as the share sheet opens (caller X.034M#LIZ), not on the profile or its Favorites tab, so both gate checks open the share sheet on the feed (w_q) and back out; nothing on the sheet is tapped (2026-10-16)."
  },
  {
   "name": "Keep the app language",
@@ -10367,8 +10367,8 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.037e",
-       "getter": "LJIILL",
+       "holder": "X.038s",
+       "getter": "LJIILIIL",
        "gap": "1500"
       },
       "expect": "moved=(-\\d{3,}|[6-9]\\d\\d|\\d{4,})ms",
@@ -11307,8 +11307,8 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.037e",
-       "getter": "LJIILL",
+       "holder": "X.038s",
+       "getter": "LJIILIIL",
        "gap": "1500"
       },
       "expect": "moved=(-\\d{3,}|[6-9]\\d\\d|\\d{4,})ms",
@@ -11593,8 +11593,8 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.037e",
-       "getter": "LJIILL",
+       "holder": "X.038s",
+       "getter": "LJIILIIL",
        "gap": "1000"
       },
       "expect": "speed=1\\.5 then 1\\.5",
@@ -11622,8 +11622,8 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.037e",
-       "getter": "LJIILL",
+       "holder": "X.038s",
+       "getter": "LJIILIIL",
        "gap": "1000"
       },
       "expect": "speed=1\\.0 then 1\\.0",
@@ -12940,8 +12940,8 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.037e",
-       "getter": "LJIILL",
+       "holder": "X.038s",
+       "getter": "LJIILIIL",
        "gap": "300"
       },
       "expect": "from=([3-9]\\d{3}|\\d{5,})ms",
@@ -13148,7 +13148,7 @@
      {
       "probe": "click",
       "extras": {
-       "find": "wbl"
+       "find": "w_q"
       },
       "expect": "^ok click",
       "waitMs": 2000
@@ -13207,7 +13207,7 @@
      {
       "probe": "click",
       "extras": {
-       "find": "wbl"
+       "find": "w_q"
       },
       "expect": "^ok click",
       "waitMs": 2000
@@ -13241,7 +13241,7 @@
     "auto": true
    }
   ],
-  "notes": "Copy link only writes the clipboard (no recipient is touched; the share sheet's contact row is never tapped). The Share button is clicked by its 47.5.3 view id wbl (view-id-anchors.txt SHARE_BUTTON_IDS); the English \"Copy link\" label is unverified on a phone: if probe click answers \"no shown view matches\" read the rail with probe views, and note the copy happens at the sheet cell's click. On 47.1.4 Copy link gives a short vt.tiktok.com link with no query (seen 2026-10-16), so both checks turn on expand_short_share_links (Copy the full link for short links), which swaps in the full link through the same sanitizer. A full link proves the expander, its query the sanitize switch. video-link answers \"not-a-tiktok-video-url host=... query=... path=<shape>\" when the swap didn't happen (shape is video, photo, t-short, short, root or other-N-segments, never the link), and \"clip=empty\" when nothing was copied. The setting key is the shared morphe_sanitize_sharing_links (BaseSettings), not in Settings.java. The swap domain (custom_share_domain) must be empty for the plain-URL expectation, which is its default; the checks do not touch it because the runner cannot send an empty value (an empty -e value is dropped by the shell). 47.1.4 also hands out the tiktok.com/t/<code>/ short form, which the expander didn't take until 2026-10-16: the switch-off check then read host=www.tiktok.com query=false with no /video/. Why the switch-off check reads a short link: TikTok's share sheet sends a link that still has its query to its server to be made short (AwemeChannelShareProtocol, getPreShareLinkShortenUrl, only when the first link has query parameters), after the tracker method this patch rewrites. With Clean up shared links on the query is gone and the link goes out full; with it off the server's short link reaches the clipboard without passing the rewrite, so the expander has to wait for it there (ShortLinkExpander.watchShortened, 2026-10-16). Each copy check picks a video first: on 2026-10-16 the feed served a photo post, whose cleaned link is /photo/<id> and which the probe reports as not-a-tiktok-video-url (path=photo, query=false), so the /video/ expectation failed with the cleanup working."
+  "notes": "Copy link only writes the clipboard (no recipient is touched; the share sheet's contact row is never tapped). The Share button is clicked by its 47.6.3 view id w_q (view-id-anchors.txt SHARE_BUTTON_IDS); the English \"Copy link\" label is unverified on a phone: if probe click answers \"no shown view matches\" read the rail with probe views, and note the copy happens at the sheet cell's click. On 47.1.4 Copy link gives a short vt.tiktok.com link with no query (seen 2026-10-16), so both checks turn on expand_short_share_links (Copy the full link for short links), which swaps in the full link through the same sanitizer. A full link proves the expander, its query the sanitize switch. video-link answers \"not-a-tiktok-video-url host=... query=... path=<shape>\" when the swap didn't happen (shape is video, photo, t-short, short, root or other-N-segments, never the link), and \"clip=empty\" when nothing was copied. The setting key is the shared morphe_sanitize_sharing_links (BaseSettings), not in Settings.java. The swap domain (custom_share_domain) must be empty for the plain-URL expectation, which is its default; the checks do not touch it because the runner cannot send an empty value (an empty -e value is dropped by the shell). 47.1.4 also hands out the tiktok.com/t/<code>/ short form, which the expander didn't take until 2026-10-16: the switch-off check then read host=www.tiktok.com query=false with no /video/. Why the switch-off check reads a short link: TikTok's share sheet sends a link that still has its query to its server to be made short (AwemeChannelShareProtocol, getPreShareLinkShortenUrl, only when the first link has query parameters), after the tracker method this patch rewrites. With Clean up shared links on the query is gone and the link goes out full; with it off the server's short link reaches the clipboard without passing the rewrite, so the expander has to wait for it there (ShortLinkExpander.watchShortened, 2026-10-16). Each copy check picks a video first: on 2026-10-16 the feed served a photo post, whose cleaned link is /photo/<id> and which the probe reports as not-a-tiktok-video-url (path=photo, query=false), so the /video/ expectation failed with the cleanup working."
  },
  {
   "name": "Settings",
@@ -13535,7 +13535,7 @@
      {
       "probe": "click",
       "extras": {
-       "find": "wbl"
+       "find": "w_q"
       },
       "expect": "^ok click",
       "waitMs": 2000
@@ -13565,7 +13565,7 @@
      {
       "probe": "click",
       "extras": {
-       "find": "wbl"
+       "find": "w_q"
       },
       "expect": "^ok click",
       "waitMs": 2000
@@ -13607,7 +13607,7 @@
     "auto": true
    }
   ],
-  "notes": "Nothing in the sheet is tapped except by Back: the contact row (suggested people) and the app row are never pressed. The Share button is clicked by its 47.5.3 view id wbl (SHARE_BUTTON_IDS in view-id-anchors.txt). The install log line is written once from MainActivity.onCreate (ShareSheetTools.install), not when a sheet opens, so it is read from the export after a restart. The sheet's own anchors on 47.1.4 are iql (contacts frame), v71 (contacts), dxb (channels row) and a5u (actions row). The English \"Copy link\" label is unverified on a phone; the hides check relies on the cell's TextView text being exactly \"Copy link\", and share_hidden_items is split on commas and newlines (ShareSheetTools.entries). If findtext answers \"none\" in the baseline too, the sheet had not opened. Adding apps (share_added_apps) and one-press copy (share_tap_copies_link) are not exercised because the second would copy on a press and the first needs a launcher app choice."
+  "notes": "Nothing in the sheet is tapped except by Back: the contact row (suggested people) and the app row are never pressed. The Share button is clicked by its 47.6.3 view id w_q (SHARE_BUTTON_IDS in view-id-anchors.txt). The install log line is written once from MainActivity.onCreate (ShareSheetTools.install), not when a sheet opens, so it is read from the export after a restart. The sheet's own anchors on 47.1.4 are iql (contacts frame), v71 (contacts), dxb (channels row) and a5u (actions row). The English \"Copy link\" label is unverified on a phone; the hides check relies on the cell's TextView text being exactly \"Copy link\", and share_hidden_items is split on commas and newlines (ShareSheetTools.entries). If findtext answers \"none\" in the baseline too, the sheet had not opened. Adding apps (share_added_apps) and one-press copy (share_tap_copies_link) are not exercised because the second would copy on a press and the first needs a launcher app choice."
  },
  {
   "name": "Show LIVE search",
@@ -14197,7 +14197,7 @@
      {
       "probe": "textwords",
       "extras": {
-       "id": "g91",
+       "id": "g9g",
        "word": ",",
        "onscreen": "true"
       },
@@ -14235,7 +14235,7 @@
      {
       "probe": "textwords",
       "extras": {
-       "id": "g91",
+       "id": "g9g",
        "word": ",",
        "onscreen": "true"
       },
@@ -14267,7 +14267,7 @@
      {
       "probe": "countformat",
       "extras": {
-       "class": "X.0EV9",
+       "class": "X.0EV1",
        "method": "LIZIZ",
        "count": "123456"
       },
@@ -14276,7 +14276,7 @@
      {
       "probe": "countformat",
       "extras": {
-       "class": "X.0FRP",
+       "class": "X.0FR0",
        "method": "LIZ",
        "count": "123456"
       },
@@ -14290,7 +14290,7 @@
      {
       "probe": "countformat",
       "extras": {
-       "class": "X.0EV9",
+       "class": "X.0EV1",
        "method": "LIZIZ",
        "count": "123456"
       },
@@ -14299,7 +14299,7 @@
      {
       "probe": "countformat",
       "extras": {
-       "class": "X.0FRP",
+       "class": "X.0FR0",
        "method": "LIZ",
        "count": "123456"
       },
@@ -14367,7 +14367,7 @@
     "auto": true
    }
   ],
-  "notes": "Exact counts only differ for counts of 10,000 and up (TikTok already shows 1,234 whole), so the check needs a video with a big like count; videoinfo's 'likes=over10000' bucket picks one (2,447 is written whole by TikTok itself, seen 2026-10-16). textwords takes onscreen=true, since the feed keeps the next cell's g91 laid out. The rail count view is g91 (like), ejs (comment), i94 (save) and w8s (share) on 47.5.3. The comment sheet title, the likes list and the viewers list come from X/0HAE.LIZIZ(Aweme, long) on 47.1.4. For someone else's video it calls TikTok's general formatter with no compact style, which writes the count whole with the switch off too (123456 as 123,456 through probe countformat on the S22, 2026-10-16); your own video goes to X/0HAE.LIZ(J) and the flag-off path to X/0EYv.LIZIZ(J), both hooked. So it needs no hook of its own, and the one added that morning was reverted (a1a60d832). comment-title-exact picks its video by videoinfo's comments bucket (probe since 2026-10-16): with likes=over10000 the a8 run opened a video with 35 comments, whose title reads the same either way. Videos with 10,000 comments are rarer than ones with 10,000 likes, hence 30 swipes. A live flip reaches only cells bound after it: the next cell is already laid out with the old text, which is why pass 3 read 69.4K right after the flip. On 2026-10-16 the comma was there both after a restart and live three swipes on, so like-count-exact restarts for its off half and swipes three times after turning it on. formatters-exact calls the main formatter (CountFormatterFingerprint, X.0EYv.LIZIZ) and a compact one (CompactCountFormatterFingerprint, X.0HAE.LIZ) through probe countformat with a count of its own, so it reads the same on any feed (none of 31 videos had 10,000 comments on 2026-10-16, and like-count-exact went inconclusive once). The names are 47.1.4's obfuscated ones: on a new TikTok build put in what those two fingerprints match there (the anchors fixture test resolves them). The switch is read at each call, so the off half needs no restart."
+  "notes": "Exact counts only differ for counts of 10,000 and up (TikTok already shows 1,234 whole), so the check needs a video with a big like count; videoinfo's 'likes=over10000' bucket picks one (2,447 is written whole by TikTok itself, seen 2026-10-16). textwords takes onscreen=true, since the feed keeps the next cell's g9g laid out. The rail count view is g9g (like), ekg (comment), i93 (save) and w6x (share) on 47.6.3. The comment sheet title, the likes list and the viewers list come from X/0HAE.LIZIZ(Aweme, long) on 47.1.4. For someone else's video it calls TikTok's general formatter with no compact style, which writes the count whole with the switch off too (123456 as 123,456 through probe countformat on the S22, 2026-10-16); your own video goes to X/0HAE.LIZ(J) and the flag-off path to X/0EYv.LIZIZ(J), both hooked. So it needs no hook of its own, and the one added that morning was reverted (a1a60d832). comment-title-exact picks its video by videoinfo's comments bucket (probe since 2026-10-16): with likes=over10000 the a8 run opened a video with 35 comments, whose title reads the same either way. Videos with 10,000 comments are rarer than ones with 10,000 likes, hence 30 swipes. A live flip reaches only cells bound after it: the next cell is already laid out with the old text, which is why pass 3 read 69.4K right after the flip. On 2026-10-16 the comma was there both after a restart and live three swipes on, so like-count-exact restarts for its off half and swipes three times after turning it on. formatters-exact calls the main formatter (CountFormatterFingerprint, X.0EV1.LIZIZ) and a compact one (CompactCountFormatterFingerprint, X.0FR0.LIZ) through probe countformat with a count of its own, so it reads the same on any feed (none of 31 videos had 10,000 comments on 2026-10-16, and like-count-exact went inconclusive once). The names are 47.1.4's obfuscated ones: on a new TikTok build put in what those two fingerprints match there (the anchors fixture test resolves them). The switch is read at each call, so the off half needs no restart."
  },
  {
   "name": "Show follow status",

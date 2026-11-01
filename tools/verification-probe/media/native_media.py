@@ -173,7 +173,7 @@ def validate_receipt(manifest: dict, manifest_hash: str, receipt: dict, apk_hash
     require(TOKEN.fullmatch(manifest.get("token", "")) is not None and receipt.get("token") == manifest["token"], "receipt token mismatch")
     require(receipt.get("manifestSha256") == manifest_hash and receipt.get("installedApkSha256") == apk_hash, "receipt artifact identity mismatch")
     require(receipt.get("sourceHashes") == manifest.get("sourceHashes"), "receipt source hashes differ")
-    require(receipt.get("package") == "com.zhiliaoapp.musically" and receipt.get("version") == "47.5.3"
+    require(receipt.get("package") == "com.zhiliaoapp.musically" and receipt.get("version") == "47.6.3"
             and receipt.get("vm") == "Dalvik" and 23 <= receipt.get("sdk", 0) <= 100, "unqualified ART host")
     require(receipt.get("actualInstalledTrackMuxer") is True and receipt.get("accepted") is True
             and receipt.get("complete") is True, "native muxer did not pass")

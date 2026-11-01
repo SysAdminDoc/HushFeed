@@ -1236,7 +1236,7 @@ public final class Probe extends Instrumentation {
                             }
                         }
                         try {
-                            Object feature = loader.loadClass("X.07So").getMethod("LIZIZ").invoke(null);
+                            Object feature = loader.loadClass("X.07Ty").getMethod("LIZIZ").invoke(null);
                             out.append(" under16=").append(feature.getClass().getMethod("LIZIZ").invoke(feature));
                         } catch (Throwable failure) {
                             out.append(" under16=?(").append(failure.getClass().getSimpleName()).append(')');
@@ -1258,16 +1258,16 @@ public final class Probe extends Instrumentation {
                             out.append(" privacy=?(").append(failure.getClass().getSimpleName()).append(": ").append(failure.getMessage()).append(')');
                         }
                         try {
-                            Object lazy = loader.loadClass("X.0mD8").getField("LIZ").get(null);
+                            Object lazy = loader.loadClass("X.0lsF").getField("LIZ").get(null);
                             out.append(" cooldownFlag=").append(lazy.getClass().getMethod("getValue").invoke(lazy));
                         } catch (Throwable failure) {
                             out.append(" cooldownFlag=?(").append(failure.getClass().getSimpleName()).append(')');
                         }
                         try {
-                            Object lazy = loader.loadClass("X.0mD7").getField("LIZIZ").get(null);
+                            Object lazy = loader.loadClass("X.0lt8").getField("LIZIZ").get(null);
                             Object config = lazy.getClass().getMethod("getValue").invoke(lazy);
                             Object cap = config == null ? null : config.getClass().getField("enabledMaxFollowers").get(config);
-                            Object me = loader.loadClass("X.02y0").getMethod("LIZ").invoke(null);
+                            Object me = loader.loadClass("X.02zE").getMethod("LIZ").invoke(null);
                             Object followers = me == null ? null : me.getClass().getField("historyMaxFollowerCount").get(me);
                             out.append(" followerCap=").append(cap == null ? "5000 (default)" : cap).append(" myHistoryMaxFollowers=").append(followers);
                         } catch (Throwable failure) {
@@ -1999,11 +1999,11 @@ public final class Probe extends Instrumentation {
                                 .getMethod("getActivity").invoke(null);
                         if (activity == null) throw new IllegalStateException("no current activity");
                         android.content.res.Resources resources = activity.getResources();
-                        // 47.5.3 names them dln and dlu (47.1.4 had dm5 and dmb): -e strip dm5 -e text dmb.
+                        // 47.6.3 names them dn7 and dnd (47.5.3 had dln and dlu, 47.1.4 dm5 and dmb): -e strip dln -e text dlu.
                         String stripName = intent.getStringExtra("strip");
                         String textName = intent.getStringExtra("text");
-                        if (stripName == null) stripName = "dln";
-                        if (textName == null) textName = "dlu";
+                        if (stripName == null) stripName = "dn7";
+                        if (textName == null) textName = "dnd";
                         int strip = resources.getIdentifier(stripName, "id", activity.getPackageName());
                         int text = resources.getIdentifier(textName, "id", activity.getPackageName());
                         StringBuilder out = new StringBuilder();
@@ -2172,8 +2172,8 @@ public final class Probe extends Instrumentation {
                         if (activity == null) throw new IllegalStateException("no current activity");
                         android.content.res.Resources resources = activity.getResources();
                         java.util.Map<Integer, String> wanted = new java.util.HashMap<>();
-                        // The 47.5.3 names: lke rail column, bqj anchor, lk3 search bar, g90 like button.
-                        for (String name : new String[]{"lke", "desc", "bqj", "lk3", "videomusiccoverblock", "g90"}) {
+                        // The 47.6.3 names: ljl rail column, bsb anchor, lj_ search bar, g9f like button.
+                        for (String name : new String[]{"ljl", "desc", "bsb", "lj_", "videomusiccoverblock", "g9f"}) {
                             int id = resources.getIdentifier(name, "id", activity.getPackageName());
                             if (id != 0) wanted.put(id, name);
                         }
@@ -2235,7 +2235,7 @@ public final class Probe extends Instrumentation {
                                 .getMethod("isClearDisplayNow");
                         android.content.res.Resources resources = activity.getResources();
                         int[] ids = new int[3];
-                        String[] names = {"lke", "bqj", "videomusiccoverblock"};
+                        String[] names = {"ljl", "bsb", "videomusiccoverblock"};
                         for (int i = 0; i < names.length; i++) {
                             ids[i] = resources.getIdentifier(names[i], "id", activity.getPackageName());
                         }
@@ -2301,8 +2301,8 @@ public final class Probe extends Instrumentation {
                         Method clearNow = loader.loadClass("app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch")
                                 .getMethod("isClearDisplayNow");
                         android.content.res.Resources resources = activity.getResources();
-                        int strip = resources.getIdentifier("dln", "id", activity.getPackageName());
-                        int drawn = resources.getIdentifier("dlu", "id", activity.getPackageName());
+                        int strip = resources.getIdentifier("dn7", "id", activity.getPackageName());
+                        int drawn = resources.getIdentifier("dnd", "id", activity.getPackageName());
                         int[] counts = new int[9];
                         android.os.Handler main = new android.os.Handler(android.os.Looper.getMainLooper());
                         long start = android.os.SystemClock.uptimeMillis();
@@ -2569,12 +2569,12 @@ public final class Probe extends Instrumentation {
                         // Without it set to dark, TikTok stays light whatever the phone's night
                         // mode is (seen on the S22, 2026-10-16). Read through TikTok's own store
                         // factory, the static (int, Context, String) -> SharedPreferences method
-                        // TikTok reads it with (-e store X.02rD -e method LIZJ on 47.5.3), since
+                        // TikTok reads it with (-e store X.02sR -e method LIZJ on 47.6.3), since
                         // that one may route the store to Keva rather than a plain file; its
                         // sibling LIZIZ skips that. -e set N writes N, which the next start applies;
                         // -e set unset removes it.
                         String storeClass = intent.getStringExtra("store");
-                        if (storeClass == null) storeClass = "X.02rD";
+                        if (storeClass == null) storeClass = "X.02sR";
                         String storeMethod = intent.getStringExtra("method");
                         if (storeMethod == null) storeMethod = "LIZJ";
                         Method factory = loader.loadClass(storeClass)
@@ -4976,9 +4976,9 @@ public final class Probe extends Instrumentation {
                 Class<?> register = loader.loadClass("com.ss.android.deviceregister.DeviceRegisterManager");
                 Log.i(TAG, "ok idreset before" + registeredIds(context, appLog, register));
                 if (readOnly) return;
-                // 47.5.3's reset callback: LIZ() when the timeout runs out, LIZIZ(installInfo)
+                // 47.6.3's reset callback: LIZ() when the timeout runs out, LIZIZ(installInfo)
                 // when new install info arrives.
-                Class<?> callbackType = loader.loadClass("X.0LRh");
+                Class<?> callbackType = loader.loadClass("X.0LOl");
                 final java.util.concurrent.CountDownLatch answered = new java.util.concurrent.CountDownLatch(1);
                 final String[] outcome = {"no answer"};
                 Object callback = java.lang.reflect.Proxy.newProxyInstance(loader, new Class<?>[]{callbackType},

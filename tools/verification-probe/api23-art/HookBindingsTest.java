@@ -5,33 +5,33 @@ import app.morphe.extension.shared.diagnostics.HookStatus;
 /** Uses the compiled production HookStatus, without replacement family or snapshot implementations. */
 public final class HookBindingsTest {
     private static final String[][] REQUIRED = {
-            {"captions", "47.5.3:dlu"}, {"captions", "47.5.3:dln"}, {"main feed", "FeedItemList.getItems"}};
+            {"captions", "47.6.3:dnd"}, {"captions", "47.6.3:dn7"}, {"main feed", "FeedItemList.getItems"}};
     private static int checks;
 
     public static void main(String[] args) throws Exception {
         try {
             bindExcept(-1);
             String evidence = HookBindings.require(HookStatus.snapshot());
-            require(evidence.contains("47.5.3:dlu") && evidence.contains("47.5.3:dln")
+            require(evidence.contains("47.6.3:dnd") && evidence.contains("47.6.3:dn7")
                     && evidence.contains("FeedItemList.getItems"), "receipt omits exact positive bindings");
             String report = HookStatus.report().toString();
-            require(report.contains("captions") && !report.contains("47.5.3:dlu")
+            require(report.contains("captions") && !report.contains("47.6.3:dnd")
                     && !report.contains("FeedItemList.getItems"), "production report should expose counts, not bound names");
             for (int i = 0; i < REQUIRED.length; i++) {
                 bindExcept(i);
                 reject(() -> HookBindings.require(HookStatus.snapshot()));
             }
             bindExcept(0);
-            HookStatus.bound("captions", "47.5.3:dlu-extra");
+            HookStatus.bound("captions", "47.6.3:dnd-extra");
             reject(() -> HookBindings.require(HookStatus.snapshot()));
             bindExcept(0);
-            HookStatus.bound("main feed", "47.5.3:dlu");
+            HookStatus.bound("main feed", "47.6.3:dnd");
             reject(() -> HookBindings.require(HookStatus.snapshot()));
             bindExcept(0);
             HookStatus.Snapshot before = HookStatus.snapshot();
-            HookStatus.bound("captions", "47.5.3:dlu");
+            HookStatus.bound("captions", "47.6.3:dnd");
             reject(() -> HookBindings.require(before));
-            require(HookBindings.require(HookStatus.snapshot()).contains("47.5.3:dlu"), "fresh snapshot omitted new binding");
+            require(HookBindings.require(HookStatus.snapshot()).contains("47.6.3:dnd"), "fresh snapshot omitted new binding");
             reject(() -> HookBindings.require(null));
             reject(() -> HookBindings.require(new Object()));
             System.out.println("[api23-art] " + checks + " actual HookStatus binding contracts passed");

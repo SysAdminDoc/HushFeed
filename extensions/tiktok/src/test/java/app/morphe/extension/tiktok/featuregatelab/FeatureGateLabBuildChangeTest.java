@@ -39,7 +39,7 @@ import org.robolectric.annotation.Config;
 @Config(sdk = 28)
 public class FeatureGateLabBuildChangeTest {
     private static final String DROPPED = "47.4.3";
-    private static final String DECLARED = "47.5.3";
+    private static final String DECLARED = "47.6.3";
 
     @Rule public final SettingsContextRule settings = new SettingsContextRule();
 
@@ -99,7 +99,7 @@ public class FeatureGateLabBuildChangeTest {
         assertTrue(enabled("player_config", "AWEDanmakuSupportMask", "BOOLEAN"));
         assertTrue("a SettingsManager read whose model keeps its name",
                 enabled("settings_manager", "lynxview_command_blacklist", "OBJECT"));
-        assertFalse("a gate 47.5.3 doesn't have", enabled("abmock", "comment_cell_badge_dedup", "BOOLEAN"));
+        assertFalse("a gate 47.6.3 doesn't have", enabled("abmock", "comment_cell_badge_dedup", "BOOLEAN"));
         assertFalse("a SettingsManager model R8 renamed",
                 enabled("settings_manager", "drama_innerfeed_lynxcard_delete_card_on_error_config", "OBJECT"));
         assertFalse("a type the catalog doesn't carry", enabled("abmock", "1005_max_limit_count_daily", "LONG"));
@@ -150,7 +150,7 @@ public class FeatureGateLabBuildChangeTest {
         BuildNames.setRunningBuildForTests(DECLARED);
         FeatureGateLabRuntime.reloadRules();
         assertFalse(Utils.isMainProcess());
-        assertEquals("a rule stored for 47.4.3 applied in a 47.5.3 process that hadn't checked it",
+        assertEquals("a rule stored for 47.4.3 applied in a 47.6.3 process that hadn't checked it",
                 5, FeatureGateLabRuntime.overrideInt("1005_max_limit_count_daily", 5));
         assertFalse(FeatureGateLabRuntime.overrideBoolean("comment_cell_badge_dedup", false));
 
@@ -208,7 +208,7 @@ public class FeatureGateLabBuildChangeTest {
         assertTrue(enabled("player_config", "AWEDanmakuSupportMask", "BOOLEAN"));
         assertTrue("a SettingsManager read whose model keeps its name",
                 enabled("settings_manager", "lynxview_command_blacklist", "OBJECT"));
-        assertFalse("a gate 47.5.3 doesn't have", enabled("abmock", "comment_cell_badge_dedup", "BOOLEAN"));
+        assertFalse("a gate 47.6.3 doesn't have", enabled("abmock", "comment_cell_badge_dedup", "BOOLEAN"));
         assertFalse("a SettingsManager model R8 renamed",
                 enabled("settings_manager", "drama_innerfeed_lynxcard_delete_card_on_error_config", "OBJECT"));
         assertFalse(enabled("abmock", "comment_cell_bind_dedup", "BOOLEAN"));

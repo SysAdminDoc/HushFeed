@@ -197,7 +197,7 @@ public final class BuildDetails {
     private static boolean validTarget(Map<String, String> facts) {
         String name = facts.get("target_package"), version = facts.get("target_version"), code = facts.get("target_version_code");
         if (name.equals("unknown")) return version.equals("unknown") && code.equals("unknown");
-        return oneOf(name + "/" + version + "=" + code, "com.zhiliaoapp.musically/47.5.3=2024705030");
+        return oneOf(name + "/" + version + "=" + code, "com.zhiliaoapp.musically/47.6.3=2024706030");
     }
 
     private static boolean matches(String value, String pattern, int max) {

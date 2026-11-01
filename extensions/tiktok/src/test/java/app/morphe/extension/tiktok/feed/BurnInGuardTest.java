@@ -53,8 +53,8 @@ public class BurnInGuardTest {
     public void setUp() {
         Utils.setContext(RuntimeEnvironment.getApplication());
         VideoOverlayHider.resolveForTests("view_rootview", CELL_ID);
-        VideoOverlayHider.resolveForTests("47.5.3:lke", COLUMN_ID);
-        VideoOverlayHider.resolveForTests("47.5.3:uyb", TABS_ID);
+        VideoOverlayHider.resolveForTests("47.6.3:ljl", COLUMN_ID);
+        VideoOverlayHider.resolveForTests("47.6.3:uwv", TABS_ID);
         overlays = SettingsStatus.videoOverlaysEnabled;
         SettingsStatus.videoOverlaysEnabled = true;
         BurnInGuard.resetForTests();
@@ -71,8 +71,8 @@ public class BurnInGuardTest {
         BurnInGuard.resetForTests();
         ClearDisplayShownControls.resetForTests();
         VideoOverlayHider.resolveForTests("view_rootview", 0);
-        VideoOverlayHider.resolveForTests("47.5.3:lke", 0);
-        VideoOverlayHider.resolveForTests("47.5.3:uyb", 0);
+        VideoOverlayHider.resolveForTests("47.6.3:ljl", 0);
+        VideoOverlayHider.resolveForTests("47.6.3:uwv", 0);
     }
 
     /** A feed cell with the rail's column in it, and the tabs under it. */

@@ -437,14 +437,14 @@ public class FeedScreenCoverageTest {
         int cellId = 0x7f0a1c01;
         Map<String, Integer> ids = new LinkedHashMap<>();
         ids.put("desc", 0x7f0a1c02);
-        ids.put("47.5.3:o8s", 0x7f0a1c03);
-        ids.put("47.5.3:lke", 0x7f0a1c04);
-        ids.put("47.5.3:f8p", 0x7f0a1c05);
+        ids.put("47.6.3:o7p", 0x7f0a1c03);
+        ids.put("47.6.3:ljl", 0x7f0a1c04);
+        ids.put("47.6.3:f9f", 0x7f0a1c05);
         Map<BooleanSetting, String> switches = new LinkedHashMap<>();
         switches.put(Settings.HIDE_FEED_CAPTION, "desc");
-        switches.put(Settings.HIDE_FEED_MUSIC, "47.5.3:o8s");
-        switches.put(Settings.HIDE_FEED_ACTION_BAR, "47.5.3:lke");
-        switches.put(Settings.HIDE_FEED_SURVEYS, "47.5.3:f8p");
+        switches.put(Settings.HIDE_FEED_MUSIC, "47.6.3:o7p");
+        switches.put(Settings.HIDE_FEED_ACTION_BAR, "47.6.3:ljl");
+        switches.put(Settings.HIDE_FEED_SURVEYS, "47.6.3:f9f");
         for (BooleanSetting setting : switches.keySet()) {
             Coverage coverage = TABLE.get(setting.key);
             assertNotNull(setting.key, coverage);

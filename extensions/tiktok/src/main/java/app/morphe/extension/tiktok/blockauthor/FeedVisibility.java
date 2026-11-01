@@ -44,16 +44,16 @@ import java.util.WeakHashMap;
  * {@link View#isShown} does not check: it reads visibility flags up the tree and nothing else.
  */
 public final class FeedVisibility {
-    private static final String[] HOME_TAB_RESOURCE_NAMES = {"47.5.3:op1"};
-    private static final String[] INBOX_TAB_RESOURCE_NAMES = {"47.5.3:op2"};
-    private static final String[] PROFILE_TAB_RESOURCE_NAMES = {"47.5.3:op3"};
+    private static final String[] HOME_TAB_RESOURCE_NAMES = {"47.6.3:onv"};
+    private static final String[] INBOX_TAB_RESOURCE_NAMES = {"47.6.3:onw"};
+    private static final String[] PROFILE_TAB_RESOURCE_NAMES = {"47.6.3:onx"};
     /**
      * The bottom Friends tab, the id FriendsTabProtocol loads on every declared build (one before
      * Home's). A build with no such view answers null and the tab is simply not covered.
      */
-    private static final String[] FRIENDS_TAB_RESOURCE_NAMES = {"47.5.3:op0"};
-    private static final String[] COMMENT_SHEET_RESOURCE_NAMES = {"47.5.3:pxv"};
-    private static final String[] COMMENT_TITLE_RESOURCE_NAMES = {"47.5.3:wn4"};
+    private static final String[] FRIENDS_TAB_RESOURCE_NAMES = {"47.6.3:onu"};
+    private static final String[] COMMENT_SHEET_RESOURCE_NAMES = {"47.6.3:pwx"};
+    private static final String[] COMMENT_TITLE_RESOURCE_NAMES = {"47.6.3:wl7"};
     // Built once: the sheet check runs on every layout pass of the feed's window.
     private static final String COMMENT_SHEET_DIAGNOSTIC_NAME =
             "sheet (" + joinResourceNames(COMMENT_SHEET_RESOURCE_NAMES) + ")";

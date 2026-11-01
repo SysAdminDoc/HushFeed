@@ -103,10 +103,10 @@ public class DmTranslationCaptureTest {
             Editable original = editor.getText();
             Input input = new Input(); input.editor = editor;
             Composer composer = new Composer(); composer.input = input;
-            InputAssem assem = new InputAssem(); assem.LLJLLL = editor;
+            InputAssem assem = new InputAssem(); assem.LLJZ = editor;
             DmTranslationPreview.identityReader = (vm, ability, session, render, currentEditor) ->
                     vm == composer && ability == input && session == composer.session && render == assem
-                            && input.editor == currentEditor && assem.LLJLLL == currentEditor
+                            && input.editor == currentEditor && assem.LLJZ == currentEditor
                             ? new DmTranslationPreview.Identity(composer.session.conversation, composer.session.peer) : null;
             DmTranslationPreview.bindInput(input, editor); DmTranslationPreview.inputReady(assem);
             DmTranslationPreview.composerCreated(composer, input, composer.session);
@@ -202,7 +202,7 @@ public class DmTranslationCaptureTest {
     private static final class Session { final String conversation = "capture-conversation", peer = "capture-peer"; }
     private static final class Input { EditText editor; }
     private static final class Composer { Input input; final Session session = new Session(); }
-    private static final class InputAssem { EditText LLJLLL; }
+    private static final class InputAssem { EditText LLJZ; }
     private static final class Message { final String source = SOURCE, content = "owned native payload"; }
     private static final class Model { final Message message = new Message(); }
     private static final class ReceiveAssem { final Model model = new Model(); final Session session = new Session(); TextView text; }

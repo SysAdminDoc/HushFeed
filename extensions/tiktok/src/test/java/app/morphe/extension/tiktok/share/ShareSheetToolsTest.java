@@ -63,10 +63,10 @@ public class ShareSheetToolsTest {
         Object cache = ReflectionHelpers.getStaticField(ShareSheetTools.class, "RESOURCE_IDS");
         ((ResourceIdCache) cache).clear();
         Map<String, Integer> ids = ReflectionHelpers.getField(cache, "ids");
-        ids.put(context.getPackageName() + ":47.5.3:ir0", 0x7f000201);
+        ids.put(context.getPackageName() + ":47.6.3:ir0", 0x7f000201);
         ids.put(context.getPackageName() + ":ibc", 0x7f000101);
-        ids.put(context.getPackageName() + ":47.5.3:v5s", 0x7f000301);
-        ids.put(context.getPackageName() + ":47.5.3:a5z", 0x7f000401);
+        ids.put(context.getPackageName() + ":47.6.3:v4b", 0x7f000301);
+        ids.put(context.getPackageName() + ":47.6.3:a6f", 0x7f000401);
     }
 
     @After public void tearDown() {

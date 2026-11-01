@@ -69,7 +69,7 @@ public class DmTranslationPreviewTest {
     private Assem assem;
     private final List<Call> calls = new ArrayList<>();
 
-    public static final class Assem { public EditText LLJLLL; }
+    public static final class Assem { public EditText LLJZ; }
     private static final class Input { EditText editor; int sends; }
     private static final class Session { String conversation = "conversation-a", peer = "peer-a"; boolean single = true, preview, report; }
     private static final class Composer { Input input; Session session; int sends; }
@@ -102,7 +102,7 @@ public class DmTranslationPreviewTest {
             Composer composer = (Composer) actualVm;
             Session chat = (Session) actualSession;
             return composer.input == actualInput && composer.session == actualSession && ((Input) actualInput).editor == actualEditor
-                    && ((Assem) actualAssem).LLJLLL == actualEditor && chat.single && !chat.preview && !chat.report
+                    && ((Assem) actualAssem).LLJZ == actualEditor && chat.single && !chat.preview && !chat.report
                     ? new DmTranslationPreview.Identity(chat.conversation, chat.peer) : null;
         };
         activity = Robolectric.buildActivity(Activity.class).setup().visible().get();
@@ -114,7 +114,7 @@ public class DmTranslationPreviewTest {
         input = new Input(); input.editor = editor;
         session = new Session();
         vm = new Composer(); vm.input = input; vm.session = session;
-        assem = new Assem(); assem.LLJLLL = editor;
+        assem = new Assem(); assem.LLJZ = editor;
         DmTranslationPreview.bindInput(input, editor);
         DmTranslationPreview.inputReady(assem);
         DmTranslationPreview.composerCreated(vm, input, session);
@@ -484,7 +484,7 @@ public class DmTranslationPreviewTest {
         assertNotSame(owned, editor.getCustomSelectionActionModeCallback());
         AlertDialog rebound = start(); Call reboundCall = calls.get(1);
         EditText replacement = new EditText(activity); replacement.setText("replacement draft"); root.addView(replacement);
-        input.editor = replacement; assem.LLJLLL = replacement;
+        input.editor = replacement; assem.LLJZ = replacement;
         DmTranslationPreview.bindInput(input, replacement); DmTranslationPreview.inputReady(assem);
         reboundCall.finish("old editor answer"); assertFalse(rebound.isShowing());
         assertNull(editor.getCustomSelectionActionModeCallback());
@@ -525,7 +525,7 @@ public class DmTranslationPreviewTest {
 
     @Test public void aRepeatedNativeViewBindInvalidatesAReadyPreviewEvenForTheSameEditor() {
         AlertDialog retired = start(); Call old = calls.get(0); old.finish("old binding answer");
-        Assem replacement = new Assem(); replacement.LLJLLL = editor;
+        Assem replacement = new Assem(); replacement.LLJZ = editor;
         DmTranslationPreview.inputReady(replacement);
         assertFalse(retired.isShowing()); assertFalse(old.guard.current());
         assem = replacement;

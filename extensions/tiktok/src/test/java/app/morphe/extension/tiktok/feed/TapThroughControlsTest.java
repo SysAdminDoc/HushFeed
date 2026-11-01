@@ -67,11 +67,11 @@ public class TapThroughControlsTest {
     public void setUp() {
         Utils.setContext(RuntimeEnvironment.getApplication());
         VideoOverlayHider.resolveForTests("view_rootview", CELL_ID);
-        VideoOverlayHider.resolveForTests("47.5.3:lke", COLUMN_ID);
-        VideoOverlayHider.resolveForTests("47.5.3:bqj", FRAME_ID);
+        VideoOverlayHider.resolveForTests("47.6.3:ljl", COLUMN_ID);
+        VideoOverlayHider.resolveForTests("47.6.3:bsb", FRAME_ID);
         VideoOverlayHider.resolveForTests("videomusiccoverblock", COVER_ID);
-        VideoOverlayHider.resolveForTests("47.5.3:lk3", SEARCH_ID);
-        VideoOverlayHider.resolveForTests("47.5.3:v08", PHOTO_EXIT_ID);
+        VideoOverlayHider.resolveForTests("47.6.3:lj_", SEARCH_ID);
+        VideoOverlayHider.resolveForTests("47.6.3:uyr", PHOTO_EXIT_ID);
         Settings.HIDE_CLEAR_DISPLAY_CONTROLS.save(false);
         overlays = SettingsStatus.videoOverlaysEnabled;
         SettingsStatus.videoOverlaysEnabled = true;
@@ -87,11 +87,11 @@ public class TapThroughControlsTest {
         Settings.HIDE_CLEAR_DISPLAY_CONTROLS.save(false);
         SettingsStatus.videoOverlaysEnabled = overlays;
         VideoOverlayHider.resolveForTests("view_rootview", 0);
-        VideoOverlayHider.resolveForTests("47.5.3:lke", 0);
-        VideoOverlayHider.resolveForTests("47.5.3:bqj", 0);
+        VideoOverlayHider.resolveForTests("47.6.3:ljl", 0);
+        VideoOverlayHider.resolveForTests("47.6.3:bsb", 0);
         VideoOverlayHider.resolveForTests("videomusiccoverblock", 0);
-        VideoOverlayHider.resolveForTests("47.5.3:lk3", 0);
-        VideoOverlayHider.resolveForTests("47.5.3:v08", 0);
+        VideoOverlayHider.resolveForTests("47.6.3:lj_", 0);
+        VideoOverlayHider.resolveForTests("47.6.3:uyr", 0);
         ClearDisplayShownControls.resetForTests();
     }
 
@@ -539,7 +539,7 @@ public class TapThroughControlsTest {
     @Test
     public void theFadeAndTheFadedClearDisplayReachThe474RailColumn() {
         int stripId = 0x7f0a0f07;
-        VideoOverlayHider.resolveForTests("47.5.3:lke", COLUMN_ID);
+        VideoOverlayHider.resolveForTests("47.6.3:ljl", COLUMN_ID);
         VideoOverlayHider.resolveForTests("47.4.3:mud", stripId);
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
             activity = controller.get();
@@ -589,7 +589,7 @@ public class TapThroughControlsTest {
             assertEquals(View.VISIBLE, strip.getVisibility());
         } finally {
             VideoOverlayHider.resolveForTests("47.4.3:mud", 0);
-            VideoOverlayHider.resolveForTests("47.5.3:lke", 0);
+            VideoOverlayHider.resolveForTests("47.6.3:ljl", 0);
         }
     }
 

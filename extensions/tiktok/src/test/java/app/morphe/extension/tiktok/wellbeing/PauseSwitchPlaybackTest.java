@@ -89,8 +89,8 @@ public class PauseSwitchPlaybackTest {
         ReflectionHelpers.callStaticMethod(CurrentVideoAuthor.class, "resetForTests");
         SessionPlaybackHold.nativeForTests = null;
         String pkg = RuntimeEnvironment.getApplication().getPackageName();
-        FeedVisibility.resolveForTests(pkg, "47.5.3:pxv", 0);
-        FeedVisibility.resolveForTests(pkg, "47.5.3:wn4", 0);
+        FeedVisibility.resolveForTests(pkg, "47.6.3:pwx", 0);
+        FeedVisibility.resolveForTests(pkg, "47.6.3:wl7", 0);
     }
 
     private static void resetSettings() {
@@ -1220,8 +1220,8 @@ public class PauseSwitchPlaybackTest {
         sheet.addView(title, new FrameLayout.LayoutParams(200, 80));
         sheet.addView(new View(activity), new FrameLayout.LayoutParams(200, 80));
         content.addView(sheet, new FrameLayout.LayoutParams(500, 700));
-        FeedVisibility.resolveForTests(activity.getPackageName(), "47.5.3:pxv", sheet.getId());
-        FeedVisibility.resolveForTests(activity.getPackageName(), "47.5.3:wn4", title.getId());
+        FeedVisibility.resolveForTests(activity.getPackageName(), "47.6.3:pwx", sheet.getId());
+        FeedVisibility.resolveForTests(activity.getPackageName(), "47.6.3:wl7", title.getId());
         idle();
         if (!up) park(sheet);
         return sheet;

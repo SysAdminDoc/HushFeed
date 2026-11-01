@@ -101,78 +101,78 @@ public final class VideoOverlayHider {
     // TikTok's own ids are looked up under the running package, which a cloned build renames
     // along with its resource table (#59). Feature modules keep their original names there.
     private static final String SEARCH_MODULE_PACKAGE = "com.zhiliaoapp.musically.df_search_biz";
-    private static final String[] VISUAL_SEARCH_LAYER_IDS = {"47.5.3:ft"};
-    private static final String[] VISUAL_SEARCH_PILL_IDS = {"47.5.3:d6"};
-    private static final String[] LIVE_ENTRANCE_IDS = {"47.5.3:ka3"};
+    private static final String[] VISUAL_SEARCH_LAYER_IDS = {"47.6.3:g0"};
+    private static final String[] VISUAL_SEARCH_PILL_IDS = {"47.6.3:d7"};
+    private static final String[] LIVE_ENTRANCE_IDS = {"47.6.3:k_r"};
     /**
      * The block under a LIVE preview in the main feed: the "Tap to watch LIVE" line, the badges,
      * the host's name and the title (47.5.3, read off the Flip7's tree). A LIVE cell has no
      * widget layer and no spacer, so nothing else lifts it over the see-through bar.
      */
-    private static final String[] LIVE_CAPTION_IDS = {"47.5.3:o5c"};
+    private static final String[] LIVE_CAPTION_IDS = {"47.6.3:o4_"};
 
     /** The caption under the creator's name. */
     private static final String[] CAPTION_IDS = {"desc"};
     /** VideoMusicTitleAssem's label container, including ordinary and matched-song titles. */
-    private static final String[] MUSIC_IDS = {"47.5.3:o8s"};
+    private static final String[] MUSIC_IDS = {"47.6.3:o7p"};
     /**
      * The rail column: the avatar, like, comment, save and share wrappers, with the music row
      * along its bottom. Not mud, a strip at the top of the cell from the same component.
      */
-    private static final String[] ACTION_BAR_IDS = {"47.5.3:lke"};
-    private static final String[] SURVEY_IDS = {"47.5.3:f8p"};
-    private static final String[] TAB_STRIP_IDS = {"47.5.3:uyb"};
+    private static final String[] ACTION_BAR_IDS = {"47.6.3:ljl"};
+    private static final String[] SURVEY_IDS = {"47.6.3:f9f"};
+    private static final String[] TAB_STRIP_IDS = {"47.6.3:uwv"};
     /**
      * The bottom tab bar (Home, Friends, the create button, Inbox, Profile). TikTok takes it away
      * when Clear display starts, but the automatic path can switch the mode on before the bar is
      * laid out after a cold start, and then the bar stays over the first video (#84). It sits
      * outside the cells, under the feed.
      */
-    private static final String[] BOTTOM_TABS_IDS = {"47.5.3:op9"};
+    private static final String[] BOTTOM_TABS_IDS = {"47.6.3:oo3"};
     /**
      * The hairline along the tab bar's top edge. It's the bar's sibling in the main layout, not
      * its child, and TikTok puts it away with the bar only when its own clear lands, so taking
      * the bar alone left a thin line across the bottom of each video until then (#84).
      */
-    private static final String[] BOTTOM_TABS_DIVIDER_IDS = {"47.5.3:cn4"};
+    private static final String[] BOTTOM_TABS_DIVIDER_IDS = {"47.6.3:coz"};
     /**
      * TikTok's loading line, the thin bar along the bottom of each video that grows from the
      * middle while it buffers. With the Clear display controls hidden it was the one bar left at
      * the bottom of a cleared screen (#84). TikTok shows and animates it on every buffer, so the
      * frame that holds it goes see-through instead of the line itself.
      */
-    private static final String[] LOADING_LINE_IDS = {"47.5.3:nfz"};
+    private static final String[] LOADING_LINE_IDS = {"47.6.3:nf0"};
     /**
      * The story-count button is a sibling of the main feed, outside its tab strip and cells. It's
      * the folded LIVE row's pill, so the LIVE row switch takes it too (#262).
      */
-    private static final String[] FOLLOWING_STORY_IDS = {"47.5.3:wsy"};
+    private static final String[] FOLLOWING_STORY_IDS = {"47.6.3:wr6"};
     /**
      * The Following tab's LIVE and stories row: the root of feed_skylight_container_layout, which
      * holds the row of circles (#262). Hidden only by its switch, whose hook already keeps the row
      * folded; this takes away a row that was open before. The pill is wsy, beside it.
      */
-    private static final String[] SKYLIGHT_IDS = {"47.5.3:id9"};
+    private static final String[] SKYLIGHT_IDS = {"47.6.3:id7"};
     /**
      * The bar TikTok shows only while Clear display is on: its round close button and the
      * pause and speed pill beside it, with the progress bar above them (#97). The main feed keeps
      * them in its seek bar mask and an opened video in its pager column, outside the cells on both.
      */
-    private static final String[] CLEAR_EXIT_IDS = {"47.5.3:e9s"};
-    private static final String[] CLEAR_PLAYBACK_IDS = {"47.5.3:l7a"};
+    private static final String[] CLEAR_EXIT_IDS = {"47.6.3:e_n"};
+    private static final String[] CLEAR_PLAYBACK_IDS = {"47.6.3:l6m"};
     private static final String[] CLEAR_SEEK_BAR_IDS = {"video_seek_bar"};
     /**
      * A photo post's Clear display has no such bar, only this close button at the bottom right,
      * inside the cell. TikTok takes it and its parent away as Clear display ends.
      */
-    private static final String[] CLEAR_PHOTO_EXIT_IDS = {"47.5.3:v08"};
+    private static final String[] CLEAR_PHOTO_EXIT_IDS = {"47.6.3:uyr"};
     /**
      * The anchor row under the caption: a related search, a place, a product or a template.
      * Clear display only fades it, so it stayed tappable while out of sight and a tap near the
      * bottom of the picture opened a search (#84). It goes invisible rather than gone, which
      * takes it out of reach without moving the caption above it.
      */
-    private static final String[] ANCHOR_IDS = {"47.5.3:bqj"};
+    private static final String[] ANCHOR_IDS = {"47.6.3:bsb"};
     /**
      * The spinning music disc at the bottom right, beside the rail's column. On 47.1.4 the
      * anchor's frame above also holds the caption and the music row, and neither sits in the
@@ -185,7 +185,7 @@ public final class VideoOverlayHider {
      * frame, so neither the fade nor Clear display reached it (S22, 2026-10-08). The music disc
      * is laid out above it, which is how its name is found on each build.
      */
-    private static final String[] SEARCH_BAR_IDS = {"47.5.3:lk3"};
+    private static final String[] SEARCH_BAR_IDS = {"47.6.3:lj_"};
     /**
      * What {@link #beforeClearDisplay} notes before TikTok's Clear display: the wrappers the rail's
      * buttons and the search bar sit in, and the frames the anchor row and the music disc sit in.
@@ -197,14 +197,14 @@ public final class VideoOverlayHider {
      * The blank TikTok keeps above the video on tall screens, as tall as the status bar, so the
      * bar never covers the picture. With the bar hidden it's only a black strip (#97).
      */
-    private static final String[] STATUS_BAR_SPACER_IDS = {"47.5.3:dug"};
+    private static final String[] STATUS_BAR_SPACER_IDS = {"47.6.3:dvj"};
     /**
      * The black band TikTok lays over the top of each feed cell, as tall as the status bar. It
      * sat over the spacer, so nobody saw it until the spacer went: the video then went up under
      * it and the strip under the clock stayed black (#145, S22). It goes with the spacer,
      * invisible rather than gone, so nothing laid out against it moves.
      */
-    private static final String[] STATUS_BAR_SCRIM_IDS = {"47.5.3:wks"};
+    private static final String[] STATUS_BAR_SCRIM_IDS = {"47.6.3:wiw"};
     /**
      * The player in each feed cell, around the video's surface. With the spacer and the band gone
      * a 9:16 video still sat centered in it with black above and below, so the see-through status
@@ -216,14 +216,14 @@ public final class VideoOverlayHider {
      * theme. It is the cell's last child (dux first, the video area between), and the reason the
      * picture stops above the bar. See-through bottom bar collapses it (#145).
      */
-    private static final String[] BOTTOM_SPACER_IDS = {"47.5.3:du1"};
+    private static final String[] BOTTOM_SPACER_IDS = {"47.6.3:dv4"};
     /**
      * The search bar across the top of a video opened from search or a profile, and the gradient
      * under it. The fade never reached them: they sit outside the cells and TikTok's Clear display
      * leaves them up (#84). Only ever faded, never hidden.
      */
-    private static final String[] TOP_SEARCH_BAR_IDS = {"47.5.3:j2p"};
-    private static final String[] TOP_SEARCH_SCRIM_IDS = {"47.5.3:g65"};
+    private static final String[] TOP_SEARCH_BAR_IDS = {"47.6.3:j2p"};
+    private static final String[] TOP_SEARCH_SCRIM_IDS = {"47.6.3:g6l"};
     /**
      * The search box in that bar, beside the Back button (#158). It is the root of the layout
      * TikTok's DetailFeedSearchHelper inflates into the bar on every page it serves: a video
@@ -231,21 +231,21 @@ public final class VideoOverlayHider {
      * sound. Another page's layout reuses the name, so only a child of the bar counts. It goes
      * invisible, so Back keeps its place.
      */
-    private static final String[] DETAIL_SEARCH_BOX_IDS = {"47.5.3:o_l"};
+    private static final String[] DETAIL_SEARCH_BOX_IDS = {"47.6.3:o9i"};
     /**
      * The Back button in that bar, its first child in all three of 47.5.3's detail page layouts
      * (#251). Many other layouts reuse the name, so it too counts only as a child of the bar.
      */
-    private static final String[] DETAIL_BACK_BUTTON_IDS = {"47.5.3:bs2"};
-    private static final String[] DETAIL_COMMENT_BAR_IDS = {"47.5.3:qq5"};
-    private static final String[] DETAIL_COMMENT_STRIP_IDS = {"47.5.3:cmy"};
+    private static final String[] DETAIL_BACK_BUTTON_IDS = {"47.6.3:btu"};
+    private static final String[] DETAIL_COMMENT_BAR_IDS = {"47.6.3:qp2"};
+    private static final String[] DETAIL_COMMENT_STRIP_IDS = {"47.6.3:cot"};
     /**
      * The slot the "Message..." bar goes in on a mutual friend's opened video, where the comment
      * bar would be, over the same strip (#153, a reporter's layout recording on 47.1.4). It goes
      * with the comment bar. TikTok's quick DM fragment puts the bar in this slot, and the bottom
      * container around it also holds other pages' bars, so only the slot is hidden.
      */
-    private static final String[] DETAIL_MESSAGE_BAR_IDS = {"47.5.3:kzf"};
+    private static final String[] DETAIL_MESSAGE_BAR_IDS = {"47.6.3:kyw"};
     /**
      * The red "Use sound" bar a post opened from a sound's page has over the strip in place of
      * the comment bar, in the same bottom container (#153, a reporter's layout recording on
@@ -253,7 +253,7 @@ public final class VideoOverlayHider {
      * posts (a template's, a sticker's) fill the same frame. Only ever read, never hidden: while
      * it shows the strip stays under it.
      */
-    private static final String[] DETAIL_SOUND_BAR_IDS = {"47.5.3:cho"};
+    private static final String[] DETAIL_SOUND_BAR_IDS = {"47.6.3:cji"};
     /**
      * The feed cell root. Furniture is only hidden underneath one: Hide feed surveys used to
      * take every survey card id in the window, and on the profile that is the Favorites tab's whole
@@ -283,7 +283,7 @@ public final class VideoOverlayHider {
      * left that row standing as a hole between the avatar and the comments (Login2, 2026-10-18,
      * #190), so collapseRailWrappers takes the row away once it holds nothing that shows.
      */
-    private static final String RAIL_SLOT_ID = "47.5.3:ex9";
+    private static final String RAIL_SLOT_ID = "47.6.3:ey3";
     /** How far up from a button the slot may be; a button with no slot that close is left alone. */
     private static final int RAIL_SLOT_DEPTH = 3;
     /** Wrappers collapseWrappers hid, so the pass keeps looking them up until they're back. */
@@ -321,19 +321,19 @@ public final class VideoOverlayHider {
         return true;
     };
     /** The row under each rail button holding its count, without the button itself. */
-    private static final String[] LIKE_COUNT_ROW_IDS = {"47.5.3:g92"};
-    private static final String[] COMMENT_COUNT_ROW_IDS = {"47.5.3:ejt"};
-    private static final String[] FAVORITE_COUNT_ROW_IDS = {"47.5.3:i95"};
-    private static final String[] SHARE_COUNT_ROW_IDS = {"47.5.3:w8t"};
+    private static final String[] LIKE_COUNT_ROW_IDS = {"47.6.3:g9h"};
+    private static final String[] COMMENT_COUNT_ROW_IDS = {"47.6.3:ekh"};
+    private static final String[] FAVORITE_COUNT_ROW_IDS = {"47.6.3:i94"};
+    private static final String[] SHARE_COUNT_ROW_IDS = {"47.6.3:w6y"};
     private static final String[][] RAIL_COUNT_ROW_IDS = {
             LIKE_COUNT_ROW_IDS, COMMENT_COUNT_ROW_IDS,
             FAVORITE_COUNT_ROW_IDS, SHARE_COUNT_ROW_IDS
     };
     /** The numeric text inside each row, retained by layouts that replace the row wrapper. */
-    private static final String[] LIKE_COUNT_TEXT_IDS = {"47.5.3:g91"};
-    private static final String[] COMMENT_COUNT_TEXT_IDS = {"47.5.3:ejs"};
-    private static final String[] FAVORITE_COUNT_TEXT_IDS = {"47.5.3:i94"};
-    private static final String[] SHARE_COUNT_TEXT_IDS = {"47.5.3:w8s"};
+    private static final String[] LIKE_COUNT_TEXT_IDS = {"47.6.3:g9g"};
+    private static final String[] COMMENT_COUNT_TEXT_IDS = {"47.6.3:ekg"};
+    private static final String[] FAVORITE_COUNT_TEXT_IDS = {"47.6.3:i93"};
+    private static final String[] SHARE_COUNT_TEXT_IDS = {"47.6.3:w6x"};
     private static final String[][] RAIL_COUNT_TEXT_IDS = {
             LIKE_COUNT_TEXT_IDS, COMMENT_COUNT_TEXT_IDS,
             FAVORITE_COUNT_TEXT_IDS, SHARE_COUNT_TEXT_IDS
@@ -346,12 +346,12 @@ public final class VideoOverlayHider {
      */
     private static final int[] RAIL_COUNT_BUTTON_INDEX = {1, 2, 3, 5};
     /** The six buttons inside the action column, in the order they are stacked. */
-    private static final String[] AVATAR_BUTTON_IDS = {"47.5.3:iam"};
-    private static final String[] LIKE_BUTTON_IDS = {"47.5.3:g90"};
-    private static final String[] COMMENT_BUTTON_IDS = {"47.5.3:epr"};
-    private static final String[] FAVORITE_BUTTON_IDS = {"47.5.3:i_5"};
-    private static final String[] MUSIC_BUTTON_IDS = {"47.5.3:ppy"};
-    private static final String[] SHARE_BUTTON_IDS = {"47.5.3:wbl"};
+    private static final String[] AVATAR_BUTTON_IDS = {"47.6.3:ial"};
+    private static final String[] LIKE_BUTTON_IDS = {"47.6.3:g9f"};
+    private static final String[] COMMENT_BUTTON_IDS = {"47.6.3:eqi"};
+    private static final String[] FAVORITE_BUTTON_IDS = {"47.6.3:i_4"};
+    private static final String[] MUSIC_BUTTON_IDS = {"47.6.3:pop"};
+    private static final String[] SHARE_BUTTON_IDS = {"47.6.3:w_q"};
     private static final String[][] RAIL_BUTTON_IDS = {
             AVATAR_BUTTON_IDS, LIKE_BUTTON_IDS, COMMENT_BUTTON_IDS,
             FAVORITE_BUTTON_IDS, MUSIC_BUTTON_IDS, SHARE_BUTTON_IDS

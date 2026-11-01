@@ -51,7 +51,7 @@ public class HomeTabSettingsShortcutTest {
         Utils.setContext(activity);
         PausedProcess.set(false);
         home = addHomeTab(activity);
-        FeedVisibility.resolveForTests(activity.getPackageName(), "47.5.3:op1", HOME_ID);
+        FeedVisibility.resolveForTests(activity.getPackageName(), "47.6.3:onv", HOME_ID);
     }
 
     private View addHomeTab(Activity into) {
@@ -69,7 +69,7 @@ public class HomeTabSettingsShortcutTest {
     @After public void tearDown() {
         PausedProcess.set(false);
         HomeTabSettingsShortcut.resetForTests();
-        FeedVisibility.resolveForTests(activity.getPackageName(), "47.5.3:op1", 0);
+        FeedVisibility.resolveForTests(activity.getPackageName(), "47.6.3:onv", 0);
         ReflectionHelpers.setStaticField(SettingsStatus.class, "feedNavigationEnabled", false);
         Settings.HOME_TAB_OPENS_SETTINGS.resetToDefault();
         owner.pause().stop().destroy();

@@ -350,7 +350,7 @@ public class PausePlaybackTest {
             homeTab.setSelected(true);
             root.addView(homeTab, new FrameLayout.LayoutParams(60, 40));
             Shadows.shadowOf(Looper.getMainLooper()).idle();
-            FeedVisibility.resolveForTests(activity.getPackageName(), "47.5.3:op1", homeTab.getId());
+            FeedVisibility.resolveForTests(activity.getPackageName(), "47.6.3:onv", homeTab.getId());
             try {
                 PausePlayback.setWasAwayForTests(true);
                 PausePlayback.onForeground(activity);
@@ -370,7 +370,7 @@ public class PausePlaybackTest {
                 assertFalse("the sound was held for a feed nobody is looking at",
                         PausePlayback.quietenedForTests());
             } finally {
-                FeedVisibility.resolveForTests(activity.getPackageName(), "47.5.3:op1", 0);
+                FeedVisibility.resolveForTests(activity.getPackageName(), "47.6.3:onv", 0);
             }
         }
     }
@@ -618,7 +618,7 @@ public class PausePlaybackTest {
             bar.addView(home, new android.widget.LinearLayout.LayoutParams(80, 60));
             root.addView(bar, new FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, 60, android.view.Gravity.BOTTOM));
-            FeedVisibility.resolveForTests(activity.getPackageName(), "47.5.3:op1", home.getId());
+            FeedVisibility.resolveForTests(activity.getPackageName(), "47.6.3:onv", home.getId());
             try {
                 Shadows.shadowOf(Looper.getMainLooper()).idle();
                 root.getViewTreeObserver().dispatchOnGlobalLayout();
@@ -630,7 +630,7 @@ public class PausePlaybackTest {
                 assertEquals("the catcher covers the tabs that arrived after it", tabs,
                         ((FrameLayout.LayoutParams) catcher.getLayoutParams()).bottomMargin);
             } finally {
-                FeedVisibility.resolveForTests(activity.getPackageName(), "47.5.3:op1", 0);
+                FeedVisibility.resolveForTests(activity.getPackageName(), "47.6.3:onv", 0);
             }
         }
     }

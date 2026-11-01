@@ -54,8 +54,8 @@ public final class CaptionStyle {
      * method, which loads dlr, and CLACaptionAssemV2, which loads dlk. 47.1.3 renamed them again,
      * the text dmb and the strip dm5, the names 47.1.4 keeps, so the names are written for the build.
      */
-    private static final String[] TEXT_IDS = {"47.5.3:dlu"};
-    private static final String[] BACKGROUND_IDS = {"47.5.3:dln"};
+    private static final String[] TEXT_IDS = {"47.6.3:dnd"};
+    private static final String[] BACKGROUND_IDS = {"47.6.3:dn7"};
     private static final String TEXT = String.join("|", TEXT_IDS);
     private static final String BACKGROUND = String.join("|", BACKGROUND_IDS);
     private static final ResourceIdCache RESOURCE_IDS = new ResourceIdCache();

@@ -36,9 +36,9 @@ import app.morphe.extension.tiktok.settings.Settings;
  */
 public final class ProfileTopBar {
     /** TuxNavBar's end row, the icons at the right of a page's top bar. */
-    private static final String[] END_ROW_IDS = {"47.5.3:pvh"};
+    private static final String[] END_ROW_IDS = {"47.6.3:pu9"};
     /** The capsule inside the profile views entrance, which keeps it in both of its looks. */
-    private static final String[] VIEWS_CAPSULE_IDS = {"47.5.3:tbm"};
+    private static final String[] VIEWS_CAPSULE_IDS = {"47.6.3:tai"};
     private static final String FAMILY = "profile top bar";
     private static final ResourceIdCache RESOURCE_IDS = new ResourceIdCache();
 

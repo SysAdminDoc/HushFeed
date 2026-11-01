@@ -34,8 +34,8 @@ import java.util.concurrent.atomic.AtomicLong;
 @SuppressWarnings("unused")
 public final class ReceivedDmTranslationPreview {
     static final String ITEM_KEY = "ReceivedTranslationPreview";
-    /** The menu row's icon, raw/icon_languages on 47.5.3; ReceivedDmTranslationIconTest holds it to that name. */
-    static final int LANGUAGES_ICON = 0x7f01084e;
+    /** The menu row's icon, raw/icon_languages on 47.6.3; ReceivedDmTranslationIconTest holds it to that name. */
+    static final int LANGUAGES_ICON = 0x7f01086a;
     private static final String CONTENT = "com.ss.android.ugc.aweme.im.sdk.chat.ui.text.content.";
     private static final Handler MAIN = new Handler(Looper.getMainLooper());
     private static final Object LOCK = new Object();
@@ -133,7 +133,7 @@ public final class ReceivedDmTranslationPreview {
             if (binding == null || binding.model.get() != owner.model) return nativeItems;
             Snapshot snapshot = binding.snapshot();
             if (snapshot == null || snapshot.message.get() != message) return nativeItems;
-            for (Object item : nativeItems) if (item != null && item.getClass().getName().equals("X.15PA")
+            for (Object item : nativeItems) if (item != null && item.getClass().getName().equals("X.1FI8")
                     && ITEM_KEY.equals(NativeDmTranslation.field(item.getClass(), "LIZ", String.class).get(item)))
                 return nativeItems;
             Object item = itemFactory.create(snapshot.view.get().getContext(), () -> binding.preview(snapshot));
@@ -339,46 +339,46 @@ public final class ReceivedDmTranslationPreview {
         ClassLoader loader = menu.getClass().getClassLoader();
         Class<?> receive = NativeDmTranslation.type(loader, CONTENT + "TextTranslateReceiveAssem");
         Object child = null;
-        Object children = NativeDmTranslation.type(loader, "X.03QV").getMethod("getChildren").invoke(menu);
+        Object children = NativeDmTranslation.type(loader, "X.03Rj").getMethod("getChildren").invoke(menu);
         if (!(children instanceof List) || ((List<?>) children).size() > 128) return null;
         for (Object candidate : (List<?>) children) if (candidate != null && candidate.getClass() == receive) {
             if (child != null) return null;
             child = candidate;
         }
-        Object cell = NativeDmTranslation.field(menu.getClass(), "LLLILZ",
+        Object cell = NativeDmTranslation.field(menu.getClass(), "LLLILZJ",
                 NativeDmTranslation.type(loader, CONTENT + "TextTranslateReceiveCell")).get(menu);
         if (child == null || cell == null) return null;
         Object model = NativeDmTranslation.type(loader, "com.bytedance.ies.powerlist.PowerCell").getMethod("getItem").invoke(cell);
-        Class<?> received = NativeDmTranslation.type(loader, "X.14WK");
+        Class<?> received = NativeDmTranslation.type(loader, "X.0pjI");
         if (model == null || model.getClass() != received) return null;
-        Object actual = NativeDmTranslation.type(loader, "X.14BU").getMethod("LIZ", NativeDmTranslation.type(loader, "X.14OB")).invoke(null, model);
+        Object actual = NativeDmTranslation.type(loader, "X.0pEj").getMethod("LIZ", NativeDmTranslation.type(loader, "X.0pYH")).invoke(null, model);
         return actual == message ? new MenuOwner(child, model) : null;
     }
 
     private static Row nativeRow(Object assem, Object model) throws ReflectiveOperationException {
         if (assem == null || model == null || !assem.getClass().getName().equals(CONTENT + "TextTranslateReceiveAssem")
-                || !model.getClass().getName().equals("X.14WK")) return null;
+                || !model.getClass().getName().equals("X.0pjI")) return null;
         ClassLoader loader = assem.getClass().getClassLoader();
-        Object current = NativeDmTranslation.type(loader, "X.08jl").getMethod("LIZ",
+        Object current = NativeDmTranslation.type(loader, "X.08kt").getMethod("LIZ",
                 NativeDmTranslation.type(loader, "com.bytedance.assem.arch.reused.ReusedAssem")).invoke(null, assem);
         if (current != model) return null;
-        Object message = NativeDmTranslation.type(loader, "X.14BU").getMethod("LIZ", NativeDmTranslation.type(loader, "X.14OB")).invoke(null, model);
-        Class<?> messageType = NativeDmTranslation.type(loader, "X.0BLT");
+        Object message = NativeDmTranslation.type(loader, "X.0pEj").getMethod("LIZ", NativeDmTranslation.type(loader, "X.0pYH")).invoke(null, model);
+        Class<?> messageType = NativeDmTranslation.type(loader, "X.0BMG");
         if (!messageType.isInstance(message) || !Integer.valueOf(7).equals(messageType.getMethod("getMsgType").invoke(message))
-                || Boolean.TRUE.equals(NativeDmTranslation.type(loader, "X.0CGj").getMethod("LJI", messageType).invoke(null, message))) return null;
-        Class<?> action = NativeDmTranslation.type(loader, "X.14MX");
-        if (!Boolean.TRUE.equals(NativeDmTranslation.type(loader, "X.0CGx").getMethod("LJIIIZ", messageType, action)
+                || Boolean.TRUE.equals(NativeDmTranslation.type(loader, "X.0CGo").getMethod("LJI", messageType).invoke(null, message))) return null;
+        Class<?> action = NativeDmTranslation.type(loader, "X.0pVg");
+        if (!Boolean.TRUE.equals(NativeDmTranslation.type(loader, "X.0CH2").getMethod("LJIIIZ", messageType, action)
                 .invoke(null, message, action.getField("TRANSLATE").get(null)))) return null;
-        Class<?> service = NativeDmTranslation.type(loader, "X.0Byb");
-        if (!Boolean.TRUE.equals(service.getMethod("LJIILLIIL").invoke(service.getField("LIZIZ").get(null)))) return null;
+        Class<?> service = NativeDmTranslation.type(loader, "X.0Byi");
+        if (!Boolean.TRUE.equals(service.getMethod("LJIIZILJ").invoke(service.getField("LIZIZ").get(null)))) return null;
         Class<?> owner = NativeDmTranslation.type(loader, CONTENT + "TextTranslateAssem");
-        Object lazy = NativeDmTranslation.field(owner, "LLJJL", NativeDmTranslation.type(loader, "X.04XN")).get(assem);
-        Object holder = NativeDmTranslation.type(loader, "X.04XN").getMethod("getValue").invoke(lazy);
-        Class<?> holderType = NativeDmTranslation.type(loader, "X.14aD");
+        Object lazy = NativeDmTranslation.field(owner, "LLJJLIIIJLLLLLLLZ", NativeDmTranslation.type(loader, "X.04Yd")).get(assem);
+        Object holder = NativeDmTranslation.type(loader, "X.04Yd").getMethod("getValue").invoke(lazy);
+        Class<?> holderType = NativeDmTranslation.type(loader, "X.0pdu");
         if (!holderType.isInstance(holder)) return null;
         Class<?> sessionType = NativeDmTranslation.type(loader, "com.ss.android.ugc.aweme.im.chatroom.api.model.SessionInfo");
         Object session = NativeDmTranslation.field(holderType, "LL", sessionType).get(holder);
-        Class<?> single = NativeDmTranslation.type(loader, "X.14N8");
+        Class<?> single = NativeDmTranslation.type(loader, "X.0pdx");
         if (!single.isInstance(session) || !Boolean.TRUE.equals(sessionType.getMethod("isSingleChat").invoke(session))
                 || Boolean.TRUE.equals(sessionType.getMethod("isPreviewMode").invoke(session))
                 || Boolean.TRUE.equals(sessionType.getMethod("isReportPage").invoke(session))) return null;
@@ -387,13 +387,13 @@ public final class ReceivedDmTranslationPreview {
         Object sender = messageType.getMethod("getSender").invoke(message);
         if (!valid(conversation) || !conversation.equals(messageType.getMethod("getConversationId").invoke(message))
                 || !(sender instanceof Long) || ((Long) sender) <= 0 || !Long.toString((Long) sender).equals(peer)) return null;
-        Object body = owner.getMethod("lq").invoke(assem);
-        Class<?> bodyType = NativeDmTranslation.type(loader, "X.14ZV");
+        Object body = owner.getMethod("qq").invoke(assem);
+        Class<?> bodyType = NativeDmTranslation.type(loader, "X.0pnq");
         if (!bodyType.isInstance(body)) return null;
         Object view = NativeDmTranslation.field(bodyType, "LL", View.class).get(body);
         return !(view instanceof View) ? null : new Row(model, message, session, (View) view,
                 (String) messageType.getMethod("getUuid").invoke(message), conversation, peer,
-                (String) NativeDmTranslation.type(loader, "X.14WN").getMethod("LLIILII").invoke(model),
+                (String) NativeDmTranslation.type(loader, "X.0pjL").getMethod("LLIILII").invoke(model),
                 (String) messageType.getMethod("getContent").invoke(message));
     }
 
@@ -410,12 +410,12 @@ public final class ReceivedDmTranslationPreview {
                 default: throw new IllegalStateException("Unexpected received translation callback");
             }
         });
-        Class<?> icon = NativeDmTranslation.type(loader, "X.15PO"), text = NativeDmTranslation.type(loader, "X.15PP");
-        Class<?> style = NativeDmTranslation.type(loader, "X.15P9"), size = NativeDmTranslation.type(loader, "X.15PN");
-        return NativeDmTranslation.type(loader, "X.15PA").getConstructor(String.class, Enum.class, icon, text, style, size, boolean.class, function)
-                .newInstance(ITEM_KEY, NativeDmTranslation.type(loader, "X.14Lw").getField("TRANSLATE").get(null),
-                        NativeDmTranslation.type(loader, "X.15PH").getConstructor(int.class).newInstance(LANGUAGES_ICON),
-                        NativeDmTranslation.type(loader, "X.15PF").getConstructor(String.class).newInstance(L10n.t(context, "Preview translation")),
+        Class<?> icon = NativeDmTranslation.type(loader, "X.1FI4"), text = NativeDmTranslation.type(loader, "X.1FI2");
+        Class<?> style = NativeDmTranslation.type(loader, "X.1FI7"), size = NativeDmTranslation.type(loader, "X.1FPX");
+        return NativeDmTranslation.type(loader, "X.1FI8").getConstructor(String.class, Enum.class, icon, text, style, size, boolean.class, function)
+                .newInstance(ITEM_KEY, NativeDmTranslation.type(loader, "X.0pUw").getField("TRANSLATE").get(null),
+                        NativeDmTranslation.type(loader, "X.1FI3").getConstructor(int.class).newInstance(LANGUAGES_ICON),
+                        NativeDmTranslation.type(loader, "X.1FI0").getConstructor(String.class).newInstance(L10n.t(context, "Preview translation")),
                         style.getField("PRIMARY").get(null), size.getConstructor().newInstance(), false, callback);
     }
 

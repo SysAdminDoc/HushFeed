@@ -11,6 +11,10 @@ import app.morphe.extension.shared.diagnostics.FeedFilterCounters;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import com.ss.android.ugc.aweme.feed.model.Aweme;
 import com.ss.android.ugc.aweme.feed.model.AwemeRawAd;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,6 +38,9 @@ public class AdsFilterTest {
         Object commerceVideoAuthInfo;
         Object contentModel;
         String aid;
+        /** Read by their field names, like TikTok's answer sets them: 1 means liked, or saved. */
+        public int userDigg;
+        public int collectStatus;
 
         @Override public boolean isAd() { return ad; }
         @Override public boolean isSoftAd() { return softAd; }
@@ -234,6 +241,39 @@ public class AdsFilterTest {
         assertEquals(java.util.Collections.singletonList(
                         "method " + VideoWithoutAnchors.class.getName() + "#getAnchorsExtras"),
                 HookStatus.missing("feed ad disclosures"));
+    }
+
+    /** The grid routes leave what the reader liked or saved; the feed's routes never ask (#269). */
+    @Test public void anAdTheReaderLikedOrSavedStaysOnGridsOnly() {
+        assertEquals(Arrays.asList("liked", "saved"),
+                aids(FeedItemsFilter.filterProfileAds(likedSavedAndPlainAds())));
+        assertEquals(Arrays.asList("liked", "saved"),
+                aids(FeedItemsFilter.filterProfileDetailAds(likedSavedAndPlainAds())));
+        assertEquals(Collections.emptyList(),
+                aids(FeedItemsFilter.filterLateInsertedAds("test", likedSavedAndPlainAds())));
+        assertEquals(Collections.emptyList(),
+                aids(FeedItemsFilter.filterDramaFeed(likedSavedAndPlainAds())));
+    }
+
+    private static List<Object> likedSavedAndPlainAds() {
+        Video liked = ad("liked");
+        liked.userDigg = 1;
+        Video saved = ad("saved");
+        saved.collectStatus = 1;
+        return new ArrayList<>(Arrays.asList(liked, saved, ad("plain")));
+    }
+
+    private static Video ad(String aid) {
+        Video video = video(null);
+        video.ad = true;
+        video.aid = aid;
+        return video;
+    }
+
+    private static List<String> aids(List<?> items) {
+        List<String> aids = new ArrayList<>();
+        for (Object item : items) aids.add(((Aweme) item).getAid());
+        return aids;
     }
 
     private static Video video(String anchorsExtras) {

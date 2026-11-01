@@ -67,6 +67,9 @@ public class ContentShapeFilterTest {
         public boolean isLiveHasProduct;
         /** Read by its field name, like a TikTok Subs post's flag. */
         public boolean isSubOnlyVideo;
+        /** Read by their field names, like TikTok's answer sets them: 1 means liked, or saved. */
+        public int userDigg;
+        public int collectStatus;
 
         Item(String aid) {
             this.aid = aid;
@@ -80,6 +83,8 @@ public class ContentShapeFilterTest {
         Item type(int awemeType) { type = awemeType; return this; }
         Item live(long id, boolean selling) { liveId = id; isLiveHasProduct = selling; return this; }
         Item subOnly() { isSubOnlyVideo = true; return this; }
+        Item liked() { userDigg = 1; return this; }
+        Item saved() { collectStatus = 1; return this; }
         Item count(int index, long value) {
             long[] counts = {30, 30, 30, 30, 30};
             counts[index] = value;
@@ -336,6 +341,18 @@ public class ContentShapeFilterTest {
         // Anything that isn't a FeedItemList is left alone.
         FeedItemsFilter.markOpenedList(new Object());
         FeedItemsFilter.markOpenedList(null);
+    }
+
+    @Test
+    public void aPostTheReaderLikedOrSavedStaysOnAProfileList() {
+        Settings.HIDE_SUBSCRIBER_ONLY.save(true);
+
+        // TikTok accepted the like and lists the video on Liked, so the profile rule leaves it (#269).
+        FeedItemList profile = page(new Item("liked").subOnly().liked(), new Item("saved").subOnly().saved(),
+                new Item("other").subOnly(), new Item("plain"));
+        FeedItemsFilter.markProfileResponse(profile);
+        FeedItemsFilter.filterOnRead(profile);
+        assertEquals(Arrays.asList("liked", "saved", "plain"), aids(profile));
     }
 
     @Test

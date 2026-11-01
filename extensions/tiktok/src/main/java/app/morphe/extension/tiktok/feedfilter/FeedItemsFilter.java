@@ -85,6 +85,8 @@ public final class FeedItemsFilter {
     static final String KEPT_WHOLE_KIND = "batches kept whole";
     /** Why a feed capture says a matched video stayed: it's the reader's own post. */
     private static final String OWN_POST = "own-post";
+    /** Why a feed capture says a matched video stayed: the reader liked or saved it. */
+    private static final String LIKED_OR_SAVED = "liked-or-saved";
     /**
      * The main feed's rules: every content rule, then the one that reads For You's own
      * distribution marks, which no other route carries.
@@ -482,6 +484,26 @@ public final class FeedItemsFilter {
         void report() {
             if (kept > 0) HookStatus.bound("main feed", "own posts kept");
         }
+    }
+
+    /** The routes that read a profile's grids, or the pager opened from one. */
+    private static final Set<String> GRID_ROUTES =
+            Set.of(PROFILE_LIST_SOURCE, "ProfileAwemeList", "ProfileDetailAdEvent");
+
+    /**
+     * Whether TikTok's answer says the reader liked or saved this video. The grid routes run the
+     * ad rules, and a video someone chose to keep can carry an ad mark, a paid partnership or
+     * promotional music: TikTok accepted the like, listed the video on Liked, and it was gone from
+     * that list here (#269). The For You routes don't ask, so a liked ad stays out of the feed.
+     * Read by name, since only the two flags are wanted and PineDrama shares this path.
+     */
+    private static boolean isLikedOrSaved(Aweme item) {
+        return isSet(Reflect.property(item, "getUserDigg", "userDigg"))
+                || isSet(Reflect.property(item, "getCollectStatus", "collectStatus"));
+    }
+
+    private static boolean isSet(Object flag) {
+        return flag instanceof Number && ((Number) flag).intValue() == 1;
     }
 
     /**
@@ -1039,6 +1061,8 @@ public final class FeedItemsFilter {
         int notVideos = 0;
         String lastReason = null;
         OwnPosts own = new OwnPosts();
+        boolean gridRoute = GRID_ROUTES.contains(source);
+        boolean likedOrSavedKept = false;
         for (int index = 0; index < items.size(); index++) {
             Object container = items.get(index);
             Aweme item = container instanceof Aweme ? (Aweme) container : null;
@@ -1048,12 +1072,17 @@ public final class FeedItemsFilter {
                 if (capture != null) capture.notVideo();
             }
             String matched = item == null ? null : getFilterReason(active, item);
-            String reason = matched != null && own.owns(item) ? null : matched;
+            String spared = matched == null ? null
+                    : own.owns(item) ? OWN_POST
+                    : gridRoute && isLikedOrSaved(item) ? LIKED_OR_SAVED
+                    : null;
+            String reason = spared == null ? matched : null;
             if (reason == null) {
                 if (kept != null) kept.add(container);
                 if (item != null) logKeptItem(source, item, verbose);
+                if (LIKED_OR_SAVED.equals(spared)) likedOrSavedKept = true;
                 if (capture != null && item != null) {
-                    if (matched != null) capture.spared(item, matched, OWN_POST);
+                    if (matched != null) capture.spared(item, matched, spared);
                     else capture.kept(item);
                 }
                 continue;
@@ -1070,6 +1099,7 @@ public final class FeedItemsFilter {
         }
 
         own.report();
+        if (likedOrSavedKept) HookStatus.bound("main feed", "liked or saved posts kept");
         FeedFilterCounters.removedItems(source, removed, lastReason);
         FeedFilterCounters.unreadable(source, notVideos);
         if (capture != null) capture.finish(kept == null ? items.size() : kept.size());

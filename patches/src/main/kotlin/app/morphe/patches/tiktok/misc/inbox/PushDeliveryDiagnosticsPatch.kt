@@ -43,7 +43,7 @@ private fun Instruction.call() = getReference<MethodReference>()?.let {
     "${it.definingClass}->${it.name}(${it.parameterTypes.joinToString("")})${it.returnType}"
 }
 
-/** All anchors are checked before any source write. PineDrama has no native profile here. */
+/** All anchors are checked before any source write. */
 internal fun planNativePushDiagnostics(classes: Iterable<ClassDef>): Map<Method, List<PushObservation>> {
     val methods = classes.flatMap { it.methods }.filter { it.pushDescriptor() in PUSH_NATIVE_METHODS }
     if (methods.map { it.pushDescriptor() }.toSet() != PUSH_NATIVE_METHODS || methods.size != PUSH_NATIVE_METHODS.size) {
@@ -152,7 +152,7 @@ internal fun MutableMethod.applyPushObservations(plan: List<PushObservation>) {
 
 internal val pushDeliveryDiagnosticsPatch = bytecodePatch {
     dependsOn(settingsPatch, sharedExtensionPatch)
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
     execute {
         val supported = supportsNativePushProfile(packageMetadata.packageName, packageMetadata.versionName)
         if (supported) {

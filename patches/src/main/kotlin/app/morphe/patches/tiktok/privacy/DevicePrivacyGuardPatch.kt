@@ -202,7 +202,7 @@ val devicePrivacyGuardPatch = bytecodePatch(
 ) {
     category("Privacy")
     dependsOn(settingsPatch, sharedExtensionPatch)
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
         SettingsStatusLoadFingerprint.method.addInstruction(
@@ -266,7 +266,7 @@ val devicePrivacyGuardPatch = bytecodePatch(
         // A new device identity. Its wipe runs before anything else in the application's
         // attachBaseContext, ahead of TikTok's first read of a device id, and its Android ID
         // answers TikTok's Settings.Secure reads, which every part of TikTok makes through one
-        // privacy wrapper (one call site on 47.4.3 and on PineDrama 47.1.4). Settings.System is
+        // privacy wrapper (one call site on 47.4.3). Settings.System is
         // where old Android versions answered it too; TikTok reads it there through the same
         // wrapper, so it's answered when found and not required. The range form reaches p1 at any
         // register count, which the four-bit form only does while p1 is v15 or lower.

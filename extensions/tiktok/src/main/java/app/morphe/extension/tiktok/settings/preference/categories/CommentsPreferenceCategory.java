@@ -41,7 +41,6 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
                 || SettingsStatus.commentsFullHeightEnabled
                 || SettingsStatus.lengthLimitsEnabled
                 || SettingsStatus.voiceCommentsEnabled
-                || SettingsStatus.commentPhotosEnabled
                 || SettingsStatus.commenterDetailsEnabled;
     }
 
@@ -353,8 +352,7 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
                     Settings.BLOCK_FROM_COMMENT_MENU
             ));
         }
-        if (SettingsStatus.lengthLimitsEnabled || SettingsStatus.voiceCommentsEnabled
-                || SettingsStatus.commentPhotosEnabled) {
+        if (SettingsStatus.lengthLimitsEnabled || SettingsStatus.voiceCommentsEnabled) {
             addPreference(new SectionHeadingPreference(context, "Writing"));
         }
         if (SettingsStatus.lengthLimitsEnabled) {
@@ -373,16 +371,6 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
                     "Show TikTok's button for recording a spoken comment, on accounts that don't "
                             + "have it yet. It hasn't been tried on a real account, so it may not work.",
                     Settings.ENABLE_VOICE_COMMENTS
-            ));
-        }
-        if (SettingsStatus.commentPhotosEnabled) {
-            addPreference(new TogglePreference(
-                    context,
-                    "Allow photo comments",
-                    "Show the gallery tab in the comment box, so you can add a photo to a comment like "
-                            + "on TikTok. PineDrama turns it off for everyone. TikTok's server still "
-                            + "decides whether your account can post one.",
-                    Settings.PINEDRAMA_COMMENT_PHOTOS
             ));
         }
     }

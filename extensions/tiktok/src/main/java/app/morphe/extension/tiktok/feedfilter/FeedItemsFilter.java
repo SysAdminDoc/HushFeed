@@ -495,7 +495,7 @@ public final class FeedItemsFilter {
      * ad rules, and a video someone chose to keep can carry an ad mark, a paid partnership or
      * promotional music: TikTok accepted the like, listed the video on Liked, and it was gone from
      * that list here (#269). The For You routes don't ask, so a liked ad stays out of the feed.
-     * Read by name, since only the two flags are wanted and PineDrama shares this path.
+     * Read by name, since only the two flags are wanted.
      */
     private static boolean isLikedOrSaved(Aweme item) {
         return isSet(Reflect.property(item, "getUserDigg", "userDigg"))
@@ -1016,8 +1016,8 @@ public final class FeedItemsFilter {
     }
 
     /**
-     * The drama tab's feed answer, as SeriesFeedResp's constructor finishes (#294). PineDrama's
-     * own feed requests build it straight from the server's answer, so the list never passes
+     * The drama tab's feed answer, as SeriesFeedResp's constructor finishes (#294). That feed's
+     * own requests build it straight from the server's answer, so the list never passes
      * {@link #filter(FeedItemList)} and its ads reached the page. Ads only: every item on that
      * page is an episode, so the series and drama rules would empty it.
      */

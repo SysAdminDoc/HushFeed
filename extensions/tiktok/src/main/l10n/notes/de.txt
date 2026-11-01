@@ -13,7 +13,7 @@
 * **TikTok:** Die untere Leiste des Haupt-Feeds kann eine schwebende Glaskapsel sein, mit einer Linse, die über die Tabs gleitet, und neuen Einstellungen für Unschärfe, Deckkraft, Höhe und Ecken (#259).
 * **TikTok:** Patches mit Einstellungen haben Morphe-Optionen für ihre Startwerte, damit ein Build deine Schalter schon eingeschaltet mitbringt. Danke an @XEGARE (#256).
 * **TikTok:** Ein neuer Schalter blendet die Reihe mit LIVE- und Story-Kreisen oben in Folge ich aus, ohne dass ein leerer Streifen bleibt (#262).
-* **TikTok:** Ein neuer Schalter stoppt das Fenster Teilen mit, das TikTok ein paar Sekunden nach dem Speichern eines Videos öffnet. PineDrama bekommt ihn auch.
+* **TikTok:** Ein neuer Schalter stoppt das Fenster Teilen mit, das TikTok ein paar Sekunden nach dem Speichern eines Videos öffnet.
 * **TikTok:** Wenn du die Originalfotos eines Fotobeitrags speicherst, werden auch Beschreibung, Creator, Link und Beitragsdatum in einer Datei gespeichert.
 * **TikTok:** Die Einstellungssuche kennt alltägliche Namen wie Autoplay, PiP und AI und findet eine Auswahlzeile über jede ihrer Optionen.
 * **TikTok:** Feed zu festen Zeiten sperren sperrt den Feed von selbst in den Stunden, die du wählst, und das Sperrfenster zeigt, wann er wieder öffnet.
@@ -29,7 +29,7 @@
 * **TikTok:** Tonformat hat jetzt MP3 zur Auswahl, sodass gespeicherte Töne überall abspielbar sind, auf jeder Android-Version (#273).
 * **TikTok:** Ein neuer Schalter blendet bei geöffneten Videos auch den Zurück-Pfeil neben der ausgeblendeten Suchleiste aus (#251).
 * **TikTok:** Mit der Schaltfläche Autor blockieren bekommen LIVEs in Für dich auch die Blockieren-Schaltfläche (#138).
-* **TikTok:** Der neue Patch Sticker erstellen für TikTok und PineDrama macht aus einem Foto oder dem Bild eines Videos im Teilen-Fenster einen gespeicherten Sticker (#156, #88).
+* **TikTok:** Der neue Patch Sticker erstellen macht aus einem Foto oder dem Bild eines Videos im Teilen-Fenster einen gespeicherten Sticker (#156, #88).
 * **TikTok:** Der neue Patch Letzte Sticker behalten hält die Reihe Zuletzt verwendet nach einem Neustart oder Kontowechsel gefüllt (#156).
 * **TikTok:** Umfragen ausblenden blendet auch die Schaltflächen Nicht interessiert und Interessiert aus, die TikTok manchmal über ein Video legt (#293).
 * **TikTok:** Eigenes Launcher-Symbol hat einen Material-You-Stil, der deinem Hintergrundbild folgt, und eine neue Option legt eine beliebige Farbe wie #1E88E5 hinter das Symbol (#280).
@@ -39,8 +39,6 @@
 * **TikTok:** Das Feature Gate Lab hat jetzt eine Neustart-Schaltfläche, und TikTok öffnet danach wieder das Lab.
 * **TikTok:** Hushfeed baut jetzt auf Morphe Patcher 2.1.0 auf und braucht daher Morphe Manager 2.3.0 oder neuer, oder morphe-desktop 1.20.0 auf einem Computer.
 * **TikTok:** Das Patch-Paket trägt Morphes Paketsignatur, damit Manager prüfen kann, ob ein späterer Download wirklich von Hushfeed kommt.
-* **TikTok:** Bei PineDrama funktionieren die Schalter im Posteingang jetzt, auch Unterhaltungen ausblenden (#156).
-* **TikTok:** Bei PineDrama nennt die Versionszeile in den Einstellungen jetzt PineDrama und seinen Build statt TikTok (#156).
 * **TikTok:** Ein Suchergebnis weit unten auf einer Einstellungsseite öffnet jetzt direkt an seiner Zeile.
 * **TikTok:** Mit eingeschalteter Durchsichtiger unterer Leiste sitzt die Zeile Zum Überspringen nach oben wischen auf Karten mit vorgeschlagenen Konten wieder über den Tabs (#261).
 * **TikTok:** Die schwebende Tab-Kapsel ist etwas höher, damit das Home-Symbol und sein Name in der Hervorhebung bleiben und die Fortschrittslinie nicht mehr darauf sitzt (#259).
@@ -87,20 +85,16 @@
 * **TikTok:** Eine Story auf Automatisch zu speichern holt die schärfste Kopie statt einer kleineren 720p-Kopie. Danke an @jutochoppa (#287, #155).
 * **TikTok:** Die Bildschirmaufnahme eines LIVE filmt die Aufnahme-Schaltfläche nicht mehr mit, und die Benachrichtigung hat eine Stopp-Schaltfläche (#265).
 * **TikTok:** Ohne Passkey anmelden sagt dir, was zu tun ist, wenn TikToks Bestätigung in zwei Schritten nur nach einem Passkey fragt (#102).
-* **TikTok:** Eine pausierte PineDrama-Folge läuft dort weiter, wo du sie angehalten hast (#156).
 * **TikTok:** Erstellungstools entfernen lässt das geteilte Paket von APKMirror in Ruhe, sodass Gesichtseffekte und Beauty dein Gesicht wieder finden (#285).
 * **TikTok:** Wenn TikTok ein Like ablehnt, zeigt Hushfeed beim ersten Mal pro Sitzung den Grund (#269).
 * **TikTok:** Videos, die du geliked oder gespeichert hast, bleiben in deinen Likes und Favoriten, auch mit Werbekennzeichnung (#269).
 * **TikTok:** Die chinesische Meldung für ein abgelehntes Folgen benutzt jetzt das richtige Wort.
 * **TikTok:** Die schwebende Tab-Kapsel macht auch LIVE-Vorschauen dahinter unscharf (#259).
-* **TikTok:** PineDrama bekommt den Feed-Filter, sodass Werbung im Feed entfernen die Werbung aus seinem Für-dich-Feed und dem Drama-Tab nimmt (#294).
 * **TikTok:** Rund 140 Hinweismeldungen sind jetzt kürzer und passen in die zwei Zeilen, die Android 12 und neuer ihnen gibt.
 * **TikTok:** Auch die Hinweise im Feature Gate Lab passen jetzt in zwei Zeilen, und ein Import ohne Neues zeigt trotzdem seine Ergebnisse.
 * **TikTok:** Die Einstellungen auf vereinfachtem Chinesisch lesen sich einheitlicher und nutzen überall dasselbe Wort für dieselbe Sache.
 * **TikTok:** Die Kommentarsuche holt keine übersetzten Kommentare mehr zurück, die der Stichwortfilter ausgeblendet hat.
 * **TikTok:** Wählst du einen Download-Ordner, der nicht geht, öffnet sich das Ordnerfenster wieder mit dem Grund darunter.
-* **TikTok:** Der Release-Durchlauf deckt jetzt auch PineDrama ab, von den Feeds und Fenstern bis zu jedem Hushfeed-Bereich.
-* **TikTok:** PineDrama hat eine eigene Patch-Prüfung, und ein Release braucht für jede unterstützte App eine aktuelle Prüfung und einen bestandenen Durchlauf.
 * **TikTok:** Jede LIVE-Vorschau und jede Drama-Beschriftung, die die Durchsichtige untere Leiste verschiebt, wird gegen den unterstützten TikTok-Build geprüft.
 * **TikTok:** Die Prüfung des automatischen Weiterschaltens folgt dem Videoplayer selbst statt Beschriftungen pro Video.
 * **TikTok:** Ein Release braucht passende Nachweise für jede App, die es unterstützt.

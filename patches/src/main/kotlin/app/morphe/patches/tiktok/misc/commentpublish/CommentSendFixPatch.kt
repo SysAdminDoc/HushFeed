@@ -86,7 +86,7 @@ val commentSendFixPatch = bytecodePatch(
     category("Comments")
     // The diagnostics number the entry's exits first, so an exit keeps its number here.
     dependsOn(sharedExtensionPatch, commentPublishDiagnosticsPatch)
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
         val matches = CommentPublishPartFingerprint.matchAll()

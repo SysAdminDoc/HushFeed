@@ -13,7 +13,7 @@
 * **TikTok:** Bilah bawah feed utama bisa berupa pil kaca melayang, dengan lensa yang bergeser di antara tab dan pengaturan baru untuk keburaman, opasitas, tinggi, dan sudut (#259).
 * **TikTok:** Patch yang punya pengaturan punya opsi Morphe untuk nilai awalnya, jadi build bisa langsung datang dengan sakelar pilihanmu menyala. Terima kasih kepada @XEGARE (#256).
 * **TikTok:** Sakelar baru menyembunyikan baris lingkaran LIVE dan cerita di bagian atas Mengikuti, tanpa meninggalkan pita kosong (#262).
-* **TikTok:** Sakelar baru menghentikan lembar Bagikan ke yang dibuka TikTok beberapa detik setelah menyimpan video. PineDrama juga mendapatkannya.
+* **TikTok:** Sakelar baru menghentikan lembar Bagikan ke yang dibuka TikTok beberapa detik setelah menyimpan video.
 * **TikTok:** Menyimpan foto asli dari postingan foto juga menyimpan keterangan, kreator, tautan, dan tanggal postingannya dalam satu berkas.
 * **TikTok:** Pencarian pengaturan mengenal nama sehari-hari seperti autoplay, PiP, dan AI, dan menemukan baris pilihan lewat opsi apa pun di dalamnya.
 * **TikTok:** Kunci feed pada jam tertentu mengunci feed dengan sendirinya selama jam yang kamu pilih, dan panel kunci menyebut kapan feed terbuka lagi.
@@ -29,7 +29,7 @@
 * **TikTok:** Format suara punya pilihan MP3, jadi suara yang disimpan bisa diputar di mana saja, di semua versi Android (#273).
 * **TikTok:** Sakelar baru juga menyembunyikan panah Kembali di samping bilah pencarian yang disembunyikan pada video yang dibuka (#251).
 * **TikTok:** Dengan Tombol blokir pembuat aktif, LIVE di Untuk Anda juga mendapat tombol blokir (#138).
-* **TikTok:** Patch baru Buat stiker untuk TikTok dan PineDrama mengubah foto, atau gambar video dari lembar bagikan, menjadi stiker tersimpan (#156, #88).
+* **TikTok:** Patch baru Buat stiker mengubah foto, atau gambar video dari lembar bagikan, menjadi stiker tersimpan (#156, #88).
 * **TikTok:** Patch baru Simpan stiker terbaru menjaga baris Terakhir digunakan tetap terisi setelah mulai ulang atau ganti akun (#156).
 * **TikTok:** Sembunyikan survei juga menyembunyikan tombol Tidak tertarik dan Tertarik yang kadang dipasang TikTok di atas video (#293).
 * **TikTok:** Ikon peluncur khusus punya gaya Material You yang mengikuti wallpaper, dan opsi baru menaruh warna apa pun, seperti #1E88E5, di belakang ikon (#280).
@@ -39,8 +39,6 @@
 * **TikTok:** Feature Gate Lab kini punya tombol mulai ulang, dan TikTok terbuka lagi di Lab setelahnya.
 * **TikTok:** Hushfeed kini dibangun di atas Morphe patcher 2.1.0, jadi perlu Morphe Manager 2.3.0 atau lebih baru, atau morphe-desktop 1.20.0 di komputer.
 * **TikTok:** Paket patch membawa tanda tangan paket Morphe, jadi Manager bisa memeriksa bahwa unduhan berikutnya benar-benar dari Hushfeed.
-* **TikTok:** Di PineDrama, sakelar Kotak masuk sekarang berfungsi, termasuk Sembunyikan percakapan (#156).
-* **TikTok:** Di PineDrama, baris versi di pengaturan menyebut PineDrama dan build-nya, bukan TikTok (#156).
 * **TikTok:** Hasil pencarian pengaturan yang jauh di bawah halaman sekarang terbuka tepat di barisnya.
 * **TikTok:** Dengan Bilah bawah tembus pandang aktif, baris Geser ke atas untuk melewati pada kartu akun yang disarankan kembali berada di atas tab (#261).
 * **TikTok:** Pil tab melayang sedikit lebih tinggi, jadi ikon Beranda dan namanya tetap di dalam sorotan, dan garis progres tidak lagi menumpang di atasnya (#259).
@@ -87,20 +85,16 @@
 * **TikTok:** Menyimpan cerita dengan Otomatis mengambil salinan paling tajam, bukan salinan 720p yang lebih kecil. Terima kasih kepada @jutochoppa (#287, #155).
 * **TikTok:** Merekam layar LIVE tidak lagi ikut merekam tombol Rekam, dan notifikasinya punya tombol Berhenti (#265).
 * **TikTok:** Masuk tanpa kunci sandi menjelaskan apa yang harus dilakukan saat verifikasi 2 langkah TikTok hanya meminta kunci sandi (#102).
-* **TikTok:** Melanjutkan episode PineDrama yang dijeda kini memutar dari titik kamu menjedanya (#156).
 * **TikTok:** Hapus alat kreasi tidak mengubah paket terpisah APKMirror, jadi efek wajah dan Beauty bisa menemukan wajahmu lagi (#285).
 * **TikTok:** Saat TikTok menolak suka, Hushfeed menampilkan alasannya pertama kali di setiap sesi (#269).
 * **TikTok:** Video yang kamu sukai atau simpan tetap ada di grid Disukai dan Favorit, meski punya tanda iklan (#269).
 * **TikTok:** Pesan bahasa Mandarin untuk ikuti yang ditolak kini memakai kata yang benar.
 * **TikTok:** Pil tab melayang juga memburamkan pratinjau LIVE di belakangnya (#259).
-* **TikTok:** PineDrama mendapat Filter feed, jadi Hapus iklan di feed membersihkan iklan dari feed Untuk Anda dan tab dramanya (#294).
 * **TikTok:** Sekitar 140 pesan pop-up kini lebih pendek, jadi muat dalam dua baris yang diberikan Android 12 ke atas.
 * **TikTok:** Pesan pop-up Feature Gate Lab juga muat dalam dua baris, dan impor tanpa hal baru tetap menampilkan hasilnya.
 * **TikTok:** Pengaturan bahasa Mandarin Sederhana kini lebih seragam dan memakai kata yang sama untuk hal yang sama.
 * **TikTok:** Pencarian komentar tidak lagi memunculkan kembali komentar terjemahan yang disembunyikan filter kata kunci.
 * **TikTok:** Memilih folder unduhan yang tidak bisa dipakai membuka lagi kotak folder dengan alasannya di bawah.
-* **TikTok:** Uji coba rilis kini mencakup PineDrama juga, dari feed dan lembarnya sampai setiap bagian Hushfeed.
-* **TikTok:** PineDrama punya audit patch sendiri, dan sebuah rilis butuh audit terbaru dan uji coba yang lolos untuk setiap aplikasi yang didukungnya.
 * **TikTok:** Setiap pratinjau LIVE dan label drama yang digeser Bilah bawah tembus pandang diperiksa terhadap build TikTok yang didukung.
 * **TikTok:** Audit perpindahan otomatis mengikuti pemutar video itu sendiri, bukan label per video.
 * **TikTok:** Sebuah rilis butuh bukti yang cocok untuk setiap aplikasi yang didukungnya.

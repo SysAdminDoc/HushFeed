@@ -23,7 +23,7 @@ import org.junit.Assert.fail
 import org.junit.Test
 
 /**
- * PineDrama's drama tab asks for its feed with requests of its own and converts the answer
+ * The drama tab asks for its feed with requests of its own and converts the answer
  * straight into SeriesFeedResp, so the list never passed FeedItemList.getItems and its ads
  * reached the page (#294). The hook filters `feedItemList` at every return of the constructor,
  * through p1, which nothing reads by then.

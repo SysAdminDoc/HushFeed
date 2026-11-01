@@ -413,8 +413,7 @@ public class ImportedFontTest {
                 Typeface.create(ImportedFont.typeface(), tiktok.getWeight(), tiktok.isItalic()).getStyle(),
                 drawn.getStyle());
         assertTrue(HookStatus.report().toString().contains("system font"));
-        // #243: an engine with no font file of its own answers null, and that becomes the import too.
-        assertEquals("an empty answer stayed empty", "Inter.ttf", familyOf(SystemFont.systemize(null)));
+        assertNull("null still passes through", SystemFont.systemize(null));
     }
 
     @Test public void withTheImportSwitchOffTheHookAnswersAsUseSystemFontAlone() throws IOException {

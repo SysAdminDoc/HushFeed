@@ -57,7 +57,7 @@ val turnOffScreenTransitionsPatch = bytecodePatch(
 ) {
     category("Interface")
     dependsOn(settingsPatch, sharedExtensionPatch)
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
         SettingsStatusLoadFingerprint.method.addInstruction(

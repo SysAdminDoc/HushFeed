@@ -17,7 +17,6 @@ import app.morphe.patches.tiktok.interaction.downloads.advancedDownloadsPatch
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
-import app.morphe.patches.tiktok.misc.theme.buildName
 import app.morphe.patches.tiktok.misc.theme.declaredVersions
 import app.morphe.util.addInstructionsAtControlFlowLabel
 import app.morphe.util.cloneMutable
@@ -140,8 +139,8 @@ val subtitleToolsPatch = bytecodePatch(
             hookCaptionsAvailable(PATCH_NAME)
             true
         } catch (problem: Exception) {
-            if (packageMetadata.buildName in declaredVersions()) throw problem
-            println("[$PATCH_NAME] Left out Keep captions available on ${packageMetadata.buildName}: ${problem.message}")
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[$PATCH_NAME] Left out Keep captions available on ${packageMetadata.versionName}: ${problem.message}")
             false
         }
         if (captionsAvailable) {

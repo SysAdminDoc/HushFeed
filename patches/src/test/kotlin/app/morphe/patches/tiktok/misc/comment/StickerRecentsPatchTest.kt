@@ -29,11 +29,9 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * Keep recent stickers (#156) patches TikTok and PineDrama, and PineDrama 47.5.3 is built from TikTok
- * 47.5.3's code: the recently used store has the same add, reset and holder there (14gj.LJ,
- * 14gj.LIZIZ and 0mnM.LIZ on TikTok, Xf3 and Xf8 on PineDrama), and the basic Saved page builds
- * its rows the same way (emit$0 with 0zfW and 14gH on TikTok, emit$22 with Q1n and QRQ on
- * PineDrama), so TikTok's fixtures hold what the patch relies on.
+ * Keep recent stickers (#156): the recently used store's add, reset and holder (14gj.LJ, 14gj.LIZIZ
+ * and 0mnM.LIZ on 47.5.3), and the basic Saved page's rows (emit$0 with 0zfW and 14gH). TikTok's
+ * fixtures hold what the patch relies on.
  */
 class StickerRecentsPatchTest {
     @Test

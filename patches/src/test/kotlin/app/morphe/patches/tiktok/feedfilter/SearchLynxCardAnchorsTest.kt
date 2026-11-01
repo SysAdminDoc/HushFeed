@@ -73,9 +73,9 @@ class SearchLynxCardAnchorsTest {
         val source = File(root, "app/morphe/patches/tiktok/feedfilter/FeedFilterPatch.kt").readText()
         for (fingerprint in holderBinds) {
             val name = fingerprint.javaClass.simpleName
-            assertTrue("the feed filter does not hook $name", Regex("""requiredWhenDeclared\($name\)\?\.addInstructions\(0, holderBound\)""").containsMatchIn(source))
+            assertTrue("the feed filter does not hook $name", Regex("""lynxBind\($name\)\?\.addInstructions\(0, holderBound\)""").containsMatchIn(source))
         }
-        assertTrue("the feed filter does not hook the Lynx cell", source.contains("requiredWhenDeclared(SearchLynxCardBindFingerprint)?.addInstructions("))
+        assertTrue("the feed filter does not hook the Lynx cell", source.contains("lynxBind(SearchLynxCardBindFingerprint)?.addInstructions("))
         assertTrue("holderBound is not the (holder, fragment, patch) call",
             Regex("""val holderBound = "invoke-static/range \{p0 \.\. p2\}, .*->onHolderBound\(""").containsMatchIn(source))
     }

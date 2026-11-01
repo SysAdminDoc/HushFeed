@@ -47,7 +47,7 @@ private fun Method.stickerMethodCalls(): List<MethodReference> =
 
 /**
  * StickerApiV2's im/sticker/save: type, uri, width, height, tags, source, create source and the
- * continuation. R8 renames it (LJII on PineDrama 47.5.3, LJIIJJI on TikTok 47.5.3).
+ * continuation. R8 renames it (LJIIJJI on TikTok 47.5.3).
  */
 internal fun MethodReference.isStickerSaveCall(): Boolean {
     val parameters = parameterTypes.map { it.toString() }
@@ -65,7 +65,7 @@ internal object FavouriteStickerPageFingerprint : Fingerprint(
 
 /**
  * The suspend fun asking im/upload_config for an ImageX token, the only caller of
- * StickerUploadConfigApi.getUploadConfig (8Ce.LIZ on PineDrama 47.5.3, 182P.LIZ on TikTok 47.5.3).
+ * StickerUploadConfigApi.getUploadConfig (182P.LIZ on TikTok 47.5.3).
  */
 internal object StickerUploadConfigFingerprint : Fingerprint(
     returnType = STICKER_OBJECT,
@@ -77,8 +77,8 @@ internal object StickerUploadConfigFingerprint : Fingerprint(
 )
 
 /**
- * The server parameter the comment image uploader hands ImageX (8Ck.LIZ on PineDrama 47.5.3, 182R.LIZ
- * on TikTok 47.5.3). A sibling builds the same string from a cached account holder, so the store
+ * The server parameter the comment image uploader hands ImageX (182R.LIZ on TikTok 47.5.3).
+ * A sibling builds the same string from a cached account holder, so the store
  * region read through IAccountService is what tells them apart.
  */
 internal object StickerServerParameterFingerprint : Fingerprint(
@@ -92,7 +92,7 @@ internal object StickerServerParameterFingerprint : Fingerprint(
 )
 
 /**
- * The DM canvas saver (YIW.LIZIZ on PineDrama 47.5.3, 14hO.LIZIZ on TikTok 47.5.3): it saves a
+ * The DM canvas saver (14hO.LIZIZ on TikTok 47.5.3): it saves a
  * drawing through im/sticker/save and adds the answer to Saved. Every call the bridges make comes
  * out of it.
  */
@@ -292,7 +292,7 @@ val createStickersPatch = bytecodePatch(
     category("Comments")
     // The native Report carrier, for the share sheet's Make sticker (#88).
     dependsOn(sharedExtensionPatch, ownedShareActionsPatch)
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
         val calls = stickerCreatorCalls(

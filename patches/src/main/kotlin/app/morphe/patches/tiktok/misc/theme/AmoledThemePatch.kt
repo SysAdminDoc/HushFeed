@@ -6,7 +6,6 @@
  */
 package app.morphe.patches.tiktok.misc.theme
 
-import app.morphe.patcher.PackageMetadata
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.colorOption
 import app.morphe.patcher.patch.resourcePatch
@@ -180,15 +179,6 @@ internal fun unreadPaletteRefusal(versionName: String?): String {
 /** The builds the bundle declares. */
 internal fun declaredVersions(): Set<String> =
     AppCompatibilities.tiktok().flatMap { it.targets }.mapNotNull { it.version }.toSet()
-
-/**
- * What a patch's declared-build checks and notes call this build. PineDrama shares TikTok's
- * version names (both are 47.5.3), so its builds go by "PineDrama 47.5.3", which is never one of
- * [declaredVersions]: a part PineDrama lacks is left out with a note, as it was while PineDrama
- * ran a version of its own (47.4.3). TikTok's builds keep the bare version.
- */
-internal val PackageMetadata.buildName: String
-    get() = if (packageName == AppCompatibilities.PINEDRAMA_PACKAGE) "PineDrama $versionName" else versionName
 
 /**
  * The dark style literals behind TikTok's sheets and pages per build, named by TikTok's own token

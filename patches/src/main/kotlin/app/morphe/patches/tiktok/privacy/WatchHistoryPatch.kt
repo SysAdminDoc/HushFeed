@@ -84,7 +84,7 @@ val watchHistoryPatch = bytecodePatch(
 ) {
     category("Privacy")
     dependsOn(settingsPatch, sharedExtensionPatch)
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
         // Both resolved before anything is written, so a build missing either one leaves the

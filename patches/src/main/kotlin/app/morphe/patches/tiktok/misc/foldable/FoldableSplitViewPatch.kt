@@ -44,7 +44,7 @@ internal const val SPLIT_CONTAINER_MANAGER = "Lcom/ss/android/ugc/aweme/tablet/i
 
 /**
  * The feed fragment's view builder, which registers the feed's split container under a "HOME_"
- * key. Its class is renamed on every build (06ws on 47.1.4, 06wG on 47.4.3, 0arO in PineDrama).
+ * key. Its class is renamed on every build (06ws on 47.1.4, 06wG on 47.4.3).
  */
 internal object FeedSplitContainerFingerprint : Fingerprint(
     returnType = "Landroid/view/View;",

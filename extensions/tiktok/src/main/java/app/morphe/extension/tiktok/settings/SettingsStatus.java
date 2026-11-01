@@ -776,13 +776,6 @@ public class SettingsStatus {
         voiceCommentsEnabled = true;
     }
 
-    /** Allow photo comments put its switch in front of PineDrama's comment gallery check (#156). */
-    public static boolean commentPhotosEnabled = false;
-
-    public static void enableCommentPhotos() {
-        commentPhotosEnabled = true;
-    }
-
     /** Skip passkey sign-in put its switch in front of TikTok's passkey support check. */
     public static boolean passkeySignInEnabled = false;
 

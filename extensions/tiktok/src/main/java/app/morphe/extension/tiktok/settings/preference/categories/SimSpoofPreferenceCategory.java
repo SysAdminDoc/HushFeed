@@ -110,7 +110,7 @@ public class SimSpoofPreferenceCategory extends ConditionalPreferenceCategory {
         // the SIM patch is what put the preset there, so the row needs both in the bundle.
         if (SettingsStatus.simSpoofEnabled && SettingsStatus.regionSpoofEnabled) {
             addPreference(new TogglePreference(context, "Keep the For You feed on your real SIM",
-                    "Sticker search, PineDrama and the rest of TikTok still see the SIM above, "
+                    "Sticker search and the rest of TikTok still see the SIM above, "
                             + "while For You asks for videos with your phone's own SIM country "
                             + "and carrier. Your IP address and account history still count.",
                     Settings.SIM_SPOOF_FEED_REAL));

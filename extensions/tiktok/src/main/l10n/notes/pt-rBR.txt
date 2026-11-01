@@ -13,7 +13,7 @@
 * **TikTok:** A barra inferior do feed principal pode ser uma pílula de vidro flutuante, com uma lente que desliza entre as abas e novas configurações de desfoque, opacidade, altura e cantos (#259).
 * **TikTok:** Os patches com configurações têm opções do Morphe para os valores iniciais, então um build pode vir com as suas chaves já ligadas. Obrigado a @XEGARE (#256).
 * **TikTok:** Uma chave nova esconde a fileira de círculos de LIVE e stories no topo de Seguindo, sem deixar uma faixa vazia (#262).
-* **TikTok:** Uma chave nova impede a folha Enviar para que o TikTok abre alguns segundos depois de salvar um vídeo. O PineDrama também tem.
+* **TikTok:** Uma chave nova impede a folha Enviar para que o TikTok abre alguns segundos depois de salvar um vídeo.
 * **TikTok:** Salvar as fotos originais de um post de fotos também salva a legenda, o criador, o link e a data do post num só arquivo.
 * **TikTok:** A pesquisa das configurações conhece nomes do dia a dia, como autoplay, PiP e AI, e acha uma linha de escolha por qualquer uma das opções.
 * **TikTok:** Bloquear o feed em horários definidos bloqueia o feed sozinho nas horas que você escolher, e o painel de bloqueio diz quando ele abre de novo.
@@ -29,7 +29,7 @@
 * **TikTok:** Formato do som tem a opção MP3, então os sons salvos tocam em qualquer lugar, em todas as versões do Android (#273).
 * **TikTok:** Uma nova chave também esconde a seta Voltar ao lado da barra de busca escondida nos vídeos abertos (#251).
 * **TikTok:** Com o Botão de bloquear autor ligado, as LIVEs em Para Você também ganham o botão de bloquear (#138).
-* **TikTok:** O novo patch Criar adesivos para TikTok e PineDrama transforma uma foto, ou a imagem de um vídeo pela janela de compartilhar, num adesivo salvo (#156, #88).
+* **TikTok:** O novo patch Criar adesivos transforma uma foto, ou a imagem de um vídeo pela janela de compartilhar, num adesivo salvo (#156, #88).
 * **TikTok:** O novo patch Manter adesivos recentes mantém a fileira Usados recentemente cheia depois de reiniciar ou trocar de conta (#156).
 * **TikTok:** Esconder as enquetes também esconde os botões Não tenho interesse e Tenho interesse que o TikTok às vezes põe sobre um vídeo (#293).
 * **TikTok:** Ícone personalizado do aplicativo tem um estilo Material You que segue o papel de parede, e uma nova opção põe qualquer cor, como #1E88E5, atrás do ícone (#280).
@@ -39,8 +39,6 @@
 * **TikTok:** O Laboratório de gates agora tem um botão de reiniciar, e o TikTok abre de volta no Laboratório depois.
 * **TikTok:** O Hushfeed agora é feito sobre o Morphe patcher 2.1.0, então precisa do Morphe Manager 2.3.0 ou mais recente, ou do morphe-desktop 1.20.0 num computador.
 * **TikTok:** O pacote de patches leva a assinatura de pacote do Morphe, então o Manager pode conferir se um download posterior veio mesmo do Hushfeed.
-* **TikTok:** No PineDrama, as chaves da Caixa de entrada agora funcionam, inclusive Esconder conversas (#156).
-* **TikTok:** No PineDrama, a linha de versão nas configurações agora cita o PineDrama e o build dele em vez do TikTok (#156).
 * **TikTok:** Um resultado da pesquisa das configurações lá embaixo numa página agora abre direto na sua linha.
 * **TikTok:** Com Barra inferior transparente ligada, a linha Deslize para cima para pular nos cartões de contas sugeridas fica acima das abas de novo (#261).
 * **TikTok:** A pílula flutuante das abas ficou um pouco mais alta, então o ícone Início e o nome dele ficam dentro do destaque, e a linha de progresso não fica mais em cima dela (#259).
@@ -87,20 +85,16 @@
 * **TikTok:** Salvar um story no Automático pega a cópia mais nítida em vez de uma menor em 720p. Obrigado a @jutochoppa (#287, #155).
 * **TikTok:** Gravar a tela de uma LIVE não filma mais o botão Gravar, e a notificação tem um botão Parar (#265).
 * **TikTok:** Entrar sem chave de acesso diz o que fazer quando a verificação em duas etapas do TikTok pede só uma chave de acesso (#102).
-* **TikTok:** Retomar um episódio do PineDrama continua de onde você pausou (#156).
 * **TikTok:** Remover ferramentas de criação deixa o pacote dividido do APKMirror em paz, então os efeitos de rosto e o Beauty voltam a achar seu rosto (#285).
 * **TikTok:** Quando o TikTok recusa uma curtida, o Hushfeed mostra o motivo na primeira vez de cada sessão (#269).
 * **TikTok:** Vídeos que você curtiu ou salvou continuam nas grades de Curtidos e Favoritos, mesmo com marca de anúncio (#269).
 * **TikTok:** A mensagem em chinês para um seguir recusado usa a palavra certa agora.
 * **TikTok:** A pílula de abas flutuante também desfoca as prévias de LIVE atrás dela (#259).
-* **TikTok:** O PineDrama ganha o Filtro do feed, então Remover os anúncios do feed tira os anúncios do feed Para Você e da aba de dramas (#294).
 * **TikTok:** Cerca de 140 mensagens pop-up estão mais curtas e cabem nas duas linhas que o Android 12 ou mais recente dá a elas.
 * **TikTok:** As mensagens pop-up do Laboratório de gates também cabem em duas linhas, e uma importação sem nada novo mostra os resultados mesmo assim.
 * **TikTok:** As configurações em chinês simplificado ficaram mais uniformes e usam a mesma palavra para a mesma coisa em todo lugar.
 * **TikTok:** A busca nos comentários não traz mais de volta comentários traduzidos que o filtro de palavras-chave escondeu.
 * **TikTok:** Escolher uma pasta de download que não pode ser usada abre de novo a janela da pasta com o motivo embaixo.
-* **TikTok:** A verificação de lançamento agora cobre o PineDrama também, dos feeds e folhas até todas as seções do Hushfeed.
-* **TikTok:** O PineDrama tem sua própria auditoria de patches, e um lançamento precisa de auditoria atualizada e verificação aprovada para cada app que ele suporta.
 * **TikTok:** Toda prévia de LIVE e todo rótulo de drama que a Barra inferior transparente move é conferido na versão do TikTok suportada.
 * **TikTok:** A auditoria do avanço automático segue o próprio player de vídeo em vez de rótulos por vídeo.
 * **TikTok:** Um lançamento precisa de evidências correspondentes para cada app que ele suporta.

@@ -13,7 +13,6 @@ import static org.junit.Assert.assertTrue;
 import android.app.Activity;
 import android.content.Context;
 
-import app.morphe.extension.shared.BuildNames;
 import app.morphe.extension.shared.Utils;
 
 import org.junit.Before;
@@ -64,19 +63,11 @@ public class AboutRowTest {
         assertTrue("the status action did not open Diagnostics", opened[0]);
     }
 
-    /** PineDrama runs these settings too, and its footer said "for TikTok 47.5.3" there (#156). */
-    @Test public void insidePineDramaTheVersionNamesPineDrama() {
-        BuildNames.setRunningAppForTests("com.ss.android.ttmd.video", "47.5.3");
-        try {
-            assertEquals("Version 0.79.0 for PineDrama 47.5.3",
-                    MorpheTikTokAboutPreference.versionSummary(context, "0.79.0", "47.5.3").toString());
-            assertEquals("Version 0.79.0",
-                    MorpheTikTokAboutPreference.versionSummary(context, "0.79.0", "Unknown").toString());
-        } finally {
-            BuildNames.setRunningBuildForTests(null);
-        }
+    @Test public void theVersionNamesTikTok() {
         assertEquals("Version 0.79.0 for TikTok 47.5.3",
-                MorpheTikTokAboutPreference.versionSummary(context, "0.79.0", "47.5.3", false).toString());
+                MorpheTikTokAboutPreference.versionSummary(context, "0.79.0", "47.5.3").toString());
+        assertEquals("Version 0.79.0",
+                MorpheTikTokAboutPreference.versionSummary(context, "0.79.0", "Unknown").toString());
     }
 
     @Test public void anUnpatchedBuildKeepsWhatTheRowAlwaysSaid() {
@@ -117,8 +108,5 @@ public class AboutRowTest {
                 summary.startsWith("Version 0.31.0 for TikTok 46.2.3."));
         assertTrue(summary.contains("0.31.0"));
         assertTrue(summary.contains("46.2.3"));
-
-        String pineDrama = MorpheTikTokAboutPreference.versionSummary(german, "0.79.0", "47.5.3", true).toString();
-        assertEquals("Version 0.79.0 für PineDrama 47.5.3", pineDrama);
     }
 }

@@ -1028,7 +1028,7 @@ Marked as not interested,标记为不感兴趣
 Match locale and timezone to country,将区域设置和时区与国家/地区相匹配
 Match region fields in requests,匹配请求中的地区字段
 Keep the For You feed on your real SIM,让“为你”使用真实 SIM 卡
-"Sticker search, PineDrama and the rest of TikTok still see the SIM above, while For You asks for videos with your phone's own SIM country and carrier. Your IP address and account history still count.",贴纸搜索、PineDrama 和 TikTok 的其他部分仍会看到上面的 SIM 卡，而“为你”会按你手机自己的 SIM 卡国家和运营商请求视频。你的 IP 地址和账号历史仍会起作用.
+"Sticker search and the rest of TikTok still see the SIM above, while For You asks for videos with your phone's own SIM country and carrier. Your IP address and account history still count.",贴纸搜索和 TikTok 的其他部分仍会看到上面的 SIM 卡，而“为你”会按你手机自己的 SIM 卡国家和运营商请求视频。你的 IP 地址和账号历史仍会起作用.
 Match text stickers too,也匹配文字贴纸
 Matches the rule: %1$s,匹配规则：%1$s
 Maximum,最大
@@ -2130,7 +2130,6 @@ Value: %1$s to %2$s,值：%1$s 至 %2$s
 Verified accounts,已验证账号
 Version %1$s,版本%1$s
 Version %1$s for TikTok %2$s,TikTok %2$s 的版本 %1$s
-Version %1$s for PineDrama %2$s,PineDrama %2$s 的版本 %1$s
 "Version, changes and licenses",版本、变更和许可
 Video,视频
 Video (MP4),视频 (MP4)
@@ -2279,8 +2278,6 @@ Tap Stop or leave the room to save it.,点按停止或离开直播间即可保�
 Screen recording wasn't allowed,未允许录屏
 Recording this LIVE's screen from now,现在开始录制此直播的屏幕
 "Recording this LIVE's screen from now, without sound",现在开始录制此直播的屏幕，不带声音
-Allow photo comments,允许图片评论
-"Show the gallery tab in the comment box, so you can add a photo to a comment like on TikTok. PineDrama turns it off for everyone. TikTok's server still decides whether your account can post one.",在评论框中显示图库标签，让你可以像在 TikTok 上一样在评论中添加图片。PineDrama 对所有人关闭了此功能。你的账号能否发布仍由 TikTok 的服务器决定.
 This screen recording has no sound,这段屏幕录制没有声音
 Export recording files,导出录制文件
 Delete recording files,删除录制文件

@@ -18,7 +18,6 @@ import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
-import app.morphe.patches.tiktok.misc.theme.buildName
 import app.morphe.patches.tiktok.misc.theme.declaredVersions
 import app.morphe.patches.tiktok.shared.guardAtEntry
 import app.morphe.patches.tiktok.shared.requireLocals
@@ -166,7 +165,7 @@ val downloadsPatch = bytecodePatch(
     category("Downloads")
     dependsOn(settingsPatch, sharedExtensionPatch)
 
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
         SettingsStatusLoadFingerprint.method.addInstruction(
@@ -195,8 +194,8 @@ val downloadsPatch = bytecodePatch(
         val postDownloadSheet = try {
             PostDownloadShareSheetFingerprint.method
         } catch (problem: Exception) {
-            if (packageMetadata.buildName in declaredVersions()) throw problem
-            println("[Downloads] Left out the post-download Share to sheet on ${packageMetadata.buildName}: ${problem.message}")
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[Downloads] Left out the post-download Share to sheet on ${packageMetadata.versionName}: ${problem.message}")
             null
         }
         if (postDownloadSheet != null) {

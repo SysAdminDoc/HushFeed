@@ -245,7 +245,7 @@ public final class PushDeliveryReport implements LogBufferManager.ReportSection 
         List<String> lines = new ArrayList<>();
         lines.add("Current process only. Zero means unobserved, not failure. No server delivery is inferred.");
         lines.add("Native registration anchors: " + (nativeProfile == 1 ? "global 47.5.3 installed"
-                : nativeProfile == 2 ? "unsupported package/version (PineDrama unqualified)" : "not installed"));
+                : nativeProfile == 2 ? "unsupported package/version" : "not installed"));
         lines.add("Native upload counters include all transports. Tokens and messages are not correlated.");
         lines.add("Android snapshots cover timed-capture attempts only. None means unobserved.");
         try { if (observer.context() != null) {

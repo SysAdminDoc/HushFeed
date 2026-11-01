@@ -13,7 +13,7 @@
 * **TikTok:** Əsas lentin alt paneli üzən şüşə kapsul ola bilər: tablar arasında sürüşən linza, bulanıqlıq, şəffaflıq, hündürlük və künclər üçün yeni ayarlarla (#259).
 * **TikTok:** Ayarları olan yamaqların başlanğıc dəyərləri üçün Morphe seçimləri var, beləliklə quraşdırma sizin açarlarınız artıq açıq halda gələ bilər. @XEGARE-yə təşəkkür (#256).
 * **TikTok:** Yeni keçid İzlədiklərimin yuxarısındakı LIVE və hekayə dairələri cərgəsini boş zolaq qoymadan gizlədir (#262).
-* **TikTok:** Yeni keçid TikTok-un videonu yadda saxladıqdan bir neçə saniyə sonra açdığı Paylaş vərəqini dayandırır. PineDrama da bunu alır.
+* **TikTok:** Yeni keçid TikTok-un videonu yadda saxladıqdan bir neçə saniyə sonra açdığı Paylaş vərəqini dayandırır.
 * **TikTok:** Foto paylaşımının orijinal fotolarını yadda saxlayanda onun başlığı, müəllifi, keçidi və paylaşım tarixi də bir faylda saxlanır.
 * **TikTok:** Ayar axtarışı autoplay, PiP və AI kimi gündəlik adları tanıyır və seçim sətrini onun istənilən variantı ilə tapır.
 * **TikTok:** Lenti müəyyən saatlarda kilidlə seçdiyiniz saatlarda lenti özü kilidləyir və kilid paneli onun nə vaxt yenidən açılacağını göstərir.
@@ -29,7 +29,7 @@
 * **TikTok:** Səs formatı indi MP3 seçimini də təklif edir, ona görə yadda saxlanan səslər hər yerdə və hər Android versiyasında çalınır (#273).
 * **TikTok:** Yeni açar açılmış videolarda gizlədilmiş axtarış panelinin yanındakı Geri oxunu da gizlədir (#251).
 * **TikTok:** Müəllifi blokla düyməsi açıq olanda Sizin üçün lentindəki LIVE-lar da bloklama düyməsi alır (#138).
-* **TikTok:** TikTok və PineDrama üçün yeni Stikerlər yarat yaması şəkli və ya paylaşım pəncərəsindən videonun şəklini yadda saxlanmış stikerə çevirir (#156, #88).
+* **TikTok:** Yeni Stikerlər yarat yaması şəkli və ya paylaşım pəncərəsindən videonun şəklini yadda saxlanmış stikerə çevirir (#156, #88).
 * **TikTok:** Yeni Son stikerləri saxla yaması Son istifadə edilənlər stiker sırasını yenidən başlatmadan və ya hesab dəyişəndən sonra da dolu saxlayır (#156).
 * **TikTok:** Sorğuları gizlədin TikTok-un bəzən videonun üstünə qoyduğu Maraqlı deyil və Maraqlıdır düymələrini də gizlədir (#293).
 * **TikTok:** Xüsusi başlanğıc ikonu divar kağızınıza uyğunlaşan Material You üslubu aldı, yeni seçim isə ikonun arxasına #1E88E5 kimi istənilən rəng qoyur (#280).
@@ -39,8 +39,6 @@
 * **TikTok:** Feature Gate Lab-da indi yenidən başlatma düyməsi var və TikTok bundan sonra yenidən Lab-da açılır.
 * **TikTok:** Hushfeed indi Morphe patcher 2.1.0 üzərində qurulur, ona görə Morphe Manager 2.3.0 və ya daha yenisi, kompüterdə isə morphe-desktop 1.20.0 lazımdır.
 * **TikTok:** Yamaq paketi Morphe-un paket imzasını daşıyır, belə ki Manager sonrakı yükləmənin həqiqətən Hushfeed-dən gəldiyini yoxlaya bilər.
-* **TikTok:** PineDrama-da Gələnlər qutusu açarları indi işləyir, Söhbətləri gizlət də daxil olmaqla (#156).
-* **TikTok:** PineDrama-da ayarlardakı versiya sətri TikTok əvəzinə PineDrama-nı və onun quruluşunu göstərir (#156).
 * **TikTok:** Səhifənin aşağısında olan ayar axtarışı nəticəsi indi birbaşa öz sətrində açılır.
 * **TikTok:** Şəffaf alt panel açıq olanda təklif olunan hesab kartlarındakı Keçmək üçün yuxarı sürüşdürün sətri yenidən tabların üstündə durur (#261).
 * **TikTok:** Üzən tab kapsulu bir az hündürdür, beləliklə Ana səhifə ikonu və adı vurğunun içində qalır və irəliləyiş xətti artıq onun üstündə getmir (#259).
@@ -87,20 +85,16 @@
 * **TikTok:** Avtomatik rejimdə hekayəni yadda saxlamaq daha kiçik 720p nüsxə əvəzinə ən kəskin nüsxəni götürür. @jutochoppa-ya təşəkkürlər (#287, #155).
 * **TikTok:** LIVE ekranını yazmaq artıq Yaz düyməsini çəkmir, bildirişdə isə Dayandır düyməsi var (#265).
 * **TikTok:** Passkey olmadan daxil olun TikTok-un 2 addımlı yoxlaması yalnız passkey istəyəndə nə edəcəyinizi deyir (#102).
-* **TikTok:** Dayandırılmış PineDrama epizodu dayandırdığınız yerdən davam edir (#156).
 * **TikTok:** Yaratma alətlərini silin APKMirror-un bölünmüş paketinə toxunmur, ona görə üz effektləri və Beauty üzünüzü yenidən tapır (#285).
 * **TikTok:** TikTok bəyənməni rədd edəndə Hushfeed hər seansda ilk dəfə səbəbini göstərir (#269).
 * **TikTok:** Bəyəndiyiniz və ya yadda saxladığınız videolar reklam işarəsi olsa belə Bəyənilənlər və Seçilmişlər şəbəkəsində qalır (#269).
 * **TikTok:** Rədd edilən izləmə üçün Çin dilindəki mesaj indi düzgün sözü işlədir.
 * **TikTok:** Üzən tab kapsulu arxasındakı LIVE önizləmələrini də bulanıqlaşdırır (#259).
-* **TikTok:** PineDrama Lent filtri alır, ona görə Lent reklamlarını silin onun Sizin üçün lentindən və drama tabından reklamları təmizləyir (#294).
 * **TikTok:** Təxminən 140 bildiriş mesajı indi daha qısadır, ona görə Android 12 və yenidə verilən iki sətrə sığır.
 * **TikTok:** Feature Gate Lab-ın bildiriş mesajları da iki sətrə sığır, yeni heç nə gətirməyən idxal isə yenə də nəticələrini göstərir.
 * **TikTok:** Sadələşdirilmiş Çin dilində ayarlar daha bərabər oxunur və eyni şey üçün hər yerdə eyni sözü işlədir.
 * **TikTok:** Şərh axtarışı açar söz filtrinin gizlətdiyi tərcümə olunmuş şərhləri artıq geri qaytarmır.
 * **TikTok:** İstifadə oluna bilməyən yükləmə qovluğu seçəndə qovluq pəncərəsi səbəbi altında yazılmış halda yenidən açılır.
-* **TikTok:** Buraxılış gəzintisi indi PineDrama-nı da əhatə edir, onun lentlərindən və vərəqlərindən Hushfeed-in hər bölməsinə qədər.
-* **TikTok:** PineDrama-nın öz yamaq auditi var və buraxılış dəstəklədiyi hər tətbiq üçün aktual audit və uğurlu gəzinti tələb edir.
 * **TikTok:** Şəffaf alt panelin yerini dəyişdirdiyi hər LIVE önizləmə və dram yazısı dəstəklənən TikTok quruluşu ilə yoxlanılır.
 * **TikTok:** Avtomatik keçid auditi hər video üçün etiketlərə deyil, oynatıcının özünə əməl edir.
 * **TikTok:** Buraxılış dəstəklədiyi hər tətbiq üçün uyğun sübut tələb edir.

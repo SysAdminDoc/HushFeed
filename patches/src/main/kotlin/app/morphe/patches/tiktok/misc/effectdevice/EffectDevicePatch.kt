@@ -122,7 +122,6 @@ val effectDevicePatch = bytecodePatch(
     category("Interface")
     dependsOn(settingsPatch, sharedExtensionPatch)
 
-    // PineDrama has the first and third of these but not the effect manager creator.
     compatibleWith(*AppCompatibilities.tiktok())
 
     execute {

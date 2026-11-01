@@ -18,7 +18,6 @@ import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
-import app.morphe.patches.tiktok.misc.theme.buildName
 import app.morphe.patches.tiktok.shared.requireLocals
 import app.morphe.util.getReference
 import app.morphe.util.numberOfParameterRegisters
@@ -94,7 +93,7 @@ val videoFitPatch = bytecodePatch(
     category("Playback")
     dependsOn(settingsPatch, sharedExtensionPatch)
 
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
         // Every check comes before the first write. The patcher does not take a failed patch's
@@ -209,7 +208,7 @@ val videoFitPatch = bytecodePatch(
             )
         }
 
-        hookPhotoSlides(packageMetadata.buildName)
+        hookPhotoSlides(packageMetadata.versionName)
 
         settingsStatus.addInstruction(
             0,

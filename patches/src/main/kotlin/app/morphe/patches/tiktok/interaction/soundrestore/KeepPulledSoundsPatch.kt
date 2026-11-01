@@ -117,7 +117,7 @@ val keepPulledSoundsPatch = bytecodePatch(
 ) {
     category("Playback")
     dependsOn(settingsPatch, sharedExtensionPatch)
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
         val decision = PlayerMuteDecisionFingerprint.method

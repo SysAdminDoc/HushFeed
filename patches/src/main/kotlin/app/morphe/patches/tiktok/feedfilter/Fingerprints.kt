@@ -1225,10 +1225,10 @@ internal const val SERIES_FEED_RESP_CLASS_DESCRIPTOR =
     "Lcom/ss/android/ugc/aweme/minidrama/common/component/topfeed/common/arch/SeriesFeedResp;"
 
 /**
- * The drama tab's feed answer (#294). PineDrama fetches that feed with requests of its own and
- * converts the answer straight into this object, so the list never reaches FeedItemList.getItems.
+ * The drama tab's feed answer (#294). That feed comes from requests of its own, which convert the
+ * answer straight into this object, so the list never reaches FeedItemList.getItems.
  * Every converter, the preload, the end-of-drama picks and the copy helper build it through this
- * one constructor. Real-named class and field, the same shape on TikTok 47.5.3 and PineDrama.
+ * one constructor. Real-named class and field.
  */
 internal object SeriesFeedRespConstructorFingerprint : Fingerprint(
     definingClass = SERIES_FEED_RESP_CLASS_DESCRIPTOR,

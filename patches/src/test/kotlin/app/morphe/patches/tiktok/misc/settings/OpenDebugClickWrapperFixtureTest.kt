@@ -19,8 +19,8 @@ private const val TIKTOK_LAMBDA_PREFIX = "Lkotlin/jvm/internal/AwS"
 
 /**
  * The Settings patch finds the OpenDebug row's click wrapper and its Function2 lambda by their
- * constructors' parameters, not by TikTok's obfuscated class name, so it also works on PineDrama
- * (#156). On TikTok it has to land on the same classes the name check used to pick.
+ * constructors' parameters, not by TikTok's obfuscated class name. It has to land on the same
+ * classes the name check used to pick.
  */
 class OpenDebugClickWrapperFixtureTest {
     @Test

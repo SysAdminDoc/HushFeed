@@ -1322,7 +1322,6 @@ Value to return	Qaytarılacaq dəyər
 Verified accounts	Təsdiqlənmiş hesablar
 Version %1$s	Versiya %1$s
 Version %1$s for TikTok %2$s	Versiya %1$s, TikTok %2$s üçün
-Version %1$s for PineDrama %2$s	Versiya %1$s, PineDrama %2$s üçün
 Video	Video
 Video (MP4)	Video (MP4)
 Video destination	Video təyinatı
@@ -1760,7 +1759,7 @@ Play sounds TikTok pulled	TikTok-un çıxardığı səsləri oynat
 Play the audio on videos TikTok silenced because their sound was pulled for copyright or in your region. TikTok may still say the sound isn't available.	Səsi müəllif hüququna görə və ya bölgənizdə çıxarıldığı üçün TikTok-un səssizləşdirdiyi videolarda səsi oynadır. TikTok yenə də səsin əlçatan olmadığını göstərə bilər.
 Match region fields in requests	Sorğulardakı region sahələrini uyğunlaşdır
 Keep the For You feed on your real SIM	Sənin üçün lentini əsl SIM-də saxla
-Sticker search, PineDrama and the rest of TikTok still see the SIM above, while For You asks for videos with your phone's own SIM country and carrier. Your IP address and account history still count.	Stiker axtarışı, PineDrama və TikTok-un qalanı yuxarıdakı SIM-i görməyə davam edir, Sənin üçün isə telefonunuzun öz SIM ölkəsi və operatoru ilə video istəyir. IP ünvanınız və hesab tarixçəniz yenə də nəzərə alınır.
+Sticker search and the rest of TikTok still see the SIM above, while For You asks for videos with your phone's own SIM country and carrier. Your IP address and account history still count.	Stiker axtarışı və TikTok-un qalanı yuxarıdakı SIM-i görməyə davam edir, Sənin üçün isə telefonunuzun öz SIM ölkəsi və operatoru ilə video istəyir. IP ünvanınız və hesab tarixçəniz yenə də nəzərə alınır.
 Show exact LIVE viewer counts	Dəqiq LIVE izləyici sayını göstər
 A LIVE room shows how many people are watching as a rounded number like 1.2K. This shows the exact count instead.	LIVE otağı kimin baxdığını 1.2K kimi yuvarlaqlaşdırılmış rəqəmlə göstərir. Bu, əvəzinə dəqiq sayı göstərir.
 Offer LIVE quality in more rooms	Daha çox LIVE otağında keyfiyyət seçimi təklif et
@@ -2303,8 +2302,6 @@ Tap Stop or leave the room to save it.	Saxlamaq üçün Dayandır düyməsinə t
 Screen recording wasn't allowed	Ekran yazısına icazə verilmədi
 Recording this LIVE's screen from now	Bu LIVE-ın ekranı indi yazılır
 Recording this LIVE's screen from now, without sound	Bu LIVE-ın ekranı indi səssiz yazılır
-Allow photo comments	Foto şərhlərə icazə ver
-Show the gallery tab in the comment box, so you can add a photo to a comment like on TikTok. PineDrama turns it off for everyone. TikTok's server still decides whether your account can post one.	Şərh qutusunda qalereya bölməsini göstərir ki, TikTok-da olduğu kimi şərhə foto əlavə edə biləsiniz. PineDrama onu hamı üçün söndürür. Hesabınızın foto paylaşa bilib-bilməyəcəyinə yenə də TikTok-un serveri qərar verir.
 This screen recording has no sound	Bu ekran yazısında səs yoxdur
 Export recording files	Qeyd fayllarını ixrac et
 Delete recording files	Qeyd fayllarını sil
@@ -2375,7 +2372,7 @@ Removed: %1$d. The other %2$d are still there. Open your Inbox, then try again.	
 Removing the kept messages	Saxlanan mesajlar silinir
 Hide the Back button there too	Oradakı Geri düyməsini də gizlədin
 Hide the Back button beside that search bar as well. Your phone's back gesture or button still takes you back.	O axtarış çubuğunun yanındakı Geri düyməsini də gizlədin. Telefonunuzun geri jesti və ya düyməsi sizi yenə geri aparır.
-# context: PineDrama's comment sticker panel. Create is a button on its Saved page that turns a photo into a sticker. These are its spoken label and its toasts. The panel's tab names come from TikTok's server, not the app, so the last toast describes the saved stickers instead of quoting the tab
+# context: the comment sticker panel. Create is a button on its Saved page that turns a photo into a sticker. These are its spoken label and its toasts. The panel's tab names come from TikTok's server, not the app, so the last toast describes the saved stickers instead of quoting the tab
 Make a sticker from a photo	Fotodan stiker yaradın
 Making your sticker	Stikeriniz hazırlanır
 Couldn't open your photos. Try again.	Fotoları açmaq alınmadı. Yenidən cəhd edin.
@@ -2383,7 +2380,7 @@ Couldn't make the sticker. Try again.	Stikeri yaratmaq alınmadı. Yenidən cəh
 Couldn't read that photo. Try another one.	Bu fotonu oxumaq alınmadı. Başqa birini seçin.
 This account can't make stickers	Bu hesab stiker yarada bilməz
 Sticker added to Saved	Stiker saxlanılanlara əlavə edildi
-# context: PineDrama's comment sticker panel. Recently used is a heading Hushfeed adds above Saved, over the last stickers you sent. TikTok's own label for it isn't in the APK, so this is the usual phone wording
+# context: the comment sticker panel. Recently used is a heading Hushfeed adds above Saved, over the last stickers you sent. TikTok's own label for it isn't in the APK, so this is the usual phone wording
 Recently used	Son istifadə olunanlar
 # context: A video's share sheet. Make sticker is a button Hushfeed adds after Save cover, and it turns the video's cover into one of your saved comment stickers. Keep it about as short as Save cover, since share sheet labels get two short lines under the icon
 Make sticker	Stiker yarat

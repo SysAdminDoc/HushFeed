@@ -135,7 +135,7 @@ val profileBackgroundPatch = bytecodePatch(
 ) {
     category("Interaction")
     dependsOn(settingsPatch, sharedExtensionPatch)
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
         val holders = PROFILE_BACKGROUND_KEYS

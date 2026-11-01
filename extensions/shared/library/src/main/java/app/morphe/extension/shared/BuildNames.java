@@ -5,7 +5,6 @@
 package app.morphe.extension.shared;
 
 import android.content.Context;
-import app.morphe.extension.shared.diagnostics.BuildDetails;
 
 /**
  * Resource names written for one build of the host app.
@@ -16,38 +15,16 @@ import app.morphe.extension.shared.diagnostics.BuildDetails;
  * name and resolves on 47.4.3 alone, so a build the bundle doesn't declare never finds the wrong
  * view under it, and a list can carry each supported build's name for one view. A name with no
  * build in front is a real name, the same on every build.
- *
- * <p>The builds are TikTok's. PineDrama reports TikTok's version names, but its resource table is
- * its own and hands the same short names to unrelated views, so a build's name never resolves
- * there (#156). A name for PineDrama's table puts {@value #PINEDRAMA_BUILD} before the build,
- * {@code "pinedrama-47.5.3:d2v"}, and resolves on that PineDrama build alone.
- *
- * <p>A copy of TikTok that Morphe's Clone app renamed for Run beside the store app runs under
- * another package with TikTok's resource table, so the build asset's target package, which the
- * patcher read before any patch changed the manifest, says whose names resolve (#209).
  */
 public final class BuildNames {
-    /** The app whose builds the names are written for. */
-    static final String NAMED_APP = "com.zhiliaoapp.musically";
-    static final String PINEDRAMA_APP = "com.ss.android.ttmd.video";
-    /** Written before a PineDrama build, so its names never meet TikTok's. */
-    static final String PINEDRAMA_BUILD = "pinedrama-";
-
     private static volatile String runningBuild;
-    private static volatile String runningApp;
 
-    /**
-     * The entry name to look up in the running app, or null when the name is another build's or
-     * another app's.
-     */
+    /** The entry name to look up on the running build, or null when the name is another build's. */
     public static String entryName(String name) {
         int colon = name.indexOf(':');
         if (colon < 0) return name;
         String build = runningBuild();
-        if (build == null) return null;
-        String app = runningApp;
-        if (NAMED_APP.equals(app)) return entryName(name, build);
-        return PINEDRAMA_APP.equals(app) ? entryName(name, PINEDRAMA_BUILD + build) : null;
+        return build == null ? null : entryName(name, build);
     }
 
     /** The entry name to look up on [build], or null when the name is another build's. */
@@ -66,45 +43,17 @@ public final class BuildNames {
         if (build != null) return build;
         Context context = Utils.context;
         if (context == null) return null;
-        String app = context.getPackageName();
         try {
-            build = context.getPackageManager().getPackageInfo(app, 0).versionName;
+            build = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
         } catch (Throwable error) {
             return null;
         }
-        if (build != null) {
-            // The app first: a reader that sees the build sees its app.
-            runningApp = namedApp(app, BuildDetails.targetPackage(BuildDetails.readMetadata(context)));
-            runningBuild = build;
-        }
+        if (build != null) runningBuild = build;
         return build;
     }
 
-    /**
-     * The app the running package was patched from (see {@link #namedApp}), or null until the
-     * extension has a context.
-     */
-    public static String runningApp() {
-        return runningBuild() == null ? null : runningApp;
-    }
-
-    /**
-     * The app whose names the running package resolves: the package the bundle patched when the
-     * build asset names one, since a renamed copy keeps that app's resource table (#209), and the
-     * running package when there's no record to go on.
-     */
-    static String namedApp(String runningPackage, String targetPackage) {
-        return targetPackage != null ? targetPackage : runningPackage;
-    }
-
-    /** Stands in for TikTok's version name in a test; null reads it again. */
+    /** Stands in for the host app's version name in a test; null reads it again. */
     public static void setRunningBuildForTests(String build) {
-        setRunningAppForTests(NAMED_APP, build);
-    }
-
-    /** Stands in for the host app and its version name in a test; a null build reads both again. */
-    public static void setRunningAppForTests(String app, String build) {
-        runningApp = app;
         runningBuild = build;
     }
 

@@ -68,12 +68,6 @@ public final class MorpheTikTokAboutPreference extends Preference
 
     /** The compact version sentence shared by About and the master-page status card. */
     static CharSequence versionSummary(Context context, String bundleVersion, String appVersion) {
-        return versionSummary(context, bundleVersion, appVersion, L10n.inPineDrama());
-    }
-
-    /** PineDrama reports TikTok's version names, so its line names PineDrama with the same build (#156). */
-    static CharSequence versionSummary(Context context, String bundleVersion, String appVersion,
-            boolean pineDrama) {
         if (bundleVersion == null || bundleVersion.isEmpty()) return "";
         // "Unknown" is the literal English word Utils hands back when the package manager
         // refuses, and splicing it into an otherwise translated sentence reads worse than
@@ -81,8 +75,6 @@ public final class MorpheTikTokAboutPreference extends Preference
         boolean readable = appVersion != null && !appVersion.isEmpty()
                 && !"Unknown".equals(appVersion);
         if (!readable) return L10n.f(context, "Version %1$s", bundleVersion);
-        return pineDrama
-                ? L10n.f(context, "Version %1$s for PineDrama %2$s", bundleVersion, appVersion)
-                : L10n.f(context, "Version %1$s for TikTok %2$s", bundleVersion, appVersion);
+        return L10n.f(context, "Version %1$s for TikTok %2$s", bundleVersion, appVersion);
     }
 }

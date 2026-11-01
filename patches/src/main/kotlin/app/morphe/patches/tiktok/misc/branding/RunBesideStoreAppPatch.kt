@@ -13,7 +13,6 @@ import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.registerForBuildDetails
-import app.morphe.patches.tiktok.misc.theme.buildName
 import app.morphe.patches.tiktok.misc.theme.declaredVersions
 import app.morphe.util.addInstructions
 import app.morphe.util.addInstructionsAtControlFlowLabel
@@ -200,7 +199,6 @@ val runBesideStoreAppPatch = bytecodePatch(
 ) {
     category("Settings")
     dependsOn(sharedExtensionPatch)
-    // Not PineDrama: the copy registers as the store TikTok package, which would sign PineDrama in as TikTok.
     compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
@@ -225,10 +223,10 @@ val runBesideStoreAppPatch = bytecodePatch(
         // The wallpaper data and the own-package checks matter far less than signing in. On a
         // declared build RenamedCopyAnchorsTest holds them, so a miss there is a fault and fails
         // the patch. On any other build a miss leaves just that part out, with a note.
-        val declaredBuild = packageMetadata.buildName in declaredVersions()
+        val declaredBuild = packageMetadata.versionName in declaredVersions()
         fun leftOut(problem: String): Nothing? {
             if (declaredBuild) throw PatchException("Run beside the store app: $problem")
-            println("[Run beside the store app] Left out on ${packageMetadata.buildName}: $problem")
+            println("[Run beside the store app] Left out on ${packageMetadata.versionName}: $problem")
             return null
         }
         // The wallpaper caller's authority, loaded once into the register every URI of the

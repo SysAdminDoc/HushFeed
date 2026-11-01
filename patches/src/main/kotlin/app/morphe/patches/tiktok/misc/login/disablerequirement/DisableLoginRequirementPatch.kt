@@ -20,7 +20,7 @@ val disableLoginRequirementPatch = bytecodePatch(
     category("Settings")
     // Only so Build details can list it: the patch itself runs no extension code.
     dependsOn(sharedExtensionPatch)
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
         listOf(

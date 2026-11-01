@@ -362,7 +362,7 @@ public final class RegionSpoof {
     /*
      * For You requests with Keep the For You feed on your real SIM on. TikTok reads the SIM once
      * as it starts, through getters the SIM patch answers with the preset, and keeps the answers
-     * for the life of the process, so sticker search, PineDrama's episode panel and the feed's
+     * for the life of the process, so sticker search and the feed's
      * region all saw the same preset. These are the fields that carry it in a request: the SIM
      * country in the region fields, the operator code and the carrier name. Each one still
      * holding the preset gets the phone's own value, read here, where the SIM patch doesn't reach.

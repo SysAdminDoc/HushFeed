@@ -1300,7 +1300,6 @@ Value to return,Nilai yang dikembalikan
 Verified accounts,Akun terverifikasi
 Version %1$s,Versi %1$s
 Version %1$s for TikTok %2$s,Versi %1$s untuk TikTok %2$s
-Version %1$s for PineDrama %2$s,Versi %1$s untuk PineDrama %2$s
 Video,Video
 Video (MP4),Video (MP4)
 Video destination,Lokasi simpan video
@@ -1752,7 +1751,7 @@ Play sounds TikTok pulled,Putar suara yang ditarik TikTok
 Play the audio on videos TikTok silenced because their sound was pulled for copyright or in your region. TikTok may still say the sound isn't available.,Putar audio pada video yang dibisukan TikTok karena suaranya ditarik akibat hak cipta atau di wilayah Anda. TikTok mungkin tetap menyebut suaranya tidak tersedia.
 Match region fields in requests,Samakan kolom wilayah dalam permintaan
 Keep the For You feed on your real SIM,Biarkan Untuk Kamu memakai SIM asli
-"Sticker search, PineDrama and the rest of TikTok still see the SIM above, while For You asks for videos with your phone's own SIM country and carrier. Your IP address and account history still count.","Pencarian stiker, PineDrama, dan bagian TikTok lainnya tetap melihat SIM di atas, sedangkan Untuk Kamu meminta video dengan negara dan operator SIM ponselmu sendiri. Alamat IP dan riwayat akunmu tetap berpengaruh."
+"Sticker search and the rest of TikTok still see the SIM above, while For You asks for videos with your phone's own SIM country and carrier. Your IP address and account history still count.","Pencarian stiker dan bagian TikTok lainnya tetap melihat SIM di atas, sedangkan Untuk Kamu meminta video dengan negara dan operator SIM ponselmu sendiri. Alamat IP dan riwayat akunmu tetap berpengaruh."
 Show exact LIVE viewer counts,Tampilkan jumlah penonton LIVE yang tepat
 A LIVE room shows how many people are watching as a rounded number like 1.2K. This shows the exact count instead.,"Ruang LIVE menampilkan jumlah penonton sebagai angka dibulatkan seperti 1,2K. Ini menampilkan jumlah yang tepat."
 Offer LIVE quality in more rooms,Tawarkan kualitas LIVE di lebih banyak ruang
@@ -2281,8 +2280,6 @@ Tap Stop or leave the room to save it.,Ketuk Berhenti atau keluar dari ruangan u
 Screen recording wasn't allowed,Perekaman layar tidak diizinkan
 Recording this LIVE's screen from now,Merekam layar LIVE ini mulai sekarang
 "Recording this LIVE's screen from now, without sound","Merekam layar LIVE ini mulai sekarang, tanpa suara"
-Allow photo comments,Izinkan komentar foto
-"Show the gallery tab in the comment box, so you can add a photo to a comment like on TikTok. PineDrama turns it off for everyone. TikTok's server still decides whether your account can post one.",Tampilkan tab galeri di kotak komentar agar kamu bisa menambahkan foto ke komentar seperti di TikTok. PineDrama mematikannya untuk semua orang. Server TikTok tetap menentukan apakah akunmu bisa mempostingnya.
 This screen recording has no sound,Rekaman layar ini tidak memiliki suara
 Export recording files,Ekspor berkas rekaman
 Delete recording files,Hapus berkas rekaman

@@ -45,7 +45,6 @@ class PushDeliveryDiagnosticsTest {
 
     @Test fun onlyTheExactGlobalProfileUsesNativeAnchors() {
         assertTrue(supportsNativePushProfile("com.zhiliaoapp.musically", "47.5.3"))
-        assertFalse(supportsNativePushProfile("com.ss.android.ugc.pine", "47.5.3"))
         assertFalse(supportsNativePushProfile("com.ss.android.ugc.trill", "47.5.3"))
         assertFalse(supportsNativePushProfile("com.zhiliaoapp.musically", "47.4.3"))
         assertFalse(supportsNativePushProfile(null, "47.5.3"))

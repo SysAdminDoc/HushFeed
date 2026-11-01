@@ -110,15 +110,6 @@ public class BuildDetailsTest {
         assertUnknown(record.replace("version_code_override=2147483647", "version_code_override=2024705030"));
     }
 
-    /** The target package stands on its own for a renamed copy's name lookups (#209): the record's, or nothing. */
-    @Test public void theTargetPackageIsTheRecordsOrNothing() throws Exception {
-        String record = metadata();
-        assertEquals("com.zhiliaoapp.musically", BuildDetails.targetPackage(record));
-        assertNull(BuildDetails.targetPackage(record.replace("target_package=com.zhiliaoapp.musically", "target_package=unknown")));
-        assertNull("an invalid record names no target", BuildDetails.targetPackage(record.replace("amoled=applied", "amoled=not_selected")));
-        assertNull("no record, no target", BuildDetails.targetPackage(""));
-    }
-
     @Test public void unverifiedSelectionsAndUntickedChoicesRemainDifferent() throws Exception {
         String record = metadata().replace("amoled=applied", "amoled=unverified")
                 .replace("amoled_color=#121212", "amoled_color=unknown")
@@ -166,9 +157,7 @@ public class BuildDetailsTest {
         // A build the bundle no longer declares is no target of this one, for either app.
         assertUnknown(record.replace("47.5.3", "47.4.3").replace("2024705030", "2024704030"));
         assertUnknown(record.replace("47.5.3", "47.1.4").replace("2024705030", "2024701040"));
-        assertUnknown(record.replace("com.zhiliaoapp.musically", "com.ss.android.ttmd.video")
-                .replace("47.5.3", "47.4.3").replace("2024705030", "2024704030"));
-        // PineDrama (#156) shares TikTok's 47.5.3 version and code under its own package; another package is not declared.
+        // Another package with TikTok's version and code is not declared.
         assertUnknown(record.replace("com.zhiliaoapp.musically", "com.example.other"));
     }
 

@@ -13,7 +13,7 @@
 * **TikTok:** La barra inferior del feed principal puede ser una píldora de cristal flotante, con una lente que se desliza entre las pestañas y ajustes nuevos de desenfoque, opacidad, altura y esquinas (#259).
 * **TikTok:** Los parches con ajustes tienen opciones de Morphe para sus valores iniciales, así que una compilación puede venir con tus interruptores ya activados. Gracias a @XEGARE (#256).
 * **TikTok:** Un interruptor nuevo oculta la fila de círculos de LIVE y de historias en la parte de arriba de Siguiendo, sin dejar una franja vacía (#262).
-* **TikTok:** Un interruptor nuevo detiene la hoja Compartir con que TikTok abre unos segundos después de guardar un video. PineDrama también lo recibe.
+* **TikTok:** Un interruptor nuevo detiene la hoja Compartir con que TikTok abre unos segundos después de guardar un video.
 * **TikTok:** Al guardar las fotos originales de una publicación de fotos, también se guardan en un solo archivo su descripción, creador, enlace y fecha de publicación.
 * **TikTok:** La búsqueda de ajustes conoce nombres de uso diario como autoplay, PiP y AI, y encuentra una fila de opciones por cualquiera de sus opciones.
 * **TikTok:** Bloquear el feed en horas fijas bloquea el feed por sí solo durante las horas que elijas, y el panel de bloqueo dice cuándo se abre de nuevo.
@@ -29,7 +29,7 @@
 * **TikTok:** Formato del sonido tiene la opción MP3, así los sonidos guardados se reproducen en cualquier sitio, en todas las versiones de Android (#273).
 * **TikTok:** Un nuevo interruptor también oculta la flecha Atrás junto a la barra de búsqueda oculta en los videos abiertos (#251).
 * **TikTok:** Con el botón Bloquear al autor activado, los LIVE de Para ti también tienen el botón de bloquear (#138).
-* **TikTok:** El nuevo parche Crear stickers para TikTok y PineDrama convierte una foto, o la imagen de un video desde el menú de compartir, en un sticker guardado (#156, #88).
+* **TikTok:** El nuevo parche Crear stickers convierte una foto, o la imagen de un video desde el menú de compartir, en un sticker guardado (#156, #88).
 * **TikTok:** El nuevo parche Conservar stickers recientes mantiene llena la fila Usados recientemente después de reiniciar o cambiar de cuenta (#156).
 * **TikTok:** Ocultar las encuestas también oculta los botones No me interesa y Me interesa que TikTok a veces pone sobre un video (#293).
 * **TikTok:** Icono personalizado del lanzador tiene un estilo Material You que sigue tu fondo de pantalla, y una nueva opción pone cualquier color, como #1E88E5, detrás del icono (#280).
@@ -39,8 +39,6 @@
 * **TikTok:** El Laboratorio de interruptores tiene ahora un botón de reinicio, y TikTok vuelve a abrirse en el Laboratorio después.
 * **TikTok:** Hushfeed se construye ahora sobre Morphe patcher 2.1.0, así que necesita Morphe Manager 2.3.0 o posterior, o morphe-desktop 1.20.0 en una computadora.
 * **TikTok:** El paquete de parches lleva la firma de paquetes de Morphe, así Manager puede comprobar que una descarga posterior viene de verdad de Hushfeed.
-* **TikTok:** En PineDrama, los interruptores de la Bandeja de entrada ya funcionan, incluido Ocultar conversaciones (#156).
-* **TikTok:** En PineDrama, la línea de versión en los ajustes nombra PineDrama y su compilación en vez de TikTok (#156).
 * **TikTok:** Un resultado de la búsqueda de ajustes que está muy abajo en una página ahora se abre justo en su fila.
 * **TikTok:** Con la Barra inferior transparente activada, la línea Desliza hacia arriba para omitir de las tarjetas de cuentas sugeridas vuelve a quedar sobre las pestañas (#261).
 * **TikTok:** La píldora flotante de pestañas es un poco más alta, así que el icono de Inicio y su nombre quedan dentro del resaltado, y la línea de progreso ya no va encima (#259).
@@ -87,20 +85,16 @@
 * **TikTok:** Guardar una historia en Automático toma la copia más nítida en lugar de una de 720p más pequeña. Gracias a @jutochoppa (#287, #155).
 * **TikTok:** Grabar la pantalla de un LIVE ya no graba el botón Grabar, y la notificación tiene un botón Detener (#265).
 * **TikTok:** Iniciar sesión sin llave de acceso explica qué hacer cuando la verificación en dos pasos de TikTok solo pide una llave de acceso (#102).
-* **TikTok:** Al reanudar un episodio de PineDrama, sigue desde donde lo pausaste (#156).
 * **TikTok:** Quitar las herramientas de creación deja en paz el paquete dividido de APKMirror, así los efectos de cara y Beauty vuelven a encontrar tu cara (#285).
 * **TikTok:** Cuando TikTok rechaza un me gusta, Hushfeed muestra el motivo la primera vez en cada sesión (#269).
 * **TikTok:** Los videos que te gustaron o guardaste se quedan en tus cuadrículas de Me gusta y Favoritos, aunque lleven marca de anuncio (#269).
 * **TikTok:** El mensaje en chino para un seguimiento rechazado usa ahora la palabra correcta.
 * **TikTok:** La píldora flotante de pestañas también desenfoca las vistas previas de LIVE que hay detrás (#259).
-* **TikTok:** PineDrama recibe Filtro del feed, así Quitar los anuncios del feed limpia los anuncios de su feed Para ti y de la pestaña de dramas (#294).
 * **TikTok:** Unos 140 mensajes emergentes son más cortos ahora y caben en las dos líneas que les da Android 12 y posterior.
 * **TikTok:** Los mensajes emergentes del Laboratorio de interruptores también caben en dos líneas, y una importación sin nada nuevo igualmente muestra sus resultados.
 * **TikTok:** Los ajustes en chino simplificado se leen de forma más pareja y usan la misma palabra para lo mismo en todas partes.
 * **TikTok:** La búsqueda de comentarios ya no devuelve los comentarios traducidos que ocultó el filtro de palabras clave.
 * **TikTok:** Elegir una carpeta de descargas que no se puede usar vuelve a abrir el cuadro de carpeta con el motivo debajo.
-* **TikTok:** El recorrido de versión ahora cubre también PineDrama, desde sus feeds y hojas hasta cada sección de Hushfeed.
-* **TikTok:** PineDrama tiene su propia auditoría de parches, y una versión necesita una auditoría al día y un recorrido sin fallos para cada app que admite.
 * **TikTok:** Cada vista previa de LIVE y cada etiqueta de drama que mueve la Barra inferior transparente se comprueba con la compilación de TikTok compatible.
 * **TikTok:** La auditoría del avance automático sigue al propio reproductor de video en vez de etiquetas por video.
 * **TikTok:** Una versión necesita pruebas que coincidan para cada app que admite.

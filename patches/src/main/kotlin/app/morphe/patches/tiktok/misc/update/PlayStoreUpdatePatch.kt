@@ -25,7 +25,7 @@ val hidePlayStoreUpdatePatch = resourcePatch(
     default = false,
 ) {
     category("Performance")
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
     dependsOn(buildChoicePatch(BuildChoice.VERSION_CODE))
 
     execute {
@@ -36,7 +36,7 @@ val hidePlayStoreUpdatePatch = resourcePatch(
                 .map { attributes.item(it) }
                 .singleOrNull { it.nodeName.substringAfterLast(':') == "versionCode" }
                 ?: throw PatchException("TikTok manifest has no version code")
-            if (AppCompatibilities.DECLARED_VERSION_CODES.none { it.toString() == versionCode.nodeValue }) {
+            if (AppCompatibilities.TIKTOK_VERSION_CODES.none { it.toString() == versionCode.nodeValue }) {
                 throw PatchException("Unexpected TikTok version code ${versionCode.nodeValue}; refusing to change it")
             }
             versionCode.nodeValue = MAX_VERSION_CODE.toString()

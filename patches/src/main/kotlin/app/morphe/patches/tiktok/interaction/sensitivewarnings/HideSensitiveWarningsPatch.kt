@@ -16,7 +16,6 @@ import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.interaction.blockauthor.registerOfParameter
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
-import app.morphe.patches.tiktok.misc.theme.buildName
 import app.morphe.patches.tiktok.misc.theme.declaredVersions
 import app.morphe.patches.tiktok.shared.guardAtEntry
 
@@ -54,7 +53,7 @@ val hideSensitiveWarningsPatch = bytecodePatch(
     category("Feed")
     dependsOn(settingsPatch, sharedExtensionPatch)
 
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
         SettingsStatusLoadFingerprint.method.addInstruction(
@@ -73,7 +72,7 @@ val hideSensitiveWarningsPatch = bytecodePatch(
         // The unverified notices switch matters less than the warnings themselves: on a declared
         // build AwemeRiskModelAnchorsTest holds the getter, elsewhere a miss leaves that switch out.
         val riskModel = AwemeRiskModelFingerprint.methodOrNull
-        if (riskModel == null && packageMetadata.buildName in declaredVersions()) {
+        if (riskModel == null && packageMetadata.versionName in declaredVersions()) {
             throw PatchException("Skip content warnings: Aweme's getAwemeRiskModel() wasn't found.")
         }
         if (riskModel != null) {
@@ -82,7 +81,7 @@ val hideSensitiveWarningsPatch = bytecodePatch(
                 "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableUnverifiedNotices()V",
             )
         } else {
-            println("[Skip content warnings] Left out the unverified notices switch on ${packageMetadata.buildName}: no getAwemeRiskModel().")
+            println("[Skip content warnings] Left out the unverified notices switch on ${packageMetadata.versionName}: no getAwemeRiskModel().")
         }
 
         // Check your sources is a model of its own (KtfInfo), so it gets its own switch. The banner
@@ -90,7 +89,7 @@ val hideSensitiveWarningsPatch = bytecodePatch(
         // that hides half of what it says. KnowTheFactsAnchorsTest holds both on declared builds.
         val ktfGate = KnowTheFactsBannerGateFingerprint.methodOrNull
         val ktfPrompt = KnowTheFactsSharePromptFingerprint.methodOrNull
-        if ((ktfGate == null || ktfPrompt == null) && packageMetadata.buildName in declaredVersions()) {
+        if ((ktfGate == null || ktfPrompt == null) && packageMetadata.versionName in declaredVersions()) {
             throw PatchException(
                 "Skip content warnings: the Know the facts " +
                     (if (ktfGate == null) "banner gate" else "share prompt") + " wasn't found.",
@@ -104,7 +103,7 @@ val hideSensitiveWarningsPatch = bytecodePatch(
             ktfGate.hideKnowTheFacts("Skip content warnings")
             ktfPrompt.hideKnowTheFacts("Skip content warnings")
         } else {
-            println("[Skip content warnings] Left out the Check your sources switch on ${packageMetadata.buildName}: no Know the facts gate or share prompt.")
+            println("[Skip content warnings] Left out the Check your sources switch on ${packageMetadata.versionName}: no Know the facts gate or share prompt.")
         }
 
         // /range: a parameter register on a method this size sits well above v15.
@@ -129,11 +128,11 @@ val hideSensitiveWarningsPatch = bytecodePatch(
         // holds the card on declared builds; elsewhere a miss only leaves chats as they are.
         if (riskModel != null) {
             val chatCard = ChatCardCautionFingerprint.methodOrNull
-            if (chatCard == null && packageMetadata.buildName in declaredVersions()) {
+            if (chatCard == null && packageMetadata.versionName in declaredVersions()) {
                 throw PatchException("Skip content warnings: the chat card's caution label wasn't found.")
             }
             chatCard?.hideChatCardLabels("Skip content warnings")
-                ?: println("[Skip content warnings] Left chat cards' caution labels on ${packageMetadata.buildName}: no card reads them.")
+                ?: println("[Skip content warnings] Left chat cards' caution labels on ${packageMetadata.versionName}: no card reads them.")
         }
     }
 }

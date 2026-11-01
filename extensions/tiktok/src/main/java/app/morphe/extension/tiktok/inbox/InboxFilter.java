@@ -64,28 +64,22 @@ import java.util.WeakHashMap;
  *   kpy        header, search
  *   l8a        header, activity status
  * </pre>
- *
- * PineDrama 47.5.3 names the same views from its own table (#156), read off the S22's live Inbox
- * on 2026-10-27 by their descriptions and places: hrp the Inbox tab, g7b the list, l1y a system
- * row with its title in at1, ltd a chat row with its title in pfk, and d2v, fti and g7d the
- * header's add people, search and activity status. Rows the test account doesn't show there
- * (message requests, stories, suggested accounts, "Say hi to") have no PineDrama name yet.
  */
 public final class InboxFilter {
-    private static final String[] LIST_IDS = {"47.5.3:l89", "pinedrama-47.5.3:g7b"};
-    private static final String[] SYSTEM_ROW_IDS = {"47.5.3:v0g", "pinedrama-47.5.3:l1y"};
-    private static final String[] CHAT_ROW_IDS = {"47.5.3:w3x", "pinedrama-47.5.3:ltd"};
+    private static final String[] LIST_IDS = {"47.5.3:l89"};
+    private static final String[] SYSTEM_ROW_IDS = {"47.5.3:v0g"};
+    private static final String[] CHAT_ROW_IDS = {"47.5.3:w3x"};
     private static final String[] MESSAGE_REQUESTS_IDS = {"tv_request_unread_count"};
     private static final String[] SAY_HI_ROW_IDS = {"47.5.3:oo6"};
-    private static final String[] SYSTEM_ROW_TITLE_IDS = {"47.5.3:br_", "pinedrama-47.5.3:at1"};
-    private static final String[] USER_ROW_TITLE_IDS = {"user_name", "pinedrama-47.5.3:pfk"};
+    private static final String[] SYSTEM_ROW_TITLE_IDS = {"47.5.3:br_"};
+    private static final String[] USER_ROW_TITLE_IDS = {"user_name"};
     private static final String[] STORIES_TITLE_IDS = {"47.5.3:wtk"};
     private static final String[] SUGGESTED_HEADER_IDS = {"47.5.3:q5n"};
     private static final String[] SUGGESTED_TITLE_IDS = {"47.5.3:u4_"};
     private static final String[] SUGGESTED_REMOVE_IDS = {"47.5.3:fyu"};
-    private static final String[] HEADER_ADD_PEOPLE_IDS = {"47.5.3:fh0", "pinedrama-47.5.3:d2v"};
-    private static final String[] HEADER_SEARCH_IDS = {"47.5.3:kpy", "pinedrama-47.5.3:fti"};
-    private static final String[] HEADER_ACTIVITY_STATUS_IDS = {"47.5.3:l8a", "pinedrama-47.5.3:g7d"};
+    private static final String[] HEADER_ADD_PEOPLE_IDS = {"47.5.3:fh0"};
+    private static final String[] HEADER_SEARCH_IDS = {"47.5.3:kpy"};
+    private static final String[] HEADER_ACTIVITY_STATUS_IDS = {"47.5.3:l8a"};
 
     /** One dismissal at a time, so bulk clearing does not hammer TikTok's API. */
     private static final long DISMISS_INTERVAL_MS = 300L;

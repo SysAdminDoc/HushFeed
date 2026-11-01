@@ -65,7 +65,7 @@ internal object BuildDetails {
     }
 
     private fun base(context: PackageMetadata): Map<String, String> {
-        val target = AppCompatibilities.tiktokAndPineDrama().any { compatibility ->
+        val target = AppCompatibilities.tiktok().any { compatibility ->
             context.packageName == compatibility.packageName && compatibility.targets.any {
                 it.version == context.versionName && it.versionCodes.orEmpty().values.any { code -> code.toString() == context.versionCode }
             }

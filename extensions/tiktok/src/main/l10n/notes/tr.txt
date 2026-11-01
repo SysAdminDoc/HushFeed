@@ -13,7 +13,7 @@
 * **TikTok:** Ana akışın alt çubuğu, sekmelerin üzerinde kayan bir mercek ve bulanıklık, saydamlık, yükseklik ve köşeler için yeni ayarlarla yüzen cam bir hap olabilir (#259).
 * **TikTok:** Ayarları olan yamaların başlangıç değerleri için Morphe seçenekleri var, böylece bir derleme anahtarların daha önceden açık olarak gelebilir. Teşekkürler @XEGARE (#256).
 * **TikTok:** Yeni bir anahtar, Takip Edilenler'in en üstündeki LIVE ve hikâye dairelerinin satırını, geride boş bir şerit bırakmadan gizliyor (#262).
-* **TikTok:** Yeni bir anahtar, TikTok'un bir video kaydedildikten birkaç saniye sonra açtığı Paylaş sayfasını durduruyor. PineDrama'da da var.
+* **TikTok:** Yeni bir anahtar, TikTok'un bir video kaydedildikten birkaç saniye sonra açtığı Paylaş sayfasını durduruyor.
 * **TikTok:** Bir fotoğraf gönderisinin orijinal fotoğraflarını kaydetmek, açıklamasını, üreticisini, bağlantısını ve gönderi tarihini de tek dosyada kaydeder.
 * **TikTok:** Ayar araması autoplay, PiP ve AI gibi günlük adları tanıyor ve bir seçim satırını seçeneklerinden herhangi biriyle buluyor.
 * **TikTok:** Akışı belirli saatlerde kilitle, seçtiğin saatlerde akışı kendiliğinden kilitliyor ve kilit paneli ne zaman yeniden açılacağını söylüyor.
@@ -29,7 +29,7 @@
 * **TikTok:** Ses biçimi artık MP3 seçeneği de sunuyor, böylece kaydedilen sesler her yerde ve her Android sürümünde çalar (#273).
 * **TikTok:** Yeni bir anahtar, açılan videolarda gizlenen arama çubuğunun yanındaki Geri okunu da gizler (#251).
 * **TikTok:** Yazarı engelle düğmesi açıkken Sana Özel'deki LIVE'lar da engelleme düğmesi alır (#138).
-* **TikTok:** TikTok ve PineDrama için yeni Çıkartma oluştur yaması bir fotoğrafı ya da paylaşım sayfasından bir videonun görüntüsünü kayıtlı bir çıkartmaya çevirir (#156, #88).
+* **TikTok:** Yeni Çıkartma oluştur yaması bir fotoğrafı ya da paylaşım sayfasından bir videonun görüntüsünü kayıtlı bir çıkartmaya çevirir (#156, #88).
 * **TikTok:** Yeni Son çıkartmaları koru yaması, Son kullanılanlar satırını yeniden başlatma veya hesap değişikliğinden sonra dolu tutar (#156).
 * **TikTok:** Anketleri gizle, TikTok'un bazen videonun üstüne koyduğu İlgilenmiyorum ve İlgileniyorum düğmelerini de gizler (#293).
 * **TikTok:** Özel başlatıcı simgesi duvar kâğıdını izleyen bir Material You stili aldı, yeni bir seçenek de simgenin arkasına #1E88E5 gibi herhangi bir renk koyar (#280).
@@ -39,8 +39,6 @@
 * **TikTok:** Feature Gate Lab'de artık yeniden başlatma düğmesi var ve TikTok sonrasında yine Lab'de açılır.
 * **TikTok:** Hushfeed artık Morphe patcher 2.1.0 üzerine kurulu, bu yüzden Morphe Manager 2.3.0 veya daha yenisi, bilgisayarda da morphe-desktop 1.20.0 gerekiyor.
 * **TikTok:** Yama paketi Morphe'nin paket imzasını taşıyor, böylece Manager sonraki bir indirmenin gerçekten Hushfeed'den geldiğini kontrol edebilir.
-* **TikTok:** PineDrama'da Gelen Kutusu anahtarları artık çalışıyor, Sohbetleri gizle de dahil (#156).
-* **TikTok:** PineDrama'da ayarlardaki sürüm satırı artık TikTok yerine PineDrama'yı ve derlemesini gösteriyor (#156).
 * **TikTok:** Bir sayfanın çok aşağısındaki ayar arama sonucu artık doğrudan kendi satırında açılıyor.
 * **TikTok:** Şeffaf alt çubuk açıkken, önerilen hesap kartlarındaki Atlamak için yukarı kaydır satırı yine sekmelerin üstünde duruyor (#261).
 * **TikTok:** Yüzen sekme hapı biraz daha yüksek, böylece Ana sayfa simgesi ve adı vurgunun içinde kalıyor ve ilerleme çizgisi artık üstüne binmiyor (#259).
@@ -87,20 +85,16 @@
 * **TikTok:** Bir hikâyeyi Otomatik ile kaydetmek daha küçük 720p kopya yerine en net kopyayı alır. @jutochoppa'ya teşekkürler (#287, #155).
 * **TikTok:** Bir LIVE'ın ekranını kaydetmek artık Kaydet düğmesini görüntüye almıyor ve bildirimde bir Durdur düğmesi var (#265).
 * **TikTok:** Geçiş anahtarı olmadan giriş yap, TikTok'un 2 adımlı doğrulaması yalnızca geçiş anahtarı istediğinde ne yapacağını söyler (#102).
-* **TikTok:** Duraklatılan bir PineDrama bölümü, durdurduğun yerden devam eder (#156).
 * **TikTok:** Oluşturma araçlarını kaldır, APKMirror'ın bölünmüş paketine dokunmaz, böylece yüz efektleri ve Beauty yüzünü yeniden bulur (#285).
 * **TikTok:** TikTok bir beğeniyi reddettiğinde Hushfeed her oturumda ilk seferinde nedenini gösterir (#269).
 * **TikTok:** Beğendiğin ya da kaydettiğin videolar reklam işareti taşısa bile Beğenilenler ve Favoriler ızgaralarında kalır (#269).
 * **TikTok:** Reddedilen takip için Çince mesaj artık doğru kelimeyi kullanıyor.
 * **TikTok:** Yüzen sekme hapı arkasındaki LIVE önizlemelerini de bulanıklaştırır (#259).
-* **TikTok:** PineDrama artık Akış filtresi alıyor, böylece Akış reklamlarını kaldır onun Sana Özel akışındaki ve dizi sekmesindeki reklamları temizler (#294).
 * **TikTok:** Yaklaşık 140 açılır mesaj artık daha kısa ve Android 12 ve sonrasının verdiği iki satıra sığıyor.
 * **TikTok:** Feature Gate Lab'in açılır mesajları da iki satıra sığıyor ve yeni bir şey getirmeyen bir içe aktarma yine de sonuçlarını gösteriyor.
 * **TikTok:** Basitleştirilmiş Çince ayarlar daha tutarlı okunuyor ve aynı şey için her yerde aynı kelimeyi kullanıyor.
 * **TikTok:** Yorum araması, anahtar kelime filtresinin gizlediği çevrilmiş yorumları artık geri getirmiyor.
 * **TikTok:** Kullanılamayan bir indirme klasörü seçmek, klasör kutusunu altında nedeniyle birlikte yeniden açar.
-* **TikTok:** Sürüm yürüyüşü artık PineDrama'yı da kapsıyor, akışlarından ve sayfalarından her Hushfeed bölümüne kadar.
-* **TikTok:** PineDrama'nın kendi yama denetimi var ve bir sürüm, desteklediği her uygulama için güncel bir denetim ve başarılı bir yürüyüş istiyor.
 * **TikTok:** Şeffaf alt çubuğun taşıdığı her LIVE önizlemesi ve dizi etiketi, desteklenen TikTok derlemesinde kontrol ediliyor.
 * **TikTok:** Otomatik ilerleme denetimi, tek tek video etiketleri yerine video oynatıcının kendisini izliyor.
 * **TikTok:** Bir sürüm, desteklediği her uygulama için eşleşen kanıt istiyor.

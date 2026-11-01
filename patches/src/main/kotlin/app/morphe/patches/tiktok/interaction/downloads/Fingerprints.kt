@@ -240,8 +240,8 @@ internal object DownloadSuccessCoroutineFingerprint : Fingerprint(
 /**
  * The Share to sheet TikTok opens a few seconds after its own downloader saves a video. The
  * fragment's show method builds the sheet, logs this event name and hands it to the fragment
- * manager; it is the only method of the fragment holding the string on 47.5.3 and PineDrama
- * 47.5.3 (PostDownloadShareSheetAnchorsTest). Its two parameters are obfuscated types, so the
+ * manager; it is the only method of the fragment holding the string on 47.5.3
+ * (PostDownloadShareSheetAnchorsTest). Its two parameters are obfuscated types, so the
  * class, the string and the void return are what it is known by.
  */
 internal object PostDownloadShareSheetFingerprint : Fingerprint(

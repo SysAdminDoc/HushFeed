@@ -161,7 +161,7 @@ private object LynxParameterFingerprint : Fingerprint(
  * Whether the search page draws "You may like" itself instead of through the Lynx page the
  * hooks above cover. 47.1.4 turned it on for some accounts, and its own list has a Refresh
  * button that none of the Lynx hooks reach. The AB key defaults to false, so refusing keeps
- * TikTok on its stock path. The class is renamed per build (0HAN on 47.1.4, 04wz in PineDrama),
+ * TikTok on its stock path. The class is renamed per build (0HAN on 47.1.4),
  * and one public static no-argument boolean reads the key in each.
  */
 internal const val NATIVE_GUESS_KEY = "ttk_guess_use_native"
@@ -187,7 +187,7 @@ private const val SEARCH_INTERMEDIATE_FRAGMENT =
 /**
  * The page's re-entry request: the one body holding both the `show_suggest_search_words` key and
  * `searchTransferEnter` that works on the intermediate fragment. It is a method of the fragment
- * itself on 47.4.3 and in PineDrama, and a lambda's `invoke` in a renamed class since 47.5.3 (the
+ * itself on 47.4.3, and a lambda's `invoke` in a renamed class since 47.5.3 (the
  * ecommerce suggest assem holds both strings too, but never touches the fragment).
  */
 internal fun isSearchReentry(method: Method): Boolean =
@@ -207,9 +207,8 @@ private const val SUGGEST_WORD = "Lcom/ss/android/ugc/aweme/discover/model/sugge
 /**
  * The observer that writes TikTok's trending word into the search box placeholder ("costco
  * finds") and stores it as what an empty submit searches for. It sits in a renamed class on each
- * build: an instance `onChanged` in `0EcI` on 47.4.3, and a static `onChanged$42` that PineDrama
- * merged into a shared observer class. What names it is its content: it is the one method in the
- * app that reads `Word.checkAndResetIsFromRefresh` and calls a `setSearchHint(String)`.
+ * build (an instance `onChanged` in `0EcI` on 47.4.3). What names it is its content: it is the
+ * one method in the app that reads `Word.checkAndResetIsFromRefresh` and calls a `setSearchHint(String)`.
  */
 internal fun isSearchHintObserver(method: Method): Boolean =
     method.returnType == "V" && method.implementation?.instructions?.let { instructions ->
@@ -237,7 +236,7 @@ private const val SEARCH_FRAGMENT = "Lcom/ss/android/ugc/aweme/search/middle/Bas
  * Where the search page writes a word into the box placeholder and keeps it as the `Word` an
  * empty submit searches for. Every word reaches the box through here: the one the feed hands the
  * page as it opens (the observer above only fills the box when that is empty) and the ones the
- * page's own observers pass in. `iZ` on 47.4.3, `Yw` in PineDrama. It is the one method in the
+ * page's own observers pass in. `iZ` on 47.4.3. It is the one method in the
  * fragment that takes one argument, builds a `Word` and sets the box hint.
  */
 internal fun isSearchHintApplier(method: Method): Boolean =
@@ -254,7 +253,7 @@ internal fun isSearchHintApplier(method: Method): Boolean =
 
 /**
  * TikTok's own placeholder ("Search"), which the page passes to the method above whenever it has
- * no word. `IX` on 47.4.3, `ev` in PineDrama: the fragment's one no-argument string method that
+ * no word. `IX` on 47.4.3: the fragment's one no-argument string method that
  * reads the shop's `defaultHintWord` before falling back to the string resource.
  */
 internal fun isDefaultSearchHint(method: Method): Boolean =
@@ -292,7 +291,7 @@ val hideSearchSuggestionsPatch = bytecodePatch(
 ) {
     category("Search")
     dependsOn(settingsPatch, sharedExtensionPatch)
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
         // Resolved before anything is written, so a build without it leaves the patch unapplied

@@ -1,2 +1,1 @@
-com.ss.android.ttmd.video/47.5.3=2024705030
 com.zhiliaoapp.musically/47.5.3=2024705030

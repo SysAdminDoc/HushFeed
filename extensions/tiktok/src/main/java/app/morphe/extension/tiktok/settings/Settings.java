@@ -1253,9 +1253,6 @@ public class Settings extends BaseSettings {
     // Enable voice comments, in the default selection with this off. A restart, since TikTok may
     // keep the answer for a comment box it has already built.
     public static final BooleanSetting ENABLE_VOICE_COMMENTS = new BooleanSetting("enable_voice_comments", FALSE, true);
-    // PineDrama's comment box gallery tab, which PineDrama turns off for everyone (#156). A
-    // restart, since the answer is kept per signed-in account.
-    public static final BooleanSetting PINEDRAMA_COMMENT_PHOTOS = new BooleanSetting("pinedrama_comment_photos", FALSE, true);
     public static final BooleanSetting KEEP_FAVORITES_TAB =
             new BooleanSetting("keep_favorites_tab", TRUE, true);
     /** The collections popup from holding the bookmark, dark when TikTok is (issue #142). */

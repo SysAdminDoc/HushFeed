@@ -21,11 +21,8 @@ import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 
 private const val EXTENSION = "Lapp/morphe/extension/tiktok/search/SearchSuggestions;"
 private const val PLUGGABLE_SPI = "Lcom/ss/android/ugc/aweme/framework/services/PluggableExtentionKt;"
-/** TikTok's feature check takes (Fragment, String, Z); PineDrama 47.5.3's checkPluginInstalled takes the String alone. */
-private val FEATURE_CHECK_PARAMETERS = setOf(
-    listOf("Landroidx/fragment/app/Fragment;", "Ljava/lang/String;", "Z"),
-    listOf("Ljava/lang/String;"),
-)
+/** TikTok's feature check takes (Fragment, String, Z). */
+private val FEATURE_CHECK_PARAMETERS = listOf("Landroidx/fragment/app/Fragment;", "Ljava/lang/String;", "Z")
 
 /** The two downloadable features the search rewards services live in. */
 internal val SEARCH_REWARDS_FEATURES = setOf("coin", "incentive")
@@ -67,7 +64,7 @@ internal fun searchRewardsGetter(method: Method): SearchRewardsGetter? {
 
     val checkIndex = instructions.indexOfFirst { instruction ->
         instruction.opcode == Opcode.INVOKE_VIRTUAL && instruction.getReference<MethodReference>()?.let {
-            it.returnType == "Z" && it.parameterTypes.map(CharSequence::toString) in FEATURE_CHECK_PARAMETERS
+            it.returnType == "Z" && it.parameterTypes.map(CharSequence::toString) == FEATURE_CHECK_PARAMETERS
         } == true
     }
     if (checkIndex < 0 || instructions.getOrNull(checkIndex + 1)?.opcode != Opcode.MOVE_RESULT) return null

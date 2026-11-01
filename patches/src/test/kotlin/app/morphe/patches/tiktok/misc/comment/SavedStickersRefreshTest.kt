@@ -25,8 +25,8 @@ import org.junit.Test
 
 /**
  * The saved stickers refresh (#214): one coroutine reads the page size config's refreshCount and
- * asks StickerApiV2 for that many saved stickers. PineDrama 47.4.3 is built from TikTok's code and
- * has the same coroutine (0OQT there), so TikTok's fixtures hold the shape the patch relies on.
+ * asks StickerApiV2 for that many saved stickers. TikTok's fixtures hold the shape the patch
+ * relies on.
  */
 class SavedStickersRefreshTest {
     private val extension = "Lapp/morphe/extension/tiktok/comment/SavedStickers;"

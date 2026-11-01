@@ -14,7 +14,6 @@ import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
-import app.morphe.patches.tiktok.misc.theme.buildName
 import app.morphe.patches.tiktok.misc.theme.declaredVersions
 import app.morphe.patches.tiktok.shared.requireLocals
 import app.morphe.util.getReference
@@ -72,7 +71,7 @@ val inboxFilterPatch = bytecodePatch(
     category("Inbox")
     dependsOn(settingsPatch, sharedExtensionPatch)
 
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
         // Found and checked before anything is written: a patch that fails part way keeps
@@ -88,8 +87,8 @@ val inboxFilterPatch = bytecodePatch(
         val groupBanner = try {
             InboxGroupBannerUpdateFingerprint.method.also { it.requireLocals(PATCH_NAME, 1) }
         } catch (problem: Exception) {
-            if (packageMetadata.buildName in declaredVersions()) throw problem
-            println("[$PATCH_NAME] Left out the group chat prompt switch on ${packageMetadata.buildName}: ${problem.message}")
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[$PATCH_NAME] Left out the group chat prompt switch on ${packageMetadata.versionName}: ${problem.message}")
             null
         }
         val binding = InboxRowBindingFingerprint.method

@@ -97,7 +97,7 @@ val commenterDetailsPatch = bytecodePatch(
     category("Comments")
     dependsOn(settingsPatch, sharedExtensionPatch)
 
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
         SettingsStatusLoadFingerprint.method.addInstruction(
@@ -214,20 +214,14 @@ internal data class NameColorSite(val writeIndex: Int, val viewRegister: Int, va
 private fun Instruction.calls(owner: String, name: String) =
     getReference<MethodReference>()?.let { it.definingClass == owner && it.name == name } == true
 
-/**
- * TikTok's static helper that colours a text view and writes its text: (I, I, TextView, CharSequence)V.
- * PineDrama 47.5.3's takes the view and the text first: (TextView, CharSequence, I, I)V.
- */
-private val COLORED_TEXT_WRITE_SHAPES = setOf(
-    listOf("I", "I", TEXT_VIEW, CHAR_SEQUENCE),
-    listOf(TEXT_VIEW, CHAR_SEQUENCE, "I", "I"),
-)
+/** TikTok's static helper that colours a text view and writes its text: (I, I, TextView, CharSequence)V. */
+private val COLORED_TEXT_WRITE_SHAPE = listOf("I", "I", TEXT_VIEW, CHAR_SEQUENCE)
 
 private fun Instruction.isColoredTextWrite() =
     (opcode == Opcode.INVOKE_STATIC || opcode == Opcode.INVOKE_STATIC_RANGE) &&
         getReference<MethodReference>()?.let { reference ->
             reference.returnType == "V" &&
-                reference.parameterTypes.map(CharSequence::toString) in COLORED_TEXT_WRITE_SHAPES
+                reference.parameterTypes.map(CharSequence::toString) == COLORED_TEXT_WRITE_SHAPE
         } == true
 
 /** The register a colored text write hands over as [type]: the view or the text. No parameter is wide. */

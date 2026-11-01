@@ -125,7 +125,7 @@ val hideLauncherShortcutsPatch = bytecodePatch(
     category("Interface")
     dependsOn(settingsPatch, sharedExtensionPatch)
 
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
         var patched = 0

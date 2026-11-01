@@ -188,7 +188,7 @@ public final class LinkReturn {
         }
     }
 
-    /** TikTok and PineDrama both declare REORDER_TASKS, which moveTaskToFront needs. */
+    /** TikTok declares REORDER_TASKS, which moveTaskToFront needs. */
     private static void senderToFront(Activity activity, int taskId) {
         TaskFront forTests = taskFrontForTests;
         if (forTests != null) {

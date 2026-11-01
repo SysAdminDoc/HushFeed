@@ -8,7 +8,6 @@ import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.misc.navigation.isTopTabLayoutConstructor
 import app.morphe.patches.tiktok.misc.navigation.writes
-import app.morphe.patches.tiktok.misc.theme.buildName
 import app.morphe.util.addInstructions
 import app.morphe.util.findFreeRegister
 import app.morphe.util.findMutableMethodOf
@@ -158,7 +157,7 @@ internal fun MutableMethod.handTopTabOver(site: TopTabBindSite) {
 internal fun BytecodePatchContext.hookForYouLongPress(): Boolean {
     val lookup = findTopTabBind { classDefByOrNull(it) }
     val site = lookup.site ?: run {
-        println("[Settings] Left out the For You long press on ${packageMetadata.buildName}: ${lookup.miss}.")
+        println("[Settings] Left out the For You long press on ${packageMetadata.versionName}: ${lookup.miss}.")
         return false
     }
     mutableClassDefBy(site.method.definingClass).findMutableMethodOf(site.method).handTopTabOver(site)

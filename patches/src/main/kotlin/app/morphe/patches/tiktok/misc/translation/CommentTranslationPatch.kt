@@ -16,7 +16,6 @@ import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
-import app.morphe.patches.tiktok.misc.theme.buildName
 import app.morphe.patches.tiktok.misc.theme.declaredVersions
 import app.morphe.patches.tiktok.shared.callThroughLocals
 import app.morphe.patches.tiktok.shared.objectIn
@@ -176,7 +175,7 @@ val commentTranslationPatch = bytecodePatch(
     category("Comments")
     dependsOn(settingsPatch, sharedExtensionPatch)
 
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
         SettingsStatusLoadFingerprint.method.addInstruction(
@@ -285,8 +284,8 @@ val commentTranslationPatch = bytecodePatch(
         try {
             hookAttachedCommentTranslation()
         } catch (problem: Exception) {
-            if (packageMetadata.buildName in declaredVersions()) throw problem
-            println("[Translate comments] Left out the newer comment path on ${packageMetadata.buildName}: ${problem.message}")
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[Translate comments] Left out the newer comment path on ${packageMetadata.versionName}: ${problem.message}")
         }
 
         // The languages TikTok's automatic translation leaves alone (#121). Required on a declared
@@ -296,8 +295,8 @@ val commentTranslationPatch = bytecodePatch(
             hookDoNotAutoTranslate()
             true
         } catch (problem: Exception) {
-            if (packageMetadata.buildName in declaredVersions()) throw problem
-            println("[Translate comments] Left out Don't auto translate on ${packageMetadata.buildName}: ${problem.message}")
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[Translate comments] Left out Don't auto translate on ${packageMetadata.versionName}: ${problem.message}")
             false
         }
         if (doNotAutoTranslate) {
@@ -313,8 +312,8 @@ val commentTranslationPatch = bytecodePatch(
             hookTranslateInto()
             true
         } catch (problem: Exception) {
-            if (packageMetadata.buildName in declaredVersions()) throw problem
-            println("[Translate comments] Left out Translate into on ${packageMetadata.buildName}: ${problem.message}")
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[Translate comments] Left out Translate into on ${packageMetadata.versionName}: ${problem.message}")
             false
         }
         if (translateInto) {
@@ -331,8 +330,8 @@ val commentTranslationPatch = bytecodePatch(
             installCommentTranslateButton()
             true
         } catch (problem: Exception) {
-            if (packageMetadata.buildName in declaredVersions()) throw problem
-            println("[Translate comments] Left out the translate button on ${packageMetadata.buildName}: ${problem.message}")
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[Translate comments] Left out the translate button on ${packageMetadata.versionName}: ${problem.message}")
             false
         }
         if (translateButton) {
@@ -349,8 +348,8 @@ val commentTranslationPatch = bytecodePatch(
             hookLanguagePageTranslations()
             true
         } catch (problem: Exception) {
-            if (packageMetadata.buildName in declaredVersions()) throw problem
-            println("[Translate comments] Left out the Language page rows on ${packageMetadata.buildName}: ${problem.message}")
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[Translate comments] Left out the Language page rows on ${packageMetadata.versionName}: ${problem.message}")
             false
         }
         if (languagePage) {
@@ -366,8 +365,8 @@ val commentTranslationPatch = bytecodePatch(
             hookFeedTranslations()
             true
         } catch (problem: Exception) {
-            if (packageMetadata.buildName in declaredVersions()) throw problem
-            println("[Translate comments] Left out See translation on videos on ${packageMetadata.buildName}: ${problem.message}")
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[Translate comments] Left out See translation on videos on ${packageMetadata.versionName}: ${problem.message}")
             false
         }
         if (videos) {
@@ -383,8 +382,8 @@ val commentTranslationPatch = bytecodePatch(
             hookVideoAutoTranslate()
             true
         } catch (problem: Exception) {
-            if (packageMetadata.buildName in declaredVersions()) throw problem
-            println("[Translate comments] Left out Don't auto translate videos on ${packageMetadata.buildName}: ${problem.message}")
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[Translate comments] Left out Don't auto translate videos on ${packageMetadata.versionName}: ${problem.message}")
             false
         }
         if (videoAutoTranslate) {

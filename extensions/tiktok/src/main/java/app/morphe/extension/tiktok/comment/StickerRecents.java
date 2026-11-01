@@ -20,14 +20,14 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- * Recently used on PineDrama's comment sticker panel (#156).
+ * Recently used on the basic comment sticker panel (#156).
  *
  * <p>TikTok's full sticker panel lives in an on-demand module that a patched install can't
- * download, so PineDrama falls back to its basic panel, whose Saved page has no Recently used
+ * download, so the app falls back to its basic panel, whose Saved page has no Recently used
  * row. The store behind that row still fills as stickers are sent, so {@link #addRow} puts its
  * newest stickers above Saved each time the page draws its rows.
  *
- * <p>PineDrama keeps that list in memory only, and its sticker store empties it the first time the
+ * <p>The app keeps that list in memory only, and its sticker store empties it the first time the
  * store is used in each process, since it takes the account it finds as a new one. So every
  * restart, the ones Hushfeed's settings ask for included, leaves the list empty. The patch hands
  * {@link #save} each new list as a sticker goes on it, and {@link #restore} the list's flow
@@ -322,7 +322,7 @@ public final class StickerRecents {
         rowsAbove = 0;
     }
 
-    // The bridges below are stubs. The patch writes each body from the Saved page PineDrama
+    // The bridges below are stubs. The patch writes each body from the Saved page the app
     // draws, and an unpatched build answers with nothing.
 
     /** The page's sticker store's Recently used list, newest first. */

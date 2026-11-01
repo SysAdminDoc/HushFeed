@@ -66,7 +66,6 @@ internal fun ttnetConfigReads(method: Method): List<Int> {
     val instructions = method.implementation?.instructions?.toList() ?: return emptyList()
     return instructions.indices.mapNotNull { keyIndex ->
         val key = instructions[keyIndex]
-        // PineDrama 47.5.3 loads the key with const-string/jumbo; the reference is the same.
         if (key.getReference<StringReference>()?.string != TTNET_PROXY_KEY) {
             return@mapNotNull null
         }
@@ -129,7 +128,7 @@ val networkProxyPatch = bytecodePatch(
 ) {
     category("Settings")
     dependsOn(settingsPatch, sharedExtensionPatch)
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
         // Everything is found and checked before the first write: the patcher doesn't take a

@@ -155,7 +155,7 @@ val commentSheetHeightPatch = bytecodePatch(
     category("Comments")
     dependsOn(settingsPatch, sharedExtensionPatch)
 
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
         val height = CommentSheetHeightFingerprint.method

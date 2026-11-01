@@ -194,7 +194,6 @@ val cameraBrightnessPatch = bytecodePatch(
     category("Interface")
     dependsOn(settingsPatch, sharedExtensionPatch)
 
-    // PineDrama has no camera, and no start or flash is in it.
     compatibleWith(*AppCompatibilities.tiktok())
 
     execute {

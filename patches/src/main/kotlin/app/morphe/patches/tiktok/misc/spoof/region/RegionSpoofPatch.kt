@@ -41,21 +41,6 @@ private object RegionService : Fingerprint(
 )
 
 /**
- * The region hub's static initializer, which builds its East Asian and Arabic-speaking country
- * lists, for a build whose RegionService no longer has getRegion, the hub's one named caller.
- * PineDrama 47.5.3 kept the hub and its six static String getters and dropped that method.
- */
-private object RegionHubInitFingerprint : Fingerprint(
-    name = "<clinit>",
-    strings = listOf("MO", "KM", "DJ"),
-    custom = { _, classDef ->
-        classDef.methods.count {
-            AccessFlags.STATIC.isSet(it.accessFlags) && it.returnType == "Ljava/lang/String;" && it.parameterTypes.isEmpty()
-        } == 6
-    },
-)
-
-/**
  * AppLog's common-parameter builder, an instance method taking (Context, isApi, Map, level): the
  * one place the query fields every TTNet and AppLog request carries are put together, from the
  * device ids, the fields cached once at startup and the network_common_params feature map. R8
@@ -402,7 +387,7 @@ val regionSpoofPatch = bytecodePatch(
     default = false,
 ) {
     category("Settings")
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
     dependsOn(settingsPatch, simSpoofPatch)
     execute {
         // Found and checked before anything is written: the patcher doesn't take a failed
@@ -471,12 +456,11 @@ val regionSpoofPatch = bytecodePatch(
             )
         }
 
-        val hubType = RegionService.methodOrNull?.implementationOrPatchException("Region spoof")
-            ?.instructions?.mapNotNull {
+        val hubType = RegionService.method.implementationOrPatchException("Region spoof")
+            .instructions.mapNotNull {
             it.getReference<MethodReference>()
-        }?.filter { it.returnType == "Ljava/lang/String;" && it.parameterTypes.isEmpty() }
-            ?.singleOrPatchException("Region spoof: RegionService string hub call")?.definingClass
-            ?: RegionHubInitFingerprint.originalMethod.definingClass
+        }.filter { it.returnType == "Ljava/lang/String;" && it.parameterTypes.isEmpty() }
+            .singleOrPatchException("Region spoof: RegionService string hub call").definingClass
         val hub = mutableClassDefBy(hubType)
         val account = mutableClassDefBy("Lcom/ss/android/ugc/aweme/AccountService;")
         val accountSuperclass = account.superclass

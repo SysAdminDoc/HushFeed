@@ -1301,7 +1301,6 @@ Value to return	Valor devolvido
 Verified accounts	Contas verificadas
 Version %1$s	Versão %1$s
 Version %1$s for TikTok %2$s	Versão %1$s para TikTok %2$s
-Version %1$s for PineDrama %2$s	Versão %1$s para PineDrama %2$s
 Video	Vídeo
 Video (MP4)	Vídeo (MP4)
 Video destination	Destino dos vídeos
@@ -1760,7 +1759,7 @@ Play sounds TikTok pulled	Tocar sons que o TikTok removeu
 Play the audio on videos TikTok silenced because their sound was pulled for copyright or in your region. TikTok may still say the sound isn't available.	Toca o áudio dos vídeos que o TikTok silenciou porque o som foi removido por direitos autorais ou na sua região. O TikTok pode continuar dizendo que o som não está disponível.
 Match region fields in requests	Igualar os campos de região nas solicitações
 Keep the For You feed on your real SIM	Manter o Para você no seu SIM real
-Sticker search, PineDrama and the rest of TikTok still see the SIM above, while For You asks for videos with your phone's own SIM country and carrier. Your IP address and account history still count.	A busca de figurinhas, o PineDrama e o resto do TikTok continuam vendo o SIM acima, enquanto o Para você pede vídeos com o país e a operadora do SIM do seu celular. Seu endereço IP e o histórico da sua conta continuam valendo.
+Sticker search and the rest of TikTok still see the SIM above, while For You asks for videos with your phone's own SIM country and carrier. Your IP address and account history still count.	A busca de figurinhas e o resto do TikTok continuam vendo o SIM acima, enquanto o Para você pede vídeos com o país e a operadora do SIM do seu celular. Seu endereço IP e o histórico da sua conta continuam valendo.
 Show exact LIVE viewer counts	Mostrar o número exato de espectadores da LIVE
 A LIVE room shows how many people are watching as a rounded number like 1.2K. This shows the exact count instead.	Uma sala de LIVE mostra quantas pessoas estão assistindo com um número arredondado, como 1,2K. Isso mostra o número exato.
 Offer LIVE quality in more rooms	Oferecer a qualidade da LIVE em mais salas
@@ -2303,8 +2302,6 @@ Tap Stop or leave the room to save it.	Toque em Parar ou saia da sala para salva
 Screen recording wasn't allowed	A gravação de tela não foi permitida
 Recording this LIVE's screen from now	Gravando a tela desta LIVE a partir de agora
 Recording this LIVE's screen from now, without sound	Gravando a tela desta LIVE a partir de agora, sem som
-Allow photo comments	Permitir comentários com foto
-Show the gallery tab in the comment box, so you can add a photo to a comment like on TikTok. PineDrama turns it off for everyone. TikTok's server still decides whether your account can post one.	Mostra a aba de galeria na caixa de comentários para você adicionar uma foto a um comentário como no TikTok. O PineDrama a desativa para todos. O servidor do TikTok ainda decide se a sua conta pode publicar uma.
 This screen recording has no sound	Esta gravação de tela não tem som
 Export recording files	Exportar arquivos da gravação
 Delete recording files	Excluir arquivos da gravação
@@ -2375,7 +2372,7 @@ Removed: %1$d. The other %2$d are still there. Open your Inbox, then try again.	
 Removing the kept messages	Removendo as mensagens mantidas
 Hide the Back button there too	Ocultar também o botão Voltar
 Hide the Back button beside that search bar as well. Your phone's back gesture or button still takes you back.	Oculte também o botão Voltar ao lado dessa barra de pesquisa. O gesto ou o botão de voltar do seu celular continua levando você de volta.
-# context: PineDrama's comment sticker panel. Create is a button on its Saved page that turns a photo into a sticker. These are its spoken label and its toasts. The panel's tab names come from TikTok's server, not the app, so the last toast describes the saved stickers instead of quoting the tab
+# context: the comment sticker panel. Create is a button on its Saved page that turns a photo into a sticker. These are its spoken label and its toasts. The panel's tab names come from TikTok's server, not the app, so the last toast describes the saved stickers instead of quoting the tab
 Make a sticker from a photo	Criar um adesivo com uma foto
 Making your sticker	Criando seu adesivo
 Couldn't open your photos. Try again.	Não foi possível abrir suas fotos. Tente de novo.
@@ -2383,7 +2380,7 @@ Couldn't make the sticker. Try again.	Não foi possível criar o adesivo. Tente 
 Couldn't read that photo. Try another one.	Não foi possível ler essa foto. Tente outra.
 This account can't make stickers	Esta conta não pode criar adesivos
 Sticker added to Saved	Adesivo adicionado aos salvos
-# context: PineDrama's comment sticker panel. Recently used is a heading Hushfeed adds above Saved, over the last stickers you sent. TikTok's own label for it isn't in the APK, so this is the usual phone wording
+# context: the comment sticker panel. Recently used is a heading Hushfeed adds above Saved, over the last stickers you sent. TikTok's own label for it isn't in the APK, so this is the usual phone wording
 Recently used	Usados recentemente
 # context: A video's share sheet. Make sticker is a button Hushfeed adds after Save cover, and it turns the video's cover into one of your saved comment stickers. Keep it about as short as Save cover, since share sheet labels get two short lines under the icon
 Make sticker	Criar adesivo

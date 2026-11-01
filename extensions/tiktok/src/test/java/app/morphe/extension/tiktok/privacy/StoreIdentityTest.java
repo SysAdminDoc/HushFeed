@@ -8,7 +8,6 @@ import static org.junit.Assert.assertNull;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.BaseSettings;
@@ -40,9 +39,6 @@ public class StoreIdentityTest {
     /** The digest Morphe Manager holds a picked APK to, so a bad edit to the constant is caught. */
     private static final String TIKTOK_SIGNER_SHA256 =
             "9041803e91bcb814b4b4399fb5c85a91640b755e5e8ba76813814bf4cf2ab5ba";
-    /** PineDrama's (CN=TikTok Drama), as apksigner prints it for the APKMirror 47.1.4, 47.4.3 and 47.5.3 bundles. */
-    private static final String PINEDRAMA_SIGNER_SHA256 =
-            "e97ca0c8835c5a9e4f7702a0382b103ede9c5d51e5194c8db54f4c8833f54e18";
 
     private Context context;
     private String ownPackage;
@@ -63,16 +59,6 @@ public class StoreIdentityTest {
 
     @Test public void theEmbeddedCertificateIsTikToks() throws Exception {
         assertEquals(TIKTOK_SIGNER_SHA256, sha256(StoreIdentity.signatures()[0].toByteArray()));
-        assertEquals(TIKTOK_SIGNER_SHA256, sha256(der(StoreIdentity.certificateFor("com.zhiliaoapp.musically"))));
-    }
-
-    /** A patched PineDrama answers with PineDrama's own certificate, not TikTok's (#156). */
-    @Test public void pineDramaGetsItsOwnCertificate() throws Exception {
-        assertEquals(PINEDRAMA_SIGNER_SHA256, sha256(der(StoreIdentity.certificateFor("com.ss.android.ttmd.video"))));
-    }
-
-    private static byte[] der(String certificate) {
-        return new Signature(android.util.Base64.decode(certificate, android.util.Base64.DEFAULT)).toByteArray();
     }
 
     private static String sha256(byte[] der) throws Exception {

@@ -20,7 +20,7 @@ val fixGoogleLoginPatch = bytecodePatch(
     category("Settings")
     // Only so Build details can list it: the patch itself runs no extension code.
     dependsOn(sharedExtensionPatch)
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
         // returnEarly writes the same two instructions and refuses a method whose return type

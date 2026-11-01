@@ -29,9 +29,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * Create stickers (#156, #88) patches TikTok and PineDrama, and PineDrama 47.5.3 is built from
- * TikTok 47.5.3's code: the upload config, the server parameter, the canvas saver and the Saved page
- * have the same shapes there (182P, 182R, 14hO), so TikTok's fixtures hold what the patch relies on.
+ * Create stickers (#156, #88): the upload config, the server parameter, the canvas saver and the
+ * Saved page (182P, 182R, 14hO on 47.5.3). TikTok's fixtures hold what the patch relies on.
  */
 class StickerCreatorPatchTest {
     private val fingerprints = listOf(

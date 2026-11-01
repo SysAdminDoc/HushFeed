@@ -10,7 +10,6 @@ import app.morphe.util.addInstructions
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
-import app.morphe.patches.tiktok.misc.theme.buildName
 import app.morphe.patches.tiktok.misc.theme.declaredVersions
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
@@ -148,7 +147,7 @@ val playbackSpeedPatch = bytecodePatch(
     category("Playback")
     dependsOn(settingsPatch, sharedExtensionPatch)
 
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
         // The live speed gesture's hook and bridges are resolved before the first write below, so
@@ -183,8 +182,8 @@ val playbackSpeedPatch = bytecodePatch(
             ) { "Playback speed: the extension's nativeAweme stub is not static (Object)Aweme." }
             LiveSpeedSites(progress, liveSetter, liveAweme)
         } catch (problem: Exception) {
-            if (packageMetadata.buildName in declaredVersions()) throw problem
-            println("[Playback speed] Left out the live speed change on ${packageMetadata.buildName}: ${problem.message}")
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[Playback speed] Left out the live speed change on ${packageMetadata.versionName}: ${problem.message}")
             null
         }
 
@@ -218,8 +217,8 @@ val playbackSpeedPatch = bytecodePatch(
             ) { "Playback speed: the extension's applyNative stub is not static (Object, float)V." }
             HoldHudSites(touch, apply, stub, pullDown)
         } catch (problem: Exception) {
-            if (packageMetadata.buildName in declaredVersions()) throw problem
-            println("[Playback speed] Left out sliding the hold speed on ${packageMetadata.buildName}: ${problem.message}")
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[Playback speed] Left out sliding the hold speed on ${packageMetadata.versionName}: ${problem.message}")
             null
         }
 
@@ -459,8 +458,8 @@ val playbackSpeedPatch = bytecodePatch(
         try {
             release.routeThroughUnlockSpeed(release.unlockSpeedLiteral())
         } catch (problem: PatchException) {
-            if (packageMetadata.buildName in declaredVersions()) throw problem
-            println("[Playback speed] Left out the default speed on unlock on ${packageMetadata.buildName}: ${problem.message}")
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[Playback speed] Left out the default speed on unlock on ${packageMetadata.versionName}: ${problem.message}")
         }
 
         // Slide to change the hold speed: the press and release tell the extension a hold began
@@ -496,8 +495,8 @@ val playbackSpeedPatch = bytecodePatch(
             try {
                 lockShow.hideHoldLockBannerOnShow()
             } catch (problem: PatchException) {
-                if (packageMetadata.buildName in declaredVersions()) throw problem
-                println("[Playback speed] Left out hiding the hold lock banner on ${packageMetadata.buildName}: ${problem.message}")
+                if (packageMetadata.versionName in declaredVersions()) throw problem
+                println("[Playback speed] Left out hiding the hold lock banner on ${packageMetadata.versionName}: ${problem.message}")
             }
             SettingsStatusLoadFingerprint.method.addInstruction(
                 0,

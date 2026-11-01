@@ -21,7 +21,6 @@ import org.robolectric.annotation.Config;
 @Config(sdk = 28)
 public class BuildNamesTest {
     private static final String PACKAGE = "com.zhiliaoapp.musically";
-    private static final String PINEDRAMA = "com.ss.android.ttmd.video";
 
     @After
     public void tearDown() {
@@ -42,47 +41,6 @@ public class BuildNamesTest {
         assertNull(BuildNames.entryName("47.4.3:g8a", "47.4"));
         assertNull(BuildNames.entryName("47.4.3:g8a", "47.4.31"));
         assertNull(BuildNames.entryName("47.4.3:g8a", "147.4.3"));
-    }
-
-    /**
-     * PineDrama reports TikTok's version names with a resource table of its own: 76 of the 82
-     * view groups name an unrelated view or nothing there. A build's name never resolves in it,
-     * even when its version matches; a real name still does (#156).
-     */
-    @Test
-    public void aBuildsNameResolvesInTikTokAlone() {
-        BuildNames.setRunningAppForTests(PINEDRAMA, "47.4.3");
-        assertNull(BuildNames.entryName("47.4.3:g8a"));
-        assertEquals("desc", BuildNames.entryName("desc"));
-
-        BuildNames.setRunningAppForTests(PACKAGE, "47.4.3");
-        assertEquals("g8a", BuildNames.entryName("47.4.3:g8a"));
-    }
-
-    /** PineDrama's own names, read off its live Inbox, resolve on its build alone and never in TikTok. */
-    @Test
-    public void aPineDramaNameResolvesInPineDramaAlone() {
-        BuildNames.setRunningAppForTests(PINEDRAMA, "47.5.3");
-        assertEquals("d2v", BuildNames.entryName("pinedrama-47.5.3:d2v"));
-        assertNull(BuildNames.entryName("pinedrama-47.5.1:d2v"));
-        assertNull(BuildNames.entryName("47.5.3:fh0"));
-
-        BuildNames.setRunningAppForTests(PACKAGE, "47.5.3");
-        assertNull(BuildNames.entryName("pinedrama-47.5.3:d2v"));
-        assertEquals("fh0", BuildNames.entryName("47.5.3:fh0"));
-    }
-
-    /**
-     * Run beside the store app runs a copy that Morphe's Clone app renamed, and the build asset
-     * still names TikTok, since the patcher reads the manifest before any patch changes it. The
-     * copy's resource table is TikTok's, so TikTok's names resolve there (#209). PineDrama's
-     * record names PineDrama, and a copy with no record is whatever its package says.
-     */
-    @Test
-    public void aRenamedCopyResolvesTheNamesOfTheAppItWasPatchedFrom() {
-        assertEquals(PACKAGE, BuildNames.namedApp("com.zhiliaoapp.musically.morphe", PACKAGE));
-        assertEquals(PINEDRAMA, BuildNames.namedApp(PINEDRAMA, PINEDRAMA));
-        assertEquals("com.zhiliaoapp.musically.morphe", BuildNames.namedApp("com.zhiliaoapp.musically.morphe", null));
     }
 
     @Test

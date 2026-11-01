@@ -17,8 +17,6 @@ import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 private val reviewedSplashGateInstructionCounts = setOf(
     listOf(4, 4, 30),
     listOf(4, 4),
-    // PineDrama 47.5.3 reads the same two static Booleans without null-checking their holder first.
-    listOf(2, 2, 30),
 )
 
 internal fun isReviewedSplashGateShape(instructionCounts: List<Int>): Boolean =

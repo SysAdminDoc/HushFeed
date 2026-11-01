@@ -52,11 +52,6 @@ class ObfuscatedIdentityTest {
             identitiesIn("""LIKE_IDS = {"47.0.3:g6r", "47.1.3:g85", "47.1.3:i_l"};""", extensionTree = true),
         )
         assertEquals(setOf("a5u"), identitiesIn("""val x = "47.1.3:a5u"""", extensionTree = false))
-        // PineDrama's build names are its own table's inventions just the same (#156).
-        assertEquals(
-            setOf("fh0", "d2v", "pfk"),
-            identitiesIn("""ADD_IDS = {"47.5.3:fh0", "pinedrama-47.5.3:d2v", "pinedrama-47.5.3:pfk"};""", extensionTree = true),
-        )
     }
 
     @Test
@@ -173,13 +168,13 @@ class ObfuscatedIdentityTest {
          * A shortened resource entry name of the letter-digit kind: `"a3y"`, `"o1k"`, `"ht9"`, also
          * when it is written for one build, `"47.1.3:a5u"`.
          */
-        val SHORT_RESOURCE = Regex(""""(?:(?:pinedrama-)?\d+(?:\.\d+)+:)?([a-z][0-9][a-z0-9]{1,2}|[a-z]{2}[0-9])"""")
+        val SHORT_RESOURCE = Regex(""""(?:\d+(?:\.\d+)+:)?([a-z][0-9][a-z0-9]{1,2}|[a-z]{2}[0-9])"""")
 
         /** A line that looks a view or resource up by name, in the extension. */
         val RESOURCE_LOOKUP = Regex("""_IDS?\b|RESOURCE_NAME|getIdentifier\(|\.resolve\(|IDS\b|viewId\(|idOf\(""")
 
         /** A two or three character name on such a line: `"kzj"`, `"fb"`, `"p_5"`, `"47.1.3:i_l"`. */
-        val RESOURCE_NAME = Regex(""""(?:(?:pinedrama-)?\d+(?:\.\d+)+:)?([a-z][a-z0-9_]{1,2})"""")
+        val RESOURCE_NAME = Regex(""""(?:\d+(?:\.\d+)+:)?([a-z][a-z0-9_]{1,2})"""")
 
         /**
          * Names that match a shape above and are nobody's invention: framework and interface

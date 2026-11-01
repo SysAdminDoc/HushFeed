@@ -209,7 +209,6 @@ All loaded items are picked or saved. Scroll for more.,All loaded items are pick
 All loaded tabs,All loaded tabs
 Allow Add to Story anyway,Allow Add to Story anyway
 Allow Duet and Stitch anyway,Allow Duet and Stitch anyway
-Allow photo comments,Allow photo comments
 Allow screenshots and Circle to Search,Allow screenshots and Circle to Search
 Allow storage for TikTok to record LIVEs,Allow storage for TikTok to record LIVEs
 Allow storage for TikTok to save covers,Allow storage for TikTok to save covers
@@ -1745,7 +1744,6 @@ Show the country a video was posted from next to the creator's name.,Show the co
 Show the country as a flag,Show the country as a flag
 Show the current spoken caption while the other controls are hidden.,Show the current spoken caption while the other controls are hidden.
 Show the day each video was posted under its view count on profile grids.,Show the day each video was posted under its view count on profile grids.
-"Show the gallery tab in the comment box, so you can add a photo to a comment like on TikTok. PineDrama turns it off for everyone. TikTok's server still decides whether your account can post one.","Show the gallery tab in the comment box, so you can add a photo to a comment like on TikTok. PineDrama turns it off for everyone. TikTok's server still decides whether your account can post one."
 Show the handle instead of the name,Show the handle instead of the name
 Show the hide button on videos,Show the hide button on videos
 "Show the main feed's tabs on a rounded, see-through dark pill that floats over the video. Needs See-through bottom bar.","Show the main feed's tabs on a rounded, see-through dark pill that floats over the video. Needs See-through bottom bar."
@@ -1837,7 +1835,7 @@ Sticker,Sticker
 Sticker added to Saved,Sticker added to Saved
 Sticker destination,Sticker destination
 Sticker saved to %1$s,Sticker saved to %1$s
-"Sticker search, PineDrama and the rest of TikTok still see the SIM above, while For You asks for videos with your phone's own SIM country and carrier. Your IP address and account history still count.","Sticker search, PineDrama and the rest of TikTok still see the SIM above, while For You asks for videos with your phone's own SIM country and carrier. Your IP address and account history still count."
+"Sticker search and the rest of TikTok still see the SIM above, while For You asks for videos with your phone's own SIM country and carrier. Your IP address and account history still count.","Sticker search and the rest of TikTok still see the SIM above, while For You asks for videos with your phone's own SIM country and carrier. Your IP address and account history still count."
 "Stickers can't be saved to the folder in that file, so your sticker folder was kept","Stickers can't be saved to the folder in that file, so your sticker folder was kept"
 Stickers: %1$s,Stickers: %1$s
 Still here. Nothing is waiting.,Still here. Nothing is waiting.
@@ -2254,7 +2252,6 @@ Value to return,Value to return
 Value: %1$s to %2$s,Value: %1$s to %2$s
 Verified accounts,Verified accounts
 Version %1$s,Version %1$s
-Version %1$s for PineDrama %2$s,Version %1$s for PineDrama %2$s
 Version %1$s for TikTok %2$s,Version %1$s for TikTok %2$s
 "Version, changes and licenses","Version, changes and licenses"
 Video,Video

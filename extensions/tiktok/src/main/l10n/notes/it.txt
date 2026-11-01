@@ -13,7 +13,7 @@
 * **TikTok:** La barra inferiore del feed principale può essere una pillola di vetro fluttuante, con una lente che scorre tra le schede e nuove impostazioni per sfocatura, opacità, altezza e angoli (#259).
 * **TikTok:** Le patch con impostazioni hanno opzioni Morphe per i valori iniziali, così una build può arrivare con i tuoi interruttori già attivi. Grazie a @XEGARE (#256).
 * **TikTok:** Un nuovo interruttore nasconde la fila di cerchi di LIVE e storie in cima a Seguiti, senza lasciare una fascia vuota (#262).
-* **TikTok:** Un nuovo interruttore ferma il foglio Condividi con che TikTok apre qualche secondo dopo aver salvato un video. Lo ha anche PineDrama.
+* **TikTok:** Un nuovo interruttore ferma il foglio Condividi con che TikTok apre qualche secondo dopo aver salvato un video.
 * **TikTok:** Salvando le foto originali di un post fotografico si salvano anche didascalia, creator, link e data del post in un solo file.
 * **TikTok:** La ricerca nelle impostazioni conosce nomi di tutti i giorni come autoplay, PiP e AI, e trova una riga di scelta da una qualsiasi delle sue opzioni.
 * **TikTok:** Blocca il feed a orari fissi blocca il feed da solo nelle ore che scegli, e il pannello di blocco dice quando si riapre.
@@ -29,7 +29,7 @@
 * **TikTok:** Formato audio ha la scelta MP3, così i suoni salvati si riproducono ovunque, su ogni versione di Android (#273).
 * **TikTok:** Un nuovo interruttore nasconde anche la freccia Indietro accanto alla barra di ricerca nascosta nei video aperti (#251).
 * **TikTok:** Con il Pulsante blocca autore attivo, anche le LIVE in Per te hanno il pulsante per bloccare (#138).
-* **TikTok:** La nuova patch Crea sticker per TikTok e PineDrama trasforma una foto, o l'immagine di un video dal foglio di condivisione, in uno sticker salvato (#156, #88).
+* **TikTok:** La nuova patch Crea sticker trasforma una foto, o l'immagine di un video dal foglio di condivisione, in uno sticker salvato (#156, #88).
 * **TikTok:** La nuova patch Mantieni gli sticker recenti tiene piena la riga Usati di recente dopo un riavvio o un cambio di account (#156).
 * **TikTok:** Nascondi i sondaggi nasconde anche i pulsanti Non mi interessa e Mi interessa che TikTok a volte mette sopra un video (#293).
 * **TikTok:** Icona personalizzata del launcher ha uno stile Material You che segue lo sfondo, e una nuova opzione mette qualsiasi colore, come #1E88E5, dietro l'icona (#280).
@@ -39,8 +39,6 @@
 * **TikTok:** Il Feature Gate Lab ora ha un pulsante di riavvio, e dopo TikTok si riapre sul Lab.
 * **TikTok:** Hushfeed ora si basa su Morphe patcher 2.1.0, quindi serve Morphe Manager 2.3.0 o successivo, oppure morphe-desktop 1.20.0 su un computer.
 * **TikTok:** Il pacchetto delle patch porta la firma dei pacchetti di Morphe, così Manager può verificare che un download successivo arrivi davvero da Hushfeed.
-* **TikTok:** Su PineDrama ora funzionano gli interruttori della Posta in arrivo, compreso Nascondi le conversazioni (#156).
-* **TikTok:** Su PineDrama, la riga della versione nelle impostazioni ora indica PineDrama e la sua build invece di TikTok (#156).
 * **TikTok:** Un risultato della ricerca nelle impostazioni che sta in fondo a una pagina ora si apre proprio sulla sua riga.
 * **TikTok:** Con la Barra inferiore trasparente attiva, la riga Scorri verso l'alto per saltare sulle schede degli account suggeriti sta di nuovo sopra le schede (#261).
 * **TikTok:** La pillola flottante delle schede è un po' più alta, così l'icona Home e il suo nome restano dentro l'evidenziazione, e la linea di avanzamento non ci sta più sopra (#259).
@@ -87,20 +85,16 @@
 * **TikTok:** Salvare una storia in Automatico prende la copia più nitida invece di una più piccola a 720p. Grazie a @jutochoppa (#287, #155).
 * **TikTok:** Registrare lo schermo di una LIVE non riprende più il pulsante Registra, e la notifica ha un pulsante Ferma (#265).
 * **TikTok:** Accedi senza passkey spiega cosa fare quando la verifica in due passaggi di TikTok chiede solo una passkey (#102).
-* **TikTok:** Riprendere un episodio di PineDrama riparte da dove l'avevi messo in pausa (#156).
 * **TikTok:** Rimuovi gli strumenti di creazione lascia stare il pacchetto diviso di APKMirror, così gli effetti viso e Beauty ritrovano il tuo viso (#285).
 * **TikTok:** Quando TikTok rifiuta un mi piace, Hushfeed mostra il motivo la prima volta in ogni sessione (#269).
 * **TikTok:** I video a cui hai messo mi piace o che hai salvato restano nelle griglie Mi piace e Preferiti, anche con un segno di pubblicità (#269).
 * **TikTok:** Il messaggio in cinese per un segui rifiutato usa ora la parola giusta.
 * **TikTok:** La pillola delle schede fluttuante sfoca anche le anteprime LIVE dietro di sé (#259).
-* **TikTok:** PineDrama riceve Filtro del feed, così Rimuovi gli annunci dal feed toglie gli annunci dal suo feed Per te e dalla scheda dei drama (#294).
 * **TikTok:** Circa 140 messaggi pop-up ora sono più corti e stanno nelle due righe che Android 12 e successivi gli danno.
 * **TikTok:** Anche i messaggi pop-up del Feature Gate Lab stanno in due righe, e un'importazione senza niente di nuovo mostra comunque i risultati.
 * **TikTok:** Le impostazioni in cinese semplificato si leggono in modo più uniforme e usano la stessa parola per la stessa cosa ovunque.
 * **TikTok:** La ricerca nei commenti non riporta più i commenti tradotti nascosti dal filtro per parole chiave.
 * **TikTok:** Scegliere una cartella di download che non si può usare riapre la finestra della cartella con il motivo sotto.
-* **TikTok:** La verifica di rilascio ora copre anche PineDrama, dai feed ai fogli fino a ogni sezione di Hushfeed.
-* **TikTok:** PineDrama ha un suo controllo delle patch, e un rilascio richiede un controllo aggiornato e una verifica superata per ogni app supportata.
 * **TikTok:** Ogni anteprima LIVE e ogni etichetta di drama che la Barra inferiore trasparente sposta viene controllata sulla build di TikTok supportata.
 * **TikTok:** La verifica dell'avanzamento automatico segue il lettore video stesso invece delle etichette dei singoli video.
 * **TikTok:** Un rilascio richiede prove corrispondenti per ogni app che supporta.

@@ -84,39 +84,6 @@ public final class StoreIdentity {
             + "ijVwSf5+V3mTcH0pQsSZiyM1wNqWiUr71jihfYY8l/f94qh4Rfh7dwIA3y6OtyCtP0+p/Oieop5s+i/Q08Tn"
             + "6xDztKKaUNvqO9pv83jB0UvACa9m2woW0g==";
 
-    /** PineDrama's package, TikTok's drama app built from the same code (#156). */
-    static final String PINEDRAMA_PACKAGE = "com.ss.android.ttmd.video";
-
-    /**
-     * PineDrama's own signing certificate (CN=TikTok Drama) as DER, read off the APKMirror 47.1.4
-     * bundle and unchanged on 47.4.3 and 47.5.3. Its SHA-256 is the {@code e97ca0c8...f54e18} digest Morphe Manager holds a picked
-     * PineDrama APK to. A patched PineDrama answers with this one, never TikTok's.
-     */
-    static final String PINEDRAMA_CERTIFICATE =
-            "MIIFxDCCA6ygAwIBAgIUOjW81DNncJPXi472GQwU/AVl3W0wDQYJKoZIhvcNAQELBQAwgZoxCzAJBgNVBAYTAlNH"
-            + "MQswCQYDVQQIEwJTRzExMC8GA1UEBwwoMSBSQUZGTEVTIFFVQVksICMyNi0xMCwgU0lOR0FQT1JFIDA0ODU4MzEZ"
-            + "MBcGA1UEChMQVGlrVG9rIFB0ZS4gTHRkLjEZMBcGA1UECxMQVGlrVG9rIFB0ZS4gTHRkLjEVMBMGA1UEAxMMVGlr"
-            + "VG9rIERyYW1hMCAXDTI1MTAxNDE2MDAwMFoYDzIwNTAxMDE0MTU1OTU5WjCBmjELMAkGA1UEBhMCU0cxCzAJBgNV"
-            + "BAgTAlNHMTEwLwYDVQQHDCgxIFJBRkZMRVMgUVVBWSwgIzI2LTEwLCBTSU5HQVBPUkUgMDQ4NTgzMRkwFwYDVQQK"
-            + "ExBUaWtUb2sgUHRlLiBMdGQuMRkwFwYDVQQLExBUaWtUb2sgUHRlLiBMdGQuMRUwEwYDVQQDEwxUaWtUb2sgRHJh"
-            + "bWEwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQD3yoQcCUMU2Awk3EvNvmfJVp9Z7lnd/IxIIundwM+b"
-            + "Gx8H1TcOo1dVPbs7oY86xJo6wQTQWAIbQVb1LYoWEs82XYbGiqxKayl//yeJ/SEKRfR1ukIl78KzfpH9FG406bn3"
-            + "ecu8D2wADgHNY09kwwvCKCZQqspz2SdDtxYzO4aNuelm7B1nQ/+rfnGSXmz0yA/1gkvo+oobh2SpHcmMBHPd50Mz"
-            + "lcR9BHKy6F+oQXDKCShoiJNeyNFbWWQ1/CrgZSw2XbgvoSO1jjpbqZivWNYrrUsAnSBePjppmRiUr/uFD0lF/xM6"
-            + "qnTC66i2pGZiWi5V77RBZLouXhBCeN71tyxVHs3gDDlQ4pPx/e1dDg7RCnwv2xEC7/TzXHTHaO3aa8GFIrWfKdDk"
-            + "SI4Ov9HDPbN0/yRJBFjMzqjwT/rkOPifOpMTa02UR8ngERzwrY773e4nDdrS9SiOXHGGEeo75JnA5IFSVHKZOcn/"
-            + "QZcZQ3DiJ/r56iYjph5S9/2NOrtHzBJ4rKE1Duph3qEGYxWeBfhbwBaIT/pclqRjALa0c3MdAWYRgAfpP7oiph+c"
-            + "4luQnXYeFRVO2Y92qwmHM+g83WaUYB9MnUmtvC5FoskK8ZIsai1RatQnfdCx4ewOFZa/0uG0d+upkUzqo14YCd2J"
-            + "i8jChBHdiW5+W2eGy8Cz5sGvuwIDAQABMA0GCSqGSIb3DQEBCwUAA4ICAQBWf5JZRNkqiFlbE0IQTzcnjl3/f/es"
-            + "5Shx0El/XNzMu0M/yhbodESbZNxjYkP23HTqjExQrVqOXMIaa13IH6Lb2TqnJV9iv0/X97K2cLbqNP1/toFL6t3A"
-            + "F2i2DvmeBYdI6G6KVXPj0NPzzmV8eqBWSXy+hf7AyK/eGKwpRjQ5tGfvyLAIO8Ah4vxGbqnn1SExBd564ugzDZOV"
-            + "eSmq1hkcQIrehe9l+8i7+O5GxaNWmscStEjLr4QZ0ac2hMKFRq5J0r+2t9jlqBOQDYCQ2hxWWRl0CjCd31FlEjZk"
-            + "7UI96yXSIRiLulWCWhj9Vvf1CMZhMXBuLldLxmtzZCW1fUYCt2idXK0Y0SxRmuDEYjRVQ4KppNqC5HQNMNPMZXrg"
-            + "iS8TQtyRSX0gRncaTZcab9AWUtqYeu5eOYoZZ/SB/g8B5McF2KcY6AsxiDkAL4tTQoZ+jhvUKljlF13gmaQvqqT+"
-            + "quHEckhZk9kBFMV+6EL+J4+KhwKuwR7TTTDRhRBlrM5naM7pfKjFuOFoB20raXmbH5p8x7RVF3MdMDSts+aV7Bop"
-            + "He2Hnf7XzKkG11hKEF7AXeRsn902+Jd/fNQehwxqdd+PXuF1avRmh2txIF7ygZeuctRsORDIpATwzJHbgZ8dQHv4"
-            + "fNhghwCvLC1EH8zwHf8+AfYxKt5vYGfswoMsrw==";
-
     @Nullable
     private static volatile Signature[] original;
     /** TikTok's own package with GET_SIGNATURES alone, which is how every reader of it asks. */
@@ -189,18 +156,11 @@ public final class StoreIdentity {
         return packageName.equals(context.getPackageName());
     }
 
-    /** The store build's certificate for {@code packageName}: PineDrama's for PineDrama, else TikTok's. */
-    static String certificateFor(@Nullable String packageName) {
-        return PINEDRAMA_PACKAGE.equals(packageName) ? PINEDRAMA_CERTIFICATE : CERTIFICATE;
-    }
-
     /** The certificate of the store build of the app this runs in, which can't change while it runs. */
     static Signature[] signatures() {
         Signature[] known = original;
         if (known == null) {
-            Context context = Utils.getContext();
-            String certificate = certificateFor(context == null ? null : context.getPackageName());
-            known = new Signature[]{new Signature(Base64.decode(certificate, Base64.DEFAULT))};
+            known = new Signature[]{new Signature(Base64.decode(CERTIFICATE, Base64.DEFAULT))};
             original = known;
         }
         return known.clone();

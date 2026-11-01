@@ -85,7 +85,7 @@ val commentPublishDiagnosticsPatch = bytecodePatch(
 ) {
     category("Comments")
     dependsOn(sharedExtensionPatch)
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
         val matches = CommentPublishPartFingerprint.matchAll()

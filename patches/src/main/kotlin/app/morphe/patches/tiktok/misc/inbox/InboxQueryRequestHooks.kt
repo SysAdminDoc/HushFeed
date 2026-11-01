@@ -74,7 +74,7 @@ internal val loadedInboxRequestSpecs = listOf(
     InboxRequestSpec("all tab refresh", INBOX_ALL_TAB_VM, 1, strings = listOf("all tab onRefresh(), from = ")),
     refreshClosure("creator refresh closure", INBOX_CREATOR_VM),
     refreshClosure("regular refresh closure", INBOX_REGULAR_VM),
-    // PowerPageLoader's three job launches carry no log line, and PineDrama 47.5.3 moved each one's
+    // PowerPageLoader's three job launches carry no log line, and a build can move each one's
     // name a slot along. Each loads its direction from the loader's enum, whose constants keep their names.
     InboxRequestSpec("page loader load", INBOX_PAGE_LOADER, 1, tracked = true, filters = listOf(fieldAccess(name = "Prev"))),
     InboxRequestSpec("page loader append", INBOX_PAGE_LOADER, 1, tracked = true, filters = listOf(fieldAccess(name = "Next"))),

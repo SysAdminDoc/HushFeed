@@ -49,7 +49,7 @@ val instantLaunchSplashBlockerPatch = bytecodePatch(
 ) {
     category("Performance")
     dependsOn(sharedExtensionPatch, settingsPatch)
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
         installSplashAdSwitch()
@@ -95,8 +95,7 @@ internal fun installSplashAdSwitch() {
         "SplashSettingServiceImpl",
     ) + reviewedBooleanMethods(
         REALTIME_SPLASH_DESCRIPTOR,
-        // PineDrama 47.5.3 null-checks the flag's holder first: the same one static Boolean read.
-        setOf(listOf(3), listOf(4)),
+        setOf(listOf(3)),
         "RealTimeSplashManagerImpl",
     )
     val splashService = patchContext.mutableClassDefBy(SPLASH_SERVICE_DESCRIPTOR)
@@ -127,7 +126,7 @@ val networkTrafficGovernorPatch = bytecodePatch(
 ) {
     category("Performance")
     dependsOn(sharedExtensionPatch, settingsPatch)
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     val skipPushSetup by booleanOption(
         "skipPushSetup",
@@ -178,7 +177,7 @@ val runtimeMemoryGovernorPatch = bytecodePatch(
 ) {
     category("Performance")
     dependsOn(sharedExtensionPatch, settingsPatch)
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
         installAnimatedImageCacheSwitch()
@@ -242,7 +241,7 @@ val updatePromptSuppressorPatch = bytecodePatch(
 ) {
     category("Performance")
     dependsOn(sharedExtensionPatch, settingsPatch)
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
         installUpdateCheckSwitch()

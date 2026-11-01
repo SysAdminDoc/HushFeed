@@ -12,7 +12,6 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.LocaleList;
 
-import app.morphe.extension.shared.BuildNames;
 import app.morphe.extension.shared.Utils;
 
 import java.util.ArrayList;
@@ -20,7 +19,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * Settings text in the phone's language.
@@ -72,68 +70,10 @@ public final class L10n {
         }
         Map<String, String> translations = tableFor(tags(context)).translations;
         if (translations == null) {
-            return forApp(english);
+            return english;
         }
         String translated = translations.get(english);
-        return forApp(translated == null || translated.isEmpty() ? english : translated);
-    }
-
-    /** The package PineDrama runs under, TikTok's drama app built on TikTok's code. */
-    static final String PINEDRAMA = "com.ss.android.ttmd.video";
-
-    /**
-     * The restart phrase in each shipped language, with TikTok's name and the case ending it
-     * takes there ("TikTok-u", "TikTok'u"), and what it becomes for PineDrama. English is in
-     * every list's place too, since a row nobody translated yet shows the English text.
-     */
-    private static final Pattern[] RESTART_PHRASES = {
-            Pattern.compile("([Rr]estart(?:ing)?) TikTok\\b"),
-            Pattern.compile("TikTok-u (yenidən)"),
-            Pattern.compile("([Ss]tarte|Neustart von) TikTok\\b"),
-            Pattern.compile("TikTok (neu starten|konnte nicht neu)"),
-            Pattern.compile("([Rr]einicia(?:r)?|[Rr]iavvia(?:re)?|ulang) TikTok\\b"),
-            Pattern.compile("([Rr]einici(?:e|ar) o) TikTok\\b"),
-            Pattern.compile("([Пп]ерезапуск|[Пп]ерезапуст\\p{L}+) TikTok\\b"),
-            Pattern.compile("TikTok'u (yeniden)"),
-            Pattern.compile("TikTok (yeniden başlatılamadı)"),
-            Pattern.compile("(重新启动|重启) TikTok\\b"),
-    };
-
-    private static final String[] PINEDRAMA_PHRASES = {
-            "$1 PineDrama",
-            "PineDrama-nı $1",
-            "$1 PineDrama",
-            "PineDrama $1",
-            "$1 PineDrama",
-            "$1 PineDrama",
-            "$1 PineDrama",
-            "PineDrama'yı $1",
-            "PineDrama $1",
-            "$1 PineDrama",
-    };
-
-    /**
-     * {@code text} as the running app says it. PineDrama runs Hushfeed's settings too, and a row
-     * telling its reader to restart TikTok sends them to an app they may not have (#156). Only the
-     * restart phrase changes: TikTok's servers, TikTok Sans and the rest stay TikTok's.
-     */
-    static String forApp(String text) {
-        return forApp(text, inPineDrama());
-    }
-
-    /** Whether these settings are running inside PineDrama rather than TikTok (#156). */
-    public static boolean inPineDrama() {
-        return PINEDRAMA.equals(BuildNames.runningApp());
-    }
-
-    static String forApp(String text, boolean pineDrama) {
-        if (!pineDrama || text == null || !text.contains("TikTok")) {
-            return text;
-        }
-        for (int index = 0; index < RESTART_PHRASES.length; index++) {
-            text = RESTART_PHRASES[index].matcher(text).replaceAll(PINEDRAMA_PHRASES[index]);
-        }
-        return text;
+        return translated == null || translated.isEmpty() ? english : translated;
     }
 
     /**
@@ -163,7 +103,7 @@ public final class L10n {
         try {
             return String.format(Locale.getDefault(), t(context, english), args);
         } catch (Throwable ignored) {
-            return String.format(Locale.ROOT, forApp(english), args);
+            return String.format(Locale.ROOT, english, args);
         }
     }
 
@@ -268,9 +208,9 @@ public final class L10n {
 
     private static String format(String translated, String english, Object... args) {
         try {
-            return String.format(Locale.getDefault(), forApp(translated), args);
+            return String.format(Locale.getDefault(), translated, args);
         } catch (Throwable ignored) {
-            return String.format(Locale.ROOT, forApp(english), args);
+            return String.format(Locale.ROOT, english, args);
         }
     }
 

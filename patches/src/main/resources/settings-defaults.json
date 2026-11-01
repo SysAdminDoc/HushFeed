@@ -38,9 +38,6 @@
       "allow_duet_and_stitch",
       "allow_add_to_story"
     ],
-    "Allow photo comments": [
-      "pinedrama_comment_photos"
-    ],
     "Allow screenshots and Circle to Search": [
       "allow_screen_capture"
     ],
@@ -3096,12 +3093,6 @@
     "picture_in_picture": {
       "field": "PICTURE_IN_PICTURE",
       "key": "picture_in_picture",
-      "type": "boolean",
-      "default": false
-    },
-    "pinedrama_comment_photos": {
-      "field": "PINEDRAMA_COMMENT_PHOTOS",
-      "key": "pinedrama_comment_photos",
       "type": "boolean",
       "default": false
     },

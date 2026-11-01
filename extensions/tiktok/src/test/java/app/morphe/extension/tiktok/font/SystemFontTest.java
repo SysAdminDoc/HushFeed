@@ -4,8 +4,6 @@
  */
 package app.morphe.extension.tiktok.font;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -14,8 +12,6 @@ import android.graphics.Typeface;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.tiktok.settings.Settings;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,9 +33,6 @@ public class SystemFontTest {
     }
 
     @After public void tearDown() {
-        ImportedFont.remove(RuntimeEnvironment.getApplication());
-        ImportedFont.forget();
-        Settings.IMPORTED_FONT.resetToDefault();
         Settings.SYSTEM_FONT.resetToDefault();
         HookStatus.clear();
     }
@@ -60,39 +53,10 @@ public class SystemFontTest {
         assertTrue("the TikTok typeface was handed straight back", replaced != tiktok);
     }
 
-    @Test public void nullIsPassedThroughWithoutAnImportedFont() {
+    @Test public void nullIsAlwaysPassedThrough() {
         assertNull(SystemFont.systemize(null));
         Settings.SYSTEM_FONT.save(true);
         assertNull(SystemFont.systemize(null));
-    }
-
-    /**
-     * Issue #243: PineDrama has none of TikTok's font files, so its engine answers null. With an
-     * imported font on, that empty answer becomes the imported font, at the weight asked for.
-     */
-    @Test public void anEmptyAnswerBecomesTheImportedFont() throws IOException {
-        byte[] trueType = {0, 1, 0, 0, 0, 12, 0, (byte) 0x80};
-        ImportedFont.receive(RuntimeEnvironment.getApplication(), new ByteArrayInputStream(trueType), "Inter.ttf").install();
-        ImportedFont.forget();
-        SystemFont.askedFile("font/TikTok-Text-Bold.otf");
-        assertNull("an imported font was used with its switch off", SystemFont.systemize(null));
-
-        Settings.IMPORTED_FONT.save(true);
-        Typeface built = SystemFont.systemize(null);
-        assertNotNull("the empty answer stayed empty with an imported font on", built);
-        assertTrue("the device font came back instead of the imported one", built != Typeface.DEFAULT);
-        SystemFont.askedWeight(500, false);
-        assertNotNull("the variable builder's empty answer stayed empty", SystemFont.systemize(null));
-    }
-
-    @Test public void anAssetsFileNameGivesItsWeight() {
-        assertEquals(400, SystemFont.weightOf("font/TikTok-Text-Regular.otf"));
-        assertEquals(500, SystemFont.weightOf("font/TikTok-Display-Medium.otf"));
-        assertEquals(600, SystemFont.weightOf("font/TikTok-Text-SemiBold.otf"));
-        assertEquals(700, SystemFont.weightOf("font/TikTok-Text-Bold.otf"));
-        assertEquals(800, SystemFont.weightOf("TikTokSans-ExtraBold.otf"));
-        assertEquals(900, SystemFont.weightOf("TikTokSans36pt-Black.otf"));
-        assertEquals(400, SystemFont.weightOf(null));
     }
 
     @Test public void theExportNamesTheStateWhicheverWayTheSwitchIsSet() {

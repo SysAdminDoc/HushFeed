@@ -34,7 +34,7 @@ import org.robolectric.annotation.Config;
 public class StickerRecentsTest {
     @Rule public final SettingsContextRule settingsContext = new SettingsContextRule();
 
-    /** Stands in for PineDrama's StickerItem. */
+    /** Stands in for the app's StickerItem. */
     public static final class FakeSticker {
         final String id;
         final String url;

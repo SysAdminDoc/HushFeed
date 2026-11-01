@@ -48,7 +48,7 @@ internal fun BytecodePatchContext.registerForBuildDetails(enable: String) {
  * The crash reporter's initialiser, which is handed the application context. The context is
  * what the injection passes on, so its position is part of the shape: first, and the only
  * parameter, or the register arithmetic in the patch names something else. R8 names it LIZ on
- * TikTok and LIZIZ on PineDrama 47.5.3; the task's run(Context) is the class's only other method
+ * TikTok; the task's run(Context) is the class's only other method
  * of that shape.
  */
 internal object NpthExtentTaskInitFingerprint : Fingerprint(

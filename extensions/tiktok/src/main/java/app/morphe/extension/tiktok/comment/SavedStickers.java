@@ -8,7 +8,7 @@ package app.morphe.extension.tiktok.comment;
  * How many saved stickers the sticker panel's first read asks for (#214).
  *
  * <p>The panel loads your saved stickers with one request sized by the server's
- * im_sticker_fav_pagesize_config (refreshCount, 100 by default). PineDrama's comment sticker
+ * im_sticker_fav_pagesize_config (refreshCount, 100 by default). The comment sticker
  * panel never asks for the next page, so a sticker saved past that first page never shows,
  * patched or not. The patch hands the refresh's count here just before the request goes out,
  * and a count of {@link #FIRST_READ} brings every saved sticker in that one read (113 of 113 on

@@ -48,7 +48,6 @@ val accentColorPatch = resourcePatch(
     default = false,
 ) {
     category("Interface")
-    // PineDrama applies it only at TikTok's red: its accent tokens and drawables aren't read, so any other color is refused.
     compatibleWith(*AppCompatibilities.tiktok())
     dependsOn(buildDetailsPatch)
     val accent by colorOption(

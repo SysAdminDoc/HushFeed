@@ -13,7 +13,6 @@ import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
-import app.morphe.patches.tiktok.misc.theme.buildName
 import app.morphe.patches.tiktok.misc.theme.declaredVersions
 import app.morphe.patches.tiktok.shared.requireLocals
 import app.morphe.util.getReference
@@ -59,7 +58,7 @@ val customOfflineVideosLimitPatch = bytecodePatch(
     category("Feed")
     dependsOn(settingsPatch, sharedExtensionPatch)
 
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
         // Everything the writes below need is found and checked before the first of them, because
@@ -145,8 +144,8 @@ val customOfflineVideosLimitPatch = bytecodePatch(
         val lifetime = try {
             OfflineVideoLifetimeFingerprint.method.also { it.requireLocals(PATCH_NAME, 2) }
         } catch (problem: Exception) {
-            if (packageMetadata.buildName in declaredVersions()) throw problem
-            println("[$PATCH_NAME] Left out Keep offline videos on ${packageMetadata.buildName}: ${problem.message}")
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[$PATCH_NAME] Left out Keep offline videos on ${packageMetadata.versionName}: ${problem.message}")
             null
         }
 
@@ -160,8 +159,8 @@ val customOfflineVideosLimitPatch = bytecodePatch(
                 DefaultEnableStateFingerprint.method.also { it.defaultEnableCleanupReturnIndex(PATCH_NAME) },
             )
         } catch (problem: Exception) {
-            if (packageMetadata.buildName in declaredVersions()) throw problem
-            println("[$PATCH_NAME] Left out Keep offline videos through Auto adjust on ${packageMetadata.buildName}: ${problem.message}")
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[$PATCH_NAME] Left out Keep offline videos through Auto adjust on ${packageMetadata.versionName}: ${problem.message}")
             null
         }
 

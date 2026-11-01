@@ -30,8 +30,8 @@ internal fun FieldReference.isStickerRefreshCount() =
 
 /**
  * The saved stickers read: StickerApiV2's suspend call taking the cursor and the count (two
- * longs), a flag and a string. R8 renames it (LJI on PineDrama 47.4.3, LJIIIIZZ on TikTok
- * 47.5.3), and its shape is the same in both. The refresh and load more both call it.
+ * longs), a flag and a string. R8 renames it (LJIIIIZZ on TikTok 47.5.3). The refresh and load
+ * more both call it.
  */
 internal fun MethodReference.isSavedStickersRead(): Boolean {
     val parameters = parameterTypes.map { it.toString() }
@@ -41,7 +41,7 @@ internal fun MethodReference.isSavedStickersRead(): Boolean {
 
 /**
  * The saved stickers refresh (#214): the coroutine that reads refreshCount and asks for that many
- * saved stickers from cursor 0 (0OQT on PineDrama 47.4.3, 14gn on TikTok 47.5.3). Load more calls
+ * saved stickers from cursor 0 (14gn on TikTok 47.5.3). Load more calls
  * the same read with loadMoreCount, and the recently used list reads refreshCount as its length
  * cap without calling it, so neither matches.
  */
@@ -60,7 +60,7 @@ internal object SavedStickersRefreshFingerprint : Fingerprint(
 
 /**
  * Hands the refresh's count to the extension right after the coroutine reads it, so the one
- * request PineDrama's comment sticker panel makes asks for every saved sticker.
+ * request the comment sticker panel makes asks for every saved sticker.
  */
 internal fun MutableMethod.raiseSavedStickersFirstRead() {
     val instructions = implementation?.instructions?.toList()
@@ -87,14 +87,13 @@ internal fun MutableMethod.raiseSavedStickersFirstRead() {
 @Suppress("unused")
 val loadAllSavedStickersPatch = bytecodePatch(
     name = "Load all saved stickers",
-    description = "Loads every sticker you saved when you open the sticker panel. PineDrama " +
-        "otherwise shows only the first 100 and never loads the rest. Works as soon as you patch " +
-        "it in, with no switch.",
+    description = "Loads every sticker you saved in one go when you open the sticker panel, " +
+        "instead of the first 100. Works as soon as you patch it in, with no switch.",
     default = true,
 ) {
     category("Comments")
     dependsOn(sharedExtensionPatch)
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
         SavedStickersRefreshFingerprint.method.raiseSavedStickersFirstRead()

@@ -13,7 +13,7 @@
 * **TikTok:** The main feed's bottom bar can be a floating glass pill, with a lens that slides across the tabs and new settings for blur, opacity, height and corners (#259).
 * **TikTok:** Patches with settings have Morphe options that set their starting values, so a build can come with your switches already on. Thanks to @XEGARE (#256).
 * **TikTok:** A new switch hides the row of LIVE and story circles at the top of Following, with no empty band left behind (#262).
-* **TikTok:** A new switch stops the Share to sheet TikTok opens a few seconds after it saves a video. PineDrama gets it too.
+* **TikTok:** A new switch stops the Share to sheet TikTok opens a few seconds after it saves a video.
 * **TikTok:** Saving a photo post's original photos also saves its caption, creator, link and post date in one file.
 * **TikTok:** Settings search knows everyday names like autoplay, PiP and AI, and finds a choice row by any of its options.
 * **TikTok:** Lock the feed at set times locks the feed by itself during the hours you pick, and the lock panel says when it opens again.
@@ -29,7 +29,7 @@
 * **TikTok:** Sound format has an MP3 choice, so saved sounds play anywhere, on every Android version (#273).
 * **TikTok:** A new switch also hides the Back arrow beside the hidden search bar on opened videos (#251).
 * **TikTok:** With Block author button on, LIVEs in For You get the block button too (#138).
-* **TikTok:** The new Create stickers patch for TikTok and PineDrama turns a photo, or a video's picture from the share sheet, into a saved sticker (#156, #88).
+* **TikTok:** The new Create stickers patch turns a photo, or a video's picture from the share sheet, into a saved sticker (#156, #88).
 * **TikTok:** The new Keep recent stickers patch keeps the Recently used sticker row filled after a restart or an account switch (#156).
 * **TikTok:** Hide surveys also hides the Not interested and Interested buttons TikTok sometimes puts over a video (#293).
 * **TikTok:** Custom launcher icon has a Material You style that follows your wallpaper, and a new option puts any color, like #1E88E5, behind the icon (#280).
@@ -39,8 +39,6 @@
 * **TikTok:** The Feature Gate Lab has a restart button now, and TikTok opens back on the Lab afterwards.
 * **TikTok:** Hushfeed builds on Morphe patcher 2.1.0 now, so it needs Morphe Manager 2.3.0 or newer, or morphe-desktop 1.20.0 on a computer.
 * **TikTok:** The patch bundle carries Morphe's bundle signature, so Manager can check that a later download really came from Hushfeed.
-* **TikTok:** On PineDrama, the Inbox switches work now, including Hide conversations (#156).
-* **TikTok:** On PineDrama, the version line in settings names PineDrama and its build instead of TikTok (#156).
 * **TikTok:** A settings search result far down a page now opens right at its row.
 * **TikTok:** With See-through bottom bar on, the Swipe up to skip line on suggested account cards sits above the tabs again (#261).
 * **TikTok:** The floating tab pill is a little taller, so the Home icon and its name stay inside the highlight, and the progress line no longer rides on it (#259).
@@ -87,20 +85,16 @@
 * **TikTok:** Saving a story on Automatic takes the sharpest copy instead of a smaller 720p one. Thanks to @jutochoppa (#287, #155).
 * **TikTok:** Recording a LIVE's screen no longer films the Record button, and the notification has a Stop button (#265).
 * **TikTok:** Sign in without a passkey says what to do when TikTok's 2-step check asks only for a passkey (#102).
-* **TikTok:** Unpausing a PineDrama episode carries on from where you paused it (#156).
 * **TikTok:** Remove creation tools leaves APKMirror's split bundle alone, so face effects and Beauty find your face again (#285).
 * **TikTok:** When TikTok refuses a like, Hushfeed shows the reason the first time each session (#269).
 * **TikTok:** Videos you liked or saved stay on your Liked and Favorites grids, even with an ad mark (#269).
 * **TikTok:** The Chinese message for a refused follow uses the right word now.
 * **TikTok:** The floating tab pill blurs LIVE previews behind it too (#259).
-* **TikTok:** PineDrama gets Feed filter, so Remove feed ads clears the ads from its For You feed and drama tab (#294).
 * **TikTok:** About 140 pop-up messages are shorter now, so they fit in the two lines Android 12 and later gives them.
 * **TikTok:** The Feature Gate Lab's pop-up messages fit in two lines too, and an import with nothing new still shows its results.
 * **TikTok:** The Simplified Chinese settings read more evenly and use the same word for the same thing throughout.
 * **TikTok:** Comment search no longer brings back translated comments the keyword filter hid.
 * **TikTok:** Picking a download folder that can't be used reopens the folder box with the reason under it.
-* **TikTok:** The release walk covers PineDrama too, from its feeds and sheets to every Hushfeed section.
-* **TikTok:** PineDrama has its own patch audit, and a release needs an up-to-date audit and a passing walk for each app it supports.
 * **TikTok:** Every LIVE preview and drama label that See-through bottom bar moves is checked against the supported TikTok build.
 * **TikTok:** The auto-advance audit follows the video player itself instead of per-video labels.
 * **TikTok:** A release needs matching evidence for every app it supports.

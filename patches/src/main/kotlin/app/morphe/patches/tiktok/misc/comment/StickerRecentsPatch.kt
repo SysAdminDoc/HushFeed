@@ -33,7 +33,7 @@ private const val RECENT_STICKER_ITEM = "Lcom/ss/android/ugc/aweme/im/common/mod
 
 /**
  * The recently used list's add: takes a sticker, returns nothing and caps the list at the page
- * size config's refreshCount (Xf3.LJ on PineDrama 47.5.3, 14gj.LJ on TikTok 47.5.3). The saved
+ * size config's refreshCount (14gj.LJ on TikTok 47.5.3). The saved
  * stickers refresh reads refreshCount too, but takes no sticker.
  */
 internal object RecentStickerAddFingerprint : Fingerprint(
@@ -81,7 +81,7 @@ internal fun Method.recentStickersAddWrite(): RecentStickersWrite =
         ?: throw PatchException("Keep recent stickers: ${recentStickersWrites().size} list writes in the add, expected 1")
 
 /**
- * The store's reset: the other `()V` of the add's class that writes the same holder. PineDrama
+ * The store's reset: the other `()V` of the add's class that writes the same holder. The app
  * calls it the first time the store is used in each process and on every sign in, sign out and
  * switch, which is what leaves Recently used empty after a restart.
  */
@@ -112,8 +112,8 @@ internal fun MutableMethod.restoreRecentStickers(write: RecentStickersWrite) = a
 
 /**
  * The basic panel's Saved page building its rows: the collector that makes the Saved heading and a
- * cell per saved sticker, then hands the list to the page (AgS116S0200000_11.emit$22 on PineDrama
- * 47.5.3, AgS193S0200000_27_I1.emit$0 on TikTok 47.5.3).
+ * cell per saved sticker, then hands the list to the page (AgS193S0200000_27_I1.emit$0 on TikTok
+ * 47.5.3).
  */
 internal object RecentStickerRowsFingerprint : Fingerprint(
     returnType = "Ljava/lang/Object;",
@@ -170,8 +170,8 @@ internal data class RecentStickerStore(
 private fun ClassDef.recentRowInvoke() = if (AccessFlags.INTERFACE.isSet(accessFlags)) "invoke-interface" else "invoke-virtual"
 
 /**
- * The page's one public getter whose type declares getRecentStickersFlow() (XT1.LJIIIZ, the
- * IM sticker store, on PineDrama 47.5.3), so the row reads the same list a sent sticker goes on.
+ * The page's one public getter whose type declares getRecentStickersFlow() (the IM sticker
+ * store), so the row reads the same list a sent sticker goes on.
  */
 internal fun recentStickerStore(page: ClassDef, classDef: (String) -> ClassDef?): RecentStickerStore {
     fun ClassDef.recentFlow() = methods.singleOrNull { it.name == "getRecentStickersFlow" && it.parameterTypes.isEmpty() }
@@ -287,7 +287,7 @@ val keepRecentStickersPatch = bytecodePatch(
 ) {
     category("Comments")
     dependsOn(sharedExtensionPatch)
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
         val add = RecentStickerAddFingerprint.method

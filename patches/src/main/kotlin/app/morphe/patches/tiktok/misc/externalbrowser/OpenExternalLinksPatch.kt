@@ -16,7 +16,6 @@ import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.patches.tiktok.shared.requireLocals
-import app.morphe.patches.tiktok.shared.shipsStories
 import app.morphe.util.findFreeRegister
 import com.android.tools.smali.dexlib2.Opcode
 
@@ -34,7 +33,7 @@ val openExternalLinksPatch = bytecodePatch(
     category("Interaction")
     dependsOn(settingsPatch, sharedExtensionPatch)
 
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
         SettingsStatusLoadFingerprint.method.addInstruction(
@@ -58,22 +57,20 @@ val openExternalLinksPatch = bytecodePatch(
             ),
         )
 
-        if (shipsStories("Open external links directly", "links in stories")) {
-            StoryLinkSheetFingerprint.method.requireLocals("Open links in external browser", 1)
-            StoryLinkSheetFingerprint.method.addInstructionsWithLabels(
-                0,
-                """
-                    invoke-static/range {p0 .. p1}, $EXTENSION_CLASS_DESCRIPTOR->openStoryLink(Ljava/lang/Object;Ljava/lang/Object;)Z
-                    move-result v0
-                    if-eqz v0, :external_browser_story_original
-                    return-void
-                """,
-                ExternalLabel(
-                    "external_browser_story_original",
-                    StoryLinkSheetFingerprint.method.getInstruction(0),
-                ),
-            )
-        }
+        StoryLinkSheetFingerprint.method.requireLocals("Open links in external browser", 1)
+        StoryLinkSheetFingerprint.method.addInstructionsWithLabels(
+            0,
+            """
+                invoke-static/range {p0 .. p1}, $EXTENSION_CLASS_DESCRIPTOR->openStoryLink(Ljava/lang/Object;Ljava/lang/Object;)Z
+                move-result v0
+                if-eqz v0, :external_browser_story_original
+                return-void
+            """,
+            ExternalLabel(
+                "external_browser_story_original",
+                StoryLinkSheetFingerprint.method.getInstruction(0),
+            ),
+        )
 
         val superOnCreateIndex = SparkActivityOnCreateFingerprint.method.implementation!!.instructions
             .indexOfFirst { it.opcode == Opcode.INVOKE_SUPER }

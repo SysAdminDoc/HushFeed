@@ -38,9 +38,6 @@
       "ALLOW_DUET_AND_STITCH",
       "ALLOW_ADD_TO_STORY"
     ],
-    "Allow photo comments": [
-      "PINEDRAMA_COMMENT_PHOTOS"
-    ],
     "Allow screenshots and Circle to Search": [
       "ALLOW_SCREEN_CAPTURE"
     ],

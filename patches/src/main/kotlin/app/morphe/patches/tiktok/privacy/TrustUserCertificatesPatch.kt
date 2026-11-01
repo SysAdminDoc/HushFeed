@@ -41,7 +41,7 @@ val trustUserCertificatesPatch = resourcePatch(
     default = false,
 ) {
     category("Privacy")
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
     dependsOn(buildDetailsPatch)
 
     execute {

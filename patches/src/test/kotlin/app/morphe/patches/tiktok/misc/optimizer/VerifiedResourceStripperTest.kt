@@ -1,7 +1,6 @@
 package app.morphe.patches.tiktok.misc.optimizer
 
 import app.morphe.patcher.patch.PatchException
-import app.morphe.patches.shared.compat.AppCompatibilities
 import java.io.File
 import java.security.MessageDigest
 import org.junit.Assert.assertArrayEquals
@@ -35,19 +34,6 @@ class VerifiedResourceStripperTest {
         assertThrows(PatchException::class.java) { strip("2.1") }
         assertThrows(PatchException::class.java) { strip(null) }
         assertThrows(IllegalArgumentException::class.java) { ResourceProfile("unpinned", emptyList()) }
-    }
-
-    @Test
-    fun `the relay strip passes every declared PineDrama build, which ships no relay library`() {
-        // The 47.4.3 retarget renamed the only 47.1.4 empty profile and PineDrama 47.1.4 stopped patching.
-        val versions = AppCompatibilities.pineDrama().flatMap { it.targets }.map { it.version }
-        assertTrue(versions.isNotEmpty())
-        for (version in versions) {
-            val root = temporary.newFolder("pinedrama-$version")
-            val result = stripVerifiedResources(root, "P2P Relay Blocker", emptyList(),
-                p2pRelayProfiles.flatMap { it.files }.map { it.path }.distinct(), p2pRelayProfiles, versionName = version)
-            assertEquals(version, 0, result.files)
-        }
     }
 
     @Test

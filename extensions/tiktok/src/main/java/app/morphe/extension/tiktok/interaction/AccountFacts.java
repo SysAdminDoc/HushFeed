@@ -105,8 +105,7 @@ public final class AccountFacts {
         facts.add(new Fact("Display name last changed",
                 date(seconds(Reflect.readField(user, "nickNameModifyTs")), locale, zone)));
         // Both are plain booleans on the model, so one the server left out reads false. Only a
-        // true one is a fact, and false leaves its line out. 47.4.3 renamed secret to isSecret,
-        // and PineDrama 47.1.4 still has secret.
+        // true one is a fact, and false leaves its line out. 47.4.3 renamed secret to isSecret.
         Object secret = Reflect.readField(user, "isSecret");
         if (secret == null) secret = Reflect.readField(user, "secret");
         if (Boolean.TRUE.equals(secret)) {

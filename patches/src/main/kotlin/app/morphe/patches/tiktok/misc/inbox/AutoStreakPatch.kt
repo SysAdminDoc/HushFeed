@@ -163,7 +163,7 @@ val autoStreakPatch = bytecodePatch(
     category("Inbox")
     dependsOn(settingsPatch, sharedExtensionPatch, autoStreakManifestPatch)
 
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
         val lookup = readyLookupIn(QuickReplySendFingerprint.method).getOrElse {

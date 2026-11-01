@@ -16,7 +16,6 @@ import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
-import app.morphe.patches.tiktok.misc.theme.buildName
 import app.morphe.patches.tiktok.misc.theme.declaredVersions
 import com.android.tools.smali.dexlib2.iface.Method
 
@@ -83,8 +82,8 @@ val hideFeedLiveButtonPatch = bytecodePatch(
             "hideFeedLiveButtonEnabled",
         )
 
-        hookSidebarButtonOn(packageMetadata.buildName)
-        hookSidebarSwipeOn(packageMetadata.buildName)
+        hookSidebarButtonOn(packageMetadata.versionName)
+        hookSidebarSwipeOn(packageMetadata.versionName)
     }
 }
 

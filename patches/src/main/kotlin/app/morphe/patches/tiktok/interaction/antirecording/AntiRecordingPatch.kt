@@ -70,7 +70,7 @@ val antiRecordingPatch = bytecodePatch(
     category("Downloads")
     // Only so Build details can list it: the patch itself runs no extension code.
     dependsOn(sharedExtensionPatch)
-    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
         var returnedEarly = 0

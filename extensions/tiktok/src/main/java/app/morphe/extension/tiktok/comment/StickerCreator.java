@@ -84,7 +84,7 @@ public final class StickerCreator {
     private StickerCreator() {
     }
 
-    /** Called with the saved stickers page as PineDrama builds it. */
+    /** Called with the saved stickers page as the app builds it. */
     public static void onFavouritesPage(View page) {
         try {
             if (HushfeedPause.isPaused() || !(page instanceof ViewGroup)) return;
@@ -388,7 +388,7 @@ public final class StickerCreator {
     }
 
     /**
-     * Uploads the sticker file through ImageX with the settings PineDrama's comment sticker
+     * Uploads the sticker file through ImageX with the settings the app's comment sticker
      * uploader uses, and returns the file's key. Logs the host and service, never the keys.
      */
     private static String upload(File file) throws Exception {
@@ -587,20 +587,20 @@ public final class StickerCreator {
                 TypedValue.COMPLEX_UNIT_DIP, value, context.getResources().getDisplayMetrics()));
     }
 
-    // The bridges below are stubs. The patch writes each body from the calls PineDrama makes
+    // The bridges below are stubs. The patch writes each body from the calls the app makes
     // itself, and an unpatched build answers with nothing.
 
-    /** PineDrama's sticker upload config call: an ImageX token from im/upload_config, scene 2. */
+    /** The app's sticker upload config call: an ImageX token from im/upload_config, scene 2. */
     static Object uploadConfig(Object continuation) {
         return null;
     }
 
-    /** The server parameter PineDrama hands its ImageX uploads (app id, device, region). */
+    /** The server parameter the app hands its ImageX uploads (app id, device, region). */
     static String uploadServerParameter() {
         return null;
     }
 
-    /** StickerApiV2's im/sticker/save, through the API object PineDrama's canvas saver uses. */
+    /** StickerApiV2's im/sticker/save, through the API object the app's canvas saver uses. */
     static Object saveSticker(int type, String uri, int width, int height, List<?> tags, String source,
                               Integer createSource, Object continuation) {
         return null;

@@ -72,16 +72,6 @@ class SearchRewardsGettersTest {
     }
 
     @Test
-    fun `PineDrama's one-argument plugin check is a feature check too`() {
-        val native = getter("coin", COIN_CONTROL, pluginCheck = true)
-        val getter = searchRewardsGetter(native)
-        assertEquals(COIN_CONTROL, getter!!.placeholder)
-        assertEquals(3, getter.loadedResultIndex)
-        assertHooked(native, getter)
-        assertNull("another feature's check", searchRewardsGetter(getter("ecommerce", COIN_CONTROL, pluginCheck = true)))
-    }
-
-    @Test
     fun `other features, other placeholders and getters that never ask for the service are left alone`() {
         assertNull("another feature's check", searchRewardsGetter(getter("ecommerce", COIN_CONTROL)))
         assertNull("not a search rewards placeholder",
@@ -117,7 +107,7 @@ class SearchRewardsGettersTest {
         }
     }
 
-    private fun getter(feature: String, placeholder: String, asksForService: Boolean = true, pluginCheck: Boolean = false): Method {
+    private fun getter(feature: String, placeholder: String, asksForService: Boolean = true): Method {
         val mutable = MutableMethod(ImmutableMethod(
             "LX/0AO4;", "invoke", emptyList(), "Ljava/lang/Object;", AccessFlags.PUBLIC.value or AccessFlags.FINAL.value,
             null, null, ImmutableMethodImplementation(9, emptyList(), null, null),
@@ -136,25 +126,14 @@ class SearchRewardsGettersTest {
         } else {
             "const/4 v0, 0x0"
         }
-        val check = if (pluginCheck) {
-            """
-                sget-object v1, LX/Igu;->LIZIZ:LX/Igu;
-                const-string v0, "$feature"
-                invoke-virtual {v1, v0}, LX/Igu;->checkPluginInstalled(Ljava/lang/String;)Z
-            """
-        } else {
+        mutable.addInstructionsWithLabels(
+            0,
             """
                 sget-object v2, LX/08FU;->LIZIZ:LX/08FU;
                 const-string v1, "$feature"
                 const/4 v3, 0x0
                 const/4 v0, 0x0
                 invoke-virtual {v2, v0, v1, v3}, LX/08FU;->LJFF(Landroidx/fragment/app/Fragment;Ljava/lang/String;Z)Z
-            """
-        }
-        mutable.addInstructionsWithLabels(
-            0,
-            """
-                $check
                 move-result v0
                 if-nez v0, :real
                 new-instance v0, $placeholder

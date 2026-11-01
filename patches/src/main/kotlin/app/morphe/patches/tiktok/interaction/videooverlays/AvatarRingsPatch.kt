@@ -12,7 +12,6 @@ import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
-import app.morphe.patches.tiktok.misc.theme.buildName
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
 import app.morphe.util.addInstructionsAtControlFlowLabel
@@ -137,6 +136,6 @@ val avatarRingsPatch = bytecodePatch(
             "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableAvatarRings()V")
 
         // #233: the profile and Inbox pictures open a LIVE creator's Story first, on its own switch.
-        hookStoryOverLiveOn(packageMetadata.buildName)
+        hookStoryOverLiveOn(packageMetadata.versionName)
     }
 }

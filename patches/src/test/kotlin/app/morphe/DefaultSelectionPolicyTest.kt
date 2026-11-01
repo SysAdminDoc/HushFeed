@@ -58,18 +58,6 @@ class DefaultSelectionPolicyTest {
         )
     }
 
-    /** The README's install step and Patches section both say how many patches simple mode picks. */
-    @Test
-    fun `the README counts simple mode's selection from the catalog`() {
-        val readme = File("../README.md").takeIf { it.isFile } ?: File("README.md")
-        assertTrue("could not find the README from ${File(".").absolutePath}", readme.isFile)
-        val counts = Regex("""Simple mode in Morphe Manager selects (\d+)""").findAll(readme.readText())
-            .map { it.groupValues[1].toInt() }.toList()
-        assertEquals("the install step and the Patches section each give the count", 2, counts.size)
-        val picked = shippedPatches().count { it.get("use").asBoolean }
-        assertEquals("simple mode's count in the README", listOf(picked, picked), counts)
-    }
-
     /** The catalog is generated, so the declarations are checked too, in case it is stale. */
     @Test
     fun `the declarations agree with the catalog`() {

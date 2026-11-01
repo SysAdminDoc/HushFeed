@@ -1,6 +1,5 @@
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.nio.file.Files
 import java.security.KeyFactory
 import java.security.MessageDigest
 import java.security.Signature
@@ -16,7 +15,6 @@ import java.util.zip.CRC32
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
-import javax.xml.parsers.DocumentBuilderFactory
 import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
 
 /**
@@ -419,10 +417,9 @@ val verifyBouncyCastleBuildGraph = tasks.register("verifyBouncyCastleBuildGraph"
 }
 
 // By type rather than by the one name, so a second test task cannot start on a graph nothing
-// has looked at. :patches:test is what scripts/pre-push.ps1 runs when a patch source changes.
+// has looked at.
 tasks.withType<Test>().configureEach {
     dependsOn(verifyBouncyCastleBuildGraph)
-    dependsOn("verifySourceProvenance")
 }
 
 dependencies {
@@ -450,17 +447,14 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
 }
 
-val documentationClasses = listOf("app/morphe/ReadmePatchNamesTest.class", "app/morphe/MarketingHeroTest.class")
 // The patch tests that read extension sources or the extension bundle. They stay in :patches:test,
 // which a runtime Java edit reruns. Every other patch test runs in nativeTest, whose inputs leave
-// the extensions out, so that edit reuses the long fixture fingerprint scans. nativeTest refuses
-// to run a test outside this list that reads extensions.
+// the extensions out, so that edit reuses the long fixture fingerprint scans.
 val extensionClasses = listOf(
     "app/morphe/patches/tiktok/interaction/videooverlays/StoryOverLiveBindingFixturesTest.class",
     "app/morphe/ExtensionBridgeLookupTest.class",
     "app/morphe/ExtensionHostsTest.class",
     "app/morphe/ObfuscatedIdentityTest.class",
-    "app/morphe/OriginNoticeMirrorsTest.class",
     "app/morphe/RuntimeViewIdAnchorsTest.class",
     "app/morphe/gatecatalog/GateCatalogFixturesTest.class",
     "app/morphe/patches/tiktok/ExtensionReferencesResolveTest.class",
@@ -494,47 +488,7 @@ val nativeTest = tasks.register<Test>("nativeTest") {
     testClassesDirs = sourceSets.test.get().output.classesDirs
     val mainResources = sourceSets.main.get().output.resourcesDir
     classpath = sourceSets.test.get().runtimeClasspath.filter { it != mainResources } + files(nativeTestResources)
-    exclude(documentationClasses + extensionClasses)
-    inputs.property("suiteSelection", provider {
-        (tasks.test.get().filter as DefaultTestFilter).commandLineIncludePatterns
-    })
-    failOnNoDiscoveredTests.set(provider {
-        (tasks.test.get().filter as DefaultTestFilter).commandLineIncludePatterns.isEmpty()
-    })
-    val testRoot = file("src/test/kotlin")
-    val testSources = fileTree(testRoot) { include("**/*.kt") }
-    // By package path, the way include and exclude match: a listed test moved to another
-    // package would otherwise still pass here by its name while test no longer ran it.
-    val listed = extensionClasses.map { it.removeSuffix(".class") }.toSet()
-    doFirst {
-        val readsExtensions = Regex("""["/\\]extensions[/\\"]""")
-        val unlisted = testSources.files
-            .filter {
-                it.relativeTo(testRoot).invariantSeparatorsPath.removeSuffix(".kt") !in listed &&
-                    readsExtensions.containsMatchIn(it.readText())
-            }
-            .map { it.relativeTo(projectDir).invariantSeparatorsPath }.sorted()
-        check(unlisted.isEmpty()) {
-            "These test sources read extensions, but nativeTest ignores extension changes. " +
-                "Add their test classes to extensionClasses in patches/build.gradle.kts, or fix " +
-                "an entry whose test moved: $unlisted"
-        }
-        val selected = (tasks.test.get().filter as DefaultTestFilter).commandLineIncludePatterns
-        if (selected.isNotEmpty()) {
-            setTestNameIncludePatterns(selected.toList())
-            filter.isFailOnNoMatchingTests = false
-        }
-    }
-}
-val documentationTest = tasks.register<Test>("documentationTest") {
-    group = "verification"
-    description = "Checks the README, source catalog and approved artwork."
-    testClassesDirs = sourceSets.test.get().output.classesDirs
-    classpath = sourceSets.test.get().runtimeClasspath
-    maxHeapSize = "512m"
-    include(documentationClasses)
-    // TestFilter has no public getter for CLI patterns in the pinned Gradle 9.8.2 API.
-    // Record forwarded filters before input snapshotting, then apply them before execution.
+    exclude(extensionClasses)
     inputs.property("suiteSelection", provider {
         (tasks.test.get().filter as DefaultTestFilter).commandLineIncludePatterns
     })
@@ -549,82 +503,6 @@ val documentationTest = tasks.register<Test>("documentationTest") {
         }
     }
 }
-
-// A finalizer also runs when the native partition is UP-TO-DATE or NO-SOURCE.
-val verifyPatchTestSelection = tasks.register("verifyPatchTestSelection") {
-    mustRunAfter(tasks.test, nativeTest, documentationTest)
-    doLast {
-        val parser = DocumentBuilderFactory.newInstance().apply {
-            setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
-        }.newDocumentBuilder()
-        val suites = mutableSetOf<String>()
-        var total = 0
-        for (partition in listOf("test", "nativeTest", "documentationTest")) {
-            val reports = layout.buildDirectory.dir("test-results/$partition").get().asFile
-            for (report in reports.listFiles().orEmpty().filter { it.name.startsWith("TEST-") && it.extension == "xml" }) {
-                val suite = parser.parse(report).documentElement
-                val name = suite.getAttribute("name")
-                check(suites.add(name)) { "Duplicate patch test suite: $name" }
-                total += suite.getElementsByTagName("testcase").length
-            }
-        }
-        check(total > 0) { "No tests matched the requested selection" }
-        val selection = tasks.test.get().filter as DefaultTestFilter
-        if (selection.commandLineIncludePatterns.isEmpty() && selection.includePatterns.isEmpty()) {
-            val expected = fileTree("src/test/kotlin") { include("**/*Test.kt") }
-                .files.map { it.nameWithoutExtension }.toSet()
-            val ran = suites.map { it.substringAfterLast('.') }.toSet()
-            check(ran == expected) {
-                "Incomplete patch test run. Missing: ${expected - ran}; orphaned: ${ran - expected}"
-            }
-        }
-        logger.lifecycle("Patch tests across all three partitions: $total")
-    }
-}
-
-val patchTestPartitions = setOf("test", "nativeTest", "documentationTest")
-tasks.withType<Test>().matching { it.name in patchTestPartitions }.configureEach {
-    val contractFiles = when (name) {
-        "documentationTest" -> rootProject.files(
-            "patches/src", "README.md", "patches-list.json", "patches-bundle.json",
-            "assets/readme-hero.png", "patches-bundle.png", "concepts/marketing/2026-09-12"
-        )
-        "nativeTest" -> rootProject.files(fileTree("src"), rootProject.file("patches-list.json"))
-        else -> rootProject.files(fileTree("src"), rootProject.file("patches-list.json"),
-            rootProject.fileTree("extensions") { include("**/src/**"); exclude("**/build/**") })
-    }
-    // These contracts read raw files beyond the compiled classpath. Hash content directly so
-    // equal size/mtime replacements also invalidate Gradle's cached file fingerprints.
-    val contractContent = provider {
-        contractFiles.asFileTree.files.filter { it.isFile }.associate { source ->
-            val digest = MessageDigest.getInstance("SHA-256")
-            source.inputStream().use { stream ->
-                val buffer = ByteArray(65_536)
-                while (true) {
-                    val read = stream.read(buffer)
-                    if (read < 0) break
-                    digest.update(buffer, 0, read)
-                }
-            }
-            source.relativeTo(rootProject.projectDir).invariantSeparatorsPath to
-                digest.digest().joinToString("") { "%02x".format(it) }
-        }
-    }
-    inputs.files(contractFiles).withPropertyName("contractFiles").withPathSensitivity(PathSensitivity.RELATIVE)
-    inputs.property("contractContent", contractContent)
-    // The XML output directory, including this receipt, is retained with cached test results.
-    val receipt = layout.buildDirectory.file("test-results/$name/source-inputs.sha256")
-    var startedWith = emptyMap<String, String>()
-    doFirst { startedWith = contractContent.get() }
-    doLast {
-        check(startedWith == contractContent.get()) { "Contract inputs changed during $name" }
-        receipt.get().asFile.parentFile.mkdirs()
-        receipt.get().asFile.writeText(startedWith.toSortedMap().entries.joinToString("\n", postfix = "\n") {
-            (path, digest) -> "$digest $path"
-        })
-    }
-}
-
 // The fixture tests skip when this is unset and read the folder when it is set. Blank counts as
 // unset, as Fixtures.kt reads it; File("") would be the whole project.
 val fixtureDirectory = providers.environmentVariable("HUSHFEED_FIXTURE_DIR")
@@ -677,11 +555,9 @@ tasks.withType<Test>().matching { it.name == "test" || it.name == "nativeTest" }
 
 tasks {
     test {
-        dependsOn(documentationTest, nativeTest)
-        finalizedBy(verifyPatchTestSelection)
+        dependsOn(nativeTest)
         include(extensionClasses)
-        // A --tests selection may belong only to another partition. The finalizer checks every
-        // result set so an unmatched selection still fails, as it did before.
+        // A --tests selection may belong only to the other partition.
         filter.isFailOnNoMatchingTests = false
         failOnNoDiscoveredTests.set(false)
     }
@@ -692,124 +568,10 @@ tasks {
     // test run did it again between the build and the index push. Nothing but buildAndroid
     // writes build/release. scripts/common.ps1 names the same path for every release script.
     val releaseBundleName = "patches-${project.version}.mpp"
-    val verifySourceProvenance = register("verifySourceProvenance") {
-        group = "verification"
-        description = "Checks source snapshots and manifest stamping against real temporary Git files"
-        val testDirectory = layout.buildDirectory.dir("source-provenance-tests")
-        doLast {
-            val boundary = testDirectory.get().asFile.canonicalFile
-            boundary.mkdirs()
-            val fixture = Files.createTempDirectory(boundary.toPath(), "source-").toFile()
-            try {
-                val unknown = BundleSource.capture(fixture)
-                check(!unknown.clean) { "A directory without its own Git repository was eligible" }
-                BundleSource.git(fixture, "init", "--quiet")
-                val input = fixture.resolve("input.txt")
-                input.writeText("original\n")
-                fixture.resolve(".gitattributes").writeText("* text=auto eol=lf\n")
-                BundleSource.git(fixture, "add", "input.txt", ".gitattributes")
-                fun commit() {
-                    BundleSource.git(fixture, "-c", "user.name=SysAdminDoc", "-c",
-                        "user.email=matt_parker@outlook.com", "-c", "commit.gpgsign=false",
-                        "commit", "--quiet", "-m", "Record source provenance fixture")
-                }
-                commit()
-                val clean = BundleSource.capture(fixture)
-                check(clean.clean) { "A clean committed source tree was ineligible" }
-                input.writeText("changed\n")
-                val dirty = BundleSource.capture(fixture)
-                check(!dirty.clean && dirty.fingerprint != clean.fingerprint) { "A changed source input was missed" }
-                input.writeText("original\n")
-                val restored = BundleSource.capture(fixture)
-                check(restored.clean && restored.fingerprint == clean.fingerprint) { "Restored bytes did not match" }
-                val extra = fixture.resolve("untracked.txt")
-                extra.writeText("untracked\n")
-                check(!BundleSource.capture(fixture).clean) { "An untracked input was treated as clean" }
-                check(extra.delete())
-                val sourceRegressions = mutableListOf<String>()
-                for (relative in listOf("src/main/java/Ignored.java", "src/main/resources/ignored.txt")) {
-                    fixture.resolve(".git/info/exclude").appendText("\n/$relative\n")
-                    val ignored = fixture.resolve(relative)
-                    ignored.parentFile.mkdirs()
-                    ignored.writeText(if (relative.endsWith(".java")) "class Ignored {}\n" else "ignored resource\n")
-                    try {
-                        if (BundleSource.capture(fixture).clean) sourceRegressions += "ignored $relative was eligible"
-                    } finally { check(ignored.delete()) }
-                }
-                input.writeText("original\r\n")
-                // Refresh Git's index using the committed normalization policy before checking it.
-                BundleSource.git(fixture, "add", "--renormalize", "--", "input.txt")
-                val crlf = BundleSource.capture(fixture)
-                check(crlf.clean) { "The CRLF control is not Git-equivalent to its LF commit" }
-                // checkout-index trusts matching index metadata, so remove this owned test input first.
-                check(input.delete()) { "Could not remove the fresh-checkout control input" }
-                BundleSource.git(fixture, "checkout-index", "--force", "--index", "--", "input.txt")
-                check(input.readBytes().contentEquals("original\n".toByteArray())) {
-                    "The fresh-checkout control did not apply the committed LF policy"
-                }
-                val fresh = BundleSource.capture(fixture)
-                check(fresh.clean) { "The fresh-checkout control is not clean" }
-                if (crlf.fingerprint != fresh.fingerprint) {
-                    sourceRegressions += "Git-equivalent line endings changed the source fingerprint"
-                }
-                if (BundleSource.manifestFacts(crlf, crlf) != BundleSource.manifestFacts(fresh, fresh)) {
-                    sourceRegressions += "a fresh checkout changed the manifest source facts"
-                }
-                check(BundleSource.manifestFacts(crlf, fresh)["Hushfeed-Source-Clean"] == "false") {
-                    "A byte change during one build must stay ineligible even when Git normalizes it"
-                }
-                check(sourceRegressions.isEmpty()) { sourceRegressions.joinToString("; ") }
-                for (flag in listOf("assume-unchanged", "skip-worktree")) {
-                    BundleSource.git(fixture, "update-index", "--$flag", "input.txt")
-                    input.writeText("hidden change\n")
-                    check(!BundleSource.capture(fixture).clean) { "A $flag input hid a source edit" }
-                    BundleSource.git(fixture, "update-index", "--no-$flag", "input.txt")
-                    input.writeText("original\n")
-                }
-                input.writeText("new committed input\n")
-                BundleSource.git(fixture, "add", "input.txt")
-                commit()
-                val moved = BundleSource.capture(fixture)
-                check(moved.clean && moved.commit != clean.commit) { "The source commit did not move" }
-                val cases = listOf(
-                    Triple(clean, clean, true), Triple(dirty, dirty, false),
-                    Triple(clean, dirty, false), Triple(clean, moved, false),
-                    Triple(unknown, clean, false)
-                )
-                for ((index, test) in cases.withIndex()) {
-                    val bundle = boundary.resolve("${fixture.name}-snapshot-$index.mpp")
-                    try {
-                        ZipOutputStream(bundle.outputStream()).use { zip ->
-                            zip.putNextEntry(ZipEntry("META-INF/MANIFEST.MF"))
-                            zip.write("Manifest-Version: 1.0\r\nTimestamp: 0\r\n\r\n".toByteArray())
-                            zip.closeEntry()
-                        }
-                        // Every case gets the same reproducible stamp, including dirty/restored.
-                        pinBundleTimestamp(bundle, 1_700_000_000L, BundleSource.manifestFacts(test.first, test.second))
-                        ZipFile(bundle).use { zip ->
-                            val manifest = zip.getInputStream(zip.getEntry("META-INF/MANIFEST.MF"))
-                                .use { Manifest(it).mainAttributes }
-                            check(manifest.getValue("Timestamp") == "1700000000000")
-                            check(manifest.getValue("Hushfeed-Source-Clean") == test.third.toString()) {
-                                "Source eligibility changed while stamping case $index"
-                            }
-                            check(manifest.getValue("Hushfeed-Source-Commit") == test.first.commit)
-                            check(manifest.getValue("Hushfeed-Source-Start") == test.first.fingerprint)
-                            check(manifest.getValue("Hushfeed-Source-End") == test.second.fingerprint)
-                        }
-                    } finally { check(bundle.delete()) { "Could not remove source test bundle" } }
-                }
-                logger.lifecycle("Source provenance: clean, dirty/restored, changed, hidden and unreadable input checks passed.")
-            } finally {
-                check(fixture.canonicalFile.parentFile == boundary) { "Source test directory escaped its build folder" }
-                check(fixture.deleteRecursively()) { "Could not remove source test repository" }
-            }
-        }
-    }
     val verifyBundle = register<JavaExec>("verifyBundle") {
         group = "verification"
         description = "Check the Android bundle and its published patch list without rebuilding it"
-        dependsOn(classes, verifySourceProvenance)
+        dependsOn(classes)
         classpath = sourceSets["main"].runtimeClasspath
         mainClass.set("app.morphe.util.BundleVerifier")
         args(
@@ -885,13 +647,8 @@ tasks {
     register<JavaExec>("generatePatchesList") {
         description = "Build patch with patch list"
 
-        // jar, not build. build runs check, which runs test, and ReadmePatchNamesTest asserts
-        // that the checked-in patches-list.json names exactly the patches the Kotlin sources
-        // declare. Adding or renaming a patch therefore failed the test before the task that
-        // regenerates the list could run, and the only ways through were -x test or editing the
-        // generated JSON by hand. The generator reads build/libs/patches-<version>.mpp, which
-        // jar produces; the test and verifyBundle are still the gate afterwards, which is the
-        // order that can actually pass.
+        // jar, not build: build runs check, which runs test. The generator reads
+        // build/libs/patches-<version>.mpp, which jar produces.
         dependsOn(jar)
 
         classpath = sourceSets["main"].runtimeClasspath

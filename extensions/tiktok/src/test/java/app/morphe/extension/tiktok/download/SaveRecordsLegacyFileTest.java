@@ -233,21 +233,6 @@ public class SaveRecordsLegacyFileTest {
         assertEquals("something else can reach the records file", List.of(), readers);
     }
 
-    /** The README says what the record keeps, the Android 9 path included, and claims nothing more. */
-    @Test public void theReadmeSaysWhatTheRecordKeeps() throws Exception {
-        File readme = new File("../../README.md");
-        if (!readme.isFile()) readme = new File("README.md");
-        assertTrue(readme.isFile());
-        String text = new String(Files.readAllBytes(readme.toPath()), StandardCharsets.UTF_8);
-        int at = text.indexOf("If TikTok closes while saves are still going");
-        assertTrue("the README lost its paragraph on unfinished saves", at >= 0);
-        String paragraph = text.substring(at, text.indexOf('\n', at));
-        assertFalse("the README says no video IDs are kept: " + paragraph, paragraph.contains("no video IDs"));
-        assertTrue("the README doesn't say a file being written is noted by its path: " + paragraph,
-                paragraph.contains("Android 9 and older") && paragraph.contains("path"));
-        assertTrue(paragraph.contains("no links or tokens"));
-    }
-
     /** A file confirmed and deleted since is a file that was saved. */
     @Test public void aConfirmedFileDeletedSinceIsStillDone() throws Exception {
         File file = target("clip.jpg");

@@ -32,8 +32,6 @@ The steps run what actually proves the bundle: the runtime and patch tests once,
 
 The local helpers are `scripts/gen-l10n.py`, `scripts/verify-all-patches.ps1` and `scripts/patch-for-device.ps1`. The last two need a Morphe desktop jar and a fixture APK. Anything more than one of them needs goes in `scripts/common.ps1`, which they all dot-source. The jar runs on JDK 21 or newer, so set `HUSHFEED_JAVA` or `JAVA_HOME` if that isn't the `java` first on your PATH. An explicit `-Java` directory must contain `bin/java.exe` or `bin/java`.
 
-`pinedrama-47.5.3-capabilities-v1` is a separate read-only inspection. Build its probe with `tools/verification-probe/build.ps1 -Profile pinedrama-47.5.3-capabilities-v1` and the target's signing key. `New-PineDramaInspectionPlan` in `tools/verification-probe/probe-log.ps1` needs the exact stock and patched APKs, the device build's record and the bundle. It refuses split APKs and UI commands, and its result can't stand in for a whole-app walk.
-
 When the TikTok target moves, record the content-marker corpus again on the new build.
 `ContentMarkerCorpusTest` replays shapes recorded from real videos through the AI label, paid
 partnership, series and playlist filters, because hand-built test objects never carried the

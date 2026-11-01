@@ -6,7 +6,7 @@ This guide maps the TikTok app Hushfeed modifies to the code and release checks 
 
 Hushfeed is a Morphe patch bundle, not a TikTok APK. Morphe Manager takes a TikTok APK chosen by the user, applies the selected patches, and signs the result with the user's existing key. The patch definitions and the runtime code they inject live in separate Gradle modules.
 
-Source snapshot: version 0.80.0, 144 patch entries. Those come from gradle.properties and patches-list.json.
+Source snapshot: version 0.80.0, 143 patch entries. Those come from gradle.properties and patches-list.json.
 
 Published bundle: version 0.79.0, 141 patches. Those come from patches-bundle.json and the release it names.
 
@@ -25,7 +25,7 @@ Keep every Unreleased bullet under a `###` group. The release cutter preserves t
 | APK signer SHA-256 | 9041803e91bcb814b4b4399fb5c85a91640b755e5e8ba76813814bf4cf2ab5ba |
 | Extension minimum Android API | 23 |
 
-Global TikTok is the main target. PineDrama (com.ss.android.ttmd.video 47.5.3, version code 2024705030, signer SHA-256 e97ca0c8835c5a9e4f7702a0382b103ede9c5d51e5194c8db54f4c8833f54e18) is built from TikTok's 47.5.3 code, and the patches whose anchors it keeps declare it too: 98 of the 144 in the current catalog. It leaves out TikTok's stories, so the parts of a patch that need them check `shipsStories()` and skip on PineDrama. A patch's package and version support says only that it applies. Whether it works signed in on a drama feed is a separate runtime check. TikTok Lite and regional package variants aren't patch targets.
+Global TikTok is the target. PineDrama has its own repo, [HushPine](https://github.com/SysAdminDoc/HushPine). TikTok Lite and regional package variants aren't patch targets.
 
 The target identity is centralized in [AppCompatibilities.kt](../patches/src/main/kotlin/app/morphe/patches/shared/compat/AppCompatibilities.kt). Patch definitions normally use that compatibility object instead of copying package names, signer hashes, or version codes into each patch. The README's [Supported target](../README.md#supported-target) section is the user-facing version record, and its install steps keep naming the build the published release patches, since that's what people install. When the target moves, update AppCompatibilities.kt from the reviewed APK and add one line under Supported target in the form ``- Next release: TikTok X.Y.Z, [on APKMirror](link) since YYYY-MM-DD (version code ...), SHA-256 `...`.`` The release's index step moves the install steps onto that build and drops the line.
 
@@ -90,11 +90,11 @@ The Morphe Gradle plugin and the default extension namespace are configured in s
 
 The runtime code is grouped by feature under extensions/tiktok/src/main/java/app/morphe/extension/tiktok/. Current package folders are accountmanagement, blockauthor, captions, capture, cleardisplay, comment, commentsort, diagnostics, download, externalbrowser, favorites, featurecontrols, featuregatelab, feed, feedfilter, foldable, follow, font, ghostmode, inbox, interaction, live, misc, navigation, network, notinterested, offline, playback, popups, privacy, profile, publishdate, repost, search, seekbar, seen, settings, share, speed, spoof, storage, telemetry, theme, translation, upload, and wellbeing. Search the generated patch catalog by display name first, then follow its dependencies into the Kotlin and Java sources.
 
-The current catalog's 144 patches are grouped as follows:
+The current catalog's 143 patches are grouped as follows:
 
 | Manager category | Patches |
 | --- | ---: |
-| Comments | 17 |
+| Comments | 16 |
 | Downloads | 5 |
 | Feed | 20 |
 | Inbox | 8 |
@@ -246,8 +246,6 @@ To audit a new TikTok version:
 6. Diff the new results file against the previous version's. A check that passed before and fails now is the first thing to look at.
 
 Run `audit/run-audit.ps1 -ValidateResults -Results <results file> -OutDir <evidence folder>` to check saved evidence without rewriting it. Add `-Apk <expected apk>` to qualify it against another artifact. Missing, duplicate, removed, unknown-status and changed or unversioned checks are reported by patch/check key. A partial run keeps old records, but each check must match its definition, build receipt, APK, available evidence and executable-input digest. The digest covers the committed runtime, patch resources, build tools and other executable inputs across the project. It changes conservatively when any of those inputs change. Documentation and audit outputs are excluded. Current-checkout validation refuses uncommitted or hidden executable inputs. Explicit historical-commit validation reads that committed tree. Legacy records without an input digest keep their verdicts but need a new bound run before they qualify. Without a verified build receipt, a run is explicitly unbound. Device-build receipts also retain the stock and patched manifest package, version and version code, both APK hashes, exact patch selection/options, bundle hash and patch-report hash. A version-code override may differ from stock. Every ordinary check requires its patch selected; a negative check must declare `patchSelection: absent`. Older device-build receipts remain historical.
-
-PineDrama gets its own audit. `audit/catalog-pinedrama.json` holds an entry for each of its patches, with checks that open PineDrama's own tabs (Home, Discover, Inbox, Profile, no Friends) and use its `snssdk845221` links. The runner picks the catalog, probe build, tabs and results name from the APK's package, so a PineDrama run writes `audit/results/pinedrama-<version>.json`. Build its probe with `tools/verification-probe/build.ps1 -Profile pinedrama-47.5.3-audit-v1`, and check the catalog without a device with `audit/run-audit.ps1 -Validate -CatalogPackage com.ss.android.ttmd.video`.
 
 The verification probe sends diagnostic reports in encoded frames with byte counts and a SHA-256 digest. Missing or damaged frames leave the check inconclusive. Rebuild the probe before rerunning these report checks. A missing current video is also inconclusive when the check declares that video as a prerequisite; a probe exception or an observed expectation failure still fails.
 

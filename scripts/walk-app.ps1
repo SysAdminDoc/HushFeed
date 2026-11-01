@@ -330,10 +330,11 @@ function Get-WalkSectionView([string]$Label, [int]$Width, [int]$Height, [string]
     $row = Find-WalkRow $Label $Width $Height $Name 'title'
     if (-not $row) { return $null }
     if ($row.Top -gt $Height * 0.4) {
-        # Leave room below the header. Refresh the dump before the next tap.
+        # Leave room below the header. Refresh the dump before the next tap. The swipe is slow
+        # because a fast one flings on, 1107 px for 711 asked, and carries the row off the top.
         $distance = [int][Math]::Min($row.Top - $Height * 0.25, $Height * 0.45)
         Invoke-WalkAdb shell input swipe ([int]($Width / 2)) ([int]($Height * 0.7)) `
-            ([int]($Width / 2)) ([int]($Height * 0.7) - $distance) 450 | Out-Null
+            ([int]($Width / 2)) ([int]($Height * 0.7) - $distance) ($distance * 4) | Out-Null
         Start-Sleep -Milliseconds 1300
     }
     $nodes = Get-WalkScreen $Name

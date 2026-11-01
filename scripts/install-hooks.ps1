@@ -72,5 +72,5 @@ if ($IsLinux -or $IsMacOS) {
 }
 
 Write-Host "Installed $hookPath"
-Write-Host 'A push now runs the runtime tests when extension or patch sources changed, and the'
-Write-Host 'release check when a published file changed. Set HUSHFEED_SKIP_PRE_PUSH=1 to skip it.'
+Write-Host 'A push now takes a couple of seconds to check authorship and added lines for a device'
+Write-Host 'serial or a home folder path. Set HUSHFEED_SKIP_PRE_PUSH=1 to skip it.'

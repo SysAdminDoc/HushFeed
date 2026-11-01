@@ -85,7 +85,7 @@
 * **TikTok:** Eine Story auf Automatisch zu speichern holt die schärfste Kopie statt einer kleineren 720p-Kopie. Danke an @jutochoppa (#287, #155).
 * **TikTok:** Die Bildschirmaufnahme eines LIVE filmt die Aufnahme-Schaltfläche nicht mehr mit, und die Benachrichtigung hat eine Stopp-Schaltfläche (#265).
 * **TikTok:** Ohne Passkey anmelden sagt dir, was zu tun ist, wenn TikToks Bestätigung in zwei Schritten nur nach einem Passkey fragt (#102).
-* **TikTok:** Erstellungstools entfernen lässt das geteilte Paket von APKMirror in Ruhe, sodass Gesichtseffekte und Beauty dein Gesicht wieder finden (#285).
+* **TikTok:** Erstellungstools entfernen wirkt jetzt auch auf das geteilte Paket von APKMirror, weil das Paket von TikTok 47.6.3 die Editor-Dateien wieder enthält. Der Create-Tab funktioniert dann nicht mehr, also lass den Patch weg, wenn du Videos machst (#285).
 * **TikTok:** Wenn TikTok ein Like ablehnt, zeigt Hushfeed beim ersten Mal pro Sitzung den Grund (#269).
 * **TikTok:** Videos, die du geliked oder gespeichert hast, bleiben in deinen Likes und Favoriten, auch mit Werbekennzeichnung (#269).
 * **TikTok:** Die chinesische Meldung für ein abgelehntes Folgen benutzt jetzt das richtige Wort.

@@ -85,7 +85,7 @@
 * **TikTok:** Saving a story on Automatic takes the sharpest copy instead of a smaller 720p one. Thanks to @jutochoppa (#287, #155).
 * **TikTok:** Recording a LIVE's screen no longer films the Record button, and the notification has a Stop button (#265).
 * **TikTok:** Sign in without a passkey says what to do when TikTok's 2-step check asks only for a passkey (#102).
-* **TikTok:** Remove creation tools leaves APKMirror's split bundle alone, so face effects and Beauty find your face again (#285).
+* **TikTok:** Remove creation tools now works on APKMirror's split bundle too, because TikTok 47.6.3's bundle carries the editor files again. The Create tab stops working, so leave it out if you make videos (#285).
 * **TikTok:** When TikTok refuses a like, Hushfeed shows the reason the first time each session (#269).
 * **TikTok:** Videos you liked or saved stay on your Liked and Favorites grids, even with an ad mark (#269).
 * **TikTok:** The Chinese message for a refused follow uses the right word now.

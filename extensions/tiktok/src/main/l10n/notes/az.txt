@@ -85,7 +85,7 @@
 * **TikTok:** Avtomatik rejimdə hekayəni yadda saxlamaq daha kiçik 720p nüsxə əvəzinə ən kəskin nüsxəni götürür. @jutochoppa-ya təşəkkürlər (#287, #155).
 * **TikTok:** LIVE ekranını yazmaq artıq Yaz düyməsini çəkmir, bildirişdə isə Dayandır düyməsi var (#265).
 * **TikTok:** Passkey olmadan daxil olun TikTok-un 2 addımlı yoxlaması yalnız passkey istəyəndə nə edəcəyinizi deyir (#102).
-* **TikTok:** Yaratma alətlərini silin APKMirror-un bölünmüş paketinə toxunmur, ona görə üz effektləri və Beauty üzünüzü yenidən tapır (#285).
+* **TikTok:** Yaratma alətlərini silin indi APKMirror-un bölünmüş paketində də işləyir, çünki TikTok 47.6.3 paketində redaktor faylları yenidən var. Create tabı işləməyi dayandırır, ona görə video çəkirsinizsə, seçməyin (#285).
 * **TikTok:** TikTok bəyənməni rədd edəndə Hushfeed hər seansda ilk dəfə səbəbini göstərir (#269).
 * **TikTok:** Bəyəndiyiniz və ya yadda saxladığınız videolar reklam işarəsi olsa belə Bəyənilənlər və Seçilmişlər şəbəkəsində qalır (#269).
 * **TikTok:** Rədd edilən izləmə üçün Çin dilindəki mesaj indi düzgün sözü işlədir.

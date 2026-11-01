@@ -5,6 +5,7 @@ Every Hushfeed release, newest first.
 ## Unreleased
 
 * **TikTok:** PineDrama moved out to its own repo, [HushPine](https://github.com/SysAdminDoc/HushPine), with its own patches and releases. Hushfeed is TikTok only from here on, and `Allow photo comments` went with PineDrama.
+* **TikTok:** Hushfeed now supports TikTok 47.6.3, and only that one. 47.5.3 isn't supported anymore, so grab the 47.6.3 bundle or APK from APKMirror and patch it with the same signing key, so your login and settings carry over.
 
 ## 0.80.0 (2026-10-31)
 
@@ -98,7 +99,7 @@ Every Hushfeed release, newest first.
 * **TikTok:** Saving a story on Automatic takes the sharpest copy the story has, the one the player shows. With `Show download progress` or a few other download switches on, it used to save a smaller 720p copy. Thanks to @jutochoppa (#287, #155).
 * **TikTok:** Recording a LIVE's screen doesn't film the Record button anymore. It hides as the recording starts and comes back once the file is saved. The recording's notification has a Stop button, and leaving the room still stops and saves it (#265).
 * **TikTok:** `Sign in without a passkey` says what to do when TikTok's 2-step check still asks only for a passkey. That page lists only the ways your account has set up, so add email or text as a way to verify on tiktok.com or another phone first, then sign in (#102).
-* **TikTok:** `Remove creation tools` leaves APKMirror's split bundle alone, which is what Morphe Manager patches for most people. That bundle doesn't carry the editor and effect files the patch takes out, so it only emptied the face model, and face effects and Beauty couldn't find a face (#285).
+* **TikTok:** `Remove creation tools` never empties the face model on its own anymore, on a build with no editor and effect files, since that left face effects and Beauty unable to find a face (#285). TikTok 47.6.3's split bundle has those files again, so it now works there like it does on the universal APK and the Create tab stops working. Leave it out if you make videos.
 * **TikTok:** When TikTok turns down a like, Hushfeed tells you. The heart still fills when you tap it, but a like the server refused is gone after a restart, so the first one each session now shows TikTok's reason, or its error code when it gives none. Comment likes count too. With logging on, the diagnostics report says whether each like went through (#269).
 * **TikTok:** Videos you liked or saved stay on your Liked and Favorites grids now, even when they carry an ad, a paid partnership or a commission mark. `Remove feed ads` and the other feed filters used to take those off the grids too, so a like went through but the video never showed on Liked. The For You and Following feeds still drop them (#269).
 * **TikTok:** The Chinese message for a refused follow says 关注 now. It used to read "follow" as "the following".

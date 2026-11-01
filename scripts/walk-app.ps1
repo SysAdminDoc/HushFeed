@@ -1,7 +1,7 @@
 <#
 .SYNOPSIS
     Walks the whole patched TikTok or PineDrama on a release phone or an emulator and writes the
-    walk-receipt.json that release.ps1's publish stage needs, one per app the bundle declares.
+    walk-receipt.json release.ps1 reads, one per app the bundle declares.
 
 .DESCRIPTION
     Patches -Package's app from the bundle being released with patch-for-device.ps1 and installs
@@ -30,12 +30,12 @@
     or left the foreground, and the installed APK is the one patched from -Bundle.
 
 .EXAMPLE
-    ./scripts/walk-app.ps1 -Serial $env:HUSHFEED_DEVICE_SERIAL -Bundle build/release-assets/0.78.0/patches-0.78.0.mpp `
+    ./scripts/walk-app.ps1 -Serial $env:HUSHFEED_DEVICE_SERIAL -Bundle patches/build/release/patches-0.78.0.mpp `
         -PatchArgs @{ Apk = 'C:/fixtures/tiktok.apk'; Keystore = 'C:/keys/device.keystore'; KeyAlias = 'Morphe' }
 
 .EXAMPLE
     ./scripts/walk-app.ps1 -Serial $env:HUSHFEED_DEVICE_SERIAL -Package com.ss.android.ttmd.video `
-        -Bundle build/release-assets/0.80.0/patches-0.80.0.mpp -Out build/walk-pinedrama/walk-receipt.json `
+        -Bundle patches/build/release/patches-0.80.0.mpp -Out build/walk-pinedrama/walk-receipt.json `
         -PatchArgs @{ Apk = 'C:/fixtures/pinedrama.apk'; Keystore = 'C:/keys/device.keystore'; KeyAlias = 'Morphe' }
 #>
 [CmdletBinding()]
@@ -43,8 +43,7 @@ param(
     [Parameter(Mandatory = $true)][string]$Serial,
     # The app to walk, one of the packages in walk-app-core.ps1's $WalkProfiles.
     [string]$Package = 'com.zhiliaoapp.musically',
-    # The bundle the receipt vouches for. Publish holds the receipt to the staged copy in
-    # build/release-assets, so pass that one when walking a release.
+    # The bundle the receipt vouches for.
     [string]$Bundle,
     # Walk the build already installed, described by the .audit-build.json patch-for-device.ps1
     # left beside its APK, instead of patching and installing a new one.

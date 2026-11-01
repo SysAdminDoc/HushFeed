@@ -1,5 +1,5 @@
 # Shared by execution, read-only result validation and human verdict import.
-. (Join-Path (Split-Path -Parent $PSScriptRoot) 'scripts/release-receipt.ps1')
+. (Join-Path (Split-Path -Parent $PSScriptRoot) 'scripts/apk-facts.ps1')
 
 function Test-AuditExecutableInputPath([string]$Path) {
     # Global scope until a reviewed patch-to-input map exists. Unknown paths stay included.
@@ -11,7 +11,7 @@ function Test-AuditExecutableInputPath([string]$Path) {
     # Catalog behavior has its own definition hashes. Evidence and receipt outputs must
     # not invalidate the build whose execution they record.
     if ($Path -cmatch '^audit/catalog(-[a-z]+)?\.json$' -or $Path -cmatch '^audit/results/' -or
-        $Path -cmatch '^release-receipt-[^/]+\.json$' -or $Path -ceq 'patches-bundle.json') { return $false }
+        $Path -ceq 'patches-bundle.json') { return $false }
     if ($Path -cmatch '\.md$' -or $Path -cmatch '^(docs|concepts)/' -or
         $Path -cin @('LICENSE', 'NOTICE') -or $Path -cmatch '^assets/(readme-|screenshots/)') { return $false }
     return $true
@@ -506,7 +506,7 @@ function Set-AuditVerdicts($Entries, $Run, $Verdicts, [string]$Directory, [strin
 function Read-DeviceBuildIdentity([string]$ApkPath, [string]$ReceiptPath, [string]$BundlePath, [string]$GitRoot, $App) {
     if (-not $ReceiptPath) { return [pscustomobject]@{ status = 'unbound'; reason = 'No device-build receipt supplied.' } }
     if (-not $BundlePath) { throw 'A build receipt requires -Bundle to verify its source manifest.' }
-    . (Join-Path (Split-Path -Parent $PSScriptRoot) 'scripts/release-receipt.ps1')
+    . (Join-Path (Split-Path -Parent $PSScriptRoot) 'scripts/apk-facts.ps1')
     $receipt = Get-Content -LiteralPath $ReceiptPath -Raw -Encoding UTF8 | ConvertFrom-Json
     if (($receipt.schemaVersion -isnot [int] -and $receipt.schemaVersion -isnot [long]) -or
         $receipt.schemaVersion -cnotin @(1,2) -or $receipt.kind -cne 'hushfeed-device-build') { throw 'Unsupported device-build receipt.' }

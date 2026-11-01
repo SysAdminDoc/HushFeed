@@ -70,7 +70,7 @@ $root = Split-Path -Parent $PSScriptRoot
 . (Join-Path $PSScriptRoot 'Resolve-Java.ps1')
 . (Join-Path $PSScriptRoot 'apk-signing.ps1')
 . (Join-Path $PSScriptRoot 'device-install.ps1')
-. (Join-Path $PSScriptRoot 'release-receipt.ps1')
+. (Join-Path $PSScriptRoot 'apk-facts.ps1')
 $Java = Resolve-Java -Explicit $Java
 $DesktopJar = Resolve-DesktopCli -Explicit $DesktopJar -Root $root -Required
 $catalogPath = Join-Path $root 'patches-list.json'

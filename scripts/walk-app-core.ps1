@@ -5,8 +5,7 @@
     the app's crashes in logcat and turning what the walk reached into PASS, PARTIAL or FAIL.
 
 .DESCRIPTION
-    Dot-sourced by walk-app.ps1, which drives the phone, and by test-walk-app.ps1, which feeds
-    these functions recorded dumps and logcat so the verdict rules are held without a device.
+    Dot-sourced by walk-app.ps1, which drives the phone.
 #>
 
 $WalkPackage = 'com.zhiliaoapp.musically'

@@ -123,32 +123,6 @@ function New-PineDramaInspectionPlan {
     return $plan
 }
 
-function ConvertFrom-PineDramaInspection {
-    param([Parameter(Mandatory = $true)]$Plan, [Parameter(Mandatory = $true)][string[]]$Lines)
-    $problem = Get-PineDramaInspectionProblem $Plan
-    if ($problem) { throw $problem }
-    $responses = @($Lines | Where-Object { $_ -cmatch '^pine-capabilities-v1 ' })
-    if ($responses.Count -ne 1) { throw 'Expected exactly one PineDrama capability response.' }
-    $keys = @('requestAccepted','targetPackageMatches','targetVersionMatches','profileMatches','actionMatches','installedApkMatches','singleBaseApk',
-        'photoPatchRegistered','photoSwitchOn','nativePhotoGateShape','nativeAlbumEntryShape',
-        'photoPermissionsDeclared','settingsActivityDeclared','settingsActivityForeground','wholeAppCoverageComplete')
-    $values = [ordered]@{}
-    foreach ($token in $responses[0].Substring('pine-capabilities-v1 '.Length).Split(' ')) {
-        if ($token -cnotmatch '^([A-Za-z]+)=(true|false)$' -or $Matches[1] -cnotin $keys -or $values.Contains($Matches[1])) {
-            throw 'The PineDrama response contains unknown, repeated or non-boolean data.'
-        }
-        $values[$Matches[1]] = $Matches[2] -ceq 'true'
-    }
-    if ($values.Count -ne $keys.Count -or $values.wholeAppCoverageComplete) { throw 'The PineDrama response is incomplete or claims unsupported coverage.' }
-    foreach ($required in @('requestAccepted','targetPackageMatches','targetVersionMatches','profileMatches','actionMatches','installedApkMatches','singleBaseApk',
-            'photoPatchRegistered','nativePhotoGateShape','nativeAlbumEntryShape','photoPermissionsDeclared','settingsActivityDeclared')) {
-        if (-not $values[$required]) { throw 'The PineDrama capability prerequisite was not met.' }
-    }
-    return [pscustomobject]@{ kind = $Plan.kind; schema = 1; profile = $Plan.profile; status = 'INCOMPLETE'
-        full = $false; eligibleForPublication = $false; build = $Plan.build; capabilities = [pscustomobject]$values
-        missingCoverage = @($Plan.missingCoverage) }
-}
-
 function Write-VerificationProbeManifest {
     param([Parameter(Mandatory = $true)][string]$Template, [Parameter(Mandatory = $true)][string]$Destination,
         [ValidateSet('tiktok-whole-app-v1', 'pinedrama-47.5.3-audit-v1', 'pinedrama-47.5.3-capabilities-v1', 'pinedrama-47.5.3-core-walk-v1', 'pinedrama-47.5.3-core-walk-v2', IgnoreCase = $false)][string]$Profile = 'tiktok-whole-app-v1')

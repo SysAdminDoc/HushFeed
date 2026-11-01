@@ -40,12 +40,7 @@ param(
     [string]$Java,
     [switch]$Force,
     [string]$Aapt2,
-    [string]$ProbePackage,
-    # A folder that keeps a passing run's report and patched APK, with a stamp naming the bundle,
-    # APK, patch list and CLI that made them, so the release receipt can read this run instead of
-    # patching the same fixture again. Emptied first, and only when it's missing, empty or a folder
-    # an earlier run kept; a failed run leaves just the ownership marker.
-    [string]$KeepIn
+    [string]$ProbePackage
 )
 
 $ErrorActionPreference = 'Stop'
@@ -83,10 +78,10 @@ if ($names.Count -eq 0 -or @($names | Where-Object { [string]::IsNullOrWhiteSpac
 $dependencyNames = @(Get-PatchDependencyNames -PatchList $catalog -RequestedNames $names)
 Write-Host "[verify] $($names.Count) patches from $(Split-Path -Leaf $Bundle)"
 
-# The version the result is held to: whatever the stock APK says it is, read the same way the
-# receipt reads it. The catalog declares more than one build, so the APK names which one this is.
-# A build it doesn't declare is patched only under -Force.
-. (Join-Path $PSScriptRoot 'release-receipt.ps1')
+# The version the result is held to: whatever the stock APK says it is. The catalog declares more
+# than one build, so the APK names which one this is. A build it doesn't declare is patched only
+# under -Force.
+. (Join-Path $PSScriptRoot 'apk-facts.ps1')
 $Aapt2 = Resolve-Aapt2 -Explicit $Aapt2 -Root $root
 $stock = Get-ApkManifestFacts -Apk $Apk -Aapt2 $Aapt2
 $verificationTarget = Resolve-PatchVerificationTarget -Stock $stock -Target $expectedTarget `
@@ -102,11 +97,6 @@ if ($verificationTarget.Probe) {
     Write-Host "[verify] $($stock.package) $($stock.versionName) is a declared target, so nothing is forced"
 }
 
-if ($KeepIn) {
-    # Checked before anything is deleted or patched: a mistyped -KeepIn used to be emptied whole.
-    $KeepIn = Initialize-KeptRunDirectory -Path $KeepIn -RepositoryRoot $root `
-        -Inputs @($Apk, $Bundle, $PatchList, $DesktopJar, $WorkDir)
-}
 New-Item -ItemType Directory -Force -Path $WorkDir | Out-Null
 $workRoot = (Resolve-Path -LiteralPath $WorkDir).Path
 $runId = [guid]::NewGuid().ToString('N')
@@ -219,21 +209,6 @@ try {
                 }
             }
             Write-Host '[verify] success: every requested patch applied to a valid APK whose resource table holds every stock resource.'
-            if ($KeepIn) {
-                New-Item -ItemType Directory -Force -Path $KeepIn | Out-Null
-                Move-Item -LiteralPath $out -Destination (Join-Path $KeepIn 'patched.apk') -Force
-                Copy-Item -LiteralPath $result -Destination (Join-Path $KeepIn 'result.json') -Force
-                # Written last, so a keep cut short has no stamp and is never read.
-                [ordered]@{
-                    bundleSha256     = Get-Sha256Hex -Path $Bundle
-                    apkSha256        = Get-Sha256Hex -Path $Apk
-                    patchListSha256  = Get-Sha256Hex -Path $PatchList
-                    desktopJarSha256 = Get-Sha256Hex -Path $DesktopJar
-                    versionName      = $stock.versionName
-                    forced           = [bool]$forced
-                } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $KeepIn 'stamp.json') -Encoding UTF8
-                Write-Host "[verify] kept this run for the release receipt in $KeepIn"
-            }
             $exitCode = 0
         } else {
             Write-Warning "[verify] the patched resource table failed its check against the stock one (exit $resourceExitCode)."

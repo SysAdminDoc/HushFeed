@@ -3,12 +3,9 @@
     The checks that say whether a morphe-desktop run actually patched anything.
 
 .DESCRIPTION
-    Dot-sourced by verify-all-patches.ps1, patch-for-device.ps1, measure-patch-heap.ps1 and
-    time-patches.ps1. The first three ask the same question of the same CLI, and two used to
-    carry their own copy of these functions. The copies drifted: the verification script learned
-    on 2026-09-08 that morphe-desktop 1.15.0 omits the top-level success field when it is true,
-    and the heap script did not, so every successful run it measured came back invalid. One copy
-    is why that cannot happen again. The last reads the CLI's progress lines and GC log instead.
+    Dot-sourced by verify-all-patches.ps1, patch-for-device.ps1 and time-patches.ps1. The first
+    two ask the same question of the same CLI, and morphe-desktop 1.15.0 and later omit the
+    top-level success field when it is true. The last reads the CLI's progress lines and GC log.
 
     The CLI writes its result file from a finally block, so a file exists even after a failed
     compile or save. Nothing here treats the file's existence as the answer.

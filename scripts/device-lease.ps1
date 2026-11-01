@@ -224,12 +224,6 @@ function Assert-DeviceLease {
     }
 }
 
-function Test-DeviceLease {
-    [CmdletBinding()]
-    param([Parameter(Mandatory = $true)][AllowNull()]$Lease)
-    try { Assert-DeviceLease -Lease $Lease; return $true } catch { return $false }
-}
-
 function Update-DeviceLease {
     [CmdletBinding()]
     param([Parameter(Mandatory = $true)]$Lease, [ValidateRange(1, 30)][int]$LeaseMinutes = 30)
@@ -238,19 +232,6 @@ function Update-DeviceLease {
     $record = Read-DeviceLeaseRecord -Lease $Lease
     $record.expiresUtc = [DateTime]::UtcNow.AddMinutes($LeaseMinutes).ToString('o')
     Write-DeviceLeaseRecord -Lease $Lease -Record $record
-}
-
-function Invoke-WithDeviceLease {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory = $true)][AllowNull()]$Lease,
-        [Parameter(Mandatory = $true)][scriptblock]$Action,
-        [string]$Serial
-    )
-    $check = @{ Lease = $Lease }
-    if ($PSBoundParameters.ContainsKey('Serial')) { $check.Serial = $Serial }
-    Assert-DeviceLease @check
-    & $Action
 }
 
 function Remove-DeviceLease {

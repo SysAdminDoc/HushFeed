@@ -128,6 +128,13 @@ public class LiveRecordChipTest {
         assertFalse(LiveRecordChip.sameRoomId(null, null));
     }
 
+    @Test public void pipExitGetsGraceEvenIfTheTickRunsBeforeOnResume() {
+        assertEquals(6_500, LiveRecordChip.pipReturnDeadline(true, true, 0, 5_000));
+        assertEquals(6_700, LiveRecordChip.pipReturnDeadline(true, false, 6_500, 5_200));
+        assertEquals(0, LiveRecordChip.pipReturnDeadline(true, false, 6_500, 6_500));
+        assertEquals(0, LiveRecordChip.pipReturnDeadline(false, true, 6_500, 5_000));
+    }
+
     // The chip is 200 wide at the right edge (880 to 1080), 120 tall, wanted at 330.
 
     @Test public void theChipStaysPutWhenNothingIsUnderIt() {

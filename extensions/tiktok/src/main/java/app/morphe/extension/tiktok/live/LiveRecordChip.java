@@ -105,10 +105,17 @@ public final class LiveRecordChip {
             PAGES.put(fragment, Boolean.TRUE);
             host = new WeakReference<>(activity);
             registerCallbacks(activity);
-            // A page laid out on screen already wins over one only now resuming; before the first
-            // layout nothing is on screen, so the resuming page is taken and the tick settles it.
+            // A page laid out on screen wins over an adjacent page resuming. During PiP
+            // restoration, no full-size page may be shown yet: do not mistake a prefetched
+            // neighbor for the recorded room before the layout has settled.
             Object front = pageInFront(activity);
-            follow(front != null ? front : fragment);
+            if (front != null) follow(front);
+            else if (!streamRecording()) follow(fragment);
+            else {
+                removeChip();
+                scheduleTick();
+                return;
+            }
             if (!enabled()) {
                 removeChip();
                 return;
@@ -169,8 +176,8 @@ public final class LiveRecordChip {
                     pipTransitionGeneration++;
                     pipTransitionUntil = 0;
                     // Returning from PiP can precede the room page becoming visible again.
-                    pipReturnUntil = recordingWasPinned && streamRecording()
-                            ? SystemClock.uptimeMillis() + PIP_TRANSITION_MS : 0;
+                    pipReturnUntil = pipReturnDeadline(streamRecording(), recordingWasPinned,
+                            pipReturnUntil, SystemClock.uptimeMillis());
                     recordingWasPinned = false;
                     scheduleTick();
                 }
@@ -566,6 +573,11 @@ public final class LiveRecordChip {
         return recorded != null && candidate != null && recorded.equals(candidate);
     }
 
+    /** The first post-PiP tick can precede onResume; both extend the same brief grace. */
+    static long pipReturnDeadline(boolean stream, boolean wasPinned, long previous, long now) {
+        return stream && (wasPinned || previous > now) ? now + PIP_TRANSITION_MS : 0;
+    }
+
     // ---- watching the room ----------------------------------------------------------------
 
     private static void scheduleTick() {
@@ -578,7 +590,15 @@ public final class LiveRecordChip {
         ticking = false;
         try {
             Activity activity = host.get();
-            if (streamRecording() && nativePip(activity)) recordingWasPinned = true;
+            if (streamRecording() && nativePip(activity)) {
+                recordingWasPinned = true;
+                pipReturnUntil = 0;
+            } else if (recordingWasPinned && streamRecording()) {
+                // Android may drop the PiP flag a moment before onActivityResumed runs.
+                pipReturnUntil = pipReturnDeadline(true, true, pipReturnUntil,
+                        SystemClock.uptimeMillis());
+                recordingWasPinned = false;
+            }
             if (keepWhileHidden(activity)) {
                 // A pinned LIVE has no full-size resumed page. Keep recording its stream, but
                 // still stop if TikTok replaces the recorded room while the window is pinned.

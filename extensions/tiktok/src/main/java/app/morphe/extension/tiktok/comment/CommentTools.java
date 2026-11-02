@@ -328,7 +328,9 @@ public final class CommentTools {
             hideControlsNow(itemView);
             if (HELD_ROWS.add(itemView)) {
                 itemView.addOnLayoutChangeListener(
-                        (row, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> hideControlsNow(row));
+                        (row, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+                            if (hideControlsNow(row)) layOutAgain(row);
+                        });
             }
         });
     }
@@ -337,11 +339,23 @@ public final class CommentTools {
      * Also runs on every layout of the row. TikTok shows both controls again from several places
      * after the bind (setHateVisibility once the sheet settles, the like state on every like), which
      * left the top comment with its thumbs down. A GONE view shown again always lays its row out, so
-     * this puts it back before that frame draws, whichever place wrote it.
+     * this puts it back before that frame draws, whichever place wrote it. True when one went.
      */
-    private static void hideControlsNow(View itemView) {
-        if (hidesLikeCount()) hideControl(commentControl(itemView, LIKE_COUNT_IDS));
-        if (hidesThumbsDown()) hideControl(commentControl(itemView, DISLIKE_BUTTON_IDS));
+    private static boolean hideControlsNow(View itemView) {
+        boolean hid = hidesLikeCount() && hideControl(commentControl(itemView, LIKE_COUNT_IDS));
+        return (hidesThumbsDown() && hideControl(commentControl(itemView, DISLIKE_BUTTON_IDS))) || hid;
+    }
+
+    /**
+     * The row's own layout just placed the heart beside a count that's now gone, and no request made
+     * from here can fix that: the row clears it as its layout ends, and the framework drops a GONE
+     * view's in a window's pass. A scroll lays rows out outside that pass altogether. So the row gets
+     * its second layout here, in the bounds it already has.
+     */
+    private static void layOutAgain(View row) {
+        row.measure(View.MeasureSpec.makeMeasureSpec(row.getWidth(), View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(row.getHeight(), View.MeasureSpec.EXACTLY));
+        row.layout(row.getLeft(), row.getTop(), row.getRight(), row.getBottom());
     }
 
     private static boolean hidesLikeCount() {
@@ -352,14 +366,10 @@ public final class CommentTools {
         return Settings.HIDE_COMMENT_DISLIKE.get() && !Settings.BLOCK_FROM_COMMENT.get();
     }
 
-    /**
-     * In a layout pass the framework drops a GONE view's own request for another layout, which left
-     * the heart where it sat beside the count after a like. Its parent's request gets the pass.
-     */
-    private static void hideControl(View control) {
-        if (control == null || control.getVisibility() == View.GONE) return;
+    private static boolean hideControl(View control) {
+        if (control == null || control.getVisibility() == View.GONE) return false;
         control.setVisibility(View.GONE);
-        if (control.getParent() instanceof View) ((View) control.getParent()).requestLayout();
+        return true;
     }
 
     /**

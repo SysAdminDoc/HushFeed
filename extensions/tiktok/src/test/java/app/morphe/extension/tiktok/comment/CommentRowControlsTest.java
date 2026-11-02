@@ -129,13 +129,7 @@ public class CommentRowControlsTest {
 
     /** The framework drops a GONE view's own layout request in a pass, so a like left the heart stranded. */
     @Test public void theHeartMovesBackWhenTheCountGoesDuringALayoutPass() {
-        Settings.HIDE_COMMENT_LIKE_COUNT.save(true);
-        LinearLayout bar = new LinearLayout(activity);
-        View heart = new View(activity);
-        row.removeView(count);
-        bar.addView(count, new LinearLayout.LayoutParams(60, 40));
-        bar.addView(heart, new LinearLayout.LayoutParams(40, 40));
-        row.addView(bar, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
+        View heart = heartBesideTheCount();
         bind();
         assertEquals(0, heart.getLeft());
 
@@ -144,6 +138,31 @@ public class CommentRowControlsTest {
 
         assertEquals(View.GONE, count.getVisibility());
         assertEquals(0, heart.getLeft());
+    }
+
+    /** A scroll lays a rebound row out with no pass of the window's to come, so nothing later moves the heart. */
+    @Test public void theHeartMovesBackInTheLayoutOfARowARecyclerScrollPlaced() {
+        View heart = heartBesideTheCount();
+        bind();
+
+        count.setVisibility(View.VISIBLE);
+        int size = View.MeasureSpec.makeMeasureSpec(400, View.MeasureSpec.EXACTLY);
+        row.measure(size, size);
+        row.layout(0, 0, 400, 400);
+
+        assertEquals(View.GONE, count.getVisibility());
+        assertEquals(0, heart.getLeft());
+    }
+
+    private View heartBesideTheCount() {
+        Settings.HIDE_COMMENT_LIKE_COUNT.save(true);
+        LinearLayout bar = new LinearLayout(activity);
+        View heart = new View(activity);
+        row.removeView(count);
+        bar.addView(count, new LinearLayout.LayoutParams(60, 40));
+        bar.addView(heart, new LinearLayout.LayoutParams(40, 40));
+        row.addView(bar, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
+        return heart;
     }
 
     /** The block switch's button is that thumbs down, so hiding it would take the block away. */

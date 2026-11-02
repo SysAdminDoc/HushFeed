@@ -24,32 +24,52 @@ private const val TOP_TAB_SCENE = "scene_get_top_tab"
 private const val BOTTOM_TAB_SCENE = "scene_get_bottom_tab"
 
 /**
- * Whether the method is a tab list getter for [scene]: build the tabs, hand back the list.
+ * Whether the method is a tab list getter for [scene]: fill the tabs, hand back the list.
  *
- * <p>`TabAbilityAssem` keeps its own name and carries five `()List` methods whose names R8
+ * <p>`TabAbilityAssem` keeps its own name and carries several `()List` methods whose names R8
  * assigns, two of which the patch wants. They were written here as `W52` and `OA`, which is what
- * they are called on 46.2.3 and not on any build since. Three of the five do more than hand back a
- * list; the two that matter are three instructions long, and what tells those two apart is the
- * method each calls first to fill the list, one of which reports itself as `scene_get_top_tab` and
- * the other as `scene_get_bottom_tab`. Those two strings are on all three builds.
+ * they are called on 46.2.3 and not on any build since, and through 47.5.3 each was three
+ * instructions long: call the filler, read the list, return it. On 47.6.3 both grew a fast path
+ * that hands back a cached list first, and the top getter's filler reports its scene one call
+ * further down. What still sets the two apart from the getters beside them, which check their
+ * list and rebuild it, is that each reads one own `CopyOnWriteArrayList` field, hands it straight
+ * back, calls nothing on the list itself, and calls an own `()V` filler that reports
+ * `scene_get_top_tab` or `scene_get_bottom_tab`, in its own body or through one of its own `()V`
+ * calls. Those two strings are on every build since 46.2.3.
  */
 private fun Method.isTabModelList(classDef: ClassDef, scene: String): Boolean {
     val instructions = implementation?.instructions?.toList() ?: return false
-    if (instructions.size != 3) return false
-    if (instructions[0].opcode != Opcode.INVOKE_VIRTUAL) return false
-    if (instructions[1].opcode != Opcode.IGET_OBJECT) return false
-    if (instructions[2].opcode != Opcode.RETURN_OBJECT) return false
-    val list = instructions[1].getReference<FieldReference>() ?: return false
+    if (instructions.size < 3) return false
+    if (instructions.last().opcode != Opcode.RETURN_OBJECT) return false
+    val handedBack = instructions[instructions.size - 2]
+    if (handedBack.opcode != Opcode.IGET_OBJECT) return false
+    val list = handedBack.getReference<FieldReference>() ?: return false
     if (list.definingClass != classDef.type || list.type != COPY_ON_WRITE) return false
-    val ensure = instructions[0].getReference<MethodReference>() ?: return false
-    if (ensure.definingClass != classDef.type) return false
-    if (ensure.returnType != "V" || ensure.parameterTypes.isNotEmpty()) return false
-    val filler = classDef.methods.firstOrNull {
-        it.name == ensure.name && it.returnType == "V" && it.parameterTypes.none()
+    val ownListReads = instructions.count {
+        it.opcode == Opcode.IGET_OBJECT && it.getReference<FieldReference>()?.let { field ->
+            field.definingClass == classDef.type && field.type == COPY_ON_WRITE
+        } == true
+    }
+    if (ownListReads != 1) return false
+    val calls = instructions.mapNotNull { it.getReference<MethodReference>() }
+    if (calls.any { it.definingClass == COPY_ON_WRITE }) return false
+    val fillers = calls.filter {
+        it.definingClass == classDef.type && it.returnType == "V" && it.parameterTypes.isEmpty()
+    }.map { it.name }.distinct()
+    return fillers.any { classDef.fillerReportsScene(it, scene, hops = 1) }
+}
+
+/** Whether the own `()V` method [name] holds [scene], itself or within [hops] of its own `()V` calls. */
+private fun ClassDef.fillerReportsScene(name: String, scene: String, hops: Int): Boolean {
+    val filler = methods.firstOrNull {
+        it.name == name && it.returnType == "V" && it.parameterTypes.none()
     } ?: return false
-    return filler.implementation?.instructions?.any {
-        it.getReference<StringReference>()?.string == scene
-    } == true
+    val instructions = filler.implementation?.instructions?.toList() ?: return false
+    if (instructions.any { it.getReference<StringReference>()?.string == scene }) return true
+    if (hops == 0) return false
+    return instructions.mapNotNull { it.getReference<MethodReference>() }
+        .filter { it.definingClass == type && it.returnType == "V" && it.parameterTypes.isEmpty() && it.name != name }
+        .any { fillerReportsScene(it.name, scene, hops - 1) }
 }
 
 /** The one getter for [scene], or nothing, so that a second appearing is a failure to read. */

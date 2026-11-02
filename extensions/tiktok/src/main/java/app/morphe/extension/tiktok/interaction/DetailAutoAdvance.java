@@ -26,7 +26,9 @@ import java.util.WeakHashMap;
  * Auto-advance for a video opened from a profile or a list (#311). TikTok builds its auto scroll
  * component for the main feed and search, so its detail page has nothing to start and a video
  * there loops at its end. That page plays the same cells in the same native pager, so the end of
- * a video moves the pager on by one, as blocking a creator does.
+ * a video moves the pager on by one, as blocking a creator does. It stays put off screen, as the
+ * main feed does: TikTok's background session holds one video, and a move ends it with nothing
+ * playing, so the video that had finished is gone from the notification as well.
  */
 public final class DetailAutoAdvance {
     private static final String PAGER = "com.ss.android.ugc.aweme.common.widget.VerticalViewPager";
@@ -62,10 +64,8 @@ public final class DetailAutoAdvance {
         if (AutoAdvance.componentIn(activity)) return;
         if (SessionBudget.isLocked() || FeedLock.linkVideoAlone()) return;
         if (openedFromSearch(activity) && !Settings.AUTO_ADVANCE_SEARCH.get()) return;
-        // A stopped activity's window is invisible and never has focus, so focus only counts on
-        // screen, where a sheet or a dialog takes it.
-        boolean onScreen = activity.getWindow().getDecorView().getVisibility() == View.VISIBLE;
-        if (onScreen ? !activity.hasWindowFocus() : !movesOnWhileAway()) return;
+        // A sheet or a dialog takes the focus, and so does leaving the app.
+        if (!activity.hasWindowFocus()) return;
         if (FeedVisibility.isCommentSheetVisible(activity) || FeedVisibility.isStoryVisible(activity)) return;
         VideoAuthor current = CurrentVideoAuthor.get();
         if (current == null || !id.equals(current.awemeId)) return;
@@ -84,7 +84,7 @@ public final class DetailAutoAdvance {
         }
         session.recordCompletion(id);
         if (session.limitReached()) {
-            if (onScreen && session.claimLimitNotice()) {
+            if (session.claimLimitNotice()) {
                 AutoAdvance.Control stopped = session;
                 BlockAuthorOverlay.showActionBanner(
                         L10n.quantity(Utils.getContext(), stopped.completedCount,
@@ -104,17 +104,11 @@ public final class DetailAutoAdvance {
         }
     }
 
-    /** With a video replaying in the background, the replay is the thing that was asked for. */
-    private static boolean movesOnWhileAway() {
-        return Settings.BACKGROUND_PLAY.get() && !Settings.BACKGROUND_REPLAY.get();
-    }
-
     private static boolean openedFromSearch(Activity activity) {
         String from = activity.getIntent() == null ? null : activity.getIntent().getStringExtra(OPENED_FROM);
         return from != null && from.startsWith(FROM_SEARCH);
     }
 
-    /** Not by what's shown: a stopped activity's window is invisible while its views stay laid out. */
     private static View findPager(View view) {
         if (view == null || view.getVisibility() != View.VISIBLE) return null;
         if (PAGER.equals(view.getClass().getName())) return view;

@@ -67,7 +67,6 @@ public class DetailAutoAdvanceTest {
         Settings.AUTO_ADVANCE_LIMIT.resetToDefault();
         Settings.AUTO_ADVANCE_SEARCH.resetToDefault();
         Settings.BACKGROUND_PLAY.resetToDefault();
-        Settings.BACKGROUND_REPLAY.resetToDefault();
         CurrentVideoAuthor.resetForTests();
         Shadows.shadowOf(Looper.getMainLooper()).idle();
         Utils.setActivity(null);
@@ -149,18 +148,15 @@ public class DetailAutoAdvanceTest {
         assertEquals(1, pager.advances);
     }
 
-    @Test public void awayItMovesOnlyWithBackgroundPlayAndNoReplay() {
+    /** TikTok's background session is one video: moving the pager under it ended it with no next one. */
+    @Test public void awayItStaysPutWithBackgroundPlayOnOrOff() {
         owner.get().getWindow().getDecorView().setVisibility(View.INVISIBLE);
         owner.windowFocusChanged(false);
         ended("clip");
         assertEquals("moved away from the screen with background play off", 0, pager.advances);
         Settings.BACKGROUND_PLAY.save(true);
-        Settings.BACKGROUND_REPLAY.save(true);
         ended("clip");
-        assertEquals("moved on while the replay was asked for", 0, pager.advances);
-        Settings.BACKGROUND_REPLAY.save(false);
-        ended("clip");
-        assertEquals(1, pager.advances);
+        assertEquals("moved away from the screen with background play on", 0, pager.advances);
     }
 
     @Test public void aPageWithTikToksOwnComponentIsLeftToIt() {

@@ -1977,6 +1977,9 @@ val liveControlsPatch = bytecodePatch(
             it.name == "darkAppTheme" && it.returnType == "I" && it.parameterTypes.isEmpty()
         }.returnEarly(darkTheme)
         hookRoomTheme(LivePlayActivityThemeFingerprint.method)
+        // The dark theme can't reach the typed text in a LIVE panel's box (#323).
+        hookLiveCommentBox(LiveCommentInputCreatedFingerprint.method)
+        hookLiveCommentBox(SubSpaceInputCreatedFingerprint.method)
         // A dark mode flip with a room open doesn't recreate it: AppCompat re-applies the room's
         // last light theme with force after setTheme, so the room hook runs again once the
         // change is through.

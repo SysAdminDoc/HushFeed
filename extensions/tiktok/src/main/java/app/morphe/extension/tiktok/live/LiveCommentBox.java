@@ -2,7 +2,7 @@
  * Copyright 2026 Hushfeed contributors
  * https://github.com/SysAdminDoc/hushfeed
  */
-package app.morphe.extension.tiktok.theme;
+package app.morphe.extension.tiktok.live;
 
 import android.graphics.Color;
 import android.view.View;
@@ -10,22 +10,22 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import app.morphe.extension.shared.Logger;
-import app.morphe.extension.tiktok.settings.preference.SettingsUi;
 
 /**
- * The comment box a viewer types in inside a LIVE room, for AMOLED dark theme (#267).
+ * The comment box a viewer types in inside a LIVE room, under Dark LIVE panels (#267, #323).
  *
- * <p>The panel's fill follows the dark palette, so AMOLED dark theme makes it black, but the box's
- * typed text and hint keep a dark color of their own and read dark on black. The patch calls
- * {@link #onPanel} with the panel's root view as TikTok builds it. Once the view has finished its
- * own setup, every text box in it takes a light text color and a softer light hint, whenever the
- * page is dark. Light mode keeps TikTok's colors.
+ * <p>The panel's fill follows the room's theme, so the switch makes it dark, but the box's typed
+ * text comes from a color every TikTok theme sets to the same dark ink, which no dark theme can
+ * flip, and read dark on dark. The patch calls {@link #onPanel} with the panel's root view as
+ * TikTok builds it. Once the view has finished its own setup, every text box in it takes a light
+ * text color and a softer light hint, on the same answer that darkened the room. A room the switch
+ * leaves light keeps TikTok's colors, in dark mode as well.
  */
-public final class AmoledLiveInput {
+public final class LiveCommentBox {
     static final int TEXT = Color.WHITE;
     static final int HINT = Color.argb(0x99, 0xff, 0xff, 0xff);
 
-    private AmoledLiveInput() {}
+    private LiveCommentBox() {}
 
     /** Called with the comment panel's root view, first thing in its setup. */
     public static void onPanel(View root) {
@@ -37,10 +37,10 @@ public final class AmoledLiveInput {
         }
     }
 
-    /** Lights the text and the hint of each text box under {@code root} while the page is dark. */
+    /** Lights the text and the hint of each text box under {@code root} while the panel is dark. */
     static void paint(View root) {
         try {
-            if (!SettingsUi.isDarkContext(root.getContext())) return;
+            if (root == null || !LiveControls.darkLivePanels(root.getContext())) return;
             light(root);
         } catch (Throwable failure) {
             Logger.printException(() -> "Could not color the LIVE comment box", failure);

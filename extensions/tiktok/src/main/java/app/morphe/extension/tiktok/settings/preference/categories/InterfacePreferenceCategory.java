@@ -483,6 +483,20 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                         Settings.HIDE_FOLLOWING_LIVE_ROW
                 ));
             }
+            if (SettingsStatus.storyRowButtonsEnabled) {
+                addPreference(new TogglePreference(
+                        context,
+                        "Hide the All button on Following",
+                        "Hide the All button at the end of the story row on the Following feed. The row and its stories stay.",
+                        Settings.HIDE_FOLLOWING_ALL_BUTTON
+                ));
+                addPreference(new TogglePreference(
+                        context,
+                        "Hide the Create circle in story rows",
+                        "Hide the Create circle at the start of the story row on the Following feed and in the Inbox. Your own Story still shows there once you post one.",
+                        Settings.HIDE_STORY_CREATE
+                ));
+            }
             addPreference(new TogglePreference(
                     context,
                     "Hide Search this image prompts",

@@ -700,6 +700,13 @@ public class SettingsStatus {
         followingSkylightEnabled = true;
     }
 
+    /** Hide video overlays found the story rows' All button and Create circle and hooked them (#308, #309). */
+    public static boolean storyRowButtonsEnabled = false;
+
+    public static void enableStoryRowButtons() {
+        storyRowButtonsEnabled = true;
+    }
+
     /** Hide video overlays found the music disc's two animation settings on this build and hooked them (#68). */
     public static boolean musicDiscSpinEnabled = false;
 

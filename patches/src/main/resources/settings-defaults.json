@@ -402,6 +402,8 @@
       "hide_feed_surveys",
       "hide_footnotes",
       "hide_following_live_row",
+      "hide_following_all_button",
+      "hide_story_create",
       "hide_detail_comment_bar",
       "hide_clear_display_controls",
       "keep_clear_display_seek_bar",
@@ -2046,6 +2048,12 @@
       "type": "boolean",
       "default": false
     },
+    "hide_following_all_button": {
+      "field": "HIDE_FOLLOWING_ALL_BUTTON",
+      "key": "hide_following_all_button",
+      "type": "boolean",
+      "default": false
+    },
     "hide_following_live_row": {
       "field": "HIDE_FOLLOWING_LIVE_ROW",
       "key": "hide_following_live_row",
@@ -2469,6 +2477,12 @@
     "hide_story": {
       "field": "HIDE_STORY",
       "key": "hide_story",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_story_create": {
+      "field": "HIDE_STORY_CREATE",
+      "key": "hide_story_create",
       "type": "boolean",
       "default": false
     },

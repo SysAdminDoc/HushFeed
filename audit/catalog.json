@@ -8336,7 +8336,9 @@
    "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/videooverlays/HideVideoOverlaysPatch.kt",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/VideoOverlayHider.java",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/FeedOverlayControls.java",
-   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/MusicDiscSpin.java"
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/MusicDiscSpin.java",
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/videooverlays/StoryRowButtons.kt",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/StoryRowButtons.java"
   ],
   "settings": [
    {
@@ -8374,6 +8376,18 @@
     "default": false,
     "type": "bool",
     "row": "Hide the LIVE row on Following"
+   },
+   {
+    "key": "hide_following_all_button",
+    "default": false,
+    "type": "bool",
+    "row": "Hide the All button on Following"
+   },
+   {
+    "key": "hide_story_create",
+    "default": false,
+    "type": "bool",
+    "row": "Hide the Create circle in story rows"
    },
    {
     "key": "hide_feed_report_button",

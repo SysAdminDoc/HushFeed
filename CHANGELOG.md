@@ -15,6 +15,7 @@ Every Hushfeed release, newest first.
 * **TikTok:** `Show the save button on videos` puts a save button on the video, so one tap saves it with your save settings. It starts off, you can drag it wherever you like, and it's in Feed screen under Buttons on videos when `Advanced downloads` is patched in.
 * **TikTok:** With `Slide to change the hold speed` on, the bubble's padlock shows whether the video is locked, and letting go on a new speed while it's locked locks that speed.
 * **TikTok:** `Hide speed messages` leaves out TikTok's message when you pick a speed from the menu, or lock or unlock one with a hold. It starts off, and it's under Playback.
+* **TikTok:** `Hide the All button on Following` takes the All button off the end of the story row on Following, and `Hide the Create circle in story rows` takes the Create circle off that row and the Inbox's. The stories stay, and both start off under Feed screen.
 
 ### Bug Fixes
 * **TikTok:** The "Saving video" message no longer sits under the "Video saved" banner on a quick save. The banner takes its place.

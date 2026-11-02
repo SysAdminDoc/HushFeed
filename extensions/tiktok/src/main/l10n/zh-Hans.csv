@@ -2371,3 +2371,7 @@ Opening TikTok or your messages no longer pauses music from another app. TikTok 
 "While you hold a video, slide left or right to step through the speed menu's speeds, and a bubble shows the one you're on. Your next hold starts there. Letting go goes back to normal. A pull-down lock keeps the speed you slid to. On a locked video, letting go locks the new speed.",按住视频时向左或向右滑动，可在速度菜单的各个速度之间切换，气泡会显示当前速度。下次按住时从这个速度开始。松手后恢复正常。下拉锁定会保留你滑到的速度。在已锁定的视频上，松手会锁定新的速度.
 Hide speed messages,隐藏速度提示
 "Hides TikTok's message when you pick a speed from the menu, or lock or unlock one with a hold.",在你从菜单选择速度，或通过长按锁定或解锁速度时，隐藏 TikTok 的提示.
+Hide the All button on Following,隐藏“正在关注”的“全部”按钮
+Hide the Create circle in story rows,隐藏故事行中的“创建”圆圈
+Hide the All button at the end of the story row on the Following feed. The row and its stories stay.,隐藏“正在关注”故事行末尾的“全部”按钮。这一行和其中的故事都会保留.
+Hide the Create circle at the start of the story row on the Following feed and in the Inbox. Your own Story still shows there once you post one.,隐藏“正在关注”和收件箱故事行开头的“创建”圆圈。你发布故事后，自己的故事仍会显示在那里.

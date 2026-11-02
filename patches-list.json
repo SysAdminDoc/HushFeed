@@ -5540,6 +5540,24 @@
           "values": null
         },
         {
+          "key": "hide_following_all_button",
+          "title": "Default: hide following all button",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_story_create",
+          "title": "Default: hide story create",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "hide_detail_comment_bar",
           "title": "Default: hide detail comment bar",
           "description": null,

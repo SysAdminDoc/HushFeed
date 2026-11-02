@@ -58,7 +58,7 @@ public final class SuggestedAccountCells {
     }
 
     /** Collapses the view, or puts back what a collapse took, and says which it did. */
-    static boolean apply(View view, boolean hide) {
+    public static boolean apply(View view, boolean hide) {
         ViewGroup.LayoutParams params = view.getLayoutParams();
         ViewGroup.MarginLayoutParams margins = params instanceof ViewGroup.MarginLayoutParams
                 ? (ViewGroup.MarginLayoutParams) params : null;

@@ -955,6 +955,10 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_FOOTNOTES = new BooleanSetting("hide_footnotes", FALSE);
     /** The LIVE and stories row across the top of the Following tab and its count pill (#262). */
     public static final BooleanSetting HIDE_FOLLOWING_LIVE_ROW = new BooleanSetting("hide_following_live_row", FALSE);
+    /** The All button at the end of the Following tab's story row, which opens the following list (#308). */
+    public static final BooleanSetting HIDE_FOLLOWING_ALL_BUTTON = new BooleanSetting("hide_following_all_button", FALSE, true);
+    /** The Create circle at the start of the Following and Inbox story rows, while the viewer has no Story up (#309). */
+    public static final BooleanSetting HIDE_STORY_CREATE = new BooleanSetting("hide_story_create", FALSE, true);
     /** The Add comment bar under a video opened from a profile, a hashtag or a sound, and the strip kept for it (#50). */
     public static final BooleanSetting HIDE_DETAIL_COMMENT_BAR = new BooleanSetting("hide_detail_comment_bar", FALSE);
     /** The progress bar, close button and pause/speed pill TikTok draws while Clear display is on (#97). */

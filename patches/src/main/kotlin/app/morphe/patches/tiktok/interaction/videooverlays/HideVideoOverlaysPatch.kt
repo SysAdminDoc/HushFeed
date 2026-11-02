@@ -92,6 +92,21 @@ val hideVideoOverlaysPatch = bytecodePatch(
             println("[$PATCH_NAME] Left out the Following LIVE row on ${packageMetadata.versionName}: ${problem.message}")
             null
         }
+        // The story rows' All button and Create circle (#308, #309), the same way: required where
+        // StoryRowButtonsAnchorsTest holds them, left out with a note anywhere else.
+        val storyRowButtons = try {
+            val allShows = mutableClassDefBy(SKYLIGHT_LIST_ASSEM).methods.filter { allButtonShowIndex(it) >= 0 }
+            if (allShows.size != 2) throw PatchException("$PATCH_NAME: $SKYLIGHT_LIST_ASSEM shows All ${allShows.size} times.")
+            val binds = listOf(FOLLOWING_STORY_CELL, INBOX_STORY_CELL).map { cell ->
+                mutableClassDefBy(cell).methods.singleOrNull(::isStoryCellBind)
+                    ?: throw PatchException("$PATCH_NAME: $cell has no one bind writing the Create flag.")
+            }
+            allShows to binds
+        } catch (problem: Exception) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[$PATCH_NAME] Left out the story row buttons on ${packageMetadata.versionName}: ${problem.message}")
+            null
+        }
         // The Not interested and Interested buttons (#293), the same way: required where
         // InterestButtonsAnchorsTest holds the factory's check, left out with a note anywhere else.
         val interestButtons = try {
@@ -159,6 +174,17 @@ val hideVideoOverlaysPatch = bytecodePatch(
             status.addInstruction(
                 0,
                 "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableFollowingSkylight()V",
+            )
+        }
+        // Both decide in the extension from each cell's bind and each show call, and a bound row
+        // only changes after a restart, so these rows ask for one.
+        if (storyRowButtons != null) {
+            val (allShows, binds) = storyRowButtons
+            allShows.forEach { it.hookAllButtonShow(PATCH_NAME) }
+            binds.forEach { it.hookStoryCreateFlag(PATCH_NAME) }
+            status.addInstruction(
+                0,
+                "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableStoryRowButtons()V",
             )
         }
         // The interest buttons go with Hide surveys; the switch decides in the extension.

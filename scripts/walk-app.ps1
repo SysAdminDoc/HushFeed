@@ -449,6 +449,7 @@ foreach ($screen in Get-WalkPlannedScreens -AppProfile $appProfile -HushfeedPage
 $started = [DateTimeOffset]::UtcNow
 $device = ''; $appVersion = ''; $installedSha256 = ''; $installedPackage = ''; $installedVersionCode = ''
 $crashes = @()
+$savedScales = @{}
 $script:lease = New-DeviceLease -LeaseDir $LeaseDir -Serial $Serial -Project 'hushfeed' -ChatIdentity $ChatIdentity `
     -Purpose 'whole-app walk' -LeaseMinutes 30
 try {
@@ -463,6 +464,15 @@ try {
         }
     }
     Write-WalkLog "$device, $appName $appVersion, APK $installedSha256"
+    if ($Serial -like 'emulator-*') {
+        # A creator's animated avatar ring kept sending accessibility events over a paused feed, so
+        # uiautomator never idled and the 0.80.0 release walk on Login2 lost 22 screens. Zero
+        # animation scales stop the ring. Phones keep theirs: a killed walk can't restore them.
+        foreach ($key in 'window_animation_scale', 'transition_animation_scale', 'animator_duration_scale') {
+            $savedScales[$key] = ((Invoke-WalkAdb shell settings get global $key) -join '').Trim()
+            Invoke-WalkAdb shell settings put global $key 0 | Out-Null
+        }
+    }
 
     Invoke-WalkAdb shell am force-stop $WalkPackage | Out-Null
     # Other sessions read this phone's logs too, so the walk reads only what follows its start
@@ -634,6 +644,10 @@ try {
 } finally {
     try {
         Invoke-WalkAdb shell "rm -f $remoteDump /sdcard/hushfeed-walk.png" | Out-Null
+        foreach ($key in @($savedScales.Keys)) {
+            if ($savedScales[$key] -match '^\d+(\.\d+)?$') { Invoke-WalkAdb shell settings put global $key $savedScales[$key] | Out-Null }
+            else { Invoke-WalkAdb shell settings delete global $key | Out-Null }
+        }
     } catch { Write-Warning $_.Exception.Message }
     Remove-DeviceLease -Lease $script:lease -WarnOnFailure
 }

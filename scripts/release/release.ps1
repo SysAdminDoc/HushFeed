@@ -236,7 +236,7 @@ function Start-Avd([string]$Name) {
     $started = "emulator-$(5600 + 2 * (Get-Random -Maximum 40))"
     Say "starting $Name on $started"
     Start-Process (Join-Path $env:ANDROID_HOME 'emulator/emulator.exe') -WindowStyle Hidden -ArgumentList @(
-        '-avd', $Name, '-port', $started.Substring(9), '-no-window', '-no-audio', '-no-boot-anim', '-no-snapshot-save', '-gpu', 'host', '-cores', '2', '-memory', '3072')
+        '-avd', $Name, '-port', $started.Substring(9), '-no-window', '-no-audio', '-no-boot-anim', '-no-snapshot-load', '-no-snapshot-save', '-gpu', 'host', '-cores', '2', '-memory', '3072')
     $deadline = (Get-Date).AddMinutes(5)
     while ((Get-Date) -lt $deadline) {
         Start-Sleep -Seconds 5

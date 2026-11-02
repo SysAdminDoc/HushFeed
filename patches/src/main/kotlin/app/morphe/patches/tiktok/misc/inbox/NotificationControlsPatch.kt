@@ -76,16 +76,10 @@ internal object PushNotifyFingerprint : Fingerprint(
 )
 
 /**
- * Whether a conversation offers the streak button, and whether it carries the streak
- * reminder message. Both names survived on several copies of the same Kotlin model, so
- * every one of them is taken.
+ * Whether a conversation carries the streak reminder message. The name survived on several
+ * copies of the same Kotlin model, so every one of them is taken. Its sibling
+ * `getShowStreakButton` was taken too until 47.6.3 dropped it; on 47.5.3 nothing called it.
  */
-private object ShowStreakButtonFingerprint : Fingerprint(
-    name = "getShowStreakButton",
-    returnType = "Z",
-    parameters = emptyList(),
-)
-
 private object StreakReminderFingerprint : Fingerprint(
     name = "getHasStreakReminderInlineMsg",
     returnType = "Z",
@@ -120,32 +114,30 @@ val notificationControlsPatch = bytecodePatch(
                 "Notification controls: the push handler no longer takes the message in p1."
             }
             guardAtEntry(
-                "getShowStreakButton",
+                "Notification controls",
                 "invoke-static/range { p1 .. p1 }, $EXTENSION->shouldDropPush(Ljava/lang/Object;)Z",
                 "return-void",
             )
         }
 
-        for (fingerprint in listOf(ShowStreakButtonFingerprint, StreakReminderFingerprint)) {
-            val matches = fingerprint.matchAll().filter { it.method.implementation != null }
-            check(matches.isNotEmpty()) {
-                "Notification controls: no match for ${fingerprint.javaClass.simpleName} to take over."
+        val streakGetters = StreakReminderFingerprint.matchAll().filter { it.method.implementation != null }
+        check(streakGetters.isNotEmpty()) {
+            "Notification controls: no streak reminder getter to take over."
+        }
+        streakGetters.forEach { match ->
+            // A Kotlin getter this small can be compiled with only its own receiver, and
+            // then v0 is that receiver rather than a spare.
+            check(match.method.implementation!!.registerCount > 1) {
+                "Notification controls: ${match.method.definingClass}->${match.method.name} has no free local register."
             }
-            matches.forEach { match ->
-                // A Kotlin getter this small can be compiled with only its own receiver, and
-                // then v0 is that receiver rather than a spare.
-                check(match.method.implementation!!.registerCount > 1) {
-                    "Notification controls: ${match.method.definingClass}->${match.method.name} has no free local register."
-                }
-                match.method.guardAtEntry(
-                    "getShowStreakButton",
-                    "invoke-static {}, $EXTENSION->hideMessageStreaks()Z",
-                    """
-                        const/4 v0, 0x0
-                        return v0
-                    """,
-                )
-            }
+            match.method.guardAtEntry(
+                "Notification controls",
+                "invoke-static {}, $EXTENSION->hideMessageStreaks()Z",
+                """
+                    const/4 v0, 0x0
+                    return v0
+                """,
+            )
         }
 
         // Turn off push notifications. TikTok's push setup is one startup task, so a guard at its

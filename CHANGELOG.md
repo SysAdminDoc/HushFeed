@@ -4,13 +4,10 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
-* **TikTok:** PineDrama moved out to its own repo, [HushPine](https://github.com/SysAdminDoc/HushPine), with its own patches and releases. Hushfeed is TikTok only from here on, and `Allow photo comments` went with PineDrama.
-* **TikTok:** Hushfeed now supports TikTok 47.6.3, and only that one. 47.5.3 isn't supported anymore, so grab the 47.6.3 bundle or APK from APKMirror and patch it with the same signing key, so your login and settings carry over.
-
-## 0.80.0 (2026-10-31)
-
 ### Features
 
+* **TikTok:** PineDrama moved out to its own repo, [HushPine](https://github.com/SysAdminDoc/HushPine), with its own patches and releases. Hushfeed is TikTok only from here on, and `Allow photo comments` went with PineDrama.
+* **TikTok:** Hushfeed now supports TikTok 47.6.3, and only that one. 47.5.3 isn't supported anymore. Grab the 47.6.3 bundle or APK from APKMirror and patch it with the same signing key, so your login and settings carry over.
 * **TikTok:** `Hide the Clear display controls` has a new `Keep the progress bar` switch under it. The exit and pause buttons still go, but the progress bar stays on screen so you can see where you are and drag it (#237).
 * **TikTok:** `Double tap` has a new `Like or unlike the video` choice. A double tap on a video you've already liked takes the like back off, the same as tapping the heart, and `Confirm before liking` still asks first. TikTok's default double tap still only likes, and it works for each corner with `Double tap by corner` too (#248).
 * **TikTok:** `Slide to change the hold speed` lets you pick the speed while you hold a video. Slide left or right and it steps through your own `Speed menu choices`, with a bubble near the top showing the speed. Let go and the video goes back to its usual speed, and your next hold starts at the speed you slid to. With `Lock the hold speed with a pull down` on, pulling down locks the speed you slid to, and unlocking plays your default speed when `Use a default playback speed` is on. It's off by default and sits right under `Speed while you hold the video`. The idea comes from OmerKurdi79's fork (#248).

@@ -1,5 +1,7 @@
-## 0.80.0 (2026-10-31)
+## Unreleased
 
+* **TikTok:** PineDrama è passato a un proprio set di patch, HushPine. D'ora in poi Hushfeed applica le patch solo a TikTok.
+* **TikTok:** TikTok 47.6.3 è ora l'unica build supportata. Scaricala da APKMirror e tieni la stessa chiave di firma, così accesso e impostazioni restano.
 * **TikTok:** Nascondi i controlli della Vista pulita ha un nuovo interruttore che tiene sullo schermo la barra di avanzamento, così puoi ancora vederla e trascinarla (#237).
 * **TikTok:** Il doppio tocco ora può mettere e togliere il Mi piace. Un doppio tocco su un video che hai già messo tra i Mi piace toglie il Mi piace (#248).
 * **TikTok:** Scorri a sinistra o a destra mentre tieni premuto un video per passare tra le tue Opzioni del menu velocità. È disattivato di default (#248).
@@ -97,12 +99,13 @@
 * **TikTok:** Scegliere una cartella di download che non si può usare riapre la finestra della cartella con il motivo sotto.
 * **TikTok:** Ogni anteprima LIVE e ogni etichetta di drama che la Barra inferiore trasparente sposta viene controllata sulla build di TikTok supportata.
 * **TikTok:** La verifica dell'avanzamento automatico segue il lettore video stesso invece delle etichette dei singoli video.
-* **TikTok:** Un rilascio richiede prove corrispondenti per ogni app che supporta.
+* **TikTok:** Il giro completo dell'app controlla la build installata e le sue opzioni delle patch.
 * **TikTok:** I controlli delle patch verificano l'app installata e quali patch sono state scelte.
 * **TikTok:** Un controllo delle patch aspetta il rapporto diagnostico completo prima di dire che un interruttore manca.
 * **TikTok:** Un controllo delle patch smette di valere per una build quando cambia il codice su cui è stato eseguito.
 * **TikTok:** Il pacchetto delle patch contiene Gson 2.15.0.
 * **TikTok:** La pagina Licenze e il file NOTICE citano De-Vanced, e i link delle fonti portano alle copie usate davvero.
+* **TikTok:** I rilasci non includono più il file di ricevuta. Il pacchetto è riproducibile byte per byte, quindi puoi compilare il tag da solo e confrontare il checksum.
 
 ## 0.79.0 (2026-10-24)
 

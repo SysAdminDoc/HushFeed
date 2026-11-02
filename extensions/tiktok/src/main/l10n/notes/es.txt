@@ -1,5 +1,7 @@
-## 0.80.0 (2026-10-31)
+## Unreleased
 
+* **TikTok:** PineDrama pasó a su propio conjunto de parches, HushPine. Desde ahora Hushfeed solo parchea TikTok.
+* **TikTok:** TikTok 47.6.3 es ahora la única compilación compatible. Descárgala de APKMirror y conserva la misma clave de firma para mantener tu sesión y tus ajustes.
 * **TikTok:** Ocultar los controles de Pantalla limpia tiene un interruptor nuevo que deja a la vista la barra de progreso, para que puedas verla y arrastrarla (#237).
 * **TikTok:** El doble toque ahora puede dar y quitar el me gusta. Un doble toque en un video que ya te gusta le quita el me gusta (#248).
 * **TikTok:** Desliza a la izquierda o a la derecha mientras mantienes un video para recorrer tus Opciones del menú de velocidad. Viene desactivado (#248).
@@ -97,12 +99,13 @@
 * **TikTok:** Elegir una carpeta de descargas que no se puede usar vuelve a abrir el cuadro de carpeta con el motivo debajo.
 * **TikTok:** Cada vista previa de LIVE y cada etiqueta de drama que mueve la Barra inferior transparente se comprueba con la compilación de TikTok compatible.
 * **TikTok:** La auditoría del avance automático sigue al propio reproductor de video en vez de etiquetas por video.
-* **TikTok:** Una versión necesita pruebas que coincidan para cada app que admite.
+* **TikTok:** El recorrido por toda la app comprueba la compilación instalada y sus opciones de parches.
 * **TikTok:** Las auditorías de parches comprueban la app instalada y qué parches se eligieron.
 * **TikTok:** Una auditoría de parches espera el informe de diagnóstico completo antes de decir que falta un interruptor.
 * **TikTok:** Una auditoría de parches deja de contar para una compilación cuando cambia el código contra el que se ejecutó.
 * **TikTok:** El paquete de parches lleva Gson 2.15.0.
 * **TikTok:** La página de Licencias y el archivo NOTICE citan a De-Vanced, y los enlaces citados llevan a las copias que de verdad se usaron.
+* **TikTok:** Las versiones ya no incluyen un archivo de recibo. El paquete es reproducible byte a byte, así que puedes compilar la etiqueta por tu cuenta y comparar la suma de comprobación.
 
 ## 0.79.0 (2026-10-24)
 

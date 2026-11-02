@@ -1,5 +1,7 @@
-## 0.80.0 (2026-10-31)
+## Unreleased
 
+* **TikTok:** PineDrama pindah ke set patch sendiri, HushPine. Mulai sekarang Hushfeed hanya mem-patch TikTok.
+* **TikTok:** TikTok 47.6.3 kini satu-satunya build yang didukung. Ambil dari APKMirror dan pakai kunci tanda tangan yang sama agar login dan pengaturan Anda tetap ada.
 * **TikTok:** Sembunyikan kontrol Tampilan bersih punya sakelar baru yang menjaga bilah progres tetap tampil, jadi kamu masih bisa melihat dan menggesernya (#237).
 * **TikTok:** Ketuk dua kali sekarang bisa menyukai dan membatalkan suka. Ketuk dua kali pada video yang sudah kamu sukai akan menarik kembali sukanya (#248).
 * **TikTok:** Geser ke kiri atau kanan saat menahan video untuk berpindah di antara Pilihan di menu kecepatan milikmu. Bawaannya mati (#248).
@@ -97,12 +99,13 @@
 * **TikTok:** Memilih folder unduhan yang tidak bisa dipakai membuka lagi kotak folder dengan alasannya di bawah.
 * **TikTok:** Setiap pratinjau LIVE dan label drama yang digeser Bilah bawah tembus pandang diperiksa terhadap build TikTok yang didukung.
 * **TikTok:** Audit perpindahan otomatis mengikuti pemutar video itu sendiri, bukan label per video.
-* **TikTok:** Sebuah rilis butuh bukti yang cocok untuk setiap aplikasi yang didukungnya.
+* **TikTok:** Penelusuran seluruh aplikasi memeriksa build yang terpasang dan opsi patch-nya.
 * **TikTok:** Audit patch memeriksa aplikasi yang terpasang dan patch mana yang dipilih.
 * **TikTok:** Audit patch menunggu laporan diagnostik lengkap sebelum menyebut sebuah sakelar hilang.
 * **TikTok:** Audit patch berhenti dihitung untuk sebuah build begitu kode yang dijalankannya berubah.
 * **TikTok:** Paket patch membawa Gson 2.15.0.
 * **TikTok:** Halaman Lisensi dan file NOTICE mencantumkan De-Vanced, dan tautan sumber kini mengarah ke salinan yang benar-benar dipakai.
+* **TikTok:** Rilis tidak lagi menyertakan file tanda terima. Paket ini dapat direproduksi byte demi byte, jadi Anda bisa membangun tag-nya sendiri dan membandingkan checksum-nya.
 
 ## 0.79.0 (2026-10-24)
 

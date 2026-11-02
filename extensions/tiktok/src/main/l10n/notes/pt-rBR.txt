@@ -1,5 +1,7 @@
-## 0.80.0 (2026-10-31)
+## Unreleased
 
+* **TikTok:** O PineDrama foi para um conjunto de patches próprio, o HushPine. A partir de agora o Hushfeed só faz patch no TikTok.
+* **TikTok:** O TikTok 47.6.3 agora é a única versão suportada. Baixe do APKMirror e mantenha a mesma chave de assinatura para preservar seu login e suas configurações.
 * **TikTok:** Esconder os controles da Tela limpa ganhou uma chave nova que mantém a barra de progresso na tela, para você continuar vendo e arrastando ela (#237).
 * **TikTok:** O toque duplo agora pode curtir e descurtir. Um toque duplo num vídeo que você já curtiu tira a curtida (#248).
 * **TikTok:** Deslize para a esquerda ou para a direita enquanto segura um vídeo para passar pelas suas Opções do menu de velocidade. Vem desligado (#248).
@@ -97,12 +99,13 @@
 * **TikTok:** Escolher uma pasta de download que não pode ser usada abre de novo a janela da pasta com o motivo embaixo.
 * **TikTok:** Toda prévia de LIVE e todo rótulo de drama que a Barra inferior transparente move é conferido na versão do TikTok suportada.
 * **TikTok:** A auditoria do avanço automático segue o próprio player de vídeo em vez de rótulos por vídeo.
-* **TikTok:** Um lançamento precisa de evidências correspondentes para cada app que ele suporta.
+* **TikTok:** A passagem pelo app inteiro verifica a versão instalada e as opções de patch dela.
 * **TikTok:** As auditorias de patches verificam o app instalado e quais patches foram escolhidos.
 * **TikTok:** Uma auditoria de patches espera o relatório de diagnóstico completo antes de dizer que uma chave está faltando.
 * **TikTok:** Uma auditoria de patches deixa de valer para um build quando o código em que ela rodou muda.
 * **TikTok:** O pacote de patches traz o Gson 2.15.0.
 * **TikTok:** A página de Licenças e o arquivo NOTICE dão crédito ao De-Vanced, e os links de crédito levam às cópias que foram usadas de fato.
+* **TikTok:** Os lançamentos não trazem mais um arquivo de recibo. O pacote é reproduzível byte a byte, então você pode compilar a tag por conta própria e comparar o checksum.
 
 ## 0.79.0 (2026-10-24)
 

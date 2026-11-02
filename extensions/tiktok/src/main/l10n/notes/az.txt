@@ -1,5 +1,7 @@
-## 0.80.0 (2026-10-31)
+## Unreleased
 
+* **TikTok:** PineDrama öz yamaq dəstinə, HushPine-a köçdü. Hushfeed bundan sonra yalnız TikTok-u yamayır.
+* **TikTok:** İndi dəstəklənən yeganə quruluş TikTok 47.6.3-dür. Onu APKMirror-dan götürün və giriş məlumatlarınızla ayarlarınız qalsın deyə eyni imzalama açarını saxlayın.
 * **TikTok:** Təmiz ekran idarəetmələrini gizlət seçiminin yeni keçidi irəliləyiş çubuğunu ekranda saxlayır, beləliklə onu görə və sürüşdürə bilərsiniz (#237).
 * **TikTok:** İki dəfə toxunma artıq bəyənə və bəyənməni geri də ala bilir. Artıq bəyəndiyiniz videoya iki dəfə toxunsanız, bəyənmə geri götürülür (#248).
 * **TikTok:** Videonu basıb saxlayarkən sola və ya sağa sürüşdürərək sürət menyusu seçimləriniz arasında keçin. Defolt olaraq söndürülüb (#248).
@@ -97,12 +99,13 @@
 * **TikTok:** İstifadə oluna bilməyən yükləmə qovluğu seçəndə qovluq pəncərəsi səbəbi altında yazılmış halda yenidən açılır.
 * **TikTok:** Şəffaf alt panelin yerini dəyişdirdiyi hər LIVE önizləmə və dram yazısı dəstəklənən TikTok quruluşu ilə yoxlanılır.
 * **TikTok:** Avtomatik keçid auditi hər video üçün etiketlərə deyil, oynatıcının özünə əməl edir.
-* **TikTok:** Buraxılış dəstəklədiyi hər tətbiq üçün uyğun sübut tələb edir.
+* **TikTok:** Bütün tətbiq gəzintisi quraşdırılmış quruluşu və onun yamaq seçimlərini yoxlayır.
 * **TikTok:** Yamaq auditləri quraşdırılmış tətbiqi və hansı yamaqların seçildiyini yoxlayır.
 * **TikTok:** Yamaq auditi açarı çatışmır adlandırmazdan əvvəl diaqnostika hesabatının tam olmasını gözləyir.
 * **TikTok:** Yamaq auditi işlədiyi kod dəyişən kimi quraşdırma üçün sayılmağı dayandırır.
 * **TikTok:** Yamaq paketi Gson 2.15.0 daşıyır.
 * **TikTok:** Lisenziyalar səhifəsi və NOTICE faylı De-Vanced-i qeyd edir, istinad edilən linklər isə həqiqətən istifadə olunan nüsxələrə aparır.
+* **TikTok:** Buraxılışlarda artıq qəbz faylı olmur. Paket bayt-bayt təkrarlanır, ona görə teqi özünüz qurub yoxlama cəmini müqayisə edə bilərsiniz.
 
 ## 0.79.0 (2026-10-24)
 

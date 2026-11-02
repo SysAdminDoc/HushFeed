@@ -1,3 +1,7 @@
+## Unreleased
+
+* **TikTok:** El recorrido por toda la app mantiene la reserva del dispositivo hasta que termina la comprobación de código de Android, y espera a que un vídeo en pausa se quede quieto antes de leer la pantalla. Un LIVE que nunca se queda quieto se pasa deslizando. En un emulador también apaga las animaciones durante el recorrido, para que un anillo de avatar animado no impida leer la pantalla.
+
 ## 0.80.0 (2026-11-01)
 
 * **TikTok:** PineDrama pasó a su propio conjunto de parches, HushPine. Desde ahora Hushfeed solo parchea TikTok.

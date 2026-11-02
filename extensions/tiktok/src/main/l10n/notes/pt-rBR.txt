@@ -1,3 +1,7 @@
+## Unreleased
+
+* **TikTok:** A passagem pelo app inteiro mantém a reserva do dispositivo até a verificação de código do Android terminar, e espera um vídeo pausado ficar parado antes de ler a tela. Uma LIVE que nunca fica parada é pulada com um deslize. Num emulador, ela também desliga as animações durante a passagem, para que um anel de avatar animado não impeça a leitura da tela.
+
 ## 0.80.0 (2026-11-01)
 
 * **TikTok:** O PineDrama foi para um conjunto de patches próprio, o HushPine. A partir de agora o Hushfeed só faz patch no TikTok.

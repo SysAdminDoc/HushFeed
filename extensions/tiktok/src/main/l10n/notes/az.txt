@@ -1,3 +1,7 @@
+## Unreleased
+
+* **TikTok:** Bütün tətbiq gəzintisi Android-in kod yoxlaması bitənə qədər cihazın rezervasiyasını saxlayır və ekranı oxumazdan əvvəl dayandırılmış videonun sakitləşməsini gözləyir. Heç vaxt dayanmayan LIVE sürüşdürülüb keçilir. Emulyatorda gəzinti zamanı animasiyaları da söndürür ki, animasiyalı avatar halqası ekranın oxunmasına mane olmasın.
+
 ## 0.80.0 (2026-11-01)
 
 * **TikTok:** PineDrama öz yamaq dəstinə, HushPine-a köçdü. Hushfeed bundan sonra yalnız TikTok-u yamayır.

@@ -1,3 +1,7 @@
+## Unreleased
+
+* **TikTok:** Penelusuran seluruh aplikasi menahan reservasi perangkat sampai pemeriksaan kode Android selesai, dan menunggu video yang dijeda diam sebelum membaca layar. LIVE yang tidak pernah diam dilewati dengan geser. Di emulator, penelusuran juga mematikan animasi agar cincin avatar yang beranimasi tidak menghalangi pembacaan layar.
+
 ## 0.80.0 (2026-11-01)
 
 * **TikTok:** PineDrama pindah ke set patch sendiri, HushPine. Mulai sekarang Hushfeed hanya mem-patch TikTok.

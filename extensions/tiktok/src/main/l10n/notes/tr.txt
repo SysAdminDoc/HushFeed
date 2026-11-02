@@ -1,3 +1,7 @@
+## Unreleased
+
+* **TikTok:** Tüm uygulama turu, Android'in kod denetimi bitene kadar cihazı ayrılmış tutuyor ve ekranı okumadan önce duraklatılan videonun durulmasını bekliyor. Hiç durmayan bir LIVE kaydırılarak geçiliyor. Emülatörde tur sırasında animasyonları da kapatıyor, böylece hareketli bir avatar halkası ekranın okunmasını engellemiyor.
+
 ## 0.80.0 (2026-11-01)
 
 * **TikTok:** PineDrama kendi yama setine, HushPine'a taşındı. Hushfeed artık yalnızca TikTok'a yama uyguluyor.

@@ -1,3 +1,7 @@
+## Unreleased
+
+* **TikTok:** The whole-app walk keeps its device reserved until Android's code check is done, and waits for a paused video to settle before it reads the screen. A LIVE that never sits still gets swiped past. It also turns off an emulator's animations during the walk, so an animated avatar ring can't keep the screen from being read.
+
 ## 0.80.0 (2026-11-01)
 
 * **TikTok:** PineDrama moved to its own patch set, HushPine. Hushfeed patches TikTok only from here on.

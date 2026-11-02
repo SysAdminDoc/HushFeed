@@ -508,7 +508,7 @@ final class EdgeDragProbe {
     private static Activity current(ClassLoader loader) throws Exception { return (Activity) call(loader, UTILS, "getVisibleActivity"); }
     private static void checkHost(Context context) throws Exception {
         if (Build.VERSION.SDK_INT < 34 || !TARGET.equals(context.getPackageName()) || !TARGET.equals(Application.getProcessName())
-                || !VERSION.equals(context.getPackageManager().getPackageInfo(TARGET, 0).versionName)) throw new IllegalStateException("fixture requires main TikTok 47.5.3 process on Android 14 or later");
+                || !VERSION.equals(context.getPackageManager().getPackageInfo(TARGET, 0).versionName)) throw new IllegalStateException("fixture requires main TikTok " + VERSION + " process on Android 14 or later");
     }
     private static String devices(AudioManager audio) {
         List<String> devices = new ArrayList<>();

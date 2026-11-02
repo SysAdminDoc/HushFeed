@@ -45,6 +45,7 @@ public class HoldSpeedHudTest {
     private static final float[] GRID = {0.5f, 0.75f, 1f, 1.25f, 1.5f, 1.75f, 2f, 2.25f, 2.5f, 2.75f, 3f};
 
     private final List<Float> applied = new ArrayList<>();
+    private final List<Float> armed = new ArrayList<>();
     private final Object component = new Object();
     private ActivityController<Activity> owner;
     private float density;
@@ -61,6 +62,10 @@ public class HoldSpeedHudTest {
             assertSame(component, gesture);
             applied.add(speed);
         };
+        HoldSpeedHud.lockArmerForTests = (gesture, speed) -> {
+            assertSame(component, gesture);
+            armed.add(speed);
+        };
         forget();
     }
 
@@ -68,6 +73,7 @@ public class HoldSpeedHudTest {
     public void tearDown() {
         forget();
         HoldSpeedHud.applierForTests = null;
+        HoldSpeedHud.lockArmerForTests = null;
         SettingsStatus.holdSpeedSlideEnabled = false;
         Settings.HOLD_SPEED_SLIDE.resetToDefault();
         Settings.HOLD_SPEED.resetToDefault();
@@ -252,6 +258,79 @@ public class HoldSpeedHudTest {
         move(0);
         move(DEAD_ZONE + STEP + 2);
         assertEquals(List.of(2.25f, 2.5f, 2.75f), applied);
+    }
+
+    /** Holds a video that plays at the hold speed already, which TikTok counts as locked, and slides. */
+    private void holdLockedAndSlide(float dp) {
+        HoldSpeedHud.onHoldPress(component);
+        HoldSpeedHud.onHoldFrom(2f);
+        move(0);
+        move(dp);
+    }
+
+    @Test
+    public void aLockedVideoShowsThePadlockClosedAndAPullOpensIt() {
+        HoldSpeedHud.onHoldPress(component);
+        assertFalse(shown().locked());
+        HoldSpeedHud.onHoldFrom(2f);
+        assertTrue(shown().locked());
+        HoldSpeedHud.onPullDown(1);
+        assertFalse(shown().locked());
+        HoldSpeedHud.onPullDown(0);
+        assertTrue(shown().locked());
+    }
+
+    @Test
+    public void anUnlockedVideoShowsThePadlockOpenUntilAPull() {
+        HoldSpeedHud.onHoldPress(component);
+        HoldSpeedHud.onHoldFrom(1f);
+        assertFalse(shown().locked());
+        HoldSpeedHud.onPullDown(1);
+        assertTrue(shown().locked());
+    }
+
+    @Test
+    public void lettingGoOfALockedHoldOnANewSpeedLocksThatSpeed() {
+        holdLockedAndSlide(DEAD_ZONE + STEP + 2);
+        assertEquals(List.of(2.25f), applied);
+        assertEquals(List.of(), armed);
+        HoldSpeedHud.onHoldRelease();
+        assertEquals(List.of(2.25f), armed);
+    }
+
+    @Test
+    public void lettingGoOfAnUnlockedHoldLocksNothing() {
+        HoldSpeedHud.onHoldPress(component);
+        HoldSpeedHud.onHoldFrom(1f);
+        move(0);
+        move(DEAD_ZONE + STEP + 2);
+        HoldSpeedHud.onHoldRelease();
+        assertEquals(List.of(), armed);
+    }
+
+    @Test
+    public void aPullOnALockedHoldStaysTikToksUnlock() {
+        holdLockedAndSlide(DEAD_ZONE + STEP + 2);
+        HoldSpeedHud.onPullDown(1);
+        HoldSpeedHud.onHoldRelease();
+        assertEquals(List.of(), armed);
+    }
+
+    @Test
+    public void aLockedHoldLetGoOnTheSpeedItStartedAtChangesNothing() {
+        holdLockedAndSlide(DEAD_ZONE + STEP + 2);
+        move(DEAD_ZONE - 2);
+        assertEquals(List.of(2.25f, 2f), applied);
+        HoldSpeedHud.onHoldRelease();
+        assertEquals(List.of(), armed);
+    }
+
+    @Test
+    public void aLockedHoldThatNeverSlidChangesNothing() {
+        HoldSpeedHud.onHoldPress(component);
+        HoldSpeedHud.onHoldFrom(2f);
+        HoldSpeedHud.onHoldRelease();
+        assertEquals(List.of(), armed);
     }
 
     @Test

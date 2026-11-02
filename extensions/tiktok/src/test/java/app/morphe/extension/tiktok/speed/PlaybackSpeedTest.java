@@ -47,6 +47,21 @@ public class PlaybackSpeedTest {
         // Process-wide, and the Playback page other classes capture shows it.
         Settings.HOLD_SPEED.resetToDefault();
     }
+    @Test public void tikToksSpeedMessageShowsUnlessTheSwitchLeavesItOut() {
+        java.util.List<Object> shown = new java.util.ArrayList<>();
+        PlaybackSpeedPatch.toastShowerForTests = shown::add;
+        Object toast = new Object();
+        try {
+            PlaybackSpeedPatch.showSpeedToast(toast);
+            assertEquals(java.util.List.of(toast), shown);
+            Settings.HIDE_SPEED_TOASTS.save(true);
+            PlaybackSpeedPatch.showSpeedToast(new Object());
+            assertEquals(java.util.List.of(toast), shown);
+        } finally {
+            PlaybackSpeedPatch.toastShowerForTests = null;
+            Settings.HIDE_SPEED_TOASTS.resetToDefault();
+        }
+    }
     @Test public void manualChoiceSurvivesRepeatedFramesUntilTheVideoChanges() {
         Aweme a = video("a"), b = video("b");
         assertEquals(1.5f, PlaybackSpeedPatch.getPlaybackSpeedForVideo(a), 0);

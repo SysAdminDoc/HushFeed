@@ -566,6 +566,7 @@
       "CUSTOM_SPEEDS",
       "HOLD_SPEED",
       "HOLD_SPEED_SLIDE",
+      "HIDE_SPEED_TOASTS",
       "REMEMBERED_SPEED"
     ],
     "Prefer H.264 playback": [

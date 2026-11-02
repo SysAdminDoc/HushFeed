@@ -185,6 +185,25 @@ public final class PlaybackSpeedPatch {
      */
     public static void setNativeSpeed(Object controller, float speed) { }
 
+    /** Replaced with a call to the show method of the toast TikTok's speed messages are built on. */
+    public static void showToastNative(Object toast) { }
+
+    /** What TikTok's show call does, so a test can stand in for it. */
+    public interface ToastShower {
+        void show(Object toast);
+    }
+
+    /** Set by tests only. Unpatched, as in the tests, {@link #showToastNative} does nothing. */
+    public static volatile ToastShower toastShowerForTests;
+
+    /** Takes the place of TikTok's show call for its speed messages (#248). */
+    public static void showSpeedToast(Object toast) {
+        if (Settings.HIDE_SPEED_TOASTS.get()) return;
+        ToastShower shower = toastShowerForTests;
+        if (shower != null) shower.show(toast);
+        else showToastNative(toast);
+    }
+
     private static Aweme awemeOf(Object controller) {
         NativePlayer player = nativeForTests;
         return player != null ? player.aweme(controller) : nativeAweme(controller);

@@ -7743,6 +7743,15 @@
           "values": null
         },
         {
+          "key": "hide_speed_toasts",
+          "title": "Default: hide speed toasts",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "remembered_speed_v2",
           "title": "Default: remembered speed v2",
           "description": null,

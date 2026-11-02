@@ -361,6 +361,13 @@ public class SettingsStatus {
         holdSpeedSlideEnabled = true;
     }
 
+    /** TikTok's speed messages show through the extension, so they can be left out. */
+    public static boolean hideSpeedToastsEnabled = false;
+
+    public static void enableHideSpeedToasts() {
+        hideSpeedToastsEnabled = true;
+    }
+
     public static void enableLongPressSpeedLock() {
         longPressSpeedLockEnabled = true;
     }

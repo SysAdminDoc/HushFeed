@@ -18,6 +18,7 @@ import app.morphe.patches.tiktok.interaction.blockauthor.PlayerProgressAidFinger
 import app.morphe.patches.tiktok.interaction.cleardisplay.OnRenderFirstFrameBodyFingerprint
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.util.addInstructionsAtControlFlowLabel
+import app.morphe.util.addInstructionsWithLabels
 import app.morphe.util.cloneMutable
 import app.morphe.util.getReference
 import app.morphe.util.implementationOrPatchException
@@ -128,6 +129,23 @@ private class HoldHudSites(
     val pullDown: MutableMethod,
 )
 
+/** Letting go on a new speed while locked: the extension stub and what it writes. */
+private class HoldLockSites(val stub: MutableMethod, val kept: FieldReference, val state: HoldLockState)
+
+/** The body of the bridge that makes the release lock [kept]'s new value, as if a pull had armed it. */
+internal fun holdLockArmBody(gesture: String, kept: FieldReference, state: HoldLockState): String = """
+    check-cast p0, $gesture
+    iput p1, p0, $kept
+    invoke-virtual/range {p0 .. p0}, ${state.getter}
+    move-result-object v0
+    if-eqz v0, :no_lock_state
+    const/4 v1, 0x1
+    iput-boolean v1, v0, ${state.first}
+    iput-boolean v1, v0, ${state.second}
+    :no_lock_state
+    return-void
+"""
+
 /** The body of the bridge that answers which video a PlayerController has, for the same getter. */
 internal fun liveAwemeBridgeBody(controller: String, awemeGetter: MethodReference): String = """
     check-cast p0, $controller
@@ -219,6 +237,26 @@ val playbackSpeedPatch = bytecodePatch(
         } catch (problem: Exception) {
             if (packageMetadata.versionName in declaredVersions()) throw problem
             println("[Playback speed] Left out sliding the hold speed on ${packageMetadata.versionName}: ${problem.message}")
+            null
+        }
+
+        // Letting go on a new speed while the video is locked locks that speed (#248). It builds on
+        // the slide, and on a build nobody has checked a miss only leaves this part out.
+        val holdLock = try {
+            checkNotNull(holdHud) { "Playback speed: the slide it builds on was left out." }
+            val kept = EdgeSpeedupPressFingerprint.method.holdSpeedKept()
+            val state = EdgeSpeedupReleaseFingerprint.method.holdLockState()
+            openHoldLockMembers(kept.field, state)
+            val stub = mutableClassDefBy(HOLD_HUD).methods.filter { it.name == "armLockNative" }
+                .singleOrPatchException("Playback speed: extension armLockNative bridge")
+            check(
+                AccessFlags.STATIC.isSet(stub.accessFlags) && stub.returnType == "V" &&
+                    stub.parameterTypes.map(CharSequence::toString) == listOf("Ljava/lang/Object;", "F"),
+            ) { "Playback speed: the extension's armLockNative stub is not static (Object, float)V." }
+            HoldLockSites(stub, kept.field, state)
+        } catch (problem: Exception) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[Playback speed] Left out locking a slid speed on ${packageMetadata.versionName}: ${problem.message}")
             null
         }
 
@@ -462,6 +500,19 @@ val playbackSpeedPatch = bytecodePatch(
             println("[Playback speed] Left out the default speed on unlock on ${packageMetadata.versionName}: ${problem.message}")
         }
 
+        // The menu's message and the hold's three show through the extension, so a switch can leave
+        // them out (#248). The same kind of add-on.
+        try {
+            routeSpeedToastShows(release, toastHandler)
+            SettingsStatusLoadFingerprint.method.addInstruction(
+                0,
+                "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableHideSpeedToasts()V",
+            )
+        } catch (problem: Exception) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[Playback speed] Left out hiding the speed messages on ${packageMetadata.versionName}: ${problem.message}")
+        }
+
         // Slide to change the hold speed: the press and release tell the extension a hold began
         // and ended (past their guards, so once each), the touch listener hands it the finger's
         // moves, the pull-down signal says when a lock is armed, its stub plays a slid speed
@@ -476,6 +527,21 @@ val playbackSpeedPatch = bytecodePatch(
                 press.holdGuardEnd("the hold gesture's press"),
                 "invoke-static/range {p0 .. p0}, $HOLD_HUD->onHoldPress(Ljava/lang/Object;)V",
             )
+            // The speed before the hold says whether this video counts as locked: the press hands
+            // it over right where it keeps it, and the stub rewrites it and arms the lock for a
+            // release on a new speed.
+            if (holdLock != null) {
+                val kept = press.holdSpeedKept()
+                press.addInstruction(
+                    kept.index + 1,
+                    "invoke-static/range {v${kept.register} .. v${kept.register}}, $HOLD_HUD->onHoldFrom(F)V",
+                )
+                val holdClass = mutableClassDefBy(HOLD_HUD)
+                val armBridge = holdLock.stub.cloneMutable(additionalRegisters = 2)
+                holdClass.methods.remove(holdLock.stub)
+                holdClass.methods.add(armBridge)
+                armBridge.addInstructionsWithLabels(0, holdLockArmBody(press.definingClass, holdLock.kept, holdLock.state))
+            }
             release.addInstruction(
                 release.holdGuardEnd("the hold gesture's release"),
                 "invoke-static {}, $HOLD_HUD->onHoldRelease()V",

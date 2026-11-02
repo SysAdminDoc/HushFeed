@@ -14,6 +14,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import org.junit.Assert.assertEquals
@@ -211,6 +212,78 @@ class HoldSpeedAnchorsTest {
             }.toList()
             assertEquals("${apk.name}: touch listeners ${touches.map { it.definingClass }}", 1, touches.size)
             assertTrue("${apk.name}: the touch listener is an instance method", touches.single().accessFlags and 0x8 == 0)
+        }
+    }
+
+    @Test
+    fun `each declared build has what locking a slid speed reads and writes (#248)`() {
+        Fixtures.forEachDeclared { apk ->
+            val app = load(apk)
+            val (press, release) = gestureMethods(app, apk)
+            // The press keeps the speed past its guard, so the extension has heard of the hold by
+            // then, and that field is what the release goes back to.
+            val kept = press.holdSpeedKept()
+            assertTrue("${apk.name}: kept at ${kept.index}", kept.index >= press.holdGuardEnd("press"))
+            assertEquals("${apk.name}: the kept speed's class", component, kept.field.definingClass)
+            assertTrue(
+                "${apk.name}: the release reads ${kept.field.name}",
+                release.implementation!!.instructions.any {
+                    it.opcode == Opcode.IGET && it.getReference<FieldReference>()?.name == kept.field.name
+                },
+            )
+            // The flags the release compares are the ones the press sets, on a public class, behind
+            // a public getter on the component, or the extension could not reach them.
+            val state = release.holdLockState()
+            val stateClass = app.getValue(state.first.definingClass)
+            assertTrue("${apk.name}: ${stateClass.type} is public", stateClass.accessFlags and 0x1 != 0)
+            assertTrue(
+                "${apk.name}: ${state.getter.name} is public",
+                app.getValue(component).methods.single {
+                    it.name == state.getter.name && it.parameterTypes.isEmpty() && it.returnType == stateClass.type
+                }.accessFlags and 0x1 != 0,
+            )
+            listOf(state.first, state.second).forEach { flag ->
+                assertTrue(
+                    "${apk.name}: the press writes ${flag.name}",
+                    press.implementation!!.instructions.any {
+                        it.opcode == Opcode.IPUT_BOOLEAN && it.getReference<FieldReference>() == flag
+                    },
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `each declared build shows its speed messages through one call (#248)`() {
+        Fixtures.forEachDeclared { apk ->
+            val app = load(apk)
+            val (_, release) = gestureMethods(app, apk)
+            val holdShows = release.holdToastShows { reference ->
+                reference.parameterTypes == listOf("I") && reference.returnType == "V" &&
+                    app[reference.definingClass]?.methods?.any { method ->
+                        method.name == reference.name && method.parameterTypes == listOf("I") &&
+                            method.implementation?.instructions?.any(::isGetString) == true
+                    } == true
+            }.map { release.at(it).getReference<MethodReference>()!! }
+            assertEquals("${apk.name}: the hold's messages", 3, holdShows.size)
+
+            val basePackage = "Lcom/ss/android/ugc/aweme/share/base/model/BaseSharePackage;"
+            val menuClass = app.values.single { classDef ->
+                classDef.methods.any { it.parameterTypes == listOf(basePackage) && "is_highlight_fast_speed" in strings(it) }
+            }
+            val handler = menuClass.methods.single { method ->
+                method.parameterTypes == listOf("Landroid/view/View;", basePackage) && method.returnType == "V" &&
+                    method.implementation?.instructions?.count { it.opcode == Opcode.APUT_OBJECT } == 1
+            }
+            val shows = holdShows + handler.at(handler.menuToastShow()).getReference<MethodReference>()!!
+            val show = shows.distinctBy { it.toString() }.single()
+            assertTrue("${apk.name}: ${show.definingClass} is public", app.getValue(show.definingClass).accessFlags and 0x1 != 0)
+            assertTrue(
+                "${apk.name}: ${show.name} is public",
+                app.getValue(show.definingClass).methods.single {
+                    it.name == show.name && it.parameterTypes.isEmpty()
+                }.accessFlags and 0x1 != 0,
+            )
         }
     }
 

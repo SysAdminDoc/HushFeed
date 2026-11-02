@@ -352,8 +352,14 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                 addPreference(new TogglePreference(context, "Slide to change the hold speed",
                         "While you hold a video, slide left or right to step through the speed menu's speeds, "
                                 + "and a bubble shows the one you're on. Your next hold starts there. "
-                                + "Letting go goes back to normal. A pull-down lock keeps the speed you slid to.",
+                                + "Letting go goes back to normal. A pull-down lock keeps the speed you slid to. "
+                                + "On a locked video, letting go locks the new speed.",
                         Settings.HOLD_SPEED_SLIDE));
+            }
+            if (SettingsStatus.hideSpeedToastsEnabled) {
+                addPreference(new TogglePreference(context, "Hide speed messages",
+                        "Hides TikTok's message when you pick a speed from the menu, or lock or unlock one with a hold.",
+                        Settings.HIDE_SPEED_TOASTS));
             }
         }
         if (SettingsStatus.playbackQualityEnabled || SettingsStatus.sdrPlaybackEnabled

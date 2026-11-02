@@ -39,12 +39,16 @@ import java.util.TreeSet;
  * the speed stays put and the bubble's padlock lights; pulling back up lets the slide go on.
  *
  * <p>The speed reaches the player through the gesture's own apply call, the one TikTok plays its
- * 2x with, so TikTok's speed state is left alone and letting go returns the video to the speed it
- * had, as it always does. TikTok's pull-down lock stays the only lock: the slid speed is what
+ * 2x with, so TikTok's speed state is left alone and letting go of an unlocked hold returns the
+ * video to the speed it had, as it always does. The locks stay TikTok's: the slid speed is what
  * {@link PlaybackSpeedPatch#holdSpeed} answers, so a lock keeps it, its toast names it, and the
  * next hold starts there, until the hold speed row under Speed is changed. The finger is read
  * from the gesture's own touch listener, which already has the move events while the video is
  * held; nothing here takes a touch from TikTok.
+ *
+ * <p>A video already at the hold speed is one TikTok counts as locked: its padlock starts closed,
+ * a pull opens it (that pull is TikTok's unlock), and letting go on another speed locks that one
+ * by arming TikTok's own lock just before its release reads the state.
  *
  * <p>There is one bubble at most. A new hold, letting go, the video on screen changing, the window
  * losing focus (a pause, a dialog, the notification shade), Hushfeed Pause and the switch going off
@@ -68,6 +72,9 @@ public final class HoldSpeedHud {
     private static boolean sliding;
     private static boolean vertical;
     private static boolean pulled;
+    /** Whether this hold began on a video TikTok counts as locked, and the speed that video had. */
+    private static boolean startedLocked;
+    private static float heldFrom = Float.NaN;
     private static String heldVideo = "";
     /**
      * The speed last slid to and the hold speed row it was slid from, or NaN. Read by the
@@ -83,6 +90,9 @@ public final class HoldSpeedHud {
 
     /** Set by tests only. Unpatched, as in the tests, {@link #applyNative} does nothing. */
     public static volatile Applier applierForTests;
+
+    /** Set by tests only. Unpatched, as in the tests, {@link #armLockNative} does nothing. */
+    public static volatile Applier lockArmerForTests;
 
     private HoldSpeedHud() {}
 
@@ -106,6 +116,12 @@ public final class HoldSpeedHud {
      */
     public static void applyNative(Object gesture, float speed) { }
 
+    /**
+     * Replaced with what makes the gesture's release lock {@code speed}: the speed it would go
+     * back to becomes this one, and its lock state reads as a pull armed from an unlocked hold.
+     */
+    public static void armLockNative(Object gesture, float speed) { }
+
     /** Called from the gesture's press, past its "already held" guard, with the component. */
     public static void onHoldPress(Object component) {
         try {
@@ -122,11 +138,29 @@ public final class HoldSpeedHud {
             sliding = false;
             vertical = false;
             pulled = false;
+            startedLocked = false;
+            heldFrom = Float.NaN;
             heldVideo = PlaybackSpeedPatch.onScreenVideoId();
             holding = true;
             show(start);
         } catch (Throwable ex) {
             Logger.printException(() -> "Could not start the hold speed bubble", ex);
+        }
+    }
+
+    /**
+     * Called from the gesture's press with the speed the video played at before the hold, right
+     * after it keeps it. TikTok compares that with the hold speed the same way to tell whether
+     * this video is already locked.
+     */
+    public static void onHoldFrom(float before) {
+        if (!holding) return;
+        try {
+            heldFrom = before;
+            startedLocked = Float.compare(before, PlaybackSpeedPatch.holdSpeed(2f)) == 0;
+            showLockState();
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Could not read the speed before the hold", ex);
         }
     }
 
@@ -193,19 +227,43 @@ public final class HoldSpeedHud {
                 anchorX = Float.NaN;
                 anchorY = Float.NaN;
             }
-            Bubble shown = bubble.get();
-            if (shown != null) shown.setLocked(pulled);
+            showLockState();
         } catch (Throwable ex) {
             Logger.printException(() -> "Could not follow the hold's pull-down", ex);
         }
     }
 
-    /** Called from the gesture's release, past its "not held" guard: the bubble goes. */
+    /** The padlock is closed on a locked video and when a pull will lock; a pull on a locked video opens it. */
+    private static void showLockState() {
+        Bubble shown = bubble.get();
+        if (shown != null) shown.setLocked(startedLocked != pulled);
+    }
+
+    /**
+     * Called from the gesture's release, past its "not held" guard, before it reads the speed to
+     * go back to or the lock state: a locked hold let go on a new speed locks that one, and the
+     * bubble goes.
+     */
     public static void onHoldRelease() {
+        try {
+            lockTheSlidSpeed();
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Could not lock the speed the hold was let go on", ex);
+        }
         holding = false;
         pulled = false;
         gesture.clear();
         dismiss();
+    }
+
+    private static void lockTheSlidSpeed() {
+        if (!holding || !startedLocked || pulled) return;
+        Object component = gesture.get();
+        float speed = slidSpeed();
+        if (component == null || Float.isNaN(speed) || Float.compare(speed, heldFrom) == 0) return;
+        Applier armer = lockArmerForTests;
+        if (armer != null) armer.apply(component, speed);
+        else armLockNative(component, speed);
     }
 
     /** The on-screen tracker named another video: a hold still going is over for this bubble. */
@@ -382,13 +440,16 @@ public final class HoldSpeedHud {
             // The padlock sits just left of the speed, the two centered together.
             float textWidth = text.measureText(label);
             float left = (getWidth() - (8 * density + 5 * density + textWidth)) / 2f;
-            lock.setColor(locked ? 0xFFFFFFFF : 0x66FFFFFF);
+            lock.setColor(locked ? 0xFFFFFFFF : 0xB3FFFFFF);
             lock.setStyle(Paint.Style.STROKE);
             float shackle = left + 4 * density;
-            bounds.set(shackle - 2.5f * density, 10.5f * density, shackle + 2.5f * density, 15.5f * density);
+            // Open, the shackle stands higher and its left leg stops short of the body.
+            float lift = locked ? 0 : 2.5f * density;
+            bounds.set(shackle - 2.5f * density, 10.5f * density - lift, shackle + 2.5f * density, 15.5f * density - lift);
             canvas.drawArc(bounds, 180, 180, false, lock);
-            canvas.drawLine(shackle - 2.5f * density, 13 * density, shackle - 2.5f * density, 16 * density, lock);
-            canvas.drawLine(shackle + 2.5f * density, 13 * density, shackle + 2.5f * density, 16 * density, lock);
+            canvas.drawLine(shackle - 2.5f * density, 13 * density - lift, shackle - 2.5f * density,
+                    locked ? 16 * density : 13 * density - lift + density, lock);
+            canvas.drawLine(shackle + 2.5f * density, 13 * density - lift, shackle + 2.5f * density, 16 * density, lock);
             lock.setStyle(Paint.Style.FILL);
             bounds.set(left, 16 * density, left + 8 * density, 23 * density);
             canvas.drawRoundRect(bounds, 1.5f * density, 1.5f * density, lock);

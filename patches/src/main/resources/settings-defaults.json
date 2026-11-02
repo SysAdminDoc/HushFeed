@@ -566,6 +566,7 @@
       "custom_speeds",
       "hold_speed",
       "hold_speed_slide",
+      "hide_speed_toasts",
       "remembered_speed_v2"
     ],
     "Prefer H.264 playback": [
@@ -2444,6 +2445,12 @@
     "hide_spam_comments": {
       "field": "HIDE_SPAM_COMMENTS",
       "key": "hide_spam_comments",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_speed_toasts": {
+      "field": "HIDE_SPEED_TOASTS",
+      "key": "hide_speed_toasts",
       "type": "boolean",
       "default": false
     },

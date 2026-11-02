@@ -1403,7 +1403,6 @@ Hide the unread badges on the bottom tabs	Nascondi i badge non letti sulle sched
 Hide the red counts and dots on every bottom tab, Inbox and Profile included, and the bubble over Inbox that counts new likes, followers, comments and who's LIVE. The inbox itself still shows what came in.	Nasconde i contatori rossi e i puntini su tutte le schede in basso, inclusi Posta in arrivo e Profilo, e la bolla sopra Posta in arrivo che conta nuovi Mi piace, follower, commenti e chi è in LIVE. La posta in arrivo continua comunque a mostrare cosa è arrivato.
 Speed while you hold the video	Velocità mentre tieni premuto il video
 Slide to change the hold speed	Scorri per cambiare la velocità di pressione
-While you hold a video, slide left or right to step through the speed menu's speeds, and a bubble shows the one you're on. Your next hold starts there. Letting go goes back to normal. A pull-down lock keeps the speed you slid to.	Mentre tieni premuto un video, scorri a sinistra o a destra per passare tra le velocità del menu velocità. Una bolla mostra quella attuale. La prossima pressione parte da lì. Quando lasci torna normale. Il blocco tirando giù mantiene la velocità scelta.
 Hide mini dramas	Nascondi i mini drama
 Hide TikTok's short drama episodes and the cards that promote them.	Nasconde gli episodi dei mini drama di TikTok e le schede che li promuovono.
 Mini dramas	Mini drama
@@ -2400,3 +2399,6 @@ Show the save button on videos	Mostra il pulsante per salvare sui video
 Add a button beside the block control that saves the video on screen in one tap. Drag it wherever you like.	Aggiunge un pulsante accanto al controllo di blocco che salva il video sullo schermo con un tocco. Trascinalo dove vuoi.
 Couldn't save this one. Try again.	Non salvato. Riprova.
 Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound while a video plays and gives it back when you leave the video.	Aprire TikTok o i tuoi messaggi non mette più in pausa la musica di un'altra app. TikTok prende l'audio mentre un video è in riproduzione e lo restituisce quando esci dal video.
+While you hold a video, slide left or right to step through the speed menu's speeds, and a bubble shows the one you're on. Your next hold starts there. Letting go goes back to normal. A pull-down lock keeps the speed you slid to. On a locked video, letting go locks the new speed.	Mentre tieni premuto un video, scorri a sinistra o a destra per passare tra le velocità del menu velocità. Una bolla mostra quella attuale. La prossima pressione parte da lì. Quando lasci torna normale. Il blocco tirando giù mantiene la velocità scelta. Su un video bloccato, quando lasci si blocca la nuova velocità.
+Hide speed messages	Nascondi i messaggi di velocità
+Hides TikTok's message when you pick a speed from the menu, or lock or unlock one with a hold.	Nasconde il messaggio di TikTok quando scegli una velocità dal menu, o ne blocchi o sblocchi una tenendo premuto.

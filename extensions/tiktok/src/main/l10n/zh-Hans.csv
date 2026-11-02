@@ -1703,7 +1703,6 @@ Speed menu choices,速度菜单选项
 "Speed up this video, double tap again to undo",加快该视频的速度，再次双击即可撤消
 Speed while you hold the video,按住视频时速度
 Slide to change the hold speed,滑动更改按住时的速度
-"While you hold a video, slide left or right to step through the speed menu's speeds, and a bubble shows the one you're on. Your next hold starts there. Letting go goes back to normal. A pull-down lock keeps the speed you slid to.",按住视频时向左或向右滑动，可在速度菜单的各个速度之间切换，气泡会显示当前速度。下次按住时从这个速度开始。松手后恢复正常。下拉锁定会保留你滑到的速度.
 Spin the music disc,旋转音乐光盘
 Split comment minimum width,分割评论最小宽度
 Start each new video at your default. A manual choice lasts until the video changes.,以默认值开始每个新视频。手动选择将持续到视频发生变化为止.
@@ -2369,3 +2368,6 @@ Show the save button on videos,在视频上显示保存按钮
 Add a button beside the block control that saves the video on screen in one tap. Drag it wherever you like.,在块控件旁边添加一个按钮，点一下即可保存屏幕上的视频。可以把它拖到任意位置.
 Couldn't save this one. Try again.,无法保存。再试一次.
 Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound while a video plays and gives it back when you leave the video.,打开 TikTok 或你的消息时，不再暂停其他应用的音乐。TikTok 只在视频播放时占用声音，离开视频后就会交还.
+"While you hold a video, slide left or right to step through the speed menu's speeds, and a bubble shows the one you're on. Your next hold starts there. Letting go goes back to normal. A pull-down lock keeps the speed you slid to. On a locked video, letting go locks the new speed.",按住视频时向左或向右滑动，可在速度菜单的各个速度之间切换，气泡会显示当前速度。下次按住时从这个速度开始。松手后恢复正常。下拉锁定会保留你滑到的速度。在已锁定的视频上，松手会锁定新的速度.
+Hide speed messages,隐藏速度提示
+"Hides TikTok's message when you pick a speed from the menu, or lock or unlock one with a hold.",在你从菜单选择速度，或通过长按锁定或解锁速度时，隐藏 TikTok 的提示.

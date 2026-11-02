@@ -94,6 +94,49 @@ public class BioMentionsTest {
                 List.of("nasa", "esa"), handles("big fan of @nasa, max @esa"));
     }
 
+    @Test public void aDisplayNameIsOneLinkAndNotItsFirstWord() {
+        assertEquals(List.of("Mary Jane Watson"), handles("Sister: @Mary Jane Watson"));
+        assertEquals("the name stops at the first word without a capital",
+                List.of("First Last"), handles("Say hi to @First Last on here"));
+        assertEquals("a name and a username side by side",
+                List.of("José García", "nasa"), handles("@José García and @nasa"));
+        assertEquals("a name doesn't run past its line",
+                List.of("SKIMS", "Update"), handles("@SKIMS\n@Update"));
+        assertEquals("punctuation ends it", List.of("First Last"), handles("@First Last, backup"));
+        assertEquals("a lowercase handle before a new sentence stays a username",
+                List.of("nasa"), handles("@nasa Follow me"));
+        assertEquals("a username with its digits or punctuation stays a username",
+                List.of("Nasa2", "Mr.Beast"), handles("@Nasa2 Backup, @Mr.Beast Official"));
+        assertEquals("four words is as long as a name goes",
+                List.of("One Two Three Four"), handles("@One Two Three Four Five"));
+        assertTrue("another app's name is left alone", handles("IG: @First Last").isEmpty());
+    }
+
+    @Test public void aWordAUsernameCantSpellLinksNothing() {
+        assertTrue(handles("@José").isEmpty());
+        assertTrue(handles("@naïve").isEmpty());
+    }
+
+    @Test public void tappingADisplayNameSearchesForTheWholeName() {
+        TextView view = bio("Sister: @First Last");
+        BioMentions.MentionSpan[] found = spans(view);
+        assertEquals(1, found.length);
+        assertEquals("First Last", found[0].handle);
+        tapAt(view, view.getText().toString().indexOf("Last") + 1);
+        Intent started = Shadows.shadowOf(activity).getNextStartedActivity();
+        assertNotNull(started);
+        assertEquals(Intent.ACTION_VIEW, started.getAction());
+        assertEquals("snssdk1233", started.getData().getScheme());
+        assertEquals("First Last", started.getData().getQueryParameter("keyword"));
+        assertEquals(activity.getPackageName(), started.getPackage());
+    }
+
+    @Test public void onlyAUsernameOrADisplayNameOpensAnything() {
+        assertFalse(BioMentions.open(activity, "not a name"));
+        assertFalse(BioMentions.open(activity, "First Last&keyword=other"));
+        assertNull(Shadows.shadowOf(activity).getNextStartedActivity());
+    }
+
     private TextView bio(String text) {
         TextView view = new TextView(activity);
         view.setText(text);

@@ -261,6 +261,7 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                     context,
                     "Tap @names in bios",
                     "An @username in a profile's bio opens that profile when you tap it. "
+                            + "A full name typed after an @ opens a search for that name. "
                             + "The rest of the bio still translates on a tap.",
                     Settings.BIO_MENTION_LINKS
             ));

@@ -2499,7 +2499,6 @@ Fold the search into a button	Свернуть поиск в кнопку
 Shows a search button at the top left of the comments instead of the box, so the comments get that room back. Tap it to search, and tap it again to put the box away. Search within comments must be on.	Показывает кнопку поиска слева вверху комментариев вместо поля, и комментариям возвращается это место. Нажмите её, чтобы искать, и нажмите ещё раз, чтобы убрать поле. «Поиск по комментариям» должен быть включён.
 Put the comment search away	Убрать поиск по комментариям
 Tap @names in bios	Нажимать на @имена в био
-An @username in a profile's bio opens that profile when you tap it. The rest of the bio still translates on a tap.	@имя пользователя в био профиля открывает этот профиль по нажатию. Остальная часть био по-прежнему переводится по нажатию.
 autoplay auto play	автовоспроизведение автозапуск
 picture in picture PiP	картинка в картинке PiP
 search suggestions	подсказки поиска
@@ -2587,3 +2586,4 @@ Hide the number beside the heart on each comment. The heart still works.	Скр�
 Hide the thumbs down on comments	Скрывать палец вниз в комментариях
 Hide the thumbs down beside the heart on each comment. It stays while Thumbs down blocks the commenter is on.	Скрывает палец вниз рядом с сердечком у каждого комментария. Он остаётся, пока включено «Палец вниз блокирует автора комментария».
 Hide the row of friends at the top of the share sheet and in the menu a long press on a comment opens.	Скрывает ряд друзей вверху меню «Поделиться» и в меню, которое открывается долгим нажатием на комментарий.
+An @username in a profile's bio opens that profile when you tap it. A full name typed after an @ opens a search for that name. The rest of the bio still translates on a tap.	@имя пользователя в био профиля открывает этот профиль по нажатию. Полное имя после @ открывает поиск по этому имени. Остальная часть био по-прежнему переводится по нажатию.

@@ -46,10 +46,20 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
 public final class BioMentions {
     /**
      * A TikTok username after an @: 2 to 24 letters, digits, underscores and periods, not ending
-     * in a period. One glued to a word or an email address, or running past 24, isn't a mention.
+     * in a period. One glued to a word or an email address, or running past 24, isn't a mention,
+     * and neither is the start of a word a username can't spell ("@José" isn't @Jos).
      */
     static final Pattern MENTION = Pattern.compile(
-            "(?<![A-Za-z0-9_.@])@([A-Za-z0-9_][A-Za-z0-9_.]{0,22}[A-Za-z0-9_])(?![A-Za-z0-9_@])");
+            "(?<![A-Za-z0-9_.@])@([A-Za-z0-9_][A-Za-z0-9_.]{0,22}[A-Za-z0-9_])(?![\\p{L}\\p{M}\\p{N}_@])");
+    /**
+     * A display name typed after an @ ("@First Last"), up to four words on one line that each start
+     * with a capital. Only a username can open a profile, and linking the first word alone opened
+     * a stranger or nothing, so the whole name becomes one link to TikTok's search.
+     */
+    private static final Pattern DISPLAY_NAME = Pattern.compile(
+            "(?<![\\p{L}\\p{N}_.@])@(\\p{Lu}[\\p{L}\\p{M}'’\\-]*(?:[ \\u00A0]\\p{Lu}[\\p{L}\\p{M}\\p{N}'’\\-]*){1,3})");
+    /** Whichever starts first, and a display name when both start at the same @. */
+    private static final Pattern NAME_OR_MENTION = Pattern.compile(DISPLAY_NAME.pattern() + "|" + MENTION.pattern());
     /**
      * Another app named just before the @ on the same line ("IG: @name", "snap @name"). That
      * username belongs to the other app, and the TikTok account of the same name may be a stranger.
@@ -58,6 +68,8 @@ public final class BioMentions {
             "(?i)(?:^|[^\\p{L}\\p{N}])(?:ig|insta(?:gram)?|twitter|tw|yt|youtube|snap(?:chat)?|sc|threads|"
                     + "twitch|fb|facebook|discord|x(?=\\s*:))\\s*[:\\-|]?\\s*$");
     static final String PROFILE_URL = "https://www.tiktok.com/@";
+    /** TikTok's own search link, the one its search history rows open, typed in with the keyword. */
+    static final String SEARCH_URL = "snssdk1233://search?enter_from=search_history&enter_method=search_history&keyword=";
 
     /** Bio views already wired with the watcher and touch listener. Main thread only. */
     private static final Map<TextView, Boolean> WIRED = new WeakHashMap<>();
@@ -73,7 +85,7 @@ public final class BioMentions {
         return SettingsStatus.copyIdsEnabled && Settings.BIO_MENTION_LINKS.get();
     }
 
-    /** A username in a bio, opening its profile when tapped. */
+    /** A username in a bio opening its profile when tapped, or a display name opening a search. */
     static final class MentionSpan extends ClickableSpan {
         final String handle;
 
@@ -144,10 +156,10 @@ public final class BioMentions {
         }
     }
 
-    /** Where each TikTok username in [text] starts (its @) and ends. */
+    /** Where each TikTok username or display name in [text] starts (its @) and ends. */
     static List<int[]> find(CharSequence text) {
         List<int[]> found = new ArrayList<>();
-        Matcher matcher = MENTION.matcher(text);
+        Matcher matcher = NAME_OR_MENTION.matcher(text);
         while (matcher.find()) {
             int lineStart = TextUtils.lastIndexOf(text, '\n', matcher.start()) + 1;
             if (OTHER_APP.matcher(text.subSequence(lineStart, matcher.start())).find()) continue;
@@ -203,11 +215,15 @@ public final class BioMentions {
         return spans.length == 0 ? null : spans[0];
     }
 
-    /** Opens [handle]'s profile through TikTok's own link handling, never another app. */
+    /** Opens [handle]'s profile, or a search for a display name, through TikTok's own links, never another app. */
     static boolean open(@Nullable Context context, String handle) {
         try {
-            if (context == null || !MENTION.matcher("@" + handle).matches()) return false;
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(PROFILE_URL + handle))
+            if (context == null) return false;
+            String link = MENTION.matcher("@" + handle).matches()
+                    ? PROFILE_URL + handle
+                    : DISPLAY_NAME.matcher("@" + handle).matches() ? SEARCH_URL + Uri.encode(handle) : null;
+            if (link == null) return false;
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link))
                     .setPackage(context.getPackageName());
             if (!(context instanceof Activity)) intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);

@@ -2296,7 +2296,6 @@ Fold the search into a button,Lipat pencarian jadi tombol
 "Shows a search button at the top left of the comments instead of the box, so the comments get that room back. Tap it to search, and tap it again to put the box away. Search within comments must be on.","Menampilkan tombol pencarian di kiri atas komentar sebagai ganti kotaknya, jadi komentar mendapat ruang itu kembali. Ketuk untuk mencari, lalu ketuk lagi untuk menyimpan kotaknya. “Cari dalam komentar” harus menyala."
 Put the comment search away,Tutup pencarian komentar
 Tap @names in bios,Ketuk @nama di bio
-An @username in a profile's bio opens that profile when you tap it. The rest of the bio still translates on a tap.,@nama pengguna di bio profil membuka profil itu saat diketuk. Bagian bio lainnya tetap diterjemahkan saat diketuk.
 autoplay auto play,putar otomatis autoplay
 picture in picture PiP,gambar dalam gambar PiP
 search suggestions,saran pencarian
@@ -2381,3 +2380,4 @@ Hide the number beside the heart on each comment. The heart still works.,Sembuny
 Hide the thumbs down on comments,Sembunyikan tombol tidak suka pada komentar
 Hide the thumbs down beside the heart on each comment. It stays while Thumbs down blocks the commenter is on.,Sembunyikan tombol tidak suka di samping ikon hati pada setiap komentar. Tombol tetap ada selama Jempol ke bawah memblokir pengomentar aktif.
 Hide the row of friends at the top of the share sheet and in the menu a long press on a comment opens.,Sembunyikan deretan teman di bagian atas lembar berbagi dan di menu yang terbuka saat komentar ditekan lama.
+An @username in a profile's bio opens that profile when you tap it. A full name typed after an @ opens a search for that name. The rest of the bio still translates on a tap.,@nama pengguna di bio profil membuka profil itu saat diketuk. Nama lengkap yang ditulis setelah @ membuka pencarian nama itu. Bagian bio lainnya tetap diterjemahkan saat diketuk.

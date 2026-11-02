@@ -2325,7 +2325,6 @@ Fold the search into a button	Suche in einen Knopf falten
 Shows a search button at the top left of the comments instead of the box, so the comments get that room back. Tap it to search, and tap it again to put the box away. Search within comments must be on.	Zeigt oben links in den Kommentaren einen Suchknopf statt des Felds, damit die Kommentare den Platz zurückbekommen. Tippe ihn zum Suchen an und noch einmal, um das Feld wegzuräumen. „In Kommentaren suchen“ muss an sein.
 Put the comment search away	Kommentarsuche wegräumen
 Tap @names in bios	@Namen in Bios antippen
-An @username in a profile's bio opens that profile when you tap it. The rest of the bio still translates on a tap.	Ein @Nutzername in der Bio eines Profils öffnet beim Antippen dieses Profil. Der Rest der Bio wird beim Antippen weiterhin übersetzt.
 autoplay auto play	automatische Wiedergabe Autoplay
 picture in picture PiP	Bild-im-Bild PiP
 search suggestions	Suchvorschläge
@@ -2413,3 +2412,4 @@ Hide the number beside the heart on each comment. The heart still works.	Blendet
 Hide the thumbs down on comments	Daumen runter bei Kommentaren ausblenden
 Hide the thumbs down beside the heart on each comment. It stays while Thumbs down blocks the commenter is on.	Blendet den Daumen runter neben dem Herz bei jedem Kommentar aus. Er bleibt, solange „Daumen runter blockiert den Kommentierenden“ an ist.
 Hide the row of friends at the top of the share sheet and in the menu a long press on a comment opens.	Die Freundesreihe oben im Teilen-Menü und im Menü, das ein langes Drücken auf einen Kommentar öffnet, ausblenden.
+An @username in a profile's bio opens that profile when you tap it. A full name typed after an @ opens a search for that name. The rest of the bio still translates on a tap.	Ein @Nutzername in der Bio eines Profils öffnet beim Antippen dieses Profil. Ein voller Name nach einem @ öffnet die Suche nach diesem Namen. Der Rest der Bio wird beim Antippen weiterhin übersetzt.

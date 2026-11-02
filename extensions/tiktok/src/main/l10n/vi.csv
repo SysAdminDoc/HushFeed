@@ -231,7 +231,6 @@ Always show publish date,Luôn hiển thị ngày đăng
 Always show the publish date in video author information. Restart TikTok to apply this.,Luôn hiển thị ngày đăng trong thông tin tác giả video. Khởi động lại TikTok để áp dụng.
 Always upload in HD,Luôn tải lên ở độ phân giải HD
 Amazon Appstore,Kho ứng dụng Amazon
-An @username in a profile's bio opens that profile when you tap it. The rest of the bio still translates on a tap.,Chạm vào một @username trong tiểu sử trang cá nhân để mở trang cá nhân đó. Các phần khác của tiểu sử vẫn hoạt động bình thường (như dịch thuật khi chạm).
 "An exception names one creator, so a pattern can't be one: %1$s","Một ngoại lệ chỉ định một nhà sáng tạo, do đó một mẫu không thể là: %1$s"
 "An exception takes a handle or id, not a display name: %1$s",Một ngoại lệ nhận handle hoặc ID thay vì tên hiển thị: %1$s
 "An operator code is five or six digits, like 310260","Mã nhà mạng gồm 5 hoặc 6 chữ số, ví dụ như 310260"
@@ -2379,3 +2378,4 @@ Hide the number beside the heart on each comment. The heart still works.,Ẩn co
 Hide the thumbs down on comments,Ẩn nút không thích trên bình luận
 Hide the thumbs down beside the heart on each comment. It stays while Thumbs down blocks the commenter is on.,Ẩn nút không thích bên cạnh trái tim ở mỗi bình luận. Nút vẫn giữ nguyên khi Nút không thích giúp chặn người bình luận đang bật.
 Hide the row of friends at the top of the share sheet and in the menu a long press on a comment opens.,Ẩn hàng bạn bè ở đầu bảng chia sẻ và trong menu mở ra khi nhấn giữ một bình luận.
+An @username in a profile's bio opens that profile when you tap it. A full name typed after an @ opens a search for that name. The rest of the bio still translates on a tap.,Chạm vào một @username trong tiểu sử trang cá nhân để mở trang cá nhân đó. Tên đầy đủ viết sau @ sẽ mở tìm kiếm tên đó. Các phần khác của tiểu sử vẫn hoạt động bình thường (như dịch thuật khi chạm).

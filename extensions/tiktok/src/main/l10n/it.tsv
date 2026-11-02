@@ -2322,7 +2322,6 @@ Fold the search into a button	Riduci la ricerca a un pulsante
 Shows a search button at the top left of the comments instead of the box, so the comments get that room back. Tap it to search, and tap it again to put the box away. Search within comments must be on.	Mostra un pulsante di ricerca in alto a sinistra nei commenti al posto della casella, così i commenti riprendono quello spazio. Toccalo per cercare e toccalo di nuovo per chiudere la casella. Cerca nei commenti deve essere attivo.
 Put the comment search away	Chiudi la ricerca nei commenti
 Tap @names in bios	Tocca i @nomi nelle bio
-An @username in a profile's bio opens that profile when you tap it. The rest of the bio still translates on a tap.	Un @nomeutente nella bio di un profilo apre quel profilo quando lo tocchi. Il resto della bio si traduce ancora con un tocco.
 autoplay auto play	riproduzione automatica autoplay
 picture in picture PiP	picture in picture PiP
 search suggestions	suggerimenti di ricerca
@@ -2410,3 +2409,4 @@ Hide the number beside the heart on each comment. The heart still works.	Nascond
 Hide the thumbs down on comments	Nascondi il pollice verso sui commenti
 Hide the thumbs down beside the heart on each comment. It stays while Thumbs down blocks the commenter is on.	Nasconde il pollice verso accanto al cuore su ogni commento. Resta finché Il pollice verso blocca chi ha commentato è attivo.
 Hide the row of friends at the top of the share sheet and in the menu a long press on a comment opens.	Nasconde la fila di amici in cima al menu di condivisione e nel menu che si apre tenendo premuto un commento.
+An @username in a profile's bio opens that profile when you tap it. A full name typed after an @ opens a search for that name. The rest of the bio still translates on a tap.	Un @nomeutente nella bio di un profilo apre quel profilo quando lo tocchi. Un nome completo scritto dopo una @ apre una ricerca di quel nome. Il resto della bio si traduce ancora con un tocco.

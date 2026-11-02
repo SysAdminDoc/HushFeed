@@ -2322,7 +2322,6 @@ Fold the search into a button	Plegar la búsqueda en un botón
 Shows a search button at the top left of the comments instead of the box, so the comments get that room back. Tap it to search, and tap it again to put the box away. Search within comments must be on.	Muestra un botón de búsqueda arriba a la izquierda de los comentarios en lugar del cuadro, así los comentarios recuperan ese espacio. Tócalo para buscar y vuelve a tocarlo para guardar el cuadro. Buscar en los comentarios debe estar activado.
 Put the comment search away	Guardar la búsqueda de comentarios
 Tap @names in bios	Tocar @nombres en las biografías
-An @username in a profile's bio opens that profile when you tap it. The rest of the bio still translates on a tap.	Un @usuario en la biografía de un perfil abre ese perfil al tocarlo. El resto de la biografía se sigue traduciendo al tocarla.
 autoplay auto play	reproducción automática autoplay
 picture in picture PiP	imagen en imagen PiP
 search suggestions	sugerencias de búsqueda
@@ -2410,3 +2409,4 @@ Hide the number beside the heart on each comment. The heart still works.	Oculta 
 Hide the thumbs down on comments	Ocultar el pulgar hacia abajo de los comentarios
 Hide the thumbs down beside the heart on each comment. It stays while Thumbs down blocks the commenter is on.	Oculta el pulgar hacia abajo junto al corazón en cada comentario. Se queda mientras El pulgar hacia abajo bloquea a quien comenta esté activado.
 Hide the row of friends at the top of the share sheet and in the menu a long press on a comment opens.	Oculta la fila de amigos de arriba del menú de compartir y del menú que abre una pulsación larga en un comentario.
+An @username in a profile's bio opens that profile when you tap it. A full name typed after an @ opens a search for that name. The rest of the bio still translates on a tap.	Un @usuario en la biografía de un perfil abre ese perfil al tocarlo. Un nombre completo escrito tras una @ abre una búsqueda de ese nombre. El resto de la biografía se sigue traduciendo al tocarla.

@@ -2322,7 +2322,6 @@ Fold the search into a button	Axtarışı düyməyə yığ
 Shows a search button at the top left of the comments instead of the box, so the comments get that room back. Tap it to search, and tap it again to put the box away. Search within comments must be on.	Qutunun yerinə şərhlərin yuxarı solunda axtarış düyməsi göstərir, beləliklə o yer şərhlərə qayıdır. Axtarmaq üçün ona toxunun, qutunu gizlətmək üçün yenidən toxunun. “Şərhlər daxilində axtarın” açıq olmalıdır.
 Put the comment search away	Şərh axtarışını gizlət
 Tap @names in bios	Bioqrafiyalarda @adlara toxun
-An @username in a profile's bio opens that profile when you tap it. The rest of the bio still translates on a tap.	Profilin bioqrafiyasındakı @istifadəçi adına toxunanda həmin profil açılır. Bioqrafiyanın qalan hissəsi toxunanda yenə tərcümə olunur.
 autoplay auto play	avtomatik oynatma avtooynatma
 picture in picture PiP	şəkil içində şəkil PiP
 search suggestions	axtarış təklifləri
@@ -2410,3 +2409,4 @@ Hide the number beside the heart on each comment. The heart still works.	Hər ş
 Hide the thumbs down on comments	Şərhlərdə bəyənməmə düyməsini gizlədin
 Hide the thumbs down beside the heart on each comment. It stays while Thumbs down blocks the commenter is on.	Hər şərhdə ürəyin yanındakı bəyənməmə düyməsini gizlədir. Bəyənməmə şərh yazanı bloklayır açıq olduqda qalır.
 Hide the row of friends at the top of the share sheet and in the menu a long press on a comment opens.	Paylaşım panelinin yuxarısındakı və şərhə uzun basanda açılan menyudakı dost sırasını gizlədir.
+An @username in a profile's bio opens that profile when you tap it. A full name typed after an @ opens a search for that name. The rest of the bio still translates on a tap.	Profilin bioqrafiyasındakı @istifadəçi adına toxunanda həmin profil açılır. @ işarəsindən sonra yazılan tam ad həmin ad üçün axtarışı açır. Bioqrafiyanın qalan hissəsi toxunanda yenə tərcümə olunur.

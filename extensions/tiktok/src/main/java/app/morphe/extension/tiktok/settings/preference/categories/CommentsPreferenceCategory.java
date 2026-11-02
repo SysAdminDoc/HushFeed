@@ -330,6 +330,19 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
             ));
             addPreference(new TogglePreference(
                     context,
+                    "Hide like counts on comments",
+                    "Hide the number beside the heart on each comment. The heart still works.",
+                    Settings.HIDE_COMMENT_LIKE_COUNT
+            ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Hide the thumbs down on comments",
+                    "Hide the thumbs down beside the heart on each comment. It stays while "
+                            + "Thumbs down blocks the commenter is on.",
+                    Settings.HIDE_COMMENT_DISLIKE
+            ));
+            addPreference(new TogglePreference(
+                    context,
                     "Show poll results before voting",
                     "A comment poll shows how many picked each answer before you vote. Tapping an answer still votes.",
                     Settings.SHOW_POLL_RESULTS
@@ -340,8 +353,8 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
                     context,
                     "Thumbs down blocks the commenter",
                     "The thumbs down on each comment blocks the commenter instead of "
-                            + "disliking. The comment dims, an undo banner follows, and a second tap "
-                            + "unblocks.",
+                            + "disliking. Their comments leave the list right away and an undo "
+                            + "banner follows.",
                     Settings.BLOCK_FROM_COMMENT
             ));
             addPreference(new TogglePreference(

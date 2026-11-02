@@ -910,7 +910,6 @@ Remove feed ads, creator commission posts, paid partnerships, and branded conten
 Hide voting cards and poll results above the comments, including polls that have ended.	Blende Abstimmungen und ihre Ergebnisse über den Kommentaren aus, auch wenn die Abstimmung bereits beendet ist.
 Hide the Share via row.	Die Zeile „Teilen über“ ausblenden.
 Hide the actions row of the share sheet.	Die Aktionszeile des Teilen-Menüs ausblenden.
-Hide the row of friends at the top of the share sheet.	Die Freundesreihe oben im Teilen-Menü ausblenden.
 Cuts the tracking bits out of links you share.	Entfernt die Tracking-Teile aus Links, die du teilst.
 Remove watermark	Wasserzeichen entfernen
 Removed %1$s	%1$s entfernt
@@ -1195,7 +1194,6 @@ The smallest value is above the largest	Der kleinste Wert liegt über dem größ
 The sound couldn't be saved. Try again.	Sound nicht gespeichert. Versuch es erneut.
 The sticker couldn't be saved. Try again.	Sticker nicht gespeichert. Versuch es erneut.
 The story couldn't be saved. Try again.	Die Story konnte nicht gespeichert werden.
-The thumbs down on each comment blocks the commenter instead of disliking. The comment dims, an undo banner follows, and a second tap unblocks.	Der Daumen runter bei jedem Kommentar blockiert den Kommentator statt zu disliken. Der Kommentar wird gedimmt, ein Rückgängig-Banner folgt, und ein zweites Tippen entsperrt.
 Couldn't save. Try again, or choose Automatic.	Nicht gespeichert. Nochmal oder Automatisch wählen.
 There is no Lab change to undo.	Es gibt keine Lab-Änderung, die sich rückgängig machen ließe.
 There is no diagnostic data to clear	Es gibt keine Diagnosedaten zum Löschen
@@ -2409,3 +2407,9 @@ Hide the All button on Following	„Alle“-Schaltfläche bei „Gefolgt“ ausb
 Hide the Create circle in story rows	Kreis „Erstellen“ in Story-Leisten ausblenden
 Hide the All button at the end of the story row on the Following feed. The row and its stories stay.	Blendet die Schaltfläche „Alle“ am Ende der Story-Leiste bei „Gefolgt“ aus. Die Leiste und ihre Storys bleiben.
 Hide the Create circle at the start of the story row on the Following feed and in the Inbox. Your own Story still shows there once you post one.	Blendet den Kreis „Erstellen“ am Anfang der Story-Leiste bei „Gefolgt“ und im Posteingang aus. Deine eigene Story erscheint dort weiterhin, sobald du eine postest.
+The thumbs down on each comment blocks the commenter instead of disliking. Their comments leave the list right away and an undo banner follows.	Der Daumen runter bei jedem Kommentar blockiert den Kommentierenden statt zu disliken. Seine Kommentare verschwinden sofort aus der Liste und ein Rückgängig-Banner folgt.
+Hide like counts on comments	Like-Zahlen bei Kommentaren ausblenden
+Hide the number beside the heart on each comment. The heart still works.	Blendet die Zahl neben dem Herz bei jedem Kommentar aus. Das Herz funktioniert weiterhin.
+Hide the thumbs down on comments	Daumen runter bei Kommentaren ausblenden
+Hide the thumbs down beside the heart on each comment. It stays while Thumbs down blocks the commenter is on.	Blendet den Daumen runter neben dem Herz bei jedem Kommentar aus. Er bleibt, solange „Daumen runter blockiert den Kommentierenden“ an ist.
+Hide the row of friends at the top of the share sheet and in the menu a long press on a comment opens.	Die Freundesreihe oben im Teilen-Menü und im Menü, das ein langes Drücken auf einen Kommentar öffnet, ausblenden.

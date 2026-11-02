@@ -757,6 +757,7 @@ Hide every direct message conversation. Leaves the Inbox empty apart from whatev
 Hide floating promotions,Hide floating promotions
 Hide gaming LIVEs,Hide gaming LIVEs
 Hide inserted cards,Hide inserted cards
+Hide like counts on comments,Hide like counts on comments
 Hide location labels,Hide location labels
 Hide message requests,Hide message requests
 Hide message streaks,Hide message streaks
@@ -852,6 +853,7 @@ Hide the magnifying glass at the top of Inbox. Search on the feed and in comment
 Hide the magnifying glass at the top right of the feed. Search in Inbox and suggestions above comments stay unchanged.,Hide the magnifying glass at the top right of the feed. Search in Inbox and suggestions above comments stay unchanged.
 Hide the music line,Hide the music line
 "Hide the notification saying somebody new followed you before it reaches the drawer. Every other notification is left alone, and the follower still appears in the Inbox.","Hide the notification saying somebody new followed you before it reaches the drawer. Every other notification is left alone, and the follower still appears in the Inbox."
+Hide the number beside the heart on each comment. The heart still works.,Hide the number beside the heart on each comment. The heart still works.
 "Hide the photo, @ and gift buttons in the box where you write a comment. Emoji and sending work as before.","Hide the photo, @ and gift buttons in the box where you write a comment. Emoji and sending work as before."
 Hide the playlist bar,Hide the playlist bar
 Hide the playlist bar along the bottom of videos that belong to a series.,Hide the playlist bar along the bottom of videos that belong to a series.
@@ -867,7 +869,7 @@ Hide the restriction notice on your own profile on this phone. TikTok's restrict
 Hide the rewards shortcut,Hide the rewards shortcut
 Hide the right column,Hide the right column
 "Hide the row of LIVE and story circles across the top of the Following feed, and the pill that counts them. For You is left as it is.","Hide the row of LIVE and story circles across the top of the Following feed, and the pill that counts them. For You is left as it is."
-Hide the row of friends at the top of the share sheet.,Hide the row of friends at the top of the share sheet.
+Hide the row of friends at the top of the share sheet and in the menu a long press on a comment opens.,Hide the row of friends at the top of the share sheet and in the menu a long press on a comment opens.
 Hide the save button in the right column. Ticking Save in the list above hides it too.,Hide the save button in the right column. Ticking Save in the list above hides it too.
 Hide the save button on the feed,Hide the save button on the feed
 "Hide the search bar at the top of videos you open from search, a profile or your watch history. The Back button stays.","Hide the search bar at the top of videos you open from search, a profile or your watch history. The Back button stays."
@@ -881,6 +883,8 @@ Hide the streak button in a chat and the reminder message that goes with it.,Hid
 Hide the suggested-search strip above the bottom tabs and let video details and side controls use its space. The top search button and comments stay unchanged.,Hide the suggested-search strip above the bottom tabs and let video details and side controls use its space. The top search button and comments stay unchanged.
 Hide the tab names above the feed,Hide the tab names above the feed
 "Hide the tags above a video's description that invite you to try an effect, a template, CapCut or an AI style. Location labels and the music line have their own switches.","Hide the tags above a video's description that invite you to try an effect, a template, CapCut or an AI style. Location labels and the music line have their own switches."
+Hide the thumbs down beside the heart on each comment. It stays while Thumbs down blocks the commenter is on.,Hide the thumbs down beside the heart on each comment. It stays while Thumbs down blocks the commenter is on.
+Hide the thumbs down on comments,Hide the thumbs down on comments
 Hide the track name beside the caption.,Hide the track name beside the caption.
 Hide the unread badges on the bottom tabs,Hide the unread badges on the bottom tabs
 "Hide the whole column on the right, from the avatar down to the music disc.","Hide the whole column on the right, from the avatar down to the music disc."
@@ -2062,7 +2066,7 @@ The sound couldn't be saved. Try again.,The sound couldn't be saved. Try again.
 The sticker couldn't be saved. Try again.,The sticker couldn't be saved. Try again.
 The sticker suggestion banner stops showing in a chat. Your own stickers are still in the sticker picker.,The sticker suggestion banner stops showing in a chat. Your own stickers are still in the sticker picker.
 The story couldn't be saved. Try again.,The story couldn't be saved. Try again.
-"The thumbs down on each comment blocks the commenter instead of disliking. The comment dims, an undo banner follows, and a second tap unblocks.","The thumbs down on each comment blocks the commenter instead of disliking. The comment dims, an undo banner follows, and a second tap unblocks."
+The thumbs down on each comment blocks the commenter instead of disliking. Their comments leave the list right away and an undo banner follows.,The thumbs down on each comment blocks the commenter instead of disliking. Their comments leave the list right away and an undo banner follows.
 The tick on the main feed's tabs. Short pulse is one quick tap of the motor. Phone's click is the click your phone makes elsewhere. Soft tick rings a little longer. Full tick is the phone's strongest tick.,The tick on the main feed's tabs. Short pulse is one quick tap of the motor. Phone's click is the click your phone makes elsewhere. Soft tick rings a little longer. Full tick is the phone's strongest tick.
 The time of day the message goes out.,The time of day the message goes out.
 "The video you're watching keeps playing to its end after you leave TikTok or turn the screen off, with TikTok's own media notification to pause it. TikTok's background play switch stays on while this is on. Restart TikTok to apply this.","The video you're watching keeps playing to its end after you leave TikTok or turn the screen off, with TikTok's own media notification to pause it. TikTok's background play switch stays on while this is on. Restart TikTok to apply this."

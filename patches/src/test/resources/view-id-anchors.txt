@@ -126,6 +126,7 @@ blockauthor/FeedVisibility.java|COMMENT_TITLE_RESOURCE_NAMES|47.6.3:wl7|app|com.
 blockauthor/FeedVisibility.java|STORY_PAGER_RESOURCE_NAME|vp_story_collection|app|com.by.andInflater.story_layout_immersive_play_area|at:2
 comment/CommentTools.java|DISLIKE_BUTTON_IDS|47.6.3:k1e|app|class-method:setHateVisibility|to:RelativeLayout$LayoutParams
 comment/CommentTools.java|DISLIKE_ICON_IDS|47.6.3:mn5|app|class-method:setHateVisibility|on:TuxIconView#4
+comment/CommentTools.java|LIKE_COUNT_IDS|tv_like_count|app|com.ss.android.ugc.aweme.comment.photocomment.CommentInnerDiggAssem|on:TuxTextView
 captions/CaptionStyle.java|TEXT_IDS|47.6.3:dnd|app|method-string:caption_balancer|at:1
 captions/CaptionStyle.java|BACKGROUND_IDS|47.6.3:dn7|app|layout-method-string:caption_balancer|tag:ConstraintLayout
 feedfilter/TakoAiFilter.java|SEARCH_TAB_ENTRANCE_ID|tv_tab_tako_entrance|app|layout:com.ss.android.ugc.aweme.search.pages.core.ui.fragment.SearchContainerFragment|tag:TuxTextView

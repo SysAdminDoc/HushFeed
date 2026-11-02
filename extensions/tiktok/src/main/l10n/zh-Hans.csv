@@ -810,7 +810,6 @@ Hide the quick emoji row and automatic sticker suggestions that appear while you
 Hide the restriction notice on your own profile on this phone. TikTok's restrictions and appeals still apply.,在此手机上隐藏你自己的个人资料中的限制通知。 TikTok 的限制和上诉仍然适用.
 Hide the rewards shortcut,隐藏奖励快捷方式
 Hide the right column,隐藏右列
-Hide the row of friends at the top of the share sheet.,隐藏共享表顶部的好友行.
 Hide the save button in the right column. Ticking Save in the list above hides it too.,隐藏右栏中的保存按钮。在上面的列表中勾选“保存”也会将其隐藏.
 Hide the save button on the feed,隐藏信息流上的保存按钮
 "Hide the search bar at the top of videos you open from search, a profile or your watch history. The Back button stays.",隐藏通过搜索、个人资料或观看历史记录打开的视频顶部的搜索栏。返回按钮保留.
@@ -1923,7 +1922,6 @@ The sound couldn't be saved. Try again.,声音无法保存。再试一次.
 The sticker couldn't be saved. Try again.,无法保存贴纸。再试一次.
 The sticker suggestion banner stops showing in a chat. Your own stickers are still in the sticker picker.,贴纸建议横幅停止在聊天中显示。你自己的贴纸仍在贴纸选择器中.
 The story couldn't be saved. Try again.,故事无法保存。再试一次.
-"The thumbs down on each comment blocks the commenter instead of disliking. The comment dims, an undo banner follows, and a second tap unblocks.",对每条评论的“大拇指朝下”会阻止评论者，而不是不喜欢。评论变暗，随后出现撤消横幅，然后再点按即可解锁.
 The time of day the message goes out.,消息发出的时间.
 Couldn't make the video. Try again.,无法制作视频，请重试.
 "Couldn't save. Try again, or choose Automatic.",无法保存，请重试，或选择“自动”.
@@ -2375,3 +2373,9 @@ Hide the All button on Following,隐藏“正在关注”的“全部”按钮
 Hide the Create circle in story rows,隐藏故事行中的“创建”圆圈
 Hide the All button at the end of the story row on the Following feed. The row and its stories stay.,隐藏“正在关注”故事行末尾的“全部”按钮。这一行和其中的故事都会保留.
 Hide the Create circle at the start of the story row on the Following feed and in the Inbox. Your own Story still shows there once you post one.,隐藏“正在关注”和收件箱故事行开头的“创建”圆圈。你发布故事后，自己的故事仍会显示在那里.
+The thumbs down on each comment blocks the commenter instead of disliking. Their comments leave the list right away and an undo banner follows.,每条评论上的大拇指朝下会屏蔽评论者，而不是点踩。他们的评论立即离开列表，随后出现撤消横幅.
+Hide like counts on comments,隐藏评论的点赞数
+Hide the number beside the heart on each comment. The heart still works.,隐藏每条评论爱心旁的数字。爱心仍可使用.
+Hide the thumbs down on comments,隐藏评论的大拇指朝下
+Hide the thumbs down beside the heart on each comment. It stays while Thumbs down blocks the commenter is on.,隐藏每条评论爱心旁的大拇指朝下。开启“大拇指朝下屏蔽评论者”时它会保留.
+Hide the row of friends at the top of the share sheet and in the menu a long press on a comment opens.,隐藏分享面板顶部以及长按评论打开的菜单中的好友行.

@@ -16,8 +16,10 @@ Every Hushfeed release, newest first.
 * **TikTok:** With `Slide to change the hold speed` on, the bubble's padlock shows whether the video is locked, and letting go on a new speed while it's locked locks that speed.
 * **TikTok:** `Hide speed messages` leaves out TikTok's message when you pick a speed from the menu, or lock or unlock one with a hold. It starts off, and it's under Playback.
 * **TikTok:** `Hide the All button on Following` takes the All button off the end of the story row on Following, and `Hide the Create circle in story rows` takes the Create circle off that row and the Inbox's. The stories stay, and both start off under Feed screen.
+* **TikTok:** `Hide like counts on comments` takes the number off the heart on each comment, and `Hide the thumbs down on comments` takes the thumbs down off. The heart still works. Both start off, and they're in Hushfeed settings > Comments.
 
 ### Bug Fixes
+* **TikTok:** `Thumbs down blocks the commenter` takes that person's comments out of the list right away now. Before, the comment only dimmed and stayed where it was.
 * **TikTok:** `AMOLED dark theme` turns the gray cards in the comment menu and the long-press video menu black, along with the panel behind them.
 * **TikTok:** The "Saving video" message no longer sits under the "Video saved" banner on a quick save. The banner takes its place.
 * **TikTok:** With `Let other apps play until a video starts` on, music from another app comes back when you leave a video for your messages, a profile or another tab. TikTok used to keep the sound until you closed it. It asks again when the next video plays, and a video you've paused on the feed still holds on to it.

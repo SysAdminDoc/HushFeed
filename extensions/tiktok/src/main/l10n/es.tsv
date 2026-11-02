@@ -907,7 +907,6 @@ Remove feed ads, creator commission posts, paid partnerships, and branded conten
 Hide voting cards and poll results above the comments, including polls that have ended.	Oculta las tarjetas de votación y sus resultados sobre los comentarios, incluidas las encuestas finalizadas.
 Hide the Share via row.	Ocultar la fila Compartir con.
 Hide the actions row of the share sheet.	Ocultar la fila de acciones del panel de compartir.
-Hide the row of friends at the top of the share sheet.	Ocultar la fila de amigos de la parte de arriba del panel de compartir.
 Cuts the tracking bits out of links you share.	Quita las partes de seguimiento de los enlaces que compartes.
 Remove watermark	Quitar la marca de agua
 Removed %1$s	Se quitó %1$s
@@ -1192,7 +1191,6 @@ The smallest value is above the largest	El valor mínimo es mayor que el máximo
 The sound couldn't be saved. Try again.	No se pudo guardar el sonido. Inténtalo otra vez.
 The sticker couldn't be saved. Try again.	No se pudo guardar el sticker. Inténtalo otra vez.
 The story couldn't be saved. Try again.	No se pudo guardar la historia.
-The thumbs down on each comment blocks the commenter instead of disliking. The comment dims, an undo banner follows, and a second tap unblocks.	El pulgar hacia abajo en cada comentario bloquea al comentarista en vez de dar No me gusta. El comentario se atenúa, un banner de deshacer sigue, y un segundo toque desbloquea.
 Couldn't save. Try again, or choose Automatic.	No se guardó. Reintenta o elige Automático.
 There is no Lab change to undo.	No hay ningún cambio del Lab que deshacer.
 There is no diagnostic data to clear	No hay datos de diagnóstico que borrar
@@ -2406,3 +2404,9 @@ Hide the All button on Following	Ocultar el botón Todos en Siguiendo
 Hide the Create circle in story rows	Ocultar el círculo Crear en las filas de historias
 Hide the All button at the end of the story row on the Following feed. The row and its stories stay.	Oculta el botón Todos al final de la fila de historias en Siguiendo. La fila y sus historias se quedan.
 Hide the Create circle at the start of the story row on the Following feed and in the Inbox. Your own Story still shows there once you post one.	Oculta el círculo Crear al inicio de la fila de historias en Siguiendo y en la Bandeja de entrada. Tu propia historia sigue saliendo ahí cuando publicas una.
+The thumbs down on each comment blocks the commenter instead of disliking. Their comments leave the list right away and an undo banner follows.	El pulgar hacia abajo en cada comentario bloquea a quien comenta en vez de dar No me gusta. Sus comentarios salen de la lista al instante y aparece un banner para deshacer.
+Hide like counts on comments	Ocultar los me gusta de los comentarios
+Hide the number beside the heart on each comment. The heart still works.	Oculta el número junto al corazón en cada comentario. El corazón sigue funcionando.
+Hide the thumbs down on comments	Ocultar el pulgar hacia abajo de los comentarios
+Hide the thumbs down beside the heart on each comment. It stays while Thumbs down blocks the commenter is on.	Oculta el pulgar hacia abajo junto al corazón en cada comentario. Se queda mientras El pulgar hacia abajo bloquea a quien comenta esté activado.
+Hide the row of friends at the top of the share sheet and in the menu a long press on a comment opens.	Oculta la fila de amigos de arriba del menú de compartir y del menú que abre una pulsación larga en un comentario.

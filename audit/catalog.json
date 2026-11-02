@@ -2375,6 +2375,20 @@
     "default": false,
     "type": "bool",
     "row": "Thumbs down blocks the commenter"
+   },
+   {
+    "key": "hide_comment_like_count",
+    "default": false,
+    "type": "bool",
+    "row": "Hide like counts on comments",
+    "restart": true
+   },
+   {
+    "key": "hide_comment_dislike",
+    "default": false,
+    "type": "bool",
+    "row": "Hide the thumbs down on comments",
+    "restart": true
    }
   ],
   "surface": "comments",

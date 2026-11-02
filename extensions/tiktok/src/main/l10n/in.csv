@@ -904,7 +904,6 @@ Remove feed ads,Hapus iklan di feed
 "Hide voting cards and poll results above the comments, including polls that have ended.","Sembunyikan kartu jajak pendapat dan hasilnya di atas komentar, termasuk jajak pendapat yang sudah berakhir."
 Hide the Share via row.,Sembunyikan baris Bagikan lewat.
 Hide the actions row of the share sheet.,Sembunyikan baris aksi di menu bagikan.
-Hide the row of friends at the top of the share sheet.,Sembunyikan baris teman di bagian atas menu bagikan.
 Cuts the tracking bits out of links you share.,Menghapus bagian pelacak dari tautan yang kamu bagikan.
 Remove watermark,Hapus tanda air
 Removed %1$s,%1$s dihapus
@@ -1189,7 +1188,6 @@ The smallest value is above the largest,Nilai terkecil lebih besar daripada yang
 The sound couldn't be saved. Try again.,Suara tidak bisa disimpan. Coba lagi.
 The sticker couldn't be saved. Try again.,Sticker tidak bisa disimpan. Coba lagi.
 The story couldn't be saved. Try again.,Story-nya tidak bisa disimpan.
-"The thumbs down on each comment blocks the commenter instead of disliking. The comment dims, an undo banner follows, and a second tap unblocks.","Tombol tidak suka di setiap komentar memblokir komentator alih-alih tidak menyukai. Komentar meredup, banner batalkan mengikuti, dan ketukan kedua membuka blokir."
 "Couldn't save. Try again, or choose Automatic.","Gagal menyimpan. Coba lagi, atau pilih Otomatis."
 There is no Lab change to undo.,Tidak ada perubahan Lab yang bisa dibatalkan.
 There is no diagnostic data to clear,Tidak ada data diagnostik yang perlu dihapus
@@ -2377,3 +2375,9 @@ Hide the All button on Following,Sembunyikan tombol Semua di Mengikuti
 Hide the Create circle in story rows,Sembunyikan lingkaran Buat di baris story
 Hide the All button at the end of the story row on the Following feed. The row and its stories stay.,Menyembunyikan tombol Semua di ujung baris story di Mengikuti. Baris dan story-nya tetap ada.
 Hide the Create circle at the start of the story row on the Following feed and in the Inbox. Your own Story still shows there once you post one.,Menyembunyikan lingkaran Buat di awal baris story di Mengikuti dan Kotak Masuk. Story milikmu tetap muncul di sana setelah kamu mempostingnya.
+The thumbs down on each comment blocks the commenter instead of disliking. Their comments leave the list right away and an undo banner follows.,Tombol tidak suka di setiap komentar memblokir pengomentar alih-alih tidak menyukai. Komentar mereka langsung hilang dari daftar dan banner batalkan muncul setelahnya.
+Hide like counts on comments,Sembunyikan jumlah suka pada komentar
+Hide the number beside the heart on each comment. The heart still works.,Sembunyikan angka di samping ikon hati pada setiap komentar. Ikon hati tetap berfungsi.
+Hide the thumbs down on comments,Sembunyikan tombol tidak suka pada komentar
+Hide the thumbs down beside the heart on each comment. It stays while Thumbs down blocks the commenter is on.,Sembunyikan tombol tidak suka di samping ikon hati pada setiap komentar. Tombol tetap ada selama Jempol ke bawah memblokir pengomentar aktif.
+Hide the row of friends at the top of the share sheet and in the menu a long press on a comment opens.,Sembunyikan deretan teman di bagian atas lembar berbagi dan di menu yang terbuka saat komentar ditekan lama.

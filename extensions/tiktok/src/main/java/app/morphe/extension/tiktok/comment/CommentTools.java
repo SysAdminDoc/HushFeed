@@ -247,6 +247,7 @@ public final class CommentTools {
     /** One log line for a cell with no thumbs down, not a verdict on the build. */
     private static boolean warnedNoDislikeControl;
     private static final String[] DISLIKE_ICON_IDS = {"47.6.3:mn5"};
+    private static final String[] LIKE_COUNT_IDS = {"tv_like_count"};
     /**
      * Faded enough to read as blocked, still readable. At 0.35 the comment text dropped to about
      * 3:1 on the sheet, which is below the floor for text of that size.
@@ -314,6 +315,25 @@ public final class CommentTools {
     }
 
     /**
+     * Takes the like count and the thumbs down off a row (#314, #317). Posted because TikTok writes
+     * both during the same bind. Thumbs down blocks the commenter keeps its button whatever the
+     * other switch says, since that's the button it blocks with.
+     */
+    private static void hideRowControls(View itemView) {
+        boolean count = Settings.HIDE_COMMENT_LIKE_COUNT.get();
+        boolean dislike = Settings.HIDE_COMMENT_DISLIKE.get() && !Settings.BLOCK_FROM_COMMENT.get();
+        if (!count && !dislike) return;
+        itemView.post(() -> {
+            if (count) hideControl(commentControl(itemView, LIKE_COUNT_IDS));
+            if (dislike) hideControl(commentControl(itemView, DISLIKE_BUTTON_IDS));
+        });
+    }
+
+    private static void hideControl(View control) {
+        if (control != null && control.getVisibility() != View.GONE) control.setVisibility(View.GONE);
+    }
+
+    /**
      * Called as a comment cell is bound. {@code manager} is the cell's state holder, whose
      * fields include the bound {@code Comment}.
      */
@@ -325,6 +345,7 @@ public final class CommentTools {
         // and this is the only callback that says so.
         app.morphe.extension.tiktok.playback.PausePlayback.onCommentCellBound(itemView);
         CommentLikeTouchTarget.onCellBound(itemView);
+        hideRowControls(itemView);
 
         boolean block = Settings.BLOCK_FROM_COMMENT.get();
         if (!block) {
@@ -964,7 +985,7 @@ public final class CommentTools {
         if (author.uid != null && BLOCKED_UIDS.contains(blockKey(author.uid))) {
             unblock(cell, author, flight);
         } else {
-            block(cell, author, flight);
+            block(cell, user, author, flight);
         }
     }
 
@@ -973,7 +994,7 @@ public final class CommentTools {
         return blockKey(author.uid != null ? author.uid : "sec:" + author.secUid);
     }
 
-    private static void block(View cell, VideoAuthor author, String flight) {
+    private static void block(View cell, Object user, VideoAuthor author, String flight) {
         // The account that blocks is the one signed in at the tap, whatever happens meanwhile.
         String key = author.uid == null ? null : blockKey(author.uid);
         BlockAuthorService.block(author, result -> {
@@ -987,8 +1008,12 @@ public final class CommentTools {
             if (key != null) {
                 BLOCKED_UIDS.add(key);
             }
-            // The cell reads its current comment, so a recycled row is never mis-styled.
+            // The cell reads its current comment, so a recycled row is never mis-styled. A row
+            // that outlasts the removal below stays dimmed and a second tap still unblocks.
             applyBlockedEverywhere();
+            // Their comments leave the open list, as they do for a block from the comment's menu
+            // (#314). Undo doesn't bring them back until the sheet opens again, same as there.
+            CommentMenuBlock.removeComments(user);
 
             View root = cell.getRootView();
             BlockAuthorOverlay.showUndoBanner(root instanceof ViewGroup ? (ViewGroup) root : null,

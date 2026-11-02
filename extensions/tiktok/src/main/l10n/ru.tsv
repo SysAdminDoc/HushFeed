@@ -970,7 +970,6 @@ Remove feed ads, creator commission posts, paid partnerships, and branded conten
 Hide voting cards and poll results above the comments, including polls that have ended.	Скрывать карточки голосования и результаты опросов над комментариями, включая уже завершённые опросы.
 Hide the Share via row.	Скрывать строку «Поделиться через».
 Hide the actions row of the share sheet.	Скрывать строку действий в меню «Поделиться».
-Hide the row of friends at the top of the share sheet.	Скрывать строку друзей вверху меню «Поделиться».
 Cuts the tracking bits out of links you share.	Убирает из отправляемых ссылок части, которые нужны для слежки.
 Remove watermark	Убирать водяной знак
 Removed %1$s	Удалено: %1$s
@@ -1276,7 +1275,6 @@ The smallest value is above the largest	Наименьшее значение б
 The sound couldn't be saved. Try again.	Не удалось сохранить звук. Повторите попытку.
 The sticker couldn't be saved. Try again.	Не удалось сохранить стикер. Повторите попытку.
 The story couldn't be saved. Try again.	Не удалось сохранить историю. Повторите попытку.
-The thumbs down on each comment blocks the commenter instead of disliking. The comment dims, an undo banner follows, and a second tap unblocks.	Палец вниз на любом комментарии блокирует автора комментария вместо того, чтобы выразить «не нравится». Комментарий гаснет, появляется баннер отмены, а повторное нажатие снимает блокировку.
 Couldn't save. Try again, or choose Automatic.	Не сохранено. Повторите или выберите «Автоматически».
 There is no Lab change to undo.	Нет изменений Lab, которые можно было бы отменить.
 There is no diagnostic data to clear	Нет диагностических данных для очистки
@@ -2583,3 +2581,9 @@ Hide the All button on Following	Скрывать кнопку «Все» в «�
 Hide the Create circle in story rows	Скрывать круг «Создать» в рядах историй
 Hide the All button at the end of the story row on the Following feed. The row and its stories stay.	Скрывает кнопку «Все» в конце ряда историй в «Подписках». Ряд и его истории остаются.
 Hide the Create circle at the start of the story row on the Following feed and in the Inbox. Your own Story still shows there once you post one.	Скрывает круг «Создать» в начале ряда историй в «Подписках» и во «Входящих». Ваша история всё равно появится там, когда вы её опубликуете.
+The thumbs down on each comment blocks the commenter instead of disliking. Their comments leave the list right away and an undo banner follows.	Палец вниз на любом комментарии блокирует автора комментария вместо того, чтобы выразить «не нравится». Его комментарии сразу исчезают из списка, затем появляется баннер отмены.
+Hide like counts on comments	Скрывать число лайков в комментариях
+Hide the number beside the heart on each comment. The heart still works.	Скрывает число рядом с сердечком у каждого комментария. Сердечко по-прежнему работает.
+Hide the thumbs down on comments	Скрывать палец вниз в комментариях
+Hide the thumbs down beside the heart on each comment. It stays while Thumbs down blocks the commenter is on.	Скрывает палец вниз рядом с сердечком у каждого комментария. Он остаётся, пока включено «Палец вниз блокирует автора комментария».
+Hide the row of friends at the top of the share sheet and in the menu a long press on a comment opens.	Скрывает ряд друзей вверху меню «Поделиться» и в меню, которое открывается долгим нажатием на комментарий.

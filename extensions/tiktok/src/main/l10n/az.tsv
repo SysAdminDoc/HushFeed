@@ -927,7 +927,6 @@ Remove feed ads, creator commission posts, paid partnerships, and branded conten
 Hide the Share via row.	Share via sətrini gizlədin.
 Hide the actions row of the share sheet.	Paylaşma vərəqinin əməliyyatlar sətrini gizlədin.
 Hide the magnifying glass at the top of Inbox. Search on the feed and in comments is unchanged.	Gələnlərin yuxarısındakı böyüdücü şüşəni gizlədin. Lentdəki və şərhlərdəki axtarış dəyişmir.
-Hide the row of friends at the top of the share sheet.	Paylaşma vərəqinin yuxarısındakı dostlar sətrini gizlədin.
 Hide the suggested-search strip above the bottom tabs and let video details and side controls use its space. The top search button and comments stay unchanged.	Alt nişanların üstündəki təklif olunan axtarış zolağını gizlədin və video təfərrüatları ilə yan idarəetmələrin onun yerindən istifadə etməsinə icazə verin. Yuxarıdakı axtarış düyməsi və şərhlər dəyişmir.
 Cuts the tracking bits out of links you share.	Paylaşdığınız linklərdən izləmə hissələrini çıxarır.
 Remove watermark	Su nişanını silin
@@ -1214,7 +1213,6 @@ The smallest value is above the largest	Ən kiçik dəyər ən böyükdən yüks
 The sound couldn't be saved. Try again.	Səs saxlanıla bilmədi. Yenidən cəhd edin.
 The sticker couldn't be saved. Try again.	Stiker saxlanıla bilmədi. Yenidən cəhd edin.
 The story couldn't be saved. Try again.	Hekayə saxlanıla bilmədi. Yenidən cəhd edin.
-The thumbs down on each comment blocks the commenter instead of disliking. The comment dims, an undo banner follows, and a second tap unblocks.	Hər şərhdəki bəyənməmə düyməsi bəyənməmək əvəzinə şərh yazanı bloklayır. Şərh solğunlaşır, geri qaytarma bannerı çıxır və ikinci toxunuş blokdan çıxarır.
 Couldn't save. Try again, or choose Automatic.	Saxlanmadı. Yenidən cəhd edin və ya Avtomatik seçin.
 There is no Lab change to undo.	Geri qaytarılacaq Lab dəyişikliyi yoxdur.
 There is no diagnostic data to clear	Təmizlənəcək diaqnostik məlumat yoxdur
@@ -2406,3 +2404,9 @@ Hide the All button on Following	İzlənilənlər lentində Hamısı düyməsini
 Hide the Create circle in story rows	Hekayə sıralarında Yarat dairəsini gizlədin
 Hide the All button at the end of the story row on the Following feed. The row and its stories stay.	İzlənilənlər lentində hekayə sırasının sonundakı Hamısı düyməsini gizlədir. Sıra və hekayələri qalır.
 Hide the Create circle at the start of the story row on the Following feed and in the Inbox. Your own Story still shows there once you post one.	İzlənilənlər lentində və Gələnlərdə hekayə sırasının əvvəlindəki Yarat dairəsini gizlədir. Hekayə paylaşanda öz hekayəniz yenə orada görünür.
+The thumbs down on each comment blocks the commenter instead of disliking. Their comments leave the list right away and an undo banner follows.	Hər şərhdəki bəyənməmə düyməsi bəyənməmək əvəzinə şərh yazanı bloklayır. Onun şərhləri dərhal siyahıdan çıxır, ardınca geri qaytarma bannerı görünür.
+Hide like counts on comments	Şərhlərdə bəyənmə sayını gizlədin
+Hide the number beside the heart on each comment. The heart still works.	Hər şərhdə ürəyin yanındakı rəqəmi gizlədir. Ürək işləməyə davam edir.
+Hide the thumbs down on comments	Şərhlərdə bəyənməmə düyməsini gizlədin
+Hide the thumbs down beside the heart on each comment. It stays while Thumbs down blocks the commenter is on.	Hər şərhdə ürəyin yanındakı bəyənməmə düyməsini gizlədir. Bəyənməmə şərh yazanı bloklayır açıq olduqda qalır.
+Hide the row of friends at the top of the share sheet and in the menu a long press on a comment opens.	Paylaşım panelinin yuxarısındakı və şərhə uzun basanda açılan menyudakı dost sırasını gizlədir.

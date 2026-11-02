@@ -1339,6 +1339,10 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting BLOCK_FROM_COMMENT = new BooleanSetting("block_from_comment", FALSE);
     /** Adds Block this commenter to the menu a long press on a comment opens (#169). */
     public static final BooleanSetting BLOCK_FROM_COMMENT_MENU = new BooleanSetting("block_from_comment_menu", FALSE);
+    /** Takes the number beside the heart off each comment (#317). A row isn't handed it back until a restart. */
+    public static final BooleanSetting HIDE_COMMENT_LIKE_COUNT = new BooleanSetting("hide_comment_like_count", FALSE, true);
+    /** Takes the thumbs down off each comment (#314), unless Block from comment has taken it over. */
+    public static final BooleanSetting HIDE_COMMENT_DISLIKE = new BooleanSetting("hide_comment_dislike", FALSE, true);
     public static final BooleanSetting COMMENT_SEARCH = new BooleanSetting("comment_search", FALSE);
     /** Adds Export CSV and Export JSON under the comment search box. */
     public static final BooleanSetting COMMENT_EXPORT = new BooleanSetting("comment_export", FALSE);

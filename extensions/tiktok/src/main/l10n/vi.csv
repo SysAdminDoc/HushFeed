@@ -854,7 +854,6 @@ Hide the restriction notice on your own profile on this phone. TikTok's restrict
 Hide the rewards shortcut,Ẩn lối tắt phần thưởng
 Hide the right column,Ẩn cột bên phải
 "Hide the row of LIVE and story circles across the top of the Following feed, and the pill that counts them. For You is left as it is.","Ẩn hàng vòng tròn LIVE và tin ở đầu bảng tin Đang theo dõi, cùng với thanh đếm số lượng. Thẻ Dành cho bạn được giữ nguyên."
-Hide the row of friends at the top of the share sheet.,Ẩn hàng bạn bè ở đầu bảng chia sẻ.
 Hide the save button in the right column. Ticking Save in the list above hides it too.,"Ẩn nút lưu ở cột bên phải. Tích chọn ""Lưu"" trong danh sách phía trên cũng sẽ ẩn nút này."
 Hide the save button on the feed,Ẩn nút lưu trên bảng tin
 "Hide the search bar at the top of videos you open from search, a profile or your watch history. The Back button stays.","Ẩn thanh tìm kiếm ở đầu các video bạn mở từ mục tìm kiếm, trang cá nhân hoặc lịch sử xem. Nút Quay lại vẫn được giữ nguyên."
@@ -2039,7 +2038,6 @@ The sound couldn't be saved. Try again.,Không thể lưu âm thanh. Vui lòng t
 The sticker couldn't be saved. Try again.,Không thể lưu nhãn dán. Vui lòng thử lại.
 The sticker suggestion banner stops showing in a chat. Your own stickers are still in the sticker picker.,Biểu ngữ gợi ý nhãn dán sẽ dừng hiển thị trong đoạn chat. Nhãn dán của riêng bạn vẫn nằm trong trình chọn nhãn dán.
 The story couldn't be saved. Try again.,Không thể lưu tin (story). Vui lòng thử lại.
-"The thumbs down on each comment blocks the commenter instead of disliking. The comment dims, an undo banner follows, and a second tap unblocks.","Nút không thích (ngón tay hướng xuống) ở mỗi bình luận sẽ chuyển thành nút chặn người bình luận thay vì không thích. Bình luận sẽ mờ đi, hiển thị thanh hoàn tác và chạm lần thứ hai để bỏ chặn."
 The tick on the main feed's tabs. Short pulse is one quick tap of the motor. Phone's click is the click your phone makes elsewhere. Soft tick rings a little longer. Full tick is the phone's strongest tick.,Kiểu rung trên các thẻ của bảng tin chính. Xung ngắn là một lực gõ nhanh của mô tơ. Nhấp chuột theo máy là tiếng nhấp máy bạn dùng ở nơi khác. Rung nhẹ ngân lâu hơn một chút. Rung đầy đủ là lực rung mạnh nhất của điện thoại.
 The time of day the message goes out.,Thời điểm trong ngày mà tin nhắn được gửi đi.
 "The video you're watching keeps playing to its end after you leave TikTok or turn the screen off, with TikTok's own media notification to pause it. TikTok's background play switch stays on while this is on. Restart TikTok to apply this.","Video bạn đang xem vẫn tiếp tục phát đến hết sau khi bạn thoát TikTok hoặc tắt màn hình, đi kèm thông báo phương tiện của TikTok để tạm dừng. Công tắc phát ngầm của TikTok vẫn bật khi tùy chọn này đang hoạt động. Khởi động lại TikTok để áp dụng."
@@ -2375,3 +2373,9 @@ Hide the All button on Following,Ẩn nút Tất cả trên mục Đang theo dõ
 Hide the Create circle in story rows,Ẩn vòng tròn Tạo trong các hàng tin
 Hide the All button at the end of the story row on the Following feed. The row and its stories stay.,Ẩn nút Tất cả ở cuối hàng tin trên mục Đang theo dõi. Hàng tin và các tin vẫn còn.
 Hide the Create circle at the start of the story row on the Following feed and in the Inbox. Your own Story still shows there once you post one.,Ẩn vòng tròn Tạo ở đầu hàng tin trên mục Đang theo dõi và trong Hộp thư đến. Tin của bạn vẫn hiện ở đó sau khi bạn đăng.
+The thumbs down on each comment blocks the commenter instead of disliking. Their comments leave the list right away and an undo banner follows.,Nút không thích ở mỗi bình luận sẽ chặn người bình luận thay vì không thích. Bình luận của họ sẽ biến mất khỏi danh sách ngay lập tức và một biểu ngữ hoàn tác sẽ xuất hiện sau đó.
+Hide like counts on comments,Ẩn số lượt thích trên bình luận
+Hide the number beside the heart on each comment. The heart still works.,Ẩn con số bên cạnh biểu tượng trái tim ở mỗi bình luận. Trái tim vẫn hoạt động.
+Hide the thumbs down on comments,Ẩn nút không thích trên bình luận
+Hide the thumbs down beside the heart on each comment. It stays while Thumbs down blocks the commenter is on.,Ẩn nút không thích bên cạnh trái tim ở mỗi bình luận. Nút vẫn giữ nguyên khi Nút không thích giúp chặn người bình luận đang bật.
+Hide the row of friends at the top of the share sheet and in the menu a long press on a comment opens.,Ẩn hàng bạn bè ở đầu bảng chia sẻ và trong menu mở ra khi nhấn giữ một bình luận.

@@ -120,6 +120,8 @@
       "comment_blocked_users",
       "block_from_comment",
       "block_from_comment_menu",
+      "hide_comment_like_count",
+      "hide_comment_dislike",
       "comment_search",
       "comment_export",
       "comment_search_folded",
@@ -1922,9 +1924,21 @@
       "type": "boolean",
       "default": false
     },
+    "hide_comment_dislike": {
+      "field": "HIDE_COMMENT_DISLIKE",
+      "key": "hide_comment_dislike",
+      "type": "boolean",
+      "default": false
+    },
     "hide_comment_eggs": {
       "field": "HIDE_COMMENT_EGGS",
       "key": "hide_comment_eggs",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_comment_like_count": {
+      "field": "HIDE_COMMENT_LIKE_COUNT",
+      "key": "hide_comment_like_count",
       "type": "boolean",
       "default": false
     },

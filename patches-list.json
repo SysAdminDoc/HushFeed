@@ -1720,6 +1720,24 @@
           "values": null
         },
         {
+          "key": "hide_comment_like_count",
+          "title": "Default: hide comment like count",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_comment_dislike",
+          "title": "Default: hide comment dislike",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "comment_search",
           "title": "Default: comment search",
           "description": null,

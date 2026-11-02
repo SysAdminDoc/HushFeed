@@ -48,4 +48,26 @@ class LiveClearScreenAnchorsTest {
             assertEquals("${apk.name}: portrait room menus gated on the clear screen entry", 1, menus.size)
         }
     }
+
+    @Test
+    fun `each declared build exposes the live controller state change and initialized state`() {
+        Fixtures.forEachDeclared { apk ->
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            val classes = container.dexEntryNames.asSequence()
+                .flatMap { container.getEntry(it)!!.dexFile.classes.asSequence() }.toList()
+            val taken = classes.flatMap { cls ->
+                cls.methods.filter { LiveClearScreenControllerFingerprint.takes(it, cls) }
+            }
+            assertEquals("${apk.name}: ${taken.map { it.definingClass }}", 1, taken.size)
+            val initialized = taken.single()
+            val controller = classes.single { it.type == initialized.definingClass }
+            assertTrue("${apk.name}: controller has no room field", controller.fields.any { it.type == LIVE_ROOM_TYPE })
+            val changed = controller.methods.single(::liveClearStateChange)
+            assertTrue("${apk.name}: change hook has no return", nativeClearReturn(changed) >= 0)
+            assertTrue("${apk.name}: constructor hook has no return", nativeClearReturn(initialized) >= 0)
+            assertEquals("${apk.name}: no readable clear state", 1, controller.methods.count {
+                it.returnType == "Z" && it.parameterTypes.isEmpty()
+            })
+        }
+    }
 }

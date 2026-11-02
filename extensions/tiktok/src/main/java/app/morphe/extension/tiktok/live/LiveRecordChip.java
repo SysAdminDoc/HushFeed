@@ -32,7 +32,9 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -62,6 +64,8 @@ public final class LiveRecordChip {
      * page to resume is usually one that isn't shown.
      */
     private static final Map<Object, Boolean> PAGES = new WeakHashMap<>();
+    /** Clear-screen controllers can be created before their room page resumes. */
+    private static final Map<String, Boolean> CLEAR_ROOM_STATES = new HashMap<>();
     private static WeakReference<Object> page = new WeakReference<>(null);
     private static WeakReference<Activity> host = new WeakReference<>(null);
     private static TextView chip;
@@ -69,6 +73,7 @@ public final class LiveRecordChip {
     private static boolean saving;
     private static boolean ticking;
     private static boolean callbacksRegistered;
+    private static boolean clearScreen;
 
     /** True while the switch is on and Hushfeed isn't paused. */
     public static boolean enabled() {
@@ -126,6 +131,8 @@ public final class LiveRecordChip {
                 if (destroyed == host.get()) {
                     leave(LiveRecorder.End.APP_EXIT);
                     removeChip();
+                    clearScreen = false;
+                    CLEAR_ROOM_STATES.clear();
                     page = new WeakReference<>(null);
                     host = new WeakReference<>(null);
                 }
@@ -250,7 +257,8 @@ public final class LiveRecordChip {
     private static void refresh() {
         TextView view = chip;
         if (view == null) return;
-        view.setVisibility(hidesChip(recorder == null ? null : recorder.target()) ? View.INVISIBLE : View.VISIBLE);
+        view.setVisibility(hidesChip(recorder == null ? null : recorder.target(), clearScreen)
+                ? View.INVISIBLE : View.VISIBLE);
         if (saving) {
             view.setText(L10n.t("Saving the recording"));
             view.setContentDescription(L10n.t("Saving the recording"));
@@ -267,13 +275,58 @@ public final class LiveRecordChip {
         }
     }
 
-    /**
-     * Whether the chip stays out of sight for a recording of {@code target} (#265): a screen
-     * recording would film it, so it's hidden from the start until the file is saved, and the
-     * recording's notification carries the Stop. A stream recording never sees the chip.
-     */
+    /** Screen recordings hide the chip to avoid filming it (#265). */
     static boolean hidesChip(LiveRecorder.Target target) {
-        return target != null && target.transport == LiveRecorder.Transport.SCREEN;
+        return hidesChip(target, false);
+    }
+
+    /** LIVE Clear screen also hides the chip, without changing recording state. */
+    static boolean hidesChip(LiveRecorder.Target target, boolean clearScreen) {
+        return clearScreen || (target != null && target.transport == LiveRecorder.Transport.SCREEN);
+    }
+
+    /** Called after TikTok's LIVE clear-screen controller changes state. */
+    public static void onNativeClearScreenChanged(Object controller, int state) {
+        try {
+            String roomId = roomKey(roomOf(controller));
+            if (roomId == null) return;
+            boolean cleared = state != 0;
+            Utils.runOnMainThread(() -> {
+                CLEAR_ROOM_STATES.put(roomId, cleared);
+                if (roomId.equals(roomKey(roomOf(page.get())))) {
+                    clearScreen = cleared;
+                    refresh();
+                    Logger.printDebug(() -> "LIVE record chip: Clear screen " + (cleared ? "on" : "off"));
+                }
+            });
+        } catch (Throwable failure) {
+            Logger.printException(() -> "Could not follow LIVE Clear screen", failure);
+        }
+    }
+
+    /** The controller can inherit Clear screen from the previous room without a new toggle. */
+    public static void onNativeClearScreenInitialized(Object controller) {
+        try {
+            Boolean current = clearStateOf(controller);
+            if (current != null) onNativeClearScreenChanged(controller, current ? 1 : 0);
+        } catch (Throwable failure) {
+            Logger.printException(() -> "Could not read LIVE Clear screen state", failure);
+        }
+    }
+
+    /** The controller's only no-argument boolean is its clear state, and that shape outlives a rename. */
+    static Boolean clearStateOf(Object controller) throws ReflectiveOperationException {
+        if (controller == null) return null;
+        Method getter = null;
+        for (Method method : controller.getClass().getDeclaredMethods()) {
+            if (method.getReturnType() != boolean.class || method.getParameterTypes().length != 0
+                    || method.isSynthetic()) continue;
+            if (getter != null) return null;
+            getter = method;
+        }
+        if (getter == null) return null;
+        getter.setAccessible(true);
+        return (Boolean) getter.invoke(controller);
     }
 
     static String elapsed(long ms) {
@@ -423,7 +476,12 @@ public final class LiveRecordChip {
     /** Makes {@code fragment} the page the button belongs to; a recording of another page stops. */
     private static void follow(Object fragment) {
         Object previous = page.get();
-        if (previous != null && previous != fragment) leave(LiveRecorder.End.LEFT_ROOM);
+        if (previous != null && previous != fragment) {
+            leave(LiveRecorder.End.LEFT_ROOM);
+        }
+        if (previous != fragment) {
+            clearScreen = Boolean.TRUE.equals(CLEAR_ROOM_STATES.get(roomKey(roomOf(fragment))));
+        }
         page = new WeakReference<>(fragment);
     }
 
@@ -517,14 +575,24 @@ public final class LiveRecordChip {
         return !(id instanceof String) || recorded.equals(id);
     }
 
-    /** The page's one Room-typed field, found by type so it doesn't depend on its obfuscated name. */
-    private static Object roomOf(Object fragment) {
+    /** Stable room identity across the native controller and the resumed room page. */
+    static String roomKey(Object room) {
+        if (room == null) return null;
+        Object text = Reflect.readField(room, "idStr");
+        if (text instanceof String && !((String) text).isEmpty()) return (String) text;
+        Object numeric = Reflect.readField(room, "id");
+        return numeric instanceof Number ? String.valueOf(((Number) numeric).longValue()) : null;
+    }
+
+    /** The Room-typed field on a room page or a native clear-screen controller. */
+    private static Object roomOf(Object holder) {
+        if (holder == null) return null;
         try {
-            for (Class<?> type = fragment.getClass(); type != null && type != Object.class; type = type.getSuperclass()) {
+            for (Class<?> type = holder.getClass(); type != null && type != Object.class; type = type.getSuperclass()) {
                 for (Field field : type.getDeclaredFields()) {
                     if (field.getType().getName().equals("com.bytedance.android.livesdkapi.depend.model.live.Room")) {
                         field.setAccessible(true);
-                        return field.get(fragment);
+                        return field.get(holder);
                     }
                 }
             }

@@ -4,6 +4,10 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+### Features
+
+* **TikTok:** The LIVE record button hides along with everything else when you turn on TikTok's LIVE Clear screen, and it comes back when you turn it off. A recording that's running keeps going. Thanks to @Hiiva (#297).
+
 ### Bug Fixes
 
 * **TikTok:** The README's install steps point at TikTok 47.6.3 now. After v0.80.0 went out they still sent you to 47.5.3, which v0.80.0 doesn't patch.

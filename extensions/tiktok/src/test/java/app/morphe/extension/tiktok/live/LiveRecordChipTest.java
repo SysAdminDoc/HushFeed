@@ -2,6 +2,7 @@ package app.morphe.extension.tiktok.live;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
@@ -38,12 +39,63 @@ public class LiveRecordChipTest {
         assertFalse(LiveRecordChip.mostlyShown(1169, 2340));
     }
 
+    private static final class OneState {
+        private final boolean cleared;
+        OneState(boolean cleared) { this.cleared = cleared; }
+        boolean current() { return cleared; }
+        boolean moved(float x) { return x > 0; }
+        void set() { }
+    }
+
+    private static final class TwoStates {
+        boolean first() { return true; }
+        boolean second() { return true; }
+    }
+
+    /** #265: the LIVE controller's state is read by shape, since its name moves every build. */
+    @Test public void theClearStateIsTheControllersOnlyNoArgumentBoolean() throws Exception {
+        assertEquals(Boolean.TRUE, LiveRecordChip.clearStateOf(new OneState(true)));
+        assertEquals(Boolean.FALSE, LiveRecordChip.clearStateOf(new OneState(false)));
+    }
+
+    @Test public void aControllerWithNoClearAnswerReadsAsUnknown() throws Exception {
+        assertNull(LiveRecordChip.clearStateOf(null));
+        assertNull(LiveRecordChip.clearStateOf(new Object()));
+        assertNull(LiveRecordChip.clearStateOf(new TwoStates()));
+    }
+
     /** #265: a screen recording filmed the chip, so it's hidden for those and only those. */
     @Test public void aScreenRecordingHidesTheChipAndAStreamRecordingDoesNot() {
         assertTrue(LiveRecordChip.hidesChip(new LiveRecorder.Target(null, LiveRecorder.Transport.SCREEN, "c", "1", null)));
         assertFalse(LiveRecordChip.hidesChip(new LiveRecorder.Target("u", LiveRecorder.Transport.FLV, "c", "1", "hd")));
         assertFalse(LiveRecordChip.hidesChip(new LiveRecorder.Target("u", LiveRecorder.Transport.HLS, "c", "1", "hd")));
         assertFalse(LiveRecordChip.hidesChip(null));
+    }
+
+    @Test public void liveClearScreenHidesTheChipRegardlessOfRecordingSource() {
+        LiveRecorder.Target flv = new LiveRecorder.Target("u", LiveRecorder.Transport.FLV, "c", "1", "hd");
+        LiveRecorder.Target hls = new LiveRecorder.Target("u", LiveRecorder.Transport.HLS, "c", "1", "hd");
+        assertTrue(LiveRecordChip.hidesChip(flv, true));
+        assertTrue(LiveRecordChip.hidesChip(hls, true));
+        assertTrue(LiveRecordChip.hidesChip(null, true));
+        assertFalse(LiveRecordChip.hidesChip(flv, false));
+        assertFalse(LiveRecordChip.hidesChip(hls, false));
+    }
+
+    private static final class RoomIdentity {
+        public String idStr;
+        public long id;
+
+        RoomIdentity(String text, long numeric) {
+            idStr = text;
+            id = numeric;
+        }
+    }
+
+    @Test public void clearScreenEventsUseTheRoomsStableId() {
+        assertEquals("123", LiveRecordChip.roomKey(new RoomIdentity("123", 456)));
+        assertEquals("456", LiveRecordChip.roomKey(new RoomIdentity(null, 456)));
+        assertNull(LiveRecordChip.roomKey(null));
     }
 
     @Test public void aRoomBesideTheOneInFrontDoesNot() {

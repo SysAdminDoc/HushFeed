@@ -108,6 +108,22 @@ public class CommentRowControlsTest {
         assertEquals(View.GONE, count.getVisibility());
     }
 
+    /** setHateVisibility and the like state write these after the bind, with no second bind to catch it. */
+    @Test public void aControlTikTokShowsAgainGoesBeforeTheNextFrame() {
+        Settings.HIDE_COMMENT_LIKE_COUNT.save(true);
+        Settings.HIDE_COMMENT_DISLIKE.save(true);
+        bind();
+        count.setVisibility(View.VISIBLE);
+        thumbsDown.setVisibility(View.VISIBLE);
+
+        int size = View.MeasureSpec.makeMeasureSpec(400, View.MeasureSpec.EXACTLY);
+        row.measure(size, size);
+        row.layout(0, 0, 400, 400);
+
+        assertEquals(View.GONE, count.getVisibility());
+        assertEquals(View.GONE, thumbsDown.getVisibility());
+    }
+
     /** The block switch's button is that thumbs down, so hiding it would take the block away. */
     @Test public void blockFromCommentKeepsTheThumbsDown() {
         Settings.BLOCK_FROM_COMMENT.save(true);

@@ -311,6 +311,9 @@ public final class CommentTools {
      */
     private static final Set<String> IN_FLIGHT = Collections.synchronizedSet(new HashSet<>());
 
+    /** Rows already holding their controls hidden, so a rebound row doesn't add a second listener. */
+    private static final Set<View> HELD_ROWS = Collections.newSetFromMap(new WeakHashMap<>());
+
     private CommentTools() {
     }
 
@@ -320,13 +323,33 @@ public final class CommentTools {
      * other switch says, since that's the button it blocks with.
      */
     private static void hideRowControls(View itemView) {
-        boolean count = Settings.HIDE_COMMENT_LIKE_COUNT.get();
-        boolean dislike = Settings.HIDE_COMMENT_DISLIKE.get() && !Settings.BLOCK_FROM_COMMENT.get();
-        if (!count && !dislike) return;
+        if (!hidesLikeCount() && !hidesThumbsDown()) return;
         itemView.post(() -> {
-            if (count) hideControl(commentControl(itemView, LIKE_COUNT_IDS));
-            if (dislike) hideControl(commentControl(itemView, DISLIKE_BUTTON_IDS));
+            hideControlsNow(itemView);
+            if (HELD_ROWS.add(itemView)) {
+                itemView.addOnLayoutChangeListener(
+                        (row, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> hideControlsNow(row));
+            }
         });
+    }
+
+    /**
+     * Also runs on every layout of the row. TikTok shows both controls again from several places
+     * after the bind (setHateVisibility once the sheet settles, the like state on every like), which
+     * left the top comment with its thumbs down. A GONE view shown again always lays its row out, so
+     * this puts it back before that frame draws, whichever place wrote it.
+     */
+    private static void hideControlsNow(View itemView) {
+        if (hidesLikeCount()) hideControl(commentControl(itemView, LIKE_COUNT_IDS));
+        if (hidesThumbsDown()) hideControl(commentControl(itemView, DISLIKE_BUTTON_IDS));
+    }
+
+    private static boolean hidesLikeCount() {
+        return Settings.HIDE_COMMENT_LIKE_COUNT.get();
+    }
+
+    private static boolean hidesThumbsDown() {
+        return Settings.HIDE_COMMENT_DISLIKE.get() && !Settings.BLOCK_FROM_COMMENT.get();
     }
 
     private static void hideControl(View control) {

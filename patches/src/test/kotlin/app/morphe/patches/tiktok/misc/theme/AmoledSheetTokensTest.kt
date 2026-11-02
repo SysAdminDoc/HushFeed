@@ -57,8 +57,8 @@ class AmoledSheetTokensTest {
      * The feed's long-press panel and Inbox > Activity stayed gray under AMOLED (Facebook report,
      * 2026-10-12; #1E1E1E and #121212 on the S22). LongPressAwemeFragment fills with
      * UISheetGrouped1 (a2c), which the dark themes send to aim and the light ones to axx, and its
-     * cards are UISheetGrouped2 (a2e, aio), which keep their gray. The notification page's
-     * container and its rows fill with BGPrimary (bx), a literal of its own in every theme.
+     * cards are UISheetGrouped2 (a2e, aio), which stayed gray through 0.80.0 (#312). The notification
+     * page's container and its rows fill with BGPrimary (bx), a literal of its own in every theme.
      */
     @Test
     fun `the long-press panel and the Activity page fill with tokens the patch rewrites`() {
@@ -75,7 +75,10 @@ class AmoledSheetTokensTest {
             assertTrue("aim is a dark opaque literal wherever it is set: $grouped", grouped.isNotEmpty() && grouped.all(::isDarkOpaqueLiteral))
             assertTrue("axx stays light", table.styleValues("axx").none(::isDarkOpaqueLiteral))
             assertEquals("the panel's cards", setOf("?attr/aio", "?attr/axz"), table.styleValues("a2e").toSet())
-            assertTrue("the cards keep their gray", "aio" !in surfaceStyleItems(Fixtures.versionOf(apk)))
+            val cards = table.styleValues("aio")
+            assertTrue("aio is a dark opaque literal wherever it is set: $cards", cards.isNotEmpty() && cards.all(::isDarkOpaqueLiteral))
+            assertTrue("axz stays light", table.styleValues("axz").none(::isDarkOpaqueLiteral))
+            assertTrue("the patch rewrites the cards", "aio" in surfaceStyleItems(Fixtures.versionOf(apk)))
 
             assertTrue(
                 "the notification page's container fills with BGPrimary",
@@ -110,7 +113,7 @@ class AmoledSheetTokensTest {
             assertTrue("agt is a dark opaque literal wherever it is set: $dark", dark.isNotEmpty() && dark.all(::isDarkOpaqueLiteral))
             assertTrue("aw4 stays light", table.styleValues("aw4").none(::isDarkOpaqueLiteral))
             assertTrue("the patch rewrites agt", "agt" in surfaceStyleItems(Fixtures.versionOf(apk)))
-            assertTrue("a sheet's cards keep their gray", "aio" !in surfaceStyleItems(Fixtures.versionOf(apk)))
+            assertTrue("a sheet's cards go black with it", "aio" in surfaceStyleItems(Fixtures.versionOf(apk)))
         }
     }
 

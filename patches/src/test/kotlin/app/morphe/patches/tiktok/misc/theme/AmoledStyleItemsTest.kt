@@ -33,13 +33,13 @@ class AmoledStyleItemsTest {
 
         val changed = rewriteDarkStyleItems(styles, surfaceStyleItems("47.6.3"), "#000000")
 
-        assertEquals(setOf("agq", "c3", "aig", "aim", "bx", "agt"), changed)
+        assertEquals(setOf("agq", "c3", "aig", "aim", "aio", "bx", "agt"), changed)
         assertEquals(
             listOf(
                 "#000000", "#000000", "#000000", "#ffffffff", "#1effffff", "?attr/aut", "#000000", "#000000", "#ffffffff",
-                // The long-press panel's fill goes black and its cards (aio) keep their gray. The
-                // settings pages' cards (agt) go black in every dark theme, and light stays white.
-                "#000000", "#ff2c2c2c", "#000000", "#000000", "#ffffffff", "#fff5f5f5", "#ffffffff", "#000000",
+                // The long-press panel's fill and its cards (aio) go black. The settings pages'
+                // cards (agt) go black in every dark theme, and light stays white.
+                "#000000", "#000000", "#000000", "#000000", "#ffffffff", "#fff5f5f5", "#ffffffff", "#000000",
             ),
             values(styles),
         )

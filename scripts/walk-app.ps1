@@ -184,8 +184,13 @@ function Suspend-WalkVideo {
         $m = [regex]::Match($_, ' 0,0-(\d+),(\d+) ')
         if ($m.Success -and [int]$m.Groups[1].Value -gt 400) { [pscustomobject]@{ W = [int]$m.Groups[1].Value; H = [int]$m.Groups[2].Value } }
     } | Select-Object -First 1
-    if (-not $layout -or -not (Get-WalkForeground).StartsWith("$WalkPackage/", [StringComparison]::Ordinal)) { return $false }
+    $before = Get-WalkForeground
+    if (-not $layout -or -not $before.StartsWith("$WalkPackage/", [StringComparison]::Ordinal)) { return $false }
     Invoke-WalkAdb shell input tap ([int]($layout.W / 2)) ([int]($layout.H / 2)) | Out-Null
+    Start-Sleep -Milliseconds 1500
+    # On a LIVE preview the same tap opens the LIVE room, which never stops drawing.
+    $after = Get-WalkForeground
+    if ($after -and $after -ne $before) { Invoke-WalkBack 'the page the pause tap opened'; return $false }
     # uiautomator can't idle while TikTok still draws, and a freshly booted emulator kept drawing
     # after the pause: every dump failed for seven minutes after search in the 0.80.0 release walk.
     for ($i = 0; $i -lt 6; $i++) {
@@ -271,6 +276,26 @@ function Find-WalkVideoButton([string]$Label, [string]$What, [int]$Width, [int]$
             if (-not (Restore-WalkTabs $What $Height)) { return $null }
             continue
         }
+        Invoke-WalkSwipe $Width $Height
+        if (-not (Test-WalkAlive "$What swipe")) { return $null }
+    }
+    return $null
+}
+
+# A button in the feed's top bar (Search, another feed's tab). Some feed items never stop drawing
+# (a LIVE preview), so uiautomator can't read the screen over them: swipe on to the next video.
+# The 0.80.0 release walk lost search when three dumps in a row failed over For You.
+function Find-WalkTopNode([string]$Label, [string]$What, [int]$Width, [int]$Height) {
+    for ($i = 0; $i -lt 4; $i++) {
+        $nodes = Get-WalkScreen "before $What" -AllowPause
+        $node = @(Find-UiNode -Nodes $nodes -Label $Label | Where-Object { $_.Top -lt $Height * 0.15 }) | Select-Object -First 1
+        if ($node) { return $node }
+        if ($nodes -and -not (Find-WalkNav $nodes $WalkLabels.Home $Height)) {
+            Write-WalkLog "off the feed before $What"
+            if (-not (Restore-WalkTabs $What $Height)) { return $null }
+            continue
+        }
+        Write-WalkLog "swipe on before $What"
         Invoke-WalkSwipe $Width $Height
         if (-not (Test-WalkAlive "$What swipe")) { return $null }
     }
@@ -498,8 +523,7 @@ try {
 
     # The other top feeds, each then back to the main feed.
     foreach ($other in $appProfile.OtherFeeds) {
-        $nodes = Get-WalkScreen "before $other" -AllowPause
-        $tabNode = @(Find-UiNode -Nodes $nodes -Label $WalkLabels[$other] | Where-Object { $_.Top -lt $H * 0.15 }) | Select-Object -First 1
+        $tabNode = Find-WalkTopNode $WalkLabels[$other] $other $W $H
         if (-not $tabNode) { Write-WalkLog "no $other feed tab"; continue }
         Invoke-WalkTap $tabNode $other 3000
         $alive = Test-WalkAlive $other
@@ -511,8 +535,7 @@ try {
     }
 
     # Search with a harmless query.
-    $nodes = Get-WalkScreen 'before search' -AllowPause
-    $search = @(Find-UiNode -Nodes $nodes -Label $WalkLabels.Search | Where-Object { $_.Top -lt $H * 0.15 }) | Select-Object -First 1
+    $search = Find-WalkTopNode $WalkLabels.Search 'search' $W $H
     if ($search) {
         Invoke-WalkTap $search 'Search' 2500
         $page = Get-WalkScreen 'search page'

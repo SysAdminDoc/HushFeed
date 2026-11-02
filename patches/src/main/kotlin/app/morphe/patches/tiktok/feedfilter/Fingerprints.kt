@@ -157,12 +157,19 @@ internal object OpenedListFillFingerprint : Fingerprint(
     },
 )
 
+/**
+ * The Following feed's loader: the static method that builds a `FollowFeedList` from the request
+ * and reads its items back. It took the request and a cache on 47.5.3 (`LX/0NMJ;->LIZ`) and
+ * five arguments on 47.6.3 (`LX/0NHh;->LIZ`, with a tag, a cursor and a count joining), so only
+ * "more than one" is asked of the parameter list. The one-argument cache lookup beside it also
+ * reads the items, but never logs the "feed" it was asked for.
+ */
 internal object FollowFeedFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
     returnType = "Lcom/ss/android/ugc/aweme/follow/presenter/FollowFeedList;",
     strings = listOf("feed"),
     custom = { method, _ ->
-        method.parameterTypes.size == 2 && method.implementation?.instructions?.any {
+        method.parameterTypes.size >= 2 && method.implementation?.instructions?.any {
             it.getReference<MethodReference>()?.let { reference ->
                 reference.definingClass == "Lcom/ss/android/ugc/aweme/follow/presenter/FollowFeedList;" &&
                     reference.name == "getItems"

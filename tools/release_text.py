@@ -155,21 +155,37 @@ def manager_floor() -> str:
     return match.group(1)
 
 
+# GitHub notes name the CHANGELOG's ### groups the way the other Hush releases do.
+NOTE_GROUPS = {"Features": "New in this release", "Fixes": "Fixes", "Changes": "Other changes",
+               "Build": "Behind the scenes"}
+
+
 def github_notes(args) -> None:
+    """The release body: summary, every bullet under its group, the changelog link, update steps
+    and what was checked."""
     body = section(read(CHANGELOG), args.version + " (")
     if body is None:
         fail(f"CHANGELOG has no published {args.version}")
-    items = bullets(grouped_changelog(body))
-    stripped = ["* " + i[len(SCOPE):] if i.startswith(SCOPE) else i for i in items]
-    intro = read(Path(args.intro)).strip()
-    checked = read(Path(args.checked)).strip()
-    update = (f"Refresh the Hushfeed source in Morphe Manager {manager_floor()} or newer and patch TikTok "
-              "again. Keep the manager's existing signing key so your login and settings carry over. "
-              "The .mpp is a patch bundle, not a TikTok APK.")
-    notes = undash(intro + "\n\n## What's changed\n\n" + "\n".join(stripped) + "\n\n## Update\n\n" + update
-                   + "\n\n## Checked\n\n" + checked + "\n")
+    parts = [read(Path(args.intro)).strip()]
+    count = 0
+    for block in grouped_changelog(body).split("\n\n### "):
+        name, _, lines = block.removeprefix("### ").partition("\n\n")
+        items = ["- " + item[len(SCOPE):] if item.startswith(SCOPE) else "- " + item[2:] for item in bullets(lines)]
+        parts.append(NOTE_GROUPS.get(name, name) + "\n\n" + "\n".join(items))
+        count += len(items)
+    _, targets = catalog()
+    parts.append("The [changelog](https://github.com/SysAdminDoc/hushfeed/blob/main/CHANGELOG.md) has every earlier "
+                 "release too.")
+    parts.append("How to update\n\n"
+                 f"1. Update Morphe Manager to {manager_floor()} or newer, then refresh the Hushfeed source.\n"
+                 f"2. Patch TikTok {spoken(targets)} from APKMirror. Keep the manager's existing signing key so your "
+                 "login and settings carry over.")
+    parts.append("The `.mpp` download is a patch bundle, not a TikTok APK. "
+                 "[Installation instructions](https://github.com/SysAdminDoc/hushfeed#install).")
+    parts.append("What was checked\n\n" + read(Path(args.checked)).strip())
+    notes = undash("\n\n".join(parts) + "\n")
     write(Path(args.out), notes)
-    print(f"[release] notes for {args.version}: {len(stripped)} CHANGELOG bullets, {len(notes)} characters")
+    print(f"[release] notes for {args.version}: {count} CHANGELOG bullets, {len(notes)} characters")
 
 
 def catalog_patches() -> list:

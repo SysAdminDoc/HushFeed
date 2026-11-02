@@ -2426,3 +2426,6 @@ Backdrop behind video text	Hintergrund hinter dem Videotext
 Colors the description, the author's name and the post date on videos.	Färbt die Beschreibung, den Namen des Autors und das Veröffentlichungsdatum auf Videos.
 Puts a band of color behind the description, the author's name and the post date, so they stay readable on bright videos.	Legt ein farbiges Band hinter die Beschreibung, den Namen des Autors und das Veröffentlichungsdatum, damit sie auf hellen Videos lesbar bleiben.
 Takes out the small bar above the progress bar that says a friend reposted the video, or asks you to repost it.	Entfernt die kleine Leiste über der Fortschrittsleiste, die anzeigt, dass ein Freund das Video erneut gepostet hat, oder dich dazu auffordert.
+Time zone	Zeitzone
+A zone name like Europe/Belgrade, used in place of the country's. Daylight saving follows by itself. Empty means the country's own zone.	Ein Zonenname wie Europe/Belgrade, der statt der Zone des Landes gilt. Die Sommerzeit läuft von selbst mit. Leer heißt die eigene Zone des Landes.
+Enter a zone like Asia/Tokyo	Gib eine Zone wie Asia/Tokyo ein

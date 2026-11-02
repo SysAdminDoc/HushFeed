@@ -2600,3 +2600,6 @@ Backdrop behind video text	Фон за текстом на видео
 Colors the description, the author's name and the post date on videos.	Окрашивает описание, имя автора и дату публикации на видео.
 Puts a band of color behind the description, the author's name and the post date, so they stay readable on bright videos.	Кладёт цветную полосу за описание, имя автора и дату публикации, чтобы их было легко читать на светлых видео.
 Takes out the small bar above the progress bar that says a friend reposted the video, or asks you to repost it.	Убирает небольшую полоску над полосой прогресса, которая сообщает, что друг сделал репост видео, или предлагает сделать репост.
+Time zone	Часовой пояс
+A zone name like Europe/Belgrade, used in place of the country's. Daylight saving follows by itself. Empty means the country's own zone.	Название пояса, например Europe/Belgrade, которое заменяет пояс страны. Летнее время учитывается само. Пусто значит собственный пояс страны.
+Enter a zone like Asia/Tokyo	Введите пояс, например Asia/Tokyo

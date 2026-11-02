@@ -70,6 +70,7 @@ public class RegionSpoofTest {
         Settings.SIMSPOOF_MCCMNC.save("44010");
         Settings.SIMSPOOF_OP_NAME.save("NTT DOCOMO");
         Settings.SIM_SPOOF_FEED_REAL.save(false);
+        Settings.SIM_SPOOF_TIME_ZONE.save("");
     }
     @After public void tearDown() {
         RegionSpoof.requestDone();
@@ -495,6 +496,62 @@ public class RegionSpoofTest {
         // And the hook's own answer is the same zone, as one more copy.
         TimeZone hooked = RegionSpoof.timeZone(TimeZone.getDefault());
         assertEquals("Europe/Belgrade", hooked.getID());
+    }
+
+    @Test public void aTypedZoneWinsOverTheCountrysDaylightSavingAndNativeDatesIncluded() {
+        serbiaAtStartUp();
+        Settings.SIM_SPOOF_TIME_ZONE.save("Asia/Tokyo");
+        assertEquals("Asia/Tokyo", RegionSpoof.timeZone(TimeZone.getDefault()).getID());
+        assertEquals("Asia/Tokyo", TimeZone.getDefault().getID());
+        assertEquals("TZ goes with it, for TikTok's native dates", "Asia/Tokyo", tz.value);
+        assertEquals("the phone's own zone is kept", PHONE_ZONE, RegionSpoof.phoneTimeZone().getID());
+
+        Settings.SIM_SPOOF_TIME_ZONE.save("America/New_York");
+        RegionSpoof.timeZone(TimeZone.getDefault());
+        java.text.SimpleDateFormat hours = new java.text.SimpleDateFormat("HH:mm", Locale.US);
+        assertEquals("summer time", "08:00", clock(hours, JULY_NOON_UTC));
+        assertEquals("standard time", "07:00", clock(hours, JANUARY_NOON_UTC));
+    }
+
+    @Test public void aTypedZoneTakesAnyCaseAndSpacesForUnderscores() {
+        serbiaAtStartUp();
+        Settings.SIM_SPOOF_TIME_ZONE.save(" america/new york ");
+        assertEquals("America/New_York", RegionSpoof.timeZone(TimeZone.getDefault()).getID());
+        assertEquals("America/New_York", tz.value);
+        assertTrue(RegionSpoof.validTimeZone(" america/new york "));
+    }
+
+    @Test public void anOffsetOrANameThatIsNoZoneLeavesTheCountrysZone() {
+        serbiaAtStartUp();
+        for (String refused : new String[]{"GMT+05:30", "UTC+2", "+02:00", "Belgrade", "Europe/Nowhere", "  "}) {
+            assertFalse(refused, RegionSpoof.validTimeZone(refused));
+            Settings.SIM_SPOOF_TIME_ZONE.save(refused);
+            assertEquals(refused, "Europe/Belgrade", RegionSpoof.timeZone(TimeZone.getDefault()).getID());
+            assertEquals(refused, "Europe/Belgrade", tz.value);
+        }
+    }
+
+    @Test public void clearingATypedZoneGoesBackToTheCountrysAtOnce() {
+        serbiaAtStartUp();
+        Settings.SIM_SPOOF_TIME_ZONE.save("Asia/Tokyo");
+        RegionSpoof.timeZone(TimeZone.getDefault());
+        Settings.SIM_SPOOF_TIME_ZONE.save("");
+        assertEquals("Europe/Belgrade", RegionSpoof.timeZone(TimeZone.getDefault()).getID());
+        assertEquals("Europe/Belgrade", TimeZone.getDefault().getID());
+        assertEquals("Europe/Belgrade", tz.value);
+    }
+
+    @Test public void aTypedZoneDoesNothingWhileMatchLocaleIsOffOrHushfeedPauses() {
+        TimeZone.setDefault(TimeZone.getTimeZone(PHONE_ZONE));
+        Settings.SIM_SPOOF_TIME_ZONE.save("Asia/Tokyo");
+        Settings.REGION_SPOOF.save(false);
+        assertEquals(PHONE_ZONE, RegionSpoof.timeZone(TimeZone.getDefault()).getID());
+        assertEquals(PHONE_ZONE, TimeZone.getDefault().getID());
+        Settings.REGION_SPOOF.save(true);
+        assertEquals("Asia/Tokyo", RegionSpoof.timeZone(TimeZone.getDefault()).getID());
+        PausedProcess.set(true);
+        assertEquals(PHONE_ZONE, RegionSpoof.timeZone(TimeZone.getDefault()).getID());
+        assertEquals(PHONE_ZONE, TimeZone.getDefault().getID());
     }
 
     @Test public void theZoneGoesBackToThePhonesWhenTheSettingGoesOffOrHushfeedPauses() {

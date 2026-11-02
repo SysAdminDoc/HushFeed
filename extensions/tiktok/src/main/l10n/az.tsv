@@ -2423,3 +2423,6 @@ Backdrop behind video text	Video mətninin arxa fonu
 Colors the description, the author's name and the post date on videos.	Videolardakı təsviri, müəllifin adını və paylaşım tarixini rəngləyir.
 Puts a band of color behind the description, the author's name and the post date, so they stay readable on bright videos.	Təsvirin, müəllifin adının və paylaşım tarixinin arxasına rəngli zolaq qoyur ki, parlaq videolarda oxunaqlı qalsınlar.
 Takes out the small bar above the progress bar that says a friend reposted the video, or asks you to repost it.	İrəliləyiş zolağının üstündə dostun videonu repost etdiyini göstərən və ya səndən onu repost etməyi istəyən kiçik zolağı silir.
+Time zone	Saat qurşağı
+A zone name like Europe/Belgrade, used in place of the country's. Daylight saving follows by itself. Empty means the country's own zone.	Ölkənin qurşağı əvəzinə işlədilən, Europe/Belgrade kimi qurşaq adı. Yay vaxtı özü tətbiq olunur. Boş qalsa, ölkənin öz qurşağı işlədilir.
+Enter a zone like Asia/Tokyo	Asia/Tokyo kimi qurşaq yazın

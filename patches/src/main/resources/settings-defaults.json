@@ -588,6 +588,7 @@
       "region_request_spoof",
       "simspoof",
       "simspoof_iso",
+      "simspoof_time_zone",
       "simspoof_mccmnc",
       "simspoof_op_name",
       "simspoof_feed_real"
@@ -3690,6 +3691,12 @@
       "key": "simspoof_op_name",
       "type": "string",
       "default": "T-Mobile"
+    },
+    "simspoof_time_zone": {
+      "field": "SIM_SPOOF_TIME_ZONE",
+      "key": "simspoof_time_zone",
+      "type": "string",
+      "default": ""
     },
     "skip_first_launch_setup": {
       "field": "SKIP_FIRST_LAUNCH_SETUP",

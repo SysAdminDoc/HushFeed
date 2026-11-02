@@ -2423,3 +2423,6 @@ Backdrop behind video text	Video metninin arkasındaki zemin
 Colors the description, the author's name and the post date on videos.	Videolardaki açıklamayı, yazarın adını ve paylaşım tarihini renklendirir.
 Puts a band of color behind the description, the author's name and the post date, so they stay readable on bright videos.	Açıklamanın, yazarın adının ve paylaşım tarihinin arkasına renkli bir şerit koyar, böylece parlak videolarda okunabilir kalırlar.
 Takes out the small bar above the progress bar that says a friend reposted the video, or asks you to repost it.	İlerleme çubuğunun üstünde bir arkadaşın videoyu yeniden paylaştığını gösteren veya senden yeniden paylaşmanı isteyen küçük çubuğu kaldırır.
+Time zone	Saat dilimi
+A zone name like Europe/Belgrade, used in place of the country's. Daylight saving follows by itself. Empty means the country's own zone.	Ülkeninki yerine kullanılan, Europe/Belgrade gibi bir dilim adı. Yaz saati kendiliğinden uygulanır. Boş bırakırsan ülkenin kendi dilimi kullanılır.
+Enter a zone like Asia/Tokyo	Asia/Tokyo gibi bir dilim girin

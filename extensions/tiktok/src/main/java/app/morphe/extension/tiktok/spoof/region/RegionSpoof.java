@@ -43,7 +43,7 @@ public final class RegionSpoof {
      */
     private static volatile String[] lastCountry = {"", ""};
     private static volatile LocaleAnswer lastLocale;
-    private static volatile Object[] lastZone = {"", null};
+    private static volatile Object[] lastZone = {"", "", null};
 
     /*
      * The whole app's time zone (#184, #198). The hook answers TikTok's own TimeZone.getDefault()
@@ -120,6 +120,27 @@ public final class RegionSpoof {
             if ((letter < 'A' || letter > 'Z') && (letter < 'a' || letter > 'z')) return false;
         }
         return COUNTRIES.contains(code.toUpperCase(Locale.ROOT));
+    }
+
+    public static boolean validTimeZone(String value) {
+        return timeZoneName(value) != null;
+    }
+
+    /**
+     * The zone a typed name means, spelled the way the zone table spells it, or null when it isn't
+     * in the table. Fixed offsets like GMT+05:30 aren't: TimeZone would take one, but TZ reads its
+     * sign the other way round, so TikTok's native dates would land on the wrong side of UTC, and
+     * an offset never follows daylight saving anyway.
+     */
+    @Nullable
+    private static String timeZoneName(@Nullable String value) {
+        if (value == null) return null;
+        String typed = value.trim().replace(' ', '_');
+        if (typed.isEmpty()) return null;
+        for (String id : TimeZone.getAvailableIDs()) {
+            if (id.equalsIgnoreCase(typed)) return id;
+        }
+        return null;
     }
 
     /*
@@ -577,15 +598,20 @@ public final class RegionSpoof {
         return format;
     }
 
-    /** The preset country's zone while Match locale and timezone is on and Hushfeed isn't paused, else null. */
+    /**
+     * The typed zone, or the preset country's without one, while Match locale and timezone is on
+     * and Hushfeed isn't paused, else null.
+     */
     @Nullable
     private static TimeZone presetZone() {
         String country = presetCountry();
         if (country.isEmpty()) return null;
+        String typed = Settings.SIM_SPOOF_TIME_ZONE.get();
         Object[] last = lastZone;
-        if (country.equals(last[0])) return (TimeZone) last[1];
-        TimeZone zone = zoneOf(country);
-        lastZone = new Object[]{country, zone};
+        if (country.equals(last[0]) && typed.equals(last[1])) return (TimeZone) last[2];
+        String name = timeZoneName(typed);
+        TimeZone zone = name != null ? TimeZone.getTimeZone(name) : zoneOf(country);
+        lastZone = new Object[]{country, typed, zone};
         return zone;
     }
 

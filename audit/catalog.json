@@ -11975,6 +11975,12 @@
     "default": "us",
     "type": "string",
     "row": "Country code"
+   },
+   {
+    "key": "simspoof_time_zone",
+    "default": "",
+    "type": "string",
+    "row": "Time zone"
    }
   ],
   "surface": "app-start",

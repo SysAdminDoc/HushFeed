@@ -8010,6 +8010,15 @@
           "values": null
         },
         {
+          "key": "simspoof_time_zone",
+          "title": "Default: simspoof time zone",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
           "key": "simspoof_mccmnc",
           "title": "Default: simspoof mccmnc",
           "description": null,

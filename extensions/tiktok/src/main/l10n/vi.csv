@@ -2392,3 +2392,6 @@ Backdrop behind video text,Nền phía sau chữ trên video
 "Colors the description, the author's name and the post date on videos.","Tô màu phần mô tả, tên tác giả và ngày đăng trên video."
 "Puts a band of color behind the description, the author's name and the post date, so they stay readable on bright videos.","Đặt một dải màu phía sau phần mô tả, tên tác giả và ngày đăng để chúng vẫn dễ đọc trên video sáng."
 "Takes out the small bar above the progress bar that says a friend reposted the video, or asks you to repost it.",Bỏ thanh nhỏ phía trên thanh tiến trình cho biết bạn bè đã đăng lại video hoặc nhắc bạn đăng lại.
+Time zone,Múi giờ
+"A zone name like Europe/Belgrade, used in place of the country's. Daylight saving follows by itself. Empty means the country's own zone.","Tên múi giờ như Europe/Belgrade, dùng thay cho múi giờ của quốc gia. Giờ mùa hè tự áp dụng. Để trống nghĩa là dùng múi giờ của chính quốc gia đó."
+Enter a zone like Asia/Tokyo,Nhập múi giờ như Asia/Tokyo

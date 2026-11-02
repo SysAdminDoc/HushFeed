@@ -2423,3 +2423,6 @@ Backdrop behind video text	Sfondo dietro il testo del video
 Colors the description, the author's name and the post date on videos.	Colora la descrizione, il nome dell'autore e la data di pubblicazione sui video.
 Puts a band of color behind the description, the author's name and the post date, so they stay readable on bright videos.	Mette una fascia colorata dietro la descrizione, il nome dell'autore e la data di pubblicazione, così restano leggibili sui video chiari.
 Takes out the small bar above the progress bar that says a friend reposted the video, or asks you to repost it.	Rimuove la piccola barra sopra la barra di avanzamento che indica che un amico ha ripubblicato il video o ti chiede di ripubblicarlo.
+Time zone	Fuso orario
+A zone name like Europe/Belgrade, used in place of the country's. Daylight saving follows by itself. Empty means the country's own zone.	Un nome di fuso come Europe/Belgrade, usato al posto di quello del paese. L'ora legale si applica da sola. Vuoto significa il fuso del paese.
+Enter a zone like Asia/Tokyo	Inserisci un fuso come Asia/Tokyo

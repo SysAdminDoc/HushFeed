@@ -2392,3 +2392,6 @@ Backdrop behind video text,视频文字背景
 "Colors the description, the author's name and the post date on videos.",为视频上的描述、作者姓名和发布日期着色.
 "Puts a band of color behind the description, the author's name and the post date, so they stay readable on bright videos.","在描述、作者姓名和发布日期后面放一条色带,让它们在明亮的视频上依然清晰可读."
 "Takes out the small bar above the progress bar that says a friend reposted the video, or asks you to repost it.",移除进度条上方显示好友转发了该视频或提示你转发的小条.
+Time zone,时区
+"A zone name like Europe/Belgrade, used in place of the country's. Daylight saving follows by itself. Empty means the country's own zone.",类似 Europe/Belgrade 的时区名称，用来代替该国家的时区。夏令时会自动跟随。留空表示使用该国家自己的时区.
+Enter a zone like Asia/Tokyo,请输入类似 Asia/Tokyo 的时区

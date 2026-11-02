@@ -71,7 +71,8 @@ public class PauseAnswersUnpatchedTest {
             "bottom_navigation_observed_tabs", "down_path", "download_paths_migrated",
             "remembered_speed_v2", "session_budget_state", "block_author_button_position",
             "local_hide_button_position", "block_sound_button_position",
-            "not_interested_button_position", "feed_mute_button_position", "share_action_catalog",
+            "not_interested_button_position", "feed_mute_button_position",
+            "download_button_position", "share_action_catalog",
             "diagnostic_report_salt",
             // Which translate toggle Hushfeed's button turned on, so a pause can answer it off.
             "comment_translate_button_turned_on",

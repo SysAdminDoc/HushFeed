@@ -1059,7 +1059,6 @@ Sound on	Səs açıq
 Sound	Səs
 Play feed videos without sound and leave the phone's volume alone. Music from another app keeps playing while it's on. DMs, stories and LIVE keep their sound.	Lent videolarını səssiz oxudun və telefonun səs səviyyəsinə toxunmayın. Bu açıq olduqda başqa tətbiqin musiqisi çalmağa davam edir. Birbaşa mesajlar, hekayələr və LIVE səsini saxlayır.
 Let other apps play until a video starts	Video başlayana qədər digər tətbiqlər çalmağa davam etsin
-Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound once a video starts playing.	TikTok-u və ya mesajlarınızı açmaq artıq başqa tətbiqdəki musiqini dayandırmır. TikTok səsi yalnız video oxunmağa başlayanda götürür.
 Show the mute button on videos	Videolarda səssiz düyməsini göstərin
 Add a button beside the block control that turns the feed's sound off and on.	Bloklama idarəetməsinin yanına lentin səsini söndürüb yandıran düymə əlavə edin.
 Show the block button on videos	Videolarda bloklama düyməsini göstərin
@@ -2396,3 +2395,8 @@ With Hide LIVE videos on, these creators' LIVEs stay when TikTok sends them. Sep
 Optional. Leave empty for a proxy without a password. TikTok signs in through a small relay on this phone, which other apps here could reach while TikTok is open.	İstəyə bağlıdır. Parolsuz proksi üçün boş buraxın. TikTok bu telefondakı kiçik bir ötürücü vasitəsilə daxil olur, TikTok açıq olanda buradakı digər tətbiqlər də ona çata bilər.
 Proxy %1$s needs a user name and password	%1$s proksisinə ad və parol lazımdır
 Proxy %1$s refused your user name or password	%1$s proksisi ad və ya parolu rədd etdi
+Save this video	Bu videonu saxlayın
+Show the save button on videos	Videolarda saxlama düyməsini göstərin
+Add a button beside the block control that saves the video on screen in one tap. Drag it wherever you like.	Bloklama idarəetməsinin yanına ekrandakı videonu bir toxunuşla saxlayan düymə əlavə edin. Onu istədiyiniz yerə sürükləyin.
+Couldn't save this one. Try again.	Saxlamaq alınmadı. Yenidən cəhd edin.
+Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound while a video plays and gives it back when you leave the video.	TikTok-u və ya mesajlarınızı açmaq artıq başqa tətbiqdəki musiqini dayandırmır. TikTok səsi video oxunarkən alır və videodan çıxanda geri qaytarır.

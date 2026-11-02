@@ -124,10 +124,11 @@
     },
     {
       "name": "Advanced downloads",
-      "description": "Adds more ways to save: pick the video quality, save full-size photos, the sound on its own or a photo post as one video, hold a profile picture or story to save it, save a story or a video's cover from the share sheet, and pick videos on a profile grid to save in one run. Starts off. Turn it on in Hushfeed settings > Downloads.",
+      "description": "Adds more ways to save: pick the video quality, save full-size photos, the sound on its own or a photo post as one video, hold a profile picture or story to save it, save a story or a video's cover from the share sheet, put a save button on the video, and pick videos on a profile grid to save in one run. Starts off. Turn it on in Hushfeed settings > Downloads.",
       "category": "Downloads",
       "use": true,
       "dependencies": [
+        "Block author button",
         "BytecodePatch",
         "RawResourcePatch",
         "Settings"
@@ -161,6 +162,24 @@
         }
       ],
       "options": [
+        {
+          "key": "download_button",
+          "title": "Default: download button",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "download_button_position",
+          "title": "Default: download button position",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
         {
           "key": "download_video_quality",
           "title": "Default: download video quality",
@@ -7033,7 +7052,7 @@
     },
     {
       "name": "Mute feed videos",
-      "description": "Mutes feed videos without changing your phone's volume, so music from another app keeps playing. You can also add a mute button on videos, or keep the sound and let other apps play until a video starts. Starts off. Turn it on in Hushfeed settings > Playback.",
+      "description": "Mutes feed videos without changing your phone's volume, so music from another app keeps playing. You can also add a mute button on videos, or keep the sound and let other apps play until a video starts and after you leave it. Starts off. Turn it on in Hushfeed settings > Playback.",
       "category": "Playback",
       "use": true,
       "dependencies": [

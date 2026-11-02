@@ -1122,7 +1122,6 @@ Sound on	Звук включён
 Sound	Звук
 Play feed videos without sound and leave the phone's volume alone. Music from another app keeps playing while it's on. DMs, stories and LIVE keep their sound.	Воспроизводить видео в ленте без звука, не трогая громкость телефона. Музыка из другого приложения продолжает играть, пока это включено. Личные сообщения, истории и LIVE сохраняют свой звук.
 Let other apps play until a video starts	Не прерывать другие приложения, пока не начнётся видео
-Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound once a video starts playing.	Открытие TikTok или ваших сообщений больше не ставит на паузу музыку из другого приложения. TikTok забирает звук, только когда начинается видео.
 Show the mute button on videos	Показывать кнопку отключения звука на видео
 Add a button beside the block control that turns the feed's sound off and on.	Добавлять рядом с кнопкой блокировки кнопку, включающую и выключающую звук ленты.
 Show the country a video was posted from next to the creator's name.	Показывать страну, откуда опубликовано видео, рядом с именем автора.
@@ -2573,3 +2572,8 @@ With Hide LIVE videos on, these creators' LIVEs stay when TikTok sends them. Sep
 Optional. Leave empty for a proxy without a password. TikTok signs in through a small relay on this phone, which other apps here could reach while TikTok is open.	Необязательно. Оставьте пустым для прокси без пароля. TikTok входит через небольшой ретранслятор на этом телефоне, к которому другие приложения здесь могут подключиться, пока TikTok открыт.
 Proxy %1$s needs a user name and password	Прокси %1$s требует логин и пароль
 Proxy %1$s refused your user name or password	Прокси %1$s отклонил логин или пароль
+Save this video	Сохранить это видео
+Show the save button on videos	Показывать кнопку сохранения на видео
+Add a button beside the block control that saves the video on screen in one tap. Drag it wherever you like.	Добавлять рядом с кнопкой блокировки кнопку, сохраняющую видео на экране одним касанием. Её можно перетащить куда угодно.
+Couldn't save this one. Try again.	Не сохранено. Повторите.
+Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound while a video plays and gives it back when you leave the video.	Открытие TikTok или ваших сообщений больше не ставит на паузу музыку из другого приложения. TikTok забирает звук, пока играет видео, и возвращает его, когда вы уходите с видео.

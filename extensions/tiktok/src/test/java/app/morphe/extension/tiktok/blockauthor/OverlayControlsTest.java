@@ -45,6 +45,52 @@ public class OverlayControlsTest {
         Settings.BLOCK_SOUND_BUTTON_POSITION.resetToDefault();
         Settings.NOT_INTERESTED_BUTTON_POSITION.resetToDefault();
         Settings.FEED_MUTE_BUTTON_POSITION.resetToDefault();
+        Settings.DOWNLOAD_BUTTON_POSITION.resetToDefault();
+    }
+
+    /** One tap saves what's on screen, and a tap with nothing to save says so rather than nothing (#299). */
+    @Test @Config(sdk = 28, qualifiers = "en")
+    public void theSaveButtonIsNamedAndATapWithNothingOnScreenSaysSo() throws Exception {
+        Activity activity = Robolectric.buildActivity(Activity.class).setup().get();
+        Utils.setContext(activity);
+        Utils.setActivity(activity);
+        Method factory = BlockAuthorOverlay.class.getDeclaredMethod("createDownloadButton", Activity.class);
+        factory.setAccessible(true);
+        View save = (View) factory.invoke(null, activity);
+        assertEquals("Save this video", save.getContentDescription().toString());
+
+        ShadowToast.reset();
+        assertTrue(save.performClick());
+        org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+        assertEquals("No video selected. Open a video first.", ShadowToast.getTextOfLatestToast());
+    }
+
+    /** Its switch and its patch decide it, and it goes with the other controls off the feed. */
+    @Test public void theSaveButtonShowsOnlyWithItsSwitchOnAndItsPatchIn() throws Exception {
+        boolean wasEnabled = app.morphe.extension.tiktok.settings.SettingsStatus.advancedDownloadsEnabled;
+        app.morphe.extension.tiktok.settings.SettingsStatus.advancedDownloadsEnabled = true;
+        Settings.DOWNLOAD_BUTTON.save(true);
+        try {
+            attachedRoot();
+            Method setFeedVisible = declared("setFeedVisible", boolean.class);
+            setFeedVisible.invoke(null, true);
+            assertEquals(View.VISIBLE, held("downloadReference").getVisibility());
+
+            setFeedVisible.invoke(null, false);
+            assertEquals(View.GONE, held("downloadReference").getVisibility());
+
+            Settings.DOWNLOAD_BUTTON.save(false);
+            setFeedVisible.invoke(null, true);
+            assertEquals("the switch is off", View.GONE, held("downloadReference").getVisibility());
+
+            Settings.DOWNLOAD_BUTTON.save(true);
+            app.morphe.extension.tiktok.settings.SettingsStatus.advancedDownloadsEnabled = false;
+            setFeedVisible.invoke(null, true);
+            assertEquals("the patch is out", View.GONE, held("downloadReference").getVisibility());
+        } finally {
+            Settings.DOWNLOAD_BUTTON.resetToDefault();
+            app.morphe.extension.tiktok.settings.SettingsStatus.advancedDownloadsEnabled = wasEnabled;
+        }
     }
 
     @Test public void theInstalledBlockButtonDrawsBothTheRingAndTheSlash() throws Exception {
@@ -632,7 +678,7 @@ public class OverlayControlsTest {
     }
 
     private static final String[] CONTROLS = {"buttonReference", "localHideReference",
-            "soundButtonReference", "notInterestedReference", "muteReference"};
+            "soundButtonReference", "notInterestedReference", "muteReference", "downloadReference"};
 
     /** The content root with all four controls attached, laid out at a known size. */
     /**
@@ -650,13 +696,14 @@ public class OverlayControlsTest {
         Settings.BLOCK_SOUND_BUTTON_POSITION.resetToDefault();
         Settings.NOT_INTERESTED_BUTTON_POSITION.resetToDefault();
         Settings.FEED_MUTE_BUTTON_POSITION.resetToDefault();
+        Settings.DOWNLOAD_BUTTON_POSITION.resetToDefault();
         ViewGroup root = attachedRoot(1080, 2316);
         // TikTok's rail on 46.2.3 at this size: the avatar as uiautomator reports it, and the
         // column under it, which the like, comment, favourite, share and sound controls share.
         android.graphics.Rect avatar = new android.graphics.Rect(932, 1019, 1057, 1144);
         android.graphics.Rect rail = new android.graphics.Rect(915, 1019, 1080, 2100);
         for (String name : new String[]{"buttonReference", "localHideReference",
-                "soundButtonReference", "notInterestedReference", "muteReference"}) {
+                "soundButtonReference", "notInterestedReference", "muteReference", "downloadReference"}) {
             View chip = held(name);
             FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) chip.getLayoutParams();
             android.graphics.Rect box = new android.graphics.Rect(params.leftMargin,

@@ -17,6 +17,7 @@ import app.morphe.patcher.util.smali.ExternalLabel
 import app.morphe.patcher.util.proxy.mutableTypes.MutableClass
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.shared.compat.AppCompatibilities
+import app.morphe.patches.tiktok.interaction.blockauthor.blockAuthorPatch
 import app.morphe.patches.tiktok.interaction.engagement.ProfileGridHolderBindFingerprint
 import app.morphe.patches.tiktok.interaction.engagement.profileGridCountPatch
 import app.morphe.patches.tiktok.interaction.sharesheet.SHARE_SAVE_COVER
@@ -275,15 +276,15 @@ val advancedDownloadsPatch = bytecodePatch(
     name = "Advanced downloads",
     description = "Adds more ways to save: pick the video quality, save full-size photos, the " +
         "sound on its own or a photo post as one video, hold a profile picture or story to save " +
-        "it, save a story or a video's cover from the share sheet, and pick videos on a profile " +
-        "grid to save in one run. Starts off. Turn it on in " +
+        "it, save a story or a video's cover from the share sheet, put a save button on the " +
+        "video, and pick videos on a profile grid to save in one run. Starts off. Turn it on in " +
         "Hushfeed settings > Downloads.",
 ) {
     category("Downloads")
     compatibleWith(*AppCompatibilities.tiktok())
     // The grid cell's count, for the check mark on videos saved here. The native Report carrier,
-    // for the share sheet's Save cover (#146).
-    dependsOn(settingsPatch, sharedExtensionPatch, profileGridCountPatch, ownedShareActionsPatch)
+    // for the share sheet's Save cover (#146). The on-video controls, for the save button (#299).
+    dependsOn(settingsPatch, sharedExtensionPatch, profileGridCountPatch, ownedShareActionsPatch, blockAuthorPatch)
     execute {
         listOf(DownloadAddressFingerprint, CleanDownloadAddressFingerprint).forEach { fingerprint ->
             fingerprint.method.apply {

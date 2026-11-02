@@ -1257,7 +1257,6 @@ Play SDR instead of HDR,播放 SDR 而不是 HDR
 Play Store,Play 商店
 "Play feed videos without sound and leave the phone's volume alone. Music from another app keeps playing while it's on. DMs, stories and LIVE keep their sound.",播放没有声音的信息流视频，不要管手机的音量。另一个应用程序中的音乐在打开时会继续播放。私信、故事和 LIVE 保持其声音.
 Let other apps play until a video starts,在视频开始播放前不打断其他应用
-Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound once a video starts playing.,打开 TikTok 或你的消息时，不再暂停其他应用的音乐。只有视频开始播放时，TikTok 才会占用声音.
 Play sounds TikTok pulled,播放声音 TikTok 拉动
 Play the audio on videos TikTok silenced because their sound was pulled for copyright or in your region. TikTok may still say the sound isn't available.,播放视频 TikTok 上的音频，该视频被静音，因为它们的声音因版权原因或在你所在的地区而被拉取。 TikTok 可能仍然会说声音不可用.
 Playback,回放
@@ -2365,3 +2364,8 @@ Keep LIVEs from these creators,保留这些创作者的直播
 "Optional. Leave empty for a proxy without a password. TikTok signs in through a small relay on this phone, which other apps here could reach while TikTok is open.",可选。代理没有密码时请留空。TikTok 通过此手机上的一个小型中继登录，TikTok 打开期间，此手机上的其他应用也可以访问该中继.
 Proxy %1$s needs a user name and password,代理 %1$s 需要用户名和密码
 Proxy %1$s refused your user name or password,代理 %1$s 拒绝了你的用户名或密码
+Save this video,保存此视频
+Show the save button on videos,在视频上显示保存按钮
+Add a button beside the block control that saves the video on screen in one tap. Drag it wherever you like.,在块控件旁边添加一个按钮，点一下即可保存屏幕上的视频。可以把它拖到任意位置.
+Couldn't save this one. Try again.,无法保存。再试一次.
+Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound while a video plays and gives it back when you leave the video.,打开 TikTok 或你的消息时，不再暂停其他应用的音乐。TikTok 只在视频播放时占用声音，离开视频后就会交还.

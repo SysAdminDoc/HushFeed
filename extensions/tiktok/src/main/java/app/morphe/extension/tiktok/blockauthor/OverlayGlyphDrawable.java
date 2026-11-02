@@ -40,6 +40,8 @@ public final class OverlayGlyphDrawable extends Drawable {
         SPEAKER,
         /** A speaker with a cross where the waves were: the feed is muted. */
         SPEAKER_OFF,
+        /** An arrow down into a tray: save the video. */
+        DOWNLOAD,
     }
 
     /** Each glyph sits inside this fraction of the shorter side. */
@@ -111,6 +113,17 @@ public final class OverlayGlyphDrawable extends Drawable {
                 float half = r * 0.6f;
                 canvas.drawLine(cx - half, cy, cx + half, cy, paint);
                 break;
+
+            case DOWNLOAD: {
+                float tip = cy + r * 0.3f;
+                float wing = r * 0.45f;
+                float tray = cy + r * 0.8f;
+                canvas.drawLine(cx, cy - r * 0.8f, cx, tip, paint);
+                canvas.drawLine(cx - wing, tip - wing, cx, tip, paint);
+                canvas.drawLine(cx + wing, tip - wing, cx, tip, paint);
+                canvas.drawLine(cx - r * 0.75f, tray, cx + r * 0.75f, tray, paint);
+                break;
+            }
 
             case SPEAKER:
             case SPEAKER_OFF: {

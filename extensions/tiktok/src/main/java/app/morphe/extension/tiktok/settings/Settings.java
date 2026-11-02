@@ -936,6 +936,8 @@ public class Settings extends BaseSettings {
      */
     public static final BooleanSetting FEED_MUTED = new BooleanSetting("feed_muted", FALSE, false, false);
     public static final BooleanSetting FEED_MUTE_BUTTON = new BooleanSetting("feed_mute_button", FALSE);
+    /** A save button on the video itself, so a save doesn't start with a long press or the share sheet (#299). */
+    public static final BooleanSetting DOWNLOAD_BUTTON = new BooleanSetting("download_button", FALSE);
     /** TikTok's audio focus waits for a video to play, so opening the app or a chat leaves other apps' music alone (#283). */
     public static final BooleanSetting FOCUS_WAITS_FOR_VIDEO = new BooleanSetting("focus_waits_for_video", FALSE);
     public static final BooleanSetting HIDE_FEED_CAPTION = new BooleanSetting("hide_feed_caption", FALSE);
@@ -1108,6 +1110,8 @@ public class Settings extends BaseSettings {
             new StringSetting("not_interested_button_position", "");
     public static final StringSetting FEED_MUTE_BUTTON_POSITION =
             new StringSetting("feed_mute_button_position", "");
+    public static final StringSetting DOWNLOAD_BUTTON_POSITION =
+            new StringSetting("download_button_position", "");
     public static final BooleanSetting HIDE_INBOX_STORIES = new BooleanSetting("hide_inbox_stories", FALSE);
     public static final BooleanSetting HIDE_INBOX_NEW_FOLLOWERS = new BooleanSetting("hide_inbox_new_followers", FALSE);
     public static final BooleanSetting HIDE_INBOX_ACTIVITY = new BooleanSetting("hide_inbox_activity", FALSE);
@@ -1468,7 +1472,7 @@ public class Settings extends BaseSettings {
                 BOTTOM_NAVIGATION_OBSERVED_TABS, DOWNLOAD_PATH, DOWNLOAD_PATHS_MIGRATED,
                 REMEMBERED_SPEED, SESSION_BUDGET_STATE, BLOCK_AUTHOR_BUTTON_POSITION,
                 LOCAL_HIDE_BUTTON_POSITION, BLOCK_SOUND_BUTTON_POSITION, NOT_INTERESTED_BUTTON_POSITION,
-                FEED_MUTE_BUTTON_POSITION, COMMENT_TRANSLATE_BUTTON_TURNED_ON,
+                FEED_MUTE_BUTTON_POSITION, DOWNLOAD_BUTTON_POSITION, COMMENT_TRANSLATE_BUTTON_TURNED_ON,
                 SHARE_ACTION_CATALOG, PROFILE_SHORTCUT_CATALOG, POPUP_LABEL_CATALOG, DIAGNOSTIC_REPORT_SALT, AUTO_STREAK_STATE,
                 // The budget's day is worked out from this hour. Paused, the budget counts
                 // nothing and holds nothing, but its record still has to name the right day.

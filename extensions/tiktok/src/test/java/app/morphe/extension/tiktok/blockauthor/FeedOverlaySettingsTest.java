@@ -98,17 +98,20 @@ public class FeedOverlaySettingsTest {
     /** Every control drawn on a video is opt-in, so a fresh install with every patch shows none. */
     @Test public void aFreshInstallDrawsNoControlOnTheVideo() {
         boolean oldMuteStatus = SettingsStatus.feedMuteEnabled;
+        boolean oldDownloadsStatus = SettingsStatus.advancedDownloadsEnabled;
         SettingsStatus.feedMuteEnabled = true;
+        SettingsStatus.advancedDownloadsEnabled = true;
         try {
             BooleanSetting[] switches = {Settings.BLOCK_AUTHOR_BUTTON, Settings.LOCAL_HIDE_BUTTON,
-                    Settings.BLOCK_SOUND_BUTTON, Settings.NOT_INTERESTED_BUTTON, Settings.FEED_MUTE_BUTTON};
+                    Settings.BLOCK_SOUND_BUTTON, Settings.NOT_INTERESTED_BUTTON, Settings.FEED_MUTE_BUTTON,
+                    Settings.DOWNLOAD_BUTTON};
             for (BooleanSetting setting : switches) {
                 setting.resetToDefault();
                 assertFalse(setting.key + " starts on", setting.get());
             }
             bind("video-one");
             for (String name : new String[]{"Block this creator", "Hide this creator on this phone",
-                    "Block this sound", "Not interested in this video", "Mute feed videos"}) {
+                    "Block this sound", "Not interested in this video", "Mute feed videos", "Save this video"}) {
                 View control = button(name);
                 assertTrue(name + " shows on a fresh install",
                         control == null || control.getVisibility() != View.VISIBLE);
@@ -116,16 +119,19 @@ public class FeedOverlaySettingsTest {
         } finally {
             Settings.FEED_MUTE_BUTTON.resetToDefault();
             SettingsStatus.feedMuteEnabled = oldMuteStatus;
+            SettingsStatus.advancedDownloadsEnabled = oldDownloadsStatus;
         }
     }
 
     /**
-     * The five switches sit in one card on Feed screen. They were split between Feed filter and
+     * The six switches sit in one card on Feed screen. They were split between Feed filter and
      * Playback, so nobody could tell from one page which controls a video would carry.
      */
     @Test public void everyOnVideoSwitchIsInOneCardOnFeedScreen() {
         boolean oldMuteStatus = SettingsStatus.feedMuteEnabled;
+        boolean oldDownloadsStatus = SettingsStatus.advancedDownloadsEnabled;
         SettingsStatus.feedMuteEnabled = true;
+        SettingsStatus.advancedDownloadsEnabled = true;
         try (var owner = Robolectric.buildActivity(
                 app.morphe.extension.tiktok.interaction.GestureActionsTest.TestActivity.class).setup()) {
             var host = owner.get();
@@ -138,7 +144,7 @@ public class FeedOverlaySettingsTest {
             new PlaybackPreferenceCategory(host, playback);
             for (BooleanSetting setting : new BooleanSetting[]{Settings.BLOCK_AUTHOR_BUTTON,
                     Settings.LOCAL_HIDE_BUTTON, Settings.BLOCK_SOUND_BUTTON,
-                    Settings.NOT_INTERESTED_BUTTON, Settings.FEED_MUTE_BUTTON}) {
+                    Settings.NOT_INTERESTED_BUTTON, Settings.FEED_MUTE_BUTTON, Settings.DOWNLOAD_BUTTON}) {
                 assertNotNull(setting.key + " is missing from Feed screen", feedScreen.findPreference(setting.key));
                 assertNull(setting.key + " is still on Feed filter", feedFilter.findPreference(setting.key));
                 assertNull(setting.key + " is still on Playback", playback.findPreference(setting.key));
@@ -156,6 +162,7 @@ public class FeedOverlaySettingsTest {
             assertNull(withoutFilter.findPreference(Settings.BLOCK_SOUND_BUTTON.key));
         } finally {
             SettingsStatus.feedMuteEnabled = oldMuteStatus;
+            SettingsStatus.advancedDownloadsEnabled = oldDownloadsStatus;
             SettingsStatus.feedFilterEnabled = true;
             Utils.setContext(activity);
         }

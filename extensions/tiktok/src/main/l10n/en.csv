@@ -170,6 +170,7 @@ Active,Active
 Activity,Activity
 Activity center (PIA),Activity center (PIA)
 Add,Add
+Add a button beside the block control that saves the video on screen in one tap. Drag it wherever you like.,Add a button beside the block control that saves the video on screen in one tap. Drag it wherever you like.
 Add a button beside the block control that turns the feed's sound off and on.,Add a button beside the block control that turns the feed's sound off and on.
 Add a button beside the block control to send feedback about the current video.,Add a button beside the block control to send feedback about the current video.
 Add a button that hides the current creator on this phone without blocking them.,Add a button that hides the current creator on this phone without blocking them.
@@ -468,6 +469,7 @@ Couldn't save the live photo's clip. Try again.,Couldn't save the live photo's c
 Couldn't save the seen-history file. Try again.,Couldn't save the seen-history file. Try again.
 Couldn't save the settings backup. Try again.,Couldn't save the settings backup. Try again.
 Couldn't save these choices. Try again.,Couldn't save these choices. Try again.
+Couldn't save this one. Try again.,Couldn't save this one. Try again.
 Couldn't save this override. Try again.,Couldn't save this override. Try again.
 "Couldn't save. Try again, or choose Automatic.","Couldn't save. Try again, or choose Automatic."
 Couldn't send the feedback. Try again in a moment.,Couldn't send the feedback. Try again in a moment.
@@ -1299,7 +1301,7 @@ Open the profile again and try once more,Open the profile again and try once mor
 Open the search page,Open the search page
 Open the story again and try once more,Open the story again and try once more
 "Open your profile once, then return here to choose its shortcuts.","Open your profile once, then return here to choose its shortcuts."
-Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound once a video starts playing.,Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound once a video starts playing.
+Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound while a video plays and gives it back when you leave the video.,Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound while a video plays and gives it back when you leave the video.
 "Opens TikTok's own profile background editor in Edit profile, and shows the backgrounds other profiles have set. TikTok's servers may still refuse to save one for an account TikTok hasn't offered it to yet.","Opens TikTok's own profile background editor in Edit profile, and shows the backgrounds other profiles have set. TikTok's servers may still refuse to save one for an account TikTok hasn't offered it to yet."
 Opens a GitHub report with your versions and settings filled in. Add what happened.,Opens a GitHub report with your versions and settings filled in. Add what happened.
 Opens github.com in your browser,Opens github.com in your browser
@@ -1568,6 +1570,7 @@ Save the video's cover,Save the video's cover
 "Save the video's cover picture at the largest size TikTok has, each time you tap Download. It goes to your photo folder, named after the video.","Save the video's cover picture at the largest size TikTok has, each time you tap Download. It goes to your photo folder, named after the video."
 "Save the videos @%1$s has seen, and when, to a JSON file. Anyone who opens the file can see that viewing history.","Save the videos @%1$s has seen, and when, to a JSON file. Anyone who opens the file can see that viewing history."
 "Save this account's seen videos, and when they were watched, to a JSON file. Anyone who opens the file can see that viewing history.","Save this account's seen videos, and when they were watched, to a JSON file. Anyone who opens the file can see that viewing history."
+Save this video,Save this video
 Save videos without sound,Save videos without sound
 "Save, restore, reset and undo your settings","Save, restore, reset and undo your settings"
 Saved,Saved
@@ -1759,6 +1762,7 @@ Show the hide button on videos,Show the hide button on videos
 Show the mute button on videos,Show the mute button on videos
 Show the progress bar,Show the progress bar
 Show the progress bar thumbnail,Show the progress bar thumbnail
+Show the save button on videos,Show the save button on videos
 "Show the search entry inside TikTok's LIVE drawer, where available. This doesn't add a search box to video comments.","Show the search entry inside TikTok's LIVE drawer, where available. This doesn't add a search box to video comments."
 Show the switch,Show the switch
 Show the time beside the progress bar,Show the time beside the progress bar

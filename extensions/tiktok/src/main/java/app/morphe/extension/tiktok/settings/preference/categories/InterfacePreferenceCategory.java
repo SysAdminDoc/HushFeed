@@ -205,7 +205,7 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
      */
     private void addButtonsOnVideos(Context context) {
         boolean any = SettingsStatus.blockAuthorEnabled || SettingsStatus.notInterestedEnabled
-                || SettingsStatus.feedMuteEnabled;
+                || SettingsStatus.feedMuteEnabled || SettingsStatus.advancedDownloadsEnabled;
         if (!any) return;
         addPreference(new SectionHeadingPreference(context, "Buttons on videos"));
         if (SettingsStatus.blockAuthorEnabled) {
@@ -242,6 +242,11 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             addPreference(new TogglePreference(context, "Show the mute button on videos",
                     "Add a button beside the block control that turns the feed's sound off and on.",
                     Settings.FEED_MUTE_BUTTON));
+        }
+        if (SettingsStatus.advancedDownloadsEnabled) {
+            addPreference(new TogglePreference(context, "Show the save button on videos",
+                    "Add a button beside the block control that saves the video on screen in one tap. Drag it wherever you like.",
+                    Settings.DOWNLOAD_BUTTON));
         }
     }
 

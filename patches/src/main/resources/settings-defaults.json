@@ -1,6 +1,8 @@
 {
   "patches": {
     "Advanced downloads": [
+      "download_button",
+      "download_button_position",
       "download_video_quality",
       "download_ask_quality",
       "download_original_photos",
@@ -1654,6 +1656,18 @@
     "feed_lock_hours": {
       "field": "FEED_LOCK_HOURS",
       "key": "feed_lock_hours",
+      "type": "string",
+      "default": ""
+    },
+    "download_button": {
+      "field": "DOWNLOAD_BUTTON",
+      "key": "download_button",
+      "type": "boolean",
+      "default": false
+    },
+    "download_button_position": {
+      "field": "DOWNLOAD_BUTTON_POSITION",
+      "key": "download_button_position",
       "type": "string",
       "default": ""
     },

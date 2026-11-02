@@ -168,6 +168,12 @@
   ],
   "settings": [
    {
+    "key": "download_button",
+    "default": false,
+    "type": "bool",
+    "row": "Show the save button on videos"
+   },
+   {
     "key": "download_video_quality",
     "default": "auto",
     "type": "string",

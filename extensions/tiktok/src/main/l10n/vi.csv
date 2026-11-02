@@ -1292,7 +1292,6 @@ Open the profile again and try once more,Hãy mở lại trang cá nhân và th�
 Open the search page,Mở trang tìm kiếm
 Open the story again and try once more,Hãy mở lại tin (story) và thử lại một lần nữa
 "Open your profile once, then return here to choose its shortcuts.",Hãy mở trang cá nhân của bạn một lần rồi quay lại đây để chọn các lối tắt.
-Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound once a video starts playing.,Mở TikTok hoặc tin nhắn của bạn sẽ không còn làm tạm dừng nhạc từ ứng dụng khác. TikTok chỉ chiếm quyền âm thanh khi một video bắt đầu phát.
 "Opens TikTok's own profile background editor in Edit profile, and shows the backgrounds other profiles have set. TikTok's servers may still refuse to save one for an account TikTok hasn't offered it to yet.",Mở trình chỉnh sửa ảnh nền trang cá nhân của TikTok trong mục Chỉnh sửa trang cá nhân và hiển thị ảnh nền mà các trang cá nhân khác đã đặt. Máy chủ của TikTok vẫn có thể từ chối lưu ảnh nền cho tài khoản chưa được bổ sung tính năng này.
 Opens a GitHub report with your versions and settings filled in. Add what happened.,Mở báo cáo GitHub với thông tin phiên bản và cài đặt của bạn được điền sẵn. Hãy mô tả thêm sự cố đã xảy ra.
 Opens github.com in your browser,Mở github.com trong trình duyệt của bạn
@@ -2365,3 +2364,8 @@ Keep LIVEs from these creators,Giữ LIVE của các nhà sáng tạo này
 "Optional. Leave empty for a proxy without a password. TikTok signs in through a small relay on this phone, which other apps here could reach while TikTok is open.","Không bắt buộc. Để trống nếu proxy không có mật khẩu. TikTok đăng nhập qua một trạm chuyển tiếp nhỏ trên điện thoại này, các ứng dụng khác trên máy có thể truy cập trạm đó khi TikTok đang mở."
 Proxy %1$s needs a user name and password,Proxy %1$s cần tên người dùng và mật khẩu
 Proxy %1$s refused your user name or password,Proxy %1$s từ chối tên hoặc mật khẩu
+Save this video,Lưu video này
+Show the save button on videos,Hiển thị nút lưu trên video
+Add a button beside the block control that saves the video on screen in one tap. Drag it wherever you like.,Thêm một nút bên cạnh điều khiển chặn để lưu video trên màn hình chỉ với một lần chạm. Bạn có thể kéo nút đến bất kỳ đâu.
+Couldn't save this one. Try again.,Không thể lưu. Vui lòng thử lại.
+Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound while a video plays and gives it back when you leave the video.,Mở TikTok hoặc tin nhắn của bạn sẽ không còn làm tạm dừng nhạc từ ứng dụng khác. TikTok chỉ chiếm âm thanh khi video đang phát và trả lại khi bạn rời khỏi video.

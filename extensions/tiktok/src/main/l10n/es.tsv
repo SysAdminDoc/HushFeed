@@ -1044,7 +1044,6 @@ Sound on	Sonido activado
 Sound	Sonido
 Play feed videos without sound and leave the phone's volume alone. Music from another app keeps playing while it's on. DMs, stories and LIVE keep their sound.	Reproduce los videos del feed sin sonido y no cambia el volumen del teléfono. La música de otra app sigue sonando mientras esté activado. Los mensajes directos, las historias y los LIVE conservan su sonido.
 Let other apps play until a video starts	Dejar sonar otras apps hasta que empiece un video
-Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound once a video starts playing.	Abrir TikTok o tus mensajes ya no pausa la música de otra app. TikTok toma el sonido cuando empieza a reproducirse un video.
 Show the mute button on videos	Mostrar el botón de silencio en los videos
 Add a button beside the block control that turns the feed's sound off and on.	Añade un botón junto al control de bloqueo que apaga y enciende el sonido del feed.
 Show the country a video was posted from next to the creator's name.	Mostrar el país desde el que se publicó un vídeo junto al nombre del creador.
@@ -2396,3 +2395,8 @@ With Hide LIVE videos on, these creators' LIVEs stay when TikTok sends them. Sep
 Optional. Leave empty for a proxy without a password. TikTok signs in through a small relay on this phone, which other apps here could reach while TikTok is open.	Opcional. Déjalo vacío si el proxy no tiene contraseña. TikTok inicia sesión a través de un pequeño relé en este teléfono, al que otras apps de aquí podrían acceder mientras TikTok esté abierto.
 Proxy %1$s needs a user name and password	El proxy %1$s pide usuario y contraseña
 Proxy %1$s refused your user name or password	El proxy %1$s rechazó usuario o contraseña
+Save this video	Guardar este video
+Show the save button on videos	Mostrar el botón de guardar en los videos
+Add a button beside the block control that saves the video on screen in one tap. Drag it wherever you like.	Añade un botón junto al control de bloqueo que guarda el video en pantalla con un toque. Arrástralo adonde quieras.
+Couldn't save this one. Try again.	No se pudo guardar. Reintenta.
+Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound while a video plays and gives it back when you leave the video.	Abrir TikTok o tus mensajes ya no pausa la música de otra app. TikTok toma el sonido mientras se reproduce un video y lo devuelve cuando sales del video.

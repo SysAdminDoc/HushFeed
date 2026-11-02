@@ -125,7 +125,7 @@ Unreleased settings use flat rows with the same controls in dark and light mode.
 
 ## Patches
 
-Simple mode in Morphe Manager selects 124 of these patches. Each row says what the patch does, whether its switch starts on or off, and where to find it. The other 19 stay out of the default selection, and you pick them in Expert mode:
+Simple mode in Morphe Manager selects 125 of these patches. Each row says what the patch does, whether its switch starts on or off, and where to find it. The other 19 stay out of the default selection, and you pick them in Expert mode:
 
 - Change app name, Custom launcher icon, Hide Play Store update offer, Look like the store app and Run beside the store app change the app's name, icon, signature, package or version code.
 - Accent color, AMOLED dark theme, Block P2P video relay, Remove content credential and card scanner assets, Remove creation tools, Remove LIVE extras, Remove unused language packs and Remove voice tools change TikTok's files while patching. Only a fresh patch takes that back.
@@ -136,7 +136,7 @@ Simple mode in Morphe Manager selects 124 of these patches. Each row says what t
 | Patch | Description |
 |---|---|
 | `Accent color` | Swaps the red of TikTok's main buttons and red text for blue, green, purple, orange, teal or a color code you type in this patch's options, or for the color of the phone's wallpaper theme on Android 12 and up. Unread dots and counts change with it. Warnings stay red, and so can icons with the red drawn in. It's built in while patching, so only patching again without it undoes it. |
-| `Advanced downloads` | Adds more ways to save: pick the video quality, save full-size photos, the sound on its own or a photo post as one video, hold a profile picture or story to save it, save a story or a video's cover from the share sheet, and pick videos on a profile grid to save in one run. Starts off. Turn it on in Hushfeed settings > Downloads. |
+| `Advanced downloads` | Adds more ways to save: pick the video quality, save full-size photos, the sound on its own or a photo post as one video, hold a profile picture or story to save it, save a story or a video's cover from the share sheet, put a save button on the video, and pick videos on a profile grid to save in one run. Starts off. Turn it on in Hushfeed settings > Downloads. |
 | `Allow Duet and Stitch` | Shows the Duet and Stitch buttons on videos whose creator turned them off, so you can still make one, and Add to Story in the share sheet and on stories when the creator turned off content reuse. TikTok may still refuse some videos or the upload. Starts off. Turn it on in Hushfeed settings > Share sheet. |
 | `Allow screenshots and Circle to Search` | Lets screenshots, screen recordings and Circle to Search work on TikTok screens that would otherwise come out black. Starts off. Turn it on in Hushfeed settings > App, then restart TikTok. |
 | `Always show publish date` | Shows the date a video was posted next to the creator's name, so you can tell how old it is. It can also show the exact time, dates and lengths on profile grids, or sort the videos a grid has loaded. On by default. Turn it off in Hushfeed settings > Feed screen. |

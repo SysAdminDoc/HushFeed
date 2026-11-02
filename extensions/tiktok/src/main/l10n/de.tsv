@@ -1047,7 +1047,6 @@ Sound on	Ton an
 Sound	Ton
 Play feed videos without sound and leave the phone's volume alone. Music from another app keeps playing while it's on. DMs, stories and LIVE keep their sound.	Feed-Videos ohne Ton abspielen und die Lautstärke des Telefons unverändert lassen. Musik aus einer anderen App läuft weiter, solange das an ist. DMs, Stories und LIVE behalten ihren Ton.
 Let other apps play until a video starts	Andere Apps spielen lassen, bis ein Video startet
-Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound once a video starts playing.	Wenn du TikTok oder deine Nachrichten öffnest, pausiert Musik aus einer anderen App nicht mehr. TikTok übernimmt den Ton erst, wenn ein Video abgespielt wird.
 Show the mute button on videos	Stummschalt-Schaltfläche auf Videos anzeigen
 Add a button beside the block control that turns the feed's sound off and on.	Neben der Blockieren-Schaltfläche eine Schaltfläche hinzufügen, die den Ton des Feeds aus- und einschaltet.
 Show the country a video was posted from next to the creator's name.	Das Land, aus dem ein Video veröffentlicht wurde, neben dem Namen des Creators anzeigen.
@@ -2399,3 +2398,8 @@ With Hide LIVE videos on, these creators' LIVEs stay when TikTok sends them. Sep
 Optional. Leave empty for a proxy without a password. TikTok signs in through a small relay on this phone, which other apps here could reach while TikTok is open.	Optional. Bei einem Proxy ohne Passwort leer lassen. TikTok meldet sich über ein kleines Relay auf diesem Telefon an, das andere Apps hier erreichen können, solange TikTok offen ist.
 Proxy %1$s needs a user name and password	Proxy %1$s braucht Name und Passwort
 Proxy %1$s refused your user name or password	Proxy %1$s lehnt Name oder Passwort ab
+Save this video	Dieses Video speichern
+Show the save button on videos	Speichern-Schaltfläche auf Videos anzeigen
+Add a button beside the block control that saves the video on screen in one tap. Drag it wherever you like.	Neben der Blockieren-Schaltfläche eine Schaltfläche hinzufügen, die das Video auf dem Bildschirm mit einem Tippen speichert. Zieh sie, wohin du möchtest.
+Couldn't save this one. Try again.	Nicht gespeichert. Versuch es erneut.
+Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound while a video plays and gives it back when you leave the video.	Wenn du TikTok oder deine Nachrichten öffnest, pausiert Musik aus einer anderen App nicht mehr. TikTok übernimmt den Ton, während ein Video läuft, und gibt ihn zurück, sobald du das Video verlässt.

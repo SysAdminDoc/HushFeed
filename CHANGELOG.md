@@ -12,6 +12,7 @@ Every Hushfeed release, newest first.
 * **TikTok:** `Copy bio and IDs` has a `Copy name` button now, so a profile's share sheet copies the display name as well as the username. Buttons that don't fit move down to a second line instead of running off the sheet.
 * **TikTok:** `Background play in the long-press menu` adds TikTok's own background play row to the long-press menu, so one video can keep playing while the others stop as usual. It starts off, and it's under Playback.
 * **TikTok:** `Keep LIVEs from these creators` lets the LIVEs of creators you pick stay in the feed while `Hide LIVE videos` is on. Add as many as you like, by handle or user ID. It keeps what TikTok sends you, so it won't bring in a LIVE TikTok didn't serve.
+* **TikTok:** `Show the save button on videos` puts a save button on the video, so one tap saves it with your save settings. It starts off, you can drag it wherever you like, and it's in Feed screen under Buttons on videos when `Advanced downloads` is patched in.
 
 ### Bug Fixes
 * **TikTok:** The "Saving video" message no longer sits under the "Video saved" banner on a quick save. The banner takes its place.

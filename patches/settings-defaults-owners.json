@@ -1,6 +1,8 @@
 {
   "patches": {
     "Advanced downloads": [
+      "DOWNLOAD_BUTTON",
+      "DOWNLOAD_BUTTON_POSITION",
       "DOWNLOAD_VIDEO_QUALITY",
       "DOWNLOAD_ASK_QUALITY",
       "DOWNLOAD_ORIGINAL_PHOTOS",

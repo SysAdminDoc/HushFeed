@@ -45,6 +45,31 @@ public final class OriginalPhotos {
     }
 
     /**
+     * The save button on the video. It runs the same steps as {@link #start}, but no TikTok save
+     * stands behind it: where that one hands the post back to TikTok, this one saves it here, so
+     * a tap is never a tap that did nothing.
+     */
+    public static void startFromButton(Object aweme, Context context) {
+        if (aweme == null || context == null) {
+            Utils.showToastShort(L10n.t("No video selected. Open a video first."));
+            return;
+        }
+        if (ExternalDownloader.handOff(aweme, context)) return;
+        if (QualityChoice.offer(aweme, context)) return;
+        if (!VideoDownloads.savesTheCover()) CoverSaver.beside(context, aweme);
+        if (VideoDownloads.start(aweme, context)) return;
+        boolean started;
+        if (Reflect.property(aweme, "getPhotoModeImageInfo", "photoModeImageInfo") != null) {
+            AudioDownloads.start(aweme, context);
+            started = savePhotos(aweme, context, null, false, true);
+        } else {
+            // TikTok's file by name, which saves the sound itself when that's wanted.
+            started = VideoDownloads.startPicked(aweme, context, VideoDownloads.AUTOMATIC);
+        }
+        if (!started) Utils.showToastShort(L10n.t("Couldn't save this one. Try again."));
+    }
+
+    /**
      * TikTok's own photo save job, which every photo save on 47.0.3 runs and the start above
      * never sees: "Download image" in the sheet a single photo asks with, a single photo saved
      * without asking, the photos picked in TikTok's selection sheet, and a TikTok Now save.

@@ -28,7 +28,9 @@ import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.Setting;
 import app.morphe.extension.shared.settings.StringSetting;
+import app.morphe.extension.tiktok.download.OriginalPhotos;
 import app.morphe.extension.tiktok.feedfilter.SoundIdentity;
+import app.morphe.extension.tiktok.interaction.GestureActions;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SystemBarInsets;
 import app.morphe.extension.tiktok.settings.preference.SettingsUi;
@@ -78,6 +80,7 @@ public final class BlockAuthorOverlay {
     private static WeakReference<View> soundButtonReference = new WeakReference<>(null);
     private static WeakReference<View> notInterestedReference = new WeakReference<>(null);
     private static WeakReference<View> muteReference = new WeakReference<>(null);
+    private static WeakReference<View> downloadReference = new WeakReference<>(null);
 
     /** Which banner a queued dismiss belongs to. Main thread only. */
     private static int undoGeneration;
@@ -121,7 +124,7 @@ public final class BlockAuthorOverlay {
         boolean anyBlockControl = Settings.BLOCK_AUTHOR_BUTTON.get()
                 || (SettingsStatus.feedFilterEnabled
                 && (Settings.LOCAL_HIDE_BUTTON.get() || Settings.BLOCK_SOUND_BUTTON.get()));
-        if (!anyBlockControl && !notInterestedEnabled() && !muteButtonEnabled()) {
+        if (!anyBlockControl && !notInterestedEnabled() && !muteButtonEnabled() && !downloadButtonEnabled()) {
             Utils.runOnMainThread(BlockAuthorOverlay::detach);
             return;
         }
@@ -185,6 +188,8 @@ public final class BlockAuthorOverlay {
             mute.setVisibility(visible && video && muteButtonEnabled() && governed ? View.VISIBLE : View.GONE);
             showMuteState(mute);
         }
+        View download = downloadReference.get();
+        if (download != null) download.setVisibility(visible && video && downloadButtonEnabled() ? View.VISIBLE : View.GONE);
     }
 
     /**
@@ -229,7 +234,7 @@ public final class BlockAuthorOverlay {
                 boolean anyBlockControl = Settings.BLOCK_AUTHOR_BUTTON.get()
                         || (SettingsStatus.feedFilterEnabled
                         && (Settings.LOCAL_HIDE_BUTTON.get() || Settings.BLOCK_SOUND_BUTTON.get()));
-                if (!anyBlockControl && !notInterestedEnabled() && !muteButtonEnabled()) return;
+                if (!anyBlockControl && !notInterestedEnabled() && !muteButtonEnabled() && !downloadButtonEnabled()) return;
                 VideoAuthor author = CurrentVideoAuthor.get();
                 if (author != null) attach(author, resumed);
             }
@@ -299,6 +304,10 @@ public final class BlockAuthorOverlay {
             mute.setLayoutParams(new FrameLayout.LayoutParams(size, size, Gravity.TOP | Gravity.LEFT));
             root.addView(mute);
             muteReference = new WeakReference<>(mute);
+            View download = createDownloadButton(activity);
+            download.setLayoutParams(new FrameLayout.LayoutParams(size, size, Gravity.TOP | Gravity.LEFT));
+            root.addView(download);
+            downloadReference = new WeakReference<>(download);
 
             // The root has no measured size until it lays out, so the saved fraction can
             // only be turned into margins once dimensions are known.
@@ -324,7 +333,9 @@ public final class BlockAuthorOverlay {
         View soundButton = soundButtonReference.get();
         View feedback = notInterestedReference.get();
         View mute = muteReference.get();
-        if (button == null || localHide == null || soundButton == null || feedback == null || mute == null) return;
+        View download = downloadReference.get();
+        if (button == null || localHide == null || soundButton == null || feedback == null || mute == null
+                || download == null) return;
         // A second attach can swap these references to another activity's controls before this
         // runs, since it is posted. Positioning those against this root would read the wrong
         // width and cast layout params off a view that is not a child of it.
@@ -337,7 +348,7 @@ public final class BlockAuthorOverlay {
         // ended up, so it has to be off its own saved fraction before they are worked out.
         applySavedPosition(button, root, size, Settings.BLOCK_AUTHOR_BUTTON_POSITION,
                 DEFAULT_X_FRACTION, DEFAULT_Y_FRACTION);
-        for (View view : new View[]{localHide, soundButton, feedback, mute}) {
+        for (View view : new View[]{localHide, soundButton, feedback, mute, download}) {
             float[] fractions = defaultFractions(view, root, button, size, step);
             applySavedPosition(view, root, size, positionSetting(view), fractions[0], fractions[1]);
         }
@@ -376,6 +387,11 @@ public final class BlockAuthorOverlay {
             return new float[]{(blockX + step * horizontalDirection) / root.getWidth(),
                     (blockY + step * verticalDirection) / root.getHeight()};
         }
+        if (view == downloadReference.get()) {
+            // One more down that side, beside the sound control.
+            return new float[]{(blockX + step * horizontalDirection) / root.getWidth(),
+                    (blockY + step * 2f * verticalDirection) / root.getHeight()};
+        }
         return new float[]{(blockX + step * horizontalDirection) / root.getWidth(),
                 blockY / root.getHeight()};
     }
@@ -402,7 +418,8 @@ public final class BlockAuthorOverlay {
     private static void clampCurrentPositions(ViewGroup root) {
         if (root.getWidth() == 0 || root.getHeight() == 0) return;
         for (View view : new View[]{buttonReference.get(), localHideReference.get(),
-                soundButtonReference.get(), notInterestedReference.get(), muteReference.get()}) {
+                soundButtonReference.get(), notInterestedReference.get(), muteReference.get(),
+                downloadReference.get()}) {
             if (view == null || view.getParent() != root) continue;
             ViewGroup.MarginLayoutParams params =
                     (ViewGroup.MarginLayoutParams) view.getLayoutParams();
@@ -447,6 +464,11 @@ public final class BlockAuthorOverlay {
             ((ViewGroup) mute.getParent()).removeView(mute);
         }
         muteReference = new WeakReference<>(null);
+        View download = downloadReference.get();
+        if (download != null && download.getParent() instanceof ViewGroup) {
+            ((ViewGroup) download.getParent()).removeView(download);
+        }
+        downloadReference = new WeakReference<>(null);
         dismissUndo();
     }
 
@@ -507,6 +529,27 @@ public final class BlockAuthorOverlay {
 
     private static boolean muteButtonEnabled() {
         return SettingsStatus.feedMuteEnabled && Settings.FEED_MUTE_BUTTON.get();
+    }
+
+    private static boolean downloadButtonEnabled() {
+        return SettingsStatus.advancedDownloadsEnabled && Settings.DOWNLOAD_BUTTON.get();
+    }
+
+    /** Saves the post on screen with the reader's save settings, in one tap (#299). */
+    private static View createDownloadButton(Activity activity) {
+        TextView button = new TextView(activity);
+        button.setGravity(Gravity.CENTER);
+        button.setContentDescription(L10n.t(activity, "Save this video"));
+        button.setFocusable(true);
+        Drawable glyph = new OverlayGlyphDrawable(OverlayGlyphDrawable.Shape.DOWNLOAD,
+                SettingsUi.OVERLAY_TEXT, SettingsUi.dp(activity, 2));
+        button.setBackground(SettingsUi.overlayControl(activity, SettingsUi.RADIUS_OVERLAY, glyph));
+        button.setOnClickListener(view -> {
+            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
+            OriginalPhotos.startFromButton(GestureActions.onScreenAweme(), view.getContext());
+        });
+        installDrag(button);
+        return button;
     }
 
     /**
@@ -873,6 +916,7 @@ public final class BlockAuthorOverlay {
         if (view == soundButtonReference.get()) return Settings.BLOCK_SOUND_BUTTON_POSITION;
         if (view == notInterestedReference.get()) return Settings.NOT_INTERESTED_BUTTON_POSITION;
         if (view == muteReference.get()) return Settings.FEED_MUTE_BUTTON_POSITION;
+        if (view == downloadReference.get()) return Settings.DOWNLOAD_BUTTON_POSITION;
         return Settings.BLOCK_AUTHOR_BUTTON_POSITION;
     }
 

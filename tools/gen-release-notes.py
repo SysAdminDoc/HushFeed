@@ -20,7 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CHANGELOG = ROOT / "CHANGELOG.md"
 OUTPUT = ROOT / "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/settings/preference/ReleaseNotesData.java"
 NOTES = ROOT / "extensions/tiktok/src/main/l10n/notes"
-LANGUAGES = ("az", "de", "es", "in", "it", "pt-rBR", "ru", "tr", "zh-Hans")
+LANGUAGES = ("az", "de", "es", "in", "it", "pt-rBR", "ru", "tr", "vi", "zh-Hans")
 START = (0, 60, 0)
 # Class-file bytes of notes text across TEXT and every table, which keeps the compiled
 # ReleaseNotesData under 150 KB. The newest release goes in even when it alone is larger.

@@ -26,7 +26,7 @@ from typing import NoReturn
 ROOT = Path(__file__).resolve().parents[1]
 CHANGELOG = ROOT / "CHANGELOG.md"
 NOTES = ROOT / "extensions/tiktok/src/main/l10n/notes"
-LANGUAGES = ("az", "de", "es", "in", "it", "pt-rBR", "ru", "tr", "zh-Hans")
+LANGUAGES = ("az", "de", "es", "in", "it", "pt-rBR", "ru", "tr", "vi", "zh-Hans")
 SCOPE = "* **TikTok:** "
 VERSION = re.compile(r"^\d+\.\d+\.\d+$")
 GUIDE = "concepts/patch-development.md"

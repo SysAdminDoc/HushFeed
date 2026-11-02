@@ -44,7 +44,7 @@ The main branch contains 144 patches: the 143 in v0.80.0 and Hide read receipts.
 - **Privacy:** Turn off supported telemetry, hide that you viewed a story or that you're typing, keep videos out of Watch history and put TikTok behind your fingerprint or PIN.
 - **Screen time:** Set a daily budget in videos or minutes with a hold when it runs out, or lock the feed and keep TikTok for messages.
 
-The settings screen comes in English, German, Spanish, Italian, Indonesian, Brazilian Portuguese, Russian, Turkish, Azerbaijani and Simplified Chinese. It follows the language TikTok runs in. Simplified Chinese is a first pass, so corrections are welcome.
+The settings screen comes in English, German, Spanish, Italian, Indonesian, Brazilian Portuguese, Russian, Turkish, Azerbaijani, Vietnamese and Simplified Chinese. It follows the language TikTok runs in. Simplified Chinese is a first pass, so corrections are welcome.
 
 The block, hide, sound and Not interested buttons Hushfeed can put on a video:
 

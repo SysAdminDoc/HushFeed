@@ -57,6 +57,8 @@ public final class LiveRecordChip {
     private static final long TICK_MS = 1000;
     /** onPause can run before Android has entered its native PiP window. */
     private static final long PIP_TRANSITION_MS = 1500;
+    /** A LIVE activity can be destroyed while TikTok itself remains open (including after PiP). */
+    static final LiveRecorder.End LIVE_ACTIVITY_DESTROYED_END = LiveRecorder.End.LEFT_ROOM;
 
     private static final Handler HANDLER = new Handler(Looper.getMainLooper());
 
@@ -160,7 +162,7 @@ public final class LiveRecordChip {
                     pipTransitionUntil = 0;
                     recordingWasPinned = false;
                     pipReturnUntil = 0;
-                    leave(LiveRecorder.End.APP_EXIT);
+                    leave(LIVE_ACTIVITY_DESTROYED_END);
                     removeChip();
                     clearScreen = false;
                     CLEAR_ROOM_STATES.clear();

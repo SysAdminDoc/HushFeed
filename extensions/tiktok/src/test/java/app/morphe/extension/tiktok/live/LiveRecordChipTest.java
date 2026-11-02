@@ -120,6 +120,10 @@ public class LiveRecordChipTest {
         assertFalse(LiveRecordChip.keepWhileHidden(false, false, 1, 10_000));
     }
 
+    @Test public void destroyingTheLiveActivityDoesNotClaimTikTokClosed() {
+        assertEquals(LiveRecorder.End.LEFT_ROOM, LiveRecordChip.LIVE_ACTIVITY_DESTROYED_END);
+    }
+
     @Test public void aRecreatedFragmentForTheSameLiveDoesNotMeanLeavingTheRoom() {
         assertTrue(LiveRecordChip.sameRoomId("1234", "1234"));
         assertFalse(LiveRecordChip.sameRoomId("1234", "5678"));

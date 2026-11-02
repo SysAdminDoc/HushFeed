@@ -9,16 +9,20 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.ss.android.ugc.aweme.feed.model.Aweme;
@@ -67,6 +71,11 @@ import app.morphe.extension.tiktok.settings.preference.SettingsUi;
  * holds {@link #LOAD_CAP} videos. That way the order covers the profile rather than the first
  * screen of it. A chip over the grid's top corner names the order and changes it in place.
  *
+ * <p>That chain used to play out in front of the reader, a fresh list or a pull to refresh showing
+ * TikTok's first page and then reshuffling page by page, which read as a slow sort and as the order
+ * being lost. A grid now stays out of sight while the chain runs and comes back once, sorted
+ * ({@link Hold}).
+ *
  * <p>The Liked tab has its own order, which follows the profile grids until one is chosen for it
  * there or from its chip ({@link #orderFor}).
  */
@@ -104,13 +113,18 @@ public final class GridSort {
     /** The most videos a sorted grid loads by itself. Past this the reader's scrolling loads more. */
     static final int LOAD_CAP = 300;
     /** The pause before asking for the next page, so a long profile isn't fetched in one burst. */
-    static final long NEXT_PAGE_DELAY_MS = 400;
-    /** How many videos a page asks for, TikTok's own count when nothing was flung. */
-    static final int PAGE_SIZE = 18;
+    static final long NEXT_PAGE_DELAY_MS = 100;
+    /** How many videos a page asks for. */
+    static final int PAGE_SIZE = 50;
     /** The source TikTok's footer names when it asks for a page. */
     static final String PAGE_SOURCE = "load_more_bind_footer";
+    /** The longest a grid stays out of sight, so a slow or dead request can't leave it hidden. */
+    static final long HOLD_LIMIT_MS = 12_000;
+    /** A hold shows nothing this early, so a profile with few videos doesn't flash a spinner. */
+    static final long HOLD_SPINNER_DELAY_MS = 250;
 
     static final String CHIP_TAG = "hushfeed_grid_sort_chip";
+    static final String HOLD_TAG = "hushfeed_grid_sort_hold";
 
     private static final Handler MAIN = new Handler(Looper.getMainLooper());
 
@@ -128,6 +142,8 @@ public final class GridSort {
     private static final Map<Object, Integer> TABS = new WeakHashMap<>();
     /** Per grid fragment class, the field that holds its adapter. */
     private static final Map<Class<?>, Field> ADAPTER_FIELDS = new WeakHashMap<>();
+    /** Per grid, its hold while its pages load. Main thread only. */
+    private static final Map<View, Hold> HOLDS = new WeakHashMap<>();
 
     private GridSort() {
     }
@@ -186,9 +202,13 @@ public final class GridSort {
         List<?> order = adapter == null ? list : tiktokOrder(adapter, list);
         List<?> out = sorted(order, chosen);
         if (adapter != null) {
-            remember(adapter, list, order);
+            int before = remember(adapter, list, order);
             int size = list == null ? 0 : list.size();
-            MAIN.post(() -> afterTikTok(adapter, 0, size));
+            // A first list or a shorter one is a fresh load or a pull to refresh. TikTok handing the
+            // same list back stays in sight. This has to happen here: a post runs after the frame.
+            boolean fresh = before == 0 || size < before;
+            if (fresh) startHold(adapter, size);
+            MAIN.post(() -> afterTikTok(adapter, 0, size, fresh));
         }
         return out;
     }
@@ -208,8 +228,8 @@ public final class GridSort {
             int size = list == null ? 0 : list.size();
             boolean moved = moved(list, out);
             MAIN.post(() -> {
-                if (moved) refresh(adapter);
-                afterTikTok(adapter, before, size);
+                if (moved && !holdTakesRefresh(adapter)) refresh(adapter);
+                afterTikTok(adapter, before, size, false);
             });
         }
         return out;
@@ -268,7 +288,12 @@ public final class GridSort {
         }
         showChip(adapter, grid);
         int size = original == null ? 0 : original.size();
-        if (wantsNextPage(order, 0, size, onScreen(grid))) askForNextPage(adapter);
+        if (wantsNextPage(order, 0, size, onScreen(grid)) && loadMoreListener(adapter) != null) {
+            startHold(adapter, size);
+            askForNextPage(adapter);
+        } else {
+            endHold(grid);
+        }
     }
 
     /**
@@ -446,18 +471,36 @@ public final class GridSort {
         return null;
     }
 
-    private static void afterTikTok(Object adapter, int before, int size) {
+    private static void afterTikTok(Object adapter, int before, int size, boolean fresh) {
+        View grid = null;
         try {
-            View grid = gridView(adapter);
+            grid = gridView(adapter);
+            View gridShown = grid;
             showChip(adapter, grid);
             boolean shown = onScreen(grid);
-            boolean next = wantsNextPage(orderFor(adapter), before, size, shown);
+            // TikTok takes the listener away once it knows it has no more. It decides that after it
+            // hands the list over, so this post is the first point that can tell.
+            boolean next = wantsNextPage(orderFor(adapter), before, size, shown) && loadMoreListener(adapter) != null;
             Logger.printDebug(() -> "Grid sort: page " + before + " -> " + size
-                    + (grid == null ? ", no grid" : shown ? "" : ", off screen") + (next ? ", asking for more" : ""));
-            if (next) askForNextPage(adapter);
+                    + (gridShown == null ? ", no grid" : shown ? "" : ", off screen") + (next ? ", asking for more" : ""));
+            if (next) {
+                // The grid can be laid out only now, which is too late for the hook's own start.
+                if (fresh) startHold(adapter, size);
+                showHoldCount(grid, size);
+                askForNextPage(adapter);
+            } else {
+                endHold(grid);
+            }
         } catch (Throwable ex) {
+            endHold(grid);
             Logger.printException(() -> "Could not finish a sorted grid page", ex);
         }
+    }
+
+    /** The listener TikTok's footer calls, which it clears once a grid has no more pages. */
+    private static Object loadMoreListener(Object adapter) {
+        Object listener = Reflect.invoke(adapter, "getLoadMoreListener");
+        return listener != null ? listener : Reflect.readField(adapter, "mmLoadMoreListener");
     }
 
     private static void askForNextPage(Object adapter) {
@@ -479,11 +522,11 @@ public final class GridSort {
                 synchronized (ORIGINALS) {
                     ASKED.remove(adapter);
                 }
+                endHold(gridView(adapter));
                 Logger.printDebug(() -> "Grid sort: next page dropped, order " + order + " or the grid left the screen");
                 return;
             }
-            Object listener = Reflect.invoke(adapter, "getLoadMoreListener");
-            if (listener == null) listener = Reflect.readField(adapter, "mmLoadMoreListener");
+            Object listener = loadMoreListener(adapter);
             if (listener != null && loadPage(listener, 0, PAGE_SIZE, PAGE_SOURCE)) {
                 Object loaderShown = listener;
                 Logger.printDebug(() -> "Grid sort: asked " + loaderShown.getClass().getName() + "'s page loader for the next page");
@@ -491,6 +534,10 @@ public final class GridSort {
             }
             Method next = listener == null ? null : Reflect.method(listener.getClass(), "loadMore");
             if (next == null) {
+                synchronized (ORIGINALS) {
+                    ASKED.remove(adapter);
+                }
+                endHold(gridView(adapter));
                 Logger.printDebug(() -> "Grid sort: no load more listener on " + adapter.getClass().getName());
                 return;
             }
@@ -498,8 +545,147 @@ public final class GridSort {
             Logger.printDebug(() -> "Grid sort: asking " + listenerShown.getClass().getName() + " for the next page");
             next.invoke(listener);
         } catch (Throwable ex) {
+            endHold(gridView(adapter));
             Logger.printException(() -> "Could not load the next page of a sorted grid", ex);
         }
+    }
+
+    /**
+     * A grid out of sight while its pages load. It stays laid out and shown, since {@link #onScreen}
+     * is what keeps the pages coming, and only its alpha drops. A cover over it takes the taps that
+     * would otherwise open a cell nobody can see, and shows a spinner with how many videos are in.
+     * The sort chip sits above the cover by its elevation, so the order can still change.
+     */
+    private static final class Hold {
+        final View cover;
+        final TextView count;
+        final Runnable limit;
+        final View.OnAttachStateChangeListener leaving;
+        Object adapter;
+        boolean refreshDue;
+
+        Hold(View cover, TextView count, Runnable limit, View.OnAttachStateChangeListener leaving, Object adapter) {
+            this.cover = cover;
+            this.count = count;
+            this.limit = limit;
+            this.leaving = leaving;
+            this.adapter = adapter;
+        }
+    }
+
+    /** A grid gone from the screen can't load, so its cover steps aside rather than eat taps until the limit. */
+    private static final class HoldCover extends FrameLayout {
+        private final View grid;
+
+        HoldCover(Context context, View grid) {
+            super(context);
+            this.grid = grid;
+        }
+
+        @Override
+        public boolean dispatchTouchEvent(MotionEvent event) {
+            if (onScreen(grid)) return super.dispatchTouchEvent(event);
+            letGoOfGrid(grid, this);
+            return false;
+        }
+    }
+
+    /** Called from the middle of the parent's own removal or touch pass, so the removal waits for the post. */
+    private static void letGoOfGrid(View grid, View cover) {
+        cover.setVisibility(View.GONE);
+        MAIN.post(() -> endHold(grid));
+    }
+
+    /** Takes the grid out of sight if it's about to load pages on its own. */
+    private static void startHold(Object adapter, int size) {
+        try {
+            if (Looper.myLooper() != Looper.getMainLooper() || size <= 0 || size >= LOAD_CAP) return;
+            if (comparator(orderFor(adapter)) == null) return;
+            View grid = gridView(adapter);
+            if (!onScreen(grid) || !(grid.getParent() instanceof FrameLayout)) return;
+            Object currentAdapter = Reflect.invoke(grid, "getAdapter");
+            if (currentAdapter != null && currentAdapter != adapter) return;
+            Hold held = HOLDS.get(grid);
+            if (held != null) {
+                held.adapter = adapter;
+                return;
+            }
+            Context context = grid.getContext();
+            FrameLayout cover = new HoldCover(context, grid);
+            cover.setTag(HOLD_TAG);
+            cover.setClickable(true);
+
+            LinearLayout box = new LinearLayout(context);
+            box.setGravity(Gravity.CENTER_VERTICAL);
+            box.setBackground(SettingsUi.overlayChip(context, SettingsUi.RADIUS_OVERLAY));
+            int paddingX = SettingsUi.dp(context, 12);
+            int paddingY = SettingsUi.dp(context, 8);
+            box.setPadding(paddingX, paddingY, paddingX, paddingY);
+            box.setVisibility(View.INVISIBLE);
+            ProgressBar spinner = new ProgressBar(context, null, android.R.attr.progressBarStyleSmall);
+            spinner.setIndeterminateTintList(ColorStateList.valueOf(SettingsUi.OVERLAY_TEXT));
+            int spinnerSize = SettingsUi.dp(context, 18);
+            box.addView(spinner, new LinearLayout.LayoutParams(spinnerSize, spinnerSize));
+            TextView count = new TextView(context);
+            count.setTextColor(SettingsUi.OVERLAY_TEXT);
+            count.setTextSize(TypedValue.COMPLEX_UNIT_SP, SettingsUi.TEXT_CAPTION);
+            count.setPadding(SettingsUi.dp(context, 8), 0, 0, 0);
+            count.setText(String.valueOf(size));
+            box.addView(count);
+            FrameLayout.LayoutParams boxAt = new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
+                    Gravity.TOP | Gravity.CENTER_HORIZONTAL);
+            boxAt.topMargin = SettingsUi.dp(context, 64);
+            cover.addView(box, boxAt);
+            ((FrameLayout) grid.getParent()).addView(cover, new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            grid.setAlpha(0f);
+
+            View.OnAttachStateChangeListener leaving = new View.OnAttachStateChangeListener() {
+                @Override
+                public void onViewAttachedToWindow(View view) {
+                }
+
+                @Override
+                public void onViewDetachedFromWindow(View view) {
+                    letGoOfGrid(grid, cover);
+                }
+            };
+            grid.addOnAttachStateChangeListener(leaving);
+            Hold hold = new Hold(cover, count, () -> endHold(grid), leaving, adapter);
+            HOLDS.put(grid, hold);
+            MAIN.postDelayed(hold.limit, HOLD_LIMIT_MS);
+            MAIN.postDelayed(() -> box.setVisibility(View.VISIBLE), HOLD_SPINNER_DELAY_MS);
+            Logger.printDebug(() -> "Grid sort: holding the grid at " + size);
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Could not hold a sorted grid", ex);
+        }
+    }
+
+    private static void showHoldCount(View grid, int size) {
+        Hold hold = HOLDS.get(grid);
+        if (hold != null) hold.count.setText(String.valueOf(size));
+    }
+
+    /** Whether a page's refresh can wait for the end of the hold: one refresh, not one per page. */
+    private static boolean holdTakesRefresh(Object adapter) {
+        Hold hold = HOLDS.get(gridView(adapter));
+        if (hold == null) return false;
+        hold.refreshDue = true;
+        return true;
+    }
+
+    /** Brings the grid back, with the one refresh the pages it hid were owed. */
+    private static void endHold(View grid) {
+        Hold hold = grid == null ? null : HOLDS.remove(grid);
+        if (hold == null) return;
+        MAIN.removeCallbacks(hold.limit);
+        grid.removeOnAttachStateChangeListener(hold.leaving);
+        grid.setAlpha(1f);
+        ViewParent parent = hold.cover.getParent();
+        if (parent instanceof ViewGroup) ((ViewGroup) parent).removeView(hold.cover);
+        if (hold.refreshDue) refresh(hold.adapter);
+        Logger.printDebug(() -> "Grid sort: hold over");
     }
 
     /**
@@ -970,6 +1156,7 @@ public final class GridSort {
             REWRITTEN.clear();
             TABS.clear();
         }
+        HOLDS.clear();
         synchronized (ADAPTER_FIELDS) {
             ADAPTER_FIELDS.clear();
         }

@@ -264,7 +264,7 @@ public class GridSortTest {
     public static final class GridAdapter {
         public List<?> mmItems;
         public View mmRecyclerView;
-        final Listener listener = new Listener();
+        Listener listener = new Listener();
         int refreshes;
         public Listener getLoadMoreListener() { return listener; }
         public void notifyDataSetChanged() { refreshes++; }
@@ -336,6 +336,172 @@ public class GridSortTest {
             assertEquals("a page that added nothing stops", 2, adapter.listener.calls);
             idle(5_000);
             assertEquals(2, adapter.listener.calls);
+        }
+    }
+
+    private static View holdOn(GridAdapter adapter) {
+        FrameLayout frame = (FrameLayout) adapter.mmRecyclerView.getParent();
+        for (int i = 0; i < frame.getChildCount(); i++) {
+            View child = frame.getChildAt(i);
+            if (GridSort.HOLD_TAG.equals(child.getTag())) return child;
+        }
+        return null;
+    }
+
+    private static void assertHeld(GridAdapter adapter) {
+        assertEquals("out of sight", 0f, adapter.mmRecyclerView.getAlpha(), 0f);
+        assertTrue("a cell nobody can see can't be tapped", holdOn(adapter).isClickable());
+    }
+
+    private static void assertInSight(GridAdapter adapter) {
+        assertEquals(1f, adapter.mmRecyclerView.getAlpha(), 0f);
+        assertNull(holdOn(adapter));
+    }
+
+    /** #180: the chain read as a slow sort, and on a pull to refresh as the order being lost. */
+    @Test public void aFreshGridStaysOutOfSightUntilItsLastPageThenRefreshesOnce() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            GridAdapter adapter = gridOnScreen(controller.get());
+            Settings.PROFILE_GRID_SORT.save("newest");
+            List<Aweme> model = posts(30);
+            adapter.mmItems = GridSort.data(adapter, model);
+            assertHeld(adapter);
+
+            idle(GridSort.NEXT_PAGE_DELAY_MS + 100);
+            model.addAll(0, posts(30));
+            adapter.mmItems = GridSort.page(adapter, model);
+            idle(GridSort.NEXT_PAGE_DELAY_MS + 100);
+            assertHeld(adapter);
+            assertEquals("no refresh while it's out of sight", 0, adapter.refreshes);
+
+            adapter.mmItems = GridSort.page(adapter, model);
+            idle(0);
+            assertInSight(adapter);
+            assertEquals("one refresh as it comes back", 1, adapter.refreshes);
+        }
+    }
+
+    @Test public void aHoldEndsAtTheCapAndAtItsLimit() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            GridAdapter capped = gridOnScreen(controller.get());
+            Settings.PROFILE_GRID_SORT.save("newest");
+            List<Aweme> model = posts(30);
+            capped.mmItems = GridSort.data(capped, model);
+            assertHeld(capped);
+            model.addAll(posts(GridSort.LOAD_CAP));
+            capped.mmItems = GridSort.page(capped, model);
+            idle(0);
+            assertInSight(capped);
+
+            GridAdapter unanswered = gridOnScreen(controller.get());
+            unanswered.mmItems = GridSort.data(unanswered, posts(30));
+            assertHeld(unanswered);
+            idle(GridSort.HOLD_LIMIT_MS - 100);
+            assertHeld(unanswered);
+            idle(200);
+            assertInSight(unanswered);
+        }
+    }
+
+    private static boolean coverTakes(FrameLayout frame) {
+        int size = View.MeasureSpec.makeMeasureSpec(400, View.MeasureSpec.EXACTLY);
+        frame.measure(size, size);
+        frame.layout(0, 0, 400, 400);
+        android.view.MotionEvent down = android.view.MotionEvent.obtain(0, 0,
+                android.view.MotionEvent.ACTION_DOWN, 200, 200, 0);
+        try {
+            return frame.dispatchTouchEvent(down);
+        } finally {
+            down.recycle();
+        }
+    }
+
+    /** With the grid gone nothing would answer the pages, and the taps belong to whatever replaced it. */
+    @Test public void aHoldLetsGoAsSoonAsItsGridLeaves() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            GridAdapter detached = gridOnScreen(controller.get());
+            View grid = detached.mmRecyclerView;
+            FrameLayout frame = (FrameLayout) grid.getParent();
+            Settings.PROFILE_GRID_SORT.save("newest");
+            detached.mmItems = GridSort.data(detached, posts(30));
+            assertHeld(detached);
+            assertTrue("a cover in place takes the tap", coverTakes(frame));
+
+            frame.removeView(grid);
+            assertFalse("gone as the grid goes, before any queued work", coverTakes(frame));
+            idle(0);
+            assertEquals(1f, grid.getAlpha(), 0f);
+            for (int i = 0; i < frame.getChildCount(); i++) {
+                assertFalse(GridSort.HOLD_TAG.equals(frame.getChildAt(i).getTag()));
+            }
+
+            GridAdapter hidden = gridOnScreen(controller.get());
+            hidden.mmItems = GridSort.data(hidden, posts(30));
+            assertHeld(hidden);
+            FrameLayout hiddenFrame = (FrameLayout) hidden.mmRecyclerView.getParent();
+            hidden.mmRecyclerView.setVisibility(View.GONE);
+            assertFalse("a hidden grid's cover lets the first tap through", coverTakes(hiddenFrame));
+            idle(0);
+            assertEquals(1f, hidden.mmRecyclerView.getAlpha(), 0f);
+            assertNull(holdOn(hidden));
+        }
+    }
+
+    /** TikTok clears the listener right after handing over a profile's last videos. */
+    @Test public void aProfileWithNoMorePagesComesBackAtOnce() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            GridAdapter adapter = gridOnScreen(controller.get());
+            Settings.PROFILE_GRID_SORT.save("newest");
+            Listener listener = adapter.listener;
+            adapter.listener = null;
+            adapter.mmItems = GridSort.data(adapter, posts(5));
+            idle(0);
+            assertInSight(adapter);
+            idle(GridSort.NEXT_PAGE_DELAY_MS * 2);
+            assertEquals(0, listener.calls);
+        }
+    }
+
+    @Test public void originalOrderAndAnOffScreenGridAndTheSameListAgainStayAsTheyAre() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            GridAdapter stock = gridOnScreen(controller.get());
+            Settings.PROFILE_GRID_SORT.save("off");
+            stock.mmItems = GridSort.data(stock, posts(30));
+            assertInSight(stock);
+
+            Settings.PROFILE_GRID_SORT.save("newest");
+            GridAdapter hidden = gridOnScreen(controller.get());
+            hidden.mmRecyclerView.setVisibility(View.GONE);
+            hidden.mmItems = GridSort.data(hidden, posts(30));
+            assertInSight(hidden);
+
+            GridAdapter adapter = gridOnScreen(controller.get());
+            List<Aweme> model = posts(30);
+            adapter.mmItems = GridSort.data(adapter, model);
+            adapter.mmItems = GridSort.page(adapter, model);
+            idle(0);
+            assertInSight(adapter);
+            adapter.mmItems = GridSort.data(adapter, model);
+            assertInSight(adapter);
+            adapter.mmItems = GridSort.data(adapter, model.subList(0, 9));
+            assertHeld(adapter);
+        }
+    }
+
+    @Test public void anOrderPickedFromTheChipHoldsAndOriginalOrderLetsGo() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            GridAdapter adapter = gridOnScreen(controller.get());
+            Settings.PROFILE_GRID_SORT.save("off");
+            adapter.mmItems = GridSort.data(adapter, posts(30));
+            idle(0);
+            assertInSight(adapter);
+
+            GridSort.apply(adapter, "newest");
+            assertHeld(adapter);
+            assertTrue("the chip stays above the cover to change the order",
+                    chip(adapter).getElevation() > holdOn(adapter).getElevation());
+            GridSort.apply(adapter, "off");
+            assertInSight(adapter);
         }
     }
 
@@ -534,6 +700,7 @@ public class GridSortTest {
             assertEquals("the viewer had the sorted order", "apecdfb", ids(model));
 
             selectOrder(adapter, "off");
+            int asked = adapter.listener.calls;
             assertEquals("off", Settings.PROFILE_GRID_SORT.get());
             assertEquals("native order includes pinned and missing-value posts", "abcdefp", ids(adapter.mmItems));
             assertSame("Original keeps the active control", originalControl, chip(adapter));
@@ -546,7 +713,7 @@ public class GridSortTest {
                 assertSame("the grid and viewer own the same post at " + i, model.get(i), adapter.mmItems.get(i));
             }
             idle(GridSort.NEXT_PAGE_DELAY_MS * 2);
-            assertEquals("Original leaves paging to TikTok", 0, adapter.listener.calls);
+            assertEquals("Original leaves paging to TikTok", asked, adapter.listener.calls);
 
             selectOrder(adapter, "off");
             assertSame("selecting Original again keeps the route", originalControl, chip(adapter));
@@ -566,6 +733,7 @@ public class GridSortTest {
             adapter.mmItems = GridSort.data(adapter, model);
             idle(0);
             selectOrder(adapter, "off");
+            int asked = adapter.listener.calls;
             TextView originalControl = chip(adapter);
             assertNotNull("Original leaves its control on the current grid", originalControl);
 
@@ -575,7 +743,7 @@ public class GridSortTest {
             assertSame(model, adapter.mmItems);
             assertEquals("abcdefpg", ids(adapter.mmItems));
             assertSame("the same grid's next page keeps its menu", originalControl, chip(adapter));
-            assertEquals(0, adapter.listener.calls);
+            assertEquals(asked, adapter.listener.calls);
 
             adapter.mmRecyclerView.setVisibility(View.GONE);
             idle(50);
@@ -1241,6 +1409,7 @@ public class GridSortTest {
             idle(50);
             GridAdapter adapter = new GridAdapter();
             adapter.mmRecyclerView = grid;
+            adapter.listener = null;
             Settings.PROFILE_GRID_SORT.save("newest");
             adapter.mmItems = GridSort.data(adapter, grid());
             idle(50);

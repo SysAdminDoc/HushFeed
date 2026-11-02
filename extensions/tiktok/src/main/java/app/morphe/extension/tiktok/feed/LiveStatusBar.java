@@ -139,7 +139,7 @@ public final class LiveStatusBar {
         });
     }
 
-    static boolean isLiveRoom(Activity activity) {
+    public static boolean isLiveRoom(Activity activity) {
         return activity != null && LIVE_ROOM.equals(activity.getClass().getName());
     }
 

@@ -8,11 +8,18 @@ import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
 import android.content.Context;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.PausedProcess;
+import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 import com.ss.android.ugc.aweme.feed.model.Aweme;
+import com.ss.android.ugc.aweme.live.LivePlayActivity;
+import java.lang.ref.WeakReference;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +36,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
+import org.robolectric.util.ReflectionHelpers;
 
 /**
  * Mute feed videos: a feed video's engine is silenced as it plays and given its sound back on
@@ -683,6 +691,159 @@ public class FeedMuteTest {
         FeedMute.onVideoPlaying();
         idleMain();
         assertEquals(List.of(), calls);
+    }
+
+    /**
+     * TikTok's focus is a transient grant it keeps until it closes, so music it paused stayed
+     * paused all through the inbox (#283). Leaving the video hands it back, the music app carries
+     * on by itself, and the next video asks again.
+     */
+    @Test public void leavingAVideoGivesTheFocusBackAndTheNextVideoAsksAgain() {
+        Settings.FOCUS_WAITS_FOR_VIDEO.save(true);
+        assertTrue(FeedMute.holdPageFocus("page"));
+        assertTrue(FeedMute.holdSessionFocus("session"));
+        FeedMute.onVideoPlaying();
+        idleMain();
+        calls.clear();
+
+        ActivityController<OtherScreen> other = openOverFeed(OtherScreen.class);
+        try {
+            idleFor(3000);
+            assertEquals(List.of("abandon session session", "abandon page page"), calls);
+
+            calls.clear();
+            idleFor(3000);
+            assertEquals("given back once", List.of(), calls);
+
+            FeedMute.onVideoPlaying();
+            idleMain();
+            assertEquals(List.of("request session session", "request page page"), calls);
+
+            calls.clear();
+            idleFor(3000);
+            assertEquals("and back again", List.of("abandon session session", "abandon page page"), calls);
+        } finally {
+            other.pause().stop().destroy();
+        }
+    }
+
+    /** TikTok asks on each resume, and once a video has played that ask goes straight through. */
+    @Test public void aRequestLetThroughAfterAVideoPlayedIsGivenBackToo() {
+        Settings.FOCUS_WAITS_FOR_VIDEO.save(true);
+        FeedMute.onVideoPlaying();
+        idleMain();
+        assertFalse(FeedMute.holdPageFocus("page"));
+
+        ActivityController<OtherScreen> other = openOverFeed(OtherScreen.class);
+        try {
+            idleFor(3000);
+            assertEquals(List.of("abandon page page"), calls);
+        } finally {
+            other.pause().stop().destroy();
+        }
+    }
+
+    /** The Friends tab or a story plays off the feed: its progress keeps the sound with TikTok. */
+    @Test public void aVideoStillPlayingOffTheFeedKeepsTheFocus() {
+        Settings.FOCUS_WAITS_FOR_VIDEO.save(true);
+        assertTrue(FeedMute.holdPageFocus("page"));
+        FeedMute.onVideoPlaying();
+        idleMain();
+        calls.clear();
+
+        ActivityController<OtherScreen> other = openOverFeed(OtherScreen.class);
+        try {
+            for (int i = 0; i < 6; i++) {
+                idleFor(1000);
+                FeedMute.onVideoPlaying();
+            }
+            assertEquals(List.of(), calls);
+        } finally {
+            other.pause().stop().destroy();
+        }
+    }
+
+    @Test public void aVideoPausedOnTheFeedKeepsTheFocus() {
+        Settings.FOCUS_WAITS_FOR_VIDEO.save(true);
+        bringFeedForward();
+        assertTrue(FeedMute.holdPageFocus("page"));
+        FeedMute.onVideoPlaying();
+        idleMain();
+        calls.clear();
+
+        idleFor(5000);
+        assertEquals(List.of(), calls);
+    }
+
+    /** Inbox and Profile are tabs of the feed's own activity, so the Home tab tells them apart. */
+    @Test public void anotherTabOfTheFeedScreenGivesTheFocusBack() {
+        Settings.FOCUS_WAITS_FOR_VIDEO.save(true);
+        bringFeedForward();
+        assertTrue(FeedMute.holdPageFocus("page"));
+        FeedMute.onVideoPlaying();
+        idleMain();
+        calls.clear();
+
+        ViewGroup content = feed.get().findViewById(android.R.id.content);
+        View home = new View(feed.get());
+        home.setSelected(false);
+        content.addView(home, new FrameLayout.LayoutParams(216, 138));
+        idleMain();
+        WeakReference<View> oldHome = ReflectionHelpers.getStaticField(FeedVisibility.class, "homeTabReference");
+        ReflectionHelpers.setStaticField(FeedVisibility.class, "homeTabReference", new WeakReference<>(home));
+        try {
+            idleFor(3000);
+            assertEquals(List.of("abandon page page"), calls);
+        } finally {
+            ReflectionHelpers.setStaticField(FeedVisibility.class, "homeTabReference", oldHome);
+        }
+    }
+
+    /** A LIVE room plays without the progress reports this listens to. */
+    @Test public void aLiveRoomKeepsTheFocus() {
+        Settings.FOCUS_WAITS_FOR_VIDEO.save(true);
+        assertTrue(FeedMute.holdPageFocus("page"));
+        FeedMute.onVideoPlaying();
+        idleMain();
+        calls.clear();
+
+        ActivityController<LivePlayActivity> room = openOverFeed(LivePlayActivity.class);
+        try {
+            idleFor(5000);
+            assertEquals(List.of(), calls);
+        } finally {
+            room.pause().stop().destroy();
+        }
+    }
+
+    @Test public void withTheSwitchOffLeavingAVideoGivesNothingBack() {
+        assertFalse(FeedMute.holdPageFocus("page"));
+        FeedMute.onVideoPlaying();
+        idleMain();
+
+        ActivityController<OtherScreen> other = openOverFeed(OtherScreen.class);
+        try {
+            idleFor(5000);
+            assertEquals(List.of(), calls);
+        } finally {
+            other.pause().stop().destroy();
+        }
+    }
+
+    /** Another of TikTok's activities resumed over the feed, the feed left as it was. */
+    private <T extends Activity> ActivityController<T> openOverFeed(Class<T> screen) {
+        Utils.setActivity(feed.get());
+        return Robolectric.buildActivity(screen).setup();
+    }
+
+    /** Puts the feed in front of whatever an earlier test left behind. */
+    private void bringFeedForward() {
+        Utils.setActivity(feed.get());
+        feed.pause().resume();
+    }
+
+    private static void idleFor(long millis) {
+        org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(Duration.ofMillis(millis));
     }
 
     private static void idleMain() {

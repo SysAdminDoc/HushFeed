@@ -338,7 +338,7 @@ val feedMutePatch = bytecodePatch(
     name = "Mute feed videos",
     description = "Mutes feed videos without changing your phone's volume, so music from " +
         "another app keeps playing. You can also add a mute button on videos, or keep the sound " +
-        "and let other apps play until a video starts. Starts off. Turn it on in Hushfeed " +
+        "and let other apps play until a video starts and after you leave it. Starts off. Turn it on in Hushfeed " +
         "settings > Playback.",
 ) {
     category("Playback")

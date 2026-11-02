@@ -8,12 +8,14 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.SystemClock;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.shared.settings.preference.LogBufferManager;
 import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
+import app.morphe.extension.tiktok.feed.LiveStatusBar;
 import app.morphe.extension.tiktok.feedfilter.LiveFilter;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
@@ -117,6 +119,20 @@ public final class FeedMute {
     private static volatile boolean videoPlayed;
     private static volatile WeakReference<Object> owedSession = new WeakReference<>(null);
     private static volatile WeakReference<Object> owedPage = new WeakReference<>(null);
+    /**
+     * The focus let through for the video playing, newest of each kind, given back when the reader
+     * has left it. TikTok's grant is a transient one, so a music app picks up again by itself, and
+     * TikTok never gave it up on its way to the inbox (#283). Written under OWED.
+     */
+    private static volatile WeakReference<Object> grantedSession = new WeakReference<>(null);
+    private static volatile WeakReference<Object> grantedPage = new WeakReference<>(null);
+    private static volatile long lastPlayingAt;
+    /** Main thread. */
+    private static boolean leaveCheckRunning;
+    static final long LEAVE_CHECK_MS = 1000L;
+    /** Longer than TikTok's gap between progress reports, so a video on another tab still counts. */
+    static final long LEAVE_QUIET_MS = 1500L;
+    private static final Runnable LEAVE_CHECK = FeedMute::checkLeftTheVideo;
     private static WeakReference<Application> followed = new WeakReference<>(null);
     /** Feed engines this silenced, and focus requests it turned down, since TikTok started. */
     private static final AtomicLong SILENCED = new AtomicLong();
@@ -144,6 +160,8 @@ public final class FeedMute {
                     refreshOwed = false;
                     refresh();
                 }
+                // The switch may have just been turned on in settings, with a video already played.
+                startLeaveCheck();
             }
 
             @Override public void onActivityPaused(Activity paused) {
@@ -364,7 +382,9 @@ public final class FeedMute {
      * TikTok meant it to. Any thread.
      */
     public static void onVideoPlaying() {
-        if (videoPlayed || !SettingsStatus.feedMuteEnabled) return;
+        if (!SettingsStatus.feedMuteEnabled) return;
+        lastPlayingAt = SystemClock.uptimeMillis();
+        if (videoPlayed) return;
         Object session;
         Object page;
         synchronized (OWED) {
@@ -374,13 +394,15 @@ public final class FeedMute {
             page = owedPage.get();
             owedSession = new WeakReference<>(null);
             owedPage = new WeakReference<>(null);
+            if (session != null) grantedSession = new WeakReference<>(session);
+            if (page != null) grantedPage = new WeakReference<>(page);
         }
-        if (session == null && page == null) return;
         Utils.runOnMainThread(() -> {
             // Through TikTok's own requests, so a muted feed still turns them down below.
             if (session != null) requestSessionFocus(session);
             Context context = Utils.getContext();
             if (page != null && context != null) requestPageFocus(page, context);
+            startLeaveCheck();
         });
     }
 
@@ -389,7 +411,64 @@ public final class FeedMute {
             videoPlayed = false;
             owedSession = new WeakReference<>(null);
             owedPage = new WeakReference<>(null);
+            grantedSession = new WeakReference<>(null);
+            grantedPage = new WeakReference<>(null);
         }
+    }
+
+    /** Main thread. */
+    private static void startLeaveCheck() {
+        if (leaveCheckRunning || !videoPlayed || !Settings.FOCUS_WAITS_FOR_VIDEO.get()) return;
+        leaveCheckRunning = true;
+        Utils.runOnMainThreadDelayed(LEAVE_CHECK, LEAVE_CHECK_MS);
+    }
+
+    /** Runs only while a video holds the focus with the switch on. Main thread. */
+    private static void checkLeftTheVideo() {
+        leaveCheckRunning = false;
+        try {
+            if (!videoPlayed || !Settings.FOCUS_WAITS_FOR_VIDEO.get()) return;
+            if (leftTheVideo()) {
+                giveFocusBack();
+                return;
+            }
+            startLeaveCheck();
+        } catch (Throwable failure) {
+            HookStatus.threw(HOOK_FAMILY, "left the video", failure);
+        }
+    }
+
+    /**
+     * Nothing has played for a moment and the screen in front has no video to go back to: another
+     * tab, a chat, the creator's page. A video paused on the feed or a detail pager keeps the
+     * focus as it always has, and a LIVE room plays without the progress reports heard here.
+     * Gone from the app altogether, TikTok has given the focus up itself, and background play
+     * keeps what it holds.
+     */
+    private static boolean leftTheVideo() {
+        if (SystemClock.uptimeMillis() - lastPlayingAt < LEAVE_QUIET_MS || inBackground()) return false;
+        Activity front = Utils.getVisibleActivity();
+        if (front == null || FeedVisibility.isDetailPager(front) || LiveStatusBar.isLiveRoom(front)) return false;
+        return front.getClass() != feedActivity || !FeedVisibility.isOnFeed(front);
+    }
+
+    /** Hands the focus back and keeps it owed, so the next video asks again. Main thread. */
+    private static void giveFocusBack() {
+        Object session;
+        Object page;
+        synchronized (OWED) {
+            videoPlayed = false;
+            session = grantedSession.get();
+            page = grantedPage.get();
+            owedSession = new WeakReference<>(session);
+            owedPage = new WeakReference<>(page);
+            grantedSession = new WeakReference<>(null);
+            grantedPage = new WeakReference<>(null);
+        }
+        if (session != null) abandonSessionFocus(session);
+        Context context = Utils.getContext();
+        if (page != null && context != null) abandonPageFocus(page, context);
+        HookStatus.bound(HOOK_FAMILY, "focus given back after a video");
     }
 
     /** A video on the feed or a detail pager, not a story and not LIVE. */
@@ -540,6 +619,8 @@ public final class FeedMute {
                 // Switched off while one waited: TikTok's next request goes through as it is.
                 owedSession = new WeakReference<>(null);
                 owedPage = new WeakReference<>(null);
+                if (page) grantedPage = new WeakReference<>(helper);
+                else grantedSession = new WeakReference<>(helper);
                 return false;
             }
             if (page) owedPage = new WeakReference<>(helper);
@@ -671,6 +752,8 @@ public final class FeedMute {
         refreshOwed = false;
         focusOwed = false;
         forgetPlayedVideo();
+        leaveCheckRunning = false;
+        lastPlayingAt = 0L;
         feedActivity = null;
         nativeForTests = null;
         SILENCED.set(0);

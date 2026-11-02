@@ -20,6 +20,7 @@ Every Hushfeed release, newest first.
 
 ### Bug Fixes
 * **TikTok:** `Thumbs down blocks the commenter` takes that person's comments out of the list right away now. Before, the comment only dimmed and stayed where it was.
+* **TikTok:** `Hide the Send to row` and `Hide people and options by name` reach the row of friends in the menu a long press on a comment opens. They only reached the share sheet's row before.
 * **TikTok:** `AMOLED dark theme` turns the gray cards in the comment menu and the long-press video menu black, along with the panel behind them.
 * **TikTok:** The "Saving video" message no longer sits under the "Video saved" banner on a quick save. The banner takes its place.
 * **TikTok:** With `Let other apps play until a video starts` on, music from another app comes back when you leave a video for your messages, a profile or another tab. TikTok used to keep the sound until you closed it. It asks again when the next video plays, and a video you've paused on the feed still holds on to it.

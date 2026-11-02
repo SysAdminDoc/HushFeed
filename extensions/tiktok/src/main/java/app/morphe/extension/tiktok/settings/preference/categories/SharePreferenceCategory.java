@@ -51,7 +51,7 @@ public final class SharePreferenceCategory extends ConditionalPreferenceCategory
             addPreference(new TogglePreference(
                     context,
                     "Hide the Send to row",
-                    "Hide the row of friends at the top of the share sheet.",
+                    "Hide the row of friends at the top of the share sheet and in the menu a long press on a comment opens.",
                     Settings.HIDE_SHARE_CONTACTS
             ));
             addPreference(new ShareActionChecklistPreference(context));

@@ -8,6 +8,7 @@ package app.morphe.extension.tiktok.inbox;
 
 import java.lang.reflect.Field;
 
+import app.morphe.extension.shared.Logger;
 import app.morphe.extension.tiktok.settings.Settings;
 
 /**
@@ -44,7 +45,9 @@ public final class HideReadReceipts {
                 batchMarkRead = type.getField("batch_mark_read_body");
                 knownType = type;
             }
-            return markRead.get(requestBody) != null || batchMarkRead.get(requestBody) != null;
+            boolean receipt = markRead.get(requestBody) != null || batchMarkRead.get(requestBody) != null;
+            if (receipt) Logger.printDebug(() -> "Held back a read receipt");
+            return receipt;
         } catch (Throwable error) {
             return false;
         }

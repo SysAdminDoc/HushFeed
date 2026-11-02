@@ -200,6 +200,30 @@ class NativeFocusBridgeTest {
     }
 
     @Test
+    fun `abandon through the wrapper R8 outlined it into is taken like the platform call`() {
+        // 47.6.3 is the first build to hand the give-up to a static wrapper, with the manager in
+        // front of the listener, the way the request has always gone.
+        val method = nativeOwnerMethod("anything", 9, """
+            iget-object v6, p0, LX/1Gr4;->LIZ:$audio
+            if-eqz v6, :done
+            iget-object v8, p0, LX/1Gr4;->LIZIZ:LX/1Gr5;
+            if-eqz v8, :done
+            invoke-static {v6, v8}, LX/2ZZZ;->ne($audio${listener})I
+            :done
+            return-void
+        """, 5)
+
+        method.captureNativeFocusAbandon()
+
+        val code = method.implementation!!.instructions
+        assertCall(code[4] as ReferenceInstruction, extension, "onNativeFocusAbandon",
+            listOf("Ljava/lang/Object;"), "V", listOf(8))
+        assertCall(code[5] as ReferenceInstruction, "LX/2ZZZ;", "ne",
+            listOf(audio, listener), "I", listOf(6, 8))
+        assertEquals(Opcode.RETURN_VOID, code[6].opcode)
+    }
+
+    @Test
     fun `a request that is not the last thing its method does is refused`() {
         // The answer register is only free because the host returns straight after the call.
         // A build that reads it afterwards would have the extension's result clobber it, and

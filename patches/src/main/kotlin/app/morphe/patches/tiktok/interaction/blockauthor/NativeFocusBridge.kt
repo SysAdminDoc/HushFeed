@@ -7,6 +7,7 @@
 package app.morphe.patches.tiktok.interaction.blockauthor
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.anyInstruction
 import app.morphe.patcher.methodCall
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
@@ -50,14 +51,20 @@ internal class NativeFocus(
 )
 
 /**
- * The helper's abandon method: an instance `(Context)V` calling `abandonAudioFocus`. The call
- * lets the patcher's member-name index pick the few classes to look at, where walking every
- * class took seconds.
+ * The helper's abandon method: an instance `(Context)V` that gives focus up, through the platform
+ * call itself or the static wrapper R8 outlines it into (`LX/00kq;->ne` on 47.6.3, the manager in
+ * front of the listener). Either call lets the patcher's member index pick the few classes to
+ * look at, where walking every class took seconds.
  */
 private object AbandonAudioFocusFingerprint : Fingerprint(
     returnType = "V",
     parameters = listOf(CONTEXT),
-    filters = listOf(methodCall(name = "abandonAudioFocus")),
+    filters = listOf(
+        anyInstruction(
+            methodCall(name = "abandonAudioFocus"),
+            methodCall(parameters = listOf(AUDIO_MANAGER, AUDIO_LISTENER), returnType = "I"),
+        ),
+    ),
     custom = { method, _ -> method.name != "<init>" && !AccessFlags.STATIC.isSet(method.accessFlags) },
 )
 
@@ -90,7 +97,7 @@ internal fun BytecodePatchContext.resolveNativeFocus(): NativeFocus {
                 it.parameterTypes.toList() == listOf(CONTEXT) &&
                 AccessFlags.STATIC.value and it.accessFlags == 0
         }
-        val abandon = contextMethods.singleOrNull { method -> method.calls { it.name == "abandonAudioFocus" } }
+        val abandon = contextMethods.singleOrNull { method -> method.calls(::abandonsFocus) }
         val request = contextMethods.singleOrNull { method -> method.calls(::requestsFocus) }
         if (abandon == null || request == null || abandon == request) continue
         listenerOf[classDef.type] = listener
@@ -168,6 +175,16 @@ private fun requestsFocus(reference: MethodReference): Boolean =
         (reference.returnType == "I" &&
             reference.parameterTypes.toList() == listOf(AUDIO_MANAGER, AUDIO_LISTENER, "I", "I"))
 
+/**
+ * The give-up, by the same rule: the platform call by name, or a static wrapper taking the
+ * manager and the listener and answering the platform's int. 47.6.3 is the first build that
+ * wraps it; the builds before called `abandonAudioFocus` on the manager themselves.
+ */
+private fun abandonsFocus(reference: MethodReference): Boolean =
+    reference.name == "abandonAudioFocus" ||
+        (reference.returnType == "I" &&
+            reference.parameterTypes.toList() == listOf(AUDIO_MANAGER, AUDIO_LISTENER))
+
 internal fun MutableMethod.captureNativeFocusRequest() {
     val instructions = implementation!!.instructions
     // Resolution accepts a method that contains at least one focus request; this needs the one it
@@ -221,19 +238,22 @@ internal fun MutableMethod.captureNativeFocusChange() {
 internal fun MutableMethod.captureNativeFocusAbandon() {
     val instructions = implementation!!.instructions
     val index = instructions.withIndex().singleOrNull {
-        it.value.getReference<MethodReference>()?.name == "abandonAudioFocus"
+        it.value.getReference<MethodReference>()?.let(::abandonsFocus) == true
     }?.index ?: throw PatchException(
         "Block author button: expected one abandonAudioFocus call in $definingClass->$name.",
     )
-    check(instructions[index].opcode == Opcode.INVOKE_VIRTUAL) {
+    // The platform call is invoke-virtual on the manager; the wrapper is invoke-static with the
+    // manager first. The listener is the second register either way.
+    val opcode = instructions[index].opcode
+    check(opcode == Opcode.INVOKE_VIRTUAL || opcode == Opcode.INVOKE_STATIC) {
         "Block author button: abandonAudioFocus in $definingClass->$name is " +
-            "${instructions[index].opcode}, not invoke-virtual."
+            "$opcode, not invoke-virtual or invoke-static."
     }
     val call = instructions[index] as FiveRegisterInstruction
     check(call.registerCount == 2) {
         "Block author button: abandonAudioFocus is not called on a manager with one listener."
     }
     // Invalidate before calling Android, including when the native Exception handler runs.
-    // registerD is the listener the host hands to the platform.
+    // registerD is the listener the host hands to the platform or its wrapper.
     addInstruction(index, "invoke-static {v${call.registerD}}, $EXTENSION->onNativeFocusAbandon(Ljava/lang/Object;)V")
 }

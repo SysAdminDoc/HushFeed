@@ -3961,7 +3961,7 @@
     },
     {
       "name": "Feed text sizes",
-      "description": "Lets you make video descriptions, creator names and post dates bigger or smaller, so they're easier to read. Starts off. Pick a size in Hushfeed settings > Feed screen.",
+      "description": "Lets you make video descriptions, creator names and post dates bigger or smaller, or give them a color and a backdrop, so they're easier to read. Starts off. Pick them in Hushfeed settings > Feed screen.",
       "category": "Interface",
       "use": true,
       "dependencies": [
@@ -4014,6 +4014,24 @@
           "required": false,
           "type": "kotlin.Int",
           "default": 0,
+          "values": null
+        },
+        {
+          "key": "feed_text_color",
+          "title": "Default: feed text color",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "off",
+          "values": null
+        },
+        {
+          "key": "feed_text_backdrop",
+          "title": "Default: feed text backdrop",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "off",
           "values": null
         }
       ]

@@ -275,6 +275,14 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             };
             authorSize.zeroMeans("TikTok's size");
             addPreference(authorSize);
+            addPreference(new ChoicePreference(context, "Video text color", Settings.FEED_TEXT_COLOR,
+                    new String[]{"TikTok's color", "White", "Light gray", "Gray", "Black", "Yellow"},
+                    new String[]{"off", "white", "light_gray", "gray", "black", "yellow"})
+                    .withNote("Colors the description, the author's name and the post date on videos."));
+            addPreference(new ChoicePreference(context, "Backdrop behind video text", Settings.FEED_TEXT_BACKDROP,
+                    new String[]{"None", "Black", "Dark gray", "Gray", "White"},
+                    new String[]{"off", "black", "dark_gray", "gray", "white"})
+                    .withNote("Puts a band of color behind the description, the author's name and the post date, so they stay readable on bright videos."));
         }
         if (SettingsStatus.alwaysShowPublishDateEnabled) {
             addPreference(new TogglePreference(

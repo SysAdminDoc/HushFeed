@@ -300,7 +300,9 @@
     ],
     "Feed text sizes": [
       "feed_description_text_size",
-      "feed_author_text_size"
+      "feed_author_text_size",
+      "feed_text_color",
+      "feed_text_backdrop"
     ],
     "Fit the video to the screen": [
       "fit_video_to_screen",
@@ -1712,6 +1714,18 @@
       "key": "feed_navigation_tabs",
       "type": "string",
       "default": "HOT,EXPLORE,FOLLOWING,MALL,NEARBY,FRIENDS,LIVE,POPULAR,STEM,SERIES"
+    },
+    "feed_text_backdrop": {
+      "field": "FEED_TEXT_BACKDROP",
+      "key": "feed_text_backdrop",
+      "type": "string",
+      "default": "off"
+    },
+    "feed_text_color": {
+      "field": "FEED_TEXT_COLOR",
+      "key": "feed_text_color",
+      "type": "string",
+      "default": "off"
     },
     "fill_video_to_screen": {
       "field": "FILL_VIDEO_TO_SCREEN",

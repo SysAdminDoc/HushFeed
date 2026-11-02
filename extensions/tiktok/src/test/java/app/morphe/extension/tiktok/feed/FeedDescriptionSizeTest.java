@@ -2,12 +2,14 @@ package app.morphe.extension.tiktok.feed;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Looper;
 import android.text.Layout;
 import android.text.SpannableString;
@@ -154,6 +156,60 @@ public class FeedDescriptionSizeTest {
             idle();
             assertEquals(19, owner.collapsed.getPaint().getTextSize(), 0);
             assertEquals(19, owner.expanded.getPaint().getTextSize(), 0);
+        }
+    }
+
+    @Test public void aColorRebuildsTheWordsAndTheBackdropGoesOnTheViewAndBothComeBackOff() {
+        try (var activity = Robolectric.buildActivity(MainActivity.class).setup()) {
+            Owner owner = attach(activity.get());
+            String previousColor = Settings.FEED_TEXT_COLOR.savedValue();
+            String previousBackdrop = Settings.FEED_TEXT_BACKDROP.savedValue();
+            try {
+                owner.bind();
+                int nativeColor = owner.expanded.getPaint().getColor();
+                float nativeSize = owner.expanded.getPaint().getTextSize();
+                assertFalse(FeedTextSize.freshDescription(owner));
+                int binds = owner.binds;
+
+                Settings.FEED_TEXT_COLOR.save("yellow");
+                Settings.FEED_TEXT_BACKDROP.save("black");
+                FeedTextSize.applyTo(activity.get());
+                assertEquals("A color has no size to change, and must still rebuild", binds + 1, owner.binds);
+                assertTrue(owner.lastFresh);
+                assertEquals(0xFFFFD60A, owner.expanded.getPaint().getColor());
+                assertEquals(0xFFFFD60A, owner.collapsed.getPaint().getColor());
+                assertEquals(nativeSize, owner.expanded.getPaint().getTextSize(), 0);
+                assertEquals(0xffaabbcc, owner.expanded.getPaint().linkColor);
+                assertTrue(owner.view.getBackground() instanceof GradientDrawable);
+
+                // Native fitting writes an input between build attempts.
+                owner.collapsedInput.paint.setColor(0xFF123456);
+                FeedTextSize.descriptionBuilding(owner.collapsedInput);
+                assertEquals(0xFFFFD60A, owner.collapsedInput.paint.getColor());
+
+                FeedTextSize.applyTo(activity.get());
+                assertEquals("An unchanged color must not keep rebinding", binds + 1, owner.binds);
+
+                PausedProcess.set(true);
+                FeedTextSize.onSettingChanged();
+                idle();
+                assertEquals(nativeColor, owner.expanded.getPaint().getColor());
+                assertNull(owner.view.getBackground());
+                PausedProcess.set(false);
+                FeedTextSize.onSettingChanged();
+                idle();
+                assertEquals(0xFFFFD60A, owner.expanded.getPaint().getColor());
+
+                Settings.FEED_TEXT_COLOR.save("off");
+                Settings.FEED_TEXT_BACKDROP.save("off");
+                FeedTextSize.applyTo(activity.get());
+                assertEquals(nativeColor, owner.expanded.getPaint().getColor());
+                assertNull(owner.view.getBackground());
+                assertFalse("Later binds keep TikTok's own cache", FeedTextSize.freshDescription(owner));
+            } finally {
+                Settings.FEED_TEXT_COLOR.save(previousColor);
+                Settings.FEED_TEXT_BACKDROP.save(previousBackdrop);
+            }
         }
     }
 

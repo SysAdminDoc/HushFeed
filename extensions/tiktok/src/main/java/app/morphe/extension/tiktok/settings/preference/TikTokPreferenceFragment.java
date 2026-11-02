@@ -472,7 +472,8 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
             app.morphe.extension.tiktok.comment.CommenterDetails.onSettingChanged();
         }
         if (!applySettingToPreference && (setting == Settings.FEED_DESCRIPTION_TEXT_SIZE
-                || setting == Settings.FEED_AUTHOR_TEXT_SIZE || setting == BaseSettings.PAUSED)) {
+                || setting == Settings.FEED_AUTHOR_TEXT_SIZE || setting == Settings.FEED_TEXT_COLOR
+                || setting == Settings.FEED_TEXT_BACKDROP || setting == BaseSettings.PAUSED)) {
             app.morphe.extension.tiktok.feed.FeedTextSize.onSettingChanged();
         }
         if (!applySettingToPreference && setting == BaseSettings.PAUSED) {

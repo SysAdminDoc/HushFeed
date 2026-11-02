@@ -2589,3 +2589,14 @@ Hide the row of friends at the top of the share sheet and in the menu a long pre
 An @username in a profile's bio opens that profile when you tap it. A full name typed after an @ opens a search for that name. The rest of the bio still translates on a tap.	@имя пользователя в био профиля открывает этот профиль по нажатию. Полное имя после @ открывает поиск по этому имени. Остальная часть био по-прежнему переводится по нажатию.
 Hide the repost chip	Скрыть метку репоста
 Takes out the small chip above the progress bar that says a friend reposted the video.	Убирает небольшую метку над полосой прогресса о том, что друг сделал репост видео.
+TikTok's color	Цвет TikTok
+White	Белый
+Light gray	Светло-серый
+Gray	Серый
+Dark gray	Тёмно-серый
+Yellow	Жёлтый
+None	Нет
+Video text color	Цвет текста на видео
+Backdrop behind video text	Фон за текстом на видео
+Colors the description, the author's name and the post date on videos.	Окрашивает описание, имя автора и дату публикации на видео.
+Puts a band of color behind the description, the author's name and the post date, so they stay readable on bright videos.	Кладёт цветную полосу за описание, имя автора и дату публикации, чтобы их было легко читать на светлых видео.

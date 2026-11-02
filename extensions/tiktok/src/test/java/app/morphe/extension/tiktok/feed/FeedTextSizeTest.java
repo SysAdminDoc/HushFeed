@@ -7,6 +7,8 @@ import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Looper;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -158,6 +160,79 @@ public class FeedTextSizeTest {
             Settings.FEED_AUTHOR_TEXT_SIZE.save(0);
             FeedTextSize.authorBound(author);
             assertEquals("An intervening native write must not be overwritten", 19, author.getTextSize(), 0);
+        }
+    }
+
+    @Test public void authorColorAndBackdropGoBackToWhatTikTokLastSet() {
+        String previousColor = Settings.FEED_TEXT_COLOR.savedValue();
+        String previousBackdrop = Settings.FEED_TEXT_BACKDROP.savedValue();
+        try (var owner = Robolectric.buildActivity(MainActivity.class).setup()) {
+            TextView author = text(owner.get(), 16, "A creator");
+            author.setTextColor(0xFF112233);
+            ColorDrawable tiktoks = new ColorDrawable(0xFF445566);
+            author.setBackground(tiktoks);
+            FeedTextSize.authorBound(author);
+            assertEquals("Off leaves the row as TikTok drew it", 0xFF112233, author.getCurrentTextColor());
+            assertSame(tiktoks, author.getBackground());
+
+            Settings.FEED_TEXT_COLOR.save("yellow");
+            Settings.FEED_TEXT_BACKDROP.save("gray");
+            FeedTextSize.authorBound(author);
+            assertEquals(0xFFFFD60A, author.getCurrentTextColor());
+            assertTrue(author.getBackground() instanceof GradientDrawable);
+            assertEquals(16, author.getTextSize(), 0);
+
+            // TikTok rebinds the row from its own values, and the picks go back on after it.
+            FeedTextSize.beforeAuthorBind(author);
+            assertEquals(0xFF112233, author.getCurrentTextColor());
+            assertSame(tiktoks, author.getBackground());
+            author.setTextColor(0xFF778899);
+            FeedTextSize.authorBound(author);
+            assertEquals(0xFFFFD60A, author.getCurrentTextColor());
+
+            PausedProcess.set(true);
+            FeedTextSize.authorBound(author);
+            assertEquals(0xFF778899, author.getCurrentTextColor());
+            assertSame(tiktoks, author.getBackground());
+            PausedProcess.set(false);
+            FeedTextSize.authorBound(author);
+            assertEquals(0xFFFFD60A, author.getCurrentTextColor());
+
+            // A color or background TikTok writes over ours is the newer one to keep.
+            author.setTextColor(0xFF001122);
+            ColorDrawable newer = new ColorDrawable(0xFF334455);
+            author.setBackground(newer);
+            Settings.FEED_TEXT_COLOR.save("off");
+            Settings.FEED_TEXT_BACKDROP.save("off");
+            FeedTextSize.authorBound(author);
+            assertEquals(0xFF001122, author.getCurrentTextColor());
+            assertSame(newer, author.getBackground());
+        } finally {
+            Settings.FEED_TEXT_COLOR.save(previousColor);
+            Settings.FEED_TEXT_BACKDROP.save(previousBackdrop);
+        }
+    }
+
+    @Test public void everyColorChoiceReadsAsAnOpaqueColorAndABackdropLetsTheVideoShowThrough() {
+        String previousColor = Settings.FEED_TEXT_COLOR.savedValue();
+        String previousBackdrop = Settings.FEED_TEXT_BACKDROP.savedValue();
+        try {
+            for (String choice : new String[]{"white", "light_gray", "gray", "black", "yellow"}) {
+                Settings.FEED_TEXT_COLOR.save(choice);
+                assertEquals(choice, 0xFF, FeedTextStyle.color() >>> 24);
+            }
+            for (String choice : new String[]{"black", "dark_gray", "gray", "white"}) {
+                Settings.FEED_TEXT_BACKDROP.save(choice);
+                int alpha = FeedTextStyle.backdrop() >>> 24;
+                assertTrue(choice, alpha > 0 && alpha < 0xFF);
+            }
+            Settings.FEED_TEXT_COLOR.save("off");
+            Settings.FEED_TEXT_BACKDROP.save("off");
+            assertEquals(0, FeedTextStyle.color());
+            assertEquals(0, FeedTextStyle.backdrop());
+        } finally {
+            Settings.FEED_TEXT_COLOR.save(previousColor);
+            Settings.FEED_TEXT_BACKDROP.save(previousBackdrop);
         }
     }
 

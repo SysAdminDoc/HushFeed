@@ -2412,3 +2412,14 @@ Hide the row of friends at the top of the share sheet and in the menu a long pre
 An @username in a profile's bio opens that profile when you tap it. A full name typed after an @ opens a search for that name. The rest of the bio still translates on a tap.	Bir profilin biyografisindeki @kullanıcıadı, dokunduğunda o profili açar. @ işaretinden sonra yazılan tam ad, o ad için aramayı açar. Biyografinin geri kalanı dokununca yine çevrilir.
 Hide the repost chip	Yeniden paylaşım etiketini gizle
 Takes out the small chip above the progress bar that says a friend reposted the video.	İlerleme çubuğunun üstünde bir arkadaşın videoyu yeniden paylaştığını gösteren küçük etiketi kaldırır.
+TikTok's color	TikTok'un rengi
+White	Beyaz
+Light gray	Açık gri
+Gray	Gri
+Dark gray	Koyu gri
+Yellow	Sarı
+None	Yok
+Video text color	Video metni rengi
+Backdrop behind video text	Video metninin arkasındaki zemin
+Colors the description, the author's name and the post date on videos.	Videolardaki açıklamayı, yazarın adını ve paylaşım tarihini renklendirir.
+Puts a band of color behind the description, the author's name and the post date, so they stay readable on bright videos.	Açıklamanın, yazarın adının ve paylaşım tarihinin arkasına renkli bir şerit koyar, böylece parlak videolarda okunabilir kalırlar.

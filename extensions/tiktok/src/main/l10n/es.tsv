@@ -2412,3 +2412,14 @@ Hide the row of friends at the top of the share sheet and in the menu a long pre
 An @username in a profile's bio opens that profile when you tap it. A full name typed after an @ opens a search for that name. The rest of the bio still translates on a tap.	Un @usuario en la biografía de un perfil abre ese perfil al tocarlo. Un nombre completo escrito tras una @ abre una búsqueda de ese nombre. El resto de la biografía se sigue traduciendo al tocarla.
 Hide the repost chip	Ocultar la etiqueta de republicación
 Takes out the small chip above the progress bar that says a friend reposted the video.	Quita la pequeña etiqueta sobre la barra de progreso que dice que un amigo volvió a publicar el video.
+TikTok's color	Color de TikTok
+White	Blanco
+Light gray	Gris claro
+Gray	Gris
+Dark gray	Gris oscuro
+Yellow	Amarillo
+None	Ninguno
+Video text color	Color del texto del video
+Backdrop behind video text	Fondo detrás del texto del video
+Colors the description, the author's name and the post date on videos.	Colorea la descripción, el nombre del autor y la fecha de publicación en los videos.
+Puts a band of color behind the description, the author's name and the post date, so they stay readable on bright videos.	Pone una franja de color detrás de la descripción, el nombre del autor y la fecha de publicación para que se lean bien en videos claros.

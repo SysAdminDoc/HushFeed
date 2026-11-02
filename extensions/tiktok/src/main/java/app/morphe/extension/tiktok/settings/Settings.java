@@ -948,6 +948,10 @@ public class Settings extends BaseSettings {
             new IntegerSetting("feed_description_text_size", 0).withRange(0, 48);
     public static final IntegerSetting FEED_AUTHOR_TEXT_SIZE =
             new IntegerSetting("feed_author_text_size", 0).withRange(0, 48);
+    /** The description, creator name and post date: off, or one of the colors in FeedTextStyle. */
+    public static final StringSetting FEED_TEXT_COLOR = new StringSetting("feed_text_color", "off");
+    /** The band behind that same text: off, or one of the colors in FeedTextStyle. */
+    public static final StringSetting FEED_TEXT_BACKDROP = new StringSetting("feed_text_backdrop", "off");
     public static final BooleanSetting HIDE_FEED_MUSIC = new BooleanSetting("hide_feed_music", FALSE);
     public static final BooleanSetting HIDE_FEED_ACTION_BAR = new BooleanSetting("hide_feed_action_bar", FALSE);
     public static final BooleanSetting HIDE_FEED_SURVEYS = new BooleanSetting("hide_feed_surveys", FALSE);

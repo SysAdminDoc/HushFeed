@@ -8,6 +8,7 @@ package app.morphe.extension.tiktok.feed;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.res.ColorStateList;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.TypedValue;
@@ -31,6 +32,8 @@ import java.util.WeakHashMap;
  *
  * <p>The author size also sizes the post date beside the name. TikTok's own row draws both in the
  * same font (tux font 42), so they share one size, and the row's owner holds both views.
+ *
+ * <p>The same views take the color and backdrop from {@link FeedTextStyle}.
  */
 public final class FeedTextSize {
     public static final int MIN_TEXT_SIZE = 8;
@@ -67,6 +70,9 @@ public final class FeedTextSize {
         float requestedPx;
         /** The post date beside the name: sized with it, never rebinds the row itself. */
         boolean date;
+        ColorStateList nativeColors;
+        int writtenColor;
+        final FeedTextStyle.Band band = new FeedTextStyle.Band();
         WeakReference<Object> owner = new WeakReference<>(null);
         WeakReference<Object> item = new WeakReference<>(null);
 
@@ -76,11 +82,14 @@ public final class FeedTextSize {
     private static final class DescriptionSize {
         final WeakReference<View> view;
         float requestedPx;
+        int requestedColor;
         boolean rebuilding;
+        final FeedTextStyle.Band band = new FeedTextStyle.Band();
 
-        DescriptionSize(View view, float requestedPx) {
+        DescriptionSize(View view, float requestedPx, int requestedColor) {
             this.view = new WeakReference<>(view);
             this.requestedPx = requestedPx;
+            this.requestedColor = requestedColor;
         }
     }
 
@@ -98,8 +107,13 @@ public final class FeedTextSize {
         resizeDescriptionBuilder(builder, view);
         DescriptionSize state = DESCRIPTIONS.get(owner);
         if (state == null || state.view.get() != view) {
-            DESCRIPTIONS.put(owner, new DescriptionSize(view, descriptionPixels(view)));
-        } else state.requestedPx = descriptionPixels(view);
+            state = new DescriptionSize(view, descriptionPixels(view), FeedTextStyle.color());
+            DESCRIPTIONS.put(owner, state);
+        } else {
+            state.requestedPx = descriptionPixels(view);
+            state.requestedColor = FeedTextStyle.color();
+        }
+        state.band.apply(view);
     }
 
     /** Native fitting can change its input between builds. Reapply only to a marked builder. */
@@ -117,10 +131,11 @@ public final class FeedTextSize {
         // The controller's cached layouts outlive its View, so the replacement inherits the size
         // they were built at. Seeding it from the setting would hide a change made while detached.
         if (view != null && (state == null || state.view.get() != view)) {
-            state = new DescriptionSize(view, state == null ? descriptionPixels(view) : state.requestedPx);
+            state = state == null ? new DescriptionSize(view, descriptionPixels(view), FeedTextStyle.color())
+                    : new DescriptionSize(view, state.requestedPx, state.requestedColor);
             DESCRIPTIONS.put(owner, state);
         }
-        return clampSize(Settings.FEED_DESCRIPTION_TEXT_SIZE.get()) != 0
+        return clampSize(Settings.FEED_DESCRIPTION_TEXT_SIZE.get()) != 0 || FeedTextStyle.color() != 0
                 || state != null && state.rebuilding;
     }
 
@@ -130,8 +145,11 @@ public final class FeedTextSize {
      */
     public static boolean descriptionPaint(Paint paint, View view) {
         float wanted = descriptionPixels(view);
-        if (paint == null || wanted == 0) return false;
-        paint.setTextSize(wanted);
+        int color = FeedTextStyle.color();
+        if (paint == null || wanted == 0 && color == 0) return false;
+        if (wanted != 0) paint.setTextSize(wanted);
+        // Spans over the words, hashtags and mentions, keep their own colors.
+        if (color != 0) paint.setColor(color);
         return true;
     }
 
@@ -193,7 +211,10 @@ public final class FeedTextSize {
         if (!(view instanceof TextView)) return;
         TextView text = (TextView) view;
         AuthorSize state = AUTHORS.get(text);
-        if (state != null) restore(text, state);
+        if (state != null) {
+            restore(text, state);
+            restoreStyle(text, state);
+        }
     }
 
     /** Called after the owning native author bind. Text, spans and tap listeners stay untouched. */
@@ -206,6 +227,7 @@ public final class FeedTextSize {
             AUTHORS.put(text, state);
         }
         apply(text, state);
+        applyStyle(text, state);
     }
 
     private static void apply(TextView text, AuthorSize state) {
@@ -225,6 +247,33 @@ public final class FeedTextSize {
         state.writtenPx = wanted;
     }
 
+    private static void applyStyle(TextView text, AuthorSize state) {
+        int color = FeedTextStyle.color();
+        if (color == 0) {
+            restoreColor(text, state);
+        } else {
+            // A native write between bind/layout callbacks becomes the next restoration baseline.
+            if (state.writtenColor == 0 || text.getCurrentTextColor() != state.writtenColor) {
+                state.nativeColors = text.getTextColors();
+            }
+            if (text.getCurrentTextColor() != color) text.setTextColor(color);
+            state.writtenColor = color;
+        }
+        state.band.apply(text);
+    }
+
+    private static void restoreStyle(TextView text, AuthorSize state) {
+        restoreColor(text, state);
+        state.band.restore(text);
+    }
+
+    private static void restoreColor(TextView text, AuthorSize state) {
+        if (state.writtenColor == 0) return;
+        if (text.getCurrentTextColor() == state.writtenColor) text.setTextColor(state.nativeColors);
+        state.nativeColors = null;
+        state.writtenColor = 0;
+    }
+
     private static float authorPixels(TextView text) {
         int size = clampSize(Settings.FEED_AUTHOR_TEXT_SIZE.get());
         return size == 0 ? 0 : pixels(text, size);
@@ -241,6 +290,7 @@ public final class FeedTextSize {
             TextView key = entry.getKey();
             if (key != current && key != currentDate && entry.getValue().owner.get() == owner) {
                 restore(key, entry.getValue());
+                restoreStyle(key, entry.getValue());
                 entries.remove();
             }
         }
@@ -249,6 +299,7 @@ public final class FeedTextSize {
     private static void refreshAuthorSize(TextView text, AuthorSize state) {
         float wanted = authorPixels(text);
         apply(text, state);
+        applyStyle(text, state);
         if (Float.compare(state.requestedPx, wanted) == 0) return;
         state.requestedPx = wanted;
         // The name's entry rebinds the row, and that bind sizes the date before measuring it.
@@ -358,10 +409,13 @@ public final class FeedTextSize {
     private static void refresh(Object owner, DescriptionSize state, View view) {
         // The controller may already hold a replacement View; rebuilding it from the old one is wrong.
         if (descriptionViewOf(owner) != view) return;
+        state.band.apply(view);
         float wanted = descriptionPixels(view);
-        if (Float.compare(state.requestedPx, wanted) == 0) return;
+        int color = FeedTextStyle.color();
+        if (Float.compare(state.requestedPx, wanted) == 0 && state.requestedColor == color) return;
         // Native refresh can synchronously cause another layout pass.
         state.requestedPx = wanted;
+        state.requestedColor = color;
         state.rebuilding = true;
         try {
             refreshDescription(owner);
@@ -371,7 +425,14 @@ public final class FeedTextSize {
     }
 
     private static void restoreAll() {
-        for (Map.Entry<TextView, AuthorSize> entry : AUTHORS.entrySet()) restore(entry.getKey(), entry.getValue());
+        for (Map.Entry<TextView, AuthorSize> entry : AUTHORS.entrySet()) {
+            restore(entry.getKey(), entry.getValue());
+            restoreStyle(entry.getKey(), entry.getValue());
+        }
+        for (Map.Entry<Object, DescriptionSize> entry : DESCRIPTIONS.entrySet()) {
+            View view = entry.getValue().view.get();
+            if (view != null) entry.getValue().band.restore(view);
+        }
     }
 
     static void resetForTests() {

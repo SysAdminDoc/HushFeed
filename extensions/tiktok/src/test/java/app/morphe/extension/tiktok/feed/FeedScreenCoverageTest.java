@@ -153,6 +153,8 @@ public class FeedScreenCoverageTest {
         // which both windows share.
         put("feed_description_text_size", YES, YES, NONE);
         put("feed_author_text_size", YES, YES, NONE);
+        put("feed_text_color", YES, YES, NONE);
+        put("feed_text_backdrop", YES, YES, NONE);
         put("always_show_publish_date", YES, YES, NONE);
         put("publish_date_exact_time", YES, YES, NONE);
         // Both only shape the exact time, so they reach where it does.

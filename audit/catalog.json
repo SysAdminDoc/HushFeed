@@ -5473,6 +5473,18 @@
     "default": 0,
     "type": "int",
     "row": "Author text size"
+   },
+   {
+    "key": "feed_text_color",
+    "default": "off",
+    "type": "string",
+    "row": "Video text color"
+   },
+   {
+    "key": "feed_text_backdrop",
+    "default": "off",
+    "type": "string",
+    "row": "Backdrop behind video text"
    }
   ],
   "surface": "feed",

@@ -277,6 +277,7 @@ Automatic Clear display,Automatic Clear display
 Avatar and follow button,Avatar and follow button
 Back,Back
 Back up settings,Back up settings
+Backdrop behind video text,Backdrop behind video text
 Background play in the long-press menu,Background play in the long-press menu
 "Background play in the long-press menu is on in Hushfeed's Playback settings, so TikTok gets 1 for this key and an override here has no effect until that switch is off.","Background play in the long-press menu is on in Hushfeed's Playback settings, so TikTok gets 1 for this key and an override here has no effect until that switch is off."
 Backup and restore,Backup and restore
@@ -388,6 +389,7 @@ Close,Close
 Close TikTok after,Close TikTok after
 Collapsed,Collapsed
 Color commenter names,Color commenter names
+"Colors the description, the author's name and the post date on videos.","Colors the description, the author's name and the post date on videos."
 "Comma separated names exactly as the row under a profile's bio shows them, such as TikTok Studio or Your orders. Restart TikTok to apply this.","Comma separated names exactly as the row under a profile's bio shows them, such as TikTok Studio or Your orders. Restart TikTok to apply this."
 Comment export failed,Comment export failed
 Comment media filename,Comment media filename
@@ -515,6 +517,7 @@ Daily video budget,Daily video budget
 Dark,Dark
 Dark Favorites popup,Dark Favorites popup
 Dark LIVE panels in dark mode,Dark LIVE panels in dark mode
+Dark gray,Dark gray
 Days to remember a video. Zero removes the age limit. History keeps at most %1$s videos.,Days to remember a video. Zero removes the age limit. History keeps at most %1$s videos.
 "Days. Zero keeps every age. Posts without a usable timestamp, including future posts, stay visible.","Days. Zero keeps every age. Posts without a usable timestamp, including future posts, stay visible."
 Default,Default
@@ -696,6 +699,7 @@ Glass lens on the current tab,Glass lens on the current tab
 Glass opacity,Glass opacity
 Go to the screen. Recording in %1$d seconds.,Go to the screen. Recording in %1$d seconds.
 Got it,Got it
+Gray,Gray
 "HDR videos light the screen extra bright. This plays the standard (SDR) version instead, so the screen doesn't jump to full brightness. Videos with no standard version still play in HDR.","HDR videos light the screen extra bright. This plays the standard (SDR) version instead, so the screen doesn't jump to full brightness. Videos with no standard version still play in HDR."
 HTTP,HTTP
 Hand-off,Hand-off
@@ -1063,6 +1067,7 @@ Lift text length limits,Lift text length limits
 "Lifts spoken captions above TikTok's spot while the phone is upright. Use 0 for TikTok's spot, or up to %1$d.","Lifts spoken captions above TikTok's spot while the phone is upright. Use 0 for TikTok's spot, or up to %1$d."
 "Lifts the kept caption above its usual spot in Clear display. Use 0 for the usual spot, or up to %1$d.","Lifts the kept caption above its usual spot in Clear display. Use 0 for the usual spot, or up to %1$d."
 Light,Light
+Light gray,Light gray
 Like,Like
 Like or unlike the video,Like or unlike the video
 Like the video,Like the video
@@ -1224,6 +1229,7 @@ No suggested accounts to clear,No suggested accounts to clear
 No video saved. The original photos are missing.,No video saved. The original photos are missing.
 No video selected. Open a video first.,No video selected. Open a video first.
 "Nobody was signed in to TikTok. Sign in, and it tries again at %1$s.","Nobody was signed in to TikTok. Sign in, and it tries again at %1$s."
+None,None
 None of the photos could be saved. Try again.,None of the photos could be saved. Try again.
 None of the picked videos could be saved. Try again.,None of the picked videos could be saved. Try again.
 None of these gates had an override to reset,None of these gates had an override to reset
@@ -1438,6 +1444,7 @@ Put %1$s in %2$s first.,Put %1$s in %2$s first.
 Put back the settings saved before the last restore or reset.,Put back the settings saved before the last restore or reset.
 Put every setting back to its default straight away. Your current settings are kept for Undo.,Put every setting back to its default straight away. Your current settings are kept for Undo.
 Put the comment search away,Put the comment search away
+"Puts a band of color behind the description, the author's name and the post date, so they stay readable on bright videos.","Puts a band of color behind the description, the author's name and the post date, so they stay readable on bright videos."
 "Puts a circle on each video in a profile, Liked or Favorites grid. Pick up to %1$s, then tap Save to save them one after another, with a count and Cancel.","Puts a circle on each video in a profile, Liked or Favorites grid. Pick up to %1$s, then tap Save to save them one after another, with a count and Cancel."
 "Puts a save button in the sheet a story's Share button opens. It saves the story you're watching, and holding a story still pauses it.","Puts a save button in the sheet a story's Share button opens. It saves the story you're watching, and holding a story still pauses it."
 "Puts a ✓ by videos and photo posts you saved with Hushfeed, on profile grids and next to the time in the feed. Works only while Check for already-saved videos is on.","Puts a ✓ by videos and photo posts you saved with Hushfeed, on profile grids and next to the time in the feed. Works only while Check for already-saved videos is on."
@@ -2154,6 +2161,7 @@ TikTok sometimes tests your phone's speed in a background process that can use a
 TikTok starts as a new phone after the restart. Tap again to cancel.,TikTok starts as a new phone after the restart. Tap again to cancel.
 "TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app. If TikTok's 2-step check still wants only a passkey, add email or text as a way to verify on tiktok.com or another phone first.","TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app. If TikTok's 2-step check still wants only a passkey, add email or text as a way to verify on tiktok.com or another phone first."
 TikTok's background play and Auto scroll,TikTok's background play and Auto scroll
+TikTok's color,TikTok's color
 TikTok's downloader: %1$s,TikTok's downloader: %1$s
 TikTok's hold to speed up,TikTok's hold to speed up
 TikTok's messages didn't start in time. It tries again at %1$s.,TikTok's messages didn't start in time. It tries again at %1$s.
@@ -2293,6 +2301,7 @@ Video playback quality,Video playback quality
 Video player settings,Video player settings
 Video saved,Video saved
 Video saved with %1$s subtitles in %2$s,Video saved with %1$s subtitles in %2$s
+Video text color,Video text color
 "Videos can't be saved to the folder in that file, so your video folder was kept","Videos can't be saved to the folder in that file, so your video folder was kept"
 Videos in search results show their cover and play when you open them. The feed and the videos you open play as usual.,Videos in search results show their cover and play when you open them. The feed and the videos you open play as usual.
 Views range,Views range
@@ -2330,6 +2339,7 @@ Where the time goes,Where the time goes
 "While Clear display is on, also hide the progress bar, the close button and the pause and speed buttons at the bottom. You can still drag along the bottom edge to move through the video. To leave Clear display, press and hold the video and tap Restore display, or pinch the screen.","While Clear display is on, also hide the progress bar, the close button and the pause and speed buttons at the bottom. You can still drag along the bottom edge to move through the video. To leave Clear display, press and hold the video and tap Restore display, or pinch the screen."
 "While diagnostic logging is on, a message names the part of Hushfeed that failed. Off keeps failures in the report only.","While diagnostic logging is on, a message names the part of Hushfeed that failed. Off keeps failures in the report only."
 "While you hold a video, slide left or right to step through the speed menu's speeds, and a bubble shows the one you're on. Your next hold starts there. Letting go goes back to normal. A pull-down lock keeps the speed you slid to. On a locked video, letting go locks the new speed.","While you hold a video, slide left or right to step through the speed menu's speeds, and a bubble shows the one you're on. Your next hold starts there. Letting go goes back to normal. A pull-down lock keeps the speed you slid to. On a locked video, letting go locks the new speed."
+White,White
 Who to message,Who to message
 Window width needed to enable the layout. Restart TikTok to apply this.,Window width needed to enable the layout. Restart TikTok to apply this.
 "Wipe TikTok's data and give it a new Android ID and advertising ID on the next start, so it sees a phone it hasn't met. You'll be signed out and lose your drafts. Hushfeed's settings stay.","Wipe TikTok's data and give it a new Android ID and advertising ID on the next start, so it sees a phone it hasn't met. You'll be signed out and lose your drafts. Hushfeed's settings stay."
@@ -2348,6 +2358,7 @@ Writing the caption on the video,Writing the caption on the video
 Writing the caption on the video: %1$s,Writing the caption on the video: %1$s
 YTDLnis background mode,YTDLnis background mode
 YTDLnis download type,YTDLnis download type
+Yellow,Yellow
 Yes,Yes
 You can pick up to %1$s at a time,You can pick up to %1$s at a time
 YouTube Music didn't open. Open it yourself to search.,YouTube Music didn't open. Open it yourself to search.

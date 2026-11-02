@@ -2381,3 +2381,14 @@ Hide the row of friends at the top of the share sheet and in the menu a long pre
 An @username in a profile's bio opens that profile when you tap it. A full name typed after an @ opens a search for that name. The rest of the bio still translates on a tap.,点按主页简介中的 @用户名即可打开该用户的主页。@ 后面的完整姓名会打开对该姓名的搜索。点按简介的其他部分仍会翻译.
 Hide the repost chip,隐藏转发标签
 Takes out the small chip above the progress bar that says a friend reposted the video.,移除进度条上方显示好友转发了该视频的小标签.
+TikTok's color,TikTok 的颜色
+White,白色
+Light gray,浅灰色
+Gray,灰色
+Dark gray,深灰色
+Yellow,黄色
+None,无
+Video text color,视频文字颜色
+Backdrop behind video text,视频文字背景
+"Colors the description, the author's name and the post date on videos.",为视频上的描述、作者姓名和发布日期着色.
+"Puts a band of color behind the description, the author's name and the post date, so they stay readable on bright videos.","在描述、作者姓名和发布日期后面放一条色带,让它们在明亮的视频上依然清晰可读."

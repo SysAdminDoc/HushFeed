@@ -93,6 +93,27 @@ public class BackgroundPlayTest {
         }
     }
 
+    @Test public void theMenuSwitchOffersTikTokSRowOneVideoAtATime() {
+        boolean was = SettingsStatus.backgroundPlayEnabled;
+        try {
+            SettingsStatus.backgroundPlayEnabled = true;
+            Settings.BACKGROUND_PLAY_MENU.save(true);
+            for (int served : new int[]{0, 1, 2}) assertEquals(1, BackgroundPlay.mode(served));
+            assertFalse("nothing stays on for good", BackgroundPlay.remembered(false));
+            assertFalse("your own profile stays TikTok's call", BackgroundPlay.scene(false, BackgroundPlay.OWN_PROFILE));
+            assertTrue(BackgroundPlay.menuDecidesGate(BackgroundPlay.GATE_KEY));
+            assertFalse(BackgroundPlay.decidesGate(BackgroundPlay.GATE_KEY));
+
+            Settings.BACKGROUND_PLAY.save(true);
+            assertEquals("the main switch wins", 2, BackgroundPlay.mode(1));
+            assertFalse(BackgroundPlay.menuDecidesGate(BackgroundPlay.GATE_KEY));
+        } finally {
+            Settings.BACKGROUND_PLAY.save(false);
+            Settings.BACKGROUND_PLAY_MENU.save(false);
+            SettingsStatus.backgroundPlayEnabled = was;
+        }
+    }
+
     @Test public void theLabSaysWhenTheSwitchDecidesTheKey() {
         boolean was = SettingsStatus.backgroundPlayEnabled;
         try {

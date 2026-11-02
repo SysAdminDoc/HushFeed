@@ -333,6 +333,12 @@ public class Settings extends BaseSettings {
     /** Keep playing in the background (#52). TikTok reads its gate once a process, so a restart applies it. */
     public static final BooleanSetting BACKGROUND_PLAY = new BooleanSetting("background_play", FALSE, true);
     /**
+     * TikTok's own long-press row for background play, which turns it on for one video (#302). It
+     * sets the same gate, so a restart applies it too.
+     */
+    public static final BooleanSetting BACKGROUND_PLAY_MENU = new BooleanSetting(
+            "background_play_menu", FALSE, true, Setting.parentNot(BACKGROUND_PLAY));
+    /**
      * Replay in the background (#99): a video that ends while TikTok plays in the background
      * starts again instead of waiting on the notification's Play. Read at each end, so no restart.
      */

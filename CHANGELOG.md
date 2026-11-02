@@ -10,6 +10,7 @@ Every Hushfeed release, newest first.
 * **TikTok:** The settings screen and What's new now come in Vietnamese. Thanks to @hautv404 (#306).
 * **TikTok:** The LIVE record button hides along with everything else when you turn on TikTok's LIVE Clear screen, and it comes back when you turn it off. A recording that's running keeps going. Thanks to @Hiiva (#297).
 * **TikTok:** `Copy bio and IDs` has a `Copy name` button now, so a profile's share sheet copies the display name as well as the username. Buttons that don't fit move down to a second line instead of running off the sheet.
+* **TikTok:** `Background play in the long-press menu` adds TikTok's own background play row to the long-press menu, so one video can keep playing while the others stop as usual. It starts off, and it's under Playback.
 
 ### Bug Fixes
 

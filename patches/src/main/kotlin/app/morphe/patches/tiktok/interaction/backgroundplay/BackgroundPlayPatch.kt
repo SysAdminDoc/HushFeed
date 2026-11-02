@@ -219,7 +219,7 @@ val backgroundPlayPatch = bytecodePatch(
     name = "Keep playing in the background",
     description = "Keeps the video playing when you leave TikTok or turn the screen off, with " +
         "a notification to pause it. It can also start the video over when it ends. Handy for " +
-        "music and talks. Starts off. Turn it on in Hushfeed settings > Playback, then restart TikTok.",
+        "music and talks. If you only want it on some videos, a second switch adds TikTok's own row to the long-press menu. Starts off. Turn it on in Hushfeed settings > Playback, then restart TikTok.",
 ) {
     category("Playback")
     dependsOn(settingsPatch, sharedExtensionPatch)

@@ -189,6 +189,9 @@ final class FeatureGateLabText {
         if (BackgroundPlay.decidesGate(entry.key)) {
             return L10n.t(context, "2, from Keep playing in the background");
         }
+        if (BackgroundPlay.menuDecidesGate(entry.key)) {
+            return L10n.t(context, "1, from Background play in the long-press menu");
+        }
         FeatureGateLabStore.Rule rule = FeatureGateLabStore.rule(
                 entry.manager, entry.key, entry.type);
         if (FeatureGateLabStore.masterEnabled() && rule != null && rule.enabled) {

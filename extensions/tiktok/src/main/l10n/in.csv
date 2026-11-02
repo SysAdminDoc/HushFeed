@@ -2360,3 +2360,7 @@ TikTok refused the like with code %1$s,TikTok menolak suka dengan kode %1$s
 Hide read receipts,Sembunyikan tanda sudah dibaca
 Stops TikTok telling people you've read their messages. Your own unread badges still clear as usual.,Mencegah TikTok memberi tahu orang lain bahwa kamu sudah membaca pesan mereka. Lencana belum dibaca milikmu tetap hilang seperti biasa.
 Copy name,Salin nama
+Background play in the long-press menu,Putar latar belakang di menu tekan lama
+"Adds TikTok's own background play row to the long-press menu, so you pick it for one video and other videos stop as usual. Has no effect while Keep playing in the background is on. Restart TikTok to apply this.","Menambahkan baris putar latar belakang milik TikTok ke menu tekan lama, jadi Anda memilihnya untuk satu video dan video lain berhenti seperti biasa. Tidak berpengaruh selama Tetap putar di latar belakang aktif. Mulai ulang TikTok untuk menerapkannya."
+"1, from Background play in the long-press menu","1, dari Putar latar belakang di menu tekan lama"
+"Background play in the long-press menu is on in Hushfeed's Playback settings, so TikTok gets 1 for this key and an override here has no effect until that switch is off.","Putar latar belakang di menu tekan lama aktif di pengaturan Pemutaran Hushfeed, jadi TikTok mendapat 1 untuk kunci ini dan penggantian di sini tidak berpengaruh sampai tombol itu dimatikan."

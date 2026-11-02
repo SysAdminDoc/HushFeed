@@ -41,6 +41,8 @@ public final class BackgroundPlay {
     public static final String GATE_KEY = "background_play_enable";
     /** TikTok's value for background play the menu can leave on for good. */
     static final int ALWAYS = 2;
+    /** TikTok's value for background play the menu turns on one video at a time (#302). */
+    static final int ONE_VIDEO = 1;
     /** The event type TikTok gives the videos you open from your own profile. */
     static final String OWN_PROFILE = "personal_homepage";
     /**
@@ -92,7 +94,8 @@ public final class BackgroundPlay {
      * the life of the process, so the switch applies from the next start.
      */
     public static int mode(int served) {
-        return Settings.BACKGROUND_PLAY.get() ? ALWAYS : served;
+        if (Settings.BACKGROUND_PLAY.get()) return ALWAYS;
+        return Settings.BACKGROUND_PLAY_MENU.get() ? ONE_VIDEO : served;
     }
 
     /** Whether TikTok's remembered background play switch reads as on. */
@@ -194,5 +197,11 @@ public final class BackgroundPlay {
     /** Whether the switch is deciding {@code key} right now, which the Lab shows on that key. */
     public static boolean decidesGate(String key) {
         return SettingsStatus.backgroundPlayEnabled && GATE_KEY.equals(key) && Settings.BACKGROUND_PLAY.get();
+    }
+
+    /** Whether the long-press menu switch is deciding {@code key} right now, with the main switch off. */
+    public static boolean menuDecidesGate(String key) {
+        return SettingsStatus.backgroundPlayEnabled && GATE_KEY.equals(key)
+                && !Settings.BACKGROUND_PLAY.get() && Settings.BACKGROUND_PLAY_MENU.get();
     }
 }

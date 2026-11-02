@@ -457,6 +457,7 @@
     ],
     "Keep playing in the background": [
       "background_play",
+      "background_play_menu",
       "background_replay"
     ],
     "Keep pulled sounds": [
@@ -866,6 +867,12 @@
     "background_play": {
       "field": "BACKGROUND_PLAY",
       "key": "background_play",
+      "type": "boolean",
+      "default": false
+    },
+    "background_play_menu": {
+      "field": "BACKGROUND_PLAY_MENU",
+      "key": "background_play_menu",
       "type": "boolean",
       "default": false
     },

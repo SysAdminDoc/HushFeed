@@ -457,6 +457,7 @@
     ],
     "Keep playing in the background": [
       "BACKGROUND_PLAY",
+      "BACKGROUND_PLAY_MENU",
       "BACKGROUND_REPLAY"
     ],
     "Keep pulled sounds": [

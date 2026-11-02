@@ -2566,3 +2566,7 @@ TikTok refused the like with code %1$s	TikTok отклонил лайк с ко�
 Hide read receipts	Скрыть отметки о прочтении
 Stops TikTok telling people you've read their messages. Your own unread badges still clear as usual.	Не дает TikTok сообщать людям, что ты прочитал(а) их сообщения. Твои значки непрочитанного по-прежнему сбрасываются как обычно.
 Copy name	Копировать имя
+Background play in the long-press menu	Фоновое воспроизведение в меню долгого нажатия
+Adds TikTok's own background play row to the long-press menu, so you pick it for one video and other videos stop as usual. Has no effect while Keep playing in the background is on. Restart TikTok to apply this.	Добавляет в меню долгого нажатия собственный пункт TikTok для фонового воспроизведения: вы выбираете его для одного видео, а остальные останавливаются как обычно. Не действует, пока включено «Продолжать воспроизведение в фоне». Перезапустите TikTok, чтобы применить.
+1, from Background play in the long-press menu	1, от «Фоновое воспроизведение в меню долгого нажатия»
+Background play in the long-press menu is on in Hushfeed's Playback settings, so TikTok gets 1 for this key and an override here has no effect until that switch is off.	«Фоновое воспроизведение в меню долгого нажатия» включено в настройках воспроизведения Hushfeed, поэтому TikTok получает значение 1 для этого ключа, и переопределение здесь не действует, пока тот переключатель не выключен.

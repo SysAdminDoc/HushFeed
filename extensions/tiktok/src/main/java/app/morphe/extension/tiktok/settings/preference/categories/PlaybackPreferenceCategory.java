@@ -297,6 +297,11 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                             + "instead of waiting for you to press Play in the notification. A "
                             + "call or another app's sound still pauses it.",
                     Settings.BACKGROUND_REPLAY));
+            addPreference(new TogglePreference(context, "Background play in the long-press menu",
+                    "Adds TikTok's own background play row to the long-press menu, so you pick it "
+                            + "for one video and other videos stop as usual. Has no effect while "
+                            + "Keep playing in the background is on. Restart TikTok to apply this.",
+                    Settings.BACKGROUND_PLAY_MENU));
         }
         if (SettingsStatus.pictureInPictureEnabled) {
             addPreference(new TogglePreference(context, "Keep watching in a small window",

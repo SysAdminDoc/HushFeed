@@ -295,8 +295,10 @@ function Restore-WalkTabs([string]$From, [int]$Height) {
 }
 
 function Select-WalkRow($Nodes, [string]$Label, [string]$Id, [int]$Height) {
+    # The band starts under the toolbar, which ends at 0.095 of the height on the S22, where the
+    # first row's title (Search settings) sits at 0.117: a 0.12 cutoff never saw it.
     return @(Find-UiNode -Nodes $Nodes -Label $Label -Id $Id |
-            Where-Object { $_.Top -gt $Height * 0.12 -and $_.Bottom -lt $Height * 0.95 }) | Select-Object -First 1
+            Where-Object { $_.Top -gt $Height * 0.10 -and $_.Bottom -lt $Height * 0.95 }) | Select-Object -First 1
 }
 
 function Find-WalkRow([string]$Label, [int]$Width, [int]$Height, [string]$Name, [string]$Id) {

@@ -43,7 +43,9 @@
     The phones are shared, so the pull and the device verifier each run under the device lease
     (scripts/device-lease.ps1) on -Serial, taken right before and released right after, and the
     script refuses the device half while another task holds that phone. Pass -LeaseDir and
-    -ChatIdentity, or set HUSHFEED_DEVICE_LEASE_DIR and HUSHFEED_CHAT_IDENTITY.
+    -ChatIdentity, or set HUSHFEED_DEVICE_LEASE_DIR and HUSHFEED_CHAT_IDENTITY. A caller that
+    already holds the lease on -Serial passes it as -Lease instead (walk-app.ps1 does, so the
+    phone stays with the release between the walk and the verifier), and it stays held.
 #>
 [CmdletBinding()]
 param(
@@ -57,7 +59,8 @@ param(
     [string]$DesktopJar,
     [string]$LeaseDir = $env:HUSHFEED_DEVICE_LEASE_DIR,
     [string]$ChatIdentity = $env:HUSHFEED_CHAT_IDENTITY,
-    [ValidateRange(1, 30)][int]$LeaseMinutes = 30
+    [ValidateRange(1, 30)][int]$LeaseMinutes = 30,
+    [object]$Lease
 )
 
 $ErrorActionPreference = 'Stop'
@@ -123,16 +126,19 @@ try {
 $adbPath = $null
 if ($FromDevice -or $Serial) {
     # Checked here so a missing setting fails now, not after the minutes-long dex comparison.
-    if (-not $LeaseDir) { throw 'Device checks require -LeaseDir or HUSHFEED_DEVICE_LEASE_DIR for the shared device pool.' }
-    if (-not $ChatIdentity) { throw 'Device checks require -ChatIdentity or HUSHFEED_CHAT_IDENTITY.' }
+    if ($Lease) { Assert-DeviceLease -Lease $Lease -Serial $Serial }
+    elseif (-not $LeaseDir) { throw 'Device checks require -LeaseDir or HUSHFEED_DEVICE_LEASE_DIR for the shared device pool.' }
+    elseif (-not $ChatIdentity) { throw 'Device checks require -ChatIdentity or HUSHFEED_CHAT_IDENTITY.' }
     $adbPath = Resolve-Adb -Explicit $Adb
 }
 
 if ($FromDevice) {
     if (-not $Serial) { throw '-FromDevice needs -Serial so it cannot pull from somebody else''s phone.' }
     # Released right after the pull, so the dex comparison doesn't hold the phone for minutes.
-    $deviceLease = New-DeviceLease -LeaseDir $LeaseDir -Serial $Serial -Project 'hushfeed' `
-        -ChatIdentity $ChatIdentity -Purpose 'injected-register check pull' -LeaseMinutes $LeaseMinutes
+    $deviceLease = if ($Lease) { $Lease } else {
+        New-DeviceLease -LeaseDir $LeaseDir -Serial $Serial -Project 'hushfeed' `
+            -ChatIdentity $ChatIdentity -Purpose 'injected-register check pull' -LeaseMinutes $LeaseMinutes
+    }
     try {
         Assert-DeviceLease -Lease $deviceLease -Serial $Serial
         $paths = @(& $adbPath -s $Serial shell pm path com.zhiliaoapp.musically 2>&1 |
@@ -150,7 +156,7 @@ if ($FromDevice) {
         & $adbPath -s $Serial pull $onDevice $PatchedApk | Out-Null
         if ($LASTEXITCODE -ne 0) { throw "Could not pull the installed APK from $Serial." }
     } finally {
-        Remove-DeviceLease -Lease $deviceLease -WarnOnFailure
+        if (-not $Lease) { Remove-DeviceLease -Lease $deviceLease -WarnOnFailure }
     }
 }
 
@@ -176,8 +182,13 @@ if ($diffExit -ne 0) {
 
 if ($Serial) {
     Write-Host "[registers] running the device verifier on $Serial"
-    $deviceLease = New-DeviceLease -LeaseDir $LeaseDir -Serial $Serial -Project 'hushfeed' `
-        -ChatIdentity $ChatIdentity -Purpose 'injected-register device verifier' -LeaseMinutes $LeaseMinutes
+    if ($Lease) {
+        Update-DeviceLease -Lease $Lease -LeaseMinutes $LeaseMinutes
+        $deviceLease = $Lease
+    } else {
+        $deviceLease = New-DeviceLease -LeaseDir $LeaseDir -Serial $Serial -Project 'hushfeed' `
+            -ChatIdentity $ChatIdentity -Purpose 'injected-register device verifier' -LeaseMinutes $LeaseMinutes
+    }
     try {
         $cleanTally = Invoke-AndroidVerifierTally -Adb $adbPath -Serial $Serial `
             -Local $CleanApk -Label 'clean' -Lease $deviceLease
@@ -186,7 +197,7 @@ if ($Serial) {
         $patchedTally = Invoke-AndroidVerifierTally -Adb $adbPath -Serial $Serial `
             -Local $PatchedApk -Label 'patched' -Lease $deviceLease
     } finally {
-        Remove-DeviceLease -Lease $deviceLease -WarnOnFailure
+        if (-not $Lease) { Remove-DeviceLease -Lease $deviceLease -WarnOnFailure }
     }
     $comparison = Compare-VerifierTallies -Clean $cleanTally -Patched $patchedTally
     Write-Host "[registers] verifier messages: clean $($comparison.CleanTotal), patched $($comparison.PatchedTotal)"

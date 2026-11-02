@@ -31,6 +31,9 @@ param(
     [string]$LeaseDir = $env:HUSHFEED_DEVICE_LEASE_DIR,
     [string]$ChatIdentity = $env:HUSHFEED_CHAT_IDENTITY,
     [ValidateRange(1, 30)][int]$LeaseMinutes = 30,
+    # A lease the caller already holds on -Serial (walk-app.ps1 passes its own). The install
+    # runs under it and leaves it held, so no other task can take the phone before the walk.
+    [object]$Lease,
     [switch]$Replace,
     # Print every line the desktop CLI writes, not only errors. The privacy patches say how
     # many call sites they intercepted, and a count of zero is the finding that matters.
@@ -213,8 +216,13 @@ if (-not $Serial) { return }
 $adb = (Get-Command adb -ErrorAction SilentlyContinue).Source
 if (-not $adb) { $adb = Get-ChildItem "$env:LOCALAPPDATA\Microsoft\WinGet\Packages" -Recurse -Filter adb.exe -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName }
 if (-not $adb) { throw 'No adb found. Put it on the PATH or install the platform tools.' }
-$deviceLease = New-DeviceLease -LeaseDir $LeaseDir -Serial $Serial -Project 'hushfeed' `
-    -ChatIdentity $ChatIdentity -Purpose 'patched application install' -LeaseMinutes $LeaseMinutes
+if ($Lease) {
+    Assert-DeviceLease -Lease $Lease -Serial $Serial
+    $deviceLease = $Lease
+} else {
+    $deviceLease = New-DeviceLease -LeaseDir $LeaseDir -Serial $Serial -Project 'hushfeed' `
+        -ChatIdentity $ChatIdentity -Purpose 'patched application install' -LeaseMinutes $LeaseMinutes
+}
 if ($Replace) {
     [void](Remove-AndroidPackageIfInstalled -Adb $adb -Serial $Serial -PackageName $target.PackageName -Lease $deviceLease)
 } else {
@@ -242,7 +250,7 @@ Assert-DeviceLease -Lease $deviceLease -Serial $Serial
             if (Test-Path -LiteralPath $unsigned) { Remove-Item -LiteralPath $unsigned -Force }
         }
     } finally {
-        try { Remove-DeviceLease -Lease $deviceLease -WarnOnFailure }
+        try { if (-not $Lease) { Remove-DeviceLease -Lease $deviceLease -WarnOnFailure } }
         finally { Close-ApkSigningSession -Session $signingSession }
     }
 }

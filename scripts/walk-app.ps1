@@ -27,6 +27,10 @@
     The receipt is PASS only when every planned screen was reached, the app never crashed, died
     or left the foreground, and the installed APK is the one patched from -Bundle.
 
+    One device lease covers the install, the walk and, with -VerifyCleanApk, ART's verifier
+    (verify-injected-registers.ps1) after a PASS. Taking a fresh lease for each step let another
+    task take the phone in the seconds between them, twice in one release.
+
 .EXAMPLE
     ./scripts/walk-app.ps1 -Serial $env:HUSHFEED_DEVICE_SERIAL -Bundle patches/build/release/patches-0.78.0.mpp `
         -PatchArgs @{ Apk = 'C:/fixtures/tiktok.apk'; Keystore = 'C:/keys/device.keystore'; KeyAlias = 'Morphe' }
@@ -50,7 +54,10 @@ param(
     [string]$Query = 'cats',
     # Passed to patch-for-device.ps1 as they are: Apk, DesktopJar, Java, Keystore, KeyAlias,
     # KeystoreType, KeystorePassword, KeyPassword, Exclude, Option, OutDir.
-    [hashtable]$PatchArgs = @{}
+    [hashtable]$PatchArgs = @{},
+    # The clean vendor APK. After a PASS, verify-injected-registers.ps1 compares it with the
+    # walked APK and runs ART's verifier on -Serial under the walk's own lease.
+    [string]$VerifyCleanApk
 )
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version 3.0
@@ -99,10 +106,16 @@ if ((Get-FileHash -LiteralPath $releaseBundle -Algorithm SHA256).Hash.ToLowerInv
 $adb = (Get-Command adb -ErrorAction SilentlyContinue).Source
 if (-not $adb) { $adb = Get-ChildItem "$env:LOCALAPPDATA\Microsoft\WinGet\Packages" -Recurse -Filter adb.exe -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName }
 if (-not $adb) { throw 'No adb found. Put it on the PATH or install the platform tools.' }
+if ($VerifyCleanApk -and -not (Test-Path -LiteralPath $VerifyCleanApk -PathType Leaf)) { throw "There's no clean APK at $VerifyCleanApk." }
+
+$script:lease = New-DeviceLease -LeaseDir $LeaseDir -Serial $Serial -Project 'hushfeed' -ChatIdentity $ChatIdentity `
+    -Purpose 'whole-app walk' -LeaseMinutes 30
+$walkExit = 1
+try {
 
 if (-not $AuditBuild) {
     $patch = @{} + $PatchArgs
-    $patch.Serial = $Serial; $patch.LeaseDir = $LeaseDir; $patch.ChatIdentity = $ChatIdentity
+    $patch.Serial = $Serial; $patch.LeaseDir = $LeaseDir; $patch.ChatIdentity = $ChatIdentity; $patch.Lease = $script:lease
     if (-not $patch.ContainsKey('OutDir')) { $patch.OutDir = Join-Path $work 'apk' }
     Write-WalkLog "patching and installing from $releaseBundle"
     & (Join-Path $PSScriptRoot 'patch-for-device.ps1') @patch
@@ -450,8 +463,7 @@ $started = [DateTimeOffset]::UtcNow
 $device = ''; $appVersion = ''; $installedSha256 = ''; $installedPackage = ''; $installedVersionCode = ''
 $crashes = @()
 $savedScales = @{}
-$script:lease = New-DeviceLease -LeaseDir $LeaseDir -Serial $Serial -Project 'hushfeed' -ChatIdentity $ChatIdentity `
-    -Purpose 'whole-app walk' -LeaseMinutes 30
+Update-DeviceLease -Lease $script:lease -LeaseMinutes 30
 try {
     Invoke-WalkAdb shell input keyevent KEYCODE_WAKEUP | Out-Null
     $device = ((Invoke-WalkAdb shell getprop ro.product.model) -join '').Trim()
@@ -649,7 +661,6 @@ try {
             else { Invoke-WalkAdb shell settings delete global $key | Out-Null }
         }
     } catch { Write-Warning $_.Exception.Message }
-    Remove-DeviceLease -Lease $script:lease -WarnOnFailure
 }
 
 $verdict = Get-WalkVerdict -Planned $planned -Reached $reached -Crashes $crashes -Faults $faults
@@ -662,4 +673,19 @@ $receipt = New-WalkReceipt -WalkProfile $receiptProfile -Result $verdict.Result 
 foreach ($problem in $verdict.Problems) { Write-WalkLog "problem: $problem" }
 Write-WalkLog "$($reached.Count) of $($planned.Count) screens, $($crashes.Count) crashes. Receipt: $Out"
 Write-WalkLog $verdict.Result
-if ($verdict.Result -ne 'PASS') { exit 1 }
+
+if ($verdict.Result -eq 'PASS') {
+    $walkExit = 0
+    if ($VerifyCleanApk) {
+        # ART's verifier reads every class, so it sees a bad hook on a screen the walk never opened.
+        Update-DeviceLease -Lease $script:lease -LeaseMinutes 30
+        & (Join-Path $PSScriptRoot 'verify-injected-registers.ps1') -CleanApk $VerifyCleanApk -PatchedApk $PatchedApk `
+            -Serial $Serial -Lease $script:lease
+        $walkExit = $LASTEXITCODE
+    }
+}
+
+} finally {
+    Remove-DeviceLease -Lease $script:lease -WarnOnFailure
+}
+exit $walkExit

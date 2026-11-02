@@ -78,8 +78,9 @@ public class SimSpoofPreferenceCategory extends ConditionalPreferenceCategory {
         addPreference(new InputTextPreference(
                 context,
                 "Proxy user name",
-                "Optional. Only connections made by Android itself can sign in to a proxy, not "
-                        + "TikTok's own. Leave empty for a proxy without a password.",
+                "Optional. Leave empty for a proxy without a password. TikTok signs in through a "
+                        + "small relay on this phone, which other apps here could reach while "
+                        + "TikTok is open.",
                 Settings.NETWORK_PROXY_USER
         ).withNameKeyboard());
         addPreference(new InputTextPreference(

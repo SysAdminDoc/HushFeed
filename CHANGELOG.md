@@ -14,6 +14,8 @@ Every Hushfeed release, newest first.
 * **TikTok:** `Keep LIVEs from these creators` lets the LIVEs of creators you pick stay in the feed while `Hide LIVE videos` is on. Add as many as you like, by handle or user ID. It keeps what TikTok sends you, so it won't bring in a LIVE TikTok didn't serve.
 
 ### Bug Fixes
+* **TikTok:** `Network proxy` works with a proxy that has a user name and password now, for both HTTP and SOCKS5. Before, TikTok's own traffic couldn't sign in, so the app acted like it had no connection.
+* **TikTok:** `Network proxy` no longer says a working proxy is down because one website behind it failed. It asks the proxy first, and gives a slow proxy a second try. A wrong password gets its own message.
 
 * **TikTok:** The README's install steps point at TikTok 47.6.3 now. After v0.80.0 went out they still sent you to 47.5.3, which v0.80.0 doesn't patch.
 

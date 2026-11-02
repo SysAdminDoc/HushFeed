@@ -1953,12 +1953,10 @@ The proxy's address, like 192.168.1.20 or proxy.example.com.	Адрес прок
 Proxy port	Порт прокси
 The port the proxy listens on, like 8080 or 1080.	Порт, на котором работает прокси, например 8080 или 1080.
 Proxy user name	Имя пользователя прокси
-Optional. Only connections made by Android itself can sign in to a proxy, not TikTok's own. Leave empty for a proxy without a password.	Необязательно. Входить в прокси могут только соединения, которые устанавливает сам Android, но не соединения TikTok. Оставьте пустым для прокси без пароля.
 Proxy password	Пароль прокси
 Optional, used with the user name. It isn't shown, logged or put in a backup.	Необязательно, используется вместе с именем пользователя. Он не показывается, не пишется в журнал и не попадает в резервную копию.
 Enter a server name or IP address, without http:// or a port number	Введите имя сервера или IP-адрес без http:// и номера порта
 A port is a whole number from 1 to 65535	Порт должен быть целым числом от 1 до 65535
-TikTok can't send a password to proxy %1$s. Use another.	Пароль не доходит до прокси %1$s. Выберите другой.
 Proxy %1$s is down. Turn it off if TikTok won't load.	Прокси %1$s упал. Выключите его, если TikTok завис.
 Word rules only, not every feed filter:	Только правила для слов, а не все фильтры ленты:
 This list is too long to preview here. Saving still follows the usual limit.	Этот список слишком длинный для предпросмотра. При сохранении действует обычный лимит.
@@ -2572,3 +2570,6 @@ Adds TikTok's own background play row to the long-press menu, so you pick it for
 Background play in the long-press menu is on in Hushfeed's Playback settings, so TikTok gets 1 for this key and an override here has no effect until that switch is off.	«Фоновое воспроизведение в меню долгого нажатия» включено в настройках воспроизведения Hushfeed, поэтому TikTok получает значение 1 для этого ключа, и переопределение здесь не действует, пока тот переключатель не выключен.
 Keep LIVEs from these creators	Оставить LIVE этих авторов
 With Hide LIVE videos on, these creators' LIVEs stay when TikTok sends them. Separate handles or user IDs with commas.	Когда включено «Скрывать видео LIVE», LIVE этих авторов остаются, если TikTok их присылает. Разделяйте имена пользователей или ID запятыми.
+Optional. Leave empty for a proxy without a password. TikTok signs in through a small relay on this phone, which other apps here could reach while TikTok is open.	Необязательно. Оставьте пустым для прокси без пароля. TikTok входит через небольшой ретранслятор на этом телефоне, к которому другие приложения здесь могут подключиться, пока TikTok открыт.
+Proxy %1$s needs a user name and password	Прокси %1$s требует логин и пароль
+Proxy %1$s refused your user name or password	Прокси %1$s отклонил логин или пароль

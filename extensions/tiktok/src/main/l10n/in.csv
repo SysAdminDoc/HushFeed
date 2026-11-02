@@ -1799,12 +1799,10 @@ Proxy host,Host proksi
 Proxy port,Port proksi
 "The port the proxy listens on, like 8080 or 1080.","Port yang didengarkan proksi, seperti 8080 atau 1080."
 Proxy user name,Nama pengguna proksi
-"Optional. Only connections made by Android itself can sign in to a proxy, not TikTok's own. Leave empty for a proxy without a password.","Opsional. Hanya koneksi yang dibuat Android sendiri yang bisa masuk ke proxy, bukan koneksi TikTok. Kosongkan untuk proxy tanpa kata sandi."
 Proxy password,Kata sandi proksi
 "Optional, used with the user name. It isn't shown, logged or put in a backup.","Opsional, dipakai bersama nama pengguna. Tidak ditampilkan, dicatat, atau dimasukkan ke cadangan."
 "Enter a server name or IP address, without http:// or a port number","Masukkan nama server atau alamat IP, tanpa http:// dan tanpa nomor port"
 A port is a whole number from 1 to 65535,Port adalah bilangan bulat dari 1 sampai 65535
-TikTok can't send a password to proxy %1$s. Use another.,Sandi tak bisa dikirim ke proksi %1$s. Pakai lainnya.
 Proxy %1$s is down. Turn it off if TikTok won't load.,Proksi %1$s mati. Matikan jika TikTok tak termuat.
 "Word rules only, not every feed filter:","Hanya aturan kata, bukan semua filter feed:"
 This list is too long to preview here. Saving still follows the usual limit.,"Daftar ini terlalu panjang untuk dipratinjau di sini. Saat disimpan, batas yang biasa tetap berlaku."
@@ -2366,3 +2364,6 @@ Background play in the long-press menu,Putar latar belakang di menu tekan lama
 "Background play in the long-press menu is on in Hushfeed's Playback settings, so TikTok gets 1 for this key and an override here has no effect until that switch is off.","Putar latar belakang di menu tekan lama aktif di pengaturan Pemutaran Hushfeed, jadi TikTok mendapat 1 untuk kunci ini dan penggantian di sini tidak berpengaruh sampai tombol itu dimatikan."
 Keep LIVEs from these creators,Pertahankan LIVE dari kreator ini
 "With Hide LIVE videos on, these creators' LIVEs stay when TikTok sends them. Separate handles or user IDs with commas.","Sembunyikan video LIVE aktif, LIVE dari kreator ini tetap ada saat TikTok mengirimkannya. Pisahkan nama pengguna atau ID pengguna dengan koma."
+"Optional. Leave empty for a proxy without a password. TikTok signs in through a small relay on this phone, which other apps here could reach while TikTok is open.","Opsional. Kosongkan untuk proxy tanpa kata sandi. TikTok masuk melalui relai kecil di ponsel ini, yang bisa dijangkau aplikasi lain di sini selama TikTok terbuka."
+Proxy %1$s needs a user name and password,Proxy %1$s perlu nama pengguna dan kata sandi
+Proxy %1$s refused your user name or password,Proxy %1$s menolak nama pengguna atau sandi

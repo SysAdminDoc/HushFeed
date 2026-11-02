@@ -45,8 +45,8 @@ private const val CONFIG_LOOKBACK = 6
 /**
  * TTNet's one builder of TikTok's Cronet engine, org.chromium.CronetClient.tryCreateCronetEngine,
  * on every declared build. TikTok's API client goes through the engine this builds once a process;
- * whether its image loader and LIVE websocket share that engine is a device check. The read sits
- * behind isBOEProxyEnabled(), ByteDance's internal test environment, which is off in release.
+ * whether its image loader and LIVE websocket share that engine is a device check. The read runs
+ * when isBOEProxyEnabled(), ByteDance's internal test environment, is off, as it is in release.
  */
 internal object CronetEngineCreateFingerprint : Fingerprint(
     definingClass = "Lorg/chromium/CronetClient;",
@@ -123,7 +123,8 @@ val networkProxyPatch = bytecodePatch(
     name = "Network proxy",
     description = "Sends TikTok's feed, search and comments through a proxy server you set " +
         "up. Videos and LIVEs still load directly, and so do Hushfeed's own saves and short-link " +
-        "lookups. Other apps aren't affected. Starts off. Turn it on in Hushfeed settings > " +
+        "lookups. HTTP and SOCKS5 both work, with or without a password. Other apps aren't " +
+        "affected. Starts off. Turn it on in Hushfeed settings > " +
         "Region, then restart TikTok.",
 ) {
     category("Settings")

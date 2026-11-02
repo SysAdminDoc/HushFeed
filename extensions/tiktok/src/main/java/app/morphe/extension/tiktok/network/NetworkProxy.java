@@ -24,16 +24,13 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.Authenticator;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -60,8 +57,8 @@ import java.util.regex.Pattern;
  * native code that open their own sockets. Hushfeed's own saves and short-link lookups skip the
  * selector on purpose too: they open with {@code Proxy.NO_PROXY} so a proxy can't pick the peer
  * after the address was checked (see {@code PinnedMediaConnection}). {@link NetworkRoutes} lists
- * all four routes in the exported report. Chromium can't sign in to a proxy for TTNet, so a
- * user name and password only reach the Java side, through {@link Authenticator}.
+ * all four routes in the exported report. Neither route can sign in to a proxy by itself, so with
+ * a user name set both point at {@link ProxyRelay}, which signs in for them.
  *
  * <p>The Java side keeps this phone and its local network direct. TTNet's rule has no room for
  * a list of exceptions (Chromium reads one apart from the rule, and TTNet's builder takes the rule
@@ -83,10 +80,16 @@ public final class NetworkProxy {
     /** Where the start-up check asks an HTTP proxy to open a tunnel to. */
     static final String PROBE_TARGET = "www.tiktok.com:443";
 
-    static final int PROBE_TIMEOUT_MS = 6000;
+    static final int PROBE_TIMEOUT_MS = 10_000;
+
+    /** How many tries a check gets before it says the proxy is down, since slow ones are common. */
+    static final int PROBE_TRIES = 2;
 
     /** How long after a check TikTok coming back to the screen checks the proxy again. */
     static final long RECHECK_AFTER_MS = 5 * 60_000L;
+
+    /** How often a failed connection can have the proxy checked, since they come in bursts. */
+    static final long CONFIRM_AFTER_MS = 30_000L;
 
     private static final Executor OWN_THREAD = task -> Utils.runOnOwnThread("Hushfeed proxy check", task);
 
@@ -99,7 +102,7 @@ public final class NetworkProxy {
     private static final Pattern IPV4 = Pattern.compile("\\d{1,3}(?:\\.\\d{1,3}){3}");
 
     /** What the start-up check found. */
-    enum Probe { REACHED, UNREACHABLE, NEEDS_PASSWORD }
+    enum Probe { REACHED, UNREACHABLE, NEEDS_PASSWORD, REFUSED_PASSWORD }
 
     /** The proxy as the settings describe it. Only a valid one is ever built. */
     static final class Config {
@@ -160,6 +163,8 @@ public final class NetworkProxy {
     /** When the last check started, on {@link SystemClock#elapsedRealtime()}. */
     private static volatile long checkedAt;
     private static volatile boolean following;
+    /** The relay in front of a proxy with a password, once something has asked for it. */
+    @Nullable private static ProxyRelay relay;
 
     private NetworkProxy() {
     }
@@ -271,6 +276,22 @@ public final class NetworkProxy {
         return config != null ? config : configured();
     }
 
+    /**
+     * What TikTok's stacks are pointed at: the proxy itself, or the relay in front of one with a
+     * password. Should the relay fail to start, they go to the proxy with no sign-in, and the
+     * proxy says no to that.
+     */
+    static synchronized Config route(Config config) {
+        if (!config.hasCredentials()) return config;
+        try {
+            if (relay == null) relay = ProxyRelay.start(config);
+            return relay.route();
+        } catch (IOException | RuntimeException failure) {
+            Logger.printException(() -> "Network proxy could not start its sign-in relay", failure);
+            return config;
+        }
+    }
+
     // -- TTNet ----------------------------------------------------------------------------------
 
     /**
@@ -294,7 +315,7 @@ public final class NetworkProxy {
                     return original;
                 }
             }
-            json.put(TTNET_PROXY_KEY, config.ttnetRules());
+            json.put(TTNET_PROXY_KEY, route(config).ttnetRules());
             Logger.printDebug(() -> "Network proxy: TikTok's network stack starts through the " + config.describe());
             return json.toString();
         } catch (JSONException | RuntimeException error) {
@@ -307,9 +328,9 @@ public final class NetworkProxy {
 
     /**
      * Called once per process from the host application's attachBaseContext, after the
-     * extension has its context and before TikTok builds a network client. Puts the selector and,
-     * with a user name, the authenticator in place, and in TikTok's main process checks the
-     * proxy answers, then checks again as TikTok comes back to the screen.
+     * extension has its context and before TikTok builds a network client. Puts the selector in
+     * place, and in TikTok's main process checks the proxy answers, then checks again as TikTok
+     * comes back to the screen.
      */
     public static void install(Context context) {
         if (installed) return;
@@ -318,10 +339,10 @@ public final class NetworkProxy {
             Config config = configured();
             if (config == null) return;
             active = config;
-            ProxySelector.setDefault(new Selector(config, ProxySelector.getDefault()));
-            if (config.hasCredentials()) Authenticator.setDefault(new Credentials(config));
+            Config route = route(config);
+            ProxySelector.setDefault(new Selector(config, route, ProxySelector.getDefault()));
             Logger.printDebug(() -> "Network proxy: Java connections go through the " + config.describe()
-                    + (config.hasCredentials() ? ", signing in when asked" : ""));
+                    + (route != config ? ", signing in through the relay" : ""));
             if (Utils.isMainProcess()) {
                 check(config);
                 // Queued, not now: during attachBaseContext the base context has no application yet.
@@ -335,7 +356,24 @@ public final class NetworkProxy {
     /** Asks the proxy whether it answers, off the main thread, and says so if it doesn't. */
     static void check(Config config) {
         checkedAt = SystemClock.elapsedRealtime();
-        checker.execute(() -> report(config, probe(config, PROBE_TIMEOUT_MS)));
+        checker.execute(() -> {
+            Probe found = probe(config, PROBE_TIMEOUT_MS);
+            for (int retry = 1; retry < PROBE_TRIES && found == Probe.UNREACHABLE; retry++) {
+                found = probe(config, PROBE_TIMEOUT_MS);
+            }
+            report(config, found);
+        });
+    }
+
+    /**
+     * Asks the proxy itself after a connection through it failed. A failure there says little:
+     * OkHttp reports one for any route that fails, a site the proxy can't reach or won't carry
+     * included, and telling people their working proxy was down is how #304 read.
+     */
+    static void confirm(Config config) {
+        if (!Utils.isMainProcess()) return;
+        if (checkedAt != 0 && SystemClock.elapsedRealtime() - checkedAt < CONFIRM_AFTER_MS) return;
+        check(config);
     }
 
     /**
@@ -391,12 +429,14 @@ public final class NetworkProxy {
     /** The JVM's default selector while the proxy is on. */
     static final class Selector extends ProxySelector {
         private final Config config;
+        private final Config route;
         private final Proxy proxy;
         @Nullable private final ProxySelector previous;
 
-        Selector(Config config, @Nullable ProxySelector previous) {
+        Selector(Config config, Config route, @Nullable ProxySelector previous) {
             this.config = config;
-            this.proxy = config.javaProxy();
+            this.route = route;
+            this.proxy = route.javaProxy();
             this.previous = previous;
         }
 
@@ -425,8 +465,8 @@ public final class NetworkProxy {
 
         @Override
         public void connectFailed(URI uri, SocketAddress address, IOException failure) {
-            if (isProxy(address, config)) {
-                report(config, Probe.UNREACHABLE);
+            if (isProxy(address, route)) {
+                confirm(config);
             } else if (previous != null && !(previous instanceof Selector)) {
                 previous.connectFailed(uri, address, failure);
             }
@@ -442,47 +482,13 @@ public final class NetworkProxy {
         return resolved != null && config.host.equalsIgnoreCase(resolved.getHostAddress());
     }
 
-    /** Answers a proxy's sign-in request, and nobody else's, with the saved user name and password. */
-    static final class Credentials extends Authenticator {
-        private final Config config;
-
-        Credentials(Config config) {
-            this.config = config;
-        }
-
-        @Override
-        protected PasswordAuthentication getPasswordAuthentication() {
-            return credentialsFor(config, getRequestorType() == RequestorType.PROXY,
-                    getRequestingProtocol(), getRequestingHost(), getRequestingSite(), getRequestingPort());
-        }
-    }
-
-    /**
-     * The saved sign-in when the request comes from this proxy: an HTTP proxy asking through
-     * HttpURLConnection, or the SOCKS5 handshake, which asks with the protocol "SOCKS5". Null for
-     * every other request, so a website's own password prompt never gets the proxy's.
-     */
-    @Nullable
-    static PasswordAuthentication credentialsFor(Config config, boolean proxyRequest,
-                                                 @Nullable String protocol, @Nullable String host,
-                                                 @Nullable InetAddress site, int port) {
-        if (!config.hasCredentials() || port != config.port) return null;
-        boolean fromProxy = config.socks()
-                ? "SOCKS5".equalsIgnoreCase(protocol)
-                : proxyRequest;
-        if (!fromProxy) return null;
-        boolean sameHost = config.host.equalsIgnoreCase(host)
-                || (site != null && config.host.equalsIgnoreCase(site.getHostAddress()));
-        return sameHost ? new PasswordAuthentication(config.user, config.password.toCharArray()) : null;
-    }
-
     // -- The start-up check ---------------------------------------------------------------------
 
     /**
-     * Connects to the proxy straight, never through the selector, and asks it what TTNet will:
-     * a SOCKS5 proxy for a session with no sign-in, which is the only kind Chromium offers, and an
-     * HTTP proxy for a tunnel, with no credentials, for the same reason. A proxy that wants a
-     * password works for the Java side only, so that's reported apart from one that's down.
+     * Connects to the proxy straight, never through the selector, and does what the relay or
+     * TikTok's stacks will do: a SOCKS5 greeting or a request for an HTTP tunnel, with the sign-in
+     * when there's a user name. A proxy that wants a password nobody gave it, or turns down the one
+     * given, is told apart from one that's down.
      */
     static Probe probe(Config config, int timeoutMs) {
         try (Socket socket = new Socket(Proxy.NO_PROXY)) {
@@ -490,41 +496,19 @@ public final class NetworkProxy {
             socket.setSoTimeout(timeoutMs);
             OutputStream out = socket.getOutputStream();
             InputStream in = socket.getInputStream();
-            if (config.socks()) {
-                out.write(new byte[]{5, 1, 0});
-                out.flush();
-                int version = in.read();
-                int method = in.read();
-                if (version != 5 || method < 0) return Probe.UNREACHABLE;
-                return method == 0 ? Probe.REACHED : Probe.NEEDS_PASSWORD;
-            }
-            out.write(("CONNECT " + PROBE_TARGET + " HTTP/1.1\r\nHost: " + PROBE_TARGET + "\r\n\r\n")
-                    .getBytes(StandardCharsets.US_ASCII));
-            out.flush();
-            String status = statusLine(in);
-            if (status == null || !status.startsWith("HTTP/")) return Probe.UNREACHABLE;
-            String[] parts = status.split(" ");
-            return parts.length > 1 && parts[1].equals("407") ? Probe.NEEDS_PASSWORD : Probe.REACHED;
+            if (config.socks()) return ProxyRelay.signInToSocks(config, in, out);
+            int status = ProxyRelay.askForHttpTunnel(config, PROBE_TARGET, in, out);
+            if (status < 0) return Probe.UNREACHABLE;
+            if (status != 407) return Probe.REACHED;
+            return config.hasCredentials() ? Probe.REFUSED_PASSWORD : Probe.NEEDS_PASSWORD;
         } catch (IOException | RuntimeException failure) {
             return Probe.UNREACHABLE;
         }
     }
 
-    @Nullable
-    private static String statusLine(InputStream in) throws IOException {
-        StringBuilder line = new StringBuilder();
-        while (line.length() < 128) {
-            int next = in.read();
-            if (next < 0) return line.length() == 0 ? null : line.toString();
-            if (next == '\n') break;
-            if (next != '\r') line.append((char) next);
-        }
-        return line.toString();
-    }
-
     /**
-     * Says when the proxy is down or wants a sign-in TTNet can't give, once until it answers
-     * again, so a proxy that comes back and drops later is told about a second time.
+     * Says when the proxy is down or won't take the sign-in, once until it answers again, so a
+     * proxy that comes back and drops later is told about a second time.
      */
     static void report(Config config, Probe probe) {
         if (probe == Probe.REACHED) {
@@ -534,9 +518,11 @@ public final class NetworkProxy {
         }
         if (!reported.compareAndSet(false, true)) return;
         if (probe == Probe.NEEDS_PASSWORD) {
-            Logger.printInfo(() -> "Network proxy: the " + config.describe() + " wants a sign-in TikTok's network stack can't give");
-            Utils.showToastLong(L10n.f("TikTok can't send a password to proxy %1$s. Use another.",
-                    config.hostPort()));
+            Logger.printInfo(() -> "Network proxy: the " + config.describe() + " wants a sign-in and none is set");
+            Utils.showToastLong(L10n.f("Proxy %1$s needs a user name and password", config.hostPort()));
+        } else if (probe == Probe.REFUSED_PASSWORD) {
+            Logger.printInfo(() -> "Network proxy: the " + config.describe() + " turned down the sign-in");
+            Utils.showToastLong(L10n.f("Proxy %1$s refused your user name or password", config.hostPort()));
         } else {
             Logger.printInfo(() -> "Network proxy: the " + config.describe() + " didn't answer");
             Utils.showToastLong(L10n.f("Proxy %1$s is down. Turn it off if TikTok won't load.",
@@ -545,9 +531,11 @@ public final class NetworkProxy {
     }
 
     /** For tests: forget what this process put in place. */
-    static void resetForTests() {
+    static synchronized void resetForTests() {
         installed = false;
         active = null;
+        if (relay != null) relay.close();
+        relay = null;
         reported.set(false);
         checkedAt = 0;
         following = false;

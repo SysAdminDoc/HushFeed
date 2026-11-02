@@ -41,10 +41,8 @@ import org.robolectric.util.ReflectionHelpers.ClassParameter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.Authenticator;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.ServerSocket;
@@ -58,10 +56,10 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Network proxy: what the settings accept, the rule TTNet's engine builder gets, the selector and
- * sign-in the JVM gets, the start-up check, and that it all stays out of the way while the switch
- * is off, while Hushfeed is paused, before the extension has a context and on a bundle without
- * the patch. The user name and password never appear in anything this writes.
+ * Network proxy: what the settings accept, the rule TTNet's engine builder gets, the selector the
+ * JVM gets, the relay both use to sign in, the start-up check, and that it all stays out of the way
+ * while the switch is off, while Hushfeed is paused, before the extension has a context and on a
+ * bundle without the patch. The user name and password never appear in anything this writes.
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 28)
@@ -104,7 +102,6 @@ public class NetworkProxyTest {
         Utils.setContext(context);
         setPaused(false);
         ProxySelector.setDefault(originalSelector);
-        Authenticator.setDefault(null);
         SettingsStatus.networkProxyEnabled = false;
         SettingsStatus.simSpoofEnabled = simSpoof;
         SettingsStatus.regionSpoofEnabled = regionSpoof;
@@ -320,8 +317,6 @@ public class NetworkProxyTest {
         assertTrue(NetworkProxy.isInstalled());
         assertNull(NetworkProxy.active());
         assertSame(originalSelector, ProxySelector.getDefault());
-        assertNull(Authenticator.requestPasswordAuthentication("10.0.0.2", null, 1080, "SOCKS5",
-                "", "", null, Authenticator.RequestorType.SERVER));
 
         // Once a process: turning it on later waits for the restart.
         turnOn("http", "proxy.example.com", "8080", "", "");
@@ -336,7 +331,7 @@ public class NetworkProxyTest {
         assertTrue(joined.contains("tiktok_api_and_java_connections: direct"));
 
         ServerSocket server = serve(socket -> {
-            readFully(socket.getInputStream(), 3);
+            readFully(socket.getInputStream(), 4);
             socket.getOutputStream().write(new byte[]{5, 0});
         });
         turnOn("socks5", "127.0.0.1", String.valueOf(server.getLocalPort()), USER, PASSWORD);
@@ -351,7 +346,7 @@ public class NetworkProxyTest {
         assertTrue(joined.contains("hushfeed_saves: direct, to a checked public address"));
         assertTrue(joined.contains("never the proxy selector"));
         assertTrue(joined.contains("short_link_expansion: direct, same checks, switch off"));
-        assertTrue(joined.contains("proxy_sign_in: Java connections only"));
+        assertTrue(joined.contains("proxy_sign_in: through a relay on this phone"));
         assertFalse(joined.contains("127.0.0.1"));
         assertFalse(joined.contains(USER));
         assertFalse(joined.contains(PASSWORD));
@@ -371,41 +366,69 @@ public class NetworkProxyTest {
         assertSame(originalSelector, ProxySelector.getDefault());
     }
 
-    @Test public void onInstallRoutesJavaConnectionsAndSignsInToTheProxyOnly() throws Exception {
-        ServerSocket server = serve(socket -> {
-            readFully(socket.getInputStream(), 3);
-            socket.getOutputStream().write(new byte[]{5, 0});
-        });
-        String port = String.valueOf(server.getLocalPort());
-        turnOn("socks5", "127.0.0.1", port, USER, PASSWORD);
+    /**
+     * #304: a proxy with a password. The start-up check gets through, both stacks point at the
+     * relay rather than the proxy, and what they send reaches the proxy signed in. The selector
+     * being on is the point: the relay's own socket has to skip it or it would call itself.
+     */
+    @Test public void withAPasswordBothStacksGoThroughTheRelayAndSignIn() throws Exception {
+        StringBuilder tunnel = new StringBuilder();
+        ServerSocket proxy = new ServerSocket(0, 8, InetAddress.getByName("127.0.0.1"));
+        servers.add(proxy);
+        Thread thread = new Thread(() -> {
+            while (!proxy.isClosed()) {
+                try (Socket socket = proxy.accept()) {
+                    socket.setSoTimeout(TIMEOUT_MS);
+                    String head = readHead(socket.getInputStream());
+                    if (head.startsWith("CONNECT api")) tunnel.append(head);
+                    boolean signedIn = head.contains("Proxy-Authorization: Basic ");
+                    socket.getOutputStream().write((signedIn
+                            ? "HTTP/1.1 200 OK\r\n\r\n"
+                            : "HTTP/1.1 407 Proxy Authentication Required\r\n\r\n").getBytes(StandardCharsets.US_ASCII));
+                    socket.getOutputStream().flush();
+                    socket.getInputStream().read();
+                } catch (IOException ignored) {
+                    // The assertions read what the proxy saw.
+                }
+            }
+        }, "network-proxy-test-proxy");
+        thread.setDaemon(true);
+        thread.start();
+        turnOn("http", "127.0.0.1", String.valueOf(proxy.getLocalPort()), USER, PASSWORD);
 
         NetworkProxy.install(context);
         Utils.awaitBackgroundTasksForTests();
         shadowOf(Looper.getMainLooper()).idle();
 
-        assertNotNull(NetworkProxy.active());
-        ProxySelector selector = ProxySelector.getDefault();
-        assertTrue(selector instanceof NetworkProxy.Selector);
-        Proxy proxy = selector.select(new URI("https://api16-normal-useast5.tiktokv.us/aweme/v1/feed/")).get(0);
-        assertEquals(Proxy.Type.SOCKS, proxy.type());
-        assertEquals(InetSocketAddress.createUnresolved("127.0.0.1", server.getLocalPort()), proxy.address());
+        assertEquals("the start-up check signed in", 0, ShadowToast.shownToastCount());
+        Proxy route = ProxySelector.getDefault().select(new URI("https://api16-normal-useast5.tiktokv.us/aweme/v1/feed/")).get(0);
+        assertEquals(Proxy.Type.SOCKS, route.type());
+        InetSocketAddress relay = (InetSocketAddress) route.address();
+        assertEquals("127.0.0.1", relay.getHostString());
+        assertFalse(relay.getPort() == proxy.getLocalPort());
+        assertEquals("socks5://127.0.0.1:" + relay.getPort(),
+                new JSONObject(NetworkProxy.ttnetConfig("")).getString("ttnet_proxy"));
 
-        PasswordAuthentication signIn = Authenticator.requestPasswordAuthentication("127.0.0.1",
-                InetAddress.getByName("127.0.0.1"), server.getLocalPort(), "SOCKS5", "", "", null,
-                Authenticator.RequestorType.SERVER);
-        assertNotNull(signIn);
-        assertEquals(USER, signIn.getUserName());
-        assertEquals(PASSWORD, new String(signIn.getPassword()));
-        // A website asking for its own password never gets the proxy's.
-        assertNull(Authenticator.requestPasswordAuthentication("www.tiktok.com", null, 443, "https",
-                "", "basic", null, Authenticator.RequestorType.SERVER));
-        // The proxy answered, so nothing was said.
-        assertEquals(0, ShadowToast.shownToastCount());
+        try (Socket client = new Socket(route)) {
+            client.setSoTimeout(TIMEOUT_MS);
+            client.connect(InetSocketAddress.createUnresolved("api16.example.test", 443), TIMEOUT_MS);
+        }
+        assertTrue(tunnel.toString(), tunnel.toString().startsWith("CONNECT api16.example.test:443 HTTP/1.1\r\n"));
+    }
+
+    @Test public void aProxyWithoutAPasswordIsTalkedToStraight() throws Exception {
+        turnOn("socks5", "10.0.0.2", "1080", "", "");
+        NetworkProxy.checker = task -> { };
+
+        NetworkProxy.install(context);
+
+        Proxy route = ProxySelector.getDefault().select(new URI("https://www.tiktok.com/")).get(0);
+        assertEquals(InetSocketAddress.createUnresolved("10.0.0.2", 1080), route.address());
     }
 
     @Test public void theSelectorCarriesWebTrafficAndLeavesTheLocalNetworkDirect() throws Exception {
         NetworkProxy.Config http = NetworkProxy.parse("http", "proxy.example.com", "8080", "", "");
-        NetworkProxy.Selector selector = new NetworkProxy.Selector(http, null);
+        NetworkProxy.Selector selector = new NetworkProxy.Selector(http, http, null);
         Proxy expected = new Proxy(Proxy.Type.HTTP, InetSocketAddress.createUnresolved("proxy.example.com", 8080));
         for (String carried : new String[]{"https://www.tiktok.com/", "http://api.tiktokv.com/x",
                 "wss://webcast.tiktok.com/ws", "ws://webcast.tiktok.com/ws"}) {
@@ -421,7 +444,7 @@ public class NetworkProxyTest {
         NetworkProxy.Config socks = NetworkProxy.parse("socks5", "10.0.0.2", "1080", "", "");
         Proxy socksProxy = new Proxy(Proxy.Type.SOCKS, InetSocketAddress.createUnresolved("10.0.0.2", 1080));
         assertEquals(Collections.singletonList(socksProxy),
-                new NetworkProxy.Selector(socks, null).select(new URI("socket://api.tiktokv.com:443")));
+                new NetworkProxy.Selector(socks, socks, null).select(new URI("socket://api.tiktokv.com:443")));
     }
 
     @Test public void whatTheProxyDoesntCarryGoesWhereItWentBefore() throws Exception {
@@ -436,8 +459,8 @@ public class NetworkProxyTest {
                 failed.add(uri);
             }
         };
-        NetworkProxy.Selector selector = new NetworkProxy.Selector(
-                NetworkProxy.parse("http", "proxy.example.com", "8080", "", ""), previous);
+        NetworkProxy.Config config = NetworkProxy.parse("http", "proxy.example.com", "8080", "", "");
+        NetworkProxy.Selector selector = new NetworkProxy.Selector(config, config, previous);
         assertEquals(Collections.singletonList(before), selector.select(new URI("http://localhost/")));
 
         URI elsewhere = new URI("http://localhost/");
@@ -446,38 +469,77 @@ public class NetworkProxyTest {
         assertEquals(0, ShadowToast.shownToastCount());
     }
 
-    @Test public void aFailedConnectionToTheProxySaysSoOnce() throws Exception {
-        NetworkProxy.Config config = NetworkProxy.parse("http", "proxy.example.com", "8080", USER, PASSWORD);
-        NetworkProxy.Selector selector = new NetworkProxy.Selector(config, null);
-        URI uri = new URI("https://www.tiktok.com/");
-        selector.connectFailed(uri, InetSocketAddress.createUnresolved("proxy.example.com", 8080), new IOException());
-        selector.connectFailed(uri, InetSocketAddress.createUnresolved("proxy.example.com", 8080), new IOException());
-        shadowOf(Looper.getMainLooper()).idle();
+    /**
+     * #304: OkHttp calls connectFailed with the proxy's address for any route that fails, so a site
+     * the proxy couldn't reach read as a dead proxy while it was busy carrying everything else.
+     */
+    @Test public void aFailedConnectionOnlySaysTheProxyIsDownOnceTheProxyDoesntAnswer() throws Exception {
+        ServerSocket server = serve(socket -> {
+            readFully(socket.getInputStream(), 3);
+            socket.getOutputStream().write(new byte[]{5, 0});
+        });
+        int port = server.getLocalPort();
+        NetworkProxy.Config config = NetworkProxy.parse("socks5", "127.0.0.1", String.valueOf(port), "", "");
+        NetworkProxy.Selector selector = new NetworkProxy.Selector(config, config, null);
+        int[] checks = {0};
+        NetworkProxy.checker = task -> {
+            checks[0]++;
+            task.run();
+        };
+        URI uri = new URI("https://log16-normal.example.test/");
+        InetSocketAddress address = InetSocketAddress.createUnresolved("127.0.0.1", port);
 
+        selector.connectFailed(uri, address, new IOException());
+        shadowOf(Looper.getMainLooper()).idle();
+        assertEquals("the check ran", 1, checks[0]);
+        assertEquals("the proxy answered, so nothing's said", 0, ShadowToast.shownToastCount());
+
+        selector.connectFailed(uri, address, new IOException());
+        assertEquals("a burst of failures is one check", 1, checks[0]);
+
+        server.close();
+        shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(NetworkProxy.CONFIRM_AFTER_MS));
+        selector.connectFailed(uri, address, new IOException());
+        shadowOf(Looper.getMainLooper()).idle();
+        assertEquals("the check ran again", 2, checks[0]);
         assertEquals(1, ShadowToast.shownToastCount());
-        String said = ShadowToast.getTextOfLatestToast();
-        assertTrue(said, said.contains("proxy.example.com:8080"));
-        assertFalse(said, said.contains(USER));
-        assertFalse(said, said.contains(PASSWORD));
+        assertTrue(ShadowToast.getTextOfLatestToast(), ShadowToast.getTextOfLatestToast().contains("127.0.0.1:" + port));
     }
 
-    @Test public void signInGoesToTheProxyAndNobodyElse() throws Exception {
-        NetworkProxy.Config http = NetworkProxy.parse("http", "proxy.example.com", "8080", USER, PASSWORD);
-        PasswordAuthentication answer = NetworkProxy.credentialsFor(http, true, "http", "proxy.example.com", null, 8080);
-        assertNotNull(answer);
-        assertEquals(USER, answer.getUserName());
-        assertEquals(PASSWORD, new String(answer.getPassword()));
-        assertNull("a website", NetworkProxy.credentialsFor(http, false, "https", "proxy.example.com", null, 8080));
-        assertNull("another host", NetworkProxy.credentialsFor(http, true, "http", "evil.example.com", null, 8080));
-        assertNull("another port", NetworkProxy.credentialsFor(http, true, "http", "proxy.example.com", null, 8081));
+    @Test public void aFailureSomewhereElseIsntAboutTheProxy() throws Exception {
+        NetworkProxy.Config config = NetworkProxy.parse("socks5", "127.0.0.1", "1080", "", "");
+        int[] checks = {0};
+        NetworkProxy.checker = task -> checks[0]++;
+        new NetworkProxy.Selector(config, config, null).connectFailed(new URI("https://www.tiktok.com/"),
+                InetSocketAddress.createUnresolved("www.tiktok.com", 443), new IOException());
+        assertEquals(0, checks[0]);
+    }
 
-        NetworkProxy.Config socks = NetworkProxy.parse("socks5", "127.0.0.1", "1080", USER, PASSWORD);
-        assertNotNull(NetworkProxy.credentialsFor(socks, false, "SOCKS5", null,
-                InetAddress.getByName("127.0.0.1"), 1080));
-        assertNull("not the SOCKS handshake", NetworkProxy.credentialsFor(socks, false, "http", "127.0.0.1", null, 1080));
+    /** A slow proxy that misses the first try shouldn't get called down. */
+    @Test public void aProxyThatAnswersTheSecondTryIsUp() throws Exception {
+        int[] tries = {0};
+        ServerSocket server = new ServerSocket(0, 2, InetAddress.getByName("127.0.0.1"));
+        servers.add(server);
+        Thread thread = new Thread(() -> {
+            while (!server.isClosed()) {
+                try (Socket socket = server.accept()) {
+                    socket.setSoTimeout(TIMEOUT_MS);
+                    readFully(socket.getInputStream(), 3);
+                    if (++tries[0] > 1) socket.getOutputStream().write(new byte[]{5, 0});
+                } catch (IOException ignored) {
+                    // The assertions read what the check concluded.
+                }
+            }
+        }, "network-proxy-test-slow-proxy");
+        thread.setDaemon(true);
+        thread.start();
+        NetworkProxy.checker = Runnable::run;
 
-        NetworkProxy.Config anonymous = NetworkProxy.parse("http", "proxy.example.com", "8080", "", "");
-        assertNull(NetworkProxy.credentialsFor(anonymous, true, "http", "proxy.example.com", null, 8080));
+        NetworkProxy.check(NetworkProxy.parse("socks5", "127.0.0.1", String.valueOf(server.getLocalPort()), "", ""));
+        shadowOf(Looper.getMainLooper()).idle();
+
+        assertEquals(2, tries[0]);
+        assertEquals(0, ShadowToast.shownToastCount());
     }
 
     // -- The start-up check ---------------------------------------------------------------------------
@@ -508,7 +570,7 @@ public class NetworkProxyTest {
         });
         assertEquals(NetworkProxy.Probe.REACHED, NetworkProxy.probe(local("http", server), TIMEOUT_MS));
         assertTrue(request.toString(), request.toString().startsWith("CONNECT " + NetworkProxy.PROBE_TARGET + " HTTP/1.1\r\n"));
-        assertFalse("the check never signs in", request.toString().contains("Proxy-Authorization"));
+        assertFalse("nothing to sign in with", request.toString().contains("Proxy-Authorization"));
     }
 
     @Test public void anHttpProxyThatWantsASignInIsToldApart() throws Exception {
@@ -519,6 +581,58 @@ public class NetworkProxyTest {
                             .getBytes(StandardCharsets.US_ASCII));
         });
         assertEquals(NetworkProxy.Probe.NEEDS_PASSWORD, NetworkProxy.probe(local("http", server), TIMEOUT_MS));
+    }
+
+    @Test public void anHttpProxyGetsTheSignInAndAWrongOneIsToldApart() throws Exception {
+        StringBuilder request = new StringBuilder();
+        ServerSocket accepts = serve(socket -> {
+            request.append(readHead(socket.getInputStream()));
+            socket.getOutputStream().write("HTTP/1.1 200 OK\r\n\r\n".getBytes(StandardCharsets.US_ASCII));
+        });
+        assertEquals(NetworkProxy.Probe.REACHED, NetworkProxy.probe(NetworkProxy.parse("http", "127.0.0.1",
+                String.valueOf(accepts.getLocalPort()), USER, PASSWORD), TIMEOUT_MS));
+        assertTrue(request.toString(), request.toString().contains("Proxy-Authorization: Basic "));
+
+        ServerSocket refuses = serve(socket -> {
+            readHead(socket.getInputStream());
+            socket.getOutputStream().write("HTTP/1.1 407 No\r\n\r\n".getBytes(StandardCharsets.US_ASCII));
+        });
+        assertEquals(NetworkProxy.Probe.REFUSED_PASSWORD, NetworkProxy.probe(NetworkProxy.parse("http", "127.0.0.1",
+                String.valueOf(refuses.getLocalPort()), USER, "wrong"), TIMEOUT_MS));
+    }
+
+    @Test public void aSocksProxyGetsTheSignInAndAWrongOneIsToldApart() throws Exception {
+        byte[] login = new byte[3 + USER.length() + PASSWORD.length()];
+        ServerSocket accepts = serve(socket -> {
+            readFully(socket.getInputStream(), 4);
+            socket.getOutputStream().write(new byte[]{5, 2});
+            socket.getOutputStream().flush();
+            readFully(socket.getInputStream(), login.length, login);
+            socket.getOutputStream().write(new byte[]{1, 0});
+        });
+        assertEquals(NetworkProxy.Probe.REACHED, NetworkProxy.probe(NetworkProxy.parse("socks5", "127.0.0.1",
+                String.valueOf(accepts.getLocalPort()), USER, PASSWORD), TIMEOUT_MS));
+        String sent = new String(login, StandardCharsets.UTF_8);
+        assertTrue(sent, sent.contains(USER) && sent.contains(PASSWORD));
+
+        ServerSocket refuses = serve(socket -> {
+            readFully(socket.getInputStream(), 4);
+            socket.getOutputStream().write(new byte[]{5, 2});
+            socket.getOutputStream().flush();
+            readFully(socket.getInputStream(), 3 + USER.length() + "wrong".length());
+            socket.getOutputStream().write(new byte[]{1, 1});
+        });
+        assertEquals(NetworkProxy.Probe.REFUSED_PASSWORD, NetworkProxy.probe(NetworkProxy.parse("socks5", "127.0.0.1",
+                String.valueOf(refuses.getLocalPort()), USER, "wrong"), TIMEOUT_MS));
+    }
+
+    @Test public void aSocksProxyThatTakesNoSignInIsReachedEvenWithOneSet() throws Exception {
+        ServerSocket server = serve(socket -> {
+            readFully(socket.getInputStream(), 4);
+            socket.getOutputStream().write(new byte[]{5, 0});
+        });
+        assertEquals(NetworkProxy.Probe.REACHED, NetworkProxy.probe(NetworkProxy.parse("socks5", "127.0.0.1",
+                String.valueOf(server.getLocalPort()), USER, PASSWORD), TIMEOUT_MS));
     }
 
     @Test public void somethingElseOnThePortIsUnreachable() throws Exception {
@@ -547,7 +661,7 @@ public class NetworkProxyTest {
         shadowOf(Looper.getMainLooper()).idle();
         assertEquals(0, ShadowToast.shownToastCount());
 
-        NetworkProxy.report(config, NetworkProxy.Probe.NEEDS_PASSWORD);
+        NetworkProxy.report(config, NetworkProxy.Probe.REFUSED_PASSWORD);
         NetworkProxy.report(config, NetworkProxy.Probe.UNREACHABLE);
         shadowOf(Looper.getMainLooper()).idle();
         assertEquals(1, ShadowToast.shownToastCount());

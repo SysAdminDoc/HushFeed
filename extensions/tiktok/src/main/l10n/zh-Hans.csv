@@ -1201,7 +1201,6 @@ Opens github.com in your browser,在浏览器中打开 github.com
 Operator code,操作员代码
 Operator name,操作员名称
 "Optional, used with the user name. It isn't shown, logged or put in a backup.",可选，与用户名一起使用。它不会被显示、记录或放入备份中.
-"Optional. Only connections made by Android itself can sign in to a proxy, not TikTok's own. Leave empty for a proxy without a password.",可选。只有 Android 本身建立的连接才能登录到代理，而 TikTok 自己的连接则不能。对于没有密码的代理，留空.
 "MP3 (.mp3), plays anywhere",MP3 (.mp3)，随处可播放
 "Opus (.ogg), a smaller file",Opus (.ogg)，较小的文件
 Opus didn't work. Saving TikTok's own file.,Opus 无法使用，将保存 TikTok 的原文件.
@@ -1908,7 +1907,6 @@ Storage almost full. Recording saved to %1$s,存储空间快满了，录制已�
 "The port the proxy listens on, like 8080 or 1080.",代理侦听的端口，例如 8080 或 1080.
 The presets couldn't load. Open the Lab again.,无法加载预设。再次打开实验室.
 The profile picture couldn't be saved. Try again.,无法保存个人资料图片。再试一次.
-TikTok can't send a password to proxy %1$s. Use another.,TikTok 无法向代理 %1$s 发送密码，请换一个.
 "The proxy's address, like 192.168.1.20 or proxy.example.com.",代理的地址，例如 192.168.1.20 或 proxy.example.com.
 The quality choice is still open,品质选择依然开放
 Couldn't read an interrupted change. Check your settings.,无法读取中断的更改。请检查你的设置.
@@ -2364,3 +2362,6 @@ Background play in the long-press menu,长按菜单中的后台播放
 "Background play in the long-press menu is on in Hushfeed's Playback settings, so TikTok gets 1 for this key and an override here has no effect until that switch is off.",在 Hushfeed 的播放设置中，“长按菜单中的后台播放”处于打开状态，因此 TikTok 该键的值为 1，并且在该开关关闭之前，此处的覆盖不会产生任何效果.
 Keep LIVEs from these creators,保留这些创作者的直播
 "With Hide LIVE videos on, these creators' LIVEs stay when TikTok sends them. Separate handles or user IDs with commas.",开启“隐藏 LIVE 视频”时，TikTok 推送的这些创作者的直播会保留。用逗号分隔用户名或用户 ID.
+"Optional. Leave empty for a proxy without a password. TikTok signs in through a small relay on this phone, which other apps here could reach while TikTok is open.",可选。代理没有密码时请留空。TikTok 通过此手机上的一个小型中继登录，TikTok 打开期间，此手机上的其他应用也可以访问该中继.
+Proxy %1$s needs a user name and password,代理 %1$s 需要用户名和密码
+Proxy %1$s refused your user name or password,代理 %1$s 拒绝了你的用户名或密码

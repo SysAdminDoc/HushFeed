@@ -51,7 +51,8 @@ public final class NetworkRoutes implements LogBufferManager.ReportSection {
                 + " never the proxy selector");
         lines.add("short_link_expansion: direct, same checks, "
                 + (Settings.EXPAND_SHORT_SHARE_LINKS.get() ? "switch on" : "switch off"));
-        lines.add("proxy_sign_in: Java connections only, never TikTok's native stack");
+        lines.add("proxy_sign_in: " + (active == null || !active.hasCredentials()
+                ? "none" : "through a relay on this phone, for TikTok's own stack and Java connections"));
         return lines;
     }
 }

@@ -1307,7 +1307,7 @@ Opens github.com in your browser,Opens github.com in your browser
 Operator code,Operator code
 Operator name,Operator name
 "Optional, used with the user name. It isn't shown, logged or put in a backup.","Optional, used with the user name. It isn't shown, logged or put in a backup."
-"Optional. Only connections made by Android itself can sign in to a proxy, not TikTok's own. Leave empty for a proxy without a password.","Optional. Only connections made by Android itself can sign in to a proxy, not TikTok's own. Leave empty for a proxy without a password."
+"Optional. Leave empty for a proxy without a password. TikTok signs in through a small relay on this phone, which other apps here could reach while TikTok is open.","Optional. Leave empty for a proxy without a password. TikTok signs in through a small relay on this phone, which other apps here could reach while TikTok is open."
 "Opus (.ogg), a smaller file","Opus (.ogg), a smaller file"
 Opus didn't work. Saving TikTok's own file.,Opus didn't work. Saving TikTok's own file.
 "Opus needs Android 10 or later, so it saves sounds as TikTok sent them. MP3 works on any phone.","Opus needs Android 10 or later, so it saves sounds as TikTok sent them. MP3 works on any phone."
@@ -1412,6 +1412,8 @@ Promotional music,Promotional music
 Proof,Proof
 Protect external pages in TikTok's browser,Protect external pages in TikTok's browser
 Proxy %1$s is down. Turn it off if TikTok won't load.,Proxy %1$s is down. Turn it off if TikTok won't load.
+Proxy %1$s needs a user name and password,Proxy %1$s needs a user name and password
+Proxy %1$s refused your user name or password,Proxy %1$s refused your user name or password
 Proxy host,Proxy host
 Proxy password,Proxy password
 Proxy port,Proxy port
@@ -2098,7 +2100,6 @@ Three at once,Three at once
 Thumbs down blocks the commenter,Thumbs down blocks the commenter
 TikTok account facts,TikTok account facts
 TikTok can't lock without a phone screen lock,TikTok can't lock without a phone screen lock
-TikTok can't send a password to proxy %1$s. Use another.,TikTok can't send a password to proxy %1$s. Use another.
 "TikTok checks how it was signed and installed. This answers those checks the way the Play Store version would. Try it if follows or likes undo themselves after a refresh. It may not help, since TikTok has other checks.","TikTok checks how it was signed and installed. This answers those checks the way the Play Store version would. Try it if follows or likes undo themselves after a refresh. It may not help, since TikTok has other checks."
 TikTok closed during these saves,TikTok closed during these saves
 "TikTok closed three times within a minute of starting, so Hushfeed paused itself. Your settings stay as they are.","TikTok closed three times within a minute of starting, so Hushfeed paused itself. Your settings stay as they are."

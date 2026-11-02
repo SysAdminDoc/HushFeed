@@ -52,6 +52,25 @@ public class SaveNoticeTest {
         SaveNotice.windowRootsForTests = null;
     }
 
+    /** A quick save finished inside its own two-second toast, and the banner drew over it (#299). */
+    @Test public void theBannerTakesDownTheSavingToastItWouldLandOn() {
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            Utils.setActivity(owner.get());
+            Utils.showToastShort("Saving video to DCIM/TikTok");
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            android.widget.Toast saving = ShadowToast.getLatestToast();
+            assertNotNull(saving);
+
+            SaveNotice.saved("Video saved to DCIM/TikTok", new MediaFileWriter.Saved("a.mp4",
+                    Uri.parse("content://media/external/video/media/78")));
+            assertTrue("the toast went before there was a banner to replace it",
+                    !Shadows.shadowOf(saving).isCancelled());
+            idlePastTheSheetSettle();
+
+            assertTrue("the toast is still up under the banner", Shadows.shadowOf(saving).isCancelled());
+        }
+    }
+
     @Test public void aSaveWithARowShowsTheBannerAndOpenStartsAViewerOnIt() {
         try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
             Activity activity = owner.get();

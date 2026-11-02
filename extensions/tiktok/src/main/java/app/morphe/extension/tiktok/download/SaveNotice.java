@@ -63,6 +63,9 @@ final class SaveNotice {
             // which is the sheet while it is up and the activity's own decor otherwise.
             ViewGroup root = topWindowRoot(activity);
             if (root == null) root = activity.findViewById(android.R.id.content);
+            // A quick save lands inside the two seconds of its own "Saving" toast, and the banner
+            // drew over the toast's text (#299). It says the newer thing, so the toast goes.
+            Utils.cancelLatestToast();
             if (retry == null) {
                 BlockAuthorOverlay.showActionBanner(root, message, L10n.t("Open"), () -> open(uri));
             } else if (uri == null) {

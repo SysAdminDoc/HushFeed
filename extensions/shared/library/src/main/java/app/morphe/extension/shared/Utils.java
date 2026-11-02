@@ -829,9 +829,24 @@ public class Utils {
                 Logger.printException(() -> "Cannot show toast (context is null): " + messageToToast);
             } else {
                 Logger.printDebug(() -> "Showing toast: " + messageToToast);
-                Toast.makeText(currentContext, messageToToast, toastDuration).show();
+                Toast toast = Toast.makeText(currentContext, messageToToast, toastDuration);
+                latestToast = toast;
+                toast.show();
             }
         });
+    }
+
+    /** The toast shown last, for {@link #cancelLatestToast()}. Main thread only. */
+    private static Toast latestToast;
+
+    /**
+     * Takes the latest toast off the screen, for something about to say the next thing in the
+     * same spot. Harmless when it has already gone. Main thread only.
+     */
+    public static void cancelLatestToast() {
+        Toast toast = latestToast;
+        latestToast = null;
+        if (toast != null) toast.cancel();
     }
 
     /**

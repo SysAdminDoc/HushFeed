@@ -142,7 +142,6 @@ $planned = [Collections.Generic.List[string]]::new()
 $reached = [Collections.Generic.List[string]]::new()
 $faults = [Collections.Generic.List[string]]::new()
 $script:dumpCount = 0
-$script:lease = $null
 $translations = Get-HushfeedTranslations -Root $root
 $remoteDump = '/sdcard/hushfeed-walk.xml'
 

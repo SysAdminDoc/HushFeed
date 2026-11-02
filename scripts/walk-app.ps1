@@ -294,13 +294,22 @@ function Restore-WalkTabs([string]$From, [int]$Height) {
     return @()
 }
 
+function Select-WalkRow($Nodes, [string]$Label, [string]$Id, [int]$Height) {
+    return @(Find-UiNode -Nodes $Nodes -Label $Label -Id $Id |
+            Where-Object { $_.Top -gt $Height * 0.12 -and $_.Bottom -lt $Height * 0.95 }) | Select-Object -First 1
+}
+
 function Find-WalkRow([string]$Label, [int]$Width, [int]$Height, [string]$Name, [string]$Id) {
-    # Settings rows: scroll the page to its top, then down until the row shows. Hushfeed's page
-    # rows carry the id "title", which keeps the walk off Hushfeed home's quick setup buttons
-    # (one of them is "Privacy", like the page).
+    # Settings rows: scroll the page up until the row shows or the top stops moving, then down
+    # until it shows. Hushfeed's page rows carry the id "title", which keeps the walk off
+    # Hushfeed home's quick setup buttons (one of them is "Privacy", like the page). The way up
+    # reads every screen: a header being collapsed sits above its controls, and an expanded Feed
+    # filter runs about twelve screens, so eight blind swipes up left the walk under the header.
     $before = ''
-    for ($i = 0; $i -lt 8; $i++) {
+    for ($i = 0; $i -lt 30; $i++) {
         $nodes = Get-WalkScreen "$Name-top"
+        $row = Select-WalkRow $nodes $Label $Id $Height
+        if ($row) { return $row }
         $print = Get-UiFingerprint $nodes
         if ($print -ceq $before) { break }
         $before = $print
@@ -309,8 +318,7 @@ function Find-WalkRow([string]$Label, [int]$Width, [int]$Height, [string]$Name, 
     $before = ''
     for ($i = 0; $i -lt 12; $i++) {
         $nodes = Get-WalkScreen $Name
-        $row = @(Find-UiNode -Nodes $nodes -Label $Label -Id $Id |
-                Where-Object { $_.Top -gt $Height * 0.12 -and $_.Bottom -lt $Height * 0.95 }) | Select-Object -First 1
+        $row = Select-WalkRow $nodes $Label $Id $Height
         if ($row) { return $row }
         $print = Get-UiFingerprint $nodes
         if ($print -ceq $before) { return $null }
@@ -332,8 +340,7 @@ function Get-WalkSectionView([string]$Label, [int]$Width, [int]$Height, [string]
         Start-Sleep -Milliseconds 1300
     }
     $nodes = Get-WalkScreen $Name
-    $row = @(Find-UiNode -Nodes $nodes -Label $Label -Id 'title' |
-            Where-Object { $_.Top -gt $Height * 0.12 -and $_.Bottom -lt $Height * 0.95 }) | Select-Object -First 1
+    $row = Select-WalkRow $nodes $Label 'title' $Height
     if (-not $row) { return $null }
     $next = @($nodes | Where-Object { $_.Id -ceq 'title' -and $_.Top -ge $row.Bottom -and
             $_.Bottom -lt $Height * 0.95 -and $_.Text } | Sort-Object Top) | Select-Object -First 1

@@ -959,6 +959,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_FOLLOWING_ALL_BUTTON = new BooleanSetting("hide_following_all_button", FALSE, true);
     /** The Create circle at the start of the Following and Inbox story rows, while the viewer has no Story up (#309). */
     public static final BooleanSetting HIDE_STORY_CREATE = new BooleanSetting("hide_story_create", FALSE, true);
+    /** The chip above the progress bar saying someone you follow reposted the video (#319). */
+    public static final BooleanSetting HIDE_REPOST_CHIP = new BooleanSetting("hide_repost_chip", FALSE, true);
     /** The Add comment bar under a video opened from a profile, a hashtag or a sound, and the strip kept for it (#50). */
     public static final BooleanSetting HIDE_DETAIL_COMMENT_BAR = new BooleanSetting("hide_detail_comment_bar", FALSE);
     /** The progress bar, close button and pause/speed pill TikTok draws while Clear display is on (#97). */

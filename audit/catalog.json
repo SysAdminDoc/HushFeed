@@ -8404,6 +8404,12 @@
     "row": "Hide the Create circle in story rows"
    },
    {
+    "key": "hide_repost_chip",
+    "default": false,
+    "type": "bool",
+    "row": "Hide the repost chip"
+   },
+   {
     "key": "hide_feed_report_button",
     "default": false,
     "type": "bool",

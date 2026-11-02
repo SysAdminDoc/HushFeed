@@ -120,6 +120,19 @@ val hideVideoOverlaysPatch = bytecodePatch(
             println("[$PATCH_NAME] Left out the interest buttons on ${packageMetadata.versionName}: ${problem.message}")
             null
         }
+        // The chip saying someone you follow reposted the video (#319), the same way: required where
+        // RepostChipAnchorsTest holds the trigger's answer, left out with a note anywhere else.
+        val repostChip = try {
+            RepostChipTriggerFingerprint.method.also {
+                if (repostChipAnswer(it.implementation!!.instructions.toList()) < 0) {
+                    throw PatchException("$PATCH_NAME: ${it.definingClass} no longer asks about the repost chip the way it did.")
+                }
+            }
+        } catch (problem: Exception) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[$PATCH_NAME] Left out the repost chip on ${packageMetadata.versionName}: ${problem.message}")
+            null
+        }
         // The music disc's two switches (#68), the same way: required where MusicDiscSpinAnchorsTest
         // holds every hold on the disc's way, left out with a note anywhere else.
         val musicDisc = try {
@@ -189,6 +202,13 @@ val hideVideoOverlaysPatch = bytecodePatch(
         }
         // The interest buttons go with Hide surveys; the switch decides in the extension.
         interestButtons?.dropInterestButtons(PATCH_NAME)
+        if (repostChip != null) {
+            repostChip.dropRepostChip(PATCH_NAME)
+            status.addInstruction(
+                0,
+                "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableRepostChip()V",
+            )
+        }
         // The music disc. 47.1.4 ships music_animation_close_exp at 3, which keeps the disc from
         // turning; each lazy read hands its value to MusicDiscSpin before boxing it. The holds
         // past it (anim_opt, the high frame rate hold, the play animation's load downgrade and

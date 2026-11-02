@@ -138,6 +138,29 @@ public class FeedOverlayControlsTest {
         }
     }
 
+    /** Issue #319: a video TikTok gives no chip stays that way, and Pause hands TikTok's answer back. */
+    @Test public void theRepostChipGoesWithItsOwnSwitchAndHonoursPause() {
+        try {
+            assertEquals(Boolean.FALSE, Settings.HIDE_REPOST_CHIP.defaultValue);
+            Settings.HIDE_FEED_SURVEYS.save(true);
+            assertTrue("another overlay switch dropped the chip", FeedOverlayControls.repostChipShown(1));
+            assertFalse(FeedOverlayControls.repostChipShown(0));
+            Settings.HIDE_FEED_SURVEYS.save(false);
+            Settings.HIDE_REPOST_CHIP.save(true);
+            assertFalse(FeedOverlayControls.repostChipShown(1));
+            assertFalse("a video with no chip got one", FeedOverlayControls.repostChipShown(0));
+            PausedProcess.set(true);
+            assertTrue("a paused Hushfeed still dropped the chip", FeedOverlayControls.repostChipShown(1));
+            PausedProcess.set(false);
+            assertTrue(String.join(" ", HookStatus.report()).contains("repost chip"));
+        } finally {
+            PausedProcess.set(false);
+            HookStatus.clear();
+            Settings.HIDE_REPOST_CHIP.resetToDefault();
+            Settings.HIDE_FEED_SURVEYS.resetToDefault();
+        }
+    }
+
     @Test public void fullscreenOnlyHidesItsDedicatedRootAndKeepsNativeClickOnRestore() {
         try(Fixture f=new Fixture()) {
             int[] clicks={0};

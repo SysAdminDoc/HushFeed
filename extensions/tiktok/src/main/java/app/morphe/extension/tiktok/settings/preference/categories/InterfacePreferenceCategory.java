@@ -497,6 +497,14 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                         Settings.HIDE_STORY_CREATE
                 ));
             }
+            if (SettingsStatus.repostChipEnabled) {
+                addPreference(new TogglePreference(
+                        context,
+                        "Hide the repost chip",
+                        "Takes out the small chip above the progress bar that says a friend reposted the video.",
+                        Settings.HIDE_REPOST_CHIP
+                ));
+            }
             addPreference(new TogglePreference(
                     context,
                     "Hide Search this image prompts",

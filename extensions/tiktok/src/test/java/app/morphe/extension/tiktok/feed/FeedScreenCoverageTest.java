@@ -191,6 +191,8 @@ public class FeedScreenCoverageTest {
         // All and Create sit in the Following row (and the Inbox's, which is no video window).
         put("hide_following_all_button", YES, NONE, NONE);
         put("hide_story_create", YES, NONE, NONE);
+        // The chip is a cell component, and the feed and the detail pager build the same cell (#319).
+        put("hide_repost_chip", YES, YES, NONE);
         put("hide_visual_search", YES, YES, NONE);
         // The bar is an opened post's: the detail pager's videos and, on 47.1.4, a photo from
         // search in the main activity. The main feed has the tabs there.

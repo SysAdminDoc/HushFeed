@@ -2410,3 +2410,5 @@ Hide the thumbs down on comments	Yorumlardaki aşağı başparmağı gizle
 Hide the thumbs down beside the heart on each comment. It stays while Thumbs down blocks the commenter is on.	Her yorumda kalbin yanındaki aşağı başparmağı gizler. Aşağı başparmak yorumu yazanı engeller açıkken kalır.
 Hide the row of friends at the top of the share sheet and in the menu a long press on a comment opens.	Paylaşım sayfasının üstündeki ve bir yoruma uzun basınca açılan menüdeki arkadaş sırasını gizler.
 An @username in a profile's bio opens that profile when you tap it. A full name typed after an @ opens a search for that name. The rest of the bio still translates on a tap.	Bir profilin biyografisindeki @kullanıcıadı, dokunduğunda o profili açar. @ işaretinden sonra yazılan tam ad, o ad için aramayı açar. Biyografinin geri kalanı dokununca yine çevrilir.
+Hide the repost chip	Yeniden paylaşım etiketini gizle
+Takes out the small chip above the progress bar that says a friend reposted the video.	İlerleme çubuğunun üstünde bir arkadaşın videoyu yeniden paylaştığını gösteren küçük etiketi kaldırır.

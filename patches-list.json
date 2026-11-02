@@ -5576,6 +5576,15 @@
           "values": null
         },
         {
+          "key": "hide_repost_chip",
+          "title": "Default: hide repost chip",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "hide_detail_comment_bar",
           "title": "Default: hide detail comment bar",
           "description": null,

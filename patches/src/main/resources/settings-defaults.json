@@ -406,6 +406,7 @@
       "hide_following_live_row",
       "hide_following_all_button",
       "hide_story_create",
+      "hide_repost_chip",
       "hide_detail_comment_bar",
       "hide_clear_display_controls",
       "keep_clear_display_seek_bar",
@@ -2383,6 +2384,12 @@
     "hide_read_receipts": {
       "field": "HIDE_READ_RECEIPTS",
       "key": "hide_read_receipts",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_repost_chip": {
+      "field": "HIDE_REPOST_CHIP",
+      "key": "hide_repost_chip",
       "type": "boolean",
       "default": false
     },

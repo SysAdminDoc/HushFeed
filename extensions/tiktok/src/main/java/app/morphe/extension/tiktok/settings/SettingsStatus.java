@@ -707,6 +707,13 @@ public class SettingsStatus {
         storyRowButtonsEnabled = true;
     }
 
+    /** Hide video overlays found the trigger for the repost chip and hooked it (#319). */
+    public static boolean repostChipEnabled = false;
+
+    public static void enableRepostChip() {
+        repostChipEnabled = true;
+    }
+
     /** Hide video overlays found the music disc's two animation settings on this build and hooked them (#68). */
     public static boolean musicDiscSpinEnabled = false;
 

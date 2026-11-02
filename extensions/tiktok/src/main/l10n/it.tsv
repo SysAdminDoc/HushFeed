@@ -2410,3 +2410,5 @@ Hide the thumbs down on comments	Nascondi il pollice verso sui commenti
 Hide the thumbs down beside the heart on each comment. It stays while Thumbs down blocks the commenter is on.	Nasconde il pollice verso accanto al cuore su ogni commento. Resta finché Il pollice verso blocca chi ha commentato è attivo.
 Hide the row of friends at the top of the share sheet and in the menu a long press on a comment opens.	Nasconde la fila di amici in cima al menu di condivisione e nel menu che si apre tenendo premuto un commento.
 An @username in a profile's bio opens that profile when you tap it. A full name typed after an @ opens a search for that name. The rest of the bio still translates on a tap.	Un @nomeutente nella bio di un profilo apre quel profilo quando lo tocchi. Un nome completo scritto dopo una @ apre una ricerca di quel nome. Il resto della bio si traduce ancora con un tocco.
+Hide the repost chip	Nascondi l'etichetta del repost
+Takes out the small chip above the progress bar that says a friend reposted the video.	Rimuove la piccola etichetta sopra la barra di avanzamento che indica che un amico ha ripubblicato il video.

@@ -2381,3 +2381,5 @@ Hide the thumbs down on comments,Sembunyikan tombol tidak suka pada komentar
 Hide the thumbs down beside the heart on each comment. It stays while Thumbs down blocks the commenter is on.,Sembunyikan tombol tidak suka di samping ikon hati pada setiap komentar. Tombol tetap ada selama Jempol ke bawah memblokir pengomentar aktif.
 Hide the row of friends at the top of the share sheet and in the menu a long press on a comment opens.,Sembunyikan deretan teman di bagian atas lembar berbagi dan di menu yang terbuka saat komentar ditekan lama.
 An @username in a profile's bio opens that profile when you tap it. A full name typed after an @ opens a search for that name. The rest of the bio still translates on a tap.,@nama pengguna di bio profil membuka profil itu saat diketuk. Nama lengkap yang ditulis setelah @ membuka pencarian nama itu. Bagian bio lainnya tetap diterjemahkan saat diketuk.
+Hide the repost chip,Sembunyikan label repost
+Takes out the small chip above the progress bar that says a friend reposted the video.,Menghapus label kecil di atas bilah progres yang menunjukkan teman memposting ulang video ini.

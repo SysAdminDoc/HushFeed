@@ -17,6 +17,7 @@ Every Hushfeed release, newest first.
 * **TikTok:** `Hide speed messages` leaves out TikTok's message when you pick a speed from the menu, or lock or unlock one with a hold. It starts off, and it's under Playback.
 * **TikTok:** `Hide the All button on Following` takes the All button off the end of the story row on Following, and `Hide the Create circle in story rows` takes the Create circle off that row and the Inbox's. The stories stay, and both start off under Feed screen.
 * **TikTok:** `Hide like counts on comments` takes the number off the heart on each comment, and `Hide the thumbs down on comments` takes the thumbs down off. The heart still works. Both start off, and they're in Hushfeed settings > Comments.
+* **TikTok:** `Hide the repost chip` under Feed screen takes out the small chip above the progress bar that says someone you follow reposted the video.
 
 ### Bug Fixes
 * **TikTok:** `Auto-advance videos` now moves on from videos you open from a profile or a list, where TikTok has no auto scroll of its own. Before, the first one just looped at its end.

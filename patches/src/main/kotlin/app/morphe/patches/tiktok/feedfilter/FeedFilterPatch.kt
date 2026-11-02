@@ -1021,8 +1021,8 @@ val feedFilterPatch = bytecodePatch(
  * in front of that return can, and the branch into the return from the empty-list check carries
  * a List in v28 (the read list handed to the request), so Android 16 typed v28 as List at the
  * handler and rejected the whole class ("register v28 has type java.util.List but expected
- * FollowFeedList"), a VerifyError the first time Following loads (47.6.3 register check,
- * 2026-11-01).
+ * FollowFeedList"), so the class throws a VerifyError whenever that loader runs (47.6.3 register
+ * check, 2026-11-01).
  *
  * So each `return-object vN` becomes a goto to one trailing block per register, added after the
  * last instruction and so past every try range, that calls the filter on vN and returns it. The

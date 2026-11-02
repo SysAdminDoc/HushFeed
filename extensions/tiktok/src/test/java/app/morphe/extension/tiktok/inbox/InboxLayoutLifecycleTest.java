@@ -3,6 +3,7 @@ package app.morphe.extension.tiktok.inbox;
 import static org.junit.Assert.*;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Looper;
 import android.view.View;
@@ -341,6 +342,51 @@ public class InboxLayoutLifecycleTest {
         assertRow(wrapperOnly, false);
     }
 
+    /** #315: the frame after the hide would draw the gap the list left for that row. */
+    @Test public void hidingARowSkipsTheOneFrameThatWouldDrawItsGap() {
+        Settings.HIDE_INBOX_STORIES.save(true);
+        Inbox inbox = openInbox();
+        LinearLayout story = new LinearLayout(inbox.activity);
+        reshape(inbox, story, null, "47.6.3:wrs", "Story account");
+        inbox.rows.addView(story, new LinearLayout.LayoutParams(-1, 72));
+
+        ViewTreeObserver observer = inbox.rows.getViewTreeObserver();
+        assertFalse("a frame with nothing newly hidden was skipped", observer.dispatchOnPreDraw());
+        inbox.layout();
+        assertRow(story, true);
+        assertTrue("the frame with the gap was drawn", observer.dispatchOnPreDraw());
+        assertFalse("the next frame was skipped too", observer.dispatchOnPreDraw());
+
+        inbox.layout();
+        assertFalse("a row that was already hidden skipped a frame", observer.dispatchOnPreDraw());
+    }
+
+    /** #315: on its first pass the tray has no cells yet, so its titles can't say what it is. */
+    @Test public void theStoriesTrayGoesOnItsFirstPassBeforeItHasACell() {
+        Settings.HIDE_INBOX_STORIES.save(true);
+        Inbox inbox = openInbox();
+        EmptyStoriesTray tray = new EmptyStoriesTray(inbox.activity);
+        inbox.rows.addView(tray, new LinearLayout.LayoutParams(-1, 72));
+
+        inbox.layout();
+        assertRow(tray, true);
+
+        Settings.HIDE_INBOX_STORIES.save(false);
+        inbox.layout();
+        assertRow(tray, false);
+    }
+
+    @Test public void theEmptyTrayGoesWithOnlyTheStoriesPatchInstalledToo() {
+        SettingsStatus.inboxFilterEnabled = false;
+        Settings.HIDE_INBOX_STORIES.save(true);
+        Inbox inbox = openInbox();
+        EmptyStoriesTray tray = new EmptyStoriesTray(inbox.activity);
+        inbox.rows.addView(tray, new LinearLayout.LayoutParams(-1, 72));
+
+        inbox.layout();
+        assertRow(tray, true);
+    }
+
     @Test public void storiesOnlyModeLeavesOtherInboxViewsAloneAndRestoresRecycledRows() {
         SettingsStatus.inboxFilterEnabled = false;
         Settings.HIDE_INBOX_STORIES.save(true);
@@ -592,6 +638,18 @@ public class InboxLayoutLifecycleTest {
         static final class Cell {
             public final int cellId;
             Cell() { cellId = 15; }
+        }
+    }
+
+    /** The shape of TikTok's tray row: a private getter with a real name, and no id or cell to go on. */
+    @SuppressWarnings("unused")
+    public static final class EmptyStoriesTray extends LinearLayout {
+        EmptyStoriesTray(Context context) {
+            super(context);
+        }
+
+        private int getStoryHighlightCount() {
+            return 0;
         }
     }
 

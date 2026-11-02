@@ -13,6 +13,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -30,7 +31,9 @@ import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
 import app.morphe.extension.tiktok.navigation.FrontWindow;
 
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
@@ -127,6 +130,8 @@ public final class InboxFilter {
 
     /** Rows recognised as the stories tray, retained until a recycled row changes shape. */
     private static final WeakHashMap<View, Boolean> STORY_ROWS = new WeakHashMap<>();
+    /** Each row class's answer, since asking a class that isn't the tray throws on every layout. */
+    private static final Map<Class<?>, Boolean> STORIES_TRAY_CLASSES = new HashMap<>();
 
     /** Header controls a switch hid, the only ones it brings back when turned off. */
     private static final WeakHashMap<View, Boolean> HIDDEN_HEADER_CONTROLS = new WeakHashMap<>();
@@ -367,7 +372,7 @@ public final class InboxFilter {
      * reuses it for another item.
      */
     private static void applyStoriesOnly(Activity activity, View row) {
-        boolean stories = findWithin(activity, row, STORIES_TITLE_IDS) != null;
+        boolean stories = isStoriesTray(activity, row);
         boolean wasStories = STORY_ROWS.remove(row) != null;
         if (stories) {
             STORY_ROWS.put(row, Boolean.TRUE);
@@ -377,9 +382,36 @@ public final class InboxFilter {
         }
     }
 
+    /**
+     * The tray is the row that holds the horizontal avatar titles. It's its own list inside the
+     * Inbox's list with no id, and on its first pass its cells aren't there yet, so the class is
+     * what recognizes it then: left for a later pass, the rows below it jump up when it goes (#315).
+     */
+    private static boolean isStoriesTray(Activity activity, View row) {
+        return findWithin(activity, row, STORIES_TITLE_IDS) != null || hasStoryHighlights(row.getClass());
+    }
+
+    private static boolean hasStoryHighlights(Class<?> rowClass) {
+        Boolean known = STORIES_TRAY_CLASSES.get(rowClass);
+        if (known != null) {
+            return known;
+        }
+        boolean found = false;
+        // TikTok declares it private, which getMethod can't see.
+        for (Class<?> type = rowClass; type != null && type != View.class && !found; type = type.getSuperclass()) {
+            try {
+                type.getDeclaredMethod("getStoryHighlightCount");
+                found = true;
+            } catch (NoSuchMethodException notHere) {
+                // The next class up may declare it.
+            }
+        }
+        STORIES_TRAY_CLASSES.put(rowClass, found);
+        return found;
+    }
+
     private static boolean shouldHideRow(Activity activity, View row) {
-        // The stories tray is the row that holds the horizontal avatar titles.
-        if (findWithin(activity, row, STORIES_TITLE_IDS) != null) {
+        if (isStoriesTray(activity, row)) {
             return Settings.HIDE_INBOX_STORIES.get();
         }
 
@@ -784,6 +816,7 @@ public final class InboxFilter {
                 row.setVisibility(View.GONE);
                 params.height = 0;
                 row.setLayoutParams(params);
+                skipThisFrame(row);
             }
         } else {
             int restored = original != null ? original : ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -793,6 +826,32 @@ public final class InboxFilter {
                 row.setLayoutParams(params);
             }
         }
+    }
+
+    /**
+     * This runs from the layout listener, after the list placed its rows around this one, and the
+     * frame that follows would draw that gap before the next pass closes it, which is the Inbox's
+     * flicker (#315). Android lays out again straight away when a pre-draw listener says no. The
+     * flag makes sure a listener that can't remove itself only says no the once.
+     */
+    private static void skipThisFrame(View row) {
+        if (!row.isAttachedToWindow()) {
+            return;
+        }
+        ViewTreeObserver observer = row.getViewTreeObserver();
+        observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            private boolean skipped;
+
+            @Override
+            public boolean onPreDraw() {
+                if (observer.isAlive()) {
+                    observer.removeOnPreDrawListener(this);
+                }
+                boolean draw = skipped;
+                skipped = true;
+                return draw;
+            }
+        });
     }
 
     private static void setHidden(View view, boolean hidden) {

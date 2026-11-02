@@ -19,6 +19,7 @@ Every Hushfeed release, newest first.
 * **TikTok:** `Hide like counts on comments` takes the number off the heart on each comment, and `Hide the thumbs down on comments` takes the thumbs down off. The heart still works. Both start off, and they're in Hushfeed settings > Comments.
 
 ### Bug Fixes
+* **TikTok:** The Inbox doesn't flicker when it opens with `Hide stories tray` on. The tray used to go a moment too late, so the chats jumped down and back up. The same fix covers every other row the Inbox hides.
 * **TikTok:** A full name typed after an @ in a bio, like @First Last, is one link now and opens a search for that name. Before, only the first word lit up, and it opened a stranger's profile or nothing. A name like @José no longer links as @Jos.
 * **TikTok:** `Thumbs down blocks the commenter` takes that person's comments out of the list right away now. Before, the comment only dimmed and stayed where it was.
 * **TikTok:** `Hide the Send to row` and `Hide people and options by name` reach the row of friends in the menu a long press on a comment opens. They only reached the share sheet's row before.

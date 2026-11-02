@@ -8,6 +8,7 @@ import android.os.Looper;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.blockauthor.BlockAuthorService;
@@ -19,6 +20,7 @@ import com.ss.android.ugc.aweme.profile.model.User;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.Before;
@@ -29,6 +31,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.util.ReflectionHelpers;
 
 /** The like count and thumbs down a comment row can lose, and what a thumbs down block takes out (#314, #317). */
@@ -122,6 +125,25 @@ public class CommentRowControlsTest {
 
         assertEquals(View.GONE, count.getVisibility());
         assertEquals(View.GONE, thumbsDown.getVisibility());
+    }
+
+    /** The framework drops a GONE view's own layout request in a pass, so a like left the heart stranded. */
+    @Test public void theHeartMovesBackWhenTheCountGoesDuringALayoutPass() {
+        Settings.HIDE_COMMENT_LIKE_COUNT.save(true);
+        LinearLayout bar = new LinearLayout(activity);
+        View heart = new View(activity);
+        row.removeView(count);
+        bar.addView(count, new LinearLayout.LayoutParams(60, 40));
+        bar.addView(heart, new LinearLayout.LayoutParams(40, 40));
+        row.addView(bar, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
+        bind();
+        assertEquals(0, heart.getLeft());
+
+        count.setVisibility(View.VISIBLE);
+        ShadowLooper.idleMainLooper(100, TimeUnit.MILLISECONDS);
+
+        assertEquals(View.GONE, count.getVisibility());
+        assertEquals(0, heart.getLeft());
     }
 
     /** The block switch's button is that thumbs down, so hiding it would take the block away. */

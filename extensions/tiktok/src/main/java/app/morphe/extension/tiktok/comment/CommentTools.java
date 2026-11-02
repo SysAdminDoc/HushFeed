@@ -352,8 +352,14 @@ public final class CommentTools {
         return Settings.HIDE_COMMENT_DISLIKE.get() && !Settings.BLOCK_FROM_COMMENT.get();
     }
 
+    /**
+     * In a layout pass the framework drops a GONE view's own request for another layout, which left
+     * the heart where it sat beside the count after a like. Its parent's request gets the pass.
+     */
     private static void hideControl(View control) {
-        if (control != null && control.getVisibility() != View.GONE) control.setVisibility(View.GONE);
+        if (control == null || control.getVisibility() == View.GONE) return;
+        control.setVisibility(View.GONE);
+        if (control.getParent() instanceof View) ((View) control.getParent()).requestLayout();
     }
 
     /**

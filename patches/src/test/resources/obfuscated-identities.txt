@@ -184,7 +184,6 @@ extensions/tiktok/src/main/java/app/morphe/extension/tiktok/translation/Received
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/translation/ReceivedDmTranslationPreview.java|X.1FI8
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/translation/ReceivedDmTranslationPreview.java|X.1FPX
 patches/src/main/kotlin/app/morphe/patches/tiktok/captchapopup/HideCaptchaPopupsPatch.kt|LIZJ
-patches/src/main/kotlin/app/morphe/patches/tiktok/captchapopup/HideCaptchaPopupsPatch.kt|LIZLLL
 patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/sharesheet/ShareModelHooks.kt|LIZ
 patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/sharesheet/ShareModelHooks.kt|LJFF
 patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/sharesheet/ShareModelHooks.kt|LJJIIJZLJL

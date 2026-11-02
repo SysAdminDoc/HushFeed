@@ -7,9 +7,11 @@
 package app.morphe.patches.tiktok.captchapopup
 
 import app.morphe.patcher.patch.PatchException
+import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import java.util.ArrayDeque
 
 /** True when this method has an instance receiver and can use p0 as that receiver. */
@@ -80,6 +82,25 @@ internal fun requireRiskControlMembers(
         "$feature: $callbackType has no onFail(I)V to refuse the request with."
     }
     return callback
+}
+
+/**
+ * What the LIVE host tells its callback when it has no Activity to show the puzzle on: the one
+ * `()V` its own popCaptchaV2 invokes on [callbackType]. The callback's methods are renumbered every
+ * build (LIZLLL on 47.4.3, LIZJ on 47.5.3, LIZIZ on 47.6.3), and that no-Activity branch is the
+ * host's own way of dropping a request, so it is the notice the patch sends too.
+ */
+internal fun Method.liveDismissName(callbackType: String): String {
+    val notices = implementation?.instructions
+        ?.mapNotNull { it.getReference<MethodReference>() }
+        .orEmpty()
+        .filter { it.definingClass == callbackType && it.returnType == "V" && it.parameterTypes.isEmpty() }
+        .map { it.name }
+        .distinct()
+    return notices.singleOrNull() ?: throw PatchException(
+        "Hide CAPTCHA popups: expected the LIVE host to tell its callback one thing when it has " +
+            "no Activity; found ${notices.ifEmpty { listOf("nothing") }.joinToString()}.",
+    )
 }
 
 /** Builds a dismiss call only after its inherited instance-method contract has been proved. */

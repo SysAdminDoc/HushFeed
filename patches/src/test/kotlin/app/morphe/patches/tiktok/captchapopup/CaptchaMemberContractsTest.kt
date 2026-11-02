@@ -1,10 +1,14 @@
 package app.morphe.patches.tiktok.captchapopup
 
+import app.morphe.patcher.patch.PatchException
+import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
+import app.morphe.util.addInstructionsWithLabels
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.immutable.ImmutableClassDef
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
+import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -151,12 +155,57 @@ class CaptchaMemberContractsTest {
     }
 
     @Test
+    fun `the LIVE dismiss is the one notice the host sends when it has no Activity`() {
+        // 47.6.3's LiveHostUser.popCaptchaV2: no Activity means LIZIZ on the callback, otherwise
+        // the request goes to SecApi wrapped in an adapter the callback's type is handed to.
+        val host = liveHost("""
+            if-nez p1, :show
+            if-eqz p3, :done
+            invoke-interface { p3 }, Ltest/LiveCallback;->LIZIZ()V
+            :done
+            return-void
+            :show
+            new-instance v0, Ltest/Adapter;
+            invoke-direct { v0, p3 }, Ltest/Adapter;-><init>(Ltest/LiveCallback;)V
+            return-void
+        """)
+
+        assertEquals("LIZIZ", host.liveDismissName("Ltest/LiveCallback;"))
+    }
+
+    @Test
+    fun `a host telling its callback two things names both and refuses`() {
+        val host = liveHost("""
+            invoke-interface { p3 }, Ltest/LiveCallback;->LIZIZ()V
+            invoke-interface { p3 }, Ltest/LiveCallback;->LIZJ()V
+            return-void
+        """)
+
+        val error = assertThrows(PatchException::class.java) { host.liveDismissName("Ltest/LiveCallback;") }
+        assertTrue(error.message!!.contains("LIZIZ, LIZJ"))
+    }
+
+    @Test
     fun `a malformed hierarchy cycle terminates without finding a member`() {
         val left = interfaceDef("Ltest/Left;", interfaces = listOf("Ltest/Right;"))
         val right = interfaceDef("Ltest/Right;", interfaces = listOf(left.type))
 
         assertFalse(left.hasInstanceMethodInHierarchy(resolver(left, right), "missing", "V", emptyList()))
     }
+
+    private fun liveHost(body: String): Method = MutableMethod(
+        ImmutableMethod(
+            "Ltest/LiveHostUser;",
+            "popCaptchaV2",
+            listOf(ACTIVITY, STRING, "Ltest/LiveCallback;", "Landroidx/fragment/app/Fragment;")
+                .map { ImmutableMethodParameter(it, null, null) },
+            "V",
+            AccessFlags.PUBLIC.value or AccessFlags.FINAL.value,
+            null,
+            null,
+            ImmutableMethodImplementation(7, emptyList(), null, null),
+        ),
+    ).apply { addInstructionsWithLabels(0, body) }
 
     private fun resolver(vararg classes: ClassDef): (String) -> ClassDef? {
         val byType = classes.associateBy { it.type }

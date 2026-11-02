@@ -88,10 +88,11 @@ private object BdTuringCaptchaPopupFingerprint : Fingerprint(
     ),
 )
 
-/** What each callback is told when its request is dropped, checked before it is called. */
+/**
+ * What each SEC callback is told when its request is dropped, checked before it is called. The
+ * LIVE callback's notice is read off the LIVE host itself ([liveDismissName]).
+ */
 private const val SEC_DISMISS = "LIZJ"
-// LIZIZ until 47.4.3, whose LIVE callback (`LX/1Uei`) dismisses through LIZLLL.
-private const val LIVE_DISMISS = "LIZLLL"
 
 /**
  * The whole `invoke-... {p3 .. p3}, type->name()V`, having checked that the class in this build
@@ -182,7 +183,8 @@ val hideCaptchaPopupsPatch = bytecodePatch(
 
         LiveHostCaptchaPopupFingerprint.method.apply {
             requireLocals("Hide CAPTCHA popups", 1)
-            val dismiss = dismissCall(parameterTypes[2].toString(), LIVE_DISMISS)
+            val callback = parameterTypes[2].toString()
+            val dismiss = dismissCall(callback, liveDismissName(callback))
             guardAtEntry(
                 "popCaptchaV2",
                 "invoke-static/range {p1 .. p2}, $CAPTCHA_GATE_CLASS_DESCRIPTOR->shouldHideCaptchaPopup(Landroid/app/Activity;Ljava/lang/String;)Z",

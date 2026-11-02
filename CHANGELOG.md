@@ -21,6 +21,7 @@ Every Hushfeed release, newest first.
 * **TikTok:** With `Let other apps play until a video starts` on, music from another app comes back when you leave a video for your messages, a profile or another tab. TikTok used to keep the sound until you closed it. It asks again when the next video plays, and a video you've paused on the feed still holds on to it.
 * **TikTok:** `Network proxy` works with a proxy that has a user name and password now, for both HTTP and SOCKS5. Before, TikTok's own traffic couldn't sign in, so the app acted like it had no connection.
 * **TikTok:** `Network proxy` no longer says a working proxy is down because one website behind it failed. It asks the proxy first, and gives a slow proxy a second try. A wrong password gets its own message.
+* **TikTok:** `Speed menu choices` and the offline video limit no longer ask you to restart TikTok twice in a row when the settings are in another language.
 
 * **TikTok:** The README's install steps point at TikTok 47.6.3 now. After v0.80.0 went out they still sent you to 47.5.3, which v0.80.0 doesn't patch.
 

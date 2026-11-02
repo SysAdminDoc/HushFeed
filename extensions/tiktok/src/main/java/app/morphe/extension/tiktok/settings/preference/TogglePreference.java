@@ -87,6 +87,10 @@ public class TogglePreference extends SwitchPreference {
         if (SAYS_RESTART.matcher(summary).find()) return translated;
 
         String note = L10n.t(context, RESTART_SENTENCE);
+        // A row that fills numbers in hands over text that is already translated, so the check on
+        // the English above finds nothing: Speed menu choices asked twice in every language but
+        // English.
+        if (translated.contains(note)) return translated;
         String body = translated.trim();
         if (body.isEmpty()) return note;
         char last = body.charAt(body.length() - 1);

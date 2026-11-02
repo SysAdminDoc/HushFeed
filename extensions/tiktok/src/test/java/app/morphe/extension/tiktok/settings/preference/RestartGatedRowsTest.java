@@ -16,6 +16,7 @@ import android.preference.PreferenceGroup;
 
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.Setting;
+import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 
 import org.junit.After;
@@ -154,6 +155,40 @@ public class RestartGatedRowsTest {
 
         // A page walk that reaches nothing passes every "none of them is wrong" assertion, so it
         // has to show it saw the rows first.
+        assertTrue("the walk saw too few rows carrying the sentence to mean anything: " + saying,
+                saying >= 40);
+        assertTrue("rows that ask for a restart twice:\n" + String.join("\n", doubled),
+                doubled.isEmpty());
+    }
+
+    /**
+     * In a translation as well.
+     *
+     * <p>The rows that fill numbers in, Speed menu choices and the offline video limit, hand over
+     * text that is already translated. The check on the English found no restart in it, so both
+     * rows asked twice in every language except the one this walk reads above.
+     */
+    @Test @Config(qualifiers = "vi") public void noRowAsksForARestartTwiceInATranslation() {
+        String sentence = L10n.t(activity, TogglePreference.RESTART_SENTENCE);
+        assertTrue("the walk has to read the rows in another language",
+                !TogglePreference.RESTART_SENTENCE.equals(sentence));
+        List<String> doubled = new ArrayList<>();
+        int saying = 0;
+        for (String section : SECTIONS) {
+            TikTokPreferenceFragment page = attach(section);
+            for (Preference row : rows(page.getPreferenceScreen(), new ArrayList<>())) {
+                CharSequence summary = row.getSummary();
+                if (summary == null) continue;
+                String text = summary.toString();
+                int first = text.indexOf(sentence);
+                if (first < 0) continue;
+                saying++;
+                if (text.indexOf(sentence, first + 1) >= 0) {
+                    doubled.add(section + " / " + row.getKey() + ": " + text);
+                }
+            }
+        }
+
         assertTrue("the walk saw too few rows carrying the sentence to mean anything: " + saying,
                 saying >= 40);
         assertTrue("rows that ask for a restart twice:\n" + String.join("\n", doubled),

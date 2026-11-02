@@ -4,6 +4,10 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+### Bug Fixes
+
+* **TikTok:** The README's install steps point at TikTok 47.6.3 now. After v0.80.0 went out they still sent you to 47.5.3, which v0.80.0 doesn't patch.
+
 ### Build
 
 * **TikTok:** The release walk keeps its device reserved from the install until Android's code check is done, so another job can't take the phone in between and cost a walk that passed. It cold boots the emulator it starts and waits for a paused video to settle before it reads the screen. A LIVE that never sits still gets swiped past instead of tapped, since a tap opens the LIVE room. It turns off an emulator's system animations for the walk and puts them back after, because a creator's animated avatar ring kept the screen from being read.

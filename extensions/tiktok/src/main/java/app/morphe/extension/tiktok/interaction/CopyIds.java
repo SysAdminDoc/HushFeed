@@ -59,6 +59,7 @@ public final class CopyIds {
     static final String USER_ID_COPIED = "User ID copied";
     static final String VIDEO_ID_COPIED = "Video ID copied";
     static final String NAME_COPIED = "Name copied";
+    static final String COPY_NAME = "Copy name";
     static final String COPY_USERNAME = "Copy username";
     static final String COPY_USER_ID = "Copy user ID";
     static final String COPY_VIDEO_ID = "Copy video ID";
@@ -334,13 +335,15 @@ public final class CopyIds {
     static List<Target> targetsOf(@Nullable Object sharePackage) {
         if (sharePackage == null) return Collections.emptyList();
         boolean copies = enabled();
-        List<Target> targets = new ArrayList<>(3);
+        List<Target> targets = new ArrayList<>(4);
         String itemType = Reflect.string(sharePackage, "getItemType", "itemType");
         if ("user".equals(itemType == null ? null : itemType.toLowerCase(Locale.ROOT))) {
             Object user = Reflect.readField(sharePackage, "user");
             if (copies) {
+                String name = Reflect.string(user, "getNickname", "nickname");
                 String handle = Reflect.string(user, "getUniqueId", "uniqueId");
                 String uid = Reflect.string(user, "getUid", "uid");
+                if (name != null) targets.add(new Target(COPY_NAME, name, NAME_COPIED));
                 if (handle != null) targets.add(new Target(COPY_USERNAME, handle, USERNAME_COPIED));
                 if (uid != null) targets.add(new Target(COPY_USER_ID, uid, USER_ID_COPIED));
             }
@@ -415,10 +418,8 @@ public final class CopyIds {
         }
         Context context = panel.getContext();
         if (row == null) {
-            row = new LinearLayout(context);
+            row = new ButtonRow(context);
             row.setTag(ROW_TAG);
-            row.setOrientation(LinearLayout.HORIZONTAL);
-            row.setGravity(Gravity.CENTER_VERTICAL);
             row.setPadding(dp(context, 16), dp(context, 6), dp(context, 16), dp(context, 10));
             panel.addView(row, new FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM));
@@ -433,6 +434,57 @@ public final class CopyIds {
         row.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
         reserve(panel, row, row.getMeasuredHeight());
+    }
+
+    /** The share sheet's buttons, left to right, with any that don't fit on a line of their own (#303). */
+    static final class ButtonRow extends LinearLayout {
+        ButtonRow(Context context) {
+            super(context);
+        }
+
+        @Override
+        protected void onMeasure(int widthSpec, int heightSpec) {
+            int width = MeasureSpec.getSize(widthSpec);
+            int available = Math.max(0, width - getPaddingLeft() - getPaddingRight());
+            int childSpec = MeasureSpec.makeMeasureSpec(available, MeasureSpec.AT_MOST);
+            int free = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
+            for (int index = 0; index < getChildCount(); index++) {
+                getChildAt(index).measure(childSpec, free);
+            }
+            setMeasuredDimension(width, place(available, false) + getPaddingTop() + getPaddingBottom());
+        }
+
+        @Override
+        protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+            place(getWidth() - getPaddingLeft() - getPaddingRight(), true);
+        }
+
+        /** Walks the buttons line by line and returns the height they take, laying them out if asked. */
+        private int place(int available, boolean layout) {
+            boolean rtl = getLayoutDirection() == LAYOUT_DIRECTION_RTL;
+            int gap = dp(getContext(), 6);
+            int used = 0;
+            int lineTop = 0;
+            int lineHeight = 0;
+            for (int index = 0; index < getChildCount(); index++) {
+                View child = getChildAt(index);
+                MarginLayoutParams params = (MarginLayoutParams) child.getLayoutParams();
+                int childWidth = child.getMeasuredWidth();
+                if (used > 0 && used + childWidth > available) {
+                    lineTop += lineHeight + gap;
+                    used = 0;
+                    lineHeight = 0;
+                }
+                if (layout) {
+                    int start = rtl ? getWidth() - getPaddingRight() - used - childWidth : getPaddingLeft() + used;
+                    int childTop = getPaddingTop() + lineTop;
+                    child.layout(start, childTop, start + childWidth, childTop + child.getMeasuredHeight());
+                }
+                used += childWidth + params.getMarginEnd();
+                lineHeight = Math.max(lineHeight, child.getMeasuredHeight());
+            }
+            return lineTop + lineHeight;
+        }
     }
 
     /** Moves TikTok's own children up by {@code height}, from the margin each had before. */

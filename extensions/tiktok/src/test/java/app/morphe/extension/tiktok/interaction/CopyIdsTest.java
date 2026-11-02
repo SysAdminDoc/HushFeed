@@ -374,6 +374,48 @@ public class CopyIdsTest {
         assertFalse(bio.isLongClickable());
     }
 
+    @Test public void aProfileSheetCopiesTheDisplayNameToo() {
+        ProfilePackage sharePackage = profile("6812345678901234567", "fang_yuan01010");
+        sharePackage.user.nickname = "Fang Yuan";
+
+        List<CopyIds.Target> targets = CopyIds.targetsOf(sharePackage);
+
+        assertEquals(3, targets.size());
+        assertEquals(CopyIds.COPY_NAME, targets.get(0).label);
+        assertEquals("Fang Yuan", targets.get(0).text);
+        assertEquals(CopyIds.NAME_COPIED, targets.get(0).toast);
+        assertEquals(CopyIds.COPY_USERNAME, targets.get(1).label);
+        assertEquals("fang_yuan01010", targets.get(1).text);
+    }
+
+    @Test public void buttonsThatDoNotFitMoveToANewLineInsteadOfOffTheSheet() {
+        FrameLayout panel = new FrameLayout(activity);
+        ProfilePackage sharePackage = profile("6812345678901234567", "fang_yuan01010");
+        sharePackage.user.nickname = "Fang Yuan";
+        CopyIds.showRow(panel, CopyIds.targetsOf(sharePackage));
+        LinearLayout row = (LinearLayout) panel.getChildAt(0);
+        int oneLine = fit(row, 4000);
+
+        int narrow = row.getChildAt(0).getMeasuredWidth() + row.getChildAt(1).getMeasuredWidth();
+        int wrapped = fit(row, narrow);
+
+        assertTrue("a narrow row takes more lines than a wide one", wrapped > oneLine);
+        for (int index = 0; index < row.getChildCount(); index++) {
+            View button = row.getChildAt(index);
+            assertTrue("button " + index + " stays inside the row", button.getRight() <= narrow);
+            assertTrue("button " + index + " stays inside the row", button.getBottom() <= wrapped);
+        }
+        assertTrue("the last button went below the first",
+                row.getChildAt(2).getTop() >= row.getChildAt(0).getBottom());
+    }
+
+    private static int fit(LinearLayout row, int width) {
+        row.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        row.layout(0, 0, width, row.getMeasuredHeight());
+        return row.getMeasuredHeight();
+    }
+
     private static ProfilePackage profile(String uid, String handle) {
         ProfilePackage sharePackage = new ProfilePackage();
         sharePackage.user = new User();

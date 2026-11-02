@@ -18,7 +18,7 @@ Every Hushfeed release, newest first.
 * **TikTok:** `Hide the All button on Following` takes the All button off the end of the story row on Following, and `Hide the Create circle in story rows` takes the Create circle off that row and the Inbox's. The stories stay, and both start off under Feed screen.
 * **TikTok:** `Hide like counts on comments` takes the number off the heart on each comment, and `Hide the thumbs down on comments` takes the thumbs down off. The heart still works. Both start off, and they're in Hushfeed settings > Comments.
 * **TikTok:** `Video text color` and `Backdrop behind video text` under Feed screen color the description, the creator's name and the post date on videos, and can put a see-through band behind them.
-* **TikTok:** `Hide the repost chip` under Feed screen takes out the small chip above the progress bar that says someone you follow reposted the video.
+* **TikTok:** `Hide the repost chip` under Feed screen takes out the small bar above the progress bar that says someone you follow reposted the video, or asks you to repost it.
 
 ### Bug Fixes
 * **TikTok:** `Auto-advance videos` now moves on from videos you open from a profile or a list, where TikTok has no auto scroll of its own. Before, the first one just looped at its end.

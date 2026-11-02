@@ -2411,7 +2411,6 @@ Hide the thumbs down beside the heart on each comment. It stays while Thumbs dow
 Hide the row of friends at the top of the share sheet and in the menu a long press on a comment opens.	Esconde a fileira de amigos no topo do menu de compartilhar e no menu que abre ao tocar e segurar um comentário.
 An @username in a profile's bio opens that profile when you tap it. A full name typed after an @ opens a search for that name. The rest of the bio still translates on a tap.	Um @usuário na bio de um perfil abre esse perfil quando você toca nele. Um nome completo escrito depois de um @ abre uma busca por esse nome. O resto da bio continua sendo traduzido com um toque.
 Hide the repost chip	Ocultar a etiqueta de repost
-Takes out the small chip above the progress bar that says a friend reposted the video.	Remove a pequena etiqueta acima da barra de progresso que diz que um amigo republicou o vídeo.
 TikTok's color	Cor do TikTok
 White	Branco
 Light gray	Cinza-claro
@@ -2423,3 +2422,4 @@ Video text color	Cor do texto do vídeo
 Backdrop behind video text	Fundo atrás do texto do vídeo
 Colors the description, the author's name and the post date on videos.	Colore a descrição, o nome do autor e a data da publicação nos vídeos.
 Puts a band of color behind the description, the author's name and the post date, so they stay readable on bright videos.	Coloca uma faixa de cor atrás da descrição, do nome do autor e da data da publicação para que continuem legíveis em vídeos claros.
+Takes out the small bar above the progress bar that says a friend reposted the video, or asks you to repost it.	Remove a pequena barra acima da barra de progresso que diz que um amigo republicou o vídeo ou pede para você republicar.

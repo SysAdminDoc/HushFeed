@@ -161,6 +161,23 @@ public class FeedOverlayControlsTest {
         }
     }
 
+    /** The prompt to repost reaches the same bar without going through the chip's question. */
+    @Test public void theRepostBarStaysOffWithTheChipsSwitchAndHonoursPause() {
+        try {
+            assertEquals(View.VISIBLE, FeedOverlayControls.repostBarVisibility(View.VISIBLE));
+            Settings.HIDE_REPOST_CHIP.save(true);
+            assertEquals(View.GONE, FeedOverlayControls.repostBarVisibility(View.VISIBLE));
+            assertEquals("TikTok taking the bar down still does", View.GONE, FeedOverlayControls.repostBarVisibility(View.GONE));
+            assertEquals(View.INVISIBLE, FeedOverlayControls.repostBarVisibility(View.INVISIBLE));
+            PausedProcess.set(true);
+            assertEquals("a paused Hushfeed still kept the bar off", View.VISIBLE, FeedOverlayControls.repostBarVisibility(View.VISIBLE));
+        } finally {
+            PausedProcess.set(false);
+            HookStatus.clear();
+            Settings.HIDE_REPOST_CHIP.resetToDefault();
+        }
+    }
+
     @Test public void fullscreenOnlyHidesItsDedicatedRootAndKeepsNativeClickOnRestore() {
         try(Fixture f=new Fixture()) {
             int[] clicks={0};

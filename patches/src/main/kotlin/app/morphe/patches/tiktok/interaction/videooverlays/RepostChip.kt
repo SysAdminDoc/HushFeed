@@ -18,6 +18,8 @@ import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 
 internal const val REPOST_CHIP_TRIGGER = "Lcom/ss/android/ugc/feed/platform/cell/interact/info/UpvoteVideoTrigger;"
+internal const val REPOST_BAR_ASSEM = "Lcom/ss/android/ugc/aweme/upvote/detail/whitebar/UpvoteVideoAssemNew;"
+private const val REPOST_CONTROLS = "Lapp/morphe/extension/tiktok/feed/FeedOverlayControls;"
 private const val VIDEO_ITEM_PARAMS = "Lcom/ss/android/ugc/aweme/feed/model/VideoItemParams;"
 private const val CHIP_VIDEO = "Lcom/ss/android/ugc/aweme/feed/model/Aweme;"
 private const val PAGE_PARAMS = "Lcom/ss/android/ugc/aweme/feed/model/BaseFeedPageParams;"
@@ -33,6 +35,28 @@ internal object RepostChipTriggerFingerprint : Fingerprint(
     parameters = listOf(VIDEO_ITEM_PARAMS),
     custom = { method, _ -> isRepostChipTrigger(method) },
 )
+
+/**
+ * The one method that shows or hides that white bar. The trigger above only covers the chip: the
+ * bar's assem also shows the bar by itself as its prompt to repost, after a loop or a like, and
+ * that comes through here with a reason of its own (#319). The string is its log line.
+ */
+internal object RepostBarVisibilityFingerprint : Fingerprint(
+    definingClass = REPOST_BAR_ASSEM,
+    returnType = "V",
+    strings = listOf(", changeContainerViewVisibility: "),
+)
+
+/** Rewrites the visibility as it comes in, with no branch of its own (#264). */
+internal fun MutableMethod.dropRepostBar() {
+    addInstructions(
+        0,
+        """
+            invoke-static {p1}, $REPOST_CONTROLS->repostBarVisibility(I)I
+            move-result p1
+        """,
+    )
+}
 
 internal fun isRepostChipTrigger(method: Method): Boolean =
     !AccessFlags.ABSTRACT.isSet(method.accessFlags) &&

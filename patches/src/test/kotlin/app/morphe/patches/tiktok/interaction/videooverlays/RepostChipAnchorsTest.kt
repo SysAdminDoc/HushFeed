@@ -14,6 +14,7 @@ import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
@@ -78,6 +79,39 @@ class RepostChipAnchorsTest {
     }
 
     @Test
+    fun `the bar's one visibility point gets the rewrite first, and that value reaches the view`() {
+        Fixtures.forEachDeclared { apk ->
+            val version = Fixtures.versionOf(apk)
+            val found = methodsOf(apk, REPOST_BAR_ASSEM) { classDef, method -> RepostBarVisibilityFingerprint.takes(method, classDef) }
+            assertEquals("$version: the fingerprint took ${found.map { it.second.name }}", 1, found.size)
+            val native = found.single().second
+            assertEquals("I", native.parameterTypes.first().toString())
+
+            val before = native.implementation!!.instructions.toList()
+            // p1 in a method whose parameters are one word each.
+            val visibility = native.implementation!!.registerCount - native.parameterTypes.size
+            val toView = before.filter { instruction ->
+                instruction.getReference<MethodReference>()?.parameterTypes?.map(CharSequence::toString) == listOf("I", "Landroid/view/View;")
+            }
+            assertEquals("$version: one call sets the bar's visibility", 1, toView.size)
+            assertEquals("$version: and it's handed the parameter", visibility, (toView.single() as FiveRegisterInstruction).registerC)
+
+            val hooked = MutableMethod(native)
+            hooked.dropRepostBar()
+            val after = hooked.implementation!!.instructions.toList()
+            val target = after[0].getReference<MethodReference>()!!
+            assertEquals(CONTROLS, target.definingClass)
+            assertEquals("repostBarVisibility", target.name)
+            assertEquals(listOf("I"), target.parameterTypes.map(CharSequence::toString))
+            assertEquals("I", target.returnType)
+            assertEquals(visibility, (after[0] as FiveRegisterInstruction).registerC)
+            assertEquals(Opcode.MOVE_RESULT, after[1].opcode)
+            assertEquals(visibility, (after[1] as OneRegisterInstruction).registerA)
+            assertEquals(before.map { it.opcode }, after.drop(2).map { it.opcode })
+        }
+    }
+
+    @Test
     fun `a trigger with no such call stops the patch untouched`() {
         val moved = MutableMethod(
             ImmutableMethod(
@@ -100,12 +134,12 @@ class RepostChipAnchorsTest {
     }
 
     /** Every method of one build the filter takes, walked once and never held (the dex has millions). */
-    private fun methodsOf(apk: File, accept: (ClassDef, Method) -> Boolean): List<Pair<ClassDef, Method>> {
+    private fun methodsOf(apk: File, type: String = REPOST_CHIP_TRIGGER, accept: (ClassDef, Method) -> Boolean): List<Pair<ClassDef, Method>> {
         val found = mutableListOf<Pair<ClassDef, Method>>()
         val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
         for (entry in container.dexEntryNames) {
             for (classDef in container.getEntry(entry)!!.dexFile.classes) {
-                if (classDef.type != REPOST_CHIP_TRIGGER) continue
+                if (classDef.type != type) continue
                 for (method in classDef.methods) {
                     if (accept(classDef, method)) found += classDef to method
                 }

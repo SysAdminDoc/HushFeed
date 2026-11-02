@@ -2382,7 +2382,6 @@ Hide the thumbs down beside the heart on each comment. It stays while Thumbs dow
 Hide the row of friends at the top of the share sheet and in the menu a long press on a comment opens.,Sembunyikan deretan teman di bagian atas lembar berbagi dan di menu yang terbuka saat komentar ditekan lama.
 An @username in a profile's bio opens that profile when you tap it. A full name typed after an @ opens a search for that name. The rest of the bio still translates on a tap.,@nama pengguna di bio profil membuka profil itu saat diketuk. Nama lengkap yang ditulis setelah @ membuka pencarian nama itu. Bagian bio lainnya tetap diterjemahkan saat diketuk.
 Hide the repost chip,Sembunyikan label repost
-Takes out the small chip above the progress bar that says a friend reposted the video.,Menghapus label kecil di atas bilah progres yang menunjukkan teman memposting ulang video ini.
 TikTok's color,Warna TikTok
 White,Putih
 Light gray,Abu-abu muda
@@ -2394,3 +2393,4 @@ Video text color,Warna teks video
 Backdrop behind video text,Latar di belakang teks video
 "Colors the description, the author's name and the post date on videos.","Mewarnai deskripsi, nama pembuat, dan tanggal posting pada video."
 "Puts a band of color behind the description, the author's name and the post date, so they stay readable on bright videos.","Menaruh pita warna di belakang deskripsi, nama pembuat, dan tanggal posting agar tetap terbaca pada video yang terang."
+"Takes out the small bar above the progress bar that says a friend reposted the video, or asks you to repost it.",Menghapus bilah kecil di atas bilah progres yang menunjukkan teman memposting ulang video ini atau meminta Anda memposting ulang.

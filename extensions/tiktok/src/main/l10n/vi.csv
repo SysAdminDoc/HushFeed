@@ -2380,7 +2380,6 @@ Hide the thumbs down beside the heart on each comment. It stays while Thumbs dow
 Hide the row of friends at the top of the share sheet and in the menu a long press on a comment opens.,Ẩn hàng bạn bè ở đầu bảng chia sẻ và trong menu mở ra khi nhấn giữ một bình luận.
 An @username in a profile's bio opens that profile when you tap it. A full name typed after an @ opens a search for that name. The rest of the bio still translates on a tap.,Chạm vào một @username trong tiểu sử trang cá nhân để mở trang cá nhân đó. Tên đầy đủ viết sau @ sẽ mở tìm kiếm tên đó. Các phần khác của tiểu sử vẫn hoạt động bình thường (như dịch thuật khi chạm).
 Hide the repost chip,Ẩn nhãn đăng lại
-Takes out the small chip above the progress bar that says a friend reposted the video.,Bỏ nhãn nhỏ phía trên thanh tiến trình cho biết bạn bè đã đăng lại video.
 TikTok's color,Màu của TikTok
 White,Màu trắng
 Light gray,Màu xám nhạt
@@ -2392,3 +2391,4 @@ Video text color,Màu chữ trên video
 Backdrop behind video text,Nền phía sau chữ trên video
 "Colors the description, the author's name and the post date on videos.","Tô màu phần mô tả, tên tác giả và ngày đăng trên video."
 "Puts a band of color behind the description, the author's name and the post date, so they stay readable on bright videos.","Đặt một dải màu phía sau phần mô tả, tên tác giả và ngày đăng để chúng vẫn dễ đọc trên video sáng."
+"Takes out the small bar above the progress bar that says a friend reposted the video, or asks you to repost it.",Bỏ thanh nhỏ phía trên thanh tiến trình cho biết bạn bè đã đăng lại video hoặc nhắc bạn đăng lại.

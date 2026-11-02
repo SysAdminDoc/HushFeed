@@ -133,6 +133,13 @@ val hideVideoOverlaysPatch = bytecodePatch(
             println("[$PATCH_NAME] Left out the repost chip on ${packageMetadata.versionName}: ${problem.message}")
             null
         }
+        val repostBar = try {
+            RepostBarVisibilityFingerprint.method
+        } catch (problem: Exception) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[$PATCH_NAME] Left out the repost bar on ${packageMetadata.versionName}: ${problem.message}")
+            null
+        }
         // The music disc's two switches (#68), the same way: required where MusicDiscSpinAnchorsTest
         // holds every hold on the disc's way, left out with a note anywhere else.
         val musicDisc = try {
@@ -204,6 +211,7 @@ val hideVideoOverlaysPatch = bytecodePatch(
         interestButtons?.dropInterestButtons(PATCH_NAME)
         if (repostChip != null) {
             repostChip.dropRepostChip(PATCH_NAME)
+            repostBar?.dropRepostBar()
             status.addInstruction(
                 0,
                 "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableRepostChip()V",

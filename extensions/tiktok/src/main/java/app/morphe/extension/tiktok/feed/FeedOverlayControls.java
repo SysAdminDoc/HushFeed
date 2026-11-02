@@ -91,6 +91,19 @@ public final class FeedOverlayControls {
         return !hide;
     }
 
+    /**
+     * The visibility TikTok is about to give the repost bar. The chip above only covers a video
+     * someone reposted: TikTok also raises that bar by itself as a prompt to repost the video, after
+     * a loop or a like, and only this sees that one (#319).
+     */
+    public static int repostBarVisibility(int visibility) {
+        if (visibility != View.VISIBLE) return visibility;
+        boolean hide = Settings.HIDE_REPOST_CHIP.get();
+        HookStatus.bound("repost bar", hide ? "bar kept off" : "bar left");
+        Logger.printDebug(() -> "Repost bar " + (hide ? "kept off" : "left"));
+        return hide ? View.GONE : visibility;
+    }
+
     private static void bind(View view, BooleanSetting setting, boolean location, String name) {
         if (view == null) return;
         HookStatus.bound(name, "native control bind");

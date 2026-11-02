@@ -510,7 +510,7 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                 addPreference(new TogglePreference(
                         context,
                         "Hide the repost chip",
-                        "Takes out the small chip above the progress bar that says a friend reposted the video.",
+                        "Takes out the small bar above the progress bar that says a friend reposted the video, or asks you to repost it.",
                         Settings.HIDE_REPOST_CHIP
                 ));
             }

@@ -39,6 +39,9 @@ import app.morphe.util.numberOfParameterRegisters
 import app.morphe.util.singleOrPatchException
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction10t
+import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction11x
+import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction3rc
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
@@ -51,6 +54,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
+import com.android.tools.smali.dexlib2.immutable.reference.ImmutableMethodReference
 
 private const val EXTENSION_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/feedfilter/FeedItemsFilter;"
 private const val PROFILE_DETAIL_PANEL_DESCRIPTOR =
@@ -63,6 +67,7 @@ private const val CARD_FILTERS_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/
 private const val SEARCH_LYNX_CARDS_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/feedfilter/SearchLynxCards;"
 private const val LIVE_FEED_FILTER_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/feedfilter/LiveFeedFilter;"
 private const val FEED_ITEM_LIST_DESCRIPTOR = "Lcom/ss/android/ugc/aweme/feed/model/FeedItemList;"
+private const val FOLLOW_FEED_LIST_DESCRIPTOR = "Lcom/ss/android/ugc/aweme/follow/presenter/FollowFeedList;"
 private const val FILTERED_COUNT_PILL_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/feedfilter/FilteredCountPill;"
 private const val LINKED_VIDEO_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/feedfilter/LinkedVideo;"
 
@@ -217,22 +222,7 @@ val feedFilterPatch = bytecodePatch(
             )
         }
 
-        FollowFeedFingerprint.method.let { method ->
-            val returnIndices =
-                method.implementation!!.instructions.withIndex()
-                    .filter { it.value.opcode == Opcode.RETURN_OBJECT }
-                    .map { it.index }
-                    .toList()
-
-            returnIndices.asReversed().forEach { returnIndex ->
-                val register = (method.implementation!!.instructions[returnIndex] as OneRegisterInstruction).registerA
-
-                method.addInstructionsAtControlFlowLabel(
-                    returnIndex,
-                    "invoke-static/range { v$register .. v$register }, $EXTENSION_CLASS_DESCRIPTOR->filter(Lcom/ss/android/ugc/aweme/follow/presenter/FollowFeedList;)V",
-                )
-            }
-        }
+        FollowFeedFingerprint.method.filterFollowFeedReturns()
 
         FollowFeedListGetItemsFingerprint.method.let { method ->
             val returnIndices = method.implementation!!.instructions.withIndex()
@@ -1021,7 +1011,54 @@ val feedFilterPatch = bytecodePatch(
     }
 }
 
-/** Refuses to skip a recommendation-card surface whose known insertion method merely drifted. */
+/**
+ * Hands every FollowFeedList the Following loader returns to the extension's filter.
+ *
+ * The call can't go in front of the return instruction. On 47.6.3 the loader's `return-object v8`
+ * is the last instruction of a try block whose handler is the null return (`return-object v28`),
+ * and the verifier hands a handler the register state of every instruction in its try range that
+ * can throw. A return can't throw, so the clean handler only ever sees v28 as null. A filter call
+ * in front of that return can, and the branch into the return from the empty-list check carries
+ * a List in v28 (the read list handed to the request), so Android 16 typed v28 as List at the
+ * handler and rejected the whole class ("register v28 has type java.util.List but expected
+ * FollowFeedList"), a VerifyError the first time Following loads (47.6.3 register check,
+ * 2026-11-01).
+ *
+ * So each `return-object vN` becomes a goto to one trailing block per register, added after the
+ * last instruction and so past every try range, that calls the filter on vN and returns it. The
+ * goto takes the return's place, which keeps every label (branch targets, catch handlers, try
+ * ends) and every address where it was, and the block verifies wherever the return did, since
+ * both need vN assignable to FollowFeedList. A null return calls the filter with null, which
+ * does nothing.
+ */
+internal fun MutableMethod.filterFollowFeedReturns() {
+    val code = implementation
+        ?: throw PatchException("Follow feed filter: $definingClass->$name has no implementation")
+    val returns = code.instructions.withIndex()
+        .filter { it.value.opcode == Opcode.RETURN_OBJECT }
+        .map { it.index to (it.value as OneRegisterInstruction).registerA }
+    if (returns.isEmpty()) {
+        throw PatchException("Follow feed filter: $definingClass->$name never returns an object")
+    }
+
+    val filter = ImmutableMethodReference(
+        EXTENSION_CLASS_DESCRIPTOR,
+        "filter",
+        listOf(FOLLOW_FEED_LIST_DESCRIPTOR),
+        "V",
+    )
+    val blocks = returns.map { it.second }.distinct().associateWith { register ->
+        val blockIndex = code.instructions.size
+        code.addInstruction(BuilderInstruction3rc(Opcode.INVOKE_STATIC_RANGE, register, 1, filter))
+        code.addInstruction(BuilderInstruction11x(Opcode.RETURN_OBJECT, register))
+        blockIndex
+    }
+    returns.forEach { (index, register) ->
+        val block = code.newLabelForIndex(blocks.getValue(register))
+        code.replaceInstruction(index, BuilderInstruction10t(Opcode.GOTO, block))
+    }
+}
+
 /**
  * Latest first on Following (#226): TikTok writes the Following request's count as the literal 20
  * in the helper that calls the API. Right before each call (GET and POST) the extension may swap in

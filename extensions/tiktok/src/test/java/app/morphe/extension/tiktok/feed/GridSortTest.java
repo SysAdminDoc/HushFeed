@@ -381,7 +381,7 @@ public class GridSortTest {
         }
     }
 
-    @Test public void aHoldEndsAtTheCapAndAtItsLimit() {
+    @Test public void aHoldEndsAtTheCap() {
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
             GridAdapter capped = gridOnScreen(controller.get());
             Settings.PROFILE_GRID_SORT.save("newest");
@@ -392,14 +392,60 @@ public class GridSortTest {
             capped.mmItems = GridSort.page(capped, model);
             idle(0);
             assertInSight(capped);
+        }
+    }
 
+    /** The Liked tab asked past its last video got no answer at all, and stayed hidden until the limit. */
+    @Test public void aHoldEndsWhenAPageGoesUnanswered() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
             GridAdapter unanswered = gridOnScreen(controller.get());
+            Settings.PROFILE_GRID_SORT.save("newest");
             unanswered.mmItems = GridSort.data(unanswered, posts(30));
             assertHeld(unanswered);
-            idle(GridSort.HOLD_LIMIT_MS - 100);
+            idle(GridSort.HOLD_QUIET_MS - 100);
             assertHeld(unanswered);
             idle(200);
             assertInSight(unanswered);
+        }
+    }
+
+    @Test public void aRefreshDuringAHoldStartsItsLimitOver() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            GridAdapter adapter = gridOnScreen(controller.get());
+            Settings.PROFILE_GRID_SORT.save("newest");
+            List<Aweme> model = posts(30);
+            adapter.mmItems = GridSort.data(adapter, model);
+            long gap = GridSort.HOLD_QUIET_MS - 1000;
+            long passed = 0;
+            while (passed + gap < GridSort.HOLD_LIMIT_MS) {
+                idle(gap);
+                passed += gap;
+                model.addAll(posts(5));
+                adapter.mmItems = GridSort.page(adapter, model);
+            }
+            adapter.mmItems = GridSort.data(adapter, posts(10));
+            idle(GridSort.HOLD_LIMIT_MS - passed + 100);
+            assertHeld(adapter);
+        }
+    }
+
+    @Test public void pagesKeepAHoldGoingUpToItsLimit() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            GridAdapter slow = gridOnScreen(controller.get());
+            Settings.PROFILE_GRID_SORT.save("newest");
+            List<Aweme> model = posts(10);
+            slow.mmItems = GridSort.data(slow, model);
+            long gap = GridSort.HOLD_QUIET_MS - 1000;
+            long passed = 0;
+            while (passed + gap < GridSort.HOLD_LIMIT_MS) {
+                idle(gap);
+                passed += gap;
+                assertHeld(slow);
+                model.addAll(posts(10));
+                slow.mmItems = GridSort.page(slow, model);
+            }
+            idle(GridSort.HOLD_LIMIT_MS - passed + 100);
+            assertInSight(slow);
         }
     }
 

@@ -114,12 +114,21 @@ public final class GridSort {
     static final int LOAD_CAP = 300;
     /** The pause before asking for the next page, so a long profile isn't fetched in one burst. */
     static final long NEXT_PAGE_DELAY_MS = 100;
-    /** How many videos a page asks for. */
+    /** How many videos a page asks for. The server answers 50 with about 30, up from about 16 for 18. */
     static final int PAGE_SIZE = 50;
     /** The source TikTok's footer names when it asks for a page. */
     static final String PAGE_SOURCE = "load_more_bind_footer";
-    /** The longest a grid stays out of sight, so a slow or dead request can't leave it hidden. */
-    static final long HOLD_LIMIT_MS = 12_000;
+    /**
+     * The longest a grid stays out of sight, so a slow or dead request can't leave it hidden. A
+     * profile past {@link #LOAD_CAP} took 18 s on Login2, and a limit under that shows the last
+     * pages reshuffling.
+     */
+    static final long HOLD_LIMIT_MS = 20_000;
+    /**
+     * How long a hold waits on one page. The Liked tab keeps its listener past its last video and
+     * just never answers the ask, so this is what ends that hold. Pages came within 3 s on Login2.
+     */
+    static final long HOLD_QUIET_MS = 5_000;
     /** A hold shows nothing this early, so a profile with few videos doesn't flash a spinner. */
     static final long HOLD_SPINNER_DELAY_MS = 250;
 
@@ -504,6 +513,11 @@ public final class GridSort {
     }
 
     private static void askForNextPage(Object adapter) {
+        Hold hold = HOLDS.get(gridView(adapter));
+        if (hold != null) {
+            MAIN.removeCallbacks(hold.quiet);
+            MAIN.postDelayed(hold.quiet, HOLD_QUIET_MS);
+        }
         synchronized (ORIGINALS) {
             if (ASKED.containsKey(adapter)) return;
             ASKED.put(adapter, Boolean.TRUE);
@@ -560,14 +574,16 @@ public final class GridSort {
         final View cover;
         final TextView count;
         final Runnable limit;
+        final Runnable quiet;
         final View.OnAttachStateChangeListener leaving;
         Object adapter;
         boolean refreshDue;
 
-        Hold(View cover, TextView count, Runnable limit, View.OnAttachStateChangeListener leaving, Object adapter) {
+        Hold(View cover, TextView count, Runnable limit, Runnable quiet, View.OnAttachStateChangeListener leaving, Object adapter) {
             this.cover = cover;
             this.count = count;
             this.limit = limit;
+            this.quiet = quiet;
             this.leaving = leaving;
             this.adapter = adapter;
         }
@@ -608,6 +624,9 @@ public final class GridSort {
             Hold held = HOLDS.get(grid);
             if (held != null) {
                 held.adapter = adapter;
+                // A pull to refresh during a hold has every page ahead of it again.
+                MAIN.removeCallbacks(held.limit);
+                MAIN.postDelayed(held.limit, HOLD_LIMIT_MS);
                 return;
             }
             Context context = grid.getContext();
@@ -652,7 +671,7 @@ public final class GridSort {
                 }
             };
             grid.addOnAttachStateChangeListener(leaving);
-            Hold hold = new Hold(cover, count, () -> endHold(grid), leaving, adapter);
+            Hold hold = new Hold(cover, count, () -> endHold(grid), () -> endHold(grid), leaving, adapter);
             HOLDS.put(grid, hold);
             MAIN.postDelayed(hold.limit, HOLD_LIMIT_MS);
             MAIN.postDelayed(() -> box.setVisibility(View.VISIBLE), HOLD_SPINNER_DELAY_MS);
@@ -680,6 +699,7 @@ public final class GridSort {
         Hold hold = grid == null ? null : HOLDS.remove(grid);
         if (hold == null) return;
         MAIN.removeCallbacks(hold.limit);
+        MAIN.removeCallbacks(hold.quiet);
         grid.removeOnAttachStateChangeListener(hold.leaving);
         grid.setAlpha(1f);
         ViewParent parent = hold.cover.getParent();

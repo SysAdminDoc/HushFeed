@@ -375,6 +375,9 @@
       "hide_profile_thoughts",
       "enable_thoughts"
     ],
+    "Hide read receipts": [
+      "hide_read_receipts"
+    ],
     "Hide search suggestions": [
       "hide_search_rewards",
       "hide_search_suggestions"
@@ -2329,6 +2332,12 @@
     "hide_rail_share": {
       "field": "HIDE_RAIL_SHARE",
       "key": "hide_rail_share",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_read_receipts": {
+      "field": "HIDE_READ_RECEIPTS",
+      "key": "hide_read_receipts",
       "type": "boolean",
       "default": false
     },

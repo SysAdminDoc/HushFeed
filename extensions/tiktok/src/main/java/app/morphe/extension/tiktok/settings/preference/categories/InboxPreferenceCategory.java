@@ -39,6 +39,7 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
                 || SettingsStatus.keepUnsentEnabled
                 || SettingsStatus.suggestedVideoPushBlockEnabled
                 || SettingsStatus.autoStreakEnabled
+                || SettingsStatus.hideReadReceiptsEnabled
                 || SettingsStatus.dmTranslationPreviewEnabled
                 || SettingsStatus.receivedDmTranslationPreviewEnabled;
     }
@@ -50,6 +51,15 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
 
     @Override
     public void addPreferences(Context context) {
+        if (SettingsStatus.hideReadReceiptsEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Hide read receipts",
+                    "Stops TikTok telling people you've read their messages. Your own unread badges still clear "
+                            + "as usual.",
+                    Settings.HIDE_READ_RECEIPTS
+            ));
+        }
         if (SettingsStatus.receivedDmTranslationPreviewEnabled) {
             addPreference(new TogglePreference(context, "Received message translation",
                     "Preview a translation from a received text message's menu. The original message stays unchanged.",

@@ -9965,6 +9965,43 @@
   "notes": "Issue #200. The camera is a page inside SplashActivity, opened from the + tab, and Back doesn't close it (its X does). With the switch off, `dumpsys window windows` shows sbrt= on TikTok's window while the camera is open (0.39 on the S22 at system brightness 50: the phone's level plus TikTok's step, over 255); with it on there's no sbrt. The front flash and fill light (47.5.3: the record screen's fill light and front flash, the flash button's screen flash, the Tako AI camera's flash and the avatar camera's flash) store their own full brightness: with the switch off, flash on with the front camera shows sbrt=1.0, and with it on the white overlay still comes up while sbrt stays where it was. Opening the camera needs a tap the audit doesn't script, so the device check is by hand."
  },
  {
+  "name": "Hide read receipts",
+  "category": "Inbox",
+  "default": true,
+  "kind": "infrastructure",
+  "source": [
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/misc/inbox/HideReadReceiptsPatch.kt",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/inbox/HideReadReceipts.java"
+  ],
+  "settings": [
+   {
+    "key": "hide_read_receipts",
+    "default": false,
+    "type": "bool",
+    "row": "Hide read receipts"
+   }
+  ],
+  "surface": "apk",
+  "checks": [
+   {
+    "id": "registered",
+    "what": "The patch registered its switch and its extension class is shipped. (The dex-string step shows the class is in the dex, the whole extension is kept; the registered-switch step is what shows the patch ran.)",
+    "steps": [
+     {
+      "probe": "report",
+      "expect": "registered_switches:[^\n]*\bhideReadReceipts\b"
+     },
+     {
+      "apk": "dex-string",
+      "expect": "Lapp/morphe/extension/tiktok/inbox/HideReadReceipts;"
+     }
+    ],
+    "auto": true
+   }
+  ],
+  "notes": "Only a second account can see whether Seen shows up, and the audit has none, so only its registration is checked. Owed natural check with a controlled sender: the switch on, open their new message, their chat doesn't show Seen while your own unread badge clears; switch off, Seen comes back."
+ },
+ {
   "name": "Keep unsent messages",
   "category": "Inbox",
   "default": true,

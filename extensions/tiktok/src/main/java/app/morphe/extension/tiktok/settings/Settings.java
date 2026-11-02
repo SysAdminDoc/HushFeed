@@ -390,6 +390,12 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting MARK_KEPT_UNSENT_MESSAGES =
             new BooleanSetting("mark_kept_unsent_messages", TRUE);
     /**
+     * Stops TikTok telling people you have read their messages: the request that marks a chat as read is not
+     * sent. Off by default. See HideReadReceipts.
+     */
+    public static final BooleanSetting HIDE_READ_RECEIPTS =
+            new BooleanSetting("hide_read_receipts", FALSE);
+    /**
      * Dispatches one message per selected chat a day at {@link #AUTO_STREAK_MINUTE},
      * so a streak with them keeps going on a day nobody opens the app. Off by default. See
      * AutoStreak.

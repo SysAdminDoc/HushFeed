@@ -130,6 +130,7 @@ public class SettingsStatus {
     public static boolean keepUnsentEnabled = false;
     public static boolean suggestedVideoPushBlockEnabled = false;
     public static boolean autoStreakEnabled = false;
+    public static boolean hideReadReceiptsEnabled = false;
     public static boolean hideSuggestedAccountsEnabled = false;
     public static boolean hideInboxStoriesEnabled = false;
     public static boolean chatDeclutterEnabled = false;
@@ -550,6 +551,10 @@ public class SettingsStatus {
 
     public static void enableAutoStreak() {
         autoStreakEnabled = true;
+    }
+
+    public static void enableHideReadReceipts() {
+        hideReadReceiptsEnabled = true;
     }
 
     public static void enableInboxFilter() {

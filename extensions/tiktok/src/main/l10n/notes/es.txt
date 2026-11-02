@@ -1,4 +1,4 @@
-## Unreleased
+## 0.80.0 (2026-11-01)
 
 * **TikTok:** PineDrama pasó a su propio conjunto de parches, HushPine. Desde ahora Hushfeed solo parchea TikTok.
 * **TikTok:** TikTok 47.6.3 es ahora la única compilación compatible. Descárgala de APKMirror y conserva la misma clave de firma para mantener tu sesión y tus ajustes.

@@ -1,4 +1,4 @@
-## Unreleased
+## 0.80.0 (2026-11-01)
 
 * **TikTok:** PineDrama 已迁到自己的补丁集 HushPine。从现在起，Hushfeed 只修补 TikTok。
 * **TikTok:** 现在只支持 TikTok 47.6.3。请从 APKMirror 获取这个版本，并沿用同一个签名密钥，这样登录状态和设置都会保留。

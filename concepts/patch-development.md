@@ -1,6 +1,6 @@
 # App and patch development map
 
-This guide maps the TikTok app Hushfeed modifies to the code and release checks that make a patch. Its version and patch counts were last synced with the source on 2026-10-31. The generated [patch catalog](../patches-list.json) is the current source of truth for patch names and compatibility.
+This guide maps the TikTok app Hushfeed modifies to the code and release checks that make a patch. Its version and patch counts were last synced with the source on 2026-11-01. The generated [patch catalog](../patches-list.json) is the current source of truth for patch names and compatibility.
 
 ## What Hushfeed ships
 

@@ -1,4 +1,4 @@
-## Unreleased
+## 0.80.0 (2026-11-01)
 
 * **TikTok:** O PineDrama foi para um conjunto de patches próprio, o HushPine. A partir de agora o Hushfeed só faz patch no TikTok.
 * **TikTok:** O TikTok 47.6.3 agora é a única versão suportada. Baixe do APKMirror e mantenha a mesma chave de assinatura para preservar seu login e suas configurações.

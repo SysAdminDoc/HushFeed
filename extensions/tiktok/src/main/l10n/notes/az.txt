@@ -1,4 +1,4 @@
-## Unreleased
+## 0.80.0 (2026-11-01)
 
 * **TikTok:** PineDrama öz yamaq dəstinə, HushPine-a köçdü. Hushfeed bundan sonra yalnız TikTok-u yamayır.
 * **TikTok:** İndi dəstəklənən yeganə quruluş TikTok 47.6.3-dür. Onu APKMirror-dan götürün və giriş məlumatlarınızla ayarlarınız qalsın deyə eyni imzalama açarını saxlayın.

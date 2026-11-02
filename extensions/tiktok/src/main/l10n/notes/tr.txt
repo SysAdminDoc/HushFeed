@@ -1,4 +1,4 @@
-## Unreleased
+## 0.80.0 (2026-11-01)
 
 * **TikTok:** PineDrama kendi yama setine, HushPine'a taşındı. Hushfeed artık yalnızca TikTok'a yama uyguluyor.
 * **TikTok:** Artık desteklenen tek derleme TikTok 47.6.3. APKMirror'dan indirin ve girişiniz ile ayarlarınız korunsun diye aynı imzalama anahtarını kullanın.

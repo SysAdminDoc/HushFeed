@@ -4,6 +4,8 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+## 0.80.0 (2026-11-01)
+
 ### Features
 
 * **TikTok:** PineDrama moved out to its own repo, [HushPine](https://github.com/SysAdminDoc/HushPine), with its own patches and releases. Hushfeed is TikTok only from here on, and `Allow photo comments` went with PineDrama.

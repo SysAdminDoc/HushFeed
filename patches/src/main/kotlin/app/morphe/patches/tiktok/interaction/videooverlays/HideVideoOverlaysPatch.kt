@@ -181,7 +181,7 @@ val hideVideoOverlaysPatch = bytecodePatch(
         if (storyRowButtons != null) {
             val (allShows, binds) = storyRowButtons
             allShows.forEach { it.hookAllButtonShow(PATCH_NAME) }
-            binds.forEach { it.hookStoryCreateFlag(PATCH_NAME) }
+            binds.forEach { it.hookStoryCreateCell(PATCH_NAME) }
             status.addInstruction(
                 0,
                 "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableStoryRowButtons()V",

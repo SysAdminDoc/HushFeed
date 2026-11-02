@@ -51,16 +51,39 @@ public class StoryRowButtonsTest {
             Cell cell = new Cell(item);
 
             Settings.HIDE_STORY_CREATE.save(true);
-            StoryRowButtons.onStoryCellBound(cell, 1);
+            StoryRowButtons.onStoryCellOwner(cell, 1);
+            StoryRowButtons.onOwnCellAnswer(cell, 1);
             assertEquals("the circle stayed visible", View.GONE, item.getVisibility());
             assertEquals("the circle kept its width", 0, size.width);
             assertEquals("the circle kept its margin", 0, size.leftMargin);
 
-            StoryRowButtons.onStoryCellBound(cell, 0);
+            StoryRowButtons.onStoryCellOwner(cell, 0);
             assertEquals("someone's stories stayed hidden", View.VISIBLE, item.getVisibility());
             assertEquals(180, size.width);
             assertEquals(240, size.height);
             assertEquals(4, size.leftMargin);
+        }
+    }
+
+    /** Posting a Story turns the same cell from the Create circle into the viewer's own stories. */
+    @Test public void theViewersOwnCellComesBackOnceItHasAStory() {
+        try (var owner = Robolectric.buildActivity(Activity.class).setup()) {
+            Activity activity = owner.get();
+            Utils.setContext(activity);
+            View item = new View(activity);
+            LinearLayout row = new LinearLayout(activity);
+            row.addView(item, new LinearLayout.LayoutParams(180, 240));
+            Cell cell = new Cell(item);
+
+            Settings.HIDE_STORY_CREATE.save(true);
+            StoryRowButtons.onStoryCellOwner(cell, 1);
+            StoryRowButtons.onOwnCellAnswer(cell, 1);
+            assertEquals(View.GONE, item.getVisibility());
+
+            StoryRowButtons.onStoryCellOwner(cell, 1);
+            StoryRowButtons.onOwnCellAnswer(cell, 0);
+            assertEquals(View.VISIBLE, item.getVisibility());
+            assertEquals(180, item.getLayoutParams().width);
         }
     }
 
@@ -73,12 +96,13 @@ public class StoryRowButtonsTest {
             row.addView(item, new LinearLayout.LayoutParams(180, 240));
             Cell cell = new Cell(item);
 
-            StoryRowButtons.onStoryCellBound(cell, 1);
+            StoryRowButtons.onStoryCellOwner(cell, 1);
+            StoryRowButtons.onOwnCellAnswer(cell, 1);
             assertEquals(View.VISIBLE, item.getVisibility());
             assertEquals(180, item.getLayoutParams().width);
 
             Settings.HIDE_STORY_CREATE.save(true);
-            StoryRowButtons.onStoryCellBound(cell, 0);
+            StoryRowButtons.onStoryCellOwner(cell, 0);
             assertEquals(View.VISIBLE, item.getVisibility());
             assertEquals(180, item.getLayoutParams().width);
         }

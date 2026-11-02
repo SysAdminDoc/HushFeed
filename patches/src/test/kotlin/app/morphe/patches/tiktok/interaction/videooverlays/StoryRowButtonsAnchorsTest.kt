@@ -15,6 +15,7 @@ import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
@@ -32,13 +33,13 @@ private const val BUTTONS = "Lapp/morphe/extension/tiktok/feed/StoryRowButtons;"
 
 /**
  * What the story row switches hook (#308, #309), held to each declared build: each story cell has
- * one bind writing the Create flag, and the skylight list shows All in exactly two methods. The
- * hooks are one straight call each with the registers TikTok's own write and call use, and
- * nothing in TikTok's code branches around the Create hook.
+ * one bind asking whether the viewer's own item has no Story, and the skylight list shows All in
+ * exactly two methods. The hooks are one straight call each with the registers TikTok's own write
+ * and call use, and nothing in TikTok's code branches around the Create hooks.
  */
 class StoryRowButtonsAnchorsTest {
     @Test
-    fun `each story cell has one bind writing the Create flag and the hook reads the write's registers`() {
+    fun `each story cell has one bind asking about the viewer's Story and the hooks read its registers`() {
         Fixtures.forEachDeclared { apk ->
             val version = Fixtures.versionOf(apk)
             for (cell in listOf(FOLLOWING_STORY_CELL, INBOX_STORY_CELL)) {
@@ -46,27 +47,50 @@ class StoryRowButtonsAnchorsTest {
                 assertEquals("$version: $cell binds ${binds.map { it.name }}", 1, binds.size)
                 val bind = binds.single()
                 val code = bind.implementation!!.instructions.toList()
-                val flag = storyCreateFlagIndex(bind)
-                val write = code[flag] as TwoRegisterInstruction
+                val owner = storyOwnerWriteIndex(bind)
+                val answer = storyAnswerIndex(bind)
+                val write = code[owner] as TwoRegisterInstruction
+                val result = (code[answer] as OneRegisterInstruction).registerA
 
-                assertFalse("$version: $cell branches past the flag", branchedOnto(code).contains(flag + 1))
-                assertTrue("$version: $cell branches to the write on the not-own path", branchedOnto(code).contains(flag))
+                // A yes skips the flag that picks the "your Story" label, so yes means no Story up.
+                assertEquals("$version: $cell's answer", Opcode.IF_NEZ, code[answer + 1].opcode)
+                assertEquals("$version: $cell's owner branch", Opcode.IF_EQZ, code.drop(owner + 1).first { it is OffsetInstruction }.opcode)
+                assertFalse("$version: $cell branches past the owner", branchedOnto(code).contains(owner + 1))
+                assertFalse("$version: $cell branches past the answer", branchedOnto(code).contains(answer + 1))
 
                 val hooked = MutableMethod(bind)
-                hooked.hookStoryCreateFlag("Hide video overlays")
+                hooked.hookStoryCreateCell("Hide video overlays")
                 val after = hooked.implementation!!.instructions.toList()
-                val call = after[flag + 1]
-                assertEquals(Opcode.INVOKE_STATIC, call.opcode)
-                val target = call.getReference<MethodReference>()!!
-                assertEquals(BUTTONS, target.definingClass)
-                assertEquals("onStoryCellBound", target.name)
-                assertEquals(listOf("Ljava/lang/Object;", "I"), target.parameterTypes.map(CharSequence::toString))
-                assertEquals(write.registerB, (call as FiveRegisterInstruction).registerC)
-                assertEquals(write.registerA, call.registerD)
+
+                val ownerCall = after[owner + 1]
+                assertEquals(Opcode.INVOKE_STATIC, ownerCall.opcode)
+                val ownerTarget = ownerCall.getReference<MethodReference>()!!
+                assertEquals(BUTTONS, ownerTarget.definingClass)
+                assertEquals("onStoryCellOwner", ownerTarget.name)
+                assertEquals(listOf("Ljava/lang/Object;", "I"), ownerTarget.parameterTypes.map(CharSequence::toString))
+                assertEquals(write.registerB, (ownerCall as FiveRegisterInstruction).registerC)
+                assertEquals(write.registerA, ownerCall.registerD)
+
+                val answerCall = after[answer + 2]
+                assertEquals(Opcode.INVOKE_STATIC, answerCall.opcode)
+                val answerTarget = answerCall.getReference<MethodReference>()!!
+                assertEquals(BUTTONS, answerTarget.definingClass)
+                assertEquals("onOwnCellAnswer", answerTarget.name)
+                assertEquals(listOf("Ljava/lang/Object;", "I"), answerTarget.parameterTypes.map(CharSequence::toString))
+                assertEquals(write.registerB, (answerCall as FiveRegisterInstruction).registerC)
+                assertEquals(result, answerCall.registerD)
+
+                // The cell's register still holds the cell by the time of the answer.
+                (owner + 1..answer).forEach { index ->
+                    val writes = (code[index] as? OneRegisterInstruction)?.registerA == write.registerB &&
+                        code[index].opcode.setsRegister()
+                    assertFalse("$version: $cell overwrites the cell before the answer", writes)
+                }
                 assertEquals(
                     "$version: $cell's own code moved",
                     code.map { it.opcode }.filter { it != Opcode.NOP },
-                    after.filterIndexed { index, _ -> index != flag + 1 }.map { it.opcode }.filter { it != Opcode.NOP },
+                    after.filterIndexed { index, _ -> index != owner + 1 && index != answer + 2 }
+                        .map { it.opcode }.filter { it != Opcode.NOP },
                 )
             }
         }
@@ -114,7 +138,7 @@ class StoryRowButtonsAnchorsTest {
             ),
         )
         val before = moved.implementation!!.instructions.toList()
-        assertThrows(PatchException::class.java) { moved.hookStoryCreateFlag("Hide video overlays") }
+        assertThrows(PatchException::class.java) { moved.hookStoryCreateCell("Hide video overlays") }
         assertThrows(PatchException::class.java) { moved.hookAllButtonShow("Hide video overlays") }
         assertEquals(before, moved.implementation!!.instructions.toList())
     }

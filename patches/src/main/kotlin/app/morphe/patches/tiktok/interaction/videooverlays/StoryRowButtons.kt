@@ -12,6 +12,7 @@ import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction
+import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
@@ -26,45 +27,70 @@ private const val STORY_ROW_BUTTONS = "Lapp/morphe/extension/tiktok/feed/StoryRo
 private fun Method.code(): List<Instruction> = implementation?.instructions?.toList().orEmpty()
 
 /**
- * Where a story cell's bind writes "this is the viewer's own item and it has no Story": the first
- * static (Aweme)Z call asks whether the item has a Story, and the next boolean written to the cell
- * holds the answer on both ways in (true past the checks, false from the branches that jump to the
- * same write). That's the Create circle, on the Following row and in the Inbox alike, and the
- * flag's name changes on every build. -1 when the method doesn't do that.
+ * A story cell's bind asks one static (Aweme)Z question: whether the viewer's own item has no Story
+ * up. True with no Story, so that's the Create circle, on the Following row and in the Inbox alike.
+ * The flag the bind writes afterwards is the other way round (own and has a Story), and its name
+ * changes on every build. -1 when the method doesn't ask.
  */
-internal fun storyCreateFlagIndex(method: Method): Int {
+private fun storyAskedIndex(code: List<Instruction>): Int = code.indexOfFirst { instruction ->
+    instruction.opcode == Opcode.INVOKE_STATIC && instruction.getReference<MethodReference>()?.let {
+        it.returnType == "Z" && it.parameterTypes.map(CharSequence::toString) == listOf(STORY_AWEME)
+    } == true
+}
+
+/**
+ * Where the answer lands: the move-result right after the question, which only the viewer's own
+ * item gets to. -1 when the method doesn't ask.
+ */
+internal fun storyAnswerIndex(method: Method): Int {
     val code = method.code()
-    val asked = code.indexOfFirst { instruction ->
-        instruction.opcode == Opcode.INVOKE_STATIC && instruction.getReference<MethodReference>()?.let {
-            it.returnType == "Z" && it.parameterTypes.map(CharSequence::toString) == listOf(STORY_AWEME)
-        } == true
-    }
+    val asked = storyAskedIndex(code)
+    if (asked < 0 || code.getOrNull(asked + 1)?.opcode != Opcode.MOVE_RESULT) return -1
+    return asked + 1
+}
+
+/**
+ * Where the bind writes "this is the viewer's own item": the last boolean it writes to the cell
+ * before asking, and every other cell branches past the question from here. -1 when it doesn't.
+ */
+internal fun storyOwnerWriteIndex(method: Method): Int {
+    val code = method.code()
+    val asked = storyAskedIndex(code)
     if (asked < 0) return -1
-    return (asked + 1 until code.size).firstOrNull {
+    return (asked - 1 downTo 0).firstOrNull {
         code[it].opcode == Opcode.IPUT_BOOLEAN &&
             code[it].getReference<FieldReference>()?.definingClass == method.definingClass
     } ?: -1
 }
 
-/** A story cell's bind, the one (item)V method on the class that writes the Create flag. */
+/** A story cell's bind, the one (item)V method on the class that writes the owner and asks. */
 internal fun isStoryCellBind(method: Method): Boolean =
-    method.returnType == "V" && method.parameterTypes.size == 1 && storyCreateFlagIndex(method) >= 0
+    method.returnType == "V" && method.parameterTypes.size == 1 &&
+        storyAnswerIndex(method) >= 0 && storyOwnerWriteIndex(method) >= 0
 
 /**
- * Hands the flag and the cell to the extension right after the flag is written. Nothing branches
- * past the write, so both ways in reach the call, and the registers are the write's own. The
- * parameter is an int because one way in writes a const (the Z rule in the repo's notes).
+ * Hands the cell to the extension twice: right after the owner write, which every bind reaches, and
+ * right after the answer, which only the viewer's own item reaches. Neither is a branch target, so
+ * both are one straight call on registers the bind already holds. The parameters are ints (the Z
+ * rule in the repo's notes).
  */
-internal fun MutableMethod.hookStoryCreateFlag(patch: String) {
-    val flag = storyCreateFlagIndex(this)
-    if (flag < 0) throw PatchException("$patch: $definingClass->$name no longer writes the Create flag.")
-    val write = implementation!!.instructions.toList()[flag] as TwoRegisterInstruction
-    if (write.registerA > 15 || write.registerB > 15) {
-        throw PatchException("$patch: $definingClass->$name writes the Create flag above v15.")
+internal fun MutableMethod.hookStoryCreateCell(patch: String) {
+    val owner = storyOwnerWriteIndex(this)
+    val answer = storyAnswerIndex(this)
+    if (owner < 0 || answer < 0) throw PatchException("$patch: $definingClass->$name no longer asks about the viewer's Story.")
+    val code = implementation!!.instructions.toList()
+    val write = code[owner] as TwoRegisterInstruction
+    val result = (code[answer] as OneRegisterInstruction).registerA
+    if (write.registerA > 15 || write.registerB > 15 || result > 15) {
+        throw PatchException("$patch: $definingClass->$name holds the Create cell above v15.")
     }
     addInstruction(
-        flag + 1,
-        "invoke-static {v${write.registerB}, v${write.registerA}}, $STORY_ROW_BUTTONS->onStoryCellBound(Ljava/lang/Object;I)V",
+        answer + 1,
+        "invoke-static {v${write.registerB}, v$result}, $STORY_ROW_BUTTONS->onOwnCellAnswer(Ljava/lang/Object;I)V",
+    )
+    addInstruction(
+        owner + 1,
+        "invoke-static {v${write.registerB}, v${write.registerA}}, $STORY_ROW_BUTTONS->onStoryCellOwner(Ljava/lang/Object;I)V",
     )
 }
 

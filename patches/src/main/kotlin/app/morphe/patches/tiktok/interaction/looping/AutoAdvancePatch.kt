@@ -16,6 +16,7 @@ import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.shared.compat.AppCompatibilities
+import app.morphe.patches.tiktok.interaction.resume.FeedPlayCompletedFingerprint
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
@@ -447,6 +448,10 @@ val autoAdvancePatch = bytecodePatch(
             .addInstruction(0, "invoke-static/range {p0 .. p0}, $EXTENSION->onPageResume(Ljava/lang/Object;)V")
         completed.addInstruction(0,
             "invoke-static/range {p0 .. p1}, $EXTENSION->beforeCompletion(Ljava/lang/Object;Ljava/lang/String;)V")
+        // A video opened from a profile plays on a page with no component to hook, and the player
+        // reports its end all the same (#311).
+        FeedPlayCompletedFingerprint.method.addInstruction(0,
+            "invoke-static/range { p1 .. p1 }, Lapp/morphe/extension/tiktok/interaction/DetailAutoAdvance;->onPlayCompleted(Ljava/lang/String;)V")
         val available = Availability.method
         val returns = available.implementationOrPatchException("Auto advance").instructions
             .withIndex().filter { it.value.opcode == Opcode.RETURN }

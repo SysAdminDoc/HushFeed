@@ -129,13 +129,27 @@ public final class AutoAdvance {
 
     /** The activity a view sits in, by class name, through any theme wrappers. */
     private static String hostOf(View view) {
+        android.content.Context context = hostContext(view);
+        return context == null ? "no context" : context.getClass().getName();
+    }
+
+    private static android.content.Context hostContext(View view) {
         android.content.Context context = view.getContext();
         while (context instanceof android.content.ContextWrapper && !(context instanceof android.app.Activity)) {
             android.content.Context base = ((android.content.ContextWrapper) context).getBaseContext();
             if (base == null || base == context) break;
             context = base;
         }
-        return context == null ? "no context" : context.getClass().getName();
+        return context;
+    }
+
+    /** Whether TikTok built its own auto scroll component on this screen. */
+    static boolean componentIn(android.app.Activity activity) {
+        for (Control control : CONTROLS.values()) {
+            View view = control.view.get();
+            if (view != null && hostContext(view) == activity) return true;
+        }
+        return false;
     }
 
     public static void onResume(Object component) {
@@ -206,9 +220,7 @@ public final class AutoAdvance {
                     "Auto-advance stopped after one video", "Auto-advance stopped after %1$d videos");
             BlockAuthorOverlay.showActionBanner(message,
                     L10n.t("Keep going"), () -> {
-                        control.completedCount = 0;
-                        control.lastCompletedId = null;
-                        control.limitNoticeShown = false;
+                        control.keepGoing();
                         update(component);
                     });
         }
@@ -263,6 +275,11 @@ public final class AutoAdvance {
             int next = Settings.AUTO_ADVANCE_LIMIT.get();
             if (sessionLimit == next) return;
             sessionLimit = next;
+            keepGoing();
+        }
+
+        /** A new count from here: the limit changed, or its notice was answered with Keep going. */
+        void keepGoing() {
             completedCount = 0;
             lastCompletedId = null;
             limitNoticeShown = false;

@@ -18,10 +18,10 @@ public class LiveFilter implements IFilter {
 
     @Override
     public boolean getFiltered(Aweme item) {
-        return isLive(item);
+        return isLive(item) && !CreatorExceptions.keepsLive(item);
     }
 
-    static boolean isLive(Aweme item) {
+    public static boolean isLive(Aweme item) {
         return item.getLiveId() > 0
             || item.isLiveReplay()
             || hasText(item.getLiveType())
@@ -59,12 +59,22 @@ public class LiveFilter implements IFilter {
         addRoom(rooms, getFieldValue(item, "room"));
         Object cell = invokeNoArg(item, "getRoomFeedCellStruct");
         if (cell == null) cell = getFieldValue(item, "mRoomFeedCellStruct");
-        if (cell != null) {
-            addRoom(rooms, invokeNoArg(cell, "getNewLiveRoomData"));
-            addRoom(rooms, getFieldValue(cell, "room"));
-            addRoom(rooms, getFieldValue(cell, "newLiveRoomData"));
-        }
+        addCellRooms(rooms, cell);
         return rooms;
+    }
+
+    /** The rooms a room feed cell holds, which is all a Friends tab LIVE card has. */
+    static java.util.List<Object> cellRooms(Object cell) {
+        java.util.List<Object> rooms = new java.util.ArrayList<>(3);
+        addCellRooms(rooms, cell);
+        return rooms;
+    }
+
+    private static void addCellRooms(java.util.List<Object> rooms, Object cell) {
+        if (cell == null) return;
+        addRoom(rooms, invokeNoArg(cell, "getNewLiveRoomData"));
+        addRoom(rooms, getFieldValue(cell, "room"));
+        addRoom(rooms, getFieldValue(cell, "newLiveRoomData"));
     }
 
     private static void addRoom(java.util.List<Object> rooms, Object room) {

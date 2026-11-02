@@ -101,7 +101,7 @@ internal fun validDefault(setting: JsonObject, value: Any): Boolean {
             "simspoof_iso" -> if (!Regex("[a-zA-Z]{2}").matches(value) ||
                 value.uppercase(java.util.Locale.ROOT) !in java.util.Locale.getISOCountries()) return false
             "simspoof_mccmnc" -> if (!Regex("[0-9]{5,6}").matches(value)) return false
-            "blocked_caption_words", "blocked_creators", "local_hidden_creators", "creator_filter_exceptions" -> {
+            "blocked_caption_words", "blocked_creators", "local_hidden_creators", "creator_filter_exceptions", "live_kept_creators" -> {
                 if (value.toByteArray(StandardCharsets.UTF_8).size > 256 * 1024) return false
                 if (value.count { it == '\n' || it == ',' } >= 10_000) return false
             }

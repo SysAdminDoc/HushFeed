@@ -89,10 +89,10 @@ public final class CreatorExceptions {
         /** Empty for no exceptions; otherwise the count and a 64-bit print of the names. */
         final String token;
 
-        Names(String source, Set<String> exact) {
+        Names(String source, Set<String> exact, String label) {
             this.source = source;
             this.exact = exact;
-            token = exact.isEmpty() ? "" : "CreatorExceptions#" + exact.size() + '.' + Long.toHexString(fingerprint(exact));
+            token = exact.isEmpty() ? "" : label + '#' + exact.size() + '.' + Long.toHexString(fingerprint(exact));
         }
 
         /** FNV-1a over the names in order. A 32-bit set hash summed String hashes, which two lists can share. */
@@ -112,6 +112,7 @@ public final class CreatorExceptions {
 
     private static final Object LOCK = new Object();
     private static volatile Names current;
+    private static volatile Names currentLiveKeep;
     private static final AtomicInteger failureLogCount = new AtomicInteger();
 
     private CreatorExceptions() {
@@ -152,6 +153,64 @@ public final class CreatorExceptions {
         return current(Settings.CREATOR_FILTER_EXCEPTIONS.get()).token;
     }
 
+    /**
+     * Whether {@code item} is a LIVE the reader keeps with Hide LIVE videos on (#305). The list
+     * is its own, because the exceptions above never reach LIVE. The post's author or the owner
+     * of a room it carries can be the one named, since a LIVE item may only have the room.
+     */
+    static boolean keepsLive(Aweme item) {
+        Set<String> names = liveKeep().exact;
+        if (names.isEmpty()) return false;
+        try {
+            if (CreatorIdentity.of(item).namedIn(names)) return true;
+            return anyOwnerNamed(LiveFilter.rooms(item), names);
+        } catch (RuntimeException failure) {
+            logLiveKeepFailure(failure);
+            return false;
+        }
+    }
+
+    /** The same for a Friends tab card, which carries a room and no video. */
+    static boolean keepsLiveCard(Object cell) {
+        Set<String> names = liveKeep().exact;
+        if (names.isEmpty()) return false;
+        try {
+            return anyOwnerNamed(LiveFilter.cellRooms(cell), names);
+        } catch (RuntimeException failure) {
+            logLiveKeepFailure(failure);
+            return false;
+        }
+    }
+
+    private static boolean anyOwnerNamed(List<Object> rooms, Set<String> names) {
+        for (Object room : rooms) {
+            LiveFeedFilter.LiveRoom live = LiveFeedFilter.LiveRoom.of(room);
+            if (CreatorIdentity.of(live.uid, live.secUid, live.handle, live.nickname).namedIn(names)) return true;
+        }
+        return false;
+    }
+
+    private static void logLiveKeepFailure(RuntimeException failure) {
+        if (failureLogCount.getAndIncrement() < 3) {
+            Logger.printException(() -> "Could not read who a LIVE belongs to for the keep list;"
+                    + " the LIVE stays hidden", failure);
+        }
+    }
+
+    /** {@link #maskToken()} for the LIVE keep list, so a changed list rescans a page too. */
+    static String liveKeepToken() {
+        return liveKeep().token;
+    }
+
+    private static Names liveKeep() {
+        String source = Settings.LIVE_KEPT_CREATORS.get();
+        Names found = currentLiveKeep;
+        if (found != null && found.source.equals(source)) return found;
+        found = new Names(source, parse(source), "LiveKeep");
+        currentLiveKeep = found;
+        return found;
+    }
+
     /** The exact, normalized names in {@code source}. Patterns and display names are left out. */
     static Set<String> names(String source) {
         return current(source).exact;
@@ -163,7 +222,7 @@ public final class CreatorExceptions {
         synchronized (LOCK) {
             found = current;
             if (found == null || !found.source.equals(source)) {
-                found = new Names(source, parse(source));
+                found = new Names(source, parse(source), "CreatorExceptions");
                 current = found;
             }
             return found;

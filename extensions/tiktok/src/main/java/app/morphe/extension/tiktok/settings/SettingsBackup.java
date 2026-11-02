@@ -556,6 +556,7 @@ public final class SettingsBackup {
         if (setting == Settings.LIVE_HIDDEN_CATEGORIES) return "Hidden LIVE categories";
         if (setting == Settings.BLOCKED_CREATORS) return "Blocked creators";
         if (setting == Settings.LOCAL_HIDDEN_CREATORS) return "Creators hidden on this phone";
+        if (setting == Settings.LIVE_KEPT_CREATORS) return "Keep LIVEs from these creators";
         return "Creator exceptions";
     }
 
@@ -787,7 +788,8 @@ public final class SettingsBackup {
             return FeedRuleLimits.captionProblem(text);
         }
         if (setting == Settings.BLOCKED_CREATORS || setting == Settings.LOCAL_HIDDEN_CREATORS
-                || setting == Settings.CREATOR_FILTER_EXCEPTIONS) {
+                || setting == Settings.CREATOR_FILTER_EXCEPTIONS
+                || setting == Settings.LIVE_KEPT_CREATORS) {
             return FeedRuleLimits.creatorProblem(text);
         }
         return null;

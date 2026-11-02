@@ -437,6 +437,8 @@ public class Settings extends BaseSettings {
             new FeedRuleStringSetting("blocked_creators", true);
     public static final StringSetting LOCAL_HIDDEN_CREATORS =
             new FeedRuleStringSetting("local_hidden_creators", true);
+    public static final StringSetting LIVE_KEPT_CREATORS =
+            new FeedRuleStringSetting("live_kept_creators", true);
     public static final StringSetting CREATOR_FILTER_EXCEPTIONS =
             new FeedRuleStringSetting("creator_filter_exceptions", true);
     public static final StringSetting REGION_ONLY_FROM = new StringSetting("region_only_from", "", true);

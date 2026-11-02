@@ -206,12 +206,38 @@ public class FriendsFeedFilterTest {
     /** LiveRoomStruct, read through RoomFeedCellStruct.getNewLiveRoomData(). */
     public static final class Room {
         public final Object owner;
-        Room(Person owner) { this.owner = owner; }
+        Room(Object owner) { this.owner = owner; }
     }
     public static final class RoomCell {
         private final Room room;
-        RoomCell(Person owner) { this.room = new Room(owner); }
+        RoomCell(Object owner) { this.room = new Room(owner); }
         public Room getNewLiveRoomData() { return room; }
+    }
+
+    /** A room's owner, whose handle is read from username. */
+    public static final class Host {
+        public final String username;
+        Host(String username) { this.username = username; }
+    }
+
+    /** #305: a creator on the keep list keeps their LIVE card with Hide LIVE videos on. */
+    @Test public void aLiveCardFromAKeptCreatorStaysOnTheFriendsTab() {
+        Settings.REMOVE_ADS.save(false);
+        Settings.HIDE_LIVE.save(true);
+        Settings.LIVE_KEPT_CREATORS.save("@Favorite");
+        try {
+            Entry kept = Entry.live();
+            kept.roomStruct = new RoomCell(new Host("favorite"));
+            Entry other = Entry.live();
+            other.roomStruct = new RoomCell(new Host("stranger"));
+            Response response = new Response(kept, other);
+
+            FeedItemsFilter.filterFriendsFeed(response);
+
+            assertEquals(List.of(kept), response.friendFeedData);
+        } finally {
+            Settings.LIVE_KEPT_CREATORS.resetToDefault();
+        }
     }
 
     @Test public void mutualsOnlyKeepsFriendsTheirRepostsAndYourOwnPosts() {

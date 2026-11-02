@@ -404,7 +404,7 @@ public final class FeedMute {
         if (item.getIsTikTokStory()) return false;
         int type = item.getAwemeType();
         if (type == STORY_TYPE || type == STORY_TYPE_SHARED) return false;
-        return !new LiveFilter().getFiltered(item);
+        return !LiveFilter.isLive(item);
     }
 
     /** Story aweme types, as Ghost mode reads them. */

@@ -1000,7 +1000,7 @@ public final class FeedItemsFilter {
     private static String friendsFeedReason(Object entry, List<IFilter> activeFilters, boolean hideLive) {
         if (entry == null) return null;
         Object room = Reflect.readField(entry, "roomStruct");
-        if (hideLive && room != null) return "LiveFilter";
+        if (hideLive && room != null && !CreatorExceptions.keepsLiveCard(room)) return "LiveFilter";
         // A Friends card for a LIVE carries its room and no video, so the Shop switch looks at
         // the room itself for a LIVE that is selling (#46).
         if (room != null && Settings.HIDE_SHOP.get() && ShopFilter.roomSells(room)) return "ShopFilter";
@@ -2183,6 +2183,11 @@ public final class FeedItemsFilter {
         if (!exceptions.isEmpty()) {
             if (builder.length() > 0) builder.append('|');
             builder.append(exceptions);
+        }
+        String liveKeep = CreatorExceptions.liveKeepToken();
+        if (!liveKeep.isEmpty()) {
+            if (builder.length() > 0) builder.append('|');
+            builder.append(liveKeep);
         }
         return builder.toString();
     }

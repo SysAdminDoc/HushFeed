@@ -4,11 +4,21 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import app.morphe.extension.tiktok.SettingsContextRule;
+
 import com.ss.android.ugc.aweme.feed.model.Aweme;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
+@RunWith(RobolectricTestRunner.class)
+@Config(sdk = 28)
 public class LiveFilterTest {
+    @Rule public final SettingsContextRule settingsContext = new SettingsContextRule();
+
     @Test public void directGettersAndLiveTypeAreEvidence() {
         GetterAweme item = new GetterAweme();
         item.liveId = 42;

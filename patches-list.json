@@ -3196,6 +3196,15 @@
           "values": null
         },
         {
+          "key": "live_kept_creators",
+          "title": "Default: live kept creators",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
           "key": "region_only_from",
           "title": "Default: region only from",
           "description": null,

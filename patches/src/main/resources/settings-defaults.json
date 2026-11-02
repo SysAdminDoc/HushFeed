@@ -215,6 +215,7 @@
       "blocked_creators",
       "local_hidden_creators",
       "creator_filter_exceptions",
+      "live_kept_creators",
       "region_only_from",
       "caption_languages",
       "region_never_from",
@@ -2697,6 +2698,12 @@
       "key": "live_hide_verified",
       "type": "boolean",
       "default": false
+    },
+    "live_kept_creators": {
+      "field": "LIVE_KEPT_CREATORS",
+      "key": "live_kept_creators",
+      "type": "string",
+      "default": ""
     },
     "live_min_max_followers": {
       "field": "LIVE_MIN_MAX_FOLLOWERS",

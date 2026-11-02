@@ -559,6 +559,7 @@ public class InputCheckTest {
                 {"PRIVACY", Settings.CUSTOM_SHARE_DOMAIN.key},
                 {"FEED_FILTER", Settings.BLOCKED_CREATORS.key},
                 {"FEED_FILTER", Settings.CREATOR_FILTER_EXCEPTIONS.key},
+                {"FEED_FILTER", Settings.LIVE_KEPT_CREATORS.key},
                 {"FEED_FILTER", Settings.BLOCKED_SOUND_IDS.key},
                 {"FEED_FILTER", Settings.REGION_ONLY_FROM.key},
                 {"FEED_FILTER", Settings.REGION_NEVER_FROM.key},

@@ -11,6 +11,7 @@ Every Hushfeed release, newest first.
 * **TikTok:** The LIVE record button hides along with everything else when you turn on TikTok's LIVE Clear screen, and it comes back when you turn it off. A recording that's running keeps going. Thanks to @Hiiva (#297).
 * **TikTok:** `Copy bio and IDs` has a `Copy name` button now, so a profile's share sheet copies the display name as well as the username. Buttons that don't fit move down to a second line instead of running off the sheet.
 * **TikTok:** `Background play in the long-press menu` adds TikTok's own background play row to the long-press menu, so one video can keep playing while the others stop as usual. It starts off, and it's under Playback.
+* **TikTok:** `Keep LIVEs from these creators` lets the LIVEs of creators you pick stay in the feed while `Hide LIVE videos` is on. Add as many as you like, by handle or user ID. It keeps what TikTok sends you, so it won't bring in a LIVE TikTok didn't serve.
 
 ### Bug Fixes
 

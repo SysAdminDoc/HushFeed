@@ -317,7 +317,7 @@ public class CreatorExceptionsTest {
         return new StringSetting[]{
                 Settings.BLOCKED_CAPTION_WORDS, Settings.BLOCKED_CREATORS, Settings.LOCAL_HIDDEN_CREATORS,
                 Settings.CREATOR_FILTER_EXCEPTIONS, Settings.BLOCKED_SOUND_IDS, Settings.BLOCKED_SOUND_NAMES,
-                Settings.CAPTION_LANGUAGES,
+                Settings.CAPTION_LANGUAGES, Settings.LIVE_KEPT_CREATORS,
         };
     }
 
@@ -423,6 +423,86 @@ public class CreatorExceptionsTest {
         } catch (ReflectiveOperationException exception) {
             throw new AssertionError(exception);
         }
+    }
+
+    private static Item live(String aid, String handle) {
+        Item item = new Item(aid);
+        item.liveId = 42;
+        item.author.handle = handle;
+        item.author.uid = handle + "-uid";
+        item.author.secUid = handle + "-sec";
+        return item;
+    }
+
+    /** A LIVE whose post names nobody, with only its room saying who is on. */
+    public static final class RoomOnlyItem extends Item {
+        public final Object room;
+        RoomOnlyItem(String aid, Object room) {
+            super(aid);
+            this.room = room;
+            liveId = 42;
+            author.handle = "";
+            author.uid = "";
+            author.secUid = "";
+        }
+    }
+
+    public static final class RoomOwner {
+        public final String username;
+        RoomOwner(String username) { this.username = username; }
+    }
+
+    public static final class OwnedRoom {
+        public final Object owner;
+        OwnedRoom(String username) { owner = new RoomOwner(username); }
+    }
+
+    /** #305: Hide LIVE videos stays on, and the LIVEs of the creators on the list stay in the feed. */
+    @Test
+    public void theLiveKeepListKeepsThoseCreatorsLivesAndNoOthers() {
+        Settings.HIDE_LIVE.save(true);
+        Settings.LIVE_KEPT_CREATORS.save("@FAVORITE, other-uid");
+        assertEquals(List.of("favorite", "byId", "byRoom", "plain"), survivors(page(
+                live("favorite", "favorite"),
+                live("stranger", "stranger"),
+                live("byId", "other"),
+                new RoomOnlyItem("byRoom", new OwnedRoom("favorite")),
+                new RoomOnlyItem("otherRoom", new OwnedRoom("stranger")),
+                new Item("plain"))));
+    }
+
+    @Test
+    public void theLiveKeepListReachesNothingButHideLiveVideos() {
+        Settings.HIDE_LIVE.save(true);
+        Settings.LIVE_KEPT_CREATORS.save("favorite");
+        Settings.BLOCKED_CREATORS.save("favorite");
+        assertEquals("a block still wins", List.of("plain"),
+                survivors(page(live("blocked", "favorite"), new Item("plain"))));
+
+        Settings.BLOCKED_CREATORS.save("");
+        Settings.HIDE_LIVE_REPLAYS.save(true);
+        Item replay = live("replay", "favorite");
+        replay.liveReplay = true;
+        assertEquals("so does the replay switch", List.of("plain"), survivors(page(replay, new Item("plain"))));
+
+        Settings.HIDE_LIVE_REPLAYS.save(false);
+        Settings.LIVE_KEPT_CREATORS.save("");
+        Settings.CREATOR_FILTER_EXCEPTIONS.save("favorite");
+        assertEquals("the exceptions never reach LIVE", List.of("plain"),
+                survivors(page(live("excepted", "favorite"), new Item("plain"))));
+    }
+
+    @Test
+    public void aChangedLiveKeepListRescansAPageTheFilterHasAlreadySeen() {
+        Settings.HIDE_LIVE.save(true);
+        Settings.LIVE_KEPT_CREATORS.save("favorite");
+        FeedItemList page = page(live("favorite", "favorite"), new Item("plain"));
+        FeedItemsFilter.filter(page);
+        assertEquals(2, page.items.size());
+
+        Settings.LIVE_KEPT_CREATORS.save("someone_else");
+        FeedItemsFilter.filter(page);
+        assertEquals("the list changed, so the page is read again", 1, page.items.size());
     }
 
     @Test

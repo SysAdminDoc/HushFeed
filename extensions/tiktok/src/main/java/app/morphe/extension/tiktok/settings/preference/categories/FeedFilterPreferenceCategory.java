@@ -85,6 +85,13 @@ public class FeedFilterPreferenceCategory extends ConditionalPreferenceCategory 
                 "Hide LIVE videos", "Hide LIVE videos from the feed.",
                 Settings.HIDE_LIVE
         ));
+        addPreference(new InputTextPreference(context, "Keep LIVEs from these creators",
+                "With Hide LIVE videos on, these creators' LIVEs stay when TikTok sends them. "
+                        + "Separate handles or user IDs with commas.",
+                Settings.LIVE_KEPT_CREATORS)
+                .withCheck(CreatorExceptions::entryProblem)
+                .withNote(CreatorExceptions::conflictNote)
+                .withNameKeyboard());
         addPreference(new TogglePreference(context, "Hide LIVE replays", "Hide recorded LIVE broadcasts from the feed.", Settings.HIDE_LIVE_REPLAYS));
         addPreference(new TogglePreference(
                 context,

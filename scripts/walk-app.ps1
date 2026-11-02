@@ -186,7 +186,13 @@ function Suspend-WalkVideo {
     } | Select-Object -First 1
     if (-not $layout -or -not (Get-WalkForeground).StartsWith("$WalkPackage/", [StringComparison]::Ordinal)) { return $false }
     Invoke-WalkAdb shell input tap ([int]($layout.W / 2)) ([int]($layout.H / 2)) | Out-Null
-    Start-Sleep -Milliseconds 1200
+    # uiautomator can't idle while TikTok still draws, and a freshly booted emulator kept drawing
+    # after the pause: every dump failed for seven minutes after search in the 0.80.0 release walk.
+    for ($i = 0; $i -lt 6; $i++) {
+        Invoke-WalkAdb shell dumpsys gfxinfo $WalkPackage reset | Out-Null
+        Start-Sleep -Seconds 2
+        if (((Invoke-WalkAdb shell dumpsys gfxinfo $WalkPackage) -join ' ') -match 'Total frames rendered: 0\b') { break }
+    }
     return $true
 }
 
@@ -288,10 +294,12 @@ function Restore-WalkTabs([string]$From, [int]$Height) {
         Close-WalkKeyboard
         $nodes = Get-WalkScreen "restore-$From" -AllowPause
         if (Find-WalkNav $nodes $WalkLabels.Home $Height) { return $nodes }
-        if (-not (Get-WalkForeground).StartsWith("$WalkPackage/", [StringComparison]::Ordinal)) { return @() }
+        # The comma keeps the empty list a list: a bare @() reaches the caller as $null, and
+        # Find-UiNode then stopped the whole walk on $null.Text instead of logging "no Friends tab".
+        if (-not (Get-WalkForeground).StartsWith("$WalkPackage/", [StringComparison]::Ordinal)) { return , @() }
         Invoke-WalkBack $From
     }
-    return @()
+    return , @()
 }
 
 function Select-WalkRow($Nodes, [string]$Label, [string]$Id, [int]$Height) {

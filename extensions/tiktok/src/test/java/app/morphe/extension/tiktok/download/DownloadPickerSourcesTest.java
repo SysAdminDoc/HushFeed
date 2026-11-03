@@ -30,7 +30,7 @@ import org.robolectric.annotation.Config;
 /**
  * #240: when every gear at 720p or taller is ByteVC2, the Download choice stopped at 540p while
  * another site served a better file. The Video model also carries its own H.264 and HEVC play
- * addresses, which are offered when the gears top out low, and the report says what was left out.
+ * addresses, which are offered when they're taller than the gears, and the report says what was left out.
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 28, qualifiers = "en")
@@ -103,13 +103,15 @@ public class DownloadPickerSourcesTest {
         assertTrue(labels.get(1), labels.get(1).startsWith("1080p HEVC"));
     }
 
-    @Test public void aSourceIsNotOfferedWhenAGearAlreadyReaches720p() {
+    @Test public void aSourceTallerThanA720pGearIsOffered() {
         SourcedVideo video = new SourcedVideo(G540, new Gear("normal_720_0", 250, "https://example.com/720"));
         video.playAddrValue = frame("https://example.com/play-1080", 1080, 1920);
-        assertEquals(3, QualityChoice.options(video, context).size());
+        List<String> labels = labels(QualityChoice.options(video, context));
+        assertEquals(4, labels.size());
+        assertTrue(labels.get(1), labels.get(1).startsWith("1080p H.264"));
         assertTrue(DownloadPickerReport.sectionForTests().lines().toString(),
                 DownloadPickerReport.sectionForTests().lines().contains(
-                        "source play_addr_h264 1080p H.264: not needed, a gear at 720p is offered"));
+                        "source play_addr_h264 1080p H.264: offered, taller than the gears (720p)"));
     }
 
     @Test public void aSourceNoTallerThanTheGearsIsLeftOut() {

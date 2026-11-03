@@ -93,10 +93,10 @@ final class QualityChoice {
 
     /**
      * Automatic first, then the playable renditions tallest first, H.264 before HEVC at a height,
-     * the larger before the smaller. Two that would read the same are offered once. When no
-     * playable gear reaches {@link QualitySelector#TALL_ENOUGH}, a taller H.264 or HEVC address
-     * the video carries on its own is offered too (#240). What was offered and what was left out
-     * goes to the report ({@link DownloadPickerReport}).
+     * the larger before the smaller. Two that would read the same are offered once. An H.264 or
+     * HEVC address the video carries on its own is offered too when it's taller than every
+     * playable gear (#240). What was offered and what was left out goes to the report
+     * ({@link DownloadPickerReport}).
      */
     static List<Option> options(Object video, Context context) {
         List<Option> options = new ArrayList<>();
@@ -140,8 +140,6 @@ final class QualityChoice {
                 report.add(what + "left out, no usable address");
             } else if (dash) {
                 report.add(what + "left out, the video has a separate sound track");
-            } else if (tallest >= QualitySelector.TALL_ENOUGH) {
-                report.add(what + "not needed, a gear at " + tallest + "p is offered");
             } else if (QualitySelector.heightOf(source) <= tallest) {
                 report.add(what + "left out, no taller than the gears (" + tallest + "p)");
             } else {

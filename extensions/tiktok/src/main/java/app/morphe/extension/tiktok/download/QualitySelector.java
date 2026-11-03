@@ -35,8 +35,8 @@ public final class QualitySelector {
     }
 
     /**
-     * A gear list that tops out below this height is short of a good file, so the video's own
-     * play addresses are looked at too (#240).
+     * The usual height of TikTok's own file: a rendition past it is taller than a file whose
+     * height isn't listed (#240).
      */
     static final int TALL_ENOUGH = 720;
 

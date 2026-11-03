@@ -24,6 +24,7 @@ Every Hushfeed release, newest first.
 * **TikTok:** `Hide the repost chip` under Feed screen takes out the small bar above the progress bar that says someone you follow reposted the video, or asks you to repost it.
 
 ### Bug Fixes
+* **TikTok:** The save picker lists a taller copy the video carries on its own when TikTok's gears stop at 720p. Before, it only looked past the gears when they stopped lower than that, so a 1080p copy never made the list (#240).
 * **TikTok:** `New device identity` says outright that it's off until you tap it and runs once, and it shows when an identity is in use. A new `Use this phone's own IDs` row takes TikTok back to the phone's real IDs. If a step of the wipe keeps failing it gives up after three starts, where before it could've carried on with new IDs at every launch. The diagnostic report lists how many wipes ran, without the IDs.
 * **TikTok:** What you type in a LIVE room's comment box is readable under `Dark LIVE panels in dark mode` now, on a recommended build too. The fix used to come only with `AMOLED dark theme`, so everyone else typed dark text on a dark bar. With the switch off, the box keeps TikTok's own colors.
 * **TikTok:** `Auto-advance videos` now moves on from videos you open from a profile or a list, where TikTok has no auto scroll of its own. Before, the first one just looped at its end.

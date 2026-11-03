@@ -76,6 +76,27 @@ public class SettingsDialogScreenEndTest {
         kept.pause().stop().destroy();
     }
 
+    /** The row keeps one dialog for its double-tap check, and that used to be all a screen's end saw. */
+    @Test public void aRowOpenedOnTwoScreensClosesEachDialogWithItsOwnScreen() {
+        ActivityController<Activity> first = Robolectric.buildActivity(Activity.class).setup().visible();
+        ActivityController<Activity> second = Robolectric.buildActivity(Activity.class).setup().visible();
+        Utils.setContext(first.get());
+        AlertDialog under = shown(first.get());
+        SettingsUi.dialogOpened("screen_end_twice_row", first.get(), under);
+        AlertDialog over = shown(second.get());
+        SettingsUi.dialogOpened("screen_end_twice_row", second.get(), over);
+
+        first.pause().stop().destroy();
+        shadowOf(Looper.getMainLooper()).idle();
+
+        assertFalse("the first screen's dialog closed with it", under.isShowing());
+        assertTrue("the second screen's stayed", over.isShowing());
+        assertTrue(SettingsUi.dialogOpen("screen_end_twice_row", second.get()));
+        second.pause().stop().destroy();
+        shadowOf(Looper.getMainLooper()).idle();
+        assertFalse(over.isShowing());
+    }
+
     private static AlertDialog shown(Activity activity) {
         AlertDialog dialog = new AlertDialog.Builder(activity).setMessage("Row details").create();
         dialog.show();

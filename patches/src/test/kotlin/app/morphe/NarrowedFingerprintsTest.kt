@@ -7,6 +7,7 @@ import app.morphe.patcher.InstanceOfFilter
 import app.morphe.patcher.MethodCallFilter
 import app.morphe.patches.tiktok.feedfilter.FollowFeedRequestFingerprint
 import app.morphe.patches.tiktok.feedfilter.FollowingCacheRestoreFingerprint
+import app.morphe.patches.tiktok.interaction.cleardisplay.ClearModeLogStateFingerprint
 import app.morphe.patches.tiktok.interaction.ghostmode.ProfileViewReportFingerprint
 import app.morphe.patches.tiktok.interaction.ghostmode.StoryViewReportFingerprint
 import app.morphe.patches.tiktok.interaction.ghostmode.TypingStatusSenderFingerprint
@@ -20,6 +21,7 @@ import app.morphe.patches.tiktok.misc.comment.StickerUploadConfigFingerprint
 import app.morphe.patches.tiktok.misc.comment.clipboardTextHelperFingerprint
 import app.morphe.patches.tiktok.misc.comment.commentClipDataBuilderFingerprint
 import app.morphe.patches.tiktok.misc.commenttools.CommentPageSurpriseFingerprint
+import app.morphe.patches.tiktok.misc.inbox.ChatRequestSendWithHeadersFingerprint
 import app.morphe.patches.tiktok.misc.login.disablerequirement.MandatoryLoginService2Fingerprint
 import app.morphe.patches.tiktok.misc.login.disablerequirement.MandatoryLoginServiceFingerprint
 import app.morphe.patches.tiktok.misc.refreshrate.RefreshRateWriteFingerprint
@@ -37,9 +39,10 @@ import org.junit.Test
  * The fingerprints #54 narrowed took a definingClass, a name or one indexed instruction filter
  * that their custom block already implied, so the patcher searches the few classes that can
  * hold them instead of every method of TikTok. The --validate timing pass on 47.6.3 narrowed
- * nine more the same way, with a call, a field read, an instanceof or a cast. Implied is the
- * claim, and this is its check: on every retained fixture each one takes exactly the methods it
- * takes without the addition.
+ * nine more the same way, with a call, a field read, an instanceof or a cast, and a second pass
+ * two with the field access their job needs (the request's headers, the Message's number).
+ * Implied is the claim, and this is its check: on every retained fixture each one takes exactly
+ * the methods it takes without the addition.
  */
 class NarrowedFingerprintsTest {
     private class Narrowed(val label: String, val fingerprint: Fingerprint, val addedClassAndName: Boolean = false)
@@ -67,6 +70,8 @@ class NarrowedFingerprintsTest {
         Narrowed("SlideScaleType", SlideScaleTypeFingerprint),
         Narrowed("SlideContainerCrop", SlideContainerCropFingerprint),
         Narrowed("ProfileMenuCell", ProfileMenuCellFingerprint),
+        Narrowed("ChatRequestSendWithHeaders", ChatRequestSendWithHeadersFingerprint),
+        Narrowed("ClearModeLogState", ClearModeLogStateFingerprint),
     )
 
     /** The fingerprint as it was before #54: the same fields, less what was added. */
@@ -125,8 +130,8 @@ class NarrowedFingerprintsTest {
                 else -> null
             }
             // The patcher indexes a call, a field access, an instanceof or a cast by an exact
-            // class, `L...;` (a call or field access by its member name too). These nine each
-            // name the class, the narrower of the two keys.
+            // class, `L...;` (a call or field access by its member name too). Each of these
+            // names the class, the narrower of the two keys.
             assertTrue("${item.label}: ${filter.javaClass.simpleName} on $type", type != null && type.startsWith("L") && type.endsWith(";"))
         }
         for (item in narrowed.filter { it.addedClassAndName }) {

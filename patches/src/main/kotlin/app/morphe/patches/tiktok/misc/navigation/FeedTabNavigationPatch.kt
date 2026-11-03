@@ -252,11 +252,7 @@ val feedTabNavigationPatch = bytecodePatch(
         // every show of either passes through the tab icon's own setter, so the visibility is
         // answered there, and a repeated native update cannot bring a hidden badge back.
         val countSetter = TabCountDotVisibilityFingerprint.method
-        val dotSetter = TabDotVisibilityFingerprint.method
-        check(countSetter.definingClass == dotSetter.definingClass) {
-            "Feed tab navigation: the badge setters sit on ${countSetter.definingClass} and " +
-                "${dotSetter.definingClass}, not on one tab icon."
-        }
+        val dotSetter = TabDotVisibilityFingerprint.match(classDefBy(countSetter.definingClass)).method
         val icon = mutableClassDefBy(countSetter.definingClass)
         check(icon.methods.any { it.name == "getCountDotView" } && icon.methods.any { it.name == "getRedDotVIew" }) {
             "Feed tab navigation: ${icon.type} has no badge views, so it is not the tab icon."

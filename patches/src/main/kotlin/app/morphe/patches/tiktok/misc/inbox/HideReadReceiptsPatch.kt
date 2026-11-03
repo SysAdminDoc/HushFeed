@@ -7,6 +7,7 @@
 package app.morphe.patches.tiktok.misc.inbox
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.fieldAccess
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
@@ -22,6 +23,7 @@ import com.android.tools.smali.dexlib2.AccessFlags
 private const val HIDE_READ_RECEIPTS = "Lapp/morphe/extension/tiktok/inbox/HideReadReceipts;"
 private const val HIDE_READ_RECEIPTS_PATCH = "Hide read receipts"
 private const val REQUEST_BODY = "Lcom/bytedance/im/core/proto/RequestBody;"
+private const val REQUEST = "Lcom/bytedance/im/core/proto/Request;"
 
 /**
  * The method every chat request handler in TikTok's IM SDK sends its request through: the inbox type, the request
@@ -42,6 +44,9 @@ internal object ChatRequestSendFingerprint : Fingerprint(
 /** The same sender, for the handlers that add headers of their own to the request. */
 internal object ChatRequestSendWithHeadersFingerprint : Fingerprint(
     returnType = "V",
+    // It copies the built request's headers before adding its own, and the request keeps its
+    // readable name, so the patcher's index finds the few methods that read them.
+    filters = listOf(fieldAccess(definingClass = REQUEST, name = "headers")),
     custom = { method, _ ->
         val types = method.parameterTypes.map { it.toString() }
         types.size == 5 && types[0] == "I" && types[1] == REQUEST_BODY && types[3] == "Ljava/util/Map;" &&

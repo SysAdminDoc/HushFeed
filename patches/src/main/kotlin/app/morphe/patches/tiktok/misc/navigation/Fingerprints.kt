@@ -89,8 +89,12 @@ internal object TabCountDotVisibilityFingerprint : Fingerprint(
     parameters = listOf("I"),
 )
 
+/**
+ * Matched in the class [TabCountDotVisibilityFingerprint] found. A classFingerprint would find
+ * that class again with a second walk of every method, since the patcher resolves it through
+ * matchAll, which keeps no result.
+ */
 internal object TabDotVisibilityFingerprint : Fingerprint(
-    classFingerprint = TabCountDotVisibilityFingerprint,
     name = "setTabDotVisibility",
     returnType = "V",
     parameters = listOf("I"),

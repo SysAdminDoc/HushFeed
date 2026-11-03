@@ -5,7 +5,11 @@
 package app.morphe.patches.tiktok.interaction.cleardisplay
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.fieldAccess
 import com.android.tools.smali.dexlib2.AccessFlags
+import com.android.tools.smali.dexlib2.Opcode
+
+private const val MESSAGE = "Landroid/os/Message;"
 
 internal object OnClearDisplayEventFingerprint : Fingerprint(
     definingClass = "Lcom/ss/android/ugc/feed/platform/panel/clearmode/ClearModePanelComponent;",
@@ -58,6 +62,10 @@ internal object ClearModeLogStateFingerprint : Fingerprint(
         "I",
         "I",
     ),
+    // The handler it takes is how it waits: it numbers a Message (101 on 47.6.3) and posts it a
+    // second later. Message is Android's, so the write is named in full and the patcher's index
+    // finds the methods that make it.
+    filters = listOf(fieldAccess(definingClass = MESSAGE, name = "what", opcode = Opcode.IPUT)),
 )
 
 /**

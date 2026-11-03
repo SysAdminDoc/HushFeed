@@ -64,23 +64,17 @@ private object EmojiGlyphCheckFingerprint : Fingerprint(
     custom = { method, classDef -> !classDef.type.startsWith(EXTENSION_ROOT) && isEmojiGlyphCheck(method) },
 )
 
-private object WebViewPageFinishedFingerprint : Fingerprint(
-    name = "onPageFinished",
+/**
+ * Both page callbacks in one lookup. Nothing inside them is shared (on 47.6.3 they are 57
+ * onPageFinished and 12 onPageCommitVisible bodies) and the patcher can't look a class up by its
+ * superclass, so this walks every method, and taking both names in one walk saves the second.
+ */
+private object WebViewPageCallbackFingerprint : Fingerprint(
     parameters = listOf(WEB_VIEW, STRING),
     returnType = "V",
     custom = { method, classDef ->
-        !classDef.type.startsWith(EXTENSION_ROOT) &&
-            !AccessFlags.STATIC.isSet(method.accessFlags) &&
-            method.implementation != null
-    },
-)
-
-private object WebViewPageCommitVisibleFingerprint : Fingerprint(
-    name = "onPageCommitVisible",
-    parameters = listOf(WEB_VIEW, STRING),
-    returnType = "V",
-    custom = { method, classDef ->
-        !classDef.type.startsWith(EXTENSION_ROOT) &&
+        method.name in PAGE_CALLBACK_NAMES &&
+            !classDef.type.startsWith(EXTENSION_ROOT) &&
             !AccessFlags.STATIC.isSet(method.accessFlags) &&
             method.implementation != null
     },
@@ -192,7 +186,7 @@ internal fun BytecodePatchContext.hookWebPageCallbacks(patch: String, target: St
         }
         return false
     }
-    val candidateCallbacks = (WebViewPageFinishedFingerprint.matchAll() + WebViewPageCommitVisibleFingerprint.matchAll())
+    val candidateCallbacks = WebViewPageCallbackFingerprint.matchAll()
         .map { it.originalMethod }
         .distinct()
     val pageCallbacks = candidateCallbacks.filter { isClient(it.definingClass) }

@@ -34,9 +34,14 @@ private fun writesRefreshRate(instruction: Instruction) =
 /**
  * Anything that asks the window for a refresh rate. The field is Android's, so the write is
  * named in full whatever TikTok called the method around it, and taking every one of them
- * means the switch does not depend on which surface asked. On 46.2.3 the feed's is in
- * PlayerController, where the rate it asks for is the frame rate of the video that just
- * started, which is what drops a 120 Hz screen to the video's 30.
+ * means the switch does not depend on which surface asked. On 47.6.3 the feed's is in
+ * PlayerController's first-frame callback, where the rate it asks for is the player's float
+ * option 10 for the video that just started, which is what drops a 120 Hz screen to the
+ * video's 30. It asks only while AB ui_video_frame_rate_opt is on (its default) and that
+ * option is nonzero, and on the S22 it stayed zero for twenty videos, so some phones never
+ * ask at all. Every write is followed by Window.setAttributes and nothing waits on the value.
+ * The others are LIVE's RefreshFrequencyTutor (a 30 to 60 Hz pick), a rate while dragging
+ * and one an AB sets.
  */
 internal object RefreshRateWriteFingerprint : Fingerprint(
     // The filter repeats a reference the custom block requires, so the patcher reads only the
@@ -51,7 +56,8 @@ internal object RefreshRateWriteFingerprint : Fingerprint(
 val refreshRatePatch = bytecodePatch(
     name = "Keep the screen's refresh rate",
     description = "Stops TikTok slowing your screen down to the video's frame rate, so " +
-        "scrolling stays smooth on 90 or 120 Hz phones. Starts off. Turn it on in Hushfeed " +
+        "scrolling stays smooth on 90 or 120 Hz phones. TikTok doesn't ask on every phone, " +
+        "and where it doesn't, this changes nothing. Starts off. Turn it on in Hushfeed " +
         "settings > App.",
 ) {
     category("Playback")

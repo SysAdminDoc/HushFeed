@@ -54,6 +54,7 @@ Every Hushfeed release, newest first.
 * **TikTok:** Your recent settings searches stay put while Hushfeed is paused. The list used to come up empty, and the next search you sent wiped out the ones before it.
 
 * **TikTok:** The README's install steps point at TikTok 47.6.3 now. After v0.80.0 went out they still sent you to 47.5.3, which v0.80.0 doesn't patch.
+* **TikTok:** `Keep the screen's refresh rate` says up front that TikTok doesn't ask for a rate on every phone. Where it doesn't, the switch has nothing to stop.
 
 ### Build
 

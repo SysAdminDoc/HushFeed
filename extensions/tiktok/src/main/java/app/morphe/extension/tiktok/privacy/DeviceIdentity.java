@@ -17,12 +17,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.SecureRandom;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
 import app.morphe.extension.shared.Logger;
+import app.morphe.extension.shared.Utils;
+import app.morphe.extension.shared.settings.preference.LogBufferManager;
 
 /**
  * A new device identity for TikTok: the phone it registers as, made over so its servers see one
@@ -50,8 +55,20 @@ public final class DeviceIdentity {
     static final String ARMED_KEY = "armed";
     static final String ANDROID_ID_KEY = "android_id";
     static final String ADVERTISING_ID_KEY = "advertising_id";
+    /** With the wipe armed: the saved ids go too, so TikTok is back on the phone's own. */
+    static final String OWN_IDS_KEY = "own_ids";
+    static final String TRIES_KEY = "tries";
+    static final String WIPES_KEY = "wipes";
+    static final String LAST_WIPE_KEY = "last_wipe";
+    static final String GAVE_UP_KEY = "gave_up";
     /** In TikTok's data folder for as long as a wipe runs, under a name the wipe keeps. */
     static final String WIPING_MARKER = "hushfeed_identity_wiping";
+    /**
+     * How many starts an armed wipe gets. It stays armed until it has finished, so that a start
+     * that dies halfway finishes on the next one. Without a limit a step that fails every time
+     * would wipe TikTok on every launch for good (#325).
+     */
+    static final int MOST_TRIES = 3;
 
     /**
      * The prefixes Hushfeed's own files, preferences and databases go by, which the wipe keeps.
@@ -118,7 +135,7 @@ public final class DeviceIdentity {
             SharedPreferences saved = base.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE);
             if (saved.getBoolean(ARMED_KEY, false)) {
                 if (isMainProcess(base)) {
-                    renew(base, saved);
+                    wipeWithinLimit(base, saved);
                 } else if (wipingMarker(base).exists()) {
                     // The main process is wiping. This one would read TikTok's old ids before they
                     // go and could write them back after, so it ends before TikTok's code runs.
@@ -148,31 +165,133 @@ public final class DeviceIdentity {
 
     /** Whether the next start wipes TikTok's data for a new identity. */
     public static boolean isArmed(Context context) {
-        return preferences(context).getBoolean(ARMED_KEY, false);
+        SharedPreferences saved = preferences(context);
+        return saved.getBoolean(ARMED_KEY, false) && !saved.getBoolean(OWN_IDS_KEY, false);
     }
 
-    /** Arms or disarms the wipe. False when the choice couldn't be saved. */
+    /** Arms or disarms the wipe for a new identity. False when the choice couldn't be saved. */
     public static boolean setArmed(Context context, boolean armed) {
-        return preferences(context).edit().putBoolean(ARMED_KEY, armed).commit();
+        return preferences(context).edit().putBoolean(ARMED_KEY, armed)
+                .remove(OWN_IDS_KEY).remove(TRIES_KEY).remove(GAVE_UP_KEY).commit();
+    }
+
+    /** Whether the next start wipes TikTok's data and goes back to the phone's own ids. */
+    public static boolean isOwnIdsArmed(Context context) {
+        SharedPreferences saved = preferences(context);
+        return saved.getBoolean(ARMED_KEY, false) && saved.getBoolean(OWN_IDS_KEY, false);
+    }
+
+    /** Arms or disarms the way back to the phone's own ids. False when it couldn't be saved. */
+    public static boolean setOwnIdsArmed(Context context, boolean armed) {
+        return preferences(context).edit().putBoolean(ARMED_KEY, armed).putBoolean(OWN_IDS_KEY, armed)
+                .remove(TRIES_KEY).remove(GAVE_UP_KEY).commit();
+    }
+
+    /** Whether TikTok is answered with an identity made here rather than the phone's own ids. */
+    public static boolean hasIdentity(Context context) {
+        return holdsIdentity(preferences(context));
+    }
+
+    /** Whether the last armed wipe ran out of tries. */
+    public static boolean gaveUp(Context context) {
+        return preferences(context).getBoolean(GAVE_UP_KEY, false);
+    }
+
+    /** Registered once, at settings load, so an export says what the identity has done. */
+    public static void installReport() {
+        LogBufferManager.registerReportSection(Report.INSTANCE);
+    }
+
+    private static final class Report implements LogBufferManager.ReportSection {
+        static final Report INSTANCE = new Report();
+
+        @Override
+        public String title() {
+            return "DEVICE IDENTITY";
+        }
+
+        @Override
+        public List<String> lines() {
+            return reportLines(preferences(Utils.getContext()));
+        }
+    }
+
+    /** What's in use and how often TikTok was wiped, with the ids left out. Nothing if it never ran. */
+    static List<String> reportLines(SharedPreferences saved) {
+        List<String> lines = new ArrayList<>();
+        int wipes = saved.getInt(WIPES_KEY, 0);
+        boolean armed = saved.getBoolean(ARMED_KEY, false);
+        boolean gaveUp = saved.getBoolean(GAVE_UP_KEY, false);
+        boolean identity = holdsIdentity(saved);
+        if (wipes == 0 && !armed && !gaveUp && !identity) return lines;
+        lines.add("in use: " + (identity ? "an identity made here" : "the phone's own ids"));
+        String last = wipes == 0 ? "" : ", last "
+                + new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(new Date(saved.getLong(LAST_WIPE_KEY, 0)));
+        lines.add("wipes finished: " + wipes + last);
+        if (armed) {
+            lines.add("armed for the next start" + (saved.getBoolean(OWN_IDS_KEY, false) ? ", back to the phone's ids" : "")
+                    + ", tries so far " + saved.getInt(TRIES_KEY, 0));
+        }
+        if (gaveUp) lines.add("the last wipe gave up after " + MOST_TRIES + " tries");
+        return lines;
     }
 
     private static SharedPreferences preferences(Context context) {
         return context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE);
     }
 
+    private static boolean holdsIdentity(SharedPreferences saved) {
+        return valid(ANDROID_ID, saved.getString(ANDROID_ID_KEY, null))
+                || valid(ADVERTISING_ID, saved.getString(ADVERTISING_ID_KEY, null));
+    }
+
+    private static boolean valid(Pattern pattern, @Nullable String value) {
+        return value != null && pattern.matcher(value).matches();
+    }
+
     private static void remember(SharedPreferences saved) {
         String android = saved.getString(ANDROID_ID_KEY, null);
         String advertising = saved.getString(ADVERTISING_ID_KEY, null);
-        androidId = android != null && ANDROID_ID.matcher(android).matches() ? android : null;
-        advertisingId = advertising != null && ADVERTISING_ID.matcher(advertising).matches() ? advertising : null;
+        androidId = valid(ANDROID_ID, android) ? android : null;
+        advertisingId = valid(ADVERTISING_ID, advertising) ? advertising : null;
+    }
+
+    /**
+     * Runs the armed wipe unless it has had its tries. Whatever the wipe throws stops here, so this
+     * start still answers with the saved identity rather than the phone's own ids.
+     */
+    private static void wipeWithinLimit(Context base, SharedPreferences saved) {
+        if (saved.getInt(TRIES_KEY, 0) >= MOST_TRIES) {
+            Logger.printInfo(() -> "Device identity: the wipe gave up after " + MOST_TRIES + " tries");
+            saved.edit().putBoolean(ARMED_KEY, false).remove(OWN_IDS_KEY).remove(TRIES_KEY)
+                    .putBoolean(GAVE_UP_KEY, true).commit();
+            removeMarker(base);
+            return;
+        }
+        try {
+            renew(base, saved);
+        } catch (Throwable failed) {
+            Logger.printException(() -> "Device identity: the wipe failed", failed);
+            removeMarker(base);
+        }
+    }
+
+    private static void removeMarker(Context base) {
+        File marker = wipingMarker(base);
+        if (!marker.delete() && marker.exists()) {
+            Logger.printInfo(() -> "Device identity: the wipe's marker stayed");
+        }
     }
 
     /**
      * Saves the new ids, ends TikTok's other processes and wipes its data. The ids are saved
      * before anything ends, so a process Android starts again meanwhile never finds the wipe
      * armed with no ids to answer with, and the marker makes any that start during the wipe end
-     * themselves. The armed flag clears last, so a start that dies halfway wipes again on the next
-     * one, with new ids again.
+     * themselves. The try is counted in the same save, so a wipe that takes the process down
+     * counts too. The armed flag clears last, so a start that dies halfway wipes again on the next
+     * one, with the same ids: TikTok's servers only ever see one new phone per tap. On the way back
+     * to the phone's own ids the saved ones go instead, and the server hands TikTok its old device
+     * id again.
      */
     private static void renew(Context base, SharedPreferences saved) {
         long started = System.currentTimeMillis();
@@ -184,11 +303,16 @@ public final class DeviceIdentity {
         } catch (IOException unwritable) {
             Logger.printException(() -> "Device identity: no marker for the wipe", unwritable);
         }
-        SecureRandom random = new SecureRandom();
-        boolean committed = saved.edit()
-                .putString(ANDROID_ID_KEY, newAndroidId(random))
-                .putString(ADVERTISING_ID_KEY, UUID.randomUUID().toString())
-                .commit();
+        int tries = saved.getInt(TRIES_KEY, 0);
+        boolean ownIds = saved.getBoolean(OWN_IDS_KEY, false);
+        SharedPreferences.Editor ids = saved.edit().putInt(TRIES_KEY, tries + 1);
+        if (ownIds) {
+            ids.remove(ANDROID_ID_KEY).remove(ADVERTISING_ID_KEY);
+        } else if (tries == 0) {
+            ids.putString(ANDROID_ID_KEY, newAndroidId(new SecureRandom()))
+                    .putString(ADVERTISING_ID_KEY, UUID.randomUUID().toString());
+        }
+        boolean committed = ids.commit();
         processes.endOthers(base);
         int removed = 0;
         File credentialData = new File(base.getApplicationInfo().dataDir);
@@ -204,14 +328,15 @@ public final class DeviceIdentity {
         File external = base.getExternalFilesDir(null);
         if (external != null && external.getParentFile() != null) removed += wipe(external.getParentFile());
 
-        boolean disarmed = saved.edit().putBoolean(ARMED_KEY, false).commit();
-        if (!marker.delete() && marker.exists()) {
-            Logger.printInfo(() -> "Device identity: the wipe's marker stayed");
-        }
+        boolean disarmed = saved.edit().putBoolean(ARMED_KEY, false).remove(OWN_IDS_KEY).remove(TRIES_KEY)
+                .putInt(WIPES_KEY, saved.getInt(WIPES_KEY, 0) + 1)
+                .putLong(LAST_WIPE_KEY, System.currentTimeMillis()).commit();
+        removeMarker(base);
         int count = removed;
         long took = System.currentTimeMillis() - started;
+        String purpose = ownIds ? "the phone's own ids" : "a new identity";
         Logger.printInfo(() -> "Device identity: wiped " + count + " files in " + took
-                + " ms for a new identity, saved " + committed + ", disarmed " + disarmed);
+                + " ms for " + purpose + ", saved " + committed + ", disarmed " + disarmed);
     }
 
     private static File wipingMarker(Context base) {

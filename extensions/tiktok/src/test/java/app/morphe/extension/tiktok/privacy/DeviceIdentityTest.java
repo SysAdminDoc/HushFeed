@@ -314,6 +314,127 @@ public class DeviceIdentityTest {
         }
     }
 
+    /** A phone where a step of the wipe always fails, like an OEM that refuses to end a process. */
+    private static final class FailingProcesses implements DeviceIdentity.Processes {
+        int tries;
+        String androidId;
+        String advertisingId;
+
+        @Override public void endOthers(Context base) {
+            tries++;
+            SharedPreferences saved = base.getSharedPreferences(DeviceIdentity.PREFERENCES, Context.MODE_PRIVATE);
+            androidId = saved.getString(DeviceIdentity.ANDROID_ID_KEY, null);
+            advertisingId = saved.getString(DeviceIdentity.ADVERTISING_ID_KEY, null);
+            throw new IllegalStateException("refused");
+        }
+
+        @Override public void endSelf() {
+            throw new AssertionError("a wipe that failed leaves no marker to end on");
+        }
+    }
+
+    @Test public void aWipeThatKeepsFailingGivesUpInsteadOfRunningOnEveryLaunch() throws IOException {
+        File data = temporary.newFolder("data");
+        File tiktok = file(data, "shared_prefs/applog_stats.xml");
+        Context app = dataIn(data, temporary.newFolder("device-data"), temporary.newFolder("external"));
+        FailingProcesses failing = new FailingProcesses();
+        DeviceIdentity.processes = failing;
+        DeviceIdentity.processName = context::getPackageName;
+        assertTrue(DeviceIdentity.setArmed(app, true));
+
+        DeviceIdentity.start(app);
+        String androidId = failing.androidId;
+        String advertisingId = failing.advertisingId;
+        assertNotNull(androidId);
+        assertNotNull(advertisingId);
+        assertEquals("TikTok runs on the identity it'll keep", androidId, DeviceIdentity.androidId());
+        assertTrue("it tries again at the next start", DeviceIdentity.isArmed(app));
+        assertFalse(DeviceIdentity.gaveUp(app));
+        assertFalse("the failed try leaves no marker behind", new File(data, DeviceIdentity.WIPING_MARKER).exists());
+
+        DeviceIdentity.start(app);
+        DeviceIdentity.start(app);
+        assertEquals(DeviceIdentity.MOST_TRIES, failing.tries);
+        assertEquals("a retry finishes the same identity, so the server sees one new phone",
+                androidId, failing.androidId);
+        assertEquals(advertisingId, failing.advertisingId);
+
+        DeviceIdentity.start(app);
+        DeviceIdentity.start(app);
+        assertEquals("then it stops", DeviceIdentity.MOST_TRIES, failing.tries);
+        assertFalse(DeviceIdentity.isArmed(app));
+        assertTrue(DeviceIdentity.gaveUp(app));
+        assertEquals("and the ids stop changing", androidId, DeviceIdentity.androidId());
+        assertEquals(advertisingId, DeviceIdentity.advertisingId());
+        assertTrue("nothing got wiped on the way", tiktok.isFile());
+
+        assertTrue(DeviceIdentity.setArmed(app, true));
+        assertFalse("a new tap starts over", DeviceIdentity.gaveUp(app));
+        DeviceIdentity.start(app);
+        assertEquals(DeviceIdentity.MOST_TRIES + 1, failing.tries);
+    }
+
+    @Test public void goingBackWipesOnceAndHandsThePhonesOwnIdsThrough() throws IOException {
+        File data = temporary.newFolder("data");
+        File tiktok = file(data, "shared_prefs/applog_stats.xml");
+        Context app = dataIn(data, temporary.newFolder("device-data"), temporary.newFolder("external"));
+        ContentResolver resolver = context.getContentResolver();
+        Secure.putString(resolver, Secure.ANDROID_ID, "0123456789abcdef");
+        saved().edit()
+                .putString(DeviceIdentity.ANDROID_ID_KEY, IDENTITY_ANDROID_ID)
+                .putString(DeviceIdentity.ADVERTISING_ID_KEY, IDENTITY_AD_ID)
+                .commit();
+        assertTrue(DeviceIdentity.hasIdentity(app));
+
+        assertTrue(DeviceIdentity.setOwnIdsArmed(app, true));
+        assertTrue(DeviceIdentity.isOwnIdsArmed(app));
+        assertFalse("this isn't a new identity being armed", DeviceIdentity.isArmed(app));
+        DeviceIdentity.processName = context::getPackageName;
+        DeviceIdentity.start(app);
+
+        assertEquals(1, processes.endedOthers);
+        assertNull("the saved id was gone before the other processes ended", processes.androidIdWhenEnding);
+        assertFalse(tiktok.exists());
+        assertFalse(DeviceIdentity.isOwnIdsArmed(app));
+        assertFalse(DeviceIdentity.hasIdentity(app));
+        assertNull(DeviceIdentity.androidId());
+        assertNull(DeviceIdentity.advertisingId());
+        assertEquals("0123456789abcdef", DevicePrivacyGuard.interceptSecureString(resolver, Secure.ANDROID_ID));
+        assertEquals(REAL_AD_ID, DevicePrivacyGuard.interceptAdvertisingIdRead(REAL_AD_ID));
+
+        File written = file(data, "shared_prefs/applog_stats.xml");
+        DeviceIdentity.start(app);
+        assertTrue("and that was the only wipe", written.isFile());
+        assertEquals(1, processes.endedOthers);
+    }
+
+    @Test public void onlyOneOfTheTwoCanBeArmed() {
+        assertTrue(DeviceIdentity.setOwnIdsArmed(context, true));
+        assertTrue(DeviceIdentity.setArmed(context, true));
+        assertTrue(DeviceIdentity.isArmed(context));
+        assertFalse(DeviceIdentity.isOwnIdsArmed(context));
+
+        assertTrue(DeviceIdentity.setOwnIdsArmed(context, true));
+        assertFalse(DeviceIdentity.isArmed(context));
+        assertTrue(DeviceIdentity.isOwnIdsArmed(context));
+    }
+
+    @Test public void theReportSaysWhatHappenedAndLeavesTheIdsOut() {
+        assertTrue("a phone that never used this has nothing to say",
+                DeviceIdentity.reportLines(saved()).isEmpty());
+
+        saved().edit()
+                .putString(DeviceIdentity.ANDROID_ID_KEY, IDENTITY_ANDROID_ID)
+                .putString(DeviceIdentity.ADVERTISING_ID_KEY, IDENTITY_AD_ID)
+                .putInt(DeviceIdentity.WIPES_KEY, 2)
+                .commit();
+        String report = String.join("\n", DeviceIdentity.reportLines(saved()));
+        assertTrue(report, report.contains("an identity made here"));
+        assertTrue(report, report.contains("wipes finished: 2"));
+        assertFalse("the ids stay out of a report people post", report.contains(IDENTITY_ANDROID_ID));
+        assertFalse(report.contains(IDENTITY_AD_ID));
+    }
+
     @Test public void aDamagedSavedIdentityIsIgnored() {
         saved().edit()
                 .putString(DeviceIdentity.ANDROID_ID_KEY, "not hex at all!!")

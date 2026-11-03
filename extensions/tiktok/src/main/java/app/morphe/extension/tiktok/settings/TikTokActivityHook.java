@@ -91,6 +91,8 @@ public class TikTokActivityHook {
         app.morphe.extension.tiktok.network.NetworkRoutes.install();
         // Which settings the reader changed, so an export answers "which switch is on" itself.
         ChangedSettingsReport.install();
+        // Whether TikTok runs on an identity made here, and how often it was wiped for one.
+        app.morphe.extension.tiktok.privacy.DeviceIdentity.installReport();
         // Build details and the full log export list the switches the patcher registered, read
         // here for the same reason. Both open from this screen.
         BuildDetails.setRegisteredSwitches(SettingsStatus.registered());

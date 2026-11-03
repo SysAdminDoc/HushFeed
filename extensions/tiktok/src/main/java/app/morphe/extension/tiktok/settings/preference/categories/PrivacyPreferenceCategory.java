@@ -9,6 +9,7 @@ import android.preference.PreferenceScreen;
 
 import app.morphe.extension.shared.settings.BaseSettings;
 import app.morphe.extension.tiktok.privacy.BenchmarkRuns;
+import app.morphe.extension.tiktok.privacy.DeviceIdentity;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 import app.morphe.extension.tiktok.settings.L10n;
@@ -198,6 +199,7 @@ public final class PrivacyPreferenceCategory extends ConditionalPreferenceCatego
                     Settings.HIDE_ROOT
             ));
             addPreference(new DeviceIdentityPreference(context));
+            if (DeviceIdentity.hasIdentity(context)) addPreference(DeviceIdentityPreference.ownIds(context));
         }
         if (SettingsStatus.resourceGovernorEnabled) {
             addPreference(new TogglePreference(

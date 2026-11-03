@@ -440,6 +440,7 @@ Couldn't confirm blocking %1$s. Check their profile.,Couldn't confirm blocking %
 Couldn't confirm unblocking %1$s. Check their profile.,Couldn't confirm unblocking %1$s. Check their profile.
 Couldn't copy the report. Use Save report instead.,Couldn't copy the report. Use Save report instead.
 Couldn't copy. Use Save build details instead.,Couldn't copy. Use Save build details instead.
+Couldn't finish wiping TikTok's data. Tap to try again.,Couldn't finish wiping TikTok's data. Tap to try again.
 Couldn't forget the saved videos. Try again.,Couldn't forget the saved videos. Try again.
 Couldn't import watch history. Your saved history is unchanged.,Couldn't import watch history. Your saved history is unchanged.
 Couldn't list your apps. Tap here to try again.,Couldn't list your apps. Tap here to try again.
@@ -965,6 +966,7 @@ Imported: %1$s. Pick another file to replace it.,Imported: %1$s. Pick another fi
 Importing new history ended Undo for the earlier clear. You can clear the imported history.,Importing new history ended Undo for the earlier clear. You can clear the imported history.
 Importing watch history,Importing watch history
 In a chat,In a chat
+"In use: TikTok sees the identity you made here, and it stays the same on every start. Tap to make another one, which wipes TikTok's data again.","In use: TikTok sees the identity you made here, and it stays the same on every start. Tap to make another one, which wipes TikTok's data again."
 Inbox,Inbox
 Inbox tab name,Inbox tab name
 Include diagnostic events,Include diagnostic events
@@ -1273,6 +1275,7 @@ Notices from this project and the ones it's built on,Notices from this project a
 OK,OK
 Off,Off
 "Off forces the value to false, on forces it to true. Reset lets TikTok decide again.","Off forces the value to false, on forces it to true. Reset lets TikTok decide again."
+"Off until you tap it. Wipes TikTok's data once, on the next start, and gives it a new Android ID and advertising ID, so it sees a phone it hasn't met. You'll be signed out and lose your drafts. Hushfeed's settings stay.","Off until you tap it. Wipes TikTok's data once, on the next start, and gives it a new Android ID and advertising ID, so it sees a phone it hasn't met. You'll be signed out and lose your drafts. Hushfeed's settings stay."
 Off. TikTok can report views and typing.,Off. TikTok can report views and typing.
 Offer LIVE quality in more rooms,Offer LIVE quality in more rooms
 Offer clear screen in every LIVE room,Offer clear screen in every LIVE room
@@ -2147,6 +2150,7 @@ TikTok didn't unblock %1$s. Try again in a moment.,TikTok didn't unblock %1$s. T
 TikTok forgets the LIVE quality you picked when it closes. This starts rooms at that quality again after a restart. A room whose stream doesn't have it opens at TikTok's choice.,TikTok forgets the LIVE quality you picked when it closes. This starts rooms at that quality again after a restart. A room whose stream doesn't have it opens at TikTok's choice.
 "TikTok gets a blank advertising ID, like the one Android gives after you delete yours. Apps can't use it to recognize your phone.","TikTok gets a blank advertising ID, like the one Android gives after you delete yours. Apps can't use it to recognize your phone."
 TikTok gets no location from your phone. The Region settings change your country and time zone. This switch stops the exact position.,TikTok gets no location from your phone. The Region settings change your country and time zone. This switch stops the exact position.
+TikTok goes back to this phone's IDs after the restart. Tap again to cancel.,TikTok goes back to this phone's IDs after the restart. Tap again to cancel.
 "TikTok hasn't loaded this setting yet. Open the part of the app that uses it, then come back.","TikTok hasn't loaded this setting yet. Open the part of the app that uses it, then come back."
 TikTok is locked,TikTok is locked
 "TikTok isn't ready yet. Open your Inbox, then try again.","TikTok isn't ready yet. Open your Inbox, then try again."
@@ -2280,6 +2284,7 @@ Use system font,Use system font
 Use the preset for the region TikTok reports for your account and its shop too. May affect search.,Use the preset for the region TikTok reports for your account and its shop too. May affect search.
 "Use the split layout on wider screens. Restart TikTok to apply this. If the old layout is still there, unfold again.","Use the split layout on wider screens. Restart TikTok to apply this. If the old layout is still there, unfold again."
 "Use this account's TikTok JSON export, up to %1$s MB and %2$s entries. Dates without a time zone use this phone's time zone.","Use this account's TikTok JSON export, up to %1$s MB and %2$s entries. Dates without a time zone use this phone's time zone."
+Use this phone's own IDs,Use this phone's own IDs
 Use translation,Use translation
 Use value,Use value
 Use your own offline videos limit,Use your own offline videos limit
@@ -2355,7 +2360,7 @@ Where the time goes,Where the time goes
 White,White
 Who to message,Who to message
 Window width needed to enable the layout. Restart TikTok to apply this.,Window width needed to enable the layout. Restart TikTok to apply this.
-"Wipe TikTok's data and give it a new Android ID and advertising ID on the next start, so it sees a phone it hasn't met. You'll be signed out and lose your drafts. Hushfeed's settings stay.","Wipe TikTok's data and give it a new Android ID and advertising ID on the next start, so it sees a phone it hasn't met. You'll be signed out and lose your drafts. Hushfeed's settings stay."
+"Wipes TikTok's data once, on the next start, and goes back to this phone's real Android ID and advertising ID. You'll be signed out and lose your drafts.","Wipes TikTok's data once, on the next start, and goes back to this phone's real Android ID and advertising ID. You'll be signed out and lose your drafts."
 "With Hide LIVE videos on, these creators' LIVEs stay when TikTok sends them. Separate handles or user IDs with commas.","With Hide LIVE videos on, these creators' LIVEs stay when TikTok sends them. Separate handles or user IDs with commas."
 "With TikTok in dark mode, a LIVE room still opens its share menu, fan club and other panels in light colors. This opens them dark.","With TikTok in dark mode, a LIVE room still opens its share menu, fan club and other panels in light colors. This opens them dark."
 "With the fade below 100, the buttons and caption stay on screen at that level in Clear display, and taps go through them to the video. Off, Clear display hides them the way it does at 100.","With the fade below 100, the buttons and caption stay on screen at that level in Clear display, and taps go through them to the video. Off, Clear display hides them the way it does at 100."

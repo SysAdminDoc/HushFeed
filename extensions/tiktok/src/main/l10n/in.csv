@@ -2225,7 +2225,6 @@ Above the bar,Di atas bilah
 Full-width progress bar,Bilah progres selebar layar
 "Run the progress bar from one screen edge to the other, without the gap TikTok leaves at each end.","Bilah progres membentang dari satu tepi layar ke tepi lainnya, tanpa celah yang disisakan TikTok di kedua ujung."
 New device identity,Identitas perangkat baru
-"Wipe TikTok's data and give it a new Android ID and advertising ID on the next start, so it sees a phone it hasn't met. You'll be signed out and lose your drafts. Hushfeed's settings stay.","Hapus data TikTok dan beri ID Android serta ID iklan baru saat mulai berikutnya, agar TikTok melihat ponsel yang belum pernah dikenalnya. Kamu akan keluar dari akun dan kehilangan draf. Pengaturan Hushfeed tetap ada."
 TikTok starts as a new phone after the restart. Tap again to cancel.,TikTok mulai sebagai ponsel baru setelah dimulai ulang. Ketuk lagi untuk membatalkan.
 Couldn't set up a new device identity. Try again.,Tidak bisa menyiapkan identitas perangkat baru. Coba lagi.
 Saves at once,Penyimpanan sekaligus
@@ -2407,3 +2406,9 @@ Watch history cleared,Riwayat tontonan dihapus
 Couldn't open that video. Try again.,Video itu tidak bisa dibuka. Coba lagi.
 Keep the next videos in full screen,Simpan video berikutnya saat layar penuh
 "Full screen opens with just your video on most pages, so there's nothing to swipe to. This brings the videos after it along.","Di sebagian besar halaman, layar penuh hanya membuka video Anda, jadi tidak ada yang bisa digeser. Ini membawa serta video setelahnya."
+"Off until you tap it. Wipes TikTok's data once, on the next start, and gives it a new Android ID and advertising ID, so it sees a phone it hasn't met. You'll be signed out and lose your drafts. Hushfeed's settings stay.","Mati sampai Anda mengetuknya. Menghapus data TikTok sekali, saat mulai berikutnya, dan memberinya Android ID serta ID iklan baru, jadi TikTok melihat ponsel yang belum dikenalnya. Anda akan keluar dan kehilangan draf. Pengaturan Hushfeed tetap ada."
+"In use: TikTok sees the identity you made here, and it stays the same on every start. Tap to make another one, which wipes TikTok's data again.","Sedang dipakai: TikTok melihat identitas yang Anda buat di sini, dan tetap sama setiap kali mulai. Ketuk untuk membuat yang lain, yang menghapus data TikTok lagi."
+Couldn't finish wiping TikTok's data. Tap to try again.,Tidak bisa menyelesaikan penghapusan data TikTok. Ketuk untuk mencoba lagi.
+Use this phone's own IDs,Pakai ID asli ponsel ini
+"Wipes TikTok's data once, on the next start, and goes back to this phone's real Android ID and advertising ID. You'll be signed out and lose your drafts.","Menghapus data TikTok sekali, saat mulai berikutnya, dan kembali ke Android ID serta ID iklan asli ponsel ini. Anda akan keluar dan kehilangan draf."
+TikTok goes back to this phone's IDs after the restart. Tap again to cancel.,TikTok kembali ke ID ponsel ini setelah dimulai ulang. Ketuk lagi untuk membatalkan.

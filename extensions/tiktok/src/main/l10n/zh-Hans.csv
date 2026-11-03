@@ -2223,7 +2223,6 @@ Above the bar,在进度条上方
 Full-width progress bar,全宽进度条
 "Run the progress bar from one screen edge to the other, without the gap TikTok leaves at each end.",进度条从屏幕一侧延伸到另一侧，去掉 TikTok 在两端留下的空隙.
 New device identity,新设备身份
-"Wipe TikTok's data and give it a new Android ID and advertising ID on the next start, so it sees a phone it hasn't met. You'll be signed out and lose your drafts. Hushfeed's settings stay.",下次启动时清除 TikTok 的数据，并给它新的 Android ID 和广告 ID，让它看到一部没见过的手机。你将被退出登录，草稿也会丢失。Hushfeed 的设置会保留.
 TikTok starts as a new phone after the restart. Tap again to cancel.,重启后 TikTok 会以新手机的身份启动。再次点按可取消.
 Couldn't set up a new device identity. Try again.,无法设置新的设备身份。请重试.
 Saves at once,同时保存数
@@ -2405,3 +2404,9 @@ Watch history cleared,观看历史已清除
 Couldn't open that video. Try again.,无法打开该视频。请重试.
 Keep the next videos in full screen,全屏时保留后面的视频
 "Full screen opens with just your video on most pages, so there's nothing to swipe to. This brings the videos after it along.",在大多数页面上，全屏只打开当前视频，无处可滑。开启后会带上它后面的视频.
+"Off until you tap it. Wipes TikTok's data once, on the next start, and gives it a new Android ID and advertising ID, so it sees a phone it hasn't met. You'll be signed out and lose your drafts. Hushfeed's settings stay.","点按前不会生效. 在下次启动时清除一次 TikTok 的数据,并给它新的 Android ID 和广告 ID,让它看到一部没见过的手机. 你会退出登录并丢失草稿. Hushfeed 的设置会保留."
+"In use: TikTok sees the identity you made here, and it stays the same on every start. Tap to make another one, which wipes TikTok's data again.","使用中: TikTok 看到的是你在这里创建的身份,每次启动都保持不变. 点按可再创建一个,这会再次清除 TikTok 的数据."
+Couldn't finish wiping TikTok's data. Tap to try again.,未能清除完 TikTok 的数据. 点按重试.
+Use this phone's own IDs,使用这部手机自己的 ID
+"Wipes TikTok's data once, on the next start, and goes back to this phone's real Android ID and advertising ID. You'll be signed out and lose your drafts.","在下次启动时清除一次 TikTok 的数据,并换回这部手机真实的 Android ID 和广告 ID. 你会退出登录并丢失草稿."
+TikTok goes back to this phone's IDs after the restart. Tap again to cancel.,重启后 TikTok 会换回这部手机的 ID. 再次点按可取消.

@@ -2247,7 +2247,6 @@ Above moves the caption and the buttons up a little so the time fits over the ri
 Full-width progress bar	Tam enli irəliləyiş paneli
 Run the progress bar from one screen edge to the other, without the gap TikTok leaves at each end.	İrəliləyiş paneli TikTok-un hər iki ucda qoyduğu boşluq olmadan ekranın bir kənarından o birinə qədər uzanır.
 New device identity	Yeni cihaz kimliyi
-Wipe TikTok's data and give it a new Android ID and advertising ID on the next start, so it sees a phone it hasn't met. You'll be signed out and lose your drafts. Hushfeed's settings stay.	TikTok-un məlumatlarını silir və növbəti açılışda ona yeni Android ID və reklam ID-si verir ki, tanımadığı telefon görsün. Hesabdan çıxış ediləcək və qaralamalarınız silinəcək. Hushfeed ayarları qalır.
 TikTok starts as a new phone after the restart. Tap again to cancel.	TikTok yenidən başladıqdan sonra yeni telefon kimi açılır. Ləğv etmək üçün yenidən toxunun.
 Couldn't set up a new device identity. Try again.	Yeni cihaz kimliyi qurmaq alınmadı. Yenidən cəhd edin.
 Saves at once	Eyni anda saxlamalar
@@ -2436,3 +2435,9 @@ Watch history cleared	Baxış tarixçəsi təmizləndi
 Couldn't open that video. Try again.	Bu video açılmadı. Yenidən cəhd edin.
 Keep the next videos in full screen	Növbəti videoları tam ekranda saxlayın
 Full screen opens with just your video on most pages, so there's nothing to swipe to. This brings the videos after it along.	Çox səhifədə tam ekran yalnız sizin videonuzla açılır, ona görə sürüşdürəcək heç nə olmur. Bu, ondan sonrakı videoları da gətirir.
+Off until you tap it. Wipes TikTok's data once, on the next start, and gives it a new Android ID and advertising ID, so it sees a phone it hasn't met. You'll be signed out and lose your drafts. Hushfeed's settings stay.	Toxunana qədər söndürülüb. Növbəti başlanğıcda TikTok-un məlumatlarını bir dəfə silir və ona yeni Android ID və reklam ID-si verir ki, tanımadığı telefon görsün. Hesabdan çıxacaqsınız və qaralamalarınızı itirəcəksiniz. Hushfeed ayarları qalır.
+In use: TikTok sees the identity you made here, and it stays the same on every start. Tap to make another one, which wipes TikTok's data again.	İstifadədədir: TikTok burada yaratdığınız kimliyi görür və o, hər başlanğıcda eyni qalır. Başqasını yaratmaq üçün toxunun, bu, TikTok-un məlumatlarını yenidən silir.
+Couldn't finish wiping TikTok's data. Tap to try again.	TikTok-un məlumatlarını silmək başa çatmadı. Yenidən cəhd etmək üçün toxunun.
+Use this phone's own IDs	Bu telefonun öz ID-lərini istifadə et
+Wipes TikTok's data once, on the next start, and goes back to this phone's real Android ID and advertising ID. You'll be signed out and lose your drafts.	Növbəti başlanğıcda TikTok-un məlumatlarını bir dəfə silir və bu telefonun real Android ID və reklam ID-sinə qayıdır. Hesabdan çıxacaqsınız və qaralamalarınızı itirəcəksiniz.
+TikTok goes back to this phone's IDs after the restart. Tap again to cancel.	Yenidən başladıqdan sonra TikTok bu telefonun ID-lərinə qayıdır. Ləğv etmək üçün yenidən toxunun.

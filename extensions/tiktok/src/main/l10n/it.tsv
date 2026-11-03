@@ -2247,7 +2247,6 @@ Above moves the caption and the buttons up a little so the time fits over the ri
 Full-width progress bar	Barra di avanzamento a tutta larghezza
 Run the progress bar from one screen edge to the other, without the gap TikTok leaves at each end.	La barra di avanzamento va da un bordo all'altro dello schermo, senza lo spazio che TikTok lascia alle estremità.
 New device identity	Nuova identità del dispositivo
-Wipe TikTok's data and give it a new Android ID and advertising ID on the next start, so it sees a phone it hasn't met. You'll be signed out and lose your drafts. Hushfeed's settings stay.	Cancella i dati di TikTok e gli dà un nuovo ID Android e un nuovo ID pubblicitario al prossimo avvio, così vede un telefono che non conosce. Verrai disconnesso e perderai le bozze. Le impostazioni di Hushfeed restano.
 TikTok starts as a new phone after the restart. Tap again to cancel.	Dopo il riavvio TikTok si avvia come su un telefono nuovo. Tocca di nuovo per annullare.
 Couldn't set up a new device identity. Try again.	Impossibile impostare una nuova identità del dispositivo. Riprova.
 Saves at once	Salvataggi contemporanei
@@ -2436,3 +2435,9 @@ Watch history cleared	Cronologia visualizzazioni cancellata
 Couldn't open that video. Try again.	Impossibile aprire il video. Riprova.
 Keep the next videos in full screen	Mantieni i video successivi a schermo intero
 Full screen opens with just your video on most pages, so there's nothing to swipe to. This brings the videos after it along.	Nella maggior parte delle pagine, lo schermo intero apre solo il tuo video, quindi non c'è nulla da scorrere. Così arrivano anche i video successivi.
+Off until you tap it. Wipes TikTok's data once, on the next start, and gives it a new Android ID and advertising ID, so it sees a phone it hasn't met. You'll be signed out and lose your drafts. Hushfeed's settings stay.	Spento finché non lo tocchi. Cancella i dati di TikTok una volta, al prossimo avvio, e gli dà un nuovo ID Android e un nuovo ID pubblicitario, così vede un telefono che non conosce. Verrai disconnesso e perderai le bozze. Le impostazioni di Hushfeed restano.
+In use: TikTok sees the identity you made here, and it stays the same on every start. Tap to make another one, which wipes TikTok's data again.	In uso: TikTok vede l'identità che hai creato qui, e resta la stessa a ogni avvio. Tocca per crearne un'altra, cosa che cancella di nuovo i dati di TikTok.
+Couldn't finish wiping TikTok's data. Tap to try again.	Impossibile finire di cancellare i dati di TikTok. Tocca per riprovare.
+Use this phone's own IDs	Usa gli ID di questo telefono
+Wipes TikTok's data once, on the next start, and goes back to this phone's real Android ID and advertising ID. You'll be signed out and lose your drafts.	Cancella i dati di TikTok una volta, al prossimo avvio, e torna all'ID Android e all'ID pubblicitario reali di questo telefono. Verrai disconnesso e perderai le bozze.
+TikTok goes back to this phone's IDs after the restart. Tap again to cancel.	TikTok torna agli ID di questo telefono dopo il riavvio. Tocca di nuovo per annullare.

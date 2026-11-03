@@ -58,7 +58,7 @@ Every Hushfeed release, newest first.
 
 * **TikTok:** The release walk keeps its device reserved from the install until Android's code check is done, so another job can't take the phone in between and cost a walk that passed. It cold boots the emulator it starts and waits for a paused video to settle before it reads the screen. A LIVE that never sits still gets swiped past instead of tapped, since a tap opens the LIVE room. It turns off an emulator's system animations for the walk and puts them back after, because a creator's animated avatar ring kept the screen from being read.
 * **TikTok:** Editing the release scripts no longer makes the saved patch audit results look out of date. They run after the APK is built, so they don't count as audit inputs anymore.
-* **TikTok:** When a fingerprint stops matching on a new TikTok build, `NearestMethodsReport` lists the three methods closest to it on each supported build, with the parts each one misses. Name the fingerprint in `HUSHFEED_NEAREST`. Pointing `HUSHFEED_NEAREST_FROM` at an older APK it still matches lets the method it took there help break ties.
+* **TikTok:** When a fingerprint stops matching on a new TikTok build, `NearestMethodsReport` lists the three methods closest to it on each supported build, with the parts each one misses. Name the fingerprint in `HUSHFEED_NEAREST`. Pointing `HUSHFEED_NEAREST_FROM` at an older APK it still matches also scores each method by how much it looks like the one the fingerprint took there.
 
 ## 0.80.0 (2026-11-01)
 

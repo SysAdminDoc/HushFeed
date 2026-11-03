@@ -1684,9 +1684,7 @@ TikTok is locked	TikTok kilitli
 Unlock	Kilidi aç
 TikTok can't lock without a phone screen lock	Telefonda ekran kilidi yok, TikTok kilitlenemez
 Save photo posts as a video	Fotoğraf gönderilerini video olarak kaydet
-On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video.	Tek fotoğraflı bir gönderide Videoyu indir, gönderinin sesiyle, TikTok logosu ve bitiş kartı olmadan bir MP4 oluşturur. Birden çok fotoğraflı gönderide İndir, orijinalleri mi yoksa tek bir video mu istediğini sorar.
 Seconds per photo	Fotoğraf başına saniye
-How long each photo stays on screen in a video made from a photo post.	Bir fotoğraf gönderisinden yapılan videoda her fotoğrafın ekranda ne kadar kalacağı.
 Save photos or a video?	Fotoğraflar mı, video mu kaydedilsin?
 Save photos	Fotoğrafları kaydet
 Save as video	Video olarak kaydet
@@ -2441,3 +2439,5 @@ Couldn't finish wiping TikTok's data. Tap to try again.	TikTok verileri tamamen 
 Use this phone's own IDs	Bu telefonun kendi kimliklerini kullan
 Wipes TikTok's data once, on the next start, and goes back to this phone's real Android ID and advertising ID. You'll be signed out and lose your drafts.	Bir sonraki açılışta TikTok verilerini bir kez siler ve bu telefonun gerçek Android kimliği ile reklam kimliğine döner. Oturumunuz kapanır ve taslaklarınızı kaybedersiniz.
 TikTok goes back to this phone's IDs after the restart. Tap again to cancel.	Yeniden başlatmanın ardından TikTok bu telefonun kimliklerine döner. İptal etmek için yeniden dokunun.
+On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video. A photo story saves as a video too.	Tek fotoğraflı bir gönderide Videoyu indir, gönderinin sesiyle, TikTok logosu ve bitiş kartı olmadan bir MP4 oluşturur. Birden çok fotoğraflı gönderide İndir, orijinalleri mi yoksa tek bir video mu istediğini sorar. Fotoğraflı bir hikaye de video olarak kaydedilir.
+How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.	Bir fotoğraf gönderisinden yapılan videoda her fotoğrafın ekranda ne kadar kalacağı. Bir hikayenin videosu hikaye kadar sürer.

@@ -57,6 +57,8 @@ public final class SlideshowVideo {
     private static final int[][] FALLBACK_SIDES = {{1280, 720}, {960, 540}};
     /** The shortest a pass of a repeated sound counts as. */
     static final long MIN_LOOP_US = 100_000L;
+    /** TikTok's own defaults for a story with no video of its own (47.6.3). */
+    private static final int STORY_SECONDS_WITH_SOUND = 10, STORY_SECONDS_SILENT = 5;
 
     private static final Set<String> ACTIVE = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 
@@ -72,6 +74,10 @@ public final class SlideshowVideo {
      * or no screen to ask on leaves the save where it was going.
      */
     static boolean offer(Object aweme, Set<?> indices) {
+        return offer(aweme, indices, seconds(Settings.PHOTO_VIDEO_SECONDS.get()));
+    }
+
+    private static boolean offer(Object aweme, Set<?> indices, int seconds) {
         if (!enabled()) return false;
         Object info = Reflect.property(aweme, "getPhotoModeImageInfo", "photoModeImageInfo");
         Object raw = Reflect.property(info, "getImageList", "imageList");
@@ -79,11 +85,11 @@ public final class SlideshowVideo {
         Activity activity = Utils.getVisibleActivity();
         if (activity == null || activity.isFinishing() || activity.isDestroyed()) return false;
         Set<Object> picked = indices == null ? null : new HashSet<Object>(indices);
-        Utils.runOnMainThread(() -> ask(aweme, picked));
+        Utils.runOnMainThread(() -> ask(aweme, picked, seconds));
         return true;
     }
 
-    private static void ask(Object aweme, Set<?> picked) {
+    private static void ask(Object aweme, Set<?> picked, int seconds) {
         try {
             Activity activity = Utils.getVisibleActivity();
             if (activity == null || activity.isFinishing() || activity.isDestroyed()) {
@@ -93,7 +99,7 @@ public final class SlideshowVideo {
             AlertDialog dialog = new AlertDialog.Builder(activity)
                     .setTitle(L10n.t("Save photos or a video?"))
                     .setNegativeButton(L10n.t("Save photos"), (ignored, which) -> OriginalPhotos.savePicked(aweme, picked))
-                    .setPositiveButton(L10n.t("Save as video"), (ignored, which) -> start(aweme, picked))
+                    .setPositiveButton(L10n.t("Save as video"), (ignored, which) -> start(aweme, picked, true, seconds))
                     .setNeutralButton(L10n.t("Cancel"), null)
                     .create();
             dialog.setOnShowListener(ignored -> SettingsUi.styleStandardAlertDialog(dialog));
@@ -111,7 +117,21 @@ public final class SlideshowVideo {
      * video's path, so a failure says so itself instead of falling back.
      */
     static boolean start(Object aweme, Set<?> indices) {
-        return start(aweme, indices, true);
+        return start(aweme, indices, true, seconds(Settings.PHOTO_VIDEO_SECONDS.get()));
+    }
+
+    /**
+     * A photo story as one video with its sound, as long as TikTok shows it: the row's few seconds
+     * would cut the sound short (#327). Several photos ask first, as a post does.
+     */
+    static boolean saveStory(Object aweme) {
+        int seconds = storySeconds(aweme);
+        return offer(aweme, null, seconds) || start(aweme, null, true, seconds);
+    }
+
+    /** How long TikTok keeps a story with no video of its own on screen, on its default settings. */
+    static int storySeconds(Object aweme) {
+        return soundSources(aweme).isEmpty() ? STORY_SECONDS_SILENT : STORY_SECONDS_WITH_SOUND;
     }
 
     /**
@@ -119,7 +139,7 @@ public final class SlideshowVideo {
      * again first ({@code check}, false for Save again), and the video that's made is recorded
      * under the post's id.
      */
-    private static boolean start(Object aweme, Set<?> indices, boolean check) {
+    private static boolean start(Object aweme, Set<?> indices, boolean check, int seconds) {
         Context context = Utils.getContext();
         if (context == null) return failed();
         if (android.os.Build.VERSION.SDK_INT < 29
@@ -136,7 +156,6 @@ public final class SlideshowVideo {
         List<List<String>> sources = new ArrayList<>();
         for (int position : chosen) sources.add(new ArrayList<>(photos.get(position)));
         List<String> sound = soundSources(aweme);
-        int seconds = seconds(Settings.PHOTO_VIDEO_SECONDS.get());
         String name, path;
         try {
             name = DownloadFilenameFormatter.formatSelectedVideoName(aweme);
@@ -163,7 +182,7 @@ public final class SlideshowVideo {
                 if (checkSaved && check) {
                     Runnable saveAgain = () -> {
                         ACTIVE.remove(id);
-                        start(aweme, indices, false);
+                        start(aweme, indices, false, seconds);
                     };
                     asking.set(true);
                     SavedVideoArchive.Check found = SavedVideoArchive.check(app, id, saveAgain,
@@ -203,7 +222,7 @@ public final class SlideshowVideo {
 
     /** For the tests: stands in for drawing, muxing and publishing the video. */
     interface Maker {
-        MediaFileWriter.Saved make(String name) throws IOException;
+        MediaFileWriter.Saved make(String name, int seconds) throws IOException;
     }
 
     static volatile Maker makerForTests;
@@ -240,7 +259,7 @@ public final class SlideshowVideo {
     private static MediaFileWriter.Saved make(Context app, List<List<String>> photos, List<String> sound,
             int seconds, String name, String path, SaveProgress progress, boolean[] silent) throws IOException {
         Maker stand = makerForTests;
-        if (stand != null) return stand.make(name);
+        if (stand != null) return stand.make(name, seconds);
         List<File> temporary = new ArrayList<>();
         try {
             MediaBudget.checkDiskSpace(app.getCacheDir(), -1L);

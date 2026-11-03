@@ -1980,8 +1980,8 @@ final class L10nTranslationsDe {
                 "Funktionsprüfung");
         table.put("How far each edge press moves the video.",
                 "Wie weit ein Druck am Rand das Video bewegt.");
-        table.put("How long each photo stays on screen in a video made from a photo post.",
-                "Wie lange jedes Foto in einem Video aus einem Fotobeitrag zu sehen ist.");
+        table.put("How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.",
+                "Wie lange jedes Foto in einem Video aus einem Fotobeitrag zu sehen ist. Das Video einer Story läuft so lange wie die Story.");
         table.put("How many saves run at the same time. The others wait in line and start as each one ends.",
                 "Wie viele Speicherungen gleichzeitig laufen. Die anderen warten in der Schlange und starten, sobald eine davon fertig ist.");
         table.put("How much of a video you watch before it's hidden next time. Zero counts it after a few seconds.",
@@ -2690,8 +2690,8 @@ final class L10nTranslationsDe {
                 "Limit für Offline-Videos");
         table.put("Oldest first",
                 "Älteste zuerst");
-        table.put("On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video.",
-                "Bei einem Beitrag mit einem Foto erstellt „Video herunterladen“ ein MP4 mit dem Ton des Beitrags, ohne TikTok-Logo und Endkarte. Bei mehreren Fotos fragt „Herunterladen“, ob du die Originale oder ein Video möchtest.");
+        table.put("On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video. A photo story saves as a video too.",
+                "Bei einem Beitrag mit einem Foto erstellt „Video herunterladen“ ein MP4 mit dem Ton des Beitrags, ohne TikTok-Logo und Endkarte. Bei mehreren Fotos fragt „Herunterladen“, ob du die Originale oder ein Video möchtest. Eine Foto-Story wird ebenfalls als Video gespeichert.");
         table.put("On mobile data",
                 "Bei mobilen Daten");
         table.put("On or off",

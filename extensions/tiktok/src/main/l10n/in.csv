@@ -1677,9 +1677,7 @@ TikTok is locked,TikTok terkunci
 Unlock,Buka kunci
 TikTok can't lock without a phone screen lock,TikTok tak bisa mengunci tanpa kunci layar ponsel
 Save photo posts as a video,Simpan unggahan foto sebagai video
-"On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video.","Pada kiriman satu foto, Unduh video membuat MP4 dengan suara kiriman tanpa logo TikTok dan kartu penutup. Pada kiriman dengan beberapa foto, Unduh menanyakan apakah kamu mau foto asli atau satu video."
 Seconds per photo,Detik per foto
-How long each photo stays on screen in a video made from a photo post.,Berapa lama setiap foto tampil di layar dalam video yang dibuat dari unggahan foto.
 Save photos or a video?,Simpan foto atau video?
 Save photos,Simpan foto
 Save as video,Simpan sebagai video
@@ -2412,3 +2410,5 @@ Couldn't finish wiping TikTok's data. Tap to try again.,Tidak bisa menyelesaikan
 Use this phone's own IDs,Pakai ID asli ponsel ini
 "Wipes TikTok's data once, on the next start, and goes back to this phone's real Android ID and advertising ID. You'll be signed out and lose your drafts.","Menghapus data TikTok sekali, saat mulai berikutnya, dan kembali ke Android ID serta ID iklan asli ponsel ini. Anda akan keluar dan kehilangan draf."
 TikTok goes back to this phone's IDs after the restart. Tap again to cancel.,TikTok kembali ke ID ponsel ini setelah dimulai ulang. Ketuk lagi untuk membatalkan.
+"On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video. A photo story saves as a video too.","Pada kiriman satu foto, Unduh video membuat MP4 dengan suara kiriman tanpa logo TikTok dan kartu penutup. Pada kiriman dengan beberapa foto, Unduh menanyakan apakah kamu mau foto asli atau satu video. Story foto juga disimpan sebagai video."
+How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.,Berapa lama setiap foto tampil di layar dalam video yang dibuat dari unggahan foto. Video dari Story berdurasi sama dengan Story-nya.

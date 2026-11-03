@@ -251,6 +251,55 @@ public class SlideshowVideoTest {
         assertNull(MediaJobScheduler.job("photo video " + post.getAid()));
     }
 
+    @Test public void aPhotoStoryWithASoundRunsTenSecondsAndASilentOneFive() {
+        var silent = post("slideshow-story-silent", List.of(photo("https://example.com/one")));
+        assertEquals(5, SlideshowVideo.storySeconds(silent));
+        assertEquals(10, SlideshowVideo.storySeconds(storyWithSound("slideshow-story-sound")));
+    }
+
+    @Test public void aPhotoStorySavesAsAVideoAtTheStorysLengthAndNotTheRows() throws Exception {
+        Settings.PHOTO_VIDEO_SECONDS.save(3);
+        List<Integer> lengths = new java.util.concurrent.CopyOnWriteArrayList<>();
+        CountDownLatch made = new CountDownLatch(1);
+        SlideshowVideo.makerForTests = (name, seconds) -> {
+            lengths.add(seconds);
+            made.countDown();
+            throw new java.io.IOException("Nothing to draw with here");
+        };
+        try {
+            var story = storyWithSound("slideshow-story-length");
+            assertTrue(StoryDownloads.saveStory(RuntimeEnvironment.getApplication(), story));
+            assertNull("The photos aren't saved beside it", MediaJobScheduler.job("story " + story.getAid()));
+            assertTrue("The video never started", made.await(5, TimeUnit.SECONDS));
+            assertEquals(List.of(10), lengths);
+        } finally {
+            SlideshowVideo.makerForTests = null;
+        }
+    }
+
+    @Test public void aPhotoStoryKeepsItsPhotoSaveWithTheSwitchOff() throws Exception {
+        Settings.DOWNLOAD_PHOTOS_AS_VIDEO.save(false);
+        holdWorkers();
+        var story = storyWithSound("slideshow-story-off");
+        assertTrue(StoryDownloads.saveStory(RuntimeEnvironment.getApplication(), story));
+        assertNull(MediaJobScheduler.job("photo video " + story.getAid()));
+        MediaJobScheduler.Job job = MediaJobScheduler.job("story " + story.getAid());
+        assertNotNull(job);
+        assertTrue(job.cancel());
+    }
+
+    @Test public void aLivePhotoStoryKeepsItsOwnSave() throws Exception {
+        holdWorkers();
+        var photo = photo("https://example.com/one");
+        photo.live();
+        var story = post("slideshow-story-live", List.of(photo));
+        assertTrue(StoryDownloads.saveStory(RuntimeEnvironment.getApplication(), story));
+        assertNull(MediaJobScheduler.job("photo video " + story.getAid()));
+        MediaJobScheduler.Job job = MediaJobScheduler.job("story " + story.getAid());
+        assertNotNull(job);
+        assertTrue(job.cancel());
+    }
+
     @Test public void aOnePhotoPostSkipsTheQuestionAndNoScreenLeavesThePickerAlone() {
         Activity previous = Utils.getActivity();
         try {
@@ -365,6 +414,14 @@ public class SlideshowVideoTest {
 
     private static AdvancedDownloadsTest.Photo photo(String url) {
         return new AdvancedDownloadsTest.Photo(url);
+    }
+
+    /** A photo story carries its music as the Video's play address. */
+    private AdvancedDownloadsTest.PhotoPost storyWithSound(String id) {
+        var story = post(id, List.of(photo("https://example.com/one")));
+        story.video = new AdvancedDownloadsTest.VideoData(List.of());
+        story.video.playAddr = new AdvancedDownloadsTest.Address("https://example.com/sound", 100);
+        return story;
     }
 
     private static Set<String> videoIds() { return ReflectionHelpers.getStaticField(SlideshowVideo.class, "ACTIVE"); }

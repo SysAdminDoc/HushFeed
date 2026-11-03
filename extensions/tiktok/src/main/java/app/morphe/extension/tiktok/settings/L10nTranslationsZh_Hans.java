@@ -1980,8 +1980,8 @@ final class L10nTranslationsZh_Hans {
                 "挂钩状态");
         table.put("How far each edge press moves the video.",
                 "每次边缘按压会使视频移动多远.");
-        table.put("How long each photo stays on screen in a video made from a photo post.",
-                "由照片帖子制作的视频中每张照片在屏幕上停留的时间.");
+        table.put("How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.",
+                "由照片帖子制作的视频中每张照片在屏幕上停留的时间。故事的视频时长与故事相同.");
         table.put("How many saves run at the same time. The others wait in line and start as each one ends.",
                 "同时进行的保存数量。其余的排队等候，每完成一个就开始下一个.");
         table.put("How much of a video you watch before it's hidden next time. Zero counts it after a few seconds.",
@@ -2690,8 +2690,8 @@ final class L10nTranslationsZh_Hans {
                 "离线视频限制");
         table.put("Oldest first",
                 "最早的在前");
-        table.put("On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video.",
-                "在一张照片帖子中，下载视频会生成带有帖子声音的 MP4，但没有 TikTok 徽标或结束卡。在包含多张照片的帖子中，“下载”会询问你是否想要原件或一个视频.");
+        table.put("On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video. A photo story saves as a video too.",
+                "在一张照片帖子中，下载视频会生成带有帖子声音的 MP4，但没有 TikTok 徽标或结束卡。在包含多张照片的帖子中，“下载”会询问你是否想要原件或一个视频。照片故事也会保存为视频.");
         table.put("On mobile data",
                 "关于移动数据");
         table.put("On or off",

@@ -1980,8 +1980,8 @@ final class L10nTranslationsIt {
                 "Stato dell'hook");
         table.put("How far each edge press moves the video.",
                 "Quanto sposta il video ogni pressione sul bordo.");
-        table.put("How long each photo stays on screen in a video made from a photo post.",
-                "Quanto resta sullo schermo ogni foto in un video creato da un post di foto.");
+        table.put("How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.",
+                "Quanto resta sullo schermo ogni foto in un video creato da un post di foto. Il video di una storia dura quanto la storia.");
         table.put("How many saves run at the same time. The others wait in line and start as each one ends.",
                 "Quanti salvataggi sono in corso contemporaneamente. Gli altri aspettano in coda e partono man mano che ognuno finisce.");
         table.put("How much of a video you watch before it's hidden next time. Zero counts it after a few seconds.",
@@ -2690,8 +2690,8 @@ final class L10nTranslationsIt {
                 "Limite dei video offline");
         table.put("Oldest first",
                 "Prima i più vecchi");
-        table.put("On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video.",
-                "In un post con una sola foto, Scarica video crea un MP4 con l'audio del post e senza logo TikTok né scheda finale. In un post con più foto, Scarica chiede se vuoi gli originali o un solo video.");
+        table.put("On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video. A photo story saves as a video too.",
+                "In un post con una sola foto, Scarica video crea un MP4 con l'audio del post e senza logo TikTok né scheda finale. In un post con più foto, Scarica chiede se vuoi gli originali o un solo video. Anche una storia di foto viene salvata come video.");
         table.put("On mobile data",
                 "Con dati mobili");
         table.put("On or off",

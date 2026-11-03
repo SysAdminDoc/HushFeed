@@ -1684,9 +1684,7 @@ TikTok is locked	TikTok está bloqueado
 Unlock	Desbloquear
 TikTok can't lock without a phone screen lock	TikTok no se puede bloquear sin bloqueo de pantalla
 Save photo posts as a video	Guardar publicaciones de fotos como vídeo
-On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video.	En una publicación con una foto, Descargar video crea un MP4 con el sonido de la publicación y sin logo de TikTok ni tarjeta final. En una publicación con varias fotos, Descargar pregunta si quieres los originales o un solo video.
 Seconds per photo	Segundos por foto
-How long each photo stays on screen in a video made from a photo post.	Cuánto tiempo se ve cada foto en un vídeo hecho a partir de una publicación de fotos.
 Save photos or a video?	¿Guardar fotos o un vídeo?
 Save photos	Guardar fotos
 Save as video	Guardar como vídeo
@@ -2441,3 +2439,5 @@ Couldn't finish wiping TikTok's data. Tap to try again.	No se pudieron borrar de
 Use this phone's own IDs	Usar los ID propios de este teléfono
 Wipes TikTok's data once, on the next start, and goes back to this phone's real Android ID and advertising ID. You'll be signed out and lose your drafts.	Borra los datos de TikTok una vez, en el próximo inicio, y vuelve al ID de Android y al ID de publicidad reales de este teléfono. Se cerrará tu sesión y perderás tus borradores.
 TikTok goes back to this phone's IDs after the restart. Tap again to cancel.	TikTok vuelve a los ID de este teléfono tras el reinicio. Toca de nuevo para cancelar.
+On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video. A photo story saves as a video too.	En una publicación con una foto, Descargar video crea un MP4 con el sonido de la publicación y sin logo de TikTok ni tarjeta final. En una publicación con varias fotos, Descargar pregunta si quieres los originales o un solo video. Una historia de fotos también se guarda como video.
+How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.	Cuánto tiempo se ve cada foto en un vídeo hecho a partir de una publicación de fotos. El vídeo de una historia dura lo mismo que la historia.

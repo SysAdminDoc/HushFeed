@@ -863,7 +863,6 @@ Home,首页
 Home tab name,主页选项卡名称
 Hook status,挂钩状态
 How far each edge press moves the video.,每次边缘按压会使视频移动多远.
-How long each photo stays on screen in a video made from a photo post.,由照片帖子制作的视频中每张照片在屏幕上停留的时间.
 How much of a video you watch before it's hidden next time. Zero counts it after a few seconds.,下次视频被隐藏之前你观看了多少视频。几秒钟后零开始计数.
 "How wide each edge strip is, as a percent of the screen width.",每个边缘条的宽度，以屏幕宽度的百分比表示.
 Hushfeed,Hushfeed
@@ -1153,7 +1152,6 @@ Offer LIVE quality in more rooms,在更多房间提供 LIVE 品质
 Offer clear screen in every LIVE room,每个 LIVE 房间均提供清晰的屏幕
 Offline videos,离线视频
 Offline videos limit,离线视频限制
-"On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video.",在一张照片帖子中，下载视频会生成带有帖子声音的 MP4，但没有 TikTok 徽标或结束卡。在包含多张照片的帖子中，“下载”会询问你是否想要原件或一个视频.
 On mobile data,关于移动数据
 On or off,打开或关闭
 "On the Friends tab, hide posts, reposts and LIVEs from accounts that aren't a mutual follow, suggested accounts included. Your own posts stay.",在“好友”选项卡上，隐藏非相互关注账号（包括建议账号）的帖子、转发和直播。你自己的帖子会保留.
@@ -2410,3 +2408,5 @@ Couldn't finish wiping TikTok's data. Tap to try again.,未能清除完 TikTok �
 Use this phone's own IDs,使用这部手机自己的 ID
 "Wipes TikTok's data once, on the next start, and goes back to this phone's real Android ID and advertising ID. You'll be signed out and lose your drafts.","在下次启动时清除一次 TikTok 的数据,并换回这部手机真实的 Android ID 和广告 ID. 你会退出登录并丢失草稿."
 TikTok goes back to this phone's IDs after the restart. Tap again to cancel.,重启后 TikTok 会换回这部手机的 ID. 再次点按可取消.
+"On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video. A photo story saves as a video too.",在一张照片帖子中，下载视频会生成带有帖子声音的 MP4，但没有 TikTok 徽标或结束卡。在包含多张照片的帖子中，“下载”会询问你是否想要原件或一个视频。照片故事也会保存为视频.
+How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.,由照片帖子制作的视频中每张照片在屏幕上停留的时间。故事的视频时长与故事相同.

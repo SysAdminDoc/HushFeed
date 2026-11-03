@@ -1980,8 +1980,8 @@ final class L10nTranslationsAz {
                 "Qoşulma statusu");
         table.put("How far each edge press moves the video.",
                 "Hər kənar basışının videonu nə qədər irəli çəkdiyi.");
-        table.put("How long each photo stays on screen in a video made from a photo post.",
-                "Foto paylaşımından hazırlanan videoda hər fotonun ekranda nə qədər qalması.");
+        table.put("How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.",
+                "Foto paylaşımından hazırlanan videoda hər fotonun ekranda nə qədər qalması. Hekayənin videosu hekayənin özü qədər davam edir.");
         table.put("How many saves run at the same time. The others wait in line and start as each one ends.",
                 "Eyni anda neçə saxlamanın işlədiyi. Digərləri növbədə gözləyir və hər biri bitdikcə başlayır.");
         table.put("How much of a video you watch before it's hidden next time. Zero counts it after a few seconds.",
@@ -2690,8 +2690,8 @@ final class L10nTranslationsAz {
                 "Oflayn videolar limiti");
         table.put("Oldest first",
                 "Əvvəlcə ən köhnələr");
-        table.put("On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video.",
-                "Tək fotolu yazıda Download video yazının səsi ilə, TikTok loqosu və son kart olmadan MP4 hazırlayır. Bir neçə fotolu yazıda Download orijinalları, yoxsa tək video istədiyinizi soruşur.");
+        table.put("On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video. A photo story saves as a video too.",
+                "Tək fotolu yazıda Download video yazının səsi ilə, TikTok loqosu və son kart olmadan MP4 hazırlayır. Bir neçə fotolu yazıda Download orijinalları, yoxsa tək video istədiyinizi soruşur. Foto hekayə də video kimi saxlanılır.");
         table.put("On mobile data",
                 "Mobil data ilə");
         table.put("On or off",

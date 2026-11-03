@@ -1684,9 +1684,7 @@ TikTok is locked	TikTok kilidlidir
 Unlock	Kilidi açın
 TikTok can't lock without a phone screen lock	Ekran kilidi yoxdur, TikTok kilidlənə bilməz
 Save photo posts as a video	Foto paylaşımlarını video kimi saxla
-On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video.	Tək fotolu yazıda Download video yazının səsi ilə, TikTok loqosu və son kart olmadan MP4 hazırlayır. Bir neçə fotolu yazıda Download orijinalları, yoxsa tək video istədiyinizi soruşur.
 Seconds per photo	Hər foto üçün saniyə
-How long each photo stays on screen in a video made from a photo post.	Foto paylaşımından hazırlanan videoda hər fotonun ekranda nə qədər qalması.
 Save photos or a video?	Fotolar, yoxsa video saxlanılsın?
 Save photos	Fotoları saxla
 Save as video	Video kimi saxla
@@ -2441,3 +2439,5 @@ Couldn't finish wiping TikTok's data. Tap to try again.	TikTok-un məlumatların
 Use this phone's own IDs	Bu telefonun öz ID-lərini istifadə et
 Wipes TikTok's data once, on the next start, and goes back to this phone's real Android ID and advertising ID. You'll be signed out and lose your drafts.	Növbəti başlanğıcda TikTok-un məlumatlarını bir dəfə silir və bu telefonun real Android ID və reklam ID-sinə qayıdır. Hesabdan çıxacaqsınız və qaralamalarınızı itirəcəksiniz.
 TikTok goes back to this phone's IDs after the restart. Tap again to cancel.	Yenidən başladıqdan sonra TikTok bu telefonun ID-lərinə qayıdır. Ləğv etmək üçün yenidən toxunun.
+On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video. A photo story saves as a video too.	Tək fotolu yazıda Download video yazının səsi ilə, TikTok loqosu və son kart olmadan MP4 hazırlayır. Bir neçə fotolu yazıda Download orijinalları, yoxsa tək video istədiyinizi soruşur. Foto hekayə də video kimi saxlanılır.
+How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.	Foto paylaşımından hazırlanan videoda hər fotonun ekranda nə qədər qalması. Hekayənin videosu hekayənin özü qədər davam edir.

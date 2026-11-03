@@ -238,7 +238,7 @@ public class BatchSaveTest {
         Settings.DOWNLOAD_PHOTOS_AS_VIDEO.save(true);
         Settings.CHECK_SAVED_VIDEOS.save(true);
         List<String> made = new ArrayList<>();
-        SlideshowVideo.makerForTests = name -> {
+        SlideshowVideo.makerForTests = (name, seconds) -> {
             made.add(name);
             java.io.File file = new java.io.File(context.getCacheDir(), "batch-photo-video.mp4");
             java.nio.file.Files.write(file.toPath(), new byte[]{1, 2, 3, 4});

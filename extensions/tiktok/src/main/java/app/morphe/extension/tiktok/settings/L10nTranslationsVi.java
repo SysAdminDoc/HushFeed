@@ -1980,8 +1980,8 @@ final class L10nTranslationsVi {
                 "Trạng thái Hook");
         table.put("How far each edge press moves the video.",
                 "Khoảng cách video di chuyển khi nhấn vào mép màn hình.");
-        table.put("How long each photo stays on screen in a video made from a photo post.",
-                "Thời gian mỗi bức ảnh hiển thị trên màn hình trong video được tạo từ bài đăng ảnh.");
+        table.put("How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.",
+                "Thời gian mỗi bức ảnh hiển thị trên màn hình trong video được tạo từ bài đăng ảnh. Video của tin dài bằng chính tin đó.");
         table.put("How many saves run at the same time. The others wait in line and start as each one ends.",
                 "Số lượng tệp được tải xuống cùng một lúc. Các tệp còn lại sẽ xếp hàng chờ và bắt đầu tải khi có tệp hoàn tất.");
         table.put("How much of a video you watch before it's hidden next time. Zero counts it after a few seconds.",
@@ -2690,8 +2690,8 @@ final class L10nTranslationsVi {
                 "Giới hạn video ngoại tuyến");
         table.put("Oldest first",
                 "Cũ nhất trước");
-        table.put("On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video.",
-                "Đối với bài đăng 1 ảnh, nút Tải xuống video sẽ tạo tệp MP4 kèm âm thanh bài đăng và không có logo TikTok hay đoạn kết. Đối với bài đăng nhiều ảnh, nút Tải xuống sẽ hỏi bạn muốn lấy các ảnh gốc hay 1 video tổng hợp.");
+        table.put("On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video. A photo story saves as a video too.",
+                "Đối với bài đăng 1 ảnh, nút Tải xuống video sẽ tạo tệp MP4 kèm âm thanh bài đăng và không có logo TikTok hay đoạn kết. Đối với bài đăng nhiều ảnh, nút Tải xuống sẽ hỏi bạn muốn lấy các ảnh gốc hay 1 video tổng hợp. Tin dạng ảnh cũng được lưu thành video.");
         table.put("On mobile data",
                 "Khi dùng dữ liệu di động");
         table.put("On or off",

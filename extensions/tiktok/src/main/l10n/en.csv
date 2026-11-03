@@ -936,7 +936,7 @@ Home,Home
 Home tab name,Home tab name
 Hook status,Hook status
 How far each edge press moves the video.,How far each edge press moves the video.
-How long each photo stays on screen in a video made from a photo post.,How long each photo stays on screen in a video made from a photo post.
+How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.,How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.
 How many saves run at the same time. The others wait in line and start as each one ends.,How many saves run at the same time. The others wait in line and start as each one ends.
 How much of a video you watch before it's hidden next time. Zero counts it after a few seconds.,How much of a video you watch before it's hidden next time. Zero counts it after a few seconds.
 How much of the video shows through the glass pill on the main feed. Most see-through shows the most and Frosted the least.,How much of the video shows through the glass pill on the main feed. Most see-through shows the most and Frosted the least.
@@ -1282,7 +1282,7 @@ Offer clear screen in every LIVE room,Offer clear screen in every LIVE room
 Offline videos,Offline videos
 Offline videos limit,Offline videos limit
 Oldest first,Oldest first
-"On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video.","On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video."
+"On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video. A photo story saves as a video too.","On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video. A photo story saves as a video too."
 On mobile data,On mobile data
 On or off,On or off
 "On the Friends tab, hide posts, reposts and LIVEs from accounts that aren't a mutual follow, suggested accounts included. Your own posts stay.","On the Friends tab, hide posts, reposts and LIVEs from accounts that aren't a mutual follow, suggested accounts included. Your own posts stay."

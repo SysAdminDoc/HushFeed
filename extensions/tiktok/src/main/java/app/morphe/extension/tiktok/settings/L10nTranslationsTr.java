@@ -1980,8 +1980,8 @@ final class L10nTranslationsTr {
                 "Kanca durumu");
         table.put("How far each edge press moves the video.",
                 "Kenara her basışın videoyu ne kadar sardığı.");
-        table.put("How long each photo stays on screen in a video made from a photo post.",
-                "Bir fotoğraf gönderisinden yapılan videoda her fotoğrafın ekranda ne kadar kalacağı.");
+        table.put("How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.",
+                "Bir fotoğraf gönderisinden yapılan videoda her fotoğrafın ekranda ne kadar kalacağı. Bir hikayenin videosu hikaye kadar sürer.");
         table.put("How many saves run at the same time. The others wait in line and start as each one ends.",
                 "Aynı anda kaç kaydın süreceği. Diğerleri sırada bekler ve her biri bittikçe başlar.");
         table.put("How much of a video you watch before it's hidden next time. Zero counts it after a few seconds.",
@@ -2690,8 +2690,8 @@ final class L10nTranslationsTr {
                 "Çevrimdışı video sınırı");
         table.put("Oldest first",
                 "Önce en eski");
-        table.put("On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video.",
-                "Tek fotoğraflı bir gönderide Videoyu indir, gönderinin sesiyle, TikTok logosu ve bitiş kartı olmadan bir MP4 oluşturur. Birden çok fotoğraflı gönderide İndir, orijinalleri mi yoksa tek bir video mu istediğini sorar.");
+        table.put("On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video. A photo story saves as a video too.",
+                "Tek fotoğraflı bir gönderide Videoyu indir, gönderinin sesiyle, TikTok logosu ve bitiş kartı olmadan bir MP4 oluşturur. Birden çok fotoğraflı gönderide İndir, orijinalleri mi yoksa tek bir video mu istediğini sorar. Fotoğraflı bir hikaye de video olarak kaydedilir.");
         table.put("On mobile data",
                 "Mobil veride");
         table.put("On or off",

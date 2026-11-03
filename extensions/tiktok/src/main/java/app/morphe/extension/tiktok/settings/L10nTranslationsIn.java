@@ -1980,8 +1980,8 @@ final class L10nTranslationsIn {
                 "Pemeriksaan fitur");
         table.put("How far each edge press moves the video.",
                 "Seberapa jauh setiap tekanan di tepi memindahkan video.");
-        table.put("How long each photo stays on screen in a video made from a photo post.",
-                "Berapa lama setiap foto tampil di layar dalam video yang dibuat dari unggahan foto.");
+        table.put("How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.",
+                "Berapa lama setiap foto tampil di layar dalam video yang dibuat dari unggahan foto. Video dari Story berdurasi sama dengan Story-nya.");
         table.put("How many saves run at the same time. The others wait in line and start as each one ends.",
                 "Berapa penyimpanan yang berjalan bersamaan. Sisanya menunggu dalam antrean dan dimulai setiap kali satu selesai.");
         table.put("How much of a video you watch before it's hidden next time. Zero counts it after a few seconds.",
@@ -2690,8 +2690,8 @@ final class L10nTranslationsIn {
                 "Batas video offline");
         table.put("Oldest first",
                 "Terlama dulu");
-        table.put("On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video.",
-                "Pada kiriman satu foto, Unduh video membuat MP4 dengan suara kiriman tanpa logo TikTok dan kartu penutup. Pada kiriman dengan beberapa foto, Unduh menanyakan apakah kamu mau foto asli atau satu video.");
+        table.put("On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video. A photo story saves as a video too.",
+                "Pada kiriman satu foto, Unduh video membuat MP4 dengan suara kiriman tanpa logo TikTok dan kartu penutup. Pada kiriman dengan beberapa foto, Unduh menanyakan apakah kamu mau foto asli atau satu video. Story foto juga disimpan sebagai video.");
         table.put("On mobile data",
                 "Saat memakai data seluler");
         table.put("On or off",

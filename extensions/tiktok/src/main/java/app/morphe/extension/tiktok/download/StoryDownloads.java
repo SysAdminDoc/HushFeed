@@ -292,6 +292,10 @@ public final class StoryDownloads {
         if (VideoDownloads.start(aweme, context, false)) return true;
 
         List<List<String>> photos = OriginalPhotos.sources(aweme);
+        // Saved as photos a story loses its sound, so the switch for photo posts makes a video of it too.
+        if (!photos.isEmpty() && SlideshowVideo.enabled() && !OriginalPhotos.anyChosenIsLive(aweme, null)) {
+            return SlideshowVideo.saveStory(aweme);
+        }
         Object storyVideo = Reflect.property(aweme, "getVideo", "video");
         // Reached on Automatic only when no rendition above was usable, and with a chosen
         // quality that left the save to the story. The tallest rendition comes first (#155).

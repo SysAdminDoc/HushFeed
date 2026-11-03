@@ -232,9 +232,11 @@ public class DownloadsPreferenceCategory extends ConditionalPreferenceCategory {
             addPreference(new TogglePreference(context, "Save photo posts as a video",
                     "On a one-photo post, Download video makes an MP4 with the post's sound and "
                             + "no TikTok logo or end card. On a post with several photos, "
-                            + "Download asks if you want the originals or one video.", Settings.DOWNLOAD_PHOTOS_AS_VIDEO));
+                            + "Download asks if you want the originals or one video. A photo story "
+                            + "saves as a video too.", Settings.DOWNLOAD_PHOTOS_AS_VIDEO));
             addPreference(new NumberInputPreference(context, "Seconds per photo",
-                    "How long each photo stays on screen in a video made from a photo post.",
+                    "How long each photo stays on screen in a video made from a photo post. A "
+                            + "story's video runs as long as the story does.",
                     Settings.PHOTO_VIDEO_SECONDS, "%1$s second", "%1$s seconds"));
         }
         if (SettingsStatus.downloadEnabled) {

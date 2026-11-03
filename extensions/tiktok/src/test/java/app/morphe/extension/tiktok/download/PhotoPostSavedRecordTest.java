@@ -138,7 +138,7 @@ public class PhotoPostSavedRecordTest {
     @Test public void aPostSavedAsAVideoIsRecordedAndOffered() throws Exception {
         var post = post("video-recorded", 2);
         int[] made = {0};
-        SlideshowVideo.makerForTests = name -> {
+        SlideshowVideo.makerForTests = (name, seconds) -> {
             made[0]++;
             return file(name);
         };

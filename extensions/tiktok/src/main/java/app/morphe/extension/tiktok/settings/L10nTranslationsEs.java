@@ -1980,8 +1980,8 @@ final class L10nTranslationsEs {
                 "Comprobación de funciones");
         table.put("How far each edge press moves the video.",
                 "Cuánto avanza el vídeo con cada toque en el borde.");
-        table.put("How long each photo stays on screen in a video made from a photo post.",
-                "Cuánto tiempo se ve cada foto en un vídeo hecho a partir de una publicación de fotos.");
+        table.put("How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.",
+                "Cuánto tiempo se ve cada foto en un vídeo hecho a partir de una publicación de fotos. El vídeo de una historia dura lo mismo que la historia.");
         table.put("How many saves run at the same time. The others wait in line and start as each one ends.",
                 "Cuántos guardados se hacen a la vez. Los demás esperan en la cola y empiezan a medida que termina cada uno.");
         table.put("How much of a video you watch before it's hidden next time. Zero counts it after a few seconds.",
@@ -2690,8 +2690,8 @@ final class L10nTranslationsEs {
                 "Límite de vídeos sin conexión");
         table.put("Oldest first",
                 "Más antiguos primero");
-        table.put("On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video.",
-                "En una publicación con una foto, Descargar video crea un MP4 con el sonido de la publicación y sin logo de TikTok ni tarjeta final. En una publicación con varias fotos, Descargar pregunta si quieres los originales o un solo video.");
+        table.put("On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video. A photo story saves as a video too.",
+                "En una publicación con una foto, Descargar video crea un MP4 con el sonido de la publicación y sin logo de TikTok ni tarjeta final. En una publicación con varias fotos, Descargar pregunta si quieres los originales o un solo video. Una historia de fotos también se guarda como video.");
         table.put("On mobile data",
                 "Con datos móviles");
         table.put("On or off",

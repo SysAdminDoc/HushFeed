@@ -1822,9 +1822,7 @@ TikTok is locked	TikTok заблокирован
 Unlock	Разблокировать
 TikTok can't lock without a phone screen lock	Без блокировки экрана TikTok не заблокируется
 Save photo posts as a video	Сохранять фотопубликации как видео
-On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video.	В посте с одним фото «Скачать видео» делает MP4 со звуком поста, без логотипа TikTok и заключительной заставки. В посте с несколькими фото «Скачать» спрашивает, нужны ли оригиналы или одно видео.
 Seconds per photo	Секунд на фото
-How long each photo stays on screen in a video made from a photo post.	Сколько каждое фото остаётся на экране в видео из фотопубликации.
 Save photos or a video?	Сохранить фото или видео?
 Save photos	Сохранить фото
 Save as video	Сохранить как видео
@@ -2618,3 +2616,5 @@ Couldn't finish wiping TikTok's data. Tap to try again.	Не удалось до
 Use this phone's own IDs	Использовать ID этого телефона
 Wipes TikTok's data once, on the next start, and goes back to this phone's real Android ID and advertising ID. You'll be signed out and lose your drafts.	Один раз, при следующем запуске, стирает данные TikTok и возвращает настоящие Android ID и рекламный ID этого телефона. Вы выйдете из аккаунта и потеряете черновики.
 TikTok goes back to this phone's IDs after the restart. Tap again to cancel.	После перезапуска TikTok вернётся к ID этого телефона. Нажмите ещё раз, чтобы отменить.
+On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video. A photo story saves as a video too.	В посте с одним фото «Скачать видео» делает MP4 со звуком поста, без логотипа TikTok и заключительной заставки. В посте с несколькими фото «Скачать» спрашивает, нужны ли оригиналы или одно видео. Фотоистория тоже сохраняется как видео.
+How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.	Сколько каждое фото остаётся на экране в видео из фотопубликации. Видео из истории длится столько же, сколько сама история.

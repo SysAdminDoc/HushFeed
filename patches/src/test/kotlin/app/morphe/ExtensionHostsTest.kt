@@ -8,7 +8,7 @@ import org.junit.Test
 
 /**
  * What the README's Privacy section says about the extension, held to its source: which web
- * addresses the code names, and the two places that open a connection by themselves.
+ * addresses the code names, and the three places that open a connection by themselves.
  *
  * <p>Comments don't count. Licence headers and design notes name hosts the code never contacts,
  * so string literals and code are read apart first, which also stops the `//` inside a URL from
@@ -34,12 +34,13 @@ class ExtensionHostsTest {
     }
 
     @Test
-    fun `only the media transport and the proxy check open connections themselves`() {
+    fun `only the media transport, the proxy check and the proxy relay open connections themselves`() {
         val openers = sources().filter { (_, source) -> NETWORK.containsMatchIn(split(source).second) }
             .map { it.first }.toSortedSet()
         assertEquals(
-            "The README says the extension goes online by itself only through the media transport " +
-                "and Network proxy's check that the proxy answers. These files open connections",
+            "The README says the extension goes online by itself only through the media transport, " +
+                "Network proxy's check that the proxy answers and the loopback relay that signs in to a " +
+                "proxy with a password. These files open connections",
             OPENERS.toSortedSet(),
             openers,
         )
@@ -104,12 +105,14 @@ class ExtensionHostsTest {
         /**
          * The media transport (the client, and the connection it pins to a checked address), and
          * Network proxy's check, which asks the proxy the user set for a greeting or a tunnel and
-         * hangs up on the answer.
+         * hangs up on the answer, and the relay on the phone's own loopback address that signs
+         * TikTok in to a proxy with a password (the README's Privacy section names it).
          */
         val OPENERS = setOf(
             "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/download/MediaTransport.java",
             "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/download/PinnedMediaConnection.java",
             "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/network/NetworkProxy.java",
+            "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/network/ProxyRelay.java",
         )
         val URL = Regex("""(?:https?|wss?)://([A-Za-z0-9.-]+)""")
         val NETWORK = Regex(

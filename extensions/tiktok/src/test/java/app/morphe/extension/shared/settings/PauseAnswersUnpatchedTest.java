@@ -20,6 +20,7 @@ import app.morphe.extension.tiktok.navigation.NavigationTabsFilter;
 import app.morphe.extension.tiktok.seekbar.SeekbarPatch;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsBackup;
+import app.morphe.extension.tiktok.settings.SettingsSearchHistory;
 import app.morphe.extension.tiktok.settings.preference.TogglePreference;
 import app.morphe.extension.tiktok.share.ShareModelFilter;
 import app.morphe.extension.tiktok.share.ShareSurface;
@@ -84,6 +85,8 @@ public class PauseAnswersUnpatchedTest {
             "session_budget_reset_hour",
             // The day the streak's message last went, so a pause can't send a second one.
             "auto_streak_state",
+            // The settings screen's recent searches, which it still lists and adds to while paused.
+            "recent_settings_searches",
             // Downloads rewrite TikTok's folder and file name with no switch in front.
             "download_video_path", "download_photo_path", "download_sticker_path",
             "download_sticker_format", "download_video_filename_template",
@@ -292,6 +295,22 @@ public class PauseAnswersUnpatchedTest {
             Setting.setPausedForProcess(false);
             RememberClearDisplayPatch.rememberClearDisplayEvent(new ClearEvent(false, 0));
         }
+    }
+
+    @Test public void aSearchWhilePausedJoinsTheRecentSearchesInsteadOfReplacingThem() {
+        SettingsSearchHistory.clear();
+        SettingsSearchHistory.add("speed");
+        SettingsSearchHistory.add("ads");
+        Setting.setPausedForProcess(true);
+        try {
+            assertEquals("paused, the settings screen lost its recent searches",
+                    Arrays.asList("ads", "speed"), SettingsSearchHistory.recent());
+            SettingsSearchHistory.add("comments");
+            assertEquals(Arrays.asList("comments", "ads", "speed"), SettingsSearchHistory.recent());
+        } finally {
+            Setting.setPausedForProcess(false);
+        }
+        assertEquals(Arrays.asList("comments", "ads", "speed"), SettingsSearchHistory.recent());
     }
 
     /** TikTok's clear-display event, by the two field names the hook reads. */

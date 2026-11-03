@@ -2,6 +2,8 @@ package app.morphe.patches.tiktok.interaction.looping
 
 import app.morphe.BridgeTypeFlow
 import app.morphe.Fixtures
+import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
+import app.morphe.util.addInstructions
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcodes
@@ -15,9 +17,9 @@ import org.junit.Test
 
 /**
  * What Keep the next videos in full screen stands on, held to each declared build: the Full screen
- * button's handler sets the viewer's list in the shape the hook looks for, TikTok's viewer test can
- * be called from the extension, and the adapter the extension reads keeps getCount and getItem
- * under their real names and public.
+ * button's handler sets the viewer's list in the shape the hook looks for, the viewer's first page
+ * is built where the whole list can go in, TikTok's viewer test can be called from the extension,
+ * and the adapter the extension reads keeps getCount and getItem under their real names and public.
  */
 class FullScreenNextVideosAnchorsTest {
     private fun classes(apk: java.io.File): List<ClassDef> {
@@ -35,6 +37,35 @@ class FullScreenNextVideosAnchorsTest {
             assertEquals("handlers: ${handlers.map { it.name }}", 1, handlers.size)
             val set = handlers.single().fullScreenListSet()
             assertNotNull("the handler no longer clears and fills one ArrayList", set)
+        }
+    }
+
+    @Test
+    fun `the viewer's first page takes the whole list and moves the read position`() {
+        Fixtures.forEachDeclared { apk ->
+            val all = classes(apk)
+            val viewModel = all.single { it.type == FULL_SCREEN_VIEW_MODEL }
+            val pages = viewModel.methods.filter {
+                it.returnType == "Ljava/util/List;" && it.parameterTypes.isEmpty() &&
+                    it.implementation?.instructions?.any { code ->
+                        code.getReference<StringReference>()?.string == FULL_SCREEN_FIRST_PAGE_TAG
+                    } == true
+            }
+            assertEquals("first pages: ${pages.map { it.name }}", 1, pages.size)
+            val native = pages.single()
+            val page = native.fullScreenFirstPage()
+            assertNotNull("the first page's shape changed", page)
+            val holder = all.single { it.type == page!!.list.definingClass }
+            val position = holder.fullScreenReadPosition()
+            assertNotNull("${holder.type} has no read position", position)
+            assertTrue("${holder.type} isn't public", AccessFlags.PUBLIC.isSet(holder.accessFlags))
+            assertTrue(
+                "the read position isn't public",
+                AccessFlags.PUBLIC.isSet(holder.fields.single { it.type == "J" }.accessFlags),
+            )
+            val patched = MutableMethod(native)
+            patched.addInstructions(page!!.at, fullScreenFirstPageHook(page, position!!))
+            assertEquals(emptyList<BridgeTypeFlow.Problem>(), BridgeTypeFlow.check(patched))
         }
     }
 

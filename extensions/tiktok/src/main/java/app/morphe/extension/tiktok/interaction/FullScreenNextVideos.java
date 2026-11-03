@@ -24,8 +24,10 @@ import app.morphe.extension.tiktok.settings.Settings;
  * Hands TikTok's full screen viewer the videos after the one on screen (#286). The Full screen
  * button sets the viewer's list to that one video, and off For You the viewer pages through that
  * list with no server call, so it has nothing to swipe to and its own move to the next video at a
- * video's end has nowhere to go. The hook runs right after the button sets the list, and reads the
- * rest from the pager on screen.
+ * video's end has nowhere to go. A longer list isn't enough by itself: the viewer takes the first
+ * video as its first page and only asks for more when the page changes, which a one page viewer
+ * never does. So the rest is read from the pager on screen as the button is tapped, and goes in
+ * with that first page. Videos the page loads after that tap don't come along.
  */
 public final class FullScreenNextVideos {
     private static final String FAMILY = "full screen next videos";
@@ -38,8 +40,20 @@ public final class FullScreenNextVideos {
         boolean plays(Object video);
     }
 
-    /** Takes the viewer's list as the button left it, holding the video on screen alone. */
-    public static void fill(Object video, List<Object> list) {
+    /** The video the button was tapped on and the ones after it, kept for as long as that viewer lasts. */
+    private static volatile List<Object> opened;
+
+    /** Whether the viewer took them, so its own list has nothing left to deal out. */
+    private static volatile boolean handedOver;
+
+    /** Runs as the button sets the viewer's list, while the page it was tapped on still shows. */
+    public static void fill(Object video) {
+        fill(video, FullScreenNextVideos::playsFullScreen);
+    }
+
+    static void fill(Object video, Playable playable) {
+        opened = null;
+        handedOver = false;
         try {
             HookStatus.bound(FAMILY, "viewer's list");
             if (!Settings.FULL_SCREEN_NEXT_VIDEOS.get()) return;
@@ -48,15 +62,41 @@ public final class FullScreenNextVideos {
             List<View> pagers = new ArrayList<>();
             findPagers(activity.findViewById(android.R.id.content), pagers);
             for (View pager : pagers) {
+                List<Object> list = new ArrayList<>();
+                list.add(video);
                 Object adapter = pager.getClass().getMethod("getAdapter").invoke(pager);
-                if (addVideosAfter(adapter, video, list, FullScreenNextVideos::playsFullScreen)) {
+                if (addVideosAfter(adapter, video, list, playable)) {
                     Logger.printDebug(() -> "Full screen starts with " + list.size() + " video(s)");
+                    opened = list;
                     return;
                 }
             }
         } catch (Throwable ex) {
             HookStatus.threw(FAMILY, "fill the viewer's list", ex);
         }
+    }
+
+    /** Takes the viewer's first page, its one video, and gives back that video and the ones after it. */
+    public static List<Object> wholeList(List<Object> firstPage) {
+        try {
+            List<Object> videos = opened;
+            if (videos == null || videos.size() < 2 || firstPage == null || firstPage.size() != 1
+                    || !sameVideo(firstPage.get(0), videos.get(0))) {
+                return firstPage;
+            }
+            List<Object> whole = new ArrayList<>(firstPage);
+            whole.addAll(videos.subList(1, videos.size()));
+            handedOver = true;
+            return whole;
+        } catch (Throwable ex) {
+            HookStatus.threw(FAMILY, "hand over the viewer's list", ex);
+            return firstPage;
+        }
+    }
+
+    /** Where the viewer's own list reads from next: past its end once the videos were handed over. */
+    public static long readFrom(long position) {
+        return handedOver ? Long.MAX_VALUE : position;
     }
 
     /** False when this adapter doesn't hold the video, so the video came from another pager. */

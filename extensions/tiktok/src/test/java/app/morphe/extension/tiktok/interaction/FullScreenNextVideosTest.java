@@ -63,7 +63,20 @@ public class FullScreenNextVideosTest {
 
     @After public void cleanup() {
         Settings.FULL_SCREEN_NEXT_VIDEOS.resetToDefault();
+        FullScreenNextVideos.fill(null);
         Utils.setActivity(null);
+    }
+
+    private static void showPagerWith(Aweme... videos) {
+        Activity activity = Robolectric.buildActivity(Activity.class).setup().visible().get();
+        Utils.setActivity(activity);
+        VerticalViewPager pager = new VerticalViewPager(activity);
+        pager.adapter = new Adapter(videos);
+        activity.setContentView(pager);
+        View root = pager.getRootView();
+        root.measure(View.MeasureSpec.makeMeasureSpec(400, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(800, View.MeasureSpec.EXACTLY));
+        root.layout(0, 0, 400, 800);
     }
 
     @Test
@@ -124,24 +137,89 @@ public class FullScreenNextVideosTest {
         assertEquals(200, list.size());
     }
 
+    /** The viewer pages through its own list on a load more, and from the start it'd deal the first video again. */
     @Test
-    public void withTheSwitchOffTheListStaysAsTheButtonLeftIt() {
-        Activity activity = Robolectric.buildActivity(Activity.class).setup().visible().get();
-        Utils.setActivity(activity);
-        VerticalViewPager pager = new VerticalViewPager(activity);
+    public void theFirstPageGrowsToTheWholeListAndTheOwnListHasNoMoreToGive() {
         Aweme onScreen = video("1");
-        pager.adapter = new Adapter(onScreen, video("2"));
-        activity.setContentView(pager);
-        View root = pager.getRootView();
-        root.measure(View.MeasureSpec.makeMeasureSpec(400, View.MeasureSpec.EXACTLY),
-                View.MeasureSpec.makeMeasureSpec(800, View.MeasureSpec.EXACTLY));
-        root.layout(0, 0, 400, 800);
-        List<Object> list = new ArrayList<>(Arrays.asList(onScreen));
+        Aweme next = video("2");
+        showPagerWith(onScreen, next);
+        Settings.FULL_SCREEN_NEXT_VIDEOS.save(true);
+
+        FullScreenNextVideos.fill(onScreen, it -> true);
+
+        assertEquals("not moved before the viewer takes them", 0, FullScreenNextVideos.readFrom(0));
+        assertEquals(Arrays.asList(onScreen, next), FullScreenNextVideos.wholeList(Arrays.asList(onScreen)));
+        assertEquals(Long.MAX_VALUE, FullScreenNextVideos.readFrom(0));
+    }
+
+    /** The button's list outlives the activity, so a recreated viewer asks again. */
+    @Test
+    public void aSecondAskForTheFirstPageGetsTheSameAnswer() {
+        Aweme onScreen = video("1");
+        Aweme next = video("2");
+        showPagerWith(onScreen, next);
+        Settings.FULL_SCREEN_NEXT_VIDEOS.save(true);
+
+        FullScreenNextVideos.fill(onScreen, it -> true);
+        FullScreenNextVideos.wholeList(Arrays.asList(onScreen));
+
+        assertEquals(Arrays.asList(onScreen, next), FullScreenNextVideos.wholeList(Arrays.asList(onScreen)));
+    }
+
+    @Test
+    public void aFirstPageThatIsntThatOneVideoIsLeftAlone() {
+        Aweme onScreen = video("1");
+        showPagerWith(onScreen, video("2"));
+        Settings.FULL_SCREEN_NEXT_VIDEOS.save(true);
+        FullScreenNextVideos.fill(onScreen, it -> true);
+
+        List<Object> other = Arrays.asList(video("9"));
+        assertEquals(other, FullScreenNextVideos.wholeList(other));
+        List<Object> empty = new ArrayList<>();
+        assertEquals(empty, FullScreenNextVideos.wholeList(empty));
+        assertEquals(0, FullScreenNextVideos.readFrom(0));
+    }
+
+    @Test
+    public void aVideoWithNothingAfterItChangesNothing() {
+        Aweme onScreen = video("1");
+        showPagerWith(onScreen);
+        Settings.FULL_SCREEN_NEXT_VIDEOS.save(true);
+        FullScreenNextVideos.fill(onScreen, it -> true);
+
+        List<Object> firstPage = Arrays.asList(onScreen);
+        assertEquals(firstPage, FullScreenNextVideos.wholeList(firstPage));
+        assertEquals("the own list still deals this video out", 0, FullScreenNextVideos.readFrom(0));
+    }
+
+    @Test
+    public void withTheSwitchOffTheFirstPageStaysAsItWas() {
+        Aweme onScreen = video("1");
+        showPagerWith(onScreen, video("2"));
 
         Settings.FULL_SCREEN_NEXT_VIDEOS.save(false);
-        FullScreenNextVideos.fill(onScreen, list);
+        FullScreenNextVideos.fill(onScreen, it -> true);
 
-        assertEquals(Arrays.asList(onScreen), list);
+        List<Object> firstPage = Arrays.asList(onScreen);
+        assertEquals(firstPage, FullScreenNextVideos.wholeList(firstPage));
+        assertEquals(0, FullScreenNextVideos.readFrom(0));
+    }
+
+    /** One viewer's videos don't carry over to the next one opened with the switch off. */
+    @Test
+    public void aNewOpenForgetsTheLastOne() {
+        Aweme onScreen = video("1");
+        showPagerWith(onScreen, video("2"));
+        Settings.FULL_SCREEN_NEXT_VIDEOS.save(true);
+        FullScreenNextVideos.fill(onScreen, it -> true);
+        FullScreenNextVideos.wholeList(Arrays.asList(onScreen));
+
+        Settings.FULL_SCREEN_NEXT_VIDEOS.save(false);
+        FullScreenNextVideos.fill(onScreen, it -> true);
+
+        List<Object> firstPage = Arrays.asList(onScreen);
+        assertEquals(firstPage, FullScreenNextVideos.wholeList(firstPage));
+        assertEquals(0, FullScreenNextVideos.readFrom(0));
     }
 
     /** An unpatched build answers no, so the stub alone changes nothing. */

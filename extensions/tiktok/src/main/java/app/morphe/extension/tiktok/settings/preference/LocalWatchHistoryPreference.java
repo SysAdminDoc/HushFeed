@@ -8,6 +8,7 @@ package app.morphe.extension.tiktok.settings.preference;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -37,14 +38,21 @@ import app.morphe.extension.tiktok.settings.L10n;
 
 /**
  * Opens the watch history kept on the phone (#172): a search box over the videos, newest first. A
- * tap opens the video. Thumbnails aren't kept, since TikTok's links to them run out.
+ * tap opens the video over the list, so Back returns to it with the search still typed. Thumbnails
+ * aren't kept, since TikTok's links to them run out.
  */
 @SuppressWarnings("deprecation")
 public final class LocalWatchHistoryPreference extends Preference {
     /** A stable key, so the settings search can find the row. */
     public static final String KEY = "action_local_watch_history";
 
-    /** The app's own link to a video. */
+    /** TikTok's video page, which loads a video from its id alone. */
+    private static final String VIDEO_PAGE = "com.ss.android.ugc.aweme.detail.ui.DetailActivity";
+
+    /**
+     * The app's own link to a video, for when the page can't be started. It works too, but it
+     * brings the feed forward on the way and closes settings, so Back doesn't return here.
+     */
     private static final String VIDEO_LINK = "snssdk1233://aweme/detail/";
 
     public LocalWatchHistoryPreference(Context context) {
@@ -61,6 +69,7 @@ public final class LocalWatchHistoryPreference extends Preference {
     private static void show(Context context) {
         if (SettingsUi.dialogOpen(KEY, context)) return;
         int gap = SettingsUi.dp(context, 20);
+        int height = SettingsUi.dialogListHeight(context, 420);
 
         EditText search = new EditText(context);
         search.setHint(L10n.t(context, "Search"));
@@ -83,10 +92,11 @@ public final class LocalWatchHistoryPreference extends Preference {
         page.setPadding(gap, 0, gap, 0);
         page.addView(search, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        // The same height as the list, so the dialog doesn't jump as a search empties it.
         page.addView(empty, new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                ViewGroup.LayoutParams.MATCH_PARENT, height));
         page.addView(list, new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, SettingsUi.dialogListHeight(context, 420)));
+                ViewGroup.LayoutParams.MATCH_PARENT, height));
 
         AlertDialog dialog = new AlertDialog.Builder(context)
                 .setTitle(L10n.t(context, "My watch history"))
@@ -106,6 +116,7 @@ public final class LocalWatchHistoryPreference extends Preference {
 
         View.OnClickListener[] clearOrUndo = new View.OnClickListener[1];
         Button clear = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+        boolean[] undoing = new boolean[1];
         Runnable refresh = () -> {
             List<LocalWatchHistory.Entry> shown = LocalWatchHistory.filter(rows.all, search.getText().toString());
             rows.show(shown);
@@ -113,15 +124,18 @@ public final class LocalWatchHistoryPreference extends Preference {
             list.setVisibility(nothing ? View.GONE : View.VISIBLE);
             empty.setVisibility(nothing ? View.VISIBLE : View.GONE);
             empty.setText(L10n.t(context, rows.all.isEmpty() ? "Videos you watch show up here" : "No videos match"));
+            clear.setVisibility(undoing[0] || !rows.all.isEmpty() ? View.VISIBLE : View.GONE);
         };
         // A clear happens at once and stays a tap away from coming back while the list is open.
         clearOrUndo[0] = view -> LocalWatchHistory.clear(removed -> {
+            undoing[0] = true;
             rows.all = Collections.emptyList();
             refresh.run();
             Utils.showToastShort(L10n.t(context, "Watch history cleared"));
             clear.setText(L10n.t(context, "Undo"));
             clear.setOnClickListener(undo -> {
                 LocalWatchHistory.restore(removed);
+                undoing[0] = false;
                 rows.all = removed;
                 refresh.run();
                 clear.setText(L10n.t(context, "Clear"));
@@ -130,10 +144,8 @@ public final class LocalWatchHistoryPreference extends Preference {
         });
         clear.setOnClickListener(clearOrUndo[0]);
 
-        list.setOnItemClickListener((parent, view, position, id) -> {
-            dialog.dismiss();
-            open(context, rows.shown.get(position).aid);
-        });
+        list.setOnItemClickListener((parent, view, position, id) ->
+                open(context, rows.shown.get(position).aid));
         search.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence text, int start, int count, int after) {
@@ -154,16 +166,24 @@ public final class LocalWatchHistoryPreference extends Preference {
         });
     }
 
-    private static void open(Context context, String aid) {
+    static void open(Context context, String aid) {
         try {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(VIDEO_LINK + aid))
-                    .setPackage(context.getPackageName());
-            if (!(context instanceof Activity)) intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);
+            try {
+                start(context, new Intent().setClassName(context.getPackageName(), VIDEO_PAGE)
+                        .putExtra("id", aid));
+            } catch (ActivityNotFoundException ex) {
+                start(context, new Intent(Intent.ACTION_VIEW, Uri.parse(VIDEO_LINK + aid))
+                        .setPackage(context.getPackageName()));
+            }
         } catch (Throwable ex) {
             Logger.printException(() -> "Could not open a video from the watch history", ex);
             Utils.showToastShort(L10n.t(context, "Couldn't open that video. Try again."));
         }
+    }
+
+    private static void start(Context context, Intent intent) {
+        if (!(context instanceof Activity)) intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
     }
 
     private static final class Rows extends BaseAdapter {
@@ -202,7 +222,8 @@ public final class LocalWatchHistoryPreference extends Preference {
                 int gap = SettingsUi.dp(context, 10);
                 row = new LinearLayout(context);
                 row.setOrientation(LinearLayout.VERTICAL);
-                row.setPadding(0, gap, 0, gap);
+                // The search box's text sits a little inside its own edge.
+                row.setPadding(SettingsUi.dp(context, 4), gap, 0, gap);
                 row.addView(SettingsUi.text(context, "", SettingsUi.TEXT_BODY,
                         SettingsUi.textPrimary(), Typeface.BOLD));
                 TextView caption = SettingsUi.text(context, "", SettingsUi.TEXT_BODY_SMALL,
@@ -212,8 +233,11 @@ public final class LocalWatchHistoryPreference extends Preference {
                 row.addView(caption);
             }
             LocalWatchHistory.Entry entry = shown.get(position);
+            // Never younger than a minute, which would read "0 minutes ago".
+            long now = System.currentTimeMillis();
             CharSequence when = DateUtils.getRelativeTimeSpanString(
-                    entry.watchedMs, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS);
+                    Math.min(entry.watchedMs, now - DateUtils.MINUTE_IN_MILLIS), now,
+                    DateUtils.MINUTE_IN_MILLIS);
             TextView title = (TextView) row.getChildAt(0);
             title.setText(entry.creator.isEmpty() ? when : entry.creator + " · " + when);
             TextView caption = (TextView) row.getChildAt(1);

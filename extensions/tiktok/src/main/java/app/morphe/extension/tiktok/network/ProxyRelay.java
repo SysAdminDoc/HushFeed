@@ -62,22 +62,41 @@ final class ProxyRelay {
     private static final int ANSWER_COMMAND_UNSUPPORTED = 7;
     private static final int ANSWER_ADDRESS_UNSUPPORTED = 8;
 
+    /** Starts each of a relay's threads. A test passes one that stands in for a phone out of threads. */
+    interface ThreadStarter {
+        void start(Thread thread);
+    }
+
     private final NetworkProxy.Config upstream;
     private final ServerSocket server;
+    private final ThreadStarter threads;
     private final AtomicInteger connections = new AtomicInteger();
 
-    private ProxyRelay(NetworkProxy.Config upstream, ServerSocket server) {
+    private ProxyRelay(NetworkProxy.Config upstream, ServerSocket server, ThreadStarter threads) {
         this.upstream = upstream;
         this.server = server;
+        this.threads = threads;
     }
 
     /** Binds a free loopback port and starts answering on it. */
     static ProxyRelay start(NetworkProxy.Config upstream) throws IOException {
+        return start(upstream, Thread::start);
+    }
+
+    static ProxyRelay start(NetworkProxy.Config upstream, ThreadStarter threads) throws IOException {
         // By address, so this can't turn into a lookup on the main thread during start-up.
         InetAddress loopback = InetAddress.getByAddress(new byte[]{127, 0, 0, 1});
-        ProxyRelay relay = new ProxyRelay(upstream, new ServerSocket(0, BACKLOG, loopback));
-        startThread(relay::acceptLoop);
+        ProxyRelay relay = new ProxyRelay(upstream, new ServerSocket(0, BACKLOG, loopback), threads);
+        if (!relay.startThread(relay::acceptLoop)) {
+            relay.close();
+            throw new IOException("no thread to accept on");
+        }
         return relay;
+    }
+
+    /** Connections being served now. Tests read it. */
+    int openConnections() {
+        return connections.get();
     }
 
     /** Where TikTok's stacks point instead of the proxy. It has no sign-in of its own. */
@@ -90,10 +109,21 @@ final class ProxyRelay {
         closeQuietly(server);
     }
 
-    private static void startThread(Runnable task) {
+    /**
+     * False when the phone couldn't start it. At the process's thread limit Android throws
+     * OutOfMemoryError from start(). Let out of the accept loop or a connection's thread, it went
+     * to Android's default handler, which ends TikTok.
+     */
+    private boolean startThread(Runnable task) {
         Thread thread = new Thread(null, task, THREAD_NAME, THREAD_STACK_BYTES);
         thread.setDaemon(true);
-        thread.start();
+        try {
+            threads.start(thread);
+            return true;
+        } catch (OutOfMemoryError noThread) {
+            Logger.printDebug(() -> "Network proxy relay: couldn't start a thread, " + noThread.getMessage());
+            return false;
+        }
     }
 
     private void acceptLoop() {
@@ -116,13 +146,23 @@ final class ProxyRelay {
                 closeQuietly(client);
                 continue;
             }
-            startThread(() -> {
+            boolean started = startThread(() -> {
                 try {
                     serve(client);
                 } finally {
                     connections.decrementAndGet();
                 }
             });
+            if (!started) {
+                // Nothing will serve it. TikTok retries, and threads free up as connections end.
+                connections.decrementAndGet();
+                closeQuietly(client);
+                try {
+                    Thread.sleep(250);
+                } catch (InterruptedException interrupted) {
+                    return;
+                }
+            }
         }
     }
 
@@ -155,11 +195,13 @@ final class ProxyRelay {
             client.setSoTimeout(0);
             remote.setSoTimeout(0);
             Socket tunnel = remote;
-            startThread(() -> {
+            boolean started = startThread(() -> {
                 pump(tunnel, client);
                 closeQuietly(tunnel);
                 closeQuietly(client);
             });
+            // With no thread for the way back the tunnel can't carry anything, so both ends close.
+            if (!started) return;
             pump(client, tunnel);
         } catch (IOException | RuntimeException failure) {
             // TikTok hung up or timed out mid-handshake. It retries on its own.
@@ -223,6 +265,7 @@ final class ProxyRelay {
             // Chromium sends an IPv6 literal by name and bare; a CONNECT line wants it in brackets.
             host = text.indexOf(':') >= 0 ? "[" + text + "]" : text;
         } else {
+            // No telling how long an address of an unknown type is, so this one can't wait.
             answer(out, ANSWER_ADDRESS_UNSUPPORTED);
             return null;
         }

@@ -21,6 +21,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -28,6 +29,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The relay against a proxy that really wants a password (#304): TikTok's stacks speak SOCKS5 with
@@ -238,7 +240,107 @@ public class ProxyRelayTest {
         assertEquals(7, readExactly(client.getInputStream(), 10)[1]);
     }
 
+    /** At Android's thread limit Thread.start throws OutOfMemoryError, and the relay has to outlive it. */
+    @Test public void aConnectionThePhoneHasNoThreadForIsClosedAndTheRelayKeepsAccepting() throws Exception {
+        ServerSocket proxy = echoingHttpProxy(new CountDownLatch(1));
+        // Start 1 is the accept loop, start 2 the first connection.
+        relay = ProxyRelay.start(config("http", proxy, USER, PASSWORD), failingThreadStart(2));
+
+        Socket refused = open();
+        assertEquals("the refused client is hung up on", -1, readOrEnd(refused));
+        awaitOpenConnections(0);
+
+        Socket client = askForSite("api16.example.test", 443);
+        assertEquals("the next connection still gets its tunnel", 0, answerTo(client));
+        assertEchoes(client);
+        assertNothingEscaped();
+    }
+
+    @Test public void aTunnelWithNoThreadForTheWayBackClosesAndGivesItsSlotBack() throws Exception {
+        CountDownLatch firstTunnelEnded = new CountDownLatch(1);
+        ServerSocket proxy = echoingHttpProxy(firstTunnelEnded);
+        // Start 3 is the first connection's pump from the proxy back to TikTok.
+        relay = ProxyRelay.start(config("http", proxy, USER, PASSWORD), failingThreadStart(3));
+
+        Socket first = askForSite("api16.example.test", 443);
+        assertEquals(0, answerTo(first));
+        assertEquals("a tunnel that can't carry bytes is closed", -1, readOrEnd(first));
+        // The proxy's side ends cleanly, well before its own read would time out.
+        assertTrue("the relay left the proxy's side of the tunnel open",
+                firstTunnelEnded.await(TIMEOUT_MS / 3, TimeUnit.MILLISECONDS));
+        awaitOpenConnections(0);
+
+        Socket client = askForSite("api16.example.test", 443);
+        assertEquals(0, answerTo(client));
+        assertEchoes(client);
+        // Before, the error went on out of the first connection's thread, which on a phone ends
+        // TikTok. Read last, so that thread has long finished.
+        assertNothingEscaped();
+    }
+
+    @Test public void aRelayWithNoThreadToAcceptOnFailsToStartWithAnIoError() throws Exception {
+        try {
+            relay = ProxyRelay.start(NetworkProxy.parse("http", "proxy.example.com", "8080", USER, PASSWORD),
+                    failingThreadStart(1));
+        } catch (IOException expected) {
+            // NetworkProxy.route sends TikTok to the proxy itself on an IOException; an Error got past it.
+            return;
+        }
+        throw new AssertionError("start() returned a relay nothing accepts on");
+    }
+
     // -- Helpers --------------------------------------------------------------------------------
+
+    /** Answers every CONNECT and echoes the tunnel. {@code ended} counts down when one ends in a clean close. */
+    private ServerSocket echoingHttpProxy(CountDownLatch ended) throws IOException {
+        return proxy(socket -> {
+            readHead(socket.getInputStream());
+            socket.getOutputStream().write("HTTP/1.1 200 OK\r\n\r\n".getBytes(StandardCharsets.US_ASCII));
+            echo(socket);
+            ended.countDown();
+        });
+    }
+
+    /** Errors that got out of a relay thread, which Android's default handler would end TikTok with. */
+    private final List<Throwable> escaped = Collections.synchronizedList(new ArrayList<>());
+
+    /**
+     * Thread start number {@code failing} of the one relay it's given to throws the way Android's
+     * does at its limit. Every thread it does start reports an error that gets out of it.
+     */
+    private ProxyRelay.ThreadStarter failingThreadStart(int failing) {
+        AtomicInteger starts = new AtomicInteger();
+        return thread -> {
+            if (starts.incrementAndGet() == failing) {
+                throw new OutOfMemoryError("pthread_create (1040KB stack) failed: Try again");
+            }
+            thread.setUncaughtExceptionHandler((dead, error) -> escaped.add(error));
+            thread.start();
+        };
+    }
+
+    private void assertNothingEscaped() {
+        assertTrue("an error got out of a relay thread: " + escaped, escaped.isEmpty());
+    }
+
+    /** -1 when the relay closed the connection. A read that times out means it was left open. */
+    private static int readOrEnd(Socket client) throws IOException {
+        try {
+            return client.getInputStream().read();
+        } catch (SocketTimeoutException leftOpen) {
+            throw leftOpen;
+        } catch (IOException reset) {
+            return -1;
+        }
+    }
+
+    private void awaitOpenConnections(int expected) throws InterruptedException {
+        long deadline = System.currentTimeMillis() + TIMEOUT_MS;
+        while (relay.openConnections() != expected && System.currentTimeMillis() < deadline) {
+            Thread.sleep(10);
+        }
+        assertEquals("connections being served", expected, relay.openConnections());
+    }
 
     private interface Handler {
         void handle(Socket socket) throws IOException;

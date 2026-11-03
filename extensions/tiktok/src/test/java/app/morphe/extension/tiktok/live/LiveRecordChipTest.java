@@ -103,6 +103,42 @@ public class LiveRecordChipTest {
         assertFalse(LiveRecordChip.mostlyShown(0, 0));
     }
 
+    @Test public void streamRecordingContinuesInNativePipAfterTransitionEnds() {
+        assertTrue(LiveRecordChip.keepWhileHidden(true, true, 20_000, 0));
+        assertTrue(LiveRecordChip.keepWhileHidden(true, true, 20_000, 10_000));
+    }
+
+    @Test public void enteringPipHasOnlyABriefGracePeriod() {
+        assertTrue(LiveRecordChip.keepWhileHidden(true, false, 9_999, 10_000));
+        assertFalse(LiveRecordChip.keepWhileHidden(true, false, 10_000, 10_000));
+        assertFalse(LiveRecordChip.keepWhileHidden(true, false, 15_000, 10_000));
+        assertFalse(LiveRecordChip.keepWhileHidden(true, false, 100, 0));
+    }
+
+    @Test public void screenRecordingNeverContinuesIntoPipOrTheLauncher() {
+        assertFalse(LiveRecordChip.keepWhileHidden(false, true, 1, 10_000));
+        assertFalse(LiveRecordChip.keepWhileHidden(false, false, 1, 10_000));
+    }
+
+    @Test public void destroyingTheLiveActivityDoesNotClaimTikTokClosed() {
+        assertEquals(LiveRecorder.End.LEFT_ROOM, LiveRecordChip.LIVE_ACTIVITY_DESTROYED_END);
+    }
+
+    @Test public void aRecreatedFragmentForTheSameLiveDoesNotMeanLeavingTheRoom() {
+        assertTrue(LiveRecordChip.sameRoomId("1234", "1234"));
+        assertFalse(LiveRecordChip.sameRoomId("1234", "5678"));
+        assertFalse(LiveRecordChip.sameRoomId("1234", null));
+        assertFalse(LiveRecordChip.sameRoomId(null, "1234"));
+        assertFalse(LiveRecordChip.sameRoomId(null, null));
+    }
+
+    @Test public void pipExitGetsGraceEvenIfTheTickRunsBeforeOnResume() {
+        assertEquals(6_500, LiveRecordChip.pipReturnDeadline(true, true, 0, 5_000));
+        assertEquals(6_700, LiveRecordChip.pipReturnDeadline(true, false, 6_500, 5_200));
+        assertEquals(0, LiveRecordChip.pipReturnDeadline(true, false, 6_500, 6_500));
+        assertEquals(0, LiveRecordChip.pipReturnDeadline(false, true, 6_500, 5_000));
+    }
+
     // The chip is 200 wide at the right edge (880 to 1080), 120 tall, wanted at 330.
 
     @Test public void theChipStaysPutWhenNothingIsUnderIt() {

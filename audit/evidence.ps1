@@ -12,6 +12,8 @@ function Test-AuditExecutableInputPath([string]$Path) {
     # not invalidate the build whose execution they record.
     if ($Path -cmatch '^audit/catalog\.json$' -or $Path -cmatch '^audit/results/' -or
         $Path -ceq 'patches-bundle.json') { return $false }
+    # Release orchestration runs after the APK exists and never changes what a device runs.
+    if ($Path -cmatch '^scripts/release(/|[^/]*$)') { return $false }
     if ($Path -cmatch '\.md$' -or $Path -cmatch '^(docs|concepts)/' -or
         $Path -cin @('LICENSE', 'NOTICE') -or $Path -cmatch '^assets/(readme-|screenshots/)') { return $false }
     return $true

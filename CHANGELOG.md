@@ -27,6 +27,7 @@ Every Hushfeed release, newest first.
 
 ### Bug Fixes
 * **TikTok:** Saves work again after one that was cut off while Hushfeed was writing its first record of files still to be published. That half-written record used to count as damaged, and every save after it failed. Now it's thrown away, since nothing was published under it, and the next save goes through.
+* **TikTok:** A save that runs TikTok out of memory while it copies the file ends as a failed save. Before, the error got past the save and took TikTok down with it.
 * **TikTok:** The save picker lists a taller copy the video carries on its own when TikTok's gears stop at 720p. Before, it only looked past the gears when they stopped lower than that, so a 1080p copy never made the list (#240).
 * **TikTok:** `New device identity` says outright that it's off until you tap it and runs once, and it shows when an identity is in use. A new `Use this phone's own IDs` row takes TikTok back to the phone's real IDs. If a step of the wipe keeps failing it gives up after three starts, where before it could've carried on with new IDs at every launch. The diagnostic report lists how many wipes ran, without the IDs.
 * **TikTok:** What you type in a LIVE room's comment box is readable under `Dark LIVE panels in dark mode` now, on a recommended build too. The fix used to come only with `AMOLED dark theme`, so everyone else typed dark text on a dark bar. With the switch off, the box keeps TikTok's own colors.

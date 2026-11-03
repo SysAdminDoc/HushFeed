@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 import android.os.Looper;
 import app.morphe.extension.shared.Utils;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -227,6 +228,40 @@ public class MediaJobSchedulerTest {
         }
         waitFor(next, MediaJobScheduler.MAX_RUNNING_JOBS + 1);
         assertEquals("the failed save's cleanup ran again", 1, ended.get());
+    }
+
+    /**
+     * An Error out of a save (the phone had no memory for its copy buffer) is a failed save like
+     * any other. Left to escape, it kills the worker, and an uncaught error on any thread takes
+     * TikTok down with it.
+     */
+    @Test public void aSaveThatThrowsAnErrorEndsAsFailedAndKeepsItsWorker() throws Exception {
+        List<Throwable> uncaught = Collections.synchronizedList(new ArrayList<>());
+        Thread.UncaughtExceptionHandler previous = Thread.getDefaultUncaughtExceptionHandler();
+        Thread.setDefaultUncaughtExceptionHandler((thread, failure) -> uncaught.add(failure));
+        try {
+            MediaJobScheduler.clearEndedForTests();
+            Thread[] worker = new Thread[1];
+            AtomicInteger ended = new AtomicInteger();
+            MediaJobScheduler.Job job = MediaJobScheduler.submit("no memory", "no memory", () -> {
+                worker[0] = Thread.currentThread();
+                throw new OutOfMemoryError("a copy buffer the phone couldn't give");
+            }, ended::incrementAndGet);
+            assertNotNull(job);
+            waitFor(ended, 1);
+            drain();
+            // The time a worker would take to die of the error, were it let through.
+            worker[0].join(500);
+
+            assertTrue("the error escaped the save: " + uncaught, uncaught.isEmpty());
+            assertTrue("the worker died with the save", worker[0].isAlive());
+            MediaJobScheduler.Ended last = MediaJobScheduler.ended().get(0);
+            assertEquals("no memory", last.label);
+            assertTrue("an error wasn't counted as a failed save", last.failed);
+            assertNull(MediaJobScheduler.job("no memory"));
+        } finally {
+            Thread.setDefaultUncaughtExceptionHandler(previous);
+        }
     }
 
     /**

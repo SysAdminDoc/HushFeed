@@ -182,9 +182,10 @@ final class MediaJobScheduler {
             boolean failed = false;
             try {
                 MediaBudget.runWithJobDeadline(work);
-            } catch (RuntimeException failure) {
-                // The saver says what went wrong for anything it expects. What it didn't expect
-                // must not take TikTok down with the worker thread.
+            } catch (Throwable failure) {
+                // The saver says what went wrong for anything it expects. What it didn't expect,
+                // an Error included (a copy buffer the phone couldn't give), must not take TikTok
+                // down with the worker thread: that is what an uncaught one does to the process.
                 failed = true;
                 Logger.printException(() -> "Media job failed for " + label, failure);
             } finally {

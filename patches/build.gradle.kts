@@ -551,6 +551,9 @@ tasks.withType<Test>().matching { it.name == "test" || it.name == "nativeTest" }
         .withPropertyName("fixtures")
         .withPathSensitivity(PathSensitivity.RELATIVE)
     inputs.property("fixtureBytes", provider { fixtureDigests })
+    // NearestMethodsReport ranks methods for the fingerprint these name, so a new name runs it again.
+    inputs.property("nearestMethods", providers.environmentVariable("HUSHFEED_NEAREST").orElse(""))
+    inputs.property("nearestMethodsFrom", providers.environmentVariable("HUSHFEED_NEAREST_FROM").orElse(""))
 }
 
 tasks {

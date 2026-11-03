@@ -24,7 +24,8 @@ import com.android.tools.smali.dexlib2.iface.reference.StringReference
  * code: the method takes them when its instructions hold them in order, with gaps, and taking
  * each filter's earliest instruction is enough to know. Filters placed any other way are not
  * modelled, and a fingerprint using them is refused rather than half judged. A class fingerprint
- * is judged on [classDef]'s own methods, and patcher 2.0's `isStatic` on the method's flags.
+ * is judged on [classDef]'s own methods, and patcher 2.0's `isStatic` on the method's flags and
+ * its `superclass` and `interfaces` on [classDef].
  */
 internal fun Fingerprint.takes(method: Method, classDef: ClassDef): Boolean {
     classFingerprint?.let { cf ->
@@ -40,6 +41,12 @@ internal fun Fingerprint.takes(method: Method, classDef: ClassDef): Boolean {
     declaredAccessFlags?.let { if (method.accessFlags != it) return false }
     declaredIsStatic?.let { if (AccessFlags.STATIC.isSet(method.accessFlags) != it) return false }
     declaredReturnType?.let { if (!typeMatches(method.returnType, it)) return false }
+    // Patcher 2.0's classMatches: a declared superclass needs one that compares, and each
+    // declared interface needs some interface of the class that compares with it.
+    declaredSuperclass?.let { wanted -> if (classDef.superclass?.let { typeMatches(it, wanted) } != true) return false }
+    declaredInterfaces?.let { wanted ->
+        if (wanted.any { want -> classDef.interfaces.none { typeMatches(it, want) } }) return false
+    }
     declaredParameters?.let { wanted ->
         val actual = method.parameterTypes.map(CharSequence::toString)
         if (actual.size != wanted.size || actual.zip(wanted).any { (have, want) -> !typeMatches(have, want) }) return false
@@ -82,6 +89,8 @@ internal val Fingerprint.declaredAccessFlags: Int? get() = declared("accessFlags
 internal val Fingerprint.declaredIsStatic: Boolean? get() = declared("isStatic")
 internal val Fingerprint.declaredReturnType: String? get() = declared("returnType")
 internal val Fingerprint.declaredParameters: List<String>? get() = declared("parameters")
+internal val Fingerprint.declaredSuperclass: String? get() = declared("superclass")
+internal val Fingerprint.declaredInterfaces: List<String>? get() = declared("interfaces")
 
 @Suppress("UNCHECKED_CAST")
 private fun <T> Fingerprint.declared(field: String): T? =

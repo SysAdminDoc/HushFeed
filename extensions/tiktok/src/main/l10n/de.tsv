@@ -2446,3 +2446,9 @@ On a one-photo post, Download video makes an MP4 with the post's sound and no Ti
 How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.	Wie lange jedes Foto in einem Video aus einem Fotobeitrag zu sehen ist. Das Video einer Story läuft so lange wie die Story.
 Stop loading	Laden stoppen
 Recording files deleted	Aufnahmedateien gelöscht
+Hide story views	Story-Aufrufe verbergen
+You stay off the viewer list of stories you watch. Needs Ghost mode on.	Du erscheinst nicht in der Zuschauerliste der Storys, die du ansiehst. Dafür muss der Geistermodus an sein.
+Hide profile visits	Profilbesuche verbergen
+You stay off the Profile views list of people whose profile you open. Needs Ghost mode on.	Du erscheinst nicht in der Liste der Profilaufrufe von Leuten, deren Profil du öffnest. Dafür muss der Geistermodus an sein.
+Hide typing	Tippen verbergen
+People you chat with won't see that you're typing. Needs Ghost mode on.	Deine Chatpartner sehen nicht, dass du schreibst. Dafür muss der Geistermodus an sein.

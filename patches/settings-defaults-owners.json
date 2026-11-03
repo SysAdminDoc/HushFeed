@@ -314,7 +314,10 @@
     ],
     "Ghost mode": [
       "GHOST_MODE",
-      "GHOST_HIDE_ONLINE_STATUS"
+      "GHOST_HIDE_ONLINE_STATUS",
+      "GHOST_HIDE_STORY_VIEWS",
+      "GHOST_HIDE_PROFILE_VISITS",
+      "GHOST_HIDE_TYPING"
     ],
     "Hide already seen videos": [
       "HIDE_SEEN_VIDEOS",

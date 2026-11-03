@@ -786,6 +786,7 @@ Hide playlist videos,Hide playlist videos
 Hide profile shortcuts,Hide profile shortcuts
 Hide profile shortcuts by name,Hide profile shortcuts by name
 Hide profile views,Hide profile views
+Hide profile visits,Hide profile visits
 Hide promotional music,Hide promotional music
 Hide read receipts,Hide read receipts
 Hide recommended searches before you type on TikTok's search page. Your search history stays. This doesn't hide suggestions above comments.,Hide recommended searches before you type on TikTok's search page. Your search history stays. This doesn't hide suggestions above comments.
@@ -806,6 +807,7 @@ Hide sticker suggestions,Hide sticker suggestions
 Hide stories,Hide stories
 Hide stories from the feed.,Hide stories from the feed.
 Hide stories tray,Hide stories tray
+Hide story views,Hide story views
 Hide subscriber-only videos,Hide subscriber-only videos
 Hide suggested accounts,Hide suggested accounts
 Hide suggested replies,Hide suggested replies
@@ -900,6 +902,7 @@ Hide the track name beside the caption.,Hide the track name beside the caption.
 Hide the unread badges on the bottom tabs,Hide the unread badges on the bottom tabs
 "Hide the whole column on the right, from the avatar down to the music disc.","Hide the whole column on the right, from the avatar down to the music disc."
 Hide this creator on this phone,Hide this creator on this phone
+Hide typing,Hide typing
 Hide unpersonalized For You videos,Hide unpersonalized For You videos
 Hide unverified content notices,Hide unverified content notices
 Hide verified accounts,Hide verified accounts
@@ -1370,6 +1373,7 @@ Pause Hushfeed,Pause Hushfeed
 Pause the video while comments are open,Pause the video while comments are open
 Paused,Paused
 Pauses the video behind the comment sheet while you read. It plays on from the same spot when the sheet closes.,Pauses the video behind the comment sheet while you read. It plays on from the same spot when the sheet closes.
+People you chat with won't see that you're typing. Needs Ghost mode on.,People you chat with won't see that you're typing. Needs Ghost mode on.
 "People, shortcuts and sending controls","People, shortcuts and sending controls"
 Performance,Performance
 Phone's click,Phone's click
@@ -2381,6 +2385,8 @@ YTDLnis download type,YTDLnis download type
 Yellow,Yellow
 Yes,Yes
 You can pick up to %1$s at a time,You can pick up to %1$s at a time
+You stay off the Profile views list of people whose profile you open. Needs Ghost mode on.,You stay off the Profile views list of people whose profile you open. Needs Ghost mode on.
+You stay off the viewer list of stories you watch. Needs Ghost mode on.,You stay off the viewer list of stories you watch. Needs Ghost mode on.
 YouTube Music didn't open. Open it yourself to search.,YouTube Music didn't open. Open it yourself to search.
 YouTube Music isn't installed,YouTube Music isn't installed
 Your Long press choice runs only on the left and right thirds of the video. A press in the middle still opens TikTok's own menu. It needs a Long press choice other than TikTok default.,Your Long press choice runs only on the left and right thirds of the video. A press in the middle still opens TikTok's own menu. It needs a Long press choice other than TikTok default.

@@ -2443,3 +2443,9 @@ On a one-photo post, Download video makes an MP4 with the post's sound and no Ti
 How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.	Bir fotoğraf gönderisinden yapılan videoda her fotoğrafın ekranda ne kadar kalacağı. Bir hikayenin videosu hikaye kadar sürer.
 Stop loading	Yüklemeyi durdur
 Recording files deleted	Kayıt dosyaları silindi
+Hide story views	Hikâye görüntülemelerini gizle
+You stay off the viewer list of stories you watch. Needs Ghost mode on.	İzlediğin hikâyelerin izleyici listesinde görünmezsin. Hayalet modu açık olmalı.
+Hide profile visits	Profil ziyaretlerini gizle
+You stay off the Profile views list of people whose profile you open. Needs Ghost mode on.	Profilini açtığın kişilerin Profil görüntülemeleri listesinde görünmezsin. Hayalet modu açık olmalı.
+Hide typing	Yazıyor durumunu gizle
+People you chat with won't see that you're typing. Needs Ghost mode on.	Sohbet ettiğin kişiler yazdığını görmez. Hayalet modu açık olmalı.

@@ -4232,7 +4232,7 @@
     },
     {
       "name": "Ghost mode",
-      "description": "Stops TikTok telling people you viewed their story or profile, or that you're typing. What TikTok already recorded stays. A separate switch hides your online status. Starts off. Turn it on in Hushfeed settings > Privacy.",
+      "description": "Stops TikTok telling people you viewed their story or profile, or that you're typing. What TikTok already recorded stays. Each of the three has its own switch under it, and a separate one hides your online status. Starts off. Turn it on in Hushfeed settings > Privacy.",
       "category": "Privacy",
       "use": true,
       "dependencies": [
@@ -4285,6 +4285,33 @@
           "required": false,
           "type": "kotlin.Boolean",
           "default": false,
+          "values": null
+        },
+        {
+          "key": "ghost_hide_story_views",
+          "title": "Default: ghost hide story views",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
+          "key": "ghost_hide_profile_visits",
+          "title": "Default: ghost hide profile visits",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
+          "key": "ghost_hide_typing",
+          "title": "Default: ghost hide typing",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
           "values": null
         }
       ]

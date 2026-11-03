@@ -314,7 +314,10 @@
     ],
     "Ghost mode": [
       "ghost_mode",
-      "ghost_hide_online_status"
+      "ghost_hide_online_status",
+      "ghost_hide_story_views",
+      "ghost_hide_profile_visits",
+      "ghost_hide_typing"
     ],
     "Hide CAPTCHA popups": [
       "hide_browsing_captcha_popups"
@@ -480,6 +483,9 @@
     ],
     "Keep the app language": [
       "keep_app_language"
+    ],
+    "Keep the next videos in full screen": [
+      "full_screen_next_videos"
     ],
     "Keep the screen's brightness in the camera": [
       "keep_camera_brightness"
@@ -699,9 +705,6 @@
     ],
     "Skip update checks": [
       "skip_update_checks"
-    ],
-    "Keep the next videos in full screen": [
-      "full_screen_next_videos"
     ],
     "Stay on the video in full screen": [
       "full_screen_hold"
@@ -1430,6 +1433,18 @@
       "type": "boolean",
       "default": false
     },
+    "download_button": {
+      "field": "DOWNLOAD_BUTTON",
+      "key": "download_button",
+      "type": "boolean",
+      "default": false
+    },
+    "download_button_position": {
+      "field": "DOWNLOAD_BUTTON_POSITION",
+      "key": "download_button_position",
+      "type": "string",
+      "default": ""
+    },
     "download_comment_media_filename_template": {
       "field": "DOWNLOAD_COMMENT_MEDIA_FILENAME_TEMPLATE",
       "key": "download_comment_media_filename_template",
@@ -1672,18 +1687,6 @@
       "type": "string",
       "default": ""
     },
-    "download_button": {
-      "field": "DOWNLOAD_BUTTON",
-      "key": "download_button",
-      "type": "boolean",
-      "default": false
-    },
-    "download_button_position": {
-      "field": "DOWNLOAD_BUTTON_POSITION",
-      "key": "download_button_position",
-      "type": "string",
-      "default": ""
-    },
     "feed_mute_button": {
       "field": "FEED_MUTE_BUTTON",
       "key": "feed_mute_button",
@@ -1811,6 +1814,24 @@
       "key": "ghost_hide_online_status",
       "type": "boolean",
       "default": false
+    },
+    "ghost_hide_profile_visits": {
+      "field": "GHOST_HIDE_PROFILE_VISITS",
+      "key": "ghost_hide_profile_visits",
+      "type": "boolean",
+      "default": true
+    },
+    "ghost_hide_story_views": {
+      "field": "GHOST_HIDE_STORY_VIEWS",
+      "key": "ghost_hide_story_views",
+      "type": "boolean",
+      "default": true
+    },
+    "ghost_hide_typing": {
+      "field": "GHOST_HIDE_TYPING",
+      "key": "ghost_hide_typing",
+      "type": "boolean",
+      "default": true
     },
     "ghost_mode": {
       "field": "GHOST_MODE",

@@ -11,8 +11,9 @@ import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.diagnostics.DiagnosticCategory;
 import app.morphe.extension.shared.diagnostics.HookStatus;
-import app.morphe.extension.tiktok.settings.Settings;
+import app.morphe.extension.shared.settings.BooleanSetting;
 import app.morphe.extension.shared.settings.Setting;
+import app.morphe.extension.tiktok.settings.Settings;
 import com.ss.android.ugc.aweme.feed.model.Aweme;
 import java.util.Map;
 import java.lang.ref.WeakReference;
@@ -119,15 +120,15 @@ public final class GhostMode {
     }
 
     public static boolean shouldBlockStoryView() {
-        return answer(STORY_VIEW);
+        return answer(STORY_VIEW, Settings.GHOST_HIDE_STORY_VIEWS);
     }
 
     public static boolean shouldBlockProfileView() {
-        return answer(PROFILE_VIEW);
+        return answer(PROFILE_VIEW, Settings.GHOST_HIDE_PROFILE_VISITS);
     }
 
     public static boolean shouldBlockTypingStatus() {
-        return answer(TYPING_STATUS);
+        return answer(TYPING_STATUS, Settings.GHOST_HIDE_TYPING);
     }
 
     /**
@@ -139,7 +140,8 @@ public final class GhostMode {
      */
     public static boolean shouldBlockStoryStats(Aweme aweme) {
         if (!isStory(aweme)) return false;
-        return answer(STORY_PLAY_STATS);
+        // Either call alone puts you on the viewer list, so both follow the story views switch.
+        return answer(STORY_PLAY_STATS, Settings.GHOST_HIDE_STORY_VIEWS);
     }
 
     /**
@@ -149,7 +151,7 @@ public final class GhostMode {
      * at the next one. A paused process answers false through both settings.
      */
     public static boolean shouldBlockOnlineStatus() {
-        return answer(ONLINE_STATUS, Settings.GHOST_MODE.get() && Settings.GHOST_HIDE_ONLINE_STATUS.get());
+        return answer(ONLINE_STATUS, Settings.GHOST_HIDE_ONLINE_STATUS);
     }
 
     static boolean isStory(Aweme aweme) {
@@ -171,9 +173,9 @@ public final class GhostMode {
         }
     }
 
-    /** The setting, recorded against the call site that asked for it. */
-    private static boolean answer(String callSite) {
-        return answer(callSite, Settings.GHOST_MODE.get());
+    /** Ghost mode and the report's own switch, recorded against the call site that asked for it. */
+    private static boolean answer(String callSite, BooleanSetting report) {
+        return answer(callSite, Settings.GHOST_MODE.get() && report.get());
     }
 
     private static boolean answer(String callSite, boolean blocked) {

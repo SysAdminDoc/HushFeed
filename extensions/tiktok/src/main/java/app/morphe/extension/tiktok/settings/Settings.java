@@ -1219,6 +1219,14 @@ public class Settings extends BaseSettings {
     // Ghost mode is on, so it sits under that switch.
     public static final BooleanSetting GHOST_HIDE_ONLINE_STATUS =
             new BooleanSetting("ghost_hide_online_status", FALSE, false, Setting.parent(GHOST_MODE));
+    // One switch per report Ghost mode holds back, so a reader can keep some and let others go.
+    // On by default: turning Ghost mode on still holds back all three, as it did before they existed.
+    public static final BooleanSetting GHOST_HIDE_STORY_VIEWS =
+            new BooleanSetting("ghost_hide_story_views", TRUE, false, Setting.parent(GHOST_MODE));
+    public static final BooleanSetting GHOST_HIDE_PROFILE_VISITS =
+            new BooleanSetting("ghost_hide_profile_visits", TRUE, false, Setting.parent(GHOST_MODE));
+    public static final BooleanSetting GHOST_HIDE_TYPING =
+            new BooleanSetting("ghost_hide_typing", TRUE, false, Setting.parent(GHOST_MODE));
     public static final BooleanSetting DISABLE_ANALYTICS = new BooleanSetting("disable_analytics", FALSE);
     // Stop on-device AI profiling, in the default selection with this off. TikTok starts the
     // engine during launch, so a restart applies it.

@@ -5942,6 +5942,24 @@
     "default": false,
     "type": "bool",
     "row": "Hide online status"
+   },
+   {
+    "key": "ghost_hide_story_views",
+    "default": true,
+    "type": "bool",
+    "row": "Hide story views"
+   },
+   {
+    "key": "ghost_hide_profile_visits",
+    "default": true,
+    "type": "bool",
+    "row": "Hide profile visits"
+   },
+   {
+    "key": "ghost_hide_typing",
+    "default": true,
+    "type": "bool",
+    "row": "Hide typing"
    }
   ],
   "surface": "other-profile",

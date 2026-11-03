@@ -50,6 +50,7 @@ Every Hushfeed release, newest first.
 * **TikTok:** `Speed menu choices` and the offline video limit no longer ask you to restart TikTok twice in a row when the settings are in another language.
 * **TikTok:** `Network proxy` with a user name and password keeps working when Android won't give TikTok another thread. The connection that didn't get one is dropped and TikTok tries it again. Before, that could close TikTok outright.
 * **TikTok:** A Hushfeed dialog that's still open when TikTok closes the screen under it closes along with that screen now. Before, it hung on to the screen after it was gone.
+* **TikTok:** The hold that covers the feed scrolls when it doesn't fit, like at Android's largest text and display sizes or in split screen, so you can always get to the buttons at the bottom. They used to get squeezed off the bottom with no way to reach them, and now the text fades at an edge when there's more past it.
 
 * **TikTok:** The README's install steps point at TikTok 47.6.3 now. After v0.80.0 went out they still sent you to 47.5.3, which v0.80.0 doesn't patch.
 

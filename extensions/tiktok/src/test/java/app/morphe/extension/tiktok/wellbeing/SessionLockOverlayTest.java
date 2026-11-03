@@ -787,6 +787,191 @@ public class SessionLockOverlayTest {
         }
     }
 
+    /**
+     * The largest font and display sizes on a small phone, or TikTok in split screen: the stack
+     * is taller than the room above the tab bar. The panel used to squeeze its last two controls
+     * into whatever was left, so neither way off it could be reached by a finger or a reader.
+     */
+    @Config(qualifiers = "w360dp-h240dp")
+    @Test public void aHoldTallerThanItsRoomScrollsToBothWaysOff() throws Exception {
+        Settings.SESSION_BUDGET_VIDEOS.save(1);
+        Settings.SESSION_BUDGET_LOCK_MINUTES.save(5);
+        SessionBudget.noteVideo("a");
+        assertTrue(SessionBudget.claimNotice());
+
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setActivity(activity);
+            ViewGroup root = activity.findViewById(android.R.id.content);
+            FrameLayout inbox = new FrameLayout(activity);
+            root.addView(inbox, 0);
+            seedInboxTab(inbox);
+            SessionLockOverlay.sync();
+            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+
+            ViewGroup panel = (ViewGroup) root.getChildAt(root.getChildCount() - 1);
+            View title = panel.getChildAt(0);
+            View release = panel.getChildAt(3);
+            View messages = panel.getChildAt(4);
+            assertEquals(View.VISIBLE, release.getVisibility());
+            assertEquals(View.VISIBLE, messages.getVisibility());
+            assertTrue("the fixture's stack fits, so it proves nothing",
+                    naturalHeight(panel) > panel.getHeight());
+
+            int touchHeight = app.morphe.extension.tiktok.settings.preference.SettingsUi.dp(activity, 48);
+            assertTrue("Open the feed anyway was squeezed: " + release.getHeight(),
+                    release.getHeight() >= touchHeight);
+            assertTrue("Open messages was squeezed: " + messages.getHeight(),
+                    messages.getHeight() >= touchHeight);
+            assertTrue("the panel did not open at its title", inView(panel, title));
+            assertFalse("the fixture already shows the last control", inView(panel, messages));
+
+            // A screen reader hears a scroll container with more below, and moving onto the
+            // last control brings it on screen.
+            var info = android.view.accessibility.AccessibilityNodeInfo.obtain();
+            panel.onInitializeAccessibilityNodeInfo(info);
+            assertEquals(android.widget.ScrollView.class.getName(), String.valueOf(info.getClassName()));
+            assertTrue(info.isScrollable());
+            assertTrue("no scroll forward for a reader",
+                    info.getActionList().contains(
+                            android.view.accessibility.AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_FORWARD));
+            assertTrue(messages.performAccessibilityAction(
+                    android.view.accessibility.AccessibilityNodeInfo.AccessibilityAction.ACTION_SHOW_ON_SCREEN.getId(),
+                    null));
+            assertTrue("a reader moving onto Open messages left it off screen", inView(panel, messages));
+
+            // Back to the top a page at a time, the way a reader's scroll gesture goes.
+            int pages = 0;
+            while (panel.performAccessibilityAction(
+                    android.view.accessibility.AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD, null)) {
+                assertTrue("scrolling back never ended", ++pages < 20);
+            }
+            assertTrue("scrolling back did not reach the title", inView(panel, title));
+
+            // The stack grows under the reader, the way a longer hint or label does on another
+            // day: what they were reading stays where it was.
+            int titleOnScreen = title.getTop() - panel.getScrollY();
+            messages.getLayoutParams().height = messages.getHeight() + 40;
+            messages.requestLayout();
+            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            assertEquals("growing the stack moved the title", titleOnScreen, title.getTop() - panel.getScrollY());
+
+            // A finger drags up to the buttons. Wherever the drag starts, it is a scroll and not a
+            // tap on whatever was under it.
+            drag(panel, panel.getWidth() / 2f, panel.getHeight() - 10f, -600f);
+            assertTrue("the drag did not reach Open messages", inView(panel, messages));
+            assertTrue("the drag did not reach Open the feed anyway", inView(panel, release));
+            assertTrue("a drag counted as a tap on the way out", SessionBudget.isLocked());
+
+            // A short drag that starts and ends on Open the feed anyway is a scroll too: the panel
+            // takes the gesture over and the button gets a cancel. Left to the button, letting go
+            // still on it would be a tap.
+            float onX = (release.getLeft() + release.getRight()) / 2f;
+            float onY = (release.getTop() + release.getBottom()) / 2f - panel.getScrollY();
+            int distance = release.getHeight() / 2 - 2;
+            assertTrue("the fixture's drag is no longer than a touch slop",
+                    distance > android.view.ViewConfiguration.get(activity).getScaledTouchSlop());
+            int scrolledTo = panel.getScrollY();
+            drag(panel, onX, onY, onY + distance);
+            assertTrue("a drag that started on Open the feed anyway didn't scroll", panel.getScrollY() < scrolledTo);
+            assertTrue("a drag on Open the feed anyway tapped it", SessionBudget.isLocked());
+            assertTrue("the panel doesn't say it can scroll back down", panel.canScrollVertically(1));
+            pages = 0;
+            while (panel.performAccessibilityAction(
+                    android.view.accessibility.AccessibilityNodeInfo.ACTION_SCROLL_FORWARD, null)) {
+                assertTrue("scrolling forward never ended", ++pages < 20);
+            }
+            assertFalse("the panel says it scrolls past its end", panel.canScrollVertically(1));
+
+            // And the way out, scrolled into view, takes a real tap.
+            float x = (release.getLeft() + release.getRight()) / 2f;
+            float y = (release.getTop() + release.getBottom()) / 2f - panel.getScrollY();
+            touch(panel, MotionEvent.ACTION_DOWN, x, y, 500);
+            touch(panel, MotionEvent.ACTION_UP, x, y, 560);
+            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            assertFalse("a tap on the scrolled-in way out did nothing", SessionBudget.isLocked());
+        } finally {
+            Utils.setActivity(null);
+            SessionBudget.releaseLock();
+            SessionLockOverlay.sync();
+        }
+    }
+
+    /** A panel that fits stays centred, and a drag on it moves nothing. */
+    @Test public void aHoldThatFitsStaysCentredAndStill() throws Exception {
+        Settings.SESSION_BUDGET_VIDEOS.save(1);
+        Settings.SESSION_BUDGET_LOCK_MINUTES.save(5);
+        SessionBudget.noteVideo("a");
+        assertTrue(SessionBudget.claimNotice());
+
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setActivity(activity);
+            SessionLockOverlay.sync();
+            ViewGroup root = activity.findViewById(android.R.id.content);
+            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            ViewGroup panel = (ViewGroup) root.getChildAt(root.getChildCount() - 1);
+
+            assertTrue("the fixture's stack overflows", naturalHeight(panel) < panel.getHeight());
+            View title = panel.getChildAt(0);
+            assertTrue("the stack is not centred", title.getTop() > panel.getPaddingTop());
+            drag(panel, panel.getWidth() / 2f, panel.getHeight() - 10f, 10f);
+            assertEquals("a panel that fits scrolled", 0, panel.getScrollY());
+            var info = android.view.accessibility.AccessibilityNodeInfo.obtain();
+            panel.onInitializeAccessibilityNodeInfo(info);
+            assertFalse("a panel that fits told a reader it scrolls", info.isScrollable());
+            assertTrue("a drag counted as a tap", SessionBudget.isLocked());
+        } finally {
+            Utils.setActivity(null);
+            SessionBudget.releaseLock();
+            SessionLockOverlay.sync();
+        }
+    }
+
+    /** The height the panel's visible children ask for, measured one by one with no limit. */
+    private static int naturalHeight(ViewGroup panel) {
+        int width = panel.getWidth() - panel.getPaddingLeft() - panel.getPaddingRight();
+        int height = panel.getPaddingTop() + panel.getPaddingBottom();
+        for (int index = 0; index < panel.getChildCount(); index++) {
+            View child = panel.getChildAt(index);
+            if (child.getVisibility() == View.GONE) continue;
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) child.getLayoutParams();
+            int before = child.getHeight();
+            child.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.AT_MOST),
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+            height += Math.max(before, child.getMeasuredHeight()) + params.topMargin + params.bottomMargin;
+        }
+        // Measuring the children by hand left them out of step with the panel's last layout.
+        panel.requestLayout();
+        Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+        return height;
+    }
+
+    /** Whether the whole child is inside the panel's visible area. */
+    private static boolean inView(ViewGroup panel, View child) {
+        int top = child.getTop() - panel.getScrollY();
+        int bottom = child.getBottom() - panel.getScrollY();
+        return top >= 0 && bottom <= panel.getHeight();
+    }
+
+    private static void drag(View view, float x, float fromY, float toY) {
+        touch(view, MotionEvent.ACTION_DOWN, x, fromY, 100);
+        for (int step = 1; step <= 12; step++) {
+            touch(view, MotionEvent.ACTION_MOVE, x, fromY + (toY - fromY) * step / 12f, 100 + step * 16L);
+        }
+        touch(view, MotionEvent.ACTION_UP, x, toY, 400);
+        Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+    }
+
+    private static void touch(View view, int action, float x, float y, long time) {
+        MotionEvent event = MotionEvent.obtain(100, time, action, x, y, 0);
+        try {
+            view.dispatchTouchEvent(event);
+        } finally {
+            event.recycle();
+        }
+    }
+
     /** What TalkBack would call the view. */
     private static String roleOf(View view) {
         var info = android.view.accessibility.AccessibilityNodeInfo.obtain();

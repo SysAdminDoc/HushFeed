@@ -406,7 +406,9 @@ public final class SessionLockOverlay {
         if (root == null) return null;
         if (existing != null && existing.getParent() == root) return existing;
 
-        LinearLayout panel = new LinearLayout(activity);
+        // Scrolls once the stack is taller than the room above the tab bar, so both buttons stay
+        // reachable at the largest font and display sizes (see HoldPanel).
+        LinearLayout panel = new HoldPanel(activity);
         panel.setOrientation(LinearLayout.VERTICAL);
         panel.setGravity(Gravity.CENTER);
         int sidePad = SettingsUi.dp(activity, 24);

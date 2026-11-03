@@ -209,17 +209,46 @@ final class ProxyRelay {
             int length = in.read();
             if (length <= 0) return null;
             byte[] name = readExactly(in, length);
+            if (!isHostName(name)) {
+                // A line break or a space in a "name" would let whoever reached this port put
+                // lines of their own into the CONNECT request that carries the user's sign-in.
+                answer(out, ANSWER_ADDRESS_UNSUPPORTED);
+                return null;
+            }
             ByteArrayOutputStream whole = new ByteArrayOutputStream(length + 1);
             whole.write(length);
             whole.write(name);
             address = whole.toByteArray();
-            host = new String(name, StandardCharsets.US_ASCII);
+            String text = new String(name, StandardCharsets.US_ASCII);
+            // Chromium sends an IPv6 literal by name and bare; a CONNECT line wants it in brackets.
+            host = text.indexOf(':') >= 0 ? "[" + text + "]" : text;
         } else {
             answer(out, ANSWER_ADDRESS_UNSUPPORTED);
             return null;
         }
         byte[] port = readExactly(in, 2);
         return new Target(type, address, port, host, ((port[0] & 0xFF) << 8) | (port[1] & 0xFF));
+    }
+
+    /**
+     * Letters, digits, dots, hyphens and underscores: what a host name is made of. A name with a
+     * colon in it is an IPv6 literal, so it may hold only hex digits, colons and dots; bracketed,
+     * anything else would read as a second port or a path to the proxy.
+     */
+    private static boolean isHostName(byte[] name) {
+        boolean literal = false;
+        for (byte b : name) literal |= b == ':';
+        for (byte b : name) {
+            boolean digit = b >= '0' && b <= '9';
+            if (literal) {
+                boolean hex = digit || (b >= 'a' && b <= 'f') || (b >= 'A' && b <= 'F');
+                if (!hex && b != ':' && b != '.') return false;
+            } else {
+                boolean letter = (b >= 'a' && b <= 'z') || (b >= 'A' && b <= 'Z');
+                if (!letter && !digit && b != '.' && b != '-' && b != '_') return false;
+            }
+        }
+        return true;
     }
 
     /** The reply TikTok's stack reads: it never looks at the bound address, so it's all zeros. */

@@ -24,6 +24,7 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -126,7 +127,7 @@ public class ProxyRelayTest {
     }
 
     @Test public void addressesGetTheShapeAnHttpProxyExpects() throws Exception {
-        List<String> targets = new ArrayList<>();
+        List<String> targets = Collections.synchronizedList(new ArrayList<>());
         ServerSocket proxy = proxy(socket -> {
             targets.add(readHead(socket.getInputStream()).split("\r\n")[0]);
             socket.getOutputStream().write("HTTP/1.1 200 OK\r\n\r\n".getBytes(StandardCharsets.US_ASCII));
@@ -141,6 +142,29 @@ public class ProxyRelayTest {
         assertEquals(0, answerTo(v6));
 
         assertEquals(List.of("CONNECT 192.0.2.7:443 HTTP/1.1", "CONNECT [2001:db8:0:0:0:0:0:1]:8443 HTTP/1.1"), targets);
+    }
+
+    /** A name with a line break in it would put lines of the client's choosing into the CONNECT request. */
+    @Test public void aNameThatCouldWriteIntoTheConnectRequestIsTurnedDown() throws Exception {
+        List<String> targets = Collections.synchronizedList(new ArrayList<>());
+        ServerSocket proxy = proxy(socket -> {
+            targets.add(readHead(socket.getInputStream()).split("\r\n")[0]);
+            socket.getOutputStream().write("HTTP/1.1 200 OK\r\n\r\n".getBytes(StandardCharsets.US_ASCII));
+        });
+        relay = ProxyRelay.start(config("http", proxy, USER, PASSWORD));
+
+        Socket forged = askForSite("api16.example.test\r\nX-Forged: yes\r\n", 443);
+        assertEquals(8, answerTo(forged));
+        assertEquals("then it hangs up", -1, forged.getInputStream().read());
+        Socket spaced = askForSite("api16.example.test HTTP/1.1", 443);
+        assertEquals(8, answerTo(spaced));
+        // Letters beside a colon aren't an IPv6 literal; in brackets they'd carry a port of their own.
+        Socket ported = askForSite("evil.example:80", 443);
+        assertEquals(8, answerTo(ported));
+        Socket literal = askForSite("2001:db8::1", 443);
+        assertEquals(0, answerTo(literal));
+
+        assertEquals(List.of("CONNECT [2001:db8::1]:443 HTTP/1.1"), targets);
     }
 
     @Test public void aRefusedSignInIsAFailedTunnelAndNeverAHang() throws Exception {

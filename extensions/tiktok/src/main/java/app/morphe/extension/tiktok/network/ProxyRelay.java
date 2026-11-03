@@ -249,9 +249,9 @@ final class ProxyRelay {
             host = "[" + InetAddress.getByAddress(address).getHostAddress() + "]";
         } else if (type == ADDRESS_NAME) {
             int length = in.read();
-            if (length <= 0) return null;
+            if (length < 0) return null;
             byte[] name = readExactly(in, length);
-            if (!isHostName(name) && refusal == ANSWER_OK) {
+            if ((length == 0 || !isHostName(name)) && refusal == ANSWER_OK) {
                 // A line break or a space in a "name" would let whoever reached this port put
                 // lines of their own into the CONNECT request that carries the user's sign-in.
                 refusal = ANSWER_ADDRESS_UNSUPPORTED;

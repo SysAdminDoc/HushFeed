@@ -186,6 +186,14 @@ public class ProxyRelayTest {
         assertEquals(7, answerToLateEnd(new byte[]{5, 2, 0, 1, 1, 2, 3, 4}, new byte[]{0, 80}));
     }
 
+    /** An empty name is no site to tunnel to, and it's still a request that gets an answer. */
+    @Test public void anEmptyNameIsTurnedDownWithAnAnswer() throws Exception {
+        relay = ProxyRelay.start(NetworkProxy.parse("http", "proxy.example.com", "8080", USER, PASSWORD));
+        assertEquals(8, answerToLateEnd(new byte[]{5, 1, 0, 3, 0}, new byte[]{1, (byte) 187}));
+        // BIND by an empty name is still a command the relay doesn't carry.
+        assertEquals(7, answerToLateEnd(new byte[]{5, 2, 0, 3, 0}, new byte[]{0, 80}));
+    }
+
     /** Sends a request without its last bytes, waits, sends those, and reads the relay's answer. */
     private int answerToLateEnd(byte[] start, byte[] end) throws Exception {
         Socket client = open();

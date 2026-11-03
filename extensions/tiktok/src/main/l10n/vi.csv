@@ -441,7 +441,7 @@ Couldn't open your photos. Try again.,Không thể mở thư viện ảnh của 
 Couldn't put back the diagnostic data. Try again.,Không thể khôi phục dữ liệu chẩn đoán. Vui lòng thử lại.
 Couldn't put the saved videos back. Try again.,Không thể khôi phục các video đã lưu. Vui lòng thử lại.
 Couldn't read %1$s. Write days and hours like Mon-Fri 21:00-07:00.,Không thể đọc %1$s. Vui lòng nhập ngày giờ theo định dạng như Mon-Fri 21:00-07:00.
-Couldn't read TikTok's current values (%1$s). Refresh values from the menu to try again.,Không thể đọc giá trị hiện tại của TikTok (%1$s). Làm mới giá trị từ menu để thử lại.
+Couldn't read TikTok's current values. Refresh values from the menu to try again.,Không thể đọc giá trị hiện tại của TikTok. Làm mới giá trị từ menu để thử lại.
 Couldn't read a field value. Check and try again.,Không đọc được một giá trị. Hãy kiểm tra và thử lại.
 Couldn't read an interrupted change. Check your settings.,Không đọc được thay đổi bị ngắt. Hãy kiểm tra cài đặt.
 Couldn't read that file. Choose it again.,Không thể đọc tệp đó. Vui lòng chọn lại.
@@ -2410,3 +2410,5 @@ Use this phone's own IDs,Dùng ID của chính điện thoại này
 TikTok goes back to this phone's IDs after the restart. Tap again to cancel.,TikTok quay lại ID của điện thoại này sau khi khởi động lại. Nhấn lần nữa để hủy.
 "On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video. A photo story saves as a video too.","Đối với bài đăng 1 ảnh, nút Tải xuống video sẽ tạo tệp MP4 kèm âm thanh bài đăng và không có logo TikTok hay đoạn kết. Đối với bài đăng nhiều ảnh, nút Tải xuống sẽ hỏi bạn muốn lấy các ảnh gốc hay 1 video tổng hợp. Tin dạng ảnh cũng được lưu thành video."
 How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.,Thời gian mỗi bức ảnh hiển thị trên màn hình trong video được tạo từ bài đăng ảnh. Video của tin dài bằng chính tin đó.
+Stop loading,Dừng tải
+Recording files deleted,Đã xóa các tệp ghi hình

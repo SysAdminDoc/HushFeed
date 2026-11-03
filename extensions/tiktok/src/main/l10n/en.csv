@@ -453,7 +453,7 @@ Couldn't open your photos. Try again.,Couldn't open your photos. Try again.
 Couldn't put back the diagnostic data. Try again.,Couldn't put back the diagnostic data. Try again.
 Couldn't put the saved videos back. Try again.,Couldn't put the saved videos back. Try again.
 Couldn't read %1$s. Write days and hours like Mon-Fri 21:00-07:00.,Couldn't read %1$s. Write days and hours like Mon-Fri 21:00-07:00.
-Couldn't read TikTok's current values (%1$s). Refresh values from the menu to try again.,Couldn't read TikTok's current values (%1$s). Refresh values from the menu to try again.
+Couldn't read TikTok's current values. Refresh values from the menu to try again.,Couldn't read TikTok's current values. Refresh values from the menu to try again.
 Couldn't read a field value. Check and try again.,Couldn't read a field value. Check and try again.
 Couldn't read an interrupted change. Check your settings.,Couldn't read an interrupted change. Check your settings.
 Couldn't read that file. Choose it again.,Couldn't read that file. Choose it again.
@@ -1481,6 +1481,7 @@ Record LIVEs you watch,Record LIVEs you watch
 Record a screen's layout,Record a screen's layout
 Record this LIVE from now,Record this LIVE from now
 Recorded gate reads (%1$d),Recorded gate reads (%1$d)
+Recording files deleted,Recording files deleted
 Recording files need recovery,Recording files need recovery
 Recording stopped early. Saved to %1$s,Recording stopped early. Saved to %1$s
 Recording this LIVE from now,Recording this LIVE from now
@@ -1900,6 +1901,7 @@ Stop a long press on Share from opening TikTok's quick share action.,Stop a long
 Stop analytics and tracking,Stop analytics and tracking
 Stop and save the feed capture,Stop and save the feed capture
 Stop feature gate recording,Stop feature gate recording
+Stop loading,Stop loading
 Stop on-device AI profiling,Stop on-device AI profiling
 Stop recording this LIVE,Stop recording this LIVE
 Stop search results playing on their own,Stop search results playing on their own

@@ -139,7 +139,7 @@ Comma separated names exactly as the row under a profile's bio shows them, such 
 Couldn't add the older seen videos. Try again.	No se pudieron añadir los vídeos vistos anteriores. Inténtalo de nuevo.
 Couldn't copy. Use Save build details instead.	No se copió. Usa «Guardar detalles de la compilación».
 Couldn't copy the report. Use Save report instead.	No se copió el informe. Usa «Guardar informe».
-Couldn't read TikTok's current values (%1$s). Refresh values from the menu to try again.	No se pudieron leer los valores actuales de TikTok (%1$s). Actualiza los valores desde el menú para volver a intentarlo.
+Couldn't read TikTok's current values. Refresh values from the menu to try again.	No se pudieron leer los valores actuales de TikTok. Actualiza los valores desde el menú para volver a intentarlo.
 Couldn't restart TikTok. Close it and open it again.	No se pudo reiniciar TikTok. Ciérralo y vuelve a abrirlo.
 Couldn't undo that. Try again.	No se pudo deshacer. Inténtalo de nuevo.
 Count a video as seen after	Contar un vídeo como visto después de
@@ -2441,3 +2441,5 @@ Wipes TikTok's data once, on the next start, and goes back to this phone's real 
 TikTok goes back to this phone's IDs after the restart. Tap again to cancel.	TikTok vuelve a los ID de este teléfono tras el reinicio. Toca de nuevo para cancelar.
 On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video. A photo story saves as a video too.	En una publicación con una foto, Descargar video crea un MP4 con el sonido de la publicación y sin logo de TikTok ni tarjeta final. En una publicación con varias fotos, Descargar pregunta si quieres los originales o un solo video. Una historia de fotos también se guarda como video.
 How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.	Cuánto tiempo se ve cada foto en un vídeo hecho a partir de una publicación de fotos. El vídeo de una historia dura lo mismo que la historia.
+Stop loading	Detener la carga
+Recording files deleted	Archivos de grabación eliminados

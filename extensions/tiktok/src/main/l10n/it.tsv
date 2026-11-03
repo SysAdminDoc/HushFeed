@@ -142,7 +142,7 @@ Comma separated names exactly as the row under a profile's bio shows them, such 
 Couldn't add the older seen videos. Try again.	Non è stato possibile aggiungere i video già visti più vecchi. Riprova.
 Couldn't copy. Use Save build details instead.	Copia fallita. Usa invece Salva dettagli della build.
 Couldn't copy the report. Use Save report instead.	Rapporto non copiato. Usa invece Salva rapporto.
-Couldn't read TikTok's current values (%1$s). Refresh values from the menu to try again.	Non è stato possibile leggere i valori attuali di TikTok (%1$s). Aggiorna i valori dal menu per riprovare.
+Couldn't read TikTok's current values. Refresh values from the menu to try again.	Non è stato possibile leggere i valori attuali di TikTok. Aggiorna i valori dal menu per riprovare.
 Couldn't restart TikTok. Close it and open it again.	Non è stato possibile riavviare TikTok. Chiudi l'app e riaprila.
 Couldn't undo that. Try again.	Non è stato possibile annullare l'operazione. Riprova.
 Count a video as seen after	Conta un video come visto dopo
@@ -2441,3 +2441,5 @@ Wipes TikTok's data once, on the next start, and goes back to this phone's real 
 TikTok goes back to this phone's IDs after the restart. Tap again to cancel.	TikTok torna agli ID di questo telefono dopo il riavvio. Tocca di nuovo per annullare.
 On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video. A photo story saves as a video too.	In un post con una sola foto, Scarica video crea un MP4 con l'audio del post e senza logo TikTok né scheda finale. In un post con più foto, Scarica chiede se vuoi gli originali o un solo video. Anche una storia di foto viene salvata come video.
 How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.	Quanto resta sullo schermo ogni foto in un video creato da un post di foto. Il video di una storia dura quanto la storia.
+Stop loading	Interrompi il caricamento
+Recording files deleted	File della registrazione eliminati

@@ -62,6 +62,7 @@ import java.util.zip.GZIPOutputStream;
 
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.Logger;
+import app.morphe.extension.shared.diagnostics.DiagnosticRedactor;
 import app.morphe.extension.shared.settings.SettingsJson;
 import app.morphe.extension.tiktok.settings.SettingsOperationJournal;
 import app.morphe.extension.tiktok.settings.preference.DocumentOperation;
@@ -739,8 +740,11 @@ public final class FeatureGateLabFragment extends Fragment {
             @Override
             public void onError(String message) {
                 if (!isAdded() || getView() == null) return;
-                count.setText(
-                        L10n.f(getContext(), "Couldn't read TikTok's current values (%1$s). Refresh values from the menu to try again.", message));
+                // The exception's name and text go to the log. The reader gets what to do next.
+                Logger.printInfo(() -> DiagnosticRedactor.redact(
+                        "Feature Gate Lab could not read TikTok's current values: " + message));
+                count.setText(L10n.t(getContext(),
+                        "Couldn't read TikTok's current values. Refresh values from the menu to try again."));
                 FeatureGateCatalog.Snapshot cached = FeatureGateCatalog.cachedSnapshot();
                 if (cached != null) {
                     snapshot = cached;

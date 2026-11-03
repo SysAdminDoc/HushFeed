@@ -181,7 +181,7 @@ Comma separated names exactly as the row under a profile's bio shows them, such 
 Couldn't add the older seen videos. Try again.	Не удалось добавить старые просмотренные видео. Попробуйте снова.
 Couldn't copy. Use Save build details instead.	Не вышло. Нажмите «Сохранить сведения о сборке».
 Couldn't copy the report. Use Save report instead.	Отчёт не скопирован. Нажмите «Сохранить отчёт».
-Couldn't read TikTok's current values (%1$s). Refresh values from the menu to try again.	Не удалось прочитать текущие значения TikTok (%1$s). Обновите значения через меню, чтобы попробовать снова.
+Couldn't read TikTok's current values. Refresh values from the menu to try again.	Не удалось прочитать текущие значения TikTok. Обновите значения через меню, чтобы попробовать снова.
 Couldn't restart TikTok. Close it and open it again.	Не удалось перезапустить TikTok. Закройте приложение и откройте его снова.
 Couldn't undo that. Try again.	Не удалось отменить это действие. Попробуйте снова.
 Count a video as seen after	Считать видео просмотренным после
@@ -2618,3 +2618,5 @@ Wipes TikTok's data once, on the next start, and goes back to this phone's real 
 TikTok goes back to this phone's IDs after the restart. Tap again to cancel.	После перезапуска TikTok вернётся к ID этого телефона. Нажмите ещё раз, чтобы отменить.
 On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video. A photo story saves as a video too.	В посте с одним фото «Скачать видео» делает MP4 со звуком поста, без логотипа TikTok и заключительной заставки. В посте с несколькими фото «Скачать» спрашивает, нужны ли оригиналы или одно видео. Фотоистория тоже сохраняется как видео.
 How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.	Сколько каждое фото остаётся на экране в видео из фотопубликации. Видео из истории длится столько же, сколько сама история.
+Stop loading	Остановить загрузку
+Recording files deleted	Файлы записи удалены

@@ -428,7 +428,7 @@ Couldn't open the file picker to import. Try again.,无法打开要导入的文�
 Couldn't put back the diagnostic data. Try again.,无法恢复诊断数据。再试一次.
 Couldn't put the saved videos back. Try again.,无法恢复保存的视频。再试一次.
 Proxy %1$s is down. Turn it off if TikTok won't load.,代理 %1$s 无法连接。TikTok 无法加载时请关闭代理.
-Couldn't read TikTok's current values (%1$s). Refresh values from the menu to try again.,无法读取 TikTok 的当前值 (%1$s)。从菜单中刷新值以重试.
+Couldn't read TikTok's current values. Refresh values from the menu to try again.,无法读取 TikTok 的当前值。从菜单中刷新值以重试.
 Couldn't read that file. Choose it again.,无法读取该文件。再选择一次.
 Couldn't read this list. Close it and try again.,无法阅读此列表。关闭它并重试.
 Can't tell who wrote this. Block them on their profile.,无法识别评论者，请在其主页拉黑.
@@ -2410,3 +2410,5 @@ Use this phone's own IDs,使用这部手机自己的 ID
 TikTok goes back to this phone's IDs after the restart. Tap again to cancel.,重启后 TikTok 会换回这部手机的 ID. 再次点按可取消.
 "On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video. A photo story saves as a video too.",在一张照片帖子中，下载视频会生成带有帖子声音的 MP4，但没有 TikTok 徽标或结束卡。在包含多张照片的帖子中，“下载”会询问你是否想要原件或一个视频。照片故事也会保存为视频.
 How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.,由照片帖子制作的视频中每张照片在屏幕上停留的时间。故事的视频时长与故事相同.
+Stop loading,停止加载
+Recording files deleted,录制文件已删除

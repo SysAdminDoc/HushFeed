@@ -239,7 +239,7 @@ public final class LiveRecordingSaver {
                 RecordingRetention.Record record = RecordingRetention.in(app).open(id);
                 if (record == null) return;
                 try {
-                    if (discard) {new RecordingPublication(app, record).discard();record.close();Utils.showToastShort(L10n.t("Done"));}
+                    if (discard) {new RecordingPublication(app, record).discard();record.close();Utils.showToastShort(L10n.t("Recording files deleted"));}
                     else {
                         LiveRecorder.Published published = publishRecord(app, record);
                         announce(retriedResult(record, published));

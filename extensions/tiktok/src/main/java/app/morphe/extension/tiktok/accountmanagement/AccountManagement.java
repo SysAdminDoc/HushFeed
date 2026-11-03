@@ -64,6 +64,9 @@ public final class AccountManagement {
         body.addView(scope);
         TextView progress = label(context, ""); progress.setTag("account_list_progress");
         TextView status = label(context, ""); status.setTag("account_list_status");
+        // The one line that says a page landed, loading stopped or the account changed, so a
+        // screen reader hears it without having to find it.
+        status.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);
         TextView metadata = label(context, ""); metadata.setTag("account_list_metadata");
         body.addView(progress); body.addView(status); body.addView(metadata);
         Rows adapter = new Rows(context, kind);
@@ -75,7 +78,8 @@ public final class AccountManagement {
                 SettingsUi.dialogListHeight(context, 360)));
         AlertDialog dialog = new AlertDialog.Builder(context).setView(body)
                 .setPositiveButton(L10n.t(context, "Load more"), null)
-                .setNeutralButton(L10n.t(context, "Cancel"), null)
+                // It stops the page loads and keeps the list; Close is the button that leaves.
+                .setNeutralButton(L10n.t(context, "Stop loading"), null)
                 .setNegativeButton(L10n.t(context, "Close"), null).create();
         AccountListSession.Dispatch dispatch = new AccountListSession.Dispatch() {
             @Override public long now() { return SystemClock.uptimeMillis(); }

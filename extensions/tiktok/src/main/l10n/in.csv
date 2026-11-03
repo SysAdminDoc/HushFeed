@@ -137,7 +137,7 @@ Caption languages,Bahasa takarir
 Couldn't add the older seen videos. Try again.,Tidak dapat menambahkan video lama yang dilihat. Coba lagi.
 Couldn't copy. Use Save build details instead.,Gagal menyalin. Gunakan Simpan detail build.
 Couldn't copy the report. Use Save report instead.,Laporan tidak bisa disalin. Gunakan Simpan laporan.
-Couldn't read TikTok's current values (%1$s). Refresh values from the menu to try again.,Tidak bisa membaca nilai TikTok saat ini (%1$s). Perbarui nilai dari menu untuk mencoba lagi.
+Couldn't read TikTok's current values. Refresh values from the menu to try again.,Tidak bisa membaca nilai TikTok saat ini. Perbarui nilai dari menu untuk mencoba lagi.
 Couldn't restart TikTok. Close it and open it again.,Tidak bisa memulai ulang TikTok. Tutup lalu buka lagi.
 Couldn't undo that. Try again.,Tidak bisa dibatalkan. Coba lagi.
 Count a video as seen after,Anggap video sudah dilihat setelah
@@ -2412,3 +2412,5 @@ Use this phone's own IDs,Pakai ID asli ponsel ini
 TikTok goes back to this phone's IDs after the restart. Tap again to cancel.,TikTok kembali ke ID ponsel ini setelah dimulai ulang. Ketuk lagi untuk membatalkan.
 "On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video. A photo story saves as a video too.","Pada kiriman satu foto, Unduh video membuat MP4 dengan suara kiriman tanpa logo TikTok dan kartu penutup. Pada kiriman dengan beberapa foto, Unduh menanyakan apakah kamu mau foto asli atau satu video. Story foto juga disimpan sebagai video."
 How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.,Berapa lama setiap foto tampil di layar dalam video yang dibuat dari unggahan foto. Video dari Story berdurasi sama dengan Story-nya.
+Stop loading,Berhenti memuat
+Recording files deleted,File rekaman dihapus

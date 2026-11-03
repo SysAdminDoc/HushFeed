@@ -139,7 +139,7 @@ Comma separated names exactly as the row under a profile's bio shows them, such 
 Couldn't add the older seen videos. Try again.	Daha köhnə izlənmiş videoları əlavə etmək alınmadı. Yenidən cəhd edin.
 Couldn't copy. Use Save build details instead.	Kopyalanmadı. Əvəzinə Build təfərrüatlarını saxlayın.
 Couldn't copy the report. Use Save report instead.	Hesabat kopyalanmadı. Əvəzinə Hesabatı saxla.
-Couldn't read TikTok's current values (%1$s). Refresh values from the menu to try again.	TikTok-un cari dəyərlərini oxumaq alınmadı (%1$s). Yenidən cəhd etmək üçün menyudan dəyərləri yeniləyin.
+Couldn't read TikTok's current values. Refresh values from the menu to try again.	TikTok-un cari dəyərlərini oxumaq alınmadı. Yenidən cəhd etmək üçün menyudan dəyərləri yeniləyin.
 Couldn't restart TikTok. Close it and open it again.	TikTok-u yenidən başlatmaq alınmadı. Onu bağlayıb yenidən açın.
 Couldn't undo that. Try again.	Bunu geri qaytarmaq alınmadı. Yenidən cəhd edin.
 Count a video as seen after	Videonu bu müddətdən sonra izlənmiş say
@@ -2441,3 +2441,5 @@ Wipes TikTok's data once, on the next start, and goes back to this phone's real 
 TikTok goes back to this phone's IDs after the restart. Tap again to cancel.	Yenidən başladıqdan sonra TikTok bu telefonun ID-lərinə qayıdır. Ləğv etmək üçün yenidən toxunun.
 On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video. A photo story saves as a video too.	Tək fotolu yazıda Download video yazının səsi ilə, TikTok loqosu və son kart olmadan MP4 hazırlayır. Bir neçə fotolu yazıda Download orijinalları, yoxsa tək video istədiyinizi soruşur. Foto hekayə də video kimi saxlanılır.
 How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.	Foto paylaşımından hazırlanan videoda hər fotonun ekranda nə qədər qalması. Hekayənin videosu hekayənin özü qədər davam edir.
+Stop loading	Yükləməni dayandır
+Recording files deleted	Qeyd faylları silindi

@@ -139,7 +139,7 @@ Comma separated names exactly as the row under a profile's bio shows them, such 
 Couldn't add the older seen videos. Try again.	Eski görülen videolar eklenemedi. Tekrar dene.
 Couldn't copy. Use Save build details instead.	Kopyalanamadı. Derleme ayrıntılarını kaydet.
 Couldn't copy the report. Use Save report instead.	Kopyalanamadı. Bunun yerine “Raporu kaydet” kullan.
-Couldn't read TikTok's current values (%1$s). Refresh values from the menu to try again.	TikTok'un geçerli değerleri okunamadı (%1$s). Yeniden denemek için menüden değerleri yenile.
+Couldn't read TikTok's current values. Refresh values from the menu to try again.	TikTok'un geçerli değerleri okunamadı. Yeniden denemek için menüden değerleri yenile.
 Couldn't restart TikTok. Close it and open it again.	TikTok yeniden başlatılamadı. Kapatıp tekrar açın.
 Couldn't undo that. Try again.	Geri alınamadı. Tekrar deneyin.
 Count a video as seen after	Bir videoyu şu kadarından sonra görülmüş say
@@ -2441,3 +2441,5 @@ Wipes TikTok's data once, on the next start, and goes back to this phone's real 
 TikTok goes back to this phone's IDs after the restart. Tap again to cancel.	Yeniden başlatmanın ardından TikTok bu telefonun kimliklerine döner. İptal etmek için yeniden dokunun.
 On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video. A photo story saves as a video too.	Tek fotoğraflı bir gönderide Videoyu indir, gönderinin sesiyle, TikTok logosu ve bitiş kartı olmadan bir MP4 oluşturur. Birden çok fotoğraflı gönderide İndir, orijinalleri mi yoksa tek bir video mu istediğini sorar. Fotoğraflı bir hikaye de video olarak kaydedilir.
 How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.	Bir fotoğraf gönderisinden yapılan videoda her fotoğrafın ekranda ne kadar kalacağı. Bir hikayenin videosu hikaye kadar sürer.
+Stop loading	Yüklemeyi durdur
+Recording files deleted	Kayıt dosyaları silindi

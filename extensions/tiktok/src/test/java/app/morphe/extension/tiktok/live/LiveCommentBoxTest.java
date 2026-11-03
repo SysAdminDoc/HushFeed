@@ -4,11 +4,22 @@
  */
 package app.morphe.extension.tiktok.live;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import org.junit.After;
 import org.junit.Before;
@@ -17,6 +28,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.annotation.GraphicsMode;
 
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.PausedProcess;
@@ -25,7 +37,9 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
 
 /**
  * The comment box inside a LIVE room (#267, #323): a room Dark LIVE panels darkened makes the
- * typed text and the hint light, and a room it left light keeps TikTok's colors.
+ * typed text and the hint light, and a room it left light keeps TikTok's colors. In a dark room
+ * the rest of the panel follows (#329): the picker's white boxes take the panel's own fill and the
+ * bar's dark icons are drawn white.
  */
 @RunWith(RobolectricTestRunner.class)
 public class LiveCommentBoxTest {
@@ -103,5 +117,209 @@ public class LiveCommentBoxTest {
     public void aMissingPanelIsLeftAlone() {
         LiveCommentBox.onPanel(null);
         LiveCommentBox.paint(null);
+    }
+
+    /** A custom AMOLED color, the one #329 was reported with. */
+    private static final int AMOLED = 0xFF181825;
+
+    /** The panel's root, its AMOLED colored fill under it, as the room lays it out. */
+    private static FrameLayout panel(FrameLayout root) {
+        FrameLayout panel = new FrameLayout(root.getContext());
+        panel.setBackground(new ColorDrawable(AMOLED));
+        root.addView(panel);
+        return panel;
+    }
+
+    private static View filled(FrameLayout panel, Drawable background) {
+        View view = new View(panel.getContext());
+        view.setBackground(background);
+        panel.addView(view);
+        return view;
+    }
+
+    private static int solid(View view) {
+        return ((ColorDrawable) view.getBackground()).getColor();
+    }
+
+    /** An icon of one ink on a clear ground, the way TikTok's bar draws its heart and emoji buttons. */
+    private static ImageView icon(ViewGroup parent, int ink) {
+        ImageView icon = new ImageView(parent.getContext());
+        icon.setScaleType(ImageView.ScaleType.FIT_XY);
+        icon.setPadding(10, 10, 10, 10);
+        icon.setImageDrawable(new ColorDrawable(ink));
+        parent.addView(icon, new LinearLayout.LayoutParams(40, 40));
+        return icon;
+    }
+
+    private static void layOut(View root) {
+        root.measure(View.MeasureSpec.makeMeasureSpec(1080, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(600, View.MeasureSpec.EXACTLY));
+        root.layout(0, 0, 1080, 600);
+    }
+
+    /** #329: the picker's white boxes behind send and delete take the panel's own dark fill. */
+    @Test
+    @Config(qualifiers = "night")
+    public void aDarkRoomGivesThePickersWhiteBoxesThePanelsOwnFill() {
+        FrameLayout root = new FrameLayout(RuntimeEnvironment.getApplication());
+        FrameLayout panel = panel(root);
+        GradientDrawable sendBox = new GradientDrawable();
+        sendBox.setCornerRadius(8f);
+        sendBox.setColor(Color.WHITE);
+        filled(panel, sendBox);
+        View deleteBox = filled(panel, new ColorDrawable(0xFFF6F6F6));
+        GradientDrawable fade = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, new int[]{0x00FFFFFF, Color.WHITE});
+        filled(panel, fade);
+        View tile = filled(panel, new ColorDrawable(0x29FFFFFF));
+        View yellow = filled(panel, new ColorDrawable(0xFFFFC400));
+        ImageView photo = new ImageView(root.getContext());
+        photo.setImageDrawable(new ColorDrawable(Color.BLUE));
+        photo.setBackground(new ColorDrawable(Color.WHITE));
+        panel.addView(photo);
+
+        LiveCommentBox.paint(root);
+
+        assertEquals("the send box", AMOLED, sendBox.getColor().getDefaultColor());
+        assertEquals("the delete box", AMOLED, solid(deleteBox));
+        assertArrayEquals("a white fade keeps its see-through end", new int[]{0x00181825, AMOLED}, fade.getColors());
+        assertEquals("a see-through tile stays", 0x29FFFFFF, solid(tile));
+        assertEquals("a colored button keeps its color", 0xFFFFC400, solid(yellow));
+        assertEquals("a photo's ground stays", Color.WHITE, solid(photo));
+    }
+
+    /** The picker's pages come from an adapter after the panel is set up. */
+    @Test
+    @Config(qualifiers = "night")
+    public void aPickerPageThatArrivesLaterIsDarkenedOnTheNextLayout() {
+        FrameLayout root = new FrameLayout(RuntimeEnvironment.getApplication());
+        FrameLayout panel = panel(root);
+        LiveCommentBox.paint(root);
+
+        View page = filled(panel, new ColorDrawable(Color.WHITE));
+        root.getViewTreeObserver().dispatchOnGlobalLayout();
+        assertEquals(AMOLED, solid(page));
+    }
+
+    /** #329: the bar's heart and emoji buttons, dark ink on their faint pill, are drawn white. */
+    @Test
+    @Config(qualifiers = "night")
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    public void theBarsDarkIconsAreDrawnWhiteAndCheckedAgainEachFrame() {
+        FrameLayout root = new FrameLayout(RuntimeEnvironment.getApplication());
+        FrameLayout panel = panel(root);
+        LinearLayout pill = new LinearLayout(root.getContext());
+        GradientDrawable faint = new GradientDrawable();
+        faint.setColor(0x0F161823);
+        pill.setBackground(faint);
+        panel.addView(pill);
+        ImageView heart = icon(pill, 0xFF161823);
+        ImageView send = icon(pill, 0xFFFE2C55);
+        TextView count = new TextView(root.getContext());
+        count.setTextColor(0x99161823);
+        pill.addView(count);
+        layOut(root);
+
+        LiveCommentBox.paint(root);
+        assertNotNull("the heart goes white", heart.getColorFilter());
+        assertNull("a colored send button stays", send.getColorFilter());
+        assertEquals("gray text goes light", 0x99FFFFFF, count.getCurrentTextColor());
+
+        // TikTok gives the heart a colored icon, then a dark one again: each frame shows it right.
+        heart.setImageDrawable(new ColorDrawable(0xFFFE2C55));
+        root.getViewTreeObserver().dispatchOnPreDraw();
+        assertNull(heart.getColorFilter());
+        heart.setImageDrawable(new ColorDrawable(0xFF161823));
+        root.getViewTreeObserver().dispatchOnPreDraw();
+        assertNotNull(heart.getColorFilter());
+    }
+
+    @Test
+    @Config(qualifiers = "night")
+    public void aRoomTheSwitchLeftLightKeepsItsWhiteBoxes() {
+        Settings.DARK_LIVE_PANELS.save(false);
+        FrameLayout root = new FrameLayout(RuntimeEnvironment.getApplication());
+        View box = filled(panel(root), new ColorDrawable(Color.WHITE));
+        LiveCommentBox.paint(root);
+        assertEquals(Color.WHITE, solid(box));
+    }
+
+    @Test
+    public void thePanelsFillIsItsNearestDarkOneOrTheDarkCardsFill() {
+        FrameLayout root = new FrameLayout(RuntimeEnvironment.getApplication());
+        assertEquals(LivePanelTheme.DARK_FILL, LiveCommentBox.panelFill(root));
+        filled(panel(root), new ColorDrawable(Color.BLACK));
+        assertEquals(AMOLED, LiveCommentBox.panelFill(root));
+    }
+
+    /** An AMOLED color needn't be a gray: a navy panel gives its boxes navy. */
+    @Test
+    @Config(qualifiers = "night")
+    public void aColoredAmoledFillIsThePanelsFillToo() {
+        FrameLayout root = new FrameLayout(RuntimeEnvironment.getApplication());
+        FrameLayout panel = new FrameLayout(root.getContext());
+        panel.setBackground(new ColorDrawable(0xFF00264D));
+        root.addView(panel);
+        View box = filled(panel, new ColorDrawable(Color.WHITE));
+        LiveCommentBox.paint(root);
+        assertEquals(0xFF00264D, solid(box));
+    }
+
+    /** A white fill can share its state with another view's copy, outside the room. */
+    @Test
+    @Config(qualifiers = "night")
+    public void aSharedWhiteFillChangesOnlyInThePanel() {
+        FrameLayout root = new FrameLayout(RuntimeEnvironment.getApplication());
+        FrameLayout panel = panel(root);
+        ColorDrawable white = new ColorDrawable(Color.WHITE);
+        ColorDrawable elsewhere = (ColorDrawable) white.getConstantState().newDrawable();
+        filled(panel, white);
+        GradientDrawable fade = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, new int[]{0x00FFFFFF, Color.WHITE});
+        GradientDrawable fadeElsewhere = (GradientDrawable) fade.getConstantState().newDrawable();
+        filled(panel, fade);
+
+        LiveCommentBox.paint(root);
+
+        assertEquals(AMOLED, white.getColor());
+        assertEquals(Color.WHITE, elsewhere.getColor());
+        assertArrayEquals(new int[]{0x00181825, AMOLED}, fade.getColors());
+        assertArrayEquals(new int[]{0x00FFFFFF, Color.WHITE}, fadeElsewhere.getColors());
+    }
+
+    /** TikTok's emoji grids are RecyclerView subclasses; the name is what's matched. */
+    static final class RecyclerView extends FrameLayout {
+        RecyclerView(android.content.Context context) {
+            super(context);
+        }
+    }
+
+    /** A dark emoji in the picker's grid keeps its ink, a dark key on a box made dark is drawn white. */
+    @Test
+    @Config(qualifiers = "night")
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    public void anEmojiInTheGridKeepsItsInkButADarkKeyOnADarkenedBoxGoesWhite() {
+        FrameLayout root = new FrameLayout(RuntimeEnvironment.getApplication());
+        FrameLayout panel = panel(root);
+        RecyclerView grid = new RecyclerView(root.getContext());
+        panel.addView(grid);
+        ImageView blackHeart = icon(grid, 0xFF161823);
+        FrameLayout deleteBox = new FrameLayout(root.getContext());
+        deleteBox.setBackground(new ColorDrawable(Color.WHITE));
+        grid.addView(deleteBox, new FrameLayout.LayoutParams(60, 60));
+        ImageView delete = icon(deleteBox, 0xFF161823);
+        layOut(root);
+
+        LiveCommentBox.paint(root);
+        assertNull("an emoji keeps its look", blackHeart.getColorFilter());
+        assertEquals("the delete box", AMOLED, solid(deleteBox));
+        assertNotNull("the delete key goes white", delete.getColorFilter());
+
+        // Its box is dark already on the next layout, and the key is still kept white.
+        root.getViewTreeObserver().dispatchOnGlobalLayout();
+        delete.setImageDrawable(new ColorDrawable(0xFFFE2C55));
+        root.getViewTreeObserver().dispatchOnPreDraw();
+        delete.setImageDrawable(new ColorDrawable(0xFF161823));
+        root.getViewTreeObserver().dispatchOnPreDraw();
+        assertNotNull(delete.getColorFilter());
+        assertNull(blackHeart.getColorFilter());
     }
 }

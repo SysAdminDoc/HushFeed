@@ -376,7 +376,17 @@ public final class MediaCache {
             File file = new File(directory, PENDING_FILE_NAME + suffix);
             if (file.exists() && !file.isFile()) throw new IOException("Unreadable media publication journal");
         }
-        if (!base.exists() && !backup.exists()) throw new IOException("Uncommitted media publication journal");
+        if (!base.exists() && !backup.exists()) {
+            // Only the file a write was going into, with nothing committed before it: the first
+            // write ever died before its rename, or a stale .new outlived a journal cleared to
+            // nothing. Either way the committed map is empty. Reading it as unreadable instead
+            // failed every save from then on, since no write could get past the read.
+            File uncommitted = new File(directory, PENDING_FILE_NAME + ".new");
+            if (uncommitted.exists() && !uncommitted.delete()) {
+                throw new IOException("Could not discard an uncommitted media publication journal");
+            }
+            return records;
+        }
         try {
             // A backup is the committed record until a write retires it. AtomicFile.openRead
             // replaces base/deletes .new before decoding; an unreadable source must stay intact.

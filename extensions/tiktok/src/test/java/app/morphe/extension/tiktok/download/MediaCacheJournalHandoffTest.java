@@ -129,6 +129,34 @@ public class MediaCacheJournalHandoffTest {
         assertTrue("fresh row's record was lost", text(journal(durable)).contains(uri(10).toString()));
     }
 
+    /**
+     * The first write to the journal died before its rename, so only the file it was going into
+     * is there. That is no committed record, and the next save must not fail on it for good.
+     */
+    @Test @Config(sdk = {29, 33})
+    public void anUncommittedFirstWriteDoesNotLockEveryLaterSaveOut() throws Exception {
+        File uncommitted = new File(journal(durable).getPath() + ".new");
+        write(uncommitted, stale() + "\t" + uri(12));
+
+        MediaCache.markPending(context, uri(10));
+
+        assertTrue("the save's record was not journaled", text(journal(durable)).contains(uri(10).toString()));
+        assertFalse("a write that never committed was adopted", text(journal(durable)).contains(uri(12).toString()));
+        assertFalse(uncommitted.exists());
+    }
+
+    @Test @Config(sdk = {29, 33})
+    public void anUncommittedLegacyWriteIsRetiredWithoutBlockingTheHandoff() throws Exception {
+        File uncommitted = new File(journal(cache).getPath() + ".new");
+        write(uncommitted, stale() + "\t" + uri(12));
+
+        MediaCache.markPending(context, uri(10));
+
+        assertTrue(text(journal(durable)).contains(uri(10).toString()));
+        assertFalse(text(journal(durable)).contains(uri(12).toString()));
+        assertFalse("the legacy directory still claims a journal", uncommitted.exists());
+    }
+
     @Test public void unreadableLegacyRecordsPreventReplacementOrPartialHandoff() throws Exception {
         File legacy = journal(cache);
         assertTrue(legacy.mkdirs());

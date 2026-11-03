@@ -700,6 +700,9 @@
     "Skip update checks": [
       "skip_update_checks"
     ],
+    "Keep the next videos in full screen": [
+      "full_screen_next_videos"
+    ],
     "Stay on the video in full screen": [
       "full_screen_hold"
     ],
@@ -1794,6 +1797,12 @@
     "full_screen_hold": {
       "field": "FULL_SCREEN_HOLD",
       "key": "full_screen_hold",
+      "type": "boolean",
+      "default": false
+    },
+    "full_screen_next_videos": {
+      "field": "FULL_SCREEN_NEXT_VIDEOS",
+      "key": "full_screen_next_videos",
       "type": "boolean",
       "default": false
     },

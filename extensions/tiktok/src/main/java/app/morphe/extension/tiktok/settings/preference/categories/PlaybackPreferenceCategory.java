@@ -31,7 +31,8 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
         return SettingsStatus.playbackQualityEnabled || SettingsStatus.sdrPlaybackEnabled
                 || SettingsStatus.h264PlaybackEnabled || SettingsStatus.playbackSpeedEnabled
                 || SettingsStatus.autoAdvanceEnabled || SettingsStatus.videoFitEnabled
-                || SettingsStatus.fullScreenHoldEnabled || SettingsStatus.storyControlsEnabled
+                || SettingsStatus.fullScreenHoldEnabled || SettingsStatus.fullScreenNextVideosEnabled
+                || SettingsStatus.storyControlsEnabled
                 || SettingsStatus.liveControlsEnabled
                 || SettingsStatus.feedMuteEnabled || SettingsStatus.keepPulledSoundsEnabled
                 || SettingsStatus.backgroundPlayEnabled || SettingsStatus.pictureInPictureEnabled
@@ -68,6 +69,12 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                     "Also turns on TikTok's own Auto scroll for videos opened from search. "
                             + "Restart TikTok to apply this.",
                     Settings.AUTO_ADVANCE_SEARCH));
+        }
+        if (SettingsStatus.fullScreenNextVideosEnabled) {
+            addPreference(new TogglePreference(context, "Keep the next videos in full screen",
+                    "Full screen opens with just your video on most pages, so there's nothing to "
+                            + "swipe to. This brings the videos after it along.",
+                    Settings.FULL_SCREEN_NEXT_VIDEOS));
         }
         // None of these is auto-advance, and under its heading they read as parts of it: each keeps
         // you on the video you're on, paused behind the comments, held or stopped at its end, or

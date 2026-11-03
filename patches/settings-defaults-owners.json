@@ -700,6 +700,9 @@
     "Skip update checks": [
       "SKIP_UPDATE_CHECKS"
     ],
+    "Keep the next videos in full screen": [
+      "FULL_SCREEN_NEXT_VIDEOS"
+    ],
     "Stay on the video in full screen": [
       "FULL_SCREEN_HOLD"
     ],

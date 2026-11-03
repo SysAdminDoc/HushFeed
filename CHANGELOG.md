@@ -6,6 +6,7 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* **TikTok:** `Keep the next videos in full screen` fixes full screen stopping dead on most pages. TikTok opens it with only the video you were on, so there was nothing to swipe to and it couldn't move on by itself. With the switch on, the videos after it come along. It starts off, and it lives in Hushfeed settings > Playback (#286).
 * **TikTok:** `Keep my own watch history` lists the videos you watch on this phone with who posted them and their captions, in Hushfeed settings > Feed filter. `My watch history` searches the list and a tap opens the video again. It starts off and stays on your phone (#172).
 * **TikTok:** A new `Time zone` row under Region lets you type a zone like Europe/Belgrade to use in place of the country's. Daylight saving follows by itself, and leaving it empty keeps the country's zone (#198).
 * **TikTok:** `Hide read receipts` keeps the "seen" mark off the chats you open, so the other person doesn't see that you've read their message. It starts off, and it lives in Hushfeed settings > Inbox. Thanks to @maayan080 (#295).

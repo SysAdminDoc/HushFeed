@@ -85,6 +85,7 @@ public class SettingsStatus {
     public static boolean seekbarThumbnailEnabled = false;
     public static boolean stopVideoLoopingEnabled = false;
     public static boolean fullScreenHoldEnabled = false;
+    public static boolean fullScreenNextVideosEnabled = false;
     public static boolean storyControlsEnabled = false;
     public static boolean liveControlsEnabled = false;
     public static boolean keepPulledSoundsEnabled = false;
@@ -446,6 +447,10 @@ public class SettingsStatus {
 
     public static void enableFullScreenHold() {
         fullScreenHoldEnabled = true;
+    }
+
+    public static void enableFullScreenNextVideos() {
+        fullScreenNextVideosEnabled = true;
     }
 
     public static void enableStopVideoLooping() {

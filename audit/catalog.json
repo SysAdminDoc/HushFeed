@@ -15264,6 +15264,44 @@
   "notes": "One of the two tasks runs when the phone boots, which the audit cannot trigger. The in-app update prompt that the description says may stop is server-driven and not reproducible. skip_update_checks is restart-gated."
  },
  {
+  "name": "Keep the next videos in full screen",
+  "category": "Playback",
+  "default": true,
+  "kind": "runtime",
+  "source": [
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/looping/FullScreenNextVideosPatch.kt",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/interaction/FullScreenNextVideos.java"
+  ],
+  "settings": [
+   {
+    "key": "full_screen_next_videos",
+    "default": false,
+    "type": "bool",
+    "row": "Keep the next videos in full screen"
+   }
+  ],
+  "surface": "feed",
+  "checks": [
+   {
+    "id": "patch-applied",
+    "what": "SettingsStatus.fullScreenNextVideosEnabled is true, so the patch is in this APK and the extension loaded it.",
+    "steps": [
+     {
+      "probe": "fields",
+      "extras": {
+       "class": "app.morphe.extension.tiktok.settings.SettingsStatus",
+       "names": "fullScreenNextVideosEnabled"
+      },
+      "expect": "\\bfullScreenNextVideosEnabled=true\\b",
+      "waitMs": 1500
+     }
+    ],
+    "auto": true
+   }
+  ],
+  "notes": "Needs a landscape video on a page with more videos after it. Whether the viewer then has a next page takes a look at the screen, which the audit can't do."
+ },
+ {
   "name": "Stay on the video in full screen",
   "category": "Playback",
   "default": true,

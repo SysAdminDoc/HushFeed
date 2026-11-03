@@ -30,6 +30,8 @@ Every Hushfeed release, newest first.
 * **TikTok:** A save that runs TikTok out of memory while it copies the file ends as a failed save. Before, the error got past the save and took TikTok down with it.
 * **TikTok:** With `Send TikTok through a proxy` set up with a password, the relay that signs in for TikTok turns down a site name with a line break or a space in it instead of passing it to the proxy, and it sends an IPv6 address the way a proxy expects it, in square brackets.
 * **TikTok:** When Feature Gate Lab can't read TikTok's values, the message on screen no longer carries the error's technical text. That goes to the log, and the screen keeps to what to do next.
+* **TikTok:** The delete button next to each recent settings search is a full-size tap target now, and a screen reader calls it a button.
+* **TikTok:** The Clear button on the Inbox search bar dims while there's nothing to clear.
 * **TikTok:** Deleting the files of a LIVE recording says `Recording files deleted` rather than `Done`.
 * **TikTok:** The save picker lists a taller copy the video carries on its own when TikTok's gears stop at 720p. Before, it only looked past the gears when they stopped lower than that, so a 1080p copy never made the list (#240).
 * **TikTok:** `New device identity` says outright that it's off until you tap it and runs once, and it shows when an identity is in use. A new `Use this phone's own IDs` row takes TikTok back to the phone's real IDs. If a step of the wipe keeps failing it gives up after three starts, where before it could've carried on with new IDs at every launch. The diagnostic report lists how many wipes ran, without the IDs.

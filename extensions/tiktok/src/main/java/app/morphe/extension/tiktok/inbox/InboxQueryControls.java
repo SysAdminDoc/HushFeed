@@ -108,7 +108,8 @@ final class InboxQueryControls implements ViewTreeObserver.OnGlobalLayoutListene
         clear = new Button(context);
         clear.setText(L10n.t(context, "Clear"));
         clear.setAllCaps(false);
-        clear.setTextColor(SettingsUi.overlayAccentOn(dark));
+        // A state list, so Clear reads as disabled while there is nothing to clear.
+        clear.setTextColor(SettingsUi.enabledTextColors(SettingsUi.overlayAccentOn(dark)));
         clear.setMinHeight(SettingsUi.dp(context, 48));
         clear.setOnClickListener(view -> { editor.setText(""); editor.clearFocus(); });
         bar.addView(editor, new LinearLayout.LayoutParams(0, -2, 1));

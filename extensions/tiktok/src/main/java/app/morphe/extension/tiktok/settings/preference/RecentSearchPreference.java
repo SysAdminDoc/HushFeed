@@ -61,8 +61,8 @@ public final class RecentSearchPreference extends Preference {
         row.setOrientation(LinearLayout.HORIZONTAL);
         row.setGravity(Gravity.CENTER_VERTICAL);
         row.setMinimumHeight(SettingsUi.dp(context, 48));
-        row.setPadding(SettingsUi.dp(context, 16), SettingsUi.dp(context, 4),
-                SettingsUi.dp(context, 12), SettingsUi.dp(context, 4));
+        // No vertical padding: the delete control is the full 48dp, so it sets the row's height.
+        row.setPadding(SettingsUi.dp(context, 16), 0, SettingsUi.dp(context, 12), 0);
         row.setBackground(SettingsUi.pressAndFocusOver(context, SettingsUi.RADIUS_PILL,
                 new ColorDrawable(Color.TRANSPARENT)));
 
@@ -77,6 +77,8 @@ public final class RecentSearchPreference extends Preference {
         text.setText(query);
         text.setTextSize(SettingsUi.TEXT_TITLE);
         text.setTextColor(SettingsUi.textPrimary());
+        // Breathing room for a query that wraps past the 48dp the delete control sets.
+        text.setPadding(0, SettingsUi.dp(context, 4), 0, SettingsUi.dp(context, 4));
         row.addView(text, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
 
         ImageView delete = new ImageView(context);
@@ -86,7 +88,11 @@ public final class RecentSearchPreference extends Preference {
                 new ColorDrawable(Color.TRANSPARENT)));
         delete.setClickable(true);
         delete.setFocusable(true);
-        int deleteSize = SettingsUi.dp(context, 40);
+        SettingsUi.markAsButton(delete);
+        // A 48dp target, with the glyph drawn in the same 40dp it always had.
+        int deleteSize = SettingsUi.dp(context, 48);
+        int deleteInset = SettingsUi.dp(context, 4);
+        delete.setPadding(deleteInset, deleteInset, deleteInset, deleteInset);
         delete.setOnClickListener(v -> {
             if (onDelete != null) onDelete.onDelete(query);
         });

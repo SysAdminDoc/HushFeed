@@ -263,6 +263,11 @@ public class SettingsActionFlowTest {
         android.view.ViewGroup row = (android.view.ViewGroup) recentRow(fragment, "speed");
         View bin = row.getChildAt(row.getChildCount() - 1);
         assertEquals("Delete search", bin.getContentDescription());
+        // A 48dp target that a screen reader calls a button, not a picture.
+        int dp48 = Math.round(48 * fragment.getResources().getDisplayMetrics().density);
+        assertEquals(dp48, bin.getLayoutParams().width);
+        assertEquals(dp48, bin.getLayoutParams().height);
+        assertEquals(android.widget.Button.class.getName(), bin.createAccessibilityNodeInfo().getClassName());
         bin.performClick();
         idle();
         assertEquals(List.of("comment"), recents(fragment));

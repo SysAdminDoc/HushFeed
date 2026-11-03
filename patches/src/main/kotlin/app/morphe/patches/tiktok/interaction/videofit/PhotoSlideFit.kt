@@ -85,7 +85,7 @@ internal fun Method.isSlideScaleChoice(): Boolean {
     val chosen = implementation?.instructions
         ?.filter { it.opcode == Opcode.SGET_OBJECT }
         ?.mapNotNull { it.getReference<FieldReference>() }
-        ?.filter { it.type == SCALE_TYPE }
+        ?.filter { it.definingClass == SCALE_TYPE && it.type == SCALE_TYPE }
         ?.map { it.name }
         ?.toSet() ?: return false
     return chosen == setOf("CENTER_CROP", "FIT_CENTER")

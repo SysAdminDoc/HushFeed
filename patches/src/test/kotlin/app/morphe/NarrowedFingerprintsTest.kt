@@ -125,7 +125,8 @@ class NarrowedFingerprintsTest {
                 else -> null
             }
             // The patcher indexes a call, a field access, an instanceof or a cast by an exact
-            // class, `L...;`, and walks every class for anything looser.
+            // class, `L...;` (a call or field access by its member name too). These nine each
+            // name the class, the narrower of the two keys.
             assertTrue("${item.label}: ${filter.javaClass.simpleName} on $type", type != null && type.startsWith("L") && type.endsWith(";"))
         }
         for (item in narrowed.filter { it.addedClassAndName }) {

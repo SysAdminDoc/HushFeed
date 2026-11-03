@@ -5,6 +5,7 @@
 package app.morphe.patches.tiktok.misc.comment
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.methodCall
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableClass
@@ -70,6 +71,8 @@ internal object FavouriteStickerPageFingerprint : Fingerprint(
 internal object StickerUploadConfigFingerprint : Fingerprint(
     returnType = STICKER_OBJECT,
     parameters = listOf("L"),
+    // The call the custom check looks for, so the patcher's index finds its one caller.
+    filters = listOf(methodCall(definingClass = STICKER_UPLOAD_CONFIG_API, name = "getUploadConfig")),
     custom = { method, _ ->
         AccessFlags.STATIC.isSet(method.accessFlags) &&
             method.stickerMethodCalls().any { it.definingClass == STICKER_UPLOAD_CONFIG_API && it.name == "getUploadConfig" }

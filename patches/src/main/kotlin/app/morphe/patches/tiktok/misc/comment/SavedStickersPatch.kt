@@ -5,6 +5,7 @@
 package app.morphe.patches.tiktok.misc.comment
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.fieldAccess
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
@@ -55,6 +56,8 @@ internal fun Method.isSavedStickersRefresh(): Boolean {
 
 internal object SavedStickersRefreshFingerprint : Fingerprint(
     name = "invokeSuspend",
+    // Implied by the custom check; it lets the patcher's index find the few classes reading it.
+    filters = listOf(fieldAccess(definingClass = STICKER_PAGE_SIZE_CONFIG, name = "refreshCount", type = "J")),
     custom = { method, _ -> method.isSavedStickersRefresh() },
 )
 

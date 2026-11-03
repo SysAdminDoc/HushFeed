@@ -5,6 +5,7 @@
 package app.morphe.patches.tiktok.promobanners
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.methodCall
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.shared.guardAtEntry
 import app.morphe.util.getReference
@@ -28,6 +29,15 @@ private const val PROFILE_MENU_CELLS = "Lapp/morphe/extension/tiktok/profile/Pro
 internal object ProfileMenuCellFingerprint : Fingerprint(
     returnType = "Z",
     parameters = listOf("L", "Ljava/lang/String;"),
+    // The provider call the custom check needs, so the patcher's index finds the callers.
+    filters = listOf(
+        methodCall(
+            opcode = Opcode.INVOKE_INTERFACE,
+            definingClass = PROFILE_SIDEBAR_CELL_PROVIDER,
+            returnType = "Z",
+            parameters = emptyList(),
+        ),
+    ),
     custom = { method, _ -> isProfileMenuCellQuestion(method) },
 )
 

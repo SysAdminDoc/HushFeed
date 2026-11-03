@@ -6,6 +6,8 @@ package app.morphe.patches.tiktok.interaction.videofit
 
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
+import app.morphe.patcher.fieldAccess
+import app.morphe.patcher.instanceOf
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.util.smali.ExternalLabel
 import app.morphe.patches.tiktok.misc.theme.declaredVersions
@@ -36,6 +38,8 @@ private const val CONSTRAINT_LAYOUT = "Landroidx/constraintlayout/widget/Constra
 internal object SlideScaleTypeFingerprint : Fingerprint(
     returnType = SCALE_TYPE,
     parameters = listOf("F", "L"),
+    // One of the two values the custom check needs, so the patcher's index finds the readers.
+    filters = listOf(fieldAccess(definingClass = SCALE_TYPE, name = "FIT_CENTER", type = SCALE_TYPE)),
     custom = { method, _ -> method.isSlideScaleChoice() },
 )
 
@@ -48,6 +52,8 @@ internal object SlideScaleTypeFingerprint : Fingerprint(
 internal object SlideContainerCropFingerprint : Fingerprint(
     returnType = "Z",
     parameters = listOf("F"),
+    // The check the custom one ends on, so the patcher's index finds the methods holding one.
+    filters = listOf(instanceOf(CONSTRAINT_LAYOUT)),
     custom = { method, _ -> method.isSlideContainerCrop() },
 )
 

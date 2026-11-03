@@ -1,12 +1,22 @@
 package app.morphe
 
+import app.morphe.patcher.CheckCastFilter
 import app.morphe.patcher.FieldAccessFilter
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.InstanceOfFilter
 import app.morphe.patcher.MethodCallFilter
+import app.morphe.patches.tiktok.feedfilter.FollowFeedRequestFingerprint
+import app.morphe.patches.tiktok.feedfilter.FollowingCacheRestoreFingerprint
 import app.morphe.patches.tiktok.interaction.ghostmode.ProfileViewReportFingerprint
 import app.morphe.patches.tiktok.interaction.ghostmode.StoryViewReportFingerprint
 import app.morphe.patches.tiktok.interaction.ghostmode.TypingStatusSenderFingerprint
 import app.morphe.patches.tiktok.interaction.resume.FeedProgressContinueGateFingerprint
+import app.morphe.patches.tiktok.interaction.videofit.SlideContainerCropFingerprint
+import app.morphe.patches.tiktok.interaction.videofit.SlideScaleTypeFingerprint
+import app.morphe.patches.tiktok.misc.comment.RecentStickerAddFingerprint
+import app.morphe.patches.tiktok.misc.comment.RecentStickerRowsFingerprint
+import app.morphe.patches.tiktok.misc.comment.SavedStickersRefreshFingerprint
+import app.morphe.patches.tiktok.misc.comment.StickerUploadConfigFingerprint
 import app.morphe.patches.tiktok.misc.comment.clipboardTextHelperFingerprint
 import app.morphe.patches.tiktok.misc.comment.commentClipDataBuilderFingerprint
 import app.morphe.patches.tiktok.misc.commenttools.CommentPageSurpriseFingerprint
@@ -15,6 +25,7 @@ import app.morphe.patches.tiktok.misc.login.disablerequirement.MandatoryLoginSer
 import app.morphe.patches.tiktok.misc.refreshrate.RefreshRateWriteFingerprint
 import app.morphe.patches.tiktok.misc.shortcuts.ShortcutPublishFingerprint
 import app.morphe.patches.tiktok.misc.translation.CommentListLoadedFingerprint
+import app.morphe.patches.tiktok.promobanners.ProfileMenuCellFingerprint
 import app.morphe.patches.tiktok.promobanners.ProfileRewardsIconBinderFingerprint
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcodes
@@ -25,8 +36,10 @@ import org.junit.Test
 /**
  * The fingerprints #54 narrowed took a definingClass, a name or one indexed instruction filter
  * that their custom block already implied, so the patcher searches the few classes that can
- * hold them instead of every method of TikTok. Implied is the claim, and this is its check: on
- * every retained fixture each one takes exactly the methods it takes without the addition.
+ * hold them instead of every method of TikTok. The --validate timing pass on 47.6.3 narrowed
+ * nine more the same way, with a call, a field read, an instanceof or a cast. Implied is the
+ * claim, and this is its check: on every retained fixture each one takes exactly the methods it
+ * takes without the addition.
  */
 class NarrowedFingerprintsTest {
     private class Narrowed(val label: String, val fingerprint: Fingerprint, val addedClassAndName: Boolean = false)
@@ -45,6 +58,15 @@ class NarrowedFingerprintsTest {
         Narrowed("CommentListLoaded", CommentListLoadedFingerprint),
         Narrowed("clipboardTextHelper", clipboardTextHelperFingerprint),
         Narrowed("commentClipDataBuilder", commentClipDataBuilderFingerprint),
+        Narrowed("FollowFeedRequest", FollowFeedRequestFingerprint),
+        Narrowed("FollowingCacheRestore", FollowingCacheRestoreFingerprint),
+        Narrowed("SavedStickersRefresh", SavedStickersRefreshFingerprint),
+        Narrowed("RecentStickerAdd", RecentStickerAddFingerprint),
+        Narrowed("RecentStickerRows", RecentStickerRowsFingerprint),
+        Narrowed("StickerUploadConfig", StickerUploadConfigFingerprint),
+        Narrowed("SlideScaleType", SlideScaleTypeFingerprint),
+        Narrowed("SlideContainerCrop", SlideContainerCropFingerprint),
+        Narrowed("ProfileMenuCell", ProfileMenuCellFingerprint),
     )
 
     /** The fingerprint as it was before #54: the same fields, less what was added. */
@@ -98,10 +120,12 @@ class NarrowedFingerprintsTest {
             val type = when (filter) {
                 is MethodCallFilter -> filter.definingClass
                 is FieldAccessFilter -> filter.definingClass
+                is InstanceOfFilter -> filter.type()
+                is CheckCastFilter -> filter.type()
                 else -> null
             }
-            // The patcher indexes a call or field access by an exact class, `L...;`, and walks
-            // every class for anything looser.
+            // The patcher indexes a call, a field access, an instanceof or a cast by an exact
+            // class, `L...;`, and walks every class for anything looser.
             assertTrue("${item.label}: ${filter.javaClass.simpleName} on $type", type != null && type.startsWith("L") && type.endsWith(";"))
         }
         for (item in narrowed.filter { it.addedClassAndName }) {

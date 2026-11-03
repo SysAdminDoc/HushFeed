@@ -199,6 +199,8 @@ private const val FOLLOW_FEED_API_DESCRIPTOR = "Lcom/ss/android/ugc/aweme/follow
  */
 internal object FollowFeedRequestFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
+    // One of the two calls the custom check needs, so the patcher's index finds the callers.
+    filters = listOf(methodCall(definingClass = FOLLOW_FEED_API_DESCRIPTOR, name = "followFeedGet")),
     custom = { method, _ ->
         val calls = method.implementation?.instructions
             ?.mapNotNull { it.getReference<MethodReference>() }
@@ -221,6 +223,8 @@ internal const val FOLLOWING_CACHE_DESCRIPTOR =
 internal object FollowingCacheRestoreFingerprint : Fingerprint(
     returnType = "V",
     parameters = listOf(FOLLOWING_CACHE_DESCRIPTOR, "Ljava/util/List;", "Z"),
+    // The field the custom check needs, so the patcher's index finds the few methods reading it.
+    filters = listOf(fieldAccess(definingClass = FOLLOWING_CACHE_DESCRIPTOR, name = "updateTime")),
     custom = { method, _ ->
         method.implementation?.instructions?.any { instruction ->
             instruction.getReference<FieldReference>()?.let {

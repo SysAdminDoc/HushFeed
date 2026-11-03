@@ -5,6 +5,8 @@
 package app.morphe.patches.tiktok.misc.comment
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.checkCast
+import app.morphe.patcher.fieldAccess
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableClass
@@ -39,6 +41,8 @@ private const val RECENT_STICKER_ITEM = "Lcom/ss/android/ugc/aweme/im/common/mod
 internal object RecentStickerAddFingerprint : Fingerprint(
     returnType = "V",
     parameters = listOf(RECENT_STICKER_ITEM),
+    // Implied by the custom check; it lets the patcher's index find the few classes reading it.
+    filters = listOf(fieldAccess(definingClass = STICKER_PAGE_SIZE_CONFIG, name = "refreshCount", type = "J")),
     custom = { method, _ ->
         method.implementation?.instructions?.any { it.getReference<FieldReference>()?.isStickerRefreshCount() == true } == true
     },
@@ -118,6 +122,8 @@ internal fun MutableMethod.restoreRecentStickers(write: RecentStickersWrite) = a
 internal object RecentStickerRowsFingerprint : Fingerprint(
     returnType = "Ljava/lang/Object;",
     parameters = listOf("L", "Ljava/lang/Object;", "L"),
+    // The cast recentStickerRows() needs, so the patcher's index finds it.
+    filters = listOf(checkCast(FAVOURITE_STICKER_PAGE)),
     custom = { method, _ -> AccessFlags.STATIC.isSet(method.accessFlags) && method.recentStickerRows() != null },
 )
 

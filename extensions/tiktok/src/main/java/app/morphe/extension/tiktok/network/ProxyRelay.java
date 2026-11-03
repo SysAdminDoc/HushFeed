@@ -234,10 +234,10 @@ final class ProxyRelay {
     private static Target readRequest(InputStream in, OutputStream out) throws IOException {
         byte[] head = readExactly(in, 4);
         if (head[0] != SOCKS) return null;
-        if (head[1] != COMMAND_CONNECT) {
-            answer(out, ANSWER_COMMAND_UNSUPPORTED);
-            return null;
-        }
+        // A refusal waits until the whole request is read. A socket closed with bytes still
+        // unread sends a reset rather than an end, and the reset can reach TikTok first and throw
+        // the answer away.
+        int refusal = head[1] == COMMAND_CONNECT ? ANSWER_OK : ANSWER_COMMAND_UNSUPPORTED;
         int type = head[3] & 0xFF;
         byte[] address;
         String host;
@@ -251,11 +251,10 @@ final class ProxyRelay {
             int length = in.read();
             if (length <= 0) return null;
             byte[] name = readExactly(in, length);
-            if (!isHostName(name)) {
+            if (!isHostName(name) && refusal == ANSWER_OK) {
                 // A line break or a space in a "name" would let whoever reached this port put
                 // lines of their own into the CONNECT request that carries the user's sign-in.
-                answer(out, ANSWER_ADDRESS_UNSUPPORTED);
-                return null;
+                refusal = ANSWER_ADDRESS_UNSUPPORTED;
             }
             ByteArrayOutputStream whole = new ByteArrayOutputStream(length + 1);
             whole.write(length);
@@ -266,10 +265,14 @@ final class ProxyRelay {
             host = text.indexOf(':') >= 0 ? "[" + text + "]" : text;
         } else {
             // No telling how long an address of an unknown type is, so this one can't wait.
-            answer(out, ANSWER_ADDRESS_UNSUPPORTED);
+            answer(out, refusal == ANSWER_OK ? ANSWER_ADDRESS_UNSUPPORTED : refusal);
             return null;
         }
         byte[] port = readExactly(in, 2);
+        if (refusal != ANSWER_OK) {
+            answer(out, refusal);
+            return null;
+        }
         return new Target(type, address, port, host, ((port[0] & 0xFF) << 8) | (port[1] & 0xFF));
     }
 

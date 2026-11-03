@@ -169,6 +169,43 @@ public class ProxyRelayTest {
         assertEquals(List.of("CONNECT [2001:db8::1]:443 HTTP/1.1"), targets);
     }
 
+    /**
+     * A client's small writes can reach the relay apart. A relay that refused on the name and
+     * hung up before the port came in had that port land on a closed socket, which answers with a
+     * reset, and the reset threw away the refusal the client hadn't read yet. So a refused request
+     * is read to its end first.
+     */
+    @Test public void aRefusalIsStillThereToReadWhenTheRequestEndsLate() throws Exception {
+        relay = ProxyRelay.start(NetworkProxy.parse("http", "proxy.example.com", "8080", USER, PASSWORD));
+        byte[] name = "evil.example:80".getBytes(StandardCharsets.US_ASCII);
+        ByteArrayOutputStream named = new ByteArrayOutputStream();
+        named.write(new byte[]{5, 1, 0, 3, (byte) name.length});
+        named.write(name);
+        assertEquals(8, answerToLateEnd(named.toByteArray(), new byte[]{1, (byte) 187}));
+        // BIND, with its port late.
+        assertEquals(7, answerToLateEnd(new byte[]{5, 2, 0, 1, 1, 2, 3, 4}, new byte[]{0, 80}));
+    }
+
+    /** Sends a request without its last bytes, waits, sends those, and reads the relay's answer. */
+    private int answerToLateEnd(byte[] start, byte[] end) throws Exception {
+        Socket client = open();
+        OutputStream out = client.getOutputStream();
+        out.write(new byte[]{5, 1, 0});
+        out.flush();
+        assertArrayEquals(new byte[]{5, 0}, readExactly(client.getInputStream(), 2));
+        out.write(start);
+        out.flush();
+        // Long enough for a relay that answers early to have hung up already.
+        Thread.sleep(300);
+        out.write(end);
+        out.flush();
+        // And for the reset a closed socket sends back to arrive.
+        Thread.sleep(200);
+        int answer = answerTo(client);
+        assertEquals("then it hangs up", -1, client.getInputStream().read());
+        return answer;
+    }
+
     @Test public void aRefusedSignInIsAFailedTunnelAndNeverAHang() throws Exception {
         ServerSocket proxy = proxy(socket -> {
             readHead(socket.getInputStream());

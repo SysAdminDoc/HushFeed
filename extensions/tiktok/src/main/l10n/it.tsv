@@ -2426,3 +2426,11 @@ Takes out the small bar above the progress bar that says a friend reposted the v
 Time zone	Fuso orario
 A zone name like Europe/Belgrade, used in place of the country's. Daylight saving follows by itself. Empty means the country's own zone.	Un nome di fuso come Europe/Belgrade, usato al posto di quello del paese. L'ora legale si applica da sola. Vuoto significa il fuso del paese.
 Enter a zone like Asia/Tokyo	Inserisci un fuso come Asia/Tokyo
+Keep my own watch history	Tieni la mia cronologia visualizzazioni
+Lists the videos you watch on this phone, with who posted each one and its caption. It stays on your phone.	Elenca i video che guardi su questo telefono, con chi li ha pubblicati e la loro descrizione. L'elenco resta sul tuo telefono.
+My watch history	La mia cronologia visualizzazioni
+Find and reopen the videos you've watched on this phone	Trova e riapri i video che hai guardato su questo telefono
+Videos you watch show up here	I video che guardi compaiono qui
+No videos match	Nessun video corrisponde
+Watch history cleared	Cronologia visualizzazioni cancellata
+Couldn't open that video. Try again.	Impossibile aprire il video. Riprova.

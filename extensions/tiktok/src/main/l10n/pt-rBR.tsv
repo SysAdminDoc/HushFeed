@@ -2426,3 +2426,11 @@ Takes out the small bar above the progress bar that says a friend reposted the v
 Time zone	Fuso horário
 A zone name like Europe/Belgrade, used in place of the country's. Daylight saving follows by itself. Empty means the country's own zone.	Um nome de fuso como Europe/Belgrade, usado no lugar do fuso do país. O horário de verão acompanha sozinho. Vazio significa o próprio fuso do país.
 Enter a zone like Asia/Tokyo	Digite um fuso como Asia/Tokyo
+Keep my own watch history	Manter meu próprio histórico de exibição
+Lists the videos you watch on this phone, with who posted each one and its caption. It stays on your phone.	Lista os vídeos que você assiste neste celular, com quem publicou cada um e a legenda. A lista fica no seu celular.
+My watch history	Meu histórico de exibição
+Find and reopen the videos you've watched on this phone	Encontre e reabra os vídeos que você assistiu neste celular
+Videos you watch show up here	Os vídeos que você assiste aparecem aqui
+No videos match	Nenhum vídeo encontrado
+Watch history cleared	Histórico de exibição limpo
+Couldn't open that video. Try again.	Não foi possível abrir o vídeo. Tente de novo.

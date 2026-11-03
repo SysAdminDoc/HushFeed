@@ -2426,3 +2426,11 @@ Takes out the small bar above the progress bar that says a friend reposted the v
 Time zone	Saat qurşağı
 A zone name like Europe/Belgrade, used in place of the country's. Daylight saving follows by itself. Empty means the country's own zone.	Ölkənin qurşağı əvəzinə işlədilən, Europe/Belgrade kimi qurşaq adı. Yay vaxtı özü tətbiq olunur. Boş qalsa, ölkənin öz qurşağı işlədilir.
 Enter a zone like Asia/Tokyo	Asia/Tokyo kimi qurşaq yazın
+Keep my own watch history	Öz baxış tarixçəmi saxla
+Lists the videos you watch on this phone, with who posted each one and its caption. It stays on your phone.	Bu telefonda baxdığınız videoları, onları kimin paylaşdığını və başlığını siyahıya alır. Siyahı telefonunuzda qalır.
+My watch history	Baxış tarixçəm
+Find and reopen the videos you've watched on this phone	Bu telefonda baxdığınız videoları tapın və yenidən açın
+Videos you watch show up here	Baxdığınız videolar burada görünür
+No videos match	Uyğun video yoxdur
+Watch history cleared	Baxış tarixçəsi təmizləndi
+Couldn't open that video. Try again.	Bu video açılmadı. Yenidən cəhd edin.

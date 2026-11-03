@@ -319,7 +319,8 @@
     "Hide already seen videos": [
       "HIDE_SEEN_VIDEOS",
       "SEEN_VIDEO_RETENTION_DAYS",
-      "SEEN_VIDEO_MARK_PERCENT"
+      "SEEN_VIDEO_MARK_PERCENT",
+      "LOCAL_WATCH_HISTORY"
     ],
     "Hide CAPTCHA popups": [
       "HIDE_CAPTCHA_POPUPS"

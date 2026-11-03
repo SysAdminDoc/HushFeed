@@ -2429,3 +2429,11 @@ Takes out the small bar above the progress bar that says a friend reposted the v
 Time zone	Zeitzone
 A zone name like Europe/Belgrade, used in place of the country's. Daylight saving follows by itself. Empty means the country's own zone.	Ein Zonenname wie Europe/Belgrade, der statt der Zone des Landes gilt. Die Sommerzeit läuft von selbst mit. Leer heißt die eigene Zone des Landes.
 Enter a zone like Asia/Tokyo	Gib eine Zone wie Asia/Tokyo ein
+Keep my own watch history	Eigenen Wiedergabeverlauf führen
+Lists the videos you watch on this phone, with who posted each one and its caption. It stays on your phone.	Listet die Videos auf, die du auf diesem Handy ansiehst, mit Ersteller und Beschreibung. Die Liste bleibt auf deinem Handy.
+My watch history	Mein Wiedergabeverlauf
+Find and reopen the videos you've watched on this phone	Videos finden und wieder öffnen, die du auf diesem Handy angesehen hast
+Videos you watch show up here	Videos, die du ansiehst, erscheinen hier
+No videos match	Keine passenden Videos
+Watch history cleared	Wiedergabeverlauf gelöscht
+Couldn't open that video. Try again.	Video konnte nicht geöffnet werden. Versuch es erneut.

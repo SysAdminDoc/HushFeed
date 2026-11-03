@@ -2426,3 +2426,11 @@ Takes out the small bar above the progress bar that says a friend reposted the v
 Time zone	Zona horaria
 A zone name like Europe/Belgrade, used in place of the country's. Daylight saving follows by itself. Empty means the country's own zone.	Un nombre de zona como Europe/Belgrade, que se usa en lugar de la del país. El horario de verano se aplica solo. Vacío significa la zona propia del país.
 Enter a zone like Asia/Tokyo	Escribe una zona como Asia/Tokyo
+Keep my own watch history	Guardar mi propio historial de visualización
+Lists the videos you watch on this phone, with who posted each one and its caption. It stays on your phone.	Lista los videos que ves en este teléfono, con quién publicó cada uno y su descripción. Se queda en tu teléfono.
+My watch history	Mi historial de visualización
+Find and reopen the videos you've watched on this phone	Busca y vuelve a abrir los videos que viste en este teléfono
+Videos you watch show up here	Los videos que ves aparecen aquí
+No videos match	Ningún video coincide
+Watch history cleared	Historial de visualización borrado
+Couldn't open that video. Try again.	No se pudo abrir ese video. Inténtalo de nuevo.

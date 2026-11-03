@@ -2395,3 +2395,11 @@ Backdrop behind video text,Nền phía sau chữ trên video
 Time zone,Múi giờ
 "A zone name like Europe/Belgrade, used in place of the country's. Daylight saving follows by itself. Empty means the country's own zone.","Tên múi giờ như Europe/Belgrade, dùng thay cho múi giờ của quốc gia. Giờ mùa hè tự áp dụng. Để trống nghĩa là dùng múi giờ của chính quốc gia đó."
 Enter a zone like Asia/Tokyo,Nhập múi giờ như Asia/Tokyo
+Keep my own watch history,Giữ lịch sử xem của riêng tôi
+"Lists the videos you watch on this phone, with who posted each one and its caption. It stays on your phone.","Liệt kê các video bạn xem trên điện thoại này, kèm người đăng và chú thích. Danh sách chỉ nằm trên điện thoại của bạn."
+My watch history,Lịch sử xem của tôi
+Find and reopen the videos you've watched on this phone,Tìm và mở lại các video bạn đã xem trên điện thoại này
+Videos you watch show up here,Các video bạn xem sẽ hiện ở đây
+No videos match,Không có video nào khớp
+Watch history cleared,Đã xóa lịch sử xem
+Couldn't open that video. Try again.,Không mở được video này. Hãy thử lại.

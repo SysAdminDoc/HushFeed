@@ -322,7 +322,8 @@
     "Hide already seen videos": [
       "hide_seen_videos",
       "seen_video_retention_days",
-      "seen_video_mark_percent"
+      "seen_video_mark_percent",
+      "local_watch_history"
     ],
     "Hide comment popup ads": [
       "hide_comment_eggs"
@@ -2839,6 +2840,12 @@
     "local_profile_verified_badge": {
       "field": "LOCAL_PROFILE_VERIFIED_BADGE",
       "key": "local_profile_verified_badge",
+      "type": "boolean",
+      "default": false
+    },
+    "local_watch_history": {
+      "field": "LOCAL_WATCH_HISTORY",
+      "key": "local_watch_history",
       "type": "boolean",
       "default": false
     },

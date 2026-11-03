@@ -2603,3 +2603,11 @@ Takes out the small bar above the progress bar that says a friend reposted the v
 Time zone	Часовой пояс
 A zone name like Europe/Belgrade, used in place of the country's. Daylight saving follows by itself. Empty means the country's own zone.	Название пояса, например Europe/Belgrade, которое заменяет пояс страны. Летнее время учитывается само. Пусто значит собственный пояс страны.
 Enter a zone like Asia/Tokyo	Введите пояс, например Asia/Tokyo
+Keep my own watch history	Вести свою историю просмотров
+Lists the videos you watch on this phone, with who posted each one and its caption. It stays on your phone.	Записывает видео, которые вы смотрите на этом телефоне, с автором и подписью. Список остаётся на вашем телефоне.
+My watch history	Моя история просмотров
+Find and reopen the videos you've watched on this phone	Находите и снова открывайте видео, просмотренные на этом телефоне
+Videos you watch show up here	Здесь появятся просмотренные видео
+No videos match	Подходящих видео нет
+Watch history cleared	История просмотров очищена
+Couldn't open that video. Try again.	Не удалось открыть это видео. Попробуйте ещё раз.

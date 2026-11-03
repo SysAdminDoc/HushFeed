@@ -20,6 +20,7 @@ import app.morphe.extension.tiktok.settings.preference.InputTextPreference;
 import app.morphe.extension.tiktok.settings.preference.AdoptSeenVideoHistoryPreference;
 import app.morphe.extension.tiktok.settings.preference.ClearSeenVideoHistoryPreference;
 import app.morphe.extension.tiktok.settings.preference.ImportSeenVideoHistoryPreference;
+import app.morphe.extension.tiktok.settings.preference.LocalWatchHistoryPreference;
 import app.morphe.extension.tiktok.settings.preference.SeenHistoryFilePreference;
 import app.morphe.extension.tiktok.settings.preference.NumberInputPreference;
 import app.morphe.extension.tiktok.settings.preference.CreatorListPreference;
@@ -366,6 +367,17 @@ public class FeedFilterPreferenceCategory extends ConditionalPreferenceCategory 
         addPreference(new ClearSeenVideoHistoryPreference(context));
         int unowned = SeenVideoHistory.unownedCount();
         if (unowned > 0) addPreference(new AdoptSeenVideoHistoryPreference(context, unowned));
+        // Who posted a video and its caption come from the block button's record of the video.
+        if (SettingsStatus.blockAuthorEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Keep my own watch history",
+                    "Lists the videos you watch on this phone, with who posted each one and its caption. "
+                            + "It stays on your phone.",
+                    Settings.LOCAL_WATCH_HISTORY
+            ));
+            addPreference(new LocalWatchHistoryPreference(context));
+        }
     }
 
     private void addAdvanced(Context context) {

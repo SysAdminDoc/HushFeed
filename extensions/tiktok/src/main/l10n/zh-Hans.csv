@@ -2395,3 +2395,11 @@ Backdrop behind video text,视频文字背景
 Time zone,时区
 "A zone name like Europe/Belgrade, used in place of the country's. Daylight saving follows by itself. Empty means the country's own zone.",类似 Europe/Belgrade 的时区名称，用来代替该国家的时区。夏令时会自动跟随。留空表示使用该国家自己的时区.
 Enter a zone like Asia/Tokyo,请输入类似 Asia/Tokyo 的时区
+Keep my own watch history,保留我自己的观看历史
+"Lists the videos you watch on this phone, with who posted each one and its caption. It stays on your phone.",列出你在这部手机上看过的视频，以及发布者和说明。列表只保存在你的手机上.
+My watch history,我的观看历史
+Find and reopen the videos you've watched on this phone,查找并重新打开你在这部手机上看过的视频
+Videos you watch show up here,你看过的视频会显示在这里
+No videos match,没有匹配的视频
+Watch history cleared,观看历史已清除
+Couldn't open that video. Try again.,无法打开该视频。请重试.

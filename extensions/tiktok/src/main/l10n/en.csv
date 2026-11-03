@@ -445,6 +445,7 @@ Couldn't import watch history. Your saved history is unchanged.,Couldn't import 
 Couldn't list your apps. Tap here to try again.,Couldn't list your apps. Tap here to try again.
 Couldn't make the sticker. Try again.,Couldn't make the sticker. Try again.
 Couldn't make the video. Try again.,Couldn't make the video. Try again.
+Couldn't open that video. Try again.,Couldn't open that video. Try again.
 Couldn't open the file picker to export. Try again.,Couldn't open the file picker to export. Try again.
 Couldn't open the file picker to import. Try again.,Couldn't open the file picker to import. Try again.
 Couldn't open your photos. Try again.,Couldn't open your photos. Try again.
@@ -638,6 +639,7 @@ Filter the LIVE feed,Filter the LIVE feed
 Filter the list,Filter the list
 Filter: %1$s,Filter: %1$s
 "Filters, translation and copy options","Filters, translation and copy options"
+Find and reopen the videos you've watched on this phone,Find and reopen the videos you've watched on this phone
 Find the sound on YouTube Music,Find the sound on YouTube Music
 First caller,First caller
 First rejection:,First rejection:
@@ -986,6 +988,7 @@ Keep faded controls in Clear display,Keep faded controls in Clear display
 Keep going,Keep going
 Keep long press from quick sharing,Keep long press from quick sharing
 Keep long press from reposting,Keep long press from reposting
+Keep my own watch history,Keep my own watch history
 Keep offline videos out of the feed,Keep offline videos out of the feed
 Keep offline videos until you delete them,Keep offline videos until you delete them
 Keep photos as TikTok sent them,Keep photos as TikTok sent them
@@ -1083,6 +1086,7 @@ Link copied,Link copied
 Links,Links
 Links in comments open,Links in comments open
 Liquid glass look,Liquid glass look
+"Lists the videos you watch on this phone, with who posted each one and its caption. It stays on your phone.","Lists the videos you watch on this phone, with who posted each one and its caption. It stays on your phone."
 Live photo clip,Live photo clip
 Live photo clip saved to %1$s,Live photo clip saved to %1$s
 Live photo clips: %1$s,Live photo clips: %1$s
@@ -1171,6 +1175,7 @@ Move up,Move up
 Music disc,Music disc
 Mute feed videos,Mute feed videos
 Muted,Muted
+My watch history,My watch history
 Name copied,Name copied
 Nearby,Nearby
 Network proxy,Network proxy
@@ -1230,6 +1235,7 @@ No stream found to record. Reopen the LIVE.,No stream found to record. Reopen th
 No suggested accounts to clear,No suggested accounts to clear
 No video saved. The original photos are missing.,No video saved. The original photos are missing.
 No video selected. Open a video first.,No video selected. Open a video first.
+No videos match,No videos match
 "Nobody was signed in to TikTok. Sign in, and it tries again at %1$s.","Nobody was signed in to TikTok. Sign in, and it tries again at %1$s."
 None,None
 None of the photos could be saved. Try again.,None of the photos could be saved. Try again.
@@ -2307,6 +2313,7 @@ Video saved with %1$s subtitles in %2$s,Video saved with %1$s subtitles in %2$s
 Video text color,Video text color
 "Videos can't be saved to the folder in that file, so your video folder was kept","Videos can't be saved to the folder in that file, so your video folder was kept"
 Videos in search results show their cover and play when you open them. The feed and the videos you open play as usual.,Videos in search results show their cover and play when you open them. The feed and the videos you open play as usual.
+Videos you watch show up here,Videos you watch show up here
 Views range,Views range
 Visual search,Visual search
 Volume,Volume
@@ -2320,6 +2327,7 @@ Waiting to record. Go to the screen you want recorded.,Waiting to record. Go to 
 Waiting to save %1$s files,Waiting to save %1$s files
 Waiting to save one file,Waiting to save one file
 Waiting to save video,Waiting to save video
+Watch history cleared,Watch history cleared
 Watch history was imported for the account that chose the file. Switch back to see it.,Watch history was imported for the account that chose the file. Switch back to see it.
 "WebP, exactly as TikTok sent it","WebP, exactly as TikTok sent it"
 What TikTok gets,What TikTok gets

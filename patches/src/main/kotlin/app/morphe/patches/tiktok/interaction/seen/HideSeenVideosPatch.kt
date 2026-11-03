@@ -37,8 +37,9 @@ private object PlayerProgressFingerprint : Fingerprint(
 val hideSeenVideosPatch = bytecodePatch(
     name = "Hide already seen videos",
     description = "Remembers the videos you've watched and hides them when the feed sends " +
-        "them again, so you only see new ones. The list stays on your phone. Starts off. Turn it " +
-        "on in Hushfeed settings > Feed filter.",
+        "them again, so you only see new ones. It can also keep a watch history you can search " +
+        "and reopen videos from. Both stay on your phone. Starts off. Turn them on in Hushfeed " +
+        "settings > Feed filter.",
 ) {
     category("Feed")
     dependsOn(settingsPatch, sharedExtensionPatch, feedFilterPatch)

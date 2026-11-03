@@ -267,7 +267,7 @@ public final class SeenVideoHistory {
      * clear or an undo started for the account before is left to finish on disk and no longer
      * touches memory, and the way back from a clear stays with the account that cleared.
      */
-    private static String account() {
+    static String account() {
         String id = SignedInUser.id();
         String account = id == null ? SIGNED_OUT : id;
         if (account.equals(partition)) return account;
@@ -308,6 +308,9 @@ public final class SeenVideoHistory {
             // Playback moved on, so the video kept through a rebuild is an ordinary seen one.
             if (!normalizedAid.equals(keptAid)) keptAid = null;
         }
+
+        // Its own switch, so the list can run with the filter off.
+        LocalWatchHistory.onProgress(account, normalizedAid, positionMs, durationMs, nowMs);
 
         if (!Settings.HIDE_SEEN_VIDEOS.get() || callbackAidMarked) {
             return;

@@ -6168,6 +6168,7 @@
   "source": [
    "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/seen/HideSeenVideosPatch.kt",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/seen/SeenVideoHistory.java",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/seen/LocalWatchHistory.java",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feedfilter/SeenVideoFilter.java"
   ],
   "settings": [
@@ -6189,6 +6190,12 @@
     "default": 0,
     "type": "int",
     "row": "Count a video as seen after"
+   },
+   {
+    "key": "local_watch_history",
+    "default": false,
+    "type": "bool",
+    "row": "Keep my own watch history"
    }
   ],
   "surface": "feed",

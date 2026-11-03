@@ -2426,3 +2426,11 @@ Takes out the small bar above the progress bar that says a friend reposted the v
 Time zone	Saat dilimi
 A zone name like Europe/Belgrade, used in place of the country's. Daylight saving follows by itself. Empty means the country's own zone.	Ülkeninki yerine kullanılan, Europe/Belgrade gibi bir dilim adı. Yaz saati kendiliğinden uygulanır. Boş bırakırsan ülkenin kendi dilimi kullanılır.
 Enter a zone like Asia/Tokyo	Asia/Tokyo gibi bir dilim girin
+Keep my own watch history	Kendi izleme geçmişimi tut
+Lists the videos you watch on this phone, with who posted each one and its caption. It stays on your phone.	Bu telefonda izlediğin videoları, paylaşan kişi ve açıklamasıyla listeler. Liste telefonunda kalır.
+My watch history	İzleme geçmişim
+Find and reopen the videos you've watched on this phone	Bu telefonda izlediğin videoları bul ve yeniden aç
+Videos you watch show up here	İzlediğin videolar burada görünür
+No videos match	Eşleşen video yok
+Watch history cleared	İzleme geçmişi temizlendi
+Couldn't open that video. Try again.	Bu video açılamadı. Tekrar dene.

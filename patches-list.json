@@ -4379,7 +4379,7 @@
     },
     {
       "name": "Hide already seen videos",
-      "description": "Remembers the videos you've watched and hides them when the feed sends them again, so you only see new ones. The list stays on your phone. Starts off. Turn it on in Hushfeed settings > Feed filter.",
+      "description": "Remembers the videos you've watched and hides them when the feed sends them again, so you only see new ones. It can also keep a watch history you can search and reopen videos from. Both stay on your phone. Starts off. Turn them on in Hushfeed settings > Feed filter.",
       "category": "Feed",
       "use": true,
       "dependencies": [
@@ -4442,6 +4442,15 @@
           "required": false,
           "type": "kotlin.Int",
           "default": 0,
+          "values": null
+        },
+        {
+          "key": "local_watch_history",
+          "title": "Default: local watch history",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
           "values": null
         }
       ]

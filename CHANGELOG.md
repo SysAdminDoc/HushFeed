@@ -27,6 +27,7 @@ Every Hushfeed release, newest first.
 * **TikTok:** `Hide the repost chip` under Feed screen takes out the small bar above the progress bar that says someone you follow reposted the video, or asks you to repost it.
 
 ### Bug Fixes
+* **TikTok:** `Hide message streaks` takes the streak button off chats, the share panel, Friends and stories, and the streak reminder off your chat list. Before, it hid nothing, since TikTok no longer asks the spot Hushfeed was answering.
 * **TikTok:** Saves work again after one that was cut off while Hushfeed was writing its first record of files still to be published. That half-written record used to count as damaged, and every save after it failed. Now it's thrown away, since nothing was published under it, and the next save goes through.
 * **TikTok:** A save that runs TikTok out of memory while it copies the file ends as a failed save. Before, the error got past the save and took TikTok down with it.
 * **TikTok:** With `Send TikTok through a proxy` set up with a password, the relay that signs in for TikTok turns down a site name with a line break or a space in it instead of passing it to the proxy, and it sends an IPv6 address the way a proxy expects it, in square brackets.

@@ -8,6 +8,7 @@ package app.morphe.patches.tiktok.misc.inbox
 
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.anyInstruction
+import app.morphe.patcher.fieldAccess
 import app.morphe.patcher.methodCall
 import app.morphe.patcher.patch.PatchException
 import app.morphe.util.addInstruction
@@ -76,14 +77,21 @@ internal object PushNotifyFingerprint : Fingerprint(
 )
 
 /**
- * Whether a conversation carries the streak reminder message. The name survived on several
- * copies of the same Kotlin model, so every one of them is taken. Its sibling
- * `getShowStreakButton` was taken too until 47.6.3 dropped it; on 47.5.3 nothing called it.
+ * TikTok's answer to whether a scene shows the streak button: the chat page, the share panel,
+ * the Friends tab, stories and the two in-app message alerts each ask it with their own scene,
+ * and the chat list asks it for the reminder flag its cells carry. It is the only reader of the
+ * server's `enableStreakBtn`, so that read finds it. This replaced a guard on the cell model's
+ * `getHasStreakReminderInlineMsg`, which nothing calls on 47.5.3 or 47.6.3.
  */
-private object StreakReminderFingerprint : Fingerprint(
-    name = "getHasStreakReminderInlineMsg",
+internal object StreakButtonFingerprint : Fingerprint(
+    definingClass = "Lcom/ss/android/ugc/aweme/im/streak/impl/StreakService;",
     returnType = "Z",
-    parameters = emptyList(),
+    filters = listOf(
+        fieldAccess(
+            definingClass = "Lcom/ss/android/ugc/aweme/im/common/experiment/DMStreakConfig;",
+            name = "enableStreakBtn",
+        ),
+    ),
 )
 
 @Suppress("unused")
@@ -120,25 +128,14 @@ val notificationControlsPatch = bytecodePatch(
             )
         }
 
-        val streakGetters = StreakReminderFingerprint.matchAll().filter { it.method.implementation != null }
-        check(streakGetters.isNotEmpty()) {
-            "Notification controls: no streak reminder getter to take over."
-        }
-        streakGetters.forEach { match ->
-            // A Kotlin getter this small can be compiled with only its own receiver, and
-            // then v0 is that receiver rather than a spare.
-            check(match.method.implementation!!.registerCount > 1) {
-                "Notification controls: ${match.method.definingClass}->${match.method.name} has no free local register."
-            }
-            match.method.guardAtEntry(
-                "Notification controls",
-                "invoke-static {}, $EXTENSION->hideMessageStreaks()Z",
-                """
-                    const/4 v0, 0x0
-                    return v0
-                """,
-            )
-        }
+        StreakButtonFingerprint.method.guardAtEntry(
+            "Notification controls",
+            "invoke-static {}, $EXTENSION->hideMessageStreaks()Z",
+            """
+                const/4 v0, 0x0
+                return v0
+            """,
+        )
 
         // Turn off push notifications. TikTok's push setup is one startup task, so a guard at its
         // entry keeps the push service from starting for a launch with the switch on, and the

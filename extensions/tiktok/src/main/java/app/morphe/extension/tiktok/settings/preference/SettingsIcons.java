@@ -68,6 +68,37 @@ final class SettingsIcons {
         return fallback;
     }
 
+    /**
+     * The icon a section's rows fall back on: the Material picture closest to the one its row on
+     * the main page draws, a different one for each section.
+     */
+    static String forMenu(@Nullable SettingsMenuPreference.Icon icon) {
+        if (icon == null) return SETTINGS;
+        switch (icon) {
+            case FILTER: return BLOCK;
+            case SEARCH: return SEARCH;
+            case TABS: return TAB_BAR;
+            case LAYOUT: return LAYOUT;
+            case COMMENTS: return COMMENTS;
+            case DOWNLOADS: return DOWNLOADS;
+            case PLAYBACK: return PLAYBACK;
+            case SCREEN_TIME: return UPDATES;
+            case INBOX: return CHATS;
+            case SHARE: return NETWORK;
+            case REGION: return PLACE;
+            case PRIVACY: return PRIVACY;
+            case BEHAVIOR: return SETTINGS;
+            case LAB: return TOOLS;
+            case DIAGNOSTICS: return BUG;
+            case BACKUP: return EXPORT;
+            case NEWS: return NOTIFICATIONS;
+            case ABOUT: return ABOUT;
+            case REPORT: return LINKS;
+            case SUPPORT: return LIKE;
+            default: return SETTINGS;
+        }
+    }
+
     static final String BACK = "iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAQAAABIkb+zAAAAuUlEQVR42u3VSw7BYBhG4W+MNRrbRUWEVbnbV7UMxFhJ3+Y57wbOSf5LFQAAAAD8hqbW2fptt022fr9ttn6/XbZ+v322fr9Vtv69FvTp06dPnz59+vTp06dPnz59+gPp/2Ph+m26fpuuL2ACR2gCl3gCz+gEPjIJ4064SRhBwrXmEiR8n3CRIEHCc2cJI0g41UyCBAndjhIkDJFwyE9YViUnNBVGk63/mRCp/06I1X8lROsDAAAAGDMP5dIlT2gEqj8AAAAASUVORK5CYII=";
     static final String SEARCH = "iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAACuklEQVR4AezcAUTdQRgA8B+hYQMAMNjbNvDQkMAjmBqAgIgoBADYVgC0IMoGEIACAC0oIigAoEUI6gGiVfoPAmbuevXevf/r+/EBxXf3cfd/d3cn9EgIIYQQQgghhBBCaGAea9jGCc5Q3ccZTrCNNcyjITxKEys4RdVhnGIFTdnCJPZRPXHsY9J/hREcoOpyHGAEgDCMVdyi6lHcYhXDxOR6hKpQHKHhmRpDG1XhaGPMM/MJl6j6JC7xyTMx1mHnt7GBGbTwBi/v4w1amMEG2h0WYcyAa3TQOZtoYUi+IbSw2UGRGwbU8AMn3F2MerxR7D5wYh42gFYzO+AGC57eAm4yc1g1YEZwmzkEjOue8cwh8BYjBshBZue/033vMotwYEBMZA4743pnPHM4mlB3mQtrC3pvIXMBr9aaWV87hWR+HTXV2EqicXcYVc4o7hI5rqit9GbKlvK20ps69dRAlYiW8loZeTbU0FyiURcYUt4QLhK5zqmh9USjNvSPjUSu62poJ9Goaf1jOpHrjho6rsH4nzsPHKuh80Sj3uofbxO5nquhq0SjXukfrxK5XikqCvBHUTEEtWMSjkk4PkPLiR9iPxUVSxGziorFuPeKieXok9iQiQ2Z2JIsIzbldxUVx1I+KyYOZu0pKo4mflRMHM5dVkwcTz/EC8XEBY3XiogrShWuMQVxSa9/YknXxTXV68TfLOqKuKh9iNeYQtW7IsRTBTdYxguAzP/75tHisY49fPSvqrtFiOdqdhPP1VTy46ss8WDTCb6jKW2p8yLEk2Xn+I1f+IFZfPBwi6jywxd/26MDEwBhGACCWdq2qu7uDBEhEu5G+Cfv/xO4kxOO6MgEruSEPTChozM5YQUmdHQkJ8zAhI725IQRHZnASk7Y4nOs+gHM+vjM+viM+viM+vhsb+IDAAAAAPAAAZhSG5SrhtMAAAAASUVORK5CYII=";
     static final String CLOSE = "iVBORw0KGgoAAAANSUhEUgAAAGAAAABgBAMAAAAQtmoLAAAAFVBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAASAQCkAAAAB3RSTlMAELo0yv/uOyK2GwAAANtJREFUeAFiGL5gFIyCUSBkgE2UWRGXekbXZGzCZiECODSIhIYZYLEgNdQRwNgcWAAQBEEQjOYTeib/VB5Q7zgasKZt3YANAdgOAjDEH9iFeLY/Adhe9zkhAN6EzZc7UQFrBMwRsFdAEAFFBSQR0FRAFAFVBWQRQFQAAYgEIBIRQAAiASgEIBOATnTga7e+DQCAQRgI7r81M1yJQu1skN4n4JH80vas8HFeGl58Xt7eQN6ibAJqM2hkYJVgxmD3ECgcWR6KHLsc7IwODCeMPwxYinAMiYyhsZqm6QCQI8VdIPm9HQAAAABJRU5ErkJggg==";
@@ -115,36 +146,47 @@ final class SettingsIcons {
 
     /**
      * An icon, then the words of a key that call for it. Earlier rules win, so Don't save recent
-     * searches is a search and Download on reels a download. Declared after the icons it names.
+     * searches is a search and Download live replays a download. Declared after the icons it names.
      */
     private static final String[][] BY_WORD = {
             {LOCK, "lock", "locked"},
-            {LIKE, "like", "liked"},
-            {HIDDEN, "anonymously", "seen", "receipt", "typing", "active", "screenshots", "hidden", "ghost"},
-            {AI, "meta", "ai", "muse"},
-            {SEARCH, "search", "searches", "zoom"},
-            {DOWNLOADS, "download", "downloads", "save", "filename"},
-            {PLACE, "location", "place"},
-            {COMMENTS, "comment", "comments"},
-            {REELS, "reel", "reels"},
-            {STORIES, "story", "stories", "photos", "carousels", "resolution"},
-            {NOTIFICATIONS, "notification", "notifications"},
-            {LINKS, "links"},
-            {NETWORK, "share", "sharing", "repost"},
-            {EXPLORE, "explore"},
-            {MARKETPLACE, "shopping"},
-            {PHONE, "call", "screen", "space"},
-            {CHATS, "chat", "chats", "messages", "inbox", "instants", "notes"},
-            {PERSON, "profile", "following", "follow", "friendship", "accounts"},
-            {PLAYBACK, "video", "videos", "playback", "play", "player", "sound", "muted", "hdr", "quality", "speed"},
-            {TAB_BAR, "tab", "tabs", "glass"},
-            {BLOCK, "ads"},
-            {APPEARANCE, "accent", "emoji"},
-            {UPDATES, "expired", "time"},
-            {STORAGE, "cache"},
-            {DELETE, "clear"},
+            {LIKE, "like", "liked", "likes", "favorites"},
+            {HIDDEN, "anonymously", "seen", "receipt", "receipts", "typing", "active", "screenshots", "hidden",
+                    "ghost", "incognito"},
+            {AI, "ai"},
+            {SEARCH, "search", "searches"},
+            {DOWNLOADS, "download", "downloads", "save", "saves", "saved", "watermark", "filename", "path"},
+            {PLACE, "location", "region", "simspoof", "country", "carrier", "place"},
+            {COMMENTS, "comment", "comments", "reply", "replies"},
+            {REELS, "live", "lives", "stream"},
+            {STORIES, "story", "stories", "photo", "photos", "carousel", "carousels", "slideshow"},
+            {NOTIFICATIONS, "notification", "notifications", "badge", "badges", "reminder", "reminders"},
+            {LINKS, "link", "links", "url"},
+            {NETWORK, "share", "sharing", "repost", "reposts", "proxy", "network"},
+            {EXPLORE, "explore", "discover", "trending"},
+            {MARKETPLACE, "shop", "shopping", "mall", "product", "products"},
+            {WRITING, "caption", "captions", "text", "translate", "translation", "font", "sticker", "stickers"},
+            {CHATS, "chat", "chats", "message", "messages", "inbox", "dm"},
+            {PERSON, "profile", "following", "follow", "followers", "author", "verified", "account", "accounts",
+                    "username"},
+            {PLAYBACK, "video", "videos", "playback", "play", "player", "sound", "music", "mute", "muted", "hdr",
+                    "quality", "speed", "seekbar", "skip", "autoplay", "loop"},
+            {TAB_BAR, "tab", "tabs", "bar", "navigation"},
+            {LAYOUT, "rail", "grid", "layout", "button", "buttons"},
+            {BLOCK, "ads", "ad", "block", "blocked", "filter", "keyword", "keywords", "spam", "sponsored"},
+            {APPEARANCE, "accent", "emoji", "theme", "dark", "color", "colors"},
+            {BATTERY, "battery"},
+            {STORAGE, "cache", "storage", "data"},
+            {DELETE, "clear", "forget", "delete"},
             // After clear, so Clear viewing history keeps the bin.
-            {UPDATES, "history"},
-            {MENU, "menu"},
+            {UPDATES, "history", "expired", "time", "streak", "streaks", "budget", "minutes"},
+            {EXPORT, "backup", "export", "import", "restore"},
+            {BUG, "debug", "log", "logs", "diagnostics", "capture", "recorder"},
+            {BUILD, "build", "version"},
+            {LICENSE, "license", "licenses"},
+            {ABOUT, "about"},
+            {MENU, "menu", "shortcut", "shortcuts", "quick"},
+            // Last, so Screen time keeps its clock.
+            {PHONE, "device", "identity", "call", "screen"},
     };
 }

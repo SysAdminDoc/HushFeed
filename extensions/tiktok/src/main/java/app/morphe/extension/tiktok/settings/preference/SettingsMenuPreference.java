@@ -6,6 +6,7 @@ package app.morphe.extension.tiktok.settings.preference;
 
 import app.morphe.extension.tiktok.settings.L10n;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
@@ -54,7 +55,6 @@ public final class SettingsMenuPreference extends PreferenceGroup {
         SUPPORT
     }
 
-    private static final int ACCESSORY_TAG = 0x4D4D454E;
     private final Icon menuIcon;
     private boolean compact;
     private boolean expandable;
@@ -142,19 +142,21 @@ public final class SettingsMenuPreference extends PreferenceGroup {
                 SettingsUi.dp(context, compact ? 6 : 12)
         );
 
+        // A 24 dp icon in a 38 dp frame, so the text starts 14 dp after it, as on every other row.
         FrameLayout iconFrame = new FrameLayout(context);
         iconFrame.setId(android.R.id.icon_frame);
+        iconFrame.setPaddingRelative(0, 0, SettingsUi.dp(context, 14), 0);
         ImageView icon = new ImageView(context);
         icon.setId(android.R.id.icon);
         icon.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         iconFrame.addView(icon, new FrameLayout.LayoutParams(
-                SettingsUi.dp(context, compact ? 24 : 40),
-                SettingsUi.dp(context, compact ? 24 : 40),
-                Gravity.CENTER
+                SettingsUi.dp(context, 24),
+                SettingsUi.dp(context, 24),
+                Gravity.CENTER_VERTICAL | Gravity.START
         ));
         row.addView(iconFrame, new LinearLayout.LayoutParams(
-                SettingsUi.dp(context, compact ? 24 : 40),
-                SettingsUi.dp(context, compact ? 24 : 40)
+                SettingsUi.dp(context, 24 + 14),
+                SettingsUi.dp(context, 24)
         ));
 
         LinearLayout labels = new LinearLayout(context);
@@ -174,9 +176,8 @@ public final class SettingsMenuPreference extends PreferenceGroup {
         labels.addView(summary, new LinearLayout.LayoutParams(-1, -2));
 
         LinearLayout.LayoutParams labelParams = new LinearLayout.LayoutParams(0, -2, 1);
-        // Start and end rather than left and right: in an RTL layout the icon is on the right
-        // and this gap belongs between the icon and the text, not stranded on the far side.
-        labelParams.setMarginStart(SettingsUi.dp(context, 16));
+        // End rather than right: in an RTL layout the chevron is on the left and this gap
+        // belongs between it and the text. The icon's frame holds the gap before the text.
         labelParams.setMarginEnd(SettingsUi.dp(context, 10));
         row.addView(labels, labelParams);
 
@@ -194,7 +195,7 @@ public final class SettingsMenuPreference extends PreferenceGroup {
         view.setMinimumHeight(SettingsUi.dp(getContext(), compact ? 52 : 80));
         styleText(view);
         styleIcon(view);
-        addAccessory(view);
+        ScreenColors.current().paintChevron(view, this);
         bindExpansionAccessibility(view);
     }
 
@@ -295,57 +296,13 @@ public final class SettingsMenuPreference extends PreferenceGroup {
         }
     }
 
+    /** The page's icon at the row icon size, in the heading colour and dimmed with its row. */
     private void styleIcon(View view) {
         ImageView icon = view.findViewById(android.R.id.icon);
         if (icon == null) {
             return;
         }
-        int size = SettingsUi.dp(getContext(), compact ? 24 : 40);
-        View iconFrame = view.findViewById(android.R.id.icon_frame);
-        if (iconFrame != null) {
-            ViewGroup.LayoutParams frameParams = iconFrame.getLayoutParams();
-            frameParams.width = size;
-            frameParams.height = size;
-            iconFrame.setLayoutParams(frameParams);
-        }
-        ViewGroup.LayoutParams params = icon.getLayoutParams();
-        params.width = size;
-        params.height = size;
-        if (params instanceof FrameLayout.LayoutParams) {
-            ((FrameLayout.LayoutParams) params).gravity = Gravity.CENTER;
-        }
-        icon.setLayoutParams(params);
-        icon.setScaleType(ImageView.ScaleType.FIT_CENTER);
-    }
-
-    private void addAccessory(View view) {
-        View widget = view.findViewById(android.R.id.widget_frame);
-        if (!(widget instanceof ViewGroup)) {
-            return;
-        }
-
-        ViewGroup frame = (ViewGroup) widget;
-        frame.setVisibility(View.VISIBLE);
-        View previous = frame.findViewWithTag(ACCESSORY_TAG);
-        if (previous != null) {
-            frame.removeView(previous);
-        }
-
-        LinearLayout accessory = new LinearLayout(getContext());
-        accessory.setTag(ACCESSORY_TAG);
-        accessory.setGravity(Gravity.CENTER_VERTICAL);
-        accessory.setOrientation(LinearLayout.HORIZONTAL);
-
-        ImageView chevron = new ImageView(getContext());
-        chevron.setImageDrawable(new ChevronDrawable(getContext(), expandable ? (expanded ? -1 : 1) : 0));
-        // Decorative, like the one the list adapter adds to every other row.
-        chevron.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-        LinearLayout.LayoutParams chevronParams = new LinearLayout.LayoutParams(
-                SettingsUi.dp(getContext(), 18),
-                SettingsUi.dp(getContext(), 18)
-        );
-        accessory.addView(chevron, chevronParams);
-        frame.addView(accessory);
+        ScreenColors.current().paintIcon(icon, SettingsUi.dp(getContext(), 24));
     }
 
     public static final class ChevronDrawable extends Drawable {
@@ -437,6 +394,13 @@ public final class SettingsMenuPreference extends PreferenceGroup {
 
         /** Tiles take their corner from the radius scale, by size, rather than a fifth of their width. */
         private final float density;
+        /** The mark's own colour, for when nothing tints it. */
+        private final int lineColor;
+        /**
+         * The row's tint for the mark. ImageView tints through the drawable, and a drawable of its
+         * own that ignores it kept the accent mark on the heading-coloured rows.
+         */
+        private ColorStateList tint;
 
         MenuIconDrawable(Context context, Icon icon) {
             this(context, icon, false);
@@ -450,7 +414,8 @@ public final class SettingsMenuPreference extends PreferenceGroup {
             border.setColor(SettingsUi.border());
             border.setStyle(Paint.Style.STROKE);
             border.setStrokeWidth(SettingsUi.strokePx(context, 1f));
-            line.setColor(icon == Icon.SEARCH ? SettingsUi.textSecondary() : SettingsUi.accent());
+            lineColor = icon == Icon.SEARCH ? SettingsUi.textSecondary() : SettingsUi.accent();
+            line.setColor(lineColor);
             line.setStyle(Paint.Style.STROKE);
             line.setStrokeWidth(SettingsUi.strokePx(context, 1.8f));
             line.setStrokeCap(Paint.Cap.ROUND);
@@ -690,6 +655,31 @@ public final class SettingsMenuPreference extends PreferenceGroup {
                             right + bounds.width() * 0.04f, cy + bounds.height() * 0.08f), -90, 180, false, line);
                     break;
             }
+        }
+
+        @Override
+        public void setTintList(ColorStateList tint) {
+            this.tint = tint;
+            tintFor(getState());
+        }
+
+        @Override
+        public boolean isStateful() {
+            return tint != null && tint.isStateful();
+        }
+
+        @Override
+        protected boolean onStateChange(int[] state) {
+            return tintFor(state);
+        }
+
+        /** Colours the mark for [state] from the tint; false when that changed nothing. */
+        private boolean tintFor(int[] state) {
+            int color = tint == null ? lineColor : tint.getColorForState(state, tint.getDefaultColor());
+            if (line.getColor() == color) return false;
+            line.setColor(color);
+            invalidateSelf();
+            return true;
         }
 
         @Override

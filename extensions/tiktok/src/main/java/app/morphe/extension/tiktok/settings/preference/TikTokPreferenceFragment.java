@@ -981,7 +981,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         }
         ListView list = getView().findViewById(android.R.id.list);
         if (list != null && list.getAdapter() != null) {
-            styledAdapter = new SettingsListAdapter(list.getAdapter());
+            styledAdapter = new SettingsListAdapter(list.getAdapter(), searchRows);
             list.setAdapter(styledAdapter);
             {
                 list.setOnItemLongClickListener((parent, row, position, id) -> {
@@ -1245,6 +1245,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
                             openSection(result.section, result.key, null);
                         });
                 toggle.setOrder(order++);
+                mark(toggle, resultIcon(result));
                 searchRows.add(toggle);
                 searchScreen.addPreference(toggle);
                 continue;
@@ -1253,6 +1254,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
             row.setTitle(result.title);
             row.setSummary(result.displaySummary());
             row.setOrder(order++);
+            mark(row, resultIcon(result));
             row.setOnPreferenceClickListener(preference -> {
                 app.morphe.extension.tiktok.settings.SettingsSearchHistory.add(typed);
                 // A result's page can change what the rows show, so they read again on the way back.
@@ -1308,12 +1310,14 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
                         updateSearchResults("");
                     });
             row.setOrder(order++);
+            mark(row, SettingsIcons.SEARCH);
             searchRows.add(row);
             searchScreen.addPreference(row);
         }
         Preference clear = new Preference(context);
         clear.setTitle(L10n.t(context, "Clear search history"));
         clear.setOrder(order);
+        mark(clear, SettingsIcons.DELETE);
         clear.setOnPreferenceClickListener(preference -> {
             app.morphe.extension.tiktok.settings.SettingsSearchHistory.clear();
             updateSearchResults("");
@@ -1330,8 +1334,34 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         state.setSummary(L10n.t(getActivity(), summary));
         state.setSelectable(false);
         state.setOrder(-700);
+        mark(state, SettingsIcons.SEARCH);
         searchRows.add(state);
         searchScreen.addPreference(state);
+    }
+
+    /** A result's icon: one its key's words call for, or its section's. */
+    private static String resultIcon(SearchResult result) {
+        return SettingsIcons.forKey(result.key, result.section == null
+                ? SettingsIcons.SETTINGS : SettingsIcons.forMenu(result.section.icon));
+    }
+
+    /** Gives [row] the [icon] it leads with, which the list paints in the heading colour. */
+    private static Preference mark(Preference row, String icon) {
+        row.setIcon(SettingsIcons.icon(row.getContext(), icon, ScreenColors.current().heading));
+        return row;
+    }
+
+    /**
+     * Gives every row under [group] without an icon of its own one picked by the words of its
+     * key, or [fallback], its section's. Headings and categories only hold rows.
+     */
+    private static void markRows(PreferenceGroup group, String fallback) {
+        for (int i = 0; i < group.getPreferenceCount(); i++) {
+            Preference row = group.getPreference(i);
+            boolean holder = row instanceof SectionHeadingPreference || row instanceof PreferenceCategory;
+            if (!holder && row.getIcon() == null) mark(row, SettingsIcons.forKey(row.getKey(), fallback));
+            if (row instanceof PreferenceGroup) markRows((PreferenceGroup) row, fallback);
+        }
     }
 
     /** Set by tests, which see Utils' empty release version and so never a pending What's new. */
@@ -1926,6 +1956,8 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
                     return true;
                 });
         notes.setKey(ReleaseNotes.KEY);
+        // A row in About's card like the others there, not the old tile.
+        notes.setCompact(true);
         screen.addPreference(notes);
     }
 
@@ -1938,6 +1970,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
     private TogglePreference pauseRow(Context context) {
         TogglePreference pause = new TogglePreference(context, "Pause Hushfeed", PAUSE_SUMMARY,
                 BaseSettings.PAUSED);
+        mark(pause, SettingsIcons.PAUSE);
         pause.setOnPreferenceChangeListener((preference, value) -> {
             if (!Boolean.TRUE.equals(value)) return true;
             if (SessionBudget.lockedToday()) {
@@ -2047,12 +2080,15 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
                 SettingsBackupPreference.addTo(this, menu);
             }
         }
+        // Each time it opens: a row a section adds while it's closed gets its icon too.
+        markRows(menu, SettingsIcons.forMenu(section.icon));
         menu.setExpanded(true);
     }
 
     private void expandAbout() {
         if (aboutMenu == null) return;
         if (aboutMenu.getPreferenceCount() == 0) createAboutMenu(getActivity(), aboutMenu);
+        markRows(aboutMenu, SettingsIcons.ABOUT);
         aboutMenu.setExpanded(true);
     }
 

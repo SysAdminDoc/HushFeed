@@ -508,6 +508,15 @@ public final class SettingsUi {
         if (findSwitch(widget) == null) return;
         RelativeLayout text = (RelativeLayout) title.getParent();
         int column = rowWidth - row.getPaddingLeft() - row.getPaddingRight() - dp(row.getContext(), 40 + 16);
+        // The row's icon and the gap after it come out of the same width.
+        View icon = row.findViewById(android.R.id.icon);
+        if (icon != null && icon.getParent() instanceof View && icon.getParent() != row) {
+            View frame = (View) icon.getParent();
+            if (frame.getVisibility() != View.GONE && frame.getLayoutParams() != null
+                    && frame.getLayoutParams().width > 0) {
+                column -= frame.getLayoutParams().width;
+            }
+        }
         boolean narrow = column < title.getTextSize() * NARROW_TITLE_EMS;
         if (narrow == (widget.getParent() == text)) return;
         if (narrow) {
@@ -954,17 +963,9 @@ public final class SettingsUi {
         }
     }
 
+    /** A category's title, drawn as the page's section heading. */
     public static void styleCategory(View view) {
-        Context context = view.getContext();
-        view.setPaddingRelative(dp(context, 16), dp(context, 14), dp(context, 16), dp(context, 6));
-        TextView title = view.findViewById(android.R.id.title);
-        if (title != null) {
-            title.setTextColor(textSecondary());
-            title.setTextSize(TEXT_CAPTION);
-            title.setAllCaps(false);
-            title.setLetterSpacing(0f);
-            title.setTypeface(title.getTypeface(), Typeface.BOLD);
-        }
+        ScreenColors.current().paintHeading(view);
     }
 
     public static TextView sectionTitle(Context context, String text) {

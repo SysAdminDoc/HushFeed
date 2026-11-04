@@ -34,21 +34,14 @@ public final class SectionHeadingPreference extends Preference {
         Context context = getContext();
         LinearLayout layout = new LinearLayout(context);
         layout.setOrientation(LinearLayout.VERTICAL);
-        int side = SettingsUi.dp(context, 16);
-        layout.setPadding(side, SettingsUi.dp(context, 14),
-                side, SettingsUi.dp(context, 8));
 
         TextView title = new TextView(context);
         title.setId(android.R.id.title);
-        title.setTextColor(SettingsUi.textSecondary());
-        title.setTextSize(12);
-        title.setTypeface(android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL));
-        title.setAllCaps(false);
-        title.setLetterSpacing(0f);
         title.setText(getTitle());
         SettingsUi.markHeading(title);
         layout.addView(title, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        ScreenColors.current().paintHeading(layout);
         return layout;
     }
 
@@ -56,9 +49,8 @@ public final class SectionHeadingPreference extends Preference {
     protected void onBindView(View view) {
         super.onBindView(view);
         TextView title = view.findViewById(android.R.id.title);
-        if (title != null) {
-            title.setText(getTitle());
-            title.setTextColor(SettingsUi.textSecondary());
-        }
+        if (title != null) title.setText(getTitle());
+        // Read on each bind, so a theme change shows on the next one.
+        ScreenColors.current().paintHeading(view);
     }
 }

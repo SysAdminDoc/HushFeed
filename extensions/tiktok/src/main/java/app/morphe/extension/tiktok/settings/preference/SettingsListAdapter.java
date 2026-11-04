@@ -10,15 +10,19 @@ import android.database.DataSetObserver;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
+import android.preference.PreferenceGroup;
 import android.preference.SwitchPreference;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.WrapperListAdapter;
+
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
 
 import app.morphe.extension.shared.settings.preference.AbstractPreferenceFragment;
 
@@ -28,13 +32,23 @@ final class SettingsListAdapter extends BaseAdapter implements WrapperListAdapte
     private static final int SEARCH_INPUT_OWNER = 0x7f7f4006;
     private final ListAdapter delegate;
     private final int searchInputViewType;
+    /** The search's results, drawn as one section's card the way an open section draws its rows. */
+    private final List<?> searchRows;
+    /** The rows inside an open section or the search's results, by identity: they wear the inset card. */
+    private final Map<Object, Boolean> sectionRows = new IdentityHashMap<>();
+    private boolean sectionRowsStale = true;
     private final DataSetObserver observer = new DataSetObserver() {
-        @Override public void onChanged() { notifyDataSetChanged(); }
-        @Override public void onInvalidated() { notifyDataSetInvalidated(); }
+        @Override public void onChanged() { sectionRowsStale = true; notifyDataSetChanged(); }
+        @Override public void onInvalidated() { sectionRowsStale = true; notifyDataSetInvalidated(); }
     };
 
     SettingsListAdapter(ListAdapter delegate) {
+        this(delegate, Collections.emptyList());
+    }
+
+    SettingsListAdapter(ListAdapter delegate, List<?> searchRows) {
         this.delegate = delegate;
+        this.searchRows = searchRows;
         searchInputViewType = delegate.getViewTypeCount();
         delegate.registerDataSetObserver(observer);
     }
@@ -63,6 +77,31 @@ final class SettingsListAdapter extends BaseAdapter implements WrapperListAdapte
                 || item instanceof SettingsSearchInputPreference
                 || item instanceof SettingsSearchEntryPreference
                 || item instanceof SettingsHeader;
+    }
+
+    /**
+     * Whether [item] sits inside an open section or among the search's results. The main page's
+     * own rows run full bleed; these sit in their section's card.
+     */
+    private boolean isSectionRow(Object item) {
+        if (sectionRowsStale) {
+            sectionRows.clear();
+            for (int position = 0; position < getCount(); position++) {
+                Object each = getItem(position);
+                if (each instanceof SettingsMenuPreference) addDescendants((PreferenceGroup) each);
+            }
+            for (Object row : searchRows) sectionRows.put(row, Boolean.TRUE);
+            sectionRowsStale = false;
+        }
+        return sectionRows.containsKey(item);
+    }
+
+    private void addDescendants(PreferenceGroup group) {
+        for (int i = 0; i < group.getPreferenceCount(); i++) {
+            Preference child = group.getPreference(i);
+            sectionRows.put(child, Boolean.TRUE);
+            if (child instanceof PreferenceGroup) addDescendants((PreferenceGroup) child);
+        }
     }
 
     /** The recovery page's message, which is drawn as the page's title rather than as a row. */
@@ -102,14 +141,12 @@ final class SettingsListAdapter extends BaseAdapter implements WrapperListAdapte
                         && !((SettingsMenuPreference) preference).isExpandable()))
                 && preference.isSelectable())
             SearchTogglePreference.bindTapOnly(row, preference);
-        if (preference instanceof SettingsMenuPreference && ((SettingsMenuPreference) preference).isCompact()) {
-            SettingsUi.styleCompactMenuRow(row, isBoundary(position + 1),
-                    ((SettingsMenuPreference) preference).isAbout());
-            SettingsUi.applyGroupedRow(row, isBoundary(position - 1), isBoundary(position + 1));
-            return row;
-        }
-        SettingsUi.stylePreferenceRow(row);
-        SettingsUi.applyGroupedRow(row, isBoundary(position - 1), isBoundary(position + 1));
+        // A section's card opens on its first row and closes on its last: a heading, the end of
+        // the section or a main page row on either side ends it.
+        boolean section = isSectionRow(preference);
+        boolean first = !section || isBoundary(position - 1) || !isSectionRow(getItem(position - 1));
+        boolean last = !section || isBoundary(position + 1) || !isSectionRow(getItem(position + 1));
+        ScreenColors.current().paintRow(row, preference, !section, first, last);
         if (preference instanceof SwitchPreference) SettingsUi.reflowSwitchRow(row, rowWidth(parent));
         // The recovery page's two actions were styled while the rows were bound, and the row
         // styling above painted over it, so Retry and Back came out as two identical rows.
@@ -119,51 +156,10 @@ final class SettingsListAdapter extends BaseAdapter implements WrapperListAdapte
             SettingsUi.styleErrorAction(row,
                     AbstractPreferenceFragment.INITIALIZATION_RETRY_KEY.equals(key));
         }
-        if (preference instanceof SettingsMenuPreference) {
-            row.setPaddingRelative(SettingsUi.dp(row.getContext(), 16), SettingsUi.dp(row.getContext(), 14),
-                    SettingsUi.dp(row.getContext(), 16), SettingsUi.dp(row.getContext(), 14));
-            ((TextView) row.findViewById(android.R.id.title)).setTextSize(SettingsUi.TEXT_TITLE);
-            return row;
-        }
-
-        View icon = row.findViewById(android.R.id.icon_frame);
-        if (icon != null) icon.setVisibility(View.GONE);
         TextView summary = row.findViewById(android.R.id.summary);
         if (summary != null && (preference instanceof ListPreference
                 || preference instanceof DownloadPathPreference)) {
             summary.setTextColor(preference.isEnabled() ? SettingsUi.accent() : SettingsUi.textDisabled());
-        }
-        ViewGroup widget = row.findViewById(android.R.id.widget_frame);
-        // A row that acts on the tap gets no chevron. Reset, Undo, Start today over and the two
-        // clear rows all wore the one that means "opens a page", which is the wrong promise to
-        // make about a row that replaces every setting.
-        boolean acts = preference instanceof app.morphe.extension.shared.settings.preference.ImmediateAction
-                && ((app.morphe.extension.shared.settings.preference.ImmediateAction) preference).actsOnTap();
-        if (widget != null && !acts && !(preference instanceof SwitchPreference) && preference.isSelectable()) {
-            widget.setVisibility(View.VISIBLE);
-            if (widget.findViewWithTag("hushfeed_chevron") == null) {
-                ImageView arrow = new ImageView(row.getContext());
-                arrow.setTag("hushfeed_chevron");
-                arrow.setImageDrawable(new SettingsMenuPreference.ChevronDrawable(row.getContext()));
-                arrow.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-                android.widget.LinearLayout.LayoutParams params = new android.widget.LinearLayout.LayoutParams(
-                        SettingsUi.dp(row.getContext(), 18), SettingsUi.dp(row.getContext(), 24));
-                params.gravity = Gravity.CENTER_VERTICAL;
-                params.setMarginStart(SettingsUi.dp(row.getContext(), 12));
-                widget.addView(arrow, params);
-            }
-        } else if (widget != null) {
-            // Rows are recycled, and one class can make both kinds: Back up and Restore open a
-            // file picker and keep the chevron, Reset and Undo act and do not. Adding one and
-            // never taking it away meant "Reset settings" wore a chevron as soon as "Back up
-            // settings" had scrolled past it, which is the promise this exists to stop making.
-            View stale = widget.findViewWithTag("hushfeed_chevron");
-            if (stale != null) {
-                widget.removeView(stale);
-                // The frame is here for the chevron on these rows, and an empty one still takes
-                // width. Preference hides it when the view is built, which reuse skips.
-                if (widget.getChildCount() == 0) widget.setVisibility(View.GONE);
-            }
         }
         return row;
     }

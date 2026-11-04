@@ -61,7 +61,7 @@ Every Hushfeed release, newest first.
 * A Hushfeed dialog that's still open when TikTok closes the screen under it closes along with that screen now. Before, it hung on to the screen after it was gone.
 * The hold that covers the feed scrolls when it doesn't fit, like at Android's largest text and display sizes or in split screen, so you can always get to the buttons at the bottom. They used to get squeezed off the bottom with no way to reach them, and now the text fades at an edge when there's more past it.
 * Your recent settings searches stay put while Hushfeed is paused. The list used to come up empty, and the next search you sent wiped out the ones before it.
-
+* Comments in your own language get Hushfeed's comment controls again on TikTok 47.6.3. Since 47.5.3 only the comments TikTok offered to translate got them, so on most rows `Thumbs down blocks the commenter` left TikTok's thumbs down alone. Now every row's thumbs down blocks, and `Hide like counts on comments` and `Hide the thumbs down on comments` reach every row, replies included.
 * The README's install steps point at TikTok 47.6.3 now. After v0.80.0 went out they still sent you to 47.5.3, which v0.80.0 doesn't patch.
 * `Keep the screen's refresh rate` says up front that TikTok doesn't ask for a rate on every phone. Where it doesn't, the switch has nothing to stop.
 
@@ -78,6 +78,8 @@ Every Hushfeed release, newest first.
 * The patch audit's check that `Hide read receipts` is switched on could never pass. Its pattern had two backspace characters where the word edges belonged, so it failed even with the switch listed. It looks for the switch's name now.
 * The audit's comment hook check asked for records that only appear once a comment row's thumbs down is looked up, but it never turned on anything that looks. So it failed on 47.5.3 and 47.6.3 without ever reaching the code it asks about. It now switches on `Thumbs down blocks the commenter` for the check (nothing gets tapped) and stops asking for the link records, which only show up on a comment that has a web address in it.
 * The audit's Settings section check turns list view off before it opens Settings. In list view a section row doesn't fold open or shut, so the tap the check makes on Inbox did nothing there. The phone's own choice comes back after the check.
+* `Comment tools` won't patch a TikTok build whose comment rows read a comment kept from an earlier row. It stops with an error instead of giving each row the controls for the comment before it.
+* Four audit checks hold up better after the 47.6.3 run. The filtered count pill check waits until something has actually been filtered, and a quiet session comes out inconclusive instead of failing. Checks that open a video from a profile tap the grid's cover, since the first match was a wrapper that opened nothing. The Settings section check scrolls with slow drags, and a diagnostic report that's still arriving gets up to a minute.
 * Changelog entries and release notes don't open with a "TikTok:" label anymore. Hushfeed only patches TikTok, so the label repeated itself on every line, and Morphe Manager 2.3.0 shows a one-app source's whole list without it. The release scripts stopped adding it, and What's new reads the same as before.
 
 ## 0.80.0 (2026-11-01)

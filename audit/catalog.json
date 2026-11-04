@@ -1916,6 +1916,21 @@
     "auto": true
    },
    {
+    "id": "manifest-label-option",
+    "what": "On a build patched with the app name Hush, the application label and the launcher entry say Hush, not the default Hushfeed.",
+    "buildOptions": [
+     "Change app name|appName=Hush"
+    ],
+    "steps": [
+     {
+      "apk": "manifest",
+      "expect": "android:label\\(0x01010001\\)=\\\"Hush\\\"",
+      "expectNot": "android:label\\(0x01010001\\)=\\\"Hushfeed\\\""
+     }
+    ],
+    "auto": true
+   },
+   {
     "id": "home-label",
     "what": "Review: Android's App info page names the app with the chosen name, and inside the app it still says TikTok.",
     "steps": [
@@ -1936,7 +1951,7 @@
     "auto": false
    }
   ],
-  "notes": "The expected name is the patch option the build was made with (appName, default Hushfeed, 50 characters at most); adjust the regex if the build used another. The manifest check runs against the patched APK with aapt2, no device. 'Inside the app it still says TikTok' is by design: only android:label changes."
+  "notes": "The expected name is the patch option the build was made with (appName, default Hushfeed, 50 characters at most): manifest-label reads the default on a plain build, and manifest-label-option names Hush in buildOptions, so it runs only on a build patched with it (scripts/patch-for-device.ps1 -Option 'Change app name|appName=Hush'), into tiktok-<version>-options.json. The manifest check runs against the patched APK with aapt2, no device. 'Inside the app it still says TikTok' is by design: only android:label changes."
  },
  {
   "name": "Comment publish diagnostics",
@@ -2987,6 +3002,24 @@
     "auto": true
    },
    {
+    "id": "icon-style-option",
+    "what": "On a build patched with the Black on white style, the launcher icon's background layer is filled white and its note black.",
+    "buildOptions": [
+     "Custom launcher icon|iconStyle=black-on-white"
+    ],
+    "steps": [
+     {
+      "apk": "icon-xml",
+      "expect": "(?s)^\\s*E: background\\b(?:(?!^\\s*E: (?:foreground|monochrome)\\b).)*fillColor\\(0x01010404\\)=#ffffffff"
+     },
+     {
+      "apk": "icon-xml",
+      "expect": "(?s)^\\s*E: foreground\\b(?:(?!^\\s*E: (?:background|monochrome)\\b).)*fillColor\\(0x01010404\\)=#ff000000"
+     }
+    ],
+    "auto": true
+   },
+   {
     "id": "icon-visible",
     "what": "Review: Android's App info page shows the icon in the chosen style (TikTok colors, black, white on black or black on white, or the picture).",
     "steps": [
@@ -3007,7 +3040,7 @@
     "auto": false
    }
   ],
-  "notes": "Options: iconStyle tiktok (default), black, white-on-black, black-on-white, material-you (hushfeed_launcher_background and hushfeed_launcher_glyph colors: white on black in values, system_neutral2_700 on system_accent1_100 in values-v31, system_accent1_100 on system_neutral1_800 in values-night-v31); iconBackground an optional #RRGGBB that replaces any style's background, picture included; iconPicture an optional 432-1024 pixel square PNG (then no themed icon). The resources dump only proves an icon resource exists; which style the build used is visible by eye. Themed icons need Android 13+ and the launcher's themed-icons switch on (Samsung One UI has it under Wallpaper and style). The App info page shows the full-color icon; the themed (wallpaper-tinted) look only shows on the home screen with the launcher's themed icons on, and the monochrome layer check covers what it draws."
+  "notes": "Options: iconStyle tiktok (default), black, white-on-black, black-on-white, material-you (hushfeed_launcher_background and hushfeed_launcher_glyph colors: white on black in values, system_neutral2_700 on system_accent1_100 in values-v31, system_accent1_100 on system_neutral1_800 in values-night-v31); iconBackground an optional #RRGGBB that replaces any style's background, picture included; iconPicture an optional 432-1024 pixel square PNG (then no themed icon). The monochrome check only proves the themed layer exists. icon-style-option names Black on white in buildOptions, so it runs only on a build patched with it (scripts/patch-for-device.ps1 -Option 'Custom launcher icon|iconStyle=black-on-white'), and reads the inline vectors the style draws into the background and foreground layers: every path white behind, the note black in front. Themed icons need Android 13+ and the launcher's themed-icons switch on (Samsung One UI has it under Wallpaper and style). The App info page shows the full-color icon; the themed (wallpaper-tinted) look only shows on the home screen with the launcher's themed icons on, and the monochrome layer check covers what it draws."
  },
  {
   "name": "Custom offline videos limit",

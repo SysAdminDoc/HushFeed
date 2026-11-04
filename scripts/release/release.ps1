@@ -140,11 +140,11 @@ function Write-Text([string]$Name, [string]$Text) {
 }
 
 function Push-Main {
-    # Rebasing a tagged fix would leave the tag off main, so that case merges instead.
+    # A HEAD main already has stays put, so a rerun can't pull in commits from after the cut. Rebasing a tagged fix would leave the tag off main, so that case merges.
     foreach ($attempt in 1, 2) {
         Invoke-Git fetch -q origin main
+        git.exe -C $work merge-base --is-ancestor HEAD origin/main; if ($LASTEXITCODE -eq 0) { return }
         $tagged = git.exe -C $work tag --list $tag
-        $global:LASTEXITCODE = 0
         if ($tagged) { git.exe -C $work merge-base --is-ancestor $tag origin/main }
         if ($tagged -and $LASTEXITCODE -ne 0) { Invoke-Git merge --no-edit origin/main } else { Invoke-Git rebase origin/main }
         git.exe -C $work push origin HEAD:main 2>&1 | ForEach-Object { Write-Host $_ }
@@ -155,12 +155,12 @@ function Push-Main {
 
 function Step-cut {
     $properties = Join-Path $work 'gradle.properties'
-    $changelog = Get-Content -LiteralPath (Join-Path $work 'CHANGELOG.md') -Raw
-    if ((Get-Content -LiteralPath $properties -Raw) -match "(?m)^version = $([regex]::Escape($Version))\s*$" -and $changelog -match "(?m)^## $([regex]::Escape($Version)) \(") {
-        Say "main already reads $Version"
-        return
+    $heading = "(?m)^## $([regex]::Escape($Version)) \("
+    # Only a committed cut counts, so a rerun finishes one that stopped partway.
+    if (((git.exe -C $work show HEAD:gradle.properties) -join "`n") -match "(?m)^version = $([regex]::Escape($Version))\s*$" -and ((git.exe -C $work show HEAD:CHANGELOG.md) -join "`n") -match $heading) {
+        Say "main already reads $Version"; Push-Main; return
     }
-    Invoke-ReleaseText cut --version $Version
+    if ((Get-Content -LiteralPath (Join-Path $work 'CHANGELOG.md') -Raw) -notmatch $heading) { Invoke-ReleaseText cut --version $Version }
     [IO.File]::WriteAllText($properties, ([IO.File]::ReadAllText($properties) -replace '(?m)^version = \d+\.\d+\.\d+', "version = $Version"))
     $readme = Join-Path $work 'README.md'
     [IO.File]::WriteAllText($readme, ([IO.File]::ReadAllText($readme) -replace 'badge/version-\d+\.\d+\.\d+-', "badge/version-$Version-"))
@@ -168,7 +168,7 @@ function Step-cut {
     Invoke-ReleaseText guide
     Invoke-Program py.exe '-3.13' -X utf8 (Join-Path $work 'tools/gen-release-notes.py')
     Invoke-Git add -A
-    Invoke-Git commit -q -m "chore(release): prepare $Version for publication"
+    if (git.exe -C $work status --porcelain) { Invoke-Git commit -q -m "chore(release): prepare $Version for publication" }
     Push-Main
 }
 
@@ -275,6 +275,7 @@ function Step-walk {
         foreach ($property in $key.PSObject.Properties) { $patchArgs[$property.Name] = $property.Value }
         New-Item -ItemType Directory -Force -Path $patchArgs.OutDir | Out-Null
         $receipt = Join-Path $stateDir "walk-$package.json"
+        Remove-Item -LiteralPath $receipt -Force -ErrorAction SilentlyContinue
         $walkArgs = @{ Serial = $device.Serial; Package = $package; Bundle = $bundlePath; Out = $receipt; PatchArgs = $patchArgs }
         # The walk runs ART's verifier after its PASS under the same lease, so no other task
         # can take the phone between the two.
@@ -348,8 +349,7 @@ function Step-index {
     if ($hosted.version -ne $Version) { throw "GitHub's patches-bundle.json reads $($hosted.version), not $Version." }
     $description = [string](gh repo view $repository --json description --jq .description)
     $updated = $description -replace "$($Repo.Title) v\d+\.\d+\.\d+", "$($Repo.Title) v$Version" -replace '\b\d+ patches\b', "$(@((Get-PatchList).patches).Count) patches"
-    if ($updated -ne $description) { gh repo edit $repository --description $updated }
-    $global:LASTEXITCODE = 0
+    if ($updated -ne $description) { Invoke-Checked 'repo description' { gh repo edit $repository --description $updated } }
 }
 
 function Remove-ReleaseWork {

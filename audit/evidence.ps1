@@ -214,6 +214,16 @@ function Get-AuditCatalogProblems($Entries) {
             if ($null -ne $selection -and ($selection.Value -isnot [string] -or $selection.Value -cnotin @('selected','absent'))) {
                 "invalid patch selection policy '$($entry.name)/$($check.id)'"
             }
+            $buildOptions = $check.PSObject.Properties['buildOptions']
+            if ($null -ne $buildOptions) {
+                $declaredOptions = @($buildOptions.Value)
+                if ($buildOptions.Value -isnot [Array] -or $declaredOptions.Count -eq 0 -or
+                    @($declaredOptions | Where-Object { $_ -isnot [string] -or $_ -cnotmatch '^([^|]+)\|([^=]+)=(.*)$' }).Count -gt 0 -or
+                    @($declaredOptions | Select-Object -Unique).Count -ne $declaredOptions.Count -or
+                    ($null -ne $selection -and [string]$selection.Value -ceq 'absent')) {
+                    "invalid build options '$($entry.name)/$($check.id)'"
+                }
+            }
             if ([string]::IsNullOrWhiteSpace([string]$check.id) -or ([string]$check.id).Contains('/')) {
                 "invalid check ID '$($entry.name)/$($check.id)'"
             } elseif (-not $ids.Add([string]$check.id)) { "duplicate check '$($entry.name)/$($check.id)'" }
@@ -306,6 +316,24 @@ function Get-AuditNativeBuildProblem($Build, [string]$ApkHash, $App) {
     return Get-DeviceNativeBuildProblem $Build $ApkHash $App
 }
 
+# A check that names build options ('Accent color|accentColor=#2D7FF9') is judged only on a build
+# patched with all of them, and that build's results go in their own file. Patched with defaults,
+# Accent color changes nothing a screenshot can tell from a broken recolor.
+function Get-AuditCheckBuildOptions($Check) {
+    $declared = $Check.PSObject.Properties['buildOptions']
+    if ($null -eq $declared) { return @() }
+    return @($declared.Value)
+}
+
+# A build patched with no options runs every check that names none. A build patched with options
+# runs only the checks whose options it has, so each results file comes from one APK.
+function Test-AuditCheckInScope($Check, $Build) {
+    $wanted = @(Get-AuditCheckBuildOptions $Check)
+    $options = @(if ($null -ne $Build -and $Build.options -is [Array]) { $Build.options })
+    if ($options.Count -eq 0) { return $wanted.Count -eq 0 }
+    return $wanted.Count -gt 0 -and @($wanted | Where-Object { $_ -cnotin $options }).Count -eq 0
+}
+
 function Get-AuditPatchSelectionProblem($Entry, $Check, $Build) {
     # Ordinary checks need the patch selected. Negative checks declare absence explicitly.
     $policyProperty = $Check.PSObject.Properties['patchSelection']
@@ -317,6 +345,8 @@ function Get-AuditPatchSelectionProblem($Entry, $Check, $Build) {
     if ($selected -ne ($policy -ceq 'selected')) {
         return "$($Entry.name)/$($Check.id) requires its patch $policy in the audited build."
     }
+    $missing = @(Get-AuditCheckBuildOptions $Check | Where-Object { $_ -cnotin @($Build.options) })
+    if ($missing.Count) { return "$($Entry.name)/$($Check.id) needs a build patched with $($missing -join ', ')." }
     return $null
 }
 
@@ -368,13 +398,23 @@ function Get-AuditResultValidation($Entries, $Run, [string]$Directory, [string]$
     }
     catch { $executableInputs = $null; $problems.Add("unavailable-executable-inputs: $($_.Exception.Message)") }
     foreach ($problem in @(Get-AuditCatalogProblems $Entries)) { $problems.Add($problem) }
+    # Checks that belong to another build's results file: the option checks on a default build
+    # (listed as needing their options) and everything else on an option build.
+    $otherBuild = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    $needsOptions = [Collections.Generic.List[string]]::new()
     foreach ($entry in $Entries) {
-        foreach ($check in $entry.checks) { $expected["$($entry.name)/$($check.id)"] = @($entry, $check) }
+        foreach ($check in $entry.checks) {
+            $key = "$($entry.name)/$($check.id)"
+            if (Test-AuditCheckInScope $check $Run.build) { $expected[$key] = @($entry, $check); continue }
+            [void]$otherBuild.Add($key)
+            if (@(Get-AuditCheckBuildOptions $check).Count) { $needsOptions.Add($key) }
+        }
     }
     $seen = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
     $missing = [Collections.Generic.List[string]]::new()
     $duplicates = [Collections.Generic.List[string]]::new()
     $removed = [Collections.Generic.List[string]]::new()
+    $wrongBuild = [Collections.Generic.List[string]]::new()
     $changed = [Collections.Generic.List[string]]::new()
     $unknown = [Collections.Generic.List[string]]::new()
     $historical = [Collections.Generic.List[string]]::new()
@@ -387,6 +427,7 @@ function Get-AuditResultValidation($Entries, $Run, [string]$Directory, [string]$
             $digest = if ($result.apkSha256) { [string]$result.apkSha256 } else { [string]$patch.apkSha256 }
             if ($digest) { [void]$digests.Add($digest) }
             if (-not $seen.Add($key)) { $duplicates.Add($key); continue }
+            if ($otherBuild.Contains($key)) { $wrongBuild.Add($key); continue }
             if (-not $expected.ContainsKey($key)) { $removed.Add($key); continue }
             if ($result.status -cnotin @('pass','fail','review','inconclusive','error','skipped')) { $unknown.Add($key); continue }
             $entry, $check = $expected[$key]
@@ -399,7 +440,7 @@ function Get-AuditResultValidation($Entries, $Run, [string]$Directory, [string]$
         }
     }
     foreach ($key in $expected.Keys) { if (-not $seen.Contains($key)) { $missing.Add($key) } }
-    foreach ($category in @(@('missing',$missing), @('duplicate',$duplicates), @('removed',$removed), @('changed-or-unversioned',$changed), @('unknown-status',$unknown))) {
+    foreach ($category in @(@('missing',$missing), @('duplicate',$duplicates), @('removed',$removed), @('other-build',$wrongBuild), @('changed-or-unversioned',$changed), @('unknown-status',$unknown))) {
         foreach ($key in $category[1]) { $problems.Add("$($category[0]): $key") }
     }
     foreach ($key in $historical) { $problems.Add("historical-or-unbound: $key") }
@@ -408,8 +449,11 @@ function Get-AuditResultValidation($Entries, $Run, [string]$Directory, [string]$
         state = if ($problems.Count -eq 0) { 'current-bound' } else { 'historical-or-incomplete' }
         executionInputs = $executableInputs
         catalogChecks = $expected.Count; resultChecks = $seen.Count; currentChecks = $current; currentPass = $currentPass
+        buildOptions = @(if ($null -ne $Run.build -and $Run.build.options -is [Array]) { $Run.build.options })
+        needsOptions = @($needsOptions | Sort-Object)
         apkDigests = @($digests | Sort-Object); mixedBuild = $digests.Count -gt 1
         missing = @($missing | Sort-Object); duplicates = @($duplicates | Sort-Object); removed = @($removed | Sort-Object)
+        otherBuild = @($wrongBuild | Sort-Object)
         changed = @($changed | Sort-Object); unknown = @($unknown | Sort-Object); historical = @($historical | Sort-Object)
         problems = @($problems)
     }

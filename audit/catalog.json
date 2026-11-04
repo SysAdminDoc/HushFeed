@@ -124,7 +124,10 @@
    },
    {
     "id": "accent-visible",
-    "what": "Review: TikTok's main red buttons and red text show the accent chosen in the patch options (or the wallpaper color on Android 12+ with Follow the wallpaper).",
+    "what": "Review: on a build patched with the Blue accent, TikTok's main red buttons and red text show Blue #2D7FF9.",
+    "buildOptions": [
+     "Accent color|accentColor=#2D7FF9"
+    ],
     "steps": [
      {
       "open": "feed"
@@ -134,7 +137,7 @@
      },
      {
       "shot": "accent-feed",
-      "review": "Feed: red buttons and red text show the chosen color instead of TikTok red #FE2C55. Warnings stay red, and the patch leaves the follow plus under the avatar red; the patch doesn't claim the Inbox unread badge either. Failing looks like the stock red on primary buttons."
+      "review": "Feed: red buttons and red text show Blue #2D7FF9 instead of TikTok red #FE2C55. Warnings stay red, and the patch leaves the follow plus under the avatar red; the patch doesn't claim the Inbox unread badge either. Failing looks like the stock red on primary buttons."
      },
      {
       "open": "profile"
@@ -144,13 +147,13 @@
      },
      {
       "shot": "accent-profile",
-      "review": "Own profile: the Upload / Follow style buttons and links use the accent, not TikTok red."
+      "review": "Own profile: the Upload / Follow style buttons and links use Blue #2D7FF9, not TikTok red."
      }
     ],
     "auto": false
    }
   ],
-  "notes": "The lane file lists TikTok original #FE2C55 (no change), Blue #2D7FF9, Green #1DA153, Purple #8B5CF6, Orange #F26411, Teal #0F9E8E or a typed code, plus Follow the wallpaper. With the default option the patch changes nothing visible, so the review needs a build made with a non-default color. Icons with the red drawn into a PNG are recolored for solid colors only; the follow plus under an avatar and soft see-through reds are documented as unchanged."
+  "notes": "The lane file lists TikTok original #FE2C55 (no change), Blue #2D7FF9, Green #1DA153, Purple #8B5CF6, Orange #F26411, Teal #0F9E8E or a typed code, plus Follow the wallpaper. With the default option the patch changes nothing visible, so accent-visible names the Blue option in buildOptions and runs only on a build patched with it (scripts/patch-for-device.ps1 -Option 'Accent color|accentColor=#2D7FF9'), into tiktok-<version>-options.json. Icons with the red drawn into a PNG are recolored for solid colors only; the follow plus under an avatar and soft see-through reds are documented as unchanged."
  },
  {
   "name": "Advanced downloads",

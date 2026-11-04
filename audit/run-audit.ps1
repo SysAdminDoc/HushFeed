@@ -17,6 +17,11 @@
     expectations is marked auto; one with a "shot" ends as "review" until a verdict is merged
     with -ApplyVerdicts.
 
+    A check that names "buildOptions" ('Accent color|accentColor=#2D7FF9') needs a build patched
+    with them (scripts/patch-for-device.ps1 -Option), since on default options its patch changes
+    nothing to see. Such a build runs only those checks, into tiktok-<version>-options.json, and a
+    build with no options lists them as not judged instead of running them.
+
     -BuildReceipt and -Bundle verify the device builder's APK/source identity. Device checks
     also require the installed base APK to match -Apk and a shared -LeaseDir (or its environment
     variable). -ValidateResults checks saved definitions, receipts and evidence files without
@@ -226,6 +231,14 @@ if ($Validate) {
                     }
                 }
             }
+            foreach ($wantedOption in @(Get-AuditCheckBuildOptions $check)) {
+                if ([string]$wantedOption -notmatch '^([^|]+)\|([^=]+)=') { continue }
+                $optionPatchName, $optionKey = $Matches[1], $Matches[2]
+                $optionPatch = @($patchList.patches | Where-Object { $_.name -ceq $optionPatchName })[0]
+                if ($null -eq $optionPatch -or @($optionPatch.options | Where-Object { $_.key -ceq $optionKey }).Count -eq 0) {
+                    $problems.Add("$at needs the build option $optionKey of '$optionPatchName', which patches-list.json doesn't have")
+                }
+            }
             $decides = @($check.steps | Where-Object { $_.expect -or $_.expectNot -or $_.log -or $_.logNot -or $_.apk -or $_.shot -or $_.vibrations -or $_.record -eq 'stop' }).Count
             if ($decides -eq 0) { $problems.Add("$at decides nothing: no expect, log, apk, shot, vibrations or record stop step") }
             $reviews = @($check.steps | Where-Object { $_.shot }).Count
@@ -296,8 +309,19 @@ if ($Only) {
     })
     if ($catalogEntries.Count -eq 0) { throw "Nothing in the catalog matches -Only $Only." }
 }
+$auditBuild = Read-AuditBuildIdentity -ApkPath $Apk -ReceiptPath $BuildReceipt -BundlePath $Bundle -GitRoot $root `
+    -App ([pscustomobject]@{ package = $apkPackage; version = $versionName; versionCode = $versionCode })
+# A check with buildOptions runs only on a build patched with them, and that build runs nothing
+# else (Test-AuditCheckInScope), so its results get their own file.
+$scopedChecks = @{}
+foreach ($entry in $catalogEntries) { $scopedChecks[[string]$entry.name] = @($entry.checks | Where-Object { Test-AuditCheckInScope $_ $auditBuild }) }
+$catalogEntries = @($catalogEntries | Where-Object { $scopedChecks[[string]$_.name].Count -gt 0 })
+$optionBuild = @(if ($auditBuild.options -is [Array]) { $auditBuild.options }).Count -gt 0
+if ($catalogEntries.Count -eq 0) {
+    throw "No check$(if ($Only) { " in -Only $Only" }) runs on this build$(if ($optionBuild) { ", which is patched with options: $($auditBuild.options -join ', ')" })."
+}
 
-if (-not $Results) { $Results = Join-Path $PSScriptRoot "results\$($auditProfile.ResultsPrefix)-$versionName.json" }
+if (-not $Results) { $Results = Join-Path $PSScriptRoot "results\$($auditProfile.ResultsPrefix)-$versionName$(if ($optionBuild) { '-options' }).json" }
 $stamp = [DateTime]::UtcNow.ToString('yyyyMMdd-HHmmss')
 if (-not $OutDir) { $OutDir = Join-Path ([IO.Path]::GetTempPath()) "hushfeed-audit\$stamp" }
 New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
@@ -1130,8 +1154,7 @@ $run = [ordered]@{
     app = [ordered]@{ package = $package; version = $versionName; versionCode = $versionCode }
     apk = [ordered]@{ file = (Split-Path -Leaf $Apk); sha256 = (Get-FileHash -LiteralPath $Apk -Algorithm SHA256).Hash.ToLowerInvariant() }
     runner = [ordered]@{ commit = "$(git -C $root rev-parse HEAD 2>$null)"; catalog = (Get-FileHash -LiteralPath $Catalog -Algorithm SHA256).Hash.ToLowerInvariant() }
-    build = Read-AuditBuildIdentity -ApkPath $Apk -ReceiptPath $BuildReceipt -BundlePath $Bundle -GitRoot $root `
-        -App ([pscustomobject]@{ package = $apkPackage; version = $versionName; versionCode = $versionCode })
+    build = $auditBuild
     device = $null
     startedUtc = [DateTime]::UtcNow.ToString('o')
     finishedUtc = $null
@@ -1148,12 +1171,22 @@ if ($Only -and (Test-Path -LiteralPath $Results)) {
     $rerun = @($catalogEntries | ForEach-Object { [string]$_.name })
     $run.patches = @($previous.patches | Where-Object { $rerun -notcontains $_.name })
     foreach ($kept in $run.patches) {
+        # A check that has since moved to an option build's own file isn't carried here.
+        $keptEntry = @($allCatalogEntries | Where-Object { $_.name -ceq $kept.name })[0]
+        if ($null -ne $keptEntry) {
+            $kept.checks = @($kept.checks | Where-Object {
+                $keptId = $_.id
+                $catalogCheck = @($keptEntry.checks | Where-Object { $_.id -ceq $keptId })[0]
+                $null -eq $catalogCheck -or (Test-AuditCheckInScope $catalogCheck $auditBuild)
+            })
+        }
         $kept.evidence = ConvertTo-LeafName $kept.evidence
         foreach ($keptCheck in $kept.checks) {
             $keptCheck.evidence = @($keptCheck.evidence | ForEach-Object { ConvertTo-LeafName $_ })
             foreach ($shot in $keptCheck.review) { $shot.shot = ConvertTo-LeafName $shot.shot }
         }
     }
+    $run.patches = @($run.patches | Where-Object { @($_.checks).Count -gt 0 })
     $run.startedUtc = $previous.startedUtc
     $run.hooks = $previous.hooks
 }
@@ -1211,7 +1244,7 @@ try {
         $originals = @{}
         $restarted = $false
         $checks = @()
-        foreach ($check in $entry.checks) {
+        foreach ($check in $scopedChecks[[string]$entry.name]) {
             # A check starts with TikTok in front. Behind the home screen its process may be gone or
             # frozen, and no probe answers: on 47.1.4 that failed a patch-applied check with the
             # home screen up (2026-10-16). A fresh start then says nothing about this check's patch.
@@ -1298,4 +1331,7 @@ $counts = $run.summary
 Write-Host "[audit] $(($counts.GetEnumerator() | ForEach-Object { "$($_.Key) $($_.Value)" }) -join ', ')"
 Write-Host "[audit] results $Results, evidence $OutDir"
 Write-Host "[audit] $($run.qualification.state): $($run.qualification.currentChecks)/$($run.qualification.catalogChecks) current bound checks; $($run.qualification.currentPass) pass"
+if ($run.qualification.needsOptions.Count) {
+    Write-Host "[audit] not judged here, they need a build patched with their buildOptions (scripts/patch-for-device.ps1 -Option): $($run.qualification.needsOptions -join ', ')"
+}
 if ($counts['fail'] -gt 0 -or $counts['error'] -gt 0) { exit 1 }

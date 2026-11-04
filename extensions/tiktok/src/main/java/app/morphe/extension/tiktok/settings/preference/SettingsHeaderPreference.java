@@ -39,6 +39,7 @@ public final class SettingsHeaderPreference extends Preference {
     private final Runnable backAction;
     private Runnable statusAction;
     private TextView statusView;
+    private TextView titleView;
 
     public static SettingsHeaderPreference master(Context context, Runnable backAction) {
         return master(context, backAction, null);
@@ -95,6 +96,7 @@ public final class SettingsHeaderPreference extends Preference {
         Context context = getContext();
         LinearLayout header = createHeader(context, heading, backAction, true);
         LinearLayout toolbar = header.findViewWithTag("hushfeed_toolbar");
+        titleView = header.findViewWithTag("hushfeed_page_title");
         statusView = SettingsUi.text(context, "", SettingsUi.TEXT_CAPTION,
                 SettingsUi.textSecondary(), 0);
         statusView.setTag("hushfeed_compact_status");
@@ -157,8 +159,22 @@ public final class SettingsHeaderPreference extends Preference {
         super.onBindView(view);
         if (kind == Kind.MASTER) {
             statusView = view.findViewWithTag("hushfeed_compact_status");
+            titleView = view.findViewWithTag("hushfeed_page_title");
             refreshStatus();
         }
+    }
+
+    /**
+     * The bar's title: [searchTitle] while a search is typed, else the page's name, which it
+     * leaves off while the header below shows that name. Hidden rather than gone, so the bar keeps
+     * its height and the rows don't jump.
+     */
+    public void showTitle(CharSequence searchTitle, boolean headerNameShown) {
+        if (titleView == null) return;
+        CharSequence text = searchTitle != null ? searchTitle : heading;
+        if (!android.text.TextUtils.equals(titleView.getText(), text)) titleView.setText(text);
+        int visibility = searchTitle == null && headerNameShown ? View.INVISIBLE : View.VISIBLE;
+        if (titleView.getVisibility() != visibility) titleView.setVisibility(visibility);
     }
 
     private View createSectionHeader() { return createHeader(getContext(), heading, backAction); }

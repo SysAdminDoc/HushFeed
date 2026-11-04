@@ -84,6 +84,16 @@ public final class BuildDetails {
         }
     }
 
+    /**
+     * Whether the record says the resource patch [name] ran on this APK. A record that's missing,
+     * damaged or older than the list says no, so nothing is shown that the APK may not carry.
+     */
+    public static boolean resourcePatchApplied(String metadata, String name) {
+        String value = parse(metadata).get("resource_patches");
+        if (oneOf(value, "unknown", "none")) return false;
+        return Arrays.asList(value.split(",", -1)).contains(name);
+    }
+
     public static String report() { return report(Utils.getBuildMetadata()); }
 
     public static String report(String metadata) {

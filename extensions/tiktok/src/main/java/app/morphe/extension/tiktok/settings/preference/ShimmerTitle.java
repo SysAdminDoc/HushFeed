@@ -11,8 +11,8 @@ import android.graphics.Matrix;
 import android.graphics.PorterDuff;
 import android.graphics.Shader;
 import android.text.Layout;
+import android.view.Choreographer;
 import android.view.View;
-import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -28,7 +28,7 @@ import java.util.WeakHashMap;
  * moves whatever Android's animation scale says, since the S22 runs with animations off and a
  * ValueAnimator would sit still there.
  */
-public final class ShimmerTitle implements Runnable, View.OnAttachStateChangeListener {
+public final class ShimmerTitle implements Choreographer.FrameCallback, Runnable, View.OnAttachStateChangeListener {
     /** One sheen sweep and the wait after it. */
     static final long PERIOD_MS = 6000;
     /** How long a sheen sweep runs. */
@@ -117,18 +117,30 @@ public final class ShimmerTitle implements Runnable, View.OnAttachStateChangeLis
         startedAt = -1L;
         if (!running) {
             running = true;
-            title.postOnAnimationDelayed(this, FRAME_MS);
+            Choreographer.getInstance().postFrameCallbackDelayed(this, FRAME_MS);
         }
     }
 
     @Override
     public void onViewDetachedFromWindow(View view) {
         running = false;
+        Choreographer.getInstance().removeFrameCallback(this);
         title.removeCallbacks(this);
     }
 
+    /** The look again at a title that wasn't showing: back to drawing every frame once it is. */
     @Override
     public void run() {
+        if (!running || !title.isAttachedToWindow()) {
+            running = false;
+            return;
+        }
+        if (title.isShown()) Choreographer.getInstance().postFrameCallbackDelayed(this, FRAME_MS);
+        else title.postDelayed(this, HIDDEN_CHECK_MS);
+    }
+
+    @Override
+    public void doFrame(long frameTimeNanos) {
         if (!running || !title.isAttachedToWindow()) {
             running = false;
             return;
@@ -139,10 +151,12 @@ public final class ShimmerTitle implements Runnable, View.OnAttachStateChangeLis
             title.postDelayed(this, HIDDEN_CHECK_MS);
             return;
         }
-        long now = AnimationUtils.currentAnimationTimeMillis();
+        // The frame's own time. AnimationUtils' clock never goes back past the latest time it has
+        // handed out on this thread, so after the clock it reads starts again it stands still.
+        long now = frameTimeNanos / 1_000_000L;
         if (startedAt < 0L) startedAt = now;
         frame(now - startedAt);
-        title.postOnAnimationDelayed(this, FRAME_MS);
+        Choreographer.getInstance().postFrameCallbackDelayed(this, FRAME_MS);
     }
 
     /** Shades [title], which wears the gradient, as it stands [sinceStart] ms after it opened. */

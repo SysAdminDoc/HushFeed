@@ -26,6 +26,7 @@ Every Hushfeed release, newest first.
 * **TikTok:** `Video text color` and `Backdrop behind video text` under Feed screen color the description, the creator's name and the post date on videos, and can put a see-through band behind them.
 * **TikTok:** `Hide the repost chip` under Feed screen takes out the small bar above the progress bar that says someone you follow reposted the video, or asks you to repost it.
 * **TikTok:** Hushfeed settings wear TikTok's colors. Its red marks switches and buttons, its cyan marks headings and icons, and every color was checked so text stays easy to read in the dark and the light look. Switches are rounded squares now instead of pills.
+* **TikTok:** The main settings page opens on Hushfeed's icon, name and version, centered above the rows. The bar at the top names the page only once that header scrolls away, and it says Search settings while you're typing a search.
 
 ### Bug Fixes
 * **TikTok:** `Hide message streaks` takes the streak button off chats, the share panel, Friends and stories, and the streak reminder off your chat list. Before, it hid nothing, since TikTok no longer asks the spot Hushfeed was answering.

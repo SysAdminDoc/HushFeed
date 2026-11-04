@@ -13422,6 +13422,11 @@
     "what": "A section row opens its page: Inbox lists its Hide new followers row.",
     "steps": [
      {
+      "set": {
+       "settings_as_list": "false"
+      }
+     },
+     {
       "open": "settings"
      },
      {

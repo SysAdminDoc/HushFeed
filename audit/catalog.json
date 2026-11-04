@@ -5119,8 +5119,22 @@
       "wait": 2500
      },
      {
+      "probe": "call",
+      "extras": {
+       "class": "app.morphe.extension.shared.diagnostics.FeedFilterCounters",
+       "method": "sessionRemoved"
+      },
+      "expect": "^ok call sessionRemoved -> [1-9]",
+      "precondition": true,
+      "retrySwipe": 8,
+      "waitMs": 1500
+     },
+     {
+      "wait": 2000
+     },
+     {
       "shot": "filter-count-pill",
-      "review": "A small pill over the feed shows how many videos were filtered out. A feed where nothing was removed shows no pill, so a quiet session is inconclusive."
+      "review": "The session has removed at least one video by now, so a small pill under the top tabs shows how many were filtered out. No pill is a fail."
      },
      {
       "set": {
@@ -8941,7 +8955,7 @@
      },
      {
       "tap": {
-       "id": "id/f2g$"
+       "id": "id/cover$"
       }
      },
      {
@@ -13446,7 +13460,8 @@
        "text": "Hide new followers"
       },
       "expect": "ok findtext found",
-      "retrySwipe": 4
+      "retrySwipe": 4,
+      "slowSwipe": true
      },
      {
       "back": true

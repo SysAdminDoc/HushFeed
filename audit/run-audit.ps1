@@ -448,6 +448,11 @@ function Invoke-AuditProbe([string]$Action, $Extras, [int]$WaitMs = 3000, [strin
     # longer ceiling only costs time when the answer never comes.
     $floorMs = if ($Action -eq 'report') { 20000 } else { 800 }
     $deadline = [DateTime]::UtcNow.AddMilliseconds([Math]::Max($WaitMs, $floorMs) + 4000)
+    # A report still sending pieces at the deadline gets 4 more seconds after each new one, up
+    # to a minute in all: on 47.6.3 one ran past 24 seconds and its switch list never arrived
+    # (Hide read receipts/registered, S22 2026-11-04, passed on the rerun).
+    $cap = [DateTime]::UtcNow.AddMilliseconds(60000)
+    $seen = 0
     $answer = @()
     do {
         Start-Sleep -Milliseconds 400
@@ -455,6 +460,12 @@ function Invoke-AuditProbe([string]$Action, $Extras, [int]$WaitMs = 3000, [strin
         $answer = @(Get-LogAfter $marker @('HushfeedProbe') |
             ForEach-Object { "$_" -replace '^[VDIWEF]/HushfeedProbe\s*: ?', '' })
         $finished = @($answer | Where-Object { "$_" -match $done }).Count -gt 0
+        if ($Action -eq 'report' -and $answer.Count -gt $seen) {
+            $seen = $answer.Count
+            $grace = [DateTime]::UtcNow.AddMilliseconds(4000)
+            if ($grace -gt $cap) { $grace = $cap }
+            if ($grace -gt $deadline) { $deadline = $grace }
+        }
     } until ($finished -or [DateTime]::UtcNow -gt $deadline)
     # "<action>[n] text" opens a piece; the lines after it belong to that piece. Pieces were cut
     # from one string, so they join with nothing between them.
@@ -1014,7 +1025,10 @@ function Invoke-Check($Entry, $Check, [hashtable]$Originals, [ref]$Restarted, $B
                     $wait = if ($step.waitMs) { [int]$step.waitMs } else { 3000 }
                     # "retrySwipe": n moves the feed on to the next video up to n times until the
                     # answer matches, for a check that needs a certain kind of video in front.
+                    # "slowSwipe" makes each move a slow drag of under a screen instead: the feed's
+                    # quick swipe flings a settings list past whole sections between two looks.
                     $swipesLeft = if ($step.retrySwipe) { [int]$step.retrySwipe } else { 0 }
+                    $between = if ($step.slowSwipe) { "`n--- scrolled`n" } else { "`n--- next video`n" }
                     # Every attempt's answer goes into the one evidence file, so a precondition
                     # that never held shows each video it looked at.
                     $attempts = @()
@@ -1045,11 +1059,12 @@ function Invoke-Check($Entry, $Check, [hashtable]$Originals, [ref]$Restarted, $B
                             }
                             $swipesLeft--
                             $w, $h = Get-ScreenSize
-                            Invoke-DeviceShell "input swipe $([int]($w / 2)) $([int]($h * 0.72)) $([int]($w / 2)) $([int]($h * 0.28)) 220" | Out-Null
+                            $move = if ($step.slowSwipe) { "$([int]($h * 0.70)) $([int]($w / 2)) $([int]($h * 0.30)) 1500" } else { "$([int]($h * 0.72)) $([int]($w / 2)) $([int]($h * 0.28)) 220" }
+                            Invoke-DeviceShell "input swipe $([int]($w / 2)) $move" | Out-Null
                             Start-Sleep -Milliseconds 2200
                         }
                     } finally {
-                        $result.evidence += Save-Evidence "$tag-$index-$($step.probe)" ($attempts -join "`n--- next video`n")
+                        $result.evidence += Save-Evidence "$tag-$index-$($step.probe)" ($attempts -join $between)
                     }
                 }
                 { $_ -in 'log', 'logNot' } {

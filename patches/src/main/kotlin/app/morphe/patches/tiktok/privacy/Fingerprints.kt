@@ -92,8 +92,3 @@ internal object PitayaLiteStartFingerprint : Fingerprint(
 )
 
 internal const val PITAYA_LITE = "Lcom/bytedance/pitaya/api/PitayaLite;"
-
-internal object WebViewTrackingFingerprint : Fingerprint(
-    strings = listOf("addJavascriptInterface"),
-    definingClass = "Lcom/bytedance/hybrid/",
-)

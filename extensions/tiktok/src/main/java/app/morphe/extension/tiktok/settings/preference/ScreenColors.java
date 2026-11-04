@@ -56,9 +56,12 @@ public final class ScreenColors {
     public final @ColorInt int hint;
     /** Section titles, row icons, the bar's back arrow and every focus outline. */
     public final @ColorInt int heading;
-    /** A switch that's on, the filled dialog action and a field's cursor. */
+    /** A switch that's on, a dialog's main action and a field's cursor and focused outline. */
     public final @ColorInt int accent;
-    /** A switch that's off, and a field's outline at rest. */
+    /**
+     * A switch that's off. A field's outline at rest is {@link #outline} instead: this grey
+     * against the accent of a focused field is only 1.45:1 on the dark theme.
+     */
     public final @ColorInt int switchOff;
     /** Rows and their edge. */
     public final @ColorInt int card;

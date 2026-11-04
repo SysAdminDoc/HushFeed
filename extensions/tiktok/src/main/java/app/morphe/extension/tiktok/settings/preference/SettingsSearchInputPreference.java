@@ -92,7 +92,8 @@ public final class SettingsSearchInputPreference extends Preference {
         // typed in the announcement, so "cats" came back as the label. The hint names it.
         editText.setMinimumHeight(SettingsUi.dp(context, 48));
         editText.setPadding(0, 0, 0, 0);
-        SettingsUi.styleEditText(editText);
+        // The row above is the field's frame, so the field takes the colours and no frame.
+        SettingsUi.tintField(editText);
         editText.setBackground(null);
         // Every native search flow lands with the field focused, the keyboard up and the action
         // key searching. This one made the reader tap the box first, showed a generic action

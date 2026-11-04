@@ -10066,7 +10066,7 @@
     "steps": [
      {
       "probe": "report",
-      "expect": "registered_switches:[^\n]*\bhideReadReceipts\b"
+      "expect": "registered_switches:[^\\n]*\\bhideReadReceipts\\b"
      },
      {
       "apk": "dex-string",

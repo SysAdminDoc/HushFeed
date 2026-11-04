@@ -75,6 +75,7 @@ Every Hushfeed release, newest first.
 * **TikTok:** Nine more TikTok lookups find their method faster while patching: the follow feed, the sticker rows, the photo slide fit and the profile menu. Each one now names a call, a field it reads, a type check or a cast that the patcher keeps an index of. Every one of them used to take 140 to 630 ms on 47.6.3, and now none is slow enough to show up in `--validate`.
 * **TikTok:** Patching 47.6.3 spends about a second less looking for methods. The read receipts and clear display lookups now name a field they read or write. `Use system font` and `AMOLED dark theme` find the web page callbacks in one pass instead of two, and the tab badge dot is looked up inside its count's class rather than across the whole app.
 * **TikTok:** Four more lookups find their method faster while patching 47.6.3: the hold gesture's touch listener, the DM sticker preview, the feed's long-press listeners and the Inbox pull refresh. Together they took 550 to 960 ms a run, and none of them is slow enough to show up in `--validate` now. The pull refresh is looked up only in the class that holds the manual refresh.
+* **TikTok:** The patch audit's check that `Hide read receipts` is switched on could never pass. Its pattern had two backspace characters where the word edges belonged, so it failed even with the switch listed. It looks for the switch's name now.
 
 ## 0.80.0 (2026-11-01)
 

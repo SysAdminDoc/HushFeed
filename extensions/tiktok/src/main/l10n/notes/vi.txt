@@ -1,112 +1,112 @@
 ## Unreleased
 
-* **TikTok:** Bước kiểm tra toàn ứng dụng chờ Android kiểm tra mã xong và chờ video đứng yên rồi mới đọc màn hình. LIVE luôn chuyển động sẽ được vuốt qua.
+* Bước kiểm tra toàn ứng dụng chờ Android kiểm tra mã xong và chờ video đứng yên rồi mới đọc màn hình. LIVE luôn chuyển động sẽ được vuốt qua.
 
 ## 0.80.0 (2026-11-01)
 
-* **TikTok:** PineDrama chuyển sang bộ bản vá riêng, HushPine. Hushfeed giờ chỉ vá TikTok.
-* **TikTok:** Chỉ hỗ trợ TikTok 47.6.3. Tải từ APKMirror và giữ nguyên khóa ký để không mất đăng nhập.
-* **TikTok:** Ẩn các nút của Clear display có công tắc giữ lại thanh tiến trình (#237).
-* **TikTok:** Nhấn đúp có thể thích hoặc bỏ thích video (#248).
-* **TikTok:** Giữ video rồi trượt ngang để đổi tốc độ trong menu của bạn. Mặc định tắt (#248).
-* **TikTok:** Lưới đã thích có cách sắp xếp riêng, chỉ áp dụng cho lưới đó (#180).
-* **TikTok:** Tiêu đề Hushfeed có dải màu xanh ngọc và đỏ của TikTok chuyển động chậm.
-* **TikTok:** Đã bỏ Calm feed. Các bộ lọc vẫn ở Bộ lọc nguồn cấp và vẫn bật như cũ.
-* **TikTok:** Nhấn đúp và Nhấn giữ có thể mở trang tìm kiếm, kể cả khi đã ẩn nút tìm kiếm (#251).
-* **TikTok:** Công tắc mới thu gọn ô tìm kiếm bình luận thành nút kính lúp (#254).
-* **TikTok:** Công tắc mới bỏ hàng Hushfeed khỏi cài đặt của TikTok. Nhấn giữ Dành cho bạn để mở cài đặt (#264).
-* **TikTok:** @tên người dùng trong tiểu sử giờ là liên kết đến trang cá nhân đó (#247).
-* **TikTok:** Thanh dưới có thể là viên kính nổi, có thấu kính trượt và cài đặt độ mờ, độ trong, chiều cao, góc bo (#259).
-* **TikTok:** Tùy chọn Morphe đặt giá trị ban đầu, nên bản dựng có thể bật sẵn công tắc. Cảm ơn @XEGARE (#256).
-* **TikTok:** Công tắc mới ẩn hàng vòng tròn LIVE và tin ở đầu trang Đang follow (#262).
-* **TikTok:** Công tắc mới chặn bảng Chia sẻ đến mở ra sau khi lưu video.
-* **TikTok:** Lưu ảnh gốc cũng lưu chú thích, người đăng, liên kết và ngày đăng vào một tệp.
-* **TikTok:** Tìm kiếm cài đặt hiểu các tên thường dùng như autoplay, PiP, AI và cả tùy chọn trong hàng lựa chọn.
-* **TikTok:** Khóa nguồn cấp theo giờ tự khóa trong những giờ bạn chọn và cho biết khi nào mở lại.
-* **TikTok:** Chỉ lưu qua Wi-Fi không dùng dữ liệu di động. Lượt lưu chờ Wi-Fi tối đa 30 phút.
-* **TikTok:** Công tắc mới tắt hộp Lưu nội dung cho nhãn dán trong trò chuyện (#274).
-* **TikTok:** Để ứng dụng khác phát đến khi video bắt đầu giữ nhạc tiếp tục khi mở TikTok hoặc tin nhắn (#283).
-* **TikTok:** Giữ tin nhắn đã thu hồi để lại tin người khác thu hồi. Cảm ơn @maayan080 (#291).
-* **TikTok:** Công tắc mới ẩn hàng Service+ dưới bản xem trước LIVE, và hàng đó không còn dính lại (#94).
-* **TikTok:** Mới nhất trước trên Đang follow tải 30 bài mỗi lần, nên ít bài mới chen vào hơn (#226).
-* **TikTok:** Trong phòng LIVE, nhấn giữ tiểu sử, tên hoặc tên người dùng để sao chép (#268).
-* **TikTok:** Ẩn TikTok Shop cũng bỏ các nút cửa hàng dưới chú thích (#271).
-* **TikTok:** Biểu tượng tùy chỉnh có thể cho thông báo chữ H Hushfeed sắc nét (#114).
-* **TikTok:** Định dạng âm thanh có thêm MP3, phát được ở mọi nơi (#273).
-* **TikTok:** Công tắc mới ẩn cả mũi tên Quay lại cạnh thanh tìm kiếm đã ẩn (#251).
-* **TikTok:** Khi bật nút Chặn tác giả, LIVE trong Dành cho bạn cũng có nút chặn (#138).
-* **TikTok:** Bản vá mới Tạo nhãn dán biến ảnh hoặc hình của video thành nhãn dán (#156, #88).
-* **TikTok:** Bản vá mới Giữ nhãn dán gần đây giữ hàng Dùng gần đây sau khi khởi động lại (#156).
-* **TikTok:** Ẩn khảo sát cũng ẩn nút Không quan tâm và Quan tâm trên video (#293).
-* **TikTok:** Biểu tượng tùy chỉnh có kiểu Material You, và tùy chọn đặt màu nền như #1E88E5 (#280).
-* **TikTok:** Rời đi khi không chạm dừng video và đưa TikTok xuống nền sau số phút bạn đặt (#266).
-* **TikTok:** Hiện thời điểm tạo tài khoản thêm ngày tham gia trên trang của người khác.
-* **TikTok:** Có gì mới có tiếng Trung giản thể.
-* **TikTok:** Feature Gate Lab có nút khởi động lại và mở lại đúng trang Lab.
-* **TikTok:** Dựng trên Morphe patcher 2.1.0, cần Morphe Manager 2.3.0 trở lên hoặc morphe-desktop 1.20.0.
-* **TikTok:** Gói bản vá có chữ ký, nên Manager kiểm tra được bản tải về từ Hushfeed.
-* **TikTok:** Kết quả tìm kiếm cài đặt mở đúng hàng đó.
-* **TikTok:** Thanh dưới trong suốt: dòng Vuốt lên để bỏ qua lại nằm trên các thẻ (#261).
-* **TikTok:** Viên kính nổi cao hơn một chút, đường tiến trình không đè lên nó (#259).
-* **TikTok:** Clear display tự động: mở video thứ hai không làm thanh tìm kiếm nháy lên (#84).
-* **TikTok:** Giao diện tối AMOLED: thẻ của trung tâm hoạt động cũng màu đen (#263).
-* **TikTok:** Ẩn thông báo nội dung chưa xác minh cũng bỏ dải Cảnh báo trong tin nhắn (#258).
-* **TikTok:** Nhấn giữ tiểu sử của người khác sao chép được (#247).
-* **TikTok:** Bình luận toàn chiều cao dừng dưới thanh trạng thái và mở đúng ngay ở video đầu (#261).
-* **TikTok:** Các mục cài đặt mở ngay dưới hàng của chúng và vẫn mở sau khi xoay máy.
-* **TikTok:** Trang chính của cài đặt giờ là danh sách gọn, đã bỏ Thiết lập nhanh.
-* **TikTok:** Cờ và mã quốc gia ở cạnh các tên viết từ phải sang trái (#258).
-* **TikTok:** Thanh dưới trong suốt: tên và dòng Chạm để xem của LIVE, phim ngắn ở trên các thẻ (#250).
-* **TikTok:** Nút sắp xếp lưới to hơn nên dễ chạm hơn.
-* **TikTok:** Nút sắp xếp lưới ẩn khi lưới không hiển thị.
-* **TikTok:** Nếu không lưu được sắp xếp, lưới giữ thứ tự cũ.
-* **TikTok:** Chọn Thứ tự gốc vẫn giữ menu sắp xếp (#180).
-* **TikTok:** Bình luận bên cạnh video luôn đo chiều rộng như nhau (#253).
-* **TikTok:** Trong Hộp thư, ảnh trò chuyện dùng lại mở Tin của đúng người ngay lần chạm đầu (#233).
-* **TikTok:** Video vẫn tạm dừng khi liên kết trong bình luận mở trang khác (#257).
-* **TikTok:** Báo cáo thông báo trong Chẩn đoán đếm số thông báo, không lưu nội dung (#126, #222, #86).
-* **TikTok:** TikTok vẫn có trong danh sách Android hiện khi ghi một ứng dụng.
-* **TikTok:** Giữ một công tắc trong kết quả tìm kiếm để tô sáng nó trong danh sách (#248).
-* **TikTok:** Kiểm tra khởi động ghi lại trình phát nào vẽ khung hình đầu (#150).
-* **TikTok:** Xuất bản ghi đã khôi phục nhanh hơn với tệp lớn.
-* **TikTok:** Thử lại trong Khôi phục giữ lý do dừng ban đầu của bản ghi.
-* **TikTok:** Ghi màn hình kiểm tra dung lượng và giữ tệp khôi phục đến khi bản lưu được xác minh.
-* **TikTok:** Khung hình đầu của bản ghi màn hình giữ đúng dấu thời gian.
-* **TikTok:** Ghi màn hình giữ các khung hình đầu khi âm thanh đang khởi động.
-* **TikTok:** Ghi màn hình giải phóng âm thanh khi lỗi, và thông báo lưu nói khi nào không có tiếng.
-* **TikTok:** Ghi màn hình chỉ thu âm thanh của ứng dụng đã vá.
-* **TikTok:** Dọn Service+ kiểm tra đúng mục xem trước LIVE đầu tiên (#94).
-* **TikTok:** Tạm dừng khi xem bình luận nhận ra khung hình đầu sớm hơn (#151).
-* **TikTok:** Ẩn nút Tự động cuộn cũng ẩn nút tròn ở góc trên bên phải video (#234).
-* **TikTok:** Hai thanh trong suốt: ảnh bìa giữa các video to theo video, không còn dải nháy (#232).
-* **TikTok:** Xóa quảng cáo nguồn cấp cũng chặn quảng cáo trong trình phát phim ngắn (#286).
-* **TikTok:** AMOLED: chữ gõ trong ô bình luận LIVE giờ màu sáng (#267).
-* **TikTok:** Giữ chuỗi đến được tên có emoji hoặc khoảng trắng và các nhóm (#289).
-* **TikTok:** Mở liên tiếp liên kết từ Telegram không chất đống nguồn cấp, Quay lại về trò chuyện (#276).
-* **TikTok:** Tự động dịch bình luận hoạt động lại trên danh sách bình luận mới (#282).
-* **TikTok:** Ẩn video LIVE cũng bắt được LIVE chèn vào trang đang hiển thị (#277).
-* **TikTok:** Tắt biểu tượng dịch phía trên bình luận giữ nguyên trên mọi video (#282).
-* **TikTok:** Mở Tin khi người đó đang LIVE cũng hoạt động với ảnh đại diện (#233).
-* **TikTok:** Lưu video ở chế độ Tự động lấy bản cao hơn khi tệp của TikTok chỉ là 720p (#240).
-* **TikTok:** Lưu tin ở chế độ Tự động lấy bản nét nhất. Cảm ơn @jutochoppa (#287, #155).
-* **TikTok:** Ghi màn hình LIVE không còn quay nút Ghi, và thông báo có nút Dừng (#265).
-* **TikTok:** Đăng nhập không dùng passkey cho biết cần làm gì khi TikTok chỉ hỏi passkey (#102).
-* **TikTok:** Xóa công cụ sáng tạo cũng hoạt động với gói tách. Thẻ Tạo sẽ ngừng hoạt động, nên hãy bỏ bản vá này nếu bạn làm video (#285).
-* **TikTok:** Khi TikTok từ chối lượt thích, Hushfeed hiện lý do một lần mỗi phiên (#269).
-* **TikTok:** Video đã thích hoặc đã lưu vẫn ở lưới, kể cả khi có dấu quảng cáo (#269).
-* **TikTok:** Thông báo tiếng Trung khi bị từ chối follow dùng đúng từ.
-* **TikTok:** Viên kính nổi cũng làm mờ bản xem trước LIVE phía sau (#259).
-* **TikTok:** Khoảng 140 thông báo bật lên ngắn hơn, vừa hai dòng trên Android 12 trở lên.
-* **TikTok:** Thông báo của Feature Gate Lab cũng vừa hai dòng.
-* **TikTok:** Cài đặt tiếng Trung giản thể đọc đều hơn.
-* **TikTok:** Tìm kiếm bình luận không đưa lại bình luận đã dịch bị bộ lọc ẩn.
-* **TikTok:** Chọn thư mục tải xuống không dùng được sẽ mở lại hộp thư mục kèm lý do.
-* **TikTok:** Mọi nhãn LIVE và phim ngắn mà Thanh dưới trong suốt dịch chuyển đều được kiểm tra.
-* **TikTok:** Bước kiểm tra chuyển video theo dõi chính trình phát.
-* **TikTok:** Bước kiểm tra toàn ứng dụng kiểm tra bản đã cài và tùy chọn bản vá.
-* **TikTok:** Kiểm tra bản vá xem ứng dụng đã cài và các bản vá đã chọn.
-* **TikTok:** Kiểm tra bản vá chờ báo cáo đầy đủ rồi mới kết luận thiếu công tắc.
-* **TikTok:** Kết quả kiểm tra không còn tính khi mã đã thay đổi.
-* **TikTok:** Gói bản vá mang Gson 2.15.0.
-* **TikTok:** Trang Giấy phép và tệp NOTICE ghi công De-Vanced.
-* **TikTok:** Không còn tệp biên nhận. Gói dựng lại y hệt, bạn có thể tự dựng và so sánh mã kiểm tra.
+* PineDrama chuyển sang bộ bản vá riêng, HushPine. Hushfeed giờ chỉ vá TikTok.
+* Chỉ hỗ trợ TikTok 47.6.3. Tải từ APKMirror và giữ nguyên khóa ký để không mất đăng nhập.
+* Ẩn các nút của Clear display có công tắc giữ lại thanh tiến trình (#237).
+* Nhấn đúp có thể thích hoặc bỏ thích video (#248).
+* Giữ video rồi trượt ngang để đổi tốc độ trong menu của bạn. Mặc định tắt (#248).
+* Lưới đã thích có cách sắp xếp riêng, chỉ áp dụng cho lưới đó (#180).
+* Tiêu đề Hushfeed có dải màu xanh ngọc và đỏ của TikTok chuyển động chậm.
+* Đã bỏ Calm feed. Các bộ lọc vẫn ở Bộ lọc nguồn cấp và vẫn bật như cũ.
+* Nhấn đúp và Nhấn giữ có thể mở trang tìm kiếm, kể cả khi đã ẩn nút tìm kiếm (#251).
+* Công tắc mới thu gọn ô tìm kiếm bình luận thành nút kính lúp (#254).
+* Công tắc mới bỏ hàng Hushfeed khỏi cài đặt của TikTok. Nhấn giữ Dành cho bạn để mở cài đặt (#264).
+* @tên người dùng trong tiểu sử giờ là liên kết đến trang cá nhân đó (#247).
+* Thanh dưới có thể là viên kính nổi, có thấu kính trượt và cài đặt độ mờ, độ trong, chiều cao, góc bo (#259).
+* Tùy chọn Morphe đặt giá trị ban đầu, nên bản dựng có thể bật sẵn công tắc. Cảm ơn @XEGARE (#256).
+* Công tắc mới ẩn hàng vòng tròn LIVE và tin ở đầu trang Đang follow (#262).
+* Công tắc mới chặn bảng Chia sẻ đến mở ra sau khi lưu video.
+* Lưu ảnh gốc cũng lưu chú thích, người đăng, liên kết và ngày đăng vào một tệp.
+* Tìm kiếm cài đặt hiểu các tên thường dùng như autoplay, PiP, AI và cả tùy chọn trong hàng lựa chọn.
+* Khóa nguồn cấp theo giờ tự khóa trong những giờ bạn chọn và cho biết khi nào mở lại.
+* Chỉ lưu qua Wi-Fi không dùng dữ liệu di động. Lượt lưu chờ Wi-Fi tối đa 30 phút.
+* Công tắc mới tắt hộp Lưu nội dung cho nhãn dán trong trò chuyện (#274).
+* Để ứng dụng khác phát đến khi video bắt đầu giữ nhạc tiếp tục khi mở TikTok hoặc tin nhắn (#283).
+* Giữ tin nhắn đã thu hồi để lại tin người khác thu hồi. Cảm ơn @maayan080 (#291).
+* Công tắc mới ẩn hàng Service+ dưới bản xem trước LIVE, và hàng đó không còn dính lại (#94).
+* Mới nhất trước trên Đang follow tải 30 bài mỗi lần, nên ít bài mới chen vào hơn (#226).
+* Trong phòng LIVE, nhấn giữ tiểu sử, tên hoặc tên người dùng để sao chép (#268).
+* Ẩn TikTok Shop cũng bỏ các nút cửa hàng dưới chú thích (#271).
+* Biểu tượng tùy chỉnh có thể cho thông báo chữ H Hushfeed sắc nét (#114).
+* Định dạng âm thanh có thêm MP3, phát được ở mọi nơi (#273).
+* Công tắc mới ẩn cả mũi tên Quay lại cạnh thanh tìm kiếm đã ẩn (#251).
+* Khi bật nút Chặn tác giả, LIVE trong Dành cho bạn cũng có nút chặn (#138).
+* Bản vá mới Tạo nhãn dán biến ảnh hoặc hình của video thành nhãn dán (#156, #88).
+* Bản vá mới Giữ nhãn dán gần đây giữ hàng Dùng gần đây sau khi khởi động lại (#156).
+* Ẩn khảo sát cũng ẩn nút Không quan tâm và Quan tâm trên video (#293).
+* Biểu tượng tùy chỉnh có kiểu Material You, và tùy chọn đặt màu nền như #1E88E5 (#280).
+* Rời đi khi không chạm dừng video và đưa TikTok xuống nền sau số phút bạn đặt (#266).
+* Hiện thời điểm tạo tài khoản thêm ngày tham gia trên trang của người khác.
+* Có gì mới có tiếng Trung giản thể.
+* Feature Gate Lab có nút khởi động lại và mở lại đúng trang Lab.
+* Dựng trên Morphe patcher 2.1.0, cần Morphe Manager 2.3.0 trở lên hoặc morphe-desktop 1.20.0.
+* Gói bản vá có chữ ký, nên Manager kiểm tra được bản tải về từ Hushfeed.
+* Kết quả tìm kiếm cài đặt mở đúng hàng đó.
+* Thanh dưới trong suốt: dòng Vuốt lên để bỏ qua lại nằm trên các thẻ (#261).
+* Viên kính nổi cao hơn một chút, đường tiến trình không đè lên nó (#259).
+* Clear display tự động: mở video thứ hai không làm thanh tìm kiếm nháy lên (#84).
+* Giao diện tối AMOLED: thẻ của trung tâm hoạt động cũng màu đen (#263).
+* Ẩn thông báo nội dung chưa xác minh cũng bỏ dải Cảnh báo trong tin nhắn (#258).
+* Nhấn giữ tiểu sử của người khác sao chép được (#247).
+* Bình luận toàn chiều cao dừng dưới thanh trạng thái và mở đúng ngay ở video đầu (#261).
+* Các mục cài đặt mở ngay dưới hàng của chúng và vẫn mở sau khi xoay máy.
+* Trang chính của cài đặt giờ là danh sách gọn, đã bỏ Thiết lập nhanh.
+* Cờ và mã quốc gia ở cạnh các tên viết từ phải sang trái (#258).
+* Thanh dưới trong suốt: tên và dòng Chạm để xem của LIVE, phim ngắn ở trên các thẻ (#250).
+* Nút sắp xếp lưới to hơn nên dễ chạm hơn.
+* Nút sắp xếp lưới ẩn khi lưới không hiển thị.
+* Nếu không lưu được sắp xếp, lưới giữ thứ tự cũ.
+* Chọn Thứ tự gốc vẫn giữ menu sắp xếp (#180).
+* Bình luận bên cạnh video luôn đo chiều rộng như nhau (#253).
+* Trong Hộp thư, ảnh trò chuyện dùng lại mở Tin của đúng người ngay lần chạm đầu (#233).
+* Video vẫn tạm dừng khi liên kết trong bình luận mở trang khác (#257).
+* Báo cáo thông báo trong Chẩn đoán đếm số thông báo, không lưu nội dung (#126, #222, #86).
+* TikTok vẫn có trong danh sách Android hiện khi ghi một ứng dụng.
+* Giữ một công tắc trong kết quả tìm kiếm để tô sáng nó trong danh sách (#248).
+* Kiểm tra khởi động ghi lại trình phát nào vẽ khung hình đầu (#150).
+* Xuất bản ghi đã khôi phục nhanh hơn với tệp lớn.
+* Thử lại trong Khôi phục giữ lý do dừng ban đầu của bản ghi.
+* Ghi màn hình kiểm tra dung lượng và giữ tệp khôi phục đến khi bản lưu được xác minh.
+* Khung hình đầu của bản ghi màn hình giữ đúng dấu thời gian.
+* Ghi màn hình giữ các khung hình đầu khi âm thanh đang khởi động.
+* Ghi màn hình giải phóng âm thanh khi lỗi, và thông báo lưu nói khi nào không có tiếng.
+* Ghi màn hình chỉ thu âm thanh của ứng dụng đã vá.
+* Dọn Service+ kiểm tra đúng mục xem trước LIVE đầu tiên (#94).
+* Tạm dừng khi xem bình luận nhận ra khung hình đầu sớm hơn (#151).
+* Ẩn nút Tự động cuộn cũng ẩn nút tròn ở góc trên bên phải video (#234).
+* Hai thanh trong suốt: ảnh bìa giữa các video to theo video, không còn dải nháy (#232).
+* Xóa quảng cáo nguồn cấp cũng chặn quảng cáo trong trình phát phim ngắn (#286).
+* AMOLED: chữ gõ trong ô bình luận LIVE giờ màu sáng (#267).
+* Giữ chuỗi đến được tên có emoji hoặc khoảng trắng và các nhóm (#289).
+* Mở liên tiếp liên kết từ Telegram không chất đống nguồn cấp, Quay lại về trò chuyện (#276).
+* Tự động dịch bình luận hoạt động lại trên danh sách bình luận mới (#282).
+* Ẩn video LIVE cũng bắt được LIVE chèn vào trang đang hiển thị (#277).
+* Tắt biểu tượng dịch phía trên bình luận giữ nguyên trên mọi video (#282).
+* Mở Tin khi người đó đang LIVE cũng hoạt động với ảnh đại diện (#233).
+* Lưu video ở chế độ Tự động lấy bản cao hơn khi tệp của TikTok chỉ là 720p (#240).
+* Lưu tin ở chế độ Tự động lấy bản nét nhất. Cảm ơn @jutochoppa (#287, #155).
+* Ghi màn hình LIVE không còn quay nút Ghi, và thông báo có nút Dừng (#265).
+* Đăng nhập không dùng passkey cho biết cần làm gì khi TikTok chỉ hỏi passkey (#102).
+* Xóa công cụ sáng tạo cũng hoạt động với gói tách. Thẻ Tạo sẽ ngừng hoạt động, nên hãy bỏ bản vá này nếu bạn làm video (#285).
+* Khi TikTok từ chối lượt thích, Hushfeed hiện lý do một lần mỗi phiên (#269).
+* Video đã thích hoặc đã lưu vẫn ở lưới, kể cả khi có dấu quảng cáo (#269).
+* Thông báo tiếng Trung khi bị từ chối follow dùng đúng từ.
+* Viên kính nổi cũng làm mờ bản xem trước LIVE phía sau (#259).
+* Khoảng 140 thông báo bật lên ngắn hơn, vừa hai dòng trên Android 12 trở lên.
+* Thông báo của Feature Gate Lab cũng vừa hai dòng.
+* Cài đặt tiếng Trung giản thể đọc đều hơn.
+* Tìm kiếm bình luận không đưa lại bình luận đã dịch bị bộ lọc ẩn.
+* Chọn thư mục tải xuống không dùng được sẽ mở lại hộp thư mục kèm lý do.
+* Mọi nhãn LIVE và phim ngắn mà Thanh dưới trong suốt dịch chuyển đều được kiểm tra.
+* Bước kiểm tra chuyển video theo dõi chính trình phát.
+* Bước kiểm tra toàn ứng dụng kiểm tra bản đã cài và tùy chọn bản vá.
+* Kiểm tra bản vá xem ứng dụng đã cài và các bản vá đã chọn.
+* Kiểm tra bản vá chờ báo cáo đầy đủ rồi mới kết luận thiếu công tắc.
+* Kết quả kiểm tra không còn tính khi mã đã thay đổi.
+* Gói bản vá mang Gson 2.15.0.
+* Trang Giấy phép và tệp NOTICE ghi công De-Vanced.
+* Không còn tệp biên nhận. Gói dựng lại y hệt, bạn có thể tự dựng và so sánh mã kiểm tra.

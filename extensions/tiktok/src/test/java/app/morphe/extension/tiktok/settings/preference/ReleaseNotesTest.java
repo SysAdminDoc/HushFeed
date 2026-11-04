@@ -54,8 +54,8 @@ public class ReleaseNotesTest {
         Path cursor = Path.of(System.getProperty("user.dir"));
         while (!Files.isRegularFile(cursor.resolve("CHANGELOG.md"))) cursor = cursor.getParent();
         Path root = temporary.getRoot().toPath();
-        String notes = "## 0.67.0 (date)\n\n* **TikTok:** Newest starts. " + "content 🚀 \000 ".repeat(7_000)
-                + "\n\n* **TikTok:** Newest ends.\n\n## 0.60.0 (date)\n\n* **TikTok:** Oldest kept.\n";
+        String notes = "## 0.67.0 (date)\n\n* Newest starts. " + "content 🚀 \000 ".repeat(7_000)
+                + "\n\n* Newest ends.\n\n## 0.60.0 (date)\n\n* Oldest kept.\n";
         assertTrue(notes.getBytes(StandardCharsets.UTF_8).length > 65_535);
         Path changelog = root.resolve("CHANGELOG.md");
         Files.write(changelog, ("## Unreleased\nDraft stays out.\n\n" + notes).getBytes(StandardCharsets.UTF_8));
@@ -219,18 +219,11 @@ public class ReleaseNotesTest {
         return out;
     }
 
-    /** The changelog's scope label is for Morphe Manager; the dialog shows a plain bullet. */
-    @Test
-    public void bulletsDropTheChangelogScopeLabel() {
-        String shown = ReleaseNotes.text("## 0.60.0 (date)\n\n* **TikTok:** Comments send again.\n", "0.60.0", null);
-        assertEquals("Hushfeed 0.60.0 (date)\n\n• Comments send again.", shown);
-    }
-
     /** A setting name in backticks reads as code on GitHub; the dialog showed the backticks. */
     @Test
     public void settingNamesLoseTheirBackticks() {
         String shown = ReleaseNotes.text(
-                "## 0.60.0 (date)\n\n* **TikTok:** Turn `Hide series` back on.\n", "0.60.0", null);
+                "## 0.60.0 (date)\n\n* Turn `Hide series` back on.\n", "0.60.0", null);
         assertEquals("Hushfeed 0.60.0 (date)\n\n• Turn Hide series back on.", shown);
     }
 
@@ -264,8 +257,8 @@ public class ReleaseNotesTest {
      * releases, which are all translated, so the label tests bring their own.
      */
     private static final String ENGLISH =
-            "## 0.68.0 (date)\n\n* **TikTok:** Newer.\n\n## 0.67.0 (date)\n\n* **TikTok:** Older.\n";
-    private static final String GERMAN = "## 0.68.0 (date)\n\n* **TikTok:** Neuer.\n";
+            "## 0.68.0 (date)\n\n* Newer.\n\n## 0.67.0 (date)\n\n* Older.\n";
+    private static final String GERMAN = "## 0.68.0 (date)\n\n* Neuer.\n";
 
     private static void assertEnglishLabel(String label) {
         java.util.List<android.widget.TextView> texts = dialogTexts("0.68.0", null, ENGLISH, null);
@@ -423,8 +416,8 @@ public class ReleaseNotesTest {
     /** #91: a release translated for the phone's table shows in that language, the rest in English. */
     @Test
     public void aTranslatedReleaseReplacesItsEnglishAndOlderOnesStayEnglish() {
-        String english = "## 0.61.0 (date)\n\n* **TikTok:** Newer.\n\n## 0.60.0 (date)\n\n* **TikTok:** Older.\n";
-        String german = "## 0.61.0 (date)\n\n* **TikTok:** Neuer.\n";
+        String english = "## 0.61.0 (date)\n\n* Newer.\n\n## 0.60.0 (date)\n\n* Older.\n";
+        String german = "## 0.61.0 (date)\n\n* Neuer.\n";
         java.util.List<ReleaseNotes.Section> shown = ReleaseNotes.sections(english, german, "0.61.0", "0.59.0");
         assertEquals(2, shown.size());
         assertEquals("Hushfeed 0.61.0 (date)\n\n• Neuer.\n", shown.get(0).text);

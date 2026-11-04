@@ -124,7 +124,7 @@ public final class ReleaseNotes {
     private static String format(String section) {
         return section
                 .replaceAll("(?m)^## ", "Hushfeed ")
-                .replaceAll("(?m)^\\* (\\*\\*TikTok:\\*\\* )?", "• ")
+                .replaceAll("(?m)^\\* ", "• ")
                 .replace("**", "")
                 .replace("`", "");
     }

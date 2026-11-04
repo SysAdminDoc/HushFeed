@@ -3,6 +3,9 @@ package app.morphe.patches.tiktok.misc.inbox
 import app.morphe.Fixtures
 import app.morphe.takes
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.Patcher
+import app.morphe.patcher.PatcherConfig
+import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.Opcode
@@ -18,11 +21,16 @@ import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstructio
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
 
 /** The rendered-list seams must retain the native model, metadata and completion trajectories. */
 class InboxQueryPublicationFixturesTest {
+    @get:Rule val temporary = TemporaryFolder()
+
     @Test fun `publication replaces only the List argument before native mask defaults and dispatch`() {
         Fixtures.forEachDeclared { apk ->
             val dex = Fixtures.dexContainer(apk, Opcodes.getDefault())
@@ -255,6 +263,31 @@ class InboxQueryPublicationFixturesTest {
             mutable.loadedIndexedHook()
             assertSame(original[3], mutable.implementation!!.instructions[3])
             assertTrue(mutable.implementation!!.instructions.indexOfFirst { it.extensionCall("onLoadedIndexedCallback") } > 3)
+        }
+    }
+
+    @Test fun `the patch finds the pull refresh in the manual refresh's class and guards that one`() {
+        Fixtures.forEachDeclared { apk ->
+            val version = Fixtures.versionOf(apk)
+            val (spring, native) = InboxSpringRefresh.soleMatch(Fixtures.dexContainer(apk, Opcodes.getDefault()).allClasses())
+            var checked = false
+            val probe = bytecodePatch(name = "inbox refresh probe") {
+                execute {
+                    loadedInboxPublicationSeams().install()
+                    val refresh = mutableClassDefBy(spring.type).methods.single { it.name == native.name &&
+                        it.parameterTypes.map(CharSequence::toString) == native.parameterTypes.map(CharSequence::toString) }
+                    assertTrue("$version: the pull refresh guard", refresh.implementation!!.instructions[0].extensionCall("allowLoadedRefresh"))
+                    checked = true
+                }
+            }
+            listOf(InboxIndexedCallback, InboxDiffSubmission, InboxDiffAcceptance, InboxListPublication, InboxStubPublication,
+                InboxFragmentPublication, InboxVisibleIndices, InboxNotificationClick, InboxSpringRefresh, InboxSpringManualRefresh,
+            ).forEach { it.clearMatch() }
+            Patcher(PatcherConfig(apk, temporary.newFolder())).use { patcher ->
+                patcher += setOf(probe)
+                runBlocking { patcher().collect { result -> result.exception?.let { throw it } } }
+            }
+            assertTrue("$version: the probe never ran", checked)
         }
     }
 

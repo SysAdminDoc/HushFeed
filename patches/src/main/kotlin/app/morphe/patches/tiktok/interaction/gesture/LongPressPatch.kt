@@ -57,16 +57,18 @@ private fun Method.isCoordinateCallback() =
  * holds a Context and the other an int, which is the ordinary cell against the adapter's; the
  * patch hooks both the same way so it does not need to tell them apart.
  */
-private object CoordinateLongPressCallbackFingerprint : Fingerprint(
+internal object CoordinateLongPressCallbackFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
     returnType = "V",
     parameters = listOf("F", "F"),
+    // Both first ask that BaseFeedPageParams whether the playlist is in clean mode. The patcher
+    // can look the call up, so it reads only the classes that make one (#54).
+    filters = listOf(methodCall(definingClass = FEED_PAGE_PARAMS)),
+    custom = { _, classDef -> classDef.fields.any { it.type == FEED_PAGE_PARAMS } },
 )
 
 internal fun BytecodePatchContext.coordinateLongPressCallbacks(): List<MutableMethod> {
-    val matches = CoordinateLongPressCallbackFingerprint.matchAllOrNull().orEmpty().filter { match ->
-        match.originalClassDef.fields.any { it.type == FEED_PAGE_PARAMS }
-    }
+    val matches = CoordinateLongPressCallbackFingerprint.matchAllOrNull().orEmpty()
     if (matches.size != 2) {
         throw PatchException(
             "Long-press controls: expected two feed coordinate listeners holding a " +

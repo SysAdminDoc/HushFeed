@@ -8,10 +8,13 @@ import app.morphe.patcher.MethodCallFilter
 import app.morphe.patches.tiktok.feedfilter.FollowFeedRequestFingerprint
 import app.morphe.patches.tiktok.feedfilter.FollowingCacheRestoreFingerprint
 import app.morphe.patches.tiktok.interaction.cleardisplay.ClearModeLogStateFingerprint
+import app.morphe.patches.tiktok.interaction.downloads.StickerPreviewSourceFingerprint
+import app.morphe.patches.tiktok.interaction.gesture.CoordinateLongPressCallbackFingerprint
 import app.morphe.patches.tiktok.interaction.ghostmode.ProfileViewReportFingerprint
 import app.morphe.patches.tiktok.interaction.ghostmode.StoryViewReportFingerprint
 import app.morphe.patches.tiktok.interaction.ghostmode.TypingStatusSenderFingerprint
 import app.morphe.patches.tiktok.interaction.resume.FeedProgressContinueGateFingerprint
+import app.morphe.patches.tiktok.interaction.speed.EdgeSpeedupTouchFingerprint
 import app.morphe.patches.tiktok.interaction.videofit.SlideContainerCropFingerprint
 import app.morphe.patches.tiktok.interaction.videofit.SlideScaleTypeFingerprint
 import app.morphe.patches.tiktok.misc.comment.RecentStickerAddFingerprint
@@ -40,7 +43,9 @@ import org.junit.Test
  * that their custom block already implied, so the patcher searches the few classes that can
  * hold them instead of every method of TikTok. The --validate timing pass on 47.6.3 narrowed
  * nine more the same way, with a call, a field read, an instanceof or a cast, and a second pass
- * two with the field access their job needs (the request's headers, the Message's number).
+ * two with the field access their job needs (the request's headers, the Message's number), and
+ * a third pass more with the edge speed-up ability call its custom block looks for, the sticker
+ * preview's read of the item it was handed and the coordinate listeners' feed parameters.
  * Implied is the claim, and this is its check: on every retained fixture each one takes exactly
  * the methods it takes without the addition.
  */
@@ -72,6 +77,9 @@ class NarrowedFingerprintsTest {
         Narrowed("ProfileMenuCell", ProfileMenuCellFingerprint),
         Narrowed("ChatRequestSendWithHeaders", ChatRequestSendWithHeadersFingerprint),
         Narrowed("ClearModeLogState", ClearModeLogStateFingerprint),
+        Narrowed("EdgeSpeedupTouch", EdgeSpeedupTouchFingerprint),
+        Narrowed("StickerPreviewSource", StickerPreviewSourceFingerprint),
+        Narrowed("CoordinateLongPressCallback", CoordinateLongPressCallbackFingerprint),
     )
 
     /** The fingerprint as it was before #54: the same fields, less what was added. */

@@ -5,6 +5,7 @@
 package app.morphe.patches.tiktok.interaction.speed
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.methodCall
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.Method
@@ -115,6 +116,9 @@ internal object EdgeSpeedupTouchFingerprint : Fingerprint(
     name = "onTouch",
     returnType = "Z",
     parameters = listOf("Landroid/view/View;", "Landroid/view/MotionEvent;"),
+    // The filter names the full type of the ability call the custom block requires, so the
+    // patcher reads only the classes that make one (#54).
+    filters = listOf(methodCall(definingClass = "Lcom/ss/android/ugc/aweme$EDGE_SPEEDUP_ABILITY")),
     custom = { method, _ -> method.callsEdgeSpeedupAbility() },
 )
 

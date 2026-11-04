@@ -95,7 +95,8 @@ internal object InboxNotificationClick : Fingerprint(
 )
 /**
  * PowerList's pull-to-refresh layout (a renamed class on each build): the FrameLayout that keeps
- * its own getManuallyRefreshAnimator(). Its setRefreshing(Z) keeps the real name.
+ * its own getManuallyRefreshAnimator(). Its setRefreshing(Z) keeps the real name. The patch
+ * matches it only in [InboxSpringManualRefresh]'s class, and the fixture test holds them to one.
  */
 internal object InboxSpringRefresh : Fingerprint(
     name = "setRefreshing", returnType = "V", parameters = listOf("Z"),
@@ -141,10 +142,14 @@ internal fun loadedInboxPublicationSeams(): InboxPublicationSeams {
     check(accepted.definingClass == submit.definingClass && accepted.parameterTypes[1].toString() == metadata) {
         "Loaded Inbox diff submit and acceptance are not one differ"
     }
+    // setRefreshing(Z) has nothing the patcher can look up, so it's matched in the class that holds
+    // the manual refresh InboxSpringManualRefresh found, rather than in every class of TikTok.
+    val manualRefresh = InboxSpringManualRefresh.method
+    val refresh = InboxSpringRefresh.match(patchContext.classDefBy(manualRefresh.definingClass)).method
     return InboxPublicationSeams(InboxListPublication.method,
         InboxStubPublication.method, submit, accepted,
         InboxFragmentPublication.method, indexed, InboxVisibleIndices.method, InboxNotificationClick.method,
-        InboxSpringRefresh.method, InboxSpringManualRefresh.method, metadata) { owner.methods.add(gate) }
+        refresh, manualRefresh, metadata) { owner.methods.add(gate) }
 }
 
 internal class InboxPublicationSeams(

@@ -74,6 +74,7 @@ Every Hushfeed release, newest first.
 * **TikTok:** When a fingerprint stops matching on a new TikTok build, `NearestMethodsReport` lists the three methods closest to it on each supported build, with the parts each one misses. Name the fingerprint in `HUSHFEED_NEAREST`. Pointing `HUSHFEED_NEAREST_FROM` at an older APK it still matches also scores each method by how much it looks like the one the fingerprint took there.
 * **TikTok:** Nine more TikTok lookups find their method faster while patching: the follow feed, the sticker rows, the photo slide fit and the profile menu. Each one now names a call, a field it reads, a type check or a cast that the patcher keeps an index of. Every one of them used to take 140 to 630 ms on 47.6.3, and now none is slow enough to show up in `--validate`.
 * **TikTok:** Patching 47.6.3 spends about a second less looking for methods. The read receipts and clear display lookups now name a field they read or write. `Use system font` and `AMOLED dark theme` find the web page callbacks in one pass instead of two, and the tab badge dot is looked up inside its count's class rather than across the whole app.
+* **TikTok:** Four more lookups find their method faster while patching 47.6.3: the hold gesture's touch listener, the DM sticker preview, the feed's long-press listeners and the Inbox pull refresh. Together they took 550 to 960 ms a run, and none of them is slow enough to show up in `--validate` now. The pull refresh is looked up only in the class that holds the manual refresh.
 
 ## 0.80.0 (2026-11-01)
 

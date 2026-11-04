@@ -5,6 +5,7 @@
 package app.morphe.patches.tiktok.interaction.downloads
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.fieldAccess
 import app.morphe.patcher.methodCall
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.AccessFlags
@@ -218,6 +219,10 @@ internal object StickerPreviewSourceFingerprint : Fingerprint(
     //
     // Instance, because the source hook reads the StickerItem out of p2 and a static method of
     // the same declared parameter list would have the View there.
+    //
+    // It reads the item's StickerBase for the sticker type first thing, and the patcher can look
+    // that read up, so it reads only the classes that make it rather than every class of TikTok.
+    filters = listOf(fieldAccess(definingClass = "Lcom/ss/android/ugc/aweme/im/common/model/StickerItem;", name = "stickerBase")),
     custom = { method, _ ->
         AccessFlags.STATIC.value and method.accessFlags == 0 &&
             method.implementation?.instructions?.any { instruction ->

@@ -567,7 +567,7 @@ public final class SettingsUi {
         int off = switchOffOn(dark);
         int onThumb = onAccentOn(dark);
         // A square-cornered track and thumb on the bundle's radius scale, not a pill: 40 by 24
-        // at the control radius, a 20 dp thumb at the badge radius.
+        // at the control radius, a 20 dp knob at the badge radius 2 dp inside it.
         StateListDrawable track = new StateListDrawable();
         // Checked-and-disabled first, or the -state_enabled entry below answers for it and a
         // greyed switch looks the same on as off: a reader cannot see what state it will come
@@ -579,9 +579,6 @@ public final class SettingsUi {
         track.addState(new int[]{android.R.attr.state_checked},
                 switchShape(context, on, 40, 24, RADIUS_CONTROL));
         track.addState(new int[]{}, switchShape(context, off, 40, 24, RADIUS_CONTROL));
-        control.setTrackTintList(null);
-        control.setThumbTintList(null);
-        control.setTrackDrawable(track);
         StateListDrawable thumb = new StateListDrawable();
         thumb.addState(new int[]{-android.R.attr.state_enabled, android.R.attr.state_checked},
                 switchShape(context, ScreenColors.half(onThumb), 20, 20, RADIUS_BADGE));
@@ -590,7 +587,27 @@ public final class SettingsUi {
         thumb.addState(new int[]{android.R.attr.state_checked},
                 switchShape(context, onThumb, 20, 20, RADIUS_BADGE));
         thumb.addState(new int[]{}, switchShape(context, SWITCH_THUMB, 20, 20, RADIUS_BADGE));
-        control.setThumbDrawable(thumb);
+        // Switch draws the thumb from the track's top to its bottom and starts it at the track's
+        // padding, so the bare shapes sat flush with the track's end at full height, and a thumb
+        // the card's colour (white on the light card, black on the dark one) read as a cut-off
+        // block. The layers hold the 20 dp knob 2 dp inside the track on every side, the gap that
+        // makes the badge radius concentric with the control radius: the thumb's 2 dp side
+        // padding lets it overhang a 16 dp slot, and the track's 4 dp padding keeps that overhang
+        // inside the 40 dp track.
+        int gap = dp(context, 2);
+        LayerDrawable trackLayer = new LayerDrawable(new Drawable[]{track});
+        trackLayer.setPadding(2 * gap, 0, 2 * gap, 0);
+        LayerDrawable thumbLayer = new LayerDrawable(new Drawable[]{thumb});
+        thumbLayer.setLayerInset(0, 0, gap, 0, gap);
+        thumbLayer.setPadding(gap, 0, gap, 0);
+        control.setTrackTintList(null);
+        control.setThumbTintList(null);
+        control.setTrackDrawable(trackLayer);
+        control.setThumbDrawable(thumbLayer);
+        // Switch's setters don't hand a new drawable the view's state, so a switch restyled on
+        // screen (a rebind after the look changed) showed the greyed entries until it was next
+        // toggled.
+        control.refreshDrawableState();
         control.setSwitchMinWidth(dp(context, 40));
         control.setThumbTextPadding(0);
         control.setShowText(false);

@@ -12,9 +12,14 @@ import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
+import android.view.View;
 import android.widget.Switch;
 
 import app.morphe.extension.shared.Utils;
@@ -168,6 +173,55 @@ public class ScreenColorsAccessibilityTest {
         }
     }
 
+    /**
+     * The knob sits 2 dp inside the track on every side in both positions. Switch draws its thumb
+     * from the track's top to its bottom, so the bare shapes sat flush with the track's end, and
+     * the light look's white knob on the white card (and the dark on-knob, black on the black
+     * card) read as a cut-off block.
+     */
+    @Test public void theKnobSitsInsideTheTrackInBothPositions() {
+        try (var owner = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setContext(activity);
+            int gap = dp(activity, 2);
+            int knob = dp(activity, 20);
+            for (boolean dark : new boolean[]{true, false}) {
+                Utils.setIsDarkModeEnabled(dark);
+                ScreenColors look = dark ? ScreenColors.DARK : ScreenColors.LIGHT;
+                for (boolean checked : new boolean[]{false, true}) {
+                    Switch control = new Switch(activity);
+                    SettingsUi.styleSwitch(control);
+                    control.setChecked(checked);
+                    control.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+                    control.layout(0, 0, control.getMeasuredWidth(), control.getMeasuredHeight());
+                    Bitmap bitmap = Bitmap.createBitmap(control.getWidth(), control.getHeight(),
+                            Bitmap.Config.ARGB_8888);
+                    control.draw(new Canvas(bitmap));
+                    Rect track = control.getTrackDrawable().getBounds();
+                    String where = (dark ? "dark" : "light") + (checked ? " on" : " off");
+                    assertEquals(where + " track width", dp(activity, 40), track.width());
+                    assertEquals(where + " track height", dp(activity, 24), track.height());
+                    int left = checked ? track.right - gap - knob : track.left + gap;
+                    int middleX = left + knob / 2;
+                    int middleY = track.top + gap + knob / 2;
+                    int trackColour = checked ? look.accent : look.switchOff;
+                    int knobColour = checked ? look.onAccent : look.offThumb();
+                    assertEquals(where + " knob", knobColour, bitmap.getPixel(middleX, middleY));
+                    assertEquals(where + " knob's far edge", knobColour,
+                            bitmap.getPixel(left + knob - 1, middleY));
+                    assertEquals(where + " gap before the knob", trackColour,
+                            bitmap.getPixel(left - gap / 2, middleY));
+                    assertEquals(where + " gap after the knob", trackColour,
+                            bitmap.getPixel(left + knob + gap / 2, middleY));
+                    assertEquals(where + " gap above the knob", trackColour,
+                            bitmap.getPixel(middleX, track.top + gap / 2));
+                    assertEquals(where + " gap below the knob", trackColour,
+                            bitmap.getPixel(middleX, track.bottom - gap / 2));
+                }
+            }
+        }
+    }
+
     private static ScreenColors[] looks() {
         return new ScreenColors[]{ScreenColors.DARK, ScreenColors.LIGHT};
     }
@@ -189,6 +243,8 @@ public class ScreenColorsAccessibilityTest {
     private static GradientDrawable shape(Drawable drawable, int[] state) {
         drawable.setState(state);
         Drawable current = drawable.getCurrent();
+        // The track and thumb each sit in one layer that places them; the shape is that layer.
+        if (current instanceof LayerDrawable) current = ((LayerDrawable) current).getDrawable(0).getCurrent();
         assertTrue("a switch part isn't a shape: " + current, current instanceof GradientDrawable);
         return (GradientDrawable) current;
     }

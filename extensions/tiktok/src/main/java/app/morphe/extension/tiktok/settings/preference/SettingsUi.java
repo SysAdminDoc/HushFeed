@@ -101,7 +101,7 @@ public final class SettingsUi {
     public static final @ColorInt int LIGHT_HEADING = Color.rgb(5, 93, 90);
     /** A field's placeholder: 6.16:1 on black, 5.52:1 on the surface, quieter than a summary (8.92:1). */
     public static final @ColorInt int DARK_HINT = Color.rgb(138, 138, 150);
-    /** 4.63:1 on the light page and 5.04:1 on white, quieter than a summary (6.55:1). */
+    /** 4.63:1 on the light page and 5.04:1 on white, quieter than a summary (9.43:1). */
     public static final @ColorInt int LIGHT_HINT = Color.rgb(110, 110, 121);
     /** The tile behind a header icon. */
     public static final @ColorInt int DARK_ICON_SURFACE = DARK_SURFACE_LIFTED;

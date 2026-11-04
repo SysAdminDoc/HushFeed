@@ -563,6 +563,35 @@ public class SettingsCardsTest {
         assertTrue("the search found too little to mean anything: " + drawn, drawn > 3);
     }
 
+    @Test public void clearingTheSearchHistoryActsInPlaceWithNoChevron() throws Exception {
+        app.morphe.extension.tiktok.settings.SettingsSearchHistory.clear();
+        try {
+            app.morphe.extension.tiktok.settings.SettingsSearchHistory.add("speed");
+            openHome();
+            Preference search = keyed("action_search_settings");
+            assertTrue(search.getOnPreferenceClickListener().onPreferenceClick(search));
+            layoutPage();
+            var update = TikTokPreferenceFragment.class.getDeclaredMethod("updateSearchResults", String.class);
+            update.setAccessible(true);
+            update.invoke(page, "");
+            layoutPage();
+
+            Preference clear = null;
+            ListAdapter adapter = adapter();
+            for (int position = 0; position < adapter.getCount(); position++) {
+                Object item = adapter.getItem(position);
+                if (item instanceof Preference
+                        && "Clear search history".contentEquals(String.valueOf(((Preference) item).getTitle()))) {
+                    clear = (Preference) item;
+                }
+            }
+            assertNotNull("no row to clear the history", clear);
+            assertNull("the row clears where it stands and opens nothing", chevron(render(clear)));
+        } finally {
+            app.morphe.extension.tiktok.settings.SettingsSearchHistory.clear();
+        }
+    }
+
     @Test @Config(qualifiers = "w360dp-h640dp-notnight-mdpi")
     public void theLightLookPaintsTheSameShapesInItsOwnColours() {
         openHome();

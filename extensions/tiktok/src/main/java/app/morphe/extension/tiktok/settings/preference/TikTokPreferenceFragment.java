@@ -1319,7 +1319,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
             searchRows.add(row);
             searchScreen.addPreference(row);
         }
-        Preference clear = new Preference(context);
+        Preference clear = new ClearSearchHistoryRow(context);
         clear.setTitle(L10n.t(context, "Clear search history"));
         clear.setOrder(order);
         mark(clear, SettingsIcons.DELETE);
@@ -1331,6 +1331,18 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         searchRows.add(clear);
         searchScreen.addPreference(clear);
         return true;
+    }
+
+    /** Forgets the recent searches where it stands, so it goes without the chevron. */
+    private static final class ClearSearchHistoryRow extends Preference
+            implements app.morphe.extension.shared.settings.preference.ImmediateAction {
+        ClearSearchHistoryRow(Context context) {
+            super(context);
+        }
+
+        @Override public boolean actsOnTap() {
+            return true;
+        }
     }
 
     private void addSearchState(String title, String summary) {

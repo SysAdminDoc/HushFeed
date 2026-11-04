@@ -100,7 +100,7 @@ class ExtensionHostsTest {
         /** The hosts the README's Privacy section names. */
         val ALLOWED_HOSTS = setOf(
             "github.com", "ko-fi.com", "gitlab.com", "www.gnu.org", "www.tiktok.com", "music.youtube.com",
-            "git.iem.at", "central.sonatype.com",
+            "git.iem.at", "central.sonatype.com", "www.apache.org",
         )
         /**
          * The media transport (the client, and the connection it pins to a checked address), and

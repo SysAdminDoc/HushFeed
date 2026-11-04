@@ -1,6 +1,7 @@
 package app.morphe.extension.tiktok.comment;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
@@ -196,6 +197,22 @@ public class CommentRowControlsTest {
             ReflectionHelpers.setStaticField(serviceType, "cachedService", previousService);
             ReflectionHelpers.setStaticField(serviceType, "cachedBlockMethod", previousMethod);
         }
+    }
+
+    /**
+     * The bind hands the hook the comment itself, ahead of the branch only translations take: on
+     * 47.5.3 and 47.6.3 the state holder was filled on that branch alone, so a comment in the
+     * reader's own language never got the block.
+     */
+    @Test public void aCommentHandedOverItselfGetsTheThumbsDownBlock() {
+        Settings.BLOCK_FROM_COMMENT.save(true);
+        Comment comment = new Comment();
+        CommentTools.registerCommentCell(row, comment);
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+
+        Map<View, Object> cells = ReflectionHelpers.getStaticField(CommentTools.class, "CELL_COMMENTS");
+        assertSame(comment, cells.get(row));
+        assertEquals("Block this commenter", String.valueOf(thumbsDown.getContentDescription()));
     }
 
     /** A cell state holder carrying a comment, which is what findComment reaches for. */

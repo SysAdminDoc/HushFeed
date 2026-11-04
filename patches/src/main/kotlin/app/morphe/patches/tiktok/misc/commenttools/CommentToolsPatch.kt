@@ -41,6 +41,7 @@ import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
@@ -180,10 +181,39 @@ internal fun applyAfterCommentToolsPreflight(vararg resolve: () -> CommentToolsW
 }
 
 /**
- * Hooks the same two places the comment translation patch does: the comment cell being
- * bound (to attach the block gesture) and the comment list response being handled (to
- * filter it). The fingerprints are shared with that patch; the injection is repeated here
- * so this patch works without it.
+ * Where the comment cell bind has its comment in hand on every bind: the index just past the
+ * move-result of the first Comment-returning call after the PowerCell's own bind, and the
+ * register that move-result writes. Nothing above it branches, so no comment skips it.
+ */
+internal fun Method.commentBindSite(): Pair<Int, Int> {
+    val instructions = implementation?.instructions?.toList().orEmpty()
+    val superBind = instructions.indexOfFirst {
+        it.opcode in setOf(Opcode.INVOKE_SUPER, Opcode.INVOKE_SUPER_RANGE) &&
+            it.getReference<MethodReference>()?.name == "onBindItemView"
+    }
+    if (superBind < 0) {
+        throw PatchException("Comment tools: the comment cell bind no longer starts with the PowerCell's own bind.")
+    }
+    val getter = (superBind + 1 until instructions.lastIndex).firstOrNull {
+        instructions[it].getReference<MethodReference>()?.returnType == COMMENT_DESCRIPTOR &&
+            instructions[it + 1].opcode == Opcode.MOVE_RESULT_OBJECT
+    } ?: throw PatchException("Comment tools: the comment cell bind no longer reads its comment.")
+    // Ifs, gotos and switches are all offset instructions; returns and throws don't continue.
+    val branch = instructions.subList(0, getter).firstOrNull {
+        it is OffsetInstruction || !it.opcode.canContinue()
+    }
+    if (branch != null) {
+        throw PatchException("Comment tools: the comment cell bind branches (${branch.opcode}) before reading its comment.")
+    }
+    val moveResult = instructions[getter + 1] as OneRegisterInstruction
+    return getter + 2 to moveResult.registerA
+}
+
+/**
+ * Hooks the comment cell being bound (to attach the block gesture and the row controls) and the
+ * comment list response being handled (to filter it). The fingerprints are shared with the
+ * comment translation patch, which hooks the list in the same place; the injection is repeated
+ * here so this patch works without it.
  */
 @Suppress("unused")
 val commentToolsPatch = bytecodePatch(
@@ -342,66 +372,36 @@ val commentToolsPatch = bytecodePatch(
                 CommentMoreCellBindFingerprint.method.resolveReplySearch { classDefByOrNull(it) }
             },
             {
+                // The hook followed the last write into the cell's state holder, which is where
+                // Comment translation hooks. From 47.5.3 that holder belongs to the translation
+                // branch, and a comment TikTok offers no translation for never enters it, so rows
+                // in the reader's own language were never seen: no thumbs down block, no links,
+                // no hidden like counts. The comment the bind reads straight after the PowerCell's
+                // own bind is ahead of every branch.
                 val method = BaseCommentCellBindFingerprint.method
-                val instructions = method.implementation!!.instructions
-                val managerMatch = instructions.withIndex().mapNotNull { (index, instruction) ->
-                    val field = instruction.getReference<FieldReference>() ?: return@mapNotNull null
-                    if (instruction.opcode != Opcode.IPUT_OBJECT ||
-                        field.type != COMMENT_DESCRIPTOR ||
-                        instruction !is TwoRegisterInstruction
-                    ) {
-                        return@mapNotNull null
-                    }
-
-                    // The cell's state holder is written in a burst of iput-objects into the
-                    // same register; the comment is one of them. Take the last write of the
-                    // burst so the holder is fully initialised when the hook runs.
-                    val managerRegister = instruction.registerB
-                    var matchingWrites = 0
-                    var lastWriteIndex = index
-                    val searchEnd = (index + 6).coerceAtMost(instructions.lastIndex)
-                    for (candidateIndex in (index + 1)..searchEnd) {
-                        val candidate = instructions[candidateIndex]
-                        val candidateField = candidate.getReference<FieldReference>()
-                        if (candidate.opcode == Opcode.IPUT_OBJECT &&
-                            candidate is TwoRegisterInstruction &&
-                            candidate.registerB == managerRegister &&
-                            candidateField?.definingClass == field.definingClass
-                        ) {
-                            matchingWrites++
-                            lastWriteIndex = candidateIndex
-                        }
-                    }
-
-                    if (matchingWrites >= 2) lastWriteIndex to managerRegister else null
-                }.lastOrNull() ?: throw PatchException(
-                    "Comment tools: could not locate the initialised comment cell state holder.",
-                )
-                val (managerReadyIndex, managerRegister) = managerMatch
+                val (commentReadyIndex, commentRegister) = method.commentBindSite()
 
                 // Plain invoke-static cannot encode a register above v15 (see the block button
-                // patch); the translation patch relies on this register being low as well.
-                if (managerRegister > 15) {
+                // patch).
+                if (commentRegister > 15) {
                     throw PatchException(
-                        "Comment tools: cell state register v$managerRegister is above v15.",
+                        "Comment tools: the bound comment's register v$commentRegister is above v15.",
                     )
                 }
 
-                // A register nothing is holding here. This injects into the middle of the bind,
-                // where v0 belongs to the host, and it was written over on the strength of being
-                // dead on this one build.
+                // A register nothing is holding here: the bind's own locals are still to come.
                 val cellRegister = method.getFreeRegisterProvider(
-                    managerReadyIndex + 1,
+                    commentReadyIndex,
                     1,
-                    listOf(managerRegister),
+                    listOf(commentRegister),
                 ).getFreeRegister4Bit()
                 val write: CommentToolsWrite = {
                     method.addInstructions(
-                        managerReadyIndex + 1,
+                        commentReadyIndex,
                         """
                             move-object/from16 v$cellRegister, p0
                             iget-object v$cellRegister, v$cellRegister, Landroidx/recyclerview/widget/RecyclerView${'$'}ViewHolder;->itemView:Landroid/view/View;
-                            invoke-static {v$cellRegister, v$managerRegister}, $EXTENSION_CLASS_DESCRIPTOR->registerCommentCell(Landroid/view/View;Ljava/lang/Object;)V
+                            invoke-static {v$cellRegister, v$commentRegister}, $EXTENSION_CLASS_DESCRIPTOR->registerCommentCell(Landroid/view/View;Ljava/lang/Object;)V
                         """,
                     )
                 }

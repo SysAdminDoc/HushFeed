@@ -373,8 +373,8 @@ public final class CommentTools {
     }
 
     /**
-     * Called as a comment cell is bound. {@code manager} is the cell's state holder, whose
-     * fields include the bound {@code Comment}.
+     * Called as a comment cell is bound. {@code manager} is the bound {@code Comment} itself, or
+     * a state holder whose fields include it.
      */
     public static void registerCommentCell(View itemView, Object manager) {
         if (itemView == null || manager == null) {
@@ -1238,14 +1238,25 @@ public final class CommentTools {
     private static final java.util.concurrent.ConcurrentHashMap<Class<?>, Object[]> COMMENT_FIELDS =
             new java.util.concurrent.ConcurrentHashMap<>();
 
-    /** The bound comment is the manager field whose value answers to {@code getCid}. */
+    /* Classes the bind handed over as the comment itself rather than as a holder of one. */
+    private static final Set<Class<?>> COMMENT_TYPES = java.util.concurrent.ConcurrentHashMap.newKeySet();
+
+    /**
+     * The bound comment: the object itself when it answers to {@code getCid} and {@code getUser}
+     * (the cell bind hands the comment over directly), otherwise the manager field whose value does.
+     */
     private static Object findComment(Object manager) throws IllegalAccessException {
+        if (COMMENT_TYPES.contains(manager.getClass())) return manager;
         // The field and the class of the comment the scan found in it: a value of that class has
         // already answered both checks, and any other value goes through the scan again.
         Object[] known = COMMENT_FIELDS.get(manager.getClass());
         if (known != null) {
             Object value = ((Field) known[0]).get(manager);
             if (value != null && value.getClass() == known[1]) return value;
+        }
+        if (Reflect.string(manager, "getCid", "cid") != null && hasMethod(manager.getClass(), "getUser")) {
+            COMMENT_TYPES.add(manager.getClass());
+            return manager;
         }
         Class<?> type = manager.getClass();
         while (type != null && type != Object.class) {

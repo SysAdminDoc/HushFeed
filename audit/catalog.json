@@ -1100,6 +1100,13 @@
       "open": "feed"
      },
      {
+      "probe": "videoinfo",
+      "expect": "photo=false durationMs=([3-9]\\d{3}|[1-3]\\d{4})\\b(?!.*\\bad=true\\b)(?=.*\\blive=false\\b)",
+      "waitMs": 1500,
+      "retrySwipe": 8,
+      "precondition": true
+     },
+     {
       "probe": "startwatch",
       "extras": {
        "seconds": "45"
@@ -1142,7 +1149,7 @@
     "auto": true
    }
   ],
-  "notes": "The watcher reads the visible native feed pager and its existing player. It never creates a global player or emits video labels. A loop, stopped-at-end heuristic, or source-bound advance must follow stable native progress before the check is conclusive. A longer clip, unavailable owner or unfocused window stays inconclusive. Use a public video that can finish inside the 45-second window. Search results and the native Auto scroll panel are separate checks."
+  "notes": "The watcher reads the visible native feed pager and its existing player. It never creates a global player or emits video labels. A loop, stopped-at-end heuristic, or source-bound advance must follow stable native progress before the check is conclusive. A longer clip, unavailable owner or unfocused window stays inconclusive. Use a public video that can finish inside the 45-second window: the advance check swipes up to 8 times to a plain video of 3 to 40 seconds before its watch starts, since on 47.6.3 the watch started on whatever video followed the restart and never established its observation (2026-11-04). Search results and the native Auto scroll panel are separate checks."
  },
  {
   "name": "Block P2P video relay",

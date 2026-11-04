@@ -9993,6 +9993,73 @@
   "notes": "The visible bug (issue #61) shows only after a phone reboot with a language picked in TikTok that differs from the phone's, which the audit does not change. If TikTok has no language picked (the test account follows the phone), the line is 'nothing picked in TikTok, <locale> from the phone stays'. The line is written in Application.onCreate, so it depends on the log buffer being ready that early; if it is missing, the dex check still proves the hook. EarlySwitch reads the saved file, so set (probe) writes it before the restart."
  },
  {
+  "name": "Freeze TikTok's experiments",
+  "category": "Settings",
+  "default": true,
+  "kind": "runtime",
+  "source": [
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/misc/remoteconfig/FreezeRemoteConfigPatch.kt",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/misc/RemoteConfigFreeze.java"
+  ],
+  "settings": [
+   {
+    "key": "freeze_remote_config",
+    "default": false,
+    "type": "bool",
+    "row": "Freeze TikTok's experiments"
+   }
+  ],
+  "surface": "app-start",
+  "checks": [
+   {
+    "id": "store-held",
+    "what": "With the switch on, a server settings store after a restart is held, or on a phone that never stored one with the patch in, that whole start goes through once.",
+    "steps": [
+     {
+      "set": {
+       "freeze_remote_config": "true"
+      }
+     },
+     {
+      "restart": true
+     },
+     {
+      "open": "feed"
+     },
+     {
+      "wait": 8000
+     },
+     {
+      "probe": "report",
+      "expect": "Freeze TikTok's experiments: (skipped a store|nothing stored yet)"
+     },
+     {
+      "set": {
+       "freeze_remote_config": "false"
+      }
+     }
+    ],
+    "auto": true
+   },
+   {
+    "id": "injected",
+    "what": "The patched dex carries the store switch and the patch registered itself. (The dex-string steps show the extension class or constant is shipped, the whole extension is kept in the dex; the registered-switch step is what shows the patch ran.)",
+    "steps": [
+     {
+      "apk": "dex-string",
+      "expect": "holdsStore"
+     },
+     {
+      "probe": "report",
+      "expect": "registered_switches:[^\\n]*\\bremoteConfigFreeze\\b"
+     }
+    ],
+    "auto": true
+   }
+  ],
+  "notes": "TikTok asks for its A/B settings at each start, so the store line shows within seconds of the feed opening; a phone whose first start with the freeze on is this one prints 'nothing stored yet' and every later start prints 'skipped a store'. The feed must still load with the switch on: a held store is a parse of a response that already arrived, so nothing retries. The Feature Gate Recorder is the manual check that values stay put across restarts."
+ },
+ {
   "name": "Keep the screen's refresh rate",
   "category": "Playback",
   "default": true,

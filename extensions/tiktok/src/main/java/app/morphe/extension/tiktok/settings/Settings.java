@@ -1276,6 +1276,17 @@ public class Settings extends BaseSettings {
     // Keep the app language (#61), in the default selection with this off. TikTok's reset runs
     // once early in each start, so a change counts from the next one, with no restart asked for.
     public static final BooleanSetting KEEP_APP_LANGUAGE = new BooleanSetting("keep_app_language", FALSE);
+    // Freeze TikTok's experiments, in the default selection with this off. Asked each time a
+    // server settings response arrives, so a change counts from the next one, with no restart.
+    public static final BooleanSetting FREEZE_REMOTE_CONFIG = new BooleanSetting("freeze_remote_config", FALSE);
+    /**
+     * Whether TikTok has stored its server settings at least once on this phone since the patch
+     * went in. No row of its own: a freeze turned on before TikTok ever stored any would leave it
+     * on nothing but its built-in defaults, so the first start with the freeze on and this unset
+     * lets every store through. Kept out of import and export, since it describes this phone.
+     */
+    public static final BooleanSetting REMOTE_CONFIG_STORED =
+            new BooleanSetting("remote_config_stored", FALSE, false, false);
     // Profile background (#80), in the default selection with this off. TikTok asks its gate as
     // Edit profile or a profile is built, but the allow-list value its profile requests send is
     // snapshotted once per account and process, so a change takes a restart to reach the server.

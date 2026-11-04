@@ -12,6 +12,8 @@ Importing new history ended Undo for the earlier clear. You can clear the import
 %1$d settings in that file can't be restored here and were skipped	%1$d configurações do arquivo não podem ser restauradas aqui e foram ignoradas
 Import watch history	Importar histórico de visualização
 Keep the language picked in TikTok	Manter o idioma escolhido no TikTok
+Freeze TikTok's experiments	Congelar os experimentos do TikTok
+TikTok's servers keep sending it new settings, which is how it tests new layouts and features on people. With this on, TikTok keeps the ones it has now and ignores new ones. If something in TikTok stops working, turn this off so it can get fixes.	Os servidores do TikTok vivem enviando novas configurações, e é assim que ele testa novos layouts e recursos nas pessoas. Com isto ativado, o TikTok mantém as que tem agora e ignora as novas. Se algo no TikTok parar de funcionar, desative isto para que ele possa receber correções.
 Nothing is playing to speed up	Não há nada tocando para acelerar
 One language code, like en or es. Comments and captions TikTok translates come out in this language instead of the app's. Leave it empty to keep TikTok's choice.	Um código de idioma, como en ou es. Os comentários e legendas que o TikTok traduz saem neste idioma em vez do idioma do app. Deixe vazio para manter a escolha do TikTok.
 MP3 (.mp3), plays anywhere	MP3 (.mp3), toca em qualquer lugar

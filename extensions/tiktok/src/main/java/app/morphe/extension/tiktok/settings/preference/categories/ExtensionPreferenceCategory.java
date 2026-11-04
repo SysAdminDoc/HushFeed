@@ -69,6 +69,7 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                 || SettingsStatus.storeIdentityEnabled
                 || SettingsStatus.passkeySignInEnabled
                 || SettingsStatus.appLanguageEnabled
+                || SettingsStatus.remoteConfigFreezeEnabled
                 || hasPerformance();
     }
 
@@ -372,7 +373,7 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                 || SettingsStatus.effectDeviceSpoofEnabled
                 || SettingsStatus.launcherShortcutsEnabled || SettingsStatus.firstLaunchSetupEnabled
                 || SettingsStatus.storeIdentityEnabled || SettingsStatus.passkeySignInEnabled
-                || SettingsStatus.appLanguageEnabled) {
+                || SettingsStatus.appLanguageEnabled || SettingsStatus.remoteConfigFreezeEnabled) {
             addPreference(new SectionHeadingPreference(context, "System"));
         }
         if (SettingsStatus.screenCaptureEnabled) {
@@ -495,6 +496,17 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                             + "language you picked in its settings and follows the phone. With this "
                             + "on, your pick stays. Counts from TikTok's next start.",
                     Settings.KEEP_APP_LANGUAGE
+            ));
+        }
+        if (SettingsStatus.remoteConfigFreezeEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Freeze TikTok's experiments",
+                    "TikTok's servers keep sending it new settings, which is how it tests new "
+                            + "layouts and features on people. With this on, TikTok keeps the ones "
+                            + "it has now and ignores new ones. If something in TikTok stops "
+                            + "working, turn this off so it can get fixes.",
+                    Settings.FREEZE_REMOTE_CONFIG
             ));
         }
         // Each of these used to change TikTok the moment it was patched in, with no switch. They

@@ -917,6 +917,8 @@ Keep the Favorites tab,保留收藏夹选项卡
 Keep the LIVE quality after TikTok restarts,TikTok 重新启动后保持 LIVE 质量
 Keep the clock and status icons off the screen while TikTok is open. Swipe down from the top to peek at them.,当 TikTok 打开时，使时钟和状态图标远离屏幕。从顶部向下滑动即可查看它们.
 Keep the language picked in TikTok,将所选语言保留在 TikTok 中
+Freeze TikTok's experiments,冻结 TikTok 的实验
+"TikTok's servers keep sending it new settings, which is how it tests new layouts and features on people. With this on, TikTok keeps the ones it has now and ignores new ones. If something in TikTok stops working, turn this off so it can get fixes.",TikTok 的服务器会不断给它发送新设置，它就是这样拿用户测试新布局和新功能的。开启后，TikTok 会保留现有设置并忽略新的设置。如果 TikTok 里有功能失灵，请关闭此项，让它能收到修复.
 Keep the music disc still,保持音乐光盘静止
 Keep the screen's refresh rate,保持屏幕刷新率
 "Keep the speed you chose for the next video. Off, each new video starts at 1x and a manual choice lasts for that video only.",保持你为下一个视频选择的速度。关闭时，每个新视频都会以 1x 开始，并且手动选择仅适用于该视频.

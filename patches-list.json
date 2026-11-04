@@ -4231,6 +4231,56 @@
       "options": []
     },
     {
+      "name": "Freeze TikTok's experiments",
+      "description": "Lets you keep the settings TikTok's servers sent it so far. TikTok tests new layouts and features on people by sending new ones all the time, and with this on it ignores them. Starts off. Turn it on in Hushfeed settings > App.",
+      "category": "Settings",
+      "use": true,
+      "dependencies": [
+        "BytecodePatch",
+        "RawResourcePatch",
+        "Settings"
+      ],
+      "compatiblePackages": {
+        "com.zhiliaoapp.musically": [
+          "47.6.3"
+        ]
+      },
+      "compatibility": [
+        {
+          "name": "TikTok",
+          "packageName": "com.zhiliaoapp.musically",
+          "description": null,
+          "appIconColor": 16657493,
+          "signatures": [
+            "9041803e91bcb814b4b4399fb5c85a91640b755e5e8ba76813814bf4cf2ab5ba"
+          ],
+          "targets": [
+            {
+              "version": "47.6.3",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 2024706030,
+                "ARMEABI_V7A": 2024706030,
+                "X86": 2024706030,
+                "X86_64": 2024706030
+              }
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "freeze_remote_config",
+          "title": "Default: freeze remote config",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
+    },
+    {
       "name": "Ghost mode",
       "description": "Stops TikTok telling people you viewed their story or profile, or that you're typing. What TikTok already recorded stays. Each of the three has its own switch under it, and a separate one hides your online status. Starts off. Turn it on in Hushfeed settings > Privacy.",
       "category": "Privacy",
@@ -9007,6 +9057,15 @@
         {
           "key": "hide_settings_row",
           "title": "Default: hide settings row",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "settings_as_list",
+          "title": "Default: settings as list",
           "description": null,
           "required": false,
           "type": "kotlin.Boolean",

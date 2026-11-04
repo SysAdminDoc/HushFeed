@@ -821,6 +821,13 @@ public class SettingsStatus {
         appLanguageEnabled = true;
     }
 
+    /** Freeze TikTok's experiments put its switch in front of TikTok's three server settings stores. */
+    public static boolean remoteConfigFreezeEnabled = false;
+
+    public static void enableRemoteConfigFreeze() {
+        remoteConfigFreezeEnabled = true;
+    }
+
     /** Profile background put its switch in front of TikTok's profile background gate. */
     public static boolean profileBackgroundEnabled = false;
 

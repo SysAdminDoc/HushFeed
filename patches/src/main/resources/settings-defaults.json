@@ -312,6 +312,9 @@
       "foldable_split_view",
       "foldable_split_view_min_width_dp"
     ],
+    "Freeze TikTok's experiments": [
+      "freeze_remote_config"
+    ],
     "Ghost mode": [
       "ghost_mode",
       "ghost_hide_online_status",
@@ -636,7 +639,8 @@
     "Settings": [
       "morphe_language",
       "morphe_show_menu_icons",
-      "hide_settings_row"
+      "hide_settings_row",
+      "settings_as_list"
     ],
     "Share sheet tools": [
       "hide_share_channels",
@@ -1788,6 +1792,12 @@
     "following_latest_first": {
       "field": "FOLLOWING_LATEST_FIRST",
       "key": "following_latest_first",
+      "type": "boolean",
+      "default": false
+    },
+    "freeze_remote_config": {
+      "field": "FREEZE_REMOTE_CONFIG",
+      "key": "freeze_remote_config",
       "type": "boolean",
       "default": false
     },
@@ -3570,6 +3580,12 @@
     "session_budget_wait_to_loosen": {
       "field": "SESSION_BUDGET_WAIT_TO_LOOSEN",
       "key": "session_budget_wait_to_loosen",
+      "type": "boolean",
+      "default": false
+    },
+    "settings_as_list": {
+      "field": "SETTINGS_AS_LIST",
+      "key": "settings_as_list",
       "type": "boolean",
       "default": false
     },

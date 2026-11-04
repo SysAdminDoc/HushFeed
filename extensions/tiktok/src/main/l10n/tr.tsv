@@ -12,6 +12,8 @@ Importing new history ended Undo for the earlier clear. You can clear the import
 %1$d settings in that file can't be restored here and were skipped	Dosyadaki %1$d ayar burada geri yüklenemedi ve atlandı
 Import watch history	İzleme geçmişini içe aktar
 Keep the language picked in TikTok	TikTok'ta seçilen dili koru
+Freeze TikTok's experiments	TikTok'un deneylerini dondur
+TikTok's servers keep sending it new settings, which is how it tests new layouts and features on people. With this on, TikTok keeps the ones it has now and ignores new ones. If something in TikTok stops working, turn this off so it can get fixes.	TikTok'un sunucuları ona sürekli yeni ayarlar gönderir, TikTok yeni düzenleri ve özellikleri insanlar üzerinde böyle dener. Bu açıkken TikTok şu anki ayarlarını korur ve yenilerini yok sayar. TikTok'ta bir şey çalışmayı bırakırsa düzeltmeleri alabilmesi için bunu kapat.
 Nothing is playing to speed up	Hızlandırılacak bir şey oynatılmıyor
 One language code, like en or es. Comments and captions TikTok translates come out in this language instead of the app's. Leave it empty to keep TikTok's choice.	Tek bir dil kodu, örneğin en veya es. TikTok'un çevirdiği yorumlar ve açıklamalar uygulamanın dili yerine bu dilde çıkar. TikTok'un seçimini korumak için boş bırak.
 MP3 (.mp3), plays anywhere	MP3 (.mp3), her yerde çalar

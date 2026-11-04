@@ -32,7 +32,7 @@ Most switches start off, so a freshly patched TikTok looks and works the way it 
 
 Hushfeed v0.80.0 contains 143 patches for TikTok 47.6.3. New in this one: TikTok moves to 47.6.3 and PineDrama has its own patches in HushPine now. TikTok can lock the feed during hours you pick, keep saves off mobile data and turn the bottom bar into a floating glass pill, and messages someone unsends can stay in the chat. It needs Morphe Manager 2.3.0 or newer.
 
-The main branch contains 145 patches: the 143 in v0.80.0, Hide read receipts and Keep the next videos in full screen.
+The main branch contains 146 patches: the 143 in v0.80.0, Hide read receipts, Keep the next videos in full screen and Freeze TikTok's experiments.
 
 ## What it changes
 
@@ -183,6 +183,7 @@ Simple mode in Morphe Manager selects 126 of these patches. Each row says what t
 | `Fix Google login` | Makes Sign in with Google work in the patched app, where it would otherwise fail. Works as soon as you patch it in, with no switch. |
 | `Foldable split comment view` | On a folding phone or tablet, shows comments beside the video instead of over it when the screen is wide enough. Starts off. Turn it on in Hushfeed settings > App. |
 | `Follow diagnostics` | Tells you when TikTok quietly turned down a follow, and why, since the app shows it as if it worked. With diagnostic logging on, the details go in the report too. Works as soon as you patch it in, with no switch. |
+| `Freeze TikTok's experiments` | Lets you keep the settings TikTok's servers sent it so far. TikTok tests new layouts and features on people by sending new ones all the time, and with this on it ignores them. Starts off. Turn it on in Hushfeed settings > App. |
 | `Ghost mode` | Stops TikTok telling people you viewed their story or profile, or that you're typing. What TikTok already recorded stays. Each of the three has its own switch under it, and a separate one hides your online status. Starts off. Turn it on in Hushfeed settings > Privacy. |
 | `Hide already seen videos` | Remembers the videos you've watched and hides them when the feed sends them again, so you only see new ones. It can also keep a watch history you can search and reopen videos from. Both stay on your phone. Starts off. Turn them on in Hushfeed settings > Feed filter. |
 | `Hide CAPTCHA popups` | Skips the puzzle TikTok shows while you're just browsing. A puzzle right after you like, follow, comment or repost still shows, and so do sign-in, SMS and two-step checks. Starts off. Turn it on in Hushfeed settings > Feed screen, then restart TikTok. |

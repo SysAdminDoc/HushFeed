@@ -676,6 +676,7 @@ Forgetting saved videos,Forgetting saved videos
 Forgotten. Tap to put them back.,Forgotten. Tap to put them back.
 Found %1$s in your chats.,Found %1$s in your chats.
 Frame saved to %1$s,Frame saved to %1$s
+Freeze TikTok's experiments,Freeze TikTok's experiments
 Friends,Friends
 Friends tab name,Friends tab name
 "Friends won't see a green dot or Active now while you're in TikTok. Needs Ghost mode on. Their status may stop updating for you, and your last status can linger.","Friends won't see a green dot or Active now while you're in TikTok. Needs Ghost mode on. Their status may stop updating for you, and your last status can linger."
@@ -2190,6 +2191,7 @@ TikTok's messages didn't start in time. It tries again at %1$s.,TikTok's message
 "TikTok's own daily screen-time reminder sends the app to the background instead of waiting to be dismissed. Coming straight back leaves the reminder on screen, so the limit stays reachable. Needs a daily limit set under TikTok's Settings and privacy, under Time and well-being.","TikTok's own daily screen-time reminder sends the app to the background instead of waiting to be dismissed. Coming straight back leaves the reminder on screen, so the limit stays reachable. Needs a daily limit set under TikTok's Settings and privacy, under Time and well-being."
 TikTok's own name,TikTok's own name
 TikTok's own value,TikTok's own value
+"TikTok's servers keep sending it new settings, which is how it tests new layouts and features on people. With this on, TikTok keeps the ones it has now and ignores new ones. If something in TikTok stops working, turn this off so it can get fixes.","TikTok's servers keep sending it new settings, which is how it tests new layouts and features on people. With this on, TikTok keeps the ones it has now and ignores new ones. If something in TikTok stops working, turn this off so it can get fixes."
 TikTok's size,TikTok's size
 TikTok's suggested reply cells and their intro banner stop showing in a chat. Messages you type or receive are untouched.,TikTok's suggested reply cells and their intro banner stop showing in a chat. Messages you type or receive are untouched.
 TikTok's total: %1$s. Filtered accounts: %2$s.,TikTok's total: %1$s. Filtered accounts: %2$s.

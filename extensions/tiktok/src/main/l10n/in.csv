@@ -13,6 +13,8 @@ Importing new history ended Undo for the earlier clear. You can clear the import
 %1$d settings in that file can't be restored here and were skipped,%1$d pengaturan dalam berkas tidak dapat dipulihkan di sini dan dilewati
 "Import watch history","Impor riwayat tontonan"
 Keep the language picked in TikTok,Pertahankan bahasa yang dipilih di TikTok
+Freeze TikTok's experiments,Bekukan eksperimen TikTok
+"TikTok's servers keep sending it new settings, which is how it tests new layouts and features on people. With this on, TikTok keeps the ones it has now and ignores new ones. If something in TikTok stops working, turn this off so it can get fixes.","Server TikTok terus mengirim pengaturan baru, begitulah TikTok menguji tata letak dan fitur baru pada orang-orang. Jika ini menyala, TikTok menyimpan pengaturan yang ada sekarang dan mengabaikan yang baru. Jika ada yang berhenti berfungsi di TikTok, matikan ini agar TikTok bisa mendapat perbaikan."
 Nothing is playing to speed up,Tidak ada yang diputar untuk dipercepat
 "One language code, like en or es. Comments and captions TikTok translates come out in this language instead of the app's. Leave it empty to keep TikTok's choice.","Satu kode bahasa, seperti en atau es. Komentar dan keterangan yang diterjemahkan TikTok muncul dalam bahasa ini, bukan bahasa aplikasi. Biarkan kosong untuk memakai pilihan TikTok."
 "MP3 (.mp3), plays anywhere","MP3 (.mp3), bisa diputar di mana saja"

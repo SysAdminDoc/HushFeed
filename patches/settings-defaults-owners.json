@@ -312,6 +312,9 @@
       "FOLDABLE_SPLIT_VIEW",
       "FOLDABLE_SPLIT_VIEW_MIN_WIDTH_DP"
     ],
+    "Freeze TikTok's experiments": [
+      "FREEZE_REMOTE_CONFIG"
+    ],
     "Ghost mode": [
       "GHOST_MODE",
       "GHOST_HIDE_ONLINE_STATUS",
@@ -626,7 +629,8 @@
     "Settings": [
       "MORPHE_LANGUAGE",
       "SHOW_MENU_ICONS",
-      "HIDE_SETTINGS_ROW"
+      "HIDE_SETTINGS_ROW",
+      "SETTINGS_AS_LIST"
     ],
     "Share sheet tools": [
       "HIDE_SHARE_CHANNELS",
@@ -772,6 +776,7 @@
     "CAPTION_REGULAR_WEIGHT": "Runtime state or legacy migration data; not a configurable feature default.",
     "RECENT_SETTINGS_SEARCHES": "Runtime state or legacy migration data; not a configurable feature default.",
     "LAUNCHER_SHORTCUTS_REMOVED": "Runtime state or legacy migration data; not a configurable feature default.",
+    "REMOTE_CONFIG_STORED": "Runtime state or legacy migration data; not a configurable feature default.",
     "AUTO_STREAK_STATE": "Runtime state or legacy migration data; not a configurable feature default.",
     "FEED_NAVIGATION_OBSERVED_TABS": "Runtime state or legacy migration data; not a configurable feature default.",
     "BOTTOM_NAVIGATION_OBSERVED_TABS": "Runtime state or legacy migration data; not a configurable feature default.",

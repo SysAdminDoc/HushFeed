@@ -34,6 +34,12 @@ import app.morphe.patches.tiktok.misc.optimizer.installAnimatedImageCacheSwitch
 import app.morphe.patches.tiktok.misc.optimizer.installSplashAdSwitch
 import app.morphe.patches.tiktok.misc.optimizer.installUpdateCheckSwitch
 import app.morphe.patches.tiktok.misc.optimizer.limitBackgroundTraffic
+import app.morphe.patches.tiktok.misc.remoteconfig.ChunkStoreFingerprint
+import app.morphe.patches.tiktok.misc.remoteconfig.OptimizedChunkStoreFingerprint
+import app.morphe.patches.tiktok.misc.remoteconfig.REMOTE_CONFIG_SWITCH
+import app.morphe.patches.tiktok.misc.remoteconfig.ResponseStoreFingerprint
+import app.morphe.patches.tiktok.misc.remoteconfig.installRemoteConfigFreeze
+import app.morphe.patches.tiktok.misc.remoteconfig.responseStores
 import app.morphe.patches.tiktok.misc.translation.COMMENT_TRANSLATE_BUTTON_SWITCH
 import app.morphe.patches.tiktok.misc.translation.findCommentTranslateButtonTargets
 import app.morphe.patches.tiktok.misc.translation.installCommentTranslateButton
@@ -74,7 +80,9 @@ import org.junit.rules.TemporaryFolder
  * ad, Limit background traffic, Drop the animated image cache, Skip update checks, Stop on-device
  * AI profiling and Enable voice comments. Skip passkey sign-in came later with its switch already
  * in front, the same way, and so did the two gates of the translate button in Translate comments
- * and the two Thoughts gates of Turn on Thoughts in Hide profile shortcuts. This puts their real hooks on each declared build and reads every hooked method back.
+ * and the two Thoughts gates of Turn on Thoughts in Hide profile shortcuts, and the three server
+ * settings stores of Freeze TikTok's experiments. This puts their real hooks on each declared
+ * build and reads every hooked method back.
  *
  * <p>Each one has to ask its switch before anything else runs, leave with the patch's old answer
  * when the switch says yes, and land on TikTok's own first instruction, with all of TikTok's code
@@ -148,11 +156,16 @@ class SwitchedReturnFixturesTest {
                         add(before(translateButton.styleAnswer, COMMENT_TRANSLATE_BUTTON_SWITCH, true))
                         add(before(thoughts.publish, THOUGHTS_SWITCH, true))
                         add(before(thoughts.consumption, THOUGHTS_SWITCH, true))
+                        responseStores().forEach { add(before(it, REMOTE_CONFIG_SWITCH)) }
+                        add(before(ChunkStoreFingerprint.method, REMOTE_CONFIG_SWITCH))
+                        add(before(OptimizedChunkStoreFingerprint.method, REMOTE_CONFIG_SWITCH))
                     }
                     // Four tasks, the reviewed gates (two or three on the splash service), the
                     // buffer gate, push setup, two update tasks, three Pitaya doors, the voice gate,
-                    // the passkey support check, the translate button's two gates and the two
-                    // Thoughts gates.
+                    // the passkey support check, the translate button's two gates, the two
+                    // Thoughts gates and the server settings stores (two whole-response copies on
+                    // 47.6.3, then the two chunk stores).
+                    assertEquals("$version: whole-response stores", 2, responseStores().size)
                     assertTrue("$version: ${splashGates().size} splash gates", splashGates().size in 5..6)
                     // Turn on Thoughts (#186): each gate is the static getter of its own key's
                     // lazy value, and the two are different classes.
@@ -189,6 +202,7 @@ class SwitchedReturnFixturesTest {
                     installPasskeySignInSwitch()
                     installCommentTranslateButton()
                     thoughts.installThoughtsSwitch()
+                    installRemoteConfigFreeze()
 
                     for (hook in hooks) {
                         val now = mutableClassDefBy(hook.definingClass).methods.filter { signature(it) == hook.signature }
@@ -210,6 +224,7 @@ class SwitchedReturnFixturesTest {
                 UpdateBackgroundTaskFingerprint, UpdateBootFinishedTaskFingerprint,
                 PitayaPluginLookupFingerprint, PitayaRealProviderFingerprint, PitayaLiteStartFingerprint,
                 AnimatedDrawableFactoryFingerprint, PasskeyDeviceSupportFingerprint,
+                ResponseStoreFingerprint, ChunkStoreFingerprint, OptimizedChunkStoreFingerprint,
             ).forEach { it.clearMatch() }
             Patcher(PatcherConfig(apk, temporary.newFolder())).use { patcher ->
                 patcher += setOf(probe)

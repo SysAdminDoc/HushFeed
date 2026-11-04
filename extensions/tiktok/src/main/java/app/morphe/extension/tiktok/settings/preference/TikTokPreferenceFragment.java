@@ -142,6 +142,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
     private SettingsHeaderPreference barHeader;
     private android.widget.FrameLayout barSlot;
     private SettingsSearchEntryPreference searchEntry;
+    private SettingsViewTogglePreference viewToggle;
     private final java.util.Map<Section, SettingsMenuPreference> sectionMenus =
             new java.util.EnumMap<>(Section.class);
     private SettingsMenuPreference aboutMenu;
@@ -1181,11 +1182,15 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
 
     private void createSearchMenu(Context context, PreferenceScreen screen) {
         if (searchScreen != null) return;
+        // The list view's pages are fixed open, so they fold first like every other page does.
+        if (settingsAsList()) showAsList(false);
         searchExpanded = expandedGroups();
         for (SettingsMenuPreference menu : sectionMenus.values()) menu.setExpanded(false);
         if (aboutMenu != null) aboutMenu.setExpanded(false);
         searchScreen = screen;
         screen.removePreference(searchEntry);
+        // The results come right under the field, and the view a tap gives means nothing there.
+        if (viewToggle != null) screen.removePreference(viewToggle);
         searchInput = new SettingsSearchInputPreference(context, this::updateSearchResults);
         searchInput.setKey("action_search_settings");
         searchInput.setOrder(-900);
@@ -1723,6 +1728,11 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         searchEntry.setKey("action_search_settings");
         searchEntry.setOrder(-900);
         screen.addPreference(searchEntry);
+        viewToggle = new SettingsViewTogglePreference(context, preference -> {
+            toggleListView();
+            return true;
+        });
+        screen.addPreference(viewToggle);
 
         for (Section section : new Section[]{Section.FEED_FILTER, Section.FEED_NAVIGATION,
                 Section.INTERFACE, Section.PLAYBACK, Section.SCREEN_TIME, Section.COMMENTS,
@@ -1746,8 +1756,44 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         // Search results occupy the space between the field and these category rows.
         for (int index = 0; index < screen.getPreferenceCount(); index++) {
             Preference row = screen.getPreference(index);
-            if (row != pageHeader && row != searchEntry) row.setOrder(10000 + index);
+            if (row != pageHeader && row != searchEntry && row != viewToggle) row.setOrder(10000 + index);
         }
+        if (settingsAsList()) showAsList(true);
+    }
+
+    /** Whether the home page shows every page's rows in one list. Pause doesn't change it. */
+    private static boolean settingsAsList() {
+        return Settings.SETTINGS_AS_LIST.savedValue();
+    }
+
+    /**
+     * Every page open in place and fixed open, its row a heading over its rows, or every page
+     * folded back under its row. About stays a fold either way: it's links and notes, not settings.
+     */
+    private void showAsList(boolean list) {
+        for (java.util.Map.Entry<Section, SettingsMenuPreference> entry : sectionMenus.entrySet()) {
+            SettingsMenuPreference menu = entry.getValue();
+            if (list) {
+                expandSection(entry.getKey());
+                menu.setExpandable(false);
+            } else {
+                menu.setExpandable(true);
+            }
+            menu.setSelectable(!list);
+        }
+    }
+
+    /** The row under the search: switches the view, saves it, and says what the next tap gives. */
+    private void toggleListView() {
+        boolean list = !settingsAsList();
+        Settings.SETTINGS_AS_LIST.save(list);
+        closeSearch();
+        showAsList(list);
+        if (list) {
+            updateUIToSettingValues();
+            refreshRestartPending();
+        }
+        if (viewToggle != null) viewToggle.refresh();
     }
 
     /** Report a problem, just above the Ko-fi row: a GitHub bug report with the facts filled in. */
@@ -2180,6 +2226,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         removeSearchRows();
         searchScreen.removePreference(searchInput);
         searchScreen.addPreference(searchEntry);
+        if (viewToggle != null) searchScreen.addPreference(viewToggle);
         searchScreen = null;
         updateSearchLongClicks();
         searchInput = null;
@@ -2187,6 +2234,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         shownSearch = "";
         restoreExpanded(searchExpanded);
         searchExpanded = null;
+        if (settingsAsList()) showAsList(true);
         updateUIToSettingValues();
         refreshRestartPending();
         showTitle();

@@ -39,12 +39,13 @@ public final class SettingsSearchEntryPreference extends Preference {
         row.setTag(ROW_TAG);
         row.setGravity(Gravity.CENTER_VERTICAL);
         row.setMinimumHeight(SettingsUi.dp(context, 48));
+        // On the cards' 18 dp side line, its icon on the line their icons start on.
         row.setBackground(new android.graphics.drawable.InsetDrawable(
                 SettingsUi.pressAndFocusOver(context, SettingsUi.RADIUS_SETTINGS_FIELD,
                         SettingsUi.borderedSurface(context, SettingsUi.RADIUS_SETTINGS_FIELD, false)),
-                SettingsUi.dp(context, 8), 0, SettingsUi.dp(context, 8), 0));
-        row.setPaddingRelative(SettingsUi.dp(context, 22), SettingsUi.dp(context, 8),
-                SettingsUi.dp(context, 22), SettingsUi.dp(context, 8));
+                SettingsUi.dp(context, 18), 0, SettingsUi.dp(context, 18), 0));
+        row.setPaddingRelative(SettingsUi.dp(context, 30), SettingsUi.dp(context, 8),
+                SettingsUi.dp(context, 30), SettingsUi.dp(context, 8));
         SettingsUi.markAsButton(row);
 
         ImageView icon = new ImageView(context);

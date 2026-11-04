@@ -8,7 +8,11 @@ package app.morphe.extension.tiktok.settings.preference;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.RippleDrawable;
 import android.preference.Preference;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -67,15 +71,24 @@ public final class RestartPendingPreference extends Preference {
      * there looks and reads the same as one owed on a settings page.
      */
     public static TextView button(Context context, View.OnClickListener press) {
-        TextView row = SettingsUi.text(context, label(context), SettingsUi.TEXT_BODY, SettingsUi.accent(),
-                Typeface.BOLD);
+        ScreenColors colors = ScreenColors.current();
+        TextView row = SettingsUi.text(context, label(context), 15, colors.title, Typeface.NORMAL);
         row.setTag(ROW_TAG);
-        int side = SettingsUi.dp(context, 16);
-        int ends = SettingsUi.dp(context, 14);
-        row.setPadding(side, ends, side, ends);
-        row.setMinimumHeight(SettingsUi.dp(context, 48));
-        row.setBackground(SettingsUi.pressAndFocusOver(context, SettingsUi.RADIUS_SETTINGS_CARD,
-                SettingsUi.borderedSurface(context, SettingsUi.RADIUS_SETTINGS_CARD, false)));
+        row.setGravity(Gravity.CENTER_VERTICAL | Gravity.START);
+        row.setPaddingRelative(SettingsUi.dp(context, 16), SettingsUi.dp(context, 12),
+                SettingsUi.dp(context, 20), SettingsUi.dp(context, 12));
+        row.setMinHeight(SettingsUi.dp(context, 56));
+        row.setMinimumHeight(SettingsUi.dp(context, 56));
+        // A restart arrow and the heading colour's edge mark it as something to tap, not a notice.
+        Drawable arrow = SettingsIcons.icon(context, SettingsIcons.TOOLS, colors.heading);
+        arrow.setBounds(0, 0, SettingsUi.dp(context, 24), SettingsUi.dp(context, 24));
+        row.setCompoundDrawablesRelative(arrow, null, null, null);
+        row.setCompoundDrawablePadding(SettingsUi.dp(context, 14));
+        GradientDrawable surface = new GradientDrawable();
+        surface.setColor(colors.card);
+        surface.setCornerRadius(SettingsUi.dp(context, SettingsUi.RADIUS_SETTINGS_CARD));
+        surface.setStroke(SettingsUi.dp(context, 1), colors.heading);
+        row.setBackground(new RippleDrawable(ScreenColors.interactionRipple(colors.heading), surface, surface));
         row.setFocusable(true);
         // A TextView with a click listener is read as text; the role has to be said.
         SettingsUi.markAsButton(row);
@@ -90,8 +103,10 @@ public final class RestartPendingPreference extends Preference {
 
         FrameLayout holder = new FrameLayout(context);
         holder.setBackgroundColor(SettingsUi.background());
-        int gutter = SettingsUi.dp(context, 8);
-        holder.setPadding(gutter, gutter, gutter, 0);
+        // The cards' and the search's 18 dp side line, with 8 dp of air above and below.
+        int side = SettingsUi.dp(context, 18);
+        int ends = SettingsUi.dp(context, 8);
+        holder.setPaddingRelative(side, ends, side, ends);
         holder.addView(row, new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         return holder;

@@ -1757,6 +1757,7 @@ Show a LIVE under the status bar,Show a LIVE under the status bar
 Show a progress bar while a video saves.,Show a progress bar while a video saves.
 Show a verified badge on your own profile on this phone. Other people see your real status.,Show a verified badge on your own profile on this phone. Other people see your real status.
 Show a video preview thumbnail while dragging the progress bar.,Show a video preview thumbnail while dragging the progress bar.
+Show all settings as a list,Show all settings as a list
 Show chosen counts on your own profile on this phone. Other people see the real counts.,Show chosen counts on your own profile on this phone. Other people see the real counts.
 Show commenters' handles,Show commenters' handles
 "Show counts as full numbers, like 1,234,567 instead of 1.2M.","Show counts as full numbers, like 1,234,567 instead of 1.2M."
@@ -1784,6 +1785,7 @@ Show only videos with this many views.,Show only videos with this many views.
 Show original,Show original
 Show poll results before voting,Show poll results before voting
 Show search in LIVE,Show search in LIVE
+Show settings by category,Show settings by category
 Show the Not interested button,Show the Not interested button
 Show the block button on videos,Show the block button on videos
 Show the block sound button,Show the block sound button

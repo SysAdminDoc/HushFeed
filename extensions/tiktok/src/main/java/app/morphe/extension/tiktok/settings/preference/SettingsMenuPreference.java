@@ -200,7 +200,8 @@ public final class SettingsMenuPreference extends PreferenceGroup {
     }
 
     private void bindExpansionAccessibility(View view) {
-        if (Build.VERSION.SDK_INT >= 28) view.setAccessibilityHeading(expandable);
+        // A page shown open in the list view can't be tapped, and heads the rows under it.
+        if (Build.VERSION.SDK_INT >= 28) view.setAccessibilityHeading(expandable || !isSelectable());
         if (Build.VERSION.SDK_INT >= 30) {
             view.setStateDescription(expandable ? expansionState() : null);
         }

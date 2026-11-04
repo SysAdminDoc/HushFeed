@@ -228,6 +228,11 @@ public class Settings extends BaseSettings {
     /** What settings search was last used for, newest first, as a JSON array. Kept out of backups. */
     public static final StringSetting RECENT_SETTINGS_SEARCHES =
             new StringSetting("recent_settings_searches", "[]", false, false);
+    /**
+     * The settings home lists every page's rows inline instead of folding each page under its row.
+     * A choice about the screen, so it's read with savedValue(): Pause doesn't change the layout.
+     */
+    public static final BooleanSetting SETTINGS_AS_LIST = new BooleanSetting("settings_as_list", FALSE);
     public static final StringSetting LONG_PRESS_ACTION = new StringSetting("long_press_action", "default");
     /**
      * The Long press choice runs only on the left and right thirds of the video, so a press in the

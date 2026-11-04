@@ -258,7 +258,8 @@ public final class ScreenColors {
         int vertical = overview ? 6 : 10;
         row.setPaddingRelative(dp(row, horizontal), dp(row, vertical + (!overview && first ? 4 : 0)),
                 dp(row, horizontal), dp(row, vertical + (!overview && last ? 4 : 0)));
-        row.setMinimumHeight(dp(row, overview ? 52 : 64));
+        row.setMinimumHeight(dp(row, SettingsViewTogglePreference.KEY.equals(preference.getKey()) ? 48
+                : overview ? 52 : 64));
     }
 
     /** A section's heading: small capitals in the heading colour, lined up with the cards under it. */

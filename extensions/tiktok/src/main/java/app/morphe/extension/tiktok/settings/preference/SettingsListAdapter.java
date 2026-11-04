@@ -76,7 +76,9 @@ final class SettingsListAdapter extends BaseAdapter implements WrapperListAdapte
                 || item instanceof SettingsStatusPreference
                 || item instanceof SettingsSearchInputPreference
                 || item instanceof SettingsSearchEntryPreference
-                || item instanceof SettingsHeader;
+                || item instanceof SettingsHeader
+                // The restart bar is a button on the 18 dp line, not a row of the page.
+                || item instanceof RestartPendingPreference;
     }
 
     /**

@@ -148,7 +148,11 @@ public final class SettingsSearchInputPreference extends Preference {
         clearButton = clear;
         row.addView(clear, new LinearLayout.LayoutParams(clearSize, clearSize));
         updateClearButton();
-        root.addView(row, new LinearLayout.LayoutParams(-1, -2));
+        // The field's frame sits on the cards' 18 dp side line, as the entry it replaces did.
+        LinearLayout.LayoutParams frame = new LinearLayout.LayoutParams(-1, -2);
+        frame.setMarginStart(SettingsUi.dp(context, 18));
+        frame.setMarginEnd(SettingsUi.dp(context, 18));
+        root.addView(row, frame);
 
         resultCount = SettingsUi.resultCount(context, "settings_search_result_count");
         resultCount.setAllCaps(true);

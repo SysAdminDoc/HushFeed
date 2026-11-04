@@ -80,6 +80,7 @@ Every Hushfeed release, newest first.
 * The audit's Settings section check turns list view off before it opens Settings. In list view a section row doesn't fold open or shut, so the tap the check makes on Inbox did nothing there. The phone's own choice comes back after the check.
 * `Comment tools` won't patch a TikTok build whose comment rows read a comment kept from an earlier row. It stops with an error instead of giving each row the controls for the comment before it.
 * Four audit checks hold up better after the 47.6.3 run. The filtered count pill check waits until something has actually been filtered, and a quiet session comes out inconclusive instead of failing. Checks that open a video from a profile tap the grid's cover, since the first match was a wrapper that opened nothing. The Settings section check scrolls with slow drags, and a diagnostic report that's still arriving gets up to a minute.
+* The patch audit has saved results for TikTok 47.6.3 now, from a full run on a Galaxy S22. 365 of its 382 checks pass. One fails (the comment row hook, fixed above). The other 16 wait on a case the run couldn't set up, like a floating promotion TikTok never served or a build with a non-default accent color.
 * Changelog entries and release notes don't open with a "TikTok:" label anymore. Hushfeed only patches TikTok, so the label repeated itself on every line, and Morphe Manager 2.3.0 shows a one-app source's whole list without it. The release scripts stopped adding it, and What's new reads the same as before.
 
 ## 0.80.0 (2026-11-01)

@@ -25,6 +25,7 @@ Every Hushfeed release, newest first.
 * **TikTok:** `Hide like counts on comments` takes the number off the heart on each comment, and `Hide the thumbs down on comments` takes the thumbs down off. The heart still works. Both start off, and they're in Hushfeed settings > Comments.
 * **TikTok:** `Video text color` and `Backdrop behind video text` under Feed screen color the description, the creator's name and the post date on videos, and can put a see-through band behind them.
 * **TikTok:** `Hide the repost chip` under Feed screen takes out the small bar above the progress bar that says someone you follow reposted the video, or asks you to repost it.
+* **TikTok:** Hushfeed settings wear TikTok's colors. Its red marks switches and buttons, its cyan marks headings and icons, and every color was checked so text stays easy to read in the dark and the light look. Switches are rounded squares now instead of pills.
 
 ### Bug Fixes
 * **TikTok:** `Hide message streaks` takes the streak button off chats, the share panel, Friends and stories, and the streak reminder off your chat list. Before, it hid nothing, since TikTok no longer asks the spot Hushfeed was answering.

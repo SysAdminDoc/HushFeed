@@ -494,7 +494,7 @@ public final class FeatureGateLabFragment extends Fragment {
                 FeatureGateLabUi.dp(context, 12),
                 0
         );
-        filterButton.setBackground(SettingsUi.focusableSurface(context, SettingsUi.RADIUS_PILL, false));
+        filterButton.setBackground(SettingsUi.focusableSurface(context, SettingsUi.RADIUS_SETTINGS_FIELD, false));
         filterButton.setFocusable(true);
         filterButton.setOnClickListener(view -> showFilterPicker());
         resultRow.addView(filterButton, new LinearLayout.LayoutParams(

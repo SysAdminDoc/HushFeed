@@ -118,7 +118,7 @@ final class FeatureGateLabUi {
         // The settings pages' press and focus, on the control radius. The platform's borderless
         // ripple drew a circle and had no focus state, so a d-pad or keyboard could land on an
         // icon button and leave nothing on screen to say so.
-        icon.setBackground(SettingsUi.pressAndFocusOver(context, SettingsUi.RADIUS_PILL,
+        icon.setBackground(SettingsUi.pressAndFocusOver(context, SettingsUi.RADIUS_FIELD,
                 new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT)));
         icon.setContentDescription(description);
         icon.setFocusable(true);
@@ -223,10 +223,10 @@ final class FeatureGateLabUi {
     static void styleTab(View tab, boolean selected) {
         Context context = tab.getContext();
         android.graphics.drawable.GradientDrawable surface = SettingsUi.roundedSurface(
-                context, SettingsUi.RADIUS_PILL, selected);
+                context, SettingsUi.RADIUS_SETTINGS_FIELD, selected);
         surface.setStroke(Math.max(1, dp(context, 1)),
                 selected ? SettingsUi.accent() : SettingsUi.border());
-        tab.setBackground(SettingsUi.pressAndFocusOver(context, SettingsUi.RADIUS_PILL, surface));
+        tab.setBackground(SettingsUi.pressAndFocusOver(context, SettingsUi.RADIUS_SETTINGS_FIELD, surface));
     }
 
     static View notice(Context context, String text, int toneColor) {

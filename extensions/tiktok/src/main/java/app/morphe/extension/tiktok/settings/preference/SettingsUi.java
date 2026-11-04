@@ -53,7 +53,15 @@ import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.settings.L10n;
 
 public final class SettingsUi {
-    public static final @ColorInt int ACCENT = Color.rgb(255, 79, 135);
+    /*
+     * Every ratio below is WCAG contrast against the surface the colour sits on. Text needs
+     * 4.5:1 on the page, a card and a dialog; a heading aims for 7:1 and never goes under 4.5;
+     * a switch track, a field's outline and an icon need 3:1. ScreenColorsAccessibilityTest
+     * measures every pair in both themes, so a change here that breaks one fails there.
+     */
+
+    /** TikTok's red: 5.71:1 on the black page and card, 5.12:1 on the dark surface, 4.66:1 lifted. */
+    public static final @ColorInt int ACCENT = Color.rgb(254, 44, 85);
     public static final @ColorInt int DARK_BACKGROUND = Color.BLACK;
     public static final @ColorInt int DARK_SURFACE = Color.rgb(17, 17, 21);
     public static final @ColorInt int DARK_SURFACE_LIFTED = Color.rgb(27, 27, 33);
@@ -70,17 +78,53 @@ public final class SettingsUi {
     public static final @ColorInt int LIGHT_BORDER = Color.argb(255, 210, 210, 210);
     public static final @ColorInt int LIGHT_DIVIDER = Color.argb(255, 224, 224, 224);
     public static final @ColorInt int LIGHT_TEXT_PRIMARY = Color.rgb(22, 22, 28);
-    public static final @ColorInt int LIGHT_TEXT_SECONDARY = Color.rgb(87, 87, 98);
+    /**
+     * 10.24:1 on white and 9.43:1 on the light page. A greyed row's summary is this at 75%, which
+     * still reads at 4.91:1 on a white card; the old (87, 87, 98) came out at 3.86:1 there.
+     */
+    public static final @ColorInt int LIGHT_TEXT_SECONDARY = Color.rgb(64, 64, 74);
     public static final @ColorInt int LIGHT_TEXT_DISABLED = Color.argb(255, 117, 117, 125);
     public static final @ColorInt int LIGHT_ERROR = Color.rgb(180, 35, 61);
 
-    public static final int LIGHT_ACCENT = Color.rgb(184, 22, 77);
+    /**
+     * TikTok's red taken down until it carries text on white: 5.39:1 on white, 4.96:1 on the
+     * light page, and white on it is 5.39:1.
+     */
+    public static final @ColorInt int LIGHT_ACCENT = Color.rgb(214, 0, 42);
 
-    static final @ColorInt int DARK_SWITCH_TRACK_OFF = Color.rgb(100, 100, 111);
+    /**
+     * Section headings, the bar's back arrow, row icons and focus outlines. TikTok's cyan, 11.79:1
+     * on black, 10.58:1 on the dark surface and 9.62:1 on the icon tile.
+     */
+    public static final @ColorInt int DARK_HEADING = Color.rgb(32, 213, 236);
+    /** The same cyan darkened for a light page: 7.10:1 on it, 7.72:1 on white, 6.62:1 on its tile. */
+    public static final @ColorInt int LIGHT_HEADING = Color.rgb(5, 93, 90);
+    /** A field's placeholder: 6.16:1 on black, 5.52:1 on the surface, quieter than a summary (8.92:1). */
+    public static final @ColorInt int DARK_HINT = Color.rgb(138, 138, 150);
+    /** 4.63:1 on the light page and 5.04:1 on white, quieter than a summary (6.55:1). */
+    public static final @ColorInt int LIGHT_HINT = Color.rgb(110, 110, 121);
+    /** The tile behind a header icon. */
+    public static final @ColorInt int DARK_ICON_SURFACE = DARK_SURFACE_LIFTED;
+    public static final @ColorInt int LIGHT_ICON_SURFACE = Color.rgb(237, 237, 242);
+    /** Text and a switch thumb on the accent: black on TikTok's red is 5.71:1 (white is 3.68:1). */
+    public static final @ColorInt int DARK_ON_ACCENT = Color.BLACK;
+    /** White on {@link #LIGHT_ACCENT}, 5.39:1. */
+    public static final @ColorInt int LIGHT_ON_ACCENT = Color.WHITE;
+    /** Cards and dialogs on the black page are black too, set apart by their outline alone. */
+    public static final @ColorInt int DARK_CARD = Color.BLACK;
+    public static final @ColorInt int DARK_DIALOG = Color.BLACK;
+    public static final @ColorInt int LIGHT_CARD = LIGHT_SURFACE;
+    public static final @ColorInt int LIGHT_DIALOG = LIGHT_SURFACE;
+
+    /**
+     * An unchecked switch's track: 3.93:1 on black, 3.21:1 on the lifted surface; white on it
+     * 5.34:1. The old (100, 100, 111) came out at 2.93:1 on the lifted surface.
+     */
+    static final @ColorInt int DARK_SWITCH_TRACK_OFF = Color.rgb(106, 106, 117);
+    /** 4.24:1 on the light page, 4.62:1 on white; white on it 4.62:1. */
     static final @ColorInt int LIGHT_SWITCH_TRACK_OFF = Color.rgb(116, 116, 127);
+    /** An unchecked switch's thumb in either theme. */
     static final @ColorInt int SWITCH_THUMB = Color.WHITE;
-    static final @ColorInt int DARK_SWITCH_THUMB_STROKE = Color.rgb(225, 225, 230);
-    static final @ColorInt int LIGHT_SWITCH_THUMB_STROKE = Color.rgb(116, 116, 127);
 
     public static @ColorInt int rippleTint() {
         return (accent() & 0x00FFFFFF) | 0x26000000;
@@ -118,7 +162,6 @@ public final class SettingsUi {
     /** Settings geometry stays independent of the controls drawn over a playing video. */
     public static final int RADIUS_SETTINGS_CARD = 12;
     public static final int RADIUS_SETTINGS_FIELD = 12;
-    public static final int RADIUS_PILL = 24;
     /** Taller than any bar TikTok draws, so a pill's ends stay round at whatever height it's given. */
     public static final int RADIUS_ROUND_ENDS = 100;
 
@@ -202,13 +245,13 @@ public final class SettingsUi {
     public static @ColorInt int accent() { return isDarkMode() ? ACCENT : LIGHT_ACCENT; }
 
     /**
-     * What a filled chip is painted with. The plain accent is a light pink, and white on it is
-     * 3.1:1, under what small text needs. The darker accent carries white in either theme, so
-     * a badge and a selected pill use it and stay readable.
+     * What a filled chip is painted with. White on the plain accent is 3.68:1, under what small
+     * text needs. The darker accent carries white in either theme, so a badge and a selected
+     * chip use it and stay readable.
      */
     public static @ColorInt int badgeFill() { return LIGHT_ACCENT; }
 
-    /** Text on {@link #badgeFill()}: 6.4:1, the same in both themes. */
+    /** Text on {@link #badgeFill()}: 5.39:1, the same in both themes. */
     public static @ColorInt int badgeText() { return Color.WHITE; }
 
     /**
@@ -217,7 +260,7 @@ public final class SettingsUi {
      */
     public static final @ColorInt int OVERLAY_ACCENT = Color.rgb(254, 44, 85);
 
-    /** The same red, dark enough to read as text on a white surface (6.4:1 rather than 3.7:1). */
+    /** The same red, dark enough to read as text on a white surface (5.39:1 rather than 3.68:1). */
     public static @ColorInt int overlayAccentOn(boolean darkSurface) {
         return darkSurface ? OVERLAY_ACCENT : LIGHT_ACCENT;
     }
@@ -443,7 +486,7 @@ public final class SettingsUi {
     static final int NARROW_TITLE_EMS = 10;
 
     /**
-     * Gives a switch row the shape its width can hold. The 44 dp switch and its 16 dp gap sit
+     * Gives a switch row the shape its width can hold. The 40 dp switch and its 16 dp gap sit
      * beside the text, and at twice the text size on a 320 dp phone that leaves the title about
      * a dozen characters a line: "Kommentare automatisch übersetzen" came out as Kom-, mentare,
      * automatisch, übersetzen, with the summary wrapped in the same narrow column. When the
@@ -464,7 +507,7 @@ public final class SettingsUi {
         if (!(title.getParent() instanceof RelativeLayout) || summary.getParent() != title.getParent()) return;
         if (findSwitch(widget) == null) return;
         RelativeLayout text = (RelativeLayout) title.getParent();
-        int column = rowWidth - row.getPaddingLeft() - row.getPaddingRight() - dp(row.getContext(), 44 + 16);
+        int column = rowWidth - row.getPaddingLeft() - row.getPaddingRight() - dp(row.getContext(), 40 + 16);
         boolean narrow = column < title.getTextSize() * NARROW_TITLE_EMS;
         if (narrow == (widget.getParent() == text)) return;
         if (narrow) {
@@ -509,26 +552,37 @@ public final class SettingsUi {
                 && control.getTrackDrawable() != null && control.getThumbDrawable() != null) {
             return;
         }
-        control.setTag(TAG_SWITCH_PAINT, isDarkMode());
+        boolean dark = isDarkMode();
+        control.setTag(TAG_SWITCH_PAINT, dark);
+        int on = accentOn(dark);
+        int off = switchOffOn(dark);
+        int onThumb = onAccentOn(dark);
+        // A square-cornered track and thumb on the bundle's radius scale, not a pill: 40 by 24
+        // at the control radius, a 20 dp thumb at the badge radius.
         StateListDrawable track = new StateListDrawable();
         // Checked-and-disabled first, or the -state_enabled entry below answers for it and a
         // greyed switch looks the same on as off: a reader cannot see what state it will come
         // back in when the parent is turned on again.
         track.addState(new int[]{-android.R.attr.state_enabled, android.R.attr.state_checked},
-                switchShape(context, (accent() & 0x00ffffff) | 0x66000000, 44, 26, 13));
+                switchShape(context, ScreenColors.half(on), 40, 24, RADIUS_CONTROL));
         track.addState(new int[]{-android.R.attr.state_enabled},
-                switchShape(context, border(), 44, 26, 13));
+                switchShape(context, ScreenColors.half(off), 40, 24, RADIUS_CONTROL));
         track.addState(new int[]{android.R.attr.state_checked},
-                switchShape(context, accent(), 44, 26, 13));
-        track.addState(new int[]{}, switchShape(context,
-                isDarkMode() ? DARK_SWITCH_TRACK_OFF : LIGHT_SWITCH_TRACK_OFF, 44, 26, 13));
+                switchShape(context, on, 40, 24, RADIUS_CONTROL));
+        track.addState(new int[]{}, switchShape(context, off, 40, 24, RADIUS_CONTROL));
         control.setTrackTintList(null);
         control.setThumbTintList(null);
         control.setTrackDrawable(track);
-        GradientDrawable thumb = switchShape(context, SWITCH_THUMB, 22, 22, 11);
-        thumb.setStroke(dp(context, 1), isDarkMode() ? DARK_SWITCH_THUMB_STROKE : LIGHT_SWITCH_THUMB_STROKE);
+        StateListDrawable thumb = new StateListDrawable();
+        thumb.addState(new int[]{-android.R.attr.state_enabled, android.R.attr.state_checked},
+                switchShape(context, ScreenColors.half(onThumb), 20, 20, RADIUS_BADGE));
+        thumb.addState(new int[]{-android.R.attr.state_enabled},
+                switchShape(context, ScreenColors.half(SWITCH_THUMB), 20, 20, RADIUS_BADGE));
+        thumb.addState(new int[]{android.R.attr.state_checked},
+                switchShape(context, onThumb, 20, 20, RADIUS_BADGE));
+        thumb.addState(new int[]{}, switchShape(context, SWITCH_THUMB, 20, 20, RADIUS_BADGE));
         control.setThumbDrawable(thumb);
-        control.setSwitchMinWidth(dp(context, 44));
+        control.setSwitchMinWidth(dp(context, 40));
         control.setThumbTextPadding(0);
         control.setShowText(false);
         control.setSplitTrack(false);
@@ -663,6 +717,14 @@ public final class SettingsUi {
         return rippleTint();
     }
 
+    /** {@code top}, translucent, laid over the opaque {@code under}: the colour the eye gets. */
+    static @ColorInt int over(@ColorInt int top, @ColorInt int under) {
+        float alpha = Color.alpha(top) / 255f;
+        return Color.rgb(Math.round(Color.red(top) * alpha + Color.red(under) * (1 - alpha)),
+                Math.round(Color.green(top) * alpha + Color.green(under) * (1 - alpha)),
+                Math.round(Color.blue(top) * alpha + Color.blue(under) * (1 - alpha)));
+    }
+
     private static final class GroupRowDrawable extends Drawable {
         private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         private final boolean first, last;
@@ -691,8 +753,10 @@ public final class SettingsUi {
             canvas.drawRoundRect(frame, radius, radius, paint);
             if (activated) {
                 // Over the surface rather than instead of it, so the tint is the same one the
-                // ripple leaves behind and the row keeps its own background underneath.
-                paint.setColor(activatedFill());
+                // ripple leaves behind and the row keeps its own background underneath. Mixed
+                // here and painted opaque: the canvas rounds a translucent red a step off in
+                // places, and the chosen row should be exactly the colour the press leaves.
+                paint.setColor(over(activatedFill(), surface()));
                 canvas.drawRoundRect(frame, radius, radius, paint);
             }
             paint.setStyle(Paint.Style.STROKE);
@@ -841,6 +905,30 @@ public final class SettingsUi {
     /** The accent for a surface that worked out its own theme. */
     public static @ColorInt int accentOn(boolean dark) {
         return dark ? ACCENT : LIGHT_ACCENT;
+    }
+
+    public static @ColorInt int heading() {
+        return headingOn(isDarkMode());
+    }
+
+    public static @ColorInt int headingOn(boolean dark) {
+        return dark ? DARK_HEADING : LIGHT_HEADING;
+    }
+
+    public static @ColorInt int hint() {
+        return hintOn(isDarkMode());
+    }
+
+    public static @ColorInt int hintOn(boolean dark) {
+        return dark ? DARK_HINT : LIGHT_HINT;
+    }
+
+    public static @ColorInt int onAccentOn(boolean dark) {
+        return dark ? DARK_ON_ACCENT : LIGHT_ON_ACCENT;
+    }
+
+    public static @ColorInt int switchOffOn(boolean dark) {
+        return dark ? DARK_SWITCH_TRACK_OFF : LIGHT_SWITCH_TRACK_OFF;
     }
 
     /** Text that repaints itself when its control is enabled or disabled. */

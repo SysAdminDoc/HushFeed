@@ -63,7 +63,7 @@ public final class RecentSearchPreference extends Preference {
         row.setMinimumHeight(SettingsUi.dp(context, 48));
         // No vertical padding: the delete control is the full 48dp, so it sets the row's height.
         row.setPadding(SettingsUi.dp(context, 16), 0, SettingsUi.dp(context, 12), 0);
-        row.setBackground(SettingsUi.pressAndFocusOver(context, SettingsUi.RADIUS_PILL,
+        row.setBackground(SettingsUi.pressAndFocusOver(context, SettingsUi.RADIUS_SETTINGS_FIELD,
                 new ColorDrawable(Color.TRANSPARENT)));
 
         ImageView icon = new ImageView(context);
@@ -84,7 +84,7 @@ public final class RecentSearchPreference extends Preference {
         ImageView delete = new ImageView(context);
         delete.setImageDrawable(new TrashDrawable(context));
         delete.setContentDescription(L10n.t(context, "Delete search"));
-        delete.setBackground(SettingsUi.pressAndFocusOver(context, SettingsUi.RADIUS_PILL,
+        delete.setBackground(SettingsUi.pressAndFocusOver(context, SettingsUi.RADIUS_FIELD,
                 new ColorDrawable(Color.TRANSPARENT)));
         delete.setClickable(true);
         delete.setFocusable(true);

@@ -184,7 +184,7 @@ public final class LicenseNotice {
             "---------------------\n" +
             "\n" +
             "Copyright Google LLC.\n" +
-            "https://github.com/google/material-design-icons\n" +
+            "From Google's material-design-icons project.\n" +
             "Original outlined icons, embedded as PNG images.\n" +
             "\n" +
             "\n" +

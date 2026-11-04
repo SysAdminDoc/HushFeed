@@ -54,12 +54,7 @@ public final class RemoteConfigFreeze {
                 Logger.printDebug(() -> "Freeze TikTok's experiments: off, a store goes through");
                 return false;
             }
-            Boolean first = firstStart;
-            if (first == null) {
-                first = !(early ? EarlySwitch.isOn(STORED_KEY) : Settings.REMOTE_CONFIG_STORED.savedValue());
-                firstStart = first;
-            }
-            if (first) {
+            if (firstStart(early)) {
                 markStored(early);
                 Logger.printInfo(() -> "Freeze TikTok's experiments: nothing stored yet, this start stores");
                 return false;
@@ -70,6 +65,18 @@ public final class RemoteConfigFreeze {
             Logger.printException(() -> "Could not decide on a server settings store", error);
             return false;
         }
+    }
+
+    /**
+     * This start's answer, worked out by the first store that asks. Under the lock, so a chunk
+     * store running beside the whole-response store on the first start can't read the flag the
+     * other one just saved and hold its half of the response.
+     */
+    private static synchronized boolean firstStart(boolean early) {
+        if (firstStart == null) {
+            firstStart = !(early ? EarlySwitch.isOn(STORED_KEY) : Settings.REMOTE_CONFIG_STORED.savedValue());
+        }
+        return firstStart;
     }
 
     /**

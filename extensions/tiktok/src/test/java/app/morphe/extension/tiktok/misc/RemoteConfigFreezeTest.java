@@ -111,11 +111,18 @@ public class RemoteConfigFreezeTest {
         Settings.FREEZE_REMOTE_CONFIG.save(true);
         assertFalse("without the patch's flag", RemoteConfigFreeze.holdsStore());
 
+        // Stored already and on, so only the pause lets this one through.
         SettingsStatus.remoteConfigFreezeEnabled = true;
-        Settings.REMOTE_CONFIG_STORED.save(false);
         PausedProcess.set(true);
         assertFalse("paused, the store runs as TikTok ships it", RemoteConfigFreeze.holdsStore());
+        assertNull("paused decides nothing about the start", RemoteConfigFreeze.firstStart);
+
+        PausedProcess.set(false);
+        Settings.REMOTE_CONFIG_STORED.save(false);
+        PausedProcess.set(true);
+        assertFalse(RemoteConfigFreeze.holdsStore());
         assertTrue("paused, the store that went through is remembered", Settings.REMOTE_CONFIG_STORED.savedValue());
+        assertNull(RemoteConfigFreeze.firstStart);
     }
 
     @Test public void beforeTheSettingsContextTheSavedFileIsRead() {

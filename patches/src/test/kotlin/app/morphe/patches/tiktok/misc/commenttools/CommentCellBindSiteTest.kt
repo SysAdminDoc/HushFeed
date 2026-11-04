@@ -79,8 +79,18 @@ class CommentCellBindSiteTest {
         }
     }
 
+    @Test
+    fun `a bind that reads a comment the cell kept is refused`() {
+        try {
+            bind(branchFirst = false, receiver = "p0").commentBindSite()
+            fail("a comment read off the cell must refuse the patch")
+        } catch (refused: PatchException) {
+            assertTrue(refused.message.orEmpty(), "not the bound item" in refused.message.orEmpty())
+        }
+    }
+
     /** 47.6.3's bind in miniature: the PowerCell's bind, then the item's comment. */
-    private fun bind(branchFirst: Boolean): MutableMethod {
+    private fun bind(branchFirst: Boolean, receiver: String = "p1"): MutableMethod {
         val cell = "Lcom/ss/android/ugc/aweme/commentv2/commentlist/powercell/BaseCommentCell;"
         val method = MutableMethod(
             ImmutableMethod(
@@ -92,7 +102,7 @@ class CommentCellBindSiteTest {
             (if (branchFirst) "if-eqz p1, :done\n" else "") +
                 """
                     invoke-super {p0, p1}, Lcom/bytedance/ies/powerlist/PowerCell;->onBindItemView(LX/05xH;)V
-                    invoke-virtual {p1}, LX/0FFP;->LIZ()Lcom/ss/android/ugc/aweme/comment/model/Comment;
+                    invoke-virtual {$receiver}, LX/0FFP;->LIZ()Lcom/ss/android/ugc/aweme/comment/model/Comment;
                     move-result-object v0
                     invoke-virtual {p0, v0}, $cell->P8(Lcom/ss/android/ugc/aweme/comment/model/Comment;)V
                     :done

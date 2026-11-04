@@ -183,7 +183,8 @@ internal fun applyAfterCommentToolsPreflight(vararg resolve: () -> CommentToolsW
 /**
  * Where the comment cell bind has its comment in hand on every bind: the index just past the
  * move-result of the first Comment-returning call after the PowerCell's own bind, and the
- * register that move-result writes. Nothing above it branches, so no comment skips it.
+ * register that move-result writes. Nothing above it branches, so no comment skips it, and the
+ * comment comes off the item this bind was handed.
  */
 internal fun Method.commentBindSite(): Pair<Int, Int> {
     val instructions = implementation?.instructions?.toList().orEmpty()
@@ -204,6 +205,21 @@ internal fun Method.commentBindSite(): Pair<Int, Int> {
     }
     if (branch != null) {
         throw PatchException("Comment tools: the comment cell bind branches (${branch.opcode}) before reading its comment.")
+    }
+    // A comment the cell kept from an earlier bind would hand every row the previous row's comment:
+    // the getter's receiver must be the bound item (the last parameter) or a plain copy of it.
+    val item = implementation!!.registerCount - 1
+    val receiver = when (val call = instructions[getter]) {
+        is FiveRegisterInstruction -> call.registerC
+        is RegisterRangeInstruction -> call.startRegister
+        else -> -1
+    }
+    val copied = instructions.subList(0, getter).any {
+        it.opcode in setOf(Opcode.MOVE_OBJECT, Opcode.MOVE_OBJECT_FROM16, Opcode.MOVE_OBJECT_16) &&
+            (it as TwoRegisterInstruction).registerA == receiver && it.registerB == item
+    }
+    if (receiver != item && !copied) {
+        throw PatchException("Comment tools: the comment cell bind reads its comment off v$receiver, not the bound item.")
     }
     val moveResult = instructions[getter + 1] as OneRegisterInstruction
     return getter + 2 to moveResult.registerA

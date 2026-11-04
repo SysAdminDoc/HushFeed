@@ -2498,12 +2498,13 @@
    },
    {
     "id": "hooks-bound",
-    "what": "The comment hooks found their anchors (HookStatus 'comments' and 'comment links' bound, no missing view id).",
+    "what": "The comment row hooks found their anchors (HookStatus 'comments' bound, no missing view id). That family records when a row's thumbs down or like count is looked up, so Thumbs down blocks the commenter is on; nothing is tapped. 'comment links' records only on a comment holding a web address, so it isn't asked for here.",
     "steps": [
      {
       "set": {
        "comment_links": "true",
-       "comment_search": "true"
+       "comment_search": "true",
+       "block_from_comment": "true"
       }
      },
      {
@@ -2537,7 +2538,8 @@
      {
       "set": {
        "comment_links": "false",
-       "comment_search": "false"
+       "comment_search": "false",
+       "block_from_comment": "false"
       }
      }
     ],

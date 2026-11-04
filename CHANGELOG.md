@@ -76,6 +76,7 @@ Every Hushfeed release, newest first.
 * **TikTok:** Patching 47.6.3 spends about a second less looking for methods. The read receipts and clear display lookups now name a field they read or write. `Use system font` and `AMOLED dark theme` find the web page callbacks in one pass instead of two, and the tab badge dot is looked up inside its count's class rather than across the whole app.
 * **TikTok:** Four more lookups find their method faster while patching 47.6.3: the hold gesture's touch listener, the DM sticker preview, the feed's long-press listeners and the Inbox pull refresh. Together they took 550 to 960 ms a run, and none of them is slow enough to show up in `--validate` now. The pull refresh is looked up only in the class that holds the manual refresh.
 * **TikTok:** The patch audit's check that `Hide read receipts` is switched on could never pass. Its pattern had two backspace characters where the word edges belonged, so it failed even with the switch listed. It looks for the switch's name now.
+* **TikTok:** The audit's comment hook check asked for records that only appear once a comment row's thumbs down is looked up, but it never turned on anything that looks. So it failed on 47.5.3 and 47.6.3 without ever reaching the code it asks about. It now switches on `Thumbs down blocks the commenter` for the check (nothing gets tapped) and stops asking for the link records, which only show up on a comment that has a web address in it.
 
 ## 0.80.0 (2026-11-01)
 

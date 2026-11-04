@@ -9,8 +9,8 @@
     "sha256": "ca9c75870e1fd408b1e9bd64aacbd730614b6b99c055198a1d249e31a1a5a246"
   },
   "runner": {
-    "commit": "8a626029da68e8e5c1d00d71e3c17d8fef26d373",
-    "catalog": "cdc9c59e016f1e50e4f611867be6c5fc7754ccd4531e4ac8118b9d16f68b8683"
+    "commit": "ecfccc71735855eb83b6763777a32ba730a6b5a9",
+    "catalog": "c44cb2af6d1581b314e550c9dd3a1de31accb33fdfeaed4d4879e40f2e75d594"
   },
   "build": {
     "status": "verified",
@@ -199,18 +199,18 @@
     "android": "16"
   },
   "startedUtc": "2026-11-04T13:35:14.7239168Z",
-  "finishedUtc": "2026-11-04T21:51:37.571884Z",
+  "finishedUtc": "2026-11-04T22:06:34.3410689Z",
   "evidence": "s22-def-ev",
   "summary": {
-    "pass": 365,
-    "fail": 1,
+    "pass": 366,
+    "fail": 0,
     "review": 3,
     "inconclusive": 12,
     "error": 0,
     "skipped": 0
   },
   "hooks": {
-    "families": 39,
+    "families": 50,
     "missed": []
   },
   "patches": [
@@ -20394,7 +20394,7 @@
       "name": "Comment tools",
       "category": "Comments",
       "kind": "runtime",
-      "ranUtc": "2026-11-04T21:51:07.1788405Z",
+      "ranUtc": "2026-11-04T22:05:58.2119932Z",
       "apkSha256": "ca9c75870e1fd408b1e9bd64aacbd730614b6b99c055198a1d249e31a1a5a246",
       "evidence": "s22-def-ev",
       "checks": [
@@ -20402,17 +20402,17 @@
           "id": "keyword-filter",
           "what": "With a keyword list that matches common comment words, the comment page loads with matching comments removed (debug line 'Comment filter removed N comment(s)').",
           "auto": true,
-          "status": "fail",
-          "failures": [
-            "step 5 (log): no log line matching Comment filter removed \\d+ comment\\(s\\)"
-          ],
+          "status": "pass",
+          "failures": [],
           "evidence": [
             "Comment_tools-keyword-filter-3-videoinfo.txt",
             "Comment_tools-keyword-filter-4-comments.txt",
-            "Comment_tools-keyword-filter-failed-step5-f468a6e7c46f46d2afad5713e2662660.png"
+            "Comment_tools-keyword-filter-5-log.txt",
+            "Comment_tools-keyword-filter-9-videoinfo.txt",
+            "Comment_tools-keyword-filter-10-comments.txt"
           ],
           "review": [],
-          "definitionHash": "c3e99b40261f904fe31d831b17cf0a3f49a8f0d44458618ad02cd4bb8f918dfd",
+          "definitionHash": "c713ac00980f7ad1abe5cd831f04607a00de338e639abca535333c852a1bc361",
           "apkSha256": "ca9c75870e1fd408b1e9bd64aacbd730614b6b99c055198a1d249e31a1a5a246",
           "installedApkSha256": "ca9c75870e1fd408b1e9bd64aacbd730614b6b99c055198a1d249e31a1a5a246",
           "build": {
@@ -20598,8 +20598,8 @@
             "nativeBuildSchema": 2
           },
           "receipt": {
-            "execution": "94d07300b3454cc1b07e790e7948734d",
-            "definition": "c3e99b40261f904fe31d831b17cf0a3f49a8f0d44458618ad02cd4bb8f918dfd",
+            "execution": "3167e44486684a9f8685a3b53e2a19e2",
+            "definition": "c713ac00980f7ad1abe5cd831f04607a00de338e639abca535333c852a1bc361",
             "apk": "ca9c75870e1fd408b1e9bd64aacbd730614b6b99c055198a1d249e31a1a5a246",
             "installed": "ca9c75870e1fd408b1e9bd64aacbd730614b6b99c055198a1d249e31a1a5a246",
             "build": {
@@ -20787,30 +20787,38 @@
             "evidence": [
               "Comment_tools-keyword-filter-3-videoinfo.txt",
               "Comment_tools-keyword-filter-4-comments.txt",
-              "Comment_tools-keyword-filter-failed-step5-f468a6e7c46f46d2afad5713e2662660.png"
+              "Comment_tools-keyword-filter-5-log.txt",
+              "Comment_tools-keyword-filter-9-videoinfo.txt",
+              "Comment_tools-keyword-filter-10-comments.txt"
             ],
             "files": [
               {
                 "file": "Comment_tools-keyword-filter-3-videoinfo.txt",
-                "sha256": "c3a85bd47858a71b7be46ce93872bce77891969c3b02ab6baf4ffb241d4dfc2c"
+                "sha256": "f7d62954d020cba272b9343793daeddb8b52a15b7156465bd37bf0852fa8d363"
               },
               {
                 "file": "Comment_tools-keyword-filter-4-comments.txt",
-                "sha256": "e59ff0e1d632f23ecd087425aef51cba47ca0e541d03aded8859b4aa86f4ba7f"
+                "sha256": "76819c8387226112a8cd176e3369c2e180299d25cfdda1c20c17910dd3e1d866"
               },
               {
-                "file": "Comment_tools-keyword-filter-failed-step5-f468a6e7c46f46d2afad5713e2662660.png",
-                "sha256": "7b4faa48233ecf6077ca606597c03129798dea019ec481e21f0dd0c62b2ab395"
+                "file": "Comment_tools-keyword-filter-5-log.txt",
+                "sha256": "a8109c7a7597e1eabb436cf6fabd242121bea0e1be0d105deab898b40e14f514"
+              },
+              {
+                "file": "Comment_tools-keyword-filter-9-videoinfo.txt",
+                "sha256": "bd3788e1434bce9b057eb4b6174a0a6320cb22cdb3cb139d6591ba8a439db3e9"
+              },
+              {
+                "file": "Comment_tools-keyword-filter-10-comments.txt",
+                "sha256": "3b6a1e7697e0bd1ec48177409d535f2654b40818bf337c75e3176494d0a81b3f"
               }
             ],
             "review": [],
             "auto": true,
-            "status": "fail",
-            "failures": [
-              "step 5 (log): no log line matching Comment filter removed \\d+ comment\\(s\\)"
-            ]
+            "status": "pass",
+            "failures": []
           },
-          "receiptId": "b1e2d3332df246f9d03cafce3f86501d3a74ba8b96470860a1761eb4b9dee36c"
+          "receiptId": "8dfcbf6ecab68dd401090202f70b92774c8b1f4b04f045ebbb631f2239572672"
         },
         {
           "id": "comment-search-box",
@@ -20821,11 +20829,11 @@
           "evidence": [
             "Comment_tools-comment-search-box-3-videoinfo.txt",
             "Comment_tools-comment-search-box-4-comments.txt",
-            "Comment_tools-comment-search-box-comment-search-4d4db8b3fc734e8b8b6f91209dbf328f.png"
+            "Comment_tools-comment-search-box-comment-search-c4a248ab255c4cb4abc9bffc76ad61d3.png"
           ],
           "review": [
             {
-              "shot": "Comment_tools-comment-search-box-comment-search-4d4db8b3fc734e8b8b6f91209dbf328f.png",
+              "shot": "Comment_tools-comment-search-box-comment-search-c4a248ab255c4cb4abc9bffc76ad61d3.png",
               "criteria": "Comment sheet: a search box with the hint 'Search these comments' sits above the first comment. Do not type or post. Failing looks like the sheet header going straight to comments."
             }
           ],
@@ -21015,7 +21023,7 @@
             "nativeBuildSchema": 2
           },
           "receipt": {
-            "execution": "2f9120b70cca42538b2c4c29a916c8a7",
+            "execution": "a0321b0e6ebb4bb697e51b23f7dfa4de",
             "definition": "23103e1504760fa6bfacec2ba187d865630e397053a8effd34685cf9b6280b3a",
             "apk": "ca9c75870e1fd408b1e9bd64aacbd730614b6b99c055198a1d249e31a1a5a246",
             "installed": "ca9c75870e1fd408b1e9bd64aacbd730614b6b99c055198a1d249e31a1a5a246",
@@ -21204,25 +21212,25 @@
             "evidence": [
               "Comment_tools-comment-search-box-3-videoinfo.txt",
               "Comment_tools-comment-search-box-4-comments.txt",
-              "Comment_tools-comment-search-box-comment-search-4d4db8b3fc734e8b8b6f91209dbf328f.png"
+              "Comment_tools-comment-search-box-comment-search-c4a248ab255c4cb4abc9bffc76ad61d3.png"
             ],
             "files": [
               {
                 "file": "Comment_tools-comment-search-box-3-videoinfo.txt",
-                "sha256": "f99effed4c97cd82f7763ff1c1f89ffe881d7af14cfa92d6fa257e3b81194c80"
+                "sha256": "b3eeb6bda1c5298634413076dc23f769f13b45569f155023baa47e31d117b194"
               },
               {
                 "file": "Comment_tools-comment-search-box-4-comments.txt",
-                "sha256": "2d867ae31c9efe00c41970fab8cb71543cc4d27eb41bb4d0de3b19d436f31c78"
+                "sha256": "d5e3536126a02b052ed43b2520f7ac955a0a9d8962112e6d35b10cfbf6b3ee67"
               },
               {
-                "file": "Comment_tools-comment-search-box-comment-search-4d4db8b3fc734e8b8b6f91209dbf328f.png",
-                "sha256": "5125b1364a0cbb92580e0b337dfe343f161a6d35fa1b8991a6f66ef77d1b6d49"
+                "file": "Comment_tools-comment-search-box-comment-search-c4a248ab255c4cb4abc9bffc76ad61d3.png",
+                "sha256": "27810bc4e841af39739c4d781be108781e5c2f90917dbee68c4852df3047219e"
               }
             ],
             "review": [
               {
-                "shot": "Comment_tools-comment-search-box-comment-search-4d4db8b3fc734e8b8b6f91209dbf328f.png",
+                "shot": "Comment_tools-comment-search-box-comment-search-c4a248ab255c4cb4abc9bffc76ad61d3.png",
                 "criteria": "Comment sheet: a search box with the hint 'Search these comments' sits above the first comment. Do not type or post. Failing looks like the sheet header going straight to comments."
               }
             ],
@@ -21230,12 +21238,12 @@
             "status": "review",
             "failures": []
           },
-          "receiptId": "9900936fdaf74dd13c23e41720a8425dd3c7dedb79529b5b162a8c0860dad351",
-          "verdictNote": "TikTok 47.6.3, Hushfeed 0.80.0 main 8a626029d, S22: the comment sheet on a 1,743-comment video shows a Search these comments box right under the comment count and above the first comment. Nothing was typed.",
+          "receiptId": "682b356d73ee91faba9a131c139cdec59aa9c2ecdab223dd2d67080bd0d4578c",
+          "verdictNote": "TikTok 47.6.3, Hushfeed 0.80.0 main 8a626029d, S22, rerun with ecfccc717: the comment sheet on a 10-comment video shows a Search these comments box right under the comment count and above the first comment. Nothing was typed.",
           "verdict": {
-            "receiptId": "9900936fdaf74dd13c23e41720a8425dd3c7dedb79529b5b162a8c0860dad351",
+            "receiptId": "682b356d73ee91faba9a131c139cdec59aa9c2ecdab223dd2d67080bd0d4578c",
             "status": "pass",
-            "note": "TikTok 47.6.3, Hushfeed 0.80.0 main 8a626029d, S22: the comment sheet on a 1,743-comment video shows a Search these comments box right under the comment count and above the first comment. Nothing was typed."
+            "note": "TikTok 47.6.3, Hushfeed 0.80.0 main 8a626029d, S22, rerun with ecfccc717: the comment sheet on a 10-comment video shows a Search these comments box right under the comment count and above the first comment. Nothing was typed."
           }
         },
         {
@@ -21436,7 +21444,7 @@
             "nativeBuildSchema": 2
           },
           "receipt": {
-            "execution": "f0acb35bb4914830a7dcccd2769c8402",
+            "execution": "8746492e8a08455796f08a92248064f9",
             "definition": "8963e0552093a179d3d6b1adeb7e99f4e2afaec169105c2739bacd821f719957",
             "apk": "ca9c75870e1fd408b1e9bd64aacbd730614b6b99c055198a1d249e31a1a5a246",
             "installed": "ca9c75870e1fd408b1e9bd64aacbd730614b6b99c055198a1d249e31a1a5a246",
@@ -21630,11 +21638,11 @@
             "files": [
               {
                 "file": "Comment_tools-hooks-bound-3-videoinfo.txt",
-                "sha256": "66503c3124e51cdf323a1b7b7efa6dbfec954958c0c3c71e8f8653420ec14267"
+                "sha256": "045d4eb7380c2a3c413e4c75549393500ab66c79154a522b27807e48e1c41945"
               },
               {
                 "file": "Comment_tools-hooks-bound-4-comments.txt",
-                "sha256": "5dfbd7344e419d9b6251540704c38435afc0320071a1fcc516098b473c6cb916"
+                "sha256": "ce9b851bcee46ebe44c48c0cc09afdd584f99c2c08755057b04582611f8140bc"
               },
               {
                 "file": "Comment_tools-hooks-bound-6-hookdetails.txt",
@@ -21646,7 +21654,7 @@
             "status": "pass",
             "failures": []
           },
-          "receiptId": "dd3f1c9eadab3eec487e226c0247a2ec4cd99e8b9b2dae07cbc199869d8505ba"
+          "receiptId": "f6f576fa7ce3bd292295bc8bcdbaa6ea0127e3e1aa94458e89db06ddb9227084"
         },
         {
           "id": "registered",
@@ -21844,7 +21852,7 @@
             "nativeBuildSchema": 2
           },
           "receipt": {
-            "execution": "35d7de64444a4d7b8c191e9daab72f36",
+            "execution": "ed9f0e8fe46043a78b032b8f9eae63e9",
             "definition": "09012e82e65326c765758c665e05c16327bc80d690365e8c100828dac3043c95",
             "apk": "ca9c75870e1fd408b1e9bd64aacbd730614b6b99c055198a1d249e31a1a5a246",
             "installed": "ca9c75870e1fd408b1e9bd64aacbd730614b6b99c055198a1d249e31a1a5a246",
@@ -22036,7 +22044,7 @@
             "files": [
               {
                 "file": "Comment_tools-registered-1-report.txt",
-                "sha256": "5cd62fcb4338e62858dbe0501e8c3c11687f69793df0493e7dbc206c1475d737"
+                "sha256": "9dd8eec991549d25a38a59dcd4a4a95e8b6022f38c3dc17c3e9a1377156d66a9"
               }
             ],
             "review": [],
@@ -22044,7 +22052,7 @@
             "status": "pass",
             "failures": []
           },
-          "receiptId": "12b4182dfea4a95f09ae9040772499f6ca39de9a330fd6a706f12e97e93da1c7"
+          "receiptId": "75fa74e81dd873f8b01d387707f841d14d93840cd3ad4e8e07576e47791bd559"
         }
       ]
     },
@@ -155997,7 +156005,7 @@
     "catalogChecks": 381,
     "resultChecks": 381,
     "currentChecks": 7,
-    "currentPass": 5,
+    "currentPass": 6,
     "buildOptions": [],
     "needsOptions": [
       "Accent color/accent-visible",

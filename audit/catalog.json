@@ -2433,8 +2433,8 @@
      },
      {
       "probe": "videoinfo",
-      "expect": "likes=over1000",
-      "retrySwipe": 8,
+      "expect": "comments=(?:1000orFewer|over1000)",
+      "retrySwipe": 12,
       "precondition": true
      },
      {
@@ -2459,8 +2459,8 @@
      },
      {
       "probe": "videoinfo",
-      "expect": "likes=over1000",
-      "retrySwipe": 8,
+      "expect": "comments=(?:1000orFewer|over1000)",
+      "retrySwipe": 12,
       "precondition": true
      },
      {

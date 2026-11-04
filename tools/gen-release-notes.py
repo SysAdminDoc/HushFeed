@@ -3,7 +3,8 @@
 Translated sections live in extensions/tiktok/src/main/l10n/notes/<table>.txt, one file per
 settings table, with en.txt holding the English summaries. A release in en.txt that doesn't
 line up with the CHANGELOG embeds the CHANGELOG's own bullets, with a warning. A translation
-goes in only when every table has that release (#91), so What's new never shows one language
+goes in only when every table has that release with one summary per English one (#91), so
+What's new never shows one language
 a release in its own words and the next language the English.
 
 Only the newest releases that fit BUDGET are embedded, counting each release's English and all
@@ -91,6 +92,13 @@ def translations(english: str) -> dict:
                if version in shipped and any(version not in found.get(language, {}) for language in LANGUAGES)}
     for version in sorted(partial, reverse=True):
         print(f"warning: {name(version)} isn't in every table, so What's new shows it in English")
+    # A table drafted before the English fell back to the CHANGELOG would show that language a
+    # different release, so a summary count that differs anywhere keeps the release in English.
+    uneven = {version for sections in found.values() for version, section in sections.items()
+              if version in shipped and version not in partial and bullets(section) != bullets(shipped[version])}
+    for version in sorted(uneven, reverse=True):
+        print(f"warning: {name(version)} doesn't line up with the English in every table, so What's new shows it in English")
+    partial |= uneven
     kept = {}
     for language, sections in found.items():
         versions = sorted((v for v in sections if v in shipped and v not in partial), reverse=True)

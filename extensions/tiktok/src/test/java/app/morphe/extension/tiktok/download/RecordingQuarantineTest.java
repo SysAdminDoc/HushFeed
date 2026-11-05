@@ -324,11 +324,16 @@ public class RecordingQuarantineTest {
         }
         try {
             assertFalse(store.ids().contains(id));
+            RecordingRetention.Record opened = null;
             try {
-                store.open(id);
-                fail();
+                opened = store.open(id);
             } catch (IOException expected) {
+                // Android follows the link and the canonical-path check refuses it.
             }
+            // Windows won't follow a directory link an ordinary user made ("untrusted mount
+            // point"), so there open() sees no directory and returns nothing. Either way no
+            // record may lease the linked directory.
+            assertNull(opened);
             assertArrayEquals(ORIGINAL, Files.readAllBytes(outside.toPath()));
         } finally {
             Files.deleteIfExists(link);

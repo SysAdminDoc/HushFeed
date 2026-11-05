@@ -2283,6 +2283,71 @@ public final class Probe extends Instrumentation {
                                 + " shownB=" + bRects.size() + " crossing=" + crossing + out);
                         break;
                     }
+                    case "fill": {
+                        // Where each shown feed player's picture is drawn inside it (#218): every
+                        // SurfaceView or TextureView child mapped through its own matrix (scale,
+                        // pivot and translation), which is the frame SurfaceFlinger gives the layer.
+                        // A player with no surface is its own picture and is mapped in its parent.
+                        // covers=true when every picture reaches both edges of its space.
+                        android.app.Activity activity = (android.app.Activity) loader.loadClass(UTILS)
+                                .getMethod("getActivity").invoke(null);
+                        if (activity == null) throw new IllegalStateException("no current activity");
+                        android.content.res.Resources resources = activity.getResources();
+                        int playerId = resources.getIdentifier("player_view", "id", activity.getPackageName());
+                        if (playerId == 0) throw new IllegalStateException("player_view=missing");
+                        android.util.DisplayMetrics metrics = resources.getDisplayMetrics();
+                        android.graphics.Rect screen = new android.graphics.Rect(0, 0, metrics.widthPixels, metrics.heightPixels);
+                        StringBuilder out = new StringBuilder();
+                        int players = 0;
+                        int pictures = 0;
+                        boolean covers = true;
+                        java.util.ArrayDeque<android.view.View> pending = new java.util.ArrayDeque<>(windowRoots());
+                        while (!pending.isEmpty()) {
+                            android.view.View view = pending.removeFirst();
+                            if (view instanceof android.view.ViewGroup) {
+                                android.view.ViewGroup group = (android.view.ViewGroup) view;
+                                for (int i = 0; i < group.getChildCount(); i++) pending.add(group.getChildAt(i));
+                            }
+                            if (view.getId() != playerId || !view.isShown() || !(view instanceof android.view.ViewGroup)
+                                    || view.getWindowVisibility() != android.view.View.VISIBLE || view.getHeight() <= 0) continue;
+                            int[] where = new int[2];
+                            view.getLocationOnScreen(where);
+                            if (!android.graphics.Rect.intersects(screen, new android.graphics.Rect(where[0], where[1],
+                                    where[0] + view.getWidth(), where[1] + view.getHeight()))) continue;
+                            players++;
+                            android.view.ViewGroup player = (android.view.ViewGroup) view;
+                            java.util.List<android.view.View> inside = new java.util.ArrayList<>();
+                            for (int i = 0; i < player.getChildCount(); i++) {
+                                android.view.View child = player.getChildAt(i);
+                                if (child.getVisibility() == android.view.View.VISIBLE && child.getHeight() > 0
+                                        && (child instanceof android.view.SurfaceView || child instanceof android.view.TextureView)) {
+                                    inside.add(child);
+                                }
+                            }
+                            boolean own = inside.isEmpty();
+                            if (own) inside.add(player);
+                            int space = own ? (player.getParent() instanceof android.view.View
+                                    ? ((android.view.View) player.getParent()).getHeight() : player.getHeight()) : player.getHeight();
+                            for (android.view.View picture : inside) {
+                                android.graphics.RectF drawn = new android.graphics.RectF(0, 0, picture.getWidth(), picture.getHeight());
+                                picture.getMatrix().mapRect(drawn);
+                                drawn.offset(picture.getLeft(), picture.getTop());
+                                boolean whole = drawn.top <= 0.5f && drawn.bottom >= space - 0.5f;
+                                covers &= whole;
+                                pictures++;
+                                out.append(" [").append(own ? "player" : picture.getClass().getSimpleName())
+                                        .append(" in=").append(space)
+                                        .append(" top=").append(Math.round(drawn.top)).append(" bottom=").append(Math.round(drawn.bottom))
+                                        .append(" scale=").append(picture.getScaleY())
+                                        .append(" pivotY=").append(picture.getPivotY())
+                                        .append(" ty=").append(picture.getTranslationY())
+                                        .append(" covers=").append(whole).append(']');
+                            }
+                        }
+                        Log.i(TAG, "ok fill players=" + players + " pictures=" + pictures
+                                + " covers=" + (pictures > 0 && covers) + out);
+                        break;
+                    }
                     case "fadestate": {
                         // The feed controls Fade the video controls and Clear display both write
                         // opacity to (#84): for each shown rail column, caption, anchor frame, search

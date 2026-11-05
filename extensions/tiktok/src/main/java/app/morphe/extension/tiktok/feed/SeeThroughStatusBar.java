@@ -6,6 +6,7 @@ package app.morphe.extension.tiktok.feed;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.os.Build;
 import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
@@ -13,7 +14,9 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.Window;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 import app.morphe.extension.tiktok.settings.Settings;
@@ -33,7 +36,8 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
  * <p>TikTok sizes each video's surface to the picture and centers it in the cell's player, so on
  * a tall screen a 9:16 video still left a black band under the clock with the spacer gone (S22: a
  * 1107 by 1968 surface in a 1080 by 2181 player, 106 px above and below). {@link #fill} grows a
- * portrait surface from its center until it covers the player, trimming a little off each side.
+ * portrait surface until it covers the player, trimming a little off each side: from its center,
+ * or from the point that covers both edges when TikTok moved the surface ({@link #fillPivot}).
  * See-through bottom bar asks for the same fill on its own, for the band under the picture (#218).
  */
 public final class SeeThroughStatusBar {
@@ -46,6 +50,8 @@ public final class SeeThroughStatusBar {
     private static final Map<Window, Integer> CLEARED = new WeakHashMap<>();
     /** Video surfaces and players this grew, with the scale it wrote. */
     private static final Map<View, Float> FILLED = new WeakHashMap<>();
+    /** Surfaces whose pivot this moved off their center, so it goes back with the scale. */
+    private static final Set<View> PIVOTED = Collections.newSetFromMap(new WeakHashMap<>());
 
     private SeeThroughStatusBar() {
     }
@@ -104,7 +110,8 @@ public final class SeeThroughStatusBar {
             View surface = group.getChildAt(i);
             if (!(surface instanceof SurfaceView) && !(surface instanceof TextureView)) continue;
             surfaces = true;
-            scale = grow(surface, wanted ? fillScale(group.getHeight(), surface) : 1f);
+            float grown = wanted ? fillScale(group.getHeight(), surface) : 1f;
+            scale = grow(surface, grown, fillPivot(surface, grown));
         }
         ViewParent space = player.getParent();
         // A player this grew keeps getting a pass after a surface shows up in it, so it goes back.
@@ -139,24 +146,68 @@ public final class SeeThroughStatusBar {
         return SettingsStatus.videoFitEnabled && Settings.FIT_VIDEO_TO_SCREEN.get();
     }
 
+    /** {@link #grow(View, float, float)} from the view's center. */
+    private static float grow(View view, float scale) {
+        return grow(view, scale, Float.NaN);
+    }
+
     /**
      * Writes {@code scale} on {@code view} unless TikTok has written a scale of its own there, and
-     * answers the scale this now holds on it, 1 when none.
+     * answers the scale this now holds on it, 1 when none. It grows from {@code pivotY}, or from
+     * the center when that's NaN, and a pivot this wrote goes back with the scale.
      */
-    private static float grow(View view, float scale) {
+    private static float grow(View view, float scale, float pivotY) {
         Float ours = FILLED.get(view);
         float current = view.getScaleY();
         if (current != (ours == null ? 1f : ours) || view.getScaleX() != current) {
             FILLED.remove(view);
+            pivot(view, Float.NaN);
             return 1f;
         }
         if (scale != current) {
             view.setScaleX(scale);
             view.setScaleY(scale);
         }
+        pivot(view, scale == 1f ? Float.NaN : pivotY);
         if (scale == 1f) FILLED.remove(view);
         else FILLED.put(view, scale);
         return scale;
+    }
+
+    /** Puts {@code view}'s pivot at {@code y}, or gives back the center when this moved it and {@code y} is NaN. */
+    private static void pivot(View view, float y) {
+        if (Float.isNaN(y)) {
+            if (!PIVOTED.remove(view)) return;
+            if (Build.VERSION.SDK_INT >= 28) {
+                view.resetPivot();
+            } else {
+                view.setPivotX(view.getWidth() / 2f);
+                view.setPivotY(view.getHeight() / 2f);
+            }
+            return;
+        }
+        if (view.getPivotY() != y || view.getPivotX() != view.getWidth() / 2f) {
+            view.setPivotX(view.getWidth() / 2f);
+            view.setPivotY(y);
+        }
+        PIVOTED.add(view);
+    }
+
+    /**
+     * Where {@code picture} grows from so {@code scale} covers the space from edge to edge, or NaN
+     * for its center. TikTok can move a surface it centered with its translation: 47.6.3 on the
+     * S22 lifts it 70.5 px, half the band it had before the bar's room was freed, so grown from its
+     * center the picture stopped 70 px short of the bottom and the tabs sat on black. The pivot
+     * that puts its top edge a pixel over the space's top puts the bottom one a pixel under, since
+     * the scale is the space's height plus two. A picture partly outside the space keeps its center.
+     */
+    static float fillPivot(View picture, float scale) {
+        if (scale <= 1f) return Float.NaN;
+        float above = picture.getTop() + picture.getTranslationY();
+        float pivot = (above + 1f) / (scale - 1f);
+        int height = picture.getHeight();
+        if (pivot < 0f || pivot > height || Math.abs(pivot - height / 2f) <= 1f) return Float.NaN;
+        return pivot;
     }
 
     /** {@link #fillScale(int, View, boolean)} for a surface TikTok centered by its layout. */

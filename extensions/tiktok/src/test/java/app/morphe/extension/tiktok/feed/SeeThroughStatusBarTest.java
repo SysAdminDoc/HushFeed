@@ -287,6 +287,50 @@ public class SeeThroughStatusBarTest {
     }
 
     /**
+     * 47.6.3 on the S22: the surface is 1080 by 1920, centered in the 2199 px player by its layout
+     * (139 above, 140 below), and TikTok lifts it 70.5 px with its translation, half the band of
+     * the 2061 px player it had before the bar's room was freed. Grown from its center the picture
+     * ended at 2129 of 2199 and the tabs sat on black. It grows from the point that covers both
+     * edges, with the same scale, and off gives the center back.
+     */
+    @Test
+    public void aSurfaceTikTokLiftedCoversThePlayerToTheBottom() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            feedCell(activity, View.INVISIBLE);
+            FrameLayout cell = activity.findViewById(CELL_ID);
+            FrameLayout player = new FrameLayout(activity);
+            player.setId(PLAYER_ID);
+            SurfaceView surface = new SurfaceView(activity);
+            player.addView(surface, new FrameLayout.LayoutParams(1080, 1920, Gravity.CENTER));
+            cell.addView(player, new FrameLayout.LayoutParams(1080, 2199));
+            layOut(player, 1080, 2199);
+            surface.setTranslationY(-70.5f);
+            assertEquals("not the S22's centered surface", 139, surface.getTop());
+
+            Settings.SEE_THROUGH_BOTTOM_BAR.save(true);
+            VideoOverlayHider.applyTo(activity);
+            float scale = surface.getScaleY();
+            float top = surface.getTop() + surface.getTranslationY() + surface.getPivotY() * (1f - scale);
+            float bottom = top + 1920 * scale;
+            assertTrue("the picture stopped short of the top: " + top, top <= 0f);
+            assertTrue("the picture stopped short of the bottom: " + bottom, bottom >= 2199f);
+            assertTrue("grown past what the player needs: " + scale, 1920 * scale <= 2199 + 3);
+            assertEquals("the sides grow from the middle", 540f, surface.getPivotX(), 0f);
+            assertEquals("TikTok's lift was changed", -70.5f, surface.getTranslationY(), 0f);
+
+            Settings.SEE_THROUGH_BOTTOM_BAR.save(false);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("off didn't put the picture back", 1f, surface.getScaleY(), 0f);
+            // A reset pivot follows the view's center again; Robolectric's RenderNode reads 0 for
+            // it rather than working the center out, so this asks whether one is still set.
+            assertFalse("off kept the moved pivot", surface.isPivotSet());
+            assertFalse(SeeThroughStatusBar.anyFilled());
+        }
+    }
+
+    /**
      * #164: only the first video after a cold start filled. That one plays in the surface TikTok
      * creates at launch inside the player. Later cells can get TikTok's SurfaceControl player,
      * whose view is the player itself: TikTok sizes the player to the picture and places it with

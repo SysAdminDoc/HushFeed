@@ -8592,6 +8592,12 @@
     "default": false,
     "type": "bool",
     "row": "Hide the comment bar on opened videos"
+   },
+   {
+    "key": "see_through_bottom_bar",
+    "default": false,
+    "type": "bool",
+    "row": "See-through bottom bar"
    }
   ],
   "surface": "feed",
@@ -9071,6 +9077,55 @@
     "auto": true
    },
    {
+    "id": "see-through-fills-to-bottom",
+    "what": "See-through bottom bar grows the playing video until it reaches the bottom of its player, so the tabs sit on the picture and not on black, and switching it off gives back TikTok's own size.",
+    "steps": [
+     {
+      "set": {
+       "see_through_bottom_bar": "true"
+      }
+     },
+     {
+      "restart": true
+     },
+     {
+      "open": "feed"
+     },
+     {
+      "wait": 2500
+     },
+     {
+      "probe": "fill",
+      "expect": "covers=true",
+      "retrySwipe": 2
+     },
+     {
+      "shot": "see-through-bottom-on",
+      "review": "The band above the tabs shows the video, not black."
+     },
+     {
+      "set": {
+       "see_through_bottom_bar": "false"
+      }
+     },
+     {
+      "restart": true
+     },
+     {
+      "open": "feed"
+     },
+     {
+      "wait": 2500
+     },
+     {
+      "probe": "fill",
+      "expect": "scale=1\\.0 ",
+      "expectNot": "scale=1\\.[0-9]*[1-9]"
+     }
+    ],
+    "auto": true
+   },
+   {
     "id": "registered",
     "what": "The patch registered its three switches in the APK.",
     "steps": [
@@ -9090,7 +9145,7 @@
     "auto": true
    }
   ],
-  "notes": "Nineteen switches in one patch; the checks above cover the ones with a view id or a HookStatus line. Not automated: Hide surveys (f98) and location labels / effect tags only exist on videos that carry them (naturally served; Roadmap_Blocked lists the visual-search and survey surfaces as unserved), and Hide full screen button needs a landscape video. Both are covered only by the registered check and the hookdetails 'overlay' family. View ids are 47.1.4 names read from VideoOverlayHider's id lists (obfuscated, they change every TikTok build). A hider acts on layout passes, so each 'on' phase swipes once and waits before it reads. 'morphe_debug' is the Log diagnostics setting; the Music disc log line only prints with it on. The right column list rows (hide_rail_*) have no row title of their own, they are items in the Right column checklist. Some videos have no music line (TikTok puts a search suggestion bar there and collapses ey3), so the music check first swipes to a video that shows one, and the hidden state it asks for is o7p GONE under a visible ey3 (2026-10-16; o97 under exn on 47.1.4). Keep the music disc still records 'held the disc' only when TikTok's music_animation_close_exp would let the disc turn; an account that gets 1 or 3 (the S22's gets 3, which the spin phase's log line names) is already held, so its hold phase shows installed alone (2026-10-16). music-line-hidden is inconclusive on 47.1.4 when TikTok shows no music line at all: on 2026-10-16 every video in eight swipes had `exn` (the music line's parent) gone and `o97` at 0x0 with the switch off, and the caption ran into a Search bar where the line used to be. That says nothing about the patch; rerun it on another day. opened-video-like-count-clear opens the first video on the official @tiktok profile and asks the probe's overlap action whether the like count row (g9h) crosses the progress row (video_seek_bar) where they're drawn; the heart's count sits beside g9f rather than inside it, as it sat beside g85 on 47.1.4, which is what put it on the time before the rail's lift counted it (2026-10-16, #145)."
+  "notes": "Nineteen switches in one patch; the checks above cover the ones with a view id or a HookStatus line. Not automated: Hide surveys (f98) and location labels / effect tags only exist on videos that carry them (naturally served; Roadmap_Blocked lists the visual-search and survey surfaces as unserved), and Hide full screen button needs a landscape video. Both are covered only by the registered check and the hookdetails 'overlay' family. View ids are 47.1.4 names read from VideoOverlayHider's id lists (obfuscated, they change every TikTok build). A hider acts on layout passes, so each 'on' phase swipes once and waits before it reads. 'morphe_debug' is the Log diagnostics setting; the Music disc log line only prints with it on. The right column list rows (hide_rail_*) have no row title of their own, they are items in the Right column checklist. Some videos have no music line (TikTok puts a search suggestion bar there and collapses ey3), so the music check first swipes to a video that shows one, and the hidden state it asks for is o7p GONE under a visible ey3 (2026-10-16; o97 under exn on 47.1.4). Keep the music disc still records 'held the disc' only when TikTok's music_animation_close_exp would let the disc turn; an account that gets 1 or 3 (the S22's gets 3, which the spin phase's log line names) is already held, so its hold phase shows installed alone (2026-10-16). music-line-hidden is inconclusive on 47.1.4 when TikTok shows no music line at all: on 2026-10-16 every video in eight swipes had `exn` (the music line's parent) gone and `o97` at 0x0 with the switch off, and the caption ran into a Search bar where the line used to be. That says nothing about the patch; rerun it on another day. opened-video-like-count-clear opens the first video on the official @tiktok profile and asks the probe's overlap action whether the like count row (g9h) crosses the progress row (video_seek_bar) where they're drawn; the heart's count sits beside g9f rather than inside it, as it sat beside g85 on 47.1.4, which is what put it on the time before the rail's lift counted it (2026-10-16, #145). see-through-fills-to-bottom reads the probe's fill action, which maps each surface through its own matrix the way SurfaceFlinger frames the layer; a view's getTop alone misses TikTok's translation, and on 47.6.3 the S22's surface sat 70.5 px high, so the picture stopped 70 px short of the tabs with every view measurement saying it fit (2026-11-05, #218)."
  },
  {
   "name": "Hold-and-slide 2x lock",

@@ -147,6 +147,11 @@ public final class HomeTabSettingsShortcut {
         }
     }
 
+    /** TikTok's main activity in front, or null. */
+    static Activity front() {
+        return FRONT.get();
+    }
+
     /** Whether the settings long press is on this tab, which is then Hushfeed's and not TikTok's. */
     static boolean holds(View view) {
         return view != null && attached.get() == view;

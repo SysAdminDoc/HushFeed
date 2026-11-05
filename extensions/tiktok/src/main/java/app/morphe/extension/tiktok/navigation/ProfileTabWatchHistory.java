@@ -15,6 +15,7 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 
 import app.morphe.extension.shared.Logger;
+import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
 import app.morphe.extension.tiktok.settings.Settings;
 
@@ -27,10 +28,16 @@ import app.morphe.extension.tiktok.settings.Settings;
  * A VIEW intent kept to TikTok's own package reaches its deep link handler, which opens the page
  * in a SparkActivity (47.4.3, S22, 2026-10-21, cold start included).
  *
- * <p>On some accounts holding Profile is TikTok's account switcher; on others the tab has no long
- * press at all. While the switch is on this takes the press and keeps TikTok's own listener,
- * which goes back on the tab when the switch goes off. If TikTok sets its listener again later,
- * the next layout pass takes the press back and keeps the new one instead.
+ * <p>On some accounts holding Profile is TikTok's account switcher. That listener stays on the
+ * tab: the patch has TikTok's switcher handler ask {@link #takesSwitcherPress} first, and while
+ * the switch is on the hold opens Watch history in place of the account sheet. Off, TikTok's
+ * handler runs as it always did. Taking TikTok's listener off the tab and putting it back
+ * depended on reading the view's private listener fields, and where that read failed the tab was
+ * left with no long press at all once the switch went off (#341).
+ *
+ * <p>On accounts where the tab has no long press of its own, this sets one. It declines while the
+ * switch is off, and comes off the tab only when it reads back as this one, so a listener TikTok
+ * sets on the tab later is never cleared.
  *
  * <p>Rides on {@link HomeTabSettingsShortcut}'s front window and layout passes, so it follows the
  * same main activity and the same rebuilt tab bars.
@@ -44,12 +51,14 @@ public final class ProfileTabWatchHistory {
             + "%26allow_webview_gesture%3D1%26bdhm_bid%3Dtiktok_privacy_product_hybrid"
             + "%26enable_search_history%3D1%26enter_from%3Dprofile_menu";
 
+    /** The tab tag TikTok's switcher handler gets for Profile. */
+    static final String PROFILE_TAG = "USER";
+
     private static WeakReference<View> attached = new WeakReference<>(null);
     /** A tab view that doesn't take the tap itself, so a long press on it would swallow taps. */
     private static WeakReference<View> refused = new WeakReference<>(null);
-    /** TikTok's own long press on the attached tab, given back when the switch goes off. */
-    private static View.OnLongClickListener original;
-    private static boolean originalLongClickable;
+    /** A tab carrying TikTok's own long press, which is left on it. */
+    private static WeakReference<View> tikToks = new WeakReference<>(null);
 
     private static Field listenerInfoField;
     private static Field longClickField;
@@ -57,6 +66,8 @@ public final class ProfileTabWatchHistory {
 
     static final View.OnLongClickListener OPEN_WATCH_HISTORY = view -> {
         try {
+            // Still on a tab after the switch went off (see takeOff): the release is a tap again.
+            if (!Settings.PROFILE_TAB_OPENS_WATCH_HISTORY.get()) return false;
             view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
             open(view.getContext());
         } catch (Throwable error) {
@@ -76,40 +87,48 @@ public final class ProfileTabWatchHistory {
         context.startActivity(intent);
     }
 
+    /**
+     * Injection point: the top of TikTok's Profile-hold handler, the one that shows the account
+     * switcher. True means Watch history opened and the handler returns before the sheet.
+     *
+     * @param tag the tab tag TikTok's long press posted
+     */
+    public static boolean takesSwitcherPress(Object tag) {
+        try {
+            if (!PROFILE_TAG.equals(tag) || !Settings.PROFILE_TAB_OPENS_WATCH_HISTORY.get()) return false;
+            Context context = HomeTabSettingsShortcut.front();
+            if (context == null) context = Utils.getContext();
+            if (context == null) return false;
+            open(context);
+            return true;
+        } catch (Throwable error) {
+            Logger.printException(() -> "Could not open Watch history from TikTok's Profile hold", error);
+            return false;
+        }
+    }
+
     /** Called on each layout pass of the main activity in front. */
     static void apply(Activity activity) {
         try {
             View current = attached.get();
             // Off, the tab isn't even looked up.
             if (!Settings.PROFILE_TAB_OPENS_WATCH_HISTORY.get()) {
-                if (current != null) giveBack(current);
+                if (current != null) takeOff(current);
                 return;
             }
             View profile = FeedVisibility.profileTabView(activity);
-            if (current != null && current != profile) giveBack(current);
-            if (profile == null || refused.get() == profile) return;
-
-            if (attached.get() == profile) {
-                View.OnLongClickListener now = longClickListener(profile);
-                if (listenerUnreadable || now == OPEN_WATCH_HISTORY) return;
-                // TikTok set its long press again, or cleared it: that is what goes back on the
-                // tab when the switch goes off.
-                original = now;
-                originalLongClickable = now != null;
-                profile.setOnLongClickListener(OPEN_WATCH_HISTORY);
-                Logger.printInfo(() -> "TikTok changed the Profile tab's long press; took it back");
-                return;
-            }
+            if (current != null && current != profile) takeOff(current);
+            if (profile == null || attached.get() == profile
+                    || refused.get() == profile || tikToks.get() == profile) return;
             if (!profile.isClickable()) {
                 refused = new WeakReference<>(profile);
                 Logger.printInfo(() -> "The Profile tab view doesn't take the tap itself; no long press");
                 return;
             }
-            originalLongClickable = profile.isLongClickable();
-            original = originalLongClickable ? longClickListener(profile) : null;
-            if (originalLongClickable && original == null) {
-                Logger.printInfo(() -> "Couldn't keep TikTok's own long press on Profile; "
-                        + "it comes back when TikTok rebuilds the tab bar");
+            if (profile.isLongClickable()) {
+                tikToks = new WeakReference<>(profile);
+                Logger.printInfo(() -> "The Profile tab has TikTok's own long press; TikTok's handler asks first");
+                return;
             }
             profile.setOnLongClickListener(OPEN_WATCH_HISTORY);
             attached = new WeakReference<>(profile);
@@ -118,23 +137,21 @@ public final class ProfileTabWatchHistory {
         }
     }
 
-    /**
-     * The main activity followed was destroyed: its tab goes with it, and TikTok's listener (which
-     * can hold that activity) isn't kept here past it.
-     */
+    /** The main activity followed was destroyed: its tab goes with it. */
     static void release() {
         View current = attached.get();
-        if (current != null) giveBack(current);
-        original = null;
-        originalLongClickable = false;
+        if (current != null) takeOff(current);
     }
 
-    private static void giveBack(View tab) {
-        tab.setOnLongClickListener(original);
-        tab.setLongClickable(originalLongClickable);
+    /**
+     * Takes this long press off a tab, but only once it reads back as this one: TikTok may have
+     * set its own on the tab since. Where the read fails it stays, and declines while off.
+     */
+    private static void takeOff(View tab) {
         attached = new WeakReference<>(null);
-        original = null;
-        originalLongClickable = false;
+        if (longClickListener(tab) != OPEN_WATCH_HISTORY) return;
+        tab.setOnLongClickListener(null);
+        tab.setLongClickable(false);
     }
 
     /** The view's long-click listener, or null when there is none or it can't be read. */
@@ -163,10 +180,10 @@ public final class ProfileTabWatchHistory {
 
     static void resetForTests() {
         View current = attached.get();
-        if (current != null) giveBack(current);
+        if (current != null) takeOff(current);
         attached = new WeakReference<>(null);
         refused = new WeakReference<>(null);
-        original = null;
-        originalLongClickable = false;
+        tikToks = new WeakReference<>(null);
+        listenerUnreadable = false;
     }
 }

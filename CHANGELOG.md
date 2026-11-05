@@ -54,6 +54,7 @@ Every Hushfeed release, newest first.
 * Hushfeed builds on Morphe patcher 2.2.0 now, so it needs Morphe Manager 2.4.0 or newer, or morphe-desktop 2.0.0 on a computer. Older Managers refuse the bundle.
 
 ### Bug Fixes
+* Turning off `Long-press Profile for Watch history` gives the Profile tab its account switcher back. On some phones holding Profile did nothing at all once the switch was off (#341).
 * Screen recordings of a LIVE no longer stop short with "Recording stopped early". When the picture barely moved, a small frame looked damaged to the step that checks the recording before saving it, so the saved video ended at that frame, often a few seconds in (#37).
 * The sound in a screen recording of a LIVE no longer cuts out early or drifts away from the picture when the phone is busy. Android throws away sound an app doesn't pick up within about a second, and the recorder ran at background priority, so a busy phone kept it waiting longer than that. Now the sound is picked up on its own thread as it arrives, and the recorder runs at normal priority while it records, which also keeps the picture from skipping (#37).
 * For You no longer freezes after a swipe with the first video's sound still playing and the next video stuck on its cover. On some starts TikTok never told the For You page it was on screen, so its videos never started. Now Hushfeed notices a For You feed that's in front but was never shown and shows it to TikTok, the way a tap on Home would. It doesn't depend on `Feed tab navigation`, and a feed that plays normally is left alone.

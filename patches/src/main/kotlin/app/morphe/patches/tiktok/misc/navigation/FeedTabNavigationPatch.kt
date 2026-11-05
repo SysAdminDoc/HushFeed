@@ -34,6 +34,7 @@ private const val FEED_REFRESH_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/
 private const val FEED_LOCK_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/wellbeing/FeedLock;"
 private const val START_PAGE_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/navigation/StartPage;"
 private const val FEED_BUTTONS_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/navigation/FeedButtons;"
+private const val PROFILE_TAB_WATCH_HISTORY_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/navigation/ProfileTabWatchHistory;"
 
 /** A method reference the way smali writes it after the invoke's registers. */
 private fun com.android.tools.smali.dexlib2.iface.reference.MethodReference.smali(): String =
@@ -451,5 +452,28 @@ val feedTabNavigationPatch = bytecodePatch(
             0,
             "invoke-static {p1}, $FEED_BUTTONS_CLASS_DESCRIPTOR->buttonShown(Landroid/view/View;)V",
         )
+
+        // Where holding Profile is TikTok's account switcher, its listener stays on the tab and its
+        // handler asks first, so Long-press Profile for Watch history never has to take that
+        // listener and give it back (#341). On a build where the handler moved, holding Profile
+        // stays the switcher there; a declared build fails instead (ProfileTabSwitcherAnchorsTest).
+        val switcher = if (packageMetadata.versionName in declaredVersions()) {
+            ProfileTabSwitcherFingerprint.method
+        } else {
+            ProfileTabSwitcherFingerprint.methodOrNull
+        }
+        switcher?.apply {
+            requireLocals("Feed tab navigation", 1)
+            addInstructionsWithLabels(
+                0,
+                """
+                    invoke-static/range {p1 .. p1}, $PROFILE_TAB_WATCH_HISTORY_CLASS_DESCRIPTOR->takesSwitcherPress(Ljava/lang/Object;)Z
+                    move-result v0
+                    if-eqz v0, :switcher
+                    return-void
+                """,
+                ExternalLabel("switcher", getInstruction(0)),
+            )
+        } ?: println("[Feed tab navigation] Left holding Profile to TikTok's account switcher on ${packageMetadata.versionName}")
     }
 }

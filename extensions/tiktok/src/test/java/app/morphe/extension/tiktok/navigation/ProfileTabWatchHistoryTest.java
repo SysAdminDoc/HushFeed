@@ -59,13 +59,13 @@ public class ProfileTabWatchHistoryTest {
         bar.addView(profile, new FrameLayout.LayoutParams(216, 138));
         content.addView(bar, new FrameLayout.LayoutParams(-1, 138, Gravity.BOTTOM));
         activity.setContentView(content);
-        FeedVisibility.resolveForTests(activity.getPackageName(), "47.6.3:onx", PROFILE_ID);
+        FeedVisibility.resolveForTests(activity.getPackageName(), "47.7.2:oph", PROFILE_ID);
     }
 
     @After public void tearDown() {
         PausedProcess.set(false);
         HomeTabSettingsShortcut.resetForTests();
-        FeedVisibility.resolveForTests(activity.getPackageName(), "47.6.3:onx", 0);
+        FeedVisibility.resolveForTests(activity.getPackageName(), "47.7.2:oph", 0);
         ReflectionHelpers.setStaticField(SettingsStatus.class, "feedNavigationEnabled", false);
         Settings.PROFILE_TAB_OPENS_WATCH_HISTORY.resetToDefault();
         if (!destroyed) owner.pause().stop().destroy();
@@ -96,72 +96,102 @@ public class ProfileTabWatchHistoryTest {
         assertNull(nextStarted());
     }
 
-    @Test public void tikToksOwnLongPressIsTakenWhileOnAndGivenBackWhenOff() {
-        AtomicInteger own = new AtomicInteger();
-        View.OnLongClickListener switcher = view -> {
-            own.incrementAndGet();
-            return true;
-        };
-        profile.setOnLongClickListener(switcher);
+    @Test public void tikToksSwitcherStaysOnTheTabAndOpensWatchHistoryWhileOn() {
+        AtomicInteger sheets = new AtomicInteger();
+        profile.setOnLongClickListener(switcher(sheets));
         Settings.PROFILE_TAB_OPENS_WATCH_HISTORY.save(true);
         installAndResume();
 
         assertTrue(profile.performLongClick());
-        assertNotNull(nextStarted());
-        assertEquals("TikTok's long press also ran", 0, own.get());
+        Intent opened = nextStarted();
+        assertNotNull("TikTok's Profile hold didn't open Watch history", opened);
+        assertEquals(ProfileTabWatchHistory.WATCH_HISTORY_URI, String.valueOf(opened.getData()));
+        assertEquals("the account sheet showed too", 0, sheets.get());
+        assertFalse("another tab's hold opened Watch history", ProfileTabWatchHistory.takesSwitcherPress("HOME"));
+        assertFalse(ProfileTabWatchHistory.takesSwitcherPress(null));
+        assertNull(nextStarted());
 
         Settings.PROFILE_TAB_OPENS_WATCH_HISTORY.save(false);
         layoutPass();
         assertTrue(profile.isLongClickable());
         assertTrue(profile.performLongClick());
-        assertEquals("switched off, TikTok's own long press didn't come back", 1, own.get());
+        assertEquals("switched off, TikTok's account sheet didn't come back", 1, sheets.get());
         assertNull(nextStarted());
     }
 
-    @Test public void aLongPressTikTokSetsAgainIsTakenBackAndKept() {
+    /** #341: the switch going off left the tab with no long press where its listener couldn't be read. */
+    @Test public void tikToksSwitcherSurvivesTheSwitchGoingOffWhereTheTabCantBeRead() {
+        ReflectionHelpers.setStaticField(ProfileTabWatchHistory.class, "listenerUnreadable", true);
+        AtomicInteger sheets = new AtomicInteger();
+        profile.setOnLongClickListener(switcher(sheets));
         Settings.PROFILE_TAB_OPENS_WATCH_HISTORY.save(true);
         installAndResume();
-        AtomicInteger own = new AtomicInteger();
-        profile.setOnLongClickListener(view -> {
-            own.incrementAndGet();
-            return true;
-        });
+        assertTrue(profile.performLongClick());
+        assertNotNull(nextStarted());
+
+        Settings.PROFILE_TAB_OPENS_WATCH_HISTORY.save(false);
+        layoutPass();
+        assertTrue("TikTok's Profile hold came back dead", profile.isLongClickable());
+        assertTrue(profile.performLongClick());
+        assertEquals("TikTok's account sheet was lost", 1, sheets.get());
+        assertNull(nextStarted());
+    }
+
+    @Test public void aLongPressLeftOnAnUnreadableTabDeclinesWhileOff() {
+        ReflectionHelpers.setStaticField(ProfileTabWatchHistory.class, "listenerUnreadable", true);
+        Settings.PROFILE_TAB_OPENS_WATCH_HISTORY.save(true);
+        installAndResume();
+        assertTrue(profile.performLongClick());
+        assertNotNull(nextStarted());
+
+        Settings.PROFILE_TAB_OPENS_WATCH_HISTORY.save(false);
+        layoutPass();
+        // Not read back as Hushfeed's, so it stays, and a declined press ends as a tap.
+        assertFalse("switched off, the hold still opened Watch history", profile.performLongClick());
+        assertNull(nextStarted());
+        assertTrue(profile.performClick());
+        assertEquals(1, taps.get());
+    }
+
+    @Test public void aLongPressTikTokSetsLaterIsLeftOnTheTab() {
+        Settings.PROFILE_TAB_OPENS_WATCH_HISTORY.save(true);
+        installAndResume();
+        AtomicInteger sheets = new AtomicInteger();
+        profile.setOnLongClickListener(switcher(sheets));
         layoutPass();
 
         assertTrue(profile.performLongClick());
-        assertNotNull("TikTok's later listener kept the press", nextStarted());
-        assertEquals(0, own.get());
+        assertNotNull("TikTok's later switcher didn't ask first", nextStarted());
+        assertEquals(0, sheets.get());
 
         Settings.PROFILE_TAB_OPENS_WATCH_HISTORY.save(false);
         layoutPass();
         // performLongClick runs a listener on a view that isn't long-clickable; a finger doesn't.
         assertTrue("TikTok's later long press came back dead", profile.isLongClickable());
         assertTrue(profile.performLongClick());
-        assertEquals("TikTok's later listener was lost", 1, own.get());
+        assertEquals("TikTok's later listener was lost", 1, sheets.get());
     }
 
-    @Test public void aLongPressTikTokClearsWhileOnStaysGoneWhenOff() {
-        AtomicInteger own = new AtomicInteger();
-        profile.setOnLongClickListener(view -> {
-            own.incrementAndGet();
-            return true;
-        });
+    @Test public void aTabRebuiltWithoutTikToksLongPressGetsOurs() {
+        AtomicInteger sheets = new AtomicInteger();
+        profile.setOnLongClickListener(switcher(sheets));
         Settings.PROFILE_TAB_OPENS_WATCH_HISTORY.save(true);
         installAndResume();
-        profile.setOnLongClickListener(null);
+        FrameLayout bar = (FrameLayout) profile.getParent();
+        View rebuilt = new View(activity);
+        rebuilt.setId(PROFILE_ID);
+        rebuilt.setOnClickListener(view -> taps.incrementAndGet());
+        bar.removeView(profile);
+        bar.addView(rebuilt, new FrameLayout.LayoutParams(216, 138));
         layoutPass();
 
-        assertTrue("TikTok clearing its listener took ours too", profile.performLongClick());
+        assertTrue(rebuilt.isLongClickable());
+        assertTrue(rebuilt.performLongClick());
         assertNotNull(nextStarted());
-
-        Settings.PROFILE_TAB_OPENS_WATCH_HISTORY.save(false);
-        layoutPass();
-        assertFalse("a long press TikTok removed came back", profile.isLongClickable());
-        assertFalse(profile.performLongClick());
-        assertEquals(0, own.get());
+        assertEquals(0, sheets.get());
     }
 
-    @Test public void tikToksLongPressIsGivenBackWhenTheActivityCloses() {
+    @Test public void tikToksLongPressIsUntouchedWhenTheActivityCloses() {
         AtomicInteger own = new AtomicInteger();
         profile.setOnLongClickListener(view -> {
             own.incrementAndGet();
@@ -212,6 +242,8 @@ public class ProfileTabWatchHistoryTest {
         installAndResume();
 
         assertFalse(profile.isLongClickable());
+        assertFalse("paused, TikTok's account switcher was skipped",
+                ProfileTabWatchHistory.takesSwitcherPress(ProfileTabWatchHistory.PROFILE_TAG));
         assertNull(nextStarted());
     }
 
@@ -224,6 +256,16 @@ public class ProfileTabWatchHistoryTest {
         assertFalse(profile.isLongClickable());
         assertFalse(profile.performLongClick());
         assertNull(nextStarted());
+    }
+
+    /** TikTok's account-switcher long press: it posts the tab tag, and its handler asks Hushfeed first. */
+    private static View.OnLongClickListener switcher(AtomicInteger sheets) {
+        return view -> {
+            if (!ProfileTabWatchHistory.takesSwitcherPress(ProfileTabWatchHistory.PROFILE_TAG)) {
+                sheets.incrementAndGet();
+            }
+            return true;
+        };
     }
 
     private void installAndResume() {

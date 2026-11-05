@@ -31,6 +31,7 @@ Every Hushfeed release, newest first.
 * Settings dialogs match the settings page now. The panel has rounded corners and a thin outline, and a long title wraps instead of getting cut off. Choices are rounded rows, and the one you picked is tinted. Buttons are outlined and big enough to hit easily. Text boxes get a rounded frame that turns red while you type, and the dialog makes room for the keyboard instead of sliding under it. On the dark theme, the tick in a checked box is easier to see.
 * A row under the search switches the main settings page between categories and one long list with every category open, and it keeps your choice for next time. The restart button looks like a button now, with an arrow and an outline, and it lines up with the search and the cards under it.
 * When your daily budget runs out, the title on the screen that holds the feed moves through the same cyan and red as the settings and the App lock screen.
+* `Long-press Inbox for read receipts` makes a long press on the Inbox tab turn `Hide read receipts` on or off, and a short message says which. A tap on Inbox still opens it. It starts off, and it sits under Feed tab navigation.
 
 ### Bug Fixes
 * `Hide message streaks` takes the streak button off chats, the share panel, Friends and stories, and the streak reminder off your chat list. Before, it hid nothing, since TikTok no longer asks the spot Hushfeed was answering.

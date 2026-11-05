@@ -2422,3 +2422,7 @@ Hide typing,隐藏正在输入
 People you chat with won't see that you're typing. Needs Ghost mode on.,和你聊天的人不会看到你正在输入。需要开启幽灵模式.
 Show all settings as a list,以列表显示所有设置
 Show settings by category,按类别显示设置
+Long-press Inbox for read receipts,长按收件箱切换已读回执
+"Press and hold the Inbox tab to turn Hide read receipts on or off. A message says which. A tap on Inbox works as before. If holding Inbox does something for you already, this takes that press.",按住收件箱标签可开启或关闭“隐藏已读回执”，并会弹出提示说明当前状态。点按收件箱仍和以前一样。如果按住收件箱在你的账号上已有其他作用，此功能会接管该操作.
+Read receipts hidden,已隐藏已读回执
+Read receipts shown,已显示已读回执

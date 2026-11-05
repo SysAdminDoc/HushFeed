@@ -54,6 +54,7 @@ public final class HomeTabSettingsShortcut {
         @Override public void onGone(Activity activity) {
             LAYOUT.detach();
             ProfileTabWatchHistory.release();
+            InboxTabReadReceipts.release();
         }
     });
     /** The tab the listener is on, so a rebuilt tab gets it again and an old one is let go. */
@@ -113,6 +114,7 @@ public final class HomeTabSettingsShortcut {
                 return;
             }
             ProfileTabWatchHistory.apply(activity);
+            InboxTabReadReceipts.apply(activity);
             View home = FeedVisibility.homeTabView(activity);
             View current = attached.get();
             boolean wanted = Settings.HOME_TAB_OPENS_SETTINGS.get();
@@ -145,6 +147,7 @@ public final class HomeTabSettingsShortcut {
         LAYOUT.detach();
         FRONT.resetForTests();
         ProfileTabWatchHistory.resetForTests();
+        InboxTabReadReceipts.resetForTests();
         attached = new WeakReference<>(null);
         refused = new WeakReference<>(null);
     }

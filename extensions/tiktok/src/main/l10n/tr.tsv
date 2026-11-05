@@ -2453,3 +2453,7 @@ Hide typing	Yazıyor durumunu gizle
 People you chat with won't see that you're typing. Needs Ghost mode on.	Sohbet ettiğin kişiler yazdığını görmez. Hayalet modu açık olmalı.
 Show all settings as a list	Tüm ayarları liste olarak göster
 Show settings by category	Ayarları kategoriye göre göster
+Long-press Inbox for read receipts	Gelen kutusuna uzun basarak okundu bilgisi
+Press and hold the Inbox tab to turn Hide read receipts on or off. A message says which. A tap on Inbox works as before. If holding Inbox does something for you already, this takes that press.	Gelen kutusu sekmesine basılı tutarak Okundu bilgilerini gizle seçeneğini açıp kapatın. Bir mesaj hangisi olduğunu söyler. Gelen kutusuna dokunmak eskisi gibi çalışır. Gelen kutusuna basılı tutmak sizde zaten bir şey yapıyorsa, bu seçenek o basışı devralır.
+Read receipts hidden	Okundu bilgileri gizli
+Read receipts shown	Okundu bilgileri gösteriliyor

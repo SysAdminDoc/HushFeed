@@ -2453,3 +2453,7 @@ Hide typing	Ocultar quando você está digitando
 People you chat with won't see that you're typing. Needs Ghost mode on.	As pessoas com quem você conversa não verão que você está digitando. Precisa do modo fantasma ligado.
 Show all settings as a list	Mostrar todas as configurações em lista
 Show settings by category	Mostrar configurações por categoria
+Long-press Inbox for read receipts	Toque longo na Caixa de entrada para confirmações de leitura
+Press and hold the Inbox tab to turn Hide read receipts on or off. A message says which. A tap on Inbox works as before. If holding Inbox does something for you already, this takes that press.	Mantenha pressionada a aba Caixa de entrada para ligar ou desligar Ocultar confirmações de leitura. Uma mensagem diz qual ficou. Um toque na Caixa de entrada funciona como antes. Se manter a Caixa de entrada pressionada já faz algo para você, isso assume esse toque.
+Read receipts hidden	Confirmações de leitura ocultas
+Read receipts shown	Confirmações de leitura visíveis

@@ -5253,6 +5253,12 @@
     "row": "Long-press Home for Hushfeed settings"
    },
    {
+    "key": "inbox_tab_flips_read_receipts",
+    "default": false,
+    "type": "bool",
+    "row": "Long-press Inbox for read receipts"
+   },
+   {
     "key": "keep_for_you_on_tab_tap",
     "default": false,
     "type": "bool",

@@ -2453,3 +2453,7 @@ Hide typing	Ocultar que estás escribiendo
 People you chat with won't see that you're typing. Needs Ghost mode on.	Las personas con las que chateas no verán que estás escribiendo. Necesita el modo fantasma activado.
 Show all settings as a list	Mostrar todos los ajustes en una lista
 Show settings by category	Mostrar los ajustes por categoría
+Long-press Inbox for read receipts	Mantener pulsado Bandeja para confirmaciones de lectura
+Press and hold the Inbox tab to turn Hide read receipts on or off. A message says which. A tap on Inbox works as before. If holding Inbox does something for you already, this takes that press.	Mantén pulsada la pestaña Bandeja de entrada para activar o desactivar Ocultar confirmaciones de lectura. Un aviso indica cuál es el estado. Tocar Bandeja de entrada funciona como siempre. Si mantenerla pulsada ya hace algo en tu cuenta, esto toma esa pulsación.
+Read receipts hidden	Confirmaciones de lectura ocultas
+Read receipts shown	Confirmaciones de lectura visibles

@@ -100,6 +100,16 @@ public class FeedNavigationPreferenceCategory extends ConditionalPreferenceCateg
                         + "press, and the name at the top of your profile still switches accounts.",
                 Settings.PROFILE_TAB_OPENS_WATCH_HISTORY
         ));
+        if (SettingsStatus.hideReadReceiptsEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Long-press Inbox for read receipts",
+                    "Press and hold the Inbox tab to turn Hide read receipts on or off. A message says "
+                            + "which. A tap on Inbox works as before. If holding Inbox does something for "
+                            + "you already, this takes that press.",
+                    Settings.INBOX_TAB_FLIPS_READ_RECEIPTS
+            ));
+        }
         addPreference(new TogglePreference(
                 context,
                 "Keep For You on a Home tap",

@@ -1124,6 +1124,7 @@ Logging until %1$s. Tap to stop now.,Logging until %1$s. Tap to stop now.
 "Logs for 15 minutes, then stops on its own. Restarting TikTok doesn't move the end, and the switch above stays as you set it.","Logs for 15 minutes, then stops on its own. Restarting TikTok doesn't move the end, and the switch above stays as you set it."
 Long press,Long press
 Long-press Home for Hushfeed settings,Long-press Home for Hushfeed settings
+Long-press Inbox for read receipts,Long-press Inbox for read receipts
 Long-press Profile for Watch history,Long-press Profile for Watch history
 "Long-press a bio to copy it. A profile's share sheet gets buttons that copy its username and user ID, and a video's share sheet one that copies the video ID. On a LIVE profile card, long-press the name, username or bio to copy it, or tap the copy mark by the username.","Long-press a bio to copy it. A profile's share sheet gets buttons that copy its username and user ID, and a video's share sheet one that copies the video ID. On a LIVE profile card, long-press the name, username or bio to copy it, or tap the copy mark by the username."
 Long-press menu on every post,Long-press menu on every post
@@ -1425,6 +1426,7 @@ Press and hold a comment to find Block this commenter in its menu. Their comment
 Press and hold a profile picture to save the full size original to your photo destination.,Press and hold a profile picture to save the full size original to your photo destination.
 "Press and hold a story to save it. Stories have no save button of their own, and holding one is how TikTok pauses it, so this takes that gesture over.","Press and hold a story to save it. Stories have no save button of their own, and holding one is how TikTok pauses it, so this takes that gesture over."
 Press and hold the Home tab to open these settings. A tap on Home works as before.,Press and hold the Home tab to open these settings. A tap on Home works as before.
+"Press and hold the Inbox tab to turn Hide read receipts on or off. A message says which. A tap on Inbox works as before. If holding Inbox does something for you already, this takes that press.","Press and hold the Inbox tab to turn Hide read receipts on or off. A message says which. A tap on Inbox works as before. If holding Inbox does something for you already, this takes that press."
 "Press and hold the Profile tab to open your Watch history. A tap on Profile works as before. If holding Profile switches accounts for you, this takes that press, and the name at the top of your profile still switches accounts.","Press and hold the Profile tab to open your Watch history. A tap on Profile works as before. If holding Profile switches accounts for you, this takes that press, and the name at the top of your profile still switches accounts."
 Press and hold the left or right third of the screen to jump back or forward. The middle third keeps the Long press action.,Press and hold the left or right third of the screen to jump back or forward. The middle third keeps the Long press action.
 Preview a translation from a received text message's menu. The original message stays unchanged.,Preview a translation from a received text message's menu. The original message stays unchanged.
@@ -1473,6 +1475,8 @@ Putting the settings back to their defaults,Putting the settings back to their d
 Quality,Quality
 "Quality, files, subtitles and hand-off","Quality, files, subtitles and hand-off"
 "Quality, speed and auto-advance","Quality, speed and auto-advance"
+Read receipts hidden,Read receipts hidden
+Read receipts shown,Read receipts shown
 Read-only list. Accounts won't be opened or unblocked.,Read-only list. Accounts won't be opened or unblocked.
 Reading,Reading
 Reading the font file,Reading the font file

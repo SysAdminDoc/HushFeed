@@ -292,6 +292,7 @@
       "keep_for_you_on_pull_down",
       "home_tab_opens_settings",
       "profile_tab_opens_watch_history",
+      "inbox_tab_flips_read_receipts",
       "start_page",
       "show_feed_buttons",
       "hide_tako_ai",
@@ -2658,6 +2659,12 @@
     "inbox_loaded_search": {
       "field": "INBOX_LOADED_SEARCH",
       "key": "inbox_loaded_search",
+      "type": "boolean",
+      "default": false
+    },
+    "inbox_tab_flips_read_receipts": {
+      "field": "INBOX_TAB_FLIPS_READ_RECEIPTS",
+      "key": "inbox_tab_flips_read_receipts",
       "type": "boolean",
       "default": false
     },

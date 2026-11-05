@@ -557,6 +557,8 @@ public class Settings extends BaseSettings {
      * accounts that press is TikTok's account switcher, which this takes over while it's on.
      */
     public static final BooleanSetting PROFILE_TAB_OPENS_WATCH_HISTORY = new BooleanSetting("profile_tab_opens_watch_history", FALSE);
+    /** A long press on the Inbox tab flips Hide read receipts and toasts the new state (#333). */
+    public static final BooleanSetting INBOX_TAB_FLIPS_READ_RECEIPTS = new BooleanSetting("inbox_tab_flips_read_receipts", FALSE);
     /** The tab TikTok opens on from its icon: tiktok (its own pick), for_you, following, friends, inbox or profile. */
     public static final StringSetting START_PAGE = new StringSetting("start_page", "tiktok");
     /** TikTok's previous, pause and next buttons on the feed, shown without a screen reader. Off by default. */

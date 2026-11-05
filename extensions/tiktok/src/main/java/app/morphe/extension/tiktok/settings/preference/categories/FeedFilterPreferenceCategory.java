@@ -377,6 +377,12 @@ public class FeedFilterPreferenceCategory extends ConditionalPreferenceCategory 
                     Settings.LOCAL_WATCH_HISTORY
             ));
             addPreference(new LocalWatchHistoryPreference(context));
+            addPreference(new TogglePreference(
+                    context,
+                    "Long press on For You opens my watch history",
+                    "Instead of these settings. The list has a button that brings you back here.",
+                    Settings.FOR_YOU_HOLD_OPENS_WATCH_HISTORY
+            ));
         }
     }
 

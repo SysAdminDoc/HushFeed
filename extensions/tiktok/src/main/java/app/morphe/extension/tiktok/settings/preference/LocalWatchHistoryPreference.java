@@ -35,6 +35,7 @@ import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.seen.LocalWatchHistory;
 import app.morphe.extension.tiktok.settings.L10n;
+import app.morphe.extension.tiktok.settings.TikTokActivityHook;
 
 /**
  * Opens the watch history kept on the phone (#172): a search box over the videos, newest first. A
@@ -61,12 +62,20 @@ public final class LocalWatchHistoryPreference extends Preference {
         setTitle(L10n.t(context, "My watch history"));
         setSummary(L10n.t(context, "Find and reopen the videos you've watched on this phone"));
         setOnPreferenceClickListener(preference -> {
-            show(context);
+            show(context, false);
             return true;
         });
     }
 
-    private static void show(Context context) {
+    /**
+     * The same list over TikTok's feed, from a long press on For You (#172). That press is
+     * otherwise a way into these settings, so the list carries a button to them.
+     */
+    public static void showOverFeed(Context context) {
+        show(context, true);
+    }
+
+    private static void show(Context context, boolean overFeed) {
         if (SettingsUi.dialogOpen(KEY, context)) return;
         int gap = SettingsUi.dp(context, 20);
         int height = SettingsUi.dialogListHeight(context, 420);
@@ -98,12 +107,18 @@ public final class LocalWatchHistoryPreference extends Preference {
         page.addView(list, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, height));
 
-        AlertDialog dialog = new AlertDialog.Builder(context)
+        AlertDialog.Builder builder = new AlertDialog.Builder(context)
                 .setTitle(L10n.t(context, "My watch history"))
                 .setView(page)
                 .setPositiveButton(L10n.t(context, "Close"), (target, which) -> target.dismiss())
-                .setNeutralButton(L10n.t(context, "Clear"), null)
-                .create();
+                .setNeutralButton(L10n.t(context, "Clear"), null);
+        if (overFeed) {
+            builder.setNegativeButton(L10n.t(context, "Open Hushfeed settings"), (target, which) -> {
+                target.dismiss();
+                TikTokActivityHook.openSettings();
+            });
+        }
+        AlertDialog dialog = builder.create();
         dialog.show();
         SettingsUi.dialogOpened(KEY, context, dialog);
         SettingsUi.styleStandardAlertDialog(dialog);

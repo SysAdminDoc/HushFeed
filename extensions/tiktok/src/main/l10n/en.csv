@@ -982,6 +982,7 @@ Includes all diagnostic events.,Includes all diagnostic events.
 Includes these events: %1$s,Includes these events: %1$s
 Inserted cards,Inserted cards
 "Install one, then come back here.","Install one, then come back here."
+Instead of these settings. The list has a button that brings you back here.,Instead of these settings. The list has a button that brings you back here.
 Joined,Joined
 Joined %s,Joined %s
 Keep Clear display across videos,Keep Clear display across videos
@@ -1126,6 +1127,7 @@ Logging until %1$s. Tap to stop now.,Logging until %1$s. Tap to stop now.
 "Logging, hook status and reports","Logging, hook status and reports"
 "Logs for 15 minutes, then stops on its own. Restarting TikTok doesn't move the end, and the switch above stays as you set it.","Logs for 15 minutes, then stops on its own. Restarting TikTok doesn't move the end, and the switch above stays as you set it."
 Long press,Long press
+Long press on For You opens my watch history,Long press on For You opens my watch history
 Long-press Home for Hushfeed settings,Long-press Home for Hushfeed settings
 Long-press Inbox for read receipts,Long-press Inbox for read receipts
 Long-press Profile for Watch history,Long-press Profile for Watch history

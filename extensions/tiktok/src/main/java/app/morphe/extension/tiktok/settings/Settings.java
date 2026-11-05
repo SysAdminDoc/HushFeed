@@ -1207,6 +1207,9 @@ public class Settings extends BaseSettings {
             new IntegerSetting("seen_video_mark_percent", 0).withRange(0, 90);
     /** A list of the videos watched, with who posted them and their captions, on the phone (#172). */
     public static final BooleanSetting LOCAL_WATCH_HISTORY = new BooleanSetting("local_watch_history", FALSE);
+    /** A long press on For You opens that list over the feed instead of these settings (#172). */
+    public static final BooleanSetting FOR_YOU_HOLD_OPENS_WATCH_HISTORY = new BooleanSetting(
+            "for_you_hold_opens_watch_history", FALSE, Setting.parent(LOCAL_WATCH_HISTORY));
     public static final BooleanSetting HIDE_PLAYLIST_BAR = new BooleanSetting("hide_playlist_bar", FALSE, true);
     public static final BooleanSetting HIDE_EVENT_BADGE = new BooleanSetting("hide_event_badge", FALSE, true);
     public static final BooleanSetting HIDE_INSERTED_CARDS = new BooleanSetting("hide_inserted_cards", FALSE, true);

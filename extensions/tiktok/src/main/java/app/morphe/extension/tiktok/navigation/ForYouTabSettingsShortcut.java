@@ -24,7 +24,9 @@ import java.util.WeakHashMap;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.settings.L10n;
+import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.TikTokActivityHook;
+import app.morphe.extension.tiktok.settings.preference.LocalWatchHistoryPreference;
 
 /**
  * A long press on For You, the feed's name in the strip of tabs across the top of TikTok's home
@@ -43,9 +45,10 @@ import app.morphe.extension.tiktok.settings.TikTokActivityHook;
  * <p>TalkBack can't time a press, so For You also carries a named action, Open Hushfeed settings,
  * in the actions TalkBack lists for it ({@link OpenAction}).
  *
- * <p>No switch reads this, so Pause leaves it working: it's a way back to the switch that resumes
- * Hushfeed. The other top tabs are left alone, and a tab TikTok makes long-clickable keeps its own
- * long press.
+ * <p>One switch can send the press to the watch history kept on the phone instead (#172). Pause
+ * answers that switch's default, so a paused Hushfeed opens the settings: it's a way back to the
+ * switch that resumes Hushfeed. The other top tabs are left alone, and a tab TikTok makes
+ * long-clickable keeps its own long press.
  */
 public final class ForYouTabSettingsShortcut {
     /** The timer on each top tab that has shown For You, so a tab bound again keeps the one it has. */
@@ -81,18 +84,38 @@ public final class ForYouTabSettingsShortcut {
     }
 
     /**
-     * Opens the settings page the way its row in Settings and privacy does.
+     * Opens the settings page the way its row in Settings and privacy does, or the watch history
+     * kept on the phone over the feed when `Long press on For You opens my watch history` is on
+     * (#172).
      *
-     * @return whether the page was asked for. False leaves the press to TikTok.
+     * @param tab the pressed tab, or null for TalkBack's named action, which always means settings
+     * @return whether something was opened. False leaves the press to TikTok.
      */
-    static boolean open() {
+    static boolean open(View tab) {
         if (Utils.getContext() == null) {
             Logger.printInfo(() -> "No app context yet, so the long press on For You stays TikTok's");
             return false;
         }
+        if (tab != null && opensWatchHistory()) {
+            try {
+                Logger.printInfo(() -> "Watch history requested by a long press on For You");
+                LocalWatchHistoryPreference.showOverFeed(tab.getContext());
+                return true;
+            } catch (Throwable error) {
+                Logger.printException(() -> "Could not show the watch history, so the settings open", error);
+            }
+        }
         Logger.printInfo(() -> "Settings requested by a long press on For You");
         TikTokActivityHook.openSettings();
         return true;
+    }
+
+    /**
+     * Whether the press opens the watch history. Pause answers both switches' defaults, so a paused
+     * Hushfeed still opens the settings, where Pause is turned off.
+     */
+    static boolean opensWatchHistory() {
+        return Settings.FOR_YOU_HOLD_OPENS_WATCH_HISTORY.get() && Settings.LOCAL_WATCH_HISTORY.get();
     }
 
     /** Times a press on one top tab, and opens the settings when the tab is For You. */
@@ -159,7 +182,7 @@ public final class ForYouTabSettingsShortcut {
             if (tab == null || !tab.isAttachedToWindow() || !forYou) return;
             try {
                 // Not asked for, and letting go is TikTok's tap, as it is without Hushfeed.
-                if (!open()) return;
+                if (!open(tab)) return;
                 opened = true;
                 tab.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
                 // The tab lets go of its press here, so letting go of the screen isn't a tap on it.
@@ -231,7 +254,7 @@ public final class ForYouTabSettingsShortcut {
 
         @Override
         public boolean performAccessibilityAction(View host, int action, Bundle arguments) {
-            if (action == ID) return offered(host) && open();
+            if (action == ID) return offered(host) && open(null);
             return tikTok != null ? tikTok.performAccessibilityAction(host, action, arguments)
                     : super.performAccessibilityAction(host, action, arguments);
         }

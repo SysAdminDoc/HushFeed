@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.SystemClock;
@@ -15,6 +16,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.accessibility.AccessibilityNodeInfo;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
@@ -23,6 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.PausedProcess;
+import app.morphe.extension.tiktok.settings.Settings;
 
 import org.junit.After;
 import org.junit.Before;
@@ -34,6 +37,7 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowLooper;
 
 /**
@@ -80,6 +84,10 @@ public class ForYouTabSettingsShortcutTest {
 
     @After public void tearDown() {
         PausedProcess.set(false);
+        Settings.LOCAL_WATCH_HISTORY.resetToDefault();
+        Settings.FOR_YOU_HOLD_OPENS_WATCH_HISTORY.resetToDefault();
+        AlertDialog shown = ShadowAlertDialog.getLatestAlertDialog();
+        if (shown != null) shown.dismiss();
         ForYouTabSettingsShortcut.resetForTests();
         owner.pause().stop().destroy();
     }
@@ -287,8 +295,9 @@ public class ForYouTabSettingsShortcutTest {
         assertEquals("letting go off the tab was a tap", 0, tab.taps);
     }
 
-    /** No switch reads it, so it's still the way back to the switch while Hushfeed is paused. */
+    /** Paused, the switches answer their defaults, so it's still the way back to the pause switch. */
     @Test public void pauseLeavesItWorking() {
+        historyOnLongPress();
         PausedProcess.set(true);
         TopTab tab = tab();
         ForYouTabSettingsShortcut.onTopTab(tab, FOR_YOU);
@@ -296,6 +305,63 @@ public class ForYouTabSettingsShortcutTest {
         press(tab, longPress());
 
         assertOpenedSettings();
+        assertNull("paused, the long press showed the watch history", ShadowAlertDialog.getLatestAlertDialog());
+    }
+
+    private static void historyOnLongPress() {
+        Settings.LOCAL_WATCH_HISTORY.save(true);
+        Settings.FOR_YOU_HOLD_OPENS_WATCH_HISTORY.save(true);
+    }
+
+    /** One switch sends the long press to the watch history over the feed (#172). */
+    @Test public void withTheSwitchOnALongPressShowsTheWatchHistoryWithAWayToSettings() {
+        historyOnLongPress();
+        TopTab tab = tab();
+        ForYouTabSettingsShortcut.onTopTab(tab, FOR_YOU);
+
+        press(tab, longPress());
+
+        assertNull("the long press opened the settings over the watch history", nextStarted());
+        assertEquals("letting go after the long press was also a tap", 0, tab.taps);
+        AlertDialog history = ShadowAlertDialog.getLatestAlertDialog();
+        assertNotNull("the long press showed no watch history", history);
+        assertTrue(history.isShowing());
+        assertEquals("My watch history", String.valueOf(Shadows.shadowOf(history).getTitle()));
+
+        Button toSettings = history.getButton(AlertDialog.BUTTON_NEGATIVE);
+        assertNotNull("the watch history over the feed has no way to the settings", toSettings);
+        assertEquals("Open Hushfeed settings", String.valueOf(toSettings.getText()));
+        assertTrue(toSettings.performClick());
+        ShadowLooper.idleMainLooper();
+
+        assertOpenedSettings();
+        assertFalse("the watch history stayed over the settings", history.isShowing());
+    }
+
+    /** With no history kept there's nothing to show, so the press opens the settings as before. */
+    @Test public void theSwitchNeedsTheHistoryKept() {
+        Settings.FOR_YOU_HOLD_OPENS_WATCH_HISTORY.save(true);
+        TopTab tab = tab();
+        ForYouTabSettingsShortcut.onTopTab(tab, FOR_YOU);
+
+        press(tab, longPress());
+
+        assertOpenedSettings();
+        assertNull(ShadowAlertDialog.getLatestAlertDialog());
+    }
+
+    /** TalkBack's named action keeps its name: it opens the settings whichever way the press goes. */
+    @Test public void talkBacksActionStillOpensTheSettingsWithTheSwitchOn() {
+        historyOnLongPress();
+        TopTab tab = tab();
+        ForYouTabSettingsShortcut.onTopTab(tab, FOR_YOU);
+
+        AccessibilityNodeInfo.AccessibilityAction action = openAction(tab.createAccessibilityNodeInfo());
+        assertNotNull(action);
+        assertTrue(tab.performAccessibilityAction(action.getId(), null));
+
+        assertOpenedSettings();
+        assertNull("TalkBack's settings action showed the watch history", ShadowAlertDialog.getLatestAlertDialog());
     }
 
     @Test public void aMissingTabOrTagChangesNothing() {

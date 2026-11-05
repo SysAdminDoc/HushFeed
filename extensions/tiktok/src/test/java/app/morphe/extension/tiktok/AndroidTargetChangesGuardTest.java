@@ -110,7 +110,11 @@ public class AndroidTargetChangesGuardTest {
                             + "46.9.3), each an instance field on the response the hook was given"),
             new ReviewedWrites("live/LivePanelTheme.java", 2,
                     "safe: writes a LIVE profile card label's background and that background's "
-                            + "colorCode, and lightLabel() skips either field when it's static"));
+                            + "colorCode, and lightLabel() skips either field when it's static"),
+            new ReviewedWrites("live/LiveAudioOnly.java", 4,
+                    "safe: writes sdkKey, name and level on a quality row this class just built "
+                            + "with newInstance, and the current-quality mark on the picker row it "
+                            + "just built; instanceField() drops a static field before any write"));
 
     /**
      * Addresses written into the payload, and what is done with them.
@@ -210,7 +214,8 @@ public class AndroidTargetChangesGuardTest {
         assertEquals("the reviewed total no longer matches what the scan finds", reviewed, total);
         // Nine on 2026-09-19; four comment-menu instance writes were added for #169, and two
         // LIVE profile card label writes for #159, and the grid sort chip's re-sort for #180.
-        assertEquals("the audit counted sixteen reflective writes on 2026-10-23", 16, total);
+        // Four LIVE Audio only row writes for #265 on 2026-11-05.
+        assertEquals("the audit counted twenty reflective writes on 2026-11-05", 20, total);
     }
 
     @Test

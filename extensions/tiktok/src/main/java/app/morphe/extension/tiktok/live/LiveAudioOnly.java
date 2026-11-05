@@ -129,9 +129,9 @@ public final class LiveAudioOnly {
 
     /** A new quality row of {@code type} keyed "ao", named Audio only, at {@code level}. Null when it can't be written. */
     private static Object quality(Class<?> type, int levelValue) throws Exception {
-        Field key = Reflect.field(type, "sdkKey");
-        Field name = Reflect.field(type, "name");
-        Field level = Reflect.field(type, "level");
+        Field key = instanceField(type, "sdkKey");
+        Field name = instanceField(type, "name");
+        Field level = instanceField(type, "level");
         if (key == null || name == null) {
             Logger.printInfo(() -> "LIVE audio only: the quality row has no sdkKey or name on this TikTok version");
             return null;
@@ -223,12 +223,22 @@ public final class LiveAudioOnly {
     /** Marks an older picker row as the current quality, when the patch named the field and the row has it. */
     private static void mark(Object row) throws IllegalAccessException {
         String name = pickerMark();
-        Field field = name == null ? null : Reflect.field(row.getClass(), name);
+        Field field = name == null ? null : instanceField(row.getClass(), name);
         if (field == null || field.getType() != boolean.class) {
             Logger.printDebug(() -> "LIVE audio only: the older picker's row can't be marked as the current quality");
             return;
         }
         field.setBoolean(row, true);
+    }
+
+    /**
+     * {@code type}'s field {@code name} when it belongs to each row rather than to the class, so a
+     * write lands on the row. Null otherwise: a static field could be final, which Android 17
+     * refuses to have written.
+     */
+    private static Field instanceField(Class<?> type, String name) {
+        Field field = Reflect.field(type, name);
+        return field == null || Modifier.isStatic(field.getModifiers()) ? null : field;
     }
 
     /** Whether one of the older picker's rows already carries the key "ao" in a text field. */

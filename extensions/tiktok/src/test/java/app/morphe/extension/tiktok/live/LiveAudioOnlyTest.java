@@ -137,6 +137,22 @@ public class LiveAudioOnlyTest {
         assertNull("no list", LiveAudioOnly.qualities(new Room(WITH_AUDIO), null));
     }
 
+    /** A quality row whose key belongs to the class, the shape Android 17 won't let a write reach when it's final. */
+    @SuppressWarnings("unused")
+    static final class ClassKeyedQuality {
+        static String sdkKey = "class";
+        String name;
+        int level;
+    }
+
+    @Test public void aRowWhoseKeyIsStaticIsNeverWritten() throws Exception {
+        LinkedList<Object> list = new LinkedList<>();
+        list.add(new ClassKeyedQuality());
+
+        assertNull("a row was made by writing a static field", LiveAudioOnly.row(list));
+        assertEquals("the class's own key changed", "class", ClassKeyedQuality.sdkKey);
+    }
+
     @Test public void thePlayersKeysGetAoOnlyWhenTheListOffersIt() {
         Settings.LIVE_AUDIO_ONLY.save(true);
         List<Object> keys = new ArrayList<>(Arrays.asList("hd", "sd"));

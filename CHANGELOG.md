@@ -83,6 +83,7 @@ Every Hushfeed release, newest first.
 * Your recent settings searches stay put while Hushfeed is paused. The list used to come up empty, and the next search you sent wiped out the ones before it.
 * Comments in your own language get Hushfeed's comment controls again on TikTok 47.6.3. Since 47.5.3 only the comments TikTok offered to translate got them, so on most rows `Thumbs down blocks the commenter` left TikTok's thumbs down alone. Now every row's thumbs down blocks, and `Hide like counts on comments` and `Hide the thumbs down on comments` reach every row, replies included.
 * The README's install steps point at TikTok 47.6.3 now. After v0.80.0 went out they still sent you to 47.5.3, which v0.80.0 doesn't patch.
+* The README's install steps say what to do where Morphe Manager runs as a 32-bit app. There it gives the patcher only 1 GB, which Hushfeed fits in by itself but not with patches from several other sources beside it (#339). The README's patch count also includes `Account cleanup` now.
 * `Keep the screen's refresh rate` says up front that TikTok doesn't ask for a rate on every phone. Where it doesn't, the switch has nothing to stop.
 
 ### Build

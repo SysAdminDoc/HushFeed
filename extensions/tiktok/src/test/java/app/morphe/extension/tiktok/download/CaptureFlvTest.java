@@ -144,6 +144,31 @@ public class CaptureFlvTest {
         }
     }
 
+    /**
+     * #265: a still screen makes P-frames of a few hundred bytes. A first NAL of 256-511 bytes
+     * starts its written AVCC sample with 00 00 01, which a start-code guess reads as Annex B, so
+     * recovery cut the recording at that frame.
+     */
+    @Test
+    public void aSmallFrameNeverCutsTheRecoveredRecordingShort() throws Exception {
+        for (int length = 250; length <= 520; length++) {
+            byte[] small = new byte[length];
+            Arrays.fill(small, (byte) 0x55);
+            System.arraycopy(P, 0, small, 0, P.length);
+            Sink sink = new Sink();
+            CaptureFlv.Writer writer = new CaptureFlv.Writer(sink, config(false));
+            byte[] key = annex(IDR), tiny = annex(small), next = annex(P);
+            writer.video(ByteBuffer.wrap(key), 0, key.length, 0);
+            writer.video(ByteBuffer.wrap(tiny), 0, tiny.length, 33_000);
+            writer.video(ByteBuffer.wrap(next), 0, next.length, 66_000);
+            writer.end();
+            CaptureFlv.Prefix prefix = CaptureFlv.prefix(file(sink.bytes.toByteArray()));
+            assertEquals("first NAL of " + length + " bytes", 3, prefix.videoSamples);
+            assertTrue("first NAL of " + length + " bytes", prefix.ended);
+            assertFalse("first NAL of " + length + " bytes", prefix.incomplete);
+        }
+    }
+
     @Test
     public void avccConfigurationMustMatchFourByteLengthsAndBaselineProfile() throws Exception {
         CaptureFlv.Config config = config(false);

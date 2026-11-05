@@ -139,7 +139,20 @@ final class CaptureFlv {
 
         boolean video(ByteBuffer buffer, int offset, int size, long presentationUs)
                 throws IOException {
-            List<byte[]> nals = nals(slice(buffer, offset, size, MAX_TAG_BYTES - 5));
+            return video(nals(slice(buffer, offset, size, MAX_TAG_BYTES - 5)), size, presentationUs);
+        }
+
+        /**
+         * A sample this writer already wrote, read back as the AVCC it is. Guessing the format
+         * from its first bytes reads a 256-511 byte first NAL's length as an Annex B start code.
+         */
+        boolean writtenVideo(byte[] sample, long presentationUs) throws IOException {
+            if (sample.length < 1 || sample.length > MAX_TAG_BYTES - 5)
+                throw new IOException("Invalid capture buffer range");
+            return video(avccNals(sample), sample.length, presentationUs);
+        }
+
+        private boolean video(List<byte[]> nals, int size, long presentationUs) throws IOException {
             boolean idr = false, frame = false;
             ByteArrayOutputStream sample = new ByteArrayOutputStream(size + 16);
             for (byte[] nal : nals) {
@@ -355,8 +368,9 @@ final class CaptureFlv {
                             && body[3] == 0
                             && body[4] == 0) {
                         long before = writer.videoSamples;
-                        if ((body[0] == 0x17) != hasIdr(Arrays.copyOfRange(body, 5, size))
-                                || !writer.video(ByteBuffer.wrap(body), 5, size - 5, time * 1000L))
+                        byte[] sample = Arrays.copyOfRange(body, 5, size);
+                        if ((body[0] == 0x17) != hasIdr(sample)
+                                || !writer.writtenVideo(sample, time * 1000L))
                             break;
                         if (writer.videoSamples != before + 1) break;
                     } else if (type == 8 && size > 2 && body[0] == (byte) 0xAF && body[1] == 1)
@@ -383,7 +397,7 @@ final class CaptureFlv {
     }
 
     private static boolean hasIdr(byte[] sample) throws IOException {
-        for (byte[] nal : nals(sample)) if ((nal[0] & 31) == 5) return true;
+        for (byte[] nal : avccNals(sample)) if ((nal[0] & 31) == 5) return true;
         return false;
     }
 
@@ -436,35 +450,40 @@ final class CaptureFlv {
         return out;
     }
 
+    /** Encoder output: Annex B when it starts with a start code, AVCC otherwise. */
     private static List<byte[]> nals(byte[] data) throws IOException {
+        if (startCode(data, 0) == 0) return avccNals(data);
         List<byte[]> result = new ArrayList<>();
-        if (startCode(data, 0) > 0) {
-            int at = 0;
-            while (at < data.length) {
-                int prefix = startCode(data, at);
-                if (prefix == 0) throw new IOException("Cut-off Annex B capture sample");
-                int from = at + prefix, next = from;
-                while (next < data.length && startCode(data, next) == 0) next++;
-                int end = next;
-                while (end > from && data[end - 1] == 0) end--;
-                addNal(result, data, from, end - from);
-                at = next;
-            }
-        } else {
-            int at = 0;
-            while (at < data.length) {
-                if (data.length - at < 4) throw new IOException("Cut-off AVCC capture sample");
-                long length =
-                        ((long) (data[at] & 255) << 24)
-                                | ((data[at + 1] & 255) << 16)
-                                | ((data[at + 2] & 255) << 8)
-                                | (data[at + 3] & 255);
-                at += 4;
-                if (length < 1 || length > data.length - at)
-                    throw new IOException("Invalid AVCC capture NAL length");
-                addNal(result, data, at, (int) length);
-                at += (int) length;
-            }
+        int at = 0;
+        while (at < data.length) {
+            int prefix = startCode(data, at);
+            if (prefix == 0) throw new IOException("Cut-off Annex B capture sample");
+            int from = at + prefix, next = from;
+            while (next < data.length && startCode(data, next) == 0) next++;
+            int end = next;
+            while (end > from && data[end - 1] == 0) end--;
+            addNal(result, data, from, end - from);
+            at = next;
+        }
+        if (result.isEmpty()) throw new IOException("Empty capture NAL sample");
+        return result;
+    }
+
+    private static List<byte[]> avccNals(byte[] data) throws IOException {
+        List<byte[]> result = new ArrayList<>();
+        int at = 0;
+        while (at < data.length) {
+            if (data.length - at < 4) throw new IOException("Cut-off AVCC capture sample");
+            long length =
+                    ((long) (data[at] & 255) << 24)
+                            | ((data[at + 1] & 255) << 16)
+                            | ((data[at + 2] & 255) << 8)
+                            | (data[at + 3] & 255);
+            at += 4;
+            if (length < 1 || length > data.length - at)
+                throw new IOException("Invalid AVCC capture NAL length");
+            addNal(result, data, at, (int) length);
+            at += (int) length;
         }
         if (result.isEmpty()) throw new IOException("Empty capture NAL sample");
         return result;

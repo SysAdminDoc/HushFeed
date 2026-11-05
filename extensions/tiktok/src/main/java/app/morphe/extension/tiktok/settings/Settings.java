@@ -1280,13 +1280,16 @@ public class Settings extends BaseSettings {
     // server settings response arrives, so a change counts from the next one, with no restart.
     public static final BooleanSetting FREEZE_REMOTE_CONFIG = new BooleanSetting("freeze_remote_config", FALSE);
     /**
-     * Whether TikTok has stored its server settings at least once on this phone since the patch
-     * went in. No row of its own: a freeze turned on before TikTok ever stored any would leave it
-     * on nothing but its built-in defaults, so the first start with the freeze on and this unset
-     * lets every store through. Kept out of import and export, since it describes this phone.
+     * Which TikTok and account the last server settings store that went through came from, as
+     * "version code/uid" with the uid empty when it wasn't known, or empty when TikTok hasn't
+     * stored any since the patch went in. No row of its own: a freeze turned on before TikTok ever
+     * stored any would leave it on nothing but its built-in defaults, and one held across a TikTok
+     * update or an account switch would keep values the new build or account was never sent, so a
+     * start with the freeze on lets every store through when this names another TikTok or
+     * account. Kept out of import and export, since it describes this phone.
      */
-    public static final BooleanSetting REMOTE_CONFIG_STORED =
-            new BooleanSetting("remote_config_stored", FALSE, false, false);
+    public static final StringSetting REMOTE_CONFIG_STAMP =
+            new StringSetting("remote_config_stamp", "", false, false);
     // Profile background (#80), in the default selection with this off. TikTok asks its gate as
     // Edit profile or a profile is built, but the allow-list value its profile requests send is
     // snapshotted once per account and process, so a change takes a restart to reach the server.

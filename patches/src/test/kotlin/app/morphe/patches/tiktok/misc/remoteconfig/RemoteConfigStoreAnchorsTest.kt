@@ -29,6 +29,11 @@ import org.junit.Test
  * lambdas that hand it a chunk, so holding it holds every optimized chunk and nothing else.
  */
 class RemoteConfigStoreAnchorsTest {
+    private companion object {
+        /** How many copies of the whole-response store each declared build has, read from its dex. */
+        val RESPONSE_STORE_COPIES = mapOf("47.6.3" to 2)
+    }
+
     @Test
     fun `the three server settings stores resolve on each build and can take a guard`() {
         Fixtures.forEachDeclared { apk ->
@@ -45,9 +50,11 @@ class RemoteConfigStoreAnchorsTest {
             fun named(methods: List<Method>) = methods.map { "${it.definingClass}->${it.name}" }
 
             // The whole-response store is the same code twice on 47.6.3, one per request type, and
-            // the patch holds each copy.
+            // the patch holds each copy. A new build declares its own count here.
             val responses = taken(ResponseStoreFingerprint)
-            assertTrue("$version: ResponseStoreFingerprint takes ${named(responses)}", responses.size in 1..2)
+            val copies = RESPONSE_STORE_COPIES[version]
+                ?: throw AssertionError("$version: say how many whole-response stores it has, ResponseStoreFingerprint takes ${named(responses)}")
+            assertEquals("$version: ResponseStoreFingerprint takes ${named(responses)}", copies, responses.size)
             val chunks = listOf(ChunkStoreFingerprint, OptimizedChunkStoreFingerprint).map { fingerprint ->
                 val methods = taken(fingerprint)
                 assertEquals("$version: ${fingerprint.javaClass.simpleName} takes ${named(methods)}", 1, methods.size)

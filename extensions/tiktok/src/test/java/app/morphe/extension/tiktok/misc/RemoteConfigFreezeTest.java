@@ -9,8 +9,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.robolectric.Shadows.shadowOf;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
@@ -20,11 +22,13 @@ import app.morphe.extension.shared.settings.EarlyApplication;
 import app.morphe.extension.shared.settings.PausedProcess;
 import app.morphe.extension.shared.settings.Setting;
 import app.morphe.extension.tiktok.SettingsContextRule;
+import app.morphe.extension.tiktok.SignedInUser;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 import app.morphe.extension.tiktok.settings.preference.categories.ExtensionPreferenceCategory;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,13 +39,19 @@ import org.robolectric.annotation.Config;
 
 /**
  * Freeze TikTok's experiments' switch. It starts off, a paused build and one without the patch's
- * flag let every store through, and a freeze turned on before TikTok ever stored anything lets the
- * whole of that start through once, so TikTok isn't left on its built-in defaults.
+ * flag let every store through, and a freeze turned on before TikTok stored anything for the
+ * running TikTok and account lets the whole of that start through once, so TikTok isn't left on
+ * its built-in defaults or on what an older build or another account was sent.
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 28)
 public class RemoteConfigFreezeTest {
     @Rule public final SettingsContextRule settingsContext = new SettingsContextRule();
+
+    /** TikTok 47.6.3's version code. */
+    private static final String VERSION = "2024706030";
+    /** 47.5.3's, the build before it. */
+    private static final String OLDER_VERSION = "2024705030";
 
     public static final class TestActivity extends PreferenceActivity {
         @Override public void onCreate(android.os.Bundle state) {
@@ -50,41 +60,51 @@ public class RemoteConfigFreezeTest {
         }
     }
 
+    @Before public void setUp() {
+        RemoteConfigFreeze.version = VERSION;
+    }
+
     @After public void tearDown() {
         PausedProcess.set(false);
         EarlyApplication.reset();
         Utils.setContext(RuntimeEnvironment.getApplication());
         Settings.FREEZE_REMOTE_CONFIG.save(false);
-        Settings.REMOTE_CONFIG_STORED.save(false);
-        saveInTheFile(Settings.FREEZE_REMOTE_CONFIG.key, false);
-        saveInTheFile(Settings.REMOTE_CONFIG_STORED.key, false);
+        Settings.REMOTE_CONFIG_STAMP.save("");
+        theFile().edit().remove(Settings.FREEZE_REMOTE_CONFIG.key).remove(Settings.REMOTE_CONFIG_STAMP.key).commit();
         SettingsStatus.remoteConfigFreezeEnabled = false;
+        SignedInUser.idForTests = null;
         RemoteConfigFreeze.firstStart = null;
+        RemoteConfigFreeze.version = null;
     }
 
-    /** The early read opens the application's own preferences file, written here as well. */
-    private static void saveInTheFile(String key, boolean value) {
-        RuntimeEnvironment.getApplication()
-                .getSharedPreferences(Setting.PREFERENCES_NAME, Context.MODE_PRIVATE)
-                .edit().putBoolean(key, value).commit();
+    /** The preferences file the early reads and saves open, through the application. */
+    private static SharedPreferences theFile() {
+        return RuntimeEnvironment.getApplication().getSharedPreferences(Setting.PREFERENCES_NAME, Context.MODE_PRIVATE);
+    }
+
+    /** Starts the next TikTok process: nothing about the last one's answer is left. */
+    private static void nextStart() {
+        RemoteConfigFreeze.firstStart = null;
     }
 
     @Test public void theSwitchStartsOffAndAStoreWithItOffIsRemembered() {
         assertEquals(Boolean.FALSE, Settings.FREEZE_REMOTE_CONFIG.defaultValue);
         assertEquals(RemoteConfigFreeze.SWITCH_KEY, Settings.FREEZE_REMOTE_CONFIG.key);
-        assertEquals(RemoteConfigFreeze.STORED_KEY, Settings.REMOTE_CONFIG_STORED.key);
+        assertEquals(RemoteConfigFreeze.STAMP_KEY, Settings.REMOTE_CONFIG_STAMP.key);
+        assertEquals("", Settings.REMOTE_CONFIG_STAMP.defaultValue);
         assertFalse("each store asks again, so no restart", Settings.FREEZE_REMOTE_CONFIG.rebootApp);
-        assertFalse("the stored flag describes this phone", Settings.REMOTE_CONFIG_STORED.includeWithImportExport);
+        assertFalse("the stamp describes this phone", Settings.REMOTE_CONFIG_STAMP.includeWithImportExport);
 
         SettingsStatus.remoteConfigFreezeEnabled = true;
         assertFalse("off, the store runs as TikTok ships it", RemoteConfigFreeze.holdsStore());
-        assertTrue("a store that went through is remembered", Settings.REMOTE_CONFIG_STORED.get());
+        assertEquals("a store that went through is remembered with its TikTok",
+                VERSION + "/", Settings.REMOTE_CONFIG_STAMP.get());
         assertNull("off decides nothing about the start", RemoteConfigFreeze.firstStart);
     }
 
     @Test public void onAfterAStoreEveryStoreIsHeld() {
         SettingsStatus.remoteConfigFreezeEnabled = true;
-        Settings.REMOTE_CONFIG_STORED.save(true);
+        Settings.REMOTE_CONFIG_STAMP.save(VERSION + "/");
         Settings.FREEZE_REMOTE_CONFIG.save(true);
 
         assertTrue(RemoteConfigFreeze.holdsStore());
@@ -99,15 +119,99 @@ public class RemoteConfigFreezeTest {
         Settings.FREEZE_REMOTE_CONFIG.save(true);
 
         assertFalse("nothing stored yet, so this start stores", RemoteConfigFreeze.holdsStore());
-        assertTrue(Settings.REMOTE_CONFIG_STORED.get());
+        assertEquals(VERSION + "/", Settings.REMOTE_CONFIG_STAMP.get());
         assertFalse("and every later store of the same start too", RemoteConfigFreeze.holdsStore());
 
-        RemoteConfigFreeze.firstStart = null;
+        nextStart();
         assertTrue("the next start holds", RemoteConfigFreeze.holdsStore());
     }
 
+    @Test public void aTikTokUpdateLetsOneStartThrough() {
+        SettingsStatus.remoteConfigFreezeEnabled = true;
+        SignedInUser.idForTests = "101";
+        Settings.REMOTE_CONFIG_STAMP.save(OLDER_VERSION + "/101");
+        Settings.FREEZE_REMOTE_CONFIG.save(true);
+
+        assertFalse("values the older TikTok was sent aren't kept", RemoteConfigFreeze.holdsStore());
+        assertEquals(VERSION + "/101", Settings.REMOTE_CONFIG_STAMP.get());
+        assertFalse("the whole start goes through", RemoteConfigFreeze.holdsStore());
+
+        nextStart();
+        assertTrue("the next start on the same TikTok holds", RemoteConfigFreeze.holdsStore());
+    }
+
+    @Test public void anAccountSwitchLetsTheNewAccountsValuesThrough() {
+        SettingsStatus.remoteConfigFreezeEnabled = true;
+        SignedInUser.idForTests = "101";
+        Settings.REMOTE_CONFIG_STAMP.save(VERSION + "/101");
+        Settings.FREEZE_REMOTE_CONFIG.save(true);
+        assertTrue(RemoteConfigFreeze.holdsStore());
+
+        SignedInUser.idForTests = "202";
+        assertFalse("switched in the same start, the other account's response goes through",
+                RemoteConfigFreeze.holdsStore());
+        assertEquals(VERSION + "/202", Settings.REMOTE_CONFIG_STAMP.get());
+        assertFalse("its chunks too", RemoteConfigFreeze.holdsStore());
+
+        nextStart();
+        assertTrue("the next start on that account holds", RemoteConfigFreeze.holdsStore());
+        SignedInUser.idForTests = "101";
+        assertFalse("and switching back takes the first account's values again", RemoteConfigFreeze.holdsStore());
+        assertEquals(VERSION + "/101", Settings.REMOTE_CONFIG_STAMP.get());
+    }
+
+    @Test public void anAccountNotKnownHoldsAndKeepsTheStampsAccount() {
+        SettingsStatus.remoteConfigFreezeEnabled = true;
+        SignedInUser.idForTests = "";
+        Settings.REMOTE_CONFIG_STAMP.save(VERSION + "/101");
+        Settings.FREEZE_REMOTE_CONFIG.save(true);
+
+        assertTrue("an account not known yet is no switch", RemoteConfigFreeze.holdsStore());
+        assertEquals(VERSION + "/101", Settings.REMOTE_CONFIG_STAMP.get());
+
+        Settings.FREEZE_REMOTE_CONFIG.save(false);
+        assertFalse(RemoteConfigFreeze.holdsStore());
+        assertEquals("a store with the freeze off doesn't forget the account",
+                VERSION + "/101", Settings.REMOTE_CONFIG_STAMP.get());
+    }
+
+    @Test public void signingInAfterAStoreWithNoAccountLetsTheAccountsValuesThrough() {
+        SettingsStatus.remoteConfigFreezeEnabled = true;
+        SignedInUser.idForTests = "";
+        Settings.REMOTE_CONFIG_STAMP.save(VERSION + "/");
+        Settings.FREEZE_REMOTE_CONFIG.save(true);
+        assertTrue(RemoteConfigFreeze.holdsStore());
+
+        SignedInUser.idForTests = "303";
+        assertFalse("values stored with no account known aren't kept for one", RemoteConfigFreeze.holdsStore());
+        assertEquals(VERSION + "/303", Settings.REMOTE_CONFIG_STAMP.get());
+
+        nextStart();
+        assertTrue(RemoteConfigFreeze.holdsStore());
+    }
+
+    @Test public void aStampMatchesOnlyItsTikTokAndAccount() {
+        assertTrue(RemoteConfigFreeze.matches(VERSION + "/101", VERSION, "101"));
+        assertTrue("an account not known matches", RemoteConfigFreeze.matches(VERSION + "/101", VERSION, null));
+        assertTrue(RemoteConfigFreeze.matches(VERSION + "/", VERSION, null));
+        assertFalse(RemoteConfigFreeze.matches(VERSION + "/101", VERSION, "202"));
+        assertFalse(RemoteConfigFreeze.matches(VERSION + "/", VERSION, "202"));
+        assertFalse(RemoteConfigFreeze.matches(OLDER_VERSION + "/101", VERSION, "101"));
+        assertFalse(RemoteConfigFreeze.matches(OLDER_VERSION + "/101", VERSION, null));
+        assertFalse("never stored", RemoteConfigFreeze.matches("", VERSION, null));
+    }
+
+    @Test public void theVersionIsThePackagesVersionCode() {
+        Context application = RuntimeEnvironment.getApplication();
+        shadowOf(application.getPackageManager())
+                .getInternalMutablePackageInfo(application.getPackageName())
+                .setLongVersionCode(2024706030L);
+        RemoteConfigFreeze.version = null;
+        assertEquals("2024706030", RemoteConfigFreeze.versionOf(application));
+    }
+
     @Test public void pausedOrWithoutThePatchFlagEveryStoreGoesThrough() {
-        Settings.REMOTE_CONFIG_STORED.save(true);
+        Settings.REMOTE_CONFIG_STAMP.save(VERSION + "/");
         Settings.FREEZE_REMOTE_CONFIG.save(true);
         assertFalse("without the patch's flag", RemoteConfigFreeze.holdsStore());
 
@@ -118,27 +222,49 @@ public class RemoteConfigFreezeTest {
         assertNull("paused decides nothing about the start", RemoteConfigFreeze.firstStart);
 
         PausedProcess.set(false);
-        Settings.REMOTE_CONFIG_STORED.save(false);
+        Settings.REMOTE_CONFIG_STAMP.save("");
         PausedProcess.set(true);
         assertFalse(RemoteConfigFreeze.holdsStore());
-        assertTrue("paused, the store that went through is remembered", Settings.REMOTE_CONFIG_STORED.savedValue());
+        assertEquals("paused, the store that went through is remembered",
+                VERSION + "/", Settings.REMOTE_CONFIG_STAMP.savedValue());
         assertNull(RemoteConfigFreeze.firstStart);
     }
 
     @Test public void beforeTheSettingsContextTheSavedFileIsRead() {
         Context application = RuntimeEnvironment.getApplication();
         SettingsStatus.remoteConfigFreezeEnabled = true;
-        Settings.REMOTE_CONFIG_STORED.save(true);
-        Settings.FREEZE_REMOTE_CONFIG.save(true);
-        saveInTheFile(Settings.REMOTE_CONFIG_STORED.key, true);
-        saveInTheFile(Settings.FREEZE_REMOTE_CONFIG.key, true);
+        theFile().edit().putString(Settings.REMOTE_CONFIG_STAMP.key, VERSION + "/")
+                .putBoolean(Settings.FREEZE_REMOTE_CONFIG.key, true).commit();
         EarlyApplication.set(application);
         Utils.setContext(null);
         try {
             assertTrue(RemoteConfigFreeze.holdsStore());
-            RemoteConfigFreeze.firstStart = null;
+            nextStart();
             EarlyApplication.set(null);
             assertFalse("no application yet answers off", RemoteConfigFreeze.holdsStore());
+        } finally {
+            Utils.setContext(application);
+        }
+    }
+
+    @Test public void aStoreBeforeTheSettingsContextIsSavedInTheFile() {
+        Context application = RuntimeEnvironment.getApplication();
+        SettingsStatus.remoteConfigFreezeEnabled = true;
+        theFile().edit().putBoolean(Settings.FREEZE_REMOTE_CONFIG.key, true).commit();
+        EarlyApplication.set(application);
+        Utils.setContext(null);
+        try {
+            assertFalse("nothing stored yet, so this start stores", RemoteConfigFreeze.holdsStore());
+            assertEquals("a start that ends before the settings context still counts",
+                    VERSION + "/", theFile().getString(Settings.REMOTE_CONFIG_STAMP.key, ""));
+            nextStart();
+            assertTrue("so the next start holds", RemoteConfigFreeze.holdsStore());
+
+            theFile().edit().putBoolean(Settings.FREEZE_REMOTE_CONFIG.key, false)
+                    .putString(Settings.REMOTE_CONFIG_STAMP.key, OLDER_VERSION + "/101").commit();
+            assertFalse(RemoteConfigFreeze.holdsStore());
+            assertEquals("off, an early store saves this TikTok and keeps the account",
+                    VERSION + "/101", theFile().getString(Settings.REMOTE_CONFIG_STAMP.key, ""));
         } finally {
             Utils.setContext(application);
         }

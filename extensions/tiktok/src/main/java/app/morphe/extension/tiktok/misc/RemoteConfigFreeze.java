@@ -4,11 +4,18 @@
  */
 package app.morphe.extension.tiktok.misc;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.os.Build;
+
 import androidx.annotation.Nullable;
 
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.EarlySwitch;
+import app.morphe.extension.shared.settings.Setting;
+import app.morphe.extension.tiktok.SignedInUser;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 
@@ -23,22 +30,28 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
  * no request waiting and nothing to retry. With the switch off, and while Hushfeed is paused,
  * every store runs as TikTok ships it.
  *
- * <p>A freeze turned on before TikTok ever stored a value would leave it on its built-in
- * defaults, which no TikTok anyone uses runs on. So a store that goes through marks
- * {@link Settings#REMOTE_CONFIG_STORED}, and the first start with the freeze on and that unset
- * lets every store of that start through. The answer for that start is decided once, so the
- * chunks of one response are never half kept.
+ * <p>The values kept have to be ones the running TikTok and account were sent. A freeze turned on
+ * before TikTok ever stored any would leave it on its built-in defaults, and one held across an
+ * update or an account switch would keep what the old build or the other account got. So a store
+ * that goes through saves {@link Settings#REMOTE_CONFIG_STAMP}, the TikTok version code and the
+ * account it came from, and a start with the switch on whose TikTok or account doesn't match lets
+ * every store of that start through. The answer for a start is decided once, so the chunks of one
+ * response are never half kept, except when an account the stamp doesn't name turns up after it:
+ * that is a switch, and the new account's response goes through.
  */
 @SuppressWarnings("unused")
 public final class RemoteConfigFreeze {
     /** {@link Settings#FREEZE_REMOTE_CONFIG}'s key, for a read before the settings context. */
     static final String SWITCH_KEY = "freeze_remote_config";
-    /** {@link Settings#REMOTE_CONFIG_STORED}'s key, for the same read. */
-    static final String STORED_KEY = "remote_config_stored";
+    /** {@link Settings#REMOTE_CONFIG_STAMP}'s key, for the same read and its save. */
+    static final String STAMP_KEY = "remote_config_stamp";
 
     /** Whether this start lets every store through, decided by its first store with the switch on. */
     @Nullable
     static Boolean firstStart;
+    /** The running TikTok's version code, read once. Tests put their own here. */
+    @Nullable
+    static String version;
 
     private RemoteConfigFreeze() {
     }
@@ -47,16 +60,21 @@ public final class RemoteConfigFreeze {
     public static boolean holdsStore() {
         if (!SettingsStatus.remoteConfigFreezeEnabled) return false;
         try {
-            boolean early = Utils.getContext() == null;
+            Context context = Utils.getContext();
+            boolean early = context == null;
+            if (early) context = EarlySwitch.application();
             boolean on = early ? EarlySwitch.isOn(SWITCH_KEY) : Settings.FREEZE_REMOTE_CONFIG.get();
             if (!on) {
-                markStored(early);
+                markStored(context, early, null);
                 Logger.printDebug(() -> "Freeze TikTok's experiments: off, a store goes through");
                 return false;
             }
-            if (firstStart(early)) {
-                markStored(early);
-                Logger.printInfo(() -> "Freeze TikTok's experiments: nothing stored yet, this start stores");
+            // Asked only with the switch on, and never before the settings context, while TikTok
+            // may still be starting its account service.
+            String account = early ? null : SignedInUser.id();
+            if (firstStart(context, early, account)) {
+                markStored(context, early, account);
+                Logger.printInfo(() -> "Freeze TikTok's experiments: nothing stored for this TikTok and account yet, this start stores");
                 return false;
             }
             Logger.printInfo(() -> "Freeze TikTok's experiments: skipped a store");
@@ -68,24 +86,75 @@ public final class RemoteConfigFreeze {
     }
 
     /**
-     * This start's answer, worked out by the first store that asks. Under the lock, so a chunk
-     * store running beside the whole-response store on the first start can't read the flag the
-     * other one just saved and hold its half of the response.
+     * This start's answer, worked out by the first store that asks, and again when an account the
+     * stamp doesn't name turns up after it. Under the lock, so a chunk store running beside the
+     * whole-response store on the first start can't read the stamp the other one just saved and
+     * hold its half of the response.
      */
-    private static synchronized boolean firstStart(boolean early) {
-        if (firstStart == null) {
-            firstStart = !(early ? EarlySwitch.isOn(STORED_KEY) : Settings.REMOTE_CONFIG_STORED.savedValue());
-        }
+    private static synchronized boolean firstStart(Context context, boolean early, @Nullable String account) {
+        String stamp = savedStamp(context, early);
+        if (firstStart != null && account != null && !account.equals(accountOf(stamp))) firstStart = null;
+        if (firstStart == null) firstStart = !matches(stamp, versionOf(context), account);
         return firstStart;
     }
 
     /**
-     * Records that a store went through, once the settings context can save it. The flag is read
-     * as saved, since a paused process answers every setting's default and a store then goes
+     * Whether [stamp] names this TikTok and account. An account not known yet matches whichever
+     * the stamp names, and one the stamp didn't know doesn't, so its values come in once.
+     */
+    static boolean matches(String stamp, String version, @Nullable String account) {
+        int slash = stamp.indexOf('/');
+        if (slash < 0 || !stamp.substring(0, slash).equals(version)) return false;
+        return account == null || account.equals(stamp.substring(slash + 1));
+    }
+
+    /** The account [stamp] names, empty when none was known. */
+    private static String accountOf(String stamp) {
+        int slash = stamp.indexOf('/');
+        return slash < 0 ? "" : stamp.substring(slash + 1);
+    }
+
+    /**
+     * Records which TikTok and account a store that went through came from. An account not known
+     * keeps the one the stamp named. Before the settings context it saves into the preferences
+     * file itself, so a first start that ends before any later store still counts. The stamp is
+     * read as saved, since a paused process answers every setting's default and a store then goes
      * through too.
      */
-    private static void markStored(boolean early) {
-        if (early || Settings.REMOTE_CONFIG_STORED.savedValue()) return;
-        Settings.REMOTE_CONFIG_STORED.save(true);
+    private static void markStored(@Nullable Context context, boolean early, @Nullable String account) {
+        if (context == null) return;
+        String saved = savedStamp(context, early);
+        String stamp = versionOf(context) + '/' + (account != null ? account : accountOf(saved));
+        if (stamp.equals(saved)) return;
+        if (early) {
+            preferences(context).edit().putString(STAMP_KEY, stamp).apply();
+        } else {
+            Settings.REMOTE_CONFIG_STAMP.save(stamp);
+        }
+    }
+
+    private static String savedStamp(Context context, boolean early) {
+        if (!early) return Settings.REMOTE_CONFIG_STAMP.savedValue();
+        String stamp = preferences(context).getString(STAMP_KEY, "");
+        return stamp != null ? stamp : "";
+    }
+
+    private static SharedPreferences preferences(Context context) {
+        return context.getSharedPreferences(Setting.PREFERENCES_NAME, Context.MODE_PRIVATE);
+    }
+
+    /** The running TikTok's version code, or empty when the package can't be read. */
+    static String versionOf(Context context) {
+        String known = version;
+        if (known != null) return known;
+        try {
+            PackageInfo info = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            known = String.valueOf(Build.VERSION.SDK_INT >= 28 ? info.getLongVersionCode() : info.versionCode);
+        } catch (Exception unreadable) {
+            Logger.printException(() -> "Freeze TikTok's experiments: could not read TikTok's version", unreadable);
+            known = "";
+        }
+        version = known;
+        return known;
     }
 }

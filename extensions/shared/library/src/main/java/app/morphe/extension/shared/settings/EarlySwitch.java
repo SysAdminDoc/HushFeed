@@ -80,6 +80,16 @@ public final class EarlySwitch {
         }
     }
 
+    /**
+     * The application the early reads open the preferences file through, or null before Android
+     * has made it. For a hook that has to save something before the settings context, into the
+     * same file under {@link Setting#PREFERENCES_NAME}.
+     */
+    @Nullable
+    public static Context application() {
+        return source.application();
+    }
+
     /** The process's application, or null before Android has made it. */
     @Nullable
     static Context fromActivityThread() {

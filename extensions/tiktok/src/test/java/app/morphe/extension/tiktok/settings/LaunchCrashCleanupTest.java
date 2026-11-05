@@ -81,6 +81,7 @@ public class LaunchCrashCleanupTest {
         expected.put("settings/preference/ReleaseNotes.java", Arrays.asList(
                 "PREFS_NAME", "PREFS_NAME", "PREFS_NAME"));
         expected.put("inbox/GroupChats.java", Arrays.asList("PREFS_NAME", "PREFS_NAME"));
+        expected.put("misc/RemoteConfigFreeze.java", Arrays.asList("Setting.PREFERENCES_NAME"));
         expected.put("privacy/DeviceIdentity.java", Arrays.asList("PREFERENCES", "PREFERENCES"));
         expected.put("translation/DmTranslationPreview.java", Arrays.asList("Setting.preferences.name"));
         expected.put("translation/ReceivedDmTranslationPreview.java", Arrays.asList("Setting.preferences.name"));

@@ -31,6 +31,10 @@ import java.nio.ByteBuffer;
 final class ScreenSource implements LiveRecorder.Source {
     static final int MAX_SIDE = 1920;
     private static final int FRAME_RATE = 30, SAMPLE_RATE = 44100, AUDIO_BITRATE = 128_000;
+    /** One AAC frame of 16-bit stereo PCM, and eight seconds of it waiting for the encoder. */
+    private static final int AAC_FRAME_BYTES = 1024 * 4, BACKLOG_BYTES = SAMPLE_RATE * 4 * 8;
+    /** How long to wait for the capture thread's read in progress, about ten of its reads. */
+    private static final long READ_WAIT_MS = 250;
     private static final long POLL_MS = 8,
             END_WAIT_MS = 4000,
             FORMAT_WAIT_MS = 4000,
@@ -96,6 +100,7 @@ final class ScreenSource implements LiveRecorder.Source {
         if (projection == null) throw new IOException("Screen recording was not allowed");
         Encoder encoder = new Encoder(projection);
         control.onStop(encoder);
+        int background = raisePriority();
         try {
             encoder.run(output, control);
         } finally {
@@ -107,8 +112,39 @@ final class ScreenSource implements LiveRecorder.Source {
                     encoder.release();
                 }
             } finally {
-                ScreenCapture.release(projection);
+                try {
+                    ScreenCapture.release(projection);
+                } finally {
+                    restorePriority(background);
+                }
             }
+        }
+    }
+
+    /**
+     * The encoders drop what this thread doesn't drain in time, so while it records it runs at
+     * normal priority, as Android's own recorder does. Returns the priority to go back to, or
+     * {@link Integer#MIN_VALUE} when it was left alone.
+     */
+    static int raisePriority() {
+        try {
+            int before = android.os.Process.getThreadPriority(android.os.Process.myTid());
+            if (before <= android.os.Process.THREAD_PRIORITY_DEFAULT) return Integer.MIN_VALUE;
+            android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_DEFAULT);
+            return before;
+        } catch (RuntimeException denied) {
+            Logger.printInfo(() -> "Screen recording stays at background priority: " + denied);
+            return Integer.MIN_VALUE;
+        }
+    }
+
+    /** Saving the recording afterwards goes back to the background. */
+    static void restorePriority(int before) {
+        if (before == Integer.MIN_VALUE) return;
+        try {
+            android.os.Process.setThreadPriority(before);
+        } catch (RuntimeException failure) {
+            Logger.printInfo(() -> "Could not restore the recorder's priority: " + failure);
         }
     }
 
@@ -119,11 +155,13 @@ final class ScreenSource implements LiveRecorder.Source {
         private VirtualDisplay display;
         private Surface surface;
         private AudioRecord audioRecord;
+        private PcmBacklog audioBacklog;
+        private CaptureReader capture;
         private MediaFormat videoFormat, audioFormat;
         private Frame videoFrame, audioFrame;
         private CaptureFlv.Writer writer;
-        private boolean videoDone, audioDone, audioInputDone, formatsReady;
-        private long originUs, audioBaseUs, audioFrames;
+        private boolean videoDone, audioDone, audioReadDone, audioInputDone, formatsReady;
+        private long originUs, audioBaseUs, audioCutAt;
 
         Encoder(MediaProjection projection) {
             this.projection = projection;
@@ -139,13 +177,13 @@ final class ScreenSource implements LiveRecorder.Source {
             ScreenCapture.whenEnded(this::close);
             if (control.stopRequested() || stopRequested) return;
             setUp();
+            startCapture();
             long formatDeadline = System.nanoTime() / 1_000_000L + FORMAT_WAIT_MS,
                     firstOutputDeadline = Long.MAX_VALUE,
                     firstIdrDeadline = Long.MAX_VALUE,
                     endAt = 0,
                     endUs = 0;
             boolean ending = false;
-            byte[] pcm = new byte[4096];
             while (!(videoDone && audioDone)) {
                 long now = System.nanoTime() / 1_000_000L;
                 if ((stopRequested || control.stopRequested()) && !ending) {
@@ -153,6 +191,7 @@ final class ScreenSource implements LiveRecorder.Source {
                     endUs = System.nanoTime() / 1000L - originUs;
                     videoCodec.signalEndOfInputStream();
                     endAt = now + END_WAIT_MS;
+                    audioCutAt = now + END_WAIT_MS / 2;
                 }
                 if (writer == null && now > formatDeadline) {
                     if (videoFormat == null)
@@ -167,7 +206,7 @@ final class ScreenSource implements LiveRecorder.Source {
                     throw new IOException("Screen encoder did not finish all output");
                 boolean moved = readVideo();
                 if (audioCodec != null) {
-                    moved |= feedAudio(pcm, ending);
+                    moved |= feedAudio(ending, now);
                     moved |= readAudio();
                 }
                 if (!formatsReady
@@ -313,6 +352,7 @@ final class ScreenSource implements LiveRecorder.Source {
                 if (audioRecord.getState() != AudioRecord.STATE_INITIALIZED) {
                     throw new IllegalStateException("Playback capture was not initialized");
                 }
+                audioBacklog = new PcmBacklog(BACKLOG_BYTES);
                 MediaFormat format =
                         MediaFormat.createAudioFormat(
                                 MediaFormat.MIMETYPE_AUDIO_AAC, SAMPLE_RATE, 2);
@@ -452,46 +492,95 @@ final class ScreenSource implements LiveRecorder.Source {
             return true;
         }
 
-        private boolean feedAudio(byte[] pcm, boolean ending) throws IOException {
+        private void startCapture() {
+            AudioRecord record = audioRecord;
+            if (record == null) return;
+            capture =
+                    new CaptureReader(
+                            (into, offset, length) ->
+                                    record.read(into, offset, length, AudioRecord.READ_BLOCKING),
+                            audioBacklog,
+                            AAC_FRAME_BYTES);
+            capture.start();
+        }
+
+        /**
+         * Hands the encoder whole input buffers of the sound the capture thread has read. Each
+         * buffer is stamped with its place in the capture, so sound a full backlog gave up still
+         * counts and the rest stays in step with the picture.
+         */
+        private boolean feedAudio(boolean ending, long now) throws IOException {
             if (audioInputDone) return false;
-            int index = audioCodec.dequeueInputBuffer(0);
-            if (index < 0) return false;
-            ByteBuffer input = audioCodec.getInputBuffer(index);
-            if (input == null) throw new IOException("Screen audio input is unavailable");
-            long time = audioTimeUs(audioBaseUs, audioFrames, SAMPLE_RATE);
-            if (ending) {
-                audioCodec.queueInputBuffer(
-                        index, 0, 0, time, MediaCodec.BUFFER_FLAG_END_OF_STREAM);
-                audioInputDone = true;
-                return true;
+            IOException failed = capture == null ? null : capture.failure();
+            if (failed != null) throw failed;
+            if (ending && !audioReadDone) {
+                finishCapture();
+                audioReadDone = true;
             }
-            int size = Math.min(pcm.length, input.capacity()) & ~3;
-            if (size < 4) throw new IOException("Screen audio buffer cannot hold one PCM frame");
-            int read = audioRecord.read(pcm, 0, size, AudioRecord.READ_NON_BLOCKING);
-            if (read < 0 || read > size || read % 4 != 0)
-                throw new IOException("Playback capture read failed: " + read);
-            if (read == 0) {
-                audioCodec.queueInputBuffer(index, 0, 0, time, 0);
-                return false;
+            if (ending && now > audioCutAt) audioBacklog.dropAll();
+            boolean moved = false;
+            for (int queued = 0; queued < 8; queued++) {
+                if (!audioReadDone && audioBacklog.bytes() < AAC_FRAME_BYTES) break;
+                int index = audioCodec.dequeueInputBuffer(0);
+                if (index < 0) break;
+                ByteBuffer input = audioCodec.getInputBuffer(index);
+                if (input == null) throw new IOException("Screen audio input is unavailable");
+                if (input.capacity() < 4)
+                    throw new IOException("Screen audio buffer cannot hold one PCM frame");
+                input.clear();
+                long time = audioTimeUs(audioBaseUs, audioBacklog.take(input, input.capacity()),
+                        SAMPLE_RATE);
+                int size = input.position();
+                if (size == 0) {
+                    audioCodec.queueInputBuffer(
+                            index, 0, 0, time, MediaCodec.BUFFER_FLAG_END_OF_STREAM);
+                    audioInputDone = true;
+                    return true;
+                }
+                audioCodec.queueInputBuffer(index, 0, size, time, 0);
+                moved = true;
             }
-            input.clear();
-            input.put(pcm, 0, read);
-            audioCodec.queueInputBuffer(index, 0, read, time, 0);
-            audioFrames += read / 4;
-            return true;
+            return moved;
+        }
+
+        /** Ends the capture thread after its last read, so every sound so far is in the backlog. */
+        private void finishCapture() throws IOException {
+            CaptureReader reader = capture;
+            if (reader == null) return;
+            reader.finish();
+            awaitReader(reader);
+            if (reader.isAlive()) {
+                // A blocking read only waits this long when no sound is arriving at all.
+                AudioRecord record = audioRecord;
+                if (record != null)
+                    try {
+                        record.stop();
+                    } catch (RuntimeException ignored) {
+                        // Already stopped.
+                    }
+                awaitReader(reader);
+            }
+            IOException failed = reader.failure();
+            if (failed != null) throw failed;
         }
 
         void releaseAudio() {
             AudioRecord record = audioRecord;
             MediaCodec codec = audioCodec;
+            CaptureReader reader = capture;
             audioRecord = null;
             audioCodec = null;
+            audioBacklog = null;
+            capture = null;
+            if (reader != null) reader.finish();
             if (record != null) {
                 try {
                     record.stop();
                 } catch (RuntimeException ignored) {
                     // Not started.
                 }
+                // Stopping wakes a blocked read; the reader is done with the record before release.
+                if (reader != null) awaitReader(reader);
                 try {
                     record.release();
                 } catch (RuntimeException failure) {
@@ -577,6 +666,156 @@ final class ScreenSource implements LiveRecorder.Source {
                             (frames % rate) * 1_000_000L / rate));
         } catch (ArithmeticException overflow) {
             throw new IOException("Capture audio clock overflow", overflow);
+        }
+    }
+
+    private static void awaitReader(Thread reader) {
+        try {
+            reader.join(READ_WAIT_MS);
+        } catch (InterruptedException interrupted) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    /** Playback capture: reads up to {@code length} bytes of whole PCM frames. */
+    interface PcmReader {
+        int read(byte[] into, int offset, int length) throws IOException;
+    }
+
+    /**
+     * Reads playback capture as it arrives into the backlog, on its own thread at audio priority.
+     * Android drops capture an app leaves unread for about a second, and a busy phone can keep an
+     * ordinary thread off the CPU for that long.
+     */
+    static final class CaptureReader extends Thread {
+        private final PcmReader capture;
+        private final PcmBacklog backlog;
+        private final int chunkBytes;
+        private volatile boolean stopping;
+        private volatile IOException failure;
+
+        CaptureReader(PcmReader capture, PcmBacklog backlog, int chunkBytes) {
+            super("hushfeed-live-sound");
+            if (chunkBytes < 4 || chunkBytes % 4 != 0)
+                throw new IllegalArgumentException("Invalid PCM chunk size");
+            this.capture = capture;
+            this.backlog = backlog;
+            this.chunkBytes = chunkBytes;
+            setDaemon(true);
+        }
+
+        @Override
+        public void run() {
+            try {
+                android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_AUDIO);
+            } catch (RuntimeException denied) {
+                Logger.printInfo(() -> "Screen sound is read at normal priority: " + denied);
+            }
+            byte[] chunk = new byte[chunkBytes];
+            try {
+                while (!stopping) {
+                    int read = capture.read(chunk, 0, chunk.length);
+                    if (read < 0 || read > chunk.length || read % 4 != 0)
+                        throw new IOException("Playback capture read failed: " + read);
+                    if (read > 0) backlog.write(chunk, 0, read);
+                    else Thread.sleep(POLL_MS);
+                }
+            } catch (IOException readFailure) {
+                failure = readFailure;
+            } catch (InterruptedException interrupted) {
+                failure = new IOException("Playback capture read interrupted", interrupted);
+            } catch (RuntimeException readFailure) {
+                failure = new IOException("Playback capture read failed", readFailure);
+            }
+        }
+
+        /** Stops after the read in progress. */
+        void finish() {
+            stopping = true;
+        }
+
+        IOException failure() {
+            return failure;
+        }
+    }
+
+    /**
+     * Sound the capture thread has read and the encoder hasn't taken yet. When it fills, the
+     * oldest sound goes, and its frames still count on the clock.
+     */
+    static final class PcmBacklog {
+        private final byte[] ring;
+        private int head, size;
+        private long framesOut, droppedFrames;
+
+        PcmBacklog(int bytes) {
+            if (bytes < 4 || bytes % 4 != 0)
+                throw new IllegalArgumentException("Invalid PCM backlog size");
+            ring = new byte[bytes];
+        }
+
+        synchronized int bytes() {
+            return size;
+        }
+
+        synchronized long droppedFrames() {
+            return droppedFrames;
+        }
+
+        synchronized void write(byte[] pcm, int offset, int length) {
+            if (offset < 0 || length < 0 || length % 4 != 0 || offset > pcm.length - length)
+                throw new IllegalArgumentException("Invalid PCM range");
+            int skip = Math.max(0, length - ring.length);
+            if (skip > 0) {
+                drop(size);
+                count(skip);
+                offset += skip;
+                length -= skip;
+            }
+            int over = size + length - ring.length;
+            // A quarter at a time, so a long stall leaves one gap rather than a gap per read.
+            if (over > 0) drop(Math.max(over, (ring.length / 4) & ~3));
+            int tail = (head + size) % ring.length;
+            int first = Math.min(length, ring.length - tail);
+            System.arraycopy(pcm, offset, ring, tail, first);
+            System.arraycopy(pcm, offset + first, ring, 0, length - first);
+            size += length;
+        }
+
+        /**
+         * Moves whole frames, as many as fit, into {@code into} and returns the place in the
+         * capture, in frames, of the first one.
+         */
+        synchronized long take(ByteBuffer into, int limit) {
+            long at = framesOut;
+            int count = Math.min(size, Math.min(limit, into.remaining())) & ~3;
+            int first = Math.min(count, ring.length - head);
+            into.put(ring, head, first);
+            if (count > first) into.put(ring, 0, count - first);
+            advance(count);
+            framesOut += count / 4;
+            return at;
+        }
+
+        synchronized void dropAll() {
+            drop(size);
+        }
+
+        private void drop(int bytes) {
+            int count = Math.min(size, bytes) & ~3;
+            advance(count);
+            count(count);
+        }
+
+        private void count(int droppedBytes) {
+            framesOut += droppedBytes / 4;
+            droppedFrames += droppedBytes / 4;
+        }
+
+        private void advance(int count) {
+            head = (head + count) % ring.length;
+            size -= count;
+            if (size == 0) head = 0;
         }
     }
 

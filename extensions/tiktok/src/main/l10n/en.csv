@@ -121,7 +121,11 @@ source,target
 1 result so far,1 result so far
 1 video left,1 video left
 "1, from Background play in the long-press menu","1, from Background play in the long-press menu"
+2 taps a second,2 taps a second
 "2, from Keep playing in the background","2, from Keep playing in the background"
+4 taps a second,4 taps a second
+6 taps a second,6 taps a second
+8 taps a second,8 taps a second
 A LIVE in the feed can count down and take you into the room on its own. This keeps you in the feed until you tap it.,A LIVE in the feed can count down and take you into the room on its own. This keeps you in the feed until you tap it.
 "A LIVE in the feed can show a Service+ line under the creator's name, such as Ask me anything. This keeps it hidden.","A LIVE in the feed can show a Service+ line under the creator's name, such as Ask me anything. This keeps it hidden."
 A LIVE room shows how many people are watching as a rounded number like 1.2K. This shows the exact count instead.,A LIVE room shows how many people are watching as a rounded number like 1.2K. This shows the exact count instead.
@@ -200,6 +204,7 @@ Added to this account.,Added to this account.
 "Adds TikTok's translate button next to the comment count. One tap translates every comment, and another shows the originals again.","Adds TikTok's translate button next to the comment count. One tap translates every comment, and another shows the originals again."
 Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.,Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.
 "Adds a search box that finds comments already loaded on this video, by words or username. It doesn't search all of TikTok.","Adds a search box that finds comments already loaded on this video, by words or username. It doesn't search all of TikTok."
+"Adds an Auto tap button to LIVE rooms. Tap it to send taps to the stream at a steady pace, and tap it again to stop. It also stops when you leave or swipe to another room, leave TikTok or lock the screen.","Adds an Auto tap button to LIVE rooms. Tap it to send taps to the stream at a steady pace, and tap it again to stop. It also stops when you leave or swipe to another room, leave TikTok or lock the screen."
 Ads,Ads
 Advanced,Advanced
 Advanced JSON value,Advanced JSON value
@@ -266,6 +271,10 @@ Ask for the quality on each save,Ask for the quality on each save
 Attention,Attention
 Audio,Audio
 Author text size,Author text size
+Auto tap,Auto tap
+Auto tap in LIVE rooms,Auto tap in LIVE rooms
+Auto tap speed,Auto tap speed
+Auto tap stopped,Auto tap stopped
 Auto translate comments,Auto translate comments
 Auto-advance,Auto-advance
 Auto-advance in search results,Auto-advance in search results
@@ -1895,6 +1904,7 @@ Standard,Standard
 Start each new video at your default. A manual choice lasts until the video changes.,Start each new video at your default. A manual choice lasts until the video changes.
 Start feature gate recording,Start feature gate recording
 Start recording,Start recording
+Start tapping this LIVE,Start tapping this LIVE
 Start the day at,Start the day at
 Start today over,Start today over
 Start typing,Start typing
@@ -1930,6 +1940,7 @@ Stop loading,Stop loading
 Stop on-device AI profiling,Stop on-device AI profiling
 Stop recording this LIVE,Stop recording this LIVE
 Stop search results playing on their own,Stop search results playing on their own
+Stop tapping this LIVE,Stop tapping this LIVE
 Stop the brand animation that plays over the comments when what someone typed matches an advertiser's trigger.,Stop the brand animation that plays over the comments when what someone typed matches an advertiser's trigger.
 Stop the bubble TikTok floats at the top of the feed to point you to a LIVE.,Stop the bubble TikTok floats at the top of the feed to point you to a LIVE.
 Stop the bubble that asks you to share a video with friends after you like it.,Stop the bubble that asks you to share a video with friends after you like it.

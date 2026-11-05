@@ -107,6 +107,8 @@ public final class LiveRecordChip {
             PAGES.put(fragment, Boolean.TRUE);
             host = new WeakReference<>(activity);
             registerCallbacks(activity);
+            // Auto tap (#335) follows the same pages and keeps its own chip and checks.
+            LiveAutoTap.roomResumed(activity);
             // A page laid out on screen wins over an adjacent page resuming. During PiP
             // restoration, no full-size page may be shown yet: do not mistake a prefetched
             // neighbor for the recorded room before the layout has settled.
@@ -328,7 +330,10 @@ public final class LiveRecordChip {
         return hidesChip(target, false);
     }
 
-    /** Whether the room in front has LIVE Clear screen on; known only with LIVE controls patched in. */
+    /**
+     * Whether the room in front has LIVE Clear screen on; known only with LIVE controls patched in.
+     * Main thread only.
+     */
     public static boolean clearScreenOn() {
         return clearScreen;
     }
@@ -692,7 +697,7 @@ public final class LiveRecordChip {
     }
 
     /** The resumed room page of {@code activity} with the most of itself on screen, or null. */
-    private static Object pageInFront(Activity activity) {
+    static Object pageInFront(Activity activity) {
         if (activity.isFinishing() || activity.isDestroyed()) return null;
         View decor = activity.getWindow() == null ? null : activity.getWindow().getDecorView();
         if (decor == null || !decor.isShown()) return null;

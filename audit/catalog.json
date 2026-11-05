@@ -10418,6 +10418,12 @@
     "default": false,
     "type": "bool",
     "row": "Record LIVEs you watch"
+   },
+   {
+    "key": "live_auto_tap",
+    "default": false,
+    "type": "bool",
+    "row": "Auto tap in LIVE rooms"
    }
   ],
   "surface": "live-room",

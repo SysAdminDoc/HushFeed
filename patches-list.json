@@ -6896,6 +6896,24 @@
           "values": null
         },
         {
+          "key": "live_auto_tap",
+          "title": "Default: live auto tap",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "live_auto_tap_rate",
+          "title": "Default: live auto tap rate",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "4",
+          "values": null
+        },
+        {
           "key": "remembered_live_quality",
           "title": "Default: remembered live quality",
           "description": null,

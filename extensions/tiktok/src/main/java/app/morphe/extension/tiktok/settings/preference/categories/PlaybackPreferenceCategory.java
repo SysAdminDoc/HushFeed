@@ -154,6 +154,14 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                             + "phone shows while you watch, with the sound the app plays when TikTok has the "
                             + "microphone permission. Android asks you to allow screen recording each time, and "
                             + "shows its own notice while it records."));
+            addPreference(new TogglePreference(context, "Auto tap in LIVE rooms",
+                    "Adds an Auto tap button to LIVE rooms. Tap it to send taps to the stream at a steady "
+                            + "pace, and tap it again to stop. It also stops when you leave or swipe to "
+                            + "another room, leave TikTok or lock the screen.",
+                    Settings.LIVE_AUTO_TAP));
+            addPreference(new ChoicePreference(context, "Auto tap speed", Settings.LIVE_AUTO_TAP_RATE,
+                    app.morphe.extension.tiktok.live.LiveAutoTap.RATE_LABELS,
+                    app.morphe.extension.tiktok.live.LiveAutoTap.RATE_VALUES));
         }
         if (SettingsStatus.stopVideoLoopingEnabled) {
             addPreference(new TogglePreference(

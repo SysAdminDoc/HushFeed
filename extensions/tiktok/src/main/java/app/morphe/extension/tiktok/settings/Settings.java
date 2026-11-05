@@ -750,6 +750,17 @@ public class Settings extends BaseSettings {
      */
     public static final StringSetting LIVE_RECORD_SOURCE = new StringSetting("live_record_source", "stream");
     /**
+     * Puts an Auto tap button in LIVE rooms (#335); the LIVE controls patch. Tapping it sends taps
+     * to the stream until it is tapped again or the room is left. Read as a room resumes and on the
+     * chip's once-a-second check, so no restart.
+     */
+    public static final BooleanSetting LIVE_AUTO_TAP = new BooleanSetting("live_auto_tap", FALSE);
+    /**
+     * How many taps a second Auto tap sends (#335), "2" to "8"; anything else reads as 4 and more
+     * than 8 as 8. Read as tapping starts, so no restart.
+     */
+    public static final StringSetting LIVE_AUTO_TAP_RATE = new StringSetting("live_auto_tap_rate", "4");
+    /**
      * Plays the audio TikTok mutes on a post whose sound was pulled; the Keep pulled sounds
      * patch. Read as each video starts, so no restart.
      */

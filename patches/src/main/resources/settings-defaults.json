@@ -515,6 +515,8 @@
       "record_live",
       "live_record_quality",
       "live_record_source",
+      "live_auto_tap",
+      "live_auto_tap_rate",
       "remembered_live_quality"
     ],
     "Lift text length limits": [
@@ -2805,6 +2807,18 @@
       "key": "liquid_glass_bottom_bar",
       "type": "boolean",
       "default": false
+    },
+    "live_auto_tap": {
+      "field": "LIVE_AUTO_TAP",
+      "key": "live_auto_tap",
+      "type": "boolean",
+      "default": false
+    },
+    "live_auto_tap_rate": {
+      "field": "LIVE_AUTO_TAP_RATE",
+      "key": "live_auto_tap_rate",
+      "type": "string",
+      "default": "4"
     },
     "live_feed_filter": {
       "field": "LIVE_FEED_FILTER",

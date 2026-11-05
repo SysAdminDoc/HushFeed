@@ -1417,16 +1417,27 @@ public final class Probe extends Instrumentation {
                                 row = target;
                                 target = target.getParent() instanceof android.view.View ? (android.view.View) target.getParent() : null;
                             }
-                            if (target instanceof android.widget.AdapterView && row != null) {
+                            if (target instanceof android.widget.AbsListView && row != null) {
                                 // A row of a ListView (the Hushfeed settings list) isn't clickable
                                 // itself: the list takes the tap and calls its item listener, and
                                 // performClick on the list answers false without picking a row.
-                                android.widget.AdapterView<?> list = (android.widget.AdapterView<?>) target;
+                                // A Spinner is clickable too but opens its own dropdown, so it
+                                // keeps performClick below. The answer leads with the result so
+                                // the audit's clicked=true patterns read list rows too.
+                                android.widget.AbsListView list = (android.widget.AbsListView) target;
                                 int position = list.getPositionForView(row);
-                                clicked = position == android.widget.AdapterView.INVALID_POSITION
-                                        ? " clicked=row not in its list"
-                                        : " clicked=item " + position + ' '
-                                        + list.performItemClick(row, position, list.getItemIdAtPosition(position));
+                                android.widget.Adapter adapter = list.getAdapter();
+                                if (position == android.widget.AdapterView.INVALID_POSITION) {
+                                    clicked = " clicked=false row not in its list";
+                                } else if (adapter instanceof android.widget.ListAdapter
+                                        && !((android.widget.ListAdapter) adapter).isEnabled(position)) {
+                                    // A greyed-out row: a finger on it does nothing, while
+                                    // performItemClick would still run the listener.
+                                    clicked = " clicked=false item=" + position + " disabled";
+                                } else {
+                                    clicked = " clicked=" + list.performItemClick(row, position, list.getItemIdAtPosition(position))
+                                            + " item=" + position;
+                                }
                             } else {
                                 clicked = target == null ? " clicked=no clickable ancestor" : " clicked=" + target.performClick();
                             }
@@ -3549,7 +3560,11 @@ public final class Probe extends Instrumentation {
             // single pixel: the deepest view that gives the colour while its children don't is
             // the one painting it, background or onDraw. A hardware bitmap can't be drawn this
             // way and says so.
-            out.append(" draws=").append(drawnAt(view, x - where[0], y - where[1]));
+            // Both draws below render in the view's scrolled content space, so the point moves
+            // with its scroll (0 for TikTok's frames, not for a ScrollView).
+            int contentX = x - where[0] + view.getScrollX();
+            int contentY = y - where[1] + view.getScrollY();
+            out.append(" draws=").append(drawnAt(view, contentX, contentY));
             out.append('\n');
             if (view instanceof android.view.ViewGroup) {
                 android.view.ViewGroup group = (android.view.ViewGroup) view;
@@ -3563,7 +3578,7 @@ public final class Probe extends Instrumentation {
                     child.getLocationOnScreen(at);
                     boolean inside = x >= at[0] && y >= at[1] && x < at[0] + child.getWidth() && y < at[1] + child.getHeight();
                     if (inside || !child.isShown()) continue;
-                    String paints = drawnThrough(group, child, x - where[0], y - where[1]);
+                    String paints = drawnThrough(group, child, contentX, contentY);
                     if ("0".equals(paints)) continue;
                     out.append(depth + 1).append(' ').append(child.getClass().getName())
                             .append(" id=").append(idName(child, resources))

@@ -286,6 +286,9 @@ public class FeedScreenCoverageTest {
         put("long_press_full_menu_on_profiles", NONE, YES, NONE);
         // The same for a video opened from search, which opens in the detail pager (#120).
         put("long_press_full_menu_in_search", NONE, YES, NONE);
+        // For You gets the compact sheet, and it wins over the two full-menu switches on opened
+        // videos, so both windows follow it (#334).
+        put("long_press_compact_menu", YES, YES, NONE);
         put("edge_seek", YES, YES, NONE);
         put("edge_seek_seconds", YES, YES, NONE);
         put("rail_hold_comment", YES, YES, NONE);

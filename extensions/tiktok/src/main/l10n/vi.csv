@@ -2478,3 +2478,10 @@ A removal is already running,Đang có một lượt xóa chạy
 Cancelled,Đã hủy
 Show inbox filters,Hiện bộ lọc hộp thư
 "Adds the Main, Requests, Unread and Starred tabs above your chats, the ones TikTok gives creator accounts.","Thêm các tab Chính, Yêu cầu, Chưa đọc và Đã gắn sao phía trên các cuộc trò chuyện, giống như TikTok cung cấp cho tài khoản nhà sáng tạo."
+Rebuild message search,Tạo lại tìm kiếm tin nhắn
+"Clears TikTok's message search and adds back every message saved on this phone, newest first. It keeps going after you leave search.","Xóa tìm kiếm tin nhắn của TikTok và thêm lại mọi tin nhắn đã lưu trên điện thoại này, bắt đầu từ tin mới nhất. Vẫn chạy tiếp sau khi bạn rời trang tìm kiếm."
+Rebuilding message search,Đang tạo lại tìm kiếm tin nhắn
+Stopped. Search carries on later.,Đã dừng. Tìm kiếm sẽ tiếp tục sau.
+Couldn't stop it. Try again.,Không dừng được. Vui lòng thử lại.
+Couldn't rebuild search. Try again.,Không tạo lại được. Vui lòng thử lại.
+Message search isn't on for this account,Tìm kiếm tin nhắn chưa bật cho tài khoản này

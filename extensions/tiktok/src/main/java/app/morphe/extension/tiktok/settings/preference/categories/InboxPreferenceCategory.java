@@ -17,6 +17,7 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
 import app.morphe.extension.tiktok.settings.preference.ClearKeptMessagesPreference;
 import app.morphe.extension.tiktok.settings.preference.ClockTimePreference;
 import app.morphe.extension.tiktok.settings.preference.InputTextPreference;
+import app.morphe.extension.tiktok.settings.preference.RebuildMessageSearchPreference;
 import app.morphe.extension.tiktok.settings.preference.SectionHeadingPreference;
 import app.morphe.extension.tiktok.settings.preference.SendStreakNowPreference;
 import app.morphe.extension.tiktok.settings.preference.TogglePreference;
@@ -79,6 +80,9 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
                         "Adds the Main, Requests, Unread and Starred tabs above your chats, the ones TikTok "
                                 + "gives creator accounts.",
                         Settings.SHOW_INBOX_FILTERS));
+            }
+            if (SettingsStatus.messageSearchRebuildEnabled) {
+                addPreference(new RebuildMessageSearchPreference(context));
             }
             addPreference(new SectionHeadingPreference(context, "Rows"));
             addPreference(new TogglePreference(

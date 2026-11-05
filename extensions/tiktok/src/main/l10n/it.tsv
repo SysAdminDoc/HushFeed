@@ -2509,3 +2509,10 @@ A removal is already running	Una rimozione è già in corso
 Cancelled	Annullato
 Show inbox filters	Mostra i filtri della posta in arrivo
 Adds the Main, Requests, Unread and Starred tabs above your chats, the ones TikTok gives creator accounts.	Aggiunge sopra le tue chat le schede Principale, Richieste, Non letti e Preferiti, quelle che TikTok dà agli account creator.
+Rebuild message search	Ricostruisci la ricerca dei messaggi
+Clears TikTok's message search and adds back every message saved on this phone, newest first. It keeps going after you leave search.	Svuota la ricerca dei messaggi di TikTok e riaggiunge ogni messaggio salvato su questo telefono, dal più recente. Continua anche dopo che esci dalla ricerca.
+Rebuilding message search	Ricostruzione della ricerca dei messaggi
+Stopped. Search carries on later.	Interrotto. La ricerca riprenderà dopo.
+Couldn't stop it. Try again.	Non interrotto. Riprova.
+Couldn't rebuild search. Try again.	Ricerca non ricostruita. Riprova.
+Message search isn't on for this account	Ricerca messaggi non attiva su questo account

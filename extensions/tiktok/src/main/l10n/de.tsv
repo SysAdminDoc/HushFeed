@@ -2512,3 +2512,10 @@ A removal is already running	Es läuft bereits eine Entfernung
 Cancelled	Abgebrochen
 Show inbox filters	Posteingangsfilter anzeigen
 Adds the Main, Requests, Unread and Starred tabs above your chats, the ones TikTok gives creator accounts.	Fügt über deinen Chats die Tabs Haupt, Anfragen, Ungelesen und Markiert hinzu, die TikTok sonst Creator-Konten gibt.
+Rebuild message search	Nachrichtensuche neu aufbauen
+Clears TikTok's message search and adds back every message saved on this phone, newest first. It keeps going after you leave search.	Leert TikToks Nachrichtensuche und nimmt jede auf diesem Handy gespeicherte Nachricht wieder auf, die neuesten zuerst. Es läuft weiter, auch wenn du die Suche verlässt.
+Rebuilding message search	Nachrichtensuche wird neu aufgebaut
+Stopped. Search carries on later.	Gestoppt. Die Suche macht später weiter.
+Couldn't stop it. Try again.	Stoppen fehlgeschlagen. Versuch es erneut.
+Couldn't rebuild search. Try again.	Neuaufbau fehlgeschlagen. Versuch es erneut.
+Message search isn't on for this account	Nachrichtensuche ist für dieses Konto aus

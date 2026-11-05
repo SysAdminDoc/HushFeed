@@ -7381,10 +7381,12 @@
   "source": [
    "patches/src/main/kotlin/app/morphe/patches/tiktok/misc/inbox/InboxFilterPatch.kt",
    "patches/src/main/kotlin/app/morphe/patches/tiktok/misc/inbox/InboxFilterTabs.kt",
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/misc/inbox/MessageSearchRebuild.kt",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/inbox/InboxFilter.java",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/inbox/InboxModelFilter.java",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/inbox/InboxControls.java",
-   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/inbox/InboxFilterTabs.java"
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/inbox/InboxFilterTabs.java",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/inbox/MessageSearchRebuild.java"
   ],
   "settings": [
    {

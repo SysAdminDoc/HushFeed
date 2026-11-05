@@ -2686,3 +2686,10 @@ A removal is already running	Удаление уже идёт
 Cancelled	Отменено
 Show inbox filters	Показывать фильтры входящих
 Adds the Main, Requests, Unread and Starred tabs above your chats, the ones TikTok gives creator accounts.	Добавляет над чатами вкладки «Основные», «Запросы», «Непрочитанные» и «Избранные», которые TikTok даёт аккаунтам авторов.
+Rebuild message search	Перестроить поиск по сообщениям
+Clears TikTok's message search and adds back every message saved on this phone, newest first. It keeps going after you leave search.	Очищает поиск по сообщениям TikTok и заново добавляет каждое сообщение, сохранённое на этом телефоне, начиная с новых. Продолжает работу и после выхода из поиска.
+Rebuilding message search	Поиск по сообщениям перестраивается
+Stopped. Search carries on later.	Остановлено. Поиск продолжит позже.
+Couldn't stop it. Try again.	Не остановлено. Повторите.
+Couldn't rebuild search. Try again.	Поиск не перестроен. Повторите.
+Message search isn't on for this account	Поиск сообщений недоступен для этого аккаунта

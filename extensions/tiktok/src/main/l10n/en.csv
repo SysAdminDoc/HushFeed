@@ -402,6 +402,7 @@ Clearing Favorites in %1$d,Clearing Favorites in %1$d
 Clearing seen videos,Clearing seen videos
 Clearing suggested accounts,Clearing suggested accounts
 "Clearing, %1$d so far","Clearing, %1$d so far"
+"Clears TikTok's message search and adds back every message saved on this phone, newest first. It keeps going after you leave search.","Clears TikTok's message search and adds back every message saved on this phone, newest first. It keeps going after you leave search."
 "Clears the recent events, saved crash reports, a recorded screen layout and the Hook status results above.","Clears the recent events, saved crash reports, a recorded screen layout and the Hook status results above."
 Close,Close
 Close TikTok after,Close TikTok after
@@ -478,6 +479,7 @@ Couldn't read that file. Choose it again.,Couldn't read that file. Choose it aga
 Couldn't read that file. Try again.,Couldn't read that file. Try again.
 Couldn't read that photo. Try another one.,Couldn't read that photo. Try another one.
 Couldn't read this list. Close it and try again.,Couldn't read this list. Close it and try again.
+Couldn't rebuild search. Try again.,Couldn't rebuild search. Try again.
 Couldn't recover a change. Restore a backup if needed.,Couldn't recover a change. Restore a backup if needed.
 Couldn't remove the imported font. Try again.,Couldn't remove the imported font. Try again.
 Couldn't reset the settings. Try again.,Couldn't reset the settings. Try again.
@@ -502,6 +504,7 @@ Couldn't start the export. Try again in a moment.,Couldn't start the export. Try
 Couldn't start the import. Try again in a moment.,Couldn't start the import. Try again in a moment.
 Couldn't start the report export. Try again.,Couldn't start the report export. Try again.
 Couldn't start the settings change. Try again in a moment.,Couldn't start the settings change. Try again in a moment.
+Couldn't stop it. Try again.,Couldn't stop it. Try again.
 Couldn't tell which folder to update. Choose it again.,Couldn't tell which folder to update. Choose it again.
 Couldn't translate this draft. Try again.,Couldn't translate this draft. Try again.
 Couldn't translate this message. Try again.,Couldn't translate this message. Try again.
@@ -1189,6 +1192,7 @@ Media save,Media save
 Medium,Medium
 Message,Message
 "Message bubble colors, Inbox archive and sharing to more chats","Message bubble colors, Inbox archive and sharing to more chats"
+Message search isn't on for this account,Message search isn't on for this account
 "Messages, profiles and search still work.","Messages, profiles and search still work."
 Microphone in use,Microphone in use
 Mini dramas,Mini dramas
@@ -1515,6 +1519,8 @@ Reading,Reading
 Reading the font file,Reading the font file
 Reading the seen-history file,Reading the seen-history file
 Reading watch history,Reading watch history
+Rebuild message search,Rebuild message search
+Rebuilding message search,Rebuilding message search
 Received message translation,Received message translation
 Recent searches,Recent searches
 Recently used,Recently used
@@ -1982,6 +1988,7 @@ Stopped waiting for the file app. Nothing was changed.,Stopped waiting for the f
 Stopped waiting for the file app. Nothing was exported.,Stopped waiting for the file app. Nothing was exported.
 Stopped waiting for the file app. Nothing was imported.,Stopped waiting for the file app. Nothing was imported.
 Stopped. %1$d removed.,Stopped. %1$d removed.
+Stopped. Search carries on later.,Stopped. Search carries on later.
 Stopping after this file,Stopping after this file
 Stops TikTok from reading your phone's motion and compass sensors. Apps can use them to recognize your phone.,Stops TikTok from reading your phone's motion and compass sensors. Apps can use them to recognize your phone.
 "Stops TikTok from reporting the videos you watch, so they don't get added to Watch history in Activity center. Your views won't count and For You learns less. Likes, follows and searches are still seen.","Stops TikTok from reporting the videos you watch, so they don't get added to Watch history in Activity center. Your views won't count and For You learns less. Likes, follows and searches are still seen."

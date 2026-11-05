@@ -2480,3 +2480,10 @@ A removal is already running,Penghapusan sedang berjalan
 Cancelled,Dibatalkan
 Show inbox filters,Tampilkan filter kotak masuk
 "Adds the Main, Requests, Unread and Starred tabs above your chats, the ones TikTok gives creator accounts.","Menambahkan tab Utama, Permintaan, Belum dibaca, dan Berbintang di atas obrolanmu, yang diberikan TikTok kepada akun kreator."
+Rebuild message search,Bangun ulang pencarian pesan
+"Clears TikTok's message search and adds back every message saved on this phone, newest first. It keeps going after you leave search.","Mengosongkan pencarian pesan TikTok lalu menambahkan lagi setiap pesan yang tersimpan di ponsel ini, mulai dari yang terbaru. Tetap berjalan setelah kamu keluar dari pencarian."
+Rebuilding message search,Membangun ulang pencarian pesan
+Stopped. Search carries on later.,Dihentikan. Pencarian lanjut nanti.
+Couldn't stop it. Try again.,Tidak bisa dihentikan. Coba lagi.
+Couldn't rebuild search. Try again.,Pencarian tidak bisa dibangun ulang. Coba lagi.
+Message search isn't on for this account,Pencarian pesan tidak aktif di akun ini

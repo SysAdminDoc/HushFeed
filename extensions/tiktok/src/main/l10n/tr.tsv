@@ -2509,3 +2509,10 @@ A removal is already running	Bir kaldırma işlemi zaten sürüyor
 Cancelled	İptal edildi
 Show inbox filters	Gelen kutusu filtrelerini göster
 Adds the Main, Requests, Unread and Starred tabs above your chats, the ones TikTok gives creator accounts.	Sohbetlerinizin üstüne TikTok'un içerik üreticisi hesaplarına verdiği Ana, İstekler, Okunmamış ve Yıldızlı sekmelerini ekler.
+Rebuild message search	Mesaj aramasını yeniden oluştur
+Clears TikTok's message search and adds back every message saved on this phone, newest first. It keeps going after you leave search.	TikTok'un mesaj aramasını temizler ve bu telefonda kayıtlı her mesajı en yeniden başlayarak yeniden ekler. Aramadan çıktıktan sonra da devam eder.
+Rebuilding message search	Mesaj araması yeniden oluşturuluyor
+Stopped. Search carries on later.	Durduruldu. Arama sonra devam eder.
+Couldn't stop it. Try again.	Durdurulamadı. Tekrar dene.
+Couldn't rebuild search. Try again.	Arama oluşturulamadı. Tekrar dene.
+Message search isn't on for this account	Mesaj araması bu hesapta açık değil

@@ -2478,3 +2478,10 @@ A removal is already running,已有移除任务在进行
 Cancelled,已取消
 Show inbox filters,显示收件箱筛选
 "Adds the Main, Requests, Unread and Starred tabs above your chats, the ones TikTok gives creator accounts.",在聊天列表上方添加“主要”“请求”“未读”和“星标”标签，也就是 TikTok 给创作者账号的那些.
+Rebuild message search,重建消息搜索
+"Clears TikTok's message search and adds back every message saved on this phone, newest first. It keeps going after you leave search.",清空 TikTok 的消息搜索，并把这部手机上保存的每条消息重新加入，从最新的开始。离开搜索后仍会继续.
+Rebuilding message search,正在重建消息搜索
+Stopped. Search carries on later.,已停止。搜索稍后会继续.
+Couldn't stop it. Try again.,无法停止。再试一次.
+Couldn't rebuild search. Try again.,无法重建搜索。再试一次.
+Message search isn't on for this account,此账号未开启消息搜索

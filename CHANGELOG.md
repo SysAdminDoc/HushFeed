@@ -76,6 +76,7 @@ Every Hushfeed release, newest first.
 * A full name typed after an @ in a bio, like @First Last, is one link now and opens a search for that name. Before, only the first word lit up, and it opened a stranger's profile or nothing. A name like @José no longer links as @Jos.
 * A name in a bio with a date stuck to it, like @Hannahraines11/30/24, searches for the whole thing now instead of opening whatever account matches the part before the slash. Mentions picked from TikTok's own list in the bio editor keep TikTok's link, which opens the exact person (#247).
 * `Thumbs down blocks the commenter` takes that person's comments out of the list right away now. Before, the comment only dimmed and stayed where it was.
+* `Pause the video while comments are open` stops a video opened from a profile or from Activity as soon as the comments open, even when it has no comments yet. It used to wait for the first comment to load there, so a video with none kept playing (#316).
 * `Hide the Send to row` and `Hide people and options by name` reach the row of friends in the menu a long press on a comment opens. They only reached the share sheet's row before.
 * `AMOLED dark theme` turns the gray cards in the comment menu and the long-press video menu black, along with the panel behind them.
 * The "Saving video" message no longer sits under the "Video saved" banner on a quick save. The banner takes its place.

@@ -24,6 +24,8 @@ import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 import app.morphe.extension.tiktok.wellbeing.SessionPlaybackHoldTest.NativeController;
 
+import com.ss.android.ugc.aweme.detail.ui.DetailActivity;
+
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.junit.After;
@@ -639,6 +641,40 @@ public class PauseSwitchPlaybackTest {
             sheet.getViewTreeObserver().dispatchOnGlobalLayout();
             idle();
             assertEquals("a sheet with nothing to bind left the video playing", 2, player.manager.pauses);
+        }
+    }
+
+    /**
+     * #316: a video opened from a profile or from Activity plays in the detail pager, which only
+     * started watching for its comments once one bound, so a video with none played on under them.
+     */
+    @Test public void commentsWithNothingToBindStopAVideoOpenedFromAProfile() {
+        Settings.PAUSE_ON_COMMENTS.save(true);
+        try (var feed = Robolectric.buildActivity(FeedActivity.class).create()) {
+            PausePlayback.install(feed.get());
+            feed.start().resume().visible();
+            feed.pause();
+            try (var owner = Robolectric.buildActivity(DetailActivity.class).create()) {
+                Activity activity = owner.get();
+                activity.setContentView(new FrameLayout(activity));
+                owner.start().resume().visible();
+                feed.stop();
+                Utils.setActivity(activity);
+                NativeController player = playing("profile");
+
+                FrameLayout sheet = panelIn(activity, true);
+                idle();
+                assertEquals("comments with nothing to bind left the profile video playing",
+                        1, player.manager.pauses);
+                long stoppedAt = player.manager.position;
+                player.manager.advance(2_000);
+                assertEquals(stoppedAt, player.manager.position);
+
+                park(sheet);
+                idleFor(300);
+                assertEquals("closing the comments did not give the profile video back",
+                        1, player.manager.resumes);
+            }
         }
     }
 

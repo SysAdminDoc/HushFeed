@@ -224,11 +224,11 @@ public final class PausePlayback {
     }
 
     /**
-     * Watches the activity's layout passes for the sheet. Started from the feed's resume as well
-     * as from a bind: waiting for a bind left the first sheet of each start playing until its
-     * comments had loaded, which on a slow connection is seconds, and a video with no comments
-     * binds nothing at all. Opening the sheet lays it out, so the pass is there either way. With
-     * the switch off each pass costs a setting read.
+     * Watches the activity's layout passes for the sheet. Started from the feed's and the detail
+     * pager's resume as well as from a bind: waiting for a bind left the first sheet of each start
+     * playing until its comments had loaded, which on a slow connection is seconds, and a video
+     * with no comments binds nothing at all. Opening the sheet lays it out, so the pass is there
+     * either way. With the switch off each pass costs a setting read.
      */
     private static void watchPanel(Activity activity, View decor) {
         panelActivityReference = new WeakReference<>(activity);
@@ -430,9 +430,12 @@ public final class PausePlayback {
             }
             // The same for a sheet drawn into the activity, let go as the app went away. The
             // feed's own resume is where watching for that sheet starts: onCreate is too early to
-            // ask for the window's decor, which TikTok may still be configuring then. A bundle
-            // without Comment tools has no switch for it, so nothing is watched there.
-            if (SettingsStatus.commentToolsEnabled && activity != null && activity.getClass() == feedClass
+            // ask for the window's decor, which TikTok may still be configuring then. The detail
+            // pager a video opened from a profile or Activity plays in draws the same sheet, and
+            // waiting there for a comment to bind left a video with none playing under it (#316).
+            // A bundle without Comment tools has no switch for it, so nothing is watched there.
+            if (SettingsStatus.commentToolsEnabled && activity != null
+                    && (activity.getClass() == feedClass || FeedVisibility.isDetailPager(activity))
                     && activity.getWindow() != null && activity.getWindow().peekDecorView() != null) {
                 watchPanel(activity, activity.getWindow().getDecorView());
             }

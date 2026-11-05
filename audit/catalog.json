@@ -9096,7 +9096,7 @@
      },
      {
       "probe": "fill",
-      "expect": "covers=true",
+      "expect": "ok fill players=\\d+ pictures=\\d+ covers=true",
       "retrySwipe": 2
      },
      {

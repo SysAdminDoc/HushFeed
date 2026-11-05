@@ -258,7 +258,7 @@ public final class LiveRecordChip {
     }
 
     /** Every visible view under {@code root} that takes a tap, other than {@code skip}, in {@code area}'s coordinates. */
-    static void tapTargets(View root, View skip, Rect area, long largest, List<Rect> out) {
+    public static void tapTargets(View root, View skip, Rect area, long largest, List<Rect> out) {
         if (root == skip || root.getVisibility() != View.VISIBLE || root.getAlpha() == 0f) return;
         Rect rect = new Rect();
         if ((root.isClickable() || root.isLongClickable()) && root.getGlobalVisibleRect(rect)
@@ -279,7 +279,7 @@ public final class LiveRecordChip {
      * and {@code right} covers none of {@code taken}. Past {@code lowest} the chip would sit among
      * the room's own controls, so it stays at {@code wanted} then.
      */
-    static int freeTop(int wanted, int height, int left, int right, List<Rect> taken, int gap, int lowest) {
+    public static int freeTop(int wanted, int height, int left, int right, List<Rect> taken, int gap, int lowest) {
         int top = wanted;
         boolean moved = true;
         while (moved && top <= lowest) {
@@ -326,6 +326,11 @@ public final class LiveRecordChip {
     /** Screen recordings hide the chip to avoid filming it (#265). */
     static boolean hidesChip(LiveRecorder.Target target) {
         return hidesChip(target, false);
+    }
+
+    /** Whether the room in front has LIVE Clear screen on; known only with LIVE controls patched in. */
+    public static boolean clearScreenOn() {
+        return clearScreen;
     }
 
     /** LIVE Clear screen also hides the chip, without changing recording state. */
@@ -705,7 +710,7 @@ public final class LiveRecordChip {
     }
 
     /** How much of a room page is on screen, in pixels; 0 unless it is resumed and mostly shown. */
-    private static int heightOnScreen(Object fragment) {
+    public static int heightOnScreen(Object fragment) {
         if (Boolean.FALSE.equals(Reflect.invoke(fragment, "isResumed"))) return 0;
         if (Boolean.TRUE.equals(Reflect.invoke(fragment, "isRemoving"))) return 0;
         if (Boolean.TRUE.equals(Reflect.invoke(fragment, "isDetached"))) return 0;
@@ -743,7 +748,7 @@ public final class LiveRecordChip {
     }
 
     /** The Room-typed field on a room page or a native clear-screen controller. */
-    private static Object roomOf(Object holder) {
+    public static Object roomOf(Object holder) {
         if (holder == null) return null;
         try {
             for (Class<?> type = holder.getClass(); type != null && type != Object.class; type = type.getSuperclass()) {

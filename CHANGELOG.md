@@ -42,6 +42,7 @@ Every Hushfeed release, newest first.
 * `Open TikTok on` has a Discover choice for phones whose bottom bar has a Discover tab. On a bar without one, TikTok opens where it normally would (#338).
 * `Sort loaded videos on sound pages` sorts the videos a sound's page has loaded, with the same orders as profile grids. Open a video from there and swiping up follows that order too. It starts off, and other kinds of pages keep TikTok's order (#180).
 * `Hold speed bubble style` picks how the speed shows while you slide during a hold: the pill you know, or a small round dial with a ring that fills as the speed goes up. The dial comes from OmerKurdi79's fork (#248).
+* `Block author button` works inside LIVE rooms too. The button sits under the record button, a tap blocks the host and closes the room, and the screen you land on offers Unblock for a couple of seconds, like it does in the feed. It hides along with the rest when LIVE Clear screen is on (#138).
 
 ### Bug Fixes
 * For You no longer freezes after a swipe with the first video's sound still playing and the next video stuck on its cover. On some starts TikTok never told the For You page it was on screen, so its videos never started. Now Hushfeed notices a For You feed that's in front but was never shown and shows it to TikTok, the way a tap on Home would. It doesn't depend on `Feed tab navigation`, and a feed that plays normally is left alone.

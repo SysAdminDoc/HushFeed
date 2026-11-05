@@ -17,6 +17,7 @@ import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.inbox.MainActivityOnCreateFingerprint
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
+import app.morphe.patches.tiktok.interaction.live.LivePlayFragmentResumeFingerprint
 import app.morphe.patches.tiktok.interaction.resume.FeedPlayCompletedFingerprint
 import app.morphe.patches.tiktok.shared.OnRenderFirstFrameFingerprint
 import app.morphe.patches.tiktok.shared.guardAtEntry
@@ -141,6 +142,15 @@ val blockAuthorPatch = bytecodePatch(
             0,
             "invoke-static/range { p0 .. p1 }, " +
                 "$EXTENSION_CLASS_DESCRIPTOR->onLiveCellBound(Ljava/lang/Object;Ljava/lang/Object;)V",
+        )
+
+        // An open LIVE room gets the block button too (#138). Its page resuming is the hook the
+        // Record chip uses; the button reads the host from the page in front when it's tapped,
+        // so it works with or without LIVE controls patched in.
+        LivePlayFragmentResumeFingerprint.method.addInstruction(
+            0,
+            "invoke-static/range { p0 .. p0 }, " +
+                "Lapp/morphe/extension/tiktok/blockauthor/LiveRoomBlock;->noteRoomFragment(Ljava/lang/Object;)V",
         )
 
         // The video actually playing, and the player's own pause and resume, come from

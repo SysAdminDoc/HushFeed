@@ -21,43 +21,43 @@ import org.junit.Test
  *
  * <p>The comment panel's shapes and the Tux sheet behind the share sheet fill with one theme
  * attribute: the comment page sets drawable af4 or af9 on its container, whose solid is
- * ?attr/a27, and the Tux sheet reads TuxSheet's tux_sheetBackgroundColor, which its style points
- * at ?attr/a27 as well. The dark themes send a27 to the palette token aig, a dark literal
- * (#1E1E1E on the S22, 2026-09-23), and the light ones to axr, white. The names are the build's
+ * ?attr/a26, and the Tux sheet reads TuxSheet's tux_sheetBackgroundColor, which its style points
+ * at ?attr/a26 as well. The dark themes send a26 to the palette token aif, a dark literal
+ * (#1E1E1E on the S22, 2026-09-23), and the light ones to axq, white. The names are the build's
  * own: 46.x reached the same sheets through agk and c3, which 47.x keeps as unrelated tokens.
- * a27 is what TikTok's own token table calls UISheetFlat1, the fill of its sheets, panels, modals
+ * a26 is what TikTok's own token table calls UISheetFlat1, the fill of its sheets, panels, modals
  * and text cells as well, so all of those go black with it.
  */
 class AmoledSheetTokensTest {
     @Test
-    fun `each declared build fills both sheets through a27, which the dark themes send to aig`() {
+    fun `each declared build fills both sheets through a26, which the dark themes send to aif`() {
         Fixtures.forEachDeclared { apk ->
             val table = FixtureResourceTable(apk)
 
             val sheetAttr = tuxSheetBackgroundAttr(apk)
-            assertEquals("the Tux sheet background attribute", "b7i", table.attrNames[sheetAttr])
-            val sheetValues = table.styleValues("b7i").toSet()
-            assertTrue("b7i reaches a27 in a Tux sheet style: $sheetValues", "?attr/a27" in sheetValues)
+            assertEquals("the Tux sheet background attribute", "b7h", table.attrNames[sheetAttr])
+            val sheetValues = table.styleValues("b7h").toSet()
+            assertTrue("b7h reaches a26 in a Tux sheet style: $sheetValues", "?attr/a26" in sheetValues)
 
             // The comment page's two container shapes were traced on 47.0.3 (af4 and af9).
             // Drawable names move with every build and nothing here reads which ones the
             // declared build's page sets.
 
-            val a27 = table.styleValues("a27")
-            assertEquals("what the themes point a27 at: $a27", setOf("?attr/aig", "?attr/axr"), a27.toSet())
-            val dark = table.styleValues("aig")
-            val light = table.styleValues("axr")
-            assertTrue("aig is a dark opaque literal wherever it is set: $dark", dark.isNotEmpty() && dark.all(::isDarkOpaqueLiteral))
-            assertTrue("axr is light wherever it is set: $light", light.isNotEmpty() && light.none(::isDarkOpaqueLiteral))
-            assertTrue("the patch rewrites aig", "aig" in surfaceStyleItems(Fixtures.versionOf(apk)))
+            val a26 = table.styleValues("a26")
+            assertEquals("what the themes point a26 at: $a26", setOf("?attr/aif", "?attr/axq"), a26.toSet())
+            val dark = table.styleValues("aif")
+            val light = table.styleValues("axq")
+            assertTrue("aif is a dark opaque literal wherever it is set: $dark", dark.isNotEmpty() && dark.all(::isDarkOpaqueLiteral))
+            assertTrue("axq is light wherever it is set: $light", light.isNotEmpty() && light.none(::isDarkOpaqueLiteral))
+            assertTrue("the patch rewrites aif", "aif" in surfaceStyleItems(Fixtures.versionOf(apk)))
         }
     }
 
     /**
      * The feed's long-press panel and Inbox > Activity stayed gray under AMOLED (Facebook report,
      * 2026-10-12; #1E1E1E and #121212 on the S22). LongPressAwemeFragment fills with
-     * UISheetGrouped1 (a2c), which the dark themes send to aim and the light ones to axx, and its
-     * cards are UISheetGrouped2 (a2e, aio), which stayed gray through 0.80.0 (#312). The notification
+     * UISheetGrouped1 (a2b), which the dark themes send to ail and the light ones to axw, and its
+     * cards are UISheetGrouped2 (a2d, ain), which stayed gray through 0.80.0 (#312). The notification
      * page's container and its rows fill with BGPrimary (bx), a literal of its own in every theme.
      */
     @Test
@@ -68,17 +68,17 @@ class AmoledSheetTokensTest {
 
             assertTrue(
                 "LongPressAwemeFragment fills with UISheetGrouped1",
-                loadsConstant(apk, "Lcom/ss/android/ugc/profile/business/ur/longpress/LongPressAwemeFragment;", "onCreateView", idOf("a2c")),
+                loadsConstant(apk, "Lcom/ss/android/ugc/profile/business/ur/longpress/LongPressAwemeFragment;", "onCreateView", idOf("a2b")),
             )
-            assertEquals("what the themes point a2c at", setOf("?attr/aim", "?attr/axx"), table.styleValues("a2c").toSet())
-            val grouped = table.styleValues("aim")
-            assertTrue("aim is a dark opaque literal wherever it is set: $grouped", grouped.isNotEmpty() && grouped.all(::isDarkOpaqueLiteral))
-            assertTrue("axx stays light", table.styleValues("axx").none(::isDarkOpaqueLiteral))
-            assertEquals("the panel's cards", setOf("?attr/aio", "?attr/axz"), table.styleValues("a2e").toSet())
-            val cards = table.styleValues("aio")
-            assertTrue("aio is a dark opaque literal wherever it is set: $cards", cards.isNotEmpty() && cards.all(::isDarkOpaqueLiteral))
-            assertTrue("axz stays light", table.styleValues("axz").none(::isDarkOpaqueLiteral))
-            assertTrue("the patch rewrites the cards", "aio" in surfaceStyleItems(Fixtures.versionOf(apk)))
+            assertEquals("what the themes point a2b at", setOf("?attr/ail", "?attr/axw"), table.styleValues("a2b").toSet())
+            val grouped = table.styleValues("ail")
+            assertTrue("ail is a dark opaque literal wherever it is set: $grouped", grouped.isNotEmpty() && grouped.all(::isDarkOpaqueLiteral))
+            assertTrue("axw stays light", table.styleValues("axw").none(::isDarkOpaqueLiteral))
+            assertEquals("the panel's cards", setOf("?attr/ain", "?attr/axy"), table.styleValues("a2d").toSet())
+            val cards = table.styleValues("ain")
+            assertTrue("ain is a dark opaque literal wherever it is set: $cards", cards.isNotEmpty() && cards.all(::isDarkOpaqueLiteral))
+            assertTrue("axy stays light", table.styleValues("axy").none(::isDarkOpaqueLiteral))
+            assertTrue("the patch rewrites the cards", "ain" in surfaceStyleItems(Fixtures.versionOf(apk)))
 
             assertTrue(
                 "the notification page's container fills with BGPrimary",
@@ -88,16 +88,16 @@ class AmoledSheetTokensTest {
             assertTrue("bx is a literal in every theme: $primary", primary.none { it.startsWith("?") })
             assertTrue("bx is dark in a dark theme: $primary", primary.any(::isDarkOpaqueLiteral))
             assertTrue("bx is light in a light theme: $primary", !primary.all(::isDarkOpaqueLiteral))
-            assertTrue("the patch rewrites aim and bx", surfaceStyleItems(Fixtures.versionOf(apk)).containsAll(setOf("aim", "bx")))
+            assertTrue("the patch rewrites ail and bx", surfaceStyleItems(Fixtures.versionOf(apk)).containsAll(setOf("ail", "bx")))
         }
     }
 
     /**
      * TikTok's own settings pages stayed stock under AMOLED (#152): Settings and privacy is
      * UIPageGrouped1, already black in TikTok's dark mode, and its cards were #1E1E1E on the S22.
-     * A TuxCell (the settings row) fills with UIPageGrouped2 (a0j) unless it sits on a sheet,
-     * where it takes UISheetGrouped2 (a2e) like the long-press panel's cards. The dark themes send
-     * a0j to agt and the light ones to aw4.
+     * A TuxCell (the settings row) fills with UIPageGrouped2 (a0i) unless it sits on a sheet,
+     * where it takes UISheetGrouped2 (a2d) like the long-press panel's cards. The dark themes send
+     * a0i to ags and the light ones to aw3.
      */
     @Test
     fun `settings rows off a sheet fill with UIPageGrouped2, which the patch rewrites`() {
@@ -106,14 +106,14 @@ class AmoledSheetTokensTest {
             val idOf = { name: String -> table.attrNames.entries.single { it.value == name }.key }
 
             val cell = "Lcom/ss/android/ugc/aweme/cell/TuxCell;"
-            assertTrue("a TuxCell fills with UIPageGrouped2", loadsConstant(apk, cell, null, idOf("a0j")))
-            assertTrue("a TuxCell on a sheet fills with UISheetGrouped2", loadsConstant(apk, cell, null, idOf("a2e")))
-            assertEquals("what the themes point a0j at", setOf("?attr/agt", "?attr/aw4"), table.styleValues("a0j").toSet())
-            val dark = table.styleValues("agt")
-            assertTrue("agt is a dark opaque literal wherever it is set: $dark", dark.isNotEmpty() && dark.all(::isDarkOpaqueLiteral))
-            assertTrue("aw4 stays light", table.styleValues("aw4").none(::isDarkOpaqueLiteral))
-            assertTrue("the patch rewrites agt", "agt" in surfaceStyleItems(Fixtures.versionOf(apk)))
-            assertTrue("a sheet's cards go black with it", "aio" in surfaceStyleItems(Fixtures.versionOf(apk)))
+            assertTrue("a TuxCell fills with UIPageGrouped2", loadsConstant(apk, cell, null, idOf("a0i")))
+            assertTrue("a TuxCell on a sheet fills with UISheetGrouped2", loadsConstant(apk, cell, null, idOf("a2d")))
+            assertEquals("what the themes point a0i at", setOf("?attr/ags", "?attr/aw3"), table.styleValues("a0i").toSet())
+            val dark = table.styleValues("ags")
+            assertTrue("ags is a dark opaque literal wherever it is set: $dark", dark.isNotEmpty() && dark.all(::isDarkOpaqueLiteral))
+            assertTrue("aw3 stays light", table.styleValues("aw3").none(::isDarkOpaqueLiteral))
+            assertTrue("the patch rewrites ags", "ags" in surfaceStyleItems(Fixtures.versionOf(apk)))
+            assertTrue("a sheet's cards go black with it", "ain" in surfaceStyleItems(Fixtures.versionOf(apk)))
         }
     }
 

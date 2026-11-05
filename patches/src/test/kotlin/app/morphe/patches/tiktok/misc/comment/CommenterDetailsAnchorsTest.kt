@@ -79,9 +79,11 @@ class CommenterDetailsAnchorsTest {
             val times = taken(CommentTimeWriteFingerprint)
             assertEquals("$version: the time fingerprint takes ${times.map(::label)}", 1, times.size)
             val time = times.single()
-            val timeSites = time.commentTimeSites()
+            val timeSites = time.commentTimeSites(cell.commentGetter())
             assertEquals("$version: time writes $timeSites", 2, timeSites.size)
             assertEquals("$version: two time writes share a setText", 2, timeSites.map { it.writeIndex }.toSet().size)
+            assertTrue("$version: the comment would land on a time view",
+                timeSites.none { it.commentRegister == it.viewRegister })
 
             val binds = taken(BaseCommentCellBindFingerprint)
             assertEquals("$version: the cell bind fingerprint takes ${binds.map(::label)}", 1, binds.size)

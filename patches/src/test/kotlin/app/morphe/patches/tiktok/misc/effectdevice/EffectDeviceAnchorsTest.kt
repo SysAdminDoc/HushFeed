@@ -22,15 +22,18 @@ import org.junit.Test
 
 private const val EXTENSION = "Lapp/morphe/extension/tiktok/misc/EffectDeviceSpoof;"
 
+private const val EFFECT_CONFIGURATION_BUILDER = "Lcom/ss/android/ugc/effectmanager/EffectConfiguration\$Builder;"
+private const val MODEL_CONFIGURATION_BUILDER = "Lcom/ss/android/ugc/effectmanager/DownloadableModelConfig\$Builder;"
+
 /**
- * Report a newer phone to effects (#176), held to every declared build: each of the three
- * methods that hand `Build.MODEL` to the effect platform's config builders is found exactly
- * once, and every model read in it gets a typed call and a move-result in its register.
+ * Report a newer phone to effects (#176), held to every declared build: each method that hands
+ * `Build.MODEL` to the effect platform's config builders is found exactly once, nothing else
+ * calls either builder's device type setter, and every model read gets a typed call and a
+ * move-result in its register.
  */
 class EffectDeviceAnchorsTest {
     private val expectedReads = mapOf(
         EffectConfigurationFactoryFingerprint to 1,
-        EffectManagerCreateFingerprint to 2,
         ModelConfigBuilderFingerprint to 1,
     )
 
@@ -82,7 +85,20 @@ class EffectDeviceAnchorsTest {
                 "${native.definingClass}->${native.name}"
             }
             assertEquals("${apk.name}: the fingerprints overlap $taken", taken.size, taken.toSet().size)
+            // Every caller of either setter is one of those, so a build that adds a config path
+            // (47.6.3's DefaultResourceProvider creator set both, and 47.7.2 dropped it) shows up here.
+            val setters = methods.filter { (classDef, method) ->
+                method.implementation?.instructions?.any { isDeviceTypeSetter(it, classDef.type) } == true
+            }.map { (classDef, method) -> "${classDef.type}->${method.name}" }
+            assertEquals("${apk.name}: methods handing the effect builders a device type", taken.sorted(), setters.sorted())
         }
+    }
+
+    private fun isDeviceTypeSetter(instruction: Instruction, caller: String): Boolean {
+        val call = instruction.getReference<MethodReference>() ?: return false
+        if (call.definingClass == caller) return false
+        return (call.definingClass == EFFECT_CONFIGURATION_BUILDER && call.name == "deviceType") ||
+            (call.definingClass == MODEL_CONFIGURATION_BUILDER && call.name == "setDeviceType")
     }
 
     @Test
@@ -90,7 +106,6 @@ class EffectDeviceAnchorsTest {
         val root = File("src/main/kotlin").takeIf { it.isDirectory } ?: File("patches/src/main/kotlin")
         val source = File(root, "app/morphe/patches/tiktok/misc/effectdevice/EffectDevicePatch.kt").readText()
         assertTrue(source.contains("EffectConfigurationFactoryFingerprint.method.swapExactly(1)"))
-        assertTrue(source.contains("EffectManagerCreateFingerprint.method.swapExactly(2)"))
         assertTrue(source.contains("ModelConfigBuilderFingerprint.method.swapExactly(1)"))
         assertTrue(source.contains("SettingsStatus;->enableEffectDeviceSpoof()V"))
         assertTrue(source.contains("deviceType(Ljava/lang/String;)Ljava/lang/String;"))

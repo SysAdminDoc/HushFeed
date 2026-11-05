@@ -46,11 +46,11 @@ class LocalProfileCountAnchorsTest {
             assertTrue(found.legacy.first.parameterTypes.isEmpty())
             assertEquals(mapOf(
                 ProfileCountMetric.FOLLOWERS to listOf("(I)V", "(Z)V"),
-                ProfileCountMetric.FOLLOWING to listOf("LJJLIIIJJI()Z"),
-                ProfileCountMetric.LIKES to listOf("LJJLIIIJJI()Z"),
+                ProfileCountMetric.FOLLOWING to listOf("LJJLIIIJL()Z"),
+                ProfileCountMetric.LIKES to listOf("LJJLIIIJL()Z"),
             ), found.sites.mapValues { (_, sites) -> sites.map { (method, _) ->
                 // R8 renames the follower setters (47.4.3 LJJLIL and LJLJJL); the bind keeps its name.
-                if (method.name == "LJJLIIIJJI") signature(method) else signature(method).removePrefix(method.name) }.sorted() })
+                if (method.name == "LJJLIIIJL") signature(method) else signature(method).removePrefix(method.name) }.sorted() })
             assertEquals("(I${NUMBER}${STRING})$TEXT", found.formatter.toString().substringAfter("->${found.formatter.name}"))
             val formatter = found.classes.getValue(found.formatter.definingClass).methods.single {
                 it.name == found.formatter.name && it.parameterTypes.map(CharSequence::toString) == listOf("I", NUMBER, STRING) && it.returnType == TEXT
@@ -76,11 +76,11 @@ class LocalProfileCountAnchorsTest {
                 assertTrue(AccessFlags.PUBLIC.isSet(method.accessFlags))
             }
             val identity = found.legacy.first.legacyCountIdentity()
-            assertEquals("LLLF", identity.attached.name)
+            assertEquals("LLJLLL", identity.attached.name)
             assertEquals(identity.holder.definingClass, identity.attached.type)
-            assertEquals("LLJJIII", identity.holder.name)
+            assertEquals("LLJJIJIIJIL", identity.holder.name)
             assertEquals("componentId", identity.key.name)
-            assertEquals("LLJLLL", identity.fallback.name)
+            assertEquals("LLJLIL", identity.fallback.name)
         }
     }
 

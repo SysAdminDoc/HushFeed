@@ -109,7 +109,7 @@ class SearchRewardsGettersTest {
 
     private fun getter(feature: String, placeholder: String, asksForService: Boolean = true): Method {
         val mutable = MutableMethod(ImmutableMethod(
-            "LX/0AO4;", "invoke", emptyList(), "Ljava/lang/Object;", AccessFlags.PUBLIC.value or AccessFlags.FINAL.value,
+            "LX/0HOD;", "invoke", emptyList(), "Ljava/lang/Object;", AccessFlags.PUBLIC.value or AccessFlags.FINAL.value,
             null, null, ImmutableMethodImplementation(9, emptyList(), null, null),
         ))
         val real = if (asksForService) {
@@ -129,11 +129,11 @@ class SearchRewardsGettersTest {
         mutable.addInstructionsWithLabels(
             0,
             """
-                sget-object v2, LX/08FU;->LIZIZ:LX/08FU;
+                sget-object v2, LX/0AEL;->LIZIZ:LX/0AEL;
                 const-string v1, "$feature"
                 const/4 v3, 0x0
                 const/4 v0, 0x0
-                invoke-virtual {v2, v0, v1, v3}, LX/08FU;->LJFF(Landroidx/fragment/app/Fragment;Ljava/lang/String;Z)Z
+                invoke-virtual {v2, v0, v1, v3}, LX/0AEL;->LJFF(Landroidx/fragment/app/Fragment;Ljava/lang/String;Z)Z
                 move-result v0
                 if-nez v0, :real
                 new-instance v0, $placeholder

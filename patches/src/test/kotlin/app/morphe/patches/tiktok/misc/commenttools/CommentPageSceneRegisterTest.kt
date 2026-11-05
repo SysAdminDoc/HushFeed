@@ -31,13 +31,13 @@ class CommentPageSceneRegisterTest {
     /** (this, struct, scene, string) with the scene in [scene]. */
     private fun play(scene: Int) = ImmutableInstruction35c(
         Opcode.INVOKE_VIRTUAL, 4, 5, 0, scene, 6, 0,
-        ImmutableMethodReference("LX/0Gsw;", "LIZ", listOf(struct, "I", "Ljava/lang/String;"), "V"),
+        ImmutableMethodReference("LX/0Dj0;", "LIZ", listOf(struct, "I", "Ljava/lang/String;"), "V"),
     )
 
     /** The same call as a range invoke, which is how a body passes registers past v15: (this, struct, scene, string) from [scene] - 2. */
     private fun playRange(scene: Int) = ImmutableInstruction3rc(
         Opcode.INVOKE_VIRTUAL_RANGE, scene - 2, 4,
-        ImmutableMethodReference("LX/0Gsw;", "LIZ", listOf(struct, "I", "Ljava/lang/String;"), "V"),
+        ImmutableMethodReference("LX/0Dj0;", "LIZ", listOf(struct, "I", "Ljava/lang/String;"), "V"),
     )
 
     private fun body(vararg between: Instruction, scene: Int): List<Instruction> =

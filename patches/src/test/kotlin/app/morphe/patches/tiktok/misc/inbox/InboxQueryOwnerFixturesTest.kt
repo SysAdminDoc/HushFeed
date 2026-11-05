@@ -32,7 +32,7 @@ private const val MUS_NOTICE = "Lcom/ss/android/ugc/aweme/notice/repo/list/bean/
 class InboxQueryOwnerFixturesTest {
     @Test
     fun `both current native bind variants capture after success without replacing a listener or model`() {
-        assertEquals(listOf("47.6.3"), Fixtures.declaredVersions())
+        assertEquals(listOf("47.7.2"), Fixtures.declaredVersions())
         Fixtures.forEachDeclared { apk ->
             val dex = Fixtures.dexContainer(apk, Opcodes.getDefault())
             val cell = dex.classOf(TEMPLATE_NOTIFICATION_CELL)
@@ -92,35 +92,35 @@ class InboxQueryOwnerFixturesTest {
         Fixtures.forEachDeclared { apk ->
             val dex = Fixtures.dexContainer(apk, Opcodes.getDefault())
             // 47.5.3 renamed the PowerList classes (47.4.3 LX/09Mx; LX/09MC; LX/09LW; LX/09Nj;
-            // LX/09Ni; LX/0NaB; and BX for the recycler getter). The member names come from the
+            // LX/0Av4; LX/1NAu; and BX for the recycler getter). The member names come from the
             // extension itself: the 47.4.3 retarget left them on 47.1.4 and search went quiet.
             val names = extensionNames()
             val stub = dex.classOf(STUB)
-            assertEquals("LX/09Ft;", stub.method(names.getValue("STUB_STATE")).returnType)
-            assertEquals("LX/09FG;", stub.fields.single { it.name == names.getValue("STUB_ADAPTER") }.type)
+            assertEquals("LX/0B3L;", stub.method(names.getValue("STUB_STATE")).returnType)
+            assertEquals("LX/0B2W;", stub.fields.single { it.name == names.getValue("STUB_ADAPTER") }.type)
             val adapter = dex.classOf(ADAPTER)
             assertEquals(STUB, adapter.methods.single { it.name == names.getValue("ADAPTER_PRIMARY_STUB") && it.parameterTypes.isEmpty() }.returnType)
-            assertEquals("LX/09Fc;", adapter.fields.single { it.name == names.getValue("ADAPTER_DIFF") }.type)
+            assertEquals("LX/0B31;", adapter.fields.single { it.name == names.getValue("ADAPTER_DIFF") }.type)
             assertEquals("Lcom/bytedance/ies/powerlist/page/PowerPageLoader;",
                 adapter.fields.single { it.name == names.getValue("ADAPTER_PAGER") }.type)
-            val recycler = dex.classOf("LX/09F4;")
-            assertEquals("LX/09Ft;", recycler.method("getState").returnType)
-            val state = dex.classOf("LX/09Ft;")
+            val recycler = dex.classOf("LX/0B2A;")
+            assertEquals("LX/0B3L;", recycler.method("getState").returnType)
+            val state = dex.classOf("LX/0B3L;")
             assertEquals("Lcom/bytedance/ies/powerlist/ListState;", state.superclass)
             assertEquals("Ljava/util/List;", state.fields.single { it.name == "LJ" }.type)
             assertEquals("Ljava/util/concurrent/locks/ReentrantLock;", state.fields.single { it.name == "LJFF" }.type)
             val fragment = dex.classOf(FRAGMENT)
             assertEquals(recycler.type, fragment.method(names.getValue("FRAGMENT_LIST")).returnType)
-            val spring = dex.classOf("LX/09GH;")
+            val spring = dex.classOf("LX/0B3q;")
             assertEquals(spring.type, fragment.method(names.getValue("FRAGMENT_SPRING")).returnType)
-            assertEquals("LX/09GG;", spring.superclass)
+            assertEquals("LX/0B3p;", spring.superclass)
             val constrainedParent = dex.classOf(spring.superclass!!)
             assertEquals("Landroid/widget/FrameLayout;", constrainedParent.superclass)
             assertTrue(constrainedParent.method("getNestedChild").references<MethodReference>()
                 .any { it.name == "getChildCount" })
             assertTrue(constrainedParent.method("getNestedChild").references<MethodReference>()
                 .any { it.definingClass == "Ljava/lang/IllegalArgumentException;" && it.name == "<init>" })
-            assertEquals("LX/0La3;", fragment.method("FX").returnType)
+            assertEquals("LX/0NGx;", fragment.method("EY").returnType)
             assertEquals("Lcom/ss/android/ugc/aweme/inbox/widget/v2/InboxWidgetContainer;",
                 fragment.fields.single { it.name == names.getValue("FRAGMENT_CONTAINER") }.type)
         }

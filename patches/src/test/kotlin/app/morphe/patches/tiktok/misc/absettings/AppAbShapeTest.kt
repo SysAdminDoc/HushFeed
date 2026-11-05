@@ -79,7 +79,7 @@ class AppAbShapeTest {
     }
 
     private fun method(name: String, returnType: String, parameters: List<String>) = ImmutableMethod(
-        "LX/02z2;",
+        "LX/03JB;",
         name,
         parameters.map { ImmutableMethodParameter(it, null, null) },
         returnType,
@@ -91,7 +91,7 @@ class AppAbShapeTest {
 
     private fun classWith(vararg methods: ImmutableMethod) = MutableClass(
         ImmutableClassDef(
-            "LX/02z2;",
+            "LX/03JB;",
             AccessFlags.PUBLIC.value,
             "Ljava/lang/Object;",
             null,

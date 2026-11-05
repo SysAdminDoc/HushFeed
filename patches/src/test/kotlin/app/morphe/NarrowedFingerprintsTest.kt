@@ -5,7 +5,6 @@ import app.morphe.patcher.FieldAccessFilter
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.InstanceOfFilter
 import app.morphe.patcher.MethodCallFilter
-import app.morphe.patches.tiktok.feedfilter.FollowFeedRequestFingerprint
 import app.morphe.patches.tiktok.feedfilter.FollowingCacheRestoreFingerprint
 import app.morphe.patches.tiktok.interaction.cleardisplay.ClearModeLogStateFingerprint
 import app.morphe.patches.tiktok.interaction.downloads.StickerPreviewSourceFingerprint
@@ -66,7 +65,6 @@ class NarrowedFingerprintsTest {
         Narrowed("CommentListLoaded", CommentListLoadedFingerprint),
         Narrowed("clipboardTextHelper", clipboardTextHelperFingerprint),
         Narrowed("commentClipDataBuilder", commentClipDataBuilderFingerprint),
-        Narrowed("FollowFeedRequest", FollowFeedRequestFingerprint),
         Narrowed("FollowingCacheRestore", FollowingCacheRestoreFingerprint),
         Narrowed("SavedStickersRefresh", SavedStickersRefreshFingerprint),
         Narrowed("RecentStickerAdd", RecentStickerAddFingerprint),

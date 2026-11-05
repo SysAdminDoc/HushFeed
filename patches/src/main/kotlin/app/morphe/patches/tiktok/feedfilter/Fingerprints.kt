@@ -160,7 +160,8 @@ internal object OpenedListFillFingerprint : Fingerprint(
 /**
  * The Following feed's loader: the static method that builds a `FollowFeedList` from the request
  * and reads its items back. It took the request and a cache on 47.5.3 (`LX/0NMJ;->LIZ`) and
- * five arguments on 47.6.3 (`LX/0NHh;->LIZ`, with a tag, a cursor and a count joining), so only
+ * five on 47.6.3 (`LX/0NHh;->LIZ`, a tag, a cursor and a count joining), and four on 47.7.2
+ * (`LX/1Q5B;->LIZ`, the cache gone), so only
  * "more than one" is asked of the parameter list. The one-argument cache lookup beside it also
  * reads the items, but never logs the "feed" it was asked for.
  */
@@ -193,22 +194,14 @@ internal object FollowFeedListGetItemsFingerprint : Fingerprint(
 private const val FOLLOW_FEED_API_DESCRIPTOR = "Lcom/ss/android/ugc/aweme/follow/api/FollowFeedApiV2;"
 
 /**
- * The static helper that calls the Following feed API, GET or POST, with a count it writes as the
- * literal 20 ([raiseFollowFeedFirstReadCount]). R8 names the class and method; the API interface
- * keeps its real name and its two request methods, which one method calls both of.
+ * The static helper that calls the Following feed API with a count it writes as the literal 20
+ * ([raiseFollowFeedFirstReadCount]). R8 names the class and method; the API interface keeps its
+ * real name and its request methods. 47.6.3's helper called followFeedGet and followFeedPost;
+ * 47.7.2 dropped followFeedGet from the interface, so the POST is the call every build shares.
  */
 internal object FollowFeedRequestFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
-    // One of the two calls the custom check needs, so the patcher's index finds the callers.
-    filters = listOf(methodCall(definingClass = FOLLOW_FEED_API_DESCRIPTOR, name = "followFeedGet")),
-    custom = { method, _ ->
-        val calls = method.implementation?.instructions
-            ?.mapNotNull { it.getReference<MethodReference>() }
-            ?.filter { it.definingClass == FOLLOW_FEED_API_DESCRIPTOR }
-            ?.map { it.name }
-            ?: emptyList()
-        "followFeedGet" in calls && "followFeedPost" in calls
-    },
+    filters = listOf(methodCall(definingClass = FOLLOW_FEED_API_DESCRIPTOR, name = "followFeedPost")),
 )
 
 internal const val FOLLOWING_CACHE_DESCRIPTOR =
@@ -631,7 +624,7 @@ internal const val DYNAMIC_PATCH_DESCRIPTOR = "Lcom/ss/android/ugc/aweme/discove
 internal const val LYNX_SSR_INFO_DESCRIPTOR = "Lcom/ss/android/ugc/aweme/search/pages/result/topsearch/core/model/LynxSSRInfo;"
 
 /**
- * The Top results list's own Lynx card holder binding a card's data into its row (LX/0J8X;->P5
+ * The Top results list's own Lynx card holder binding a card's data into its row (LX/0Kat;->P5
  * on 47.0.3, called by the results adapter's bind). The Short Drama block is bound here: TikTok
  * builds it from a streamed chunk's patches and slots it into the adapter, past the result list
  * [SearchResultRequestIdFingerprint] filters. Named by the real types among its ten parameters:

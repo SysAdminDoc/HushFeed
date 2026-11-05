@@ -45,7 +45,7 @@ import org.junit.rules.TemporaryFolder
 import java.io.File
 
 private const val AVATAR_VIEW = "Lcom/ss/android/ugc/aweme/avatar/AvatarComponentView;"
-private const val BUSINESS = "LX/07WQ;"
+private const val BUSINESS = "LX/09sy;"
 private const val CHAT_ROW_VH = "Lcom/ss/android/ugc/aweme/im/chatlist/impl/ui/viewholder/chatlistvo/NewChatListSingleChatVH;"
 
 /**

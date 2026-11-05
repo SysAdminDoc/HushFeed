@@ -5,14 +5,17 @@
 package app.morphe.patches.tiktok.interaction.feedtext
 
 import app.morphe.patcher.patch.PatchException
+import app.morphe.util.ControlFlow
 import app.morphe.util.RegisterLiveness
 import app.morphe.util.getReference
 import app.morphe.util.namedRegisters
 import app.morphe.util.p0Register
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.ReferenceType
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
@@ -20,6 +23,7 @@ import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference
+import java.util.BitSet
 
 internal const val DESCRIPTION = "Lcom/ss/android/ugc/aweme/feed/assem/desc/VideoDescAssem;"
 internal const val AUTHOR = "Lcom/ss/android/ugc/aweme/feed/assem/videoauthorinfo/VideoAuthorInfoRelationAssem;"
@@ -31,10 +35,10 @@ private const val TEXT_VIEW = "Landroid/widget/TextView;"
 private const val PAINT = "Landroid/graphics/Paint;"
 private const val VIDEO_ITEM_PARAMS = "Lcom/ss/android/ugc/aweme/feed/model/VideoItemParams;"
 private const val WHAT = "Feed text sizes"
-// 47.6.3's ids for the caption text, the creator name (`title`) and the post date beside it.
-internal val DESCRIPTION_IDS = setOf(0x7f0a2081)
-internal val TITLE_IDS = setOf(0x7f0a8816)
-internal val POST_TIME_IDS = setOf(0x7f0a93ca)
+// 47.7.2's ids for the caption text, the creator name (`title`) and the post date beside it.
+internal val DESCRIPTION_IDS = setOf(0x7f0a2097)
+internal val TITLE_IDS = setOf(0x7f0a897d)
+internal val POST_TIME_IDS = setOf(0x7f0a9547)
 
 internal data class SizeInput(val index: Int, val builderRegister: Int, val ownerLocal: Int, val argumentLocal: Int)
 internal data class CacheBypass(val index: Int, val fallback: Int, val ownerRegister: Int, val resultLocal: Int)
@@ -119,9 +123,12 @@ internal fun resolveFeedText(classOf: (String) -> ClassDef?): FeedTextMembers {
     val descLoader = controller.methods.filter { it.parameters() == listOf(VIEW) && it.hasLiteral(DESCRIPTION_IDS) }
         .one("description view loader")
     val descView = descLoader.loadedView(DESCRIPTION_IDS).second
+    // 47.7.2 moved the paragraph model behind the Aweme and passes the dispatch's third flag as well:
+    // (I, Aweme, paragraph, Z, Z, Z), where 47.6.3 had (paragraph, I, Aweme, Z, Z).
     val factory = controller.methods.filter {
-        it.isInstance() && it.parameters().let { p -> p.size == 5 && p.drop(1) == listOf("I", AWEME, "Z", "Z") } &&
-            classOf(it.returnType)?.fields?.count { field -> field.type == LAYOUT } == 3
+        it.isInstance() && it.parameters().let { p ->
+            p.size == 6 && p.take(2) == listOf("I", AWEME) && p.drop(3) == listOf("Z", "Z", "Z")
+        } && classOf(it.returnType)?.fields?.count { field -> field.type == LAYOUT } == 3
     }.one("native full/collapsed description layout factory")
     val builder = factory.instructions().filter { it.opcode == Opcode.NEW_INSTANCE }.mapNotNull {
         it.getReference<TypeReference>()?.type?.let(classOf)
@@ -192,8 +199,9 @@ internal fun resolveFeedText(classOf: (String) -> ClassDef?): FeedTextMembers {
         .one("description layout cache wrapper").type
     val caches = controller.fields.filter { it.type == cacheType }.toList()
     if (caches.size != 6) throw PatchException("$WHAT: expected six owned description layout caches, found ${caches.size}")
+    // On 47.7.2 the cached dispatch takes exactly the factory's parameters.
     val dispatch = controller.methods.filter {
-        it.parameters() == listOf(factory.parameterTypes.first().toString(), "I", "Z", AWEME, "Z", "Z") &&
+        it.parameters() == factory.parameters() &&
             it.returnType == "Lkotlin/Pair;" && it.calls().any { call -> call.toString() == factory.toString() }
     }.one("native cached description layout dispatch")
     val bypass = dispatch.cacheBypass(factory)
@@ -248,40 +256,85 @@ internal fun freeLocal(method: Method, index: Int, reserved: Set<Int> = emptySet
         ?: throw PatchException("$WHAT: no dead low local at $index in $method (including exception handlers)")
 }
 
-/** The straight-line prefix must have copied every fallback argument before the added branch. */
+private val PLAIN_MOVES = setOf(Opcode.MOVE, Opcode.MOVE_FROM16, Opcode.MOVE_16,
+    Opcode.MOVE_OBJECT, Opcode.MOVE_OBJECT_FROM16, Opcode.MOVE_OBJECT_16)
+private val GOTOS = setOf(Opcode.GOTO, Opcode.GOTO_16, Opcode.GOTO_32)
+
+/**
+ * The straight-line prefix must have copied every fallback argument before the added branch.
+ * 47.7.2 shuffles those copies down into v0.. with plain moves right before the uncached call, so the
+ * bypass lands on the first of those moves (the instruction the native empty-caption check jumps to)
+ * and [CacheBypass.fallback] is that instruction.
+ */
 internal fun Method.cacheBypass(factory: Method): CacheBypass {
     val code = instructions()
-    val fallback = code.indices.filter { code[it].getReference<MethodReference>()?.toString() == factory.toString() }
+    val call = code.indices.filter { code[it].getReference<MethodReference>()?.toString() == factory.toString() }
         .one("uncached native description fallback")
+    var fallback = call
+    while (fallback > 0 && code[fallback - 1].opcode in PLAIN_MOVES) fallback--
     val entry = code.indexOfFirst { it.opcode == Opcode.IF_EQZ || it.opcode == Opcode.IF_NEZ }
     if (entry < 0) throw PatchException("$WHAT: no cache dispatch entry in $this")
+    if (entry >= fallback) throw PatchException("$WHAT: description fallback no longer follows the dispatch entry")
     val aliases = (0 until implementation!!.registerCount).associateWith { it }.toMutableMap()
+    fun follow(instruction: Instruction) {
+        if (!instruction.opcode.setsRegister()) return
+        val destination = (instruction as OneRegisterInstruction).registerA
+        aliases[destination] = if (instruction.opcode in PLAIN_MOVES) {
+            aliases.getValue((instruction as TwoRegisterInstruction).registerB)
+        } else -1
+        if (instruction.opcode.setsWideRegister()) aliases[destination + 1] = -1
+    }
     for (instruction in code.take(entry)) {
-        if (instruction.opcode.name.startsWith("invoke") || instruction.opcode.name.startsWith("goto")) {
+        val type = instruction.opcode.referenceType
+        if (type == ReferenceType.METHOD || type == ReferenceType.CALL_SITE || instruction.opcode in GOTOS) {
             throw PatchException("$WHAT: description dispatch no longer has a straight-line parameter prefix")
         }
-        if (instruction.opcode.setsRegister()) {
-            val destination = (instruction as OneRegisterInstruction).registerA
-            aliases[destination] = if (instruction.opcode.name.startsWith("move") && instruction is TwoRegisterInstruction) {
-                aliases.getValue(instruction.registerB)
-            } else -1
-        }
+        follow(instruction)
     }
-    val registers = code[fallback].namedRegisters()
-    val expected = listOf(p0Register, p0Register + 1, p0Register + 2, p0Register + 4, p0Register + 5, p0Register + 6)
+    // The controller as the entry state holds it: the shuffle overwrites the low copies it reads from.
+    val owner = aliases.keys.filter { aliases[it] == p0Register }.minOrNull()
+        ?: throw PatchException("$WHAT: description dispatch no longer holds its controller at entry")
+    code.subList(fallback, call).forEach(::follow)
+    val registers = code[call].namedRegisters()
+    // 47.7.2's fallback hands the dispatch's first flag (p4) to the factory last.
+    val expected = listOf(p0Register, p0Register + 1, p0Register + 2, p0Register + 3, p0Register + 5,
+        p0Register + 6, p0Register + 4)
     if (registers.map { aliases[it] } != expected) {
         throw PatchException("$WHAT: description fallback arguments aren't initialized at dispatch entry")
     }
-    // The bypass jumps from entry straight to the fallback. Anything the code after the fallback
-    // reads must hold the same value on both paths, or ART rejects the class at the merge.
+    // The bypass jumps from entry straight to the fallback. Anything the fallback reads must hold the
+    // same value on both paths, or ART rejects the class at the merge. Only writes on a native path
+    // from entry to the fallback count: 47.7.2's cached branch reuses v2 on its way to its own return.
     val live = RegisterLiveness.of(this).liveInto(fallback)
-    val skipped = code.subList(entry, fallback).filter { it.opcode.setsRegister() }.flatMap {
-        val register = (it as OneRegisterInstruction).registerA
-        if (it.opcode.setsWideRegister()) listOf(register, register + 1) else listOf(register)
-    }.toSet()
+    val skipped = ControlFlow.of(this).writesBetween(entry, fallback)
     if (live.any { it in skipped }) {
         throw PatchException("$WHAT: description fallback reads ${live.filter { it in skipped }} set on the skipped path")
     }
     // The flag local is dead at entry, so if the fallback read it, the skipped path would set it.
-    return CacheBypass(entry, fallback, registers.first(), freeLocal(this, entry, registers.toSet()))
+    return CacheBypass(entry, fallback, owner, freeLocal(this, entry, registers.toSet() + owner))
+}
+
+/** Registers written by any instruction on some path from [from] to [to], [to] itself excluded. */
+private fun ControlFlow.writesBetween(from: Int, to: Int): Set<Int> {
+    fun successors(at: Int) = normal[at] + exceptional[at]
+    val forward = BitSet().apply { set(from) }
+    val pending = ArrayDeque(listOf(from))
+    while (pending.isNotEmpty()) {
+        val at = pending.removeFirst()
+        if (at == to) continue
+        successors(at).forEach { if (!forward[it]) { forward.set(it); pending += it } }
+    }
+    val predecessors = Array(instructions.size) { mutableListOf<Int>() }
+    instructions.indices.forEach { at -> successors(at).forEach { predecessors[it] += at } }
+    val backward = BitSet().apply { set(to) }
+    pending += to
+    while (pending.isNotEmpty()) {
+        predecessors[pending.removeFirst()].forEach { if (!backward[it]) { backward.set(it); pending += it } }
+    }
+    return instructions.indices.filter { it != to && forward[it] && backward[it] }.flatMap { at ->
+        val instruction = instructions[at]
+        if (!instruction.opcode.setsRegister()) return@flatMap emptyList()
+        val register = (instruction as OneRegisterInstruction).registerA
+        if (instruction.opcode.setsWideRegister()) listOf(register, register + 1) else listOf(register)
+    }.toSet()
 }

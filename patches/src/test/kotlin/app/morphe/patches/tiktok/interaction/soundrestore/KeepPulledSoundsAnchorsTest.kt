@@ -152,7 +152,7 @@ class KeepPulledSoundsAnchorsTest {
             CONTROLLER, "LLJZ",
             listOf(
                 ImmutableMethodParameter("Lcom/ss/android/ugc/aweme/feed/model/Aweme;", null, null),
-                ImmutableMethodParameter("LX/037s;", null, null),
+                ImmutableMethodParameter("LX/03Je;", null, null),
                 ImmutableMethodParameter("Z", null, null),
             ),
             "V", AccessFlags.PUBLIC.value, null, null,

@@ -7,12 +7,16 @@ package app.morphe.patches.tiktok.misc.commenttools
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
+import app.morphe.patches.tiktok.shared.LazyAbGateSearch
+import app.morphe.patches.tiktok.shared.constantBefore
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
@@ -147,10 +151,10 @@ internal fun commentBoxButtonFields(
         if (instruction.opcode != Opcode.IGET_OBJECT) return@forEachIndexed
         val field = instruction.getReference<FieldReference>() ?: return@forEachIndexed
         if (field.definingClass != owner || field.type != TUX_ICON_VIEW) return@forEachIndexed
-        val listener = instructions.subList(index + 1, minOf(index + 4, instructions.size))
-            .firstOrNull { it.opcode == Opcode.NEW_INSTANCE }
-            ?.getReference<TypeReference>()?.type ?: return@forEachIndexed
-        val button = classDefOf(listener)?.let(::commentBoxButtonOf) ?: return@forEachIndexed
+        val created = (index + 1 until minOf(index + 4, instructions.size))
+            .firstOrNull { instructions[it].opcode == Opcode.NEW_INSTANCE } ?: return@forEachIndexed
+        val body = listenerBody(instructions, created, classDefOf) ?: return@forEachIndexed
+        val button = commentBoxButtonOf(body) ?: return@forEachIndexed
         found.getOrPut(button) { mutableListOf() }.add(field)
     }
     return CommentBoxButton.entries.associateWith { button ->
@@ -161,8 +165,47 @@ internal fun commentBoxButtonFields(
     }
 }
 
-internal fun commentBoxButtonOf(listener: ClassDef): CommentBoxButton? {
-    val instructions = listener.methods.flatMap { it.implementation?.instructions ?: emptyList() }
+/**
+ * The code the listener created at [created] runs when its button is tapped. R8 merges small
+ * listeners into one class that keeps a number per instance in `$t` and switches on it to reach
+ * each one's own body (47.7.2's row over the keyboard puts the photo button and an input panel
+ * toggle in one such class). For those, only the body the constructor's number reaches is this
+ * listener, followed through the switch like a merged lambda group; the whole class would show
+ * every merged button's marks at once. An ordinary listener class is all its own.
+ */
+internal fun listenerBody(
+    instructions: List<Instruction>,
+    created: Int,
+    classDefOf: (String) -> ClassDef?,
+): List<Method>? {
+    val register = (instructions[created] as OneRegisterInstruction).registerA
+    val type = instructions[created].getReference<TypeReference>()?.type ?: return null
+    val listener = classDefOf(type) ?: return null
+    if (listener.fields.none { it.name == "\$t" && it.type == "I" }) return listener.methods.toList()
+    val init = (created + 1 until minOf(created + 4, instructions.size)).firstOrNull { at ->
+        val call = instructions[at] as? FiveRegisterInstruction ?: return@firstOrNull false
+        instructions[at].opcode == Opcode.INVOKE_DIRECT && call.registerC == register &&
+            instructions[at].getReference<MethodReference>()?.let { it.definingClass == type && it.name == "<init>" } == true
+    } ?: return null
+    val call = instructions[init] as FiveRegisterInstruction
+    val parameters = instructions[init].getReference<MethodReference>()!!.parameterTypes.map(CharSequence::toString)
+    if (parameters.lastOrNull() != "I" || call.registerCount != parameters.size + 1) return null
+    val number = constantBefore(instructions, init, call.lastRegister()) ?: return null
+    return LazyAbGateSearch(classDefOf).groupBodies(type, number).takeIf { it.size == 1 }
+}
+
+private fun FiveRegisterInstruction.lastRegister() = when (registerCount) {
+    1 -> registerC
+    2 -> registerD
+    3 -> registerE
+    4 -> registerF
+    else -> registerG
+}
+
+internal fun commentBoxButtonOf(listener: ClassDef): CommentBoxButton? = commentBoxButtonOf(listener.methods.toList())
+
+internal fun commentBoxButtonOf(body: List<Method>): CommentBoxButton? {
+    val instructions = body.flatMap { it.implementation?.instructions ?: emptyList() }
     val strings = instructions.mapNotNull { it.getReference<StringReference>()?.string }
     if ("click_comment_photo" in strings) {
         return CommentBoxButton.PHOTO

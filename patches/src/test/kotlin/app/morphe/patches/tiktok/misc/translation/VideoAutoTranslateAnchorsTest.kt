@@ -387,8 +387,8 @@ class VideoAutoTranslateAnchorsTest {
 
     private companion object {
         const val OWNER = "LX/08Wk;"
-        const val STATE_CLASS = "LX/08Xa;"
-        const val PUBLISHED = "LX/08XX;"
+        const val STATE_CLASS = "LX/0AZk;"
+        const val PUBLISHED = "LX/0Ozi;"
 
         /** The captions' Keva service, whose one call to the read decides whether captions translate. */
         const val CAPTION_KEVA_SERVICE = "Lcom/ss/android/ugc/aweme/service/CaptionKevaServiceImpl;"

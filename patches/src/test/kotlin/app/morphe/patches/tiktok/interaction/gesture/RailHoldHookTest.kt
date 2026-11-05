@@ -160,7 +160,7 @@ class RailHoldHookTest {
     }
 
     /** 0BJ9's shape: the log, the login check, the offer, and Unit loaded and returned mid-method. */
-    private fun favoritesMenu(unitRegister: Int = 0) = method("LX/0BJ9;", "invoke", listOf(), "Ljava/lang/Object;", 8, """
+    private fun favoritesMenu(unitRegister: Int = 0) = method("LX/0CGt;", "invoke", listOf(), "Ljava/lang/Object;", 8, """
         const-string v0, "$FAVORITES_MENU_EVENT"
         invoke-static {}, LX/03Go;->LJFF()Ljava/lang/Object;
         move-result-object v1
@@ -202,7 +202,7 @@ class RailHoldHookTest {
 
     @Test
     fun `a Favorites offer with no register of its own to spare is refused`() {
-        val bare = method("LX/0BJ9;", "invoke", listOf(), "Ljava/lang/Object;", 1, """
+        val bare = method("LX/0CGt;", "invoke", listOf(), "Ljava/lang/Object;", 1, """
             sget-object p0, Lkotlin/Unit;->LIZ:Lkotlin/Unit;
             return-object p0
         """)
@@ -210,9 +210,9 @@ class RailHoldHookTest {
     }
 
     /** 47.0.3's hold listener, cut down: the check on a press, and the post dropped in two places. */
-    private fun holdTouch(drops: Boolean = true) = method("LX/0ANt;", "onTouch", listOf(view, "Landroid/view/MotionEvent;"), "Z", 11, """
+    private fun holdTouch(drops: Boolean = true) = method("LX/0HNt;", "onTouch", listOf(view, "Landroid/view/MotionEvent;"), "Z", 11, """
         const/4 v5, 0x0
-        iget-object v4, p0, LX/0ANt;->LLJL:$EDGE_SPEEDUP_ABILITY
+        iget-object v4, p0, LX/0HNt;->LLJL:$EDGE_SPEEDUP_ABILITY
         invoke-virtual {p2}, Landroid/view/MotionEvent;->getActionMasked()I
         move-result v2
         if-nez v2, :later
@@ -221,10 +221,10 @@ class RailHoldHookTest {
         move-result v0
         return v0
         :later
-        iget-object v1, p0, LX/0ANt;->LL:Landroid/os/Handler;
-        iget-object v0, p0, LX/0ANt;->LLJLL:Ljava/lang/Runnable;
+        iget-object v1, p0, LX/0HNt;->LL:Landroid/os/Handler;
+        iget-object v0, p0, LX/0HNt;->LLJLL:Ljava/lang/Runnable;
         ${if (drops) "invoke-virtual {v1, v0}, Landroid/os/Handler;->removeCallbacks(Ljava/lang/Runnable;)V" else "invoke-virtual {v1, v0}, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z"}
-        iget-object v3, p0, LX/0ANt;->LL:Landroid/os/Handler;
+        iget-object v3, p0, LX/0HNt;->LL:Landroid/os/Handler;
         ${if (drops) "invoke-virtual {v3, v0}, Landroid/os/Handler;->removeCallbacks(Ljava/lang/Runnable;)V" else "nop"}
         return v5
     """)
@@ -261,8 +261,8 @@ class RailHoldHookTest {
     @Test
     fun `each of Share's long presses goes through the extension with TikTok's view and listener`() {
         val method = method(VIDEO_SHARE_ASSEM, "onViewCreated", listOf(view), "V", 4, """
-            new-instance v0, LX/09Yy;
-            invoke-direct {v0, p0}, LX/09Yy;-><init>($VIDEO_SHARE_ASSEM)V
+            new-instance v0, LX/0B8y;
+            invoke-direct {v0, p0}, LX/0B8y;-><init>($VIDEO_SHARE_ASSEM)V
             invoke-virtual {p1, v0}, $view->setOnLongClickListener($onLongClick)V
             const v1, 0x7f0c0000
             invoke-virtual {p1, v1}, $view->findViewById(I)$view

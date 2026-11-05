@@ -7,6 +7,7 @@ import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.DexFile
 import com.android.tools.smali.dexlib2.iface.MultiDexContainer
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -18,12 +19,14 @@ import org.junit.Test
  * declared TikTok build. The extension cannot link against them, so a rename would only show as
  * "unknown" in a report; here it fails first.
  *
- * What it reads, and where each name comes from on 47.1.4:
+ * What it reads, and where each name comes from on 47.7.2:
  * - the parsed response (the return type of the interceptor's parseResponse lancet): field LIZIZ
- *   is the body, LIZ() is the HTTP code and LIZJ() is the success flag;
+ *   is the body and field LIZ the raw response it came from. 47.7.2 dropped its LIZ() code
+ *   getter and renamed its success flag to LIZIZ(), which only asks the raw response, so the
+ *   extension reads both from that;
  * - the raw response (the return type of the executeCall lancet): the HTTP code is the int field
- *   LIZIZ, and it has no LIZ() without arguments, which is why the request-stage line reads the
- *   field;
+ *   LIZIZ, LIZJ() is the 2xx check, and it has no LIZ() without arguments, which is why the
+ *   request-stage line reads the field;
  * - the response models, which R8 leaves alone: status_code and error_code on BaseResponse,
  *   upvoteLists and repostList on the list responses, itemId on UpvoteStruct, getAid on Aweme;
  * - the HTTP failure the lancet casts to, whose getStatusCode() the error lines read.
@@ -84,15 +87,21 @@ class RepostDiagnosticsFieldsTest {
 
             val parsed = checkNotNull(classes[parsedType]) { "the parsed response $parsedType is gone" }
             assertEquals("the parsed response's body field", "Ljava/lang/Object;", parsed.fieldType("LIZIZ"))
-            val code = checkNotNull(parsed.noArgMethod("LIZ")) { "the parsed response lost LIZ()" }
-            assertEquals("the parsed response's HTTP code", "I", code.returnType)
-            assertTrue("LIZ() must be public for getMethod", AccessFlags.PUBLIC.isSet(code.accessFlags))
-            val success = checkNotNull(parsed.noArgMethod("LIZJ")) { "the parsed response lost LIZJ()" }
-            assertEquals("the parsed response's success flag", "Z", success.returnType)
-            assertTrue("LIZJ() must be public for getMethod", AccessFlags.PUBLIC.isSet(success.accessFlags))
+            assertEquals("the parsed response's raw response field", rawType, parsed.fieldType("LIZ"))
 
             val raw = checkNotNull(classes[rawType]) { "the raw response $rawType is gone" }
             assertEquals("the raw response's HTTP code field", "I", raw.fieldType("LIZIZ"))
+            val success = checkNotNull(raw.noArgMethod("LIZJ")) { "the raw response lost LIZJ()" }
+            assertEquals("the raw response's success flag", "Z", success.returnType)
+            assertTrue("LIZJ() must be public for getMethod", AccessFlags.PUBLIC.isSet(success.accessFlags))
+            // R8 hands old names to new members, so the flag has to be the check on that code.
+            assertTrue(
+                "the raw response's LIZJ() doesn't test its HTTP code",
+                success.implementation!!.instructions.any {
+                    ((it as? ReferenceInstruction)?.reference as? FieldReference)
+                        ?.let { field -> field.definingClass == rawType && field.name == "LIZIZ" } == true
+                },
+            )
             assertEquals(
                 "the raw response gained an argument-free LIZ(), so its request-stage read can use it",
                 null,

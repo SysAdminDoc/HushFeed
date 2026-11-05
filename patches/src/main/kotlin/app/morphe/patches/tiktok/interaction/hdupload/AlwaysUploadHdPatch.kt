@@ -70,7 +70,7 @@ internal fun hdChoiceReads(method: Method): List<Int> {
         val keyLoad = (index - 1 downTo maxOf(0, index - KEY_LOOKBACK))
             .firstOrNull { (instructions[it] as? OneRegisterInstruction)?.registerA == keyRegister }
             ?.let { instructions[it] }
-        val loadsKey = keyLoad?.opcode == Opcode.CONST_STRING &&
+        val loadsKey = (keyLoad?.opcode == Opcode.CONST_STRING || keyLoad?.opcode == Opcode.CONST_STRING_JUMBO) &&
             keyLoad?.getReference<StringReference>()?.string == HD_CHOICE_KEY
         val result = instructions.getOrNull(index + 1)
         if (loadsKey && result?.opcode == Opcode.MOVE_RESULT) index + 1 else null

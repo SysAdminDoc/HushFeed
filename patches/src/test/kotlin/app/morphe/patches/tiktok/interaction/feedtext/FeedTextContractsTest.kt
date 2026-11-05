@@ -2,6 +2,7 @@ package app.morphe.patches.tiktok.interaction.feedtext
 
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
+import app.morphe.util.ControlFlow
 import app.morphe.util.RegisterLiveness
 import app.morphe.util.addInstructionsWithLabels
 import app.morphe.util.getReference
@@ -26,8 +27,19 @@ import org.junit.Test
 class FeedTextContractsTest {
     private val model = "Lcom/example/Description;"
     private val holder = "Lcom/example/Layouts;"
-    private val factory: Method = method("factory", 40, listOf(model, "I", AWEME, "Z", "Z"), holder,
-        "const/4 v0, 0x0\nreturn-object v0")
+    // 47.7.2's shapes: the factory and its cached dispatch both take (I, Aweme, paragraph, Z, Z, Z).
+    private val parameters = listOf("I", AWEME, model, "Z", "Z", "Z")
+    private val factory: Method = method("factory", 40, parameters, holder, "const/4 v0, 0x0\nreturn-object v0")
+    // The native argument shuffle into v0..v6 right before the uncached call, as 47.7.2 compiles it.
+    private val shuffle = """
+        move-object v0, v2
+        move v1, v4
+        move-object v2, v5
+        move-object v3, v3
+        move v4, v6
+        move v5, v7
+        move v6, v8
+    """.trimIndent()
 
     @Test
     fun `a high builder argument uses two dead low locals without expanding the native frame`() {
@@ -54,40 +66,75 @@ class FeedTextContractsTest {
     fun `the cache fallback waits until high native parameters have all been copied`() {
         val dispatch = dispatch()
         val bypass = dispatch.cacheBypass(factory)
-        assertEquals(8, bypass.index)
-        assertEquals(3, bypass.ownerRegister)
+        assertEquals(9, bypass.index)
+        // The controller's entry copy, not v0: the shuffle fills v0 only after the branch.
+        assertEquals(2, bypass.ownerRegister)
+        assertEquals(Opcode.MOVE_OBJECT, dispatch.implementation!!.instructions.elementAt(bypass.fallback).opcode)
         assertFalse(bypass.resultLocal in RegisterLiveness.of(dispatch).liveInto(bypass.index))
         dispatch.bypassDescriptionCache(bypass)
         val code = dispatch.implementation!!.instructions.toList()
-        assertEquals("freshDescription", code[8].getReference<MethodReference>()?.name)
-        assertEquals(3, (code[8] as RegisterRangeInstruction).startRegister)
-        assertEquals(Opcode.IF_NEZ, code[10].opcode)
+        assertEquals("freshDescription", code[9].getReference<MethodReference>()?.name)
+        assertEquals(2, (code[9] as RegisterRangeInstruction).startRegister)
+        assertEquals(Opcode.IF_NEZ, code[11].opcode)
+        // The added branch and the native empty-caption check land on the same first move of the shuffle.
+        val flow = ControlFlow.of(dispatch)
+        val target = flow.normal[11].single { it != 12 }
+        assertTrue(target in flow.normal[12])
+        assertEquals(factory.toString(), code[target + 7].getReference<MethodReference>()?.toString())
         assertEquals(40, dispatch.implementation!!.registerCount)
         assertThrows(PatchException::class.java) { dispatch(wrongWidth = true).cacheBypass(factory) }
     }
 
     @Test
     fun `a fallback that reads a value set on the bypassed path is refused`() {
-        fun dispatch(readsLater: Boolean) = method("dispatch", 40,
-            listOf(model, "I", "Z", AWEME, "Z", "Z"), "Lkotlin/Pair;", """
-                move-object/from16 v4, p1
-                iget-object v0, v4, $model->text:Ljava/lang/CharSequence;
+        fun dispatch(readsLater: Boolean) = method("dispatch", 40, parameters, "Lkotlin/Pair;", """
+                move-object/from16 v3, p3
+                iget-object v0, v3, $model->text:Ljava/lang/CharSequence;
                 const/4 v9, 0x1
-                move/from16 v8, p6
-                move/from16 v7, p5
-                move-object/from16 v6, p4
-                move/from16 v5, p2
-                move-object/from16 v3, p0
+                move/from16 v7, p6
+                move/from16 v6, p5
+                move/from16 v8, p4
+                move-object/from16 v5, p2
+                move/from16 v4, p1
+                move-object/from16 v2, p0
                 if-eqz v0, :fallback
                 const/4 v9, 0x2
                 :fallback
-                invoke-virtual/range { v3 .. v8 }, $factory
+                $shuffle
+                invoke-virtual/range { v0 .. v6 }, $factory
                 move-result-object v0
                 ${if (readsLater) "invoke-static { v9 }, Lcom/example/Native;->use(I)V" else "nop"}
                 return-object v0
             """)
         dispatch(readsLater = false).cacheBypass(factory)
         assertThrows(PatchException::class.java) { dispatch(readsLater = true).cacheBypass(factory) }
+    }
+
+    @Test
+    fun `a write that never reaches the fallback doesn't block the bypass`() {
+        // 47.7.2's cached branch reuses v2, which the shuffle reads, on its way to its own return.
+        fun dispatch(reachesFallback: Boolean) = method("dispatch", 40, parameters, "Lkotlin/Pair;", """
+                move-object/from16 v3, p3
+                iget-object v0, v3, $model->text:Ljava/lang/CharSequence;
+                move/from16 v7, p6
+                move/from16 v6, p5
+                move/from16 v8, p4
+                move-object/from16 v5, p2
+                move/from16 v4, p1
+                move-object/from16 v2, p0
+                if-eqz v0, :fallback
+                invoke-static { v0 }, Lcom/example/Native;->cached(Ljava/lang/CharSequence;)Lkotlin/Pair;
+                move-result-object v2
+                ${if (reachesFallback) "if-eqz v2, :fallback" else "nop"}
+                return-object v2
+                :fallback
+                $shuffle
+                invoke-virtual/range { v0 .. v6 }, $factory
+                move-result-object v0
+                return-object v0
+            """)
+        dispatch(reachesFallback = false).cacheBypass(factory)
+        assertThrows(PatchException::class.java) { dispatch(reachesFallback = true).cacheBypass(factory) }
     }
 
     @Test
@@ -137,22 +184,23 @@ class FeedTextContractsTest {
         assertEquals(24, method.implementation!!.registerCount)
     }
 
-    private fun dispatch(wrongWidth: Boolean = false) = method("dispatch", 40,
-        listOf(model, "I", "Z", AWEME, "Z", "Z"), "Lkotlin/Pair;", """
-            move-object/from16 v4, p1
-            iget-object v0, v4, $model->text:Ljava/lang/CharSequence;
-            const/4 v2, 0x1
-            move/from16 v8, p6
-            move/from16 v7, p5
-            move-object/from16 v6, p4
-            move/from16 v5, ${if (wrongWidth) "p3" else "p2"}
-            move-object/from16 v3, p0
+    private fun dispatch(wrongWidth: Boolean = false) = method("dispatch", 40, parameters, "Lkotlin/Pair;", """
+            move-object/from16 v3, p3
+            iget-object v0, v3, $model->text:Ljava/lang/CharSequence;
+            const/4 v1, 0x1
+            move/from16 v7, p6
+            move/from16 v6, p5
+            move/from16 v8, p4
+            move-object/from16 v5, p2
+            move/from16 v4, ${if (wrongWidth) "p4" else "p1"}
+            move-object/from16 v2, p0
             if-eqz v0, :fallback
             invoke-static { v0 }, Lcom/example/Native;->cached(Ljava/lang/CharSequence;)Lkotlin/Pair;
             move-result-object v0
             return-object v0
             :fallback
-            invoke-virtual/range { v3 .. v8 }, $factory
+            $shuffle
+            invoke-virtual/range { v0 .. v6 }, $factory
             move-result-object v0
             return-object v0
         """)

@@ -70,7 +70,7 @@ internal fun Method.isProfileBackgroundGate(): Boolean =
     returnType == "Z" && parameterTypes.map(CharSequence::toString) == listOf("Z") && implementation != null
 
 /**
- * The left-aligned avatar layout check the gate asks on both branches (`X.0ClT.LIZLLL()` on
+ * The left-aligned avatar layout check the gate asks on both branches (`X.0HMg.LIZLLL()` on
  * 47.1.4): the one static no-argument boolean it calls, or null when there isn't exactly one.
  * A background drawn without that layout lands in the wrong place, so the switch stands in for
  * the allow list only and still asks this.

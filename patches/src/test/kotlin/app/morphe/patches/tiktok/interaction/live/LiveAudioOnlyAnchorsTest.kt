@@ -69,7 +69,7 @@ class LiveAudioOnlyAnchorsTest {
                     }
             }
             assertEquals("${apk.name}: every read is hooked", reads.size, hookedReads)
-            if ("47.6.3" in apk.name) assertEquals("${apk.name}: one read per branch", 2, reads.size)
+            if ("47.7.2" in apk.name) assertEquals("${apk.name}: one read per branch", 2, reads.size)
             var filtered = 0
             for (read in reads) {
                 val list = (code[read] as TwoRegisterInstruction).registerA
@@ -92,7 +92,7 @@ class LiveAudioOnlyAnchorsTest {
                 // Labels stay on the instruction the hook went in front of.
                 assertTrue("${apk.name}: a branch skips the hook at $read", code[after].location.labels.isEmpty())
             }
-            if ("47.6.3" in apk.name) assertEquals("${apk.name}: the branch that checks the player's keys", 1, filtered)
+            if ("47.7.2" in apk.name) assertEquals("${apk.name}: the branch that checks the player's keys", 1, filtered)
             assertEquals("${apk.name}", emptyList<BridgeTypeFlow.Problem>(), BridgeTypeFlow.check(hooked))
 
             // The extension makes the row with the row class's own no-argument constructor and
@@ -115,7 +115,7 @@ class LiveAudioOnlyAnchorsTest {
             val flag = audioSwitchFlag(gates.single())
             assertEquals(VIDEO_LIVE_MANAGER, flag.definingClass)
             assertEquals("I", flag.type)
-            if ("47.6.3" in apk.name) assertEquals("${apk.name}: the flag", "z1", flag.name)
+            if ("47.7.2" in apk.name) assertEquals("${apk.name}: the flag", "L0", flag.name)
 
             // It's the server's EnableOnlyAudioInAoRes: the player's settings parse stores it there.
             val manager = classes[VIDEO_LIVE_MANAGER] ?: throw AssertionError("${apk.name}: $VIDEO_LIVE_MANAGER is gone")
@@ -142,7 +142,7 @@ class LiveAudioOnlyAnchorsTest {
                     code[at].opcode == Opcode.IGET && ((code[at] as ReferenceInstruction).reference as FieldReference).name == flag.name
                 }
                 assertEquals("${apk.name}: ${method.name} reads", reads.size, hookedReads)
-                if ("47.6.3" in apk.name) assertEquals("${apk.name}: ${method.name} reads", if (method == soundOnly.single()) 1 else 2, reads.size)
+                if ("47.7.2" in apk.name) assertEquals("${apk.name}: ${method.name} reads", if (method == soundOnly.single()) 1 else 2, reads.size)
                 for (read in reads) {
                     val register = (code[read] as TwoRegisterInstruction).registerA
                     val call = code[read + 1]
@@ -209,7 +209,7 @@ class LiveAudioOnlyAnchorsTest {
             val loads = built.indices.filter { at ->
                 built[at].opcode == Opcode.CHECK_CAST && ((built[at] as ReferenceInstruction).reference as TypeReference).type == LIVE_ROOM_TYPE
             }
-            if ("47.6.3" in apk.name) assertEquals("${apk.name}: the channel's room and TikTok's current one", 2, loads.size)
+            if ("47.7.2" in apk.name) assertEquals("${apk.name}: the channel's room and TikTok's current one", 2, loads.size)
             assertEquals("${apk.name}: the note right after the last load", loads.last() + 1, note)
             val jump = built[loads.first() + 1] as BuilderOffsetInstruction
             assertEquals("${apk.name}: a found room jumps to the note", note, jump.target.location.index)

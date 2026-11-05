@@ -173,10 +173,23 @@ class TikTokPatchAnchorsMatchFixturesTest {
                     }
             }
             assertEquals("${apk.name}: sticker preview row", 1, rows.size)
-            val groups = rows.single().fields
-                .filter { !AccessFlags.STATIC.isSet(it.accessFlags) && descendsFrom(it.type, "Landroid/widget/TextView;") }
+            // 47.7.2 added a "more stickers" section: plain TuxTextView titles beside the caption and
+            // a third button, so the runtime takes the like-typed siblings under one parent. What the
+            // row keeps on every build is one TikTok subclass of TuxTextView for its buttons, and the
+            // main bind configures exactly two of them, the action pair.
+            val row = rows.single()
+            val tux = "Lcom/bytedance/tux/input/TuxTextView;"
+            val groups = row.fields
+                .filter { !AccessFlags.STATIC.isSet(it.accessFlags) && it.type != tux && descendsFrom(it.type, tux) }
                 .groupBy { it.type }.filterValues { it.size >= 2 }
             assertEquals("${apk.name}: like typed action fields ${groups.keys}", 1, groups.size)
+            val bind = row.methods.single { method ->
+                method.parameterTypes.map(CharSequence::toString).drop(1) == listOf("Z", "Ljava/lang/String;", "Ljava/util/Map;")
+            }
+            val bound = bind.implementation!!.instructions
+                .mapNotNull { (it as? ReferenceInstruction)?.reference as? FieldReference }
+                .filter { it.definingClass == row.type && it.type == groups.keys.single() }.map { it.name }.toSet()
+            assertEquals("${apk.name}: the bind's action pair", 2, bound.size)
         }
     }
 

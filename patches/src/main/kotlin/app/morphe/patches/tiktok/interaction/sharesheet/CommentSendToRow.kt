@@ -26,7 +26,7 @@ internal fun isCommentSendToLoad(method: Method): Boolean =
     method.returnType == "V" &&
         method.parameterTypes.map(CharSequence::toString) == listOf("Ljava/util/List;") &&
         method.implementation?.instructions?.any { instruction ->
-            instruction.opcode == Opcode.CONST_STRING &&
+            (instruction.opcode == Opcode.CONST_STRING || instruction.opcode == Opcode.CONST_STRING_JUMBO) &&
                 instruction.getReference<StringReference>()?.string == SEND_TO_ROW_LOG_TAG
         } == true
 

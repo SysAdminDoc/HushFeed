@@ -33,6 +33,6 @@ class DoubleTapRoutesTest {
         // LX/0SPC declares the same method and returns immediately. Guarding it would add an
         // injection that can only ever be dead.
         val owners = doubleTapRouteMethods.map { it.first }
-        assertEquals(emptyList<String>(), owners.filter { it == "LX/0SPC;" })
+        assertEquals(emptyList<String>(), owners.filter { it == "LX/0kwa;" })
     }
 }

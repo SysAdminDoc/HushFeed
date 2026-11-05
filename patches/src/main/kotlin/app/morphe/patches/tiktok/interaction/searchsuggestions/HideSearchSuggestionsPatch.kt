@@ -403,7 +403,7 @@ internal fun MutableMethod.hookReentryVisibility() {
     val read = instructions.getOrNull(keyIndex + 1)
     val reference = read?.getReference<MethodReference>()
     val result = instructions.getOrNull(keyIndex + 2)
-    // The settings reader was named here as LX/0BZD;->LJIIJJI, both of which R8 assigns. Its
+    // The settings reader was named here as LX/0Cu8;->LJIIJJI, both of which R8 assigns. Its
     // signature is what identifies it at this call site: two ints, the key this method just
     // loaded, a boolean, and an int back.
     if (read !is FiveRegisterInstruction || read.registerCount != 5 || read.registerF != keyRegister ||

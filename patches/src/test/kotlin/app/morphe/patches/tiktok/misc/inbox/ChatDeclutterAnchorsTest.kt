@@ -305,8 +305,9 @@ class ChatDeclutterAnchorsTest {
     }
 
     /**
-     * The types the dispatcher casts to where its chain of value tests sends [value], up to that
-     * branch's return or throw.
+     * The types the dispatcher gets hold of where its chain of value tests sends [value], up to that
+     * branch's return or throw: what it casts to and what the calls it makes hand back. 47.7.2's
+     * double tap reaches the reaction view model through a typed getter (Xp()), with no cast.
      */
     private fun branchCasts(code: List<Instruction>, value: Int): List<String> {
         val addresses = code.runningFold(0) { address, instruction -> address + instruction.codeUnits }
@@ -343,6 +344,7 @@ class ChatDeclutterAnchorsTest {
         val casts = ArrayList<String>()
         for (instruction in code.drop(at)) {
             if (instruction.opcode == Opcode.CHECK_CAST) casts += instruction.getReference<TypeReference>()!!.type
+            instruction.getReference<MethodReference>()?.let { casts += it.returnType }
             if (instruction.opcode == Opcode.RETURN_VOID || instruction.opcode == Opcode.THROW) break
         }
         return casts

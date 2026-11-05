@@ -76,14 +76,16 @@ class ReviewedProfilesMatchFixturesTest {
 
     @Test
     fun `creation tools come out only where the editor and effect libraries ship`() {
-        // 47.6.3's universal APK and split bundle both carry them. A face model alone broke face effects (#285).
+        // 47.7.2's universal APK carries them. Its split bundle has the arm64 editor library but
+        // none of the effect libraries, and a face model emptied there breaks face effects (#285).
         val apks = fixtures()
-        assertTrue("no 47.6.3 universal APK and split bundle to compare", apks.map { it.extension }.toSet() == setOf("apk", "apkm"))
+        assertTrue("no 47.7.2 universal APK and split bundle to compare", apks.map { it.extension }.toSet() == setOf("apk", "apkm"))
         for (apk in apks) {
             val present = digests(apk) { it.startsWith("lib/") }.keys
-            assertTrue(apk.name, stripsCreationTools { it in present })
+            assertEquals(apk.name, apk.extension == "apk", stripsCreationTools { it in present })
         }
         assertTrue(stripsCreationTools { it == "lib/armeabi-v7a/libeffect_plugin.so" })
+        assertTrue(!stripsCreationTools { it == "lib/arm64-v8a/libEffectCreatorJni.so" })
         assertTrue(!stripsCreationTools { it.startsWith("assets/") })
     }
 

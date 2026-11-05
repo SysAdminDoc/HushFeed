@@ -105,9 +105,9 @@ public class BuildDetailsTest {
         assertUnknown(record.replace("#121212", "#ff121212"));
         assertUnknown(record.replace("language_packs=stripped", "language_packs=not_selected"));
         assertUnknown(record.replace("source_end=A1234567890123456789B", "source_end=B1234567890123456789B"));
-        assertUnknown(record.replace("target_version_code=2024706030", "target_version_code=2147483647"));
+        assertUnknown(record.replace("target_version_code=2024707020", "target_version_code=2147483647"));
         assertUnknown(record.replace("target_package=com.zhiliaoapp.musically", "target_package=unknown"));
-        assertUnknown(record.replace("version_code_override=2147483647", "version_code_override=2024706030"));
+        assertUnknown(record.replace("version_code_override=2147483647", "version_code_override=2024707020"));
     }
 
     @Test public void unverifiedSelectionsAndUntickedChoicesRemainDifferent() throws Exception {
@@ -148,15 +148,15 @@ public class BuildDetailsTest {
         for (String line : targets.split("\\R")) {
             String[] target = line.split("[/=]");
             String report = BuildDetails.report(record.replace("com.zhiliaoapp.musically", target[0])
-                    .replace("47.6.3", target[1]).replace("2024706030", target[2]));
+                    .replace("47.7.2", target[1]).replace("2024707020", target[2]));
             assertTrue(report, report.contains("build_metadata: available\n"));
             assertTrue(report.contains("patch_time.native_locales_retained: " + locales + "\n"));
             assertTrue(report.contains("target_package: " + target[0] + "\n"));
             assertTrue(report.contains("target_version: " + target[1] + "\n"));
         }
         // A build the bundle no longer declares is no target of this one, for either app.
-        assertUnknown(record.replace("47.6.3", "47.4.3").replace("2024706030", "2024704030"));
-        assertUnknown(record.replace("47.6.3", "47.1.4").replace("2024706030", "2024701040"));
+        assertUnknown(record.replace("47.7.2", "47.4.3").replace("2024707020", "2024704030"));
+        assertUnknown(record.replace("47.7.2", "47.1.4").replace("2024707020", "2024701040"));
         // Another package with TikTok's version and code is not declared.
         assertUnknown(record.replace("com.zhiliaoapp.musically", "com.example.other"));
     }

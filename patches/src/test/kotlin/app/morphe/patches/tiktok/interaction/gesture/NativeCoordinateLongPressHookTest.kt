@@ -19,10 +19,10 @@ import org.junit.Test
 class NativeCoordinateLongPressHookTest {
     @Test
     fun bothNativeCoordinateCallbacksUseXAndKeepTheirOriginalEventBranches() {
-        for (owner in listOf("LX/0QPc;", "LX/0QPd;")) {
+        for (owner in listOf("LX/0PdH;", "LX/0PdI;")) {
             val method = callback(owner)
             val original = method.implementation!!.instructions.toList()
-            assertEquals(if (owner == "LX/0QPc;") 24 else 19, original.size)
+            assertEquals(if (owner == "LX/0PdH;") 24 else 19, original.size)
             val targets = original.mapIndexedNotNull { index, instruction ->
                 if (instruction !is OffsetInstruction) null else {
                     val address = original.take(index).sumOf { it.codeUnits } + instruction.codeOffset
@@ -76,13 +76,13 @@ class NativeCoordinateLongPressHookTest {
         AccessFlags.PUBLIC.value or AccessFlags.FINAL.value, null, null,
         ImmutableMethodImplementation(6, emptyList(), null, null),
     )).apply {
-        val identity = if (owner == "LX/0QPc;") """
+        val identity = if (owner == "LX/0PdH;") """
             iget-object v0, p0, $owner->LIZIZ:Landroid/content/Context;
             if-eqz v0, :no_context
             invoke-virtual { v0 }, Ljava/lang/Object;->hashCode()I
             move-result v0
         """ else "iget v0, p0, $owner->LIZIZ:I"
-        val nullContext = if (owner == "LX/0QPc;") """
+        val nullContext = if (owner == "LX/0PdH;") """
             :no_context
             const/4 v0, 0x0
             goto :event
@@ -99,7 +99,7 @@ class NativeCoordinateLongPressHookTest {
             if-nez v0, :event_type
             const-string v0, ""
             :event_type
-            invoke-static { v0 }, LX/0BC2;->LIZ(Ljava/lang/String;)Z
+            invoke-static { v0 }, LX/0CcI;->LIZ(Ljava/lang/String;)Z
             move-result v0
             if-eqz v0, :done
             new-instance v2, LX/0SLd;
@@ -108,7 +108,7 @@ class NativeCoordinateLongPressHookTest {
             $identity
             :event
             invoke-direct { v2, p1, v1, p2, v0 }, LX/0SLd;-><init>(FIFI)V
-            invoke-static { v2 }, LX/08yC;->LIZ(Lcom/ss/android/ugc/governance/eventbus/IEvent;)Lcom/ss/android/ugc/governance/eventbus/IEvent;
+            invoke-static { v2 }, LX/0Bj7;->LIZ(Lcom/ss/android/ugc/governance/eventbus/IEvent;)Lcom/ss/android/ugc/governance/eventbus/IEvent;
             :done
             return-void
             $nullContext

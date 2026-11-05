@@ -35,11 +35,16 @@ public class RepostDiagnosticsTest {
         public String getPath() { return path; }
     }
 
+    /**
+     * 47.7.2's parsed response: the raw response in LIZ, the body in LIZIZ, and a success check
+     * (LIZIZ()) that only asks the raw response. There's no LIZ() code getter any more.
+     */
     public static final class Parsed {
+        public final RawResponse LIZ;
         public final Object LIZIZ;
-        Parsed(Object body) { LIZIZ = body; }
-        public int LIZ() { return 200; }
-        public boolean LIZJ() { return true; }
+        Parsed(Object body) { this(200, body); }
+        Parsed(int code, Object body) { LIZ = new RawResponse(code); LIZIZ = body; }
+        public boolean LIZIZ() { return LIZ.LIZJ(); }
     }
 
     public static final class Body {
@@ -65,10 +70,19 @@ public class RepostDiagnosticsTest {
         public int getErrorCode() { return 2098; }
     }
 
-    /** The raw response 47.1.4 hands the request stage: the HTTP code is a field, with no LIZ(). */
+    /**
+     * The raw response the request stage gets and the parsed response holds: the HTTP code is a
+     * field, with no LIZ(), and LIZJ() is its 2xx check.
+     */
     public static final class RawResponse {
         public final int LIZIZ;
         RawResponse(int code) { LIZIZ = code; }
+        public boolean LIZJ() { return LIZIZ >= 200 && LIZIZ < 300; }
+    }
+
+    /** A response that answers its code through LIZ(), which rawHttpCode still reads. */
+    public static final class CodeGetter {
+        public int LIZ() { return 200; }
     }
 
     public static final class HttpFailure extends RuntimeException {
@@ -130,8 +144,8 @@ public class RepostDiagnosticsTest {
 
     @Test public void theRawResponseAndHttpFailureNameTheirCodesAsOn4714() {
         assertEquals("200", RepostDiagnostics.rawHttpCode(new RawResponse(200)));
-        assertEquals("a parsed-style response still answers through LIZ()",
-                "200", RepostDiagnostics.rawHttpCode(new Parsed(null)));
+        assertEquals("a response with a LIZ() getter still answers through it",
+                "200", RepostDiagnostics.rawHttpCode(new CodeGetter()));
         assertEquals("unknown", RepostDiagnostics.rawHttpCode(new Object()));
 
         assertEquals("2098", RepostDiagnostics.errorStatus(new ServerRefusal()));
@@ -146,6 +160,14 @@ public class RepostDiagnosticsTest {
         assertTrue(report, report.contains("parse error id="));
         assertTrue(report, report.contains("status_code=503"));
         assertFalse(report, report.contains("private repost note"));
+    }
+
+    @Test public void theParsedResponseIsReadThroughItsRawResponse() {
+        RepostDiagnostics.onParsedResponse(new Request("/tiktok/v1/upvote/publish"),
+                new Parsed(403, new Body(0, "", null)));
+        String report = LogBufferManager.snapshotForCrash(100_000);
+        assertTrue(report, report.contains("http=403"));
+        assertTrue(report, report.contains("outcome=transport_refused"));
     }
 
     @Test public void parseErrorNamesTheRefusalCode() {

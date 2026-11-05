@@ -60,6 +60,7 @@ import app.morphe.patcher.util.smali.ExternalLabel
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcode.CONST_STRING
+import com.android.tools.smali.dexlib2.Opcode.CONST_STRING_JUMBO
 import com.android.tools.smali.dexlib2.Opcode.MOVE_RESULT
 import com.android.tools.smali.dexlib2.Opcode.MOVE_RESULT_OBJECT
 import com.android.tools.smali.dexlib2.Opcode.MOVE_RESULT_WIDE
@@ -526,7 +527,7 @@ fun Method.indexOfFirstInstructionOrThrow(startIndex: Int = 0, filter: Instructi
 
 fun Method.indexOfFirstStringInstruction(str: String) =
     indexOfFirstInstruction {
-        opcode == CONST_STRING &&
+        (opcode == CONST_STRING || opcode == CONST_STRING_JUMBO) &&
                 getReference<StringReference>()?.string == str
     }
 

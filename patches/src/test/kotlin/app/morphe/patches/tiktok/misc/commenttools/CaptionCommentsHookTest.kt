@@ -25,7 +25,7 @@ import org.junit.Test
  * goes on when the answer is no, and that every branch TikTok had still lands where it did.
  */
 class CaptionCommentsHookTest {
-    private val caption = "LX/09Gd;"
+    private val caption = "LX/09q0;"
     private val list = "LX/0Gts;"
     private val aweme = "Lcom/ss/android/ugc/aweme/feed/model/Aweme;"
     private val contextSource = "Lcom/ss/android/ugc/aweme/comment/model/CommentContextSource;"

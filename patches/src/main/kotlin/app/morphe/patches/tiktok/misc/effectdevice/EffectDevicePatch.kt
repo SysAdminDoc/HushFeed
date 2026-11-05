@@ -32,7 +32,12 @@ private const val MODEL_CONFIGURATION_BUILDER = "Lcom/ss/android/ugc/effectmanag
  * TikTok's effect platform builds two configs that carry the phone's model as `device_type`:
  * EffectConfiguration (the effect list and download requests, where the server answers 2003 for
  * a phone it won't serve) and DownloadableModelConfig (the effect models). Each build reads
- * `Build.MODEL` and hands it straight to the builder's setter. Three methods do that on 47.5.3.
+ * `Build.MODEL` and hands it straight to the builder's setter. Two methods do that on 47.7.2.
+ * 47.6.3 had a third, DefaultResourceProvider's effect manager creator (`LX/0mdO;->LJIJJLI()`,
+ * which read the model for both configs); 47.7.2 dropped that class, and the comment image
+ * effect manager that took its place (`LX/16Or;->LIZ()`) gets its config from
+ * createEffectConfigurationBuilder through IEffectPlatformFactory.create, which is already swapped.
+ * EffectDeviceAnchorsTest holds every method that calls either setter to these two.
  */
 
 /** `EffectPlatformFactory.createEffectConfigurationBuilder(...)`, the class keeps its name. */
@@ -46,23 +51,9 @@ internal object EffectConfigurationFactoryFingerprint : Fingerprint(
 )
 
 /**
- * The effect manager's creator (`LX/1JpD;->LIZ()`, obfuscated): reads the model once for the
- * model config and once for the effect config.
- */
-internal object EffectManagerCreateFingerprint : Fingerprint(
-    returnType = "Lcom/ss/android/ugc/effectmanager/EffectManager;",
-    parameters = listOf(),
-    filters = listOf(
-        fieldAccess(definingClass = BUILD, name = "MODEL"),
-        methodCall(definingClass = MODEL_CONFIGURATION_BUILDER, name = "setDeviceType"),
-        fieldAccess(definingClass = BUILD, name = "MODEL"),
-        methodCall(definingClass = EFFECT_CONFIGURATION_BUILDER, name = "deviceType"),
-    ),
-)
-
-/**
- * A second model config builder (`Lx2j/q;->LJ()V`, obfuscated), static and with no parameters,
- * which reads the model once for `setDeviceType`.
+ * The model config builder (`Lf7j/p;->LJ()V` on 47.7.2, obfuscated), static and with no
+ * parameters, which reads the model once for `setDeviceType` before it initializes
+ * DownloadableModelSupport.
  */
 internal object ModelConfigBuilderFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
@@ -77,7 +68,6 @@ internal object ModelConfigBuilderFingerprint : Fingerprint(
 internal val effectDeviceFingerprints: List<Fingerprint>
     get() = listOf(
         EffectConfigurationFactoryFingerprint,
-        EffectManagerCreateFingerprint,
         ModelConfigBuilderFingerprint,
     )
 
@@ -126,7 +116,6 @@ val effectDevicePatch = bytecodePatch(
 
     execute {
         EffectConfigurationFactoryFingerprint.method.swapExactly(1)
-        EffectManagerCreateFingerprint.method.swapExactly(2)
         ModelConfigBuilderFingerprint.method.swapExactly(1)
 
         SettingsStatusLoadFingerprint.method.addInstruction(

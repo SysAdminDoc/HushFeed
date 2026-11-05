@@ -89,7 +89,7 @@ internal fun isShareActionKey(method: Method, key: String): Boolean {
         return false
     }
     val instructions = method.implementation?.instructions?.toList() ?: return false
-    return instructions.size == 2 && instructions[0].opcode == Opcode.CONST_STRING &&
+    return instructions.size == 2 && (instructions[0].opcode == Opcode.CONST_STRING || instructions[0].opcode == Opcode.CONST_STRING_JUMBO) &&
         instructions[0].getReference<StringReference>()?.string == key &&
         instructions[1].opcode == Opcode.RETURN_OBJECT
 }
@@ -134,13 +134,17 @@ private fun Method.literals(): Set<Int> =
 /**
  * The icon the comment menu's Report row is built with: the constant boxed by the
  * `Integer.valueOf` right after each `"report"` key. Null unless every Report row agrees.
+ * Only constant loads may sit between the key and the box: 47.7.2 loads one Report row's icon
+ * there (`const-string/jumbo v39 "report"`, `const v3 0x7f0107c3`, `Integer.valueOf(v3)`).
  */
 internal fun Method.reportRowIcon(): Int? {
     val instructions = implementation?.instructions?.toList() ?: return null
     val icons = instructions.withIndex().filter { (_, instruction) ->
-        instruction.opcode == Opcode.CONST_STRING && instruction.getReference<StringReference>()?.string == "report"
+        (instruction.opcode == Opcode.CONST_STRING || instruction.opcode == Opcode.CONST_STRING_JUMBO) && instruction.getReference<StringReference>()?.string == "report"
     }.map { (index, _) ->
-        val box = instructions.getOrNull(index + 1) ?: return null
+        var boxAt = index + 1
+        while (instructions.getOrNull(boxAt)?.literal() != null) boxAt++
+        val box = instructions.getOrNull(boxAt) ?: return null
         val call = box.getReference<MethodReference>()
         if (call?.definingClass != "Ljava/lang/Integer;" || call.name != "valueOf") return null
         val register = when (box) {
@@ -148,7 +152,7 @@ internal fun Method.reportRowIcon(): Int? {
             is FiveRegisterInstruction -> box.registerC
             else -> return null
         }
-        val writer = (index downTo 0).firstOrNull { instructions[it].writeRegister == register } ?: return null
+        val writer = (boxAt - 1 downTo 0).firstOrNull { instructions[it].writeRegister == register } ?: return null
         instructions[writer].literal() ?: return null
     }.toSet()
     return icons.singleOrNull()?.takeIf { it ushr 24 == 0x7f }

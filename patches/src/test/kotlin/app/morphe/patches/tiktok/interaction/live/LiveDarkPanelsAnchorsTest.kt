@@ -368,7 +368,7 @@ class LiveDarkPanelsAnchorsTest {
                 val read = (context - 1 downTo 0).first {
                     original[it].opcode == Opcode.IGET_OBJECT && (original[it] as TwoRegisterInstruction).registerB == labels.strip
                 }
-                assertEquals("${apk.name}: the strip", "LX/0wKt;", ((original[read] as ReferenceInstruction).reference as FieldReference).definingClass)
+                assertEquals("${apk.name}: the strip", "LX/11zz;", ((original[read] as ReferenceInstruction).reference as FieldReference).definingClass)
             }
 
             // The hook as the patch writes it: right before the card walks the labels, the
@@ -410,7 +410,7 @@ class LiveDarkPanelsAnchorsTest {
             if ("47.4.3" in apk.name) {
                 // X/0wEX finds the box as id/hwn, the ConstraintLayout layout/ha3 draws on
                 // drawable/e9l, a white shape (2026-10-20).
-                assertEquals("${apk.name}: the event module", "LX/0wEX;", bind.definingClass)
+                assertEquals("${apk.name}: the event module", "LX/0xx1;", bind.definingClass)
                 val module = classes.getValue(bind.definingClass)
                 val hwn = module.methods.any { method ->
                     method.implementation?.instructions?.any { (it as? NarrowLiteralInstruction)?.narrowLiteral == 0x7f0a2aa9 } == true
@@ -473,10 +473,10 @@ class LiveDarkPanelsAnchorsTest {
             assertEquals("${apk.name}: the badge bind", 1, found.size)
             val bind = found.single()
             val calls = badgeTileCalls(bind)!!
-            if ("47.4.3" in apk.name) {
-                // X/0wLz's tile is its lazy X/11qx, given a border around the server's art, a
-                // server color, or a border alone (2026-10-20).
-                assertEquals("${apk.name}: the badge module", "LX/0wLz;", bind.definingClass)
+            if ("47.7.2" in apk.name) {
+                // X/11kh.LJJIIZI(User)Z: its tile is its lazy LLJJL cast to View, given a border
+                // around the server's art, a server color, or a border alone.
+                assertEquals("${apk.name}: the badge module", "LX/11kh;", bind.definingClass)
                 assertEquals("${apk.name}: one call per background", 3, calls.size)
             }
 
@@ -596,7 +596,7 @@ class LiveDarkPanelsAnchorsTest {
             if ("47.4.3" in apk.name) {
                 // X/0wJT puts drawable/e9l on its row in LJIJ and drawable/e9i in the bind's
                 // branch for a host with no group yet (2026-10-20).
-                assertEquals("${apk.name}: the group chat module", "LX/0wJT;", found.single().definingClass)
+                assertEquals("${apk.name}: the group chat module", "LX/0fHj;", found.single().definingClass)
                 assertEquals("${apk.name}: one call each", mapOf("LJIIJ" to listOf(54), "LJIJ" to listOf(3)),
                     calls.mapKeys { it.key.name }.toSortedMap())
             }
@@ -1018,12 +1018,12 @@ class LiveDarkPanelsAnchorsTest {
             val (owner, make) = found.single()
             val binder = rowBinder(make, owner)!!
             if ("47.4.3" in apk.name) {
-                assertEquals("${apk.name}: the row binders' base", "LX/136J;", owner.type)
+                assertEquals("${apk.name}: the row binders' base", "LX/10fG;", owner.type)
                 assertEquals(listOf("LIZIZ", "LIZJ", "LJIIIIZZ"),
                     listOf(binder.layout.name, binder.attach.name, binder.holder.name))
                 // The trending tab's rows come from the ranking's row binder, which builds on it.
                 assertTrue("${apk.name}: the ranking's row binder left the base",
-                    owner.type in generateSequence("LX/1GYT;") { classes[it]?.superclass }.toList())
+                    owner.type in generateSequence("LX/1PLB;") { classes[it]?.superclass }.toList())
             }
 
             // The hook as the patch writes it: the extension asked first, its row handed to the

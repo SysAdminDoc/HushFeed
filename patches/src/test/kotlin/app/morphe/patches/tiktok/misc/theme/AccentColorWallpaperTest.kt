@@ -24,22 +24,22 @@ class AccentColorWallpaperTest {
         val styles = parse(
             """
             <resources>
-              <style name="zl"><item name="ah9">#fffe2c55</item><item name="ah_">#99fe2c55</item><item name="ahc">#21fe2c55</item><item name="agt">#ffff4c3a</item></style>
-              <style name="a_c"><item name="ahc">#ffffffff</item><item name="ayb">#ffb50030</item></style>
-              <style name="zh"><item name="a0x">?attr/ah9</item></style>
-              <style name="zn"><item name="aj1">#fe2c55</item></style>
+              <style name="zl"><item name="ah8">#fffe2c55</item><item name="ah9">#99fe2c55</item><item name="ahb">#21fe2c55</item><item name="agt">#ffff4c3a</item></style>
+              <style name="a_c"><item name="ahb">#ffffffff</item><item name="aya">#ffb50030</item></style>
+              <style name="zh"><item name="a0x">?attr/ah8</item></style>
+              <style name="zn"><item name="aj0">#fe2c55</item></style>
             </resources>
             """.trimIndent(),
         )
         val literals = mutableSetOf<String>()
 
-        val changed = recolorAccentItems(styles, accentTokens("47.6.3"), accentRecolor(true, TIKTOK_ACCENT, literals))
+        val changed = recolorAccentItems(styles, accentTokens("47.7.2"), accentRecolor(true, TIKTOK_ACCENT, literals))
 
-        assertEquals("a see-through red still counts as found", setOf("ah9", "ah_", "ahc", "ayb", "aj1"), changed)
+        assertEquals("a see-through red still counts as found", setOf("ah8", "ah9", "ahb", "aya", "aj0"), changed)
         assertEquals(
             listOf(
                 "@color/hushfeed_accent_fe2c55", "#99fe2c55", "#21fe2c55", "#ffff4c3a", "#ffffffff",
-                "@color/hushfeed_accent_b50030", "?attr/ah9", "@color/hushfeed_accent_fe2c55",
+                "@color/hushfeed_accent_b50030", "?attr/ah8", "@color/hushfeed_accent_fe2c55",
             ),
             values(styles),
         )
@@ -48,10 +48,10 @@ class AccentColorWallpaperTest {
 
     @Test
     fun `without the wallpaper choice the recolor is the preset shade, as before`() {
-        val styles = parse("""<resources><style name="zl"><item name="ah9">#fffe2c55</item></style></resources>""")
+        val styles = parse("""<resources><style name="zl"><item name="ah8">#fffe2c55</item></style></resources>""")
         val literals = mutableSetOf<String>()
 
-        recolorAccentItems(styles, accentTokens("47.6.3"), accentRecolor(false, "#2D7FF9", literals))
+        recolorAccentItems(styles, accentTokens("47.7.2"), accentRecolor(false, "#2D7FF9", literals))
 
         assertEquals(listOf("#ff2d7ff9"), values(styles))
         assertTrue(literals.isEmpty())

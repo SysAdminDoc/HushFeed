@@ -74,9 +74,12 @@ public final class RepostDiagnostics {
         String kind = pathKind(request);
         if (kind == null || !reserveEvent()) return;
 
+        // 47.7.2's parsed response dropped its LIZ() code getter and moved its success check to
+        // LIZIZ(); both only ever asked the raw response it keeps in field LIZ, so ask that.
         Object body = field(response, "LIZIZ");
-        String http = value(response, "LIZ");
-        String success = value(response, "LIZJ");
+        Object raw = field(response, "LIZ");
+        String http = rawHttpCode(raw);
+        String success = value(raw, "LIZJ");
         String code = String.valueOf(field(body, "status_code"));
         String errorCode = String.valueOf(field(body, "error_code"));
         int id = System.identityHashCode(request);
@@ -99,9 +102,9 @@ public final class RepostDiagnostics {
     }
 
     /**
-     * The HTTP code of the raw response the request stage sees. On 47.1.4 that class keeps it in
-     * the int field LIZIZ and has no LIZ() to call, unlike the parsed response, whose LIZ()
-     * answers it; both are tried so a build that adds the call is read too.
+     * The HTTP code of a raw response (the request stage's, or the one a parsed response holds).
+     * The class keeps it in the int field LIZIZ and has no LIZ() to call; both are tried so a
+     * build that adds the call is read too.
      */
     static String rawHttpCode(Object response) {
         Object code = field(response, "LIZIZ");

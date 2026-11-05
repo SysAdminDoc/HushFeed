@@ -31,7 +31,7 @@ import org.junit.Test
 class RemoteConfigStoreAnchorsTest {
     private companion object {
         /** How many copies of the whole-response store each declared build has, read from its dex. */
-        val RESPONSE_STORE_COPIES = mapOf("47.6.3" to 2)
+        val RESPONSE_STORE_COPIES = mapOf("47.7.2" to 2)
     }
 
     @Test
@@ -82,7 +82,8 @@ class RemoteConfigStoreAnchorsTest {
             }
             assertTrue("$version: nothing calls the optimized store", callers.isNotEmpty())
             assertTrue("$version: the optimized store is called from $callers",
-                callers.all { it.endsWith("->onNext") || it.contains("->accept$") })
+                // 47.7.2's R8 names the two lambdas' method plain accept, without the $ suffix.
+                callers.all { it.endsWith("->onNext") || it.endsWith("->accept") || it.contains("->accept$") })
         }
     }
 

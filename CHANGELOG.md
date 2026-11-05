@@ -6,6 +6,8 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* Hushfeed now supports TikTok 47.7.2, and only that one. 47.6.3 isn't supported anymore. Grab the 47.7.2 bundle or APK from APKMirror and patch it with the same signing key, so your login and settings carry over.
+* On the 47.7.2 bundle (the `.apkm`), `Remove creation tools` leaves TikTok's files alone. That bundle doesn't ship the effects libraries it takes out, and emptying the face model by itself would break face effects again. `Block P2P video relay` has nothing to remove there either, since the bundle leaves the relay out. Both still work as before on the APK.
 * With `Save photo posts as a video` on, a photo story saves as one MP4 with its sound, running about as long as it does in TikTok. Before, its save kept the photos and left the sound out (#327).
 * `Keep the next videos in full screen` fixes full screen stopping dead on most pages. TikTok opens it with only the video you were on, so there was nothing to swipe to and it couldn't move on by itself. With the switch on, the videos after it come along. It starts off, and it lives in Hushfeed settings > Playback (#286).
 * `Keep my own watch history` lists the videos you watch on this phone with who posted them and their captions, in Hushfeed settings > Feed filter. `My watch history` searches the list and a tap opens the video again. It starts off and stays on your phone (#172).

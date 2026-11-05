@@ -275,7 +275,7 @@ internal fun resolveSettingsIconResourceId(
             method.parameterTypes.isEmpty() &&
                 method.returnType == "Ljava/lang/String;" &&
                 instructions.size == 2 &&
-                instructions[0].opcode == Opcode.CONST_STRING &&
+                (instructions[0].opcode == Opcode.CONST_STRING || instructions[0].opcode == Opcode.CONST_STRING_JUMBO) &&
                 ((instructions[0] as? ReferenceInstruction)?.reference as? StringReference)?.string ==
                 AD_BROWSER_SETTINGS_KEY &&
                 instructions[1].opcode == Opcode.RETURN_OBJECT &&

@@ -18,13 +18,13 @@ class OptionListsTest {
     @Test
     fun `every list the holder freezes from boxed counts is found, two on 46_2_3 and four on 46_8_3`() {
         val two = holderInit(
-            "LX/0sIr;",
+            "LX/0v48;",
             listOf("LJ" to listOf(50, 100, 150, 200), "LJFF" to listOf(60, 120, 240, 480)),
         )
-        assertResults(two, "LX/0sIr;", 2)
+        assertResults(two, "LX/0v48;", 2)
 
         val four = holderInit(
-            "LX/18A3;",
+            "LX/0vgk;",
             listOf(
                 "LJFF" to listOf(50, 100, 150, 200),
                 "LJI" to listOf(60, 120, 240, 480),
@@ -32,14 +32,14 @@ class OptionListsTest {
                 "LJIIIIZZ" to listOf(50, 150, 200),
             ),
         )
-        assertResults(four, "LX/18A3;", 4)
+        assertResults(four, "LX/0vgk;", 4)
     }
 
     @Test
     fun `a list stored any other way is refused rather than left without the custom entry`() {
-        val init = holderInit("LX/0sIr;", listOf("LJ" to listOf(50, 100)), copiedTo = "LJFF")
+        val init = holderInit("LX/0v48;", listOf("LJ" to listOf(50, 100)), copiedTo = "LJFF")
         try {
-            optionListResults(init, "LX/0sIr;")
+            optionListResults(init, "LX/0v48;")
             fail("expected a refusal")
         } catch (refused: PatchException) {
             assertTrue(refused.message.orEmpty(), "stores LJFF without freezing it" in refused.message.orEmpty())

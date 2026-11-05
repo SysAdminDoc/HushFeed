@@ -66,6 +66,7 @@ class CommentBoxButtonsAnchorsTest {
                     ((instruction as? ReferenceInstruction)?.reference as? MethodReference)?.name == "findViewById"
                 })
                 // Each listener carries its own button's mark and none of the others', and none opens the emoji panel.
+                // 47.7.2 merges listeners into one class, so the mark is read off the body this one's number reaches.
                 val listener = listenerOf(instructions, field, build)
                 val marks = marksOf(listener)
                 val own = when (button) {
@@ -73,7 +74,7 @@ class CommentBoxButtonsAnchorsTest {
                     CommentBoxButton.MENTION -> "mention"
                     CommentBoxButton.GIFT -> "gift"
                 }
-                assertEquals("$button: ${listener.type} carries $marks", setOf(own), marks)
+                assertEquals("$button: ${listener.map { "${it.definingClass}->${it.name}" }} carries $marks", setOf(own), marks)
             }
         }
     }
@@ -102,18 +103,20 @@ class CommentBoxButtonsAnchorsTest {
         }
     }
 
-    private fun listenerOf(instructions: List<Instruction>, field: FieldReference, build: Build): ClassDef {
+    private fun listenerOf(instructions: List<Instruction>, field: FieldReference, build: Build): List<Method> {
         val read = instructions.indices.first { index ->
             instructions[index].opcode == Opcode.IGET_OBJECT &&
                 ((instructions[index] as ReferenceInstruction).reference as FieldReference).name == field.name &&
                 instructions.subList(index + 1, minOf(index + 4, instructions.size)).any { it.opcode == Opcode.NEW_INSTANCE }
         }
-        val created = instructions.subList(read + 1, minOf(read + 4, instructions.size)).first { it.opcode == Opcode.NEW_INSTANCE }
-        return build.byType.getValue(((created as ReferenceInstruction).reference as TypeReference).type)
+        val created = (read + 1 until minOf(read + 4, instructions.size)).first { instructions[it].opcode == Opcode.NEW_INSTANCE }
+        val body = listenerBody(instructions, created) { build.byType[it] }
+        assertTrue("${field.name}: no body for the listener created at $created", !body.isNullOrEmpty())
+        return body!!
     }
 
-    private fun marksOf(listener: ClassDef): Set<String> {
-        val references = listener.methods.flatMap { it.implementation?.instructions ?: emptyList() }
+    private fun marksOf(listener: List<Method>): Set<String> {
+        val references = listener.flatMap { it.implementation?.instructions ?: emptyList() }
             .mapNotNull { (it as? ReferenceInstruction)?.reference }
         val strings = references.filterIsInstance<StringReference>().map { it.string }
         val panels = references.filterIsInstance<FieldReference>().filter { it.type == it.definingClass }.map { it.name }

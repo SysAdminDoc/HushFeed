@@ -226,13 +226,17 @@ public class FeatureSwitchesTest {
         assertFalse("the button switch must not take the swipe too", FeatureControls.sidebarSwipeOff());
         Settings.HIDE_FEED_SIDEBAR_BUTTON.save(false);
 
+        assertTrue("off, TikTok's yes stands", FeatureControls.sidebarSwipeOffered(true));
         Settings.DISABLE_FEED_SIDEBAR_SWIPE.save(true);
         assertTrue(FeatureControls.sidebarSwipeOff());
+        assertFalse("on, TikTok's yes becomes a no", FeatureControls.sidebarSwipeOffered(true));
+        assertFalse("and its no stays a no", FeatureControls.sidebarSwipeOffered(false));
         assertFalse("and the swipe switch must not take the button",
                 FeatureControls.hideFeedSidebarButtonView());
 
         PausedProcess.set(true);
         assertFalse("Pause Hushfeed leaves the swipe to TikTok", FeatureControls.sidebarSwipeOff());
+        assertTrue("paused, TikTok's yes stands", FeatureControls.sidebarSwipeOffered(true));
         PausedProcess.set(false);
         Settings.DISABLE_FEED_SIDEBAR_SWIPE.save(false);
         assertFalse("turned back off, the swipe is back", FeatureControls.sidebarSwipeOff());

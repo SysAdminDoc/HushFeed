@@ -48,10 +48,10 @@ import org.robolectric.annotation.Config;
 public class RemoteConfigFreezeTest {
     @Rule public final SettingsContextRule settingsContext = new SettingsContextRule();
 
-    /** TikTok 47.6.3's version code. */
-    private static final String VERSION = "2024706030";
-    /** 47.5.3's, the build before it. */
-    private static final String OLDER_VERSION = "2024705030";
+    /** TikTok 47.7.2's version code. */
+    private static final String VERSION = "2024707020";
+    /** 47.6.3's, the build before it. */
+    private static final String OLDER_VERSION = "2024706030";
 
     public static final class TestActivity extends PreferenceActivity {
         @Override public void onCreate(android.os.Bundle state) {

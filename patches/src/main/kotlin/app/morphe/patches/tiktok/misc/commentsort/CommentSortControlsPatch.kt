@@ -51,7 +51,7 @@ val commentSortControlsPatch = bytecodePatch(
         val style = CommentSortOptionStyleFingerprint.method
         val styleInstructions = style.implementation!!.instructions.toList()
         val stringIndex = styleInstructions.indexOfFirst {
-            it.opcode == Opcode.CONST_STRING &&
+            (it.opcode == Opcode.CONST_STRING || it.opcode == Opcode.CONST_STRING_JUMBO) &&
                 it.getReference<StringReference>()?.string == "comment_sort_opt_style"
         }
         check(stringIndex >= 0) {

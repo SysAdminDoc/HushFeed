@@ -175,6 +175,71 @@ public class StickerGallerySaverTest {
         assertEquals(3, sheet.actions.getChildCount());
     }
 
+    /**
+     * 47.7.2's sheet adds a "more stickers" section: two plain titles side by side and a third
+     * action of the buttons' own type. Neither more plain text views than actions nor a stray
+     * action elsewhere may pull the Save media button out of the sheet's action row.
+     */
+    @Test public void theMoreStickersSectionDoesNotTakeTheSaveButton() {
+        android.content.Context context = RuntimeEnvironment.getApplication();
+        app.morphe.extension.shared.Utils.setContext(context);
+        ModuleStickerSheet sheet = new ModuleStickerSheet(context);
+
+        PreviewModel preview = new PreviewModel();
+        StickerGallerySaver.registerStickerSource(preview, sticker("https://example.invalid/sticker.png"));
+        StickerGallerySaver.attachSaveImageButton(sheet, preview);
+
+        assertEquals("the Save media button left the action row", 3, sheet.actions.getChildCount());
+        assertSame(sheet.share, sheet.actions.getChildAt(0));
+        assertSame(sheet.favorite, sheet.actions.getChildAt(1));
+        assertEquals("morphe_save_media", sheet.actions.getChildAt(2).getTag());
+        assertEquals(2, sheet.header.getChildCount());
+        assertEquals(2, sheet.section.getChildCount());
+    }
+
+    /** 47.7.2's shape: the preview row plus a section of more stickers with its own action. */
+    private static final class ModuleStickerSheet extends android.widget.LinearLayout {
+        final android.widget.TextView caption;
+        final android.widget.TextView title;
+        final android.widget.TextView subtitle;
+        final android.widget.TextView empty;
+        final RenamedEveryBuild favorite;
+        final RenamedEveryBuild share;
+        final RenamedEveryBuild useAll;
+        final android.widget.LinearLayout actions;
+        final android.widget.LinearLayout header;
+        final android.widget.LinearLayout section;
+
+        ModuleStickerSheet(android.content.Context context) {
+            super(context);
+            setOrientation(VERTICAL);
+            caption = new android.widget.TextView(context);
+            share = new RenamedEveryBuild(context);
+            favorite = new RenamedEveryBuild(context);
+            share.setOnClickListener(view -> { });
+            favorite.setOnClickListener(view -> { });
+            actions = new android.widget.LinearLayout(context);
+            actions.addView(share);
+            actions.addView(favorite);
+            title = new android.widget.TextView(context);
+            subtitle = new android.widget.TextView(context);
+            header = new android.widget.LinearLayout(context);
+            header.addView(title);
+            header.addView(subtitle);
+            useAll = new RenamedEveryBuild(context);
+            useAll.setOnClickListener(view -> { });
+            section = new android.widget.LinearLayout(context);
+            section.addView(header);
+            section.addView(useAll);
+            empty = new android.widget.TextView(context);
+            empty.setVisibility(GONE);
+            addView(caption);
+            addView(actions);
+            addView(section);
+            addView(empty);
+        }
+    }
+
     @Test public void actionsThatArriveAfterTheFirstBindStillGetASaveButton() throws Exception {
         android.content.Context context = RuntimeEnvironment.getApplication();
         app.morphe.extension.shared.Utils.setContext(context);

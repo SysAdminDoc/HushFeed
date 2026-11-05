@@ -55,7 +55,7 @@ class SharePanelHooksTest {
 
     @Test
     fun `a high result register is passed by range without borrowing a parameter`() {
-        val method = panel(0x7f0a013a, high = true)
+        val method = panel(0x7f0a0136, high = true)
         method.notifyPanelBound()
         assertEquals(32, method.implementation!!.registerCount)
         val calls = method.implementation!!.instructions.filter { it.getReference<MethodReference>()?.name == "panelBound" }
@@ -64,28 +64,28 @@ class SharePanelHooksTest {
 
     @Test
     fun `an ambiguous native panel or wrong native owner fails closed`() {
-        val first = panel(0x7f0a013a)
-        val second = panel(0x7f0a013a, type = "Lfixture/OtherPanel;")
+        val first = panel(0x7f0a0136)
+        val second = panel(0x7f0a0136, type = "Lfixture/OtherPanel;")
         assertThrows(Exception::class.java) { resolveSharePanel(listOf(owner(first), owner(second))) }
         assertThrows(Exception::class.java) { resolveSharePanel(listOf(owner(first, "Ljava/lang/Object;"))) }
     }
 
     @Test
     fun `a branch bypassing the resource constant cannot turn a lookalike into an action row`() {
-        val method = panel(0x7f0a013a, entry = "if-eqz v1, :horizontal")
+        val method = panel(0x7f0a0136, entry = "if-eqz v1, :horizontal")
         unchangedFailure(method)
     }
 
     @Test
     fun `a branch entering the cast without the lookup result prevents every insertion`() {
-        val method = panel(0x7f0a013a, beforeLookup = "if-eqz v1, :verticalCast")
+        val method = panel(0x7f0a0136, beforeLookup = "if-eqz v1, :verticalCast")
         unchangedFailure(method)
     }
 
     @Test
     fun `a missing path changed type or overwritten action id cannot partially instrument the other path`() {
-        unchangedFailure(panel(0x7f0a013a, secondType = "Landroid/view/View;"))
-        unchangedFailure(panel(0x7f0a013a, beforeLookup = "const/4 v5, 0x0"))
+        unchangedFailure(panel(0x7f0a0136, secondType = "Landroid/view/View;"))
+        unchangedFailure(panel(0x7f0a0136, beforeLookup = "const/4 v5, 0x0"))
         unchangedFailure(panel(0x7f0a013b))
     }
 

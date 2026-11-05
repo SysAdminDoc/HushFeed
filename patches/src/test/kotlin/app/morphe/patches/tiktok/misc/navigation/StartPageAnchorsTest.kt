@@ -313,7 +313,7 @@ class StartPageAnchorsTest {
      * Boolean unboxed into v1, then Following's type loaded and v1 tested.
      */
     private fun defaultPage(boxedResult: Boolean = false, jumpBack: Boolean = false, getter: String = "getIsChangeFollowTab"): Method {
-        val holder = "LX/05fq;"
+        val holder = "LX/06o0;"
         val instructions = mutableListOf<Instruction>(
             ImmutableInstruction35c(Opcode.INVOKE_VIRTUAL, 1, 0, 0, 0, 0, 0,
                 ImmutableMethodReference(SHARE_PREF_CACHE, getter, listOf(), holder)),

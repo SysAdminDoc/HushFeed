@@ -58,14 +58,14 @@ class LocalProfileAppearanceAnchorsTest {
             val found = find(apk)
             assertEquals("V", found.legacy.first.returnType)
             assertTrue(found.legacy.first.parameterTypes.isEmpty())
-            assertEquals("LJJLIIIJJI", found.nickname.first.name)
+            assertEquals("LJJLIIIJL", found.nickname.first.name)
             assertEquals("LIZ", found.repaint.first.name)
-            assertEquals("LJJLIIIJJI", found.navbar.first.name)
+            assertEquals("LJJLIIIJL", found.navbar.first.name)
             assertEquals("LIZ", found.navbarRepaint.first.name)
             assertEquals("LIZ", found.navbarAddRepaint.name)
             assertNotNull(found.nickname.first.nicknameAddNameSite())
-            assertEquals("LLIFFJFJJ", found.navbarAddName.first.name)
-            val (bind, refresh) = found.warnings.map { it.first }.partition { it.name == "LJJLIIIJJI" }
+            assertEquals("LLII", found.navbarAddName.first.name)
+            val (bind, refresh) = found.warnings.map { it.first }.partition { it.name == "LJJLIIIJL" }
             assertEquals("Z", bind.single().returnType)
             assertEquals(listOf("Landroid/view/View;"), refresh.single().parameterTypes.map(CharSequence::toString))
             assertEquals("V", refresh.single().returnType)
@@ -101,7 +101,7 @@ class LocalProfileAppearanceAnchorsTest {
             assertTrue(before.none { !it.opcode.setsRegister() && it.getReference<FieldReference>()?.definingClass?.endsWith("/UserAccountInfo;") == true })
             val identity = found.classes.getValue(LEGACY_NICKNAME_OWNER).userNameIdentity()!!
             val fields = identity.implementation!!.instructions.mapNotNull { it.getReference<FieldReference>() }
-            assertEquals(listOf("LLLF", "LLJJIII", "componentName", "LLJLLL"), fields.map { it.name })
+            assertEquals(listOf("LLJLLL", "LLJJIJIIJIL", "componentName", "LLJLIL"), fields.map { it.name })
             assertEquals(listOf("user_account_user_name"), identity.implementation!!.instructions.mapNotNull { it.getReference<StringReference>()?.string })
         }
     }
@@ -207,7 +207,7 @@ class LocalProfileAppearanceAnchorsTest {
                     it.definingClass.endsWith("/User;") || it.definingClass.endsWith("/UserAccountInfo;") })
                 if (bridge.name == APPEARANCE_RENDER) {
                     assertTrue(AccessFlags.PUBLIC.isSet(bridge.accessFlags))
-                    assertEquals(listOf(APPEARANCE_SELECT, "intValue", "LLII", "LJJLIIIJJI"), calls.map { it.name })
+                    assertEquals(listOf(APPEARANCE_SELECT, "intValue", "LLIIII", "LJJLIIIJL"), calls.map { it.name })
                     assertEquals(INTEGER, calls.first().parameterTypes.single().toString())
                 } else {
                     assertTrue(AccessFlags.PRIVATE.isSet(bridge.accessFlags))
@@ -217,7 +217,7 @@ class LocalProfileAppearanceAnchorsTest {
                 }
             }
             val notice = bridges.last().implementation!!.instructions.toList()
-            assertEquals("$PROFILE_PROTOCOL->LLJJJJLIIL:Landroid/view/View;", notice.mapNotNull { it.getReference<FieldReference>() }.single().toString())
+            assertEquals("$PROFILE_PROTOCOL->LLJJLIIIJLLLLLLLZ:Landroid/view/View;", notice.mapNotNull { it.getReference<FieldReference>() }.single().toString())
             assertEquals(NOTICE_VISIBILITY, notice.mapNotNull { it.getReference<MethodReference>() }.last().toString())
             val legacy = bridges.first().implementation!!.instructions.toList()
             assertEquals(found.legacy.second.original.toString(), legacy.first().getReference<MethodReference>().toString())
@@ -229,7 +229,7 @@ class LocalProfileAppearanceAnchorsTest {
         Fixtures.forEachDeclared { apk ->
             val found = find(apk)
             for (owner in listOf(NICKNAME_OWNER, NAVBAR_NICKNAME_OWNER)) {
-                val native = found.classes.getValue(owner).methods.single { it.name == "LJJLIIIJJI" }
+                val native = found.classes.getValue(owner).methods.single { it.name == "LJJLIIIJL" }
                     .implementation!!.instructions.toList()
                 val verify = native.indexOfFirst { it.getReference<MethodReference>()?.name == "getVerifyIcon" }
                 val localIcon = native.indexOfFirst { it.getReference<MethodReference>()?.name == "getLocalIcon" }
@@ -285,7 +285,7 @@ class LocalProfileAppearanceAnchorsTest {
         Fixtures.forEachDeclared { apk ->
             val found = find(apk)
             for (owner in listOf(NICKNAME_OWNER, NAVBAR_NICKNAME_OWNER)) {
-                val original = found.classes.getValue(owner).methods.single { it.name == "LJJLIIIJJI" }
+                val original = found.classes.getValue(owner).methods.single { it.name == "LJJLIIIJL" }
                 val patched = MutableMethod(original)
                 val before = patched.implementation!!.instructions.toList()
                 val captures = before.filter { it.getReference<MethodReference>()?.let { ref ->
@@ -331,7 +331,7 @@ class LocalProfileAppearanceAnchorsTest {
                 val calls = guard.mapNotNull { it.getReference<MethodReference>() }
                 assertEquals(listOf(getter.name, "getUserProfileInfo", "getUid", "currentNicknameRepaint"), calls.map { it.name })
                 assertEquals(1, guard.count { it.getReference<FieldReference>() != null })
-                assertTrue(guard.none { it.opcode.name.startsWith("iput") || it.getReference<MethodReference>()?.name == "LJJLIIIJJI" })
+                assertTrue(guard.none { it.opcode.name.startsWith("iput") || it.getReference<MethodReference>()?.name == "LJJLIIIJL" })
             }
             val (original, index) = found.navbarRepaint
             val patched = MutableMethod(original).apply { replaceNavbarRepaint(index) }
@@ -376,7 +376,11 @@ class LocalProfileAppearanceAnchorsTest {
             assertEquals(Opcode.RETURN, cache.last().opcode)
             assertEquals(listOf(2), cache.last().namedRegisters())
             val widget = found.classes.getValue(ADD_NAME_VIEW).methods.single { it.name == "setAddNameText" }
-            assertTrue(widget.implementation!!.instructions.any { it.getReference<MethodReference>()?.name == "setSpan" })
+            // 47.7.2's R8 moved the setSpan call into a static helper (LX/00kA;->t2), so one hop counts.
+            fun MethodReference.setsSpan() = name == "setSpan" || found.classes[definingClass]?.methods
+                ?.singleOrNull { it.name == name && it.parameterTypes.map(CharSequence::toString) == parameterTypes.map(CharSequence::toString) && AccessFlags.STATIC.isSet(it.accessFlags) }
+                ?.implementation?.instructions?.any { it.getReference<MethodReference>()?.name == "setSpan" } == true
+            assertTrue(widget.implementation!!.instructions.any { it.getReference<MethodReference>()?.setsSpan() == true })
             // The nickname modify gate (47.4.3 LX/0OQE;->LIZJ, 47.5.3 LX/0MSo;) is a static ()Z read of getNickNameModifyTs.
             val gate = found.classes.values.flatMap { it.methods }.single { method -> method.returnType == "Z" &&
                 method.parameterTypes.isEmpty() && AccessFlags.STATIC.isSet(method.accessFlags) &&
@@ -457,10 +461,10 @@ class LocalProfileAppearanceAnchorsTest {
         Fixtures.forEachDeclared { apk ->
             val found = find(apk)
             val owner = found.classes.getValue(NICKNAME_OWNER)
-            val render = owner.methods.single { it.name == "LLII" }
+            val render = owner.methods.single { it.name == "LLIIII" }
             assertEquals(listOf("I", "I", STRING), render.parameterTypes.map(CharSequence::toString))
             assertTrue(AccessFlags.PUBLIC.isSet(render.accessFlags))
-            // LLII hands its (I, Integer, String) renderer the nullable resource (47.4.3 LJJLIIIJLLLLLLLZ).
+            // LLIIII hands its (I, Integer, String) renderer the nullable resource (47.4.3 LJJLIIIJLLLLLLLZ).
             val nullable = render.implementation!!.instructions.mapNotNull { it.getReference<MethodReference>() }.single { ref ->
                 ref.definingClass == NICKNAME_OWNER && ref.parameterTypes.map(CharSequence::toString) == listOf("I", INTEGER, STRING) }
             val nullableRender = owner.methods.single { it.name == nullable.name && it.parameterTypes == nullable.parameterTypes }
@@ -506,7 +510,7 @@ class LocalProfileAppearanceAnchorsTest {
             assertNull(wrongBox.nicknameAppearanceSite())
             val (repaint, index) = found.repaint
             val wrongRepaint = MutableMethod(repaint).apply {
-                replaceInstruction(index + 3, "invoke-virtual { v2, v0, v1, v3 }, $NICKNAME_OWNER->LLII(II$STRING)V")
+                replaceInstruction(index + 3, "invoke-virtual { v2, v0, v1, v3 }, $NICKNAME_OWNER->LLIIII(II$STRING)V")
             }
             assertNull(wrongRepaint.nicknameRepaintSite())
             assertThrows(PatchException::class.java) { wrongRepaint.replaceNicknameRepaint(index) }

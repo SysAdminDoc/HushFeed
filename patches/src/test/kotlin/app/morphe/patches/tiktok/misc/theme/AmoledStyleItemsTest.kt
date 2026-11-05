@@ -18,27 +18,27 @@ class AmoledStyleItemsTest {
         val styles = parse(
             """
             <resources>
-              <style name="a9z"><item name="agq">#ff282828</item><item name="c3">#FF252525</item></style>
-              <style name="zb"><item name="agq">#ff1e1e1e</item><item name="c3">#ffffffff</item></style>
-              <style name="z6"><item name="dy">#1effffff</item><item name="agq">?attr/aut</item></style>
-              <style name="a_0"><item name="agq">#1d2026</item></style>
-              <style name="zf"><item name="aig">#ff1e1e1e</item><item name="axl">#ffffffff</item></style>
-              <style name="zl"><item name="aim">#ff1e1e1e</item><item name="aio">#ff2c2c2c</item><item name="agt">#ff1e1e1e</item></style>
+              <style name="a9z"><item name="agp">#ff282828</item><item name="c3">#FF252525</item></style>
+              <style name="zb"><item name="agp">#ff1e1e1e</item><item name="c3">#ffffffff</item></style>
+              <style name="z6"><item name="dy">#1effffff</item><item name="agp">?attr/aut</item></style>
+              <style name="a_0"><item name="agp">#1d2026</item></style>
+              <style name="zf"><item name="aif">#ff1e1e1e</item><item name="axl">#ffffffff</item></style>
+              <style name="zl"><item name="ail">#ff1e1e1e</item><item name="ain">#ff2c2c2c</item><item name="ags">#ff1e1e1e</item></style>
               <style name="zd"><item name="bx">#ff121212</item></style>
-              <style name="zo"><item name="bx">#ffffffff</item><item name="axr">#fff5f5f5</item><item name="avy">#ffffffff</item></style>
-              <style name="a_d"><item name="agt">#1a1e24</item></style>
+              <style name="zo"><item name="bx">#ffffffff</item><item name="axq">#fff5f5f5</item><item name="avy">#ffffffff</item></style>
+              <style name="a_d"><item name="ags">#1a1e24</item></style>
             </resources>
             """.trimIndent(),
         )
 
-        val changed = rewriteDarkStyleItems(styles, surfaceStyleItems("47.6.3"), "#000000")
+        val changed = rewriteDarkStyleItems(styles, surfaceStyleItems("47.7.2"), "#000000")
 
-        assertEquals(setOf("agq", "c3", "aig", "aim", "aio", "bx", "agt"), changed)
+        assertEquals(setOf("agp", "c3", "aif", "ail", "ain", "bx", "ags"), changed)
         assertEquals(
             listOf(
                 "#000000", "#000000", "#000000", "#ffffffff", "#1effffff", "?attr/aut", "#000000", "#000000", "#ffffffff",
-                // The long-press panel's fill and its cards (aio) go black. The settings pages'
-                // cards (agt) go black in every dark theme, and light stays white.
+                // The long-press panel's fill and its cards (ain) go black. The settings pages'
+                // cards (ags) go black in every dark theme, and light stays white.
                 "#000000", "#000000", "#000000", "#000000", "#ffffffff", "#fff5f5f5", "#ffffffff", "#000000",
             ),
             values(styles),
@@ -48,7 +48,7 @@ class AmoledStyleItemsTest {
     @Test
     fun `nothing dark to rewrite is reported as nothing changed`() {
         val styles = parse("""<resources><style name="zb"><item name="c3">#ffffffff</item></style></resources>""")
-        assertTrue(rewriteDarkStyleItems(styles, surfaceStyleItems("47.6.3"), "#000000").isEmpty())
+        assertTrue(rewriteDarkStyleItems(styles, surfaceStyleItems("47.7.2"), "#000000").isEmpty())
     }
 
     /**
@@ -59,7 +59,7 @@ class AmoledStyleItemsTest {
      */
     @Test
     fun `the palette is read for exactly the declared builds`() {
-        assertEquals(setOf("47.6.3"), declaredVersions())
+        assertEquals(setOf("47.7.2"), declaredVersions())
         assertEquals(declaredVersions(), DARK_BACKGROUND_COLORS.keys)
         assertEquals(declaredVersions(), SURFACE_STYLE_ITEMS.keys)
     }
@@ -67,9 +67,9 @@ class AmoledStyleItemsTest {
     /** Each build moves the grays to new names, and an older build's names are an accent and overlays. */
     @Test
     fun `the palette is each build's own and a build never read is refused`() {
-        assertEquals(setOf("a3w", "a3y", "a3z", "a41", "a49"), darkBackgroundColors("47.6.3"))
+        assertEquals(setOf("a2c", "a2e", "a2f", "a2h", "a2p"), darkBackgroundColors("47.7.2"))
         declaredVersions().forEach { assertTrue("no palette for declared $it", darkBackgroundColors(it).size == 5) }
-        listOf("46.9.3", "47.0.3", "47.1.3", "47.1.4", "47.4.3").forEach { version ->
+        listOf("46.9.3", "47.0.3", "47.1.3", "47.1.4", "47.4.3", "47.6.3").forEach { version ->
             assertRefused { darkBackgroundColors(version) }
             assertRefused { surfaceStyleItems(version) }
         }
@@ -77,7 +77,7 @@ class AmoledStyleItemsTest {
         assertRefused { surfaceStyleItems(null) }
         val refusal = unreadPaletteRefusal("47.1.4")
         assertTrue(refusal, refusal.contains("TikTok 47.1.4") && refusal.contains("nothing was changed"))
-        assertTrue(refusal, refusal.endsWith("The palette is known for TikTok 47.6.3."))
+        assertTrue(refusal, refusal.endsWith("The palette is known for TikTok 47.7.2."))
         assertTrue(unreadPaletteRefusal(null).contains("this TikTok build"))
     }
 

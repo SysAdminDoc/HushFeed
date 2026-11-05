@@ -19,7 +19,7 @@ internal const val SKYLIGHT_TOGGLE_LOG = "toggleSkylightListShowStatus: isShow: 
  * a static `(viewModel, isShow, enterMethod, needAnim, isRefresh, toggleCleanMode, String, mask)Z`
  * on the row's view model, called when the row's data arrives and from every swipe and clear
  * display toggle. The view model keeps its real name, the method is renamed on every build (Y23
- * on 47.5.3, H23 on 47.6.3, which also started returning a boolean), and it logs its own isShow,
+ * on 47.5.3, H23 on 47.6.3, which also started returning a boolean, e53 on 47.7.2), and it logs its own isShow,
  * which nothing else in the class does.
  */
 internal object FollowingSkylightToggleFingerprint : Fingerprint(

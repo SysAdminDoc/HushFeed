@@ -95,7 +95,7 @@ public class SearchInsteadOfHomeTest {
         Utils.setContext(activity);
         PausedProcess.set(false);
         home = addHomeTab(activity);
-        FeedVisibility.resolveForTests(activity.getPackageName(), "47.6.3:onv", HOME_ID);
+        FeedVisibility.resolveForTests(activity.getPackageName(), "47.7.2:opf", HOME_ID);
         Settings.SEARCH_INSTEAD_OF_HOME.save(true);
     }
 
@@ -119,7 +119,7 @@ public class SearchInsteadOfHomeTest {
         PausedProcess.set(false);
         HomeTabSettingsShortcut.resetForTests();
         StartPage.resetForTests();
-        FeedVisibility.resolveForTests(activity.getPackageName(), "47.6.3:onv", 0);
+        FeedVisibility.resolveForTests(activity.getPackageName(), "47.7.2:opf", 0);
         ReflectionHelpers.setStaticField(SettingsStatus.class, "feedNavigationEnabled", false);
         Settings.SEARCH_INSTEAD_OF_HOME.resetToDefault();
         Settings.HOME_TAB_OPENS_SETTINGS.resetToDefault();

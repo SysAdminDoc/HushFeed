@@ -23,12 +23,16 @@ import org.junit.Assert.*
 import org.junit.Test
 import java.util.zip.ZipFile
 
-/** Reads the three native DEX entries only, then applies the real insertion function. */
+/**
+ * Reads only the DEX entries that define the native owners, then applies the real insertion
+ * function. On 47.7.2 those are classes3 (InitPushTask), classes10 (the FCM token helper, its
+ * completion and SendTokenTask), classes35 (MessageHandler) and classes37 (SSGcmListenerService).
+ */
 class PushDeliveryDiagnosticsTest {
     private val classes: List<ClassDef> by lazy {
         val owners = PUSH_NATIVE_METHODS.map { it.substringBefore("->") }.toSet()
-        ZipFile(Fixtures.apkOf("47.6.3")).use { apk ->
-            listOf("classes2.dex", "classes8.dex", "classes21.dex").flatMap { name ->
+        ZipFile(Fixtures.apkOf("47.7.2")).use { apk ->
+            listOf("classes3.dex", "classes10.dex", "classes35.dex", "classes37.dex").flatMap { name ->
                 apk.getInputStream(apk.getEntry(name)).buffered().use { input ->
                     DexBackedDexFile.fromInputStream(Opcodes.getDefault(), input).classes.filter { it.type in owners }
                 }
@@ -44,10 +48,10 @@ class PushDeliveryDiagnosticsTest {
     }
 
     @Test fun onlyTheExactGlobalProfileUsesNativeAnchors() {
-        assertTrue(supportsNativePushProfile("com.zhiliaoapp.musically", "47.6.3"))
-        assertFalse(supportsNativePushProfile("com.ss.android.ugc.trill", "47.6.3"))
+        assertTrue(supportsNativePushProfile("com.zhiliaoapp.musically", "47.7.2"))
+        assertFalse(supportsNativePushProfile("com.ss.android.ugc.trill", "47.7.2"))
         assertFalse(supportsNativePushProfile("com.zhiliaoapp.musically", "47.4.3"))
-        assertFalse(supportsNativePushProfile(null, "47.6.3"))
+        assertFalse(supportsNativePushProfile(null, "47.7.2"))
         assertFalse(supportsNativePushProfile("com.zhiliaoapp.musically", null))
     }
 

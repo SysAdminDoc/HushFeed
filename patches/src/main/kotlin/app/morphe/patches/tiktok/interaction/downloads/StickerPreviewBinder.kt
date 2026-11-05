@@ -41,7 +41,7 @@ internal fun MethodReference.isStickerPreviewBind() =
 /**
  * The row that shows a sticker in the message sheet, found by what it is built from.
  *
- * <p>It was `LX/0ULN;` with its payload `LX/0ULM;`, and the patch named both, along with two more
+ * <p>It was `LX/0SOE;` with its payload `LX/0SC0;`, and the patch named both, along with two more
  * obfuscated classes it happens to call. It is `LX/0WTz;` on 46.7.3 and `LX/0m0P;` on 46.8.3.
  *
  * <p>What holds is that it is a LinearLayout holding a `SmartImageView` and a `TuxTextView`, which

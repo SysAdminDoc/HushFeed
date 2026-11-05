@@ -19,8 +19,8 @@ import org.junit.Assert.assertSame
 import org.junit.Test
 
 class NativeFocusBridgeTest {
-    private val owner = "LX/0q3r;"
-    private val nativeListener = "LX/0q3s;"
+    private val owner = "LX/0rXN;"
+    private val nativeListener = "LX/0rXO;"
     private val audio = "Landroid/media/AudioManager;"
     private val listener = "Landroid/media/AudioManager${'$'}OnAudioFocusChangeListener;"
     private val extension = "Lapp/morphe/extension/tiktok/wellbeing/SessionPlaybackHold;"
@@ -152,9 +152,9 @@ class NativeFocusBridgeTest {
         // first version of this bridge asserted v3, v2, v1, v0 and the name LX/0UUp;->j4, which
         // is the 46.2.3 build written into the patch. Everything here differs from that.
         val method = nativeOwnerMethod("anything", 8, """
-            iget-object v7, p0, LX/1Gr4;->LIZ:$audio
+            iget-object v7, p0, LX/1O4I;->LIZ:$audio
             if-eqz v7, :done
-            iget-object v5, p0, LX/1Gr4;->LIZIZ:LX/1Gr5;
+            iget-object v5, p0, LX/1O4I;->LIZIZ:LX/1O2P;
             if-eqz v5, :done
             const/4 v6, 3
             const/4 v4, 2
@@ -181,9 +181,9 @@ class NativeFocusBridgeTest {
     @Test
     fun `abandon takes its listener from the call it precedes`() {
         val method = nativeOwnerMethod("anything", 9, """
-            iget-object v6, p0, LX/1Gr4;->LIZ:$audio
+            iget-object v6, p0, LX/1O4I;->LIZ:$audio
             if-eqz v6, :done
-            iget-object v8, p0, LX/1Gr4;->LIZIZ:LX/1Gr5;
+            iget-object v8, p0, LX/1O4I;->LIZIZ:LX/1O2P;
             if-eqz v8, :done
             invoke-virtual {v6, v8}, $audio->abandonAudioFocus($listener)I
             :done
@@ -204,9 +204,9 @@ class NativeFocusBridgeTest {
         // 47.6.3 is the first build to hand the give-up to a static wrapper, with the manager in
         // front of the listener, the way the request has always gone.
         val method = nativeOwnerMethod("anything", 9, """
-            iget-object v6, p0, LX/1Gr4;->LIZ:$audio
+            iget-object v6, p0, LX/1O4I;->LIZ:$audio
             if-eqz v6, :done
-            iget-object v8, p0, LX/1Gr4;->LIZIZ:LX/1Gr5;
+            iget-object v8, p0, LX/1O4I;->LIZIZ:LX/1O2P;
             if-eqz v8, :done
             invoke-static {v6, v8}, LX/2ZZZ;->ne($audio${listener})I
             :done
@@ -229,8 +229,8 @@ class NativeFocusBridgeTest {
         // A build that reads it afterwards would have the extension's result clobber it, and
         // that has to be a loud failure at patch time rather than a quiet one on a phone.
         val method = nativeOwnerMethod("anything", 6, """
-            iget-object v3, p0, LX/1Gr4;->LIZ:$audio
-            iget-object v2, p0, LX/1Gr4;->LIZIZ:LX/1Gr5;
+            iget-object v3, p0, LX/1O4I;->LIZ:$audio
+            iget-object v2, p0, LX/1O4I;->LIZIZ:LX/1O2P;
             const/4 v1, 3
             const/4 v0, 2
             invoke-static {v3, v2, v1, v0}, LX/2ZZZ;->q9($audio${listener}II)I
@@ -248,8 +248,8 @@ class NativeFocusBridgeTest {
         // pressure here and the host emits invoke-static/range, which is not the instruction the
         // registers are read off, and the cast used to happen before anything said so.
         val method = nativeOwnerMethod("anything", 8, """
-            iget-object v4, p0, LX/1Gr4;->LIZ:$audio
-            iget-object v5, p0, LX/1Gr4;->LIZIZ:LX/1Gr5;
+            iget-object v4, p0, LX/1O4I;->LIZ:$audio
+            iget-object v5, p0, LX/1O4I;->LIZIZ:LX/1O2P;
             const/4 v6, 3
             const/4 v7, 2
             invoke-static/range {v4 .. v7}, LX/2ZZZ;->q9($audio${listener}II)I
@@ -265,8 +265,8 @@ class NativeFocusBridgeTest {
         // The resolver takes a method that contains a request, never one that contains only one,
         // so a normal path and an error path reaching here has to say what it found.
         val method = nativeOwnerMethod("anything", 6, """
-            iget-object v3, p0, LX/1Gr4;->LIZ:$audio
-            iget-object v2, p0, LX/1Gr4;->LIZIZ:LX/1Gr5;
+            iget-object v3, p0, LX/1O4I;->LIZ:$audio
+            iget-object v2, p0, LX/1O4I;->LIZIZ:LX/1O2P;
             const/4 v1, 3
             const/4 v0, 2
             invoke-static {v3, v2, v1, v0}, LX/2ZZZ;->q9($audio${listener}II)I
@@ -281,8 +281,8 @@ class NativeFocusBridgeTest {
     @Test
     fun `two abandon calls in one method are refused by name`() {
         val method = nativeOwnerMethod("anything", 4, """
-            iget-object v1, p0, LX/1Gr4;->LIZ:$audio
-            iget-object v0, p0, LX/1Gr4;->LIZIZ:LX/1Gr5;
+            iget-object v1, p0, LX/1O4I;->LIZ:$audio
+            iget-object v0, p0, LX/1O4I;->LIZIZ:LX/1O2P;
             invoke-virtual {v1, v0}, $audio->abandonAudioFocus($listener)I
             invoke-virtual {v1, v0}, $audio->abandonAudioFocus($listener)I
             return-void

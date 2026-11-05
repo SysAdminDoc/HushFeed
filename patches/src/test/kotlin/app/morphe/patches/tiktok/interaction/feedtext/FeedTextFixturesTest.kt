@@ -31,7 +31,7 @@ class FeedTextFixturesTest {
     @Test
     fun `all declared hosts resolve native owners and safely size before line breaking`() {
         val expected = mapOf(
-            "47.6.3" to Triple("LX/0974;", "LX/087t;", 0x7f0a2081 to 0x7f0a8816),
+            "47.7.2" to Triple("LX/0As4;", "LX/0A3v;", 0x7f0a2097 to 0x7f0a897d),
         )
         assertEquals(Fixtures.declaredVersions().toSet(), expected.keys)
         Fixtures.forEachDeclared { apk ->
@@ -49,21 +49,21 @@ class FeedTextFixturesTest {
             assertEquals(POST_TIME_IDS.toList(), resources.getValue("tv_post_time"))
             assertEquals(2, native.sizeInputs.size)
             assertEquals(listOf(2, 10), native.sizeInputs.map { it.builderRegister })
-            assertEquals(listOf(85, 275), native.sizeInputs.map { it.index })
-            assertEquals(29, native.layoutFactory.implementation!!.registerCount)
+            assertEquals(listOf(86, 276), native.sizeInputs.map { it.index })
+            assertEquals(30, native.layoutFactory.implementation!!.registerCount)
             assertEquals("LIZJ", native.builderPaint.name)
             assertEquals("LJIIJ", native.builderSize.name)
             assertEquals("LJFF", native.builderCache.name)
             assertEquals(6, native.layoutCaches.size)
             assertEquals("LJLLI", native.refreshOriginal.name)
             assertEquals("LJLLJ", native.refreshTranslated.name)
-            assertEquals("Oq", native.authorBind.name)
-            assertEquals("LLLIIII", native.authorView.name)
+            assertEquals("er", native.authorBind.name)
+            assertEquals("LLLIIIL", native.authorView.name)
             assertTrue(native.authorLoader.implementation!!.instructions.any {
                 it is NarrowLiteralInstruction && it.narrowLiteral == ids.second
             })
             // The post date beside the name: the same owner loads it, as the same kind of text view.
-            assertEquals("LLLIIIIL", native.dateView.name)
+            assertEquals("LLLIIL", native.dateView.name)
             assertEquals(AUTHOR, native.dateView.definingClass)
             assertEquals(native.authorView.type, native.dateView.type)
             val loaderCode = native.authorLoader.implementation!!.instructions.toList()
@@ -83,7 +83,7 @@ class FeedTextFixturesTest {
             mutable.markDescriptionBuilders(native.sizeInputs)
             val after = mutable.implementation!!.instructions.toList()
             assertEquals(before.size + 4, after.size)
-            assertEquals(29, mutable.implementation!!.registerCount)
+            assertEquals(30, mutable.implementation!!.registerCount)
             assertEquals(2, after.count { it.getReference<MethodReference>()?.name == "descriptionBuilder" })
             branches.forEach { (branch, target) ->
                 val source = after.single { it === branch }
@@ -95,10 +95,20 @@ class FeedTextFixturesTest {
             val fresh = flow.instructions.indexOfFirst { it.getReference<MethodReference>()?.name == "freshDescription" }
             val branch = fresh + 2
             assertEquals(Opcode.IF_NEZ, flow.instructions[branch].opcode)
-            val fallback = flow.normal[branch].single { target ->
-                flow.instructions[target].getReference<MethodReference>()?.toString() == native.layoutFactory.toString()
-            }
-            assertEquals(listOf(3, 4, 5, 6, 7, 8), flow.instructions[fallback].namedRegisters())
+            // v2 holds the controller at entry (move-object/from16 v2, p0); v0 is still the caption there.
+            assertEquals(2, (flow.instructions[fresh] as RegisterRangeInstruction).startRegister)
+            // 47.7.2 shuffles the fallback's arguments down into v0..v6 with plain moves before the
+            // uncached call. The bypass lands on the first move, where the native empty-caption check lands.
+            val shuffle = flow.normal[branch].single { it != branch + 1 }
+            assertTrue(flow.instructions.indices.any {
+                it != branch && flow.instructions[it].opcode == Opcode.IF_EQZ && shuffle in flow.normal[it]
+            })
+            val moves = setOf(Opcode.MOVE, Opcode.MOVE_OBJECT)
+            val fallback = (shuffle until flow.instructions.size).first { flow.instructions[it].opcode !in moves }
+            assertEquals(7, fallback - shuffle)
+            assertEquals(native.layoutFactory.toString(),
+                flow.instructions[fallback].getReference<MethodReference>()?.toString())
+            assertEquals(listOf(0, 1, 2, 3, 4, 5, 6), flow.instructions[fallback].namedRegisters())
             val author = MutableMethod(native.authorBind)
             val returns = author.implementation!!.instructions.count { it.opcode == Opcode.RETURN_VOID }
             author.bindAuthorSize()

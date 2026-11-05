@@ -37,7 +37,7 @@ class ProfileAvatarGestureHookTest {
     @Test
     fun `own profile native hold preserves its six register body when saving is off`() {
         assertNativeGesture("onClick\$43", 6, """
-            sget-object v3, LX/0lWb;->LIZ:LX/0lWb;
+            sget-object v3, LX/1K1S;->LIZ:LX/1K1S;
             iget-object v0, p0, $listener->l0:Ljava/lang/Object;
             check-cast v0, ${avatarOwner}MyProfileAvatarAssem;
             invoke-virtual { v0 }, ${avatarOwner}ProfileAvatarAssem;->bq()Lcom/ss/android/ugc/aweme/profile/model/User;
@@ -51,11 +51,11 @@ class ProfileAvatarGestureHookTest {
         // 46.9.3: no listener group and no cast. The assem sits in a field of its own type on a
         // class of its own, and p0 is `this` rather than the group instance handed to a static.
         assertNativeGesture("onClick", 6, """
-            iget-object v0, p0, LX/0NnB;->LL:${avatarOwner}MyProfileAvatarAssem;
+            iget-object v0, p0, LX/05il;->LL:${avatarOwner}MyProfileAvatarAssem;
             invoke-virtual { v0 }, ${avatarOwner}ProfileAvatarAssem;->ds()Lcom/ss/android/ugc/aweme/profile/model/User;
             move-result-object v2
             return-void
-        """, owner = "LX/0NnB;", static = false, fieldName = "LL", fieldType = "${avatarOwner}MyProfileAvatarAssem;")
+        """, owner = "LX/05il;", static = false, fieldName = "LL", fieldType = "${avatarOwner}MyProfileAvatarAssem;")
     }
 
     private fun assertNativeGesture(

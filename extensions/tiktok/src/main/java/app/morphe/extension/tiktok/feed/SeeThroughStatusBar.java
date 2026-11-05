@@ -88,7 +88,7 @@ public final class SeeThroughStatusBar {
      * TikTok creates that one at launch, sized to the picture inside {@code player_view}. Every
      * later cell takes its video view from a factory that, depending on TikTok's experiments, hands
      * back a SurfaceView or a TextureView inside the player, or a SurfaceControl player (47.1.4's
-     * {@code X.1T9e}) whose view is {@code player_view} itself: the size TikTok works out for the
+     * {@code X.1QpS}) whose view is {@code player_view} itself: the size TikTok works out for the
      * picture goes on the player, and the picture is a layer that follows the player's place, size
      * and scale. With no surface inside it, the player is the picture, and it grows inside the space
      * around it instead. Fit the video to the screen wins: a picture it shrank to show whole isn't

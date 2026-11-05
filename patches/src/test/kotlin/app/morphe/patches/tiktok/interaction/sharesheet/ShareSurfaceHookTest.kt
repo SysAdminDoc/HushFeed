@@ -31,7 +31,7 @@ import org.junit.Test
  */
 class ShareSurfaceHookTest {
     private val model = "LX/0oVo;"
-    private val builder = "LX/0oVp;"
+    private val builder = "LX/0tmx;"
     private val field = "$builder->LJJIIJ:Lcom/ss/android/ugc/aweme/share/base/model/BaseSharePackage;"
 
     @Test

@@ -195,12 +195,12 @@ class RuntimeViewIdAnchorsTest {
     /** Each group handed another group's id on each declared build, by that build's name for it. */
     @Test
     fun `semantic owners reject an unrelated id for every group that needs one`() {
-        val actions = "share/ShareSheetTools.java|ACTIONS_LIST_IDS|47.6.3:a6f"
-        val dislike = "comment/CommentTools.java|DISLIKE_BUTTON_IDS|47.6.3:k1e"
-        val dislikeIcon = "comment/CommentTools.java|DISLIKE_ICON_IDS|47.6.3:mn5"
-        val captionText = "captions/CaptionStyle.java|TEXT_IDS|47.6.3:dnd"
+        val actions = "share/ShareSheetTools.java|ACTIONS_LIST_IDS|47.7.2:a6b"
+        val dislike = "comment/CommentTools.java|DISLIKE_BUTTON_IDS|47.7.2:k2g"
+        val dislikeIcon = "comment/CommentTools.java|DISLIKE_ICON_IDS|47.7.2:mof"
+        val captionText = "captions/CaptionStyle.java|TEXT_IDS|47.7.2:dnn"
         val wrongNames = mapOf(
-            "47.6.3" to mapOf(actions to "k1e", dislike to "a6f", dislikeIcon to "a6f", captionText to "k1e"),
+            "47.7.2" to mapOf(actions to "k2g", dislike to "a6b", dislikeIcon to "a6b", captionText to "k2g"),
         )
         assertEquals(Fixtures.declaredVersions().toSet(), wrongNames.keys)
         for ((version, wrong) in wrongNames) {
@@ -526,7 +526,9 @@ class RuntimeViewIdAnchorsTest {
         return if (picked == wanted) Coverage(anchor, State.OWNED, "$loads, told by $tell", candidates)
         else Coverage(anchor, State.BROKEN,
             "$loads, but its tell $tell picks ${picked?.let { hex(it) } ?: "nothing"} (of ${matching.size} matching), " +
-                "not ${hex(wanted)}, the id of $used; the id's own uses: ${describe(uses.filter { it.id == wanted })}",
+                "not ${hex(wanted)}, the id of $used, " +
+                (matching.indexOf(wanted).takeIf { it >= 0 }?.let { "which is #${it + 1}" } ?: "which the tell doesn't match") +
+                "; the id's own uses: ${describe(uses.filter { it.id == wanted })}",
             candidates)
     }
 
@@ -994,7 +996,7 @@ class RuntimeViewIdAnchorsTest {
         val METHOD_NAME = Regex("""[A-Za-z_$][A-Za-z0-9_$]*""")
         /** A type in a tell: a dotted class name, or a bare framework tag such as LinearLayout. */
         val TYPE_NAME = Regex("""[A-Za-z_$][A-Za-z0-9_$]*(\.[A-Za-z_$][A-Za-z0-9_$]*)*""")
-        /** R8's names, new on every build: `X.05y1`. A tell that carries one is a tell that dies with the build. */
+        /** R8's names, new on every build: `X.070T`. A tell that carries one is a tell that dies with the build. */
         val OBFUSCATED = Regex("""(?:.*\.)?X\.[0-9A-Za-z_$]{3,6}""")
 
         /** An owner written `layout:<class>`: the class loads a layout that sets the id. */

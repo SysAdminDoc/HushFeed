@@ -25,21 +25,22 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * The Following request's count (#226): TikTok's helper calls FollowFeedApiV2.followFeedGet and
- * followFeedPost with the count held in a register it filled with the literal 20, and the hook
- * hands the cursor, level and count to the extension just before each call.
+ * The Following request's count (#226): TikTok's helper calls FollowFeedApiV2.followFeedPost (and
+ * followFeedGet before 47.7.2 dropped it) with the count held in a register it filled with the
+ * literal 20, and the hook hands the cursor, level and count to the extension just before each call.
  */
 class FollowFeedFirstReadCountTest {
     private val api = "Lcom/ss/android/ugc/aweme/follow/api/FollowFeedApiV2;"
     private val extension = "Lapp/morphe/extension/tiktok/feedfilter/FollowingLatestFirst;"
 
     @Test
-    fun `every retained fixture has one helper that sets the count to 20 and the hook reaches both calls`() {
+    fun `every retained fixture has one helper that sets the count to 20 and the hook reaches each call`() {
         val apks = Fixtures.apks()
         assertTrue("fixtures: ${apks.map { it.name }}", apks.containsAll(Fixtures.declared()))
         apks.forEach { apk ->
-            val helpers = load(apk).values.flatMap { it.methods }.filter { it.callsBoth() }
-            assertEquals("${apk.name}: helpers calling both requests ${helpers.map { it.name }}", 1, helpers.size)
+            val helpers = load(apk).values.flatMap { it.methods }.filter { "followFeedPost" in it.apiCalls() }
+            assertEquals("${apk.name}: helpers calling the POST ${helpers.map { it.name }}", 1, helpers.size)
+            val expected = helpers.single().apiCalls().size
             val method = MutableMethod(helpers.single())
             method.raiseFollowFeedFirstReadCount()
 
@@ -49,7 +50,7 @@ class FollowFeedFirstReadCountTest {
                     it is MethodReference && it.definingClass == extension && it.name == "requestCount"
                 }
             }
-            assertEquals("${apk.name}: hooks", 2, hooks.size)
+            assertEquals("${apk.name}: hooks", expected, hooks.size)
             hooks.forEach { (index, hook) ->
                 val range = hook as RegisterRangeInstruction
                 assertEquals("${apk.name}: cursor, level and count", 4, range.registerCount)
@@ -71,17 +72,27 @@ class FollowFeedFirstReadCountTest {
         assertTrue(error.message!!, error.message!!.contains("not the literal 20"))
     }
 
-    private fun Method.callsBoth(): Boolean {
-        val names = implementation?.instructions
-            ?.mapNotNull { (it as? ReferenceInstruction)?.reference as? MethodReference }
-            ?.filter { it.definingClass == api }
-            ?.map { it.name }
-            .orEmpty()
-        return "followFeedGet" in names && "followFeedPost" in names
+    @Test
+    fun `a helper without the POST or with two of them stops the patch`() {
+        assertThrows(PatchException::class.java) { MutableMethod(helperSource(20, "followFeedGet")).raiseFollowFeedFirstReadCount() }
+        assertThrows(PatchException::class.java) {
+            MutableMethod(helperSource(20, "followFeedPost", "followFeedPost")).raiseFollowFeedFirstReadCount()
+        }
+        val postOnly = MutableMethod(helperSource(20, "followFeedPost"))
+        postOnly.raiseFollowFeedFirstReadCount()
+        assertEquals(1, postOnly.implementation!!.instructions.count {
+            ((it as? ReferenceInstruction)?.reference as? MethodReference)?.name == "requestCount"
+        })
     }
 
+    private fun Method.apiCalls(): List<String> = implementation?.instructions
+        ?.mapNotNull { (it as? ReferenceInstruction)?.reference as? MethodReference }
+        ?.filter { it.definingClass == api && (it.name == "followFeedGet" || it.name == "followFeedPost") }
+        ?.map { it.name }
+        .orEmpty()
+
     /** A helper shaped like TikTok's: the count register v7 is filled, then GET and POST are called. */
-    private fun helperSource(literal: Int): Method {
+    private fun helperSource(literal: Int, vararg requests: String = arrayOf("followFeedGet", "followFeedPost")): Method {
         fun call(name: String) = ImmutableInstruction3rc(
             Opcode.INVOKE_INTERFACE_RANGE,
             2,
@@ -98,12 +109,8 @@ class FollowFeedFirstReadCountTest {
             null,
             ImmutableMethodImplementation(
                 8,
-                listOf(
-                    ImmutableInstruction21s(Opcode.CONST_16, 7, literal),
-                    call("followFeedGet"),
-                    call("followFeedPost"),
+                listOf(ImmutableInstruction21s(Opcode.CONST_16, 7, literal)) + requests.map { call(it) } +
                     ImmutableInstruction10x(Opcode.RETURN_VOID),
-                ),
                 null,
                 null,
             ),

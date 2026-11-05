@@ -159,7 +159,7 @@ internal object LiveClearScreenEntryFingerprint : Fingerprint(
 )
 
 /**
- * LIVE's per-room controller (X.0Kl0 on 47.6.3, whose obfuscated name moves every build), found by
+ * LIVE's per-room controller (X.0Lau on 47.7.2, whose obfuscated name moves every build), found by
  * its constructor. It owns the actual clear state, including swipe gestures, and that constructor
  * may restore Clear screen before the room page has resumed.
  */
@@ -313,7 +313,7 @@ internal const val LIVE_STREAM_URL = "Lcom/bytedance/android/livesdkapi/depend/m
 internal const val AUDIO_SWITCH_REFUSED = "not support switch to audio, streamFormat: "
 
 /**
- * The LIVE player's message loop (X.0IaX on 47.6.3). A switch to "ao", a room's sound on its own,
+ * The LIVE player's message loop (X.0Jxt on 47.7.2). A switch to "ao", a room's sound on its own,
  * goes through there only while the server's EnableOnlyAudioInAoRes flag is on, and logs
  * [AUDIO_SWITCH_REFUSED] otherwise (#265).
  */
@@ -325,7 +325,7 @@ internal object LiveAudioSwitchGateFingerprint : Fingerprint(
 )
 
 /**
- * Whether the player is on a room's sound alone (LLJLILLLLZIIL on 47.6.3), which adds
+ * Whether the player is on a room's sound alone (LLJJJJLIIL on 47.7.2), which adds
  * only_audio=1 to the room's address so the picture stops downloading. It checks the same flag.
  */
 internal object LiveAudioUrlGateFingerprint : Fingerprint(
@@ -1094,7 +1094,7 @@ private const val DATA_CHANNEL = "Lcom/bytedance/ies/sdk/datachannel/DataChannel
 /**
  * Adds Audio only to the older picker's rows (#265), the one Share > Video quality opens on some
  * accounts (Login2, 2026-11-05). [viewCreated] gets its rows from a static builder that takes the
- * room's data channel (X.0wHW.LIZ on 47.6.3). TikTok also reads that builder to find the next lower
+ * room's data channel (X.12C0.LIZ on 47.7.2). TikTok also reads that builder to find the next lower
  * quality on a weak connection, so the row goes only into the dialog's copy: right after the
  * builder answers, the extension answers the rows. A jump to the instruction after the answer
  * skips the hook, as it should, since the rows didn't just come from the builder there. Returns
@@ -1460,11 +1460,13 @@ private const val SET_BACKGROUND = "Landroid/view/View;->setBackground(Landroid/
  * view, from a lazy field and gives it a rounded shape drawn from the badge's server background
  * (a border around the server's art, a server color, or a border alone). The server draws that
  * art and the text over it for the white card, the low levels' "Lv." tile see-through, so on the
- * dark card the tile and its text went dark gray together (Login2, 2026-10-20).
+ * dark card the tile and its text went dark gray together (Login2, 2026-10-20). On 47.7.2 the
+ * bind is X.11kh.LJJIIZI: it takes the user, reads the badge off it itself and returns a boolean,
+ * where 47.6.3's X.0wa2.LJIJI took the badge and returned nothing.
  */
 internal object LiveProfileBadgeFingerprint : Fingerprint(
-    returnType = "V",
-    parameters = listOf(LIVE_BADGE),
+    returnType = "Z",
+    parameters = listOf(LIVE_USER),
     filters = listOf(fieldAccess(opcode = Opcode.IGET_OBJECT, definingClass = COMBINE_BADGE, name = "background")),
     custom = { method, _ -> badgeTileCalls(method) != null },
 )
@@ -2044,7 +2046,7 @@ internal data class ViewerCountSite(
 
 /**
  * Every call in [widget] to a static (J)Ljava/lang/String; helper that isn't the JDK's, or only
- * those to [formatter] when given. That helper is the "K+", "M+" and "B+" abbreviator (X.0LE4.LIZJ
+ * those to [formatter] when given. That helper is the "K+", "M+" and "B+" abbreviator (X.0N0e.LIZJ
  * on 47.0.3, X.0LDD on 47.1.3, X.0LDH on 47.1.4), renamed per build, so the shape is matched, not
  * the name. Throws if any such call has a shape the hook can't take: a site the patch skipped would
  * keep showing the rounded count with nothing to say so.

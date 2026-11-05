@@ -15,7 +15,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -29,13 +29,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -68,7 +68,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -82,13 +82,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -133,7 +133,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -147,13 +147,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -174,7 +174,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -188,13 +188,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -521,7 +521,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -535,13 +535,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -580,7 +580,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -594,13 +594,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -630,7 +630,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -644,13 +644,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -752,7 +752,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -766,13 +766,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -802,7 +802,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -816,13 +816,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -861,7 +861,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -875,13 +875,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -936,7 +936,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -950,13 +950,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -976,7 +976,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -990,13 +990,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -1242,7 +1242,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -1256,13 +1256,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -1292,7 +1292,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -1306,13 +1306,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -1342,7 +1342,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -1356,13 +1356,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -1410,7 +1410,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -1424,13 +1424,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -1460,7 +1460,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -1474,13 +1474,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -1508,7 +1508,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -1522,13 +1522,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -1556,7 +1556,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -1570,13 +1570,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -1595,7 +1595,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -1609,13 +1609,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -1635,7 +1635,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -1649,13 +1649,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -1686,7 +1686,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -1700,13 +1700,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -1944,7 +1944,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -1958,13 +1958,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -2030,7 +2030,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -2044,13 +2044,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -2098,7 +2098,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -2112,13 +2112,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -2146,7 +2146,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -2160,13 +2160,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -2184,7 +2184,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -2198,13 +2198,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -2270,7 +2270,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -2284,13 +2284,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -2338,7 +2338,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -2352,13 +2352,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -2415,7 +2415,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -2429,13 +2429,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -2499,7 +2499,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -2513,13 +2513,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -2537,7 +2537,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -2551,13 +2551,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -2577,7 +2577,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -2591,13 +2591,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -2627,7 +2627,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -2641,13 +2641,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -2677,7 +2677,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -2691,13 +2691,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -2728,7 +2728,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -2742,13 +2742,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -2823,7 +2823,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -2837,13 +2837,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -2981,7 +2981,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -2995,13 +2995,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -3031,7 +3031,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -3045,13 +3045,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -3081,7 +3081,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -3095,13 +3095,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -3129,7 +3129,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -3143,13 +3143,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -3168,7 +3168,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -3182,13 +3182,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -3208,7 +3208,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -3222,13 +3222,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -3780,7 +3780,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -3794,13 +3794,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -4037,7 +4037,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -4051,13 +4051,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -4114,7 +4114,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -4128,13 +4128,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -4171,7 +4171,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -4185,13 +4185,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -4211,7 +4211,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -4225,13 +4225,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -4268,7 +4268,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -4282,13 +4282,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -4308,7 +4308,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -4322,13 +4322,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -4358,7 +4358,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -4372,13 +4372,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -4444,7 +4444,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -4458,13 +4458,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -4492,7 +4492,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -4506,13 +4506,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -4533,7 +4533,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -4547,13 +4547,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -4595,6 +4595,15 @@
           "type": "kotlin.Boolean",
           "default": false,
           "values": null
+        },
+        {
+          "key": "for_you_hold_opens_watch_history",
+          "title": "Default: for you hold opens watch history",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
         }
       ]
     },
@@ -4610,7 +4619,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -4624,13 +4633,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -4660,7 +4669,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -4674,13 +4683,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -4710,7 +4719,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -4724,13 +4733,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -4778,7 +4787,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -4792,13 +4801,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -4828,7 +4837,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -4842,13 +4851,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -4878,7 +4887,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -4892,13 +4901,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -4928,7 +4937,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -4942,13 +4951,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -4987,7 +4996,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -5001,13 +5010,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -5226,7 +5235,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -5240,13 +5249,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -5276,7 +5285,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -5290,13 +5299,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -5371,7 +5380,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -5385,13 +5394,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -5421,7 +5430,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -5435,13 +5444,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -5489,7 +5498,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -5503,13 +5512,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -5539,7 +5548,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -5553,13 +5562,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -5588,7 +5597,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -5602,13 +5611,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -5628,7 +5637,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -5642,13 +5651,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -6173,7 +6182,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -6187,13 +6196,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -6223,7 +6232,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -6237,13 +6246,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -6274,7 +6283,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -6288,13 +6297,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -6351,7 +6360,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -6365,13 +6374,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -6419,7 +6428,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -6433,13 +6442,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -6467,7 +6476,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -6481,13 +6490,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -6507,7 +6516,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -6521,13 +6530,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -6566,7 +6575,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -6580,13 +6589,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -6616,7 +6625,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -6630,13 +6639,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -6666,7 +6675,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -6680,13 +6689,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -6716,7 +6725,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -6730,13 +6739,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -6766,7 +6775,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -6780,13 +6789,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -6826,7 +6835,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -6840,13 +6849,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -6962,6 +6971,15 @@
           "values": null
         },
         {
+          "key": "live_audio_only",
+          "title": "Default: live audio only",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "remembered_live_quality",
           "title": "Default: remembered live quality",
           "description": null,
@@ -6984,7 +7002,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -6998,13 +7016,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -7034,7 +7052,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -7048,13 +7066,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -7091,7 +7109,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -7105,13 +7123,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -7131,7 +7149,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -7145,13 +7163,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -7182,7 +7200,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -7196,13 +7214,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -7313,7 +7331,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -7327,13 +7345,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -7373,7 +7391,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -7387,13 +7405,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -7450,7 +7468,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -7464,13 +7482,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -7543,7 +7561,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -7557,13 +7575,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -7584,7 +7602,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -7598,13 +7616,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -7643,7 +7661,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -7657,13 +7675,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -7720,7 +7738,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -7734,13 +7752,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -7770,7 +7788,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -7784,13 +7802,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -7821,7 +7839,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -7835,13 +7853,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -7871,7 +7889,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -7885,13 +7903,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -7921,7 +7939,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -7935,13 +7953,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -7980,7 +7998,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -7994,13 +8012,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -8102,7 +8120,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -8116,13 +8134,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -8152,7 +8170,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -8166,13 +8184,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -8202,7 +8220,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -8216,13 +8234,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -8324,7 +8342,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -8338,13 +8356,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -8400,7 +8418,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -8414,13 +8432,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -8440,7 +8458,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -8454,13 +8472,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -8507,7 +8525,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -8521,13 +8539,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -8545,7 +8563,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -8559,13 +8577,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -8583,7 +8601,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -8597,13 +8615,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -8632,7 +8650,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -8646,13 +8664,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -8672,7 +8690,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -8686,13 +8704,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -8721,7 +8739,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -8735,13 +8753,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -8761,7 +8779,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -8775,13 +8793,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -8820,7 +8838,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -8834,13 +8852,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -8868,7 +8886,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -8882,13 +8900,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -8908,7 +8926,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -8922,13 +8940,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -8994,7 +9012,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -9008,13 +9026,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -9061,7 +9079,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -9075,13 +9093,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -9215,7 +9233,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -9229,13 +9247,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -9336,7 +9354,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -9350,13 +9368,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -9386,7 +9404,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -9400,13 +9418,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -9454,7 +9472,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -9468,13 +9486,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -9531,7 +9549,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -9545,13 +9563,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -9581,7 +9599,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -9595,13 +9613,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -9631,7 +9649,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -9645,13 +9663,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -9726,7 +9744,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -9740,13 +9758,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -9829,7 +9847,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -9843,13 +9861,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -9879,7 +9897,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -9893,13 +9911,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -9947,7 +9965,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -9961,13 +9979,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -9997,7 +10015,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -10011,13 +10029,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -10047,7 +10065,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -10061,13 +10079,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -10097,7 +10115,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -10111,13 +10129,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -10147,7 +10165,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -10161,13 +10179,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -10197,7 +10215,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -10211,13 +10229,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -10247,7 +10265,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -10261,13 +10279,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -10297,7 +10315,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -10311,13 +10329,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -10347,7 +10365,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -10361,13 +10379,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -10397,7 +10415,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -10411,13 +10429,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -10447,7 +10465,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -10461,13 +10479,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -10508,7 +10526,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -10522,13 +10540,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -10641,7 +10659,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -10655,13 +10673,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -10691,7 +10709,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -10705,13 +10723,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -10802,7 +10820,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -10816,13 +10834,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -10842,7 +10860,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -10856,13 +10874,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -10892,7 +10910,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -10906,13 +10924,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -10942,7 +10960,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -10956,13 +10974,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]
@@ -10992,7 +11010,7 @@
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
-          "47.6.3"
+          "47.7.2"
         ]
       },
       "compatibility": [
@@ -11006,13 +11024,13 @@
           ],
           "targets": [
             {
-              "version": "47.6.3",
+              "version": "47.7.2",
               "experimental": false,
               "versionCodes": {
-                "ARM64_V8A": 2024706030,
-                "ARMEABI_V7A": 2024706030,
-                "X86": 2024706030,
-                "X86_64": 2024706030
+                "ARM64_V8A": 2024707020,
+                "ARMEABI_V7A": 2024707020,
+                "X86": 2024707020,
+                "X86_64": 2024707020
               }
             }
           ]

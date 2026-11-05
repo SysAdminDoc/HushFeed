@@ -149,7 +149,7 @@ class ObfuscatedIdentityTest {
         /** A whole name of the shape [MEMBER_LITERAL] finds: `LIZ`, `LJFF`, `LL`. */
         val MEMBER_NAME = Regex("""L[IJLZF]{1,19}""")
 
-        /** A class R8 named for one build: `LX/0sIr;`, or a merged lambda group `LY/...;`. */
+        /** A class R8 named for one build: `LX/0v48;`, or a merged lambda group `LY/...;`. */
         val OBFUSCATED_TYPE = Regex("""L[XY]/[0-9A-Za-z_$]+;""")
 
         /** The Java binary spelling of an R8 class name: `X.0GSy`. */

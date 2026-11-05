@@ -152,7 +152,7 @@ internal object PhotoMediaStoreInsertFingerprint : Fingerprint(
 /**
  * The copy that puts a saved image or video into the gallery.
  *
- * <p>It was `LX/0L4G;` and it delegated to `LX/0L4Q;`, both written here. They are `LX/0LEA;` and
+ * <p>It was `LX/0Mqc;` and it delegated to `LX/05w6;`, both written here. They are `LX/0N0m;` and
  * `LX/0LEM;` on 46.8.3. The six-parameter signature and the three media types together name one
  * method on all three builds without either, and what is left of the delegation check is that the
  * two MediaStore inserts it calls are on one class, whatever that class is called.
@@ -211,10 +211,13 @@ internal object StickerPreviewSourceFingerprint : Fingerprint(
         "Lkotlin/jvm/functions/Function0;",
         "Lkotlin/jvm/functions/Function0;",
         "Lkotlin/jvm/functions/Function0;",
+        "Lkotlin/jvm/functions/Function2;",
+        "Ljava/lang/Long;",
     ),
     // The parameter list names StickerItem, which TikTok does not rename, and no other method
-    // in any of the three builds shares it. The class was `LX/0UL9;` on 46.2.3 and is `LX/0WU6;`
-    // and `LX/0m0M;` on the two builds since, its own name `LJ` throughout, so what is left is
+    // shares it. The class was `LX/0UL9;` on 46.2.3, `LX/0WU6;` and `LX/0m0M;` on the two builds
+    // after, and is `LX/0MGA;->LJI` on 47.7.2, which added the Function2 and the Long at the end
+    // (the patcher matches the whole list, so the old nine took nothing there). What is left is
     // that it calls the preview bind, by that bind's shape rather than by its name.
     //
     // Instance, because the source hook reads the StickerItem out of p2 and a static method of

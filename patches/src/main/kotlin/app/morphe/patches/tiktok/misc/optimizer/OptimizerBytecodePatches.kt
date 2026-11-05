@@ -89,9 +89,13 @@ internal fun installSplashAdSwitch() {
             }
         }
 
+    // SplashSettingServiceImpl's two gates on 47.7.2: LIZIZ() (9) reads the AB key
+    // cold_start_upload_topview_cid_enabled, and LIZ() (12) reads the setting
+    // enable_force_skip_topview, answering true if that read throws. 47.6.3's LIZ() was 11; 47.7.2's
+    // catch handler only adds a TryCatchGuardChecker.doCheck call before the same logger.
     val fixedBooleanMethods = reviewedBooleanMethods(
         SPLASH_SETTING_DESCRIPTOR,
-        setOf(listOf(9, 11)),
+        setOf(listOf(9, 12)),
         "SplashSettingServiceImpl",
     ) + reviewedBooleanMethods(
         REALTIME_SPLASH_DESCRIPTOR,

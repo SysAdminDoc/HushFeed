@@ -79,9 +79,9 @@ public class SeekbarTimeRoomTest {
         SettingsStatus.videoOverlaysEnabled = false;
         VideoOverlayHider.resolveForTests("view_rootview", 0);
         VideoOverlayHider.resolveForTests("widget_container", 0);
-        VideoOverlayHider.resolveForTests("47.6.3:cot", 0);
+        VideoOverlayHider.resolveForTests("47.7.2:col", 0);
         VideoOverlayHider.resolveForTests("viewpager_container", 0);
-        VideoOverlayHider.resolveForTests("47.6.3:oo3", 0);
+        VideoOverlayHider.resolveForTests("47.7.2:opn", 0);
     }
 
     /** TikTok's pager in short: the cells stacked a page apart and scrolled to the current one. */
@@ -364,9 +364,9 @@ public class SeekbarTimeRoomTest {
      */
     @Test
     public void withSeeThroughBottomBarTheLayerTakesTheLargerLift() {
-        VideoOverlayHider.resolveForTests("47.6.3:cot", STRIP_ID);
+        VideoOverlayHider.resolveForTests("47.7.2:col", STRIP_ID);
         VideoOverlayHider.resolveForTests("viewpager_container", COLUMN_ID);
-        VideoOverlayHider.resolveForTests("47.6.3:oo3", TABS_ID);
+        VideoOverlayHider.resolveForTests("47.7.2:opn", TABS_ID);
         Settings.SEE_THROUGH_BOTTOM_BAR.save(true);
         Settings.SEEKBAR_TIME.save(true);
         Settings.SEEKBAR_TIME_PLACEMENT.save("above");
@@ -413,9 +413,9 @@ public class SeekbarTimeRoomTest {
      */
     @Test
     public void aStripTikTokShowsAgainOnASwipeLeavesTheLayerLiftedAfterOnePass() {
-        VideoOverlayHider.resolveForTests("47.6.3:cot", STRIP_ID);
+        VideoOverlayHider.resolveForTests("47.7.2:col", STRIP_ID);
         VideoOverlayHider.resolveForTests("viewpager_container", COLUMN_ID);
-        VideoOverlayHider.resolveForTests("47.6.3:oo3", TABS_ID);
+        VideoOverlayHider.resolveForTests("47.7.2:opn", TABS_ID);
         Settings.SEE_THROUGH_BOTTOM_BAR.save(true);
         try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
             Activity activity = controller.get();

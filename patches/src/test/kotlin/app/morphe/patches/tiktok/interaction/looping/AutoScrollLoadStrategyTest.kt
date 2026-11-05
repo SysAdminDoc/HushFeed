@@ -21,8 +21,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-private const val STRATEGY = "LX/0rap;"
-private const val ENTRY = "LX/07Ii;"
+private const val STRATEGY = "LX/0ueM;"
+private const val ENTRY = "LX/09gT;"
 
 class AutoScrollLoadStrategyTest {
     @Test

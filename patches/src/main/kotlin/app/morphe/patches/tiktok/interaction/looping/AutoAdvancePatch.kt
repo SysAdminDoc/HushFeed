@@ -471,7 +471,7 @@ val autoAdvancePatch = bytecodePatch(
         val panelAction = PanelAction.method
         val panelInstructions = panelAction.implementationOrPatchException("Auto advance").instructions.toList()
         val panelStringIndex = panelInstructions.indexOfFirst {
-            it.opcode == Opcode.CONST_STRING &&
+            (it.opcode == Opcode.CONST_STRING || it.opcode == Opcode.CONST_STRING_JUMBO) &&
                 it.getReference<StringReference>()?.string == "panel_auto_scroll"
         }
         check(panelStringIndex >= 0) {

@@ -35,7 +35,7 @@ class DmTranslationAnchorsTest {
 
     @Test fun `the declared build has exactly the typed composer editor lifecycle`() {
         Fixtures.forEachDeclared { apk ->
-            assertEquals("47.6.3", Fixtures.versionOf(apk))
+            assertEquals("47.7.2", Fixtures.versionOf(apk))
             val owners = owners(apk)
             val targets = findDmPreviewTargets(owners::get)
             assertEquals(DM_ASSEM, targets.viewCreated.definingClass)
@@ -48,7 +48,7 @@ class DmTranslationAnchorsTest {
             assertEquals("onCleared", targets.cleared.name)
             assertEquals(0, targets.editorStore.input)
             assertEquals(6, targets.editorStore.editor)
-            assertEquals(DM_SESSION, owners.getValue("LX/0pdx;").superclass)
+            assertEquals(DM_SESSION, owners.getValue("LX/0qvG;").superclass)
         }
     }
 
@@ -59,7 +59,7 @@ class DmTranslationAnchorsTest {
             assertIntact(editor) { captureDmEditor(targets.editorStore) }
             val code = editor.implementation!!.instructions.toList()
             val store = code.indexOfFirst { it.opcode == Opcode.IPUT_OBJECT &&
-                it.getReference<FieldReference>()?.let { field -> field.definingClass == DM_INPUT && field.name == "LLJJIJI" } == true }
+                it.getReference<FieldReference>()?.let { field -> field.definingClass == DM_INPUT && field.name == "LLJJIJIL" } == true }
             val captured = code[store + 1]
             assertEquals("bindInput", captured.getReference<MethodReference>()!!.name)
             assertEquals(listOf("Ljava/lang/Object;", "Landroid/view/View;"),
@@ -92,12 +92,12 @@ class DmTranslationAnchorsTest {
         Fixtures.forEachDeclared { apk ->
             val owners = owners(apk)
             assertTrue(DM_ABILITY in owners.getValue(DM_INPUT).interfaces)
-            val scopeFactory = owners.getValue("LY/AObjectS105S0100000_22_I1;").methods.single { it.name == "invoke\$15" }
+            val scopeFactory = owners.getValue("LY/AObjectS153S0100000_23_I1;").methods.single { it.name == "invoke\$234" }
             assertTrue(scopeFactory.implementation!!.instructions.any { it.getReference<StringReference>() == null &&
                 it.getReference<com.android.tools.smali.dexlib2.iface.reference.TypeReference>()?.type == DM_ABILITY })
-            assertTrue(calls(scopeFactory).any { it.definingClass == "LX/03fP;" && it.name == "getAbility" })
-            assertTrue(calls(scopeFactory).any { it.definingClass == "LX/02tP;" && it.name == "LLLLLLLZIL" })
-            val factory = owners.getValue("LX/02tP;").methods.single { it.name == "LLLLLLLZIL" }
+            assertTrue(calls(scopeFactory).any { it.definingClass == "LX/04LE;" && it.name == "getAbility" })
+            assertTrue(calls(scopeFactory).any { it.definingClass == "LX/03AA;" && it.name == "LLLLLLZZ" })
+            val factory = owners.getValue("LX/03AA;").methods.single { it.name == "LLLLLLZZ" }
             val call = factory.implementation!!.instructions.single { it.getReference<MethodReference>()?.let { target ->
                 target.definingClass == DM_COMPOSER && target.name == "<init>"
             } == true } as RegisterRangeInstruction
@@ -110,13 +110,13 @@ class DmTranslationAnchorsTest {
     @Test fun `the raw request has only text language and exclusion fields and exact response schemas`() {
         Fixtures.forEachDeclared { apk ->
             val owners = owners(apk)
-            val request = owners.getValue("LX/1Rz5;").methods.single { it.name == "LJ" }
-            assertEquals("/aweme/v1/translation/dm/", annotation(request.annotations, "LX/04xg;"))
-            assertTrue(request.annotations.any { it.type == "LX/06hy;" })
+            val request = owners.getValue("LX/0kUT;").methods.single { it.name == "LJ" }
+            assertEquals("/aweme/v1/translation/dm/", annotation(request.annotations, "LX/05jR;"))
+            assertTrue(request.annotations.any { it.type == "LX/08FU;" })
             assertEquals(listOf("original_list", "target_lang", "dnt_lang_list"),
-                request.parameters.map { annotation(it.annotations, "LX/0528;") })
+                request.parameters.map { annotation(it.annotations, "LX/05mQ;") })
             assertEquals(List(3) { "Ljava/lang/String;" }, request.parameterTypes.map(CharSequence::toString))
-            assertEquals("LX/02tZ;", request.returnType)
+            assertEquals("LX/03AG;", request.returnType)
             for ((owner, expected) in mapOf(
                 RESPONSE to mapOf("statusCode" to "status_code", "statusMsg" to "status_msg", "results" to "translated_list"),
                 RESULT to mapOf("translationStatusCode" to "translation_status_code", "originalText" to "original_text",
@@ -124,7 +124,7 @@ class DmTranslationAnchorsTest {
                 "Lcom/ss/android/ugc/aweme/translation/repo/BizCompTranslationContent;" to mapOf("originalText" to "original_text",
                     "sourceLang" to "source_lang", "textExtraList" to "text_extra_list"),
             )) {
-                assertEquals(expected, owners.getValue(owner).fields.filter { it.name in expected }.associate { it.name to annotation(it.annotations, "LX/02w3;") })
+                assertEquals(expected, owners.getValue(owner).fields.filter { it.name in expected }.associate { it.name to annotation(it.annotations, "LX/039m;") })
             }
         }
     }
@@ -132,44 +132,44 @@ class DmTranslationAnchorsTest {
     @Test fun `the API factory uses the native Retrofit origin and target and DNT come from the same service`() {
         Fixtures.forEachDeclared { apk ->
             val owners = owners(apk)
-            val getter = owners.getValue("LX/1Rym;").methods.single { it.name == "LIZ" }
-            assertTrue(getter.implementation!!.instructions.any { it.getReference<FieldReference>()?.definingClass == "LX/1Ryn;" })
-            val lazy = owners.getValue("LX/1Ryn;").methods.single { it.name == "<clinit>" }
-            assertTrue(calls(lazy).any { it.definingClass == "Lkotlin/jvm/internal/AFwS179S0000000_40_I1;" && it.name == "get\$arr\$" })
-            val factory = owners.getValue("Lkotlin/jvm/internal/AFwS179S0000000_40_I1;").methods.single { it.name == "invoke\$274" }
+            val getter = owners.getValue("LX/0kUW;").methods.single { it.name == "LIZ" }
+            assertTrue(getter.implementation!!.instructions.any { it.getReference<FieldReference>()?.definingClass == "LX/0kUX;" })
+            val lazy = owners.getValue("LX/0kUX;").methods.single { it.name == "<clinit>" }
+            assertTrue(calls(lazy).any { it.definingClass == "Lkotlin/jvm/internal/AFwS143S0000000_20_I1;" && it.name == "get\$arr\$" })
+            val factory = owners.getValue("Lkotlin/jvm/internal/AFwS143S0000000_20_I1;").methods.single { it.name == "invoke\$637" }
             assertTrue(calls(factory).any { it.definingClass == "Lcom/ss/android/ugc/aweme/framework/services/ServiceManager;" && it.name == "getService" })
             assertTrue(factory.implementation!!.instructions.any { it.getReference<FieldReference>()?.let { field ->
-                field.definingClass == "LX/0Wht;" && field.name == "LIZ" && field.type == "Ljava/lang/String;"
+                field.definingClass == "LX/0VCa;" && field.name == "LIZ" && field.type == "Ljava/lang/String;"
             } == true })
             assertTrue(calls(factory).any { it.definingClass == "Lcom/bytedance/ies/ugc/aweme/network/IRetrofitFactory;" && it.name == "LIZ" })
-            assertTrue(calls(factory).any { it.definingClass == "LX/0468;" && it.name == "create" })
-            val origin = owners.getValue("LX/0Wht;").methods.single { it.name == "<clinit>" }
+            assertTrue(calls(factory).any { it.definingClass == "LX/04VH;" && it.name == "create" })
+            val origin = owners.getValue("LX/0VCa;").methods.single { it.name == "<clinit>" }
             assertTrue(strings(origin).contains("https://"))
-            assertTrue(origin.implementation!!.instructions.any { it.getReference<FieldReference>()?.definingClass == "LX/02r9;" })
-            val caller = owners.getValue("LX/1Ryh;").methods.single { it.name == "LJIILJJIL" }
-            assertTrue(calls(caller).any { it.definingClass == "LX/1Rz5;" && it.name == "LJ" })
-            assertTrue(calls(caller).any { it.definingClass == "LX/03cx;" && it.name == "LL" })
+            assertTrue(origin.implementation!!.instructions.any { it.getReference<FieldReference>()?.definingClass == "LX/035u;" })
+            val caller = owners.getValue("LX/1SIh;").methods.single { it.name == "LJIILJJIL" }
+            assertTrue(calls(caller).any { it.definingClass == "LX/0kUT;" && it.name == "LJ" })
+            assertTrue(calls(caller).any { it.definingClass == "LX/03pu;" && it.name == "LLF" })
         }
     }
 
     @Test fun `both native adapters offer cancellable HTTP ownership before execute and enqueue`() {
         Fixtures.forEachDeclared { apk ->
             val owners = owners(apk)
-            for ((adapter, operation, handle) in listOf(Triple("LX/056m;", "execute", "LX/058l;"), Triple("LX/06k2;", "enqueue", "LX/06k3;"))) {
-                val subscribe = owners.getValue(adapter).methods.single { it.name == "LJLI" }
+            for ((adapter, operation, handle) in listOf(Triple("LX/05ph;", "execute", "LX/05uu;"), Triple("LX/08xU;", "enqueue", "LX/08xX;"))) {
+                val subscribe = owners.getValue(adapter).methods.single { it.name == "LJLIIIL" }
                 val calls = calls(subscribe)
-                val before = calls.indexOfFirst { it.definingClass == "LX/02tf;" && it.name == "onSubscribe" }
-                val after = calls.indexOfFirst { it.definingClass == "LX/04Oq;" && it.name == operation }
+                val before = calls.indexOfFirst { it.definingClass == "LX/03AJ;" && it.name == "onSubscribe" }
+                val after = calls.indexOfFirst { it.definingClass == "LX/05SI;" && it.name == operation }
                 assertTrue(before >= 0 && after > before)
                 val dispose = owners.getValue(handle).methods.single { it.name == "dispose" }
-                assertEquals(listOf("LX/04Oq;->cancel"), calls(dispose).map { "${it.definingClass}->${it.name}" })
+                assertEquals(listOf("LX/05SI;->cancel"), calls(dispose).map { "${it.definingClass}->${it.name}" })
                 val isDisposed = owners.getValue(handle).methods.single { it.name == "isDisposed" }
-                assertTrue(calls(isDisposed).any { it.definingClass == "LX/04Oq;" && it.name == "isCanceled" })
+                assertTrue(calls(isDisposed).any { it.definingClass == "LX/05SI;" && it.name == "isCanceled" })
             }
             for (name in listOf("onFailure", "onResponse")) {
-                val callback = owners.getValue("LX/06k3;").methods.single { it.name == name }
+                val callback = owners.getValue("LX/08xX;").methods.single { it.name == name }
                 val methods = calls(callback)
-                assertTrue(methods.indexOfFirst { it.name == "isCanceled" } in 0 until methods.indexOfFirst { it.definingClass == "LX/02tf;" })
+                assertTrue(methods.indexOfFirst { it.name == "isCanceled" } in 0 until methods.indexOfFirst { it.definingClass == "LX/03AJ;" })
             }
         }
     }
@@ -177,15 +177,15 @@ class DmTranslationAnchorsTest {
     @Test fun `native Send still owns message construction and the ordinary text watcher only updates input state`() {
         Fixtures.forEachDeclared { apk ->
             val owners = owners(apk)
-            val send = owners.getValue(DM_COMPOSER).methods.single { it.name == "I23" }
-            assertTrue(calls(send).any { it.definingClass == DM_ABILITY && it.name == "b21" })
-            assertTrue(calls(send).any { it.definingClass == "LX/0q0l;" && it.name == "lX" })
-            // R8 merged the text watchers into one switch class; afterTextChanged dispatches this composer's case to $2.
-            val watcher = owners.getValue("LX/0qQY;").methods.single { it.name == "afterTextChanged\$2" }
-            assertTrue(calls(watcher).any { it.definingClass == DM_ASSEM && it.name == "Yq" })
-            assertFalse(calls(watcher).any { it.name in setOf("I23", "lX", "Ip", "D23") })
-            val assemblySend = owners.getValue("Lcom/ss/android/ugc/aweme/im/sdk/chat/ui/base/assems/input/sendmsg/SendMessageAssem;").methods.single { it.name == "Ip" }
-            assertTrue(calls(assemblySend).any { it.name == "D23" })
+            val send = owners.getValue(DM_COMPOSER).methods.single { it.name == "f53" }
+            assertTrue(calls(send).any { it.definingClass == DM_ABILITY && it.name == "c31" })
+            assertTrue(calls(send).any { it.definingClass == "LX/0r3d;" && it.name == "BX" })
+            // R8 merged the text watchers into one switch class (LX/0re5; on 47.7.2); afterTextChanged dispatches this composer's case to $3.
+            val watcher = owners.getValue("LX/0re5;").methods.single { it.name == "afterTextChanged\$3" }
+            assertTrue(calls(watcher).any { it.definingClass == DM_ASSEM && it.name == "Tp" })
+            assertFalse(calls(watcher).any { it.name in setOf("f53", "BX", "gq", "a53") })
+            val assemblySend = owners.getValue("Lcom/ss/android/ugc/aweme/im/sdk/chat/ui/base/assems/input/sendmsg/SendMessageAssem;").methods.single { it.name == "gq" }
+            assertTrue(calls(assemblySend).any { it.name == "a53" })
             assertFalse(listOf(findDmPreviewTargets(owners::get).viewCreated, findDmPreviewTargets(owners::get).constructor).contains(send))
         }
     }
@@ -195,25 +195,25 @@ class DmTranslationAnchorsTest {
             val owners = owners(apk)
             val original = findDmPreviewTargets(owners::get)
             val duplicate = MutableMethod(original.viewCreated)
-            duplicate.addInstructions(0, "iget-object v1, p0, $DM_ASSEM->LLJZ:LX/0FAy;\niput-object v1, v0, $DM_INPUT->LLJJIJI:Landroid/widget/EditText;")
+            duplicate.addInstructions(0, "iget-object v1, p0, $DM_ASSEM->LLJJJ:LX/032S;\niput-object v1, v0, $DM_INPUT->LLJJIJIL:Landroid/widget/EditText;")
             rejected { duplicate.dmEditorStore() }
             val input = owners.getValue(DM_INPUT)
-            val changed = copy(input, fields = input.fields.filterNot { it.name == "LLJJIJI" })
+            val changed = copy(input, fields = input.fields.filterNot { it.name == "LLJJIJIL" })
             rejected { findDmPreviewTargets { if (it == DM_INPUT) changed else owners[it] } }
             val composer = owners.getValue(DM_COMPOSER)
             val wrongConstructor = MutableMethod(original.constructor)
             val sessionStore = wrongConstructor.implementation!!.instructions.indexOfFirst {
                 it.getReference<FieldReference>()?.let { field -> field.definingClass == DM_COMPOSER &&
-                    field.name == "LLJJL" && field.type == DM_SESSION } == true
+                    field.name == "LLJL" && field.type == DM_SESSION } == true
             }
             assertTrue(sessionStore >= 0)
-            wrongConstructor.replaceInstruction(sessionStore, "iput-object p4, p0, $DM_COMPOSER->LLJJL:$DM_SESSION")
+            wrongConstructor.replaceInstruction(sessionStore, "iput-object p4, p0, $DM_COMPOSER->LLJL:$DM_SESSION")
             val changedComposer = copy(composer, methods = composer.methods.filterNot { it == original.constructor } + wrongConstructor)
             assertEquals(1, changedComposer.methods.count { it.name == "<init>" })
             val changedStore = changedComposer.methods.single { it.name == "<init>" }.implementation!!.instructions.elementAt(sessionStore)
             assertEquals(wrongConstructor.implementation!!.registerCount - 6, (changedStore as com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction).registerA)
             rejected { findDmPreviewTargets { if (it == DM_COMPOSER) changedComposer else owners[it] } }
-            val wrongSession = copy(owners.getValue("LX/0pdx;"), superclass = "Ljava/lang/Object;")
+            val wrongSession = copy(owners.getValue("LX/0qvG;"), superclass = "Ljava/lang/Object;")
             rejected { findDmPreviewTargets { if (it == wrongSession.type) wrongSession else owners[it] } }
         }
     }

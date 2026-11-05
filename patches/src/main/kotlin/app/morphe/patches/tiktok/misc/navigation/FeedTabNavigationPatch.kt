@@ -112,7 +112,7 @@ internal fun com.android.tools.smali.dexlib2.iface.Method.liveTopTabModeRead(): 
     var first = -1
     var last = -1
     for ((index, instruction) in instructions.withIndex()) {
-        if (instruction.opcode != Opcode.CONST_STRING) continue
+        if (instruction.opcode != Opcode.CONST_STRING && instruction.opcode != Opcode.CONST_STRING_JUMBO) continue
         val mode = instruction.getReference<StringReference>()?.string
         if (mode !in LIVE_TOP_TAB_MODES) continue
         val constant = (instruction as OneRegisterInstruction).registerA

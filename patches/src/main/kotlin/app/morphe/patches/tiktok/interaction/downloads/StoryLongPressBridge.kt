@@ -29,7 +29,7 @@ private const val RUNNABLE = "Ljava/lang/Runnable;"
 /**
  * The story press-and-hold timer, found by what it is rather than what it is called.
  *
- * <p>It was `LX/0Qet;` with its view `LX/0R9T;` and the view field `LL`, all three written into
+ * <p>It was `LX/0UXs;` with its view `LX/049A;` and the view field `LL`, all three written into
  * this patch along with the exact registers its body happened to use. It is `LX/0QpH;` on 46.7.3
  * and `LX/0Qep;` on 46.8.3.
  *

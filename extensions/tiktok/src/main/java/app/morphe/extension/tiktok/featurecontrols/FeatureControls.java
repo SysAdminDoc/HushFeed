@@ -126,6 +126,14 @@ public final class FeatureControls {
         return off;
     }
 
+    /**
+     * TikTok's own answer to "is the side menu on offer to swipe to", read where it asks (#213).
+     * 47.7.2 inlined the ask into each swipe path, so the hook filters the answer in place.
+     */
+    public static boolean sidebarSwipeOffered(boolean offered) {
+        return offered && !sidebarSwipeOff();
+    }
+
     public static int overrideLongPressQuickShare(int originalMode) {
         return Settings.DISABLE_LONG_PRESS_QUICK_SHARE.get() ? 0 : originalMode;
     }

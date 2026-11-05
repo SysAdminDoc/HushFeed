@@ -988,7 +988,7 @@ public final class GestureActions {
     /**
      * How far a horizontal movement goes toward the profile page: to the left in a left-to-right
      * layout, to the right in a right-to-left one, where TikTok's pager runs the other way. Decided
-     * the way TikTok decides it (X.05QH.LIZJ): the layout direction of the configuration.
+     * the way TikTok decides it (X.06be.LIZJ): the layout direction of the configuration.
      */
     static float towardProfile(Object pager, float dx) {
         boolean rtl = pager instanceof View

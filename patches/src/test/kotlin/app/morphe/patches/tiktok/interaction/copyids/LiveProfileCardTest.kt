@@ -44,8 +44,8 @@ class LiveProfileCardTest {
             assertEquals("$version: bio sets", 3, liveBioSets(bio).size)
             assertEquals("$version: name sets", 2, liveNameSets(bind).size)
 
-            val bioBefore = bio.implementation!!.instructions.map { it.opcode }.filter { it != Opcode.NOP }
-            val bindBefore = bind.implementation!!.instructions.map { it.opcode }.filter { it != Opcode.NOP }
+            val bioBefore = bio.implementation!!.instructions.map { it.opcode }.own()
+            val bindBefore = bind.implementation!!.instructions.map { it.opcode }.own()
             hookLiveCard(bio, bind)
 
             val bioAfter = bio.implementation!!.instructions.toList()
@@ -72,14 +72,24 @@ class LiveProfileCardTest {
             assertEquals(
                 "$version: the bio's own instructions keep their order",
                 bioBefore,
-                bioAfter.filterIndexed { i, _ -> i !in added }.map { it.opcode }.filter { it != Opcode.NOP },
+                bioAfter.filterIndexed { i, _ -> i !in added }.map { it.opcode }.own(),
             )
             val addedBind = (textHooks + 0).toSet()
             assertEquals(
                 "$version: the bind's own instructions keep their order",
                 bindBefore,
-                bindAfter.filterIndexed { i, _ -> i !in addedBind }.map { it.opcode }.filter { it != Opcode.NOP },
+                bindAfter.filterIndexed { i, _ -> i !in addedBind }.map { it.opcode }.own(),
             )
         }
     }
+
+    /**
+     * The instructions TikTok wrote, with padding dropped and goto widths folded. A hook placed at a
+     * branch target briefly holds a copy of the target call, and a backward goto that crosses it can
+     * outgrow the one-byte form for that moment: 47.7.2's bio setup has `goto -> @a85` at a208, 123
+     * code units back, and the hook before the a96 call stretches it past 128. The assembler widens it
+     * to goto/16 and never narrows it again, which is the same jump.
+     */
+    private fun List<Opcode>.own() = filter { it != Opcode.NOP }
+        .map { if (it == Opcode.GOTO_16 || it == Opcode.GOTO_32) Opcode.GOTO else it }
 }

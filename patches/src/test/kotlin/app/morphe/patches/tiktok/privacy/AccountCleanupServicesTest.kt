@@ -31,8 +31,8 @@ import org.junit.Test
 
 private const val MANAGER = "Lcom/ss/android/ugc/aweme/framework/services/ServiceManager;"
 private const val FACTORY = "Lcom/bytedance/ies/ugc/aweme/network/IRetrofitFactory;"
-private const val CLIENT = "LX/0468;"
-private const val SERVICE = "LX/1LBz;"
+private const val CLIENT = "LX/04VH;"
+private const val SERVICE = "LX/1Q65;"
 
 /**
  * What Account cleanup (#332) bridges to, held to each declared build: one liked videos list
@@ -87,7 +87,7 @@ class AccountCleanupServicesTest {
         assertEquals(SERVICE, service)
         assertEquals("$FACTORY->LIZ", recipe.factory.definingClass + "->" + recipe.factory.name)
         assertEquals(Opcode.INVOKE_INTERFACE, recipe.factoryCall)
-        assertEquals("LX/048i;->LIZJ", recipe.host.definingClass + "->" + recipe.host.name)
+        assertEquals("LX/04XS;->LIZJ", recipe.host.definingClass + "->" + recipe.host.name)
         assertEquals("$CLIENT->create", recipe.create.definingClass + "->" + recipe.create.name)
         assertEquals(Opcode.INVOKE_INTERFACE, recipe.createCall)
         checkBridge("hand-built", service, recipe)
@@ -96,7 +96,7 @@ class AccountCleanupServicesTest {
     @Test
     fun `a maker missing a step is not taken`() {
         assertEquals("the host isn't a String", emptyList<Any>(),
-            serviceRecipes(maker(host = ImmutableFieldReference("LX/048i;", "LIZJ", "LX/048i;"))))
+            serviceRecipes(maker(host = ImmutableFieldReference("LX/04XS;", "LIZJ", "LX/04XS;"))))
         assertEquals("the factory isn't from ServiceManager", emptyList<Any>(), serviceRecipes(maker(fromManager = false)))
         assertEquals("the class handed to create isn't the one loaded", emptyList<Any>(),
             serviceRecipes(maker(createRegisters = 1 to 1)))
@@ -134,7 +134,7 @@ class AccountCleanupServicesTest {
 
     /** The liked list service's maker as 47.6.3 has it, cut down to the steps that make it. */
     private fun maker(
-        host: ImmutableFieldReference = ImmutableFieldReference("LX/048i;", "LIZJ", "Ljava/lang/String;"),
+        host: ImmutableFieldReference = ImmutableFieldReference("LX/04XS;", "LIZJ", "Ljava/lang/String;"),
         fromManager: Boolean = true,
         createRegisters: Pair<Int, Int> = 1 to 0,
     ): Method {
@@ -160,7 +160,7 @@ class AccountCleanupServicesTest {
             ImmutableInstruction11x(Opcode.RETURN_OBJECT, 0),
         )
         return ImmutableMethod(
-            "LX/1LC0;", "make", listOf(), "Ljava/lang/Object;",
+            "LX/1Q64;", "make", listOf(), "Ljava/lang/Object;",
             AccessFlags.PUBLIC.value or AccessFlags.STATIC.value, null, null,
             ImmutableMethodImplementation(2, instructions, null, null),
         )

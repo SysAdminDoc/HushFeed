@@ -15,9 +15,9 @@ import org.junit.Test;
  *
  * <ul>
  *   <li>app AB class: X.0BYX on 46.2.3, X.02y4 on 47.0.3, X.02yB on 47.1.3;</li>
- *   <li>settings cache: X.0Bb9, X.02ww, X.02x7;</li>
- *   <li>the wrapper the getter with a default hands the cache: X.0BZ5, X.03jr, X.03gg;</li>
- *   <li>the boolean getter's lambda: X.0BZA, X.03jM, X.03gp.</li>
+ *   <li>settings cache: X.0Cvo, X.03Bb, X.03HI;</li>
+ *   <li>the wrapper the getter with a default hands the cache: X.0Cu0, X.04Kb, X.03pC;</li>
+ *   <li>the boolean getter's lambda: X.0Cu5, X.03jM, X.04Pc.</li>
  * </ul>
  *
  * <p>The Lab used to skip 46.2.3's names, which on 47.x belong to an enum, an empty class and
@@ -29,9 +29,9 @@ public class GateCallersTest {
 
     private static final String[][] BUILDS = {
             // app AB class, settings cache, default wrapper, boolean lambda
-            {"X.0BYX", "X.0Bb9", "X.0BZ5", "X.0BZA"},
-            {"X.02y4", "X.02ww", "X.03jr", "X.03jM"},
-            {"X.02yB", "X.02x7", "X.03gg", "X.03gp"},
+            {"X.0BYX", "X.0Cvo", "X.0Cu0", "X.0Cu5"},
+            {"X.03I9", "X.03Bb", "X.04Kb", "X.03jM"},
+            {"X.03IQ", "X.03HI", "X.03pC", "X.04Pc"},
     };
 
     @Test
@@ -81,8 +81,8 @@ public class GateCallersTest {
         // TikTok keeps many experiments in a Kotlin lazy. The lambda R8 merged into
         // kotlin.jvm.internal is TikTok's code and is the caller; the Lazy machinery is not.
         StackTraceElement[] lambda = stack(
-                "X.02yB#LIZ", "kotlin.jvm.internal.AFwS194S0000000_4#invoke",
-                "kotlin.SynchronizedLazyImpl#getValue", "X.0BPv#LIZ", HOST + "#run");
+                "X.03IQ#LIZ", "kotlin.jvm.internal.AFwS194S0000000_4#invoke",
+                "kotlin.SynchronizedLazyImpl#getValue", "X.0Cnj#LIZ", HOST + "#run");
         assertEquals("kotlin.jvm.internal.AFwS194S0000000_4#invoke", GateCallers.hostCaller(lambda));
 
         StackTraceElement[] plumbing = stack(

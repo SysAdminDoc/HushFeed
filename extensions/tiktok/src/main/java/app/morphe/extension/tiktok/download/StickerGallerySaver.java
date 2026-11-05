@@ -1433,13 +1433,15 @@ public final class StickerGallerySaver {
      *
      * <p>TikTok's button is a TextView subclass whose name changes with every build: X.0GSy on
      * 46.2.3, X.02Lg on 47.0.3, where X.0GSy is an unrelated class. Naming it is what left
-     * 47.0.3 with no Save media button (issue #23). What holds on all five retained builds is
-     * that the row keeps its two actions in fields of one shared type, while its caption is the
-     * only field of its own type. So the actions are the largest set of attached TextView fields
-     * declared with the same type, and a lone TextView is never one of them.
+     * 47.0.3 with no Save media button (issue #23). What holds on every build read so far is
+     * that the row keeps its actions in fields of one shared type, sitting side by side under one
+     * parent. 47.7.2 added a "more stickers" section with its own titles (plain TuxTextViews,
+     * like the caption) and a third action of the buttons' type, so type alone no longer finds
+     * them: the actions are the largest set of visible, same-typed TextView fields that share a
+     * direct parent, and when two sets tie, the one whose every view takes clicks.
      */
     static List<View> findActionButtons(View sheetView) {
-        java.util.Map<Class<?>, List<View>> byType = new java.util.LinkedHashMap<>();
+        java.util.Map<String, List<View>> siblings = new java.util.LinkedHashMap<>();
         for (Class<?> type = sheetView.getClass();
              type != null && !type.getName().startsWith("android."); type = type.getSuperclass()) {
             for (java.lang.reflect.Field field : type.getDeclaredFields()) {
@@ -1448,20 +1450,35 @@ public final class StickerGallerySaver {
                 try {
                     field.setAccessible(true);
                     Object value = field.get(sheetView);
-                    if (!(value instanceof View) || ((View) value).getParent() == null) continue;
-                    List<View> sameType = byType.get(field.getType());
-                    if (sameType == null) byType.put(field.getType(), sameType = new ArrayList<>());
-                    if (!sameType.contains(value)) sameType.add((View) value);
+                    if (!(value instanceof View)) continue;
+                    View view = (View) value;
+                    ViewParent parent = view.getParent();
+                    if (parent == null || view.getVisibility() != View.VISIBLE) continue;
+                    String key = field.getType().getName() + '@' + System.identityHashCode(parent);
+                    List<View> sameRow = siblings.get(key);
+                    if (sameRow == null) siblings.put(key, sameRow = new ArrayList<>());
+                    if (!sameRow.contains(view)) sameRow.add(view);
                 } catch (Throwable unreadable) {
                     // A field this build will not hand over is not an action button.
                 }
             }
         }
         List<View> actions = Collections.emptyList();
-        for (List<View> sameType : byType.values()) {
-            if (sameType.size() >= 2 && sameType.size() > actions.size()) actions = sameType;
+        for (List<View> sameRow : siblings.values()) {
+            if (sameRow.size() < 2) continue;
+            if (sameRow.size() > actions.size()
+                    || (sameRow.size() == actions.size() && allClickable(sameRow) && !allClickable(actions))) {
+                actions = sameRow;
+            }
         }
         return actions;
+    }
+
+    private static boolean allClickable(List<View> views) {
+        for (View view : views) {
+            if (!view.hasOnClickListeners()) return false;
+        }
+        return !views.isEmpty();
     }
 
     /** The action that sits last in its parent, whatever order the fields were declared in. */

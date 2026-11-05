@@ -78,7 +78,7 @@ private fun Method.isOnlyTabModelList(classDef: ClassDef, scene: String) =
         classDef.methods.count { it.isTabModelList(classDef, scene) } == 1
 
 /**
- * The bottom tab icon's badge setters. The icon class is renamed on every build (`LX/0ru7;` on
+ * The bottom tab icon's badge setters. The icon class is renamed on every build (`LX/0uIC;` on
  * 46.2.3, `LX/066P;` on 47.0.3), but its setters keep their names, and each is the one method of
  * that name and shape in the app. Every show of the red count (Inbox) or the dot (Profile) goes
  * through them; the callers that fetch the views themselves animate them and write no visibility.
@@ -344,7 +344,7 @@ internal fun Method.coldStartTab(): ColdStartTab? {
     val activity = (getIntent as FiveRegisterInstruction).registerC
     val tag = switch.registerF
     val join = instructions.indices.firstOrNull { i ->
-        i + 4 < switchAt && instructions[i].opcode == Opcode.CONST_STRING &&
+        i + 4 < switchAt && (instructions[i].opcode == Opcode.CONST_STRING || instructions[i].opcode == Opcode.CONST_STRING_JUMBO) &&
             instructions[i].getReference<StringReference>()?.string == "HOME" &&
             instructions[i + 1].opcode == Opcode.INVOKE_STATIC &&
             (instructions[i + 1] as FiveRegisterInstruction).let { compare ->
@@ -485,7 +485,7 @@ internal fun Method.firstTopTab(): FirstTopTab? {
         it.opcode == Opcode.MOVE_OBJECT && (it as TwoRegisterInstruction).registerA == tag && it.registerB == answer
     }
     val defaulted = instructions.subList(0, service).any {
-        it.opcode == Opcode.CONST_STRING && (it as OneRegisterInstruction).registerA == tag &&
+        (it.opcode == Opcode.CONST_STRING || it.opcode == Opcode.CONST_STRING_JUMBO) && (it as OneRegisterInstruction).registerA == tag &&
             it.getReference<StringReference>()?.string == "For You"
     }
     return if (answered && defaulted) FirstTopTab(switchAt, tag) else null

@@ -61,11 +61,14 @@ class HapticsAnchorsTest {
             return container.dexEntryNames.flatMap { entry -> container.getEntry(entry)!!.dexFile.classes }
         }
 
-        /** View haptic calls on any receiver, and framework vibrate calls, outside the extension. */
-        fun hapticCallsOf(apk: File): List<MethodReference> = classesOf(apk)
+        /**
+         * View haptic calls on any receiver, and framework vibrate calls, outside the extension.
+         * Walked as a sequence: holding every instruction of 47.7.2 at once ran a 2 GB fork out of heap.
+         */
+        fun hapticCallsOf(apk: File): List<MethodReference> = classesOf(apk).asSequence()
             .filterNot { it.type.startsWith("Lapp/morphe/extension/") }
-            .flatMap { owner -> owner.methods }
-            .flatMap { method -> method.implementation?.instructions?.toList().orEmpty() }
+            .flatMap { owner -> owner.methods.asSequence() }
+            .flatMap { method -> method.implementation?.instructions?.asSequence().orEmpty() }
             .filter { it.opcode in VIRTUAL }
             .mapNotNull { (it as? ReferenceInstruction)?.reference as? MethodReference }
             .filter { call ->
@@ -73,5 +76,6 @@ class HapticsAnchorsTest {
                     (call.name == "vibrate" && call.definingClass.startsWith("Landroid/")) ||
                     (call.name == "setOnLongClickListener" && call.definingClass == "Landroid/view/View;")
             }
+            .toList()
     }
 }

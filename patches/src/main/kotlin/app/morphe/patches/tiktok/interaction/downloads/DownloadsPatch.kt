@@ -137,7 +137,7 @@ private fun MutableMethod.checkCameraPathRun(fieldIndex: Int) {
                 "Found ${at(1).opcode.name} and ${at(3).opcode.name} at $fieldIndex plus 1 and 3.",
         )
     }
-    val literal = at(2).takeIf { it.opcode == Opcode.CONST_STRING }
+    val literal = at(2).takeIf { it.opcode == Opcode.CONST_STRING || it.opcode == Opcode.CONST_STRING_JUMBO }
         ?.getReference<StringReference>()?.string
     // Written "/Camera/" at four of the five sites and "/Camera" at the fifth.
     if (literal == null || !literal.trimEnd('/').endsWith("Camera")) {
@@ -246,7 +246,7 @@ val downloadsPatch = bytecodePatch(
             // x register and x then written back as a literal zero, which is only the same
             // drawing because of what this build happens to do: on 46.2.3 the host translates
             // the canvas first and passes one register holding zero as both x and y
-            // (const/4 v0 at 201, drawBitmap {v6, v3, v0, v0, v5} at 202 of LX/0owv;->LIZ).
+            // (const/4 v0 at 201, drawBitmap {v6, v3, v0, v0, v5} at 202 of LX/0qVu;->LIZ).
             // A build that draws at a computed x would have had the watermark moved to the
             // left edge for everyone who keeps it, which is the default.
             val flagReg = findFreeRegister(

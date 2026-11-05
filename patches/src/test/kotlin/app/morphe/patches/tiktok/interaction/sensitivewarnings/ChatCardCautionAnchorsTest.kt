@@ -30,6 +30,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 private const val CONTROLS = "Lapp/morphe/extension/tiktok/feed/SensitiveWarnings;"
+private const val SEND_TASK = "Lcom/ss/android/ugc/aweme/im/message/template/service/SendMessageTemplateTask;"
 
 /**
  * What hides the caution strip on a video shared into a chat (#258), held to each declared build:
@@ -42,17 +43,29 @@ class ChatCardCautionAnchorsTest {
         Fixtures.forEachDeclared { apk ->
             val version = Fixtures.versionOf(apk)
             val taken = mutableListOf<Method>()
-            val naming = mutableListOf<String>()
+            val naming = mutableListOf<Naming>()
             walk(apk) { classDef, method ->
                 val code = method.implementation ?: return@walk
                 if (code.instructions.any { it.getReference<StringReference>()?.string == CHAT_CARD_LABEL_KEYS[0] }) {
-                    naming += "${classDef.type}->${method.name}"
+                    naming += Naming(classDef, method)
                 }
                 if (ChatCardCautionFingerprint.takes(method, classDef)) taken += method
             }
             assertEquals("$version: taken ${taken.map { it.definingClass + "->" + it.name }} of $naming", 1, taken.size)
-            // The writer (the share's send task) and the card are the only two that name the key.
-            assertEquals("$version: methods naming the caution key $naming", 2, naming.size)
+            // The writer (the share's send task) and the card are the only two that name the key
+            // and run. 47.7.2 also ships the chat video stack's member card (0rT7->LJ()Z), which
+            // reads both labels only to test them for emptiness, and which nothing in the build
+            // calls: neither it, its interface 0rE5, nor the IVideoStackMemberCardService that
+            // builds it is ever invoked. Any other method naming the key has to be that dead, so
+            // the first build that wires the stack up fails here instead of showing the strip.
+            val native = taken.single()
+            val others = naming.filter {
+                !(it.owners.first() == native.definingClass && it.name == native.name && it.parameters == native.parameterTypes.map(CharSequence::toString))
+            }
+            val called = invoked(apk, others.filter { it.returnType != SEND_TASK })
+            val dead = others.filter { it.returnType != SEND_TASK && it !in called }
+            assertEquals("$version: methods naming the caution key $naming, never called $dead", 2, naming.size - dead.size)
+            assertEquals("$version: share writers naming the caution key $others", 1, others.count { it.returnType == SEND_TASK })
 
             val card = MutableMethod(taken.single())
             val before = card.implementation!!.instructions.size
@@ -106,6 +119,33 @@ class ChatCardCautionAnchorsTest {
         val untouched = tight.implementation!!.instructions.toList()
         assertThrows(PatchException::class.java) { tight.hideChatCardLabels("Skip content warnings") }
         assertEquals(untouched, tight.implementation!!.instructions.toList())
+    }
+
+    /** A method naming the caution key, with every type a call to it could name. */
+    private class Naming(classDef: ClassDef, method: Method) {
+        val owners = listOfNotNull(classDef.type, classDef.superclass) + classDef.interfaces
+        val name: String = method.name
+        val parameters = method.parameterTypes.map(CharSequence::toString)
+        val returnType: String = method.returnType
+        override fun toString() = "${owners.first()}->$name"
+    }
+
+    /** Which of [methods] something in the build invokes, on its own class or a supertype. */
+    private fun invoked(apk: File, methods: List<Naming>): Set<Naming> {
+        if (methods.isEmpty()) return emptySet()
+        val found = HashSet<Naming>()
+        walk(apk) { _, method ->
+            for (instruction in method.implementation?.instructions ?: return@walk) {
+                val reference = instruction.getReference<MethodReference>() ?: continue
+                for (target in methods) {
+                    if (reference.name == target.name && reference.returnType == target.returnType &&
+                        reference.definingClass in target.owners &&
+                        reference.parameterTypes.map(CharSequence::toString) == target.parameters
+                    ) found += target
+                }
+            }
+        }
+        return found
     }
 
     /** Every method of one build, walked once and never held (the dex has millions). */

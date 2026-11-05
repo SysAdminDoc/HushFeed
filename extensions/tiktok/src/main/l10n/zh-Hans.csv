@@ -1028,7 +1028,7 @@ Marked as not interested,标记为不感兴趣
 Match locale and timezone to country,将区域设置和时区与国家/地区相匹配
 Match region fields in requests,匹配请求中的地区字段
 Keep the For You feed on your real SIM,让“为你”使用真实 SIM 卡
-"Sticker search and the rest of TikTok still see the SIM above, while For You asks for videos with your phone's own SIM country and carrier. Your IP address and account history still count.",贴纸搜索和 TikTok 的其他部分仍会看到上面的 SIM 卡，而“为你”会按你手机自己的 SIM 卡国家和运营商请求视频。你的 IP 地址和账号历史仍会起作用.
+"With the SIM changed, TikTok can keep showing videos you've already watched. Turn this on to stop that. Sticker search and the rest of TikTok still see the SIM above, while For You asks for videos with your phone's own SIM country and carrier. Your IP address and account history still count.",更改 SIM 卡后，TikTok 可能会反复显示你已经看过的视频。打开此项即可避免。贴纸搜索和 TikTok 的其他部分仍会看到上面的 SIM 卡，而“为你”会按你手机自己的 SIM 卡国家和运营商请求视频。你的 IP 地址和账号历史仍会起作用.
 Match text stickers too,也匹配文字贴纸
 Matches the rule: %1$s,匹配规则：%1$s
 Maximum,最大

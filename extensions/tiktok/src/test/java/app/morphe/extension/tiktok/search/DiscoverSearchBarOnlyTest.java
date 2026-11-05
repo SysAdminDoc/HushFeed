@@ -13,11 +13,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import app.morphe.extension.shared.settings.PausedProcess;
+import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -30,6 +32,8 @@ import org.robolectric.util.ReflectionHelpers;
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 28)
 public class DiscoverSearchBarOnlyTest {
+    @Rule public final SettingsContextRule settingsContext = new SettingsContextRule();
+
     /** TikTok's content pager, an androidx ViewPager under an R8 name. */
     public static class ViewPager extends FrameLayout {
         public ViewPager(Context context) {

@@ -219,6 +219,7 @@ public final class LiveRecordChip {
         background.setColor(0xB3000000);
         view.setBackground(background);
         view.setOnClickListener(clicked -> onChipTap());
+        markStacked(view, STACK_RECORD);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
                 Gravity.TOP | Gravity.END);
@@ -259,9 +260,42 @@ public final class LiveRecordChip {
         }
     }
 
-    /** Every visible view under {@code root} that takes a tap, other than {@code skip}, in {@code area}'s coordinates. */
+    /**
+     * Hushfeed's own buttons over a LIVE room stack top to bottom in this order: the Record chip,
+     * Auto tap, then the block button. Each one makes room only for those above it; two that each
+     * made room for the other both moved at once and ended up on the same spot.
+     */
+    public static final int STACK_RECORD = 1;
+    public static final int STACK_AUTO_TAP = 2;
+    public static final int STACK_BLOCK = 3;
+
+    private static final class StackSlot {
+        final int rank;
+
+        StackSlot(int rank) {
+            this.rank = rank;
+        }
+    }
+
+    /** Marks {@code view} as the Hushfeed button at {@code rank} in the room's stack. */
+    public static void markStacked(View view, int rank) {
+        view.setTag(new StackSlot(rank));
+    }
+
+    private static int stackRank(View view) {
+        Object tag = view == null ? null : view.getTag();
+        return tag instanceof StackSlot ? ((StackSlot) tag).rank : 0;
+    }
+
+    /**
+     * Every visible view under {@code root} that takes a tap, other than {@code skip}, in {@code area}'s
+     * coordinates. When {@code skip} is one of Hushfeed's stacked buttons, the ones stacked under it
+     * don't count either.
+     */
     public static void tapTargets(View root, View skip, Rect area, long largest, List<Rect> out) {
         if (root == skip || root.getVisibility() != View.VISIBLE || root.getAlpha() == 0f) return;
+        int own = stackRank(skip);
+        if (own > 0 && stackRank(root) >= own) return;
         Rect rect = new Rect();
         if ((root.isClickable() || root.isLongClickable()) && root.getGlobalVisibleRect(rect)
                 && (long) rect.width() * rect.height() < largest) {
@@ -309,6 +343,15 @@ public final class LiveRecordChip {
         if (view == null) return;
         view.setVisibility(hidesChip(recorder == null ? null : recorder.target(), clearScreen)
                 ? View.INVISIBLE : View.VISIBLE);
+        // The buttons stacked under the chip keep out of a screen recording too; they check
+        // filmingScreen() on their own ticks, and this hides them before the first frame.
+        if (filmingScreen() && view.getParent() instanceof ViewGroup) {
+            ViewGroup parent = (ViewGroup) view.getParent();
+            for (int i = 0; i < parent.getChildCount(); i++) {
+                View sibling = parent.getChildAt(i);
+                if (sibling != view && stackRank(sibling) > 0) sibling.setVisibility(View.INVISIBLE);
+            }
+        }
         if (saving) {
             view.setText(L10n.t("Saving the recording"));
             view.setContentDescription(L10n.t("Saving the recording"));
@@ -328,6 +371,15 @@ public final class LiveRecordChip {
     /** Screen recordings hide the chip to avoid filming it (#265). */
     static boolean hidesChip(LiveRecorder.Target target) {
         return hidesChip(target, false);
+    }
+
+    /**
+     * Whether a recording of the room's screen is under way, so every Hushfeed button over the
+     * room stays out of it (#265). Main thread only.
+     */
+    public static boolean filmingScreen() {
+        LiveRecorder running = recorder;
+        return running != null && hidesChip(running.target());
     }
 
     /**

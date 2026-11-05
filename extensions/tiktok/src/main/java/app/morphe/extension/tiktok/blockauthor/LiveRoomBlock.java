@@ -172,7 +172,9 @@ public final class LiveRoomBlock {
             if (button == null) return;
         }
         // Clear screen hides the room's controls; the button goes with them and comes back after.
-        button.setVisibility(LiveRecordChip.clearScreenOn() ? View.INVISIBLE : View.VISIBLE);
+        // A screen recording of the room hides it the same way, so it isn't filmed (#265).
+        boolean hidden = LiveRecordChip.clearScreenOn() || LiveRecordChip.filmingScreen();
+        button.setVisibility(hidden ? View.INVISIBLE : View.VISIBLE);
         stayClear(activity, button);
     }
 
@@ -191,6 +193,7 @@ public final class LiveRoomBlock {
             view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
             onBlockTapped(activity);
         });
+        LiveRecordChip.markStacked(button, LiveRecordChip.STACK_BLOCK);
         int size = SettingsUi.dp(activity, SIZE_DP);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(size, size, Gravity.TOP | Gravity.END);
         params.topMargin = SettingsUi.dp(activity, TOP_DP);

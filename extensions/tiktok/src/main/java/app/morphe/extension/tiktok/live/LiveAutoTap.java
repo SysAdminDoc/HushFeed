@@ -479,6 +479,7 @@ public final class LiveAutoTap {
         background.setColor(0xB3000000);
         view.setBackground(background);
         view.setOnClickListener(clicked -> onChipTap());
+        LiveRecordChip.markStacked(view, LiveRecordChip.STACK_AUTO_TAP);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
                 Gravity.TOP | Gravity.END);
@@ -523,7 +524,9 @@ public final class LiveAutoTap {
         if (view == null) return;
         Loop running = loop;
         // Clear screen leaves only the stream; a running chip stays so Stop is always in reach.
-        view.setVisibility(running == null && LiveRecordChip.clearScreenOn() ? View.INVISIBLE : View.VISIBLE);
+        // A screen recording hides it even then, so it isn't filmed (#265); it comes back after.
+        boolean hidden = LiveRecordChip.filmingScreen() || (running == null && LiveRecordChip.clearScreenOn());
+        view.setVisibility(hidden ? View.INVISIBLE : View.VISIBLE);
         if (running != null) {
             view.setText("● " + running.taps() + "  " + L10n.t("Stop"));
             view.setContentDescription(L10n.t("Stop tapping this LIVE"));

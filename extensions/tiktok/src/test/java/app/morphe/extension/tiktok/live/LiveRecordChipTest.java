@@ -188,4 +188,55 @@ public class LiveRecordChipTest {
 
         assertEquals(List.of(new Rect(0, 0, 100, 100)), found);
     }
+
+    @Test public void hushfeedButtonsStackRecordThenAutoTapThenBlockWithoutLandingOnEachOther() {
+        Activity activity = Robolectric.buildActivity(Activity.class).setup().get();
+        FrameLayout content = new FrameLayout(activity);
+        View record = new View(activity);
+        record.setOnClickListener(v -> { });
+        LiveRecordChip.markStacked(record, LiveRecordChip.STACK_RECORD);
+        View autoTap = new View(activity);
+        autoTap.setOnClickListener(v -> { });
+        LiveRecordChip.markStacked(autoTap, LiveRecordChip.STACK_AUTO_TAP);
+        View block = new View(activity);
+        block.setOnClickListener(v -> { });
+        LiveRecordChip.markStacked(block, LiveRecordChip.STACK_BLOCK);
+        // All three asked for the same spot, inside Robolectric's 320 by 470 window.
+        for (View view : new View[] {record, autoTap, block}) {
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(60, 60);
+            params.leftMargin = 240;
+            params.topMargin = 100;
+            content.addView(view, params);
+        }
+        activity.setContentView(content, new ViewGroup.LayoutParams(1000, 1000));
+        content.measure(View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY));
+        content.layout(0, 0, 1000, 1000);
+        Rect area = new Rect();
+        assertTrue(content.getGlobalVisibleRect(area));
+        long largest = (long) area.width() * area.height() / 4;
+
+        List<Rect> aboveRecord = new ArrayList<>();
+        LiveRecordChip.tapTargets(content, record, area, largest, aboveRecord);
+        List<Rect> aboveAutoTap = new ArrayList<>();
+        LiveRecordChip.tapTargets(content, autoTap, area, largest, aboveAutoTap);
+        List<Rect> aboveBlock = new ArrayList<>();
+        LiveRecordChip.tapTargets(content, block, area, largest, aboveBlock);
+        List<Rect> forAutoTapFingers = new ArrayList<>();
+        LiveRecordChip.tapTargets(content, null, area, largest, forAutoTapFingers);
+
+        assertEquals(List.of(), aboveRecord);
+        assertEquals(1, aboveAutoTap.size());
+        assertEquals(2, aboveBlock.size());
+        assertEquals(3, forAutoTapFingers.size());
+        int recordTop = LiveRecordChip.freeTop(300, 100, 900, 1000, aboveRecord, 20, 900);
+        int autoTapTop = LiveRecordChip.freeTop(300, 100, 900, 1000,
+                List.of(new Rect(900, recordTop, 1000, recordTop + 100)), 20, 900);
+        int blockTop = LiveRecordChip.freeTop(300, 100, 900, 1000, List.of(
+                new Rect(900, recordTop, 1000, recordTop + 100),
+                new Rect(900, autoTapTop, 1000, autoTapTop + 100)), 20, 900);
+        assertEquals(300, recordTop);
+        assertEquals(420, autoTapTop);
+        assertEquals(540, blockTop);
+    }
 }

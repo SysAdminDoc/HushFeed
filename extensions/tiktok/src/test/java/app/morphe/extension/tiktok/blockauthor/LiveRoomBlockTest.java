@@ -10,6 +10,8 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.SettingsContextRule;
+import app.morphe.extension.tiktok.download.LiveRecorder;
+import app.morphe.extension.tiktok.live.LiveRecordChip;
 import app.morphe.extension.tiktok.settings.Settings;
 import com.bytedance.android.livesdkapi.depend.model.live.Room;
 import java.time.Duration;
@@ -119,6 +121,28 @@ public class LiveRoomBlockTest {
         Settings.BLOCK_AUTHOR_BUTTON.save(false);
         openRoom();
         assertNull(blockButton());
+    }
+
+    @Test public void aScreenRecordingOfTheRoomHidesTheButtonUntilItEnds() throws Exception {
+        openRoom();
+        java.lang.reflect.Constructor<?> make = null;
+        for (java.lang.reflect.Constructor<?> constructor : LiveRecorder.class.getDeclaredConstructors()) {
+            if (constructor.getParameterCount() == 5) make = constructor;
+        }
+        assertNotNull(make);
+        make.setAccessible(true);
+        LiveRecorder filming = (LiveRecorder) make.newInstance(
+                new LiveRecorder.Target(null, LiveRecorder.Transport.SCREEN, "host1", "1", null),
+                null, null, null, null);
+        try {
+            LiveRecordChip.holdForTests(filming, false);
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(1100));
+            assertEquals(View.INVISIBLE, blockButton().getVisibility());
+        } finally {
+            LiveRecordChip.holdForTests(null, false);
+        }
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(1100));
+        assertEquals(View.VISIBLE, blockButton().getVisibility());
     }
 
     @Test public void turningTheSwitchOffTakesTheButtonAwayWithinASecond() {

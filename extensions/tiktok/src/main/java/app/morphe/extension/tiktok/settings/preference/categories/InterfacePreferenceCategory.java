@@ -340,6 +340,16 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                             new String[]{"profile", "off", "newest", "oldest", "longest", "shortest", "most_viewed",
                                     "least_viewed", "most_liked", "least_liked"}));
                 }
+                if (SettingsStatus.soundGridSortEnabled) {
+                    addPreference(new ChoicePreference(context, "Sort loaded videos on sound pages",
+                            Settings.SOUND_GRID_SORT,
+                            new String[]{"Original order", "Newest first", "Oldest first", "Longest first",
+                                    "Shortest first", "Most viewed first", "Least viewed first",
+                                    "Most liked first", "Least liked first"},
+                            new String[]{"off", "newest", "oldest", "longest", "shortest", "most_viewed",
+                                    "least_viewed", "most_liked", "least_liked"})
+                            .withNote("Sorts the videos on a sound's page the same way, loading up to 300 of them while an order is on."));
+                }
             }
         }
         if (SettingsStatus.authorRegionEnabled) {

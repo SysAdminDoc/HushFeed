@@ -179,6 +179,66 @@ class GridSortAnchorsTest {
         }
     }
 
+    @Test
+    fun `each declared build has one detail page grid adapter and a sound page click that reaches its page model`() {
+        Fixtures.forEachDeclared { apk ->
+            val version = Fixtures.versionOf(apk)
+            val data = mutableListOf<Method>()
+            val page = mutableListOf<Method>()
+            val inits = mutableListOf<Method>()
+            val clicks = mutableListOf<Method>()
+            val soundClicks = mutableListOf<Method>()
+            val superclasses = mutableMapOf<String, String?>()
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            for (entry in container.dexEntryNames) {
+                for (classDef in container.getEntry(entry)!!.dexFile.classes) {
+                    superclasses[classDef.type] = classDef.superclass
+                    for (method in classDef.methods) {
+                        if (DetailGridSetDataFingerprint.takes(method, classDef)) data += method
+                        if (DetailGridPageFingerprint.takes(method, classDef)) page += method
+                        if (DetailGridInitFingerprint.takes(method, classDef)) inits += method
+                        if (DetailCellOpenFingerprint.takes(method, classDef)) clicks += method
+                        if (SoundCellOpenFingerprint.takes(method, classDef)) soundClicks += method
+                    }
+                }
+            }
+            assertEquals("$version: setData ${data.map { it.definingClass }}", 1, data.size)
+            assertEquals("$version: setDataAfterLoadMore ${page.map { it.definingClass }}", 1, page.size)
+            assertEquals("$version: constructors ${inits.map { it.parameterTypes }}", 1, inits.size)
+            assertEquals("$version: one class", data.single().definingClass, page.single().definingClass)
+            assertEquals("$version: one class", data.single().definingClass, inits.single().definingClass)
+            assertTrue("$version: the constructor keeps its label in p1", keepsFirstParameter(inits.single()))
+
+            assertEquals("$version: detail clicks ${clicks.map { it.definingClass }}", 1, clicks.size)
+            assertEquals("$version: sound clicks ${soundClicks.map { it.definingClass }}", 1, soundClicks.size)
+            val getter = detailModelGetterIn(clicks.single())
+            assertTrue("$version: no page model getter in the detail click", getter != null)
+            assertEquals("$version: the fragment's own getter", clicks.single().definingClass, getter!!.definingClass)
+            val chain = generateSequence(soundClicks.single().definingClass) { superclasses[it] }.toList()
+            assertTrue("$version: the sound fragment is a detail fragment $chain", getter.definingClass in chain)
+        }
+    }
+
+    @Test
+    fun `only a detail page grid constructor that keeps its label is hooked at its end`() {
+        val keeps = constructor(
+            ImmutableInstruction35c(Opcode.INVOKE_DIRECT, 1, 1, 0, 0, 0, 0, ImmutableMethodReference("Ljava/lang/Object;", "<init>", listOf(), "V")),
+            ImmutableInstruction21c(Opcode.CONST_STRING, 0, ImmutableStringReference("x")),
+        )
+        assertTrue(keepsFirstParameter(keeps))
+        // regs 3: v0 local, v1 this, v2 the label.
+        val overwrites = constructor(ImmutableInstruction21c(Opcode.CONST_STRING, 2, ImmutableStringReference("x")))
+        assertFalse("a constructor that writes over its label", keepsFirstParameter(overwrites))
+    }
+
+    private fun constructor(vararg code: com.android.tools.smali.dexlib2.iface.instruction.Instruction): Method =
+        ImmutableMethod(
+            "LX/0Detail;", "<init>",
+            listOf(ImmutableMethodParameter("Ljava/lang/String;", null, null)), "V",
+            AccessFlags.PUBLIC.value or AccessFlags.CONSTRUCTOR.value, null, null,
+            ImmutableMethodImplementation(3, code.toList() + ImmutableInstruction10x(Opcode.RETURN_VOID), null, null),
+        )
+
     /** The literal a tab name method compares the tab number to before naming it the favorite tab. */
     private fun favoriteTabNumber(method: Method): Int? {
         val code = method.implementation!!.instructions.toList()

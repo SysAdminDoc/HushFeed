@@ -3890,10 +3890,14 @@ final class L10nTranslationsZh_Hans {
                 "对“喜欢”网格中已加载的视频排序");
         table.put("Sort loaded videos on profile grids",
                 "对个人资料网格中已加载的视频排序");
+        table.put("Sort loaded videos on sound pages",
+                "对声音页中已加载的视频排序");
         table.put("Sort this grid",
                 "排序此网格");
         table.put("Sorts a profile or Liked grid with pinned videos first. While an order is on, the grid keeps loading by itself up to 300 videos, so the order covers more than the first screen. A button in the grid's top corner changes the order right there.",
                 "对个人资料或喜欢网格排序，置顶视频仍排在最前。选择排序后，网格会自动继续加载，最多 300 个视频，让排序覆盖的不只是第一屏。网格顶部角落的按钮可直接更改排序.");
+        table.put("Sorts the videos on a sound's page the same way, loading up to 300 of them while an order is on.",
+                "以同样方式对声音页面上的视频排序，选定顺序时最多加载 300 个视频.");
         table.put("Sound",
                 "声音");
         table.put("Sound IDs saved by the player's sound button, separated by commas. Remove one to unblock it.",

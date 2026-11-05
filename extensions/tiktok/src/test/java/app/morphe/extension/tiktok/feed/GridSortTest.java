@@ -129,19 +129,23 @@ public class GridSortTest {
 
     private boolean gridSortEnabled;
     private boolean likedGridSortEnabled;
+    private boolean soundGridSortEnabled;
 
     @Before public void setUp() {
         Utils.setContext(RuntimeEnvironment.getApplication());
         gridSortEnabled = SettingsStatus.gridSortEnabled;
         likedGridSortEnabled = SettingsStatus.likedGridSortEnabled;
+        soundGridSortEnabled = SettingsStatus.soundGridSortEnabled;
     }
 
     @After public void tearDown() {
         setPaused(false);
         Settings.PROFILE_GRID_SORT.resetToDefault();
         Settings.LIKED_GRID_SORT.resetToDefault();
+        Settings.SOUND_GRID_SORT.resetToDefault();
         SettingsStatus.gridSortEnabled = gridSortEnabled;
         SettingsStatus.likedGridSortEnabled = likedGridSortEnabled;
+        SettingsStatus.soundGridSortEnabled = soundGridSortEnabled;
         SettingsStatus.alwaysShowPublishDateEnabled = false;
         HookStatus.clear();
         GridSort.resetForTests();
@@ -715,6 +719,82 @@ public class GridSortTest {
             assertEquals("newest", Settings.PROFILE_GRID_SORT.get());
             assertSame("Original order hands the Liked grid TikTok's list", model, adapter.mmItems);
         }
+    }
+
+    /** A sound's page (#180) has its own order; a hashtag's or an effect's page keeps TikTok's. */
+    @Test public void aSoundPageSortsByItsOwnOrderAndOtherDetailPagesKeepTikToks() {
+        assertEquals("sound_grid_sort", Settings.SOUND_GRID_SORT.key);
+        assertEquals("off", Settings.SOUND_GRID_SORT.defaultValue);
+        GridAdapter sound = new GridAdapter();
+        GridAdapter hashtag = new GridAdapter();
+        GridSort.soundGrid(sound, "single_song");
+        GridSort.soundGrid(hashtag, "challenge");
+        Settings.PROFILE_GRID_SORT.save("newest");
+
+        List<Aweme> untouched = grid();
+        assertSame("off until an order is chosen for sound pages", untouched, GridSort.soundData(sound, untouched));
+        Settings.SOUND_GRID_SORT.save("oldest");
+        assertEquals("pinned first, then oldest", "apfcdeb", ids(GridSort.soundData(sound, grid())));
+        assertEquals("apfcdeb", ids(GridSort.soundPage(sound, grid())));
+        assertSame(Settings.SOUND_GRID_SORT, GridSort.settingFor(sound));
+
+        List<Aweme> first = grid();
+        List<Aweme> more = grid();
+        assertSame("a hashtag page keeps TikTok's list", first, GridSort.soundData(hashtag, first));
+        assertSame(more, GridSort.soundPage(hashtag, more));
+        assertEquals("off", GridSort.orderFor(hashtag));
+        assertSame(first, GridSort.soundData(null, first));
+        idle(0);
+    }
+
+    @Test public void theChipOnASoundPageChangesOnlyTheSoundOrder() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            GridAdapter adapter = gridOnScreen(controller.get());
+            GridSort.soundGrid(adapter, "single_song");
+            Settings.PROFILE_GRID_SORT.save("newest");
+            Settings.SOUND_GRID_SORT.save("oldest");
+            adapter.mmItems = GridSort.soundData(adapter, grid());
+            idle(0);
+            assertEquals("apfcdeb", ids(adapter.mmItems));
+            assertEquals("Oldest first", String.valueOf(chip(adapter).getText()));
+
+            selectOrder(adapter, "least_liked");
+
+            assertEquals("least_liked", Settings.SOUND_GRID_SORT.get());
+            assertEquals("the profile grids keep theirs", "newest", Settings.PROFILE_GRID_SORT.get());
+            assertEquals("apcdfeb", ids(adapter.mmItems));
+        }
+    }
+
+    /**
+     * A sound's page hands its grid a copy and its video page plays the page model's list, so
+     * that list is the one put in the grid's order, and the copy stays TikTok's order.
+     */
+    @Test public void openingAVideoFromASortedSoundPageSwipesInTheGridsOrder() {
+        GridAdapter adapter = new GridAdapter();
+        GridSort.soundGrid(adapter, "single_song");
+        Settings.SOUND_GRID_SORT.save("newest");
+        List<Aweme> model = grid();
+        List<Aweme> copy = new ArrayList<>(model);
+        adapter.mmItems = GridSort.soundData(adapter, copy);
+        assertEquals("apecdfb", ids(adapter.mmItems));
+
+        GridSort.beforeOpen(new GridFragment(adapter));
+        assertEquals("with no page model found the video page keeps TikTok's order", "abcdefp", ids(model));
+        assertEquals("abcdefp", ids(copy));
+
+        GridSort.playInGridOrder(adapter, model);
+        assertEquals("the video page plays the grid's order", "apecdfb", ids(model));
+        assertEquals("the grid's copy stays TikTok's order", "abcdefp", ids(copy));
+
+        // TikTok appends the next page to the model and hands the grid a fresh copy of it.
+        model.add(new Post("g", 250, 1_000, 1, 1, false));
+        adapter.mmItems = GridSort.soundPage(adapter, new ArrayList<>(model));
+        assertEquals("apecdgfb", ids(adapter.mmItems));
+        GridSort.apply(adapter, "off");
+        assertEquals("Original order is TikTok's, the new video where TikTok put it",
+                "abcdefpg", ids(adapter.mmItems));
+        idle(0);
     }
 
     private static void selectOrder(GridAdapter adapter, String order) {
@@ -2080,6 +2160,31 @@ public class GridSortTest {
                 assertEquals(GridSort.ORDERS[i], String.valueOf(list.getEntryValues()[i + 1]));
                 assertEquals(GridSort.LABELS[i], String.valueOf(list.getEntries()[i + 1]));
             }
+        }
+    }
+
+    @Test public void theSoundPageRowShowsOnlyWhereTheDetailAdapterWasHooked() {
+        try (var controller = Robolectric.buildActivity(TestActivity.class).setup()) {
+            var activity = controller.get();
+            Utils.setContext(activity);
+            SettingsStatus.alwaysShowPublishDateEnabled = true;
+            SettingsStatus.gridSortEnabled = true;
+
+            SettingsStatus.soundGridSortEnabled = false;
+            assertEquals(null, build(activity).findPreference(Settings.SOUND_GRID_SORT.key));
+
+            SettingsStatus.soundGridSortEnabled = true;
+            Preference row = build(activity).findPreference(Settings.SOUND_GRID_SORT.key);
+            assertTrue(row instanceof ListPreference);
+            assertEquals("Sort loaded videos on sound pages", String.valueOf(row.getTitle()));
+            ListPreference list = (ListPreference) row;
+            assertEquals(GridSort.ORDERS.length, list.getEntryValues().length);
+            for (int i = 0; i < GridSort.ORDERS.length; i++) {
+                assertEquals(GridSort.ORDERS[i], String.valueOf(list.getEntryValues()[i]));
+                assertEquals(GridSort.LABELS[i], String.valueOf(list.getEntries()[i]));
+            }
+            String summary = String.valueOf(row.getSummary());
+            assertTrue(summary, summary.contains("sound's page") && summary.contains("up to 300"));
         }
     }
 

@@ -163,9 +163,10 @@ public class FeedScreenCoverageTest {
         // Profile grids only.
         put("publish_date_on_grid", NONE, NONE, NONE);
         put("video_length_on_grid", NONE, NONE, NONE);
-        // The order of the profile and Liked grids, which neither window draws (#180).
+        // The order of the profile, Liked and sound page grids, which neither window draws (#180).
         put("profile_grid_sort", NONE, NONE, NONE);
         put("liked_grid_sort", NONE, NONE, NONE);
+        put("sound_grid_sort", NONE, NONE, NONE);
         put("show_author_region", YES, YES, NONE);
         // Only how the region label shows its code, so it reaches where the label does (#157).
         put("region_as_flag", YES, YES, NONE);

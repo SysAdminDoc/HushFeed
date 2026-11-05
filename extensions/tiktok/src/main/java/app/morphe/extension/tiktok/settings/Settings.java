@@ -779,6 +779,8 @@ public class Settings extends BaseSettings {
     public static final StringSetting PROFILE_GRID_SORT = new StringSetting("profile_grid_sort", "off");
     /** The Liked tab's own order (#180): "profile" follows PROFILE_GRID_SORT, otherwise one of GridSort's orders. */
     public static final StringSetting LIKED_GRID_SORT = new StringSetting("liked_grid_sort", "profile");
+    /** The order of a sound page's video grid (#180): off, or one of GridSort's orders. */
+    public static final StringSetting SOUND_GRID_SORT = new StringSetting("sound_grid_sort", "off");
     public static final BooleanSetting SHOW_EXACT_COUNTS = new BooleanSetting("show_exact_counts", FALSE);
     public static final BooleanSetting CLEAR_DISPLAY = new BooleanSetting("clear_display", FALSE);
     /** Clear display turned on by hand carries to the next video. Off, each video starts with its controls (#232). */

@@ -3890,10 +3890,14 @@ final class L10nTranslationsAz {
                 "Bəyənilənlər şəbəkələrində yüklənmiş videoları sıralayın");
         table.put("Sort loaded videos on profile grids",
                 "Profil şəbəkələrində yüklənmiş videoları sıralayın");
+        table.put("Sort loaded videos on sound pages",
+                "Səs səhifələrində yüklənmiş videoları sıralayın");
         table.put("Sort this grid",
                 "Bu şəbəkəni sırala");
         table.put("Sorts a profile or Liked grid with pinned videos first. While an order is on, the grid keeps loading by itself up to 300 videos, so the order covers more than the first screen. A button in the grid's top corner changes the order right there.",
                 "Profil və ya bəyənilənlər şəbəkəsini sıralayır, sancılmış videolar əvvəldə qalır. Sıra seçiləndə şəbəkə 300 videoya qədər özü yüklənməyə davam edir, beləliklə sıra ilk ekrandan daha çoxunu əhatə edir. Şəbəkənin yuxarı küncündəki düymə sıranı elə oradaca dəyişir.");
+        table.put("Sorts the videos on a sound's page the same way, loading up to 300 of them while an order is on.",
+                "Səsin səhifəsindəki videoları eyni qaydada sıralayır, sıralama seçili olduqca onlardan 300-ə qədərini yükləyir.");
         table.put("Sound",
                 "Səs");
         table.put("Sound IDs saved by the player's sound button, separated by commas. Remove one to unblock it.",

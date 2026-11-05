@@ -671,6 +671,13 @@ public class SettingsStatus {
         likedGridSortEnabled = true;
     }
 
+    /** The detail page grid adapter hands over its label, so a sound's page can be sorted (#180). */
+    public static boolean soundGridSortEnabled = false;
+
+    public static void enableSoundGridSort() {
+        soundGridSortEnabled = true;
+    }
+
     public static void enableFeedSidebarSwipe() {
         feedSidebarSwipeEnabled = true;
     }

@@ -740,6 +740,12 @@
     "default": "profile",
     "type": "string",
     "row": "Sort loaded videos on Liked grids"
+   },
+   {
+    "key": "sound_grid_sort",
+    "default": "off",
+    "type": "string",
+    "row": "Sort loaded videos on sound pages"
    }
   ],
   "surface": "feed",

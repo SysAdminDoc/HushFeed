@@ -4199,10 +4199,14 @@ final class L10nTranslationsRu {
                 "Сортировать загруженные видео в сетках «Понравилось»");
         table.put("Sort loaded videos on profile grids",
                 "Сортировать загруженные видео в сетках профиля");
+        table.put("Sort loaded videos on sound pages",
+                "Сортировать загруженные видео на страницах звуков");
         table.put("Sort this grid",
                 "Сортировка этой сетки");
         table.put("Sorts a profile or Liked grid with pinned videos first. While an order is on, the grid keeps loading by itself up to 300 videos, so the order covers more than the first screen. A button in the grid's top corner changes the order right there.",
                 "Сортирует сетку профиля или раздела «Понравившиеся», закреплённые видео остаются первыми. Пока выбран порядок, сетка сама подгружает до 300 видео, чтобы порядок охватывал больше первого экрана. Кнопка в верхнем углу сетки меняет порядок прямо там.");
+        table.put("Sorts the videos on a sound's page the same way, loading up to 300 of them while an order is on.",
+                "Так же сортирует видео на странице звука и подгружает до 300 из них, пока выбран порядок.");
         table.put("Sound",
                 "Звук");
         table.put("Sound IDs saved by the player's sound button, separated by commas. Remove one to unblock it.",

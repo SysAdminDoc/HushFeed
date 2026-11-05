@@ -252,6 +252,13 @@ internal fun BytecodePatchContext.hookGridSortOn(versionName: String): Boolean {
                 "Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableLikedGridSort()V",
         )
     }
+    if (hookSoundGridSort(versionName)) {
+        SettingsStatusLoadFingerprint.method.addInstruction(
+            0,
+            "invoke-static {}, " +
+                "Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableSoundGridSort()V",
+        )
+    }
     SettingsStatusLoadFingerprint.method.addInstruction(
         0,
         "invoke-static {}, " +
@@ -309,5 +316,194 @@ internal fun BytecodePatchContext.hookGridSort(versionName: String): Boolean {
             move-result-object p1
         """,
     )
+    return true
+}
+
+/**
+ * The string only the detail pages' grid adapter logs under. A sound's page, a hashtag's and an
+ * effect's all draw their videos through it.
+ */
+private const val DETAIL_ADAPTER_TAG = "DetailAwemeAdapter"
+
+/** The detail page grid adapter's cell builder, the one method in the app that logs under [DETAIL_ADAPTER_TAG]. */
+internal object DetailGridTagFingerprint : Fingerprint(
+    strings = listOf(DETAIL_ADAPTER_TAG),
+)
+
+/** The detail page grid adapter's `setData(List)`, which a sound page's first videos go through (#180). */
+internal object DetailGridSetDataFingerprint : Fingerprint(
+    classFingerprint = DetailGridTagFingerprint,
+    name = "setData",
+    isStatic = false,
+    returnType = "V",
+    parameters = listOf("Ljava/util/List;"),
+)
+
+/** Its `setDataAfterLoadMore(List)`, which each later page goes through. */
+internal object DetailGridPageFingerprint : Fingerprint(
+    classFingerprint = DetailGridTagFingerprint,
+    name = "setDataAfterLoadMore",
+    isStatic = false,
+    returnType = "V",
+    parameters = listOf("Ljava/util/List;"),
+)
+
+/**
+ * The detail page grid adapter's constructor, which takes the page's event label first
+ * ("single_song" on a sound's page) and the page's arguments last.
+ */
+internal object DetailGridInitFingerprint : Fingerprint(
+    classFingerprint = DetailGridTagFingerprint,
+    name = "<init>",
+    returnType = "V",
+    custom = { method, _ ->
+        method.parameterTypes.firstOrNull()?.toString() == "Ljava/lang/String;" &&
+            method.parameterTypes.lastOrNull()?.toString() == "Landroid/os/Bundle;"
+    },
+)
+
+/**
+ * The detail fragment's cell click, which hands TikTok's video page the page model it plays
+ * ([detailModelGetterIn] reads the getter from it). Its bridges take the same parameters, but only
+ * the click itself names the effect page.
+ */
+internal object DetailCellOpenFingerprint : Fingerprint(
+    definingClass = "Lcom/ss/android/ugc/aweme/challenge/ui/DetailAwemeListFragment;",
+    returnType = "V",
+    parameters = listOf(
+        "Landroid/view/View;",
+        "Lcom/ss/android/ugc/aweme/feed/model/Aweme;",
+        "Ljava/lang/String;",
+        "I",
+    ),
+    strings = listOf("editing_effect_page"),
+)
+
+/** A sound page's own cell click, which runs ahead of the detail fragment's. */
+internal object SoundCellOpenFingerprint : Fingerprint(
+    definingClass = "Lcom/ss/android/ugc/aweme/music/ui/MusicDetailAwemeListFragment;",
+    returnType = "V",
+    parameters = listOf(
+        "Landroid/view/View;",
+        "Lcom/ss/android/ugc/aweme/feed/model/Aweme;",
+        "Ljava/lang/String;",
+        "I",
+    ),
+)
+
+/**
+ * The detail fragment's getter for the page model its cell click hands the video page: the
+ * fragment's own call with no arguments whose result goes straight into a static field of its type.
+ */
+internal fun detailModelGetterIn(method: Method): MethodReference? {
+    val code = method.implementation?.instructions?.toList() ?: return null
+    val found = code.indices.mapNotNull { index ->
+        if (index + 2 >= code.size || code[index].opcode != Opcode.INVOKE_VIRTUAL) return@mapNotNull null
+        val ref = code[index].getReference<MethodReference>() ?: return@mapNotNull null
+        if (ref.definingClass != method.definingClass || ref.parameterTypes.isNotEmpty() || !ref.returnType.startsWith("L")) {
+            return@mapNotNull null
+        }
+        val result = code[index + 1]
+        val store = code[index + 2]
+        if (result.opcode != Opcode.MOVE_RESULT_OBJECT || store.opcode != Opcode.SPUT_OBJECT) return@mapNotNull null
+        if ((result as OneRegisterInstruction).registerA != (store as OneRegisterInstruction).registerA) return@mapNotNull null
+        if (store.getReference<FieldReference>()?.type != ref.returnType) return@mapNotNull null
+        ref
+    }
+    return found.distinctBy { "${it.definingClass}->${it.name}()${it.returnType}" }.singleOrNull()
+}
+
+/**
+ * Whether a constructor leaves its first parameter as it came, so the hook at its end still reads
+ * the label there.
+ */
+internal fun keepsFirstParameter(init: Method): Boolean {
+    val implementation = init.implementation ?: return false
+    val first = implementation.registerCount - (1 + init.parameterTypes.sumOf { registerSize(it) }) + 1
+    return implementation.instructions.none { instruction ->
+        if (!instruction.opcode.setsRegister()) return@none false
+        val written = (instruction as? OneRegisterInstruction)?.registerA ?: return@none false
+        written == first || (instruction.opcode.setsWideRegister() && written + 1 == first)
+    }
+}
+
+/**
+ * Sorts a sound page's video grid (#180) with the profile grids' extension code. The detail page
+ * adapter hands over its event label as it's built and puts both its lists through the extension,
+ * which sorts only a sound page's. Required on a declared build, where the anchors test holds it,
+ * and left out with a note on any other, so the profile grids keep their sort.
+ */
+internal fun BytecodePatchContext.hookSoundGridSort(versionName: String): Boolean {
+    val declared = versionName in declaredVersions()
+    val init = if (declared) DetailGridInitFingerprint.method else DetailGridInitFingerprint.methodOrNull
+    val setData = if (declared) DetailGridSetDataFingerprint.method else DetailGridSetDataFingerprint.methodOrNull
+    val page = if (declared) DetailGridPageFingerprint.method else DetailGridPageFingerprint.methodOrNull
+    if (init == null || setData == null || page == null ||
+        setData.definingClass != page.definingClass || init.definingClass != setData.definingClass ||
+        !keepsFirstParameter(init)
+    ) {
+        if (declared) throw PatchException("$PATCH: no detail page grid adapter to sort sound pages on $versionName.")
+        println("[$PATCH] Left out the sound page sort on $versionName: no detail page grid adapter found.")
+        return false
+    }
+    init.implementation!!.instructions.withIndex()
+        .filter { it.value.opcode == Opcode.RETURN_VOID }
+        .map { it.index }
+        .reversed()
+        .forEach { index ->
+            init.addInstructionsAtControlFlowLabel(
+                index,
+                "invoke-static/range { p0 .. p1 }, $GRID_SORT->soundGrid(Ljava/lang/Object;Ljava/lang/String;)V",
+            )
+        }
+    setData.addInstructions(
+        0,
+        """
+            invoke-static/range { p0 .. p1 }, $GRID_SORT->soundData(Ljava/lang/Object;Ljava/util/List;)Ljava/util/List;
+            move-result-object p1
+        """,
+    )
+    page.addInstructions(
+        0,
+        """
+            invoke-static/range { p0 .. p1 }, $GRID_SORT->soundPage(Ljava/lang/Object;Ljava/util/List;)Ljava/util/List;
+            move-result-object p1
+        """,
+    )
+    hookSoundOpen(versionName)
+    return true
+}
+
+/**
+ * Hands a sound page's fragment to the extension as a cell opens its video, so the video page
+ * swipes on in the grid's order (#180). The video page plays the page model's list, not the one the
+ * grid got, so the extension's `detailModel` is filled with a call to the fragment's getter for it.
+ * Required on a declared build. On any other, a sorted sound page opens videos in TikTok's order.
+ */
+internal fun BytecodePatchContext.hookSoundOpen(versionName: String): Boolean {
+    val declared = versionName in declaredVersions()
+    val open = if (declared) SoundCellOpenFingerprint.method else SoundCellOpenFingerprint.methodOrNull
+    val click = if (declared) DetailCellOpenFingerprint.method else DetailCellOpenFingerprint.methodOrNull
+    val getter = click?.let(::detailModelGetterIn)
+    if (open == null || getter == null) {
+        if (declared) throw PatchException("$PATCH: no sound page cell click or page model on $versionName.")
+        println("[$PATCH] A sorted sound page on $versionName opens videos in TikTok's order: no cell click or page model found.")
+        return false
+    }
+    val stub = mutableClassDefBy(GRID_SORT).methods.singleOrNull {
+        it.name == "detailModel" && it.returnType == "Ljava/lang/Object;" &&
+            it.parameterTypes == listOf("Ljava/lang/Object;")
+    } ?: throw PatchException("$PATCH: the extension has no detailModel to fill in.")
+    // What the stub did before is left behind as unreachable code.
+    stub.addInstructions(
+        0,
+        """
+            check-cast p0, ${getter.definingClass}
+            invoke-virtual { p0 }, ${getter.definingClass}->${getter.name}()${getter.returnType}
+            move-result-object p0
+            return-object p0
+        """,
+    )
+    open.addInstruction(0, "invoke-static/range { p0 .. p0 }, $GRID_SORT->beforeOpen(Ljava/lang/Object;)V")
     return true
 }

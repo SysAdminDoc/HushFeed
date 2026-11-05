@@ -51,7 +51,8 @@
       "publish_date_on_grid",
       "video_length_on_grid",
       "profile_grid_sort",
-      "liked_grid_sort"
+      "liked_grid_sort",
+      "sound_grid_sort"
     ],
     "Always upload in HD": [
       "always_upload_hd"
@@ -3815,6 +3816,12 @@
       "key": "skip_update_checks",
       "type": "boolean",
       "default": false
+    },
+    "sound_grid_sort": {
+      "field": "SOUND_GRID_SORT",
+      "key": "sound_grid_sort",
+      "type": "string",
+      "default": "off"
     },
     "sound_seekbar": {
       "field": "SOUND_SEEKBAR",

@@ -1867,8 +1867,10 @@ Some recording files remain. Try deleting them again.,Some recording files remai
 Something is missing from %1$s. Tap for the whole report.,Something is missing from %1$s. Tap for the whole report.
 Sort loaded videos on Liked grids,Sort loaded videos on Liked grids
 Sort loaded videos on profile grids,Sort loaded videos on profile grids
+Sort loaded videos on sound pages,Sort loaded videos on sound pages
 Sort this grid,Sort this grid
 "Sorts a profile or Liked grid with pinned videos first. While an order is on, the grid keeps loading by itself up to 300 videos, so the order covers more than the first screen. A button in the grid's top corner changes the order right there.","Sorts a profile or Liked grid with pinned videos first. While an order is on, the grid keeps loading by itself up to 300 videos, so the order covers more than the first screen. A button in the grid's top corner changes the order right there."
+"Sorts the videos on a sound's page the same way, loading up to 300 of them while an order is on.","Sorts the videos on a sound's page the same way, loading up to 300 of them while an order is on."
 Sound,Sound
 "Sound IDs saved by the player's sound button, separated by commas. Remove one to unblock it.","Sound IDs saved by the player's sound button, separated by commas. Remove one to unblock it."
 Sound format,Sound format

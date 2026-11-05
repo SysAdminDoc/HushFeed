@@ -689,6 +689,15 @@
           "type": "kotlin.String",
           "default": "profile",
           "values": null
+        },
+        {
+          "key": "sound_grid_sort",
+          "title": "Default: sound grid sort",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "off",
+          "values": null
         }
       ]
     },

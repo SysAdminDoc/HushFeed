@@ -78,6 +78,11 @@ import app.morphe.extension.tiktok.settings.preference.SettingsUi;
  *
  * <p>The Liked tab has its own order, which follows the profile grids until one is chosen for it
  * there or from its chip ({@link #orderFor}).
+ *
+ * <p>A sound's page draws its videos through TikTok's detail page adapter, which hashtag and
+ * effect pages share. The patch hands over the label each one is built with, and only a sound's
+ * grid is sorted, by its own setting ({@link #soundGrid}). Its video page plays the page model's
+ * list rather than the one the grid got, so that's the list a cell's click puts in order.
  */
 @SuppressWarnings("unused")
 public final class GridSort {
@@ -109,6 +114,14 @@ public final class GridSort {
     static final int TAB_FAVORITES = 4;
     static final int TAB_PRIVATE = 14;
     static final int TAB_FAVORITE_VIDEOS = 25;
+    /**
+     * The numbers kept for a detail page's grid, which TikTok builds with an event label in place
+     * of a tab number: a sound's page, and any other (hashtags, effects), which keeps TikTok's order.
+     */
+    static final int TAB_SOUND = -100;
+    static final int TAB_DETAIL_OTHER = -101;
+    /** The event label TikTok builds a sound page's grid with. */
+    static final String SOUND_LABEL = "single_song";
 
     /** The most videos a sorted grid loads by itself. Past this the reader's scrolling loads more. */
     static final int LOAD_CAP = 300;
@@ -166,11 +179,41 @@ public final class GridSort {
     }
 
     /**
+     * Called as TikTok builds a detail page's grid adapter, with the event label the page was
+     * opened with. Only a sound's page is sorted; hashtag and effect pages keep TikTok's order.
+     */
+    public static void soundGrid(Object adapter, String label) {
+        tab(adapter, SOUND_LABEL.equals(label) ? TAB_SOUND : TAB_DETAIL_OTHER);
+    }
+
+    /** A detail page adapter's setData: a sound page's list goes through {@link #data}, any other comes back as it came. */
+    public static List<?> soundData(Object adapter, List<?> list) {
+        return isSound(adapter) ? data(adapter, list) : list;
+    }
+
+    /** A detail page adapter's setDataAfterLoadMore, the same way as {@link #soundData}. */
+    public static List<?> soundPage(Object adapter, List<?> list) {
+        return isSound(adapter) ? page(adapter, list) : list;
+    }
+
+    static boolean isSound(Object adapter) {
+        if (adapter == null) return false;
+        synchronized (ORIGINALS) {
+            Integer type = TABS.get(adapter);
+            return type != null && type == TAB_SOUND;
+        }
+    }
+
+    private static String hookName(Object adapter) {
+        return isSound(adapter) ? "sound grid sort" : "profile grid sort";
+    }
+
+    /**
      * The order the grid this adapter draws follows. The Liked tab has its own setting, which
      * follows the profile grids ("profile", its default) until an order is chosen for it. Posts, Favorites and the private
      * tab follow the profile setting, and a tab TikTok numbers some other way keeps TikTok's
-     * order. An adapter whose tab never came in (a build the patch couldn't hook) follows the
-     * profile setting, as every grid did before Liked got its own.
+     * order. A sound's page has its own setting. An adapter whose tab never came in (a build the
+     * patch couldn't hook) follows the profile setting, as every grid did before Liked got its own.
      */
     static String orderFor(Object adapter) {
         Integer type;
@@ -187,6 +230,8 @@ public final class GridSort {
             case TAB_PRIVATE:
             case TAB_FAVORITE_VIDEOS:
                 return Settings.PROFILE_GRID_SORT.get();
+            case TAB_SOUND:
+                return Settings.SOUND_GRID_SORT.get();
             default:
                 return OFF;
         }
@@ -198,7 +243,8 @@ public final class GridSort {
         synchronized (ORIGINALS) {
             type = adapter == null ? null : TABS.get(adapter);
         }
-        return type != null && type == TAB_LIKED ? Settings.LIKED_GRID_SORT : Settings.PROFILE_GRID_SORT;
+        if (type != null && type == TAB_LIKED) return Settings.LIKED_GRID_SORT;
+        return type != null && type == TAB_SOUND ? Settings.SOUND_GRID_SORT : Settings.PROFILE_GRID_SORT;
     }
 
     /**
@@ -207,7 +253,7 @@ public final class GridSort {
      */
     public static List<?> data(Object adapter, List<?> list) {
         String chosen = orderFor(adapter);
-        HookStatus.bound("profile grid sort", OFF.equals(chosen) ? "order left" : "order sorted");
+        HookStatus.bound(hookName(adapter), OFF.equals(chosen) ? "order left" : "order sorted");
         List<?> order = adapter == null ? list : tiktokOrder(adapter, list);
         List<?> out = sorted(order, chosen);
         if (adapter != null) {
@@ -229,7 +275,7 @@ public final class GridSort {
      */
     public static List<?> page(Object adapter, List<?> list) {
         String chosen = orderFor(adapter);
-        HookStatus.bound("profile grid sort", OFF.equals(chosen) ? "order left" : "order sorted");
+        HookStatus.bound(hookName(adapter), OFF.equals(chosen) ? "order left" : "order sorted");
         List<?> order = adapter == null ? list : tiktokOrder(adapter, list);
         List<?> out = sorted(order, chosen);
         if (adapter != null) {
@@ -256,7 +302,8 @@ public final class GridSort {
 
     /**
      * Puts {@code order} on the grid this adapter draws, from the list TikTok last gave it, and
-     * saves it as the order its kind of grid follows: the Liked tab's own, or the profile grids'.
+     * saves it as the order its kind of grid follows: the Liked tab's own, a sound page's own, or
+     * the profile grids'.
      */
     static void apply(Object adapter, String order) {
         apply(adapter, order, null);
@@ -376,32 +423,71 @@ public final class GridSort {
      * plays the fragment's own list, the one it handed the adapter, so swiping there went on in
      * TikTok's order while the grid showed another. This writes the grid's order into that list
      * first. A list that doesn't hold the same videos as the grid is left alone.
+     *
+     * <p>A sound's page hands its grid a copy and plays its page model's list, so on a sound
+     * page that list is the one put in order, and the copy kept as TikTok's order stays as it is.
      */
     public static void beforeOpen(Object fragment) {
         try {
             Object adapter = adapterOf(fragment);
             if (adapter == null) return;
-            List<?> handed;
-            synchronized (ORIGINALS) {
-                handed = HANDED.get(adapter);
+            List<?> played;
+            if (isSound(adapter)) {
+                played = soundPageList(fragment);
+            } else {
+                synchronized (ORIGINALS) {
+                    played = HANDED.get(adapter);
+                }
             }
-            Object shown = Reflect.readField(adapter, "mmItems");
-            if (handed == null || !(shown instanceof List) || shown == handed) return;
-            List<?> grid = (List<?>) shown;
-            if (sameOrder(handed, grid)) return;
-            List<Object> before = new ArrayList<>(handed);
-            if (!follow(handed, grid)) {
-                Logger.printDebug(() -> "Grid sort: the opened video's list doesn't hold the grid's videos, left as is");
-                return;
-            }
-            synchronized (ORIGINALS) {
-                if (ORIGINALS.get(adapter) == handed) ORIGINALS.put(adapter, before);
-                REWRITTEN.put(adapter, Boolean.TRUE);
-            }
-            Logger.printDebug(() -> "Grid sort: the video page follows the grid's order, " + grid.size() + " videos");
+            playInGridOrder(adapter, played);
         } catch (Throwable ex) {
             Logger.printException(() -> "Could not give the video page the grid's order", ex);
         }
+    }
+
+    /** Writes the order the adapter's grid shows into {@code played}, the list its video page swipes through. */
+    static void playInGridOrder(Object adapter, List<?> played) {
+        List<?> handed;
+        synchronized (ORIGINALS) {
+            handed = HANDED.get(adapter);
+        }
+        Object shown = Reflect.readField(adapter, "mmItems");
+        if (handed == null || played == null || !(shown instanceof List) || shown == played) return;
+        List<?> grid = (List<?>) shown;
+        if (sameOrder(played, grid)) return;
+        List<Object> before = new ArrayList<>(played);
+        if (!follow(played, grid)) {
+            Logger.printDebug(() -> "Grid sort: the opened video's list doesn't hold the grid's videos, left as is");
+            return;
+        }
+        synchronized (ORIGINALS) {
+            if (ORIGINALS.get(adapter) == played) ORIGINALS.put(adapter, before);
+            REWRITTEN.put(adapter, Boolean.TRUE);
+        }
+        Logger.printDebug(() -> "Grid sort: the video page follows the grid's order, " + grid.size() + " videos");
+    }
+
+    /** The list a sound page's video page plays: its page model's items, or null. */
+    private static List<?> soundPageList(Object fragment) {
+        Object model;
+        try {
+            model = detailModel(fragment);
+        } catch (Throwable ex) {
+            Logger.printDebug(() -> "Grid sort: no page model on " + fragment.getClass().getName() + " (" + ex + ")");
+            return null;
+        }
+        Object items = model == null ? null : Reflect.invoke(model, "getItems");
+        return items instanceof List ? (List<?>) items : null;
+    }
+
+    /**
+     * The page model a detail page's cell click hands TikTok's video page. The patch replaces this
+     * body with a call to the detail fragment's own getter for it. Where the patch found no getter
+     * this stays null, and a sorted sound page's video page swipes in TikTok's order.
+     */
+    @SuppressWarnings("unused")
+    static Object detailModel(Object fragment) {
+        return null;
     }
 
     /**
@@ -771,7 +857,8 @@ public final class GridSort {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
                 if (key != null && !Settings.PROFILE_GRID_SORT.key.equals(key)
-                        && !Settings.LIKED_GRID_SORT.key.equals(key)) return;
+                        && !Settings.LIKED_GRID_SORT.key.equals(key)
+                        && !Settings.SOUND_GRID_SORT.key.equals(key)) return;
                 synchronized (Setting.class) {
                     if (originalWatch != this || !originalChosen) return;
                     originalChosen = false;

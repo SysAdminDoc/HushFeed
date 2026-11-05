@@ -51,7 +51,8 @@
       "PUBLISH_DATE_ON_GRID",
       "VIDEO_LENGTH_ON_GRID",
       "PROFILE_GRID_SORT",
-      "LIKED_GRID_SORT"
+      "LIKED_GRID_SORT",
+      "SOUND_GRID_SORT"
     ],
     "Always upload in HD": [
       "ALWAYS_UPLOAD_HD"

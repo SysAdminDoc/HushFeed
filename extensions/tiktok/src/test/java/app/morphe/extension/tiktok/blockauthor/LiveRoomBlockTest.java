@@ -35,7 +35,7 @@ public class LiveRoomBlockTest {
     @Rule public final SettingsContextRule settingsContext = new SettingsContextRule();
     private final BlockFeedAdvanceTest.FakeService service = new BlockFeedAdvanceTest.FakeService();
     private ActivityController<Activity> under;
-    private ActivityController<Activity> room;
+    private ActivityController<RoomActivity> room;
     private Page front;
     private Page next;
 
@@ -51,7 +51,7 @@ public class LiveRoomBlockTest {
         under = Robolectric.buildActivity(Activity.class).setup().visible().windowFocusChanged(true);
         Utils.setContext(under.get());
         Utils.setActivity(under.get());
-        room = Robolectric.buildActivity(Activity.class).setup().visible().windowFocusChanged(true);
+        room = Robolectric.buildActivity(RoomActivity.class).setup().visible().windowFocusChanged(true);
         Pages pages = new Pages(room.get());
         room.get().setContentView(pages);
         idle();
@@ -145,6 +145,17 @@ public class LiveRoomBlockTest {
         assertEquals(View.VISIBLE, blockButton().getVisibility());
     }
 
+    @Test public void thePictureInPictureWindowShowsNoButtonAndItComesBackAfter() {
+        openRoom();
+        assertNotNull(blockButton());
+        room.get().pictureInPicture = true;
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(1100));
+        assertNull(blockButton());
+        room.get().pictureInPicture = false;
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(1100));
+        assertNotNull(blockButton());
+    }
+
     @Test public void turningTheSwitchOffTakesTheButtonAwayWithinASecond() {
         openRoom();
         Settings.BLOCK_AUTHOR_BUTTON.save(false);
@@ -179,6 +190,12 @@ public class LiveRoomBlockTest {
         next.view.offsetTopAndBottom(-height);
         tapBlock();
         assertEquals(List.of("host2:1"), service.calls);
+    }
+
+    /** The room's activity, which can say it sits in Android's picture-in-picture window. */
+    public static final class RoomActivity extends Activity {
+        boolean pictureInPicture;
+        @Override public boolean isInPictureInPictureMode() { return pictureInPicture; }
     }
 
     /** A pager that leaves its pages where they were put, as TikTok's does between scrolls. */

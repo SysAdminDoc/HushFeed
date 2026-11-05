@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -158,9 +159,10 @@ public final class LiveRoomBlock {
     /** Shows, hides or moves the button for the room open in {@code activity}. */
     static void refresh(Activity activity) {
         if (activity == null) return;
-        // A LIVE playing inside the feed already has the feed's own button.
+        // A LIVE playing inside the feed already has the feed's own button, and Android's
+        // picture-in-picture window shows only the stream, like TikTok's own controls.
         boolean wanted = enabled() && !activity.isFinishing() && !activity.isDestroyed()
-                && !FeedVisibility.isFeedWindow(activity);
+                && !FeedVisibility.isFeedWindow(activity) && !inPictureInPicture(activity);
         if (!wanted) {
             removeButton();
             return;
@@ -176,6 +178,10 @@ public final class LiveRoomBlock {
         boolean hidden = LiveRecordChip.clearScreenOn() || LiveRecordChip.filmingScreen();
         button.setVisibility(hidden ? View.INVISIBLE : View.VISIBLE);
         stayClear(activity, button);
+    }
+
+    private static boolean inPictureInPicture(Activity activity) {
+        return Build.VERSION.SDK_INT >= 24 && activity.isInPictureInPictureMode();
     }
 
     private static View showButton(Activity activity) {

@@ -1295,6 +1295,7 @@ Oldest first,Oldest first
 "On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video. A photo story saves as a video too.","On a one-photo post, Download video makes an MP4 with the post's sound and no TikTok logo or end card. On a post with several photos, Download asks if you want the originals or one video. A photo story saves as a video too."
 On mobile data,On mobile data
 On or off,On or off
+"On the Discover tab, which TikTok shows in some regions, hide the trending hashtags, the banners and the tabs under the search box. The search box stays and works as before.","On the Discover tab, which TikTok shows in some regions, hide the trending hashtags, the banners and the tabs under the search box. The search box stays and works as before."
 "On the Friends tab, hide posts, reposts and LIVEs from accounts that aren't a mutual follow, suggested accounts included. Your own posts stay.","On the Friends tab, hide posts, reposts and LIVEs from accounts that aren't a mutual follow, suggested accounts included. Your own posts stay."
 "On the main feed, a light tick each time the glass lens passes a tab, as it slides after a tap or under your finger. Needs Glass lens on the current tab.","On the main feed, a light tick each time the glass lens passes a tab, as it slides after a tap or under your finger. Needs Glass lens on the current tab."
 "On the main feed, a raised bubble of glass sits behind the tab you're on and slides to the next tab you pick. Needs Liquid glass look.","On the main feed, a raised bubble of glass sits behind the tab you're on and slides to the next tab you pick. Needs Liquid glass look."
@@ -1788,6 +1789,7 @@ Show last report,Show last report
 Show only LIVEs from creators with this many followers.,Show only LIVEs from creators with this many followers.
 Show only LIVEs with this many people watching.,Show only LIVEs with this many people watching.
 Show only mutual friends on the Friends tab,Show only mutual friends on the Friends tab
+Show only the search bar on Discover,Show only the search bar on Discover
 Show only videos with this many comments.,Show only videos with this many comments.
 Show only videos with this many favorites.,Show only videos with this many favorites.
 Show only videos with this many likes.,Show only videos with this many likes.

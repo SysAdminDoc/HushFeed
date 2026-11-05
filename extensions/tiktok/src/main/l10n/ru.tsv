@@ -1453,6 +1453,8 @@ Hide the Report button on videos	Скрывать кнопку «Пожалов�
 Hide the flag button TikTok puts above the creator's picture in some regions. You can still report a video from the share menu.	Скрывать кнопку-флажок, которую TikTok показывает над фото автора в некоторых регионах. Пожаловаться на видео по-прежнему можно через меню «Поделиться».
 Hide search rewards	Скрывать поисковые награды
 Hide the points banner under the search box and the coin counter floating over search results, which TikTok shows in some regions. Searching works as before.	Скрывать баннер с баллами под строкой поиска и счётчик монет, плавающий над результатами поиска, которые TikTok показывает в некоторых регионах. Поиск работает как раньше.
+Show only the search bar on Discover	Только строка поиска в «Интересном»
+On the Discover tab, which TikTok shows in some regions, hide the trending hashtags, the banners and the tabs under the search box. The search box stays and works as before.	На вкладке «Интересное», которую TikTok показывает в некоторых регионах, скрывает популярные хештеги, баннеры и вкладки под полем поиска. Поле поиска остаётся и работает как раньше.
 %1$s hid everything TikTok sent, %2$d times in a row. Turn it off if that's not what you wanted.	%1$s скрыл всё, что прислал TikTok, %2$d раз подряд. Отключите это, если вы не этого хотели.
 Show the switch	Показывать переключатель
 this creator	этот автор

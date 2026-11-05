@@ -183,6 +183,14 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                     "Hide the points banner under the search box and the coin counter floating over search results, which TikTok shows in some regions. Searching works as before.",
                     Settings.HIDE_SEARCH_REWARDS
             ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Show only the search bar on Discover",
+                    "On the Discover tab, which TikTok shows in some regions, hide the trending hashtags, "
+                            + "the banners and the tabs under the search box. The search box stays and "
+                            + "works as before.",
+                    Settings.DISCOVER_SEARCH_BAR_ONLY
+            ));
         }
         if (SettingsStatus.searchAutoplayEnabled) {
             addPreference(new TogglePreference(

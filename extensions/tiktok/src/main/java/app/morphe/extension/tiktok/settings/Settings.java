@@ -1367,6 +1367,8 @@ public class Settings extends BaseSettings {
     // Read each time TikTok builds a video's caption strips, so no restart.
     public static final BooleanSetting HIDE_CREATION_TAGS = new BooleanSetting("hide_creation_tags", FALSE);
     public static final BooleanSetting HIDE_SEARCH_SUGGESTIONS = new BooleanSetting("hide_search_suggestions", FALSE);
+    // The Discover page checks it before each draw, so no restart (#338).
+    public static final BooleanSetting DISCOVER_SEARCH_BAR_ONLY = new BooleanSetting("discover_search_bar_only", FALSE);
     public static final BooleanSetting STOP_SEARCH_AUTOPLAY = new BooleanSetting("stop_search_autoplay", FALSE);
     /**
      * Has TikTok read its own HD upload choice as on; the Always upload in HD patch. Read as each

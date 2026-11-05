@@ -7983,7 +7983,8 @@
   "kind": "runtime",
   "source": [
    "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/searchsuggestions/HideSearchSuggestionsPatch.kt",
-   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/search/SearchSuggestions.java"
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/search/SearchSuggestions.java",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/search/DiscoverSearchBarOnly.java"
   ],
   "settings": [
    {
@@ -7998,6 +7999,12 @@
     "type": "bool",
     "row": "Hide search rewards",
     "restart": true
+   },
+   {
+    "key": "discover_search_bar_only",
+    "default": false,
+    "type": "bool",
+    "row": "Show only the search bar on Discover"
    },
    {
     "key": "hide_search_shop",

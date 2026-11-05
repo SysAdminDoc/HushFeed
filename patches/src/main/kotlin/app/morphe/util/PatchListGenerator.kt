@@ -164,7 +164,7 @@ private fun Compatibility.toJsonCompatibility() = JsonCompatibility(
     // writes these and the per-target version codes; this one used to drop both, so the catalog
     // said nothing about what Manager actually checks.
     signatures = signatures?.sorted(),
-    targets = targets?.map { t -> t.toJsonAppTarget() },
+    targets = targets.map { t -> t.toJsonAppTarget() },
 )
 
 private fun AppTarget.toJsonAppTarget() = JsonAppTarget(

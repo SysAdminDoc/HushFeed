@@ -6,7 +6,6 @@ package app.morphe.extension.tiktok.blockauthor;
 
 import android.app.Activity;
 import android.app.Application;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,7 +29,6 @@ import app.morphe.extension.tiktok.settings.preference.SettingsUi;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -177,7 +175,7 @@ public final class LiveRoomBlock {
         // A screen recording of the room hides it the same way, so it isn't filmed (#265).
         boolean hidden = LiveRecordChip.clearScreenOn() || LiveRecordChip.filmingScreen();
         button.setVisibility(hidden ? View.INVISIBLE : View.VISIBLE);
-        stayClear(activity, button);
+        stayClear(button);
     }
 
     private static boolean inPictureInPicture(Activity activity) {
@@ -199,14 +197,15 @@ public final class LiveRoomBlock {
             view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
             onBlockTapped(activity);
         });
-        LiveRecordChip.markStacked(button, LiveRecordChip.STACK_BLOCK);
+        LiveRecordChip.markStacked(button, LiveRecordChip.STACK_BLOCK,
+                SettingsUi.dp(activity, TOP_DP), SettingsUi.dp(activity, GAP_DP));
         int size = SettingsUi.dp(activity, SIZE_DP);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(size, size, Gravity.TOP | Gravity.END);
         params.topMargin = SettingsUi.dp(activity, TOP_DP);
         params.rightMargin = SettingsUi.dp(activity, SIDE_DP);
         content.addView(button, params);
         buttonReference = new WeakReference<>(button);
-        button.post(() -> stayClear(activity, button));
+        button.post(() -> stayClear(button));
         return button;
     }
 
@@ -214,22 +213,8 @@ public final class LiveRoomBlock {
      * Moves the button below anything to tap that TikTok draws where it sits, such as the Record
      * chip or the Discover panel's avatar row, and back up once it's gone.
      */
-    private static void stayClear(Activity activity, View button) {
-        if (!(button.getParent() instanceof ViewGroup)) return;
-        ViewGroup content = (ViewGroup) button.getParent();
-        Rect area = new Rect();
-        if (!content.isShown() || !content.getGlobalVisibleRect(area)) return;
-        List<Rect> taken = new ArrayList<>();
-        LiveRecordChip.tapTargets(content, button, area, (long) area.width() * area.height() / 4, taken);
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) button.getLayoutParams();
-        int size = SettingsUi.dp(activity, SIZE_DP);
-        int right = area.width() - params.rightMargin;
-        int top = LiveRecordChip.freeTop(SettingsUi.dp(activity, TOP_DP), size, right - size, right, taken,
-                SettingsUi.dp(activity, GAP_DP), area.height() * 2 / 3);
-        if (top != params.topMargin) {
-            params.topMargin = top;
-            button.setLayoutParams(params);
-        }
+    private static void stayClear(View button) {
+        if (button.getParent() instanceof ViewGroup) LiveRecordChip.restack((ViewGroup) button.getParent());
     }
 
     private static void removeButton() {

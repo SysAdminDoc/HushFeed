@@ -479,7 +479,7 @@ public final class LiveAutoTap {
         background.setColor(0xB3000000);
         view.setBackground(background);
         view.setOnClickListener(clicked -> onChipTap());
-        LiveRecordChip.markStacked(view, LiveRecordChip.STACK_AUTO_TAP);
+        LiveRecordChip.markStacked(view, LiveRecordChip.STACK_AUTO_TAP, dp(activity, TOP_DP), dp(activity, GAP_DP));
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
                 Gravity.TOP | Gravity.END);
@@ -490,25 +490,10 @@ public final class LiveAutoTap {
         view.post(() -> stayClear(activity));
     }
 
-    /** Moves the chip below anything to tap where it sits, the Record chip included. */
+    /** Moves the chip below anything to tap where it sits, the Record chip included, with the rest of the stack. */
     private static void stayClear(Activity activity) {
         TextView view = chip;
-        if (view == null || !(view.getParent() instanceof ViewGroup)) return;
-        ViewGroup content = (ViewGroup) view.getParent();
-        Rect area = new Rect();
-        if (!content.isShown() || !content.getGlobalVisibleRect(area)) return;
-        List<Rect> taken = new ArrayList<>();
-        LiveRecordChip.tapTargets(content, view, area, (long) area.width() * area.height() / 4, taken);
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) view.getLayoutParams();
-        int width = view.getWidth() > 0 ? view.getWidth() : dp(activity, 96);
-        int height = view.getHeight() > 0 ? view.getHeight() : dp(activity, 48);
-        int right = area.width() - params.rightMargin;
-        int top = LiveRecordChip.freeTop(dp(activity, TOP_DP), height, right - width, right, taken,
-                dp(activity, GAP_DP), area.height() * 2 / 3);
-        if (top != params.topMargin) {
-            params.topMargin = top;
-            view.setLayoutParams(params);
-        }
+        if (view != null && view.getParent() instanceof ViewGroup) LiveRecordChip.restack((ViewGroup) view.getParent());
     }
 
     private static void removeChip() {

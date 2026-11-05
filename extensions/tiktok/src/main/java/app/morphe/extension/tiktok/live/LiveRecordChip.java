@@ -35,6 +35,7 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -219,7 +220,7 @@ public final class LiveRecordChip {
         background.setColor(0xB3000000);
         view.setBackground(background);
         view.setOnClickListener(clicked -> onChipTap());
-        markStacked(view, STACK_RECORD);
+        markStacked(view, STACK_RECORD, dp(activity, TOP_DP), dp(activity, GAP_DP));
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
                 Gravity.TOP | Gravity.END);
@@ -237,49 +238,41 @@ public final class LiveRecordChip {
 
     /**
      * Moves the chip below anything to tap that TikTok draws where it sits, such as the avatar row
-     * of the Discover panel when that opens over the room, and back up once it's gone. A view a
-     * quarter of the screen or bigger is the room's own surface and doesn't count.
+     * of the Discover panel when that opens over the room, and back up once it's gone, with the
+     * buttons stacked under it following in the same pass.
      */
     private static void stayClear(Activity activity) {
         TextView view = chip;
-        if (view == null || !(view.getParent() instanceof ViewGroup)) return;
-        ViewGroup content = (ViewGroup) view.getParent();
-        Rect area = new Rect();
-        if (!content.isShown() || !content.getGlobalVisibleRect(area)) return;
-        List<Rect> taken = new ArrayList<>();
-        tapTargets(content, view, area, (long) area.width() * area.height() / 4, taken);
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) view.getLayoutParams();
-        int width = view.getWidth() > 0 ? view.getWidth() : dp(activity, 96);
-        int height = view.getHeight() > 0 ? view.getHeight() : dp(activity, 48);
-        int right = area.width() - params.rightMargin;
-        int top = freeTop(dp(activity, TOP_DP), height, right - width, right, taken,
-                dp(activity, GAP_DP), area.height() * 2 / 3);
-        if (top != params.topMargin) {
-            params.topMargin = top;
-            view.setLayoutParams(params);
-        }
+        if (view != null && view.getParent() instanceof ViewGroup) restack((ViewGroup) view.getParent());
     }
 
     /**
      * Hushfeed's own buttons over a LIVE room stack top to bottom in this order: the Record chip,
-     * Auto tap, then the block button. Each one makes room only for those above it; two that each
-     * made room for the other both moved at once and ended up on the same spot.
+     * Auto tap, then the block button.
      */
     public static final int STACK_RECORD = 1;
     public static final int STACK_AUTO_TAP = 2;
     public static final int STACK_BLOCK = 3;
 
+    /** A stacked button's place in the stack, the top it asks for and the gap it keeps, in pixels. */
     private static final class StackSlot {
         final int rank;
+        final int wantedTop;
+        final int gap;
 
-        StackSlot(int rank) {
+        StackSlot(int rank, int wantedTop, int gap) {
             this.rank = rank;
+            this.wantedTop = wantedTop;
+            this.gap = gap;
         }
     }
 
-    /** Marks {@code view} as the Hushfeed button at {@code rank} in the room's stack. */
-    public static void markStacked(View view, int rank) {
-        view.setTag(new StackSlot(rank));
+    /**
+     * Marks {@code view} as the Hushfeed button at {@code rank} in the room's stack, sitting at
+     * {@code wantedTop} unless something to tap is there, and {@code gap} below whatever it moves under.
+     */
+    public static void markStacked(View view, int rank, int wantedTop, int gap) {
+        view.setTag(new StackSlot(rank, wantedTop, gap));
     }
 
     private static int stackRank(View view) {
@@ -288,14 +281,56 @@ public final class LiveRecordChip {
     }
 
     /**
-     * Every visible view under {@code root} that takes a tap, other than {@code skip}, in {@code area}'s
-     * coordinates. When {@code skip} is one of Hushfeed's stacked buttons, the ones stacked under it
-     * don't count either.
+     * Puts every stacked Hushfeed button in {@code content} in its place in one pass, top of the
+     * stack first: each below the room's own tap targets and below where the shown buttons above it
+     * are going, not where they were last drawn. When each button moved on its own tick against the
+     * others' last drawn spots, a room opening or the Discover panel sliding in moved them all at
+     * once, and they sat on top of each other until later ticks sorted them out. A view a quarter
+     * of the screen or bigger is the room's own surface and doesn't count. Main thread only.
      */
+    public static void restack(ViewGroup content) {
+        Rect area = new Rect();
+        if (!content.isShown() || !content.getGlobalVisibleRect(area)) return;
+        List<View> stacked = new ArrayList<>();
+        for (int i = 0; i < content.getChildCount(); i++) {
+            View child = content.getChildAt(i);
+            if (stackRank(child) > 0 && child.getLayoutParams() instanceof FrameLayout.LayoutParams) {
+                stacked.add(child);
+            }
+        }
+        if (stacked.isEmpty()) return;
+        Collections.sort(stacked, (a, b) -> Integer.compare(stackRank(a), stackRank(b)));
+        List<Rect> taken = new ArrayList<>();
+        collectTapTargets(content, null, true, area, (long) area.width() * area.height() / 4, taken);
+        int lowest = area.height() * 2 / 3;
+        for (View view : stacked) {
+            StackSlot slot = (StackSlot) view.getTag();
+            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) view.getLayoutParams();
+            float density = view.getResources().getDisplayMetrics().density;
+            int width = view.getWidth() > 0 ? view.getWidth()
+                    : params.width > 0 ? params.width : Math.round(96 * density);
+            int height = view.getHeight() > 0 ? view.getHeight()
+                    : params.height > 0 ? params.height : Math.round(48 * density);
+            int right = area.width() - params.rightMargin;
+            int top = freeTop(slot.wantedTop, height, right - width, right, taken, slot.gap, lowest);
+            if (top != params.topMargin) {
+                params.topMargin = top;
+                view.setLayoutParams(params);
+            }
+            // A hidden button keeps no room, so the ones under it move up into its spot.
+            if (view.getVisibility() == View.VISIBLE) taken.add(new Rect(right - width, top, right, top + height));
+        }
+    }
+
+    /** Every visible view under {@code root} that takes a tap, other than {@code skip}, in {@code area}'s coordinates. */
     public static void tapTargets(View root, View skip, Rect area, long largest, List<Rect> out) {
+        collectTapTargets(root, skip, false, area, largest, out);
+    }
+
+    private static void collectTapTargets(View root, View skip, boolean skipStacked, Rect area, long largest,
+            List<Rect> out) {
         if (root == skip || root.getVisibility() != View.VISIBLE || root.getAlpha() == 0f) return;
-        int own = stackRank(skip);
-        if (own > 0 && stackRank(root) >= own) return;
+        if (skipStacked && stackRank(root) > 0) return;
         Rect rect = new Rect();
         if ((root.isClickable() || root.isLongClickable()) && root.getGlobalVisibleRect(rect)
                 && (long) rect.width() * rect.height() < largest) {
@@ -305,7 +340,7 @@ public final class LiveRecordChip {
         if (root instanceof ViewGroup) {
             ViewGroup group = (ViewGroup) root;
             for (int i = 0; i < group.getChildCount(); i++) {
-                tapTargets(group.getChildAt(i), skip, area, largest, out);
+                collectTapTargets(group.getChildAt(i), skip, skipStacked, area, largest, out);
             }
         }
     }

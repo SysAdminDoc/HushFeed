@@ -12,6 +12,7 @@ import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
@@ -320,6 +321,53 @@ class HoldSpeedAnchorsTest {
             }.map { it.index }
             assertEquals("${apk.name}: writes to p0 in the lock banner's show method", emptyList<Int>(), writes)
             assertTrue("${apk.name}: the show method returns", code.instructions.any { it.opcode == Opcode.RETURN_VOID })
+        }
+    }
+
+    @Test
+    fun `each declared build's pull-down lock state can follow a sideways slide (#248)`() {
+        Fixtures.forEachDeclared { apk ->
+            val app = load(apk)
+            val owner = app.getValue(component)
+            val signal = owner.methods.single { method ->
+                method.returnType == "V" && method.parameterTypes == listOf("Z") && "pull_down" in strings(method)
+            }
+            // The state the patch hooks and the extension calls is public, posts the signal, and
+            // names its flag once, in the branch that picks arm or let go.
+            val state = owner.holdPullState(signal)
+            val instructions = state.implementation!!.instructions.toList()
+            val flag = state.implementation!!.registerCount - 1
+            val uses = instructions.filter { it.namesRegister(flag) }
+            assertEquals("${apk.name}: uses of the flag", listOf(Opcode.IF_EQZ), uses.map { it.opcode })
+            // A hook goes in at its top, so nothing may branch there.
+            var address = 0
+            val targets = mutableSetOf<Int>()
+            instructions.forEach { instruction ->
+                if (instruction is OffsetInstruction) targets += address + instruction.codeOffset
+                address += instruction.codeUnits
+            }
+            assertTrue("${apk.name}: a branch lands on the state's first instruction", 0 !in targets)
+            // TikTok's own trigger, the finger's depth, reaches it through the ability from the
+            // touch listener, once to arm and once to let go, so the hook overrules both.
+            val touch = app.values.asSequence().flatMap { it.methods.asSequence() }.single { method ->
+                method.name == "onTouch" && method.returnType == "Z" &&
+                    method.parameterTypes == listOf("Landroid/view/View;", "Landroid/view/MotionEvent;") &&
+                    method.callsEdgeSpeedupAbility()
+            }
+            val calls = touch.implementation!!.instructions.mapNotNull { it.getReference<MethodReference>() }.filter {
+                it.definingClass.endsWith(EDGE_SPEEDUP_ABILITY) && it.name == state.name && it.parameterTypes == listOf("Z")
+            }
+            assertEquals("${apk.name}: the touch listener's calls to ${state.name}", 2, calls.size)
+            // What it writes is what the release reads to lock or unlock.
+            val (_, release) = gestureMethods(app, apk)
+            val lock = release.holdLockState()
+            val written = instructions.filter { it.opcode == Opcode.IPUT_BOOLEAN }
+                .mapNotNull { it.getReference<FieldReference>() }.filter { it.definingClass == lock.first.definingClass }
+                .map { it.name }.toSet()
+            assertTrue(
+                "${apk.name}: the state writes ${written}, the release reads ${lock.first.name} and ${lock.second.name}",
+                lock.first.name in written || lock.second.name in written,
+            )
         }
     }
 

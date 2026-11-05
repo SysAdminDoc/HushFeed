@@ -1412,6 +1412,10 @@ Hold speed bubble style	Basılı tutma hızı balonunun stili
 Pill	Hap
 Circle	Daire
 Pill is the wide bubble with a row of dots under the speed. Circle is a small round dial with a notch for each speed around its edge.	Hap, hızın altında bir sıra nokta olan geniş balondur. Daire, kenarında her hız için bir çentik olan küçük yuvarlak bir kadrandır.
+Hold speed slide direction	Basılı tutma hızı kaydırma yönü
+Sideways	Yana
+Up and down	Yukarı ve aşağı
+With Sideways, slide left or right to change the speed and pull down to lock it. With Up and down, slide up for faster and down for slower, and slide to the side to lock it, so a hold near the edge still reaches every speed.	Yana seçiliyken hızı değiştirmek için sola veya sağa kaydırın, kilitlemek için aşağı çekin. Yukarı ve aşağı seçiliyken hızlandırmak için yukarı, yavaşlatmak için aşağı kaydırın, kilitlemek için yana kaydırın. Böylece kenara yakın bir basılı tutma da her hıza ulaşır.
 Hide mini dramas	Mini dizileri gizle
 Hide TikTok's short drama episodes and the cards that promote them.	TikTok'un kısa dizi bölümlerini ve onları tanıtan kartları gizle.
 Mini dramas	Mini diziler

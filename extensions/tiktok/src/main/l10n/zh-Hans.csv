@@ -1711,6 +1711,10 @@ Hold speed bubble style,按住速度气泡样式
 Pill,胶囊
 Circle,圆形
 Pill is the wide bubble with a row of dots under the speed. Circle is a small round dial with a notch for each speed around its edge.,胶囊是速度下方带一排圆点的宽气泡。圆形是一个小圆盘，边缘为每个速度标有刻度.
+Hold speed slide direction,按住速度滑动方向
+Sideways,左右
+Up and down,上下
+"With Sideways, slide left or right to change the speed and pull down to lock it. With Up and down, slide up for faster and down for slower, and slide to the side to lock it, so a hold near the edge still reaches every speed.",选择左右时，向左或向右滑动来改变速度，向下拉来锁定。选择上下时，向上滑动加快，向下滑动减慢，向一侧滑动来锁定，这样在靠近边缘处按住也能调到每个速度.
 Spin the music disc,旋转音乐光盘
 Split comment minimum width,分割评论最小宽度
 Start each new video at your default. A manual choice lasts until the video changes.,以默认值开始每个新视频。手动选择将持续到视频发生变化为止.

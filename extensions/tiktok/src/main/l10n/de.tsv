@@ -1415,6 +1415,10 @@ Hold speed bubble style	Stil der Haltegeschwindigkeits-Blase
 Pill	Pille
 Circle	Kreis
 Pill is the wide bubble with a row of dots under the speed. Circle is a small round dial with a notch for each speed around its edge.	Pille ist die breite Blase mit einer Punktreihe unter der Geschwindigkeit. Kreis ist eine kleine runde Skala mit einer Kerbe für jede Geschwindigkeit am Rand.
+Hold speed slide direction	Wischrichtung der Haltegeschwindigkeit
+Sideways	Seitwärts
+Up and down	Hoch und runter
+With Sideways, slide left or right to change the speed and pull down to lock it. With Up and down, slide up for faster and down for slower, and slide to the side to lock it, so a hold near the edge still reaches every speed.	Bei Seitwärts wischst du nach links oder rechts, um die Geschwindigkeit zu ändern, und ziehst nach unten, um sie zu sperren. Bei Hoch und runter wischst du nach oben für schneller, nach unten für langsamer und zur Seite, um sie zu sperren. So erreicht auch ein Halten nahe am Rand jede Geschwindigkeit.
 Hide mini dramas	Mini-Dramen ausblenden
 Hide TikTok's short drama episodes and the cards that promote them.	TikToks kurze Drama-Folgen und die Karten, die dafür werben, ausblenden.
 Mini dramas	Mini-Dramen

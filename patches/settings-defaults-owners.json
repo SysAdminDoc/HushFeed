@@ -592,6 +592,7 @@
       "HOLD_SPEED",
       "HOLD_SPEED_SLIDE",
       "HOLD_SPEED_HUD_STYLE",
+      "HOLD_SPEED_SLIDE_AXIS",
       "HIDE_SPEED_TOASTS",
       "REMEMBERED_SPEED"
     ],

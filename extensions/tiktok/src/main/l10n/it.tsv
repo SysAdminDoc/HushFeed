@@ -1412,6 +1412,10 @@ Hold speed bubble style	Stile della bolla della velocità di pressione
 Pill	Pillola
 Circle	Cerchio
 Pill is the wide bubble with a row of dots under the speed. Circle is a small round dial with a notch for each speed around its edge.	Pillola è la bolla larga con una fila di punti sotto la velocità. Cerchio è un piccolo quadrante rotondo con una tacca per ogni velocità sul bordo.
+Hold speed slide direction	Direzione dello scorrimento della velocità di pressione
+Sideways	Di lato
+Up and down	Su e giù
+With Sideways, slide left or right to change the speed and pull down to lock it. With Up and down, slide up for faster and down for slower, and slide to the side to lock it, so a hold near the edge still reaches every speed.	Con Di lato, scorri a sinistra o a destra per cambiare la velocità e tira giù per bloccarla. Con Su e giù, scorri in su per andare più veloce e in giù per andare più lento, e scorri di lato per bloccarla, così anche una pressione vicino al bordo raggiunge ogni velocità.
 Hide mini dramas	Nascondi i mini drama
 Hide TikTok's short drama episodes and the cards that promote them.	Nasconde gli episodi dei mini drama di TikTok e le schede che li promuovono.
 Mini dramas	Mini drama

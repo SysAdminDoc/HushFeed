@@ -1412,6 +1412,10 @@ Hold speed bubble style	Estilo da bolha de velocidade ao segurar
 Pill	Pílula
 Circle	Círculo
 Pill is the wide bubble with a row of dots under the speed. Circle is a small round dial with a notch for each speed around its edge.	Pílula é a bolha larga com uma fileira de pontos abaixo da velocidade. Círculo é um pequeno mostrador redondo com uma marca para cada velocidade na borda.
+Hold speed slide direction	Direção do deslize da velocidade ao segurar
+Sideways	Para os lados
+Up and down	Para cima e para baixo
+With Sideways, slide left or right to change the speed and pull down to lock it. With Up and down, slide up for faster and down for slower, and slide to the side to lock it, so a hold near the edge still reaches every speed.	Com Para os lados, deslize para a esquerda ou para a direita para mudar a velocidade e puxe para baixo para travá-la. Com Para cima e para baixo, deslize para cima para acelerar e para baixo para desacelerar, e deslize para o lado para travá-la, assim segurar perto da borda ainda alcança todas as velocidades.
 Hide mini dramas	Esconder minidramas
 Hide TikTok's short drama episodes and the cards that promote them.	Esconder os episódios de dramas curtos do TikTok e os cartões que os promovem.
 Mini dramas	Minidramas

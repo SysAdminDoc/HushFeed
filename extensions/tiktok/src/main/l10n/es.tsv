@@ -1412,6 +1412,10 @@ Hold speed bubble style	Estilo de la burbuja de velocidad al mantener
 Pill	Píldora
 Circle	Círculo
 Pill is the wide bubble with a row of dots under the speed. Circle is a small round dial with a notch for each speed around its edge.	Píldora es la burbuja ancha con una fila de puntos bajo la velocidad. Círculo es un pequeño dial redondo con una marca por cada velocidad en el borde.
+Hold speed slide direction	Dirección del deslizamiento de velocidad al mantener
+Sideways	De lado
+Up and down	Arriba y abajo
+With Sideways, slide left or right to change the speed and pull down to lock it. With Up and down, slide up for faster and down for slower, and slide to the side to lock it, so a hold near the edge still reaches every speed.	Con De lado, desliza a la izquierda o a la derecha para cambiar la velocidad y tira hacia abajo para fijarla. Con Arriba y abajo, desliza hacia arriba para ir más rápido y hacia abajo para ir más lento, y desliza hacia un lado para fijarla, así que mantener cerca del borde también llega a todas las velocidades.
 Hide mini dramas	Ocultar minidramas
 Hide TikTok's short drama episodes and the cards that promote them.	Ocultar los episodios de dramas cortos de TikTok y las tarjetas que los promocionan.
 Mini dramas	Minidramas

@@ -1532,6 +1532,10 @@ Hold speed bubble style	Вид пузыря скорости удержания
 Pill	Капсула
 Circle	Круг
 Pill is the wide bubble with a row of dots under the speed. Circle is a small round dial with a notch for each speed around its edge.	Капсула: широкий пузырь с рядом точек под скоростью. Круг: маленький круглый циферблат с отметкой для каждой скорости по краю.
+Hold speed slide direction	Направление сдвига скорости удержания
+Sideways	В стороны
+Up and down	Вверх и вниз
+With Sideways, slide left or right to change the speed and pull down to lock it. With Up and down, slide up for faster and down for slower, and slide to the side to lock it, so a hold near the edge still reaches every speed.	В режиме «В стороны» сдвигайте влево или вправо, чтобы менять скорость, и потяните вниз, чтобы закрепить её. В режиме «Вверх и вниз» сдвигайте вверх, чтобы ускорить, и вниз, чтобы замедлить, а в сторону, чтобы закрепить. Так даже удержание у края экрана достаёт до любой скорости.
 Hide mini dramas	Скрывать мини-драмы
 Hide TikTok's short drama episodes and the cards that promote them.	Скрывать короткие драма-эпизоды TikTok и карточки, которые их продвигают.
 Mini dramas	Мини-драмы

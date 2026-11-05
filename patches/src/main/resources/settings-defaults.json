@@ -595,6 +595,7 @@
       "hold_speed",
       "hold_speed_slide",
       "hold_speed_hud_style",
+      "hold_speed_slide_axis",
       "hide_speed_toasts",
       "remembered_speed_v2"
     ],
@@ -2670,6 +2671,12 @@
       "key": "hold_speed_slide",
       "type": "boolean",
       "default": false
+    },
+    "hold_speed_slide_axis": {
+      "field": "HOLD_SPEED_SLIDE_AXIS",
+      "key": "hold_speed_slide_axis",
+      "type": "string",
+      "default": "sideways"
     },
     "home_tab_opens_settings": {
       "field": "HOME_TAB_OPENS_SETTINGS",

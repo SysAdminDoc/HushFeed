@@ -1801,6 +1801,10 @@ Hold speed bubble style,Kiểu bong bóng tốc độ nhấn giữ
 Pill,Viên thuốc
 Circle,Hình tròn
 Pill is the wide bubble with a row of dots under the speed. Circle is a small round dial with a notch for each speed around its edge.,Viên thuốc là bong bóng rộng với một hàng chấm dưới tốc độ. Hình tròn là mặt số tròn nhỏ có một vạch cho mỗi tốc độ quanh viền.
+Hold speed slide direction,Hướng trượt tốc độ nhấn giữ
+Sideways,Sang ngang
+Up and down,Lên và xuống
+"With Sideways, slide left or right to change the speed and pull down to lock it. With Up and down, slide up for faster and down for slower, and slide to the side to lock it, so a hold near the edge still reaches every speed.","Với Sang ngang, trượt sang trái hoặc phải để đổi tốc độ và kéo xuống để khóa. Với Lên và xuống, trượt lên để nhanh hơn, trượt xuống để chậm hơn và trượt sang một bên để khóa, nên khi giữ gần mép màn hình bạn vẫn đến được mọi tốc độ."
 Soft blur,Mờ nhẹ
 Soft tick,Rung nhẹ
 Some of these notes are in English.,Một số ghi chú này bằng tiếng Anh.

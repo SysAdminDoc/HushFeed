@@ -8089,6 +8089,15 @@
           "values": null
         },
         {
+          "key": "hold_speed_slide_axis",
+          "title": "Default: hold speed slide axis",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "sideways",
+          "values": null
+        },
+        {
           "key": "hide_speed_toasts",
           "title": "Default: hide speed toasts",
           "description": null,

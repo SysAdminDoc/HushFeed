@@ -132,6 +132,9 @@ private class HoldHudSites(
 /** Letting go on a new speed while locked: the extension stub and what it writes. */
 private class HoldLockSites(val stub: MutableMethod, val kept: FieldReference, val state: HoldLockState)
 
+/** Up and down for the speed: TikTok's pull-down lock state and the extension stub that drives it. */
+private class HoldAxisSites(val state: MutableMethod, val stub: MutableMethod)
+
 /** The body of the bridge that makes the release lock [kept]'s new value, as if a pull had armed it. */
 internal fun holdLockArmBody(gesture: String, kept: FieldReference, state: HoldLockState): String = """
     check-cast p0, $gesture
@@ -257,6 +260,25 @@ val playbackSpeedPatch = bytecodePatch(
         } catch (problem: Exception) {
             if (packageMetadata.versionName in declaredVersions()) throw problem
             println("[Playback speed] Left out locking a slid speed on ${packageMetadata.versionName}: ${problem.message}")
+            null
+        }
+
+        // Up and down for the hold speed, with a sideways slide for the lock (#248). It builds on
+        // the slide too: a stub makes TikTok's pull-down lock state take the sideways slide, and a
+        // hook at the state's top answers in place of the finger's depth while that's chosen.
+        val holdAxis = try {
+            val hud = checkNotNull(holdHud) { "Playback speed: the slide it builds on was left out." }
+            val state = mutableClassDefBy(hud.pullDown.definingClass).holdPullState(hud.pullDown)
+            val stub = mutableClassDefBy(HOLD_HUD).methods.filter { it.name == "pullNative" }
+                .singleOrPatchException("Playback speed: extension pullNative bridge")
+            check(
+                AccessFlags.STATIC.isSet(stub.accessFlags) && stub.returnType == "V" &&
+                    stub.parameterTypes.map(CharSequence::toString) == listOf("Ljava/lang/Object;", "Z"),
+            ) { "Playback speed: the extension's pullNative stub is not static (Object, boolean)V." }
+            HoldAxisSites(state as MutableMethod, stub)
+        } catch (problem: Exception) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[Playback speed] Left out sliding the hold speed up and down on ${packageMetadata.versionName}: ${problem.message}")
             null
         }
 
@@ -556,6 +578,20 @@ val playbackSpeedPatch = bytecodePatch(
                 0,
                 "invoke-static/range {p1 .. p1}, $HOLD_HUD->onPullDown(I)V",
             )
+            // The state's flag goes over as an int and comes back a boolean, which its one branch
+            // reads; the stub hands it the sideways slide the way the touch listener hands it depth.
+            if (holdAxis != null) {
+                val state = holdAxis.state
+                holdAxis.stub.addInstructions(0, """
+                    check-cast p0, ${state.definingClass}
+                    invoke-virtual {p0, p1}, ${state.definingClass}->${state.name}(Z)V
+                    return-void
+                """)
+                state.addInstructions(0, """
+                    invoke-static/range {p1 .. p1}, $HOLD_HUD->pullState(I)Z
+                    move-result p1
+                """)
+            }
             // Checked before anything goes in, so a build that leaves it out keeps the banner
             // whole and only shows it beside the bubble.
             try {

@@ -57,17 +57,32 @@ import java.util.TreeSet;
  * <p>{@link Settings#HOLD_SPEED_HUD_STYLE} picks how the bubble looks: {@link #PILL}, the wide
  * bubble, or {@link #CIRCLE}, a small dial adapted from OmerKurdi79's fork. Both follow the hold
  * the same way; only the drawing differs.
+ *
+ * <p>{@link Settings#HOLD_SPEED_SLIDE_AXIS} can turn the slide on its side, the way that fork's
+ * dial works: with {@link #UP_DOWN}, up steps faster and down slower, so a hold near the screen's
+ * edge has room for every speed, and a slide {@link #SIDE_LOCK_DP} to either side arms the lock.
+ * The lock is still TikTok's: the sideways slide drives its pull-down state, and TikTok's own
+ * trigger, a finger far enough down, is overruled for the hold, since down means slower now.
  */
 public final class HoldSpeedHud {
     /** The values of {@link Settings#HOLD_SPEED_HUD_STYLE}. */
     public static final String PILL = "pill";
     public static final String CIRCLE = "circle";
+    /** The values of {@link Settings#HOLD_SPEED_SLIDE_AXIS}. */
+    public static final String SIDEWAYS = "sideways";
+    public static final String UP_DOWN = "up_down";
 
-    /** How far the finger moves sideways before the slide starts, then how far per step, in dp. */
+    /** How far the finger moves along the slide before it starts, then how far per step, in dp. */
     static final float DEAD_ZONE_DP = 16f;
     static final float STEP_DP = 32f;
-    /** How far down a hold goes, more down than sideways, before it counts as a pull and not a slide. */
+    /** How far a hold goes toward the lock, more that way than along the slide, before it counts as heading for the lock and not a slide. */
     static final float AXIS_LOCK_DP = 18f;
+    /**
+     * With up and down for the speed, how far to either side of where the hold began arms the
+     * lock, and how near it has to come back to let it go, so a finger resting there doesn't flicker.
+     */
+    static final float SIDE_LOCK_DP = 40f;
+    static final float SIDE_UNLOCK_DP = 32f;
 
     private static WeakReference<Object> gesture = new WeakReference<>(null);
     private static WeakReference<Bubble> bubble = new WeakReference<>(null);
@@ -76,10 +91,17 @@ public final class HoldSpeedHud {
     private static int index;
     private static float anchorX = Float.NaN;
     private static float anchorY = Float.NaN;
-    private static float originX = Float.NaN;
+    /** Where the last step was taken, as a distance toward faster from the anchor. */
+    private static float origin;
     private static boolean sliding;
+    /** The hold went down toward TikTok's pull before it slid, so it doesn't slide until the pull lets go. */
     private static boolean vertical;
     private static boolean pulled;
+    /** This hold steps the speed up and down, and where it began, which its sideways lock is measured from. */
+    private static boolean upDown;
+    private static float lockX = Float.NaN;
+    /** Whether this hold's sideways slide has armed TikTok's lock. */
+    private static boolean sideArmed;
     /** Whether this hold began on a video TikTok counts as locked, and the speed that video had. */
     private static boolean startedLocked;
     private static float heldFrom = Float.NaN;
@@ -101,6 +123,14 @@ public final class HoldSpeedHud {
 
     /** Set by tests only. Unpatched, as in the tests, {@link #armLockNative} does nothing. */
     public static volatile Applier lockArmerForTests;
+
+    /** What TikTok's pull-down lock state does with a pull, so a test can stand in for it. */
+    public interface Puller {
+        void pull(Object gesture, boolean down);
+    }
+
+    /** Set by tests only. Unpatched, as in the tests, {@link #pullNative} does nothing. */
+    public static volatile Puller pullerForTests;
 
     private HoldSpeedHud() {}
 
@@ -130,6 +160,28 @@ public final class HoldSpeedHud {
      */
     public static void armLockNative(Object gesture, float speed) { }
 
+    /**
+     * Replaced with a call to TikTok's pull-down lock state on the gesture, the one its touch
+     * listener makes when the finger goes far enough down and when it comes back.
+     */
+    public static void pullNative(Object gesture, boolean down) { }
+
+    /**
+     * Called at the top of TikTok's pull-down lock state with what its touch listener worked out
+     * from how far down the finger is, 1 or 0, and answers the one the state goes by. With up and
+     * down for the speed, a finger going down is slowing the video, so the hold's sideways slide
+     * answers instead; otherwise TikTok's stands.
+     */
+    public static boolean pullState(int tiktok) {
+        try {
+            if (!holding || !upDown || !enabled()) return tiktok != 0;
+            return sideArmed;
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Could not answer the hold's pull-down", ex);
+            return tiktok != 0;
+        }
+    }
+
     /** Called from the gesture's press, past its "already held" guard, with the component. */
     public static void onHoldPress(Object component) {
         try {
@@ -146,6 +198,9 @@ public final class HoldSpeedHud {
             sliding = false;
             vertical = false;
             pulled = false;
+            upDown = UP_DOWN.equals(Settings.HOLD_SPEED_SLIDE_AXIS.get());
+            lockX = Float.NaN;
+            sideArmed = false;
             startedLocked = false;
             heldFrom = Float.NaN;
             heldVideo = PlaybackSpeedPatch.onScreenVideoId();
@@ -175,7 +230,8 @@ public final class HoldSpeedHud {
     /**
      * Called with every event the gesture's touch listener gets. Only a move during a hold does
      * anything: the first one marks where the finger is, later ones step the speed by how far it
-     * moved sideways from there. Up and cancel are left to the gesture's release.
+     * moved along the slide from there, sideways or, with {@link #UP_DOWN}, up for faster. Up and
+     * cancel are left to the gesture's release.
      */
     public static void onHoldTouch(MotionEvent event) {
         if (!holding || event == null || event.getActionMasked() != MotionEvent.ACTION_MOVE) return;
@@ -187,30 +243,35 @@ public final class HoldSpeedHud {
             // Raw, so the bubble or a view moving under the finger can't shift where it seems to be.
             float x = event.getRawX();
             float y = event.getRawY();
+            if (Float.isNaN(lockX)) lockX = x;
+            float density = density();
+            // Letting the side lock go reaches onPullDown, which marks the finger again from here.
+            if (upDown) followSideLock(x, density);
+            if (pulled || vertical) return;
             if (Float.isNaN(anchorX)) {
                 anchorX = x;
                 anchorY = y;
                 return;
             }
-            if (pulled || vertical) return;
-            float density = density();
-            float dx = x - anchorX;
+            float along = upDown ? anchorY - y : x - anchorX;
             if (!sliding) {
-                float dy = y - anchorY;
-                if (dy > AXIS_LOCK_DP * density && dy > Math.abs(dx)) {
-                    vertical = true;
+                float toward = upDown ? Math.abs(x - anchorX) : y - anchorY;
+                if (toward > AXIS_LOCK_DP * density && toward > Math.abs(along)) {
+                    // TikTok's pull holds the slide off until it lets go. The sideways lock is
+                    // measured here, so coming back toward the middle lets the slide start.
+                    if (!upDown) vertical = true;
                     return;
                 }
                 float dead = DEAD_ZONE_DP * density;
-                if (Math.abs(dx) <= dead) return;
+                if (Math.abs(along) <= dead) return;
                 sliding = true;
-                originX = anchorX + Math.signum(dx) * dead;
+                origin = Math.signum(along) * dead;
             }
             float step = STEP_DP * density;
-            int moved = (int) ((x - originX) / step);
+            int moved = (int) ((along - origin) / step);
             if (moved == 0) return;
             // The origin follows the finger past either end too, so coming back steps at once.
-            originX += moved * step;
+            origin += moved * step;
             int to = Math.max(0, Math.min(steps.length - 1, index + moved));
             if (to == index) return;
             index = to;
@@ -219,6 +280,24 @@ public final class HoldSpeedHud {
             Logger.printException(() -> "Could not change the hold speed", ex);
             end();
         }
+    }
+
+    /**
+     * With up and down for the speed, a slide {@link #SIDE_LOCK_DP} to either side of where the
+     * hold began arms TikTok's lock, as its pull down would, and coming back within
+     * {@link #SIDE_UNLOCK_DP} lets it go. TikTok's own state takes both, so its release locks or
+     * unlocks just as it does after a pull, and its signal tells {@link #onPullDown} as usual.
+     */
+    private static void followSideLock(float x, float density) {
+        float side = Math.abs(x - lockX);
+        boolean arm = sideArmed ? side >= SIDE_UNLOCK_DP * density : side > SIDE_LOCK_DP * density;
+        if (arm == sideArmed) return;
+        sideArmed = arm;
+        Object component = gesture.get();
+        if (component == null) return;
+        Puller puller = pullerForTests;
+        if (puller != null) puller.pull(component, arm);
+        else pullNative(component, arm);
     }
 
     /**
@@ -260,6 +339,8 @@ public final class HoldSpeedHud {
         }
         holding = false;
         pulled = false;
+        sideArmed = false;
+        lockX = Float.NaN;
         gesture.clear();
         dismiss();
     }

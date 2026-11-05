@@ -28,6 +28,8 @@ import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.ThreeRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
@@ -235,6 +237,46 @@ internal fun Method.holdLockState(): HoldLockState {
         it.definingClass == definingClass && it.parameterTypes.isEmpty() && it.returnType == first.definingClass
     }.distinctBy { it.toString() }.singleOrPatchException("Playback speed: the hold lock state's getter")
     return HoldLockState(getter, first, second)
+}
+
+/**
+ * TikTok's pull-down lock state on [component]: its one public instance (Z)V that posts the
+ * pull-down [signal]. The touch listener calls it with whether the finger is far enough down; it
+ * arms or lets go of the lock the release reads and posts the signal only when that changes, so a
+ * repeat of the same flag does nothing. The flag is named once, by a branch, which is what lets a
+ * hook at its top hand it another answer.
+ */
+internal fun ClassDef.holdPullState(signal: Method): Method {
+    val state = methods.filter { method ->
+        method.returnType == "V" && method.parameterTypes.map(CharSequence::toString) == listOf("Z") &&
+            !AccessFlags.STATIC.isSet(method.accessFlags) && method.implementation?.instructions?.any { instruction ->
+                instruction.getReference<MethodReference>()?.let {
+                    it.definingClass == signal.definingClass && it.name == signal.name &&
+                        it.parameterTypes.map(CharSequence::toString) == listOf("Z")
+                } == true
+            } == true
+    }.singleOrPatchException("Playback speed: the hold's pull-down lock state")
+    if (!AccessFlags.PUBLIC.isSet(state.accessFlags)) {
+        throw PatchException("Playback speed: the hold's pull-down lock state is not public, so the extension cannot make it.")
+    }
+    val code = state.implementation!!
+    val flag = code.registerCount - 1
+    val uses = code.instructions.filter { it.namesRegister(flag) }
+    if (uses.size != 1 || uses.single().opcode !in setOf(Opcode.IF_EQZ, Opcode.IF_NEZ)) {
+        throw PatchException("Playback speed: the pull-down lock state uses its flag in ${uses.map { it.opcode }}, not one branch.")
+    }
+    return state
+}
+
+/** Whether any of [this] instruction's register slots, read or written, is [register]. */
+internal fun Instruction.namesRegister(register: Int): Boolean {
+    val slots = mutableListOf<Int>()
+    if (this is RegisterRangeInstruction) slots += (startRegister until startRegister + registerCount)
+    if (this is FiveRegisterInstruction) slots += listOf(registerC, registerD, registerE, registerF, registerG).take(registerCount)
+    if (this is OneRegisterInstruction) slots += registerA
+    if (this is TwoRegisterInstruction) slots += registerB
+    if (this is ThreeRegisterInstruction) slots += registerC
+    return register in slots
 }
 
 /**

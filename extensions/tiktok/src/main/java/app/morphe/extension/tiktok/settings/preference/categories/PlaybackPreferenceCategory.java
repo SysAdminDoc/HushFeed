@@ -16,6 +16,7 @@ import app.morphe.extension.tiktok.settings.preference.SectionHeadingPreference;
 import app.morphe.extension.tiktok.settings.preference.TogglePreference;
 import app.morphe.extension.tiktok.settings.preference.InputTextPreference;
 import app.morphe.extension.tiktok.settings.preference.NumberInputPreference;
+import app.morphe.extension.tiktok.speed.HoldSpeedHud;
 import app.morphe.extension.tiktok.speed.PlaybackSpeedPatch;
 
 
@@ -362,6 +363,11 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                                 + "Letting go goes back to normal. A pull-down lock keeps the speed you slid to. "
                                 + "On a locked video, letting go locks the new speed.",
                         Settings.HOLD_SPEED_SLIDE));
+                addPreference(new ChoicePreference(context, "Hold speed bubble style", Settings.HOLD_SPEED_HUD_STYLE,
+                        new String[]{"Pill", "Circle"},
+                        new String[]{HoldSpeedHud.PILL, HoldSpeedHud.CIRCLE})
+                        .withNote("Pill is the wide bubble with a row of dots under the speed. Circle is a small "
+                                + "round dial with a notch for each speed around its edge."));
             }
             if (SettingsStatus.hideSpeedToastsEnabled) {
                 addPreference(new TogglePreference(context, "Hide speed messages",

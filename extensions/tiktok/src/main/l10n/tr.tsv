@@ -1407,6 +1407,10 @@ Hide the unread badges on the bottom tabs	Alt sekmelerdeki okunmamış rozetleri
 Hide the red counts and dots on every bottom tab, Inbox and Profile included, and the bubble over Inbox that counts new likes, followers, comments and who's LIVE. The inbox itself still shows what came in.	Gelen Kutusu ve Profil dahil tüm alt sekmelerdeki kırmızı sayaçları ve noktaları, ayrıca Gelen Kutusu'nun üstünde yeni beğenileri, takipçileri, yorumları ve kimin LIVE'da olduğunu sayan baloncuğu gizler. Gelen kutusunun kendisi gelenleri göstermeye devam eder.
 Speed while you hold the video	Videoyu basılı tutarken hız
 Slide to change the hold speed	Basılı tutma hızını kaydırarak değiştir
+Hold speed bubble style	Basılı tutma hızı balonunun stili
+Pill	Hap
+Circle	Daire
+Pill is the wide bubble with a row of dots under the speed. Circle is a small round dial with a notch for each speed around its edge.	Hap, hızın altında bir sıra nokta olan geniş balondur. Daire, kenarında her hız için bir çentik olan küçük yuvarlak bir kadrandır.
 Hide mini dramas	Mini dizileri gizle
 Hide TikTok's short drama episodes and the cards that promote them.	TikTok'un kısa dizi bölümlerini ve onları tanıtan kartları gizle.
 Mini dramas	Mini diziler

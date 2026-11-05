@@ -589,6 +589,7 @@
       "custom_speeds",
       "hold_speed",
       "hold_speed_slide",
+      "hold_speed_hud_style",
       "hide_speed_toasts",
       "remembered_speed_v2"
     ],
@@ -2646,6 +2647,12 @@
       "key": "hold_speed",
       "type": "string",
       "default": "2"
+    },
+    "hold_speed_hud_style": {
+      "field": "HOLD_SPEED_HUD_STYLE",
+      "key": "hold_speed_hud_style",
+      "type": "string",
+      "default": "pill"
     },
     "hold_speed_slide": {
       "field": "HOLD_SPEED_SLIDE",

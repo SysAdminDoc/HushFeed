@@ -797,6 +797,9 @@ public class Settings extends BaseSettings {
     public static final StringSetting HOLD_SPEED = new StringSetting("hold_speed", "2");
     /** Sliding sideways during the hold changes its speed, with a bubble that shows it (#248). */
     public static final BooleanSetting HOLD_SPEED_SLIDE = new BooleanSetting("hold_speed_slide", FALSE);
+    /** How that bubble looks: the pill, or the round dial adapted from OmerKurdi79's fork (#248). */
+    public static final StringSetting HOLD_SPEED_HUD_STYLE = new StringSetting(
+            "hold_speed_hud_style", "pill", false, Setting.parent(HOLD_SPEED_SLIDE));
     /** Leaves out TikTok's message when a speed is picked from the menu or locked with a hold (#248). */
     public static final BooleanSetting HIDE_SPEED_TOASTS = new BooleanSetting("hide_speed_toasts", FALSE);
     public static final BooleanSetting AUTO_ADVANCE = new BooleanSetting("auto_advance", FALSE, true);

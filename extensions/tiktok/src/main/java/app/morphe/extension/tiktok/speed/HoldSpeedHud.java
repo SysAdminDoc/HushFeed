@@ -53,8 +53,16 @@ import java.util.TreeSet;
  * <p>There is one bubble at most. A new hold, letting go, the video on screen changing, the window
  * losing focus (a pause, a dialog, the notification shade), Hushfeed Pause and the switch going off
  * each take it down, and a recreated activity drops it with its old views.
+ *
+ * <p>{@link Settings#HOLD_SPEED_HUD_STYLE} picks how the bubble looks: {@link #PILL}, the wide
+ * bubble, or {@link #CIRCLE}, a small dial adapted from OmerKurdi79's fork. Both follow the hold
+ * the same way; only the drawing differs.
  */
 public final class HoldSpeedHud {
+    /** The values of {@link Settings#HOLD_SPEED_HUD_STYLE}. */
+    public static final String PILL = "pill";
+    public static final String CIRCLE = "circle";
+
     /** How far the finger moves sideways before the slide starts, then how far per step, in dp. */
     static final float DEAD_ZONE_DP = 16f;
     static final float STEP_DP = 32f;
@@ -342,7 +350,8 @@ public final class HoldSpeedHud {
         if (activity == null || activity.isFinishing()) return;
         ViewGroup content = activity.findViewById(android.R.id.content);
         if (!(content instanceof FrameLayout)) return;
-        Bubble view = new Bubble(activity, steps);
+        boolean round = CIRCLE.equals(Settings.HOLD_SPEED_HUD_STYLE.get());
+        Bubble view = round ? new Circle(activity, steps) : new Bubble(activity, steps);
         view.setSpeed(speed, false);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -350,6 +359,10 @@ public final class HoldSpeedHud {
         params.topMargin = Math.round(content.getHeight() * 0.14f);
         content.addView(view, params);
         bubble = new WeakReference<>(view);
+        if (round) {
+            view.setAlpha(0f);
+            view.animate().alpha(1f).setDuration(Circle.FADE_IN_MS);
+        }
     }
 
     /** Takes the bubble down, wherever it is. */
@@ -366,19 +379,22 @@ public final class HoldSpeedHud {
         return bubble.get();
     }
 
-    /** A small pill: a padlock and the speed over a row of dots, one per step, the current one lit. */
-    static final class Bubble extends View {
-        private final float density;
-        private final Paint fill = new Paint(Paint.ANTI_ALIAS_FLAG);
-        private final Paint text = new Paint(Paint.ANTI_ALIAS_FLAG);
-        private final Paint dot = new Paint(Paint.ANTI_ALIAS_FLAG);
-        private final Paint lock = new Paint(Paint.ANTI_ALIAS_FLAG);
-        private final RectF bounds = new RectF();
-        private final float[] steps;
+    /**
+     * A small pill: a padlock and the speed over a row of dots, one per step, the current one lit.
+     * {@link Circle} draws the same state its own way.
+     */
+    static class Bubble extends View {
+        final float density;
+        final Paint fill = new Paint(Paint.ANTI_ALIAS_FLAG);
+        final Paint text = new Paint(Paint.ANTI_ALIAS_FLAG);
+        final Paint dot = new Paint(Paint.ANTI_ALIAS_FLAG);
+        final Paint lock = new Paint(Paint.ANTI_ALIAS_FLAG);
+        final RectF bounds = new RectF();
+        final float[] steps;
         private final float widestLabel;
-        private float speed = Float.NaN;
-        private String label = "";
-        private boolean locked;
+        float speed = Float.NaN;
+        String label = "";
+        boolean locked;
 
         Bubble(Context context, float[] steps) {
             super(context);
@@ -476,6 +492,103 @@ public final class HoldSpeedHud {
             if (bubble.get() == this) {
                 bubble.clear();
                 holding = false;
+            }
+        }
+    }
+
+    /**
+     * The round style (#248), after the dial in OmerKurdi79's fork: a dark disc with a hairline
+     * rim, a ring that fills from the slowest step to the current one, a notch per step around it
+     * with the current one lit, and the speed in the middle. The padlock shows only while closed,
+     * above a smaller speed.
+     */
+    static final class Circle extends Bubble {
+        static final float DIAMETER_DP = 52f;
+        static final long FADE_IN_MS = 150;
+        /** The ring opens at the bottom: it starts down and to the left and turns three quarters. */
+        static final float START = 135f;
+        static final float SWEEP = 270f;
+
+        private final Paint ring = new Paint(Paint.ANTI_ALIAS_FLAG);
+        private final RectF arc = new RectF();
+
+        Circle(Context context, float[] steps) {
+            super(context, steps);
+            fill.setColor(0xBE101218);
+            ring.setStyle(Paint.Style.STROKE);
+            ring.setStrokeCap(Paint.Cap.ROUND);
+            text.setTextAlign(Paint.Align.CENTER);
+        }
+
+        /** Where step {@code i} sits on the ring, in degrees clockwise from three o'clock. */
+        float angleOf(int i) {
+            int last = steps.length - 1;
+            return START + (last > 0 ? SWEEP * i / last : 0f);
+        }
+
+        /** The ring's radius for a view {@code size} pixels across. */
+        float ringRadius(float size) {
+            return size / 2f - density - 3.5f * density;
+        }
+
+        @Override
+        protected void onMeasure(int widthSpec, int heightSpec) {
+            int diameter = Math.round(DIAMETER_DP * density);
+            setMeasuredDimension(diameter, diameter);
+        }
+
+        @Override
+        protected void onDraw(Canvas canvas) {
+            float size = Math.min(getWidth(), getHeight());
+            float cx = getWidth() / 2f;
+            float cy = getHeight() / 2f;
+            float outer = size / 2f - density;
+            canvas.drawCircle(cx, cy, outer, fill);
+            ring.setStrokeWidth(density);
+            ring.setColor(0x23FFFFFF);
+            canvas.drawCircle(cx, cy, outer, ring);
+
+            if (steps.length > 0) {
+                float radius = ringRadius(size);
+                arc.set(cx - radius, cy - radius, cx + radius, cy + radius);
+                ring.setStrokeWidth(2 * density);
+                ring.setColor(0x19FFFFFF);
+                canvas.drawArc(arc, START, SWEEP, false, ring);
+                int current = indexOf(steps, speed);
+                ring.setColor(0xB9D7E1EB);
+                canvas.drawArc(arc, START, Math.max(3f, angleOf(current) - START), false, ring);
+                for (int i = 0; i < steps.length; i++) {
+                    double angle = Math.toRadians(angleOf(i));
+                    float x = cx + (float) (radius * Math.cos(angle));
+                    float y = cy + (float) (radius * Math.sin(angle));
+                    if (i == current) {
+                        dot.setColor(0x96FFFFFF);
+                        canvas.drawCircle(x, y, 3.5f * density, dot);
+                        dot.setColor(0xFFFFFFFF);
+                        canvas.drawCircle(x, y, 1.8f * density, dot);
+                    } else {
+                        dot.setColor(0x32FFFFFF);
+                        canvas.drawCircle(x, y, 1.2f * density, dot);
+                    }
+                }
+            }
+
+            if (locked) {
+                // A closed padlock over the speed: the shackle's arch, its legs and the body.
+                lock.setColor(0xDCFFFFFF);
+                lock.setStyle(Paint.Style.STROKE);
+                bounds.set(cx - 2.5f * density, cy - 12.5f * density, cx + 2.5f * density, cy - 7.5f * density);
+                canvas.drawArc(bounds, 180, 180, false, lock);
+                canvas.drawLine(cx - 2.5f * density, cy - 10 * density, cx - 2.5f * density, cy - 7 * density, lock);
+                canvas.drawLine(cx + 2.5f * density, cy - 10 * density, cx + 2.5f * density, cy - 7 * density, lock);
+                lock.setStyle(Paint.Style.FILL);
+                bounds.set(cx - 4 * density, cy - 7 * density, cx + 4 * density, cy - 1.5f * density);
+                canvas.drawRoundRect(bounds, 1.5f * density, 1.5f * density, lock);
+                text.setTextSize(11 * density);
+                canvas.drawText(label, cx, cy + 9.5f * density, text);
+            } else {
+                text.setTextSize(13 * density);
+                canvas.drawText(label, cx, cy + 4.5f * density, text);
             }
         }
     }

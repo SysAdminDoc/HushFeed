@@ -7996,6 +7996,15 @@
           "values": null
         },
         {
+          "key": "hold_speed_hud_style",
+          "title": "Default: hold speed hud style",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "pill",
+          "values": null
+        },
+        {
           "key": "hide_speed_toasts",
           "title": "Default: hide speed toasts",
           "description": null,

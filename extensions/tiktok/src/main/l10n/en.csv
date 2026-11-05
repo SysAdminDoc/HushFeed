@@ -364,6 +364,7 @@ Choose what reaches your feed,Choose what reaches your feed
 Choose which bottom tabs stay visible.,Choose which bottom tabs stay visible.
 "Choose which feed tabs stay visible. If only For You is left, its tab name is hidden.","Choose which feed tabs stay visible. If only For You is left, its tab name is hidden."
 Choose which rows and controls appear,Choose which rows and controls appear
+Circle,Circle
 Clean up shared links,Clean up shared links
 Clear,Clear
 Clear all,Clear all
@@ -934,6 +935,7 @@ Historical,Historical
 Historical values,Historical values
 Hold a gate to choose several,Hold a gate to choose several
 Hold a photo story,Hold a photo story
+Hold speed bubble style,Hold speed bubble style
 Hold speed on Comment,Hold speed on Comment
 Hold speed on Favorites,Hold speed on Favorites
 Hold speed on Share,Hold speed on Share
@@ -1404,8 +1406,10 @@ Pick videos to save from profile grids,Pick videos to save from profile grids
 "Picked %1$s. Save, then tap Pick all for more.","Picked %1$s. Save, then tap Pick all for more."
 Picked videos,Picked videos
 Picks the older H.264 video format when TikTok also offers a newer one (HEVC or ByteVC2). It helps phones that stutter or run hot. Videos without an H.264 version still play.,Picks the older H.264 video format when TikTok also offers a newer one (HEVC or ByteVC2). It helps phones that stutter or run hot. Videos without an H.264 version still play.
+Pill,Pill
 Pill corners,Pill corners
 Pill height,Pill height
+Pill is the wide bubble with a row of dots under the speed. Circle is a small round dial with a notch for each speed around its edge.,Pill is the wide bubble with a row of dots under the speed. Circle is a small round dial with a notch for each speed around its edge.
 Play,Play
 Play SDR instead of HDR,Play SDR instead of HDR
 Play Store,Play Store

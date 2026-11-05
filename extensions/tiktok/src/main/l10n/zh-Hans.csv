@@ -1706,6 +1706,10 @@ Speed menu choices,速度菜单选项
 "Speed up this video, double tap again to undo",加快该视频的速度，再次双击即可撤消
 Speed while you hold the video,按住视频时速度
 Slide to change the hold speed,滑动更改按住时的速度
+Hold speed bubble style,按住速度气泡样式
+Pill,胶囊
+Circle,圆形
+Pill is the wide bubble with a row of dots under the speed. Circle is a small round dial with a notch for each speed around its edge.,胶囊是速度下方带一排圆点的宽气泡。圆形是一个小圆盘，边缘为每个速度标有刻度.
 Spin the music disc,旋转音乐光盘
 Split comment minimum width,分割评论最小宽度
 Start each new video at your default. A manual choice lasts until the video changes.,以默认值开始每个新视频。手动选择将持续到视频发生变化为止.

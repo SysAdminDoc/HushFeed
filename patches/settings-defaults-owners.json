@@ -557,7 +557,8 @@
     "Notification controls": [
       "HIDE_FOLLOWER_NOTIFICATIONS",
       "TURN_OFF_PUSH_NOTIFICATIONS",
-      "HIDE_MESSAGE_STREAKS"
+      "HIDE_MESSAGE_STREAKS",
+      "HIDE_STREAK_POPUPS"
     ],
     "Open external links directly": [
       "OPEN_EXTERNAL_LINKS"

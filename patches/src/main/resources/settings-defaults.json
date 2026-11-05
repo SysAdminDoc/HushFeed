@@ -560,7 +560,8 @@
     "Notification controls": [
       "hide_follower_notifications",
       "turn_off_push_notifications",
-      "hide_message_streaks"
+      "hide_message_streaks",
+      "hide_streak_popups"
     ],
     "Open external links directly": [
       "open_external_links"
@@ -2568,6 +2569,12 @@
     "hide_story_rings": {
       "field": "HIDE_STORY_RINGS",
       "key": "hide_story_rings",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_streak_popups": {
+      "field": "HIDE_STREAK_POPUPS",
+      "key": "hide_streak_popups",
       "type": "boolean",
       "default": false
     },

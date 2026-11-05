@@ -2631,8 +2631,10 @@ People you chat with won't see that you're typing. Needs Ghost mode on.	Собе
 Show all settings as a list	Показать все настройки списком
 Show settings by category	Показать настройки по категориям
 Long-press Inbox for read receipts	Долгое нажатие на «Входящие» для отметок о прочтении
-Press and hold the Inbox tab to turn Hide read receipts on or off. A message says which. A tap on Inbox works as before. If holding Inbox does something for you already, this takes that press.	Нажмите и удерживайте вкладку «Входящие», чтобы включить или выключить «Скрывать отметки о прочтении». Сообщение покажет, что получилось. Обычное нажатие на «Входящие» работает как раньше. Если удержание «Входящих» у вас уже что-то делает, эта функция перехватывает это нажатие.
+Press and hold the Inbox tab to turn Hide read receipts on or off. A message says which. A tap on Inbox works as before. If holding Inbox does something for you already, this takes that press.	Нажмите и удерживайте вкладку «Входящие», чтобы включить или выключить «Скрыть отметки о прочтении». Сообщение покажет, что получилось. Обычное нажатие на «Входящие» работает как раньше. Если удержание «Входящих» у вас уже что-то делает, эта функция перехватывает это нажатие.
 Read receipts hidden	Отметки о прочтении скрыты
 Read receipts shown	Отметки о прочтении видны
 Compact long-press menu everywhere	Компактное меню долгого нажатия везде
 A long press on a video opens TikTok's small share sheet on For You too, the same one a creator's videos get. It wins over the two full-menu switches above. It needs Long press on TikTok default.	Долгое нажатие на видео открывает маленькое меню «Поделиться» TikTok и в «Рекомендациях», такое же, как у видео автора. Оно главнее двух переключателей полного меню выше. Нужно, чтобы «Долгое нажатие» было по умолчанию TikTok.
+Hide streak pop-ups	Скрыть всплывающие окна серий
+Stop the streak alerts that slide in over TikTok and the streak messages and tips it adds to your chats.	Убирает уведомления о сериях, которые выезжают поверх TikTok, а также сообщения и подсказки о сериях в ваших чатах.

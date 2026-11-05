@@ -82,6 +82,18 @@ public class NotificationControlsTest {
         }
     }
 
+    @Test public void theStreakPopupSwitchIsWhatTheGetterAsks() {
+        try {
+            assertFalse(Settings.HIDE_STREAK_POPUPS.defaultValue);
+            assertFalse(NotificationControls.hideStreakPopups());
+            Settings.HIDE_STREAK_POPUPS.save(true);
+            assertTrue(NotificationControls.hideStreakPopups());
+            assertFalse("the button switch is its own", NotificationControls.hideMessageStreaks());
+        } finally {
+            Settings.HIDE_STREAK_POPUPS.save(false);
+        }
+    }
+
     @Test public void bothSwitchesAreReachableOnTheirOwn() {
         try (var controller = Robolectric.buildActivity(TestActivity.class).setup()) {
             var activity = controller.get();

@@ -252,6 +252,13 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
                             + "with it.",
                     Settings.HIDE_MESSAGE_STREAKS
             ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Hide streak pop-ups",
+                    "Stop the streak alerts that slide in over TikTok and the streak "
+                            + "messages and tips it adds to your chats.",
+                    Settings.HIDE_STREAK_POPUPS
+            ));
         }
         if (SettingsStatus.expandActivityListEnabled) {
             addPreference(new TogglePreference(

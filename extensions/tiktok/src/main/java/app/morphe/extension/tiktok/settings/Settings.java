@@ -399,6 +399,9 @@ public class Settings extends BaseSettings {
             new BooleanSetting("block_suggested_video_notifications", TRUE);
     public static final BooleanSetting HIDE_MESSAGE_STREAKS =
             new BooleanSetting("hide_message_streaks", FALSE);
+    /** Streak pop-ups, the in-app streak alert and the streak message TikTok drops into a chat. */
+    public static final BooleanSetting HIDE_STREAK_POPUPS =
+            new BooleanSetting("hide_streak_popups", FALSE);
     /**
      * Leaves a message in the chat when the other person unsends it. Messages you unsend
      * yourself are still removed. Off by default. See KeepUnsent.

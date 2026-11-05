@@ -94,6 +94,31 @@ internal object StreakButtonFingerprint : Fingerprint(
     ),
 )
 
+/**
+ * StreakInnerPushHelper's insertRemindInAppPush: the streak alert that slides in over the app.
+ * It logs its own name, which no other method holds.
+ */
+internal object StreakInAppPushFingerprint : Fingerprint(
+    returnType = "Z",
+    parameters = listOf("Ljava/lang/String;", "Ljava/lang/String;", "Ljava/util/Map;"),
+    strings = listOf("StreakInnerPushHelper start to insertRemindInAppPush, convId="),
+)
+
+/**
+ * The streak helper's one void method taking a conversation id that reads the server's
+ * `enableInlineMsg`: it queues the streak message TikTok inserts into the chat.
+ */
+internal object StreakInlineMessageFingerprint : Fingerprint(
+    returnType = "V",
+    parameters = listOf("Ljava/lang/String;"),
+    filters = listOf(
+        fieldAccess(
+            definingClass = "Lcom/ss/android/ugc/aweme/im/common/experiment/DMStreakConfig;",
+            name = "enableInlineMsg",
+        ),
+    ),
+)
+
 @Suppress("unused")
 val notificationControlsPatch = bytecodePatch(
     name = "Notification controls",
@@ -135,6 +160,20 @@ val notificationControlsPatch = bytecodePatch(
                 const/4 v0, 0x0
                 return v0
             """,
+        )
+
+        StreakInAppPushFingerprint.method.guardAtEntry(
+            "Notification controls",
+            "invoke-static {}, $EXTENSION->hideStreakPopups()Z",
+            """
+                const/4 v0, 0x0
+                return v0
+            """,
+        )
+        StreakInlineMessageFingerprint.method.guardAtEntry(
+            "Notification controls",
+            "invoke-static {}, $EXTENSION->hideStreakPopups()Z",
+            "return-void",
         )
 
         // Turn off push notifications. TikTok's push setup is one startup task, so a guard at its

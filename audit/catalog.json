@@ -11413,6 +11413,12 @@
     "row": "Hide message streaks"
    },
    {
+    "key": "hide_streak_popups",
+    "default": false,
+    "type": "bool",
+    "row": "Hide streak pop-ups"
+   },
+   {
     "key": "turn_off_push_notifications",
     "default": false,
     "type": "bool",

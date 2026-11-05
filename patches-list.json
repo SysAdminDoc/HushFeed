@@ -3913,6 +3913,15 @@
           "values": null
         },
         {
+          "key": "inbox_tab_flips_read_receipts",
+          "title": "Default: inbox tab flips read receipts",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "start_page",
           "title": "Default: start page",
           "description": null,
@@ -7171,6 +7180,15 @@
           "values": null
         },
         {
+          "key": "long_press_compact_menu",
+          "title": "Default: long press compact menu",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "edge_seek",
           "title": "Default: edge seek",
           "description": null,
@@ -7580,6 +7598,15 @@
         {
           "key": "hide_message_streaks",
           "title": "Default: hide message streaks",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_streak_popups",
+          "title": "Default: hide streak popups",
           "description": null,
           "required": false,
           "type": "kotlin.Boolean",

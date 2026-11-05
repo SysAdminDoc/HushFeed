@@ -57,4 +57,9 @@ public final class NotificationControls {
     public static boolean hideMessageStreaks() {
         return Settings.HIDE_MESSAGE_STREAKS.get();
     }
+
+    /** True when streak pop-ups and the streak messages TikTok inserts into a chat should not appear. */
+    public static boolean hideStreakPopups() {
+        return Settings.HIDE_STREAK_POPUPS.get();
+    }
 }

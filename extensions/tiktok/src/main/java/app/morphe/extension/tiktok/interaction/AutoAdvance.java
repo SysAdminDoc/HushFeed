@@ -70,6 +70,16 @@ public final class AutoAdvance {
     }
 
     /**
+     * TikTok's Auto scroll label at the top of the video while auto scroll runs. Auto-advance
+     * runs TikTok's own auto scroll, so the label came up with it even with the hide switch on
+     * (#342). Both of the host's show paths ask here first and, with the switch on, leave the
+     * label GONE, which is also the state the host's own hide checks for before doing anything.
+     */
+    public static boolean indicatorHidden() {
+        return Settings.AUTO_ADVANCE_HIDE_PANEL_ACTION.get();
+    }
+
+    /**
      * TikTok's search_auto_scroll flag, read where search decides whether its results feed gets
      * auto scroll and which state that starts in. The feed runs the same component as For You, so
      * once the flag lets it exist the hooks below start and stop it like any other. With either

@@ -20,6 +20,7 @@ import app.morphe.patches.tiktok.interaction.resume.FeedPlayCompletedFingerprint
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
+import app.morphe.patches.tiktok.shared.guardAtEntry
 import app.morphe.util.addInstructionsAtControlFlowLabel
 import app.morphe.util.cloneMutable
 import app.morphe.util.findMutableMethodOf
@@ -27,6 +28,7 @@ import app.morphe.util.getReference
 import app.morphe.util.implementationOrPatchException
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
@@ -43,6 +45,7 @@ private const val EXTENSION = "Lapp/morphe/extension/tiktok/interaction/AutoAdva
 private const val COMPONENT = "Lcom/ss/android/ugc/feed/platform/panel/autoscroll/AutoScrollComponent;"
 private const val RIGHT_COLUMN = "Lcom/ss/android/ugc/feed/platform/cell/interact/right/InteractRightAreaComponent;"
 private const val RAIL_SWITCH = "Lcom/ss/android/ugc/feed/platform/panel/autoscroll/AutoScrollSwitchAssem;"
+internal const val INDICATOR_BASE = "Lcom/ss/android/ugc/feed/platform/panel/autoscroll/BaseAutoScrollUIComponent;"
 internal const val TABLET_BUTTON = "Lcom/ss/android/ugc/feed/platform/panel/autoscroll/TabletDefaultAutoScrollComponent;"
 private const val TABLET_DEFAULT_KEY = "ITabletAutoScroll.isDefaultAutoScroll"
 private const val LAZY = "LAZY"
@@ -250,6 +253,42 @@ private object Completion : Fingerprint(definingClass = COMPONENT, name = "onPla
     returnType = "V", parameters = listOf("Ljava/lang/String;"))
 private object Stop : Fingerprint(definingClass = COMPONENT, returnType = "V",
     parameters = listOf("Ljava/lang/String;", "Z"), strings = listOf("turn_off_auto_scroll"))
+
+/** The source names of the indicator's two show methods, one animated and one not. */
+internal val INDICATOR_SHOWS = listOf("showContentView", "showContainerWithoutAnim")
+
+/**
+ * Whether [runnable] is the first runnable [method] posts, going by its trace label,
+ * `BaseAutoScrollUIComponent@<hash>.<method>$1`. The labels keep the source names R8 takes off
+ * the methods themselves. The hash changes with the build, and patcher 2.0 holds a `strings`
+ * entry to the whole literal, so the label is read here rather than through a fingerprint.
+ */
+internal fun isIndicatorTrace(runnable: ClassDef, method: String) = runnable.methods.any { run ->
+    run.name == "run" && run.returnType == "V" && run.parameterTypes.isEmpty() &&
+        run.implementation?.instructions?.any {
+            val text = it.getReference<StringReference>()?.string
+            text != null && text.startsWith("BaseAutoScrollUIComponent@") && text.endsWith(".$method\$1")
+        } == true
+}
+
+/**
+ * Which of the base class's [methods] are the show method named [method]: no parameters, no
+ * answer, and a runnable built inside that [classOf] says carries the method's trace label.
+ */
+internal fun <M : Method> indicatorShows(methods: Iterable<M>, method: String, classOf: (String) -> ClassDef?): List<M> =
+    methods.filter { candidate ->
+        candidate.returnType == "V" && candidate.parameterTypes.isEmpty() &&
+            candidate.implementation?.instructions?.any { instruction ->
+                instruction.opcode == Opcode.NEW_INSTANCE &&
+                    instruction.getReference<TypeReference>()?.type?.let(classOf)
+                        ?.let { isIndicatorTrace(it, method) } == true
+            } == true
+    }
+
+/** The indicator's show method named [method], on the base class every auto scroll component extends. */
+private fun BytecodePatchContext.indicatorShow(method: String): MutableMethod =
+    indicatorShows(mutableClassDefBy(INDICATOR_BASE).methods, method) { classDefByOrNull(it) }
+        .singleOrPatchException("Auto advance: indicator $method")
 
 /** Whether this method loads exactly [key], not only a longer key that holds it. */
 private fun Method.loadsExactly(key: String) = implementation?.instructions?.any {
@@ -510,6 +549,20 @@ val autoAdvancePatch = bytecodePatch(
             .sumOf { it.answerTabletGate(tabletGate.name, tabletServices) }
         check(tabletReads > 0) {
             "Auto advance: the tablet Auto scroll button no longer reads the default auto scroll answer."
+        }
+
+        // While auto scroll runs, TikTok puts an Auto scroll label at the video's top right: the
+        // component's own view, shown by one of two methods on its base class, one animated and
+        // one not. Auto-advance runs TikTok's auto scroll, so the label came up with it whatever
+        // the hide switch said (#342). Both only draw: the label, its first-run hint and the
+        // hint's countdown. Left GONE, the host's own hide returns at once, as it does for a
+        // label that was never shown.
+        for (method in INDICATOR_SHOWS) {
+            indicatorShow(method).guardAtEntry(
+                "Auto advance",
+                "invoke-static {}, $EXTENSION->indicatorHidden()Z",
+                "return-void",
+            )
         }
 
         // Search results' own flag, answered through the child switch. Their feed builds the

@@ -63,8 +63,9 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                     Settings.AUTO_ADVANCE_LIMIT, "%1$s video", "%1$s videos").zeroMeansOff());
             addPreference(new TogglePreference(context, "Hide TikTok's Auto scroll button",
                     "Takes TikTok's own Auto scroll action out of the video panel and the Auto "
-                            + "scroll switch beside videos on tablets and unfolded foldables. "
-                            + "Works with Auto-advance off too.",
+                            + "scroll label off the top of videos. Tablets and unfolded foldables "
+                            + "also lose the Auto scroll switch beside videos. Works with "
+                            + "Auto-advance off too.",
                     Settings.AUTO_ADVANCE_HIDE_PANEL_ACTION));
             addPreference(new TogglePreference(context, "Auto-advance in search results",
                     "Also turns on TikTok's own Auto scroll for videos opened from search. "

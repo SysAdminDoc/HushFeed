@@ -162,6 +162,7 @@ Every Hushfeed release, newest first.
 
 ### Fixes
 
+* `Hide TikTok's Auto scroll button` also hides the Auto scroll label at the top of the video. With Auto-advance on, it used to show up anyway (#342).
 * Opening a search result that lives far down a page, like `Double tap` or the Liked grid sort in Feed screen, now lands on that row. It used to open the page at its top, so you had to scroll a long way to find it.
 * With `See-through bottom bar` on, the "Swipe up to skip" line on a suggested account card in For You sits above the tabs again instead of behind them (#261).
 * The floating tab pill is a little taller now. It reaches just above the bar and the tabs sit in its middle, so the Home icon and its name stay inside the highlight instead of poking out over it. The caption and the video's progress line move up to match, so the line no longer rides on the pill (#259).

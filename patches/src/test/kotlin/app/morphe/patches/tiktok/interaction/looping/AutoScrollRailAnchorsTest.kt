@@ -6,10 +6,12 @@ package app.morphe.patches.tiktok.interaction.looping
 
 import app.morphe.Fixtures
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
+import app.morphe.patches.tiktok.shared.guardAtEntry
 import app.morphe.takes
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
+import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
@@ -138,6 +140,49 @@ class AutoScrollRailAnchorsTest {
             // onViewCreated, the account-change refresh and the page-change refresh each read it.
             assertTrue("$version: only $hooked default auto scroll reads hooked", hooked >= 3)
             assertEquals("$version: every read carries the hide answer", hooked, seen)
+        }
+    }
+
+    /**
+     * #342: while auto scroll runs, TikTok shows an Auto scroll label at the video's top right
+     * through one of two show methods on the components' base class. Each build has both, found
+     * through the runnable each posts, each sets the label VISIBLE, and each asks the hide switch
+     * before anything else.
+     */
+    @Test
+    fun `each build's indicator show methods are found and ask the hide switch first`() {
+        Fixtures.forEachDeclared { apk ->
+            val version = Fixtures.versionOf(apk)
+            val classes = mutableMapOf<String, ClassDef>()
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            for (entry in container.dexEntryNames) {
+                for (classDef in container.getEntry(entry)!!.dexFile.classes) classes[classDef.type] = classDef
+            }
+            val methods = classes[INDICATOR_BASE]?.methods?.toList()
+            assertNotNull("$version: the auto scroll base component is gone", methods)
+            val shows = mutableSetOf<String>()
+            for (label in INDICATOR_SHOWS) {
+                val runnables = classes.values.filter { isIndicatorTrace(it, label) }.map { it.type }
+                assertEquals("$version: $label runnables $runnables", 1, runnables.size)
+                val found = indicatorShows(methods!!, label) { classes[it] }
+                assertEquals("$version: $label show methods ${found.map { it.name }}", 1, found.size)
+                val native = found.single()
+                shows += native.name
+                val before = native.implementation!!.instructions.toList()
+                assertTrue("$version: $label sets no visibility", before.any {
+                    val target = it.getReference<MethodReference>()
+                    it.opcode == Opcode.INVOKE_STATIC && target?.returnType == "V" &&
+                        target.parameterTypes.map(CharSequence::toString) == listOf("I", "Landroid/view/View;")
+                })
+                val patched = MutableMethod(native)
+                patched.guardAtEntry("Auto advance", "invoke-static {}, $EXTENSION->indicatorHidden()Z", "return-void")
+                val after = patched.implementation!!.instructions.toList()
+                assertEquals("$version: $label asks first", Opcode.INVOKE_STATIC, after[0].opcode)
+                assertEquals(EXTENSION, after[0].getReference<MethodReference>()!!.definingClass)
+                assertEquals("indicatorHidden", after[0].getReference<MethodReference>()!!.name)
+                assertEquals("$version: $label leaves when told", Opcode.RETURN_VOID, after[3].opcode)
+            }
+            assertEquals("$version: two different show methods $shows", 2, shows.size)
         }
     }
 }

@@ -100,7 +100,9 @@ public class FeedNavigationPreferenceCategory extends ConditionalPreferenceCateg
                         + "press, and the name at the top of your profile still switches accounts.",
                 Settings.PROFILE_TAB_OPENS_WATCH_HISTORY
         ));
-        if (SettingsStatus.hideReadReceiptsEnabled) {
+        // The press rides on the feed tab hooks and flips the read receipt patch's switch, so it
+        // needs both; with only the read receipt patch the page isn't offered at all.
+        if (SettingsStatus.feedNavigationEnabled && SettingsStatus.hideReadReceiptsEnabled) {
             addPreference(new TogglePreference(
                     context,
                     "Long-press Inbox for read receipts",

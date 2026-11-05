@@ -960,6 +960,19 @@ val feedFilterPatch = bytecodePatch(
             """,
         )
 
+        // The "Trending free dramas on PineDrama" full-screen card is asked for with this
+        // request. Null is what the builder answers with no card component, so no request goes
+        // out and no card comes back.
+        PineDramaMidInsertRequestFingerprint.method.requireLocals("Feed filter", 1)
+        PineDramaMidInsertRequestFingerprint.method.guardAtEntry(
+            "Feed filter",
+            "invoke-static {}, $CARD_FILTERS_CLASS_DESCRIPTOR->shouldSkipPineDramaMidInsert()Z",
+            """
+                const/4 v0, 0x0
+                return-object v0
+            """,
+        )
+
         // An empty list is the app's own "no card to ask for", so the Lemon8 promo is never
         // requested and never arrives. Remove feed ads also drops it from the list if it came
         // another way.

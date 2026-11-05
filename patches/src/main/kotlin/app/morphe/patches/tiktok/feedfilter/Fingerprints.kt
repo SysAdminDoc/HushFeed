@@ -1354,3 +1354,15 @@ internal object ProfileAdResponseReadFingerprint : Fingerprint(
     ),
 )
 
+
+/**
+ * The series player's builder of the PineDrama mid-insert request (#286): it asks the card
+ * component for the request and answers null when there is no component, which the callers
+ * already take as "nothing to ask for". Keyed by the string it logs.
+ */
+internal object PineDramaMidInsertRequestFingerprint : Fingerprint(
+    definingClass = "Lcom/ss/android/ugc/aweme/series/innerfeed/viewmodel/SeriesInnerFeedViewModel;",
+    returnType = "L",
+    parameters = listOf(),
+    strings = listOf("buildPineDramaMidInsertRequestInfo manager="),
+)

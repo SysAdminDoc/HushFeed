@@ -50,6 +50,16 @@ public final class CardFilters {
     }
 
     /**
+     * The full-screen "Trending free dramas on PineDrama" card between drama episodes (#286) is
+     * never asked for. It is a mini drama promo and an inserted card, so any of the three
+     * switches that name those turns it off.
+     */
+    public static boolean shouldSkipPineDramaMidInsert() {
+        return Settings.HIDE_MINI_DRAMAS.get() || Settings.HIDE_SERIES.get()
+                || Settings.HIDE_INSERTED_CARDS.get();
+    }
+
+    /**
      * TikTok locks scrolling until a short drama advert has counted down. It asks whether
      * the item is a blocking advert; answering no releases the scroll.
      */

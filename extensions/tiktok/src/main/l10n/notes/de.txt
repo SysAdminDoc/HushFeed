@@ -1,4 +1,4 @@
-## Unreleased
+## 0.81.0 (2026-11-05)
 
 * Der Durchlauf durch die ganze App behält die Gerätereservierung, bis Androids Codeprüfung fertig ist, und wartet, bis ein pausiertes Video ruhig steht, bevor er den Bildschirm liest. Ein LIVE, das nie still steht, wird per Wischen übersprungen. Auf einem Emulator schaltet er während des Durchlaufs außerdem die Animationen aus, damit ein animierter Avatarring das Lesen des Bildschirms nicht blockiert.
 

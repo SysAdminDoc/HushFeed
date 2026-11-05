@@ -1,4 +1,4 @@
-## Unreleased
+## 0.81.0 (2026-11-05)
 
 * Bước kiểm tra toàn ứng dụng chờ Android kiểm tra mã xong và chờ video đứng yên rồi mới đọc màn hình. LIVE luôn chuyển động sẽ được vuốt qua.
 

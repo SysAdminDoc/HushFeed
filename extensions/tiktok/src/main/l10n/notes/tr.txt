@@ -1,4 +1,4 @@
-## Unreleased
+## 0.81.0 (2026-11-05)
 
 * Tüm uygulama turu, Android'in kod denetimi bitene kadar cihazı ayrılmış tutuyor ve ekranı okumadan önce duraklatılan videonun durulmasını bekliyor. Hiç durmayan bir LIVE kaydırılarak geçiliyor. Emülatörde tur sırasında animasyonları da kapatıyor, böylece hareketli bir avatar halkası ekranın okunmasını engellemiyor.
 

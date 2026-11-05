@@ -1,4 +1,4 @@
-## Unreleased
+## 0.81.0 (2026-11-05)
 
 * Il giro completo dell'app tiene la prenotazione del dispositivo finché il controllo del codice di Android non è finito, e aspetta che un video in pausa si fermi prima di leggere lo schermo. Una LIVE che non sta mai ferma viene saltata con uno scorrimento. Su un emulatore spegne anche le animazioni durante il giro, così un anello avatar animato non impedisce di leggere lo schermo.
 

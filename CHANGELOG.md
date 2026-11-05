@@ -4,6 +4,8 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+## 0.81.0 (2026-11-05)
+
 ### Features
 
 * Hushfeed now supports TikTok 47.7.2, and only that one. 47.6.3 isn't supported anymore. Grab the 47.7.2 bundle or APK from APKMirror and patch it with the same signing key, so your login and settings carry over.

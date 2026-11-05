@@ -1,4 +1,4 @@
-## Unreleased
+## 0.81.0 (2026-11-05)
 
 * Bütün tətbiq gəzintisi Android-in kod yoxlaması bitənə qədər cihazın rezervasiyasını saxlayır və ekranı oxumazdan əvvəl dayandırılmış videonun sakitləşməsini gözləyir. Heç vaxt dayanmayan LIVE sürüşdürülüb keçilir. Emulyatorda gəzinti zamanı animasiyaları da söndürür ki, animasiyalı avatar halqası ekranın oxunmasına mane olmasın.
 

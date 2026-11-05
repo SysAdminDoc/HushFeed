@@ -2600,6 +2600,25 @@ assertEquals(View.LAYOUT_DIRECTION_RTL, configuration.getLayoutDirection());
         }
     }
 
+    @Test public void automaticLiveRecordingDefaultsOffAndNeedsRecordLiveEnabled() throws Exception {
+        try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setContext(activity);
+            Settings.RECORD_LIVE.save(false);
+            Settings.AUTO_RECORD_LIVE.resetToDefault();
+            TikTokPreferenceFragment page = attachSection(activity, "PLAYBACK");
+            Preference row = findPreference(page.getPreferenceScreen(), "Automatically record LIVEs you enter");
+            assertNotNull(row);
+            assertFalse(((android.preference.SwitchPreference) row).isChecked());
+            assertFalse("the automatic option must wait for Record LIVEs you watch", row.isEnabled());
+            Settings.RECORD_LIVE.save(true);
+            assertTrue(Settings.AUTO_RECORD_LIVE.isAvailable());
+        } finally {
+            Settings.AUTO_RECORD_LIVE.resetToDefault();
+            Settings.RECORD_LIVE.resetToDefault();
+        }
+    }
+
     /**
      * The default speed is read only while its switch is on. Its row took a choice that did
      * nothing and said so nowhere; now it greys, and the note sits under the value on its own

@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import app.morphe.extension.tiktok.download.LiveRecorder;
+import com.bytedance.android.livesdkapi.depend.model.live.Room;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +22,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -93,6 +95,170 @@ public class LiveRecordChipTest {
         }
     }
 
+    private static final class PipRoom extends Room {
+        public String idStr;
+
+        PipRoom(String id) { idStr = id; }
+    }
+
+    private static final class PipRoomPage {
+        public Room room;
+        private Activity activity;
+        Object parent;
+
+        PipRoomPage(Activity activity, String id) {
+            this.activity = activity;
+            room = new PipRoom(id);
+        }
+
+        public Activity getActivity() { return activity; }
+        public Object getParentFragment() { return parent; }
+        void detach() { activity = null; }
+    }
+
+    public static final class PipLiveActivity extends Activity {
+        Object current;
+        public Object getCurrentFragment() { return current; }
+    }
+
+    private static final class PipPager {
+        Object current;
+        public Object getCurrentFragment() { return current; }
+    }
+
+    private static final class PipTab {
+        public final PipPager pager = new PipPager();
+        private final Activity activity;
+        PipTab(Activity activity) { this.activity = activity; }
+        public Activity getActivity() { return activity; }
+    }
+
+    private static final class PipRoomPager {
+        private final Activity activity;
+        Object current;
+        PipRoomPager(Activity activity) { this.activity = activity; }
+        public Activity getActivity() { return activity; }
+        public Object getCurrentFragment() { return current; }
+    }
+
+    public static final class PipNullGetterActivity extends Activity {
+        public Object getCurrentFragment() { return null; }
+    }
+
+    private static final class PipRoomContainer {
+        Object current;
+        public Object getCurrentFragment() { return current; }
+    }
+
+    @Test public void pipFindsThePlayingRoomWhenTheActivityGetterAlwaysReturnsNull() {
+        PipNullGetterActivity activity = Robolectric.buildActivity(PipNullGetterActivity.class).setup().get();
+        PipRoomContainer pager = new PipRoomContainer();
+        PipRoomPage first = new PipRoomPage(activity, "first");
+        PipRoomPage preloaded = new PipRoomPage(activity, "preloaded");
+        PipRoomPage second = new PipRoomPage(activity, "second");
+        first.parent = pager;
+        preloaded.parent = pager;
+        second.parent = pager;
+        List<PipRoomPage> resumed = Arrays.asList(first, preloaded, second);
+        pager.current = first;
+        assertEquals(first, LiveRecordChip.currentPipPage(activity, first, resumed));
+        pager.current = second;
+        assertEquals(second, LiveRecordChip.currentPipPage(activity, first, resumed));
+        assertFalse(preloaded == LiveRecordChip.currentPipPage(activity, first, resumed));
+        pager.current = null;
+        assertNull(LiveRecordChip.currentPipPage(activity, first, resumed));
+        pager.current = new PipRoomPage(Robolectric.buildActivity(Activity.class).setup().get(), "wrong activity");
+        assertNull(LiveRecordChip.currentPipPage(activity, first, resumed));
+    }
+
+    @Test public void pipFindsTheNextRoomAfterTheRememberedFragmentDetaches() {
+        PipNullGetterActivity activity = Robolectric.buildActivity(PipNullGetterActivity.class).setup().get();
+        PipRoomContainer pager = new PipRoomContainer();
+        PipRoomPage old = new PipRoomPage(activity, "old");
+        PipRoomPage next = new PipRoomPage(activity, "next");
+        old.parent = pager;
+        next.parent = pager;
+        pager.current = next;
+        old.detach();
+        assertEquals(next, LiveRecordChip.currentPipPage(activity, old, Arrays.asList(old, next)));
+    }
+
+    @Test public void pipNeverGuessesBetweenTwoIndependentActiveRoomPagers() {
+        PipNullGetterActivity activity = Robolectric.buildActivity(PipNullGetterActivity.class).setup().get();
+        PipRoomContainer firstPager = new PipRoomContainer();
+        PipRoomContainer secondPager = new PipRoomContainer();
+        PipRoomPage first = new PipRoomPage(activity, "first");
+        PipRoomPage second = new PipRoomPage(activity, "second");
+        first.parent = firstPager;
+        second.parent = secondPager;
+        firstPager.current = first;
+        secondPager.current = second;
+        assertNull(LiveRecordChip.currentPipPage(activity, null, Arrays.asList(first, second)));
+        assertNull(LiveRecordChip.currentPipPage(activity, first, Arrays.asList(first, second)));
+    }
+
+    @Test public void pipPrefersTheActivitySelectedRoomOverAnOldParentPager() {
+        PipLiveActivity activity = Robolectric.buildActivity(PipLiveActivity.class).setup().get();
+        PipRoomContainer oldPager = new PipRoomContainer();
+        PipRoomPage old = new PipRoomPage(activity, "old");
+        PipRoomPage active = new PipRoomPage(activity, "active");
+        old.parent = oldPager;
+        oldPager.current = old;
+        activity.current = active;
+        assertEquals(active, LiveRecordChip.currentPipPage(activity, old, Arrays.asList(old)));
+    }
+
+    @Test public void pipSelectsTheCurrentPlayingRoomRatherThanAPreloadedNeighbor() {
+        PipLiveActivity activity = Robolectric.buildActivity(PipLiveActivity.class).setup().get();
+        PipRoomPage first = new PipRoomPage(activity, "first");
+        PipRoomPage prefetched = new PipRoomPage(activity, "prefetched");
+        PipRoomPage next = new PipRoomPage(activity, "next");
+        activity.current = first;
+        assertEquals(first, LiveRecordChip.currentPipPage(activity));
+        // A neighboring room exists but does not replace the player's current room.
+        assertEquals(first, LiveRecordChip.currentPipPage(activity));
+        activity.current = next;
+        assertEquals(next, LiveRecordChip.currentPipPage(activity));
+        assertFalse(prefetched == LiveRecordChip.currentPipPage(activity));
+    }
+
+    @Test public void pipDoesNotSelectAnUnattachedOrUnknownRoom() {
+        PipLiveActivity activity = Robolectric.buildActivity(PipLiveActivity.class).setup().get();
+        PipLiveActivity other = Robolectric.buildActivity(PipLiveActivity.class).setup().get();
+        activity.current = new PipRoomPage(other, "another");
+        assertNull(LiveRecordChip.currentPipPage(activity));
+        activity.current = new PipRoomPage(activity, null);
+        assertNull(LiveRecordChip.currentPipPage(activity));
+        activity.current = null;
+        assertNull(LiveRecordChip.currentPipPage(activity));
+    }
+
+    @Test public void pipResolvesTheCurrentRoomInsideTheSelectedLiveTab() {
+        PipLiveActivity activity = Robolectric.buildActivity(PipLiveActivity.class).setup().get();
+        PipTab tab = new PipTab(activity);
+        activity.current = tab;
+        PipRoomPage old = new PipRoomPage(activity, "old");
+        PipRoomPage next = new PipRoomPage(activity, "next");
+        tab.pager.current = old;
+        assertEquals(old, LiveRecordChip.currentPipPage(activity));
+        tab.pager.current = next;
+        assertEquals(next, LiveRecordChip.currentPipPage(activity));
+        tab.pager.current = null;
+        assertNull(LiveRecordChip.currentPipPage(activity));
+    }
+
+    @Test public void pipResolvesTheCurrentRoomInADirectRoomPager() {
+        PipLiveActivity activity = Robolectric.buildActivity(PipLiveActivity.class).setup().get();
+        PipRoomPager pager = new PipRoomPager(activity);
+        activity.current = pager;
+        PipRoomPage first = new PipRoomPage(activity, "first");
+        PipRoomPage next = new PipRoomPage(activity, "next");
+        pager.current = first;
+        assertEquals(first, LiveRecordChip.currentPipPage(activity));
+        pager.current = next;
+        assertEquals(next, LiveRecordChip.currentPipPage(activity));
+    }
+
     @Test public void clearScreenEventsUseTheRoomsStableId() {
         assertEquals("123", LiveRecordChip.roomKey(new RoomIdentity("123", 456)));
         assertEquals("456", LiveRecordChip.roomKey(new RoomIdentity(null, 456)));
@@ -138,6 +304,144 @@ public class LiveRecordChipTest {
         assertEquals(6_700, LiveRecordChip.pipReturnDeadline(true, false, 6_500, 5_200));
         assertEquals(0, LiveRecordChip.pipReturnDeadline(true, false, 6_500, 6_500));
         assertEquals(0, LiveRecordChip.pipReturnDeadline(false, true, 6_500, 5_000));
+    }
+
+    @Test public void automaticRecordingIsOffUnlessEnabledAndTheRoomIsVisible() {
+        LiveRecordChip.AutoRecordVisit visit = new LiveRecordChip.AutoRecordVisit();
+        assertFalse(visit.observe(null, true, false));
+        assertFalse(visit.observe("adjacent", false, false));
+        assertFalse(visit.observe("visible", true, false));
+        assertTrue(visit.observe("visible", true, false));
+        assertFalse(visit.observe("visible", true, false));
+    }
+
+    @Test public void automaticRecordingRequiresOptInForegroundAndStreamSource() {
+        assertFalse(LiveRecordChip.autoStreamAllowed(true, true, false, false, false));
+        assertFalse(LiveRecordChip.autoStreamAllowed(true, false, true, false, false));
+        assertFalse(LiveRecordChip.autoStreamAllowed(false, true, true, false, false));
+        assertFalse(LiveRecordChip.autoStreamAllowed(true, true, true, true, false));
+        assertFalse(LiveRecordChip.autoStreamAllowed(false, true, true, true, true));
+        assertTrue(LiveRecordChip.autoStreamAllowed(false, true, true, false, true));
+        assertTrue(LiveRecordChip.autoStreamAllowed(true, true, true, false, false));
+    }
+
+    @Test public void pipAutoRecordStartsOnlyAfterTheNewRoomIsConfirmed() {
+        LiveRecordChip.AutoRecordVisit visit = new LiveRecordChip.AutoRecordVisit();
+        assertFalse(visit.observe("first", true, false));
+        assertTrue(visit.observe("first", true, false));
+        assertFalse("do not restart the current room", visit.observe("first", true, false));
+        assertFalse("first observation of a new PiP room", visit.observe("next", true, true));
+        assertFalse("old recording is closing", visit.observe("next", true, true));
+        assertTrue("start once its source closes", visit.observe("next", true, false));
+        assertFalse("only once per PiP room", visit.observe("next", true, false));
+    }
+
+    @Test public void automaticRecordingWaitsForThePreviousRoomToFinishSaving() {
+        LiveRecordChip.AutoRecordVisit visit = new LiveRecordChip.AutoRecordVisit();
+        assertFalse(visit.observe("first", true, false));
+        assertTrue(visit.observe("first", true, false));
+        assertFalse(visit.observe("second", true, true));
+        assertFalse(visit.observe("second", true, true));
+        assertTrue(visit.observe("second", true, false));
+        assertFalse(visit.observe("second", true, false));
+    }
+
+    @Test public void aFullSaveQueueRetriesAutomaticRecordingOnlyAfterAFileFinishes() {
+        LiveRecordChip.AutoRecordVisit visit = new LiveRecordChip.AutoRecordVisit();
+        assertFalse(visit.observe("room", true, false));
+        assertTrue(visit.observe("room", true, false));
+        visit.waitForSave();
+        assertFalse("do not retry the full queue every tick", visit.observe("room", true, false));
+        visit.saveFinished();
+        assertTrue("the same visible room gets another chance", visit.observe("room", true, false));
+        assertFalse(visit.observe("room", true, false));
+    }
+
+    @Test public void automaticRecordingDoesNotRestartAfterManualStopInTheSameRoom() {
+        LiveRecordChip.AutoRecordVisit visit = new LiveRecordChip.AutoRecordVisit();
+        visit.startedManually("room");
+        assertFalse(visit.observe("room", true, false));
+        assertFalse(visit.observe("room", true, false));
+        visit.reset();
+        assertFalse(visit.observe("room", true, false));
+        assertTrue(visit.observe("room", true, false));
+    }
+
+    @Test public void disconnectedStreamRestartsInTheSamePipRoomAfterBackoff() {
+        LiveRecordChip.AutoRecordVisit visit = new LiveRecordChip.AutoRecordVisit();
+        assertFalse(visit.observe("room", true, false, 1000));
+        assertTrue(visit.observe("room", true, false, 2000));
+        visit.streamEnded("room", LiveRecorder.End.DISCONNECTED, 180000, 3000);
+        assertFalse("do not immediately reconnect", visit.observe("room", true, false, 7999));
+        assertTrue("reconnect while the same LIVE remains active", visit.observe("room", true, false, 8000));
+        assertFalse("only one attempt per failure", visit.observe("room", true, false, 8001));
+    }
+
+    @Test public void repeatedEarlyDisconnectsBackOffWithoutPermanentlyDisablingAutoRecord() {
+        LiveRecordChip.AutoRecordVisit visit = new LiveRecordChip.AutoRecordVisit();
+        assertFalse(visit.observe("room", true, false, 0));
+        assertTrue(visit.observe("room", true, false, 1000));
+        visit.streamEnded("room", LiveRecorder.End.DISCONNECTED, 1000, 2000);
+        assertTrue(visit.observe("room", true, false, 7000));
+        visit.streamEnded("room", LiveRecorder.End.DISCONNECTED, 1000, 8000);
+        assertFalse(visit.observe("room", true, false, 17999));
+        assertTrue(visit.observe("room", true, false, 18000));
+        visit.streamEnded("room", LiveRecorder.End.DISCONNECTED, 1000, 19000);
+        assertFalse(visit.observe("room", true, false, 38999));
+        assertTrue(visit.observe("room", true, false, 39000));
+    }
+
+    @Test public void manualStopAndSafetyLimitsNeverTriggerSameRoomRetry() {
+        for (LiveRecorder.End end : LiveRecorder.End.values()) {
+            if (end == LiveRecorder.End.DISCONNECTED) continue;
+            LiveRecordChip.AutoRecordVisit visit = new LiveRecordChip.AutoRecordVisit();
+            visit.startedManually("room");
+            visit.streamEnded("room", end, 5000, 1000);
+            assertFalse("must not retry after " + end, visit.observe("room", true, false, 120000));
+        }
+    }
+
+    @Test public void aStaleFailureCannotRestartTheWrongRoomOrBlockANewOne() {
+        LiveRecordChip.AutoRecordVisit visit = new LiveRecordChip.AutoRecordVisit();
+        assertFalse(visit.observe("first", true, false, 100));
+        assertTrue(visit.observe("first", true, false, 200));
+        visit.streamEnded("neighbor", LiveRecorder.End.DISCONNECTED, 1000, 300);
+        assertFalse(visit.observe("first", true, false, 120000));
+        visit.streamEnded("first", LiveRecorder.End.DISCONNECTED, 1000, 120100);
+        assertFalse(visit.observe("second", true, false, 120101));
+        assertTrue("new LIVE should not inherit old backoff", visit.observe("second", true, false, 120102));
+    }
+
+    @Test public void retryRespectsOptOutAndExplicitlyLeavingTheRoom() {
+        LiveRecordChip.AutoRecordVisit visit = new LiveRecordChip.AutoRecordVisit();
+        assertFalse(visit.observe("room", true, false, 1000));
+        assertTrue(visit.observe("room", true, false, 2000));
+        visit.streamEnded("room", LiveRecorder.End.DISCONNECTED, 2000, 3000);
+        assertFalse(visit.observe("room", false, false, 10000));
+        visit.reset();
+        assertFalse(visit.observe("room", true, false, 10001));
+        assertTrue(visit.observe("room", true, false, 10002));
+    }
+
+    @Test public void automaticRecordingIgnoresBriefSwipesToAnAdjacentRoom() {
+        LiveRecordChip.AutoRecordVisit visit = new LiveRecordChip.AutoRecordVisit();
+        assertFalse(visit.observe("first", true, false));
+        assertTrue(visit.observe("first", true, false));
+        assertFalse(visit.observe("second", true, false));
+        assertFalse(visit.observe("first", true, false));
+        assertFalse(visit.observe("first", true, false));
+        assertFalse(visit.observe("second", true, false));
+        assertTrue(visit.observe("second", true, false));
+    }
+
+    @Test public void automaticRecordingRequiresAStableRoomIdentity() {
+        LiveRecordChip.AutoRecordVisit visit = new LiveRecordChip.AutoRecordVisit();
+        assertFalse(visit.observe("", true, false));
+        assertFalse(visit.observe(null, true, false));
+        assertFalse(visit.observe("room", true, false));
+        assertFalse(visit.observe(null, true, false));
+        assertFalse(visit.observe("room", true, false));
+        assertTrue(visit.observe("room", true, false));
     }
 
     // The chip is 200 wide at the right edge (880 to 1080), 120 tall, wanted at 330.

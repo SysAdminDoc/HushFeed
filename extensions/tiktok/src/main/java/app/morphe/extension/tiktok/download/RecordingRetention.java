@@ -30,6 +30,14 @@ final class RecordingRetention {
     static final String DIRECTORY = "hushfeed-recordings";
     private static final Object LOCK = new Object();
     private static final int MAX_JOURNAL_BYTES = 32 * 1024;
+    /** One capture may run alongside at most sixteen closed recordings being published. */
+    static final int MAX_BACKGROUND_SAVES = 16;
+
+    static final class BackgroundSaveLimit extends IOException {
+        BackgroundSaveLimit() {
+            super("Too many LIVE recordings are still saving");
+        }
+    }
     final File root;
     final File legacyRoot;
 
@@ -178,13 +186,7 @@ final class RecordingRetention {
             throw new IOException("Unknown retained recording format");
         return locked(
                 () -> {
-                    // One active recording or retained debt consumes admission.
-                    // CaptureJournal checks byte/sample limits and remaining-copy headroom.
-                    if (admission && (!directories().isEmpty() || hasLegacyDebt())) {
-                        throw new IOException(
-                                "Retained recordings must be retried or discarded before recording"
-                                        + " again");
-                    }
+                    if (admission) checkCaptureAdmission();
                     String id = UUID.randomUUID().toString().replace("-", "");
                     File directory = new File(root, id);
                     if (!directory.mkdir())
@@ -251,6 +253,59 @@ final class RecordingRetention {
                     }
                     return lease(directory, data, false);
                 });
+    }
+
+    /** A live owner may finish publishing while a new capture starts. Crashed or damaged
+     * recordings still block admission until they are recovered: a journal flag alone is never
+     * evidence that another process still owns its source and destination. */
+    private void checkCaptureAdmission() throws IOException {
+        if (hasLegacyDebt()) throw new IOException("Recover retained recordings before recording again");
+        int saving = 0;
+        long outstandingBytes = 0;
+        for (File directory : directories()) {
+            JSONObject data = read(directory);
+            if (!data.optBoolean("captureClosed") || !currentlyLeased(directory)) {
+                throw new IOException("Recover retained recordings before recording again");
+            }
+            if (++saving > MAX_BACKGROUND_SAVES)
+                throw new BackgroundSaveLimit();
+            File[] files = directory.listFiles();
+            if (files == null) throw new IOException("Cannot inspect recording storage");
+            for (File file : files) {
+                checkDirect(directory, file);
+                if (!file.isFile()) throw new IOException("Unexpected nested recording storage");
+                if (metadata(file.getName()) || file.getName().equals("owner.lock")) continue;
+                try {
+                    // A closed source may still need both an MP4 rewrite and its gallery copy.
+                    outstandingBytes = Math.addExact(outstandingBytes,
+                            Math.multiplyExact(2, file.length()));
+                } catch (ArithmeticException overflow) {
+                    throw new IOException("Recording storage reservation overflow", overflow);
+                }
+            }
+        }
+        long free = root.getUsableSpace();
+        if (free > 0 && (outstandingBytes > Long.MAX_VALUE - LiveRecorder.RESERVE_BYTES
+                || free < outstandingBytes + LiveRecorder.RESERVE_BYTES)) {
+            throw new IOException("Not enough storage for recordings still saving");
+        }
+    }
+
+    private boolean currentlyLeased(File directory) throws IOException {
+        File owner = new File(directory, "owner.lock");
+        checkDirect(directory, owner);
+        if (!owner.isFile()) return false;
+        try (RandomAccessFile access = new RandomAccessFile(owner, "rw")) {
+            FileLock available;
+            try {
+                available = access.getChannel().tryLock();
+            } catch (OverlappingFileLockException inThisProcess) {
+                return true;
+            }
+            if (available == null) return true;
+            available.release();
+            return false;
+        }
     }
 
     Record open(String id) throws IOException {
@@ -814,7 +869,7 @@ final class RecordingRetention {
             for (Iterator<String> keys = data.keys(); keys.hasNext(); )
                 if (!keys.next()
                         .matches(
-                                "v|id|format|creator|started|source|state|screenAudio|capture|captureComplete|captureConfig|captureWidth|captureHeight"))
+                                "v|id|format|creator|started|source|state|screenAudio|capture|captureClosed|captureComplete|captureConfig|captureWidth|captureHeight"))
                     return false;
             checkDirect(root, directory);
             try {

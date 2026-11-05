@@ -137,6 +137,11 @@ public final class LiveRecorder {
         void onFinished(Result result);
     }
 
+    /** Called after capture has stopped and its source file is closed, before MP4 publication. */
+    interface SourceClosed {
+        void onClosed() throws IOException;
+    }
+
     /** Where the spool's bytes are written. */
     interface Output {
         void write(byte[] bytes, int offset, int length) throws IOException;
@@ -220,6 +225,7 @@ public final class LiveRecorder {
     private final Source source;
     private final Finisher finisher;
     private final Listener listener;
+    private final SourceClosed sourceClosed;
     private final Clock clock;
     private final long maxBytes;
 
@@ -231,21 +237,34 @@ public final class LiveRecorder {
     private volatile boolean pumping;
     private volatile long startedAtMs;
     private volatile long endedAtMs;
+    private volatile End sourceEnd;
     private Thread thread;
 
     LiveRecorder(Target target, File spoolFile, Source source, Finisher finisher, Listener listener,
             Clock clock, long maxBytes) {
+        this(target, spoolFile, source, finisher, listener, null, clock, maxBytes);
+    }
+
+    LiveRecorder(Target target, File spoolFile, Source source, Finisher finisher, Listener listener,
+            SourceClosed sourceClosed, Clock clock, long maxBytes) {
         this.target = target;
         this.spoolFile = spoolFile;
         this.source = source;
         this.finisher = finisher;
         this.listener = listener;
+        this.sourceClosed = sourceClosed;
         this.clock = clock == null ? SYSTEM : clock;
         this.maxBytes = maxBytes;
     }
 
     LiveRecorder(Target target, File spoolFile, Source source, Finisher finisher, Listener listener) {
         this(target, spoolFile, source, finisher, listener, SYSTEM, MediaBudget.MAX_LIVE_RECORDING_BYTES);
+    }
+
+    LiveRecorder(Target target, File spoolFile, Source source, Finisher finisher, Listener listener,
+            SourceClosed sourceClosed) {
+        this(target, spoolFile, source, finisher, listener, sourceClosed, SYSTEM,
+                MediaBudget.MAX_LIVE_RECORDING_BYTES);
     }
 
     public Target target() {
@@ -260,6 +279,11 @@ public final class LiveRecorder {
     /** True while the stream is being pulled, which ends as soon as a stop is asked for. */
     public boolean recording() {
         return pumping && requested == null;
+    }
+
+    /** Why capture stopped, available before the finished MP4 is published. */
+    public End sourceEnd() {
+        return sourceEnd;
     }
 
     /** Milliseconds recorded so far, frozen when the stream stops coming in. */
@@ -392,6 +416,18 @@ public final class LiveRecorder {
         }
         // The stream may have ended by itself while a stop was racing it; the stop then explains it.
         if (requested != null && end == End.DISCONNECTED) end = requested;
+        sourceEnd = end;
+        // Capture no longer owns a source or projection. A new recording may now start while
+        // the closed file is remuxed and published, but only after durable ownership is updated.
+        if (sourceClosed != null && ((spool != null && spool.bytes() >= MIN_USEFUL_BYTES)
+                || finisher.usefulWithoutSpool())) {
+            try {
+                sourceClosed.onClosed();
+            } catch (IOException | RuntimeException failure) {
+                Logger.printException(() -> "Could not release the completed LIVE capture", failure);
+                // Do not release its UI slot if retention cannot authorize another capture.
+            }
+        }
         Result result = conclude(end, detail, spool == null ? 0 : spool.bytes());
         finished = true;
         try {

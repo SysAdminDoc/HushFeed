@@ -2338,7 +2338,6 @@ Picked %1$s. Save, then tap Pick all for more.	Выбрано %1$s. Сохран
 All loaded items are picked or saved. Scroll for more.	Всё загруженное выбрано или сохранено. Листайте дальше.
 
 Record LIVEs you watch	Записывать LIVE, которые вы смотрите
-Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.	Добавляет в комнаты LIVE кнопку записи. Запись начинается, когда вы нажимаете её, и заканчивается, когда вы нажимаете «Стоп» или выходите из комнаты. Всё, что было до этого, не сохраняется.
 Record	Запись
 Stop	Стоп
 Stop recording this LIVE	Остановить запись этого LIVE
@@ -2723,3 +2722,6 @@ If the video blinks as you swipe with See-through bottom bar on, this draws it i
 # context: a switch under Blur the video behind the bar; the glass tab bar's rim bends the blurred video like a lens edge
 Bend the video at the edges	Преломлять видео по краям
 The glass pill's edges bend the blurred video behind them, like the rim of real glass, and its colors come through a little richer. Needs Blur the video behind the bar and Android 13 and up.	Края стеклянной панели преломляют размытое видео за ними, как край настоящего стекла, а цвета становятся чуть насыщеннее. Нужен «Размывать видео за панелью» и Android 13 или новее.
+Adds a Record button to LIVE rooms. Tap it to start or stop recording. Leaving the room also stops a recording.	Добавляет кнопку записи в комнаты LIVE. Нажмите её, чтобы начать или остановить запись. При выходе из комнаты запись тоже останавливается.
+Automatically record LIVEs you enter	Автоматически записывать LIVE при входе
+Start recording a LIVE's stream when you enter the room. Stop won't restart it until you leave and enter again. Screen recordings still need a tap and Android's permission.	Начинает запись потока LIVE при входе в комнату. После остановки запись не возобновится, пока вы не выйдете и не зайдёте снова. Для записи экрана по-прежнему нужны нажатие и разрешение Android.

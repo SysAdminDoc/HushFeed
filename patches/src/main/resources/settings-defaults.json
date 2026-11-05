@@ -293,6 +293,7 @@
       "home_tab_opens_settings",
       "profile_tab_opens_watch_history",
       "inbox_tab_flips_read_receipts",
+      "search_instead_of_home",
       "start_page",
       "show_feed_buttons",
       "hide_tako_ai",
@@ -395,7 +396,8 @@
     ],
     "Hide search suggestions": [
       "hide_search_rewards",
-      "hide_search_suggestions"
+      "hide_search_suggestions",
+      "discover_search_bar_only"
     ],
     "Hide suggested accounts": [
       "hide_inbox_suggested_accounts"
@@ -1359,6 +1361,12 @@
     "disable_long_press_repost": {
       "field": "DISABLE_LONG_PRESS_REPOST",
       "key": "disable_long_press_repost",
+      "type": "boolean",
+      "default": false
+    },
+    "discover_search_bar_only": {
+      "field": "DISCOVER_SEARCH_BAR_ONLY",
+      "key": "discover_search_bar_only",
       "type": "boolean",
       "default": false
     },
@@ -3471,6 +3479,12 @@
     "save_story_from_share": {
       "field": "SAVE_STORY_FROM_SHARE",
       "key": "save_story_from_share",
+      "type": "boolean",
+      "default": false
+    },
+    "search_instead_of_home": {
+      "field": "SEARCH_INSTEAD_OF_HOME",
+      "key": "search_instead_of_home",
       "type": "boolean",
       "default": false
     },

@@ -3922,6 +3922,15 @@
           "values": null
         },
         {
+          "key": "search_instead_of_home",
+          "title": "Default: search instead of home",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "start_page",
           "title": "Default: start page",
           "description": null,
@@ -5394,6 +5403,15 @@
         {
           "key": "hide_search_suggestions",
           "title": "Default: hide search suggestions",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "discover_search_bar_only",
+          "title": "Default: discover search bar only",
           "description": null,
           "required": false,
           "type": "kotlin.Boolean",

@@ -293,6 +293,7 @@
       "HOME_TAB_OPENS_SETTINGS",
       "PROFILE_TAB_OPENS_WATCH_HISTORY",
       "INBOX_TAB_FLIPS_READ_RECEIPTS",
+      "SEARCH_INSTEAD_OF_HOME",
       "START_PAGE",
       "SHOW_FEED_BUTTONS",
       "HIDE_TAKO_AI",
@@ -392,7 +393,8 @@
     ],
     "Hide search suggestions": [
       "HIDE_SEARCH_REWARDS",
-      "HIDE_SEARCH_SUGGESTIONS"
+      "HIDE_SEARCH_SUGGESTIONS",
+      "DISCOVER_SEARCH_BAR_ONLY"
     ],
     "Hide suggested accounts": [
       "HIDE_INBOX_SUGGESTED_ACCOUNTS"

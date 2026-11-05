@@ -76,8 +76,8 @@ public class FeedNavigationPreferenceCategory extends ConditionalPreferenceCateg
                 Settings.BOTTOM_NAVIGATION_BLOCK_NEW_TABS
         ));
         addPreference(new ChoicePreference(context, "Open TikTok on", Settings.START_PAGE,
-                new String[]{"TikTok default", "For You", "Following", "Friends", "Inbox", "Profile"},
-                new String[]{StartPage.TIKTOK, StartPage.FOR_YOU, StartPage.FOLLOWING, StartPage.FRIENDS, StartPage.INBOX, StartPage.PROFILE}));
+                new String[]{"TikTok default", "For You", "Following", "Friends", "Discover", "Inbox", "Profile"},
+                new String[]{StartPage.TIKTOK, StartPage.FOR_YOU, StartPage.FOLLOWING, StartPage.FRIENDS, StartPage.DISCOVER, StartPage.INBOX, StartPage.PROFILE}));
         addPreference(new TogglePreference(
                 context,
                 "Show TikTok's feed buttons",

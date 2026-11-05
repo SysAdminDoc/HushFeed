@@ -13,6 +13,7 @@ import android.os.Looper;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.settings.Settings;
+import app.morphe.extension.tiktok.settings.SettingsStatus;
 import java.util.concurrent.TimeUnit;
 import org.junit.After;
 import org.junit.Before;
@@ -94,6 +95,37 @@ public class StartPageTest {
         assertEquals("a bottom tab", "FRIENDS_TAB", start(launcher(), "HOME"));
         Settings.BOTTOM_NAVIGATION_OBSERVED_TABS.save("HOME,INBOX,PROFILE");
         assertEquals("a feed along the top", "FRIENDS_FEED", start(launcher(), "HOME"));
+    }
+
+    @Test public void discoverOpensOnlyWhereThisPhoneShowedADiscoverTab() {
+        Settings.START_PAGE.save(StartPage.DISCOVER);
+        Settings.BOTTOM_NAVIGATION_OBSERVED_TABS.save("HOME,RAW:discover,PUBLISH,INBOX,PROFILE");
+        assertEquals("a Discover bottom tab", "DISCOVER", start(launcher(), "HOME"));
+        Settings.BOTTOM_NAVIGATION_OBSERVED_TABS.save("HOME,FRIENDS,PUBLISH,INBOX,PROFILE");
+        assertEquals("a bar with no Discover keeps TikTok's tab", "HOME", start(launcher(), "HOME"));
+
+        Settings.BOTTOM_NAVIGATION_OBSERVED_TABS.save("HOME,RAW:discover,INBOX,PROFILE");
+        Settings.BOTTOM_NAVIGATION.save(true);
+        Settings.BOTTOM_NAVIGATION_TABS.save("HOME,INBOX,PROFILE");
+        assertEquals("a Discover tab the Bottom tabs page hides", "HOME", start(launcher(), "HOME"));
+        Settings.BOTTOM_NAVIGATION_TABS.save("HOME,RAW:discover,INBOX,PROFILE");
+        assertEquals("a Discover tab the Bottom tabs page keeps", "DISCOVER", start(launcher(), "HOME"));
+    }
+
+    @Test public void searchInsteadOfHomeStillOpensOnDiscover() {
+        boolean wasEnabled = SettingsStatus.feedNavigationEnabled;
+        SettingsStatus.feedNavigationEnabled = true;
+        try {
+            Settings.SEARCH_INSTEAD_OF_HOME.save(true);
+            Settings.BOTTOM_NAVIGATION_OBSERVED_TABS.save("HOME,RAW:discover,INBOX,PROFILE");
+            Settings.START_PAGE.save(StartPage.DISCOVER);
+            assertEquals("Discover isn't a feed, so it stays", "DISCOVER", start(launcher(), "HOME"));
+            Settings.START_PAGE.save(StartPage.TIKTOK);
+            assertEquals("TikTok's own Home start still moves to Inbox", "NOTIFICATION", start(launcher(), "HOME"));
+        } finally {
+            SettingsStatus.feedNavigationEnabled = wasEnabled;
+            Settings.SEARCH_INSTEAD_OF_HOME.resetToDefault();
+        }
     }
 
     @Test public void onlyAPlainLauncherStartChanges() {

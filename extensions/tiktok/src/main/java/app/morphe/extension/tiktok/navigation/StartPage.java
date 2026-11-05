@@ -47,6 +47,7 @@ public final class StartPage {
     public static final String FOR_YOU = "for_you";
     public static final String FOLLOWING = "following";
     public static final String FRIENDS = "friends";
+    public static final String DISCOVER = "discover";
     public static final String INBOX = "inbox";
     public static final String PROFILE = "profile";
 
@@ -54,6 +55,8 @@ public final class StartPage {
     static final String HOME_TAG = "HOME";
     static final String FRIENDS_TAB_TAG = "FRIENDS_TAB";
     static final String FRIENDS_FEED_TAG = "FRIENDS_FEED";
+    /** The Discover bottom tab some regions get in place of Friends (DiscoverCompassTabProtocol). */
+    static final String DISCOVER_TAG = "DISCOVER";
     static final String INBOX_TAG = "NOTIFICATION";
     static final String PROFILE_TAG = "USER";
 
@@ -238,6 +241,14 @@ public final class StartPage {
                     Settings.BOTTOM_NAVIGATION_OBSERVED_TABS.get()).contains(BottomNavigationTabOptions.FRIENDS);
             if (bottom) return bottomTabShown(BottomNavigationTabOptions.FRIENDS) ? FRIENDS_TAB_TAG : null;
             return topTabShown(NavigationTabOptions.FRIENDS) ? FRIENDS_FEED_TAG : null;
+        }
+        if (DISCOVER.equals(choice)) {
+            // Only a bar that has shown a Discover tab gets it (#338); Hushfeed keeps such a tab
+            // under its raw tag, so the Bottom tabs page can still hide it.
+            String key = BottomNavigationTabOptions.normalizeRuntimeTag(DISCOVER_TAG);
+            boolean seen = BottomNavigationTabOptions.parseObservedKeys(
+                    Settings.BOTTOM_NAVIGATION_OBSERVED_TABS.get()).contains(key);
+            return seen && bottomTabShown(key) ? DISCOVER_TAG : null;
         }
         return null;
     }

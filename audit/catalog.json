@@ -6325,6 +6325,12 @@
     "default": false,
     "type": "bool",
     "row": "Keep my own watch history"
+   },
+   {
+    "key": "for_you_hold_opens_watch_history",
+    "default": false,
+    "type": "bool",
+    "row": "Long press on For You opens my watch history"
    }
   ],
   "surface": "feed",

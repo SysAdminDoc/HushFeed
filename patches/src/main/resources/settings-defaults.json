@@ -332,7 +332,8 @@
       "hide_seen_videos",
       "seen_video_retention_days",
       "seen_video_mark_percent",
-      "local_watch_history"
+      "local_watch_history",
+      "for_you_hold_opens_watch_history"
     ],
     "Hide comment popup ads": [
       "hide_comment_eggs"
@@ -1808,6 +1809,12 @@
     "following_latest_first": {
       "field": "FOLLOWING_LATEST_FIRST",
       "key": "following_latest_first",
+      "type": "boolean",
+      "default": false
+    },
+    "for_you_hold_opens_watch_history": {
+      "field": "FOR_YOU_HOLD_OPENS_WATCH_HISTORY",
+      "key": "for_you_hold_opens_watch_history",
       "type": "boolean",
       "default": false
     },

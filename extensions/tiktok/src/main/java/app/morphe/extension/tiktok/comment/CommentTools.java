@@ -1239,7 +1239,8 @@ public final class CommentTools {
             new java.util.concurrent.ConcurrentHashMap<>();
 
     /* Classes the bind handed over as the comment itself rather than as a holder of one. */
-    private static final Set<Class<?>> COMMENT_TYPES = java.util.concurrent.ConcurrentHashMap.newKeySet();
+    private static final Set<Class<?>> COMMENT_TYPES =
+            Collections.newSetFromMap(new java.util.concurrent.ConcurrentHashMap<Class<?>, Boolean>());
 
     /**
      * The bound comment: the object itself when it answers to {@code getCid} and {@code getUser}

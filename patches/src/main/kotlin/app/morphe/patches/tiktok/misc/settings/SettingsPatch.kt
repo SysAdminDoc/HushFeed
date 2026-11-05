@@ -16,6 +16,7 @@ import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patcher.util.smali.ExternalLabel
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
+import app.morphe.patches.tiktok.misc.navigation.forYouShowRepairPatch
 import app.morphe.patches.tiktok.shared.requireLocals
 import app.morphe.patches.tiktok.shared.requireRegisters
 import app.morphe.util.findFreeRegister
@@ -354,7 +355,7 @@ val settingsPatch = bytecodePatch(
     default = true,
 ) {
     category("Settings")
-    dependsOn(sharedExtensionPatch)
+    dependsOn(sharedExtensionPatch, forYouShowRepairPatch)
 
     compatibleWith(*AppCompatibilities.tiktok())
 

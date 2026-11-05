@@ -38,6 +38,7 @@ Every Hushfeed release, newest first.
 * `Hide streak pop-ups` stops the streak alert that slides in over TikTok and the streak message it drops into a chat. `Hide message streaks` still handles the button. It starts off, and it's in Hushfeed settings > Inbox (#331).
 
 ### Bug Fixes
+* For You no longer freezes after a swipe with the first video's sound still playing and the next video stuck on its cover. On some starts TikTok never told the For You page it was on screen, so its videos never started. Now Hushfeed notices a For You feed that's in front but was never shown and shows it to TikTok, the way a tap on Home would. It doesn't depend on `Feed tab navigation`, and a feed that plays normally is left alone.
 * `Hide message streaks` takes the streak button off chats, the share panel, Friends and stories, and the streak reminder off your chat list. Before, it hid nothing, since TikTok no longer asks the spot Hushfeed was answering.
 * Saves work again after one that was cut off while Hushfeed was writing its first record of files still to be published. That half-written record used to count as damaged, and every save after it failed. Now it's thrown away, since nothing was published under it, and the next save goes through.
 * A save that runs TikTok out of memory while it copies the file ends as a failed save. Before, the error got past the save and took TikTok down with it.

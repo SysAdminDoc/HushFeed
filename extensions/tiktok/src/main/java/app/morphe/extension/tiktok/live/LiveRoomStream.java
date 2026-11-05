@@ -246,6 +246,28 @@ public final class LiveRoomStream {
         }
     }
 
+    /**
+     * The room's pull stream data, the JSON whose {@code data} object holds one entry per quality
+     * ("origin", "hd", "ao" and so on), or null. Never throws.
+     */
+    static String streamData(Object room) {
+        if (room == null) return null;
+        try {
+            return streamData(room, Reflect.readField(room, "streamUrl"));
+        } catch (Throwable failure) {
+            return null;
+        }
+    }
+
+    private static String streamData(Object room, Object streamUrl) {
+        Object core = streamUrl == null ? null : Reflect.readField(streamUrl, "liveCoreSDKData");
+        Object pull = core == null ? null : Reflect.readField(core, "pullData");
+        Object streamData = pull == null ? null : Reflect.readField(pull, "streamData");
+        if (streamData instanceof String) return (String) streamData;
+        Object fallback = Reflect.readField(room, "pullStreamData");
+        return fallback instanceof String ? (String) fallback : null;
+    }
+
     /** Reads the room off TikTok's room object. Never throws. */
     @SuppressWarnings("unchecked")
     public static Pick fromRoom(Object room, String preferred) {
@@ -253,15 +275,7 @@ public final class LiveRoomStream {
         try {
             Object streamUrl = Reflect.readField(room, "streamUrl");
             if (streamUrl == null) return new Pick(null, "No stream");
-            String json = null;
-            Object core = Reflect.readField(streamUrl, "liveCoreSDKData");
-            Object pull = core == null ? null : Reflect.readField(core, "pullData");
-            Object streamData = pull == null ? null : Reflect.readField(pull, "streamData");
-            if (streamData instanceof String) json = (String) streamData;
-            if (json == null) {
-                Object fallback = Reflect.readField(room, "pullStreamData");
-                if (fallback instanceof String) json = (String) fallback;
-            }
+            String json = streamData(room, streamUrl);
             Object flv = Reflect.readField(streamUrl, "flvPullUrl");
             Object hls = Reflect.readField(streamUrl, "hlsPullUrlMap");
             Object hlsOne = Reflect.readField(streamUrl, "hlsPullUrl");

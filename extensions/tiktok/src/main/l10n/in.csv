@@ -2487,3 +2487,7 @@ Stopped. Search carries on later.,Dihentikan. Pencarian lanjut nanti.
 Couldn't stop it. Try again.,Tidak bisa dihentikan. Coba lagi.
 Couldn't rebuild search. Try again.,Pencarian tidak bisa dibangun ulang. Coba lagi.
 Message search isn't on for this account,Pencarian pesan tidak aktif di akun ini
+Offer Audio only in LIVE quality,Tawarkan Hanya audio di kualitas LIVE
+Audio only,Hanya audio
+"Adds Audio only to a LIVE's Video quality list. The room plays its sound without the picture, which uses much less data, until you pick another quality or leave. Recording from the stream still saves the video.","Menambahkan Hanya audio ke daftar kualitas video LIVE. Ruang memutar suaranya tanpa gambar, yang jauh lebih hemat data, sampai kamu memilih kualitas lain atau keluar. Merekam dari siaran tetap menyimpan videonya."
+Pick a video quality to record the screen,Pilih kualitas video untuk merekam layar

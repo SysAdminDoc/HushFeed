@@ -2516,3 +2516,7 @@ Stopped. Search carries on later.	Detenido. La búsqueda seguirá luego.
 Couldn't stop it. Try again.	No se detuvo. Reintenta.
 Couldn't rebuild search. Try again.	No se reconstruyó la búsqueda. Reintenta.
 Message search isn't on for this account	La búsqueda de mensajes no está activa en esta cuenta
+Offer Audio only in LIVE quality	Ofrecer Solo audio en la calidad del LIVE
+Audio only	Solo audio
+Adds Audio only to a LIVE's Video quality list. The room plays its sound without the picture, which uses much less data, until you pick another quality or leave. Recording from the stream still saves the video.	Añade Solo audio a la lista de calidad de video de un LIVE. La sala reproduce el sonido sin la imagen, lo que usa muchos menos datos, hasta que elijas otra calidad o salgas. Grabar desde la transmisión sigue guardando el video.
+Pick a video quality to record the screen	Elige una calidad de video para grabar la pantalla

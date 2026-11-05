@@ -539,6 +539,11 @@ public final class LiveRecordChip {
      * when TikTok already holds the microphone permission, which playback capture requires.
      */
     private static void startScreen(Activity activity, Object fragment, Object room) throws Exception {
+        // Audio only stops the picture, so the screen would record a still frame (#265).
+        if (LiveAudioOnly.playing(room)) {
+            Utils.showToastLong(L10n.t("Pick a video quality to record the screen"));
+            return;
+        }
         LiveRoomStream.Pick pick = LiveRoomStream.screenTarget(room);
         if (pick.target == null) {
             Utils.showToastShort(L10n.t("No stream found to record. Reopen the LIVE."));

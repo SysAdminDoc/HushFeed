@@ -2516,3 +2516,7 @@ Stopped. Search carries on later.	Durduruldu. Arama sonra devam eder.
 Couldn't stop it. Try again.	Durdurulamadı. Tekrar dene.
 Couldn't rebuild search. Try again.	Arama oluşturulamadı. Tekrar dene.
 Message search isn't on for this account	Mesaj araması bu hesapta açık değil
+Offer Audio only in LIVE quality	LIVE kalitesinde Yalnızca ses seçeneği sun
+Audio only	Yalnızca ses
+Adds Audio only to a LIVE's Video quality list. The room plays its sound without the picture, which uses much less data, until you pick another quality or leave. Recording from the stream still saves the video.	LIVE'ın Video kalitesi listesine Yalnızca ses ekler. Oda, görüntü olmadan sesi çalar ve bu çok daha az veri kullanır, siz başka bir kalite seçene ya da çıkana kadar. Yayından kayıt yine videoyu kaydeder.
+Pick a video quality to record the screen	Ekranı kaydetmek için bir video kalitesi seç

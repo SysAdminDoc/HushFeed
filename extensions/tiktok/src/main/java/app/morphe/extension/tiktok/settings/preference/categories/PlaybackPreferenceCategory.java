@@ -130,6 +130,11 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                             + "that quality again after a restart. A room whose stream doesn't have it "
                             + "opens at TikTok's choice.",
                     Settings.REMEMBER_LIVE_QUALITY));
+            addPreference(new TogglePreference(context, "Offer Audio only in LIVE quality",
+                    "Adds Audio only to a LIVE's Video quality list. The room plays its sound without "
+                            + "the picture, which uses much less data, until you pick another quality or "
+                            + "leave. Recording from the stream still saves the video.",
+                    Settings.LIVE_AUDIO_ONLY));
             addPreference(new TogglePreference(context, "Offer clear screen in every LIVE room",
                     "Clear screen hides a LIVE's chat, gifts and buttons so only the stream shows. "
                             + "TikTok puts it in the menu of only some rooms. This adds it to the others.",

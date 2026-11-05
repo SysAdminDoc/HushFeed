@@ -518,6 +518,7 @@
       "LIVE_RECORD_SOURCE",
       "LIVE_AUTO_TAP",
       "LIVE_AUTO_TAP_RATE",
+      "LIVE_AUDIO_ONLY",
       "REMEMBERED_LIVE_QUALITY"
     ],
     "Location access governor": [

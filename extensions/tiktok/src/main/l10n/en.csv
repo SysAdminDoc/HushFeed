@@ -199,6 +199,7 @@ Added 1 seen video.,Added 1 seen video.
 Added one older seen video to this account,Added one older seen video to this account
 Added to this account.,Added to this account.
 "Adds (unsent) after the text of a message that was kept, so you can tell it apart from the rest.","Adds (unsent) after the text of a message that was kept, so you can tell it apart from the rest."
+"Adds Audio only to a LIVE's Video quality list. The room plays its sound without the picture, which uses much less data, until you pick another quality or leave. Recording from the stream still saves the video.","Adds Audio only to a LIVE's Video quality list. The room plays its sound without the picture, which uses much less data, until you pick another quality or leave. Recording from the stream still saves the video."
 "Adds Export CSV and Export JSON buttons under the search box, so Search within comments must be on. They save the comments and replies loaded so far to a file you pick. Open the reply threads you want first.","Adds Export CSV and Export JSON buttons under the search box, so Search within comments must be on. They save the comments and replies loaded so far to a file you pick. Open the reply threads you want first."
 "Adds Save cover next to Download when you share a video, so you save the cover only when you want it. While this is on, Download saves just the video, even with Save the cover as well on.","Adds Save cover next to Download when you share a video, so you save the cover only when you want it. While this is on, Download saves just the video, even with Save the cover as well on."
 "Adds TikTok's own background play row to the long-press menu, so you pick it for one video and other videos stop as usual. Has no effect while Keep playing in the background is on. Restart TikTok to apply this.","Adds TikTok's own background play row to the long-press menu, so you pick it for one video and other videos stop as usual. Has no effect while Keep playing in the background is on. Restart TikTok to apply this."
@@ -272,6 +273,7 @@ Ask for the quality on each save,Ask for the quality on each save
 "Ask for the unlock your phone uses, like a fingerprint or a PIN, when TikTok starts and when you come back to it. A link you open from another app still goes to its video once you unlock. While this is on, TikTok's preview in recent apps stays blank. Needs a screen lock on the phone.","Ask for the unlock your phone uses, like a fingerprint or a PIN, when TikTok starts and when you come back to it. A link you open from another app still goes to its video once you unlock. While this is on, TikTok's preview in recent apps stays blank. Needs a screen lock on the phone."
 Attention,Attention
 Audio,Audio
+Audio only,Audio only
 Author text size,Author text size
 Auto tap,Auto tap
 Auto tap in LIVE rooms,Auto tap in LIVE rooms
@@ -1316,6 +1318,7 @@ Off,Off
 "Off forces the value to false, on forces it to true. Reset lets TikTok decide again.","Off forces the value to false, on forces it to true. Reset lets TikTok decide again."
 "Off until you tap it. Wipes TikTok's data once, on the next start, and gives it a new Android ID and advertising ID, so it sees a phone it hasn't met. You'll be signed out and lose your drafts. Hushfeed's settings stay.","Off until you tap it. Wipes TikTok's data once, on the next start, and gives it a new Android ID and advertising ID, so it sees a phone it hasn't met. You'll be signed out and lose your drafts. Hushfeed's settings stay."
 Off. TikTok can report views and typing.,Off. TikTok can report views and typing.
+Offer Audio only in LIVE quality,Offer Audio only in LIVE quality
 Offer LIVE quality in more rooms,Offer LIVE quality in more rooms
 Offer clear screen in every LIVE room,Offer clear screen in every LIVE room
 Offline videos,Offline videos
@@ -1422,6 +1425,7 @@ Photos and stickers,Photos and stickers
 "Photos can't be saved to the folder in that file, so your photo folder was kept","Photos can't be saved to the folder in that file, so your photo folder was kept"
 Pick a .ttf or .otf file of up to %1$s MB.,Pick a .ttf or .otf file of up to %1$s MB.
 "Pick a folder on internal storage, not an SD card","Pick a folder on internal storage, not an SD card"
+Pick a video quality to record the screen,Pick a video quality to record the screen
 Pick all,Pick all
 "Pick apps to add to the Share via row, before More. Each gets the same link the other apps get.","Pick apps to add to the Share via row, before More. Each gets the same link the other apps get."
 Pick for saving,Pick for saving

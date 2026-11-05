@@ -519,6 +519,7 @@
       "live_record_source",
       "live_auto_tap",
       "live_auto_tap_rate",
+      "live_audio_only",
       "remembered_live_quality"
     ],
     "Lift text length limits": [
@@ -2813,6 +2814,12 @@
     "liquid_glass_bottom_bar": {
       "field": "LIQUID_GLASS_BOTTOM_BAR",
       "key": "liquid_glass_bottom_bar",
+      "type": "boolean",
+      "default": false
+    },
+    "live_audio_only": {
+      "field": "LIVE_AUDIO_ONLY",
+      "key": "live_audio_only",
       "type": "boolean",
       "default": false
     },

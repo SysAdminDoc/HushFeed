@@ -2485,3 +2485,7 @@ Stopped. Search carries on later.,已停止。搜索稍后会继续.
 Couldn't stop it. Try again.,无法停止。再试一次.
 Couldn't rebuild search. Try again.,无法重建搜索。再试一次.
 Message search isn't on for this account,此账号未开启消息搜索
+Offer Audio only in LIVE quality,在 LIVE 画质中提供仅音频
+Audio only,仅音频
+"Adds Audio only to a LIVE's Video quality list. The room plays its sound without the picture, which uses much less data, until you pick another quality or leave. Recording from the stream still saves the video.",在 LIVE 的视频画质列表中加入仅音频。直播间只播放声音、不显示画面，流量少得多，直到你选择其他画质或离开。从直播流录制仍会保存视频.
+Pick a video quality to record the screen,请选择视频画质再录屏

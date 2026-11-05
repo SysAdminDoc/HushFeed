@@ -2516,3 +2516,7 @@ Stopped. Search carries on later.	Dayandırıldı. Axtarış sonra davam edəcə
 Couldn't stop it. Try again.	Dayandırmaq alınmadı. Yenidən cəhd edin.
 Couldn't rebuild search. Try again.	Axtarış qurulmadı. Yenidən cəhd edin.
 Message search isn't on for this account	Mesaj axtarışı bu hesabda aktiv deyil
+Offer Audio only in LIVE quality	LIVE keyfiyyətində Yalnız səs təklif et
+Audio only	Yalnız səs
+Adds Audio only to a LIVE's Video quality list. The room plays its sound without the picture, which uses much less data, until you pick another quality or leave. Recording from the stream still saves the video.	LIVE-ın Video keyfiyyəti siyahısına Yalnız səs əlavə edir. Otaq şəkilsiz yalnız səsi oynadır, bu da çox az data işlədir, başqa keyfiyyət seçənə və ya çıxana qədər. Yayımdan yazmaq yenə də videonu saxlayır.
+Pick a video quality to record the screen	Ekranı yazmaq üçün video keyfiyyəti seç

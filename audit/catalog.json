@@ -10474,6 +10474,12 @@
     "default": false,
     "type": "bool",
     "row": "Auto tap in LIVE rooms"
+   },
+   {
+    "key": "live_audio_only",
+    "default": false,
+    "type": "bool",
+    "row": "Offer Audio only in LIVE quality"
    }
   ],
   "surface": "live-room",

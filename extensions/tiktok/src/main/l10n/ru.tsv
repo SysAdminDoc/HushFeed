@@ -2693,3 +2693,7 @@ Stopped. Search carries on later.	Остановлено. Поиск продо�
 Couldn't stop it. Try again.	Не остановлено. Повторите.
 Couldn't rebuild search. Try again.	Поиск не перестроен. Повторите.
 Message search isn't on for this account	Поиск сообщений недоступен для этого аккаунта
+Offer Audio only in LIVE quality	Вариант «Только звук» в качестве LIVE
+Audio only	Только звук
+Adds Audio only to a LIVE's Video quality list. The room plays its sound without the picture, which uses much less data, until you pick another quality or leave. Recording from the stream still saves the video.	Добавляет «Только звук» в список качества видео LIVE. Эфир играет звук без картинки, что тратит намного меньше трафика, пока вы не выберете другое качество или не выйдете. Запись из потока по-прежнему сохраняет видео.
+Pick a video quality to record the screen	Выберите качество видео для записи экрана

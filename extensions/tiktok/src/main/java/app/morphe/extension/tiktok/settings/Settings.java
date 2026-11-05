@@ -722,6 +722,12 @@ public class Settings extends BaseSettings {
     /** TikTok's key for that pick ("hd", "origin" and so on), saved from its picker. Never shown. */
     public static final StringSetting REMEMBERED_LIVE_QUALITY = new StringSetting("remembered_live_quality", "");
     /**
+     * Adds Audio only to a LIVE room's Video quality list when the room's stream has its sound on
+     * its own (#265); the LIVE controls patch. Read as the list opens and as the player switches,
+     * so no restart. A pick lasts for that room only. See LiveAudioOnly.
+     */
+    public static final BooleanSetting LIVE_AUDIO_ONLY = new BooleanSetting("live_audio_only", FALSE);
+    /**
      * Offers clear screen in every LIVE room's menu (#57); the LIVE controls patch. Read as a
      * room builds its menu, so the next menu follows a change.
      */

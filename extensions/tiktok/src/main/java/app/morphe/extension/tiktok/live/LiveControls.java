@@ -112,12 +112,15 @@ public final class LiveControls {
         // On the S22 a room after a restart opened at TikTok's choice with no restore line, so
         // each read says what TikTok handed it and which start asked (#57).
         Logger.printDebug(() -> "LIVE quality: a start read " + tiktokPick + " in " + startCaller());
+        // Audio only lasts for the room it was picked in (#265): the next room starts at the last
+        // picture quality picked this run, as if Audio only had never been picked.
+        String picked = LiveAudioOnly.KEY.equals(tiktokPick) ? lastQualityPick : tiktokPick;
         // The older picker, which LIVE Studio rooms open, never writes TikTok's pick, so on the S22
         // a 360p pick there left the next room at AUTO (#57). The last pick from either picker
         // this run carries instead, and TikTok's own is only the newer picker's.
         String runPick = pickThisRun;
         if (runPick != null && offerQualityEverywhere()) return runPick;
-        if (tiktokPick != null || !rememberQuality()) return tiktokPick;
+        if (picked != null || !rememberQuality()) return picked;
         String saved = Settings.REMEMBERED_LIVE_QUALITY.get();
         if (saved == null || saved.isEmpty()) return null;
         if (!restoredLogged) {
@@ -190,8 +193,14 @@ public final class LiveControls {
         return "?";
     }
 
-    /** Called with each quality TikTok's picker carries to the next room; saved while the switch is on. */
+    /**
+     * Called with each quality TikTok's picker carries to the next room; saved while the switch is
+     * on. Audio only is never kept (#265): it's for the room it was picked in, and a recording at
+     * the quality being watched still needs a picture.
+     */
     public static void noteLiveQualityPick(String pick) {
+        LiveAudioOnly.notePick(pick);
+        if (LiveAudioOnly.KEY.equals(pick)) return;
         if (pick != null && !pick.isEmpty()) {
             lastQualityPick = pick;
             if (offerQualityEverywhere()) pickThisRun = pick;

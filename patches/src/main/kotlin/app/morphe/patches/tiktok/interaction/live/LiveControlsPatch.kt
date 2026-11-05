@@ -46,6 +46,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.ThreeRegisterInstructio
 import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 import java.util.BitSet
 
@@ -53,6 +54,7 @@ private const val EXTENSION = "Lapp/morphe/extension/tiktok/live/LiveControls;"
 private const val RECORD_EXTENSION = "Lapp/morphe/extension/tiktok/live/LiveRecordChip;"
 private const val PANEL_THEME = "Lapp/morphe/extension/tiktok/live/LivePanelTheme;"
 private const val QUALITY_LIST_COLORS = "Lapp/morphe/extension/tiktok/live/LiveQualityListColors;"
+private const val AUDIO_ONLY = "Lapp/morphe/extension/tiktok/live/LiveAudioOnly;"
 
 /** A LIVE room page, one fragment per room in the room pager, real-named on 47.1.4. */
 internal const val LIVE_PLAY_FRAGMENT = "Lcom/bytedance/android/livesdk/chatroom/ui/LivePlayFragment;"
@@ -299,6 +301,38 @@ internal object LiveTalentDefinitionListFingerprint : Fingerprint(
     name = "onViewCreated",
     returnType = "V",
     parameters = listOf("Landroid/view/View;", "Landroid/os/Bundle;"),
+)
+
+/** TikTok's LIVE player, real-named. */
+internal const val VIDEO_LIVE_MANAGER = "Lcom/ss/videoarch/liveplayer/VideoLiveManager;"
+
+/** A room's stream addresses, which hold the quality list the pickers show. */
+internal const val LIVE_STREAM_URL = "Lcom/bytedance/android/livesdkapi/depend/model/live/StreamUrl;"
+
+/** What the player logs when it turns down a switch to a room's sound on its own. */
+internal const val AUDIO_SWITCH_REFUSED = "not support switch to audio, streamFormat: "
+
+/**
+ * The LIVE player's message loop (X.0IaX on 47.6.3). A switch to "ao", a room's sound on its own,
+ * goes through there only while the server's EnableOnlyAudioInAoRes flag is on, and logs
+ * [AUDIO_SWITCH_REFUSED] otherwise (#265).
+ */
+internal object LiveAudioSwitchGateFingerprint : Fingerprint(
+    name = "handleMessage",
+    returnType = "Z",
+    parameters = listOf("Landroid/os/Message;"),
+    strings = listOf(AUDIO_SWITCH_REFUSED),
+)
+
+/**
+ * Whether the player is on a room's sound alone (LLJLILLLLZIIL on 47.6.3), which adds
+ * only_audio=1 to the room's address so the picture stops downloading. It checks the same flag.
+ */
+internal object LiveAudioUrlGateFingerprint : Fingerprint(
+    definingClass = VIDEO_LIVE_MANAGER,
+    returnType = "Z",
+    parameters = listOf(),
+    strings = listOf("ao"),
 )
 
 /**
@@ -992,6 +1026,196 @@ internal fun hookQualityList(viewCreated: MutableMethod) {
         0,
         "invoke-static/range {p1 .. p1}, $QUALITY_LIST_COLORS->readableQualityList(Landroid/view/View;)V",
     )
+}
+
+/**
+ * Adds Audio only to the newer picker's rows (#265). After each read of the room's quality list in
+ * [viewCreated], the extension answers the list, with an Audio only row while the switch is on and
+ * the room's stream has its sound on its own. Where the picker keeps only the qualities the player
+ * lists, the player's list gets "ao" too. Returns how many reads it hooked.
+ */
+internal fun hookAudioOnlyQualities(viewCreated: MutableMethod): Int {
+    val instructions = viewCreated.implementation?.instructions?.toList().orEmpty()
+    fun reference(index: Int) = (instructions[index] as? ReferenceInstruction)?.reference
+    fun writes(index: Int, register: Int) = instructions[index].opcode.setsRegister() &&
+        (instructions[index] as? OneRegisterInstruction)?.registerA == register
+    val reads = instructions.indices.filter { index ->
+        instructions[index].opcode == Opcode.IGET_OBJECT &&
+            (reference(index) as FieldReference).let { it.definingClass == LIVE_STREAM_URL && it.name == "qualityList" }
+    }
+    if (reads.isEmpty()) throw PatchException("LIVE controls: the quality picker no longer reads the room's quality list")
+    reads.asReversed().forEach { read ->
+        val list = (instructions[read] as TwoRegisterInstruction).registerA
+        // The room is the receiver of the getStreamUrl call the list's StreamUrl came from.
+        val call = (read - 1 downTo maxOf(0, read - 4)).firstOrNull { index ->
+            instructions[index].opcode == Opcode.INVOKE_VIRTUAL &&
+                (reference(index) as? MethodReference)?.let {
+                    it.definingClass == LIVE_ROOM_TYPE && it.name == "getStreamUrl"
+                } == true
+        } ?: throw PatchException("LIVE controls: the quality picker's list no longer comes straight from the room")
+        val room = (instructions[call] as FiveRegisterInstruction).registerC
+        if ((call + 1..read).any { writes(it, room) }) {
+            throw PatchException("LIVE controls: the quality picker no longer keeps the room while reading its list")
+        }
+        // The player's keys: the list a List.contains checks each row's key against, before the next read.
+        val next = reads.firstOrNull { it > read } ?: instructions.size
+        val contains = (read + 1 until next).firstOrNull { index ->
+            instructions[index].opcode == Opcode.INVOKE_INTERFACE &&
+                (reference(index) as? MethodReference)?.let {
+                    it.definingClass == "Ljava/util/List;" && it.name == "contains"
+                } == true
+        }
+        val keys = contains?.let { (instructions[it] as FiveRegisterInstruction).registerC }
+        if (keys != null && (read + 1 until contains).any { writes(it, keys) }) {
+            throw PatchException("LIVE controls: the quality picker sets the player's keys after reading the list")
+        }
+        if (listOfNotNull(room, list, keys).any { it > 15 }) {
+            throw PatchException("LIVE controls: the quality picker keeps its list above v15")
+        }
+        val playerKeys = keys?.let {
+            """
+                invoke-static {v$list, v$it}, $AUDIO_ONLY->playerKeys(Ljava/util/LinkedList;Ljava/util/List;)Ljava/util/List;
+                move-result-object v$it
+            """
+        }.orEmpty()
+        viewCreated.addInstructions(
+            read + 1,
+            """
+                invoke-static {v$room, v$list}, $AUDIO_ONLY->qualities(Ljava/lang/Object;Ljava/util/LinkedList;)Ljava/util/LinkedList;
+                move-result-object v$list
+            """ + playerKeys,
+        )
+    }
+    return reads.size
+}
+
+private const val DATA_CHANNEL = "Lcom/bytedance/ies/sdk/datachannel/DataChannel;"
+
+/**
+ * Adds Audio only to the older picker's rows (#265), the one Share > Video quality opens on some
+ * accounts (Login2, 2026-11-05). [viewCreated] gets its rows from a static builder that takes the
+ * room's data channel (X.0wHW.LIZ on 47.6.3). TikTok also reads that builder to find the next lower
+ * quality on a weak connection, so the row goes only into the dialog's copy: right after the
+ * builder answers, the extension answers the rows. A jump to the instruction after the answer
+ * skips the hook, as it should, since the rows didn't just come from the builder there. Returns
+ * the builder, whose room [hookAudioOnlyPickerRoom] tells the extension.
+ */
+internal fun hookAudioOnlyPickerRows(viewCreated: MutableMethod): MethodReference {
+    val instructions = viewCreated.implementation?.instructions?.toList().orEmpty()
+    fun builder(index: Int) = ((instructions[index] as? ReferenceInstruction)?.reference as? MethodReference)?.takeIf {
+        instructions[index].opcode == Opcode.INVOKE_STATIC && it.returnType == "Ljava/util/List;" &&
+            it.parameterTypes.map(CharSequence::toString) == listOf(DATA_CHANNEL)
+    }
+    val call = instructions.indices.filter { builder(it) != null }.singleOrNull()
+        ?: throw PatchException("LIVE controls: the older quality picker no longer builds its rows from the room's data channel")
+    val result = instructions.getOrNull(call + 1)
+    if (result?.opcode != Opcode.MOVE_RESULT_OBJECT) {
+        throw PatchException("LIVE controls: the older quality picker no longer keeps the rows its builder answers")
+    }
+    val rows = (result as OneRegisterInstruction).registerA
+    if (rows > 15) throw PatchException("LIVE controls: the older quality picker keeps its rows above v15")
+    viewCreated.addInstructions(
+        call + 2,
+        """
+            invoke-static {v$rows}, $AUDIO_ONLY->pickerRows(Ljava/util/List;)Ljava/util/List;
+            move-result-object v$rows
+        """,
+    )
+    return builder(call)!!
+}
+
+/**
+ * Tells the extension which room the older picker's row [builder] loaded, so the rows the dialog
+ * gets next can be checked against that room's stream. The builder loads the room off the data
+ * channel, falling back to TikTok's current room, and both loads cast it into one register. The
+ * call goes where they meet, right after the last load, and takes over that spot's label, since
+ * the first load jumps there when it finds a room. Returns the room's register.
+ */
+internal fun hookAudioOnlyPickerRoom(builder: MutableMethod): Int {
+    val instructions = builder.implementation?.instructions?.toList().orEmpty()
+    val loads = instructions.indices.filter { index ->
+        instructions[index].opcode == Opcode.CHECK_CAST &&
+            ((instructions[index] as ReferenceInstruction).reference as TypeReference).type == LIVE_ROOM_TYPE
+    }
+    if (loads.isEmpty()) throw PatchException("LIVE controls: the older quality picker's rows no longer come from a room")
+    val room = loads.map { (instructions[it] as OneRegisterInstruction).registerA }.distinct().singleOrNull()
+        ?: throw PatchException("LIVE controls: the older quality picker loads its room into more than one register")
+    if (room > 15) throw PatchException("LIVE controls: the older quality picker keeps its room above v15")
+    if (loads.last() + 1 >= instructions.size) throw PatchException("LIVE controls: the older quality picker ends at its room")
+    builder.addInstructionsAtControlFlowLabel(
+        loads.last() + 1,
+        "invoke-static {v$room}, $AUDIO_ONLY->noteRoom(Ljava/lang/Object;)V",
+    )
+    return room
+}
+
+/**
+ * The boolean field the older picker's row [builder] marks the room's current quality with: the
+ * one it sets on the row it makes from a name and key, right after making it, when none of the
+ * rows it listed is the current one. Audio only is never one of TikTok's rows, so while a room
+ * plays it nothing is marked, and the extension marks its own row through this field (#265).
+ */
+internal fun audioOnlyPickerMark(builder: Method): FieldReference {
+    val instructions = builder.implementation?.instructions?.toList().orEmpty()
+    val marks = instructions.indices.mapNotNull { index ->
+        val made = (instructions[index] as? ReferenceInstruction)?.reference as? MethodReference
+        val mark = instructions.getOrNull(index + 1)
+        val field = (mark as? ReferenceInstruction)?.reference as? FieldReference
+        field?.takeIf {
+            instructions[index].opcode == Opcode.INVOKE_DIRECT && made?.name == "<init>" &&
+                made.parameterTypes.map(CharSequence::toString) == listOf("Ljava/lang/String;", "Ljava/lang/String;") &&
+                mark.opcode == Opcode.IPUT_BOOLEAN && it.definingClass == made.definingClass && it.type == "Z" &&
+                (mark as TwoRegisterInstruction).registerB == (instructions[index] as FiveRegisterInstruction).registerC
+        }
+    }
+    return marks.distinctBy { "${it.definingClass}->${it.name}" }.singleOrNull()
+        ?: throw PatchException("LIVE controls: the older quality picker no longer marks a quality it made from a name and key")
+}
+
+/**
+ * The player's EnableOnlyAudioInAoRes flag: the int field of the player that [gate] reads and
+ * branches on right before it logs [AUDIO_SWITCH_REFUSED].
+ */
+internal fun audioSwitchFlag(gate: Method): FieldReference {
+    val instructions = gate.implementation?.instructions?.toList().orEmpty()
+    val refusal = instructions.indexOfFirst {
+        ((it as? ReferenceInstruction)?.reference as? StringReference)?.string == AUDIO_SWITCH_REFUSED
+    }
+    val read = (refusal - 1 downTo maxOf(0, refusal - 8)).firstOrNull { index ->
+        val field = (instructions[index] as? ReferenceInstruction)?.reference as? FieldReference
+        val next = instructions.getOrNull(index + 1)
+        instructions[index].opcode == Opcode.IGET && field?.definingClass == VIDEO_LIVE_MANAGER &&
+            field.type == "I" && (next?.opcode == Opcode.IF_NEZ || next?.opcode == Opcode.IF_EQZ) &&
+            (next as OneRegisterInstruction).registerA == (instructions[index] as TwoRegisterInstruction).registerA
+    } ?: throw PatchException("LIVE controls: the LIVE player no longer checks a flag before turning down audio only")
+    return (instructions[read] as ReferenceInstruction).reference as FieldReference
+}
+
+/**
+ * Lets the extension answer every read of the player's audio switch [flag] in [method], so a
+ * switch to a room's sound goes through while Offer Audio only is on (#265). Returns how many
+ * reads it hooked.
+ */
+internal fun hookAudioSwitchFlag(method: MutableMethod, flag: FieldReference): Int {
+    val instructions = method.implementation?.instructions?.toList().orEmpty()
+    val reads = instructions.indices.filter { index ->
+        instructions[index].opcode == Opcode.IGET &&
+            ((instructions[index] as ReferenceInstruction).reference as FieldReference).key() == flag.key()
+    }
+    if (reads.isEmpty()) {
+        throw PatchException("LIVE controls: ${method.definingClass}->${method.name} no longer reads ${flag.name}")
+    }
+    reads.asReversed().forEach { read ->
+        val register = (instructions[read] as TwoRegisterInstruction).registerA
+        method.addInstructions(
+            read + 1,
+            """
+                invoke-static/range {v$register .. v$register}, $AUDIO_ONLY->switchAllowed(I)I
+                move-result v$register
+            """,
+        )
+    }
+    return reads.size
 }
 
 /** The LIVE profile card's header cell, the bio among it, real-named on 47.4.3. */
@@ -2021,6 +2245,22 @@ val liveControlsPatch = bytecodePatch(
         // The newer picker puts its rows on a white card whose text follows the dark room, so
         // the same check keeps them readable (#57).
         hookQualityList(LiveTalentDefinitionListFingerprint.method)
+        // Offer Audio only (#265): the newer picker lists the room's sound on its own, and the
+        // player's checks of the server flag that allows a switch to it answer on while the
+        // switch is on.
+        hookAudioOnlyQualities(LiveTalentDefinitionListFingerprint.method)
+        // The older picker (Share > Video quality on Login2) builds its rows elsewhere, so its
+        // own copy gets the row, for the room its builder loaded.
+        val rowsBuilder = hookAudioOnlyPickerRows(LiveDefinitionListFingerprint.method)
+        val rowsBuilderMethod = mutableClassDefBy(rowsBuilder.definingClass).findMutableMethodOf(rowsBuilder)
+        // While a room plays Audio only none of TikTok's rows is the current one, so the
+        // extension marks its own row with the field TikTok marks the current row with.
+        val pickerMark = audioOnlyPickerMark(rowsBuilderMethod).name
+        hookAudioOnlyPickerRoom(rowsBuilderMethod)
+        mutableClassDefBy(AUDIO_ONLY).methods.first { it.name == "pickerMark" }.returnEarly(pickerMark)
+        val audioFlag = audioSwitchFlag(LiveAudioSwitchGateFingerprint.method)
+        hookAudioSwitchFlag(LiveAudioSwitchGateFingerprint.method, audioFlag)
+        hookAudioSwitchFlag(LiveAudioUrlGateFingerprint.method, audioFlag)
 
         // The room page coming to the front: where the Record button goes and which room it records (#37).
         liveRoomField(classDefByOrNull(LIVE_PLAY_FRAGMENT)

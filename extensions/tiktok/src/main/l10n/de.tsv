@@ -2519,3 +2519,7 @@ Stopped. Search carries on later.	Gestoppt. Die Suche macht später weiter.
 Couldn't stop it. Try again.	Stoppen fehlgeschlagen. Versuch es erneut.
 Couldn't rebuild search. Try again.	Neuaufbau fehlgeschlagen. Versuch es erneut.
 Message search isn't on for this account	Nachrichtensuche ist für dieses Konto aus
+Offer Audio only in LIVE quality	Nur Audio in der LIVE-Qualität anbieten
+Audio only	Nur Audio
+Adds Audio only to a LIVE's Video quality list. The room plays its sound without the picture, which uses much less data, until you pick another quality or leave. Recording from the stream still saves the video.	Fügt der Videoqualität eines LIVE die Option Nur Audio hinzu. Der Raum spielt den Ton ohne Bild, was viel weniger Daten braucht, bis du eine andere Qualität wählst oder gehst. Aufnahmen aus dem Stream speichern weiterhin das Video.
+Pick a video quality to record the screen	Wähl eine Videoqualität für die Bildschirmaufnahme

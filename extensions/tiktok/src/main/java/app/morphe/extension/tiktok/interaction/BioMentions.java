@@ -47,19 +47,28 @@ public final class BioMentions {
     /**
      * A TikTok username after an @: 2 to 24 letters, digits, underscores and periods, not ending
      * in a period. One glued to a word or an email address, or running past 24, isn't a mention,
-     * and neither is the start of a word a username can't spell ("@José" isn't @Jos).
+     * and neither is the start of a word a username can't spell ("@José" isn't @Jos) or one with
+     * a date glued on ("@davidj11/30/24" names somebody, but not the account @davidj11).
      */
     static final Pattern MENTION = Pattern.compile(
-            "(?<![A-Za-z0-9_.@])@([A-Za-z0-9_][A-Za-z0-9_.]{0,22}[A-Za-z0-9_])(?![\\p{L}\\p{M}\\p{N}_@])");
+            "(?<![A-Za-z0-9_.@])@([A-Za-z0-9_][A-Za-z0-9_.]{0,22}[A-Za-z0-9_])(?![\\p{L}\\p{M}\\p{N}_@]|/\\p{N})");
     /**
      * A display name typed after an @ ("@First Last"), up to four words on one line that each start
      * with a capital. Only a username can open a profile, and linking the first word alone opened
-     * a stranger or nothing, so the whole name becomes one link to TikTok's search.
+     * a stranger or nothing, so the whole name becomes one link to TikTok's search. A word may end
+     * in a glued date ("@Hannah Raines11/30/24"), which people add to a partner's name.
      */
     private static final Pattern DISPLAY_NAME = Pattern.compile(
-            "(?<![\\p{L}\\p{N}_.@])@(\\p{Lu}[\\p{L}\\p{M}'’\\-]*(?:[ \\u00A0]\\p{Lu}[\\p{L}\\p{M}\\p{N}'’\\-]*){1,3})");
+            "(?<![\\p{L}\\p{N}_.@])@(\\p{Lu}[\\p{L}\\p{M}'’\\-]*(?:[ \\u00A0]\\p{Lu}[\\p{L}\\p{M}\\p{N}'’\\-]*(?:/\\p{N}{1,4}){0,2}){1,3})");
+    /**
+     * A one-word display name with a date glued on ("@Davidjennings11/30/24"). Without the date it
+     * reads as a username, so only the date makes it a name, searched as a whole.
+     */
+    private static final Pattern DATED_NAME = Pattern.compile(
+            "(?<![\\p{L}\\p{N}_.@])@(\\p{Lu}[\\p{L}\\p{M}'’\\-]*\\p{N}{1,4}(?:/\\p{N}{1,4}){1,2})(?![\\p{L}\\p{N}/])");
     /** Whichever starts first, and a display name when both start at the same @. */
-    private static final Pattern NAME_OR_MENTION = Pattern.compile(DISPLAY_NAME.pattern() + "|" + MENTION.pattern());
+    private static final Pattern NAME_OR_MENTION = Pattern.compile(
+            DISPLAY_NAME.pattern() + "|" + DATED_NAME.pattern() + "|" + MENTION.pattern());
     /**
      * Another app named just before the @ on the same line ("IG: @name", "snap @name"). That
      * username belongs to the other app, and the TikTok account of the same name may be a stranger.
@@ -221,7 +230,8 @@ public final class BioMentions {
             if (context == null) return false;
             String link = MENTION.matcher("@" + handle).matches()
                     ? PROFILE_URL + handle
-                    : DISPLAY_NAME.matcher("@" + handle).matches() ? SEARCH_URL + Uri.encode(handle) : null;
+                    : DISPLAY_NAME.matcher("@" + handle).matches() || DATED_NAME.matcher("@" + handle).matches()
+                    ? SEARCH_URL + Uri.encode(handle) : null;
             if (link == null) return false;
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link))
                     .setPackage(context.getPackageName());

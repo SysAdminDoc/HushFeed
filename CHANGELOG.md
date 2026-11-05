@@ -74,6 +74,7 @@ Every Hushfeed release, newest first.
 * A sorted profile or Liked grid stays out of sight while its pages load, with a small spinner and a running count, then shows once in its final order. Before, you watched it reshuffle page by page, and a pull to refresh looked like it had dropped the order.
 * The Inbox doesn't flicker when it opens with `Hide stories tray` on. The tray used to go a moment too late, so the chats jumped down and back up. The same fix covers every other row the Inbox hides.
 * A full name typed after an @ in a bio, like @First Last, is one link now and opens a search for that name. Before, only the first word lit up, and it opened a stranger's profile or nothing. A name like @José no longer links as @Jos.
+* A name in a bio with a date stuck to it, like @Hannahraines11/30/24, searches for the whole thing now instead of opening whatever account matches the part before the slash. Mentions picked from TikTok's own list in the bio editor keep TikTok's link, which opens the exact person (#247).
 * `Thumbs down blocks the commenter` takes that person's comments out of the list right away now. Before, the comment only dimmed and stayed where it was.
 * `Hide the Send to row` and `Hide people and options by name` reach the row of friends in the menu a long press on a comment opens. They only reached the share sheet's row before.
 * `AMOLED dark theme` turns the gray cards in the comment menu and the long-press video menu black, along with the panel behind them.

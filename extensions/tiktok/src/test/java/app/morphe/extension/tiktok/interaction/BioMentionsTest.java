@@ -11,7 +11,9 @@ import android.content.Intent;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.text.Layout;
+import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.style.ClickableSpan;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -112,6 +114,48 @@ public class BioMentionsTest {
         assertTrue("another app's name is left alone", handles("IG: @First Last").isEmpty());
     }
 
+    @Test public void aNameWithADateGluedOnIsOneSearchNotAUsername() {
+        assertEquals(List.of("Davidjennings11/30/24"), handles("Married to @Davidjennings11/30/24 💍"));
+        assertEquals(List.of("Hannah Raines11/30/24"), handles("@Hannah Raines11/30/24"));
+        assertEquals("a two-part date works too", List.of("Sam Lee6/24"), handles("@Sam Lee6/24"));
+        assertTrue("a lowercase handle with a date isn't that account",
+                handles("@davidj11/30/24").isEmpty());
+        assertEquals("a capitalized username without a date stays a username",
+                List.of("Davidjennings11"), handles("@Davidjennings11"));
+    }
+
+    @Test public void tappingADatedNameSearchesForAllOfIt() {
+        TextView view = bio("Married to @Davidjennings11/30/24");
+        BioMentions.MentionSpan[] found = spans(view);
+        assertEquals(1, found.length);
+        assertEquals("Davidjennings11/30/24", found[0].handle);
+        tapAt(view, view.getText().toString().indexOf("jennings"));
+        Intent started = Shadows.shadowOf(activity).getNextStartedActivity();
+        assertNotNull(started);
+        assertEquals("snssdk1233", started.getData().getScheme());
+        assertEquals("Davidjennings11/30/24", started.getData().getQueryParameter("keyword"));
+    }
+
+    @Test public void aMentionTikTokAlreadyLinkedKeepsTikToksLink() {
+        // A mention picked in TikTok's bio editor arrives as TikTok's own link, which opens the
+        // right account by its id. Only the typed @username next to it gets a span.
+        String text = "Wife @Hannah Raines, backup @esa_web";
+        SpannableString shown = new SpannableString(text);
+        int start = text.indexOf("@Hannah");
+        int end = start + "@Hannah Raines".length();
+        shown.setSpan(new ClickableSpan() {
+            @Override public void onClick(View widget) {
+            }
+        }, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        TextView view = bio(shown);
+        BioMentions.MentionSpan[] found = spans(view);
+        assertEquals(1, found.length);
+        assertEquals("esa_web", found[0].handle);
+        assertEquals(0, ((Spanned) view.getText()).getSpans(start, end, BioMentions.MentionSpan.class).length);
+        assertNull("a tap on TikTok's link isn't taken", BioMentions.spanAt(view,
+                xOf(view, start + 3), yOf(view, start + 3)));
+    }
+
     @Test public void aWordAUsernameCantSpellLinksNothing() {
         assertTrue(handles("@José").isEmpty());
         assertTrue(handles("@naïve").isEmpty());
@@ -137,13 +181,13 @@ public class BioMentionsTest {
         assertNull(Shadows.shadowOf(activity).getNextStartedActivity());
     }
 
-    private TextView bio(String text) {
+    private TextView bio(CharSequence text) {
         TextView view = new TextView(activity);
         view.setText(text);
         FrameLayout root = new FrameLayout(activity);
         root.addView(view, new FrameLayout.LayoutParams(1000, FrameLayout.LayoutParams.WRAP_CONTENT));
         activity.setContentView(root);
-        CopyIds.onBio(view, text);
+        CopyIds.onBio(view, text.toString());
         Shadows.shadowOf(Looper.getMainLooper()).idle();
         root.measure(View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY),
                 View.MeasureSpec.makeMeasureSpec(2000, View.MeasureSpec.AT_MOST));
@@ -161,13 +205,22 @@ public class BioMentionsTest {
         pressAt(view, offset, 50);
     }
 
-    /** Presses at the middle of character [offset] of [view]'s text and lifts after [millis]. */
-    private static void pressAt(TextView view, int offset, long millis) {
+    private static float xOf(TextView view, int offset) {
+        Layout layout = view.getLayout();
+        return (layout.getPrimaryHorizontal(offset) + layout.getPrimaryHorizontal(offset + 1)) / 2
+                + view.getTotalPaddingLeft();
+    }
+
+    private static float yOf(TextView view, int offset) {
         Layout layout = view.getLayout();
         int line = layout.getLineForOffset(offset);
-        float x = (layout.getPrimaryHorizontal(offset) + layout.getPrimaryHorizontal(offset + 1)) / 2
-                + view.getTotalPaddingLeft();
-        float y = (layout.getLineTop(line) + layout.getLineBottom(line)) / 2f + view.getTotalPaddingTop();
+        return (layout.getLineTop(line) + layout.getLineBottom(line)) / 2f + view.getTotalPaddingTop();
+    }
+
+    /** Presses at the middle of character [offset] of [view]'s text and lifts after [millis]. */
+    private static void pressAt(TextView view, int offset, long millis) {
+        float x = xOf(view, offset);
+        float y = yOf(view, offset);
         long now = SystemClock.uptimeMillis();
         MotionEvent down = MotionEvent.obtain(now, now, MotionEvent.ACTION_DOWN, x, y, 0);
         view.dispatchTouchEvent(down);

@@ -2662,3 +2662,25 @@ Auto tap	Автонажатие
 Start tapping this LIVE	Начать нажатия в этом LIVE
 Stop tapping this LIVE	Остановить нажатия в этом LIVE
 Auto tap stopped	Автонажатие остановлено
+Clean up your account	Очистка аккаунта
+Remove all reposts	Удалить все репосты
+Deletes all reposts from your account sequentially.	Удаляет все репосты с аккаунта по одному.
+Remove all likes	Удалить все лайки
+Unlikes every video one after another.	Снимает лайк с каждого видео по очереди.
+Clear Favorites	Очистить Избранное
+Removes every video from Favorites one after another.	Убирает все видео из Избранного по очереди.
+Removing all reposts in %1$d	Удаление всех репостов через %1$d
+Removing all likes in %1$d	Удаление всех лайков через %1$d
+Clearing Favorites in %1$d	Очистка Избранного через %1$d
+Reposts removed: %1$d	Удалено репостов: %1$d
+Likes removed: %1$d	Снято лайков: %1$d
+Favorites removed: %1$d	Убрано из Избранного: %1$d
+Nothing to remove	Нечего удалять
+Done. %1$d removed.	Готово. Удалено: %1$d.
+Stopped. %1$d removed.	Остановлено. Удалено: %1$d.
+TikTok refused. %1$d removed.	TikTok отказал. Удалено: %1$d.
+Network error. %1$d removed.	Ошибка сети. Удалено: %1$d.
+Not available on this TikTok version	Недоступно в этой версии TikTok
+Sign in to TikTok first	Сначала войдите в TikTok
+A removal is already running	Удаление уже идёт
+Cancelled	Отменено

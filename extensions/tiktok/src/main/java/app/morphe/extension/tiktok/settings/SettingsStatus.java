@@ -882,6 +882,9 @@ public class SettingsStatus {
     public static boolean featureGateLabEnabled = false;
     public static void enableFeatureGateLab() { featureGateLabEnabled = true; }
 
+    public static boolean accountCleanupEnabled = false;
+    public static void enableAccountCleanup() { accountCleanupEnabled = true; }
+
     private static final String SWITCH_SUFFIX = "Enabled";
 
     /**

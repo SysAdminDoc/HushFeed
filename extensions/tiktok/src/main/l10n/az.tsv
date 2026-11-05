@@ -2485,3 +2485,25 @@ Auto tap	Avto toxunma
 Start tapping this LIVE	Bu LIVE-a toxunmağa başla
 Stop tapping this LIVE	Bu LIVE-a toxunmanı dayandır
 Auto tap stopped	Avto toxunma dayandı
+Clean up your account	Hesabınızı təmizləyin
+Remove all reposts	Bütün yenidən paylaşmaları silin
+Deletes all reposts from your account sequentially.	Hesabınızdakı bütün yenidən paylaşmaları bir-bir silir.
+Remove all likes	Bütün bəyənmələri silin
+Unlikes every video one after another.	Bütün videoların bəyənməsini bir-bir geri götürür.
+Clear Favorites	Favoritləri təmizləyin
+Removes every video from Favorites one after another.	Bütün videoları Favoritlərdən bir-bir silir.
+Removing all reposts in %1$d	Yenidən paylaşmalar silinir: %1$d
+Removing all likes in %1$d	Bəyənmələr silinir: %1$d
+Clearing Favorites in %1$d	Favoritlər təmizlənir: %1$d
+Reposts removed: %1$d	Silinən yenidən paylaşmalar: %1$d
+Likes removed: %1$d	Silinən bəyənmələr: %1$d
+Favorites removed: %1$d	Favoritlərdən silinən: %1$d
+Nothing to remove	Silinəcək heç nə yoxdur
+Done. %1$d removed.	Hazırdır. Silindi: %1$d.
+Stopped. %1$d removed.	Dayandırıldı. Silindi: %1$d.
+TikTok refused. %1$d removed.	TikTok rədd etdi. Silindi: %1$d.
+Network error. %1$d removed.	Şəbəkə xətası. Silindi: %1$d.
+Not available on this TikTok version	Bu TikTok versiyasında mövcud deyil
+Sign in to TikTok first	Əvvəlcə TikTok-a daxil olun
+A removal is already running	Silmə artıq gedir
+Cancelled	Ləğv edildi

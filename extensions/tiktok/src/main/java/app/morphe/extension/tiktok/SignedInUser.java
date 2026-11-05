@@ -20,6 +20,8 @@ public final class SignedInUser {
     public static volatile String idForTests;
     /** The handle a test stands in with, read while {@link #idForTests} is set. */
     public static volatile String handleForTests;
+    /** The secure uid a test stands in with, read while {@link #idForTests} is set. */
+    public static volatile String secIdForTests;
 
     private static volatile Lookups lookups;
     private static volatile boolean unavailable;
@@ -66,6 +68,21 @@ public final class SignedInUser {
             String forTests = handleForTests;
             return forTests == null || forTests.isEmpty() ? null : forTests;
         }
+        return curUserString("getUniqueId");
+    }
+
+    /**
+     * The signed-in account's secure uid, the id TikTok's own list requests carry, or null.
+     */
+    public static String secId() {
+        if (idForTests != null) {
+            String forTests = secIdForTests;
+            return forTests == null || forTests.isEmpty() ? null : forTests;
+        }
+        return curUserString("getSecUid");
+    }
+
+    private static String curUserString(String getter) {
         Lookups found = lookups();
         if (found == null) return null;
         try {
@@ -73,8 +90,8 @@ public final class SignedInUser {
             if (service == null || !Boolean.TRUE.equals(found.isLogin.invoke(service))) return null;
             Object user = found.accountClass.getMethod("getCurUser").invoke(service);
             if (user == null) return null;
-            Object handle = user.getClass().getMethod("getUniqueId").invoke(user);
-            return handle instanceof String && !((String) handle).isEmpty() ? (String) handle : null;
+            Object value = user.getClass().getMethod(getter).invoke(user);
+            return value instanceof String && !((String) value).isEmpty() ? (String) value : null;
         } catch (Throwable ignored) {
             return null;
         }

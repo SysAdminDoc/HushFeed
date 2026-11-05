@@ -56,6 +56,9 @@ public final class SettingsActionBanner {
 
     private static int generation;
     private static WeakReference<View> current = new WeakReference<>(null);
+    /** The last job banner shown by {@link #showProgress}, and the action that names its job. */
+    private static WeakReference<View> progress = new WeakReference<>(null);
+    private static Runnable progressAction;
 
     public static void showUndo(Context context, String message, Runnable undo) {
         show(context, message, L10n.t(context, "Undo"), undo,
@@ -107,52 +110,7 @@ public final class SettingsActionBanner {
                     Utils.showToastShort(message);
                     return;
                 }
-
-                dismissCurrent();
-                LinearLayout banner = new LinearLayout(activity);
-                banner.setTag(BANNER_TAG);
-                banner.setOrientation(LinearLayout.HORIZONTAL);
-                banner.setGravity(Gravity.CENTER_VERTICAL);
-                int vertical = SettingsUi.dp(activity, 10);
-                int horizontal = SettingsUi.dp(activity, 16);
-                banner.setPadding(horizontal, vertical, SettingsUi.dp(activity, 8), vertical);
-                banner.setBackground(SettingsUi.borderedSurface(
-                        activity, SettingsUi.RADIUS_SETTINGS_CARD, true));
-                banner.setElevation(SettingsUi.dp(activity, 8));
-                banner.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);
-                // The banner sits over the bottom rows for up to half a minute. It wasn't
-                // clickable, so a tap on it went through to the row it covered and could flip a
-                // switch out of sight. A tap on it now takes it down instead.
-                banner.setOnClickListener(view -> dismissCurrent());
-                String close = L10n.t(activity, "Close");
-                banner.setAccessibilityDelegate(new View.AccessibilityDelegate() {
-                    @Override
-                    public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfo info) {
-                        super.onInitializeAccessibilityNodeInfo(host, info);
-                        info.addAction(new AccessibilityNodeInfo.AccessibilityAction(
-                                AccessibilityNodeInfo.ACTION_CLICK, close));
-                    }
-                });
-
-                TextView label = SettingsUi.text(activity, message, SettingsUi.TEXT_BODY_SMALL,
-                        SettingsUi.textPrimary(), Typeface.NORMAL);
-                label.setTag(MESSAGE_TAG);
-                label.setLineSpacing(SettingsUi.dp(activity, 2), 1f);
-                banner.addView(label, new LinearLayout.LayoutParams(
-                        0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
-
-                if (action != null) addAction(activity, banner, actionLabel, action, failure);
-
-                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
-                int margin = SettingsUi.dp(activity, 16);
-                params.setMargins(margin, margin, margin, margin);
-                root.addView(banner, params);
-                banner.bringToFront();
-                current = new WeakReference<>(banner);
-
+                addBanner(activity, root, message, actionLabel, action, failure);
                 final int token = ++generation;
                 Utils.runOnMainThreadDelayed(() -> {
                     if (token == generation) dismissCurrent();
@@ -162,6 +120,117 @@ public final class SettingsActionBanner {
                 Utils.showToastShort(message);
             }
         });
+    }
+
+    /**
+     * A banner for a job that keeps going, such as a countdown or a removal run, with the job's
+     * own Cancel or Stop. It stays until the job takes it down, and a later call for the same
+     * {@code action} changes its text in place, so a screen reader hears each update once.
+     * Runs on the main thread.
+     *
+     * <p>Once a job's banner is gone, because it was tapped away, another banner replaced it or
+     * the settings window closed, the job's later updates stay quiet rather than pop it back.
+     * {@code replace} is for a job's first banner, which takes the place of whatever is shown.</p>
+     *
+     * @return whether the banner is showing now
+     */
+    public static boolean showProgress(Context context, String message, String actionLabel,
+            Runnable action, boolean replace) {
+        try {
+            if (showingProgressOf(action)) {
+                View label = current.get().findViewWithTag(MESSAGE_TAG);
+                if (label instanceof TextView) {
+                    ((TextView) label).setText(message);
+                    return true;
+                }
+            }
+            if (!replace) return false;
+            Activity activity = activityFrom(context);
+            FrameLayout root = contentRoot(activity);
+            if (root == null) return false;
+            View banner = addBanner(activity, root, message, actionLabel, action, null);
+            progress = new WeakReference<>(banner);
+            progressAction = action;
+            return true;
+        } catch (Throwable throwable) {
+            Logger.printException(() -> "Could not show the settings progress banner", throwable);
+            return false;
+        }
+    }
+
+    /**
+     * Whether the banner shown now is the job banner with {@code action}, in a settings window
+     * that is still open. Main thread.
+     */
+    public static boolean showingProgressOf(Runnable action) {
+        View shown = current.get();
+        if (action == null || action != progressAction || shown == null
+                || shown != progress.get() || shown.getParent() == null) {
+            return false;
+        }
+        Context context = shown.getContext();
+        if (!(context instanceof Activity)) return true;
+        Activity activity = (Activity) context;
+        return !activity.isFinishing() && !activity.isDestroyed();
+    }
+
+    /** Takes down the job banner with {@code action}, if it's the one shown. Main thread. */
+    public static void dismissProgress(Runnable action) {
+        if (showingProgressOf(action)) dismissCurrent();
+    }
+
+    /** Whether a banner shown for {@code context} would land in the settings window. */
+    public static boolean isOpen(Context context) {
+        return contentRoot(activityFrom(context)) != null;
+    }
+
+    private static View addBanner(Activity activity, FrameLayout root, String message,
+            String actionLabel, Runnable action, String failure) {
+        dismissCurrent();
+        LinearLayout banner = new LinearLayout(activity);
+        banner.setTag(BANNER_TAG);
+        banner.setOrientation(LinearLayout.HORIZONTAL);
+        banner.setGravity(Gravity.CENTER_VERTICAL);
+        int vertical = SettingsUi.dp(activity, 10);
+        int horizontal = SettingsUi.dp(activity, 16);
+        banner.setPadding(horizontal, vertical, SettingsUi.dp(activity, 8), vertical);
+        banner.setBackground(SettingsUi.borderedSurface(
+                activity, SettingsUi.RADIUS_SETTINGS_CARD, true));
+        banner.setElevation(SettingsUi.dp(activity, 8));
+        banner.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);
+        // The banner sits over the bottom rows for up to half a minute. It wasn't
+        // clickable, so a tap on it went through to the row it covered and could flip a
+        // switch out of sight. A tap on it now takes it down instead.
+        banner.setOnClickListener(view -> dismissCurrent());
+        String close = L10n.t(activity, "Close");
+        banner.setAccessibilityDelegate(new View.AccessibilityDelegate() {
+            @Override
+            public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfo info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                info.addAction(new AccessibilityNodeInfo.AccessibilityAction(
+                        AccessibilityNodeInfo.ACTION_CLICK, close));
+            }
+        });
+
+        TextView label = SettingsUi.text(activity, message, SettingsUi.TEXT_BODY_SMALL,
+                SettingsUi.textPrimary(), Typeface.NORMAL);
+        label.setTag(MESSAGE_TAG);
+        label.setLineSpacing(SettingsUi.dp(activity, 2), 1f);
+        banner.addView(label, new LinearLayout.LayoutParams(
+                0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+
+        if (action != null) addAction(activity, banner, actionLabel, action, failure);
+
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
+        int margin = SettingsUi.dp(activity, 16);
+        params.setMargins(margin, margin, margin, margin);
+        root.addView(banner, params);
+        banner.bringToFront();
+        current = new WeakReference<>(banner);
+        return banner;
     }
 
     private static void addAction(Activity activity, LinearLayout banner, String actionLabel,
@@ -186,7 +255,7 @@ public final class SettingsActionBanner {
                 action.run();
             } catch (Throwable throwable) {
                 Logger.printException(() -> "Could not run the settings banner action", throwable);
-                Utils.showToastShort(failure);
+                if (failure != null) Utils.showToastShort(failure);
             }
         });
         banner.addView(button, new LinearLayout.LayoutParams(
@@ -227,5 +296,7 @@ public final class SettingsActionBanner {
 
     static void dismissForTests() {
         dismissCurrent();
+        progress = new WeakReference<>(null);
+        progressAction = null;
     }
 }

@@ -2485,3 +2485,25 @@ Auto tap	Tocco automatico
 Start tapping this LIVE	Inizia a toccare questo LIVE
 Stop tapping this LIVE	Smetti di toccare questo LIVE
 Auto tap stopped	Tocco automatico interrotto
+Clean up your account	Ripulisci il tuo account
+Remove all reposts	Rimuovi tutte le ripubblicazioni
+Deletes all reposts from your account sequentially.	Elimina una alla volta tutte le ripubblicazioni del tuo account.
+Remove all likes	Rimuovi tutti i Mi piace
+Unlikes every video one after another.	Toglie il Mi piace a ogni video, uno dopo l'altro.
+Clear Favorites	Svuota Preferiti
+Removes every video from Favorites one after another.	Rimuove ogni video dai Preferiti, uno dopo l'altro.
+Removing all reposts in %1$d	Rimozione delle ripubblicazioni tra %1$d
+Removing all likes in %1$d	Rimozione dei Mi piace tra %1$d
+Clearing Favorites in %1$d	Svuotamento dei Preferiti tra %1$d
+Reposts removed: %1$d	Ripubblicazioni rimosse: %1$d
+Likes removed: %1$d	Mi piace rimossi: %1$d
+Favorites removed: %1$d	Rimossi dai Preferiti: %1$d
+Nothing to remove	Niente da rimuovere
+Done. %1$d removed.	Fatto. Rimossi: %1$d.
+Stopped. %1$d removed.	Interrotto. Rimossi: %1$d.
+TikTok refused. %1$d removed.	TikTok ha rifiutato. Rimossi: %1$d.
+Network error. %1$d removed.	Errore di rete. Rimossi: %1$d.
+Not available on this TikTok version	Non disponibile in questa versione di TikTok
+Sign in to TikTok first	Prima accedi a TikTok
+A removal is already running	Una rimozione è già in corso
+Cancelled	Annullato

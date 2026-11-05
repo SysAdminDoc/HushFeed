@@ -152,6 +152,7 @@ A name of your own under this tab's icon. Leave it empty to keep TikTok's.,A nam
 A port is a whole number from 1 to 65535,A port is a whole number from 1 to 65535
 A press on Share under a video copies its link instead of opening the share sheet. Press Share again right after to open the sheet.,A press on Share under a video copies its link instead of opening the share sheet. Press Share again right after to open the sheet.
 "A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.","A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched."
+A removal is already running,A removal is already running
 "A screen's layout is recorded. Export the diagnostic report to send it, or tap to record another.","A screen's layout is recorded. Export the diagnostic report to send it, or tap to record another."
 "A small label on the feed shows the minutes or videos left of today's budget, whichever is closer to running out.","A small label on the feed shows the minutes or videos left of today's budget, whichever is closer to running out."
 A tap on Home or on the For You tab while For You is showing no longer reloads it. The video you're on stays.,A tap on Home or on the For You tab while For You is showing no longer reloads it. The video you're on stays.
@@ -347,6 +348,7 @@ Can't check yet: %1$s,Can't check yet: %1$s
 Can't retry those photos. Save the post again.,Can't retry those photos. Save the post again.
 Can't tell who wrote this. Block them on their profile.,Can't tell who wrote this. Block them on their profile.
 Cancel,Cancel
+Cancelled,Cancelled
 Caption above comments,Caption above comments
 Caption background,Caption background
 Caption boldness,Caption boldness
@@ -375,7 +377,9 @@ Choose which bottom tabs stay visible.,Choose which bottom tabs stay visible.
 Choose which rows and controls appear,Choose which rows and controls appear
 Circle,Circle
 Clean up shared links,Clean up shared links
+Clean up your account,Clean up your account
 Clear,Clear
+Clear Favorites,Clear Favorites
 Clear all,Clear all
 "Clear all Lab data (overrides, switch, recordings)","Clear all Lab data (overrides, switch, recordings)"
 Clear all suggested accounts,Clear all suggested accounts
@@ -393,6 +397,7 @@ Clear seen videos,Clear seen videos
 Clear the search,Clear the search
 Cleared. Tap to undo before TikTok closes.,Cleared. Tap to undo before TikTok closes.
 Clearing,Clearing
+Clearing Favorites in %1$d,Clearing Favorites in %1$d
 Clearing seen videos,Clearing seen videos
 Clearing suggested accounts,Clearing suggested accounts
 "Clearing, %1$d so far","Clearing, %1$d so far"
@@ -540,6 +545,7 @@ Default playback speed,Default playback speed
 Delete recording files,Delete recording files
 Delete search,Delete search
 Deletes %1$s from TikTok's storage.,Deletes %1$s from TikTok's storage.
+Deletes all reposts from your account sequentially.,Deletes all reposts from your account sequentially.
 Delivery unconfirmed: %1$d/%2$d chats. Remaining chats still need a message.,Delivery unconfirmed: %1$d/%2$d chats. Remaining chats still need a message.
 Delivery unconfirmed: %1$d/%2$d chats. Those chats won't be retried today.,Delivery unconfirmed: %1$d/%2$d chats. Those chats won't be retried today.
 Description text size,Description text size
@@ -571,6 +577,7 @@ Don't save new searches,Don't save new searches
 Don't start the feed on returning,Don't start the feed on returning
 Don't start the first video,Don't start the first video
 Done,Done
+Done. %1$d removed.,Done. %1$d removed.
 Double tap,Double tap
 Double tap by corner,Double tap by corner
 "Download lists the qualities this video comes in, with the size TikTok gives for each, and saves the one you pick. The quality above stays as it is for the next save.","Download lists the qualities this video comes in, with the size TikTok gives for each, and saves the one you pick. The quality above stays as it is for the next save."
@@ -626,6 +633,7 @@ Fade the feed out before the hold,Fade the feed out before the hold
 Fade the video controls,Fade the video controls
 Fall back to the watermarked copy,Fall back to the watermarked copy
 Favorites range,Favorites range
+Favorites removed: %1$d,Favorites removed: %1$d
 Feature Gate Lab,Feature Gate Lab
 Feature gate override reset,Feature gate override reset
 Feature gate override saved,Feature gate override saved
@@ -1104,6 +1112,7 @@ Liked videos,Liked videos
 Likes,Likes
 Likes aren't available for this video,Likes aren't available for this video
 Likes range,Likes range
+Likes removed: %1$d,Likes removed: %1$d
 Limit background traffic,Limit background traffic
 Limits,Limits
 Link copied,Link copied
@@ -1204,6 +1213,7 @@ Muted,Muted
 My watch history,My watch history
 Name copied,Name copied
 Nearby,Nearby
+Network error. %1$d removed.,Network error. %1$d removed.
 Network proxy,Network proxy
 Never from these countries,Never from these countries
 New comment emoji,New comment emoji
@@ -1272,6 +1282,7 @@ None recorded,None recorded
 Normal,Normal
 "Not a handle or id, so ignored: %1$s","Not a handle or id, so ignored: %1$s"
 "Not a part Hushfeed fills in, so it's kept as typed: %1$s","Not a part Hushfeed fills in, so it's kept as typed: %1$s"
+Not available on this TikTok version,Not available on this TikTok version
 Not blocked,Not blocked
 Not interested in this video,Not interested in this video
 Not read yet,Not read yet
@@ -1290,6 +1301,7 @@ Nothing is saving right now,Nothing is saving right now
 Nothing new was imported,Nothing new was imported
 Nothing on this page changes what TikTok does until they are on.,Nothing on this page changes what TikTok does until they are on.
 "Nothing recorded. Start, then leave settings.","Nothing recorded. Start, then leave settings."
+Nothing to remove,Nothing to remove
 Nothing to undo yet.,Nothing to undo yet.
 Nothing was recorded,Nothing was recorded
 Nothing was sent. Check the streak settings and try again.,Nothing was sent. Check the streak settings and try again.
@@ -1528,7 +1540,9 @@ Remember the last speed,Remember the last speed
 Remind me every,Remind me every
 Remove,Remove
 Remove %1$s,Remove %1$s
+Remove all likes,Remove all likes
 Remove all overrides,Remove all overrides
+Remove all reposts,Remove all reposts
 Remove feed ads,Remove feed ads
 "Remove feed ads, creator commission posts, paid partnerships, and branded content.","Remove feed ads, creator commission posts, paid partnerships, and branded content."
 Remove story rings,Remove story rings
@@ -1539,6 +1553,9 @@ Removed %1$s,Removed %1$s
 Removed: %1$d,Removed: %1$d
 "Removed: %1$d. The other %2$d are still there. Open your Inbox, then try again.","Removed: %1$d. The other %2$d are still there. Open your Inbox, then try again."
 Removes every message that was kept. Each chat shows TikTok's usual notice that a message was unsent.,Removes every message that was kept. Each chat shows TikTok's usual notice that a message was unsent.
+Removes every video from Favorites one after another.,Removes every video from Favorites one after another.
+Removing all likes in %1$d,Removing all likes in %1$d
+Removing all reposts in %1$d,Removing all reposts in %1$d
 Removing the kept messages,Removing the kept messages
 "Reopen Hushfeed settings, then choose the file","Reopen Hushfeed settings, then choose the file"
 Replace values when TikTok asks for them,Replace values when TikTok asks for them
@@ -1548,6 +1565,7 @@ Report a newer phone to effects,Report a newer phone to effects
 Report a problem,Report a problem
 Report saved to %1$s,Report saved to %1$s
 Repost with a comment,Repost with a comment
+Reposts removed: %1$d,Reposts removed: %1$d
 Required,Required
 Researched,Researched
 Researched values,Researched values
@@ -1857,6 +1875,7 @@ Shows the Duet and Stitch options even when the creator turned them off. TikTok 
 "Shows the country's flag in place of its two letters, by the creator's name and by a commenter's time.","Shows the country's flag in place of its two letters, by the creator's name and by a commenter's time."
 Sign in to TikTok before importing watch history.,Sign in to TikTok before importing watch history.
 Sign in to TikTok before saving or restoring seen history.,Sign in to TikTok before saving or restoring seen history.
+Sign in to TikTok first,Sign in to TikTok first
 Sign in to edit your own profile counts,Sign in to edit your own profile counts
 Sign in to view this list,Sign in to view this list
 Sign in without a passkey,Sign in without a passkey
@@ -1960,6 +1979,7 @@ Stopped waiting for the file app. It hasn't said yet whether the export was save
 Stopped waiting for the file app. Nothing was changed.,Stopped waiting for the file app. Nothing was changed.
 Stopped waiting for the file app. Nothing was exported.,Stopped waiting for the file app. Nothing was exported.
 Stopped waiting for the file app. Nothing was imported.,Stopped waiting for the file app. Nothing was imported.
+Stopped. %1$d removed.,Stopped. %1$d removed.
 Stopping after this file,Stopping after this file
 Stops TikTok from reading your phone's motion and compass sensors. Apps can use them to recognize your phone.,Stops TikTok from reading your phone's motion and compass sensors. Apps can use them to recognize your phone.
 "Stops TikTok from reporting the videos you watch, so they don't get added to Watch history in Activity center. Your views won't count and For You learns less. Likes, follows and searches are still seen.","Stops TikTok from reporting the videos you watch, so they don't get added to Watch history in Activity center. Your views won't count and For You learns less. Likes, follows and searches are still seen."
@@ -2204,6 +2224,7 @@ TikTok refused the follow: %1$s,TikTok refused the follow: %1$s
 TikTok refused the like with code %1$s,TikTok refused the like with code %1$s
 TikTok refused the like: %1$s,TikTok refused the like: %1$s
 TikTok refused this request (%1$s).,TikTok refused this request (%1$s).
+TikTok refused. %1$d removed.,TikTok refused. %1$d removed.
 "TikTok removes videos saved for offline viewing after a set time, sometimes only two days, watched or not. With this on they stay until you delete them in TikTok's Offline videos settings. TikTok can still clear watched ones when your phone is low on space.","TikTok removes videos saved for offline viewing after a set time, sometimes only two days, watched or not. With this on they stay until you delete them in TikTok's Offline videos settings. TikTok can still clear watched ones when your phone is low on space."
 TikTok reports additional filtered accounts. This list is incomplete.,TikTok reports additional filtered accounts. This list is incomplete.
 TikTok reports no more items in this list.,TikTok reports no more items in this list.
@@ -2303,6 +2324,7 @@ Undo last Lab change,Undo last Lab change
 Undo last restore or reset,Undo last restore or reset
 Undoing the last change,Undoing the last change
 Unknown resolution,Unknown resolution
+Unlikes every video one after another.,Unlikes every video one after another.
 Unlock,Unlock
 Unlock TikTok,Unlock TikTok
 Unpersonalized For You videos,Unpersonalized For You videos

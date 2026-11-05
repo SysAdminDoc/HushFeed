@@ -2485,3 +2485,25 @@ Auto tap	Otomatik dokunma
 Start tapping this LIVE	Bu LIVE'a dokunmaya başla
 Stop tapping this LIVE	Bu LIVE'a dokunmayı durdur
 Auto tap stopped	Otomatik dokunma durdu
+Clean up your account	Hesabını temizle
+Remove all reposts	Tüm yeniden yayınlamaları kaldır
+Deletes all reposts from your account sequentially.	Hesabındaki tüm yeniden yayınlamaları tek tek siler.
+Remove all likes	Tüm beğenileri kaldır
+Unlikes every video one after another.	Her videonun beğenisini sırayla geri alır.
+Clear Favorites	Favorileri temizle
+Removes every video from Favorites one after another.	Tüm videoları Favorilerden sırayla kaldırır.
+Removing all reposts in %1$d	Yeniden yayınlamalar siliniyor: %1$d
+Removing all likes in %1$d	Beğeniler kaldırılıyor: %1$d
+Clearing Favorites in %1$d	Favoriler temizleniyor: %1$d
+Reposts removed: %1$d	Kaldırılan yeniden yayınlamalar: %1$d
+Likes removed: %1$d	Kaldırılan beğeniler: %1$d
+Favorites removed: %1$d	Favorilerden kaldırılan: %1$d
+Nothing to remove	Kaldırılacak bir şey yok
+Done. %1$d removed.	Bitti. %1$d kaldırıldı.
+Stopped. %1$d removed.	Durduruldu. %1$d kaldırıldı.
+TikTok refused. %1$d removed.	TikTok reddetti. %1$d kaldırıldı.
+Network error. %1$d removed.	Ağ hatası. %1$d kaldırıldı.
+Not available on this TikTok version	Bu TikTok sürümünde kullanılamıyor
+Sign in to TikTok first	Önce TikTok'ta oturum aç
+A removal is already running	Bir kaldırma işlemi zaten sürüyor
+Cancelled	İptal edildi

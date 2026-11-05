@@ -2454,3 +2454,25 @@ Auto tap,自动点击
 Start tapping this LIVE,开始点击此 LIVE
 Stop tapping this LIVE,停止点击此 LIVE
 Auto tap stopped,自动点击已停止
+Clean up your account,清理你的账号
+Remove all reposts,移除所有转发
+Deletes all reposts from your account sequentially.,逐一删除你账号中的所有转发.
+Remove all likes,取消所有点赞
+Unlikes every video one after another.,逐个取消每个视频的点赞.
+Clear Favorites,清空收藏
+Removes every video from Favorites one after another.,逐个将视频移出收藏.
+Removing all reposts in %1$d,%1$d 秒后移除所有转发
+Removing all likes in %1$d,%1$d 秒后取消所有点赞
+Clearing Favorites in %1$d,%1$d 秒后清空收藏
+Reposts removed: %1$d,已移除转发：%1$d
+Likes removed: %1$d,已取消点赞：%1$d
+Favorites removed: %1$d,已移出收藏：%1$d
+Nothing to remove,没有可移除的内容
+Done. %1$d removed.,完成。已移除 %1$d 项.
+Stopped. %1$d removed.,已停止。已移除 %1$d 项.
+TikTok refused. %1$d removed.,TikTok 拒绝了请求。已移除 %1$d 项.
+Network error. %1$d removed.,网络错误。已移除 %1$d 项.
+Not available on this TikTok version,此 TikTok 版本不支持
+Sign in to TikTok first,请先登录 TikTok
+A removal is already running,已有移除任务在进行
+Cancelled,已取消

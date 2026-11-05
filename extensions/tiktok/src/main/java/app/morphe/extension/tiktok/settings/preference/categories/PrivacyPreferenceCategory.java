@@ -8,11 +8,13 @@ import android.content.Context;
 import android.preference.PreferenceScreen;
 
 import app.morphe.extension.shared.settings.BaseSettings;
+import app.morphe.extension.tiktok.privacy.AccountCleanupSources.Kind;
 import app.morphe.extension.tiktok.privacy.BenchmarkRuns;
 import app.morphe.extension.tiktok.privacy.DeviceIdentity;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 import app.morphe.extension.tiktok.settings.L10n;
+import app.morphe.extension.tiktok.settings.preference.AccountCleanupPreference;
 import app.morphe.extension.tiktok.settings.preference.ChoicePreference;
 import app.morphe.extension.tiktok.settings.preference.DeviceIdentityPreference;
 import app.morphe.extension.tiktok.settings.preference.GhostModePreference;
@@ -35,7 +37,8 @@ public final class PrivacyPreferenceCategory extends ConditionalPreferenceCatego
 
     /** Whether this page has anything on it. The row into it asks the same question. */
     public static boolean isAvailable() {
-        return SettingsStatus.appLockEnabled || hasTracking() || hasDeviceAccess() || hasLinks();
+        return SettingsStatus.appLockEnabled || hasTracking() || hasDeviceAccess() || hasLinks()
+                || SettingsStatus.accountCleanupEnabled;
     }
 
     private static boolean hasTracking() {
@@ -299,6 +302,12 @@ public final class PrivacyPreferenceCategory extends ConditionalPreferenceCatego
                     Settings.BLOCK_WEBVIEW_JS_INTERFACES
             ));
         }
-
+        if (SettingsStatus.accountCleanupEnabled) {
+            // Actions, not switches: each tap counts down with Cancel, then runs (#332).
+            addPreference(new SectionHeadingPreference(context, "Clean up your account"));
+            addPreference(new AccountCleanupPreference(context, Kind.REPOSTS));
+            addPreference(new AccountCleanupPreference(context, Kind.LIKES));
+            addPreference(new AccountCleanupPreference(context, Kind.FAVORITES));
+        }
     }
 }

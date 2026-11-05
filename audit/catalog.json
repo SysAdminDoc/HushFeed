@@ -156,6 +156,40 @@
   "notes": "The lane file lists TikTok original #FE2C55 (no change), Blue #2D7FF9, Green #1DA153, Purple #8B5CF6, Orange #F26411, Teal #0F9E8E or a typed code, plus Follow the wallpaper. With the default option the patch changes nothing visible, so accent-visible names the Blue option in buildOptions and runs only on a build patched with it (scripts/patch-for-device.ps1 -Option 'Accent color|accentColor=#2D7FF9'), into tiktok-<version>-options.json. Icons with the red drawn into a PNG are recolored for solid colors only; the follow plus under an avatar and soft see-through reds are documented as unchanged."
  },
  {
+  "name": "Account cleanup",
+  "category": "Privacy",
+  "default": true,
+  "kind": "runtime",
+  "source": [
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/privacy/AccountCleanupPatch.kt",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/privacy/AccountCleanup.java",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/privacy/AccountCleanupSources.java",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/privacy/CleanupRunner.java",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/privacy/TikTokCalls.java"
+  ],
+  "settings": [],
+  "surface": "settings",
+  "checks": [
+   {
+    "id": "patch-applied",
+    "what": "SettingsStatus.accountCleanupEnabled is true, so the patch is in this APK and the extension loaded it.",
+    "steps": [
+     {
+      "probe": "fields",
+      "extras": {
+       "class": "app.morphe.extension.tiktok.settings.SettingsStatus",
+       "names": "accountCleanupEnabled"
+      },
+      "expect": "\\baccountCleanupEnabled=true\\b",
+      "waitMs": 1500
+     }
+    ],
+    "auto": true
+   }
+  ],
+  "notes": "The three rows (Remove all reposts, Remove all likes, Clear Favorites) change the signed-in account, so no automatic check presses them. Run them by hand on the S22 test account after seeding a few reposts, likes and Favorites: each shows a five second countdown with Cancel, then a running count with Stop, then the count it reached, and the profile tabs come back empty."
+ },
+ {
   "name": "Advanced downloads",
   "category": "Downloads",
   "default": true,

@@ -123,6 +123,45 @@
       ]
     },
     {
+      "name": "Account cleanup",
+      "description": "Adds Remove all reposts, Remove all likes and Clear Favorites to Hushfeed settings > Privacy. Each one takes items off your account one at a time through TikTok's own requests, with a pause between them, and stops on the first error.",
+      "category": "Privacy",
+      "use": true,
+      "dependencies": [
+        "BytecodePatch",
+        "Settings"
+      ],
+      "compatiblePackages": {
+        "com.zhiliaoapp.musically": [
+          "47.6.3"
+        ]
+      },
+      "compatibility": [
+        {
+          "name": "TikTok",
+          "packageName": "com.zhiliaoapp.musically",
+          "description": null,
+          "appIconColor": 16657493,
+          "signatures": [
+            "9041803e91bcb814b4b4399fb5c85a91640b755e5e8ba76813814bf4cf2ab5ba"
+          ],
+          "targets": [
+            {
+              "version": "47.6.3",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 2024706030,
+                "ARMEABI_V7A": 2024706030,
+                "X86": 2024706030,
+                "X86_64": 2024706030
+              }
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Advanced downloads",
       "description": "Adds more ways to save: pick the video quality, save full-size photos, the sound on its own or a photo post as one video, hold a profile picture or story to save it, save a story or a video's cover from the share sheet, put a save button on the video, and pick videos on a profile grid to save in one run. Starts off. Turn it on in Hushfeed settings > Downloads.",
       "category": "Downloads",

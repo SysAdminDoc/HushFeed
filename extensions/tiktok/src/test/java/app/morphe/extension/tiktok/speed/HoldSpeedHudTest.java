@@ -185,6 +185,25 @@ public class HoldSpeedHudTest {
         assertEquals("1.5x", label());
     }
 
+    /**
+     * #248, a later report: a video opened from search, a profile or a chat plays in an activity
+     * of its own over the main one, and the bubble went on the main one's window behind it.
+     */
+    @Test
+    public void theBubbleGoesOnTheActivityInFrontOfTheMainOne() {
+        try (ActivityController<Activity> detail = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            HoldSpeedHud.onHoldPress(component);
+            assertEquals("nothing on the main activity behind", 0, bubbles());
+            ViewGroup front = detail.get().findViewById(android.R.id.content);
+            assertSame(front, HoldSpeedHud.bubble().getParent());
+            HoldSpeedHud.onHoldRelease();
+            assertEquals("the release takes it off the front one", 0, front.getChildCount());
+        }
+        // Back on the feed once that one is gone.
+        HoldSpeedHud.onHoldPress(component);
+        assertEquals(1, bubbles());
+    }
+
     @Test
     public void aSlideStepsOnceItClearsTheDeadZoneAndEachStepHolds() {
         holdAndSlide(DEAD_ZONE + 1);

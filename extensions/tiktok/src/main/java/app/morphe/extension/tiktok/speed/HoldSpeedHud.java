@@ -427,7 +427,9 @@ public final class HoldSpeedHud {
     }
 
     private static void show(float speed) {
-        Activity activity = Utils.getActivity();
+        // The activity in front, not the main one: a video opened from search, a profile or a
+        // chat plays in an activity of its own, and the bubble went on the window behind it.
+        Activity activity = Utils.getVisibleActivity();
         if (activity == null || activity.isFinishing()) return;
         ViewGroup content = activity.findViewById(android.R.id.content);
         if (!(content instanceof FrameLayout)) return;

@@ -85,6 +85,7 @@ Every Hushfeed release, newest first.
 * The README's install steps point at TikTok 47.6.3 now. After v0.80.0 went out they still sent you to 47.5.3, which v0.80.0 doesn't patch.
 * The README's install steps say what to do where Morphe Manager runs as a 32-bit app. There it gives the patcher only 1 GB, which Hushfeed fits in by itself but not with patches from several other sources beside it (#339). The README's patch count also includes `Account cleanup` now.
 * `Keep the screen's refresh rate` says up front that TikTok doesn't ask for a rate on every phone. Where it doesn't, the switch has nothing to stop.
+* `Keep a streak going` finds a friend you enter by the name your Inbox shows for them, emoji and all, like "Lina 🌸". Until now a name like that was only looked for among group chats, so a one to one streak needed the @username. A group with the same name still wins, and two friends who share a name are left alone (#289).
 
 ### Build
 

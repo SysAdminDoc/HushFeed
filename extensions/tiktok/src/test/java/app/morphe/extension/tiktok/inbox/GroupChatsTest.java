@@ -124,6 +124,47 @@ public class GroupChatsTest {
         assertEquals("@friend", StreakMessenger.labelOf("friend"));
     }
 
+    @Test public void aFriendEnteredByTheirDisplayNameIsFound() {
+        contacts("200", new String[][]{
+                {"200", "Me 🌸", "me"},
+                {"100", "Lina  🌸", "lina.k"},
+                {"300", "Andrew", "amy85"},
+                {"400", "Sam", "sam.one"},
+                {"500", "sam", "sam.two"},
+        });
+
+        StreakMessenger.Target lina = StreakMessenger.resolve(context, "200", StreakMessenger.keyOf("lina 🌸"));
+        assertNotNull(lina);
+        assertEquals("0:1:100:200", lina.conversationId);
+        assertEquals("Lina  🌸", lina.name);
+        assertEquals("0:1:200:300",
+                StreakMessenger.resolve(context, "200", StreakMessenger.keyOf("Andrew")).conversationId);
+        // Two people called Sam: neither is guessed. The account's own name isn't a chat.
+        assertNull(StreakMessenger.resolve(context, "200", StreakMessenger.keyOf("Sam")));
+        assertNull(StreakMessenger.resolve(context, "200", StreakMessenger.keyOf("Me 🌸")));
+    }
+
+    @Test public void aGroupKeepsItsNameAheadOfAFriendWithTheSameOne() {
+        contacts("200", new String[][]{{"100", "Squad 🔥", "lina.k"}});
+        GroupChats.seen(new FakeConversation(true, "0:2:99", "Squad 🔥"));
+
+        assertEquals("0:2:99",
+                StreakMessenger.resolve(context, "200", StreakMessenger.keyOf("Squad 🔥")).conversationId);
+    }
+
+    private void contacts(String self, String[][] rows) {
+        java.io.File file = context.getDatabasePath("db_im_contact-" + self);
+        file.getParentFile().mkdirs();
+        file.delete();
+        try (android.database.sqlite.SQLiteDatabase database =
+                     android.database.sqlite.SQLiteDatabase.openOrCreateDatabase(file, null)) {
+            database.execSQL("CREATE TABLE IM_USER_BASE_INFO (UID TEXT, NICK_NAME TEXT, UNIQUE_ID TEXT)");
+            for (String[] row : rows) {
+                database.execSQL("INSERT INTO IM_USER_BASE_INFO VALUES (?, ?, ?)", row);
+            }
+        }
+    }
+
     @Test public void theRecipientFieldTakesSpacesAndEmoji() {
         app.morphe.extension.tiktok.settings.preference.InputTextPreference preference =
                 new app.morphe.extension.tiktok.settings.preference.InputTextPreference(

@@ -176,16 +176,19 @@ final class StreakMessenger {
      * The chat a key names on this account, or null. A group key is looked up among the groups
      * TikTok loaded ({@link GroupChats}). A handle is looked up among the account's contacts
      * for a one to one chat, and failing that among the groups, since a group can be called
-     * "squad" as well.
+     * "squad" as well. A name no group has is last tried as a contact's display name, so a
+     * friend entered as the Inbox shows them ("Lina 🌸") is found too.
      */
     static Target resolve(Context context, String selfUid, String key) {
         if (!isGroupKey(key)) {
             Contact peer = findContact(context, selfUid, key);
             if (peer != null) return new Target(conversationId(selfUid, peer.uid), peer.name);
         }
-        GroupChats.Chat group = GroupChats.find(context, selfUid,
-                isGroupKey(key) ? key.substring(GROUP_PREFIX.length()) : key);
-        return group == null ? null : new Target(group.id, group.name);
+        String name = isGroupKey(key) ? key.substring(GROUP_PREFIX.length()) : key;
+        GroupChats.Chat group = GroupChats.find(context, selfUid, name);
+        if (group != null) return new Target(group.id, group.name);
+        Contact named = findContactByName(context, selfUid, name);
+        return named == null ? null : new Target(conversationId(selfUid, named.uid), named.name);
     }
 
     /**
@@ -216,6 +219,40 @@ final class StreakMessenger {
                 String uid = row.getString(0);
                 return uid == null || uid.isEmpty() ? null : new Contact(uid, row.getString(1));
             }
+        } catch (RuntimeException unreadable) {
+            Logger.printInfo(() -> "Auto streak: contacts unreadable", unreadable);
+            return null;
+        } finally {
+            if (database != null) database.close();
+        }
+    }
+
+    /**
+     * The one contact whose display name is this name, compared the way group names are, or
+     * null. Two people with the same name are left alone rather than guessed between, and the
+     * account's own row never counts.
+     */
+    static Contact findContactByName(Context context, String selfUid, String name) {
+        String wanted = GroupChats.normalize(name);
+        if (wanted.isEmpty()) return null;
+        File file = context.getDatabasePath("db_im_contact-" + selfUid);
+        if (!file.isFile()) return null;
+        SQLiteDatabase database = null;
+        try {
+            database = SQLiteDatabase.openDatabase(file.getPath(), null,
+                    SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+            Contact match = null;
+            try (Cursor row = database.rawQuery("SELECT UID, NICK_NAME FROM IM_USER_BASE_INFO "
+                    + "WHERE NICK_NAME IS NOT NULL AND NICK_NAME != ''", null)) {
+                while (row.moveToNext()) {
+                    String uid = row.getString(0);
+                    if (uid == null || uid.isEmpty() || uid.equals(selfUid)) continue;
+                    if (!wanted.equals(GroupChats.normalize(row.getString(1)))) continue;
+                    if (match != null && !match.uid.equals(uid)) return null;
+                    match = new Contact(uid, row.getString(1));
+                }
+            }
+            return match;
         } catch (RuntimeException unreadable) {
             Logger.printInfo(() -> "Auto streak: contacts unreadable", unreadable);
             return null;

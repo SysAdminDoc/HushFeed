@@ -38,7 +38,7 @@ final class PayloadCases {
         originalFallback = Settings.FILTER_OFFLINE_FALLBACK_VIDEOS.get();
         captured = true;
         // Only the helper's resource names model a host version; the payload DEX stays intact.
-        BuildNames.setRunningBuildForTests("47.6.3");
+        BuildNames.setRunningBuildForTests("47.7.2");
         Settings.CAPTION_TEXT_SIZE.save(0);
         Settings.CAPTION_BACKGROUND.save("default");
         TextPaint paint = new TextPaint();
@@ -59,8 +59,8 @@ final class PayloadCases {
                 + " beforePx=" + sourceSize + " afterPx=" + styled.getPaint().getTextSize());
         FrameLayout container = new FrameLayout(context), strip = new FrameLayout(context);
         TextView view = new TextView(context);
-        strip.setId(context.getResources().getIdentifier("dn7", "id", context.getPackageName()));
-        view.setId(context.getResources().getIdentifier("dnd", "id", context.getPackageName()));
+        strip.setId(context.getResources().getIdentifier("dng", "id", context.getPackageName()));
+        view.setId(context.getResources().getIdentifier("dnn", "id", context.getPackageName()));
         require(strip.getId() != 0 && view.getId() != 0, "helper native resource IDs are missing");
         view.setTextSize(TypedValue.COMPLEX_UNIT_PX, sourceSize);
         strip.setBackgroundColor(Color.BLUE); strip.addView(view); container.addView(strip);

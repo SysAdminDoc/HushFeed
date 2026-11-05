@@ -1175,7 +1175,7 @@ public final class Probe extends Instrumentation {
                     }
                     case "layouts": {
                         // Every shown, on-screen view that draws a Layout of its own rather than
-                        // being a TextView (TikTok's X.09F7 draws captions and descriptions this
+                        // being a TextView (TikTok's X.0Btt draws captions and descriptions this
                         // way), with its class, place, size, text size in px and the layout's
                         // lines and width. How the caption size was shown to stay off the other
                         // text; the text itself never leaves the phone.
@@ -2037,10 +2037,10 @@ public final class Probe extends Instrumentation {
                         Class<?> hox = loader.loadClass("com.bytedance.hox.Hox");
                         Method hoxOf = null;
                         for (Method method : hox.getDeclaredMethods()) {
-                            if (method.getName().equals("H23") && method.getParameterTypes().length == 1
+                            if (method.getName().equals("e53") && method.getParameterTypes().length == 1
                                     && java.lang.reflect.Modifier.isStatic(method.getModifiers())) hoxOf = method;
                         }
-                        Method parentOf = hox.getDeclaredMethod("O23", String.class);
+                        Method parentOf = hox.getDeclaredMethod("l53", String.class);
                         parentOf.setAccessible(true);
                         hoxOf.setAccessible(true);
                         int shownCount = 0;
@@ -2068,11 +2068,11 @@ public final class Probe extends Instrumentation {
                         Class<?> hox = loader.loadClass("com.bytedance.hox.Hox");
                         Method hoxOf = null;
                         for (Method method : hox.getDeclaredMethods()) {
-                            if (method.getName().equals("H23") && method.getParameterTypes().length == 1
+                            if (method.getName().equals("e53") && method.getParameterTypes().length == 1
                                     && java.lang.reflect.Modifier.isStatic(method.getModifiers())) hoxOf = method;
                         }
                         hoxOf.setAccessible(true);
-                        Method switchTo = hox.getDeclaredMethod("b33", android.os.Bundle.class, String.class, boolean.class);
+                        Method switchTo = hox.getDeclaredMethod("y53", android.os.Bundle.class, String.class, boolean.class);
                         switchTo.setAccessible(true);
                         int switched = 0;
                         for (Object fragment : listPanelFragments) {
@@ -2121,11 +2121,11 @@ public final class Probe extends Instrumentation {
                                 .getMethod("getActivity").invoke(null);
                         if (activity == null) throw new IllegalStateException("no current activity");
                         android.content.res.Resources resources = activity.getResources();
-                        // 47.6.3 names them dn7 and dnd (47.5.3 had dln and dlu, 47.1.4 dm5 and dmb): -e strip dln -e text dlu.
+                        // 47.7.2 names them dng and dnn (47.6.3 had dn7 and dnd, 47.5.3 dln and dlu): -e strip dn7 -e text dnd.
                         String stripName = intent.getStringExtra("strip");
                         String textName = intent.getStringExtra("text");
-                        if (stripName == null) stripName = "dn7";
-                        if (textName == null) textName = "dnd";
+                        if (stripName == null) stripName = "dng";
+                        if (textName == null) textName = "dnn";
                         int strip = resources.getIdentifier(stripName, "id", activity.getPackageName());
                         int text = resources.getIdentifier(textName, "id", activity.getPackageName());
                         StringBuilder out = new StringBuilder();
@@ -2359,8 +2359,8 @@ public final class Probe extends Instrumentation {
                         if (activity == null) throw new IllegalStateException("no current activity");
                         android.content.res.Resources resources = activity.getResources();
                         java.util.Map<Integer, String> wanted = new java.util.HashMap<>();
-                        // The 47.6.3 names: ljl rail column, bsb anchor, lj_ search bar, g9f like button.
-                        for (String name : new String[]{"ljl", "desc", "bsb", "lj_", "videomusiccoverblock", "g9f"}) {
+                        // The 47.7.2 names: lkj rail column, bs2 anchor, lk8 search bar, g_2 like button.
+                        for (String name : new String[]{"lkj", "desc", "bs2", "lk8", "videomusiccoverblock", "g_2"}) {
                             int id = resources.getIdentifier(name, "id", activity.getPackageName());
                             if (id != 0) wanted.put(id, name);
                         }
@@ -2422,7 +2422,7 @@ public final class Probe extends Instrumentation {
                                 .getMethod("isClearDisplayNow");
                         android.content.res.Resources resources = activity.getResources();
                         int[] ids = new int[3];
-                        String[] names = {"ljl", "bsb", "videomusiccoverblock"};
+                        String[] names = {"lkj", "bs2", "videomusiccoverblock"};
                         for (int i = 0; i < names.length; i++) {
                             ids[i] = resources.getIdentifier(names[i], "id", activity.getPackageName());
                         }
@@ -2488,8 +2488,8 @@ public final class Probe extends Instrumentation {
                         Method clearNow = loader.loadClass("app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch")
                                 .getMethod("isClearDisplayNow");
                         android.content.res.Resources resources = activity.getResources();
-                        int strip = resources.getIdentifier("dn7", "id", activity.getPackageName());
-                        int drawn = resources.getIdentifier("dnd", "id", activity.getPackageName());
+                        int strip = resources.getIdentifier("dng", "id", activity.getPackageName());
+                        int drawn = resources.getIdentifier("dnn", "id", activity.getPackageName());
                         int[] counts = new int[9];
                         android.os.Handler main = new android.os.Handler(android.os.Looper.getMainLooper());
                         long start = android.os.SystemClock.uptimeMillis();
@@ -2708,7 +2708,7 @@ public final class Probe extends Instrumentation {
                     }
                     case "countformat": {
                         // One of TikTok's static count formatters run with a count the check
-                        // picks, and the text it wrote: -e class X.0EV9 -e method LIZIZ -e count
+                        // picks, and the text it wrote: -e class X.0GJY -e method LIZIZ -e count
                         // 123456. One that takes (long) gets just the count, one that takes
                         // (Aweme, long) the video on screen as well. A check can read what Show
                         // exact counts makes of a big count whatever the feed serves. The class
@@ -2756,12 +2756,12 @@ public final class Probe extends Instrumentation {
                         // Without it set to dark, TikTok stays light whatever the phone's night
                         // mode is (seen on the S22, 2026-10-16). Read through TikTok's own store
                         // factory, the static (int, Context, String) -> SharedPreferences method
-                        // TikTok reads it with (-e store X.02sR -e method LIZJ on 47.6.3), since
+                        // TikTok reads it with (-e store X.038m -e method LIZJ on 47.7.2), since
                         // that one may route the store to Keva rather than a plain file; its
                         // sibling LIZIZ skips that. -e set N writes N, which the next start applies;
                         // -e set unset removes it.
                         String storeClass = intent.getStringExtra("store");
-                        if (storeClass == null) storeClass = "X.02sR";
+                        if (storeClass == null) storeClass = "X.038m";
                         String storeMethod = intent.getStringExtra("method");
                         if (storeMethod == null) storeMethod = "LIZJ";
                         Method factory = loader.loadClass(storeClass)
@@ -4363,7 +4363,7 @@ public final class Probe extends Instrumentation {
                     lines.add(answers.toString());
                 }
                 try {
-                    lines.add(" class gate 05LR.LIZ=" + loader.loadClass("X.05LR").getMethod("LIZ").invoke(null));
+                    lines.add(" class gate 06Rv.LIZ=" + loader.loadClass("X.06Rv").getMethod("LIZ").invoke(null));
                 } catch (ReflectiveOperationException | RuntimeException unreadable) {
                     lines.add(" class gate unreadable " + unreadable);
                 }
@@ -4431,7 +4431,7 @@ public final class Probe extends Instrumentation {
                 long started = android.os.SystemClock.uptimeMillis();
                 // The page panel builds its visibility component only while this experiment is on.
                 try {
-                    Method sequenceOn = loader.loadClass("X.06Yf").getDeclaredMethod("LIZ");
+                    Method sequenceOn = loader.loadClass("X.07wT").getDeclaredMethod("LIZ");
                     sequenceOn.setAccessible(true);
                     lines.add("generic feed sequence " + sequenceOn.invoke(null));
                 } catch (ReflectiveOperationException | RuntimeException unreadable) {
@@ -4439,7 +4439,7 @@ public final class Probe extends Instrumentation {
                 }
                 java.util.List<Object> panels = new java.util.ArrayList<>();
                 try {
-                    Method panelOf = loader.loadClass("X.06ev").getDeclaredMethod("LIZJ", fragmentType);
+                    Method panelOf = loader.loadClass("X.08qu").getDeclaredMethod("LIZJ", fragmentType);
                     panelOf.setAccessible(true);
                     for (Object root : roots) {
                         if (!fragmentType.isInstance(root)) continue;
@@ -4484,7 +4484,7 @@ public final class Probe extends Instrumentation {
                 Object component = found[0];
                 StringBuilder line = new StringBuilder("visibility ").append(ref(component));
                 try {
-                    Field stateField = component.getClass().getDeclaredField("LLJJIII");
+                    Field stateField = component.getClass().getDeclaredField("LLJJIJIIJIL");
                     stateField.setAccessible(true);
                     Object state = stateField.get(component);
                     line.append(" state=").append(ref(state)).append(ownFields(state, state.getClass(), false));
@@ -4882,9 +4882,9 @@ public final class Probe extends Instrumentation {
         private static String hoxNode(Object node) throws ReflectiveOperationException {
             if (node == null) return " none";
             Class<?> nodeType = node.getClass();
-            while (nodeType != null && !nodeType.getName().equals("X.05F6")) nodeType = nodeType.getSuperclass();
+            while (nodeType != null && !nodeType.getName().equals("X.06HL")) nodeType = nodeType.getSuperclass();
             if (nodeType == null) return " " + ref(node) + " not a node";
-            Field listenersField = nodeType.getDeclaredField("LLJJIII");
+            Field listenersField = nodeType.getDeclaredField("LLJJIJIIJIL");
             Field containerField = nodeType.getDeclaredField("LL");
             listenersField.setAccessible(true);
             containerField.setAccessible(true);
@@ -4893,7 +4893,7 @@ public final class Probe extends Instrumentation {
             Object container = containerField.get(node);
             out.append(" container ").append(ref(container));
             Class<?> containerType = container == null ? null : container.getClass();
-            while (containerType != null && !containerType.getName().equals("X.05HC")) containerType = containerType.getSuperclass();
+            while (containerType != null && !containerType.getName().equals("X.06MW")) containerType = containerType.getSuperclass();
             if (containerType == null) return out.toString();
             Field shown = containerType.getDeclaredField("LLJJJJJIL");
             Field index = containerType.getDeclaredField("LLJJJ");
@@ -4908,10 +4908,10 @@ public final class Probe extends Instrumentation {
             return out.toString();
         }
 
-        /** The tag and identity of Hox's current leaf, the node b33 compares a switch's target with. */
+        /** The tag and identity of Hox's current leaf, the node y53 compares a switch's target with. */
         private static String hoxLeaf(Object tree) {
             try {
-                Field rootField = tree.getClass().getDeclaredField("LLJJIJI");
+                Field rootField = tree.getClass().getDeclaredField("LLJJIJIL");
                 rootField.setAccessible(true);
                 Object root = rootField.get(tree);
                 if (root == null) return "no root";
@@ -4928,14 +4928,14 @@ public final class Probe extends Instrumentation {
         }
 
         /**
-         * Each of a feed fragment's fields holding TikTok's older list panel (X.04fn), with that
+         * Each of a feed fragment's fields holding TikTok's older list panel (X.05fB), with that
          * panel's visible hint. The page's node show sets it and its node hide clears it, and the
          * list's players follow it, so a page left hidden shows here as false.
          */
         private String listPanelHints(Object fragment) {
             StringBuilder out = new StringBuilder();
             try {
-                Class<?> panelType = loader.loadClass("X.04fn");
+                Class<?> panelType = loader.loadClass("X.05fB");
                 Field hint = panelType.getDeclaredField("mUserVisibleHint");
                 hint.setAccessible(true);
                 for (Class<?> c = fragment.getClass(); c != null && !c.getName().startsWith("androidx."); c = c.getSuperclass()) {
@@ -6042,9 +6042,9 @@ public final class Probe extends Instrumentation {
                 Class<?> register = loader.loadClass("com.ss.android.deviceregister.DeviceRegisterManager");
                 Log.i(TAG, "ok idreset before" + registeredIds(context, appLog, register));
                 if (readOnly) return;
-                // 47.6.3's reset callback: LIZ() when the timeout runs out, LIZIZ(installInfo)
+                // 47.7.2's reset callback: LIZ() when the timeout runs out, LIZIZ(installInfo)
                 // when new install info arrives.
-                Class<?> callbackType = loader.loadClass("X.0LOl");
+                Class<?> callbackType = loader.loadClass("X.09H9");
                 final java.util.concurrent.CountDownLatch answered = new java.util.concurrent.CountDownLatch(1);
                 final String[] outcome = {"no answer"};
                 Object callback = java.lang.reflect.Proxy.newProxyInstance(loader, new Class<?>[]{callbackType},

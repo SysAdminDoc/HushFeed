@@ -111,11 +111,11 @@ final class SecurePopupProbe {
     }
 
     /**
-     * Compose's PopupProperties, Density, PopupPositionProvider and PopupLayout as TikTok 47.6.3's
+     * Compose's PopupProperties, Density, PopupPositionProvider and PopupLayout as TikTok 47.7.2's
      * R8 named them.
      */
     private static String[] composeNames() {
-        return new String[]{"X.011c", "X.01ov", "X.011a", "X.01tr"};
+        return new String[]{"X.011Y", "X.01o5", "X.011W", "X.01sv"};
     }
 
     private static int dp(Activity activity, int value) {
@@ -131,8 +131,8 @@ final class SecurePopupProbe {
         if (type == float.class) {
             float value = args != null && args.length > 0 && args[0] instanceof Number
                     ? ((Number) args[0]).floatValue() : 0f;
-            if ("LJJJJL".equals(name)) return value * density;
-            if ("LLII".equals(name)) return value / density;
+            if ("LJJJJZI".equals(name)) return value * density;
+            if ("LLIIIILZ".equals(name)) return value / density;
             if ("getDensity".equals(name)) return density;
             return value;
         }

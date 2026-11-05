@@ -43,7 +43,7 @@ import org.json.JSONObject;
 
 /** Explicit, temporary native edge drags. No settings persist and no application buttons are clicked. */
 final class EdgeDragProbe {
-    private static final String TARGET = "com.zhiliaoapp.musically", VERSION = "47.6.3";
+    private static final String TARGET = "com.zhiliaoapp.musically", VERSION = "47.7.2";
     private static final String PREFIX = "app.morphe.extension.tiktok.";
     private static final String UTILS = "app.morphe.extension.shared.Utils";
     private static final String JOURNAL = "hushfeed-edge-drag-restore.json";
@@ -123,8 +123,8 @@ final class EdgeDragProbe {
             if (bounds.width() != decor.getWidth() || bounds.height() != decor.getHeight()) {
                 throw new IllegalStateException("native window is clipped; coordinate mapping refused");
             }
-            comments = unique(decor, activity.getResources().getIdentifier("eqi", "id", TARGET));
-            rail = unique(decor, activity.getResources().getIdentifier("ljl", "id", TARGET));
+            comments = unique(decor, activity.getResources().getIdentifier("eqn", "id", TARGET));
+            rail = unique(decor, activity.getResources().getIdentifier("lkj", "id", TARGET));
             commentBounds = visibleBounds(comments); railBounds = visibleBounds(rail);
             if (!railBounds.contains(commentBounds)) throw new IllegalStateException("comments are outside the observed native rail");
             pager = pagerAbove(rail);

@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/** Passive 47.6.3 feed observation. It never creates a native player, seeks or dispatches input. */
+/** Passive 47.7.2 feed observation. It never creates a native player, seeks or dispatches input. */
 final class AutoAdvanceWatch implements Application.ActivityLifecycleCallbacks {
     private static final String PACKAGE="com.zhiliaoapp.musically";
     private static final String MAIN="com.ss.android.ugc.aweme.main.MainActivity";
@@ -38,8 +38,8 @@ final class AutoAdvanceWatch implements Application.ActivityLifecycleCallbacks {
     static void bootstrap(Application app,ClassLoader loader){
         if(instance!=null)return;
         boolean supported=false;
-        try{PackageInfo info=app.getPackageManager().getPackageInfo(PACKAGE,0);supported=PACKAGE.equals(app.getPackageName()) && "47.6.3".equals(info.versionName)
-                && (info.versionCode==2024706030 || info.versionCode==Integer.MAX_VALUE);}catch(Exception ignored){}
+        try{PackageInfo info=app.getPackageManager().getPackageInfo(PACKAGE,0);supported=PACKAGE.equals(app.getPackageName()) && "47.7.2".equals(info.versionName)
+                && (info.versionCode==2024707020 || info.versionCode==Integer.MAX_VALUE);}catch(Exception ignored){}
         instance=new AutoAdvanceWatch(loader,supported);
         // Registered before TikTok replaces the Instrumentation. No extension Activity helper is needed.
         app.registerActivityLifecycleCallbacks(instance);
@@ -96,12 +96,12 @@ final class AutoAdvanceWatch implements Application.ActivityLifecycleCallbacks {
         if(!visible(decor) || decor.getWindowToken()==null)throw new Missing("native_window_unavailable");
         requireSingleWindow(decor);
         if(bindings==null)bindings=new Bindings(loader);
-        int homeId=activity.getResources().getIdentifier("onv","id",PACKAGE);
+        int homeId=activity.getResources().getIdentifier("opf","id",PACKAGE);
         View home=homeId==0?null:decor.findViewById(homeId);
         if(!visible(home) || !home.isSelected() || home.getRootView()!=decor)throw new Missing("native_home_not_selected");
         ViewGroup pager=null;ArrayDeque<View> queue=new ArrayDeque<>();queue.add(decor);int nodes=0;
-        int sheet=activity.getResources().getIdentifier("pwx","id",PACKAGE);
-        int title=activity.getResources().getIdentifier("wl7","id",PACKAGE);
+        int sheet=activity.getResources().getIdentifier("pyh","id",PACKAGE);
+        int title=activity.getResources().getIdentifier("wqo","id",PACKAGE);
         if(sheet==0 || title==0)throw new Missing("native_sheet_anchors_unavailable");
         while(!queue.isEmpty()){
             if(++nodes>MAX_NODES)throw new Missing("view_bound");
@@ -126,16 +126,16 @@ final class AutoAdvanceWatch implements Application.ActivityLifecycleCallbacks {
         }
         if(cell==null || !bindings.cell.isInstance(holder))throw new Missing("native_cell_unavailable");
         Object model=call(adapter,"getItem",int.class,index);
-        if(model==null || read(holder,"LLJLLIL")!=model)throw new Missing("holder_model_mismatch");
-        Object ability=read(holder,"T"),panel=read(holder,"S");
-        if(panel==null){Object fragment=read(holder,"LLJZ");if(!bindings.fragment.isInstance(fragment))throw new Missing("existing_panel_unavailable");panel=read(fragment,"LLJJJJ");}
-        if(!bindings.panel.isInstance(panel) || read(panel,"LLJZ")!=pager || read(panel,"LLLIIIIL")!=adapter)throw new Missing("panel_owner_mismatch");
-        if(ability==null)ability=read(panel,"LLLLLLLZIL");
-        if(!bindings.ability.isInstance(ability) || read(ability,"LLJJJJ")!=panel)throw new Missing("component_owner_mismatch");
-        Object controller=read(ability,"LLJLILLLLZIIL");
-        if(!bindings.controller.isInstance(controller) || read(panel,"LLLLLLLLLL")!=controller)throw new Missing("controller_owner_mismatch");
+        if(model==null || read(holder,"LLJZ")!=model)throw new Missing("holder_model_mismatch");
+        Object ability=read(holder,"V"),panel=read(holder,"U");
+        if(panel==null){Object fragment=read(holder,"LLL");if(!bindings.fragment.isInstance(fragment))throw new Missing("existing_panel_unavailable");panel=read(fragment,"LLJJJJLIIL");}
+        if(!bindings.panel.isInstance(panel) || read(panel,"LLL")!=pager || read(panel,"LLLIIL")!=adapter)throw new Missing("panel_owner_mismatch");
+        if(ability==null)ability=read(panel,"LLLLLLZZ");
+        if(!bindings.ability.isInstance(ability) || read(ability,"LLJJJJLIIL")!=panel)throw new Missing("component_owner_mismatch");
+        Object controller=read(ability,"LLJLLIL");
+        if(!bindings.controller.isInstance(controller) || read(panel,"LLLLLLZ")!=controller)throw new Missing("controller_owner_mismatch");
         Object manager=read(controller,"mPlayerManager");if(manager==null)throw new Missing("existing_manager_unavailable");
-        Object key=call(model,"getAid"),controllerModel=call(controller,"LLJJI");
+        Object key=call(model,"getAid"),controllerModel=call(controller,"LLJJIJIL");
         if(!(key instanceof String) || ((String)key).isEmpty() || controllerModel==null || !key.equals(call(controllerModel,"getAid")))throw new Missing("controller_model_mismatch");
         Object images=call(model,"getImageInfos"),status=call(model,"getStatus"),video=call(model,"getVideo");
         boolean photo=images instanceof Collection && !((Collection<?>)images).isEmpty()
@@ -155,11 +155,11 @@ final class AutoAdvanceWatch implements Application.ActivityLifecycleCallbacks {
         if(!source.valid() || source.model!=model || !key.equals(source.key))throw new Missing("native_source_changed_or_mismatched");
         // Re-read the native bindings after the player queries. No lazy getter creates a manager or panel.
         if(resumed.get()!=activity || !activity.hasWindowFocus() || cell.getParent()!=pager || !visible(cell)
-                || cell.getTag(HOLDER_TAG)!=holder || read(holder,"LLJLLIL")!=model || call(adapter,"getItem",int.class,index)!=model
+                || cell.getTag(HOLDER_TAG)!=holder || read(holder,"LLJZ")!=model || call(adapter,"getItem",int.class,index)!=model
                 || call(pager,"getAdapter")!=adapter || number(call(pager,"getCurrentItem"))!=index || number(call(pager,"getScrollState"))!=0
-                || read(controller,"mPlayerManager")!=manager || read(ability,"LLJLILLLLZIIL")!=controller
+                || read(controller,"mPlayerManager")!=manager || read(ability,"LLJLLIL")!=controller
                 || !key.equals(read(controller,"mCurrentSourceId")) || !key.equals(call(model,"getAid"))
-                || !key.equals(call(call(controller,"LLJJI"),"getAid")))throw new Missing("native_owner_changed_during_read");
+                || !key.equals(call(call(controller,"LLJJIJIL"),"getAid")))throw new Missing("native_owner_changed_during_read");
         return new AutoAdvanceWatchState.Frame(new Object[]{activity,decor.getWindowToken(),pager,adapter,cell,holder,model,ability,controller,manager},
                 (String)key,index,source.position,number(call(video,"getDuration")),SystemClock.elapsedRealtime(),source.playing,source.paused);
     }
@@ -178,7 +178,7 @@ final class AutoAdvanceWatch implements Application.ActivityLifecycleCallbacks {
     }
     private static final class Bindings{
         final Class<?> cell,adapter,ability,panel,controller,fragment;
-        Bindings(ClassLoader loader)throws Exception{cell=loader.loadClass("com.ss.android.ugc.aweme.feed.adapter.VideoViewCell");adapter=loader.loadClass("X.07H8");ability=loader.loadClass("com.ss.android.ugc.feed.platform.panel.player.PlayerComponentTemp");panel=loader.loadClass("com.ss.android.ugc.aweme.feed.panel.BaseListFragmentPanel");controller=loader.loadClass("com.ss.android.ugc.aweme.feed.controller.PlayerController");fragment=loader.loadClass("com.ss.android.ugc.aweme.feed.ui.FeedRecommendFragment");}
+        Bindings(ClassLoader loader)throws Exception{cell=loader.loadClass("com.ss.android.ugc.aweme.feed.adapter.VideoViewCell");adapter=loader.loadClass("X.09e6");ability=loader.loadClass("com.ss.android.ugc.feed.platform.panel.player.PlayerComponentTemp");panel=loader.loadClass("com.ss.android.ugc.aweme.feed.panel.BaseListFragmentPanel");controller=loader.loadClass("com.ss.android.ugc.aweme.feed.controller.PlayerController");fragment=loader.loadClass("com.ss.android.ugc.aweme.feed.ui.FeedRecommendFragment");}
     }
     private static final class Missing extends Exception{final String reason;Missing(String reason){this.reason=reason;}}
     private static boolean bool(Object value){return Boolean.TRUE.equals(value);}

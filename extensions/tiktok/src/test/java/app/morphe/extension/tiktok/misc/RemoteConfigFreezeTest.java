@@ -168,11 +168,77 @@ public class RemoteConfigFreezeTest {
 
         assertTrue("an account not known yet is no switch", RemoteConfigFreeze.holdsStore());
         assertEquals(VERSION + "/101", Settings.REMOTE_CONFIG_STAMP.get());
+    }
 
+    @Test public void anUpdateWithTheAccountNotKnownKeepsTheStampsAccount() {
+        SettingsStatus.remoteConfigFreezeEnabled = true;
+        SignedInUser.idForTests = "";
+        Settings.REMOTE_CONFIG_STAMP.save(OLDER_VERSION + "/101");
+        Settings.FREEZE_REMOTE_CONFIG.save(true);
+
+        assertFalse("the update lets the start through", RemoteConfigFreeze.holdsStore());
+        assertEquals(VERSION + "/101", Settings.REMOTE_CONFIG_STAMP.get());
+
+        nextStart();
+        assertTrue(RemoteConfigFreeze.holdsStore());
+        SignedInUser.idForTests = "101";
+        assertTrue("the account the stamp kept turns up, nothing to re-decide", RemoteConfigFreeze.holdsStore());
+        SignedInUser.idForTests = "202";
+        assertFalse("another one does", RemoteConfigFreeze.holdsStore());
+    }
+
+    @Test public void aStoreWithTheSwitchOffNamesNoAccount() {
+        SettingsStatus.remoteConfigFreezeEnabled = true;
+        SignedInUser.idForTests = "101";
+        Settings.REMOTE_CONFIG_STAMP.save(VERSION + "/101");
+        Settings.FREEZE_REMOTE_CONFIG.save(true);
+        assertTrue(RemoteConfigFreeze.holdsStore());
+
+        // Turned off, signed into another account that stores, then back with no store between
+        // the switch back and turning the freeze on: what's stored is the other account's.
         Settings.FREEZE_REMOTE_CONFIG.save(false);
+        nextStart();
+        SignedInUser.idForTests = "202";
         assertFalse(RemoteConfigFreeze.holdsStore());
-        assertEquals("a store with the freeze off doesn't forget the account",
-                VERSION + "/101", Settings.REMOTE_CONFIG_STAMP.get());
+        assertEquals("off, the account isn't asked, so the stamp names none",
+                VERSION + "/", Settings.REMOTE_CONFIG_STAMP.get());
+
+        SignedInUser.idForTests = "101";
+        Settings.FREEZE_REMOTE_CONFIG.save(true);
+        nextStart();
+        assertFalse("turned on, the first start takes the signed-in account's values",
+                RemoteConfigFreeze.holdsStore());
+        assertEquals(VERSION + "/101", Settings.REMOTE_CONFIG_STAMP.get());
+        nextStart();
+        assertTrue(RemoteConfigFreeze.holdsStore());
+    }
+
+    @Test public void anAccountKnownAfterAnEarlyHoldReDecidesTheStart() {
+        Context application = RuntimeEnvironment.getApplication();
+        SettingsStatus.remoteConfigFreezeEnabled = true;
+        Settings.REMOTE_CONFIG_STAMP.save(VERSION + "/101");
+        Settings.FREEZE_REMOTE_CONFIG.save(true);
+        SignedInUser.idForTests = "202";
+        EarlyApplication.set(application);
+        Utils.setContext(null);
+        try {
+            assertTrue("before the settings context the account isn't asked", RemoteConfigFreeze.holdsStore());
+        } finally {
+            Utils.setContext(application);
+        }
+        assertFalse("asked once the settings context is up, another account re-decides the start",
+                RemoteConfigFreeze.holdsStore());
+        assertEquals(VERSION + "/202", Settings.REMOTE_CONFIG_STAMP.get());
+    }
+
+    @Test public void aStampWithoutItsSlashCountsAsNothingStored() {
+        SettingsStatus.remoteConfigFreezeEnabled = true;
+        SignedInUser.idForTests = "101";
+        Settings.REMOTE_CONFIG_STAMP.save(VERSION);
+        Settings.FREEZE_REMOTE_CONFIG.save(true);
+
+        assertFalse(RemoteConfigFreeze.holdsStore());
+        assertEquals(VERSION + "/101", Settings.REMOTE_CONFIG_STAMP.get());
     }
 
     @Test public void signingInAfterAStoreWithNoAccountLetsTheAccountsValuesThrough() {
@@ -199,6 +265,7 @@ public class RemoteConfigFreezeTest {
         assertFalse(RemoteConfigFreeze.matches(OLDER_VERSION + "/101", VERSION, "101"));
         assertFalse(RemoteConfigFreeze.matches(OLDER_VERSION + "/101", VERSION, null));
         assertFalse("never stored", RemoteConfigFreeze.matches("", VERSION, null));
+        assertFalse("no slash", RemoteConfigFreeze.matches(VERSION, VERSION, null));
     }
 
     @Test public void theVersionIsThePackagesVersionCode() {
@@ -263,8 +330,8 @@ public class RemoteConfigFreezeTest {
             theFile().edit().putBoolean(Settings.FREEZE_REMOTE_CONFIG.key, false)
                     .putString(Settings.REMOTE_CONFIG_STAMP.key, OLDER_VERSION + "/101").commit();
             assertFalse(RemoteConfigFreeze.holdsStore());
-            assertEquals("off, an early store saves this TikTok and keeps the account",
-                    VERSION + "/101", theFile().getString(Settings.REMOTE_CONFIG_STAMP.key, ""));
+            assertEquals("off, an early store saves this TikTok and no account",
+                    VERSION + "/", theFile().getString(Settings.REMOTE_CONFIG_STAMP.key, ""));
         } finally {
             Utils.setContext(application);
         }

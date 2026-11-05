@@ -33,9 +33,9 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
  * <p>The values kept have to be ones the running TikTok and account were sent. A freeze turned on
  * before TikTok ever stored any would leave it on its built-in defaults, and one held across an
  * update or an account switch would keep what the old build or the other account got. So a store
- * that goes through saves {@link Settings#REMOTE_CONFIG_STAMP}, the TikTok version code and the
- * account it came from, and a start with the switch on whose TikTok or account doesn't match lets
- * every store of that start through. The answer for a start is decided once, so the chunks of one
+ * that goes through saves {@link Settings#REMOTE_CONFIG_STAMP}, the TikTok version code and, with
+ * the switch on, the account it came from, and a start with the switch on whose TikTok or account
+ * doesn't match lets every store of that start through. The answer for a start is decided once, so the chunks of one
  * response are never half kept, except when an account the stamp doesn't name turns up after it:
  * that is a switch, and the new account's response goes through.
  */
@@ -65,7 +65,9 @@ public final class RemoteConfigFreeze {
             if (early) context = EarlySwitch.application();
             boolean on = early ? EarlySwitch.isOn(SWITCH_KEY) : Settings.FREEZE_REMOTE_CONFIG.get();
             if (!on) {
-                markStored(context, early, null);
+                // The account isn't asked with the switch off, so the stamp names none and the
+                // first start turned on with a known account takes that account's values once.
+                markStored(context, early, "");
                 Logger.printDebug(() -> "Freeze TikTok's experiments: off, a store goes through");
                 return false;
             }
@@ -115,11 +117,12 @@ public final class RemoteConfigFreeze {
     }
 
     /**
-     * Records which TikTok and account a store that went through came from. An account not known
-     * keeps the one the stamp named. Before the settings context it saves into the preferences
-     * file itself, so a first start that ends before any later store still counts. The stamp is
-     * read as saved, since a paused process answers every setting's default and a store then goes
-     * through too.
+     * Records which TikTok and account a store that went through came from. A null account, one
+     * not known yet with the switch on, keeps the one the stamp named, since the next store asks
+     * again and a different one re-decides the start; an empty one names none. Before the settings
+     * context it saves into the preferences file itself, so a first start that ends before any
+     * later store still counts. The stamp is read as saved, since a paused process answers every
+     * setting's default and a store then goes through too.
      */
     private static void markStored(@Nullable Context context, boolean early, @Nullable String account) {
         if (context == null) return;
@@ -127,7 +130,9 @@ public final class RemoteConfigFreeze {
         String stamp = versionOf(context) + '/' + (account != null ? account : accountOf(saved));
         if (stamp.equals(saved)) return;
         if (early) {
-            preferences(context).edit().putString(STAMP_KEY, stamp).apply();
+            if (!preferences(context).edit().putString(STAMP_KEY, stamp).commit()) {
+                Logger.printDebug(() -> "Freeze TikTok's experiments: could not save the stamp, the next start stores again");
+            }
         } else {
             Settings.REMOTE_CONFIG_STAMP.save(stamp);
         }

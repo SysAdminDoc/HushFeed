@@ -564,6 +564,12 @@ public class Settings extends BaseSettings {
     /** A long press on the Home tab opens Hushfeed's settings (#45). TikTok gives that press nothing of its own. */
     public static final BooleanSetting HOME_TAB_OPENS_SETTINGS = new BooleanSetting("home_tab_opens_settings", TRUE);
     /**
+     * The Home tab turns into a search button (#338): its icon and name read Search, a tap opens
+     * TikTok's search instead of the feed, and a start from the icon lands on Inbox or Profile.
+     * Home is a tab the bottom tab filter can't drop, so this is how a reader gets rid of it.
+     */
+    public static final BooleanSetting SEARCH_INSTEAD_OF_HOME = new BooleanSetting("search_instead_of_home", FALSE);
+    /**
      * A long press on the Profile tab opens TikTok's Watch history (#199). Off by default: on some
      * accounts that press is TikTok's account switcher, which this takes over while it's on.
      */

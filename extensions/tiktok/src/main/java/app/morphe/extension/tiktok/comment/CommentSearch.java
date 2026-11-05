@@ -933,12 +933,15 @@ public final class CommentSearch {
         }
     }
 
-    /** A magnifier drawn with the clear glyph's stroke, so the two read as one set. */
-    static final class SearchGlyphDrawable extends Drawable {
+    /**
+     * A magnifier drawn with the clear glyph's stroke, so the two read as one set. Search instead
+     * of Home draws the Home tab's icon with it too.
+     */
+    public static final class SearchGlyphDrawable extends Drawable {
         private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         private final int size;
 
-        SearchGlyphDrawable(Context context, int color) {
+        public SearchGlyphDrawable(Context context, int color) {
             paint.setColor(color);
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(SettingsUi.strokePx(context, 2f));
@@ -946,13 +949,13 @@ public final class CommentSearch {
             size = SettingsUi.dp(context, 24);
         }
 
-        void setColor(int color) {
+        public void setColor(int color) {
             if (paint.getColor() == color) return;
             paint.setColor(color);
             invalidateSelf();
         }
 
-        int getColor() {
+        public int getColor() {
             return paint.getColor();
         }
 

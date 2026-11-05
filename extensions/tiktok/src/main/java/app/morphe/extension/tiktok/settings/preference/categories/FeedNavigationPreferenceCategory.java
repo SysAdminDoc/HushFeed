@@ -92,6 +92,17 @@ public class FeedNavigationPreferenceCategory extends ConditionalPreferenceCateg
                 "Press and hold the Home tab to open these settings. A tap on Home works as before.",
                 Settings.HOME_TAB_OPENS_SETTINGS
         ));
+        // The tab's tap and the start tab both ride on the feed tab hooks.
+        if (SettingsStatus.feedNavigationEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Search instead of Home",
+                    "The Home tab becomes a search button. Its icon and name say Search, and a tap opens "
+                            + "TikTok's search instead of For You. TikTok starts on Inbox, or on Profile when "
+                            + "Inbox is hidden, so the feed doesn't play when you open it.",
+                    Settings.SEARCH_INSTEAD_OF_HOME
+            ));
+        }
         addPreference(new TogglePreference(
                 context,
                 "Long-press Profile for Watch history",

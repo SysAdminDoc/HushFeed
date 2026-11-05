@@ -5259,6 +5259,12 @@
     "row": "Long-press Inbox for read receipts"
    },
    {
+    "key": "search_instead_of_home",
+    "default": false,
+    "type": "bool",
+    "row": "Search instead of Home"
+   },
+   {
     "key": "keep_for_you_on_tab_tap",
     "default": false,
     "type": "bool",

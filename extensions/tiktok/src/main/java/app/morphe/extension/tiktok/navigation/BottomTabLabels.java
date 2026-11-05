@@ -16,6 +16,7 @@ import java.util.WeakHashMap;
 
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.shared.settings.StringSetting;
+import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
 
 /**
@@ -66,6 +67,8 @@ public final class BottomTabLabels {
 
     /** The name a tab should show, or an empty string to keep TikTok's. */
     static String nameFor(@Nullable String key) {
+        // Home turned into a search button reads Search, over a name of the reader's own (#338).
+        if (BottomNavigationTabOptions.HOME.equals(key) && SearchInsteadOfHome.isOn()) return L10n.t("Search");
         StringSetting setting = settingFor(key);
         if (setting == null) return "";
         String name = setting.get();

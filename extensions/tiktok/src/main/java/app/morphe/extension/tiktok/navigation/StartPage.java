@@ -92,16 +92,22 @@ public final class StartPage {
             if (FeedLock.isVideoLink(intent)) FeedLock.noteLinkEntry();
             String choice = Settings.START_PAGE.get();
             boolean locking = FeedLock.isOn();
-            if (TIKTOK.equals(choice) && !(locking && HOME_TAG.equals(tag))) return tag;
+            // Home turned into a search button (#338) has no feed to open on either.
+            boolean searchHome = SearchInsteadOfHome.isOn();
+            if (TIKTOK.equals(choice) && !((locking || searchHome) && HOME_TAG.equals(tag))) return tag;
             if (!isLauncherStart(intent)) return tag;
             String target = TIKTOK.equals(choice) ? null : tagFor(choice);
             // With the feed lock on, a start that would land on a feed, or on a tab this phone
             // can't show, lands on Inbox, or on Profile for a phone with no Inbox to open, so the
-            // app doesn't open on a blank feed.
-            if (locking && (target == null || landsOnFeed(target))) {
+            // app doesn't open on a blank feed. With Home a search button, a start that would land
+            // on one of Home's feeds goes the same way, so no feed plays behind a tab that reads
+            // Search. A Friends bottom tab is a tab of its own and stays.
+            String landing = target == null ? tag : target;
+            if ((locking && (target == null || landsOnFeed(target)))
+                    || (searchHome && (HOME_TAG.equals(landing) || FRIENDS_FEED_TAG.equals(landing)))) {
                 choice = tagFor(INBOX) != null ? INBOX : PROFILE;
                 target = tagFor(choice);
-                HookStatus.bound(FAMILY, "feed lock start");
+                HookStatus.bound(FAMILY, locking ? "feed lock start" : "search home start");
             }
             if (target == null) return tag;
             String top = topTagFor(choice);

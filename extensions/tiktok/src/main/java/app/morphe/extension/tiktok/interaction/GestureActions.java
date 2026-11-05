@@ -437,7 +437,8 @@ public final class GestureActions {
     static final String SEARCH_PAGE_URI = "snssdk1233://search?enter_from=home_screen_icon&enter_method=enter"
             + "&enter_blank_page=1&enter_from_sub=app_outside&set_hint_by_sug_word=1";
 
-    static boolean openSearchPage(Context context) {
+    /** Also the Home tab's tap under Search instead of Home (#338). */
+    public static boolean openSearchPage(Context context) {
         if (context == null) context = Utils.getContext();
         if (context == null) return false;
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(SEARCH_PAGE_URI))

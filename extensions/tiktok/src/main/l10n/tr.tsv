@@ -423,6 +423,8 @@ Disable	Devre dışı bırak
 Stop analytics and tracking	Analitiği ve izlemeyi durdur
 Long-press Home for Hushfeed settings	Hushfeed ayarları için Ana Sayfa'ya basılı tut
 Press and hold the Home tab to open these settings. A tap on Home works as before.	Bu ayarları açmak için Ana Sayfa sekmesine basılı tut. Ana Sayfa'ya dokunmak eskisi gibi çalışır.
+Search instead of Home	Ana Sayfa yerine Arama
+The Home tab becomes a search button. Its icon and name say Search, and a tap opens TikTok's search instead of For You. TikTok starts on Inbox, or on Profile when Inbox is hidden, so the feed doesn't play when you open it.	Ana Sayfa sekmesi bir arama düğmesine dönüşür. Simgesi ve adı Arama olur ve dokunmak Sana Özel yerine TikTok aramasını açar. TikTok Gelen Kutusu'nda, Gelen Kutusu gizliyse Profil'de açılır, böylece açtığında akış oynamaz.
 Keep For You on a Home tap	Ana Sayfa'ya dokununca Senin İçin'i koru
 Keep For You on a pull down	Aşağı çekince Senin İçin'i koru
 Keep long press from quick sharing	Uzun basma hızlı paylaşmasın

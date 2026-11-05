@@ -36,16 +36,17 @@ private const val SERVICE = "LX/1LBz;"
 
 /**
  * What Account cleanup (#332) bridges to, held to each declared build: one liked videos list
- * service and one Favorites service, each made one way in TikTok, and a bridge that makes it the
- * same way and passes the verifier's typing.
+ * service, one Favorites service and one service that clears unavailable Favorites, each made one
+ * way in TikTok, and a bridge that makes it the same way and passes the verifier's typing.
  */
 class AccountCleanupServicesTest {
     @Test
-    fun `each build has one liked list and one Favorites service, each made one way`() {
+    fun `each build has one liked list, one Favorites and one unavailable Favorites service, each made one way`() {
         Fixtures.forEachDeclared { apk ->
             val version = Fixtures.versionOf(apk)
             val liked = mutableSetOf<String>()
             val favorites = mutableSetOf<String>()
+            val unavailable = mutableSetOf<String>()
             val made = mutableMapOf<String, MutableSet<ServiceRecipe>>()
             val makers = mutableMapOf<String, MutableList<Method>>()
             val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
@@ -53,6 +54,7 @@ class AccountCleanupServicesTest {
                 for (classDef in container.getEntry(entry)!!.dexFile.classes) {
                     if (isLikedListService(classDef)) liked += classDef.type
                     if (isFavoritesService(classDef)) favorites += classDef.type
+                    if (isUnavailableFavoritesService(classDef)) unavailable += classDef.type
                     for (method in classDef.methods) {
                         for ((service, recipe) in serviceRecipes(method)) {
                             made.getOrPut(service) { mutableSetOf() } += recipe
@@ -63,7 +65,8 @@ class AccountCleanupServicesTest {
             }
             assertEquals("$version: liked list services $liked", 1, liked.size)
             assertEquals("$version: Favorites services $favorites", 1, favorites.size)
-            for (service in listOf(liked.single(), favorites.single())) {
+            assertEquals("$version: unavailable Favorites services $unavailable", 1, unavailable.size)
+            for (service in listOf(liked.single(), favorites.single(), unavailable.single())) {
                 val recipes = made[service].orEmpty()
                 assertEquals("$version: ways $service is made: $recipes", 1, recipes.size)
                 // The patch finds the makers through the patcher's check-cast index.

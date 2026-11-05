@@ -34,6 +34,7 @@ public final class AccountCleanupSources {
     static final String DIGG = "/aweme/v1/commit/item/digg/";
     static final String FAVORITES_LIST = "/aweme/v1/aweme/listcollection/";
     static final String COLLECT = "/aweme/v1/aweme/collect/";
+    static final String REMOVE_UNAVAILABLE = "/aweme/v1/aweme/collect/removeinvalid";
 
     static final String UPVOTE_API = "com.ss.android.ugc.aweme.upvote.api.UpvoteApi";
     static final String STORY_API = "com.ss.android.ugc.aweme.story.api.StoryApi";
@@ -50,6 +51,8 @@ public final class AccountCleanupSources {
         Object likes() throws Failure;
 
         Object favorites() throws Failure;
+
+        Object unavailableFavorites() throws Failure;
     }
 
     private AccountCleanupSources() {
@@ -65,6 +68,14 @@ public final class AccountCleanupSources {
 
     /** Filled by the patch: TikTok's Favorites service, which lists and removes. Null unpatched. */
     public static Object favoritesService() {
+        return null;
+    }
+
+    /**
+     * Filled by the patch: the service behind the Favorites page's "unavailable" notice, whose
+     * Remove clears saved videos that were deleted since. Null unpatched.
+     */
+    public static Object unavailableFavoritesService() {
         return null;
     }
 
@@ -87,6 +98,11 @@ public final class AccountCleanupSources {
         @Override
         public Object favorites() throws Failure {
             return built(favoritesService(), "Favorites");
+        }
+
+        @Override
+        public Object unavailableFavorites() throws Failure {
+            return built(unavailableFavoritesService(), "unavailable Favorites");
         }
     };
 
@@ -131,6 +147,16 @@ public final class AccountCleanupSources {
             public void remove(String id) throws Failure {
                 check();
                 source.remove(id);
+            }
+
+            @Override
+            public CleanupRunner.Request last() {
+                CleanupRunner.Request last = source.last();
+                if (last == null) return null;
+                return () -> {
+                    check();
+                    last.send();
+                };
             }
 
             private void check() throws Failure {
@@ -206,7 +232,11 @@ public final class AccountCleanupSources {
         };
     }
 
-    /** Favorites are listed and removed through the one service the Favorites page uses. */
+    /**
+     * Favorites are listed and removed through the one service the Favorites page uses. Saved
+     * videos that were deleted since never come back from that list, and the page shows them as
+     * a notice with a Remove button instead, so the run ends with the request that Remove sends.
+     */
     static Source favorites(Services services) {
         return new Source() {
             @Override
@@ -229,6 +259,18 @@ public final class AccountCleanupSources {
                 query.put("action", 0);
                 Object body = TikTokCalls.await(TikTokCalls.call(services.favorites(), COLLECT, null, query));
                 TikTokCalls.checkStatus(body);
+            }
+
+            @Override
+            public CleanupRunner.Request last() {
+                return () -> {
+                    Map<String, Object> query = new HashMap<>();
+                    // Where TikTok's own Remove starts once it has cleared them: the whole list.
+                    query.put("cursor", 0L);
+                    Object body = TikTokCalls.await(TikTokCalls.call(
+                            services.unavailableFavorites(), REMOVE_UNAVAILABLE, null, query));
+                    TikTokCalls.checkStatus(body);
+                };
             }
         };
     }

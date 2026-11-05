@@ -165,6 +165,40 @@ public class AccountCleanupTest {
                 "collect {aweme_id=f0, action=0}",
                 "collect {aweme_id=f1, action=0}"), account.requests);
         assertEquals(List.of("f1", "f2", "f3"), account.favorites);
+        assertEquals("a refused run doesn't go on to the unavailable ones", 0,
+                account.requests.stream().filter(request -> request.startsWith("removeInvalid")).count());
+    }
+
+    @Test public void clearFavoritesEndsByClearingTheUnavailableOnes() {
+        FakeTikTok.Account account = new FakeTikTok.Account().withFavorites(3).withUnavailableFavorites(2);
+        AccountCleanup.servicesForTests = account;
+
+        AccountCleanup.start(activity, Kind.FAVORITES);
+        countDown();
+
+        assertEquals("Done. 3 removed.", bannerText());
+        assertEquals(List.of(), account.favorites);
+        assertEquals("the saved videos deleted since are gone too", List.of(), account.unavailable);
+        assertEquals(List.of(
+                "list {cursor=0, count=20}",
+                "collect {aweme_id=f0, action=0}",
+                "collect {aweme_id=f1, action=0}",
+                "collect {aweme_id=f2, action=0}",
+                "list {cursor=0, count=20}",
+                "removeInvalid {cursor=0}"), account.requests);
+        assertEquals("the last request waited like the rest", account.requests.size() - 1, pauses.size());
+    }
+
+    @Test public void aRefusedClearOfTheUnavailableOnesSaysSo() {
+        FakeTikTok.Account account = new FakeTikTok.Account().withFavorites(2).withUnavailableFavorites(1);
+        account.refuseUnavailable = true;
+        AccountCleanup.servicesForTests = account;
+
+        AccountCleanup.start(activity, Kind.FAVORITES);
+        countDown();
+
+        assertEquals("TikTok refused. 2 removed.", bannerText());
+        assertEquals(List.of("u0"), account.unavailable);
     }
 
     @Test public void theRunShowsItsCountAndStopEndsIt() {

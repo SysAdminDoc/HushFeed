@@ -82,6 +82,13 @@ final class FakeTikTok {
         Object collect(@Field("aweme_id") String awemeId, @Field("action") int action);
     }
 
+    /** The Favorites page's "unavailable" notice's Remove, on its own service as in TikTok. */
+    public interface UnavailableFavoritesApi {
+        @FormUrlEncoded
+        @Post("/aweme/v1/aweme/collect/removeinvalid")
+        Object removeInvalid(@Field("cursor") long cursor);
+    }
+
     /** What a fake service answers a request with, by method name and named arguments. */
     interface Answer {
         Object answer(String method, Map<String, Object> arguments) throws Throwable;
@@ -253,16 +260,19 @@ final class FakeTikTok {
     }
 
     /**
-     * An account with reposts, likes and Favorites behind the four services a cleanup uses. Lists
+     * An account with reposts, likes and Favorites behind the five services a cleanup uses. Lists
      * are read by offset; a removal takes the item off. Removing {@link #refuse} answers a
-     * non-zero status code instead.
+     * non-zero status code instead. Unavailable Favorites never show in the Favorites list and
+     * only go with the request that clears them all.
      */
     static final class Account implements AccountCleanupSources.Services {
         final List<String> reposts = new ArrayList<>();
         final List<String> likes = new ArrayList<>();
         final List<String> favorites = new ArrayList<>();
+        final List<String> unavailable = new ArrayList<>();
         final List<String> requests = new ArrayList<>();
         volatile String refuse;
+        volatile boolean refuseUnavailable;
 
         Account withReposts(int count) {
             for (int index = 0; index < count; index++) reposts.add("r" + index);
@@ -276,6 +286,11 @@ final class FakeTikTok {
 
         Account withFavorites(int count) {
             for (int index = 0; index < count; index++) favorites.add("f" + index);
+            return this;
+        }
+
+        Account withUnavailableFavorites(int count) {
+            for (int index = 0; index < count; index++) unavailable.add("u" + index);
             return this;
         }
 
@@ -317,6 +332,17 @@ final class FakeTikTok {
                             (Integer) arguments.get("count")));
                 }
                 return call(remove(favorites, (String) arguments.get("aweme_id")));
+            });
+        }
+
+        @Override
+        public Object unavailableFavorites() {
+            return service(UnavailableFavoritesApi.class, requests, (method, arguments) -> {
+                if (refuseUnavailable) return single(new Status(2149));
+                synchronized (unavailable) {
+                    unavailable.clear();
+                }
+                return single(new Status(0));
             });
         }
 

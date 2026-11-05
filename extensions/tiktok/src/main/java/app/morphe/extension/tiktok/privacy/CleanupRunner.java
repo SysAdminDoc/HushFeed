@@ -71,11 +71,24 @@ public final class CleanupRunner {
         }
     }
 
+    /** A request with nothing to read back but whether it worked. */
+    public interface Request {
+        void send() throws Failure;
+    }
+
     /** Where the list comes from and how an item leaves it. */
     public interface Source {
         Page fetch(long cursor) throws Failure;
 
         void remove(String id) throws Failure;
+
+        /**
+         * One more request once the list has run out, for what the list never shows, sent after
+         * the same pause as the rest. Null when there's nothing more.
+         */
+        default Request last() {
+            return null;
+        }
     }
 
     /** Waits between requests. {@link #wake()} ends a wait early, for Stop. */
@@ -148,7 +161,7 @@ public final class CleanupRunner {
                     stale = 0;
                     continue;
                 }
-                if (!page.more || page.next == cursor || ++stale >= STALE_PAGES) return End.DONE;
+                if (!page.more || page.next == cursor || ++stale >= STALE_PAGES) return finish();
                 cursor = page.next;
             }
         } catch (Failure failure) {
@@ -156,6 +169,15 @@ public final class CleanupRunner {
         } catch (RuntimeException unexpected) {
             return stopRequested ? End.STOPPED : End.UNSUPPORTED;
         }
+    }
+
+    /** Sends the source's last request, if it has one, and answers how the run ended. */
+    private End finish() throws Failure {
+        Request last = source.last();
+        if (last == null) return End.DONE;
+        if (!pause() || stopRequested) return End.STOPPED;
+        last.send();
+        return End.DONE;
     }
 
     /** Waits before a request. False when Stop came during the wait. */

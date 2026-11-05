@@ -34,6 +34,7 @@ public class CleanupRunnerTest {
         End failure = End.REFUSED;
         int fetchFailureAt = -1;
         RuntimeException unexpected;
+        CleanupRunner.Request last;
 
         Listing(int count) {
             for (int index = 0; index < count; index++) items.add("v" + index);
@@ -56,6 +57,11 @@ public class CleanupRunnerTest {
             if (id.equals(failOn)) throw new Failure(failure, "removal refused");
             removed.add(id);
             if (!sticky) items.remove(id);
+        }
+
+        @Override
+        public CleanupRunner.Request last() {
+            return last;
         }
     }
 
@@ -212,6 +218,40 @@ public class CleanupRunnerTest {
         assertEquals(List.of("fetch 0", "remove v0", "remove v1"), listing.requests);
         assertTrue(runner[0].stopRequested());
         assertEquals("Stop woke the wait", 1, clock.wakes);
+    }
+
+    @Test public void aLastRequestGoesOnceTheListRunsOutAndStopKeepsItBack() {
+        List<String> sent = new ArrayList<>();
+        Listing listing = new Listing(2);
+        listing.last = () -> sent.add("last");
+        Clock clock = new Clock();
+        CleanupRunner runner = runner(listing, clock, new ArrayList<>());
+        assertEquals(End.DONE, runner.run());
+        assertEquals(List.of("last"), sent);
+        assertEquals("a wait before each removal, the second read and the last request",
+                4, clock.pauses.size());
+
+        sent.clear();
+        Listing again = new Listing(2);
+        again.last = () -> sent.add("last");
+        Clock stopping = new Clock();
+        CleanupRunner[] stopped = new CleanupRunner[1];
+        // Waits 1 and 2 come before the removals, 3 before the second read, 4 before the last.
+        stopping.during = pause -> {
+            if (pause == 4) stopped[0].stop();
+        };
+        stopped[0] = runner(again, stopping, new ArrayList<>());
+        assertEquals(End.STOPPED, stopped[0].run());
+        assertEquals(List.of(), sent);
+        assertEquals(2, stopped[0].removed());
+
+        Listing refused = new Listing(1);
+        refused.last = () -> {
+            throw new Failure(End.REFUSED, "no");
+        };
+        CleanupRunner refusedRun = runner(refused, new Clock(), new ArrayList<>());
+        assertEquals(End.REFUSED, refusedRun.run());
+        assertEquals(1, refusedRun.removed());
     }
 
     @Test public void stopBeforeTheRunSendsNothing() {

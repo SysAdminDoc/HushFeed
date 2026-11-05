@@ -42,6 +42,8 @@ internal const val LIKED_LIST_PATH = "/aweme/v1/aweme/favorite/"
 internal const val COLLECT_PATH = "/aweme/v1/aweme/collect/"
 /** The Favorites page's video list. */
 internal const val LIST_COLLECTION_PATH = "/aweme/v1/aweme/listcollection/"
+/** What the Favorites page's "unavailable" notice sends to clear saved videos deleted since. */
+internal const val REMOVE_UNAVAILABLE_PATH = "/aweme/v1/aweme/collect/removeinvalid"
 
 @Suppress("unused")
 val accountCleanupPatch = bytecodePatch(
@@ -56,16 +58,21 @@ val accountCleanupPatch = bytecodePatch(
     execute {
         val liked = mutableSetOf<String>()
         val favorites = mutableSetOf<String>()
+        val unavailable = mutableSetOf<String>()
         classDefForEach { classDef ->
             if (isLikedListService(classDef)) liked += classDef.type
             if (isFavoritesService(classDef)) favorites += classDef.type
+            if (isUnavailableFavoritesService(classDef)) unavailable += classDef.type
         }
         // The repost and like services keep their names and the extension reaches them itself.
-        // These two are renamed in every build, so their bridges make them the way TikTok does.
+        // These three are renamed in every build, so their bridges make them the way TikTok does.
         fillServiceBridge("likedListService",
             liked.singleOrPatchException("Account cleanup: liked videos list service"), "liked videos list", this)
         fillServiceBridge("favoritesService",
             favorites.singleOrPatchException("Account cleanup: Favorites service"), "Favorites", this)
+        fillServiceBridge("unavailableFavoritesService",
+            unavailable.singleOrPatchException("Account cleanup: unavailable Favorites service"),
+            "unavailable Favorites", this)
         SettingsStatusLoadFingerprint.method.addInstruction(0,
             "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableAccountCleanup()V")
     }
@@ -124,6 +131,10 @@ internal fun isLikedListService(classDef: ClassDef) = AccessFlags.INTERFACE.isSe
 internal fun isFavoritesService(classDef: ClassDef) = AccessFlags.INTERFACE.isSet(classDef.accessFlags) &&
     classDef.methods.any { it.annotatedWith(COLLECT_PATH) && it.requestNames() == listOf("aweme_id", "action") } &&
     classDef.methods.any { it.annotatedWith(LIST_COLLECTION_PATH) }
+
+/** The service the Favorites page's "unavailable" notice clears deleted saved videos with, from a cursor. */
+internal fun isUnavailableFavoritesService(classDef: ClassDef) = AccessFlags.INTERFACE.isSet(classDef.accessFlags) &&
+    classDef.methods.any { it.annotatedWith(REMOVE_UNAVAILABLE_PATH) && it.requestNames() == listOf("cursor") }
 
 /** A two-register call through an interface or a virtual method, or null. */
 private fun Instruction.twoRegisterCall(): MethodReference? {

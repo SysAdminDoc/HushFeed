@@ -930,6 +930,30 @@ val feedFilterPatch = bytecodePatch(
             """,
         )
 
+        // The shop's "Find <product>" bar in the same bottom slot (#271). Its trigger's answer goes
+        // through Hide TikTok Shop on the way out, so a no keeps it off both ways it shows (the
+        // cell's bind and the bottom bar's priority pick), and an export counts the bars it hid.
+        // A recycled cell's container is already hidden by the time the trigger is asked.
+        ShopFindBarAvailableFingerprint.method.let { method ->
+            val returnIndices = method.implementationOrPatchException("Feed filter").instructions.withIndex()
+                .filter { it.value.opcode == Opcode.RETURN }
+                .map { it.index }
+                .toList()
+            if (returnIndices.isEmpty()) {
+                throw PatchException("Feed filter: the shop Find bar's show check has no return to filter")
+            }
+            returnIndices.asReversed().forEach { returnIndex ->
+                val register = (method.getInstruction(returnIndex) as OneRegisterInstruction).registerA
+                method.addInstructionsAtControlFlowLabel(
+                    returnIndex,
+                    """
+                        invoke-static/range {v$register .. v$register}, $CARD_FILTERS_CLASS_DESCRIPTOR->keepShopFindBar(Z)Z
+                        move-result v$register
+                    """,
+                )
+            }
+        }
+
         // TikTok may remove this surface in a future build. If the marker still exists, its
         // insertion hook is mandatory; if the surface itself is absent, there is no card here
         // to suppress.

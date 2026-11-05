@@ -1215,6 +1215,17 @@ internal object PlaylistBottomBarAvailableFingerprint : Fingerprint(
     parameters = listOf("Lcom/ss/android/ugc/aweme/feed/model/VideoItemParams;"),
 )
 
+/**
+ * The shop's "Find <product>" bar along the bottom of a video (#271). It isn't one of the common
+ * banners: its words come from the video's own ttec_suggest_words, and this trigger alone decides
+ * whether it shows, both for the cell's own bind and for the bottom bar's priority pick.
+ */
+internal object ShopFindBarAvailableFingerprint : Fingerprint(
+    definingClass = "/FeedEcSearchBottomBarAssemTrigger;",
+    returnType = "Z",
+    parameters = listOf("Lcom/ss/android/ugc/aweme/feed/model/VideoItemParams;"),
+)
+
 /** Answers whether an item is a short drama advert that locks scrolling until it ends. */
 internal object DramaBlockingAdFingerprint : Fingerprint(
     definingClass = "Lcom/ss/android/ugc/aweme/impl/DramaBlockingAdServiceImpl;",

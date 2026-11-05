@@ -8,6 +8,7 @@
 package app.morphe.extension.tiktok.feedfilter;
 
 import app.morphe.extension.shared.Logger;
+import app.morphe.extension.shared.diagnostics.FeedFilterCounters;
 import app.morphe.extension.tiktok.settings.Settings;
 
 import com.ss.android.ugc.aweme.feed.model.Aweme;
@@ -28,6 +29,27 @@ public final class CardFilters {
     /** The playlist bar TikTok shows along the bottom of a video in a series. */
     public static boolean shouldHidePlaylistBar() {
         return Settings.HIDE_PLAYLIST_BAR.get();
+    }
+
+    /** The export's line for the shop's Find bar: each ask, each one that would show, each one hidden. */
+    static final String SHOP_FIND_BAR_SOURCE = "ShopFindBar";
+
+    /**
+     * TikTok's answer to whether a video shows the shop's "Find &lt;product&gt;" bar along its
+     * bottom (#271), a shopping search for something in the video. It rides Hide TikTok Shop,
+     * like the shop buttons under captions. Only some accounts are served the bar, so every ask
+     * is counted: an export with asks and no bars says the account just isn't getting it.
+     */
+    public static boolean keepShopFindBar(boolean shows) {
+        try {
+            FeedFilterCounters.sawList(SHOP_FIND_BAR_SOURCE, shows ? 1 : 0);
+            if (!shows || !Settings.HIDE_SHOP.get()) return shows;
+            FeedFilterCounters.removed(SHOP_FIND_BAR_SOURCE, 1, "shopFindBar");
+            return false;
+        } catch (Throwable failure) {
+            Logger.printException(() -> "Could not check the shop Find bar", failure);
+            return shows;
+        }
     }
 
     /** The floating promotional event badge. */

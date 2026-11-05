@@ -669,7 +669,7 @@ final class ScreenSource implements LiveRecorder.Source {
         }
     }
 
-    private static void awaitReader(Thread reader) {
+    private static void awaitReader(CaptureReader reader) {
         try {
             reader.join(READ_WAIT_MS);
         } catch (InterruptedException interrupted) {
@@ -687,21 +687,35 @@ final class ScreenSource implements LiveRecorder.Source {
      * Android drops capture an app leaves unread for about a second, and a busy phone can keep an
      * ordinary thread off the CPU for that long.
      */
-    static final class CaptureReader extends Thread {
+    static final class CaptureReader implements Runnable {
         private final PcmReader capture;
         private final PcmBacklog backlog;
         private final int chunkBytes;
+        // A plain Thread handed this Runnable, never a subclass (OVERRIDDEN_THREAD_START_METHOD).
+        private final Thread thread;
         private volatile boolean stopping;
         private volatile IOException failure;
 
         CaptureReader(PcmReader capture, PcmBacklog backlog, int chunkBytes) {
-            super("hushfeed-live-sound");
             if (chunkBytes < 4 || chunkBytes % 4 != 0)
                 throw new IllegalArgumentException("Invalid PCM chunk size");
             this.capture = capture;
             this.backlog = backlog;
             this.chunkBytes = chunkBytes;
-            setDaemon(true);
+            thread = new Thread(this, "hushfeed-live-sound");
+            thread.setDaemon(true);
+        }
+
+        void start() {
+            thread.start();
+        }
+
+        boolean isAlive() {
+            return thread.isAlive();
+        }
+
+        void join(long millis) throws InterruptedException {
+            thread.join(millis);
         }
 
         @Override

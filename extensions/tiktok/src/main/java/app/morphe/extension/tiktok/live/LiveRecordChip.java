@@ -612,6 +612,14 @@ public final class LiveRecordChip {
                 if (recorder != null) scheduleTick();
                 return;
             }
+            if (streamRecording() && activity != null && miniWindowOfRecording(activity)) {
+                // The room shrank into TikTok's own floating mini window: its page is no longer
+                // in front but the same LIVE is still playing, so the recording goes on.
+                pipReturnUntil = 0;
+                removeChip();
+                scheduleTick();
+                return;
+            }
             Object fragment = activity != null && enabled() ? pageInFront(activity) : null;
             boolean showing = fragment != null;
             if (!showing && streamRecording() && pipReturnUntil > SystemClock.uptimeMillis()) {
@@ -638,6 +646,44 @@ public final class LiveRecordChip {
         } catch (Throwable failure) {
             Logger.printException(() -> "Could not check the LIVE room", failure);
         }
+    }
+
+    /** The class of the container TikTok shrinks a LIVE into for its in-app mini window. */
+    static final String MINI_WINDOW_TYPE = "com.bytedance.android.livesdk.pip.PipVideoViewContainDialog";
+
+    /**
+     * Whether a room page has put its video in TikTok's in-app mini window. The page holds the
+     * window's dialog while it is up and drops it when the window closes, so a page that is going
+     * away never counts. The field is found by its class, since its own name moves every build.
+     */
+    static boolean inMiniWindow(Object fragment) {
+        if (fragment == null) return false;
+        if (Boolean.TRUE.equals(Reflect.invoke(fragment, "isRemoving"))) return false;
+        if (Boolean.TRUE.equals(Reflect.invoke(fragment, "isDetached"))) return false;
+        try {
+            for (Class<?> type = fragment.getClass(); type != null && type != Object.class; type = type.getSuperclass()) {
+                for (Field field : type.getDeclaredFields()) {
+                    if (field.getType().getName().equals(MINI_WINDOW_TYPE)) {
+                        field.setAccessible(true);
+                        return field.get(fragment) != null;
+                    }
+                }
+            }
+        } catch (Throwable ignored) {
+            // no mini window readable: the page counts as full size
+        }
+        return false;
+    }
+
+    /** Whether the page of the room being recorded sits in the mini window of {@code activity}. */
+    private static boolean miniWindowOfRecording(Activity activity) {
+        LiveRecorder running = recorder;
+        if (running == null || !running.active()) return false;
+        for (Object fragment : new ArrayList<>(PAGES.keySet())) {
+            if (fragment == null || Reflect.invoke(fragment, "getActivity") != activity) continue;
+            if (inMiniWindow(fragment) && sameRoom(running, fragment)) return true;
+        }
+        return false;
     }
 
     /** The resumed room page of {@code activity} with the most of itself on screen, or null. */

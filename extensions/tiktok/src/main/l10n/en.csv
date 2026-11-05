@@ -140,6 +140,7 @@ A forced value applies to this copy of TikTok whichever account is signed in. It
 A long press on Comment plays the video at the hold speed instead of opening the emoji row. It needs Long press on TikTok default and Seek from the edges off.,A long press on Comment plays the video at the hold speed instead of opening the emoji row. It needs Long press on TikTok default and Seek from the edges off.
 A long press on Favorites plays the video at the hold speed instead of offering a new collection. It needs Long press on TikTok default and Seek from the edges off.,A long press on Favorites plays the video at the hold speed instead of offering a new collection. It needs Long press on TikTok default and Seek from the edges off.
 A long press on Share plays the video at the hold speed instead of opening the quick share row. It needs Long press on TikTok default and Seek from the edges off.,A long press on Share plays the video at the hold speed instead of opening the quick share row. It needs Long press on TikTok default and Seek from the edges off.
+"A long press on a video opens TikTok's small share sheet on For You too, the same one a creator's videos get. It wins over the two full-menu switches above. It needs Long press on TikTok default.","A long press on a video opens TikTok's small share sheet on For You too, the same one a creator's videos get. It wins over the two full-menu switches above. It needs Long press on TikTok default."
 A long press on a video you opened from search opens the same menu as on For You. It needs Long press on TikTok default.,A long press on a video you opened from search opens the same menu as on For You. It needs Long press on TikTok default.
 "A long press on a video you opened from someone's profile opens the same menu as on For You, not the small share sheet. It needs Long press on TikTok default.","A long press on a video you opened from someone's profile opens the same menu as on For You, not the small share sheet. It needs Long press on TikTok default."
 A message is already on its way,A message is already on its way
@@ -403,6 +404,7 @@ Comments beside the video,Comments beside the video
 Comments range,Comments range
 Compact,Compact
 Compact comment header,Compact comment header
+Compact long-press menu everywhere,Compact long-press menu everywhere
 Compare gate reads with their previous values.,Compare gate reads with their previous values.
 Config,Config
 Config (Settings Manager),Config (Settings Manager)

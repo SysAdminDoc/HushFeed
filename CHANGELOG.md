@@ -32,6 +32,7 @@ Every Hushfeed release, newest first.
 * A row under the search switches the main settings page between categories and one long list with every category open, and it keeps your choice for next time. The restart button looks like a button now, with an arrow and an outline, and it lines up with the search and the cards under it.
 * When your daily budget runs out, the title on the screen that holds the feed moves through the same cyan and red as the settings and the App lock screen.
 * `Long-press Inbox for read receipts` makes a long press on the Inbox tab turn `Hide read receipts` on or off, and a short message says which. A tap on Inbox still opens it. It starts off, and it sits under Feed tab navigation.
+* `Compact long-press menu everywhere` keeps TikTok's small share sheet on a long press, For You included, for people who like it better than the full menu. It beats `Full long-press menu on a creator's videos` and `Full long-press menu in search results` if you turn them all on, and it starts off. It needs `Long press` on TikTok default.
 
 ### Bug Fixes
 * `Hide message streaks` takes the streak button off chats, the share panel, Friends and stories, and the streak reminder off your chat list. Before, it hid nothing, since TikTok no longer asks the spot Hushfeed was answering.

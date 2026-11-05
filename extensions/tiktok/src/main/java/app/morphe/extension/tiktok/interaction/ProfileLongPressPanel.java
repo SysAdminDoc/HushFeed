@@ -21,6 +21,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * the small share sheet. Every lookup in that config passes the page's name through one
  * normalizer first, and this answers For You's name there for a profile's or a search page's, so
  * those get For You's menu. The share itself still says where it came from.
+ *
+ * <p>The opposite switch (#334) answers a profile's name for For You's, so For You gets the small
+ * share sheet too. It wins over the two full-menu switches when both are on.
  */
 public final class ProfileLongPressPanel {
     static final String PROFILE = "others_homepage";
@@ -51,6 +54,12 @@ public final class ProfileLongPressPanel {
             if (!SettingsStatus.longPressEnabled
                     || GestureActions.takesLongPress(Settings.LONG_PRESS_ACTION.get())) {
                 return scene;
+            }
+            // Keep the compact menu (#334): For You looks itself up as a creator's profile, which
+            // gets the small share sheet, and the two full-menu switches below are skipped. This
+            // wins when both are on, since it is the more explicit ask.
+            if (Settings.LONG_PRESS_COMPACT_MENU.get()) {
+                return FOR_YOU.equals(scene) ? PROFILE : scene;
             }
             if (PROFILE.equals(scene) && Settings.LONG_PRESS_FULL_MENU_ON_PROFILES.get()) {
                 return FOR_YOU;

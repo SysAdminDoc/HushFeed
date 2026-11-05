@@ -285,6 +285,14 @@ public class Settings extends BaseSettings {
                     return !GestureActions.takesLongPress(LONG_PRESS_ACTION.savedValue());
                 }
             });
+    /** Keeps the small long-press share sheet everywhere, For You included; wins over the two full-menu switches (#334). */
+    public static final BooleanSetting LONG_PRESS_COMPACT_MENU =
+            new BooleanSetting("long_press_compact_menu", FALSE, new Setting.Availability() {
+                @Override
+                public boolean isAvailable() {
+                    return !GestureActions.takesLongPress(LONG_PRESS_ACTION.savedValue());
+                }
+            });
     /** What a left swipe on a feed video does: TikTok's creator profile, nothing, or the comments. */
     public static final StringSetting SWIPE_LEFT_ACTION = new StringSetting("swipe_left_action", "default");
     public static final BooleanSetting EDGE_SEEK = new BooleanSetting("edge_seek", FALSE);

@@ -32,6 +32,7 @@ public class ProfileLongPressPanelTest {
         SettingsStatus.longPressEnabled = false;
         Settings.LONG_PRESS_FULL_MENU_ON_PROFILES.resetToDefault();
         Settings.LONG_PRESS_FULL_MENU_IN_SEARCH.resetToDefault();
+        Settings.LONG_PRESS_COMPACT_MENU.resetToDefault();
         Settings.LONG_PRESS_ACTION.resetToDefault();
     }
 
@@ -67,6 +68,25 @@ public class ProfileLongPressPanelTest {
 
         Settings.LONG_PRESS_ACTION.save("copy_link");
         assertEquals("general_search", ProfileLongPressPanel.scene("general_search"));
+    }
+
+    @Test public void compactMenuGivesForYouTheProfileSheetAndBeatsTheFullSwitches() {
+        assertFalse(Settings.LONG_PRESS_COMPACT_MENU.defaultValue);
+        assertEquals("homepage_hot", ProfileLongPressPanel.scene("homepage_hot"));
+
+        Settings.LONG_PRESS_COMPACT_MENU.save(true);
+        assertEquals("others_homepage", ProfileLongPressPanel.scene("homepage_hot"));
+        assertEquals("others_homepage", ProfileLongPressPanel.scene("others_homepage"));
+        assertEquals("homepage_series", ProfileLongPressPanel.scene("homepage_series"));
+
+        Settings.LONG_PRESS_FULL_MENU_ON_PROFILES.save(true);
+        Settings.LONG_PRESS_FULL_MENU_IN_SEARCH.save(true);
+        assertEquals("others_homepage", ProfileLongPressPanel.scene("others_homepage"));
+        assertEquals("general_search", ProfileLongPressPanel.scene("general_search"));
+        assertEquals("others_homepage", ProfileLongPressPanel.scene("homepage_hot"));
+
+        Settings.LONG_PRESS_ACTION.save("copy_link");
+        assertEquals("homepage_hot", ProfileLongPressPanel.scene("homepage_hot"));
     }
 
     @Test public void aSavedSwitchWithoutLongPressControlsDoesNothing() {

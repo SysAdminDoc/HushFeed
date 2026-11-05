@@ -531,6 +531,7 @@
       "rail_hold_favorites",
       "long_press_full_menu_on_profiles",
       "long_press_full_menu_in_search",
+      "long_press_compact_menu",
       "edge_seek",
       "edge_seek_seconds"
     ],
@@ -2901,6 +2902,12 @@
       "key": "long_press_action",
       "type": "string",
       "default": "default"
+    },
+    "long_press_compact_menu": {
+      "field": "LONG_PRESS_COMPACT_MENU",
+      "key": "long_press_compact_menu",
+      "type": "boolean",
+      "default": false
     },
     "long_press_full_menu_in_search": {
       "field": "LONG_PRESS_FULL_MENU_IN_SEARCH",

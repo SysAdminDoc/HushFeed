@@ -10805,6 +10805,12 @@
     "row": "Full long-press menu in search results"
    },
    {
+    "key": "long_press_compact_menu",
+    "default": false,
+    "type": "bool",
+    "row": "Compact long-press menu everywhere"
+   },
+   {
     "key": "long_press_full_menu_on_profiles",
     "default": false,
     "type": "bool",

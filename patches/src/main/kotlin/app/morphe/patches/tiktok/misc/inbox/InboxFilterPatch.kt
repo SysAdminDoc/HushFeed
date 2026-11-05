@@ -65,7 +65,8 @@ val inboxFilterPatch = bytecodePatch(
     name = "Hide inbox items",
     description = "Lets you hide Inbox rows you don't use, like message requests, TikTok Shop " +
         "and the stories row, plus call buttons and suggested replies in chats. Each has its own " +
-        "switch. Also offers search in loaded Activity notifications. Starts off. " +
+        "switch. Also offers search in loaded Activity notifications and TikTok's Main, Requests, " +
+        "Unread and Starred tabs on any account. Starts off. " +
         "Turn it on in Hushfeed settings > Inbox.",
 ) {
     category("Inbox")
@@ -89,6 +90,14 @@ val inboxFilterPatch = bytecodePatch(
         } catch (problem: Exception) {
             if (packageMetadata.versionName in declaredVersions()) throw problem
             println("[$PATCH_NAME] Left out the group chat prompt switch on ${packageMetadata.versionName}: ${problem.message}")
+            null
+        }
+        // Show inbox filters, held the same way by InboxFilterTabsAnchorsTest.
+        val filterTabs = try {
+            inboxFilterTabHooks()
+        } catch (problem: Exception) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[$PATCH_NAME] Left out the inbox filters switch on ${packageMetadata.versionName}: ${problem.message}")
             null
         }
         val binding = InboxRowBindingFingerprint.method
@@ -135,6 +144,16 @@ val inboxFilterPatch = bytecodePatch(
             SettingsStatusLoadFingerprint.method.addInstruction(
                 0,
                 "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableGroupChatBanner()V",
+            )
+        }
+
+        // TikTok's own filter tabs above the chat list, which it gives creator and business
+        // accounts. The Inbox is told the creator mode while the stored mode stays personal.
+        if (filterTabs != null) {
+            filterTabs.install(PATCH_NAME)
+            SettingsStatusLoadFingerprint.method.addInstruction(
+                0,
+                "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableInboxFilterTabs()V",
             )
         }
     }

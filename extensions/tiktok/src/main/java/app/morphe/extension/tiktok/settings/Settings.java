@@ -1190,6 +1190,12 @@ public class Settings extends BaseSettings {
     /** The banner at the top of the Inbox that invites you to start a group chat. */
     public static final BooleanSetting HIDE_INBOX_GROUP_CHAT_BANNER =
             new BooleanSetting("hide_inbox_group_chat_banner", FALSE);
+    /**
+     * TikTok's Main, Requests, Unread and Starred tabs above the chat list, which it otherwise
+     * gives only creator and business accounts. Read when the Inbox is built. See InboxFilterTabs.
+     */
+    public static final BooleanSetting SHOW_INBOX_FILTERS =
+            new BooleanSetting("show_inbox_filters", FALSE, true);
     public static final BooleanSetting EXPAND_ACTIVITY_LIST = new BooleanSetting("expand_activity_list", FALSE);
     /** Chat screen clutter. Each is off by default and read live when a chat opens. */
     public static final BooleanSetting HIDE_CHAT_CALL_BUTTONS =

@@ -7380,9 +7380,11 @@
   "kind": "runtime",
   "source": [
    "patches/src/main/kotlin/app/morphe/patches/tiktok/misc/inbox/InboxFilterPatch.kt",
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/misc/inbox/InboxFilterTabs.kt",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/inbox/InboxFilter.java",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/inbox/InboxModelFilter.java",
-   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/inbox/InboxControls.java"
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/inbox/InboxControls.java",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/inbox/InboxFilterTabs.java"
   ],
   "settings": [
    {
@@ -7486,6 +7488,12 @@
     "default": false,
     "type": "bool",
     "row": "Search loaded activity"
+   },
+   {
+    "key": "show_inbox_filters",
+    "default": false,
+    "type": "bool",
+    "row": "Show inbox filters"
    }
   ],
   "surface": "inbox",

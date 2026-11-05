@@ -120,6 +120,7 @@ public class SettingsStatus {
         backgroundPlayEnabled = true;
     }
     public static boolean inboxFilterEnabled = false;
+    public static boolean inboxFilterTabsEnabled = false;
     public static boolean videoFitEnabled = false;
     public static boolean refreshRateEnabled = false;
     public static boolean cameraBrightnessEnabled = false;
@@ -571,6 +572,10 @@ public class SettingsStatus {
 
     public static void enableInboxFilter() {
         inboxFilterEnabled = true;
+    }
+
+    public static void enableInboxFilterTabs() {
+        inboxFilterTabsEnabled = true;
     }
 
     public static void enableCommentTools() {

@@ -379,7 +379,8 @@
       "hide_chat_ai_replies",
       "turn_off_chat_double_tap",
       "turn_off_chat_swipe_reply",
-      "hide_inbox_custom_titles"
+      "hide_inbox_custom_titles",
+      "show_inbox_filters"
     ],
     "Hide inbox stories": [
       "hide_inbox_stories"
@@ -3741,6 +3742,12 @@
       "key": "show_follow_status",
       "type": "boolean",
       "default": true
+    },
+    "show_inbox_filters": {
+      "field": "SHOW_INBOX_FILTERS",
+      "key": "show_inbox_filters",
+      "type": "boolean",
+      "default": false
     },
     "show_join_date": {
       "field": "SHOW_JOIN_DATE",

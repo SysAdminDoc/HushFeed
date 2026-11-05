@@ -206,6 +206,7 @@ Added to this account.,Added to this account.
 Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.,Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.
 "Adds a search box that finds comments already loaded on this video, by words or username. It doesn't search all of TikTok.","Adds a search box that finds comments already loaded on this video, by words or username. It doesn't search all of TikTok."
 "Adds an Auto tap button to LIVE rooms. Tap it to send taps to the stream at a steady pace, and tap it again to stop. It also stops when you leave or swipe to another room, leave TikTok or lock the screen.","Adds an Auto tap button to LIVE rooms. Tap it to send taps to the stream at a steady pace, and tap it again to stop. It also stops when you leave or swipe to another room, leave TikTok or lock the screen."
+"Adds the Main, Requests, Unread and Starred tabs above your chats, the ones TikTok gives creator accounts.","Adds the Main, Requests, Unread and Starred tabs above your chats, the ones TikTok gives creator accounts."
 Ads,Ads
 Advanced,Advanced
 Advanced JSON value,Advanced JSON value
@@ -1816,6 +1817,7 @@ Show follow status,Show follow status
 Show gates,Show gates
 Show how long each video runs under its view count on profile grids. Photo posts and videos TikTok sent no length for show none.,Show how long each video runs under its view count on profile grids. Photo posts and videos TikTok sent no length for show none.
 Show how many were filtered,Show how many were filtered
+Show inbox filters,Show inbox filters
 Show last report,Show last report
 "Show likes, comments, shares and saves as a percentage of views, next to the creator's name and after the view count on profile grids.","Show likes, comments, shares and saves as a percentage of views, next to the creator's name and after the view count on profile grids."
 Show only LIVEs from creators with this many followers.,Show only LIVEs from creators with this many followers.

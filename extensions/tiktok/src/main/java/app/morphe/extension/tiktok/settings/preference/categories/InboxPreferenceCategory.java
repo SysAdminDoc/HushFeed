@@ -74,6 +74,12 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
             addPreference(new TogglePreference(context, "Search loaded activity",
                     "Search Activity notifications already loaded on this screen. Loading more pauses while you search.",
                     Settings.INBOX_LOADED_SEARCH));
+            if (SettingsStatus.inboxFilterTabsEnabled) {
+                addPreference(new TogglePreference(context, "Show inbox filters",
+                        "Adds the Main, Requests, Unread and Starred tabs above your chats, the ones TikTok "
+                                + "gives creator accounts.",
+                        Settings.SHOW_INBOX_FILTERS));
+            }
             addPreference(new SectionHeadingPreference(context, "Rows"));
             addPreference(new TogglePreference(
                     context,

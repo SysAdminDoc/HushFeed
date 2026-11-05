@@ -379,7 +379,8 @@
       "HIDE_CHAT_AI_REPLIES",
       "TURN_OFF_CHAT_DOUBLE_TAP",
       "TURN_OFF_CHAT_SWIPE_REPLY",
-      "HIDE_INBOX_CUSTOM_TITLES"
+      "HIDE_INBOX_CUSTOM_TITLES",
+      "SHOW_INBOX_FILTERS"
     ],
     "Hide inbox stories": [
       "HIDE_INBOX_STORIES"

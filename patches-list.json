@@ -4977,7 +4977,7 @@
     },
     {
       "name": "Hide inbox items",
-      "description": "Lets you hide Inbox rows you don't use, like message requests, TikTok Shop and the stories row, plus call buttons and suggested replies in chats. Each has its own switch. Also offers search in loaded Activity notifications. Starts off. Turn it on in Hushfeed settings > Inbox.",
+      "description": "Lets you hide Inbox rows you don't use, like message requests, TikTok Shop and the stories row, plus call buttons and suggested replies in chats. Each has its own switch. Also offers search in loaded Activity notifications and TikTok's Main, Requests, Unread and Starred tabs on any account. Starts off. Turn it on in Hushfeed settings > Inbox.",
       "category": "Inbox",
       "use": true,
       "dependencies": [
@@ -5201,6 +5201,15 @@
           "required": false,
           "type": "kotlin.String",
           "default": "",
+          "values": null
+        },
+        {
+          "key": "show_inbox_filters",
+          "title": "Default: show inbox filters",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
           "values": null
         }
       ]

@@ -12,6 +12,7 @@ public class User {
     public String region;
     public String accountRegion;
     public String isoCountryCode;
+    public String country;
     public String language;
     public long uniqueIdModifyTime;
     public int nickNameModifyTs;

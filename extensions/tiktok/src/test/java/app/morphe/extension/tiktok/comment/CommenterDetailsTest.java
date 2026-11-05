@@ -622,4 +622,21 @@ public class CommenterDetailsTest {
         junk.user.isoCountryCode = "Japan";
         assertNull("a country name is not a code", CommenterDetails.regionOf(junk));
     }
+
+    @Test
+    public void countryFieldAnswersWhenTheOtherThreeAreEmpty() {
+        Remark country = by("31", "country.person", null);
+        country.user.country = "br";
+        assertEquals("BR", CommenterDetails.regionOf(country));
+        // What it answered is remembered, so the same person's next comment shows it without one.
+        assertEquals("BR", CommenterDetails.regionOf(by("31", "country.person", null)));
+        // The ISO code still comes first.
+        Remark both = by("32", "both.person", null);
+        both.user.isoCountryCode = "pt";
+        both.user.country = "br";
+        assertEquals("PT", CommenterDetails.regionOf(both));
+        Remark name = by("33", "name.person", null);
+        name.user.country = "Brazil";
+        assertNull("a country name is not a code", CommenterDetails.regionOf(name));
+    }
 }

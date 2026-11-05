@@ -9,7 +9,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -231,6 +234,73 @@ public class LiveCommentBoxTest {
         heart.setImageDrawable(new ColorDrawable(0xFF161823));
         root.getViewTreeObserver().dispatchOnPreDraw();
         assertNotNull(heart.getColorFilter());
+    }
+
+    /** TikTok's panel behind delete and send: a near-white box, a faint glow ring, clear corners. */
+    private static Bitmap glowPicture() {
+        Bitmap picture = Bitmap.createBitmap(170, 96, Bitmap.Config.ARGB_8888);
+        for (int x = 0; x < 170; x++) {
+            for (int y = 0; y < 96; y++) {
+                int edge = Math.min(Math.min(x, 169 - x), Math.min(y, 95 - y));
+                picture.setPixel(x, y, edge < 4 ? Color.TRANSPARENT : edge < 12 ? 0x30F9F9F9 : 0xFFF9F9F9);
+            }
+        }
+        return picture;
+    }
+
+    /** A thin white bar on a clear ground, like a glyph drawn as a background. */
+    private static Bitmap glyphPicture() {
+        Bitmap picture = Bitmap.createBitmap(48, 48, Bitmap.Config.ARGB_8888);
+        for (int x = 4; x < 44; x++) {
+            for (int y = 22; y < 26; y++) picture.setPixel(x, y, Color.WHITE);
+        }
+        return picture;
+    }
+
+    private static int drawnAt(Drawable drawable, int x, int y) {
+        Bitmap out = Bitmap.createBitmap(170, 96, Bitmap.Config.ARGB_8888);
+        drawable.setBounds(0, 0, 170, 96);
+        drawable.draw(new Canvas(out));
+        return out.getPixel(x, y);
+    }
+
+    /**
+     * #329: the panel behind the picker's delete and send keys is a white picture with a soft
+     * glow. It takes the panel's fill, its glow stays see-through, and the delete key on it is lit.
+     */
+    @Test
+    @Config(qualifiers = "night")
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    public void theWhiteGlowPanelBehindDeleteAndSendTakesThePanelsFill() {
+        FrameLayout root = new FrameLayout(RuntimeEnvironment.getApplication());
+        FrameLayout panel = panel(root);
+        LinearLayout keys = new LinearLayout(root.getContext());
+        BitmapDrawable glow = new BitmapDrawable(root.getResources(), glowPicture());
+        BitmapDrawable glowElsewhere = (BitmapDrawable) glow.getConstantState().newDrawable();
+        keys.setBackground(glow);
+        panel.addView(keys);
+        ImageView delete = icon(keys, 0xFF161823);
+        Bitmap blue = Bitmap.createBitmap(40, 40, Bitmap.Config.ARGB_8888);
+        blue.eraseColor(0xFF3366CC);
+        BitmapDrawable photo = new BitmapDrawable(root.getResources(), blue);
+        filled(panel, photo);
+        BitmapDrawable glyph = new BitmapDrawable(root.getResources(), glyphPicture());
+        filled(panel, glyph);
+        layOut(root);
+
+        LiveCommentBox.paint(root);
+
+        assertEquals("the white box takes the panel's fill", AMOLED, drawnAt(glow, 85, 48));
+        assertEquals("its glow stays see-through", 0x30, Color.alpha(drawnAt(glow, 85, 6)));
+        assertEquals("the corners stay clear", 0, Color.alpha(drawnAt(glow, 1, 1)));
+        assertNotNull("the delete key on it goes white", delete.getColorFilter());
+        assertNull("the same picture outside the room stays white", glowElsewhere.getColorFilter());
+        assertNull("a colored picture keeps its look", photo.getColorFilter());
+        assertNull("a thin white glyph keeps its look", glyph.getColorFilter());
+
+        root.getViewTreeObserver().dispatchOnGlobalLayout();
+        assertEquals("it stays dark on the next layout", AMOLED, drawnAt(glow, 85, 48));
+        assertNotNull(delete.getColorFilter());
     }
 
     @Test

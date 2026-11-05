@@ -5,7 +5,11 @@
 package app.morphe.extension.tiktok.live;
 
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.DrawableContainer;
@@ -43,7 +47,9 @@ import app.morphe.extension.shared.Logger;
  * panel is watched too: on each layout its opaque white and light gray fills take the panel's own
  * dark fill, which is the AMOLED color when one is picked, and before each frame its dark gray
  * text and single-ink dark icons are turned light, since TikTok tints its icons again in code.
- * Colored buttons, photos, emoji art and anything on a ground of its own keep their look.
+ * Colored buttons, photos, emoji art and anything on a ground of its own keep their look. The
+ * panel behind the picker's delete and send keys is a picture, a white box with a soft glow, so a
+ * plain white picture takes the panel's fill too, keeping its glow's see-through edge.
  */
 public final class LiveCommentBox {
     static final int TEXT = Color.WHITE;
@@ -57,6 +63,12 @@ public final class LiveCommentBox {
     private static final Map<View, Boolean> WATCHED = Collections.synchronizedMap(new WeakHashMap<>());
     /** Views whose light fill was swapped for the panel's, so their icons count as on the panel. */
     private static final Map<View, Boolean> DARKENED = Collections.synchronizedMap(new WeakHashMap<>());
+    /** Picture backgrounds already drawn in the panel's fill. */
+    private static final Map<Drawable, Boolean> TINTED = Collections.synchronizedMap(new WeakHashMap<>());
+    /** Each picture's answer to whether it's a plain white ground, so it's read once. */
+    private static final Map<Bitmap, Boolean> WHITE_PICTURES = Collections.synchronizedMap(new WeakHashMap<>());
+    /** How many points across and down a picture is read at. */
+    private static final int SAMPLES = 12;
     private static volatile boolean frameFailureLogged;
 
     private LiveCommentBox() {}
@@ -199,7 +211,7 @@ public final class LiveCommentBox {
     /**
      * Gives the white and light gray parts of a background the panel's fill, each keeping its own
      * see-through amount: a solid or rounded fill, the stops of a fade, the layers of a layered
-     * one. True when something changed.
+     * one, a plain white picture. True when something changed.
      */
     static boolean swapFill(Drawable background, int fill) {
         if (background == null) return false;
@@ -215,6 +227,14 @@ public final class LiveCommentBox {
                 if (layers.getId(index) != android.R.id.mask) changed |= swapFill(layers.getDrawable(index), fill);
             }
             return changed;
+        }
+        if (background instanceof BitmapDrawable) {
+            // The picker's panel behind delete and send is a white picture with a soft glow (#329).
+            if (TINTED.containsKey(background) || !whitePicture(((BitmapDrawable) background).getBitmap())) return false;
+            background.mutate();
+            background.setColorFilter(new PorterDuffColorFilter(fill | 0xFF000000, PorterDuff.Mode.SRC_IN));
+            TINTED.put(background, Boolean.TRUE);
+            return true;
         }
         if (background instanceof ColorDrawable) {
             ColorDrawable solid = (ColorDrawable) background;
@@ -248,7 +268,8 @@ public final class LiveCommentBox {
     /**
      * True for a background that shows a ground of its own under a view's ink: a light fill the
      * swap left alone, a picture, or anything drawn. Clear, dark and see-through fills aren't one,
-     * so the bar's icons on their faint pill still count as the panel's.
+     * so the bar's icons on their faint pill still count as the panel's, and neither is a picture
+     * drawn in the panel's fill.
      */
     static boolean ownGround(Drawable background) {
         if (background == null) return false;
@@ -274,7 +295,40 @@ public final class LiveCommentBox {
             return false;
         }
         if (background instanceof ColorDrawable) return lightFill(((ColorDrawable) background).getColor());
+        if (background instanceof BitmapDrawable) return !TINTED.containsKey(background);
         return true;
+    }
+
+    /**
+     * True for a picture that's a plain white or light gray ground: at least a third of it opaque
+     * enough to be one, and every such part a light gray. Photos, colored art and thin glyphs
+     * aren't.
+     */
+    static boolean whitePicture(Bitmap bitmap) {
+        if (bitmap == null || bitmap.isRecycled()) return false;
+        Boolean known = WHITE_PICTURES.get(bitmap);
+        if (known != null) return known;
+        boolean white = readWhite(bitmap);
+        WHITE_PICTURES.put(bitmap, white);
+        return white;
+    }
+
+    private static boolean readWhite(Bitmap bitmap) {
+        // A hardware picture's pixels can't be read.
+        if (Build.VERSION.SDK_INT >= 26 && bitmap.getConfig() == Bitmap.Config.HARDWARE) return false;
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        if (width <= 0 || height <= 0) return false;
+        int ground = 0;
+        for (int column = 0; column < SAMPLES; column++) {
+            for (int row = 0; row < SAMPLES; row++) {
+                int color = bitmap.getPixel((2 * column + 1) * width / (2 * SAMPLES), (2 * row + 1) * height / (2 * SAMPLES));
+                if (Color.alpha(color) < MIN_FILL_ALPHA) continue;
+                if (!whiteFill(color)) return false;
+                ground++;
+            }
+        }
+        return ground * 3 >= SAMPLES * SAMPLES;
     }
 
     private static boolean lightFill(int color) {

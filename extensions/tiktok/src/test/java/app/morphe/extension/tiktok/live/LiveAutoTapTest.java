@@ -25,6 +25,8 @@ import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 
+import com.bytedance.android.livesdkapi.depend.model.live.Room;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -275,23 +277,44 @@ public class LiveAutoTapTest {
         assertFalse(LiveAutoTap.sameRoom(null, "8"));
     }
 
-    @Test public void tapsLandInTheMiddleAndStayClearOfTargets() {
-        float[] point = LiveAutoTap.tapPoint(1000, 2000, List.of(), 20, new Random(4));
+    @Test public void tapsLandOnTheHostsSideAndStayClearOfTargets() {
+        float[] point = LiveAutoTap.tapPoint(1000, 2000, List.of(), 20, 0, new Random(4));
         assertNotNull(point);
-        assertTrue(point[0] >= 470 && point[0] <= 530);
-        assertTrue(point[1] >= 780 && point[1] <= 900);
+        assertTrue(point[0] >= 220 && point[0] <= 280);
+        assertTrue(point[1] >= 700 && point[1] <= 820);
+        assertEquals(0, (int) point[2]);
 
-        // Covers every place the first spot can move to; the second spot sits left of it.
-        List<Rect> firstSpotTaken = List.of(new Rect(460, 770, 540, 910));
+        // Covers every place the first spot can move to; the next one sits above it.
+        List<Rect> firstSpotTaken = List.of(new Rect(210, 690, 290, 830));
         for (int seed = 0; seed < 50; seed++) {
-            float[] moved = LiveAutoTap.tapPoint(1000, 2000, firstSpotTaken, 20, new Random(seed));
+            float[] moved = LiveAutoTap.tapPoint(1000, 2000, firstSpotTaken, 20, 0, new Random(seed));
             assertNotNull("seed " + seed, moved);
-            Rect clear = new Rect(440, 750, 560, 930);
+            Rect clear = new Rect(190, 670, 310, 850);
             assertFalse("seed " + seed, clear.contains((int) moved[0], (int) moved[1]));
         }
 
-        assertNull(LiveAutoTap.tapPoint(1000, 2000, List.of(new Rect(0, 0, 1000, 2000)), 20, new Random(4)));
-        assertNull(LiveAutoTap.tapPoint(0, 2000, List.of(), 20, new Random(4)));
+        assertNull(LiveAutoTap.tapPoint(1000, 2000, List.of(new Rect(0, 0, 1000, 2000)), 20, 0, new Random(4)));
+        assertNull(LiveAutoTap.tapPoint(0, 2000, List.of(), 20, 0, new Random(4)));
+    }
+
+    @Test public void noTapEverReachesTheOtherCreatorsHalf() {
+        // In a battle the right half is the other creator, and a tap there opens their card (#335).
+        for (int skip = 0; skip < 31; skip++) {
+            for (int seed = 0; seed < 40; seed++) {
+                float[] point = LiveAutoTap.tapPoint(1080, 2316, List.of(), 16, skip, new Random(seed));
+                assertNotNull("skip " + skip, point);
+                assertTrue("skip " + skip + " seed " + seed + " x " + point[0], point[0] < 1080 * 0.45f);
+                assertTrue(point[1] > 2316 * 0.25f && point[1] < 2316 * 0.5f);
+                assertEquals("a skipped spot is never used", 0, skip & (1 << (int) point[2]));
+            }
+        }
+    }
+
+    @Test public void aSpotThatOpenedACardIsSkippedUntilEveryOneHas() {
+        assertEquals(1, LiveAutoTap.skipAfterCard(0, 0));
+        assertEquals(0b101, LiveAutoTap.skipAfterCard(0b001, 2));
+        assertEquals("all five opened something: start over", 0, LiveAutoTap.skipAfterCard(0b01111, 4));
+        assertEquals("no tap yet", 0b10, LiveAutoTap.skipAfterCard(0b10, -1));
     }
 
     // ---- in a room ----------------------------------------------------------------------------
@@ -301,6 +324,8 @@ public class LiveAutoTapTest {
         final Activity activity;
         final View view;
         boolean resumed = true;
+        /** The room it shows; null reads as a room whose id can't be read. */
+        Room live;
 
         FakePage(Activity activity, View view) {
             this.activity = activity;
@@ -341,6 +366,7 @@ public class LiveAutoTapTest {
         Settings.LIVE_AUTO_TAP.save(Settings.LIVE_AUTO_TAP.defaultValue);
         Settings.LIVE_AUTO_TAP_RATE.save(Settings.LIVE_AUTO_TAP_RATE.defaultValue);
         SettingsStatus.liveControlsEnabled = false;
+        LiveAutoTap.forgetSkippedSpotsForTests();
     }
 
     private FakePage openRoom() {
@@ -433,6 +459,40 @@ public class LiveAutoTapTest {
         shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(1500));
 
         assertTrue("taps come back after the finger lifts", downs() > whileHeld + 3);
+    }
+
+    @Test public void aTapThatOpensACardStopsAndTheNextStartInThatRoomTapsElsewhere() {
+        FakePage first = openRoom();
+        first.live = new Room();
+        first.live.idStr = "7";
+        int height = room.getHeight();
+        chip().performClick();
+        shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(350));
+        assertEquals(1, downs());
+        int openedAt = touches.get(0)[2];
+        assertTrue("the first spot", openedAt > height * 0.34f);
+
+        // The tap opened a card: the window loses focus right after it.
+        controller.windowFocusChanged(false);
+        shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(300));
+        assertEquals("Auto tap", chip().getText().toString());
+        assertEquals(1, downs());
+
+        controller.windowFocusChanged(true);
+        touches.clear();
+        chip().performClick();
+        shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(350));
+        assertEquals(1, downs());
+        assertTrue("the next spot, above the one that opened the card", touches.get(0)[2] < height * 0.34f);
+
+        // Another room starts from the first spot again.
+        chip().performClick();
+        first.live.idStr = "8";
+        touches.clear();
+        chip().performClick();
+        shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(350));
+        assertEquals(1, downs());
+        assertTrue(touches.get(0)[2] > height * 0.34f);
     }
 
     @Test public void swipingToAnotherRoomStopsTheTaps() {

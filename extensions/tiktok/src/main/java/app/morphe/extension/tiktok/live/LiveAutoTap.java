@@ -43,8 +43,8 @@ import java.util.Random;
 
 /**
  * Auto tap in LIVE rooms (#335). While the switch is on, a small chip sits in the room under the
- * Record chip. Tapping it starts sending taps to the middle of the stream at a steady pace with a
- * little jitter, the same way a finger would: each tap goes in through the window as a touch down
+ * Record chip. Tapping it starts sending taps to the host's side of the stream at a steady pace
+ * with a little jitter, the same way a finger would: each tap goes in through the window as a touch down
  * and up, so the room's own like handling counts and batches them. Tapping it again stops.
  *
  * Taps wait while a real finger is on the screen, while a panel or the keyboard has the window,
@@ -243,7 +243,10 @@ public final class LiveAutoTap {
             loop = null;
             unwatch();
             Logger.printDebug(() -> "LIVE auto tap stopped (" + why + ") after " + taps + " taps");
-            if (why == End.PANEL) Utils.showToastShort(L10n.t("Auto tap stopped"));
+            if (why == End.PANEL) {
+                skipSpots = skipAfterCard(skipSpots, lastSpot);
+                Utils.showToastShort(L10n.t("Auto tap stopped"));
+            }
             refresh();
         }
     };
@@ -255,6 +258,11 @@ public final class LiveAutoTap {
         if (front == null) return;
         tappingPage = new WeakReference<>(front);
         tappingRoom = LiveRecordChip.roomKey(LiveRecordChip.roomOf(front));
+        if (!sameRoom(skipRoom, tappingRoom)) {
+            skipRoom = tappingRoom;
+            skipSpots = 0;
+        }
+        lastSpot = -1;
         watch(activity.getWindow());
         Loop started = new Loop(LIVE_HOST, rate(Settings.LIVE_AUTO_TAP_RATE.get()), RANDOM);
         loop = started;
@@ -323,22 +331,44 @@ public final class LiveAutoTap {
 
     // ---- one tap ----------------------------------------------------------------------------
 
-    /** Where the taps go, as fractions of the room's width and height, tried in this order. */
-    private static final float[][] SPOTS = {{0.5f, 0.42f}, {0.38f, 0.38f}, {0.62f, 0.38f}, {0.5f, 0.32f}, {0.5f, 0.5f}};
+    /**
+     * Where the taps go, as fractions of the room's width and height, tried in this order. All of
+     * them sit on the host's side: the left pane in a battle and the top-left tile in a guest grid,
+     * which are drawn into one mixed stream with no views to dodge. The other creator's or a
+     * guest's part of the picture opens their card when tapped (#335). In a room with only the
+     * host, the left side likes the same as the middle.
+     */
+    private static final float[][] SPOTS = {{0.25f, 0.38f}, {0.25f, 0.30f}, {0.25f, 0.46f}, {0.15f, 0.38f}, {0.36f, 0.38f}};
+    /** Every spot skipped. */
+    private static final int ALL_SPOTS = (1 << SPOTS.length) - 1;
+
+    // A spot whose tap opened a card is skipped the next time tapping starts in that room.
+    private static String skipRoom;
+    private static int skipSpots;
+    private static int lastSpot = -1;
 
     /**
      * A point in a {@code width} by {@code height} room to tap, kept {@code clear} pixels away from
-     * every rect in {@code taken}, or null when every spot is covered. Each spot moves up to 3% of
-     * the room each way so the taps don't all hit one pixel.
+     * every rect in {@code taken} and off the spots set in {@code skip}, as {x, y, spot index}, or
+     * null when every spot is covered. Each spot moves up to 3% of the room each way so the taps
+     * don't all hit one pixel.
      */
-    static float[] tapPoint(int width, int height, List<Rect> taken, int clear, Random random) {
+    static float[] tapPoint(int width, int height, List<Rect> taken, int clear, int skip, Random random) {
         if (width <= 0 || height <= 0) return null;
-        for (float[] spot : SPOTS) {
-            float x = width * (spot[0] + (random.nextFloat() - 0.5f) * 0.06f);
-            float y = height * (spot[1] + (random.nextFloat() - 0.5f) * 0.06f);
-            if (free(x, y, taken, clear)) return new float[]{x, y};
+        for (int i = 0; i < SPOTS.length; i++) {
+            if ((skip & (1 << i)) != 0) continue;
+            float x = width * (SPOTS[i][0] + (random.nextFloat() - 0.5f) * 0.06f);
+            float y = height * (SPOTS[i][1] + (random.nextFloat() - 0.5f) * 0.06f);
+            if (free(x, y, taken, clear)) return new float[]{x, y, i};
         }
         return null;
+    }
+
+    /** The spots to skip once the tap at {@code spot} opened a card; when every spot has, they all get another go. */
+    static int skipAfterCard(int skip, int spot) {
+        if (spot < 0 || spot >= SPOTS.length) return skip;
+        int next = skip | (1 << spot);
+        return next == ALL_SPOTS ? 0 : next;
     }
 
     private static boolean free(float x, float y, List<Rect> taken, int clear) {
@@ -364,8 +394,9 @@ public final class LiveAutoTap {
         if (!content.isShown() || !content.getGlobalVisibleRect(area)) return false;
         List<Rect> taken = new ArrayList<>();
         LiveRecordChip.tapTargets(content, null, area, (long) area.width() * area.height() / 4, taken);
-        float[] point = tapPoint(area.width(), area.height(), taken, dp(activity, CLEAR_DP), random);
+        float[] point = tapPoint(area.width(), area.height(), taken, dp(activity, CLEAR_DP), skipSpots, random);
         if (point == null) return false;
+        lastSpot = (int) point[2];
         float x = area.left + point[0];
         float y = area.top + point[1];
         long downAt = SystemClock.uptimeMillis();
@@ -605,6 +636,12 @@ public final class LiveAutoTap {
 
     static void unwatchForTests() {
         unwatch();
+    }
+
+    static void forgetSkippedSpotsForTests() {
+        skipRoom = null;
+        skipSpots = 0;
+        lastSpot = -1;
     }
 
     /** Whether a real finger is holding the taps right now. */

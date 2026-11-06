@@ -447,6 +447,33 @@ public class ImportedFontTest {
         assertNull(SystemFont.replacementFamily());
     }
 
+    @Test public void theExportSaysWhichFontTikTokGotAndWhyAnImportWasNotUsed() throws IOException {
+        SystemFont.resetReportForTests();
+        Settings.IMPORTED_FONT.save(true);
+        Typeface tiktok = Typeface.create(Typeface.SERIF, Typeface.BOLD);
+
+        File directory = new File(context.getFilesDir(), ImportedFont.DIRECTORY);
+        assertTrue(directory.isDirectory() || directory.mkdirs());
+        java.nio.file.Files.write(new File(directory, "broken.ttf").toPath(),
+                "not a font".getBytes(StandardCharsets.UTF_8));
+        ImportedFont.forget();
+        assertSame(tiktok, SystemFont.systemize(tiktok));
+        String section = String.join("\n", SystemFont.Report.INSTANCE.lines());
+        assertTrue(section, section.contains("Use an imported font: on"));
+        assertTrue(section, section.contains("Imported file: broken.ttf, 10 bytes"));
+        assertTrue(section, section.contains("Imported face: the file doesn't start like a font"));
+        assertTrue(section, section.contains("0 in the imported font, 0 in the system font, 1 in TikTok's own"));
+        assertFalse("not a Galaxy phone", section.contains("Samsung font style"));
+
+        importFont(TRUETYPE, "Inter.ttf");
+        android.provider.Settings.Global.putString(context.getContentResolver(), "flip_font_style", "2");
+        SystemFont.systemize(tiktok);
+        section = String.join("\n", SystemFont.Report.INSTANCE.lines());
+        assertTrue(section, section.contains("Imported face: loaded"));
+        assertTrue(section, section.contains("1 in the imported font, 0 in the system font, 1 in TikTok's own"));
+        assertTrue(section, section.contains("Samsung font style: 2"));
+    }
+
     @Test public void theRowsSitWithUseSystemFontOnlyWhenPatched() throws IOException {
         try (var controller = Robolectric.buildActivity(TestActivity.class).setup()) {
             var activity = controller.get();

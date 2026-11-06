@@ -149,6 +149,23 @@ public final class ImportedFont {
     /** Whether {@link #kept} holds this process's answer, a face or null. */
     private static volatile boolean known;
     private static volatile Typeface kept;
+    /**
+     * What the last look for the face found, in words, for the diagnostic export. Every way the
+     * face can come back null says why here, so an export tells a file Android refused apart
+     * from one that loaded and still didn't show (#346).
+     */
+    private static volatile String outcome = "not looked for yet";
+
+    /** A face from a file, or the reason there isn't one. */
+    private static final class Attempt {
+        final Typeface face;
+        final String refusal;
+
+        Attempt(Typeface face, String refusal) {
+            this.face = face;
+            this.refusal = refusal;
+        }
+    }
 
     private ImportedFont() {
     }
@@ -163,19 +180,35 @@ public final class ImportedFont {
         try {
             Context context = Utils.getContext();
             // Not known yet, so not kept either: the next ask, with a context, loads it.
-            if (context == null) return null;
+            if (context == null) {
+                outcome = "asked before TikTok had a context";
+                return null;
+            }
             synchronized (LOCK) {
                 if (!known) {
                     File file = storedFile(context);
-                    kept = file == null ? null : load(file);
+                    if (file == null) {
+                        kept = null;
+                        outcome = "no font imported";
+                    } else {
+                        Attempt attempt = load(file);
+                        kept = attempt.face;
+                        outcome = attempt.face != null ? "loaded" : attempt.refusal;
+                    }
                     known = true;
                 }
                 return kept;
             }
         } catch (Throwable failure) {
+            outcome = "the load threw " + failure;
             Logger.printException(() -> "Could not load the imported font", failure);
             return null;
         }
+    }
+
+    /** What the last look for the face found, for the diagnostic export. */
+    static String outcome() {
+        return outcome;
     }
 
     /** The imported font's file name, or null when there is none. */
@@ -210,7 +243,7 @@ public final class ImportedFont {
         try {
             byte[] head = copy(input, incoming);
             String extension = extensionFor(head);
-            if (extension == null || load(incoming) == null) throw new Rejected(Reason.NOT_A_FONT);
+            if (extension == null || load(incoming).face == null) throw new Rejected(Reason.NOT_A_FONT);
             accepted = true;
             return new Incoming(incoming, storedName(displayName, extension));
         } finally {
@@ -241,6 +274,7 @@ public final class ImportedFont {
         synchronized (LOCK) {
             kept = null;
             known = false;
+            outcome = "not looked for since the font changed";
         }
     }
 
@@ -350,21 +384,35 @@ public final class ImportedFont {
         return base + extension;
     }
 
-    /** A face from the file, or null when Android can't make one of it. */
-    private static Typeface load(File file) {
-        if (!file.isFile() || file.length() < 4) return null;
-        try (InputStream in = new FileInputStream(file)) {
-            byte[] head = new byte[4];
-            if (in.read(head) != head.length || extensionFor(head) == null) return null;
-        } catch (IOException unreadable) {
-            return null;
+    /** A face from the file, or why Android can't make one of it. Logs every refusal. */
+    private static Attempt load(File file) {
+        String refusal;
+        if (!file.isFile()) {
+            refusal = "the file is gone";
+        } else if (file.length() < 4) {
+            refusal = "the file is " + file.length() + " bytes";
+        } else {
+            refusal = null;
+            try (InputStream in = new FileInputStream(file)) {
+                byte[] head = new byte[4];
+                if (in.read(head) != head.length || extensionFor(head) == null) {
+                    refusal = "the file doesn't start like a font";
+                }
+            } catch (IOException unreadable) {
+                refusal = "the file couldn't be read: " + unreadable;
+            }
         }
-        try {
-            Typeface face = Typeface.createFromFile(file);
-            return face == null || face == Typeface.DEFAULT ? null : face;
-        } catch (RuntimeException unreadable) {
-            Logger.printInfo(() -> "Android can't read the font " + file.getName() + ": " + unreadable);
-            return null;
+        if (refusal == null) {
+            try {
+                Typeface face = Typeface.createFromFile(file);
+                if (face != null && face != Typeface.DEFAULT) return new Attempt(face, null);
+                refusal = face == null ? "Android made no face of it" : "Android answered with its default face";
+            } catch (RuntimeException unreadable) {
+                refusal = "Android can't read it: " + unreadable;
+            }
         }
+        String why = refusal;
+        Logger.printInfo(() -> "Imported font " + file.getName() + " not used: " + why);
+        return new Attempt(null, why);
     }
 }

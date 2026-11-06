@@ -2531,3 +2531,5 @@ Adds Audio only to a LIVE's Video quality list. The room plays its sound without
 Pick a video quality to record the screen	Wähl eine Videoqualität für die Bildschirmaufnahme
 Discover in the bottom bar	Entdecken in der unteren Leiste
 Discover takes the place of Friends in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.	Entdecken ersetzt Freunde in der unteren Leiste, so wie TikTok sie in manchen Ländern anordnet. Deine Region und dein Feed bleiben, wie sie sind.
+# context: what screen readers say for a setting an update added, next to its blue dot; %1$s is the setting's title (#349)
+%1$s, new	%1$s, neu

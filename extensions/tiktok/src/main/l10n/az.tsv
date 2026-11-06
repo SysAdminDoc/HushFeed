@@ -2528,3 +2528,5 @@ Adds Audio only to a LIVE's Video quality list. The room plays its sound without
 Pick a video quality to record the screen	Ekranı yazmaq üçün video keyfiyyəti seç
 Discover in the bottom bar	Alt paneldə Kəşf et
 Discover takes the place of Friends in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.	Kəşf et alt paneldə Dostlar bölməsinin yerini tutur, TikTok bəzi ölkələrdə paneli belə düzür. Regionunuz və lentiniz olduğu kimi qalır.
+# context: what screen readers say for a setting an update added, next to its blue dot; %1$s is the setting's title (#349)
+%1$s, new	%1$s, yeni

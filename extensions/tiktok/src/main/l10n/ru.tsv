@@ -2705,3 +2705,5 @@ Adds Audio only to a LIVE's Video quality list. The room plays its sound without
 Pick a video quality to record the screen	Выберите качество видео для записи экрана
 Discover in the bottom bar	«Интересное» в нижней панели
 Discover takes the place of Friends in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.	«Интересное» занимает место «Друзей» в нижней панели, как TikTok делает в некоторых странах. Ваш регион и лента не меняются.
+# context: what screen readers say for a setting an update added, next to its blue dot; %1$s is the setting's title (#349)
+%1$s, new	%1$s, новое

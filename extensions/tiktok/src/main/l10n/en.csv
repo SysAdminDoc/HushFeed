@@ -95,6 +95,7 @@ source,target
 "%1$s, %2$s, %3$s or %4$s","%1$s, %2$s, %3$s or %4$s"
 "%1$s, %2$s, %3$s, %4$s, %5$s","%1$s, %2$s, %3$s, %4$s, %5$s"
 "%1$s, about %2$s","%1$s, about %2$s"
+"%1$s, new","%1$s, new"
 "%1$s, selected","%1$s, selected"
 "%1$s, size unknown","%1$s, size unknown"
 %1$s. %2$s,%1$s. %2$s

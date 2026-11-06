@@ -149,6 +149,7 @@ final class SettingsListAdapter extends BaseAdapter implements WrapperListAdapte
         boolean first = !section || isBoundary(position - 1) || !isSectionRow(getItem(position - 1));
         boolean last = !section || isBoundary(position + 1) || !isSectionRow(getItem(position + 1));
         ScreenColors.current().paintRow(row, preference, !section, first, last);
+        NewSettingDots.paint(row, preference, SettingsUi.accent());
         if (preference instanceof SwitchPreference) SettingsUi.reflowSwitchRow(row, rowWidth(parent));
         // The recovery page's two actions were styled while the rows were bound, and the row
         // styling above painted over it, so Retry and Back came out as two identical rows.

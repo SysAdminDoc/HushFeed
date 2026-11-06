@@ -382,12 +382,14 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                         new String[]{HoldSpeedHud.PILL, HoldSpeedHud.CIRCLE})
                         .withNote("Pill is the wide bubble with a row of dots under the speed. Circle is a small "
                                 + "round dial with a notch for each speed around its edge."));
-                addPreference(new ChoicePreference(context, "Hold speed slide direction", Settings.HOLD_SPEED_SLIDE_AXIS,
-                        new String[]{"Sideways", "Up and down"},
-                        new String[]{HoldSpeedHud.SIDEWAYS, HoldSpeedHud.UP_DOWN})
-                        .withNote("With Sideways, slide left or right to change the speed and pull down to lock it. "
-                                + "With Up and down, slide up for faster and down for slower, and slide to the side "
-                                + "to lock it, so a hold near the edge still reaches every speed."));
+                if (SettingsStatus.holdSpeedAxisEnabled) {
+                    addPreference(new ChoicePreference(context, "Hold speed slide direction", Settings.HOLD_SPEED_SLIDE_AXIS,
+                            new String[]{"Sideways", "Up and down"},
+                            new String[]{HoldSpeedHud.SIDEWAYS, HoldSpeedHud.UP_DOWN})
+                            .withNote("With Sideways, slide left or right to change the speed and pull down to lock it. "
+                                    + "With Up and down, slide up for faster and down for slower, and slide to the side "
+                                    + "to lock it, so a hold near the edge still reaches every speed."));
+                }
             }
             if (SettingsStatus.hideSpeedToastsEnabled) {
                 addPreference(new TogglePreference(context, "Hide speed messages",

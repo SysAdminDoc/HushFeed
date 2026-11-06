@@ -198,7 +198,8 @@ public final class HoldSpeedHud {
             sliding = false;
             vertical = false;
             pulled = false;
-            upDown = UP_DOWN.equals(Settings.HOLD_SPEED_SLIDE_AXIS.get());
+            // Saved on a build whose patch had TikTok's lock state, it stays sideways on one without.
+            upDown = SettingsStatus.holdSpeedAxisEnabled && UP_DOWN.equals(Settings.HOLD_SPEED_SLIDE_AXIS.get());
             lockX = Float.NaN;
             sideArmed = false;
             startedLocked = false;

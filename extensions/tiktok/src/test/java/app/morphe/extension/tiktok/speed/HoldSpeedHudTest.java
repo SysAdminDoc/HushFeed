@@ -68,6 +68,7 @@ public class HoldSpeedHudTest {
         Utils.setActivity(owner.get());
         density = owner.get().getResources().getDisplayMetrics().density;
         SettingsStatus.holdSpeedSlideEnabled = true;
+        SettingsStatus.holdSpeedAxisEnabled = true;
         Settings.HOLD_SPEED_SLIDE.save(true);
         Settings.HOLD_SPEED.save("2");
         HoldSpeedHud.applierForTests = (gesture, speed) -> {
@@ -104,6 +105,7 @@ public class HoldSpeedHudTest {
         HoldSpeedHud.lockArmerForTests = null;
         HoldSpeedHud.pullerForTests = null;
         SettingsStatus.holdSpeedSlideEnabled = false;
+        SettingsStatus.holdSpeedAxisEnabled = false;
         Settings.HOLD_SPEED_SLIDE.resetToDefault();
         Settings.HOLD_SPEED_HUD_STYLE.resetToDefault();
         Settings.HOLD_SPEED_SLIDE_AXIS.resetToDefault();
@@ -610,6 +612,19 @@ public class HoldSpeedHudTest {
     }
 
     @Test
+    public void upAndDownSavedWhereThePatchLeftItOutSlidesSideways() {
+        SettingsStatus.holdSpeedAxisEnabled = false;
+        Settings.HOLD_SPEED_SLIDE_AXIS.save(HoldSpeedHud.UP_DOWN);
+        HoldSpeedHud.onHoldPress(component);
+        move(0, 0);
+        move(0, -(DEAD_ZONE + STEP + 2));
+        assertTrue("up stepped the speed with nothing behind the side lock", applied.isEmpty());
+        move(DEAD_ZONE + STEP + 2, -(DEAD_ZONE + STEP + 2));
+        assertEquals(List.of(2.25f), applied);
+        assertTrue("a sideways slide armed a lock", pulls.isEmpty());
+    }
+
+    @Test
     public void sidewaysLeavesTikToksPullAloneAndTakesNoSideLock() {
         HoldSpeedHud.onHoldPress(component);
         move(0, 0);
@@ -699,6 +714,11 @@ public class HoldSpeedHudTest {
             assertNull(playbackPage(host).findPreference(Settings.HOLD_SPEED_SLIDE_AXIS.key));
 
             SettingsStatus.holdSpeedSlideEnabled = true;
+            SettingsStatus.holdSpeedAxisEnabled = false;
+            assertNull("the direction showed without the patch part behind it",
+                    playbackPage(host).findPreference(Settings.HOLD_SPEED_SLIDE_AXIS.key));
+
+            SettingsStatus.holdSpeedAxisEnabled = true;
             PreferenceScreen screen = playbackPage(host);
             Preference row = screen.findPreference(Settings.HOLD_SPEED_SLIDE_AXIS.key);
             assertTrue(row instanceof ListPreference);

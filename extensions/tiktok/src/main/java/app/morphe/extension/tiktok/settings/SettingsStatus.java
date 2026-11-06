@@ -364,6 +364,13 @@ public class SettingsStatus {
         holdSpeedSlideEnabled = true;
     }
 
+    /** TikTok's pull-down lock state takes the sideways slide too, so the slide can run up and down. */
+    public static boolean holdSpeedAxisEnabled = false;
+
+    public static void enableHoldSpeedAxis() {
+        holdSpeedAxisEnabled = true;
+    }
+
     /** TikTok's speed messages show through the extension, so they can be left out. */
     public static boolean hideSpeedToastsEnabled = false;
 

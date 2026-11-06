@@ -591,6 +591,10 @@ val playbackSpeedPatch = bytecodePatch(
                     invoke-static/range {p1 .. p1}, $HOLD_HUD->pullState(I)Z
                     move-result p1
                 """)
+                SettingsStatusLoadFingerprint.method.addInstruction(
+                    0,
+                    "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableHoldSpeedAxis()V",
+                )
             }
             // Checked before anything goes in, so a build that leaves it out keeps the banner
             // whole and only shows it beside the bubble.

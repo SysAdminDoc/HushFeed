@@ -928,7 +928,7 @@
     },
     {
       "name": "Block P2P video relay",
-      "description": "Removes the files TikTok uses to pass videos on to other viewers through your phone's internet connection. The app gets about 3.5 MB smaller. It's built in while patching, so only patching again without it brings them back.",
+      "description": "Removes the files TikTok uses to pass videos on to other viewers through your phone's internet connection. The app gets about 4.5 MB smaller. It's built in while patching, so only patching again without it brings them back.",
       "category": "Performance",
       "use": false,
       "dependencies": [

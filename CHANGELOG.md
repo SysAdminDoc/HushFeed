@@ -14,6 +14,7 @@ Every Hushfeed release, newest first.
 * Settings an update adds get a small dot after their name in Hushfeed settings, and the closed section they sit in gets one too, so you can spot what's new. A dot goes away after the visit that shows it, and a fresh install starts with none (#349).
 * `Startup message` shows a message you write each time TikTok opens, with an optional title. Turn off `Close with Back or a tap outside` and only its OK button closes it. Rotating the phone or changing TikTok's theme doesn't bring it back. It starts off and lives in Hushfeed settings > App (#347).
 * With a color picked in `AMOLED dark theme`'s options, Profile, Inbox and TikTok's other full pages take that color too. Before, they stayed black. The light look and the video feed don't change (#348).
+* `Block P2P video relay` also takes out the LIVE relay's two leftover libraries, about 1 MB more. The split APK bundle never had them, so nothing changes for those installs (#70).
 
 ### Bug Fixes
 

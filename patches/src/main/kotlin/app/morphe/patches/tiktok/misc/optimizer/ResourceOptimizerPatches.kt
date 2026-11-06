@@ -19,7 +19,7 @@ import java.util.Locale
 val p2pRelayBlockerPatch = rawResourcePatch(
     name = "Block P2P video relay",
     description = "Removes the files TikTok uses to pass videos on to other viewers through " +
-        "your phone's internet connection. The app gets about 3.5 MB smaller. It's built in while " +
+        "your phone's internet connection. The app gets about 4.5 MB smaller. It's built in while " +
         "patching, so only patching again without it brings them back.",
     default = false,
 ) {
@@ -31,8 +31,12 @@ val p2pRelayBlockerPatch = rawResourcePatch(
         val nativeFiles = listOf(
             "lib/arm64-v8a/libavmdlp2pv2.so",
             "lib/arm64-v8a/libp2plivevdp.so",
+            "lib/arm64-v8a/libbase_live.so",
+            "lib/arm64-v8a/libpunch.so",
             "lib/armeabi-v7a/libavmdlp2pv2.so",
             "lib/armeabi-v7a/libp2plivevdp.so",
+            "lib/armeabi-v7a/libbase_live.so",
+            "lib/armeabi-v7a/libpunch.so",
         )
         val result = stripVerifiedResources(
             get("."),
@@ -414,6 +418,14 @@ private val p2pRelay = ResourceProfile(
         file("lib/arm64-v8a/libp2plivevdp.so", "ed35b032fac7c169860d3f37bc3be1933df9bddc8ac6785413f9608945946337"),
         file("lib/armeabi-v7a/libavmdlp2pv2.so", "1f3ac5a18eed8735e66a23e826baa3d9371a5cb1b69061c722f3d3253af1ec56"),
         file("lib/armeabi-v7a/libp2plivevdp.so", "dd8a626f8b0efe36a883096923bed56ecb457e9408b26262c844442901dc1d09"),
+        // The LIVE relay's own base and NAT punch libraries (#70). Only libp2plivevdp needs
+        // libbase_live, and nothing links libpunch. libbase_live is also df_live_p2p's load probe,
+        // so an empty one reads that feature as not installed, which is how the split bundle
+        // (it ships neither) already runs.
+        file("lib/arm64-v8a/libbase_live.so", "33e4131d9702024042edd9026554da67a678145cf6c611bf198e367563cbc34f"),
+        file("lib/arm64-v8a/libpunch.so", "4432a15bc71ee40a43fd495b572b8bf86444ef4eae77d5003b4e717e9a7526ed"),
+        file("lib/armeabi-v7a/libbase_live.so", "4f2ac3c7ff004fba1ba9b1407c10987d19f8ffb40071f06bf3a4d6b7d62de320"),
+        file("lib/armeabi-v7a/libpunch.so", "835f3ad87eb0d4df69de4a6f1aa1cb33a3095a450c7e93806ebf3ac4aa295034"),
     ),
 )
 
@@ -425,6 +437,10 @@ internal val p2pRelayProfiles = listOf(
         "lib/arm64-v8a/libp2plivevdp.so",
         "lib/armeabi-v7a/libavmdlp2pv2.so",
         "lib/armeabi-v7a/libp2plivevdp.so",
+        "lib/arm64-v8a/libbase_live.so",
+        "lib/arm64-v8a/libpunch.so",
+        "lib/armeabi-v7a/libbase_live.so",
+        "lib/armeabi-v7a/libpunch.so",
     ),
 )
 

@@ -2509,3 +2509,5 @@ What the message says.,Apa yang tertulis di pesan.
 Close with Back or a tap outside,Tutup dengan Kembali atau ketuk di luar
 "Off, only its button closes it.","Jika mati, hanya tombolnya yang menutup."
 dialog popup greeting,dialog popup sapaan
+Stop the blink under the bar,Hentikan kedipan di bawah bilah
+"If the video blinks as you swipe with See-through bottom bar on, this draws it inside TikTok instead of on a layer of its own. It can use a little more battery. Needs See-through bottom bar.","Jika video berkedip saat Anda menggeser dengan Bilah bawah transparan aktif, ini menggambar video di dalam TikTok, bukan di lapisan tersendiri. Bisa memakai sedikit lebih banyak baterai. Perlu Bilah bawah transparan."

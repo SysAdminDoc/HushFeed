@@ -13,6 +13,7 @@ import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.interaction.authorregion.DetailActivityOnCreateFingerprint
+import app.morphe.patches.tiktok.misc.absettings.hookAppAbIntBoundary
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.inbox.MainActivityOnCreateFingerprint
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
@@ -23,6 +24,8 @@ import app.morphe.patches.tiktok.shared.requireLocals
 
 private const val EXTENSION_CLASS_DESCRIPTOR =
     "Lapp/morphe/extension/tiktok/feed/VideoOverlayHider;"
+private const val SEE_THROUGH_VIDEO_LAYER_DESCRIPTOR =
+    "Lapp/morphe/extension/tiktok/feed/SeeThroughVideoLayer;"
 
 private object FullscreenEntranceFingerprint : Fingerprint(
     definingClass = FULLSCREEN_COMPONENT,
@@ -234,6 +237,12 @@ val hideVideoOverlaysPatch = bytecodePatch(
             "invoke-static {}, " +
                 "Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableVideoOverlays()V",
         )
+
+        // See-through bottom bar's Stop the blink under the bar (#232): the player's view gate,
+        // player_enable_surface_surfaceview, is read in five places, all through the app AB int
+        // getter, so SeeThroughVideoLayer answers it there with 0 (draw the video in the window)
+        // while both switches are on.
+        hookAppAbIntBoundary(SEE_THROUGH_VIDEO_LAYER_DESCRIPTOR, "videoSurfaceGate")
 
         // p0 is the activity. /range because a parameter register is usually above v15. The
         // detail page too: a process started into search by a deep link opens its videos there

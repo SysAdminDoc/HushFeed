@@ -761,6 +761,12 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             ));
             addPreference(new TogglePreference(
                     context,
+                    "Stop the blink under the bar",
+                    "If the video blinks as you swipe with See-through bottom bar on, this draws it inside TikTok instead of on a layer of its own. It can use a little more battery. Needs See-through bottom bar.",
+                    Settings.SEE_THROUGH_VIDEO_IN_WINDOW
+            ));
+            addPreference(new TogglePreference(
+                    context,
                     "Floating bottom bar",
                     "Show the main feed's tabs on a rounded, see-through dark pill that floats over the video. Needs See-through bottom bar.",
                     Settings.FLOATING_BOTTOM_BAR

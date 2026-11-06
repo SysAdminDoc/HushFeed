@@ -2507,3 +2507,5 @@ What the message says.,Nội dung mà thông báo hiển thị.
 Close with Back or a tap outside,Đóng bằng nút Quay lại hoặc chạm ra ngoài
 "Off, only its button closes it.","Khi tắt, chỉ nút của nó mới đóng được."
 dialog popup greeting,hộp thoại cửa sổ bật lên lời chào
+Stop the blink under the bar,Hết nhấp nháy dưới thanh
+"If the video blinks as you swipe with See-through bottom bar on, this draws it inside TikTok instead of on a layer of its own. It can use a little more battery. Needs See-through bottom bar.","Nếu video nhấp nháy khi bạn vuốt lúc bật Thanh dưới cùng trong suốt, tùy chọn này vẽ video ngay trong TikTok thay vì trên một lớp riêng. Có thể tốn pin hơn một chút. Yêu cầu bật Thanh dưới cùng trong suốt."

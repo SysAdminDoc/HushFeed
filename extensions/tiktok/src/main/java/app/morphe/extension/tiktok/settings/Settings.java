@@ -1057,6 +1057,14 @@ public class Settings extends BaseSettings {
      */
     public static final BooleanSetting SEE_THROUGH_BOTTOM_BAR = new BooleanSetting("see_through_bottom_bar", FALSE);
     /**
+     * With See-through bottom bar, has TikTok draw feed video into its own window instead of on a
+     * layer of its own (#232), which some phones (an Honor X9c) blink when the video slides under
+     * the clear bar. SeeThroughVideoLayer answers the player's view gate; TikTok reads it as the
+     * player starts, so it takes a restart.
+     */
+    public static final BooleanSetting SEE_THROUGH_VIDEO_IN_WINDOW = new BooleanSetting(
+            "see_through_video_in_window", FALSE, true, Setting.parent(SEE_THROUGH_BOTTOM_BAR));
+    /**
      * With See-through bottom bar, draws the tabs on a rounded see-through pill inset from the
      * bar's sides and bottom instead of nothing (#124). Only the bar's background changes, so the
      * tabs keep their places. Read on each layout.

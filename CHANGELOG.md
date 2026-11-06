@@ -6,7 +6,7 @@ Every Hushfeed release, newest first.
 
 ### Features
 
-* `Show where commenters are from` reads one more field from the commenter's account, so a few more comments get a country. It's only used when it holds a two letter code (#201).
+* `Show where commenters are from` also checks the country field on a commenter's account, and uses it only when it holds a two letter code (#201).
 
 ### Bug Fixes
 

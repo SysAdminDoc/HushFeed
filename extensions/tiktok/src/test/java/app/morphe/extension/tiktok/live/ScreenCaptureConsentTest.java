@@ -28,15 +28,19 @@ public class ScreenCaptureConsentTest {
         ScreenCapture.release(null);
     }
 
+    /**
+     * NO_USER_ACTION in both: without it Android pauses the LIVE with userLeaving, TikTok's own
+     * LIVE picture-in-picture takes the room off screen, and the recording stops as it starts.
+     */
     @Test @Config(sdk = {34, 35})
     public void appPickerConsentUsesAnotherTaskAndStillRequiresAnAnswer() {
-        checkRequest(Intent.FLAG_ACTIVITY_NO_ANIMATION
+        checkRequest(Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_NO_USER_ACTION
                 | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
     }
 
     @Test @Config(sdk = {23, 33})
     public void displayOnlyConsentKeepsItsExistingRoute() {
-        checkRequest(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        checkRequest(Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_NO_USER_ACTION);
     }
 
     /** #265: the Record chip hides while the screen is filmed, so the notification carries the Stop. */

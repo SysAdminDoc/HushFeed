@@ -41,8 +41,10 @@ public final class ScreenCapture {
             waiting = ready;
             app = from.getApplicationContext() == null ? from : from.getApplicationContext();
         }
+        // Not a user leaving the room: without NO_USER_ACTION TikTok's own LIVE picture-in-picture
+        // takes the room off screen, and the recording stops the moment it starts.
         Intent consent = new Intent(from, ScreenRecordConsentActivity.class)
-                .addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                .addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_NO_USER_ACTION);
         if (Build.VERSION.SDK_INT >= 34) {
             // Android's picker hides its own task. Keep the video task available in Recents.
             consent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);

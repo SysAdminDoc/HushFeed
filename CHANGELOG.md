@@ -20,6 +20,7 @@ Every Hushfeed release, newest first.
 * With `Long-press Profile for Watch history` on, holding Profile opens Watch history again after you remove your second account. Before, the hold did nothing until TikTok rebuilt its tab bar (#341).
 * Hushfeed adds less lag when a video opens from Search or Explore. The part that hides buttons on videos rebuilt its whole lookup list on every screen layout while the page opened, and now builds it once. With `Playback quality` set, each video's addresses get checked once too, instead of again in every place the player asks (#344).
 * LIVE Auto tap taps the host's side of the stream now. In a battle or a room with guests it used to tap near the middle, hit the other creator's half and open their profile card, which stopped it after a second. If a tap still opens a card, the next start in that room skips that spot (#335).
+* With `LIVE recording source` set to Screen, a recording keeps going after you allow it. Android's permission screen made TikTok think you were leaving the room, so TikTok shrank the LIVE into its own picture-in-picture window and the recording stopped a few seconds in.
 
 ## 0.81.0 (2026-11-05)
 

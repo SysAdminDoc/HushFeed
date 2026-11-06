@@ -6331,6 +6331,12 @@
     "default": false,
     "type": "bool",
     "row": "Long press on For You opens my watch history"
+   },
+   {
+    "key": "profile_hold_opens_local_watch_history",
+    "default": false,
+    "type": "bool",
+    "row": "Long press on Profile opens my watch history"
    }
   ],
   "surface": "feed",

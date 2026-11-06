@@ -1247,6 +1247,12 @@ public class Settings extends BaseSettings {
     /** A long press on For You opens that list over the feed instead of these settings (#172). */
     public static final BooleanSetting FOR_YOU_HOLD_OPENS_WATCH_HISTORY = new BooleanSetting(
             "for_you_hold_opens_watch_history", FALSE, Setting.parent(LOCAL_WATCH_HISTORY));
+    /**
+     * A long press on the Profile tab opens that list, in place of TikTok's Watch history or its
+     * account switcher, so For You can keep opening these settings (#172).
+     */
+    public static final BooleanSetting PROFILE_HOLD_OPENS_LOCAL_WATCH_HISTORY = new BooleanSetting(
+            "profile_hold_opens_local_watch_history", FALSE, Setting.parent(LOCAL_WATCH_HISTORY));
     public static final BooleanSetting HIDE_PLAYLIST_BAR = new BooleanSetting("hide_playlist_bar", FALSE, true);
     public static final BooleanSetting HIDE_EVENT_BADGE = new BooleanSetting("hide_event_badge", FALSE, true);
     public static final BooleanSetting HIDE_INSERTED_CARDS = new BooleanSetting("hide_inserted_cards", FALSE, true);

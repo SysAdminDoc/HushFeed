@@ -7,6 +7,7 @@ Every Hushfeed release, newest first.
 ### Features
 
 * `Show where commenters are from` also checks the country field on a commenter's account, and uses it only when it holds a two letter code (#201).
+* `Long press on Profile opens my watch history` makes holding the Profile tab show the watch history kept on your phone, so the long press on For You can keep opening Hushfeed settings. A tap on Profile works as before. It starts off, and it sits under `Keep my own watch history` (#172).
 
 ### Bug Fixes
 

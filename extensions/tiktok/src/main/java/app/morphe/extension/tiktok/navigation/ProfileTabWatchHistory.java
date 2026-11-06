@@ -18,10 +18,12 @@ import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
 import app.morphe.extension.tiktok.settings.Settings;
+import app.morphe.extension.tiktok.settings.preference.LocalWatchHistoryPreference;
 
 /**
  * A long press on the Profile tab opens TikTok's Watch history (#199), which otherwise sits
- * behind Profile, the menu, Settings and privacy and Activity center.
+ * behind Profile, the menu, Settings and privacy and Activity center. A switch under Keep my own
+ * watch history sends it to that list over the feed instead (#172).
  *
  * <p>The page is TikTok's own hybrid page, opened the way its profile menu does: a
  * {@code webview} route on TikTok's scheme carrying the inapp.tiktokv.com watch_history address.
@@ -66,8 +68,8 @@ public final class ProfileTabWatchHistory {
 
     static final View.OnLongClickListener OPEN_WATCH_HISTORY = view -> {
         try {
-            // Still on a tab after the switch went off (see takeOff): the release is a tap again.
-            if (!Settings.PROFILE_TAB_OPENS_WATCH_HISTORY.get()) return false;
+            // Still on a tab after the switches went off (see takeOff): the release is a tap again.
+            if (!wanted()) return false;
             view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
             open(view.getContext());
         } catch (Throwable error) {
@@ -80,7 +82,25 @@ public final class ProfileTabWatchHistory {
     private ProfileTabWatchHistory() {
     }
 
+    /** Either switch sends the hold somewhere: TikTok's Watch history, or the list kept on the phone. */
+    static boolean wanted() {
+        return Settings.PROFILE_TAB_OPENS_WATCH_HISTORY.get() || opensLocalHistory();
+    }
+
+    /**
+     * The hold opens the watch history kept on the phone, which wins over TikTok's page when both
+     * switches are on (#172). Pause answers both switches' defaults, so a paused hold is TikTok's.
+     */
+    static boolean opensLocalHistory() {
+        return Settings.PROFILE_HOLD_OPENS_LOCAL_WATCH_HISTORY.get() && Settings.LOCAL_WATCH_HISTORY.get();
+    }
+
     static void open(Context context) {
+        if (opensLocalHistory()) {
+            Logger.printInfo(() -> "Watch history requested by a long press on Profile");
+            LocalWatchHistoryPreference.showOverFeed(context);
+            return;
+        }
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(WATCH_HISTORY_URI))
                 .setPackage(context.getPackageName());
         if (!(context instanceof Activity)) intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -95,9 +115,10 @@ public final class ProfileTabWatchHistory {
      */
     public static boolean takesSwitcherPress(Object tag) {
         try {
-            if (!PROFILE_TAG.equals(tag) || !Settings.PROFILE_TAB_OPENS_WATCH_HISTORY.get()) return false;
+            if (!PROFILE_TAG.equals(tag) || !wanted()) return false;
             Context context = HomeTabSettingsShortcut.front();
-            if (context == null) context = Utils.getContext();
+            // The list shows as a dialog, which needs the screen; TikTok's page opens from any context.
+            if (context == null && !opensLocalHistory()) context = Utils.getContext();
             if (context == null) return false;
             open(context);
             return true;
@@ -112,7 +133,7 @@ public final class ProfileTabWatchHistory {
         try {
             View current = attached.get();
             // Off, the tab isn't even looked up.
-            if (!Settings.PROFILE_TAB_OPENS_WATCH_HISTORY.get()) {
+            if (!wanted()) {
                 if (current != null) takeOff(current);
                 return;
             }

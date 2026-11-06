@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.view.Gravity;
 import android.view.View;
@@ -28,6 +29,7 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.util.ReflectionHelpers;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -68,7 +70,58 @@ public class ProfileTabWatchHistoryTest {
         FeedVisibility.resolveForTests(activity.getPackageName(), "47.7.2:oph", 0);
         ReflectionHelpers.setStaticField(SettingsStatus.class, "feedNavigationEnabled", false);
         Settings.PROFILE_TAB_OPENS_WATCH_HISTORY.resetToDefault();
+        Settings.LOCAL_WATCH_HISTORY.resetToDefault();
+        Settings.PROFILE_HOLD_OPENS_LOCAL_WATCH_HISTORY.resetToDefault();
+        AlertDialog shown = ShadowAlertDialog.getLatestAlertDialog();
+        if (shown != null) shown.dismiss();
         if (!destroyed) owner.pause().stop().destroy();
+    }
+
+    private static void localHistoryOnHold() {
+        Settings.LOCAL_WATCH_HISTORY.save(true);
+        Settings.PROFILE_HOLD_OPENS_LOCAL_WATCH_HISTORY.save(true);
+    }
+
+    /** #172: holding Profile shows the watch history kept on the phone, so For You can stay on settings. */
+    @Test public void withTheLocalSwitchALongPressShowsTheListKeptOnThePhone() {
+        localHistoryOnHold();
+        installAndResume();
+
+        assertTrue("the long press was not handled", profile.performLongClick());
+        assertNull("TikTok's Watch history opened instead of the list", nextStarted());
+        AlertDialog history = ShadowAlertDialog.getLatestAlertDialog();
+        assertNotNull("the long press showed no watch history", history);
+        assertTrue(history.isShowing());
+        assertEquals("My watch history", String.valueOf(Shadows.shadowOf(history).getTitle()));
+        assertEquals("a long press also counted as a tap", 0, taps.get());
+    }
+
+    /** It takes TikTok's account-switcher hold too, and wins over the switch for TikTok's page. */
+    @Test public void theLocalSwitchTakesTikToksSwitcherPressAndWinsOverTikToksPage() {
+        AtomicInteger sheets = new AtomicInteger();
+        profile.setOnLongClickListener(switcher(sheets));
+        Settings.PROFILE_TAB_OPENS_WATCH_HISTORY.save(true);
+        localHistoryOnHold();
+        installAndResume();
+
+        assertTrue(profile.performLongClick());
+        assertEquals("the account sheet showed too", 0, sheets.get());
+        assertNull("TikTok's Watch history opened over the list", nextStarted());
+        AlertDialog history = ShadowAlertDialog.getLatestAlertDialog();
+        assertNotNull("TikTok's Profile hold didn't show the list", history);
+        assertTrue(history.isShowing());
+    }
+
+    /** With no history kept there's nothing to show, so the tab stays as it was. */
+    @Test public void theLocalSwitchNeedsTheHistoryKept() {
+        Settings.PROFILE_HOLD_OPENS_LOCAL_WATCH_HISTORY.save(true);
+        installAndResume();
+
+        assertFalse(profile.isLongClickable());
+        assertFalse(profile.performLongClick());
+        assertFalse(ProfileTabWatchHistory.takesSwitcherPress(ProfileTabWatchHistory.PROFILE_TAG));
+        assertNull(nextStarted());
+        assertNull(ShadowAlertDialog.getLatestAlertDialog());
     }
 
     @Test public void aLongPressOnProfileOpensWatchHistory() {

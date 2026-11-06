@@ -12,10 +12,16 @@ import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patcher.util.smali.ExternalLabel
 import app.morphe.patches.shared.compat.AppCompatibilities
+import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
+import app.morphe.patches.tiktok.misc.absettings.APP_AB_TYPED_OBJECT
+import app.morphe.patches.tiktok.misc.absettings.appAbClass
+import app.morphe.patches.tiktok.misc.absettings.methodsOfShape
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.patches.tiktok.misc.theme.declaredVersions
+import app.morphe.patches.tiktok.shared.callThroughLocals
+import app.morphe.patches.tiktok.shared.objectIn
 import app.morphe.patches.tiktok.shared.requireLocals
 import app.morphe.util.addInstructionsAtControlFlowLabel
 import app.morphe.util.getReference
@@ -35,6 +41,7 @@ private const val FEED_LOCK_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/wel
 private const val START_PAGE_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/navigation/StartPage;"
 private const val FEED_BUTTONS_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/navigation/FeedButtons;"
 private const val PROFILE_TAB_WATCH_HISTORY_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/navigation/ProfileTabWatchHistory;"
+private const val DISCOVER_TAB_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/navigation/DiscoverTab;"
 
 /** A method reference the way smali writes it after the invoke's registers. */
 private fun com.android.tools.smali.dexlib2.iface.reference.MethodReference.smali(): String =
@@ -152,10 +159,35 @@ internal fun com.android.tools.smali.dexlib2.iface.instruction.Instruction.write
     return (opcode.setsRegister() && target == register) || (opcode.setsWideRegister() && target + 1 == register)
 }
 
+/**
+ * Every value the typed getter returns passes the extension with its key, which hands back the
+ * bottom bar layout with Discover in it when the switch is on and anything else untouched. The
+ * key (p1) and the value are only read, right before the return.
+ */
+internal fun MutableMethod.offerDiscoverTab() {
+    val implementation = implementation
+        ?: throw PatchException("Feed tab navigation: the typed App AB object getter has no implementation.")
+    implementation.instructions.withIndex()
+        .filter { (_, instruction) -> instruction.opcode == Opcode.RETURN_OBJECT }
+        .map { (index, instruction) -> index to (instruction as OneRegisterInstruction).registerA }
+        .asReversed()
+        .forEach { (index, register) ->
+            val call = callThroughLocals(
+                "Feed tab navigation",
+                "invoke-static",
+                "$DISCOVER_TAB_CLASS_DESCRIPTOR->apply(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;",
+                objectIn("p1"),
+                objectIn("v$register"),
+            )
+            addInstructionsAtControlFlowLabel(index, "$call\nmove-result-object v$register")
+        }
+}
+
 @Suppress("unused")
 val feedTabNavigationPatch = bytecodePatch(
     name = "Feed tab navigation",
-    description = "Lets you hide feed and bottom tabs you don't use, rename the bottom tabs, " +
+    description = "Lets you hide feed and bottom tabs you don't use, put Discover in the " +
+        "bottom bar, rename the bottom tabs, " +
         "choose the tab TikTok opens on, stop For You reloading when you tap Home and hold " +
         "Profile to open your Watch history. Starts off, " +
         "except holding Home to open Hushfeed settings. Find it in Hushfeed settings > Feed tabs.",
@@ -178,6 +210,15 @@ val feedTabNavigationPatch = bytecodePatch(
             if (packageMetadata.versionName in declaredVersions()) throw problem
             println("[Feed tab navigation] Left out the bottom tab names on ${packageMetadata.versionName}: ${problem.message}")
             null
+        }
+        // The bottom bar's layout is a gate TikTok parses into a class (`tab_fcp_config_v2`, #98),
+        // so the Discover tab rides on the App AB class's typed object getter. Same rule as above.
+        val typedAbGetters = try {
+            appAbClass().methodsOfShape(APP_AB_TYPED_OBJECT, "Feed tab navigation typed App AB object getter")
+        } catch (problem: PatchException) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[Feed tab navigation] Left out the Discover tab on ${packageMetadata.versionName}: ${problem.message}")
+            emptyList()
         }
 
         SettingsStatusLoadFingerprint.method.addInstruction(
@@ -293,6 +334,14 @@ val feedTabNavigationPatch = bytecodePatch(
             SettingsStatusLoadFingerprint.method.addInstruction(
                 0,
                 "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableBottomTabLabels()V",
+            )
+        }
+
+        if (typedAbGetters.isNotEmpty()) {
+            typedAbGetters.forEach { it.offerDiscoverTab() }
+            SettingsStatusLoadFingerprint.method.addInstruction(
+                0,
+                "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableDiscoverTab()V",
             )
         }
 

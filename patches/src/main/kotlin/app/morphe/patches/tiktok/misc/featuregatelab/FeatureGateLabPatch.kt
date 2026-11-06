@@ -12,6 +12,7 @@ import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.absettings.APP_AB_INT_KEY_REGISTER
 import app.morphe.patches.tiktok.misc.absettings.APP_AB_RAW
+import app.morphe.patches.tiktok.misc.absettings.APP_AB_TYPED_OBJECT
 import app.morphe.patches.tiktok.misc.absettings.MethodShape
 import app.morphe.patches.tiktok.misc.absettings.appAbClass
 import app.morphe.patches.tiktok.misc.absettings.methodOfShape
@@ -395,16 +396,6 @@ private fun MutableMethod.patchRawAbBoundary() {
             addInstructionsAtControlFlowLabel(index, "$call\nmove-result-object v$register")
         }
 }
-
-/**
- * The App AB class's typed object getter: `(String key, boolean, boolean, Class type, int)`,
- * `LJIIJ` on 47.7.2. Every generated accessor for a class-typed gate ends here, with the key in
- * p1 and the class in p4, both only copied out and never written.
- */
-private val APP_AB_TYPED_OBJECT = MethodShape(
-    "Ljava/lang/Object;",
-    listOf("Ljava/lang/String;", "Z", "Z", "Ljava/lang/Class;", "I"),
-)
 
 private fun MutableMethod.patchTypedAbObjectBoundary() {
     val implementation = implementation

@@ -242,6 +242,8 @@ public final class NavigationTabsFilter {
                     Settings.BOTTOM_NAVIGATION_OBSERVED_TABS.get()
             );
             boolean blockNewTabs = Settings.BOTTOM_NAVIGATION_BLOCK_NEW_TABS.get();
+            // Asked for by its own switch, so it isn't a tab the list or block-new can take away.
+            boolean keepDiscover = Settings.DISCOVER_BOTTOM_TAB.get();
             CopyOnWriteArrayList filtered = new CopyOnWriteArrayList();
             Object homeTab = null;
 
@@ -251,7 +253,8 @@ public final class NavigationTabsFilter {
                     homeTab = tab;
                 }
 
-                if (shouldKeepBottomTab(key, enabledKeys, previousObservedKeys, observedKeys, blockNewTabs)) {
+                if ((keepDiscover && DiscoverTab.FILTER_KEY.equals(key))
+                        || shouldKeepBottomTab(key, enabledKeys, previousObservedKeys, observedKeys, blockNewTabs)) {
                     filtered.add(tab);
                 }
             }

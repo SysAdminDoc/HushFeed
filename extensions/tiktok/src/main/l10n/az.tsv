@@ -2526,3 +2526,5 @@ Offer Audio only in LIVE quality	LIVE keyfiyyətində Yalnız səs təklif et
 Audio only	Yalnız səs
 Adds Audio only to a LIVE's Video quality list. The room plays its sound without the picture, which uses much less data, until you pick another quality or leave. Recording from the stream still saves the video.	LIVE-ın Video keyfiyyəti siyahısına Yalnız səs əlavə edir. Otaq şəkilsiz yalnız səsi oynadır, bu da çox az data işlədir, başqa keyfiyyət seçənə və ya çıxana qədər. Yayımdan yazmaq yenə də videonu saxlayır.
 Pick a video quality to record the screen	Ekranı yazmaq üçün video keyfiyyəti seç
+Discover in the bottom bar	Alt paneldə Kəşf et
+Discover takes the place of Friends in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.	Kəşf et alt paneldə Dostlar bölməsinin yerini tutur, TikTok bəzi ölkələrdə paneli belə düzür. Regionunuz və lentiniz olduğu kimi qalır.

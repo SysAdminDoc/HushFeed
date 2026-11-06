@@ -61,6 +61,17 @@ internal val APP_AB_SHAPES = listOf(
     APP_AB_BOOLEAN, APP_AB_DOUBLE, APP_AB_FLOAT, APP_AB_INT, APP_AB_LONG, APP_AB_STRING, APP_AB_RAW,
 )
 
+/**
+ * The class's typed object getter: `(String key, boolean, boolean, Class type, int)`, `LJIIJ` on
+ * 47.7.2. Every generated accessor for a class-typed gate ends here, with the key in p1 and the
+ * class in p4, both only copied out and never written. It isn't one of [APP_AB_SHAPES], which name
+ * the class; this one is looked up on it.
+ */
+internal val APP_AB_TYPED_OBJECT = MethodShape(
+    "Ljava/lang/Object;",
+    listOf(STRING, "Z", "Z", "Ljava/lang/Class;", "I"),
+)
+
 /** The int getter's key sits after `this` and two ints, which [APP_AB_INT] holds it to. */
 internal const val APP_AB_INT_KEY_REGISTER = "p3"
 

@@ -2495,3 +2495,5 @@ Offer Audio only in LIVE quality,在 LIVE 画质中提供仅音频
 Audio only,仅音频
 "Adds Audio only to a LIVE's Video quality list. The room plays its sound without the picture, which uses much less data, until you pick another quality or leave. Recording from the stream still saves the video.",在 LIVE 的视频画质列表中加入仅音频。直播间只播放声音、不显示画面，流量少得多，直到你选择其他画质或离开。从直播流录制仍会保存视频.
 Pick a video quality to record the screen,请选择视频画质再录屏
+Discover in the bottom bar,底部栏显示“发现”
+"Discover takes the place of Friends in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.",在底部栏中用“发现”替换“好友”，与 TikTok 在部分国家的布局相同。你的地区和推荐内容保持不变.

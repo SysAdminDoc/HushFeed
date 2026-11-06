@@ -2703,3 +2703,5 @@ Offer Audio only in LIVE quality	Вариант «Только звук» в к�
 Audio only	Только звук
 Adds Audio only to a LIVE's Video quality list. The room plays its sound without the picture, which uses much less data, until you pick another quality or leave. Recording from the stream still saves the video.	Добавляет «Только звук» в список качества видео LIVE. Эфир играет звук без картинки, что тратит намного меньше трафика, пока вы не выберете другое качество или не выйдете. Запись из потока по-прежнему сохраняет видео.
 Pick a video quality to record the screen	Выберите качество видео для записи экрана
+Discover in the bottom bar	«Интересное» в нижней панели
+Discover takes the place of Friends in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.	«Интересное» занимает место «Друзей» в нижней панели, как TikTok делает в некоторых странах. Ваш регион и лента не меняются.

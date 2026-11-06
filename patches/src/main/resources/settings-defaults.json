@@ -282,6 +282,7 @@
       "bottom_navigation",
       "bottom_navigation_tabs",
       "bottom_navigation_block_new_tabs",
+      "discover_bottom_tab",
       "hide_tab_badges",
       "hide_bottom_tab_labels",
       "bottom_tab_name_home",
@@ -1370,6 +1371,12 @@
     "disable_long_press_repost": {
       "field": "DISABLE_LONG_PRESS_REPOST",
       "key": "disable_long_press_repost",
+      "type": "boolean",
+      "default": false
+    },
+    "discover_bottom_tab": {
+      "field": "DISCOVER_BOTTOM_TAB",
+      "key": "discover_bottom_tab",
       "type": "boolean",
       "default": false
     },

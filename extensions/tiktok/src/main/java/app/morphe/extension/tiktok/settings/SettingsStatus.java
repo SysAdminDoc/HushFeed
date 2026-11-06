@@ -70,6 +70,8 @@ public class SettingsStatus {
     public static boolean windDownScreensEnabled = false;
     /** Feed tab navigation found the bottom tab icons' names on this build and hooked them. */
     public static boolean bottomTabLabelsEnabled = false;
+    /** Feed tab navigation found the App AB class's typed object getter, which the bar's layout comes through. */
+    public static boolean discoverTabEnabled = false;
     /** Playback speed found the on-screen player's progress report, so a strip can drag the speed. */
     public static boolean liveSpeedEnabled = false;
     public static boolean longPressSpeedLockEnabled = false;
@@ -351,6 +353,10 @@ public class SettingsStatus {
 
     public static void enableBottomTabLabels() {
         bottomTabLabelsEnabled = true;
+    }
+
+    public static void enableDiscoverTab() {
+        discoverTabEnabled = true;
     }
 
     public static void enableLiveSpeed() {

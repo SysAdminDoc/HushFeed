@@ -25,7 +25,8 @@ public class FeedNavigationPreferenceCategory extends ConditionalPreferenceCateg
 
     /** Whether this page has anything on it. The row into it asks the same question. */
     public static boolean isAvailable() {
-        return SettingsStatus.feedNavigationEnabled || SettingsStatus.bottomTabLabelsEnabled;
+        return SettingsStatus.feedNavigationEnabled || SettingsStatus.bottomTabLabelsEnabled
+                || SettingsStatus.discoverTabEnabled;
     }
 
     @Override
@@ -75,6 +76,16 @@ public class FeedNavigationPreferenceCategory extends ConditionalPreferenceCateg
                 "Hide bottom tabs TikTok adds later unless you allow them.",
                 Settings.BOTTOM_NAVIGATION_BLOCK_NEW_TABS
         ));
+        // Left out on a build where the getter the bar's layout comes through wasn't found.
+        if (SettingsStatus.discoverTabEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Discover in the bottom bar",
+                    "Discover takes the place of Friends in the bottom bar, the way TikTok lays it "
+                            + "out in some countries. Your region and your feed stay as they are.",
+                    Settings.DISCOVER_BOTTOM_TAB
+            ));
+        }
         addPreference(new ChoicePreference(context, "Open TikTok on", Settings.START_PAGE,
                 new String[]{"TikTok default", "For You", "Following", "Friends", "Discover", "Inbox", "Profile"},
                 new String[]{StartPage.TIKTOK, StartPage.FOR_YOU, StartPage.FOLLOWING, StartPage.FRIENDS, StartPage.DISCOVER, StartPage.INBOX, StartPage.PROFILE}));

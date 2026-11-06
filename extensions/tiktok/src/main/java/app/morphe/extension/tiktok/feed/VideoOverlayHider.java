@@ -24,6 +24,7 @@ import android.view.WindowManager;
 
 import androidx.annotation.Nullable;
 
+import app.morphe.extension.shared.BuildNames;
 import app.morphe.extension.shared.GlobalLayoutHook;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.ResourceIdCache;
@@ -43,6 +44,7 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
 import java.lang.ref.WeakReference;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -394,6 +396,8 @@ public final class VideoOverlayHider {
     private static final String[][] TRAVERSAL_TARGET_IDS = traversalTargetIds();
     private static final int LOGICAL_TARGET_COUNT = TRAVERSAL_TARGET_IDS.length;
     private static final int TRAVERSAL_TARGET_COUNT = candidateCount(TRAVERSAL_TARGET_IDS);
+    /** Each target's names joined the way Hook status keys them, built once rather than per pass. */
+    private static final String[] TRAVERSAL_TARGET_KEYS = joinedNames(TRAVERSAL_TARGET_IDS);
 
     private static final int LEGACY_STATUS_BAR_FLAGS = View.SYSTEM_UI_FLAG_FULLSCREEN
             | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -789,13 +793,13 @@ public final class VideoOverlayHider {
                     wanted[COUNT_TEXT_TARGET_START + i] = hideCount || carryHides;
                 }
 
+                CandidateIds table = candidateIds(activity);
+                System.arraycopy(table.ids, 0, ids, 0, ids.length);
                 int candidateAt = 0;
                 boolean[] needsCell = TRAVERSAL.needsCell;
                 for (int target = 0; target < TRAVERSAL_TARGET_IDS.length; target++) {
                     boolean hideTarget = wanted[target];
-                    for (String name : TRAVERSAL_TARGET_IDS[target]) {
-                        ids[candidateAt] = resolveIdentifier(
-                                activity, activity.getPackageName(), name, false);
+                    for (int i = 0; i < TRAVERSAL_TARGET_IDS[target].length; i++) {
                         hidden[candidateAt] = hideTarget;
                         needsCell[candidateAt] = !outsideCells(target);
                         candidateAt++;
@@ -808,7 +812,7 @@ public final class VideoOverlayHider {
                 }
                 int cellId = identifier(activity, activity.getPackageName(), CELL_ROOT_ID);
                 try {
-                    collect(root, ids, found, cellId, cellId == 0, needsCell);
+                    collect(root, table, needsCell, found, cellId, cellId == 0);
                     // Only a strip this class hid is ever put back, and that one was the
                     // column's, so the column is looked up only while the strip is wanted.
                     if (detailCommentBar || stripForBar) {
@@ -2283,8 +2287,7 @@ public final class VideoOverlayHider {
             int chosen = selected[target];
             boolean wanted = hidden[candidateAt];
             if (chosen >= 0) {
-                String diagnostic = String.join("|", names);
-                HookStatus.recoveredViewId("overlay", diagnostic);
+                HookStatus.recoveredViewId("overlay", TRAVERSAL_TARGET_KEYS[target]);
                 HookStatus.bound("overlay", names[chosen - candidateAt]);
                 for (View view : found.get(chosen)) {
                     // The progress bar only goes see-through, so a drag along the bottom edge
@@ -2440,7 +2443,8 @@ public final class VideoOverlayHider {
     private static View view(Activity activity, String packageName, String[] names) {
         boolean retryMissing = SEARCH_MODULE_PACKAGE.equals(packageName);
         String family = overlayFamily(retryMissing);
-        String diagnostic = String.join("|", names);
+        // Runs on every layout pass; a single name is its own key, with nothing to build.
+        String diagnostic = names.length == 1 ? names[0] : String.join("|", names);
         for (String name : names) {
             int id = resolveIdentifier(activity, packageName, name, retryMissing);
             View candidate = id == 0 ? null : activity.findViewById(id);
@@ -2478,23 +2482,10 @@ public final class VideoOverlayHider {
     }
 
     private static void collect(View view, int[] ids, List<List<View>> found) {
-        collect(view, ids, found, 0, true, null);
-    }
-
-    /**
-     * The walk. A target flagged in {@code needsCell} is collected only under a view whose
-     * id is {@code cellId}; with no cell id resolved ({@code inCell} starts true) every
-     * match is taken, which is what the walk did before the cell root was known.
-     */
-    private static void collect(View view, int[] ids, List<List<View>> found,
-                                int cellId, boolean inCell, boolean[] needsCell) {
         int viewId = view.getId();
-        if (cellId != 0 && viewId == cellId) {
-            inCell = true;
-        }
         if (viewId != View.NO_ID) {
             for (int i = 0; i < ids.length; i++) {
-                if (ids[i] == viewId && (inCell || needsCell == null || !needsCell[i])) {
+                if (ids[i] == viewId) {
                     found.get(i).add(view);
                 }
             }
@@ -2502,9 +2493,127 @@ public final class VideoOverlayHider {
         if (view instanceof ViewGroup) {
             ViewGroup group = (ViewGroup) view;
             for (int i = 0, count = group.getChildCount(); i < count; i++) {
-                collect(group.getChildAt(i), ids, found, cellId, inCell, needsCell);
+                collect(group.getChildAt(i), ids, found);
             }
         }
+    }
+
+    /**
+     * The pass's walk. A candidate flagged in {@code needsCell} is collected only under a view
+     * whose id is {@code cellId}; with no cell id resolved ({@code inCell} starts true) every
+     * match is taken, which is what the walk did before the cell root was known. Each view's id
+     * is looked up in the table's index rather than compared with every candidate in turn.
+     */
+    private static void collect(View view, CandidateIds table, boolean[] needsCell,
+                                List<List<View>> found, int cellId, boolean inCell) {
+        int viewId = view.getId();
+        if (cellId != 0 && viewId == cellId) {
+            inCell = true;
+        }
+        if (viewId != View.NO_ID) {
+            int[] carrying = table.candidatesFor(viewId);
+            if (carrying != null) {
+                for (int candidate : carrying) {
+                    if (inCell || !needsCell[candidate]) {
+                        found.get(candidate).add(view);
+                    }
+                }
+            }
+        }
+        if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) view;
+            for (int i = 0, count = group.getChildCount(); i < count; i++) {
+                collect(group.getChildAt(i), table, needsCell, found, cellId, inCell);
+            }
+        }
+    }
+
+    /**
+     * The pass's candidate ids for one package, resolved once, with an index from each id to the
+     * candidates that carry it.
+     *
+     * <p>The layout listener runs this class on every layout of the window, and an opened video
+     * lays out many times while it settles. Each pass resolved every candidate name again and
+     * compared every view in the window with every candidate, which on the S22 was the larger part
+     * of the main-thread time Hushfeed added to opening a video from search (#344).
+     */
+    static final class CandidateIds {
+        final String packageName;
+        /** The id cache's generation the ids were read at; see {@link ResourceIdCache#generation}. */
+        final int generation;
+        /** One id per candidate, in candidate order, 0 for a name this build doesn't have. */
+        final int[] ids;
+        /** The distinct ids other than 0, ascending. */
+        private final int[] sorted;
+        /** For each id in {@link #sorted}, the candidates carrying it, in candidate order. */
+        private final int[][] carrying;
+
+        CandidateIds(String packageName, int generation, int[] ids) {
+            this.packageName = packageName;
+            this.generation = generation;
+            this.ids = ids;
+            int[] distinct = new int[ids.length];
+            int count = 0;
+            for (int id : ids) {
+                if (id != 0) distinct[count++] = id;
+            }
+            Arrays.sort(distinct, 0, count);
+            int unique = 0;
+            for (int i = 0; i < count; i++) {
+                if (unique == 0 || distinct[unique - 1] != distinct[i]) distinct[unique++] = distinct[i];
+            }
+            sorted = Arrays.copyOf(distinct, unique);
+            int[] sizes = new int[unique];
+            for (int id : ids) {
+                if (id != 0) sizes[Arrays.binarySearch(sorted, id)]++;
+            }
+            carrying = new int[unique][];
+            for (int i = 0; i < unique; i++) carrying[i] = new int[sizes[i]];
+            int[] filled = new int[unique];
+            for (int candidate = 0; candidate < ids.length; candidate++) {
+                if (ids[candidate] == 0) continue;
+                int at = Arrays.binarySearch(sorted, ids[candidate]);
+                carrying[at][filled[at]++] = candidate;
+            }
+        }
+
+        /** The candidates carrying {@code id}, in candidate order, or null for none. */
+        @Nullable
+        int[] candidatesFor(int id) {
+            int at = Arrays.binarySearch(sorted, id);
+            return at < 0 ? null : carrying[at];
+        }
+    }
+
+    /** The table for the package last seen; the main thread is the only one that reads it. */
+    @Nullable
+    private static CandidateIds candidateIdTable;
+
+    static CandidateIds candidateIds(Activity activity) {
+        String packageName = activity.getPackageName();
+        int generation = RESOURCE_IDS.generation();
+        CandidateIds cached = candidateIdTable;
+        if (cached != null && cached.generation == generation && cached.packageName.equals(packageName)) {
+            return cached;
+        }
+        int[] ids = new int[TRAVERSAL_TARGET_COUNT];
+        int at = 0;
+        for (String[] names : TRAVERSAL_TARGET_IDS) {
+            for (String name : names) {
+                ids[at++] = resolveIdentifier(activity, packageName, name, false);
+            }
+        }
+        CandidateIds table = new CandidateIds(packageName, generation, ids);
+        // Until the running build can be read, a name written for one build resolves to 0 without
+        // being remembered, so a table built then would keep that 0. It is rebuilt until then.
+        if (BuildNames.runningBuild() != null) candidateIdTable = table;
+        return table;
+    }
+
+    private static String[] joinedNames(String[][] targets) {
+        String[] joined = new String[targets.length];
+        for (int i = 0; i < targets.length; i++) joined[i] = String.join("|", targets[i]);
+        return joined;
     }
 
     private static final class TraversalScratch {

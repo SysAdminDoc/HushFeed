@@ -1,8 +1,12 @@
 package app.morphe.extension.tiktok.feed;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
@@ -13,9 +17,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import app.morphe.extension.shared.BuildNames;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.tiktok.settings.Settings;
+
+import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -4020,5 +4027,49 @@ public class VideoOverlayHiderTest {
         assertEquals("content FrameLayout 0px, 0x" + Integer.toHexString(unnamed)
                         + " TextView 0px; strip hidden [no id TextView 0px]",
                 VideoOverlayHider.columnNote(column, strip));
+    }
+
+    /**
+     * Each layout pass looks a view's candidates up in an index instead of comparing the view with
+     * every candidate (#344). Two names can share an id, so every candidate carrying it comes back,
+     * in candidate order, and an id no candidate has, 0 included, gives nothing.
+     */
+    @Test
+    public void theCandidateIndexGivesEveryCandidateCarryingAnId() {
+        VideoOverlayHider.CandidateIds table = new VideoOverlayHider.CandidateIds("pkg", 0,
+                new int[]{0x7f0a0005, 0, 0x7f0a0009, 0x7f0a0005, 0x7f0a0003});
+
+        assertArrayEquals(new int[]{0, 3}, table.candidatesFor(0x7f0a0005));
+        assertArrayEquals(new int[]{2}, table.candidatesFor(0x7f0a0009));
+        assertArrayEquals(new int[]{4}, table.candidatesFor(0x7f0a0003));
+        assertNull(table.candidatesFor(0));
+        assertNull(table.candidatesFor(0x7f0a0004));
+    }
+
+    /**
+     * The candidate names are resolved once rather than on every pass (#344), and resolved again
+     * when an id they gave changes.
+     */
+    @Test
+    public void theCandidateTableIsKeptAcrossPassesUntilAnIdChanges() {
+        BuildNames.setRunningBuildForTests("47.7.2");
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            Activity activity = controller.get();
+            VideoOverlayHider.resolveForTests("desc", 0x7f0a1001);
+            VideoOverlayHider.CandidateIds first = VideoOverlayHider.candidateIds(activity);
+
+            assertSame(first, VideoOverlayHider.candidateIds(activity));
+            assertTrue(Arrays.stream(first.ids).anyMatch(id -> id == 0x7f0a1001));
+
+            VideoOverlayHider.resolveForTests("desc", 0x7f0a1002);
+            VideoOverlayHider.CandidateIds second = VideoOverlayHider.candidateIds(activity);
+
+            assertNotSame(first, second);
+            assertTrue(Arrays.stream(second.ids).anyMatch(id -> id == 0x7f0a1002));
+            assertFalse(Arrays.stream(second.ids).anyMatch(id -> id == 0x7f0a1001));
+        } finally {
+            VideoOverlayHider.resolveForTests("desc", 0);
+            BuildNames.setRunningBuildForTests(null);
+        }
     }
 }

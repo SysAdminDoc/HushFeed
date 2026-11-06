@@ -53,10 +53,22 @@ public final class ResourceIdCache {
     /** Supplies a deterministic id for an isolated test fixture. */
     public synchronized void putForTests(String packageName, String name, int id) {
         ids.put(packageName + ":" + name, id);
+        generation++;
     }
 
     /** Clears values when a host activity or dynamic resource package is replaced. */
     public synchronized void clear() {
         ids.clear();
+        generation++;
+    }
+
+    private int generation;
+
+    /**
+     * Moves on whenever a remembered id may have changed, so a caller holding ids it resolved
+     * earlier can tell they still stand.
+     */
+    public synchronized int generation() {
+        return generation;
     }
 }

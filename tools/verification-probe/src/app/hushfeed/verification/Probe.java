@@ -2629,6 +2629,12 @@ public final class Probe extends Instrumentation {
                             Object kept = incoming.getClass().getMethod("install").invoke(incoming);
                             Log.i(TAG, "font imported as " + kept);
                         }
+                        if ("true".equals(intent.getStringExtra("remove"))) {
+                            // -e remove true takes the stored font off again, the way the
+                            // settings row's Remove does, so a check leaves no file behind.
+                            Object removed = importedFont.getMethod("remove", Context.class).invoke(null, app);
+                            Log.i(TAG, "font removed " + removed);
+                        }
                         Class<?> settings = loader.loadClass("app.morphe.extension.tiktok.settings.Settings");
                         Object importedSwitch = settings.getField("IMPORTED_FONT").get(null);
                         Object systemSwitch = settings.getField("SYSTEM_FONT").get(null);

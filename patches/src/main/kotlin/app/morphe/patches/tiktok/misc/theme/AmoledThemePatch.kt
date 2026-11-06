@@ -194,13 +194,18 @@ internal fun declaredVersions(): Set<String> =
  *   a sheet fills with it. The pages behind them are UIPageGrouped1, black in TikTok's own dark
  *   mode already, so those cards were the only gray left on Settings and privacy (#152). A
  *   TuxCell on a sheet (the profile menu panel) fills with UISheetGrouped2 instead.
+ * - agk and agq are UIPageFlat1's and UIPageGrouped1's (attr/a0a, attr/a0g), the pages
+ *   themselves: Inbox, profiles and TikTok's other full screens. They're #000000 in three dark
+ *   themes and #0C0E12 in the tinted one, so a picked color left those pages black (#348).
+ *   agl and agr are the same pages raised (UIPageFlat1Elevated, UIPageGrouped1Elevated, #1E1E1E),
+ *   and agm is UIPageFlat2 (attr/a0c), the gray band a page sets off a part of itself with.
  * - agp (UIPageFlat3Elevated) and c3 were the comments and share sheets' own through 46.x, under
  *   other names, and are dark surfaces of their own on 47.x.
  * The token names move a place or two with every build, and on 46.x a name these use now was
  * another surface tier, which is why only a build whose names were read is patched.
  */
 internal val SURFACE_STYLE_ITEMS: Map<String, Set<String>> = linkedMapOf(
-    "47.7.2" to setOf("agp", "c3", "aif", "ail", "ain", "bx", "ags"),
+    "47.7.2" to setOf("agp", "c3", "aif", "ail", "ain", "bx", "ags", "agk", "agl", "agm", "agq", "agr"),
 )
 
 /** This build's surface style items, or a refusal like the palette's. */

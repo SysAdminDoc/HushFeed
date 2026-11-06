@@ -117,6 +117,47 @@ class AmoledSheetTokensTest {
         }
     }
 
+    /**
+     * Inbox, profiles and TikTok's other full pages fill with UIPageFlat1 (a0a) or
+     * UIPageGrouped1 (a0g), named so by TikTok's own token table (a profile's background
+     * component and Inbox's activity and followers pages load them by id). The dark themes send them to
+     * agk and agq, #000000 in three themes and #0C0E12 in the tinted one, so a picked color
+     * left those pages black until the patch rewrote them too (#348). Their raised forms (agl,
+     * agr) and UIPageFlat2 (a0c, agm) go with them.
+     */
+    @Test
+    fun `the pages fill with tokens the patch rewrites, so a picked color reaches them`() {
+        Fixtures.forEachDeclared { apk ->
+            val table = FixtureResourceTable(apk)
+            val idOf = { name: String -> table.attrNames.entries.single { it.value == name }.key }
+            val rewritten = surfaceStyleItems(Fixtures.versionOf(apk))
+
+            val profile = "Lcom/ss/android/ugc/profile/platform/business/background/ProfileBackgroundComponent;"
+            assertTrue("a profile's background fills with UIPageFlat1", loadsConstant(apk, profile, null, idOf("a0a")))
+            val activity = "Lcom/ss/android/ugc/aweme/notification/aggnotice/AggregateNoticeFragment;"
+            assertTrue("Inbox's activity pages fill with UIPageFlat1", loadsConstant(apk, activity, "onViewCreated", idOf("a0a")))
+            val followers = "Lcom/ss/android/ugc/aweme/inbox/followerv2/InboxFollowerFragmentV2;"
+            assertTrue("Inbox's followers page fills with UIPageGrouped1", loadsConstant(apk, followers, "onViewCreated", idOf("a0g")))
+
+            val pages = mapOf(
+                "a0a" to ("agk" to "avv"),
+                "a0b" to ("agl" to "avw"),
+                "a0c" to ("agm" to "avx"),
+                "a0g" to ("agq" to "aw1"),
+                "a0h" to ("agr" to "aw2"),
+            )
+            for ((token, values) in pages) {
+                val (dark, light) = values
+                assertEquals("what the themes point $token at", setOf("?attr/$dark", "?attr/$light"), table.styleValues(token).toSet())
+                val darkValues = table.styleValues(dark)
+                assertTrue("$dark is a dark opaque literal wherever it is set: $darkValues", darkValues.isNotEmpty() && darkValues.all(::isDarkOpaqueLiteral))
+                assertTrue("$light stays light", table.styleValues(light).none(::isDarkOpaqueLiteral))
+                assertTrue("the patch rewrites $dark", dark in rewritten)
+            }
+            assertTrue("a dark theme's page is pure black before patching", "#ff000000" in table.styleValues("agk"))
+        }
+    }
+
     private fun loadsConstant(apk: File, type: String, method: String?, value: Int): Boolean {
         val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
         val classDef = container.dexEntryNames.asSequence().mapNotNull { entry ->

@@ -352,7 +352,7 @@ A bid from a patched TikTok can fail with "Bidding is temporarily unavailable", 
 
 ### Profile and Inbox are pure black, but I didn't pick AMOLED dark theme
 
-That's TikTok's own dark mode. It paints Profile and Inbox black and leaves the comment, share and search sheets dark gray. AMOLED dark theme is what turns those sheets black as well.
+That's TikTok's own dark mode. It paints Profile and Inbox black and leaves the comment, share and search sheets dark gray. AMOLED dark theme is what turns those sheets black as well, and with a color picked in its options, Profile and Inbox take that color too.
 
 ### Coming from Kveld
 

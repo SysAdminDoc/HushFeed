@@ -45,6 +45,37 @@ class AmoledStyleItemsTest {
         )
     }
 
+    /**
+     * A picked color reached the sheets and cards but left Inbox and profiles black, since the
+     * pages' own tokens are #000000 in the dark themes and weren't rewritten (#348).
+     */
+    @Test
+    fun `a picked color reaches the pages, black ones included, and light pages stay`() {
+        val styles = parse(
+            """
+            <resources>
+              <style name="zo"><item name="agk">#ff000000</item><item name="agq">#ff000000</item><item name="agm">#ff1e1e1e</item></style>
+              <style name="a_k"><item name="agk">#ff0c0e12</item><item name="agq">#ff0c0e12</item><item name="agm">#ff16191d</item></style>
+              <style name="a_j"><item name="agl">#ff1e1e1e</item><item name="agr">#ff1e1e1e</item></style>
+              <style name="z6"><item name="avv">#ffffffff</item><item name="aw1">#fff3f5f6</item><item name="avx">#fff7f8f9</item></style>
+            </resources>
+            """.trimIndent(),
+        )
+
+        val changed = rewriteDarkStyleItems(styles, surfaceStyleItems("47.7.2"), "#181825")
+
+        assertEquals(setOf("agk", "agl", "agm", "agq", "agr"), changed)
+        assertEquals(
+            listOf(
+                "#181825", "#181825", "#181825",
+                "#181825", "#181825", "#181825",
+                "#181825", "#181825",
+                "#ffffffff", "#fff3f5f6", "#fff7f8f9",
+            ),
+            values(styles),
+        )
+    }
+
     @Test
     fun `nothing dark to rewrite is reported as nothing changed`() {
         val styles = parse("""<resources><style name="zb"><item name="c3">#ffffffff</item></style></resources>""")

@@ -352,8 +352,9 @@ function Find-WalkRow([string]$Label, [int]$Width, [int]$Height, [string]$Name, 
     # Hushfeed home's quick setup buttons (one of them is "Privacy", like the page). The way up
     # reads every screen: a header being collapsed sits above its controls, and an expanded Feed
     # filter runs about twelve screens, so eight blind swipes up left the walk under the header.
+    # Feed screen runs about 32 on a 720x1600 emulator, past the old cap of 30.
     $before = ''
-    for ($i = 0; $i -lt 30; $i++) {
+    for ($i = 0; $i -lt 80; $i++) {
         $nodes = Get-WalkScreen "$Name-top"
         $row = Select-WalkRow $nodes $Label $Id $Height
         if ($row) { return $row }
@@ -396,7 +397,7 @@ function Get-WalkSectionView([string]$Label, [int]$Width, [int]$Height, [string]
 
 function Invoke-WalkScrollToEnd([string]$Name, [int]$Width, [int]$Height, [string]$StopLabel, [string]$StartLabel) {
     $before = ''
-    for ($i = 0; $i -lt 40; $i++) {
+    for ($i = 0; $i -lt 80; $i++) {
         $nodes = Get-WalkScreen "$Name-scroll"
         if (-not $nodes) { return $false }
         $cutoff = $Height * 0.12

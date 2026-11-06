@@ -409,6 +409,7 @@ Clearing suggested accounts,Clearing suggested accounts
 "Clears the recent events, saved crash reports, a recorded screen layout and the Hook status results above.","Clears the recent events, saved crash reports, a recorded screen layout and the Hook status results above."
 Close,Close
 Close TikTok after,Close TikTok after
+Close with Back or a tap outside,Close with Back or a tap outside
 Collapsed,Collapsed
 Color commenter names,Color commenter names
 "Colors the description, the author's name and the post date on videos.","Colors the description, the author's name and the post date on videos."
@@ -1201,6 +1202,8 @@ Medium,Medium
 Message,Message
 "Message bubble colors, Inbox archive and sharing to more chats","Message bubble colors, Inbox archive and sharing to more chats"
 Message search isn't on for this account,Message search isn't on for this account
+Message text,Message text
+Message title,Message title
 "Messages, profiles and search still work.","Messages, profiles and search still work."
 Microphone in use,Microphone in use
 Mini dramas,Mini dramas
@@ -1323,6 +1326,7 @@ OK,OK
 Off,Off
 "Off forces the value to false, on forces it to true. Reset lets TikTok decide again.","Off forces the value to false, on forces it to true. Reset lets TikTok decide again."
 "Off until you tap it. Wipes TikTok's data once, on the next start, and gives it a new Android ID and advertising ID, so it sees a phone it hasn't met. You'll be signed out and lose your drafts. Hushfeed's settings stay.","Off until you tap it. Wipes TikTok's data once, on the next start, and gives it a new Android ID and advertising ID, so it sees a phone it hasn't met. You'll be signed out and lose your drafts. Hushfeed's settings stay."
+"Off, only its button closes it.","Off, only its button closes it."
 Off. TikTok can report views and typing.,Off. TikTok can report views and typing.
 Offer Audio only in LIVE quality,Offer Audio only in LIVE quality
 Offer LIVE quality in more rooms,Offer LIVE quality in more rooms
@@ -1815,6 +1819,7 @@ Show See translation,Show See translation
 Show TikTok's feed buttons,Show TikTok's feed buttons
 Show TikTok's own progress bar on videos where it's normally hidden.,Show TikTok's own progress bar on videos where it's normally hidden.
 Show a LIVE under the status bar,Show a LIVE under the status bar
+Show a message of your own each time TikTok opens.,Show a message of your own each time TikTok opens.
 Show a progress bar while a video saves.,Show a progress bar while a video saves.
 Show a verified badge on your own profile on this phone. Other people see your real status.,Show a verified badge on your own profile on this phone. Other people see your real status.
 Show a video preview thumbnail while dragging the progress bar.,Show a video preview thumbnail while dragging the progress bar.
@@ -1948,6 +1953,7 @@ Start today over,Start today over
 Start typing,Start typing
 Starts after %1$s other saves,Starts after %1$s other saves
 Starts after one other save,Starts after one other save
+Startup message,Startup message
 Stay on the video in full screen,Stay on the video in full screen
 Staying on a video,Staying on a video
 Sticker,Sticker
@@ -2132,6 +2138,7 @@ The feed stops when this video ends.,The feed stops when this video ends.
 The file hushfeed-safe-mode couldn't be removed. Delete it from TikTok's folder under Android/data to turn Hushfeed back on.,The file hushfeed-safe-mode couldn't be removed. Delete it from TikTok's folder under Android/data to turn Hushfeed back on.
 The frame couldn't be read. Try again.,The frame couldn't be read. Try again.
 The frame couldn't be saved. Try again.,The frame couldn't be saved. Try again.
+The heading at the top. Leave it empty for none.,The heading at the top. Leave it empty for none.
 "The hour both budgets reset, on a 24 hour clock. The default is 4 in the morning, so a late night still counts as the same day.","The hour both budgets reset, on a 24 hour clock. The default is 4 in the morning, so a late night still counts as the same day."
 The last feed capture wasn't saved. Tap to try again.,The last feed capture wasn't saved. Tap to try again.
 The last one is still waiting for Wi-Fi,The last one is still waiting for Wi-Fi
@@ -2423,6 +2430,7 @@ Watch history was imported for the account that chose the file. Switch back to s
 "WebP, exactly as TikTok sent it","WebP, exactly as TikTok sent it"
 What TikTok gets,What TikTok gets
 What gets sent each day.,What gets sent each day.
+What the message says.,What the message says.
 What's new,What's new
 "When Copy link gives a short vt.tiktok.com or vm.tiktok.com link, Hushfeed opens it once in the background to find the full video link and copies that instead. TikTok sees that visit, and it connects directly even when a proxy is on. Links you send to another app go out as they were.","When Copy link gives a short vt.tiktok.com or vm.tiktok.com link, Hushfeed opens it once in the background to find the full video link and copies that instead. TikTok sees that visit, and it connects directly even when a proxy is on. Links you send to another app go out as they were."
 "When TikTok is in dark mode, the list of collections you get by holding the Favorites button is dark too instead of white.","When TikTok is in dark mode, the list of collections you get by holding the Favorites button is dark too instead of white."
@@ -2493,6 +2501,7 @@ Your settings,Your settings
 autoplay auto play,autoplay auto play
 collapsed,collapsed
 debug debugging logs logging,debug debugging logs logging
+dialog popup greeting,dialog popup greeting
 expanded,expanded
 picture in picture PiP,picture in picture PiP
 save photos,save photos

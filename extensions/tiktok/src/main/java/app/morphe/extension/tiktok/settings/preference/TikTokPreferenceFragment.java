@@ -1563,7 +1563,8 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
             Settings.HIDE_SEARCH_SUGGESTIONS.key, "search suggestions",
             Settings.HIDE_INBOX_TAKO.key, "AI chat",
             Settings.HIDE_CHAT_AI_REPLIES.key, "AI Tako",
-            Settings.DOWNLOAD_ORIGINAL_PHOTOS.key, "save photos");
+            Settings.DOWNLOAD_ORIGINAL_PHOTOS.key, "save photos",
+            Settings.STARTUP_MESSAGE.key, "dialog popup greeting");
 
     private static String searchKeywords(Context context, String key) {
         String aliases = SEARCH_ALIASES.get(key);

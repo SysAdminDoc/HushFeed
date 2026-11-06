@@ -2530,3 +2530,13 @@ Discover in the bottom bar	Alt paneldə Kəşf et
 Discover takes the place of Friends in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.	Kəşf et alt paneldə Dostlar bölməsinin yerini tutur, TikTok bəzi ölkələrdə paneli belə düzür. Regionunuz və lentiniz olduğu kimi qalır.
 # context: what screen readers say for a setting an update added, next to its blue dot; %1$s is the setting's title (#349)
 %1$s, new	%1$s, yeni
+Startup message	Başlanğıc mesajı
+Show a message of your own each time TikTok opens.	TikTok hər dəfə açılanda öz mesajınızı göstərin.
+Message title	Mesajın başlığı
+The heading at the top. Leave it empty for none.	Yuxarıdakı başlıq. Başlıq istəmirsinizsə, boş saxlayın.
+Message text	Mesajın mətni
+What the message says.	Mesajda yazılanlar.
+Close with Back or a tap outside	Geri və ya kənara toxunuşla bağlansın
+Off, only its button closes it.	Söndürüləndə onu yalnız düyməsi bağlayır.
+# context: extra search words for the Startup message setting, not shown anywhere (#347)
+dialog popup greeting	dialoq pəncərə salamlama

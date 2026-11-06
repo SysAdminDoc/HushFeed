@@ -2707,3 +2707,13 @@ Discover in the bottom bar	«Интересное» в нижней панели
 Discover takes the place of Friends in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.	«Интересное» занимает место «Друзей» в нижней панели, как TikTok делает в некоторых странах. Ваш регион и лента не меняются.
 # context: what screen readers say for a setting an update added, next to its blue dot; %1$s is the setting's title (#349)
 %1$s, new	%1$s, новое
+Startup message	Сообщение при запуске
+Show a message of your own each time TikTok opens.	Показывать ваше сообщение при каждом открытии TikTok.
+Message title	Заголовок сообщения
+The heading at the top. Leave it empty for none.	Заголовок сверху. Оставьте пустым, чтобы его не было.
+Message text	Текст сообщения
+What the message says.	Что говорится в сообщении.
+Close with Back or a tap outside	Закрывать кнопкой «Назад» или касанием снаружи
+Off, only its button closes it.	Если выключено, закрыть можно только кнопкой.
+# context: extra search words for the Startup message setting, not shown anywhere (#347)
+dialog popup greeting	диалог всплывающее окно приветствие

@@ -12,6 +12,7 @@ Every Hushfeed release, newest first.
 * The Feature Gate Lab can override experiments TikTok reads as a whole object, like the home tab layout. It couldn't reach those before. An override changes only the fields you give it, and it still applies when TikTok sent your account nothing for that experiment (#98).
 * The diagnostic export has a Font section. It shows which font TikTok's text went out in, whether an imported font loaded (and if it didn't, why), and the Samsung font style on Galaxy phones (#346).
 * Settings an update adds get a small dot after their name in Hushfeed settings, and the closed section they sit in gets one too, so you can spot what's new. A dot goes away after the visit that shows it, and a fresh install starts with none (#349).
+* `Startup message` shows a message you write each time TikTok opens, with an optional title. Turn off `Close with Back or a tap outside` and only its OK button closes it. Rotating the phone or changing TikTok's theme doesn't bring it back. It starts off and lives in Hushfeed settings > App (#347).
 
 ### Bug Fixes
 

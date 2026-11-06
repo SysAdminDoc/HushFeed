@@ -2530,3 +2530,13 @@ Discover in the bottom bar	Descubrir en la barra inferior
 Discover takes the place of Friends in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.	Descubrir ocupa el lugar de Amigos en la barra inferior, como TikTok la organiza en algunos países. Tu región y tu feed no cambian.
 # context: what screen readers say for a setting an update added, next to its blue dot; %1$s is the setting's title (#349)
 %1$s, new	%1$s, nuevo
+Startup message	Mensaje de inicio
+Show a message of your own each time TikTok opens.	Muestra un mensaje tuyo cada vez que se abre TikTok.
+Message title	Título del mensaje
+The heading at the top. Leave it empty for none.	El encabezado de arriba. Déjalo vacío para no mostrar ninguno.
+Message text	Texto del mensaje
+What the message says.	Lo que dice el mensaje.
+Close with Back or a tap outside	Cerrar con Atrás o tocando fuera
+Off, only its button closes it.	Desactivado, solo su botón lo cierra.
+# context: extra search words for the Startup message setting, not shown anywhere (#347)
+dialog popup greeting	diálogo ventana emergente saludo

@@ -2498,3 +2498,12 @@ Pick a video quality to record the screen,请选择视频画质再录屏
 Discover in the bottom bar,底部栏显示“发现”
 "Discover takes the place of Friends in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.",在底部栏中用“发现”替换“好友”，与 TikTok 在部分国家的布局相同。你的地区和推荐内容保持不变.
 "%1$s, new","%1$s，新"
+Startup message,启动消息
+Show a message of your own each time TikTok opens.,每次打开 TikTok 时显示你自己的消息.
+Message title,消息标题
+The heading at the top. Leave it empty for none.,顶部的标题。留空则不显示.
+Message text,消息内容
+What the message says.,消息显示的内容.
+Close with Back or a tap outside,按返回键或点按外部即可关闭
+"Off, only its button closes it.",关闭后只能用它的按钮关闭.
+dialog popup greeting,对话框 弹窗 问候

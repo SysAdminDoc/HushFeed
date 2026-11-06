@@ -365,6 +365,15 @@ public class Settings extends BaseSettings {
      */
     public static final BooleanSetting HIDE_SETTINGS_ROW =
             new BooleanSetting("hide_settings_row", FALSE);
+    /** A message of the reader's own, shown each time TikTok opens (#347). */
+    public static final BooleanSetting STARTUP_MESSAGE = new BooleanSetting("startup_message", FALSE);
+    public static final StringSetting STARTUP_MESSAGE_TITLE = new StringSetting(
+            "startup_message_title", "", false, Setting.parent(STARTUP_MESSAGE));
+    public static final StringSetting STARTUP_MESSAGE_TEXT = new StringSetting(
+            "startup_message_text", "", false, Setting.parent(STARTUP_MESSAGE));
+    /** Off, only the message's button closes it. */
+    public static final BooleanSetting STARTUP_MESSAGE_DISMISSIBLE = new BooleanSetting(
+            "startup_message_dismissible", TRUE, false, Setting.parent(STARTUP_MESSAGE));
     /**
      * On by default: the setup runs before anyone can reach this switch, so picking the patch is
      * the choice. Off brings the screens back the next time TikTok runs its setup.

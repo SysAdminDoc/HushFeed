@@ -459,6 +459,23 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                         + "Hushfeed settings is on.",
                 Settings.HIDE_SETTINGS_ROW
         ));
+        // Shown from the same start of TikTok's main screen as the settings row, so every bundle has it.
+        addPreference(new TogglePreference(
+                context,
+                "Startup message",
+                "Show a message of your own each time TikTok opens.",
+                Settings.STARTUP_MESSAGE
+        ));
+        addPreference(new InputTextPreference(context, "Message title",
+                "The heading at the top. Leave it empty for none.", Settings.STARTUP_MESSAGE_TITLE));
+        addPreference(new InputTextPreference(context, "Message text",
+                "What the message says.", Settings.STARTUP_MESSAGE_TEXT));
+        addPreference(new TogglePreference(
+                context,
+                "Close with Back or a tap outside",
+                "Off, only its button closes it.",
+                Settings.STARTUP_MESSAGE_DISMISSIBLE
+        ));
         if (SettingsStatus.firstLaunchSetupEnabled) {
             addPreference(new TogglePreference(
                     context,

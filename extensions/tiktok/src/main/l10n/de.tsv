@@ -2533,3 +2533,13 @@ Discover in the bottom bar	Entdecken in der unteren Leiste
 Discover takes the place of Friends in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.	Entdecken ersetzt Freunde in der unteren Leiste, so wie TikTok sie in manchen Ländern anordnet. Deine Region und dein Feed bleiben, wie sie sind.
 # context: what screen readers say for a setting an update added, next to its blue dot; %1$s is the setting's title (#349)
 %1$s, new	%1$s, neu
+Startup message	Startnachricht
+Show a message of your own each time TikTok opens.	Zeigt bei jedem Öffnen von TikTok eine eigene Nachricht.
+Message title	Titel der Nachricht
+The heading at the top. Leave it empty for none.	Die Überschrift oben. Leer lassen für keine.
+Message text	Text der Nachricht
+What the message says.	Was in der Nachricht steht.
+Close with Back or a tap outside	Mit Zurück oder Tippen daneben schließen
+Off, only its button closes it.	Aus: Nur die Schaltfläche schließt sie.
+# context: extra search words for the Startup message setting, not shown anywhere (#347)
+dialog popup greeting	Dialog Popup Begrüßung

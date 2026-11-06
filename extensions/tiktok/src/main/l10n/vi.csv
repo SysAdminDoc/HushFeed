@@ -2498,3 +2498,12 @@ Pick a video quality to record the screen,Chọn chất lượng video để qua
 Discover in the bottom bar,Khám phá ở thanh dưới cùng
 "Discover takes the place of Friends in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.","Khám phá thay chỗ Bạn bè ở thanh dưới cùng, giống cách TikTok sắp xếp ở một số quốc gia. Khu vực và bảng tin của bạn vẫn giữ nguyên."
 "%1$s, new","%1$s, mới"
+Startup message,Thông báo khi mở
+Show a message of your own each time TikTok opens.,Hiện một thông báo của riêng bạn mỗi lần mở TikTok.
+Message title,Tiêu đề thông báo
+The heading at the top. Leave it empty for none.,Dòng tiêu đề ở trên cùng. Để trống nếu không cần.
+Message text,Nội dung thông báo
+What the message says.,Nội dung mà thông báo hiển thị.
+Close with Back or a tap outside,Đóng bằng nút Quay lại hoặc chạm ra ngoài
+"Off, only its button closes it.","Khi tắt, chỉ nút của nó mới đóng được."
+dialog popup greeting,hộp thoại cửa sổ bật lên lời chào

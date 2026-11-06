@@ -2530,3 +2530,13 @@ Discover in the bottom bar	Alt çubukta Keşfet
 Discover takes the place of Friends in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.	Keşfet, alt çubukta Arkadaşlar'ın yerini alır, TikTok bazı ülkelerde çubuğu böyle dizer. Bölgeniz ve akışınız olduğu gibi kalır.
 # context: what screen readers say for a setting an update added, next to its blue dot; %1$s is the setting's title (#349)
 %1$s, new	%1$s, yeni
+Startup message	Açılış mesajı
+Show a message of your own each time TikTok opens.	TikTok her açıldığında kendi mesajınızı gösterir.
+Message title	Mesaj başlığı
+The heading at the top. Leave it empty for none.	Üstteki başlık. Başlık istemiyorsanız boş bırakın.
+Message text	Mesaj metni
+What the message says.	Mesajda yazacaklar.
+Close with Back or a tap outside	Geri veya dışarı dokunarak kapat
+Off, only its button closes it.	Kapalıyken yalnızca düğmesi kapatır.
+# context: extra search words for the Startup message setting, not shown anywhere (#347)
+dialog popup greeting	iletişim kutusu açılır pencere karşılama

@@ -18,6 +18,7 @@ import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsReturn;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
+import app.morphe.extension.tiktok.settings.StartupMessage;
 import app.morphe.extension.tiktok.settings.TikTokActivityHook;
 import app.morphe.extension.tiktok.wellbeing.IdleLeave;
 
@@ -95,6 +96,8 @@ public final class HomeTabSettingsShortcut {
         // And the wait under Screen time that leaves TikTok after no touch, which follows every
         // screen from here.
         if (context instanceof Activity) IdleLeave.onMainActivityCreate((Activity) context);
+        // The reader's own startup message (#347), in every bundle like the lines above.
+        if (context instanceof Activity) StartupMessage.onMainActivityCreate((Activity) context);
         try {
             if (!(context instanceof Activity) || !SettingsStatus.feedNavigationEnabled) return;
             FRONT.add((Activity) context);

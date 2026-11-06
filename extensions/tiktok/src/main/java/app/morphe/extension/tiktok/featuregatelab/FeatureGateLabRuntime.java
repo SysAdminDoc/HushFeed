@@ -292,6 +292,27 @@ public final class FeatureGateLabRuntime {
         return forced;
     }
 
+    /**
+     * TikTok's typed App AB getter for a JSON gate it parses into a class, such as the home tab
+     * rows (`tab_fcp_config_v2` into TabConfig, #98). The raw getter above never sees these
+     * reads. A rule's fields go over a copy of TikTok's own value, or over an empty one when the
+     * server sent none, so a gate this account isn't in can still be set.
+     */
+    public static Object overrideAbObject(String key, Class<?> requestedClass, Object original) {
+        FeatureGateLearnMode.observe(FeatureGateLabStore.MANAGER_ABMOCK, key, "OBJECT", original);
+        if (requestedClass == null
+                || activeRule(FeatureGateLabStore.MANAGER_ABMOCK, key, "OBJECT") == null) {
+            return original;
+        }
+        return overrideStructuredObject(
+                FeatureGateLabStore.MANAGER_ABMOCK,
+                key,
+                requestedClass,
+                original == null ? StructuredConfigController.emptyInstance(requestedClass) : null,
+                original
+        );
+    }
+
     public static Object overridePlayerValue(String key, Type declaredType, Object original) {
         FeatureGateLearnMode.observe(FeatureGateLabStore.MANAGER_PLAYER_CONFIG, key, String.valueOf(declaredType), original);
         String type = scalarTypeOf(declaredType, original);

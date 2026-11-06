@@ -774,7 +774,8 @@ public final class FeatureGateLabStore {
         if (MANAGER_SETTINGS_MANAGER.equals(manager)) {
             return "OBJECT".equals(normalizeType(type));
         }
-        if (MANAGER_LIVE.equals(manager) && "OBJECT".equals(normalizeType(type))) {
+        if ((MANAGER_LIVE.equals(manager) || MANAGER_ABMOCK.equals(manager))
+                && "OBJECT".equals(normalizeType(type))) {
             return true;
         }
         if (!MANAGER_ABMOCK.equals(manager)

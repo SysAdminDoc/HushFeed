@@ -8,6 +8,7 @@ Every Hushfeed release, newest first.
 
 * `Show where commenters are from` also checks the country field on a commenter's account, and uses it only when it holds a two letter code (#201).
 * `Long press on Profile opens my watch history` makes holding the Profile tab show the watch history kept on your phone, so the long press on For You can keep opening Hushfeed settings. A tap on Profile works as before. It starts off, and it sits under `Keep my own watch history` (#172).
+* The Feature Gate Lab can override experiments TikTok reads as a whole object, like the home tab layout. It couldn't reach those before. An override changes only the fields you give it, and it still applies when TikTok sent your account nothing for that experiment (#98).
 
 ### Bug Fixes
 

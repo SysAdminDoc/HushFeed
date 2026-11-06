@@ -92,7 +92,7 @@ final class StructuredConfigController {
             }
             return result;
         }
-        if (requestedClass == null || !hasNoArgumentConstructor(requestedClass)) {
+        if (requestedClass == null || !canInstantiate(requestedClass)) {
             return null;
         }
         try {
@@ -174,7 +174,7 @@ final class StructuredConfigController {
     }
 
     private static boolean canCopy(Class<?> valueClass) {
-        return isSupportedRootArray(valueClass) || hasNoArgumentConstructor(valueClass);
+        return isSupportedRootArray(valueClass) || canInstantiate(valueClass);
     }
 
     private static boolean isSupportedRootArray(Class<?> valueClass) {
@@ -182,13 +182,79 @@ final class StructuredConfigController {
             return false;
         }
         Class<?> component = valueClass.getComponentType();
-        return isScalar(component) || hasNoArgumentConstructor(component);
+        return isScalar(component) || canInstantiate(component);
+    }
+
+    /** A new value of the class with nothing set, or null when this can't make one. */
+    static Object emptyInstance(Class<?> valueClass) {
+        try {
+            return valueClass == null || valueClass.isArray() ? null : newInstance(valueClass);
+        } catch (Throwable ignored) {
+            return null;
+        }
     }
 
     private static Object newInstance(Class<?> valueClass) throws Exception {
-        Constructor<?> constructor = valueClass.getDeclaredConstructor();
-        makeAccessible(constructor);
-        return constructor.newInstance();
+        if (hasNoArgumentConstructor(valueClass)) {
+            Constructor<?> constructor = valueClass.getDeclaredConstructor();
+            makeAccessible(constructor);
+            return constructor.newInstance();
+        }
+        if (canAllocate(valueClass)) {
+            return Allocator.ALLOCATE.invoke(Allocator.UNSAFE, valueClass);
+        }
+        throw new InstantiationException(valueClass.getName());
+    }
+
+    /**
+     * Whether this can make a value of the class to fill in. Gson, which parses TikTok's JSON
+     * gates, builds a class that has no empty constructor (the home tab rows' TabConfig, #98)
+     * without calling one, and this does the same for TikTok's own classes.
+     */
+    private static boolean canInstantiate(Class<?> valueClass) {
+        return hasNoArgumentConstructor(valueClass) || canAllocate(valueClass);
+    }
+
+    private static boolean canAllocate(Class<?> valueClass) {
+        if (valueClass.isPrimitive() || valueClass.isArray() || valueClass.isInterface()
+                || valueClass.isEnum() || Modifier.isAbstract(valueClass.getModifiers())
+                || isPlatformClass(valueClass.getName())) {
+            return false;
+        }
+        return Allocator.ALLOCATE != null;
+    }
+
+    private static boolean isPlatformClass(String name) {
+        return name.startsWith("java.") || name.startsWith("javax.")
+                || name.startsWith("android.") || name.startsWith("androidx.")
+                || name.startsWith("kotlin.") || name.startsWith("org.json.")
+                || name.startsWith("dalvik.") || name.startsWith("sun.");
+    }
+
+    /** The runtime's allocator, looked up once on first use, the way Gson finds it. */
+    private static final class Allocator {
+        static final Object UNSAFE;
+        static final java.lang.reflect.Method ALLOCATE;
+
+        static {
+            Object unsafe = null;
+            java.lang.reflect.Method allocate = null;
+            try {
+                Class<?> unsafeClass = Class.forName("sun.misc.Unsafe");
+                Field instance = unsafeClass.getDeclaredField("theUnsafe");
+                instance.setAccessible(true);
+                unsafe = instance.get(null);
+                allocate = unsafeClass.getMethod("allocateInstance", Class.class);
+            } catch (Throwable ignored) {
+                unsafe = null;
+                allocate = null;
+            }
+            UNSAFE = unsafe;
+            ALLOCATE = allocate;
+        }
+
+        private Allocator() {
+        }
     }
 
     /**
@@ -340,7 +406,7 @@ final class StructuredConfigController {
             }
             Class<?> elementType = collectionElementType(genericType);
             if (elementType == null
-                    || (!isScalar(elementType) && !hasNoArgumentConstructor(elementType))) {
+                    || (!isScalar(elementType) && !canInstantiate(elementType))) {
                 throw new IllegalArgumentException("unsupported list element type");
             }
             Collection<Object> result = Set.class.isAssignableFrom(targetType)
@@ -352,7 +418,7 @@ final class StructuredConfigController {
             }
             return result;
         }
-        if (value instanceof JSONObject && hasNoArgumentConstructor(targetType)) {
+        if (value instanceof JSONObject && canInstantiate(targetType)) {
             Object result = newInstance(targetType);
             JSONObject source = (JSONObject) value;
             java.util.Iterator<String> keys = source.keys();
@@ -445,11 +511,11 @@ final class StructuredConfigController {
         }
         if (type.isArray()) {
             Class<?> component = type.getComponentType();
-            return isScalar(component) || hasNoArgumentConstructor(component);
+            return isScalar(component) || canInstantiate(component);
         }
         if (Collection.class.isAssignableFrom(type)) {
             Class<?> element = collectionElementType(genericType);
-            return element != null && (isScalar(element) || hasNoArgumentConstructor(element));
+            return element != null && (isScalar(element) || canInstantiate(element));
         }
         if (Map.class.isAssignableFrom(type)) {
             Type[] arguments = typeArguments(genericType);
@@ -457,9 +523,9 @@ final class StructuredConfigController {
                 return false;
             }
             Class<?> valueType = classForType(arguments[1]);
-            return valueType != null && (isScalar(valueType) || hasNoArgumentConstructor(valueType));
+            return valueType != null && (isScalar(valueType) || canInstantiate(valueType));
         }
-        return hasNoArgumentConstructor(type);
+        return canInstantiate(type);
     }
 
     private static boolean hasNoArgumentConstructor(Class<?> valueClass) {

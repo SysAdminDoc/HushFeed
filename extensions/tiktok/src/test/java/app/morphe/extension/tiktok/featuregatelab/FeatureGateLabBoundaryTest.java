@@ -3,7 +3,9 @@ package app.morphe.extension.tiktok.featuregatelab;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import android.net.Uri;
@@ -408,6 +410,78 @@ public class FeatureGateLabBoundaryTest {
             executor.shutdownNow();
         }
         assertEquals(2048, SettingsManagerObservationRecorder.size());
+    }
+
+    /** Shaped like TikTok's TabConfig: final fields, no empty constructor, nested rows. */
+    static final class SampleTabs {
+        final Boolean isJsonIllegal;
+        final Integer expectedBottomSize;
+        final SampleTop topTab;
+        final Map<String, ArrayList<SampleRow>> bottomTab;
+
+        SampleTabs(Boolean isJsonIllegal, Integer expectedBottomSize, SampleTop topTab,
+                Map<String, ArrayList<SampleRow>> bottomTab) {
+            this.isJsonIllegal = isJsonIllegal;
+            this.expectedBottomSize = expectedBottomSize;
+            this.topTab = topTab;
+            this.bottomTab = bottomTab;
+        }
+    }
+
+    static final class SampleTop {
+        final ArrayList<SampleRow> tabs;
+
+        SampleTop(ArrayList<SampleRow> tabs) {
+            this.tabs = tabs;
+        }
+    }
+
+    static final class SampleRow {
+        final String name;
+        final Integer index;
+
+        SampleRow(String name, Integer index) {
+            this.name = name;
+            this.index = index;
+        }
+    }
+
+    @Test
+    public void aTypedAbObjectRuleGoesOverACopyOfTikToksValue() {
+        // #98: the home tab rows are a JSON gate TikTok parses into a class with no empty
+        // constructor, read through the typed getter the raw hook never sees.
+        FeatureGateLabStore.saveRule("abmock", "tab_rows", "OBJECT",
+                "{\"expectedBottomSize\":4,"
+                        + "\"topTab\":{\"tabs\":[{\"name\":\"friends\",\"index\":0}]}}", true);
+        FeatureGateLabStore.setMasterEnabled(true);
+
+        Map<String, ArrayList<SampleRow>> bottom = new HashMap<>();
+        bottom.put("default", new ArrayList<>(List.of(new SampleRow("home", 0))));
+        SampleTabs tikTok = new SampleTabs(false, 5,
+                new SampleTop(new ArrayList<>(List.of(new SampleRow("foryou", 1)))), bottom);
+
+        Object result = FeatureGateLabRuntime.overrideAbObject("tab_rows", SampleTabs.class, tikTok);
+        assertTrue(result instanceof SampleTabs);
+        assertNotSame("TikTok's own value was changed in place", tikTok, result);
+        SampleTabs changed = (SampleTabs) result;
+        assertEquals(Integer.valueOf(4), changed.expectedBottomSize);
+        assertEquals("friends", changed.topTab.tabs.get(0).name);
+        assertEquals(Integer.valueOf(0), changed.topTab.tabs.get(0).index);
+        assertSame("a field the rule doesn't name is TikTok's", tikTok.bottomTab, changed.bottomTab);
+        assertEquals(Boolean.FALSE, changed.isJsonIllegal);
+        assertEquals(Integer.valueOf(5), tikTok.expectedBottomSize);
+        assertEquals("foryou", tikTok.topTab.tabs.get(0).name);
+        assertTrue(FeatureGateLabRuntime.isTriggered("abmock", "tab_rows", "OBJECT"));
+
+        // A gate the server sent nothing for still takes the rule's fields.
+        Object fromNothing = FeatureGateLabRuntime.overrideAbObject("tab_rows", SampleTabs.class, null);
+        assertTrue(fromNothing instanceof SampleTabs);
+        assertEquals(Integer.valueOf(4), ((SampleTabs) fromNothing).expectedBottomSize);
+        assertNull(((SampleTabs) fromNothing).bottomTab);
+
+        // Every other key comes back as the same object.
+        assertSame(tikTok, FeatureGateLabRuntime.overrideAbObject("other_rows", SampleTabs.class, tikTok));
+        assertNull(FeatureGateLabRuntime.overrideAbObject("other_rows", SampleTabs.class, null));
     }
 
     @Test public void aDeeplyNestedStructuredValueIsRefusedRatherThanKillingTheWorker() {

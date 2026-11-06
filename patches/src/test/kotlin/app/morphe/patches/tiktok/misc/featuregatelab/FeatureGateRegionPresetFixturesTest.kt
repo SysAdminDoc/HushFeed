@@ -29,7 +29,7 @@ class FeatureGateRegionPresetFixturesTest {
         val container = Fixtures.dexContainer(Fixtures.apkOf("47.7.2"), Opcodes.getDefault())
         val owners = setOf(
             DANMAKU_READ, DANMAKU_HOLDER, DANMAKU_MASTER, LANDSCAPE_READ, DANMAKU_SERVICE, AWEME,
-            PHOTOS_READ, PHOTOS_GATE, PUBLISH, KEYBOARD,
+            PHOTOS_READ, PHOTOS_GATE, PUBLISH, KEYBOARD, TAB_READ, AB_READS, AB_CALLBACK,
         )
         container.dexEntryNames.flatMap { entry ->
             container.getEntry(entry)!!.dexFile.classes.filter { it.type in owners }
@@ -117,6 +117,26 @@ class FeatureGateRegionPresetFixturesTest {
             assertTrue("$owner $name reads the gate", app.getValue(owner).methods.filter { it.name == name }
                 .any { candidate -> candidate.calls().any { it.toString() == "$PHOTOS_GATE->LIZ()Z" } })
         }
+    }
+
+    @Test
+    fun `the home tab rows are a TabConfig read through the typed object getter the Lab hooks`() {
+        val read = method(TAB_READ, "invoke")
+        assertEquals(listOf("tab_fcp_config_v2"), read.strings())
+        assertTrue("read as a TabConfig", read.implementation!!.instructions.any {
+            it.opcode == Opcode.CONST_CLASS && it.getReference<TypeReference>()?.type == TAB_CONFIG
+        })
+        assertEquals("$AB_READS->LJIJJLI(ZLjava/lang/String;ILjava/lang/Class;Ljava/lang/Object;I)Ljava/lang/Object;",
+            read.calls().single { it.returnType == "Ljava/lang/Object;" }.toString())
+        // That read's callback goes on to the App AB class's (String, boolean, boolean, Class, int)
+        // getter, the shape FeatureGateLabPatch hooks for OBJECT rules.
+        assertTrue("the callback reads through LJIJ", app.getValue(AB_CALLBACK).methods.any { callback ->
+            callback.implementation?.let { callback.calls() }.orEmpty()
+                .any { it.toString() == "$AB_READS->LJIJ(ZLjava/lang/String;Ljava/lang/Class;I)Ljava/lang/Object;" }
+        })
+        val typed = method(AB_READS, "LJIJ").calls().single { it.returnType == "Ljava/lang/Object;" }
+        assertEquals(listOf("Ljava/lang/String;", "Z", "Z", "Ljava/lang/Class;", "I"),
+            typed.parameterTypes.map { it.toString() })
     }
 
     private fun method(owner: String, name: String): Method = app.getValue(owner).methods.single { it.name == name }
@@ -207,5 +227,9 @@ class FeatureGateRegionPresetFixturesTest {
         const val PHOTOS_GATE = "LX/0HT2;"
         const val PUBLISH = "Lcom/ss/android/ugc/aweme/commentv2/commentlist/viewmodel/CommentPublishViewModel;"
         const val KEYBOARD = "Lcom/ss/android/ugc/aweme/comment/keyboard/keyboardv2/refactor/PortraitInputKeyboard;"
+        const val TAB_READ = "LX/04TT;"
+        const val TAB_CONFIG = "Lcom/ss/android/ugc/aweme/experiment/TabConfig;"
+        const val AB_READS = "LX/03OD;"
+        const val AB_CALLBACK = "LX/03eR;"
     }
 }

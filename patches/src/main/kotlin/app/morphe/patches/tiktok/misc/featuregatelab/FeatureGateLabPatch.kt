@@ -142,6 +142,10 @@ val featureGateLabPatch = bytecodePatch(
         // into the same thing and the Lab has to hold both open. 46.9.3 is the first that does.
         appAbClass().methodsOfShape(APP_AB_RAW, "Feature Gate Lab raw App AB boundary")
             .forEach { it.patchRawAbBoundary() }
+        // A JSON gate TikTok parses into a class, such as the home tab rows (`tab_fcp_config_v2`
+        // into TabConfig, #98), comes through this one and never through the raw getter.
+        appAbClass().methodsOfShape(APP_AB_TYPED_OBJECT, "Feature Gate Lab typed App AB object boundary")
+            .forEach { it.patchTypedAbObjectBoundary() }
 
         val settingsManager = mutableClassDefBy(ABMOCK_SETTINGS_MANAGER_DESCRIPTOR)
         // By shape, like the table above: these were `LJII` and `LJIIIIZZ`, which are R8's names
@@ -387,6 +391,40 @@ private fun MutableMethod.patchRawAbBoundary() {
                 objectIn("p1"),
                 objectIn("v$register"),
                 valueIn("p2"),
+            )
+            addInstructionsAtControlFlowLabel(index, "$call\nmove-result-object v$register")
+        }
+}
+
+/**
+ * The App AB class's typed object getter: `(String key, boolean, boolean, Class type, int)`,
+ * `LJIIJ` on 47.7.2. Every generated accessor for a class-typed gate ends here, with the key in
+ * p1 and the class in p4, both only copied out and never written.
+ */
+private val APP_AB_TYPED_OBJECT = MethodShape(
+    "Ljava/lang/Object;",
+    listOf("Ljava/lang/String;", "Z", "Z", "Ljava/lang/Class;", "I"),
+)
+
+private fun MutableMethod.patchTypedAbObjectBoundary() {
+    val implementation = implementation
+        ?: throw PatchException("Feature Gate Lab typed App AB object boundary has no implementation")
+    implementation.instructions
+        .withIndex()
+        .filter { (_, instruction) -> instruction.opcode == Opcode.RETURN_OBJECT }
+        .map { (index, instruction) ->
+            index to ((instruction as? OneRegisterInstruction)?.registerA
+                ?: throw PatchException("Feature Gate Lab typed App AB object return without result register"))
+        }
+        .asReversed()
+        .forEach { (index, register) ->
+            val call = callThroughLocals(
+                "Feature Gate Lab",
+                "invoke-static",
+                "$RUNTIME_DESCRIPTOR->overrideAbObject(Ljava/lang/String;Ljava/lang/Class;Ljava/lang/Object;)Ljava/lang/Object;",
+                objectIn("p1"),
+                objectIn("p4"),
+                objectIn("v$register"),
             )
             addInstructionsAtControlFlowLabel(index, "$call\nmove-result-object v$register")
         }

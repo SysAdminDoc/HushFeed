@@ -914,6 +914,39 @@ public final class Probe extends Instrumentation {
                         }
                         break;
                     }
+                    case "lablatest": {
+                        // What the Lab's recorder last saw one gate read as, at any time since
+                        // TikTok started rather than inside a recording, so a gate read once at
+                        // startup (the tab layout's tab_fcp_config_v2) can be captured: -e key
+                        // <name>. Needs the Feature Gate Recorder patch. Logged in parts like
+                        // labreport, since a structured gate runs past one log line.
+                        Class<?> learn = loader.loadClass(
+                                "app.morphe.extension.tiktok.featuregatelab.FeatureGateLearnMode");
+                        Field latestField = learn.getDeclaredField("latest");
+                        latestField.setAccessible(true);
+                        String key = required(intent, "key");
+                        Map<String, String> seen = new java.util.LinkedHashMap<>();
+                        synchronized (learn) {
+                            for (Map.Entry<?, ?> entry : ((Map<?, ?>) latestField.get(null)).entrySet()) {
+                                String[] identity = String.valueOf(entry.getKey()).split("\n", 3);
+                                if (identity.length == 3 && key.equals(identity[1])) {
+                                    seen.put(identity[0] + " " + identity[2], String.valueOf(entry.getValue()));
+                                }
+                            }
+                        }
+                        if (seen.isEmpty()) Log.i(TAG, "ok lablatest " + key + " seen=false");
+                        for (Map.Entry<String, String> entry : seen.entrySet()) {
+                            String text = entry.getValue();
+                            int size = 3000;
+                            int parts = Math.max(1, (text.length() + size - 1) / size);
+                            for (int part = 0; part < parts; part++) {
+                                Log.i(TAG, "ok lablatest " + key + " " + entry.getKey() + " part "
+                                        + (part + 1) + "/" + parts + " "
+                                        + text.substring(part * size, Math.min(text.length(), (part + 1) * size)));
+                            }
+                        }
+                        break;
+                    }
                     case "feedmute": {
                         // What Mute feed videos matches on: each engine it has seen with the
                         // source id TikTok's player reports for it, whether it counts as a feed

@@ -17,7 +17,7 @@ body:
     attributes:
       label: Hushfeed and TikTok versions
       description: In Hushfeed settings, tap the status beside the title to show the full status card. Copy the version line here.
-      placeholder: Version 0.80.0 for TikTok 47.6.3
+      placeholder: Version 0.81.0 for TikTok 47.7.2
     validations:
       required: true
   - type: dropdown

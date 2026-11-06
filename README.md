@@ -30,7 +30,7 @@ Most switches start off, so a freshly patched TikTok looks and works the way it 
 > [!IMPORTANT]
 > Hushfeed targets the global TikTok package, `com.zhiliaoapp.musically`, version [47.6.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-6-3-release/tiktok-47-6-3-2-android-apk-download/). Patch that exact build, as the bundle or the APK ([step 1](#install) says which). See [Supported target](#supported-target) for the build details.
 
-Hushfeed v0.80.0 contains 143 patches for TikTok 47.6.3. New in this one: TikTok moves to 47.6.3 and PineDrama has its own patches in HushPine now. TikTok can lock the feed during hours you pick, keep saves off mobile data and turn the bottom bar into a floating glass pill, and messages someone unsends can stay in the chat. It needs Morphe Manager 2.3.0 or newer.
+Hushfeed v0.81.0 contains 147 patches for TikTok 47.7.2. New in this one: TikTok moves to 47.7.2. You can keep your own watch history, hide read receipts and clear out reposts, likes or Favorites in one go, and the settings have a new look in TikTok's colors. It needs Morphe Manager 2.4.0 or newer.
 
 The main branch contains 147 patches: the 143 in v0.80.0, Account cleanup, Hide read receipts, Keep the next videos in full screen and Freeze TikTok's experiments.
 

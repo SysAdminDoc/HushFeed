@@ -105,6 +105,22 @@ public class MediaTransportSecurityTest {
         assertFalse(MediaTransport.hasAllowedShape(null));
     }
 
+    /** The remembered verdicts answer the same as a fresh parse, before and after they roll over. */
+    @Test public void aRememberedShapeAnswersLikeAFreshOne() {
+        String allowed = "https://v16-webapp-prime.tiktokcdn.com/video/tos/a.mp4?x=1";
+        String refused = "http://v16-webapp-prime.tiktokcdn.com/video/tos/a.mp4?x=1";
+        for (int pass = 0; pass < 3; pass++) {
+            assertTrue(MediaTransport.hasAllowedShape(allowed));
+            assertFalse(MediaTransport.hasAllowedShape(refused));
+        }
+        for (int i = 0; i < 200; i++) {
+            assertTrue(MediaTransport.hasAllowedShape("https://cdn" + i + ".tiktokcdn.com/v.mp4"));
+            assertFalse(MediaTransport.hasAllowedShape("https://u" + i + "@cdn.tiktokcdn.com/v.mp4"));
+        }
+        assertTrue(MediaTransport.hasAllowedShape(allowed));
+        assertFalse(MediaTransport.hasAllowedShape(refused));
+    }
+
     @Test public void localPrivateWildcardAndMulticastAddressesAreNotMediaDestinations()
             throws Exception {
         for (String address : new String[]{

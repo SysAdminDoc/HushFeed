@@ -145,12 +145,20 @@ public final class QualitySelector {
             case "1080": case "720": case "540": case "480": case "360": target = Integer.parseInt(mode); break;
             default: return null;
         }
+        // Each gear's height is read once: the name's pattern and the address reads ran for both
+        // sides of every comparison, three player hooks a video, on the main thread (#344).
+        boolean lowest = "lowest".equals(mode);
         Object best = null;
+        int bestHeight = 0;
         for (Object gear : gears) {
             if (!hasUsableAddress(gear)) continue;
             if (forFile && !playable(gear)) continue;
-            if (target > 0 && height(gear) == 0) continue;
-            if (best == null || better(gear, best, target, "lowest".equals(mode), forFile)) best = gear;
+            int height = height(gear);
+            if (target > 0 && height == 0) continue;
+            if (best == null || better(gear, height, best, bestHeight, target, lowest, forFile)) {
+                best = gear;
+                bestHeight = height;
+            }
         }
         return best;
     }
@@ -176,8 +184,8 @@ public final class QualitySelector {
         return code == 0 || code == 1;
     }
 
-    private static boolean better(Object candidate, Object current, int target, boolean lowest, boolean forFile) {
-        int a = height(candidate), b = height(current);
+    private static boolean better(Object candidate, int a, Object current, int b,
+                                  int target, boolean lowest, boolean forFile) {
         if (target > 0) {
             if ((a <= target) != (b <= target)) return a <= target;
             if (a != b) return a <= target ? a > b : a < b;

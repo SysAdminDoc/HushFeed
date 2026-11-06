@@ -16,7 +16,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 /** HTTPS-only media transport with destination validation at every redirect hop. */
@@ -27,13 +29,37 @@ final class MediaTransport {
 
     private MediaTransport() { }
 
+    /**
+     * Verdicts for the addresses asked about last. Playback quality asks about the same gears'
+     * addresses from three player hooks on every video it opens, on the main thread, and parsing
+     * a CDN address into a URI and a URL each time was most of that filter's cost there (#344).
+     */
+    private static final int SHAPE_MEMO = 64;
+    private static final Map<String, Boolean> SHAPES =
+            new LinkedHashMap<String, Boolean>(SHAPE_MEMO, 0.75f, true) {
+                @Override
+                protected boolean removeEldestEntry(Map.Entry<String, Boolean> eldest) {
+                    return size() > SHAPE_MEMO;
+                }
+            };
+
     static boolean hasAllowedShape(String value) {
+        if (value == null) return false;
+        synchronized (SHAPES) {
+            Boolean known = SHAPES.get(value);
+            if (known != null) return known;
+        }
+        boolean allowed;
         try {
             target(value);
-            return true;
+            allowed = true;
         } catch (IOException ignored) {
-            return false;
+            allowed = false;
         }
+        synchronized (SHAPES) {
+            SHAPES.put(value, allowed);
+        }
+        return allowed;
     }
 
     static Response open(

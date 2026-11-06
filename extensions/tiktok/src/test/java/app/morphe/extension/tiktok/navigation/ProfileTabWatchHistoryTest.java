@@ -172,6 +172,20 @@ public class ProfileTabWatchHistoryTest {
         assertEquals("TikTok's later listener was lost", 1, sheets.get());
     }
 
+    @Test public void theTabGetsOursOnceTikTokTakesItsSwitcherOff() {
+        AtomicInteger sheets = new AtomicInteger();
+        profile.setOnLongClickListener(switcher(sheets));
+        Settings.PROFILE_TAB_OPENS_WATCH_HISTORY.save(true);
+        installAndResume();
+        // The second account is gone: TikTok drops its listener, and Android keeps the tab long-clickable.
+        profile.setOnLongClickListener(null);
+        layoutPass();
+
+        assertTrue("the Profile hold stayed dead after TikTok's switcher went", profile.performLongClick());
+        assertNotNull(nextStarted());
+        assertEquals(0, sheets.get());
+    }
+
     @Test public void aTabRebuiltWithoutTikToksLongPressGetsOurs() {
         AtomicInteger sheets = new AtomicInteger();
         profile.setOnLongClickListener(switcher(sheets));

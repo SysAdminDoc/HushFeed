@@ -118,14 +118,15 @@ public final class ProfileTabWatchHistory {
             }
             View profile = FeedVisibility.profileTabView(activity);
             if (current != null && current != profile) takeOff(current);
-            if (profile == null || attached.get() == profile
-                    || refused.get() == profile || tikToks.get() == profile) return;
+            if (profile == null || attached.get() == profile || refused.get() == profile) return;
+            // TikTok takes its switcher off the same tab when the second account goes.
+            if (tikToks.get() == profile && tikTokHolds(profile)) return;
             if (!profile.isClickable()) {
                 refused = new WeakReference<>(profile);
                 Logger.printInfo(() -> "The Profile tab view doesn't take the tap itself; no long press");
                 return;
             }
-            if (profile.isLongClickable()) {
+            if (tikTokHolds(profile)) {
                 tikToks = new WeakReference<>(profile);
                 Logger.printInfo(() -> "The Profile tab has TikTok's own long press; TikTok's handler asks first");
                 return;
@@ -152,6 +153,15 @@ public final class ProfileTabWatchHistory {
         if (longClickListener(tab) != OPEN_WATCH_HISTORY) return;
         tab.setOnLongClickListener(null);
         tab.setLongClickable(false);
+    }
+
+    /**
+     * TikTok's own long press is on the tab. A null listener leaves a view long-clickable, so the
+     * listener is read; where it can't be, a long-clickable tab counts as TikTok's.
+     */
+    private static boolean tikTokHolds(View tab) {
+        if (!tab.isLongClickable()) return false;
+        return longClickListener(tab) != null || listenerUnreadable;
     }
 
     /** The view's long-click listener, or null when there is none or it can't be read. */

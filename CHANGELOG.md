@@ -4,6 +4,10 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+### Bug Fixes
+
+* A bio handle with a period and a date stuck to it, like @john.doe11/30/24, stays plain text now. In 0.81.0 it linked only the part before the period, which opened a different account (#247).
+
 ## 0.81.0 (2026-11-05)
 
 ### Features

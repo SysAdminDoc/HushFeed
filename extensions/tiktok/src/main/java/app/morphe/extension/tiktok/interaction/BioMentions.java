@@ -48,10 +48,12 @@ public final class BioMentions {
      * A TikTok username after an @: 2 to 24 letters, digits, underscores and periods, not ending
      * in a period. One glued to a word or an email address, or running past 24, isn't a mention,
      * and neither is the start of a word a username can't spell ("@José" isn't @Jos) or one with
-     * a date glued on ("@davidj11/30/24" names somebody, but not the account @davidj11).
+     * a date glued on ("@davidj11/30/24" names somebody, but not the account @davidj11). The date
+     * check looks past the end of the match, so a dotted handle can't back off to the part before
+     * its last period ("@john.doe11/30/24" isn't @john either).
      */
     static final Pattern MENTION = Pattern.compile(
-            "(?<![A-Za-z0-9_.@])@([A-Za-z0-9_][A-Za-z0-9_.]{0,22}[A-Za-z0-9_])(?![\\p{L}\\p{M}\\p{N}_@]|/\\p{N})");
+            "(?<![A-Za-z0-9_.@])@([A-Za-z0-9_][A-Za-z0-9_.]{0,22}[A-Za-z0-9_])(?![\\p{L}\\p{M}\\p{N}_@]|[A-Za-z0-9_.]*/\\p{N})");
     /**
      * A display name typed after an @ ("@First Last"), up to four words on one line that each start
      * with a capital. Only a username can open a profile, and linking the first word alone opened

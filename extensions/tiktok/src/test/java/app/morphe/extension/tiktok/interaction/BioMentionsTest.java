@@ -120,6 +120,10 @@ public class BioMentionsTest {
         assertEquals("a two-part date works too", List.of("Sam Lee6/24"), handles("@Sam Lee6/24"));
         assertTrue("a lowercase handle with a date isn't that account",
                 handles("@davidj11/30/24").isEmpty());
+        assertTrue("a dotted handle with a date isn't the part before the period",
+                handles("@john.doe11/30/24 and @Sam.Lee11/30/24 and @jane_doe.official/2024").isEmpty());
+        assertEquals("a dotted handle ending a sentence before a date stays a username",
+                List.of("john.doe"), handles("Ask @john.doe. 1/2 of the duo"));
         assertEquals("a capitalized username without a date stays a username",
                 List.of("Davidjennings11"), handles("@Davidjennings11"));
     }

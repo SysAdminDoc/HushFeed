@@ -253,9 +253,9 @@ function Select-Device([string]$Package) {
     foreach ($candidate in $candidates) {
         if ($candidate -like 'avd:*') {
             $avd = Start-Avd $candidate.Substring(4)
-            if ($avd) { return $avd }
+            if ($avd) { $avd.Name = $candidate; return $avd }
         } elseif ($candidate -in $attached -and (Test-DeviceFree $candidate)) {
-            return @{ Serial = $candidate; Started = $false }
+            return @{ Name = $candidate; Serial = $candidate; Started = $false }
         }
     }
     throw "Every device for $Package is busy or offline: $($candidates -join ', '). Check whether a lease holder is idle, then rerun."
@@ -270,7 +270,7 @@ function Step-walk {
         # A walk that passed on this exact bundle stands.
         if ($state.walks[$package] -and $state.walks[$package].bundle -eq $state.bundle) { Say "$package already walked on this bundle"; continue }
         $device = Select-Device $package
-        $key = if ($config.keys.($device.Serial)) { $config.keys.($device.Serial) } else { $config.keys.default }
+        $key = @($config.keys.($device.Name), $config.keys.($device.Serial), $config.keys.default) | Where-Object { $_ } | Select-Object -First 1
         $patchArgs = @{ Apk = Get-Apk $package $target.PackageVersion; OutDir = (Join-Path $stateDir "patched-$package") }
         foreach ($property in $key.PSObject.Properties) { $patchArgs[$property.Name] = $property.Value }
         New-Item -ItemType Directory -Force -Path $patchArgs.OutDir | Out-Null

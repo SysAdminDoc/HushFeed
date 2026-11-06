@@ -1100,6 +1100,14 @@ public class Settings extends BaseSettings {
     public static final StringSetting GLASS_BLUR_STRENGTH = new StringSetting(
             "glass_blur_strength", "standard", false, Setting.parent(GLASS_VIDEO_BLUR));
     /**
+     * With Blur the video behind the bar on Android 13 and newer, bends the blurred video along
+     * the pill's rim the way the edge of a glass lens would and lifts its colors a little (#231),
+     * the look of KernelSU's liquid glass bar. A shader over the blurred strip, so nothing more is
+     * read back from the video. Read on each draw.
+     */
+    public static final BooleanSetting GLASS_REFRACTION = new BooleanSetting(
+            "glass_refraction", FALSE, false, Setting.parent(GLASS_VIDEO_BLUR));
+    /**
      * With Liquid glass look, how solid the glass's tint is: "clear", "light", "standard" or
      * "frosted", which scale the tint by a half, three quarters, one and 1.35. Read on each draw.
      */

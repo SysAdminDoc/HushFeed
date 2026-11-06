@@ -252,7 +252,8 @@ final class GlassVideoBlur {
         if (!hasFrame || sample == null || !canvas.isHardwareAccelerated()
                 || Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return;
         if (painter == null) painter = new Painter();
-        painter.draw(canvas, sample, pill, radius, blurDp(Settings.GLASS_BLUR_STRENGTH.get()) * density);
+        painter.draw(canvas, sample, pill, radius, blurDp(Settings.GLASS_BLUR_STRENGTH.get()) * density,
+                GlassRefraction.wanted(), density);
         drawn = painter.node;
     }
 
@@ -561,9 +562,13 @@ final class GlassVideoBlur {
         private final Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
         private final Path clip = new Path();
         private final RectF box = new RectF();
+        private final GlassRefraction refraction = new GlassRefraction();
         private float effect = -1f;
+        private boolean bent;
+        private int bentWidth, bentHeight;
+        private float bentRadius;
 
-        void draw(Canvas canvas, Bitmap sample, Rect pill, float radius, float blur) {
+        void draw(Canvas canvas, Bitmap sample, Rect pill, float radius, float blur, boolean bend, float density) {
             int width = pill.width(), height = pill.height();
             node.setPosition(0, 0, width, height);
             RecordingCanvas recording = node.beginRecording(width, height);
@@ -573,9 +578,16 @@ final class GlassVideoBlur {
             } finally {
                 node.endRecording();
             }
-            if (blur != effect) {
-                node.setRenderEffect(RenderEffect.createBlurEffect(blur, blur, Shader.TileMode.CLAMP));
+            bend = bend && !refraction.broken();
+            if (blur != effect || bend != bent
+                    || (bend && (width != bentWidth || height != bentHeight || radius != bentRadius))) {
+                RenderEffect blurred = RenderEffect.createBlurEffect(blur, blur, Shader.TileMode.CLAMP);
+                node.setRenderEffect(bend ? refraction.over(blurred, width, height, radius, density) : blurred);
                 effect = blur;
+                bent = bend && !refraction.broken();
+                bentWidth = width;
+                bentHeight = height;
+                bentRadius = radius;
             }
             box.set(pill);
             clip.rewind();

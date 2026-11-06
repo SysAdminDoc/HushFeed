@@ -823,6 +823,12 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     .withNote("How much the video behind the glass pill on the main feed is blurred."));
             addPreference(new TogglePreference(
                     context,
+                    "Bend the video at the edges",
+                    "The glass pill's edges bend the blurred video behind them, like the rim of real glass, and its colors come through a little richer. Needs Blur the video behind the bar and Android 13 and up.",
+                    Settings.GLASS_REFRACTION
+            ));
+            addPreference(new TogglePreference(
+                    context,
                     "See-through status bar",
                     "Let the video reach the top of the screen on the main feed, with the clock and status icons over it. The tabs at the top stay where they are.",
                     Settings.SEE_THROUGH_STATUS_BAR

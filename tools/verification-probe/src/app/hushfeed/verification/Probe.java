@@ -2893,6 +2893,10 @@ public final class Probe extends Instrumentation {
                         AutoAdvanceWatch.start(loader, intent);
                         break;
                     }
+                    case "mainsample": {
+                        MainThreadSampler.start(intent);
+                        break;
+                    }
                     case "holdslide": {
                         // A press held still long enough for TikTok's hold gesture, then a slide
                         // and a release. Injected through the input system like a finger (an app

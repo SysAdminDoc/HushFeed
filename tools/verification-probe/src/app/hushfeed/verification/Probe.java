@@ -2645,7 +2645,6 @@ public final class Probe extends Instrumentation {
                         int mono = 0;
                         int proportional = 0;
                         List<android.view.View> pending = new ArrayList<>(windowRoots());
-                        android.graphics.Paint paint = new android.graphics.Paint();
                         while (!pending.isEmpty()) {
                             android.view.View view = pending.remove(pending.size() - 1);
                             if (!view.isShown()) continue;
@@ -2656,11 +2655,13 @@ public final class Probe extends Instrumentation {
                             if (!(view instanceof android.widget.TextView)) continue;
                             android.widget.TextView textView = (android.widget.TextView) view;
                             if (textView.getText() == null || textView.getText().length() == 0) continue;
-                            paint.setTypeface(textView.getTypeface());
-                            paint.setTextSize(40f);
+                            // The view's own paint, read and never changed: a fresh Paint given
+                            // the view's typeface measures in Samsung's font style instead while
+                            // one is set, though the view draws in the face it was given.
+                            android.text.TextPaint paint = textView.getPaint();
                             float narrow = paint.measureText("iiiiiiiiii");
                             float wide = paint.measureText("MMMMMMMMMM");
-                            if (Math.abs(narrow - wide) < 1f) mono++;
+                            if (Math.abs(narrow - wide) < Math.max(1f, wide / 100f)) mono++;
                             else proportional++;
                         }
                         Log.i(TAG, "ok font imported_font=" + importedSwitch.getClass().getMethod("get").invoke(importedSwitch)
@@ -2670,6 +2671,15 @@ public final class Probe extends Instrumentation {
                                 + " decided=" + (family == null ? "tiktok" : family == android.graphics.Typeface.DEFAULT ? "system"
                                         : family == face ? "imported" : "other")
                                 + " text_views mono=" + mono + " proportional=" + proportional);
+                        // The FONT section the diagnostic export carries, line by line.
+                        Class<?> fontReport = loader.loadClass("app.morphe.extension.tiktok.font.SystemFont$Report");
+                        Field reportInstance = fontReport.getDeclaredField("INSTANCE");
+                        reportInstance.setAccessible(true);
+                        Method reportLines = fontReport.getDeclaredMethod("lines");
+                        reportLines.setAccessible(true);
+                        for (Object line : (List<?>) reportLines.invoke(reportInstance.get(null))) {
+                            Log.i(TAG, "font section " + line);
+                        }
                         break;
                     }
                     case "privacy-call": {

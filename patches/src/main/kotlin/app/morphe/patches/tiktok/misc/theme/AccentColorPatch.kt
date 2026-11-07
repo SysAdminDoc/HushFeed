@@ -43,8 +43,9 @@ val accentColorPatch = resourcePatch(
     description = "Swaps the red of TikTok's main buttons and red text for blue, green, purple, " +
         "orange, teal or a color code you type in this patch's options, or for the color of the " +
         "phone's wallpaper theme on Android 12 and up. Unread dots and counts change with it. " +
-        "Warnings stay red, and so can icons with the red drawn in. It's built in while patching, " +
-        "so only patching again without it undoes it.",
+        "Warnings stay red, and so can icons with the red drawn in. The feed's like heart and save " +
+        "bookmark can take colors of their own. It's built in while patching, so only patching " +
+        "again without it undoes it.",
     default = false,
 ) {
     category("Interface")
@@ -57,6 +58,23 @@ val accentColorPatch = resourcePatch(
         description = "Pick a preset, or type a solid color code like #2D7FF9. TikTok original " +
             "leaves the red as it is. TikTok's lighter and darker reds follow the color you pick.",
         values = ACCENT_PRESETS,
+    )
+    val likeColor by colorOption(
+        key = "likeColor",
+        default = TIKTOK_ACCENT,
+        title = "Like color",
+        description = "The heart on a video you liked, in the feed and in its tap animation. " +
+            "TikTok original leaves it red. It works in light, dark and AMOLED alike, with or " +
+            "without a new accent.",
+        values = LIKE_PRESETS,
+    )
+    val saveColor by colorOption(
+        key = "saveColor",
+        default = TIKTOK_SAVE,
+        title = "Save color",
+        description = "The bookmark on a video you saved to Favorites, in the feed and in its " +
+            "animation. TikTok original leaves it yellow.",
+        values = SAVE_PRESETS,
     )
     val followWallpaper by booleanOption(
         key = "followWallpaper",
@@ -72,6 +90,8 @@ val accentColorPatch = resourcePatch(
     execute {
         // Checked before anything is read or written, so a refused color changes nothing.
         val target = checkedAccent(accent)
+        val likeTarget = checkedAccent(likeColor, "Like color")
+        val saveTarget = checkedAccent(saveColor, "Save color")
         val wallpaper = followWallpaper == true
         val packageRoot = get("res").parentFile
         val decodedRoots = decodedPackageRoots(packageRoot)
@@ -83,6 +103,37 @@ val accentColorPatch = resourcePatch(
             isDecoded = { name -> name in decodable || decodedRoots.any { it.resolve(name).isFile } },
         )
         if (collisions.isNotEmpty()) throw PatchException(renamedPathsRefusal(collisions.size, "Accent color"))
+        // The like heart and the save bookmark (#369), recolored in memory before anything is written.
+        val reactionPictures = mutableListOf<Pair<File, ByteArray>>()
+        for (reaction in reactionRecolors(packageMetadata.versionName, likeTarget, saveTarget)) {
+            val shade = reactionShade(reaction.source, reaction.target)
+            val files = reaction.files
+            decode(
+                *files.rawIcons.map { "res/raw*/$it.png" }.toTypedArray(),
+                *files.drawables.map { "res/drawable*/$it.png" }.toTypedArray(),
+                *(files.pictures + files.animations).map { "assets/$it" }.toTypedArray(),
+            )
+            val folders = get("res").listFiles().orEmpty().filter { it.isDirectory }
+            val named = files.rawIcons.map { it to "raw" } + files.drawables.map { it to "drawable" }
+            for ((name, type) in named) {
+                val pictures = folders.filter { it.name == type || it.name.startsWith("$type-") }
+                    .map { it.resolve("$name.png") }.filter { it.isFile }
+                    .ifEmpty { throw PatchException(missingReactionRefusal(reaction.label, name)) }
+                pictures.mapTo(reactionPictures) {
+                    it to (recolorPng(it.readBytes(), shade) ?: throw PatchException(missingReactionRefusal(reaction.label, name)))
+                }
+            }
+            for (path in files.pictures) {
+                val picture = get("assets/$path").takeIf { it.isFile } ?: throw PatchException(missingReactionRefusal(reaction.label, path))
+                reactionPictures += picture to (recolorPng(picture.readBytes(), shade) ?: throw PatchException(missingReactionRefusal(reaction.label, path)))
+            }
+            for (path in files.animations) {
+                val animation = get("assets/$path").takeIf { it.isFile } ?: throw PatchException(missingReactionRefusal(reaction.label, path))
+                val json = recolorLottie(animation.readText(Charsets.UTF_8), shade)
+                    ?: throw PatchException(missingReactionRefusal(reaction.label, path))
+                reactionPictures += animation to json.toByteArray(Charsets.UTF_8)
+            }
+        }
         if (wallpaper || target != TIKTOK_ACCENT) {
             // This build's accent tokens, or a refusal: a name carried over from another build is a guess.
             val tokens = accentTokens(packageMetadata.versionName)
@@ -152,6 +203,7 @@ val accentColorPatch = resourcePatch(
             appendColorEntries(lynxFiles.first, lynxPlain)
             if (lynxSystem != null) appendColorEntries(lynxFiles.second, lynxSystem)
         }
+        for ((file, bytes) in reactionPictures) file.writeBytes(bytes)
         BuildDetails.applied(get(BUILD_DETAILS_ASSET), "accentColor")
     }
 }
@@ -417,8 +469,8 @@ internal fun incompleteAccentRefusal(missing: Set<String>): String =
         "its palette isn't the one this patch read. Nothing was changed."
 
 /** The color as `#RRGGBB`, or a refusal that says what to type. */
-internal fun checkedAccent(raw: String?): String = solidAccent(raw) ?: throw PatchException(
-    "Accent color: '${raw.orEmpty()}' isn't a solid color code. Pick a preset or type six hex " +
+internal fun checkedAccent(raw: String?, option: String = "Accent color"): String = solidAccent(raw) ?: throw PatchException(
+    "$option: '${raw.orEmpty()}' isn't a solid color code. Pick a preset or type six hex " +
         "digits like #2D7FF9. Nothing was changed.",
 )
 

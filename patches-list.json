@@ -59,7 +59,7 @@
     },
     {
       "name": "Accent color",
-      "description": "Swaps the red of TikTok's main buttons and red text for blue, green, purple, orange, teal or a color code you type in this patch's options, or for the color of the phone's wallpaper theme on Android 12 and up. Unread dots and counts change with it. Warnings stay red, and so can icons with the red drawn in. It's built in while patching, so only patching again without it undoes it.",
+      "description": "Swaps the red of TikTok's main buttons and red text for blue, green, purple, orange, teal or a color code you type in this patch's options, or for the color of the phone's wallpaper theme on Android 12 and up. Unread dots and counts change with it. Warnings stay red, and so can icons with the red drawn in. The feed's like heart and save bookmark can take colors of their own. It's built in while patching, so only patching again without it undoes it.",
       "category": "Interface",
       "use": false,
       "dependencies": [
@@ -109,6 +109,39 @@
             "Purple": "#8B5CF6",
             "Orange": "#F26411",
             "Teal": "#0F9E8E"
+          }
+        },
+        {
+          "key": "likeColor",
+          "title": "Like color",
+          "description": "The heart on a video you liked, in the feed and in its tap animation. TikTok original leaves it red. It works in light, dark and AMOLED alike, with or without a new accent.",
+          "required": false,
+          "type": "kotlin.String",
+          "default": "#FE2C55",
+          "values": {
+            "TikTok original": "#FE2C55",
+            "Blue": "#2D7FF9",
+            "Green": "#1DA153",
+            "Purple": "#8B5CF6",
+            "Orange": "#F26411",
+            "Teal": "#0F9E8E"
+          }
+        },
+        {
+          "key": "saveColor",
+          "title": "Save color",
+          "description": "The bookmark on a video you saved to Favorites, in the feed and in its animation. TikTok original leaves it yellow.",
+          "required": false,
+          "type": "kotlin.String",
+          "default": "#FACE15",
+          "values": {
+            "TikTok original": "#FACE15",
+            "Blue": "#2D7FF9",
+            "Green": "#1DA153",
+            "Purple": "#8B5CF6",
+            "Orange": "#F26411",
+            "Teal": "#0F9E8E",
+            "Red": "#FE2C55"
           }
         },
         {
@@ -5854,6 +5887,15 @@
           "values": null
         },
         {
+          "key": "see_through_video_in_window",
+          "title": "Default: see through video in window",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "floating_bottom_bar",
           "title": "Default: floating bottom bar",
           "description": null,
@@ -5883,6 +5925,15 @@
         {
           "key": "glass_video_blur",
           "title": "Default: glass video blur",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "glass_refraction",
+          "title": "Default: glass refraction",
           "description": null,
           "required": false,
           "type": "kotlin.Boolean",
@@ -8531,6 +8582,33 @@
           "values": null
         },
         {
+          "key": "hide_rings_feed",
+          "title": "Default: hide rings feed",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
+          "key": "hide_rings_comments",
+          "title": "Default: hide rings comments",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
+          "key": "hide_rings_profiles",
+          "title": "Default: hide rings profiles",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
           "key": "open_story_over_live",
           "title": "Default: open story over live",
           "description": null,
@@ -9244,6 +9322,42 @@
           "required": false,
           "type": "kotlin.Boolean",
           "default": false,
+          "values": null
+        },
+        {
+          "key": "startup_message",
+          "title": "Default: startup message",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "startup_message_title",
+          "title": "Default: startup message title",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "startup_message_text",
+          "title": "Default: startup message text",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "startup_message_dismissible",
+          "title": "Default: startup message dismissible",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
           "values": null
         }
       ]

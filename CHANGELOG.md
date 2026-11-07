@@ -19,6 +19,7 @@ Every Hushfeed release, newest first.
 * `Block P2P video relay` also takes out the LIVE relay's two leftover libraries, about 1 MB more. The split APK bundle never had them, so nothing changes for those installs (#70).
 * `Bend the video at the edges` makes the glass pill's rim bend the blurred video behind it the way the edge of real glass does, and it gives the colors there a small lift. It sits under `Blur the video behind the bar`, starts off and needs Android 13 or newer (#231).
 * Three new switches under the ring switches, `Remove rings on the feed`, `Remove rings in comments` and `Remove rings on profiles`, pick where the story and LIVE rings come off. All three start on, so nothing changes until you turn one off (#351).
+* `Accent color` has two new options, `Like color` and `Save color`. They paint the heart on a video you liked and the bookmark on one you saved, in the feed and in their tap animations, with a preset or a color code you type. They work in light, dark and AMOLED, and with or without a new accent. Both start on TikTok's own red and yellow, which changes nothing (#369).
 
 ### Bug Fixes
 

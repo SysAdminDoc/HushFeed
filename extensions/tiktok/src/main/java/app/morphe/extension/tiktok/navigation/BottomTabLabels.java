@@ -65,6 +65,25 @@ public final class BottomTabLabels {
         keeper.apply();
     }
 
+    /**
+     * Whether the bottom tab with this key is the selected one in a bar on screen. TikTok selects a
+     * tab's icon view when it switches to that tab; an icon view left over from an earlier start
+     * is no longer attached.
+     */
+    public static boolean tabSelected(@Nullable String key) {
+        if (key == null) return false;
+        synchronized (TAGS) {
+            for (Map.Entry<View, String> entry : TAGS.entrySet()) {
+                View icon = entry.getKey();
+                if (icon != null && icon.isSelected() && icon.isAttachedToWindow()
+                        && key.equals(BottomNavigationTabOptions.normalizeRuntimeTag(entry.getValue()))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     /** The name a tab should show, or an empty string to keep TikTok's. */
     static String nameFor(@Nullable String key) {
         // Home turned into a search button reads Search, over a name of the reader's own (#338).

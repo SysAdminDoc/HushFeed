@@ -118,6 +118,9 @@ public final class StartPage {
                 startTopTab = top;
                 startedAt = SystemClock.elapsedRealtime();
             }
+            // TikTok still builds Home first and switches after it; the start screen stays up over
+            // it so For You doesn't show on the way to a bottom tab of its own (#360).
+            if (!HOME_TAG.equals(target) && !FRIENDS_FEED_TAG.equals(target)) StartCover.show(activity, target);
             HookStatus.bound(FAMILY, "opened on " + choice);
             return target;
         } catch (Throwable failure) {

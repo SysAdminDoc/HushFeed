@@ -114,7 +114,11 @@ public class AndroidTargetChangesGuardTest {
             new ReviewedWrites("live/LiveAudioOnly.java", 4,
                     "safe: writes sdkKey, name and level on a quality row this class just built "
                             + "with newInstance, and the current-quality mark on the picker row it "
-                            + "just built; instanceField() drops a static field before any write"));
+                            + "just built; instanceField() drops a static field before any write"),
+            new ReviewedWrites("navigation/DiscoverTab.java", 2,
+                    "safe: writes bottomTab on the tab layout TikTok parsed and handed the hook, "
+                            + "and bottomTabKey on a bottom tab this class just built; findField() "
+                            + "skips a static field"));
 
     /**
      * Addresses written into the payload, and what is done with them.
@@ -214,8 +218,8 @@ public class AndroidTargetChangesGuardTest {
         assertEquals("the reviewed total no longer matches what the scan finds", reviewed, total);
         // Nine on 2026-09-19; four comment-menu instance writes were added for #169, and two
         // LIVE profile card label writes for #159, and the grid sort chip's re-sort for #180.
-        // Four LIVE Audio only row writes for #265 on 2026-11-05.
-        assertEquals("the audit counted twenty reflective writes on 2026-11-05", 20, total);
+        // Four LIVE Audio only row writes for #265 on 2026-11-05, two Discover tab writes for #98.
+        assertEquals("the audit counted twenty-two reflective writes on 2026-11-07", 22, total);
     }
 
     @Test

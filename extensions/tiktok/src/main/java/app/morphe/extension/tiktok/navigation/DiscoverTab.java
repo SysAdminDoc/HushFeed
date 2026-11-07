@@ -6,6 +6,7 @@ package app.morphe.extension.tiktok.navigation;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -138,10 +139,14 @@ public final class DiscoverTab {
         return value instanceof String ? (String) value : null;
     }
 
+    /** An instance field only: both writes above are to the tab layout's own fields, never a static. */
     private static Field findField(Class<?> type, String name) {
         for (Class<?> current = type; current != null && current != Object.class; current = current.getSuperclass()) {
             try {
-                return current.getDeclaredField(name);
+                Field field = current.getDeclaredField(name);
+                if (!Modifier.isStatic(field.getModifiers())) {
+                    return field;
+                }
             } catch (NoSuchFieldException ignored) {
                 // Declared further up, or not at all.
             }

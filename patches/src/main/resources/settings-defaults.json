@@ -520,6 +520,7 @@
       "offer_live_quality",
       "remember_live_quality",
       "offer_live_clear_screen",
+      "keep_live_clear_screen",
       "dark_live_panels",
       "record_live",
       "live_record_quality",
@@ -2825,6 +2826,12 @@
     "keep_for_you_on_tab_tap": {
       "field": "KEEP_FOR_YOU_ON_TAB_TAP",
       "key": "keep_for_you_on_tab_tap",
+      "type": "boolean",
+      "default": false
+    },
+    "keep_live_clear_screen": {
+      "field": "KEEP_LIVE_CLEAR_SCREEN",
+      "key": "keep_live_clear_screen",
       "type": "boolean",
       "default": false
     },

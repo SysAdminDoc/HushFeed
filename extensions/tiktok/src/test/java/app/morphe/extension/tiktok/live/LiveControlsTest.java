@@ -46,6 +46,7 @@ public class LiveControlsTest {
         Settings.REMEMBER_LIVE_QUALITY.save(Settings.REMEMBER_LIVE_QUALITY.defaultValue);
         Settings.REMEMBERED_LIVE_QUALITY.save(Settings.REMEMBERED_LIVE_QUALITY.defaultValue);
         Settings.OFFER_LIVE_CLEAR_SCREEN.save(Settings.OFFER_LIVE_CLEAR_SCREEN.defaultValue);
+        Settings.KEEP_LIVE_CLEAR_SCREEN.save(Settings.KEEP_LIVE_CLEAR_SCREEN.defaultValue);
         Settings.DARK_LIVE_PANELS.save(Settings.DARK_LIVE_PANELS.defaultValue);
         Settings.RECORD_LIVE.save(Settings.RECORD_LIVE.defaultValue);
         coldStart();
@@ -115,6 +116,27 @@ public class LiveControlsTest {
         setPaused(false);
         SettingsStatus.liveControlsEnabled = false;
         assertFalse(LiveControls.offerClearScreen());
+    }
+
+    /**
+     * #354: off by default, so TikTok's server setting decides whether clear screen carries to the
+     * next room. On, it answers true on its own (rooms that offer clear screen natively need no
+     * other switch), and Pause or a build without the patch hands the answer back.
+     */
+    @Test public void keepingClearScreenFollowsItsSwitchAndPause() {
+        assertFalse(Settings.KEEP_LIVE_CLEAR_SCREEN.defaultValue);
+        assertFalse(LiveControls.keepClearScreen());
+        Settings.KEEP_LIVE_CLEAR_SCREEN.save(true);
+        assertTrue(LiveControls.keepClearScreen());
+        assertFalse("keeping turned the menu entry on", LiveControls.offerClearScreen());
+        setPaused(true);
+        assertFalse(LiveControls.keepClearScreen());
+        setPaused(false);
+        SettingsStatus.liveControlsEnabled = false;
+        assertFalse(LiveControls.keepClearScreen());
+        SettingsStatus.liveControlsEnabled = true;
+        Settings.KEEP_LIVE_CLEAR_SCREEN.save(false);
+        assertFalse("read at the call, so the next room follows", LiveControls.keepClearScreen());
     }
 
     /** #57: off by default, a cold start leaves the first rooms at TikTok's choice. */

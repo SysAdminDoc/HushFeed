@@ -1796,6 +1796,10 @@ Keep the LIVE quality after TikTok restarts	TikTok yenidən başlayandan sonra L
 TikTok forgets the LIVE quality you picked when it closes. This starts rooms at that quality again after a restart. A room whose stream doesn't have it opens at TikTok's choice.	TikTok bağlananda seçdiyin LIVE keyfiyyətini unudur. Bu, yenidən başladıqdan sonra otaqları yenə həmin keyfiyyətdə açır. Yayımında o keyfiyyət olmayan otaq TikTok-un seçdiyi keyfiyyətdə açılır.
 Offer clear screen in every LIVE room	Hər LIVE otağında təmiz ekran təklif et
 Clear screen hides a LIVE's chat, gifts and buttons so only the stream shows. TikTok puts it in the menu of only some rooms. This adds it to the others.	Təmiz ekran LIVE-ın çatını, hədiyyələrini və düymələrini gizlədir, yalnız yayım görünür. TikTok onu yalnız bəzi otaqların menyusuna qoyur. Bu, onu qalanlarına da əlavə edir.
+# context: LIVE settings row next to Offer clear screen in every LIVE room; clear screen is TikTok's LIVE mode that hides chat, gifts and buttons (#354)
+Keep clear screen in the next LIVE	Növbəti LIVE-da təmiz ekranı saxla
+# context: summary of Keep clear screen in the next LIVE; a room is a LIVE stream page, swiping moves to the next one (#354)
+A LIVE you swipe to comes back with its chat, gifts and buttons showing. This keeps clear screen on from room to room until you turn it off.	Sürüşdürdüyünüz LIVE çatı, hədiyyələri və düymələri ilə geri gəlir. Bu, təmiz ekranı siz söndürənə qədər otaqdan otağa açıq saxlayır.
 Dark LIVE panels in dark mode	Qaranlıq rejimdə tünd LIVE panelləri
 With TikTok in dark mode, a LIVE room still opens its share menu, fan club and other panels in light colors. This opens them dark.	TikTok qaranlıq rejimdə olanda da LIVE otağı paylaşma menyusunu, fan klubunu və digər panelləri açıq rənglərdə açır. Bu ayar onları tünd açır.
 Keep watching in a small window	Kiçik pəncərədə izləməyə davam et

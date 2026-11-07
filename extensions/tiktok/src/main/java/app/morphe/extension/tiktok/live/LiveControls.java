@@ -66,6 +66,16 @@ public final class LiveControls {
     }
 
     /**
+     * True while clear screen should carry from one LIVE room to the next one swiped to (#354).
+     * TikTok's own setting for that is off unless its server turns it on; while it answers true,
+     * TikTok saves each clear screen change for the LIVE session and each new room's controller
+     * starts from it. Paused, the switch answers off and TikTok's setting decides.
+     */
+    public static boolean keepClearScreen() {
+        return SettingsStatus.liveControlsEnabled && Settings.KEEP_LIVE_CLEAR_SCREEN.get();
+    }
+
+    /**
      * Called as a LIVE panel asks whether to take TikTok's dark LIVE theme, with the panel's
      * context. TikTok answers no in every LIVE room even in dark mode, so the share menu, the fan
      * club and the first gift dialog opened white over a dark room (#159). True while the switch is

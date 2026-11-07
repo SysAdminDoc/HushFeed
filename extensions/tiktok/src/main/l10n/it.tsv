@@ -1796,6 +1796,10 @@ Keep the LIVE quality after TikTok restarts	Mantieni la qualità LIVE dopo il ri
 TikTok forgets the LIVE quality you picked when it closes. This starts rooms at that quality again after a restart. A room whose stream doesn't have it opens at TikTok's choice.	TikTok dimentica la qualità LIVE che hai scelto quando si chiude. Questo fa ripartire le stanze con quella qualità dopo un riavvio. Una stanza il cui stream non ce l'ha si apre con la scelta di TikTok.
 Offer clear screen in every LIVE room	Offri lo schermo pulito in ogni stanza LIVE
 Clear screen hides a LIVE's chat, gifts and buttons so only the stream shows. TikTok puts it in the menu of only some rooms. This adds it to the others.	Lo schermo pulito nasconde chat, regali e pulsanti di una LIVE così si vede solo la diretta. TikTok lo mette nel menu solo di alcune stanze. Questo lo aggiunge alle altre.
+# context: LIVE settings row next to Offer clear screen in every LIVE room; clear screen is TikTok's LIVE mode that hides chat, gifts and buttons (#354)
+Keep clear screen in the next LIVE	Mantieni lo schermo pulito nella LIVE successiva
+# context: summary of Keep clear screen in the next LIVE; a room is a LIVE stream page, swiping moves to the next one (#354)
+A LIVE you swipe to comes back with its chat, gifts and buttons showing. This keeps clear screen on from room to room until you turn it off.	Una LIVE a cui scorri torna a mostrare chat, regali e pulsanti. Questo mantiene lo schermo pulito da una stanza all'altra finché non lo disattivi.
 Dark LIVE panels in dark mode	Pannelli LIVE scuri in modalità scura
 With TikTok in dark mode, a LIVE room still opens its share menu, fan club and other panels in light colors. This opens them dark.	Con TikTok in modalità scura, una stanza LIVE apre comunque il menu di condivisione, il fan club e altri pannelli con colori chiari. Così si aprono scuri.
 Keep watching in a small window	Continua a guardare in una piccola finestra

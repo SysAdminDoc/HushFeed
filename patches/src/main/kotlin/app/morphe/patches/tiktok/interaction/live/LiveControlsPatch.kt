@@ -158,6 +158,25 @@ internal object LiveClearScreenEntryFingerprint : Fingerprint(
     parameters = listOf(),
 )
 
+/** TikTok's server setting that keeps clear screen for the rest of a LIVE session, real-named on 47.7.2. */
+internal const val LIVE_CLEAR_SCREEN_SESSION_SETTING =
+    "Lcom/bytedance/android/livesdk/setting/LiveClearScreenSessionPersistenceSetting;"
+
+/**
+ * Whether clear screen carries from one LIVE room to the next (#354). It answers the server's
+ * live_clear_screen_session_persistence, false unless TikTok turns it on. While it answers true,
+ * ClearScreenService saves each change under the LIVE session's id (set as LiveRoomFragment is
+ * created, so it lasts across swipes), hands the saved state to each new room's controller, whose
+ * constructor turns clear screen back on, and the room fragment builds that controller as its
+ * activity is created rather than later.
+ */
+internal object LiveClearScreenSessionFingerprint : Fingerprint(
+    definingClass = LIVE_CLEAR_SCREEN_SESSION_SETTING,
+    name = "getValue",
+    returnType = "Z",
+    parameters = listOf(),
+)
+
 /**
  * LIVE's per-room controller (X.0Las on 47.7.3, whose obfuscated name moves every build), found by
  * its constructor. It owns the actual clear state, including swipe gestures, and that constructor
@@ -2198,6 +2217,12 @@ val liveControlsPatch = bytecodePatch(
         LiveClearScreenEntryFingerprint.method.guardAtEntry(
             "LIVE controls",
             "invoke-static {}, $EXTENSION->offerClearScreen()Z",
+            "const/4 v0, 0x1\nreturn v0",
+        )
+        // Answers true while its switch is on, so clear screen carries to the next room (#354).
+        LiveClearScreenSessionFingerprint.method.guardAtEntry(
+            "LIVE controls",
+            "invoke-static {}, $EXTENSION->keepClearScreen()Z",
             "const/4 v0, 0x1\nreturn v0",
         )
         // Answers true while its switch is on and the panel's context is in dark mode, so LIVE

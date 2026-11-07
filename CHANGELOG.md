@@ -25,6 +25,7 @@ Every Hushfeed release, newest first.
 * `Custom hold speed` under Playback takes any speed you type, like 1.8 or 2.3, for holding a video and for the pull-down lock under it. It takes the place of `Speed while you hold the video`, and leaving it empty keeps that row's pick (#357).
 * `Check for already-saved videos` covers `Save the original sound` too. Save a sound you already have, even from a different video that uses it, and you get Open or Save again instead of a second copy (#356).
 * `Phone model for effects` under `Report a newer phone to effects` lets you pick the phone the effects server hears about. Type a model like SM-S938B or Pixel 9 Pro, since an effect turned down for one phone can open for another. Leave it empty and it stays the Galaxy S24 Ultra (#176).
+* `Keep clear screen in the next LIVE` carries clear screen from one LIVE room to the next one you swipe to, so the chat, gifts and buttons stay hidden until you turn clear screen off. It starts off and sits in Hushfeed settings > Playback, next to `Offer clear screen in every LIVE room` (#354).
 
 ### Bug Fixes
 

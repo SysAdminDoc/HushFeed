@@ -1,6 +1,9 @@
 package app.morphe.patches.tiktok.interaction.live
 
+import app.morphe.BridgeTypeFlow
 import app.morphe.Fixtures
+import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
+import app.morphe.patches.tiktok.shared.guardAtEntry
 import app.morphe.takes
 import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
@@ -46,6 +49,48 @@ class LiveClearScreenAnchorsTest {
                     calls.any { it.definingClass == clearScreenService }
             }
             assertEquals("${apk.name}: portrait room menus gated on the clear screen entry", 1, menus.size)
+        }
+    }
+
+    @Test
+    fun `each declared build keeps clear screen for the session through the guarded getter`() {
+        val service = "Lcom/bytedance/android/livesdk/clearscreen/ClearScreenService;"
+        Fixtures.forEachDeclared { apk ->
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            val classes = container.dexEntryNames.asSequence()
+                .flatMap { container.getEntry(it)!!.dexFile.classes.asSequence() }.toList()
+            val taken = classes.flatMap { cls -> cls.methods.filter { LiveClearScreenSessionFingerprint.takes(it, cls) } }
+            assertEquals("${apk.name}: ${taken.map { "${it.definingClass}->${it.name}" }}", 1, taken.size)
+            val getter = taken.single()
+            assertTrue(
+                "${apk.name}: the getter no longer reads live_clear_screen_session_persistence",
+                getter.implementation!!.instructions.any {
+                    ((it as? ReferenceInstruction)?.reference as? StringReference)?.string ==
+                        "live_clear_screen_session_persistence"
+                },
+            )
+            // The save on each change and the hand-over to a new room's controller both ask it.
+            val askers = classes.single { it.type == service }.methods.filter { method ->
+                method.implementation?.instructions?.toList().orEmpty().any {
+                    val call = (it as? ReferenceInstruction)?.reference as? MethodReference
+                    call?.definingClass == LIVE_CLEAR_SCREEN_SESSION_SETTING && call.name == "getValue"
+                }
+            }.map { it.name }.toSet()
+            assertEquals("${apk.name}: ClearScreenService readers $askers", 2, askers.size)
+
+            val patched = MutableMethod(getter)
+            patched.guardAtEntry(
+                "test",
+                "invoke-static {}, Lapp/morphe/extension/tiktok/live/LiveControls;->keepClearScreen()Z",
+                "const/4 v0, 0x1\nreturn v0",
+            )
+            val first = patched.implementation!!.instructions.first()
+            assertEquals(
+                "${apk.name}: the guard is not first",
+                "keepClearScreen",
+                ((first as? ReferenceInstruction)?.reference as? MethodReference)?.name,
+            )
+            assertEquals("${apk.name}: the guard's types", emptyList<Any>(), BridgeTypeFlow.check(patched))
         }
     }
 

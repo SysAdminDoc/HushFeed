@@ -753,6 +753,13 @@ public class Settings extends BaseSettings {
      */
     public static final BooleanSetting OFFER_LIVE_CLEAR_SCREEN = new BooleanSetting("offer_live_clear_screen", FALSE);
     /**
+     * Carries clear screen from one LIVE room to the next one swiped to (#354); the LIVE controls
+     * patch. TikTok keeps the state for the rest of the LIVE session only where its server turns
+     * live_clear_screen_session_persistence on. Read as each room opens and as clear screen
+     * changes, so the next room follows a change.
+     */
+    public static final BooleanSetting KEEP_LIVE_CLEAR_SCREEN = new BooleanSetting("keep_live_clear_screen", FALSE);
+    /**
      * Opens LIVE panels in TikTok's dark LIVE theme while TikTok is in dark mode (#159); the LIVE
      * controls patch. Read as each panel opens, so the next panel follows a change. The provider
      * answer alone only turned the panels' navigation bar dark on the S25, so each themed

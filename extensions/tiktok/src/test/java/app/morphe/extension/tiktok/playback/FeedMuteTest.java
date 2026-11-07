@@ -14,6 +14,7 @@ import android.widget.FrameLayout;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.PausedProcess;
 import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
+import app.morphe.extension.tiktok.navigation.BottomTabLabels;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 import com.ss.android.ugc.aweme.feed.model.Aweme;
@@ -760,6 +761,63 @@ public class FeedMuteTest {
             assertEquals(List.of(), calls);
         } finally {
             other.pause().stop().destroy();
+        }
+    }
+
+    /**
+     * A video whose player has paused has stopped, so leaving it hands the sound back in a moment
+     * rather than after the report gap: the music stayed off a second or more after the reader
+     * left the video (#283). A player still playing keeps the longer wait.
+     */
+    @Test public void leavingAPausedVideoGivesTheFocusBackRightAway() {
+        Settings.FOCUS_WAITS_FOR_VIDEO.save(true);
+        assertTrue(FeedMute.holdPageFocus("page"));
+        FeedMute.onVideoPlaying();
+        idleMain();
+        calls.clear();
+
+        FeedMute.pausedForTests = false;
+        ActivityController<OtherScreen> other = openOverFeed(OtherScreen.class);
+        try {
+            idleFor(FeedMute.LEAVE_PAUSED_MS + FeedMute.LEAVE_CHECK_MS);
+            assertEquals("a playing video keeps it", List.of(), calls);
+
+            FeedMute.pausedForTests = true;
+            idleFor(FeedMute.LEAVE_CHECK_MS);
+            assertEquals(List.of("abandon page page"), calls);
+        } finally {
+            other.pause().stop().destroy();
+        }
+    }
+
+    /** The Friends tab starts a video of its own after the feed's pauses, so it waits as before. */
+    @Test public void aPausedVideoLeftForTheFriendsTabWaitsForTheFriendsVideo() {
+        Settings.FOCUS_WAITS_FOR_VIDEO.save(true);
+        bringFeedForward();
+        assertTrue(FeedMute.holdPageFocus("page"));
+        FeedMute.onVideoPlaying();
+        idleMain();
+        calls.clear();
+        FeedMute.pausedForTests = true;
+
+        ViewGroup content = feed.get().findViewById(android.R.id.content);
+        View home = new View(feed.get());
+        View friends = new View(feed.get());
+        content.addView(home, new FrameLayout.LayoutParams(216, 138));
+        content.addView(friends, new FrameLayout.LayoutParams(216, 138));
+        BottomTabLabels.tabCreated(friends, "FRIENDS_TAB");
+        friends.setSelected(true);
+        idleMain();
+        WeakReference<View> oldHome = ReflectionHelpers.getStaticField(FeedVisibility.class, "homeTabReference");
+        ReflectionHelpers.setStaticField(FeedVisibility.class, "homeTabReference", new WeakReference<>(home));
+        try {
+            idleFor(FeedMute.LEAVE_PAUSED_MS + FeedMute.LEAVE_CHECK_MS);
+            assertEquals(List.of(), calls);
+            idleFor(FeedMute.LEAVE_QUIET_MS);
+            assertEquals("nothing played there after all", List.of("abandon page page"), calls);
+        } finally {
+            ReflectionHelpers.setStaticField(FeedVisibility.class, "homeTabReference", oldHome);
+            content.removeView(friends);
         }
     }
 

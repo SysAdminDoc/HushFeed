@@ -17,6 +17,8 @@ import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
 import app.morphe.extension.tiktok.feed.LiveStatusBar;
 import app.morphe.extension.tiktok.feedfilter.LiveFilter;
+import app.morphe.extension.tiktok.navigation.BottomNavigationTabOptions;
+import app.morphe.extension.tiktok.navigation.BottomTabLabels;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
@@ -129,9 +131,17 @@ public final class FeedMute {
     private static volatile long lastPlayingAt;
     /** Main thread. */
     private static boolean leaveCheckRunning;
-    static final long LEAVE_CHECK_MS = 1000L;
+    static final long LEAVE_CHECK_MS = 250L;
     /** Longer than TikTok's gap between progress reports, so a video on another tab still counts. */
     static final long LEAVE_QUIET_MS = 1500L;
+    /**
+     * How long a paused video holds the focus once the reader has left it. A paused player has
+     * stopped, so there is no report gap to wait out: waiting for one kept another app's music
+     * off for a second or two after the inbox or a chat opened (#283).
+     */
+    static final long LEAVE_PAUSED_MS = 300L;
+    /** What the player says while a test runs, null to ask it. Tests only. */
+    static volatile Boolean pausedForTests;
     private static final Runnable LEAVE_CHECK = FeedMute::checkLeftTheVideo;
     private static WeakReference<Application> followed = new WeakReference<>(null);
     /** Feed engines this silenced, and focus requests it turned down, since TikTok started. */
@@ -443,13 +453,23 @@ public final class FeedMute {
      * tab, a chat, the creator's page. A video paused on the feed or a detail pager keeps the
      * focus as it always has, and a LIVE room plays without the progress reports heard here.
      * Gone from the app altogether, TikTok has given the focus up itself, and background play
-     * keeps what it holds.
+     * keeps what it holds. A player that says it's paused needs only {@link #LEAVE_PAUSED_MS},
+     * except on the Friends tab, whose own video can take longer than that to start.
      */
     private static boolean leftTheVideo() {
-        if (SystemClock.uptimeMillis() - lastPlayingAt < LEAVE_QUIET_MS || inBackground()) return false;
+        long quiet = SystemClock.uptimeMillis() - lastPlayingAt;
+        if (quiet < LEAVE_PAUSED_MS || inBackground()) return false;
         Activity front = Utils.getVisibleActivity();
         if (front == null || FeedVisibility.isDetailPager(front) || LiveStatusBar.isLiveRoom(front)) return false;
-        return front.getClass() != feedActivity || !FeedVisibility.isOnFeed(front);
+        if (front.getClass() == feedActivity && FeedVisibility.isOnFeed(front)) return false;
+        return quiet >= LEAVE_QUIET_MS
+                || (playerPaused() && !BottomTabLabels.tabSelected(BottomNavigationTabOptions.FRIENDS));
+    }
+
+    /** Whether the player that reported last has its video paused. */
+    private static boolean playerPaused() {
+        Boolean stand = pausedForTests;
+        return stand != null ? stand : Boolean.FALSE.equals(SessionPlaybackHold.currentPlaying());
     }
 
     /** Hands the focus back and keeps it owed, so the next video asks again. Main thread. */
@@ -756,6 +776,7 @@ public final class FeedMute {
         lastPlayingAt = 0L;
         feedActivity = null;
         nativeForTests = null;
+        pausedForTests = null;
         SILENCED.set(0);
         FOCUS_HELD.set(0);
     }

@@ -1219,6 +1219,22 @@ internal object ShopFindBarAvailableFingerprint : Fingerprint(
     parameters = listOf("Lcom/ss/android/ugc/aweme/feed/model/VideoItemParams;"),
 )
 
+/**
+ * The show check of the shop's "Find <product>" button above the bottom bar on videos with no
+ * product cart (#271). TikTok carries two versions of its trigger and runs one per experiment arm.
+ */
+internal object ShopFindButtonAvailableFingerprint : Fingerprint(
+    definingClass = "/EcSearchNoCartFypBottomButtonTrigger;",
+    returnType = "Z",
+    parameters = listOf("Lcom/ss/android/ugc/aweme/feed/model/VideoItemParams;"),
+)
+
+internal object ShopFindButtonAvailableV2Fingerprint : Fingerprint(
+    definingClass = "/EcSearchNoCartFypBottomButtonTriggerV2;",
+    returnType = "Z",
+    parameters = listOf("Lcom/ss/android/ugc/aweme/feed/model/VideoItemParams;"),
+)
+
 /** Answers whether an item is a short drama advert that locks scrolling until it ends. */
 internal object DramaBlockingAdFingerprint : Fingerprint(
     definingClass = "Lcom/ss/android/ugc/aweme/impl/DramaBlockingAdServiceImpl;",

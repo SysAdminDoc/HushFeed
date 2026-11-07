@@ -52,6 +52,28 @@ public final class CardFilters {
         }
     }
 
+    /** The export's line for the shop's Find button on videos with no product cart. */
+    static final String SHOP_FIND_BUTTON_SOURCE = "ShopFindButton";
+
+    /**
+     * TikTok's answer to whether a video with no product cart shows the shop's "Find
+     * &lt;product&gt;" button above the bottom bar (#271), the one the reporter kept seeing after
+     * the Find bar was taken. It rides Hide TikTok Shop too, and every ask is counted the same way.
+     * The trigger's answer arrives as an int, non-zero for yes.
+     */
+    public static boolean keepShopFindButton(int shows) {
+        boolean showing = shows != 0;
+        try {
+            FeedFilterCounters.sawList(SHOP_FIND_BUTTON_SOURCE, showing ? 1 : 0);
+            if (!showing || !Settings.HIDE_SHOP.get()) return showing;
+            FeedFilterCounters.removed(SHOP_FIND_BUTTON_SOURCE, 1, "shopFindButton");
+            return false;
+        } catch (Throwable failure) {
+            Logger.printException(() -> "Could not check the shop Find button", failure);
+            return showing;
+        }
+    }
+
     /** The floating promotional event badge. */
     public static boolean shouldHideEventBadge() {
         return Settings.HIDE_EVENT_BADGE.get();

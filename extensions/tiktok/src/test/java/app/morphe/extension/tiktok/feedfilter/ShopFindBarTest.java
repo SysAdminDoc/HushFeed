@@ -40,10 +40,29 @@ public class ShopFindBarTest {
     }
 
     private static String exportLine() {
+        return exportLine(CardFilters.SHOP_FIND_BAR_SOURCE);
+    }
+
+    private static String exportLine(String source) {
         for (String line : FeedFilterCounters.report()) {
-            if (line.startsWith(CardFilters.SHOP_FIND_BAR_SOURCE + ":")) return line;
+            if (line.startsWith(source + ":")) return line;
         }
         return null;
+    }
+
+    /** The "Find <product>" button above the bottom bar on videos with no product cart. */
+    @Test public void hideTikTokShopTakesTheFindButtonAwayAndTheExportCountsIt() {
+        Settings.HIDE_SHOP.save(true);
+
+        assertFalse("a video with the button loses it", CardFilters.keepShopFindButton(1));
+        assertFalse("a video without the button stays without it", CardFilters.keepShopFindButton(0));
+        String line = exportLine(CardFilters.SHOP_FIND_BUTTON_SOURCE);
+        assertTrue(line, line != null && line.contains("2 lists") && line.contains("1 items")
+                && line.contains("1 removed") && line.contains("shopFindButton"));
+
+        Settings.HIDE_SHOP.save(false);
+        assertTrue("with the switch off TikTok decides", CardFilters.keepShopFindButton(1));
+        assertFalse(CardFilters.keepShopFindButton(0));
     }
 
     @Test public void hideTikTokShopTakesTheFindBarAwayAndTheExportCountsIt() {

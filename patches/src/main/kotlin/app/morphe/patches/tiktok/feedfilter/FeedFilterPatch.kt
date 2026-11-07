@@ -954,6 +954,37 @@ val feedFilterPatch = bytecodePatch(
             }
         }
 
+        // The "Find <product>" button above the bottom bar on videos with no product cart, which
+        // is what the reporter kept seeing (#271). Two versions of its trigger ship and one runs
+        // per experiment arm, so both answers go through Hide TikTok Shop on the way out. Each
+        // return sits after the trigger's try block.
+        val findButtonChecks = listOfNotNull(
+            ShopFindButtonAvailableFingerprint.methodOrNull,
+            ShopFindButtonAvailableV2Fingerprint.methodOrNull,
+        )
+        if (findButtonChecks.isEmpty()) {
+            throw PatchException("Feed filter: neither shop Find button trigger has a show check")
+        }
+        findButtonChecks.forEach { method ->
+            val returnIndices = method.implementationOrPatchException("Feed filter").instructions.withIndex()
+                .filter { it.value.opcode == Opcode.RETURN }
+                .map { it.index }
+                .toList()
+            if (returnIndices.isEmpty()) {
+                throw PatchException("Feed filter: the shop Find button's show check has no return to filter")
+            }
+            returnIndices.asReversed().forEach { returnIndex ->
+                val register = (method.getInstruction(returnIndex) as OneRegisterInstruction).registerA
+                method.addInstructionsAtControlFlowLabel(
+                    returnIndex,
+                    """
+                        invoke-static/range {v$register .. v$register}, $CARD_FILTERS_CLASS_DESCRIPTOR->keepShopFindButton(I)Z
+                        move-result v$register
+                    """,
+                )
+            }
+        }
+
         // TikTok may remove this surface in a future build. If the marker still exists, its
         // insertion hook is mandatory; if the surface itself is absent, there is no card here
         // to suppress.

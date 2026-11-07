@@ -38,8 +38,9 @@ import app.morphe.extension.tiktok.settings.L10n;
  *
  * <p>Anything that goes wrong shows no dot.
  */
-final class NewSettingDots {
-    static final String FILE = "hushfeed_new_dots";
+public final class NewSettingDots {
+    /** Kept through TikTok's launch-crash cleanup (LaunchCrashCleanup), or a crash would clear every dot. */
+    public static final String FILE = "hushfeed_new_dots";
     static final String SEEN = "seen";
     /** Marks a title that wears the dot, so a recycled row can lose it and a test can find it. */
     static final int TAG = 0x7f7f4008;

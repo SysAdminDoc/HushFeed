@@ -25,6 +25,7 @@ Every Hushfeed release, newest first.
 
 ### Bug Fixes
 
+* Hiding Report from the share sheet doesn't take `Block this creator` with it anymore. Block sits where Report would have been, in the share sheet and in the long-press menu (#367).
 * A bio handle with a period and a date stuck to it, like @john.doe11/30/24, stays plain text now. In 0.81.0 it linked only the part before the period, which opened a different account (#247).
 * With `Long-press Profile for Watch history` on, holding Profile opens Watch history again after you remove your second account. Before, the hold did nothing until TikTok rebuilt its tab bar (#341).
 * Hushfeed adds less lag when a video opens from Search or Explore. The part that hides buttons on videos rebuilt its whole lookup list on every screen layout while the page opened, and now builds it once. With `Playback quality` set, each video's addresses get checked once too, instead of again in every place the player asks (#344).

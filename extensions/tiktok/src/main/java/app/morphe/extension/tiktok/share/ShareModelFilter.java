@@ -97,6 +97,7 @@ public final class ShareModelFilter {
     }
 
     public static List<?> actions(List<?> items) {
+        HIDDEN_REPORT.remove();
         try {
             ShareActionCatalog.observe(items, current);
         } catch (Throwable ex) {
@@ -104,12 +105,59 @@ public final class ShareModelFilter {
             Logger.printException(() -> "Could not record the share actions", ex);
         }
         try {
-            return filter("actions", items, Settings.HIDE_SHARE_ACTIONS.get());
+            List<?> kept = filter("actions", items, Settings.HIDE_SHARE_ACTIONS.get());
+            noteHiddenReport(items, kept);
+            return kept;
         } catch (Throwable ex) {
             HookStatus.threw(FAMILY, "actions", ex);
             Logger.printException(() -> "Could not filter the share actions row", ex);
             return items;
         }
+    }
+
+    /**
+     * Where a Report this filter hid sat, as the key of the kept action before it ("" when it led
+     * the row). Block this creator goes beside Report and leaves rows TikTok built without one
+     * alone, so hiding Report took Block with it (#367). The snapshot constructor runs this filter
+     * and then the owned actions on one thread, so the next read on this thread is the same sheet.
+     */
+    private static final ThreadLocal<String> HIDDEN_REPORT = new ThreadLocal<>();
+
+    private static void noteHiddenReport(List<?> items, List<?> kept) {
+        if (items == null || kept == null || kept == items) return;
+        for (int i = 0; i < items.size(); i++) {
+            if (!"report".equals(Reflect.string(items.get(i), "key", "key"))) continue;
+            if (containsSame(kept, items.get(i))) return;
+            String before = "";
+            for (int j = i - 1; j >= 0; j--) {
+                if (!containsSame(kept, items.get(j))) continue;
+                String key = Reflect.string(items.get(j), "key", "key");
+                before = key == null ? "" : key;
+                break;
+            }
+            HIDDEN_REPORT.set(before);
+            return;
+        }
+    }
+
+    private static boolean containsSame(List<?> list, Object item) {
+        for (Object each : list) if (each == item) return true;
+        return false;
+    }
+
+    /** The index a hidden Report held in [row], or -1 when this filter didn't hide one. */
+    static int hiddenReportSlot(List<?> row) {
+        String before = HIDDEN_REPORT.get();
+        if (before == null) return -1;
+        if (before.isEmpty()) return 0;
+        for (int i = 0; i < row.size(); i++) {
+            if (before.equals(Reflect.string(row.get(i), "key", "key"))) return i + 1;
+        }
+        return row.size();
+    }
+
+    static void forgetHiddenReportForTests() {
+        HIDDEN_REPORT.remove();
     }
 
     public static boolean contacts(boolean original) {

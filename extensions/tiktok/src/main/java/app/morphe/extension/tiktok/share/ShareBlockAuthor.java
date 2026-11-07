@@ -140,7 +140,9 @@ public final class ShareBlockAuthor {
                 else if (built != reusable) built.retired = true;
             }
             int report = reportIndex(row);
-            if (eligible && report >= 0) {
+            // Report hidden from the share sheet still counts: TikTok offered it (#367).
+            int slot = report >= 0 ? report + 1 : ShareModelFilter.hiddenReportSlot(row);
+            if (eligible && slot >= 0) {
                 Object action = reusable == null ? null : reusable.action.get();
                 if (action == null) {
                     Activity activity = Utils.getVisibleActivity();
@@ -150,7 +152,7 @@ public final class ShareBlockAuthor {
                     }
                 }
                 if (action != null) {
-                    row.add(report + 1, action);
+                    row.add(slot, action);
                     HookStatus.bound(ShareModelFilter.FAMILY, "block author");
                 }
             } else if (reusable != null) reusable.retired = true;

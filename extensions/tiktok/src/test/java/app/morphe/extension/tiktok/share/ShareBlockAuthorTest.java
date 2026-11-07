@@ -133,6 +133,7 @@ public class ShareBlockAuthorTest {
         ((Map<?, ?>) ReflectionHelpers.getStaticField(ShareBlockAuthor.class, "IN_FLIGHT")).clear();
         ((Map<?, ?>) ReflectionHelpers.getStaticField(ShareBlockAuthor.class, "CREATORS")).clear();
         SignedInUser.idForTests = null;
+        ShareModelFilter.forgetHiddenReportForTests();
         Settings.SHARE_BLOCK_AUTHOR.save(false);
         Settings.HIDE_SHARE_ACTIONS.save(false);
         Settings.SHARE_HIDDEN_ITEMS.save("");
@@ -238,6 +239,28 @@ public class ShareBlockAuthorTest {
         SettingsStatus.shareSheetEnabled = false;
         assertSame(nativeRow, ShareBlockAuthor.actions(sheet, nativeRow));
         assertEquals(0, constructed);
+    }
+
+    @Test public void hidingReportKeepsBlockInReportsPlace() {
+        AwemeSharePackage sheet = sheet("200");
+        ShareModelFilter.surface(sheet);
+        Settings.SHARE_HIDDEN_ITEMS.save("x, report, casting");
+        List<?> kept = ShareModelFilter.actions(row());
+        assertEquals(2, kept.size());
+        List<?> finished = ShareBlockAuthor.actions(sheet, kept);
+        assertEquals(3, finished.size());
+        assertEquals("save", ((Action) finished.get(0)).key());
+        assertEquals(ShareBlockAuthor.KEY, ((Action) finished.get(1)).key());
+        assertEquals("not_interested", ((Action) finished.get(2)).key());
+
+        List<Object> reportFirst = new ArrayList<>(Arrays.asList(new Action("report"), new Action("save")));
+        List<?> leading = ShareBlockAuthor.actions(sheet, ShareModelFilter.actions(reportFirst));
+        assertEquals(ShareBlockAuthor.KEY, ((Action) leading.get(0)).key());
+
+        // Nothing hidden, no Report from TikTok: still no Block.
+        Settings.SHARE_HIDDEN_ITEMS.save("casting");
+        List<Object> noReport = new ArrayList<>(Arrays.asList(new Action("save")));
+        assertSame(noReport, ShareBlockAuthor.actions(sheet, ShareModelFilter.actions(noReport)));
     }
 
     @Test public void recycledPackageReplacesAndRetiresItsOldAction() {

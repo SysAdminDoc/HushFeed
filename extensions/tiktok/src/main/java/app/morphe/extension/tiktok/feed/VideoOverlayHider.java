@@ -2617,7 +2617,8 @@ public final class VideoOverlayHider {
         int at = 0;
         for (String[] names : TRAVERSAL_TARGET_IDS) {
             for (String name : names) {
-                ids[at++] = resolveIdentifier(activity, packageName, name, false);
+                // The package read where the lookup is, so the anchor table can trace it.
+                ids[at++] = resolveIdentifier(activity, activity.getPackageName(), name, false);
             }
         }
         CandidateIds table = new CandidateIds(packageName, generation, ids);

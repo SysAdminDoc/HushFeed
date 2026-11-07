@@ -208,7 +208,8 @@ public class CommentRowControlsTest {
         assertEquals(View.GONE, views[0].getVisibility());
         layOut();
         assertEquals("a gap was left where the picture was", 0, views[1].getLeft());
-        assertEquals(20, row.getMeasuredHeight());
+        assertEquals("the line kept the picture's height", 20,
+                ((View) views[1].getParent()).getMeasuredHeight());
         assertEquals(View.VISIBLE, count.getVisibility());
         assertEquals(View.VISIBLE, thumbsDown.getVisibility());
     }

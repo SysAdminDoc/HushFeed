@@ -333,6 +333,9 @@ public class Settings extends BaseSettings {
      */
     public static final BooleanSetting REPORT_NEWER_PHONE_TO_EFFECTS =
             new BooleanSetting("report_newer_phone_to_effects", FALSE);
+    /** The model {@link #REPORT_NEWER_PHONE_TO_EFFECTS} reports instead, empty for the Galaxy S24 Ultra. */
+    public static final StringSetting EFFECT_PHONE_MODEL =
+            new StringSetting("effect_phone_model", "", false, Setting.parent(REPORT_NEWER_PHONE_TO_EFFECTS));
     // The four Performance patches, in the default selection because each hook asks one of these
     // first. Off until the reader turns one on, and a paused build answers off. The splash, update
     // and traffic hooks act on TikTok's startup tasks, so they need a restart. The animated image

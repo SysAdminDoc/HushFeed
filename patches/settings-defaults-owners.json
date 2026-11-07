@@ -636,7 +636,8 @@
       "OPEN_STORY_OVER_LIVE"
     ],
     "Report a newer phone to effects": [
-      "REPORT_NEWER_PHONE_TO_EFFECTS"
+      "REPORT_NEWER_PHONE_TO_EFFECTS",
+      "EFFECT_PHONE_MODEL"
     ],
     "Resource and battery governor": [
       "BLOCK_MOTION_SENSORS",

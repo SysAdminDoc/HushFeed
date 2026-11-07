@@ -639,7 +639,8 @@
       "open_story_over_live"
     ],
     "Report a newer phone to effects": [
-      "report_newer_phone_to_effects"
+      "report_newer_phone_to_effects",
+      "effect_phone_model"
     ],
     "Resource and battery governor": [
       "block_motion_sensors",
@@ -1634,6 +1635,12 @@
       "default": 5,
       "minimum": 0,
       "maximum": 60
+    },
+    "effect_phone_model": {
+      "field": "EFFECT_PHONE_MODEL",
+      "key": "effect_phone_model",
+      "type": "string",
+      "default": ""
     },
     "enable_live_search": {
       "field": "ENABLE_LIVE_SEARCH",

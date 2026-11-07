@@ -24,6 +24,7 @@ Every Hushfeed release, newest first.
 * `Hide profile pictures in comments` takes the commenter's picture off every comment and reply. The name and the comment move over to the left, so there's no empty space where the picture was. It starts off, sits under `Hide the thumbs down on comments` in Hushfeed settings > Comments and takes a TikTok restart (#352).
 * `Custom hold speed` under Playback takes any speed you type, like 1.8 or 2.3, for holding a video and for the pull-down lock under it. It takes the place of `Speed while you hold the video`, and leaving it empty keeps that row's pick (#357).
 * `Check for already-saved videos` covers `Save the original sound` too. Save a sound you already have, even from a different video that uses it, and you get Open or Save again instead of a second copy (#356).
+* `Phone model for effects` under `Report a newer phone to effects` lets you pick the phone the effects server hears about. Type a model like SM-S938B or Pixel 9 Pro, since an effect turned down for one phone can open for another. Leave it empty and it stays the Galaxy S24 Ultra (#176).
 
 ### Bug Fixes
 

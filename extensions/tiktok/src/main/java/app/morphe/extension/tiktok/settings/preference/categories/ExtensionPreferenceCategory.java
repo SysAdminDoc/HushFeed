@@ -9,6 +9,7 @@ package app.morphe.extension.tiktok.settings.preference.categories;
 import android.content.Context;
 import android.preference.PreferenceScreen;
 
+import app.morphe.extension.tiktok.misc.EffectDeviceSpoof;
 import app.morphe.extension.tiktok.privacy.StoreIdentity;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
@@ -435,10 +436,17 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                     context,
                     "Report a newer phone to effects",
                     "Effects ask TikTok's server whether your phone can run them, and some get turned down on older phones. "
-                            + "This tells the effects server you have a Galaxy S24 Ultra instead. Sign-in and everything else "
-                            + "still see your real phone. An effect your phone really can't run may still fail or look wrong.",
+                            + "This tells the effects server you have a Galaxy S24 Ultra instead, or the phone you type below. "
+                            + "Sign-in and everything else still see your real phone. An effect your phone really can't run may "
+                            + "still fail or look wrong.",
                     Settings.REPORT_NEWER_PHONE_TO_EFFECTS
             ));
+            addPreference(new InputTextPreference(context, "Phone model for effects",
+                    "The model the effects server is told, like SM-S938B for a Galaxy S25 Ultra or Pixel 9 Pro. "
+                            + "An effect turned down for one phone may open for another. Leave empty for the Galaxy S24 Ultra.",
+                    Settings.EFFECT_PHONE_MODEL)
+                    .withFreeTextKeyboard()
+                    .withCheck(EffectDeviceSpoof::modelProblem));
         }
         if (SettingsStatus.launcherShortcutsEnabled) {
             addPreference(new TogglePreference(

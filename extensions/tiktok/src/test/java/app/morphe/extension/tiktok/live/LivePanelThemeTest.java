@@ -108,6 +108,8 @@ public class LivePanelThemeTest {
         SettingsStatus.liveControlsEnabled = false;
         Settings.DARK_LIVE_PANELS.save(Settings.DARK_LIVE_PANELS.defaultValue);
         LivePanelTheme.stockSeen = false;
+        LivePanelTheme.panelSeen = false;
+        ReflectionHelpers.<Map<?, ?>>getStaticField(LivePanelTheme.class, "DARK_PANELS").clear();
         // A Spark page asked with no activity looks for any darkened room, so none carries over.
         ReflectionHelpers.<Map<?, ?>>getStaticField(LivePanelTheme.class, "LIGHT_ROOMS").clear();
     }
@@ -341,6 +343,77 @@ public class LivePanelThemeTest {
         ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, false));
         SettingsStatus.liveControlsEnabled = false;
         assertSame("without the patch", tiktok, LivePanelTheme.darkLivePage(list, tiktok));
+    }
+
+    /** #362: the moderator settings' muted and blocked lists are plain fragments under a dark panel. */
+    @Test public void aPlainFragmentUnderADarkenedPanelTakesItsDarkContext() {
+        LayoutInflater tiktok = LayoutInflater.from(dark);
+        Settings.DARK_LIVE_PANELS.save(true);
+        ShareDialog admin = dialog();
+        GiftList list = new GiftList();
+        list.parent = admin;
+        assertSame("before any panel was darkened", tiktok, LivePanelTheme.darkLivePage(list, tiktok));
+        assertEquals("no walk before any panel was darkened", 0, list.asked);
+
+        LayoutInflater sheet = LivePanelTheme.darkLivePanel(admin, tiktok);
+        assertNotSame(tiktok, sheet);
+        assertTrue("a panel was darkened", LivePanelTheme.panelSeen);
+        LayoutInflater rows = LivePanelTheme.darkLivePage(list, tiktok);
+        assertNotSame(tiktok, rows);
+        assertSame("the panel's own dark context", sheet.getContext(), rows.getContext());
+        assertEquals(textColor(new ContextThemeWrapper(dark, OVERLAY)), textColor(rows.getContext()));
+        GiftList deeper = new GiftList();
+        deeper.parent = page(admin);
+        assertSame("through a themed page", sheet.getContext(), LivePanelTheme.darkLivePage(deeper, tiktok).getContext());
+
+        GiftList other = new GiftList();
+        other.parent = dialog();
+        assertSame("a panel that wasn't darkened", tiktok, LivePanelTheme.darkLivePage(other, tiktok));
+        RankListDialog ranking = stock(new RankListDialog());
+        ranking.parent = admin;
+        GiftList under = new GiftList();
+        under.parent = ranking;
+        assertSame("the walk stops at a stock panel", tiktok, LivePanelTheme.darkLivePage(under, tiktok));
+        assertSame("a fragment under no panel", tiktok, LivePanelTheme.darkLivePage(new GiftList(), tiktok));
+        assertSame("the panel itself", tiktok, LivePanelTheme.darkLivePage(admin, tiktok));
+        assertSame(null, LivePanelTheme.darkLivePage(list, null));
+        LayoutInflater day = LayoutInflater.from(light);
+        assertSame("light mode", day, LivePanelTheme.darkLivePage(list, day));
+
+        ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, true));
+        assertSame("paused", tiktok, LivePanelTheme.darkLivePage(list, tiktok));
+        ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, false));
+        SettingsStatus.liveControlsEnabled = false;
+        assertSame("without the patch", tiktok, LivePanelTheme.darkLivePage(list, tiktok));
+    }
+
+    /** #362: the gift guide bubble is white, so over a darkened room it inflates over the room's light theme. */
+    @Test public void theGiftGuideBubbleOverADarkenedRoomTakesTheRoomsLightTheme() {
+        RuntimeEnvironment.setQualifiers("+night");
+        Activity live = room();
+        int roomText = textColor(live);
+        assertSame("the switch starts off", live, LivePanelTheme.lightRoomView(live));
+
+        Settings.DARK_LIVE_PANELS.save(true);
+        assertSame("a room the hook never darkened", live, LivePanelTheme.lightRoomView(live));
+        LivePanelTheme.darkLiveRoom(live, android.R.style.Theme_Black);
+        assertTrue("the room went dark", roomText != textColor(live));
+        Context bubble = LivePanelTheme.lightRoomView(live);
+        assertNotSame(live, bubble);
+        assertSame("the bubble still sits in the room", live, LivePanelTheme.roomOf(bubble));
+        assertEquals("the bubble's text takes the room's light color", roomText, textColor(bubble));
+        assertTrue("the room itself stays dark", roomText != textColor(live));
+        Context wrapped = new ContextThemeWrapper(live, PARTIAL_OVERLAY);
+        assertEquals("found through a wrapped room context", roomText, textColor(LivePanelTheme.lightRoomView(wrapped)));
+        Context app = RuntimeEnvironment.getApplication();
+        assertSame("no room", app, LivePanelTheme.lightRoomView(app));
+        assertSame(null, LivePanelTheme.lightRoomView(null));
+
+        ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, true));
+        assertSame("paused", live, LivePanelTheme.lightRoomView(live));
+        ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, false));
+        SettingsStatus.liveControlsEnabled = false;
+        assertSame("without the patch", live, LivePanelTheme.lightRoomView(live));
     }
 
     /** Sets only the window animations, the way TikTok's light LIVE overlay leaves most of a theme alone. */

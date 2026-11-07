@@ -1602,6 +1602,56 @@ internal fun hookLongPressMenu(factory: MutableMethod) {
     }
 }
 
+internal const val LIVE_ICON_VIEW = "Lcom/bytedance/android/live/design/view/icon/LiveIconView;"
+
+/**
+ * The gift guide bubble a room shows over its gift button ("Support this LIVE") being built
+ * (X.0Mam.LIZLLL on 47.7.2, #362). TikTok draws the bubble white, and its text takes the color the
+ * room's theme gives text by default, which over a room Dark LIVE panels darkened is the dark app
+ * theme's white. The builder makes the bubble's content view from its Context parameter.
+ */
+internal object LiveGuideBubbleFingerprint : Fingerprint(
+    returnType = "V",
+    parameters = listOf("Landroid/content/Context;", "L", "L", "Lcom/bytedance/ies/sdk/datachannel/DataChannel;", "J"),
+    strings = listOf("halo", "top", "bottom"),
+)
+
+/**
+ * The bubble's content view: the one class the builder constructs from a Context alone that
+ * extends LinearLayout and holds a LIVE icon view, or null.
+ */
+internal fun guideBubbleView(builder: Method, classOf: (String) -> ClassDef?): String? =
+    builder.implementation?.instructions?.mapNotNull { instruction ->
+        val call = (instruction as? ReferenceInstruction)?.reference as? MethodReference
+        call?.definingClass?.takeIf {
+            instruction.opcode == Opcode.INVOKE_DIRECT && call.name == "<init>" &&
+                call.parameterTypes.map(CharSequence::toString) == listOf("Landroid/content/Context;")
+        }
+    }?.distinct()?.singleOrNull { type ->
+        val view = classOf(type)
+        view != null && view.superclass == "Landroid/widget/LinearLayout;" && view.fields.any { it.type == LIVE_ICON_VIEW }
+    }
+
+/**
+ * Hands the context the bubble's constructor gets to the extension before anything reads it, which
+ * answers the room's light theme over a darkened room, so the bubble inflates as TikTok shows it in
+ * light mode. Nothing touches the view before its super call, so the swap goes in first.
+ */
+internal fun hookGuideBubble(constructor: MutableMethod) {
+    if (constructor.name != "<init>" ||
+        constructor.parameterTypes.map(CharSequence::toString) != listOf("Landroid/content/Context;")
+    ) {
+        throw PatchException("LIVE controls: the gift guide bubble has no constructor taking a Context")
+    }
+    constructor.addInstructions(
+        0,
+        """
+            invoke-static/range {p1 .. p1}, $PANEL_THEME->lightRoomView(Landroid/content/Context;)Landroid/content/Context;
+            move-result-object p1
+        """,
+    )
+}
+
 private const val SET_BACKGROUND_RESOURCE = "Landroid/view/View;->setBackgroundResource(I)V"
 
 /**
@@ -2239,6 +2289,13 @@ val liveControlsPatch = bytecodePatch(
         // A viewer's long-press menu is a plain dialog, so its navigation bar stayed light under
         // the dark menu (S22, 2026-10-24). The factory the room gets it from hands it over.
         hookLongPressMenu(LiveLongPressMenuFingerprint.method)
+        // The gift guide bubble ("Support this LIVE") stays white, but its text took the darkened
+        // room's white (#362), so its view inflates over the room's light theme.
+        val bubble = guideBubbleView(LiveGuideBubbleFingerprint.method) { classDefByOrNull(it) }
+            ?: throw PatchException("LIVE controls: the gift guide bubble's view is gone")
+        hookGuideBubble(mutableClassDefBy(bubble).methods.single {
+            it.name == "<init>" && it.parameterTypes.map(CharSequence::toString) == listOf("Landroid/content/Context;")
+        })
         // Its group chat row is the same kind of fixed white shape under text in the card theme's
         // colors (Login2, 2026-10-20), so the extension gives it the event box's fill.
         hookGroupChat(mutableClassDefBy(LiveProfileGroupChatFingerprint.method.definingClass).methods)

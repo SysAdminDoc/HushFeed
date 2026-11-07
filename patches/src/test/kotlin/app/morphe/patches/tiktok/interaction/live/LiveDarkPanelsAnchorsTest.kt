@@ -532,6 +532,49 @@ class LiveDarkPanelsAnchorsTest {
         }
     }
 
+    /**
+     * #362: the gift guide bubble ("Support this LIVE") is white with text in the room theme's
+     * default color, white over a darkened room. Its builder is found on each build, the view it
+     * makes from its Context is the one LinearLayout with a LIVE icon, and that view's constructor
+     * swaps its Context for the extension's answer before anything reads it.
+     */
+    @Test
+    fun `each declared build hands the gift guide bubble's context to the extension before it inflates`() {
+        Fixtures.forEachDeclared { apk ->
+            val classes = classes(apk)
+            val builders = classes.values.flatMap { owner ->
+                owner.methods.filter { it.parameterTypes.size == 5 && LiveGuideBubbleFingerprint.takes(it, owner) }
+            }
+            assertEquals("${apk.name}: the bubble's builder", 1, builders.size)
+            val view = guideBubbleView(builders.single()) { classes[it] }
+            assertNotNull("${apk.name}: the bubble's view", view)
+            val constructor = classes.getValue(view!!).methods.single {
+                it.name == "<init>" && it.parameterTypes.map(CharSequence::toString) == listOf("Landroid/content/Context;")
+            }
+
+            val original = constructor.implementation!!.instructions.filter { it.opcode != Opcode.NOP }
+            val hooked = MutableMethod(constructor)
+            hookGuideBubble(hooked)
+            val code = hooked.implementation!!.instructions.filter { it.opcode != Opcode.NOP }
+            val context = constructor.implementation!!.registerCount - 1
+            val hook = code[0] as RegisterRangeInstruction
+            assertEquals("${apk.name}: the swap goes first", "lightRoomView",
+                ((hook as ReferenceInstruction).reference as MethodReference).name)
+            assertEquals("${apk.name}: from the Context parameter", listOf(context, 1), listOf(hook.startRegister, hook.registerCount))
+            assertEquals("${apk.name}: back into it", context, (code[1] as OneRegisterInstruction).registerA)
+            assertEquals("${apk.name}: nothing else moves", original.map { it.opcode }, code.drop(2).map { it.opcode })
+            assertTrue("${apk.name}: the view reads its Context after the swap", code.drop(2).any { instruction ->
+                (instruction as? FiveRegisterInstruction)?.let { call ->
+                    instruction.opcode == Opcode.INVOKE_STATIC && call.registerCount == 1 && call.registerC == context
+                } == true
+            })
+            assertEquals("${apk.name}", emptyList<BridgeTypeFlow.Problem>(), BridgeTypeFlow.check(hooked))
+        }
+        assertThrows(PatchException::class.java) {
+            hookGuideBubble(badgeBind("nop"))
+        }
+    }
+
     /** A badge bind that reads its tile from [owner]'s lazy field and casts it to [cast], then runs [after]. */
     private fun badgeBind(
         after: String,

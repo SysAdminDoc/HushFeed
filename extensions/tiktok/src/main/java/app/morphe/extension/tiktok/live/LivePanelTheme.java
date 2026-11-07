@@ -88,6 +88,10 @@ public final class LivePanelTheme {
     static volatile boolean stockSeen;
     /** Each darkened room's theme as it was before TikTok's dark app theme went on. */
     private static final Map<Activity, Resources.Theme> LIGHT_ROOMS = Collections.synchronizedMap(new WeakHashMap<>());
+    /** Set once a panel has been darkened, so until then no fragment walks up its parents for one. */
+    static volatile boolean panelSeen;
+    /** Each darkened panel with the dark context its views inflated through. */
+    private static final Map<Object, Context> DARK_PANELS = Collections.synchronizedMap(new WeakHashMap<>());
     /** The profile card's label color when the server's is missing or unreadable: color/aj, #0F161823, on 47.4.3. */
     private static final int LABEL_DEFAULT = 0x0F161823;
     /**
@@ -141,6 +145,7 @@ public final class LivePanelTheme {
     private static volatile boolean rowFailureLogged;
     private static volatile boolean viewContextFailureLogged;
     private static volatile boolean sparkFailureLogged;
+    private static volatile boolean bubbleFailureLogged;
 
     private LivePanelTheme() {
     }
@@ -184,7 +189,10 @@ public final class LivePanelTheme {
                 return inflater;
             }
             settle(panel);
-            return inflater.cloneInContext(new ContextThemeWrapper(context, overlay));
+            Context dark = new ContextThemeWrapper(context, overlay);
+            DARK_PANELS.put(panel, dark);
+            panelSeen = true;
+            return inflater.cloneInContext(dark);
         } catch (Throwable failure) {
             Logger.printException(() -> "Could not darken a LIVE panel", failure);
             return inflater;
@@ -823,20 +831,84 @@ public final class LivePanelTheme {
      * plain fragment takes the room activity's inflater even under a LIVE panel, so the daily
      * ranking's lists took the room's dark app theme and their rows read white on the ranking's
      * white sheet (Login2, 2026-10-19). While Dark LIVE panels is on in dark mode, a plain
-     * fragment under a stock panel inflates through the overlay that panel gets. LIVE's themed
-     * fragments and dialogs have their own hook, and every other fragment keeps TikTok's inflater.
-     * Every fragment in the app comes through here, so nothing is looked up before a stock panel
-     * has inflated.
+     * fragment under a stock panel inflates through the overlay that panel gets. The same goes for
+     * a dark panel: the moderator settings' muted and blocked lists are plain fragments under it,
+     * and over the room's light LIVE colors their names read dark on the dark sheet (#362), so a
+     * plain fragment under a panel darkLivePanel darkened inflates through that panel's dark
+     * context. LIVE's themed fragments and dialogs have their own hook, and every other fragment
+     * keeps TikTok's inflater. Every fragment in the app comes through here, so nothing is looked
+     * up before a stock panel has inflated or a panel was darkened.
      */
     public static LayoutInflater darkLivePage(Object fragment, LayoutInflater inflater) {
         try {
-            if (!stockSeen || fragment == null || panelType(fragment.getClass()) != OTHER) {
+            if ((!stockSeen && !panelSeen) || fragment == null || inflater == null
+                    || panelType(fragment.getClass()) != OTHER) {
                 return inflater;
             }
-            return darkLivePanel(fragment, inflater);
+            if (stockSeen) {
+                LayoutInflater stock = darkLivePanel(fragment, inflater);
+                if (stock != inflater) {
+                    return stock;
+                }
+            }
+            return panelSeen ? darkPanelPage(fragment, inflater) : inflater;
         } catch (Throwable failure) {
             Logger.printException(() -> "Could not check a fragment for a LIVE panel", failure);
             return inflater;
+        }
+    }
+
+    /**
+     * The inflater of a plain fragment under a panel darkLivePanel darkened: one on that panel's
+     * dark context. The walk stops at a stock panel, which keeps its light look, and at a panel
+     * that wasn't darkened; anything else hands TikTok's inflater back.
+     */
+    private static LayoutInflater darkPanelPage(Object fragment, LayoutInflater inflater) {
+        Object current = Reflect.invoke(fragment, "getParentFragment");
+        for (int depth = 0; current != null && depth < MAX_PARENTS; depth++) {
+            int kind = panelType(current.getClass());
+            if (kind == STOCK) {
+                return inflater;
+            }
+            if (kind == PANEL) {
+                Context dark = DARK_PANELS.get(current);
+                if (dark == null || !LiveControls.darkLivePanels(inflater.getContext())) {
+                    return inflater;
+                }
+                return inflater.cloneInContext(dark);
+            }
+            current = Reflect.invoke(current, "getParentFragment");
+        }
+        return inflater;
+    }
+
+    /**
+     * Called first in the constructor of the gift guide bubble a LIVE room shows over its gift
+     * button ("Support this LIVE"), with the context it inflates its views through. TikTok draws the
+     * bubble white, and its text takes the color the room's theme gives text by default, which over
+     * a room the room hook darkened is the dark app theme's white, so the text was white on white
+     * (#362). While Dark LIVE panels is on in dark mode, the bubble inflates over the room's theme as
+     * it was before the dark app theme went on, as TikTok shows it in light mode. A room the hook
+     * never darkened, and anything that fails, keeps TikTok's context.
+     */
+    public static Context lightRoomView(Context context) {
+        try {
+            if (context == null || !LiveControls.darkLivePanels(context)) {
+                return context;
+            }
+            Resources.Theme light = lightRoom(context);
+            if (light == null) {
+                return context;
+            }
+            Resources.Theme theme = context.getResources().newTheme();
+            theme.setTo(light);
+            return new ContextThemeWrapper(context, theme);
+        } catch (Throwable failure) {
+            if (!bubbleFailureLogged) {
+                bubbleFailureLogged = true;
+                Logger.printException(() -> "Could not give a LIVE room's gift guide its light theme", failure);
+            }
+            return context;
         }
     }
 

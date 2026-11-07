@@ -31,6 +31,7 @@ Every Hushfeed release, newest first.
 * An imported font and `Use system font` now reach TikTok's own screens, like its Settings pages, on installs patched from the split APK bundle. TikTok's fonts aren't in the bundle, so TikTok had nothing to swap and fell back to the phone's default font. Bold text stays bold (#346).
 * `Hide TikTok Shop` also hides the "Find <product>" button with the shopping bag that sits above the search bar on some videos. 0.81.0 only caught a different Find bar, and the diagnostic export now counts this button on its own line (#271).
 * `Remove story rings` and `Remove the LIVE ring` take the rings off on the feed, in comments and on profiles again. TikTok 47.7.2 hands each picture its story status directly and asks a different place whether someone's live, so the old hooks missed most of them (#351).
+* With `Dark LIVE panels in dark mode` on, the names in a LIVE's moderator settings and its muted and blocked lists read white on the dark sheet. They came out dark gray before. The "Support this LIVE" bubble over the gift button keeps its dark text on white too, where it had turned white on white (#362).
 
 ## 0.81.0 (2026-11-05)
 

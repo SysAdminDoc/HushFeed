@@ -1,11 +1,13 @@
 package app.morphe.patches.tiktok.interaction.systemfont
 
 import app.morphe.Fixtures
+import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
@@ -49,14 +51,50 @@ class SystemFontAnchorsTest {
                     val returns = method.implementation?.instructions
                         ?.count { it.opcode == Opcode.RETURN_OBJECT } ?: 0
                     assertTrue("$version: ${engine.type}->${method.name} returns no typeface", returns > 0)
-                    // #346: the entry hook reads the weight and slant from p2 and p3, the asset
-                    // path from p1, which holds only while the build method is an instance method.
-                    assertFalse(
-                        "$version: ${engine.type}->${method.name} is static, so the request moved",
-                        AccessFlags.STATIC.isSet(method.accessFlags),
-                    )
+                }
+                // #346: the entry hook reads the request from the first parameters, p0 on a static
+                // builder (47.7.2 has a static asset loader beside the instance one) and p1 on an
+                // instance one, so both kinds must keep the weight and slant, or the file name, first.
+                assertTrue(
+                    "$version: ${engine.type} has no instance build method",
+                    builders.any { !AccessFlags.STATIC.isSet(it.accessFlags) },
+                )
+            }
+        }
+    }
+
+    /**
+     * #346: each build method hands its request over at entry from its own parameter registers,
+     * the static asset loader's p0 as well as the instance builders' p1 and p2..p3.
+     */
+    @Test
+    fun `the request hook reads each build method's own parameters on each build`() {
+        Fixtures.forEachDeclared { apk ->
+            val version = Fixtures.versionOf(apk)
+            var statics = 0
+            classesOf(apk).filter(::isFontEngine).forEach { engine ->
+                engine.methods.filter { it.engineShape() != null }.forEach { method ->
+                    val static = AccessFlags.STATIC.isSet(method.accessFlags)
+                    if (static) statics++
+                    val registers = method.implementation!!.registerCount
+                    val parameterRegisters = method.parameterTypes.sumOf { if (it.toString() == "J" || it.toString() == "D") 2 else 1 } +
+                        if (static) 0 else 1
+                    val firstParameter = registers - parameterRegisters + if (static) 0 else 1
+                    val variation = method.engineShape() == "[Landroid/graphics/fonts/FontVariationAxis;IZ"
+                    val mutable = MutableMethod(method)
+                    mutable.systemizeReturns()
+                    val entry = mutable.implementation!!.instructions.first()
+                    val where = "$version: ${engine.type}->${method.name}"
+                    assertEquals(where, registers, mutable.implementation!!.registerCount)
+                    assertEquals(where, Opcode.INVOKE_STATIC_RANGE, entry.opcode)
+                    val range = entry as RegisterRangeInstruction
+                    assertEquals(where, if (variation) firstParameter + 1 else firstParameter, range.startRegister)
+                    assertEquals(where, if (variation) 2 else 1, range.registerCount)
+                    assertEquals(where, if (variation) "requested" else "requestedAsset",
+                        ((entry as ReferenceInstruction).reference as MethodReference).name)
                 }
             }
+            assertTrue("$version: no static build method, so this checks only the instance shape", statics > 0)
         }
     }
 

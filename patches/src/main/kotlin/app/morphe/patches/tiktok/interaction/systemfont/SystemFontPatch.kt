@@ -289,11 +289,13 @@ internal fun Method.engineShape(): String? {
  * caller's: the variable builder's weight and slant, the asset loader's file name. On an install
  * patched from the split bundle TikTok's font files are in a feature split the bundle leaves out,
  * so every build answers null (#346), and the extension makes the replacement at that weight.
+ * 47.7.2's engine also has a static asset loader beside its instance one, whose file name is p0.
  */
-private fun MutableMethod.systemizeReturns() {
+internal fun MutableMethod.systemizeReturns() {
+    val first = if (AccessFlags.STATIC.isSet(accessFlags)) 0 else 1
     val request = when (engineShape()) {
-        VARIATION_SHAPE -> "invoke-static/range {p2 .. p3}, $EXTENSION_CLASS_DESCRIPTOR->requested(II)V"
-        else -> "invoke-static/range {p1 .. p1}, $EXTENSION_CLASS_DESCRIPTOR->requestedAsset(Ljava/lang/String;)V"
+        VARIATION_SHAPE -> "invoke-static/range {p${first + 1} .. p${first + 2}}, $EXTENSION_CLASS_DESCRIPTOR->requested(II)V"
+        else -> "invoke-static/range {p$first .. p$first}, $EXTENSION_CLASS_DESCRIPTOR->requestedAsset(Ljava/lang/String;)V"
     }
     findInstructionIndicesReversedOrThrow { opcode == Opcode.RETURN_OBJECT }.forEach { index ->
         val register = getInstruction<OneRegisterInstruction>(index).registerA

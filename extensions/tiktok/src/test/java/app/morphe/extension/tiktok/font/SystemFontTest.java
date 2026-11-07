@@ -76,14 +76,27 @@ public class SystemFontTest {
                 Typeface.create(Typeface.DEFAULT, 700, false).getStyle(), bold.getStyle());
         assertFalse(bold.isItalic());
 
+        SystemFont.requestedAsset("font/TikTok-Text-Bold.otf");
+        assertEquals("the asset's weight was not read from its name",
+                Typeface.create(Typeface.DEFAULT, 700, false).getStyle(), SystemFont.systemize(null).getStyle());
+    }
+
+    /**
+     * The slant half of the #346 case, on the style path below Android 9: Robolectric's Android 9
+     * typefaces keep the weight a face is made at but not its slant, so only this path shows it.
+     */
+    @Test @Config(sdk = 27) public void aFaceTheEngineCannotBuildKeepsTheRequestedSlant() {
+        Settings.SYSTEM_FONT.save(true);
         SystemFont.requested(400, 1);
         Typeface italic = SystemFont.systemize(null);
         assertNotNull(italic);
         assertTrue("the requested slant was dropped", italic.isItalic());
+        assertFalse(italic.isBold());
 
-        SystemFont.requestedAsset("font/TikTok-Text-Bold.otf");
-        assertEquals("the asset's weight was not read from its name",
-                Typeface.create(Typeface.DEFAULT, 700, false).getStyle(), SystemFont.systemize(null).getStyle());
+        SystemFont.requestedAsset("font/TikTok-Text-BoldItalic.otf");
+        Typeface boldItalic = SystemFont.systemize(null);
+        assertTrue("the asset's slant was not read from its name", boldItalic.isItalic());
+        assertTrue("the asset's weight was not read from its name", boldItalic.isBold());
     }
 
     @Test public void aFontFileNameGivesItsWeight() {

@@ -430,10 +430,12 @@
       "fade_controls_opacity",
       "fade_in_clear_display",
       "see_through_bottom_bar",
+      "see_through_video_in_window",
       "floating_bottom_bar",
       "liquid_glass_bottom_bar",
       "glass_tab_lens",
       "glass_video_blur",
+      "glass_refraction",
       "glass_blur_strength",
       "glass_opacity",
       "glass_bar_height",
@@ -655,7 +657,11 @@
       "morphe_language",
       "morphe_show_menu_icons",
       "hide_settings_row",
-      "settings_as_list"
+      "settings_as_list",
+      "startup_message",
+      "startup_message_title",
+      "startup_message_text",
+      "startup_message_dismissible"
     ],
     "Share sheet tools": [
       "hide_share_channels",
@@ -1917,6 +1923,12 @@
       "key": "glass_opacity",
       "type": "string",
       "default": "standard"
+    },
+    "glass_refraction": {
+      "field": "GLASS_REFRACTION",
+      "key": "glass_refraction",
+      "type": "boolean",
+      "default": false
     },
     "glass_tab_lens": {
       "field": "GLASS_TAB_LENS",
@@ -3558,6 +3570,12 @@
       "type": "boolean",
       "default": false
     },
+    "see_through_video_in_window": {
+      "field": "SEE_THROUGH_VIDEO_IN_WINDOW",
+      "key": "see_through_video_in_window",
+      "type": "boolean",
+      "default": false
+    },
     "seekbar_big_handle": {
       "field": "SEEKBAR_BIG_HANDLE",
       "key": "seekbar_big_handle",
@@ -3903,6 +3921,30 @@
       "key": "start_page",
       "type": "string",
       "default": "tiktok"
+    },
+    "startup_message": {
+      "field": "STARTUP_MESSAGE",
+      "key": "startup_message",
+      "type": "boolean",
+      "default": false
+    },
+    "startup_message_dismissible": {
+      "field": "STARTUP_MESSAGE_DISMISSIBLE",
+      "key": "startup_message_dismissible",
+      "type": "boolean",
+      "default": true
+    },
+    "startup_message_text": {
+      "field": "STARTUP_MESSAGE_TEXT",
+      "key": "startup_message_text",
+      "type": "string",
+      "default": ""
+    },
+    "startup_message_title": {
+      "field": "STARTUP_MESSAGE_TITLE",
+      "key": "startup_message_title",
+      "type": "string",
+      "default": ""
     },
     "stop_ai_profiling": {
       "field": "STOP_AI_PROFILING",

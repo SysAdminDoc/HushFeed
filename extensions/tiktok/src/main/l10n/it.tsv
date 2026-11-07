@@ -2547,6 +2547,8 @@ Close with Back or a tap outside	Chiudi con Indietro o toccando fuori
 Off, only its button closes it.	Disattivato, solo il suo pulsante lo chiude.
 # context: extra search words for the Startup message setting, not shown anywhere (#347)
 dialog popup greeting	finestra popup saluto
+# context: the startup message's button that stops this message showing; a changed message shows again (#347)
+Don't show again	Non mostrare più
 # context: a switch under See-through bottom bar; it stops the video blinking as it slides under the clear tab bar
 Stop the blink under the bar	Ferma lo sfarfallio sotto la barra
 If the feed's video blinks as you swipe with See-through bottom bar on, this draws it inside TikTok instead of on a layer of its own. It can use a little more battery. Needs See-through bottom bar.	Se il video sfarfalla quando scorri con Barra inferiore trasparente attiva, questo lo disegna dentro TikTok invece che su un livello a parte. Può consumare un po' più di batteria. Richiede Barra inferiore trasparente.

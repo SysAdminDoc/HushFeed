@@ -45,12 +45,18 @@ public final class StartupMessage {
             String title = Settings.STARTUP_MESSAGE_TITLE.get().trim();
             String text = Settings.STARTUP_MESSAGE_TEXT.get().trim();
             if (title.isEmpty() && text.isEmpty()) return;
+            if (fingerprint(title, text).equals(Settings.STARTUP_MESSAGE_HIDDEN.get())) return;
             boolean dismissible = Settings.STARTUP_MESSAGE_DISMISSIBLE.get();
             // After the host's onCreate and the first resume, with its window in place.
             MAIN.post(() -> show(activity, title, text, dismissible));
         } catch (RuntimeException failure) {
             Logger.printException(() -> "Could not prepare the startup message", failure);
         }
+    }
+
+    /** The title's length leads, so a title and a text can't add up to another pair's. */
+    static String fingerprint(String title, String text) {
+        return title.length() + ":" + title + text;
     }
 
     static void resetForTests() {
@@ -87,6 +93,9 @@ public final class StartupMessage {
             SettingsUi.syncDarkMode(activity);
             AlertDialog.Builder builder = new AlertDialog.Builder(activity)
                     .setPositiveButton(L10n.t("OK"), null)
+                    // Hides this message, not the feature: a new title or text shows again.
+                    .setNeutralButton(L10n.t("Don't show again"), (ignored, which) ->
+                            Settings.STARTUP_MESSAGE_HIDDEN.save(fingerprint(title, text)))
                     .setCancelable(dismissible);
             if (!title.isEmpty()) builder.setTitle(title);
             if (!text.isEmpty()) builder.setMessage(text);

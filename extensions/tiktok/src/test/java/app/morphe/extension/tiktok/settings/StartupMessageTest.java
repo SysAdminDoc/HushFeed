@@ -58,6 +58,7 @@ public class StartupMessageTest {
         Settings.STARTUP_MESSAGE_TITLE.resetToDefault();
         Settings.STARTUP_MESSAGE_TEXT.resetToDefault();
         Settings.STARTUP_MESSAGE_DISMISSIBLE.resetToDefault();
+        Settings.STARTUP_MESSAGE_HIDDEN.resetToDefault();
     }
 
     /** What the patched MainActivity.onCreate does, then the first frames. */
@@ -136,6 +137,32 @@ public class StartupMessageTest {
         first.pause().stop().destroy();
         try (ActivityController<MainScreen> ignored = open()) {
             assertNull("a recreation showed it again", ShadowAlertDialog.getLatestAlertDialog());
+        }
+    }
+
+    /** #347's reporter: having it come up every time gets tiresome. */
+    @Test public void dontShowAgainHidesThatMessageUntilItChanges() {
+        ActivityController<MainScreen> first = open();
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+        assertNotNull(dialog);
+        assertEquals("Don't show again", dialog.getButton(AlertDialog.BUTTON_NEUTRAL).getText().toString());
+        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).performClick();
+        shadowOf(Looper.getMainLooper()).idle();
+        assertFalse(dialog.isShowing());
+        ShadowAlertDialog.reset();
+        first.get().finish();
+        first.pause().stop().destroy();
+
+        ActivityController<MainScreen> second = open();
+        assertNull("a hidden message came back", ShadowAlertDialog.getLatestAlertDialog());
+        second.get().finish();
+        second.pause().stop().destroy();
+
+        Settings.STARTUP_MESSAGE_TEXT.save("Go to bed before eleven");
+        try (ActivityController<MainScreen> ignored = open()) {
+            AlertDialog changed = ShadowAlertDialog.getLatestAlertDialog();
+            assertNotNull("a new message stayed hidden", changed);
+            assertEquals("Go to bed before eleven", String.valueOf(shadowOf(changed).getMessage()));
         }
     }
 

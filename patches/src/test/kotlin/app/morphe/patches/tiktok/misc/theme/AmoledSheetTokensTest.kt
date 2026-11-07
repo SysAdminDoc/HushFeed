@@ -34,7 +34,7 @@ class AmoledSheetTokensTest {
         Fixtures.forEachDeclared { apk ->
             val table = FixtureResourceTable(apk)
 
-            val sheetAttr = tuxSheetBackgroundAttr(apk)
+            val sheetAttr = styleableAttr(apk, "TuxSheet", "TuxSheet__tux_sheetBackgroundColor")
             assertEquals("the Tux sheet background attribute", "b7h", table.attrNames[sheetAttr])
             val sheetValues = table.styleValues("b7h").toSet()
             assertTrue("b7h reaches a26 in a Tux sheet style: $sheetValues", "?attr/a26" in sheetValues)
@@ -158,6 +158,38 @@ class AmoledSheetTokensTest {
         }
     }
 
+    /**
+     * The snackbar after Not interested ("You'll see fewer posts like this") is a TuxToast, and the
+     * comments' sort menu a TuxTooltip popover (CommentPowerListAssem builds it). Both stayed
+     * #3A3A3A under AMOLED (#368): TuxToast's background and the popover's both point at
+     * UISheetFlat3 (a2_), which the dark themes send to aij and the light ones to axu. aij is
+     * #484848 or a tinted #323C43 in the other dark palettes, over the 0x40 gate, so it's a raised
+     * item the patch takes up to its own ceiling.
+     */
+    @Test
+    fun `toasts and popover menus fill with UISheetFlat3, which the patch rewrites in every dark palette`() {
+        Fixtures.forEachDeclared { apk ->
+            val table = FixtureResourceTable(apk)
+            val version = Fixtures.versionOf(apk)
+
+            val toast = table.attrNames.getValue(styleableAttr(apk, "TuxToast", "TuxToast__tux_toastBackgroundColor"))
+            assertTrue("a toast's background is UISheetFlat3: ${table.styleValues(toast)}", "?attr/a2_" in table.styleValues(toast))
+            val popover = table.attrNames.getValue(styleableAttr(apk, "TuxTooltip", "TuxTooltip__tux_tooltipPopoverBgColor"))
+            assertTrue("a popover's background is UISheetFlat3: ${table.styleValues(popover)}", "?attr/a2_" in table.styleValues(popover))
+
+            assertEquals("what the themes point a2_ at", setOf("?attr/aij", "?attr/axu"), table.styleValues("a2_").toSet())
+            val dark = table.styleValues("aij")
+            assertTrue(
+                "aij is a dark opaque literal under the raised ceiling wherever it is set: $dark",
+                dark.isNotEmpty() && dark.all { isOpaqueLiteralUnder(it, RAISED_SURFACE_CEILING) },
+            )
+            assertTrue("one palette's aij is over the plain gate, so it needs the raised one: $dark", !dark.all(::isDarkOpaqueLiteral))
+            assertTrue("axu stays light", table.styleValues("axu").none { isOpaqueLiteralUnder(it, RAISED_SURFACE_CEILING) })
+            assertTrue("the patch rewrites aij", "aij" in surfaceStyleItems(version))
+            assertTrue("aij takes the raised ceiling", "aij" in RAISED_STYLE_ITEMS.getValue(version))
+        }
+    }
+
     private fun loadsConstant(apk: File, type: String, method: String?, value: Int): Boolean {
         val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
         val classDef = container.dexEntryNames.asSequence().mapNotNull { entry ->
@@ -168,15 +200,14 @@ class AmoledSheetTokensTest {
         }
     }
 
-    /** R$styleable.TuxSheet[TuxSheet__tux_sheetBackgroundColor]: the int field and the array <clinit> fills. */
-    private fun tuxSheetBackgroundAttr(apk: File): Int {
+    /** R$styleable.[array][[field]]: the int field and the array <clinit> fills. */
+    private fun styleableAttr(apk: File, array: String, field: String): Int {
         val styleable = "Lcom/ss/android/ugc/aweme/app/R\$styleable;"
         val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
         val classDef = container.dexEntryNames.asSequence().mapNotNull { entry ->
             container.getEntry(entry)!!.dexFile.classes.firstOrNull { it.type == styleable }
         }.first()
-        val index = (classDef.staticFields.single { it.name == "TuxSheet__tux_sheetBackgroundColor" }
-            .initialValue as IntEncodedValue).value
+        val index = (classDef.staticFields.single { it.name == field }.initialValue as IntEncodedValue).value
         val instructions = classDef.methods.single { it.name == "<clinit>" }.implementation!!.instructions.toList()
         val address = IntArray(instructions.size + 1)
         for (i in instructions.indices) address[i + 1] = address[i] + instructions[i].codeUnits
@@ -188,11 +219,11 @@ class AmoledSheetTokensTest {
                 filled[(instruction as OneRegisterInstruction).registerA] = payload.arrayElements
             } else if (instruction.opcode == Opcode.SPUT_OBJECT) {
                 val field = (instruction as ReferenceInstruction).reference as FieldReference
-                if (field.definingClass == styleable && field.name == "TuxSheet") {
+                if (field.definingClass == styleable && field.name == array) {
                     return filled.getValue((instruction as OneRegisterInstruction).registerA)[index].toInt()
                 }
             }
         }
-        error("no TuxSheet array in $styleable")
+        error("no $array array in $styleable")
     }
 }

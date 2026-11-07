@@ -60,6 +60,7 @@ val amoledThemePatch = resourcePatch(
         // file is touched: a build whose palette was never read is refused with nothing changed.
         val backgrounds = darkBackgroundColors(packageMetadata.versionName)
         val surfaces = surfaceStyleItems(packageMetadata.versionName)
+        val raised = packageMetadata.versionName?.let { RAISED_STYLE_ITEMS[it] }.orEmpty()
         val found = mutableSetOf<String>()
         val styleItemsFound = mutableSetOf<String>()
         decode("res/values*/colors.xml", "res/values*/styles.xml")
@@ -84,7 +85,7 @@ val amoledThemePatch = resourcePatch(
         // stays white.
         valuesDirectories.map { it.resolve("styles.xml") }.filter { it.exists() }.forEach { file ->
             document(file.relativeTo(get(".")).invariantSeparatorsPath).use { xml ->
-                styleItemsFound += rewriteDarkStyleItems(xml, surfaces, color)
+                styleItemsFound += rewriteDarkStyleItems(xml, surfaces, color, raised)
             }
         }
         if (found != backgrounds) throw PatchException("Dark background palette is incomplete: $found")
@@ -201,12 +202,28 @@ internal fun declaredVersions(): Set<String> =
  *   and agm is UIPageFlat2 (attr/a0c), the gray band a page sets off a part of itself with.
  * - agp (UIPageFlat3Elevated) and c3 were the comments and share sheets' own through 46.x, under
  *   other names, and are dark surfaces of their own on 47.x.
+ * - aij is UISheetFlat3's (attr/a2_), the fill of TikTok's toasts (the "You'll see fewer posts
+ *   like this" one after Not interested) and of its popover menus, the comments' sort menu among
+ *   them: TuxToast's background and TuxTooltip's popover background both point at a2_. Both
+ *   stayed #3A3A3A under AMOLED through 0.81.0 (#368).
  * The token names move a place or two with every build, and on 46.x a name these use now was
  * another surface tier, which is why only a build whose names were read is patched.
  */
 internal val SURFACE_STYLE_ITEMS: Map<String, Set<String>> = linkedMapOf(
-    "47.7.3" to setOf("agp", "c3", "aif", "ail", "ain", "bx", "ags", "agk", "agl", "agm", "agq", "agr"),
+    "47.7.3" to setOf("agp", "c3", "aif", "ail", "ain", "bx", "ags", "agk", "agl", "agm", "agq", "agr", "aij"),
 )
+
+/**
+ * Surface items a palette sets lighter than [isDarkOpaqueLiteral]'s gate. UISheetFlat3 (aij) is
+ * #484848 in a_j and #323C43 and #333D43 in the two tinted palettes the dark-mode experiment
+ * applies, so under the 0x40 gate only the default palette's toast went black. These are taken
+ * up to [RAISED_SURFACE_CEILING]; every value they hold is a raised sheet gray, never text.
+ */
+internal val RAISED_STYLE_ITEMS: Map<String, Set<String>> = linkedMapOf(
+    "47.7.3" to setOf("aij"),
+)
+
+internal const val RAISED_SURFACE_CEILING = 0x50
 
 /** This build's surface style items, or a refusal like the palette's. */
 internal fun surfaceStyleItems(versionName: String?): Set<String> =
@@ -215,23 +232,36 @@ internal fun surfaceStyleItems(versionName: String?): Set<String> =
 /**
  * Sets every `<item name="...">` in the named set whose value is a dark opaque colour literal
  * to [color], and returns the names it changed. A value that is a reference, translucent or
- * light is left alone: those are the light theme's and the overlays', not the surface.
+ * light is left alone: those are the light theme's and the overlays', not the surface. A name in
+ * [raised] is taken up to [RAISED_SURFACE_CEILING] instead.
  */
-internal fun rewriteDarkStyleItems(styles: Document, names: Set<String>, color: String): Set<String> {
+internal fun rewriteDarkStyleItems(
+    styles: Document,
+    names: Set<String>,
+    color: String,
+    raised: Set<String> = emptySet(),
+): Set<String> {
     val changed = mutableSetOf<String>()
     val items = styles.getElementsByTagName("item")
     for (index in 0 until items.length) {
         val item = items.item(index) as Element
         val name = item.getAttribute("name")
-        if (name !in names || !isDarkOpaqueLiteral(item.textContent)) continue
+        if (name !in names) continue
+        val ceiling = if (name in raised) RAISED_SURFACE_CEILING else DARK_SURFACE_CEILING
+        if (!isOpaqueLiteralUnder(item.textContent, ceiling)) continue
         item.textContent = color
         changed.add(name)
     }
     return changed
 }
 
+private const val DARK_SURFACE_CEILING = 0x40
+
 /** `#RRGGBB` or `#FFRRGGBB`, every channel under 0x40: a surface colour, not a text or an overlay. */
-internal fun isDarkOpaqueLiteral(value: String): Boolean {
+internal fun isDarkOpaqueLiteral(value: String): Boolean = isOpaqueLiteralUnder(value, DARK_SURFACE_CEILING)
+
+/** `#RRGGBB` or `#FFRRGGBB` with every channel under [ceiling]. */
+internal fun isOpaqueLiteralUnder(value: String, ceiling: Int): Boolean {
     val hex = value.trim().removePrefix("#")
     val rgb = when (hex.length) {
         6 -> hex
@@ -239,5 +269,5 @@ internal fun isDarkOpaqueLiteral(value: String): Boolean {
         else -> return false
     }
     if (!rgb.all { it.isDigit() || it.lowercaseChar() in 'a'..'f' }) return false
-    return rgb.chunked(2).all { it.toInt(16) < 0x40 }
+    return rgb.chunked(2).all { it.toInt(16) < ceiling }
 }

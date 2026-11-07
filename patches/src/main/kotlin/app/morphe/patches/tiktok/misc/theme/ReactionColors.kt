@@ -41,7 +41,7 @@ internal class ReactionFiles(
  * build's fixture to its entry here.
  */
 internal val LIKE_FILES: Map<String, ReactionFiles> = linkedMapOf(
-    "47.7.2" to ReactionFiles(
+    "47.7.3" to ReactionFiles(
         rawIcons = listOf(
             "icon_color_like_red_shadow",
             "icon_color_like_red_shadow_2",
@@ -68,7 +68,7 @@ internal val LIKE_FILES: Map<String, ReactionFiles> = linkedMapOf(
  * by experiment group, and the older button plays the favorite animation.
  */
 internal val SAVE_FILES: Map<String, ReactionFiles> = linkedMapOf(
-    "47.7.2" to ReactionFiles(
+    "47.7.3" to ReactionFiles(
         rawIcons = listOf(
             "icon_color_bookmark_yellow_shadow",
             "icon_color_bookmark_yellow_shadow_alt_1",

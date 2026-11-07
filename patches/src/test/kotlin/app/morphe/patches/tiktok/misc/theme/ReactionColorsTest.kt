@@ -145,8 +145,8 @@ class ReactionColorsTest {
 
     @Test
     fun `only a changed reaction recolors and an unread build is refused`() {
-        assertTrue(reactionRecolors("47.7.2", TIKTOK_ACCENT, TIKTOK_SAVE).isEmpty())
-        assertEquals(listOf("Save color"), reactionRecolors("47.7.2", TIKTOK_ACCENT, "#2D7FF9").map { it.label })
+        assertTrue(reactionRecolors("47.7.3", TIKTOK_ACCENT, TIKTOK_SAVE).isEmpty())
+        assertEquals(listOf("Save color"), reactionRecolors("47.7.3", TIKTOK_ACCENT, "#2D7FF9").map { it.label })
         assertTrue(reactionRecolors(null, TIKTOK_ACCENT, TIKTOK_SAVE).isEmpty())
         try {
             reactionRecolors("47.6.3", "#2D7FF9", TIKTOK_SAVE)

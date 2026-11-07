@@ -220,6 +220,14 @@ public final class VideoOverlayHider {
      */
     private static final String[] BOTTOM_SPACER_IDS = {"47.7.3:dve"};
     /**
+     * The band at the foot of the Following and Friends feeds, outside the cells. TikTok sizes it
+     * to the bottom bar's height from FeedFollowFragment, with the theme's background, so with
+     * See-through bottom bar on the Following tab's video still ended at a black strip under the
+     * clear bar (#232, S22). The For You feed keeps its own at 0 high. It goes invisible rather
+     * than gone, so TikTok's height writes still land and nothing laid out against it moves.
+     */
+    private static final String[] FOLLOWING_BAND_IDS = {"47.7.3:wwo"};
+    /**
      * The search bar across the top of a video opened from search or a profile, and the gradient
      * under it. The fade never reached them: they sit outside the cells and TikTok's Clear display
      * leaves them up (#84). Only ever faded, never hidden.
@@ -393,6 +401,7 @@ public final class VideoOverlayHider {
     private static final int WIDGET_LAYER_TARGET = DETAIL_SOUND_BAR_TARGET + 1;
     private static final int SKYLIGHT_TARGET = WIDGET_LAYER_TARGET + 1;
     private static final int DETAIL_BACK_BUTTON_TARGET = SKYLIGHT_TARGET + 1;
+    private static final int FOLLOWING_BAND_TARGET = DETAIL_BACK_BUTTON_TARGET + 1;
     private static final String[][] TRAVERSAL_TARGET_IDS = traversalTargetIds();
     private static final int LOGICAL_TARGET_COUNT = TRAVERSAL_TARGET_IDS.length;
     private static final int TRAVERSAL_TARGET_COUNT = candidateCount(TRAVERSAL_TARGET_IDS);
@@ -784,6 +793,9 @@ public final class VideoOverlayHider {
                 // in it, so the picture stopped short of the tabs over a black band (#218).
                 wanted[PLAYER_VIEW_TARGET] = seeThroughStatusBar || stripForBar;
                 wanted[BOTTOM_SPACER_TARGET] = seeThroughBar && SeeThroughBottomBar.collapseAllowed();
+                // With the strip under the pager gone the Following feed reaches under the bar,
+                // and only its own band still covered it there (#232).
+                wanted[FOLLOWING_BAND_TARGET] = stripForBar;
                 for (int i = 0; i < RAIL_BUTTON_IDS.length; i++) {
                     wanted[RAIL_TARGET_START + i] = rail[i] || carryHides;
                 }
@@ -1073,7 +1085,7 @@ public final class VideoOverlayHider {
     }
 
     private static String[][] traversalTargetIds() {
-        String[][] targets = new String[DETAIL_BACK_BUTTON_TARGET + 1][];
+        String[][] targets = new String[FOLLOWING_BAND_TARGET + 1][];
         targets[CAPTION_TARGET] = CAPTION_IDS;
         targets[MUSIC_TARGET] = MUSIC_IDS;
         targets[ACTION_BAR_TARGET] = ACTION_BAR_IDS;
@@ -1112,20 +1124,22 @@ public final class VideoOverlayHider {
         targets[WIDGET_LAYER_TARGET] = new String[] {WIDGET_LAYER_ID};
         targets[SKYLIGHT_TARGET] = SKYLIGHT_IDS;
         targets[DETAIL_BACK_BUTTON_TARGET] = DETAIL_BACK_BUTTON_IDS;
+        targets[FOLLOWING_BAND_TARGET] = FOLLOWING_BAND_IDS;
         return targets;
     }
 
     /**
      * Main-feed tabs (top and bottom, with the bottom bar's hairline), story count and the
-     * Following LIVE row, the Clear display controls, and the detail pager's comment, Message
-     * and Use sound bars are outside the cells.
+     * Following LIVE row and the band at the foot of that feed, the Clear display controls, and
+     * the detail pager's comment, Message and Use sound bars are outside the cells.
      */
     private static boolean outsideCells(int target) {
         return (target >= TAB_STRIP_TARGET && target < RAIL_TARGET_START) || target == BOTTOM_TABS_TARGET
                 || target == BOTTOM_TABS_DIVIDER_TARGET || target == TOP_SEARCH_BAR_TARGET
                 || target == TOP_SEARCH_SCRIM_TARGET || target == DETAIL_SEARCH_BOX_TARGET
                 || target == DETAIL_MESSAGE_BAR_TARGET || target == DETAIL_SOUND_BAR_TARGET
-                || target == SKYLIGHT_TARGET || target == DETAIL_BACK_BUTTON_TARGET;
+                || target == SKYLIGHT_TARGET || target == DETAIL_BACK_BUTTON_TARGET
+                || target == FOLLOWING_BAND_TARGET;
     }
 
     private static int candidateCount(String[][] targets) {
@@ -2314,10 +2328,11 @@ public final class VideoOverlayHider {
                         // and out of sight only until TikTok's own clear lands on the page.
                         setFaded(view, topBarHeld ? 0 : Math.max(NAVIGATION_FADE_FLOOR, fadeLevel), fadedClear);
                     } else if (target == DETAIL_SEARCH_BOX_TARGET || target == STATUS_BAR_SCRIM_TARGET
-                            || target == DETAIL_BACK_BUTTON_TARGET) {
+                            || target == DETAIL_BACK_BUTTON_TARGET || target == FOLLOWING_BAND_TARGET) {
                         // Invisible, not gone: the bar keeps its shape and Back stays put, and
                         // the cell's band keeps its place. Back itself goes the same way, so the
-                        // box it anchors doesn't move either.
+                        // box it anchors doesn't move either. The Following band keeps the
+                        // height TikTok gives it.
                         setHidden(view, wanted, View.INVISIBLE);
                     } else if (target == DETAIL_COMMENT_BAR_TARGET || target == DETAIL_MESSAGE_BAR_TARGET) {
                         // Hidden with its strip by the switch, Clear display and a fade of 0;
@@ -2377,11 +2392,13 @@ public final class VideoOverlayHider {
             // stories button is there only for an account with stories to show, so once its id
             // resolves, its absence is the account's: every Clear display called the overlay
             // hooks broken in #209's report. The Following LIVE row is the same: it's inflated
-            // only on the Following tab. An id this build lacks is still reported.
+            // only on the Following tab, and the band at the foot of the feed only on the Home
+            // and Friends tabs. An id this build lacks is still reported.
             } else if (target != SURVEY_TARGET && target != DETAIL_SEARCH_BOX_TARGET
                     && target != DETAIL_BACK_BUTTON_TARGET
                     && target != PLAYER_VIEW_TARGET && target != DETAIL_MESSAGE_BAR_TARGET
-                    && !((target == FOLLOWING_STORY_TARGET || target == SKYLIGHT_TARGET)
+                    && !((target == FOLLOWING_STORY_TARGET || target == SKYLIGHT_TARGET
+                            || target == FOLLOWING_BAND_TARGET)
                             && anyResolved(ids, candidateAt, names.length))
                     && (detailPager || (target != DETAIL_COMMENT_BAR_TARGET
                             && target != DETAIL_COMMENT_STRIP_TARGET))

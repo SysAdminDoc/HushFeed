@@ -64,6 +64,7 @@ feed/VideoOverlayHider.java|STATUS_BAR_SCRIM_IDS|47.7.3:wo4|app|com.by.andInflat
 feed/VideoOverlayHider.java|PLAYER_VIEW_IDS|player_view|app|com.by.andInflater.common_feed_video_container_area_feed|at:5
 feed/VideoOverlayHider.java|COVER_STILL_ID|cover|app|com.by.andInflater.common_feed_video_container_area_feed|at:8
 feed/VideoOverlayHider.java|BOTTOM_SPACER_IDS|47.7.3:dve|app|com.by.andInflater.common_feed_video_container_area_feed|on:View#2
+feed/VideoOverlayHider.java|FOLLOWING_BAND_IDS|47.7.3:wwo|app|com.ss.android.ugc.aweme.feed.ui.FeedFollowFragment|on:View#2
 feed/VideoOverlayHider.java|DETAIL_COMMENT_BAR_IDS|47.7.3:qqp|app|com.ss.android.ugc.aweme.comment.service.CommentDetailInputLayoutIdsImpl|at:2
 feed/VideoOverlayHider.java|DETAIL_COMMENT_STRIP_IDS|47.7.3:col|app|com.by.andInflater.common_feed_fragment_feed_base_opt|on:View#2
 feed/VideoOverlayHider.java|DETAIL_MESSAGE_BAR_IDS|47.7.3:l00|app|com.ss.android.ugc.aweme.im.sdk.chat.feature.reply.feature.feed.DetailFeedQuickDMFragment|at:1

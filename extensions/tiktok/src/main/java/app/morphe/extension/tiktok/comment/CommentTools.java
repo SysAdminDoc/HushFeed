@@ -249,6 +249,12 @@ public final class CommentTools {
     private static final String[] DISLIKE_ICON_IDS = {"47.7.3:mof"};
     private static final String[] LIKE_COUNT_IDS = {"tv_like_count"};
     /**
+     * The frame holding the commenter's picture, in comments and replies alike (#352). The name
+     * is placed after it, and the text and the row under it line up with the name, so with the
+     * frame gone they all move over to the row's own padding.
+     */
+    private static final String[] AVATAR_IDS = {"47.7.3:im8"};
+    /**
      * Faded enough to read as blocked, still readable. At 0.35 the comment text dropped to about
      * 3:1 on the sheet, which is below the floor for text of that size.
      */
@@ -323,7 +329,7 @@ public final class CommentTools {
      * other switch says, since that's the button it blocks with.
      */
     private static void hideRowControls(View itemView) {
-        if (!hidesLikeCount() && !hidesThumbsDown()) return;
+        if (!hidesLikeCount() && !hidesThumbsDown() && !hidesAvatars()) return;
         itemView.post(() -> {
             hideControlsNow(itemView);
             if (HELD_ROWS.add(itemView)) {
@@ -343,6 +349,7 @@ public final class CommentTools {
      */
     private static boolean hideControlsNow(View itemView) {
         boolean hid = hidesLikeCount() && hideControl(commentControl(itemView, LIKE_COUNT_IDS));
+        hid = (hidesAvatars() && hideControl(commentControl(itemView, AVATAR_IDS))) || hid;
         return (hidesThumbsDown() && hideControl(commentControl(itemView, DISLIKE_BUTTON_IDS))) || hid;
     }
 
@@ -366,6 +373,10 @@ public final class CommentTools {
         return Settings.HIDE_COMMENT_DISLIKE.get() && !Settings.BLOCK_FROM_COMMENT.get();
     }
 
+    private static boolean hidesAvatars() {
+        return Settings.HIDE_COMMENT_AVATARS.get();
+    }
+
     private static boolean hideControl(View control) {
         if (control == null || control.getVisibility() == View.GONE) return false;
         control.setVisibility(View.GONE);
@@ -384,6 +395,9 @@ public final class CommentTools {
         // and this is the only callback that says so.
         app.morphe.extension.tiktok.playback.PausePlayback.onCommentCellBound(itemView);
         CommentLikeTouchTarget.onCellBound(itemView);
+        // Here as well as in the posted pass: the picture changes the row's height, so it goes
+        // before the row's first layout instead of a frame after it.
+        if (hidesAvatars()) hideControl(commentControl(itemView, AVATAR_IDS));
         hideRowControls(itemView);
 
         boolean block = Settings.BLOCK_FROM_COMMENT.get();

@@ -39,6 +39,8 @@ import org.robolectric.util.ReflectionHelpers;
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 28)
 public class CommentRowControlsTest {
+    private static final int AVATAR_ID = 0x7f000104;
+    private static final int AVATAR_SIZE = 43;
     private Activity activity;
     private FrameLayout row;
     private View count;
@@ -53,6 +55,7 @@ public class CommentRowControlsTest {
         ids.put(activity.getPackageName() + ":tv_like_count", 0x7f000103);
         ids.put(activity.getPackageName() + ":47.7.3:k2g", 0x7f000101);
         ids.put(activity.getPackageName() + ":47.7.3:mof", 0x7f000102);
+        ids.put(activity.getPackageName() + ":47.7.3:im8", AVATAR_ID);
         ReflectionHelpers.<Map<View, ?>>getStaticField(CommentTools.class, "CELL_COMMENTS").clear();
         ReflectionHelpers.<Set<String>>getStaticField(CommentTools.class, "IN_FLIGHT").clear();
         ReflectionHelpers.<Set<String>>getStaticField(CommentTools.class, "BLOCKED_UIDS").clear();
@@ -74,6 +77,7 @@ public class CommentRowControlsTest {
     @After public void restoreSwitches() {
         Settings.HIDE_COMMENT_LIKE_COUNT.resetToDefault();
         Settings.HIDE_COMMENT_DISLIKE.resetToDefault();
+        Settings.HIDE_COMMENT_AVATARS.resetToDefault();
         Settings.BLOCK_FROM_COMMENT.resetToDefault();
         CommentDeleteVM.POSTED.clear();
     }
@@ -164,6 +168,60 @@ public class CommentRowControlsTest {
         bar.addView(heart, new LinearLayout.LayoutParams(40, 40));
         row.addView(bar, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
         return heart;
+    }
+
+    /**
+     * #352: the picture's frame sits at the start of the row with the name and text after it. A
+     * horizontal row stands in for TikTok's ConstraintLayout, which places the name after the
+     * frame the same way and moves it over when the frame is GONE.
+     */
+    private View[] rowWithAPicture() {
+        LinearLayout line = new LinearLayout(activity);
+        View picture = new FrameLayout(activity);
+        picture.setId(AVATAR_ID);
+        View name = new View(activity);
+        line.addView(picture, new LinearLayout.LayoutParams(AVATAR_SIZE, AVATAR_SIZE));
+        line.addView(name, new LinearLayout.LayoutParams(120, 20));
+        row.addView(line, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT));
+        return new View[] {picture, name};
+    }
+
+    private void layOut() {
+        row.measure(View.MeasureSpec.makeMeasureSpec(400, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(400, View.MeasureSpec.AT_MOST));
+        row.layout(0, 0, 400, row.getMeasuredHeight());
+    }
+
+    @Test public void thePictureStaysWithTheSwitchOff() {
+        View[] views = rowWithAPicture();
+        bind();
+        layOut();
+        assertEquals(View.VISIBLE, views[0].getVisibility());
+        assertEquals(AVATAR_SIZE, views[1].getLeft());
+    }
+
+    /** Gone during the bind itself, so the row's first layout already has the name at the start. */
+    @Test public void theNameTakesThePicturesPlaceFromTheFirstLayout() {
+        Settings.HIDE_COMMENT_AVATARS.save(true);
+        View[] views = rowWithAPicture();
+        CommentTools.registerCommentCell(row, new Manager());
+        assertEquals(View.GONE, views[0].getVisibility());
+        layOut();
+        assertEquals("a gap was left where the picture was", 0, views[1].getLeft());
+        assertEquals(20, row.getMeasuredHeight());
+        assertEquals(View.VISIBLE, count.getVisibility());
+        assertEquals(View.VISIBLE, thumbsDown.getVisibility());
+    }
+
+    /** TikTok can show the frame again after the bind, which the row's next layout catches. */
+    @Test public void aPictureTikTokShowsAgainGoesBeforeTheNextFrame() {
+        Settings.HIDE_COMMENT_AVATARS.save(true);
+        View[] views = rowWithAPicture();
+        bind();
+        views[0].setVisibility(View.VISIBLE);
+        layOut();
+        assertEquals(View.GONE, views[0].getVisibility());
+        assertEquals(0, views[1].getLeft());
     }
 
     /** The block switch's button is that thumbs down, so hiding it would take the block away. */

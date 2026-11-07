@@ -2556,3 +2556,6 @@ The glass pill's edges bend the blurred feed video behind them, like the rim of 
 # context: Inbox settings, the switch that hides the On this day memory TikTok puts first in the stories tray. On this day is TikTok's own name for it, kept in English like Footnotes.
 Hide On this day	Esconder o On this day
 The On this day memory at the front of the stories tray goes, and the stories after it move into its place. Nothing is deleted.	A lembrança On this day no começo da bandeja de stories some e os stories seguintes ocupam o lugar dela. Nada é apagado.
+# context: Comments settings, next to Hide like counts on comments; the switch that takes the commenter's profile picture off each comment and reply so the name and text start at the left.
+Hide profile pictures in comments	Esconder fotos de perfil nos comentários
+Hide the picture beside each comment and reply. The name and the comment move over to fill its place.	Esconde a foto ao lado de cada comentário e resposta. O nome e o comentário se movem para ocupar o lugar dela.

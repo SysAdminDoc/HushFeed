@@ -343,6 +343,13 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
             ));
             addPreference(new TogglePreference(
                     context,
+                    "Hide profile pictures in comments",
+                    "Hide the picture beside each comment and reply. The name and the comment "
+                            + "move over to fill its place.",
+                    Settings.HIDE_COMMENT_AVATARS
+            ));
+            addPreference(new TogglePreference(
+                    context,
                     "Show poll results before voting",
                     "A comment poll shows how many picked each answer before you vote. Tapping an answer still votes.",
                     Settings.SHOW_POLL_RESULTS

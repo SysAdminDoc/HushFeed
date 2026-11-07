@@ -1478,6 +1478,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_COMMENT_LIKE_COUNT = new BooleanSetting("hide_comment_like_count", FALSE, true);
     /** Takes the thumbs down off each comment (#314), unless Block from comment has taken it over. */
     public static final BooleanSetting HIDE_COMMENT_DISLIKE = new BooleanSetting("hide_comment_dislike", FALSE, true);
+    /** Takes the commenter's picture off each comment and reply, the name and text moving into its place (#352). */
+    public static final BooleanSetting HIDE_COMMENT_AVATARS = new BooleanSetting("hide_comment_avatars", FALSE, true);
     public static final BooleanSetting COMMENT_SEARCH = new BooleanSetting("comment_search", FALSE);
     /** Adds Export CSV and Export JSON under the comment search box. */
     public static final BooleanSetting COMMENT_EXPORT = new BooleanSetting("comment_export", FALSE);

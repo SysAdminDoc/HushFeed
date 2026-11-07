@@ -123,6 +123,7 @@
       "block_from_comment_menu",
       "hide_comment_like_count",
       "hide_comment_dislike",
+      "hide_comment_avatars",
       "comment_search",
       "comment_export",
       "comment_search_folded",
@@ -2021,6 +2022,12 @@
     "hide_clear_display_controls": {
       "field": "HIDE_CLEAR_DISPLAY_CONTROLS",
       "key": "hide_clear_display_controls",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_comment_avatars": {
+      "field": "HIDE_COMMENT_AVATARS",
+      "key": "hide_comment_avatars",
       "type": "boolean",
       "default": false
     },

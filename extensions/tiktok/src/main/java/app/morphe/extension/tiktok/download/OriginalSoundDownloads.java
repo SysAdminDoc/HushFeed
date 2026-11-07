@@ -9,7 +9,9 @@ import android.content.Context;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
+import app.morphe.extension.tiktok.feedfilter.SoundIdentity;
 import app.morphe.extension.tiktok.settings.L10n;
+import app.morphe.extension.tiktok.settings.Settings;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Saves the sound a video was made with, rather than the sound the video ends up making.
@@ -125,14 +128,47 @@ public final class OriginalSoundDownloads {
 
         String id = Reflect.string(aweme, "getAid", "aid");
         if (id == null) return;
+        queue(context.getApplicationContext(), aweme, sources, id, true);
+    }
 
-        Context app = context.getApplicationContext();
+    /**
+     * The name a sound goes by in the already-saved record: the sound's own id, so the same song
+     * saved from a second video is caught too. Null for a sound entry with no id, which is saved
+     * without a check. Prefixed, so it can never be taken for a video's id.
+     */
+    static String recordId(Object aweme) {
+        Object music = Reflect.property(aweme, "getMusic", "music");
+        String id = music == null ? null : SoundIdentity.idOf(music);
+        return id == null ? null : "sound:" + id;
+    }
+
+    /**
+     * Saves the sound, first offering Open or Save again for one saved before when the
+     * already-saved check is on ({@code check}, false for Save again).
+     */
+    private static void queue(Context app, Object aweme, List<String> sources, String id, boolean check) {
         String key = "original sound " + id;
         if (!ACTIVE.add(id)) {
             Utils.showToastShort(MediaJobScheduler.busyMessage(key));
             return;
         }
+        String record = Settings.CHECK_SAVED_VIDEOS.get() ? recordId(aweme) : null;
+        // Read as the save is accepted: a forget in settings while it runs leaves it unrecorded.
+        long archiveGeneration = SavedVideoArchive.generation();
+        AtomicBoolean asking = new AtomicBoolean();
         MediaJobScheduler.Job job = MediaJobScheduler.submit("original-sound", key, () -> {
+            if (record != null && check) {
+                Runnable saveAgain = () -> {
+                    ACTIVE.remove(id);
+                    queue(app, aweme, sources, id, false);
+                };
+                asking.set(true);
+                SavedVideoArchive.Check found = SavedVideoArchive.check(app, record,
+                        L10n.t("This sound is already saved"), saveAgain, () -> ACTIVE.remove(id));
+                if (found == SavedVideoArchive.Check.OFFERED) return;
+                asking.set(false);
+                if (found == SavedVideoArchive.Check.FAILED) return;
+            }
             File fetched = null, encoded = null;
             try {
                 fetched = MediaCache.createTempFile(app, "original-sound-", ".tmp");
@@ -163,6 +199,7 @@ public final class OriginalSoundDownloads {
                 String name = fileName(aweme, extension);
                 String path = AudioDownloads.audioPath(DownloadsPatch.getVideoDownloadPath());
                 MediaFileWriter.Saved saved = MediaFileWriter.publishForResult(app, publish, name, mimeFor(extension), path, true);
+                if (record != null) SavedVideoArchive.rememberQuietly(app, record, saved, archiveGeneration);
                 SaveNotice.saved(L10n.f("Sound saved to %1$s", path), saved);
             } catch (IOException | RuntimeException exception) {
                 Logger.printException(() -> "Original sound download failed", exception);
@@ -174,7 +211,9 @@ public final class OriginalSoundDownloads {
                     }
                 }
             }
-        }, () -> ACTIVE.remove(id));
+        }, () -> {
+            if (!asking.get()) ACTIVE.remove(id);
+        });
         String saying = L10n.t("Saving the sound");
         MediaJobScheduler.acknowledge(job, saying, saying);
     }

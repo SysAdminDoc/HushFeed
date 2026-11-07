@@ -205,7 +205,7 @@ public class DownloadsPreferenceCategory extends ConditionalPreferenceCategory {
                             + "it, so saving takes longer. Applies to saves made by Hushfeed.",
                     Settings.DOWNLOAD_BURN_CAPTION));
             addPreference(new TogglePreference(context, "Check for already-saved videos",
-                    L10n.f(context, "Remembers up to %1$s videos you saved here. If the file is "
+                    L10n.f(context, "Remembers up to %1$s videos and sounds you saved here. If the file is "
                             + "still there, you get Open or Save again instead of a second "
                             + "copy.",
                             java.text.NumberFormat.getIntegerInstance().format(SavedVideoArchive.LIMIT)),

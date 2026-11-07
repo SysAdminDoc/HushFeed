@@ -1640,9 +1640,11 @@ Couldn't forget the saved videos. Try again.	Не удалось забыть с
 Saved videos put back	Сохранённые видео возвращены
 Couldn't put the saved videos back. Try again.	Не удалось вернуть сохранённые видео. Повторите попытку.
 Too late to put the saved videos back	Слишком поздно, чтобы вернуть сохранённые видео
-Remembers up to %1$s videos you saved here. If the file is still there, you get Open or Save again instead of a second copy.	Запоминает до %1$s видео, сохранённых здесь. Если файл всё ещё на месте, вместо второй копии вы увидите «Открыть» или «Сохранить снова».
+Remembers up to %1$s videos and sounds you saved here. If the file is still there, you get Open or Save again instead of a second copy.	Запоминает до %1$s видео и звуков, сохранённых здесь. Если файл всё ещё на месте, вместо второй копии вы увидите «Открыть» или «Сохранить снова».
 Already saved. Open TikTok to save another copy.	Уже сохранено. Для новой копии откройте TikTok.
 This video is already saved	Это видео уже сохранено
+# context: title of the choice that comes up when an original sound saved before is saved again; it offers Open or Save again (#356)
+This sound is already saved	Этот звук уже сохранён
 Save again	Сохранить снова
 The saved-video choice couldn't open. Try again.	Выбор сохранённого видео не открылся. Повторите.
 The saved-video choice is still open	Выбор для сохранённого видео всё ещё открыт

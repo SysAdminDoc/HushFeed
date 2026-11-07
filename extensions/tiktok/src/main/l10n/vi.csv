@@ -1453,7 +1453,7 @@ Refresh values,Làm mới các giá trị
 Refreshing TikTok's current values…,Đang làm mới các giá trị hiện tại của TikTok…
 Region,Khu vực
 Remember the last speed,Ghi nhớ tốc độ phát gần nhất
-"Remembers up to %1$s videos you saved here. If the file is still there, you get Open or Save again instead of a second copy.","Ghi nhớ tối đa %1$s video bạn đã lưu tại đây. Nếu tệp vẫn còn, bạn sẽ nhận được tùy chọn Mở hoặc Lưu lại thay vì tạo bản sao thứ hai."
+"Remembers up to %1$s videos and sounds you saved here. If the file is still there, you get Open or Save again instead of a second copy.","Ghi nhớ tối đa %1$s video và âm thanh bạn đã lưu tại đây. Nếu tệp vẫn còn, bạn sẽ nhận được tùy chọn Mở hoặc Lưu lại thay vì tạo bản sao thứ hai."
 Remind me every,Nhắc tôi sau mỗi
 Remove,Xóa
 Remove %1$s,Xóa %1$s
@@ -2103,6 +2103,7 @@ This video has no link to copy,Video này không có liên kết để sao chép
 This video has no original sound to save,Video này không có âm thanh gốc để lưu
 This video has no sound of its own,Video này không có âm thanh riêng
 This video is already saved,Video này đã được lưu trước đó
+This sound is already saved,Âm thanh này đã được lưu trước đó
 This video's sound has no title to look for,Âm thanh của video này không có tiêu đề để tìm kiếm
 Three at once,Ba tệp cùng lúc
 Thumbs down blocks the commenter,Nút không thích giúp chặn người bình luận

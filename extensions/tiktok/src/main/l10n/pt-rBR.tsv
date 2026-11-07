@@ -1502,9 +1502,11 @@ Couldn't forget the saved videos. Try again.	Não foi possível esquecer os víd
 Saved videos put back	Vídeos salvos trazidos de volta
 Couldn't put the saved videos back. Try again.	Não foi possível trazer os vídeos salvos de volta. Tente novamente.
 Too late to put the saved videos back	Tarde demais para trazer os vídeos salvos de volta
-Remembers up to %1$s videos you saved here. If the file is still there, you get Open or Save again instead of a second copy.	Lembra até %1$s vídeos que você salvou aqui. Se o arquivo ainda existir, você vê Abrir ou Salvar de novo em vez de uma segunda cópia.
+Remembers up to %1$s videos and sounds you saved here. If the file is still there, you get Open or Save again instead of a second copy.	Lembra até %1$s vídeos e sons que você salvou aqui. Se o arquivo ainda existir, você vê Abrir ou Salvar de novo em vez de uma segunda cópia.
 Already saved. Open TikTok to save another copy.	Já salvo. Abra o TikTok para salvar outra cópia.
 This video is already saved	Este vídeo já está salvo
+# context: title of the choice that comes up when an original sound saved before is saved again; it offers Open or Save again (#356)
+This sound is already saved	Este som já está salvo
 Save again	Salvar novamente
 The saved-video choice couldn't open. Try again.	As opções do vídeo salvo não abriram. Tente de novo.
 The saved-video choice is still open	As opções do vídeo salvo ainda estão abertas

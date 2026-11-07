@@ -112,10 +112,15 @@ public final class SavedVideoArchive {
      * {@code release} when it's done with it; {@code FAILED} has said so and nothing is saved.
      */
     static Check check(Context context, String id, Runnable saveAgain, Runnable release) {
+        return check(context, id, L10n.t("This video is already saved"), saveAgain, release);
+    }
+
+    /** {@link #check} for a save that isn't a video, under the offer's own {@code title}. */
+    static Check check(Context context, String id, String title, Runnable saveAgain, Runnable release) {
         try {
             MediaFileWriter.Saved previous = find(context, id);
             if (previous == null) return Check.NEW;
-            offer(previous, saveAgain, release);
+            offer(previous, title, saveAgain, release);
             return Check.OFFERED;
         } catch (RuntimeException failure) {
             Logger.printException(() -> "Could not check for an already-saved post", failure);
@@ -387,8 +392,12 @@ public final class SavedVideoArchive {
     }
 
     static void offer(MediaFileWriter.Saved saved, Runnable saveAgain, Runnable release) {
+        offer(saved, L10n.t("This video is already saved"), saveAgain, release);
+    }
+
+    static void offer(MediaFileWriter.Saved saved, String title, Runnable saveAgain, Runnable release) {
         // The save ends here with nothing written; the offer speaks later, from the main thread.
-        MediaJobScheduler.said(L10n.t("This video is already saved"));
+        MediaJobScheduler.said(title);
         Utils.runOnMainThread(() -> {
             Activity activity = Utils.getVisibleActivity();
             if (activity == null || activity.isFinishing() || activity.isDestroyed()) {
@@ -400,7 +409,7 @@ public final class SavedVideoArchive {
             try {
                 SettingsUi.syncDarkMode(activity);
                 AlertDialog dialog = new AlertDialog.Builder(activity)
-                        .setTitle(L10n.t("This video is already saved"))
+                        .setTitle(title)
                         .setMessage(saved.name)
                         .setNegativeButton(L10n.t("Open"), (ignored, which) -> SaveNotice.open(saved))
                         .setPositiveButton(L10n.t("Save again"), (ignored, which) -> {

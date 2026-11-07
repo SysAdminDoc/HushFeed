@@ -1346,7 +1346,7 @@ Refresh values,刷新值
 Refreshing TikTok's current values…,正在刷新 TikTok 的当前值…
 Region,地区
 Remember the last speed,记住最后的速度
-"Remembers up to %1$s videos you saved here. If the file is still there, you get Open or Save again instead of a second copy.",最多记住你在此处保存的 %1$s 个视频。如果文件仍然存在，你将再次打开或保存，而不是第二个副本.
+"Remembers up to %1$s videos and sounds you saved here. If the file is still there, you get Open or Save again instead of a second copy.",最多记住你在此处保存的 %1$s 个视频和声音。如果文件还在，你会看到打开或再次保存，而不会多存一份.
 Remind me every,每一次提醒我
 Remove,删除
 Remove %1$s,删除 %1$s
@@ -1991,6 +1991,7 @@ This video has no link to copy,该视频没有可复制的链接
 This video has no original sound to save,该视频没有可保存的原声
 This video has no sound of its own,该视频没有自己的声音
 This video is already saved,该视频已保存
+This sound is already saved,该声音已保存
 Already saved. Open TikTok to save another copy.,已保存。打开 TikTok 可再保存一份副本.
 No full file for this video. Try again later.,此视频没有完整文件，请稍后再试.
 This video's sound has no title to look for,该视频的声音没有可查找的标题

@@ -1566,7 +1566,7 @@ Refresh values,Refresh values
 Refreshing TikTok's current values…,Refreshing TikTok's current values…
 Region,Region
 Remember the last speed,Remember the last speed
-"Remembers up to %1$s videos you saved here. If the file is still there, you get Open or Save again instead of a second copy.","Remembers up to %1$s videos you saved here. If the file is still there, you get Open or Save again instead of a second copy."
+"Remembers up to %1$s videos and sounds you saved here. If the file is still there, you get Open or Save again instead of a second copy.","Remembers up to %1$s videos and sounds you saved here. If the file is still there, you get Open or Save again instead of a second copy."
 Remind me every,Remind me every
 Remove,Remove
 Remove %1$s,Remove %1$s
@@ -2229,6 +2229,7 @@ This profile picture isn't available to save,This profile picture isn't availabl
 This screen recording has no sound,This screen recording has no sound
 This setting isn't available. Search for another setting.,This setting isn't available. Search for another setting.
 "This setting's value can't be copied on this build, so it can't be overridden. Reset the override.","This setting's value can't be copied on this build, so it can't be overridden. Reset the override."
+This sound is already saved,This sound is already saved
 This story isn't available to save,This story isn't available to save
 This value is required,This value is required
 This video has no cover to save,This video has no cover to save

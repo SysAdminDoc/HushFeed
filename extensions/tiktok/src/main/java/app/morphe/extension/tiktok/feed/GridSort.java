@@ -6,6 +6,7 @@ package app.morphe.extension.tiktok.feed;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.SharedPreferences;
@@ -32,6 +33,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.IdentityHashMap;
@@ -45,6 +47,7 @@ import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.shared.settings.Setting;
 import app.morphe.extension.shared.settings.StringSetting;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
+import app.morphe.extension.tiktok.publishdate.AlwaysShowPublishDatePatch;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.preference.SettingsUi;
@@ -105,6 +108,15 @@ public final class GridSort {
             "Original order", "Newest first", "Oldest first", "Longest first", "Shortest first",
             "Most viewed first", "Least viewed first", "Most liked first", "Least liked first",
     };
+
+    static final String DATE_FILTER_ALL = "all";
+    static final String DATE_FILTER_CUSTOM = "custom";
+    public static final String[] DATE_FILTER_VALUES = {
+            DATE_FILTER_ALL, "2026", "2025", "2024", "2023", "2022", "2021", "2020", "2019", "2018", "2017", "2016",
+    };
+    public static final String[] DATE_FILTER_LABELS = {
+            "All dates", "2026", "2025", "2024", "2023", "2022", "2021", "2020", "2019", "2018", "2017", "2016",
+    };
     /**
      * TikTok's number for a grid's tab, as its adapter is built (#180): 0 posts, 1 Liked, 4 and
      * 25 Favorites, 14 private. Both of TikTok's profile tab fragments use these numbers.
@@ -146,6 +158,7 @@ public final class GridSort {
     static final long HOLD_SPINNER_DELAY_MS = 250;
 
     static final String CHIP_TAG = "hushfeed_grid_sort_chip";
+    static final String FILTER_CHIP_TAG = "hushfeed_grid_date_filter_chip";
     static final String HOLD_TAG = "hushfeed_grid_sort_hold";
 
     private static final Handler MAIN = new Handler(Looper.getMainLooper());
@@ -204,6 +217,98 @@ public final class GridSort {
         }
     }
 
+    static boolean isLiked(Object adapter) {
+        if (adapter == null) return false;
+        synchronized (ORIGINALS) {
+            Integer type = TABS.get(adapter);
+            return type != null && type == TAB_LIKED;
+        }
+    }
+
+    /** The post-date filter the Liked tab follows, or {@link #DATE_FILTER_ALL} on every other grid. */
+    static String dateFilterFor(Object adapter) {
+        if (!isLiked(adapter)) return DATE_FILTER_ALL;
+        String filter = Settings.LIKED_GRID_DATE_FILTER.get();
+        return dateRangeSeconds(filter) != null ? filter : DATE_FILTER_ALL;
+    }
+
+    static boolean hasDateFilter(String filter) {
+        return filter != null && !DATE_FILTER_ALL.equals(filter) && dateRangeSeconds(filter) != null;
+    }
+
+    /**
+     * Inclusive [startEpochSeconds, endEpochSeconds] in the device's local time zone for a
+     * {@code YYYY} year or {@code YYYY-MM-DD..YYYY-MM-DD} custom date range, or null for
+     * {@link #DATE_FILTER_ALL} or an invalid value.
+     */
+    static long[] dateRangeSeconds(String filter) {
+        if (filter == null || filter.isEmpty() || DATE_FILTER_ALL.equals(filter)) return null;
+        try {
+            int dots = filter.indexOf("..");
+            int[] startYmd;
+            int[] endYmd;
+            if (dots > 0) {
+                startYmd = parseYmd(filter.substring(0, dots).trim());
+                endYmd = parseYmd(filter.substring(dots + 2).trim());
+                if (startYmd == null || endYmd == null) return null;
+            } else if (filter.length() == 4) {
+                int year = Integer.parseInt(filter);
+                if (year < 2015 || year > 2100) return null;
+                startYmd = new int[]{year, 1, 1};
+                endYmd = new int[]{year, 12, 31};
+            } else {
+                return null;
+            }
+            long startSec = startOfDaySeconds(startYmd[0], startYmd[1], startYmd[2]);
+            long endSec = endOfDaySeconds(endYmd[0], endYmd[1], endYmd[2]);
+            if (endSec < startSec) {
+                startSec = startOfDaySeconds(endYmd[0], endYmd[1], endYmd[2]);
+                endSec = endOfDaySeconds(startYmd[0], startYmd[1], startYmd[2]);
+            }
+            return new long[]{startSec, endSec};
+        } catch (Throwable ignored) {
+            return null;
+        }
+    }
+
+    private static int[] parseYmd(String text) {
+        if (text == null || text.length() != 10 || text.charAt(4) != '-' || text.charAt(7) != '-') return null;
+        int y = Integer.parseInt(text.substring(0, 4));
+        int m = Integer.parseInt(text.substring(5, 7));
+        int d = Integer.parseInt(text.substring(8, 10));
+        if (y < 2015 || y > 2100 || m < 1 || m > 12 || d < 1 || d > 31) return null;
+        return new int[]{y, m, d};
+    }
+
+    private static long startOfDaySeconds(int year, int month, int day) {
+        Calendar cal = Calendar.getInstance();
+        cal.setLenient(false);
+        cal.set(year, month - 1, day, 0, 0, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTimeInMillis() / 1000L;
+    }
+
+    private static long endOfDaySeconds(int year, int month, int day) {
+        Calendar cal = Calendar.getInstance();
+        cal.setLenient(false);
+        cal.set(year, month - 1, day, 23, 59, 59);
+        cal.set(Calendar.MILLISECOND, 999);
+        return cal.getTimeInMillis() / 1000L;
+    }
+
+    private static String formatYmd(int year, int month, int day) {
+        return String.format(java.util.Locale.US, "%04d-%02d-%02d", year, month, day);
+    }
+
+    static String dateFilterLabel(String filter) {
+        if (!hasDateFilter(filter)) return L10n.t("All dates");
+        int dots = filter.indexOf("..");
+        if (dots > 0) {
+            return filter.substring(0, dots) + " \u2013 " + filter.substring(dots + 2);
+        }
+        return filter;
+    }
+
     private static String hookName(Object adapter) {
         return isSound(adapter) ? "sound grid sort" : "profile grid sort";
     }
@@ -253,9 +358,10 @@ public final class GridSort {
      */
     public static List<?> data(Object adapter, List<?> list) {
         String chosen = orderFor(adapter);
-        HookStatus.bound(hookName(adapter), OFF.equals(chosen) ? "order left" : "order sorted");
+        String filter = dateFilterFor(adapter);
+        HookStatus.bound(hookName(adapter), OFF.equals(chosen) && !hasDateFilter(filter) ? "order left" : "order sorted");
         List<?> order = adapter == null ? list : tiktokOrder(adapter, list);
-        List<?> out = sorted(order, chosen);
+        List<?> out = arranged(order, chosen, filter);
         if (adapter != null) {
             int before = remember(adapter, list, order);
             int size = list == null ? 0 : list.size();
@@ -275,9 +381,10 @@ public final class GridSort {
      */
     public static List<?> page(Object adapter, List<?> list) {
         String chosen = orderFor(adapter);
-        HookStatus.bound(hookName(adapter), OFF.equals(chosen) ? "order left" : "order sorted");
+        String filter = dateFilterFor(adapter);
+        HookStatus.bound(hookName(adapter), OFF.equals(chosen) && !hasDateFilter(filter) ? "order left" : "order sorted");
         List<?> order = adapter == null ? list : tiktokOrder(adapter, list);
-        List<?> out = sorted(order, chosen);
+        List<?> out = arranged(order, chosen, filter);
         if (adapter != null) {
             int before = remember(adapter, list, order);
             int size = list == null ? 0 : list.size();
@@ -296,7 +403,12 @@ public final class GridSort {
      * while pages still add videos, so a profile with no more ends the chain.
      */
     static boolean wantsNextPage(String order, int before, int size, boolean onScreen) {
-        if (order == null || OFF.equals(order) || comparator(order) == null) return false;
+        return wantsNextPage(order, DATE_FILTER_ALL, before, size, onScreen);
+    }
+
+    static boolean wantsNextPage(String order, String filter, int before, int size, boolean onScreen) {
+        boolean sorted = order != null && !OFF.equals(order) && comparator(order) != null;
+        if (!sorted && !hasDateFilter(filter)) return false;
         return onScreen && size < LOAD_CAP && size > before;
     }
 
@@ -326,12 +438,35 @@ public final class GridSort {
             Utils.showToastShort(L10n.t("Couldn't save the change. Try again."));
             return;
         }
+        updateAdapterItems(adapter, grid);
+    }
+
+    /**
+     * Applies a post-date filter to the Liked tab's grid in place and saves it to
+     * {@link Settings#LIKED_GRID_DATE_FILTER}.
+     */
+    static void applyDateFilter(Object adapter, String filter) {
+        String normalized = dateRangeSeconds(filter) != null ? filter : DATE_FILTER_ALL;
+        boolean saved;
+        synchronized (Setting.class) {
+            saved = Settings.LIKED_GRID_DATE_FILTER.save(normalized);
+        }
+        if (!saved) {
+            Utils.showToastShort(L10n.t("Couldn't save the change. Try again."));
+            return;
+        }
+        updateAdapterItems(adapter, gridView(adapter));
+    }
+
+    private static void updateAdapterItems(Object adapter, View grid) {
         List<?> original;
         synchronized (ORIGINALS) {
             original = ORIGINALS.get(adapter);
         }
+        String order = orderFor(adapter);
+        String filter = dateFilterFor(adapter);
         if (original != null) {
-            List<?> out = sorted(original, orderFor(adapter));
+            List<?> out = arranged(original, order, filter);
             Field items = Reflect.field(adapter.getClass(), "mmItems");
             if (items != null) {
                 try {
@@ -344,7 +479,7 @@ public final class GridSort {
         }
         showChip(adapter, grid);
         int size = original == null ? 0 : original.size();
-        if (wantsNextPage(order, 0, size, onScreen(grid)) && loadMoreListener(adapter) != null) {
+        if (wantsNextPage(order, filter, 0, size, onScreen(grid)) && loadMoreListener(adapter) != null) {
             startHold(adapter, size);
             askForNextPage(adapter);
         } else {
@@ -388,7 +523,8 @@ public final class GridSort {
             return list;
         }
         String chosen = orderFor(adapter);
-        if ((OFF.equals(chosen) || comparator(chosen) == null) && follow(list, order)) {
+        String filter = dateFilterFor(adapter);
+        if ((OFF.equals(chosen) || comparator(chosen) == null) && !hasDateFilter(filter) && follow(list, order)) {
             synchronized (ORIGINALS) {
                 REWRITTEN.remove(adapter);
             }
@@ -454,9 +590,10 @@ public final class GridSort {
         Object shown = Reflect.readField(adapter, "mmItems");
         if (handed == null || played == null || !(shown instanceof List) || shown == played) return;
         List<?> grid = (List<?>) shown;
-        if (sameOrder(played, grid)) return;
+        List<?> orderToFollow = grid.size() < played.size() ? gridFirstOrder(grid, played) : grid;
+        if (sameOrder(played, orderToFollow)) return;
         List<Object> before = new ArrayList<>(played);
-        if (!follow(played, grid)) {
+        if (!follow(played, orderToFollow)) {
             Logger.printDebug(() -> "Grid sort: the opened video's list doesn't hold the grid's videos, left as is");
             return;
         }
@@ -465,6 +602,34 @@ public final class GridSort {
             REWRITTEN.put(adapter, Boolean.TRUE);
         }
         Logger.printDebug(() -> "Grid sort: the video page follows the grid's order, " + grid.size() + " videos");
+    }
+
+    /**
+     * When a date filter trims the grid to a subset of {@code played}, places the grid's shown
+     * videos first in their grid order followed by the remaining items in {@code played} so
+     * {@link #follow} can reorder {@code played} in place without dropping items.
+     */
+    private static List<?> gridFirstOrder(List<?> grid, List<?> played) {
+        Map<Object, Integer> remaining = new IdentityHashMap<>();
+        for (Object item : played) {
+            Integer c = remaining.get(item);
+            remaining.put(item, c == null ? 1 : c + 1);
+        }
+        List<Object> combined = new ArrayList<>(played.size());
+        for (Object item : grid) {
+            Integer c = remaining.get(item);
+            if (c == null || c <= 0) return grid;
+            remaining.put(item, c - 1);
+            combined.add(item);
+        }
+        for (Object item : played) {
+            Integer c = remaining.get(item);
+            if (c != null && c > 0) {
+                remaining.put(item, c - 1);
+                combined.add(item);
+            }
+        }
+        return combined;
     }
 
     /** The list a sound page's video page plays: its page model's items, or null. */
@@ -575,7 +740,8 @@ public final class GridSort {
             boolean shown = onScreen(grid);
             // TikTok takes the listener away once it knows it has no more. It decides that after it
             // hands the list over, so this post is the first point that can tell.
-            boolean next = wantsNextPage(orderFor(adapter), before, size, shown) && loadMoreListener(adapter) != null;
+            boolean next = wantsNextPage(orderFor(adapter), dateFilterFor(adapter), before, size, shown)
+                    && loadMoreListener(adapter) != null;
             Logger.printDebug(() -> "Grid sort: page " + before + " -> " + size
                     + (gridShown == null ? ", no grid" : shown ? "" : ", off screen") + (next ? ", asking for more" : ""));
             if (next) {
@@ -618,7 +784,9 @@ public final class GridSort {
     private static void loadMore(Object adapter) {
         try {
             String order = orderFor(adapter);
-            if (OFF.equals(order) || comparator(order) == null || !onScreen(gridView(adapter))) {
+            String filter = dateFilterFor(adapter);
+            boolean sorted = !OFF.equals(order) && comparator(order) != null;
+            if ((!sorted && !hasDateFilter(filter)) || !onScreen(gridView(adapter))) {
                 synchronized (ORIGINALS) {
                     ASKED.remove(adapter);
                 }
@@ -702,7 +870,7 @@ public final class GridSort {
     private static void startHold(Object adapter, int size) {
         try {
             if (Looper.myLooper() != Looper.getMainLooper() || size <= 0 || size >= LOAD_CAP) return;
-            if (comparator(orderFor(adapter)) == null) return;
+            if (comparator(orderFor(adapter)) == null && !hasDateFilter(dateFilterFor(adapter))) return;
             View grid = gridView(adapter);
             if (!onScreen(grid) || !(grid.getParent() instanceof FrameLayout)) return;
             Object currentAdapter = Reflect.invoke(grid, "getAdapter");
@@ -959,6 +1127,7 @@ public final class GridSort {
         }
         if (hideChip) {
             if (existing != null) frame.removeView(existing);
+            showDateFilterChip(adapter, grid, frame);
             return;
         }
         if (chip == null) {
@@ -990,6 +1159,55 @@ public final class GridSort {
         chip.setText(L10n.t(LABELS[index]));
         // Set every time: the parent can outlive one adapter and get the next one.
         chip.setOnClickListener(view -> choose(adapter, view));
+        TextView placed = chip;
+        chip.post(() -> placeChip(placed, grid));
+        showDateFilterChip(adapter, grid, frame);
+    }
+
+    private static TextView filterControlOn(View grid) {
+        if (grid == null || !(grid.getParent() instanceof FrameLayout)) return null;
+        FrameLayout frame = (FrameLayout) grid.getParent();
+        for (int i = 0; i < frame.getChildCount(); i++) {
+            View child = frame.getChildAt(i);
+            if (child instanceof TextView && FILTER_CHIP_TAG.equals(child.getTag())) return (TextView) child;
+        }
+        return null;
+    }
+
+    private static void showDateFilterChip(Object adapter, View grid, FrameLayout frame) {
+        TextView chip = filterControlOn(grid);
+        String filter = dateFilterFor(adapter);
+        boolean hide = Setting.isPaused() || !isLiked(adapter) || !onScreen(grid);
+        if (hide) {
+            if (chip != null) frame.removeView(chip);
+            return;
+        }
+        if (chip == null) {
+            Context context = frame.getContext();
+            chip = new TextView(context);
+            chip.setTag(FILTER_CHIP_TAG);
+            chip.setTextColor(SettingsUi.OVERLAY_TEXT);
+            chip.setTextSize(TypedValue.COMPLEX_UNIT_SP, SettingsUi.TEXT_CAPTION);
+            chip.setMinWidth(SettingsUi.dp(context, 48));
+            chip.setMinHeight(SettingsUi.dp(context, 48));
+            chip.setGravity(Gravity.CENTER);
+            int paddingX = SettingsUi.dp(context, 10);
+            int paddingY = SettingsUi.dp(context, 5);
+            chip.setPadding(paddingX, paddingY, paddingX, paddingY);
+            chip.setBackground(SettingsUi.overlayChip(context, SettingsUi.RADIUS_OVERLAY));
+            chip.setContentDescription(L10n.t("Filter by post date"));
+            chip.setElevation(SettingsUi.dp(context, 2));
+            FrameLayout.LayoutParams layout = new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
+                    Gravity.TOP | Gravity.START);
+            int margin = SettingsUi.dp(context, 8);
+            layout.setMargins(margin, margin, margin, margin);
+            frame.addView(chip, layout);
+            followFilterHeader(chip, grid, adapter);
+        }
+        chip.setVisibility(View.VISIBLE);
+        chip.setText(dateFilterLabel(filter));
+        chip.setOnClickListener(view -> chooseDateFilter(adapter, view));
         TextView placed = chip;
         chip.post(() -> placeChip(placed, grid));
     }
@@ -1054,6 +1272,10 @@ public final class GridSort {
                 chip.stopRetainingOriginal();
                 ViewParent parent = chip.getParent();
                 if (parent instanceof ViewGroup) ((ViewGroup) parent).removeView(chip);
+                TextView filterChip = filterControlOn(grid);
+                if (filterChip != null && filterChip.getParent() instanceof ViewGroup) {
+                    ((ViewGroup) filterChip.getParent()).removeView(filterChip);
+                }
             }
 
             private void update() {
@@ -1068,6 +1290,81 @@ public final class GridSort {
                 if (chip.getParent() != null) {
                     if (!grid.isAttachedToWindow()) chip.setVisibility(View.GONE);
                     else if (indexOf(orderFor(chip.adapter)) > 0) chip.setVisibility(View.VISIBLE);
+                    placeChip(chip, grid);
+                    TextView filterChip = filterControlOn(grid);
+                    if (filterChip != null) {
+                        filterChip.setVisibility(grid.isAttachedToWindow() ? View.VISIBLE : View.GONE);
+                        placeChip(filterChip, grid);
+                    }
+                    return;
+                }
+                grid.removeOnAttachStateChangeListener(this);
+                unobserve();
+            }
+        }
+        Follow follow = new Follow();
+        grid.addOnAttachStateChangeListener(follow);
+        follow.observe();
+    }
+
+    private static void followFilterHeader(TextView chip, View grid, Object adapter) {
+        final class Follow implements ViewTreeObserver.OnScrollChangedListener,
+                ViewTreeObserver.OnGlobalLayoutListener, View.OnAttachStateChangeListener {
+            private ViewTreeObserver observer;
+
+            private void removeFrom(ViewTreeObserver from) {
+                if (from == null || !from.isAlive()) return;
+                from.removeOnScrollChangedListener(this);
+                from.removeOnGlobalLayoutListener(this);
+            }
+
+            private void unobserve() {
+                removeFrom(observer);
+                observer = null;
+            }
+
+            void observe() {
+                ViewTreeObserver current = grid.getViewTreeObserver();
+                if (observer == current && current.isAlive()) return;
+                removeFrom(observer);
+                removeFrom(current);
+                observer = current;
+                if (!current.isAlive()) return;
+                current.addOnScrollChangedListener(this);
+                current.addOnGlobalLayoutListener(this);
+            }
+
+            @Override
+            public void onScrollChanged() {
+                update();
+            }
+
+            @Override
+            public void onGlobalLayout() {
+                update();
+            }
+
+            @Override
+            public void onViewAttachedToWindow(View view) {
+                observe();
+                MAIN.post(this::update);
+            }
+
+            @Override
+            public void onViewDetachedFromWindow(View view) {
+                unobserve();
+                chip.setVisibility(View.GONE);
+                MAIN.post(this::update);
+            }
+
+            private void update() {
+                Object currentAdapter = Reflect.invoke(grid, "getAdapter");
+                if (Setting.isPaused() || (currentAdapter != null && currentAdapter != adapter)) {
+                    ViewParent parent = chip.getParent();
+                    if (parent instanceof ViewGroup) ((ViewGroup) parent).removeView(chip);
+                }
+                if (chip.getParent() != null) {
+                    chip.setVisibility(grid.isAttachedToWindow() ? View.VISIBLE : View.GONE);
                     placeChip(chip, grid);
                     return;
                 }
@@ -1142,6 +1439,97 @@ public final class GridSort {
         }
     }
 
+    private static void chooseDateFilter(Object adapter, View anchor) {
+        try {
+            Activity activity = activityOf(anchor.getContext());
+            if (activity == null) activity = Utils.getVisibleActivity();
+            if (activity == null || activity.isFinishing() || activity.isDestroyed()) return;
+            SettingsUi.syncDarkMode(activity);
+            String current = dateFilterFor(adapter);
+            int customIndex = DATE_FILTER_LABELS.length;
+            String[] labels = new String[DATE_FILTER_LABELS.length + 1];
+            int checked = -1;
+            for (int i = 0; i < DATE_FILTER_LABELS.length; i++) {
+                labels[i] = L10n.t(DATE_FILTER_LABELS[i]);
+                if (DATE_FILTER_VALUES[i].equals(current)) checked = i;
+            }
+            if (checked < 0 && hasDateFilter(current)) {
+                labels[customIndex] = L10n.t("Custom date range...") + " (" + dateFilterLabel(current) + ")";
+                checked = customIndex;
+            } else {
+                labels[customIndex] = L10n.t("Custom date range...");
+                if (checked < 0) checked = 0;
+            }
+            Activity host = activity;
+            AlertDialog dialog = new AlertDialog.Builder(activity)
+                    .setTitle(L10n.t("Filter by post date"))
+                    .setSingleChoiceItems(labels, checked, (shown, which) -> {
+                        shown.dismiss();
+                        if (which == customIndex) {
+                            chooseCustomDateRange(host, adapter, current);
+                        } else {
+                            applyDateFilter(adapter, DATE_FILTER_VALUES[which]);
+                        }
+                    })
+                    .setNegativeButton(L10n.t("Cancel"), null)
+                    .create();
+            dialog.setOnShowListener(ignored -> SettingsUi.styleStandardAlertDialog(dialog));
+            dialog.show();
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Could not open the post date filter choices", ex);
+        }
+    }
+
+    private static void chooseCustomDateRange(Activity activity, Object adapter, String current) {
+        try {
+            Calendar now = Calendar.getInstance();
+            int curYear = now.get(Calendar.YEAR);
+            int curMonth = now.get(Calendar.MONTH) + 1;
+            int curDay = now.get(Calendar.DAY_OF_MONTH);
+            int[] startSeed = new int[]{curYear - 1, curMonth, curDay};
+            int[] endSeed = new int[]{curYear, curMonth, curDay};
+            if (current != null && current.contains("..")) {
+                int dots = current.indexOf("..");
+                int[] s = parseYmd(current.substring(0, dots).trim());
+                int[] e = parseYmd(current.substring(dots + 2).trim());
+                if (s != null && e != null) {
+                    startSeed = s;
+                    endSeed = e;
+                }
+            }
+            int[] finalEndSeed = endSeed;
+            DatePickerDialog startPicker = new DatePickerDialog(
+                    activity,
+                    (view, y1, m1, d1) -> {
+                        String startStr = formatYmd(y1, m1 + 1, d1);
+                        DatePickerDialog endPicker = new DatePickerDialog(
+                                activity,
+                                (view2, y2, m2, d2) -> {
+                                    String endStr = formatYmd(y2, m2 + 1, d2);
+                                    if (endStr.compareTo(startStr) < 0) {
+                                        applyDateFilter(adapter, endStr + ".." + startStr);
+                                    } else {
+                                        applyDateFilter(adapter, startStr + ".." + endStr);
+                                    }
+                                },
+                                finalEndSeed[0],
+                                finalEndSeed[1] - 1,
+                                finalEndSeed[2]
+                        );
+                        endPicker.setTitle(L10n.t("End date"));
+                        endPicker.show();
+                    },
+                    startSeed[0],
+                    startSeed[1] - 1,
+                    startSeed[2]
+            );
+            startPicker.setTitle(L10n.t("Start date"));
+            startPicker.show();
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Could not open custom date range picker", ex);
+        }
+    }
+
     private static Activity activityOf(Context context) {
         while (context instanceof ContextWrapper) {
             if (context instanceof Activity) return (Activity) context;
@@ -1170,6 +1558,31 @@ public final class GridSort {
             adapter.getClass().getMethod("notifyDataSetChanged").invoke(adapter);
         } catch (Throwable ex) {
             Logger.printException(() -> "Could not refresh a sorted grid", ex);
+        }
+    }
+
+    static List<?> arranged(List<?> list, String order, String filter) {
+        return sorted(filtered(list, filter), order);
+    }
+
+    static List<?> filtered(List<?> list, String filter) {
+        try {
+            if (list == null || list.isEmpty()) return list;
+            long[] range = dateRangeSeconds(filter);
+            if (range == null) return list;
+            long startSec = range[0];
+            long endSec = range[1];
+            List<Object> out = new ArrayList<>();
+            for (Object item : list) {
+                long time = created(item);
+                if (time >= startSec && time <= endSec) {
+                    out.add(item);
+                }
+            }
+            return out;
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Could not filter a grid by post date", ex);
+            return list;
         }
     }
 
@@ -1237,7 +1650,11 @@ public final class GridSort {
     }
 
     static long created(Object item) {
-        return item instanceof Aweme ? ((Aweme) item).getCreateTime() : 0;
+        if (item instanceof Aweme) {
+            long time = ((Aweme) item).getCreateTime();
+            if (time > 0) return time;
+        }
+        return AlwaysShowPublishDatePatch.postedAt(item, System.currentTimeMillis());
     }
 
     static long length(Object item) {

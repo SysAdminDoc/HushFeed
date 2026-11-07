@@ -11,7 +11,7 @@ Dim when idle and shift,Redupkan saat diam dan geser
 Importing new history ended Undo for the earlier clear. You can clear the imported history.,Impor riwayat baru mengakhiri opsi Urungkan untuk penghapusan sebelumnya. Anda dapat menghapus riwayat yang diimpor.
 %1$d setting in that file can't be restored here and was skipped,%1$d pengaturan dalam berkas tidak dapat dipulihkan di sini dan dilewati
 %1$d settings in that file can't be restored here and were skipped,%1$d pengaturan dalam berkas tidak dapat dipulihkan di sini dan dilewati
-"Import watch history","Impor riwayat tontonan"
+Import watch history,Impor riwayat tontonan
 Keep the language picked in TikTok,Pertahankan bahasa yang dipilih di TikTok
 Freeze TikTok's experiments,Bekukan eksperimen TikTok
 "TikTok's servers keep sending it new settings, which is how it tests new layouts and features on people. With this on, TikTok keeps the ones it has now and ignores new ones. If something in TikTok stops working, turn this off so it can get fixes.","Server TikTok terus mengirim pengaturan baru, begitulah TikTok menguji tata letak dan fitur baru pada orang-orang. Jika ini menyala, TikTok menyimpan pengaturan yang ada sekarang dan mengabaikan yang baru. Jika ada yang berhenti berfungsi di TikTok, matikan ini agar TikTok bisa mendapat perbaikan."
@@ -33,29 +33,29 @@ Translate button in comments,Tombol terjemahkan di komentar
 Translate into,Terjemahkan ke
 "Type one language code here, like en.","Ketik satu kode bahasa di sini, seperti en."
 "Use this account's TikTok JSON export, up to %1$s MB and %2$s entries. Dates without a time zone use this phone's time zone.","Gunakan ekspor JSON TikTok akun ini, maksimal %1$s MB dan %2$s entri. Tanggal tanpa zona waktu memakai zona waktu ponsel ini."
-"Sign in to TikTok before importing watch history.","Masuk ke TikTok sebelum mengimpor riwayat tontonan."
+Sign in to TikTok before importing watch history.,Masuk ke TikTok sebelum mengimpor riwayat tontonan.
 "When TikTok starts and decides the phone's language changed, it forgets the language you picked in its settings and follows the phone. With this on, your pick stays. Counts from TikTok's next start.","Saat TikTok dimulai dan menganggap bahasa ponsel berubah, TikTok membuang bahasa yang kamu pilih di pengaturannya dan mengikuti ponsel. Jika ini menyala, pilihanmu tetap. Berlaku sejak TikTok dimulai lagi."
 Write the username and caption on the video,Tulis nama pengguna dan keterangan di video
 Writing the caption on the video,Menulis keterangan di video
 Writing the caption on the video: %1$s,Menulis keterangan di video: %1$s
-"Your TikTok account changed. Choose the file again for this account.","Akun TikTok Anda berubah. Pilih kembali berkas untuk akun ini."
-"Reading watch history","Membaca riwayat tontonan"
-"Importing watch history","Mengimpor riwayat tontonan"
+Your TikTok account changed. Choose the file again for this account.,Akun TikTok Anda berubah. Pilih kembali berkas untuk akun ini.
+Reading watch history,Membaca riwayat tontonan
+Importing watch history,Mengimpor riwayat tontonan
 "Reopen Hushfeed settings, then choose the file","Buka kembali pengaturan Hushfeed, lalu pilih berkas"
-"Couldn't start the import. Try again in a moment.","Impor tidak dapat dimulai. Coba lagi sebentar."
-"Your seen history changed before the import finished. Choose the file again.","Riwayat tontonan berubah sebelum impor selesai. Pilih kembali berkas."
-"Couldn't import watch history. Your saved history is unchanged.","Riwayat tontonan tidak dapat diimpor. Riwayat tersimpan tidak berubah."
-"%1$s watched video added.","%1$s video yang ditonton ditambahkan."
-"%1$s watched videos added.","%1$s video yang ditonton ditambahkan."
-"%1$s entry skipped.","%1$s entri dilewati."
-"%1$s entries skipped.","%1$s entri dilewati."
+Couldn't start the import. Try again in a moment.,Impor tidak dapat dimulai. Coba lagi sebentar.
+Your seen history changed before the import finished. Choose the file again.,Riwayat tontonan berubah sebelum impor selesai. Pilih kembali berkas.
+Couldn't import watch history. Your saved history is unchanged.,Riwayat tontonan tidak dapat diimpor. Riwayat tersimpan tidak berubah.
+%1$s watched video added.,%1$s video yang ditonton ditambahkan.
+%1$s watched videos added.,%1$s video yang ditonton ditambahkan.
+%1$s entry skipped.,%1$s entri dilewati.
+%1$s entries skipped.,%1$s entri dilewati.
 "Skipped entries are invalid, expired, already recorded, or older than the newest %1$s videos.","Entri yang dilewati tidak valid, kedaluwarsa, sudah tersimpan, atau lebih lama dari %1$s video terbaru."
-"Watch history was imported for the account that chose the file. Switch back to see it.","Riwayat diimpor untuk akun yang memilih berkas. Kembali ke akun itu untuk melihatnya."
-"Couldn't read that file. Choose it again.","Berkas tidak dapat dibaca. Pilih kembali."
+Watch history was imported for the account that chose the file. Switch back to see it.,Riwayat diimpor untuk akun yang memilih berkas. Kembali ke akun itu untuk melihatnya.
+Couldn't read that file. Choose it again.,Berkas tidak dapat dibaca. Pilih kembali.
 That file is larger than %1$s MB. Choose a smaller watch-history export.,Berkas lebih besar dari %1$s MB. Pilih ekspor riwayat yang lebih kecil.
 That file has more than %1$s watch-history entries.,Berkas berisi lebih dari %1$s entri riwayat tontonan.
-"That JSON file doesn't contain the supported TikTok watch history.","Berkas JSON ini tidak berisi riwayat tontonan TikTok yang didukung."
-"That watch-history file is damaged. Nothing was imported.","Berkas riwayat tontonan rusak. Tidak ada yang diimpor."
+That JSON file doesn't contain the supported TikTok watch history.,Berkas JSON ini tidak berisi riwayat tontonan TikTok yang didukung.
+That watch-history file is damaged. Nothing was imported.,Berkas riwayat tontonan rusak. Tidak ada yang diimpor.
 %1$d already matched,%1$d sudah cocok
 %1$d areas were checked and everything they need is here.,%1$d area diperiksa dan semua yang dibutuhkan ada.
 %1$d fields overridden,%1$d kolom ditimpa
@@ -2010,8 +2010,8 @@ Only a watermarked copy existed. Saved to %1$s,Cuma ada salinan watermark. Disim
 Full changelog,Semua perubahan
 More hashtags per post,Lebih banyak tagar per postingan
 New comment emoji,Emoji komentar baru
-"Hide root","Sembunyikan root"
-"Hide root status and details about root tools from TikTok.","Sembunyikan status root dan detail alat root dari TikTok."
+Hide root,Sembunyikan root
+Hide root status and details about root tools from TikTok.,Sembunyikan status root dan detail alat root dari TikTok.
 Clear,Hapus
 Search Activity notifications already loaded on this screen. Loading more pauses while you search.,Cari notifikasi Aktivitas yang sudah dimuat di layar ini. Pemuatan berikutnya berhenti saat Anda mencari.
 Search is unavailable on this screen,Pencarian tidak tersedia di layar ini
@@ -2099,25 +2099,25 @@ Automatic (TikTok's file),Otomatis (file TikTok)
 "%1$s, size unknown","%1$s, ukuran tidak diketahui"
 The quality choice is still open,Pilihan kualitas masih terbuka
 Unknown resolution,Resolusi tidak diketahui
-"Make it yours.","Sesuaikan gayamu."
-"Your feed. Your rules.","Feed kamu. Aturan kamu."
-"Conversations","Percakapan"
-"About","Tentang"
+Make it yours.,Sesuaikan gayamu.
+Your feed. Your rules.,Feed kamu. Aturan kamu.
+Conversations,Percakapan
+About,Tentang
 Your settings,Pengaturanmu
 Report a problem,Laporkan masalah
 Opens a GitHub report with your versions and settings filled in. Add what happened.,Membuka laporan GitHub dengan versi dan pengaturanmu yang sudah terisi. Tambahkan apa yang terjadi.
 Support Hushfeed,Dukung Hushfeed
 No app on this phone opens web links,Tidak ada aplikasi di ponsel ini yang membuka tautan web
-"Your feed","Feed kamu"
-"Saving and sharing","Menyimpan dan berbagi"
-"Privacy and app","Privasi dan aplikasi"
-"Hushfeed","Hushfeed"
-"Open Hushfeed settings","Buka pengaturan Hushfeed"
-"Several photos in one comment","Beberapa foto dalam satu komentar"
-"Scrolling comments on videos","Komentar berjalan di atas video"
-"See-through bottom bar","Bilah bawah transparan"
-"Let the video reach the bottom of the screen on the main feed and show the tabs over it with no bar behind them.","Biarkan video di feed utama menjangkau bagian bawah layar dan tampilkan tab di atasnya tanpa bilah di belakangnya."
-"LIVE chat auto-translate","Terjemahan otomatis chat LIVE"
+Your feed,Feed kamu
+Saving and sharing,Menyimpan dan berbagi
+Privacy and app,Privasi dan aplikasi
+Hushfeed,Hushfeed
+Open Hushfeed settings,Buka pengaturan Hushfeed
+Several photos in one comment,Beberapa foto dalam satu komentar
+Scrolling comments on videos,Komentar berjalan di atas video
+See-through bottom bar,Bilah bawah transparan
+Let the video reach the bottom of the screen on the main feed and show the tabs over it with no bar behind them.,Biarkan video di feed utama menjangkau bagian bawah layar dan tampilkan tab di atasnya tanpa bilah di belakangnya.
+LIVE chat auto-translate,Terjemahan otomatis chat LIVE
 "The Translate comments button in a LIVE room also needs a Japanese SIM. Turn on Override SIM details in Hushfeed settings > Region, set SIM country preset to Japan, NTT DOCOMO (44010), then restart TikTok.","Tombol Terjemahkan komentar di ruang LIVE juga memerlukan SIM Jepang. Aktifkan Timpa detail SIM di pengaturan Hushfeed > Wilayah, atur Praset negara SIM ke Japan, NTT DOCOMO (44010), lalu mulai ulang TikTok."
 "Comments only scroll on videos TikTok has turned them on for, so most videos stay the same.","Komentar hanya berjalan di atas video yang diaktifkan TikTok, jadi sebagian besar video tetap sama."
 
@@ -2137,25 +2137,25 @@ Pick all,Pilih semua
 "Picked %1$s. Save, then tap Pick all for more.","%1$s dipilih. Simpan, lalu ketuk Pilih semua lagi."
 All loaded items are picked or saved. Scroll for more.,Semua dipilih atau disimpan. Gulir untuk lainnya.
 
-"Record LIVEs you watch","Rekam LIVE yang kamu tonton"
-"Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.","Menambahkan tombol Rekam ke ruang LIVE. Rekaman dimulai saat kamu mengetuknya dan berakhir saat kamu mengetuk Berhenti atau keluar dari ruang. Apa pun sebelum itu tidak disimpan."
-"Record","Rekam"
-"Stop","Berhenti"
-"Stop recording this LIVE","Hentikan perekaman LIVE ini"
-"Record this LIVE from now","Rekam LIVE ini mulai sekarang"
-"Recording this LIVE from now","Merekam LIVE ini mulai sekarang"
-"Saving the recording","Menyimpan rekaman"
+Record LIVEs you watch,Rekam LIVE yang kamu tonton
+Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.,Menambahkan tombol Rekam ke ruang LIVE. Rekaman dimulai saat kamu mengetuknya dan berakhir saat kamu mengetuk Berhenti atau keluar dari ruang. Apa pun sebelum itu tidak disimpan.
+Record,Rekam
+Stop,Berhenti
+Stop recording this LIVE,Hentikan perekaman LIVE ini
+Record this LIVE from now,Rekam LIVE ini mulai sekarang
+Recording this LIVE from now,Merekam LIVE ini mulai sekarang
+Saving the recording,Menyimpan rekaman
 No stream found to record. Reopen the LIVE.,Tidak ada siaran untuk direkam. Buka LIVE lagi.
 Allow storage for TikTok to record LIVEs,Beri TikTok izin penyimpanan untuk merekam LIVE
-"LIVE recording saved to %1$s","Rekaman LIVE disimpan di %1$s"
+LIVE recording saved to %1$s,Rekaman LIVE disimpan di %1$s
 LIVE ended or dropped. Recording saved to %1$s,LIVE berakhir atau terputus. Rekaman disimpan di %1$s
 Storage almost full. Recording saved to %1$s,Penyimpanan hampir penuh. Rekaman disimpan di %1$s
 Size limit reached. Recording saved to %1$s,Batas ukuran tercapai. Rekaman disimpan di %1$s
 TikTok closed. What was recorded is saved to %1$s,TikTok ditutup. Bagian yang terekam disimpan di %1$s
 Recording stopped early. Saved to %1$s,Rekaman berhenti lebih awal. Disimpan di %1$s
-"This LIVE's stream can't be saved","Siaran LIVE ini tidak bisa disimpan"
-"There isn't enough room on the phone to record","Ruang di ponsel tidak cukup untuk merekam"
-"Nothing was recorded","Tidak ada yang terekam"
+This LIVE's stream can't be saved,Siaran LIVE ini tidak bisa disimpan
+There isn't enough room on the phone to record,Ruang di ponsel tidak cukup untuk merekam
+Nothing was recorded,Tidak ada yang terekam
 The recording couldn't be saved. Try again.,Rekaman tidak bisa disimpan. Coba lagi.
 Can't retry those photos. Save the post again.,Foto itu tak bisa diulang. Simpan postingan lagi.
 Show the time zone,Tampilkan zona waktu
@@ -2229,7 +2229,7 @@ For accounts TikTok took translation away from. Brings back See translation unde
 "For accounts TikTok took translation away from. Brings back See translation under video descriptions and in captions, and the translation rows on the Language page in Settings and privacy. Restart TikTok to see it on videos.","Untuk akun yang terjemahannya dihapus TikTok. Mengembalikan Lihat terjemahan di bawah deskripsi video dan di teks video, serta baris terjemahan di halaman Bahasa, di Pengaturan dan privasi. Mulai ulang TikTok untuk melihatnya di video."
 Only on the sides of the video,Hanya di sisi video
 Your Long press choice runs only on the left and right thirds of the video. A press in the middle still opens TikTok's own menu. It needs a Long press choice other than TikTok default.,Pilihan Tekan lama hanya berjalan di sepertiga kiri dan kanan video. Tekan di tengah tetap membuka menu bawaan TikTok. Perlu pilihan Tekan lama selain Bawaan TikTok.
-"Dark LIVE panels in dark mode","Panel LIVE gelap di mode gelap"
+Dark LIVE panels in dark mode,Panel LIVE gelap di mode gelap
 "With TikTok in dark mode, a LIVE room still opens its share menu, fan club and other panels in light colors. This opens them dark.","Saat TikTok dalam mode gelap, ruang LIVE tetap membuka menu bagikan, klub penggemar, dan panel lainnya dengan warna terang. Ini membukanya dalam warna gelap."
 Where the time goes,Posisi waktu
 Beside the bar,Di samping bilah
@@ -2297,10 +2297,10 @@ Recording files need recovery,File rekaman perlu dipulihkan
 The recovery record is damaged. Export a copy of the recording files or delete them.,Catatan pemulihan rusak. Ekspor salinan file rekaman atau hapus file tersebut.
 Export may be incomplete. The recordings are kept.,Ekspor mungkin tak lengkap. Rekaman tetap disimpan.
 Some recording files remain. Try deleting them again.,Beberapa file rekaman masih tersisa. Coba hapus lagi.
-"Recovered recording saved to %1$s","Rekaman yang dipulihkan disimpan ke %1$s"
-"Open setting location","Buka lokasi setelan"
-"Expanded","Diperluas"
-"Collapsed","Diciutkan"
+Recovered recording saved to %1$s,Rekaman yang dipulihkan disimpan ke %1$s
+Open setting location,Buka lokasi setelan
+Expanded,Diperluas
+Collapsed,Diciutkan
 This setting isn't available. Search for another setting.,Setelan ini tidak tersedia. Cari setelan lain.
 Hide the Hushfeed row,Sembunyikan baris Hushfeed
 "Take Hushfeed out of TikTok's Settings and privacy. To open these settings, press and hold For You at the top of the feed, or Home if Long-press Home for Hushfeed settings is on.","Keluarkan Hushfeed dari Pengaturan dan privasi TikTok. Untuk membuka pengaturan ini, tekan lama Untuk Kamu di bagian atas feed, atau Beranda jika Tekan lama Beranda untuk pengaturan Hushfeed aktif."
@@ -2513,3 +2513,21 @@ Stop the blink under the bar,Hentikan kedipan di bawah bilah
 "If the video blinks as you swipe with See-through bottom bar on, this draws it inside TikTok instead of on a layer of its own. It can use a little more battery. Needs See-through bottom bar.","Jika video berkedip saat Anda menggeser dengan Bilah bawah transparan aktif, ini menggambar video di dalam TikTok, bukan di lapisan tersendiri. Bisa memakai sedikit lebih banyak baterai. Perlu Bilah bawah transparan."
 Bend the video at the edges,Lengkungkan video di tepinya
 "The glass pill's edges bend the blurred video behind them, like the rim of real glass, and its colors come through a little richer. Needs Blur the video behind the bar and Android 13 and up.","Tepi pil kaca melengkungkan video buram di belakangnya, seperti tepi kaca sungguhan, dan warnanya tampil sedikit lebih kaya. Perlu Buramkan video di belakang bilah dan Android 13 ke atas."
+Filter Liked videos by post date,Filter video Disukai berdasarkan tanggal posting
+"Shows only liked videos posted in the chosen year or date range, loading up to 300 videos. A button in the Liked grid's top corner changes the filter or picks a custom date range.","Hanya menampilkan video disukai yang diposting pada tahun atau rentang tanggal yang dipilih, memuat hingga 300 video. Tombol di sudut atas kisi Disukai mengubah filter atau memilih rentang tanggal khusus."
+All dates,Semua tanggal
+Custom date range...,Rentang tanggal khusus...
+Filter by post date,Filter berdasarkan tanggal posting
+Start date,Tanggal mulai
+End date,Tanggal akhir
+2026,2026
+2025,2025
+2024,2024
+2023,2023
+2022,2022
+2021,2021
+2020,2020
+2019,2019
+2018,2018
+2017,2017
+2016,2016

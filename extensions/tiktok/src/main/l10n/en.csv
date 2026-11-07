@@ -124,6 +124,17 @@ source,target
 "1, from Background play in the long-press menu","1, from Background play in the long-press menu"
 2 taps a second,2 taps a second
 "2, from Keep playing in the background","2, from Keep playing in the background"
+2016,2016
+2017,2017
+2018,2018
+2019,2019
+2020,2020
+2021,2021
+2022,2022
+2023,2023
+2024,2024
+2025,2025
+2026,2026
 4 taps a second,4 taps a second
 6 taps a second,6 taps a second
 8 taps a second,8 taps a second
@@ -218,6 +229,7 @@ After 15 minutes,After 15 minutes
 After 5 minutes,After 5 minutes
 All,All
 All available languages,All available languages
+All dates,All dates
 All events,All events
 All loaded items are picked or saved. Scroll for more.,All loaded items are picked or saved. Scroll for more.
 All loaded tabs,All loaded tabs
@@ -535,6 +547,7 @@ Current %1$s,Current %1$s
 Current state,Current state
 Current: %1$s,Current: %1$s
 Custom SIM details,Custom SIM details
+Custom date range...,Custom date range...
 Custom value,Custom value
 Custom value…,Custom value…
 Cuts the tracking bits out of links you share.,Cuts the tracking bits out of links you share.
@@ -608,6 +621,7 @@ Empty,Empty
 "Empty the menu that opens when you press and hold TikTok's icon on the home screen. Turning this off asks TikTok to build them again. Tapping the icon still opens the app, and a shortcut you pinned yourself stays where you put it.","Empty the menu that opens when you press and hold TikTok's icon on the home screen. Turning this off asks TikTok to build them again. Tapping the icon still opens the app, and a shortcut you pinned yourself stays where you put it."
 Enable,Enable
 Enabled,Enabled
+End date,End date
 Enter a JSON object or array,Enter a JSON object or array
 Enter a creator handle or id,Enter a creator handle or id
 Enter a finite number,Enter a finite number
@@ -662,8 +676,10 @@ Field edits were discarded,Field edits were discarded
 Field edits weren't saved,Field edits weren't saved
 Files,Files
 Fill the screen with the video,Fill the screen with the video
+Filter Liked videos by post date,Filter Liked videos by post date
 Filter TikTok's offline videos,Filter TikTok's offline videos
 Filter bottom tabs,Filter bottom tabs
+Filter by post date,Filter by post date
 Filter comments by keyword,Filter comments by keyword
 Filter feed tabs,Filter feed tabs
 Filter location-tagged videos,Filter location-tagged videos
@@ -1896,6 +1912,7 @@ Shows TikTok's text in your phone's font instead of TikTok Sans. Icons and gift 
 "Shows a search button at the top left of the comments instead of the box, so the comments get that room back. Tap it to search, and tap it again to put the box away. Search within comments must be on.","Shows a search button at the top left of the comments instead of the box, so the comments get that room back. Tap it to search, and tap it again to put the box away. Search within comments must be on."
 "Shows a small count under TikTok's top tabs of what the feed filter has removed since TikTok started. It shows only on the feed, and taps on it go through to the video under it.","Shows a small count under TikTok's top tabs of what the feed filter has removed since TikTok started. It shows only on the feed, and taps on it go through to the video under it."
 Shows every emoji in your phone's own emoji font. The newest emoji your phone doesn't have yet may show as a box or in pieces.,Shows every emoji in your phone's own emoji font. The newest emoji your phone doesn't have yet may show as a box or in pieces.
+"Shows only liked videos posted in the chosen year or date range, loading up to 300 videos. A button in the Liked grid's top corner changes the filter or picks a custom date range.","Shows only liked videos posted in the chosen year or date range, loading up to 300 videos. A button in the Liked grid's top corner changes the filter or picks a custom date range."
 Shows the Duet and Stitch options even when the creator turned them off. TikTok may still refuse to accept the result.,Shows the Duet and Stitch options even when the creator turned them off. TikTok may still refuse to accept the result.
 "Shows the country's flag in place of its two letters, by the creator's name and by a commenter's time.","Shows the country's flag in place of its two letters, by the creator's name and by a commenter's time."
 Sideways,Sideways
@@ -1946,6 +1963,7 @@ Speed while you hold the video,Speed while you hold the video
 Spin the music disc,Spin the music disc
 Split comment minimum width,Split comment minimum width
 Standard,Standard
+Start date,Start date
 Start each new video at your default. A manual choice lasts until the video changes.,Start each new video at your default. A manual choice lasts until the video changes.
 Start feature gate recording,Start feature gate recording
 Start recording,Start recording

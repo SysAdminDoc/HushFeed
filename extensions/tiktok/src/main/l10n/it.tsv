@@ -2546,3 +2546,21 @@ If the video blinks as you swipe with See-through bottom bar on, this draws it i
 # context: a switch under Blur the video behind the bar; the glass tab bar's rim bends the blurred video like a lens edge
 Bend the video at the edges	Piega il video sui bordi
 The glass pill's edges bend the blurred video behind them, like the rim of real glass, and its colors come through a little richer. Needs Blur the video behind the bar and Android 13 and up.	I bordi della pillola di vetro piegano il video sfocato che c'è dietro, come il bordo di un vetro vero, e i colori risultano un po' più vivi. Richiede Sfoca il video dietro la barra e Android 13 o successivo.
+Filter Liked videos by post date	Filtra i video con Mi piace per data di pubblicazione
+Shows only liked videos posted in the chosen year or date range, loading up to 300 videos. A button in the Liked grid's top corner changes the filter or picks a custom date range.	Mostra solo i video con Mi piace pubblicati nell'anno o nell'intervallo di date scelto, caricando fino a 300 video. Un pulsante nell'angolo superiore della griglia dei Mi piace cambia il filtro o sceglie un intervallo di date personalizzato.
+All dates	Tutte le date
+Custom date range...	Intervallo di date personalizzato...
+Filter by post date	Filtra per data di pubblicazione
+Start date	Data di inizio
+End date	Data di fine
+2026	2026
+2025	2025
+2024	2024
+2023	2023
+2022	2022
+2021	2021
+2020	2020
+2019	2019
+2018	2018
+2017	2017
+2016	2016

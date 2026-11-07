@@ -2546,3 +2546,21 @@ If the video blinks as you swipe with See-through bottom bar on, this draws it i
 # context: a switch under Blur the video behind the bar; the glass tab bar's rim bends the blurred video like a lens edge
 Bend the video at the edges	Curvar o vídeo nas bordas
 The glass pill's edges bend the blurred video behind them, like the rim of real glass, and its colors come through a little richer. Needs Blur the video behind the bar and Android 13 and up.	As bordas da pílula de vidro curvam o vídeo desfocado atrás delas, como a borda de um vidro de verdade, e as cores ficam um pouco mais vivas. Precisa de Desfocar o vídeo atrás da barra e do Android 13 ou mais recente.
+Filter Liked videos by post date	Filtrar vídeos curtidos por data de publicação
+Shows only liked videos posted in the chosen year or date range, loading up to 300 videos. A button in the Liked grid's top corner changes the filter or picks a custom date range.	Mostra apenas os vídeos curtidos publicados no ano ou intervalo de datas escolhido, carregando até 300 vídeos. Um botão no canto superior da grade de curtidas muda o filtro ou escolhe um intervalo de datas personalizado.
+All dates	Todas as datas
+Custom date range...	Intervalo de datas personalizado...
+Filter by post date	Filtrar por data de publicação
+Start date	Data de início
+End date	Data de término
+2026	2026
+2025	2025
+2024	2024
+2023	2023
+2022	2022
+2021	2021
+2020	2020
+2019	2019
+2018	2018
+2017	2017
+2016	2016

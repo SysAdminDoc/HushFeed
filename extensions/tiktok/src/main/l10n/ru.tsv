@@ -2723,3 +2723,21 @@ If the video blinks as you swipe with See-through bottom bar on, this draws it i
 # context: a switch under Blur the video behind the bar; the glass tab bar's rim bends the blurred video like a lens edge
 Bend the video at the edges	Преломлять видео по краям
 The glass pill's edges bend the blurred video behind them, like the rim of real glass, and its colors come through a little richer. Needs Blur the video behind the bar and Android 13 and up.	Края стеклянной панели преломляют размытое видео за ними, как край настоящего стекла, а цвета становятся чуть насыщеннее. Нужен «Размывать видео за панелью» и Android 13 или новее.
+Filter Liked videos by post date	Фильтровать понравившиеся видео по дате публикации
+Shows only liked videos posted in the chosen year or date range, loading up to 300 videos. A button in the Liked grid's top corner changes the filter or picks a custom date range.	Показывает только понравившиеся видео, опубликованные в выбранном году или диапазоне дат, загружая до 300 видео. Кнопка в верхнем углу сетки «Понравилось» меняет фильтр или выбирает свой диапазон дат.
+All dates	Все даты
+Custom date range...	Свой диапазон дат...
+Filter by post date	Фильтр по дате публикации
+Start date	Дата начала
+End date	Дата окончания
+2026	2026
+2025	2025
+2024	2024
+2023	2023
+2022	2022
+2021	2021
+2020	2020
+2019	2019
+2018	2018
+2017	2017
+2016	2016

@@ -2511,3 +2511,21 @@ Stop the blink under the bar,Hết nhấp nháy dưới thanh
 "If the video blinks as you swipe with See-through bottom bar on, this draws it inside TikTok instead of on a layer of its own. It can use a little more battery. Needs See-through bottom bar.","Nếu video nhấp nháy khi bạn vuốt lúc bật Thanh dưới cùng trong suốt, tùy chọn này vẽ video ngay trong TikTok thay vì trên một lớp riêng. Có thể tốn pin hơn một chút. Yêu cầu bật Thanh dưới cùng trong suốt."
 Bend the video at the edges,Bẻ cong video ở viền
 "The glass pill's edges bend the blurred video behind them, like the rim of real glass, and its colors come through a little richer. Needs Blur the video behind the bar and Android 13 and up.","Viền của thanh hình viên thuốc bằng kính bẻ cong phần video bị làm mờ phía sau, giống mép kính thật, và màu sắc hiện lên đậm hơn một chút. Yêu cầu bật Làm mờ video phía sau thanh điều hướng và thiết bị chạy Android 13 trở lên."
+Filter Liked videos by post date,Lọc video đã thích theo ngày đăng
+"Shows only liked videos posted in the chosen year or date range, loading up to 300 videos. A button in the Liked grid's top corner changes the filter or picks a custom date range.","Chỉ hiển thị các video đã thích được đăng trong năm hoặc khoảng ngày đã chọn, tải tối đa 300 video. Nút ở góc trên của lưới video đã thích giúp đổi bộ lọc hoặc chọn khoảng ngày tùy chỉnh."
+All dates,Tất cả ngày
+Custom date range...,Khoảng ngày tùy chỉnh...
+Filter by post date,Lọc theo ngày đăng
+Start date,Ngày bắt đầu
+End date,Ngày kết thúc
+2026,2026
+2025,2025
+2024,2024
+2023,2023
+2022,2022
+2021,2021
+2020,2020
+2019,2019
+2018,2018
+2017,2017
+2016,2016

@@ -52,6 +52,7 @@
       "video_length_on_grid",
       "profile_grid_sort",
       "liked_grid_sort",
+      "liked_grid_date_filter",
       "sound_grid_sort"
     ],
     "Always upload in HD": [
@@ -2813,6 +2814,12 @@
       "key": "lift_length_limits",
       "type": "boolean",
       "default": false
+    },
+    "liked_grid_date_filter": {
+      "field": "LIKED_GRID_DATE_FILTER",
+      "key": "liked_grid_date_filter",
+      "type": "string",
+      "default": "all"
     },
     "liked_grid_sort": {
       "field": "LIKED_GRID_SORT",

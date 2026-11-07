@@ -807,6 +807,8 @@ public class Settings extends BaseSettings {
     public static final StringSetting PROFILE_GRID_SORT = new StringSetting("profile_grid_sort", "off");
     /** The Liked tab's own order (#180): "profile" follows PROFILE_GRID_SORT, otherwise one of GridSort's orders. */
     public static final StringSetting LIKED_GRID_SORT = new StringSetting("liked_grid_sort", "profile");
+    /** Post-date filter for the Liked tab: "all", a four-digit year ("2025"), or "YYYY-MM-DD..YYYY-MM-DD". */
+    public static final StringSetting LIKED_GRID_DATE_FILTER = new StringSetting("liked_grid_date_filter", "all");
     /** The order of a sound page's video grid (#180): off, or one of GridSort's orders. */
     public static final StringSetting SOUND_GRID_SORT = new StringSetting("sound_grid_sort", "off");
     public static final BooleanSetting SHOW_EXACT_COUNTS = new BooleanSetting("show_exact_counts", FALSE);

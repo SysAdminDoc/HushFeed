@@ -142,6 +142,7 @@ public class GridSortTest {
         setPaused(false);
         Settings.PROFILE_GRID_SORT.resetToDefault();
         Settings.LIKED_GRID_SORT.resetToDefault();
+        Settings.LIKED_GRID_DATE_FILTER.resetToDefault();
         Settings.SOUND_GRID_SORT.resetToDefault();
         SettingsStatus.gridSortEnabled = gridSortEnabled;
         SettingsStatus.likedGridSortEnabled = likedGridSortEnabled;
@@ -764,6 +765,46 @@ public class GridSortTest {
             assertEquals("the profile grids keep theirs", "newest", Settings.PROFILE_GRID_SORT.get());
             assertEquals("apcdfeb", ids(adapter.mmItems));
         }
+    }
+
+    @Test public void likedGridFiltersByPostYearAndCustomDateRangeWhileOtherGridsStayUnfiltered() {
+        long y2022 = java.time.LocalDate.of(2022, 6, 15).atStartOfDay(java.time.ZoneId.systemDefault()).toEpochSecond() + 3600;
+        long y2023 = java.time.LocalDate.of(2023, 3, 10).atStartOfDay(java.time.ZoneId.systemDefault()).toEpochSecond() + 3600;
+        long y2024 = java.time.LocalDate.of(2024, 8, 20).atStartOfDay(java.time.ZoneId.systemDefault()).toEpochSecond() + 3600;
+
+        List<Aweme> postsList = new ArrayList<>(Arrays.asList(
+                new Post("v22", y2022, 10_000, 100, 10, false),
+                new Post("v23", y2023, 10_000, 100, 10, false),
+                new Post("v24", y2024, 10_000, 100, 10, false)));
+
+        GridAdapter liked = new GridAdapter();
+        GridAdapter profile = new GridAdapter();
+        GridSort.tab(liked, GridSort.TAB_LIKED);
+        GridSort.tab(profile, GridSort.TAB_POSTS);
+
+        Settings.LIKED_GRID_DATE_FILTER.save("2022");
+        liked.mmItems = GridSort.data(liked, postsList);
+        profile.mmItems = GridSort.data(profile, new ArrayList<>(postsList));
+        assertEquals("only 2022 on Liked grid", "v22", ids(liked.mmItems));
+        assertEquals("profile grid ignores Liked date filter", "v22v23v24", ids(profile.mmItems));
+
+        GridSort.applyDateFilter(liked, "2022-01-01..2023-12-31");
+        assertEquals("2022 and 2023 in custom range", "v22v23", ids(liked.mmItems));
+
+        GridSort.beforeOpen(new GridFragment(liked));
+        assertEquals("video player starts with filtered videos first while keeping full list size",
+                "v22v23v24", ids(postsList));
+
+        GridSort.applyDateFilter(liked, "all");
+        assertEquals("all dates restored from in-memory originals", "v22v23v24", ids(liked.mmItems));
+        idle(0);
+    }
+
+    @Test public void activeDateFilterWantsNextPageEvenWithOriginalSortOrder() {
+        assertTrue(GridSort.wantsNextPage("off", "2023", 0, 30, true));
+        assertTrue(GridSort.wantsNextPage("off", "2021-01-01..2021-12-31", 30, 60, true));
+        assertFalse(GridSort.wantsNextPage("off", "all", 0, 30, true));
+        assertFalse(GridSort.wantsNextPage("off", "2023", 270, GridSort.LOAD_CAP, true));
     }
 
     /**

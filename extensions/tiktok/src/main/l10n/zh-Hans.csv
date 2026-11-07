@@ -2295,10 +2295,10 @@ Recording files need recovery,录制文件需要恢复
 The recovery record is damaged. Export a copy of the recording files or delete them.,恢复记录已损坏。请导出录制文件的副本或将其删除.
 Export may be incomplete. The recordings are kept.,导出可能不完整，录制文件仍保留.
 Some recording files remain. Try deleting them again.,仍有录制文件未删除。请再次尝试删除.
-"Recovered recording saved to %1$s","已恢复的录制保存到 %1$s"
-"Open setting location","打开设置所在页面"
-"Expanded","已展开"
-"Collapsed","已折叠"
+Recovered recording saved to %1$s,已恢复的录制保存到 %1$s
+Open setting location,打开设置所在页面
+Expanded,已展开
+Collapsed,已折叠
 This setting isn't available. Search for another setting.,此设置不可用. 请搜索其他设置.
 Hide the Hushfeed row,隐藏 Hushfeed 入口
 "Take Hushfeed out of TikTok's Settings and privacy. To open these settings, press and hold For You at the top of the feed, or Home if Long-press Home for Hushfeed settings is on.",从 TikTok 的“设置和隐私”中移除 Hushfeed。要打开这些设置，请长按信息流顶部的“为你”，如果已开启“长按 Home 进行 Hushfeed 设置”，也可以长按 Home.
@@ -2497,7 +2497,7 @@ Audio only,仅音频
 Pick a video quality to record the screen,请选择视频画质再录屏
 Discover in the bottom bar,底部栏显示“发现”
 "Discover takes the place of Friends in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.",在底部栏中用“发现”替换“好友”，与 TikTok 在部分国家的布局相同。你的地区和推荐内容保持不变.
-"%1$s, new","%1$s，新"
+"%1$s, new",%1$s，新
 Startup message,启动消息
 Show a message of your own each time TikTok opens.,每次打开 TikTok 时显示你自己的消息.
 Message title,消息标题
@@ -2511,3 +2511,21 @@ Stop the blink under the bar,消除底栏下的闪烁
 "If the video blinks as you swipe with See-through bottom bar on, this draws it inside TikTok instead of on a layer of its own. It can use a little more battery. Needs See-through bottom bar.",如果开启透明底栏后滑动时视频闪烁，此项会把视频直接绘制在 TikTok 内，而不是单独的图层上。可能会稍微多耗一点电。需要透明底栏.
 Bend the video at the edges,在边缘折射视频
 "The glass pill's edges bend the blurred video behind them, like the rim of real glass, and its colors come through a little richer. Needs Blur the video behind the bar and Android 13 and up.",玻璃条的边缘会像真玻璃的边沿一样折射后面模糊的视频，颜色也会更鲜艳一些。需要模糊栏后面的视频和 Android 13 及以上版本.
+Filter Liked videos by post date,按发布日期筛选喜欢的视频
+"Shows only liked videos posted in the chosen year or date range, loading up to 300 videos. A button in the Liked grid's top corner changes the filter or picks a custom date range.",仅显示在所选年份或日期范围内发布的喜欢视频，最多加载 300 个视频。“喜欢”网格顶角的按钮可更改筛选条件或选择自定义日期范围。
+All dates,所有日期
+Custom date range...,自定义日期范围...
+Filter by post date,按发布日期筛选
+Start date,开始日期
+End date,结束日期
+2026,2026
+2025,2025
+2024,2024
+2023,2023
+2022,2022
+2021,2021
+2020,2020
+2019,2019
+2018,2018
+2017,2017
+2016,2016

@@ -339,6 +339,11 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                                     "Most liked first", "Least liked first"},
                             new String[]{"profile", "off", "newest", "oldest", "longest", "shortest", "most_viewed",
                                     "least_viewed", "most_liked", "least_liked"}));
+                    addPreference(new ChoicePreference(context, "Filter Liked videos by post date",
+                            Settings.LIKED_GRID_DATE_FILTER,
+                            app.morphe.extension.tiktok.feed.GridSort.DATE_FILTER_LABELS,
+                            app.morphe.extension.tiktok.feed.GridSort.DATE_FILTER_VALUES)
+                            .withNote("Shows only liked videos posted in the chosen year or date range, loading up to 300 videos. A button in the Liked grid's top corner changes the filter or picks a custom date range."));
                 }
                 if (SettingsStatus.soundGridSortEnabled) {
                     addPreference(new ChoicePreference(context, "Sort loaded videos on sound pages",

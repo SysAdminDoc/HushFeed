@@ -112,7 +112,7 @@ class CommentDislikeTouchTest {
     private fun nativeTouchInstalls(range: Boolean, likeRange: Boolean = false): MutableMethod {
         val method = MutableMethod(
             ImmutableMethod(
-                "LX/1PIy;", "LIZIZ", emptyList(), "V", AccessFlags.PUBLIC.value,
+                "LX/0nh6;", "LIZIZ", emptyList(), "V", AccessFlags.PUBLIC.value,
                 null, null, ImmutableMethodImplementation(12, emptyList(), null, null),
             ),
         )
@@ -124,14 +124,14 @@ class CommentDislikeTouchTest {
         val call = if (range) "invoke-virtual/range {v1 .. v2}" else "invoke-virtual {v2, v1}"
         method.addInstructions(
             """
-                iget-object v$likeReceiver, p0, LX/1PIy;->LLJJ:Landroid/widget/RelativeLayout;
+                iget-object v$likeReceiver, p0, LX/0nh6;->LLJJ:Landroid/widget/RelativeLayout;
                 if-eqz v$likeReceiver, :dislike
                 new-instance v$likeListener, LY/ATListenerS437S0100000_22;
                 const/16 v0, 8
                 invoke-direct {v$likeListener, p0, v0}, LY/ATListenerS437S0100000_22;-><init>(Ljava/lang/Object;I)V
                 $likeCall, Landroid/view/View;->setOnTouchListener(Landroid/view/View${'$'}OnTouchListener;)V
                 :dislike
-                iget-object v$receiver, p0, LX/1PIy;->LLJJIJIIJIL:Landroid/widget/RelativeLayout;
+                iget-object v$receiver, p0, LX/0nh6;->LLJJIJIIJIL:Landroid/widget/RelativeLayout;
                 if-eqz v$receiver, :done
                 new-instance v$listener, LY/ATListenerS437S0100000_22;
                 const/16 v0, 9
@@ -151,7 +151,7 @@ class CommentDislikeTouchTest {
         // would put the block gesture on the like the day the two swapped places.
         val group = "LY/ATListenerS409S0100000_21;"
         for (dislikeFirst in listOf(false, true)) {
-            val method = installs("LX/1DCe;", group, "LLJJJJJIL", "LLJL", dislikeFirst)
+            val method = installs("LX/0aFy;", group, "LLJJJJJIL", "LLJL", dislikeFirst)
             val before = method.implementation!!.instructions.toList()
             method.captureDislikeTouchListener(listeners(group))
             val after = method.implementation!!.instructions.toList()
@@ -167,7 +167,7 @@ class CommentDislikeTouchTest {
 
     @Test
     fun `no install whose listener asks about a dislike is refused rather than guessed`() {
-        val method = installs("LX/1PIy;", group, "LLJJ", "LLJJIJIIJIL", dislikeFirst = false)
+        val method = installs("LX/0nh6;", group, "LLJJ", "LLJJIJIIJIL", dislikeFirst = false)
         try {
             method.captureDislikeTouchListener(listeners(group, dislikeAsks = "isUserDigged"))
             fail("expected a refusal")

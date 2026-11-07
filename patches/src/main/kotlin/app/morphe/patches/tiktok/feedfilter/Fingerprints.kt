@@ -128,7 +128,7 @@ internal fun com.android.tools.smali.dexlib2.iface.instruction.Instruction.isMod
 /**
  * Where a list the reader opened from a grid becomes the list TikTok's profile model plays: a
  * collection, or another grid handing its loaded videos to the video page (X.0OfL.LJIIL on 47.1.4,
- * called through X.0OfJ from the collection click and one other grid). It copies the grid's list
+ * called through X.0OfH from the collection click and one other grid). It copies the grid's list
  * into the model's FeedItemList with setItems, then writes the paging on it. That FeedItemList
  * carries no profile uid and no profile parse saw it, so its getItems read ran the main feed's
  * rules (#135). R8 names the class and method; the shape and the maxCursor write name it.
@@ -161,7 +161,7 @@ internal object OpenedListFillFingerprint : Fingerprint(
  * The Following feed's loader: the static method that builds a `FollowFeedList` from the request
  * and reads its items back. It took the request and a cache on 47.5.3 (`LX/0NMJ;->LIZ`) and
  * five on 47.6.3 (`LX/0NHh;->LIZ`, a tag, a cursor and a count joining), and four on 47.7.2
- * (`LX/1Q5B;->LIZ`, the cache gone), so only
+ * (`LX/1Pba;->LIZ`, the cache gone), so only
  * "more than one" is asked of the parameter list. The one-argument cache lookup beside it also
  * reads the items, but never logs the "feed" it was asked for.
  */
@@ -197,7 +197,7 @@ private const val FOLLOW_FEED_API_DESCRIPTOR = "Lcom/ss/android/ugc/aweme/follow
  * The static helper that calls the Following feed API with a count it writes as the literal 20
  * ([raiseFollowFeedFirstReadCount]). R8 names the class and method; the API interface keeps its
  * real name and its request methods. 47.6.3's helper called followFeedGet and followFeedPost;
- * 47.7.2 dropped followFeedGet from the interface, so the POST is the call every build shares.
+ * 47.7.3 dropped followFeedGet from the interface, so the POST is the call every build shares.
  */
 internal object FollowFeedRequestFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
@@ -624,7 +624,7 @@ internal const val DYNAMIC_PATCH_DESCRIPTOR = "Lcom/ss/android/ugc/aweme/discove
 internal const val LYNX_SSR_INFO_DESCRIPTOR = "Lcom/ss/android/ugc/aweme/search/pages/result/topsearch/core/model/LynxSSRInfo;"
 
 /**
- * The Top results list's own Lynx card holder binding a card's data into its row (LX/0Kat;->P5
+ * The Top results list's own Lynx card holder binding a card's data into its row (LX/0Kar;->P5
  * on 47.0.3, called by the results adapter's bind). The Short Drama block is bound here: TikTok
  * builds it from a streamed chunk's patches and slots it into the adapter, past the result list
  * [SearchResultRequestIdFingerprint] filters. Named by the real types among its ten parameters:

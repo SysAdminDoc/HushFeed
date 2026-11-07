@@ -39,19 +39,19 @@ import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
 internal const val LOCAL_APPEARANCE = "Lapp/morphe/extension/tiktok/profile/LocalProfileAppearance;"
 internal const val LEGACY_NICKNAME_OWNER = "Lcom/ss/android/ugc/profile/platform/business/header/business/info/business/userinfo/base/AccountNameInfoComponent;"
 internal const val NICKNAME_OWNER = "Lcom/ss/android/ugc/profile/business/ur/nickname/ProfileInfoNicknameProtocol;"
-internal const val NICKNAME_REPAINT = "LX/0PW3;"
+internal const val NICKNAME_REPAINT = "LX/0PWU;"
 internal const val NAVBAR_NICKNAME_OWNER = "Lcom/ss/android/ugc/profile/business/ur/ProfileNavbarNickNameProtocol;"
-internal const val NAVBAR_NICKNAME_REPAINT = "LX/0PU5;"
-internal const val NAVBAR_ADD_NAME_REPAINT = "LX/0PU6;"
+internal const val NAVBAR_NICKNAME_REPAINT = "LX/0PUB;"
+internal const val NAVBAR_ADD_NAME_REPAINT = "LX/0PUC;"
 internal const val NICKNAME_DATA = "Lcom/ss/android/ugc/profile/business/ur/platform/NickNameData;"
-internal const val ADD_NAME_VIEW = "LX/0kFW;"
-internal const val BADGE_ICON = "LX/04cD;"
-internal const val BADGE_SPAN = "LX/0GF9;"
+internal const val ADD_NAME_VIEW = "LX/0YHb;"
+internal const val BADGE_ICON = "LX/04cH;"
+internal const val BADGE_SPAN = "LX/0GF7;"
 /** Kotlin's Ref.ObjectRef, which R8 renames (47.4.3 `LX/02xT;`). */
-internal const val OBJECT_REF = "LX/03Hz;"
+internal const val OBJECT_REF = "LX/03I3;"
 /** The host's dp-to-pixel and pixel rounding helpers the native badge icon sizes itself with. */
-internal const val DIMENSION_DP = "LX/04J2;"
-internal const val PIXEL_ROUND = "LX/06EV;"
+internal const val DIMENSION_DP = "LX/04J6;"
+internal const val PIXEL_ROUND = "LX/06EZ;"
 internal const val RESTRICTION_OWNER = "Lcom/ss/android/ugc/profile/business/pns/account/AccountAGSWarningProtocol;"
 internal const val NATIVE_BLUE_BADGE = 0x7f01026f
 internal const val APPEARANCE_SELECT = "hushfeedLocalNicknameBadge"
@@ -74,7 +74,7 @@ private const val CONTEXT = "Landroid/content/Context;"
 private const val TEXT_VIEW = "Lcom/bytedance/tux/input/TuxTextView;"
 private const val NAVBAR_CAPTURE_PARAMETERS = "$TEXT_VIEW" + OBJECT_REF + NAVBAR_NICKNAME_OWNER + INTEGER + "I" + STRING
 private const val APPEARANCE = "Local profile appearance"
-internal const val NOTICE_VISIBILITY = "LX/00kA;->LJLLILLLL(ILandroid/view/View;)V"
+internal const val NOTICE_VISIBILITY = "LX/00kD;->LJLLILLLL(ILandroid/view/View;)V"
 
 private fun MethodReference.descriptor() = "$definingClass->$name(${parameterTypes.joinToString("")})$returnType"
 private fun Instruction.calls(descriptor: String) = getReference<MethodReference>()?.descriptor() == descriptor
@@ -190,7 +190,7 @@ internal fun Method.nicknameAppearanceSite(): NicknameAppearanceSite? {
     val nullValue = code.indices.singleOrNull { index -> code[index].opcode == Opcode.MOVE_OBJECT &&
         code[index].namedRegisters() == listOf(5, 6) && index + 1 < code.size && target(code, index + 1) == join
     } ?: return null
-    if (boxed < 1 || code[boxed - 1].getReference<FieldReference>()?.toString() != "LX/0FbM;->LIZ:I" || nullValue <= capture) return null
+    if (boxed < 1 || code[boxed - 1].getReference<FieldReference>()?.toString() != "LX/0FbK;->LIZ:I" || nullValue <= capture) return null
     return NicknameAppearanceSite(branch, target(code, branch)!!, render, capture)
 }
 
@@ -248,7 +248,7 @@ internal fun Method.navbarAppearanceSite(): NavbarAppearanceSite? {
     } ?: return null
     val branch = code.indices.singleOrNull { at -> at < render && code[at].opcode == Opcode.IF_EQZ &&
         code[at].namedRegisters() == listOf(10) && target(code, at)?.let { to -> to > render &&
-            code[to].calls("LX/041S;->LIZJ()Lcom/ss/android/ugc/aweme/ILoginService;") } == true
+            code[to].calls("LX/041W;->LIZJ()Lcom/ss/android/ugc/aweme/ILoginService;") } == true
     } ?: return null
     if (6 in RegisterLiveness.of(this).liveInto(branch)) return null
     fun capture(owner: String) = code.indices.singleOrNull { at ->
@@ -267,7 +267,7 @@ internal fun Method.navbarAppearanceSite(): NavbarAppearanceSite? {
     val boxed = code.indices.singleOrNull { at -> code[at].calls("$INTEGER->valueOf(I)$INTEGER") &&
         code.getOrNull(at + 1)?.opcode == Opcode.MOVE_RESULT_OBJECT && code[at + 1].namedRegisters() == listOf(10)
     } ?: return null
-    if (code[boxed - 1].getReference<FieldReference>()?.toString() != "LX/0FbM;->LIZ:I" ||
+    if (code[boxed - 1].getReference<FieldReference>()?.toString() != "LX/0FbK;->LIZ:I" ||
         code.indices.count { at -> code[at].opcode == Opcode.MOVE_OBJECT && code[at].namedRegisters() == listOf(10, 3) &&
             at + 1 < code.size && target(code, at + 1) == boxed + 2 } != 1 ||
         capture <= render || addCapture <= cached) return null
@@ -334,7 +334,7 @@ internal fun Method.navbarAddNameSite(): Int? {
         }
     } ?: return null
     val publication = code.indices.filter { code[it].getReference<FieldReference>()?.toString() in listOf(
-        "LX/0OBh;->LIZJ:$SPANNABLE", "$NAVBAR_NICKNAME_OWNER->LLLLL:$SPANNABLE", "LX/0O2F;->LIZJ:Ljava/lang/CharSequence;") }
+        "LX/0OBf;->LIZJ:$SPANNABLE", "$NAVBAR_NICKNAME_OWNER->LLLLL:$SPANNABLE", "LX/0O2D;->LIZJ:Ljava/lang/CharSequence;") }
     if (publication.isEmpty() || publication.any { it <= at } ||
         code.indices.count { before -> before < at && code[before].opcode == Opcode.NEW_INSTANCE &&
             code[before].getReference<com.android.tools.smali.dexlib2.iface.reference.TypeReference>()?.type == SPANNABLE &&
@@ -344,7 +344,8 @@ internal fun Method.navbarAddNameSite(): Int? {
 
 /**
  * A span applied to the builder: the direct setSpan call, or the static try/catch wrapper R8 outlines
- * it into on 47.7.2 (`LX/00kA;->t2(SpannableStringBuilder, Object, III)V`), builder first either way.
+ * it into on 47.7.2 but not 47.7.3 (`LX/00kA;->t2(SpannableStringBuilder, Object, III)V`), builder
+ * first either way.
  */
 private fun Instruction.setsSpan(): Boolean {
     if (calls("$SPANNABLE->setSpan($OBJECT" + "III)V")) return true

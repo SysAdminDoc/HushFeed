@@ -41,10 +41,10 @@ public final class InboxRenderedModels {
         // The probe has a different loader. Resolve all native owners from the captured adapter.
         ClassLoader loader = adapter.getClass().getClassLoader();
         return read(adapter, new Schema(type("com.bytedance.ies.powerlist.PowerAdapter", loader),
-                type("X.0B31", loader), type("X.0B30", loader),
-                type("com.bytedance.ies.powerlist.PowerStub", loader), type("X.0B2g", loader),
-                type("X.0B2h", loader), type("X.0B2k", loader), type("X.0B2s", loader),
-                type("X.0H4e", loader), type("X.0B2q", loader)));
+                type("X.0B34", loader), type("X.0B33", loader),
+                type("com.bytedance.ies.powerlist.PowerStub", loader), type("X.0B2j", loader),
+                type("X.0B2k", loader), type("X.0B2n", loader), type("X.0B2v", loader),
+                type("X.0H4c", loader), type("X.0B2t", loader)));
     }
 
     static Result read(Object adapter, Schema schema) throws ReflectiveOperationException {

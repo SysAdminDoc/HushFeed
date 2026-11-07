@@ -52,9 +52,9 @@ class PhotoSaveJobFixturesTest {
     /** The image job above does not see Download video's separate native conversion entry. */
     @Test
     fun `each declared conversion is intercepted before native state with only the Aweme argument`() {
-        val owners = mapOf("47.7.2" to "LX/0ESm;")
+        val owners = mapOf("47.7.3" to "LX/0ESk;")
         // The method-id entry call's name is the build's own (47.0.3 obfuscated it), although its owner/proto hold.
-        val frameEntries = mapOf("47.7.2" to "push")
+        val frameEntries = mapOf("47.7.3" to "push")
         Fixtures.forEachDeclared { apk ->
             val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
             val matches = container.dexEntryNames.asSequence().flatMap { entry ->

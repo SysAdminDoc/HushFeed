@@ -37,17 +37,17 @@ class NativeEdgeLongPressHookTest {
                 if-nez v0, :zone_setup
                 return v6
                 :zone_setup
-                sget-object v5, LX/1SgO;->LIZ:LX/1SgO;
+                sget-object v5, LX/1Dd0;->LIZ:LX/1Dd0;
                 invoke-virtual { p0 }, Lcom/bytedance/assem/arch/reused/ReusedUIAssem;->LJJIJLIJ()Landroid/view/View;
                 move-result-object v0
                 invoke-virtual { v0 }, Landroid/view/View;->getWidth()I
                 move-result v4
-                invoke-static {}, LX/0Cu8;->LJIIIZ()LX/0Cu8;
+                invoke-static {}, LX/0CuA;->LJIIIZ()LX/0CuA;
                 move-result-object v3
                 const/16 v2, 0x7c00
                 const-string v0, "fix_6844100557_early_edge_speed_ready"
                 const/4 v1, 0x1
-                invoke-virtual { v3, v2, v0, v1, v1 }, LX/0Cu8;->LIZJ(ILjava/lang/String;ZZ)Z
+                invoke-virtual { v3, v2, v0, v1, v1 }, LX/0CuA;->LIZJ(ILjava/lang/String;ZZ)Z
                 move-result v0
                 if-eqz v0, :no_context
                 invoke-virtual { p0 }, Lcom/bytedance/assem/arch/reused/ReusedUIAssem;->LJJIJLIJ()Landroid/view/View;
@@ -56,7 +56,7 @@ class NativeEdgeLongPressHookTest {
                 move-result-object v0
                 :zone
                 invoke-virtual { v5 }, Ljava/lang/Object;->getClass()Ljava/lang/Class;
-                invoke-static { p1, v4, v0 }, LX/1SgO;->LIZ(FILandroid/content/Context;)LX/0ROC;
+                invoke-static { p1, v4, v0 }, LX/1Dd0;->LIZ(FILandroid/content/Context;)LX/0ROC;
                 move-result-object v2
                 sget-object v0, LX/0ROC;->INVALID_ZONE:LX/0ROC;
                 if-ne v2, v0, :commerce
@@ -73,11 +73,11 @@ class NativeEdgeLongPressHookTest {
                 if-ne v0, v1, :share
                 return v6
                 :share
-                invoke-static {}, LX/0Cj7;->LIZ()Z
+                invoke-static {}, LX/0Cj9;->LIZ()Z
                 move-result v0
                 if-nez v0, :comments
-                iget-object v0, p0, $owner->LLLFFI:LX/01wP;
-                invoke-interface { v0 }, LX/01wP;->getValue()Ljava/lang/Object;
+                iget-object v0, p0, $owner->LLLFFI:LX/01wV;
+                invoke-interface { v0 }, LX/01wV;->getValue()Ljava/lang/Object;
                 move-result-object v0
                 check-cast v0, Lcom/ss/android/ugc/aweme/feed/assem/ability/IVideoShareAbility;
                 if-eqz v0, :comments
@@ -86,14 +86,14 @@ class NativeEdgeLongPressHookTest {
                 if-ne v0, v1, :comments
                 return v6
                 :comments
-                invoke-static {}, LX/0CjK;->LIZ()Z
+                invoke-static {}, LX/0CjM;->LIZ()Z
                 move-result v0
                 if-eqz v0, :like
-                invoke-static {}, LX/0Cj7;->LIZ()Z
+                invoke-static {}, LX/0Cj9;->LIZ()Z
                 move-result v0
                 if-nez v0, :like
-                iget-object v0, p0, $owner->LLLFZ:LX/01wP;
-                invoke-interface { v0 }, LX/01wP;->getValue()Ljava/lang/Object;
+                iget-object v0, p0, $owner->LLLFZ:LX/01wV;
+                invoke-interface { v0 }, LX/01wV;->getValue()Ljava/lang/Object;
                 move-result-object v0
                 check-cast v0, Lcom/ss/android/ugc/aweme/feed/assem/ability/IVideoCommentAbility;
                 if-eqz v0, :like
@@ -102,11 +102,11 @@ class NativeEdgeLongPressHookTest {
                 if-ne v0, v1, :like
                 return v6
                 :like
-                invoke-static {}, LX/0Cj7;->LIZ()Z
+                invoke-static {}, LX/0Cj9;->LIZ()Z
                 move-result v0
                 if-nez v0, :favorite
-                iget-object v0, p0, $owner->LLLII:LX/01wP;
-                invoke-interface { v0 }, LX/01wP;->getValue()Ljava/lang/Object;
+                iget-object v0, p0, $owner->LLLII:LX/01wV;
+                invoke-interface { v0 }, LX/01wV;->getValue()Ljava/lang/Object;
                 move-result-object v0
                 check-cast v0, Lcom/ss/android/ugc/feed/platform/cell/ability/VideoDiggAssemAbility;
                 if-eqz v0, :favorite
@@ -115,15 +115,15 @@ class NativeEdgeLongPressHookTest {
                 if-ne v0, v1, :favorite
                 return v6
                 :favorite
-                sget-object v0, LX/0CiO;->LIZ:LX/01wP;
-                invoke-interface { v0 }, LX/01wP;->getValue()Ljava/lang/Object;
+                sget-object v0, LX/0CiQ;->LIZ:LX/01wV;
+                invoke-interface { v0 }, LX/01wV;->getValue()Ljava/lang/Object;
                 move-result-object v0
                 check-cast v0, Ljava/lang/Number;
                 invoke-virtual { v0 }, Ljava/lang/Number;->intValue()I
                 move-result v0
                 if-eqz v0, :allowed
-                iget-object v0, p0, $owner->LLLI:LX/01wP;
-                invoke-interface { v0 }, LX/01wP;->getValue()Ljava/lang/Object;
+                iget-object v0, p0, $owner->LLLI:LX/01wV;
+                invoke-interface { v0 }, LX/01wV;->getValue()Ljava/lang/Object;
                 move-result-object v0
                 check-cast v0, Lcom/ss/android/ugc/feed/platform/cell/ability/VideoFavoriteAssemAbility;
                 if-eqz v0, :allowed

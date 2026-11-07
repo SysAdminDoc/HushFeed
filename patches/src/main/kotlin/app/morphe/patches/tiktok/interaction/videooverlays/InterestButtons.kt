@@ -23,7 +23,7 @@ internal const val INTEREST_BUTTON_GROUP = "interest_feedback_button_group"
 
 /**
  * Where TikTok builds the Not interested and Interested buttons it sometimes lays over a feed
- * video (#293). They're a server-sent "Anole" component: the holder's constructor (X.1QgF on
+ * video (#293). They're a server-sent "Anole" component: the holder's constructor (X.1OQ9 on
  * 47.5.3) walks the AnoleModel's components, logs each one's type, and compares its container
  * type with every name it knows, skipping a type no name matches. The model keeps its real name,
  * and no other constructor logs that line.

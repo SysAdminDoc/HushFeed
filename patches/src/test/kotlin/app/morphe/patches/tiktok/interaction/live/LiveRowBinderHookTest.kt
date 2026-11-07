@@ -106,7 +106,7 @@ class LiveRowBinderHookTest {
             """
                 sget-object v0, $LIVE_ROW_PRELOAD->INSTANCE:$LIVE_ROW_PRELOAD
                 iget v0, p0, $BINDER->layout:I
-                invoke-static {v0, p2}, LX/0JT4;->LJ(ILandroid/view/ViewGroup;)Landroid/view/View;
+                invoke-static {v0, p2}, LX/0JT2;->LJ(ILandroid/view/ViewGroup;)Landroid/view/View;
                 move-result-object v0
                 invoke-virtual {p0, v0, p2}, $MAKE_HOLDER
                 move-result-object v0
@@ -127,7 +127,7 @@ class LiveRowBinderHookTest {
                 $READ_PRELOAD
                 iget v1, p0, $BINDER->layout:I
                 move-object/from16 v2, p2
-                invoke-static {v1, v2}, LX/0JT4;->LJ(ILandroid/view/ViewGroup;)Landroid/view/View;
+                invoke-static {v1, v2}, LX/0JT2;->LJ(ILandroid/view/ViewGroup;)Landroid/view/View;
                 move-result-object v15
                 invoke-virtual/range {v14 .. v16}, $MAKE_HOLDER
                 move-result-object v0
@@ -159,7 +159,7 @@ class LiveRowBinderHookTest {
             const v1, 0x7f061f38
             invoke-virtual {p0}, $ANDROIDX_FRAGMENT->getContext()Landroid/content/Context;
             move-result-object v0
-            invoke-static {v1, v0}, LX/0Jvn;->LIZIZ(ILandroid/content/Context;)I
+            invoke-static {v1, v0}, LX/0Jvl;->LIZIZ(ILandroid/content/Context;)I
             move-result v0
         """)
         assertEquals(listOf(1 to 1, 7 to 0), pageContexts(page))
@@ -199,7 +199,7 @@ class LiveRowBinderHookTest {
     @Test
     fun `a branch landing right after a context is refused`() {
         val page = page(before = "if-eqz p1, :colored", color = ":colored\nconst v0, 0x7f061f36\n" +
-            "invoke-static {v0, v1}, LX/0Jvn;->LIZIZ(ILandroid/content/Context;)I\nmove-result v0")
+            "invoke-static {v0, v1}, LX/0Jvl;->LIZIZ(ILandroid/content/Context;)I\nmove-result v0")
         pageContexts(page)
         assertThrows(PatchException::class.java) { hookPageContexts(page) }
     }
@@ -231,7 +231,7 @@ class LiveRowBinderHookTest {
             iget v1, p0, $layout
             $preload
             const/4 v2, 0x0
-            invoke-static {v1, p2, v2}, LX/0JT4;->LJIILL(ILandroid/view/ViewGroup;Z)Landroid/view/View;
+            invoke-static {v1, p2, v2}, LX/0JT2;->LJIILL(ILandroid/view/ViewGroup;Z)Landroid/view/View;
             move-result-object v0
             $make
             $handBack
@@ -243,7 +243,7 @@ class LiveRowBinderHookTest {
         context: String = "v1",
         ask: String = "invoke-virtual {p0}, $ANDROIDX_FRAGMENT->getContext()Landroid/content/Context;",
         before: String = "",
-        color: String = "const v0, 0x7f061f36\ninvoke-static {v0, $context}, LX/0Jvn;->LIZIZ(ILandroid/content/Context;)I\nmove-result v0",
+        color: String = "const v0, 0x7f061f36\ninvoke-static {v0, $context}, LX/0Jvl;->LIZIZ(ILandroid/content/Context;)I\nmove-result v0",
         after: String = "",
     ) = method(
         "Lcom/example/Page;", "onViewCreated", listOf("Landroid/view/View;", "Landroid/os/Bundle;"), "V", 5,

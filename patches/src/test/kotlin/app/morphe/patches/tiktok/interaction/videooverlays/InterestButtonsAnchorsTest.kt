@@ -91,7 +91,7 @@ class InterestButtonsAnchorsTest {
     fun `a factory whose check moved stops the patch untouched`() {
         val moved = MutableMethod(
             ImmutableMethod(
-                "LX/1QgF;", "<init>",
+                "LX/1OQ9;", "<init>",
                 listOf(ImmutableMethodParameter(ANOLE_MODEL, null, null)), "V",
                 AccessFlags.PUBLIC.value or AccessFlags.CONSTRUCTOR.value, null, null,
                 ImmutableMethodImplementation(

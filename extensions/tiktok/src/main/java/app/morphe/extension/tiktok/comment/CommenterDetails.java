@@ -479,7 +479,7 @@ public final class CommenterDetails {
     /**
      * The country the commenter's account is set to. A comment carries no country of its own, so
      * the account's is the only one there is: region, accountRegion, the ISO code, then the
-     * country field, which 47.7.2's model copies off the server's account record alongside the
+     * country field, which 47.7.3's model copies off the server's account record alongside the
      * other three. 47.5.3 often leaves all of them off (#201). Then the
      * country remembered for the same account answers: first by uid, then by exact handle. What
      * the account does carry is remembered under both, so the same person's next comment, or

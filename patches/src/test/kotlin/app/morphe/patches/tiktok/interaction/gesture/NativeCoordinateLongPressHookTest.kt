@@ -19,10 +19,10 @@ import org.junit.Test
 class NativeCoordinateLongPressHookTest {
     @Test
     fun bothNativeCoordinateCallbacksUseXAndKeepTheirOriginalEventBranches() {
-        for (owner in listOf("LX/0PdH;", "LX/0PdI;")) {
+        for (owner in listOf("LX/0Pcq;", "LX/0Pcr;")) {
             val method = callback(owner)
             val original = method.implementation!!.instructions.toList()
-            assertEquals(if (owner == "LX/0PdH;") 24 else 19, original.size)
+            assertEquals(if (owner == "LX/0Pcq;") 24 else 19, original.size)
             val targets = original.mapIndexedNotNull { index, instruction ->
                 if (instruction !is OffsetInstruction) null else {
                     val address = original.take(index).sumOf { it.codeUnits } + instruction.codeOffset
@@ -64,7 +64,7 @@ class NativeCoordinateLongPressHookTest {
             }
             val event = instructions.first { instruction ->
                 val ref = (instruction as? ReferenceInstruction)?.reference as? MethodReference
-                ref?.definingClass == "LX/0SLd;" && ref.name == "<init>"
+                ref?.definingClass == "LX/0SND;" && ref.name == "<init>"
             } as FiveRegisterInstruction
             assertEquals(listOf(2, 4, 1, 5, 0),
                 listOf(event.registerC, event.registerD, event.registerE, event.registerF, event.registerG))
@@ -76,13 +76,13 @@ class NativeCoordinateLongPressHookTest {
         AccessFlags.PUBLIC.value or AccessFlags.FINAL.value, null, null,
         ImmutableMethodImplementation(6, emptyList(), null, null),
     )).apply {
-        val identity = if (owner == "LX/0PdH;") """
+        val identity = if (owner == "LX/0Pcq;") """
             iget-object v0, p0, $owner->LIZIZ:Landroid/content/Context;
             if-eqz v0, :no_context
             invoke-virtual { v0 }, Ljava/lang/Object;->hashCode()I
             move-result v0
         """ else "iget v0, p0, $owner->LIZIZ:I"
-        val nullContext = if (owner == "LX/0PdH;") """
+        val nullContext = if (owner == "LX/0Pcq;") """
             :no_context
             const/4 v0, 0x0
             goto :event
@@ -99,16 +99,16 @@ class NativeCoordinateLongPressHookTest {
             if-nez v0, :event_type
             const-string v0, ""
             :event_type
-            invoke-static { v0 }, LX/0CcI;->LIZ(Ljava/lang/String;)Z
+            invoke-static { v0 }, LX/0CcK;->LIZ(Ljava/lang/String;)Z
             move-result v0
             if-eqz v0, :done
-            new-instance v2, LX/0SLd;
+            new-instance v2, LX/0SND;
             iget-object v0, p0, $owner->LIZ:Lcom/ss/android/ugc/aweme/feed/model/BaseFeedPageParams;
             iget v1, v0, Lcom/ss/android/ugc/aweme/feed/model/BaseFeedPageParams;->awemeFromPage:I
             $identity
             :event
-            invoke-direct { v2, p1, v1, p2, v0 }, LX/0SLd;-><init>(FIFI)V
-            invoke-static { v2 }, LX/0Bj7;->LIZ(Lcom/ss/android/ugc/governance/eventbus/IEvent;)Lcom/ss/android/ugc/governance/eventbus/IEvent;
+            invoke-direct { v2, p1, v1, p2, v0 }, LX/0SND;-><init>(FIFI)V
+            invoke-static { v2 }, LX/0Bj9;->LIZ(Lcom/ss/android/ugc/governance/eventbus/IEvent;)Lcom/ss/android/ugc/governance/eventbus/IEvent;
             :done
             return-void
             $nullContext

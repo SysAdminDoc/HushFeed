@@ -1099,7 +1099,7 @@ internal fun MutableMethod.filterFollowFeedReturns() {
 /**
  * Latest first on Following (#226): TikTok writes the Following request's count as the literal 20
  * in the helper that calls the API. Right before each call (the POST, and the GET on builds that
- * still have one; 47.7.2 dropped it) the extension may swap in a larger count for the first read
+ * still have one; 47.7.3 dropped it) the extension may swap in a larger count for the first read
  * of a list, so the posts that decide slot 0 arrive together. The count is the fourth argument
  * after the receiver: the follow request index, the cursor (a long), the level, then the count, so
  * the cursor through the count are four consecutive registers of the range call and the hook can
@@ -1379,7 +1379,7 @@ private fun MutableMethod.filterChainedCacheDelivery(
     // The block used to do its work in the payload's own register, so both labels it re-enters
     // at were reached with a boolean sitting in a register the native path holds a reference in.
     // On 46.2.3 the instruction at each label writes that register before anything reads it
-    // (index 6 and index 8 of LX/0ZKs;->LIZ), so nothing was actually wrong; the block no longer
+    // (index 6 and index 8 of LX/0jNU;->LIZ), so nothing was actually wrong; the block no longer
     // depends on the host doing that. A register of its own also leaves the payload read the
     // patcher branched on exactly as the host wrote it.
     val scratchRegister = getFreeRegisterProvider(

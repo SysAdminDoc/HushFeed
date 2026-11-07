@@ -27,7 +27,7 @@ class AccentColorItemsTest {
             """.trimIndent(),
         )
 
-        val changed = recolorAccentItems(styles, accentTokens("47.7.2"), "#2D7FF9")
+        val changed = recolorAccentItems(styles, accentTokens("47.7.3"), "#2D7FF9")
 
         assertEquals(setOf("ah8", "ah9", "ahb", "aya", "aj0"), changed)
         val values = values(styles)
@@ -111,7 +111,7 @@ class AccentColorItemsTest {
     fun `the tokens are read for exactly the declared builds and any other is refused`() {
         assertEquals(declaredVersions(), ACCENT_TOKENS.keys)
         assertEquals(declaredVersions(), ACCENT_BADGES.keys)
-        assertEquals(14, accentTokens("47.7.2").size)
+        assertEquals(14, accentTokens("47.7.3").size)
         for (version in listOf("47.6.3", "47.4.3", "47.1.4", "47.1.3", "47.0.3", "46.9.3", null)) {
             for (read in listOf(::accentTokens, ::accentBadges)) {
                 try {
@@ -122,7 +122,7 @@ class AccentColorItemsTest {
                 }
             }
         }
-        assertTrue(unreadAccentRefusal("47.1.4").endsWith("The palette is known for TikTok 47.7.2."))
+        assertTrue(unreadAccentRefusal("47.1.4").endsWith("The palette is known for TikTok 47.7.3."))
         assertTrue(incompleteAccentRefusal(setOf("awk", "aha")).contains("aha, awk"))
         assertTrue(renamedPathsRefusal(3, "Accent color").startsWith("Accent color: this TikTok APK"))
         assertTrue(renamedPathsRefusal(3).startsWith("AMOLED dark theme: this TikTok APK"))

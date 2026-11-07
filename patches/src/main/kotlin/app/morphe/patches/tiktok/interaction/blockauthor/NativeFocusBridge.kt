@@ -52,7 +52,7 @@ internal class NativeFocus(
 
 /**
  * The helper's abandon method: an instance `(Context)V` that gives focus up, through the platform
- * call itself or the static wrapper R8 outlines it into (`LX/00kA;->ze` on 47.7.2, the manager in
+ * call itself or the static wrapper R8 outlines it into (`LX/00kD;->ue` on 47.7.3, the manager in
  * front of the listener). Either call lets the patcher's member index pick the few classes to
  * look at, where walking every class took seconds.
  */

@@ -134,7 +134,7 @@ private fun Method.literals(): Set<Int> =
 /**
  * The icon the comment menu's Report row is built with: the constant boxed by the
  * `Integer.valueOf` right after each `"report"` key. Null unless every Report row agrees.
- * Only constant loads may sit between the key and the box: 47.7.2 loads one Report row's icon
+ * Only constant loads may sit between the key and the box: 47.7.3 loads one Report row's icon
  * there (`const-string/jumbo v39 "report"`, `const v3 0x7f0107c3`, `Integer.valueOf(v3)`).
  */
 internal fun Method.reportRowIcon(): Int? {

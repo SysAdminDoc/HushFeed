@@ -22,8 +22,8 @@ import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 
 internal const val DM_ACCOUNT_EVENTS = "Lapp/morphe/extension/tiktok/translation/DmTranslationAccountEvents;"
-internal const val DM_ACCOUNT_BROADCASTER = "LX/03rw;"
-internal const val DM_ACCOUNT_LISTENER = "LX/02yG;"
+internal const val DM_ACCOUNT_BROADCASTER = "LX/03s0;"
+internal const val DM_ACCOUNT_LISTENER = "LX/02yK;"
 private const val USER = "Lcom/ss/android/ugc/aweme/profile/model/User;"
 private const val ACCOUNT = "Translate comments (DM account transitions)"
 private const val CALLBACK = "$DM_ACCOUNT_LISTENER->onAccountResult(IZI$USER)V"

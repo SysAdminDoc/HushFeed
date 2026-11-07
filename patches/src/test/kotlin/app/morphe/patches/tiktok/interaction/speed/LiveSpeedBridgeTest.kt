@@ -35,7 +35,7 @@ class LiveSpeedBridgeTest {
     private val extension = "Lapp/morphe/extension/tiktok/speed/PlaybackSpeedPatch;"
     private val controller = "Lcom/ss/android/ugc/aweme/feed/controller/PlayerController;"
     private val aweme = "Lcom/ss/android/ugc/aweme/feed/model/Aweme;"
-    private val selection = "LX/08IB;"
+    private val selection = "LX/08IF;"
 
     private val awemeGetter = ImmutableMethodReference(controller, "LLJJJIL", emptyList(), aweme)
     private val setSpeed = ImmutableMethodReference(controller, "LJJIJLIJ", listOf("F"), "V")

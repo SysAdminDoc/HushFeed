@@ -714,7 +714,7 @@
     "auto": true
    }
   ],
-  "notes": "SecurePopupProbe builds one of TikTok's own Compose popups with its obfuscated classes (X.011Y, X.01o5, X.011W, X.01sv on 47.7.2), so a TikTok build that renames them makes the action fail with an exception line instead of 'ok'; that means the probe needs updating, not that the patch is broken. The popup is shown on top of the feed for a moment and removed by secure-popup-close; it is a controlled test view, not a screen capture. Circle to Search itself is a system gesture and is a review item."
+  "notes": "SecurePopupProbe builds one of TikTok's own Compose popups with its obfuscated classes (X.011b, X.01o6, X.011Z, X.01t2 on 47.7.3), so a TikTok build that renames them makes the action fail with an exception line instead of 'ok'; that means the probe needs updating, not that the patch is broken. The popup is shown on top of the feed for a moment and removed by secure-popup-close; it is a controlled test view, not a screen capture. Circle to Search itself is a system gesture and is a review item."
  },
  {
   "name": "Always show publish date",
@@ -9319,7 +9319,7 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.03Yl",
+       "holder": "X.03Yp",
        "getter": "LJIILIIL",
        "gap": "1200"
       },
@@ -9382,7 +9382,7 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.03Yl",
+       "holder": "X.03Yp",
        "getter": "LJIILIIL",
        "gap": "1200"
       },
@@ -9704,7 +9704,7 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.03Yl",
+       "holder": "X.03Yp",
        "getter": "LJIILIIL",
        "gap": "1500"
       },
@@ -10755,7 +10755,7 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.03Yl",
+       "holder": "X.03Yp",
        "getter": "LJIILIIL",
        "gap": "1500"
       },
@@ -11707,7 +11707,7 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.03Yl",
+       "holder": "X.03Yp",
        "getter": "LJIILIIL",
        "gap": "1500"
       },
@@ -11993,7 +11993,7 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.03Yl",
+       "holder": "X.03Yp",
        "getter": "LJIILIIL",
        "gap": "1000"
       },
@@ -12022,7 +12022,7 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.03Yl",
+       "holder": "X.03Yp",
        "getter": "LJIILIIL",
        "gap": "1000"
       },
@@ -13346,7 +13346,7 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.03Yl",
+       "holder": "X.03Yp",
        "getter": "LJIILIIL",
        "gap": "300"
       },
@@ -14679,7 +14679,7 @@
      {
       "probe": "countformat",
       "extras": {
-       "class": "X.0GCi",
+       "class": "X.0GCg",
        "method": "LIZIZ",
        "count": "123456"
       },
@@ -14688,7 +14688,7 @@
      {
       "probe": "countformat",
       "extras": {
-       "class": "X.0HJS",
+       "class": "X.0HJQ",
        "method": "LIZ",
        "count": "123456"
       },
@@ -14702,7 +14702,7 @@
      {
       "probe": "countformat",
       "extras": {
-       "class": "X.0GCi",
+       "class": "X.0GCg",
        "method": "LIZIZ",
        "count": "123456"
       },
@@ -14711,7 +14711,7 @@
      {
       "probe": "countformat",
       "extras": {
-       "class": "X.0HJS",
+       "class": "X.0HJQ",
        "method": "LIZ",
        "count": "123456"
       },

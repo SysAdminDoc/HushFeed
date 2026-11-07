@@ -58,14 +58,14 @@ public class InboxTabReadReceiptsTest {
         bar.addView(inbox, new FrameLayout.LayoutParams(216, 138));
         content.addView(bar, new FrameLayout.LayoutParams(-1, 138, Gravity.BOTTOM));
         activity.setContentView(content);
-        FeedVisibility.resolveForTests(activity.getPackageName(), "47.7.2:opg", INBOX_ID);
+        FeedVisibility.resolveForTests(activity.getPackageName(), "47.7.3:opg", INBOX_ID);
     }
 
     @After public void tearDown() {
         PausedProcess.set(false);
         Utils.setToastObserver(null);
         HomeTabSettingsShortcut.resetForTests();
-        FeedVisibility.resolveForTests(activity.getPackageName(), "47.7.2:opg", 0);
+        FeedVisibility.resolveForTests(activity.getPackageName(), "47.7.3:opg", 0);
         ReflectionHelpers.setStaticField(SettingsStatus.class, "feedNavigationEnabled", false);
         ReflectionHelpers.setStaticField(SettingsStatus.class, "hideReadReceiptsEnabled", false);
         Settings.INBOX_TAB_FLIPS_READ_RECEIPTS.resetToDefault();

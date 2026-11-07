@@ -183,7 +183,7 @@ public final class StoryOverLive {
         for (Field field : instanceFields(machine.getClass())) {
             Object value = field.get(machine);
             if (!(value instanceof ConcurrentHashMap)) continue;
-            // TikTok edits the lists under this map's lock (X.0Nvf), so they're read under it too.
+            // TikTok edits the lists under this map's lock (X.0Nvd), so they're read under it too.
             List<Object> candidates = new ArrayList<>();
             synchronized (value) {
                 for (Object list : ((ConcurrentHashMap<?, ?>) value).values()) {

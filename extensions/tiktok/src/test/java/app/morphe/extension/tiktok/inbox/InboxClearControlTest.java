@@ -37,8 +37,8 @@ import org.robolectric.shadows.ShadowToast;
 @Config(sdk = 28, qualifiers = "en")
 @LooperMode(LooperMode.Mode.PAUSED)
 public class InboxClearControlTest {
-    private static final String[] RESOURCE_NAMES = {"47.7.2:opg", "47.7.2:l8h", "47.7.2:q6c", "47.7.2:u7j", "47.7.2:fzw",
-            "47.7.2:wxb", "user_name", "47.7.2:v3k", "47.7.2:bss", "47.7.2:w79", "47.7.2:fi4", "47.7.2:kqd", "47.7.2:l8j"};
+    private static final String[] RESOURCE_NAMES = {"47.7.3:opg", "47.7.3:l8h", "47.7.3:q6c", "47.7.3:u7j", "47.7.3:fzw",
+            "47.7.3:wxb", "user_name", "47.7.3:v3k", "47.7.3:bss", "47.7.3:w79", "47.7.3:fi4", "47.7.3:kqd", "47.7.3:l8j"};
     private ActivityController<Activity> owner;
     private Activity activity;
     private LinearLayout rows;
@@ -85,7 +85,7 @@ public class InboxClearControlTest {
         for (String name : RESOURCE_NAMES) {
             InboxFilter.resolveForTests(packageName, name, id(name));
         }
-        FeedVisibility.resolveForTests(packageName, "47.7.2:opg", id("47.7.2:opg"));
+        FeedVisibility.resolveForTests(packageName, "47.7.3:opg", id("47.7.3:opg"));
         openInbox();
         ShadowToast.reset();
     }
@@ -461,18 +461,18 @@ public class InboxClearControlTest {
         LinearLayout root = new LinearLayout(activity);
         root.setOrientation(LinearLayout.VERTICAL);
         View tab = new View(activity);
-        tab.setId(id("47.7.2:opg"));
+        tab.setId(id("47.7.3:opg"));
         tab.setSelected(true);
         root.addView(tab, new LinearLayout.LayoutParams(-1, 48));
         rows = new LinearLayout(activity);
-        rows.setId(id("47.7.2:l8h"));
+        rows.setId(id("47.7.3:l8h"));
         rows.setOrientation(LinearLayout.VERTICAL);
         root.addView(rows, new LinearLayout.LayoutParams(-1, -1));
         header = new RecordingHeader(activity);
-        header.setId(id("47.7.2:q6c"));
+        header.setId(id("47.7.3:q6c"));
         header.setOrientation(LinearLayout.HORIZONTAL);
         TextView title = new TextView(activity);
-        title.setId(id("47.7.2:u7j"));
+        title.setId(id("47.7.3:u7j"));
         title.setText("Suggested accounts");
         title.setTextColor(Color.WHITE);
         LinearLayout nativeTitle = new LinearLayout(activity);
@@ -490,7 +490,7 @@ public class InboxClearControlTest {
     private View addAccount(String account, boolean removeAfterClick) {
         LinearLayout row = new LinearLayout(activity);
         View button = new View(activity);
-        button.setId(id("47.7.2:fzw"));
+        button.setId(id("47.7.3:fzw"));
         button.setContentDescription(description(account));
         button.setOnClickListener(view -> {
             dismissed.add(account);

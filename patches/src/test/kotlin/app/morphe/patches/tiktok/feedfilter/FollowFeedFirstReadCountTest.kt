@@ -26,7 +26,7 @@ import org.junit.Test
 
 /**
  * The Following request's count (#226): TikTok's helper calls FollowFeedApiV2.followFeedPost (and
- * followFeedGet before 47.7.2 dropped it) with the count held in a register it filled with the
+ * followFeedGet before 47.7.3 dropped it) with the count held in a register it filled with the
  * literal 20, and the hook hands the cursor, level and count to the extension just before each call.
  */
 class FollowFeedFirstReadCountTest {

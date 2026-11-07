@@ -1208,7 +1208,7 @@ public final class Probe extends Instrumentation {
                     }
                     case "layouts": {
                         // Every shown, on-screen view that draws a Layout of its own rather than
-                        // being a TextView (TikTok's X.0Btt draws captions and descriptions this
+                        // being a TextView (TikTok's X.0Btv draws captions and descriptions this
                         // way), with its class, place, size, text size in px and the layout's
                         // lines and width. How the caption size was shown to stay off the other
                         // text; the text itself never leaves the phone.
@@ -1263,13 +1263,13 @@ public final class Probe extends Instrumentation {
                     case "profileviewgates": {
                         // What TikTok 47.0.3 checks before it reports a profile view
                         // (ProfilePlatformViewModel.a73 before ProfileViewerApiService.reportView),
-                        // read in this process: the feature gate X.0mpc.LIZ(), the under-16 flag,
+                        // read in this process: the feature gate X.0mTf.LIZ(), the under-16 flag,
                         // the viewer's "profile_view_history" privacy value (1 reports), the
-                        // cooldown flag X.0mD8 and the follower cap it replaces. Names are this
+                        // cooldown flag X.0llN and the follower cap it replaces. Names are this
                         // build's; each read says what it found or why it could not.
                         StringBuilder out = new StringBuilder();
                         String[][] reads = {
-                                {"featureGate", "X.0mpc", "LIZ"},
+                                {"featureGate", "X.0mTf", "LIZ"},
                         };
                         for (String[] read : reads) {
                             try {
@@ -1280,7 +1280,7 @@ public final class Probe extends Instrumentation {
                             }
                         }
                         try {
-                            Object feature = loader.loadClass("X.07Ty").getMethod("LIZIZ").invoke(null);
+                            Object feature = loader.loadClass("X.07U2").getMethod("LIZIZ").invoke(null);
                             out.append(" under16=").append(feature.getClass().getMethod("LIZIZ").invoke(feature));
                         } catch (Throwable failure) {
                             out.append(" under16=?(").append(failure.getClass().getSimpleName()).append(')');
@@ -1308,10 +1308,10 @@ public final class Probe extends Instrumentation {
                             out.append(" cooldownFlag=?(").append(failure.getClass().getSimpleName()).append(')');
                         }
                         try {
-                            Object lazy = loader.loadClass("X.0lt8").getField("LIZIZ").get(null);
+                            Object lazy = loader.loadClass("X.0lYI").getField("LIZIZ").get(null);
                             Object config = lazy.getClass().getMethod("getValue").invoke(lazy);
                             Object cap = config == null ? null : config.getClass().getField("enabledMaxFollowers").get(config);
-                            Object me = loader.loadClass("X.02zE").getMethod("LIZ").invoke(null);
+                            Object me = loader.loadClass("X.02zI").getMethod("LIZ").invoke(null);
                             Object followers = me == null ? null : me.getClass().getField("historyMaxFollowerCount").get(me);
                             out.append(" followerCap=").append(cap == null ? "5000 (default)" : cap).append(" myHistoryMaxFollowers=").append(followers);
                         } catch (Throwable failure) {
@@ -2392,7 +2392,7 @@ public final class Probe extends Instrumentation {
                         if (activity == null) throw new IllegalStateException("no current activity");
                         android.content.res.Resources resources = activity.getResources();
                         java.util.Map<Integer, String> wanted = new java.util.HashMap<>();
-                        // The 47.7.2 names: lkj rail column, bs2 anchor, lk8 search bar, g_2 like button.
+                        // The 47.7.3 names: lkj rail column, bs2 anchor, lk8 search bar, g_2 like button.
                         for (String name : new String[]{"lkj", "desc", "bs2", "lk8", "videomusiccoverblock", "g_2"}) {
                             int id = resources.getIdentifier(name, "id", activity.getPackageName());
                             if (id != 0) wanted.put(id, name);
@@ -2818,7 +2818,7 @@ public final class Probe extends Instrumentation {
                     }
                     case "countformat": {
                         // One of TikTok's static count formatters run with a count the check
-                        // picks, and the text it wrote: -e class X.0GJY -e method LIZIZ -e count
+                        // picks, and the text it wrote: -e class X.0GJW -e method LIZIZ -e count
                         // 123456. One that takes (long) gets just the count, one that takes
                         // (Aweme, long) the video on screen as well. A check can read what Show
                         // exact counts makes of a big count whatever the feed serves. The class
@@ -2866,12 +2866,12 @@ public final class Probe extends Instrumentation {
                         // Without it set to dark, TikTok stays light whatever the phone's night
                         // mode is (seen on the S22, 2026-10-16). Read through TikTok's own store
                         // factory, the static (int, Context, String) -> SharedPreferences method
-                        // TikTok reads it with (-e store X.038m -e method LIZJ on 47.7.2), since
+                        // TikTok reads it with (-e store X.038q -e method LIZJ on 47.7.3), since
                         // that one may route the store to Keva rather than a plain file; its
                         // sibling LIZIZ skips that. -e set N writes N, which the next start applies;
                         // -e set unset removes it.
                         String storeClass = intent.getStringExtra("store");
-                        if (storeClass == null) storeClass = "X.038m";
+                        if (storeClass == null) storeClass = "X.038q";
                         String storeMethod = intent.getStringExtra("method");
                         if (storeMethod == null) storeMethod = "LIZJ";
                         Method factory = loader.loadClass(storeClass)
@@ -4477,7 +4477,7 @@ public final class Probe extends Instrumentation {
                     lines.add(answers.toString());
                 }
                 try {
-                    lines.add(" class gate 06Rv.LIZ=" + loader.loadClass("X.06Rv").getMethod("LIZ").invoke(null));
+                    lines.add(" class gate 06Rv.LIZ=" + loader.loadClass("X.06Rz").getMethod("LIZ").invoke(null));
                 } catch (ReflectiveOperationException | RuntimeException unreadable) {
                     lines.add(" class gate unreadable " + unreadable);
                 }
@@ -4545,7 +4545,7 @@ public final class Probe extends Instrumentation {
                 long started = android.os.SystemClock.uptimeMillis();
                 // The page panel builds its visibility component only while this experiment is on.
                 try {
-                    Method sequenceOn = loader.loadClass("X.07wT").getDeclaredMethod("LIZ");
+                    Method sequenceOn = loader.loadClass("X.07wX").getDeclaredMethod("LIZ");
                     sequenceOn.setAccessible(true);
                     lines.add("generic feed sequence " + sequenceOn.invoke(null));
                 } catch (ReflectiveOperationException | RuntimeException unreadable) {
@@ -4553,7 +4553,7 @@ public final class Probe extends Instrumentation {
                 }
                 java.util.List<Object> panels = new java.util.ArrayList<>();
                 try {
-                    Method panelOf = loader.loadClass("X.08qu").getDeclaredMethod("LIZJ", fragmentType);
+                    Method panelOf = loader.loadClass("X.08qy").getDeclaredMethod("LIZJ", fragmentType);
                     panelOf.setAccessible(true);
                     for (Object root : roots) {
                         if (!fragmentType.isInstance(root)) continue;
@@ -4996,7 +4996,7 @@ public final class Probe extends Instrumentation {
         private static String hoxNode(Object node) throws ReflectiveOperationException {
             if (node == null) return " none";
             Class<?> nodeType = node.getClass();
-            while (nodeType != null && !nodeType.getName().equals("X.06HL")) nodeType = nodeType.getSuperclass();
+            while (nodeType != null && !nodeType.getName().equals("X.06HP")) nodeType = nodeType.getSuperclass();
             if (nodeType == null) return " " + ref(node) + " not a node";
             Field listenersField = nodeType.getDeclaredField("LLJJIJIIJIL");
             Field containerField = nodeType.getDeclaredField("LL");
@@ -5007,7 +5007,7 @@ public final class Probe extends Instrumentation {
             Object container = containerField.get(node);
             out.append(" container ").append(ref(container));
             Class<?> containerType = container == null ? null : container.getClass();
-            while (containerType != null && !containerType.getName().equals("X.06MW")) containerType = containerType.getSuperclass();
+            while (containerType != null && !containerType.getName().equals("X.06Ma")) containerType = containerType.getSuperclass();
             if (containerType == null) return out.toString();
             Field shown = containerType.getDeclaredField("LLJJJJJIL");
             Field index = containerType.getDeclaredField("LLJJJ");
@@ -5042,14 +5042,14 @@ public final class Probe extends Instrumentation {
         }
 
         /**
-         * Each of a feed fragment's fields holding TikTok's older list panel (X.05fB), with that
+         * Each of a feed fragment's fields holding TikTok's older list panel (X.05fF), with that
          * panel's visible hint. The page's node show sets it and its node hide clears it, and the
          * list's players follow it, so a page left hidden shows here as false.
          */
         private String listPanelHints(Object fragment) {
             StringBuilder out = new StringBuilder();
             try {
-                Class<?> panelType = loader.loadClass("X.05fB");
+                Class<?> panelType = loader.loadClass("X.05fF");
                 Field hint = panelType.getDeclaredField("mUserVisibleHint");
                 hint.setAccessible(true);
                 for (Class<?> c = fragment.getClass(); c != null && !c.getName().startsWith("androidx."); c = c.getSuperclass()) {
@@ -6156,9 +6156,9 @@ public final class Probe extends Instrumentation {
                 Class<?> register = loader.loadClass("com.ss.android.deviceregister.DeviceRegisterManager");
                 Log.i(TAG, "ok idreset before" + registeredIds(context, appLog, register));
                 if (readOnly) return;
-                // 47.7.2's reset callback: LIZ() when the timeout runs out, LIZIZ(installInfo)
+                // 47.7.3's reset callback: LIZ() when the timeout runs out, LIZIZ(installInfo)
                 // when new install info arrives.
-                Class<?> callbackType = loader.loadClass("X.09H9");
+                Class<?> callbackType = loader.loadClass("X.09HD");
                 final java.util.concurrent.CountDownLatch answered = new java.util.concurrent.CountDownLatch(1);
                 final String[] outcome = {"no answer"};
                 Object callback = java.lang.reflect.Proxy.newProxyInstance(loader, new Class<?>[]{callbackType},

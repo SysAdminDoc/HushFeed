@@ -27,7 +27,7 @@ private const val EXTENSION = "Lapp/morphe/extension/tiktok/feed/SensitiveWarnin
  * sender's app writes them from the video's TnsImInfo when it shares, so the receiver can't clear
  * them from the video: the card has to be told they're empty. The only other method naming both
  * keys that runs is the one that writes them, which builds a send task instead of returning void.
- * 47.7.2 also ships the chat video stack's member card (0rT7->LJ()Z), which tests both labels for
+ * 47.7.3 also ships the chat video stack's member card (0rT7->LJ()Z), which tests both labels for
  * emptiness, but nothing in that build calls it or the service that builds it.
  */
 internal object ChatCardCautionFingerprint : Fingerprint(

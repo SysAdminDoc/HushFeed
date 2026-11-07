@@ -47,7 +47,7 @@ class SidebarSwipeAnchorsTest {
     fun `each declared build has its side menu swipe asks`() {
         // 47.7.2 inlined 47.6.3's one helper method into the pager's touch dispatch and both
         // swipe handlers (2026-11-05).
-        val expected = mapOf("47.7.2" to ("LX/07nt;" to 3))
+        val expected = mapOf("47.7.3" to ("LX/07nx;" to 3))
         assertEquals(Fixtures.declaredVersions().toSet(), expected.keys)
         Fixtures.forEachDeclared { apk ->
             val version = Fixtures.versionOf(apk)

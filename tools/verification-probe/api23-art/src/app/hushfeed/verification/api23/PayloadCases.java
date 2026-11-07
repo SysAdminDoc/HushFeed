@@ -38,7 +38,7 @@ final class PayloadCases {
         originalFallback = Settings.FILTER_OFFLINE_FALLBACK_VIDEOS.get();
         captured = true;
         // Only the helper's resource names model a host version; the payload DEX stays intact.
-        BuildNames.setRunningBuildForTests("47.7.2");
+        BuildNames.setRunningBuildForTests("47.7.3");
         Settings.CAPTION_TEXT_SIZE.save(0);
         Settings.CAPTION_BACKGROUND.save("default");
         TextPaint paint = new TextPaint();

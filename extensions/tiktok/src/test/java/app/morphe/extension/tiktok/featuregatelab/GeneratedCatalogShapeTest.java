@@ -140,8 +140,8 @@ public class GeneratedCatalogShapeTest {
      * are ones older builds had otherwise: a default that moved, a gate added and one dropped.
      */
     @Test public void theRunningBuildsCatalogIsTheOneShown() throws Exception {
-        BuildNames.setRunningBuildForTests("47.7.2");
-        assertEquals("47.7.2", FeatureGateCatalog.catalogBuild());
+        BuildNames.setRunningBuildForTests("47.7.3");
+        assertEquals("47.7.3", FeatureGateCatalog.catalogBuild());
         FeatureGateCatalog.Snapshot shown = load();
         entry(shown, "abmock", "low_memory_kill_monitor", "INT", "89");
         entry(shown, "abmock", "4710_lifecycle_job_next_day_fixed", "INT", "0");

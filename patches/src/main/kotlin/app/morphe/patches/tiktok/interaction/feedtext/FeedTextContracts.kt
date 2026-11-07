@@ -35,7 +35,7 @@ private const val TEXT_VIEW = "Landroid/widget/TextView;"
 private const val PAINT = "Landroid/graphics/Paint;"
 private const val VIDEO_ITEM_PARAMS = "Lcom/ss/android/ugc/aweme/feed/model/VideoItemParams;"
 private const val WHAT = "Feed text sizes"
-// 47.7.2's ids for the caption text, the creator name (`title`) and the post date beside it.
+// 47.7.3's ids for the caption text, the creator name (`title`) and the post date beside it.
 internal val DESCRIPTION_IDS = setOf(0x7f0a2097)
 internal val TITLE_IDS = setOf(0x7f0a897d)
 internal val POST_TIME_IDS = setOf(0x7f0a9547)
@@ -123,7 +123,7 @@ internal fun resolveFeedText(classOf: (String) -> ClassDef?): FeedTextMembers {
     val descLoader = controller.methods.filter { it.parameters() == listOf(VIEW) && it.hasLiteral(DESCRIPTION_IDS) }
         .one("description view loader")
     val descView = descLoader.loadedView(DESCRIPTION_IDS).second
-    // 47.7.2 moved the paragraph model behind the Aweme and passes the dispatch's third flag as well:
+    // 47.7.3 moved the paragraph model behind the Aweme and passes the dispatch's third flag as well:
     // (I, Aweme, paragraph, Z, Z, Z), where 47.6.3 had (paragraph, I, Aweme, Z, Z).
     val factory = controller.methods.filter {
         it.isInstance() && it.parameters().let { p ->
@@ -199,7 +199,7 @@ internal fun resolveFeedText(classOf: (String) -> ClassDef?): FeedTextMembers {
         .one("description layout cache wrapper").type
     val caches = controller.fields.filter { it.type == cacheType }.toList()
     if (caches.size != 6) throw PatchException("$WHAT: expected six owned description layout caches, found ${caches.size}")
-    // On 47.7.2 the cached dispatch takes exactly the factory's parameters.
+    // On 47.7.3 the cached dispatch takes exactly the factory's parameters.
     val dispatch = controller.methods.filter {
         it.parameters() == factory.parameters() &&
             it.returnType == "Lkotlin/Pair;" && it.calls().any { call -> call.toString() == factory.toString() }
@@ -262,7 +262,7 @@ private val GOTOS = setOf(Opcode.GOTO, Opcode.GOTO_16, Opcode.GOTO_32)
 
 /**
  * The straight-line prefix must have copied every fallback argument before the added branch.
- * 47.7.2 shuffles those copies down into v0.. with plain moves right before the uncached call, so the
+ * 47.7.3 shuffles those copies down into v0.. with plain moves right before the uncached call, so the
  * bypass lands on the first of those moves (the instruction the native empty-caption check jumps to)
  * and [CacheBypass.fallback] is that instruction.
  */
@@ -296,7 +296,7 @@ internal fun Method.cacheBypass(factory: Method): CacheBypass {
         ?: throw PatchException("$WHAT: description dispatch no longer holds its controller at entry")
     code.subList(fallback, call).forEach(::follow)
     val registers = code[call].namedRegisters()
-    // 47.7.2's fallback hands the dispatch's first flag (p4) to the factory last.
+    // 47.7.3's fallback hands the dispatch's first flag (p4) to the factory last.
     val expected = listOf(p0Register, p0Register + 1, p0Register + 2, p0Register + 3, p0Register + 5,
         p0Register + 6, p0Register + 4)
     if (registers.map { aliases[it] } != expected) {
@@ -304,7 +304,7 @@ internal fun Method.cacheBypass(factory: Method): CacheBypass {
     }
     // The bypass jumps from entry straight to the fallback. Anything the fallback reads must hold the
     // same value on both paths, or ART rejects the class at the merge. Only writes on a native path
-    // from entry to the fallback count: 47.7.2's cached branch reuses v2 on its way to its own return.
+    // from entry to the fallback count: 47.7.3's cached branch reuses v2 on its way to its own return.
     val live = RegisterLiveness.of(this).liveInto(fallback)
     val skipped = ControlFlow.of(this).writesBetween(entry, fallback)
     if (live.any { it in skipped }) {

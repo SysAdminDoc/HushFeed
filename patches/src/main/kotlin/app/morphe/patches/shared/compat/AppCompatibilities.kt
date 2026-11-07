@@ -23,14 +23,14 @@ internal object AppCompatibilities {
      */
     const val TIKTOK_SIGNER_SHA256 = "9041803e91bcb814b4b4399fb5c85a91640b755e5e8ba76813814bf4cf2ab5ba"
 
-    /** TikTok 47.7.2's version code. APKMirror carries its universal APK and a split bundle. */
-    const val TIKTOK_4772_VERSION_CODE = 2024707020
+    /** TikTok 47.7.3's version code. APKMirror carries its universal APK and a split bundle. */
+    const val TIKTOK_4773_VERSION_CODE = 2024707030
 
     /** The version codes of every declared TikTok build. */
-    val TIKTOK_VERSION_CODES = setOf(TIKTOK_4772_VERSION_CODE)
+    val TIKTOK_VERSION_CODES = setOf(TIKTOK_4773_VERSION_CODE)
 
     /**
-     * Targets: the TikTok global package, 47.7.2 only. Only the newest stable build is declared:
+     * Targets: the TikTok global package, 47.7.3 only. Only the newest stable build is declared:
      * when a newer one is supported, the one before it is dropped in the same release, so every
      * patch is read against one fixture.
      */
@@ -41,7 +41,7 @@ internal object AppCompatibilities {
             appIconColor = TIKTOK_COLOR,
             signatures = setOf(TIKTOK_SIGNER_SHA256),
             targets = listOf(
-                AppTarget(version = "47.7.2", versionCode = TIKTOK_4772_VERSION_CODE),
+                AppTarget(version = "47.7.3", versionCode = TIKTOK_4773_VERSION_CODE),
             ),
         ),
     )

@@ -39,7 +39,7 @@ public final class Api23ArtProbe extends Instrumentation {
                     .put("abis", new JSONArray(Build.SUPPORTED_ABIS)).put("vmName", System.getProperty("java.vm.name"))
                     .put("vmVersion", System.getProperty("java.vm.version")).put("cases", cases)
                     .put("vendorContent", "empty list or explicit synthetic Object marker; no served video")
-                    .put("captionResources", "helper dnn/dng IDs with explicit 47.7.2 BuildNames test alias; no TikTok renderer");
+                    .put("captionResources", "helper dnn/dng IDs with explicit 47.7.3 BuildNames test alias; no TikTok renderer");
             if (!PACKAGE.equals(context.getPackageName()) || Build.VERSION.SDK_INT != 23) {
                 throw new IllegalStateException("requires this self-targeted helper on API23");
             }

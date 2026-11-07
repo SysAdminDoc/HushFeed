@@ -37,7 +37,7 @@ private fun MethodReference.isExperimentRead() =
 /**
  * The lazy that answers where the Captions row goes (#217): a static lambda body that reads
  * [CAPTIONS_ROW_KEY] from TikTok's experiments and boxes the answer. On 47.4.3 it is
- * `AFwS158S0000000_20_I1.invoke$17`, the value behind `X.0mwg.LIZ()`. The experiment registry
+ * `AFwS158S0000000_20_I1.invoke$17`, the value behind `X.0mZq.LIZ()`. The experiment registry
  * that lists the key returns nothing, so the return type leaves it out.
  */
 internal object CaptionsRowFingerprint : Fingerprint(

@@ -19,7 +19,7 @@ import org.junit.Test
  * written into the patch as `p2`, which is the List on the newer builds.
  */
 class InsertionPayloadKeyTest {
-    private val payload = "LX/0SN6;"
+    private val payload = "LX/0SID;"
 
     @Test
     fun `the key is found wherever the constructor puts it`() {
@@ -67,7 +67,7 @@ class InsertionPayloadKeyTest {
 
     @Test
     fun `the static factory beside it takes the same three and is not the constructor`() {
-        // LX/0SN6;->LIZ(I, String, List) builds the payload and is what the app calls. Only the
+        // LX/0SID;->LIZ(I, String, List) builds the payload and is what the app calls. Only the
         // name and the return type tell it apart from the constructor it forwards to.
         val factory = ImmutableMethod(
             payload,

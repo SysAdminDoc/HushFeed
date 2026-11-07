@@ -63,7 +63,7 @@ class HapticsAnchorsTest {
 
         /**
          * View haptic calls on any receiver, and framework vibrate calls, outside the extension.
-         * Walked as a sequence: holding every instruction of 47.7.2 at once ran a 2 GB fork out of heap.
+         * Walked as a sequence: holding every instruction of 47.7.3 at once ran a 2 GB fork out of heap.
          */
         fun hapticCallsOf(apk: File): List<MethodReference> = classesOf(apk).asSequence()
             .filterNot { it.type.startsWith("Lapp/morphe/extension/") }

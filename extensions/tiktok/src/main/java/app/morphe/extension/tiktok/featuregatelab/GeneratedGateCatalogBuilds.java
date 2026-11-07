@@ -11,7 +11,7 @@ package app.morphe.extension.tiktok.featuregatelab;
  * Do not edit: ./gradlew :patches:generateGateCatalog writes it again.
  */
 final class GeneratedGateCatalogBuilds {
-    static final String[] BUILDS = {"47.7.2"};
+    static final String[] BUILDS = {"47.7.3"};
 
     private GeneratedGateCatalogBuilds() {
     }

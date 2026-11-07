@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/** Passive 47.7.2 feed observation. It never creates a native player, seeks or dispatches input. */
+/** Passive 47.7.3 feed observation. It never creates a native player, seeks or dispatches input. */
 final class AutoAdvanceWatch implements Application.ActivityLifecycleCallbacks {
     private static final String PACKAGE="com.zhiliaoapp.musically";
     private static final String MAIN="com.ss.android.ugc.aweme.main.MainActivity";
@@ -38,8 +38,8 @@ final class AutoAdvanceWatch implements Application.ActivityLifecycleCallbacks {
     static void bootstrap(Application app,ClassLoader loader){
         if(instance!=null)return;
         boolean supported=false;
-        try{PackageInfo info=app.getPackageManager().getPackageInfo(PACKAGE,0);supported=PACKAGE.equals(app.getPackageName()) && "47.7.2".equals(info.versionName)
-                && (info.versionCode==2024707020 || info.versionCode==Integer.MAX_VALUE);}catch(Exception ignored){}
+        try{PackageInfo info=app.getPackageManager().getPackageInfo(PACKAGE,0);supported=PACKAGE.equals(app.getPackageName()) && "47.7.3".equals(info.versionName)
+                && (info.versionCode==2024707030 || info.versionCode==Integer.MAX_VALUE);}catch(Exception ignored){}
         instance=new AutoAdvanceWatch(loader,supported);
         // Registered before TikTok replaces the Instrumentation. No extension Activity helper is needed.
         app.registerActivityLifecycleCallbacks(instance);
@@ -178,7 +178,7 @@ final class AutoAdvanceWatch implements Application.ActivityLifecycleCallbacks {
     }
     private static final class Bindings{
         final Class<?> cell,adapter,ability,panel,controller,fragment;
-        Bindings(ClassLoader loader)throws Exception{cell=loader.loadClass("com.ss.android.ugc.aweme.feed.adapter.VideoViewCell");adapter=loader.loadClass("X.09e6");ability=loader.loadClass("com.ss.android.ugc.feed.platform.panel.player.PlayerComponentTemp");panel=loader.loadClass("com.ss.android.ugc.aweme.feed.panel.BaseListFragmentPanel");controller=loader.loadClass("com.ss.android.ugc.aweme.feed.controller.PlayerController");fragment=loader.loadClass("com.ss.android.ugc.aweme.feed.ui.FeedRecommendFragment");}
+        Bindings(ClassLoader loader)throws Exception{cell=loader.loadClass("com.ss.android.ugc.aweme.feed.adapter.VideoViewCell");adapter=loader.loadClass("X.09eA");ability=loader.loadClass("com.ss.android.ugc.feed.platform.panel.player.PlayerComponentTemp");panel=loader.loadClass("com.ss.android.ugc.aweme.feed.panel.BaseListFragmentPanel");controller=loader.loadClass("com.ss.android.ugc.aweme.feed.controller.PlayerController");fragment=loader.loadClass("com.ss.android.ugc.aweme.feed.ui.FeedRecommendFragment");}
     }
     private static final class Missing extends Exception{final String reason;Missing(String reason){this.reason=reason;}}
     private static boolean bool(Object value){return Boolean.TRUE.equals(value);}

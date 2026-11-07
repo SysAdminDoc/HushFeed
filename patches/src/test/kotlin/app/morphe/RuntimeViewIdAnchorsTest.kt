@@ -195,12 +195,12 @@ class RuntimeViewIdAnchorsTest {
     /** Each group handed another group's id on each declared build, by that build's name for it. */
     @Test
     fun `semantic owners reject an unrelated id for every group that needs one`() {
-        val actions = "share/ShareSheetTools.java|ACTIONS_LIST_IDS|47.7.2:a6b"
-        val dislike = "comment/CommentTools.java|DISLIKE_BUTTON_IDS|47.7.2:k2g"
-        val dislikeIcon = "comment/CommentTools.java|DISLIKE_ICON_IDS|47.7.2:mof"
-        val captionText = "captions/CaptionStyle.java|TEXT_IDS|47.7.2:dnn"
+        val actions = "share/ShareSheetTools.java|ACTIONS_LIST_IDS|47.7.3:a6b"
+        val dislike = "comment/CommentTools.java|DISLIKE_BUTTON_IDS|47.7.3:k2g"
+        val dislikeIcon = "comment/CommentTools.java|DISLIKE_ICON_IDS|47.7.3:mof"
+        val captionText = "captions/CaptionStyle.java|TEXT_IDS|47.7.3:dnn"
         val wrongNames = mapOf(
-            "47.7.2" to mapOf(actions to "k2g", dislike to "a6b", dislikeIcon to "a6b", captionText to "k2g"),
+            "47.7.3" to mapOf(actions to "k2g", dislike to "a6b", dislikeIcon to "a6b", captionText to "k2g"),
         )
         assertEquals(Fixtures.declaredVersions().toSet(), wrongNames.keys)
         for ((version, wrong) in wrongNames) {
@@ -996,7 +996,7 @@ class RuntimeViewIdAnchorsTest {
         val METHOD_NAME = Regex("""[A-Za-z_$][A-Za-z0-9_$]*""")
         /** A type in a tell: a dotted class name, or a bare framework tag such as LinearLayout. */
         val TYPE_NAME = Regex("""[A-Za-z_$][A-Za-z0-9_$]*(\.[A-Za-z_$][A-Za-z0-9_$]*)*""")
-        /** R8's names, new on every build: `X.070T`. A tell that carries one is a tell that dies with the build. */
+        /** R8's names, new on every build: `X.070X`. A tell that carries one is a tell that dies with the build. */
         val OBFUSCATED = Regex("""(?:.*\.)?X\.[0-9A-Za-z_$]{3,6}""")
 
         /** An owner written `layout:<class>`: the class loads a layout that sets the id. */

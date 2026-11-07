@@ -63,7 +63,7 @@ internal val APP_AB_SHAPES = listOf(
 
 /**
  * The class's typed object getter: `(String key, boolean, boolean, Class type, int)`, `LJIIJ` on
- * 47.7.2. Every generated accessor for a class-typed gate ends here, with the key in p1 and the
+ * 47.7.3. Every generated accessor for a class-typed gate ends here, with the key in p1 and the
  * class in p4, both only copied out and never written. It isn't one of [APP_AB_SHAPES], which name
  * the class; this one is looked up on it.
  */

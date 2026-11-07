@@ -78,9 +78,9 @@ public class VideoOverlayHiderTest {
 
     private void assertHiddenSeekbarDefeatsNativeAlphaWrites(int fade, boolean rebind) {
         int exitId = 0x7f0a0f41, seekId = 0x7f0a0f42, railId = 0x7f0a0f43;
-        VideoOverlayHider.resolveForTests("47.7.2:e_k", exitId);
+        VideoOverlayHider.resolveForTests("47.7.3:e_k", exitId);
         VideoOverlayHider.resolveForTests("video_seek_bar", seekId);
-        VideoOverlayHider.resolveForTests("47.7.2:lkj", railId);
+        VideoOverlayHider.resolveForTests("47.7.3:lkj", railId);
         boolean previousHide = Settings.HIDE_CLEAR_DISPLAY_CONTROLS.get();
         int previousFade = Settings.FADE_CONTROLS_OPACITY.get();
         Settings.HIDE_CLEAR_DISPLAY_CONTROLS.save(true);
@@ -145,9 +145,9 @@ public class VideoOverlayHiderTest {
         } finally {
             Settings.HIDE_CLEAR_DISPLAY_CONTROLS.save(previousHide);
             Settings.FADE_CONTROLS_OPACITY.save(previousFade);
-            VideoOverlayHider.resolveForTests("47.7.2:e_k", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:e_k", 0);
             VideoOverlayHider.resolveForTests("video_seek_bar", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:lkj", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:lkj", 0);
         }
     }
 
@@ -231,7 +231,7 @@ public class VideoOverlayHiderTest {
         int surveyId = 0x7f0a0a11;
         int cellId = 0x7f0a0a12;
         int captionId = 0x7f0a0a13;
-        VideoOverlayHider.resolveForTests("47.7.2:f9j", surveyId);
+        VideoOverlayHider.resolveForTests("47.7.3:f9j", surveyId);
         VideoOverlayHider.resolveForTests("desc", captionId);
         VideoOverlayHider.resolveForTests("view_rootview", cellId);
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
@@ -316,11 +316,11 @@ public class VideoOverlayHiderTest {
         // hold through a reset and stop holding once Normal is chosen again. The music row
         // spans the width and is left alone. Before 2026-09-17 none of this reached a phone:
         // the cell root the walk scoped to was a sibling of the rail, so it found nothing.
-        String[] names = {"47.7.2:ibj", "47.7.2:g_2", "47.7.2:eqn", "47.7.2:ia1", "47.7.2:pq_", "47.7.2:wey"};
+        String[] names = {"47.7.3:ibj", "47.7.3:g_2", "47.7.3:eqn", "47.7.3:ia1", "47.7.3:pq_", "47.7.3:wey"};
         int cellId = 0x7f0a0a31;
         int actionBarId = 0x7f0a0a32;
         VideoOverlayHider.resolveForTests("view_rootview", cellId);
-        VideoOverlayHider.resolveForTests("47.7.2:lkj", actionBarId);
+        VideoOverlayHider.resolveForTests("47.7.3:lkj", actionBarId);
         for (int i = 0; i < names.length; i++) {
             VideoOverlayHider.resolveForTests(names[i], 0x7f0a0a40 + i);
         }
@@ -404,7 +404,7 @@ public class VideoOverlayHiderTest {
         } finally {
             Settings.TOUCH_TARGET_SCALE.resetToDefault();
             VideoOverlayHider.resolveForTests("view_rootview", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:lkj", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:lkj", 0);
             for (String name : names) {
                 VideoOverlayHider.resolveForTests(name, 0);
             }
@@ -416,7 +416,7 @@ public class VideoOverlayHiderTest {
         // A build that renames the cell root must not turn every hide switch off; the walk
         // falls back to the whole window and the hook status names the miss.
         int surveyId = 0x7f0a0a21;
-        VideoOverlayHider.resolveForTests("47.7.2:f9j", surveyId);
+        VideoOverlayHider.resolveForTests("47.7.3:f9j", surveyId);
         VideoOverlayHider.resolveForTests("view_rootview", 0);
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
             Activity activity = controller.get();
@@ -444,7 +444,7 @@ public class VideoOverlayHiderTest {
         int surveyId = 0x7f0a0a52;
         int oldNameId = 0x7f0a0a53;
         VideoOverlayHider.resolveForTests("view_rootview", cellId);
-        VideoOverlayHider.resolveForTests("47.7.2:f9j", surveyId);
+        VideoOverlayHider.resolveForTests("47.7.3:f9j", surveyId);
         VideoOverlayHider.resolveForTests("ezp", oldNameId);
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
             Activity activity = controller.get();
@@ -470,7 +470,7 @@ public class VideoOverlayHiderTest {
         } finally {
             Settings.HIDE_FEED_SURVEYS.save(false);
             VideoOverlayHider.resolveForTests("view_rootview", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:f9j", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:f9j", 0);
             VideoOverlayHider.resolveForTests("ezp", 0);
         }
     }
@@ -484,8 +484,8 @@ public class VideoOverlayHiderTest {
         int pillId = 0x7e0a0a62;
         int cameraRowId = 0x7e0a0a63;
         int floatingCardRowId = 0x7e0a0a64;
-        VideoOverlayHider.resolveSearchModuleForTests("47.7.2:g0", layerId);
-        VideoOverlayHider.resolveSearchModuleForTests("47.7.2:d7", pillId);
+        VideoOverlayHider.resolveSearchModuleForTests("47.7.3:g0", layerId);
+        VideoOverlayHider.resolveSearchModuleForTests("47.7.3:d7", pillId);
         VideoOverlayHider.resolveSearchModuleForTests("fb", cameraRowId);
         VideoOverlayHider.resolveSearchModuleForTests("cn", floatingCardRowId);
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
@@ -520,7 +520,7 @@ public class VideoOverlayHiderTest {
             assertEquals(View.VISIBLE, floatingCardRow.getVisibility());
         } finally {
             Settings.HIDE_VISUAL_SEARCH.save(false);
-            for (String name : new String[]{"47.7.2:g0", "47.7.2:d7", "fb", "cn"}) {
+            for (String name : new String[]{"47.7.3:g0", "47.7.3:d7", "fb", "cn"}) {
                 VideoOverlayHider.resolveSearchModuleForTests(name, 0);
             }
         }
@@ -531,7 +531,7 @@ public class VideoOverlayHiderTest {
         int cellId = 0x7f0a0a22;
         int surveyId = 0x7f0a0a23;
         VideoOverlayHider.resolveForTests("view_rootview", cellId);
-        VideoOverlayHider.resolveForTests("47.7.2:f9j", surveyId);
+        VideoOverlayHider.resolveForTests("47.7.3:f9j", surveyId);
         HookStatus.clear();
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
             Activity activity = controller.get();
@@ -545,11 +545,11 @@ public class VideoOverlayHiderTest {
 
             assertTrue("a survey is optional content, not a required build anchor: "
                             + HookStatus.missing("overlay"),
-                    HookStatus.missing("overlay").stream().noneMatch(line -> line.contains("47.7.2:f9j")));
+                    HookStatus.missing("overlay").stream().noneMatch(line -> line.contains("47.7.3:f9j")));
         } finally {
             Settings.HIDE_FEED_SURVEYS.save(false);
             VideoOverlayHider.resolveForTests("view_rootview", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:f9j", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:f9j", 0);
             HookStatus.clear();
         }
     }
@@ -563,7 +563,7 @@ public class VideoOverlayHiderTest {
     public void anAccountWithoutTheStoriesButtonDoesNotReportTheBuildBroken() {
         int cellId = 0x7f0a0b11;
         VideoOverlayHider.resolveForTests("view_rootview", cellId);
-        VideoOverlayHider.resolveForTests("47.7.2:wwp", 0x7f0a0b10);
+        VideoOverlayHider.resolveForTests("47.7.3:wwp", 0x7f0a0b10);
         HookStatus.clear();
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
             Activity activity = controller.get();
@@ -577,17 +577,17 @@ public class VideoOverlayHiderTest {
             VideoOverlayHider.applyTo(activity);
             assertTrue("an account without stories called the overlay hooks broken: "
                             + HookStatus.missing("overlay"),
-                    HookStatus.missing("overlay").stream().noneMatch(line -> line.contains("47.7.2:wwp")));
+                    HookStatus.missing("overlay").stream().noneMatch(line -> line.contains("47.7.3:wwp")));
 
-            VideoOverlayHider.resolveForTests("47.7.2:wwp", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:wwp", 0);
             VideoOverlayHider.applyTo(activity);
             assertTrue("a build without the stories button's id went unreported",
-                    HookStatus.missing("overlay").stream().anyMatch(line -> line.contains("47.7.2:wwp")));
+                    HookStatus.missing("overlay").stream().anyMatch(line -> line.contains("47.7.3:wwp")));
         } finally {
             app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch
                     .rememberClearDisplayEvent(new ClearEvent(false, 2));
             VideoOverlayHider.resolveForTests("view_rootview", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:wwp", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:wwp", 0);
             HookStatus.clear();
         }
     }
@@ -603,8 +603,8 @@ public class VideoOverlayHiderTest {
         int rowId = 0x7f0a0b22;
         int pillId = 0x7f0a0b23;
         VideoOverlayHider.resolveForTests("view_rootview", cellId);
-        VideoOverlayHider.resolveForTests("47.7.2:ie5", rowId);
-        VideoOverlayHider.resolveForTests("47.7.2:wwp", pillId);
+        VideoOverlayHider.resolveForTests("47.7.3:ie5", rowId);
+        VideoOverlayHider.resolveForTests("47.7.3:wwp", pillId);
         HookStatus.clear();
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
             Activity activity = controller.get();
@@ -619,7 +619,7 @@ public class VideoOverlayHiderTest {
             VideoOverlayHider.applyTo(activity);
             assertTrue("For You, which has no row, called the overlay hooks broken: "
                             + HookStatus.missing("overlay"),
-                    HookStatus.missing("overlay").stream().noneMatch(line -> line.contains("47.7.2:ie5")));
+                    HookStatus.missing("overlay").stream().noneMatch(line -> line.contains("47.7.3:ie5")));
 
             FrameLayout row = new FrameLayout(activity);
             row.setId(rowId);
@@ -647,8 +647,8 @@ public class VideoOverlayHiderTest {
             Settings.HIDE_FOLLOWING_LIVE_ROW.resetToDefault();
             Settings.HIDE_FEED_SURVEYS.resetToDefault();
             VideoOverlayHider.resolveForTests("view_rootview", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:ie5", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:wwp", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:ie5", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:wwp", 0);
             HookStatus.clear();
         }
     }
@@ -660,7 +660,7 @@ public class VideoOverlayHiderTest {
         int captionId = 0x7f0a0001;
         int columnId = 0x7f0a0002;
         VideoOverlayHider.resolveForTests("desc", captionId);
-        VideoOverlayHider.resolveForTests("47.7.2:lkj", columnId);
+        VideoOverlayHider.resolveForTests("47.7.3:lkj", columnId);
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
             Activity activity = controller.get();
             Utils.setContext(activity);
@@ -724,13 +724,13 @@ public class VideoOverlayHiderTest {
         int currentCountTextId = 0x7f0a0507;
         int oldCountTextId = 0x7f0a0508;
         VideoOverlayHider.resolveForTests("view_rootview", cellId);
-        VideoOverlayHider.resolveForTests("47.7.2:lkj", currentColumnId);
+        VideoOverlayHider.resolveForTests("47.7.3:lkj", currentColumnId);
         VideoOverlayHider.resolveForTests("kzj", oldColumnId);
-        VideoOverlayHider.resolveForTests("47.7.2:g_2", currentLikeId);
+        VideoOverlayHider.resolveForTests("47.7.3:g_2", currentLikeId);
         VideoOverlayHider.resolveForTests("fws", oldLikeId);
-        VideoOverlayHider.resolveForTests("47.7.2:g_4", currentCountRowId);
+        VideoOverlayHider.resolveForTests("47.7.3:g_4", currentCountRowId);
         VideoOverlayHider.resolveForTests("fwu", oldCountRowId);
-        VideoOverlayHider.resolveForTests("47.7.2:g_3", currentCountTextId);
+        VideoOverlayHider.resolveForTests("47.7.3:g_3", currentCountTextId);
         VideoOverlayHider.resolveForTests("fwt", oldCountTextId);
 
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
@@ -799,8 +799,8 @@ public class VideoOverlayHiderTest {
             Settings.HIDE_FEED_ACTION_BAR.save(false);
             Settings.HIDE_RAIL_LIKE.save(false);
             Settings.HIDE_RAIL_COUNTS.save(false);
-            String[] names = {"view_rootview", "47.7.2:lkj", "kzj", "47.7.2:g_2", "fws",
-                    "47.7.2:g_4", "fwu", "47.7.2:g_3", "fwt"};
+            String[] names = {"view_rootview", "47.7.3:lkj", "kzj", "47.7.3:g_2", "fws",
+                    "47.7.3:g_4", "fwu", "47.7.3:g_3", "fwt"};
             for (String name : names) VideoOverlayHider.resolveForTests(name, 0);
         }
     }
@@ -830,7 +830,7 @@ public class VideoOverlayHiderTest {
     public void eachRailButtonHasItsOwnSwitchInEveryCell() {
         // The column keeps its six buttons under fixed ids, and the feed keeps the cells on
         // either side inflated with the same ones.
-        String[] names = {"47.7.2:ibj", "47.7.2:g_2", "47.7.2:eqn", "47.7.2:ia1", "47.7.2:pq_", "47.7.2:wey"};
+        String[] names = {"47.7.3:ibj", "47.7.3:g_2", "47.7.3:eqn", "47.7.3:ia1", "47.7.3:pq_", "47.7.3:wey"};
         int[] ids = new int[names.length];
         for (int i = 0; i < names.length; i++) {
             ids[i] = 0x7f0a0100 + i;
@@ -892,9 +892,9 @@ public class VideoOverlayHiderTest {
      */
     @Test
     public void aHiddenButtonTakesItsOwnCountWithIt() {
-        String[] rowNames = {"47.7.2:g_4", "47.7.2:ekn", "47.7.2:i_0", "47.7.2:wb5"};
-        String[] textNames = {"47.7.2:g_3", "47.7.2:ekm", "47.7.2:i9z", "47.7.2:wb4"};
-        String[] buttonNames = {"47.7.2:g_2", "47.7.2:eqn", "47.7.2:ia1", "47.7.2:wey"};
+        String[] rowNames = {"47.7.3:g_4", "47.7.3:ekn", "47.7.3:i_0", "47.7.3:wb5"};
+        String[] textNames = {"47.7.3:g_3", "47.7.3:ekm", "47.7.3:i9z", "47.7.3:wb4"};
+        String[] buttonNames = {"47.7.3:g_2", "47.7.3:eqn", "47.7.3:ia1", "47.7.3:wey"};
         for (int i = 0; i < rowNames.length; i++) {
             VideoOverlayHider.resolveForTests(rowNames[i], 0x7f0a0300 + i);
             VideoOverlayHider.resolveForTests(textNames[i], 0x7f0a0310 + i);
@@ -962,10 +962,10 @@ public class VideoOverlayHiderTest {
      */
     @Test
     public void theLikeButtonsRowGoesWithItSoTheRailClosesUp() {
-        VideoOverlayHider.resolveForTests("47.7.2:ey8", 0x7f0a0340);
-        VideoOverlayHider.resolveForTests("47.7.2:g_2", 0x7f0a0341);
-        VideoOverlayHider.resolveForTests("47.7.2:g_4", 0x7f0a0342);
-        VideoOverlayHider.resolveForTests("47.7.2:eqn", 0x7f0a0343);
+        VideoOverlayHider.resolveForTests("47.7.3:ey8", 0x7f0a0340);
+        VideoOverlayHider.resolveForTests("47.7.3:g_2", 0x7f0a0341);
+        VideoOverlayHider.resolveForTests("47.7.3:g_4", 0x7f0a0342);
+        VideoOverlayHider.resolveForTests("47.7.3:eqn", 0x7f0a0343);
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
             Activity activity = controller.get();
             Utils.setContext(activity);
@@ -1022,18 +1022,18 @@ public class VideoOverlayHiderTest {
         } finally {
             Settings.HIDE_RAIL_LIKE.save(false);
             Settings.HIDE_RAIL_COMMENTS.save(false);
-            VideoOverlayHider.resolveForTests("47.7.2:ey8", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:g_2", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:g_4", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:eqn", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:ey8", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:g_2", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:g_4", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:eqn", 0);
         }
     }
 
     @Test
     public void countRowsAndTheirInnerTextAnchorsGoWithoutTheButtons() {
-        String[] rowNames = {"47.7.2:g_4", "47.7.2:ekn", "47.7.2:i_0", "47.7.2:wb5"};
-        String[] textNames = {"47.7.2:g_3", "47.7.2:ekm", "47.7.2:i9z", "47.7.2:wb4"};
-        String[] buttonNames = {"47.7.2:g_2", "47.7.2:eqn", "47.7.2:ia1", "47.7.2:wey"};
+        String[] rowNames = {"47.7.3:g_4", "47.7.3:ekn", "47.7.3:i_0", "47.7.3:wb5"};
+        String[] textNames = {"47.7.3:g_3", "47.7.3:ekm", "47.7.3:i9z", "47.7.3:wb4"};
+        String[] buttonNames = {"47.7.3:g_2", "47.7.3:eqn", "47.7.3:ia1", "47.7.3:wey"};
         int[] rowIds = new int[rowNames.length];
         int[] textIds = new int[textNames.length];
         int[] buttonIds = new int[buttonNames.length];
@@ -1117,7 +1117,7 @@ public class VideoOverlayHiderTest {
     @Test
     public void clearDisplayKeepsTheTabStripAwayUntilItEnds() {
         int tabStripId = 0x7f0a0011;
-        VideoOverlayHider.resolveForTests("47.7.2:v1f", tabStripId);
+        VideoOverlayHider.resolveForTests("47.7.3:v1f", tabStripId);
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
             Activity activity = controller.get();
             Utils.setContext(activity);
@@ -1164,7 +1164,7 @@ public class VideoOverlayHiderTest {
     public void clearDisplayTakesTheBottomTabsAwayOnTheMainFeedOnly() {
         int tabsId = 0x7f0a0b20;
         int cellId = 0x7f0a0b21;
-        VideoOverlayHider.resolveForTests("47.7.2:opn", tabsId);
+        VideoOverlayHider.resolveForTests("47.7.3:opn", tabsId);
         VideoOverlayHider.resolveForTests("view_rootview", cellId);
         try (var main = Robolectric.buildActivity(Activity.class).setup();
              var detail = Robolectric.buildActivity(
@@ -1211,7 +1211,7 @@ public class VideoOverlayHiderTest {
         int tabsId = 0x7f0a0b25;
         int homeId = 0x7f0a0b26;
         int cellId = 0x7f0a0b27;
-        VideoOverlayHider.resolveForTests("47.7.2:opn", tabsId);
+        VideoOverlayHider.resolveForTests("47.7.3:opn", tabsId);
         VideoOverlayHider.resolveForTests("view_rootview", cellId);
         try (var main = Robolectric.buildActivity(Activity.class).setup().visible()) {
             Activity activity = main.get();
@@ -1235,7 +1235,7 @@ public class VideoOverlayHiderTest {
             org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
             assertTrue("the window never laid out", home.getWidth() > 0 && pager.getWidth() > 0);
             app.morphe.extension.tiktok.blockauthor.FeedVisibility.resolveForTests(
-                    activity.getPackageName(), "47.7.2:opf", homeId);
+                    activity.getPackageName(), "47.7.3:opf", homeId);
 
             app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch
                     .rememberClearDisplayEvent(new ClearEvent(true, 0));
@@ -1261,7 +1261,7 @@ public class VideoOverlayHiderTest {
             app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch
                     .rememberClearDisplayEvent(new ClearEvent(false, 2));
             app.morphe.extension.tiktok.blockauthor.FeedVisibility.resolveForTests(
-                    RuntimeEnvironment.getApplication().getPackageName(), "47.7.2:opf", 0);
+                    RuntimeEnvironment.getApplication().getPackageName(), "47.7.3:opf", 0);
         }
     }
 
@@ -1275,8 +1275,8 @@ public class VideoOverlayHiderTest {
         int tabsId = 0x7f0a0b22;
         int lineId = 0x7f0a0b23;
         int cellId = 0x7f0a0b24;
-        VideoOverlayHider.resolveForTests("47.7.2:opn", tabsId);
-        VideoOverlayHider.resolveForTests("47.7.2:cos", lineId);
+        VideoOverlayHider.resolveForTests("47.7.3:opn", tabsId);
+        VideoOverlayHider.resolveForTests("47.7.3:cos", lineId);
         VideoOverlayHider.resolveForTests("view_rootview", cellId);
         try (var main = Robolectric.buildActivity(Activity.class).setup()) {
             Utils.setContext(main.get());
@@ -1323,7 +1323,7 @@ public class VideoOverlayHiderTest {
     public void clearDisplayHidesFollowingStoriesOutsideTheCellsAndRestoresNativeVisibility() {
         int storyId = 0x7f0a0b10;
         int cellId = 0x7f0a0b11;
-        VideoOverlayHider.resolveForTests("47.7.2:wwp", storyId);
+        VideoOverlayHider.resolveForTests("47.7.3:wwp", storyId);
         VideoOverlayHider.resolveForTests("view_rootview", cellId);
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
             Activity activity = controller.get();
@@ -1366,7 +1366,7 @@ public class VideoOverlayHiderTest {
     @Test
     public void nativeClearExitRestoresFollowingStoriesWithoutAnotherLayout() {
         int storyId = 0x7f0a0b10;
-        VideoOverlayHider.resolveForTests("47.7.2:wwp", storyId);
+        VideoOverlayHider.resolveForTests("47.7.3:wwp", storyId);
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
             Activity activity = controller.get();
             Utils.setContext(activity);
@@ -1405,7 +1405,7 @@ public class VideoOverlayHiderTest {
             viewer.setVisibility(View.GONE);
             root.addView(viewer, new FrameLayout.LayoutParams(400, 600));
             activity.setContentView(root);
-            VideoOverlayHider.resolveForTests("47.7.2:wwp", stories.getId());
+            VideoOverlayHider.resolveForTests("47.7.3:wwp", stories.getId());
             app.morphe.extension.tiktok.blockauthor.FeedVisibility.resolveForTests(
                     activity.getPackageName(), "vp_story_collection", viewer.getId());
             app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch
@@ -1433,8 +1433,8 @@ public class VideoOverlayHiderTest {
     public void pauseRestoresTheClearDisplayChromeAndDetailPagesKeepTheirStoryControls() {
         int storyId = 0x7f0a0b10;
         int tabStripId = 0x7f0a0b12;
-        VideoOverlayHider.resolveForTests("47.7.2:wwp", storyId);
-        VideoOverlayHider.resolveForTests("47.7.2:v1f", tabStripId);
+        VideoOverlayHider.resolveForTests("47.7.3:wwp", storyId);
+        VideoOverlayHider.resolveForTests("47.7.3:v1f", tabStripId);
         try (var main = Robolectric.buildActivity(Activity.class).setup();
              var detail = Robolectric.buildActivity(
                      com.ss.android.ugc.aweme.detail.ui.DetailActivity.class).setup()) {
@@ -1475,7 +1475,7 @@ public class VideoOverlayHiderTest {
     public void theHidesFollowAVideoOpenedFromAProfile() {
         int likeId = 0x7f0a0200;
         int cellId = 0x7f0a0201;
-        VideoOverlayHider.resolveForTests("47.7.2:g_2", likeId);
+        VideoOverlayHider.resolveForTests("47.7.3:g_2", likeId);
         VideoOverlayHider.resolveForTests("view_rootview", cellId);
         Settings.HIDE_RAIL_LIKE.save(true);
         Settings.HIDE_STATUS_BAR.save(true);
@@ -1521,7 +1521,7 @@ public class VideoOverlayHiderTest {
     @Test
     public void aBuriedMainActivityResumedForAMomentHandsTheHidesBack() {
         int liveId = 0x7f0a0e41;
-        VideoOverlayHider.resolveForTests("47.7.2:kau", liveId);
+        VideoOverlayHider.resolveForTests("47.7.3:kau", liveId);
         Settings.HIDE_LIVE_ENTRANCE.save(true);
         try (var feed = Robolectric.buildActivity(
                      com.ss.android.ugc.aweme.main.MainActivity.class).create();
@@ -1623,8 +1623,8 @@ public class VideoOverlayHiderTest {
     private static final int CELL_ID = 0x7f0a0201;
 
     private static void resolveCommentBarIds() {
-        VideoOverlayHider.resolveForTests("47.7.2:qqp", BAR_ID);
-        VideoOverlayHider.resolveForTests("47.7.2:col", STRIP_ID);
+        VideoOverlayHider.resolveForTests("47.7.3:qqp", BAR_ID);
+        VideoOverlayHider.resolveForTests("47.7.3:col", STRIP_ID);
         VideoOverlayHider.resolveForTests("viewpager_container", COLUMN_ID);
         // With the cell root known, furniture is looked for inside cells only; the bar and its
         // strip sit outside every cell, under the pager, as on the phone.
@@ -1976,7 +1976,7 @@ public class VideoOverlayHiderTest {
     public void theProgressBarComesDownWithTheCaptionWhenTheCommentBarGoes() {
         resolveCommentBarIds();
         VideoOverlayHider.resolveForTests("video_seek_bar", SEEK_ROW_ID);
-        VideoOverlayHider.resolveForTests("47.7.2:bs2", CAPTION_FRAME_ID);
+        VideoOverlayHider.resolveForTests("47.7.3:bs2", CAPTION_FRAME_ID);
         VideoOverlayHider.resolveForTests("videomusiccoverblock", DISC_ID);
         Settings.HIDE_DETAIL_COMMENT_BAR.save(true);
         try (var detailController = Robolectric.buildActivity(
@@ -2016,7 +2016,7 @@ public class VideoOverlayHiderTest {
         } finally {
             Settings.HIDE_DETAIL_COMMENT_BAR.save(false);
             VideoOverlayHider.resolveForTests("video_seek_bar", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:bs2", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:bs2", 0);
             VideoOverlayHider.resolveForTests("videomusiccoverblock", 0);
         }
     }
@@ -2040,7 +2040,7 @@ public class VideoOverlayHiderTest {
     public void theNextVideosCaptionIsLiftedBeforeItArrives() {
         resolveCommentBarIds();
         VideoOverlayHider.resolveForTests("video_seek_bar", SEEK_ROW_ID);
-        VideoOverlayHider.resolveForTests("47.7.2:bs2", CAPTION_FRAME_ID);
+        VideoOverlayHider.resolveForTests("47.7.3:bs2", CAPTION_FRAME_ID);
         VideoOverlayHider.resolveForTests("videomusiccoverblock", DISC_ID);
         Settings.HIDE_DETAIL_COMMENT_BAR.save(true);
         try (var detailController = Robolectric.buildActivity(
@@ -2080,7 +2080,7 @@ public class VideoOverlayHiderTest {
         } finally {
             Settings.HIDE_DETAIL_COMMENT_BAR.save(false);
             VideoOverlayHider.resolveForTests("video_seek_bar", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:bs2", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:bs2", 0);
             VideoOverlayHider.resolveForTests("videomusiccoverblock", 0);
         }
     }
@@ -2096,7 +2096,7 @@ public class VideoOverlayHiderTest {
     public void aFeedGoneBehindAnOpenedVideoDoesNotPlaceItsProgressBar() {
         resolveCommentBarIds();
         VideoOverlayHider.resolveForTests("video_seek_bar", SEEK_ROW_ID);
-        VideoOverlayHider.resolveForTests("47.7.2:bs2", CAPTION_FRAME_ID);
+        VideoOverlayHider.resolveForTests("47.7.3:bs2", CAPTION_FRAME_ID);
         Settings.HIDE_DETAIL_COMMENT_BAR.save(true);
         try (var detailController = Robolectric.buildActivity(
                 com.ss.android.ugc.aweme.detail.ui.DetailActivity.class).create().start()) {
@@ -2125,7 +2125,7 @@ public class VideoOverlayHiderTest {
         } finally {
             Settings.HIDE_DETAIL_COMMENT_BAR.save(false);
             VideoOverlayHider.resolveForTests("video_seek_bar", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:bs2", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:bs2", 0);
         }
     }
 
@@ -2138,7 +2138,7 @@ public class VideoOverlayHiderTest {
     public void theDiscIsLiftedOverTikToksOwnOffset() {
         resolveCommentBarIds();
         VideoOverlayHider.resolveForTests("video_seek_bar", SEEK_ROW_ID);
-        VideoOverlayHider.resolveForTests("47.7.2:bs2", CAPTION_FRAME_ID);
+        VideoOverlayHider.resolveForTests("47.7.3:bs2", CAPTION_FRAME_ID);
         VideoOverlayHider.resolveForTests("videomusiccoverblock", DISC_ID);
         Settings.HIDE_DETAIL_COMMENT_BAR.save(true);
         try (var detailController = Robolectric.buildActivity(
@@ -2172,7 +2172,7 @@ public class VideoOverlayHiderTest {
         } finally {
             Settings.HIDE_DETAIL_COMMENT_BAR.save(false);
             VideoOverlayHider.resolveForTests("video_seek_bar", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:bs2", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:bs2", 0);
             VideoOverlayHider.resolveForTests("videomusiccoverblock", 0);
         }
     }
@@ -2188,9 +2188,9 @@ public class VideoOverlayHiderTest {
     public void theRailClearsTheRowWhenShareIsItsLowestButton() {
         resolveCommentBarIds();
         VideoOverlayHider.resolveForTests("video_seek_bar", SEEK_ROW_ID);
-        VideoOverlayHider.resolveForTests("47.7.2:bs2", CAPTION_FRAME_ID);
-        VideoOverlayHider.resolveForTests("47.7.2:g_2", 0x7f0a0216);
-        VideoOverlayHider.resolveForTests("47.7.2:wey", 0x7f0a0217);
+        VideoOverlayHider.resolveForTests("47.7.3:bs2", CAPTION_FRAME_ID);
+        VideoOverlayHider.resolveForTests("47.7.3:g_2", 0x7f0a0216);
+        VideoOverlayHider.resolveForTests("47.7.3:wey", 0x7f0a0217);
         Settings.HIDE_DETAIL_COMMENT_BAR.save(true);
         try (var detailController = Robolectric.buildActivity(
                 com.ss.android.ugc.aweme.detail.ui.DetailActivity.class).create().start()) {
@@ -2230,9 +2230,9 @@ public class VideoOverlayHiderTest {
         } finally {
             Settings.HIDE_DETAIL_COMMENT_BAR.save(false);
             VideoOverlayHider.resolveForTests("video_seek_bar", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:bs2", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:g_2", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:wey", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:bs2", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:g_2", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:wey", 0);
         }
     }
 
@@ -2246,10 +2246,10 @@ public class VideoOverlayHiderTest {
     public void theRailClearsTheRowWithTheLikeCountWhenLikeIsItsLowestButton() {
         resolveCommentBarIds();
         VideoOverlayHider.resolveForTests("video_seek_bar", SEEK_ROW_ID);
-        VideoOverlayHider.resolveForTests("47.7.2:bs2", CAPTION_FRAME_ID);
-        VideoOverlayHider.resolveForTests("47.7.2:g_2", 0x7f0a0216);
-        VideoOverlayHider.resolveForTests("47.7.2:wey", 0x7f0a0217);
-        VideoOverlayHider.resolveForTests("47.7.2:g_4", 0x7f0a0218);
+        VideoOverlayHider.resolveForTests("47.7.3:bs2", CAPTION_FRAME_ID);
+        VideoOverlayHider.resolveForTests("47.7.3:g_2", 0x7f0a0216);
+        VideoOverlayHider.resolveForTests("47.7.3:wey", 0x7f0a0217);
+        VideoOverlayHider.resolveForTests("47.7.3:g_4", 0x7f0a0218);
         Settings.HIDE_DETAIL_COMMENT_BAR.save(true);
         try (var detailController = Robolectric.buildActivity(
                 com.ss.android.ugc.aweme.detail.ui.DetailActivity.class).create().start()) {
@@ -2292,10 +2292,10 @@ public class VideoOverlayHiderTest {
         } finally {
             Settings.HIDE_DETAIL_COMMENT_BAR.save(false);
             VideoOverlayHider.resolveForTests("video_seek_bar", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:bs2", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:g_2", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:wey", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:g_4", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:bs2", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:g_2", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:wey", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:g_4", 0);
         }
     }
 
@@ -2310,10 +2310,10 @@ public class VideoOverlayHiderTest {
     public void theRailClearsTheRowWhenTheDiscIsItsLowestButton() {
         resolveCommentBarIds();
         VideoOverlayHider.resolveForTests("video_seek_bar", SEEK_ROW_ID);
-        VideoOverlayHider.resolveForTests("47.7.2:bs2", CAPTION_FRAME_ID);
-        VideoOverlayHider.resolveForTests("47.7.2:g_2", 0x7f0a0216);
-        VideoOverlayHider.resolveForTests("47.7.2:wey", 0x7f0a0217);
-        VideoOverlayHider.resolveForTests("47.7.2:pq_", 0x7f0a0219);
+        VideoOverlayHider.resolveForTests("47.7.3:bs2", CAPTION_FRAME_ID);
+        VideoOverlayHider.resolveForTests("47.7.3:g_2", 0x7f0a0216);
+        VideoOverlayHider.resolveForTests("47.7.3:wey", 0x7f0a0217);
+        VideoOverlayHider.resolveForTests("47.7.3:pq_", 0x7f0a0219);
         Settings.HIDE_DETAIL_COMMENT_BAR.save(true);
         try (var detailController = Robolectric.buildActivity(
                 com.ss.android.ugc.aweme.detail.ui.DetailActivity.class).create().start()) {
@@ -2368,10 +2368,10 @@ public class VideoOverlayHiderTest {
         } finally {
             Settings.HIDE_DETAIL_COMMENT_BAR.save(false);
             VideoOverlayHider.resolveForTests("video_seek_bar", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:bs2", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:g_2", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:wey", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:pq_", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:bs2", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:g_2", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:wey", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:pq_", 0);
         }
     }
 
@@ -2386,9 +2386,9 @@ public class VideoOverlayHiderTest {
     @Test
     public void theMessageBarGoesWithTheCommentBarOnAFriendsVideo() {
         resolveCommentBarIds();
-        VideoOverlayHider.resolveForTests("47.7.2:l00", MESSAGE_BAR_ID);
+        VideoOverlayHider.resolveForTests("47.7.3:l00", MESSAGE_BAR_ID);
         VideoOverlayHider.resolveForTests("video_seek_bar", SEEK_ROW_ID);
-        VideoOverlayHider.resolveForTests("47.7.2:bs2", CAPTION_FRAME_ID);
+        VideoOverlayHider.resolveForTests("47.7.3:bs2", CAPTION_FRAME_ID);
         Settings.HIDE_DETAIL_COMMENT_BAR.save(true);
         try (var detailController = Robolectric.buildActivity(
                 com.ss.android.ugc.aweme.detail.ui.DetailActivity.class).create().start()) {
@@ -2418,9 +2418,9 @@ public class VideoOverlayHiderTest {
             assertEquals(View.VISIBLE, views[2].getVisibility());
         } finally {
             Settings.HIDE_DETAIL_COMMENT_BAR.save(false);
-            VideoOverlayHider.resolveForTests("47.7.2:l00", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:l00", 0);
             VideoOverlayHider.resolveForTests("video_seek_bar", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:bs2", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:bs2", 0);
         }
     }
 
@@ -2436,9 +2436,9 @@ public class VideoOverlayHiderTest {
     @Test
     public void theStripStaysUnderTheUseSoundBar() {
         resolveCommentBarIds();
-        VideoOverlayHider.resolveForTests("47.7.2:cjc", SOUND_BAR_ID);
+        VideoOverlayHider.resolveForTests("47.7.3:cjc", SOUND_BAR_ID);
         VideoOverlayHider.resolveForTests("video_seek_bar", SEEK_ROW_ID);
-        VideoOverlayHider.resolveForTests("47.7.2:bs2", CAPTION_FRAME_ID);
+        VideoOverlayHider.resolveForTests("47.7.3:bs2", CAPTION_FRAME_ID);
         Settings.HIDE_DETAIL_COMMENT_BAR.save(true);
         HookStatus.clear();
         try (var detailController = Robolectric.buildActivity(
@@ -2460,7 +2460,7 @@ public class VideoOverlayHiderTest {
             assertEquals(View.VISIBLE, soundBar.getVisibility());
             assertEquals("the progress bar moved under a bar that stayed", 0f, views[1].getTranslationY(), 0f);
             assertTrue("a sound's page called the comment bar missing: " + HookStatus.missing("overlay"),
-                    HookStatus.missing("overlay").stream().noneMatch(line -> line.contains("47.7.2:qqp")));
+                    HookStatus.missing("overlay").stream().noneMatch(line -> line.contains("47.7.3:qqp")));
 
             // TikTok puts the bar away: a photo with no bar of either kind loses its strip.
             soundBar.setVisibility(View.GONE);
@@ -2469,9 +2469,9 @@ public class VideoOverlayHiderTest {
         } finally {
             Settings.HIDE_DETAIL_COMMENT_BAR.save(false);
             HookStatus.clear();
-            VideoOverlayHider.resolveForTests("47.7.2:cjc", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:cjc", 0);
             VideoOverlayHider.resolveForTests("video_seek_bar", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:bs2", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:bs2", 0);
         }
     }
 
@@ -2485,7 +2485,7 @@ public class VideoOverlayHiderTest {
     public void theDiscClearsTheRowOverAShortCaption() {
         resolveCommentBarIds();
         VideoOverlayHider.resolveForTests("video_seek_bar", SEEK_ROW_ID);
-        VideoOverlayHider.resolveForTests("47.7.2:bs2", CAPTION_FRAME_ID);
+        VideoOverlayHider.resolveForTests("47.7.3:bs2", CAPTION_FRAME_ID);
         VideoOverlayHider.resolveForTests("videomusiccoverblock", DISC_ID);
         Settings.HIDE_DETAIL_COMMENT_BAR.save(true);
         try (var detailController = Robolectric.buildActivity(
@@ -2512,7 +2512,7 @@ public class VideoOverlayHiderTest {
         } finally {
             Settings.HIDE_DETAIL_COMMENT_BAR.save(false);
             VideoOverlayHider.resolveForTests("video_seek_bar", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:bs2", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:bs2", 0);
             VideoOverlayHider.resolveForTests("videomusiccoverblock", 0);
         }
     }
@@ -2525,7 +2525,7 @@ public class VideoOverlayHiderTest {
     public void theCaptionStaysDownWithNoProgressBarOnScreen() {
         resolveCommentBarIds();
         VideoOverlayHider.resolveForTests("video_seek_bar", SEEK_ROW_ID);
-        VideoOverlayHider.resolveForTests("47.7.2:bs2", CAPTION_FRAME_ID);
+        VideoOverlayHider.resolveForTests("47.7.3:bs2", CAPTION_FRAME_ID);
         Settings.HIDE_DETAIL_COMMENT_BAR.save(true);
         try (var detailController = Robolectric.buildActivity(
                 com.ss.android.ugc.aweme.detail.ui.DetailActivity.class).create().start()) {
@@ -2543,7 +2543,7 @@ public class VideoOverlayHiderTest {
         } finally {
             Settings.HIDE_DETAIL_COMMENT_BAR.save(false);
             VideoOverlayHider.resolveForTests("video_seek_bar", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:bs2", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:bs2", 0);
         }
     }
 
@@ -2562,13 +2562,13 @@ public class VideoOverlayHiderTest {
             main.get().setContentView(pagerColumn(main.get(), new View(main.get())));
             VideoOverlayHider.applyTo(main.get());
             assertTrue("the main feed called the comment bar missing: " + HookStatus.missing("overlay"),
-                    HookStatus.missing("overlay").stream().noneMatch(line -> line.contains("47.7.2:qqp")));
+                    HookStatus.missing("overlay").stream().noneMatch(line -> line.contains("47.7.3:qqp")));
 
             Activity detail = detailController.get();
             detail.setContentView(pagerColumn(detail, new View(detail)));
             VideoOverlayHider.applyTo(detail);
             assertTrue("an opened video without the bar went unreported",
-                    HookStatus.missing("overlay").stream().anyMatch(line -> line.contains("47.7.2:qqp")));
+                    HookStatus.missing("overlay").stream().anyMatch(line -> line.contains("47.7.3:qqp")));
         } finally {
             Settings.HIDE_DETAIL_COMMENT_BAR.save(false);
             HookStatus.clear();
@@ -2584,7 +2584,7 @@ public class VideoOverlayHiderTest {
     public void theProgressBarComesDownOnlyToACaptionThatEndsHigher() {
         resolveCommentBarIds();
         VideoOverlayHider.resolveForTests("video_seek_bar", SEEK_ROW_ID);
-        VideoOverlayHider.resolveForTests("47.7.2:bs2", CAPTION_FRAME_ID);
+        VideoOverlayHider.resolveForTests("47.7.3:bs2", CAPTION_FRAME_ID);
         Settings.HIDE_DETAIL_COMMENT_BAR.save(true);
         try (var detailController = Robolectric.buildActivity(
                 com.ss.android.ugc.aweme.detail.ui.DetailActivity.class).create().start()) {
@@ -2609,7 +2609,7 @@ public class VideoOverlayHiderTest {
         } finally {
             Settings.HIDE_DETAIL_COMMENT_BAR.save(false);
             VideoOverlayHider.resolveForTests("video_seek_bar", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:bs2", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:bs2", 0);
         }
     }
 
@@ -2708,7 +2708,7 @@ public class VideoOverlayHiderTest {
         int cellId = 0x7f0a0c71;
         int anchorId = 0x7f0a0c72;
         VideoOverlayHider.resolveForTests("view_rootview", cellId);
-        VideoOverlayHider.resolveForTests("47.7.2:bs2", anchorId);
+        VideoOverlayHider.resolveForTests("47.7.3:bs2", anchorId);
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
             Activity activity = controller.get();
             Utils.setContext(activity);
@@ -2758,7 +2758,7 @@ public class VideoOverlayHiderTest {
     @Test
     public void halfTheCommentBarIsNeverHidden() {
         resolveCommentBarIds();
-        VideoOverlayHider.resolveForTests("47.7.2:qqp", 0);
+        VideoOverlayHider.resolveForTests("47.7.3:qqp", 0);
         Settings.HIDE_DETAIL_COMMENT_BAR.save(true);
         try (var noBar = Robolectric.buildActivity(
                      com.ss.android.ugc.aweme.detail.ui.DetailActivity.class).create().start();
@@ -2871,8 +2871,8 @@ public class VideoOverlayHiderTest {
         int exitId = 0x7f0a0c01;
         int playbackId = 0x7f0a0c02;
         int seekBarId = 0x7f0a0c03;
-        VideoOverlayHider.resolveForTests("47.7.2:e_k", exitId);
-        VideoOverlayHider.resolveForTests("47.7.2:l7j", playbackId);
+        VideoOverlayHider.resolveForTests("47.7.3:e_k", exitId);
+        VideoOverlayHider.resolveForTests("47.7.3:l7j", playbackId);
         VideoOverlayHider.resolveForTests("video_seek_bar", seekBarId);
         Settings.HIDE_CLEAR_DISPLAY_CONTROLS.save(true);
         try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
@@ -2950,8 +2950,8 @@ public class VideoOverlayHiderTest {
         int exitId = 0x7f0a0c01;
         int playbackId = 0x7f0a0c02;
         int seekBarId = 0x7f0a0c03;
-        VideoOverlayHider.resolveForTests("47.7.2:e_k", exitId);
-        VideoOverlayHider.resolveForTests("47.7.2:l7j", playbackId);
+        VideoOverlayHider.resolveForTests("47.7.3:e_k", exitId);
+        VideoOverlayHider.resolveForTests("47.7.3:l7j", playbackId);
         VideoOverlayHider.resolveForTests("video_seek_bar", seekBarId);
         Settings.HIDE_CLEAR_DISPLAY_CONTROLS.save(true);
         Settings.KEEP_CLEAR_DISPLAY_SEEK_BAR.save(true);
@@ -2999,8 +2999,8 @@ public class VideoOverlayHiderTest {
     public void theLoadingLineGoesWithTheClearDisplayControls() {
         int exitId = 0x7f0a0c11;
         int lineId = 0x7f0a0c12;
-        VideoOverlayHider.resolveForTests("47.7.2:e_k", exitId);
-        VideoOverlayHider.resolveForTests("47.7.2:ngb", lineId);
+        VideoOverlayHider.resolveForTests("47.7.3:e_k", exitId);
+        VideoOverlayHider.resolveForTests("47.7.3:ngb", lineId);
         Settings.HIDE_CLEAR_DISPLAY_CONTROLS.save(true);
         try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
             Activity activity = controller.get();
@@ -3057,7 +3057,7 @@ public class VideoOverlayHiderTest {
     @Test
     public void aPhotoPostsClearDisplayCloseButtonGoesToo() {
         int photoExitId = 0x7f0a0c04;
-        VideoOverlayHider.resolveForTests("47.7.2:v3b", photoExitId);
+        VideoOverlayHider.resolveForTests("47.7.3:v3b", photoExitId);
         VideoOverlayHider.resolveForTests("view_rootview", CELL_ID);
         Settings.HIDE_CLEAR_DISPLAY_CONTROLS.save(true);
         try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
@@ -3154,7 +3154,7 @@ public class VideoOverlayHiderTest {
     @Test
     public void theBlankAboveTheVideoGoesWithTheStatusBar() {
         int spacerId = 0x7f0a0c11;
-        VideoOverlayHider.resolveForTests("47.7.2:dvu", spacerId);
+        VideoOverlayHider.resolveForTests("47.7.3:dvu", spacerId);
         VideoOverlayHider.resolveForTests("view_rootview", CELL_ID);
         Settings.HIDE_STATUS_BAR.save(true);
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
@@ -3213,14 +3213,14 @@ public class VideoOverlayHiderTest {
 
     private static void resolveFadeIds() {
         VideoOverlayHider.resolveForTests("view_rootview", FADE_CELL_ID);
-        VideoOverlayHider.resolveForTests("47.7.2:lkj", FADE_COLUMN_ID);
-        VideoOverlayHider.resolveForTests("47.7.2:v1f", FADE_TABS_ID);
+        VideoOverlayHider.resolveForTests("47.7.3:lkj", FADE_COLUMN_ID);
+        VideoOverlayHider.resolveForTests("47.7.3:v1f", FADE_TABS_ID);
     }
 
     private static void clearFadeIds() {
         VideoOverlayHider.resolveForTests("view_rootview", 0);
-        VideoOverlayHider.resolveForTests("47.7.2:lkj", 0);
-        VideoOverlayHider.resolveForTests("47.7.2:v1f", 0);
+        VideoOverlayHider.resolveForTests("47.7.3:lkj", 0);
+        VideoOverlayHider.resolveForTests("47.7.3:v1f", 0);
     }
 
     @Test
@@ -3285,8 +3285,8 @@ public class VideoOverlayHiderTest {
     public void theCaptionFrameAndMusicDiscFadeBesideTheColumn() {
         int column471 = 0x7f0a0d11, frame471 = 0x7f0a0d12, disc = 0x7f0a0d13;
         resolveFadeIds();
-        VideoOverlayHider.resolveForTests("47.7.2:lkj", column471);
-        VideoOverlayHider.resolveForTests("47.7.2:bs2", frame471);
+        VideoOverlayHider.resolveForTests("47.7.3:lkj", column471);
+        VideoOverlayHider.resolveForTests("47.7.3:bs2", frame471);
         VideoOverlayHider.resolveForTests("videomusiccoverblock", disc);
         boolean overlays = app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled;
         app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = true;
@@ -3333,8 +3333,8 @@ public class VideoOverlayHiderTest {
             Settings.FADE_CONTROLS_OPACITY.save(100);
             app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = overlays;
             clearFadeIds();
-            VideoOverlayHider.resolveForTests("47.7.2:lkj", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:bs2", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:lkj", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:bs2", 0);
             VideoOverlayHider.resolveForTests("videomusiccoverblock", 0);
         }
     }
@@ -3349,7 +3349,7 @@ public class VideoOverlayHiderTest {
     public void theSearchBarUnderTheCaptionFadesAndLeavesWithClearDisplay() {
         int barId = 0x7f0a0d15;
         resolveFadeIds();
-        VideoOverlayHider.resolveForTests("47.7.2:lk8", barId);
+        VideoOverlayHider.resolveForTests("47.7.3:lk8", barId);
         boolean overlays = app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled;
         app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = true;
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
@@ -3395,7 +3395,7 @@ public class VideoOverlayHiderTest {
             Settings.FADE_CONTROLS_OPACITY.save(100);
             app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = overlays;
             clearFadeIds();
-            VideoOverlayHider.resolveForTests("47.7.2:lk8", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:lk8", 0);
         }
     }
 
@@ -3408,7 +3408,7 @@ public class VideoOverlayHiderTest {
     public void theFadeComesBackOnTheNextFrameAfterTikTokWritesItsOwnOpacity() {
         int barId = 0x7f0a0d16;
         resolveFadeIds();
-        VideoOverlayHider.resolveForTests("47.7.2:lk8", barId);
+        VideoOverlayHider.resolveForTests("47.7.3:lk8", barId);
         boolean overlays = app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled;
         app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = true;
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
@@ -3447,7 +3447,7 @@ public class VideoOverlayHiderTest {
             Settings.FADE_CONTROLS_OPACITY.save(100);
             app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = overlays;
             clearFadeIds();
-            VideoOverlayHider.resolveForTests("47.7.2:lk8", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:lk8", 0);
         }
     }
 
@@ -3599,8 +3599,8 @@ public class VideoOverlayHiderTest {
     public void theSearchBarAcrossTheTopOfAnOpenedVideoFades() {
         int barId = 0x7f0a0e02;
         int scrimId = 0x7f0a0e03;
-        VideoOverlayHider.resolveForTests("47.7.2:j3q", barId);
-        VideoOverlayHider.resolveForTests("47.7.2:g78", scrimId);
+        VideoOverlayHider.resolveForTests("47.7.3:j3q", barId);
+        VideoOverlayHider.resolveForTests("47.7.3:g78", scrimId);
         boolean overlays = app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled;
         app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = true;
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
@@ -3648,8 +3648,8 @@ public class VideoOverlayHiderTest {
             Settings.CLEAR_DISPLAY.save(false);
             Settings.FADE_CONTROLS_OPACITY.save(100);
             app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = overlays;
-            VideoOverlayHider.resolveForTests("47.7.2:j3q", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:g78", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:j3q", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:g78", 0);
         }
     }
 
@@ -3663,8 +3663,8 @@ public class VideoOverlayHiderTest {
     public void theTopBarOfAnOpenedVideoWaitsForItsClear() {
         int barId = 0x7f0a0e22;
         int scrimId = 0x7f0a0e23;
-        VideoOverlayHider.resolveForTests("47.7.2:j3q", barId);
-        VideoOverlayHider.resolveForTests("47.7.2:g78", scrimId);
+        VideoOverlayHider.resolveForTests("47.7.3:j3q", barId);
+        VideoOverlayHider.resolveForTests("47.7.3:g78", scrimId);
         boolean overlays = app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled;
         boolean automatic = app.morphe.extension.tiktok.settings.SettingsStatus.automaticClearDisplayEnabled;
         app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = true;
@@ -3703,8 +3703,8 @@ public class VideoOverlayHiderTest {
             Settings.AUTOMATIC_CLEAR_DISPLAY_DELAY.save(1000);
             app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = overlays;
             app.morphe.extension.tiktok.settings.SettingsStatus.automaticClearDisplayEnabled = automatic;
-            VideoOverlayHider.resolveForTests("47.7.2:j3q", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:g78", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:j3q", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:g78", 0);
         }
     }
 
@@ -3718,8 +3718,8 @@ public class VideoOverlayHiderTest {
     public void theSearchBoxAtTheTopOfAnOpenedVideoHidesAndComesBack() {
         int barId = 0x7f0a0e12;
         int boxId = 0x7f0a0e13;
-        VideoOverlayHider.resolveForTests("47.7.2:j3q", barId);
-        VideoOverlayHider.resolveForTests("47.7.2:oa4", boxId);
+        VideoOverlayHider.resolveForTests("47.7.3:j3q", barId);
+        VideoOverlayHider.resolveForTests("47.7.3:oa4", boxId);
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
             Activity activity = controller.get();
             Utils.setContext(activity);
@@ -3767,8 +3767,8 @@ public class VideoOverlayHiderTest {
         } finally {
             Settings.HIDE_FEED_SEARCH_BUTTON.resetToDefault();
             Settings.HIDE_OPENED_VIDEO_SEARCH.resetToDefault();
-            VideoOverlayHider.resolveForTests("47.7.2:j3q", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:oa4", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:j3q", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:oa4", 0);
         }
     }
 
@@ -3782,9 +3782,9 @@ public class VideoOverlayHiderTest {
         int barId = 0x7f0a0e12;
         int boxId = 0x7f0a0e13;
         int backId = 0x7f0a0e14;
-        VideoOverlayHider.resolveForTests("47.7.2:j3q", barId);
-        VideoOverlayHider.resolveForTests("47.7.2:oa4", boxId);
-        VideoOverlayHider.resolveForTests("47.7.2:btm", backId);
+        VideoOverlayHider.resolveForTests("47.7.3:j3q", barId);
+        VideoOverlayHider.resolveForTests("47.7.3:oa4", boxId);
+        VideoOverlayHider.resolveForTests("47.7.3:btm", backId);
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
             Activity activity = controller.get();
             Utils.setContext(activity);
@@ -3832,9 +3832,9 @@ public class VideoOverlayHiderTest {
             Settings.HIDE_FEED_SEARCH_BUTTON.resetToDefault();
             Settings.HIDE_OPENED_VIDEO_SEARCH.resetToDefault();
             Settings.HIDE_OPENED_VIDEO_BACK.resetToDefault();
-            VideoOverlayHider.resolveForTests("47.7.2:j3q", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:oa4", 0);
-            VideoOverlayHider.resolveForTests("47.7.2:btm", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:j3q", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:oa4", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:btm", 0);
         }
     }
 
@@ -3958,7 +3958,7 @@ public class VideoOverlayHiderTest {
     @Test
     public void theFollowingStoriesPillFadesWithTheTabs() {
         int storyId = 0x7f0a0e04;
-        VideoOverlayHider.resolveForTests("47.7.2:wwp", storyId);
+        VideoOverlayHider.resolveForTests("47.7.3:wwp", storyId);
         boolean overlays = app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled;
         app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = true;
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
@@ -3996,7 +3996,7 @@ public class VideoOverlayHiderTest {
             Settings.CLEAR_DISPLAY.save(false);
             Settings.FADE_CONTROLS_OPACITY.save(100);
             app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = overlays;
-            VideoOverlayHider.resolveForTests("47.7.2:wwp", 0);
+            VideoOverlayHider.resolveForTests("47.7.3:wwp", 0);
         }
     }
 
@@ -4052,7 +4052,7 @@ public class VideoOverlayHiderTest {
      */
     @Test
     public void theCandidateTableIsKeptAcrossPassesUntilAnIdChanges() {
-        BuildNames.setRunningBuildForTests("47.7.2");
+        BuildNames.setRunningBuildForTests("47.7.3");
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
             Activity activity = controller.get();
             VideoOverlayHider.resolveForTests("desc", 0x7f0a1001);

@@ -30,8 +30,8 @@ import org.junit.Test
  * registers, nine of them locals, so p1 is v10 and iget-object names it directly.
  */
 class ShareSurfaceHookTest {
-    private val model = "LX/0oVo;"
-    private val builder = "LX/0tmx;"
+    private val model = "LX/0nHe;"
+    private val builder = "LX/0sfD;"
     private val field = "$builder->LJJIIJ:Lcom/ss/android/ugc/aweme/share/base/model/BaseSharePackage;"
 
     @Test

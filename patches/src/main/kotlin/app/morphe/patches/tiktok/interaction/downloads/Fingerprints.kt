@@ -216,7 +216,7 @@ internal object StickerPreviewSourceFingerprint : Fingerprint(
     ),
     // The parameter list names StickerItem, which TikTok does not rename, and no other method
     // shares it. The class was `LX/0UL9;` on 46.2.3, `LX/0WU6;` and `LX/0m0M;` on the two builds
-    // after, and is `LX/0MGA;->LJI` on 47.7.2, which added the Function2 and the Long at the end
+    // after, and is `LX/0MG8;->LJI` on 47.7.3. 47.7.2 added the Function2 and the Long at the end
     // (the patcher matches the whole list, so the old nine took nothing there). What is left is
     // that it calls the preview bind, by that bind's shape rather than by its name.
     //

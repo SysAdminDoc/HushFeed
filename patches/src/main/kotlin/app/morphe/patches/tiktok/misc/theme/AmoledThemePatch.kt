@@ -154,12 +154,12 @@ internal fun renamedPathCollisions(
  * (47.4.3 added two), and an older build's names there are an accent and see-through white
  * overlays, which the patch painted black until this was read off the fixture (AmoledPaletteTest
  * holds every fixture's block to its entry here). Only the declared build is listed, so a build
- * the bundle moves to needs its own entry read off its fixture. 47.7.2's sit at a2c to a2p, well
+ * the bundle moves to needs its own entry read off its fixture. 47.7.3's sit at a2c to a2p, well
  * short of 47.6.3's a3w to a49, so a shift by one would have painted other colors. The block's pure
  * black is a token of its own and stays.
  */
 internal val DARK_BACKGROUND_COLORS: Map<String, Set<String>> = linkedMapOf(
-    "47.7.2" to setOf("a2c", "a2e", "a2f", "a2h", "a2p"),
+    "47.7.3" to setOf("a2c", "a2e", "a2f", "a2h", "a2p"),
 )
 
 /** This build's background grays, or a refusal: a name carried over from another build is a guess. */
@@ -181,7 +181,7 @@ internal fun declaredVersions(): Set<String> =
 
 /**
  * The dark style literals behind TikTok's sheets and pages per build, named by TikTok's own token
- * table (AmoledSheetTokensTest). On 47.7.2:
+ * table (AmoledSheetTokensTest). On 47.7.3:
  * - aif is UISheetFlat1's dark value (attr/a26), the fill of the comment panel, the share sheet
  *   and TikTok's other sheets, panels and modals.
  * - ail is UISheetGrouped1's (attr/a2b), the fill of the feed's long-press panel and the other
@@ -205,7 +205,7 @@ internal fun declaredVersions(): Set<String> =
  * another surface tier, which is why only a build whose names were read is patched.
  */
 internal val SURFACE_STYLE_ITEMS: Map<String, Set<String>> = linkedMapOf(
-    "47.7.2" to setOf("agp", "c3", "aif", "ail", "ain", "bx", "ags", "agk", "agl", "agm", "agq", "agr"),
+    "47.7.3" to setOf("agp", "c3", "aif", "ail", "ain", "bx", "ags", "agk", "agl", "agm", "agq", "agr"),
 )
 
 /** This build's surface style items, or a refusal like the palette's. */

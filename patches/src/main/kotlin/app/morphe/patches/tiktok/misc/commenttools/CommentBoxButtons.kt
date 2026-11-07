@@ -168,7 +168,7 @@ internal fun commentBoxButtonFields(
 /**
  * The code the listener created at [created] runs when its button is tapped. R8 merges small
  * listeners into one class that keeps a number per instance in `$t` and switches on it to reach
- * each one's own body (47.7.2's row over the keyboard puts the photo button and an input panel
+ * each one's own body (47.7.3's row over the keyboard puts the photo button and an input panel
  * toggle in one such class). For those, only the body the constructor's number reaches is this
  * listener, followed through the switch like a merged lambda group; the whole class would show
  * every merged button's marks at once. An ordinary listener class is all its own.

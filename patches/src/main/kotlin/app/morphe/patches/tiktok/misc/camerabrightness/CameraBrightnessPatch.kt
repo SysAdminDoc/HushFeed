@@ -112,7 +112,7 @@ internal object FrontFlashSceneFingerprint : Fingerprint(
 )
 
 /**
- * The screen flash behind a camera's flash button (`LX/1UoG;->gp(Z)V`), which then fades its
+ * The screen flash behind a camera's flash button (`LX/1XZD;->gp(Z)V`), which then fades its
  * white overlay in with an alpha animator.
  */
 internal object ScreenFlashOnFingerprint : Fingerprint(
@@ -133,7 +133,7 @@ internal object TakoFlashOnFingerprint : Fingerprint(
 )
 
 /**
- * The avatar camera's flash (`LX/0dGY;->LIZIZ(...)Ljava/lang/Object;`, a suspend function). It
+ * The avatar camera's flash (`LX/0dLv;->LIZIZ(...)Ljava/lang/Object;`, a suspend function). It
  * stores the brighter of the phone's brightness setting and its own config value, not a plain
  * 1.0, so it's told by the int-to-float of that setting before the store and its alpha fade.
  */

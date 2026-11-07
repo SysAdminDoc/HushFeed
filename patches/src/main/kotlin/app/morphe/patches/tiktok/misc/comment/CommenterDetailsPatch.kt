@@ -347,7 +347,7 @@ internal fun Method.replyLabelSite(): ReplyLabelSite {
  * own [getter] just answered, then the first `TextView.setText(CharSequence)` after it. The hook
  * runs right after that write and asks the getter again, into a local nothing reads from there on,
  * so it gets the comment the time was read from without needing a register to hold it across the
- * write: 47.7.2 reuses the comment's register for a flag and a Context before its second layout's
+ * write: 47.7.3 reuses the comment's register for a flag and a Context before its second layout's
  * write. That getter call has to sit on every path to the write, the cell (p0) is never written,
  * and the write has to fall through to the hook. A jump straight to the instruction after the
  * write skips the hook, which is the cell's own path for a missing time view.

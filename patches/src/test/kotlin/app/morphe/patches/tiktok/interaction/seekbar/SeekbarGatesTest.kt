@@ -35,8 +35,8 @@ class SeekbarGatesTest {
         )).apply { addInstructionsWithLabels(0, smali) }
 
     /** The reasons method, two checks of the shape TikTok writes: call, move-result, branch, log line. */
-    private fun reasons(dragOwner: String = "LX/06r8;", inverseCall: String = "invoke-static {p1}, LX/0PJZ;->LIZ($AWEME)Z") =
-        method("LX/07xh;", "LJII", listOf(AWEME), "Z", 4, """
+    private fun reasons(dragOwner: String = "LX/06rC;", inverseCall: String = "invoke-static {p1}, LX/0PJX;->LIZ($AWEME)Z") =
+        method("LX/07xl;", "LJII", listOf(AWEME), "Z", 4, """
             invoke-static {p1}, $dragOwner->LIZIZ($AWEME)Z
             move-result v0
             if-nez v0, :draggable
@@ -56,8 +56,8 @@ class SeekbarGatesTest {
         """)
 
     /** The mask reason as 47.4.3 writes it: the shared check, its result, and an if-eqz past the line. */
-    private fun maskedReasons(branch: String = "if-eqz") = method("LX/087x;", "LJI", listOf(AWEME), "Z", 7, """
-        invoke-static {p0}, LX/0ASl;->LJIIJJI($AWEME)Z
+    private fun maskedReasons(branch: String = "if-eqz") = method("LX/0881;", "LJI", listOf(AWEME), "Z", 7, """
+        invoke-static {p0}, LX/0ASo;->LJIIJJI($AWEME)Z
         move-result v0
         $branch v0, :unmasked
         const-string v0, "$VIDEO_MASK_LOG"
@@ -77,7 +77,7 @@ class SeekbarGatesTest {
 
         val after = reasons.implementation!!.instructions.toList()
         assertEquals(before.size + 2, after.size)
-        assertEquals("LX/0ASl;", after[0].getReference<MethodReference>()!!.definingClass)
+        assertEquals("LX/0ASo;", after[0].getReference<MethodReference>()!!.definingClass)
         assertEquals(Opcode.MOVE_RESULT, after[1].opcode)
         val call = after[2]
         assertEquals(Opcode.INVOKE_STATIC_RANGE, call.opcode)
@@ -101,10 +101,10 @@ class SeekbarGatesTest {
     fun `each log line names the static (Aweme)Z call above it`() {
         val reasons = reasons()
         val inverse = reasons.gateBefore(INVERSE_EXPERIMENT_LOG)
-        assertEquals("LX/0PJZ;", inverse.definingClass)
+        assertEquals("LX/0PJX;", inverse.definingClass)
         assertEquals("LIZ", inverse.name)
         val drag = reasons.gateBefore(CANNOT_DRAG_LOG)
-        assertEquals("LX/06r8;", drag.definingClass)
+        assertEquals("LX/06rC;", drag.definingClass)
         assertEquals("LIZIZ", drag.name)
     }
 
@@ -112,13 +112,13 @@ class SeekbarGatesTest {
     fun `a missing line and a call of another shape are refused by name`() {
         assertThrows(PatchException::class.java) { reasons().gateBefore("can not show seekbar, state: 9, no such line") }
         // The call above the inverse line takes a String: not the video's gate.
-        val other = reasons(inverseCall = "invoke-static {p1}, LX/0PJZ;->LIZ(Ljava/lang/String;)Z")
+        val other = reasons(inverseCall = "invoke-static {p1}, LX/0PJX;->LIZ(Ljava/lang/String;)Z")
         assertThrows(PatchException::class.java) { other.gateBefore(INVERSE_EXPERIMENT_LOG) }
     }
 
     @Test
     fun `the inverse gate is answered at its entry and the host's own body is kept behind the switch`() {
-        val gate = method("LX/0PJZ;", "LIZ", listOf(AWEME), "Z", 3, """
+        val gate = method("LX/0PJX;", "LIZ", listOf(AWEME), "Z", 3, """
             iget-boolean v0, p0, $AWEME->isPaidContent:Z
             return v0
         """)
@@ -142,7 +142,7 @@ class SeekbarGatesTest {
 
     @Test
     fun `the draggable flag is wrapped right after its read and nothing else in the gate moves`() {
-        val gate = method("LX/06r8;", "LIZIZ", listOf(AWEME), "Z", 4, """
+        val gate = method("LX/06rC;", "LIZIZ", listOf(AWEME), "Z", 4, """
             invoke-virtual {p0}, $AWEME->getAwemeRawAd()Ljava/lang/Object;
             move-result-object v0
             if-eqz v0, :organic
@@ -183,14 +183,14 @@ class SeekbarGatesTest {
 
     @Test
     fun `a gate without the flag is left alone and reported, two reads are refused`() {
-        val flagless = method("LX/06r8;", "LIZIZ", listOf(AWEME), "Z", 2, """
+        val flagless = method("LX/06rC;", "LIZIZ", listOf(AWEME), "Z", 2, """
             const/4 v0, 0x1
             return v0
         """)
         assertFalse(flagless.answerDraggable())
         assertEquals(2, flagless.implementation!!.instructions.count())
 
-        val twice = method("LX/06r8;", "LIZIZ", listOf(AWEME), "Z", 3, """
+        val twice = method("LX/06rC;", "LIZIZ", listOf(AWEME), "Z", 3, """
             invoke-virtual {p0}, $AWEME->getVideoControl()$VIDEO_CONTROL
             move-result-object v1
             iget v0, v1, $VIDEO_CONTROL->draftProgressBar:I

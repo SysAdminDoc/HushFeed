@@ -18,8 +18,8 @@ import org.junit.Assert.assertThrows
 import org.junit.Test
 
 private const val AWEME = "Lcom/ss/android/ugc/aweme/feed/model/Aweme;"
-private const val SEEKBAR = "LX/087M;"
-private const val LOADER = "LX/0Gqj;"
+private const val SEEKBAR = "LX/087Q;"
+private const val LOADER = "LX/0Gqh;"
 private const val EXTENSION = "Lapp/morphe/extension/tiktok/seekbar/SeekbarPatch;"
 
 /** How the seek bar's preview check is told apart from its other boolean getters, on 47.1.4's shapes. */
@@ -51,7 +51,7 @@ class SeekbarPreviewTest {
         iget-object v0, p0, $SEEKBAR->LLLLII:$LOADER
         const/4 v1, 0x1
         if-eqz v0, :done
-        invoke-virtual {v0}, LX/0Gqh;->LIZ()Z
+        invoke-virtual {v0}, LX/0Gqf;->LIZ()Z
         move-result v0
         if-ne v0, v1, :done
         const/4 v2, 0x1
@@ -66,7 +66,7 @@ class SeekbarPreviewTest {
     private val decoys = listOf(
         getter("LJIILJJIL", 2, """
             iget-object v0, p0, $SEEKBAR->LLLLII:$LOADER
-            invoke-virtual {v0}, LX/0Gqh;->LIZ()Z
+            invoke-virtual {v0}, LX/0Gqf;->LIZ()Z
             move-result v0
             invoke-virtual {p0}, $SEEKBAR->LJII()Z
             return v0

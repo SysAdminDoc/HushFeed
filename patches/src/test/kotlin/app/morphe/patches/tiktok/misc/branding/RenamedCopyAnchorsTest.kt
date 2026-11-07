@@ -168,7 +168,7 @@ class RenamedCopyAnchorsTest {
         )))
         assertEquals("an installed-app check", emptyList<Int>(), storePackageChecks(check(
             call = ImmutableInstruction35c(Opcode.INVOKE_STATIC, 2, 1, 0, 0, 0, 0,
-                ImmutableMethodReference("LX/0ILb;", "LIZ", listOf("Landroid/content/Context;", STRING), "Z")),
+                ImmutableMethodReference("LX/0ILZ;", "LIZ", listOf("Landroid/content/Context;", STRING), "Z")),
         )))
         assertEquals("a method that answers text", emptyList<Int>(), storePackageChecks(check(
             call = ImmutableInstruction35c(Opcode.INVOKE_STATIC, 3, 1, 0, 2, 0, 0,

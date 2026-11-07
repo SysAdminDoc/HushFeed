@@ -35,7 +35,7 @@ internal object FeedEnginePlayFingerprint : Fingerprint(
 
 /**
  * The engine's setIsMute, by its log line (47.0.3 `LX/04ko;->LJI(Z)V`, 47.1.3
- * `LX/06hz;->LJII(Z)V`). The one to call is TTVideoEngine's public forwarder to it.
+ * `LX/06i3;->LJII(Z)V`). The one to call is TTVideoEngine's public forwarder to it.
  */
 internal object EngineSetIsMuteFingerprint : Fingerprint(
     returnType = "V",

@@ -22,7 +22,7 @@ import app.morphe.patches.tiktok.shared.valueIn
  * Every entry point below is named by a class and a method TikTok wrote. What was written here
  * as well is the callback each one hands the request to, and that class is renamed by every
  * build: the browsing callback was `LX/13fZ;` on 46.2.3 and is `LX/12ib;` on 46.8.3, the LIVE one
- * `LX/1QK4;` and `LX/1Msq;`, the Turing one `LX/0Ytn;` and `LX/12jk;`. Its own method names have
+ * `LX/1HJh;` and `LX/15Gb;`, the Turing one `LX/0pBY;` and `LX/16oJ;`. Its own method names have
  * not moved, so the type comes off the match and only the method name stays written down, checked
  * against the class before anything is assembled against it.
  */
@@ -100,7 +100,7 @@ private const val SEC_DISMISS = "LIZJ"
  * nothing and fail on a phone.
  *
  * <p>The invoke kind comes from what the callback is rather than being written down beside it.
- * These types change kind between builds: the name `LX/1QK4;` is the LIVE callback interface on
+ * These types change kind between builds: the name `LX/1HJh;` is the LIVE callback interface on
  * 46.2.3 and an unrelated final class on the two builds since, and invoke-interface against a
  * class is the same class-load failure the name check exists to prevent.
  */

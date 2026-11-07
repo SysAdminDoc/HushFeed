@@ -27,10 +27,10 @@ import org.junit.Test
 class FeedTextContractsTest {
     private val model = "Lcom/example/Description;"
     private val holder = "Lcom/example/Layouts;"
-    // 47.7.2's shapes: the factory and its cached dispatch both take (I, Aweme, paragraph, Z, Z, Z).
+    // 47.7.3's shapes: the factory and its cached dispatch both take (I, Aweme, paragraph, Z, Z, Z).
     private val parameters = listOf("I", AWEME, model, "Z", "Z", "Z")
     private val factory: Method = method("factory", 40, parameters, holder, "const/4 v0, 0x0\nreturn-object v0")
-    // The native argument shuffle into v0..v6 right before the uncached call, as 47.7.2 compiles it.
+    // The native argument shuffle into v0..v6 right before the uncached call, as 47.7.3 compiles it.
     private val shuffle = """
         move-object v0, v2
         move v1, v4
@@ -112,7 +112,7 @@ class FeedTextContractsTest {
 
     @Test
     fun `a write that never reaches the fallback doesn't block the bypass`() {
-        // 47.7.2's cached branch reuses v2, which the shuffle reads, on its way to its own return.
+        // 47.7.3's cached branch reuses v2, which the shuffle reads, on its way to its own return.
         fun dispatch(reachesFallback: Boolean) = method("dispatch", 40, parameters, "Lkotlin/Pair;", """
                 move-object/from16 v3, p3
                 iget-object v0, v3, $model->text:Ljava/lang/CharSequence;

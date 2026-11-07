@@ -36,14 +36,14 @@ internal const val FULL_SCREEN_VIDEO = "Lcom/ss/android/ugc/aweme/feed/model/Awe
 internal const val FULL_SCREEN_VIEW_MODEL = "Lcom/ss/android/ugc/aweme/feed/landscape/viewmodels/LandscapeFeedViewModel;"
 internal const val FULL_SCREEN_FIRST_PAGE_TAG = "landscape_screen_item_soure"
 
-/** The Full screen button's handler (Cq on 47.7.2), the one place the viewer's list is set. */
+/** The Full screen button's handler (Cq on 47.7.3), the one place the viewer's list is set. */
 internal object FullScreenOpenFingerprint : Fingerprint(
     definingClass = FULL_SCREEN_ENTRANCE,
     returnType = "V",
     parameters = listOf("I", "I", "I", "Ljava/lang/String;"),
 )
 
-/** TikTok's own test of what its viewer can play (0A7q.LJJ on 47.7.2): no ads, photo posts or LIVE. */
+/** TikTok's own test of what its viewer can play (0A7q.LJJ on 47.7.3): no ads, photo posts or LIVE. */
 internal object FullScreenPlayableFingerprint : Fingerprint(
     returnType = "Z",
     parameters = listOf(FULL_SCREEN_VIDEO),
@@ -51,7 +51,7 @@ internal object FullScreenPlayableFingerprint : Fingerprint(
     custom = { method, _ -> AccessFlags.STATIC.isSet(method.accessFlags) },
 )
 
-/** What the viewer takes as its first page off For You (n71 on 47.7.2): the first video of its list, alone. */
+/** What the viewer takes as its first page off For You (n71 on 47.7.3): the first video of its list, alone. */
 internal object FullScreenFirstPageFingerprint : Fingerprint(
     definingClass = FULL_SCREEN_VIEW_MODEL,
     returnType = "Ljava/util/List;",

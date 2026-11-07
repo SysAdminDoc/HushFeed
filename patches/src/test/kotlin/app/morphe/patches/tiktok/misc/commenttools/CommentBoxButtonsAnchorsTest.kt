@@ -66,7 +66,7 @@ class CommentBoxButtonsAnchorsTest {
                     ((instruction as? ReferenceInstruction)?.reference as? MethodReference)?.name == "findViewById"
                 })
                 // Each listener carries its own button's mark and none of the others', and none opens the emoji panel.
-                // 47.7.2 merges listeners into one class, so the mark is read off the body this one's number reaches.
+                // 47.7.3 merges listeners into one class, so the mark is read off the body this one's number reaches.
                 val listener = listenerOf(instructions, field, build)
                 val marks = marksOf(listener)
                 val own = when (button) {

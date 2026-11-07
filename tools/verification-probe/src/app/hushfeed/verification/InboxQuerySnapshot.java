@@ -113,7 +113,7 @@ final class InboxQuerySnapshot {
         Object root = required(fragment, "mView");
         if (!(root instanceof View)) throw new SchemaFailure("fragment view missing");
         Object lazy = required(stub, "LLJLIL");
-        if (!"X.02pg".equals(lazy.getClass().getName())) throw new SchemaFailure("native state cache schema changed");
+        if (!"X.02pk".equals(lazy.getClass().getName())) throw new SchemaFailure("native state cache schema changed");
         Object cachedState = required(lazy, "LLJJIJIIJIL");
         boolean closed = bool(owner, "closed"), attached = list.isAttachedToWindow();
         boolean fragmentList = required(fragment, "LLJJJIL") == list;

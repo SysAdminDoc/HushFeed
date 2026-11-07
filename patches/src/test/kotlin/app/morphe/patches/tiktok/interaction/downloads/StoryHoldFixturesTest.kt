@@ -40,7 +40,7 @@ class StoryHoldFixturesTest {
             assertTrue("$apk: nothing implements $ability", monitors.isNotEmpty())
 
             // The monitor is a cell component, and a cell component binds a VideoItemParams:
-            // BaseCellLogicComponent's generic signature names it (X.0R8N<VideoItemParams> on
+            // BaseCellLogicComponent's generic signature names it (X.0RhF<VideoItemParams> on
             // 46.2.3, X.05Ba on 47.0.3, X.04E1 on 47.1.3). The Assem state keeps that item in a
             // plain Object field, which is why the saver looks for it by class.
             for (monitor in monitors) {

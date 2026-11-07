@@ -40,11 +40,11 @@ class ForYouShowRepairTest {
     private val bundleType = "Landroid/os/Bundle;"
 
     /**
-     * Home's own switch to For You and For You's show as 47.7.2 names them, the members the S22
+     * Home's own switch to For You and For You's show as 47.7.3 names them, the members the S22
      * trace proved on 47.6.3 found again by the same reads. A change in what the reads land on
      * shows here before it reaches a phone.
      */
-    private val proved4772 = mapOf(
+    private val proved4773 = mapOf(
         "nodeOf" to "k53", "container" to "LL", "current" to "LLJJJJLIIL", "shown" to "LLJJL",
         "dispatch" to "LJJII", "visibleListeners" to "LLJJJJLIIL", "switchListeners" to "LLJJL",
         "hoxOf" to "e53", "containerTagOf" to "l53", "panel" to "LLJJJJLIIL",
@@ -91,14 +91,14 @@ class ForYouShowRepairTest {
             assertEquals(calls.activityOf.returnType, calls.hoxOf.parameterTypes.single().toString())
             assertTrue("$version: For You is a kind of ${calls.fragmentBase}", ancestors(app, FOR_YOU_FRAGMENT).contains(calls.fragmentBase))
             assertTrue("$version: the panel is a kind of ${calls.hintOwner}", ancestors(app, calls.panel.type).contains(calls.hintOwner))
-            if (version == "47.7.2") {
+            if (version == "47.7.3") {
                 val read = mapOf(
                     "nodeOf" to calls.nodeOf.name, "container" to calls.container.name, "current" to calls.current.name,
                     "shown" to calls.shown.name, "dispatch" to calls.dispatch.name,
                     "visibleListeners" to calls.visibleListeners.name, "switchListeners" to calls.switchListeners.name,
                     "hoxOf" to calls.hoxOf.name, "containerTagOf" to calls.containerTagOf.name, "panel" to calls.panel.name,
                 )
-                assertEquals(proved4772, read)
+                assertEquals(proved4773, read)
             }
 
             // The constructor's returns are where the patch says a For You page exists.

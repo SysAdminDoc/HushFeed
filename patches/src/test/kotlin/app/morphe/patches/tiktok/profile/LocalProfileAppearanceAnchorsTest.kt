@@ -376,7 +376,7 @@ class LocalProfileAppearanceAnchorsTest {
             assertEquals(Opcode.RETURN, cache.last().opcode)
             assertEquals(listOf(2), cache.last().namedRegisters())
             val widget = found.classes.getValue(ADD_NAME_VIEW).methods.single { it.name == "setAddNameText" }
-            // 47.7.2's R8 moved the setSpan call into a static helper (LX/00kA;->t2), so one hop counts.
+            // 47.7.2's R8 moved the setSpan call into a static helper (LX/00kA;->t2), so one hop counts; 47.7.3 calls it directly.
             fun MethodReference.setsSpan() = name == "setSpan" || found.classes[definingClass]?.methods
                 ?.singleOrNull { it.name == name && it.parameterTypes.map(CharSequence::toString) == parameterTypes.map(CharSequence::toString) && AccessFlags.STATIC.isSet(it.accessFlags) }
                 ?.implementation?.instructions?.any { it.getReference<MethodReference>()?.name == "setSpan" } == true

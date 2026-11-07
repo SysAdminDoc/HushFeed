@@ -53,7 +53,7 @@ class ChatCardCautionAnchorsTest {
             }
             assertEquals("$version: taken ${taken.map { it.definingClass + "->" + it.name }} of $naming", 1, taken.size)
             // The writer (the share's send task) and the card are the only two that name the key
-            // and run. 47.7.2 also ships the chat video stack's member card (0rT7->LJ()Z), which
+            // and run. 47.7.3 also ships the chat video stack's member card (0rT7->LJ()Z), which
             // reads both labels only to test them for emptiness, and which nothing in the build
             // calls: neither it, its interface 0rE5, nor the IVideoStackMemberCardService that
             // builds it is ever invoked. Any other method naming the key has to be that dead, so

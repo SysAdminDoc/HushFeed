@@ -20,44 +20,44 @@ class StoryLongPressBridgeTest {
     fun nativeTimerUsesItsViewAndKeepsTheOriginalPausePathWhenUnhandled() {
         // Clean 46.2.3 LX/0Qet.LIZ, including its monitor/interceptor branches.
         val method = MutableMethod(ImmutableMethod(
-            "LX/0UXs;", "LIZ", emptyList(), "V",
+            "LX/0TwT;", "LIZ", emptyList(), "V",
             AccessFlags.PUBLIC.value or AccessFlags.FINAL.value, null, null,
             ImmutableMethodImplementation(4, emptyList(), null, null),
         )).apply {
             addInstructionsWithLabels(0, """
-                iget-object v1, p0, LX/0UXs;->LL:LX/049A;
-                iget-object v0, v1, LX/049A;->LLJIJIL:LX/0RZz;
+                iget-object v1, p0, LX/0TwT;->LL:LX/049E;
+                iget-object v0, v1, LX/049E;->LLJIJIL:LX/0RUf;
                 const/4 v2, 0x1
                 if-eqz v0, :listener
-                iput-boolean v2, v1, LX/049A;->LLJJ:Z
-                invoke-interface { v0 }, LX/0RZz;->Mf()V
-                iget-object v0, p0, LX/0UXs;->LL:LX/049A;
+                iput-boolean v2, v1, LX/049E;->LLJJ:Z
+                invoke-interface { v0 }, LX/0RUf;->Mf()V
+                iget-object v0, p0, LX/0TwT;->LL:LX/049E;
                 invoke-virtual { v0 }, Landroid/view/View;->getParent()Landroid/view/ViewParent;
                 move-result-object v0
                 if-eqz v0, :listener
                 invoke-interface { v0, v2 }, Landroid/view/ViewParent;->requestDisallowInterceptTouchEvent(Z)V
                 :listener
-                iget-object v1, p0, LX/0UXs;->LL:LX/049A;
-                iget-object v0, v1, LX/049A;->LLIZLLLIL:LX/0Pex;
+                iget-object v1, p0, LX/0TwT;->LL:LX/049E;
+                iget-object v0, v1, LX/049E;->LLIZLLLIL:LX/0PeW;
                 if-eqz v0, :done
-                iget-object v0, v1, LX/049A;->LLJILJIL:LX/0QS2;
+                iget-object v0, v1, LX/049E;->LLJILJIL:LX/0QS2;
                 if-eqz v0, :notify
                 invoke-interface { v0 }, LX/0QS2;->gi()Z
                 move-result v0
                 if-eqz v0, :notify
                 return-void
                 :notify
-                iget-object v0, p0, LX/0UXs;->LL:LX/049A;
+                iget-object v0, p0, LX/0TwT;->LL:LX/049E;
                 invoke-virtual { v0 }, Landroid/view/View;->getParent()Landroid/view/ViewParent;
                 move-result-object v0
                 if-eqz v0, :coordinates
                 invoke-interface { v0, v2 }, Landroid/view/ViewParent;->requestDisallowInterceptTouchEvent(Z)V
                 :coordinates
-                iget-object v0, p0, LX/0UXs;->LL:LX/049A;
-                iget-object v2, v0, LX/049A;->LLIZLLLIL:LX/0Pex;
-                iget v1, v0, LX/049A;->LL:F
-                iget v0, v0, LX/049A;->LLILLL:F
-                invoke-interface { v2, v1, v0 }, LX/0Pex;->LIZ(FF)V
+                iget-object v0, p0, LX/0TwT;->LL:LX/049E;
+                iget-object v2, v0, LX/049E;->LLIZLLLIL:LX/0PeW;
+                iget v1, v0, LX/049E;->LL:F
+                iget v0, v0, LX/049E;->LLILLL:F
+                invoke-interface { v2, v1, v0 }, LX/0PeW;->LIZ(FF)V
                 :done
                 return-void
             """)

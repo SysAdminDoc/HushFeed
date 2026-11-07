@@ -176,7 +176,7 @@ public class StickerGallerySaverTest {
     }
 
     /**
-     * 47.7.2's sheet adds a "more stickers" section: two plain titles side by side and a third
+     * 47.7.3's sheet adds a "more stickers" section: two plain titles side by side and a third
      * action of the buttons' own type. Neither more plain text views than actions nor a stray
      * action elsewhere may pull the Save media button out of the sheet's action row.
      */
@@ -197,7 +197,7 @@ public class StickerGallerySaverTest {
         assertEquals(2, sheet.section.getChildCount());
     }
 
-    /** 47.7.2's shape: the preview row plus a section of more stickers with its own action. */
+    /** 47.7.3's shape: the preview row plus a section of more stickers with its own action. */
     private static final class ModuleStickerSheet extends android.widget.LinearLayout {
         final android.widget.TextView caption;
         final android.widget.TextView title;

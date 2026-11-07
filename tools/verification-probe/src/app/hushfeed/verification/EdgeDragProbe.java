@@ -43,7 +43,7 @@ import org.json.JSONObject;
 
 /** Explicit, temporary native edge drags. No settings persist and no application buttons are clicked. */
 final class EdgeDragProbe {
-    private static final String TARGET = "com.zhiliaoapp.musically", VERSION = "47.7.2";
+    private static final String TARGET = "com.zhiliaoapp.musically", VERSION = "47.7.3";
     private static final String PREFIX = "app.morphe.extension.tiktok.";
     private static final String UTILS = "app.morphe.extension.shared.Utils";
     private static final String JOURNAL = "hushfeed-edge-drag-restore.json";

@@ -20,7 +20,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /** Captures the notification cell's actual list, state and independently observed VM owners. */
 final class InboxQueryOwners {
     static final String FAMILY = "loaded Inbox query";
-    // TikTok 47.7.2 names. InboxQueryOwnerFixturesTest reads these lines and checks each on the fixture.
+    // TikTok 47.7.3 names. InboxQueryOwnerFixturesTest reads these lines and checks each on the fixture.
     static final String FRAGMENT_LIST = "IY";
     static final String FRAGMENT_SPRING = "HY";
     static final String FRAGMENT_CONTAINER = "LLJJJJ";

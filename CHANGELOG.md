@@ -6,6 +6,7 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* Hushfeed now supports TikTok 47.7.3, and only that one. 47.7.2 isn't supported anymore. Grab the 47.7.3 bundle or APK from APKMirror and patch it with the same signing key, so your login and settings carry over.
 * Hushfeed builds on Morphe patcher 2.3.0 now, so it needs Morphe Manager 2.5.0 or newer, or morphe-desktop 2.1.1 on a computer. Older Managers refuse the bundle.
 * `Show where commenters are from` also checks the country field on a commenter's account, and uses it only when it holds a two letter code (#201).
 * `Long press on Profile opens my watch history` makes holding the Profile tab show the watch history kept on your phone, so the long press on For You can keep opening Hushfeed settings. A tap on Profile works as before. It starts off, and it sits under `Keep my own watch history` (#172).

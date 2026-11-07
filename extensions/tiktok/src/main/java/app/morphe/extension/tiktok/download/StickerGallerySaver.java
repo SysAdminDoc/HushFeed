@@ -1431,7 +1431,7 @@ public final class StickerGallerySaver {
     /**
      * The sheet's own action buttons, found by the sheet's shape.
      *
-     * <p>TikTok's button is a TextView subclass whose name changes with every build: X.0GSy on
+     * <p>TikTok's button is a TextView subclass whose name changes with every build: X.0GSw on
      * 46.2.3, X.02Lg on 47.0.3, where X.0GSy is an unrelated class. Naming it is what left
      * 47.0.3 with no Save media button (issue #23). What holds on every build read so far is
      * that the row keeps its actions in fields of one shared type, sitting side by side under one

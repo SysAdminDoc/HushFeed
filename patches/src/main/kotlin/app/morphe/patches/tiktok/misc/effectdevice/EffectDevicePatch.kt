@@ -32,10 +32,10 @@ private const val MODEL_CONFIGURATION_BUILDER = "Lcom/ss/android/ugc/effectmanag
  * TikTok's effect platform builds two configs that carry the phone's model as `device_type`:
  * EffectConfiguration (the effect list and download requests, where the server answers 2003 for
  * a phone it won't serve) and DownloadableModelConfig (the effect models). Each build reads
- * `Build.MODEL` and hands it straight to the builder's setter. Two methods do that on 47.7.2.
+ * `Build.MODEL` and hands it straight to the builder's setter. Two methods do that on 47.7.3.
  * 47.6.3 had a third, DefaultResourceProvider's effect manager creator (`LX/0mdO;->LJIJJLI()`,
- * which read the model for both configs); 47.7.2 dropped that class, and the comment image
- * effect manager that took its place (`LX/16Or;->LIZ()`) gets its config from
+ * which read the model for both configs); 47.7.3 dropped that class, and the comment image
+ * effect manager that took its place (`LX/0w8Y;->LIZ()`) gets its config from
  * createEffectConfigurationBuilder through IEffectPlatformFactory.create, which is already swapped.
  * EffectDeviceAnchorsTest holds every method that calls either setter to these two.
  */
@@ -51,7 +51,7 @@ internal object EffectConfigurationFactoryFingerprint : Fingerprint(
 )
 
 /**
- * The model config builder (`Lf7j/p;->LJ()V` on 47.7.2, obfuscated), static and with no
+ * The model config builder (`Lf7j/p;->LJ()V` on 47.7.3, obfuscated), static and with no
  * parameters, which reads the model once for `setDeviceType` before it initializes
  * DownloadableModelSupport.
  */

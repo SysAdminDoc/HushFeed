@@ -41,7 +41,7 @@ public class VideoMusicLineTest {
     @Rule public final SettingsContextRule settingsContext = new SettingsContextRule();
 
     /** The declared build. OLD_TITLE stands for the id an older build gave the title. */
-    private static final String[] BUILDS = {"47.7.2"};
+    private static final String[] BUILDS = {"47.7.3"};
     private static final int CELL = 0x7f0a7800;
     private static final int OLD_TITLE = 0x7f0a7801;
     private static final int NEW_TITLE = 0x7f0a7802;

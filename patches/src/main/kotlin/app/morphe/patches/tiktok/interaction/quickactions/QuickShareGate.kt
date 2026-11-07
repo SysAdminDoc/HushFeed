@@ -31,7 +31,7 @@ private const val IM_SHARE_SERVICE =
  * the gate, compare it to one, read it again and compare it to two, ask a second `()Z` gate, and
  * answer. Fourteen instructions, and no other `()Z` in any of the four builds has them. It sat
  * on `IMShareService` under that name up to 46.8.3 (`LJIIIIZZ`, then `LJIIIZ`); 46.9.3 lets R8
- * rename the service (`LX/0EhQ;`) and the body is what is left to go on. Where the name still
+ * rename the service (`LX/0EhO;`) and the body is what is left to go on. Where the name still
  * exists the two have to agree, so a build that kept the class and moved the question is refused
  * rather than guessed.
  */

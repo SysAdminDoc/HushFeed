@@ -13,14 +13,14 @@ import app.morphe.patcher.Fingerprint
  *
  * <p>Read out of the 46.2.3 fixture on 2026-09-09. `run` is gated on the `enable_sim_utils` AB
  * key, reads `TelephonyManager.getSimState`, builds the current SIM identity through
- * `LX/0Nif;->LIZ`, compares it with the one stored in Keva under `last_sim_info`, stores the new
+ * `LX/0Nid;->LIZ`, compares it with the one stored in Keva under `last_sim_info`, stores the new
  * one, and if the two differ reads `SubscriptionManager.getActiveSubscriptionInfoCount` (index 82)
  * and sends the event `ttac_sim_change_detect` carrying `sim_change_type`, `duration`, `n_sim`,
  * `prev_sim_country_code`, `prev_carrier`, `curr_sim_country_code` and `curr_carrier`. That event
  * is all it does: nothing else in the app reads `last_sim_info`, so the task can be skipped
  * whole.
  *
- * <p>"Differ" means the first field of `LX/0Nie;` only, which its own `toString` names
+ * <p>"Differ" means the first field of `LX/0Nic;` only, which its own `toString` names
  * `subscriptionId` and which comes from `SubscriptionManager.getDefaultDataSubscriptionId` or
  * `getActiveDataSubscriptionId`. The country and carrier are the second and third fields and take
  * no part in the comparison: they come from `LX/1AbB;->LLIIZ` and `LLILII`, which wrap

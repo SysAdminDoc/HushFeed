@@ -152,7 +152,7 @@ internal fun MutableMethod.resolveCommentSuggestionGate(): CommentToolsWrite {
 }
 
 /**
- * The comment like-and-hate view's bind. The view keeps no name from build to build (`LX/1PIy;`
+ * The comment like-and-hate view's bind. The view keeps no name from build to build (`LX/0nh6;`
  * on 46.2.3, `LX/0lNa;` on 46.8.3), but the line its bind logs is the same on every build and in
  * no other method of the app.
  */

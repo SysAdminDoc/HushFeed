@@ -31,7 +31,7 @@ class FeedTextFixturesTest {
     @Test
     fun `all declared hosts resolve native owners and safely size before line breaking`() {
         val expected = mapOf(
-            "47.7.2" to Triple("LX/0As4;", "LX/0A3v;", 0x7f0a2097 to 0x7f0a897d),
+            "47.7.3" to Triple("LX/0As7;", "LX/0A3z;", 0x7f0a2097 to 0x7f0a897d),
         )
         assertEquals(Fixtures.declaredVersions().toSet(), expected.keys)
         Fixtures.forEachDeclared { apk ->
@@ -57,7 +57,7 @@ class FeedTextFixturesTest {
             assertEquals(6, native.layoutCaches.size)
             assertEquals("LJLLI", native.refreshOriginal.name)
             assertEquals("LJLLJ", native.refreshTranslated.name)
-            assertEquals("er", native.authorBind.name)
+            assertEquals("lr", native.authorBind.name)
             assertEquals("LLLIIIL", native.authorView.name)
             assertTrue(native.authorLoader.implementation!!.instructions.any {
                 it is NarrowLiteralInstruction && it.narrowLiteral == ids.second
@@ -97,7 +97,7 @@ class FeedTextFixturesTest {
             assertEquals(Opcode.IF_NEZ, flow.instructions[branch].opcode)
             // v2 holds the controller at entry (move-object/from16 v2, p0); v0 is still the caption there.
             assertEquals(2, (flow.instructions[fresh] as RegisterRangeInstruction).startRegister)
-            // 47.7.2 shuffles the fallback's arguments down into v0..v6 with plain moves before the
+            // 47.7.3 shuffles the fallback's arguments down into v0..v6 with plain moves before the
             // uncached call. The bypass lands on the first move, where the native empty-caption check lands.
             val shuffle = flow.normal[branch].single { it != branch + 1 }
             assertTrue(flow.instructions.indices.any {

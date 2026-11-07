@@ -7,7 +7,7 @@
 package app.morphe.extension.tiktok.featuregatelab;
 
 /**
- * Generated from TikTok 47.7.2 (version code 2024707020), from VEConfigCenter.addConfig and the VE camera settings JSON.
+ * Generated from TikTok 47.7.3 (version code 2024707030), from VEConfigCenter.addConfig and the VE camera settings JSON.
  * The rows every build has are stored once; each build's other rows follow, in
  * GeneratedGateCatalogBuilds.BUILDS order, and a build's rows are the shared ones then its own.
  * Do not edit: ./gradlew :patches:generateGateCatalog writes it again.

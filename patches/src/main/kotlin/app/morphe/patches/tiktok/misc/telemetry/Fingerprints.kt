@@ -224,7 +224,7 @@ internal object AppLogSendPackFingerprint : Fingerprint(
  * The AppLog forward send. The forward worker reads the events flagged for forwarding out of
  * its own table, deletes them, and posts each pack to the forward hosts straight through the
  * SDK's network client, never through the pack send above. On 47.0.3 it is
- * LX/0Aom;->LJII(I, List, JSONObject)V. Named by its own log line, which the SDK has kept
+ * LX/0Aop;->LJII(I, List, JSONObject)V. Named by its own log line, which the SDK has kept
  * across builds, and by its shape.
  */
 internal object AppLogForwardSendFingerprint : Fingerprint(

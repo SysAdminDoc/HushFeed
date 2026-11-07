@@ -242,11 +242,11 @@ public final class CommentTools {
     }
 
     private static final String POLL_HOOK_FAMILY = "comment polls";
-    private static final String[] DISLIKE_BUTTON_IDS = {"47.7.2:k2g"};
+    private static final String[] DISLIKE_BUTTON_IDS = {"47.7.3:k2g"};
 
     /** One log line for a cell with no thumbs down, not a verdict on the build. */
     private static boolean warnedNoDislikeControl;
-    private static final String[] DISLIKE_ICON_IDS = {"47.7.2:mof"};
+    private static final String[] DISLIKE_ICON_IDS = {"47.7.3:mof"};
     private static final String[] LIKE_COUNT_IDS = {"tv_like_count"};
     /**
      * Faded enough to read as blocked, still readable. At 0.35 the comment text dropped to about

@@ -76,16 +76,21 @@ class ReviewedProfilesMatchFixturesTest {
 
     @Test
     fun `creation tools come out only where the editor and effect libraries ship`() {
-        // 47.7.2's universal APK carries them. Its split bundle has the arm64 editor library but
-        // none of the effect libraries, and a face model emptied there breaks face effects (#285).
+        // 47.7.3's universal APK carries them for both processor types. Its split bundle has the
+        // arm64 effect library but not the armeabi-v7a one, beside other armeabi-v7a libraries, and
+        // a face model emptied where TikTok fetches its effects breaks face effects (#285).
         val apks = fixtures()
-        assertTrue("no 47.7.2 universal APK and split bundle to compare", apks.map { it.extension }.toSet() == setOf("apk", "apkm"))
+        assertTrue("no 47.7.3 universal APK and split bundle to compare", apks.map { it.extension }.toSet() == setOf("apk", "apkm"))
         for (apk in apks) {
             val present = digests(apk) { it.startsWith("lib/") }.keys
-            assertEquals(apk.name, apk.extension == "apk", stripsCreationTools { it in present })
+            val folders = present.map { it.substringBeforeLast('/') }.toSet()
+            assertEquals(apk.name, apk.extension == "apk", stripsCreationTools { it in present || it in folders })
         }
-        assertTrue(stripsCreationTools { it == "lib/armeabi-v7a/libeffect_plugin.so" })
-        assertTrue(!stripsCreationTools { it == "lib/arm64-v8a/libEffectCreatorJni.so" })
+        val arm64Effects = setOf("lib/arm64-v8a", "lib/arm64-v8a/libeffect_plugin.so")
+        assertTrue(stripsCreationTools { it in arm64Effects })
+        assertTrue(stripsCreationTools { it in setOf("lib/armeabi-v7a", "lib/armeabi-v7a/libeffect_plugin.so") })
+        assertTrue(!stripsCreationTools { it in arm64Effects || it == "lib/armeabi-v7a" })
+        assertTrue(!stripsCreationTools { it in setOf("lib/arm64-v8a", "lib/arm64-v8a/libEffectCreatorJni.so") })
         assertTrue(!stripsCreationTools { it.startsWith("assets/") })
     }
 

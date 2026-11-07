@@ -61,8 +61,8 @@ public final class GestureProbe extends Instrumentation {
             if (!railPointer.equals("first") && !railPointer.equals("second")) {
                 throw new IllegalArgumentException("rail-pointer must be first or second");
             }
-            if (!"47.7.2".equals(getContext().getPackageManager().getPackageInfo(TARGET, 0).versionName)) {
-                throw new IllegalStateException("The resource anchors require TikTok 47.7.2");
+            if (!"47.7.3".equals(getContext().getPackageManager().getPackageInfo(TARGET, 0).versionName)) {
+                throw new IllegalStateException("The resource anchors require TikTok 47.7.3");
             }
             if (audio == null) throw new IllegalStateException("No audio service for restoration");
             audioState = new GestureAudio.Port() {

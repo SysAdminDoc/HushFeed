@@ -26,16 +26,16 @@ import com.android.tools.smali.dexlib2.iface.reference.StringReference
 
 internal const val PUSH_REPORT = "Lapp/morphe/extension/tiktok/inbox/PushDeliveryReport;"
 internal const val PUSH_SETUP_BODY = "Lcom/ss/android/ugc/aweme/legoImp/task/InitPushTask;->LIZJ(Landroid/content/Context;)V"
-internal const val TOKEN_REQUEST = "LX/0HU7;->LIZ(Landroid/content/Context;)V"
-internal const val TOKEN_FORWARD = "LX/0HU7;->LIZIZ(Landroid/content/Context;Ljava/lang/String;)V"
-internal const val TOKEN_RESULT = "LX/0HUE;->LIZ(LX/08em;)V"
-internal const val TOKEN_UPLOAD = "Lcom/bytedance/push/task/SendTokenTask;->LIZIZ(LX/0HUy;)V"
+internal const val TOKEN_REQUEST = "LX/0HU5;->LIZ(Landroid/content/Context;)V"
+internal const val TOKEN_FORWARD = "LX/0HU5;->LIZIZ(Landroid/content/Context;Ljava/lang/String;)V"
+internal const val TOKEN_RESULT = "LX/0HUC;->LIZ(LX/08eq;)V"
+internal const val TOKEN_UPLOAD = "Lcom/bytedance/push/task/SendTokenTask;->LIZIZ(LX/0HUw;)V"
 internal const val FCM_RECEIVE = "Lcom/fcm/service/SSGcmListenerService;->onMessageReceived(Lcom/google/firebase/messaging/RemoteMessage;)V"
 internal const val NATIVE_MESSAGE = "Lcom/ss/android/ugc/awemepushlib/di/ies/MessageHandler;->onHandleMessage(Landroid/content/Context;ILjava/lang/String;ILjava/lang/String;)V"
 internal val PUSH_NATIVE_METHODS = setOf(PUSH_SETUP_BODY, TOKEN_REQUEST, TOKEN_FORWARD, TOKEN_RESULT, TOKEN_UPLOAD, FCM_RECEIVE, NATIVE_MESSAGE)
 
 internal fun supportsNativePushProfile(packageName: String?, version: String?) =
-    packageName == "com.zhiliaoapp.musically" && version == "47.7.2"
+    packageName == "com.zhiliaoapp.musically" && version == "47.7.3"
 
 internal data class PushObservation(val index: Int, val event: String, val atLabel: Boolean = true)
 internal fun Method.pushDescriptor() = "$definingClass->$name(${parameterTypes.joinToString("")})$returnType"
@@ -47,7 +47,7 @@ private fun Instruction.call() = getReference<MethodReference>()?.let {
 internal fun planNativePushDiagnostics(classes: Iterable<ClassDef>): Map<Method, List<PushObservation>> {
     val methods = classes.flatMap { it.methods }.filter { it.pushDescriptor() in PUSH_NATIVE_METHODS }
     if (methods.map { it.pushDescriptor() }.toSet() != PUSH_NATIVE_METHODS || methods.size != PUSH_NATIVE_METHODS.size) {
-        throw PatchException("Push diagnostics: missing or duplicate global 47.7.2 native method.")
+        throw PatchException("Push diagnostics: missing or duplicate global 47.7.3 native method.")
     }
     return methods.associateWith(::planPushObservations)
 }
@@ -72,22 +72,22 @@ internal fun planPushObservations(method: Method): List<PushObservation> {
     fun errorAfter(value: String): Int {
         val start = literal(value)
         return (start + 1 until minOf(instructions.size, start + 8)).singleOrNull {
-            instructions[it].call() == "LX/03hv;->LJIIIIZZ(IILjava/lang/String;Ljava/lang/String;)V"
+            instructions[it].call() == "LX/03hz;->LJIIIIZZ(IILjava/lang/String;Ljava/lang/String;)V"
         } ?: fail("$value error")
     }
     when (method.pushDescriptor()) {
         PUSH_SETUP_BODY -> {
-            call("Lcom/ss/android/ugc/awemepushapi/IPushApi;->init(Landroid/content/Context;LX/03gX;)V")
+            call("Lcom/ss/android/ugc/awemepushapi/IPushApi;->init(Landroid/content/Context;LX/03gb;)V")
             call("Lcom/ss/android/ugc/awemepushapi/IPushApi;->setupNotificationChannelRestore(Landroid/content/Context;)V")
             record(0, "setupBody")
         }
         TOKEN_REQUEST -> {
-            call("LX/08em;->LIZIZ(LX/0HUD;)LX/08em;")
-            if (instructions.none { it.call() == "LX/0HUE;-><init>(Landroid/content/Context;)V" }) fail("FCM completion owner")
+            call("LX/08eq;->LIZIZ(LX/0HUB;)LX/08eq;")
+            if (instructions.none { it.call() == "LX/0HUC;-><init>(Landroid/content/Context;)V" }) fail("FCM completion owner")
             record(0, "tokenRequest")
         }
         TOKEN_RESULT -> {
-            call("LX/08em;->LJIILL()Z")
+            call("LX/08eq;->LJIILL()Z")
             if (instructions.count { it.opcode == Opcode.IF_EQZ } != 3) fail("null/success/result branches")
             record(call(TOKEN_FORWARD), "tokenResultPresent")
             record(errorAfter("token is empty"), "tokenResultRejectedOrEmpty")
@@ -95,32 +95,32 @@ internal fun planPushObservations(method: Method): List<PushObservation> {
         TOKEN_FORWARD -> {
             call("Landroid/text/TextUtils;->isEmpty(Ljava/lang/CharSequence;)Z")
             if (instructions.none { it.opcode == Opcode.IF_NEZ }) fail("empty-token branch")
-            record(call("LX/0HUu;->LIZJ(ILandroid/content/Context;Ljava/lang/String;)V"), "tokenForwarded")
+            record(call("LX/0HUs;->LIZJ(ILandroid/content/Context;Ljava/lang/String;)V"), "tokenForwarded")
             record(errorAfter("token is empty"), "tokenEmpty")
         }
         TOKEN_UPLOAD -> {
             val request = literal("/service/1/update_token/")
-            call("LX/0HTj;->LJI(I)Z")
+            call("LX/0HTh;->LJI(I)Z")
             call("Landroid/text/TextUtils;->isEmpty(Ljava/lang/CharSequence;)Z")
             literal("success")
             literal("message")
             val parsed = call("Lorg/json/JSONObject;->optString(Ljava/lang/String;)Ljava/lang/String;")
             val equals = call("Ljava/lang/String;->equals(Ljava/lang/Object;)Z")
-            val accepted = call("LX/0Hiv;->LIZJ(Landroid/content/Context;LX/0HV0;)V")
+            val accepted = call("LX/0Hit;->LIZJ(Landroid/content/Context;LX/0HUy;)V")
             val rejected = errorAfter("return error")
             if (parsed >= equals || instructions.getOrNull(equals + 1)?.opcode != Opcode.MOVE_RESULT ||
                 instructions.getOrNull(equals + 2)?.opcode != Opcode.IF_EQZ ||
                 (instructions[equals + 1] as OneRegisterInstruction).registerA != (instructions[equals + 2] as OneRegisterInstruction).registerA ||
                 accepted !in equals + 3 until target(equals + 2) || rejected !in target(equals + 2) until target(equals + 2) + 8
             ) fail("success/rejection control flow")
-            val callbacks = instructions.indices.filter { instructions[it].call() == "LX/03hv;->LJ(I)V" }
+            val callbacks = instructions.indices.filter { instructions[it].call() == "LX/03hz;->LJ(I)V" }
             val cached = callbacks.filter { it < request }.singleOrNull() ?: fail("cached registration")
             val ignoredReturn = instructions.indexOfFirst { it.opcode == Opcode.RETURN_VOID }
             if (ignoredReturn !in 1 until cached || instructions.drop(cached + 1).take(request - cached - 1).none { it.opcode == Opcode.RETURN_VOID }) fail("ignored/cache returns")
             record(0, "uploadEntered")
             record(ignoredReturn, "uploadIgnored")
             record(cached, "uploadCached")
-            record(call("LX/06MK;->LIZJ(Ljava/lang/String;Ljava/util/List;)Ljava/lang/String;"), "uploadAttempted")
+            record(call("LX/06MO;->LIZJ(Ljava/lang/String;Ljava/util/List;)Ljava/lang/String;"), "uploadAttempted")
             record(accepted, "uploadAccepted")
             record(rejected, "uploadRejected")
             record(errorAfter("token is empty"), "uploadEmpty")

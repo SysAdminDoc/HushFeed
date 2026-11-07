@@ -38,7 +38,7 @@
 .EXAMPLE
     scripts/verify-injected-registers.ps1 -FromDevice -Serial $env:HUSHFEED_DEVICE_SERIAL
 
-    The clean APK defaults to the 47.7.2 vendor build in the folder HUSHFEED_FIXTURE_DIR names.
+    The clean APK defaults to the 47.7.3 vendor build in the folder HUSHFEED_FIXTURE_DIR names.
 
     The phones are shared, so the pull and the device verifier each run under the device lease
     (scripts/device-lease.ps1) on -Serial, taken right before and released right after, and the
@@ -64,8 +64,8 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-# The vendor 47.7.2 build main targets, which is the only clean side this comparison means.
-$CleanApkSha256 = '6852b0ced20274018403dfdc30fb9fac3e168b5be733603cfd9c0d634d8a1544'
+# The vendor 47.7.3 build main targets, which is the only clean side this comparison means.
+$CleanApkSha256 = '9b35d4caed14ae54938eca1fa27fc89ce8307a9cf8350b80f66a9968fc3684e9'
 . (Join-Path $PSScriptRoot 'Resolve-Java.ps1')
 . (Join-Path $PSScriptRoot 'device-lease.ps1')
 . (Join-Path $PSScriptRoot 'injected-register-contracts.ps1')
@@ -93,7 +93,7 @@ function Resolve-Adb {
 }
 
 if (-not $CleanApk -and $env:HUSHFEED_FIXTURE_DIR) {
-    $fixture = Get-ChildItem -LiteralPath $env:HUSHFEED_FIXTURE_DIR -Filter '*47.7.2*.apk' -File -ErrorAction SilentlyContinue |
+    $fixture = Get-ChildItem -LiteralPath $env:HUSHFEED_FIXTURE_DIR -Filter '*47.7.3*.apk' -File -ErrorAction SilentlyContinue |
         Select-Object -First 1
     if ($fixture) { $CleanApk = $fixture.FullName }
 }
@@ -106,7 +106,7 @@ if (-not $CleanApk -or -not (Test-Path -LiteralPath $CleanApk -PathType Leaf)) {
 # report differences, and the run passes while comparing nothing against a clean baseline.
 $cleanHash = (Get-FileHash -LiteralPath $CleanApk -Algorithm SHA256).Hash.ToLowerInvariant()
 if ($cleanHash -ne $CleanApkSha256) {
-    throw "The clean APK at $CleanApk hashes to $cleanHash, not the vendor 47.7.2 build ($CleanApkSha256)."
+    throw "The clean APK at $CleanApk hashes to $cleanHash, not the vendor 47.7.3 build ($CleanApkSha256)."
 }
 
 $work = Join-Path ([System.IO.Path]::GetTempPath()) ("hushfeed-regs-" + [guid]::NewGuid().ToString('N').Substring(0, 8))

@@ -39,7 +39,7 @@ class LiveBottomTabCheckTest {
             addInstructionsWithLabels(
                 0,
                 """
-                    sget-object v0, LX/03wG;->LIZJ:$list
+                    sget-object v0, LX/03wK;->LIZJ:$list
                     invoke-virtual { v0 }, $list->isEmpty()Z
                     move-result v0
                     const/4 v1, 0x1

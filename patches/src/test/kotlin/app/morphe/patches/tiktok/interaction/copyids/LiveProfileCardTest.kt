@@ -86,7 +86,7 @@ class LiveProfileCardTest {
     /**
      * The instructions TikTok wrote, with padding dropped and goto widths folded. A hook placed at a
      * branch target briefly holds a copy of the target call, and a backward goto that crosses it can
-     * outgrow the one-byte form for that moment: 47.7.2's bio setup has `goto -> @a85` at a208, 123
+     * outgrow the one-byte form for that moment: 47.7.3's bio setup has `goto -> @a85` at a208, 123
      * code units back, and the hook before the a96 call stretches it past 128. The assembler widens it
      * to goto/16 and never narrows it again, which is the same jump.
      */

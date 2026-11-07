@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 
 /**
@@ -84,19 +85,22 @@ public class SystemFontTest {
     /**
      * The slant half of the #346 case, on the style path below Android 9: Robolectric's Android 9
      * typefaces keep the weight a face is made at but not its slant, so only this path shows it.
+     * Its legacy typefaces answer 0 to getStyle(), so the style is read from the face's shadow.
      */
     @Test @Config(sdk = 27) public void aFaceTheEngineCannotBuildKeepsTheRequestedSlant() {
         Settings.SYSTEM_FONT.save(true);
         SystemFont.requested(400, 1);
         Typeface italic = SystemFont.systemize(null);
         assertNotNull(italic);
-        assertTrue("the requested slant was dropped", italic.isItalic());
-        assertFalse(italic.isBold());
+        assertEquals("the requested slant was dropped", Typeface.ITALIC, styleOf(italic));
 
         SystemFont.requestedAsset("font/TikTok-Text-BoldItalic.otf");
-        Typeface boldItalic = SystemFont.systemize(null);
-        assertTrue("the asset's slant was not read from its name", boldItalic.isItalic());
-        assertTrue("the asset's weight was not read from its name", boldItalic.isBold());
+        assertEquals("the asset's weight or slant was not read from its name",
+                Typeface.BOLD_ITALIC, styleOf(SystemFont.systemize(null)));
+    }
+
+    private static int styleOf(Typeface typeface) {
+        return Shadows.shadowOf(typeface).getFontDescription().getStyle();
     }
 
     @Test public void aFontFileNameGivesItsWeight() {

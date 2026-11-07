@@ -176,6 +176,14 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
                 Settings.HIDE_INBOX_STORIES
         ));
         }
+        if (SettingsStatus.inboxOnThisDayEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Hide On this day",
+                    "The On this day memory at the front of the stories tray goes, and the stories after it move into its place. Nothing is deleted.",
+                    Settings.HIDE_INBOX_ON_THIS_DAY
+            ));
+        }
         if (SettingsStatus.inboxFilterEnabled || SettingsStatus.hideSuggestedAccountsEnabled) {
         addPreference(new TogglePreference(
                 context,

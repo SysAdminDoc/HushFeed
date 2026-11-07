@@ -2553,3 +2553,6 @@ If the feed's video blinks as you swipe with See-through bottom bar on, this dra
 # context: a switch under Blur the video behind the bar; the glass tab bar's rim bends the blurred video like a lens edge
 Bend the video at the edges	Kənarlarda videonu əy
 The glass pill's edges bend the blurred feed video behind them, like the rim of real glass, and its colors come through a little richer. Needs Blur the video behind the bar and Android 13 and up.	Şüşə həbin kənarları arxadakı bulanıq videonu əsl şüşənin kənarı kimi əyir, rənglər də bir az daha canlı görünür. Panelin arxasındakı videonu bulanıqlaşdırın və Android 13 və yuxarı tələb olunur.
+# context: Inbox settings, the switch that hides the On this day memory TikTok puts first in the stories tray. On this day is TikTok's own name for it, kept in English like Footnotes.
+Hide On this day	On this day-i gizlədin
+The On this day memory at the front of the stories tray goes, and the stories after it move into its place. Nothing is deleted.	Hekayə panelinin əvvəlindəki On this day xatirəsi yox olur, ondan sonrakı hekayələr onun yerinə keçir. Heç nə silinmir.

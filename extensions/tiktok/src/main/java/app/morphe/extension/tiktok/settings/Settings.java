@@ -1203,6 +1203,9 @@ public class Settings extends BaseSettings {
     public static final StringSetting DOWNLOAD_BUTTON_POSITION =
             new StringSetting("download_button_position", "");
     public static final BooleanSetting HIDE_INBOX_STORIES = new BooleanSetting("hide_inbox_stories", FALSE);
+    /** The On this day memory at the front of the Inbox's stories tray (#358). */
+    public static final BooleanSetting HIDE_INBOX_ON_THIS_DAY =
+            new BooleanSetting("hide_inbox_on_this_day", FALSE);
     public static final BooleanSetting HIDE_INBOX_NEW_FOLLOWERS = new BooleanSetting("hide_inbox_new_followers", FALSE);
     public static final BooleanSetting HIDE_INBOX_ACTIVITY = new BooleanSetting("hide_inbox_activity", FALSE);
     public static final BooleanSetting HIDE_INBOX_ARCHIVE = new BooleanSetting("hide_inbox_archive", FALSE);

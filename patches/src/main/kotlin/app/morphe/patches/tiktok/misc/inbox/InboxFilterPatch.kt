@@ -63,8 +63,8 @@ internal fun MutableMethod.installInboxLayoutFilter() {
 @Suppress("unused")
 val inboxFilterPatch = bytecodePatch(
     name = "Hide inbox items",
-    description = "Lets you hide Inbox rows you don't use, like message requests, TikTok Shop " +
-        "and the stories row, plus call buttons and suggested replies in chats. Each has its own " +
+    description = "Lets you hide Inbox rows you don't use, like message requests, TikTok Shop, " +
+        "the stories row and the On this day memory in it, plus call buttons and suggested replies in chats. Each has its own " +
         "switch. Also offers search in loaded Activity notifications and TikTok's Main, Requests, " +
         "Unread and Starred tabs on any account, and a way to rebuild message search. Starts off. " +
         "Turn it on in Hushfeed settings > Inbox.",
@@ -90,6 +90,14 @@ val inboxFilterPatch = bytecodePatch(
         } catch (problem: Exception) {
             if (packageMetadata.versionName in declaredVersions()) throw problem
             println("[$PATCH_NAME] Left out the group chat prompt switch on ${packageMetadata.versionName}: ${problem.message}")
+            null
+        }
+        // The On this day cell in the stories tray, held the same way by InboxOnThisDayAnchorsTest.
+        val onThisDay = try {
+            StoryOnThisDayBindFingerprint.method
+        } catch (problem: Exception) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[$PATCH_NAME] Left out the On this day switch on ${packageMetadata.versionName}: ${problem.message}")
             null
         }
         // Show inbox filters, held the same way by InboxFilterTabsAnchorsTest.
@@ -152,6 +160,15 @@ val inboxFilterPatch = bytecodePatch(
             SettingsStatusLoadFingerprint.method.addInstruction(
                 0,
                 "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableGroupChatBanner()V",
+            )
+        }
+
+        // The On this day cell at the front of the stories tray (#358).
+        if (onThisDay != null) {
+            onThisDay.reportOnThisDayBind(PATCH_NAME)
+            SettingsStatusLoadFingerprint.method.addInstruction(
+                0,
+                "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableInboxOnThisDay()V",
             )
         }
 

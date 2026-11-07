@@ -20,6 +20,7 @@ Every Hushfeed release, newest first.
 * `Bend the video at the edges` makes the glass pill's rim bend the blurred video behind it the way the edge of real glass does, and it gives the colors there a small lift. It sits under `Blur the video behind the bar`, starts off and needs Android 13 or newer (#231).
 * Three new switches under the ring switches, `Remove rings on the feed`, `Remove rings in comments` and `Remove rings on profiles`, pick where the story and LIVE rings come off. All three start on, so nothing changes until you turn one off (#351).
 * `Accent color` has two new options, `Like color` and `Save color`. They paint the heart on a video you liked and the bookmark on one you saved, in the feed and in their tap animations, with a preset or a color code you type. They work in light, dark and AMOLED, and with or without a new accent. Both start on TikTok's own red and yellow, which changes nothing (#369).
+* `Hide On this day` takes the On this day memory off the front of the Inbox's stories tray, and the stories after it move up into its place. It starts off and sits under `Hide stories tray` in Hushfeed settings > Inbox (#358).
 
 ### Bug Fixes
 
@@ -34,6 +35,7 @@ Every Hushfeed release, newest first.
 * `Remove story rings` and `Remove the LIVE ring` take the rings off on the feed, in comments and on profiles again. TikTok 47.7.2 hands each picture its story status directly and asks a different place whether someone's live, so the old hooks missed most of them (#351).
 * `AMOLED dark theme` reaches the popup that says "You'll see fewer posts like this" after Not interested, the comments' sort menu and TikTok's other toasts and small popup menus. They stayed gray before (#368).
 * With `Dark LIVE panels in dark mode` on, the names in a LIVE's moderator settings and its muted and blocked lists read white on the dark sheet. They came out dark gray before. The "Support this LIVE" bubble over the gift button keeps its dark text on white too, where it had turned white on white (#362).
+* The Suggested accounts heading in the Inbox lines its title and info icon up with `Clear all` again. Hushfeed's taller Clear all button had pushed them up above it (#358).
 
 ## 0.81.0 (2026-11-05)
 

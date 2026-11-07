@@ -363,6 +363,7 @@
     ],
     "Hide inbox items": [
       "hide_inbox_stories",
+      "hide_inbox_on_this_day",
       "hide_inbox_new_followers",
       "hide_inbox_activity",
       "hide_inbox_archive",
@@ -2260,6 +2261,12 @@
     "hide_inbox_new_followers": {
       "field": "HIDE_INBOX_NEW_FOLLOWERS",
       "key": "hide_inbox_new_followers",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_inbox_on_this_day": {
+      "field": "HIDE_INBOX_ON_THIS_DAY",
+      "key": "hide_inbox_on_this_day",
       "type": "boolean",
       "default": false
     },

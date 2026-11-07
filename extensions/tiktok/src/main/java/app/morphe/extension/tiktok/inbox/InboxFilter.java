@@ -128,6 +128,15 @@ public final class InboxFilter {
     private static final WeakHashMap<View, Integer> ORIGINAL_HEIGHTS = new WeakHashMap<>();
     private static final WeakHashMap<View, BooleanSetting> SYSTEM_ROWS = new WeakHashMap<>();
 
+    /**
+     * On this day cells TikTok has bound into the stories tray, so a layout pass can apply the
+     * switch to one already on screen. PowerList recycles a cell's view only into another cell of
+     * the same class, so a view here never turns into somebody's story.
+     */
+    private static final WeakHashMap<View, Boolean> ON_THIS_DAY_CELLS = new WeakHashMap<>();
+    /** A hidden cell's width, height and side margins, so turning the switch off restores them. */
+    private static final WeakHashMap<View, int[]> ORIGINAL_CELL_SIZES = new WeakHashMap<>();
+
     /** Rows recognised as the stories tray, retained until a recycled row changes shape. */
     private static final WeakHashMap<View, Boolean> STORY_ROWS = new WeakHashMap<>();
     /** Each row class's answer, since asking a class that isn't the tray throws on every layout. */
@@ -146,6 +155,85 @@ public final class InboxFilter {
         if (setting != null) {
             SYSTEM_ROWS.put(row, setting);
             setRowHidden(row, setting.get());
+        }
+    }
+
+    /**
+     * Called at the top of TikTok's bind of the On this day cell, the memory at the front of the
+     * Inbox's stories tray (#358). The stories after it move up into its place.
+     */
+    public static void onOnThisDayBound(Object cell) {
+        try {
+            Object item = app.morphe.extension.tiktok.blockauthor.Reflect.readField(cell, "itemView");
+            if (!(item instanceof View)) return;
+            View view = (View) item;
+            ON_THIS_DAY_CELLS.put(view, Boolean.TRUE);
+            boolean hide = Settings.HIDE_INBOX_ON_THIS_DAY.get();
+            HookStatus.bound("on this day", hide ? "cell hidden" : "cell left");
+            setCellHidden(view, hide);
+        } catch (Throwable ex) {
+            Logger.printException(() -> "On this day cell bind failed", ex);
+        }
+    }
+
+    private static void applyOnThisDay() {
+        if (ON_THIS_DAY_CELLS.isEmpty()) return;
+        boolean hide = Settings.HIDE_INBOX_ON_THIS_DAY.get();
+        for (View cell : ON_THIS_DAY_CELLS.keySet()) {
+            if (cell != null) setCellHidden(cell, hide);
+        }
+    }
+
+    /**
+     * The tray sets its cells side by side and measures them itself, so a hidden cell gives up its
+     * width, height and side margins as well as going {@code GONE}, or the next story would start
+     * where it used to. Nothing is written when the cell is already in the wanted state, which
+     * keeps the layout listener from triggering itself.
+     */
+    static void setCellHidden(View cell, boolean hidden) {
+        ViewGroup.LayoutParams params = cell.getLayoutParams();
+        if (params == null) {
+            setHidden(cell, hidden);
+            return;
+        }
+        ViewGroup.MarginLayoutParams margins = params instanceof ViewGroup.MarginLayoutParams
+                ? (ViewGroup.MarginLayoutParams) params : null;
+        int[] original = ORIGINAL_CELL_SIZES.get(cell);
+        if (hidden) {
+            boolean collapsed = cell.getVisibility() == View.GONE && params.width == 0 && params.height == 0
+                    && (margins == null || (margins.getMarginStart() == 0 && margins.getMarginEnd() == 0
+                            && margins.leftMargin == 0 && margins.rightMargin == 0));
+            if (collapsed) return;
+            if (original == null) {
+                original = margins == null
+                        ? new int[]{params.width, params.height, 0, 0, 0, 0}
+                        : new int[]{params.width, params.height, margins.getMarginStart(),
+                                margins.getMarginEnd(), margins.leftMargin, margins.rightMargin};
+                ORIGINAL_CELL_SIZES.put(cell, original);
+            }
+            cell.setVisibility(View.GONE);
+            params.width = 0;
+            params.height = 0;
+            if (margins != null) {
+                margins.setMarginStart(0);
+                margins.setMarginEnd(0);
+                margins.leftMargin = 0;
+                margins.rightMargin = 0;
+            }
+            cell.setLayoutParams(params);
+            skipThisFrame(cell);
+        } else if (original != null) {
+            ORIGINAL_CELL_SIZES.remove(cell);
+            params.width = original[0];
+            params.height = original[1];
+            if (margins != null) {
+                margins.leftMargin = original[4];
+                margins.rightMargin = original[5];
+                margins.setMarginStart(original[2]);
+                margins.setMarginEnd(original[3]);
+            }
+            cell.setVisibility(View.VISIBLE);
+            cell.setLayoutParams(params);
         }
     }
 
@@ -330,6 +418,8 @@ public final class InboxFilter {
                     applyStoriesOnly(activity, row);
                 }
             }
+            // A switch flipped while the Inbox is open reaches a cell bound before it.
+            applyOnThisDay();
 
             if (fullFilter) {
                 addClearAllControl(activity);
@@ -595,6 +685,10 @@ public final class InboxFilter {
                         (LinearLayout.LayoutParams) original);
                 remaining.width = 0;
                 remaining.weight = 1f;
+                // Clear all is a 48dp touch target, taller than the native title, and the heading
+                // keeps its children at the top, so the title and its help icon sat above the
+                // action instead of level with it (#358).
+                remaining.gravity = Gravity.CENTER_VERTICAL;
                 child.setLayoutParams(remaining);
                 hasFullWidthChild = true;
                 // The native title must leave room for its help icon as its wrapper shrinks.
@@ -610,10 +704,12 @@ public final class InboxFilter {
                     title.setLayoutParams(text);
                 }
             }
-            params = hasFullWidthChild
+            LinearLayout.LayoutParams action = hasFullWidthChild
                     ? new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT)
                     : new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+            action.gravity = Gravity.CENTER_VERTICAL;
+            params = action;
         }
         headerGroup.addView(clearAll, params);
 

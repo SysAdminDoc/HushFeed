@@ -363,6 +363,7 @@
     ],
     "Hide inbox items": [
       "HIDE_INBOX_STORIES",
+      "HIDE_INBOX_ON_THIS_DAY",
       "HIDE_INBOX_NEW_FOLLOWERS",
       "HIDE_INBOX_ACTIVITY",
       "HIDE_INBOX_ARCHIVE",

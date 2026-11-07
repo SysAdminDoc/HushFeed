@@ -764,6 +764,13 @@ public class SettingsStatus {
         groupChatBannerEnabled = true;
     }
 
+    /** Hide inbox items found the stories tray's On this day cell on this build and hooked its bind. */
+    public static boolean inboxOnThisDayEnabled = false;
+
+    public static void enableInboxOnThisDay() {
+        inboxOnThisDayEnabled = true;
+    }
+
     /** Hide profile shortcuts found the profile picture's Thoughts bubble on this build and hooked it. */
     public static boolean profileThoughtsEnabled = false;
 

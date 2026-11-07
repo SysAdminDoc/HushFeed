@@ -142,6 +142,22 @@ public class InboxClearControlTest {
                 header.getChildAt(0).getRight() <= clear.getLeft());
     }
 
+    /** #358: the heading's title and help icon sit level with Clear all, not above it. */
+    @Test @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    public void theTitleAndHelpIconLineUpWithClearAll() {
+        TextView clear = clearControl();
+        header.measure(View.MeasureSpec.makeMeasureSpec(1080, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(2316, View.MeasureSpec.AT_MOST));
+        header.layout(0, 0, header.getMeasuredWidth(), header.getMeasuredHeight());
+        View nativeTitle = header.getChildAt(0);
+        assertTrue("the fixture title is as tall as the action, so it proves nothing",
+                nativeTitle.getHeight() < clear.getHeight());
+        int titleMiddle = (nativeTitle.getTop() + nativeTitle.getBottom()) / 2;
+        int clearMiddle = (clear.getTop() + clear.getBottom()) / 2;
+        assertTrue("the title sits " + (clearMiddle - titleMiddle) + " px above Clear all",
+                Math.abs(titleMiddle - clearMiddle) <= 1);
+    }
+
     @Test public void aReplacedControlKeepsTheNativeTitleWrapperAndItsReservedWidth() {
         TextView original = clearControl();
         header.removeView(original);

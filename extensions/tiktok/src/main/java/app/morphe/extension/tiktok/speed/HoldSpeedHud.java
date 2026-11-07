@@ -189,8 +189,9 @@ public final class HoldSpeedHud {
             holding = false;
             if (!enabled() || component == null) return;
             gesture = new WeakReference<>(component);
-            float slid = slidSpeed();
-            float start = Float.isNaN(slid) ? PlaybackSpeedPatch.boostSpeed() : slid;
+            // The speed the gesture plays, unsnapped: a typed 1.8 plays 1.8, so the bubble says
+            // 1.8 and not the grid's 1.75 (#357). A speed slid to comes first, as before.
+            float start = PlaybackSpeedPatch.holdSpeed(PlaybackSpeedPatch.TIKTOK_HOLD_SPEED);
             steps = stepsFor(start, Settings.CUSTOM_SPEEDS.get());
             index = indexOf(steps, start);
             anchorX = Float.NaN;

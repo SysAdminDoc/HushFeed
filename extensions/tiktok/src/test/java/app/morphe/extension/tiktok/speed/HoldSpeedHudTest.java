@@ -187,6 +187,24 @@ public class HoldSpeedHudTest {
         assertEquals("1.5x", label());
     }
 
+    /** #357: a typed hold speed off the 0.25 grid shows as typed, the speed the hold plays. */
+    @Test
+    public void aTypedHoldSpeedShowsAsTyped() {
+        Settings.HOLD_SPEED_CUSTOM.save("1.8");
+        try {
+            HoldSpeedHud.onHoldPress(component);
+            assertEquals("1.8x", label());
+            assertEquals(1.8f, PlaybackSpeedPatch.holdSpeed(2f), 0f);
+            // One step right is the grid's next speed.
+            move(0);
+            move(DEAD_ZONE + STEP + 2);
+            assertEquals(List.of(2f), applied);
+            assertEquals("2x", label());
+        } finally {
+            Settings.HOLD_SPEED_CUSTOM.resetToDefault();
+        }
+    }
+
     /**
      * #248, a later report: a video opened from search, a profile or a chat plays in an activity
      * of its own over the main one, and the bubble went on the main one's window behind it.

@@ -111,7 +111,8 @@ public final class ResourceTableCheck {
         ZipEntry arsc = zip.getEntry(TableBlock.FILE_NAME);
         if (arsc == null) throw new IOException(zip.getName() + " has no " + TableBlock.FILE_NAME);
         try (InputStream in = new BufferedInputStream(zip.getInputStream(arsc))) {
-            return TableBlock.load(in);
+            // morphe-desktop 2.1.1's ARSCLib takes a progress listener here; null means none.
+            return TableBlock.load(in, null);
         }
     }
 

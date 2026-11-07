@@ -133,7 +133,7 @@ public class ShareBlockAuthorTest {
         ((Map<?, ?>) ReflectionHelpers.getStaticField(ShareBlockAuthor.class, "IN_FLIGHT")).clear();
         ((Map<?, ?>) ReflectionHelpers.getStaticField(ShareBlockAuthor.class, "CREATORS")).clear();
         SignedInUser.idForTests = null;
-        ShareModelFilter.forgetHiddenReportForTests();
+        ShareModelFilter.forgetHeldReportForTests();
         Settings.SHARE_BLOCK_AUTHOR.save(false);
         Settings.HIDE_SHARE_ACTIONS.save(false);
         Settings.SHARE_HIDDEN_ITEMS.save("");
@@ -245,17 +245,32 @@ public class ShareBlockAuthorTest {
         AwemeSharePackage sheet = sheet("200");
         ShareModelFilter.surface(sheet);
         Settings.SHARE_HIDDEN_ITEMS.save("x, report, casting");
-        List<?> kept = ShareModelFilter.actions(row());
-        assertEquals(2, kept.size());
-        List<?> finished = ShareBlockAuthor.actions(sheet, kept);
+        List<Object> nativeRow = row();
+        Object report = nativeRow.get(1);
+        List<?> kept = ShareModelFilter.actions(nativeRow);
+        // Report rides through the filter so TikTok's sort can place it.
+        assertEquals(3, kept.size());
+        assertSame(report, kept.get(1));
+        // TikTok sorts the snapshot's row after the filter, and Report leads it (47.7.2).
+        List<Object> sorted = new ArrayList<>(Arrays.asList(kept.get(1), kept.get(2), kept.get(0)));
+        List<?> finished = ShareBlockAuthor.actions(sheet, sorted);
         assertEquals(3, finished.size());
-        assertEquals("save", ((Action) finished.get(0)).key());
-        assertEquals(ShareBlockAuthor.KEY, ((Action) finished.get(1)).key());
-        assertEquals("not_interested", ((Action) finished.get(2)).key());
+        assertEquals(ShareBlockAuthor.KEY, ((Action) finished.get(0)).key());
+        assertEquals("not_interested", ((Action) finished.get(1)).key());
+        assertEquals("save", ((Action) finished.get(2)).key());
+        assertFalse(finished.contains(report));
 
-        List<Object> reportFirst = new ArrayList<>(Arrays.asList(new Action("report"), new Action("save")));
-        List<?> leading = ShareBlockAuthor.actions(sheet, ShareModelFilter.actions(reportFirst));
-        assertEquals(ShareBlockAuthor.KEY, ((Action) leading.get(0)).key());
+        // Your own video gets no Block, and Report still leaves.
+        List<?> own = ShareBlockAuthor.actions(sheet("100"), ShareModelFilter.actions(row()));
+        assertEquals(2, own.size());
+        assertEquals("save", ((Action) own.get(0)).key());
+        assertEquals("not_interested", ((Action) own.get(1)).key());
+
+        // Block off: the filter drops Report as before.
+        Settings.SHARE_BLOCK_AUTHOR.save(false);
+        assertEquals(2, ShareModelFilter.actions(row()).size());
+        assertNull(ShareModelFilter.takeHeldReport());
+        Settings.SHARE_BLOCK_AUTHOR.save(true);
 
         // Nothing hidden, no Report from TikTok: still no Block.
         Settings.SHARE_HIDDEN_ITEMS.save("casting");

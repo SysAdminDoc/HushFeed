@@ -122,8 +122,15 @@ public final class ShareBlockAuthor {
         return SettingsStatus.shareSheetEnabled && Settings.SHARE_BLOCK_AUTHOR.get();
     }
 
+    /** Whether a Report hidden from the row should stay in it until Block takes its place. */
+    static boolean wantsReportSlot() {
+        return enabled() && !hidden();
+    }
+
     /** Finished native row. Remove stale owned actions even when disabled or on another surface. */
     public static List<?> actions(Object sharePackage, List<?> actions) {
+        // A Report the share filter hid but kept for this: it leaves the row here either way (#367).
+        Object heldReport = ShareModelFilter.takeHeldReport();
         if (actions == null) return null;
         List<Object> row = new ArrayList<>(actions.size() + 1);
         Built reusable = null;
@@ -133,15 +140,20 @@ public final class ShareBlockAuthor {
             boolean eligible = post != null && account != null && !account.equals(post.author.uid);
             if (eligible) ShareActionCatalog.observe(Collections.singletonList(new CatalogEntry()), ShareSurface.VIDEO);
             eligible &= !hidden();
+            int heldAt = -1;
             for (Object item : actions) {
+                if (heldReport != null && item == heldReport) {
+                    heldAt = row.size();
+                    continue;
+                }
                 Built built = find(item);
                 if (built == null) row.add(item);
                 else if (eligible && reusable == null && built.matches(sharePackage, post, account)) reusable = built;
                 else if (built != reusable) built.retired = true;
             }
             int report = reportIndex(row);
-            // Report hidden from the share sheet still counts: TikTok offered it (#367).
-            int slot = report >= 0 ? report + 1 : ShareModelFilter.hiddenReportSlot(row);
+            // A hidden Report's place in TikTok's sorted row still counts: TikTok offered it (#367).
+            int slot = report >= 0 ? report + 1 : heldAt;
             if (eligible && slot >= 0) {
                 Object action = reusable == null ? null : reusable.action.get();
                 if (action == null) {
@@ -164,7 +176,7 @@ public final class ShareBlockAuthor {
                 if (built != null) built.retired = true;
             }
             row.clear();
-            for (Object item : actions) if (!owns(item)) row.add(item);
+            for (Object item : actions) if (!owns(item) && item != heldReport) row.add(item);
             HookStatus.threw(ShareModelFilter.FAMILY, "block author", failure);
             Logger.printException(() -> "Could not add the share-sheet block action", failure);
             return sameRow(actions, row) ? actions : row;

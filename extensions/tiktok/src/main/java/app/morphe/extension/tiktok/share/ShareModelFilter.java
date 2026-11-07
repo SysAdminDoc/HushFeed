@@ -97,7 +97,7 @@ public final class ShareModelFilter {
     }
 
     public static List<?> actions(List<?> items) {
-        HIDDEN_REPORT.remove();
+        HELD_REPORT.remove();
         try {
             ShareActionCatalog.observe(items, current);
         } catch (Throwable ex) {
@@ -106,8 +106,7 @@ public final class ShareModelFilter {
         }
         try {
             List<?> kept = filter("actions", items, Settings.HIDE_SHARE_ACTIONS.get());
-            noteHiddenReport(items, kept);
-            return kept;
+            return holdHiddenReport(items, kept);
         } catch (Throwable ex) {
             HookStatus.threw(FAMILY, "actions", ex);
             Logger.printException(() -> "Could not filter the share actions row", ex);
@@ -116,28 +115,30 @@ public final class ShareModelFilter {
     }
 
     /**
-     * Where a Report this filter hid sat, as the key of the kept action before it ("" when it led
-     * the row). Block this creator goes beside Report and leaves rows TikTok built without one
-     * alone, so hiding Report took Block with it (#367). The snapshot constructor runs this filter
-     * and then the owned actions on one thread, so the next read on this thread is the same sheet.
+     * A Report this filter hides, kept in the row for Block this creator to take its place (#367).
+     * Block goes beside Report and leaves rows TikTok built without one alone, so hiding Report
+     * took Block with it. TikTok sorts the row after this filter runs (Report leads the sorted
+     * row), so only the sorted row knows where Report belongs: the snapshot constructor runs this
+     * filter, sorts, and then hands the row to ShareBlockAuthor on the same thread, which takes
+     * Report out again and puts Block where it sat.
      */
-    private static final ThreadLocal<String> HIDDEN_REPORT = new ThreadLocal<>();
+    private static final ThreadLocal<Object> HELD_REPORT = new ThreadLocal<>();
 
-    private static void noteHiddenReport(List<?> items, List<?> kept) {
-        if (items == null || kept == null || kept == items) return;
-        for (int i = 0; i < items.size(); i++) {
-            if (!"report".equals(Reflect.string(items.get(i), "key", "key"))) continue;
-            if (containsSame(kept, items.get(i))) return;
-            String before = "";
-            for (int j = i - 1; j >= 0; j--) {
-                if (!containsSame(kept, items.get(j))) continue;
-                String key = Reflect.string(items.get(j), "key", "key");
-                before = key == null ? "" : key;
+    private static List<?> holdHiddenReport(List<?> items, List<?> kept) {
+        if (items == null || kept == null || kept == items || !ShareBlockAuthor.wantsReportSlot()) return kept;
+        Object report = null;
+        for (Object item : items) {
+            if ("report".equals(Reflect.string(item, "key", "key")) && !containsSame(kept, item)) {
+                report = item;
                 break;
             }
-            HIDDEN_REPORT.set(before);
-            return;
         }
+        if (report == null) return kept;
+        List<Object> held = new ArrayList<>(kept.size() + 1);
+        for (Object item : items) if (item == report || containsSame(kept, item)) held.add(item);
+        HELD_REPORT.set(report);
+        Logger.printDebug(() -> "Share sheet model " + current + " actions: hidden Report held for Block this creator");
+        return held;
     }
 
     private static boolean containsSame(List<?> list, Object item) {
@@ -145,19 +146,15 @@ public final class ShareModelFilter {
         return false;
     }
 
-    /** The index a hidden Report held in [row], or -1 when this filter didn't hide one. */
-    static int hiddenReportSlot(List<?> row) {
-        String before = HIDDEN_REPORT.get();
-        if (before == null) return -1;
-        if (before.isEmpty()) return 0;
-        for (int i = 0; i < row.size(); i++) {
-            if (before.equals(Reflect.string(row.get(i), "key", "key"))) return i + 1;
-        }
-        return row.size();
+    /** The hidden Report this thread's last actions filter kept in its row, once; null when none. */
+    static Object takeHeldReport() {
+        Object report = HELD_REPORT.get();
+        HELD_REPORT.remove();
+        return report;
     }
 
-    static void forgetHiddenReportForTests() {
-        HIDDEN_REPORT.remove();
+    static void forgetHeldReportForTests() {
+        HELD_REPORT.remove();
     }
 
     public static boolean contacts(boolean original) {

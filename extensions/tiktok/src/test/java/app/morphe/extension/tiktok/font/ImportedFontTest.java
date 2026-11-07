@@ -413,7 +413,9 @@ public class ImportedFontTest {
                 Typeface.create(ImportedFont.typeface(), tiktok.getWeight(), tiktok.isItalic()).getStyle(),
                 drawn.getStyle());
         assertTrue(HookStatus.report().toString().contains("system font"));
-        assertNull("null still passes through", SystemFont.systemize(null));
+        // #346: a face TikTok's engine can't build (its fonts left out of a split-bundle install)
+        // still comes out in the imported font.
+        assertEquals("the engine's null wasn't replaced", "Inter.ttf", familyOf(SystemFont.systemize(null)));
     }
 
     @Test public void withTheImportSwitchOffTheHookAnswersAsUseSystemFontAlone() throws IOException {

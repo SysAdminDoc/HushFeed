@@ -49,6 +49,12 @@ class SystemFontAnchorsTest {
                     val returns = method.implementation?.instructions
                         ?.count { it.opcode == Opcode.RETURN_OBJECT } ?: 0
                     assertTrue("$version: ${engine.type}->${method.name} returns no typeface", returns > 0)
+                    // #346: the entry hook reads the weight and slant from p2 and p3, the asset
+                    // path from p1, which holds only while the build method is an instance method.
+                    assertFalse(
+                        "$version: ${engine.type}->${method.name} is static, so the request moved",
+                        AccessFlags.STATIC.isSet(method.accessFlags),
+                    )
                 }
             }
         }

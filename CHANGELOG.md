@@ -27,6 +27,7 @@ Every Hushfeed release, newest first.
 * LIVE Auto tap taps the host's side of the stream now. In a battle or a room with guests it used to tap near the middle, hit the other creator's half and open their profile card, which stopped it after a second. If a tap still opens a card, the next start in that room skips that spot (#335).
 * With `LIVE recording source` set to Screen, a recording keeps going after you allow it. Android's permission screen made TikTok think you were leaving the room, so TikTok shrank the LIVE into its own picture-in-picture window and the recording stopped a few seconds in.
 * On some phones the screen blinked each time a video slid under the bar with `See-through bottom bar` on. The new `Stop the blink under the bar` switch under it has TikTok draw the video inside its own window instead of on a separate layer, which those phones were dropping for a frame. It starts off and takes a TikTok restart (#232).
+* An imported font and `Use system font` now reach TikTok's own screens, like its Settings pages, on installs patched from the split APK bundle. TikTok's fonts aren't in the bundle, so TikTok had nothing to swap and fell back to the phone's default font. Bold text stays bold (#346).
 
 ## 0.81.0 (2026-11-05)
 

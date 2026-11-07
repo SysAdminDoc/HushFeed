@@ -282,8 +282,19 @@ internal fun Method.engineShape(): String? {
     return parameterTypes.joinToString("").takeIf { it == VARIATION_SHAPE || it == ASSET_SHAPE }
 }
 
-/** Sends every returned Typeface through the extension, which swaps it when the switch is on. */
+/**
+ * Sends every returned Typeface through the extension, which swaps it when the switch is on.
+ *
+ * The request is handed over first, at the method's entry while its parameters are still the
+ * caller's: the variable builder's weight and slant, the asset loader's file name. On an install
+ * patched from the split bundle TikTok's font files are in a feature split the bundle leaves out,
+ * so every build answers null (#346), and the extension makes the replacement at that weight.
+ */
 private fun MutableMethod.systemizeReturns() {
+    val request = when (engineShape()) {
+        VARIATION_SHAPE -> "invoke-static/range {p2 .. p3}, $EXTENSION_CLASS_DESCRIPTOR->requested(II)V"
+        else -> "invoke-static/range {p1 .. p1}, $EXTENSION_CLASS_DESCRIPTOR->requestedAsset(Ljava/lang/String;)V"
+    }
     findInstructionIndicesReversedOrThrow { opcode == Opcode.RETURN_OBJECT }.forEach { index ->
         val register = getInstruction<OneRegisterInstruction>(index).registerA
         addInstructionsAtControlFlowLabel(
@@ -294,4 +305,5 @@ private fun MutableMethod.systemizeReturns() {
             """,
         )
     }
+    addInstruction(0, request)
 }

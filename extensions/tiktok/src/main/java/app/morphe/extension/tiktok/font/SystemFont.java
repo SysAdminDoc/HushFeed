@@ -50,9 +50,37 @@ public final class SystemFont {
     private SystemFont() {}
 
     /**
+     * The weight and slant the engine was last asked for on this thread, read at its entry, so a
+     * face it can't build still comes out at the size of stroke TikTok wanted (#346).
+     */
+    private static final int REGULAR = 400;
+    private static final ThreadLocal<int[]> REQUESTED = new ThreadLocal<int[]>() {
+        @Override protected int[] initialValue() {
+            return new int[] {REGULAR, 0};
+        }
+    };
+
+    /** The variable-font builder's own weight and slant arguments, taken at its entry. */
+    public static void requested(int weight, int italic) {
+        int[] request = REQUESTED.get();
+        request[0] = weight;
+        request[1] = italic;
+    }
+
+    /** The static asset loader's file name, taken at its entry: the weight is in the name. */
+    public static void requestedAsset(String path) {
+        int[] request = REQUESTED.get();
+        request[0] = weightNamed(path);
+        request[1] = path != null && path.toLowerCase(java.util.Locale.ROOT).contains("italic") ? 1 : 0;
+    }
+
+    /**
      * The replacement at {@code original}'s weight and slant while a switch asks for one,
-     * otherwise {@code original} unchanged. Null passes through, which is the engine's own "no
-     * typeface" answer.
+     * otherwise {@code original} unchanged. A null original is the engine's "no typeface"
+     * answer, which is every answer on an install patched from the split bundle: TikTok's own
+     * fonts ship in a feature split the bundle leaves out, so the engine finds no file (#346).
+     * The replacement still goes out then, at the weight and slant the engine was asked for, and
+     * with both switches off the null goes back unchanged.
      */
     public static Typeface systemize(Typeface original) {
         Typeface family = replacementFamily();
@@ -60,8 +88,12 @@ public final class SystemFont {
         // from "present and off" from "present and swapping". The FONT section says which font.
         HookStatus.bound(HOOK_FAMILY, family == null ? "tiktok" : family == Typeface.DEFAULT ? "system" : "imported");
         report(family);
-        if (family == null || original == null) return original;
+        if (family == null) return original;
         try {
+            if (original == null) {
+                int[] request = REQUESTED.get();
+                return restyled(family, request[0], request[1] != 0);
+            }
             if (Build.VERSION.SDK_INT >= 28) {
                 return Typeface.create(family, original.getWeight(), original.isItalic());
             }
@@ -70,6 +102,25 @@ public final class SystemFont {
             HookStatus.threw(HOOK_FAMILY, "systemize", failure);
             return original;
         }
+    }
+
+    private static Typeface restyled(Typeface family, int weight, boolean italic) {
+        int clamped = weight < 1 || weight > 1000 ? REGULAR : weight;
+        if (Build.VERSION.SDK_INT >= 28) return Typeface.create(family, clamped, italic);
+        int style = clamped >= 600 ? Typeface.BOLD : Typeface.NORMAL;
+        return Typeface.create(family, italic ? style | Typeface.ITALIC : style);
+    }
+
+    /** The weight a TikTok font file's name stands for: TikTok-Text-Bold.otf is 700. */
+    static int weightNamed(String path) {
+        if (path == null) return REGULAR;
+        String name = path.toLowerCase(java.util.Locale.ROOT);
+        if (name.contains("semibold") || name.contains("demibold")) return 600;
+        if (name.contains("extrabold") || name.contains("black") || name.contains("heavy")) return 900;
+        if (name.contains("bold")) return 700;
+        if (name.contains("medium")) return 500;
+        if (name.contains("light")) return 300;
+        return REGULAR;
     }
 
     /**
@@ -149,5 +200,6 @@ public final class SystemFont {
         IN_IMPORTED.set(0);
         IN_SYSTEM.set(0);
         IN_TIKTOK.set(0);
+        REQUESTED.remove();
     }
 }

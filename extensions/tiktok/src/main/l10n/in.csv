@@ -1403,6 +1403,9 @@ Takes TikTok's own Auto scroll action out of the video panel and the Auto scroll
 Hide the unread badges on the bottom tabs,Sembunyikan lencana belum dibaca di tab bawah
 "Hide the red counts and dots on every bottom tab, Inbox and Profile included, and the bubble over Inbox that counts new likes, followers, comments and who's LIVE. The inbox itself still shows what came in.","Menyembunyikan angka dan titik merah di semua tab bawah, termasuk Kotak Masuk dan Profil, serta gelembung di atas Kotak Masuk yang menghitung suka, pengikut, dan komentar baru, juga siapa yang sedang LIVE. Kotak masuk sendiri tetap menampilkan yang masuk."
 Speed while you hold the video,Kecepatan saat video ditahan
+Custom hold speed,Kecepatan tahan sendiri
+"One speed from %1$s to %2$s, like 1.8, for the hold and its pull-down lock. It takes the place of the speed above. Leave empty to use that one.","Satu kecepatan dari %1$s hingga %2$s, misalnya 1.8, untuk tahan dan kuncinya dengan tarik ke bawah. Ini menggantikan kecepatan di atas. Biarkan kosong untuk memakai yang itu."
+Enter one speed from %1$s to %2$s,Masukkan satu kecepatan dari %1$s hingga %2$s
 Slide to change the hold speed,Geser untuk mengubah kecepatan tahan
 Hold speed bubble style,Gaya gelembung kecepatan tahan
 Pill,Pil

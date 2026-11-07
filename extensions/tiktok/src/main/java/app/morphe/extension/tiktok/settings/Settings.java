@@ -829,6 +829,8 @@ public class Settings extends BaseSettings {
     public static final StringSetting CUSTOM_SPEEDS = new StringSetting("custom_speeds", "", true);
     /** The speed the hold gesture plays at and its pull-down lock keeps; TikTok's own is 2x (upstream #52). */
     public static final StringSetting HOLD_SPEED = new StringSetting("hold_speed", "2");
+    /** One typed hold speed, like 1.8, in place of the row above's presets; empty keeps that row (#357). */
+    public static final StringSetting HOLD_SPEED_CUSTOM = new StringSetting("hold_speed_custom", "");
     /** Sliding sideways during the hold changes its speed, with a bubble that shows it (#248). */
     public static final BooleanSetting HOLD_SPEED_SLIDE = new BooleanSetting("hold_speed_slide", FALSE);
     /** How that bubble looks: the pill, or the round dial adapted from OmerKurdi79's fork (#248). */

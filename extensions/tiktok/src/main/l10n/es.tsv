@@ -1407,6 +1407,10 @@ Takes TikTok's own Auto scroll action out of the video panel and the Auto scroll
 Hide the unread badges on the bottom tabs	Ocultar las insignias de no leídos en las pestañas inferiores
 Hide the red counts and dots on every bottom tab, Inbox and Profile included, and the bubble over Inbox that counts new likes, followers, comments and who's LIVE. The inbox itself still shows what came in.	Oculta los contadores y puntos rojos de todas las pestañas inferiores, incluidas Bandeja de entrada y Perfil, y la burbuja sobre Bandeja de entrada que cuenta los nuevos me gusta, seguidores, comentarios y quién está en LIVE. La bandeja de entrada sigue mostrando lo que ha llegado.
 Speed while you hold the video	Velocidad mientras mantienes pulsado el vídeo
+# context: a typed speed for the hold gesture and its pull-down lock; %1$s and %2$s are the slowest and fastest speeds (#357)
+Custom hold speed	Velocidad propia al mantener
+One speed from %1$s to %2$s, like 1.8, for the hold and its pull-down lock. It takes the place of the speed above. Leave empty to use that one.	Una velocidad de %1$s a %2$s, como 1.8, para mantener pulsado y su bloqueo al deslizar hacia abajo. Reemplaza la velocidad de arriba. Déjalo vacío para usar esa.
+Enter one speed from %1$s to %2$s	Introduce una velocidad de %1$s a %2$s
 Slide to change the hold speed	Desliza para cambiar la velocidad al mantener
 Hold speed bubble style	Estilo de la burbuja de velocidad al mantener
 Pill	Píldora

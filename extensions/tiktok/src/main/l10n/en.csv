@@ -535,6 +535,7 @@ Current %1$s,Current %1$s
 Current state,Current state
 Current: %1$s,Current: %1$s
 Custom SIM details,Custom SIM details
+Custom hold speed,Custom hold speed
 Custom value,Custom value
 Custom value…,Custom value…
 Cuts the tracking bits out of links you share.,Cuts the tracking bits out of links you share.
@@ -620,6 +621,7 @@ Enter a whole number,Enter a whole number
 "Enter a whole number, or one like 20K, 1.5M or 2B","Enter a whole number, or one like 20K, 1.5M or 2B"
 Enter a zone like Asia/Tokyo,Enter a zone like Asia/Tokyo
 "Enter an hour, like 6 or 06:00","Enter an hour, like 6 or 06:00"
+Enter one speed from %1$s to %2$s,Enter one speed from %1$s to %2$s
 Enter true or false,Enter true or false
 Enter up to %1$d comma-separated speeds from %2$s to %3$s,Enter up to %1$d comma-separated speeds from %2$s to %3$s
 Enter who to message below to start.,Enter who to message below to start.
@@ -1357,6 +1359,7 @@ One minute left,One minute left
 One more save waiting,One more save waiting
 "One of the quote marks in that list has nothing to close it, so the rest of the line reads as one phrase. Add the missing quote or take the stray one out.","One of the quote marks in that list has nothing to close it, so the rest of the line reads as one phrase. Add the missing quote or take the stray one out."
 One picked,One picked
+"One speed from %1$s to %2$s, like 1.8, for the hold and its pull-down lock. It takes the place of the speed above. Leave empty to use that one.","One speed from %1$s to %2$s, like 1.8, for the hold and its pull-down lock. It takes the place of the speed above. Leave empty to use that one."
 One value per line,One value per line
 One video was recorded before each account kept its own list. It hides nothing until you add it here.,One video was recorded before each account kept its own list. It hides nothing until you add it here.
 One was already saved,One was already saved

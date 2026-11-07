@@ -1829,6 +1829,9 @@ Speed,Tốc độ phát
 Speed menu choices,Các tùy chọn menu tốc độ phát
 "Speed up this video, double tap again to undo","Tăng tốc video này, chạm đúp lần nữa để hoàn tác"
 Speed while you hold the video,Tốc độ phát khi bạn nhấn giữ video
+Custom hold speed,Tốc độ giữ tùy chỉnh
+"One speed from %1$s to %2$s, like 1.8, for the hold and its pull-down lock. It takes the place of the speed above. Leave empty to use that one.","Một tốc độ từ %1$s đến %2$s, ví dụ 1.8, cho thao tác giữ và khóa bằng cách kéo xuống. Nó thay cho tốc độ ở trên. Để trống để dùng tốc độ đó."
+Enter one speed from %1$s to %2$s,Nhập một tốc độ từ %1$s đến %2$s
 Spin the music disc,Xoay đĩa nhạc
 Split comment minimum width,Chiều rộng tối thiểu khi chia đôi màn hình bình luận
 Standard,Tiêu chuẩn

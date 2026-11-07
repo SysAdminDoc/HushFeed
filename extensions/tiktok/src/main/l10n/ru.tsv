@@ -1527,6 +1527,10 @@ Takes TikTok's own Auto scroll action out of the video panel and the Auto scroll
 Hide the unread badges on the bottom tabs	Скрывать значки непрочитанного на нижних вкладках
 Hide the red counts and dots on every bottom tab, Inbox and Profile included, and the bubble over Inbox that counts new likes, followers, comments and who's LIVE. The inbox itself still shows what came in.	Скрывать красные счётчики и точки на всех нижних вкладках, включая «Входящие» и «Профиль», а также всплывающий значок над «Входящими» с числом новых лайков, подписчиков, комментариев и тех, кто в LIVE. Сами входящие по-прежнему показывают, что пришло.
 Speed while you hold the video	Скорость при удержании видео
+# context: a typed speed for the hold gesture and its pull-down lock; %1$s and %2$s are the slowest and fastest speeds (#357)
+Custom hold speed	Своя скорость при удержании
+One speed from %1$s to %2$s, like 1.8, for the hold and its pull-down lock. It takes the place of the speed above. Leave empty to use that one.	Одна скорость от %1$s до %2$s, например 1.8, для удержания и его фиксации жестом вниз. Она заменяет скорость выше. Оставьте пустым, чтобы использовать ту.
+Enter one speed from %1$s to %2$s	Введите одну скорость от %1$s до %2$s
 Slide to change the hold speed	Смена скорости удержания свайпом
 Hold speed bubble style	Вид пузыря скорости удержания
 Pill	Капсула

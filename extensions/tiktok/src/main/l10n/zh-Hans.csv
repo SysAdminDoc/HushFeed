@@ -1706,6 +1706,9 @@ Speed,速度
 Speed menu choices,速度菜单选项
 "Speed up this video, double tap again to undo",加快该视频的速度，再次双击即可撤消
 Speed while you hold the video,按住视频时速度
+Custom hold speed,自定义按住速度
+"One speed from %1$s to %2$s, like 1.8, for the hold and its pull-down lock. It takes the place of the speed above. Leave empty to use that one.",一个从 %1$s 到 %2$s 的速度，例如 1.8，用于按住和下拉锁定。它会替代上面的速度。留空则使用上面的速度.
+Enter one speed from %1$s to %2$s,输入一个从 %1$s 到 %2$s 的速度
 Slide to change the hold speed,滑动更改按住时的速度
 Hold speed bubble style,按住速度气泡样式
 Pill,胶囊

@@ -22,6 +22,7 @@ Every Hushfeed release, newest first.
 * `Accent color` has two new options, `Like color` and `Save color`. They paint the heart on a video you liked and the bookmark on one you saved, in the feed and in their tap animations, with a preset or a color code you type. They work in light, dark and AMOLED, and with or without a new accent. Both start on TikTok's own red and yellow, which changes nothing (#369).
 * `Hide On this day` takes the On this day memory off the front of the Inbox's stories tray, and the stories after it move up into its place. It starts off and sits under `Hide stories tray` in Hushfeed settings > Inbox (#358).
 * `Hide profile pictures in comments` takes the commenter's picture off every comment and reply. The name and the comment move over to the left, so there's no empty space where the picture was. It starts off, sits under `Hide the thumbs down on comments` in Hushfeed settings > Comments and takes a TikTok restart (#352).
+* `Custom hold speed` under Playback takes any speed you type, like 1.8 or 2.3, for holding a video and for the pull-down lock under it. It takes the place of `Speed while you hold the video`, and leaving it empty keeps that row's pick (#357).
 
 ### Bug Fixes
 

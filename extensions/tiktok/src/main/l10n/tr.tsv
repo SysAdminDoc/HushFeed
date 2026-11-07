@@ -1407,6 +1407,10 @@ Takes TikTok's own Auto scroll action out of the video panel and the Auto scroll
 Hide the unread badges on the bottom tabs	Alt sekmelerdeki okunmamış rozetlerini gizle
 Hide the red counts and dots on every bottom tab, Inbox and Profile included, and the bubble over Inbox that counts new likes, followers, comments and who's LIVE. The inbox itself still shows what came in.	Gelen Kutusu ve Profil dahil tüm alt sekmelerdeki kırmızı sayaçları ve noktaları, ayrıca Gelen Kutusu'nun üstünde yeni beğenileri, takipçileri, yorumları ve kimin LIVE'da olduğunu sayan baloncuğu gizler. Gelen kutusunun kendisi gelenleri göstermeye devam eder.
 Speed while you hold the video	Videoyu basılı tutarken hız
+# context: a typed speed for the hold gesture and its pull-down lock; %1$s and %2$s are the slowest and fastest speeds (#357)
+Custom hold speed	Özel basılı tutma hızı
+One speed from %1$s to %2$s, like 1.8, for the hold and its pull-down lock. It takes the place of the speed above. Leave empty to use that one.	Basılı tutma ve aşağı çekerek kilitleme için %1$s ile %2$s arasında bir hız, örneğin 1.8. Yukarıdaki hızın yerini alır. Onu kullanmak için boş bırakın.
+Enter one speed from %1$s to %2$s	%1$s ile %2$s arasında bir hız girin
 Slide to change the hold speed	Basılı tutma hızını kaydırarak değiştir
 Hold speed bubble style	Basılı tutma hızı balonunun stili
 Pill	Hap

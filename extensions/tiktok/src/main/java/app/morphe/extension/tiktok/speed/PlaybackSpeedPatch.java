@@ -437,12 +437,28 @@ public final class PlaybackSpeedPatch {
      */
     static float chosenHoldSpeed() {
         if (Setting.isPaused()) return Float.NaN;
+        // A typed speed (#357) stands over the preset row; an empty or refused one leaves it.
+        float custom = parseHoldSpeed(Settings.HOLD_SPEED_CUSTOM.get());
+        return Float.isNaN(custom) ? parseHoldSpeed(Settings.HOLD_SPEED.get()) : custom;
+    }
+
+    /**
+     * One speed the hold can play at, or NaN for an empty, unreadable or out of range value. A
+     * comma reads as the decimal point, the way many keyboards type it.
+     */
+    public static float parseHoldSpeed(String text) {
+        if (text == null || text.trim().isEmpty()) return Float.NaN;
         try {
-            float value = Float.parseFloat(Settings.HOLD_SPEED.get());
+            float value = Float.parseFloat(text.trim().replace(',', '.'));
             return isValidSpeed(value) && value >= MIN_SPEED && value <= MAX_SPEED ? value : Float.NaN;
         } catch (NumberFormatException refused) {
             return Float.NaN;
         }
+    }
+
+    /** Both hold speed rows together: a speed slid to lasts until either changes. */
+    static String holdSpeedRows() {
+        return Settings.HOLD_SPEED.get() + "|" + Settings.HOLD_SPEED_CUSTOM.get();
     }
 
     /**

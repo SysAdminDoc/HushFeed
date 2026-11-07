@@ -38,6 +38,7 @@ public class PlaybackSpeedTest {
         Settings.DEFAULT_SPEED.save("1.5");
         Settings.CUSTOM_SPEEDS.save("");
         Settings.HOLD_SPEED.save("2");
+        Settings.HOLD_SPEED_CUSTOM.save("");
         Settings.REMEMBERED_SPEED.save(1f);
         PlaybackSpeedPatch.beginVideo(null);
     }
@@ -46,6 +47,20 @@ public class PlaybackSpeedTest {
         SettingsStatus.playbackQualityEnabled = false;
         // Process-wide, and the Playback page other classes capture shows it.
         Settings.HOLD_SPEED.resetToDefault();
+        Settings.HOLD_SPEED_CUSTOM.resetToDefault();
+    }
+    /** #357: one typed speed for the hold and its pull-down lock, over the preset row. */
+    @Test public void aCustomHoldSpeedStandsOverTheRowAndABadOneLeavesTheRow() {
+        Settings.HOLD_SPEED.save("1.5");
+        Settings.HOLD_SPEED_CUSTOM.save("1.8");
+        assertEquals(1.8f, PlaybackSpeedPatch.holdSpeed(2f), 0);
+        assertEquals("Pull down to lock 1.8x speed", PlaybackSpeedPatch.holdSpeedText("Pull down to lock 2x speed"));
+        Settings.HOLD_SPEED_CUSTOM.save(" 2,3 ");
+        assertEquals(2.3f, PlaybackSpeedPatch.holdSpeed(2f), 0);
+        for (String refused : new String[]{"", "4", "0.2", "fast"}) {
+            Settings.HOLD_SPEED_CUSTOM.save(refused);
+            assertEquals(refused, 1.5f, PlaybackSpeedPatch.holdSpeed(2f), 0);
+        }
     }
     @Test public void tikToksSpeedMessageShowsUnlessTheSwitchLeavesItOut() {
         java.util.List<Object> shown = new java.util.ArrayList<>();

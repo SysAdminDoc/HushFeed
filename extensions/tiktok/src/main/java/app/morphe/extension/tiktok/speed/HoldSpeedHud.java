@@ -145,7 +145,7 @@ public final class HoldSpeedHud {
     static float slidSpeed() {
         if (!enabled()) return Float.NaN;
         String from = slidFrom;
-        return from != null && from.equals(Settings.HOLD_SPEED.get()) ? slidSpeed : Float.NaN;
+        return from != null && from.equals(PlaybackSpeedPatch.holdSpeedRows()) ? slidSpeed : Float.NaN;
     }
 
     /**
@@ -416,7 +416,7 @@ public final class HoldSpeedHud {
             return;
         }
         slidSpeed = speed;
-        slidFrom = Settings.HOLD_SPEED.get();
+        slidFrom = PlaybackSpeedPatch.holdSpeedRows();
         Bubble shown = bubble.get();
         if (shown != null) shown.setSpeed(speed, true);
     }

@@ -8,6 +8,7 @@ package app.morphe.extension.tiktok.settings.preference.categories;
 
 import android.content.Context;
 import android.preference.PreferenceScreen;
+import android.text.InputType;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
@@ -370,6 +371,19 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
             addPreference(new ChoicePreference(context, "Speed while you hold the video", Settings.HOLD_SPEED,
                     new String[]{"1.25x", "1.5x", "1.75x", "2x", "2.5x", "3x"},
                     new String[]{"1.25", "1.5", "1.75", "2", "2.5", "3"}));
+            // One speed of the reader's own for the hold and its pull-down lock, no slider (#357).
+            InputTextPreference holdCustom = new InputTextPreference(context, "Custom hold speed",
+                    L10n.f(context, "One speed from %1$s to %2$s, like 1.8, for the hold and its pull-down lock. It takes the place of the speed above. Leave empty to use that one.",
+                            slowest, fastest),
+                    Settings.HOLD_SPEED_CUSTOM);
+            holdCustom.getEditText().setRawInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            holdCustom.withCheck(value -> value == null || value.trim().isEmpty()
+                    || !Float.isNaN(PlaybackSpeedPatch.parseHoldSpeed(value)) ? null
+                    : L10n.f(context, "Enter one speed from %1$s to %2$s", slowest, fastest));
+            holdCustom.setOnPreferenceChangeListener((preference, value) -> value == null
+                    || value.toString().trim().isEmpty()
+                    || !Float.isNaN(PlaybackSpeedPatch.parseHoldSpeed(value.toString())));
+            addPreference(holdCustom);
             if (SettingsStatus.holdSpeedSlideEnabled) {
                 addPreference(new TogglePreference(context, "Slide to change the hold speed",
                         "While you hold a video, slide left or right to step through the speed menu's speeds, "

@@ -151,8 +151,8 @@ MANAGER = re.compile(r"Use Morphe Manager (\d+\.\d+\.\d+) or newer")
 def manager_floor() -> str:
     match = MANAGER.search(read(ROOT / "README.md"))
     if not match:
-        warn("README doesn't say which Morphe Manager to use, so the text says 2.4.0")
-        return "2.4.0"
+        warn("README doesn't say which Morphe Manager to use, so the text says 2.5.0")
+        return "2.5.0"
     return match.group(1)
 
 

@@ -442,6 +442,7 @@
       "GLASS_TAB_SLIDE",
       "GLASS_HAPTICS",
       "GLASS_HAPTIC_STYLE",
+      "GLASS_REFRACTION",
       "SEE_THROUGH_STATUS_BAR",
       "BURN_IN_GUARD",
       "HIDE_SHARE_GUIDE",
@@ -596,6 +597,7 @@
       "DEFAULT_SPEED",
       "CUSTOM_SPEEDS",
       "HOLD_SPEED",
+      "HOLD_SPEED_CUSTOM",
       "HOLD_SPEED_SLIDE",
       "HOLD_SPEED_HUD_STYLE",
       "HOLD_SPEED_SLIDE_AXIS",
@@ -821,6 +823,7 @@
     "FIRST_TIME_APP_LAUNCHED": "Runtime state or legacy migration data; not a configurable feature default.",
     "EXPERIMENTAL_APP_CONFIRMED": "Runtime state or legacy migration data; not a configurable feature default.",
     "PAUSED": "Runtime state or legacy migration data; not a configurable feature default.",
-    "SAFE_MODE": "Runtime state or legacy migration data; not a configurable feature default."
+    "SAFE_MODE": "Runtime state or legacy migration data; not a configurable feature default.",
+    "STARTUP_MESSAGE_HIDDEN": "Runtime state or legacy migration data; not a configurable feature default."
   }
 }

@@ -2577,3 +2577,5 @@ The On this day memory at the front of the stories tray goes, and the stories af
 # context: Comments settings, next to Hide like counts on comments; the switch that takes the commenter's profile picture off each comment and reply so the name and text start at the left.
 Hide profile pictures in comments	Esconder fotos de perfil nos comentários
 Hide the picture beside each comment and reply. The name and the comment move over to fill its place.	Esconde a foto ao lado de cada comentário e resposta. O nome e o comentário se movem para ocupar o lugar dela.
+# context: a one-time toast over a TikTok puzzle while Hide CAPTCHA popups is off; names that switch, which would have skipped the puzzle
+Hide CAPTCHA popups in Hushfeed skips these	Dá para pular com “Esconder as janelas de CAPTCHA”

@@ -30,6 +30,7 @@ Every Hushfeed release, newest first.
 ### Bug Fixes
 
 * A LIVE quality you pick stays picked after TikTok restarts as soon as `Offer LIVE quality in more rooms` is on. `Keep the LIVE quality after TikTok restarts` used to start off as well, so the next launch opened rooms at Auto again. It starts on now, and you can still turn it off (#353).
+* With `Hide CAPTCHA popups` off, which is how it starts, a puzzle that shows while you're just browsing (in a LIVE room, say) now gets a short note naming that switch. It shows once a session, and never for a puzzle the switch would show anyway, like a sign-in check (#87).
 * Hiding Report from the share sheet doesn't take `Block this creator` with it anymore. Block sits where Report would have been, in the share sheet and in the long-press menu (#367).
 * With `Open TikTok on` set to Profile, Inbox, Friends or Discover, For You doesn't flash up for a second before that tab anymore. TikTok always builds Home first, so the start screen now stays up until your tab is showing (#360).
 * With `Let other apps play until a video starts` on, your music comes back about a quarter second after you leave a paused video for the inbox, a chat or a profile. It used to stay quiet for a second or two first (#283).

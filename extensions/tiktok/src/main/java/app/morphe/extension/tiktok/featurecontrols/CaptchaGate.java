@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.shared.Utils;
+import app.morphe.extension.shared.settings.Setting;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
@@ -80,6 +81,8 @@ public final class CaptchaGate {
     private static volatile Stamped pendingWrite;
     private static volatile Stamped lastSuppressed;
     private static final AtomicBoolean warnedThisSession = new AtomicBoolean();
+    private static final AtomicBoolean pointedThisSession = new AtomicBoolean();
+    private static final String SETTING_OFF = "the setting is off";
     /** A native-shaped account service for decision tests; never set by a runtime entry point. */
     static Object accountServiceForTests;
 
@@ -291,6 +294,7 @@ public final class CaptchaGate {
         pendingWrite = null;
         lastSuppressed = null;
         warnedThisSession.set(false);
+        pointedThisSession.set(false);
         accountServiceForTests = null;
     }
 
@@ -308,8 +312,12 @@ public final class CaptchaGate {
      *               verification scene, depending on which hook asked.
      */
     static String showReason(Activity activity, String detail, long nowMs) {
-        if (!Settings.HIDE_CAPTCHA_POPUPS.get()) return "the setting is off";
+        if (!Settings.HIDE_CAPTCHA_POPUPS.get()) return SETTING_OFF;
+        return reasonPastTheSetting(activity, detail, nowMs);
+    }
 
+    /** Why the check would have to be shown even with the setting on, or null when it may be hidden. */
+    private static String reasonPastTheSetting(Activity activity, String detail, long nowMs) {
         String writeAction = pendingWriteAction(nowMs);
         if (writeAction != null) return "it gates a " + writeAction;
 
@@ -342,10 +350,26 @@ public final class CaptchaGate {
             // that failed has to show whether the puzzle reached the reader and why.
             String shown = reason;
             Logger.printInfo(() -> "Showing risk check " + checkId + " because " + shown);
+            if (SETTING_OFF.equals(reason) && unreadable == null && !Setting.isPaused()
+                    && reasonPastTheSetting(activity, detail, now()) == null) {
+                pointToTheSetting(checkId);
+            }
             return false;
         }
         noteSuppressed(checkId);
         return true;
+    }
+
+    /**
+     * A browsing puzzle the switch would have hidden reached the reader because the switch is
+     * off, its default, and nothing on screen says Hushfeed has one (#87). The first such puzzle
+     * of a session names the switch; a puzzle the switch would show anyway (a write's, an
+     * account check, signed out) never does.
+     */
+    private static void pointToTheSetting(String checkId) {
+        if (!pointedThisSession.compareAndSet(false, true)) return;
+        Logger.printInfo(() -> "Named Hide CAPTCHA popups on browsing check " + checkId);
+        Utils.showToastLong(L10n.t("Hide CAPTCHA popups in Hushfeed skips these"));
     }
 
     /**

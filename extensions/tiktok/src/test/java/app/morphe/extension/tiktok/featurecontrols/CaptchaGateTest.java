@@ -515,6 +515,40 @@ public class CaptchaGateTest {
         assertEquals(afterFirst, ShadowToast.shownToastCount());
     }
 
+    /**
+     * #87: with the switch off, its default, a LIVE room's slide puzzle showed and nothing said
+     * Hushfeed could skip it. The first browsing puzzle of a session names the switch and still
+     * shows; one the switch would show anyway, or any while paused, names nothing.
+     */
+    @Test
+    public void aBrowsingPuzzleShownWithTheSwitchOffNamesItOnce() {
+        Settings.HIDE_CAPTCHA_POPUPS.save(false);
+        CaptchaGate.accountServiceForTests = new SignedInAccount();
+        ShadowToast.reset();
+
+        // An account check would show with the switch on too, so it says nothing.
+        assertFalse(CaptchaGate.shouldHideTuringCaptchaPopup(null, "sms"));
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        assertEquals(0, ShadowToast.shownToastCount());
+
+        PausedProcess.set(true);
+        assertFalse(CaptchaGate.shouldHideTuringDialog(null, new VerifyRequest("slide")));
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        assertEquals("paused, Hushfeed stays quiet", 0, ShadowToast.shownToastCount());
+        PausedProcess.set(false);
+
+        assertFalse("the switch is off, so the puzzle shows",
+                CaptchaGate.shouldHideTuringDialog(null, new VerifyRequest("slide")));
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        assertEquals(1, ShadowToast.shownToastCount());
+        assertEquals("Hide CAPTCHA popups in Hushfeed skips these", ShadowToast.getTextOfLatestToast());
+        assertNull("nothing was hidden", CaptchaGate.recentlySuppressedCheckId());
+
+        assertFalse(CaptchaGate.shouldHideCaptchaPopup(null, "{\"subtype\":\"slide\"}"));
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        assertEquals("one hint a session", 1, ShadowToast.shownToastCount());
+    }
+
     @Test
     public void aNumberIsNotReadAsTheNextKeysName() {
         // The first quote after the colon belonged to the next key, so the check was named

@@ -6991,12 +6991,21 @@
           "description": null,
           "required": false,
           "type": "kotlin.Boolean",
-          "default": false,
+          "default": true,
           "values": null
         },
         {
           "key": "offer_live_clear_screen",
           "title": "Default: offer live clear screen",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "keep_live_clear_screen",
+          "title": "Default: keep live clear screen",
           "description": null,
           "required": false,
           "type": "kotlin.Boolean",
@@ -8158,6 +8167,15 @@
           "values": null
         },
         {
+          "key": "hold_speed_custom",
+          "title": "Default: hold speed custom",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
           "key": "hold_speed_slide",
           "title": "Default: hold speed slide",
           "description": null,
@@ -8422,6 +8440,15 @@
           "required": false,
           "type": "kotlin.Boolean",
           "default": false,
+          "values": null
+        },
+        {
+          "key": "live_feed_countries",
+          "title": "Default: live feed countries",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
           "values": null
         }
       ]
@@ -8847,6 +8874,15 @@
           "required": false,
           "type": "kotlin.Boolean",
           "default": false,
+          "values": null
+        },
+        {
+          "key": "effect_phone_model",
+          "title": "Default: effect phone model",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
           "values": null
         }
       ]

@@ -48,6 +48,7 @@ Every Hushfeed release, newest first.
 * `AMOLED dark theme` reaches the popup that says "You'll see fewer posts like this" after Not interested, the comments' sort menu and TikTok's other toasts and small popup menus. They stayed gray before (#368).
 * With `Dark LIVE panels in dark mode` on, the names in a LIVE's moderator settings and its muted and blocked lists read white on the dark sheet. They came out dark gray before. The "Support this LIVE" bubble over the gift button keeps its dark text on white too, where it had turned white on white (#362).
 * The Suggested accounts heading in the Inbox lines its title and info icon up with `Clear all` again. Hushfeed's taller Clear all button had pushed them up above it (#358).
+* With `Compact comment header` on, the translate and close buttons no longer sit on top of the first comment. TikTok 47.7.2 moved them out of the header into their own row, so they stayed behind when the header went away. They're hidden along with the rest of the header now (#358).
 
 ## 0.81.0 (2026-11-05)
 

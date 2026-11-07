@@ -6,9 +6,12 @@ package app.morphe.extension.tiktok.comment;
 
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.ViewTreeObserver;
 import android.widget.HorizontalScrollView;
 import app.morphe.extension.shared.Logger;
+import app.morphe.extension.shared.ResourceIdCache;
+import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.tiktok.settings.Settings;
 import java.lang.ref.WeakReference;
@@ -17,6 +20,15 @@ import java.util.WeakHashMap;
 /** Only receives the three dedicated native header roots, never a sheet or comment row. */
 public final class CompactCommentHeader {
     private static final WeakHashMap<View, WeakReference<Binding>> BINDINGS = new WeakHashMap<>();
+    /**
+     * A child of the row that holds the panel's close and translate buttons. Since 47.7.2 that
+     * row is laid over the bar's container instead of sitting in the bar, so collapsing the bar
+     * alone leaves both buttons floating over the first comment (#358).
+     */
+    private static final String BUTTON_ROW_ANCHOR = "translate_intro_anchor";
+    /** How many of the bar's ancestors are searched for the row: bar slot, column, container. */
+    private static final int BUTTON_ROW_DEPTH = 4;
+    private static final ResourceIdCache RESOURCE_IDS = new ResourceIdCache();
 
     public static void bindCountBar(View view) { bind(view, "count bar"); }
     public static void bindLegacyBanner(View view) { bind(view, "legacy banner"); }
@@ -44,17 +56,25 @@ public final class CompactCommentHeader {
         }
     }
 
+    static void resolveForTests(String name, int id) {
+        RESOURCE_IDS.putForTests(Utils.getContext().getPackageName(), name, id);
+    }
+
     private static final class Binding implements Runnable, View.OnAttachStateChangeListener,
             ViewTreeObserver.OnGlobalLayoutListener {
         final WeakReference<View> root;
-        final boolean keepListTabs;
+        /** The count bar keeps native list tabs and takes the close and translate row with it. */
+        final boolean countBar;
         ViewTreeObserver observer;
         boolean hidden;
         int height, minimumHeight, visibility, accessibility, topMargin, bottomMargin;
+        WeakReference<View> buttonRow;
+        boolean buttonRowSearched, buttonRowHidden;
+        int buttonRowVisibility;
 
-        Binding(View view, boolean keepListTabs) {
+        Binding(View view, boolean countBar) {
             root = new WeakReference<>(view);
-            this.keepListTabs = keepListTabs;
+            this.countBar = countBar;
         }
 
         void watch() {
@@ -74,7 +94,7 @@ public final class CompactCommentHeader {
             if (view == null) return;
             try {
                 // Own-post viewer lists and other tabbed panels still need their native navigation.
-                if (!Settings.COMPACT_COMMENT_HEADER.get() || (keepListTabs && hasListTabs(view, 3))) {
+                if (!Settings.COMPACT_COMMENT_HEADER.get() || (countBar && hasListTabs(view, 3))) {
                     restore(view);
                     return;
                 }
@@ -104,6 +124,7 @@ public final class CompactCommentHeader {
                 if (view.getVisibility() != View.GONE) view.setVisibility(View.GONE);
                 if (view.getImportantForAccessibility() != View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS)
                     view.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
+                if (countBar) hideButtonRow(view);
             } catch (Exception error) {
                 unwatch();
                 restore(view);
@@ -111,7 +132,59 @@ public final class CompactCommentHeader {
             }
         }
 
+        /** Hides the close and translate row when it sits beside the bar, never one holding it. */
+        private void hideButtonRow(View bar) {
+            View row = buttonRow == null ? null : buttonRow.get();
+            if (row == null && !buttonRowSearched && bar.isAttachedToWindow()) {
+                // The row is inflated with the panel, before the bar is bound, so one search
+                // per attach finds it; searching every layout would walk the comment list too.
+                buttonRowSearched = true;
+                row = findButtonRow(bar);
+                buttonRow = row == null ? null : new WeakReference<>(row);
+            }
+            if (row == null) return;
+            if (!buttonRowHidden) {
+                buttonRowVisibility = row.getVisibility();
+                buttonRowHidden = true;
+            }
+            if (row.getVisibility() != View.GONE) row.setVisibility(View.GONE);
+        }
+
+        private static View findButtonRow(View bar) {
+            int id = RESOURCE_IDS.resolve(bar.getResources(), bar.getContext().getPackageName(),
+                    BUTTON_ROW_ANCHOR, false);
+            if (id == 0) return null;
+            ViewParent parent = bar.getParent();
+            for (int depth = 0; depth < BUTTON_ROW_DEPTH && parent instanceof ViewGroup; depth++) {
+                View anchor = ((ViewGroup) parent).findViewById(id);
+                if (anchor != null) {
+                    // Only a row laid straight over the container counts, so a panel that
+                    // keeps the anchor anywhere else, or in the bar itself, is left alone.
+                    ViewParent row = anchor.getParent();
+                    if (!(row instanceof ViewGroup) || row.getParent() != parent
+                            || holds((View) row, bar)) return null;
+                    return (View) row;
+                }
+                parent = parent.getParent();
+            }
+            return null;
+        }
+
+        private static boolean holds(View group, View view) {
+            for (ViewParent parent = view.getParent(); parent != null; parent = parent.getParent()) {
+                if (parent == group) return true;
+            }
+            return false;
+        }
+
+        private void restoreButtonRow() {
+            View row = buttonRow == null ? null : buttonRow.get();
+            if (buttonRowHidden && row != null) row.setVisibility(buttonRowVisibility);
+            buttonRowHidden = false;
+        }
+
         void restore(View view) {
+            restoreButtonRow();
             if (!hidden) return;
             ViewGroup.LayoutParams params = view.getLayoutParams();
             if (params != null) {
@@ -130,7 +203,11 @@ public final class CompactCommentHeader {
         }
 
         @Override public void onGlobalLayout() { run(); }
-        @Override public void onViewAttachedToWindow(View view) { watch(); view.post(this); }
+        @Override public void onViewAttachedToWindow(View view) {
+            buttonRowSearched = false;
+            watch();
+            view.post(this);
+        }
         @Override public void onViewDetachedFromWindow(View view) {
             unwatch();
             view.removeCallbacks(this);

@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.HorizontalScrollView;
+import android.widget.RelativeLayout;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.settings.Settings;
 import org.junit.After;
@@ -169,6 +170,91 @@ public class CompactCommentHeaderTest {
             tabs.setVisibility(View.GONE);
             count.getViewTreeObserver().dispatchOnGlobalLayout();
             assertEquals(View.GONE, count.getVisibility());
+        }
+    }
+
+    @Test public void theCloseAndTranslateRowLaidOverTheBarsContainerGoesWithTheCountBar() {
+        Settings.COMPACT_COMMENT_HEADER.save(true);
+        int anchorId = View.generateViewId();
+        CompactCommentHeader.resolveForTests("translate_intro_anchor", anchorId);
+        try (var owner = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            Activity activity = owner.get();
+            // 47.7.2: the container holds the bar's column and, laid over it, the button row.
+            FrameLayout container = new FrameLayout(activity);
+            LinearLayout column = new LinearLayout(activity);
+            column.setOrientation(LinearLayout.VERTICAL);
+            FrameLayout slot = new FrameLayout(activity);
+            View count = header(activity);
+            slot.addView(count);
+            column.addView(slot);
+            View list = new View(activity);
+            column.addView(list, new LinearLayout.LayoutParams(-1, 0, 1));
+            RelativeLayout row = new RelativeLayout(activity);
+            FrameLayout anchor = new FrameLayout(activity);
+            anchor.setId(anchorId);
+            row.addView(anchor, new RelativeLayout.LayoutParams(44, 44));
+            View close = new View(activity);
+            row.addView(close, new RelativeLayout.LayoutParams(20, 20));
+            container.addView(column, new FrameLayout.LayoutParams(-1, -1));
+            container.addView(row, new FrameLayout.LayoutParams(-1, 44));
+            activity.setContentView(container);
+            CompactCommentHeader.bindCountBar(count);
+            idle();
+            assertEquals(View.GONE, count.getVisibility());
+            assertEquals(View.GONE, row.getVisibility());
+            assertEquals(View.VISIBLE, column.getVisibility());
+            assertEquals(View.VISIBLE, list.getVisibility());
+            row.setVisibility(View.VISIBLE); // TikTok shows the row again on a rebind.
+            count.getViewTreeObserver().dispatchOnGlobalLayout();
+            assertEquals(View.GONE, row.getVisibility());
+            Settings.COMPACT_COMMENT_HEADER.save(false);
+            count.getViewTreeObserver().dispatchOnGlobalLayout();
+            assertEquals(View.VISIBLE, count.getVisibility());
+            assertEquals(View.VISIBLE, row.getVisibility());
+        } finally {
+            CompactCommentHeader.resolveForTests("translate_intro_anchor", 0);
+        }
+    }
+
+    @Test public void aButtonRowHoldingTheBarOrBesideABannerStaysPut() {
+        Settings.COMPACT_COMMENT_HEADER.save(true);
+        int anchorId = View.generateViewId();
+        CompactCommentHeader.resolveForTests("translate_intro_anchor", anchorId);
+        try (var owner = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            Activity activity = owner.get();
+            LinearLayout content = new LinearLayout(activity);
+            content.setOrientation(LinearLayout.VERTICAL);
+            // A layout that keeps the anchor in the bar's own row: only the bar collapses.
+            FrameLayout barContainer = new FrameLayout(activity);
+            LinearLayout barRow = new LinearLayout(activity);
+            View count = header(activity);
+            FrameLayout anchor = new FrameLayout(activity);
+            anchor.setId(anchorId);
+            barRow.addView(count);
+            barRow.addView(anchor, new LinearLayout.LayoutParams(44, 44));
+            barContainer.addView(barRow);
+            content.addView(barContainer);
+            // A banner beside an overlaid row: only the count bar takes the row with it.
+            FrameLayout bannerContainer = new FrameLayout(activity);
+            View banner = header(activity);
+            RelativeLayout bannerRow = new RelativeLayout(activity);
+            FrameLayout bannerAnchor = new FrameLayout(activity);
+            bannerAnchor.setId(anchorId);
+            bannerRow.addView(bannerAnchor, new RelativeLayout.LayoutParams(44, 44));
+            bannerContainer.addView(banner);
+            bannerContainer.addView(bannerRow, new FrameLayout.LayoutParams(-1, 44));
+            content.addView(bannerContainer);
+            activity.setContentView(content);
+            CompactCommentHeader.bindCountBar(count);
+            CompactCommentHeader.bindCommonBanner(banner);
+            idle();
+            assertEquals(View.GONE, count.getVisibility());
+            assertEquals(View.VISIBLE, barRow.getVisibility());
+            assertEquals(View.VISIBLE, anchor.getVisibility());
+            assertEquals(View.GONE, banner.getVisibility());
+            assertEquals(View.VISIBLE, bannerRow.getVisibility());
+        } finally {
+            CompactCommentHeader.resolveForTests("translate_intro_anchor", 0);
         }
     }
 

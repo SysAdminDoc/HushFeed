@@ -264,8 +264,8 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
             addPreference(new TogglePreference(
                     context,
                     "Compact comment header",
-                    "Hides the comment count, the sort and close buttons and the suggestions "
-                            + "above them. Use Back or swipe down to close comments.",
+                    "Hides the comment count, the sort, translate and close buttons and the "
+                            + "suggestions above them. Use Back or swipe down to close comments.",
                     Settings.COMPACT_COMMENT_HEADER
             ));
             addPreference(new TogglePreference(

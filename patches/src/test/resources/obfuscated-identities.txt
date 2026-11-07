@@ -232,6 +232,9 @@ patches/src/main/kotlin/app/morphe/patches/tiktok/misc/theme/AmoledThemePatch.kt
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/theme/AmoledThemePatch.kt|a2f
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/theme/AmoledThemePatch.kt|a2h
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/theme/AmoledThemePatch.kt|a2p
+# The liked heart's vector drawable, declared per build in LIKE_FILES and held to each declared
+# build's fixture by ReactionColorsFixtureTest; a new build gets its own entry.
+patches/src/main/kotlin/app/morphe/patches/tiktok/misc/theme/ReactionColors.kt|c01
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/DmTranslationAccountHooks.kt|LIZ
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/DmTranslationAccountHooks.kt|LJII
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/DmTranslationAccountHooks.kt|LX/

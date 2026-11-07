@@ -735,10 +735,11 @@ public class Settings extends BaseSettings {
      * {@link #OFFER_LIVE_QUALITY}. Read as each room picks its starting quality, so no restart.
      * A pick is saved from either of TikTok's pickers: the newer one's setter and the older
      * LiveDefinitionSelectionDialog's applied switch, which Share > Video quality opens in rooms
-     * whose stream asks for a quality button.
+     * whose stream asks for a quality button. On by default (#353): it only shows once Offer LIVE
+     * quality is on, and a pick that went back to Auto after a restart read as Offer not working.
      */
     public static final BooleanSetting REMEMBER_LIVE_QUALITY = new BooleanSetting(
-            "remember_live_quality", FALSE, false, Setting.parent(OFFER_LIVE_QUALITY));
+            "remember_live_quality", TRUE, false, Setting.parent(OFFER_LIVE_QUALITY));
     /** TikTok's key for that pick ("hd", "origin" and so on), saved from its picker. Never shown. */
     public static final StringSetting REMEMBERED_LIVE_QUALITY = new StringSetting("remembered_live_quality", "");
     /**

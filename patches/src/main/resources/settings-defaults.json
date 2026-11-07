@@ -3547,7 +3547,7 @@
       "field": "REMEMBER_LIVE_QUALITY",
       "key": "remember_live_quality",
       "type": "boolean",
-      "default": false
+      "default": true
     },
     "remember_playback_speed": {
       "field": "REMEMBER_SPEED",

@@ -620,7 +620,8 @@
       "SIM_SPOOF_TIME_ZONE",
       "SIMSPOOF_MCCMNC",
       "SIMSPOOF_OP_NAME",
-      "SIM_SPOOF_FEED_REAL"
+      "SIM_SPOOF_FEED_REAL",
+      "LIVE_FEED_COUNTRIES"
     ],
     "Remember clear display": [
       "AUTOMATIC_CLEAR_DISPLAY",

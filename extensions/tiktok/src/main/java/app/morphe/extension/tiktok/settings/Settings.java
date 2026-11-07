@@ -1325,6 +1325,10 @@ public class Settings extends BaseSettings {
             "live_min_max_viewers", "0-" + Long.MAX_VALUE, false, Setting.parent(LIVE_FEED_FILTER));
     public static final StringSetting LIVE_MIN_MAX_FOLLOWERS = new StringSetting(
             "live_min_max_followers", "0-" + Long.MAX_VALUE, false, Setting.parent(LIVE_FEED_FILTER));
+    // The countries the LIVE feed asks for rooms from (#355). TikTok sends no room's country, so
+    // nothing can filter on it; the region patch's request hooks put these in each LIVE feed
+    // page's region fields instead, as each page is asked for, so no restart.
+    public static final StringSetting LIVE_FEED_COUNTRIES = new StringSetting("live_feed_countries", "");
 
     // Privacy.
     public static final BooleanSetting GHOST_MODE = new BooleanSetting("ghost_mode", FALSE);

@@ -13,6 +13,7 @@ import app.morphe.extension.tiktok.spoof.sim.SimPreset;
 import app.morphe.extension.tiktok.spoof.sim.SimPresets;
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
@@ -281,6 +282,134 @@ public class RegionSpoofTest {
                 "/api/aweme/v1/feed/", "/aweme/vx/feed/", "/passport/user/login/"}) {
             assertFalse(String.valueOf(path), RegionSpoof.isForYouFeed(path));
         }
+    }
+
+    @Test public void onlyTheLiveFeedPathIsALiveFill() {
+        for (String path : new String[]{"/webcast/feed/", "/webcast/feed", "//webcast/feed/"}) {
+            assertTrue(path, RegionSpoof.isLiveFeed(path));
+        }
+        for (String path : new String[]{null, "", "/", "webcast/feed/", "/webcast/feed/more/",
+                "/webcast/feeds/", "/webcast/room/enter/", "/webcast/feed//", "/aweme/v1/feed/",
+                "/api/webcast/feed/", "/Webcast/feed/"}) {
+            assertFalse(String.valueOf(path), RegionSpoof.isLiveFeed(path));
+        }
+    }
+
+    @Test public void eachLiveFeedPageAsksForTheNextListedCountryWithTheSwitchesOff() {
+        Settings.SIM_SPOOF.save(false);
+        Settings.REGION_SPOOF.save(false);
+        Settings.LIVE_FEED_COUNTRIES.save(" br,UK ");
+        try {
+            Map<String, String> first = liveParams();
+            liveFeed(first);
+            Map<String, String> second = liveParams();
+            liveFeed(second);
+            Map<String, String> third = liveParams();
+            liveFeed(third);
+
+            String country = first.get("carrier_region");
+            String other = "BR".equals(country) ? "GB" : "BR";
+            assertTrue(country, "BR".equals(country) || "GB".equals(country));
+            assertLiveCountry(first, country);
+            assertLiveCountry(second, other);
+            assertLiveCountry(third, country);
+            for (Map<String, String> params : List.of(first, second, third)) {
+                assertEquals("a field that isn't a region was changed", "US", params.get("account_region"));
+                assertEquals("en", params.get("app_language"));
+                assertEquals("Asia/Tokyo", params.get("timezone_name"));
+                assertEquals("AT&T", params.get("carrier"));
+            }
+        } finally {
+            Settings.LIVE_FEED_COUNTRIES.save("");
+        }
+    }
+
+    @Test public void aLiveFeedPageTakesItsCountryOverTheRegionPreset() {
+        Settings.REGION_REQUEST_SPOOF.save(true);
+        Settings.LIVE_FEED_COUNTRIES.save("mx");
+        try {
+            Map<String, String> params = liveParams();
+            withSystem(Locale.US, "America/New_York", () -> {
+                RegionSpoof.requestPath("/webcast/feed/");
+                assertEquals("the getters answered the preset inside a LIVE feed fill", "US", RegionSpoof.country("US"));
+                RegionSpoof.requestParams(params);
+                RegionSpoof.requestDone();
+                assertEquals("JP", RegionSpoof.country("US"));
+            });
+            assertLiveCountry(params, "MX");
+            assertEquals("334", params.get("carrier_region_v2"));
+            assertEquals("334020", params.get("mcc_mnc"));
+
+            // Every other request still carries the preset.
+            Map<String, String> other = requestParams();
+            withSystem(Locale.US, "America/New_York", () -> {
+                RegionSpoof.requestPath("/aweme/v1/feed/");
+                RegionSpoof.requestParams(other);
+                RegionSpoof.requestDone();
+            });
+            assertEquals("JP", other.get("current_region"));
+            assertEquals("440", other.get("carrier_region_v2"));
+        } finally {
+            Settings.LIVE_FEED_COUNTRIES.save("");
+        }
+    }
+
+    @Test public void aLiveFeedPageIsLeftAloneWithNoCountryListedOrWhilePaused() {
+        Settings.SIM_SPOOF.save(false);
+        Settings.REGION_SPOOF.save(false);
+        try {
+            for (String value : new String[]{"", " , ", "xx, zz"}) {
+                Settings.LIVE_FEED_COUNTRIES.save(value);
+                Map<String, String> params = liveParams();
+                liveFeed(params);
+                assertEquals("'" + value + "'", liveParams(), params);
+            }
+            Settings.LIVE_FEED_COUNTRIES.save("br");
+            Map<String, String> forYou = liveParams();
+            forYou(forYou);
+            assertEquals("a For You request took a LIVE feed country", liveParams(), forYou);
+            PausedProcess.set(true);
+            Map<String, String> paused = liveParams();
+            liveFeed(paused);
+            assertEquals("a paused Hushfeed set a LIVE feed country", liveParams(), paused);
+        } finally {
+            PausedProcess.set(false);
+            Settings.LIVE_FEED_COUNTRIES.save("");
+        }
+    }
+
+    /** One LIVE feed page, with AppLog's fill inside the handler's as on a real request. */
+    private static void liveFeed(Map<String, String> params) {
+        withSystem(Locale.US, "America/New_York", () -> {
+            RegionSpoof.requestPath("/webcast/feed/");
+            RegionSpoof.requestUrl("https://webcast16-normal-c-useast2a.tiktokv.com/webcast/feed/?channel_id=87");
+            RegionSpoof.requestParams(params);
+            RegionSpoof.requestDone();
+            RegionSpoof.requestDone();
+        });
+    }
+
+    /** What TikTok's builder sends on a US phone, with the SIM fields' own lower case. */
+    private static Map<String, String> liveParams() {
+        Map<String, String> params = requestParams();
+        params.put("op_region", "us");
+        params.put("sim_region", "us");
+        params.put("mcc_mnc", "310410");
+        params.put("carrier", "AT&T");
+        return params;
+    }
+
+    private static void assertLiveCountry(Map<String, String> params, String country) {
+        for (String field : new String[]{"carrier_region", "sys_region", "region", "current_region", "residence"}) {
+            assertEquals(field, country, params.get(field));
+        }
+        String lower = country.toLowerCase(Locale.ROOT);
+        assertEquals("the field's own case is kept", lower, params.get("op_region"));
+        assertEquals(lower, params.get("sim_region"));
+        assertEquals("BR".equals(country) ? "724" : "GB".equals(country) ? "234" : "334",
+                params.get("carrier_region_v2"));
+        assertEquals("BR".equals(country) ? "72410" : "GB".equals(country) ? "23430" : "334020",
+                params.get("mcc_mnc"));
     }
 
     @Test public void aForYouRequestCarriesThePhonesOwnSimWhereTheFieldsHeldThePreset() {
@@ -888,8 +1017,15 @@ public class RegionSpoofTest {
             var simOnly = activity.getPreferenceManager().createPreferenceScreen(activity);
             new SimSpoofPreferenceCategory(activity, simOnly);
             assertNull(simOnly.findPreference("simspoof_feed_real"));
+            assertNull("only the region patch fills LIVE feed pages in", simOnly.findPreference("live_feed_countries"));
             assertNotNull(simOnly.findPreference("simspoof"));
             SettingsStatus.regionSpoofEnabled = true;
+            var liveCountries = (app.morphe.extension.tiktok.settings.preference.InputTextPreference)
+                    screen.findPreference("live_feed_countries");
+            assertNotNull("the LIVE feed countries row is not on the page", liveCountries);
+            assertFalse(liveCountries.callChangeListener("br, zz"));
+            assertTrue(liveCountries.callChangeListener("br, uk"));
+            assertTrue(liveCountries.callChangeListener(""));
             var country =(app.morphe.extension.tiktok.settings.preference.InputTextPreference)
                     screen.findPreference("simspoof_iso");
             assertFalse(country.callChangeListener("zz"));

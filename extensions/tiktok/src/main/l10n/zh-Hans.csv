@@ -2532,3 +2532,5 @@ Hide On this day,隐藏那年今日 (On this day)
 Hide profile pictures in comments,隐藏评论中的头像
 Hide the picture beside each comment and reply. The name and the comment move over to fill its place.,隐藏每条评论和回复旁的头像。名字和评论会移过去补上它的位置.
 Hide CAPTCHA popups in Hushfeed skips these,Hushfeed 的“隐藏验证码弹出窗口”可跳过此类验证
+LIVE feed countries,LIVE 信息流的国家/地区
+"Separate country codes with commas, like BR, MX. Each page of the LIVE feed asks TikTok for rooms from one of them, taking turns. TikTok doesn't say which country a room is in, and your IP address and account still count, so rooms from elsewhere can still show up. This works without the switches above. Leave empty for TikTok's usual rooms.","用逗号分隔国家/地区代码，例如 BR, MX。LIVE 信息流的每一页会轮流向 TikTok 请求其中一个国家/地区的直播间。TikTok 不会说明直播间所在的国家/地区，而且你的 IP 地址和账号仍会起作用，因此仍可能出现其他地方的直播间。无需打开上面的开关即可使用。留空则显示 TikTok 平常的直播间."

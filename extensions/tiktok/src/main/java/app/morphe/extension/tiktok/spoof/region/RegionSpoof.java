@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.BaseSettings;
+import app.morphe.extension.tiktok.feedfilter.RegionFilter;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.spoof.sim.SimPreset;
 import app.morphe.extension.tiktok.spoof.sim.SimPresets;
@@ -165,7 +166,13 @@ public final class RegionSpoof {
     private static final AtomicInteger marked = new AtomicInteger();
     private static final long SIGN_IN_FILL = 1;
     private static final long FEED_FILL = 2;
+    private static final long LIVE_FEED_FILL = 3;
     private static final String SIGN_IN_PATH = "passport/";
+    private static final String LIVE_FEED_PATH = "webcast/feed";
+    /** Which country of LIVE feed countries the next LIVE feed page asks for. */
+    private static final AtomicInteger liveTurn = new AtomicInteger();
+    /** The last LIVE feed countries value read, and the codes in it. */
+    private static volatile Object[] lastLiveCountries = {"", new String[0]};
     private static final String FEED_PATH_START = "aweme/v";
     private static final String FEED_PATH_END = "/feed/";
     /**
@@ -225,6 +232,7 @@ public final class RegionSpoof {
     /** The kind of fill a request's path asks for, with the switch it needs on. Zero for none. */
     private static long fillOf(@Nullable String path) {
         if (isSignIn(path)) return Settings.REGION_REQUEST_SPOOF.get() ? SIGN_IN_FILL : 0;
+        if (isLiveFeed(path)) return liveCountries().length > 0 ? LIVE_FEED_FILL : 0;
         if (isForYouFeed(path) && Settings.SIM_SPOOF.get() && Settings.SIM_SPOOF_FEED_REAL.get()) {
             return FEED_FILL;
         }
@@ -246,7 +254,9 @@ public final class RegionSpoof {
             }
             // A mark run out is a fill that threw long ago, so this fill starts its own.
             if (mark != null) clearMark();
-            MARK.set(new long[]{now, 1, fill});
+            // A LIVE feed page also keeps its turn, so a fill inside it asks for the same country.
+            long turn = fill == LIVE_FEED_FILL ? liveTurn.getAndIncrement() & Integer.MAX_VALUE : 0;
+            MARK.set(new long[]{now, 1, fill, turn});
             marked.incrementAndGet();
         } else if (mark != null) {
             clearMark();
@@ -264,6 +274,27 @@ public final class RegionSpoof {
         int start = 0;
         while (start < path.length() && path.charAt(start) == '/') start++;
         return start > 0 && path.regionMatches(start, SIGN_IN_PATH, 0, SIGN_IN_PATH.length());
+    }
+
+    /** The LIVE feed you swipe through: /webcast/feed/, a page of rooms at a time. */
+    static boolean isLiveFeed(@Nullable String path) {
+        if (path == null) return false;
+        int start = 0;
+        while (start < path.length() && path.charAt(start) == '/') start++;
+        if (start == 0 || !path.regionMatches(start, LIVE_FEED_PATH, 0, LIVE_FEED_PATH.length())) return false;
+        int end = start + LIVE_FEED_PATH.length();
+        return path.length() == end || (path.length() == end + 1 && path.charAt(end) == '/');
+    }
+
+    /** The country codes in LIVE feed countries, worked out again only when the value changes. */
+    static String[] liveCountries() {
+        String value = Settings.LIVE_FEED_COUNTRIES.get();
+        if (value == null) value = "";
+        Object[] last = lastLiveCountries;
+        if (value.equals(last[0])) return (String[]) last[1];
+        String[] countries = RegionFilter.countries(value).toArray(new String[0]);
+        lastLiveCountries = new Object[]{value, countries};
+        return countries;
     }
 
     /**
@@ -350,6 +381,10 @@ public final class RegionSpoof {
                 realSimFields(params);
                 return;
             }
+            if (fill == LIVE_FEED_FILL) {
+                liveFeedFields(params);
+                return;
+            }
             if (!Settings.REGION_REQUEST_SPOOF.get()) return;
             if (fill == SIGN_IN_FILL) {
                 // A sign-in goes out with the fields TikTok set, so the account sees the real
@@ -426,6 +461,61 @@ public final class RegionSpoof {
         if (line.equals(lastRequestReport)) return;
         lastRequestReport = line;
         Logger.printDebug(() -> line);
+    }
+
+    /*
+     * LIVE feed pages with LIVE feed countries filled in (#355). TikTok sends no room's country,
+     * so the rooms can't be filtered by it, but the LIVE feed follows the region a page is asked
+     * with: a Brazilian SIM, region and saved region on a US account brought Portuguese rooms
+     * (47.7.2, 2026-11-07). Each page asks with one country from the list, taking turns, in every region
+     * field TikTok put in the map, with that field's case kept, and with the country's network
+     * code and operator from its SIM preset where there is one. Nothing else about the request
+     * or the rest of TikTok changes.
+     */
+    static final String[] LIVE_COUNTRY_FIELDS = {
+            "carrier_region", "sys_region", "region", "op_region", "sim_region", "current_region", "residence"};
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static void liveFeedFields(Map params) {
+        String[] countries = liveCountries();
+        long[] mark = MARK.get();
+        if (countries.length == 0 || mark == null) return;
+        String country = countries[(int) (mark[3] % countries.length)];
+        List<String> set = new ArrayList<>();
+        for (String field : LIVE_COUNTRY_FIELDS) {
+            Object value = params.get(field);
+            if (!(value instanceof String)) continue;
+            String text = (String) value;
+            boolean lower = !text.equals(text.toUpperCase(Locale.ROOT));
+            params.put(field, lower ? country.toLowerCase(Locale.ROOT) : country);
+            set.add(field);
+        }
+        SimPreset preset = presetFor(country);
+        if (preset != null) {
+            Object network = params.get(NETWORK_COUNTRY_FIELD);
+            if (network instanceof String && isMcc((String) network)) {
+                params.put(NETWORK_COUNTRY_FIELD, preset.mccMnc.substring(0, 3));
+                set.add(NETWORK_COUNTRY_FIELD);
+            }
+            if (params.get(SIM_OPERATOR_FIELD) instanceof String) {
+                params.put(SIM_OPERATOR_FIELD, preset.mccMnc);
+                set.add(SIM_OPERATOR_FIELD);
+            }
+        }
+        if (!BaseSettings.DEBUG.get()) return;
+        String line = "LIVE feed request region fields set to " + country + " " + set;
+        if (line.equals(lastRequestReport)) return;
+        lastRequestReport = line;
+        Logger.printDebug(() -> line);
+    }
+
+    /** The first SIM preset for a country code, or null when the list has none. */
+    @Nullable
+    private static SimPreset presetFor(String country) {
+        for (SimPreset preset : SimPresets.PRESETS) {
+            if (preset.iso.equalsIgnoreCase(country)) return preset;
+        }
+        return null;
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

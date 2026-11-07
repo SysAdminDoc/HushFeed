@@ -136,6 +136,17 @@ public class SimSpoofPreferenceCategory extends ConditionalPreferenceCategory {
                     Settings.SIM_SPOOF_TIME_ZONE
             ).withCheck(value -> value.trim().isEmpty() || RegionSpoof.validTimeZone(value)
                     ? null : L10n.t("Enter a zone like Asia/Tokyo")).withNameKeyboard());
+            // The region patch's request hooks fill these in on LIVE feed pages only, whatever
+            // the switches above say (#355).
+            addPreference(new InputTextPreference(context, "LIVE feed countries",
+                    "Separate country codes with commas, like BR, MX. Each page of the LIVE feed asks "
+                            + "TikTok for rooms from one of them, taking turns. TikTok doesn't say which "
+                            + "country a room is in, and your IP address and account still count, so "
+                            + "rooms from elsewhere can still show up. This works without the switches "
+                            + "above. Leave empty for TikTok's usual rooms.",
+                    Settings.LIVE_FEED_COUNTRIES)
+                    .withCheck(app.morphe.extension.tiktok.feedfilter.RegionFilter::countryProblem)
+                    .withNameKeyboard());
         }
         InputTextPreference countryIsoPreference = new InputTextPreference(
                 context,

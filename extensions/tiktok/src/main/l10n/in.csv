@@ -2534,3 +2534,5 @@ Hide On this day,Sembunyikan On this day
 Hide profile pictures in comments,Sembunyikan foto profil di komentar
 Hide the picture beside each comment and reply. The name and the comment move over to fill its place.,Sembunyikan foto di samping setiap komentar dan balasan. Nama dan komentar bergeser mengisi tempatnya.
 Hide CAPTCHA popups in Hushfeed skips these,Sembunyikan popup CAPTCHA di Hushfeed melewati ini
+LIVE feed countries,Negara feed LIVE
+"Separate country codes with commas, like BR, MX. Each page of the LIVE feed asks TikTok for rooms from one of them, taking turns. TikTok doesn't say which country a room is in, and your IP address and account still count, so rooms from elsewhere can still show up. This works without the switches above. Leave empty for TikTok's usual rooms.","Pisahkan kode negara dengan koma, misalnya BR, MX. Setiap halaman feed LIVE meminta TikTok menampilkan ruang dari salah satunya, secara bergantian. TikTok tidak menyebutkan negara sebuah ruang, dan alamat IP serta akun Anda tetap berpengaruh, jadi ruang dari tempat lain masih bisa muncul. Ini berfungsi tanpa sakelar di atas. Kosongkan untuk ruang TikTok yang biasa."

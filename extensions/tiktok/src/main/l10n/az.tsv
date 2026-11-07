@@ -2579,3 +2579,7 @@ Hide profile pictures in comments	Şərhlərdə profil şəkillərini gizlədin
 Hide the picture beside each comment and reply. The name and the comment move over to fill its place.	Hər şərhin və cavabın yanındakı şəkli gizlədir. Ad və şərh onun yerini tutmaq üçün sürüşür.
 # context: a one-time toast over a TikTok puzzle while Hide CAPTCHA popups is off; names that switch, which would have skipped the puzzle
 Hide CAPTCHA popups in Hushfeed skips these	Bunu keçmək üçün: CAPTCHA pəncərələrini gizlədin
+# context: Region page row title; a list of countries the LIVE feed asks TikTok for rooms from
+LIVE feed countries	LIVE lenti üçün ölkələr
+# context: Region page row summary for LIVE feed countries; 'rooms' are LIVE rooms, 'switches above' are the SIM and region switches on the same page
+Separate country codes with commas, like BR, MX. Each page of the LIVE feed asks TikTok for rooms from one of them, taking turns. TikTok doesn't say which country a room is in, and your IP address and account still count, so rooms from elsewhere can still show up. This works without the switches above. Leave empty for TikTok's usual rooms.	Ölkə kodlarını vergüllə ayırın, məsələn BR, MX. LIVE lentinin hər səhifəsi TikTok-dan növbə ilə onlardan birinin otaqlarını istəyir. TikTok otağın hansı ölkədə olduğunu bildirmir, IP ünvanınız və hesabınız da nəzərə alınır, buna görə başqa yerlərdən otaqlar yenə görünə bilər. Bu, yuxarıdakı açarlar olmadan da işləyir. TikTok-un adi otaqları üçün boş saxlayın.

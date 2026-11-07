@@ -2582,3 +2582,7 @@ Hide profile pictures in comments	Profilbilder bei Kommentaren ausblenden
 Hide the picture beside each comment and reply. The name and the comment move over to fill its place.	Blendet das Bild neben jedem Kommentar und jeder Antwort aus. Name und Kommentar rücken an seine Stelle.
 # context: a one-time toast over a TikTok puzzle while Hide CAPTCHA popups is off; names that switch, which would have skipped the puzzle
 Hide CAPTCHA popups in Hushfeed skips these	„CAPTCHA-Popups ausblenden“ überspringt so etwas
+# context: Region page row title; a list of countries the LIVE feed asks TikTok for rooms from
+LIVE feed countries	Länder für den LIVE-Feed
+# context: Region page row summary for LIVE feed countries; 'rooms' are LIVE rooms, 'switches above' are the SIM and region switches on the same page
+Separate country codes with commas, like BR, MX. Each page of the LIVE feed asks TikTok for rooms from one of them, taking turns. TikTok doesn't say which country a room is in, and your IP address and account still count, so rooms from elsewhere can still show up. This works without the switches above. Leave empty for TikTok's usual rooms.	Trenne Ländercodes mit Kommas, etwa BR, MX. Jede Seite des LIVE-Feeds fragt TikTok abwechselnd nach Räumen aus einem dieser Länder. TikTok sagt nicht, aus welchem Land ein Raum kommt, und deine IP-Adresse und dein Konto zählen weiterhin, daher können trotzdem Räume von anderswo erscheinen. Das funktioniert auch ohne die Schalter oben. Leer lassen für die üblichen Räume von TikTok.

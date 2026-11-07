@@ -26,6 +26,7 @@ Every Hushfeed release, newest first.
 * `Check for already-saved videos` covers `Save the original sound` too. Save a sound you already have, even from a different video that uses it, and you get Open or Save again instead of a second copy (#356).
 * `Phone model for effects` under `Report a newer phone to effects` lets you pick the phone the effects server hears about. Type a model like SM-S938B or Pixel 9 Pro, since an effect turned down for one phone can open for another. Leave it empty and it stays the Galaxy S24 Ultra (#176).
 * `Keep clear screen in the next LIVE` carries clear screen from one LIVE room to the next one you swipe to, so the chat, gifts and buttons stay hidden until you turn clear screen off. It starts off and sits in Hushfeed settings > Playback, next to `Offer clear screen in every LIVE room` (#354).
+* `LIVE feed countries` under Hushfeed settings > Region asks the LIVE feed for rooms from the countries you list, like BR, MX, taking turns page by page. TikTok doesn't say which country a room comes from, so this steers the feed instead of filtering it, and a room from somewhere else can still turn up. Nothing else in TikTok sees the change. It needs the `Region spoof` patch but none of its switches, and it starts empty (#355).
 
 ### Bug Fixes
 

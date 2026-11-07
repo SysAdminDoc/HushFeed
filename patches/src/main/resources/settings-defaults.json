@@ -623,7 +623,8 @@
       "simspoof_time_zone",
       "simspoof_mccmnc",
       "simspoof_op_name",
-      "simspoof_feed_real"
+      "simspoof_feed_real",
+      "live_feed_countries"
     ],
     "Remember clear display": [
       "automatic_clear_display",
@@ -2918,6 +2919,12 @@
       "key": "live_auto_tap_rate",
       "type": "string",
       "default": "4"
+    },
+    "live_feed_countries": {
+      "field": "LIVE_FEED_COUNTRIES",
+      "key": "live_feed_countries",
+      "type": "string",
+      "default": ""
     },
     "live_feed_filter": {
       "field": "LIVE_FEED_FILTER",

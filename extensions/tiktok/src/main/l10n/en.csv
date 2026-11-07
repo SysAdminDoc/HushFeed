@@ -1075,6 +1075,7 @@ LIVE,LIVE
 LIVE chat auto-translate,LIVE chat auto-translate
 LIVE ended or dropped. Recording saved to %1$s,LIVE ended or dropped. Recording saved to %1$s
 LIVE feed,LIVE feed
+LIVE feed countries,LIVE feed countries
 LIVE followers range,LIVE followers range
 LIVE recording quality,LIVE recording quality
 LIVE recording saved to %1$s,LIVE recording saved to %1$s
@@ -1795,6 +1796,7 @@ Sends today's message right away. The daily one then waits for tomorrow.,Sends t
 Sent to %1$d/%2$d chats. The rest still need a message.,Sent to %1$d/%2$d chats. The rest still need a message.
 Sent to %1$d/%2$d chats. They won't get another message today.,Sent to %1$d/%2$d chats. They won't get another message today.
 "Separate account handles or user IDs with commas. Videos from these accounts are always hidden. An entry between slashes, like /^news_/, is a search pattern checked against the handle and display name.","Separate account handles or user IDs with commas. Videos from these accounts are always hidden. An entry between slashes, like /^news_/, is a search pattern checked against the handle and display name."
+"Separate country codes with commas, like BR, MX. Each page of the LIVE feed asks TikTok for rooms from one of them, taking turns. TikTok doesn't say which country a room is in, and your IP address and account still count, so rooms from elsewhere can still show up. This works without the switches above. Leave empty for TikTok's usual rooms.","Separate country codes with commas, like BR, MX. Each page of the LIVE feed asks TikTok for rooms from one of them, taking turns. TikTok doesn't say which country a room is in, and your IP address and account still count, so rooms from elsewhere can still show up. This works without the switches above. Leave empty for TikTok's usual rooms."
 "Separate country codes with commas, like GB, IE. Videos posted from anywhere else are hidden. Leave empty for all countries.","Separate country codes with commas, like GB, IE. Videos posted from anywhere else are hidden. Leave empty for all countries."
 "Separate country codes with commas. Videos posted from these are hidden, whatever the list above says.","Separate country codes with commas. Videos posted from these are hidden, whatever the list above says."
 "Separate handles or user IDs with commas. Their videos stay when a filter on post type, labels, age, length or counts would hide them. Ads, blocked creators, words, sounds, countries, caption languages and seen videos still apply.","Separate handles or user IDs with commas. Their videos stay when a filter on post type, labels, age, length or counts would hide them. Ads, blocked creators, words, sounds, countries, caption languages and seen videos still apply."

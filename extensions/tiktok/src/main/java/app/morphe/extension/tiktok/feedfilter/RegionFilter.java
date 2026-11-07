@@ -41,7 +41,7 @@ public final class RegionFilter implements IFilter {
      * failed to match it and there was nothing on screen to say why. A saved list from before
      * the row checked what it was given still reaches this.
      */
-    static Set<String> countries(String value) {
+    public static Set<String> countries(String value) {
         Set<String> codes = new LinkedHashSet<>();
         if (value == null) return codes;
         for (String entry : value.trim().split(SEPARATOR)) {

@@ -2756,3 +2756,7 @@ Hide profile pictures in comments	Скрывать фото профиля в к
 Hide the picture beside each comment and reply. The name and the comment move over to fill its place.	Скрывает фото рядом с каждым комментарием и ответом. Имя и текст комментария сдвигаются на его место.
 # context: a one-time toast over a TikTok puzzle while Hide CAPTCHA popups is off; names that switch, which would have skipped the puzzle
 Hide CAPTCHA popups in Hushfeed skips these	Такое скрывает «Скрывать всплывающие окна CAPTCHA»
+# context: Region page row title; a list of countries the LIVE feed asks TikTok for rooms from
+LIVE feed countries	Страны для ленты LIVE
+# context: Region page row summary for LIVE feed countries; 'rooms' are LIVE rooms, 'switches above' are the SIM and region switches on the same page
+Separate country codes with commas, like BR, MX. Each page of the LIVE feed asks TikTok for rooms from one of them, taking turns. TikTok doesn't say which country a room is in, and your IP address and account still count, so rooms from elsewhere can still show up. This works without the switches above. Leave empty for TikTok's usual rooms.	Разделяйте коды стран запятыми, например BR, MX. Каждая страница ленты LIVE по очереди запрашивает у TikTok эфиры из одной из этих стран. TikTok не сообщает, из какой страны эфир, а ваш IP-адрес и аккаунт по-прежнему учитываются, поэтому эфиры из других мест всё равно могут появляться. Работает и без переключателей выше. Оставьте пустым для обычных эфиров TikTok.

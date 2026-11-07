@@ -77,6 +77,17 @@ public class CaptureEmptyRetentionTest {
     }
 
     @Test
+    public void sourceClosedMarkerStillReclaimsAProvenEmptyScreenCapture() throws Exception {
+        RecordingRetention store = store();
+        RecordingRetention.Record record = store.begin("flv", "creator", 1);
+        record.update("capture", true, "captureComplete", false, "captureClosed", true);
+        assertTrue(record.source().createNewFile());
+        record.close();
+        assertTrue(store.ids().isEmpty());
+        store.begin("flv", "next", 2).close();
+    }
+
+    @Test
     public void realCreateScreenSetupFailureClosesTheEmptyOwner() throws Exception {
         File durable = files.newFolder(), cache = files.newFolder();
         Context app =

@@ -34,6 +34,7 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -45,7 +46,8 @@ import java.util.WeakHashMap;
 /**
  * The Record button in a LIVE room (#37). The room's page tells this class it is resuming; while
  * the switch is on a small chip shows on that page. Tapping it starts a recording from that
- * moment, tapping it again stops, and leaving the room stops it too. Stream recordings also
+ * moment, tapping it again stops, and leaving the room stops it too. An opt-in setting can
+ * automatically start a stream recording once a LIVE room is confirmed in front. Stream recordings
  * continue while the same LIVE is playing in Android's native picture-in-picture window.
  * A once-a-second check on the main thread notices a room change or the window going away.
  * Screen recordings hide the chip so it isn't filmed, and the notification's Stop ends them (#265).
@@ -56,6 +58,8 @@ public final class LiveRecordChip {
     }
 
     private static final long TICK_MS = 1000;
+    private static final long RETRY_FIRST_MS = 5000;
+    private static final long RETRY_MAX_MS = 60000;
     /** onPause can run before Android has entered its native PiP window. */
     private static final long PIP_TRANSITION_MS = 1500;
     /** A LIVE activity can be destroyed while TikTok itself remains open (including after PiP). */
@@ -80,10 +84,89 @@ public final class LiveRecordChip {
     private static boolean ticking;
     private static boolean callbacksRegistered;
     private static boolean clearScreen;
+    private static boolean hostResumed;
     private static long pipTransitionUntil;
     private static int pipTransitionGeneration;
     private static boolean recordingWasPinned;
     private static long pipReturnUntil;
+    private static final AutoRecordVisit autoVisit = new AutoRecordVisit();
+
+    /**
+     * An adjacent LIVE can resume before its page is visible. Only two consecutive observations
+     * of the same frontmost room count as entering it. A manual Stop never retries in that visit.
+     */
+    static final class AutoRecordVisit {
+        private String candidateRoom;
+        private String confirmedRoom;
+        private boolean attempted;
+        private boolean waitingForSave;
+        private long retryNotBefore;
+        private int consecutiveDrops;
+
+        boolean observe(String visibleRoom, boolean allowed, boolean busy) {
+            return observe(visibleRoom, allowed, busy, SystemClock.uptimeMillis());
+        }
+
+        boolean observe(String visibleRoom, boolean allowed, boolean busy, long now) {
+            if (visibleRoom == null || visibleRoom.isEmpty()) {
+                reset();
+                return false;
+            }
+            if (!allowed) return false;
+            if (!visibleRoom.equals(candidateRoom)) {
+                candidateRoom = visibleRoom;
+                return false;
+            }
+            if (!visibleRoom.equals(confirmedRoom)) {
+                confirmedRoom = visibleRoom;
+                attempted = false;
+                retryNotBefore = 0;
+                consecutiveDrops = 0;
+            }
+            if (busy || attempted || waitingForSave || now < retryNotBefore) return false;
+            attempted = true;
+            return true;
+        }
+
+        /** Retry a dropped stream in the same LIVE, never a manual stop or a safety limit. */
+        void streamEnded(String room, LiveRecorder.End reason, long durationMs, long now) {
+            if (reason != LiveRecorder.End.DISCONNECTED || room == null
+                    || !room.equals(confirmedRoom) || !attempted) return;
+            if (durationMs >= 60000) consecutiveDrops = 0;
+            long delay = Math.min(RETRY_FIRST_MS << Math.min(consecutiveDrops, 4), RETRY_MAX_MS);
+            consecutiveDrops = Math.min(consecutiveDrops + 1, 4);
+            retryNotBefore = now + delay;
+            attempted = false;
+        }
+
+        void waitForSave() {
+            waitingForSave = true;
+            attempted = false;
+        }
+
+        void saveFinished() {
+            waitingForSave = false;
+        }
+
+        void startedManually(String room) {
+            if (room == null || room.isEmpty()) return;
+            if (!room.equals(confirmedRoom)) consecutiveDrops = 0;
+            candidateRoom = room;
+            confirmedRoom = room;
+            attempted = true;
+            waitingForSave = false;
+            retryNotBefore = 0;
+        }
+
+        void reset() {
+            candidateRoom = null;
+            confirmedRoom = null;
+            attempted = false;
+            waitingForSave = false;
+            retryNotBefore = 0;
+            consecutiveDrops = 0;
+        }
+    }
 
     /** True while the switch is on and Hushfeed isn't paused. */
     public static boolean enabled() {
@@ -107,9 +190,17 @@ public final class LiveRecordChip {
             Activity activity = (Activity) activityObject;
             PAGES.put(fragment, Boolean.TRUE);
             host = new WeakReference<>(activity);
+            hostResumed = true;
             registerCallbacks(activity);
             // Auto tap (#335) follows the same pages and keeps its own chip and checks.
             LiveAutoTap.roomResumed(activity);
+            // A PiP room has no full-size resumed page. Its current fragment is selected by
+            // TikTok's player, not by whichever adjacent page last received onResume.
+            if (nativePip(activity)) {
+                removeChip();
+                scheduleTick();
+                return;
+            }
             // A page laid out on screen wins over an adjacent page resuming. During PiP
             // restoration, no full-size page may be shown yet: do not mistake a prefetched
             // neighbor for the recorded room before the layout has settled.
@@ -141,10 +232,13 @@ public final class LiveRecordChip {
         application.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
             @Override public void onActivityPaused(Activity paused) {
                 if (paused == host.get()) {
+                    hostResumed = false;
                     pipReturnUntil = 0;
                     removeChip();
                     if (!streamRecording()) {
                         leave(LiveRecorder.End.LEFT_ROOM);
+                        // onStop or the foreground tick clears the visit after a real exit.
+                        // Keeping it here also honors manual Stop when the same room enters PiP.
                     } else {
                         // Wait briefly for Android to report native PiP before treating this as
                         // a regular background exit. Never extend a screen capture into Home.
@@ -161,11 +255,13 @@ public final class LiveRecordChip {
 
             @Override public void onActivityDestroyed(Activity destroyed) {
                 if (destroyed == host.get()) {
+                    hostResumed = false;
                     pipTransitionGeneration++;
                     pipTransitionUntil = 0;
                     recordingWasPinned = false;
                     pipReturnUntil = 0;
                     leave(LIVE_ACTIVITY_DESTROYED_END);
+                    autoVisit.reset();
                     removeChip();
                     clearScreen = false;
                     CLEAR_ROOM_STATES.clear();
@@ -178,6 +274,7 @@ public final class LiveRecordChip {
             @Override public void onActivityStarted(Activity started) { }
             @Override public void onActivityResumed(Activity resumed) {
                 if (resumed == host.get()) {
+                    hostResumed = true;
                     pipTransitionGeneration++;
                     pipTransitionUntil = 0;
                     // Returning from PiP can precede the room page becoming visible again.
@@ -188,8 +285,10 @@ public final class LiveRecordChip {
                 }
             }
             @Override public void onActivityStopped(Activity stopped) {
-                if (stopped == host.get() && !keepWhileHidden(stopped)) {
+                if (stopped == host.get() && !nativePip(stopped) && !keepWhileHidden(stopped)) {
+                    hostResumed = false;
                     leave(LiveRecorder.End.LEFT_ROOM);
+                    autoVisit.reset();
                     removeChip();
                 }
             }
@@ -507,7 +606,12 @@ public final class LiveRecordChip {
             start();
         } catch (Throwable failure) {
             Logger.printException(() -> "Could not use the LIVE record button", failure);
-            Utils.showToastShort(L10n.t("The recording couldn't be saved. Try again."));
+            boolean stillSaving = LiveRecordingSaver.backgroundSavesFull(failure);
+            if (stillSaving) {
+                Utils.showToastShort(L10n.t("Saving the recording"));
+            } else {
+                Utils.showToastShort(L10n.t("The recording couldn't be saved. Try again."));
+            }
         }
     }
 
@@ -558,11 +662,15 @@ public final class LiveRecordChip {
         }
         Logger.printInfo(() -> "LIVE record: " + pick.target.quality + " over " + pick.target.transport
                 + " (LIVE recording quality " + Settings.LIVE_RECORD_QUALITY.get() + ", room offers [" + pick.offered + "])");
-        LiveRecorder started = LiveRecordingSaver.create(activity, pick.target, result ->
-                Utils.runOnMainThread(() -> onFinished(result)));
+        LiveRecorder[] owned = new LiveRecorder[1];
+        LiveRecorder started = LiveRecordingSaver.create(activity, pick.target,
+                result -> Utils.runOnMainThread(() -> onFinished(owned[0], result)),
+                () -> Utils.runOnMainThread(() -> onSourceClosed(owned[0])));
+        owned[0] = started;
         recorder = started;
         saving = false;
         started.start();
+        autoVisit.startedManually(roomKey(room));
         Utils.showToastShort(L10n.t("Recording this LIVE from now"));
         refresh();
         scheduleTick();
@@ -598,10 +706,14 @@ public final class LiveRecordChip {
                     refresh();
                     return;
                 }
-                LiveRecorder started = LiveRecordingSaver.createScreen(activity, pick.target, audio, result ->
-                        Utils.runOnMainThread(() -> onFinished(result)));
+                LiveRecorder[] owned = new LiveRecorder[1];
+                LiveRecorder started = LiveRecordingSaver.createScreen(activity, pick.target, audio,
+                        result -> Utils.runOnMainThread(() -> onFinished(owned[0], result)),
+                        () -> Utils.runOnMainThread(() -> onSourceClosed(owned[0])));
+                owned[0] = started;
                 recorder = started;
                 started.start();
+                autoVisit.startedManually(roomKey(room));
                 Utils.showToastShort(audio
                         ? L10n.t("Recording this LIVE's screen from now")
                         : L10n.t("Recording this LIVE's screen from now, without sound"));
@@ -616,13 +728,38 @@ public final class LiveRecordChip {
         });
     }
 
-    private static void onFinished(LiveRecorder.Result result) {
+    /** Capture stopped and its source is durable. Saving can continue without holding the chip. */
+    private static void onSourceClosed(LiveRecorder owner) {
+        if (recorder != owner) return;
+        streamEnded(owner, owner.sourceEnd());
+        releaseChip();
+        if (enabled() && Settings.AUTO_RECORD_LIVE.get()) scheduleTick();
+    }
+
+    private static void streamEnded(LiveRecorder owner, LiveRecorder.End reason) {
+        if (owner.target().transport != LiveRecorder.Transport.SCREEN) {
+            autoVisit.streamEnded(owner.target().room, reason,
+                    owner.elapsedMs(), SystemClock.uptimeMillis());
+        }
+    }
+
+    private static void releaseChip() {
         recorder = null;
         saving = false;
         recordingWasPinned = false;
         pipReturnUntil = 0;
-        LiveRecordingSaver.announce(result);
         refresh();
+    }
+
+    /** An old save must not clear a newer recording when it eventually completes. */
+    private static void onFinished(LiveRecorder owner, LiveRecorder.Result result) {
+        if (recorder == owner) {
+            if (result.outcome != LiveRecorder.Outcome.FAILED) streamEnded(owner, result.end);
+            releaseChip();
+        }
+        autoVisit.saveFinished();
+        LiveRecordingSaver.announce(result);
+        if (enabled() && Settings.AUTO_RECORD_LIVE.get()) scheduleTick();
     }
 
     /** Makes {@code fragment} the page the button belongs to; a recording of another page stops. */
@@ -654,6 +791,77 @@ public final class LiveRecordChip {
     private static boolean streamRecording() {
         LiveRecorder running = recorder;
         return running != null && running.active() && running.target().transport != LiveRecorder.Transport.SCREEN;
+    }
+
+    private static boolean automaticStreamRecording(Activity activity) {
+        return autoStreamAllowed(hostResumed, enabled(), Settings.AUTO_RECORD_LIVE.get(),
+                LiveRecordSource.screen(), nativePip(activity));
+    }
+
+    static boolean autoStreamAllowed(boolean resumed, boolean controls, boolean optedIn,
+                                     boolean screen, boolean nativePip) {
+        return (resumed || nativePip) && controls && optedIn && !screen;
+    }
+
+    /** A LIVE page's parent is its room pager, which reports the selected, not preloaded, page. */
+    private static Object playingFromParent(Object fragment, Activity activity) {
+        if (fragment == null || Reflect.invoke(fragment, "getActivity") != activity) return null;
+        Object parent = Reflect.invoke(fragment, "getParentFragment");
+        Object playing = Reflect.invoke(parent, "getCurrentFragment");
+        return playing != null && Reflect.invoke(playing, "getActivity") == activity
+                && roomKey(roomOf(playing)) != null ? playing : null;
+    }
+
+    /** In PiP the activity's getter can return null, although its child room pager is still active. */
+    private static Object retainedPipPage(Activity activity, Object remembered, Iterable<?> seenPages) {
+        Object unique = playingFromParent(remembered, activity);
+        for (Object candidate : seenPages) {
+            Object playing = playingFromParent(candidate, activity);
+            if (playing == null) continue;
+            // The previously seen page may belong to another pager after a tab switch.
+            // Never guess between two pagers that point to different rooms.
+            if (unique != null && unique != playing) return null;
+            unique = playing;
+        }
+        return unique;
+    }
+
+    /** Select only the room that TikTok's current pager is actually playing in native PiP. */
+    static Object currentPipPage(Activity activity) {
+        return currentPipPage(activity, page.get(), new ArrayList<>(PAGES.keySet()));
+    }
+
+    static Object currentPipPage(Activity activity, Object remembered, Iterable<?> seenPages) {
+        if (activity == null) return null;
+        Object selected = Reflect.invoke(activity, "getCurrentFragment");
+        if (selected == null) return retainedPipPage(activity, remembered, seenPages);
+        if (Reflect.invoke(selected, "getActivity") != activity) return null;
+        if (roomKey(roomOf(selected)) != null) return selected;
+
+        // The selected fragment can itself be a room pager rather than a room page.
+        Object direct = Reflect.invoke(selected, "getCurrentFragment");
+        if (direct != null && Reflect.invoke(direct, "getActivity") == activity
+                && roomKey(roomOf(direct)) != null) return direct;
+
+        // A multi-tab LIVE activity returns its selected tab, not the room itself. That tab's
+        // room pager exposes getCurrentFragment(). Never pick a neighbor by resume order.
+        Object playing = null;
+        for (Field field : selected.getClass().getDeclaredFields()) {
+            if (Modifier.isStatic(field.getModifiers())
+                    || Reflect.method(field.getType(), "getCurrentFragment") == null) continue;
+            try {
+                field.setAccessible(true);
+                Object pager = field.get(selected);
+                Object current = pager == null ? null : Reflect.invoke(pager, "getCurrentFragment");
+                if (current == null || Reflect.invoke(current, "getActivity") != activity
+                        || roomKey(roomOf(current)) == null) continue;
+                if (playing != null && playing != current) return null;
+                playing = current;
+            } catch (IllegalAccessException | RuntimeException ignored) {
+                // An inaccessible or unknown pager cannot authorize an automatic recording.
+            }
+        }
+        return playing != null ? playing : retainedPipPage(activity, remembered, seenPages);
     }
 
     private static boolean nativePip(Activity activity) {
@@ -694,7 +902,8 @@ public final class LiveRecordChip {
         ticking = false;
         try {
             Activity activity = host.get();
-            if (streamRecording() && nativePip(activity)) {
+            boolean pip = nativePip(activity);
+            if (streamRecording() && pip) {
                 recordingWasPinned = true;
                 pipReturnUntil = 0;
             } else if (recordingWasPinned && streamRecording()) {
@@ -702,6 +911,36 @@ public final class LiveRecordChip {
                 pipReturnUntil = pipReturnDeadline(true, true, pipReturnUntil,
                         SystemClock.uptimeMillis());
                 recordingWasPinned = false;
+            }
+            if (pip) {
+                Object playing = currentPipPage(activity);
+                if (playing != null) {
+                    follow(playing);
+                    LiveRecorder running = recorder;
+                    if (running != null && running.active() && !sameRoom(running, playing)) {
+                        leave(LiveRecorder.End.LEFT_ROOM);
+                    }
+                    if (autoVisit.observe(roomKey(roomOf(playing)), automaticStreamRecording(activity),
+                            saving || recorder != null)) {
+                        try {
+                            start();
+                        } catch (Throwable failure) {
+                            Logger.printException(() -> "Could not automatically record the PiP LIVE", failure);
+                            if (LiveRecordingSaver.backgroundSavesFull(failure)) autoVisit.waitForSave();
+                            else Utils.showToastShort(L10n.t("The recording couldn't be saved. Try again."));
+                        }
+                    }
+                } else {
+                    // An unknown playing page is not permission to record a prefetched neighbor.
+                    LiveRecorder running = recorder;
+                    Object remembered = page.get();
+                    if (running != null && running.active() && remembered != null
+                            && !sameRoom(running, remembered)) leave(LiveRecorder.End.LEFT_ROOM);
+                }
+                removeChip();
+                if (recorder != null || (enabled() && Settings.AUTO_RECORD_LIVE.get()
+                        && !LiveRecordSource.screen())) scheduleTick();
+                return;
             }
             if (keepWhileHidden(activity)) {
                 // A pinned LIVE has no full-size resumed page. Keep recording its stream, but
@@ -723,6 +962,7 @@ public final class LiveRecordChip {
             }
             if (!showing) {
                 leave(LiveRecorder.End.LEFT_ROOM);
+                autoVisit.reset();
                 removeChip();
             } else {
                 pipReturnUntil = 0;
@@ -730,6 +970,19 @@ public final class LiveRecordChip {
                 LiveRecorder running = recorder;
                 if (running != null && running.active() && !sameRoom(running, fragment)) {
                     leave(LiveRecorder.End.LEFT_ROOM);
+                }
+                if (autoVisit.observe(roomKey(roomOf(fragment)), automaticStreamRecording(activity),
+                        saving || recorder != null)) {
+                    try {
+                        start();
+                    } catch (Throwable failure) {
+                        Logger.printException(() -> "Could not automatically record the LIVE", failure);
+                        if (LiveRecordingSaver.backgroundSavesFull(failure)) {
+                            autoVisit.waitForSave();
+                        } else {
+                            Utils.showToastShort(L10n.t("The recording couldn't be saved. Try again."));
+                        }
+                    }
                 }
                 showChip(activity);
                 refresh();

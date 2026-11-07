@@ -28,7 +28,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /** Destination acknowledgement, not a callback return, authorizes recording source cleanup. */
@@ -592,6 +594,78 @@ public class RecordingRetentionTest {
         RecordingRetention.Record original = retained.open(retained.ids().get(0));
         assertEquals(20, original.source().length());
         original.close();
+    }
+
+    @Test
+    public void aClosedSourceCanSaveWhileTheNextCaptureBegins() throws Exception {
+        RecordingRetention.Record first = store.begin("flv", "creator", 1);
+        Files.write(first.source().toPath(), PAYLOAD);
+        first.update("captureClosed", true);
+        RecordingRetention.Record next = store.begin("flv", "creator", 2);
+        assertNotEquals(first.id, next.id);
+        assertEquals(2, store.ids().size());
+        assertArrayEquals(PAYLOAD, Files.readAllBytes(first.source().toPath()));
+        try {
+            store.begin("flv", "creator", 3);
+            fail("a second active capture was admitted");
+        } catch (IOException expected) {
+        }
+        next.close();
+        first.update("state", "DISCARDED");
+        first.close();
+        assertTrue(store.ids().isEmpty());
+    }
+
+    @Test
+    public void aCrashedBackgroundSaveStillBlocksNewCaptures() throws Exception {
+        RecordingRetention.Record first = store.begin("flv", "creator", 1);
+        Files.write(first.source().toPath(), PAYLOAD);
+        first.update("captureClosed", true);
+        first.close();
+        try {
+            store.begin("flv", "creator", 2);
+            fail("an orphaned source was mistaken for a background save");
+        } catch (IOException expected) {
+        }
+        assertEquals(1, store.ids().size());
+        RecordingRetention.Record recovered = store.open(first.id);
+        assertArrayEquals(PAYLOAD, Files.readAllBytes(recovered.source().toPath()));
+        recovered.close();
+    }
+
+    @Test
+    public void backgroundSaveAdmissionIsBoundedAndReopensWhenOneFinishes() throws Exception {
+        List<RecordingRetention.Record> saving = new ArrayList<>();
+        for (int i = 0; i < RecordingRetention.MAX_BACKGROUND_SAVES; i++) {
+            RecordingRetention.Record record = store.begin("flv", "creator", i + 1);
+            Files.write(record.source().toPath(), PAYLOAD);
+            record.update("captureClosed", true);
+            saving.add(record);
+        }
+        RecordingRetention.Record last = store.begin(
+                "flv", "creator", RecordingRetention.MAX_BACKGROUND_SAVES + 1);
+        Files.write(last.source().toPath(), PAYLOAD);
+        last.update("captureClosed", true);
+        try {
+            store.begin("flv", "creator", RecordingRetention.MAX_BACKGROUND_SAVES + 2);
+            fail("unbounded background saves were admitted");
+        } catch (IOException expected) {
+            assertTrue(expected.getMessage().contains("Too many LIVE recordings"));
+        }
+        RecordingRetention.Record first = saving.remove(0);
+        first.update("state", "DISCARDED");
+        first.close();
+        RecordingRetention.Record next = store.begin(
+                "flv", "creator", RecordingRetention.MAX_BACKGROUND_SAVES + 2);
+        assertNotEquals(last.id, next.id);
+        next.close();
+        last.update("state", "DISCARDED");
+        last.close();
+        for (RecordingRetention.Record record : saving) {
+            record.update("state", "DISCARDED");
+            record.close();
+        }
+        assertTrue(store.ids().isEmpty());
     }
 
     @Test

@@ -1568,6 +1568,9 @@ Remove all overrides,Remove all overrides
 Remove all reposts,Remove all reposts
 Remove feed ads,Remove feed ads
 "Remove feed ads, creator commission posts, paid partnerships, and branded content.","Remove feed ads, creator commission posts, paid partnerships, and branded content."
+Remove rings in comments,Remove rings in comments
+Remove rings on profiles,Remove rings on profiles
+Remove rings on the feed,Remove rings on the feed
 Remove story rings,Remove story rings
 Remove the LIVE ring,Remove the LIVE ring
 Remove the imported font,Remove the imported font
@@ -2044,7 +2047,10 @@ System,System
 Tag saved videos with their details,Tag saved videos with their details
 "Take Hushfeed out of TikTok's Settings and privacy. To open these settings, press and hold For You at the top of the feed, or Home if Long-press Home for Hushfeed settings is on.","Take Hushfeed out of TikTok's Settings and privacy. To open these settings, press and hold For You at the top of the feed, or Home if Long-press Home for Hushfeed settings is on."
 "Take the Add comment bar off videos you open from a profile, a hashtag, a sound or search, so the video fills the screen down to the bottom. The comment button on the right still opens comments.","Take the Add comment bar off videos you open from a profile, a hashtag, a sound or search, so the video fills the screen down to the bottom. The comment button on the right still opens comments."
-Take the pulsing LIVE ring off profile pictures on the feed and in comments. Tapping the picture of a creator who's live opens their profile instead of the LIVE.,Take the pulsing LIVE ring off profile pictures on the feed and in comments. Tapping the picture of a creator who's live opens their profile instead of the LIVE.
+"Take the pulsing LIVE ring off profile pictures on the feed, in comments and on profiles. Tapping the picture of a creator who's live opens their profile instead of the LIVE.","Take the pulsing LIVE ring off profile pictures on the feed, in comments and on profiles. Tapping the picture of a creator who's live opens their profile instead of the LIVE."
+Take the rings off profile pictures in comments. Needs Remove story rings or Remove the LIVE ring.,Take the rings off profile pictures in comments. Needs Remove story rings or Remove the LIVE ring.
+Take the rings off the big picture at the top of a profile. Needs Remove story rings or Remove the LIVE ring.,Take the rings off the big picture at the top of a profile. Needs Remove story rings or Remove the LIVE ring.
+Take the rings off the creator's picture in the feed's right column. Needs Remove story rings or Remove the LIVE ring.,Take the rings off the creator's picture in the feed's right column. Needs Remove story rings or Remove the LIVE ring.
 "Take the story ring off profile pictures on the feed, in comments and on profiles. Tapping a picture opens the profile instead of the story.","Take the story ring off profile pictures on the feed, in comments and on profiles. Tapping a picture opens the profile instead of the story."
 Takes TikTok's AI Cast button off the camera's side toolbar. Open the camera again to see the change.,Takes TikTok's AI Cast button off the camera's side toolbar. Open the camera again to see the change.
 Takes TikTok's own Auto scroll action out of the video panel and the Auto scroll label off the top of videos. Tablets and unfolded foldables also lose the Auto scroll switch beside videos. Works with Auto-advance off too.,Takes TikTok's own Auto scroll action out of the video panel and the Auto scroll label off the top of videos. Tablets and unfolded foldables also lose the Auto scroll switch beside videos. Works with Auto-advance off too.

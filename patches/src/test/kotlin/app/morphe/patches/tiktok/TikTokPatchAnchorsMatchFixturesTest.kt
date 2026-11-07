@@ -1014,8 +1014,9 @@ class TikTokPatchAnchorsMatchFixturesTest {
 
     /**
      * Remove avatar rings: the story status getter, the feed avatar's bind and the one author
-     * live check it calls, and the User.isLive reads in AvatarLiveDataAdapter, on every declared
-     * build. The bind and the check are R8 names that move each build.
+     * live check it calls, the social avatar entry's ring mode method with its screen field, and
+     * AvatarLiveDataAdapter's status method with its scene number (#351), on every declared
+     * build. The bind, the check and the entry are R8 names that move each build.
      */
     @Test
     fun `avatar ring hooks resolve on every declared build`() {
@@ -1039,10 +1040,23 @@ class TikTokPatchAnchorsMatchFixturesTest {
                 AccessFlags.STATIC.isSet(checkMethod.accessFlags))
             assertTrue("${apk.name}: the author live check returns",
                 checkMethod.implementation!!.instructions.any { it.opcode == Opcode.RETURN })
-            val adapterReads = classes.getValue(AVATAR_LIVE_DATA_ADAPTER).methods.sumOf { method ->
-                method.implementation?.instructions?.toList()?.isLiveResults()?.size ?: 0
+            // #351: the social avatar entry's mode method and its screen, hooked at the top.
+            val entries = classes.values.filter { classDef ->
+                classDef.methods.any { SocialAvatarModeFingerprint.takes(it, classDef) }
             }
-            assertTrue("${apk.name}: AvatarLiveDataAdapter reads User.isLive", adapterReads > 0)
+            assertEquals("${apk.name}: social avatar entry", 1, entries.size)
+            val social = socialAvatarAnchors(entries.single(), classes::get)
+            assertTrue("${apk.name}: the ring mode method has two free locals for the hook",
+                social.mode.implementation!!.registerCount - 3 >= 2)
+            assertEquals("${apk.name}: the scene field lives on the entry", entries.single().type,
+                social.scene.definingClass)
+            // The LIVE adapter's status method, its config and the config's scene number.
+            val live = liveAdapterAnchors(classes.getValue(AVATAR_LIVE_DATA_ADAPTER), classes::get)
+            assertTrue("${apk.name}: the live status method answers an object the hook can null",
+                live.status.returnType.startsWith("L"))
+            assertTrue("${apk.name}: the live status method has two free locals for the hook",
+                live.status.implementation!!.registerCount - 2 >= 2)
+            assertEquals("${apk.name}: the scene number is an int", "I", live.scene.type)
         }
     }
 

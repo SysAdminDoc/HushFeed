@@ -1393,6 +1393,13 @@ public class Settings extends BaseSettings {
     // Remove avatar rings: the story ring and the LIVE ring, each on its own switch.
     public static final BooleanSetting HIDE_STORY_RINGS = new BooleanSetting("hide_story_rings", FALSE);
     public static final BooleanSetting HIDE_LIVE_RING = new BooleanSetting("hide_live_ring", FALSE);
+    // Where the two ring switches reach (#351). The Inbox, search and other lists follow them always.
+    public static final BooleanSetting HIDE_RINGS_FEED = new BooleanSetting("hide_rings_feed", TRUE,
+            Setting.parentsAny(HIDE_STORY_RINGS, HIDE_LIVE_RING));
+    public static final BooleanSetting HIDE_RINGS_COMMENTS = new BooleanSetting("hide_rings_comments", TRUE,
+            Setting.parentsAny(HIDE_STORY_RINGS, HIDE_LIVE_RING));
+    public static final BooleanSetting HIDE_RINGS_PROFILES = new BooleanSetting("hide_rings_profiles", TRUE,
+            Setting.parentsAny(HIDE_STORY_RINGS, HIDE_LIVE_RING));
     // A creator's profile picture opens their Story before their LIVE, the next tap the LIVE (#233).
     public static final BooleanSetting OPEN_STORY_OVER_LIVE = new BooleanSetting("open_story_over_live", FALSE);
     // Lift text length limits: comments, repost notes and the bio.

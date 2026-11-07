@@ -139,6 +139,11 @@ public class FeedScreenCoverageTest {
         put("show_exact_counts", YES, YES, UNCHECKED);
         put("hide_story_rings", YES, YES, UNCHECKED);
         put("hide_live_ring", YES, YES, UNCHECKED);
+        // Where the two ring switches reach (#351): the feed column and the comment sheet live in
+        // both feed windows, a LIVE room draws neither, and profiles are none of the three.
+        put("hide_rings_feed", YES, YES, NONE);
+        put("hide_rings_comments", YES, YES, NONE);
+        put("hide_rings_profiles", NONE, NONE, NONE);
         // The picture at the top of a creator's profile, which none of the three windows draws (#233).
         put("open_story_over_live", NONE, NONE, NONE);
 

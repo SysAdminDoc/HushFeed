@@ -1795,7 +1795,14 @@ HDR videos light the screen extra bright. This plays the standard (SDR) version 
 Remove story rings	Убрать кольца историй
 Take the story ring off profile pictures on the feed, in comments and on profiles. Tapping a picture opens the profile instead of the story.	Убирать кольцо истории с фото профиля в ленте, в комментариях и в профилях. Нажатие на фото открывает профиль, а не историю.
 Remove the LIVE ring	Убрать кольцо LIVE
-Take the pulsing LIVE ring off profile pictures on the feed and in comments. Tapping the picture of a creator who's live opens their profile instead of the LIVE.	Убирать пульсирующее кольцо LIVE с фото профиля в ленте и в комментариях. Нажатие на фото автора в эфире открывает его профиль, а не LIVE.
+Take the pulsing LIVE ring off profile pictures on the feed, in comments and on profiles. Tapping the picture of a creator who's live opens their profile instead of the LIVE.	Убирать пульсирующее кольцо LIVE с фото профиля в ленте, в комментариях и в профилях. Нажатие на фото автора в эфире открывает его профиль, а не LIVE.
+# context: three switches under Remove story rings and Remove the LIVE ring; each picks one screen the rings come off (#351)
+Remove rings on the feed	Убрать кольца в ленте
+Take the rings off the creator's picture in the feed's right column. Needs Remove story rings or Remove the LIVE ring.	Убирать кольца с фото автора в правой колонке ленты. Нужна настройка «Убрать кольца историй» или «Убрать кольцо LIVE».
+Remove rings in comments	Убрать кольца в комментариях
+Take the rings off profile pictures in comments. Needs Remove story rings or Remove the LIVE ring.	Убирать кольца с фото профиля в комментариях. Нужна настройка «Убрать кольца историй» или «Убрать кольцо LIVE».
+Remove rings on profiles	Убрать кольца в профилях
+Take the rings off the big picture at the top of a profile. Needs Remove story rings or Remove the LIVE ring.	Убирать кольца с большого фото вверху профиля. Нужна настройка «Убрать кольца историй» или «Убрать кольцо LIVE».
 Open the Story when a creator is LIVE	Открывать историю, когда автор в LIVE
 When a creator who's LIVE also has a Story, tapping their picture on their profile or on your chat with them in the Inbox opens the Story. Tap the picture again to join the LIVE.	Если у автора в LIVE есть и история, нажатие на его фото в профиле или в вашем чате во «Входящих» открывает историю. Нажмите на фото ещё раз, чтобы перейти в LIVE.
 Writing	Написание

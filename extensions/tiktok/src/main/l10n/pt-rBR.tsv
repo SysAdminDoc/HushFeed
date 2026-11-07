@@ -1657,7 +1657,14 @@ HDR videos light the screen extra bright. This plays the standard (SDR) version 
 Remove story rings	Remover os anéis de stories
 Take the story ring off profile pictures on the feed, in comments and on profiles. Tapping a picture opens the profile instead of the story.	Tirar o anel de story das fotos de perfil no feed, nos comentários e nos perfis. Tocar numa foto abre o perfil em vez do story.
 Remove the LIVE ring	Remover o anel de LIVE
-Take the pulsing LIVE ring off profile pictures on the feed and in comments. Tapping the picture of a creator who's live opens their profile instead of the LIVE.	Tirar o anel pulsante de LIVE das fotos de perfil no feed e nos comentários. Tocar na foto de quem está ao vivo abre o perfil em vez da LIVE.
+Take the pulsing LIVE ring off profile pictures on the feed, in comments and on profiles. Tapping the picture of a creator who's live opens their profile instead of the LIVE.	Tirar o anel pulsante de LIVE das fotos de perfil no feed, nos comentários e nos perfis. Tocar na foto de quem está ao vivo abre o perfil em vez da LIVE.
+# context: three switches under Remove story rings and Remove the LIVE ring; each picks one screen the rings come off (#351)
+Remove rings on the feed	Remover os anéis no feed
+Take the rings off the creator's picture in the feed's right column. Needs Remove story rings or Remove the LIVE ring.	Tirar os anéis da foto do criador na coluna direita do feed. Precisa de Remover os anéis de stories ou Remover o anel de LIVE.
+Remove rings in comments	Remover os anéis nos comentários
+Take the rings off profile pictures in comments. Needs Remove story rings or Remove the LIVE ring.	Tirar os anéis das fotos de perfil nos comentários. Precisa de Remover os anéis de stories ou Remover o anel de LIVE.
+Remove rings on profiles	Remover os anéis nos perfis
+Take the rings off the big picture at the top of a profile. Needs Remove story rings or Remove the LIVE ring.	Tirar os anéis da foto grande no topo de um perfil. Precisa de Remover os anéis de stories ou Remover o anel de LIVE.
 Open the Story when a creator is LIVE	Abrir o story quando alguém está em LIVE
 When a creator who's LIVE also has a Story, tapping their picture on their profile or on your chat with them in the Inbox opens the Story. Tap the picture again to join the LIVE.	Se alguém que está em LIVE também tem um story, tocar na foto no perfil ou na conversa com essa pessoa na Caixa de entrada abre o story. Toque na foto de novo para entrar na LIVE.
 Writing	Escrita

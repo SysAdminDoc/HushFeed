@@ -183,8 +183,28 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             addPreference(new TogglePreference(
                     context,
                     "Remove the LIVE ring",
-                    "Take the pulsing LIVE ring off profile pictures on the feed and in comments. Tapping the picture of a creator who's live opens their profile instead of the LIVE.",
+                    "Take the pulsing LIVE ring off profile pictures on the feed, in comments and on profiles. Tapping the picture of a creator who's live opens their profile instead of the LIVE.",
                     Settings.HIDE_LIVE_RING
+            ));
+            // #351: where the two switches above reach, one screen each. The Inbox, chats and
+            // search follow the two switches alone.
+            addPreference(new TogglePreference(
+                    context,
+                    "Remove rings on the feed",
+                    "Take the rings off the creator's picture in the feed's right column. Needs Remove story rings or Remove the LIVE ring.",
+                    Settings.HIDE_RINGS_FEED
+            ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Remove rings in comments",
+                    "Take the rings off profile pictures in comments. Needs Remove story rings or Remove the LIVE ring.",
+                    Settings.HIDE_RINGS_COMMENTS
+            ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Remove rings on profiles",
+                    "Take the rings off the big picture at the top of a profile. Needs Remove story rings or Remove the LIVE ring.",
+                    Settings.HIDE_RINGS_PROFILES
             ));
         }
         if (SettingsStatus.storyOverLiveEnabled) {

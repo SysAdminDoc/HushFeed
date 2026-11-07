@@ -1650,7 +1650,13 @@ Play SDR instead of HDR,"Putar SDR, bukan HDR"
 Remove story rings,Hapus cincin cerita
 "Take the story ring off profile pictures on the feed, in comments and on profiles. Tapping a picture opens the profile instead of the story.","Hapus cincin cerita dari foto profil di feed, di komentar, dan di profil. Mengetuk foto akan membuka profil, bukan ceritanya."
 Remove the LIVE ring,Hapus cincin LIVE
-Take the pulsing LIVE ring off profile pictures on the feed and in comments. Tapping the picture of a creator who's live opens their profile instead of the LIVE.,"Hapus cincin LIVE yang berdenyut dari foto profil di feed dan di komentar. Mengetuk foto kreator yang sedang live akan membuka profilnya, bukan LIVE-nya."
+"Take the pulsing LIVE ring off profile pictures on the feed, in comments and on profiles. Tapping the picture of a creator who's live opens their profile instead of the LIVE.","Hapus cincin LIVE yang berdenyut dari foto profil di feed, di komentar, dan di profil. Mengetuk foto kreator yang sedang live akan membuka profilnya, bukan LIVE-nya."
+Remove rings on the feed,Hapus cincin di feed
+Take the rings off the creator's picture in the feed's right column. Needs Remove story rings or Remove the LIVE ring.,Hapus cincin dari foto kreator di kolom kanan feed. Perlu Hapus cincin cerita atau Hapus cincin LIVE.
+Remove rings in comments,Hapus cincin di komentar
+Take the rings off profile pictures in comments. Needs Remove story rings or Remove the LIVE ring.,Hapus cincin dari foto profil di komentar. Perlu Hapus cincin cerita atau Hapus cincin LIVE.
+Remove rings on profiles,Hapus cincin di profil
+Take the rings off the big picture at the top of a profile. Needs Remove story rings or Remove the LIVE ring.,Hapus cincin dari foto besar di bagian atas profil. Perlu Hapus cincin cerita atau Hapus cincin LIVE.
 Open the Story when a creator is LIVE,Buka cerita saat kreator sedang LIVE
 "When a creator who's LIVE also has a Story, tapping their picture on their profile or on your chat with them in the Inbox opens the Story. Tap the picture again to join the LIVE.","Jika kreator yang sedang LIVE juga punya cerita, mengetuk fotonya di profilnya atau di chat kamu dengannya di Kotak Masuk akan membuka cerita. Ketuk foto itu lagi untuk bergabung ke LIVE."
 Writing,Menulis

@@ -1799,7 +1799,13 @@ Swiping a message sideways no longer starts a reply to it. Taps and long presses
 System,系统
 Tag saved videos with their details,为保存的视频添加详细信息标签
 "Take the Add comment bar off videos you open from a profile, a hashtag, a sound or search, so the video fills the screen down to the bottom. The comment button on the right still opens comments.",将添加评论栏从你从个人资料、主题标签、声音或搜索中打开的视频中删除，以便视频填满屏幕直至底部。右侧的评论按钮仍然可以打开评论.
-Take the pulsing LIVE ring off profile pictures on the feed and in comments. Tapping the picture of a creator who's live opens their profile instead of the LIVE.,把脉动的LIVE铃声放在信息流和评论中的个人资料图片上。点击实时创作者的图片会打开他们的个人资料，而不是 LIVE.
+"Take the pulsing LIVE ring off profile pictures on the feed, in comments and on profiles. Tapping the picture of a creator who's live opens their profile instead of the LIVE.",去掉信息流、评论和个人资料中头像上跳动的 LIVE 环。点按正在直播的创作者的头像会打开其个人资料，而不是进入 LIVE.
+Remove rings on the feed,去掉信息流中的环
+Take the rings off the creator's picture in the feed's right column. Needs Remove story rings or Remove the LIVE ring.,去掉信息流右侧栏中创作者头像上的环。需要先开启“删除故事环”或“取下 LIVE 环”.
+Remove rings in comments,去掉评论中的环
+Take the rings off profile pictures in comments. Needs Remove story rings or Remove the LIVE ring.,去掉评论中头像上的环。需要先开启“删除故事环”或“取下 LIVE 环”.
+Remove rings on profiles,去掉个人资料中的环
+Take the rings off the big picture at the top of a profile. Needs Remove story rings or Remove the LIVE ring.,去掉个人资料顶部大头像上的环。需要先开启“删除故事环”或“取下 LIVE 环”.
 Open the Story when a creator is LIVE,创作者在 LIVE 时打开故事
 "When a creator who's LIVE also has a Story, tapping their picture on their profile or on your chat with them in the Inbox opens the Story. Tap the picture again to join the LIVE.",如果正在 LIVE 的创作者也有故事，在其个人资料或收件箱的聊天中点按头像会打开故事。再次点按头像即可进入 LIVE.
 "Take the story ring off profile pictures on the feed, in comments and on profiles. Tapping a picture opens the profile instead of the story.",将故事圈从信息流、评论和个人资料中的个人资料照片中删除。点击图片会打开个人资料而不是故事.

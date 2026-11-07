@@ -12,13 +12,17 @@ import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
+import app.morphe.patcher.util.smali.ExternalLabel
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
 import app.morphe.util.addInstructionsAtControlFlowLabel
+import app.morphe.util.addInstructionsWithLabels
 import app.morphe.util.findInstructionIndicesReversedOrThrow
+import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.iface.ClassDef
+import com.android.tools.smali.dexlib2.iface.Field
 import com.android.tools.smali.dexlib2.iface.Method
-import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
@@ -73,12 +77,69 @@ internal fun Method.authorLiveCheck(): MethodReference {
         ?: throw IllegalStateException("Feed avatar bind calls ${calls.size} author live checks: $calls")
 }
 
-/** The indices of the move-result that takes each User.isLive answer. */
-internal fun List<Instruction>.isLiveResults(): List<Int> = indices.filter { index ->
-    index > 0 && this[index].opcode == Opcode.MOVE_RESULT &&
-        this[index - 1].opcode.let { it == Opcode.INVOKE_VIRTUAL || it == Opcode.INVOKE_VIRTUAL_RANGE } &&
-        ((this[index - 1] as? ReferenceInstruction)?.reference as? MethodReference)?.toString() ==
-        "$AVATAR_USER->isLive()Z"
+/**
+ * TikTok's social avatar entry, the class behind every profile picture that can carry a story
+ * ring: its mode computation logs this tag and takes the User (#351).
+ */
+internal object SocialAvatarModeFingerprint : Fingerprint(
+    parameters = listOf(AVATAR_USER),
+    strings = listOf("computeAndSetAvatarMode: "),
+)
+
+private fun ClassDef.enumNames() =
+    fields.filter { AccessFlags.ENUM.isSet(it.accessFlags) }.map { it.name }.toSet()
+
+private fun Field.smali() = "$definingClass->$name:$type"
+
+/** The entry's `(status, Z) -> mode` method and the field naming the screen it sits on. */
+internal class SocialAvatarAnchors(val mode: Method, val scene: Field)
+
+internal fun socialAvatarAnchors(entry: ClassDef, classOf: (String) -> ClassDef?): SocialAvatarAnchors {
+    val modes = entry.methods.filter { method ->
+        !AccessFlags.STATIC.isSet(method.accessFlags) && method.implementation != null &&
+            method.parameterTypes.map { it.toString() } == listOf("I", "Z") &&
+            classOf(method.returnType)?.enumNames()?.containsAll(listOf("ON", "OFF", "NONE")) == true
+    }
+    val scenes = entry.fields.filter { field ->
+        !AccessFlags.STATIC.isSet(field.accessFlags) &&
+            classOf(field.type)?.enumNames()?.containsAll(listOf("FEED", "COMMENT", "OTHER_PROFILE")) == true
+    }
+    if (modes.size != 1 || scenes.size != 1) {
+        throw IllegalStateException("${entry.type}: ${modes.size} ring mode methods, ${scenes.size} scene fields")
+    }
+    return SocialAvatarAnchors(modes.single(), scenes.single())
+}
+
+/**
+ * AvatarLiveDataAdapter's status method (the one reading User.isLive), its config field and the
+ * config's scene number: 1 on profiles, 8 in chats, no config at all in comments and other lists.
+ */
+internal class LiveAdapterAnchors(val status: Method, val config: Field, val scene: Field)
+
+internal fun liveAdapterAnchors(adapter: ClassDef, classOf: (String) -> ClassDef?): LiveAdapterAnchors {
+    val statuses = adapter.methods.filter { method ->
+        !AccessFlags.STATIC.isSet(method.accessFlags) && !AccessFlags.BRIDGE.isSet(method.accessFlags) &&
+            !AccessFlags.SYNTHETIC.isSet(method.accessFlags) && method.returnType != "V" &&
+            method.parameterTypes.map { it.toString() } == listOf("Ljava/lang/Object;") &&
+            method.implementation?.instructions?.any { instruction ->
+                ((instruction as? ReferenceInstruction)?.reference as? MethodReference)?.toString() ==
+                    "$AVATAR_USER->isLive()Z"
+            } == true
+    }
+    val configType = adapter.methods.singleOrNull { method ->
+        method.name == "<init>" && method.parameterTypes.size == 1 &&
+            method.parameterTypes.single().toString() != "Ljava/lang/Object;"
+    }?.parameterTypes?.single()?.toString()
+    val config = adapter.fields.singleOrNull { !AccessFlags.STATIC.isSet(it.accessFlags) && it.type == configType }
+    val scene = configType?.let(classOf)?.fields
+        ?.filter { !AccessFlags.STATIC.isSet(it.accessFlags) && it.type == "I" }
+        ?.singleOrNull()
+    if (statuses.size != 1 || config == null || scene == null) {
+        throw IllegalStateException(
+            "${adapter.type}: ${statuses.size} live status methods, config $configType, scene $scene",
+        )
+    }
+    return LiveAdapterAnchors(statuses.single(), config, scene)
 }
 
 @Suppress("unused")
@@ -118,19 +179,48 @@ val avatarRingsPatch = bytecodePatch(
             }
         }
 
-        var adapterSites = 0
-        mutableClassDefBy(AVATAR_LIVE_DATA_ADAPTER).methods.forEach { method ->
-            if (method.implementation == null) return@forEach
-            method.instructions.toList().isLiveResults().reversed().forEach { index ->
-                val register = method.getInstruction<OneRegisterInstruction>(index).registerA
-                method.addInstructions(index + 1, """
-                    invoke-static/range { v$register .. v$register }, $RINGS->avatarLive(Z)Z
-                    move-result v$register
-                """)
-                adapterSites++
-            }
+        // #351: every story ring is drawn by the social avatar entry from a status it is handed,
+        // and the entry knows its screen. The status goes through the extension with the screen
+        // at the top of the mode method, while its parameters are still the caller's.
+        val entry = SocialAvatarModeFingerprint.classDef
+        val social = socialAvatarAnchors(entry) { classDefByOrNull(it) }
+        entry.methods.single { it.name == social.mode.name &&
+            it.parameterTypes.map { type -> type.toString() } == listOf("I", "Z") }.apply {
+            val parameters = 3 // this, the status and the flag
+            check(implementation!!.registerCount - parameters >= 2) { "${entry.type}->$name has no two locals" }
+            addInstructions(0, """
+                move/from16 v0, p1
+                move-object/from16 v1, p0
+                iget-object v1, v1, ${social.scene.smali()}
+                invoke-static/range { v0 .. v1 }, $RINGS->storyStatusIn(ILjava/lang/Object;)I
+                move-result v0
+                move/from16 p1, v0
+            """)
         }
-        check(adapterSites > 0) { "AvatarLiveDataAdapter no longer reads User.isLive" }
+
+        // Every LIVE ring off the feed asks AvatarLiveDataAdapter, built with the scene number of
+        // its screen. The top of its status method asks the extension with that number, and a yes
+        // answers null, TikTok's own "not live", before the User or Aweme is read.
+        val adapterClass = mutableClassDefBy(AVATAR_LIVE_DATA_ADAPTER)
+        val live = liveAdapterAnchors(adapterClass) { classDefByOrNull(it) }
+        adapterClass.methods.single { it.name == live.status.name &&
+            it.parameterTypes.map { type -> type.toString() } == listOf("Ljava/lang/Object;") &&
+            it.returnType == live.status.returnType }.apply {
+            check(implementation!!.registerCount - 2 >= 2) { "${adapterClass.type}->$name has no two locals" }
+            addInstructionsWithLabels(0, """
+                const/4 v0, -0x1
+                move-object/from16 v1, p0
+                iget-object v1, v1, ${live.config.smali()}
+                if-eqz v1, :ask
+                iget v0, v1, ${live.scene.smali()}
+                :ask
+                invoke-static { v0 }, $RINGS->hideLiveIn(I)Z
+                move-result v0
+                if-eqz v0, :keep
+                const/4 v0, 0x0
+                return-object v0
+            """, ExternalLabel("keep", getInstruction(0)))
+        }
 
         SettingsStatusLoadFingerprint.method.addInstruction(0,
             "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableAvatarRings()V")

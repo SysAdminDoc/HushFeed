@@ -18,6 +18,7 @@ Every Hushfeed release, newest first.
 * With a color picked in `AMOLED dark theme`'s options, Profile, Inbox and TikTok's other full pages take that color too. Before, they stayed black. The light look and the video feed don't change (#348).
 * `Block P2P video relay` also takes out the LIVE relay's two leftover libraries, about 1 MB more. The split APK bundle never had them, so nothing changes for those installs (#70).
 * `Bend the video at the edges` makes the glass pill's rim bend the blurred video behind it the way the edge of real glass does, and it gives the colors there a small lift. It sits under `Blur the video behind the bar`, starts off and needs Android 13 or newer (#231).
+* Three new switches under the ring switches, `Remove rings on the feed`, `Remove rings in comments` and `Remove rings on profiles`, pick where the story and LIVE rings come off. All three start on, so nothing changes until you turn one off (#351).
 
 ### Bug Fixes
 
@@ -29,6 +30,7 @@ Every Hushfeed release, newest first.
 * On some phones the screen blinked each time a video slid under the bar with `See-through bottom bar` on. The new `Stop the blink under the bar` switch under it has TikTok draw the video inside its own window instead of on a separate layer, which those phones were dropping for a frame. It starts off and takes a TikTok restart (#232).
 * An imported font and `Use system font` now reach TikTok's own screens, like its Settings pages, on installs patched from the split APK bundle. TikTok's fonts aren't in the bundle, so TikTok had nothing to swap and fell back to the phone's default font. Bold text stays bold (#346).
 * `Hide TikTok Shop` also hides the "Find <product>" button with the shopping bag that sits above the search bar on some videos. 0.81.0 only caught a different Find bar, and the diagnostic export now counts this button on its own line (#271).
+* `Remove story rings` and `Remove the LIVE ring` take the rings off on the feed, in comments and on profiles again. TikTok 47.7.2 hands each picture its story status directly and asks a different place whether someone's live, so the old hooks missed most of them (#351).
 
 ## 0.81.0 (2026-11-05)
 

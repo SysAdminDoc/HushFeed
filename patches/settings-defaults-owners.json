@@ -626,6 +626,9 @@
     "Remove avatar rings": [
       "HIDE_STORY_RINGS",
       "HIDE_LIVE_RING",
+      "HIDE_RINGS_FEED",
+      "HIDE_RINGS_COMMENTS",
+      "HIDE_RINGS_PROFILES",
       "OPEN_STORY_OVER_LIVE"
     ],
     "Report a newer phone to effects": [

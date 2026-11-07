@@ -246,6 +246,8 @@ public class FeedScreenCoverageTest {
         put("fade_in_clear_display", YES, YES, NONE);
         // The tab bar belongs to the main feed; an opened video has none (#145).
         put("see_through_bottom_bar", YES, NONE, NONE);
+        // How the video under that same bar is drawn (#232).
+        put("see_through_video_in_window", YES, NONE, NONE);
         // Only the look of that same bar (#124).
         put("floating_bottom_bar", YES, NONE, NONE);
         // And of that pill (#218).
@@ -254,6 +256,8 @@ public class FeedScreenCoverageTest {
         put("glass_tab_lens", YES, NONE, NONE);
         // And of the blur behind that pill (#231).
         put("glass_video_blur", YES, NONE, NONE);
+        // And of the bent edge of that blur (#231).
+        put("glass_refraction", YES, NONE, NONE);
         // The pill's height, corners, opacity and blur strength, and the lens's slide and ticks.
         put("glass_bar_height", YES, NONE, NONE);
         put("glass_corners", YES, NONE, NONE);

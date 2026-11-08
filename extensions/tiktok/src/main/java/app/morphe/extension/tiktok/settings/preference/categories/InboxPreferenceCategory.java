@@ -34,6 +34,7 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
         return SettingsStatus.inboxFilterEnabled
                 || SettingsStatus.hideSuggestedAccountsEnabled
                 || SettingsStatus.hideInboxStoriesEnabled
+                || SettingsStatus.inboxOnThisDayEnabled
                 || SettingsStatus.chatDeclutterEnabled
                 || SettingsStatus.expandActivityListEnabled
                 || SettingsStatus.notificationControlsEnabled

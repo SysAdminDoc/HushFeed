@@ -2618,3 +2618,7 @@ While the controls are invisible on the main feed, the creator's name, the capti
 Make the controls invisible	Deixar os controles invisíveis
 # context: Spoken label of that eye button while the controls are invisible
 Show the controls	Mostrar os controles
+# context: Share sheet settings row; hides TikTok's gray Send to new group button that shows beside Send separately once two or more people are picked (#375)
+Hide Send to new group	Esconder Enviar para novo grupo
+# context: summary of Hide Send to new group; Send separately is TikTok's red button that stays (#375)
+Hides the button that turns the people you picked into a new group chat. Send separately stays.	Esconde o botão que transforma as pessoas que você escolheu em um novo chat em grupo. Enviar separadamente continua.

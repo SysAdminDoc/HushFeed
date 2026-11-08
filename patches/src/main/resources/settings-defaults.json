@@ -684,6 +684,7 @@
       "share_block_author",
       "hide_share_contacts",
       "share_tap_copies_link",
+      "hide_share_new_group",
       "share_hidden_items",
       "share_hidden_items_profile",
       "share_hidden_items_live",
@@ -2626,6 +2627,12 @@
     "hide_share_guide": {
       "field": "HIDE_SHARE_GUIDE",
       "key": "hide_share_guide",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_share_new_group": {
+      "field": "HIDE_SHARE_NEW_GROUP",
+      "key": "hide_share_new_group",
       "type": "boolean",
       "default": false
     },

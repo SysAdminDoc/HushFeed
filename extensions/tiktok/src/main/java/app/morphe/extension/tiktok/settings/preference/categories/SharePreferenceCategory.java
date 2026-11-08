@@ -54,6 +54,13 @@ public final class SharePreferenceCategory extends ConditionalPreferenceCategory
                     "Hide the row of friends at the top of the share sheet and in the menu a long press on a comment opens.",
                     Settings.HIDE_SHARE_CONTACTS
             ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Hide Send to new group",
+                    "Hides the button that turns the people you picked into a new group chat. "
+                            + "Send separately stays.",
+                    Settings.HIDE_SHARE_NEW_GROUP
+            ));
             addPreference(new ShareActionChecklistPreference(context));
             addPreference(new ShareActionChecklistPreference(context, ShareSurface.PROFILE));
             addPreference(new ShareActionChecklistPreference(context, ShareSurface.LIVE));

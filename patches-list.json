@@ -9555,6 +9555,15 @@
           "values": null
         },
         {
+          "key": "hide_share_new_group",
+          "title": "Default: hide share new group",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "share_hidden_items",
           "title": "Default: share hidden items",
           "description": null,

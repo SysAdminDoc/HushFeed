@@ -13880,6 +13880,12 @@
     "row": "Hide the Send to row"
    },
    {
+    "key": "hide_share_new_group",
+    "default": false,
+    "type": "bool",
+    "row": "Hide Send to new group"
+   },
+   {
     "key": "hide_share_channels",
     "default": false,
     "type": "bool",

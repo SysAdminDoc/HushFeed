@@ -36,6 +36,7 @@ val shareSheetToolsPatch = bytecodePatch(
         hookShareModes()
         hookShareContactBinds()
         hookCommentSendToRow()
+        hookNewGroupButtonToggle()
         hookSharePanel()
         addOwnedShareAction(SHARE_BLOCK_AUTHOR)
         hookShareButtonTap()

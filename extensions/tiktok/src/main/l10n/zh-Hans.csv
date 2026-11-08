@@ -2553,3 +2553,5 @@ Keep the caption in sight,保持标题可见
 "While the controls are invisible on the main feed, the creator's name, the caption and the music line stay in sight.",在主信息流上控件隐形时，创作者名称、标题和音乐行仍然可见.
 Make the controls invisible,让控件隐形
 Show the controls,显示控件
+Hide Send to new group,隐藏“发送到新群组”
+Hides the button that turns the people you picked into a new group chat. Send separately stays.,隐藏把你选中的人建成新群聊的按钮。“分别发送”会保留.

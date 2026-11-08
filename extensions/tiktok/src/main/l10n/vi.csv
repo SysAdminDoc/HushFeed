@@ -2553,3 +2553,5 @@ Keep the caption in sight,Giữ chú thích hiển thị
 "While the controls are invisible on the main feed, the creator's name, the caption and the music line stay in sight.","Khi các điều khiển vô hình trên bảng tin chính, tên nhà sáng tạo, chú thích và dòng nhạc vẫn hiển thị."
 Make the controls invisible,Làm vô hình các điều khiển
 Show the controls,Hiện các điều khiển
+Hide Send to new group,Ẩn Gửi tới nhóm mới
+Hides the button that turns the people you picked into a new group chat. Send separately stays.,Ẩn nút biến những người bạn đã chọn thành một nhóm chat mới. Gửi riêng vẫn giữ nguyên.

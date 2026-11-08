@@ -30,7 +30,9 @@ public class AvatarRingsTest {
     @Rule public final SettingsContextRule settingsContext = new SettingsContextRule();
 
     /** TikTok's social avatar screens, as the entry's enum names them. */
-    private enum Scene { FEED, COMMENT, MY_PROFILE, OTHER_PROFILE, INBOX, SEARCH }
+    private enum Scene {
+        FEED, COMMENT, MY_PROFILE, OTHER_PROFILE, INBOX, SEARCH, INBOX_TOP_LIST, FOLLOW_SKYLIGHT, FRIENDS_SKYLIGHT
+    }
 
     private static final int CHAT_SCENE = 8;
 
@@ -116,6 +118,18 @@ public class AvatarRingsTest {
         assertEquals(0, AvatarRings.storyStatusIn(1, Scene.SEARCH));
         assertEquals("an unknown screen follows it too", 0, AvatarRings.storyStatusIn(1, null));
         assertTrue("chats follow the LIVE switch alone", AvatarRings.hideLiveIn(CHAT_SCENE));
+    }
+
+    /** #351: TikTok drops a "no story" user from a stories tray, so the trays keep their status. */
+    @Test public void theStoriesTraysKeepEveryoneWithAStory() {
+        Settings.HIDE_STORY_RINGS.save(true);
+        for (int status : new int[]{1, 2, 3}) {
+            assertEquals("Inbox tray", status, AvatarRings.storyStatusIn(status, Scene.INBOX_TOP_LIST));
+            assertEquals("Following bar", status, AvatarRings.storyStatusIn(status, Scene.FOLLOW_SKYLIGHT));
+            assertEquals("Friends bar", status, AvatarRings.storyStatusIn(status, Scene.FRIENDS_SKYLIGHT));
+        }
+        assertEquals("the Inbox's chat rows still lose theirs", 0, AvatarRings.storyStatusIn(1, Scene.INBOX));
+        assertEquals(0, AvatarRings.storyStatusIn(1, Scene.FEED));
     }
 
     @Test public void theSwitchesAreOnTheFeedScreenPageOnlyWhenPatched() {

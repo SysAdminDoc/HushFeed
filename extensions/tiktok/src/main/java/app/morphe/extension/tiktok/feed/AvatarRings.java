@@ -10,7 +10,9 @@ import app.morphe.extension.tiktok.settings.Settings;
 /**
  * Takes the story ring and the pulsing LIVE ring off profile pictures, on the feed, in comments
  * and on profiles each on its own switch (#351). The Inbox, search and other lists follow the two
- * ring switches alone.
+ * ring switches alone. The stories trays (the Inbox's top row and the Following and Friends bars)
+ * keep their story rings: TikTok drops anyone whose status there reads "no story" from the tray, so
+ * a 0 answer emptied it.
  *
  * <p>Story rings: every profile picture with a ring belongs to TikTok's social avatar entry, which
  * turns the user's story status (1 unseen, 2 seen, 3 a hidden profile badge) into the ring it
@@ -76,6 +78,10 @@ public final class AvatarRings {
             case "MY_PROFILE":
             case "OTHER_PROFILE":
                 return Settings.HIDE_RINGS_PROFILES.get();
+            case "INBOX_TOP_LIST":
+            case "FOLLOW_SKYLIGHT":
+            case "FRIENDS_SKYLIGHT":
+                return false;
             default:
                 return true;
         }

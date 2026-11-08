@@ -918,8 +918,8 @@ public class InboxQueryNativeTest {
         int helperAccesses, gateReads;
         NativeFragment(View root, NativeList list, NativeSpring spring) { this.root = root; this.list = list; this.spring = spring; }
         public View getView() { return root; }
-        public NativeList IY() { return list; }
-        public NativeSpring HY() { return spring; }
+        public NativeList QY() { return list; }
+        public NativeSpring NY() { return spring; }
         public NativeIndices yX() { helperAccesses++; return helper; }
         public boolean hushLoadedInboxIndicesEnabled() { gateReads++; return indicesEnabled; }
         void nativeIndexed(List<?> models, Pair<Integer, Integer> pair) {

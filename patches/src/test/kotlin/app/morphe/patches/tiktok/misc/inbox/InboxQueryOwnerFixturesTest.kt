@@ -120,7 +120,7 @@ class InboxQueryOwnerFixturesTest {
                 .any { it.name == "getChildCount" })
             assertTrue(constrainedParent.method("getNestedChild").references<MethodReference>()
                 .any { it.definingClass == "Ljava/lang/IllegalArgumentException;" && it.name == "<init>" })
-            assertEquals("LX/0NGv;", fragment.method("EY").returnType)
+            assertEquals("LX/0NGv;", fragment.method("LY").returnType)
             assertEquals("Lcom/ss/android/ugc/aweme/inbox/widget/v2/InboxWidgetContainer;",
                 fragment.fields.single { it.name == names.getValue("FRAGMENT_CONTAINER") }.type)
         }

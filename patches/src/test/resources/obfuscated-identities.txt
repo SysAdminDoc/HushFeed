@@ -3,14 +3,14 @@
 # a line here that no longer matches, so this list can only shrink. See that test for why.
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|LIZ
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|LIZIZ
-extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.16gI
-extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.16gB
-extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.02tb
-extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.02tc
-extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.02to
-extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.0E1m
-extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.1TVm
-extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.1TVn
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.18r1
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.18r0
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.02tX
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.02tY
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.02tk
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.0E1o
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.1TVY
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.1TVZ
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountOwner.java|LJIIZILJ
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountOwner.java|LJJIIJ
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountOwner.java|LLLLZI

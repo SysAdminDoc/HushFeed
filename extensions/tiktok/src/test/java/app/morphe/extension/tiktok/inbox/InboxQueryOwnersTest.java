@@ -225,7 +225,7 @@ public class InboxQueryOwnersTest {
         public Object LLJJJJ = new Object();
         NativeFragment(View root, NativeList list) { this.root = root; this.list = list; }
         public View getView() { return root; }
-        public NativeList IY() { return list; }
+        public NativeList QY() { return list; }
     }
     public static final class NativeStub {
         Object state;

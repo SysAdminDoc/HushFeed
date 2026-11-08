@@ -2534,3 +2534,10 @@ Hide the picture beside each comment and reply. The name and the comment move ov
 Hide CAPTCHA popups in Hushfeed skips these,Ẩn cửa sổ CAPTCHA trong Hushfeed bỏ qua chúng
 LIVE feed countries,Quốc gia cho bảng tin LIVE
 "Separate country codes with commas, like BR, MX. Each page of the LIVE feed asks TikTok for rooms from one of them, taking turns. TikTok doesn't say which country a room is in, and your IP address and account still count, so rooms from elsewhere can still show up. This works without the switches above. Leave empty for TikTok's usual rooms.","Phân tách mã quốc gia bằng dấu phẩy, ví dụ BR, MX. Mỗi trang của bảng tin LIVE sẽ yêu cầu TikTok đưa phòng từ một trong các quốc gia đó, lần lượt từng nước. TikTok không cho biết phòng ở quốc gia nào, và địa chỉ IP cùng tài khoản của bạn vẫn có ảnh hưởng, nên phòng từ nơi khác vẫn có thể xuất hiện. Tùy chọn này hoạt động mà không cần các công tắc ở trên. Để trống để xem các phòng thông thường của TikTok."
+Jump to a date on Liked grids,Chuyển đến ngày trên lưới video đã thích
+"Adds a button to the Liked grid's top corner that starts your likes at a year or month you pick, so older ones load without scrolling past newer ones. Pick Newest likes there to go back.","Thêm một nút ở góc trên của lưới video đã thích để bắt đầu danh sách lượt thích từ năm hoặc tháng bạn chọn, nhờ đó video cũ hơn được tải mà không phải cuộn qua video mới hơn. Chọn Lượt thích mới nhất ở đó để quay lại."
+Jump to a date,Chuyển đến ngày
+Up to %1$s,Đến %1$s
+Newest likes,Lượt thích mới nhất
+Whole year,Cả năm
+Pull down on the grid to load them,Kéo lưới xuống để tải chúng

@@ -780,6 +780,12 @@
     "default": "off",
     "type": "string",
     "row": "Sort loaded videos on sound pages"
+   },
+   {
+    "key": "liked_jump_to_date",
+    "default": false,
+    "type": "bool",
+    "row": "Jump to a date on Liked grids"
    }
   ],
   "surface": "feed",

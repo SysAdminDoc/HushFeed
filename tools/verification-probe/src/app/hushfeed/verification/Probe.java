@@ -2951,6 +2951,78 @@ public final class Probe extends Instrumentation {
                         }, "hushfeed-probe-fieldswatch").start();
                         break;
                     }
+                    case "likedpages": {
+                        // The signed-in account's Liked list read the way Account cleanup reads it
+                        // (#350), once from each cursor in -e cursors (comma separated; 0 is the
+                        // newest) and then -e follow more pages on from the last answer, -e count a
+                        // page (20 when left out): how many
+                        // videos came back, the cursors the answer names, has_more, and the oldest
+                        // and newest upload time on the page in seconds. No video ids. For telling
+                        // whether max_cursor is a time a jump to a date could hand the list.
+                        String cursorText = intent.getStringExtra("cursors");
+                        String[] cursors = (cursorText == null ? "0" : cursorText).split(",");
+                        String followText = intent.getStringExtra("follow");
+                        int follow = followText == null ? 0 : Integer.parseInt(followText);
+                        String countText = intent.getStringExtra("count");
+                        int count = countText == null ? 20 : Integer.parseInt(countText);
+                        new Thread(() -> {
+                            try {
+                                Class<?> sources = loader.loadClass("app.morphe.extension.tiktok.privacy.AccountCleanupSources");
+                                Class<?> calls = loader.loadClass("app.morphe.extension.tiktok.privacy.TikTokCalls");
+                                Field tiktokField = sources.getDeclaredField("TIKTOK");
+                                tiktokField.setAccessible(true);
+                                Object services = tiktokField.get(null);
+                                Method likedList = services.getClass().getMethod("likedList");
+                                likedList.setAccessible(true);
+                                Object service = likedList.invoke(services);
+                                Object secUid = loader.loadClass("app.morphe.extension.tiktok.SignedInUser").getMethod("secId").invoke(null);
+                                Method call = calls.getDeclaredMethod("call", Object.class, String.class, String.class, Map.class);
+                                Method await = calls.getDeclaredMethod("await", Object.class);
+                                Method listIn = calls.getDeclaredMethod("listIn", Object.class, String.class);
+                                Method longIn = calls.getDeclaredMethod("longIn", Object.class, String.class, long.class);
+                                Method flagIn = calls.getDeclaredMethod("flagIn", Object.class, String.class);
+                                for (Method method : new Method[] {call, await, listIn, longIn, flagIn}) method.setAccessible(true);
+                                StringBuilder out = new StringBuilder();
+                                java.util.ArrayDeque<Long> queue = new java.util.ArrayDeque<>();
+                                for (String cursor : cursors) queue.add(Long.parseLong(cursor.trim()));
+                                int extra = follow;
+                                while (!queue.isEmpty()) {
+                                    long cursor = queue.poll();
+                                    Map<String, Object> query = new java.util.HashMap<>();
+                                    query.put("max_cursor", cursor);
+                                    query.put("sec_user_id", secUid);
+                                    query.put("count", count);
+                                    query.put("invalid_item_count", 0);
+                                    query.put("is_hiding_invalid_item", 1);
+                                    Object body = await.invoke(null, call.invoke(null, service, "/aweme/v1/aweme/favorite/", null, query));
+                                    List<?> items = (List<?>) listIn.invoke(null, body, "items");
+                                    long next = (Long) longIn.invoke(null, body, "maxCursor", -1L);
+                                    long min = (Long) longIn.invoke(null, body, "minCursor", -1L);
+                                    boolean more = (Boolean) flagIn.invoke(null, body, "hasMore");
+                                    long oldest = Long.MAX_VALUE;
+                                    long newest = 0;
+                                    for (Object item : items) {
+                                        if (item == null) continue;
+                                        long created = ((Number) item.getClass().getMethod("getCreateTime").invoke(item)).longValue();
+                                        oldest = Math.min(oldest, created);
+                                        newest = Math.max(newest, created);
+                                    }
+                                    out.append("\ncursor ").append(cursor).append(": ").append(items.size())
+                                            .append(" videos, maxCursor ").append(next).append(", minCursor ").append(min)
+                                            .append(", hasMore ").append(more).append(", uploaded ")
+                                            .append(items.isEmpty() ? "-" : oldest + ".." + newest);
+                                    if (queue.isEmpty() && extra > 0 && more && next > 0) {
+                                        extra--;
+                                        queue.add(next);
+                                    }
+                                }
+                                Log.i(TAG, "ok likedpages" + out);
+                            } catch (Throwable error) {
+                                Log.e(TAG, "failed likedpages", error);
+                            }
+                        }, "hushfeed-probe-likedpages").start();
+                        break;
+                    }
                     case "session-hold": {
                         SessionHoldProbe.run(loader, intent.getStringExtra("op"), intent.getIntExtra("seconds", 15));
                         break;

@@ -52,7 +52,8 @@
       "video_length_on_grid",
       "profile_grid_sort",
       "liked_grid_sort",
-      "sound_grid_sort"
+      "sound_grid_sort",
+      "liked_jump_to_date"
     ],
     "Always upload in HD": [
       "always_upload_hd"
@@ -2889,6 +2890,12 @@
       "key": "liked_grid_sort",
       "type": "string",
       "default": "profile"
+    },
+    "liked_jump_to_date": {
+      "field": "LIKED_JUMP_TO_DATE",
+      "key": "liked_jump_to_date",
+      "type": "boolean",
+      "default": false
     },
     "limit_background_traffic": {
       "field": "LIMIT_BACKGROUND_TRAFFIC",

@@ -2534,3 +2534,10 @@ Hide the picture beside each comment and reply. The name and the comment move ov
 Hide CAPTCHA popups in Hushfeed skips these,Hushfeed 的“隐藏验证码弹出窗口”可跳过此类验证
 LIVE feed countries,LIVE 信息流的国家/地区
 "Separate country codes with commas, like BR, MX. Each page of the LIVE feed asks TikTok for rooms from one of them, taking turns. TikTok doesn't say which country a room is in, and your IP address and account still count, so rooms from elsewhere can still show up. This works without the switches above. Leave empty for TikTok's usual rooms.","用逗号分隔国家/地区代码，例如 BR, MX。LIVE 信息流的每一页会轮流向 TikTok 请求其中一个国家/地区的直播间。TikTok 不会说明直播间所在的国家/地区，而且你的 IP 地址和账号仍会起作用，因此仍可能出现其他地方的直播间。无需打开上面的开关即可使用。留空则显示 TikTok 平常的直播间."
+Jump to a date on Liked grids,在“喜欢”网格中跳到某个日期
+"Adds a button to the Liked grid's top corner that starts your likes at a year or month you pick, so older ones load without scrolling past newer ones. Pick Newest likes there to go back.",在“喜欢”网格的顶角添加一个按钮，让你的喜欢列表从你选择的年份或月份开始，这样无需滑过较新的视频就能加载较早的视频。在那里选择“最新的喜欢”即可返回.
+Jump to a date,跳到某个日期
+Up to %1$s,截至 %1$s
+Newest likes,最新的喜欢
+Whole year,全年
+Pull down on the grid to load them,在网格上下拉即可加载

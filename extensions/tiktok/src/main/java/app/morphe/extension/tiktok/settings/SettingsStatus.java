@@ -694,6 +694,13 @@ public class SettingsStatus {
         likedGridSortEnabled = true;
     }
 
+    /** The Liked list request and the grid fragment's refresh were found, so a Liked grid can jump to a date (#350). */
+    public static boolean likedJumpEnabled = false;
+
+    public static void enableLikedJump() {
+        likedJumpEnabled = true;
+    }
+
     /** The detail page grid adapter hands over its label, so a sound's page can be sorted (#180). */
     public static boolean soundGridSortEnabled = false;
 

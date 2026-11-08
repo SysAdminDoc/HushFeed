@@ -2536,3 +2536,10 @@ Hide the picture beside each comment and reply. The name and the comment move ov
 Hide CAPTCHA popups in Hushfeed skips these,Sembunyikan popup CAPTCHA di Hushfeed melewati ini
 LIVE feed countries,Negara feed LIVE
 "Separate country codes with commas, like BR, MX. Each page of the LIVE feed asks TikTok for rooms from one of them, taking turns. TikTok doesn't say which country a room is in, and your IP address and account still count, so rooms from elsewhere can still show up. This works without the switches above. Leave empty for TikTok's usual rooms.","Pisahkan kode negara dengan koma, misalnya BR, MX. Setiap halaman feed LIVE meminta TikTok menampilkan ruang dari salah satunya, secara bergantian. TikTok tidak menyebutkan negara sebuah ruang, dan alamat IP serta akun Anda tetap berpengaruh, jadi ruang dari tempat lain masih bisa muncul. Ini berfungsi tanpa sakelar di atas. Kosongkan untuk ruang TikTok yang biasa."
+Jump to a date on Liked grids,Lompat ke tanggal di kisi Disukai
+"Adds a button to the Liked grid's top corner that starts your likes at a year or month you pick, so older ones load without scrolling past newer ones. Pick Newest likes there to go back.","Menambahkan tombol di sudut atas kisi Disukai yang memulai daftar suka Anda dari tahun atau bulan yang Anda pilih, sehingga yang lebih lama dimuat tanpa harus menggulir melewati yang lebih baru. Pilih Suka terbaru di sana untuk kembali."
+Jump to a date,Lompat ke tanggal
+Up to %1$s,Hingga %1$s
+Newest likes,Suka terbaru
+Whole year,Satu tahun penuh
+Pull down on the grid to load them,Tarik ke bawah di kisi untuk memuatnya

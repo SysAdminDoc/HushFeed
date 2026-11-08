@@ -14,6 +14,7 @@ import app.morphe.util.addInstructions
 import app.morphe.util.addInstructionsAtControlFlowLabel
 import app.morphe.util.addInstructionsWithLabels
 import app.morphe.util.getReference
+import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
@@ -234,6 +235,76 @@ internal fun BytecodePatchContext.fillGridPageLoader(versionName: String): Boole
     return true
 }
 
+private const val LIKED_JUMP = "Lapp/morphe/extension/tiktok/feed/LikedJump;"
+
+/**
+ * TikTok's Liked list request (#350), the one static method that logs under "ProfileLikeApi" and
+ * puts a `max_cursor` on the request: `(isCache, userId, secUserId, type, maxCursor, count,
+ * invalidItemCount, hidingInvalid, isMyProfilePage, source)`, answering a FeedItemList.
+ */
+internal object LikedListRequestFingerprint : Fingerprint(
+    returnType = "Lcom/ss/android/ugc/aweme/feed/model/FeedItemList;",
+    parameters = listOf(
+        "Z", "Ljava/lang/String;", "Ljava/lang/String;", "I", "J", "I", "I", "I", "Z", "Ljava/lang/String;",
+    ),
+    strings = listOf("ProfileLikeApi", "max_cursor"),
+    custom = { method, _ -> AccessFlags.STATIC.isSet(method.accessFlags) },
+)
+
+/**
+ * The profile grid fragment's refresh (#350), the one method of the fragment taking nothing and
+ * answering a boolean that refreshes its list with the "fresh_from_assem" source.
+ */
+internal object GridRefreshFingerprint : Fingerprint(
+    definingClass = "Lcom/ss/android/ugc/profile/business/profile/tab/AwemeListFragmentImpl;",
+    returnType = "Z",
+    parameters = listOf(),
+    strings = listOf("fresh_from_assem"),
+)
+
+/**
+ * Jump to a date on Liked grids (#350): the Liked list request hands its ids and `max_cursor` to
+ * the extension at its first instruction, which no try range covers, and takes the cursor back,
+ * and the extension's `refreshGrid` gets the grid fragment's own refresh. Says whether both went
+ * in; required on a declared build. The settings row shows only when they did.
+ */
+internal fun BytecodePatchContext.hookLikedJump(versionName: String): Boolean {
+    val declared = versionName in declaredVersions()
+    val request = if (declared) LikedListRequestFingerprint.method else LikedListRequestFingerprint.methodOrNull
+    val refresh = if (declared) GridRefreshFingerprint.method else GridRefreshFingerprint.methodOrNull
+    if (request == null || refresh == null) {
+        println("[$PATCH] Left out jumping to a date on Liked grids on $versionName: no Liked list request or grid refresh found.")
+        return false
+    }
+    // p1 .. p5: userId, secUserId, type and the wide maxCursor, which comes back into p4.
+    request.addInstructions(
+        0,
+        """
+            invoke-static/range { p1 .. p5 }, $LIKED_JUMP->cursor(Ljava/lang/String;Ljava/lang/String;IJ)J
+            move-result-wide p4
+        """,
+    )
+    val stub = mutableClassDefBy(LIKED_JUMP).methods.singleOrNull {
+        it.name == "refreshGrid" && it.returnType == "Z" && it.parameterTypes == listOf("Ljava/lang/Object;", "I")
+    } ?: throw PatchException("$PATCH: the extension has no refreshGrid to fill in.")
+    // p1 is the stub's spare argument, so the body needs no register the compiled stub may lack.
+    stub.addInstructionsWithLabels(
+        0,
+        """
+            instance-of p1, p0, ${refresh.definingClass}
+            if-eqz p1, :not_grid
+            check-cast p0, ${refresh.definingClass}
+            invoke-virtual { p0 }, ${refresh.definingClass}->${refresh.name}()Z
+            move-result p1
+            return p1
+            :not_grid
+            const/4 p1, 0x0
+            return p1
+        """,
+    )
+    return true
+}
+
 /**
  * Sorts the grid's loaded videos while its switch is on (#180), and says whether the hooks went
  * in. Required on a declared build, where the anchors test holds it, and left out with a note on
@@ -250,6 +321,13 @@ internal fun BytecodePatchContext.hookGridSortOn(versionName: String): Boolean {
             0,
             "invoke-static {}, " +
                 "Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableLikedGridSort()V",
+        )
+    }
+    if (hookLikedJump(versionName)) {
+        SettingsStatusLoadFingerprint.method.addInstruction(
+            0,
+            "invoke-static {}, " +
+                "Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableLikedJump()V",
         )
     }
     if (hookSoundGridSort(versionName)) {

@@ -2586,3 +2586,17 @@ Hide CAPTCHA popups in Hushfeed skips these	„CAPTCHA-Popups ausblenden“ übe
 LIVE feed countries	Länder für den LIVE-Feed
 # context: Region page row summary for LIVE feed countries; 'rooms' are LIVE rooms, 'switches above' are the SIM and region switches on the same page
 Separate country codes with commas, like BR, MX. Each page of the LIVE feed asks TikTok for rooms from one of them, taking turns. TikTok doesn't say which country a room is in, and your IP address and account still count, so rooms from elsewhere can still show up. This works without the switches above. Leave empty for TikTok's usual rooms.	Trenne Ländercodes mit Kommas, etwa BR, MX. Jede Seite des LIVE-Feeds fragt TikTok abwechselnd nach Räumen aus einem dieser Länder. TikTok sagt nicht, aus welchem Land ein Raum kommt, und deine IP-Adresse und dein Konto zählen weiterhin, daher können trotzdem Räume von anderswo erscheinen. Das funktioniert auch ohne die Schalter oben. Leer lassen für die üblichen Räume von TikTok.
+# context: Interface page row title in the publish date group; a switch that adds a button on TikTok's Liked tab grid to start the list at a chosen year or month
+Jump to a date on Liked grids	In Rastern mit „Gefällt mir“-Angaben zu einem Datum springen
+# context: Row summary for Jump to a date on Liked grids; 'Newest likes' is the first item of the button's menu, keep it the same as that string
+Adds a button to the Liked grid's top corner that starts your likes at a year or month you pick, so older ones load without scrolling past newer ones. Pick Newest likes there to go back.	Fügt oben in der Ecke des Rasters mit „Gefällt mir“-Angaben eine Schaltfläche hinzu, die deine Likes bei einem gewählten Jahr oder Monat beginnen lässt, damit ältere laden, ohne an neueren vorbeizuscrollen. Wähle dort Neueste Likes, um zurückzukehren.
+# context: Label and accessibility name of the button on the Liked grid, and the title of its year menu
+Jump to a date	Zu einem Datum springen
+# context: Button label on the Liked grid after a jump; %1$s is a short month and year like Mar 2022, or a year alone; the grid shows likes from up to that date
+Up to %1$s	Bis %1$s
+# context: First item of the Liked grid's jump menu; goes back to TikTok's usual newest-first list
+Newest likes	Neueste Likes
+# context: First item of the month menu; jumps to the end of the chosen year
+Whole year	Ganzes Jahr
+# context: Toast after picking a date when the grid couldn't reload by itself; pulling down to refresh loads the likes from that date; two lines of 28 characters at most, no full stop
+Pull down on the grid to load them	Zum Laden im Raster nach unten ziehen

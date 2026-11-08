@@ -360,6 +360,14 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                             new String[]{"profile", "off", "newest", "oldest", "longest", "shortest", "most_viewed",
                                     "least_viewed", "most_liked", "least_liked"}));
                 }
+                if (SettingsStatus.likedJumpEnabled) {
+                    addPreference(new TogglePreference(
+                            context,
+                            "Jump to a date on Liked grids",
+                            "Adds a button to the Liked grid's top corner that starts your likes at a year or month you pick, so older ones load without scrolling past newer ones. Pick Newest likes there to go back.",
+                            Settings.LIKED_JUMP_TO_DATE
+                    ));
+                }
                 if (SettingsStatus.soundGridSortEnabled) {
                     addPreference(new ChoicePreference(context, "Sort loaded videos on sound pages",
                             Settings.SOUND_GRID_SORT,

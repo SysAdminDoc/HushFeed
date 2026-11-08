@@ -204,6 +204,14 @@ public final class GridSort {
         }
     }
 
+    static boolean isLiked(Object adapter) {
+        if (adapter == null) return false;
+        synchronized (ORIGINALS) {
+            Integer type = TABS.get(adapter);
+            return type != null && type == TAB_LIKED;
+        }
+    }
+
     private static String hookName(Object adapter) {
         return isSound(adapter) ? "sound grid sort" : "profile grid sort";
     }
@@ -264,6 +272,7 @@ public final class GridSort {
             boolean fresh = before == 0 || size < before;
             if (fresh) startHold(adapter, size);
             MAIN.post(() -> afterTikTok(adapter, 0, size, fresh));
+            if (isLiked(adapter)) LikedJump.listIn(adapter, true);
         }
         return out;
     }
@@ -286,6 +295,7 @@ public final class GridSort {
                 if (moved && !holdTakesRefresh(adapter)) refresh(adapter);
                 afterTikTok(adapter, before, size, false);
             });
+            if (isLiked(adapter)) LikedJump.listIn(adapter, false);
         }
         return out;
     }
@@ -593,7 +603,7 @@ public final class GridSort {
     }
 
     /** The listener TikTok's footer calls, which it clears once a grid has no more pages. */
-    private static Object loadMoreListener(Object adapter) {
+    static Object loadMoreListener(Object adapter) {
         Object listener = Reflect.invoke(adapter, "getLoadMoreListener");
         return listener != null ? listener : Reflect.readField(adapter, "mmLoadMoreListener");
     }
@@ -808,7 +818,7 @@ public final class GridSort {
     }
 
     /** The RecyclerView the adapter is attached to, or null. */
-    private static View gridView(Object adapter) {
+    static View gridView(Object adapter) {
         Object view = Reflect.readField(adapter, "mmRecyclerView");
         return view instanceof View ? (View) view : null;
     }
@@ -1080,7 +1090,7 @@ public final class GridSort {
         follow.observe();
     }
 
-    private static void placeChip(View chip, View grid) {
+    static void placeChip(View chip, View grid) {
         try {
             if (!(grid instanceof ViewGroup)) return;
             ViewGroup rows = (ViewGroup) grid;

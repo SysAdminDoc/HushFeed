@@ -172,6 +172,8 @@ public class FeedScreenCoverageTest {
         put("profile_grid_sort", NONE, NONE, NONE);
         put("liked_grid_sort", NONE, NONE, NONE);
         put("sound_grid_sort", NONE, NONE, NONE);
+        // Where the Liked grid's list starts, which neither window draws (#350).
+        put("liked_jump_to_date", NONE, NONE, NONE);
         put("show_author_region", YES, YES, NONE);
         // Only how the region label shows its code, so it reaches where the label does (#157).
         put("region_as_flag", YES, YES, NONE);

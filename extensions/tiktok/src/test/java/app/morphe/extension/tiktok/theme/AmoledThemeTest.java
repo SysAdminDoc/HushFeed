@@ -26,6 +26,7 @@ import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.shared.settings.PausedProcess;
 import app.morphe.extension.tiktok.SettingsContextRule;
+import app.morphe.extension.tiktok.live.LivePanelTheme;
 import app.morphe.extension.tiktok.settings.Settings;
 
 import java.util.HashMap;
@@ -236,6 +237,25 @@ public class AmoledThemeTest {
         Resources.Theme activity = theme(android.R.style.Theme_Material);
         AmoledTheme.restore(activity);
         assertEquals("a screen's theme", light, background(activity));
+    }
+
+    /**
+     * The LIVE room hook takes three of TikTok's applyStyle calls for itself (#362), in either
+     * patch order, so its stand-in has to put the grays back the same way.
+     */
+    @Test public void aLiveRoomStyleFollowsTheSwitchToo() {
+        int dark = background(theme(android.R.style.Theme_Material));
+        int light = background(theme(android.R.style.Theme_Material_Light));
+        AmoledTheme.setForTests(BLACK, lightRestore());
+        Resources.Theme on = app().getResources().newTheme();
+        LivePanelTheme.roomStyle(on, android.R.style.Theme_Material, 1);
+        assertEquals("on", dark, background(on));
+
+        switchOff();
+        AmoledTheme.setForTests(BLACK, lightRestore());
+        Resources.Theme off = app().getResources().newTheme();
+        LivePanelTheme.roomStyle(off, android.R.style.Theme_Material, 1);
+        assertEquals("off", light, background(off));
     }
 
     @Test public void whileOnTheThemesKeepTheAmoledLook() {

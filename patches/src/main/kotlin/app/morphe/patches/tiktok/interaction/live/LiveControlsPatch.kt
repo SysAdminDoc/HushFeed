@@ -21,6 +21,7 @@ import app.morphe.patches.tiktok.interaction.sharesheet.ownedShareActionsPatch
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
+import app.morphe.patches.tiktok.misc.theme.AMOLED_THEME_EXTENSION
 import app.morphe.patches.tiktok.shared.guardAtEntry
 import app.morphe.util.ControlFlow
 import app.morphe.util.addInstruction
@@ -1701,6 +1702,10 @@ internal fun liveColorTheme(onCreate: Method): MethodReference? =
  * same force, then to a darkened room's light copy too when the theme is that room's (#362). The
  * call keeps its registers and its place, so nothing that branches onto it moves, and the boolean
  * goes over as an int. Returns how many calls it changed.
+ *
+ * AMOLED dark mode swaps every applyStyle call in TikTok's code for its own stand-in with the same
+ * registers (#372). When that patch ran first, these calls are the stand-in, and the extension
+ * calls the stand-in itself, so either order ends the same.
  */
 internal fun hookRoomStyles(method: MutableMethod): Int {
     val instructions = method.implementation?.instructions?.toList() ?: return 0
@@ -1708,16 +1713,12 @@ internal fun hookRoomStyles(method: MutableMethod): Int {
     var changed = 0
     instructions.forEachIndexed { index, instruction ->
         val call = (instruction as? ReferenceInstruction)?.reference as? MethodReference ?: return@forEachIndexed
-        if (call.definingClass != ANDROID_THEME || call.name != "applyStyle" || call.returnType != "V" ||
-            call.parameterTypes.map(CharSequence::toString) != listOf("I", "Z")
-        ) {
-            return@forEachIndexed
-        }
+        if (!appliesRoomStyle(call)) return@forEachIndexed
         val replacement = when (instruction.opcode) {
-            Opcode.INVOKE_VIRTUAL -> (instruction as FiveRegisterInstruction).let {
+            Opcode.INVOKE_VIRTUAL, Opcode.INVOKE_STATIC -> (instruction as FiveRegisterInstruction).let {
                 "invoke-static {v${it.registerC}, v${it.registerD}, v${it.registerE}}, $target"
             }
-            Opcode.INVOKE_VIRTUAL_RANGE -> (instruction as RegisterRangeInstruction).let {
+            Opcode.INVOKE_VIRTUAL_RANGE, Opcode.INVOKE_STATIC_RANGE -> (instruction as RegisterRangeInstruction).let {
                 "invoke-static/range {v${it.startRegister} .. v${it.startRegister + 2}}, $target"
             }
             else -> return@forEachIndexed
@@ -1726,6 +1727,14 @@ internal fun hookRoomStyles(method: MutableMethod): Int {
         changed++
     }
     return changed
+}
+
+/** Theme.applyStyle(int, boolean), or AMOLED dark mode's stand-in for it (theme, style, force as an int). */
+internal fun appliesRoomStyle(call: MethodReference): Boolean {
+    if (call.name != "applyStyle" || call.returnType != "V") return false
+    val parameters = call.parameterTypes.map(CharSequence::toString)
+    return (call.definingClass == ANDROID_THEME && parameters == listOf("I", "Z")) ||
+        (call.definingClass == AMOLED_THEME_EXTENSION && parameters == listOf(ANDROID_THEME, "I", "I"))
 }
 
 private const val SET_BACKGROUND_RESOURCE = "Landroid/view/View;->setBackgroundResource(I)V"

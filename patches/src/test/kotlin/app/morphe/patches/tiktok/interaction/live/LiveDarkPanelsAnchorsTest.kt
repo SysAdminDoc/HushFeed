@@ -631,6 +631,26 @@ class LiveDarkPanelsAnchorsTest {
                         listOf(call.registerCount, call.registerC, call.registerD, call.registerE))
                 }
                 assertEquals("${apk.name}: $what", emptyList<BridgeTypeFlow.Problem>(), BridgeTypeFlow.check(hooked))
+
+                // #372: AMOLED dark mode may have swapped these calls for its stand-in first, the
+                // way InvokeSite.staticCall writes it. The room hook takes the stand-in the same way.
+                val amoledFirst = MutableMethod(method)
+                val whole = method.implementation!!.instructions.toList()
+                for (at in whole.indices.filter { appliesStyle(whole[it]) }) {
+                    val old = whole[at] as FiveRegisterInstruction
+                    amoledFirst.replaceInstruction(at, "invoke-static { v${old.registerC}, v${old.registerD}, v${old.registerE} }, " +
+                        "Lapp/morphe/extension/tiktok/theme/AmoledTheme;->applyStyle(Landroid/content/res/Resources\$Theme;II)V")
+                }
+                assertEquals("${apk.name}: $what after AMOLED", calls.size, hookRoomStyles(amoledFirst))
+                val both = amoledFirst.implementation!!.instructions.filter { it.opcode != Opcode.NOP }
+                assertEquals("${apk.name}: $what after AMOLED", code.map { it.opcode }, both.map { it.opcode })
+                for (at in calls) {
+                    val reference = (both[at] as ReferenceInstruction).reference as MethodReference
+                    assertEquals("${apk.name}: $what at $at after AMOLED", "roomStyle", reference.name)
+                    val old = stock[at] as FiveRegisterInstruction
+                    val now = both[at] as FiveRegisterInstruction
+                    assertEquals(listOf(old.registerC, old.registerD, old.registerE), listOf(now.registerC, now.registerD, now.registerE))
+                }
             }
             if ("47.7.3" in apk.name) {
                 // X.0JgL.LIZ: style/v_ and style/vb set attr/car, which the bubble's text reads

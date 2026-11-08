@@ -965,9 +965,14 @@ public final class LivePanelTheme {
      * so the copy has every attribute the room has. The LIVE color theme defines attributes the
      * room's views look up, and a gift guide bubble inflated over a copy without them threw on
      * its text (#362, S22, 2026-11-08). [force] is non-zero for TikTok's force.
+     *
+     * Both themes take the style through AMOLED dark mode's stand-in for applyStyle, which is a plain
+     * applyStyle unless that switch is off (#372). The AMOLED patch swaps every applyStyle call in
+     * TikTok's code for that stand-in, and the LIVE hook takes these calls in either form, so the
+     * room gets TikTok's grays back whichever patch ran first.
      */
     public static void roomStyle(Resources.Theme theme, int style, int force) {
-        theme.applyStyle(style, force != 0);
+        AmoledTheme.applyStyle(theme, style, force);
         try {
             if (LIGHT_ROOMS.isEmpty()) {
                 return;
@@ -976,7 +981,7 @@ public final class LivePanelTheme {
                 for (Map.Entry<Activity, Resources.Theme> kept : LIGHT_ROOMS.entrySet()) {
                     Activity room = kept.getKey();
                     if (room != null && room.getTheme() == theme) {
-                        kept.getValue().applyStyle(style, force != 0);
+                        AmoledTheme.applyStyle(kept.getValue(), style, force);
                     }
                 }
             }

@@ -2559,3 +2559,10 @@ Hide Send to new group,Sembunyikan Kirim ke grup baru
 Hides the button that turns the people you picked into a new group chat. Send separately stays.,Sembunyikan tombol yang menjadikan orang yang kamu pilih obrolan grup baru. Kirim terpisah tetap ada.
 AMOLED dark mode,Mode gelap AMOLED
 "Fills dark mode with the color picked while patching, pure black unless another was chosen. Turn it off for TikTok's own dark grays. Light mode doesn't change. Restart TikTok to see the change.","Mengisi mode gelap dengan warna yang dipilih saat patching, hitam pekat kecuali dipilih warna lain. Matikan untuk mendapatkan abu-abu gelap bawaan TikTok. Mode terang tidak berubah. Mulai ulang TikTok untuk melihat perubahannya."
+Check for Hushfeed updates,Periksa pembaruan Hushfeed
+"Once a day when TikTok opens, ask GitHub if a newer Hushfeed is out and show a card when it is. The request carries your Hushfeed version and nothing else.","Sekali sehari saat TikTok dibuka, tanyakan ke GitHub apakah ada Hushfeed yang lebih baru dan tampilkan kartu jika ada. Permintaan itu hanya membawa versi Hushfeed-mu."
+Hushfeed %1$s is out,Hushfeed %1$s sudah keluar
+"You have %1$s. Update the patches in Morphe Manager, then patch TikTok again.","Versimu %1$s. Perbarui patch di Morphe Manager, lalu patch TikTok lagi."
+Update,Perbarui
+Dismiss,Abaikan
+%1$s more in the release notes,%1$s lainnya di catatan rilis

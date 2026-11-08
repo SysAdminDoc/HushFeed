@@ -679,7 +679,8 @@
       "startup_message",
       "startup_message_title",
       "startup_message_text",
-      "startup_message_dismissible"
+      "startup_message_dismissible",
+      "check_for_updates"
     ],
     "Share sheet tools": [
       "hide_share_channels",
@@ -1192,6 +1193,12 @@
       "default": 0,
       "minimum": 0,
       "maximum": 48
+    },
+    "check_for_updates": {
+      "field": "CHECK_FOR_UPDATES",
+      "key": "check_for_updates",
+      "type": "boolean",
+      "default": false
     },
     "check_saved_videos": {
       "field": "CHECK_SAVED_VIDEOS",

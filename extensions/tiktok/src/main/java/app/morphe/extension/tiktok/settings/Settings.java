@@ -13,6 +13,7 @@ import app.morphe.extension.shared.settings.BaseSettings;
 import app.morphe.extension.shared.settings.BooleanSetting;
 import app.morphe.extension.shared.settings.FloatSetting;
 import app.morphe.extension.shared.settings.IntegerSetting;
+import app.morphe.extension.shared.settings.LongSetting;
 import app.morphe.extension.shared.settings.Setting;
 
 import app.morphe.extension.tiktok.offline.CustomOfflineVideosLimitPatch;
@@ -387,6 +388,17 @@ public class Settings extends BaseSettings {
      */
     public static final StringSetting STARTUP_MESSAGE_HIDDEN = new StringSetting(
             "startup_message_hidden", "", false, false);
+    /**
+     * Asks GitHub, once a day when TikTok opens, whether a newer Hushfeed release is out, and shows
+     * a card when it is (#377). The only request Hushfeed makes for itself, so it starts off.
+     */
+    public static final BooleanSetting CHECK_FOR_UPDATES = new BooleanSetting("check_for_updates", FALSE);
+    /** When the last update check went out, kept before it does. Not in backups. */
+    public static final LongSetting UPDATE_CHECKED_AT = new LongSetting(
+            "update_checked_at", 0L, false, false);
+    /** The release whose update card Dismiss was pressed on. Not in backups. */
+    public static final StringSetting UPDATE_DISMISSED = new StringSetting(
+            "update_dismissed", "", false, false);
     /**
      * On by default: the setup runs before anyone can reach this switch, so picking the patch is
      * the choice. Off brings the screens back the next time TikTok runs its setup.

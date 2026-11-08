@@ -497,6 +497,14 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                 "Off, only its button closes it.",
                 Settings.STARTUP_MESSAGE_DISMISSIBLE
         ));
+        // Asked from the same opening of TikTok as the startup message (#377).
+        addPreference(new TogglePreference(
+                context,
+                "Check for Hushfeed updates",
+                "Once a day when TikTok opens, ask GitHub if a newer Hushfeed is out and show a "
+                        + "card when it is. The request carries your Hushfeed version and nothing else.",
+                Settings.CHECK_FOR_UPDATES
+        ));
         if (SettingsStatus.firstLaunchSetupEnabled) {
             addPreference(new TogglePreference(
                     context,

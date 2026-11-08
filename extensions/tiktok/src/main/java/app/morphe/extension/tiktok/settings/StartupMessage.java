@@ -46,6 +46,7 @@ public final class StartupMessage {
         try {
             boolean opening = isOpening(activity);
             SCREENS.add(new WeakReference<>(activity));
+            if (opening) UpdateNotice.onOpening(activity);
             if (!opening || !Settings.STARTUP_MESSAGE.get()) return;
             String title = Settings.STARTUP_MESSAGE_TITLE.get().trim();
             String text = Settings.STARTUP_MESSAGE_TEXT.get().trim();

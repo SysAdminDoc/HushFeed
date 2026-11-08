@@ -2557,3 +2557,10 @@ Hide Send to new group,Ẩn Gửi tới nhóm mới
 Hides the button that turns the people you picked into a new group chat. Send separately stays.,Ẩn nút biến những người bạn đã chọn thành một nhóm chat mới. Gửi riêng vẫn giữ nguyên.
 AMOLED dark mode,Chế độ tối AMOLED
 "Fills dark mode with the color picked while patching, pure black unless another was chosen. Turn it off for TikTok's own dark grays. Light mode doesn't change. Restart TikTok to see the change.","Tô chế độ tối bằng màu đã chọn khi vá, đen tuyền trừ khi chọn màu khác. Tắt đi để dùng các sắc xám tối của chính TikTok. Chế độ sáng không thay đổi. Khởi động lại TikTok để xem thay đổi."
+Check for Hushfeed updates,Kiểm tra bản cập nhật Hushfeed
+"Once a day when TikTok opens, ask GitHub if a newer Hushfeed is out and show a card when it is. The request carries your Hushfeed version and nothing else.","Mỗi ngày một lần khi mở TikTok, hỏi GitHub xem đã có Hushfeed mới hơn chưa và hiện một thẻ nếu có. Yêu cầu chỉ gửi kèm phiên bản Hushfeed của bạn."
+Hushfeed %1$s is out,Hushfeed %1$s đã ra mắt
+"You have %1$s. Update the patches in Morphe Manager, then patch TikTok again.","Bạn đang dùng %1$s. Hãy cập nhật bản vá trong Morphe Manager, rồi vá lại TikTok."
+Update,Cập nhật
+Dismiss,Bỏ qua
+%1$s more in the release notes,Còn %1$s mục khác trong ghi chú phát hành

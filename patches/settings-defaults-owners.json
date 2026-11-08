@@ -669,7 +669,8 @@
       "STARTUP_MESSAGE",
       "STARTUP_MESSAGE_TITLE",
       "STARTUP_MESSAGE_TEXT",
-      "STARTUP_MESSAGE_DISMISSIBLE"
+      "STARTUP_MESSAGE_DISMISSIBLE",
+      "CHECK_FOR_UPDATES"
     ],
     "Share sheet tools": [
       "HIDE_SHARE_CHANNELS",
@@ -836,6 +837,8 @@
     "EXPERIMENTAL_APP_CONFIRMED": "Runtime state or legacy migration data; not a configurable feature default.",
     "PAUSED": "Runtime state or legacy migration data; not a configurable feature default.",
     "SAFE_MODE": "Runtime state or legacy migration data; not a configurable feature default.",
-    "STARTUP_MESSAGE_HIDDEN": "Runtime state or legacy migration data; not a configurable feature default."
+    "STARTUP_MESSAGE_HIDDEN": "Runtime state or legacy migration data; not a configurable feature default.",
+    "UPDATE_CHECKED_AT": "Runtime state or legacy migration data; not a configurable feature default.",
+    "UPDATE_DISMISSED": "Runtime state or legacy migration data; not a configurable feature default."
   }
 }

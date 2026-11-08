@@ -2557,3 +2557,10 @@ Hide Send to new group,隐藏“发送到新群组”
 Hides the button that turns the people you picked into a new group chat. Send separately stays.,隐藏把你选中的人建成新群聊的按钮。“分别发送”会保留.
 AMOLED dark mode,AMOLED 深色模式
 "Fills dark mode with the color picked while patching, pure black unless another was chosen. Turn it off for TikTok's own dark grays. Light mode doesn't change. Restart TikTok to see the change.",用打补丁时选择的颜色填充深色模式，除非选了别的颜色，否则为纯黑。关闭后使用 TikTok 自己的深灰色。浅色模式不变。重新启动 TikTok 以查看更改.
+Check for Hushfeed updates,检查 Hushfeed 更新
+"Once a day when TikTok opens, ask GitHub if a newer Hushfeed is out and show a card when it is. The request carries your Hushfeed version and nothing else.",每天打开 TikTok 时最多向 GitHub 询问一次是否有更新的 Hushfeed，有的话显示一张卡片。请求中只带有你的 Hushfeed 版本.
+Hushfeed %1$s is out,Hushfeed %1$s 已发布
+"You have %1$s. Update the patches in Morphe Manager, then patch TikTok again.",你使用的是 %1$s。请在 Morphe Manager 中更新补丁，然后重新为 TikTok 打补丁.
+Update,更新
+Dismiss,忽略
+%1$s more in the release notes,发布说明中还有 %1$s 项

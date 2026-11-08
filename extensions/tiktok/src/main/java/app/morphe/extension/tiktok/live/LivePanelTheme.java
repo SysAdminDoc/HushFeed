@@ -6,6 +6,8 @@ package app.morphe.extension.tiktok.live;
 
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
+import app.morphe.extension.tiktok.theme.AmoledTheme;
+import app.morphe.extension.tiktok.theme.AmoledThemeWrapper;
 
 import android.app.Activity;
 import android.content.Context;
@@ -190,7 +192,8 @@ public final class LivePanelTheme {
                 return inflater;
             }
             settle(panel);
-            Context dark = new ContextThemeWrapper(context, overlay);
+            // The panel's dark overlay keeps TikTok's grays while AMOLED dark mode is off (#372).
+            Context dark = new AmoledThemeWrapper(context, overlay);
             DARK_PANELS.put(panel, dark);
             panelSeen = true;
             return inflater.cloneInContext(dark);
@@ -948,6 +951,7 @@ public final class LivePanelTheme {
                 }
             }
             room.getTheme().applyStyle(theme, true);
+            AmoledTheme.restore(room.getTheme());
         } catch (Throwable failure) {
             Logger.printException(() -> "Could not darken a LIVE room", failure);
         }

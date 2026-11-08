@@ -7,11 +7,15 @@ package app.morphe.patches.tiktok.misc.theme
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.fieldAccess
 import app.morphe.patcher.literal
+import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
+import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.addInstructions
+import app.morphe.util.cloneMutable
 import app.morphe.util.getReference
+import app.morphe.util.returnEarly
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.ClassDef
@@ -140,22 +144,36 @@ internal fun Method.isDarkPaletteBuilder(field: FieldReference): Boolean {
 /** The opaque Compose literal for an AMOLED color, `#RRGGBB` or `#FFRRGGBB`. */
 internal fun composeArgb(color: String): Long = 0xff000000L or color.takeLast(6).toLong(16)
 
-/** Each card color this builder writes becomes [argb], packed by the builder's own conversion. */
-internal fun MutableMethod.paintCards(field: FieldReference, argb: Long) {
+/**
+ * Each card color this builder writes goes through the extension's [AMOLED_THEME_EXTENSION]
+ * composeCard first, which answers the AMOLED color while the switch in Hushfeed settings is on
+ * and TikTok's own packed color while it's off (#372). The builder's conversion packs a color by
+ * shifting it left 32 bits (AmoledComposeCardsTest holds it to that), which is how the extension
+ * packs the AMOLED one.
+ */
+internal fun MutableMethod.paintCards(field: FieldReference) {
     val writes = cardWrites(field)
         ?: throw PatchException("AMOLED dark theme: the dark palette's card colors are not written the way they were.")
     writes.asReversed().forEach { write ->
         val register = write.register
-        val conversion = write.conversion
         addInstructions(
             write.index,
             """
-                const-wide v$register, 0x${argb.toString(16)}L
-                invoke-static/range {v$register .. v${register + 1}}, ${conversion.definingClass}->${conversion.name}(J)J
+                invoke-static/range {v$register .. v${register + 1}}, $AMOLED_THEME_EXTENSION->composeCard(J)J
                 move-result-wide v$register
             """,
         )
     }
+}
+
+/** The extension's AMOLED color, filled in with the picked one so composeCard can answer it. */
+internal fun BytecodePatchContext.fillAmoledThemeColor(argb: Int) {
+    val extension = mutableClassDefBy(AMOLED_THEME_EXTENSION)
+    val stub = extension.methods.single { it.name == "color" && it.parameterTypes.isEmpty() }
+    val filled = stub.cloneMutable(additionalRegisters = 1)
+    extension.methods.remove(stub)
+    extension.methods.add(filled)
+    filled.returnEarly(argb)
 }
 
 /**
@@ -170,6 +188,7 @@ internal fun MutableMethod.paintCards(field: FieldReference, argb: Long) {
  * side refuses it, so neither half goes in without the other.
  */
 internal fun amoledComposeCardsPatch(color: () -> String?) = bytecodePatch {
+    dependsOn(sharedExtensionPatch)
     execute {
         // Refuses an unread build before anything changes, as the resource side does.
         darkBackgroundColors(packageMetadata.versionName)
@@ -193,7 +212,8 @@ internal fun amoledComposeCardsPatch(color: () -> String?) = bytecodePatch {
         ).matchAllOrNull().orEmpty()
         val builder = builders.singleOrNull()
             ?: throw PatchException("AMOLED dark theme: expected one dark palette builder, found ${builders.size}.")
-        builder.method.paintCards(field, composeArgb(chosen))
+        builder.method.paintCards(field)
+        fillAmoledThemeColor(composeArgb(chosen).toInt())
     }
 }
 

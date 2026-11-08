@@ -2622,3 +2622,7 @@ Show the controls	Kontrolleri göster
 Hide Send to new group	Yeni gruba gönder düğmesini gizle
 # context: summary of Hide Send to new group; Send separately is TikTok's red button that stays (#375)
 Hides the button that turns the people you picked into a new group chat. Send separately stays.	Seçtiğin kişilerden yeni bir grup sohbeti oluşturan düğmeyi gizler. Ayrı ayrı gönder kalır.
+# context: Switch in Hushfeed settings > App > Appearance (#372)
+AMOLED dark mode	AMOLED karanlık mod
+# context: Summary under the AMOLED dark mode switch
+Fills dark mode with the color picked while patching, pure black unless another was chosen. Turn it off for TikTok's own dark grays. Light mode doesn't change. Restart TikTok to see the change.	Karanlık modu yama sırasında seçilen renkle doldurur, başka bir renk seçilmediyse tam siyah. TikTok'un kendi koyu grileri için kapat. Aydınlık mod değişmez. Değişikliği görmek için TikTok'u yeniden başlat.

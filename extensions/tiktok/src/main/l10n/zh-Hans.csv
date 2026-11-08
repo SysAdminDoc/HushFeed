@@ -2555,3 +2555,5 @@ Make the controls invisible,让控件隐形
 Show the controls,显示控件
 Hide Send to new group,隐藏“发送到新群组”
 Hides the button that turns the people you picked into a new group chat. Send separately stays.,隐藏把你选中的人建成新群聊的按钮。“分别发送”会保留.
+AMOLED dark mode,AMOLED 深色模式
+"Fills dark mode with the color picked while patching, pure black unless another was chosen. Turn it off for TikTok's own dark grays. Light mode doesn't change. Restart TikTok to see the change.",用打补丁时选择的颜色填充深色模式，除非选了别的颜色，否则为纯黑。关闭后使用 TikTok 自己的深灰色。浅色模式不变。重新启动 TikTok 以查看更改.

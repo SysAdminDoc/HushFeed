@@ -128,7 +128,8 @@ Unreleased settings use flat rows with the same controls in dark and light mode.
 Simple mode in Morphe Manager selects 128 of these patches. Each row says what the patch does, whether its switch starts on or off, and where to find it. The other 19 stay out of the default selection, and you pick them in Expert mode:
 
 - Change app name, Custom launcher icon, Hide Play Store update offer, Look like the store app and Run beside the store app change the app's name, icon, signature, package or version code.
-- Accent color, AMOLED dark theme, Block P2P video relay, Remove content credential and card scanner assets, Remove creation tools, Remove LIVE extras, Remove unused language packs and Remove voice tools change TikTok's files while patching. Only a fresh patch takes that back.
+- Accent color, Block P2P video relay, Remove content credential and card scanner assets, Remove creation tools, Remove LIVE extras, Remove unused language packs and Remove voice tools change TikTok's files while patching. Only a fresh patch takes that back.
+- AMOLED dark theme repaints dark mode as soon as it's included, because its switch starts on.
 - Trust user certificates changes TikTok with no switch in front of it.
 - Feature Gate Recorder and Network request report only record what TikTok does, for research. Hide the risk control CAPTCHA sits on TikTok's account checks.
 - Region spoof changes the region TikTok sees on every read, sign-in included. Skip first-launch setup only helps when it's picked before TikTok's first start, so its switch starts on.
@@ -142,7 +143,7 @@ Simple mode in Morphe Manager selects 128 of these patches. Each row says what t
 | `Allow screenshots and Circle to Search` | Lets screenshots, screen recordings and Circle to Search work on TikTok screens that would otherwise come out black. Starts off. Turn it on in Hushfeed settings > App, then restart TikTok. |
 | `Always show publish date` | Shows the date a video was posted next to the creator's name, so you can tell how old it is. It can also show the exact time, dates and lengths on profile grids, sort the videos a grid has loaded, or start your Liked grid at a year or month you pick. On by default. Turn it off in Hushfeed settings > Feed screen. |
 | `Always upload in HD` | Posts every video you upload in HD, as if you'd turned on TikTok's own HD upload setting each time. Videos TikTok doesn't count as high quality post as usual. Starts off. Turn it on in Hushfeed settings > App. |
-| `AMOLED dark theme` | Makes TikTok's dark mode backgrounds pure black, or a dark color you pick in this patch's options. Black lets OLED screens switch those pixels off. Light mode doesn't change. It's built in while patching, so only patching again without it undoes it. |
+| `AMOLED dark theme` | Makes TikTok's dark mode backgrounds pure black, or a dark color you pick in this patch's options. Black lets OLED screens switch those pixels off. Light mode doesn't change. On by default. Turn it off in Hushfeed settings > App, then restart TikTok, and dark mode goes back to TikTok's own grays. |
 | `App lock` | Asks for your fingerprint, face or PIN before TikTok opens, and again when you come back after a time you pick, so nobody else can open it on your phone. Starts off. Turn it on in Hushfeed settings > Privacy. |
 | `Automatic video advance` | Moves on to the next video by itself when one ends, so you can watch hands-free. It can also turn on TikTok's auto scroll in search results. Starts off. Turn it on in Hushfeed settings > Playback. |
 | `Block author button` | Adds buttons on videos to block the creator, hide them only on your phone, or block the sound, so you can get rid of what you don't want in one tap. Starts off. Turn it on in Hushfeed settings > Feed screen. |
@@ -323,7 +324,7 @@ Pausing turns off the screen-time budget as well, so with Wait a day to loosen t
 A few patches change TikTok with no switch in front of them, and Pause can't reach those:
 
 - Settings itself, which is how you get back to the switch.
-- Accent color, AMOLED dark theme, Hide Play Store update offer, Change app name and Custom launcher icon.
+- Accent color, Hide Play Store update offer, Change app name and Custom launcher icon.
 - Disable screen capture detection, Disable login requirement and Fix Google login.
 - Block P2P video relay and the five patches that take files out of the app: Remove content credential and card scanner assets, Remove unused language packs, Remove creation tools, Remove LIVE extras and Remove voice tools.
 - In Downloads, the folder and file name you picked still apply, as do the fallback to a clean video address and the save button on stickers.
@@ -352,7 +353,7 @@ A bid from a patched TikTok can fail with "Bidding is temporarily unavailable", 
 
 ### Profile and Inbox are pure black, but I didn't pick AMOLED dark theme
 
-That's TikTok's own dark mode. It paints Profile and Inbox black and leaves the comment, share and search sheets dark gray. AMOLED dark theme is what turns those sheets black as well, and with a color picked in its options, Profile and Inbox take that color too.
+That's TikTok's own dark mode. It paints Profile and Inbox black and leaves the comment, share and search sheets dark gray. AMOLED dark theme is what turns those sheets black as well, and with a color picked in its options, Profile and Inbox take that color too. If you patched it in and want the grays back, turn off AMOLED dark mode in Hushfeed settings > App and restart TikTok.
 
 ### Coming from Kveld
 

@@ -2557,3 +2557,5 @@ Make the controls invisible,Buat kontrol tak terlihat
 Show the controls,Tampilkan kontrol
 Hide Send to new group,Sembunyikan Kirim ke grup baru
 Hides the button that turns the people you picked into a new group chat. Send separately stays.,Sembunyikan tombol yang menjadikan orang yang kamu pilih obrolan grup baru. Kirim terpisah tetap ada.
+AMOLED dark mode,Mode gelap AMOLED
+"Fills dark mode with the color picked while patching, pure black unless another was chosen. Turn it off for TikTok's own dark grays. Light mode doesn't change. Restart TikTok to see the change.","Mengisi mode gelap dengan warna yang dipilih saat patching, hitam pekat kecuali dipilih warna lain. Matikan untuk mendapatkan abu-abu gelap bawaan TikTok. Mode terang tidak berubah. Mulai ulang TikTok untuk melihat perubahannya."

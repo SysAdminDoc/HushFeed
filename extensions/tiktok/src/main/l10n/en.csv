@@ -167,6 +167,7 @@ AI Self,AI Self
 AI Tako,AI Tako
 AI chat,AI chat
 AI-generated posts,AI-generated posts
+AMOLED dark mode,AMOLED dark mode
 About,About
 About %1$s of storage at this limit,About %1$s of storage at this limit
 About Hushfeed,About Hushfeed
@@ -669,6 +670,7 @@ Field edits were discarded,Field edits were discarded
 Field edits weren't saved,Field edits weren't saved
 Files,Files
 Fill the screen with the video,Fill the screen with the video
+"Fills dark mode with the color picked while patching, pure black unless another was chosen. Turn it off for TikTok's own dark grays. Light mode doesn't change. Restart TikTok to see the change.","Fills dark mode with the color picked while patching, pure black unless another was chosen. Turn it off for TikTok's own dark grays. Light mode doesn't change. Restart TikTok to see the change."
 Filter TikTok's offline videos,Filter TikTok's offline videos
 Filter bottom tabs,Filter bottom tabs
 Filter comments by keyword,Filter comments by keyword

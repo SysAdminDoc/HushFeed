@@ -97,6 +97,7 @@ public class SettingsStatus {
     public static boolean alwaysShowPublishDateEnabled = false;
     public static boolean systemFontEnabled = false;
     public static boolean turnOffHapticsEnabled = false;
+    public static boolean amoledDarkModeEnabled = false;
     public static boolean screenTransitionsEnabled = false;
     public static boolean diagnosticsEnabled = false;
     public static boolean blockAuthorEnabled = false;
@@ -486,6 +487,10 @@ public class SettingsStatus {
 
     public static void enableTurnOffHaptics() {
         turnOffHapticsEnabled = true;
+    }
+
+    public static void enableAmoledDarkMode() {
+        amoledDarkModeEnabled = true;
     }
 
     public static void enableScreenTransitions() {

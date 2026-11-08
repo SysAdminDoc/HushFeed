@@ -58,6 +58,9 @@
     "Always upload in HD": [
       "ALWAYS_UPLOAD_HD"
     ],
+    "AMOLED dark theme": [
+      "AMOLED_DARK_MODE"
+    ],
     "App lock": [
       "APP_LOCK",
       "APP_LOCK_TIMEOUT"

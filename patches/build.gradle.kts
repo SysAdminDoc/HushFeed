@@ -473,6 +473,10 @@ val extensionClasses = listOf(
     "app/morphe/patches/tiktok/misc/inbox/InboxQueryOwnerFixturesTest.class",
     "app/morphe/patches/tiktok/misc/inbox/InboxRenderedModelsFixturesTest.class",
     "app/morphe/patches/tiktok/misc/onboarding/FirstLaunchSkipListTest.class",
+    // Reads AmoledTheme.java for the names it looks up, and decodes and encodes a whole TikTok
+    // resource table, which needs this partition's 4 GB heap.
+    "app/morphe/patches/tiktok/misc/theme/AmoledRestoreResourcesTest.class",
+    "app/morphe/patches/tiktok/misc/theme/AmoledThemeSwitchHooksTest.class",
     "app/morphe/patches/tiktok/misc/translation/ReceivedDmTranslationIconTest.class",
     "app/morphe/patches/tiktok/privacy/StoreIdentityExtensionTest.class",
     "app/morphe/patches/tiktok/profile/LocalProfileAppearanceAnchorsTest.class",

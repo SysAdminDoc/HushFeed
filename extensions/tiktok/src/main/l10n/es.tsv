@@ -2622,3 +2622,7 @@ Show the controls	Mostrar los controles
 Hide Send to new group	Ocultar Enviar a un grupo nuevo
 # context: summary of Hide Send to new group; Send separately is TikTok's red button that stays (#375)
 Hides the button that turns the people you picked into a new group chat. Send separately stays.	Oculta el botón que convierte a las personas que elegiste en un chat grupal nuevo. Enviar por separado se queda.
+# context: Switch in Hushfeed settings > App > Appearance (#372)
+AMOLED dark mode	Modo oscuro AMOLED
+# context: Summary under the AMOLED dark mode switch
+Fills dark mode with the color picked while patching, pure black unless another was chosen. Turn it off for TikTok's own dark grays. Light mode doesn't change. Restart TikTok to see the change.	Llena el modo oscuro con el color elegido al parchear, negro puro salvo que se eligiera otro. Desactívalo para tener los grises oscuros propios de TikTok. El modo claro no cambia. Reinicia TikTok para ver el cambio.

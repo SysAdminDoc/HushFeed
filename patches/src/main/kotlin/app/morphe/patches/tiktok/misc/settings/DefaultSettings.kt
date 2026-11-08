@@ -10,6 +10,7 @@ import app.morphe.patcher.patch.BytecodePatchBuilder
 import app.morphe.patcher.patch.Option
 import app.morphe.patcher.patch.PatchBuilder
 import app.morphe.patcher.patch.PatchException
+import app.morphe.patcher.patch.ResourcePatchBuilder
 import app.morphe.patcher.patch.booleanOption
 import app.morphe.patcher.patch.floatOption
 import app.morphe.patcher.patch.intOption
@@ -17,6 +18,7 @@ import app.morphe.patcher.patch.longOption
 import app.morphe.patcher.patch.rawResourcePatch
 import app.morphe.patcher.patch.stringOption
 import app.morphe.patcher.patch.bytecodePatch as buildBytecodePatch
+import app.morphe.patcher.patch.resourcePatch as buildResourcePatch
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.google.gson.JsonPrimitive
@@ -32,6 +34,17 @@ fun configurableBytecodePatch(
     default: Boolean = true,
     block: BytecodePatchBuilder.() -> Unit = {},
 ) = buildBytecodePatch(name, description, default) {
+    block()
+    if (name != null) addDefaultSettings(name)
+}
+
+/** The resource patch DSL with the same native options, for a resource patch that owns a setting. */
+fun configurableResourcePatch(
+    name: String? = null,
+    description: String? = null,
+    default: Boolean = true,
+    block: ResourcePatchBuilder.() -> Unit = {},
+) = buildResourcePatch(name, description, default) {
     block()
     if (name != null) addDefaultSettings(name)
 }

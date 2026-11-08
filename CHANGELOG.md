@@ -33,6 +33,7 @@ Every Hushfeed release, newest first.
 * `Hide the search button on the feed` also hides the magnifying glass TikTok puts over the shrunken video while comments are open (#371).
 * `Invisible controls button` puts a small eye at the top left of the main feed. Tap it and the buttons, caption and tabs turn invisible but keep working where they are, which helps against burn-in on OLED screens. Tap the eye again and they're back. Your choice sticks across videos and restarts. The eye stays off other tabs, comments, Clear display and videos you open from a profile or search, and Pause brings everything back. `Keep the caption in sight` under it leaves the creator's name, the caption and the music line showing. Both start off and sit in Hushfeed settings > Feed screen, under `Keep faded controls in Clear display` (#374).
 * `Hide Send to new group` takes the gray Send to new group button off the share sheet when you've picked two or more people, so Send separately is the only button left. It starts off and sits under `Hide the Send to row` in Hushfeed settings > Share sheet (#375).
+* `AMOLED dark theme` has a switch now. `AMOLED dark mode` in Hushfeed settings > App starts on, and turning it off brings back TikTok's own dark grays after a restart, so you can keep the patch in and still pick plain dark mode. The color you picked in the patch's options stays for when it's on. Pause Hushfeed turns it off too (#372).
 
 ### Bug Fixes
 

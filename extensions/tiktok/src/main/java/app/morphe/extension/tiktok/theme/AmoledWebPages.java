@@ -50,6 +50,8 @@ public final class AmoledWebPages {
     static void onPage(WebView webView, String url, int argb) {
         try {
             if (webView == null || argb == 0 || !BrowserPrivacyGuard.isTrustedAppPage(url)) return;
+            // Off in Hushfeed settings, the pages keep TikTok's grays like the app (#372).
+            if (!AmoledTheme.on()) return;
             HookStatus.bound(HOOK_FAMILY, cssColor(argb));
             // TikTok hands one page event down a chain of its clients, so a page can hear this a
             // few times. The script keeps one style element, so a repeat only rewrites it.

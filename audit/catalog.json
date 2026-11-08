@@ -3,14 +3,40 @@
   "name": "AMOLED dark theme",
   "category": "Interface",
   "default": false,
-  "kind": "static",
+  "kind": "runtime",
   "source": [
    "patches/src/main/kotlin/app/morphe/patches/tiktok/misc/theme/AmoledThemePatch.kt",
-   "patches/src/main/kotlin/app/morphe/patches/tiktok/misc/theme/AmoledComposeCards.kt"
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/misc/theme/AmoledComposeCards.kt",
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/misc/theme/AmoledThemeSwitch.kt",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/theme/AmoledTheme.java",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/theme/AmoledThemeWrapper.java"
   ],
-  "settings": [],
+  "settings": [
+   {
+    "key": "amoled_dark_mode",
+    "default": true,
+    "type": "bool",
+    "row": "AMOLED dark mode"
+   }
+  ],
   "surface": "apk",
   "checks": [
+   {
+    "id": "patch-applied",
+    "what": "SettingsStatus.amoledDarkModeEnabled is true, so the patch is in this APK and the extension loaded it.",
+    "steps": [
+     {
+      "probe": "fields",
+      "extras": {
+       "class": "app.morphe.extension.tiktok.settings.SettingsStatus",
+       "names": "amoledDarkModeEnabled"
+      },
+      "expect": "\\bamoledDarkModeEnabled=true\\b",
+      "waitMs": 1500
+     }
+    ],
+    "auto": true
+   },
    {
     "id": "build-details",
     "what": "The build records the AMOLED choice and the dark background color picked in the patch option.",
@@ -96,9 +122,83 @@
      }
     ],
     "auto": false
+   },
+   {
+    "id": "switch-off-stock-grays",
+    "what": "Review (#372): with AMOLED dark mode off in Hushfeed settings and TikTok set to Dark, the comment sheet and the Inbox show TikTok's own dark grays again after a restart, and turning it back on brings the chosen color back.",
+    "steps": [
+     {
+      "set": {
+       "amoled_dark_mode": "false"
+      }
+     },
+     {
+      "theme": "dark"
+     },
+     {
+      "restart": true
+     },
+     {
+      "probe": "tiktoktheme",
+      "expect": "^ok tiktoktheme dark_mode=2 stored=true"
+     },
+     {
+      "open": "feed"
+     },
+     {
+      "probe": "videoinfo",
+      "expect": "likes=over1000.*ad=false",
+      "retrySwipe": 8,
+      "precondition": true
+     },
+     {
+      "probe": "comments",
+      "expect": "openComments\\([^)]*\\)=true",
+      "waitMs": 2500
+     },
+     {
+      "wait": 2500
+     },
+     {
+      "shot": "amoled-off-comments",
+      "review": "AMOLED dark mode off, TikTok set to Dark, comment sheet open: the sheet is TikTok's own dark gray (about #252525), not black. Failing looks like a pure black sheet."
+     },
+     {
+      "back": true
+     },
+     {
+      "open": "inbox"
+     },
+     {
+      "wait": 1500
+     },
+     {
+      "shot": "amoled-off-inbox",
+      "review": "AMOLED dark mode off, Inbox with TikTok set to Dark: TikTok's own dark background (about #121212), not pure black."
+     },
+     {
+      "set": {
+       "amoled_dark_mode": "true"
+      }
+     },
+     {
+      "restart": true
+     },
+     {
+      "open": "inbox"
+     },
+     {
+      "wait": 1500
+     },
+     {
+      "shot": "amoled-on-again-inbox",
+      "review": "AMOLED dark mode back on, Inbox with TikTok set to Dark: the chosen color (pure black by default) again."
+     }
+    ],
+    "auto": false
    }
   ],
-  "notes": "Built in at patch time, so only patching again without it undoes it. The colour option's default is #000000 (lane file lists Black, Mocha #181825 and Dark gray #121212). The patch refuses a TikTok APK whose resource paths would clash (renamedPathCollisions), so a build that exists has passed that. TikTok only follows the phone's dark mode when its own Settings and privacy > Display has Use device settings on; the S22's says Light with that off, so `cmd uimode night yes` left every shot light (discovery 10, 2026-10-16). TikTok keeps the choice as dark_mode in its sp_dark_mode store (1 Light, 2 Dark, read through X.02s6.LIZJ on 47.1.4) and applies it at start-up, so the check uses theme steps, which write it through the probe's tiktoktheme, then restarts; the runner puts TikTok's own choice back after the patch. The probe's backgrounds action (x,y) can print the painting view and colour for a spot on screen if a number is wanted."
+  "notes": "The color is built in at patch time; the AMOLED dark mode switch (#372) puts TikTok's own grays back at the next start while it's off. The colour option's default is #000000 (lane file lists Black, Mocha #181825 and Dark gray #121212). The patch refuses a TikTok APK whose resource paths would clash (renamedPathCollisions), so a build that exists has passed that. TikTok only follows the phone's dark mode when its own Settings and privacy > Display has Use device settings on; the S22's says Light with that off, so `cmd uimode night yes` left every shot light (discovery 10, 2026-10-16). TikTok keeps the choice as dark_mode in its sp_dark_mode store (1 Light, 2 Dark, read through X.02s6.LIZJ on 47.1.4) and applies it at start-up, so the check uses theme steps, which write it through the probe's tiktoktheme, then restarts; the runner puts TikTok's own choice back after the patch. The probe's backgrounds action (x,y) can print the painting view and colour for a spot on screen if a number is wanted."
  },
  {
   "name": "Accent color",

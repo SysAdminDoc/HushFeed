@@ -6,7 +6,7 @@
   "patches": [
     {
       "name": "AMOLED dark theme",
-      "description": "Makes TikTok's dark mode backgrounds pure black, or a dark color you pick in this patch's options. Black lets OLED screens switch those pixels off. Light mode doesn't change. It's built in while patching, so only patching again without it undoes it.",
+      "description": "Makes TikTok's dark mode backgrounds pure black, or a dark color you pick in this patch's options. Black lets OLED screens switch those pixels off. Light mode doesn't change. The AMOLED dark mode switch in Hushfeed settings > App starts on, and turning it off brings TikTok's own dark grays back.",
       "category": "Interface",
       "use": false,
       "dependencies": [
@@ -54,6 +54,15 @@
             "Mocha": "#181825",
             "Dark gray": "#121212"
           }
+        },
+        {
+          "key": "amoled_dark_mode",
+          "title": "Default: amoled dark mode",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
         }
       ]
     },

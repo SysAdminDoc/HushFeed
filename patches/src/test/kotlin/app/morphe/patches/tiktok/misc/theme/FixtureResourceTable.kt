@@ -36,6 +36,9 @@ internal class FixtureResourceTable(apk: File) {
     /** Every style entry, each configuration's on its own, with its items in the table's order. */
     val styles = ArrayList<Style>()
 
+    /** Style name to id. */
+    val styleIds = HashMap<String, Int>()
+
     /**
      * attr id to every value a style gives it, each config of a style counted on its own: a
      * colour literal or ?attr/name.
@@ -112,7 +115,8 @@ internal class FixtureResourceTable(apk: File) {
         }
         for (chunk in chunks) {
             if (u8(chunk + 8) != styleType) continue
-            forEachEntry(chunk) { _, entry ->
+            forEachEntry(chunk) { index, entry ->
+                styleIds[keys[keyOf(entry)]] = (packageId shl 24) or (styleType shl 16) or index
                 val flags = u16(entry + 2)
                 if (flags and COMPLEX == 0 || flags and COMPACT != 0) return@forEachEntry
                 val items = ArrayList<Item>()

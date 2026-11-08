@@ -1,5 +1,8 @@
 {
   "patches": {
+    "AMOLED dark theme": [
+      "amoled_dark_mode"
+    ],
     "Advanced downloads": [
       "download_button",
       "download_button_position",
@@ -845,6 +848,12 @@
       "key": "always_upload_hd",
       "type": "boolean",
       "default": false
+    },
+    "amoled_dark_mode": {
+      "field": "AMOLED_DARK_MODE",
+      "key": "amoled_dark_mode",
+      "type": "boolean",
+      "default": true
     },
     "app_lock": {
       "field": "APP_LOCK",

@@ -20,7 +20,7 @@ import org.junit.Test
 class DefaultSelectionPolicyTest {
     private val keptOut = mapOf(
         "Accent color" to "rewrites TikTok's accent color resources while patching, with no switch to take it back",
-        "AMOLED dark theme" to "rewrites TikTok's color resources while patching, with no switch to take it back",
+        "AMOLED dark theme" to "repaints dark mode as soon as it's included, since its switch starts on (#372)",
         "Block P2P video relay" to "takes the relay's files out of the APK while patching",
         "Change app name" to "changes the name Android shows for the app",
         "Custom launcher icon" to "changes the launcher icon",

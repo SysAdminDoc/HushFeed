@@ -3529,6 +3529,77 @@ public final class Probe extends Instrumentation {
                         Log.i(TAG, "ok livestream" + out);
                         break;
                     }
+                    case "addview": {
+                        // Builds one TikTok view class through its (Context) constructor on the
+                        // current activity, so a hook at the top of that constructor runs as it does
+                        // in the app, and lays it over the middle of the screen for a screenshot. For
+                        // a view TikTok only shows on a trigger the test account doesn't get (#362's
+                        // gift guide bubble: -e class X.0zJ8 on 47.7.3). -e text fills its empty
+                        // TextViews; the context the view ended up with and each TextView's color go
+                        // to the log. -e remove true takes it off again.
+                        // The resumed activity comes from ActivityThread's records: Hushfeed's
+                        // tracked activity stays MainActivity while a LIVE room is in front, and a
+                        // LIVE view built on MainActivity's theme fails on a missing LIVE attribute.
+                        android.app.Activity activity = null;
+                        try {
+                            Class<?> threadClass = Class.forName("android.app.ActivityThread");
+                            Object thread = threadClass.getMethod("currentActivityThread").invoke(null);
+                            java.lang.reflect.Field records = threadClass.getDeclaredField("mActivities");
+                            records.setAccessible(true);
+                            for (Object record : ((java.util.Map<?, ?>) records.get(thread)).values()) {
+                                java.lang.reflect.Field paused = record.getClass().getDeclaredField("paused");
+                                paused.setAccessible(true);
+                                if (paused.getBoolean(record)) continue;
+                                java.lang.reflect.Field held = record.getClass().getDeclaredField("activity");
+                                held.setAccessible(true);
+                                activity = (android.app.Activity) held.get(record);
+                            }
+                        } catch (ReflectiveOperationException | RuntimeException e) {
+                            Log.w(TAG, "addview: no resumed activity from ActivityThread, using the tracked one: " + e);
+                        }
+                        if (activity == null) {
+                            activity = (android.app.Activity) loader.loadClass(UTILS).getMethod("getActivity").invoke(null);
+                        }
+                        if (activity == null) throw new IllegalStateException("no current activity");
+                        android.view.View content = activity.findViewById(android.R.id.content);
+                        if (!(content instanceof android.widget.FrameLayout)) throw new IllegalStateException("no content frame");
+                        android.widget.FrameLayout frame = (android.widget.FrameLayout) content;
+                        String tag = "hushfeed-probe-addview";
+                        android.view.View old = frame.findViewWithTag(tag);
+                        if (old != null) frame.removeView(old);
+                        if ("true".equals(intent.getStringExtra("remove"))) {
+                            Log.i(TAG, "ok addview removed=" + (old != null));
+                            break;
+                        }
+                        Class<?> type = loader.loadClass(required(intent, "class"));
+                        android.view.View view = (android.view.View) type
+                                .getConstructor(android.content.Context.class).newInstance(activity);
+                        String text = intent.getStringExtra("text");
+                        StringBuilder out = new StringBuilder("ok addview ").append(type.getName())
+                                .append(" in ").append(activity.getClass().getSimpleName()).append(" context=")
+                                .append(view.getContext() == activity ? "the activity" : view.getContext().getClass().getName());
+                        java.util.ArrayDeque<android.view.View> queue = new java.util.ArrayDeque<>();
+                        queue.add(view);
+                        while (!queue.isEmpty()) {
+                            android.view.View child = queue.removeFirst();
+                            if (child instanceof android.widget.TextView) {
+                                android.widget.TextView label = (android.widget.TextView) child;
+                                if (text != null && label.getText().length() == 0) label.setText(text);
+                                out.append("\n  text '").append(label.getText()).append("' color=")
+                                        .append(Integer.toHexString(label.getCurrentTextColor()));
+                            }
+                            if (child instanceof android.view.ViewGroup) {
+                                android.view.ViewGroup group = (android.view.ViewGroup) child;
+                                for (int i = 0; i < group.getChildCount(); i++) queue.add(group.getChildAt(i));
+                            }
+                        }
+                        view.setTag(tag);
+                        frame.addView(view, new android.widget.FrameLayout.LayoutParams(
+                                android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+                                android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.Gravity.CENTER));
+                        Log.i(TAG, out.toString());
+                        break;
+                    }
                     case "click": {
                         // Clicks one shown view by its id name (-e find bottom_tab_home), or by a
                         // content description regex (-e desc "^Profile$"), through performClick on
@@ -3584,6 +3655,69 @@ public final class Probe extends Instrumentation {
                         boolean handled = clickable.performClick();
                         Log.i(TAG, "ok click " + idName(clickable, resources) + " at " + where[0] + ',' + where[1]
                                 + " size " + clickable.getWidth() + 'x' + clickable.getHeight() + " handled=" + handled);
+                        break;
+                    }
+                    case "edittext": {
+                        // Reads the focused text field (or the only shown one) with every character
+                        // outside printable ASCII written as U+XXXX, so a check can see what a field
+                        // holds without an IME (#320's bio round trip). -e append 200b,200c adds
+                        // those code points (hex, comma separated) at the end; -e strip true removes
+                        // every zero-width character. Both go through setText, so the screen's own
+                        // TextWatchers see the change the way they see typing.
+                        android.widget.EditText focused = null;
+                        List<android.widget.EditText> shown = new ArrayList<>();
+                        java.util.ArrayDeque<android.view.View> queue = new java.util.ArrayDeque<>(windowRoots());
+                        while (!queue.isEmpty()) {
+                            android.view.View view = queue.removeFirst();
+                            if (!view.isShown()) continue;
+                            if (view instanceof android.widget.EditText) {
+                                shown.add((android.widget.EditText) view);
+                                if (view.isFocused()) focused = (android.widget.EditText) view;
+                            }
+                            if (view instanceof android.view.ViewGroup) {
+                                android.view.ViewGroup group = (android.view.ViewGroup) view;
+                                for (int i = 0; i < group.getChildCount(); i++) queue.add(group.getChildAt(i));
+                            }
+                        }
+                        if (focused == null && shown.size() == 1) focused = shown.get(0);
+                        if (focused == null) throw new IllegalStateException(shown.size() + " shown text fields, none focused");
+                        String before = String.valueOf(focused.getText());
+                        String after = before;
+                        String append = intent.getStringExtra("append");
+                        if (append != null) {
+                            StringBuilder added = new StringBuilder(before);
+                            for (String part : append.split(",")) {
+                                if (!part.trim().isEmpty()) added.appendCodePoint(Integer.parseInt(part.trim(), 16));
+                            }
+                            after = added.toString();
+                        }
+                        if ("true".equals(intent.getStringExtra("strip"))) {
+                            StringBuilder kept = new StringBuilder();
+                            for (int i = 0; i < after.length(); ) {
+                                int cp = after.codePointAt(i);
+                                if (cp != 0x200B && cp != 0x200C && cp != 0x200D && cp != 0x2060 && cp != 0xFEFF) {
+                                    kept.appendCodePoint(cp);
+                                }
+                                i += Character.charCount(cp);
+                            }
+                            after = kept.toString();
+                        }
+                        if (!after.equals(before)) {
+                            focused.setText(after);
+                            focused.setSelection(focused.length());
+                        }
+                        StringBuilder shownText = new StringBuilder();
+                        String now = String.valueOf(focused.getText());
+                        int zeroWidth = 0;
+                        for (int i = 0; i < now.length(); ) {
+                            int cp = now.codePointAt(i);
+                            if (cp == 0x200B || cp == 0x200C || cp == 0x200D || cp == 0x2060 || cp == 0xFEFF) zeroWidth++;
+                            if (cp >= 32 && cp < 127) shownText.append((char) cp);
+                            else shownText.append(String.format(java.util.Locale.ROOT, "U+%04X ", cp));
+                            i += Character.charCount(cp);
+                        }
+                        Log.i(TAG, "ok edittext " + idName(focused, app.getResources()) + " len=" + now.length()
+                                + " zeroWidth=" + zeroWidth + " changed=" + !after.equals(before) + " [" + shownText + "]");
                         break;
                     }
                     case "themeattrs": {

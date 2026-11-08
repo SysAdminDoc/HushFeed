@@ -308,7 +308,6 @@ patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/ReceivedDmTra
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/ReceivedDmTranslationHooks.kt|LX/1NCf;
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/ReceivedDmTranslationHooks.kt|LX/1NCg;
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/ReceivedDmTranslationHooks.kt|LX/1NCh;
-patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/ReceivedDmTranslationHooks.kt|wq
 patches/src/main/kotlin/app/morphe/patches/tiktok/profile/LocalProfileAppearanceHooks.kt|LIZ
 patches/src/main/kotlin/app/morphe/patches/tiktok/profile/LocalProfileAppearanceHooks.kt|LIZIZ
 patches/src/main/kotlin/app/morphe/patches/tiktok/profile/LocalProfileAppearanceHooks.kt|LIZJ

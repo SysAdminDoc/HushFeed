@@ -193,6 +193,7 @@ public final class FeedItemsFilter {
             filterCallProbeSummary = new ProbeSummary(System.currentTimeMillis());
         }
         FeedFilterFeedback.resetForTests();
+        CaptionReasons.resetForTests();
         FeedFilterCounters.clear();
     }
 
@@ -1413,6 +1414,9 @@ public final class FeedItemsFilter {
         FeedFilterCounters.sawList(source, list.size());
 
         boolean forYou = phase == FilterPhase.RESPONSE && owner instanceof FeedItemList;
+        // Counted before any rule decides, so an export with every switch off still says what
+        // caption data TikTok sent (#217).
+        if (forYou) CaptionReasons.count(list, extractor);
         List<IFilter> activeContentFilters = getActiveFilters(
             forYou ? FOR_YOU_FILTERS : phase == FilterPhase.RESPONSE ? CONTENT_FILTERS : LATE_FOLLOW_FILTERS
         );

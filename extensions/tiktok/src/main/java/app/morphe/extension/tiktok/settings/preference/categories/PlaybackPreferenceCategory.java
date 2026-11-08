@@ -150,8 +150,13 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                             + "and other panels in light colors. This opens them dark.",
                     Settings.DARK_LIVE_PANELS));
             addPreference(new TogglePreference(context, "Record LIVEs you watch",
-                    "Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.",
+                    "Adds a Record button to LIVE rooms. Tap it to start or stop recording. Leaving the room also stops a recording.",
                     Settings.RECORD_LIVE));
+            addPreference(new TogglePreference(context, "Automatically record LIVEs you enter",
+                    "Start recording a LIVE's stream when you enter the room. Stop won't restart it "
+                            + "until you leave and enter again. Screen recordings still need a tap "
+                            + "and Android's permission.",
+                    Settings.AUTO_RECORD_LIVE));
             addPreference(new ChoicePreference(context, "LIVE recording quality", Settings.LIVE_RECORD_QUALITY,
                     app.morphe.extension.tiktok.live.LiveRecordQuality.LABELS,
                     app.morphe.extension.tiktok.live.LiveRecordQuality.VALUES)

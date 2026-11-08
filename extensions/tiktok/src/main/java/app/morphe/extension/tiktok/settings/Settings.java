@@ -790,6 +790,12 @@ public class Settings extends BaseSettings {
      */
     public static final BooleanSetting RECORD_LIVE = new BooleanSetting("record_live", FALSE);
     /**
+     * Starts a stream recording once per visit to a visible LIVE room. Off by default; never
+     * requests screen capture automatically. Read by the LIVE room watcher, so no restart.
+     */
+    public static final BooleanSetting AUTO_RECORD_LIVE = new BooleanSetting(
+            "auto_record_live", FALSE, false, Setting.parent(RECORD_LIVE));
+    /**
      * Which of a room's streams a LIVE recording takes (#203): "room" for the quality being
      * watched, "highest" or "lowest". Read as each recording starts, so no restart.
      */

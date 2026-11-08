@@ -2188,7 +2188,6 @@ Picked %1$s. Save, then tap Pick all for more.	Scelti %1$s. Salva, poi tocca Sce
 All loaded items are picked or saved. Scroll for more.	Tutto il caricato è scelto o salvato. Scorri per altri.
 
 Record LIVEs you watch	Registra i LIVE che guardi
-Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.	Aggiunge un pulsante Registra alle stanze LIVE. La registrazione inizia quando lo tocchi e finisce quando tocchi Interrompi o esci dalla stanza. Quello che c'era prima non viene salvato.
 Record	Registra
 Stop	Interrompi
 Stop recording this LIVE	Interrompi la registrazione di questo LIVE
@@ -2640,3 +2639,6 @@ Update	Aggiorna
 Dismiss	Ignora
 # context: Last line of the update card when the release notes have more bullets than it lists; %1$s is how many
 %1$s more in the release notes	Altre %1$s nelle note di rilascio
+Adds a Record button to LIVE rooms. Tap it to start or stop recording. Leaving the room also stops a recording.	Aggiunge un pulsante Registra alle stanze LIVE. Toccalo per avviare o fermare la registrazione. La registrazione si ferma anche quando esci dalla stanza.
+Automatically record LIVEs you enter	Registra automaticamente le LIVE quando entri
+Start recording a LIVE's stream when you enter the room. Stop won't restart it until you leave and enter again. Screen recordings still need a tap and Android's permission.	Avvia la registrazione dello stream LIVE quando entri nella stanza. Dopo aver premuto Stop, non ricomincia finché non esci e rientri. La registrazione dello schermo richiede ancora un tocco e il permesso di Android.

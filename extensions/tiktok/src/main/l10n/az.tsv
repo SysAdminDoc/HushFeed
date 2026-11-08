@@ -2188,7 +2188,6 @@ Picked %1$s. Save, then tap Pick all for more.	%1$s seçildi. Saxlayın, sonra y
 All loaded items are picked or saved. Scroll for more.	Hamısı seçilib və ya saxlanılıb. Sürüşdürün.
 
 Record LIVEs you watch	Baxdığın LIVE-ları yaz
-Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.	LIVE otaqlarına Yaz düyməsi əlavə edir. Yazı ona toxunanda başlayır, Dayandır düyməsinə toxunanda və ya otaqdan çıxanda bitir. Ondan əvvəlki heç nə saxlanmır.
 Record	Yaz
 Stop	Dayandır
 Stop recording this LIVE	Bu LIVE-ın yazısını dayandır
@@ -2640,3 +2639,6 @@ Update	Yenilə
 Dismiss	Rədd et
 # context: Last line of the update card when the release notes have more bullets than it lists; %1$s is how many
 %1$s more in the release notes	Buraxılış qeydlərində daha %1$s
+Adds a Record button to LIVE rooms. Tap it to start or stop recording. Leaving the room also stops a recording.	LIVE otaqlarına Yaz düyməsi əlavə edir. Yazmağa başlamaq və ya dayandırmaq üçün toxun. Otaqdan çıxanda da yazı dayanır.
+Automatically record LIVEs you enter	Daxil olduğun LIVE-ları avtomatik yaz
+Start recording a LIVE's stream when you enter the room. Stop won't restart it until you leave and enter again. Screen recordings still need a tap and Android's permission.	LIVE otağına daxil olanda yayımın videosunu yazmağa başlayır. Dayandırdıqdan sonra otaqdan çıxıb yenidən daxil olmayınca yazı başlamır. Ekran yazısı üçün yenə toxunmaq və Android icazəsi lazımdır.

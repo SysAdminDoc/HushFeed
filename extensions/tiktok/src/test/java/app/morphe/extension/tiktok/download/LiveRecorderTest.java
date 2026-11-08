@@ -176,6 +176,52 @@ public class LiveRecorderTest {
         assertFalse("the finisher took the spool", spool.exists());
     }
 
+    @Test public void aNewRecordingRunsWhileThePreviousOneIsStillPublishing() throws Exception {
+        CountDownLatch sourceClosed = new CountDownLatch(1);
+        CountDownLatch publishing = new CountDownLatch(1);
+        CountDownLatch releasePublication = new CountDownLatch(1);
+        CountDownLatch firstSaved = new CountDownLatch(1);
+        ScriptedSource firstSource = new ScriptedSource(null, true, bytes(12_000));
+        LiveRecorder.Finisher slow = (file, target, started) -> {
+            publishing.countDown();
+            try {
+                if (!releasePublication.await(5, TimeUnit.SECONDS))
+                    throw new IOException("Timed out while testing background publication");
+            } catch (InterruptedException interrupted) {
+                Thread.currentThread().interrupt();
+                throw new IOException(interrupted);
+            }
+            return new LiveRecorder.Published("first.mp4", "first");
+        };
+        LiveRecorder first = new LiveRecorder(TARGET, spool, firstSource, slow,
+                result -> firstSaved.countDown(), () -> sourceClosed.countDown(),
+                clock, 1L << 30);
+        first.start();
+        assertTrue(firstSource.pumping.await(5, TimeUnit.SECONDS));
+        first.stop(LiveRecorder.End.STOPPED);
+        assertTrue("source closure was signaled", sourceClosed.await(5, TimeUnit.SECONDS));
+        assertTrue("slow publication started", publishing.await(5, TimeUnit.SECONDS));
+        assertEquals("first save remains pending", 1L, firstSaved.getCount());
+
+        CountDownLatch nextDone = new CountDownLatch(1);
+        File nextSpool = folder.newFile("next.flv");
+        LiveRecorder next = new LiveRecorder(TARGET, nextSpool,
+                new ScriptedSource(null, false, bytes(12_000)),
+                (file, target, started) -> new LiveRecorder.Published("second.mp4", "second"),
+                result -> nextDone.countDown(), clock, 1L << 30);
+        try {
+            next.start();
+            assertTrue("second recording finished before first publication",
+                    nextDone.await(5, TimeUnit.SECONDS));
+            assertEquals("first publication is still pending", 1L, firstSaved.getCount());
+        } finally {
+            releasePublication.countDown();
+        }
+        assertTrue(firstSaved.await(5, TimeUnit.SECONDS));
+        assertTrue(first.join(5000));
+        assertTrue(next.join(5000));
+    }
+
     @Test public void leavingTheRoomSavesWhatWasRecorded() throws Exception {
         LiveRecorder.Result result = stopWith(LiveRecorder.End.LEFT_ROOM, new Finish(null));
         assertEquals(LiveRecorder.Outcome.SAVED, result.outcome);
@@ -196,6 +242,43 @@ public class LiveRecorderTest {
         assertEquals(LiveRecorder.Outcome.SAVED_PARTIAL, result.outcome);
         assertEquals(LiveRecorder.End.DISCONNECTED, result.end);
         assertEquals(8_000, finish.spoolBytes.get().length);
+    }
+
+    @Test public void unexpectedSourceEndIsAvailableBeforeBackgroundSavingFinishes() throws Exception {
+        CountDownLatch sourceClosed = new CountDownLatch(1);
+        CountDownLatch publishing = new CountDownLatch(1);
+        CountDownLatch releasePublication = new CountDownLatch(1);
+        CountDownLatch completed = new CountDownLatch(1);
+        AtomicReference<LiveRecorder.End> ended = new AtomicReference<>();
+        LiveRecorder[] holder = new LiveRecorder[1];
+        LiveRecorder.Finisher slow = (file, target, started) -> {
+            publishing.countDown();
+            try {
+                if (!releasePublication.await(5, TimeUnit.SECONDS))
+                    throw new IOException("Timed out waiting for publication");
+            } catch (InterruptedException interrupted) {
+                Thread.currentThread().interrupt();
+                throw new IOException(interrupted);
+            }
+            return new LiveRecorder.Published("saved.mp4", "saved");
+        };
+        holder[0] = new LiveRecorder(TARGET, spool,
+                new ScriptedSource(new IOException("Stream reset"), false, bytes(10_000)),
+                slow, result -> completed.countDown(), () -> {
+                    ended.set(holder[0].sourceEnd());
+                    sourceClosed.countDown();
+                }, clock, 1L << 30);
+        try {
+            holder[0].start();
+            assertTrue("capture stopped before saving", sourceClosed.await(5, TimeUnit.SECONDS));
+            assertEquals(LiveRecorder.End.DISCONNECTED, ended.get());
+            assertTrue(publishing.await(5, TimeUnit.SECONDS));
+            assertEquals("old MP4 is still saving", 1, completed.getCount());
+        } finally {
+            releasePublication.countDown();
+        }
+        assertTrue(completed.await(5, TimeUnit.SECONDS));
+        assertTrue(holder[0].join(5000));
     }
 
     @Test public void aStreamThatEndsByItselfSavesAPartialFile() throws Exception {

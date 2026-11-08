@@ -25,6 +25,14 @@ public final class LiveRecordingSaver {
     private LiveRecordingSaver() {
     }
 
+    /** Never run two potentially multi-gigabyte remux/publish jobs at once. */
+    private static final Object PUBLISH_LOCK = new Object();
+
+    /** Admission is delayed only for a full background-save queue, not for damaged recovery data. */
+    public static boolean backgroundSavesFull(Throwable failure) {
+        return failure instanceof RecordingRetention.BackgroundSaveLimit;
+    }
+
     /** Where recordings are saved, which is where videos are. */
     public static String folder() {
         return DownloadsPatch.getVideoDownloadPath();
@@ -32,6 +40,12 @@ public final class LiveRecordingSaver {
 
     /** Builds one recording with durable ownership before allocating source bytes. */
     public static LiveRecorder create(Context context, LiveRecorder.Target target, LiveRecorder.Listener listener) throws IOException {
+        return create(context, target, listener, null);
+    }
+
+    /** The source-closed callback releases the UI while this recording is saved in the background. */
+    public static LiveRecorder create(Context context, LiveRecorder.Target target,
+                                      LiveRecorder.Listener listener, Runnable sourceClosed) throws IOException {
         Context app = context.getApplicationContext() == null ? context : context.getApplicationContext();
         boolean flv = target.transport == LiveRecorder.Transport.FLV;
         RecordingRetention.Record record = begin(app, flv ? "flv" : "ts", target.creator);
@@ -40,20 +54,28 @@ public final class LiveRecordingSaver {
             if (!spool.createNewFile()) throw new IOException("Recording source already exists");
             LiveRecorder.Source source = flv ? new LiveStreamSources.Flv(LiveStreamSources.NETWORK, target.url)
                     : new LiveStreamSources.Hls(LiveStreamSources.NETWORK, target.url);
-            return new LiveRecorder(target, spool, source, finisher(app, record), result -> finished(record, result, listener));
+            return new LiveRecorder(target, spool, source, finisher(app, record),
+                    result -> finished(record, result, listener), () -> captureClosed(record, sourceClosed));
         } catch (IOException | RuntimeException failure) { close(record); throw failure; }
     }
 
     /** The durable owner exists before the projection is consumed or an encoder writes bytes. */
     public static LiveRecorder createScreen(Context context, LiveRecorder.Target target, boolean audio,
                                             LiveRecorder.Listener listener) throws IOException {
+        return createScreen(context, target, audio, listener, null);
+    }
+
+    public static LiveRecorder createScreen(Context context, LiveRecorder.Target target, boolean audio,
+                                            LiveRecorder.Listener listener, Runnable sourceClosed) throws IOException {
         Context app=context.getApplicationContext()==null?context:context.getApplicationContext();
         RecordingRetention.Record record=begin(app,"flv",target.creator);
         try {
             record.update("capture",true,"captureComplete",false,"screenAudio",LiveRecorder.ScreenAudio.VIDEO_ONLY.name());
             File spool=record.source();if(!spool.createNewFile())throw new IOException("Screen capture source already exists");
             ScreenSource source=new ScreenSource(app,app.getResources().getDisplayMetrics(),audio,(output,capturedAudio)->new CaptureJournal(record,output,capturedAudio));
-            return new LiveRecorder(target,spool,source,finisher(app,record),result->finished(record,result.withScreenAudio(source.screenAudio()),listener));
+            return new LiveRecorder(target, spool, source, finisher(app, record),
+                    result -> finished(record, result.withScreenAudio(source.screenAudio()), listener),
+                    () -> captureClosed(record, sourceClosed));
         } catch(IOException | RuntimeException failure){close(record);throw failure;}
     }
     private static RecordingRetention.Record begin(Context app, String format, String creator) throws IOException {
@@ -67,6 +89,12 @@ public final class LiveRecordingSaver {
             @Override public boolean usefulWithoutSpool() { return !record.get("final").isEmpty() || "true".equals(record.get("capture")); }
             @Override public boolean partial() { return "true".equals(record.get("captureIncomplete")); }
         };
+    }
+
+    private static void captureClosed(RecordingRetention.Record record, Runnable listener) throws IOException {
+        // The journal marker must reach disk before the UI can admit another recording.
+        record.update("captureClosed", true);
+        if (listener != null) listener.run();
     }
     private static void finished(RecordingRetention.Record record, LiveRecorder.Result result, LiveRecorder.Listener listener) {
         rememberStopReason(record, result.end);
@@ -93,6 +121,12 @@ public final class LiveRecordingSaver {
     }
 
     static LiveRecorder.Published publishRecord(Context app, RecordingRetention.Record record) throws IOException {
+        synchronized (PUBLISH_LOCK) {
+            return publishOne(app, record);
+        }
+    }
+
+    private static LiveRecorder.Published publishOne(Context app, RecordingRetention.Record record) throws IOException {
         if(record.quarantined)throw new IOException("Damaged recording metadata needs explicit raw export or deletion");
         if ("true".equals(record.get("legacyUnknown"))) throw new IOException("Legacy recording has no destination acknowledgement identity");
         RecordingPublication publication = new RecordingPublication(app, record);

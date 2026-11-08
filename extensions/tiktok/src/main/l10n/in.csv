@@ -2155,7 +2155,6 @@ Pick all,Pilih semua
 All loaded items are picked or saved. Scroll for more.,Semua dipilih atau disimpan. Gulir untuk lainnya.
 
 "Record LIVEs you watch","Rekam LIVE yang kamu tonton"
-"Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.","Menambahkan tombol Rekam ke ruang LIVE. Rekaman dimulai saat kamu mengetuknya dan berakhir saat kamu mengetuk Berhenti atau keluar dari ruang. Apa pun sebelum itu tidak disimpan."
 "Record","Rekam"
 "Stop","Berhenti"
 "Stop recording this LIVE","Hentikan perekaman LIVE ini"
@@ -2566,3 +2565,6 @@ Hushfeed %1$s is out,Hushfeed %1$s sudah keluar
 Update,Perbarui
 Dismiss,Abaikan
 %1$s more in the release notes,%1$s lainnya di catatan rilis
+Adds a Record button to LIVE rooms. Tap it to start or stop recording. Leaving the room also stops a recording.,Menambahkan tombol Rekam di ruang LIVE. Ketuk untuk mulai atau berhenti merekam. Rekaman juga berhenti saat kamu meninggalkan ruang.
+Automatically record LIVEs you enter,Rekam LIVE secara otomatis saat masuk
+Start recording a LIVE's stream when you enter the room. Stop won't restart it until you leave and enter again. Screen recordings still need a tap and Android's permission.,"Mulai merekam siaran LIVE saat kamu masuk ke ruangnya. Setelah dihentikan, rekaman tidak dimulai lagi sampai kamu keluar dan masuk kembali. Perekaman layar tetap memerlukan ketukan dan izin Android."

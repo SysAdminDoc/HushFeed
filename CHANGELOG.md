@@ -36,6 +36,7 @@ Every Hushfeed release, newest first.
 * `Hide Send to new group` takes the gray Send to new group button off the share sheet when you've picked two or more people, so Send separately is the only button left. It starts off and sits under `Hide the Send to row` in Hushfeed settings > Share sheet (#375).
 * `AMOLED dark theme` has a switch now. `AMOLED dark mode` in Hushfeed settings > App starts on, and turning it off brings back TikTok's own dark grays after a restart, so you can keep the patch in and still pick plain dark mode. The color you picked in the patch's options stays for when it's on. Pause Hushfeed turns it off too (#372).
 * `Make sticker` in a video's share sheet opens TikTok's own sticker editor for that video, so you can trim it, add text and save it as an animated sticker, even on videos where TikTok doesn't show its Create sticker button. If the editor can't open, the video's cover becomes the sticker like before (#214).
+* `Automatically record LIVEs you enter` starts recording a LIVE's stream the moment you walk into the room. Swipe on to the next LIVE and that one starts recording too, while the one you left finishes saving in the background. Tap Stop and it stays stopped until you leave and come back. Screen recordings still need your tap and Android's permission. It starts off and sits under `Record LIVEs you watch` in Hushfeed settings > Playback. Thanks to Hiiva for building it (#363).
 
 ### Bug Fixes
 

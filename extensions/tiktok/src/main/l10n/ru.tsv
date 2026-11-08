@@ -2365,7 +2365,6 @@ Picked %1$s. Save, then tap Pick all for more.	Выбрано %1$s. Сохран
 All loaded items are picked or saved. Scroll for more.	Всё загруженное выбрано или сохранено. Листайте дальше.
 
 Record LIVEs you watch	Записывать LIVE, которые вы смотрите
-Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.	Добавляет в комнаты LIVE кнопку записи. Запись начинается, когда вы нажимаете её, и заканчивается, когда вы нажимаете «Стоп» или выходите из комнаты. Всё, что было до этого, не сохраняется.
 Record	Запись
 Stop	Стоп
 Stop recording this LIVE	Остановить запись этого LIVE
@@ -2817,3 +2816,6 @@ Update	Обновить
 Dismiss	Скрыть
 # context: Last line of the update card when the release notes have more bullets than it lists; %1$s is how many
 %1$s more in the release notes	Ещё %1$s в примечаниях к выпуску
+Adds a Record button to LIVE rooms. Tap it to start or stop recording. Leaving the room also stops a recording.	Добавляет кнопку записи в комнаты LIVE. Нажмите её, чтобы начать или остановить запись. При выходе из комнаты запись тоже останавливается.
+Automatically record LIVEs you enter	Автоматически записывать LIVE при входе
+Start recording a LIVE's stream when you enter the room. Stop won't restart it until you leave and enter again. Screen recordings still need a tap and Android's permission.	Начинает запись потока LIVE при входе в комнату. После остановки запись не возобновится, пока вы не выйдете и не зайдёте снова. Для записи экрана по-прежнему нужны нажатие и разрешение Android.

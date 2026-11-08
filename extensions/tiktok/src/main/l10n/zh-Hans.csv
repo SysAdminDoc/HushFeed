@@ -189,7 +189,6 @@ Added to this account.,添加到此账号.
 "Adds Export CSV and Export JSON buttons under the search box, so Search within comments must be on. They save the comments and replies loaded so far to a file you pick. Open the reply threads you want first.",在搜索框下方添加“导出 CSV”和“导出 JSON”按钮，因此必须打开“在评论中搜索”。这些按钮会把目前已加载的评论和回复保存到你选择的文件中。请先打开需要保存的回复串.
 "Adds Save cover next to Download when you share a video, so you save the cover only when you want it. While this is on, Download saves just the video, even with Save the cover as well on.",分享视频时，在“下载”旁边添加“保存封面”，让你只在需要时保存封面。启用后，“下载”只保存视频，即使“封面也保存下来”已开启.
 "Adds TikTok's translate button next to the comment count. One tap translates every comment, and another shows the originals again.",在评论计数旁边添加 TikTok 的翻译按钮。只需轻按一下即可翻译每条评论，再轻按一下即可再次显示原文.
-Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.,向 LIVE 房间添加一个录制按钮。当你点击它时录音开始，当你点击停止或离开房间时录音结束。在此之前没有任何内容被保存.
 "Adds a search box that finds comments already loaded on this video, by words or username. It doesn't search all of TikTok.",添加一个搜索框，可按单词或用户名查找已加载到该视频的评论。它不会搜索整个 TikTok.
 Ads,广告
 Advanced,高级
@@ -2564,3 +2563,6 @@ Hushfeed %1$s is out,Hushfeed %1$s 已发布
 Update,更新
 Dismiss,忽略
 %1$s more in the release notes,发布说明中还有 %1$s 项
+Adds a Record button to LIVE rooms. Tap it to start or stop recording. Leaving the room also stops a recording.,在直播间添加录制按钮。点击可开始或停止录制，离开直播间也会停止录制.
+Automatically record LIVEs you enter,进入直播间时自动录制
+Start recording a LIVE's stream when you enter the room. Stop won't restart it until you leave and enter again. Screen recordings still need a tap and Android's permission.,进入直播间时自动开始录制直播流。点击停止后，只有退出并重新进入该直播间才会再次录制。录屏仍需手动点击并获得 Android 授权.

@@ -14,7 +14,9 @@ import static org.robolectric.Shadows.shadowOf;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
@@ -32,6 +34,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowAlertDialog;
+import org.robolectric.shadows.ShadowPackageManager;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -267,6 +270,16 @@ public class UpdateNoticeTest {
     @Test public void updateOpensMorpheManager() throws Exception {
         try (ActivityController<Activity> controller = screen()) {
             Activity activity = controller.get();
+            // Manager's launcher entry is an alias whose filter has MAIN and LAUNCHER but no DEFAULT,
+            // like the real one, so only a start naming the component reaches it.
+            ComponentName alias = new ComponentName(UpdateNotice.MANAGER,
+                    UpdateNotice.MANAGER + ".MainActivity_Default");
+            ShadowPackageManager packages = shadowOf(activity.getPackageManager());
+            packages.addActivityIfNotPresent(alias);
+            IntentFilter launcher = new IntentFilter(Intent.ACTION_MAIN);
+            launcher.addCategory(Intent.CATEGORY_LAUNCHER);
+            packages.addIntentFilterForActivity(alias, launcher);
+
             assertTrue(open(activity, "0.81.0"));
             AlertDialog card = ShadowAlertDialog.getLatestAlertDialog();
             assertNotNull(card);
@@ -275,9 +288,11 @@ public class UpdateNoticeTest {
 
             Intent sent = shadowOf(activity).getNextStartedActivity();
             assertNotNull("Update opened nothing", sent);
-            assertEquals(Intent.ACTION_MAIN, sent.getAction());
-            assertEquals(UpdateNotice.MANAGER, sent.getPackage());
+            assertEquals("Update has to name Manager's launcher, a package-only start finds nothing",
+                    alias, sent.getComponent());
             assertTrue(sent.hasCategory(Intent.CATEGORY_LAUNCHER));
+            assertTrue((sent.getFlags() & Intent.FLAG_ACTIVITY_NEW_TASK) != 0);
+            assertNull("only Manager", shadowOf(activity).getNextStartedActivity());
             assertEquals("Update isn't a dismissal", "", Settings.UPDATE_DISMISSED.get());
         }
     }

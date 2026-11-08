@@ -14,9 +14,9 @@ internal const val MORPHE_MANAGER_PACKAGE = "app.morphe.manager"
 
 /**
  * Lets the patched TikTok see Morphe Manager (#377). TikTok targets Android 11 or later, so the
- * system hides every app its manifest doesn't name in a queries element, and the update card's
- * Update button got ActivityNotFoundException for an installed Manager and fell back to the
- * release page. TikTok's manifest already has several queries elements; this adds one more,
+ * system hides every app its manifest doesn't name in a queries element: the update card's Update
+ * button gets no launch intent for an installed Manager and falls back to the release page.
+ * TikTok's manifest already has several queries elements; this adds one more,
  * before the application, unless a build already names Manager.
  */
 internal fun declareManagerQuery(xml: Document) {

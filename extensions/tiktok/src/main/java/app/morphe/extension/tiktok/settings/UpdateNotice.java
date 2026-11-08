@@ -301,18 +301,21 @@ public final class UpdateNotice {
     /**
      * Morphe Manager when it's installed, else the release page in the browser. TikTok sees Manager
      * only because the Settings patch names it in a manifest queries element; without that, Android
-     * 11 and later answer ActivityNotFoundException for an installed Manager too.
+     * 11 and later hide an installed Manager too.
+     *
+     * <p>Manager starts by the component its launch intent names, the way a home screen starts it.
+     * A start that names only the package is resolved with MATCH_DEFAULT_ONLY, and Manager's
+     * launcher aliases carry no DEFAULT category, so on a phone that start found nothing (#377).
      */
     static void openUpdate(Activity activity, String tag) {
-        Intent manager = new Intent(Intent.ACTION_MAIN)
-                .addCategory(Intent.CATEGORY_LAUNCHER)
-                .setPackage(MANAGER)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         try {
-            activity.startActivity(manager);
-            return;
+            Intent manager = activity.getPackageManager().getLaunchIntentForPackage(MANAGER);
+            if (manager != null) {
+                activity.startActivity(manager.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                return;
+            }
         } catch (ActivityNotFoundException | SecurityException notThere) {
-            // No Manager on this phone: the release page has the notes and the files.
+            // Manager went away or refused: the release page has the notes and the files.
         }
         try {
             activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(RELEASE_PAGE + tag))

@@ -1671,6 +1671,63 @@ internal fun hookGuideBubble(constructor: MutableMethod) {
     )
 }
 
+private const val ANDROID_THEME = "Landroid/content/res/Resources\$Theme;"
+
+/**
+ * LIVE's themed fragment base being created (#362). It hands its context, in a room the room
+ * activity, to TikTok's LIVE color theme (X.0JgL.LIZ on 47.7.3), which applies one of LIVE's color
+ * theme styles to that context's theme without force. Those styles define attributes the room's
+ * views look up, the gift guide bubble's text among them, and they reach the room after the room
+ * hook took its light copy.
+ */
+internal object LiveThemedFragmentCreateFingerprint : Fingerprint(
+    definingClass = LIVE_THEMED_FRAGMENT,
+    name = "onCreate",
+    returnType = "V",
+    parameters = listOf("Landroid/os/Bundle;"),
+)
+
+/** TikTok's LIVE color theme: the one static call taking a Context and a boolean that [onCreate] makes, or null. */
+internal fun liveColorTheme(onCreate: Method): MethodReference? =
+    onCreate.implementation?.instructions?.mapNotNull { instruction ->
+        ((instruction as? ReferenceInstruction)?.reference as? MethodReference)?.takeIf {
+            instruction.opcode == Opcode.INVOKE_STATIC && it.returnType == "V" &&
+                it.parameterTypes.map(CharSequence::toString) == listOf("Landroid/content/Context;", "Z")
+        }
+    }?.distinct()?.singleOrNull()
+
+/**
+ * Sends every style [method] applies to a theme through the extension, which applies it with the
+ * same force, then to a darkened room's light copy too when the theme is that room's (#362). The
+ * call keeps its registers and its place, so nothing that branches onto it moves, and the boolean
+ * goes over as an int. Returns how many calls it changed.
+ */
+internal fun hookRoomStyles(method: MutableMethod): Int {
+    val instructions = method.implementation?.instructions?.toList() ?: return 0
+    val target = "$PANEL_THEME->roomStyle(${ANDROID_THEME}II)V"
+    var changed = 0
+    instructions.forEachIndexed { index, instruction ->
+        val call = (instruction as? ReferenceInstruction)?.reference as? MethodReference ?: return@forEachIndexed
+        if (call.definingClass != ANDROID_THEME || call.name != "applyStyle" || call.returnType != "V" ||
+            call.parameterTypes.map(CharSequence::toString) != listOf("I", "Z")
+        ) {
+            return@forEachIndexed
+        }
+        val replacement = when (instruction.opcode) {
+            Opcode.INVOKE_VIRTUAL -> (instruction as FiveRegisterInstruction).let {
+                "invoke-static {v${it.registerC}, v${it.registerD}, v${it.registerE}}, $target"
+            }
+            Opcode.INVOKE_VIRTUAL_RANGE -> (instruction as RegisterRangeInstruction).let {
+                "invoke-static/range {v${it.startRegister} .. v${it.startRegister + 2}}, $target"
+            }
+            else -> return@forEachIndexed
+        }
+        method.replaceInstruction(index, replacement)
+        changed++
+    }
+    return changed
+}
+
 private const val SET_BACKGROUND_RESOURCE = "Landroid/view/View;->setBackgroundResource(I)V"
 
 /**
@@ -2321,6 +2378,28 @@ val liveControlsPatch = bytecodePatch(
         hookGuideBubble(mutableClassDefBy(bubble).methods.single {
             it.name == "<init>" && it.parameterTypes.map(CharSequence::toString) == listOf("Landroid/content/Context;")
         })
+        // That light copy is taken before the room's color scheme styles, the style its base adds
+        // in onCreate and TikTok's LIVE color theme, which the room's LIVE fragments apply as
+        // they're created. The bubble inflated over a copy without them threw on its text (S22,
+        // 2026-11-08), so each of those calls goes through the extension, which gives the copy
+        // the style too.
+        if (hookRoomStyles(LivePlayActivityThemeFingerprint.method) == 0) {
+            throw PatchException("LIVE controls: the room's setTheme applies no color scheme style")
+        }
+        val roomBase = mutableClassDefBy(LIVE_PLAY_ACTIVITY).superclass
+            ?: throw PatchException("LIVE controls: the room has no base class")
+        val roomCreate = mutableClassDefBy(roomBase).methods.singleOrNull {
+            it.name == "onCreate" && it.returnType == "V" &&
+                it.parameterTypes.map(CharSequence::toString) == listOf("Landroid/os/Bundle;")
+        } ?: throw PatchException("LIVE controls: the room's base has no onCreate")
+        if (hookRoomStyles(roomCreate) == 0) {
+            throw PatchException("LIVE controls: the room's base applies no style in onCreate")
+        }
+        val colorTheme = liveColorTheme(LiveThemedFragmentCreateFingerprint.method)
+            ?: throw PatchException("LIVE controls: TikTok's LIVE color theme wasn't found")
+        if (hookRoomStyles(mutableClassDefBy(colorTheme.definingClass).findMutableMethodOf(colorTheme)) == 0) {
+            throw PatchException("LIVE controls: TikTok's LIVE color theme applies no style")
+        }
         // Its group chat row is the same kind of fixed white shape under text in the card theme's
         // colors (Login2, 2026-10-20), so the extension gives it the event box's fill.
         hookGroupChat(mutableClassDefBy(LiveProfileGroupChatFingerprint.method.definingClass).methods)

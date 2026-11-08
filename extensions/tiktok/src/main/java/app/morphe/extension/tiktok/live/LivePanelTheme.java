@@ -146,6 +146,7 @@ public final class LivePanelTheme {
     private static volatile boolean viewContextFailureLogged;
     private static volatile boolean sparkFailureLogged;
     private static volatile boolean bubbleFailureLogged;
+    private static volatile boolean roomStyleFailureLogged;
 
     private LivePanelTheme() {
     }
@@ -888,8 +889,9 @@ public final class LivePanelTheme {
      * bubble white, and its text takes the color the room's theme gives text by default, which over
      * a room the room hook darkened is the dark app theme's white, so the text was white on white
      * (#362). While Dark LIVE panels is on in dark mode, the bubble inflates over the room's theme as
-     * it was before the dark app theme went on, as TikTok shows it in light mode. A room the hook
-     * never darkened, and anything that fails, keeps TikTok's context.
+     * it was before the dark app theme went on, as TikTok shows it in light mode, with every style
+     * TikTok gave the room since ({@link #roomStyle}). A room the hook never darkened, and anything
+     * that fails, keeps TikTok's context.
      */
     public static Context lightRoomView(Context context) {
         try {
@@ -948,6 +950,37 @@ public final class LivePanelTheme {
             room.getTheme().applyStyle(theme, true);
         } catch (Throwable failure) {
             Logger.printException(() -> "Could not darken a LIVE room", failure);
+        }
+    }
+
+    /**
+     * Called in place of each style TikTok applies to a LIVE room's theme after the room hook has
+     * taken its light copy: the room's color scheme styles in its setTheme, the style its base
+     * applies in onCreate, and TikTok's LIVE color theme, which the room's LIVE fragments apply
+     * when they're created. Applies the style as TikTok asked, then to the room's light copy too,
+     * so the copy has every attribute the room has. The LIVE color theme defines attributes the
+     * room's views look up, and a gift guide bubble inflated over a copy without them threw on
+     * its text (#362, S22, 2026-11-08). [force] is non-zero for TikTok's force.
+     */
+    public static void roomStyle(Resources.Theme theme, int style, int force) {
+        theme.applyStyle(style, force != 0);
+        try {
+            if (LIGHT_ROOMS.isEmpty()) {
+                return;
+            }
+            synchronized (LIGHT_ROOMS) {
+                for (Map.Entry<Activity, Resources.Theme> kept : LIGHT_ROOMS.entrySet()) {
+                    Activity room = kept.getKey();
+                    if (room != null && room.getTheme() == theme) {
+                        kept.getValue().applyStyle(style, force != 0);
+                    }
+                }
+            }
+        } catch (Throwable failure) {
+            if (!roomStyleFailureLogged) {
+                roomStyleFailureLogged = true;
+                Logger.printException(() -> "Could not give a LIVE room's light copy its style", failure);
+            }
         }
     }
 

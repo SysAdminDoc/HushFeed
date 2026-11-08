@@ -17,6 +17,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
@@ -414,6 +415,45 @@ public class LivePanelThemeTest {
         ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, false));
         SettingsStatus.liveControlsEnabled = false;
         assertSame("without the patch", live, LivePanelTheme.lightRoomView(live));
+    }
+
+    /**
+     * #362, S22 2026-11-08: TikTok applies its LIVE color theme to the room after the room hook took
+     * the light copy, so the bubble inflated over a copy missing attributes its text looks up and
+     * threw. Every style the room gets afterwards reaches the copy too, with TikTok's force.
+     */
+    @Test public void stylesTheRoomGetsAfterItsLightCopyReachTheCopy() {
+        RuntimeEnvironment.setQualifiers("+night");
+        Settings.DARK_LIVE_PANELS.save(true);
+        Activity live = room();
+        int roomText = textColor(live);
+        LivePanelTheme.darkLiveRoom(live, android.R.style.Theme_Black);
+        assertTrue("the room has no window animation of its own", !hasOverlay(LivePanelTheme.lightRoomView(live)));
+
+        LivePanelTheme.roomStyle(live.getTheme(), PARTIAL_OVERLAY, 0);
+        assertTrue("TikTok's style still reaches the room", hasOverlay(live));
+        Context bubble = LivePanelTheme.lightRoomView(live);
+        assertTrue("and the room's light copy", hasOverlay(bubble));
+        assertEquals("the copy keeps the room's light text", roomText, textColor(bubble));
+
+        LivePanelTheme.roomStyle(live.getTheme(), android.R.style.Theme_Black, 0);
+        assertEquals("without force a style leaves what the copy has", roomText, textColor(LivePanelTheme.lightRoomView(live)));
+        LivePanelTheme.roomStyle(live.getTheme(), android.R.style.Theme_Black, 1);
+        assertTrue("with force it replaces it, as in the room", roomText != textColor(LivePanelTheme.lightRoomView(live)));
+
+        // Another room's copy and any other theme are left to TikTok's own call.
+        Activity other = room();
+        LivePanelTheme.darkLiveRoom(other, android.R.style.Theme_Black);
+        Resources.Theme loose = RuntimeEnvironment.getApplication().getResources().newTheme();
+        LivePanelTheme.roomStyle(loose, PARTIAL_OVERLAY, 0);
+        assertTrue("a theme with no room still gets the style", loose.resolveAttribute(android.R.attr.windowEnterAnimation, new TypedValue(), true));
+        assertTrue("another room's copy is untouched", !hasOverlay(LivePanelTheme.lightRoomView(other)));
+
+        // With nothing kept, the call is TikTok's applyStyle alone.
+        ReflectionHelpers.<Map<?, ?>>getStaticField(LivePanelTheme.class, "LIGHT_ROOMS").clear();
+        Activity plain = room();
+        LivePanelTheme.roomStyle(plain.getTheme(), PARTIAL_OVERLAY, 0);
+        assertTrue(hasOverlay(plain));
     }
 
     /** Sets only the window animations, the way TikTok's light LIVE overlay leaves most of a theme alone. */

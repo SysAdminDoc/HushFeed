@@ -5923,6 +5923,33 @@
           "values": null
         },
         {
+          "key": "invisible_controls_button",
+          "title": "Default: invisible controls button",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "invisible_controls_on",
+          "title": "Default: invisible controls on",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "invisible_controls_keep_caption",
+          "title": "Default: invisible controls keep caption",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "see_through_bottom_bar",
           "title": "Default: see through bottom bar",
           "description": null,

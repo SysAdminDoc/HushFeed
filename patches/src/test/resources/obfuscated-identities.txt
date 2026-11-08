@@ -332,3 +332,5 @@ patches/src/main/kotlin/app/morphe/patches/tiktok/profile/LocalProfileAppearance
 patches/src/main/kotlin/app/morphe/patches/tiktok/profile/LocalProfileAppearanceHooks.kt|LLIIII
 patches/src/main/kotlin/app/morphe/patches/tiktok/profile/LocalProfileAppearanceHooks.kt|LLJJLIIIJLLLLLLLZ
 patches/src/main/kotlin/app/morphe/patches/tiktok/profile/LocalProfileAppearanceHooks.kt|LLJLLL
+# Not a TikTok name: SimpleDateFormat's stand-alone full month pattern, used for the Liked grid's month labels.
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/LikedJump.java|LLLL

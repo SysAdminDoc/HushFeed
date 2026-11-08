@@ -355,7 +355,7 @@ val settingsPatch = bytecodePatch(
     default = true,
 ) {
     category("Settings")
-    dependsOn(sharedExtensionPatch, forYouShowRepairPatch)
+    dependsOn(sharedExtensionPatch, forYouShowRepairPatch, managerQueryPatch)
 
     compatibleWith(*AppCompatibilities.tiktok())
 

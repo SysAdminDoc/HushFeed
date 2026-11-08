@@ -9297,7 +9297,8 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
-        "RawResourcePatch"
+        "RawResourcePatch",
+        "ResourcePatch"
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
@@ -9475,6 +9476,15 @@
           "required": false,
           "type": "kotlin.Boolean",
           "default": true,
+          "values": null
+        },
+        {
+          "key": "check_for_updates",
+          "title": "Default: check for updates",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
           "values": null
         }
       ]

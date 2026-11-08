@@ -298,7 +298,11 @@ public final class UpdateNotice {
         }
     }
 
-    /** Morphe Manager when it's installed, else the release page in the browser. */
+    /**
+     * Morphe Manager when it's installed, else the release page in the browser. TikTok sees Manager
+     * only because the Settings patch names it in a manifest queries element; without that, Android
+     * 11 and later answer ActivityNotFoundException for an installed Manager too.
+     */
     static void openUpdate(Activity activity, String tag) {
         Intent manager = new Intent(Intent.ACTION_MAIN)
                 .addCategory(Intent.CATEGORY_LAUNCHER)

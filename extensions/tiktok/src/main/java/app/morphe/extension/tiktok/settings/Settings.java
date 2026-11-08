@@ -378,8 +378,9 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting STARTUP_MESSAGE_DISMISSIBLE = new BooleanSetting(
             "startup_message_dismissible", TRUE, false, Setting.parent(STARTUP_MESSAGE));
     /**
-     * The message its Don't show again button was pressed on. Changing the title or text shows it
-     * again. Not in backups: a restore on another phone shows the message once more.
+     * The message its Don't show again button was pressed on, with when TikTok was installed or last
+     * updated. Changing the title or text, or a new install or update, shows it again. Not in
+     * backups: a restore on another phone shows the message once more.
      */
     public static final StringSetting STARTUP_MESSAGE_HIDDEN = new StringSetting(
             "startup_message_hidden", "", false, false);

@@ -156,8 +156,12 @@ public final class OriginalSoundDownloads {
         // Read as the save is accepted: a forget in settings while it runs leaves it unrecorded.
         long archiveGeneration = SavedVideoArchive.generation();
         AtomicBoolean asking = new AtomicBoolean();
+        // With the check on, "Saving" waits for its answer: said at once, it would show just
+        // before an already-saved choice for a sound that is never fetched (#356).
+        boolean checking = record != null && check;
+        String saying = L10n.t("Saving the sound");
         MediaJobScheduler.Job job = MediaJobScheduler.submit("original-sound", key, () -> {
-            if (record != null && check) {
+            if (checking) {
                 Runnable saveAgain = () -> {
                     ACTIVE.remove(id);
                     queue(app, aweme, sources, id, false);
@@ -168,6 +172,7 @@ public final class OriginalSoundDownloads {
                 if (found == SavedVideoArchive.Check.OFFERED) return;
                 asking.set(false);
                 if (found == SavedVideoArchive.Check.FAILED) return;
+                Utils.showToastShort(saying);
             }
             File fetched = null, encoded = null;
             try {
@@ -214,7 +219,6 @@ public final class OriginalSoundDownloads {
         }, () -> {
             if (!asking.get()) ACTIVE.remove(id);
         });
-        String saying = L10n.t("Saving the sound");
-        MediaJobScheduler.acknowledge(job, saying, saying);
+        MediaJobScheduler.acknowledge(job, checking ? null : saying, saying);
     }
 }

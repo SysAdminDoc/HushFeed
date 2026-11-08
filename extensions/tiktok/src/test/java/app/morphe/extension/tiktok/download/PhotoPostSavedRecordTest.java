@@ -5,6 +5,7 @@
 package app.morphe.extension.tiktok.download;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -121,14 +122,19 @@ public class PhotoPostSavedRecordTest {
         var post = post("photos-again", 2);
         assertTrue(OriginalPhotos.startPhotos(post, null, false));
         finish();
+        assertTrue("new photos said nothing as they saved", ShadowToast.showedToast("Saving 2 original photos"));
         tried.clear();
 
+        ShadowToast.reset();
         assertTrue(OriginalPhotos.startPhotos(post, null, false));
         finish();
         assertEquals("the photos were saved a second time with no word", List.of(), tried);
         AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
         assertNotNull("no already-saved choice came up", dialog);
         assertTrue(dialog.isShowing());
+        // #356: "Saving" said before the choice reads as a second copy on its way.
+        assertFalse("photos never fetched said they were saving",
+                ShadowToast.showedToast("Saving 2 original photos"));
 
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
         finish();
@@ -148,11 +154,16 @@ public class PhotoPostSavedRecordTest {
         assertNotNull("the slideshow video never reached the record",
                 SavedVideoArchive.find(context, "video-recorded"));
         assertTrue(marked("video-recorded"));
+        assertTrue("a new video said nothing as it was made",
+                ShadowToast.showedToast("Making a video of the photos"));
 
+        ShadowToast.reset();
         assertTrue(SlideshowVideo.start(post, null));
         finish();
         assertEquals("a second video was made with no word", 1, made[0]);
         assertNotNull("no already-saved choice came up", ShadowAlertDialog.getLatestAlertDialog());
+        assertFalse("a video never made said it was being made",
+                ShadowToast.showedToast("Making a video of the photos"));
     }
 
     @Test public void withTheCheckOffNothingIsRecorded() throws Exception {

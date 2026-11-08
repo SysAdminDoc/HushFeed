@@ -31,6 +31,7 @@ Every Hushfeed release, newest first.
 
 ### Bug Fixes
 
+* With `Check for already-saved videos` on, saving something you already have no longer flashes "Saving" right before Open or Save again comes up. That note now waits until the check finds it's new, for sounds, original photos and photo posts saved as a video (#356).
 * A LIVE quality you pick stays picked after TikTok restarts as soon as `Offer LIVE quality in more rooms` is on. `Keep the LIVE quality after TikTok restarts` used to start off as well, so the next launch opened rooms at Auto again. It starts on now, and you can still turn it off (#353).
 * With `Hide CAPTCHA popups` off, which is how it starts, a puzzle that shows while you're just browsing (in a LIVE room, say) now gets a short note naming that switch. It shows once a session, and never for a puzzle the switch would show anyway, like a sign-in check (#87).
 * Hiding Report from the share sheet doesn't take `Block this creator` with it anymore. Block sits where Report would have been, in the share sheet and in the long-press menu (#367).

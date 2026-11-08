@@ -175,11 +175,15 @@ public final class SlideshowVideo {
         // Read as the save is accepted: a forget in settings while it runs leaves it unrecorded.
         long archiveGeneration = SavedVideoArchive.generation();
         AtomicBoolean asking = new AtomicBoolean();
+        // With the check on, "Making" waits for its answer, so it never shows just before an
+        // already-saved choice for a video that is never made (#356).
+        boolean checking = checkSaved && check;
+        String making = L10n.t("Making a video of the photos");
         MediaJobScheduler.Job job = progress.submit("photo video", key, () -> {
             MediaFileWriter.Saved[] saved = {null};
             boolean[] silent = {false};
             try {
-                if (checkSaved && check) {
+                if (checking) {
                     Runnable saveAgain = () -> {
                         ACTIVE.remove(id);
                         start(aweme, indices, false, seconds);
@@ -193,6 +197,7 @@ public final class SlideshowVideo {
                     }
                     asking.set(false);
                     if (found == SavedVideoArchive.Check.FAILED) return;
+                    Utils.showToastShort(making);
                 }
                 SaveProgress.Outcome outcome = progress.run(index ->
                         saved[0] = make(app, sources, sound, seconds, name, path, progress, silent));
@@ -216,7 +221,7 @@ public final class SlideshowVideo {
             if (!asking.get()) ACTIVE.remove(id);
         });
         if (job == null) return true;
-        progress.acknowledge(L10n.t("Making a video of the photos"), L10n.t("Waiting to save video"));
+        progress.acknowledge(checking ? null : making, L10n.t("Waiting to save video"));
         return true;
     }
 

@@ -228,13 +228,17 @@ public final class OriginalPhotos {
         // Read as the save is accepted: a forget in settings while it runs leaves it unrecorded.
         long archiveGeneration = SavedVideoArchive.generation();
         AtomicBoolean asking = new AtomicBoolean();
+        // With the check on, "Saving" waits for its answer, so it never shows just before an
+        // already-saved choice for photos that are never fetched (#356).
+        boolean checking = checkSaved && check;
+        String saying = L10n.quantity(app, chosen.size(), "Saving one original photo", "Saving %1$s original photos");
         MediaJobScheduler.Job job = progress.submit("original photos", key, () -> {
             // The banner's Open lands on the newest photo, which is where the gallery puts the rest.
             MediaFileWriter.Saved[] last = {null};
             // The record's Open goes to the first photo that landed.
             MediaFileWriter.Saved[] first = {null};
             try {
-                if (checkSaved && check) {
+                if (checking) {
                     Runnable saveAgain = () -> {
                         ACTIVE.remove(run.id);
                         if (!queue(app, run, false)) Utils.showToastLong(L10n.t("None of the photos could be saved. Try again."));
@@ -248,6 +252,7 @@ public final class OriginalPhotos {
                     }
                     asking.set(false);
                     if (found == SavedVideoArchive.Check.FAILED) return;
+                    Utils.showToastShort(saying);
                 }
                 // A photo that fails is skipped and the rest still land, and the result says what did.
                 List<Integer> landed = new ArrayList<>();
@@ -282,8 +287,7 @@ public final class OriginalPhotos {
             if (!asking.get()) ACTIVE.remove(run.id);
         });
         if (job == null) return false;
-        String saying = L10n.quantity(app, chosen.size(), "Saving one original photo", "Saving %1$s original photos");
-        progress.acknowledge(saying, saying);
+        progress.acknowledge(checking ? null : saying, saying);
         return true;
     }
 

@@ -5,6 +5,7 @@
 package app.morphe.extension.tiktok.download;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -30,6 +31,7 @@ import org.robolectric.Shadows;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowAlertDialog;
+import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.ReflectionHelpers;
 
 import java.io.File;
@@ -147,6 +149,20 @@ public class OriginalSoundAlreadySavedTest {
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
         finish();
         assertEquals("Save again saves it", 2, fetched.size());
+    }
+
+    @Test public void savingIsSaidOnlyOnceTheCheckFindsNothing() throws Exception {
+        ShadowToast.reset();
+        OriginalSoundDownloads.start(post("sound-video-6", "6805"), owner.get());
+        finish();
+        assertTrue("a new sound said nothing as it saved", ShadowToast.showedToast("Saving the sound"));
+
+        ShadowToast.reset();
+        OriginalSoundDownloads.start(post("sound-video-7", "6805"), owner.get());
+        finish();
+        assertNotNull("no already-saved choice came up", ShadowAlertDialog.getLatestAlertDialog());
+        assertFalse("a sound that was never fetched said it was saving",
+                ShadowToast.showedToast("Saving the sound"));
     }
 
     @Test public void aDifferentSoundFromTheSameVideoIsNotTakenForIt() throws Exception {

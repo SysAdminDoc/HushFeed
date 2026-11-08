@@ -42,6 +42,10 @@ public final class OverlayGlyphDrawable extends Drawable {
         SPEAKER_OFF,
         /** An arrow down into a tray: save the video. */
         DOWNLOAD,
+        /** An open eye: the controls are in sight. */
+        EYE,
+        /** An eye with a slash through it: the controls are invisible. */
+        EYE_OFF,
     }
 
     /** Each glyph sits inside this fraction of the shorter side. */
@@ -122,6 +126,25 @@ public final class OverlayGlyphDrawable extends Drawable {
                 canvas.drawLine(cx - wing, tip - wing, cx, tip, paint);
                 canvas.drawLine(cx + wing, tip - wing, cx, tip, paint);
                 canvas.drawLine(cx - r * 0.75f, tray, cx + r * 0.75f, tray, paint);
+                break;
+            }
+
+            case EYE:
+            case EYE_OFF: {
+                // Two curves meeting at the corners make the lids; a filled dot is the pupil.
+                Path lids = new Path();
+                lids.moveTo(cx - r, cy);
+                lids.quadTo(cx, cy - r * 1.1f, cx + r, cy);
+                lids.quadTo(cx, cy + r * 1.1f, cx - r, cy);
+                lids.close();
+                canvas.drawPath(lids, paint);
+                Paint filled = new Paint(paint);
+                filled.setStyle(Paint.Style.FILL);
+                canvas.drawCircle(cx, cy, r * 0.3f, filled);
+                if (shape == Shape.EYE_OFF) {
+                    float slash = r * 0.85f;
+                    canvas.drawLine(cx - slash, cy - slash, cx + slash, cy + slash, paint);
+                }
                 break;
             }
 

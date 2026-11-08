@@ -2609,3 +2609,12 @@ Hide the expand button in comments	Ocultar el botón de ampliar en los comentari
 Hides the X at the top of the comments, and the buttons next to it move over to fill the gap. Use Back or swipe down to close comments.	Oculta la X de arriba de los comentarios, y los botones de al lado se mueven para ocupar el hueco. Usa Atrás o desliza hacia abajo para cerrar los comentarios.
 # context: Summary under the expand button switch; Open the comments at full height is another switch's title
 Hides the button that stretches the comments over the whole screen. Turn on Open the comments at full height to have them open that way.	Oculta el botón que extiende los comentarios a toda la pantalla. Activa Abrir los comentarios a toda la altura para que se abran así.
+# context: Switch title in the Clear display section; the button is a small eye drawn over the main feed
+Invisible controls button	Botón de controles invisibles
+A small eye button at the top left of the main feed. Tap it and the buttons, caption and tabs go invisible but still take taps, which helps against burn-in on OLED screens. Tap it again to bring them back. They stay the way you left them across videos and restarts. Videos you open from a profile or search keep their controls.	Un pequeño botón con un ojo arriba a la izquierda del feed principal. Tócalo y los botones, la descripción y las pestañas se vuelven invisibles, pero siguen respondiendo al toque, lo que ayuda contra el quemado de pantalla en pantallas OLED. Tócalo otra vez para que vuelvan. Se quedan como los dejaste entre vídeos y reinicios. Los vídeos que abres desde un perfil o la búsqueda conservan sus controles.
+Keep the caption in sight	Mantener la descripción a la vista
+While the controls are invisible on the main feed, the creator's name, the caption and the music line stay in sight.	Mientras los controles son invisibles en el feed principal, el nombre del creador, la descripción y la línea de música siguen a la vista.
+# context: Spoken label of that eye button while the controls show
+Make the controls invisible	Hacer invisibles los controles
+# context: Spoken label of that eye button while the controls are invisible
+Show the controls	Mostrar los controles

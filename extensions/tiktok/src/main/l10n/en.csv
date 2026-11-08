@@ -157,6 +157,7 @@ A press on Share under a video copies its link instead of opening the share shee
 "A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.","A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched."
 A removal is already running,A removal is already running
 "A screen's layout is recorded. Export the diagnostic report to send it, or tap to record another.","A screen's layout is recorded. Export the diagnostic report to send it, or tap to record another."
+"A small eye button at the top left of the main feed. Tap it and the buttons, caption and tabs go invisible but still take taps, which helps against burn-in on OLED screens. Tap it again to bring them back. They stay the way you left them across videos and restarts. Videos you open from a profile or search keep their controls.","A small eye button at the top left of the main feed. Tap it and the buttons, caption and tabs go invisible but still take taps, which helps against burn-in on OLED screens. Tap it again to bring them back. They stay the way you left them across videos and restarts. Videos you open from a profile or search keep their controls."
 "A small label on the feed shows the minutes or videos left of today's budget, whichever is closer to running out.","A small label on the feed shows the minutes or videos left of today's budget, whichever is closer to running out."
 A tap on Home or on the For You tab while For You is showing no longer reloads it. The video you're on stays.,A tap on Home or on the For You tab while For You is showing no longer reloads it. The video you're on stays.
 A video you paused stays paused when you come back to the app instead of starting again. One you left playing starts as usual. It works on Android 10 and newer.,A video you paused stays paused when you come back to the app instead of starting again. One you left playing starts as usual. It works on Android 10 and newer.
@@ -1031,6 +1032,7 @@ Inserted cards,Inserted cards
 "Install one, then come back here.","Install one, then come back here."
 "Instead of TikTok's Watch history. A tap on Profile works as before. If holding Profile switches accounts for you, this takes that press.","Instead of TikTok's Watch history. A tap on Profile works as before. If holding Profile switches accounts for you, this takes that press."
 Instead of these settings. The list has a button that brings you back here.,Instead of these settings. The list has a button that brings you back here.
+Invisible controls button,Invisible controls button
 Joined,Joined
 Joined %s,Joined %s
 Jump to a date,Jump to a date
@@ -1060,6 +1062,7 @@ Keep the Favorites tab,Keep the Favorites tab
 Keep the For You feed on your real SIM,Keep the For You feed on your real SIM
 Keep the LIVE quality after TikTok restarts,Keep the LIVE quality after TikTok restarts
 "Keep the TikTok Minis entry in the menu your profile's top right button opens, and hide the row of app icons under it so the menu is shorter.","Keep the TikTok Minis entry in the menu your profile's top right button opens, and hide the row of app icons under it so the menu is shorter."
+Keep the caption in sight,Keep the caption in sight
 Keep the clock and status icons off the screen while TikTok is open. Swipe down from the top to peek at them.,Keep the clock and status icons off the screen while TikTok is open. Swipe down from the top to peek at them.
 Keep the language picked in TikTok,Keep the language picked in TikTok
 Keep the music disc still,Keep the music disc still
@@ -1196,6 +1199,7 @@ MP3 didn't work. Saving TikTok's own file.,MP3 didn't work. Saving TikTok's own 
 Make a sticker from a photo,Make a sticker from a photo
 Make it yours.,Make it yours.
 Make sticker,Make sticker
+Make the controls invisible,Make the controls invisible
 "Makes TikTok see the country and carrier you pick as your SIM. Your IP address, account history and language don't change, and any one of them can make TikTok keep your current region. Restart TikTok to see the change.","Makes TikTok see the country and carrier you pick as your SIM. Your IP address, account history and language don't change, and any one of them can make TikTok keep your current region. Restart TikTok to see the change."
 "Makes TikTok see the country you pick as your SIM. Your IP address, account history and language don't change, and any one of them can make TikTok keep your current region. Restart TikTok to see the change.","Makes TikTok see the country you pick as your SIM. Your IP address, account history and language don't change, and any one of them can make TikTok keep your current region. Restart TikTok to see the change."
 "Makes the heart easier to tap by using the empty space around it. The icon and spacing look the same, and Reply and other buttons keep their own space.","Makes the heart easier to tap by using the empty space around it. The icon and spacing look the same, and Reply and other buttons keep their own space."
@@ -1886,6 +1890,7 @@ Show settings by category,Show settings by category
 Show the Not interested button,Show the Not interested button
 Show the block button on videos,Show the block button on videos
 Show the block sound button,Show the block sound button
+Show the controls,Show the controls
 Show the country a commenter's account is set to after the comment's time. Comments from accounts TikTok sends no country for stay as they are.,Show the country a commenter's account is set to after the comment's time. Comments from accounts TikTok sends no country for stay as they are.
 Show the country a video was posted from next to the creator's name.,Show the country a video was posted from next to the creator's name.
 Show the country as a flag,Show the country as a flag
@@ -2487,6 +2492,7 @@ When to send,When to send
 Where the time goes,Where the time goes
 "While Clear display is on, also hide the progress bar, the close button and the pause and speed buttons at the bottom. You can still drag along the bottom edge to move through the video. To leave Clear display, press and hold the video and tap Restore display, or pinch the screen.","While Clear display is on, also hide the progress bar, the close button and the pause and speed buttons at the bottom. You can still drag along the bottom edge to move through the video. To leave Clear display, press and hold the video and tap Restore display, or pinch the screen."
 "While diagnostic logging is on, a message names the part of Hushfeed that failed. Off keeps failures in the report only.","While diagnostic logging is on, a message names the part of Hushfeed that failed. Off keeps failures in the report only."
+"While the controls are invisible on the main feed, the creator's name, the caption and the music line stay in sight.","While the controls are invisible on the main feed, the creator's name, the caption and the music line stay in sight."
 "While you hold a video, slide left or right to step through the speed menu's speeds, and a bubble shows the one you're on. Your next hold starts there. Letting go goes back to normal. A pull-down lock keeps the speed you slid to. On a locked video, letting go locks the new speed.","While you hold a video, slide left or right to step through the speed menu's speeds, and a bubble shows the one you're on. Your next hold starts there. Letting go goes back to normal. A pull-down lock keeps the speed you slid to. On a locked video, letting go locks the new speed."
 White,White
 Who to message,Who to message

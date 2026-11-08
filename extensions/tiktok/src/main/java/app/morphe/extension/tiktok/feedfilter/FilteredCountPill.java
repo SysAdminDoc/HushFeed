@@ -191,6 +191,19 @@ public final class FilteredCountPill {
         return params;
     }
 
+    /**
+     * Where something else at the feed's top left can start: under TikTok's top tabs, and under
+     * this label as well while it shows, so the invisible controls button (#374) doesn't cover it.
+     */
+    public static int freeTop(View root) {
+        int top = statusBar(root) + dp(root.getContext(), BELOW_STATUS_BAR_DP);
+        TextView pill = pillReference.get();
+        if (pill != null && pill.getParent() == root && pill.getVisibility() == View.VISIBLE) {
+            top += Math.max(pill.getHeight(), pill.getMeasuredHeight()) + dp(root.getContext(), 8);
+        }
+        return top;
+    }
+
     /** The status bar's height: TikTok draws the feed under it, so the label starts below it. */
     @SuppressWarnings("deprecation")
     private static int statusBar(View root) {

@@ -31,6 +31,7 @@ Every Hushfeed release, newest first.
 * The diagnostic export has a Captions line. For each For You video it says whether TikTok sent caption tracks, and when it sent none, the reason TikTok gave, like not authorized or language not supported. That way an account whose captions never show can tell whether TikTok sends any at all (#217).
 * Two new switches in Hushfeed settings > Comments, `Hide the close button in comments` and `Hide the expand button in comments`, each take one button off the top of the comments, and the buttons beside it move over into its place. Back or a swipe down still closes comments. TikTok only shows the expand button to some accounts. Both start off (#371).
 * `Hide the search button on the feed` also hides the magnifying glass TikTok puts over the shrunken video while comments are open (#371).
+* `Invisible controls button` puts a small eye at the top left of the main feed. Tap it and the buttons, caption and tabs turn invisible but keep working where they are, which helps against burn-in on OLED screens. Tap the eye again and they're back. Your choice sticks across videos and restarts. The eye stays off other tabs, comments, Clear display and videos you open from a profile or search, and Pause brings everything back. `Keep the caption in sight` under it leaves the creator's name, the caption and the music line showing. Both start off and sit in Hushfeed settings > Feed screen, under `Keep faded controls in Clear display` (#374).
 
 ### Bug Fixes
 

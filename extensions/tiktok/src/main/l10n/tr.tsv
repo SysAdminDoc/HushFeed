@@ -2609,3 +2609,12 @@ Hide the expand button in comments	Yorumlarda genişletme düğmesini gizle
 Hides the X at the top of the comments, and the buttons next to it move over to fill the gap. Use Back or swipe down to close comments.	Yorumların üstündeki X'i gizler, yanındaki düğmeler boşluğu doldurmak için kayar. Yorumları kapatmak için Geri'yi kullan veya aşağı kaydır.
 # context: Summary under the expand button switch; Open the comments at full height is another switch's title
 Hides the button that stretches the comments over the whole screen. Turn on Open the comments at full height to have them open that way.	Yorumları tüm ekrana yayan düğmeyi gizler. Yorumların hep böyle açılması için Yorumları tam yükseklikte aç'ı aç.
+# context: Switch title in the Clear display section; the button is a small eye drawn over the main feed
+Invisible controls button	Görünmez kontroller düğmesi
+A small eye button at the top left of the main feed. Tap it and the buttons, caption and tabs go invisible but still take taps, which helps against burn-in on OLED screens. Tap it again to bring them back. They stay the way you left them across videos and restarts. Videos you open from a profile or search keep their controls.	Ana akışın sol üstünde küçük bir göz düğmesi. Dokununca düğmeler, açıklama ve sekmeler görünmez olur ama dokunuşları almaya devam eder, bu da OLED ekranlarda ekran yanmasına karşı yardımcı olur. Geri getirmek için tekrar dokun. Videolar ve yeniden başlatmalar boyunca bıraktığın gibi kalırlar. Bir profilden veya aramadan açtığın videolar kontrollerini korur.
+Keep the caption in sight	Açıklamayı görünür tut
+While the controls are invisible on the main feed, the creator's name, the caption and the music line stay in sight.	Ana akışta kontroller görünmezken içerik üreticisinin adı, açıklama ve müzik satırı görünür kalır.
+# context: Spoken label of that eye button while the controls show
+Make the controls invisible	Kontrolleri görünmez yap
+# context: Spoken label of that eye button while the controls are invisible
+Show the controls	Kontrolleri göster

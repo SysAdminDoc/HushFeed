@@ -251,6 +251,10 @@ public class FeedScreenCoverageTest {
         put("keep_clear_display_seek_bar", YES, YES, NONE);
         put("fade_controls_opacity", YES, YES, NONE);
         put("fade_in_clear_display", YES, YES, NONE);
+        // The eye button sits on the main feed alone; an opened video keeps its controls (#374).
+        put("invisible_controls_button", YES, Reach.NO, NONE,
+                "Videos you open from a profile or search keep their controls.");
+        put("invisible_controls_keep_caption", YES, Reach.NO, NONE, "on the main feed");
         // The tab bar belongs to the main feed; an opened video has none (#145).
         put("see_through_bottom_bar", YES, NONE, NONE);
         // How the video under that same bar is drawn (#232).

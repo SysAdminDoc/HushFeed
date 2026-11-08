@@ -2549,3 +2549,9 @@ Hide the close button in comments,Sembunyikan tombol tutup di komentar
 Hide the expand button in comments,Sembunyikan tombol perluas di komentar
 "Hides the X at the top of the comments, and the buttons next to it move over to fill the gap. Use Back or swipe down to close comments.","Menyembunyikan X di bagian atas komentar, dan tombol di sebelahnya bergeser mengisi tempatnya. Pakai Kembali atau geser ke bawah untuk menutup komentar."
 Hides the button that stretches the comments over the whole screen. Turn on Open the comments at full height to have them open that way.,Menyembunyikan tombol yang membentangkan komentar ke seluruh layar. Nyalakan Buka komentar dengan tinggi penuh agar komentar langsung terbuka begitu.
+Invisible controls button,Tombol kontrol tak terlihat
+"A small eye button at the top left of the main feed. Tap it and the buttons, caption and tabs go invisible but still take taps, which helps against burn-in on OLED screens. Tap it again to bring them back. They stay the way you left them across videos and restarts. Videos you open from a profile or search keep their controls.","Tombol mata kecil di kiri atas feed utama. Ketuk dan tombol, keterangan, serta tab jadi tak terlihat tetapi tetap menerima ketukan, yang membantu mencegah burn-in di layar OLED. Ketuk lagi untuk memunculkannya kembali. Semuanya tetap seperti yang kamu tinggalkan di setiap video dan setelah aplikasi dibuka ulang. Video yang kamu buka dari profil atau pencarian tetap menampilkan kontrolnya."
+Keep the caption in sight,Biarkan keterangan terlihat
+"While the controls are invisible on the main feed, the creator's name, the caption and the music line stay in sight.","Saat kontrol tak terlihat di feed utama, nama kreator, keterangan, dan baris musik tetap terlihat."
+Make the controls invisible,Buat kontrol tak terlihat
+Show the controls,Tampilkan kontrol

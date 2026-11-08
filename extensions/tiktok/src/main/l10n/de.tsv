@@ -2612,3 +2612,12 @@ Hide the expand button in comments	Erweitern-Schaltfläche in Kommentaren ausble
 Hides the X at the top of the comments, and the buttons next to it move over to fill the gap. Use Back or swipe down to close comments.	Blendet das X oben in den Kommentaren aus, und die Schaltflächen daneben rücken in die Lücke. Zum Schließen der Kommentare Zurück nutzen oder nach unten wischen.
 # context: Summary under the expand button switch; Open the comments at full height is another switch's title
 Hides the button that stretches the comments over the whole screen. Turn on Open the comments at full height to have them open that way.	Blendet die Schaltfläche aus, die die Kommentare über den ganzen Bildschirm zieht. Schalte Kommentare in voller Höhe öffnen ein, damit sie gleich so aufgehen.
+# context: Switch title in the Clear display section; the button is a small eye drawn over the main feed
+Invisible controls button	Taste für unsichtbare Steuerelemente
+A small eye button at the top left of the main feed. Tap it and the buttons, caption and tabs go invisible but still take taps, which helps against burn-in on OLED screens. Tap it again to bring them back. They stay the way you left them across videos and restarts. Videos you open from a profile or search keep their controls.	Eine kleine Augen-Taste oben links im Haupt-Feed. Tippst du darauf, werden Tasten, Beschreibung und Tabs unsichtbar, reagieren aber weiter auf Berührungen. Das hilft gegen Einbrennen auf OLED-Bildschirmen. Tippst du erneut, kommen sie zurück. Sie bleiben über Videos und Neustarts hinweg so, wie du sie gelassen hast. Videos, die du über ein Profil oder die Suche öffnest, behalten ihre Steuerelemente.
+Keep the caption in sight	Beschreibung sichtbar lassen
+While the controls are invisible on the main feed, the creator's name, the caption and the music line stay in sight.	Solange die Steuerelemente im Haupt-Feed unsichtbar sind, bleiben der Name des Creators, die Beschreibung und die Musikzeile sichtbar.
+# context: Spoken label of that eye button while the controls show
+Make the controls invisible	Steuerelemente unsichtbar machen
+# context: Spoken label of that eye button while the controls are invisible
+Show the controls	Steuerelemente anzeigen

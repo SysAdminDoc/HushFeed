@@ -2609,3 +2609,12 @@ Hide the expand button in comments	Şərhlərdə genişləndirmə düyməsini gi
 Hides the X at the top of the comments, and the buttons next to it move over to fill the gap. Use Back or swipe down to close comments.	Şərhlərin yuxarısındakı X-i gizlədir, yanındakı düymələr boşluğu doldurmaq üçün sürüşür. Şərhləri bağlamaq üçün Geri düyməsindən istifadə edin və ya aşağı sürüşdürün.
 # context: Summary under the expand button switch; Open the comments at full height is another switch's title
 Hides the button that stretches the comments over the whole screen. Turn on Open the comments at full height to have them open that way.	Şərhləri bütün ekrana yayan düyməni gizlədir. Şərhlərin elə açılması üçün Şərhləri tam hündürlükdə açın seçimini yandırın.
+# context: Switch title in the Clear display section; the button is a small eye drawn over the main feed
+Invisible controls button	Görünməz idarəetmə düyməsi
+A small eye button at the top left of the main feed. Tap it and the buttons, caption and tabs go invisible but still take taps, which helps against burn-in on OLED screens. Tap it again to bring them back. They stay the way you left them across videos and restarts. Videos you open from a profile or search keep their controls.	Əsas lentin yuxarı sol küncündə kiçik göz düyməsi. Ona toxunduqda düymələr, başlıq və tablar görünməz olur, amma toxunuşları yenə qəbul edir. Bu, OLED ekranlarda ekran yanmasının qarşısını almağa kömək edir. Onları geri qaytarmaq üçün yenidən toxunun. Videolar və yenidən başlatmalar boyunca onları necə qoymusunuzsa, elə qalırlar. Profildən və ya axtarışdan açdığınız videolar idarəetmələrini saxlayır.
+Keep the caption in sight	Başlığı görünən saxla
+While the controls are invisible on the main feed, the creator's name, the caption and the music line stay in sight.	Əsas lentdə idarəetmələr görünməz olduqda yaradıcının adı, başlıq və musiqi sətri görünən qalır.
+# context: Spoken label of that eye button while the controls show
+Make the controls invisible	İdarəetmələri görünməz et
+# context: Spoken label of that eye button while the controls are invisible
+Show the controls	İdarəetmələri göstər

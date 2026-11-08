@@ -458,6 +458,14 @@ public final class VideoOverlayHider {
     /** The opacity the current pass fades the controls to, 100 meaning not at all. */
     private static int fadeLevel = 100;
 
+    /**
+     * Whether the current pass has the invisible controls on (#374): the fade at 0 with every
+     * control left where it is and taking taps, the tabs included, rather than taken away.
+     */
+    private static boolean ghostNow;
+    /** The caption frame's level this pass: the fade's, or kept in sight while the rest is invisible. */
+    private static int anchorLevel = 100;
+
     /** Whether the current pass has See-through bottom bar on, for the main feed (#145). */
     private static boolean seeThroughBarNow;
     /** Whether that bar floats as a rounded pill this pass (#124). */
@@ -663,7 +671,13 @@ public final class VideoOverlayHider {
             // display does. With Keep faded controls in Clear display off, Clear display clears
             // them as it does at 100 and the fade is left to the rest of the time.
             fadedClear = clearLive && chosenFade > 0 && chosenFade < 100 && Settings.FADE_IN_CLEAR_DISPLAY.get();
-            fadeLevel = BurnInGuard.pass(activity, chosenFade, overlaysOn);
+            // The invisible controls button (#374) runs this fade at 0 on the main feed, out of
+            // Clear display; Keep the caption in sight holds the caption frame at the chosen level.
+            boolean invisibleOffered = InvisibleControls.offered(activity, overlaysOn, detailPager, clearLive);
+            ghostNow = InvisibleControls.ghosting(invisibleOffered);
+            fadeLevel = BurnInGuard.pass(activity, ghostNow ? 0 : chosenFade, overlaysOn);
+            anchorLevel = ghostNow && Settings.INVISIBLE_CONTROLS_KEEP_CAPTION.get()
+                    ? (chosenFade > 0 ? chosenFade : 100) : fadeLevel;
             boolean carryHides = carry && !fadedClear;
             topBarHeld = carryHides && (!RememberClearDisplayPatch.isClearDisplayNow()
                     || RememberClearDisplayPatch.isPageUncleared());
@@ -912,6 +926,8 @@ public final class VideoOverlayHider {
                 }
             }
             ClearDisplayShownControls.apply(fadedClear, clearOn());
+            InvisibleControls.apply(activity, overlaysOn && Settings.INVISIBLE_CONTROLS_BUTTON.get(),
+                    invisibleOffered, ghostNow);
             // The Profile tab is a page of the feed's window, so its top bar rides on this pass.
             ProfileTopBar.apply(activity.findViewById(android.R.id.content));
 
@@ -2347,15 +2363,18 @@ public final class VideoOverlayHider {
                             || target == SEARCH_BAR_TARGET) {
                         // 47.1.4 keeps the caption frame, the music disc and the search bar
                         // beside the column, so they fade here. Invisible rather than gone, so
-                        // the caption doesn't move.
-                        boolean gone = wanted || fadeLevel == 0;
-                        setFaded(view, gone ? 100 : fadeLevel, fadedClear);
+                        // the caption doesn't move. The invisible controls leave them in place
+                        // at 0, still taking taps, with the caption frame at its own level.
+                        int level = target == ANCHOR_TARGET ? anchorLevel : fadeLevel;
+                        boolean gone = wanted || (level == 0 && !ghostNow);
+                        setFaded(view, gone ? 100 : level, fadedClear);
                         TapThroughControls.mark(view, !gone && fadedClear);
                         setHidden(view, gone, View.INVISIBLE);
                     } else if (target == ACTION_BAR_TARGET) {
                         // The rail's column. Fully faded it goes the way Clear display takes it,
-                        // so nothing invisible takes a tap.
-                        boolean gone = wanted || fadeLevel == 0;
+                        // so nothing invisible takes a tap, except under the invisible controls,
+                        // whose whole point is buttons that still work where they were.
+                        boolean gone = wanted || (fadeLevel == 0 && !ghostNow);
                         setFaded(view, gone ? 100 : fadeLevel, fadedClear);
                         TapThroughControls.mark(view, !gone && fadedClear);
                         setHidden(view, gone);
@@ -2377,8 +2396,9 @@ public final class VideoOverlayHider {
                         }
                         if (target == BOTTOM_TABS_DIVIDER_TARGET) setTransparent(view, false);
                         // The Following stories pill is the strip's neighbour at the top of the
-                        // feed, so it fades with the tabs; it was only ever hidden (#84).
-                        setFaded(view, wanted ? 100 : Math.max(NAVIGATION_FADE_FLOOR, fadeLevel));
+                        // feed, so it fades with the tabs; it was only ever hidden (#84). The
+                        // invisible controls take them to 0 as well: the button stays findable.
+                        setFaded(view, wanted ? 100 : ghostNow ? 0 : Math.max(NAVIGATION_FADE_FLOOR, fadeLevel));
                         setHidden(view, wanted);
                     } else setHidden(view, wanted);
                 }
@@ -2430,7 +2450,7 @@ public final class VideoOverlayHider {
      */
     private static void fadeFullscreenEntries() {
         if (FULLSCREEN_ENTRIES.isEmpty()) return;
-        boolean gone = fadeLevel == 0;
+        boolean gone = fadeLevel == 0 && !ghostNow;
         for (View entry : new ArrayList<>(FULLSCREEN_ENTRIES.keySet())) {
             if (entry == null || !entry.isAttachedToWindow()) continue;
             setFaded(entry, gone ? 100 : fadeLevel, fadedClear);

@@ -2547,3 +2547,9 @@ Hide the close button in comments,Ẩn nút đóng trong bình luận
 Hide the expand button in comments,Ẩn nút mở rộng trong bình luận
 "Hides the X at the top of the comments, and the buttons next to it move over to fill the gap. Use Back or swipe down to close comments.","Ẩn dấu X ở đầu phần bình luận, các nút bên cạnh sẽ dịch sang lấp chỗ trống. Sử dụng nút Quay lại hoặc vuốt xuống để đóng phần bình luận."
 Hides the button that stretches the comments over the whole screen. Turn on Open the comments at full height to have them open that way.,Ẩn nút kéo phần bình luận ra toàn màn hình. Bật Mở bảng bình luận toàn màn hình để bình luận luôn mở như vậy.
+Invisible controls button,Nút ẩn điều khiển
+"A small eye button at the top left of the main feed. Tap it and the buttons, caption and tabs go invisible but still take taps, which helps against burn-in on OLED screens. Tap it again to bring them back. They stay the way you left them across videos and restarts. Videos you open from a profile or search keep their controls.","Một nút hình con mắt nhỏ ở góc trên bên trái bảng tin chính. Chạm vào để các nút, chú thích và thẻ trở nên vô hình nhưng vẫn nhận thao tác chạm, giúp chống lưu ảnh trên màn hình OLED. Chạm lần nữa để hiện lại. Chúng giữ nguyên như bạn để lại khi chuyển video và cả sau khi khởi động lại. Video mở từ trang cá nhân hoặc tìm kiếm vẫn giữ các điều khiển."
+Keep the caption in sight,Giữ chú thích hiển thị
+"While the controls are invisible on the main feed, the creator's name, the caption and the music line stay in sight.","Khi các điều khiển vô hình trên bảng tin chính, tên nhà sáng tạo, chú thích và dòng nhạc vẫn hiển thị."
+Make the controls invisible,Làm vô hình các điều khiển
+Show the controls,Hiện các điều khiển

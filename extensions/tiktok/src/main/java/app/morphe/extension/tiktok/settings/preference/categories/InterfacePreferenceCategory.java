@@ -781,6 +781,19 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "With the fade below 100, the buttons and caption stay on screen at that level in Clear display, and taps go through them to the video. Off, Clear display hides them the way it does at 100.",
                     Settings.FADE_IN_CLEAR_DISPLAY
             ));
+            // #374: the fade at 0 on a tap, with every control still where it was.
+            addPreference(new TogglePreference(
+                    context,
+                    "Invisible controls button",
+                    "A small eye button at the top left of the main feed. Tap it and the buttons, caption and tabs go invisible but still take taps, which helps against burn-in on OLED screens. Tap it again to bring them back. They stay the way you left them across videos and restarts. Videos you open from a profile or search keep their controls.",
+                    Settings.INVISIBLE_CONTROLS_BUTTON
+            ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Keep the caption in sight",
+                    "While the controls are invisible on the main feed, the creator's name, the caption and the music line stay in sight.",
+                    Settings.INVISIBLE_CONTROLS_KEEP_CAPTION
+            ));
             addPreference(new TogglePreference(
                     context,
                     "See-through bottom bar",

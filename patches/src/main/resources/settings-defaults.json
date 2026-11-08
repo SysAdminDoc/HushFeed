@@ -434,6 +434,9 @@
       "keep_clear_display_seek_bar",
       "fade_controls_opacity",
       "fade_in_clear_display",
+      "invisible_controls_button",
+      "invisible_controls_on",
+      "invisible_controls_keep_caption",
       "see_through_bottom_bar",
       "see_through_video_in_window",
       "floating_bottom_bar",
@@ -2793,6 +2796,24 @@
     "inbox_tab_flips_read_receipts": {
       "field": "INBOX_TAB_FLIPS_READ_RECEIPTS",
       "key": "inbox_tab_flips_read_receipts",
+      "type": "boolean",
+      "default": false
+    },
+    "invisible_controls_button": {
+      "field": "INVISIBLE_CONTROLS_BUTTON",
+      "key": "invisible_controls_button",
+      "type": "boolean",
+      "default": false
+    },
+    "invisible_controls_keep_caption": {
+      "field": "INVISIBLE_CONTROLS_KEEP_CAPTION",
+      "key": "invisible_controls_keep_caption",
+      "type": "boolean",
+      "default": false
+    },
+    "invisible_controls_on": {
+      "field": "INVISIBLE_CONTROLS_ON",
+      "key": "invisible_controls_on",
       "type": "boolean",
       "default": false
     },

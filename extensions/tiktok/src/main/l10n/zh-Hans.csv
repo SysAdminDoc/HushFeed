@@ -2547,3 +2547,9 @@ Hide the close button in comments,隐藏评论中的关闭按钮
 Hide the expand button in comments,隐藏评论中的展开按钮
 "Hides the X at the top of the comments, and the buttons next to it move over to fill the gap. Use Back or swipe down to close comments.",隐藏评论顶部的 X，旁边的按钮会移过来填补空位。使用“后退”或向下滑动来关闭评论.
 Hides the button that stretches the comments over the whole screen. Turn on Open the comments at full height to have them open that way.,隐藏把评论拉满整个屏幕的按钮。打开“以全高打开评论”，评论就会直接这样打开.
+Invisible controls button,隐形控件按钮
+"A small eye button at the top left of the main feed. Tap it and the buttons, caption and tabs go invisible but still take taps, which helps against burn-in on OLED screens. Tap it again to bring them back. They stay the way you left them across videos and restarts. Videos you open from a profile or search keep their controls.",主信息流左上角的一个小眼睛按钮。点按后，按钮、标题和选项卡会变为隐形，但仍然可以点按，有助于防止 OLED 屏幕老化。再次点按即可恢复。无论切换视频还是重启，它们都会保持你离开时的状态。从个人资料或搜索中打开的视频会保留其控件.
+Keep the caption in sight,保持标题可见
+"While the controls are invisible on the main feed, the creator's name, the caption and the music line stay in sight.",在主信息流上控件隐形时，创作者名称、标题和音乐行仍然可见.
+Make the controls invisible,让控件隐形
+Show the controls,显示控件

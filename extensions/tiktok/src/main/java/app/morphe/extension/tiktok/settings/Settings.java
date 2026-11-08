@@ -1072,6 +1072,20 @@ public class Settings extends BaseSettings {
      */
     public static final BooleanSetting FADE_IN_CLEAR_DISPLAY = new BooleanSetting("fade_in_clear_display", TRUE);
     /**
+     * A small eye button at the top left of the main feed that draws the controls the fade covers,
+     * the tabs included, at 0 while they keep taking taps, and brings them back on the next tap
+     * (#374, InvisibleControls). The main feed only, out of Clear display, not under Pause.
+     */
+    public static final BooleanSetting INVISIBLE_CONTROLS_BUTTON = new BooleanSetting("invisible_controls_button", FALSE);
+    /**
+     * Whether that button has the controls invisible right now. It's where the reader left it, like
+     * the feed's mute, so a backup doesn't carry it; it lasts across videos and restarts.
+     */
+    public static final BooleanSetting INVISIBLE_CONTROLS_ON = new BooleanSetting("invisible_controls_on", FALSE, false, false);
+    /** Leaves the caption's frame (the name, the caption and the music line) in sight while they're invisible. */
+    public static final BooleanSetting INVISIBLE_CONTROLS_KEEP_CAPTION = new BooleanSetting(
+            "invisible_controls_keep_caption", FALSE, false, Setting.parent(INVISIBLE_CONTROLS_BUTTON));
+    /**
      * Lets the video draw down behind TikTok's bottom tab bar and takes the bar's own background
      * away, so the tabs sit over the picture (#145). VideoOverlayHider collapses the spacer under
      * each video and swaps the bar's background for a clear one, and puts both back when this goes

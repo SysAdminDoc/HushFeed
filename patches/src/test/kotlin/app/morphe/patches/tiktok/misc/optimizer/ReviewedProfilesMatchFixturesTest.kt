@@ -75,23 +75,28 @@ class ReviewedProfilesMatchFixturesTest {
     }
 
     @Test
-    fun `creation tools come out only where the editor and effect libraries ship`() {
-        // 47.7.3's universal APK carries them for both processor types. Its split bundle has the
-        // arm64 effect library but not the armeabi-v7a one, beside other armeabi-v7a libraries, and
-        // a face model emptied where TikTok fetches its effects breaks face effects (#285).
+    fun `creation tools empty the effect plugins and leave the face model and effect editor whole`() {
+        // Emptied, the face model left face effects and Beauty unable to find a face, and an empty
+        // effect creator library closed TikTok on All effects (#285). The universal APK carries the
+        // libraries for both processor types, the split bundle only the arm64 ones.
         val apks = fixtures()
         assertTrue("no 47.7.3 universal APK and split bundle to compare", apks.map { it.extension }.toSet() == setOf("apk", "apkm"))
         for (apk in apks) {
-            val present = digests(apk) { it.startsWith("lib/") }.keys
-            val folders = present.map { it.substringBeforeLast('/') }.toSet()
-            assertEquals(apk.name, apk.extension == "apk", stripsCreationTools { it in present || it in folders })
+            val root = temporary.newFolder("creation-${apk.extension}")
+            val kept = { path: String -> path.startsWith(FACE_MODEL) || path.endsWith(EFFECT_EDITOR) }
+            extract(apk, root) { it in studioNativeFiles || kept(it) }
+            val whole = digestsUnder(root, "").filterKeys(kept)
+            assertTrue("${apk.name} ships no face model", whole.keys.any { it.startsWith(FACE_MODEL) })
+            assertTrue("${apk.name} ships no arm64 effect editor", "lib/arm64-v8a/$EFFECT_EDITOR" in whole)
+
+            val result = stripVerifiedResources(root, "creation tools", emptyList(), studioNativeFiles, studioAssetProfiles)
+
+            assertTrue("${apk.name}: nothing was emptied", result.files > 0 && !result.alreadyStripped)
+            assertEquals("${apk.name}: the face model or effect editor changed", whole, digestsUnder(root, "").filterKeys(kept))
+            val libraries = studioNativeFiles.map(root::resolve).filter(File::exists)
+            assertEquals(apk.name, result.files, libraries.size)
+            libraries.forEach { assertEquals("${apk.name}: ${it.name}", 0L, it.length()) }
         }
-        val arm64Effects = setOf("lib/arm64-v8a", "lib/arm64-v8a/libeffect_plugin.so")
-        assertTrue(stripsCreationTools { it in arm64Effects })
-        assertTrue(stripsCreationTools { it in setOf("lib/armeabi-v7a", "lib/armeabi-v7a/libeffect_plugin.so") })
-        assertTrue(!stripsCreationTools { it in arm64Effects || it == "lib/armeabi-v7a" })
-        assertTrue(!stripsCreationTools { it in setOf("lib/arm64-v8a", "lib/arm64-v8a/libEffectCreatorJni.so") })
-        assertTrue(!stripsCreationTools { it.startsWith("assets/") })
     }
 
     @Test
@@ -200,6 +205,36 @@ class ReviewedProfilesMatchFixturesTest {
         return result
     }
 
+    /** Writes every entry [keep] accepts under [root], from every split of an .apkm. */
+    private fun extract(apk: File, root: File, keep: (String) -> Boolean) {
+        fun write(name: String, stream: InputStream) {
+            val file = root.resolve(name)
+            file.parentFile.mkdirs()
+            file.outputStream().use { stream.copyTo(it) }
+        }
+        ZipFile(apk).use { zip ->
+            if (apk.extension != "apkm") {
+                zip.entries().asSequence().filter { !it.isDirectory && keep(it.name) }
+                    .forEach { entry -> zip.getInputStream(entry).use { write(entry.name, it) } }
+                return
+            }
+            zip.entries().asSequence().filter { it.name.endsWith(".apk") }.forEach { split ->
+                ZipInputStream(zip.getInputStream(split)).use { inner ->
+                    while (true) {
+                        val entry = inner.nextEntry ?: break
+                        if (!entry.isDirectory && keep(entry.name)) write(entry.name, inner)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun digestsUnder(root: File, prefix: String): Map<String, String> =
+        root.walkTopDown().filter(File::isFile)
+            .map { it.relativeTo(root).invariantSeparatorsPath to it }
+            .filter { (path, _) -> path.startsWith(prefix) }
+            .associate { (path, file) -> path to file.inputStream().use(::sha256) }
+
     private fun sha256(stream: InputStream): String {
         val digest = MessageDigest.getInstance("SHA-256")
         val buffer = ByteArray(1 shl 16)
@@ -216,5 +251,7 @@ class ReviewedProfilesMatchFixturesTest {
 
     private companion object {
         const val LANGUAGE_PREFIX = "assets/strings#lang_"
+        const val FACE_MODEL = "assets/model/ttfacemodel/"
+        const val EFFECT_EDITOR = "libEffectCreatorJni.so"
     }
 }

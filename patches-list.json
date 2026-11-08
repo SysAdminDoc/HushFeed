@@ -8768,7 +8768,7 @@
     },
     {
       "name": "Remove creation tools",
-      "description": "Removes TikTok's camera, editing and effects files, saving about 38 MB of storage. The catch: the Create tab and every recording, editing and effects tool stop working, and opening one, like effect search, can close TikTok. Leave it out if you make videos.",
+      "description": "Removes two effects engine libraries TikTok doesn't load for the camera, effects, Retouch or the video editor, saving about 45 MB. Those all keep working. If a creation tool ever closes TikTok, repatch without this one.",
       "category": "Performance",
       "use": false,
       "dependencies": [

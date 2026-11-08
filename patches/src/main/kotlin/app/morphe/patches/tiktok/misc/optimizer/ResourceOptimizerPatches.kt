@@ -145,10 +145,9 @@ val languagePackPurgerPatch = rawResourcePatch(
 @Suppress("unused")
 val studioCreationDebloatPatch = rawResourcePatch(
     name = "Remove creation tools",
-    description = "Removes TikTok's camera, editing and effects files, saving about 38 MB of " +
-        "storage. The catch: the Create tab and every recording, editing and effects tool stop " +
-        "working, and opening one, like effect search, can close TikTok. Leave it out if you " +
-        "make videos.",
+    description = "Removes two effects engine libraries TikTok doesn't load for the camera, effects, " +
+        "Retouch or the video editor, saving about 45 MB. Those all keep working. If a creation " +
+        "tool ever closes TikTok, repatch without this one.",
     default = false,
 ) {
     category("Performance")
@@ -156,20 +155,14 @@ val studioCreationDebloatPatch = rawResourcePatch(
     dependsOn(buildChoicePatch(BuildChoice.CREATION))
 
     execute {
-        if (!stripsCreationTools { get(it).exists() }) {
-            BuildDetails.stripped(get(BUILD_DETAILS_ASSET), BuildChoice.CREATION, StripSummary(0, 0L, alreadyStripped = false))
-            println(
-                "[Studio & Creation De-bloat] This build doesn't carry its own effect library for every " +
-                    "processor type it ships, so the face model stays too. Emptied there, it only stops face " +
-                    "effects and Beauty from finding a face.",
-            )
-            return@execute
-        }
-        decode("assets/model/ttfacemodel")
+        // The face model in assets/model/ttfacemodel stays on every build (#285). Emptied, it left
+        // face effects and Beauty unable to find a face while the camera and the rest of the
+        // effects kept working, and it is under 1 MB of the strip. libEffectCreatorJni stays
+        // too (see studioNativeFiles).
         val result = stripVerifiedResources(
             get("."),
             "Studio & Creation De-bloat",
-            listOf("assets/model/ttfacemodel"),
+            emptyList(),
             studioNativeFiles,
             studioAssetProfiles,
             resolveStandaloneFile = { path -> get(path) },
@@ -260,28 +253,15 @@ val voiceToolsDebloatPatch = rawResourcePatch(
 
 // The camera feature dex stays, like every lib/*/libdex_*.so: TikTok injects them all at
 // start-up, and an empty one left its own strings in English on a Spanish phone (#125).
-private val studioNativeFiles = listOf(
-    "lib/arm64-v8a/libEffectCreatorJni.so",
+// libEffectCreatorJni stays too: All effects builds the effect editor context on open, and with
+// the library empty its static init threw UnsatisfiedLinkError and closed TikTok (#285). Nothing
+// links these two, and neither needs the other or libEffectCreatorJni.
+internal val studioNativeFiles = listOf(
     "lib/arm64-v8a/libeffect_plugin.so",
     "lib/arm64-v8a/libttvesdk_plugin.so",
-    "lib/armeabi-v7a/libEffectCreatorJni.so",
     "lib/armeabi-v7a/libeffect_plugin.so",
     "lib/armeabi-v7a/libttvesdk_plugin.so",
 )
-
-/**
- * Whether "Remove creation tools" has anything to take: the face model goes only with the
- * effect libraries. A build without them (APKMirror's split bundle on 47.5.3) gets its camera and
- * effects from libraries TikTok fetches itself, so emptying the model there saved under 1 MB and
- * left face effects and Beauty unable to find a face (#285). That holds per processor type:
- * 47.7.3's split bundle carries the arm64 effect library but not the armeabi-v7a one, beside other
- * armeabi-v7a libraries, so a 32-bit phone patched from it would fetch its effects. [shipped]
- * answers for a library's path and for its ABI folder, `lib/<abi>`.
- */
-internal fun stripsCreationTools(shipped: (String) -> Boolean): Boolean {
-    val abis = studioNativeFiles.map { it.substringBeforeLast('/') }.distinct().filter(shipped)
-    return abis.isNotEmpty() && abis.all { shipped("$it/libeffect_plugin.so") }
-}
 
 private fun StripSummary.report(patchName: String) {
     if (files == 0) {
@@ -374,8 +354,6 @@ internal val coreAssetProfiles = listOf(
 )
 
 private val studioArm64Files = listOf(
-    file("assets/model/ttfacemodel/tt_face_v11.1.model", "c4b081d04f6829f7cd5849abca0941891f1a7f2cb250efd7f0e42fece5426610"),
-    file("lib/arm64-v8a/libEffectCreatorJni.so", "b7db28436aa1ccd85e3d52d1f916817397be6b35dfff40d1bb69d0d5251a3293"),
     file("lib/arm64-v8a/libeffect_plugin.so", "2990d5bf76d832b4a6c25bbd9540f3191e86aa8342c54a638fad26ada2806be3"),
     file("lib/arm64-v8a/libttvesdk_plugin.so", "0f1cc7737330f8a9b81e03f3ab15eecea197254c16c23b5492c5424aaf51d6c0"),
 )
@@ -384,7 +362,6 @@ private val studioAssets = ResourceProfile(
     "TikTok $REVIEWED_BUILD",
     studioArm64Files +
         listOf(
-            file("lib/armeabi-v7a/libEffectCreatorJni.so", "d3ae58712413c2d1d06dcf508eb7850452f58c93b9befd57867cd029421c9482"),
             file("lib/armeabi-v7a/libeffect_plugin.so", "f89bd50e941392fee2e47d031711fdce3520dae7f3e531da59dd0afbbec9d91c"),
             file("lib/armeabi-v7a/libttvesdk_plugin.so", "42ab2be66f2b02622f52062fc3ff1b4862f44f0098faecfac3996afe3e7cf1f9"),
         ),
@@ -394,7 +371,6 @@ internal val studioAssetProfiles = listOf(
     studioAssets,
     bundleOf(
         studioAssets,
-        "lib/armeabi-v7a/libEffectCreatorJni.so",
         "lib/armeabi-v7a/libeffect_plugin.so",
         "lib/armeabi-v7a/libttvesdk_plugin.so",
     ),

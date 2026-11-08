@@ -13043,14 +13043,22 @@
    },
    {
     "id": "creation-files-emptied",
-    "what": "The face model and the effect creator library named by the strip are zero-length in the APK.",
+    "what": "The effect and VE SDK plugin libraries are zero-length in the APK, and the face model and effect creator library are still in it.",
     "steps": [
      {
       "apk": "entry-empty",
-      "path": "assets/model/ttfacemodel/tt_face_v11.1.model"
+      "path": "lib/arm64-v8a/libeffect_plugin.so"
      },
      {
       "apk": "entry-empty",
+      "path": "lib/arm64-v8a/libttvesdk_plugin.so"
+     },
+     {
+      "apk": "entry-present",
+      "path": "assets/model/ttfacemodel/tt_face_v11.1.model"
+     },
+     {
+      "apk": "entry-present",
       "path": "lib/arm64-v8a/libEffectCreatorJni.so"
      }
     ],
@@ -13072,7 +13080,7 @@
     "auto": true
    }
   ],
-  "notes": "The strip empties the face model and the effect and VE SDK libraries; the split-bundle profile also lacks libeffect_plugin.so and libttvesdk_plugin.so for arm64, so only the two files both profiles carry are asserted. The camera feature dex (libdex_*.so) stays on purpose. The Create tab and recording are broken on every APK that includes this patch, which is why the Camera and microphone indicator checks use the call probe instead of the camera. Pressing the Create tab to see TikTok close is not scripted: it uses the camera and the effects, and a crash dialog on the audit phone costs a restart."
+  "notes": "The strip empties the effect and VE SDK plugin libraries for both ABIs; 47.7.3's split bundle carries both arm64 copies. The face model (#285: face effects and Retouch lost the face), libEffectCreatorJni (#285: All effects closed TikTok) and the camera feature dex (libdex_*.so) stay on purpose. On the S22 2026-11-08 with the plugins empty, the camera, Retouch, a face effect, All effects, effect search, the Create tab and the editor all worked and TikTok never tried to load either plugin. The camera walk is not scripted: it uses the camera, and a crash dialog on the audit phone costs a restart."
  },
  {
   "name": "Remove unused language packs",

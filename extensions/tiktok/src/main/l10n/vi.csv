@@ -2541,3 +2541,7 @@ Up to %1$s,Đến %1$s
 Newest likes,Lượt thích mới nhất
 Whole year,Cả năm
 Pull down on the grid to load them,Kéo lưới xuống để tải chúng
+Hide the close button in comments,Ẩn nút đóng trong bình luận
+Hide the expand button in comments,Ẩn nút mở rộng trong bình luận
+"Hides the X at the top of the comments, and the buttons next to it move over to fill the gap. Use Back or swipe down to close comments.","Ẩn dấu X ở đầu phần bình luận, các nút bên cạnh sẽ dịch sang lấp chỗ trống. Sử dụng nút Quay lại hoặc vuốt xuống để đóng phần bình luận."
+Hides the button that stretches the comments over the whole screen. Turn on Open the comments at full height to have them open that way.,Ẩn nút kéo phần bình luận ra toàn màn hình. Bật Mở bảng bình luận toàn màn hình để bình luận luôn mở như vậy.

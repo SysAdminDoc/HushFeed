@@ -2597,3 +2597,11 @@ Newest likes	Ən yeni bəyənmələr
 Whole year	Bütün il
 # context: Toast after picking a date when the grid couldn't reload by itself; pulling down to refresh loads the likes from that date; two lines of 28 characters at most, no full stop
 Pull down on the grid to load them	Yükləmək üçün şəbəkəni aşağı çəkin
+# context: Comments settings, Hiding section. Switch that hides TikTok's X (close) button at the top of the comment panel
+Hide the close button in comments	Şərhlərdə bağlama düyməsini gizlədin
+# context: Comments settings, Hiding section. Switch that hides TikTok's button that stretches the comment panel to full screen
+Hide the expand button in comments	Şərhlərdə genişləndirmə düyməsini gizlədin
+# context: Summary under the close button switch; Back is the phone's Back
+Hides the X at the top of the comments, and the buttons next to it move over to fill the gap. Use Back or swipe down to close comments.	Şərhlərin yuxarısındakı X-i gizlədir, yanındakı düymələr boşluğu doldurmaq üçün sürüşür. Şərhləri bağlamaq üçün Geri düyməsindən istifadə edin və ya aşağı sürüşdürün.
+# context: Summary under the expand button switch; Open the comments at full height is another switch's title
+Hides the button that stretches the comments over the whole screen. Turn on Open the comments at full height to have them open that way.	Şərhləri bütün ekrana yayan düyməni gizlədir. Şərhlərin elə açılması üçün Şərhləri tam hündürlükdə açın seçimini yandırın.

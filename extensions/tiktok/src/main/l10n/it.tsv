@@ -2597,3 +2597,11 @@ Newest likes	Mi piace più recenti
 Whole year	Tutto l'anno
 # context: Toast after picking a date when the grid couldn't reload by itself; pulling down to refresh loads the likes from that date; two lines of 28 characters at most, no full stop
 Pull down on the grid to load them	Trascina giù la griglia per caricarli
+# context: Comments settings, Hiding section. Switch that hides TikTok's X (close) button at the top of the comment panel
+Hide the close button in comments	Nascondi il pulsante di chiusura nei commenti
+# context: Comments settings, Hiding section. Switch that hides TikTok's button that stretches the comment panel to full screen
+Hide the expand button in comments	Nascondi il pulsante di espansione nei commenti
+# context: Summary under the close button switch; Back is the phone's Back
+Hides the X at the top of the comments, and the buttons next to it move over to fill the gap. Use Back or swipe down to close comments.	Nasconde la X in cima ai commenti, e i pulsanti accanto si spostano per riempire lo spazio. Usa Indietro o scorri verso il basso per chiudere i commenti.
+# context: Summary under the expand button switch; Open the comments at full height is another switch's title
+Hides the button that stretches the comments over the whole screen. Turn on Open the comments at full height to have them open that way.	Nasconde il pulsante che allarga i commenti a tutto lo schermo. Attiva Apri i commenti a tutta altezza perché si aprano già così.

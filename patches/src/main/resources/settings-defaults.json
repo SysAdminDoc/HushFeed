@@ -140,6 +140,8 @@
       "caption_above_comments",
       "hide_comment_search_suggestions",
       "compact_comment_header",
+      "hide_comment_close_button",
+      "hide_comment_expand_button",
       "larger_comment_like_target"
     ],
     "Confirm feed interactions": [
@@ -2048,6 +2050,12 @@
       "type": "boolean",
       "default": false
     },
+    "hide_comment_close_button": {
+      "field": "HIDE_COMMENT_CLOSE_BUTTON",
+      "key": "hide_comment_close_button",
+      "type": "boolean",
+      "default": false
+    },
     "hide_comment_dislike": {
       "field": "HIDE_COMMENT_DISLIKE",
       "key": "hide_comment_dislike",
@@ -2057,6 +2065,12 @@
     "hide_comment_eggs": {
       "field": "HIDE_COMMENT_EGGS",
       "key": "hide_comment_eggs",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_comment_expand_button": {
+      "field": "HIDE_COMMENT_EXPAND_BUTTON",
+      "key": "hide_comment_expand_button",
       "type": "boolean",
       "default": false
     },

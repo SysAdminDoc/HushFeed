@@ -1540,6 +1540,9 @@ public class Settings extends BaseSettings {
             new BooleanSetting("hide_comment_search_suggestions", FALSE, true);
     public static final BooleanSetting COMPACT_COMMENT_HEADER =
             new BooleanSetting("compact_comment_header", FALSE, true);
+    /** One button each at the top of the comments (#371). Read each time the header lays out. */
+    public static final BooleanSetting HIDE_COMMENT_CLOSE_BUTTON = new BooleanSetting("hide_comment_close_button", FALSE);
+    public static final BooleanSetting HIDE_COMMENT_EXPAND_BUTTON = new BooleanSetting("hide_comment_expand_button", FALSE);
     public static final BooleanSetting LARGER_COMMENT_LIKE_TARGET =
             new BooleanSetting("larger_comment_like_target", FALSE, true);
     public static final BooleanSetting HIDE_COMMENT_EGGS = new BooleanSetting("hide_comment_eggs", FALSE);

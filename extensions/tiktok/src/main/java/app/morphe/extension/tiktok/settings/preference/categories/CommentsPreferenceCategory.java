@@ -270,6 +270,20 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
             ));
             addPreference(new TogglePreference(
                     context,
+                    "Hide the close button in comments",
+                    "Hides the X at the top of the comments, and the buttons next to it move over "
+                            + "to fill the gap. Use Back or swipe down to close comments.",
+                    Settings.HIDE_COMMENT_CLOSE_BUTTON
+            ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Hide the expand button in comments",
+                    "Hides the button that stretches the comments over the whole screen. Turn on "
+                            + "Open the comments at full height to have them open that way.",
+                    Settings.HIDE_COMMENT_EXPAND_BUTTON
+            ));
+            addPreference(new TogglePreference(
+                    context,
                     "Filter comments by keyword",
                     "Hide comments that contain any of the words below, or that come from the accounts below.",
                     Settings.COMMENT_KEYWORD_FILTER

@@ -2541,3 +2541,7 @@ Up to %1$s,截至 %1$s
 Newest likes,最新的喜欢
 Whole year,全年
 Pull down on the grid to load them,在网格上下拉即可加载
+Hide the close button in comments,隐藏评论中的关闭按钮
+Hide the expand button in comments,隐藏评论中的展开按钮
+"Hides the X at the top of the comments, and the buttons next to it move over to fill the gap. Use Back or swipe down to close comments.",隐藏评论顶部的 X，旁边的按钮会移过来填补空位。使用“后退”或向下滑动来关闭评论.
+Hides the button that stretches the comments over the whole screen. Turn on Open the comments at full height to have them open that way.,隐藏把评论拉满整个屏幕的按钮。打开“以全高打开评论”，评论就会直接这样打开.

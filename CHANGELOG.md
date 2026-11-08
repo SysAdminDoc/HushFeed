@@ -29,6 +29,7 @@ Every Hushfeed release, newest first.
 * `Keep clear screen in the next LIVE` carries clear screen from one LIVE room to the next one you swipe to, so the chat, gifts and buttons stay hidden until you turn clear screen off. It starts off and sits in Hushfeed settings > Playback, next to `Offer clear screen in every LIVE room` (#354).
 * `LIVE feed countries` under Hushfeed settings > Region asks the LIVE feed for rooms from the countries you list, like BR, MX, taking turns page by page. TikTok doesn't say which country a room comes from, so this steers the feed instead of filtering it, and a room from somewhere else can still turn up. Nothing else in TikTok sees the change. It needs the `Region spoof` patch but none of its switches, and it starts empty (#355).
 * The diagnostic export has a Captions line. For each For You video it says whether TikTok sent caption tracks, and when it sent none, the reason TikTok gave, like not authorized or language not supported. That way an account whose captions never show can tell whether TikTok sends any at all (#217).
+* Two new switches in Hushfeed settings > Comments, `Hide the close button in comments` and `Hide the expand button in comments`, each take one button off the top of the comments, and the buttons beside it move over into its place. Back or a swipe down still closes comments. TikTok only shows the expand button to some accounts. Both start off (#371).
 
 ### Bug Fixes
 

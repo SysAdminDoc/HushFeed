@@ -25,6 +25,8 @@ extensions/tiktok/src/main/java/app/morphe/extension/tiktok/captions/CaptionStyl
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/captions/CaptionStyle.java|dnn
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/cleardisplay/RememberClearDisplayPatch.java|LIZ
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/cleardisplay/RememberClearDisplayPatch.java|LIZIZ
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/comment/CommentHeaderButtons.java|btm
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/comment/CommentHeaderButtons.java|i0i
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/comment/CommentTools.java|k2g
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/comment/CommentTools.java|mof
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/comment/CommentTools.java|im8

@@ -38,7 +38,10 @@ public final class CompactCommentHeader {
         if (view == null) return;
         HookStatus.bound("compact comment header", component);
         // A folded comment search puts its button in this bar, compact or not (#254).
-        if ("count bar".equals(component)) CommentSearch.onHeaderBound(view);
+        if ("count bar".equals(component)) {
+            CommentSearch.onHeaderBound(view);
+            CommentHeaderButtons.onHeaderBound(view);
+        }
         if (!Settings.COMPACT_COMMENT_HEADER.get()) return;
         try {
             WeakReference<Binding> existing = BINDINGS.get(view);

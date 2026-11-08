@@ -130,6 +130,8 @@ comment/CommentTools.java|DISLIKE_ICON_IDS|47.7.3:mof|app|class-method:setHateVi
 comment/CommentTools.java|LIKE_COUNT_IDS|tv_like_count|app|com.ss.android.ugc.aweme.comment.photocomment.CommentInnerDiggAssem|on:TuxTextView
 comment/CommentTools.java|AVATAR_IDS|47.7.3:im8|app|com.ss.android.ugc.aweme.commentv2.commentlist.powercell.BaseCommentCell|on:FrameLayout#3
 comment/CompactCommentHeader.java|BUTTON_ROW_ANCHOR|translate_intro_anchor|app|com.ss.android.ugc.aweme.commentv2.actionbar.CommentPageActionBarAssem|on:FrameLayout
+comment/CommentHeaderButtons.java|CLOSE_BUTTON_ID|47.7.3:btm|app|com.ss.android.ugc.aweme.commentv2.actionbar.CommentPageActionBarAssem|on:TuxIconView#4
+comment/CommentHeaderButtons.java|EXPAND_BUTTON_ID|47.7.3:i0i|app|com.ss.android.ugc.aweme.commentv2.actionbar.CommentPageActionBarAssem|on:TuxIconView#5
 captions/CaptionStyle.java|TEXT_IDS|47.7.3:dnn|app|method-string:caption_balancer|at:1
 captions/CaptionStyle.java|BACKGROUND_IDS|47.7.3:dng|app|layout-method-string:caption_balancer|tag:ConstraintLayout
 feedfilter/TakoAiFilter.java|SEARCH_TAB_ENTRANCE_ID|tv_tab_tako_entrance|app|layout:com.ss.android.ugc.aweme.search.pages.core.ui.fragment.SearchContainerFragment|tag:TuxTextView

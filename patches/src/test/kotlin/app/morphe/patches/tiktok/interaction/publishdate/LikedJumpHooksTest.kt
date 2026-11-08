@@ -16,6 +16,7 @@ import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import java.io.InputStream
 import java.util.function.Supplier
 import kotlinx.coroutines.runBlocking
@@ -26,11 +27,12 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
 /**
- * Jump to a date on Liked grids (#350) on each declared build: the Liked list request and the grid
- * fragment's refresh are each found once, the request hands its ids and `max_cursor` to the
+ * Jump to a date on Liked grids (#350) on each declared build: the Liked list request and both
+ * fragment refreshes are each found once, the request hands its ids and `max_cursor` to the
  * extension ahead of TikTok's code and takes the cursor back into the same registers, and the
- * extension's `refreshGrid` is filled with the fragment's refresh. The probe merges the built
- * extension, since that last hook rewrites one of its methods.
+ * extension's `refreshGrid` is filled with the profile tab's refresh (the one your own Liked tab
+ * has) and then the older grid fragment's. The probe merges the built extension, since that last
+ * hook rewrites one of its methods.
  */
 class LikedJumpHooksTest {
     @get:Rule val temporary = TemporaryFolder()
@@ -41,17 +43,20 @@ class LikedJumpHooksTest {
         Fixtures.forEachDeclared { apk ->
             val version = Fixtures.versionOf(apk)
             val requests = mutableListOf<Method>()
+            val tabs = mutableListOf<Method>()
             val refreshes = mutableListOf<Method>()
             val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
             for (entry in container.dexEntryNames) {
                 for (classDef in container.getEntry(entry)!!.dexFile.classes) {
                     for (method in classDef.methods) {
                         if (LikedListRequestFingerprint.takes(method, classDef)) requests += method
+                        if (ProfileTabRefreshFingerprint.takes(method, classDef)) tabs += method
                         if (GridRefreshFingerprint.takes(method, classDef)) refreshes += method
                     }
                 }
             }
             assertEquals("$version: Liked list requests ${requests.map { it.definingClass }}", 1, requests.size)
+            assertEquals("$version: tab refreshes ${tabs.map { it.name }}", 1, tabs.size)
             assertEquals("$version: grid refreshes ${refreshes.map { it.name }}", 1, refreshes.size)
             assertTrue(
                 "$version: a try range covers the request's first instruction",
@@ -89,12 +94,25 @@ class LikedJumpHooksTest {
                     assertEquals(listOf("Ljava/lang/Object;", "I"), stub.parameterTypes.map { it.toString() })
                     val filled = ops(stub)
                     assertEquals(
-                        listOf(Opcode.INSTANCE_OF, Opcode.IF_EQZ, Opcode.CHECK_CAST, Opcode.INVOKE_VIRTUAL, Opcode.MOVE_RESULT, Opcode.RETURN),
-                        filled.take(6).map { it.opcode },
+                        listOf(
+                            Opcode.INSTANCE_OF, Opcode.IF_EQZ, Opcode.CHECK_CAST, Opcode.CONST_STRING, Opcode.INVOKE_VIRTUAL,
+                            Opcode.CONST_4, Opcode.RETURN,
+                            Opcode.INSTANCE_OF, Opcode.IF_EQZ, Opcode.CHECK_CAST, Opcode.INVOKE_VIRTUAL, Opcode.MOVE_RESULT,
+                            Opcode.RETURN,
+                        ),
+                        filled.take(13).map { it.opcode },
+                    )
+                    assertEquals(
+                        "fresh_type_has_filter_video",
+                        filled[3].getReference<StringReference>()!!.string,
+                    )
+                    assertEquals(
+                        "$PROFILE_TAB->${tabs.single().name}(Ljava/lang/String;)Z",
+                        smali(filled[4].getReference<MethodReference>()!!),
                     )
                     assertEquals(
                         "Lcom/ss/android/ugc/profile/business/profile/tab/AwemeListFragmentImpl;->${refreshes.single().name}()Z",
-                        smali(filled[3].getReference<MethodReference>()!!),
+                        smali(filled[10].getReference<MethodReference>()!!),
                     )
                     checked = true
                 }
@@ -111,12 +129,15 @@ class LikedJumpHooksTest {
 
     private fun clearMatches() {
         LikedListRequestFingerprint.clearMatch()
+        ProfileTabRefreshFingerprint.clearMatch()
         GridRefreshFingerprint.clearMatch()
     }
 
     private companion object {
         const val EXTENSION = "/extensions/tiktok.mpe"
         const val LIKED_JUMP_TYPE = "Lapp/morphe/extension/tiktok/feed/LikedJump;"
+        const val PROFILE_TAB =
+            "Lcom/ss/android/ugc/profile/platform/framework/aweme/profile/tab/profiletab/ProfileBaseAwemeListFragment;"
         val OWNER = LikedJumpHooksTest::class.java
     }
 }

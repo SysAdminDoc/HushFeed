@@ -37,6 +37,8 @@ import com.bytedance.android.live.design.resource.theme.LiveThemeAwareDialogFrag
 import com.bytedance.android.live.design.resource.theme.LiveThemeAwareFragment;
 import com.bytedance.android.live.design.view.sheet.LiveSheetFragment;
 import com.bytedance.android.live.rank.impl.list.RankListDialog;
+import com.bytedance.android.livesdk.definition.LiveDefinitionSelectionDialog;
+import com.bytedance.android.livesdk.definition.talent.LiveTalentDefinitionSelectionDialog;
 import com.bytedance.android.livesdk.fansclub.FansClubPanel;
 import com.bytedance.android.livesdk.profile.ProfilePanel;
 
@@ -1128,6 +1130,90 @@ public class LivePanelThemeTest {
         assertEquals(LivePanelTheme.DARK_FILL, strip.selected.getColor());
         assertEquals(LivePanelTheme.DARK_FILL, strip.other.getColor());
         assertEquals(LivePanelTheme.DARK_TAB, strip.unselected.getColor());
+    }
+
+    /**
+     * #168: the older Video quality picker's card is a fixed white shape and its title a fixed
+     * #161823, while its rows read the dark overlay and came out light on the white card.
+     */
+    @Test public void theOlderQualityPickersWhiteCardGoesDarkAndItsTitleLight() {
+        FrameLayout root = new FrameLayout(dark);
+        FrameLayout card = new FrameLayout(dark);
+        GradientDrawable shape = new GradientDrawable();
+        shape.setCornerRadius(12f);
+        shape.setColor(Color.WHITE);
+        card.setBackground(shape);
+        TextView title = text(dark, 0xFF161823);
+        TextView row = text(dark, 0xE6FFFFFF);
+        View tile = new View(dark);
+        tile.setBackground(new ColorDrawable(Color.WHITE));
+        card.addView(title);
+        card.addView(row);
+        card.addView(tile);
+        root.addView(card);
+        LiveDefinitionSelectionDialog picker = new LiveDefinitionSelectionDialog();
+        picker.overlay = OVERLAY;
+        picker.view = card;
+        picker.dialog = dialogWith(root);
+
+        LivePanelTheme.darkLivePanel(picker, LayoutInflater.from(dark));
+        assertEquals("the switch starts off", Color.WHITE, shape.getColor().getDefaultColor());
+
+        Settings.DARK_LIVE_PANELS.save(true);
+        LivePanelTheme.darkLivePanel(picker, LayoutInflater.from(light));
+        assertEquals("TikTok Light stays stock", Color.WHITE, ((GradientDrawable) card.getBackground()).getColor().getDefaultColor());
+
+        LivePanelTheme.darkLivePanel(picker, LayoutInflater.from(dark));
+        assertEquals("the card takes the dark sheet", LivePanelTheme.SHEET_FILL,
+                ((GradientDrawable) card.getBackground()).getColor().getDefaultColor());
+        assertEquals("a tile on the card takes the tiles' fill", LivePanelTheme.DARK_FILL,
+                ((ColorDrawable) tile.getBackground()).getColor());
+        assertEquals("the fixed dark title turns light", Color.WHITE, title.getCurrentTextColor());
+        assertEquals("a row the overlay already lit keeps its color", 0xE6FFFFFF, row.getCurrentTextColor());
+        assertTrue(LivePanelTheme.fillPanel(LiveDefinitionSelectionDialog.class));
+        assertNull("other fill panels have no card of their own", LivePanelTheme.sheet(new ProfilePanel()));
+    }
+
+    /**
+     * #168 on the S22: the picker Share > Video quality opens is a sheet page whose sheet goes
+     * dark, but its list sits on a rounded white card, so its dark rows read on white.
+     */
+    @Test public void theQualityPickersWhiteListCardGoesDarkAndItsRowsLight() {
+        FrameLayout root = new FrameLayout(dark);
+        GradientDrawable sheetShape = new GradientDrawable();
+        sheetShape.setColor(Color.BLACK);
+        root.setBackground(sheetShape);
+        TextView title = text(dark, Color.WHITE);
+        FrameLayout list = new FrameLayout(dark);
+        GradientDrawable card = new GradientDrawable();
+        card.setCornerRadius(8f);
+        card.setColor(Color.WHITE);
+        list.setBackground(card);
+        TextView row = text(dark, 0xFF161823);
+        list.addView(row);
+        root.addView(title);
+        root.addView(list);
+        LiveTalentDefinitionSelectionDialog picker = new LiveTalentDefinitionSelectionDialog();
+        picker.overlay = OVERLAY;
+        picker.view = root;
+
+        LivePanelTheme.darkLivePanel(picker, LayoutInflater.from(dark));
+        assertEquals("the switch starts off", Color.WHITE, card.getColor().getDefaultColor());
+
+        Settings.DARK_LIVE_PANELS.save(true);
+        LivePanelTheme.darkLivePanel(picker, LayoutInflater.from(light));
+        assertEquals("TikTok Light stays stock", Color.WHITE,
+                ((GradientDrawable) list.getBackground()).getColor().getDefaultColor());
+
+        LivePanelTheme.darkLivePanel(picker, LayoutInflater.from(dark));
+        assertEquals("the list's card takes the tiles' fill", LivePanelTheme.DARK_FILL,
+                ((GradientDrawable) list.getBackground()).getColor().getDefaultColor());
+        assertEquals("the dark sheet stays as it is", Color.BLACK,
+                ((GradientDrawable) root.getBackground()).getColor().getDefaultColor());
+        assertEquals("a dark row on the card turns light", Color.WHITE, row.getCurrentTextColor());
+        assertEquals("the sheet's title keeps its color", Color.WHITE, title.getCurrentTextColor());
+        assertTrue(LivePanelTheme.fillPanel(LiveTalentDefinitionSelectionDialog.class));
+        assertNull("its root is the sheet, not a card to fill", LivePanelTheme.sheet(picker));
     }
 
     /** A plain LIVE sheet with a window, like the gift sheet: dark through its overlay, no fills of its own. */

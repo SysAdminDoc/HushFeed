@@ -111,6 +111,28 @@ public class EffectDeviceSpoofTest {
                 EffectDeviceSpoof.modelProblem("Pixel/9"));
     }
 
+    /** The settings list (#176): the empty default first, then phones that each go out exactly as listed. */
+    @Test public void everyListedPhoneGoesOutAsListed() {
+        String[] models = EffectDeviceSpoof.listedModels();
+        String[] labels = EffectDeviceSpoof.listedLabels();
+        assertEquals(models.length, labels.length);
+        assertEquals("", models[0]);
+        assertEquals("Galaxy S24 Ultra (SM-S928B), the default", labels[0]);
+        assertEquals("Galaxy S25 Ultra (SM-S938B)", labels[1]);
+        Settings.REPORT_NEWER_PHONE_TO_EFFECTS.save(true);
+        java.util.Set<String> seen = new java.util.HashSet<>();
+        for (int i = 1; i < models.length; i++) {
+            assertNull(models[i], EffectDeviceSpoof.modelProblem(models[i]));
+            org.junit.Assert.assertTrue("listed twice: " + models[i], seen.add(models[i]));
+            org.junit.Assert.assertTrue(labels[i], labels[i].startsWith(EffectDeviceSpoof.LISTED_PHONES[i - 1][0]));
+            Settings.EFFECT_PHONE_MODEL.save(models[i]);
+            assertEquals(models[i], EffectDeviceSpoof.deviceType("Redmi A3"));
+        }
+        org.junit.Assert.assertFalse("the default is listed a second time", seen.contains("SM-S928B"));
+        assertEquals("a Pixel reads as its own name, once", "Pixel 9 Pro",
+                labels[java.util.Arrays.asList(models).indexOf("Pixel 9 Pro")]);
+    }
+
     @Test public void theSwitchIsReachable() {
         try (var controller = Robolectric.buildActivity(TestActivity.class).setup()) {
             var activity = controller.get();

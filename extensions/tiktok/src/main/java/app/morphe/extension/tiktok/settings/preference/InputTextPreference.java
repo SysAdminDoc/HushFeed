@@ -109,6 +109,17 @@ public class InputTextPreference extends EditTextPreference {
     /** Whether the value is a password, shown as dots on the row and while it's typed. */
     private boolean secret;
 
+    /** Ready values the row lists before the editor, with what each reads as; null opens the editor. */
+    @Nullable
+    private String[] choiceValues;
+    @Nullable
+    private String[] choiceLabels;
+    /** The list's last row, which opens the editor. Already translated. */
+    private String typeLabel = "";
+    /** The list while it's open, so a second tap on the row doesn't stack another. */
+    @Nullable
+    private AlertDialog choices;
+
     public InputTextPreference(Context context, String title, String summary, StringSetting setting) {
         super(context);
         setTitle(title);
@@ -243,6 +254,61 @@ public class InputTextPreference extends EditTextPreference {
         getEditText().setTransformationMethod(PasswordTransformationMethod.getInstance());
         rebuildSummary();
         return this;
+    }
+
+    /**
+     * Makes the row open a list of ready values first, so a common one is a scroll and a tap
+     * instead of typing (#176). A pick saves through the same check as Save and closes the list,
+     * and the last row, {@code typeLabel}, opens the editor as before. The labels are shown as
+     * given, so the caller translates what needs it.
+     */
+    public InputTextPreference withChoices(String[] labels, String[] values, String typeLabel) {
+        if (labels.length != values.length) {
+            throw new IllegalArgumentException(labels.length + " labels for " + values.length + " values");
+        }
+        choiceLabels = labels.clone();
+        choiceValues = values.clone();
+        this.typeLabel = L10n.t(getContext(), typeLabel);
+        return this;
+    }
+
+    @Override
+    protected void onClick() {
+        if (choiceValues == null || choiceLabels == null) {
+            super.onClick();
+        } else if (choices == null || !choices.isShowing()) {
+            showChoices(choiceLabels, choiceValues);
+        }
+    }
+
+    private void showChoices(String[] labels, String[] values) {
+        String[] rows = new String[labels.length + 1];
+        System.arraycopy(labels, 0, rows, 0, labels.length);
+        rows[labels.length] = typeLabel;
+        // The saved value is marked, and anything typed by hand marks the editor's row.
+        String current = getText() == null ? "" : getText().trim();
+        int checked = labels.length;
+        for (int i = 0; i < values.length; i++) {
+            if (values[i].equalsIgnoreCase(current)) {
+                checked = i;
+                break;
+            }
+        }
+        AlertDialog dialog = new AlertDialog.Builder(getContext())
+                .setTitle(getTitle())
+                .setSingleChoiceItems(rows, checked, (shown, which) -> {
+                    shown.dismiss();
+                    if (which < values.length) {
+                        if (callChangeListener(values[which])) setText(values[which]);
+                    } else {
+                        showDialog(null);
+                    }
+                })
+                .setNegativeButton(L10n.t(getContext(), "Cancel"), null)
+                .create();
+        choices = dialog;
+        dialog.show();
+        SettingsUi.styleStandardAlertDialog(dialog);
     }
 
     @Override

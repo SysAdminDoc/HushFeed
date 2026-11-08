@@ -61,6 +61,89 @@ public class InputCheckTest {
         Settings.EXTERNAL_DOWNLOADER_PACKAGE.save("");
         Settings.MIN_MAX_VIEWS.resetToDefault();
         Settings.DOWNLOAD_VIDEO_PATH.resetToDefault();
+        Settings.EFFECT_PHONE_MODEL.resetToDefault();
+    }
+
+    /** Taps a row the way the settings screen does; Preference.onClick is protected. */
+    private static void tapRow(Preference row) throws Exception {
+        java.lang.reflect.Method click = Preference.class.getDeclaredMethod("onClick");
+        click.setAccessible(true);
+        click.invoke(row);
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+    }
+
+    /** The list a row tap opened, with its rows. */
+    private static android.app.AlertDialog latestList() {
+        android.app.AlertDialog shown = org.robolectric.shadows.ShadowAlertDialog.getLatestAlertDialog();
+        assertNotNull("tapping the row opened nothing", shown);
+        assertTrue("the list isn't showing", shown.isShowing());
+        assertNotNull("the dialog has no list", shown.getListView());
+        return shown;
+    }
+
+    private static void pickRow(android.widget.ListView rows, int position) {
+        rows.performItemClick(null, position, position);
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+    }
+
+    /**
+     * The effects model row (#176) lists phones before the editor, so a common one is a scroll
+     * and a tap. A pick saves and closes the list, and the last row still opens the editor and
+     * its check for any other model.
+     */
+    @Test public void theEffectsModelRowListsPhonesAndStillTakesATypedOne() throws Exception {
+        onScreen("BEHAVIOR", Settings.EFFECT_PHONE_MODEL.key, field -> {
+            tapRow(field);
+            assertNull("the editor opened instead of the list", field.getDialog());
+            android.app.AlertDialog list = latestList();
+            android.widget.ListView rows = list.getListView();
+            int count = rows.getAdapter().getCount();
+            assertEquals("Galaxy S24 Ultra (SM-S928B), the default", String.valueOf(rows.getAdapter().getItem(0)));
+            assertEquals("Type another model", String.valueOf(rows.getAdapter().getItem(count - 1)));
+            assertEquals("the empty default isn't the marked row", 0, rows.getCheckedItemPosition());
+            int s25 = -1;
+            for (int i = 0; i < count; i++) {
+                if ("Galaxy S25 Ultra (SM-S938B)".equals(String.valueOf(rows.getAdapter().getItem(i)))) s25 = i;
+            }
+            assertTrue("no Galaxy S25 Ultra row", s25 > 0);
+
+            pickRow(rows, s25);
+            assertFalse("the list stayed open after a pick", list.isShowing());
+            assertNull("a pick opened the editor", field.getDialog());
+            assertEquals("SM-S938B", Settings.EFFECT_PHONE_MODEL.get());
+            assertEquals("SM-S938B", field.getText());
+
+            // Opened again, the saved phone is marked, and the last row opens the editor.
+            tapRow(field);
+            android.app.AlertDialog again = latestList();
+            org.junit.Assert.assertNotSame("the closed list came back", list, again);
+            android.widget.ListView againRows = again.getListView();
+            assertEquals(s25, againRows.getCheckedItemPosition());
+            pickRow(againRows, againRows.getAdapter().getCount() - 1);
+            assertFalse(again.isShowing());
+            android.app.AlertDialog editor = (android.app.AlertDialog) field.getDialog();
+            assertNotNull("the last row did not open the editor", editor);
+            assertTrue(editor.isShowing());
+            assertEquals("SM-S938B", field.getEditText().getText().toString());
+
+            field.getEditText().setText("Pixel/9");
+            editor.getButton(android.app.AlertDialog.BUTTON_POSITIVE).performClick();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertTrue("a refused model closed the editor", editor.isShowing());
+            assertEquals("SM-S938B", Settings.EFFECT_PHONE_MODEL.get());
+            field.getEditText().setText("moto g85");
+            editor.getButton(android.app.AlertDialog.BUTTON_POSITIVE).performClick();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertFalse(editor.isShowing());
+            assertEquals("moto g85", Settings.EFFECT_PHONE_MODEL.get());
+
+            // A model typed by hand marks the editor's row.
+            tapRow(field);
+            android.app.AlertDialog typed = latestList();
+            assertEquals(typed.getListView().getAdapter().getCount() - 1,
+                    typed.getListView().getCheckedItemPosition());
+            typed.dismiss();
+        });
     }
 
     /** The field as the settings screen really builds it, not one made up for the test. */

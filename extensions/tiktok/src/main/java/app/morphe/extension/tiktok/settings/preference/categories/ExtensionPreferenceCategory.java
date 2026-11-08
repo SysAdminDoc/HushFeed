@@ -442,11 +442,13 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                     Settings.REPORT_NEWER_PHONE_TO_EFFECTS
             ));
             addPreference(new InputTextPreference(context, "Phone model for effects",
-                    "The model the effects server is told, like SM-S938B for a Galaxy S25 Ultra or Pixel 9 Pro. "
-                            + "An effect turned down for one phone may open for another. Leave empty for the Galaxy S24 Ultra.",
+                    "Pick the phone the effects server is told about, or type any model. "
+                            + "An effect turned down for one phone may open for another. Empty means the Galaxy S24 Ultra.",
                     Settings.EFFECT_PHONE_MODEL)
                     .withFreeTextKeyboard()
-                    .withCheck(EffectDeviceSpoof::modelProblem));
+                    .withCheck(EffectDeviceSpoof::modelProblem)
+                    .withChoices(EffectDeviceSpoof.listedLabels(), EffectDeviceSpoof.listedModels(),
+                            "Type another model"));
         }
         if (SettingsStatus.launcherShortcutsEnabled) {
             addPreference(new TogglePreference(

@@ -28,6 +28,33 @@ public final class EffectDeviceSpoof {
     static final String NEWER_MODEL = "SM-S928B";
     /** Longer than any model name a phone reports. */
     static final int LONGEST_MODEL = 40;
+    /** What the default reads as in the settings list. */
+    static final String NEWER_PHONE = "Galaxy S24 Ultra";
+
+    /**
+     * The phones the settings row lists, newest first: the name shown, then the model sent, which
+     * is what each one reports as {@code Build.MODEL} (#176). Pixels report their own name.
+     */
+    static final String[][] LISTED_PHONES = {
+            {"Galaxy S25 Ultra", "SM-S938B"},
+            {"Galaxy S25 Edge", "SM-S937B"},
+            {"Galaxy S25+", "SM-S936B"},
+            {"Galaxy S25", "SM-S931B"},
+            {"Galaxy Z Fold7", "SM-F966B"},
+            {"Galaxy Z Flip7", "SM-F766B"},
+            {"Galaxy S24", "SM-S921B"},
+            {"Galaxy Z Fold6", "SM-F956B"},
+            {"Galaxy Z Flip6", "SM-F741B"},
+            {"Galaxy S23 Ultra", "SM-S918B"},
+            {"Galaxy A56", "SM-A566B"},
+            {"Pixel 10 Pro XL", "Pixel 10 Pro XL"},
+            {"Pixel 10 Pro", "Pixel 10 Pro"},
+            {"Pixel 10", "Pixel 10"},
+            {"Pixel 9 Pro XL", "Pixel 9 Pro XL"},
+            {"Pixel 9 Pro", "Pixel 9 Pro"},
+            {"Pixel 9", "Pixel 9"},
+            {"Pixel 8 Pro", "Pixel 8 Pro"},
+    };
 
     private EffectDeviceSpoof() {
     }
@@ -49,6 +76,29 @@ public final class EffectDeviceSpoof {
     static String chosenModel(@Nullable String typed) {
         String model = typed == null ? "" : typed.trim();
         return isModelName(model) ? model : NEWER_MODEL;
+    }
+
+    /**
+     * The models the settings row lists, in the order of {@link #listedLabels()}: empty first,
+     * which is the Galaxy S24 Ultra, then every listed phone.
+     */
+    public static String[] listedModels() {
+        String[] models = new String[LISTED_PHONES.length + 1];
+        models[0] = "";
+        for (int i = 0; i < LISTED_PHONES.length; i++) models[i + 1] = LISTED_PHONES[i][1];
+        return models;
+    }
+
+    /** What the list shows for each of {@link #listedModels()}: a phone's name, with its model when that differs. */
+    public static String[] listedLabels() {
+        String[] labels = new String[LISTED_PHONES.length + 1];
+        labels[0] = L10n.f("%1$s, the default", label(NEWER_PHONE, NEWER_MODEL));
+        for (int i = 0; i < LISTED_PHONES.length; i++) labels[i + 1] = label(LISTED_PHONES[i][0], LISTED_PHONES[i][1]);
+        return labels;
+    }
+
+    private static String label(String name, String model) {
+        return name.equals(model) ? name : name + " (" + model + ")";
     }
 
     /** The settings row's check: empty is fine (the Galaxy S24 Ultra), anything else has to read as a model. */

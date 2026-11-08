@@ -1112,8 +1112,12 @@ Report a newer phone to effects	Effekten ein neueres Telefon melden
 Effects ask TikTok's server whether your phone can run them, and some get turned down on older phones. This tells the effects server you have a Galaxy S24 Ultra instead, or the phone you type below. Sign-in and everything else still see your real phone. An effect your phone really can't run may still fail or look wrong.	Effekte fragen den Server von TikTok, ob dein Telefon sie ausführen kann, und manche werden auf älteren Telefonen abgelehnt. Das meldet dem Effekt-Server, dass du ein Galaxy S24 Ultra hast, oder das Telefon, das du unten eingibst. Anmeldung und alles andere sehen weiterhin dein echtes Telefon. Ein Effekt, den dein Telefon wirklich nicht ausführen kann, kann trotzdem fehlschlagen oder falsch aussehen.
 # context: settings row under Report a newer phone to effects; the user types a phone model name there (#176)
 Phone model for effects	Telefonmodell für Effekte
-# context: summary of Phone model for effects; SM-S938B, Galaxy S25 Ultra, Pixel 9 Pro and Galaxy S24 Ultra stay as they are (#176)
-The model the effects server is told, like SM-S938B for a Galaxy S25 Ultra or Pixel 9 Pro. An effect turned down for one phone may open for another. Leave empty for the Galaxy S24 Ultra.	Das Modell, das dem Effekt-Server gemeldet wird, etwa SM-S938B für ein Galaxy S25 Ultra oder Pixel 9 Pro. Ein Effekt, der für ein Telefon abgelehnt wird, kann sich für ein anderes öffnen. Leer lassen für das Galaxy S24 Ultra.
+# context: summary of Phone model for effects; tapping the row lists phones to pick and its last row opens a box to type one; Galaxy S24 Ultra stays as it is (#176)
+Pick the phone the effects server is told about, or type any model. An effect turned down for one phone may open for another. Empty means the Galaxy S24 Ultra.	Wähle das Telefon, das dem Effekt-Server gemeldet wird, oder tippe ein beliebiges Modell ein. Ein Effekt, der für ein Telefon abgelehnt wird, kann sich für ein anderes öffnen. Leer heißt Galaxy S24 Ultra.
+# context: first row of the phone list under Phone model for effects; %1$s is a phone name like Galaxy S24 Ultra (SM-S928B) (#176)
+%1$s, the default	%1$s, Standard
+# context: last row of the phone list under Phone model for effects; opens a box to type a model name (#176)
+Type another model	Anderes Modell eintippen
 # context: shown when the typed phone model has other characters or is over 40 long (#176)
 Use up to 40 letters and numbers. Spaces, dots, dashes and brackets are fine too.	Bis zu 40 Buchstaben und Ziffern. Leerzeichen, Punkte, Bindestriche und Klammern gehen auch.
 Stops TikTok from reading your phone's motion and compass sensors. Apps can use them to recognize your phone.	Verhindert, dass TikTok die Bewegungs- und Kompasssensoren deines Telefons ausliest. Apps können dein Telefon daran wiedererkennen.

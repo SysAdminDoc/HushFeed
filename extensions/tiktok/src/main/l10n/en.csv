@@ -98,6 +98,7 @@ source,target
 "%1$s, new","%1$s, new"
 "%1$s, selected","%1$s, selected"
 "%1$s, size unknown","%1$s, size unknown"
+"%1$s, the default","%1$s, the default"
 %1$s. %2$s,%1$s. %2$s
 "%1$s: %2$d found, %3$d missing","%1$s: %2$d found, %3$d missing"
 "%1$s: %2$d found, %3$d missing, and more it stopped counting","%1$s: %2$d found, %3$d missing, and more it stopped counting"
@@ -1463,6 +1464,7 @@ Pick all,Pick all
 Pick for saving,Pick for saving
 Pick the actions to remove from the share sheet. Names you typed by hand that TikTok hasn't shown yet stay in the list above.,Pick the actions to remove from the share sheet. Names you typed by hand that TikTok hasn't shown yet stay in the list above.
 Pick the buttons to take off the column. The rest stay where they are.,Pick the buttons to take off the column. The rest stay where they are.
+"Pick the phone the effects server is told about, or type any model. An effect turned down for one phone may open for another. Empty means the Galaxy S24 Ultra.","Pick the phone the effects server is told about, or type any model. An effect turned down for one phone may open for another. Empty means the Galaxy S24 Ultra."
 "Pick the popups to stop. The list holds the ones TikTok has tried to show on this phone, so a popup appears here after its first showing. CAPTCHA, verification, sign-in, age, ban and legal consent screens are never listed or blocked.","Pick the popups to stop. The list holds the ones TikTok has tried to show on this phone, so a popup appears here after its first showing. CAPTCHA, verification, sign-in, age, ban and legal consent screens are never listed or blocked."
 "Pick the shortcuts to remove from the row under a profile's bio, such as TikTok Studio or Your orders. Restart TikTok to apply this.","Pick the shortcuts to remove from the row under a profile's bio, such as TikTok Studio or Your orders. Restart TikTok to apply this."
 Pick videos to save from profile grids,Pick videos to save from profile grids
@@ -2181,7 +2183,6 @@ The list changed while loading. Results are incomplete.,The list changed while l
 The list reached its limit. More items may remain.,The list reached its limit. More items may remain.
 The list stopped making progress. Results are incomplete.,The list stopped making progress. Results are incomplete.
 The message didn't go through. It tries again at %1$s.,The message didn't go through. It tries again at %1$s.
-"The model the effects server is told, like SM-S938B for a Galaxy S25 Ultra or Pixel 9 Pro. An effect turned down for one phone may open for another. Leave empty for the Galaxy S24 Ultra.","The model the effects server is told, like SM-S938B for a Galaxy S25 Ultra or Pixel 9 Pro. An effect turned down for one phone may open for another. Leave empty for the Galaxy S24 Ultra."
 The network proxy from that file is off. Check its address before you turn it on,The network proxy from that file is off. Check its address before you turn it on
 "The override changes no fields. Edit the field values, or reset the override.","The override changes no fields. Edit the field values, or reset the override."
 "The override couldn't be applied: %1$s. Edit the field values, or reset the override.","The override couldn't be applied: %1$s. Edit the field values, or reset the override."
@@ -2367,6 +2368,7 @@ Two at once,Two at once
 "Two letters, like us, gb or jp.","Two letters, like us, gb or jp."
 Type,Type
 "Type a website name to use instead of tiktok.com in links you share or copy, like vxtiktok.com. Leave empty to share TikTok's own links. Only TikTok links change, and only the website name.","Type a website name to use instead of tiktok.com in links you share or copy, like vxtiktok.com. Leave empty to share TikTok's own links. Only TikTok links change, and only the website name."
+Type another model,Type another model
 "Type one language code here, like en.","Type one language code here, like en."
 Type some sample text to see whether these rules match it.,Type some sample text to see whether these rules match it.
 "Type the other app's ID, like com.dv.adm. The save button sends the video's link there instead of saving. Leave empty to save here.","Type the other app's ID, like com.dv.adm. The save button sends the video's link there instead of saving. Leave empty to save here."

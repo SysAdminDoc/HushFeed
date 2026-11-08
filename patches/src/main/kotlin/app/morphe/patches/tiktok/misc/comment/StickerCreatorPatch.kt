@@ -20,7 +20,9 @@ import app.morphe.util.addInstructions
 import app.morphe.util.addInstructionsAtControlFlowLabel
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
+import app.morphe.patches.tiktok.misc.optimizer.isBranchTarget
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
@@ -37,6 +39,11 @@ private const val STICKER_UPLOAD_CONFIG_API = "Lcom/ss/android/ugc/aweme/subscri
 private const val STICKER_ACCOUNT_SERVICE = "Lcom/ss/android/ugc/aweme/IAccountService;"
 private const val STICKER_OBJECT = "Ljava/lang/Object;"
 private const val STICKER_STRING = "Ljava/lang/String;"
+private const val PROFILE_USER = "Lcom/ss/android/ugc/aweme/profile/model/User;"
+private const val PROFILE_STICKER_TAB_MODEL = "Lcom/ss/android/ugc/aweme/profile/model/StickerTab;"
+internal const val PROFILE_STICKER_TAB = "Lapp/morphe/extension/tiktok/comment/ProfileStickerTab;"
+internal const val PROFILE_STICKER_PAGE =
+    "Lcom/ss/android/ugc/profile/business/message/fragment/StickerStoreProfileListFragment;"
 
 private fun MethodReference.stickerDescriptor() =
     "$definingClass->$name(${parameterTypes.joinToString("")})$returnType"
@@ -271,6 +278,115 @@ internal fun MutableClass.swapStickerStubs(calls: StickerCreatorCalls) {
     }
 }
 
+/**
+ * The profile's Stickers tab gate (0Pvq.LIZ on TikTok 47.7.3, #214): static, takes the User, asks
+ * the IM sticker store whether the profile owns a sticker set and otherwise reads the profile's own
+ * showStickerTab flag. 47.6.3 read only the flag.
+ */
+internal fun Method.isProfileStickerTabGate(): Boolean {
+    if (!AccessFlags.STATIC.isSet(accessFlags) || returnType != "Z" ||
+        parameterTypes.map { it.toString() } != listOf(PROFILE_USER)
+    ) return false
+    val references = implementation?.instructions?.mapNotNull { (it as? ReferenceInstruction)?.reference } ?: return false
+    return references.any { it is MethodReference && it.definingClass == IM_STICKER_API && it.name == "getImStickerStoreService" } &&
+        references.any { it is FieldReference && it.definingClass == PROFILE_STICKER_TAB_MODEL && it.name == "showStickerTab" }
+}
+
+internal object ProfileStickerTabFingerprint : Fingerprint(
+    returnType = "Z",
+    parameters = listOf(PROFILE_USER),
+    custom = { method, _ -> method.isProfileStickerTabGate() },
+)
+
+/**
+ * Hands the gate's owned-set answer to ProfileStickerTab right before it's returned, so a profile
+ * whose own flag says to show the tab gets it again.
+ */
+internal fun MutableMethod.keepProfileStickerTab() {
+    val code = implementation?.instructions?.toList()
+        ?: throw PatchException("Create stickers: the Stickers tab gate has no code")
+    val store = code.firstNotNullOfOrNull {
+        ((it as? ReferenceInstruction)?.reference as? MethodReference)
+            ?.takeIf { call -> call.definingClass == IM_STICKER_API && call.name == "getImStickerStoreService" }
+    }?.returnType ?: throw PatchException("Create stickers: the Stickers tab gate has no sticker store")
+    val owned = code.indices.filter { index ->
+        val call = (code[index] as? ReferenceInstruction)?.reference as? MethodReference
+        code[index].opcode == Opcode.INVOKE_INTERFACE && call != null && call.definingClass == store &&
+            call.returnType == "Z" && call.parameterTypes.map { it.toString() } == listOf(STICKER_STRING) &&
+            code.getOrNull(index + 1)?.opcode == Opcode.MOVE_RESULT && code.getOrNull(index + 2)?.opcode == Opcode.RETURN &&
+            (code[index + 1] as OneRegisterInstruction).registerA == (code[index + 2] as OneRegisterInstruction).registerA
+    }
+    if (owned.size != 1) {
+        throw PatchException("Create stickers: ${owned.size} owned sticker set returns in the Stickers tab gate, expected 1")
+    }
+    val returned = owned.single() + 2
+    val result = (code[returned] as OneRegisterInstruction).registerA
+    val user = implementation!!.registerCount - 1
+    if (result > 15 || user > 15) throw PatchException("Create stickers: the Stickers tab gate's registers don't fit the hook")
+    if (code.any { it.opcode.setsRegister() && (it as? OneRegisterInstruction)?.registerA == user }) {
+        throw PatchException("Create stickers: the Stickers tab gate writes over the profile")
+    }
+    addInstructionsAtControlFlowLabel(
+        returned,
+        """
+            invoke-static { v$result, v$user }, $PROFILE_STICKER_TAB->show(ILjava/lang/Object;)Z
+            move-result v$result
+        """,
+    )
+}
+
+/** The Stickers tab's page on a profile, which picks TikTok's curated set page or the sticker sets pager. */
+internal object ProfileStickerPageFingerprint : Fingerprint(
+    definingClass = PROFILE_STICKER_PAGE,
+    name = "onViewCreated",
+    returnType = "V",
+    parameters = listOf("Landroid/view/View;", "Landroid/os/Bundle;"),
+)
+
+/**
+ * Hands the page's curated-set experiment answer to ProfileStickerTab with the profile's uid, right
+ * after it's read. 47.7.3 asks the sticker store's Z(Z) check, then on yes asks the store for the
+ * curated page with (uid, view model key, is self); on no it builds the 47.6.3 sticker sets pager.
+ */
+internal fun MutableMethod.keepProfileStickerPage() {
+    val code = implementation?.instructions?.toList()
+        ?: throw PatchException("Create stickers: the Stickers tab page has no code")
+    val store = code.firstNotNullOfOrNull {
+        ((it as? ReferenceInstruction)?.reference as? MethodReference)
+            ?.takeIf { call -> call.definingClass == IM_STICKER_API && call.name == "getImStickerStoreService" }
+    }?.returnType ?: throw PatchException("Create stickers: the Stickers tab page has no sticker store")
+    fun storeCall(index: Int, returns: String, parameters: List<String>): Boolean {
+        val call = (code[index] as? ReferenceInstruction)?.reference as? MethodReference ?: return false
+        return code[index].opcode == Opcode.INVOKE_INTERFACE && call.definingClass == store && call.returnType == returns &&
+            call.parameterTypes.map { it.toString() } == parameters
+    }
+    val checks = code.indices.filter { storeCall(it, "Z", listOf("Z")) && code.getOrNull(it + 1)?.opcode == Opcode.MOVE_RESULT }
+    if (checks.size != 1) throw PatchException("Create stickers: ${checks.size} curated set checks in the Stickers tab page, expected 1")
+    val answer = checks.single() + 1
+    val curated = (answer + 1 until code.size).firstOrNull {
+        storeCall(it, "Landroidx/fragment/app/Fragment;", listOf(STICKER_STRING, STICKER_STRING, "Z"))
+    } ?: throw PatchException("Create stickers: the Stickers tab page never opens the curated set page")
+    val result = (code[answer] as OneRegisterInstruction).registerA
+    val uid = (code[curated] as? FiveRegisterInstruction)?.registerD
+        ?: throw PatchException("Create stickers: the Stickers tab page's curated set call takes a register range")
+    if (result > 15 || uid > 15) throw PatchException("Create stickers: the Stickers tab page's registers don't fit the hook")
+    val overwritten = (answer + 1 until curated).any {
+        val written = (code[it] as? OneRegisterInstruction)?.registerA ?: return@any false
+        code[it].opcode.setsRegister() && (written == uid || (code[it].opcode.setsWideRegister() && written + 1 == uid))
+    }
+    if (overwritten) {
+        throw PatchException("Create stickers: the Stickers tab page writes over the uid before the curated set page")
+    }
+    if (isBranchTarget(answer + 1)) throw PatchException("Create stickers: something lands right after the curated set check")
+    addInstructions(
+        answer + 1,
+        """
+            invoke-static { v$result, v$uid }, $PROFILE_STICKER_TAB->curatedPage(ILjava/lang/String;)Z
+            move-result v$result
+        """,
+    )
+}
+
 /** Hands the Saved page to StickerCreator as it's returned, so Create goes on every new page. */
 internal fun MutableMethod.addStickerCreatorButton() {
     val returns = implementation?.instructions?.withIndex()?.filter { it.value.opcode == Opcode.RETURN_OBJECT }
@@ -288,8 +404,10 @@ internal fun MutableMethod.addStickerCreatorButton() {
 val createStickersPatch = bytecodePatch(
     name = "Create stickers",
     description = "Adds a Create button to the Saved page of the comment sticker panel. Pick a photo and " +
-        "it turns into one of your saved stickers. Make sticker in a video's share sheet does the same " +
-        "with its cover. Works as soon as you patch it in, with no switch.",
+        "it turns into one of your saved stickers. Make sticker in a video's share sheet opens TikTok's " +
+        "sticker editor for any video, or uses its cover when the editor can't open. Profiles that have " +
+        "stickers keep their Stickers tab, and it opens their sticker sets. Works as soon as you patch it " +
+        "in, with no switch.",
     default = true,
 ) {
     category("Comments")
@@ -305,6 +423,8 @@ val createStickersPatch = bytecodePatch(
         )
         mutableClassDefBy(STICKER_CREATOR).swapStickerStubs(calls)
         FavouriteStickerPageFingerprint.method.addStickerCreatorButton()
+        ProfileStickerTabFingerprint.method.keepProfileStickerTab()
+        ProfileStickerPageFingerprint.method.keepProfileStickerPage()
         addOwnedShareAction(SHARE_MAKE_STICKER)
         registerForBuildDetails("enableStickerCreator")
     }

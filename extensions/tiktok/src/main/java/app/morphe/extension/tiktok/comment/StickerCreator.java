@@ -51,7 +51,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Create on the comment panel's saved stickers page (#156): pick a photo and it becomes one of your
  * saved stickers, the way TikTok's own Create sticker does. Make sticker in a video's share sheet
- * (#88) does the same with the video's cover.
+ * (#88) does the same with the video's cover when TikTok's animated sticker editor can't open.
  *
  * <p>The app ships everything this needs except the button. The DM canvas saves a drawing as a
  * sticker through {@code im/sticker/save} and then adds it to Saved, and the comment sticker
@@ -253,8 +253,8 @@ public final class StickerCreator {
     }
 
     /**
-     * Make sticker in a video's share sheet (#88): the video's cover becomes one of your saved
-     * stickers, since TikTok's own Create sticker needs the sticker module a patched app can't get.
+     * Make sticker in a video's share sheet (#88) when TikTok's animated sticker editor can't open
+     * (#214): the video's cover becomes one of your saved stickers.
      */
     public static void fromCover(Context context, Object aweme) {
         if (context == null) return;

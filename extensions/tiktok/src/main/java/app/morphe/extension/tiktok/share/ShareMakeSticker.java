@@ -5,8 +5,10 @@
 package app.morphe.extension.tiktok.share;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.widget.ImageView;
 
 import app.morphe.extension.shared.Logger;
@@ -16,6 +18,7 @@ import app.morphe.extension.shared.settings.HushfeedPause;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
 import app.morphe.extension.tiktok.comment.StickerCreator;
 import app.morphe.extension.tiktok.download.CoverSaver;
+import app.morphe.extension.tiktok.download.StickerClip;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
@@ -23,16 +26,22 @@ import app.morphe.extension.tiktok.settings.preference.SettingsUi;
 
 import com.ss.android.ugc.aweme.feed.model.Aweme;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Make sticker in a video's share sheet (#88), built on the same native Report carrier as Save
- * cover. TikTok's own Create sticker needs the sticker module a patched app can't download, so this
- * turns the video's cover into one of your saved stickers through Create stickers instead.
+ * cover. It opens TikTok's own animated sticker editor for the video (#214), which TikTok's Create
+ * sticker only offers on some videos, feeding it a downloaded copy when the creator turned
+ * stickers off, and turns the video's cover into one of your saved stickers through Create
+ * stickers when that editor can't open.
  */
 public final class ShareMakeSticker {
     static final String KEY = "hushfeed_make_sticker";
@@ -187,14 +196,137 @@ public final class ShareMakeSticker {
             Object post = post(sharePackage);
             if (!enabled() || hidden() || !built.matches(sharePackage, post)) return true;
             Context from = context instanceof Activity ? context : Utils.getVisibleActivity();
-            Maker stand = makerForTests;
-            if (stand != null) stand.make(from, post);
-            else StickerCreator.fromCover(from, post);
+            Maker cover = coverForTests;
+            make(from, post, cover != null ? cover : StickerCreator::fromCover);
         } catch (Throwable failure) {
             HookStatus.threw(FAMILY, "share sheet button", failure);
             Logger.printException(() -> "Could not make a sticker from the share sheet", failure);
         }
         return true;
+    }
+
+    /**
+     * TikTok's animated sticker editor for the video (#214). A video whose creator allows stickers
+     * opens the way TikTok's own Create sticker does. Any other goes in as a downloaded copy, the
+     * way TikTok makes a sticker from a saved video, since the editor won't save one from the video
+     * itself. The cover becomes the sticker when neither opens.
+     */
+    static void make(Context from, Object post, Maker cover) {
+        Runnable coverSticker = () -> cover.make(from, post);
+        if (!(from instanceof Activity)) {
+            coverSticker.run();
+            return;
+        }
+        Activity activity = (Activity) from;
+        Runnable copy = () -> fromCopy(activity, post, coverSticker);
+        if (creatorAllows(post) && VideoStickerEditor.open(activity, post, copy)) return;
+        copy.run();
+    }
+
+    /** Whether the video's creator lets people make stickers from it, the check behind TikTok's Create sticker. */
+    static boolean creatorAllows(Object post) {
+        Object permissions = Reflect.property(post, "getInteractPermission", "interactPermission");
+        Object sticker = Reflect.property(permissions, "getAllowCreateSticker", "allowCreateSticker");
+        Object status = Reflect.property(sticker, "getStatus", "status");
+        return status instanceof Number && ((Number) status).intValue() == 0;
+    }
+
+    /** How long TikTok gets to bring its editor up for a file before the cover takes over. */
+    static final long FILE_OPEN_WAIT_MS = 4000;
+    private static final AtomicBoolean COPYING = new AtomicBoolean();
+    /** The copy the editor last read, dropped when the next one starts. */
+    private static final AtomicReference<File> LAST_CLIP = new AtomicReference<>();
+
+    /** Downloads the video off the main thread, then hands the file to TikTok's editor. */
+    static void fromCopy(Activity activity, Object post, Runnable cover) {
+        if (!VideoStickerEditor.takesFiles()) {
+            cover.run();
+            return;
+        }
+        Utils.showToastShort(L10n.t("Making your sticker"));
+        if (!COPYING.compareAndSet(false, true)) return;
+        Context app = activity.getApplicationContext();
+        Clips clips = clipsForTests;
+        boolean started = worker.run(() -> {
+            File clip = null;
+            try {
+                StickerClip.drop(LAST_CLIP.getAndSet(null));
+                clip = clips != null ? clips.fetch(app, post) : StickerClip.fetch(app, post);
+            } catch (IOException | RuntimeException error) {
+                Logger.printException(() -> "Could not download the video for its sticker", error);
+            }
+            File fetched = clip;
+            Utils.runOnMainThreadNowOrLater(() -> {
+                COPYING.set(false);
+                openCopy(activity, fetched, cover);
+            });
+        });
+        if (!started) {
+            COPYING.set(false);
+            cover.run();
+        }
+    }
+
+    private static void openCopy(Activity activity, File clip, Runnable cover) {
+        if (clip == null) {
+            cover.run();
+            return;
+        }
+        Activity from = activity.isFinishing() || activity.isDestroyed() ? Utils.getVisibleActivity() : activity;
+        if (from == null || from.isFinishing() || from.isDestroyed()) {
+            StickerClip.drop(clip);
+            cover.run();
+            return;
+        }
+        LeaveWatch left = LeaveWatch.on(from);
+        if (!VideoStickerEditor.openFile(from, clip.getAbsolutePath())) {
+            left.stop();
+            StickerClip.drop(clip);
+            cover.run();
+            return;
+        }
+        LAST_CLIP.set(clip);
+        // TikTok returns without a word when it can't read the file, leaving the video on screen.
+        Utils.runOnMainThreadDelayed(() -> {
+            if (left.stop()) return;
+            Logger.printInfo(() -> "TikTok's sticker editor didn't take the video file");
+            cover.run();
+        }, FILE_OPEN_WAIT_MS);
+    }
+
+    /** Notices the video's activity giving way to TikTok's editor. */
+    private static final class LeaveWatch implements Application.ActivityLifecycleCallbacks {
+        private final Activity watched;
+        private final Application application;
+        private volatile boolean left;
+
+        private LeaveWatch(Activity watched) {
+            this.watched = watched;
+            this.application = watched.getApplication();
+        }
+
+        static LeaveWatch on(Activity activity) {
+            LeaveWatch watch = new LeaveWatch(activity);
+            if (watch.application != null) watch.application.registerActivityLifecycleCallbacks(watch);
+            return watch;
+        }
+
+        /** Stops watching and says whether the activity was left meanwhile. */
+        boolean stop() {
+            if (application != null) application.unregisterActivityLifecycleCallbacks(this);
+            return left;
+        }
+
+        @Override public void onActivityPaused(Activity activity) {
+            if (activity == watched) left = true;
+        }
+
+        @Override public void onActivityCreated(Activity activity, Bundle state) {}
+        @Override public void onActivityStarted(Activity activity) {}
+        @Override public void onActivityResumed(Activity activity) {}
+        @Override public void onActivityStopped(Activity activity) {}
+        @Override public void onActivitySaveInstanceState(Activity activity, Bundle state) {}
+        @Override public void onActivityDestroyed(Activity activity) {}
     }
 
     /** Catalog discovery uses the same localized label without guessing obfuscated getter names. */
@@ -205,8 +337,12 @@ public final class ShareMakeSticker {
 
     interface Native { Object newAction(Activity activity, Object aweme); }
     interface Maker { void make(Context context, Object aweme); }
+    interface Clips { File fetch(Context context, Object aweme) throws IOException; }
+    interface Worker { boolean run(Runnable task); }
     static volatile Native nativeForTests;
-    static volatile Maker makerForTests;
+    static volatile Maker coverForTests;
+    static volatile Clips clipsForTests;
+    static volatile Worker worker = Utils::runOnBackgroundThread;
 
     /** A native Report carrier from the shared bridge the patch fills in. */
     static Object newAction(Activity activity, Object aweme) {

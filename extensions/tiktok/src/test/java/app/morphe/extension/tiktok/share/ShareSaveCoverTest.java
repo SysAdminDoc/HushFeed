@@ -55,6 +55,8 @@ public class ShareSaveCoverTest {
 
     public static final class Post extends Aweme {
         public final Video video = new Video();
+        /** Shaped like TikTok's: interactPermission.allowCreateSticker.status, 0 when stickers are allowed. */
+        public Object interactPermission;
         private final String id;
 
         Post(String id, boolean withCover) {

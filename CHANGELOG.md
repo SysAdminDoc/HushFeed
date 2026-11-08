@@ -34,6 +34,7 @@ Every Hushfeed release, newest first.
 * `Invisible controls button` puts a small eye at the top left of the main feed. Tap it and the buttons, caption and tabs turn invisible but keep working where they are, which helps against burn-in on OLED screens. Tap the eye again and they're back. Your choice sticks across videos and restarts. The eye stays off other tabs, comments, Clear display and videos you open from a profile or search, and Pause brings everything back. `Keep the caption in sight` under it leaves the creator's name, the caption and the music line showing. Both start off and sit in Hushfeed settings > Feed screen, under `Keep faded controls in Clear display` (#374).
 * `Hide Send to new group` takes the gray Send to new group button off the share sheet when you've picked two or more people, so Send separately is the only button left. It starts off and sits under `Hide the Send to row` in Hushfeed settings > Share sheet (#375).
 * `AMOLED dark theme` has a switch now. `AMOLED dark mode` in Hushfeed settings > App starts on, and turning it off brings back TikTok's own dark grays after a restart, so you can keep the patch in and still pick plain dark mode. The color you picked in the patch's options stays for when it's on. Pause Hushfeed turns it off too (#372).
+* `Make sticker` in a video's share sheet opens TikTok's own sticker editor for that video, so you can trim it, add text and save it as an animated sticker, even on videos where TikTok doesn't show its Create sticker button. If the editor can't open, the video's cover becomes the sticker like before (#214).
 
 ### Bug Fixes
 
@@ -59,6 +60,7 @@ Every Hushfeed release, newest first.
 * `Remove creation tools` keeps the camera's face model and the effect editor library now, so face effects, Retouch and All effects work with it in. It still takes out the two big effects engine libraries TikTok doesn't load for any of that, about 45 MB, on the APK and on the bundle alike (#285).
 * The Suggested accounts heading in the Inbox lines its title and info icon up with `Clear all` again. Hushfeed's taller Clear all button had pushed them up above it (#358).
 * With `Compact comment header` on, the translate and close buttons no longer sit on top of the first comment. TikTok 47.7.2 moved them out of the header into their own row, so they stayed behind when the header went away. They're hidden along with the rest of the header now (#358).
+* Profiles with their own stickers show the Stickers tab again on TikTok 47.7.3, and tapping it opens their sticker sets and video stickers instead of a "Something went wrong" page (#214).
 
 ## 0.81.0 (2026-11-05)
 

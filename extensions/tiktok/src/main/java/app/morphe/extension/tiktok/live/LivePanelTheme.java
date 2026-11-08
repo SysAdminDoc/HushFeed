@@ -401,8 +401,9 @@ public final class LivePanelTheme {
     }
 
     /**
-     * The same, with the panel's own card, whose light fill becomes the dark sheet color instead
-     * of the tiles' dark fill; null when the panel has no such card.
+     * The same, with the panel's own sheet, whose light fill becomes the dark sheet color instead
+     * of the tiles' dark fill, and whose ink is lit even when its fill was dark already (the
+     * newer quality picker's close X, #168); null when the panel has no such sheet.
      */
     static void darkFills(View root, View sheet, List<View> ink) {
         List<View> filled = new ArrayList<>();
@@ -423,7 +424,7 @@ public final class LivePanelTheme {
         boolean dark = fillHolder(view) && darkBackground(view, view == sheet ? SHEET_FILL : DARK_FILL);
         dark |= darkCard(view);
         dark |= darkPaints(view);
-        if (dark) {
+        if (dark || view == sheet) {
             filled.add(view);
         }
         if (view instanceof ViewGroup) {
@@ -435,11 +436,13 @@ public final class LivePanelTheme {
     }
 
     /**
-     * The panel's own view when the panel is the older quality picker, whose root is its card
-     * (#168); null otherwise or before the views exist.
+     * The panel's own view when the panel is a quality picker (#168): the older one's root is its
+     * card, the newer one's is a dark sheet with its close X drawn in a dark gray. Null otherwise
+     * or before the views exist.
      */
     static View sheet(Object panel) {
-        if (!hasClassName(panel.getClass(), QUALITY_PICKER)) {
+        if (!hasClassName(panel.getClass(), QUALITY_PICKER)
+                && !hasClassName(panel.getClass(), TALENT_QUALITY_PICKER)) {
             return null;
         }
         Object view = Reflect.invoke(panel, "getView");

@@ -63,7 +63,7 @@ Every Hushfeed release, newest first.
 * The Suggested accounts heading in the Inbox lines its title and info icon up with `Clear all` again. Hushfeed's taller Clear all button had pushed them up above it (#358).
 * With `Compact comment header` on, the translate and close buttons no longer sit on top of the first comment. TikTok 47.7.2 moved them out of the header into their own row, so they stayed behind when the header went away. They're hidden along with the rest of the header now (#358).
 * Profiles with their own stickers show the Stickers tab again on TikTok 47.7.3, and tapping it opens their sticker sets and video stickers instead of a "Something went wrong" page (#214).
-* With `Dark LIVE panels in dark mode` on, Video quality under a LIVE's Share menu is dark all the way through. Its sheet went dark before, but the list of qualities sat on a white card with dark text (#168).
+* With `Dark LIVE panels in dark mode` on, Video quality under a LIVE's Share menu is dark all the way through. Its sheet went dark before, but the list of qualities sat on a white card with dark text, and its close X was nearly black on black (#168).
 
 ## 0.81.0 (2026-11-05)
 

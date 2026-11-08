@@ -1213,7 +1213,48 @@ public class LivePanelThemeTest {
         assertEquals("a dark row on the card turns light", Color.WHITE, row.getCurrentTextColor());
         assertEquals("the sheet's title keeps its color", Color.WHITE, title.getCurrentTextColor());
         assertTrue(LivePanelTheme.fillPanel(LiveTalentDefinitionSelectionDialog.class));
-        assertNull("its root is the sheet, not a card to fill", LivePanelTheme.sheet(picker));
+        assertSame("its root is its sheet", root, LivePanelTheme.sheet(picker));
+    }
+
+    /**
+     * #168 on the S22: the same picker's close X is drawn in TikTok's dark gray right on its black
+     * sheet, nothing light under it, so it read as a hole until it was drawn white.
+     */
+    @Test @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
+    public void theQualityPickersDarkCloseXOnItsBlackSheetIsDrawnWhite() {
+        FrameLayout root = new FrameLayout(dark);
+        GradientDrawable sheetShape = new GradientDrawable();
+        sheetShape.setColor(Color.BLACK);
+        root.setBackground(sheetShape);
+        android.widget.ImageView close = new android.widget.ImageView(dark);
+        close.setScaleType(android.widget.ImageView.ScaleType.FIT_XY);
+        close.setPadding(10, 10, 10, 10);
+        close.setImageDrawable(new ColorDrawable(0xFF161823));
+        android.widget.ImageView art = new android.widget.ImageView(dark);
+        art.setScaleType(android.widget.ImageView.ScaleType.FIT_XY);
+        art.setPadding(10, 10, 10, 10);
+        art.setImageDrawable(new ColorDrawable(0xFFFE2C55));
+        android.widget.LinearLayout header = new android.widget.LinearLayout(dark);
+        header.addView(close, new android.widget.LinearLayout.LayoutParams(40, 40));
+        header.addView(art, new android.widget.LinearLayout.LayoutParams(40, 40));
+        root.addView(header);
+        LiveTalentDefinitionSelectionDialog picker = new LiveTalentDefinitionSelectionDialog();
+        picker.overlay = OVERLAY;
+        picker.view = root;
+        layOut(root);
+
+        LivePanelTheme.darkLivePanel(picker, LayoutInflater.from(dark));
+        assertNull("the switch starts off", close.getColorFilter());
+
+        Settings.DARK_LIVE_PANELS.save(true);
+        LivePanelTheme.darkLivePanel(picker, LayoutInflater.from(light));
+        assertNull("TikTok Light stays stock", close.getColorFilter());
+
+        LivePanelTheme.darkLivePanel(picker, LayoutInflater.from(dark));
+        assertNotNull("the close X goes white", close.getColorFilter());
+        assertNull("colored art stays", art.getColorFilter());
+        assertEquals("the sheet stays black", Color.BLACK,
+                ((GradientDrawable) root.getBackground()).getColor().getDefaultColor());
     }
 
     /** A plain LIVE sheet with a window, like the gift sheet: dark through its overlay, no fills of its own. */

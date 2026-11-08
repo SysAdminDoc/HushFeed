@@ -93,6 +93,14 @@ public final class FeatureControls {
     }
 
     /**
+     * The search icon TikTok puts over the shrunken video while comments are open (#371). TikTok's
+     * show-or-hide method passes its answer here first: non-zero shows the icon, 0 hides it.
+     */
+    public static int shrinkVideoSearchIconShown(int shown) {
+        return Settings.HIDE_FEED_SEARCH_BUTTON.get() ? 0 : shown;
+    }
+
+    /**
      * The same question for the side menu button beside LIVE (#128), the one that opens
      * TikTok's drawer with Your orders, TikTok Minis and the rest: false hides it. The toolbar
      * asks as it builds the feed's top bar. The icon has no view id, so the Hook status line is

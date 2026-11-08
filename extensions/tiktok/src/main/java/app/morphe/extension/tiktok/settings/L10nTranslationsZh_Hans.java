@@ -1924,8 +1924,8 @@ final class L10nTranslationsZh_Hans {
                 "隐藏启动器快捷方式");
         table.put("Hide the magnifying glass at the top of Inbox. Search on the feed and in comments is unchanged.",
                 "隐藏收件箱顶部的放大镜。信息流和评论中的搜索没有变化.");
-        table.put("Hide the magnifying glass at the top right of the feed. Search in Inbox and suggestions above comments stay unchanged.",
-                "隐藏信息流右上角的放大镜。收件箱中的搜索和评论上面的建议保持不变.");
+        table.put("Hide the magnifying glass at the top right of the feed and the one over the video while comments are open. Search in Inbox and suggestions above comments stay unchanged.",
+                "隐藏信息流右上角的放大镜，以及打开评论时视频上方的放大镜。收件箱中的搜索和评论上面的建议保持不变.");
         table.put("Hide the music line",
                 "隐藏音乐线");
         table.put("Hide the notification saying somebody new followed you before it reaches the drawer. Every other notification is left alone, and the follower still appears in the Inbox.",

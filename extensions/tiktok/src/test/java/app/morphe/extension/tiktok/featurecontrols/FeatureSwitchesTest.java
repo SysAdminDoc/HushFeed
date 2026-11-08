@@ -167,6 +167,20 @@ public class FeatureSwitchesTest {
     }
 
     /**
+     * #371: the same switch hides the search icon over the shrunken video while comments are
+     * open. TikTok's answer passes through untouched when the switch is off.
+     */
+    @Test public void theSearchSwitchAlsoHidesTheIconOverTheShrunkenVideo() {
+        Settings.HIDE_FEED_SEARCH_BUTTON.save(false);
+        assertEquals(1, FeatureControls.shrinkVideoSearchIconShown(1));
+        assertEquals(0, FeatureControls.shrinkVideoSearchIconShown(0));
+
+        Settings.HIDE_FEED_SEARCH_BUTTON.save(true);
+        assertEquals(0, FeatureControls.shrinkVideoSearchIconShown(1));
+        assertEquals(0, FeatureControls.shrinkVideoSearchIconShown(0));
+    }
+
+    /**
      * #128: the side menu button beside LIVE answers the same "is it enabled" question, with its
      * own switch. Pause Hushfeed hands it back to TikTok, and the Hook status line says the check
      * ran, since the button has no view id a report could name.

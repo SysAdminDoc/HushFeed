@@ -18,8 +18,9 @@ import java.util.WeakHashMap;
 
 /**
  * Hides the close and expand buttons at the top of the comments, one switch each (#371). The
- * search icon in the same row belongs to TikTok's "Search: ..." banner, which
- * {@code HIDE_COMMENT_SEARCH_SUGGESTIONS} already hides.
+ * magnifier over the shrunken video above them is a separate view TikTok shows from its own
+ * method, which {@code HIDE_FEED_SEARCH_BUTTON} hides through
+ * {@code FeatureControls.shrinkVideoSearchIconShown}.
  *
  * <p>The count bar's bind hands its root here. The buttons sit in the row laid over the bar's
  * container, so each one is looked up by id through the bar's nearest ancestors. A hidden button

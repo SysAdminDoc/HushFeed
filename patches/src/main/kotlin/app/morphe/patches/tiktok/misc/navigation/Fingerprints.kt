@@ -401,6 +401,78 @@ internal fun Method.branchTargets(): Set<Int> {
     return targets
 }
 
+internal const val BACK_REFRESH_STRATEGY_ASSEM = "Lcom/ss/android/ugc/aweme/main/assems/BackRefreshStrategyAssem;"
+internal const val TAB_CHANGE_MANAGER = "Lcom/ss/android/ugc/aweme/main/TabChangeManager;"
+
+/**
+ * The main activity's Back, past TikTok's press-twice-to-quit check: it reads the tab Back starts
+ * on from the tab manager and names it to its back helper, ends there when the helper says a guide
+ * was showing, and from any tab but Home posts "performClickTab" for "HOME", which switches to
+ * For You. The start page answers both (#360).
+ */
+internal object BackPressFingerprint : Fingerprint(
+    definingClass = BACK_REFRESH_STRATEGY_ASSEM,
+    name = "onBackPress",
+    returnType = "V",
+    parameters = listOf(),
+    strings = listOf("performClickTab", "HOME"),
+    custom = { method, _ -> method.backPress() != null },
+)
+
+/**
+ * Where the start page answers in [BackPressFingerprint]'s method: [namedAt] is the guide check
+ * right after the tab is named to the helper, with the tab's tag in [tag]; [handledAt] is the test
+ * of that check's answer, held in [handled]; [homeAt] is the "performClickTab" post, whose tag
+ * sits in [home].
+ */
+internal class BackPress(val namedAt: Int, val tag: Int, val handledAt: Int, val handled: Int, val homeAt: Int, val home: Int)
+
+internal fun Method.backPress(): BackPress? {
+    val instructions = implementation?.instructions?.toList() ?: return null
+    fun call(index: Int, opcode: Opcode) =
+        instructions.getOrNull(index)?.takeIf { it.opcode == opcode }?.getReference<MethodReference>()
+    // The helper is told the tab's tag, then asked whether a guide was showing, and the answer is tested.
+    val namedAt = instructions.indices.firstOrNull { i ->
+        val name = call(i - 1, Opcode.INVOKE_INTERFACE) ?: return@firstOrNull false
+        val guide = call(i, Opcode.INVOKE_INTERFACE) ?: return@firstOrNull false
+        name.returnType == "V" && name.parameterTypes.map(CharSequence::toString) == listOf("Ljava/lang/String;") &&
+            guide.definingClass == name.definingClass && guide.returnType == "Z" && guide.parameterTypes.isEmpty() &&
+            instructions.getOrNull(i + 1)?.opcode == Opcode.MOVE_RESULT &&
+            instructions.getOrNull(i + 2)?.opcode == Opcode.IF_EQZ &&
+            (instructions[i + 2] as OneRegisterInstruction).registerA == (instructions[i + 1] as OneRegisterInstruction).registerA
+    } ?: return null
+    val tag = (instructions[namedAt - 1] as FiveRegisterInstruction).registerD
+    // That tag is the tab manager's current tab, an empty one standing in when it has none.
+    val fromTabManager = instructions.subList(0, namedAt - 1).withIndex().any { (i, instruction) ->
+        instruction.opcode == Opcode.INVOKE_VIRTUAL && instruction.getReference<MethodReference>()?.let {
+            it.definingClass == TAB_CHANGE_MANAGER && it.returnType == "Ljava/lang/String;" && it.parameterTypes.isEmpty()
+        } == true && instructions.getOrNull(i + 1)?.let {
+            it.opcode == Opcode.MOVE_RESULT_OBJECT && (it as OneRegisterInstruction).registerA == tag
+        } == true
+    }
+    if (!fromTabManager) return null
+    val handledAt = namedAt + 2
+    val handled = (instructions[namedAt + 1] as OneRegisterInstruction).registerA
+    // const-string "HOME" straight ahead of the post, whose event name was loaded just before.
+    val homeAt = instructions.indices.firstOrNull { i ->
+        val post = call(i, Opcode.INVOKE_VIRTUAL) ?: return@firstOrNull false
+        val home = instructions.getOrNull(i - 1) ?: return@firstOrNull false
+        val event = instructions.getOrNull(i - 2) ?: return@firstOrNull false
+        post.definingClass == definingClass && post.returnType == "V" &&
+            post.parameterTypes.map(CharSequence::toString) == listOf("Ljava/lang/Object;", "Ljava/lang/String;") &&
+            home.opcode == Opcode.CONST_STRING && home.getReference<StringReference>()?.string == "HOME" &&
+            event.opcode == Opcode.CONST_STRING && event.getReference<StringReference>()?.string == "performClickTab" &&
+            (instructions[i] as FiveRegisterInstruction).let {
+                it.registerD == (home as OneRegisterInstruction).registerA && it.registerE == (event as OneRegisterInstruction).registerA
+            }
+    } ?: return null
+    if (homeAt < handledAt) return null
+    val home = (instructions[homeAt - 1] as OneRegisterInstruction).registerA
+    // Each answer goes in front of an instruction nothing jumps to, so no path skips it.
+    if (setOf(namedAt, handledAt, homeAt).any { it in branchTargets() }) return null
+    return BackPress(namedAt, tag, handledAt, handled, homeAt, home)
+}
+
 internal const val A11Y_FEED_TOOL = "Lcom/ss/android/ugc/feed/platform/panel/accessibility/A11yFeedToolComponent;"
 
 /**

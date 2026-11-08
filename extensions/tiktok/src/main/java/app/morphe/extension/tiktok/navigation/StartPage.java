@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.SystemClock;
 
 import app.morphe.extension.shared.Logger;
+import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.wellbeing.FeedLock;
@@ -34,6 +35,11 @@ import app.morphe.extension.tiktok.wellbeing.FeedLock;
  * <p>Only a plain start from the launcher changes. A notification, a link or a shortcut keeps the
  * tab it asked for, and an activity Android restores keeps the tab it was on. Inbox also needs a
  * signed-in account, since TikTok sends a start there without one to its login screen.
+ *
+ * <p>Back follows the same tab (#360). TikTok's own Back from any tab but Home goes to For You,
+ * so a Back from another tab goes to the tab the app opens on instead ({@link #backTab}), and a
+ * Back on that tab puts the app in the background ({@link #leaveOnBack}), the way Back leaves any
+ * other app's first screen. A start page on one of Home's feeds keeps TikTok's own Back.
  */
 public final class StartPage {
     static final String FAMILY = "start page";
@@ -172,10 +178,73 @@ public final class StartPage {
         return top != null && SystemClock.elapsedRealtime() - startedAt <= TOP_TAB_WINDOW_MS ? top : null;
     }
 
+    /** The tab the Back being handled started on, as TikTok's back handler named it. */
+    private static String backFrom;
+
+    /**
+     * Notes the tab a Back starts on: the tag TikTok's back handler reads off its tab manager, or
+     * an empty one when it couldn't tell.
+     */
+    public static void backPressedOn(String tag) {
+        backFrom = tag;
+    }
+
+    /**
+     * Whether TikTok's back handler stops here, given its own answer (non-zero when it is closing a
+     * guide). A Back on the tab the app opens on puts the app in the background and answers yes,
+     * so TikTok goes no further; any other Back keeps TikTok's answer.
+     */
+    public static int leaveOnBack(int handled) {
+        if (handled != 0) return handled;
+        try {
+            String start = backStartTag();
+            if (start == null || !start.equals(backFrom)) return handled;
+            Activity activity = Utils.getActivity();
+            if (activity == null || activity.isFinishing() || !activity.moveTaskToBack(true)) return handled;
+            HookStatus.bound(FAMILY, "back left from " + start);
+            return 1;
+        } catch (Throwable failure) {
+            Logger.printException(() -> "Start page failed; Back goes where TikTok sends it", failure);
+            return handled;
+        }
+    }
+
+    /**
+     * The tab a Back from another tab goes to, given the one TikTok's back handler names (Home):
+     * the tab the app opens on, unless that is one of Home's feeds.
+     */
+    public static String backTab(String tag) {
+        try {
+            String start = backStartTag();
+            if (start == null || start.equals(backFrom)) return tag;
+            HookStatus.bound(FAMILY, "back to " + start);
+            return start;
+        } catch (Throwable failure) {
+            Logger.printException(() -> "Start page failed; Back goes where TikTok sends it", failure);
+            return tag;
+        }
+    }
+
+    /**
+     * The bottom tab a start from the icon opens on, worked out the way {@link #coldStartTag} does
+     * it, or nothing when that start opens on Home or a feed across its top.
+     */
+    static String backStartTag() {
+        String choice = Settings.START_PAGE.get();
+        String target = TIKTOK.equals(choice) ? null : tagFor(choice);
+        String landing = target == null ? HOME_TAG : target;
+        if ((FeedLock.isOn() && landsOnFeed(landing))
+                || (SearchInsteadOfHome.isOn() && (HOME_TAG.equals(landing) || FRIENDS_FEED_TAG.equals(landing)))) {
+            landing = tagFor(INBOX) != null ? INBOX_TAG : PROFILE_TAG;
+        }
+        return HOME_TAG.equals(landing) || FRIENDS_FEED_TAG.equals(landing) ? null : landing;
+    }
+
     /** Forgets the last start's top tab, for tests. */
     static void resetForTests() {
         startTopTab = null;
         startedAt = 0;
+        backFrom = null;
         signedInForTests = null;
         classes = Class::forName;
     }

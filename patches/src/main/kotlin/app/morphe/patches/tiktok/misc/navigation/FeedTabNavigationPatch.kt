@@ -65,6 +65,35 @@ private object TopTabLayoutConstructorFingerprint : app.morphe.patcher.Fingerpri
     custom = { method, _ -> isTopTabLayoutConstructor(method) },
 )
 
+/**
+ * TikTok's Back on the start page's terms (#360). The tab Back starts on goes to the start page;
+ * on the tab the app opens on, the start page puts the app in the background and answers the
+ * guide check yes, so TikTok's handler ends there; from another tab, its "HOME" becomes that tab.
+ */
+internal fun MutableMethod.answerBackWithStartPage() {
+    val back = backPress()
+        ?: throw PatchException("Feed tab navigation: TikTok's Back no longer names its tab and switches to Home where it did.")
+    // Latest first, so the earlier indexes still point where they did.
+    addInstructions(
+        back.homeAt,
+        """
+            invoke-static/range {v${back.home} .. v${back.home}}, $START_PAGE_CLASS_DESCRIPTOR->backTab(Ljava/lang/String;)Ljava/lang/String;
+            move-result-object v${back.home}
+        """,
+    )
+    addInstructions(
+        back.handledAt,
+        """
+            invoke-static/range {v${back.handled} .. v${back.handled}}, $START_PAGE_CLASS_DESCRIPTOR->leaveOnBack(I)I
+            move-result v${back.handled}
+        """,
+    )
+    addInstruction(
+        back.namedAt,
+        "invoke-static/range {v${back.tag} .. v${back.tag}}, $START_PAGE_CLASS_DESCRIPTOR->backPressedOn(Ljava/lang/String;)V",
+    )
+}
+
 /** Each answer of the LIVE button's bottom tab check goes through [EXTENSION_CLASS_DESCRIPTOR] on its way out. */
 internal fun app.morphe.patcher.util.proxy.mutableTypes.MutableMethod.answerLiveBottomTab() {
     val returns = implementation!!.instructions.withIndex()
@@ -477,6 +506,11 @@ val feedTabNavigationPatch = bytecodePatch(
                 """,
             )
         }
+
+        // Back from a bottom tab: TikTok sends it to For You, which a start page away from the
+        // feed is there to keep out of sight. It goes to the start tab instead, and leaves the app
+        // from there.
+        BackPressFingerprint.method.answerBackWithStartPage()
 
         // TikTok's feed button row (play and pause, previous, next) shows only while a screen reader
         // with touch exploration runs. Its check answers yes first when the switch is on.

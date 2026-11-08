@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
+import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.settings.Settings;
@@ -359,6 +360,137 @@ public class StartPageTest {
             assertEquals("signed in, Inbox", "NOTIFICATION", start(launcher(), "HOME"));
         } finally {
             Services.account = null;
+        }
+    }
+
+    /** TikTok's main activity as Back reaches it, noting whether the app went to the background. */
+    static final class LeavingHost extends Activity {
+        boolean movedBack;
+        boolean refuses;
+
+        @Override public boolean moveTaskToBack(boolean nonRoot) {
+            movedBack = !refuses;
+            return !refuses;
+        }
+    }
+
+    /**
+     * A Back from {@code from} as the patched handler runs it, past a guide check that found none:
+     * the tab named, the guide check answered, then Home's post. "left" when the app went away.
+     */
+    private static String back(String from) {
+        StartPage.backPressedOn(from);
+        if (StartPage.leaveOnBack(0) != 0) return "left";
+        return StartPage.backTab("HOME");
+    }
+
+    private static LeavingHost leavingHost() {
+        LeavingHost host = new LeavingHost();
+        Utils.setActivity(host);
+        return host;
+    }
+
+    @Test public void backKeepsTikToksOwnWayWhenTheAppOpensOnAFeed() {
+        try {
+            LeavingHost host = leavingHost();
+            assertEquals("TikTok's own start", "HOME", back("USER"));
+            Settings.START_PAGE.save(StartPage.FOR_YOU);
+            assertEquals("For You", "HOME", back("USER"));
+            Settings.START_PAGE.save(StartPage.FRIENDS);
+            Settings.BOTTOM_NAVIGATION_OBSERVED_TABS.save("HOME,INBOX,PROFILE");
+            assertEquals("the Friends feed across the top", "HOME", back("NOTIFICATION"));
+            assertFalse(host.movedBack);
+        } finally {
+            Utils.setActivity(null);
+        }
+    }
+
+    @Test public void backOnTheStartTabLeavesTheAppAndBackElsewhereGoesToIt() {
+        try {
+            LeavingHost host = leavingHost();
+            Settings.START_PAGE.save(StartPage.PROFILE);
+            assertEquals("from Inbox to Profile, not For You", "USER", back("NOTIFICATION"));
+            assertEquals("from Friends too", "USER", back("FRIENDS_TAB"));
+            assertFalse(host.movedBack);
+            assertEquals("on Profile itself", "left", back("USER"));
+            assertTrue(host.movedBack);
+
+            host = leavingHost();
+            StartPage.backPressedOn("HOME");
+            assertEquals("Home keeps TikTok's own Back", 0, StartPage.leaveOnBack(0));
+            assertFalse(host.movedBack);
+        } finally {
+            Utils.setActivity(null);
+        }
+    }
+
+    @Test public void aBottomTabStartOfAnyKindGetsBackToo() {
+        try {
+            leavingHost();
+            StartPage.signedInForTests = true;
+            Settings.START_PAGE.save(StartPage.INBOX);
+            assertEquals("NOTIFICATION", back("USER"));
+            assertEquals("left", back("NOTIFICATION"));
+            Settings.START_PAGE.save(StartPage.FRIENDS);
+            Settings.BOTTOM_NAVIGATION_OBSERVED_TABS.save("HOME,FRIENDS,PUBLISH,INBOX,PROFILE");
+            assertEquals("FRIENDS_TAB", back("USER"));
+            Settings.START_PAGE.save(StartPage.DISCOVER);
+            Settings.BOTTOM_NAVIGATION_OBSERVED_TABS.save("HOME,RAW:discover,PUBLISH,INBOX,PROFILE");
+            assertEquals("DISCOVER", back("USER"));
+        } finally {
+            Utils.setActivity(null);
+        }
+    }
+
+    @Test public void aGuideTikTokIsClosingKeepsItsBack() {
+        try {
+            LeavingHost host = leavingHost();
+            Settings.START_PAGE.save(StartPage.PROFILE);
+            StartPage.backPressedOn("USER");
+            assertEquals(1, StartPage.leaveOnBack(1));
+            assertFalse(host.movedBack);
+        } finally {
+            Utils.setActivity(null);
+        }
+    }
+
+    @Test public void anAppThatCannotLeaveKeepsTikToksBack() {
+        try {
+            Settings.START_PAGE.save(StartPage.PROFILE);
+            Utils.setActivity(null);
+            assertEquals("no activity", "HOME", back("USER"));
+            LeavingHost host = leavingHost();
+            host.refuses = true;
+            assertEquals("the system kept it in front", "HOME", back("USER"));
+        } finally {
+            Utils.setActivity(null);
+        }
+    }
+
+    @Test public void backFollowsTheTabTheFeedLockAndSearchHomeOpenOn() {
+        boolean wasLock = SettingsStatus.blockAuthorEnabled;
+        boolean wasNavigation = SettingsStatus.feedNavigationEnabled;
+        try {
+            leavingHost();
+            StartPage.signedInForTests = true;
+            SettingsStatus.blockAuthorEnabled = true;
+            Settings.FEED_LOCK.save(true);
+            assertEquals("the lock opens TikTok's own start on Inbox", "NOTIFICATION", back("USER"));
+            Settings.START_PAGE.save(StartPage.PROFILE);
+            assertEquals("Profile isn't a feed, so it stays", "USER", back("NOTIFICATION"));
+            Settings.FEED_LOCK.resetToDefault();
+
+            SettingsStatus.feedNavigationEnabled = true;
+            Settings.SEARCH_INSTEAD_OF_HOME.save(true);
+            Settings.START_PAGE.save(StartPage.FOR_YOU);
+            assertEquals("Home as a search button sends For You to Inbox", "NOTIFICATION", back("USER"));
+            assertEquals("left", back("NOTIFICATION"));
+        } finally {
+            Utils.setActivity(null);
+            SettingsStatus.blockAuthorEnabled = wasLock;
+            SettingsStatus.feedNavigationEnabled = wasNavigation;
+            Settings.FEED_LOCK.resetToDefault();
+            Settings.SEARCH_INSTEAD_OF_HOME.resetToDefault();
         }
     }
 

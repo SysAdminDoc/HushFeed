@@ -1,7 +1,9 @@
 package app.morphe.patches.tiktok.misc.navigation
 
 import app.morphe.Fixtures
+import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.takes
+import app.morphe.util.addInstructionsWithLabels
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
@@ -10,6 +12,7 @@ import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
@@ -366,6 +369,118 @@ class StartPageAnchorsTest {
             HOME_VIEW_PAGER_ASSEM, "onViewCreated", listOf(ImmutableMethodParameter("Landroid/view/View;", null, null)), "V",
             AccessFlags.PUBLIC.value or AccessFlags.FINAL.value, null, null,
             ImmutableMethodImplementation(16, instructions, null, null),
+        )
+    }
+
+    @Test
+    fun `Back names its tab, checks for a guide and posts Home in one place on every fixture, and each answer lands there`() {
+        val startPage = "Lapp/morphe/extension/tiktok/navigation/StartPage;"
+        Fixtures.forEachDeclared { apk ->
+            val build = Build(apk)
+            val taken = build.methods.filter { (classDef, method) -> BackPressFingerprint.takes(method, classDef) }.toList()
+            assertEquals(taken.map { "${it.first.type}->${it.second.name}" }.toString(), 1, taken.size)
+            val clean = taken.single().second
+            val back = clean.backPress()!!
+            val cleanCode = clean.implementation!!.instructions.toList()
+
+            val method = MutableMethod(clean)
+            method.answerBackWithStartPage()
+            val code = method.implementation!!.instructions.toList()
+            assertEquals("five instructions go in", cleanCode.size + 5, code.size)
+
+            fun asks(index: Int, name: String, register: Int) {
+                val call = code[index]
+                assertEquals("$name at $index", Opcode.INVOKE_STATIC_RANGE, call.opcode)
+                val target = (call as ReferenceInstruction).reference as MethodReference
+                assertEquals(startPage, target.definingClass)
+                assertEquals(name, target.name)
+                assertEquals("$name reads v$register", register, (call as RegisterRangeInstruction).startRegister)
+            }
+            // The tab, once the helper has it and before the guide check.
+            // The stock call is kept as the builder's copy, so compare what it does, not the object.
+            fun kept(stock: Int, patched: Int) {
+                assertEquals(cleanCode[stock].opcode, code[patched].opcode)
+                assertEquals(
+                    (cleanCode[stock] as ReferenceInstruction).reference.toString(),
+                    (code[patched] as ReferenceInstruction).reference.toString(),
+                )
+            }
+            asks(back.namedAt, "backPressedOn", back.tag)
+            kept(back.namedAt, back.namedAt + 1)
+            // The guide check's answer, before TikTok tests it.
+            asks(back.handledAt + 1, "leaveOnBack", back.handled)
+            assertEquals(Opcode.MOVE_RESULT, code[back.handledAt + 2].opcode)
+            assertEquals(back.handled, (code[back.handledAt + 2] as OneRegisterInstruction).registerA)
+            assertEquals(Opcode.IF_EQZ, code[back.handledAt + 3].opcode)
+            // Home's tag, between its load and the post.
+            asks(back.homeAt + 3, "backTab", back.home)
+            assertEquals(Opcode.MOVE_RESULT_OBJECT, code[back.homeAt + 4].opcode)
+            assertEquals(back.home, (code[back.homeAt + 4] as OneRegisterInstruction).registerA)
+            kept(back.homeAt, back.homeAt + 5)
+
+            // A yes from the guide check ends the handler: the helper drops its guide flag and
+            // "exitGuideView" is posted, as every other way out of it does, then it returns.
+            val yes = cleanCode.drop(back.handledAt + 1)
+            val ending = yes.take(yes.indexOfFirst { it.opcode == Opcode.RETURN_VOID })
+            assertTrue("the guide check's yes runs ${ending.map { it.opcode }}", ending.size <= 6)
+            assertEquals(listOf("exitGuideView"), ending.strings())
+            val calls = ending.mapNotNull { (it as? ReferenceInstruction)?.reference as? MethodReference }
+            assertEquals("the helper's flag and the post, nothing else", 2, calls.size)
+            assertEquals("V", calls[0].returnType)
+            assertTrue(calls[0].parameterTypes.isEmpty())
+            assertEquals(BACK_REFRESH_STRATEGY_ASSEM, calls[1].definingClass)
+        }
+    }
+
+    @Test
+    fun `a synthetic Back shaped like TikTok's gives where each answer goes`() {
+        val back = backShape().backPress()
+        assertTrue("the synthetic Back was not read", back != null)
+        assertEquals(5, back!!.namedAt)
+        assertEquals(7, back.handledAt)
+        assertEquals(11, back.homeAt)
+        assertEquals(0, back.tag)
+        assertEquals(0, back.handled)
+        assertEquals(0, back.home)
+    }
+
+    @Test
+    fun `a jump onto Home's post or a tag from somewhere else is refused`() {
+        assertNull("a jump lands on the post, so Home would skip the start page", backShape(jumpOntoPost = true).backPress())
+        assertNull("the tag isn't the tab manager's", backShape(tagFrom = "LX/Other;").backPress())
+    }
+
+    /**
+     * TikTok's Back in miniature: the helper in v1, the tab manager's tag in v0 named to it, the
+     * guide check's answer tested, then "performClickTab" posted with "HOME".
+     */
+    private fun backShape(jumpOntoPost: Boolean = false, tagFrom: String = TAB_CHANGE_MANAGER) = MutableMethod(
+        ImmutableMethod(
+            BACK_REFRESH_STRATEGY_ASSEM, "onBackPress", listOf(), "V",
+            AccessFlags.PUBLIC.value or AccessFlags.FINAL.value, null, null,
+            ImmutableMethodImplementation(4, emptyList(), null, null),
+        ),
+    ).apply {
+        addInstructionsWithLabels(
+            0,
+            """
+                iget-object v1, p0, $BACK_REFRESH_STRATEGY_ASSEM->LL:LX/06XR;
+                iget-object v0, p0, $BACK_REFRESH_STRATEGY_ASSEM->tabs:$tagFrom
+                invoke-virtual {v0}, $tagFrom->g53()Ljava/lang/String;
+                move-result-object v0
+                invoke-interface {v1, v0}, LX/06XR;->LIZIZ(Ljava/lang/String;)V
+                invoke-interface {v1}, LX/06XR;->LIZ()Z
+                move-result v0
+                if-eqz v0, :not_guide
+                return-void
+                :not_guide
+                ${if (jumpOntoPost) "if-eqz v0, :post" else ""}
+                const-string v1, "performClickTab"
+                const-string v0, "HOME"
+                ${if (jumpOntoPost) ":post" else ""}
+                invoke-virtual {p0, v0, v1}, $BACK_REFRESH_STRATEGY_ASSEM->Vp(Ljava/lang/Object;Ljava/lang/String;)V
+                return-void
+            """,
         )
     }
 

@@ -145,6 +145,79 @@ public class OtherBundlesTest {
     }
 
     @Test
+    public void aLineStartingWithABracketInsideTheTraceDoesNotEndIt() {
+        // The redactor keeps a message's own line breaks and puts its markers at the start of a
+        // line, so "[url omitted]" or "[circular throwable omitted]" can open one.
+        String crash = "[STACK TRACE]\njava.io.IOException: load failed\n[url omitted]\n"
+                + "[circular throwable omitted]\n"
+                + "\tat app.ftl.extension.dpi.DensityPatch.load(DensityPatch.kt:31)\n"
+                + "[RECENT MORPHE EVENTS]\n";
+        assertEquals(Arrays.asList(
+                "latest_crash_top_app_frame: at app.ftl.extension.dpi.DensityPatch.load(DensityPatch.kt:31)",
+                "latest_crash_top_app_frame_from: another patch bundle (app.ftl.extension.dpi)",
+                "latest_crash_frames_from_other_bundles: 1"),
+                OtherBundles.crashLines(crash));
+    }
+
+    @Test
+    public void hushfeedsOwnMp3EncoderCountsAsHushfeed() {
+        String crash = "[STACK TRACE]\njava.lang.ArrayIndexOutOfBoundsException\n"
+                + "\tat de.sciss.jump3r.mp3.Lame.lame_encode_buffer(Lame.java:120)\n"
+                + "\tat app.morphe.extension.tiktok.download.Mp3Transcoder.encode(Mp3Transcoder.java:80)\n";
+        assertEquals("latest_crash_top_app_frame_from: Hushfeed", OtherBundles.crashLines(crash).get(1));
+    }
+
+    @Test
+    public void aWrapperOverACauseInAnotherBundleNamesBoth() {
+        String crash = "[STACK TRACE]\nio.reactivex.exceptions.OnErrorNotImplementedException: boom\n"
+                + "\tat X.0rx.accept(Unknown Source:6)\n"
+                + "Caused by: java.lang.RuntimeException: wrapped\n"
+                + "\tat X.0rx.onError(Unknown Source:2)\n"
+                + "Caused by: java.lang.IllegalStateException: boom\n"
+                + "\tat java.util.Objects.requireNonNull(Objects.java:220)\n"
+                + "\tat app.ftl.extension.dpi.DensityPatch.apply(DensityPatch.kt:20)\n";
+        assertEquals(Arrays.asList(
+                "latest_crash_top_app_frame: at X.0rx.accept(Unknown Source:6)",
+                "latest_crash_top_app_frame_from: TikTok's own classes, which a bundle may have rewritten",
+                "latest_crash_cause_app_frame: at app.ftl.extension.dpi.DensityPatch.apply(DensityPatch.kt:20)",
+                "latest_crash_cause_app_frame_from: another patch bundle (app.ftl.extension.dpi)",
+                "latest_crash_frames_from_other_bundles: 1"),
+                OtherBundles.crashLines(crash));
+    }
+
+    @Test
+    public void aSuppressedExceptionsCauseIsNotTakenForTheChain() {
+        // Breadth first, a suppressed exception's own cause can come after the crash's real one.
+        String crash = "[STACK TRACE]\njava.lang.RuntimeException: outer\n"
+                + "\tat X.0abc.run(Unknown Source:4)\n"
+                + "Caused by: java.lang.IllegalStateException: inner\n"
+                + "\tat app.ftl.extension.dpi.DensityPatch.apply(DensityPatch.kt:20)\n"
+                + "Suppressed: java.io.IOException: close\n"
+                + "\tat X.0def.close(Unknown Source:1)\n"
+                + "Caused by: java.io.IOException: disk\n"
+                + "\tat app.rvx.extension.cache.Cache.close(Cache.java:3)\n";
+        List<String> lines = OtherBundles.crashLines(crash);
+        assertEquals("latest_crash_cause_app_frame: at app.ftl.extension.dpi.DensityPatch.apply(DensityPatch.kt:20)",
+                lines.get(2));
+        assertEquals("latest_crash_frames_from_other_bundles: 2", lines.get(4));
+    }
+
+    @Test
+    public void aScanThatFailedForWantOfAnApkIsTriedAgainNextTime() throws Exception {
+        Utils.setContext(RuntimeEnvironment.getApplication());
+        BaseSettings.DEBUG_LOG_FILTERS.save("all");
+        HookStatus.clear();
+        LogBufferManager.clearLogBuffer();
+        HookStatus.missingViewId("comments", "jlk");
+        // A null file fails before any APK is opened, as a missing context does on a real phone.
+        OtherBundles.useApksForTests(Collections.singletonList((File) null));
+        OtherBundles.scanForTests();
+        String report = LogBufferManager.buildExportText();
+        Utils.awaitBackgroundTasksForTests();
+        assertTrue(report, report.contains("extension_packages: still being read"));
+    }
+
+    @Test
     public void theReportNamesTheBundleAndTheFrameItDiedIn() throws Exception {
         Context context = RuntimeEnvironment.getApplication();
         Utils.setContext(context);

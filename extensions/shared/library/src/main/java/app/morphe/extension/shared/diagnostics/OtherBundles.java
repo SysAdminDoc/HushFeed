@@ -50,16 +50,22 @@ public final class OtherBundles {
     private static final String[] OWN_PACKAGES = {
             "Lapp/morphe/extension/shared/", "Lapp/morphe/extension/tiktok/",
     };
+    /** Libraries Hushfeed's extension ships under their own names (the MP3 encoder). */
+    private static final String[] OWN_LIBRARIES = {"de.sciss.jump3r."};
     private static final byte[] PREFIX = {'L', 'a', 'p', 'p', '/'};
     /** Longer than any class name a bundle ships; a longer string is not a class. */
     private static final int NAME_MAX_BYTES = 512;
-    /** Well past the 65,536 a dex index can address, so only a corrupt file trips it. */
+    /** About ten times the strings in TikTok 47.7.3's largest dex file, so only a corrupt file trips it. */
     private static final int STRINGS_MAX = 1 << 20;
+    /** A report section header such as "[RECENT MORPHE EVENTS]", which ends the stack trace. */
+    private static final java.util.regex.Pattern SECTION = java.util.regex.Pattern.compile("\\[[A-Z][A-Z ]*\\]");
 
     private static final Object SCAN_LOCK = new Object();
     private static final AtomicBoolean SCAN_STARTED = new AtomicBoolean();
     private static volatile Scan result;
     private static volatile List<File> apksForTests;
+    /** The scanning thread's id while it runs at background priority, else 0. */
+    private static volatile int scanThread;
 
     private OtherBundles() {
     }
@@ -81,10 +87,15 @@ public final class OtherBundles {
         boolean started = Utils.runOnOwnThread("hushfeed-other-bundles", () -> {
             try {
                 android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+                scanThread = android.os.Process.myTid();
             } catch (Throwable ignored) {
                 // A thread left at its default priority still finishes.
             }
-            scanNow();
+            try {
+                scanNow();
+            } finally {
+                scanThread = 0;
+            }
         });
         if (!started) SCAN_STARTED.set(false);
     }
@@ -97,7 +108,18 @@ public final class OtherBundles {
      */
     public static List<String> lines(String crashReport) {
         Scan scan = result;
-        if (scan == null && !Utils.isCurrentlyOnMainThread()) scan = scanNow();
+        if (scan == null && !Utils.isCurrentlyOnMainThread()) {
+            // A saved report waits on the scan, so the scan stops yielding to everything else.
+            int running = scanThread;
+            if (running != 0) {
+                try {
+                    android.os.Process.setThreadPriority(running, android.os.Process.THREAD_PRIORITY_DEFAULT);
+                } catch (Throwable ignored) {
+                    // It finishes at background priority, only later.
+                }
+            }
+            scan = scanNow();
+        }
         if (scan == null) prefetch();
         List<String> lines = new ArrayList<>();
         lines.add("extension_packages: " + describe(scan));
@@ -123,12 +145,17 @@ public final class OtherBundles {
         synchronized (SCAN_LOCK) {
             Scan done = result;
             if (done != null) return done;
+            // A failure is said in the report itself. Logging it would add an event to the very
+            // buffer the report is being built from.
             try {
                 done = new Scan(scan(apks()), null);
+            } catch (IOException unreadable) {
+                // The installed APK doesn't change while TikTok runs, so neither would the answer.
+                done = new Scan(Collections.emptyMap(), unreadable.getClass().getSimpleName());
             } catch (Throwable failure) {
-                // Said in the report itself. Logging it would add an event to the very buffer
-                // the report is being built from.
-                done = new Scan(Collections.emptyMap(), failure.getClass().getSimpleName());
+                // No context yet, or out of memory: the next report tries again.
+                SCAN_STARTED.set(false);
+                return new Scan(Collections.emptyMap(), failure.getClass().getSimpleName());
             }
             result = done;
             return done;
@@ -270,6 +297,9 @@ public final class OtherBundles {
     static String owner(String className) {
         String descriptor = "L" + className.replace('.', '/') + ";";
         if (isOwn(descriptor)) return "Hushfeed";
+        for (String library : OWN_LIBRARIES) {
+            if (className.startsWith(library)) return "Hushfeed";
+        }
         if (className.startsWith("app.") && className.indexOf('.', 4) > 0) {
             return "another patch bundle (" + group(descriptor) + ")";
         }
@@ -283,17 +313,41 @@ public final class OtherBundles {
                 || className.startsWith("android.") || className.startsWith("com.android.");
     }
 
-    /** The top app frame of the latest Java crash and whose code it is, or nothing without one. */
+    /**
+     * The top app frame of the latest Java crash and whose code it is, or nothing without one.
+     * When the exception wraps a cause whose top app frame is somewhere else, that frame is named
+     * too: a wrapper in TikTok's own code (RxJava, coroutines) often sits over the real failure.
+     *
+     * <p>The redacted trace lists the exception, then its causes and suppressed exceptions breadth
+     * first. Until the first suppressed one, each "Caused by" block is the next link of the chain,
+     * so the deepest cause is the last of those blocks with an app frame.
+     */
     static List<String> crashLines(String crashReport) {
         if (crashReport == null || crashReport.isEmpty()) return Collections.emptyList();
         int stack = crashReport.indexOf("[STACK TRACE]\n");
         if (stack < 0) return Collections.emptyList();
         String top = null;
         String topClass = null;
+        String cause = null;
+        String causeClass = null;
+        boolean inCause = false;
+        boolean causeTaken = false;
+        boolean chainEnded = false;
         int foreign = 0;
         Map<String, Boolean> seen = new HashMap<>();
         for (String line : crashReport.substring(stack + "[STACK TRACE]\n".length()).split("\n")) {
-            if (line.startsWith("[")) break;
+            // Redaction markers and an exception message can start a line with "[" as well.
+            if (SECTION.matcher(line).matches()) break;
+            if (line.startsWith("Caused by: ")) {
+                inCause = !chainEnded;
+                causeTaken = false;
+                continue;
+            }
+            if (line.startsWith("Suppressed: ")) {
+                chainEnded = true;
+                inCause = false;
+                continue;
+            }
             String frame = line.trim();
             if (!frame.startsWith("at ")) continue;
             int call = frame.indexOf('(');
@@ -305,6 +359,10 @@ public final class OtherBundles {
             if (top == null) {
                 top = frame;
                 topClass = className;
+            } else if (inCause && !causeTaken) {
+                cause = frame;
+                causeClass = className;
+                causeTaken = true;
             }
             if (owner(className).startsWith("another") && seen.put(frame, Boolean.TRUE) == null) foreign++;
         }
@@ -312,6 +370,10 @@ public final class OtherBundles {
         List<String> lines = new ArrayList<>();
         lines.add("latest_crash_top_app_frame: " + top);
         lines.add("latest_crash_top_app_frame_from: " + owner(topClass));
+        if (cause != null && !cause.equals(top)) {
+            lines.add("latest_crash_cause_app_frame: " + cause);
+            lines.add("latest_crash_cause_app_frame_from: " + owner(causeClass));
+        }
         lines.add("latest_crash_frames_from_other_bundles: " + foreign);
         return lines;
     }

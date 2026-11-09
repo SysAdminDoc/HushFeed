@@ -56,8 +56,9 @@ pluginManagement {
 // build; the catalog pins the same value and says why it is that one. Move both together.
 //
 // Guava arrives here at 33.5.0-jre (the Android build tools, the patcher and the plugin ask for
-// 18.0 to 33.5.0), and every one of those is inside CVE-2026-102554, fixed in 33.7.2. Same
-// reason as Bouncy Castle for spelling the version out; the catalog pins it too.
+// 18.0 to 33.5.0), and every one of those is inside CVE-2026-102554 (fixed in 33.7.2) and
+// CVE-2026-118042 (fixed in 33.8.0). Same reason as Bouncy Castle for spelling the version out;
+// the catalog pins it too.
 buildscript {
     configurations.all {
         resolutionStrategy.eachDependency {
@@ -68,7 +69,7 @@ buildscript {
                 useVersion("1.86")
             }
             if (requested.group == "com.google.guava" && requested.name == "guava") {
-                useVersion("33.7.2-jre")
+                useVersion("33.8.0-jre")
             }
         }
     }

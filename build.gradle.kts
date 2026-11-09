@@ -17,9 +17,14 @@ plugins {
 // resolves before this file exists.
 val reviewedBouncyCastle = libs.versions.bouncycastle.get()
 // Guava the same way, for the same reason: the patcher's own graph, the Robolectric test graph
-// and the Android test platform each ask for a release inside CVE-2026-102554, and the
-// catalog's pin reaches only :patches. The catalog says which release and why.
+// and the Android test platform each ask for a release inside CVE-2026-102554 and
+// CVE-2026-118042, and the catalog's pin reaches only :patches. The catalog says which release
+// and why.
 val reviewedGuava = libs.versions.guava.get()
+// Netty the same way: the Android plugin's unified test platform configurations in each
+// extension module ask for releases inside critical netty-handler and netty-codec-http2
+// advisories. The catalog says which release and why.
+val reviewedNetty = libs.versions.netty.get()
 allprojects {
     configurations.configureEach {
         resolutionStrategy.eachDependency {
@@ -29,7 +34,11 @@ allprojects {
             }
             if (requested.group == "com.google.guava" && requested.name == "guava") {
                 useVersion(reviewedGuava)
-                because("The build classpath must use the Guava release outside CVE-2026-102554.")
+                because("The build classpath must use the Guava release outside CVE-2026-102554 and CVE-2026-118042.")
+            }
+            if (requested.group == "io.netty" && !requested.name.startsWith("netty-tcnative")) {
+                useVersion(reviewedNetty)
+                because("The test platform classpath must use a Netty release outside GHSA-c4c3-7fpv-j4q5.")
             }
         }
     }

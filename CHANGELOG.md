@@ -64,6 +64,7 @@ Every Hushfeed release, newest first.
 * With `Compact comment header` on, the translate and close buttons no longer sit on top of the first comment. TikTok 47.7.2 moved them out of the header into their own row, so they stayed behind when the header went away. They're hidden along with the rest of the header now (#358).
 * Profiles with their own stickers show the Stickers tab again on TikTok 47.7.3, and tapping it opens their sticker sets and video stickers instead of a "Something went wrong" page (#214).
 * With `Dark LIVE panels in dark mode` on, Video quality under a LIVE's Share menu is dark all the way through. Its sheet went dark before, but the list of qualities sat on a white card with dark text, and its close X was nearly black on black (#168).
+* The build no longer pulls in a Guava or Netty release with known advisories against it. Guava moves to 33.8.0, past CVE-2026-118042, and the Netty that Android's test tools bring along moves to 4.1.139, past a critical netty-handler advisory. None of it reaches the app on your phone.
 
 ## 0.81.0 (2026-11-05)
 

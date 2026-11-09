@@ -32,7 +32,19 @@ jump3r = "1.0.5"
 # CompactHashMap, CompactHashSet and MapMaker deserialization sized its arrays from the
 # stream, so 72 bytes could ask for gigabytes. 33.7.2 (2026-09-29) is the fix. The graphs asked for 32.0.1, 33.3.1, 33.5.0,
 # 33.6.0 and this pin's old 33.7.1. Build and patching classpath only: no Guava reaches TikTok.
-guava = "33.7.2-jre"
+# CVE-2026-118042 (GHSA-v5x9-67m3-7m56, low, 2026-10-31) then covered 13.0 to 33.7.2: HashBiMap
+# and LinkedHashMultimap built from attacker-chosen keys went quadratic. 33.8.0 is its fix, and
+# moves error_prone_annotations from 2.50.0 to 2.52.0; failureaccess, jspecify and j2objc stay.
+guava = "33.8.0-jre"
+# Every io.netty request on Netty's main release train is rewritten to this in every project
+# graph (build.gradle.kts); netty-tcnative versions on its own train and is left alone. Only the
+# Android plugin's unified test platform asks for Netty here: its core asked for 4.1.93 and its
+# emulator control for 4.1.110, and both sit inside GHSA-c4c3-7fpv-j4q5 (netty-handler SNI
+# routing, critical, fixed in 4.1.137) plus dozens of netty-codec-http and netty-codec-http2
+# advisories. GitHub's advisory database listed none for 4.1.137 to 4.1.139 on 2026-11-08.
+# 4.1.139 (2026-10-06) is the newest 4.1 release more than two weeks old then. Nothing here
+# reaches TikTok.
+netty = "4.1.139.Final"
 # Every org.bouncycastle request in this build is rewritten to this, in :extensions:tiktok's
 # test graph and in :patches' build graph. It has to be a version that publishes all three
 # modules: 1.85.2 is a bcprov-only patch release, so forcing bcpkix and bcutil to it resolved

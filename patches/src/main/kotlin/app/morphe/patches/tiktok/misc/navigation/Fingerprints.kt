@@ -5,6 +5,7 @@
 package app.morphe.patches.tiktok.misc.navigation
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patches.tiktok.shared.dispatchesOnIndex
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.ClassDef
@@ -138,13 +139,15 @@ internal fun Method.isLiveBottomTabCheck(): Boolean =
 
 /**
  * The lazy that reads which set of bottom tab icons to draw (#285). Everything else that names
- * this experiment key only registers it and returns nothing.
+ * this experiment key only registers it and returns nothing. It has to be a lambda of its own:
+ * were R8 to fold the read into a merged group, the pick written at the top of the group's entry
+ * point would answer every lambda in it, so that entry point is no match and the icons are left out.
  */
 internal object BottomTabIconVersionFingerprint : Fingerprint(
     returnType = "Ljava/lang/Object;",
     parameters = listOf(),
     strings = listOf("new_bottom_tab_icon2"),
-    custom = { method, _ -> method.name == "invoke" },
+    custom = { method, _ -> method.name == "invoke" && !method.dispatchesOnIndex() },
 )
 
 /** The corner button compares TikTok's LIVE placement with both top-tab modes here. */

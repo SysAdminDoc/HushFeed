@@ -9,6 +9,7 @@ import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.shared.guardAtEntry
+import app.morphe.patches.tiktok.shared.requireLocals
 import app.morphe.util.addInstructionsAtControlFlowLabel
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.ClassDef
@@ -125,6 +126,13 @@ internal class InboxFilterTabHooks(
     private val returnIndex = inboxModeReturn(getter, manager)
         ?: throw PatchException("Inbox filters: ${getter.name} is not the mode getter")
     private val castIndex = inboxModeCast(tabs, modeType)
+
+    init {
+        // The pop-up's guard answers into v0. R8 can hand a boolean back in the register `this`
+        // came in, which leaves no local, and that has to be refused here with the other two
+        // checks, while nothing is written and the patch can still leave the switch out.
+        guide.requireLocals("Inbox filters", 1)
+    }
 
     fun install(patch: String) {
         val returned = (getter.implementation!!.instructions[returnIndex] as OneRegisterInstruction).registerA

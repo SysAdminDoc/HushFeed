@@ -5,15 +5,21 @@
 package app.morphe.patches.tiktok.misc.navigation
 
 import app.morphe.Fixtures
+import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.takes
 import app.morphe.util.getReference
+import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+import com.android.tools.smali.dexlib2.immutable.ImmutableClassDef
+import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
+import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -66,5 +72,41 @@ class BottomTabIconsAnchorTest {
             assertEquals(stockFirst.opcode, code[6].opcode)
             assertTrue("$version: the read is still there", code.size > 6)
         }
+    }
+
+    @Test
+    fun `a merged lambda group holding the read is not taken`() {
+        // What R8 leaves when it folds the read into a group: one invoke() for every lambda in
+        // it, opening on the lambda's number. A pick answered at its top would go to all of them.
+        val group = "LX/0Group;"
+        fun invoke(code: String) = MutableMethod(ImmutableMethod(group, "invoke", emptyList(), "Ljava/lang/Object;",
+            AccessFlags.PUBLIC.value, null, null, ImmutableMethodImplementation(2, emptyList(), null, null)))
+            .apply { addInstructionsWithLabels(0, code) }
+        val own = invoke(
+            """
+                const-string v0, "new_bottom_tab_icon2"
+                return-object v0
+            """,
+        )
+        val merged = invoke(
+            """
+                iget v0, v1, $group->${'$'}t:I
+                packed-switch v0, :numbers
+                const/4 v0, 0x0
+                return-object v0
+                :icons
+                const-string v0, "new_bottom_tab_icon2"
+                return-object v0
+                :numbers
+                .packed-switch 0x3
+                    :icons
+                .end packed-switch
+            """,
+        )
+        fun holder(method: Method) = ImmutableClassDef(group, AccessFlags.PUBLIC.value, "Ljava/lang/Object;",
+            null, null, null, null, listOf(method))
+
+        assertTrue("a lambda of its own is the getter", BottomTabIconVersionFingerprint.takes(own, holder(own)))
+        assertFalse("a group's entry point is not", BottomTabIconVersionFingerprint.takes(merged, holder(merged)))
     }
 }

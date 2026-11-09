@@ -6,6 +6,7 @@ package app.morphe.patches.tiktok.misc.inbox
 
 import app.morphe.Fixtures
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.takes
 import app.morphe.util.getReference
@@ -21,8 +22,11 @@ import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference
+import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
+import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -112,6 +116,32 @@ class InboxFilterTabsAnchorsTest {
             val guideAfter = mutableGuide.implementation!!.instructions.toList()
             assertEquals("$version: the pop-up asks first", "hideProInboxGuide",
                 guideAfter[0].getReference<MethodReference>()?.name)
+        }
+    }
+
+    @Test
+    fun `a pop-up check with no local is refused before the mode hooks are written`() {
+        Fixtures.forEachDeclared { apk ->
+            val version = Fixtures.versionOf(apk)
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            val classes = container.dexEntryNames.asSequence()
+                .flatMap { container.getEntry(it)!!.dexFile.classes.asSequence() }
+                .toList()
+            val (manager, getter) = matches(classes, InboxModeGetterFingerprint).single()
+            val mutableGetter = MutableMethod(getter)
+            val mutableTabs = MutableMethod(matches(classes, InboxFilterTabListFingerprint).single().second)
+            val getterBefore = mutableGetter.implementation!!.instructions.size
+            val tabsBefore = mutableTabs.implementation!!.instructions.size
+            // An instance method whose one register is `this`: the frame the guard can't write.
+            val noLocal = MutableMethod(ImmutableMethod(manager.type, "canShow", emptyList(), "Z",
+                AccessFlags.PUBLIC.value, null, null, ImmutableMethodImplementation(1, emptyList(), null, null)))
+
+            val refused = assertThrows(PatchException::class.java) {
+                InboxFilterTabHooks(manager, mutableGetter, mutableTabs, noLocal)
+            }
+            assertTrue("$version: ${refused.message}", refused.message!!.contains("0 local register(s)"))
+            assertEquals("$version: the getter is untouched", getterBefore, mutableGetter.implementation!!.instructions.size)
+            assertEquals("$version: the tab list is untouched", tabsBefore, mutableTabs.implementation!!.instructions.size)
         }
     }
 

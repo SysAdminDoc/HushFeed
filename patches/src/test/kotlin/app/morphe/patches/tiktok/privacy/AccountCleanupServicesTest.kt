@@ -11,6 +11,7 @@ import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
+import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
@@ -49,9 +50,11 @@ class AccountCleanupServicesTest {
             val unavailable = mutableSetOf<String>()
             val made = mutableMapOf<String, MutableSet<ServiceRecipe>>()
             val makers = mutableMapOf<String, MutableList<Method>>()
+            val classes = mutableMapOf<String, ClassDef>()
             val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
             for (entry in container.dexEntryNames) {
                 for (classDef in container.getEntry(entry)!!.dexFile.classes) {
+                    classes[classDef.type] = classDef
                     if (isLikedListService(classDef)) liked += classDef.type
                     if (isFavoritesService(classDef)) favorites += classDef.type
                     if (isUnavailableFavoritesService(classDef)) unavailable += classDef.type
@@ -75,6 +78,7 @@ class AccountCleanupServicesTest {
                         maker.implementation!!.instructions.any { it.casts(service) })
                 }
                 checkBridge("$version $service", service, recipes.single())
+                checkBridgeCanReach("$version $service", classes, service, recipes.single())
             }
         }
     }
@@ -130,6 +134,22 @@ class AccountCleanupServicesTest {
         assertEquals("$label: the create call", "create", code[10].getReference<MethodReference>()!!.name)
         assertEquals("$label: two scratch registers", 3, bridge.implementation!!.registerCount)
         assertEquals(emptyList<BridgeTypeFlow.Problem>(), BridgeTypeFlow.check(bridge))
+    }
+
+    /** The bridge sits in the extension's package, so all it names has to be public on the build. */
+    private fun checkBridgeCanReach(label: String, classes: Map<String, ClassDef>, service: String, recipe: ServiceRecipe) {
+        fun isPublic(flags: Int) = AccessFlags.PUBLIC.isSet(flags)
+        for (type in listOf(service, recipe.host.definingClass, recipe.factory.definingClass, recipe.create.definingClass)) {
+            assertTrue("$label: $type is public", isPublic(classes.getValue(type).accessFlags))
+        }
+        val host = classes.getValue(recipe.host.definingClass).fields.single { it.name == recipe.host.name && it.type == recipe.host.type }
+        assertTrue("$label: the host field is public", isPublic(host.accessFlags))
+        for (call in listOf(recipe.factory, recipe.create)) {
+            val declared = classes.getValue(call.definingClass).methods.firstOrNull { method ->
+                method.name == call.name && method.parameterTypes.map { it.toString() } == call.parameterTypes.map { it.toString() }
+            } ?: continue
+            assertTrue("$label: ${call.name} is public", isPublic(declared.accessFlags))
+        }
     }
 
     /** The liked list service's maker as 47.6.3 has it, cut down to the steps that make it. */

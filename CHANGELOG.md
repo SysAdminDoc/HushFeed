@@ -38,6 +38,9 @@ Every Hushfeed release, newest first.
 * `AMOLED dark theme` has a switch now. `AMOLED dark mode` in Hushfeed settings > App starts on, and turning it off brings back TikTok's own dark grays after a restart, so you can keep the patch in and still pick plain dark mode. The color you picked in the patch's options stays for when it's on. Pause Hushfeed turns it off too (#372).
 * `Make sticker` in a video's share sheet opens TikTok's own sticker editor for that video, so you can trim it, add text and save it as an animated sticker, even on videos where TikTok doesn't show its Create sticker button. If the editor can't open, the video's cover becomes the sticker like before (#214).
 * `Automatically record LIVEs you enter` starts recording a LIVE's stream the moment you walk into the room. Swipe on to the next LIVE and that one starts recording too, while the one you left finishes saving in the background. Tap Stop and it stays stopped until you leave and come back. Screen recordings still need your tap and Android's permission. It starts off and sits under `Record LIVEs you watch` in Hushfeed settings > Playback. Thanks to Hiiva for building it (#363).
+* `Drag handle and jump buttons on grids` shows a handle at the edge of a long profile, Liked or sound grid while it moves, with Top, Back and End buttons beside it. Back returns to where you were before the last jump. It starts off and lives in Hushfeed settings > Interface (#378).
+* `Bottom bar icons` in Hushfeed settings > Feed tabs picks one of the icon sets TikTok is testing for the bottom bar, or leaves it to TikTok, which is how it starts. It takes a TikTok restart (#285).
+* With `Log diagnostics` on, the report keeps TikTok's answer to every LIVE like, so a like TikTok refused can be told from one that never left the phone (#380).
 
 ### Bug Fixes
 
@@ -69,6 +72,8 @@ Every Hushfeed release, newest first.
 * The install steps now say to patch TikTok with Hushfeed's patches alone, since another source picked beside it can add to the memory patching needs. They also say what fit in tests with the 1 GB a 32-bit Manager can give the patcher. Simple mode's patches did, and so did every patch at once except with `AMOLED dark theme` and `Region spoof` both on, so turn on only one of them there (#339, #252).
 * The build no longer pulls in a Guava or Netty release with known advisories against it. Guava moves to 33.8.0, past CVE-2026-118042, and the Netty that Android's test tools bring along moves to 4.1.139, past a critical netty-handler advisory. None of it reaches the app on your phone.
 * The README's install steps name the TikTok version a release was built for once that release is out. 0.80.0 and 0.81.0 went out with the steps still pointing at the TikTok before it.
+* `Disable telemetry` also stops TikTok's Orbu log upload and its whoami lookups, which were still going out on 47.7.3 (#379).
+* `Hide surveys` takes the interest buttons off a video by their own view as well, for when TikTok builds them some other way. The diagnostic report now names each kind of feed component a video was given (#293).
 
 ## 0.81.0 (2026-11-05)
 

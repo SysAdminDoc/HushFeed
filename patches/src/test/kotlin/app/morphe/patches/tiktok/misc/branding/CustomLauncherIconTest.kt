@@ -538,6 +538,37 @@ class CustomLauncherIconTest {
         assertArrayEquals(only, launcherPicture(one.resolve("my picture.PNG").path)!!.bytes)
     }
 
+    @Test
+    fun `a Mac's hidden copy beside the picture doesn't count as a second PNG`() {
+        val copied = folder.newFolder("copied")
+        val picture = png(512, 512)
+        copied.resolve("logo.png").writeBytes(picture)
+        copied.resolve("._logo.png").writeBytes(byteArrayOf(0, 5, 22, 7))
+        copied.resolve(".hidden.png").writeBytes(png(432, 432))
+        assertArrayEquals(picture, launcherPicture(copied.path)!!.bytes)
+
+        val onlyHidden = folder.newFolder("only-hidden")
+        onlyHidden.resolve("._logo.png").writeBytes(byteArrayOf(0, 5, 22, 7))
+        val message = assertThrows(PatchException::class.java) { launcherPicture(onlyHidden.path) }.message!!
+        assertTrue(message, message.contains("there's no PNG in the folder"))
+    }
+
+    @Test
+    fun `a folder that can't be read says so instead of claiming it has no PNG`() {
+        val locked = folder.newFolder("locked")
+        locked.resolve("icon.png").writeBytes(png(512, 512))
+        val unreadable = object : File(locked.path) {
+            override fun listFiles(): Array<File>? = null
+        }
+        val message = assertThrows(IllegalStateException::class.java) {
+            pictureInFolder(unreadable) { throw IllegalStateException(it) }
+        }.message!!
+        assertEquals(
+            "the folder \"${locked.path}\" couldn't be read. Give Icon picture the file's full path instead.",
+            message,
+        )
+    }
+
     private fun png(width: Int, height: Int): ByteArray = ByteArrayOutputStream().also {
         assertTrue(ImageIO.write(BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB), "png", it))
     }.toByteArray()

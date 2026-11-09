@@ -324,11 +324,18 @@ internal fun launcherPicture(raw: String?): LauncherPicture? {
 
 /**
  * The picture in [folder]: its only PNG, or `icon.png` (any case) when it holds several. Anything
- * else goes to [refuse] with the PNGs it found, at most eight of them by name.
+ * else goes to [refuse] with the PNGs it found, at most eight of them by name. Hidden files are
+ * passed over: a Mac copying to a memory card leaves a `._name.png` beside every picture, and
+ * that would make one picture look like two.
  */
-private fun pictureInFolder(folder: File, refuse: (String) -> Nothing): File {
-    val pngs = folder.listFiles().orEmpty()
-        .filter { it.isFile && it.name.endsWith(".png", ignoreCase = true) }
+internal fun pictureInFolder(folder: File, refuse: (String) -> Nothing): File {
+    // Null, not empty, when the folder can't be read, which on a phone usually means the app
+    // patching wasn't given access to it. Saying it holds no PNG would send someone looking for
+    // a picture that's right there.
+    val entries = folder.listFiles()
+        ?: refuse("the folder \"${folder.path}\" couldn't be read. Give Icon picture the file's full path instead.")
+    val pngs = entries
+        .filter { it.isFile && !it.name.startsWith(".") && it.name.endsWith(".png", ignoreCase = true) }
         .sortedBy { it.name.lowercase() }
     if (pngs.isEmpty()) refuse("there's no PNG in the folder \"${folder.path}\".")
     if (pngs.size == 1) return pngs.single()

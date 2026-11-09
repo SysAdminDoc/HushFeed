@@ -4,7 +4,7 @@
   py -3.13 tools/release_text.py github-notes --version 0.70.0 --intro FILE --checked FILE --out FILE
   py -3.13 tools/release_text.py guide [--date 2026-10-09]
   py -3.13 tools/release_text.py index --version 0.70.0 --created 2026-10-09T17:03:42
-        --readme-summary FILE --bundle-summary FILE --device-line TEXT
+        --readme-summary FILE --bundle-summary FILE --device-line TEXT [--apk 47.7.3=PATH]
 
 scripts/release/release.ps1 runs them in order; they can also run alone. Text that doesn't line up
 gets fixed where it can be and a warning where it can't, since wording never holds a release back.
@@ -18,6 +18,7 @@ index moves both onto that build and drops the line.
 
 import argparse
 import datetime
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -36,9 +37,12 @@ SUPPORTED_VERSION = re.compile(
 SUPPORTED_BUILD = re.compile(r"^- Build: version code .*$", re.MULTILINE)
 SUPPORTED_SHA = re.compile(r"^(- SHA-256 of the APK every patch was verified against: )`[0-9a-f]{64}` \(\d+\.\d+\.\d+\)$",
                            re.MULTILINE)
+# The version code and SHA-256 can be left off: index reads them from patches-list.json and the
+# fixture APK release.ps1 hands it. 0.80.0 and 0.81.0 both shipped with install steps on the old
+# TikTok because a short line didn't match and the fold only warned.
 NEXT_RELEASE = re.compile(
     r"^- Next release: TikTok (?P<version>\d+\.\d+\.\d+), \[on APKMirror\]\((?P<url>[^)\s]+)\) since "
-    r"(?P<date>\d{4}-\d{2}-\d{2}) \((?P<build>version code [^)]+)\), SHA-256 `(?P<sha>[0-9a-f]{64})`\..*\n",
+    r"(?P<date>\d{4}-\d{2}-\d{2})(?: \((?P<build>version code [^)]+)\), SHA-256 `(?P<sha>[0-9a-f]{64})`)?\..*\n",
     re.MULTILINE)
 # The README lines that tell someone which TikTok build to patch: the badge, the Important box,
 # install step 1 and the two paragraphs on fetching the APK.
@@ -260,12 +264,56 @@ def release_page(url: str) -> str:
     return page.group(0) if page else url
 
 
-def fold_next_release(text: str, targets: list[str]) -> str:
+def version_code(version: str) -> str | None:
+    """'version code N' for a TikTok version, from the versionCodes patches-list.json declares for it,
+    or None when it declares none or more than one."""
+    codes = set()
+    for patch in catalog_patches():
+        for app in patch.get("compatibility") or []:
+            for target in app.get("targets") or []:
+                if target.get("version") == version:
+                    codes.update((target.get("versionCodes") or {}).values())
+    return f"version code {codes.pop()}" if len(codes) == 1 else None
+
+
+def sha256_of(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for block in iter(lambda: stream.read(1 << 20), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def known_builds(apks: list[str]) -> dict[str, dict[str, str]]:
+    """Version code and SHA-256 per TikTok version, from '--apk VERSION=PATH' arguments."""
+    builds = {}
+    for spec in apks:
+        version, _, path = spec.partition("=")
+        if not VERSION.fullmatch(version) or not Path(path).is_file():
+            warn(f"--apk {spec!r} isn't VERSION=PATH to an APK that exists, so it's skipped")
+            continue
+        builds[version] = {"sha": sha256_of(Path(path))}
+        code = version_code(version)
+        if code:
+            builds[version]["build"] = code
+    return builds
+
+
+def build_line(line: str, build: str) -> str:
+    """The Supported target '- Build:' line for a new build. A bare 'version code N' swaps only the
+    number, so the ABI, density and minSdk the line goes on with stay."""
+    if re.fullmatch(r"version code \d+", build) and re.match(r"- Build: version code \d+", line):
+        return re.sub(r"version code \d+", build, line, count=1)
+    return f"- Build: {build}"
+
+
+def fold_next_release(text: str, targets: list[str], builds: dict[str, dict[str, str]] | None = None) -> str:
     """The README with its install steps moved onto the build the release being indexed patches.
 
     A README with neither a Supported target '- Version:' line nor a '- Next release:' line (the
     test fixtures) comes back as it was, and so does one that already installs the targets and has
-    no '- Next release:' line."""
+    no '- Next release:' line. A '- Next release:' line without its version code and SHA-256 takes
+    them from `builds` (version to build and sha)."""
     supported = list(SUPPORTED_VERSION.finditer(text))
     announced = re.findall(r"^- Next release:", text, re.MULTILINE)
     if not supported and not announced and not re.search(r"^- Version: ", text, re.MULTILINE):
@@ -278,7 +326,7 @@ def fold_next_release(text: str, targets: list[str]) -> str:
     upcoming = list(NEXT_RELEASE.finditer(text))
     if len(upcoming) != len(announced):
         warn("README.md has a '- Next release:' line that doesn't read 'TikTok X.Y.Z, [on APKMirror](url) since "
-             "YYYY-MM-DD (version code ...), SHA-256 `...`.'")
+             "YYYY-MM-DD.', optionally with ' (version code ...), SHA-256 `...`' before the period")
         return text
     if not upcoming:
         if [current["version"]] != targets:
@@ -297,13 +345,20 @@ def fold_next_release(text: str, targets: list[str]) -> str:
     if upcoming["version"] == current["version"]:
         warn(f"README.md already installs TikTok {current['version']}, so its '- Next release:' line is left over")
         return text
+    known = (builds or {}).get(upcoming["version"], {})
+    build = upcoming["build"] or known.get("build")
+    sha = upcoming["sha"] or known.get("sha")
+    if not build or not sha:
+        warn(f"README.md's '- Next release:' line gives no version code and SHA-256, and index wasn't handed the "
+             f"TikTok {upcoming['version']} APK with one versionCode in patches-list.json to read them from")
+        return text
     folded = text[:upcoming.start()] + text[upcoming.end():]
     folded = SUPPORTED_VERSION.sub(
         lambda _: f"- Version: [{upcoming['version']}]({upcoming['url']}), on APKMirror since {upcoming['date']}.",
         folded, count=1)
-    folded, builds = SUPPORTED_BUILD.subn(lambda _: f"- Build: {upcoming['build']}", folded)
-    folded, hashes = SUPPORTED_SHA.subn(lambda m: f"{m.group(1)}`{upcoming['sha']}` ({upcoming['version']})", folded)
-    if builds != 1 or hashes != 1:
+    folded, build_lines = SUPPORTED_BUILD.subn(lambda m: build_line(m.group(0), build), folded)
+    folded, hashes = SUPPORTED_SHA.subn(lambda m: f"{m.group(1)}`{sha}` ({upcoming['version']})", folded)
+    if build_lines != 1 or hashes != 1:
         warn("README.md needs one Supported target '- Build:' line and one '- SHA-256 of the APK' line")
         return text
     old = re.compile(rf"(?<![\d.]){re.escape(current['version'])}(?!\.?\d)")
@@ -366,7 +421,7 @@ def index(args) -> None:
     if public_key.is_file():
         bundle["public_key"] = read(public_key).strip()
     readme = ROOT / "README.md"
-    edits = {readme: fold_next_release(read(readme), targets)}
+    edits = {readme: fold_next_release(read(readme), targets, known_builds(args.apk))}
     swap(edits, readme, r"^Hushfeed v\d+\.\d+\.\d+ contains \d+ patches for TikTok .*$",
          f"Hushfeed v{args.version} contains {count} patches for TikTok {spoken(targets)}. New in this one: "
          f"{readme_summary} It needs Morphe Manager {manager} or newer.")
@@ -402,6 +457,8 @@ def main() -> None:
     for name in ("--version", "--created", "--readme-summary", "--bundle-summary"):
         p.add_argument(name, required=True)
     p.add_argument("--device-line", default="")
+    p.add_argument("--apk", action="append", default=[], metavar="VERSION=PATH",
+                   help="the TikTok APK a version's patches were verified against; repeat per version")
     p.set_defaults(run=index)
     args = parser.parse_args()
     args.run(args)

@@ -14,6 +14,7 @@ import com.android.tools.smali.dexlib2.builder.BuilderOffsetInstruction
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 
@@ -77,5 +78,32 @@ internal fun MutableMethod.dropInterestButtons(patch: String) {
             invoke-static/range { v$register .. v$register }, Lapp/morphe/extension/tiktok/feed/FeedOverlayControls;->interestButtonsShown(I)Z
             move-result v$register
         """,
+    )
+}
+
+/**
+ * Where the factory reads a component's container type for its chain of name checks, the read
+ * right before the first name is loaded. -1 when the factory no longer has that shape.
+ */
+internal fun anoleContainerRead(instructions: List<Instruction>): Int =
+    instructions.indices.firstOrNull { index ->
+        val read = instructions[index].takeIf { it.opcode == Opcode.IGET_OBJECT }
+            ?.getReference<FieldReference>()
+        read?.name == "containerType" && read.type == "Ljava/lang/String;" &&
+            instructions.getOrNull(index + 1)?.getReference<StringReference>()?.string == "hybrid"
+    } ?: -1
+
+/**
+ * Tells the build report the name of each kind of component a video gets (#293). A report with
+ * the buttons on screen could otherwise not say what drew them. Straight-line, and a factory
+ * without this read still gets the button hook above.
+ */
+internal fun MutableMethod.reportFeedComponents() {
+    val read = anoleContainerRead(implementation!!.instructions.toList())
+    if (read < 0) return
+    val register = (implementation!!.instructions[read] as OneRegisterInstruction).registerA
+    addInstructions(
+        read + 1,
+        "invoke-static/range { v$register .. v$register }, Lapp/morphe/extension/tiktok/feed/FeedOverlayControls;->feedComponentBuilt(Ljava/lang/String;)V",
     )
 }

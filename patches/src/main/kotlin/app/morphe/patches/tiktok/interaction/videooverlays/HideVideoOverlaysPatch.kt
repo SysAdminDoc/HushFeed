@@ -212,6 +212,7 @@ val hideVideoOverlaysPatch = bytecodePatch(
         }
         // The interest buttons go with Hide surveys; the switch decides in the extension.
         interestButtons?.dropInterestButtons(PATCH_NAME)
+        interestButtons?.reportFeedComponents()
         if (repostChip != null) {
             repostChip.dropRepostChip(PATCH_NAME)
             repostBar?.dropRepostBar()

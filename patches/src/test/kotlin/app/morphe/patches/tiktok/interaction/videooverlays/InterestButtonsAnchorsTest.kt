@@ -88,6 +88,28 @@ class InterestButtonsAnchorsTest {
     }
 
     @Test
+    fun `the component report reads the container type each name check compares`() {
+        Fixtures.forEachDeclared { apk ->
+            val version = Fixtures.versionOf(apk)
+            val native = methodsOf(apk) { _, method -> isAnoleComponentFactory(method) && loads(method, INTEREST_BUTTON_GROUP) }.single().second
+            val before = native.implementation!!.instructions.toList()
+            val read = anoleContainerRead(before)
+            assertTrue("$version: the container read", read > 0)
+
+            val hooked = MutableMethod(native)
+            hooked.reportFeedComponents()
+            val after = hooked.implementation!!.instructions.toList()
+            val call = after[read + 1]
+            assertEquals("$version: the hook", Opcode.INVOKE_STATIC_RANGE, call.opcode)
+            val target = call.getReference<MethodReference>()!!
+            assertEquals(CONTROLS, target.definingClass)
+            assertEquals("feedComponentBuilt", target.name)
+            assertEquals((before[read] as OneRegisterInstruction).registerA, (call as RegisterRangeInstruction).startRegister)
+            assertEquals("$version: only the call was added", before.size + 1, after.size)
+        }
+    }
+
+    @Test
     fun `a factory whose check moved stops the patch untouched`() {
         val moved = MutableMethod(
             ImmutableMethod(

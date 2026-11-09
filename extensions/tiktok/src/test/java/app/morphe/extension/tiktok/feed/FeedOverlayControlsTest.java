@@ -112,6 +112,20 @@ public class FeedOverlayControlsTest {
         }
     }
 
+    /** Issue #293: a report names the kinds of component a video was given, each kind once. */
+    @Test public void eachFeedComponentKindIsNamedInTheReportOnce() {
+        try {
+            HookStatus.clear();
+            FeedOverlayControls.feedComponentBuilt("issue293_component");
+            FeedOverlayControls.feedComponentBuilt("issue293_component");
+            FeedOverlayControls.feedComponentBuilt(null);
+            String report = String.join("\n", HookStatus.report());
+            assertTrue(report, report.contains("feed component issue293_component: 1 found"));
+        } finally {
+            HookStatus.clear();
+        }
+    }
+
     /**
      * Issue #293: the Not interested and Interested buttons go with Hide surveys. Another
      * component type stays unmatched whatever the switch says, and Pause hands TikTok's match back.

@@ -123,6 +123,12 @@ public final class VideoOverlayHider {
      */
     private static final String[] ACTION_BAR_IDS = {"47.7.3:lkj"};
     private static final String[] SURVEY_IDS = {"47.7.3:f9j"};
+    /**
+     * The root of the Not interested and Interested buttons' own layout (#293). Hide surveys
+     * already drops the component in the factory that builds it; this takes the row away if
+     * it gets drawn some other way.
+     */
+    private static final String[] INTEREST_BUTTONS_IDS = {"47.7.3:llr"};
     private static final String[] TAB_STRIP_IDS = {"47.7.3:v1f"};
     /**
      * The bottom tab bar (Home, Friends, the create button, Inbox, Profile). TikTok takes it away
@@ -402,6 +408,7 @@ public final class VideoOverlayHider {
     private static final int SKYLIGHT_TARGET = WIDGET_LAYER_TARGET + 1;
     private static final int DETAIL_BACK_BUTTON_TARGET = SKYLIGHT_TARGET + 1;
     private static final int FOLLOWING_BAND_TARGET = DETAIL_BACK_BUTTON_TARGET + 1;
+    private static final int INTEREST_BUTTONS_TARGET = FOLLOWING_BAND_TARGET + 1;
     private static final String[][] TRAVERSAL_TARGET_IDS = traversalTargetIds();
     private static final int LOGICAL_TARGET_COUNT = TRAVERSAL_TARGET_IDS.length;
     private static final int TRAVERSAL_TARGET_COUNT = candidateCount(TRAVERSAL_TARGET_IDS);
@@ -764,6 +771,7 @@ public final class VideoOverlayHider {
                 wanted[MUSIC_TARGET] = music || carryHides;
                 wanted[ACTION_BAR_TARGET] = actionBar;
                 wanted[SURVEY_TARGET] = surveys;
+                wanted[INTEREST_BUTTONS_TARGET] = surveys;
                 wanted[TAB_STRIP_TARGET] = tabStrip;
                 // Only over the Home feed. A live state that outlasts the feed (Inbox opened from
                 // a notification) must not take the tabs off another page. The tabs ride on the
@@ -1101,7 +1109,7 @@ public final class VideoOverlayHider {
     }
 
     private static String[][] traversalTargetIds() {
-        String[][] targets = new String[FOLLOWING_BAND_TARGET + 1][];
+        String[][] targets = new String[INTEREST_BUTTONS_TARGET + 1][];
         targets[CAPTION_TARGET] = CAPTION_IDS;
         targets[MUSIC_TARGET] = MUSIC_IDS;
         targets[ACTION_BAR_TARGET] = ACTION_BAR_IDS;
@@ -1141,6 +1149,7 @@ public final class VideoOverlayHider {
         targets[SKYLIGHT_TARGET] = SKYLIGHT_IDS;
         targets[DETAIL_BACK_BUTTON_TARGET] = DETAIL_BACK_BUTTON_IDS;
         targets[FOLLOWING_BAND_TARGET] = FOLLOWING_BAND_IDS;
+        targets[INTEREST_BUTTONS_TARGET] = INTEREST_BUTTONS_IDS;
         return targets;
     }
 
@@ -2414,7 +2423,8 @@ public final class VideoOverlayHider {
             // hooks broken in #209's report. The Following LIVE row is the same: it's inflated
             // only on the Following tab, and the band at the foot of the feed only on the Home
             // and Friends tabs. An id this build lacks is still reported.
-            } else if (target != SURVEY_TARGET && target != DETAIL_SEARCH_BOX_TARGET
+            } else if (target != SURVEY_TARGET && target != INTEREST_BUTTONS_TARGET
+                    && target != DETAIL_SEARCH_BOX_TARGET
                     && target != DETAIL_BACK_BUTTON_TARGET
                     && target != PLAYER_VIEW_TARGET && target != DETAIL_MESSAGE_BAR_TARGET
                     && !((target == FOLLOWING_STORY_TARGET || target == SKYLIGHT_TARGET

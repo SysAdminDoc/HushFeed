@@ -14,13 +14,20 @@ import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.shared.settings.BooleanSetting;
 import app.morphe.extension.tiktok.settings.Settings;
 import java.lang.ref.WeakReference;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /** Receives dedicated native controls proven by the patcher, never arbitrary matching text. */
 public final class FeedOverlayControls {
     private static final ResourceIdCache IDS = new ResourceIdCache();
     private static final WeakHashMap<View, WeakReference<Binding>> BINDINGS = new WeakHashMap<>();
+    /** The names come from the server, so the report keeps only this many kinds. */
+    private static final int MAX_FEED_COMPONENT_NAMES = 40;
+    private static final Set<String> FEED_COMPONENT_NAMES =
+            Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     public static void bindFullscreen(View view) {
         VideoOverlayHider.noteFullscreenEntry(view);
@@ -75,6 +82,18 @@ public final class FeedOverlayControls {
         boolean hide = Settings.HIDE_FEED_SURVEYS.get();
         HookStatus.bound("interest buttons", hide ? "group skipped" : "group left");
         return !hide;
+    }
+
+    /**
+     * Names each kind of server-built component a feed video was given, so a report taken with
+     * something unwanted on screen says what it was (#293: the buttons were on the phone and
+     * the report couldn't say whether they came from this factory). Runs once per component
+     * while a video's holder is built, and only the first sighting of a name does any work.
+     */
+    public static void feedComponentBuilt(String containerType) {
+        if (containerType == null || FEED_COMPONENT_NAMES.size() >= MAX_FEED_COMPONENT_NAMES
+                || !FEED_COMPONENT_NAMES.add(containerType)) return;
+        HookStatus.bound("feed component " + containerType, "built");
     }
 
     /**

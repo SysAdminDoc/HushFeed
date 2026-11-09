@@ -433,6 +433,26 @@ public class FollowDiagnosticsTest {
         assertEquals("a LIVE comment answer is not a follow refusal", 0, ShadowToast.shownToastCount());
     }
 
+    /** Issue #380: a LIVE like batch's answer is in the report, with the room kept out of it. */
+    @Test
+    public void aLiveLikeAnswerIsLoggedWithoutTheRoomId() {
+        BaseSettings.DEBUG.save(true);
+        org.robolectric.shadows.ShadowLog.clear();
+
+        FollowDiagnostics.logParsedResponse(
+                new CaptchaGateRequest("/webcast/room/like/?room_id=7400000000000000001"),
+                new ParsedResponse(new ChatBody()));
+
+        String found = null;
+        for (org.robolectric.shadows.ShadowLog.LogItem log : org.robolectric.shadows.ShadowLog.getLogs()) {
+            if (log.msg.startsWith("[Morphe TikTok FollowProbe] live like response ")) found = log.msg;
+        }
+        assertTrue("no live like line", found != null);
+        assertTrue(found, found.contains("status_code=4003"));
+        assertTrue(found, found.contains("outcome=refused"));
+        assertFalse("the room id stays out of the report", found.contains("7400000000000000001"));
+    }
+
     @Test
     public void aLiveCommentAnswerStaysQuietWithLoggingOffAndForOtherPaths() {
         org.robolectric.shadows.ShadowLog.clear();

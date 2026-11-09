@@ -281,6 +281,7 @@ public final class LikedJump {
                 Context context = frame.getContext();
                 chip = new Chip(context);
                 chip.setTag(CHIP_TAG);
+                SettingsUi.markAsButton(chip);
                 chip.setTextColor(SettingsUi.OVERLAY_TEXT);
                 chip.setTextSize(TypedValue.COMPLEX_UNIT_SP, SettingsUi.TEXT_CAPTION);
                 chip.setMinWidth(SettingsUi.dp(context, 48));
@@ -301,8 +302,11 @@ public final class LikedJump {
             chip.adapter = adapter;
             chip.grid = grid;
             String shown = shownFor(adapter);
-            chip.setText(shown == null ? L10n.t("Jump to a date") : L10n.f("Up to %1$s", shown));
-            chip.setContentDescription(L10n.t("Jump to a date"));
+            String name = L10n.t("Jump to a date");
+            String upTo = shown == null ? null : L10n.f("Up to %1$s", shown);
+            chip.setText(upTo == null ? name : upTo);
+            // A description replaces the text for a screen reader, so it carries the date too.
+            chip.setContentDescription(upTo == null ? name : L10n.f("%1$s: %2$s", name, upTo));
             chip.setOnClickListener(view -> pickYear(adapter, view));
             Chip placed = chip;
             chip.post(placed::place);

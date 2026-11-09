@@ -745,8 +745,8 @@ public final class GridSort {
             TextView count = new TextView(context);
             count.setTextColor(SettingsUi.OVERLAY_TEXT);
             count.setTextSize(TypedValue.COMPLEX_UNIT_SP, SettingsUi.TEXT_CAPTION);
-            count.setPadding(SettingsUi.dp(context, 8), 0, 0, 0);
-            count.setText(String.valueOf(size));
+            count.setPaddingRelative(SettingsUi.dp(context, 8), 0, 0, 0);
+            setHoldCount(count, size);
             box.addView(count);
             FrameLayout.LayoutParams boxAt = new FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -780,7 +780,15 @@ public final class GridSort {
 
     private static void showHoldCount(View grid, int size) {
         Hold hold = HOLDS.get(grid);
-        if (hold != null) hold.count.setText(String.valueOf(size));
+        if (hold != null) setHoldCount(hold.count, size);
+    }
+
+    /** The number alone says nothing by ear, so a screen reader hears what it counts. */
+    private static void setHoldCount(TextView count, int size) {
+        String shown = String.valueOf(size);
+        count.setText(shown);
+        count.setContentDescription(
+                L10n.quantity(count.getContext(), size, "%1$s video", "%1$s videos", shown));
     }
 
     /** Whether a page's refresh can wait for the end of the hold: one refresh, not one per page. */
@@ -985,7 +993,7 @@ public final class GridSort {
             int paddingY = SettingsUi.dp(context, 5);
             chip.setPadding(paddingX, paddingY, paddingX, paddingY);
             chip.setBackground(SettingsUi.overlayChip(context, SettingsUi.RADIUS_OVERLAY));
-            chip.setContentDescription(L10n.t("Sort this grid"));
+            SettingsUi.markAsButton(chip);
             chip.setElevation(SettingsUi.dp(context, 2));
             FrameLayout.LayoutParams layout = new FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -998,7 +1006,10 @@ public final class GridSort {
         chip.adapter = adapter;
         chip.grid = grid;
         chip.setVisibility(View.VISIBLE);
-        chip.setText(L10n.t(LABELS[index]));
+        String order = L10n.t(LABELS[index]);
+        chip.setText(order);
+        // A description replaces the text for a screen reader, so it carries the order too.
+        chip.setContentDescription(L10n.f("%1$s: %2$s", L10n.t("Sort this grid"), order));
         // Set every time: the parent can outlive one adapter and get the next one.
         chip.setOnClickListener(view -> choose(adapter, view));
         TextView placed = chip;

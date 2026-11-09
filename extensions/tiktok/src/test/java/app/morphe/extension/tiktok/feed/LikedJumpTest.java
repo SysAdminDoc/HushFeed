@@ -234,6 +234,8 @@ public class LikedJumpTest {
             TextView control = chip(adapter);
             assertNotNull("a Liked grid gets the chip", control);
             assertEquals("Jump to a date", String.valueOf(control.getText()));
+            assertEquals("Jump to a date", String.valueOf(control.getContentDescription()));
+            assertEquals("android.widget.Button", String.valueOf(control.createAccessibilityNodeInfo().getClassName()));
             FrameLayout.LayoutParams layout = (FrameLayout.LayoutParams) control.getLayoutParams();
             assertEquals("the start corner, the sort chip has the end", Gravity.TOP | Gravity.START, layout.gravity);
 
@@ -263,7 +265,8 @@ public class LikedJumpTest {
             adapter.mmItems = GridSort.data(adapter, likes(4));
             idle(0);
             assertEquals("Up to Mar 2022", String.valueOf(chip(adapter).getText()));
-            assertEquals("Jump to a date", String.valueOf(chip(adapter).getContentDescription()));
+            assertEquals("a screen reader hears the date the grid starts at",
+                    "Jump to a date: Up to Mar 2022", String.valueOf(chip(adapter).getContentDescription()));
             adapter.mmItems = GridSort.page(adapter, likes(8));
             idle(0);
             assertEquals("a later page keeps the name", "Up to Mar 2022", String.valueOf(chip(adapter).getText()));

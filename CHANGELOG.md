@@ -77,6 +77,7 @@ Every Hushfeed release, newest first.
 * `Disable telemetry` also stops TikTok's Orbu log upload and its whoami lookups, which were still going out on 47.7.3 (#379).
 * `Hide surveys` takes the interest buttons off a video by their own view as well, for when TikTok builds them some other way. The diagnostic report now names each kind of feed component a video was given (#293).
 * Blocking a LIVE host with `Block this creator` and swiping to the next room before the block went through no longer closes the room you moved to.
+* TalkBack reads the sort button on a profile, Liked or sound grid as a button and says the order it's on, like "Sort this grid: Original order". It only said "Sort this grid" before. The count that shows while a sorted grid loads reads as "30 videos" now, where it was a bare number.
 
 ## 0.81.0 (2026-11-05)
 

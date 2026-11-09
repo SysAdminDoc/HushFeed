@@ -169,6 +169,8 @@ public final class GridPosition {
             button.setPadding(padding, padding, padding, padding);
             button.setBackground(SettingsUi.overlayChip(context, SettingsUi.RADIUS_OVERLAY));
             button.setElevation(SettingsUi.dp(context, 2));
+            button.setFocusable(true);
+            SettingsUi.markAsButton(button);
             button.setOnClickListener(view -> action.run());
             LinearLayout.LayoutParams at = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);

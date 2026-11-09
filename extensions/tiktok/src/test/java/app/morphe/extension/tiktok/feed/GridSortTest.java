@@ -357,6 +357,11 @@ public class GridSortTest {
         assertTrue("a cell nobody can see can't be tapped", holdOn(adapter).isClickable());
     }
 
+    private static TextView holdCount(GridAdapter adapter) {
+        ViewGroup box = (ViewGroup) ((ViewGroup) holdOn(adapter)).getChildAt(0);
+        return (TextView) box.getChildAt(1);
+    }
+
     private static void assertInSight(GridAdapter adapter) {
         assertEquals(1f, adapter.mmRecyclerView.getAlpha(), 0f);
         assertNull(holdOn(adapter));
@@ -370,13 +375,23 @@ public class GridSortTest {
             List<Aweme> model = posts(30);
             adapter.mmItems = GridSort.data(adapter, model);
             assertHeld(adapter);
+            assertEquals("30", holdCount(adapter).getText().toString());
+            assertEquals("a screen reader hears a number and not what it counts",
+                    "30 videos", String.valueOf(holdCount(adapter).getContentDescription()));
 
             idle(GridSort.NEXT_PAGE_DELAY_MS + 100);
             model.addAll(0, posts(30));
             adapter.mmItems = GridSort.page(adapter, model);
             idle(GridSort.NEXT_PAGE_DELAY_MS + 100);
             assertHeld(adapter);
+            assertEquals("60", holdCount(adapter).getText().toString());
+            assertEquals("60 videos", String.valueOf(holdCount(adapter).getContentDescription()));
             assertEquals("no refresh while it's out of sight", 0, adapter.refreshes);
+            TextView count = holdCount(adapter);
+            count.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+            assertEquals("right to left, the gap still faces the spinner",
+                    SettingsUi.dp(count.getContext(), 8), count.getPaddingRight());
+            assertEquals(0, count.getPaddingLeft());
 
             adapter.mmItems = GridSort.page(adapter, model);
             idle(0);
@@ -831,7 +846,10 @@ public class GridSortTest {
             assertEquals("native order includes pinned and missing-value posts", "abcdefp", ids(adapter.mmItems));
             assertSame("Original keeps the active control", originalControl, chip(adapter));
             assertEquals("Original order", String.valueOf(chip(adapter).getText()));
-            assertEquals("Sort this grid", String.valueOf(chip(adapter).getContentDescription()));
+            assertEquals("a screen reader hears the order the grid is in",
+                    "Sort this grid: Original order", String.valueOf(chip(adapter).getContentDescription()));
+            assertEquals("android.widget.Button",
+                    String.valueOf(chip(adapter).createAccessibilityNodeInfo().getClassName()));
             assertTrue(chip(adapter).isShown());
             GridSort.beforeOpen(fragment);
             for (int i = 0; i < identities.size(); i++) {

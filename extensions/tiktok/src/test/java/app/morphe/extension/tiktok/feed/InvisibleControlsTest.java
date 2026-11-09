@@ -27,6 +27,7 @@ import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
 import app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
+import app.morphe.extension.tiktok.settings.preference.SettingsUi;
 
 import com.ss.android.ugc.aweme.common.widget.VerticalViewPager;
 
@@ -219,6 +220,9 @@ public class InvisibleControlsTest {
         assertTrue("not at the left", button.getLeft() < content.getWidth() / 4);
         assertTrue("not near the top", button.getBottom() < content.getHeight() / 4);
         assertTrue("over TikTok's top bar row", button.getTop() >= 56);
+        assertEquals("a smaller tap area than the other buttons over the feed",
+                SettingsUi.dp(activity, 48), button.getWidth());
+        assertEquals(button.getWidth(), button.getHeight());
     }
 
     @Test

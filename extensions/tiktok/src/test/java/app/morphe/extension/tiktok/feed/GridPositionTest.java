@@ -238,6 +238,9 @@ public class GridPositionTest {
             GridPosition.Rail rail = shownRail(grid);
             grid.first = 40;
             assertEquals("nothing to go back to yet", View.GONE, rail.back.getVisibility());
+            assertEquals("a screen reader hears a button", "android.widget.Button",
+                    String.valueOf(rail.end.createAccessibilityNodeInfo().getClassName()));
+            assertTrue("a keyboard can land on it", rail.end.isFocusable());
 
             assertTrue(rail.end.performClick());
             assertEquals(Integer.valueOf(199), grid.jumps.get(grid.jumps.size() - 1));

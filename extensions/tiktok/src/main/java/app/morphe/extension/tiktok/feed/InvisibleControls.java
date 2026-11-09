@@ -7,6 +7,7 @@ package app.morphe.extension.tiktok.feed;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.InsetDrawable;
 import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
@@ -41,8 +42,11 @@ import app.morphe.extension.tiktok.settings.preference.SettingsUi;
  * #GHOSTED_ALPHA} so the reader can still find the way back.
  */
 public final class InvisibleControls {
-    /** The button's side. */
+    /** The eye's drawn side. */
     static final int SIZE_DP = 40;
+    /** The side that takes the tap: the 48dp the other buttons over the feed have. */
+    static final int TARGET_DP = 48;
+    private static final int INSET_DP = (TARGET_DP - SIZE_DP) / 2;
     private static final int SIDE_DP = 12;
     /** How much of the button shows while the controls are invisible. */
     static final float GHOSTED_ALPHA = 0.3f;
@@ -88,7 +92,7 @@ public final class InvisibleControls {
         if (button == null || button.getParent() != root) {
             remove(button);
             button = create(activity);
-            int size = SettingsUi.dp(activity, SIZE_DP);
+            int size = SettingsUi.dp(activity, TARGET_DP);
             root.addView(button, new FrameLayout.LayoutParams(size, size, Gravity.TOP | Gravity.START));
             buttonReference = new WeakReference<>(button);
         }
@@ -123,8 +127,10 @@ public final class InvisibleControls {
         ViewGroup.LayoutParams raw = button.getLayoutParams();
         if (!(raw instanceof FrameLayout.LayoutParams)) return;
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) raw;
+        // The tap area stays clear of the top bar row, so the eye sits its inset lower.
         int top = FilteredCountPill.freeTop(root);
-        int start = SettingsUi.dp(root.getContext(), SIDE_DP);
+        // The eye is drawn inset from the tap area, so the area starts that much nearer the edge.
+        int start = SettingsUi.dp(root.getContext(), SIDE_DP - INSET_DP);
         if (params.topMargin == top && params.getMarginStart() == start) return;
         params.topMargin = top;
         params.setMarginStart(start);
@@ -138,7 +144,8 @@ public final class InvisibleControls {
             Drawable glyph = new OverlayGlyphDrawable(
                     ghosting ? OverlayGlyphDrawable.Shape.EYE_OFF : OverlayGlyphDrawable.Shape.EYE,
                     SettingsUi.OVERLAY_TEXT, SettingsUi.dp(context, 2));
-            button.setBackground(SettingsUi.overlayControl(context, SIZE_DP / 2, glyph));
+            button.setBackground(new InsetDrawable(
+                    SettingsUi.overlayControl(context, SIZE_DP / 2, glyph), SettingsUi.dp(context, INSET_DP)));
             button.setContentDescription(L10n.t(context,
                     ghosting ? "Show the controls" : "Make the controls invisible"));
             button.setSelected(ghosting);

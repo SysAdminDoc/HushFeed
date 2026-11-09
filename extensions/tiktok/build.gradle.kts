@@ -244,6 +244,12 @@ android {
         unitTests.isIncludeAndroidResources = true
         unitTests.all {
             it.maxHeapSize = "1g"
+            // Robolectric keeps every sandbox it builds for as long as the worker lives, one for
+            // each mix of API level, graphics mode and extra shadows a class asks for, and the
+            // suite asks for about fifty. One worker for all of it filled this heap halfway
+            // through and spent ten minutes collecting garbage before it died. A fresh worker
+            // every hundred classes holds half as many, whatever the suite grows to.
+            it.forkEvery = 100
             // The translation tables are read from disk at run time, by the test that compares
             // them against the generated table. Without this Gradle sees no input change when a
             // table is edited, calls the task up to date, and the comparison never runs.
@@ -276,6 +282,9 @@ android {
             }
             if (refreshingScreenshots) it.outputs.upToDateWhen { false }
             it.jvmArgs(
+                // A worker that does run out says so by ending, with exit value 3, instead of
+                // holding two cores while it collects garbage.
+                "-XX:+ExitOnOutOfMemoryError",
                 "--add-opens=java.base/java.lang=ALL-UNNAMED",
                 "--add-opens=java.base/java.util=ALL-UNNAMED",
                 "--add-opens=java.base/java.io=ALL-UNNAMED",

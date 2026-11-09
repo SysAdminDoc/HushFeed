@@ -456,9 +456,10 @@ public class SettingsL10nTest {
                 // and Portuguese write maximum as "máx.", and the period belongs to the word.
                 // Reading it as a terminator and taking it off produced "mín./máx", one
                 // abbreviation with its period and the identical one beside it without.
-                boolean abbreviated = terminator(key) == ' ' && terminator(value) == '.'
+                char ending = wantedTerminator(language, key);
+                boolean abbreviated = ending == ' ' && terminator(value) == '.'
                         && endsInAnAbbreviation(value);
-                if (terminator(key) != terminator(value) && !abbreviated) {
+                if (ending != terminator(value) && !abbreviated) {
                     problems.add(language + " ends the sentence with '" + terminator(value)
                             + "' where the key ends with '" + terminator(key) + "' in: " + key);
                 }
@@ -506,6 +507,18 @@ public class SettingsL10nTest {
                 endsInAnAbbreviation("No está en la caché actual."));
         assertFalse("a value with no full stop was called an abbreviation",
                 endsInAnAbbreviation("Komentar min/maks"));
+        // Thai ends a sentence with a space. A row that kept the English full stop is the
+        // finding there, and a question is still a question.
+        assertEquals("Thai was asked for a full stop it does not write",
+                ' ', wantedTerminator("th", "Hide the caption."));
+        assertNotEquals("a Thai row that kept the English full stop",
+                wantedTerminator("th", "Hide the caption."), terminator("ซ่อนคำบรรยาย."));
+        assertEquals("a Thai question lost its mark", '?', wantedTerminator("th", "Really?"));
+        assertEquals("another language was let off its full stop",
+                '.', wantedTerminator("vi", "Hide the caption."));
+        // Thai writes its vowels as marks over the consonant, and they are part of the word.
+        assertTrue("a Thai abbreviation was read as a sentence ending",
+                endsInAnAbbreviation("%1$s วิ."));
     }
 
     /** Every placeholder in order, numbered or bare, so a change of either kind shows up. */
@@ -534,11 +547,23 @@ public class SettingsL10nTest {
         if (!trimmed.endsWith(".")) return false;
         int at = trimmed.length() - 1;
         int letters = 0;
-        while (at > 0 && Character.isLetter(trimmed.charAt(at - 1))) {
+        while (at > 0 && (Character.isLetter(trimmed.charAt(at - 1))
+                || Character.getType(trimmed.charAt(at - 1)) == Character.NON_SPACING_MARK)) {
             at--;
             letters++;
         }
         return letters > 0 && letters <= 4;
+    }
+
+    /**
+     * The terminator a translation of this key ends with in that language.
+     *
+     * <p>The key's own, except in Thai, which ends a sentence with a space and writes no full
+     * stop. Its other terminators are the English ones.
+     */
+    private static char wantedTerminator(String language, String key) {
+        char terminator = terminator(key);
+        return "th".equals(language) && terminator == '.' ? ' ' : terminator;
     }
 
     /** The character a string ends a sentence with, or a space when it ends with none. */
@@ -701,6 +726,11 @@ public class SettingsL10nTest {
         assertEquals(1, toastLines("因无触摸已离开 TikTok"));
         assertEquals(2, toastLines("零将其关闭。屏幕在这么多分钟内没有被触摸时"));
         assertEquals(3, toastLines("零将其关闭。屏幕在这么多分钟内没有被触摸时，视频会停止，TikTok"));
+        // Thai draws its vowels and tones over the letter: 29 characters here, 20 columns.
+        assertEquals("a Thai mark was given a column of its own",
+                1, toastLines("ล้างวิดีโอที่ดูแล้ว เลิกทำได้"));
+        assertEquals("a long Thai toast was let through", 3, toastLines(
+                "ไม่สามารถอ่านการเปลี่ยนแปลงที่หยุดชะงักได้ โปรดตรวจสอบการตั้งค่าของคุณ"));
     }
 
     /** The extension's Java a toast scan reads, without the generated translation tables. */
@@ -1223,7 +1253,9 @@ public class SettingsL10nTest {
                     }
                     pieces.add(new int[]{2, space ? 1 : 0});
                     space = false;
-                } else {
+                } else if (Character.getType(character) != Character.NON_SPACING_MARK) {
+                    // A mark drawn over or under its letter, as Thai's vowels and tones are,
+                    // takes no room of its own.
                     word++;
                 }
             }

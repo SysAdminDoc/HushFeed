@@ -42,6 +42,7 @@ Every Hushfeed release, newest first.
 * `Drag handle and jump buttons on grids` shows a handle at the edge of a long profile, Liked or sound grid while it moves, with Top, Back and End buttons beside it. Back returns to where you were before the last jump. It starts off and lives in Hushfeed settings > Interface (#378).
 * `Bottom bar icons` in Hushfeed settings > Feed tabs picks one of the icon sets TikTok is testing for the bottom bar, or leaves it to TikTok, which is how it starts. It takes a TikTok restart (#285).
 * With `Log diagnostics` on, the report keeps TikTok's answer to every LIVE like, so a like TikTok refused can be told from one that never left the phone (#380).
+* The settings screen now comes in Thai. Thanks to @MangaThatsFine (#381).
 
 ### Bug Fixes
 

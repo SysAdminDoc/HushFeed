@@ -41,7 +41,7 @@ private val FORMATTER_CALLS = setOf(
 val alwaysShowPublishDatePatch = bytecodePatch(
     name = "Always show publish date",
     description = "Shows the date a video was posted next to the creator's name, so you can " +
-        "tell how old it is. It can also show the exact time, dates and lengths on profile grids, or sort the videos a grid has loaded. On by " +
+        "tell how old it is. It can also show the exact time, dates and lengths on profile grids, sort the videos a grid has loaded, start your Liked grid at a year or month you pick, or add a drag handle and jump buttons to long grids. On by " +
         "default. Turn it off in Hushfeed settings > Feed screen.",
     default = true,
 ) {

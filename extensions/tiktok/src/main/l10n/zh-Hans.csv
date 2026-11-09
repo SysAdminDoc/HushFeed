@@ -2566,3 +2566,7 @@ Dismiss,忽略
 Adds a Record button to LIVE rooms. Tap it to start or stop recording. Leaving the room also stops a recording.,在直播间添加录制按钮。点击可开始或停止录制，离开直播间也会停止录制.
 Automatically record LIVEs you enter,进入直播间时自动录制
 Start recording a LIVE's stream when you enter the room. Stop won't restart it until you leave and enter again. Screen recordings still need a tap and Android's permission.,进入直播间时自动开始录制直播流。点击停止后，只有退出并重新进入该直播间才会再次录制。录屏仍需手动点击并获得 Android 授权.
+Drag handle and jump buttons on grids,网格上的拖动手柄和跳转按钮
+"On long profile, Liked and sound grids, scrolling brings up a handle you can drag through what's loaded, plus Top, Back and End buttons. Back returns to where you were.",在较长的主页、喜欢和音乐网格上，滚动时会出现可拖动浏览已加载内容的手柄，以及“顶部”“返回”“末尾”按钮。“返回”会回到你之前的位置.
+Top,顶部
+End,末尾

@@ -56,7 +56,8 @@
       "profile_grid_sort",
       "liked_grid_sort",
       "sound_grid_sort",
-      "liked_jump_to_date"
+      "liked_jump_to_date",
+      "grid_position_controls"
     ],
     "Always upload in HD": [
       "always_upload_hd"
@@ -1983,6 +1984,12 @@
     "glass_video_blur": {
       "field": "GLASS_VIDEO_BLUR",
       "key": "glass_video_blur",
+      "type": "boolean",
+      "default": false
+    },
+    "grid_position_controls": {
+      "field": "GRID_POSITION_CONTROLS",
+      "key": "grid_position_controls",
       "type": "boolean",
       "default": false
     },

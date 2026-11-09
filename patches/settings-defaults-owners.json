@@ -53,7 +53,8 @@
       "PROFILE_GRID_SORT",
       "LIKED_GRID_SORT",
       "SOUND_GRID_SORT",
-      "LIKED_JUMP_TO_DATE"
+      "LIKED_JUMP_TO_DATE",
+      "GRID_POSITION_CONTROLS"
     ],
     "Always upload in HD": [
       "ALWAYS_UPLOAD_HD"

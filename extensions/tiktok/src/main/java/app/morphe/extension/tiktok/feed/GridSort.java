@@ -582,6 +582,7 @@ public final class GridSort {
             grid = gridView(adapter);
             View gridShown = grid;
             showChip(adapter, grid);
+            GridPosition.show(adapter, grid);
             boolean shown = onScreen(grid);
             // TikTok takes the listener away once it knows it has no more. It decides that after it
             // hands the list over, so this post is the first point that can tell.

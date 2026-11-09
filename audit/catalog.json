@@ -886,6 +886,12 @@
     "default": false,
     "type": "bool",
     "row": "Jump to a date on Liked grids"
+   },
+   {
+    "key": "grid_position_controls",
+    "default": false,
+    "type": "bool",
+    "row": "Drag handle and jump buttons on grids"
    }
   ],
   "surface": "feed",

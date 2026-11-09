@@ -662,7 +662,7 @@
     },
     {
       "name": "Always show publish date",
-      "description": "Shows the date a video was posted next to the creator's name, so you can tell how old it is. It can also show the exact time, dates and lengths on profile grids, or sort the videos a grid has loaded. On by default. Turn it off in Hushfeed settings > Feed screen.",
+      "description": "Shows the date a video was posted next to the creator's name, so you can tell how old it is. It can also show the exact time, dates and lengths on profile grids, sort the videos a grid has loaded, start your Liked grid at a year or month you pick, or add a drag handle and jump buttons to long grids. On by default. Turn it off in Hushfeed settings > Feed screen.",
       "category": "Feed",
       "use": true,
       "dependencies": [
@@ -783,6 +783,15 @@
         {
           "key": "liked_jump_to_date",
           "title": "Default: liked jump to date",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "grid_position_controls",
+          "title": "Default: grid position controls",
           "description": null,
           "required": false,
           "type": "kotlin.Boolean",

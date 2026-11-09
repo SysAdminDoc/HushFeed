@@ -2642,3 +2642,11 @@ Dismiss	Ignora
 Adds a Record button to LIVE rooms. Tap it to start or stop recording. Leaving the room also stops a recording.	Aggiunge un pulsante Registra alle stanze LIVE. Toccalo per avviare o fermare la registrazione. La registrazione si ferma anche quando esci dalla stanza.
 Automatically record LIVEs you enter	Registra automaticamente le LIVE quando entri
 Start recording a LIVE's stream when you enter the room. Stop won't restart it until you leave and enter again. Screen recordings still need a tap and Android's permission.	Avvia la registrazione dello stream LIVE quando entri nella stanza. Dopo aver premuto Stop, non ricomincia finché non esci e rientri. La registrazione dello schermo richiede ancora un tocco e il permesso di Android.
+# context: Row title of the Feed screen switch that adds a drag handle and Top, Back and End buttons to long video grids
+Drag handle and jump buttons on grids	Maniglia di trascinamento e pulsanti di salto nelle griglie
+# context: Row summary for that switch; Top, Back and End are the button labels, Liked is the profile tab
+On long profile, Liked and sound grids, scrolling brings up a handle you can drag through what's loaded, plus Top, Back and End buttons. Back returns to where you were.	Nelle griglie lunghe di profilo, Mi piace e suoni, scorrendo compare una maniglia da trascinare tra i contenuti caricati, più i pulsanti Inizio, Indietro e Fine. Indietro riporta dov'eri.
+# context: Short button label on a long video grid, jumps to the first video
+Top	Inizio
+# context: Short button label on a long video grid, jumps to the last video loaded
+End	Fine

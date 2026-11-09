@@ -378,6 +378,12 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                                     "least_viewed", "most_liked", "least_liked"})
                             .withNote("Sorts the videos on a sound's page the same way, loading up to 300 of them while an order is on."));
                 }
+                addPreference(new TogglePreference(
+                        context,
+                        "Drag handle and jump buttons on grids",
+                        "On long profile, Liked and sound grids, scrolling brings up a handle you can drag through what's loaded, plus Top, Back and End buttons. Back returns to where you were.",
+                        Settings.GRID_POSITION_CONTROLS
+                ));
             }
         }
         if (SettingsStatus.authorRegionEnabled) {

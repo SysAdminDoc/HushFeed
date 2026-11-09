@@ -139,6 +139,7 @@ val customLauncherIconPatch = resourcePatch(
             "$MAX_PICTURE_SIDE pixels on each side, to use instead of TikTok's note. Home screens " +
             "trim icons to their own shape, so keep what matters in the middle two thirds. With " +
             "a picture, the style only sets the color behind it and there's no themed icon. " +
+            "A folder works too when the picture is the only PNG in it or is named icon.png. " +
             "Leave it empty to keep the note.",
         required = false,
     )
@@ -302,7 +303,9 @@ internal fun launcherPicture(raw: String?): LauncherPicture? {
     val path = raw?.trim().orEmpty()
     if (path.isEmpty()) return null
     fun refuse(why: String): Nothing = throw PatchException("Custom launcher icon: $why Nothing was changed.")
-    val file = File(path)
+    val named = File(path)
+    // Morphe Manager's picker for this option hands back a folder, not a file.
+    val file = if (named.isDirectory) pictureInFolder(named) { refuse(it) } else named
     if (!file.isFile) refuse("there's no file at \"$path\".")
     if (file.length() > MAX_PICTURE_MEGABYTES * 1024L * 1024L) {
         refuse("\"${file.name}\" is larger than $MAX_PICTURE_MEGABYTES MB, which is too big for an icon.")
@@ -317,6 +320,24 @@ internal fun launcherPicture(raw: String?): LauncherPicture? {
         )
     }
     return LauncherPicture(bytes, width)
+}
+
+/**
+ * The picture in [folder]: its only PNG, or `icon.png` (any case) when it holds several. Anything
+ * else goes to [refuse] with the PNGs it found, at most eight of them by name.
+ */
+private fun pictureInFolder(folder: File, refuse: (String) -> Nothing): File {
+    val pngs = folder.listFiles().orEmpty()
+        .filter { it.isFile && it.name.endsWith(".png", ignoreCase = true) }
+        .sortedBy { it.name.lowercase() }
+    if (pngs.isEmpty()) refuse("there's no PNG in the folder \"${folder.path}\".")
+    if (pngs.size == 1) return pngs.single()
+    pngs.firstOrNull { it.name.equals("icon.png", ignoreCase = true) }?.let { return it }
+    val shown = pngs.take(8).joinToString { it.name } + if (pngs.size > 8) " and ${pngs.size - 8} more" else ""
+    refuse(
+        "the folder \"${folder.path}\" holds ${pngs.size} PNGs ($shown). Name the one to use icon.png, " +
+            "or give Icon picture the file's full path.",
+    )
 }
 
 /**

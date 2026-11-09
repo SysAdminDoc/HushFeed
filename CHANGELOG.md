@@ -40,6 +40,7 @@ Every Hushfeed release, newest first.
 
 ### Bug Fixes
 
+* `Icon picture` in `Custom launcher icon` takes the folder Morphe Manager's picker hands back. It uses the only PNG in that folder, or the one named `icon.png` when there are several, and otherwise stops and names the PNGs it found. Before, picking a folder stopped patching with "there's no file" until you typed the file name in by hand (Discussion #288).
 * With `Check for already-saved videos` on, saving something you already have no longer flashes "Saving" right before Open or Save again comes up. That note now waits until the check finds it's new, for sounds, original photos and photo posts saved as a video (#356).
 * A LIVE quality you pick stays picked after TikTok restarts as soon as `Offer LIVE quality in more rooms` is on. `Keep the LIVE quality after TikTok restarts` used to start off as well, so the next launch opened rooms at Auto again. It starts on now, and you can still turn it off (#353).
 * With `Hide CAPTCHA popups` off, which is how it starts, a puzzle that shows while you're just browsing (in a LIVE room, say) now gets a short note naming that switch. It shows once a session, and never for a puzzle the switch would show anyway, like a sign-in check (#87).

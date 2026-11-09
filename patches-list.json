@@ -2316,7 +2316,7 @@
         {
           "key": "iconPicture",
           "title": "Icon picture",
-          "description": "Where to find a square PNG picture of your own, 432 to 1024 pixels on each side, to use instead of TikTok's note. Home screens trim icons to their own shape, so keep what matters in the middle two thirds. With a picture, the style only sets the color behind it and there's no themed icon. Leave it empty to keep the note.",
+          "description": "Where to find a square PNG picture of your own, 432 to 1024 pixels on each side, to use instead of TikTok's note. Home screens trim icons to their own shape, so keep what matters in the middle two thirds. With a picture, the style only sets the color behind it and there's no themed icon. A folder works too when the picture is the only PNG in it or is named icon.png. Leave it empty to keep the note.",
           "required": false,
           "type": "kotlin.String",
           "default": null,

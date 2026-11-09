@@ -35,9 +35,13 @@ jump3r = "1.0.5"
 # CVE-2026-118042 (GHSA-v5x9-67m3-7m56, low, 2026-10-31) then covered 13.0 to 33.7.2: HashBiMap
 # and LinkedHashMultimap built from attacker-chosen keys went quadratic. 33.8.0 is its fix, and
 # moves error_prone_annotations from 2.50.0 to 2.52.0; failureaccess, jspecify and j2objc stay.
+# 33.8.0 reached Maven Central on 2026-11-02, inside the two weeks a new release normally waits;
+# it is taken early because it is the only release outside CVE-2026-118042. The pin also goes
+# into lint's own classpath through build.gradle.kts's component rule.
 guava = "33.8.0-jre"
-# Every io.netty request on Netty's main release train is rewritten to this in every project
-# graph (build.gradle.kts); netty-tcnative versions on its own train and is left alone. Only the
+# Every io.netty request on Netty's 4.1 train is rewritten to this in every project graph, lint's
+# included (build.gradle.kts); netty-tcnative versions on its own train and is left alone, and a
+# request for another train would keep its own version. Only the
 # Android plugin's unified test platform asks for Netty here: its core asked for 4.1.93 and its
 # emulator control for 4.1.110, and both sit inside GHSA-c4c3-7fpv-j4q5 (netty-handler SNI
 # routing, critical, fixed in 4.1.137) plus dozens of netty-codec-http and netty-codec-http2

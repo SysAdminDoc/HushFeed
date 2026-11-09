@@ -8622,7 +8622,7 @@
     },
     {
       "name": "Remove LIVE extras",
-      "description": "Removes the files for LIVE co-hosting, joining a LIVE as a guest, matches, games and gift effects, so the app gets about 3 MB smaller. The catch: in LIVEs, battle scores and guest names can go missing, and joining someone's LIVE by voice or video, co-hosting, games or animated gifts may stop working.",
+      "description": "Removes the script for games inside LIVEs and turns off animated gift effects. It saves very little space. The catch: LIVE games and animated gifts may stop working. Co-hosting, joining a LIVE as a guest, invitations and battle scores aren't touched.",
       "category": "Performance",
       "use": false,
       "dependencies": [

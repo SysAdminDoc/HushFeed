@@ -12769,19 +12769,11 @@
    },
    {
     "id": "live-files-emptied",
-    "what": "The co-hosting, match and game files named by the strip are zero-length in the APK.",
+    "what": "The LIVE game script named by the strip is zero-length in the APK.",
     "steps": [
      {
       "apk": "entry-empty",
       "path": "assets/native_runtime_server/game/scripts/ttmg-core.js.zip"
-     },
-     {
-      "apk": "entry-empty",
-      "path": "assets/offline/tiktok_live_tt_live_lynx_match_component_container/mainV12/template.js"
-     },
-     {
-      "apk": "entry-empty",
-      "path": "lib/arm64-v8a/liblink_mic_sdk.so"
      }
     ],
     "auto": true
@@ -12802,7 +12794,7 @@
     "auto": true
    }
   ],
-  "notes": "The paths come from liveAssetProfiles for TikTok 47.1.4 (universal APK and split bundle carry the same five files). The match invitee template (match_invitee_v3/template.js) and the armeabi-v7a twin of liblink_mic_sdk.so are also emptied on builds that ship them. The runtime half of the description (battle scores and guest names can go missing in a LIVE, joining by voice or video stops working) needs a LIVE room with a battle or guests and is not exercised; opening any LIVE as a viewer is allowed but not scripted."
+  "notes": "The path comes from liveAssetProfiles (universal APK and split bundle carry the same file). liblink_mic_sdk.so and the LIVE match templates stay whole on purpose; ReviewedProfilesMatchFixturesTest holds that against the fixtures (#382, #107). LIVE games and animated gifts need a room running one and are not exercised; opening any LIVE as a viewer is allowed but not scripted."
  },
  {
   "name": "Remove avatar rings",

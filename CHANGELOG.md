@@ -45,6 +45,7 @@ Every Hushfeed release, newest first.
 
 ### Bug Fixes
 
+* `Remove LIVE extras` leaves the files LIVE invitations, co-hosting, joining as a guest and battle scores run on alone now. Picking every patch used to empty the guest call library, so friends' invitations never showed up and joining a LIVE failed. The patch is down to the LIVE games script and animated gift effects, so it saves very little space now (#382, #107, #132).
 * `Icon picture` in `Custom launcher icon` takes the folder Morphe Manager's picker hands back. It uses the only PNG in that folder, or the one named `icon.png` when there are several, and otherwise stops and names the PNGs it found. The hidden `._` copies a Mac leaves next to each picture on a memory card don't count, and a folder that can't be read says so instead of claiming it holds no PNG. Before, picking a folder stopped patching with "there's no file" until you typed the file name in by hand (Discussion #288).
 * With `Check for already-saved videos` on, saving something you already have no longer flashes "Saving" right before Open or Save again comes up. That note now waits until the check finds it's new, for sounds, original photos and photo posts saved as a video (#356).
 * A LIVE quality you pick stays picked after TikTok restarts as soon as `Offer LIVE quality in more rooms` is on. `Keep the LIVE quality after TikTok restarts` used to start off as well, so the next launch opened rooms at Auto again. It starts on now, and you can still turn it off (#353).

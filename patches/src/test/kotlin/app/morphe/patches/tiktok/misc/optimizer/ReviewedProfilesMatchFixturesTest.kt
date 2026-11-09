@@ -100,6 +100,28 @@ class ReviewedProfilesMatchFixturesTest {
     }
 
     @Test
+    fun `LIVE extras leave guest calls, invitations and battle screens whole`() {
+        // Emptied, the guest call library threw LibrarianUnsatisfiedLinkError inside every LIVE room,
+        // so friends' invitations, co-hosting and joining as a guest stopped working (#382, #132).
+        // The match templates draw the battle score bar and the guest names (#107).
+        val apks = fixtures()
+        assertTrue("no 47.7.3 universal APK and split bundle to compare", apks.map { it.extension }.toSet() == setOf("apk", "apkm"))
+        for (apk in apks) {
+            val root = temporary.newFolder("live-${apk.extension}")
+            val guestCalls = { path: String -> path.endsWith(GUEST_CALL_LIBRARY) || path.startsWith(MATCH_SCREENS) }
+            extract(apk, root) { path -> guestCalls(path) || liveAssetDirectories.any { path.startsWith(it) } }
+            val whole = digestsUnder(root, "").filterKeys(guestCalls)
+            assertTrue("${apk.name} ships no guest call library", whole.keys.any { it.endsWith(GUEST_CALL_LIBRARY) })
+            assertTrue("${apk.name} ships no match screens", whole.keys.any { it.startsWith(MATCH_SCREENS) })
+
+            val result = stripVerifiedResources(root, "LIVE extras", liveAssetDirectories, emptyList(), liveAssetProfiles)
+
+            assertTrue("${apk.name}: nothing was emptied", result.files > 0 && !result.alreadyStripped)
+            assertEquals("${apk.name}: a guest call or battle file changed", whole, digestsUnder(root, "").filterKeys(guestCalls))
+        }
+    }
+
+    @Test
     fun `no strip empties a feature dex TikTok loads at start-up`() {
         // Emptying Pitaya's, live cast's or the camera's dex left TikTok's own strings in English (#125).
         val dexes = groups.flatMap { (group, reviewed) ->
@@ -253,5 +275,7 @@ class ReviewedProfilesMatchFixturesTest {
         const val LANGUAGE_PREFIX = "assets/strings#lang_"
         const val FACE_MODEL = "assets/model/ttfacemodel/"
         const val EFFECT_EDITOR = "libEffectCreatorJni.so"
+        const val GUEST_CALL_LIBRARY = "liblink_mic_sdk.so"
+        const val MATCH_SCREENS = "assets/offline/tiktok_live_tt_live_lynx_match_component_container/"
     }
 }

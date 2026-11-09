@@ -175,10 +175,9 @@ val studioCreationDebloatPatch = rawResourcePatch(
 @Suppress("unused")
 val liveStreamSuiteOptimizerPatch = rawResourcePatch(
     name = "Remove LIVE extras",
-    description = "Removes the files for LIVE co-hosting, joining a LIVE as a guest, matches, " +
-        "games and gift effects, so the app gets about 3 MB smaller. The catch: in LIVEs, battle " +
-        "scores and guest names can go missing, and joining someone's LIVE by voice or video, " +
-        "co-hosting, games or animated gifts may stop working.",
+    description = "Removes the script for games inside LIVEs and turns off animated gift effects. " +
+        "It saves very little space. The catch: LIVE games and animated gifts may stop working. " +
+        "Co-hosting, joining a LIVE as a guest, invitations and battle scores aren't touched.",
     default = false,
 ) {
     category("Performance")
@@ -186,22 +185,12 @@ val liveStreamSuiteOptimizerPatch = rawResourcePatch(
     dependsOn(buildChoicePatch(BuildChoice.LIVE), liveGiftEffectOptimizerPatch)
 
     execute {
-        val nativeFiles = listOf(
-            "lib/arm64-v8a/liblink_mic_sdk.so",
-            "lib/armeabi-v7a/liblink_mic_sdk.so",
-        )
-        decode(
-            "assets/native_runtime_server/game",
-            "assets/offline/tiktok_live_tt_live_lynx_match_component_container",
-        )
+        decode(*liveAssetDirectories.toTypedArray())
         val result = stripVerifiedResources(
             get("."),
             "LIVE Stream Suite Optimizer",
-            listOf(
-                "assets/native_runtime_server/game",
-                "assets/offline/tiktok_live_tt_live_lynx_match_component_container",
-            ),
-            nativeFiles,
+            liveAssetDirectories,
+            emptyList(),
             liveAssetProfiles,
             resolveStandaloneFile = { path -> get(path) },
         )
@@ -263,6 +252,13 @@ internal val studioNativeFiles = listOf(
     "lib/armeabi-v7a/libttvesdk_plugin.so",
 )
 
+// Only the script for games inside LIVEs is emptied. liblink_mic_sdk stays: every LIVE room loads
+// it for guest calls, and with the library empty MoltenFfiLinkMicSdk's static init threw
+// LibrarianUnsatisfiedLinkError, so friends' invitations, co-hosting and joining as a guest
+// stopped working (#382, #132). The LIVE match templates stay too: they draw the battle score bar
+// and the guest names (#107).
+internal val liveAssetDirectories = listOf("assets/native_runtime_server/game")
+
 private fun StripSummary.report(patchName: String) {
     if (files == 0) {
         println("[$patchName] This build ships none of the reviewed files, so there was nothing to empty.")
@@ -293,17 +289,15 @@ private val microblinkFiles = listOf(
 )
 
 // One reviewed path set per strip for the declared build, read off its universal APK and its
-// split bundle. The log monitor, camera, relay and link mic libraries are rebuilt from one
-// TikTok build to the next, so a strip refuses any other build's files ("no
-// reviewed path set matched"), and a build the bundle moves to needs its own sets read off its
-// fixtures. The Microblink files and the C2PA debug libraries have been byte-identical on every
-// build read so far, and 47.4.3 rebuilt the main C2PA library. 47.5.3 kept 47.4.3's C2PA,
-// monitor, editor and speech libraries and rebuilt the link mic library, two LIVE scripts and
+// split bundle. The log monitor, camera and relay libraries are rebuilt from one TikTok build to
+// the next, so a strip refuses any other build's files ("no reviewed path set matched"), and a
+// build the bundle moves to needs its own sets read off its fixtures. The Microblink files and the
+// C2PA debug libraries have been byte-identical on every build read so far, and 47.4.3 rebuilt the
+// main C2PA library. 47.5.3 kept 47.4.3's C2PA, monitor, editor and speech libraries and rebuilt
 // the arm64 and armeabi-v7a P2P video relay. 47.6.3 kept the editor and speech libraries and
-// both LIVE scripts and rebuilt the main C2PA, log monitor, link mic and avmdl relay libraries.
-// 47.7.2 kept the C2PA, monitor, editor and speech libraries and rebuilt the link mic library,
-// both LIVE match scripts and the avmdl relay library. 47.7.3's universal APK changed none of
-// these files (read 2026-11-07).
+// rebuilt the main C2PA, log monitor and avmdl relay libraries. 47.7.2 kept the C2PA, monitor,
+// editor and speech libraries and rebuilt the avmdl relay library. 47.7.3's universal APK changed
+// none of these files (read 2026-11-07).
 private const val REVIEWED_BUILD = "47.7.3"
 
 private val c2paArm64Files = listOf(
@@ -377,15 +371,11 @@ internal val studioAssetProfiles = listOf(
 )
 
 internal val liveAssetProfiles = listOf(
-    // The universal APK and the split bundle carry these five files byte for byte.
+    // The universal APK and the split bundle carry this file byte for byte.
     ResourceProfile(
         "TikTok $REVIEWED_BUILD",
         listOf(
             file("assets/native_runtime_server/game/scripts/ttmg-core.js.zip", "9727cb446d3caa26e853e43efeedba6269ed95936e661d393a55a5a4e28c6331"),
-            file("assets/offline/tiktok_live_tt_live_lynx_match_component_container/mainV12/template.js", "2892ed6a1d3a1180fc5f8641ccfdbdf502f531e73c4ad30779d7fb0ef8269a8a"),
-            file("assets/offline/tiktok_live_tt_live_lynx_match_component_container/match_invitee_v3/template.js", "9b424e52fb176c82c120caae48a808962b8e7ccd2841cc7c74800890bf92be50"),
-            file("lib/arm64-v8a/liblink_mic_sdk.so", "bcefa63ce36eb57a21fd9f270948875364c95920c2912ff2626c81f6ccd582a6"),
-            file("lib/armeabi-v7a/liblink_mic_sdk.so", "1623cb6abb7fc6ffa81c37e23d883ce1d5c3a844b93b47a62e6fafd016eaeeb9"),
         ),
     ),
 )

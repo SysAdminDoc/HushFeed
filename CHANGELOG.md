@@ -76,6 +76,7 @@ Every Hushfeed release, newest first.
 * The README's install steps name the TikTok version a release was built for once that release is out. 0.80.0 and 0.81.0 went out with the steps still pointing at the TikTok before it.
 * `Disable telemetry` also stops TikTok's Orbu log upload and its whoami lookups, which were still going out on 47.7.3 (#379).
 * `Hide surveys` takes the interest buttons off a video by their own view as well, for when TikTok builds them some other way. The diagnostic report now names each kind of feed component a video was given (#293).
+* Blocking a LIVE host with `Block this creator` and swiping to the next room before the block went through no longer closes the room you moved to.
 
 ## 0.81.0 (2026-11-05)
 

@@ -192,6 +192,22 @@ public class LiveRoomBlockTest {
         assertEquals(List.of("host2:1"), service.calls);
     }
 
+    @Test public void aSwipeToTheNextRoomWhileTheBlockIsOutLeavesThatRoomOpen() throws Exception {
+        openRoom();
+        TextView button = blockButton();
+        assertNotNull(button);
+        button.performClick();
+        // The answer is still out when the viewer swipes on to the next room.
+        int height = front.view.getHeight();
+        front.view.offsetTopAndBottom(-height);
+        next.view.offsetTopAndBottom(-height);
+        Utils.awaitBackgroundTasksForTests();
+        idle();
+        assertEquals(List.of("host1:1"), service.calls);
+        assertFalse(room.get().isFinishing());
+        assertNotNull(blockButton());
+    }
+
     /** The room's activity, which can say it sits in Android's picture-in-picture window. */
     public static final class RoomActivity extends Activity {
         boolean pictureInPicture;

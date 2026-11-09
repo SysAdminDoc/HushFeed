@@ -255,7 +255,8 @@ public final class LiveRoomBlock {
     /** A confirmed block closes the room, and the screen under it offers Unblock. */
     static void onBlocked(Activity activity, VideoAuthor author, BlockAuthorService.Result result) {
         if (result != BlockAuthorService.Result.CONFIRMED
-                || activity == null || activity.isFinishing() || activity.isDestroyed()) {
+                || activity == null || activity.isFinishing() || activity.isDestroyed()
+                || movedOn(activity, author)) {
             BlockAuthorOverlay.reportBlockResult(author, result);
             return;
         }
@@ -268,6 +269,18 @@ public final class LiveRoomBlock {
         HANDLER.postDelayed(() -> {
             if (token == undoGeneration) offerUndo();
         }, UNDO_WAIT_MS);
+    }
+
+    /**
+     * True once the pager shows another host's room. The block's answer can land after a swipe to
+     * the next room, which shares the activity and stays open.
+     */
+    private static boolean movedOn(Activity activity, VideoAuthor blocked) {
+        Object front = frontPage(activity);
+        Object room = front == null ? null : LiveRecordChip.roomOf(front);
+        VideoAuthor watching = room == null ? null : LiveFeedCells.hostOf(room);
+        String id = watching == null ? null : watching.stableId();
+        return id != null && !id.equals(blocked.stableId());
     }
 
     /** Offers Unblock on {@code next} once its window has focus, which the undo chip needs. */

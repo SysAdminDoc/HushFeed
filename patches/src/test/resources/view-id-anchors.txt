@@ -46,6 +46,7 @@ feed/VideoOverlayHider.java|CAPTION_IDS|desc|app|com.ss.android.ugc.aweme.feed.a
 feed/VideoOverlayHider.java|MUSIC_IDS|47.7.3:o93|app|com.ss.android.ugc.aweme.feed.assem.music.VideoMusicTitleAssem|on:LinearLayout#1
 feed/VideoOverlayHider.java|ACTION_BAR_IDS|47.7.3:lkj|app|com.ss.android.ugc.feed.platform.cell.interact.InteractAreaComponent|on:View#4
 feed/VideoOverlayHider.java|SURVEY_IDS|47.7.3:f9j|app|layout:com.by.andInflater.common_feed_item_feed|tag:RelativeLayout#1
+feed/VideoOverlayHider.java|INTEREST_BUTTONS_IDS|47.7.3:llr|app|layout-method-string:last_interest_feedback_show_time|tag:FrameLayout
 feed/VideoOverlayHider.java|TAB_STRIP_IDS|47.7.3:v1f|app|com.ss.android.ugc.aweme.homepage.ui.view.tab.top.TopTabLayoutAbility|on:View
 feed/VideoOverlayHider.java|BOTTOM_TABS_IDS|47.7.3:opn|app|com.ss.android.ugc.aweme.main.assems.mainfragment.BottomTabAssemBase|-
 feed/VideoOverlayHider.java|BOTTOM_TABS_DIVIDER_IDS|47.7.3:cos|app|com.bytedance.tiktok.homepage.mainpagefragment.assem.MainPageSeekAssem|on:View#2

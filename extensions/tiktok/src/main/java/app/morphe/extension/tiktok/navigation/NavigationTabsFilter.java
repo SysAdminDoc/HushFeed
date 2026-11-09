@@ -177,6 +177,8 @@ public final class NavigationTabsFilter {
                     Settings.FEED_NAVIGATION_OBSERVED_TABS.get()
             );
             boolean blockNewTabs = Settings.FEED_NAVIGATION_BLOCK_NEW_TABS.get();
+            // Asked for by its own switch, so it isn't a tab the list or block-new can take away.
+            boolean keepFriends = Settings.FRIENDS_TOP_TAB.get();
             CopyOnWriteArrayList filtered = new CopyOnWriteArrayList();
             Object hotTab = null;
             boolean sawLiveTopTab = false;
@@ -191,7 +193,8 @@ public final class NavigationTabsFilter {
                     sawLiveTopTab = true;
                 }
 
-                if (shouldKeepTab(key, enabledKeys, previousObservedKeys, observedKeys, blockNewTabs)) {
+                if ((keepFriends && NavigationTabOptions.FRIENDS.equals(key))
+                        || shouldKeepTab(key, enabledKeys, previousObservedKeys, observedKeys, blockNewTabs)) {
                     filtered.add(tab);
                     if (NavigationTabOptions.LIVE.equals(key)) {
                         keptLiveTopTab = true;

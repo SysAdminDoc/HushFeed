@@ -86,6 +86,13 @@ public class FeedNavigationPreferenceCategory extends ConditionalPreferenceCateg
                             + "out in some countries. Your region and your feed stay as they are.",
                     Settings.DISCOVER_BOTTOM_TAB
             ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Friends in the top tabs",
+                    "Friends joins the tabs at the top of the feed, next to Following, the way TikTok lays it "
+                            + "out in some countries. Your region and your feed stay as they are.",
+                    Settings.FRIENDS_TOP_TAB
+            ));
         }
         addPreference(new ChoicePreference(context, "Open TikTok on", Settings.START_PAGE,
                 new String[]{"TikTok default", "For You", "Following", "Friends", "Discover", "Inbox", "Profile"},

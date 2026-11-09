@@ -586,6 +586,8 @@ public class Settings extends BaseSettings {
     );
     /** Discover in the Friends spot of the bottom bar; TikTok reads the layout once at launch. */
     public static final BooleanSetting DISCOVER_BOTTOM_TAB = new BooleanSetting("discover_bottom_tab", FALSE, true);
+    /** Friends in the row of tabs along the top of the feed; TikTok reads the layout once at launch. */
+    public static final BooleanSetting FRIENDS_TOP_TAB = new BooleanSetting("friends_top_tab", FALSE, true);
     /** The red count on Inbox and the dot on Profile, the pull that reopens the app. */
     public static final BooleanSetting HIDE_TAB_BADGES = new BooleanSetting("hide_tab_badges", FALSE, true);
     /** The names under the bottom tab icons, and a name of the user's own for each; empty keeps TikTok's. Read before each frame. */

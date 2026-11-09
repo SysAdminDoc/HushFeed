@@ -2658,3 +2658,7 @@ TikTok tests more than one set of icons for the bottom bar. Pick one here, or le
 New style 1	Nuovo stile 1
 # context: Choice value for the bottom bar's icons, TikTok's other newer icon set
 New style 2	Nuovo stile 2
+# context: Row title of the Feed tabs switch that adds Friends to the row of tabs along the top of the feed
+Friends in the top tabs	Amici nelle schede in alto
+# context: Summary under that switch; Friends and Following are TikTok's tab names
+Friends joins the tabs at the top of the feed, next to Following, the way TikTok lays it out in some countries. Your region and your feed stay as they are.	Amici si aggiunge alle schede in alto nel feed, accanto a Seguiti, come fa TikTok in alcuni paesi. La tua regione e il tuo feed restano come sono.

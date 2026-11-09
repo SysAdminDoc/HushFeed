@@ -291,6 +291,7 @@
       "bottom_navigation_tabs",
       "bottom_navigation_block_new_tabs",
       "discover_bottom_tab",
+      "friends_top_tab",
       "bottom_tab_icon_style",
       "hide_tab_badges",
       "hide_bottom_tab_labels",
@@ -1889,6 +1890,12 @@
     "friends_mutuals_only": {
       "field": "FRIENDS_MUTUALS_ONLY",
       "key": "friends_mutuals_only",
+      "type": "boolean",
+      "default": false
+    },
+    "friends_top_tab": {
+      "field": "FRIENDS_TOP_TAB",
+      "key": "friends_top_tab",
       "type": "boolean",
       "default": false
     },

@@ -30,6 +30,10 @@ public final class DiscoverTab {
     static final String GATE_KEY = "tab_fcp_config_v2";
     static final String SPOT = "1";
     static final String DISCOVER = "discover";
+    static final String FRIENDS = "friends";
+    static final String FOLLOWING = "following";
+    private static final String BOTTOM_KEY_FIELD = "bottomTabKey";
+    private static final String TOP_KEY_FIELD = "topTabKey";
     /** What the bottom tab filter calls the Discover tab once TikTok shows it. */
     public static final String FILTER_KEY = BottomNavigationTabOptions.normalizeRuntimeTag(DISCOVER);
 
@@ -49,7 +53,74 @@ public final class DiscoverTab {
         } catch (Throwable problem) {
             Logger.printException(() -> "Discover tab: left the bottom bar as TikTok sent it", problem);
         }
+        try {
+            if (Settings.FRIENDS_TOP_TAB.get()) {
+                putFriendsOnTop(value);
+            }
+        } catch (Throwable problem) {
+            Logger.printException(() -> "Friends tab: left the top tabs as TikTok sent them", problem);
+        }
         return value;
+    }
+
+    /**
+     * Adds Friends to the row along the top of the feed, just left of Following (#98). TikTok's
+     * Friends tab asks this same layout whether it has an item with its key, so the item is what
+     * turns it on. False when there's no row to add to, which leaves the layout as it was.
+     */
+    @SuppressWarnings("unchecked")
+    static boolean putFriendsOnTop(Object config) throws ReflectiveOperationException {
+        Field topField = findField(config.getClass(), "topTab");
+        if (topField == null) {
+            return false;
+        }
+        topField.setAccessible(true);
+        Object top = topField.get(config);
+        if (top == null) {
+            return false;
+        }
+        Field rowField = findField(top.getClass(), "topTabList");
+        if (rowField == null) {
+            return false;
+        }
+        rowField.setAccessible(true);
+        Object row = rowField.get(top);
+        if (!(row instanceof List) || ((List<?>) row).isEmpty()) {
+            return false;
+        }
+        List<Object> items = (List<Object>) row;
+        // Left of the last tab, For You, on an account with no Following tab to sit beside.
+        int spot = items.size() - 1;
+        for (int index = 0; index < items.size(); index++) {
+            String itemKey = tabKey(items.get(index), TOP_KEY_FIELD);
+            if (FRIENDS.equals(itemKey)) {
+                return true;
+            }
+            if (FOLLOWING.equals(itemKey)) {
+                spot = index;
+            }
+        }
+        items.add(spot, newTopTab(items.get(0).getClass()));
+        return true;
+    }
+
+    /** TikTok's item takes its key first and can go without the rest; the Kotlin defaults constructor is synthetic. */
+    private static Object newTopTab(Class<?> type) throws ReflectiveOperationException {
+        Constructor<?> widest = null;
+        for (Constructor<?> candidate : type.getDeclaredConstructors()) {
+            Class<?>[] parameters = candidate.getParameterTypes();
+            if (!candidate.isSynthetic() && parameters.length > 0 && parameters[0] == String.class
+                    && (widest == null || parameters.length > widest.getParameterTypes().length)) {
+                widest = candidate;
+            }
+        }
+        if (widest == null) {
+            throw new NoSuchMethodException("a constructor taking the key on " + type.getName());
+        }
+        widest.setAccessible(true);
+        Object[] arguments = new Object[widest.getParameterTypes().length];
+        arguments[0] = FRIENDS;
+        return widest.newInstance(arguments);
     }
 
     /**
@@ -73,7 +144,7 @@ public final class DiscoverTab {
             return false;
         }
         List<?> candidates = (List<?>) spot;
-        if (candidates.size() == 1 && DISCOVER.equals(tabKey(candidates.get(0)))) {
+        if (candidates.size() == 1 && DISCOVER.equals(tabKey(candidates.get(0), BOTTOM_KEY_FIELD))) {
             return true;
         }
         Object template = anyTab(map);
@@ -116,9 +187,9 @@ public final class DiscoverTab {
             Constructor<?> constructor = type.getDeclaredConstructor();
             constructor.setAccessible(true);
             Object tab = constructor.newInstance();
-            Field key = findField(type, "bottomTabKey");
+            Field key = findField(type, BOTTOM_KEY_FIELD);
             if (key == null) {
-                throw new NoSuchFieldException("bottomTabKey on " + type.getName());
+                throw new NoSuchFieldException(BOTTOM_KEY_FIELD + " on " + type.getName());
             }
             key.setAccessible(true);
             key.set(tab, DISCOVER);
@@ -126,11 +197,11 @@ public final class DiscoverTab {
         }
     }
 
-    private static String tabKey(Object tab) throws IllegalAccessException {
+    private static String tabKey(Object tab, String keyField) throws IllegalAccessException {
         if (tab == null) {
             return null;
         }
-        Field key = findField(tab.getClass(), "bottomTabKey");
+        Field key = findField(tab.getClass(), keyField);
         if (key == null) {
             return null;
         }
@@ -139,7 +210,7 @@ public final class DiscoverTab {
         return value instanceof String ? (String) value : null;
     }
 
-    /** An instance field only: both writes above are to the tab layout's own fields, never a static. */
+    /** An instance field only: every write above is to the tab layout's own fields, never a static. */
     private static Field findField(Class<?> type, String name) {
         for (Class<?> current = type; current != null && current != Object.class; current = current.getSuperclass()) {
             try {

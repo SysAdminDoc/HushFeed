@@ -2658,3 +2658,7 @@ TikTok tests more than one set of icons for the bottom bar. Pick one here, or le
 New style 1	Yeni stil 1
 # context: Choice value for the bottom bar's icons, TikTok's other newer icon set
 New style 2	Yeni stil 2
+# context: Row title of the Feed tabs switch that adds Friends to the row of tabs along the top of the feed
+Friends in the top tabs	Üst sekmelerde Arkadaşlar
+# context: Summary under that switch; Friends and Following are TikTok's tab names
+Friends joins the tabs at the top of the feed, next to Following, the way TikTok lays it out in some countries. Your region and your feed stay as they are.	Arkadaşlar, TikTok'un bazı ülkelerde yaptığı gibi akışın üstündeki sekmelere, Takip Edilenler'in yanına eklenir. Bölgen ve akışın olduğu gibi kalır.

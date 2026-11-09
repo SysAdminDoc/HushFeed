@@ -340,12 +340,8 @@ function Step-index {
     $created = (gh release view $tag --repo $repository --json publishedAt --jq .publishedAt) -replace 'Z$', ''
     $apps = @($state.walks.Values | ForEach-Object { $_.app }) -join ' and '
     $devices = @($state.walks.Values | ForEach-Object { $_.device } | Select-Object -Unique) -join ' and '
-    # The fixture APKs give the README's '- Next release:' line a version code and SHA-256 when it has none.
-    $apkArgs = @(foreach ($target in Get-Targets) {
-        foreach ($packageVersion in @($target.PackageVersions)) { '--apk'; "$packageVersion=$(Get-Apk $target.PackageName $packageVersion)" }
-    })
     Invoke-ReleaseText index --version $Version --created $created --readme-summary (Write-Text 'readme.txt' $text.README) `
-        --bundle-summary (Write-Text 'bundle.txt' $text.Manager) --device-line "This bundle ran through a whole-app walk of $apps on $devices with no crash." @apkArgs
+        --bundle-summary (Write-Text 'bundle.txt' $text.Manager) --device-line "This bundle ran through a whole-app walk of $apps on $devices with no crash." "--fixture-dirs=$((@((Get-RepoEnv 'FIXTURE_DIR')) + @((Get-MachineConfig).fixtureDirs) | Where-Object { $_ }) -join ';')"
     Invoke-Git add -A
     if (git.exe -C $work status --porcelain) { Invoke-Git commit -q -m "chore(release): point Manager to the verified $Version bundle" }
     Push-Main

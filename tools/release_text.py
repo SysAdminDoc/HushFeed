@@ -4,7 +4,7 @@
   py -3.13 tools/release_text.py github-notes --version 0.70.0 --intro FILE --checked FILE --out FILE
   py -3.13 tools/release_text.py guide [--date 2026-10-09]
   py -3.13 tools/release_text.py index --version 0.70.0 --created 2026-10-09T17:03:42
-        --readme-summary FILE --bundle-summary FILE --device-line TEXT [--apk 47.7.3=PATH]
+        --readme-summary FILE --bundle-summary FILE --device-line TEXT [--apk 47.7.3=PATH] [--fixture-dirs DIR;DIR]
 
 scripts/release/release.ps1 runs them in order; they can also run alone. Text that doesn't line up
 gets fixed where it can be and a warning where it can't, since wording never holds a release back.
@@ -37,13 +37,17 @@ SUPPORTED_VERSION = re.compile(
 SUPPORTED_BUILD = re.compile(r"^- Build: version code .*$", re.MULTILINE)
 SUPPORTED_SHA = re.compile(r"^(- SHA-256 of the APK every patch was verified against: )`[0-9a-f]{64}` \(\d+\.\d+\.\d+\)$",
                            re.MULTILINE)
-# The version code and SHA-256 can be left off: index reads them from patches-list.json and the
-# fixture APK release.ps1 hands it. 0.80.0 and 0.81.0 both shipped with install steps on the old
-# TikTok because a short line didn't match and the fold only warned.
+# Only the version, link and date have to read exactly. The build and SHA-256 after them are taken
+# wherever they sit, and the fixture APK fills in whatever is missing or doesn't read. 0.80.0 shipped
+# with install steps on the old TikTok over an extra word before the SHA-256, and 0.81.0 over a line
+# that left the build out; both times the fold only warned.
 NEXT_RELEASE = re.compile(
     r"^- Next release: TikTok (?P<version>\d+\.\d+\.\d+), \[on APKMirror\]\((?P<url>[^)\s]+)\) since "
-    r"(?P<date>\d{4}-\d{2}-\d{2})(?: \((?P<build>version code [^)]+)\), SHA-256 `(?P<sha>[0-9a-f]{64})`)?\..*\n",
+    r"(?P<date>\d{4}-\d{2}-\d{2})(?![\d-])(?P<rest>.*)\n",
     re.MULTILINE)
+# APKMirror's file name for one APK: package_version-code_minAPI23(abi,abi)(dpi)_apkmirror.com.apk.
+APKMIRROR_NAME = re.compile(r"_(?P<version>\d+\.\d+\.\d+)-(?P<code>\d+)_minAPI(?P<min>\d+)"
+                            r"\((?P<abis>[^)]+)\)\((?P<dpi>[^)]+)\)_apkmirror\.com\.apk$")
 # The README lines that tell someone which TikTok build to patch: the badge, the Important box,
 # install step 1 and the two paragraphs on fetching the APK.
 INSTALL_CLAIMS = ('<img alt="TikTok ', "> Hushfeed targets the global TikTok package", "1. Get the TikTok ",
@@ -272,8 +276,36 @@ def version_code(version: str) -> str | None:
         for app in patch.get("compatibility") or []:
             for target in app.get("targets") or []:
                 if target.get("version") == version:
-                    codes.update((target.get("versionCodes") or {}).values())
+                    declared = target.get("versionCodes") or {}
+                    codes.update(declared.values() if isinstance(declared, dict) else declared)
     return f"version code {codes.pop()}" if len(codes) == 1 else None
+
+
+def apk_build(path: Path, version: str) -> str | None:
+    """The '- Build:' text for an APK: its version code, and from APKMirror's file name its ABIs,
+    density and minSdk. Just the version code when the name isn't APKMirror's, and None when
+    patches-list.json and the file name disagree on the code."""
+    code = version_code(version)
+    named = APKMIRROR_NAME.search(path.name)
+    if not named or named["version"] != version:
+        return code
+    if code and code != f"version code {named['code']}":
+        warn(f"{path.name} is version code {named['code']}, but patches-list.json declares {code} for TikTok {version}")
+        return None
+    return (f"version code {named['code']}, {spoken(named['abis'].split(','))}, {named['dpi']}, "
+            f"minSdk {named['min']}")
+
+
+def fixture_apk(dirs: list[str], version: str) -> Path | None:
+    """The first APK named package_version-*.apk in the fixture folders, as release.ps1's Get-Apk picks."""
+    packages = sorted({app["packageName"] for patch in catalog_patches() for app in patch.get("compatibility") or []
+                       if app.get("packageName") and any(t.get("version") == version for t in app.get("targets") or [])})
+    for folder in dirs:
+        for package in packages:
+            found = sorted(p for p in Path(folder).glob(f"{package}_{version}-*.apk") if p.is_file())
+            if found:
+                return found[0]
+    return None
 
 
 def sha256_of(path: Path) -> str:
@@ -284,26 +316,41 @@ def sha256_of(path: Path) -> str:
     return digest.hexdigest()
 
 
-def known_builds(apks: list[str]) -> dict[str, dict[str, str]]:
-    """Version code and SHA-256 per TikTok version, from '--apk VERSION=PATH' arguments."""
-    builds = {}
+def known_builds(apks: list[str], fixture_dirs: str = "", versions: list[str] | None = None) -> dict[str, dict[str, str]]:
+    """Build and SHA-256 per TikTok version, from '--apk VERSION=PATH' arguments and, for the other
+    versions, the fixture APK in the ';'-separated fixture folders."""
+    found = {}
     for spec in apks:
         version, _, path = spec.partition("=")
         if not VERSION.fullmatch(version) or not Path(path).is_file():
             warn(f"--apk {spec!r} isn't VERSION=PATH to an APK that exists, so it's skipped")
             continue
-        builds[version] = {"sha": sha256_of(Path(path))}
-        code = version_code(version)
-        if code:
-            builds[version]["build"] = code
+        found[version] = Path(path)
+    dirs = [d for d in fixture_dirs.split(";") if d.strip()]
+    for version in versions or []:
+        if version not in found and dirs:
+            apk = fixture_apk(dirs, version)
+            if apk:
+                found[version] = apk
+            else:
+                warn(f"no TikTok {version} APK in the fixture folders {', '.join(dirs)}")
+    builds = {}
+    for version, path in found.items():
+        builds[version] = {"sha": sha256_of(path)}
+        build = apk_build(path, version)
+        if build:
+            builds[version]["build"] = build
     return builds
 
 
 def build_line(line: str, build: str) -> str:
     """The Supported target '- Build:' line for a new build. A bare 'version code N' swaps only the
-    number, so the ABI, density and minSdk the line goes on with stay."""
+    number, so the ABI, density and minSdk the line goes on with stay, and says so."""
     if re.fullmatch(r"version code \d+", build) and re.match(r"- Build: version code \d+", line):
-        return re.sub(r"version code \d+", build, line, count=1)
+        swapped = re.sub(r"version code \d+", build, line, count=1)
+        if swapped != f"- Build: {build}":
+            warn(f"README.md's '{swapped}' keeps the old build's ABIs, density and minSdk; check them against the APK")
+        return swapped
     return f"- Build: {build}"
 
 
@@ -312,8 +359,8 @@ def fold_next_release(text: str, targets: list[str], builds: dict[str, dict[str,
 
     A README with neither a Supported target '- Version:' line nor a '- Next release:' line (the
     test fixtures) comes back as it was, and so does one that already installs the targets and has
-    no '- Next release:' line. A '- Next release:' line without its version code and SHA-256 takes
-    them from `builds` (version to build and sha)."""
+    no '- Next release:' line. The build and SHA-256 come from `builds` (version to build and sha,
+    read off the fixture APK). The line's own build wins unless it is only the APK's version code."""
     supported = list(SUPPORTED_VERSION.finditer(text))
     announced = re.findall(r"^- Next release:", text, re.MULTILINE)
     if not supported and not announced and not re.search(r"^- Version: ", text, re.MULTILINE):
@@ -346,8 +393,21 @@ def fold_next_release(text: str, targets: list[str], builds: dict[str, dict[str,
         warn(f"README.md already installs TikTok {current['version']}, so its '- Next release:' line is left over")
         return text
     known = (builds or {}).get(upcoming["version"], {})
-    build = upcoming["build"] or known.get("build")
-    sha = upcoming["sha"] or known.get("sha")
+    written_build = re.search(r"\((version code \d+[^)]*)\)", upcoming["rest"])
+    written_sha = re.search(r"`([0-9a-f]{64})`", upcoming["rest"])
+    build, sha = known.get("build"), known.get("sha")
+    if written_build:
+        written = written_build.group(1)
+        # The line's own build wins unless it is the APK's version code with nothing after it.
+        if not (build and build.startswith(written + ",")):
+            if build and re.findall(r"version code (\d+)", build)[:1] != re.findall(r"version code (\d+)", written)[:1]:
+                warn(f"README.md's '- Next release:' line says {written}, but the TikTok {upcoming['version']} APK is "
+                     f"{build}")
+            build = written
+    if written_sha and sha and written_sha.group(1) != sha:
+        warn(f"README.md's '- Next release:' line gives SHA-256 {written_sha.group(1)}, but the TikTok "
+             f"{upcoming['version']} APK every patch was verified against hashes to {sha}; the APK's goes in")
+    sha = sha or (written_sha.group(1) if written_sha else None)
     if not build or not sha:
         warn(f"README.md's '- Next release:' line gives no version code and SHA-256, and index wasn't handed the "
              f"TikTok {upcoming['version']} APK with one versionCode in patches-list.json to read them from")
@@ -421,7 +481,7 @@ def index(args) -> None:
     if public_key.is_file():
         bundle["public_key"] = read(public_key).strip()
     readme = ROOT / "README.md"
-    edits = {readme: fold_next_release(read(readme), targets, known_builds(args.apk))}
+    edits = {readme: fold_next_release(read(readme), targets, known_builds(args.apk, args.fixture_dirs, targets))}
     swap(edits, readme, r"^Hushfeed v\d+\.\d+\.\d+ contains \d+ patches for TikTok .*$",
          f"Hushfeed v{args.version} contains {count} patches for TikTok {spoken(targets)}. New in this one: "
          f"{readme_summary} It needs Morphe Manager {manager} or newer.")
@@ -459,6 +519,8 @@ def main() -> None:
     p.add_argument("--device-line", default="")
     p.add_argument("--apk", action="append", default=[], metavar="VERSION=PATH",
                    help="the TikTok APK a version's patches were verified against; repeat per version")
+    p.add_argument("--fixture-dirs", default="", metavar="DIR;DIR",
+                   help="folders holding package_version-*.apk for the versions --apk doesn't name")
     p.set_defaults(run=index)
     args = parser.parse_args()
     args.run(args)

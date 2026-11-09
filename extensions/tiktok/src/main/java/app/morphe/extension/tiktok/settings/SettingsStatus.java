@@ -356,6 +356,12 @@ public class SettingsStatus {
         bottomTabLabelsEnabled = true;
     }
 
+    public static boolean bottomTabIconsEnabled = false;
+
+    public static void enableBottomTabIcons() {
+        bottomTabIconsEnabled = true;
+    }
+
     public static void enableDiscoverTab() {
         discoverTabEnabled = true;
     }

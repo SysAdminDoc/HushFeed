@@ -595,6 +595,8 @@ public class Settings extends BaseSettings {
     public static final StringSetting BOTTOM_TAB_NAME_INBOX = new StringSetting("bottom_tab_name_inbox", "");
     public static final StringSetting BOTTOM_TAB_NAME_PROFILE = new StringSetting("bottom_tab_name_profile", "");
     public static final StringSetting BOTTOM_TAB_NAME_SHOP = new StringSetting("bottom_tab_name_shop", "");
+    /** Which of TikTok's bottom tab icon sets to draw (#285): tiktok, original, new_1 or new_2. TikTok reads it at launch. */
+    public static final StringSetting BOTTOM_TAB_ICON_STYLE = new StringSetting("bottom_tab_icon_style", "tiktok", true);
     public static final BooleanSetting KEEP_FOR_YOU_ON_TAB_TAP = new BooleanSetting("keep_for_you_on_tab_tap", FALSE);
     public static final BooleanSetting KEEP_FOR_YOU_ON_PULL_DOWN = new BooleanSetting("keep_for_you_on_pull_down", FALSE);
     /** A long press on the Home tab opens Hushfeed's settings (#45). TikTok gives that press nothing of its own. */

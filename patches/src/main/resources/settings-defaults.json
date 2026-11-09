@@ -291,6 +291,7 @@
       "bottom_navigation_tabs",
       "bottom_navigation_block_new_tabs",
       "discover_bottom_tab",
+      "bottom_tab_icon_style",
       "hide_tab_badges",
       "hide_bottom_tab_labels",
       "bottom_tab_name_home",
@@ -1090,6 +1091,12 @@
       "key": "bottom_navigation_tabs",
       "type": "string",
       "default": "HOME,FRIENDS,PUBLISH,INBOX,PROFILE,MALL"
+    },
+    "bottom_tab_icon_style": {
+      "field": "BOTTOM_TAB_ICON_STYLE",
+      "key": "bottom_tab_icon_style",
+      "type": "string",
+      "default": "tiktok"
     },
     "bottom_tab_name_friends": {
       "field": "BOTTOM_TAB_NAME_FRIENDS",

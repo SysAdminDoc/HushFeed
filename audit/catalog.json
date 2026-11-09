@@ -5399,6 +5399,12 @@
     "row": "Open TikTok on"
    },
    {
+    "key": "bottom_tab_icon_style",
+    "default": "tiktok",
+    "type": "string",
+    "row": "Bottom bar icons"
+   },
+   {
     "key": "home_tab_opens_settings",
     "default": true,
     "type": "bool",

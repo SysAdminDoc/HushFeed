@@ -41,6 +41,7 @@ private const val FEED_LOCK_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/wel
 private const val START_PAGE_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/navigation/StartPage;"
 private const val FEED_BUTTONS_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/navigation/FeedButtons;"
 private const val PROFILE_TAB_WATCH_HISTORY_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/navigation/ProfileTabWatchHistory;"
+private const val BOTTOM_TAB_ICONS_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/navigation/BottomTabIcons;"
 private const val DISCOVER_TAB_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/navigation/DiscoverTab;"
 
 /** A method reference the way smali writes it after the invoke's registers. */
@@ -212,11 +213,28 @@ internal fun MutableMethod.offerDiscoverTab() {
         }
 }
 
+/** A picked icon set answers before TikTok reads its experiment; no pick leaves the read alone. */
+internal fun MutableMethod.offerBottomTabIcons() {
+    requireLocals("Feed tab navigation", 1)
+    addInstructionsWithLabels(
+        0,
+        """
+            invoke-static {}, $BOTTOM_TAB_ICONS_CLASS_DESCRIPTOR->version()I
+            move-result v0
+            if-ltz v0, :tiktok
+            invoke-static {v0}, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
+            move-result-object v0
+            return-object v0
+        """,
+        ExternalLabel("tiktok", getInstruction(0)),
+    )
+}
+
 @Suppress("unused")
 val feedTabNavigationPatch = bytecodePatch(
     name = "Feed tab navigation",
     description = "Lets you hide feed and bottom tabs you don't use, put Discover in the " +
-        "bottom bar, rename the bottom tabs, " +
+        "bottom bar, rename the bottom tabs, pick the bottom bar's icons, " +
         "choose the tab TikTok opens on, stop For You reloading when you tap Home and hold " +
         "Profile to open your Watch history. Starts off, " +
         "except holding Home to open Hushfeed settings. Find it in Hushfeed settings > Feed tabs.",
@@ -363,6 +381,19 @@ val feedTabNavigationPatch = bytecodePatch(
             SettingsStatusLoadFingerprint.method.addInstruction(
                 0,
                 "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableBottomTabLabels()V",
+            )
+        }
+
+        val iconVersion = if (packageMetadata.versionName in declaredVersions()) {
+            BottomTabIconVersionFingerprint.method
+        } else {
+            BottomTabIconVersionFingerprint.methodOrNull
+        }
+        iconVersion?.let { getter ->
+            getter.offerBottomTabIcons()
+            SettingsStatusLoadFingerprint.method.addInstruction(
+                0,
+                "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableBottomTabIcons()V",
             )
         }
 

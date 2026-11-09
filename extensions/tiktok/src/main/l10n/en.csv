@@ -341,6 +341,7 @@ Blur strength,Blur strength
 "Blur the part of the video that sits behind the glass pill on the main feed, so it looks like frosted glass. Needs Liquid glass look and Android 12 and up.","Blur the part of the video that sits behind the glass pill on the main feed, so it looks like frosted glass. Needs Liquid glass look and Android 12 and up."
 Blur the video behind the bar,Blur the video behind the bar
 Bold,Bold
+Bottom bar icons,Bottom bar icons
 Bottom left double tap,Bottom left double tap
 Bottom right double tap,Bottom right double tap
 Bottom tabs to keep,Bottom tabs to keep
@@ -1269,6 +1270,8 @@ Network proxy,Network proxy
 Never from these countries,Never from these countries
 New comment emoji,New comment emoji
 New device identity,New device identity
+New style 1,New style 1
+New style 2,New style 2
 New value,New value
 Newest first,Newest first
 Newest likes,Newest likes
@@ -2316,6 +2319,7 @@ TikTok slips the videos it saved for offline viewing back into For You when it c
 TikTok sometimes tests a change that empties the Favorites tab on your profile. This keeps the tab and your saved videos.,TikTok sometimes tests a change that empties the Favorites tab on your profile. This keeps the tab and your saved videos.
 TikTok sometimes tests your phone's speed in a background process that can use a lot of memory. This stops that test from starting. One already running ends when TikTok restarts.,TikTok sometimes tests your phone's speed in a background process that can use a lot of memory. This stops that test from starting. One already running ends when TikTok restarts.
 TikTok starts as a new phone after the restart. Tap again to cancel.,TikTok starts as a new phone after the restart. Tap again to cancel.
+"TikTok tests more than one set of icons for the bottom bar. Pick one here, or leave it to TikTok.","TikTok tests more than one set of icons for the bottom bar. Pick one here, or leave it to TikTok."
 "TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app. If TikTok's 2-step check still wants only a passkey, add email or text as a way to verify on tiktok.com or another phone first.","TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app. If TikTok's 2-step check still wants only a passkey, add email or text as a way to verify on tiktok.com or another phone first."
 TikTok's background play and Auto scroll,TikTok's background play and Auto scroll
 TikTok's color,TikTok's color

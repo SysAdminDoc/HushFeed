@@ -136,6 +136,17 @@ internal fun Method.isLiveBottomTabCheck(): Boolean =
             it.opcode == Opcode.SGET_OBJECT && it.getReference<FieldReference>()?.type == COPY_ON_WRITE
         } == true
 
+/**
+ * The lazy that reads which set of bottom tab icons to draw (#285). Everything else that names
+ * this experiment key only registers it and returns nothing.
+ */
+internal object BottomTabIconVersionFingerprint : Fingerprint(
+    returnType = "Ljava/lang/Object;",
+    parameters = listOf(),
+    strings = listOf("new_bottom_tab_icon2"),
+    custom = { method, _ -> method.name == "invoke" },
+)
+
 /** The corner button compares TikTok's LIVE placement with both top-tab modes here. */
 internal object LiveTopTabModeFingerprint : Fingerprint(
     definingClass = LIVE_ICON_GENERATOR,

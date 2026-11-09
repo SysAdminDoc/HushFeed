@@ -2650,3 +2650,11 @@ On long profile, Liked and sound grids, scrolling brings up a handle you can dra
 Top	Başa
 # context: Short button label on a long video grid, jumps to the last video loaded
 End	Sona
+# context: Row title of the Feed tabs choice that picks which of TikTok's icon sets the bottom bar draws
+Bottom bar icons	Alt panel ikonları
+# context: Note under that choice
+TikTok tests more than one set of icons for the bottom bar. Pick one here, or leave it to TikTok.	TikTok alt panel üçün bir neçə ikon dəsti sınaqdan keçirir. Burada birini seçin və ya seçimi TikTok-a buraxın.
+# context: Choice value for the bottom bar's icons, one of TikTok's newer icon sets
+New style 1	Yeni üslub 1
+# context: Choice value for the bottom bar's icons, TikTok's other newer icon set
+New style 2	Yeni üslub 2

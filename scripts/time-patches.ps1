@@ -57,6 +57,7 @@ $left = @($Leave -split ';' | ForEach-Object { $_.Trim() } | Where-Object { $_ }
 $unknown = @($left | Where-Object { $_ -notin $names })
 if ($unknown.Count -gt 0) { throw "Not a patch in patches-list.json: $($unknown -join ', ')" }
 $names = @($names | Where-Object { $_ -notin $left })
+if ($names.Count -eq 0) { throw '-Leave left out every patch.' }
 
 New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
 $OutDir = (Resolve-Path -LiteralPath $OutDir).Path
@@ -118,5 +119,5 @@ foreach ($row in @($rows | Sort-Object -Property Ms -Descending)) {
 $table = Join-Path $OutDir 'patch-times.md'
 [IO.File]::WriteAllLines($table, $lines, (New-Object Text.UTF8Encoding $false))
 Write-Host "[times] $($rows.Count) of $($names.Count) patches timed; table in $table"
-if ($rows.Count -ne $names.Count) { Write-Warning "Only $($rows.Count) of $($names.Count) patches printed a result line. See $cliLog." }
+if ($rows.Count -ne $names.Count) { Write-Warning "$($rows.Count) result lines for the $($names.Count) patches picked. See $cliLog." }
 exit $exitCode

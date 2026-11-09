@@ -564,7 +564,6 @@ Default playback speed,Default playback speed
 Delete recording files,Delete recording files
 Delete search,Delete search
 Deletes %1$s from TikTok's storage.,Deletes %1$s from TikTok's storage.
-Deletes all reposts from your account sequentially.,Deletes all reposts from your account sequentially.
 Delivery unconfirmed: %1$d/%2$d chats. Remaining chats still need a message.,Delivery unconfirmed: %1$d/%2$d chats. Remaining chats still need a message.
 Delivery unconfirmed: %1$d/%2$d chats. Those chats won't be retried today.,Delivery unconfirmed: %1$d/%2$d chats. Those chats won't be retried today.
 Description text size,Description text size
@@ -1177,7 +1176,7 @@ Loaded current values. Loading all known gates…,Loaded current values. Loading
 Loaded-value file export failed,Loaded-value file export failed
 Loading cancelled. The list is incomplete.,Loading cancelled. The list is incomplete.
 Loading gates…,Loading gates…
-Loading page %1$s...,Loading page %1$s...
+Loading page %1$s…,Loading page %1$s…
 Loading the gate list and TikTok's current values…,Loading the gate list and TikTok's current values…
 Local profile counts,Local profile counts
 Local verified badge,Local verified badge
@@ -1624,6 +1623,7 @@ Removed %1$s,Removed %1$s
 Removed: %1$d,Removed: %1$d
 "Removed: %1$d. The other %2$d are still there. Open your Inbox, then try again.","Removed: %1$d. The other %2$d are still there. Open your Inbox, then try again."
 Removes every message that was kept. Each chat shows TikTok's usual notice that a message was unsent.,Removes every message that was kept. Each chat shows TikTok's usual notice that a message was unsent.
+Removes every repost from your account one after another.,Removes every repost from your account one after another.
 Removes every video from Favorites one after another.,Removes every video from Favorites one after another.
 Removing all likes in %1$d,Removing all likes in %1$d
 Removing all reposts in %1$d,Removing all reposts in %1$d

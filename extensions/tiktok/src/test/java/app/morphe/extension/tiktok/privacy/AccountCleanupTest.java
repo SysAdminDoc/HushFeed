@@ -380,7 +380,7 @@ public class AccountCleanupTest {
         List<Preference> rows = cleanupRows(privacy);
         assertEquals(3, rows.size());
         assertEquals("Remove all reposts", rows.get(0).getTitle().toString());
-        assertEquals("Deletes all reposts from your account sequentially.", rows.get(0).getSummary().toString());
+        assertEquals("Removes every repost from your account one after another.", rows.get(0).getSummary().toString());
         assertEquals("Remove all likes", rows.get(1).getTitle().toString());
         assertEquals("Unlikes every video one after another.", rows.get(1).getSummary().toString());
         assertEquals("Clear Favorites", rows.get(2).getTitle().toString());

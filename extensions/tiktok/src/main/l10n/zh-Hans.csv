@@ -997,7 +997,7 @@ Still reading loaded values. Try again soon.,仍在读取已加载的值，请�
 Loaded-value file export failed,加载值文件导出失败
 Loading cancelled. The list is incomplete.,加载已取消。该列表不完整.
 Loading gates…,装载门…
-Loading page %1$s...,正在加载页面%1$s.
+Loading page %1$s…,正在加载页面%1$s…
 Loading the gate list and TikTok's current values…,正在加载门列表和 TikTok 的当前值…
 Local profile counts,本地档案计数
 Local verified badge,本地验证徽章
@@ -2478,7 +2478,7 @@ Stop tapping this LIVE,停止点击此 LIVE
 Auto tap stopped,自动点击已停止
 Clean up your account,清理你的账号
 Remove all reposts,移除所有转发
-Deletes all reposts from your account sequentially.,逐一删除你账号中的所有转发.
+Removes every repost from your account one after another.,逐一删除你账号中的所有转发.
 Remove all likes,取消所有点赞
 Unlikes every video one after another.,逐个取消每个视频的点赞.
 Clear Favorites,清空收藏

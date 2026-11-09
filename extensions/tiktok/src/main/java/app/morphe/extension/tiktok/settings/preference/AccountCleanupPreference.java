@@ -34,7 +34,7 @@ public final class AccountCleanupPreference extends Preference implements Immedi
             case REPOSTS:
                 setKey(REPOSTS_KEY);
                 setTitle(L10n.t(context, "Remove all reposts"));
-                setSummary(L10n.t(context, "Deletes all reposts from your account sequentially."));
+                setSummary(L10n.t(context, "Removes every repost from your account one after another."));
                 break;
             case LIKES:
                 setKey(LIKES_KEY);

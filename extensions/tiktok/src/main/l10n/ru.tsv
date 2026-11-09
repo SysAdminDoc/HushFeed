@@ -2265,7 +2265,7 @@ Load more	Загрузить ещё
 TikTok's total: %1$s. Filtered accounts: %2$s.	Всего по данным TikTok: %1$s. Отфильтровано аккаунтов: %2$s.
 Your account changed. Close this list and open it again.	Аккаунт изменился. Закройте этот список и откройте его снова.
 Loading cancelled. The list is incomplete.	Загрузка отменена. Список неполный.
-Loading page %1$s...	Загрузка страницы %1$s...
+Loading page %1$s…	Загрузка страницы %1$s…
 TikTok reports no more items in this list.	По данным TikTok, в этом списке больше нет элементов.
 More items are available.	Доступны ещё элементы.
 Sign in to view this list	Войдите, чтобы посмотреть этот список
@@ -2696,7 +2696,7 @@ Stop tapping this LIVE	Остановить нажатия в этом LIVE
 Auto tap stopped	Автонажатие остановлено
 Clean up your account	Очистка аккаунта
 Remove all reposts	Удалить все репосты
-Deletes all reposts from your account sequentially.	Удаляет все репосты с аккаунта по одному.
+Removes every repost from your account one after another.	Удаляет все репосты с аккаунта по одному.
 Remove all likes	Удалить все лайки
 Unlikes every video one after another.	Снимает лайк с каждого видео по очереди.
 Clear Favorites	Очистить Избранное

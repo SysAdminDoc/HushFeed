@@ -2097,7 +2097,7 @@ Load more	Daha fazla yükle
 TikTok's total: %1$s. Filtered accounts: %2$s.	TikTok'a göre toplam: %1$s. Filtrelenen hesap: %2$s.
 Your account changed. Close this list and open it again.	Hesabın değişti. Bu listeyi kapatıp yeniden aç.
 Loading cancelled. The list is incomplete.	Yükleme iptal edildi. Liste eksik.
-Loading page %1$s...	%1$s. sayfa yükleniyor...
+Loading page %1$s…	%1$s. sayfa yükleniyor…
 TikTok reports no more items in this list.	TikTok bu listede başka öğe olmadığını bildiriyor.
 More items are available.	Daha fazla öğe var.
 Sign in to view this list	Bu listeyi görmek için giriş yap
@@ -2519,7 +2519,7 @@ Stop tapping this LIVE	Bu LIVE'a dokunmayı durdur
 Auto tap stopped	Otomatik dokunma durdu
 Clean up your account	Hesabını temizle
 Remove all reposts	Tüm yeniden yayınlamaları kaldır
-Deletes all reposts from your account sequentially.	Hesabındaki tüm yeniden yayınlamaları tek tek siler.
+Removes every repost from your account one after another.	Hesabındaki tüm yeniden yayınlamaları tek tek siler.
 Remove all likes	Tüm beğenileri kaldır
 Unlikes every video one after another.	Her videonun beğenisini sırayla geri alır.
 Clear Favorites	Favorileri temizle

@@ -1072,7 +1072,7 @@ Loaded current values. Loading all known gates…,Đã tải các giá trị hi�
 Loaded-value file export failed,Xuất tệp giá trị đã tải thất bại
 Loading cancelled. The list is incomplete.,Đã hủy tải. Danh sách chưa hoàn chỉnh.
 Loading gates…,Đang tải các cổng…
-Loading page %1$s...,Đang tải trang %1$s...
+Loading page %1$s…,Đang tải trang %1$s…
 Loading the gate list and TikTok's current values…,Đang tải danh sách cổng và các giá trị hiện tại của TikTok…
 Local profile counts,Số lượng số liệu trang cá nhân cục bộ
 Local verified badge,Huy hiệu xác minh cục bộ (tích xanh)
@@ -2478,7 +2478,7 @@ Stop tapping this LIVE,Dừng chạm vào LIVE này
 Auto tap stopped,Đã dừng tự động chạm
 Clean up your account,Dọn dẹp tài khoản
 Remove all reposts,Xóa tất cả bài đăng lại
-Deletes all reposts from your account sequentially.,Lần lượt xóa mọi bài đăng lại khỏi tài khoản của bạn.
+Removes every repost from your account one after another.,Lần lượt xóa mọi bài đăng lại khỏi tài khoản của bạn.
 Remove all likes,Xóa tất cả lượt thích
 Unlikes every video one after another.,Lần lượt bỏ thích từng video.
 Clear Favorites,Xóa mục Yêu thích

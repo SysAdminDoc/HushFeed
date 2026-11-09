@@ -127,7 +127,7 @@ public final class AccountManagement {
         if (value.state == State.ACCOUNT_CHANGED)
             return L10n.t(context, "Your account changed. Close this list and open it again.");
         if (value.state == State.CANCELLED) return L10n.t(context, "Loading cancelled. The list is incomplete.");
-        if (value.state == State.LOADING) return L10n.f(context, "Loading page %1$s...", number(value.pages + 1));
+        if (value.state == State.LOADING) return L10n.f(context, "Loading page %1$s…", number(value.pages + 1));
         if (value.state == State.COMPLETE) return L10n.t(context, "TikTok reports no more items in this list.");
         if (value.state == State.MORE) return L10n.t(context, "More items are available.");
         switch (value.reason) {

@@ -65,7 +65,7 @@ public class AccountManagementDialogTest {
             TextView status = dialog.getWindow().getDecorView().findViewWithTag("account_list_status");
             assertNotNull("the status line is missing", status);
             assertEquals(View.ACCESSIBILITY_LIVE_REGION_POLITE, status.getAccessibilityLiveRegion());
-            assertEquals("Loading page 1...", status.getText().toString());
+            assertEquals("Loading page 1…", status.getText().toString());
             assertTrue("Stop loading is dead while the first page loads", stop.isEnabled());
 
             // The last page lands: there is no load left to stop, and the list stays.

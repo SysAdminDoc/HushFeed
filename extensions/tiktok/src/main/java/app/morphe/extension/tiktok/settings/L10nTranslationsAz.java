@@ -1555,8 +1555,8 @@ final class L10nTranslationsAz {
                 "Dostlar");
         table.put("Friends in the top tabs",
                 "Yuxarı tablarda Dostlar");
-        table.put("Friends joins the tabs at the top of the feed, next to Following, the way TikTok lays it out in some countries. Your region and your feed stay as they are.",
-                "Dostlar, TikTok-un bəzi ölkələrdə etdiyi kimi, lentin yuxarısındakı tablara, İzlənilənlərin yanına əlavə olunur. Regionunuz və lentiniz olduğu kimi qalır.");
+        table.put("Friends moves up to the tabs at the top of the feed, next to Following, and Discover takes its spot in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.",
+                "Dostlar lentin yuxarısındakı tablara, İzlənilənlərin yanına keçir, Kəşf et isə alt paneldə onun yerini tutur, TikTok bəzi ölkələrdə belə düzür. Regionunuz və lentiniz olduğu kimi qalır.");
         table.put("Friends tab name",
                 "Dostlar bölməsinin adı");
         table.put("Friends won't see a green dot or Active now while you're in TikTok. Needs Ghost mode on. Their status may stop updating for you, and your last status can linger.",

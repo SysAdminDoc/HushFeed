@@ -2838,4 +2838,4 @@ New style 2	Новый стиль 2
 # context: Row title of the Feed tabs switch that adds Friends to the row of tabs along the top of the feed
 Friends in the top tabs	«Друзья» во вкладках сверху
 # context: Summary under that switch; Friends and Following are TikTok's tab names
-Friends joins the tabs at the top of the feed, next to Following, the way TikTok lays it out in some countries. Your region and your feed stay as they are.	«Друзья» появляется среди вкладок вверху ленты, рядом с «Подписки», как TikTok делает в некоторых странах. Регион и лента остаются прежними.
+Friends moves up to the tabs at the top of the feed, next to Following, and Discover takes its spot in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.	«Друзья» переходит к вкладкам вверху ленты, рядом с «Подписки», а «Интересное» занимает её место в нижней панели, как TikTok делает в некоторых странах. Регион и лента остаются прежними.

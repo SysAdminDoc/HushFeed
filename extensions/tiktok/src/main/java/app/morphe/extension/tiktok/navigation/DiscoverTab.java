@@ -19,15 +19,26 @@ import app.morphe.extension.tiktok.settings.Settings;
  * Puts Discover in the bottom bar, in the second spot where Friends sits (#98). Indonesia gets
  * that layout from TikTok; everywhere else needed a region change, which changes the feed too.
  *
- * <p>TikTok lays the bar out from one server gate, {@code tab_fcp_config_v2}, which it parses into
- * its TabConfig class. TabConfig's {@code bottomTab} map holds five spots, "0" to "4", each a list
+ * <p>TikTok lays the bar out from a server gate it parses into its TabConfig class. It has three of
+ * them, {@code tab_fcp_config_v2}, {@code tab_fcp_config} and {@code feed_tab_frame_config}, and
+ * which one a screen reads depends on the install, so all three get the same edit.
+ * TabConfig's {@code bottomTab} map holds five spots, "0" to "4", each a list
  * of candidate tabs, and TikTok shows the first candidate of a spot that passes its rules. In the
  * US spot "1" is [friends, discover], so Friends wins. With the switch on that spot holds Discover
  * alone. TikTok checks the layout before using it, and a map without all five spots sends it back
  * to its built-in layout, so the one spot is replaced and every other one stays as sent.
+ *
+ * <p>The layout only says what's on offer. TikTok's Friends tabs each ask a check of their own, and
+ * to TikTok "Friends is on top" and "Friends is in the bottom bar" are one answer: with Friends on
+ * top the bottom tab turns itself off and Discover gets the spot. That's the layout some countries
+ * have. {@link #friendsOnTop}, {@link #friendsTopIndex} and {@link #friendsInBottomBar} answer those
+ * checks, and {@link #useSavedTabs} makes TikTok ask them: on its fast start it reuses the last run's
+ * tab list without asking any tab.
  */
 public final class DiscoverTab {
     static final String GATE_KEY = "tab_fcp_config_v2";
+    static final String OLDER_GATE_KEY = "tab_fcp_config";
+    static final String FRAME_GATE_KEY = "feed_tab_frame_config";
     static final String SPOT = "1";
     static final String DISCOVER = "discover";
     static final String FRIENDS = "friends";
@@ -40,14 +51,20 @@ public final class DiscoverTab {
     private DiscoverTab() {
     }
 
+    /** Friends on top hands its bottom spot to Discover, so either switch means the same layout there. */
+    static boolean discoverHasTheSpot() {
+        return Settings.DISCOVER_BOTTOM_TAB.get() || Settings.FRIENDS_TOP_TAB.get();
+    }
+
     /** Every value the App AB class's typed object getter returns, with its key. */
     @SuppressWarnings("unused")
     public static Object apply(String key, Object value) {
-        if (value == null || !GATE_KEY.equals(key)) {
+        if (value == null
+                || !(GATE_KEY.equals(key) || OLDER_GATE_KEY.equals(key) || FRAME_GATE_KEY.equals(key))) {
             return value;
         }
         try {
-            if (Settings.DISCOVER_BOTTOM_TAB.get()) {
+            if (discoverHasTheSpot()) {
                 putDiscover(value);
             }
         } catch (Throwable problem) {
@@ -61,6 +78,30 @@ public final class DiscoverTab {
             Logger.printException(() -> "Friends tab: left the top tabs as TikTok sent them", problem);
         }
         return value;
+    }
+
+    /** TikTok's answer to whether Friends is in the top row. Most installs get it from an experiment. */
+    @SuppressWarnings("unused")
+    public static boolean friendsOnTop(boolean sent) {
+        return sent || Settings.FRIENDS_TOP_TAB.get();
+    }
+
+    /** Where the experiment puts Friends in the top row, -1 meaning it isn't there. */
+    @SuppressWarnings("unused")
+    public static int friendsTopIndex(int sent) {
+        return sent < 0 && Settings.FRIENDS_TOP_TAB.get() ? 1 : sent;
+    }
+
+    /** Whether TikTok's Friends tab stays in the bottom bar, so with this off Discover wins the spot. */
+    @SuppressWarnings("unused")
+    public static boolean friendsInBottomBar(boolean sent) {
+        return sent && !discoverHasTheSpot();
+    }
+
+    /** TikTok's fast start reuses the last run's tab list and asks none of the checks above. */
+    @SuppressWarnings("unused")
+    public static boolean useSavedTabs(boolean sent) {
+        return sent && !discoverHasTheSpot();
     }
 
     /**

@@ -1816,8 +1816,8 @@ final class L10nTranslationsRu {
                 "Друзья");
         table.put("Friends in the top tabs",
                 "«Друзья» во вкладках сверху");
-        table.put("Friends joins the tabs at the top of the feed, next to Following, the way TikTok lays it out in some countries. Your region and your feed stay as they are.",
-                "«Друзья» появляется среди вкладок вверху ленты, рядом с «Подписки», как TikTok делает в некоторых странах. Регион и лента остаются прежними.");
+        table.put("Friends moves up to the tabs at the top of the feed, next to Following, and Discover takes its spot in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.",
+                "«Друзья» переходит к вкладкам вверху ленты, рядом с «Подписки», а «Интересное» занимает её место в нижней панели, как TikTok делает в некоторых странах. Регион и лента остаются прежними.");
         table.put("Friends tab name",
                 "Название вкладки «Друзья»");
         table.put("Friends won't see a green dot or Active now while you're in TikTok. Needs Ghost mode on. Their status may stop updating for you, and your last status can linger.",

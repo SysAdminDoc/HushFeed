@@ -1555,8 +1555,8 @@ final class L10nTranslationsIt {
                 "Amici");
         table.put("Friends in the top tabs",
                 "Amici nelle schede in alto");
-        table.put("Friends joins the tabs at the top of the feed, next to Following, the way TikTok lays it out in some countries. Your region and your feed stay as they are.",
-                "Amici si aggiunge alle schede in alto nel feed, accanto a Seguiti, come fa TikTok in alcuni paesi. La tua regione e il tuo feed restano come sono.");
+        table.put("Friends moves up to the tabs at the top of the feed, next to Following, and Discover takes its spot in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.",
+                "Amici passa alle schede in alto nel feed, accanto a Seguiti, e Scopri prende il suo posto nella barra in basso, come fa TikTok in alcuni paesi. La tua regione e il tuo feed restano come sono.");
         table.put("Friends tab name",
                 "Nome della scheda Amici");
         table.put("Friends won't see a green dot or Active now while you're in TikTok. Needs Ghost mode on. Their status may stop updating for you, and your last status can linger.",

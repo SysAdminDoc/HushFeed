@@ -89,8 +89,9 @@ public class FeedNavigationPreferenceCategory extends ConditionalPreferenceCateg
             addPreference(new TogglePreference(
                     context,
                     "Friends in the top tabs",
-                    "Friends joins the tabs at the top of the feed, next to Following, the way TikTok lays it "
-                            + "out in some countries. Your region and your feed stay as they are.",
+                    "Friends moves up to the tabs at the top of the feed, next to Following, and Discover "
+                            + "takes its spot in the bottom bar, the way TikTok lays it out in some countries. "
+                            + "Your region and your feed stay as they are.",
                     Settings.FRIENDS_TOP_TAB
             ));
         }

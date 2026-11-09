@@ -1,6 +1,7 @@
 package app.morphe.extension.tiktok.navigation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
@@ -65,6 +66,77 @@ public class DiscoverTabTest {
         assertSame(TopTabItem.class, friends.getClass());
         assertNull(friends.leftEntrance);
         assertNull(friends.filterRules);
+    }
+
+    /** An installed app reads the older gates; only the newest one's edit never reached the screen. */
+    @Test public void everyGateTheLayoutComesFromGetsBothEdits() {
+        for (String key : Arrays.asList(
+                DiscoverTab.GATE_KEY, DiscoverTab.OLDER_GATE_KEY, DiscoverTab.FRAME_GATE_KEY)) {
+            TabConfig row = topRow("following", "hot");
+            DiscoverTab.apply(key, row);
+            assertEquals(key, Arrays.asList("friends", "following", "hot"), keys(row));
+
+            TabConfig bar = usLayout();
+            DiscoverTab.apply(key, bar);
+            assertEquals(key, "discover", bar.bottomTab.get("1").get(0).bottomTabKey);
+        }
+    }
+
+    @Test public void theFriendsSwitchAnswersTikToksOwnChecks() {
+        assertTrue(DiscoverTab.friendsOnTop(false));
+        assertEquals(1, DiscoverTab.friendsTopIndex(-1));
+        assertEquals("TikTok's own place stays", 3, DiscoverTab.friendsTopIndex(3));
+
+        Settings.FRIENDS_TOP_TAB.save(false);
+        assertFalse(DiscoverTab.friendsOnTop(false));
+        assertTrue("TikTok's own yes stays", DiscoverTab.friendsOnTop(true));
+        assertEquals(-1, DiscoverTab.friendsTopIndex(-1));
+    }
+
+    @Test public void theDiscoverSwitchTakesFriendsOutOfTheBottomBar() {
+        assertFalse(DiscoverTab.friendsInBottomBar(true));
+
+        Settings.DISCOVER_BOTTOM_TAB.save(false);
+        assertFalse("Friends on top leaves the bar too", DiscoverTab.friendsInBottomBar(true));
+
+        Settings.FRIENDS_TOP_TAB.save(false);
+        assertTrue(DiscoverTab.friendsInBottomBar(true));
+        assertFalse("TikTok's own no stays", DiscoverTab.friendsInBottomBar(false));
+    }
+
+    /** With Friends still a candidate of the spot it stayed in the bottom bar and never reached the top row. */
+    @Test public void theFriendsSwitchAloneGivesDiscoverTheSpot() {
+        Settings.DISCOVER_BOTTOM_TAB.save(false);
+
+        for (String key : Arrays.asList(
+                DiscoverTab.GATE_KEY, DiscoverTab.OLDER_GATE_KEY, DiscoverTab.FRAME_GATE_KEY)) {
+            TabConfig bar = usLayout();
+            DiscoverTab.apply(key, bar);
+            assertEquals(key, 1, bar.bottomTab.get("1").size());
+            assertEquals(key, "discover", bar.bottomTab.get("1").get(0).bottomTabKey);
+        }
+    }
+
+    @Test public void eitherSwitchMakesTikTokBuildTheTabsFresh() {
+        assertFalse(DiscoverTab.useSavedTabs(true));
+
+        Settings.FRIENDS_TOP_TAB.save(false);
+        assertFalse("Discover alone", DiscoverTab.useSavedTabs(true));
+
+        Settings.DISCOVER_BOTTOM_TAB.save(false);
+        assertTrue("both off keeps TikTok's fast start", DiscoverTab.useSavedTabs(true));
+        assertFalse("TikTok's own no stays", DiscoverTab.useSavedTabs(false));
+
+        Settings.FRIENDS_TOP_TAB.save(true);
+        assertFalse("Friends alone", DiscoverTab.useSavedTabs(true));
+    }
+
+    @Test public void aGateThatIsntTheLayoutIsLeftAlone() {
+        TabConfig row = topRow("following", "hot");
+
+        assertSame(row, DiscoverTab.apply("tab_fcp_config_nuj_opt", row));
+
+        assertEquals(Arrays.asList("following", "hot"), keys(row));
     }
 
     @Test public void aRowWithoutFollowingGetsFriendsLeftOfTheLastTab() {
@@ -201,6 +273,7 @@ public class DiscoverTabTest {
         assertEquals(2, other.bottomTab.get("1").size());
 
         Settings.DISCOVER_BOTTOM_TAB.save(false);
+        Settings.FRIENDS_TOP_TAB.save(false);
         TabConfig off = usLayout();
         DiscoverTab.apply(DiscoverTab.GATE_KEY, off);
         assertEquals("friends", off.bottomTab.get("1").get(0).bottomTabKey);
@@ -232,6 +305,10 @@ public class DiscoverTabTest {
             assertEquals(Arrays.asList(home, discover, profile), NavigationTabsFilter.filterBottomTabs(tabs));
 
             Settings.DISCOVER_BOTTOM_TAB.save(false);
+            assertEquals("Friends on top hands its spot to Discover", Arrays.asList(home, discover, profile),
+                    NavigationTabsFilter.filterBottomTabs(tabs));
+
+            Settings.FRIENDS_TOP_TAB.save(false);
             assertEquals(Arrays.asList(home, profile), NavigationTabsFilter.filterBottomTabs(tabs));
         } finally {
             Settings.BOTTOM_NAVIGATION.save(false);

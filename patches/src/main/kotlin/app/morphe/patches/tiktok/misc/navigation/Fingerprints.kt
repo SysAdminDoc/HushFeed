@@ -541,6 +541,50 @@ internal const val HOX = "Lcom/bytedance/hox/Hox;"
  * signed-in account outside teen mode that is the tab TikTok's home page service names, else
  * "For You", handed to Hox's tab switch by its tag. The start page answers there.
  */
+private const val FRIENDS_TOP_EXPERIMENT = "Lcom/ss/android/ugc/aweme/friendstab/experiment/FriendsTabTopExperiment;"
+
+/**
+ * TikTok's answer to whether Friends is in the top row (#98): the one no-argument boolean on the
+ * friends service that falls back on the experiment's index. The bottom Friends tab asks it too.
+ */
+internal object FriendsOnTopFingerprint : Fingerprint(
+    definingClass = "Lcom/ss/android/ugc/aweme/friendstab/service/FriendsFeedServiceImpl;",
+    returnType = "Z",
+    parameters = listOf(),
+    custom = { method, _ ->
+        method.implementation?.instructions?.any { instruction ->
+            instruction.opcode == Opcode.INVOKE_STATIC && instruction.getReference<MethodReference>()?.let {
+                it.definingClass == FRIENDS_TOP_EXPERIMENT && it.returnType == "I"
+            } == true
+        } == true
+    },
+)
+
+/** The experiment's place for Friends in the top row, -1 when it isn't there. Its only `()I`. */
+internal object FriendsTopIndexFingerprint : Fingerprint(
+    definingClass = FRIENDS_TOP_EXPERIMENT,
+    returnType = "I",
+    parameters = listOf(),
+)
+
+/** Whether the Friends tab offers itself to the bottom bar. */
+internal object FriendsBottomTabEnableFingerprint : Fingerprint(
+    definingClass = "Lcom/ss/android/ugc/aweme/tab/FriendsTabProtocol;",
+    name = "enable",
+    returnType = "Z",
+    parameters = listOf(),
+)
+
+/**
+ * TikTok's fast-start flag (`tab_fcp_backup_config`): while it's on, both tab rows come from the list
+ * saved on the last run and no tab's own check is asked (#98). The flag's one `()Z` reader.
+ */
+internal object SavedTabsFingerprint : Fingerprint(
+    returnType = "Z",
+    parameters = listOf(),
+    strings = listOf("tab_fcp_backup_config"),
+)
+
 internal object FirstTopTabFingerprint : Fingerprint(
     definingClass = HOME_VIEW_PAGER_ASSEM,
     name = "onViewCreated",

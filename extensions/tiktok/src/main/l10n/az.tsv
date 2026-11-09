@@ -2661,4 +2661,4 @@ New style 2	Yeni üslub 2
 # context: Row title of the Feed tabs switch that adds Friends to the row of tabs along the top of the feed
 Friends in the top tabs	Yuxarı tablarda Dostlar
 # context: Summary under that switch; Friends and Following are TikTok's tab names
-Friends joins the tabs at the top of the feed, next to Following, the way TikTok lays it out in some countries. Your region and your feed stay as they are.	Dostlar, TikTok-un bəzi ölkələrdə etdiyi kimi, lentin yuxarısındakı tablara, İzlənilənlərin yanına əlavə olunur. Regionunuz və lentiniz olduğu kimi qalır.
+Friends moves up to the tabs at the top of the feed, next to Following, and Discover takes its spot in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.	Dostlar lentin yuxarısındakı tablara, İzlənilənlərin yanına keçir, Kəşf et isə alt paneldə onun yerini tutur, TikTok bəzi ölkələrdə belə düzür. Regionunuz və lentiniz olduğu kimi qalır.

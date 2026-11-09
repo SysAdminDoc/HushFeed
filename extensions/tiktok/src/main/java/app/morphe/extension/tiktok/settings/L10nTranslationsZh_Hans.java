@@ -1555,8 +1555,8 @@ final class L10nTranslationsZh_Hans {
                 "朋友");
         table.put("Friends in the top tabs",
                 "顶部标签显示“朋友”");
-        table.put("Friends joins the tabs at the top of the feed, next to Following, the way TikTok lays it out in some countries. Your region and your feed stay as they are.",
-                "“朋友”会加入信息流顶部的标签，位于“关注”旁边，和 TikTok 在部分国家的布局一样。你的地区和信息流保持不变.");
+        table.put("Friends moves up to the tabs at the top of the feed, next to Following, and Discover takes its spot in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.",
+                "“朋友”会移到信息流顶部的标签，位于“关注”旁边，“发现”则占据它在底部栏的位置，和 TikTok 在部分国家的布局一样。你的地区和信息流保持不变.");
         table.put("Friends tab name",
                 "好友选项卡名称");
         table.put("Friends won't see a green dot or Active now while you're in TikTok. Needs Ghost mode on. Their status may stop updating for you, and your last status can linger.",

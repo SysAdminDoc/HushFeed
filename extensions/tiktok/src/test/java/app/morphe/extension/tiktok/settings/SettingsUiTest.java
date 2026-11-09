@@ -110,6 +110,65 @@ public class SettingsUiTest {
         }
     }
 
+    /** The last action added is the main one, and it belongs at the end of the row in both directions. */
+    @Test
+    public void anActionRowKeepsItsLastActionAtTheEndInEitherDirection() {
+        try (var owner = Robolectric.buildActivity(DialogActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            for (int direction : new int[]{View.LAYOUT_DIRECTION_LTR, View.LAYOUT_DIRECTION_RTL}) {
+                ViewGroup row = SettingsUi.actionRow(activity);
+                row.setLayoutDirection(direction);
+                View later = new View(activity);
+                View cancel = new View(activity);
+                View save = new View(activity);
+                row.addView(later, new ViewGroup.LayoutParams(60, 40));
+                row.addView(cancel, new ViewGroup.LayoutParams(80, 40));
+                row.addView(save, new ViewGroup.LayoutParams(100, 40));
+                row.measure(View.MeasureSpec.makeMeasureSpec(400, View.MeasureSpec.EXACTLY),
+                        View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+                row.layout(0, 0, 400, row.getMeasuredHeight());
+                if (direction == View.LAYOUT_DIRECTION_LTR) {
+                    assertEquals(160, later.getLeft());
+                    assertEquals(220, cancel.getLeft());
+                    assertEquals(300, save.getLeft());
+                    assertEquals(400, save.getRight());
+                } else {
+                    assertEquals("right to left, the main action sits at the left edge", 0, save.getLeft());
+                    assertEquals(100, cancel.getLeft());
+                    assertEquals(180, later.getLeft());
+                    assertEquals(240, later.getRight());
+                }
+            }
+        }
+    }
+
+    /** The gap belongs between the glyph and its sentence, whichever side the glyph is on. */
+    @Test
+    public void aNoticeKeepsItsGapBetweenTheGlyphAndTheTextInEitherDirection() {
+        try (var owner = Robolectric.buildActivity(DialogActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setContext(activity);
+            int gap = SettingsUi.dp(activity, 8);
+            for (int direction : new int[]{View.LAYOUT_DIRECTION_LTR, View.LAYOUT_DIRECTION_RTL}) {
+                ViewGroup notice = SettingsUi.inlineNotice(activity, "Restart TikTok to apply.", 0xFFAA0000);
+                View glyph = notice.getChildAt(0);
+                View body = notice.getChildAt(1);
+                notice.setLayoutDirection(direction);
+                glyph.setLayoutDirection(direction);
+                body.setLayoutDirection(direction);
+                notice.measure(View.MeasureSpec.makeMeasureSpec(400, View.MeasureSpec.EXACTLY),
+                        View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+                notice.layout(0, 0, 400, notice.getMeasuredHeight());
+                assertEquals(direction, glyph.getLayoutDirection());
+                boolean rtl = direction == View.LAYOUT_DIRECTION_RTL;
+                assertEquals("the glyph leads the row", rtl, glyph.getLeft() > body.getLeft());
+                assertEquals("the gap faces the text", gap, rtl ? glyph.getPaddingLeft() : glyph.getPaddingRight());
+                assertEquals("and the row's edge gets none of it", 0,
+                        rtl ? glyph.getPaddingRight() : glyph.getPaddingLeft());
+            }
+        }
+    }
+
     @Test
     public void refusedFieldValueUsesAnInlineLiveErrorThatClearsWhileTyping() {
         try (var owner = Robolectric.buildActivity(DialogActivity.class).setup().visible()) {

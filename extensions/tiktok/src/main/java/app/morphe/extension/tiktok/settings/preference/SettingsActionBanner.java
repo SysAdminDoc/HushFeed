@@ -193,7 +193,7 @@ public final class SettingsActionBanner {
         banner.setGravity(Gravity.CENTER_VERTICAL);
         int vertical = SettingsUi.dp(activity, 10);
         int horizontal = SettingsUi.dp(activity, 16);
-        banner.setPadding(horizontal, vertical, SettingsUi.dp(activity, 8), vertical);
+        banner.setPaddingRelative(horizontal, vertical, SettingsUi.dp(activity, 8), vertical);
         banner.setBackground(SettingsUi.borderedSurface(
                 activity, SettingsUi.RADIUS_SETTINGS_CARD, true));
         banner.setElevation(SettingsUi.dp(activity, 8));

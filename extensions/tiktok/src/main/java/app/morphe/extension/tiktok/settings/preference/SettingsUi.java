@@ -324,7 +324,7 @@ public final class SettingsUi {
         glyph.setText(ATTENTION_GLYPH);
         glyph.setTextColor(toneColor);
         glyph.setTextSize(TEXT_BODY_SMALL);
-        glyph.setPadding(0, 0, dp(context, 8), 0);
+        glyph.setPaddingRelative(0, 0, dp(context, 8), 0);
         glyph.setImportantForAccessibility(android.view.View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         row.addView(glyph, new android.widget.LinearLayout.LayoutParams(
                 android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -753,6 +753,8 @@ public final class SettingsUi {
 
     private static final class GroupRowDrawable extends Drawable {
         private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        /** Kept between frames: every row on screen is drawn on each frame of a scroll. */
+        private final RectF frame = new RectF();
         private final boolean first, last;
         private final float radius, inset;
         private final Context context;
@@ -770,7 +772,7 @@ public final class SettingsUi {
         @Override public void draw(Canvas canvas) {
             Rect bounds = getBounds();
             float top = bounds.top, bottom = bounds.bottom;
-            RectF frame = new RectF(bounds.left + 0.5f, first ? top + 0.5f : top - radius,
+            frame.set(bounds.left + 0.5f, first ? top + 0.5f : top - radius,
                     bounds.right - 0.5f, last ? bottom - 0.5f : bottom + radius);
             canvas.save();
             canvas.clipRect(bounds);
@@ -2144,13 +2146,16 @@ public final class SettingsUi {
                     taken++;
                 }
                 if (taken == 0) break;
-                int x = getPaddingLeft() + (rtl ? 0 : available - lineWidth);
+                // Right to left the line sits at the left edge and fills from its right end, so
+                // the last action is still the one at the end of the row.
+                int x = getPaddingLeft() + (rtl ? lineWidth : available - lineWidth);
                 for (int i = index; i < index + taken; i++) {
                     View child = getChildAt(i);
                     if (child.getVisibility() == GONE) continue;
-                    child.layout(x, y, x + child.getMeasuredWidth(),
-                            y + child.getMeasuredHeight());
-                    x += child.getMeasuredWidth();
+                    int width = child.getMeasuredWidth();
+                    if (rtl) x -= width;
+                    child.layout(x, y, x + width, y + child.getMeasuredHeight());
+                    if (!rtl) x += width;
                 }
                 y += lineHeight;
                 index += taken;

@@ -264,7 +264,7 @@ public final class FeatureGateDetailFragment extends Fragment {
             turnOn.setTag("feature_gate_enable_overrides");
             SettingsUi.styleTextAction(turnOn, true);
             turnOn.setMinimumHeight(FeatureGateLabUi.dp(context, 48));
-            turnOn.setPadding(FeatureGateLabUi.dp(context, 12), FeatureGateLabUi.dp(context, 10),
+            turnOn.setPaddingRelative(FeatureGateLabUi.dp(context, 12), FeatureGateLabUi.dp(context, 10),
                     0, FeatureGateLabUi.dp(context, 10));
             SettingsUi.markAsButton(turnOn);
             turnOn.setOnClickListener(view -> enableOverrides());

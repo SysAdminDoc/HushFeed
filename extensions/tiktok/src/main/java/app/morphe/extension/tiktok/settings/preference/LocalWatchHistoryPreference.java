@@ -238,7 +238,7 @@ public final class LocalWatchHistoryPreference extends Preference {
                 row = new LinearLayout(context);
                 row.setOrientation(LinearLayout.VERTICAL);
                 // The search box's text sits a little inside its own edge.
-                row.setPadding(SettingsUi.dp(context, 4), gap, 0, gap);
+                row.setPaddingRelative(SettingsUi.dp(context, 4), gap, 0, gap);
                 row.addView(SettingsUi.text(context, "", SettingsUi.TEXT_BODY,
                         SettingsUi.textPrimary(), Typeface.BOLD));
                 TextView caption = SettingsUi.text(context, "", SettingsUi.TEXT_BODY_SMALL,

@@ -62,7 +62,7 @@ public final class RecentSearchPreference extends Preference {
         row.setGravity(Gravity.CENTER_VERTICAL);
         row.setMinimumHeight(SettingsUi.dp(context, 48));
         // No vertical padding: the delete control is the full 48dp, so it sets the row's height.
-        row.setPadding(SettingsUi.dp(context, 16), 0, SettingsUi.dp(context, 12), 0);
+        row.setPaddingRelative(SettingsUi.dp(context, 16), 0, SettingsUi.dp(context, 12), 0);
         row.setBackground(SettingsUi.pressAndFocusOver(context, SettingsUi.RADIUS_SETTINGS_FIELD,
                 new ColorDrawable(Color.TRANSPARENT)));
 

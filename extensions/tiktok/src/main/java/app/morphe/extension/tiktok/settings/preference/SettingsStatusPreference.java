@@ -114,7 +114,7 @@ public final class SettingsStatusPreference extends Preference {
         card.setOrientation(stack ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL);
         card.setGravity(stack ? Gravity.NO_GRAVITY : Gravity.CENTER_VERTICAL);
         card.setMinimumHeight(SettingsUi.dp(context, 76));
-        card.setPadding(
+        card.setPaddingRelative(
                 SettingsUi.dp(context, 16),
                 SettingsUi.dp(context, 12),
                 SettingsUi.dp(context, 12),

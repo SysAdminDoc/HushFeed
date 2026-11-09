@@ -440,7 +440,7 @@ public final class GridPicker {
         row.setTag(BAR_TAG);
         row.setOrientation(LinearLayout.HORIZONTAL);
         row.setGravity(Gravity.CENTER_VERTICAL);
-        row.setPadding(SettingsUi.dp(activity, 16), SettingsUi.dp(activity, 4),
+        row.setPaddingRelative(SettingsUi.dp(activity, 16), SettingsUi.dp(activity, 4),
                 SettingsUi.dp(activity, 8), SettingsUi.dp(activity, 4));
         row.setBackground(SettingsUi.overlayBanner(activity));
         // A tap between the buttons mustn't fall through to the grid under the bar.

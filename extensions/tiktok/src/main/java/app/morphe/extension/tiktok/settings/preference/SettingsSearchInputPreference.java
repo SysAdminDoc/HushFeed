@@ -62,7 +62,7 @@ public final class SettingsSearchInputPreference extends Preference {
         LinearLayout row = new LinearLayout(context);
         row.setGravity(Gravity.CENTER_VERTICAL);
         row.setMinimumHeight(SettingsUi.dp(context, 64));
-        row.setPadding(SettingsUi.dp(context, 12), SettingsUi.dp(context, 8),
+        row.setPaddingRelative(SettingsUi.dp(context, 12), SettingsUi.dp(context, 8),
                 SettingsUi.dp(context, 8), SettingsUi.dp(context, 8));
         row.setAddStatesFromChildren(true);
         GradientDrawable focused = SettingsUi.borderedSurface(

@@ -434,7 +434,7 @@ It goes online by itself for one job. When you save a video, a photo, a sound, s
 
 The only web addresses written into Hushfeed's code are github.com and api.github.com for this project, ko-fi.com for the Support Hushfeed row, which opens in your browser only when you tap it, gitlab.com, gnu.org and apache.org for licence texts, git.iem.at and central.sonatype.com for the source links in the MP3 encoder's notice, tiktok.com for the share links TikTok itself uses, and music.youtube.com for the Find the sound on YouTube Music gesture. A test fails the build if another one turns up.
 
-The diagnostic report and a feed capture stay on your phone until you copy or save them. They leave out web addresses, login tokens and cookies, device ids, the ids of videos, comments and messages, and creator names and handles. The report does name the Hushfeed settings you've changed, so a bug report shows which switches are on, but never the words, names or addresses you typed into one. Read one through before you share it anyway.
+The diagnostic report and a feed capture stay on your phone until you copy or save them. They leave out web addresses, login tokens and cookies, device ids, the ids of videos, comments and messages, and creator names and handles. The report does name the Hushfeed settings you've changed, so a bug report shows which switches are on, but never the words, names or addresses you typed into one. If you patched TikTok with another bundle as well, the report names that bundle's code by its package name, which helps tell whose code a crash came from. Read one through before you share it anyway.
 
 ## Credits
 

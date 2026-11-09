@@ -42,7 +42,53 @@ public class LogBufferManagerExportTest {
         String report = LogBufferManager.buildExportText();
         assertNotEquals("nothing was reported at all", "", report);
         assertTrue("an API 28 build claimed to know why the process went away: " + report,
-                report.indexOf("[LAST EXIT]") < 0);
+                report.indexOf("[LAST EXIT") < 0);
+    }
+
+    @Test @Config(sdk = 30)
+    public void theReportListsTheLastFiveExitsNewestFirst() throws Exception {
+        // One exit can't show a pattern, such as a memory kill every time a LIVE opens.
+        app.morphe.extension.shared.Utils.setContext(RuntimeEnvironment.getApplication());
+        app.morphe.extension.shared.settings.BaseSettings.DEBUG_LOG_FILTERS.save("all");
+        app.morphe.extension.shared.diagnostics.HookStatus.clear();
+        LogBufferManager.clearLogBuffer();
+        android.app.ActivityManager manager = (android.app.ActivityManager) RuntimeEnvironment
+                .getApplication().getSystemService(Context.ACTIVITY_SERVICE);
+        String main = RuntimeEnvironment.getApplication().getPackageName();
+        // Added oldest first, with helpers between, so neither the order they were recorded in
+        // nor a short list of sixteen can decide which five are shown.
+        for (int i = 1; i <= 6; i++) {
+            org.robolectric.Shadows.shadowOf(manager).addApplicationExitInfo(
+                    org.robolectric.shadows.ShadowActivityManager.ApplicationExitInfoBuilder.newBuilder()
+                            .setReason(13)
+                            .setTimestamp(1757260800000L + i * 60_000L)
+                            .setProcessName(main)
+                            .setDescription("MemoryLimiter:AnonSwap kill " + i)
+                            .build());
+            for (int helper = 0; helper < 4; helper++) {
+                org.robolectric.Shadows.shadowOf(manager).addApplicationExitInfo(
+                        org.robolectric.shadows.ShadowActivityManager.ApplicationExitInfoBuilder.newBuilder()
+                                .setReason(10)
+                                .setTimestamp(1757260800000L + i * 60_000L + helper + 1)
+                                .setProcessName(main + ":push")
+                                .setDescription("helper")
+                                .build());
+            }
+        }
+        app.morphe.extension.shared.diagnostics.HookStatus.missingViewId("comments", "jlk");
+
+        String report = LogBufferManager.buildExportText();
+        int start = report.indexOf("[LAST EXITS]\n");
+        assertTrue(report, start >= 0);
+        String[] lines = report.substring(start + "[LAST EXITS]\n".length()).split("\n");
+        for (int shown = 0; shown < 5; shown++) {
+            assertTrue("exit " + shown + " is not the next newest: " + report,
+                    lines[shown].startsWith("at: ")
+                            && lines[shown].endsWith("description: MemoryLimiter:AnonSwap kill " + (6 - shown)));
+        }
+        assertEquals("a sixth exit was listed: " + report, "", lines[5]);
+        assertTrue("the oldest exit was listed: " + report, report.indexOf("kill 1") < 0);
+        assertTrue("a helper's exit was listed: " + report, report.indexOf("description: helper") < 0);
     }
 
     @Test @Config(sdk = 30)
@@ -84,7 +130,7 @@ public class LogBufferManagerExportTest {
         app.morphe.extension.shared.diagnostics.HookStatus.missingViewId("comments", "jlk");
         String report = LogBufferManager.buildExportText();
         assertTrue("the report does not say why the process went away: " + report,
-                report.contains("[LAST EXIT]"));
+                report.contains("[LAST EXITS]\n"));
         assertTrue("the reason was not named: " + report, report.contains("reason: OTHER"));
         assertTrue("the description the kill carried was dropped: " + report,
                 report.contains("MemoryLimiter:AnonSwap"));

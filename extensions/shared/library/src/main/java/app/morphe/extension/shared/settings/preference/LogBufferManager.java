@@ -46,6 +46,7 @@ import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.diagnostics.DiagnosticEvent;
 import app.morphe.extension.shared.diagnostics.DiagnosticRedactor;
 import app.morphe.extension.shared.diagnostics.BuildDetails;
+import app.morphe.extension.shared.diagnostics.OtherBundles;
 import app.morphe.extension.shared.settings.BaseSettings;
 import app.morphe.extension.shared.settings.HushfeedPause;
 
@@ -432,9 +433,18 @@ public final class LogBufferManager {
         // Deliberately not part of worthReporting above. Every process has a last exit, most of
         // them ordinary, so counting it would mean no report was ever empty and "No matching
         // Morphe diagnostics found" would never be said again.
-        String lastExit = lastExitLine(includeAll, selected);
-        if (!lastExit.isEmpty()) {
-            report.append("\n[LAST EXIT]\n").append(lastExit).append('\n');
+        String lastExits = lastExitLines(includeAll, selected);
+        if (!lastExits.isEmpty()) {
+            report.append("\n[LAST EXITS]\n").append(lastExits).append('\n');
+        }
+        // The same filter and the same reason to stay out of worthReporting: "none" is the
+        // answer on almost every phone, and it is still the answer a reader needs.
+        if (includeAll || selected.contains(
+                app.morphe.extension.shared.diagnostics.DiagnosticCategory.PATCH_ERRORS.value)) {
+            report.append("\n[").append(OtherBundles.TITLE).append("]\n");
+            for (String line : OtherBundles.lines(crash)) {
+                report.append(DiagnosticRedactor.redact(line)).append('\n');
+            }
         }
         if (events.length() > 0) {
             report.append("\n\n[SELECTED EVENTS]\n")
@@ -481,10 +491,13 @@ public final class LogBufferManager {
      * a description like "MemoryLimiter:AnonSwap", and an ANR or a low-memory kill leaves nothing
      * behind either. One line turns an unexplained restart into something a maintainer can act on.
      *
+     * <p>The last five, newest first, one line each: a single exit can't show a pattern, such as
+     * a memory kill every time a LIVE opens.
+     *
      * <p>Read only from API 30, where the history exists at all. It follows the same filter as
      * the hook table, because it is the same kind of evidence.
      */
-    private static String lastExitLine(boolean includeAll, Set<String> selected) {
+    private static String lastExitLines(boolean includeAll, Set<String> selected) {
         if (Build.VERSION.SDK_INT < 30) return "";
         if (!includeAll && !selected.contains(
                 app.morphe.extension.shared.diagnostics.DiagnosticCategory.PATCH_ERRORS.value)) {
@@ -500,27 +513,29 @@ public final class LogBufferManager {
             // routinely a background helper the system reaped, which says nothing about why the
             // app went away, so the main process is picked out by name.
             String packageName = context.getPackageName();
+            // 0 asks for every record: helpers can fill a short list before five of the main
+            // process's own exits are in it.
             List<ApplicationExitInfo> history =
-                    manager.getHistoricalProcessExitReasons(packageName, 0, 16);
+                    manager.getHistoricalProcessExitReasons(packageName, 0, 0);
             if (history == null || history.isEmpty()) return "";
-            ApplicationExitInfo exit = null;
+            List<ApplicationExitInfo> exits = new ArrayList<>();
             for (ApplicationExitInfo candidate : history) {
-                if (packageName.equals(candidate.getProcessName())) {
-                    exit = candidate;
-                    break;
+                if (packageName.equals(candidate.getProcessName())) exits.add(candidate);
+            }
+            Collections.sort(exits, (a, b) -> Long.compare(b.getTimestamp(), a.getTimestamp()));
+            StringBuilder lines = new StringBuilder();
+            for (ApplicationExitInfo exit : exits.subList(0, Math.min(5, exits.size()))) {
+                if (lines.length() > 0) lines.append('\n');
+                lines.append("at: ").append(utcOf(exit.getTimestamp()))
+                        .append(", reason: ").append(exitReasonName(exit.getReason()))
+                        .append(", status: ").append(exit.getStatus())
+                        .append(", importance: ").append(exit.getImportance());
+                String description = exit.getDescription();
+                if (description != null && !description.isEmpty()) {
+                    lines.append(", description: ").append(description.replace('\n', ' '));
                 }
             }
-            if (exit == null) return "";
-            StringBuilder line = new StringBuilder();
-            line.append("reason: ").append(exitReasonName(exit.getReason()))
-                    .append("\nstatus: ").append(exit.getStatus())
-                    .append("\nimportance: ").append(exit.getImportance())
-                    .append("\nat: ").append(utcOf(exit.getTimestamp()));
-            String description = exit.getDescription();
-            if (description != null && !description.isEmpty()) {
-                line.append("\ndescription: ").append(description);
-            }
-            return DiagnosticRedactor.redact(line.toString());
+            return DiagnosticRedactor.redact(lines.toString());
         } catch (Throwable unavailable) {
             // A build that cannot answer this is not a build that should fail to export.
             return "";

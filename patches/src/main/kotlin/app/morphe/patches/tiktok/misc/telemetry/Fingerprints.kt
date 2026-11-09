@@ -10,7 +10,10 @@
 package app.morphe.patches.tiktok.misc.telemetry
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.AccessFlags
+import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 
 private const val APP_LOG_DESCRIPTOR = "Lcom/bytedance/applog/AppLog;"
 private const val APPS_FLYER_LIB_DESCRIPTOR = "Lcom/appsflyer/AppsFlyerLib;"
@@ -267,3 +270,30 @@ internal object InstallActiveCheckFingerprint : Fingerprint(
             method.parameterTypes[5].toString() == "Ljava/util/HashMap;"
     },
 )
+
+internal const val ORBU_LOG_PARAMS = "Lttp/orbu/sdk/logging/LogParams;"
+internal const val ORBU_LOG_BODY = "Lttp/orbu/sdk/network/request/APIPutLogsDetailsBody;"
+internal const val RESOLVER_LOOKUP_HOST = "whoami.akamai.net"
+
+/**
+ * The Orbu SDK's log upload: the suspend call that builds a put-logs body and posts it to
+ * proxy.telemetry.us-ashburn-1.oci.oraclecloud.com, the host #379's DNS log shows being called
+ * thousands of times a day. The SDK's classes are renamed but its model classes keep their
+ * names. Only this implementation builds the body (47.7.3: Lttpobfuscated/ld;->a).
+ */
+internal object OrbuLogSendFingerprint : Fingerprint(
+    returnType = "Ljava/lang/Object;",
+    parameters = listOf(ORBU_LOG_PARAMS, "L"),
+    custom = { method, _ -> buildsOrbuLogBody(method) },
+)
+
+internal fun buildsOrbuLogBody(method: Method): Boolean =
+    method.implementation?.instructions?.any {
+        it.getReference<MethodReference>()?.returnType == ORBU_LOG_BODY
+    } == true
+
+/**
+ * The lookups of whoami.akamai.net, TikTok's way of learning which DNS resolver the phone uses.
+ * Seven copies on 47.7.3, in the video and upload libraries and two renamed classes.
+ */
+internal object ResolverLookupFingerprint : Fingerprint(strings = listOf(RESOLVER_LOOKUP_HOST))

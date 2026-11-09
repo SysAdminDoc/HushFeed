@@ -11,11 +11,13 @@ package app.morphe.patches.tiktok.misc.telemetry
 
 import app.morphe.patcher.Fingerprint
 import app.morphe.util.addInstruction
+import app.morphe.util.addInstructions
 import app.morphe.util.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
+import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patcher.util.smali.ExternalLabel
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
@@ -28,7 +30,10 @@ import app.morphe.util.getReference
 import app.morphe.util.numberOfParameterRegisters
 import app.morphe.util.numberOfParameterRegistersLogical
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+import com.android.tools.smali.dexlib2.iface.reference.StringReference
 
 private const val EXTENSION_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/telemetry/DisableTelemetryPatch;"
 private const val BD_LOCATION_CONFIG_DESCRIPTOR = "Lcom/bytedance/bdlocation/client/BDLocationConfig;"
@@ -154,7 +159,50 @@ val disableTelemetryPatch = bytecodePatch(
         TELEMETRY_SEND_GUARDS.forEach { guard ->
             guard.fingerprint.method.returnEarlyIfTelemetryDisabled(guard.answer)
         }
+
+        // Orbu's log upload (#379). It answers Unit when it's done, and both callers only compare
+        // the answer with the suspended marker, so handing Unit back drops the batch quietly.
+        OrbuLogSendFingerprint.methodOrNull?.let { send ->
+            val unit = orbuUnitField(send)
+                ?: throw PatchException("Orbu's log send no longer ends with Unit: $send")
+            send.returnEarlyIfTelemetryDisabled { register ->
+                """
+                    sget-object v$register, $unit
+                    return-object v$register
+                """
+            }
+        }
+
+        // The DNS resolver lookups (#379), each answered by the phone itself with the switch on.
+        ResolverLookupFingerprint.matchAllOrNull().orEmpty().forEach { match ->
+            match.method.redirectResolverLookups()
+        }
     }
+}
+
+/** The field the method reads its Unit answer from. Its name differs per build. */
+internal fun orbuUnitField(method: Method): String? = method.implementation?.instructions
+    ?.firstNotNullOfOrNull { instruction ->
+        instruction.getReference<FieldReference>()
+            ?.takeIf { it.definingClass == "Lkotlin/Unit;" && it.type == "Lkotlin/Unit;" }
+    }?.let { "${it.definingClass}->${it.name}:${it.type}" }
+
+/** Puts the extension's host choice between each load of the name and TikTok's lookup. */
+internal fun MutableMethod.redirectResolverLookups() {
+    implementation!!.instructions.withIndex()
+        .filter { it.value.getReference<StringReference>()?.string == RESOLVER_LOOKUP_HOST }
+        .map { it.index }
+        .reversed()
+        .forEach { load ->
+            val register = getInstruction<OneRegisterInstruction>(load).registerA
+            addInstructions(
+                load + 1,
+                """
+                    invoke-static/range { v$register .. v$register }, $EXTENSION_CLASS_DESCRIPTOR->resolverLookupHost(Ljava/lang/String;)Ljava/lang/String;
+                    move-result-object v$register
+                """,
+            )
+        }
 }
 
 /** What a guarded send answers with the switch on, in place of its request. */

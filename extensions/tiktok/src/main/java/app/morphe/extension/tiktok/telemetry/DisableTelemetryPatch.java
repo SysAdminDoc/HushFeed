@@ -24,6 +24,15 @@ public final class DisableTelemetryPatch {
         return new PriorityHttpResponse(200, "", DELIVERED_PRIORITY_DATA);
     }
 
+    /**
+     * What TikTok looks up to learn which DNS resolver the phone uses (#379). Asked with
+     * whoami.akamai.net at each lookup. The phone answers localhost itself, so with the switch
+     * on no query leaves it, and TikTok just gets a local address back.
+     */
+    public static String resolverLookupHost(String host) {
+        return isTelemetryDisabled() ? "localhost" : host;
+    }
+
     public static boolean isTelemetryDisabled() {
         // Keep analytics enabled if the context isn't initialized yet
         return Utils.getContext() != null && Settings.DISABLE_ANALYTICS.get();

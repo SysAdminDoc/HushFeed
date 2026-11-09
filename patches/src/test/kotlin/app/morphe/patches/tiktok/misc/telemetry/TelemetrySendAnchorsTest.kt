@@ -1,6 +1,7 @@
 package app.morphe.patches.tiktok.misc.telemetry
 
 import app.morphe.Fixtures
+import app.morphe.takes
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.iface.ClassDef
@@ -334,6 +335,35 @@ class TelemetrySendAnchorsTest {
             }
         }
         return false
+    }
+
+    /** Issue #379: Orbu's log upload is one method, and it holds the Unit answer the guard returns. */
+    @Test
+    fun `each declared build has one Orbu log upload with a Unit answer`() {
+        onEachDeclared {
+            val sends = classes().flatMap { classDef ->
+                classDef.methods.asSequence().filter {
+                    it.implementation != null && OrbuLogSendFingerprint.takes(it, classDef)
+                }
+            }.toList()
+            assertEquals(sends.map { it.signature() }.toString(), 1, sends.size)
+            assertTrue("the send's Unit answer", orbuUnitField(sends.single()) != null)
+        }
+    }
+
+    /** Issue #379: every method loading the resolver lookup's name goes on to resolve a name. */
+    @Test
+    fun `each declared build resolves every whoami lookup it loads`() {
+        onEachDeclared {
+            val lookups = methods().filter { RESOLVER_LOOKUP_HOST in it.strings() }.toList()
+            assertTrue("found ${lookups.size}", lookups.size >= 2)
+            lookups.forEach { method ->
+                assertTrue(
+                    method.signature().toString(),
+                    method.calls().any { it.definingClass == "Ljava/net/InetAddress;" && it.name == "getByName" },
+                )
+            }
+        }
     }
 
     private companion object {

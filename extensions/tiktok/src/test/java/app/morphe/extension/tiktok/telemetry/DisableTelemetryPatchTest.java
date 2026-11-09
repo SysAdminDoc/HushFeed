@@ -47,6 +47,14 @@ public class DisableTelemetryPatchTest {
         assertFalse(DisableTelemetryPatch.isTelemetryDisabled());
     }
 
+    /** Issue #379: the resolver lookup answers locally with the switch on, and only then. */
+    @Test
+    public void theResolverLookupStaysOnThePhoneOnlyWithTheSwitchOn() {
+        assertEquals("whoami.akamai.net", DisableTelemetryPatch.resolverLookupHost("whoami.akamai.net"));
+        Settings.DISABLE_ANALYTICS.save(true);
+        assertEquals("localhost", DisableTelemetryPatch.resolverLookupHost("whoami.akamai.net"));
+    }
+
     @Test
     public void telemetryStaysEnabledBeforeTheContextIsSet() {
         Utils.setContext(null);

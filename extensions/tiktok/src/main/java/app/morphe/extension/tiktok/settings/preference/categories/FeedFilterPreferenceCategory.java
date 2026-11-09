@@ -383,13 +383,16 @@ public class FeedFilterPreferenceCategory extends ConditionalPreferenceCategory 
                     "Instead of these settings. The list has a button that brings you back here.",
                     Settings.FOR_YOU_HOLD_OPENS_WATCH_HISTORY
             ));
-            addPreference(new TogglePreference(
-                    context,
-                    "Long press on Profile opens my watch history",
-                    "Instead of TikTok's Watch history. A tap on Profile works as before. "
-                            + "If holding Profile switches accounts for you, this takes that press.",
-                    Settings.PROFILE_HOLD_OPENS_LOCAL_WATCH_HISTORY
-            ));
+            // The hold on Profile comes with the feed tab patch; For You's is in every bundle.
+            if (SettingsStatus.feedNavigationEnabled) {
+                addPreference(new TogglePreference(
+                        context,
+                        "Long press on Profile opens my watch history",
+                        "Instead of TikTok's Watch history. A tap on Profile works as before. "
+                                + "If holding Profile switches accounts for you, this takes that press.",
+                        Settings.PROFILE_HOLD_OPENS_LOCAL_WATCH_HISTORY
+                ));
+            }
         }
     }
 

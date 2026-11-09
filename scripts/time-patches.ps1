@@ -29,7 +29,9 @@ param(
     [Parameter(Mandatory = $true)][string]$OutDir,
     [string]$Bundle,
     [string]$DesktopJar,
-    [string]$Xmx = '6g'
+    [string]$Xmx = '6g',
+    # Patch names to leave out of the run, separated by ';', to see what a smaller selection needs.
+    [string]$Leave = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -51,6 +53,10 @@ $Bundle = (Resolve-Path -LiteralPath $Bundle).Path
 $jar = (Resolve-Path -LiteralPath $jar).Path
 $names = @((Get-Content -LiteralPath (Join-Path $root 'patches-list.json') -Raw | ConvertFrom-Json).patches | ForEach-Object { $_.name })
 if ($names.Count -eq 0) { throw 'No patches listed in patches-list.json.' }
+$left = @($Leave -split ';' | ForEach-Object { $_.Trim() } | Where-Object { $_ })
+$unknown = @($left | Where-Object { $_ -notin $names })
+if ($unknown.Count -gt 0) { throw "Not a patch in patches-list.json: $($unknown -join ', ')" }
+$names = @($names | Where-Object { $_ -notin $left })
 
 New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
 $OutDir = (Resolve-Path -LiteralPath $OutDir).Path
@@ -97,6 +103,7 @@ $lastPatch = $times.LastPatchAt
 
 $lines = New-Object System.Collections.Generic.List[string]
 $lines.Add("Patch times for $(Split-Path -Leaf $Apk), bundle $(Split-Path -Leaf $Bundle), -Xmx$Xmx, CLI exit $exitCode.")
+if ($left.Count -gt 0) { $lines.Add(''); $lines.Add("Left out: $($left -join ', ').") }
 $lines.Add('')
 $lines.Add(('Whole run {0:N1} s: loading and decoding {1:N1} s, patches {2:N1} s, writing {3:N1} s. Heap peak {4} MB.' -f
     (($end - $start) / 1000), (($times.ExecutingAt - $start) / 1000), (($lastPatch - $times.ExecutingAt) / 1000), (($end - $lastPatch) / 1000),

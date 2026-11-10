@@ -166,6 +166,13 @@ public class FeatureSwitchesTest {
         assertFalse(FeatureControls.hideFeedSearchButtonEnabled(true));
     }
 
+    /** The toolbar asks once, as it builds the top bar, so none of its buttons can come back live. */
+    @Test public void everyToolbarButtonSwitchOffersARestart() {
+        assertTrue("LIVE", Settings.HIDE_LIVE_ENTRANCE.rebootApp);
+        assertTrue("search", Settings.HIDE_FEED_SEARCH_BUTTON.rebootApp);
+        assertTrue("side menu", Settings.HIDE_FEED_SIDEBAR_BUTTON.rebootApp);
+    }
+
     /**
      * #371: the same switch hides the search icon over the shrunken video while comments are
      * open. TikTok's answer passes through untouched when the switch is off.

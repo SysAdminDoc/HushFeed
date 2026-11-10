@@ -1524,7 +1524,9 @@ public class Settings extends BaseSettings {
     public static final StringSetting CUSTOM_SHARE_DOMAIN = new StringSetting("custom_share_domain", "");
     // Opens a short vt/vm.tiktok.com share link once to swap the full link onto the clipboard.
     public static final BooleanSetting EXPAND_SHORT_SHARE_LINKS = new BooleanSetting("expand_short_share_links", FALSE);
-    public static final BooleanSetting HIDE_LIVE_ENTRANCE = new BooleanSetting("hide_live_entrance", FALSE);
+    // Going on it takes effect at once through the overlay hider; going off needs the toolbar to
+    // build the button again, which it only does as the feed's top bar is made.
+    public static final BooleanSetting HIDE_LIVE_ENTRANCE = new BooleanSetting("hide_live_entrance", FALSE, true);
     // The side menu button beside LIVE (#128). The toolbar asks once, as it builds the feed's
     // top bar, so a change needs a restart.
     public static final BooleanSetting HIDE_FEED_SIDEBAR_BUTTON =

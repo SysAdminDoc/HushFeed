@@ -80,6 +80,7 @@ Every Hushfeed release, newest first.
 * Blocking a LIVE host with `Block this creator` and swiping to the next room before the block went through no longer closes the room you moved to.
 * TalkBack reads the sort button on a profile, Liked or sound grid as a button and says the order it's on, like "Sort this grid: Original order". It only said "Sort this grid" before. The count that shows while a sorted grid loads reads as "30 videos" now, where it was a bare number.
 * On a phone set to Arabic or another right-to-left language, the buttons under a settings row start at the right edge now, where they started at the left before. The gaps inside the search box, a recent search, the status card and the notices are mirrored to match.
+* `Hide the LIVE button` now shows the restart button when you flip it, like the search and side menu switches. Turned off, the LIVE button stayed missing with nothing telling you it needed a restart.
 
 ## 0.81.0 (2026-11-05)
 

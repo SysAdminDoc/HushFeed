@@ -6797,7 +6797,8 @@
     "key": "hide_live_entrance",
     "default": false,
     "type": "bool",
-    "row": "Hide the LIVE button"
+    "row": "Hide the LIVE button",
+    "restart": true
    },
    {
     "key": "hide_feed_sidebar_button",

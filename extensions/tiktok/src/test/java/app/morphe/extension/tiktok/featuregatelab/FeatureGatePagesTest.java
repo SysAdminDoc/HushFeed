@@ -1367,6 +1367,88 @@ public class FeatureGatePagesTest {
         }
     }
 
+    /**
+     * What shares a line in the Lab keeps a gap, whichever way the layout runs.
+     *
+     * <p>In a right to left layout the type column sat against the title on every row,
+     * "Apply overrides" against its switch, the result count against the filter button and the
+     * search hint against the box's edge. Each was a weighted column ending on a fixed one with
+     * nothing between them, which a left to right layout showed only once a title or a count
+     * filled its share.
+     */
+    @Test @Config(qualifiers = "ar-rEG-ldrtl-w360dp-h640dp-night-mdpi")
+    public void theLabsSideBySidePartsKeepAGapRightToLeft() throws Exception {
+        assertTheLabsSideBySidePartsKeepAGap(View.LAYOUT_DIRECTION_RTL);
+    }
+
+    @Test @Config(qualifiers = "w360dp-h640dp-night-mdpi")
+    public void theLabsSideBySidePartsKeepAGapLeftToRight() throws Exception {
+        assertTheLabsSideBySidePartsKeepAGap(View.LAYOUT_DIRECTION_LTR);
+    }
+
+    private static void assertTheLabsSideBySidePartsKeepAGap(int direction) throws Exception {
+        try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setContext(activity);
+            FeatureGateLabStore.resetAllLabData();
+            FeatureGateLabSession.begin();
+            // A title that wraps beside a value that fills its column: the row that touched.
+            var entry = new FeatureGateCatalog.Entry("3p_deprecation_test_experiment_5_android",
+                    "3p Deprecation Test Experiment 5 Android", "abmock", "STRING", true, true,
+                    List.of(), List.of(), List.of(), "", "", true,
+                    "{\"deprecated_platforms\":{\"twitter\":[\"remove\"]}}", "STRING");
+            var cached = FeatureGateCatalog.class.getDeclaredField("cachedSnapshot");
+            cached.setAccessible(true);
+            cached.set(null, new FeatureGateCatalog.Snapshot(
+                    List.of(entry), Map.of(entry.identity(), entry), 0, 0, true));
+            FeatureGateLabFragment lab = new FeatureGateLabFragment();
+            attach(activity, lab);
+            View decor = activity.getWindow().getDecorView();
+            var metrics = activity.getResources().getDisplayMetrics();
+            decor.measure(View.MeasureSpec.makeMeasureSpec(metrics.widthPixels, View.MeasureSpec.EXACTLY),
+                    View.MeasureSpec.makeMeasureSpec(metrics.heightPixels, View.MeasureSpec.EXACTLY));
+            decor.layout(0, 0, metrics.widthPixels, metrics.heightPixels);
+            View root = lab.getView();
+            assertEquals("the screen is not laid out the way under test, so this proves nothing",
+                    direction, root.getLayoutDirection());
+            int gap = FeatureGateLabUi.dp(activity, 8);
+
+            ListView list = find(root, ListView.class);
+            assertTrue("the gate row was never laid out", list.getChildCount() > 0);
+            ViewGroup row = (ViewGroup) list.getChildAt(0);
+            assertSideBySideWithAGap("the title and the type", row.getChildAt(1), row.getChildAt(2),
+                    direction, gap);
+
+            Switch master = fieldOf(lab, "master", Switch.class);
+            assertNotNull(master);
+            assertSideBySideWithAGap("\"Apply overrides\" and its switch",
+                    ((ViewGroup) master.getParent()).getChildAt(0), master, direction, gap);
+
+            assertSideBySideWithAGap("the result count and the filter button",
+                    root.findViewWithTag("feature_gate_result_count"),
+                    root.findViewWithTag("feature_gate_filter"), direction, gap);
+
+            EditText search = fieldOf(lab, "search", EditText.class);
+            assertNotNull(search);
+            assertEquals("the clear button is showing, so the field does not reach the edge",
+                    View.GONE, fieldOf(lab, "clearSearch", View.class).getVisibility());
+            assertTrue("the search text runs to the edge of its box: "
+                            + search.getTotalPaddingEnd() + "px",
+                    search.getTotalPaddingEnd() >= gap);
+        }
+    }
+
+    private static void assertSideBySideWithAGap(String pair, View first, View second, int direction,
+                                                 int gap) {
+        assertNotNull(pair, first);
+        assertNotNull(pair, second);
+        assertTrue(pair + " were never laid out", first.getWidth() > 0 && second.getWidth() > 0);
+        int between = direction == View.LAYOUT_DIRECTION_RTL
+                ? first.getLeft() - second.getRight()
+                : second.getLeft() - first.getRight();
+        assertTrue(pair + " sit " + between + "px apart", between >= gap);
+    }
+
     private static void attach(Activity activity, Fragment fragment) {
         activity.getFragmentManager().beginTransaction().replace(android.R.id.content, fragment).commit();
         activity.getFragmentManager().executePendingTransactions();

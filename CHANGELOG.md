@@ -79,7 +79,7 @@ Every Hushfeed release, newest first.
 * `Hide surveys` takes the interest buttons off a video by their own view as well, for when TikTok builds them some other way. The diagnostic report now names each kind of feed component a video was given (#293).
 * Blocking a LIVE host with `Block this creator` and swiping to the next room before the block went through no longer closes the room you moved to.
 * TalkBack reads the sort button on a profile, Liked or sound grid as a button and says the order it's on, like "Sort this grid: Original order". It only said "Sort this grid" before. The count that shows while a sorted grid loads reads as "30 videos" now, where it was a bare number.
-* On a phone set to Arabic or another right-to-left language, the buttons under a settings row start at the right edge now, where they started at the left before. The gaps inside the search box, a recent search, the status card and the notices are mirrored to match.
+* On a phone set to Arabic or another right-to-left language, the button rows in What's new, the sticker sheet and the Feature Gate Lab run right to left now. The gaps inside the search box, a recent search, the status card and the notices are mirrored to match. In the Lab, a gate's title no longer runs into its value and `Apply overrides` keeps some space from its switch, whichever way the screen reads.
 * `Hide the LIVE button` now shows the restart button when you flip it, like the search and side menu switches. Turned off, the LIVE button stayed missing with nothing telling you it needed a restart.
 * If you left a video cleared with `Keep Clear display across videos` on, the first video after you reopen TikTok clears too, instead of keeping its buttons.
 

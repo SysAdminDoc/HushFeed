@@ -182,7 +182,12 @@ final class FeatureGateLabUi {
             detail.setPadding(0, dp(context, 4), 0, 0);
             labels.addView(detail, matchWrap());
         }
-        row.addView(labels, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+        // A label long enough to fill its share ran up against the switch, and in a right to
+        // left layout an English one sat against it whatever its length.
+        LinearLayout.LayoutParams labelParams =
+                new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+        labelParams.setMarginEnd(dp(context, 12));
+        row.addView(labels, labelParams);
         // The control draws the state and nothing else: the row answers the tap and the reader.
         control.setClickable(false);
         control.setFocusable(false);

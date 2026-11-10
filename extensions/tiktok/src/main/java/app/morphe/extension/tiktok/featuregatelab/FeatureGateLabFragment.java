@@ -338,6 +338,10 @@ public final class FeatureGateLabFragment extends Fragment {
         search.setCompoundDrawablesRelative(searchIcon, null, null, null);
         search.setCompoundDrawablePadding(FeatureGateLabUi.dp(context, 12));
         search.setBackgroundColor(Color.TRANSPARENT);
+        // With the clear button hidden the field runs to the box's edge, so the hint of a right
+        // to left layout and a long query in either direction sat on the border.
+        search.setPaddingRelative(search.getPaddingStart(), search.getPaddingTop(),
+                FeatureGateLabUi.dp(context, 8), search.getPaddingBottom());
         search.setTextColor(SettingsUi.textPrimary());
         search.setHintTextColor(SettingsUi.textSecondary());
         search.setText(searchQuery);
@@ -482,7 +486,10 @@ public final class FeatureGateLabFragment extends Fragment {
         count.setText(L10n.t(context, "Loading gates…"));
         count.setGravity(Gravity.CENTER_VERTICAL);
         count.setMinHeight(FeatureGateLabUi.dp(context, 48));
-        resultRow.addView(count, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+        LinearLayout.LayoutParams countParams =
+                new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+        countParams.setMarginEnd(FeatureGateLabUi.dp(context, 8));
+        resultRow.addView(count, countParams);
         filterButton = FeatureGateLabUi.text(context, "", 14, SettingsUi.textPrimary(), Typeface.BOLD);
         filterButton.setTag("feature_gate_filter");
         SettingsUi.styleTextAction(filterButton, false);
@@ -2305,7 +2312,10 @@ public final class FeatureGateLabFragment extends Fragment {
                         : new LinearLayout.LayoutParams(
                                 FeatureGateLabUi.dp(context, 116),
                                 ViewGroup.LayoutParams.WRAP_CONTENT);
+                // Side by side, a title that wraps ran into a value that filled its column, and
+                // in a right to left layout the key and the type touched on every row.
                 if (stacked) stateParams.setMargins(0, FeatureGateLabUi.dp(context, 8), 0, 0);
+                else stateParams.setMarginStart(FeatureGateLabUi.dp(context, 12));
                 row.addView(stateColumn, stateParams);
 
                 holder = new RowHolder(title, key, type, value, state, chosenMark);

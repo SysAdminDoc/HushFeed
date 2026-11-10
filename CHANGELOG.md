@@ -80,6 +80,7 @@ Every Hushfeed release, newest first.
 * Blocking a LIVE host with `Block this creator` and swiping to the next room before the block went through no longer closes the room you moved to.
 * TalkBack reads the sort button on a profile, Liked or sound grid as a button and says the order it's on, like "Sort this grid: Original order". It only said "Sort this grid" before. The count that shows while a sorted grid loads reads as "30 videos" now, where it was a bare number.
 * On a phone set to Arabic or another right-to-left language, the button rows in What's new, the sticker sheet and the Feature Gate Lab run right to left now. The gaps inside the search box, a recent search, the status card and the notices are mirrored to match. In the Lab, a gate's title no longer runs into its value and `Apply overrides` keeps some space from its switch, whichever way the screen reads.
+* On a right-to-left phone, a setting's description now sits under its name on the icon's side, and a section's heading starts on that side too. Hushfeed's text is English, so those lines used to start at the far left, across the row from the name.
 * `Hide the LIVE button` now shows the restart button when you flip it, like the search and side menu switches. Turned off, the LIVE button stayed missing with nothing telling you it needed a restart.
 * If you left a video cleared with `Keep Clear display across videos` on, the first video after you reopen TikTok clears too, instead of keeping its buttons.
 

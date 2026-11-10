@@ -112,6 +112,10 @@ final class SettingsListAdapter extends BaseAdapter implements WrapperListAdapte
                 .equals(((Preference) item).getKey());
     }
 
+    private static void alignToStart(View line) {
+        if (line instanceof TextView) line.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
+    }
+
     /** The width a row of this list gets: the list's own once it has one, the screen's before. */
     private static int rowWidth(ViewGroup list) {
         int width = list.getWidth() > 0 ? list.getWidth() : list.getMeasuredWidth();
@@ -135,6 +139,10 @@ final class SettingsListAdapter extends BaseAdapter implements WrapperListAdapte
             SettingsUi.styleErrorHeading(row);
             return row;
         }
+        // A section's heading starts on the same side as its rows (see below).
+        if (getItem(position) instanceof PreferenceCategory
+                || getItem(position) instanceof SectionHeadingPreference)
+            alignToStart(row.findViewById(android.R.id.title));
         if (isBoundary(position)) return row;
         Preference preference = (Preference) getItem(position);
         if (parent instanceof android.widget.ListView && parent.isLongClickable()
@@ -151,6 +159,12 @@ final class SettingsListAdapter extends BaseAdapter implements WrapperListAdapte
         ScreenColors.current().paintRow(row, preference, !section, first, last);
         NewSettingDots.paint(row, preference, SettingsUi.accent());
         if (preference instanceof SwitchPreference) SettingsUi.reflowSwitchRow(row, rowWidth(parent));
+        // Both lines start on the icon's side. Hush has no right-to-left translation, so an
+        // Arabic or Hebrew phone shows English in a mirrored row, and English left to its own
+        // direction starts on the left: a switch row's summary began across the row from its
+        // title, which sits at the right.
+        alignToStart(row.findViewById(android.R.id.title));
+        alignToStart(row.findViewById(android.R.id.summary));
         // The recovery page's two actions were styled while the rows were bound, and the row
         // styling above painted over it, so Retry and Back came out as two identical rows.
         String key = preference.getKey();

@@ -1091,6 +1091,99 @@ public class AutomaticClearDisplayTest {
         assertEquals(3, events.size());
     }
 
+    /**
+     * At a cold start the first frame beats TikTok's clear-mode panel, which turns a remembered
+     * clear down. Playback progress asks again, so the first video clears like the rest, and a
+     * reader who brings the controls back in the meantime is not overruled.
+     */
+    @Test public void aRememberedClearThePanelTurnedDownLandsOnProgress() {
+        for (boolean handBack : new boolean[] {false, true}) {
+            RememberClearDisplayPatch.resetForTests();
+            Settings.AUTOMATIC_CLEAR_DISPLAY.save(false);
+            Settings.CLEAR_DISPLAY.save(true);
+            Object controller = new Object();
+            org.robolectric.util.ReflectionHelpers.setStaticField(RememberClearDisplayPatch.class,
+                    "currentController", new java.lang.ref.WeakReference<>(controller));
+            java.util.concurrent.atomic.AtomicBoolean ready = new java.util.concurrent.atomic.AtomicBoolean();
+            List<Boolean> events = new ArrayList<>();
+            RememberClearDisplayPatch.firstFrame("first", () -> true, value -> {
+                events.add(value);
+                return ready.get();
+            });
+            assertEquals(List.of(true), events);
+            assertFalse(RememberClearDisplayPatch.isClearDisplayNow());
+            ready.set(true);
+
+            RememberClearDisplayPatch.onPlaybackProgress(controller, "other");
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertEquals("another video's progress asked again", List.of(true), events);
+
+            if (handBack) RememberClearDisplayPatch.rememberClearDisplayEvent(new Event(false, 2));
+            RememberClearDisplayPatch.onPlaybackProgress(controller, "first");
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertEquals(handBack ? List.of(true) : List.of(true, true), events);
+            assertEquals(!handBack, RememberClearDisplayPatch.isClearDisplayNow());
+
+            RememberClearDisplayPatch.onPlaybackProgress(controller, "first");
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertEquals("nothing left to ask for", handBack ? 1 : 2, events.size());
+        }
+    }
+
+    /**
+     * A video that's already clear turns the same clear down, the panel having nothing to do, as
+     * focus coming back asks again. Taken for a panel not ready, every progress tick asked too,
+     * and the first one after TikTok's own Back exit put the clear back.
+     */
+    @Test public void aFocusReturnOnAClearVideoLeavesProgressAlone() {
+        RememberClearDisplayPatch.resetForTests();
+        Settings.AUTOMATIC_CLEAR_DISPLAY.save(false);
+        Settings.CLEAR_DISPLAY.save(true);
+        Object controller = new Object();
+        org.robolectric.util.ReflectionHelpers.setStaticField(RememberClearDisplayPatch.class,
+                "currentController", new java.lang.ref.WeakReference<>(controller));
+        java.util.concurrent.atomic.AtomicBoolean panelHasWork = new java.util.concurrent.atomic.AtomicBoolean(true);
+        List<Boolean> events = new ArrayList<>();
+        RememberClearDisplayPatch.ClearEvent panel = value -> {
+            events.add(value);
+            return panelHasWork.getAndSet(false);
+        };
+        RememberClearDisplayPatch.firstFrame("first", () -> true, panel);
+        assertTrue(RememberClearDisplayPatch.isClearDisplayNow());
+        RememberClearDisplayPatch.firstFrame("first", () -> true, panel);
+        assertEquals(List.of(true, true), events);
+
+        RememberClearDisplayPatch.onPlaybackProgress(controller, "first");
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        assertEquals("progress asked a clear video", 2, events.size());
+
+        RememberClearDisplayPatch.rememberClearDisplayEvent(new Event(false, 12));
+        assertFalse(RememberClearDisplayPatch.isClearDisplayNow());
+        RememberClearDisplayPatch.onPlaybackProgress(controller, "first");
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        assertEquals("progress undid TikTok's Back exit", 2, events.size());
+    }
+
+    /** Under a dialog the first frame can't land. Focus coming back asks, not every progress tick. */
+    @Test public void aRememberedClearWithNoFocusLeavesProgressAlone() {
+        RememberClearDisplayPatch.resetForTests();
+        Settings.AUTOMATIC_CLEAR_DISPLAY.save(false);
+        Settings.CLEAR_DISPLAY.save(true);
+        Object controller = new Object();
+        org.robolectric.util.ReflectionHelpers.setStaticField(RememberClearDisplayPatch.class,
+                "currentController", new java.lang.ref.WeakReference<>(controller));
+        List<Boolean> events = new ArrayList<>();
+        RememberClearDisplayPatch.firstFrame("first", () -> false, value -> {
+            events.add(value);
+            return false;
+        });
+        assertEquals(List.of(true), events);
+
+        RememberClearDisplayPatch.onPlaybackProgress(controller, "first");
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        assertEquals("progress asked under a dialog", 1, events.size());
+    }
+
     @Test public void canceledOrManualOrDisabledEntryNeverRetriesFromQueuedProgress() {
         for (int stop = 0; stop < 4; stop++) {
             RememberClearDisplayPatch.resetForTests();

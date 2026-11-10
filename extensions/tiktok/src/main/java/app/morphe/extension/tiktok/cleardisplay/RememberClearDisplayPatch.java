@@ -240,7 +240,7 @@ public final class RememberClearDisplayPatch {
             progressQueued.set(false);
             if (observed != generation || !awaitingNative || pending != null || applied || manuallyChanged
                     || controller == null || currentController.get() != controller
-                    || id == null || !id.equals(currentId) || !Settings.AUTOMATIC_CLEAR_DISPLAY.get()) return;
+                    || id == null || !clearStillWanted(id)) return;
             if (onFocus != null) onFocus.run();
         });
     }
@@ -278,7 +278,15 @@ public final class RememberClearDisplayPatch {
             // Not under the daily hold, whose panel needs TikTok's tabs back (leaveForHold).
             // Nor under the feed lock, which covers the feed the same way and needs the tabs too.
             if (remembersClearDisplay() && !SessionBudget.isLocked() && !FeedLock.covers()) {
+                long asked = generation;
                 remembered = emit(event, true);
+                // At a cold start the first frame beats TikTok's clear-mode panel, and the first
+                // video kept its controls. Progress asks again, as on the automatic path. A video
+                // that's already clear refuses too, the panel having nothing to do, and asking
+                // it again would undo TikTok's own exits; with no focus, regaining it asks.
+                if (!remembered && !clearNow && asked == generation && stillCurrent.holds()) {
+                    awaitingNative = true;
+                }
             }
             // Switched off while it had the controls hidden: TikTok brings them back on the next
             // video by itself, but the live state, which the tab strip hide reads, would say
@@ -602,6 +610,12 @@ public final class RememberClearDisplayPatch {
     /** Whether the next video starts cleared because the last one was cleared by hand. */
     private static boolean remembersClearDisplay() {
         return Settings.REMEMBER_CLEAR_DISPLAY_ON_SCROLL.get() && Settings.CLEAR_DISPLAY.get();
+    }
+
+    /** Whether a clear TikTok's panel wasn't ready for is still wanted on this video. */
+    private static boolean clearStillWanted(String id) {
+        return Settings.AUTOMATIC_CLEAR_DISPLAY.get() ? id.equals(currentId)
+                : remembersClearDisplay() && id.equals(activeId);
     }
 
     /** Where a gesture's change is posted; a test stands in its own. */

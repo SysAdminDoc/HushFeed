@@ -42,6 +42,9 @@ import app.morphe.extension.shared.Utils;
  * The dialog supports themed colors, rounded corners, and dynamic button layout based on screen width. It is dismissible by default.
  */
 public class CustomDialog {
+    /** The dialog's width as a percentage of the screen's portrait width. */
+    private static final int WIDTH_PERCENT = 90;
+
     private final Context context;
     private final Dialog dialog;
     private final LinearLayout mainLayout;
@@ -49,8 +52,8 @@ public class CustomDialog {
     /**
      * Creates a custom dialog with a styled layout, including a title, message, buttons, and an optional EditText.
      * The dialog's appearance adapts to the app's dark mode setting, with rounded corners and customizable button actions.
-     * Buttons adjust dynamically to their text content and are arranged in a single row if they fit within 80% of the
-     * screen width, with the Neutral button aligned to the left and OK/Cancel buttons centered on the right.
+     * Buttons adjust dynamically to their text content and are arranged in a single row if they fit the dialog's
+     * width, with the Neutral button aligned to the start and OK/Cancel buttons centered at the end.
      * If buttons do not fit, each is placed on a separate row, all aligned to the right.
      *
      * @param context                     Context used to create the dialog.
@@ -110,7 +113,7 @@ public class CustomDialog {
         dialog.setContentView(mainLayout);
         Window window = dialog.getWindow();
         if (window != null) {
-            Utils.setDialogWindowParameters(window, Gravity.CENTER, 0, 90, false);
+            Utils.setDialogWindowParameters(window, Gravity.CENTER, 0, WIDTH_PERCENT, false);
         }
     }
 
@@ -290,6 +293,8 @@ public class CustomDialog {
         button.setGravity(Gravity.CENTER);
         // Set internal padding.
         button.setPadding(Dim.dp16, 0, Dim.dp16, 0);
+        // A floor rather than a fixed height, so large text grows the button instead of being cut off.
+        button.setMinHeight(Dim.dp36);
 
         // Background color for OK button (inversion).
         // Background color for Cancel or Neutral buttons.
@@ -343,7 +348,8 @@ public class CustomDialog {
         // Single button: stretch to full width.
         if (buttons.size() == 1) {
             layoutSingleButton(buttonContainer, buttons.get(0));
-        } else if (totalWidth <= Dim.pctWidth(80)) {
+        } else if (totalWidth <= Dim.pctPortraitWidth(WIDTH_PERCENT)
+                - mainLayout.getPaddingLeft() - mainLayout.getPaddingRight()) {
             // Single row: Neutral, Cancel, OK.
             layoutButtonsInRow(buttonContainer, buttons, buttonWidths);
         } else {
@@ -368,7 +374,7 @@ public class CustomDialog {
 
         button.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                Dim.dp36));
+                LinearLayout.LayoutParams.WRAP_CONTENT));
         singleContainer.addView(button);
         buttonContainer.addView(singleContainer);
     }
@@ -404,17 +410,20 @@ public class CustomDialog {
         if (parent != null) parent.removeView(button);
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                0, Dim.dp36, buttonWidths.get(i));
+                0, LinearLayout.LayoutParams.WRAP_CONTENT, buttonWidths.get(i));
 
-        // Set margins based on button type and combination.
+        // Set margins based on button type and combination. Start and end, so a right to left
+        // layout keeps the gap between the buttons rather than at the dialog's edges.
         if (buttons.size() == 2) {
             // Neutral + OK or Cancel + OK.
-            params.setMargins(i == 0 ? 0 : Dim.dp4, 0, i == 0 ? Dim.dp4 : 0, 0);
+            params.setMarginStart(i == 0 ? 0 : Dim.dp4);
+            params.setMarginEnd(i == 0 ? Dim.dp4 : 0);
         } else if (buttons.size() == 3) {
             // Neutral.
             // Cancel.
             // OK.
-            params.setMargins(i == 0 ? 0 : Dim.dp4, 0, i == 2 ? 0 : Dim.dp4, 0);
+            params.setMarginStart(i == 0 ? 0 : Dim.dp4);
+            params.setMarginEnd(i == 2 ? 0 : Dim.dp4);
         }
 
         button.setLayoutParams(params);
@@ -446,14 +455,14 @@ public class CustomDialog {
             singleContainer.setGravity(Gravity.CENTER);
             singleContainer.setLayoutParams(new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
-                    Dim.dp36));
+                    LinearLayout.LayoutParams.WRAP_CONTENT));
 
             ViewGroup parent = (ViewGroup) button.getParent();
             if (parent != null) parent.removeView(button);
 
             button.setLayoutParams(new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
-                    Dim.dp36));
+                    LinearLayout.LayoutParams.WRAP_CONTENT));
             singleContainer.addView(button);
             buttonContainer.addView(singleContainer);
 

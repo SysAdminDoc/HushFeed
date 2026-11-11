@@ -10,25 +10,35 @@ import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Looper;
 import android.preference.Preference;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
+import android.text.Layout;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.BaseSettings;
 import app.morphe.extension.shared.settings.Setting;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.UiCapture;
+import app.morphe.extension.tiktok.settings.preference.ShimmerTitle;
 import app.morphe.extension.tiktok.settings.preference.TikTokPreferenceFragment;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
@@ -166,6 +176,13 @@ public class PreferenceFailureRecoveryTest {
         }
     }
 
+    public static final class LightActivity extends Activity {
+        @Override public void onCreate(Bundle state) {
+            setTheme(android.R.style.Theme_Material_Light_NoActionBar);
+            super.onCreate(state);
+        }
+    }
+
     @Before public void resetState() {
         HarnessFragment.failOnceAt(Stage.NONE);
         BaseSettings.DEBUG.resetToDefault();
@@ -244,6 +261,87 @@ public class PreferenceFailureRecoveryTest {
 
             UiCapture.save(activity.getWindow().getDecorView(),
                     "settings-initialization-error.png");
+        }
+    }
+
+    /**
+     * The same page at the largest text size in both themes. Only the dark page at the normal
+     * size was ever rendered, and a light phone with big text gets this one: every line has to
+     * read against what is drawn behind it, and none may be cut short or clipped.
+     */
+    @Test
+    @Config(sdk = 35, qualifiers = "en-notnight", fontScale = 2f)
+    public void theErrorPageReadsInTheLightThemeAtTheLargestText() throws Exception {
+        assertErrorPageReadsAtLargeText(false);
+    }
+
+    @Test
+    @Config(sdk = 35, qualifiers = "en-night", fontScale = 2f)
+    public void theErrorPageReadsInTheDarkThemeAtTheLargestText() throws Exception {
+        assertErrorPageReadsAtLargeText(true);
+    }
+
+    private static void assertErrorPageReadsAtLargeText(boolean dark) throws Exception {
+        HarnessFragment.failOnceAt(Stage.INITIALIZE);
+        Class<? extends Activity> host = dark ? TestActivity.class : LightActivity.class;
+        try (var owner = Robolectric.buildActivity(host).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setContext(activity);
+            Utils.setIsDarkModeEnabled(dark);
+            HarnessFragment failed = attach(activity);
+            assertEquals(2f, activity.getResources().getConfiguration().fontScale, 0f);
+            // As narrow as the S22's 360dp, where big text wraps the most.
+            settle(activity, 360);
+
+            String theme = dark ? "dark" : "light";
+            View decor = activity.getWindow().getDecorView();
+            assertEquals(360, decor.getWidth());
+            Bitmap page = Bitmap.createBitmap(decor.getWidth(), decor.getHeight(),
+                    Bitmap.Config.ARGB_8888);
+            decor.draw(new Canvas(page));
+            int pageGround = commonest(page, new Rect(0, 0, decor.getWidth(), decor.getHeight()));
+            assertEquals("the " + theme + " page is drawn on #" + Integer.toHexString(pageGround),
+                    dark, Color.luminance(pageGround) < 0.5f);
+            for (String key : new String[]{ERROR, BACK, RETRY}) {
+                View row = rowFor(failed, key);
+                Bitmap drawn = Bitmap.createBitmap(decor.getWidth(), decor.getHeight(),
+                        Bitmap.Config.ARGB_8888);
+                decor.draw(new Canvas(drawn));
+                int lines = 0, inked = 0;
+                boolean titled = false;
+                for (TextView text : textsIn(row)) {
+                    String where = theme + " " + key + " \"" + text.getText() + "\"";
+                    Layout layout = text.getLayout();
+                    assertNotNull(where + " was never laid out", layout);
+                    int room = text.getWidth()
+                            - text.getCompoundPaddingLeft() - text.getCompoundPaddingRight();
+                    for (int line = 0; line < layout.getLineCount(); line++) {
+                        assertEquals(where + " is cut short on line " + line,
+                                0, layout.getEllipsisCount(line));
+                        assertTrue(where + " runs past its view on line " + line,
+                                layout.getLineWidth(line) <= room + 0.5f);
+                    }
+                    assertTrue(where + " is taller than its view, so it is clipped",
+                            layout.getHeight() <= text.getHeight()
+                                    - text.getCompoundPaddingTop() - text.getCompoundPaddingBottom());
+                    if (text.getId() == android.R.id.title) titled = true;
+                    lines++;
+                    // The heading's letters are painted by the moving gradient's shader, so its
+                    // text colour never reaches the screen. ShimmerTitleTest holds every stop of
+                    // that gradient to 7:1 on these grounds, and to 4.5:1 under the sheen.
+                    if (ShimmerTitle.wears(text)) continue;
+                    int ground = commonest(drawn, boundsIn(text, decor));
+                    double ratio = contrast(over(text.getCurrentTextColor(), ground), ground);
+                    assertTrue(where + " reads " + ratio + ":1 on #"
+                            + Integer.toHexString(ground), ratio >= 4.5);
+                    inked++;
+                }
+                assertTrue(theme + " " + key + " shows no text", lines > 0);
+                assertTrue(theme + " " + key + " lost its title", titled);
+                assertTrue(theme + " " + key + " has no line in a plain colour", inked > 0);
+            }
+            UiCapture.save(activity.getWindow().getDecorView(),
+                    "settings-initialization-error-" + theme + "-large-text.png");
         }
     }
 
@@ -441,6 +539,18 @@ public class PreferenceFailureRecoveryTest {
     }
 
     private static View assertActionSemantics(HarnessFragment fragment, String key) {
+        View row = rowFor(fragment, key);
+        AccessibilityNodeInfo info = AccessibilityNodeInfo.obtain();
+        row.onInitializeAccessibilityNodeInfo(info);
+        assertEquals(Button.class.getName(), String.valueOf(info.getClassName()));
+        assertTrue(info.isClickable());
+        assertNull(row.findViewWithTag("hushfeed_chevron"));
+        info.recycle();
+        return row;
+    }
+
+    /** The bound row for {@code key}, scrolled into view. */
+    private static View rowFor(HarnessFragment fragment, String key) {
         ListView list = fragment.getView().findViewById(android.R.id.list);
         for (int position = 0; position < list.getAdapter().getCount(); position++) {
             Object item = list.getAdapter().getItem(position);
@@ -449,15 +559,67 @@ public class PreferenceFailureRecoveryTest {
             settle(fragment.getActivity());
             View row = list.getChildAt(position - list.getFirstVisiblePosition());
             assertNotNull(row);
-            AccessibilityNodeInfo info = AccessibilityNodeInfo.obtain();
-            row.onInitializeAccessibilityNodeInfo(info);
-            assertEquals(Button.class.getName(), String.valueOf(info.getClassName()));
-            assertTrue(info.isClickable());
-            assertNull(row.findViewWithTag("hushfeed_chevron"));
-            info.recycle();
             return row;
         }
-        throw new AssertionError("No rendered action row for " + key);
+        throw new AssertionError("No rendered row for " + key);
+    }
+
+    /** Every shown text line in a row. */
+    private static List<TextView> textsIn(View view) {
+        List<TextView> found = new ArrayList<>();
+        if (view.getVisibility() != View.VISIBLE) return found;
+        if (view instanceof TextView && ((TextView) view).getText().length() > 0) {
+            found.add((TextView) view);
+        } else if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) view;
+            for (int i = 0; i < group.getChildCount(); i++) found.addAll(textsIn(group.getChildAt(i)));
+        }
+        return found;
+    }
+
+    /** Where {@code view} is drawn inside {@code root}. */
+    private static Rect boundsIn(View view, View root) {
+        int left = 0, top = 0;
+        for (View at = view; at != root; ) {
+            left += at.getLeft();
+            top += at.getTop();
+            View parent = (View) at.getParent();
+            left -= parent.getScrollX();
+            top -= parent.getScrollY();
+            at = parent;
+        }
+        return new Rect(left, top, left + view.getWidth(), top + view.getHeight());
+    }
+
+    /** The colour most of a region is drawn in: the ground a line of text sits on. */
+    private static int commonest(Bitmap drawn, Rect region) {
+        Map<Integer, Integer> counts = new HashMap<>();
+        int best = 0, bestCount = -1;
+        for (int x = Math.max(0, region.left); x < Math.min(drawn.getWidth(), region.right); x++) {
+            for (int y = Math.max(0, region.top); y < Math.min(drawn.getHeight(), region.bottom); y++) {
+                int pixel = drawn.getPixel(x, y);
+                int count = counts.merge(pixel, 1, Integer::sum);
+                if (count > bestCount) {
+                    best = pixel;
+                    bestCount = count;
+                }
+            }
+        }
+        return best;
+    }
+
+    private static int over(int top, int bottom) {
+        float a = Color.alpha(top) / 255f;
+        return Color.rgb(
+                Math.round(Color.red(top) * a + Color.red(bottom) * (1 - a)),
+                Math.round(Color.green(top) * a + Color.green(bottom) * (1 - a)),
+                Math.round(Color.blue(top) * a + Color.blue(bottom) * (1 - a)));
+    }
+
+    private static double contrast(int a, int b) {
+        double la = Color.luminance(a);
+        double lb = Color.luminance(b);
+        return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
     }
 
     private static HarnessFragment attach(Activity activity) {
@@ -475,14 +637,18 @@ public class PreferenceFailureRecoveryTest {
     }
 
     private static void settle(Activity activity) {
+        settle(activity, 480);
+    }
+
+    private static void settle(Activity activity, int width) {
         activity.getFragmentManager().executePendingTransactions();
         Shadows.shadowOf(Looper.getMainLooper()).idle();
         android.view.View decor = activity.getWindow().getDecorView();
-        decor.measure(android.view.View.MeasureSpec.makeMeasureSpec(480,
+        decor.measure(android.view.View.MeasureSpec.makeMeasureSpec(width,
                         android.view.View.MeasureSpec.EXACTLY),
                 android.view.View.MeasureSpec.makeMeasureSpec(960,
                         android.view.View.MeasureSpec.EXACTLY));
-        decor.layout(0, 0, 480, 960);
+        decor.layout(0, 0, width, 960);
         Shadows.shadowOf(Looper.getMainLooper()).idle();
     }
 }

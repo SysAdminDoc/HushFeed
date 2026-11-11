@@ -13,6 +13,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -531,9 +532,11 @@ public final class GridSort {
         Object shown = Reflect.readField(adapter, "mmItems");
         if (handed == null || played == null || !(shown instanceof List) || shown == played) return;
         List<?> onGrid = (List<?>) shown;
-        // A grid narrowed to a search plays its matches first, then the rest as they were.
+        // A grid narrowed to a search plays its matches first, then the rest in the grid's order.
+        List<?> original = originalOf(adapter);
         List<?> grid = onGrid.size() != played.size() && GridSearch.searching(adapter)
-                ? GridSearch.withRest(onGrid, played) : onGrid;
+                ? GridSearch.withRest(onGrid, sorted(original != null ? original : played, orderFor(adapter)))
+                : onGrid;
         if (sameOrder(played, grid)) return;
         List<Object> before = new ArrayList<>(played);
         if (!follow(played, grid)) {
@@ -1060,6 +1063,10 @@ public final class GridSort {
             chip.setTextSize(TypedValue.COMPLEX_UNIT_SP, SettingsUi.TEXT_CAPTION);
             chip.setMinWidth(SettingsUi.dp(context, 48));
             chip.setMinHeight(SettingsUi.dp(context, 48));
+            // A long order name in some languages shortens rather than run under the search chip.
+            chip.setMaxWidth(SettingsUi.dp(context, 104));
+            chip.setSingleLine(true);
+            chip.setEllipsize(TextUtils.TruncateAt.END);
             chip.setGravity(Gravity.CENTER);
             int paddingX = SettingsUi.dp(context, 10);
             int paddingY = SettingsUi.dp(context, 5);

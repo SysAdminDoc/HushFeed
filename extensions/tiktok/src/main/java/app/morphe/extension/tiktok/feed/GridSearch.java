@@ -15,6 +15,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
@@ -24,10 +25,10 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.regex.Pattern;
@@ -35,6 +36,7 @@ import java.util.regex.Pattern;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.settings.Setting;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
+import app.morphe.extension.tiktok.feedfilter.KeywordRules;
 import app.morphe.extension.tiktok.feedfilter.SoundIdentity;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
@@ -46,17 +48,27 @@ import app.morphe.extension.tiktok.settings.preference.SettingsUi;
  * any case. TikTok keeps the whole list, so its paging, the order chip and the video page go on
  * over every loaded video, and a cleared search puts the sorted grid back. While a search is on the
  * grid loads on by itself up to the sort's cap, so it looks through more than the first screen.
+ * TikTok's own footer can load past that while it's in sight, as it does at the end of any grid.
  */
 public final class GridSearch {
     static final String CHIP_TAG = "hushfeed_grid_search_chip";
-    private static final Pattern SPACES = Pattern.compile("\\s+");
+    /** Any run of spaces, the ideographic and no-break ones a CJK or phone keyboard types too. */
+    private static final Pattern SPACES = Pattern.compile("[\\s\\p{Z}]+");
 
     /** The search on each grid, by its adapter, trimmed and never blank. */
     private static final Map<Object, String> QUERIES = new WeakHashMap<>();
 
-    /** The open search box's count line and the grid it counts. Main thread only. */
-    private static TextView openCount;
-    private static Object openFor;
+    /**
+     * What each searched grid's loaded videos hold, by video, so a page that comes in only reads
+     * the videos it brought. Dropped with the search.
+     */
+    private static final Map<Object, Map<Object, String>> HAYSTACKS = new WeakHashMap<>();
+
+    /**
+     * The open search box's count line, tagged with the grid it counts. Held weakly, since a box
+     * still open when its activity goes never hears its dismiss. Main thread only.
+     */
+    private static WeakReference<TextView> openCount;
 
     private GridSearch() {
     }
@@ -83,11 +95,11 @@ public final class GridSearch {
         return queryOf(adapter) != null && enabled() && searchable(adapter);
     }
 
-    /** The words of a search, lowercased. */
+    /** The words of a search, lower cased the way the word lists are. */
     static List<String> words(String query) {
         List<String> out = new ArrayList<>();
         if (query == null) return out;
-        for (String word : SPACES.split(query.trim().toLowerCase(Locale.ROOT))) {
+        for (String word : SPACES.split(KeywordRules.fold(query))) {
             if (!word.isEmpty()) out.add(word);
         }
         return out;
@@ -107,7 +119,7 @@ public final class GridSearch {
             add(text, SoundIdentity.nameOf(music));
             add(text, SoundIdentity.authorOf(music));
         }
-        return text.toString().toLowerCase(Locale.ROOT);
+        return KeywordRules.fold(text.toString());
     }
 
     private static void add(StringBuilder text, String part) {
@@ -116,11 +128,27 @@ public final class GridSearch {
 
     /** The videos of {@code list} that hold every word of {@code query}, in the list's order. */
     static List<?> matching(List<?> list, String query) {
+        return matching(list, query, null);
+    }
+
+    /** The same, reading each video once per grid while its search stays on. */
+    private static List<?> matching(List<?> list, String query, Object adapter) {
         List<String> words = words(query);
         if (list == null || words.isEmpty()) return list;
+        Map<Object, String> known = null;
+        if (adapter != null) {
+            synchronized (QUERIES) {
+                known = HAYSTACKS.get(adapter);
+            }
+        }
+        // Rebuilt from this list, so a video TikTok let go isn't held on to.
+        Map<Object, String> texts = new IdentityHashMap<>(list.size());
         List<Object> out = new ArrayList<>();
         for (Object video : list) {
-            String text = haystack(video);
+            String text = texts.get(video);
+            if (text == null && known != null) text = known.get(video);
+            if (text == null) text = haystack(video);
+            texts.put(video, text);
             boolean all = true;
             for (String word : words) {
                 if (!text.contains(word)) {
@@ -130,12 +158,17 @@ public final class GridSearch {
             }
             if (all) out.add(video);
         }
+        if (adapter != null) {
+            synchronized (QUERIES) {
+                if (QUERIES.containsKey(adapter)) HAYSTACKS.put(adapter, texts);
+            }
+        }
         return out;
     }
 
     /** {@code list} as this adapter's grid draws it: narrowed to its search while one is on. */
     static List<?> narrowed(Object adapter, List<?> list) {
-        return searching(adapter) ? matching(list, queryOf(adapter)) : list;
+        return searching(adapter) ? matching(list, queryOf(adapter), adapter) : list;
     }
 
     /**
@@ -161,8 +194,12 @@ public final class GridSearch {
         synchronized (QUERIES) {
             String before = QUERIES.get(adapter);
             if (trimmed.equals(before == null ? "" : before)) return;
-            if (trimmed.isEmpty()) QUERIES.remove(adapter);
-            else QUERIES.put(adapter, trimmed);
+            if (trimmed.isEmpty()) {
+                QUERIES.remove(adapter);
+                HAYSTACKS.remove(adapter);
+            } else {
+                QUERIES.put(adapter, trimmed);
+            }
         }
         GridSort.searchChanged(adapter);
     }
@@ -170,6 +207,7 @@ public final class GridSearch {
     /** Takes the search off this adapter's grid, and says whether it had one. */
     private static boolean forget(Object adapter) {
         synchronized (QUERIES) {
+            HAYSTACKS.remove(adapter);
             return QUERIES.remove(adapter) != null;
         }
     }
@@ -215,10 +253,19 @@ public final class GridSearch {
             boolean off = !enabled();
             // A switch turned off or a pause gives the grid back its whole list.
             if (off && forget(adapter)) {
+                label(this, null);
                 Object narrowed = adapter;
                 post(() -> GridSort.reshow(narrowed));
             }
-            if (off || (current != null && current != adapter) || grid.getParent() != getParent()) {
+            boolean sameAdapter = current == null || current == adapter;
+            if (!off && sameAdapter && grid.isAttachedToWindow() && grid.getParent() != getParent()) {
+                // TikTok moved the grid to another frame, so the chip goes with it.
+                ViewParent parent = getParent();
+                if (parent instanceof ViewGroup) ((ViewGroup) parent).removeView(this);
+                showChip(adapter);
+                return;
+            }
+            if (off || !sameAdapter || grid.getParent() != getParent()) {
                 setVisibility(View.GONE);
                 return;
             }
@@ -250,8 +297,9 @@ public final class GridSearch {
             FrameLayout frame = (FrameLayout) grid.getParent();
             Chip chip = chipOn(grid);
             if (!enabled() || !searchable(adapter)) {
-                // TikTok's list just went on whole, so a search switched off goes without a reshow.
-                if (!enabled()) forget(adapter);
+                // TikTok's list went on whole, but a page counts its new cells from the narrowed
+                // grid, so the grid needs telling all over again.
+                if (!enabled() && forget(adapter)) GridSort.reshow(adapter);
                 if (chip != null) frame.removeView(chip);
                 return;
             }
@@ -288,7 +336,8 @@ public final class GridSearch {
             chip.setOnClickListener(view -> open(adapter, view));
             Chip placed = chip;
             chip.post(placed::place);
-            if (openFor == adapter && openCount != null) showCount(openCount, adapter);
+            TextView count = openCount == null ? null : openCount.get();
+            if (count != null && count.getTag() == adapter) showCount(count, adapter);
         } catch (Throwable ex) {
             Logger.printException(() -> "Could not show the grid search chip", ex);
         }
@@ -378,15 +427,12 @@ public final class GridSearch {
                 });
             });
             dialog.setOnDismissListener(ignored -> {
-                if (openCount == count) {
-                    openCount = null;
-                    openFor = null;
-                }
+                if (openCount != null && openCount.get() == count) openCount = null;
             });
             Window window = dialog.getWindow();
             if (window != null) window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-            openCount = count;
-            openFor = adapter;
+            count.setTag(adapter);
+            openCount = new WeakReference<>(count);
             dialog.show();
             showCount(count, adapter);
             box.requestFocus();
@@ -398,8 +444,8 @@ public final class GridSearch {
     static void resetForTests() {
         synchronized (QUERIES) {
             QUERIES.clear();
+            HAYSTACKS.clear();
         }
         openCount = null;
-        openFor = null;
     }
 }

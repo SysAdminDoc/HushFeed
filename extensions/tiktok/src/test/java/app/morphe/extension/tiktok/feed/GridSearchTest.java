@@ -16,6 +16,7 @@ import android.app.AlertDialog;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +40,7 @@ import app.morphe.extension.shared.settings.Setting;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
+import app.morphe.extension.tiktok.settings.preference.SettingsUi;
 import app.morphe.extension.tiktok.settings.preference.categories.InterfacePreferenceCategory;
 
 import org.junit.After;
@@ -111,6 +113,7 @@ public class GridSearchTest {
         final String desc;
         final Creator creator;
         final Sound sound;
+        int descReads;
 
         Liked(String id, long created, String desc, Creator creator, Sound sound) {
             this.id = id;
@@ -120,7 +123,10 @@ public class GridSearchTest {
             this.sound = sound;
         }
 
-        public String getDesc() { return desc; }
+        public String getDesc() {
+            descReads++;
+            return desc;
+        }
         public Creator getAuthor() { return creator; }
         public Sound getMusic() { return sound; }
         public Object getVideo() { return new GridSortTest.Clip(1_000); }
@@ -210,6 +216,20 @@ public class GridSearchTest {
         assertEquals("", ids(GridSearch.matching(all, "dog")));
         assertSame("a blank search leaves the list alone", all, GridSearch.matching(all, " \t "));
         assertSame(all, GridSearch.matching(all, null));
+    }
+
+    @Test public void aSearchFoldsCaseLikeTheWordListsAndSplitsOnAnySpace() {
+        String dottedCapitalI = String.valueOf((char) 0x130);
+        List<Aweme> trip = new ArrayList<>(Arrays.asList(
+                new Liked("t", 1, dottedCapitalI + "stanbul gezisi", null, null),
+                new Liked("u", 2, "istanbul trip", null, null)));
+        assertEquals("a Turkish capital dotted I", "tu", ids(GridSearch.matching(trip, "istanbul")));
+        assertEquals("tu", ids(GridSearch.matching(trip, dottedCapitalI + "STANBUL")));
+
+        List<Aweme> all = library();
+        assertEquals("an ideographic space", "d", ids(GridSearch.matching(all, "cat" + (char) 0x3000 + "box")));
+        assertEquals("a no-break space", "d", ids(GridSearch.matching(all, "box" + (char) 0xA0 + "cat")));
+        assertSame("spaces alone are still blank", all, GridSearch.matching(all, (char) 0x3000 + " "));
     }
 
     @Test public void aNarrowedGridPlaysItsMatchesFirstThenTheRest() {
@@ -331,6 +351,144 @@ public class GridSearchTest {
         }
     }
 
+    @Test public void theRestOfANarrowedSortedGridPlaysInTheGridsOrder() {
+        Settings.GRID_SEARCH.save(true);
+        Settings.LIKED_GRID_SORT.save("newest");
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            GridSortTest.GridAdapter adapter = gridOnScreen(controller.get(), GridSort.TAB_LIKED);
+            List<Aweme> model = library();
+            adapter.mmItems = GridSort.data(adapter, model);
+            idle(0);
+            GridSearch.search(adapter, "cat");
+            assertEquals("dcba", ids(adapter.mmItems));
+
+            GridSort.playInGridOrder(adapter, model);
+            assertEquals("newest first after the matches too", "dcbafe", ids(model));
+        }
+    }
+
+    @Test public void aPageWhileSearchingReadsOnlyTheVideosItBrought() {
+        Settings.GRID_SEARCH.save(true);
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            GridSortTest.GridAdapter adapter = gridOnScreen(controller.get(), GridSort.TAB_LIKED);
+            List<Aweme> model = library();
+            adapter.mmItems = GridSort.data(adapter, model);
+            idle(0);
+            GridSearch.search(adapter, "cat");
+            Liked first = (Liked) model.get(0);
+            int reads = first.descReads;
+            assertTrue(reads > 0);
+
+            Liked added = new Liked("g", 700, "cat nap", new Creator("Ivy", "ivy"), new Sound("hum", "Ivy"));
+            model.add(added);
+            adapter.mmItems = GridSort.page(adapter, model);
+            idle(0);
+            assertEquals("abcdg", ids(adapter.mmItems));
+            assertEquals("a loaded video isn't read again", reads, first.descReads);
+            assertEquals(1, added.descReads);
+
+            GridSearch.search(adapter, "cat nap");
+            assertEquals("g", ids(adapter.mmItems));
+            assertEquals("nor for new words", reads, first.descReads);
+
+            GridSearch.search(adapter, "");
+            GridSearch.search(adapter, "cat");
+            assertEquals("a search taken off lets them go", reads + 1, first.descReads);
+        }
+    }
+
+    @Test public void aPageAfterTheSwitchGoesOffRedrawsTheWholeGrid() {
+        Settings.GRID_SEARCH.save(true);
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            GridSortTest.GridAdapter adapter = gridOnScreen(controller.get(), GridSort.TAB_LIKED);
+            List<Aweme> model = library();
+            adapter.mmItems = GridSort.data(adapter, model);
+            idle(0);
+            GridSearch.search(adapter, "cat");
+            assertEquals("abcd", ids(adapter.mmItems));
+
+            Settings.GRID_SEARCH.save(false);
+            model.add(new Liked("g", 700, "bread", new Creator("Ivy", "ivy"), new Sound("hum", "Ivy")));
+            adapter.mmItems = GridSort.page(adapter, model);
+            int refreshes = adapter.refreshes;
+            idle(0);
+            assertFalse(GridSearch.searching(adapter));
+            assertEquals("abcdefg", ids(adapter.mmItems));
+            // TikTok counted the page's cells from the narrowed grid, so the grid is told again.
+            assertTrue(adapter.refreshes > refreshes);
+        }
+    }
+
+    @Test public void theChipFollowsTheGridWhenTikTokMovesIt() {
+        Settings.GRID_SEARCH.save(true);
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            Activity activity = controller.get();
+            GridSortTest.GridAdapter adapter = gridOnScreen(activity, GridSort.TAB_LIKED);
+            adapter.mmItems = GridSort.data(adapter, library());
+            idle(0);
+            GridSearch.search(adapter, "cat");
+            TextView before = chip(adapter);
+            assertNotNull(before);
+
+            FrameLayout first = (FrameLayout) adapter.mmRecyclerView.getParent();
+            FrameLayout second = new FrameLayout(activity);
+            first.removeView(adapter.mmRecyclerView);
+            second.addView(adapter.mmRecyclerView, new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            first.addView(second, new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            before.getViewTreeObserver().dispatchOnGlobalLayout();
+            idle(0);
+
+            TextView after = chip(adapter);
+            assertNotNull("the chip came along", after);
+            assertSame(second, after.getParent());
+            assertNull("and left the old frame", before.getParent());
+            assertEquals("cat", String.valueOf(after.getText()));
+            assertEquals(View.VISIBLE, after.getVisibility());
+        }
+    }
+
+    @Test public void theOpenBoxCountsAPageThatComesIn() {
+        Settings.GRID_SEARCH.save(true);
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            GridSortTest.GridAdapter adapter = gridOnScreen(controller.get(), GridSort.TAB_LIKED);
+            List<Aweme> model = library();
+            adapter.mmItems = GridSort.data(adapter, model);
+            idle(0);
+            assertTrue(chip(adapter).performClick());
+            idle(0);
+            AlertDialog dialog = (AlertDialog) ShadowDialog.getLatestDialog();
+            EditText box = find(dialog.getWindow().getDecorView(), EditText.class);
+            TextView count = (TextView) ((ViewGroup) box.getParent()).getChildAt(1);
+            box.setText("cat");
+            assertEquals("4 of 6", String.valueOf(count.getText()));
+
+            model.add(new Liked("g", 700, "cat nap", new Creator("Ivy", "ivy"), new Sound("hum", "Ivy")));
+            adapter.mmItems = GridSort.page(adapter, model);
+            idle(0);
+            assertEquals("5 of 7", String.valueOf(count.getText()));
+        }
+    }
+
+    @Test public void theOrderChipShortensALongNameBesideTheSearchChip() {
+        Settings.GRID_SEARCH.save(true);
+        Settings.LIKED_GRID_SORT.save("newest");
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            Activity activity = controller.get();
+            GridSortTest.GridAdapter adapter = gridOnScreen(activity, GridSort.TAB_LIKED);
+            adapter.mmItems = GridSort.data(adapter, library());
+            idle(0);
+            FrameLayout frame = (FrameLayout) adapter.mmRecyclerView.getParent();
+            TextView order = frame.findViewWithTag(GridSort.CHIP_TAG);
+            assertNotNull(order);
+            assertNotNull(chip(adapter));
+            assertEquals(SettingsUi.dp(activity, 104), order.getMaxWidth());
+            assertEquals(1, order.getMaxLines());
+            assertEquals(TextUtils.TruncateAt.END, order.getEllipsize());
+        }
+    }
+
     @Test public void theChipSitsTopMiddleOnLikedAndFavoritesOnlyWhileTheSwitchIsOn() {
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
             GridSortTest.GridAdapter liked = gridOnScreen(controller.get(), GridSort.TAB_LIKED);
@@ -413,7 +571,9 @@ public class GridSearchTest {
             idle(0);
             TextView control = chip(adapter);
             GridSearch.search(adapter, "cat");
+            GridSearch.showChip(adapter);
             assertEquals("abcd", ids(adapter.mmItems));
+            assertEquals("cat", String.valueOf(control.getText()));
 
             Settings.GRID_SEARCH.save(false);
             control.getViewTreeObserver().dispatchOnGlobalLayout();
@@ -422,6 +582,9 @@ public class GridSearchTest {
             assertEquals(View.GONE, control.getVisibility());
             Settings.GRID_SEARCH.save(true);
             assertFalse("the old search doesn't come back with the switch", GridSearch.searching(adapter));
+            control.getViewTreeObserver().dispatchOnGlobalLayout();
+            assertEquals(View.VISIBLE, control.getVisibility());
+            assertEquals("nor does its label", "Search", String.valueOf(control.getText()));
 
             adapter.mmItems = GridSort.data(adapter, library());
             idle(0);

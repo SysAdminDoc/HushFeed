@@ -19,8 +19,11 @@ public class ExportDiagnosticReportPreference extends Preference {
         setOnPreferenceClickListener(pref -> {
             // Reading the APK for other bundles' code takes a moment, and a quick copy is made on
             // the main thread, which never waits for it. Starting here gives it the time the
-            // reader spends choosing.
-            app.morphe.extension.shared.diagnostics.OtherBundles.prefetch();
+            // reader spends choosing. A report that leaves the section out never reads it.
+            if (LogBufferManager.includes(
+                    app.morphe.extension.shared.diagnostics.DiagnosticCategory.PATCH_ERRORS)) {
+                app.morphe.extension.shared.diagnostics.OtherBundles.prefetch();
+            }
             AlertDialog shownDialog = new AlertDialog.Builder(getContext())
                     .setTitle(dialogTitle())
                     .setItems(

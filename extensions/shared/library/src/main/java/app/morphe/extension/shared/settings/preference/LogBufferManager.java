@@ -336,6 +336,12 @@ public final class LogBufferManager {
         REPORT_SECTIONS.clear();
     }
 
+    /** Whether the reader's choice in "Included diagnostics" puts this category in a report. */
+    static boolean includes(app.morphe.extension.shared.diagnostics.DiagnosticCategory category) {
+        Set<String> selected = LogExportFilterPreference.parse(BaseSettings.DEBUG_LOG_FILTERS.get());
+        return selected.isEmpty() || selected.contains("all") || selected.contains(category.value);
+    }
+
     public static String buildExportText() {
         Set<String> selected = LogExportFilterPreference.parse(BaseSettings.DEBUG_LOG_FILTERS.get());
         boolean includeAll = selected.isEmpty() || selected.contains("all");
@@ -437,19 +443,21 @@ public final class LogBufferManager {
         if (!lastExits.isEmpty()) {
             report.append("\n[LAST EXITS]\n").append(lastExits).append('\n');
         }
-        // The same filter and the same reason to stay out of worthReporting: "none" is the
-        // answer on almost every phone, and it is still the answer a reader needs.
+        if (events.length() > 0) {
+            report.append("\n\n[SELECTED EVENTS]\n")
+                    .append("category | timestamp | thread | source | level | message\n")
+                    .append(events);
+        }
+        // The same filter as the hook table, and out of worthReporting for the same reason as the
+        // last exits: "none" is the answer on almost every phone, and it is still the answer a
+        // reader needs. After the events, because the quick copy keeps the end of a long report
+        // and a long event list would otherwise push this section off the front of it.
         if (includeAll || selected.contains(
                 app.morphe.extension.shared.diagnostics.DiagnosticCategory.PATCH_ERRORS.value)) {
             report.append("\n[").append(OtherBundles.TITLE).append("]\n");
             for (String line : OtherBundles.lines(crash)) {
                 report.append(DiagnosticRedactor.redact(line)).append('\n');
             }
-        }
-        if (events.length() > 0) {
-            report.append("\n\n[SELECTED EVENTS]\n")
-                    .append("category | timestamp | thread | source | level | message\n")
-                    .append(events);
         }
         // Immutable facts ride along only after the existing no-matching decision.
         report.append("\n[BUILD DETAILS]\n").append(BuildDetails.section(Utils.getBuildMetadata()));

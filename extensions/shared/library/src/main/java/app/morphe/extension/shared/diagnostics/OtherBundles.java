@@ -184,9 +184,7 @@ public final class OtherBundles {
                 for (Enumeration<? extends ZipEntry> entries = zip.entries(); entries.hasMoreElements(); ) {
                     ZipEntry entry = entries.nextElement();
                     if (!isDexEntry(entry.getName())) continue;
-                    try (InputStream input = zip.getInputStream(entry)) {
-                        scanDex(input, classes);
-                    }
+                    scanDex(() -> zip.getInputStream(entry), classes);
                 }
             }
         }
@@ -208,31 +206,53 @@ public final class OtherBundles {
         return true;
     }
 
-    /** Adds this dex file's foreign class descriptors to {@code classes}. */
-    static void scanDex(InputStream raw, Set<String> classes) throws IOException {
-        Reader in = new Reader(raw);
-        byte[] header = in.read(0x70);
-        if (header[0] != 'd' || header[1] != 'e' || header[2] != 'x' || header[3] != '\n') {
-            throw new IOException("not a dex file");
-        }
-        int count = le(header, 0x38);
-        int idsOffset = le(header, 0x3C);
-        if (count == 0) return;
-        if (count < 0 || count > STRINGS_MAX || idsOffset < 0x70) throw new IOException("bad string table");
-        in.skipTo(idsOffset);
-        int[] offsets = new int[count];
-        byte[] chunk = new byte[4096];
-        for (int i = 0; i < count; ) {
-            int take = Math.min(chunk.length / 4, count - i);
-            in.readFully(chunk, take * 4);
-            for (int j = 0; j < take; j++) offsets[i++] = le(chunk, j * 4);
-        }
-        // The ids are sorted by content and the data is laid out in id order, which is what lets
-        // the read stop once it is past "Lapp/". Data in any other order is read whole.
-        boolean inIdOrder = true;
-        for (int i = 1; i < count && inIdOrder; i++) inIdOrder = offsets[i] > offsets[i - 1];
-        if (!inIdOrder) Arrays.sort(offsets);
+    /** A dex file's bytes from the start, each time it's opened. */
+    interface DexSource {
+        InputStream open() throws IOException;
+    }
 
+    /** Adds this dex file's foreign class descriptors to {@code classes}. */
+    static void scanDex(DexSource dex, Set<String> classes) throws IOException {
+        int[] offsets;
+        boolean inIdOrder;
+        try (InputStream raw = dex.open()) {
+            Reader in = new Reader(raw);
+            byte[] header = in.read(0x70);
+            if (header[0] != 'd' || header[1] != 'e' || header[2] != 'x' || header[3] != '\n') {
+                throw new IOException("not a dex file");
+            }
+            int count = le(header, 0x38);
+            int idsOffset = le(header, 0x3C);
+            if (count == 0) return;
+            if (count < 0 || count > STRINGS_MAX || idsOffset < 0x70) throw new IOException("bad string table");
+            in.skipTo(idsOffset);
+            offsets = new int[count];
+            byte[] chunk = new byte[4096];
+            for (int i = 0; i < count; ) {
+                int take = Math.min(chunk.length / 4, count - i);
+                in.readFully(chunk, take * 4);
+                for (int j = 0; j < take; j++) offsets[i++] = le(chunk, j * 4);
+            }
+            // The ids are sorted by content and the data is laid out in id order, which is what
+            // lets the read stop once it is past "Lapp/". Data in any other order is read whole.
+            inIdOrder = true;
+            for (int i = 1; i < count && inIdOrder; i++) inIdOrder = offsets[i] > offsets[i - 1];
+            if (!inIdOrder) Arrays.sort(offsets);
+            // d8 and dx put the string data after the ids, so it is read on in the same pass.
+            if (offsets[0] >= in.position) {
+                readNames(in, offsets, inIdOrder, classes);
+                return;
+            }
+        }
+        // A valid dex file can put string data before the ids table, which a forward-only read
+        // has already passed, so it is read again from the start.
+        try (InputStream raw = dex.open()) {
+            readNames(new Reader(raw), offsets, inIdOrder, classes);
+        }
+    }
+
+    private static void readNames(Reader in, int[] offsets, boolean inIdOrder, Set<String> classes)
+            throws IOException {
         byte[] name = new byte[NAME_MAX_BYTES];
         for (int offset : offsets) {
             if (offset < in.position) continue;
@@ -389,6 +409,10 @@ public final class OtherBundles {
     /** Runs the scan now, as a report saved to a file would. */
     static void scanForTests() {
         scanNow();
+    }
+
+    static boolean startedForTests() {
+        return SCAN_STARTED.get();
     }
 
     private static int le(byte[] bytes, int at) {

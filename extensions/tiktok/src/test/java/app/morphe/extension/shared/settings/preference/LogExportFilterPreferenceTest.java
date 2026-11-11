@@ -6,10 +6,16 @@ import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import app.morphe.extension.shared.Utils;
+import app.morphe.extension.shared.diagnostics.DiagnosticCategory;
 import app.morphe.extension.shared.settings.BaseSettings;
+
+import java.util.Collections;
 import app.morphe.extension.tiktok.SettingsContextRule;
 
 import org.junit.Rule;
@@ -51,6 +57,45 @@ public class LogExportFilterPreferenceTest {
             // The dialog hands the click to its listener through the main looper.
             org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
             assertEquals("feed", BaseSettings.DEBUG_LOG_FILTERS.get());
+        } finally {
+            BaseSettings.DEBUG_LOG_FILTERS.save("all");
+        }
+    }
+
+    @Test
+    public void aSavedKindThisRowDoesNotOfferReadsAsEveryEvent() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            BaseSettings.DEBUG_LOG_FILTERS.save("crash");
+            LogExportFilterPreference row = new LogExportFilterPreference(activity);
+
+            assertEquals("Includes all Morphe diagnostic events.", row.getSummary().toString());
+            assertTrue("events still go in the report",
+                    LogBufferManager.includes(DiagnosticCategory.FEED_AND_NAVIGATION));
+            assertEquals(Collections.singleton("follow"), LogExportFilterPreference.parse("crash, follow"));
+        } finally {
+            BaseSettings.DEBUG_LOG_FILTERS.save("all");
+        }
+    }
+
+    @Test
+    public void theRowReadsTheChoiceAgainWhenItIsDrawn() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            Activity activity = controller.get();
+            activity.setTheme(android.R.style.Theme_Material_Light);
+            Utils.setContext(activity);
+            BaseSettings.DEBUG_LOG_FILTERS.save("all");
+            LogExportFilterPreference row = new LogExportFilterPreference(activity);
+            assertEquals("Includes all Morphe diagnostic events.", row.getSummary().toString());
+
+            // A restore, a reset or an undo saves the choice without going through the row.
+            BaseSettings.DEBUG_LOG_FILTERS.save("downloads,errors");
+            View drawn = row.getView(null, new FrameLayout(activity));
+
+            assertEquals("Includes these events: Downloads, Errors", row.getSummary().toString());
+            TextView summary = drawn.findViewById(android.R.id.summary);
+            assertEquals("Includes these events: Downloads, Errors", summary.getText().toString());
         } finally {
             BaseSettings.DEBUG_LOG_FILTERS.save("all");
         }

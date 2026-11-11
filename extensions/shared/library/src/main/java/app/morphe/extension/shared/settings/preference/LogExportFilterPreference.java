@@ -166,6 +166,13 @@ public class LogExportFilterPreference extends Preference {
     protected void onDialogShown(AlertDialog dialog) {
     }
 
+    /** A restore, a reset or an undo changes the choice behind the row, so it reads it again here. */
+    @Override
+    protected void onBindView(android.view.View view) {
+        updateSummary();
+        super.onBindView(view);
+    }
+
     private boolean[] checkedValues() {
         Set<String> selected = parse(BaseSettings.DEBUG_LOG_FILTERS.savedValue());
         boolean[] checked = new boolean[VALUES.length];
@@ -216,13 +223,20 @@ public class LogExportFilterPreference extends Preference {
         setSummary(includesSummary(builder.toString()));
     }
 
+    /**
+     * The kinds a saved choice names, leaving out any this row doesn't offer. A value from an
+     * older build or an edited backup that names none of them reads as every event, rather than
+     * a report with no events and a row that lists nothing.
+     */
     public static Set<String> parse(String value) {
         Set<String> selected = new LinkedHashSet<>();
         if (value == null || value.trim().isEmpty()) return selected;
 
         for (String token : value.split(",")) {
             String trimmed = token.trim();
-            if (!trimmed.isEmpty()) selected.add(trimmed);
+            for (String known : VALUES) {
+                if (known.equals(trimmed)) selected.add(trimmed);
+            }
         }
 
         return selected;

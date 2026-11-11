@@ -113,7 +113,7 @@ public class ScreenLayoutTest {
         idle(ScreenLayout.DELAY_MS);
 
         // Even with the reader's event filter set to one category, the layout is included.
-        BaseSettings.DEBUG_LOG_FILTERS.save("playback");
+        BaseSettings.DEBUG_LOG_FILTERS.save("downloads");
         String report = LogBufferManager.buildExportText();
         assertTrue(report, report.contains("\n[SCREEN LAYOUT]\nactivity: " + TargetActivity.class.getName()));
         List<String> lines = ScreenLayout.lines();

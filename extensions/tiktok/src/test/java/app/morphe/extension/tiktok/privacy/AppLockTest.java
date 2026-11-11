@@ -176,6 +176,61 @@ public class AppLockTest {
         }
     }
 
+    @Test public void tabAndAReaderGoToUnlockAndNothingUnderTheCover() {
+        try (ActivityController<Screen> screen = Robolectric.buildActivity(Screen.class).create()) {
+            Activity activity = screen.get();
+            ViewGroup content = activity.findViewById(android.R.id.content);
+            android.widget.Button like = new android.widget.Button(activity);
+            like.setFocusableInTouchMode(true);
+            ((ViewGroup) content.getChildAt(0)).addView(like);
+            screen.start().resume().visible();
+            View cover = coverOf(activity);
+            assertNotNull(cover);
+            View unlock = ((ViewGroup) ((ViewGroup) cover).getChildAt(0)).getChildAt(1);
+
+            ArrayList<View> stops = new ArrayList<>();
+            activity.getWindow().getDecorView().addFocusables(stops, View.FOCUS_FORWARD, View.FOCUSABLES_ALL);
+            assertEquals("Tab goes somewhere other than Unlock under the lock", List.of(unlock), stops);
+            assertFalse("the screen under the lock can still take focus", like.requestFocus());
+
+            android.view.accessibility.AccessibilityNodeInfo info = cover.createAccessibilityNodeInfo();
+            assertFalse("a reader is told the cover itself can be pressed", info.isClickable());
+            assertFalse("a reader is offered a click on the cover itself", info.getActionList().contains(
+                    android.view.accessibility.AccessibilityNodeInfo.AccessibilityAction.ACTION_CLICK));
+            assertTrue("the cover stopped swallowing touches", cover.isClickable());
+
+            AppLock.succeeded();
+            assertTrue("the screen can't take focus after the unlock", like.requestFocus());
+        }
+    }
+
+    @Test public void aViewTikTokPutsOnTheScreenWhileLockedStaysUnderTheCover() {
+        try (ActivityController<Screen> screen = Robolectric.buildActivity(Screen.class).setup()) {
+            Activity activity = screen.get();
+            ViewGroup decor = (ViewGroup) activity.getWindow().getDecorView();
+            View cover = coverOf(activity);
+            assertNotNull(cover);
+            View unlock = ((ViewGroup) ((ViewGroup) cover).getChildAt(0)).getChildAt(1);
+
+            // Straight onto the decor, after the cover went up, as a floating view would be.
+            android.widget.Button late = new android.widget.Button(activity);
+            late.setFocusableInTouchMode(true);
+            decor.addView(late);
+            decor.getViewTreeObserver().dispatchOnGlobalLayout();
+
+            assertEquals("the cover is no longer over everything on the screen",
+                    decor.getChildCount() - 1, decor.indexOfChild(cover));
+            ArrayList<View> stops = new ArrayList<>();
+            decor.addFocusables(stops, View.FOCUS_FORWARD, View.FOCUSABLES_ALL);
+            assertEquals("Tab reaches what TikTok added under the lock", List.of(unlock), stops);
+            assertFalse("a reader reaches what TikTok added under the lock", late.isImportantForAccessibility());
+
+            AppLock.succeeded();
+            assertTrue("what TikTok added can't take focus after the unlock", late.requestFocus());
+            assertTrue("a reader can't reach what TikTok added after the unlock", late.isImportantForAccessibility());
+        }
+    }
+
     @Test public void theSystemTakingThePromptDownAsksAgainButNotForever() {
         try (ActivityController<Screen> screen = Robolectric.buildActivity(Screen.class).setup()) {
             Activity activity = screen.get();

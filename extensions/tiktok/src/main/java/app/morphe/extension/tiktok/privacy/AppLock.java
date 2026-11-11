@@ -25,8 +25,10 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -482,13 +484,22 @@ public final class AppLock {
         COVERED.add(activity);
         if (coverIn(decor) != null) return true;
 
-        FrameLayout cover = new FrameLayout(activity);
+        FrameLayout cover = new Cover(activity);
         cover.setTag(COVER_TAG);
         // Opaque: the scrim the daily hold uses lets a little of the feed through.
         cover.setBackgroundColor(Color.BLACK);
         // Swallows every touch, so nothing under it can be pressed.
         cover.setClickable(true);
-        cover.setFocusable(true);
+        // Not a stop of its own for Tab or a screen reader, since pressing it does nothing. Unlock
+        // is the stop. Set outright, since a clickable view counts as focusable from API 26.
+        cover.setFocusable(false);
+        cover.setAccessibilityDelegate(new View.AccessibilityDelegate() {
+            @Override public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfo info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                info.setClickable(false);
+                info.removeAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_CLICK);
+            }
+        });
         // Above anything TikTok raised on the decor, with no shadow to draw for it.
         cover.setOutlineProvider(null);
         cover.setTranslationZ(SettingsUi.dp(activity, 1000));
@@ -538,6 +549,37 @@ public final class AppLock {
         // A screen reader can't reach what is under it either.
         SessionLockOverlay.hideBehind(decor, cover, true);
         return true;
+    }
+
+    /**
+     * The cover, checking on every layout pass while it's on the screen that it is still over
+     * everything there. A view TikTok puts straight on the decor after the cover went up lands
+     * above it, where Tab and a screen reader would find it.
+     */
+    private static final class Cover extends FrameLayout implements ViewTreeObserver.OnGlobalLayoutListener {
+        Cover(Context context) {
+            super(context);
+        }
+
+        @Override protected void onAttachedToWindow() {
+            super.onAttachedToWindow();
+            getViewTreeObserver().addOnGlobalLayoutListener(this);
+        }
+
+        @Override protected void onDetachedFromWindow() {
+            getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            super.onDetachedFromWindow();
+        }
+
+        @Override public void onGlobalLayout() {
+            guard(() -> {
+                if (!(getParent() instanceof ViewGroup)) return;
+                ViewGroup decor = (ViewGroup) getParent();
+                // Reordered without a detach, so Unlock keeps its focus.
+                if (decor.indexOfChild(this) != decor.getChildCount() - 1) decor.bringChildToFront(this);
+                SessionLockOverlay.hideBehind(decor, this, true);
+            });
+        }
     }
 
     private static void uncover(Activity activity) {

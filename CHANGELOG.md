@@ -106,6 +106,7 @@ Every Hushfeed release, newest first.
 * TalkBack doesn't stop on the screen that holds the feed as a whole anymore. It used to read everything on it a second time and offer to activate it, which did nothing. The title, the countdown and both buttons are still read one by one.
 * Tab on a keyboard or d-pad can't wander into the feed behind the daily hold anymore. It used to move from the hold into the video and the like and comment buttons underneath. Now it goes between the hold's buttons and the tabs along the bottom, which TalkBack can reach again too.
 * With the feed lock on, coming back to TikTok no longer puts the "Tap to start the feed" layer on top of the lock screen. It took the first tap there, which could start a video behind the lock.
+* With App lock up, Tab goes straight to Unlock. It used to stop on the black screen first, and TalkBack offered to press that screen, which did nothing. Anything TikTok opens while it's locked stays behind the lock screen too.
 
 ## 0.81.0 (2026-11-05)
 

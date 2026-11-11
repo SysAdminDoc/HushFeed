@@ -456,6 +456,80 @@ public class DiagnosticRedactorTest {
         assertEquals("nickname: [omitted] ", DiagnosticRedactor.redact("nickname: " + "x token=\"a ".repeat(5_000)));
         String frames = "{\"m\":\"nickname:\\nat " + "a.".repeat(31_000) + "\"}";
         assertTrue(DiagnosticRedactor.redact(frames).startsWith("{\"m\":\"nickname:\\n[omitted]"));
+        assertEquals("[" + "\"nickname: [omitted]\",".repeat(2_500) + "]",
+                DiagnosticRedactor.redact("[" + "\"nickname: Dana\",".repeat(2_500) + "]"));
+    }
+
+    /** The inputs nine review rounds of the old pattern chain left over, each with a name, number or account in it. */
+    @Test public void everyLeftoverLeakFromTheReviewRoundsGoes() {
+        String chinese = "" + (char) 0x67E5 + (char) 0x8BE2;
+        String[] inputs = {
+                "{\"msg\":\"update profile nickname: Dana Quinn signature=\\\"Mom of 2\\nDallas TX\\\" ok\"}",
+                "{\"m\":\"phone: lookup nickname=\\\"Dana\\nQuinn\\\" failed\"}",
+                "{\"m\":\"nickname:\\nat a.b(C.java:3)Dana\"}",
+                "aid=7234,author.nickname=Dana Quinn",
+                "user[nickname]=Dana Quinn",
+                "{\"m\":\"aweme_id: 7234\\nnickname: Dana Quinn\"}",
+                "token=abc123\\nnickname: Dana Quinn",
+                "{\"m\":\"bind phone: session=\\\"abc123secret\\\"\"}",
+                "bind phone: session=\\\"abc123secret\\\"",
+                "{\"m\":\"nickname: unique_id=\\\"danaq77\\\"\"}",
+                "nickname: unique_id=\"danaq77\"",
+                chinese + "username=danaq77",
+                "{\"m\":\"phone: " + chinese + "username=\\\"danaq77\\\" failed\"}",
+                "{\"m\":\"phone:\\nat 202.555.0123(ext:204)\"}",
+                "{\"m\":\"phone:\\n\\\"2025550123\\\"\"}",
+                "{\"m\":\"nickname:\\n\\\"Dana Quinn\\\"\"}",
+                "{\"m\":\"phone:\\nlookup username:\\ndanaq77\"}",
+                "{\"body\":\"{\\\"msg\\\":\\\"x\\\\nnickname: Dana Quinn\\\"}\"}",
+                "{\"m\":\"nickname:\\nCaused by: Dana Quinn\"}",
+                "login password=\"hunter2 and more",
+                "author=Dana Quinn",
+                "nickname2=Dana Quinn; _nickname: Dana Quinn",
+                "author_nickname=Dana Quinn, owner.unique_id=danaq77",
+                "nickname: Dana, Mom: the best",
+                "nickname: Dana, Queen :) of Cats",
+                "User(nickname=Dana:) Quinn, age=3)",
+                "{\"m\":\"bio=\\\"rock 'n roll\\\" nickname: Dana 'DQ' Quinn\"}",
+                "tv 6\" nickname: Dana \"DQ\" Quinn",
+                "{\"m\":\"nickname: Dana token=\\\"abc\\nprofile nickname=\\\"Dana\\nQuinn\\\" ok\"}"};
+        StringBuilder kept = new StringBuilder();
+        for (String input : inputs) {
+            String text = DiagnosticRedactor.redact(input);
+            for (String leaked : new String[]{"Dana", "Quinn", "danaq77", "2025550123", "202.555", "hunter2",
+                    "abc123", "7234", "Mom of", "Dallas", "the best", "Cats", "DQ"}) {
+                if (text.contains(leaked)) kept.append('\n').append(input).append(" kept ").append(leaked).append(": ").append(text);
+            }
+        }
+        assertEquals("", kept.toString());
+        assertEquals("{\"body\":\"{\\\"nickname\\\":\\\"[omitted]\\\"}\"}",
+                DiagnosticRedactor.redact("{\"body\":\"{\\\"nickname\\\":\\\"Dana Quinn\\\"}\"}"));
+        assertEquals("{\"log\":\"nickname: [omitted]\\nI/Feed: loaded 20 items\\n...tapped \\\"Following\\\" tab\"}",
+                DiagnosticRedactor.redact("{\"log\":\"nickname: Dana token=\\\"abc\\nI/Feed: loaded 20 items"
+                        + "\\n...tapped \\\"Following\\\" tab\"}"));
+    }
+
+    /** And the ones where the rounds hid text that names nobody. */
+    @Test public void leftoverTextThatNamesNobodyStays() {
+        StringBuilder changed = new StringBuilder();
+        for (String line : new String[]{
+                "{\"m\":\"nickname:\\nat app.Feed.load(Foo.scala)\"}",
+                "{\"m\":\"nickname:\\nat app.Feed.lambda$load$0(lambda)\"}",
+                "C:\\temp\\taid=7",
+                "+1100 1899-12-31 x",
+                "11-11 10:23:11.123456789 +1100  1234  5678 I Feed: loaded 20 items",
+                "{\"m\":\"Invalid email:\\nPlease try again\"}",
+                "version 1.2.3.4.",
+                "updated to 4.12.0.1. Restarting",
+                "loaded lib-@1.2.3_rc"}) {
+            String text = DiagnosticRedactor.redact(line);
+            if (!text.equals(line)) changed.append('\n').append(line).append(" became ").append(text);
+        }
+        assertEquals("", changed.toString());
+        assertEquals("{\"m\":\"token=\\\"[omitted]\\\"\",\"n\":\"keep\"}",
+                DiagnosticRedactor.redact("{\"m\":\"token=\\\"C:\\\\Temp\\\\\",\"n\":\"keep\"}"));
+        assertEquals("saved to cache/[[address omitted]]", DiagnosticRedactor.redact("saved to cache/[2001:db8::1]"));
+        assertEquals("via --[host omitted]/[address omitted]", DiagnosticRedactor.redact("via --router/10.0.0.1"));
     }
 
     /** A version or a hash after a dash, a C++ name and a density file name are not accounts. */

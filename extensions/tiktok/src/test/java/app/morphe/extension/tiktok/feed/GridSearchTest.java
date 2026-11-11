@@ -372,6 +372,28 @@ public class GridSearchTest {
         }
     }
 
+    @Test public void aChangedListAsLongAsTheMatchesStillPlaysThemFirst() {
+        Settings.GRID_SEARCH.save(true);
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            GridSortTest.GridAdapter adapter = gridOnScreen(controller.get(), GridSort.TAB_LIKED);
+            List<Aweme> model = library();
+            adapter.mmItems = GridSort.data(adapter, model);
+            idle(0);
+            GridSearch.search(adapter, "cat");
+            assertEquals("abcd", ids(adapter.mmItems));
+
+            // TikTok drops a match and both videos that didn't match, and gains one, so its list
+            // holds as many videos as the grid shows without holding the same ones.
+            model.remove(5);
+            model.remove(4);
+            model.remove(1);
+            model.add(0, new Liked("g", 700, "bread", new Creator("Ivy", "ivy"), new Sound("hum", "Ivy")));
+            assertEquals("gacd", ids(model));
+            GridSort.playInGridOrder(adapter, model);
+            assertEquals("acdg", ids(model));
+        }
+    }
+
     @Test public void aPageWhileSearchingGoesToTikTokWholeThenNarrows() {
         Settings.GRID_SEARCH.save(true);
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
@@ -580,6 +602,37 @@ public class GridSearchTest {
             assertNotNull("the chip came back", after);
             assertSame(last, after.getParent());
             assertEquals("cat", String.valueOf(after.getText()));
+        }
+    }
+
+    @Test public void theSwitchTurnedOffWhileTheChipWaitsOutsideAFrameGivesTheWholeListBack() {
+        Settings.GRID_SEARCH.save(true);
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            Activity activity = controller.get();
+            GridSortTest.GridAdapter adapter = gridOnScreen(activity, GridSort.TAB_LIKED);
+            adapter.mmItems = GridSort.data(adapter, library());
+            idle(0);
+            GridSearch.search(adapter, "cat");
+            assertEquals("abcd", ids(adapter.mmItems));
+
+            // The grid in a parent that can't hold a chip, so the chip waits out of any window.
+            FrameLayout first = (FrameLayout) adapter.mmRecyclerView.getParent();
+            LinearLayout stop = new LinearLayout(activity);
+            first.removeView(adapter.mmRecyclerView);
+            stop.addView(adapter.mmRecyclerView);
+            activity.setContentView(stop);
+            idle(50);
+            assertNull(stop.findViewWithTag(GridSearch.CHIP_TAG));
+
+            Settings.GRID_SEARCH.save(false);
+            FrameLayout last = new FrameLayout(activity);
+            stop.removeView(adapter.mmRecyclerView);
+            last.addView(adapter.mmRecyclerView, new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            activity.setContentView(last);
+            idle(50);
+            assertFalse(GridSearch.searching(adapter));
+            assertEquals("the grid stayed narrowed", "abcdef", ids(adapter.mmItems));
         }
     }
 

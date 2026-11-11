@@ -534,14 +534,16 @@ public final class GridSort {
         List<?> onGrid = (List<?>) shown;
         // A grid narrowed to a search plays its matches first, then the rest in the grid's order.
         List<?> original = originalOf(adapter);
-        List<?> grid = onGrid.size() != played.size() && GridSearch.searching(adapter)
+        boolean searching = GridSearch.searching(adapter);
+        List<?> grid = onGrid.size() != played.size() && searching
                 ? GridSearch.withRest(onGrid, sorted(original != null ? original : played, orderFor(adapter)))
                 : onGrid;
         if (sameOrder(played, grid)) return;
         List<Object> before = new ArrayList<>(played);
         // The kept order is a copy once the list has been written, so if TikTok's list has changed
-        // since, the matches it still holds go first and the rest keep that list's own order.
-        if (!follow(played, grid) && (grid == onGrid
+        // since, the matches it still holds go first and the rest keep that list's own order. That
+        // goes for a changed list that happens to hold as many videos as the grid shows, too.
+        if (!follow(played, grid) && (!searching
                 || !follow(played, GridSearch.withRest(stillIn(onGrid, played), played)))) {
             Logger.printDebug(() -> "Grid sort: the opened video's list doesn't hold the grid's videos, left as is");
             return;

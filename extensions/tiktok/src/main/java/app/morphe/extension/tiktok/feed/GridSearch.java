@@ -34,6 +34,7 @@ import java.util.WeakHashMap;
 import java.util.regex.Pattern;
 
 import app.morphe.extension.shared.Logger;
+import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.Setting;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
 import app.morphe.extension.tiktok.feedfilter.KeywordRules;
@@ -280,7 +281,9 @@ public final class GridSearch {
             if (off && forget(adapter)) {
                 label(this, null);
                 Object narrowed = adapter;
-                post(() -> GridSort.reshow(narrowed));
+                // Not this chip's own queue: one taken out of its frame to wait for the grid's
+                // next one never runs what it was handed.
+                Utils.runOnMainThread(() -> GridSort.reshow(narrowed));
             }
             boolean sameAdapter = current == null || current == adapter;
             if (!off && sameAdapter && grid.isAttachedToWindow() && grid.getParent() != getParent()) {

@@ -100,8 +100,10 @@ public class AlsoFilterTest {
     }
 
     @Test public void readsHashtagsTheWayACaptionWritesThem() {
-        assertEquals(Arrays.asList("#café", "#東京", "#day_2"),
-                AlsoFilter.hashtags("C# tips, issue#12 #café #東京 #day_2 ## #"));
+        String cafe = "#caf" + (char) 0xE9;
+        String tokyo = "#" + (char) 0x6771 + (char) 0x4EAC;
+        assertEquals(Arrays.asList(cafe, tokyo, "#day_2"),
+                AlsoFilter.hashtags("C# tips, issue#12 " + cafe + " " + tokyo + " #day_2 ## #"));
         assertEquals("run together, each is its own tag", Arrays.asList("#fyp", "#cats", "#dog"),
                 AlsoFilter.hashtags("#fyp#cats #Cats#dog issue#12#13"));
         assertTrue(AlsoFilter.hashtags(null).isEmpty());
@@ -114,6 +116,17 @@ public class AlsoFilterTest {
         String accentedE = "e" + (char) 0x301;
         assertEquals(Arrays.asList("#love", "#fyp"),
                 AlsoFilter.hashtags(heart + "#love " + keycapOne + "#fyp " + accentedE + "#word"));
+        String thumbsUpMedium = new String(Character.toChars(0x1F44D)) + new String(Character.toChars(0x1F3FD));
+        String smileAsText = "" + (char) 0x263A + (char) 0xFE0E;
+        assertEquals(Arrays.asList("#yes", "#smile"),
+                AlsoFilter.hashtags(thumbsUpMedium + "#yes " + smileAsText + "#smile"));
+    }
+
+    @Test public void theKeycapNumberSignIsNotATagAndTakesNoSlot() {
+        String keycap = "#" + (char) 0xFE0F + (char) 0x20E3;
+        assertEquals(Arrays.asList("#a", "#b", "#c"), AlsoFilter.hashtags(keycap + " Top #a #b #c"));
+        assertEquals(Arrays.asList("#love"), AlsoFilter.hashtags(keycap + "#love"));
+        assertEquals(Arrays.asList("#love"), AlsoFilter.hashtags("#" + (char) 0xFE0F + "#love"));
     }
 
     @Test public void aTagIsOfferedOnceWhicheverWayItsCaseFolds() {

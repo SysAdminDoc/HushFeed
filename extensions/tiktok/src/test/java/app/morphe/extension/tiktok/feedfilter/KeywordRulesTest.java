@@ -164,12 +164,24 @@ public class KeywordRulesTest {
         assertTrue(hides("#AL" + dottedCapitalI, "#ali"));
         assertFalse(hides("#ali", "#AL" + dottedCapitalI + "m"));
         assertTrue("dotless i", hides("#ilik", "#" + dotlessI + "l" + dotlessI + "k"));
+        String dotlessWithADot = "#al" + dotlessI + (char) 0x307;
+        assertEquals("#ali", KeywordRules.fold(dotlessWithADot));
+        assertTrue(hides("#ali", dotlessWithADot + " yes"));
 
         String finalSigma = "#" + (char) 0x3B8 + (char) 0x3B5 + (char) 0x3BF + (char) 0x3C2;
+        String middleSigma = "#" + (char) 0x3B8 + (char) 0x3B5 + (char) 0x3BF + (char) 0x3C3;
         String capitals = "#" + (char) 0x398 + (char) 0x395 + (char) 0x39F + (char) 0x3A3;
         String insideACaption = capitals + "." + (char) 0x39A + (char) 0x391 + (char) 0x399;
         assertTrue(hides(finalSigma, insideACaption));
         assertTrue(hides(capitals, insideACaption));
         assertTrue(hides(capitals, finalSigma + " #fyp"));
+        assertTrue("a list sigma meets a caption's final one", hides(middleSigma, finalSigma + " #fyp"));
+    }
+
+    @Test public void theKeycapEmojiIsNotATag() {
+        String keycap = "#" + (char) 0xFE0F + (char) 0x20E3;
+        // As a phrase it is a plain substring, so it hides only captions that carry that emoji.
+        assertTrue(hides(keycap, "Top 5 " + keycap + "cats"));
+        assertFalse(hides(keycap, "#cats"));
     }
 }

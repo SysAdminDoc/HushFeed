@@ -278,6 +278,10 @@ public class ContentAndSoundFilterTest {
         } finally { Locale.setDefault(previous); }
         music.title = "something else";
         assertFalse(filter.getFiltered(item));
+        // A Turkish capital dotted I on the list folds like the word lists, not to i plus a dot.
+        Settings.BLOCKED_SOUND_NAMES.save((char) 0x130 + "stanbul");
+        music.title = "ISTANBUL Nights";
+        assertTrue(filter.getFiltered(item));
         Settings.HIDE_BLOCKED_SOUNDS.save(false);
         assertFalse(filter.getEnabled());
         assertFalse(filter.getFiltered(null));

@@ -30,8 +30,11 @@ public final class KeywordRules {
     private static final Pattern COMPOSITE =
             Pattern.compile("^\\s*\"([^\"]+)\"\\s*(!?&!?)\\s*\"([^\"]+)\"\\s*$");
 
-    /** A phrase that is one hashtag and nothing else, like the ones Also filter it adds. */
-    private static final Pattern HASHTAG = Pattern.compile("#[\\p{L}\\p{M}\\p{N}_]+");
+    /**
+     * A phrase that is one hashtag and nothing else, like the ones Also filter it adds. It starts
+     * with a letter, digit or underscore, so the keycap emoji's # and its marks aren't a tag.
+     */
+    private static final Pattern HASHTAG = Pattern.compile("#[\\p{L}\\p{N}_][\\p{L}\\p{M}\\p{N}_]*");
 
     private static final char DOTLESS_I = (char) 0x131;
     private static final char DOT_ABOVE = (char) 0x307;
@@ -264,7 +267,8 @@ public final class KeywordRules {
         StringBuilder folded = null;
         for (int index = 0; index < lower.length(); index++) {
             char character = lower.charAt(index);
-            boolean dropped = character == DOT_ABOVE && index > 0 && lower.charAt(index - 1) == 'i';
+            boolean dropped = character == DOT_ABOVE && index > 0
+                    && (lower.charAt(index - 1) == 'i' || lower.charAt(index - 1) == DOTLESS_I);
             char kept = character == DOTLESS_I ? 'i' : character == FINAL_SIGMA ? SIGMA : character;
             if (folded == null) {
                 if (!dropped && kept == character) continue;

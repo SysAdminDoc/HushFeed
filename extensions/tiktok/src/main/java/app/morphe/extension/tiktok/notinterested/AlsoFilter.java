@@ -40,12 +40,14 @@ public final class AlsoFilter {
     static final int MAX_HASHTAGS = 3;
 
     /**
-     * Hashtags the way a caption carries them: a # with letters, marks, digits or underscores
-     * after it. A run like "#fyp#cats" is two tags, the way TikTok links them. {@link #hashtags}
+     * Hashtags the way a caption carries them: a # with a letter, digit or underscore after it,
+     * then any of those or marks. The keycap emoji is a # followed only by marks, so it isn't
+     * one. A run like "#fyp#cats" is two tags, the way TikTok links them. {@link #hashtags}
      * drops a run with something word-like right before it, so "C#" and "issue#12" aren't tags.
      */
-    private static final Pattern HASHTAGS = Pattern.compile("(?:#[\\p{L}\\p{M}\\p{N}_]+)+");
-    private static final Pattern HASHTAG = Pattern.compile("#[\\p{L}\\p{M}\\p{N}_]+");
+    private static final Pattern HASHTAGS =
+            Pattern.compile("(?:#[\\p{L}\\p{N}_][\\p{L}\\p{M}\\p{N}_]*)+");
+    private static final Pattern HASHTAG = Pattern.compile("#[\\p{L}\\p{N}_][\\p{L}\\p{M}\\p{N}_]*");
 
     /** Marks that finish an emoji rather than a word: the two variation selectors and the keycap. */
     private static final int TEXT_STYLE = 0xFE0E;

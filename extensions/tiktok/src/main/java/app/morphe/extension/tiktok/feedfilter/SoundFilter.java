@@ -11,8 +11,6 @@ import app.morphe.extension.tiktok.settings.Settings;
 
 import com.ss.android.ugc.aweme.feed.model.Aweme;
 
-import java.util.Locale;
-
 /**
  * Drops videos that use a blocked sound.
  *
@@ -46,9 +44,10 @@ public class SoundFilter implements IFilter {
         if (name == null) {
             return false;
         }
-        String lower = name.toLowerCase(Locale.ROOT);
+        // Folded like the word lists, so a Turkish or Greek name typed in capitals still matches.
+        String lower = KeywordRules.fold(name);
         for (String phrase : SoundIdentity.entries(Settings.BLOCKED_SOUND_NAMES.get())) {
-            if (lower.contains(phrase.toLowerCase(Locale.ROOT))) {
+            if (lower.contains(KeywordRules.fold(phrase))) {
                 return true;
             }
         }

@@ -13,6 +13,7 @@ import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.shared.compat.AppCompatibilities
+import app.morphe.patches.tiktok.misc.commenttools.commentBindSite
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
@@ -217,6 +218,7 @@ val commentTranslationPatch = bytecodePatch(
                 "Translate comments: could not locate initialized native comment translation manager.",
             )
             val (managerReadyIndex, managerRegister) = managerMatch
+            val managerClass = instructions[managerReadyIndex].getReference<FieldReference>()!!.definingClass
 
             // A register nothing is holding here. This injects into the middle of the bind,
             // where v0 belongs to the host, and it was written over on the strength of being
@@ -233,6 +235,27 @@ val commentTranslationPatch = bytecodePatch(
                     move-object/from16 v$cellRegister, p0
                     iget-object v$cellRegister, v$cellRegister, Landroidx/recyclerview/widget/RecyclerView${'$'}ViewHolder;->itemView:Landroid/view/View;
                     invoke-static {v$cellRegister, v$managerRegister}, $EXTENSION_CLASS_DESCRIPTOR->registerCommentCell(Landroid/view/View;Ljava/lang/Object;)V
+                """,
+            )
+
+            // The row's translation manager keeps listening for the comment the row showed last
+            // whenever the bind skips its translation branch (picture and sticker comments, among
+            // others), and it writes whatever text that comment's translation brings into the row
+            // (#383). The comment the bind reads at its top is ahead of every branch, so the row
+            // stops listening for the old comment there. Inserted above the manager hook, so that
+            // hook's index holds.
+            val (commentReadyIndex, commentRegister) = commentBindSite()
+            val registers = getFreeRegisterProvider(commentReadyIndex, 3, listOf(commentRegister))
+            val releaseCell = registers.getFreeRegister4Bit()
+            val releaseComment = registers.getFreeRegister4Bit()
+            val releaseType = registers.getFreeRegister4Bit()
+            addInstructions(
+                commentReadyIndex,
+                """
+                    move-object/from16 v$releaseCell, p0
+                    move-object/from16 v$releaseComment, v$commentRegister
+                    const-class v$releaseType, $managerClass
+                    invoke-static {v$releaseCell, v$releaseComment, v$releaseType}, $EXTENSION_CLASS_DESCRIPTOR->releaseStaleObserver(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Class;)V
                 """,
             )
         }

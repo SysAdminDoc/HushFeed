@@ -16,6 +16,7 @@ import java.lang.reflect.Field;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -49,6 +50,7 @@ public class CommentBatchTranslatorTest {
         Utils.setContext(context);
         clearTranslatorState();
         NativeManager.reset();
+        ObservedTranslator.UPDATES.clear();
         com.ss.android.ugc.aweme.translation.service.TranslationLangKevaServiceImpl.reset();
         Settings.COMMENT_BATCH_TRANSLATION.save(true);
     }
@@ -58,6 +60,7 @@ public class CommentBatchTranslatorTest {
         Shadows.shadowOf(Looper.getMainLooper()).idle();
         clearTranslatorState();
         NativeManager.reset();
+        ObservedTranslator.UPDATES.clear();
     }
 
     @Test public void disablingBeforeTheDelayedCallbackDoesNotDispatch() {
@@ -659,6 +662,31 @@ public class CommentBatchTranslatorTest {
         assertEquals(0, ((String[]) callPrivate("getNativeDoNotTranslateLanguages")).length);
     }
 
+    @Test public void aRowReboundToAnotherCommentStopsHearingTheOneItShowed() {
+        // #383: TikTok moves a row's translation manager to the new comment's updates only on the
+        // bind's translation branch. A row reused for a picture comment kept hearing the comment
+        // it showed before, and that comment's translation landed in the picture comment's row.
+        ObservedManager manager = new ObservedManager(new Comment("aid-row", "cid-row-old"));
+        TranslationUpdates shown = ObservedTranslator.LIZIZ("cid-row-old");
+        shown.observers.add(manager);
+        CommentRow row = new CommentRow(new View(context), manager);
+
+        CommentBatchTranslator.releaseStaleObserver(row, new Comment("aid-row", "cid-row-new"), ObservedManager.class);
+
+        assertFalse("the row still hears the comment it showed before", shown.observers.contains(manager));
+    }
+
+    @Test public void aRowBoundToTheCommentItShowsKeepsHearingIt() {
+        ObservedManager manager = new ObservedManager(new Comment("aid-row", "cid-row-same"));
+        TranslationUpdates shown = ObservedTranslator.LIZIZ("cid-row-same");
+        shown.observers.add(manager);
+        CommentRow row = new CommentRow(new View(context), manager);
+
+        CommentBatchTranslator.releaseStaleObserver(row, new Comment("aid-row", "cid-row-same"), ObservedManager.class);
+
+        assertTrue("a rebind to the same comment stopped its translation", shown.observers.contains(manager));
+    }
+
     private static void clearTranslatorState() throws Exception {
         Field lockField = CommentBatchTranslator.class.getDeclaredField("LOCK");
         lockField.setAccessible(true);
@@ -951,6 +979,59 @@ public class CommentBatchTranslatorTest {
         Anchor(Comment comment, TranslationContext context) {
             this.comment = comment;
             this.context = context;
+        }
+    }
+
+    /** Stands in for androidx's Observer, which TikTok's translation manager implements. */
+    public interface Observer {}
+
+    /** Stands in for the NextLiveData that carries one comment's translation updates. */
+    public static final class TranslationUpdates {
+        final List<Object> observers = new ArrayList<>();
+
+        public void removeObserver(Observer observer) { observers.remove(observer); }
+    }
+
+    /** The native translator as 47.7.3 has it: the batch call and a per-comment updates lookup. */
+    public static final class ObservedTranslator {
+        static final Map<String, TranslationUpdates> UPDATES = new HashMap<>();
+
+        public static void LJ(List<Object> comments, TranslationContext context, boolean force) {}
+
+        /** The lambda compiles to a second static method from a String to the updates, as D8 leaves them. */
+        public static TranslationUpdates LIZIZ(String cid) {
+            return UPDATES.computeIfAbsent(cid, key -> new TranslationUpdates());
+        }
+    }
+
+    /** The type the row's state holder declares for its manager. */
+    public abstract static class TranslationManagerBase {}
+
+    /** The row's translation manager, which observes the updates of the comment it shows. */
+    public static final class ObservedManager extends TranslationManagerBase implements Observer {
+        public final Comment comment;
+        public final TranslationContext context;
+        public final ObservedTranslator translator = new ObservedTranslator();
+
+        ObservedManager(Comment comment) {
+            this.comment = comment;
+            this.context = new TranslationContext(comment.getAid());
+        }
+    }
+
+    public static final class RowState {
+        String label = "row";
+        TranslationManagerBase translation;
+    }
+
+    /** A comment row that keeps its manager on a state holder, the way 47.7.3's cell does. */
+    public static final class CommentRow {
+        final View itemView;
+        final RowState state = new RowState();
+
+        CommentRow(View itemView, TranslationManagerBase manager) {
+            this.itemView = itemView;
+            state.translation = manager;
         }
     }
 

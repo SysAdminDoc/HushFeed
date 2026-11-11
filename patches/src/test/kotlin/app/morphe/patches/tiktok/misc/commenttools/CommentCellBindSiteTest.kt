@@ -53,6 +53,9 @@ class CommentCellBindSiteTest {
             assertTrue("$version: the comment sits in v$register", register <= 15)
             // The row's view needs a low register of its own there, taken the way the patch takes it.
             bind.getFreeRegisterProvider(index, 1, listOf(register)).getFreeRegister4Bit()
+            // Comment translation's release of the row's old comment (#383) takes three there.
+            val release = bind.getFreeRegisterProvider(index, 3, listOf(register))
+            repeat(3) { release.getFreeRegister4Bit() }
 
             // The comment comes off the item this bind was handed, not off something the cell kept
             // from an earlier bind: the getter's receiver is the parameter or a copy of it.

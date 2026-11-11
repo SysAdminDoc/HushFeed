@@ -188,6 +188,127 @@ public final class CommentBatchTranslator {
         }
     }
 
+    /** Per comment row class, the fields that lead from the row to its translation manager. */
+    private static final ConcurrentHashMap<Class<?>, Field[]> OBSERVER_PATHS = new ConcurrentHashMap<>();
+    /** Per native translator class, its lookup from a comment id to that comment's translation updates. */
+    private static final ConcurrentHashMap<Class<?>, ResolvedMethod> UPDATE_LOOKUPS = new ConcurrentHashMap<>();
+
+    /**
+     * Takes a comment row's translation manager off the updates of the comment the row showed
+     * before, when the row is bound to a different comment (#383).
+     *
+     * <p>The manager is the row's observer of its comment's translation, and it writes the comment
+     * an update carries into the row without checking that it is still the row's own. TikTok moves
+     * it from the old comment's updates to the new one's only on the branch of its bind that offers
+     * a translation, so a row reused for a comment that takes another branch (a picture or sticker
+     * with no text, a linked video) kept hearing the comment it showed before. A translation that
+     * came in for that comment afterwards, as the batches Auto translate comments asks for do, put
+     * its text in a row showing another comment until the list scrolled. Injected ahead of every
+     * branch of the bind, so this runs for every row of every comment list: the walk from the row
+     * to its manager is worked out once per row class, from field types alone.
+     */
+    public static void releaseStaleObserver(Object cell, Object comment, Class<?> managerClass) {
+        if (cell == null || comment == null || managerClass == null) return;
+        try {
+            Field[] path = observerPath(cell.getClass(), managerClass);
+            if (path.length == 0) return;
+            Object manager = cell;
+            for (Field field : path) {
+                manager = field.get(manager);
+                if (manager == null) return;
+            }
+            if (!managerClass.isInstance(manager)) return;
+            AnchorParts parts = resolveAnchorParts(manager);
+            if (parts == null) return;
+            String shown = invokeStringQuiet(parts.comment, "getCid");
+            if (isBlank(shown) || shown.equals(invokeStringQuiet(comment, "getCid"))) return;
+
+            Method lookup = translationUpdatesLookup(parts.nativeManager.getClass());
+            Object updates = lookup == null ? null : lookup.invoke(null, shown);
+            Method remove = updates == null ? null : observerRemover(updates.getClass());
+            if (remove == null || !remove.getParameterTypes()[0].isInstance(manager)) return;
+            remove.invoke(updates, manager);
+            Logger.printDebug(() -> "[Morphe CommentBatchTranslator] row stopped hearing " + shown);
+        } catch (Throwable ex) {
+            Logger.printDebug(() -> "[Morphe CommentBatchTranslator] observer release failed", asException(ex));
+        }
+    }
+
+    /**
+     * The fields from a comment row to its translation manager: one the row declares whose type
+     * the manager fits, or one on an object the row keeps (TikTok 47.7.3 keeps the manager on the
+     * row's state holder, under the manager's base type). Only types loaded with the row's own
+     * classes are looked into, so no framework class is, and empty unless exactly one path fits.
+     */
+    private static Field[] observerPath(Class<?> cellClass, Class<?> managerClass) {
+        Field[] cached = OBSERVER_PATHS.get(cellClass);
+        if (cached != null) return cached;
+        ClassLoader loader = cellClass.getClassLoader();
+        ArrayList<Field[]> found = new ArrayList<>();
+        for (Field field : appFields(cellClass, loader)) {
+            Class<?> type = field.getType();
+            if (type.getClassLoader() != loader) continue;
+            if (type.isAssignableFrom(managerClass)) {
+                found.add(new Field[] {field});
+                continue;
+            }
+            for (Field inner : appFields(type, loader)) {
+                Class<?> innerType = inner.getType();
+                if (innerType.getClassLoader() == loader && innerType.isAssignableFrom(managerClass)) {
+                    found.add(new Field[] {field, inner});
+                }
+            }
+        }
+        Field[] path = found.size() == 1 ? found.get(0) : new Field[0];
+        for (Field field : path) field.setAccessible(true);
+        OBSERVER_PATHS.put(cellClass, path);
+        return path;
+    }
+
+    /** The instance fields of the class and of its superclasses loaded by the same loader. */
+    private static List<Field> appFields(Class<?> type, ClassLoader loader) {
+        ArrayList<Field> fields = new ArrayList<>();
+        for (Class<?> current = type; current != null && current.getClassLoader() == loader;
+                current = current.getSuperclass()) {
+            for (Field field : current.getDeclaredFields()) {
+                if (!Modifier.isStatic(field.getModifiers()) && !field.getType().isPrimitive()) fields.add(field);
+            }
+        }
+        return fields;
+    }
+
+    /**
+     * The native translator's static lookup from a comment id to that comment's translation
+     * updates (47.7.3: {@code LIZIZ(String)}, a NextLiveData), or null unless exactly one static
+     * method takes a single String and returns something an observer can be removed from.
+     */
+    private static Method translationUpdatesLookup(Class<?> nativeManagerClass) {
+        ResolvedMethod cached = UPDATE_LOOKUPS.get(nativeManagerClass);
+        if (cached != null) return cached.method;
+        Method found = null;
+        int matches = 0;
+        for (Method method : nativeManagerClass.getDeclaredMethods()) {
+            Class<?>[] parameters = method.getParameterTypes();
+            // A lambda's body is a synthetic static method of the class that may take the same shape.
+            if (!Modifier.isStatic(method.getModifiers()) || method.isSynthetic() || parameters.length != 1
+                    || parameters[0] != String.class || observerRemover(method.getReturnType()) == null) continue;
+            found = method;
+            matches++;
+        }
+        Method lookup = matches == 1 ? found : null;
+        if (lookup != null) lookup.setAccessible(true);
+        UPDATE_LOOKUPS.put(nativeManagerClass, new ResolvedMethod(lookup));
+        return lookup;
+    }
+
+    /** The public one-argument {@code removeObserver} of a LiveData-like type, or null. */
+    private static Method observerRemover(Class<?> type) {
+        for (Method method : type.getMethods()) {
+            if (method.getName().equals("removeObserver") && method.getParameterTypes().length == 1) return method;
+        }
+        return null;
+    }
+
     /**
      * Remembers that a cell of this manager class could not be read, and reports it once the
      * class has missed twice running in the current generation of the Diagnostics row.

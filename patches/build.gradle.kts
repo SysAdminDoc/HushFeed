@@ -328,6 +328,7 @@ val reviewedBouncyCastleRequests = setOf("1.77", "1.79", safeBouncyCastleVersion
 // Guarded by hand rather than with a synchronized collection wrapper: in a Kotlin build script
 // `java` is the Java extension, so the java.util package cannot be named here.
 val requestedBouncyCastleVersions = sortedSetOf<String>()
+val bouncyCastleRequestReason = rootProject.extra["bouncyCastleRequestReason"] as String
 
 configurations.configureEach {
     resolutionStrategy.eachDependency {
@@ -362,21 +363,42 @@ val verifyBouncyCastleBuildGraph = tasks.register("verifyBouncyCastleBuildGraph"
             "testCompileClasspath", "testRuntimeClasspath")
         val seen = sortedMapOf<String, String>()
         val missing = mutableListOf<String>()
+        val unresolved = sortedSetOf<String>()
         for (name in inspected) {
             val configuration = configurations.findByName(name)
             if (configuration == null || !configuration.isCanBeResolved) {
                 missing += name
                 continue
             }
-            val modules = configuration.incoming.resolutionResult.allComponents
-                .mapNotNull { it.moduleVersion?.takeIf { module -> module.group == "org.bouncycastle" } }
-            for (module in modules) seen[module.name] = module.version
+            // An edge that resolves to nothing has no component below, so a published request
+            // for a module the reviewed release doesn't publish (bcprov-jdk15on stopped at 1.70)
+            // would pass here and only fail later on the classpath.
+            for (dependency in configuration.incoming.resolutionResult.allDependencies) {
+                if (dependency !is org.gradle.api.artifacts.result.UnresolvedDependencyResult) continue
+                val attempted = dependency.attempted as? org.gradle.api.artifacts.component.ModuleComponentSelector ?: continue
+                if (attempted.group == "org.bouncycastle") unresolved += "${attempted.module}:${attempted.version} in $name"
+            }
+            for (component in configuration.incoming.resolutionResult.allComponents) {
+                val module = component.moduleVersion?.takeIf { it.group == "org.bouncycastle" } ?: continue
+                seen[module.name] = module.version
+                // A published component's request reaches eachDependency already rewritten by the
+                // root build's metadata rule, which leaves the original as the selection reason.
+                for (reason in component.selectionReason.descriptions) {
+                    if (!reason.description.startsWith(bouncyCastleRequestReason)) continue
+                    val asked = reason.description.removePrefix(bouncyCastleRequestReason)
+                        .ifBlank { "a request with no version of its own" }
+                    synchronized(requestedBouncyCastleVersions) { requestedBouncyCastleVersions.add(asked) }
+                }
+            }
         }
         if (missing.isNotEmpty()) {
             throw GradleException(
                 "These configurations were not there to inspect: " + missing.joinToString(", ") +
                     ". The plugin renamed them, so this gate is looking at the wrong graph."
             )
+        }
+        if (unresolved.isNotEmpty()) {
+            throw GradleException("Bouncy Castle did not resolve: " + unresolved.joinToString(", "))
         }
         // Named, not merely non-empty. A module that fails to resolve is absent from
         // allComponents rather than raising, so a force at a version that does not publish a

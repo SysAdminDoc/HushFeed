@@ -48,13 +48,29 @@ abstract class ReviewedReleasesRule @javax.inject.Inject constructor(
                         isNettyMainTrain(dependency.group, dependency.name, dependency.versionConstraint.requiredVersion) -> netty
                         else -> null
                     }
-                    if (reviewed != null) dependency.version { require(reviewed) }
+                    if (reviewed != null) {
+                        // The Bouncy Castle gates in :patches and :extensions:tiktok fail on a
+                        // request nobody has reviewed, but their eachDependency only ever sees
+                        // this rewrite's answer. The original goes along as the reason so the
+                        // gates can read it off the resolved component. Strict and preferred too:
+                        // a request that only prefers a version leaves required blank.
+                        if (dependency.group == "org.bouncycastle") {
+                            val asked = dependency.versionConstraint.run {
+                                listOf(strictVersion, requiredVersion, preferredVersion).firstOrNull { !it.isNullOrBlank() }
+                            }
+                            dependency.because(BOUNCY_CASTLE_REQUEST + asked.orEmpty())
+                        }
+                        dependency.version { require(reviewed) }
+                    }
                 }
             }
         }
     }
 
     companion object {
+        /** Starts the reason a rewritten Bouncy Castle request carries; the original version follows. */
+        const val BOUNCY_CASTLE_REQUEST = "Bouncy Castle request before the reviewed rewrite: "
+
         /** Netty's main release train, the one the catalog's pin is on; netty-tcnative versions apart. */
         fun isNettyMainTrain(group: String, name: String, version: String?): Boolean =
             group == "io.netty" && !name.startsWith("netty-tcnative") && version?.startsWith("4.1.") == true
@@ -62,6 +78,7 @@ abstract class ReviewedReleasesRule @javax.inject.Inject constructor(
 }
 
 allprojects {
+    extra["bouncyCastleRequestReason"] = ReviewedReleasesRule.BOUNCY_CASTLE_REQUEST
     configurations.configureEach {
         resolutionStrategy.eachDependency {
             if (requested.group == "org.bouncycastle") {

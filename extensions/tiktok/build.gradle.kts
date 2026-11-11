@@ -114,6 +114,7 @@ val requestedBouncyCastleVersions = sortedSetOf<String>()
 // Module names, kept apart from the versions above so a name can never end up in the reviewed
 // version set by someone pasting it in.
 val unversionedBouncyCastleRequests = sortedSetOf<String>()
+val bouncyCastleRequestReason = rootProject.extra["bouncyCastleRequestReason"] as String
 
 configurations.configureEach {
     resolutionStrategy.eachDependency {
@@ -155,10 +156,36 @@ val verifyBouncyCastleTestGraph = tasks.register("verifyBouncyCastleTestGraph") 
         }
 
         for (classpath in classpaths) {
-            val modules = classpath.incoming.resolutionResult.allComponents
-                .mapNotNull { component ->
-                    component.moduleVersion?.takeIf { it.group == "org.bouncycastle" }
+            // An edge that resolves to nothing has no component, so a request for a module the
+            // reviewed release doesn't publish (bcprov-jdk15on stopped at 1.70) would pass here.
+            val unresolved = classpath.incoming.resolutionResult.allDependencies
+                .filterIsInstance<org.gradle.api.artifacts.result.UnresolvedDependencyResult>()
+                .mapNotNull { it.attempted as? org.gradle.api.artifacts.component.ModuleComponentSelector }
+                .filter { it.group == "org.bouncycastle" }
+            if (unresolved.isNotEmpty()) {
+                throw GradleException(
+                    "Bouncy Castle did not resolve in ${classpath.name}: " +
+                        unresolved.joinToString(", ") { "${it.module}:${it.version}" }
+                )
+            }
+            val components = classpath.incoming.resolutionResult.allComponents
+                .filter { it.moduleVersion?.group == "org.bouncycastle" }
+            // Robolectric's requests reach eachDependency already rewritten by the root build's
+            // metadata rule, which leaves the original as the selection reason.
+            for (component in components) {
+                for (reason in component.selectionReason.descriptions) {
+                    if (!reason.description.startsWith(bouncyCastleRequestReason)) continue
+                    val asked = reason.description.removePrefix(bouncyCastleRequestReason)
+                    if (asked.isNotBlank()) {
+                        synchronized(requestedBouncyCastleVersions) { requestedBouncyCastleVersions.add(asked) }
+                    } else {
+                        synchronized(unversionedBouncyCastleRequests) {
+                            unversionedBouncyCastleRequests.add(component.moduleVersion!!.name)
+                        }
+                    }
                 }
+            }
+            val modules = components.mapNotNull { it.moduleVersion }
                 .distinctBy { "${it.group}:${it.name}:${it.version}" }
                 .sortedBy { it.name }
 

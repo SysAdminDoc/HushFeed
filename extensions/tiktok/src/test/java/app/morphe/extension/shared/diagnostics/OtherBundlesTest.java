@@ -353,10 +353,12 @@ public class OtherBundlesTest {
                 new String[]{"Lapp/ftl/extension/dpi/DensityPatch;"})))));
         OtherBundles.scanForTests();
         try {
+            LogBufferManager.appendEvent(DiagnosticCategory.DOWNLOADS, "Fixture", "INFO", "phase=oldest");
             for (int index = 0; index < 180; index++) {
                 LogBufferManager.appendEvent(DiagnosticCategory.DOWNLOADS, "Fixture", "INFO",
                         "phase=ready " + "x".repeat(500));
             }
+            LogBufferManager.appendEvent(DiagnosticCategory.DOWNLOADS, "Fixture", "INFO", "phase=newest");
             assertTrue(LogBufferManager.buildExportText().length() > 60_000);
             LogBufferManager.exportToClipboard();
             ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
@@ -364,6 +366,13 @@ public class OtherBundlesTest {
             assertTrue(copied, copied.contains("clipboard_note:"));
             assertTrue(copied, copied.contains("[OTHER PATCH BUNDLES]\n"
                     + "extension_packages: app.ftl.extension.dpi (1 class)\n"));
+            // Only the oldest events go. The head of the report stays, and so does the newest event.
+            assertTrue(copied.length() <= 60_000);
+            assertTrue(copied, copied.startsWith("MORPHE DIAGNOSTIC REPORT\nschema: 1\n"));
+            assertTrue(copied, copied.contains("[SELECTED EVENTS]\ncategory | timestamp | thread | source | level | message\n"
+                    + "clipboard_note: older events omitted"));
+            assertTrue(copied.contains("phase=newest"));
+            assertFalse(copied.contains("phase=oldest"));
         } finally {
             LogBufferManager.clearLogBuffer();
         }

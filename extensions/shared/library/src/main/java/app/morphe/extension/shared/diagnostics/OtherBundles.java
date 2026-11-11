@@ -238,6 +238,9 @@ public final class OtherBundles {
             inIdOrder = true;
             for (int i = 1; i < count && inIdOrder; i++) inIdOrder = offsets[i] > offsets[i - 1];
             if (!inIdOrder) Arrays.sort(offsets);
+            // No string can start inside the header, and a negative one is past 2 GB: either is a
+            // broken table, not a reason to inflate the whole file a second time.
+            if (offsets[0] < 0x70) throw new IOException("bad string table");
             // d8 and dx put the string data after the ids, so it is read on in the same pass.
             if (offsets[0] >= in.position) {
                 readNames(in, offsets, inIdOrder, classes);

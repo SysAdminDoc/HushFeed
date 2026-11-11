@@ -167,11 +167,12 @@ public final class LogBufferManager {
 
     public static void exportToClipboard() {
         try {
-            String exportText = buildExportText();
+            String exportText = buildExportText(CLIPBOARD_MAX_CHARS);
             if (exportText.isEmpty()) {
                 Utils.showToastShort(say(nothingToExportMessage, "No matching diagnostics found."));
                 return;
             }
+            // Only when the sections around the events are over the limit on their own.
             if (exportText.length() > CLIPBOARD_MAX_CHARS) {
                 exportText = "MORPHE DIAGNOSTIC REPORT\n"
                         + "clipboard_note: older content omitted; use Save full report for everything\n\n"
@@ -343,6 +344,14 @@ public final class LogBufferManager {
     }
 
     public static String buildExportText() {
+        return buildExportText(Integer.MAX_VALUE);
+    }
+
+    /**
+     * The report, with the oldest selected events dropped when it would run past {@code limit}.
+     * The events are the one section that grows without bound, so every other section stays whole.
+     */
+    private static String buildExportText(int limit) {
         Set<String> selected = LogExportFilterPreference.parse(BaseSettings.DEBUG_LOG_FILTERS.get());
         boolean includeAll = selected.isEmpty() || selected.contains("all");
         String crash = DiagnosticRedactor.redact(readCrashReport(Utils.getContext()));
@@ -443,15 +452,17 @@ public final class LogBufferManager {
         if (!lastExits.isEmpty()) {
             report.append("\n[LAST EXITS]\n").append(lastExits).append('\n');
         }
+        int eventsStart = -1;
         if (events.length() > 0) {
             report.append("\n\n[SELECTED EVENTS]\n")
-                    .append("category | timestamp | thread | source | level | message\n")
-                    .append(events);
+                    .append("category | timestamp | thread | source | level | message\n");
+            eventsStart = report.length();
+            report.append(events);
         }
         // The same filter as the hook table, and out of worthReporting for the same reason as the
         // last exits: "none" is the answer on almost every phone, and it is still the answer a
-        // reader needs. After the events, because the quick copy keeps the end of a long report
-        // and a long event list would otherwise push this section off the front of it.
+        // reader needs. After the events, so that when the sections around them are too long for
+        // the quick copy on their own, its tail cut still keeps this one.
         if (includeAll || selected.contains(
                 app.morphe.extension.shared.diagnostics.DiagnosticCategory.PATCH_ERRORS.value)) {
             report.append("\n[").append(OtherBundles.TITLE).append("]\n");
@@ -468,6 +479,14 @@ public final class LogBufferManager {
             for (String line : layout) {
                 report.append(DiagnosticRedactor.redact(line)).append('\n');
             }
+        }
+        if (report.length() > limit && eventsStart >= 0) {
+            String note = "clipboard_note: older events omitted; use Save full report for everything\n";
+            int over = report.length() - limit + note.length();
+            // Whole lines only, so the oldest event kept is never cut in half.
+            int nextLine = over < events.length() ? events.indexOf("\n", over) : -1;
+            String kept = nextLine < 0 ? "" : events.substring(nextLine + 1);
+            report.replace(eventsStart, eventsStart + events.length(), note + kept);
         }
         return report.toString();
     }

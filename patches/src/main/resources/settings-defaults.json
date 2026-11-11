@@ -534,6 +534,7 @@
       "keep_live_clear_screen",
       "dark_live_panels",
       "record_live",
+      "auto_record_live",
       "live_record_quality",
       "live_record_source",
       "live_auto_tap",
@@ -894,6 +895,12 @@
     "auto_advance_search": {
       "field": "AUTO_ADVANCE_SEARCH",
       "key": "auto_advance_search",
+      "type": "boolean",
+      "default": false
+    },
+    "auto_record_live": {
+      "field": "AUTO_RECORD_LIVE",
+      "key": "auto_record_live",
       "type": "boolean",
       "default": false
     },

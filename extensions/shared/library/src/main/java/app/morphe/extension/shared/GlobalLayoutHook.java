@@ -11,10 +11,16 @@ import android.view.ViewTreeObserver;
 
 import java.lang.ref.WeakReference;
 
-/** Owns one global-layout listener and detaches it when its host root is replaced. */
+/**
+ * Owns one global-layout listener and detaches it when its host root is replaced.
+ *
+ * <p>Each hook is a static field, and a closed window's observer still holds every listener its
+ * views added. The root and the observer are both held weakly, so a dismissed sheet or a finished
+ * activity is not kept alive until the next install.
+ */
 public final class GlobalLayoutHook {
     private WeakReference<ViewGroup> root = new WeakReference<>(null);
-    private ViewTreeObserver observer;
+    private WeakReference<ViewTreeObserver> observer = new WeakReference<>(null);
     private ViewTreeObserver.OnGlobalLayoutListener listener;
 
     /** Installs the callback once for a root, replacing a callback owned by an older root. */
@@ -25,14 +31,15 @@ public final class GlobalLayoutHook {
         }
         if (root.get() == nextRoot && listener != null) {
             ViewTreeObserver current = nextRoot.getViewTreeObserver();
-            if (observer == current && current.isAlive()) return false;
+            ViewTreeObserver previous = observer.get();
+            if (previous == current && current.isAlive()) return false;
             // A reused Dialog root can have a new observer while the old one is still alive.
             // A listener added before attachment can instead have merged into the current
             // observer. Remove it from both before rebinding so either path keeps exactly one.
-            remove(observer, listener);
+            remove(previous, listener);
             remove(current, listener);
             current.addOnGlobalLayoutListener(listener);
-            observer = current;
+            observer = new WeakReference<>(current);
             return false;
         }
 
@@ -41,7 +48,7 @@ public final class GlobalLayoutHook {
         ViewTreeObserver.OnGlobalLayoutListener nextListener = callback::run;
         nextObserver.addOnGlobalLayoutListener(nextListener);
         root = new WeakReference<>(nextRoot);
-        observer = nextObserver;
+        observer = new WeakReference<>(nextObserver);
         listener = nextListener;
         return true;
     }
@@ -49,13 +56,13 @@ public final class GlobalLayoutHook {
     /** Removes the listener from its previous root, if that observer is still alive. */
     public synchronized void detach() {
         if (listener != null) {
-            remove(observer, listener);
+            remove(observer.get(), listener);
             // A listener added before its root was attached now lives on the window's observer.
             ViewGroup held = root.get();
             if (held != null) remove(held.getViewTreeObserver(), listener);
         }
         root = new WeakReference<>(null);
-        observer = null;
+        observer = new WeakReference<>(null);
         listener = null;
     }
 

@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 
+import java.lang.ref.WeakReference;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import app.morphe.extension.shared.GlobalLayoutHook;
@@ -105,8 +106,8 @@ public class GlobalLayoutHookTest {
 
                 assertFalse(hook.install(root, calls::incrementAndGet));
                 assertFalse(hook.install(root, calls::incrementAndGet));
-                assertSame("the hook must register the root's current observer", reopened,
-                        ReflectionHelpers.getField(hook, "observer"));
+                assertTrue("the hook must register the root's current observer",
+                        reopened == registered(hook));
                 calls.set(0);
                 reopened.dispatchOnGlobalLayout();
                 assertEquals("the reopened Dialog needs exactly one callback", 1, calls.get());
@@ -141,7 +142,7 @@ public class GlobalLayoutHookTest {
 
                 assertFalse(hook.install(root, calls::incrementAndGet));
                 assertFalse(hook.install(root, calls::incrementAndGet));
-                assertSame(current, ReflectionHelpers.getField(hook, "observer"));
+                assertTrue("the hook must register the current observer", current == registered(hook));
                 calls.set(0);
                 current.dispatchOnGlobalLayout();
                 assertEquals("the new observer needs exactly one listener", 1, calls.get());
@@ -171,6 +172,34 @@ public class GlobalLayoutHookTest {
         @Override public ViewTreeObserver getViewTreeObserver() {
             return current == null ? super.getViewTreeObserver() : current;
         }
+    }
+
+    private static Object registered(GlobalLayoutHook hook) {
+        return ((WeakReference<?>) ReflectionHelpers.getField(hook, "observer")).get();
+    }
+
+    /**
+     * Every hook is a static field. Holding the observer strongly kept a dismissed sheet's
+     * observer, and every listener its views added, alive until the next install.
+     */
+    @Test public void aRootThatWentAwayIsNotKeptAliveThroughItsObserver() throws Exception {
+        Activity activity = Robolectric.buildActivity(Activity.class).setup().get();
+        GlobalLayoutHook hook = new GlobalLayoutHook();
+        WeakReference<ViewTreeObserver> closed = installOnAThrowawayRoot(hook, activity);
+
+        for (int attempt = 0; attempt < 20 && closed.get() != null; attempt++) {
+            System.gc();
+            Thread.sleep(10);
+        }
+        assertTrue("the hook kept a closed root's observer alive", closed.get() == null);
+        hook.detach();
+    }
+
+    private static WeakReference<ViewTreeObserver> installOnAThrowawayRoot(
+            GlobalLayoutHook hook, Activity activity) {
+        FrameLayout root = new FrameLayout(activity);
+        assertTrue(hook.install(root, () -> { }));
+        return new WeakReference<>(root.getViewTreeObserver());
     }
 
     @Test public void invalidInstallDetachesTheExistingListener() {

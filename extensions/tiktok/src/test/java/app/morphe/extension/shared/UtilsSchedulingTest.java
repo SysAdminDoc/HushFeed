@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import app.morphe.extension.shared.diagnostics.DiagnosticCategory;
 import app.morphe.extension.shared.settings.preference.LogBufferManager;
@@ -70,6 +71,22 @@ public class UtilsSchedulingTest {
 
         assertTrue(laterTaskRan.get());
         assertTrue(LogBufferManager.buildExportText().contains("background sentinel"));
+    }
+
+    @Test
+    public void aSubmittedTaskThatFailsIsLoggedAndStillFailsItsFuture() throws Exception {
+        java.util.concurrent.Future<Object> result = Utils.submitOnBackgroundThread(() -> {
+            throw new IllegalStateException("submitted sentinel");
+        });
+        Utils.awaitBackgroundTasksForTests();
+
+        assertTrue(LogBufferManager.buildExportText().contains("submitted sentinel"));
+        try {
+            result.get();
+            fail("the future hid the failure");
+        } catch (java.util.concurrent.ExecutionException expected) {
+            assertTrue(expected.getCause() instanceof IllegalStateException);
+        }
     }
 
     @Test

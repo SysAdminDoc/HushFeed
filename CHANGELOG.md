@@ -99,6 +99,7 @@ Every Hushfeed release, newest first.
 * When `Turn back on` can't save, it says "Couldn't save the change. Try again." instead of acting like Hushfeed came back on.
 * Shared diagnostics leave out email addresses, phone numbers, account names and your proxy's address. Phone numbers written with spaces, dashes or brackets go too, and so does a nickname of several words or the name in front of your proxy's or router's address.
 * Opening a video from a sorted or searched Liked grid, or from your sorted private videos, now swipes in the grid's order, and a search plays its matches first. Those two grids have a tap handler of their own, so their video page kept TikTok's order while your posts followed the sort (#180).
+* A background job that fails, like the media cache's start-up cleanup, now shows up in the diagnostics log. Before, nothing recorded it.
 
 ## 0.81.0 (2026-11-05)
 

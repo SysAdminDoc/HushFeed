@@ -293,6 +293,10 @@ public class Utils {
             return backgroundThreadPool.submit(() -> {
                 try {
                     return call.call();
+                } catch (Throwable failure) {
+                    // A caller that drops the future, like the media cache's start-up pass, would never see it.
+                    Logger.printException(() -> call.getClass().getSimpleName() + ": " + failure.getMessage(), failure);
+                    throw failure;
                 } finally {
                     backgroundTasksInFlight.decrementAndGet();
                 }

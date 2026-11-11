@@ -14,9 +14,12 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.diagnostics.HookStatus;
+import app.morphe.extension.shared.settings.Setting;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
+import app.morphe.extension.tiktok.settings.preference.BackupRuns;
 import app.morphe.extension.tiktok.settings.preference.categories.InterfacePreferenceCategory;
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.After;
 import org.junit.Test;
@@ -971,6 +974,29 @@ public class CaptionToolsTest {
             assertNotNull(restored);
             assertNotSame(caption, restored);
             assertEquals(View.VISIBLE, restored.getVisibility());
+        }
+    }
+
+    @Test public void aResetThatTurnsKeptCaptionsOffTakesTheKeptCaptionAway() throws Exception {
+        try (var owner = Robolectric.buildActivity(CaptionActivity.class).setup().visible()) {
+            var activity = owner.get();
+            FrameLayout source = new FrameLayout(activity);
+            activity.setContentView(source);
+            owner.windowFocusChanged(true);
+            Utils.setContext(activity);
+            Settings.KEEP_CAPTIONS_CLEAR_DISPLAY.save(true);
+            CaptionTools.onVideoChanged("restored-video");
+            CaptionTools.onCaption(source, "restored-video", "EXPANDED", "Restored cue");
+            CaptionTools.onClear(new Video("restored-video"), true);
+            TextView caption = find(activity.getWindow().getDecorView(), "Restored cue");
+            assertNotNull(caption);
+
+            // A restore, a reset or an undo writes every setting at once, past the switch's redraw.
+            Setting.saveAll(Collections.singletonMap(Settings.KEEP_CAPTIONS_CLEAR_DISPLAY, false));
+            BackupRuns.finish(BackupRuns.BACKUP);
+            assertNotNull("a backup only reads the settings, so it redraws nothing", caption.getParent());
+            BackupRuns.finish(BackupRuns.RESET);
+            assertNull("a reset that turned kept captions off left the caption on screen", caption.getParent());
         }
     }
 

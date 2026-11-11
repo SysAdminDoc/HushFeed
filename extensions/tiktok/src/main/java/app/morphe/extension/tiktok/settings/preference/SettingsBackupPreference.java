@@ -364,10 +364,26 @@ public final class SettingsBackupPreference extends Preference
     }
 
     private static void finishRun(int run, int action, WeakReference<TikTokPreferenceFragment> owner) {
+        // A run that was stopped gave the rows back already, and they may be a later run's now.
+        if (RUN.get() != run) {
+            refreshRows();
+        } else {
+            if (action != EXPORT) AbstractPreferenceFragment.settingImportInProgress = false;
+            operation = null;
+            operationUri = null;
+            BUSY.set(false);
+            setRowsBusy(0, null);
+            TikTokPreferenceFragment started = owner.get();
+            if (started != null && started.isAdded()) started.refreshBackupSettings();
+            // The page open now, when settings was rebuilt while the file app had the file.
+            TikTokPreferenceFragment open = TikTokPreferenceFragment.active();
+            if (open != null && open != started) open.refreshBackupSettings();
+        }
         // A restore, a reset or an undo writes every setting at once, past the switches' own
         // redraws, and the page only puts the stored values back in its controls. The redraws
-        // those switches run are run here instead. Auto-translate's is left out: it saves a
-        // setting of its own, which would undo what was just restored.
+        // those switches run are run here instead, after the run has let go of the rows. Auto-
+        // translate's is left out: it saves a setting of its own, which would undo what was just
+        // restored.
         if (action != EXPORT) {
             app.morphe.extension.tiktok.blockauthor.BlockAuthorOverlay.refresh();
             app.morphe.extension.tiktok.playback.FeedMute.refresh();
@@ -377,21 +393,6 @@ public final class SettingsBackupPreference extends Preference
             app.morphe.extension.tiktok.comment.CommenterDetails.onSettingChanged();
             app.morphe.extension.tiktok.feed.GridSearch.onSettingChanged();
         }
-        // A run that was stopped gave the rows back already, and they may be a later run's now.
-        if (RUN.get() != run) {
-            refreshRows();
-            return;
-        }
-        if (action != EXPORT) AbstractPreferenceFragment.settingImportInProgress = false;
-        operation = null;
-        operationUri = null;
-        BUSY.set(false);
-        setRowsBusy(0, null);
-        TikTokPreferenceFragment started = owner.get();
-        if (started != null && started.isAdded()) started.refreshBackupSettings();
-        // The page open now, when settings was rebuilt while the file app had the file.
-        TikTokPreferenceFragment open = TikTokPreferenceFragment.active();
-        if (open != null && open != started) open.refreshBackupSettings();
     }
 
     /**

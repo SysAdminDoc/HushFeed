@@ -30,13 +30,11 @@ import com.ss.android.ugc.aweme.feed.model.AwemeStatistics;
 import com.ss.android.ugc.aweme.feed.model.PhotoModeImageInfo;
 import com.ss.android.ugc.aweme.feed.model.PhotoModeTextInfo;
 
-import java.lang.ref.WeakReference;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.diagnostics.HookStatus;
@@ -44,9 +42,8 @@ import app.morphe.extension.shared.settings.Setting;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
-import app.morphe.extension.tiktok.settings.preference.SettingsBackupPreference;
+import app.morphe.extension.tiktok.settings.preference.BackupRuns;
 import app.morphe.extension.tiktok.settings.preference.SettingsUi;
-import app.morphe.extension.tiktok.settings.preference.TikTokPreferenceFragment;
 import app.morphe.extension.tiktok.settings.preference.categories.InterfacePreferenceCategory;
 
 import org.junit.After;
@@ -694,26 +691,18 @@ public class GridSearchTest {
             Setting.saveAll(Collections.singletonMap(Settings.GRID_SEARCH, false));
             idle(50);
             assertEquals("the batch write alone redrew the grid", "abcd", ids(adapter.mmItems));
-            finishBackupRun(7311);
+            BackupRuns.finish(BackupRuns.BACKUP);
             idle(50);
             assertEquals("a backup only reads the settings, so it redraws nothing", "abcd", ids(adapter.mmItems));
-            finishBackupRun(7313);
+            BackupRuns.finish(BackupRuns.RESET);
             idle(50);
             assertEquals("a reset that turned search off left the grid narrowed", "abcdef", ids(adapter.mmItems));
 
             Setting.saveAll(Collections.singletonMap(Settings.GRID_SEARCH, true));
-            finishBackupRun(7314);
+            BackupRuns.finish(BackupRuns.UNDO);
             idle(50);
             assertEquals("an undo that turned search back on didn't narrow the grid", "abcd", ids(adapter.mmItems));
         }
-    }
-
-    /** Ends the backup page's current run as its worker does: a backup (7311), a reset (7313) or an undo (7314). */
-    private static void finishBackupRun(int action) {
-        AtomicInteger run = ReflectionHelpers.getStaticField(SettingsBackupPreference.class, "RUN");
-        ReflectionHelpers.callStaticMethod(SettingsBackupPreference.class, "finishRun",
-                ClassParameter.from(int.class, run.get()), ClassParameter.from(int.class, action),
-                ClassParameter.from(WeakReference.class, new WeakReference<TikTokPreferenceFragment>(null)));
     }
 
     @Test public void theOpenBoxCountsAPageThatComesIn() {

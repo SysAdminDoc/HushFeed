@@ -10,6 +10,9 @@ import app.morphe.extension.tiktok.blockauthor.CurrentVideoAuthor;
 import app.morphe.extension.tiktok.feedfilter.CreatorExceptionsTest.Item;
 import app.morphe.extension.tiktok.settings.Settings;
 
+import android.os.Looper;
+
+import com.ss.android.ugc.aweme.feed.panel.FollowFeedFragmentPanelMT;
 import com.ss.android.ugc.aweme.follow.presenter.FollowFeed;
 import com.ss.android.ugc.aweme.follow.presenter.FollowFeedList;
 
@@ -23,6 +26,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 
@@ -307,6 +311,87 @@ public class FollowingLatestFirstTest {
     @Test
     public void offAsksForTikToksOwnCount() {
         assertEquals(20, FollowingLatestFirst.requestCount(0, 0, 20));
+    }
+
+    @Test
+    public void followingAsksForTheNextReadFurtherAheadAndOtherFeedsDoNot() {
+        Settings.FOLLOWING_LATEST_FIRST.save(true);
+
+        assertEquals(FollowingLatestFirst.LOAD_AHEAD,
+                FollowingLatestFirst.loadAhead(new FollowFeedFragmentPanelMT(), 3));
+        // A Following panel TikTok derives from its own is still Following.
+        assertEquals(FollowingLatestFirst.LOAD_AHEAD,
+                FollowingLatestFirst.loadAhead(new FollowFeedFragmentPanelMT() {}, 3));
+        // For You and every other feed keep TikTok's threshold, and so does one already larger.
+        assertEquals(3, FollowingLatestFirst.loadAhead(new Object(), 3));
+        assertEquals(3, FollowingLatestFirst.loadAhead(null, 3));
+        assertEquals(20, FollowingLatestFirst.loadAhead(new FollowFeedFragmentPanelMT(), 20));
+    }
+
+    @Test
+    public void offKeepsTikToksLoadMoreThreshold() {
+        assertEquals(3, FollowingLatestFirst.loadAhead(new FollowFeedFragmentPanelMT(), 3));
+    }
+
+    @Test
+    public void eachReadThatGrewTheListAsksForTheNextUntilTheServerHasNoMore() {
+        Settings.FOLLOWING_LATEST_FIRST.save(true);
+        FollowFeedFragmentPanelMT panel = new FollowFeedFragmentPanelMT();
+
+        FollowingLatestFirst.delivered(panel, posts(3), true);
+        // Asked once the delivery is done, not inside it.
+        assertEquals(0, panel.checks);
+        idle();
+        assertEquals(1, panel.checks);
+
+        FollowingLatestFirst.delivered(panel, posts(7), true);
+        idle();
+        assertEquals(2, panel.checks);
+        // A read that brought nothing new stops the chain: the reader moving asks again.
+        FollowingLatestFirst.delivered(panel, posts(7), true);
+        idle();
+        assertEquals(2, panel.checks);
+        // So does the end of the list.
+        FollowingLatestFirst.delivered(panel, posts(10), false);
+        idle();
+        assertEquals(2, panel.checks);
+        // A pull to refresh that came back shorter doesn't ask by itself, the next read that grows it does.
+        FollowingLatestFirst.delivered(panel, posts(4), true);
+        idle();
+        assertEquals(2, panel.checks);
+        FollowingLatestFirst.delivered(panel, posts(6), true);
+        idle();
+        assertEquals(3, panel.checks);
+    }
+
+    @Test
+    public void aPanelWhoseScreenIsGoneIsNotAsked() {
+        Settings.FOLLOWING_LATEST_FIRST.save(true);
+        FollowFeedFragmentPanelMT panel = new FollowFeedFragmentPanelMT();
+        panel.viewValid = false;
+
+        FollowingLatestFirst.delivered(panel, posts(3), true);
+        idle();
+        assertEquals(0, panel.checks);
+    }
+
+    @Test
+    public void offNeverAsksForAnExtraRead() {
+        FollowFeedFragmentPanelMT panel = new FollowFeedFragmentPanelMT();
+
+        FollowingLatestFirst.delivered(panel, posts(3), true);
+        idle();
+        assertEquals(0, panel.checks);
+    }
+
+    private static List<Object> posts(int count) {
+        List<Object> posts = new ArrayList<>();
+        for (int index = 0; index < count; index++) posts.add(new Object());
+        return posts;
+    }
+
+    private static void idle() {
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
     }
 
     @Test

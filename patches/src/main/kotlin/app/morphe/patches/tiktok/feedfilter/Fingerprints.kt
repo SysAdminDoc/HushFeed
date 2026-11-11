@@ -227,6 +227,23 @@ internal object FollowingCacheRestoreFingerprint : Fingerprint(
     },
 )
 
+internal const val FULL_FEED_FRAGMENT_PANEL_DESCRIPTOR =
+    "Lcom/ss/android/ugc/aweme/feed/panel/FullFeedFragmentPanel;"
+internal const val FOLLOW_FEED_FRAGMENT_PANEL_DESCRIPTOR =
+    "Lcom/ss/android/ugc/aweme/feed/panel/FollowFeedFragmentPanelMT;"
+
+/**
+ * The feed pager's load-more check ([loadFollowingFurtherAhead]), run on every page select of
+ * every full-screen feed. The class and the method keep their real names.
+ */
+internal object FeedCheckLoadMoreFingerprint : Fingerprint(
+    definingClass = FULL_FEED_FRAGMENT_PANEL_DESCRIPTOR,
+    name = "checkLoadMore",
+    accessFlags = listOf(AccessFlags.PUBLIC),
+    returnType = "V",
+    parameters = listOf(),
+)
+
 internal object InsertedFeedItemsFingerprint : Fingerprint(
     definingClass = BASE_LIST_FRAGMENT_PANEL_DESCRIPTOR,
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),

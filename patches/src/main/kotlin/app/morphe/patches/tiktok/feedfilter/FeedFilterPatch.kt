@@ -252,6 +252,9 @@ val feedFilterPatch = bytecodePatch(
 
         FollowFeedRequestFingerprint.method.raiseFollowFeedFirstReadCount()
         FollowingCacheRestoreFingerprint.method.skipSavedFollowingFirstVideo()
+        FeedCheckLoadMoreFingerprint.method.loadFollowingFurtherAhead()
+        followingReadDeliveries(mutableClassDefBy(FOLLOW_FEED_FRAGMENT_PANEL_DESCRIPTOR).methods)
+            .forEach { it.reportFollowingRead() }
 
         listOf(
             ProfileRefreshResultFingerprint.method,
@@ -1191,6 +1194,72 @@ internal fun MutableMethod.skipSavedFollowingFirstVideo() {
             move-object/from16 p1, v0
         """,
         ExternalLabel("morphe_keep_saved_following", getInstruction(0)),
+    )
+}
+
+/**
+ * Latest first on Following (#226): the server sends about 3 posts a Following read whatever count
+ * is asked, and the pager asks for the next read only with 3 left below the reader, so a newer post
+ * often turned up after the reader had passed older ones. Past its settings and smart load-more
+ * paths, checkLoadMore compares the reader's position with the item count less a threshold from a
+ * static int getter of its own class (3). The hook hands that threshold to the extension, which
+ * raises it on Following while the switch is on. Straight line: this runs on every swipe of every
+ * feed (#264).
+ */
+internal fun MutableMethod.loadFollowingFurtherAhead() {
+    val instructions = implementationOrPatchException("Following load ahead").instructions.toList()
+    val getters = instructions.withIndex().filter { (_, instruction) ->
+        instruction.opcode == Opcode.INVOKE_STATIC &&
+            instruction.getReference<MethodReference>()?.let {
+                it.definingClass == definingClass && it.returnType == "I" && it.parameterTypes.isEmpty()
+            } == true
+    }
+    val index = getters.singleOrNull()?.index
+        ?: throw PatchException("Following load ahead: $name calls ${getters.size} int getters of its class, expected one")
+    val result = instructions.getOrNull(index + 1)
+    val subtract = instructions.getOrNull(index + 2) as? TwoRegisterInstruction
+    val threshold = (result as? OneRegisterInstruction)?.registerA
+        ?.takeIf { result?.opcode == Opcode.MOVE_RESULT }
+        ?.takeIf { subtract?.opcode == Opcode.SUB_INT_2ADDR && subtract.registerB == it }
+        ?: throw PatchException("Following load ahead: the getter's result is not taken off the item count")
+    val receiver = implementation!!.registerCount - numberOfParameterRegisters
+    if (receiver > 15 || threshold > 15) {
+        throw PatchException("Following load ahead: v$receiver or v$threshold is past a plain call's registers")
+    }
+    addInstructions(
+        index + 2,
+        """
+            invoke-static { p0, v$threshold }, $FOLLOWING_LATEST_FIRST_CLASS_DESCRIPTOR->loadAhead(Ljava/lang/Object;I)I
+            move-result v$threshold
+        """,
+    )
+}
+
+/**
+ * Latest first on Following (#226): the Following panel's two list deliveries, the first read of a
+ * list and every later one. Each takes the whole list and whether the server has more, and calls
+ * its FullFeedFragmentPanel counterpart. R8 names both.
+ */
+internal fun <M : Method> followingReadDeliveries(panelMethods: Iterable<M>): List<M> {
+    val deliveries = panelMethods.filter { candidate ->
+        candidate.returnType == "V" &&
+            candidate.parameterTypes.map(CharSequence::toString) == listOf("Ljava/util/List;", "Z")
+    }
+    if (deliveries.size != 2) {
+        throw PatchException("Following load ahead: expected two list deliveries on the Following panel, found ${deliveries.size}")
+    }
+    return deliveries
+}
+
+/**
+ * The pager asks for the next read only as the reader moves, so the first read's few posts were
+ * all that waited below the first video. Each delivery tells the extension, which asks
+ * checkLoadMore again once it is done, while the switch is on and the server has more.
+ */
+internal fun MutableMethod.reportFollowingRead() {
+    addInstructions(
+        0,
+        "invoke-static/range { p0 .. p2 }, $FOLLOWING_LATEST_FIRST_CLASS_DESCRIPTOR->delivered(Ljava/lang/Object;Ljava/util/List;Z)V",
     )
 }
 

@@ -5,6 +5,7 @@
 package app.morphe.extension.tiktok.feedfilter;
 
 import app.morphe.extension.shared.Logger;
+import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.publishdate.AlwaysShowPublishDatePatch;
 import app.morphe.extension.tiktok.settings.Settings;
 import com.ss.android.ugc.aweme.feed.model.Aweme;
@@ -26,6 +27,7 @@ import java.util.Map;
  * list again and finds the current video in it, which is what carries the new order to the screen.
  * Ads, LIVEs and posts with no date keep their places. A card that isn't a post (the "You're all
  * caught up" divider) also splits the sort, so a suggested post after it never moves above it.
+ * The pager also loads further ahead on Following, so each sort has more posts to order.
  */
 public final class FollowingLatestFirst {
     /** Lists remembered at once, in the order they were last read, so the one on screen stays. */
@@ -52,6 +54,21 @@ public final class FollowingLatestFirst {
      */
     static final int LATER_READ_COUNT = 30;
 
+    /**
+     * Posts left below the reader on Following when the next read is asked for. TikTok asks with 3
+     * left, and the server sends about 3 a read whatever count is asked (#226), so a newer post
+     * often turned up after the reader had passed older ones. With this many waiting, a few reads'
+     * posts are sorted together before the reader reaches them.
+     */
+    static final int LOAD_AHEAD = 12;
+
+    private static final String FOLLOWING_PANEL =
+        "com.ss.android.ugc.aweme.feed.panel.FollowFeedFragmentPanelMT";
+
+    /** The Following panel the last read went to, and its list's size then. */
+    private static WeakReference<Object> deliveredPanel = new WeakReference<>(null);
+    private static int deliveredSize = -1;
+
     private FollowingLatestFirst() {}
 
     /**
@@ -73,6 +90,67 @@ public final class FollowingLatestFirst {
             // The request goes out with TikTok's own count.
         }
         return count;
+    }
+
+    /**
+     * The threshold TikTok's pager checks on every page select of every feed: it asks for the next
+     * read once the reader is within {@code threshold} posts of the end. Raised to LOAD_AHEAD on
+     * Following with the switch on; every other feed keeps TikTok's.
+     */
+    public static int loadAhead(Object panel, int threshold) {
+        try {
+            if (threshold < LOAD_AHEAD && enabled() && isFollowing(panel)) return LOAD_AHEAD;
+        } catch (Throwable unknown) {
+            // TikTok's own threshold.
+        }
+        return threshold;
+    }
+
+    /**
+     * A read reached the Following panel, with the whole list and whether the server has more.
+     * The pager only asks for the next read as the reader moves, so the first read's few posts
+     * were all that waited below the first video. With the switch on this asks again once the
+     * delivery is done, through the raised threshold, until LOAD_AHEAD posts wait below the
+     * reader. A read that added nothing stops it, as does the end of the list.
+     */
+    public static void delivered(Object panel, List posts, boolean hasMore) {
+        try {
+            if (panel == null || posts == null || !enabled()) return;
+            int size = posts.size();
+            // Only a read that added posts asks again, so a list that keeps its size or a refresh
+            // that came back shorter can't keep reads going by itself.
+            boolean grew = deliveredPanel.get() != panel || size > deliveredSize;
+            deliveredPanel = new WeakReference<>(panel);
+            deliveredSize = size;
+            if (!hasMore || !grew) return;
+            Logger.printDebug(() -> "Latest first on Following: a read brought the list to "
+                + size + " posts, asking for the next");
+            // Posted, so the read that just landed is no longer in flight when the next is asked.
+            Utils.runOnMainThread(() -> askForMore(panel));
+        } catch (Throwable unknown) {
+            // TikTok asks again as the reader moves.
+        }
+    }
+
+    private static void askForMore(Object panel) {
+        try {
+            Class<?> type = panel.getClass();
+            // TikTok's delivery checks its screen only after the hook, and its check for more
+            // doesn't, so a panel whose screen is gone would still send a read.
+            if (Boolean.FALSE.equals(type.getMethod("isViewValid").invoke(panel))) return;
+            type.getMethod("checkLoadMore").invoke(panel);
+        } catch (Throwable unknown) {
+            Logger.printDebug(() -> "Latest first on Following: could not ask for the next read: "
+                + unknown);
+        }
+    }
+
+    private static boolean isFollowing(Object panel) {
+        for (Class<?> type = panel == null ? null : panel.getClass(); type != null;
+             type = type.getSuperclass()) {
+            if (FOLLOWING_PANEL.equals(type.getName())) return true;
+        }
+        return false;
     }
 
     /**
@@ -173,6 +251,8 @@ public final class FollowingLatestFirst {
 
     static void resetForTests() {
         enabled = null;
+        deliveredPanel = new WeakReference<>(null);
+        deliveredSize = -1;
         synchronized (CHECKED) {
             CHECKED.clear();
         }

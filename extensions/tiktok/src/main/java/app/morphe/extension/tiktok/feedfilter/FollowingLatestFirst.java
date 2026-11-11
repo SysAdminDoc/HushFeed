@@ -63,6 +63,10 @@ public final class FollowingLatestFirst {
         try {
             int wanted = cursor == 0 ? FIRST_READ_COUNT : LATER_READ_COUNT;
             if (count > 0 && count < wanted && enabled()) {
+                // The S22 got about 3 posts back per read whatever it asked (#226): this tells a
+                // read that never passed here from one the server cut short.
+                Logger.printDebug(() -> "Latest first on Following: asked for " + wanted
+                    + " posts instead of " + count + " at cursor " + cursor);
                 return wanted;
             }
         } catch (Throwable unknown) {
@@ -214,6 +218,10 @@ public final class FollowingLatestFirst {
         synchronized (checked) {
             if (checked.valid && checked.signature == signature) return;
             long[] postedAt = new long[size];
+            // For the debug log only, to tell which post the sort took for the one on screen.
+            if (current >= 0 && posts[current] != null) {
+                postedAt[current] = AlwaysShowPublishDatePatch.postedAt(posts[current], nowMillis);
+            }
             List<Integer> run = new ArrayList<>();
             List order = null;
             for (int slot = current + 1; slot < size; slot++) {
@@ -272,7 +280,8 @@ public final class FollowingLatestFirst {
         Collections.sort(sorted, (a, b) -> Long.compare(postedAt[b], postedAt[a]));
         if (sorted.equals(run)) return order;
         Logger.printDebug(() -> "Latest first on Following: " + run.size() + " posts below slot "
-            + current + " at " + slots(run, postedAt) + " play as " + slots(sorted, postedAt));
+            + current + (current >= 0 ? "@" + postedAt[current] : "") + " of " + snapshot.size()
+            + " at " + slots(run, postedAt) + " play as " + slots(sorted, postedAt));
         List result = order != null ? order : new ArrayList(snapshot);
         for (int k = 0; k < run.size(); k++) {
             result.set(run.get(k), snapshot.get(sorted.get(k)));

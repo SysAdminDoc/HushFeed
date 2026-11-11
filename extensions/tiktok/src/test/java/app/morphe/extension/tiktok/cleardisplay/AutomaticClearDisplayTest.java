@@ -1124,8 +1124,13 @@ public class AutomaticClearDisplayTest {
             assertEquals("another video's progress asked again", List.of(true), events);
             assertTrue(RememberClearDisplayPatch.isCarryingClear());
 
-            if (handBack) RememberClearDisplayPatch.rememberClearDisplayEvent(new Event(false, 2));
-            if (handBack) assertFalse("the controls brought back stayed away", RememberClearDisplayPatch.isCarryingClear());
+            if (handBack) {
+                RememberClearDisplayPatch.rememberClearDisplayEvent(new Event(false, 2));
+                assertFalse("the controls brought back stayed away", RememberClearDisplayPatch.isCarryingClear());
+                // isCarryingClear also reads the saved choice, which the hand-back cleared.
+                assertFalse("the carry outlived the controls brought back", (Boolean)
+                        org.robolectric.util.ReflectionHelpers.getStaticField(RememberClearDisplayPatch.class, "carrying"));
+            }
             RememberClearDisplayPatch.onPlaybackProgress(controller, "first");
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertEquals(handBack ? List.of(true) : List.of(true, true), events);
@@ -1135,6 +1140,43 @@ public class AutomaticClearDisplayTest {
             RememberClearDisplayPatch.onPlaybackProgress(controller, "first");
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertEquals("nothing left to ask for", handBack ? 1 : 2, events.size());
+        }
+    }
+
+    /**
+     * A cold start's first frame can come before the window has focus, and the panel turns the
+     * remembered clear down then too. The controls showed for most of a second until focus asked
+     * again (S22, 2026-11-11), so the clear carries over that gap. One TikTok never takes lets
+     * the controls back after PAGE_LIMIT_MS.
+     */
+    @Test public void aRememberedClearTurnedDownBeforeFocusCarriesUntilFocusAsksAgain() {
+        for (boolean takes : new boolean[] {true, false}) {
+            RememberClearDisplayPatch.resetForTests();
+            Settings.AUTOMATIC_CLEAR_DISPLAY.save(false);
+            Settings.CLEAR_DISPLAY.save(true);
+            java.util.concurrent.atomic.AtomicBoolean focused = new java.util.concurrent.atomic.AtomicBoolean();
+            List<Boolean> events = new ArrayList<>();
+            RememberClearDisplayPatch.ClearEvent panel = value -> {
+                events.add(value);
+                return focused.get() && takes;
+            };
+            RememberClearDisplayPatch.firstFrame("first", focused::get, panel);
+            assertEquals(List.of(true), events);
+            assertFalse(RememberClearDisplayPatch.isClearDisplayNow());
+            assertTrue("the controls showed while the window had no focus",
+                    RememberClearDisplayPatch.isCarryingClear());
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(RememberClearDisplayPatch.PAGE_LIMIT_MS - 1000));
+            assertTrue(RememberClearDisplayPatch.isCarryingClear());
+
+            focused.set(true);
+            RememberClearDisplayPatch.firstFrame("first", focused::get, panel);
+            assertEquals(List.of(true, true), events);
+            assertEquals(takes, RememberClearDisplayPatch.isClearDisplayNow());
+            assertTrue("focus asking again dropped the carry", RememberClearDisplayPatch.isCarryingClear());
+
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(RememberClearDisplayPatch.PAGE_LIMIT_MS));
+            assertEquals(takes ? "a clear that landed lost its carry" : "a clear TikTok never took kept the controls away",
+                    takes, RememberClearDisplayPatch.isCarryingClear());
         }
     }
 

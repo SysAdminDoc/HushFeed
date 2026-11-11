@@ -136,6 +136,13 @@ public final class RememberClearDisplayPatch {
         starting = false;
         VideoOverlayHider.refresh();
     };
+    /** A remembered clear TikTok's panel turned down and never took: the controls come back. */
+    private static final Runnable END_TURNED_DOWN_CARRY = () -> {
+        if (!carrying || clearNow || Settings.AUTOMATIC_CLEAR_DISPLAY.get()) return;
+        Logger.printDebug(() -> "Clear display: the remembered clear never landed, letting the controls back");
+        awaitingNative = false;
+        setCarrying(false);
+    };
     private static boolean observingPreferences;
     private static WeakReference<View> window = new WeakReference<>(null);
     private static final SharedPreferences.OnSharedPreferenceChangeListener PREFERENCES = (preferences, key) -> {
@@ -277,6 +284,7 @@ public final class RememberClearDisplayPatch {
             applied = false;
             manuallyChanged = false;
             boolean remembered = false;
+            boolean turnedDown = false;
             // Not under the daily hold, whose panel needs TikTok's tabs back (leaveForHold).
             // Nor under the feed lock, which covers the feed the same way and needs the tabs too.
             if (remembersClearDisplay() && !SessionBudget.isLocked() && !FeedLock.covers()) {
@@ -286,8 +294,14 @@ public final class RememberClearDisplayPatch {
                 // video kept its controls. Progress asks again, as on the automatic path. A video
                 // that's already clear refuses too, the panel having nothing to do, and asking
                 // it again would undo TikTok's own exits; with no focus, regaining it asks.
-                if (!remembered && !clearNow && asked == generation && stillCurrent.holds()) {
+                turnedDown = !remembered && !clearNow && asked == generation;
+                if (turnedDown && stillCurrent.holds()) {
                     awaitingNative = true;
+                }
+                if (!remembered) {
+                    boolean again = awaitingNative;
+                    Logger.printDebug(() -> "Clear display: TikTok's clear-mode panel didn't take the remembered clear"
+                            + (again ? ", asking again on progress" : ""));
                 }
             }
             // Switched off while it had the controls hidden: TikTok brings them back on the next
@@ -305,9 +319,14 @@ public final class RememberClearDisplayPatch {
             // A remembered clear lands on every video as it starts, the way the automatic path
             // with no delay does, so it carries the same way: a video opened from Favorites
             // showed its controls for about a second until its clear landed (#84). One the panel
-            // turned down carries until progress asks again, or a cold start's first video showed
-            // its tabs and buttons in between. Turned down again, the controls come back.
-            setCarrying(remembered || (awaitingNative && !retry));
+            // turned down carries until progress or focus asks again, or a cold start's first
+            // video showed its tabs and buttons in between. Its first frame can come before the
+            // window has focus, which asks again as it comes (S22, 2026-11-11). Turned down again,
+            // or never taken within PAGE_LIMIT_MS, the controls come back.
+            boolean carryTurnedDown = turnedDown && !retry;
+            setCarrying(remembered || carryTurnedDown);
+            MAIN.removeCallbacks(END_TURNED_DOWN_CARRY);
+            if (carryTurnedDown) MAIN.postDelayed(END_TURNED_DOWN_CARRY, PAGE_LIMIT_MS);
             return;
         }
         // A video page opened inside the main window (search on 47.5.3) is a new viewer, the way a
@@ -386,6 +405,7 @@ public final class RememberClearDisplayPatch {
         starting = true;
         startLimitArmed = false;
         MAIN.removeCallbacks(END_START);
+        MAIN.removeCallbacks(END_TURNED_DOWN_CARRY);
         endPageHold();
         openedPage.clear();
         frontPage.clear();
@@ -504,6 +524,8 @@ public final class RememberClearDisplayPatch {
         starting = false;
         if (carrying == carry && !started) return;
         carrying = carry;
+        Logger.printDebug(() -> "Clear display: " + (carry ? "carrying the clear" : "not carrying the clear")
+                + (started ? ", start window over" : ""));
         MAIN.post(VideoOverlayHider::refresh);
     }
 
@@ -513,7 +535,10 @@ public final class RememberClearDisplayPatch {
             boolean accepted = event.accept(clear);
             if (dispatch != generation) return false;
             if (clear && !accepted) return false;
-            if (clear) endPageHold();
+            if (clear) {
+                endPageHold();
+                MAIN.removeCallbacks(END_TURNED_DOWN_CARRY);
+            }
             if (clearNow != clear) {
                 clearNow = clear;
                 MAIN.post(VideoOverlayHider::refresh);

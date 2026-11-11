@@ -503,6 +503,8 @@ public final class VideoOverlayHider {
      * the cleared video as the page opened (#84, Login2 emulator 2026-10-15).
      */
     private static boolean topBarHeld;
+    /** Whether the last pass held the controls for a carried clear, so the log says when that changes. */
+    private static boolean carriedLast;
 
     /**
      * How long a status bar may stay visible before it is hidden again on Android 11 and
@@ -665,6 +667,11 @@ public final class VideoOverlayHider {
             // the tabs and (with the controls hidden) TikTok's ordinary progress bar (#84).
             // Carried over, they stay away across the swipe.
             boolean carry = !HushfeedPause.isPaused() && RememberClearDisplayPatch.isCarryingClear();
+            if (carry != carriedLast) {
+                carriedLast = carry;
+                Logger.printDebug(() -> "Video overlay: " + (carry ? "holding" : "letting go of")
+                        + " the controls for a carried clear");
+            }
             boolean clearLive = !HushfeedPause.isPaused()
                     && (RememberClearDisplayPatch.isClearDisplayNow() || carry);
             // The fade belongs to the overlay patch: a value saved before a repatch without it

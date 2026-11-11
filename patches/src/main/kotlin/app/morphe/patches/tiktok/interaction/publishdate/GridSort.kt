@@ -163,6 +163,23 @@ internal object GridCellOpenFingerprint : Fingerprint(
 )
 
 /**
+ * The same cell click on the other profile grid fragment, the one the Liked tab and the private
+ * videos tab extend without overriding it. It has its own copy of the click, so a hook on
+ * [GridCellOpenFingerprint] alone never ran there and a sorted or searched Liked grid, or a
+ * sorted private one, swiped on in TikTok's order.
+ */
+internal object ProfileTabCellOpenFingerprint : Fingerprint(
+    definingClass = "Lcom/ss/android/ugc/profile/platform/framework/aweme/profile/tab/profiletab/ProfileBaseAwemeListFragment;",
+    returnType = "V",
+    parameters = listOf(
+        "Lcom/ss/android/ugc/aweme/feed/model/Aweme;",
+        "Landroid/view/View;",
+        "Ljava/lang/String;",
+    ),
+    strings = listOf("aweme://aweme/detail/", "from_profile_other"),
+)
+
+/**
  * The profile grid fragment's method that asks for the next page once a fresh list is in, the
  * one method in the app that logs both of these (#180). It calls TikTok's page loader with the
  * load-more message, which [gridPageLoaderIn] reads from it.
@@ -379,19 +396,24 @@ internal fun BytecodePatchContext.hookGridSortOn(versionName: String): Boolean {
 
 /**
  * Hands the grid's fragment to the extension as a cell opens its video, so the video page swipes
- * on in the grid's order (#180). The fragment is `p0` at the click's first instruction, and the
- * range form takes it from any register. Required on a declared build. On any other, a click it
- * can't find leaves the grid sorted and the video page in TikTok's order.
+ * on in the grid's order (#180) and a searched grid plays its matches first. Both profile grid
+ * fragments get it. The fragment is `p0` at the click's first instruction, and the range form
+ * takes it from any register. Required on a declared build. On any other, a click it can't find
+ * leaves that grid sorted and its video page in TikTok's order. Says whether both went in.
  */
 internal fun BytecodePatchContext.hookGridOpen(versionName: String): Boolean {
     val declared = versionName in declaredVersions()
-    val open = if (declared) GridCellOpenFingerprint.method else GridCellOpenFingerprint.methodOrNull
-    if (open == null) {
-        println("[$PATCH] The sorted grid on $versionName opens videos in TikTok's order: no grid cell click found.")
-        return false
+    var hooked = 0
+    for ((fingerprint, grid) in listOf(GridCellOpenFingerprint to "profile",ProfileTabCellOpenFingerprint to "Liked and private")) {
+        val open = if (declared) fingerprint.method else fingerprint.methodOrNull
+        if (open == null) {
+            println("[$PATCH] The sorted $grid grids on $versionName open videos in TikTok's order: no grid cell click found.")
+            continue
+        }
+        open.addInstruction(0, "invoke-static/range { p0 .. p0 }, $GRID_SORT->beforeOpen(Ljava/lang/Object;)V")
+        hooked++
     }
-    open.addInstruction(0, "invoke-static/range { p0 .. p0 }, $GRID_SORT->beforeOpen(Ljava/lang/Object;)V")
-    return true
+    return hooked == 2
 }
 
 /**

@@ -17,6 +17,7 @@ import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
@@ -263,44 +264,59 @@ class GridSortAnchorsTest {
     }
 
     @Test
-    fun `each declared build has one grid cell click and hands it the fragment first`() {
+    fun `each declared build has one cell click per profile grid fragment and hands each the fragment first`() {
+        // The Liked tab's grid has its own click; hooking only the other one left its video page
+        // in TikTok's order under a sort or a search.
+        val clicks = listOf(GridCellOpenFingerprint, ProfileTabCellOpenFingerprint)
         Fixtures.forEachDeclared { apk ->
             val version = Fixtures.versionOf(apk)
-            val found = mutableListOf<Method>()
             val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
-            for (entry in container.dexEntryNames) {
-                for (classDef in container.getEntry(entry)!!.dexFile.classes) {
-                    for (method in classDef.methods) {
-                        if (GridCellOpenFingerprint.takes(method, classDef)) found += method
+            for (click in clicks) {
+                val found = mutableListOf<Method>()
+                for (entry in container.dexEntryNames) {
+                    for (classDef in container.getEntry(entry)!!.dexFile.classes) {
+                        for (method in classDef.methods) {
+                            if (click.takes(method, classDef)) found += method
+                        }
                     }
                 }
+                val name = click.javaClass.simpleName
+                assertEquals("$version: $name takes ${found.map { "${it.definingClass}->${it.name}" }}", 1, found.size)
+                assertFalse("$version: $name has no fragment to hand over", AccessFlags.STATIC.isSet(found.single().accessFlags))
             }
-            assertEquals("$version: ${found.map { "${it.definingClass}->${it.name}" }}", 1, found.size)
 
             var checked = false
             val probe = bytecodePatch(name = "grid open probe") {
                 execute {
                     fun ops(m: Method) = m.implementation!!.instructions.filter { it.opcode != Opcode.NOP }.toList()
-                    val before = ops(GridCellOpenFingerprint.method).map { it.opcode }
-                    GridCellOpenFingerprint.clearMatch()
-                    assertTrue("$version: the hook went in", hookGridOpen(version))
-                    GridCellOpenFingerprint.clearMatch()
-                    val after = ops(GridCellOpenFingerprint.method)
-                    val call = after.first().getReference<MethodReference>()!!
-                    assertEquals(
-                        "Lapp/morphe/extension/tiktok/feed/GridSort;->beforeOpen(Ljava/lang/Object;)V",
-                        "${call.definingClass}->${call.name}(${call.parameterTypes.joinToString("")})${call.returnType}",
-                    )
-                    assertEquals(listOf(Opcode.INVOKE_STATIC_RANGE) + before, after.map { it.opcode })
+                    val before = clicks.map { click -> ops(click.method).map { it.opcode } }
+                    clicks.forEach { it.clearMatch() }
+                    assertTrue("$version: both hooks went in", hookGridOpen(version))
+                    clicks.forEach { it.clearMatch() }
+                    for ((index, click) in clicks.withIndex()) {
+                        val after = ops(click.method)
+                        val call = after.first().getReference<MethodReference>()!!
+                        assertEquals(
+                            "Lapp/morphe/extension/tiktok/feed/GridSort;->beforeOpen(Ljava/lang/Object;)V",
+                            "${call.definingClass}->${call.name}(${call.parameterTypes.joinToString("")})${call.returnType}",
+                        )
+                        assertEquals(listOf(Opcode.INVOKE_STATIC_RANGE) + before[index], after.map { it.opcode })
+                        // p0 is the first of the method's last registers, the ones its this and parameters arrive in.
+                        val hook = after.first() as RegisterRangeInstruction
+                        val ins = 1 + click.method.parameterTypes.sumOf { if (it.toString() == "J" || it.toString() == "D") 2 else 1 }
+                        assertEquals("$version: ${click.javaClass.simpleName} hands over p0, the fragment",
+                            click.method.implementation!!.registerCount - ins, hook.startRegister)
+                        assertEquals(1, hook.registerCount)
+                    }
                     checked = true
                 }
             }
-            GridCellOpenFingerprint.clearMatch()
+            clicks.forEach { it.clearMatch() }
             Patcher(PatcherConfig(apk, temporary.newFolder())).use { patcher ->
                 patcher += setOf(probe)
                 runBlocking { patcher().collect { result -> result.exception?.let { throw it } } }
             }
-            GridCellOpenFingerprint.clearMatch()
+            clicks.forEach { it.clearMatch() }
             assertTrue("$version: the probe never ran", checked)
         }
     }

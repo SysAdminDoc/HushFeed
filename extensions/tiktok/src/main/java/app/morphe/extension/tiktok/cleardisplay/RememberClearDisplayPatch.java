@@ -246,6 +246,8 @@ public final class RememberClearDisplayPatch {
     }
 
     static void firstFrame(String id, Condition stillCurrent, ClearEvent event) {
+        // Progress or focus asking again for a clear the panel turned down on this video.
+        boolean retry = awaitingNative && id != null && id.equals(activeId);
         activeId = id;
         activeCondition = stillCurrent;
         if (!observingPreferences) {
@@ -302,8 +304,10 @@ public final class RememberClearDisplayPatch {
             if (!id.equals(clearedByHandOn)) clearedByHandOn = null;
             // A remembered clear lands on every video as it starts, the way the automatic path
             // with no delay does, so it carries the same way: a video opened from Favorites
-            // showed its controls for about a second until its clear landed (#84).
-            setCarrying(remembered);
+            // showed its controls for about a second until its clear landed (#84). One the panel
+            // turned down carries until progress asks again, or a cold start's first video showed
+            // its tabs and buttons in between. Turned down again, the controls come back.
+            setCarrying(remembered || (awaitingNative && !retry));
             return;
         }
         // A video page opened inside the main window (search on 47.5.3) is a new viewer, the way a

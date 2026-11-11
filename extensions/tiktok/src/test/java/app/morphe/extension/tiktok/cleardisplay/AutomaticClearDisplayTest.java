@@ -730,11 +730,14 @@ public class AutomaticClearDisplayTest {
             RememberClearDisplayPatch.firstFrame("first", () -> true, value -> true);
             assertTrue(RememberClearDisplayPatch.isCarryingClear());
 
-            // A first video TikTok wouldn't clear ends it.
+            // A first video whose clear TikTok's panel turned down carries until progress asks
+            // again, and turned down again it ends.
             RememberClearDisplayPatch.resetForTests();
             assertTrue(RememberClearDisplayPatch.isCarryingClear());
             RememberClearDisplayPatch.firstFrame("refused", () -> true, value -> false);
-            assertFalse(RememberClearDisplayPatch.isCarryingClear());
+            assertTrue("the controls showed before the retry", RememberClearDisplayPatch.isCarryingClear());
+            RememberClearDisplayPatch.firstFrame("refused", () -> true, value -> false);
+            assertFalse("a video TikTok won't clear kept its controls away", RememberClearDisplayPatch.isCarryingClear());
 
             // So does a LIVE preview or an ad, which TikTok never clears.
             RememberClearDisplayPatch.resetForTests();
@@ -1112,17 +1115,22 @@ public class AutomaticClearDisplayTest {
             });
             assertEquals(List.of(true), events);
             assertFalse(RememberClearDisplayPatch.isClearDisplayNow());
+            assertTrue("the controls showed before progress asked again",
+                    RememberClearDisplayPatch.isCarryingClear());
             ready.set(true);
 
             RememberClearDisplayPatch.onPlaybackProgress(controller, "other");
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertEquals("another video's progress asked again", List.of(true), events);
+            assertTrue(RememberClearDisplayPatch.isCarryingClear());
 
             if (handBack) RememberClearDisplayPatch.rememberClearDisplayEvent(new Event(false, 2));
+            if (handBack) assertFalse("the controls brought back stayed away", RememberClearDisplayPatch.isCarryingClear());
             RememberClearDisplayPatch.onPlaybackProgress(controller, "first");
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertEquals(handBack ? List.of(true) : List.of(true, true), events);
             assertEquals(!handBack, RememberClearDisplayPatch.isClearDisplayNow());
+            assertEquals(!handBack, RememberClearDisplayPatch.isCarryingClear());
 
             RememberClearDisplayPatch.onPlaybackProgress(controller, "first");
             Shadows.shadowOf(Looper.getMainLooper()).idle();

@@ -1297,6 +1297,12 @@ public class Settings extends BaseSettings {
      */
     public static final BooleanSetting SHOW_INBOX_FILTERS =
             new BooleanSetting("show_inbox_filters", FALSE, true);
+    /**
+     * Lifts the app's cap on pinned chats in the Inbox, 5 unless TikTok's server says otherwise.
+     * TikTok reads the cap once per launch. See PinMoreChats.
+     */
+    public static final BooleanSetting PIN_MORE_CHATS =
+            new BooleanSetting("pin_more_chats", FALSE, true);
     public static final BooleanSetting EXPAND_ACTIVITY_LIST = new BooleanSetting("expand_activity_list", FALSE);
     /** Chat screen clutter. Each is off by default and read live when a chat opens. */
     public static final BooleanSetting HIDE_CHAT_CALL_BUTTONS =

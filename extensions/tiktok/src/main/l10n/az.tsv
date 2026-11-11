@@ -2662,3 +2662,7 @@ New style 2	Yeni üslub 2
 Friends in the top tabs	Yuxarı tablarda Dostlar
 # context: Summary under that switch; Friends and Following are TikTok's tab names
 Friends moves up to the tabs at the top of the feed, next to Following, and Discover takes its spot in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.	Dostlar lentin yuxarısındakı tablara, İzlənilənlərin yanına keçir, Kəşf et isə alt paneldə onun yerini tutur, TikTok bəzi ölkələrdə belə düzür. Regionunuz və lentiniz olduğu kimi qalır.
+# context: Row title of the Inbox switch that lifts the app's cap on pinned chats
+Pin more chats	Daha çox söhbət sancaqla
+# context: Summary under that switch; 5 is the cap TikTok's app usually puts on pinned chats
+Lifts the app's limit on pinned chats in the Inbox, usually 5, so you can pin more.	Tətbiqin Gələnlər qutusunda sancaqlanmış söhbətlərə qoyduğu limiti, adətən 5, qaldırır ki, daha çoxunu sancaqlaya biləsiniz.

@@ -2839,3 +2839,7 @@ New style 2	Новый стиль 2
 Friends in the top tabs	«Друзья» во вкладках сверху
 # context: Summary under that switch; Friends and Following are TikTok's tab names
 Friends moves up to the tabs at the top of the feed, next to Following, and Discover takes its spot in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.	«Друзья» переходит к вкладкам вверху ленты, рядом с «Подписки», а «Интересное» занимает её место в нижней панели, как TikTok делает в некоторых странах. Регион и лента остаются прежними.
+# context: Row title of the Inbox switch that lifts the app's cap on pinned chats
+Pin more chats	Закреплять больше чатов
+# context: Summary under that switch; 5 is the cap TikTok's app usually puts on pinned chats
+Lifts the app's limit on pinned chats in the Inbox, usually 5, so you can pin more.	Снимает ограничение приложения на закреплённые чаты во «Входящих», обычно 5, чтобы можно было закрепить больше.

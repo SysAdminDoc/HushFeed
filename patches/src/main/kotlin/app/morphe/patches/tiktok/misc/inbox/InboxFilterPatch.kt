@@ -66,7 +66,8 @@ val inboxFilterPatch = bytecodePatch(
     description = "Lets you hide Inbox rows you don't use, like message requests, TikTok Shop, " +
         "the stories row and the On this day memory in it, plus call buttons and suggested replies in chats. Each has its own " +
         "switch. Also offers search in loaded Activity notifications and TikTok's Main, Requests, " +
-        "Unread and Starred tabs on any account, and a way to rebuild message search. Starts off. " +
+        "Unread and Starred tabs on any account, a way to rebuild message search and room to pin " +
+        "more than 5 chats. Starts off. " +
         "Turn it on in Hushfeed settings > Inbox.",
 ) {
     category("Inbox")
@@ -114,6 +115,14 @@ val inboxFilterPatch = bytecodePatch(
         } catch (problem: Exception) {
             if (packageMetadata.versionName in declaredVersions()) throw problem
             println("[$PATCH_NAME] Left out Rebuild message search on ${packageMetadata.versionName}: ${problem.message}")
+            null
+        }
+        // Pin more chats, held the same way by PinMoreChatsAnchorsTest.
+        val pinLimit = try {
+            PinChatLimitFingerprint.method
+        } catch (problem: Exception) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[$PATCH_NAME] Left out Pin more chats on ${packageMetadata.versionName}: ${problem.message}")
             null
         }
         val binding = InboxRowBindingFingerprint.method
@@ -189,6 +198,16 @@ val inboxFilterPatch = bytecodePatch(
             SettingsStatusLoadFingerprint.method.addInstruction(
                 0,
                 "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableMessageSearchRebuild()V",
+            )
+        }
+
+        // The cap on pinned chats (#385). TikTok checks it on the phone before any pin reaches
+        // its server, and the server setting it reads defaults to 5.
+        if (pinLimit != null) {
+            pinLimit.liftPinChatLimit(PATCH_NAME)
+            SettingsStatusLoadFingerprint.method.addInstruction(
+                0,
+                "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enablePinMoreChats()V",
             )
         }
     }

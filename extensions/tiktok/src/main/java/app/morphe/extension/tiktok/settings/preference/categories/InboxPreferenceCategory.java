@@ -82,6 +82,11 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
                                 + "gives creator accounts.",
                         Settings.SHOW_INBOX_FILTERS));
             }
+            if (SettingsStatus.pinMoreChatsEnabled) {
+                addPreference(new TogglePreference(context, "Pin more chats",
+                        "Lifts the app's limit on pinned chats in the Inbox, usually 5, so you can pin more.",
+                        Settings.PIN_MORE_CHATS));
+            }
             if (SettingsStatus.messageSearchRebuildEnabled) {
                 addPreference(new RebuildMessageSearchPreference(context));
             }

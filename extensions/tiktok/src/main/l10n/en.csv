@@ -1150,6 +1150,7 @@ Licenses,Licenses
 Lift text length limits,Lift text length limits
 "Lifts spoken captions above TikTok's spot while the phone is sideways. Use 0 for TikTok's spot, or up to %1$d.","Lifts spoken captions above TikTok's spot while the phone is sideways. Use 0 for TikTok's spot, or up to %1$d."
 "Lifts spoken captions above TikTok's spot while the phone is upright. Use 0 for TikTok's spot, or up to %1$d.","Lifts spoken captions above TikTok's spot while the phone is upright. Use 0 for TikTok's spot, or up to %1$d."
+"Lifts the app's limit on pinned chats in the Inbox, usually 5, so you can pin more.","Lifts the app's limit on pinned chats in the Inbox, usually 5, so you can pin more."
 "Lifts the kept caption above its usual spot in Clear display. Use 0 for the usual spot, or up to %1$d.","Lifts the kept caption above its usual spot in Clear display. Use 0 for the usual spot, or up to %1$d."
 Light,Light
 Light gray,Light gray
@@ -1496,6 +1497,7 @@ Pill,Pill
 Pill corners,Pill corners
 Pill height,Pill height
 Pill is the wide bubble with a row of dots under the speed. Circle is a small round dial with a notch for each speed around its edge.,Pill is the wide bubble with a row of dots under the speed. Circle is a small round dial with a notch for each speed around its edge.
+Pin more chats,Pin more chats
 Play,Play
 Play SDR instead of HDR,Play SDR instead of HDR
 Play Store,Play Store

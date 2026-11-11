@@ -394,7 +394,8 @@
       "TURN_OFF_CHAT_DOUBLE_TAP",
       "TURN_OFF_CHAT_SWIPE_REPLY",
       "HIDE_INBOX_CUSTOM_TITLES",
-      "SHOW_INBOX_FILTERS"
+      "SHOW_INBOX_FILTERS",
+      "PIN_MORE_CHATS"
     ],
     "Hide inbox stories": [
       "HIDE_INBOX_STORIES"

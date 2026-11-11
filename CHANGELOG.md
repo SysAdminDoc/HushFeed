@@ -43,6 +43,7 @@ Every Hushfeed release, newest first.
 * `Bottom bar icons` in Hushfeed settings > Feed tabs picks one of the icon sets TikTok is testing for the bottom bar, or leaves it to TikTok, which is how it starts. It takes a TikTok restart (#285).
 * With `Log diagnostics` on, the report keeps TikTok's answer to every LIVE like, so a like TikTok refused can be told from one that never left the phone (#380).
 * The settings screen now comes in Thai. Thanks to @MangaThatsFine (#381).
+* `Pin more chats` lets you pin more than 5 chats in the Inbox. TikTok's app stops you at 5 even though its website doesn't, and pins you make there already show up in the app. It starts off, sits under `Show inbox filters` in Hushfeed settings > Inbox and takes a TikTok restart (#385).
 
 ### Bug Fixes
 

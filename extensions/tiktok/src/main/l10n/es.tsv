@@ -2662,3 +2662,7 @@ New style 2	Estilo nuevo 2
 Friends in the top tabs	Amigos en las pestañas superiores
 # context: Summary under that switch; Friends and Following are TikTok's tab names
 Friends moves up to the tabs at the top of the feed, next to Following, and Discover takes its spot in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.	Amigos pasa a las pestañas de arriba del feed, junto a Siguiendo, y Descubrir ocupa su lugar en la barra inferior, como lo organiza TikTok en algunos países. Tu región y tu feed no cambian.
+# context: Row title of the Inbox switch that lifts the app's cap on pinned chats
+Pin more chats	Fijar más chats
+# context: Summary under that switch; 5 is the cap TikTok's app usually puts on pinned chats
+Lifts the app's limit on pinned chats in the Inbox, usually 5, so you can pin more.	Quita el límite de la app para chats fijados en la bandeja de entrada, normalmente 5, para que puedas fijar más.

@@ -394,7 +394,8 @@
       "turn_off_chat_double_tap",
       "turn_off_chat_swipe_reply",
       "hide_inbox_custom_titles",
-      "show_inbox_filters"
+      "show_inbox_filters",
+      "pin_more_chats"
     ],
     "Hide inbox stories": [
       "hide_inbox_stories"
@@ -3483,6 +3484,12 @@
     "picture_in_picture": {
       "field": "PICTURE_IN_PICTURE",
       "key": "picture_in_picture",
+      "type": "boolean",
+      "default": false
+    },
+    "pin_more_chats": {
+      "field": "PIN_MORE_CHATS",
+      "key": "pin_more_chats",
       "type": "boolean",
       "default": false
     },

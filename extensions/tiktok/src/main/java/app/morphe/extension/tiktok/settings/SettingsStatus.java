@@ -125,6 +125,7 @@ public class SettingsStatus {
     public static boolean inboxFilterEnabled = false;
     public static boolean inboxFilterTabsEnabled = false;
     public static boolean messageSearchRebuildEnabled = false;
+    public static boolean pinMoreChatsEnabled = false;
     public static boolean videoFitEnabled = false;
     public static boolean refreshRateEnabled = false;
     public static boolean cameraBrightnessEnabled = false;
@@ -605,6 +606,11 @@ public class SettingsStatus {
 
     public static void enableMessageSearchRebuild() {
         messageSearchRebuildEnabled = true;
+    }
+
+    /** The cap on pinned chats in the Inbox was found and hooked (#385). */
+    public static void enablePinMoreChats() {
+        pinMoreChatsEnabled = true;
     }
 
     public static void enableCommentTools() {

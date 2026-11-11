@@ -7627,6 +7627,12 @@
     "default": false,
     "type": "bool",
     "row": "Show inbox filters"
+   },
+   {
+    "key": "pin_more_chats",
+    "default": false,
+    "type": "bool",
+    "row": "Pin more chats"
    }
   ],
   "surface": "inbox",

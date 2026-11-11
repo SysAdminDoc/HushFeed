@@ -254,6 +254,63 @@ public class SeeThroughStatusBarTest {
     }
 
     /**
+     * #390: with the bars see through, the picture shrank to TikTok's size for four frames just
+     * after a swipe, then grew again. TikTok writes 1 back on the scale as a video starts, and a
+     * scale is no layout, so the fill waited for the next layout pass, which took the 1 for a zoom
+     * of TikTok's own and let the picture go until the pass after. The picture and its cover are
+     * grown again before the frame is drawn, and a zoom TikTok sets itself still stays.
+     */
+    @Test
+    public void aScaleTikTokPutsBackIsGrownAgainBeforeTheFrameIsDrawn() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            feedCell(activity, View.INVISIBLE);
+            FrameLayout cell = activity.findViewById(CELL_ID);
+            FrameLayout player = new FrameLayout(activity);
+            player.setId(PLAYER_ID);
+            SurfaceView surface = new SurfaceView(activity);
+            player.addView(surface);
+            cell.addView(player, new FrameLayout.LayoutParams(1080, 2181));
+            View cover = new View(activity);
+            cover.setId(COVER_ID);
+            cell.addView(cover, new FrameLayout.LayoutParams(1080, 2181));
+            showVideo(player, surface, 1107, 1968);
+            layOut(cover, 1080, 2181);
+
+            Settings.SEE_THROUGH_STATUS_BAR.save(true);
+            VideoOverlayHider.applyTo(activity);
+            float scale = surface.getScaleY();
+            assertTrue("the picture didn't fill", scale > 1f);
+            assertEquals(scale, cover.getScaleY(), 0f);
+
+            // TikTok's reset with no layout after it: the next frame is drawn straight away.
+            surface.setScaleX(1f);
+            surface.setScaleY(1f);
+            cover.setScaleX(1f);
+            cover.setScaleY(1f);
+            surface.getViewTreeObserver().dispatchOnPreDraw();
+            assertEquals("the picture was drawn at TikTok's size", scale, surface.getScaleY(), 0f);
+            assertEquals(scale, surface.getScaleX(), 0f);
+            assertEquals("the cover was drawn at TikTok's size", scale, cover.getScaleY(), 0f);
+
+            // A layout pass right after the reset grows it again too, rather than letting it go.
+            surface.setScaleX(1f);
+            surface.setScaleY(1f);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("the pass let the picture go", scale, surface.getScaleY(), 0f);
+            assertEquals(scale, cover.getScaleY(), 0f);
+
+            surface.setScaleX(1.5f);
+            surface.setScaleY(1.5f);
+            surface.getViewTreeObserver().dispatchOnPreDraw();
+            assertEquals("TikTok's own zoom was overwritten before the frame", 1.5f, surface.getScaleY(), 0f);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("TikTok's own zoom was overwritten", 1.5f, surface.getScaleY(), 0f);
+        }
+    }
+
+    /**
      * #218: with only See-through bottom bar on, the strip under the video goes and the player
      * reaches the bottom edge, but TikTok centers the 9:16 picture in it, so the bottom of the
      * floating bar sat over black. The bottom bar asks for the same fill; off puts it back.

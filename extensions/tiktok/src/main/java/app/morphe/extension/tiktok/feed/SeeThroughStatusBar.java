@@ -196,12 +196,14 @@ public final class SeeThroughStatusBar {
     /**
      * Writes {@code scale} on {@code view} unless TikTok has written a scale of its own there, and
      * answers the scale this now holds on it, 1 when none. It grows from {@code pivotY}, or from
-     * the center when that's NaN, and a pivot this wrote goes back with the scale.
+     * the center when that's NaN, and a pivot this wrote goes back with the scale. A 1 written over
+     * this one's scale is TikTok putting the view back, not a zoom of its own (#390).
      */
     private static float grow(View view, float scale, float pivotY) {
         Float ours = FILLED.get(view);
         float current = view.getScaleY();
-        if (current != (ours == null ? 1f : ours) || view.getScaleX() != current) {
+        boolean reset = ours != null && current == 1f && view.getScaleX() == 1f;
+        if (!reset && (current != (ours == null ? 1f : ours) || view.getScaleX() != current)) {
             FILLED.remove(view);
             pivot(view, Float.NaN);
             return 1f;
@@ -289,5 +291,27 @@ public final class SeeThroughStatusBar {
     /** Whether a surface still carries a scale this wrote, so the pass runs to put it back. */
     static boolean anyFilled() {
         return !FILLED.isEmpty();
+    }
+
+    /**
+     * The pre-draw pass: a picture or cover TikTok put back to 1 is grown again before the frame
+     * is drawn. TikTok writes 1 on the scale as a video starts, and a scale is no layout, so the
+     * fill waited for the next layout pass and the picture showed at TikTok's size for four frames
+     * after a swipe (#390). Any other scale is TikTok's own and is left to the layout pass. The
+     * values are compared first, so a frame with nothing reset writes nothing. Answers how many
+     * views it grew again.
+     */
+    static int refill() {
+        int grown = 0;
+        for (Map.Entry<View, Float> entry : FILLED.entrySet()) {
+            View view = entry.getKey();
+            if (view == null || !view.isAttachedToWindow()) continue;
+            if (view.getScaleX() != 1f || view.getScaleY() != 1f) continue;
+            float scale = entry.getValue();
+            view.setScaleX(scale);
+            view.setScaleY(scale);
+            grown++;
+        }
+        return grown;
     }
 }

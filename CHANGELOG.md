@@ -52,6 +52,7 @@ Every Hushfeed release, newest first.
 
 ### Bug Fixes
 
+* With `See-through bottom bar` or `See-through status bar` on, a video no longer shrinks for a moment and grows back right after you swipe to it. TikTok puts the picture back to its own size as each video starts, and Hushfeed now grows it again before that frame is shown (#390).
 * Saving works again behind a proxy app whose fake-IP mode answers with an IPv6 address from its own private range, like mihomo's `fdfe:dcba:9876::/64`. Hushfeed only knew the narrower fc00::/18 range, so every video and photo save stopped with "Media URL resolves to a non-public address". Any private IPv6 range a fake-IP proxy hands out counts now, and when a save is still turned down for a local address, the message names the range instead of saying nothing (#387).
 * With `Hide unpersonalized For You videos` on, a For You batch that's nothing but fill-in now keeps just its first video instead of all of them, so far fewer unpicked videos slip through while the feed still has somewhere to go. Thanks to @yokkkoso (#391).
 * A mouse wheel or touchpad scroll over the daily hold, the tap to start stop, the App lock screen, the Start page cover or the profile grid's sort hold no longer scrolls what's behind it. A hold too tall for the screen scrolls itself instead.

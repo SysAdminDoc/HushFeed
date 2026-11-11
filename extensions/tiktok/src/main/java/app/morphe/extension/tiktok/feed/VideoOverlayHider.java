@@ -334,6 +334,7 @@ public final class VideoOverlayHider {
     private static final ViewTreeObserver.OnPreDrawListener RESCALE = () -> {
         reapplyScale();
         reapplyFade();
+        refill();
         return true;
     };
     /** The row under each rail button holding its count, without the button itself. */
@@ -1013,7 +1014,8 @@ public final class VideoOverlayHider {
      * Keeps the scaled icons for the pre-draw pass, and the pass itself on the root while
      * anything is scaled or faded. The fade needs it too: Clear display ending animates the
      * caption, the rail and the search bar back to full opacity, and no layout follows, so
-     * they stayed at full until the next video (S22, 2026-10-08).
+     * they stayed at full until the next video (S22, 2026-10-08). So does a grown picture,
+     * which TikTok puts back to 1 as a video starts (#390).
      */
     private static void rememberScaled(List<View> scaled, float touchScale, View root) {
         SCALED.clear();
@@ -1025,7 +1027,7 @@ public final class VideoOverlayHider {
         }
         View watched = rescaleRoot.get();
         if (touchScale != 1f || !FADED_TO.isEmpty() || !FADED_HERE.isEmpty()
-                || ClearDisplayShownControls.anyKept()) {
+                || ClearDisplayShownControls.anyKept() || SeeThroughStatusBar.anyFilled()) {
             if (watched != root && root != null) {
                 if (watched != null && watched.getViewTreeObserver().isAlive()) {
                     watched.getViewTreeObserver().removeOnPreDrawListener(RESCALE);
@@ -1063,6 +1065,19 @@ public final class VideoOverlayHider {
             final int put = corrected;
             final int held = seen;
             Logger.printDebug(() -> "Rail scale " + scale + " put back on " + put + " of " + held + " icons");
+        }
+    }
+
+    /** When the frame pass last said it grew a picture again, so the log is not written per frame. */
+    private static long refillLoggedAt;
+
+    /** The pre-draw pass: a grown picture or cover TikTok put back to 1, grown again (#390). */
+    private static void refill() {
+        int grown = SeeThroughStatusBar.refill();
+        long now = SystemClock.uptimeMillis();
+        if (grown > 0 && now - refillLoggedAt > 2000L) {
+            refillLoggedAt = now;
+            Logger.printDebug(() -> "Fill grown again on " + grown + " views TikTok put back to 1");
         }
     }
 

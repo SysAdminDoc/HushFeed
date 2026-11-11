@@ -167,7 +167,9 @@ public final class GridPosition {
             button.setGravity(Gravity.CENTER);
             int padding = SettingsUi.dp(context, 8);
             button.setPadding(padding, padding, padding, padding);
-            button.setBackground(SettingsUi.overlayChip(context, SettingsUi.RADIUS_OVERLAY));
+            // A word, not a glyph: over a thumbnail's own caption text the chip's 55 percent
+            // scrim left Back and End hard to pick out, so they take the banner's text scrim.
+            button.setBackground(SettingsUi.overlayBanner(context));
             button.setElevation(SettingsUi.dp(context, 2));
             button.setFocusable(true);
             SettingsUi.markAsButton(button);

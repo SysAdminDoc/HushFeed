@@ -84,6 +84,7 @@ Every Hushfeed release, newest first.
 * `Hide the LIVE button` now shows the restart button when you flip it, like the search and side menu switches. Turned off, the LIVE button stayed missing with nothing telling you it needed a restart.
 * If you left a video cleared with `Keep Clear display across videos` on, the first video after you reopen TikTok clears too, instead of keeping its buttons.
 * With `Hide CAPTCHA popups` on, tapping hearts in a LIVE no longer hides TikTok's check. It shows, the same as it does for a save or a gift, because a hidden check left the hearts on screen while TikTok counted none of them. When TikTok turns your taps down, Hushfeed says so once, the way it does for a video like (#380).
+* The sort button and the jump buttons on profile, Liked and sound grids sit on a darker backdrop, so their words read over a white or busy thumbnail (#378).
 
 ## 0.81.0 (2026-11-05)
 

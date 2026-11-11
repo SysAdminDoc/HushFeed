@@ -93,7 +93,11 @@ Every Hushfeed release, newest first.
 * The sort button and the jump buttons on profile, Liked and sound grids sit on a darker backdrop, so their words read over a white or busy thumbnail (#378).
 * The hold speed bubble follows your phone's font size now, in both the pill and the round dial. With large text on, the speed used to stay small while everything else in Hushfeed grew. The whole bubble grows with it, so the padlock and the dots keep their room.
 * With `Open TikTok on` set to Inbox, Profile or another tab, TalkBack can't land on the For You feed hidden under the start screen while TikTok opens.
-* Restoring a settings backup, resetting settings or undoing either one now updates the feed's text size and color, the commenter names, a searched Liked or Favorites grid, the buttons on the video, feed mute, the comment search box and kept captions right away, the same as flipping those switches by hand. A grid you'd searched stayed narrowed after a restore turned `Search Liked and Favorites grids` off.
+* Restoring a settings backup, resetting settings or undoing either one now updates the feed's text size and color, the commenter names, a searched Liked or Favorites grid, the buttons on the video, feed mute, the comment search box and kept captions right away, the same as flipping those switches by hand. A grid you'd searched stayed narrowed after a restore turned `Search Liked and Favorites grids` off. If one of those can't redraw, the rest still do.
+* A switch your patch options turned on now works from the first launch, including the privacy and speed switches TikTok reads before Hushfeed's settings load. Those early reads treated them as off until you'd flipped them yourself.
+* `Included diagnostics` shows the choice a restored backup brought back. A saved choice it doesn't know now includes everything, where it used to export an empty log.
+* When `Turn back on` can't save, it says "Couldn't save the change. Try again." instead of acting like Hushfeed came back on.
+* Shared diagnostics leave out email addresses, phone numbers, account names and your proxy's address.
 
 ## 0.81.0 (2026-11-05)
 

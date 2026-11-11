@@ -1244,7 +1244,9 @@ public final class GridSort {
                     showChip(chip.adapter, grid);
                 }
                 if (chip.getParent() != null) {
-                    if (!grid.isAttachedToWindow()) chip.setVisibility(View.GONE);
+                    // The frame can hold more than the grid, as Favorites' sub-tabs do, so the
+                    // chip hides with the grid itself and not only with the frame.
+                    if (!grid.isAttachedToWindow() || !grid.isShown()) chip.setVisibility(View.GONE);
                     else if (indexOf(orderFor(chip.adapter)) > 0) chip.setVisibility(View.VISIBLE);
                     placeChip(chip, grid);
                     return;

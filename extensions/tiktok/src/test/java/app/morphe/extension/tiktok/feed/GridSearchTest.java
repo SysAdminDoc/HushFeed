@@ -860,6 +860,14 @@ public class GridSearchTest {
             assertEquals("dcba", ids(adapter.mmItems));
             assertSame("the chip stays put through its own redraw", search, frame.findViewWithTag(GridSearch.CHIP_TAG));
             assertEquals(View.VISIBLE, search.getVisibility());
+
+            // Another sub-tab hides the grid inside its layout and leaves the frame showing.
+            grid.setVisibility(View.GONE);
+            idle(50);
+            assertEquals("the order chip goes with the grid", View.GONE, order.getVisibility());
+            grid.setVisibility(View.VISIBLE);
+            idle(50);
+            assertEquals(View.VISIBLE, order.getVisibility());
         }
     }
 

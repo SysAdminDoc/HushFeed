@@ -1320,6 +1320,166 @@ public final class Probe extends Instrumentation {
                         Log.i(TAG, "ok profileviewgates" + out);
                         break;
                     }
+                    case "thoughtgates": {
+                        // What TikTok 47.7.3 answers for the redesigned Thoughts (#186), read in
+                        // this process: whether the SocialThought plugin is in (X.0CqY.LIZ), the
+                        // redesign gate (X.0IPJ.LIZ), its raw enable_thought_redesign_consumption
+                        // value (the lazy X.0IPJ.LIZIZ), and need_story_notes (X.0IPL.LIZIZ). That
+                        // value comes from an AB store the Feature Gate recorder does not hook.
+                        StringBuilder out = new StringBuilder();
+                        String[][] reads = {
+                                {"plugin", "X.0CqY", "LIZ"},
+                                {"redesignGate", "X.0IPJ", "LIZ"},
+                                {"needStoryNotes", "X.0IPL", "LIZIZ"},
+                        };
+                        for (String[] read : reads) {
+                            try {
+                                out.append(' ').append(read[0]).append('=')
+                                        .append(loader.loadClass(read[1]).getMethod(read[2]).invoke(null));
+                            } catch (Throwable failure) {
+                                out.append(' ').append(read[0]).append("=?(").append(failure.getClass().getSimpleName()).append(')');
+                            }
+                        }
+                        try {
+                            Field field = loader.loadClass("X.0IPJ").getDeclaredField("LIZIZ");
+                            field.setAccessible(true);
+                            Object lazy = field.get(null);
+                            out.append(" redesignValue=").append(lazy.getClass().getMethod("getValue").invoke(lazy));
+                        } catch (Throwable failure) {
+                            out.append(" redesignValue=?(").append(failure.getClass().getSimpleName()).append(')');
+                        }
+                        Log.i(TAG, "ok thoughtgates" + out);
+                        break;
+                    }
+                    case "commenttranslategates": {
+                        // Which comment translation manager TikTok 47.7.3 gives a comment row (#383).
+                        // BaseCommentCell swaps the observer-based X.0H92 for X.0sNJ when
+                        // X.0H8z.LIZ() holds: X.07oI.LIZ() (its lazy flag, unless X.07o6.LIZ()), or
+                        // comment_auto_translation_consumer_style (the lazy X.0H8z.LIZ) equal to 3
+                        // with X.07oM.LIZIZ().
+                        StringBuilder out = new StringBuilder();
+                        String[][] reads = {
+                                {"swapsManager", "X.0H8z", "LIZ"},
+                                {"autoTranslateGate", "X.07oI", "LIZ"},
+                                {"autoTranslateVeto", "X.07o6", "LIZ"},
+                                {"consumerStyleGate", "X.07oM", "LIZIZ"},
+                        };
+                        for (String[] read : reads) {
+                            try {
+                                out.append(' ').append(read[0]).append('=')
+                                        .append(loader.loadClass(read[1]).getMethod(read[2]).invoke(null));
+                            } catch (Throwable failure) {
+                                out.append(' ').append(read[0]).append("=?(").append(failure.getClass().getSimpleName()).append(')');
+                            }
+                        }
+                        String[][] lazies = {{"consumerStyle", "X.0H8z"}, {"autoTranslateFlag", "X.07oI"}};
+                        for (String[] lazy : lazies) {
+                            try {
+                                Field field = loader.loadClass(lazy[1]).getDeclaredField("LIZ");
+                                field.setAccessible(true);
+                                Object value = field.get(null);
+                                out.append(' ').append(lazy[0]).append('=').append(value.getClass().getMethod("getValue").invoke(value));
+                            } catch (Throwable failure) {
+                                out.append(' ').append(lazy[0]).append("=?(").append(failure.getClass().getSimpleName()).append(')');
+                            }
+                        }
+                        Log.i(TAG, "ok commenttranslategates" + out);
+                        break;
+                    }
+                    case "commentrows": {
+                        // Every comment row laid out in TikTok 47.7.3's comment lists (#383): the
+                        // class of the row's translation manager (BaseCommentCell.LLLFZ, an X.0H8V,
+                        // then its X.0H91 LJI), whether the row's comment is a picture with no text,
+                        // and for the observer manager X.0H92 whether the comment it listens for
+                        // (LLJJIJIL) is the one the row shows (O6). Ids are shown as short hashes.
+                        // The probe answers on the main thread, so the rows are read as laid out.
+                        StringBuilder out = new StringBuilder();
+                        int rows = 0;
+                        java.util.ArrayDeque<android.view.View> queue = new java.util.ArrayDeque<>(windowRoots());
+                        while (!queue.isEmpty()) {
+                            android.view.View view = queue.removeFirst();
+                            if (view instanceof android.view.ViewGroup) {
+                                android.view.ViewGroup group = (android.view.ViewGroup) view;
+                                Method holderOf = null;
+                                for (Class<?> type = view.getClass(); type != null && holderOf == null; type = type.getSuperclass()) {
+                                    if (type.getName().equals("androidx.recyclerview.widget.RecyclerView")) {
+                                        holderOf = type.getMethod("getChildViewHolder", android.view.View.class);
+                                    }
+                                }
+                                for (int i = 0; i < group.getChildCount(); i++) {
+                                    android.view.View child = group.getChildAt(i);
+                                    queue.add(child);
+                                    // A closed sheet's list can stay attached behind the feed, so only
+                                    // rows on the screen are read.
+                                    if (holderOf == null || !child.isShown()
+                                            || !child.getGlobalVisibleRect(new android.graphics.Rect())) continue;
+                                    Object cell = holderOf.invoke(view, child);
+                                    Class<?> base = cell == null ? null : cell.getClass();
+                                    while (base != null && !base.getName().endsWith(".BaseCommentCell")) base = base.getSuperclass();
+                                    if (base == null) continue;
+                                    rows++;
+                                    out.append("\n  ").append(cell.getClass().getSimpleName());
+                                    try {
+                                        Object shown = base.getMethod("O6").invoke(cell);
+                                        Object text = shown == null ? null : shown.getClass().getMethod("getText").invoke(shown);
+                                        Object images = shown == null ? null : shown.getClass().getMethod("getImageList").invoke(shown);
+                                        out.append(" shows=").append(shown == null ? "none" : "<id " + (String.valueOf(shown.getClass().getMethod("getCid").invoke(shown)).hashCode() & 0xffff) + ">")
+                                                .append(" picture=").append((text == null || text.toString().isEmpty()) && images instanceof java.util.List && !((java.util.List<?>) images).isEmpty());
+                                        Field stateField = base.getDeclaredField("LLLFZ");
+                                        stateField.setAccessible(true);
+                                        Object state = stateField.get(cell);
+                                        if (state == null) {
+                                            out.append(" state=null");
+                                            continue;
+                                        }
+                                        // onItemViewCreated only builds the X.0H92 when X.0H8V.LJII() is false;
+                                        // otherwise it wires X.0Hdb (LJIIIIZZ) and the X.0sNN translator.
+                                        for (String gate : new String[] {"LJII", "LJI"}) {
+                                            Method read = state.getClass().getDeclaredMethod(gate);
+                                            read.setAccessible(true);
+                                            out.append(' ').append(gate).append("()=").append(read.invoke(state));
+                                        }
+                                        for (String name : new String[] {"LJIIL", "LJIIIIZZ", "LJIIIZ"}) {
+                                            Field field = state.getClass().getDeclaredField(name);
+                                            field.setAccessible(true);
+                                            Object value = field.get(state);
+                                            out.append(' ').append(name).append('=').append(value == null ? "null" : value instanceof Boolean ? value : value.getClass().getName());
+                                        }
+                                        Field managerField = state.getClass().getDeclaredField("LJI");
+                                        managerField.setAccessible(true);
+                                        Object manager = managerField.get(state);
+                                        out.append(" manager=").append(manager == null ? "null" : manager.getClass().getName());
+                                        if (manager != null && manager.getClass().getName().equals("X.0H92")) {
+                                            Field heard = manager.getClass().getDeclaredField("LLJJIJIL");
+                                            heard.setAccessible(true);
+                                            Object comment = heard.get(manager);
+                                            String heardCid = comment == null ? null : String.valueOf(comment.getClass().getMethod("getCid").invoke(comment));
+                                            out.append(" hears=").append(heardCid == null ? "none" : "<id " + (heardCid.hashCode() & 0xffff) + ">");
+                                            if (heardCid != null) {
+                                                // Whether the manager is still among the observers of that
+                                                // comment's updates (X.0H93.LIZIZ(cid), a NextLiveData that
+                                                // keys nextObserverMap by the observer it was given).
+                                                Object updates = loader.loadClass("X.0H93").getMethod("LIZIZ", String.class).invoke(null, heardCid);
+                                                Field observers = null;
+                                                for (Class<?> type = updates.getClass(); type != null && observers == null; type = type.getSuperclass()) {
+                                                    try {
+                                                        observers = type.getDeclaredField("nextObserverMap");
+                                                    } catch (NoSuchFieldException ignored) {
+                                                    }
+                                                }
+                                                observers.setAccessible(true);
+                                                out.append(" listening=").append(((java.util.Map<?, ?>) observers.get(updates)).containsKey(manager));
+                                            }
+                                        }
+                                    } catch (Throwable failure) {
+                                        out.append(" ?(").append(failure.getClass().getSimpleName()).append(' ').append(failure.getMessage()).append(')');
+                                    }
+                                }
+                            }
+                        }
+                        Log.i(TAG, "ok commentrows " + rows + out);
+                        break;
+                    }
                     case "finddesc": {
                         // Shown views whose content description is exactly -e desc, with class and
                         // bounds; -e click true also performs a click on the first, the listener a
@@ -2625,7 +2785,7 @@ public final class Probe extends Instrumentation {
                         for (String name : required(intent, "names").split(",")) {
                             Field field = owner.getDeclaredField(name.trim());
                             field.setAccessible(true);
-                            String shown = String.valueOf(field.get(null));
+                            String shown = describeValue(field.get(null));
                             if (name.trim().endsWith("Id") && !shown.isEmpty()) shown = "<id " + (shown.hashCode() & 0xffff) + ">";
                             out.append(' ').append(name.trim()).append('=').append(shown);
                         }
@@ -3958,6 +4118,18 @@ public final class Probe extends Instrumentation {
             String value = intent.getStringExtra(name);
             if (value == null) throw new IllegalArgumentException("-e " + name + " is required");
             return value;
+        }
+
+        /** A field's value as text, with arrays and maps of arrays spelled out rather than shown by identity. */
+        private static String describeValue(Object value) {
+            if (value instanceof Object[]) return java.util.Arrays.deepToString((Object[]) value);
+            if (!(value instanceof java.util.Map)) return String.valueOf(value);
+            StringBuilder out = new StringBuilder("{");
+            for (java.util.Map.Entry<?, ?> entry : ((java.util.Map<?, ?>) value).entrySet()) {
+                if (out.length() > 1) out.append(", ");
+                out.append(describeValue(entry.getKey())).append('=').append(describeValue(entry.getValue()));
+            }
+            return out.append('}').toString();
         }
 
         /** One line for each shown view under x,y, from this view down: its class, id, bounds and background. */

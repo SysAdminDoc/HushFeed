@@ -1648,7 +1648,7 @@ Stopped waiting for the file app. Nothing was exported.	Dosya uygulaması artık
 Stopped waiting for the file app. It hasn't said yet whether the export was saved.	Dosya uygulaması artık beklenmiyor. Dışa aktarımın kaydedilip kaydedilmediğini henüz bildirmedi.
 The export wasn't saved. Try again.	Dışa aktarma kaydedilmedi. Tekrar dene.
 Hide unpersonalized For You videos	Kişiselleştirilmemiş Senin İçin videolarını gizle
-Hide the fill-in videos TikTok sends to For You without picking them for you. When a whole batch is fill-in, it stays so the feed doesn't run dry.	TikTok'un Senin İçin'e senin için seçmeden gönderdiği dolgu videolarını gizle. Bütün bir parti dolguysa akış boş kalmasın diye kalır.
+Hide the fill-in videos TikTok sends to For You without picking them for you. When a whole batch is fill-in, only its first video stays so the feed doesn't run dry.	TikTok'un Senin İçin'e senin için seçmeden gönderdiği dolgu videolarını gizle. Bütün bir parti dolguysa akış boş kalmasın diye yalnızca ilk videosu kalır.
 Unpersonalized For You videos	Kişiselleştirilmemiş Senin İçin videoları
 Reviewed presets for TikTok %1$s	TikTok %1$s için doğrulanmış hazır ayarlar
 No reviewed presets for TikTok %1$s yet	TikTok %1$s için henüz doğrulanmış hazır ayar yok

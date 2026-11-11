@@ -1634,7 +1634,7 @@ Stopped waiting for the file app. Nothing was exported.,Berhenti menunggu aplika
 Stopped waiting for the file app. It hasn't said yet whether the export was saved.,Berhenti menunggu aplikasi file. Aplikasi itu belum memberi tahu apakah ekspor sudah tersimpan.
 The export wasn't saved. Try again.,Ekspor tidak tersimpan. Coba lagi.
 Hide unpersonalized For You videos,Sembunyikan video Untuk Kamu yang tidak dipersonalisasi
-"Hide the fill-in videos TikTok sends to For You without picking them for you. When a whole batch is fill-in, it stays so the feed doesn't run dry.","Sembunyikan video pengisi yang dikirim TikTok ke Untuk Kamu tanpa dipilih untukmu. Jika satu kumpulan isinya pengisi semua, kumpulan itu tetap ditampilkan agar feed tidak kosong."
+"Hide the fill-in videos TikTok sends to For You without picking them for you. When a whole batch is fill-in, only its first video stays so the feed doesn't run dry.","Sembunyikan video pengisi yang dikirim TikTok ke Untuk Kamu tanpa dipilih untukmu. Jika satu kumpulan isinya pengisi semua, hanya video pertamanya yang tetap ditampilkan agar feed tidak kosong."
 Unpersonalized For You videos,Video Untuk Kamu yang tidak dipersonalisasi
 Reviewed presets for TikTok %1$s,Preset teruji untuk TikTok %1$s
 No reviewed presets for TikTok %1$s yet,Belum ada preset yang diuji untuk TikTok %1$s

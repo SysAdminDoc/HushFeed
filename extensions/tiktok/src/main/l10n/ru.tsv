@@ -1786,7 +1786,7 @@ Stopped waiting for the file app. Nothing was exported.	Ожидание при�
 Stopped waiting for the file app. It hasn't said yet whether the export was saved.	Ожидание приложения для файлов остановлено. Оно ещё не сообщило, сохранён ли экспорт.
 The export wasn't saved. Try again.	Экспорт не сохранён. Повторите.
 Hide unpersonalized For You videos	Скрывать неперсонализированные видео в Рекомендациях
-Hide the fill-in videos TikTok sends to For You without picking them for you. When a whole batch is fill-in, it stays so the feed doesn't run dry.	Скрывать видео-заполнители, которые TikTok отправляет в Рекомендации, не подбирая их для вас. Если вся партия состоит из заполнителей, она остаётся, чтобы лента не опустела.
+Hide the fill-in videos TikTok sends to For You without picking them for you. When a whole batch is fill-in, only its first video stays so the feed doesn't run dry.	Скрывать видео-заполнители, которые TikTok отправляет в Рекомендации, не подбирая их для вас. Если вся партия состоит из заполнителей, остаётся только её первое видео, чтобы лента не опустела.
 Unpersonalized For You videos	Неперсонализированные видео в Рекомендациях
 Reviewed presets for TikTok %1$s	Проверенные предустановки для TikTok %1$s
 No reviewed presets for TikTok %1$s yet	Для TikTok %1$s пока нет проверенных предустановок

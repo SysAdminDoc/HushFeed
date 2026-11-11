@@ -1648,7 +1648,7 @@ Stopped waiting for the file app. Nothing was exported.	A espera pelo app de arq
 Stopped waiting for the file app. It hasn't said yet whether the export was saved.	A espera pelo app de arquivos foi interrompida. Ele ainda não informou se a exportação foi salva.
 The export wasn't saved. Try again.	A exportação não foi salva. Tente de novo.
 Hide unpersonalized For You videos	Esconder vídeos do Para você não personalizados
-Hide the fill-in videos TikTok sends to For You without picking them for you. When a whole batch is fill-in, it stays so the feed doesn't run dry.	Esconder os vídeos de preenchimento que o TikTok manda para o Para você sem escolher para você. Quando um lote inteiro é de preenchimento, ele fica para o feed não ficar vazio.
+Hide the fill-in videos TikTok sends to For You without picking them for you. When a whole batch is fill-in, only its first video stays so the feed doesn't run dry.	Esconder os vídeos de preenchimento que o TikTok manda para o Para você sem escolher para você. Quando um lote inteiro é de preenchimento, só o primeiro vídeo dele fica para o feed não ficar vazio.
 Unpersonalized For You videos	Vídeos do Para você não personalizados
 Reviewed presets for TikTok %1$s	Predefinições verificadas para o TikTok %1$s
 No reviewed presets for TikTok %1$s yet	Nenhuma predefinição verificada no TikTok %1$s

@@ -1651,7 +1651,7 @@ Stopped waiting for the file app. Nothing was exported.	Warten auf die Datei-App
 Stopped waiting for the file app. It hasn't said yet whether the export was saved.	Warten auf die Datei-App beendet. Sie hat noch nicht gemeldet, ob der Export gespeichert wurde.
 The export wasn't saved. Try again.	Export nicht gespeichert. Versuch es erneut.
 Hide unpersonalized For You videos	Nicht personalisierte „Für dich“-Videos ausblenden
-Hide the fill-in videos TikTok sends to For You without picking them for you. When a whole batch is fill-in, it stays so the feed doesn't run dry.	Lückenfüller-Videos ausblenden, die TikTok in „Für dich“ schickt, ohne sie für dich auszuwählen. Besteht ein ganzer Schwung nur aus Lückenfüllern, bleibt er, damit der Feed nicht leerläuft.
+Hide the fill-in videos TikTok sends to For You without picking them for you. When a whole batch is fill-in, only its first video stays so the feed doesn't run dry.	Lückenfüller-Videos ausblenden, die TikTok in „Für dich“ schickt, ohne sie für dich auszuwählen. Besteht ein ganzer Schwung nur aus Lückenfüllern, bleibt nur sein erstes Video, damit der Feed nicht leerläuft.
 Unpersonalized For You videos	Nicht personalisierte „Für dich“-Videos
 Reviewed presets for TikTok %1$s	Geprüfte Vorlagen für TikTok %1$s
 No reviewed presets for TikTok %1$s yet	Noch keine geprüften Vorlagen für TikTok %1$s

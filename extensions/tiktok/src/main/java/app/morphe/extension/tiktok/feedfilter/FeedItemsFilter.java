@@ -82,7 +82,7 @@ public final class FeedItemsFilter {
     static final String AI_REASON = "AiGeneratedFilter";
     /** The For You batch's distribute sources, counted while the unpersonalized rule is on. */
     static final String FOR_YOU_DISTRIBUTION_SOURCE = "ForYouDistribution";
-    static final String KEPT_WHOLE_KIND = "batches kept whole";
+    static final String KEPT_ONE_KIND = "batches cut to one";
     /** Why a feed capture says a matched video stayed: it's the reader's own post. */
     private static final String OWN_POST = "own-post";
     /** Why a feed capture says a matched video stayed: the reader liked or saved it. */
@@ -1546,25 +1546,24 @@ public final class FeedItemsFilter {
         }
 
         own.report();
-        // The unpersonalized rule is about what TikTok pads For You with, so a batch that is all
-        // padding stays whole rather than leave the feed nothing to move to. Its candidates
-        // passed every other rule, which is why they go back before the quality fallback.
+        // A batch that is all padding keeps its first video, so the feed has one to move to and
+        // TikTok asks for the next batch when the reader reaches it. It passed every other rule,
+        // which is why it goes back before the quality fallback.
         if (rangeKept.isEmpty() && !unpersonalized.isEmpty()) {
+            Object first = unpersonalized.get(0);
             if (capture != null) {
-                for (Object container : unpersonalized) {
-                    capture.putBack(extractor.extract(container), UNPERSONALIZED_REASON, "batch-all-fill-in");
-                }
+                capture.putBack(extractor.extract(first), UNPERSONALIZED_REASON, "batch-all-fill-in");
             }
-            rangeKept.addAll(unpersonalized);
-            contentRemoved -= unpersonalized.size();
-            int left = reasonCounts.get(UNPERSONALIZED_REASON) - unpersonalized.size();
+            rangeKept.add(first);
+            contentRemoved--;
+            int left = reasonCounts.get(UNPERSONALIZED_REASON) - 1;
             if (left > 0) reasonCounts.put(UNPERSONALIZED_REASON, left);
             else reasonCounts.remove(UNPERSONALIZED_REASON);
-            FeedFilterCounters.sawKind(FOR_YOU_DISTRIBUTION_SOURCE, KEPT_WHOLE_KIND);
-            int keptWhole = unpersonalized.size();
+            FeedFilterCounters.sawKind(FOR_YOU_DISTRIBUTION_SOURCE, KEPT_ONE_KIND);
+            int fillIn = unpersonalized.size();
             if (verbose) {
-                Logger.printInfo(() -> "[Morphe TikTok FeedFilter] " + source + " kept " + keptWhole
-                    + " unpersonalized For You videos, since hiding them would have left nothing");
+                Logger.printInfo(() -> "[Morphe TikTok FeedFilter] " + source + " kept 1 of " + fillIn
+                    + " unpersonalized For You videos, since hiding them all would have left nothing");
             }
         }
         if (countDistribution) {

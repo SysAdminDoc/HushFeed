@@ -97,8 +97,9 @@ Every Hushfeed release, newest first.
 * A switch your patch options turned on now works from the first launch, including the privacy and speed switches TikTok reads before Hushfeed's settings load. Those early reads treated them as off until you'd flipped them yourself.
 * `Included diagnostics` shows the choice a restored backup brought back. A saved choice it doesn't know now includes everything, where it used to export an empty log.
 * When `Turn back on` can't save, it says "Couldn't save the change. Try again." instead of acting like Hushfeed came back on.
-* Shared diagnostics leave out email addresses, phone numbers, account names and your proxy's address. Phone numbers written with spaces, dashes or brackets go too, and so does a nickname of several words or the name in front of your proxy's or router's address.
+* Shared diagnostics leave out email addresses, phone numbers, account names and your proxy's address. Phone numbers written with spaces, dashes or brackets go too, and so does a nickname of several words or the name in front of your proxy's or router's address. A name with a smiley, an apostrophe or a comma in it is left out whole, and so is one written after a folder path. A time zone like +1000 next to a log's timestamp stays, since it isn't a phone number.
 * Opening a video from a sorted or searched Liked grid, or from your sorted private videos, now swipes in the grid's order, and a search plays its matches first. Those two grids have a tap handler of their own, so their video page kept TikTok's order while your posts followed the sort (#180).
+* On TikTok 47.7.3 the Favorites tab gets its sort button, position rail and Search button. TikTok tucks that grid inside an extra container there, so none of them showed up, and they now sit just under the Posts and Collections row (#180).
 * A background job that fails, like the media cache's start-up cleanup, now shows up in the diagnostics log. Before, nothing recorded it.
 
 ## 0.81.0 (2026-11-05)

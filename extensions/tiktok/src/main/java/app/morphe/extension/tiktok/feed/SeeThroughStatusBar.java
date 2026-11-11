@@ -14,7 +14,9 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.Window;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -52,6 +54,12 @@ public final class SeeThroughStatusBar {
     private static final Map<View, Float> FILLED = new WeakHashMap<>();
     /** Surfaces whose pivot this moved off their center, so it goes back with the scale. */
     private static final Set<View> PIVOTED = Collections.newSetFromMap(new WeakHashMap<>());
+    /** Players the last pass filled, with their cell's cover id, so the pre-draw pass fills them again. */
+    private static final Map<View, Integer> PLAYERS = new WeakHashMap<>();
+    /** The pre-draw pass's copy of {@link #PLAYERS}, kept so a frame allocates nothing. */
+    private static final List<View> REFILLING = new ArrayList<>();
+    /** How many scales {@link #grow} has written, so the pre-draw pass can tell whether it changed any. */
+    private static int scaleWrites;
 
     private SeeThroughStatusBar() {
     }
@@ -104,6 +112,8 @@ public final class SeeThroughStatusBar {
     static void fill(View player, boolean wanted, int coverId) {
         if (!(player instanceof ViewGroup)) return;
         if (wanted && fitWins()) wanted = false;
+        if (wanted) PLAYERS.put(player, coverId);
+        else PLAYERS.remove(player);
         ViewGroup group = (ViewGroup) player;
         ViewParent space = player.getParent();
         boolean surfaces = false;
@@ -211,6 +221,7 @@ public final class SeeThroughStatusBar {
         if (scale != current) {
             view.setScaleX(scale);
             view.setScaleY(scale);
+            scaleWrites++;
         }
         pivot(view, scale == 1f ? Float.NaN : pivotY);
         if (scale == 1f) FILLED.remove(view);
@@ -294,24 +305,25 @@ public final class SeeThroughStatusBar {
     }
 
     /**
-     * The pre-draw pass: a picture or cover TikTok put back to 1 is grown again before the frame
-     * is drawn. TikTok writes 1 on the scale as a video starts, and a scale is no layout, so the
-     * fill waited for the next layout pass and the picture showed at TikTok's size for four frames
-     * after a swipe (#390). Any other scale is TikTok's own and is left to the layout pass. The
-     * values are compared first, so a frame with nothing reset writes nothing. Answers how many
-     * views it grew again.
+     * The pre-draw pass: every player the last pass filled is filled again for the size it has
+     * now, before the frame is drawn. As a video starts TikTok writes 1 on the picture's scale,
+     * and can lay the player out short for one pass and back to full height with nothing after
+     * it, so the picture was drawn at TikTok's size, or grown for the short player and 6% small,
+     * for a few frames after a swipe and then grew (#390). Neither reaches the layout pass in
+     * time. A scale TikTok set itself is still left alone, the values are compared first so a
+     * frame with nothing changed writes nothing, and a pass that turned the fill off takes the
+     * player out. Answers how many scales it wrote.
      */
     static int refill() {
-        int grown = 0;
-        for (Map.Entry<View, Float> entry : FILLED.entrySet()) {
-            View view = entry.getKey();
-            if (view == null || !view.isAttachedToWindow()) continue;
-            if (view.getScaleX() != 1f || view.getScaleY() != 1f) continue;
-            float scale = entry.getValue();
-            view.setScaleX(scale);
-            view.setScaleY(scale);
-            grown++;
+        if (PLAYERS.isEmpty()) return 0;
+        int before = scaleWrites;
+        REFILLING.addAll(PLAYERS.keySet());
+        for (int i = 0, count = REFILLING.size(); i < count; i++) {
+            View player = REFILLING.get(i);
+            Integer coverId = player == null ? null : PLAYERS.get(player);
+            if (coverId != null && player.isAttachedToWindow()) fill(player, true, coverId);
         }
-        return grown;
+        REFILLING.clear();
+        return scaleWrites - before;
     }
 }

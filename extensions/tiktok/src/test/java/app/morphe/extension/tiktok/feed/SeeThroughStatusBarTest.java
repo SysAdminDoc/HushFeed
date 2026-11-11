@@ -311,6 +311,51 @@ public class SeeThroughStatusBarTest {
     }
 
     /**
+     * #390 on the S22: as a video starts TikTok lays the player out 138 px short for one pass and
+     * back to full height with no pass after it, so the picture kept the scale worked out for the
+     * short player and was drawn 6% small for two to four frames, then grew. The pre-draw pass
+     * fills it again for the size the player has when the frame is drawn.
+     */
+    @Test
+    public void aPlayerResizedWithNoLayoutPassIsFilledForItsNewSizeBeforeTheFrame() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            feedCell(activity, View.INVISIBLE);
+            FrameLayout cell = activity.findViewById(CELL_ID);
+            FrameLayout player = new FrameLayout(activity);
+            player.setId(PLAYER_ID);
+            SurfaceView surface = new SurfaceView(activity);
+            player.addView(surface);
+            cell.addView(player, new FrameLayout.LayoutParams(1080, 2181));
+            View cover = new View(activity);
+            cover.setId(COVER_ID);
+            cell.addView(cover, new FrameLayout.LayoutParams(1080, 2181));
+            surface.setLayoutParams(new FrameLayout.LayoutParams(1107, 1968, Gravity.CENTER));
+            layOut(player, 1080, 2043);
+            layOut(cover, 1080, 2181);
+
+            Settings.SEE_THROUGH_STATUS_BAR.save(true);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("the short player wasn't filled", (2043 + 2f) / 1968, surface.getScaleY(), 1e-5f);
+
+            // Back to full height, and the next frame is drawn with no layout pass first.
+            layOut(player, 1080, 2181);
+            surface.getViewTreeObserver().dispatchOnPreDraw();
+            float full = (2181 + 2f) / 1968;
+            assertEquals("the picture was drawn grown for the short player", full, surface.getScaleY(), 1e-5f);
+            assertEquals(full, surface.getScaleX(), 1e-5f);
+            assertEquals("the cover was drawn grown for the short player", full, cover.getScaleY(), 1e-5f);
+
+            Settings.SEE_THROUGH_STATUS_BAR.save(false);
+            VideoOverlayHider.applyTo(activity);
+            surface.getViewTreeObserver().dispatchOnPreDraw();
+            assertEquals("the frame pass grew a picture the switch put back", 1f, surface.getScaleY(), 0f);
+            assertEquals(1f, cover.getScaleY(), 0f);
+        }
+    }
+
+    /**
      * #218: with only See-through bottom bar on, the strip under the video goes and the player
      * reaches the bottom edge, but TikTok centers the 9:16 picture in it, so the bottom of the
      * floating bar sat over black. The bottom bar asks for the same fill; off puts it back.

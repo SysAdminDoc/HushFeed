@@ -1015,7 +1015,7 @@ public final class VideoOverlayHider {
      * anything is scaled or faded. The fade needs it too: Clear display ending animates the
      * caption, the rail and the search bar back to full opacity, and no layout follows, so
      * they stayed at full until the next video (S22, 2026-10-08). So does a grown picture,
-     * which TikTok puts back to 1 as a video starts (#390).
+     * which TikTok puts back to 1 or resizes with no layout pass as a video starts (#390).
      */
     private static void rememberScaled(List<View> scaled, float touchScale, View root) {
         SCALED.clear();
@@ -1068,16 +1068,16 @@ public final class VideoOverlayHider {
         }
     }
 
-    /** When the frame pass last said it grew a picture again, so the log is not written per frame. */
+    /** When the frame pass last said it filled a picture again, so the log is not written per frame. */
     private static long refillLoggedAt;
 
-    /** The pre-draw pass: a grown picture or cover TikTok put back to 1, grown again (#390). */
+    /** The pre-draw pass: grown pictures and covers filled again for the frame about to be drawn (#390). */
     private static void refill() {
-        int grown = SeeThroughStatusBar.refill();
+        int written = SeeThroughStatusBar.refill();
         long now = SystemClock.uptimeMillis();
-        if (grown > 0 && now - refillLoggedAt > 2000L) {
+        if (written > 0 && now - refillLoggedAt > 2000L) {
             refillLoggedAt = now;
-            Logger.printDebug(() -> "Fill grown again on " + grown + " views TikTok put back to 1");
+            Logger.printDebug(() -> "Fill set again on " + written + " views before the frame was drawn");
         }
     }
 

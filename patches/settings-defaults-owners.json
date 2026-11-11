@@ -578,6 +578,7 @@
     ],
     "Not interested button": [
       "NOT_INTERESTED_BUTTON",
+      "NOT_INTERESTED_ALSO_FILTER",
       "NOT_INTERESTED_BUTTON_POSITION"
     ],
     "Keep unsent messages": [

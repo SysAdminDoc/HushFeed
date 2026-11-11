@@ -7852,6 +7852,15 @@
           "values": null
         },
         {
+          "key": "not_interested_also_filter",
+          "title": "Default: not interested also filter",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "not_interested_button_position",
           "title": "Default: not interested button position",
           "description": null,

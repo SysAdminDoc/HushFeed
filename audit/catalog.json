@@ -11561,6 +11561,7 @@
   "source": [
    "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/notinterested/NotInterestedPatch.kt",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/notinterested/NotInterested.java",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/notinterested/AlsoFilter.java",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/blockauthor/BlockAuthorOverlay.java"
   ],
   "settings": [
@@ -11569,6 +11570,12 @@
     "default": false,
     "type": "bool",
     "row": "Show the Not interested button"
+   },
+   {
+    "key": "not_interested_also_filter",
+    "default": false,
+    "type": "bool",
+    "row": "Also filter it"
    }
   ],
   "surface": "feed",
@@ -11634,6 +11641,47 @@
      {
       "probe": "report",
       "expect": "registered_switches:[^\\n]*\\bnotInterested\\b"
+     }
+    ],
+    "auto": true
+   },
+   {
+    "id": "also-filter-switch",
+    "what": "Also filter it reads through: with the feed filter in the bundle, the chooser is armed with the switch on and not with it off. The runner never presses Not interested, so the chooser itself is a device check by hand.",
+    "steps": [
+     {
+      "set": {
+       "not_interested_also_filter": "true"
+      }
+     },
+     {
+      "restart": true
+     },
+     {
+      "probe": "call",
+      "extras": {
+       "class": "app.morphe.extension.tiktok.notinterested.AlsoFilter",
+       "method": "enabled"
+      },
+      "expect": "^ok call enabled -> true$",
+      "waitMs": 1500
+     },
+     {
+      "set": {
+       "not_interested_also_filter": "false"
+      }
+     },
+     {
+      "restart": true
+     },
+     {
+      "probe": "call",
+      "extras": {
+       "class": "app.morphe.extension.tiktok.notinterested.AlsoFilter",
+       "method": "enabled"
+      },
+      "expect": "^ok call enabled -> false$",
+      "waitMs": 1500
      }
     ],
     "auto": true

@@ -2670,3 +2670,19 @@ Lifts the app's limit on pinned chats in the Inbox, usually 5, so you can pin mo
 Hide voice comments	Esconder os comentários de voz
 # context: Summary under that switch
 Hide comments made of a voice recording instead of words.	Esconder os comentários feitos com gravação de voz em vez de palavras.
+# context: Row title of the switch, and the title of the chooser that opens after the Not interested button
+Also filter it	Filtrar também
+# context: Summary under that switch; Not interested is the overlay button's name
+After you tap Not interested, offer to skip the video's creator, sound or hashtags from now on.	Depois de tocar em Não tenho interesse, oferece pular a partir de agora o criador, o som ou as hashtags do vídeo.
+# context: Chooser row; %1$s is the creator's @handle
+Videos from %1$s	Vídeos de %1$s
+# context: Chooser row; %1$s is the sound's name
+Videos with the sound %1$s	Vídeos com o som %1$s
+# context: Chooser row; %1$s is a hashtag such as #cats
+Videos tagged %1$s	Vídeos com a hashtag %1$s
+# context: Banner after a pick, with an Undo; %1$s is the creator's @handle
+Skipping videos from %1$s	Pulando os vídeos de %1$s
+# context: Banner after a pick, with an Undo; %1$s is a hashtag
+Skipping videos tagged %1$s	Pulando os vídeos com a hashtag %1$s
+# context: Toast when the list a chooser pick goes on already holds as much as it can
+That list is full	Essa lista está cheia

@@ -36,6 +36,7 @@ import app.morphe.extension.tiktok.settings.SystemBarInsets;
 import app.morphe.extension.tiktok.settings.preference.SettingsUi;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
+import app.morphe.extension.tiktok.notinterested.AlsoFilter;
 import app.morphe.extension.tiktok.notinterested.NotInterested;
 import app.morphe.extension.tiktok.playback.FeedMute;
 import app.morphe.extension.tiktok.wellbeing.SessionBudget;
@@ -522,6 +523,7 @@ public final class BlockAuthorOverlay {
         button.setOnClickListener(view -> {
             view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
             NotInterested.submit();
+            AlsoFilter.offer(activity);
         });
         installDrag(button);
         return button;
@@ -612,7 +614,7 @@ public final class BlockAuthorOverlay {
     }
 
     /** A local action may claim success only after its preference commit succeeded. */
-    static <T> boolean saveAction(Setting<T> setting, T value) {
+    public static <T> boolean saveAction(Setting<T> setting, T value) {
         if (setting.save(value)) return true;
         Utils.showToastLong(L10n.t("This change couldn't be saved. Try again."));
         return false;

@@ -45,6 +45,7 @@ Every Hushfeed release, newest first.
 * The settings screen now comes in Thai. Thanks to @MangaThatsFine (#381).
 * `Pin more chats` lets you pin more than 5 chats in the Inbox. TikTok's app stops you at 5 even though its website doesn't, and pins you make there already show up in the app. It starts off, sits under `Show inbox filters` in Hushfeed settings > Inbox and takes a TikTok restart (#385).
 * `Hide voice comments` takes voice comments out of a comment thread, replies included, the way `Hide picture comments` does for pictures and stickers. Your own voice comments stay. It starts off and sits under `Hide picture comments` in Hushfeed settings > Comments.
+* `Also filter it` follows up a tap on the Not interested button. A short list offers the video's creator, its sound and up to three of its hashtags, and the one you pick goes on the feed filter's own list, so those videos stay gone even after TikTok forgets the feedback. Undo on the banner takes it back off. Cancel just closes the list, and the feedback still goes to TikTok. The sound is offered only while `Hide videos with blocked sounds` is on. It starts off and sits under `Show the Not interested button` in Hushfeed settings > Feed screen.
 
 ### Bug Fixes
 

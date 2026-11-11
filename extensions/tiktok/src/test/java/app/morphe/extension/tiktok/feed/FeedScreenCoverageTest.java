@@ -153,6 +153,8 @@ public class FeedScreenCoverageTest {
                 "block_sound_button", "not_interested_button", "feed_mute_button", "download_button"}) {
             put(button, YES, YES, NONE);
         }
+        // The chooser after a Not interested tap, so it reaches where that button does.
+        put("not_interested_also_filter", YES, YES, NONE);
 
         // Video info. The text sizes, the date and the creator row hook TikTok's own owners,
         // which both windows share.

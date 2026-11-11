@@ -2580,3 +2580,11 @@ Pin more chats,置顶更多聊天
 "Lifts the app's limit on pinned chats in the Inbox, usually 5, so you can pin more.",取消应用对收件箱置顶聊天的数量限制，通常为 5 个，让你可以置顶更多.
 Hide voice comments,隐藏语音评论
 Hide comments made of a voice recording instead of words.,隐藏由语音录音而不是文字组成的评论.
+Also filter it,同时过滤
+"After you tap Not interested, offer to skip the video's creator, sound or hashtags from now on.",点按不感兴趣后，提供以后跳过该视频的创作者、音频或话题标签的选项.
+Videos from %1$s,来自 %1$s 的视频
+Videos with the sound %1$s,使用音频 %1$s 的视频
+Videos tagged %1$s,带有 %1$s 标签的视频
+Skipping videos from %1$s,正在跳过来自 %1$s 的视频
+Skipping videos tagged %1$s,正在跳过带有 %1$s 标签的视频
+That list is full,该列表已满

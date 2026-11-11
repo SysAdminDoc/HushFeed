@@ -258,6 +258,12 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             addPreference(new TogglePreference(context, "Show the Not interested button",
                     "Add a button beside the block control to send feedback about the current video.",
                     Settings.NOT_INTERESTED_BUTTON));
+            // The chooser adds to the feed filter's lists, so it needs the feed filter.
+            if (SettingsStatus.feedFilterEnabled) {
+                addPreference(new TogglePreference(context, "Also filter it",
+                        "After you tap Not interested, offer to skip the video's creator, sound or hashtags from now on.",
+                        Settings.NOT_INTERESTED_ALSO_FILTER));
+            }
         }
         if (SettingsStatus.feedMuteEnabled) {
             addPreference(new TogglePreference(context, "Show the mute button on videos",

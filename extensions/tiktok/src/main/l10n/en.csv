@@ -222,6 +222,7 @@ Advanced. Find and force the hidden switches TikTok uses to test features.,Advan
 After 1 minute,After 1 minute
 After 15 minutes,After 15 minutes
 After 5 minutes,After 5 minutes
+"After you tap Not interested, offer to skip the video's creator, sound or hashtags from now on.","After you tap Not interested, offer to skip the video's creator, sound or hashtags from now on."
 All,All
 All available languages,All available languages
 All events,All events
@@ -242,6 +243,7 @@ Already marked as not interested,Already marked as not interested
 Already saved. Open TikTok to save another copy.,Already saved. Open TikTok to save another copy.
 Also apply these filters to downloaded videos TikTok uses when the feed can't load enough new items.,Also apply these filters to downloaded videos TikTok uses when the feed can't load enough new items.
 Also change the region TikTok reports internally and set TikTok to the country's time zone. Keeps your interface language. Your IP address and your account's own rules still apply.,Also change the region TikTok reports internally and set TikTok to the country's time zone. Keeps your interface language. Your IP address and your account's own rules still apply.
+Also filter it,Also filter it
 Also hide videos whose text stickers match a blocked caption word. Text stickers are the words a creator types over the video in TikTok's editor. Text that's part of the picture itself can't be read.,Also hide videos whose text stickers match a blocked caption word. Text stickers are the words a creator types over the video in TikTok's editor. Text that's part of the picture itself can't be read.
 "Also on a block list, so still hidden: %1$s","Also on a block list, so still hidden: %1$s"
 Also on opened videos,Also on opened videos
@@ -1969,6 +1971,8 @@ Skip update checks,Skip update checks
 Skipped a creator pattern that could stall: %1$s,Skipped a creator pattern that could stall: %1$s
 Skipped a creator pattern that's too long: %1$s,Skipped a creator pattern that's too long: %1$s
 "Skipped entries are invalid, expired, already recorded, or older than the newest %1$s videos.","Skipped entries are invalid, expired, already recorded, or older than the newest %1$s videos."
+Skipping videos from %1$s,Skipping videos from %1$s
+Skipping videos tagged %1$s,Skipping videos tagged %1$s
 Skipping videos with %1$s,Skipping videos with %1$s
 Sleep timer off,Sleep timer off
 Slide across the tabs,Slide across the tabs
@@ -2149,6 +2153,7 @@ That isn't a Hushfeed settings backup. Nothing was altered.,That isn't a Hushfee
 "That isn't a seen-history file saved by Hushfeed. For TikTok's own data export, use Import watch history.","That isn't a seen-history file saved by Hushfeed. For TikTok's own data export, use Import watch history."
 "That isn't an app name. Try something like com.example.downloader, or leave the box empty to keep saving in TikTok.","That isn't an app name. Try something like com.example.downloader, or leave the box empty to keep saving in TikTok."
 That list has too many entries. Keep it to %1$s or fewer.,That list has too many entries. Keep it to %1$s or fewer.
+That list is full,That list is full
 That list is too large. Keep it to %1$s KB or less.,That list is too large. Keep it to %1$s KB or less.
 That loosens the budget. It waits until %1$s.,That loosens the budget. It waits until %1$s.
 That loosens the lock. It waits until %1$s.,That loosens the lock. It waits until %1$s.
@@ -2480,7 +2485,10 @@ Video saved,Video saved
 Video saved with %1$s subtitles in %2$s,Video saved with %1$s subtitles in %2$s
 Video text color,Video text color
 "Videos can't be saved to the folder in that file, so your video folder was kept","Videos can't be saved to the folder in that file, so your video folder was kept"
+Videos from %1$s,Videos from %1$s
 Videos in search results show their cover and play when you open them. The feed and the videos you open play as usual.,Videos in search results show their cover and play when you open them. The feed and the videos you open play as usual.
+Videos tagged %1$s,Videos tagged %1$s
+Videos with the sound %1$s,Videos with the sound %1$s
 Videos you watch show up here,Videos you watch show up here
 Views range,Views range
 Visual search,Visual search

@@ -1042,6 +1042,8 @@ public class Settings extends BaseSettings {
 
     public static final BooleanSetting ENABLE_LONG_PRESS_SPEED_LOCK = new BooleanSetting("enable_long_press_speed_lock", FALSE, true);
     public static final BooleanSetting NOT_INTERESTED_BUTTON = new BooleanSetting("not_interested_button", FALSE);
+    /** After the Not interested button sends its feedback, offers the video's creator, sound and hashtags to the feed filter. */
+    public static final BooleanSetting NOT_INTERESTED_ALSO_FILTER = new BooleanSetting("not_interested_also_filter", FALSE);
     /**
      * Mute feed videos. Whether the feed is muted right now is the phone's state, like the volume,
      * so a backup doesn't carry it; paused, Hushfeed plays the feed with sound as TikTok would.

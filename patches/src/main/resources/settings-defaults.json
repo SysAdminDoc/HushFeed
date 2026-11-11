@@ -585,6 +585,7 @@
     ],
     "Not interested button": [
       "not_interested_button",
+      "not_interested_also_filter",
       "not_interested_button_position"
     ],
     "Notification controls": [
@@ -3423,6 +3424,12 @@
     "no_video_auto_translate": {
       "field": "NO_VIDEO_AUTO_TRANSLATE",
       "key": "no_video_auto_translate",
+      "type": "boolean",
+      "default": false
+    },
+    "not_interested_also_filter": {
+      "field": "NOT_INTERESTED_ALSO_FILTER",
+      "key": "not_interested_also_filter",
       "type": "boolean",
       "default": false
     },

@@ -66,6 +66,24 @@ public class ShimmerTitleTest {
         }
     }
 
+    /** The sweep paints white over the letters, so on the light theme it lightens them toward the page. */
+    @Test
+    public void everyLightStopStillReadsUnderTheSheenAtItsBrightest() {
+        int[] light = {SettingsUi.LIGHT_BACKGROUND, SettingsUi.LIGHT_SURFACE, SettingsUi.LIGHT_SURFACE_LIFTED};
+        int peak = ShimmerTitle.SHEEN_ON_LIGHT[0];
+        for (int stop : ShimmerTitle.SHEEN_ON_LIGHT) {
+            if (Color.alpha(stop) > Color.alpha(peak)) peak = stop;
+        }
+        for (int color : ShimmerTitle.COLORS_ON_LIGHT) {
+            int lit = over(peak, color);
+            for (int ground : light) {
+                double ratio = contrast(lit, ground);
+                assertTrue(Integer.toHexString(color) + " under the sheen reads " + ratio + ":1 on "
+                        + Integer.toHexString(ground), ratio >= 4.5);
+            }
+        }
+    }
+
     @Test
     public void aSweepRunsAsTheTitleOpensAndOnceEachPeriod() {
         assertEquals(0f, ShimmerTitle.sweep(0L), 0f);
@@ -228,6 +246,15 @@ public class ShimmerTitleTest {
             }
         }
         return false;
+    }
+
+    /** {@code top} drawn over the opaque {@code bottom}, as SRC_OVER does. */
+    private static int over(int top, int bottom) {
+        float a = Color.alpha(top) / 255f;
+        return Color.rgb(
+                Math.round(Color.red(top) * a + Color.red(bottom) * (1 - a)),
+                Math.round(Color.green(top) * a + Color.green(bottom) * (1 - a)),
+                Math.round(Color.blue(top) * a + Color.blue(bottom) * (1 - a)));
     }
 
     private static double contrast(int one, int other) {

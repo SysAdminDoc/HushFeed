@@ -55,8 +55,11 @@ public final class ShimmerTitle implements Choreographer.FrameCallback, Runnable
      */
     static final int[] COLORS_ON_LIGHT = {0xFF055D5A, 0xFF16161C, 0xFFAA0122};
     private static final int[] SHEEN_ON_DARK = {0x00FFFFFF, 0xB3FFFFFF, 0x00FFFFFF};
-    /** Softer on the light theme, where a full sheen would wash the dark letters into the page. */
-    private static final int[] SHEEN_ON_LIGHT = {0x00FFFFFF, 0x80FFFFFF, 0x00FFFFFF};
+    /**
+     * Softer on the light theme, where white over the dark letters lightens them toward the page:
+     * at the sheen's peak every light stop still reads at 4.5:1 or better on the light surfaces.
+     */
+    static final int[] SHEEN_ON_LIGHT = {0x00FFFFFF, 0x2EFFFFFF, 0x00FFFFFF};
     /**
      * The titles wearing the gradient, so painting one twice doesn't run two loops. The loop is held
      * weakly too: it holds its title, and a value that holds its key keeps the entry, and with it

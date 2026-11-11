@@ -102,6 +102,7 @@ Every Hushfeed release, newest first.
 * Opening a video from a sorted or searched Liked grid, or from your sorted private videos, now swipes in the grid's order, and a search plays its matches first. Those two grids have a tap handler of their own, so their video page kept TikTok's order while your posts followed the sort (#180).
 * On TikTok 47.7.3 the Favorites tab gets its sort button, position rail and Search button. TikTok tucks that grid inside an extra container there, so none of them showed up, and they now sit just under the Posts and Collections row (#180).
 * A background job that fails, like the media cache's start-up cleanup, now shows up in the diagnostics log. Before, nothing recorded it.
+* On the light theme, the shine that runs across the Hushfeed settings title no longer washes the letters out. It's softer there now, so the title stays readable while it passes.
 
 ## 0.81.0 (2026-11-05)
 

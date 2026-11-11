@@ -92,6 +92,7 @@ Every Hushfeed release, newest first.
 * With `Hide CAPTCHA popups` on, tapping hearts in a LIVE no longer hides TikTok's check. It shows, the same as it does for a save or a gift, because a hidden check left the hearts on screen while TikTok counted none of them. When TikTok turns your taps down, Hushfeed says so once, the way it does for a video like (#380).
 * The sort button and the jump buttons on profile, Liked and sound grids sit on a darker backdrop, so their words read over a white or busy thumbnail (#378).
 * The hold speed bubble follows your phone's font size now, in both the pill and the round dial. With large text on, the speed used to stay small while everything else in Hushfeed grew. The whole bubble grows with it, so the padlock and the dots keep their room.
+* With `Open TikTok on` set to Inbox, Profile or another tab, TalkBack can't land on the For You feed hidden under the start screen while TikTok opens.
 
 ## 0.81.0 (2026-11-05)
 

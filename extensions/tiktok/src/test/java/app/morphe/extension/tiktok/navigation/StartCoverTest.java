@@ -1,8 +1,10 @@
 package app.morphe.extension.tiktok.navigation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.robolectric.Shadows.shadowOf;
 
 import android.app.Activity;
@@ -95,6 +97,37 @@ public class StartCoverTest {
         profile.setSelected(true);
         frame();
         assertNull("Profile is up", cover());
+    }
+
+    /** TalkBack goes by the view tree, not by what's drawn on top, so the covered Home is out of its reach. */
+    @Test public void aScreenReaderCannotReachHomeWhileItsCovered() {
+        home.setClickable(true);
+        assertTrue(home.isImportantForAccessibility());
+        Settings.START_PAGE.save(StartPage.PROFILE);
+        assertEquals("USER", StartPage.coldStartTag(activity, "HOME", null));
+        assertNotNull(cover());
+        assertFalse("Home is covered", home.isImportantForAccessibility());
+
+        home.setSelected(false);
+        profile.setSelected(true);
+        frame();
+        assertNull(cover());
+        assertTrue("Profile is up", home.isImportantForAccessibility());
+    }
+
+    /** A view TikTok hides from screen readers itself while the cover is up stays hidden after it. */
+    @Test public void theCoverPutsBackOnlyWhatItHid() {
+        View content = ((ViewGroup) activity.getWindow().getDecorView()).getChildAt(0);
+        content.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+        StartCover.show(activity, "USER");
+        assertEquals(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS, content.getImportantForAccessibility());
+        cover().lift("test");
+        assertEquals(View.IMPORTANT_FOR_ACCESSIBILITY_YES, content.getImportantForAccessibility());
+
+        StartCover.show(activity, "USER");
+        content.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        cover().lift("test");
+        assertEquals(View.IMPORTANT_FOR_ACCESSIBILITY_NO, content.getImportantForAccessibility());
     }
 
     @Test public void theCoverComesOffBySelfWhenTheTabNeverShows() {

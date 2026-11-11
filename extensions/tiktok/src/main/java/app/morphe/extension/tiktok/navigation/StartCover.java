@@ -17,6 +17,9 @@ import android.view.ViewParent;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
@@ -85,10 +88,16 @@ final class StartCover {
         return copy != null ? copy : new ColorDrawable(Color.BLACK);
     }
 
-    /** The cover itself: takes the touches meant for the Home under it, and checks before each frame. */
+    /**
+     * The cover itself: takes the touches meant for the Home under it, and checks before each frame.
+     * A screen reader doesn't go by what's drawn on top, so the window's other views are hidden from
+     * it for as long as the cover hides them from sight, or TalkBack could start reading the feed
+     * the reader chose not to open on.
+     */
     static final class Cover extends View implements ViewTreeObserver.OnPreDrawListener {
         final String key;
         private final Runnable timeout = () -> lift("timed out");
+        private final Map<View, Integer> hidden = new LinkedHashMap<>();
         private boolean lifting;
 
         Cover(Context context, String key) {
@@ -103,12 +112,29 @@ final class StartCover {
             super.onAttachedToWindow();
             getViewTreeObserver().addOnPreDrawListener(this);
             postDelayed(timeout, LONGEST_MS);
+            ViewParent parent = getParent();
+            if (!(parent instanceof ViewGroup)) return;
+            ViewGroup window = (ViewGroup) parent;
+            for (int i = 0; i < window.getChildCount(); i++) {
+                View child = window.getChildAt(i);
+                if (child == this) continue;
+                hidden.put(child, child.getImportantForAccessibility());
+                child.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
+            }
         }
 
         @Override
         protected void onDetachedFromWindow() {
             getViewTreeObserver().removeOnPreDrawListener(this);
             removeCallbacks(timeout);
+            // A view TikTok set otherwise while the cover was up keeps TikTok's choice.
+            for (Map.Entry<View, Integer> entry : hidden.entrySet()) {
+                View child = entry.getKey();
+                if (child.getImportantForAccessibility() == IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS) {
+                    child.setImportantForAccessibility(entry.getValue());
+                }
+            }
+            hidden.clear();
             super.onDetachedFromWindow();
         }
 

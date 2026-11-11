@@ -216,6 +216,167 @@ public class DiagnosticRedactorTest {
         assertEquals("nickname: [omitted]\nnickname=[omitted], uniqueId=[omitted]; display_name='[omitted]'", text);
     }
 
+    /** An emoticon's lone bracket and a comma inside a phrase belong to the name, and the line after its object stays. */
+    @Test public void aNameWithAnEmoticonOrACommaGoesWholeAndTheRestOfTheLineStays() {
+        assertEquals("nickname: [omitted]", DiagnosticRedactor.redact("nickname: Dana :) Quinn"));
+        assertEquals("nickname: [omitted]", DiagnosticRedactor.redact("nickname: Dana <3 Quinn"));
+        assertEquals("nickname: [omitted]", DiagnosticRedactor.redact("nickname: Dana, Queen of Cats"));
+        assertEquals("User{nickname=[omitted], uniqueId=[omitted]} logged in at 10:23",
+                DiagnosticRedactor.redact("User{nickname=Dana :(, uniqueId=dq} logged in at 10:23"));
+    }
+
+    /** A smiley before the field, or one in the name, neither holds the field nor closes its object. */
+    @Test public void aSmileyNeitherEndsANameNorHoldsItsField() {
+        assertEquals("status: sad :( nickname: [omitted]",
+                DiagnosticRedactor.redact("status: sad :( nickname: Dana :) Quinn"));
+        assertEquals("User{bio=sad :(, nickname=[omitted]} done",
+                DiagnosticRedactor.redact("User{bio=sad :(, nickname=Dana :) Quinn} done"));
+        assertEquals("User(nickname=[omitted], uniqueId=[omitted]) logged in at 10:23",
+                DiagnosticRedactor.redact("User(nickname=Dana :) Quinn, uniqueId=dq) logged in at 10:23"));
+        assertEquals("User{bio=hi :), nickname=[omitted]} done",
+                DiagnosticRedactor.redact("User{bio=hi :), nickname=Dana Quinn} done"));
+        assertEquals("User{bio=hi:), nickname=[omitted]} done",
+                DiagnosticRedactor.redact("User{bio=hi:), nickname=Dana Quinn} done"));
+        assertEquals("User{bio=sad:(, nickname=[omitted]} done",
+                DiagnosticRedactor.redact("User{bio=sad:(, nickname=Dana Quinn} done"));
+        assertEquals("User(nickname=[omitted], uniqueId=[omitted]) logged in",
+                DiagnosticRedactor.redact("User(nickname=Dana (DQ :), uniqueId=dq) logged in"));
+        assertEquals("User[nickname=[omitted]] done", DiagnosticRedactor.redact("User[nickname=Dana:] done"));
+        assertEquals("nickname: [omitted]", DiagnosticRedactor.redact("nickname: Dana :'( Quinn"));
+        assertEquals("[nickname:[omitted], uniqueId:[omitted]]",
+                DiagnosticRedactor.redact("[nickname:[DQ] Dana Quinn, uniqueId:dq]"));
+        assertEquals("User(nickname=[omitted], uniqueId=[omitted]) logged in",
+                DiagnosticRedactor.redact("User(nickname=Dana :(DQ) Quinn, uniqueId=dq) logged in"));
+        assertEquals("nickname: [omitted]", DiagnosticRedactor.redact("nickname: Dana:(DQ) Quinn"));
+        assertEquals("Result:(nickname: [omitted]) ok", DiagnosticRedactor.redact("Result:(nickname: Dana Quinn) ok"));
+        assertTrue(DiagnosticRedactor.redact("Conn(local=[::]:443, nickname=Dana Quinn) done")
+                .endsWith(", nickname=[omitted]) done"));
+    }
+
+    /** A quote ends a name only when it closes the string the field sits in, and a path's backslashes are not escapes. */
+    @Test public void aQuoteEndsANameOnlyWhenItClosesTheFieldsString() {
+        for (String name : new String[]{"Dana \"DQ\" Quinn", "James' Bakery", "C:\\new\\Dana Quinn", "Dana&amp;Co: Bakery"}) {
+            assertEquals(name, "nickname: [omitted]", DiagnosticRedactor.redact("nickname: " + name));
+        }
+        assertEquals("{\"msg\":\"nickname: [omitted]\"}",
+                DiagnosticRedactor.redact("{\"msg\":\"nickname: C:\\\\new\\\\Dana Quinn\"}"));
+        assertEquals("{\"nickname\":[omitted]}", DiagnosticRedactor.redact("{\"nickname\":Dana \"DQ\" Quinn}"));
+        assertEquals("log('nickname: [omitted]')", DiagnosticRedactor.redact("log('nickname: James O'Brien')"));
+        assertEquals("log('nickname: [omitted]')", DiagnosticRedactor.redact("log('nickname: Dana :'( Quinn')"));
+        assertEquals("log('nickname: [omitted]')", DiagnosticRedactor.redact("log('nickname: C:\\new\\Dana Quinn')"));
+        assertEquals("msg=\"nickname: [omitted]\" next",
+                DiagnosticRedactor.redact("msg=\"nickname: C:\\new\\Dana Quinn\" next"));
+        for (String path : new String[]{"C:\\Program Files\\new\\Dana Quinn", "C:\\My Docs\\new\\Dana Quinn",
+                "\\\\nas\\new\\Dana Quinn", "(C:\\new\\Dana Quinn)", "Users\\new\\Dana Quinn"}) {
+            assertEquals(path, "msg=\"nickname: [omitted]\" next",
+                    DiagnosticRedactor.redact("msg=\"nickname: " + path + "\" next"));
+            assertEquals(path, "log('nickname: [omitted]')", DiagnosticRedactor.redact("log('nickname: " + path + "')"));
+        }
+        assertEquals("{\"token\":\"[omitted]\",\"msg\":\"nickname: [omitted]\"} after",
+                DiagnosticRedactor.redact("{\"token\":\"a\\\"b\",\"msg\":\"nickname: Dana Quinn\"} after"));
+    }
+
+    @Test public void anApostropheAfterAStyledOrAccentedLetterStaysInTheName() {
+        assertEquals("nickname: [omitted]", DiagnosticRedactor.redact("nickname: " + script("Dana's Quinn")));
+        assertEquals("nickname: [omitted]",
+                DiagnosticRedactor.redact("nickname: Chloe" + (char) 0x308 + "'s Shop Dana"));
+        assertEquals("log('nickname: [omitted]')",
+                DiagnosticRedactor.redact("log('nickname: " + script("Dana's Quinn") + "')"));
+        assertEquals("log('nickname: [omitted]')",
+                DiagnosticRedactor.redact("log('nickname: Chloe" + (char) 0x308 + "'s Shop Dana')"));
+    }
+
+    /** A log line inside a JSON string carries its line breaks as escapes, and a name ends at one. */
+    @Test public void aNameInsideAJsonStringEndsAtItsEscapedLineBreak() {
+        String trace = "{\"trace\":\"Invalid email: \\n\\tat com.example.Signup.check(Signup.java:12)\"}";
+
+        assertEquals(trace, DiagnosticRedactor.redact(trace));
+        assertEquals("{\"msg\":\"nickname: [omitted]\\nnext\"}",
+                DiagnosticRedactor.redact("{\"msg\":\"nickname: Dana Quinn\\nnext\"}"));
+    }
+
+    /** A home network names its hosts in any language, and Java prints their addresses several ways. */
+    @Test public void aLocalHostNameGoesWithItsAddressHoweverJavaPrintsIt() {
+        assertEquals("failed to connect to [host omitted]/[address omitted].",
+                DiagnosticRedactor.redact("failed to connect to myproxy.lan/192.168.1.5."));
+        assertEquals("via -[host omitted]/[address omitted]",
+                DiagnosticRedactor.redact("via -myproxy.lan/192.168.1.5"));
+        assertEquals("[host omitted]/[address omitted]",
+                DiagnosticRedactor.redact("m" + (char) 0xFC + "nchen-pi.home/192.168.1.5"));
+        assertEquals("[host omitted]/[[address omitted]]:443",
+                DiagnosticRedactor.redact("router.home/[fd00::1]:443"));
+        assertEquals("HTTP @ [host omitted]/[[address omitted]]:3128",
+                DiagnosticRedactor.redact("HTTP @ myproxy.lan/[fd00::1]:3128"));
+        assertEquals("[host omitted]/[address omitted]",
+                DiagnosticRedactor.redact("router.home/::ffff:192.168.1.5"));
+        assertEquals("Unable to resolve host \\\\\\\"[host omitted]\\\\\\\": No address",
+                DiagnosticRedactor.redact("Unable to resolve host \\\\\\\"myproxy.lan\\\\\\\": No address"));
+        assertEquals("build 10.2.3.4.5", DiagnosticRedactor.redact("build 10.2.3.4.5"));
+    }
+
+    /** Offsets from +1000 to +1400 have a phone number's first digit, so the clock or the date next to them decides. */
+    @Test public void aTimeZoneOffsetBesideAClockOrADateIsNotAPhoneNumber() {
+        for (String line : new String[]{"+1100 2026-11-11 10:23:11 started", "+1000 2026-11-11 10:23:11 started",
+                "11-11 10:23:11.269 +1100  1234  5678 I Tag", "retry +1 2026-11-11 10:23:11.269",
+                "11-11 10:23:11.269123 +1100  1234  5678 I Tag", "11-11 10:23:11.269 +1100   555 12345 W Tag"}) {
+            assertEquals(line, DiagnosticRedactor.redact(line));
+        }
+        assertEquals("call [phone omitted] now", DiagnosticRedactor.redact("call +44 2079-46-09-58 now"));
+    }
+
+    /** The clock only excuses a four-digit offset, so a phone number written after a time still goes. */
+    @Test public void aPhoneNumberAfterAClockStillGoes() {
+        for (String time : new String[]{"Call at 10:23 ", "meet 9:30 ", "sent 10:23:11  ", "at 10:23:11.269 "}) {
+            for (String phone : new String[]{"+44 20 7946 0958", "+14155550123", "+1 202 555 0143", "+61 412 345 678",
+                    "+1202 555 0143", "+1415-555-0123", "+1312.555.0100"}) {
+                assertEquals(time + "[phone omitted] called", DiagnosticRedactor.redact(time + phone + " called"));
+            }
+        }
+        // Spaced like logcat's process, thread and level columns, but not padded like them.
+        assertEquals("at 10:23:11.269 [phone omitted] I called",
+                DiagnosticRedactor.redact("at 10:23:11.269 +1415 555 0123 I called"));
+        assertEquals("10:23:11.269 [phone omitted] A new msg",
+                DiagnosticRedactor.redact("10:23:11.269 +1312 555 0100 A new msg"));
+    }
+
+    /** A long run of hyphenated words, styled letters or backslashes is read once, not once per word. */
+    @Test(timeout = 5000) public void aLongHyphenatedOrEscapedRunIsRedactedInLinearTime() {
+        String uuid = "123e4567-e89b-12d3-a456-426614174000-";
+        for (String run : new String[]{"a-".repeat(32_000), "1-".repeat(32_000), uuid.repeat(1_700),
+                script("a-").repeat(21_000)}) {
+            assertEquals(run, DiagnosticRedactor.redact(run));
+        }
+        assertEquals("nickname: [omitted]", DiagnosticRedactor.redact("nickname: x" + "\\".repeat(60_000)));
+        assertEquals("nickname: [omitted]", DiagnosticRedactor.redact("nickname: x," + "\\".repeat(60_000)));
+        assertEquals("{\"msg\":\"nickname: [omitted]\"}",
+                DiagnosticRedactor.redact("{\"msg\":\"nickname: x" + "\\".repeat(60_000) + "\"}"));
+    }
+
+    /** A version or a hash after a dash, a C++ name and a density file name are not accounts. */
+    @Test public void aVersionAfterADashACppNameAndADensityFileNameStay() {
+        String line = "loaded lib-@1.2.3 from C++@foo and --@dana; anim@2x.json, favicon@2x.ico, lib-@v1.2.3,"
+                + " b@2x.heif, d@2x.jxl";
+
+        assertEquals(line, DiagnosticRedactor.redact(line));
+    }
+
+    @Test public void anAddressAtADomainStartingWithADensityGoesAndAHandleAfterADashGoes() {
+        assertEquals("[email omitted] and [email omitted]",
+                DiagnosticRedactor.redact("dana@2x.com and dana@3x.example.org"));
+        assertEquals("cc-[handle omitted] and x+[handle omitted]", DiagnosticRedactor.redact("cc-@dana.q and x+@dana_q"));
+    }
+
+    /** The text in Unicode's bold script letters, two chars each, the way a styled nickname arrives. */
+    private static String script(String plain) {
+        StringBuilder styled = new StringBuilder();
+        for (char c : plain.toCharArray()) {
+            if (c >= 'A' && c <= 'Z') styled.appendCodePoint(0x1D4D0 + c - 'A');
+            else if (c >= 'a' && c <= 'z') styled.appendCodePoint(0x1D4EA + c - 'a');
+            else styled.append(c);
+        }
+        return styled.toString();
+    }
+
     @Test public void theFieldsThatNameAnAccountLoseTheirValues() {
         String text = DiagnosticRedactor.redact("{\"nickname\":\"Dana Q\",\"unique_id\":\"dana.q\","
                 + "\"uniqueId\":\"dana.q2\",\"email\":\"d@x.io\",\"mobile\":\"2025550123\","

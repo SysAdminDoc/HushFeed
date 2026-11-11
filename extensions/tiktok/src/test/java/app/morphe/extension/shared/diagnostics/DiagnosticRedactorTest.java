@@ -30,9 +30,38 @@ public class DiagnosticRedactorTest {
                 + " from /2607:fb90:8a2c:1d4e:5c1f:9b2a:77e3:41d0 (port 38754) after 15000ms;"
                 + " retry via /fe80::1%wlan0 (port 443)");
 
-        assertEquals("failed to connect to cdn.example/[address omitted] (port 443)"
+        assertEquals("failed to connect to [host omitted]/[address omitted] (port 443)"
                 + " from /[address omitted] (port 38754) after 15000ms;"
                 + " retry via /[address omitted] (port 443)", line);
+    }
+
+    /** A proxy or a router is the reader's own server, and no list of TikTok's hosts names it. */
+    @Test public void theNameInFrontOfAnAddressAndALookupsQuotedNameGoToo() {
+        String line = DiagnosticRedactor.redact("failed to connect to myproxy.lan/192.168.1.5 (port 3128);"
+                + " Unable to resolve host \"dana-pi.home\": No address associated with hostname;"
+                + " via router.home/fd00::1 at com.example.Net.open(Net.java:42)");
+
+        assertEquals("failed to connect to [host omitted]/[address omitted] (port 3128);"
+                + " Unable to resolve host \"[host omitted]\": No address associated with hostname;"
+                + " via [host omitted]/[address omitted] at com.example.Net.open(Net.java:42)", line);
+    }
+
+    /** Java prints an IPv6 address in full, while a slash in front of a clock time is just a slash. */
+    @Test public void aClockTimeAfterASlashIsNotAnAddressButJavasFullIpv6Is() {
+        String line = DiagnosticRedactor.redact("at 2026-11-11/10:23:11 position 00:01:05/00:02:30"
+                + " via router.home/fd00:0:0:0:0:0:0:1%wlan0");
+
+        assertEquals("at 2026-11-11/10:23:11 position 00:01:05/00:02:30 via [host omitted]/[address omitted]", line);
+    }
+
+    @Test public void aProxyNamedWithAnUnderscoreUnresolvedOrInsideJsonGoesToo() {
+        String line = DiagnosticRedactor.redact("my_proxy/192.168.1.5; HTTP @ myproxy.lan:3128;"
+                + " SOCKS @ socks.lan/<unresolved>:1080;"
+                + " {\"msg\":\"Unable to resolve host \\\"dana-pi.home\\\": No address\"}");
+
+        assertEquals("[host omitted]/[address omitted]; HTTP @ [host omitted]:3128;"
+                + " SOCKS @ [host omitted]/<unresolved>:1080;"
+                + " {\"msg\":\"Unable to resolve host \\\"[host omitted]\\\": No address\"}", line);
     }
 
     @Test public void clockTimesAndVersionsAreNotTakenForAddresses() {
@@ -136,6 +165,55 @@ public class DiagnosticRedactorTest {
 
         assertEquals("code sent to [phone omitted], retry in 60s;"
                 + " 10:23:11.269 TikTok 47.7.3 offset +0500", text);
+    }
+
+    @Test public void aPhoneNumberSplitBySpacesDashesDotsOrBracketsGoesToo() {
+        String text = DiagnosticRedactor.redact("to +1 202-555-0123, +44 20 7946 0958 and +1 (202) 555.0123;"
+                + " 5 more, +0500, +12 likes");
+
+        assertEquals("to [phone omitted], [phone omitted] and [phone omitted];"
+                + " 5 more, +0500, +12 likes", text);
+    }
+
+    @Test public void aTimeZoneOffsetInFrontOfADateIsNotAPhoneNumber() {
+        String line = "+0500 2026-11-11 10:23:11 started";
+
+        assertEquals(line, DiagnosticRedactor.redact(line));
+    }
+
+    /** A message ending in an empty field is followed by the trace, which has to stay readable. */
+    @Test public void anEmptyFieldAtALineEndLeavesTheNextLineAlone() {
+        String line = "java.lang.IllegalArgumentException: Invalid email: \n"
+                + "\tat com.example.Signup.check(Signup.java:12)\nusername:\nCookie:\n"
+                + "\tat com.example.Net.open(Net.java:42)";
+        String trace = DiagnosticRedactor.redactThrowable(new IllegalArgumentException("Invalid email: "));
+
+        assertEquals(line, DiagnosticRedactor.redact(line));
+        assertTrue(trace, trace.contains("Invalid email: \n\tat "));
+        assertFalse(trace, trace.contains("[omitted]"));
+    }
+
+    /** An address can end in a dash, and a drawable's density suffix is a file name, not a domain. */
+    @Test public void anEmailEndingInADashGoesWholeAndADensitySuffixStays() {
+        String text = DiagnosticRedactor.redact("sent to a-@x.com and b+@x.com; loaded ic_like@2x.webp, icon@1.5x.png");
+
+        assertEquals("sent to [email omitted] and [email omitted]; loaded ic_like@2x.webp, icon@1.5x.png", text);
+    }
+
+    /** A name written into a log line without quotes still runs to its line's end or its object's. */
+    @Test public void anUnquotedNameOfSeveralWordsGoesWhole() {
+        String text = DiagnosticRedactor.redact("nickname: Dana Quinn  \nUser{nickname=Dana Quinn, uniqueId=dq}"
+                + " (display_name=Dana Q) token=abc def");
+
+        assertEquals("nickname: [omitted]  \nUser{nickname=[omitted], uniqueId=[omitted]}"
+                + " (display_name=[omitted]) token=[omitted] def", text);
+    }
+
+    @Test public void aNameKeepsTheBracketsItOpensAndTheApostrophesInItsWords() {
+        String text = DiagnosticRedactor.redact("nickname: Dana O'Brien\nnickname=[DQ] Dana Quinn, uniqueId=dq;"
+                + " display_name='Dana'");
+
+        assertEquals("nickname: [omitted]\nnickname=[omitted], uniqueId=[omitted]; display_name='[omitted]'", text);
     }
 
     @Test public void theFieldsThatNameAnAccountLoseTheirValues() {

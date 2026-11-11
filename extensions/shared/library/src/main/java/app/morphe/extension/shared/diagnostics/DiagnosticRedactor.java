@@ -44,13 +44,15 @@ public final class DiagnosticRedactor {
             "unique_id", "nickname", "nick_name", "display_name", "displayname", "email", "phone",
             "phone_number", "phonenumber", "mobile"};
     /**
-     * An email address, and a phone number written the international way with nothing between
-     * its digits. A sign-in or contact screen's own log line can carry either. The domain is one
-     * flat class with no repeated group, for the same reason as {@link #HOSTS}.
+     * An email address, and a phone number written the international way, its 10 to 15 digits
+     * run together or split by spaces, dashes, dots or brackets. A sign-in or contact screen's own
+     * log line can carry either. The domain is one flat class with no repeated group, for the same
+     * reason as {@link #HOSTS}. A drawable's density suffix such as ic_like@2x.webp is a file name.
+     * No country code starts with 0, so a time zone offset such as +0500 is not a phone number.
      */
-    private static final String EMAIL =
-            "(?<![\\w.+-])[\\w.+-]+@[A-Za-z0-9-][A-Za-z0-9.-]*\\.[A-Za-z]{2,}(?![\\w-])";
-    private static final String PHONE = "(?<![\\w+])\\+\\d{10,15}(?!\\d)";
+    private static final String EMAIL = "(?<![\\w.+-])[\\w.+-]+@(?!\\d(?:\\.\\d)?x\\.)"
+            + "[A-Za-z0-9-][A-Za-z0-9.-]*\\.[A-Za-z]{2,}(?![\\w-])";
+    private static final String PHONE = "(?<![\\w+])\\+(?=[1-9])(?:\\d[ ().-]{0,2}){9,14}\\d(?!\\d)";
     /**
      * A bare id, for the places that print a list of them with no name in front. TikTok's ids run
      * to nineteen digits; nothing else these reports carry is a number that long.
@@ -66,6 +68,17 @@ public final class DiagnosticRedactor {
     private static final String IPV6 = "(?<![\\w:.])(?=[0-9A-Fa-f:]*::|(?:[0-9A-Fa-f]{0,4}:){4})"
             + "[0-9A-Fa-f]{0,4}(?::[0-9A-Fa-f]{0,4}){2,7}(?:%[\\w.]+)?(?![\\w:])";
     /**
+     * The name in front of such an address (or of Java's "/&lt;unresolved&gt;"), the one a failed
+     * lookup quotes, and the one a proxy prints as "HTTP @ name:port". Each can be the reader's
+     * own server, a proxy or a router, which no list of TikTok's hosts covers. The IPv6 test is
+     * {@link #IPV6}'s, so a slash in front of a clock time does not make a name.
+     */
+    private static final String RESOLVED_NAME = "(?<![\\w.-])[A-Za-z0-9][\\w.-]*+"
+            + "(?=/(?:\\d{1,3}\\.){3}\\d{1,3}(?![\\w.])|/<unresolved>"
+            + "|/(?=[0-9A-Fa-f:]*::|(?:[0-9A-Fa-f]{0,4}:){4})[0-9A-Fa-f]{0,4}:)"
+            + "|(?<=(?:HTTP|SOCKS) @ )[A-Za-z0-9][\\w.-]*+(?=:\\d{1,5}(?!\\d))"
+            + "|(?<=Unable to resolve host \\\\?\")[^\"\\\\\\n]+";
+    /**
      * A creator's name, as the bundle writes it into a toast or a banner: between Unicode's
      * first-strong isolate U+2068 and its pop U+2069. Every toast is written to the buffer as it
      * is shown, in whatever language the phone speaks, so the name cannot be found by the words
@@ -75,10 +88,10 @@ public final class DiagnosticRedactor {
     private static final String ISOLATED_NAME = "⁨[^⁩\\n]*⁩?";
     /**
      * An account handle, which starts with @ and stands on its own. One glued to something in
-     * front of it is not a handle: an email address, or the identity hash Java prints after a
-     * class name.
+     * front of it is not a handle: an email address, whose name can end in a dash or a plus, or
+     * the identity hash Java prints after a class name.
      */
-    private static final String HANDLE = "(?<![\\w.@/:])@[A-Za-z0-9_.]{2,}";
+    private static final String HANDLE = "(?<![\\w.+\\-@/:])@[A-Za-z0-9_.]{2,}";
 
     private static final Pattern NAMES = Pattern.compile(ISOLATED_NAME);
     private static final Pattern HANDLES = Pattern.compile(HANDLE);
@@ -88,12 +101,13 @@ public final class DiagnosticRedactor {
     // overflow the regex stack before either an export or a logging hook finished.
     private static final Pattern HOSTS = Pattern.compile(
             "(?i)(?<![a-z0-9.-])[a-z0-9.-]+\\." + HOST_SUFFIXES + "\\b(?:[:/][^\\s\"'<>]*)?");
+    private static final Pattern RESOLVED_NAMES = Pattern.compile(RESOLVED_NAME);
     private static final Pattern IDS = Pattern.compile(BARE_CONTENT_ID);
     private static final Pattern EMAILS = Pattern.compile(EMAIL);
     private static final Pattern PHONES = Pattern.compile(PHONE);
     private static final Pattern ADDRESSES = Pattern.compile(IPV4 + "|" + IPV6);
     private static final Pattern ASSIGNMENTS = Pattern.compile(
-            "(?<![A-Za-z0-9_-])([A-Za-z0-9_-]+)(\\\\*[\"'])?\\s*[=:]\\s*");
+            "(?<![A-Za-z0-9_-])([A-Za-z0-9_-]+)(\\\\*[\"'])?[ \\t]*[=:][ \\t]*");
 
     private DiagnosticRedactor() {
     }
@@ -112,6 +126,7 @@ public final class DiagnosticRedactor {
             text = EMAILS.matcher(text).replaceAll("[email omitted]");
             text = PHONES.matcher(text).replaceAll("[phone omitted]");
             text = HOSTS.matcher(text).replaceAll("[host omitted]");
+            text = RESOLVED_NAMES.matcher(text).replaceAll("[host omitted]");
             text = ADDRESSES.matcher(text).replaceAll("[address omitted]");
             text = IDS.matcher(text).replaceAll("[id omitted]");
             return truncated || text.length() > MAX_CHARS
@@ -133,7 +148,9 @@ public final class DiagnosticRedactor {
                 if (name.contains(token)) { credential = true; break; }
             }
             boolean contentId = isContentId(name);
-            if (!credential && !contentId && !isPersonal(name)) continue;
+            // A name or an address can run to several words, so the value goes to the line's end.
+            boolean words = !credential && !contentId && isPersonal(name);
+            if (!credential && !contentId && !words) continue;
             boolean quotedName = fields.group(2) != null;
             boolean header = !quotedName && (name.equals("authorization")
                     || name.equals("proxy-authorization") || name.equals("cookie") || name.equals("set-cookie"));
@@ -160,13 +177,21 @@ public final class DiagnosticRedactor {
                         || end - start != "[omitted]".length()) replacement = "\"[omitted]\"";
             } else {
                 end = start;
+                // A name keeps the brackets it opens and an apostrophe inside a word: [DQ] Dana O'Brien.
+                int depth = 0;
                 while (end < text.length()) {
                     char c = text.charAt(end);
-                    if (Character.isWhitespace(c) || ";&\"'<>".indexOf(c) >= 0
-                            || (quotedName && (c == ']' || c == '}'))
-                            || ((!contentId || quotedName) && c == ',')) break;
+                    if (words && "[({".indexOf(c) >= 0) depth++;
+                    else if (words && depth > 0 && "])}".indexOf(c) >= 0) depth--;
+                    else if (!(words && c == '\'' && inWord(text, end))
+                            && ((words ? c == '\n' || c == '\r' : Character.isWhitespace(c))
+                            || ";&\"'<>".indexOf(c) >= 0
+                            || ((quotedName || words) && (c == ']' || c == '}'))
+                            || (words && c == ')')
+                            || ((!contentId || quotedName) && c == ',' && depth == 0))) break;
                     end++;
                 }
+                while (words && end > start && Character.isWhitespace(text.charAt(end - 1))) end--;
             }
             if (end == start) continue;
             result.append(text, copied, start).append(replacement);
@@ -192,6 +217,11 @@ public final class DiagnosticRedactor {
             if (name.equals(whole)) return true;
         }
         return false;
+    }
+
+    private static boolean inWord(String text, int at) {
+        return at > 0 && at + 1 < text.length()
+                && Character.isLetter(text.charAt(at - 1)) && Character.isLetter(text.charAt(at + 1));
     }
 
     private static int quotedEnd(String text, int start, int quote) {

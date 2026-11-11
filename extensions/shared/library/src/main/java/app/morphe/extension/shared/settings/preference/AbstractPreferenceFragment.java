@@ -514,7 +514,8 @@ public abstract class AbstractPreferenceFragment extends PreferenceFragment {
             updateListPreferenceSummary(listPref, setting);
         } else if (!pref.getClass().equals(Preference.class)) {
             // Ignore root preference class because there is no data to sync.
-            Logger.printException(() -> "Setting cannot be handled: " + pref.getClass() + ": " + pref);
+            // The key, not the row: a row prints its title and summary, and a summary can show what was typed in.
+            Logger.printException(() -> "Setting cannot be handled: " + pref.getClass() + ": " + pref.getKey());
         }
     }
 

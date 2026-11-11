@@ -30,6 +30,9 @@ public final class KeywordRules {
     private static final Pattern COMPOSITE =
             Pattern.compile("^\\s*\"([^\"]+)\"\\s*(!?&!?)\\s*\"([^\"]+)\"\\s*$");
 
+    /** A phrase that is one hashtag and nothing else, like the ones Also filter it adds. */
+    private static final Pattern HASHTAG = Pattern.compile("#[\\p{L}\\p{M}\\p{N}_]+");
+
     /** Test-only observer for proving the feed path does not rebuild unchanged rules. */
     private static volatile Runnable parseTestHook;
     private static final Object CACHE_LOCK = new Object();
@@ -54,12 +57,16 @@ public final class KeywordRules {
         private final String second;
         private final boolean without;
         private final String entry;
+        private final boolean firstIsTag;
+        private final boolean secondIsTag;
 
         private Rule(String first, String second, boolean without, String entry) {
             this.first = first;
             this.second = second;
             this.without = without;
             this.entry = entry;
+            this.firstIsTag = HASHTAG.matcher(first).matches();
+            this.secondIsTag = second != null && HASHTAG.matcher(second).matches();
         }
 
         /** The entry as it was typed, for saying which rule matched. */
@@ -67,11 +74,45 @@ public final class KeywordRules {
             return entry;
         }
 
+        /** Whether the rule asks for its second phrase to be missing ({@code "a" !& "b"}). */
+        public boolean excludesSecond() {
+            return second != null && without;
+        }
+
         /** @param lowerCased the text to test, already lower cased with {@link Locale#ROOT}. */
         public boolean matches(String lowerCased) {
-            if (lowerCased == null || first.isEmpty() || !lowerCased.contains(first)) return false;
+            if (lowerCased == null || first.isEmpty() || !holds(lowerCased, first, firstIsTag)) return false;
             if (second == null) return true;
-            return without != lowerCased.contains(second);
+            return without != holds(lowerCased, second, secondIsTag);
+        }
+    }
+
+    /**
+     * Whether the text holds the phrase. A phrase that is one hashtag counts only where the tag
+     * ends too, so #cat doesn't hide #catholic or #cats. Anything else is a plain substring.
+     */
+    private static boolean holds(String lowerCased, String phrase, boolean tag) {
+        int at = lowerCased.indexOf(phrase);
+        if (!tag) return at >= 0;
+        for (; at >= 0; at = lowerCased.indexOf(phrase, at + 1)) {
+            int end = at + phrase.length();
+            if (end == lowerCased.length() || !tagCharacter(lowerCased.codePointAt(end))) return true;
+        }
+        return false;
+    }
+
+    /** A character that carries a hashtag on: a letter, mark, number or underscore. */
+    private static boolean tagCharacter(int codePoint) {
+        if (codePoint == '_' || Character.isLetterOrDigit(codePoint)) return true;
+        switch (Character.getType(codePoint)) {
+            case Character.NON_SPACING_MARK:
+            case Character.COMBINING_SPACING_MARK:
+            case Character.ENCLOSING_MARK:
+            case Character.LETTER_NUMBER:
+            case Character.OTHER_NUMBER:
+                return true;
+            default:
+                return false;
         }
     }
 

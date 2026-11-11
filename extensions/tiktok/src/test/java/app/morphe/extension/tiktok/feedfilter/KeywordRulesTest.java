@@ -120,4 +120,23 @@ public class KeywordRulesTest {
         assertTrue(hides("crypto\n\"cat\" & \"dog\"", "my cat and my dog"));
         assertTrue(hides("crypto\n\"cat\" & \"dog\"", "a crypto video"));
     }
+
+    @Test public void aHashtagHidesOnlyThatWholeTag() {
+        assertTrue(hides("#cat", "my #Cat"));
+        assertTrue(hides("#cat", "#cat, #dog"));
+        assertTrue(hides("#cat", "#fyp#cat#dog"));
+        assertTrue("a later whole tag still counts", hides("#cat", "#catholic and #cat"));
+        assertFalse(hides("#cat", "#catholic"));
+        assertFalse(hides("#cat", "#cats"));
+        assertFalse(hides("#cat", "#cat_videos"));
+        assertFalse("a combining accent carries the tag on", hides("#cafe", "#cafe" + (char) 0x301));
+        // Without the # it's a plain phrase, and a phrase with words after the tag is too.
+        assertTrue(hides("cat", "#catholic"));
+        assertTrue(hides("#cat video", "#cat videos"));
+        // Both halves of a rule follow the same reading.
+        assertTrue(hides("\"#news\" !& \"#cat\"", "#news #cats"));
+        assertFalse(hides("\"#news\" !& \"#cat\"", "#news #cat"));
+        assertTrue(hides("\"#news\" & \"#cat\"", "#news #cat"));
+        assertFalse(hides("\"#news\" & \"#cat\"", "#newsroom #cat"));
+    }
 }

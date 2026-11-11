@@ -41,11 +41,13 @@ public final class AlsoFilter {
     static final int MAX_HASHTAGS = 3;
 
     /**
-     * A hashtag the way a caption carries it: a # with letters, marks, digits or underscores after
-     * it, and nothing word-like right before it, so "C#" and "issue#12" aren't read as tags.
+     * Hashtags the way a caption carries them: a # with letters, marks, digits or underscores
+     * after it, and nothing word-like right before the run, so "C#" and "issue#12" aren't read as
+     * tags. A run like "#fyp#cats" is two tags, the way TikTok links them.
      */
-    private static final Pattern HASHTAG =
-            Pattern.compile("(?<![\\p{L}\\p{M}\\p{N}_#])#[\\p{L}\\p{M}\\p{N}_]+");
+    private static final Pattern HASHTAGS =
+            Pattern.compile("(?<![\\p{L}\\p{M}\\p{N}_#])(?:#[\\p{L}\\p{M}\\p{N}_]+)+");
+    private static final Pattern HASHTAG = Pattern.compile("#[\\p{L}\\p{M}\\p{N}_]+");
 
     enum Kind { CREATOR, SOUND_ID, SOUND_NAME, HASHTAG }
 
@@ -72,23 +74,23 @@ public final class AlsoFilter {
 
     /** Called after the Not interested button sent its feedback. Main thread. */
     public static void offer(Activity activity) {
+        offer(activity, CurrentVideoAuthor.getAweme());
+    }
+
+    static void offer(Activity activity, Object video) {
         try {
             if (!enabled() || activity == null || activity.isFinishing() || activity.isDestroyed()) return;
-            Object video = CurrentVideoAuthor.getAweme();
             if (video == null) return;
             Object author = Reflect.property(video, "getAuthor", "author");
             Object music = Reflect.property(video, "getMusic", "music");
-            List<Choice> offered = new ArrayList<>();
-            for (Choice choice : choices(
+            List<Choice> offered = offered(choices(
                     Reflect.string(author, "getUniqueId", "uniqueId"),
                     Reflect.firstNonBlank(Reflect.string(author, "getUid", "uid"),
                             Reflect.string(video, "getAuthorUid", "authorUid")),
                     music == null ? null : SoundIdentity.idOf(music),
                     music == null ? null : SoundIdentity.nameOf(music),
                     Reflect.string(video, "getDesc", "desc"),
-                    Settings.HIDE_BLOCKED_SOUNDS.get())) {
-                if (!listed(choice, setting(choice.kind).get())) offered.add(choice);
-            }
+                    Settings.HIDE_BLOCKED_SOUNDS.get()));
             if (offered.isEmpty()) return;
 
             SettingsUi.syncDarkMode(activity);
@@ -108,7 +110,7 @@ public final class AlsoFilter {
 
     /**
      * What one video offers, in the chooser's order: the creator, the sound when blocked sounds
-     * are hidden, then the first three different hashtags of the caption.
+     * are hidden, then every different hashtag of the caption.
      */
     static List<Choice> choices(String handle, String uid, String soundId, String soundName,
             String caption, boolean soundsHidden) {
@@ -124,7 +126,9 @@ public final class AlsoFilter {
             if (!blank(soundId)) {
                 choices.add(new Choice(Kind.SOUND_ID, soundId.trim(),
                         blank(soundName) ? soundId.trim() : soundName.trim()));
-            } else if (!blank(soundName)) {
+            } else if (!blank(soundName) && soundName.indexOf(',') < 0) {
+                // The sound name list splits on commas, so "Hello, World" would land as two
+                // words that hide every sound holding either one.
                 choices.add(new Choice(Kind.SOUND_NAME, soundName.trim(), soundName.trim()));
             }
         }
@@ -132,20 +136,39 @@ public final class AlsoFilter {
         return choices;
     }
 
-    /** The first {@link #MAX_HASHTAGS} different hashtags in a caption, as written. */
+    /**
+     * The choices the chooser shows: those whose list doesn't hide them yet, with at most
+     * {@link #MAX_HASHTAGS} hashtags, counted after the listed ones are left out.
+     */
+    static List<Choice> offered(List<Choice> choices) {
+        List<Choice> offered = new ArrayList<>();
+        int tags = 0;
+        for (Choice choice : choices) {
+            if (choice.kind == Kind.HASHTAG && tags == MAX_HASHTAGS) continue;
+            if (listed(choice, setting(choice.kind).get())) continue;
+            if (choice.kind == Kind.HASHTAG) tags++;
+            offered.add(choice);
+        }
+        return offered;
+    }
+
+    /** The different hashtags in a caption, as first written. */
     static List<String> hashtags(String caption) {
         List<String> tags = new ArrayList<>();
         if (caption == null) return tags;
         Set<String> seen = new HashSet<>();
-        Matcher matcher = HASHTAG.matcher(caption);
-        while (tags.size() < MAX_HASHTAGS && matcher.find()) {
-            String tag = matcher.group();
-            if (seen.add(tag.toLowerCase(Locale.ROOT))) tags.add(tag);
+        Matcher run = HASHTAGS.matcher(caption);
+        while (run.find()) {
+            Matcher matcher = HASHTAG.matcher(run.group());
+            while (matcher.find()) {
+                String tag = matcher.group();
+                if (seen.add(tag.toLowerCase(Locale.ROOT))) tags.add(tag);
+            }
         }
         return tags;
     }
 
-    /** Whether the list a choice belongs on already holds it. */
+    /** Whether the list a choice belongs on already holds it, or for a tag already hides it. */
     static boolean listed(Choice choice, String stored) {
         switch (choice.kind) {
             case CREATOR:
@@ -154,8 +177,11 @@ public final class AlsoFilter {
             case SOUND_NAME:
                 return SoundIdentity.containsEntry(stored, choice.entry);
             default:
-                for (String entry : KeywordRules.split(stored)) {
-                    if (entry.equalsIgnoreCase(choice.entry)) return true;
+                // A rule that hides the bare tag hides every caption carrying it, unless it asks
+                // for a phrase to be missing, which more words around the tag can bring in.
+                String tag = choice.entry.toLowerCase(Locale.ROOT);
+                for (KeywordRules.Rule rule : KeywordRules.parse(stored)) {
+                    if (!rule.excludesSecond() && rule.matches(tag)) return true;
                 }
                 return false;
         }
@@ -195,7 +221,8 @@ public final class AlsoFilter {
         }
     }
 
-    private static void add(Choice choice) {
+    /** Saves the pick and shows its undo banner. @return the banner's undo, or null when nothing was saved. */
+    static Runnable add(Choice choice) {
         StringSetting setting = setting(choice.kind);
         String before = setting.get();
         String after = withChoice(choice, before);
@@ -204,18 +231,20 @@ public final class AlsoFilter {
         if (problem != null) {
             // The editor's own refusal names the limit, but it runs past a toast's two lines.
             Utils.showToastLong(L10n.t("That list is full"));
-            return;
+            return null;
         }
-        if (!BlockAuthorOverlay.saveAction(setting, after)) return;
+        if (!BlockAuthorOverlay.saveAction(setting, after)) return null;
         String shown = L10n.isolate(choice.shown);
         String done = choice.kind == Kind.CREATOR ? L10n.f("Skipping videos from %1$s", shown)
                 : choice.kind == Kind.HASHTAG ? L10n.f("Skipping videos tagged %1$s", shown)
                 : L10n.f("Skipping videos with %1$s", shown);
-        BlockAuthorOverlay.showUndoBanner(done, () -> {
+        Runnable undo = () -> {
             if (BlockAuthorOverlay.saveAction(setting, before)) {
                 Utils.showToastShort(L10n.f("Showing %1$s again", shown));
             }
-        });
+        };
+        BlockAuthorOverlay.showUndoBanner(done, undo);
+        return undo;
     }
 
     private static boolean blank(String value) {

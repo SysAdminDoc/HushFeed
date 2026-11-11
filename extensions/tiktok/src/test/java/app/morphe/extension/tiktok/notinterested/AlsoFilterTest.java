@@ -2,25 +2,76 @@ package app.morphe.extension.tiktok.notinterested;
 
 import static org.junit.Assert.*;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.widget.ListAdapter;
+
+import app.morphe.extension.shared.Utils;
+import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.feedfilter.AdvancedFeedRules;
+import app.morphe.extension.tiktok.feedfilter.FeedRuleLimits;
 import app.morphe.extension.tiktok.feedfilter.KeywordRules;
 import app.morphe.extension.tiktok.feedfilter.SoundIdentity;
+import app.morphe.extension.tiktok.settings.Settings;
+import app.morphe.extension.tiktok.settings.SettingsStatus;
+import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.Shadows;
+import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowDialog;
+import org.robolectric.shadows.ShadowToast;
 
+@RunWith(RobolectricTestRunner.class)
+@Config(manifest = Config.NONE, sdk = 28)
 public class AlsoFilterTest {
-    @Test public void offersTheCreatorTheSoundAndThreeHashtagsInThatOrder() {
+    @Rule public final SettingsContextRule settingsContext = new SettingsContextRule();
+
+    private boolean notInterestedEnabled;
+    private boolean feedFilterEnabled;
+
+    @Before public void setUp() {
+        Utils.setContext(RuntimeEnvironment.getApplication());
+        notInterestedEnabled = SettingsStatus.notInterestedEnabled;
+        feedFilterEnabled = SettingsStatus.feedFilterEnabled;
+    }
+
+    @After public void tearDown() {
+        Settings.NOT_INTERESTED_ALSO_FILTER.resetToDefault();
+        Settings.HIDE_BLOCKED_SOUNDS.resetToDefault();
+        Settings.BLOCKED_CREATORS.resetToDefault();
+        Settings.BLOCKED_SOUND_IDS.resetToDefault();
+        Settings.BLOCKED_SOUND_NAMES.resetToDefault();
+        Settings.BLOCKED_CAPTION_WORDS.resetToDefault();
+        SettingsStatus.notInterestedEnabled = notInterestedEnabled;
+        SettingsStatus.feedFilterEnabled = feedFilterEnabled;
+    }
+
+    private static void idle() {
+        Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(Duration.ofMillis(0));
+    }
+
+    @Test public void offersTheCreatorTheSoundAndEveryHashtagInThatOrder() {
         List<AlsoFilter.Choice> choices = AlsoFilter.choices("cat.daily", "7001", "6900123",
                 "original sound", "Monday mood #Cats #catsoftiktok #cats #fyp #viral", true);
 
-        assertEquals(5, choices.size());
+        assertEquals(6, choices.size());
         assertChoice(choices.get(0), AlsoFilter.Kind.CREATOR, "@cat.daily", "@cat.daily");
         assertChoice(choices.get(1), AlsoFilter.Kind.SOUND_ID, "6900123", "original sound");
-        // A tag repeated in another case is offered once, and the fourth different tag isn't.
+        // A tag repeated in another case is offered once.
         assertChoice(choices.get(2), AlsoFilter.Kind.HASHTAG, "#Cats", "#Cats");
         assertChoice(choices.get(3), AlsoFilter.Kind.HASHTAG, "#catsoftiktok", "#catsoftiktok");
         assertChoice(choices.get(4), AlsoFilter.Kind.HASHTAG, "#fyp", "#fyp");
+        assertChoice(choices.get(5), AlsoFilter.Kind.HASHTAG, "#viral", "#viral");
     }
 
     @Test public void fallsBackToTheUserIdAndTheSoundName() {
@@ -29,6 +80,15 @@ public class AlsoFilterTest {
         assertEquals(2, choices.size());
         assertChoice(choices.get(0), AlsoFilter.Kind.CREATOR, "7001", "7001");
         assertChoice(choices.get(1), AlsoFilter.Kind.SOUND_NAME, "Song A", "Song A");
+    }
+
+    @Test public void aSoundNameWithACommaIsntOfferedSinceTheListWouldSplitIt() {
+        List<AlsoFilter.Choice> choices = AlsoFilter.choices("@someone", null, null, "Hello, World", null, true);
+
+        assertEquals(1, choices.size());
+        assertEquals(AlsoFilter.Kind.CREATOR, choices.get(0).kind);
+        assertEquals("by id it's one entry", AlsoFilter.Kind.SOUND_ID,
+                AlsoFilter.choices(null, null, "6900123", "Hello, World", null, true).get(0).kind);
     }
 
     @Test public void leavesTheSoundOutWhileBlockedSoundsAreShown() {
@@ -41,6 +101,8 @@ public class AlsoFilterTest {
     @Test public void readsHashtagsTheWayACaptionWritesThem() {
         assertEquals(Arrays.asList("#café", "#東京", "#day_2"),
                 AlsoFilter.hashtags("C# tips, issue#12 #café #東京 #day_2 ## #"));
+        assertEquals("run together, each is its own tag", Arrays.asList("#fyp", "#cats", "#dog"),
+                AlsoFilter.hashtags("#fyp#cats #Cats#dog issue#12#13"));
         assertTrue(AlsoFilter.hashtags(null).isEmpty());
         assertTrue(AlsoFilter.hashtags("no tags here").isEmpty());
     }
@@ -62,7 +124,9 @@ public class AlsoFilterTest {
         String words = AlsoFilter.withChoice(tag, "\"spoiler\" & \"finale\"");
         assertEquals("\"spoiler\" & \"finale\", #Cats", words);
         assertTrue(KeywordRules.anyMatches(KeywordRules.parse(words), "Monday mood #cats"));
+        assertTrue(KeywordRules.anyMatches(KeywordRules.parse(words), "Monday mood #fyp#cats"));
         assertFalse(KeywordRules.anyMatches(KeywordRules.parse(words), "Monday mood, no tags"));
+        assertFalse("only that tag", KeywordRules.anyMatches(KeywordRules.parse(words), "#catsoftiktok"));
         assertTrue(AlsoFilter.listed(tag, words));
     }
 
@@ -75,6 +139,130 @@ public class AlsoFilterTest {
 
         AlsoFilter.Choice creator = new AlsoFilter.Choice(AlsoFilter.Kind.CREATOR, "@Cat.Daily", "@Cat.Daily");
         assertTrue(AlsoFilter.listed(creator, "cat.daily"));
+    }
+
+    @Test public void aTagIsListedWhenTheListAlreadyHidesEveryCaptionWithIt() {
+        AlsoFilter.Choice cats = new AlsoFilter.Choice(AlsoFilter.Kind.HASHTAG, "#cats", "#cats");
+        assertTrue("the word it's made of", AlsoFilter.listed(cats, "cat"));
+        assertTrue(AlsoFilter.listed(cats, "dogs, CATS"));
+        assertFalse("#cat is another tag", AlsoFilter.listed(cats, "#cat"));
+        assertFalse("#catsoftiktok is another tag", AlsoFilter.listed(cats, "#catsoftiktok"));
+        assertFalse("a two-phrase rule hides only some", AlsoFilter.listed(cats, "\"#cats\" !& \"dog\""));
+        assertEquals("\"#cats\" !& \"dog\", #cats", AlsoFilter.withChoice(cats, "\"#cats\" !& \"dog\""));
+    }
+
+    @Test public void threeHashtagsAreOfferedAfterTheListedOnesAreLeftOut() {
+        Settings.BLOCKED_CAPTION_WORDS.save("#one, two");
+        Settings.BLOCKED_CREATORS.save("cat.daily");
+        List<AlsoFilter.Choice> offered = AlsoFilter.offered(AlsoFilter.choices("cat.daily", null, "6900123",
+                "Song", "#one #two #three #four #five #six", true));
+
+        assertEquals(4, offered.size());
+        assertChoice(offered.get(0), AlsoFilter.Kind.SOUND_ID, "6900123", "Song");
+        assertChoice(offered.get(1), AlsoFilter.Kind.HASHTAG, "#three", "#three");
+        assertChoice(offered.get(2), AlsoFilter.Kind.HASHTAG, "#four", "#four");
+        assertChoice(offered.get(3), AlsoFilter.Kind.HASHTAG, "#five", "#five");
+    }
+
+    @Test public void aPickGoesOnItsOwnListAndUndoTakesItOff() {
+        Settings.BLOCKED_CAPTION_WORDS.save("spoiler");
+        Runnable undo = AlsoFilter.add(new AlsoFilter.Choice(AlsoFilter.Kind.HASHTAG, "#cats", "#cats"));
+        idle();
+        assertNotNull(undo);
+        assertEquals("spoiler, #cats", Settings.BLOCKED_CAPTION_WORDS.get());
+        assertTrue(ShadowToast.getTextOfLatestToast(), ShadowToast.getTextOfLatestToast().contains("#cats"));
+        undo.run();
+        idle();
+        assertEquals("spoiler", Settings.BLOCKED_CAPTION_WORDS.get());
+        assertTrue(ShadowToast.getTextOfLatestToast().startsWith("Showing"));
+
+        assertNotNull(AlsoFilter.add(new AlsoFilter.Choice(AlsoFilter.Kind.CREATOR, "@cat.daily", "@cat.daily")));
+        assertEquals("@cat.daily", Settings.BLOCKED_CREATORS.get());
+        assertNotNull(AlsoFilter.add(new AlsoFilter.Choice(AlsoFilter.Kind.SOUND_ID, "6900123", "Song")));
+        assertEquals("6900123", Settings.BLOCKED_SOUND_IDS.get());
+        assertNotNull(AlsoFilter.add(new AlsoFilter.Choice(AlsoFilter.Kind.SOUND_NAME, "Song A", "Song A")));
+        assertEquals("Song A", Settings.BLOCKED_SOUND_NAMES.get());
+        assertEquals("spoiler", Settings.BLOCKED_CAPTION_WORDS.get());
+    }
+
+    @Test public void aFullListSaysSoAndKeepsWhatItHad() {
+        StringBuilder full = new StringBuilder();
+        for (int index = 0; index < FeedRuleLimits.MAX_ENTRIES; index++) {
+            if (index > 0) full.append(',');
+            full.append('w').append(index);
+        }
+        Settings.BLOCKED_CAPTION_WORDS.save(full.toString());
+        assertNull(AlsoFilter.add(new AlsoFilter.Choice(AlsoFilter.Kind.HASHTAG, "#cats", "#cats")));
+        idle();
+        assertEquals("That list is full", ShadowToast.getTextOfLatestToast());
+        assertEquals(full.toString(), Settings.BLOCKED_CAPTION_WORDS.get());
+    }
+
+    public static final class Person {
+        public String getUniqueId() { return "cat.daily"; }
+        public String getUid() { return "7001"; }
+    }
+
+    public static final class Song {
+        public String getMid() { return "6900123"; }
+        public String getMusicName() { return "original sound"; }
+    }
+
+    public static final class Video {
+        final String caption;
+        Video(String caption) { this.caption = caption; }
+        public Person getAuthor() { return new Person(); }
+        public Song getMusic() { return new Song(); }
+        public String getDesc() { return caption; }
+    }
+
+    private static List<String> items(AlertDialog dialog) {
+        ListAdapter list = dialog.getListView().getAdapter();
+        List<String> out = new ArrayList<>();
+        for (int index = 0; index < list.getCount(); index++) out.add(String.valueOf(list.getItem(index)));
+        return out;
+    }
+
+    @Test public void theChooserOffersWhatsNotListedAndAPickSavesIt() {
+        SettingsStatus.notInterestedEnabled = true;
+        SettingsStatus.feedFilterEnabled = true;
+        Settings.NOT_INTERESTED_ALSO_FILTER.save(true);
+        Settings.BLOCKED_SOUND_IDS.save("6900123");
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            AlsoFilter.offer(controller.get(), new Video("Monday #cats #fyp"));
+            idle();
+            AlertDialog dialog = (AlertDialog) ShadowDialog.getLatestDialog();
+            assertNotNull(dialog);
+            assertTrue(dialog.isShowing());
+            List<String> labels = items(dialog);
+            assertEquals(labels.toString(), 3, labels.size());
+            assertTrue(labels.get(0), labels.get(0).startsWith("Videos from") && labels.get(0).contains("@cat.daily"));
+            assertTrue(labels.get(1), labels.get(1).startsWith("Videos tagged") && labels.get(1).contains("#cats"));
+            assertTrue(labels.get(2), labels.get(2).contains("#fyp"));
+
+            Shadows.shadowOf(dialog).clickOnItem(1);
+            idle();
+            assertEquals("#cats", Settings.BLOCKED_CAPTION_WORDS.get());
+            assertEquals("", Settings.BLOCKED_CREATORS.get());
+        }
+    }
+
+    @Test public void nothingShowsWhileOffOrWhenEverythingIsListed() {
+        SettingsStatus.notInterestedEnabled = true;
+        SettingsStatus.feedFilterEnabled = true;
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            AlsoFilter.offer(controller.get(), new Video("#cats"));
+            idle();
+            assertNull("off by default", ShadowDialog.getLatestDialog());
+
+            Settings.NOT_INTERESTED_ALSO_FILTER.save(true);
+            Settings.BLOCKED_CREATORS.save("cat.daily");
+            Settings.BLOCKED_SOUND_IDS.save("6900123");
+            Settings.BLOCKED_CAPTION_WORDS.save("cats");
+            AlsoFilter.offer(controller.get(), new Video("#cats"));
+            idle();
+            assertNull(ShadowDialog.getLatestDialog());
+        }
     }
 
     private static void assertChoice(AlsoFilter.Choice choice, AlsoFilter.Kind kind, String entry, String shown) {

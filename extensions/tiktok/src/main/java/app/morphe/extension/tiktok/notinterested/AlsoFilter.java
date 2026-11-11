@@ -24,7 +24,6 @@ import app.morphe.extension.tiktok.settings.preference.SettingsUi;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,12 +41,16 @@ public final class AlsoFilter {
 
     /**
      * Hashtags the way a caption carries them: a # with letters, marks, digits or underscores
-     * after it, and nothing word-like right before the run, so "C#" and "issue#12" aren't read as
-     * tags. A run like "#fyp#cats" is two tags, the way TikTok links them.
+     * after it. A run like "#fyp#cats" is two tags, the way TikTok links them. {@link #hashtags}
+     * drops a run with something word-like right before it, so "C#" and "issue#12" aren't tags.
      */
-    private static final Pattern HASHTAGS =
-            Pattern.compile("(?<![\\p{L}\\p{M}\\p{N}_#])(?:#[\\p{L}\\p{M}\\p{N}_]+)+");
+    private static final Pattern HASHTAGS = Pattern.compile("(?:#[\\p{L}\\p{M}\\p{N}_]+)+");
     private static final Pattern HASHTAG = Pattern.compile("#[\\p{L}\\p{M}\\p{N}_]+");
+
+    /** Marks that finish an emoji rather than a word: the two variation selectors and the keycap. */
+    private static final int TEXT_STYLE = 0xFE0E;
+    private static final int EMOJI_STYLE = 0xFE0F;
+    private static final int KEYCAP = 0x20E3;
 
     enum Kind { CREATOR, SOUND_ID, SOUND_NAME, HASHTAG }
 
@@ -159,13 +162,21 @@ public final class AlsoFilter {
         Set<String> seen = new HashSet<>();
         Matcher run = HASHTAGS.matcher(caption);
         while (run.find()) {
+            if (run.start() > 0 && joinsWord(caption.codePointBefore(run.start()))) continue;
             Matcher matcher = HASHTAG.matcher(run.group());
             while (matcher.find()) {
                 String tag = matcher.group();
-                if (seen.add(tag.toLowerCase(Locale.ROOT))) tags.add(tag);
+                if (seen.add(KeywordRules.fold(tag))) tags.add(tag);
             }
         }
         return tags;
+    }
+
+    /** Whether a # right after this character is part of a word rather than a tag's start. */
+    private static boolean joinsWord(int codePoint) {
+        // A red heart or a keycap one right before "#love" ends in a mark too, but it closes an emoji.
+        if (codePoint == TEXT_STYLE || codePoint == EMOJI_STYLE || codePoint == KEYCAP) return false;
+        return codePoint == '#' || KeywordRules.tagCharacter(codePoint);
     }
 
     /** Whether the list a choice belongs on already holds it, or for a tag already hides it. */
@@ -179,7 +190,7 @@ public final class AlsoFilter {
             default:
                 // A rule that hides the bare tag hides every caption carrying it, unless it asks
                 // for a phrase to be missing, which more words around the tag can bring in.
-                String tag = choice.entry.toLowerCase(Locale.ROOT);
+                String tag = KeywordRules.fold(choice.entry);
                 for (KeywordRules.Rule rule : KeywordRules.parse(stored)) {
                     if (!rule.excludesSecond() && rule.matches(tag)) return true;
                 }

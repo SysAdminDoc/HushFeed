@@ -139,4 +139,37 @@ public class KeywordRulesTest {
         assertTrue(hides("\"#news\" & \"#cat\"", "#news #cat"));
         assertFalse(hides("\"#news\" & \"#cat\"", "#newsroom #cat"));
     }
+
+    @Test public void aTagWithSpacesInsideItsQuotesIsStillThatWholeTag() {
+        assertTrue(hides("\" #cat \" & \"dog\"", "#cat and a dog"));
+        assertFalse(hides("\" #cat \" & \"dog\"", "#cats and a dog"));
+        assertFalse(hides("\"#news\" !& \" #cat\"", "#news #cat"));
+        // Spaces around a plain phrase still mark a word's edge.
+        assertFalse(hides("\" cat\" & \"dog\"", "concat dog"));
+        assertTrue(hides("\" cat\" & \"dog\"", "a cat dog"));
+    }
+
+    @Test public void aTagMadeOfSupplementaryLettersEndsWhereTheyDo() {
+        String tag = "#" + new String(Character.toChars(0x20000));
+        String next = new String(Character.toChars(0x20001));
+        assertTrue(hides(tag, tag + " today"));
+        assertFalse(hides(tag, tag + next));
+    }
+
+    @Test public void listsAndTextFoldCaseTheSameWay() {
+        String dottedCapitalI = String.valueOf((char) 0x130);
+        String dotlessI = String.valueOf((char) 0x131);
+        assertEquals("#ali", KeywordRules.fold("#AL" + dottedCapitalI));
+        assertTrue("Turkish capital dotted I", hides("#ali", "#AL" + dottedCapitalI + " yes"));
+        assertTrue(hides("#AL" + dottedCapitalI, "#ali"));
+        assertFalse(hides("#ali", "#AL" + dottedCapitalI + "m"));
+        assertTrue("dotless i", hides("#ilik", "#" + dotlessI + "l" + dotlessI + "k"));
+
+        String finalSigma = "#" + (char) 0x3B8 + (char) 0x3B5 + (char) 0x3BF + (char) 0x3C2;
+        String capitals = "#" + (char) 0x398 + (char) 0x395 + (char) 0x39F + (char) 0x3A3;
+        String insideACaption = capitals + "." + (char) 0x39A + (char) 0x391 + (char) 0x399;
+        assertTrue(hides(finalSigma, insideACaption));
+        assertTrue(hides(capitals, insideACaption));
+        assertTrue(hides(capitals, finalSigma + " #fyp"));
+    }
 }

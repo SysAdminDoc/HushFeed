@@ -33,6 +33,11 @@ public final class KeywordRules {
     /** A phrase that is one hashtag and nothing else, like the ones Also filter it adds. */
     private static final Pattern HASHTAG = Pattern.compile("#[\\p{L}\\p{M}\\p{N}_]+");
 
+    private static final char DOTLESS_I = (char) 0x131;
+    private static final char DOT_ABOVE = (char) 0x307;
+    private static final char FINAL_SIGMA = (char) 0x3C2;
+    private static final char SIGMA = (char) 0x3C3;
+
     /** Test-only observer for proving the feed path does not rebuild unchanged rules. */
     private static volatile Runnable parseTestHook;
     private static final Object CACHE_LOCK = new Object();
@@ -61,12 +66,14 @@ public final class KeywordRules {
         private final boolean secondIsTag;
 
         private Rule(String first, String second, boolean without, String entry) {
-            this.first = first;
-            this.second = second;
+            // A quoted half keeps its spaces, which can mean a word's edge, but " #cat" is still
+            // the tag and nothing else.
+            this.firstIsTag = isTag(first);
+            this.secondIsTag = second != null && isTag(second);
+            this.first = firstIsTag ? first.trim() : first;
+            this.second = secondIsTag ? second.trim() : second;
             this.without = without;
             this.entry = entry;
-            this.firstIsTag = HASHTAG.matcher(first).matches();
-            this.secondIsTag = second != null && HASHTAG.matcher(second).matches();
         }
 
         /** The entry as it was typed, for saying which rule matched. */
@@ -79,7 +86,7 @@ public final class KeywordRules {
             return second != null && without;
         }
 
-        /** @param lowerCased the text to test, already lower cased with {@link Locale#ROOT}. */
+        /** @param lowerCased the text to test, already lower cased with {@link #fold}. */
         public boolean matches(String lowerCased) {
             if (lowerCased == null || first.isEmpty() || !holds(lowerCased, first, firstIsTag)) return false;
             if (second == null) return true;
@@ -101,8 +108,12 @@ public final class KeywordRules {
         return false;
     }
 
+    private static boolean isTag(String phrase) {
+        return HASHTAG.matcher(phrase.trim()).matches();
+    }
+
     /** A character that carries a hashtag on: a letter, mark, number or underscore. */
-    private static boolean tagCharacter(int codePoint) {
+    public static boolean tagCharacter(int codePoint) {
         if (codePoint == '_' || Character.isLetterOrDigit(codePoint)) return true;
         switch (Character.getType(codePoint)) {
             case Character.NON_SPACING_MARK:
@@ -238,7 +249,30 @@ public final class KeywordRules {
     }
 
     private static String lower(String value) {
-        return value.toLowerCase(Locale.ROOT);
+        return fold(value);
+    }
+
+    /**
+     * Text lower cased the way both a list and what it's matched against are. {@link Locale#ROOT}
+     * alone leaves three gaps: Turkish capital dotted I comes out as i plus a combining dot, so
+     * #ali missed it as a whole tag, the dotless i never met a typed i, and Greek capital sigma
+     * turns final only at a word's end, so a tag on the list and the same tag inside a caption
+     * could come out spelled differently.
+     */
+    public static String fold(String text) {
+        String lower = text.toLowerCase(Locale.ROOT);
+        StringBuilder folded = null;
+        for (int index = 0; index < lower.length(); index++) {
+            char character = lower.charAt(index);
+            boolean dropped = character == DOT_ABOVE && index > 0 && lower.charAt(index - 1) == 'i';
+            char kept = character == DOTLESS_I ? 'i' : character == FINAL_SIGMA ? SIGMA : character;
+            if (folded == null) {
+                if (!dropped && kept == character) continue;
+                folded = new StringBuilder(lower.length()).append(lower, 0, index);
+            }
+            if (!dropped) folded.append(kept);
+        }
+        return folded == null ? lower : folded.toString();
     }
 
     /**
@@ -274,7 +308,7 @@ public final class KeywordRules {
      */
     public static Rule firstMatch(List<Rule> rules, String text) {
         if (text == null || rules.isEmpty()) return null;
-        String lowerCased = text.toLowerCase(Locale.ROOT);
+        String lowerCased = fold(text);
         for (Rule rule : rules) {
             if (rule.matches(lowerCased)) return rule;
         }

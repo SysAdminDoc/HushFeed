@@ -14,6 +14,7 @@ import app.morphe.extension.tiktok.feedfilter.KeywordRules;
 import app.morphe.extension.tiktok.feedfilter.SoundIdentity;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
+import com.ss.android.ugc.aweme.feed.model.Aweme;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -107,6 +108,33 @@ public class AlsoFilterTest {
         assertTrue(AlsoFilter.hashtags("no tags here").isEmpty());
     }
 
+    @Test public void aTagRightAfterAnEmojiStillCounts() {
+        String heart = "" + (char) 0x2764 + (char) 0xFE0F;
+        String keycapOne = "1" + (char) 0xFE0F + (char) 0x20E3;
+        String accentedE = "e" + (char) 0x301;
+        assertEquals(Arrays.asList("#love", "#fyp"),
+                AlsoFilter.hashtags(heart + "#love " + keycapOne + "#fyp " + accentedE + "#word"));
+    }
+
+    @Test public void aTagIsOfferedOnceWhicheverWayItsCaseFolds() {
+        String istanbul = "#" + (char) 0x130 + "stanbul";
+        assertEquals(Arrays.asList(istanbul), AlsoFilter.hashtags(istanbul + " #istanbul"));
+        String ilik = "#" + (char) 0x131 + "l" + (char) 0x131 + "k";
+        assertEquals(Arrays.asList(ilik), AlsoFilter.hashtags(ilik + " #ILIK"));
+    }
+
+    @Test public void aGreekTagPickedFromACaptionHidesThatCaption() {
+        // Capital sigma lower cases to its final form only at a word's end, so the tag on its own
+        // and the tag inside this caption came out spelled two ways.
+        String theos = "#" + (char) 0x398 + (char) 0x395 + (char) 0x39F + (char) 0x3A3;
+        String caption = theos + "." + (char) 0x39A + (char) 0x391 + (char) 0x399;
+        assertEquals(Arrays.asList(theos), AlsoFilter.hashtags(caption));
+        AlsoFilter.Choice tag = new AlsoFilter.Choice(AlsoFilter.Kind.HASHTAG, theos, theos);
+        String words = AlsoFilter.withChoice(tag, "");
+        assertTrue(KeywordRules.anyMatches(KeywordRules.parse(words), caption));
+        assertTrue(AlsoFilter.listed(tag, words));
+    }
+
     @Test public void eachPickLandsOnTheListTheFeedFilterReads() {
         AlsoFilter.Choice creator = new AlsoFilter.Choice(AlsoFilter.Kind.CREATOR, "@cat.daily", "@cat.daily");
         String creators = AlsoFilter.withChoice(creator, "news_bot");
@@ -162,6 +190,35 @@ public class AlsoFilterTest {
         assertChoice(offered.get(1), AlsoFilter.Kind.HASHTAG, "#three", "#three");
         assertChoice(offered.get(2), AlsoFilter.Kind.HASHTAG, "#four", "#four");
         assertChoice(offered.get(3), AlsoFilter.Kind.HASHTAG, "#five", "#five");
+    }
+
+    @Test public void aTagThatOnlyARuleWithAnExceptionHidesIsOfferedAndCounted() {
+        Settings.BLOCKED_CAPTION_WORDS.save("\"#one\" !& \"duet\"");
+        List<AlsoFilter.Choice> offered = AlsoFilter.offered(AlsoFilter.choices(null, null, null, null,
+                "#one #two #three #four", false));
+
+        assertEquals(3, offered.size());
+        assertChoice(offered.get(0), AlsoFilter.Kind.HASHTAG, "#one", "#one");
+        assertChoice(offered.get(2), AlsoFilter.Kind.HASHTAG, "#three", "#three");
+    }
+
+    public static final class Caption extends Aweme {
+        final String desc;
+        Caption(String desc) { this.desc = desc; }
+        public String getDesc() { return desc; }
+    }
+
+    @Test public void thePickedTagHidesFeedVideosWithThatWholeTag() {
+        Settings.BLOCKED_CAPTION_WORDS.save("spoiler");
+        AdvancedFeedRules.KeywordFilter feed = new AdvancedFeedRules.KeywordFilter();
+        assertFalse(feed.getFiltered(new Caption("Monday #Cats")));
+        assertNotNull(AlsoFilter.add(new AlsoFilter.Choice(AlsoFilter.Kind.HASHTAG, "#cats", "#cats")));
+        idle();
+
+        assertTrue(feed.getFiltered(new Caption("Monday #Cats")));
+        assertTrue(feed.getFiltered(new Caption("#fyp#cats#dog")));
+        assertFalse(feed.getFiltered(new Caption("#catsoftiktok")));
+        assertFalse(feed.getFiltered(new Caption("#cat")));
     }
 
     @Test public void aPickGoesOnItsOwnListAndUndoTakesItOff() {
@@ -251,6 +308,7 @@ public class AlsoFilterTest {
         SettingsStatus.notInterestedEnabled = true;
         SettingsStatus.feedFilterEnabled = true;
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            assertFalse("off by default", AlsoFilter.enabled());
             AlsoFilter.offer(controller.get(), new Video("#cats"));
             idle();
             assertNull("off by default", ShadowDialog.getLatestDialog());
@@ -259,9 +317,20 @@ public class AlsoFilterTest {
             Settings.BLOCKED_CREATORS.save("cat.daily");
             Settings.BLOCKED_SOUND_IDS.save("6900123");
             Settings.BLOCKED_CAPTION_WORDS.save("cats");
+            assertTrue(AlsoFilter.enabled());
+            // The same choices offer() reads off this video, so a quiet failure inside it can't
+            // pass for "everything is listed".
+            assertTrue(AlsoFilter.offered(AlsoFilter.choices("cat.daily", "7001", "6900123",
+                    "original sound", "#cats", Settings.HIDE_BLOCKED_SOUNDS.get())).isEmpty());
             AlsoFilter.offer(controller.get(), new Video("#cats"));
             idle();
             assertNull(ShadowDialog.getLatestDialog());
+
+            // And with something left to offer, the same call does show the chooser.
+            Settings.BLOCKED_CAPTION_WORDS.save("");
+            AlsoFilter.offer(controller.get(), new Video("#cats"));
+            idle();
+            assertNotNull(ShadowDialog.getLatestDialog());
         }
     }
 

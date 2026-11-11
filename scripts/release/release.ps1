@@ -146,7 +146,7 @@ function Push-Main {
         git.exe -C $work merge-base --is-ancestor HEAD origin/main; if ($LASTEXITCODE -eq 0) { return }
         $tagged = git.exe -C $work tag --list $tag; if ($tagged) { git.exe -C $work merge-base --is-ancestor $tag origin/main }
         [string[]]$how = if ($tagged -and $LASTEXITCODE -ne 0) { 'merge', '--no-edit' } else { , 'rebase' }; git.exe -C $work @how origin/main 2>&1 | ForEach-Object { Write-Host $_ }
-        if ($LASTEXITCODE -ne 0) { git.exe -C $work $how[0] --abort; throw "main took a change that won't $($how[0]) onto this release, so the worktree is back as it was (a rerun would have committed the conflict). In $work, run git $($how[0]) origin/main, settle it, finish the $($how[0]), and rerun." }
+        if ($LASTEXITCODE -ne 0) { git.exe -C $work $how[0] --abort 2>&1 | Out-Null; if ($LASTEXITCODE -ne 0) { throw "git $($how[0]) origin/main stopped in $work before changing anything (its reason is above), so there was nothing to undo. Fix that there and rerun." }; throw "main took a change that won't $($how[0]) onto this release, so the worktree is back as it was (a rerun would have committed the conflict). In $work, run git $($how[0]) origin/main, settle it, finish the $($how[0]), and rerun." }
         git.exe -C $work push origin HEAD:main 2>&1 | ForEach-Object { Write-Host $_ }
         if ($LASTEXITCODE -eq 0) { return }
     }

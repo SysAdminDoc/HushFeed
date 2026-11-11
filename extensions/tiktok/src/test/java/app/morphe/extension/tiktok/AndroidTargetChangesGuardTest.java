@@ -100,10 +100,11 @@ public class AndroidTargetChangesGuardTest {
             new ReviewedWrites("feed/SensitiveWarnings.java", 2,
                     "safe: writes the mask and the Aweme the host handed it, and already catches "
                             + "a refusal and reports it as a diagnostic row"),
-            new ReviewedWrites("feed/GridSort.java", 1,
+            new ReviewedWrites("feed/GridSort.java", 2,
                     "safe: writes mmItems on the profile grid adapter the hook was given, an "
                             + "instance field, with a sorted copy of the list TikTok last handed "
-                            + "that adapter"),
+                            + "that adapter, both when the order changes and when reshow() narrows "
+                            + "it to a grid search"),
             new ReviewedWrites("feedfilter/FeedItemsFilter.java", 3,
                     "safe: writes the search results' mItems, friendFeedData and, since #12, the "
                             + "Following feed's items field (mItems up to 46.8.3, items from "
@@ -228,7 +229,8 @@ public class AndroidTargetChangesGuardTest {
         // Nine on 2026-09-19; four comment-menu instance writes were added for #169, and two
         // LIVE profile card label writes for #159, and the grid sort chip's re-sort for #180.
         // Four LIVE Audio only row writes for #265 on 2026-11-05, two Discover tab writes for #98.
-        assertEquals("the audit counted twenty-two reflective writes on 2026-11-07", 22, total);
+        // The grid search's reshow on 2026-11-10.
+        assertEquals("the audit counted twenty-three reflective writes on 2026-11-10", 23, total);
     }
 
     @Test

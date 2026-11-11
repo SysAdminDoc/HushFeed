@@ -539,7 +539,9 @@ public final class GridSort {
                 : onGrid;
         if (sameOrder(played, grid)) return;
         List<Object> before = new ArrayList<>(played);
-        if (!follow(played, grid)) {
+        // The kept order is a copy once the list has been written, so if TikTok's list has changed
+        // since, the matches still go first and the rest keep that list's own order.
+        if (!follow(played, grid) && (grid == onGrid || !follow(played, GridSearch.withRest(onGrid, played)))) {
             Logger.printDebug(() -> "Grid sort: the opened video's list doesn't hold the grid's videos, left as is");
             return;
         }
@@ -1063,8 +1065,6 @@ public final class GridSort {
             chip.setTextSize(TypedValue.COMPLEX_UNIT_SP, SettingsUi.TEXT_CAPTION);
             chip.setMinWidth(SettingsUi.dp(context, 48));
             chip.setMinHeight(SettingsUi.dp(context, 48));
-            // A long order name in some languages shortens rather than run under the search chip.
-            chip.setMaxWidth(SettingsUi.dp(context, 104));
             chip.setSingleLine(true);
             chip.setEllipsize(TextUtils.TruncateAt.END);
             chip.setGravity(Gravity.CENTER);
@@ -1184,6 +1184,7 @@ public final class GridSort {
 
     static void placeChip(View chip, View grid) {
         try {
+            if (chip instanceof SortChip) fitBesideSearch((TextView) chip);
             if (!(grid instanceof ViewGroup)) return;
             ViewGroup rows = (ViewGroup) grid;
             int count = rows.getChildCount();
@@ -1201,6 +1202,29 @@ public final class GridSort {
         } catch (Throwable ex) {
             Logger.printException(() -> "Could not place the grid sort chip", ex);
         }
+    }
+
+    /**
+     * Shortens the order chip to the room left at the end of its frame by the search chip in the
+     * middle, so a long order name, a long search or a narrow window ends in "..." rather than one
+     * chip running under the other. With no search chip it keeps its whole name.
+     */
+    private static void fitBesideSearch(TextView chip) {
+        if (!(chip.getParent() instanceof ViewGroup)) return;
+        ViewGroup frame = (ViewGroup) chip.getParent();
+        View search = null;
+        for (int i = 0; i < frame.getChildCount(); i++) {
+            View child = frame.getChildAt(i);
+            if (GridSearch.CHIP_TAG.equals(child.getTag()) && child.getVisibility() == View.VISIBLE) search = child;
+        }
+        int max = Integer.MAX_VALUE;
+        if (search != null && frame.getWidth() > 0) {
+            Context context = chip.getContext();
+            // The order chip's 8dp margin from the edge, and a 4dp gap between the two.
+            int room = frame.getWidth() / 2 - search.getWidth() / 2 - SettingsUi.dp(context, 12);
+            max = Math.max(SettingsUi.dp(context, 48), room);
+        }
+        if (chip.getMaxWidth() != max) chip.setMaxWidth(max);
     }
 
     /**

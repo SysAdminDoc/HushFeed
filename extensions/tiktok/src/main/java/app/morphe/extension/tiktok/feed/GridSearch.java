@@ -147,7 +147,8 @@ public final class GridSearch {
         for (Object video : list) {
             String text = texts.get(video);
             if (text == null && known != null) text = known.get(video);
-            if (text == null) text = haystack(video);
+            // A video read before TikTok filled it in had nothing to keep, so it's read again.
+            if (text == null || text.isEmpty()) text = haystack(video);
             texts.put(video, text);
             boolean all = true;
             for (String word : words) {
@@ -191,6 +192,8 @@ public final class GridSearch {
     /** Puts {@code query} on this adapter's grid, or takes the search off for a blank one. */
     static void search(Object adapter, String query) {
         String trimmed = query == null ? "" : query.trim();
+        // trim() keeps the ideographic and no-break spaces, so a box holding only those is blank too.
+        if (words(trimmed).isEmpty()) trimmed = "";
         synchronized (QUERIES) {
             String before = QUERIES.get(adapter);
             if (trimmed.equals(before == null ? "" : before)) return;
@@ -213,12 +216,31 @@ public final class GridSearch {
     }
 
     private static final class Chip extends TextView implements ViewTreeObserver.OnScrollChangedListener,
-            ViewTreeObserver.OnGlobalLayoutListener {
+            ViewTreeObserver.OnGlobalLayoutListener, View.OnAttachStateChangeListener {
         Object adapter;
         View grid;
 
         Chip(Context context) {
             super(context);
+        }
+
+        /** Watches {@code next} coming back to a window, or nothing for null. */
+        void follow(View next) {
+            if (grid == next) return;
+            if (grid != null) grid.removeOnAttachStateChangeListener(this);
+            grid = next;
+            if (next != null) next.addOnAttachStateChangeListener(this);
+        }
+
+        @Override
+        public void onViewAttachedToWindow(View view) {
+            // TikTok can throw the old frame away with this chip in it, which quiets the chip's own
+            // listeners, so the grid arriving in its new frame is what brings the chip along.
+            view.post(this::place);
+        }
+
+        @Override
+        public void onViewDetachedFromWindow(View view) {
         }
 
         @Override
@@ -262,6 +284,7 @@ public final class GridSearch {
                 // TikTok moved the grid to another frame, so the chip goes with it.
                 ViewParent parent = getParent();
                 if (parent instanceof ViewGroup) ((ViewGroup) parent).removeView(this);
+                follow(null);
                 showChip(adapter);
                 return;
             }
@@ -300,7 +323,10 @@ public final class GridSearch {
                 // TikTok's list went on whole, but a page counts its new cells from the narrowed
                 // grid, so the grid needs telling all over again.
                 if (!enabled() && forget(adapter)) GridSort.reshow(adapter);
-                if (chip != null) frame.removeView(chip);
+                if (chip != null) {
+                    frame.removeView(chip);
+                    chip.follow(null);
+                }
                 return;
             }
             if (chip == null) {
@@ -331,7 +357,7 @@ public final class GridSearch {
                 frame.addView(chip, layout);
             }
             chip.adapter = adapter;
-            chip.grid = grid;
+            chip.follow(grid);
             label(chip, queryOf(adapter));
             chip.setOnClickListener(view -> open(adapter, view));
             Chip placed = chip;

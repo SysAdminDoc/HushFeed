@@ -110,7 +110,7 @@ public class GridSearchTest {
     public static final class Liked extends Aweme {
         final String id;
         final long created;
-        final String desc;
+        String desc;
         final Creator creator;
         final Sound sound;
         int descReads;
@@ -225,6 +225,15 @@ public class GridSearchTest {
                 new Liked("u", 2, "istanbul trip", null, null)));
         assertEquals("a Turkish capital dotted I", "tu", ids(GridSearch.matching(trip, "istanbul")));
         assertEquals("tu", ids(GridSearch.matching(trip, dottedCapitalI + "STANBUL")));
+        char dotlessI = (char) 0x131;
+        List<Aweme> water = new ArrayList<>(Arrays.asList(
+                new Liked("w", 1, "" + dotlessI + "l" + dotlessI + "k su", null, null)));
+        assertEquals("a dotless i", "w", ids(GridSearch.matching(water, "ILIK")));
+        String finalSigma = "" + (char) 0x3B8 + (char) 0x3B5 + (char) 0x3BF + (char) 0x3C2;
+        String capitals = "" + (char) 0x398 + (char) 0x395 + (char) 0x39F + (char) 0x3A3;
+        List<Aweme> greek = new ArrayList<>(Arrays.asList(new Liked("g", 1, capitals + "THS", null, null)));
+        assertEquals("a final sigma typed against a capital one inside a word", "g",
+                ids(GridSearch.matching(greek, finalSigma)));
 
         List<Aweme> all = library();
         assertEquals("an ideographic space", "d", ids(GridSearch.matching(all, "cat" + (char) 0x3000 + "box")));
@@ -295,6 +304,50 @@ public class GridSearchTest {
             GridSearch.search(adapter, "  ");
             assertFalse(GridSearch.searching(adapter));
             assertEquals("fedcba", ids(adapter.mmItems));
+
+            GridSearch.search(adapter, "cat");
+            GridSearch.search(adapter, "" + (char) 0x3000 + (char) 0xA0);
+            assertFalse("only ideographic and no-break spaces are blank too", GridSearch.searching(adapter));
+            assertNull(GridSearch.queryOf(adapter));
+            assertEquals("fedcba", ids(adapter.mmItems));
+        }
+    }
+
+    @Test public void aVideoReadBeforeTikTokFilledItInIsReadAgain() {
+        Settings.GRID_SEARCH.save(true);
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            GridSortTest.GridAdapter adapter = gridOnScreen(controller.get(), GridSort.TAB_LIKED);
+            List<Aweme> model = library();
+            Liked late = new Liked("g", 700, null, null, null);
+            model.add(late);
+            adapter.mmItems = GridSort.data(adapter, model);
+            idle(0);
+            GridSearch.search(adapter, "cat");
+            assertEquals("abcd", ids(adapter.mmItems));
+
+            late.desc = "cat nap";
+            model.add(new Liked("h", 800, "bread", new Creator("Ivy", "ivy"), new Sound("hum", "Ivy")));
+            adapter.mmItems = GridSort.page(adapter, model);
+            idle(0);
+            assertEquals("abcdg", ids(adapter.mmItems));
+        }
+    }
+
+    @Test public void aListTikTokChangedSinceTheLastOpenStillPlaysTheMatchesFirst() {
+        Settings.GRID_SEARCH.save(true);
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            GridSortTest.GridAdapter adapter = gridOnScreen(controller.get(), GridSort.TAB_LIKED);
+            List<Aweme> model = library();
+            adapter.mmItems = GridSort.data(adapter, model);
+            idle(0);
+            GridSearch.search(adapter, "box");
+            GridSort.playInGridOrder(adapter, model);
+            assertEquals("dabcef", ids(model));
+
+            // TikTok puts a video at the front of its own list without a page coming through.
+            model.add(0, new Liked("g", 700, "bread", new Creator("Ivy", "ivy"), new Sound("hum", "Ivy")));
+            GridSort.playInGridOrder(adapter, model);
+            assertEquals("the cell still opens its own video", "dgabcef", ids(model));
         }
     }
 
@@ -449,6 +502,34 @@ public class GridSearchTest {
         }
     }
 
+    @Test public void theChipFollowsTheGridOutOfAFrameTikTokThrewAway() {
+        Settings.GRID_SEARCH.save(true);
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            Activity activity = controller.get();
+            GridSortTest.GridAdapter adapter = gridOnScreen(activity, GridSort.TAB_LIKED);
+            adapter.mmItems = GridSort.data(adapter, library());
+            idle(0);
+            GridSearch.search(adapter, "cat");
+            TextView before = chip(adapter);
+            assertNotNull(before);
+
+            FrameLayout first = (FrameLayout) adapter.mmRecyclerView.getParent();
+            FrameLayout second = new FrameLayout(activity);
+            first.removeView(adapter.mmRecyclerView);
+            second.addView(adapter.mmRecyclerView, new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            activity.setContentView(second);
+            idle(50);
+
+            assertFalse("the old frame left the window", first.isAttachedToWindow());
+            TextView after = chip(adapter);
+            assertNotNull("the chip came along", after);
+            assertSame(second, after.getParent());
+            assertNull(before.getParent());
+            assertEquals("cat", String.valueOf(after.getText()));
+        }
+    }
+
     @Test public void theOpenBoxCountsAPageThatComesIn() {
         Settings.GRID_SEARCH.save(true);
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
@@ -481,11 +562,22 @@ public class GridSearchTest {
             idle(0);
             FrameLayout frame = (FrameLayout) adapter.mmRecyclerView.getParent();
             TextView order = frame.findViewWithTag(GridSort.CHIP_TAG);
+            TextView search = chip(adapter);
             assertNotNull(order);
-            assertNotNull(chip(adapter));
-            assertEquals(SettingsUi.dp(activity, 104), order.getMaxWidth());
+            assertNotNull(search);
             assertEquals(1, order.getMaxLines());
             assertEquals(TextUtils.TruncateAt.END, order.getEllipsize());
+
+            GridSort.placeChip(order, adapter.mmRecyclerView);
+            assertTrue("laid out", frame.getWidth() > 0 && search.getWidth() > 0);
+            int gap = SettingsUi.dp(activity, 12);
+            assertEquals("the room the search chip leaves, not a fixed width",
+                    Math.max(SettingsUi.dp(activity, 48), frame.getWidth() / 2 - search.getWidth() / 2 - gap),
+                    order.getMaxWidth());
+
+            search.setVisibility(View.GONE);
+            GridSort.placeChip(order, adapter.mmRecyclerView);
+            assertEquals("with no search chip the whole name shows", Integer.MAX_VALUE, order.getMaxWidth());
         }
     }
 

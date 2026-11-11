@@ -464,10 +464,11 @@ public final class CommentTools {
     public static void onCommentListLoaded(Object commentItemList) {
         boolean byWord = Settings.COMMENT_KEYWORD_FILTER.get();
         boolean media = Settings.HIDE_COMMENT_MEDIA.get();
+        boolean voice = Settings.HIDE_VOICE_COMMENTS.get();
         boolean spam = Settings.HIDE_SPAM_COMMENTS.get();
         boolean polls = Settings.HIDE_COMMENT_POLLS.get();
         boolean previews = Settings.HIDE_COMMENT_REPLY_PREVIEWS.get();
-        if ((!byWord && !media && !spam && !polls && !previews) || commentItemList == null) {
+        if ((!byWord && !media && !voice && !spam && !polls && !previews) || commentItemList == null) {
             return;
         }
 
@@ -478,7 +479,7 @@ public final class CommentTools {
             if (previews) {
                 clearReplyPreviews(commentItemList);
             }
-            if (!byWord && !media && !spam) {
+            if (!byWord && !media && !voice && !spam) {
                 return;
             }
 
@@ -487,7 +488,7 @@ public final class CommentTools {
                             Settings.COMMENT_BLOCKED_KEYWORDS.get())
                     : List.of();
             List<String> users = byWord ? entries(Settings.COMMENT_BLOCKED_USERS.get()) : List.of();
-            if (keywords.isEmpty() && users.isEmpty() && !media && !spam) {
+            if (keywords.isEmpty() && users.isEmpty() && !media && !voice && !spam) {
                 return;
             }
 
@@ -498,9 +499,9 @@ public final class CommentTools {
 
             // Looked up once for the page, not once per comment: two reflective calls into
             // TikTok's account service.
-            String self = media || spam ? signedInUserId() : null;
+            String self = media || voice || spam ? signedInUserId() : null;
 
-            int removed = filterComments((List<?>) itemsObject, keywords, users, media, spam, self);
+            int removed = filterComments((List<?>) itemsObject, keywords, users, media, voice, spam, self);
             if (removed > 0) {
                 final int count = removed;
                 Logger.printDebug(() -> "Comment filter removed " + count + " comment(s)");
@@ -1111,7 +1112,7 @@ public final class CommentTools {
 
     private static int filterComments(List<?> comments,
             List<app.morphe.extension.tiktok.feedfilter.KeywordRules.Rule> keywords,
-            List<String> users, boolean media, boolean spam, String self) {
+            List<String> users, boolean media, boolean voice, boolean spam, String self) {
         int removed = 0;
         Iterator<?> iterator = comments.iterator();
         while (iterator.hasNext()) {
@@ -1120,7 +1121,7 @@ public final class CommentTools {
                 continue;
             }
 
-            if (matches(comment, keywords, users, media, spam, self)) {
+            if (matches(comment, keywords, users, media, voice, spam, self)) {
                 try {
                     iterator.remove();
                     removed++;
@@ -1133,7 +1134,7 @@ public final class CommentTools {
 
             Object replies = Reflect.property(comment, "getReplyComments", "replyComments");
             if (replies instanceof List) {
-                removed += filterComments((List<?>) replies, keywords, users, media, spam, self);
+                removed += filterComments((List<?>) replies, keywords, users, media, voice, spam, self);
             }
         }
         return removed;
@@ -1141,11 +1142,14 @@ public final class CommentTools {
 
     private static boolean matches(Object comment,
             List<app.morphe.extension.tiktok.feedfilter.KeywordRules.Rule> keywords,
-            List<String> users, boolean media, boolean spam, String self) {
+            List<String> users, boolean media, boolean voice, boolean spam, String self) {
         // Your own stickers and images stay. Hiding comments with pictures is about what other
         // people post, and having your own disappear from a thread you are in reads as the
-        // comment having failed to send.
+        // comment having failed to send. The same goes for your own voice comments.
         if (media && hasMedia(comment) && !isOwnComment(comment, self)) {
+            return true;
+        }
+        if (voice && hasVoice(comment) && !isOwnComment(comment, self)) {
             return true;
         }
 
@@ -1240,6 +1244,24 @@ public final class CommentTools {
             return true;
         }
         return Reflect.property(comment, "getStickerStruct", "stickerStruct") != null;
+    }
+
+    /**
+     * Whether a comment is a voice recording. TikTok's own test, in getIsAudioContained: the
+     * audio struct names an uploaded clip or, for one still sending, a file on the phone. An
+     * audio struct with neither is not a voice comment, and getCommentMediaType agrees.
+     */
+    private static boolean hasVoice(Object comment) {
+        Object audio = Reflect.property(comment, "getAudioStruct", "audioStruct");
+        if (audio == null) {
+            return false;
+        }
+        String vid = Reflect.string(audio, "getVid", "vid");
+        if (vid != null && !vid.isEmpty()) {
+            return true;
+        }
+        String localPath = Reflect.string(audio, "getLocalPath", "localPath");
+        return localPath != null && !localPath.isEmpty();
     }
 
     // ---- model access ------------------------------------------------------------------

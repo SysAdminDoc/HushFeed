@@ -37,8 +37,20 @@ public class CommentMediaFilterTest {
         public List<Object> imageList;
         public List<Object> textImageCommentPostItemList;
         public Object stickerStruct;
+        public Audio audioStruct;
         public List<Object> replyComments;
         public User user;
+    }
+
+    /** Stands in for CmtAudioStruct, with the two members TikTok's voice test reads. */
+    public static class Audio {
+        public String vid;
+        public String localPath;
+
+        Audio(String vid, String localPath) {
+            this.vid = vid;
+            this.localPath = localPath;
+        }
     }
 
     /** Stands in for the profile model, with the two ids the filter compares. */
@@ -83,6 +95,7 @@ public class CommentMediaFilterTest {
     public void setUp() {
         Utils.setContext(RuntimeEnvironment.getApplication());
         Settings.HIDE_COMMENT_MEDIA.save(false);
+        Settings.HIDE_VOICE_COMMENTS.save(false);
         Settings.HIDE_COMMENT_POLLS.save(false);
         Settings.HIDE_COMMENT_REPLY_PREVIEWS.save(false);
         Settings.COMMENT_KEYWORD_FILTER.save(false);
@@ -95,6 +108,7 @@ public class CommentMediaFilterTest {
     @org.junit.After
     public void tearDown() {
         CommentTools.signedInUserIdForTests = null;
+        Settings.HIDE_VOICE_COMMENTS.save(false);
         Settings.HIDE_COMMENT_POLLS.save(false);
         Settings.HIDE_COMMENT_REPLY_PREVIEWS.save(false);
         HookStatus.clear();
@@ -190,6 +204,70 @@ public class CommentMediaFilterTest {
 
         assertEquals(Collections.singletonList(parent), page.items);
         assertEquals(Collections.singletonList(keptReply), parent.replyComments);
+    }
+
+    @Test
+    public void voiceCommentsGoWithTheirOwnSwitchAndPicturesStay() {
+        // TikTok counts a comment as voice when its audio struct names an uploaded clip, or a
+        // file on the phone while it is still sending. An empty struct is not one.
+        Settings.HIDE_VOICE_COMMENTS.save(true);
+
+        Comment kept = words("nice one");
+        Comment uploaded = words("");
+        uploaded.audioStruct = new Audio("v0f044gc0000", null);
+        Comment sending = words("");
+        sending.audioStruct = new Audio("", "/data/user/0/voice.m4a");
+        Comment emptyAudio = words("words after all");
+        emptyAudio.audioStruct = new Audio("", "");
+        Comment withSticker = words("");
+        withSticker.stickerStruct = new Object();
+        Comment voiceReply = words("");
+        voiceReply.audioStruct = new Audio("v0f044gc0001", null);
+        Comment parent = words("what do you think");
+        parent.replyComments = new ArrayList<>(Arrays.asList(voiceReply, words("agreed")));
+
+        ItemList page = new ItemList(new ArrayList<>(
+                Arrays.asList(kept, uploaded, sending, emptyAudio, withSticker, parent)));
+        CommentTools.onCommentListLoaded(page);
+
+        assertEquals(Arrays.asList(kept, emptyAudio, withSticker, parent), page.items);
+        assertEquals(1, parent.replyComments.size());
+        assertEquals("agreed", ((Comment) parent.replyComments.get(0)).text);
+    }
+
+    @Test
+    public void yourOwnVoiceCommentsStayAndOffBringsThemBack() {
+        Settings.HIDE_VOICE_COMMENTS.save(true);
+        CommentTools.signedInUserIdForTests = "me-123";
+
+        Comment mine = words("");
+        mine.audioStruct = new Audio("v0f044gc0002", null);
+        mine.user = new User("me-123", "sec-me");
+        Comment theirs = words("");
+        theirs.audioStruct = new Audio("v0f044gc0003", null);
+        theirs.user = new User("second-account", "sec-second");
+
+        ItemList page = new ItemList(new ArrayList<>(Arrays.asList(mine, theirs)));
+        CommentTools.onCommentListLoaded(page);
+        assertEquals(Collections.singletonList(mine), page.items);
+
+        Settings.HIDE_VOICE_COMMENTS.save(false);
+        ItemList again = new ItemList(new ArrayList<>(Arrays.asList(mine, theirs)));
+        CommentTools.onCommentListLoaded(again);
+        assertEquals(Arrays.asList(mine, theirs), again.items);
+    }
+
+    @Test
+    public void thePictureSwitchAloneLeavesVoiceCommentsAlone() {
+        Settings.HIDE_COMMENT_MEDIA.save(true);
+
+        Comment voice = words("");
+        voice.audioStruct = new Audio("v0f044gc0004", null);
+
+        ItemList page = new ItemList(new ArrayList<>(Collections.singletonList(voice)));
+        CommentTools.onCommentListLoaded(page);
+
+        assertEquals(Collections.singletonList(voice), page.items);
     }
 
     @Test

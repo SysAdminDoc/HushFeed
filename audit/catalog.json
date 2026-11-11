@@ -2505,6 +2505,12 @@
     "row": "Hide picture comments"
    },
    {
+    "key": "hide_voice_comments",
+    "default": false,
+    "type": "bool",
+    "row": "Hide voice comments"
+   },
+   {
     "key": "hide_spam_comments",
     "default": false,
     "type": "bool",
@@ -2634,6 +2640,44 @@
      }
     ],
     "auto": true
+   },
+   {
+    "id": "voice-comments-hidden",
+    "what": "Review: with Hide voice comments on, a thread that has voice comments from other accounts shows none of them, and the comment count in the header stays as TikTok sent it. Off, they're back. A feed video rarely has one, so open a thread known to hold a voice comment.",
+    "steps": [
+     {
+      "set": {
+       "hide_voice_comments": "true"
+      }
+     },
+     {
+      "open": "feed"
+     },
+     {
+      "probe": "videoinfo",
+      "expect": "comments=(?:1000orFewer|over1000)",
+      "retrySwipe": 12,
+      "precondition": true
+     },
+     {
+      "probe": "comments",
+      "expect": "openComments\\([^)]*\\)=true",
+      "waitMs": 2500
+     },
+     {
+      "shot": "voice-comments-hidden",
+      "review": "Comment sheet with Hide voice comments on: no row has a voice comment's play button and waveform, and the header count is TikTok's own. Do not type, post or play anything."
+     },
+     {
+      "back": true
+     },
+     {
+      "set": {
+       "hide_voice_comments": "false"
+      }
+     }
+    ],
+    "auto": false
    },
    {
     "id": "comment-search-box",

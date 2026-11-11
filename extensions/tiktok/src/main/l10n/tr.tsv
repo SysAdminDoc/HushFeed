@@ -2666,3 +2666,7 @@ Friends moves up to the tabs at the top of the feed, next to Following, and Disc
 Pin more chats	Daha fazla sohbet sabitle
 # context: Summary under that switch; 5 is the cap TikTok's app usually puts on pinned chats
 Lifts the app's limit on pinned chats in the Inbox, usually 5, so you can pin more.	Uygulamanın Gelen kutusundaki sabitlenmiş sohbetlere koyduğu sınırı, genellikle 5, kaldırır, böylece daha fazlasını sabitleyebilirsiniz.
+# context: Row title of the Comments switch that hides voice comments
+Hide voice comments	Sesli yorumları gizle
+# context: Summary under that switch
+Hide comments made of a voice recording instead of words.	Kelimeler yerine bir ses kaydından oluşan yorumları gizle.

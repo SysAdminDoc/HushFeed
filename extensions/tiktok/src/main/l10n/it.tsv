@@ -2666,3 +2666,7 @@ Friends moves up to the tabs at the top of the feed, next to Following, and Disc
 Pin more chats	Fissa più chat
 # context: Summary under that switch; 5 is the cap TikTok's app usually puts on pinned chats
 Lifts the app's limit on pinned chats in the Inbox, usually 5, so you can pin more.	Toglie il limite dell'app sulle chat fissate nella posta in arrivo, di solito 5, così puoi fissarne di più.
+# context: Row title of the Comments switch that hides voice comments
+Hide voice comments	Nascondi i commenti vocali
+# context: Summary under that switch
+Hide comments made of a voice recording instead of words.	Nascondi i commenti fatti di una registrazione vocale invece che di parole.

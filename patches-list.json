@@ -1900,6 +1900,15 @@
           "values": null
         },
         {
+          "key": "hide_voice_comments",
+          "title": "Default: hide voice comments",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "hide_spam_comments",
           "title": "Default: hide spam comments",
           "description": null,

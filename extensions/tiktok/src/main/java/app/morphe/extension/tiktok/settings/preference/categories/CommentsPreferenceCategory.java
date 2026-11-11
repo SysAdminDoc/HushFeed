@@ -311,6 +311,12 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
             ));
             addPreference(new TogglePreference(
                     context,
+                    "Hide voice comments",
+                    "Hide comments made of a voice recording instead of words.",
+                    Settings.HIDE_VOICE_COMMENTS
+            ));
+            addPreference(new TogglePreference(
+                    context,
                     "Hide spam comments",
                     "Hide comments that send you to a profile, a bio link, a website or a "
                             + "messenger, or offer free followers. Your own comments stay, and so "

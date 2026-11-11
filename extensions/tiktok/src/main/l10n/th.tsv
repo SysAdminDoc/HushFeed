@@ -2669,3 +2669,7 @@ Friends moves up to the tabs at the top of the feed, next to Following, and Disc
 Pin more chats	ปักหมุดแชทได้มากขึ้น
 # context: Summary under that switch; 5 is the cap TikTok's app usually puts on pinned chats
 Lifts the app's limit on pinned chats in the Inbox, usually 5, so you can pin more.	ยกเลิกขีดจำกัดของแอปสำหรับแชทที่ปักหมุดในกล่องขาเข้า ซึ่งปกติคือ 5 รายการ เพื่อให้คุณปักหมุดได้มากขึ้น
+# context: Row title of the Comments switch that hides voice comments
+Hide voice comments	ซ่อนความคิดเห็นแบบเสียง
+# context: Summary under that switch
+Hide comments made of a voice recording instead of words.	ซ่อนความคิดเห็นที่เป็นเสียงบันทึกแทนข้อความ

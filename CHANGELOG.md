@@ -44,6 +44,7 @@ Every Hushfeed release, newest first.
 * With `Log diagnostics` on, the report keeps TikTok's answer to every LIVE like, so a like TikTok refused can be told from one that never left the phone (#380).
 * The settings screen now comes in Thai. Thanks to @MangaThatsFine (#381).
 * `Pin more chats` lets you pin more than 5 chats in the Inbox. TikTok's app stops you at 5 even though its website doesn't, and pins you make there already show up in the app. It starts off, sits under `Show inbox filters` in Hushfeed settings > Inbox and takes a TikTok restart (#385).
+* `Hide voice comments` takes voice comments out of a comment thread, replies included, the way `Hide picture comments` does for pictures and stickers. Your own voice comments stay. It starts off and sits under `Hide picture comments` in Hushfeed settings > Comments.
 
 ### Bug Fixes
 

@@ -134,6 +134,7 @@
       "comment_search_folded",
       "comment_links",
       "hide_comment_media",
+      "hide_voice_comments",
       "hide_spam_comments",
       "hide_comment_polls",
       "hide_comment_reply_previews",
@@ -2774,6 +2775,12 @@
     "hide_visual_search": {
       "field": "HIDE_VISUAL_SEARCH",
       "key": "hide_visual_search",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_voice_comments": {
+      "field": "HIDE_VOICE_COMMENTS",
+      "key": "hide_voice_comments",
       "type": "boolean",
       "default": false
     },

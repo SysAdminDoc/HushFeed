@@ -365,9 +365,14 @@ public final class SettingsBackupPreference extends Preference
 
     private static void finishRun(int run, int action, WeakReference<TikTokPreferenceFragment> owner) {
         // A restore, a reset or an undo writes every setting at once, past the switches' own
-        // redraws, and the page only puts the stored values back in its controls. What is on
-        // screen is redrawn here instead, the same as flipping each switch would.
+        // redraws, and the page only puts the stored values back in its controls. The redraws
+        // those switches run are run here instead. Auto-translate's is left out: it saves a
+        // setting of its own, which would undo what was just restored.
         if (action != EXPORT) {
+            app.morphe.extension.tiktok.blockauthor.BlockAuthorOverlay.refresh();
+            app.morphe.extension.tiktok.playback.FeedMute.refresh();
+            app.morphe.extension.tiktok.comment.CommentSearch.onSettingChanged();
+            app.morphe.extension.tiktok.captions.CaptionTools.onSettingChanged();
             app.morphe.extension.tiktok.feed.FeedTextSize.onSettingChanged();
             app.morphe.extension.tiktok.comment.CommenterDetails.onSettingChanged();
             app.morphe.extension.tiktok.feed.GridSearch.onSettingChanged();

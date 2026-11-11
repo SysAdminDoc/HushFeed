@@ -694,6 +694,9 @@ public class GridSearchTest {
             Setting.saveAll(Collections.singletonMap(Settings.GRID_SEARCH, false));
             idle(50);
             assertEquals("the batch write alone redrew the grid", "abcd", ids(adapter.mmItems));
+            finishBackupRun(7311);
+            idle(50);
+            assertEquals("a backup only reads the settings, so it redraws nothing", "abcd", ids(adapter.mmItems));
             finishBackupRun(7313);
             idle(50);
             assertEquals("a reset that turned search off left the grid narrowed", "abcdef", ids(adapter.mmItems));
@@ -705,7 +708,7 @@ public class GridSearchTest {
         }
     }
 
-    /** Ends the backup page's current run as its worker does, for a reset (7313) or an undo (7314). */
+    /** Ends the backup page's current run as its worker does: a backup (7311), a reset (7313) or an undo (7314). */
     private static void finishBackupRun(int action) {
         AtomicInteger run = ReflectionHelpers.getStaticField(SettingsBackupPreference.class, "RUN");
         ReflectionHelpers.callStaticMethod(SettingsBackupPreference.class, "finishRun",

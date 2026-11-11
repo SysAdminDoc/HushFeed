@@ -730,13 +730,17 @@ public class AutomaticClearDisplayTest {
             RememberClearDisplayPatch.firstFrame("first", () -> true, value -> true);
             assertTrue(RememberClearDisplayPatch.isCarryingClear());
 
-            // A first video whose clear TikTok's panel turned down carries until progress asks
-            // again, and turned down again it ends.
+            // A first video whose clear TikTok's panel turned down carries while progress asks
+            // again, turned down again included, and ends PAGE_LIMIT_MS after the first refusal.
             RememberClearDisplayPatch.resetForTests();
             assertTrue(RememberClearDisplayPatch.isCarryingClear());
             RememberClearDisplayPatch.firstFrame("refused", () -> true, value -> false);
             assertTrue("the controls showed before the retry", RememberClearDisplayPatch.isCarryingClear());
             RememberClearDisplayPatch.firstFrame("refused", () -> true, value -> false);
+            assertTrue("a retry turned down showed the controls before the limit",
+                    RememberClearDisplayPatch.isCarryingClear());
+            Shadows.shadowOf(Looper.getMainLooper())
+                    .idleFor(Duration.ofMillis(RememberClearDisplayPatch.PAGE_LIMIT_MS));
             assertFalse("a video TikTok won't clear kept its controls away", RememberClearDisplayPatch.isCarryingClear());
 
             // So does a LIVE preview or an ad, which TikTok never clears.
@@ -1146,9 +1150,10 @@ public class AutomaticClearDisplayTest {
     /**
      * A cold start's first frame can come before the window has focus, and the panel turns the
      * remembered clear down then too. The controls showed for most of a second until focus asked
-     * again (S22, 2026-11-11), so the clear carries over that gap. Focus asking is the retry:
-     * turned down again then, the controls come back. Never asked again, they come back
-     * PAGE_LIMIT_MS after the first refusal.
+     * again (S22, 2026-11-11), so the clear carries over that gap. The panel then turned down four
+     * more asks, focus's and progress's, before one landed about 0.9 s in, so a retry turned down
+     * keeps the carry. PAGE_LIMIT_MS after the first refusal, a clear never taken lets the
+     * controls back, and asking again on that video doesn't hide them again.
      */
     @Test public void aRememberedClearTurnedDownBeforeFocusCarriesUntilFocusAsksAgain() {
         RememberClearDisplayPatch.resetForTests();
@@ -1166,16 +1171,19 @@ public class AutomaticClearDisplayTest {
             Settings.CLEAR_DISPLAY.save(true);
             java.util.concurrent.atomic.AtomicBoolean focused = new java.util.concurrent.atomic.AtomicBoolean();
             List<Boolean> events = new ArrayList<>();
+            // Takes the third ask, the way the S22's panel took a later one at a cold start.
             RememberClearDisplayPatch.ClearEvent panel = value -> {
                 events.add(value);
-                return focused.get() && takes;
+                return takes && events.size() >= 3;
             };
             RememberClearDisplayPatch.firstFrame("first", focused::get, panel);
-            assertEquals(List.of(true), events);
+            // The same video's first frame again before focus, as a player rebinds, is a retry.
+            RememberClearDisplayPatch.firstFrame("first", focused::get, panel);
+            assertEquals(List.of(true, true), events);
             assertFalse(RememberClearDisplayPatch.isClearDisplayNow());
             assertTrue("the controls showed while the window had no focus",
                     RememberClearDisplayPatch.isCarryingClear());
-            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(RememberClearDisplayPatch.PAGE_LIMIT_MS - 1000));
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(RememberClearDisplayPatch.PAGE_LIMIT_MS - 1500));
             assertTrue(RememberClearDisplayPatch.isCarryingClear());
             // Focus lost as the window settles asks nothing and ends nothing.
             RememberClearDisplayPatch.cancel();
@@ -1183,16 +1191,49 @@ public class AutomaticClearDisplayTest {
 
             focused.set(true);
             RememberClearDisplayPatch.firstFrame("first", focused::get, panel);
-            assertEquals(List.of(true, true), events);
+            assertEquals(List.of(true, true, true), events);
             assertEquals(takes, RememberClearDisplayPatch.isClearDisplayNow());
-            assertEquals(takes ? "focus asking again dropped the carry of a clear that landed"
-                    : "turned down again as focus asked, the controls stayed away",
+            assertTrue(takes ? "focus asking again dropped the carry of a clear that landed"
+                    : "turned down again as focus asked, the controls showed before the limit",
+                    RememberClearDisplayPatch.isCarryingClear());
+
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(1500));
+            assertEquals(takes ? "a clear that landed lost its carry" : "a retry turned down started the limit over",
                     takes, RememberClearDisplayPatch.isCarryingClear());
 
-            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(RememberClearDisplayPatch.PAGE_LIMIT_MS));
-            assertEquals(takes ? "a clear that landed lost its carry" : "the controls went away again with nothing taken",
+            // Focus coming back after the limit, as a dialog closes, asks again on the same video.
+            RememberClearDisplayPatch.cancel();
+            RememberClearDisplayPatch.firstFrame("first", focused::get, panel);
+            assertEquals(takes ? "a clear that landed lost its carry as focus came back"
+                    : "asked again after the limit, the controls went away with nothing taken",
                     takes, RememberClearDisplayPatch.isCarryingClear());
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(RememberClearDisplayPatch.PAGE_LIMIT_MS));
+            assertEquals(takes, RememberClearDisplayPatch.isCarryingClear());
         }
+    }
+
+    /** TikTok's own exit during a turned-down carry ends it, and a later refused ask doesn't bring it back. */
+    @Test public void tikToksOwnExitEndsATurnedDownCarryForGood() {
+        RememberClearDisplayPatch.resetForTests();
+        Settings.AUTOMATIC_CLEAR_DISPLAY.save(false);
+        Settings.CLEAR_DISPLAY.save(true);
+        RememberClearDisplayPatch.firstFrame("first", () -> true, value -> false);
+        assertTrue(RememberClearDisplayPatch.isCarryingClear());
+        // OTHER_EXIT (6), as the share panel opens: TikTok's exit, not the reader's choice.
+        RememberClearDisplayPatch.rememberClearDisplayEvent(new Event(false, 6));
+        assertFalse(RememberClearDisplayPatch.isCarryingClear());
+        RememberClearDisplayPatch.firstFrame("first", () -> true, value -> false);
+        assertFalse("a refused ask after TikTok's own exit hid the controls again",
+                RememberClearDisplayPatch.isCarryingClear());
+
+        // Turned down before focus, so nothing waits on progress and focus's ask reads as a first try.
+        RememberClearDisplayPatch.firstFrame("second", () -> false, value -> false);
+        assertTrue(RememberClearDisplayPatch.isCarryingClear());
+        RememberClearDisplayPatch.rememberClearDisplayEvent(new Event(false, 6));
+        assertFalse(RememberClearDisplayPatch.isCarryingClear());
+        RememberClearDisplayPatch.firstFrame("second", () -> true, value -> false);
+        assertFalse("focus asking after TikTok's own exit hid the controls again",
+                RememberClearDisplayPatch.isCarryingClear());
     }
 
     /**

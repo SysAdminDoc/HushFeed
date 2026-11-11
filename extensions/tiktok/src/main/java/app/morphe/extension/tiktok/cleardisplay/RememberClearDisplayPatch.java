@@ -56,6 +56,8 @@ public final class RememberClearDisplayPatch {
     private static volatile boolean awaitingNative;
     /** The carry is for a remembered clear the panel turned down, so the next ask is a retry. */
     private static boolean turnedDownCarry;
+    /** The video whose turned-down clear ran out of time; asking again there doesn't carry again. */
+    private static String turnedDownEndedOn;
     private static WeakReference<Object> currentController = new WeakReference<>(null);
     private static WeakReference<Object> currentModel = new WeakReference<>(null);
     private static Condition activeCondition;
@@ -144,6 +146,7 @@ public final class RememberClearDisplayPatch {
         Logger.printDebug(() -> "Clear display: the remembered clear never landed, letting the controls back");
         awaitingNative = false;
         turnedDownCarry = false;
+        turnedDownEndedOn = activeId;
         setCarrying(false);
     };
     private static boolean observingPreferences;
@@ -259,6 +262,7 @@ public final class RememberClearDisplayPatch {
         // Progress or focus asking again for a clear the panel turned down on this video. Turned
         // down before focus, nothing waits on progress, and the carry says it was asked already.
         boolean retry = (awaitingNative || turnedDownCarry && carrying) && id != null && id.equals(activeId);
+        if (id == null || !id.equals(activeId)) turnedDownEndedOn = null;
         activeId = id;
         activeCondition = stillCurrent;
         if (!observingPreferences) {
@@ -323,15 +327,19 @@ public final class RememberClearDisplayPatch {
             // A remembered clear lands on every video as it starts, the way the automatic path
             // with no delay does, so it carries the same way: a video opened from Favorites
             // showed its controls for about a second until its clear landed (#84). One the panel
-            // turned down carries until progress or focus asks again, or a cold start's first
+            // turned down carries while progress or focus asks again, or a cold start's first
             // video showed its tabs and buttons in between. Its first frame can come before the
-            // window has focus, which asks again as it comes (S22, 2026-11-11). Turned down again,
-            // or never taken within PAGE_LIMIT_MS, the controls come back.
-            boolean carryTurnedDown = turnedDown && !retry;
+            // window has focus, which asks again as it comes, and the panel turned down four more
+            // asks before one landed about 0.9 s in (S22, 2026-11-11). Not taken within
+            // PAGE_LIMIT_MS of the first refusal, the controls come back for that video.
+            boolean carryTurnedDown = turnedDown && (retry ? turnedDownCarry : !id.equals(turnedDownEndedOn));
             turnedDownCarry = carryTurnedDown;
             setCarrying(remembered || carryTurnedDown);
-            MAIN.removeCallbacks(END_TURNED_DOWN_CARRY);
-            if (carryTurnedDown) MAIN.postDelayed(END_TURNED_DOWN_CARRY, PAGE_LIMIT_MS);
+            // Only a first try starts the limit. A retry turned down again keeps the one running.
+            if (!retry || !carryTurnedDown) {
+                MAIN.removeCallbacks(END_TURNED_DOWN_CARRY);
+                if (carryTurnedDown) MAIN.postDelayed(END_TURNED_DOWN_CARRY, PAGE_LIMIT_MS);
+            }
             return;
         }
         // A video page opened inside the main window (search on 47.5.3) is a new viewer, the way a
@@ -412,6 +420,7 @@ public final class RememberClearDisplayPatch {
         MAIN.removeCallbacks(END_START);
         MAIN.removeCallbacks(END_TURNED_DOWN_CARRY);
         turnedDownCarry = false;
+        turnedDownEndedOn = null;
         endPageHold();
         openedPage.clear();
         frontPage.clear();
@@ -596,6 +605,11 @@ public final class RememberClearDisplayPatch {
         hushfeedCleared = false;
         // TikTok's own change: the state is TikTok's or the user's from here.
         automaticHidden = false;
+        // A turned-down clear's next ask isn't carried again after it, a back press included, even
+        // when focus never asked on this video and the next ask reads as a first try.
+        MAIN.removeCallbacks(END_TURNED_DOWN_CARRY);
+        turnedDownCarry = false;
+        turnedDownEndedOn = activeId;
         setCarrying(false);
         // Exits TikTok makes by itself, not the reader's choice: on an opened video the first back
         // press leaves clear mode before the page (BACK_BUTTON from DetailPageComponent, OTHER_EXIT

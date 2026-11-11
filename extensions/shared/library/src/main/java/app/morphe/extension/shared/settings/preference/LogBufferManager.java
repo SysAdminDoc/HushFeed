@@ -458,8 +458,10 @@ public final class LogBufferManager {
         if (!lastExits.isEmpty()) {
             report.append("\n[LAST EXITS]\n").append(lastExits).append('\n');
         }
+        int sectionStart = -1;
         int eventsStart = -1;
         if (events.length() > 0) {
+            sectionStart = report.length();
             report.append("\n\n[SELECTED EVENTS]\n")
                     .append("category | timestamp | thread | source | level | message\n");
             eventsStart = report.length();
@@ -490,14 +492,25 @@ public final class LogBufferManager {
             String note = "clipboard_note: older events omitted; use Save full report for everything\n";
             int over = report.length() - limit + note.length();
             // Whole events only, so the oldest event kept is never cut in half.
-            String kept = "";
+            int from = -1;
             for (int start : eventStarts) {
                 if (start >= over) {
-                    kept = events.substring(start);
+                    from = start;
                     break;
                 }
             }
-            report.replace(eventsStart, eventsStart + events.length(), note + kept);
+            if (from >= 0) {
+                report.replace(eventsStart, eventsStart + events.length(), note + events.substring(from));
+            } else {
+                // Not one event fits. Kept, the section's header and the note put the report over
+                // a limit the sections around it fit, and the quick copy then cut off its first
+                // lines. A shorter line takes the section's place when it fits, and nothing does
+                // when even that would push the report over.
+                String gone = "\nclipboard_note: events omitted; use Save full report for everything\n";
+                int sectionEnd = eventsStart + events.length();
+                boolean noteFits = report.length() - (sectionEnd - sectionStart) + gone.length() <= limit;
+                report.replace(sectionStart, sectionEnd, noteFits ? gone : "");
+            }
         }
         return report.toString();
     }

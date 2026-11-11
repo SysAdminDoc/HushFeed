@@ -136,7 +136,7 @@ public final class OtherBundles {
         if (scan == null) prefetch();
         List<String> lines = new ArrayList<>();
         lines.add("extension_packages: " + describe(scan));
-        lines.addAll(crashLines(crashReport));
+        lines.addAll(crashLines(crashReport, scan));
         return lines;
     }
 
@@ -307,7 +307,11 @@ public final class OtherBundles {
 
     private static boolean isOwn(String descriptor) {
         Set<String> listed = ownClasses();
-        if (listed != null) return listed.contains(descriptor);
+        return listed != null ? listed.contains(descriptor) : ownByName(descriptor);
+    }
+
+    /** Under Hushfeed's package names, which a bundle built from the same template shares. */
+    private static boolean ownByName(String descriptor) {
         for (String own : OWN_PACKAGES) {
             if (descriptor.startsWith(own)) return true;
         }
@@ -367,15 +371,22 @@ public final class OtherBundles {
         return packagePath.replace('/', '.');
     }
 
-    /** Whose code a class name is, for one stack frame. */
-    static String owner(String className) {
+    /** Whose code a class name is, for one stack frame, with the APK's scan when there is one. */
+    static String owner(String className, Scan scan) {
         String descriptor = "L" + className.replace('.', '/') + ";";
         if (isOwn(descriptor)) return "Hushfeed";
         for (String library : OWN_LIBRARIES) {
             if (className.startsWith(library)) return "Hushfeed";
         }
         if (className.startsWith("app.") && className.indexOf('.', 4) > 0) {
-            return "another patch bundle (" + group(descriptor) + ")";
+            String group = group(descriptor);
+            // A saved crash outlives an update, so its frames can name a class an earlier Hushfeed
+            // had and this one renamed, which no list holds. When no bundle in this APK has
+            // classes under that name, it was Hushfeed's.
+            if (scan != null && scan.failure == null && !scan.packages.containsKey(group) && ownByName(descriptor)) {
+                return "Hushfeed (an earlier build)";
+            }
+            return "another patch bundle (" + group + ")";
         }
         return "TikTok's own classes, which a bundle may have rewritten";
     }
@@ -396,7 +407,7 @@ public final class OtherBundles {
      * first. Until the first suppressed one, each "Caused by" block is the next link of the chain,
      * so the deepest cause is the last of those blocks with an app frame.
      */
-    static List<String> crashLines(String crashReport) {
+    static List<String> crashLines(String crashReport, Scan scan) {
         if (crashReport == null || crashReport.isEmpty()) return Collections.emptyList();
         int stack = crashReport.indexOf("[STACK TRACE]\n");
         if (stack < 0) return Collections.emptyList();
@@ -438,15 +449,15 @@ public final class OtherBundles {
                 causeClass = className;
                 causeTaken = true;
             }
-            if (owner(className).startsWith("another") && seen.put(frame, Boolean.TRUE) == null) foreign++;
+            if (owner(className, scan).startsWith("another") && seen.put(frame, Boolean.TRUE) == null) foreign++;
         }
         if (top == null) return Collections.emptyList();
         List<String> lines = new ArrayList<>();
         lines.add("latest_crash_top_app_frame: " + top);
-        lines.add("latest_crash_top_app_frame_from: " + owner(topClass));
+        lines.add("latest_crash_top_app_frame_from: " + owner(topClass, scan));
         if (cause != null && !cause.equals(top)) {
             lines.add("latest_crash_cause_app_frame: " + cause);
-            lines.add("latest_crash_cause_app_frame_from: " + owner(causeClass));
+            lines.add("latest_crash_cause_app_frame_from: " + owner(causeClass, scan));
         }
         lines.add("latest_crash_frames_from_other_bundles: " + foreign);
         return lines;

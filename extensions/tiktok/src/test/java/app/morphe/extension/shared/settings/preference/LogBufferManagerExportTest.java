@@ -64,6 +64,39 @@ public class LogBufferManagerExportTest {
         }
     }
 
+    @Test public void sectionsThatFitWithoutTheEventsStayWholeWithinTheLimit() {
+        // Between the length of the sections around the events and that plus the note, no event
+        // fits. The report still has to fit, or the quick copy cuts off its first lines.
+        app.morphe.extension.shared.Utils.setContext(RuntimeEnvironment.getApplication());
+        app.morphe.extension.shared.settings.BaseSettings.DEBUG_LOG_FILTERS.save("all");
+        app.morphe.extension.shared.diagnostics.HookStatus.clear();
+        LogBufferManager.clearLogBuffer();
+        try {
+            StringBuilder message = new StringBuilder("phase=failed");
+            while (message.length() < 500) message.append(" x");
+            LogBufferManager.appendEvent(app.morphe.extension.shared.diagnostics.DiagnosticCategory.DOWNLOADS,
+                    "Fixture", "ERROR", message.toString());
+            String whole = LogBufferManager.buildExportText();
+            int section = whole.indexOf("\n\n[SELECTED EVENTS]\n");
+            assertTrue(section > 0);
+            int next = whole.indexOf("\n[", section + 2);
+            assertTrue(next > section);
+            int around = whole.length() - (next - section);
+            String gone = "\nclipboard_note: events omitted; use Save full report for everything\n";
+            for (int limit = around; limit < whole.length(); limit++) {
+                String trimmed = LogBufferManager.buildExportText(limit);
+                assertTrue("over the limit of " + limit + ": " + trimmed.length(), trimmed.length() <= limit);
+                // The note goes in from the first limit it fits under. The two builds can be a
+                // millisecond apart, and the stamp is the same length either way.
+                String kept = limit >= around + gone.length() ? gone : "";
+                assertEquals("at a limit of " + limit,
+                        unstamped(whole.substring(0, section) + kept + whole.substring(next)), unstamped(trimmed));
+            }
+        } finally {
+            LogBufferManager.clearLogBuffer();
+        }
+    }
+
     @Test public void aQuickCopyOfACrashTooLongOnItsOwnStaysWithinTheLimit() throws Exception {
         // No events to drop, so the copy keeps the report's end behind a short head of its own,
         // and the head counts toward the limit.
@@ -250,6 +283,10 @@ public class LogBufferManagerExportTest {
         LogBufferManager.exportToFile();
         app.morphe.extension.shared.Utils.awaitBackgroundTasksForTests();
         assertEquals("the slot stayed taken after the stalled save returned", 2, media.inserts.get());
+    }
+
+    private static String unstamped(String report) {
+        return report.replaceAll("(?m)^generated_utc: .*$", "generated_utc: -");
     }
 
     private static void reportAMissingView() {

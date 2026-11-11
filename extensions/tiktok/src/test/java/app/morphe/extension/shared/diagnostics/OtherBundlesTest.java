@@ -85,12 +85,34 @@ public class OtherBundlesTest {
                 "latest_crash_cause_app_frame: at app.morphe.extension.tiktok.feedfilter.FeedFilter.filter(FeedFilter.java:9)",
                 "latest_crash_cause_app_frame_from: Hushfeed",
                 "latest_crash_frames_from_other_bundles: 1"),
-                OtherBundles.crashLines(crash));
+                OtherBundles.crashLines(crash, null));
 
         // An APK patched before the list existed goes by package name and can't tell them apart.
         OtherBundles.useOwnClassesForTests(Collections.emptySet());
         assertEquals(Collections.emptyMap(), OtherBundles.scan(Collections.singletonList(apk)));
-        assertEquals("latest_crash_top_app_frame_from: Hushfeed", OtherBundles.crashLines(crash).get(1));
+        assertEquals("latest_crash_top_app_frame_from: Hushfeed", OtherBundles.crashLines(crash, null).get(1));
+    }
+
+    @Test
+    public void aSavedCrashInAClassAnEarlierHushfeedHadIsStillHushfeeds() throws Exception {
+        // Saved before an update that renamed the class, so the new list doesn't hold it.
+        String crash = "[STACK TRACE]\njava.lang.IllegalStateException\n"
+                + "\tat app.morphe.extension.tiktok.renamed.Gone.run(Gone.java:3)\n";
+        OtherBundles.useOwnClassesForTests(new HashSet<>(Arrays.asList(HUSHFEED)));
+        File alone = apk(dex(concat(TIKTOK, HUSHFEED)));
+        List<String> lines = OtherBundles.crashLines(crash,
+                new OtherBundles.Scan(OtherBundles.scan(Collections.singletonList(alone)), null));
+        assertEquals("latest_crash_top_app_frame_from: Hushfeed (an earlier build)", lines.get(1));
+        assertEquals("latest_crash_frames_from_other_bundles: 0", lines.get(2));
+
+        // Another bundle under the same names in this APK could own it, so it isn't told apart.
+        File shared = apk(dex(concat(TIKTOK, HUSHFEED, new String[]{"Lapp/morphe/extension/tiktok/other/Foreign;"})));
+        lines = OtherBundles.crashLines(crash,
+                new OtherBundles.Scan(OtherBundles.scan(Collections.singletonList(shared)), null));
+        assertEquals("latest_crash_top_app_frame_from: another patch bundle (app.morphe.extension.tiktok)", lines.get(1));
+        // An APK that couldn't be read says nothing either way.
+        lines = OtherBundles.crashLines(crash, new OtherBundles.Scan(Collections.emptyMap(), "IOException"));
+        assertEquals("latest_crash_top_app_frame_from: another patch bundle (app.morphe.extension.tiktok)", lines.get(1));
     }
 
     @Test
@@ -220,21 +242,21 @@ public class OtherBundlesTest {
                 "latest_crash_top_app_frame: at app.ftl.extension.dpi.DensityPatch.apply(DensityPatch.kt:20)",
                 "latest_crash_top_app_frame_from: another patch bundle (app.ftl.extension.dpi)",
                 "latest_crash_frames_from_other_bundles: 2"),
-                OtherBundles.crashLines(crash));
+                OtherBundles.crashLines(crash, null));
 
         String ours = "[STACK TRACE]\njava.lang.RuntimeException\n"
                 + "\tat android.os.Handler.dispatchMessage(Handler.java:106)\n"
                 + "\tat app.morphe.extension.tiktok.feedfilter.FeedFilter.filter(FeedFilter.java:9)\n";
-        assertEquals("latest_crash_top_app_frame_from: Hushfeed", OtherBundles.crashLines(ours).get(1));
+        assertEquals("latest_crash_top_app_frame_from: Hushfeed", OtherBundles.crashLines(ours, null).get(1));
 
         String tiktok = "[STACK TRACE]\njava.lang.RuntimeException\n"
                 + "\tat com.android.billingclient.api.BillingClientImpl.a(Unknown Source:2)\n"
                 + "\tat com.ss.android.ugc.aweme.live.LivePlayActivity.onCreate(Unknown Source:8)\n";
-        List<String> lines = OtherBundles.crashLines(tiktok);
+        List<String> lines = OtherBundles.crashLines(tiktok, null);
         assertEquals("latest_crash_top_app_frame_from: TikTok's own classes, which a bundle may have rewritten",
                 lines.get(1));
         assertEquals("latest_crash_frames_from_other_bundles: 0", lines.get(2));
-        assertEquals(Collections.emptyList(), OtherBundles.crashLines(""));
+        assertEquals(Collections.emptyList(), OtherBundles.crashLines("", null));
     }
 
     @Test
@@ -249,7 +271,7 @@ public class OtherBundlesTest {
                 "latest_crash_top_app_frame: at app.ftl.extension.dpi.DensityPatch.load(DensityPatch.kt:31)",
                 "latest_crash_top_app_frame_from: another patch bundle (app.ftl.extension.dpi)",
                 "latest_crash_frames_from_other_bundles: 1"),
-                OtherBundles.crashLines(crash));
+                OtherBundles.crashLines(crash, null));
     }
 
     @Test
@@ -257,7 +279,7 @@ public class OtherBundlesTest {
         String crash = "[STACK TRACE]\njava.lang.ArrayIndexOutOfBoundsException\n"
                 + "\tat de.sciss.jump3r.mp3.Lame.lame_encode_buffer(Lame.java:120)\n"
                 + "\tat app.morphe.extension.tiktok.download.Mp3Transcoder.encode(Mp3Transcoder.java:80)\n";
-        assertEquals("latest_crash_top_app_frame_from: Hushfeed", OtherBundles.crashLines(crash).get(1));
+        assertEquals("latest_crash_top_app_frame_from: Hushfeed", OtherBundles.crashLines(crash, null).get(1));
     }
 
     @Test
@@ -275,7 +297,7 @@ public class OtherBundlesTest {
                 "latest_crash_cause_app_frame: at app.ftl.extension.dpi.DensityPatch.apply(DensityPatch.kt:20)",
                 "latest_crash_cause_app_frame_from: another patch bundle (app.ftl.extension.dpi)",
                 "latest_crash_frames_from_other_bundles: 1"),
-                OtherBundles.crashLines(crash));
+                OtherBundles.crashLines(crash, null));
     }
 
     @Test
@@ -289,7 +311,7 @@ public class OtherBundlesTest {
                 + "\tat X.0def.close(Unknown Source:1)\n"
                 + "Caused by: java.io.IOException: disk\n"
                 + "\tat app.rvx.extension.cache.Cache.close(Cache.java:3)\n";
-        List<String> lines = OtherBundles.crashLines(crash);
+        List<String> lines = OtherBundles.crashLines(crash, null);
         assertEquals("latest_crash_cause_app_frame: at app.ftl.extension.dpi.DensityPatch.apply(DensityPatch.kt:20)",
                 lines.get(2));
         assertEquals("latest_crash_frames_from_other_bundles: 2", lines.get(4));

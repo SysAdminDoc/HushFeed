@@ -331,6 +331,73 @@ public class SeeThroughStatusBarTest {
     }
 
     /**
+     * The cover still beside that lifted surface lands on the grown picture. The still sits in the
+     * middle of its cell-sized cover and the picture grows from {@code fillPivot}, so a cover grown
+     * from its center left the still 70 px off the picture when TikTok lifted the cover with the
+     * surface. A cover TikTok left in place keeps its center, and so does one beside a centered surface.
+     */
+    @Test
+    public void theCoverStillLandsOnALiftedPicture() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            feedCell(activity, View.INVISIBLE);
+            FrameLayout cell = activity.findViewById(CELL_ID);
+            FrameLayout player = new FrameLayout(activity);
+            player.setId(PLAYER_ID);
+            SurfaceView surface = new SurfaceView(activity);
+            player.addView(surface, new FrameLayout.LayoutParams(1080, 1920, Gravity.CENTER));
+            cell.addView(player, new FrameLayout.LayoutParams(1080, 2199));
+            FrameLayout wrapper = new FrameLayout(activity);
+            View cover = new View(activity);
+            cover.setId(COVER_ID);
+            wrapper.addView(cover, new FrameLayout.LayoutParams(1080, 2199));
+            cell.addView(wrapper, new FrameLayout.LayoutParams(1080, 2199));
+            layOut(player, 1080, 2199);
+            layOut(wrapper, 1080, 2199);
+            surface.setTranslationY(-70.5f);
+            cover.setTranslationY(-70.5f);
+            Settings.SEE_THROUGH_BOTTOM_BAR.save(true);
+
+            VideoOverlayHider.applyTo(activity);
+            assertTheStillIsOnThePicture(surface, cover);
+
+            cover.setTranslationY(0f);
+            VideoOverlayHider.applyTo(activity);
+            assertTheStillIsOnThePicture(surface, cover);
+            assertFalse("a cover in place left its center", cover.isPivotSet());
+
+            surface.setTranslationY(0f);
+            VideoOverlayHider.applyTo(activity);
+            assertTheStillIsOnThePicture(surface, cover);
+            assertFalse("the cover by a centered picture left its center", cover.isPivotSet());
+
+            Settings.SEE_THROUGH_BOTTOM_BAR.save(false);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("off didn't put the cover back", 1f, cover.getScaleY(), 0f);
+            assertFalse(SeeThroughStatusBar.anyFilled());
+        }
+    }
+
+    /** The still, as tall as the picture and fitted in the middle of its cover, is drawn where the grown surface is. */
+    private static void assertTheStillIsOnThePicture(View surface, View cover) {
+        float scale = surface.getScaleY();
+        assertTrue("the picture didn't fill", scale > 1f);
+        assertEquals("the cover kept TikTok's size", scale, cover.getScaleY(), 0f);
+        float picture = surface.getTop() + surface.getTranslationY() + pivotY(surface) * (1f - scale);
+        float pivot = pivotY(cover);
+        float inside = (cover.getHeight() - surface.getHeight()) / 2f;
+        float still = cover.getTop() + cover.getTranslationY() + pivot + scale * (inside - pivot);
+        // Same height, same scale: tops that meet put the bottoms together too.
+        assertEquals("the still is off the picture", picture, still, 2f);
+    }
+
+    /** Robolectric reads 0 for a pivot nothing set, where Android follows the view's center. */
+    private static float pivotY(View view) {
+        return view.isPivotSet() ? view.getPivotY() : view.getHeight() / 2f;
+    }
+
+    /**
      * #164: only the first video after a cold start filled. That one plays in the surface TikTok
      * creates at launch inside the player. Later cells can get TikTok's SurfaceControl player,
      * whose view is the player itself: TikTok sizes the player to the picture and places it with

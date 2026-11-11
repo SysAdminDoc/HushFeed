@@ -98,30 +98,72 @@ public final class SeeThroughStatusBar {
      * coverId}): a sibling of the player, or a sibling's child, the size of the cell with the still
      * fitted inside. It shows the still for a frame as a video leaves and while the next one loads,
      * and the still was never grown, so with the picture filled the bands came back for that frame
-     * on every swipe (#232). The cover takes the picture's scale, and goes back with it.
+     * on every swipe (#232). The cover takes the picture's scale, and goes back with it. It grows
+     * from the point that keeps its still on the grown picture ({@link #coverPivot}).
      */
     static void fill(View player, boolean wanted, int coverId) {
         if (!(player instanceof ViewGroup)) return;
         if (wanted && fitWins()) wanted = false;
         ViewGroup group = (ViewGroup) player;
+        ViewParent space = player.getParent();
         boolean surfaces = false;
         float scale = 1f;
+        float middle = Float.NaN;
         for (int i = 0, count = group.getChildCount(); i < count; i++) {
             View surface = group.getChildAt(i);
             if (!(surface instanceof SurfaceView) && !(surface instanceof TextureView)) continue;
             surfaces = true;
             float grown = wanted ? fillScale(group.getHeight(), surface) : 1f;
-            scale = grow(surface, grown, fillPivot(surface, grown));
+            float pivot = fillPivot(surface, grown);
+            scale = grow(surface, grown, pivot);
+            middle = middle(surface, space, scale, pivot);
         }
-        ViewParent space = player.getParent();
         // A player this grew keeps getting a pass after a surface shows up in it, so it goes back.
         if (!surfaces || FILLED.containsKey(player)) {
             boolean grows = wanted && !surfaces && space instanceof View;
             float own = grow(player, grows ? fillScale(((View) space).getHeight(), player, true) : 1f);
-            if (!surfaces) scale = own;
+            if (!surfaces) {
+                scale = own;
+                middle = middle(player, space, own, Float.NaN);
+            }
         }
         View cover = cover(space, coverId);
-        if (cover != null) grow(cover, scale);
+        if (cover != null) grow(cover, scale, coverPivot(cover, space, scale, middle));
+    }
+
+    /**
+     * Where the cover grows from so the still fitted in its middle lands on the grown picture,
+     * whose middle sits at {@code middle} in {@code space}, or NaN for its center. A surface TikTok
+     * lifted grows from {@link #fillPivot}, which brings its middle down to the space's, so a cover
+     * TikTok left in place keeps its center, and one TikTok lifted with the surface grows from
+     * higher up instead of leaving its still 70 px off the picture with the band under it.
+     */
+    private static float coverPivot(View cover, ViewParent space, float scale, float middle) {
+        int height = cover.getHeight();
+        if (scale <= 1f || Float.isNaN(middle) || height <= 0) return Float.NaN;
+        float half = height / 2f;
+        float pivot = (offset(cover, space) + scale * half - middle) / (scale - 1f);
+        if (!(pivot >= 0f && pivot <= height) || Math.abs(pivot - half) <= 1f) return Float.NaN;
+        return pivot;
+    }
+
+    /** Where the middle of {@code picture}, grown by {@code scale} from {@code pivotY} (NaN for its center), sits in {@code space}. */
+    private static float middle(View picture, ViewParent space, float scale, float pivotY) {
+        float half = picture.getHeight() / 2f;
+        float pivot = Float.isNaN(pivotY) || scale == 1f ? half : pivotY;
+        return offset(picture, space) + pivot + scale * (half - pivot);
+    }
+
+    /** How far down {@code space} the top of {@code view}, somewhere inside it, sits, or NaN when it isn't inside. */
+    private static float offset(View view, ViewParent space) {
+        float top = 0f;
+        for (View at = view; at != space; ) {
+            top += at.getTop() + at.getTranslationY();
+            ViewParent parent = at.getParent();
+            if (!(parent instanceof View)) return Float.NaN;
+            at = (View) parent;
+        }
+        return top;
     }
 
     /** The cell's cover still beside {@code player}: a sibling, or a sibling's child, with {@code coverId}. */

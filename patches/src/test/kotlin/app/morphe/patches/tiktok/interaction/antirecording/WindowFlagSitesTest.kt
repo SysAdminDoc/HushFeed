@@ -23,6 +23,8 @@ class WindowFlagSitesTest {
     fun aConstantWithoutTheSecureFlagIsLeftAlone() {
         assertFalse(secureFrom("const/16 v1, 0x80\ninvoke-virtual {v0, v1}, $window->addFlags(I)V"))
         assertFalse(secureFrom("const/high16 v1, 0x1000000\ninvoke-virtual {v0, v1}, $window->addFlags(I)V"))
+        assertFalse(secureFrom("const/4 v1, 0x2\ninvoke-virtual {v0, v1}, $window->addFlags(I)V"))
+        assertFalse(secureFrom("const v1, 0x10100\ninvoke-virtual {v0, v1}, $window->addFlags(I)V"))
         assertFalse(secureFrom(
             "const/16 v1, 0x400\nconst/16 v2, 0x2400\ninvoke-virtual {v0, v1, v2}, $window->setFlags(II)V"))
         assertFalse(secureFrom("const/16 v1, 0x80\ninvoke-virtual/range {v0 .. v1}, $window->addFlags(I)V"))
@@ -34,6 +36,8 @@ class WindowFlagSitesTest {
     fun theSecureFlagOrAnUnknownValueIsRewritten() {
         assertTrue(secureFrom("const/16 v1, 0x2000\ninvoke-virtual {v0, v1}, $window->addFlags(I)V"))
         assertTrue(secureFrom("const/16 v1, 0x2080\ninvoke-virtual {v0, v1}, $window->addFlags(I)V"))
+        assertTrue(secureFrom("const/4 v1, -0x1\ninvoke-virtual {v0, v1}, $window->addFlags(I)V"))
+        assertTrue(secureFrom("const v1, 0x80002000\ninvoke-virtual {v0, v1}, $window->addFlags(I)V"))
         assertTrue(secureFrom(
             "const/16 v1, 0x2000\nconst/16 v2, 0x2000\ninvoke-virtual {v0, v1, v2}, $window->setFlags(II)V"))
         assertTrue(secureFrom(

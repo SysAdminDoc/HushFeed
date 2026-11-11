@@ -45,7 +45,7 @@ private val INT_CONSTANTS = setOf(Opcode.CONST_4, Opcode.CONST_16, Opcode.CONST,
 /**
  * Whether the Window addFlags or setFlags call at [index] could set the secure flag. One whose own
  * block loads its flags as a constant without it can't, so it's left alone and its class isn't
- * rewritten: on 47.7.3 that's 141 of the 267 classes this patch would rewrite, and the classes
+ * rewritten: on 47.7.3 that's 141 of the 267 classes with a Window flag call, and the classes
  * rewritten set Simple mode's patching peak (#339). [targets] are the method's branch targets.
  */
 internal fun mayAddSecure(instructions: List<Instruction>, index: Int, targets: Set<Int>): Boolean {

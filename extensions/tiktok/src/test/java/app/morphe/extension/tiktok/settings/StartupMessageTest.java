@@ -142,6 +142,56 @@ public class StartupMessageTest {
         }
     }
 
+    /** The dialog dies with the activity, so a rotation mid-read would lose a message nobody closed. */
+    @Test public void aMessageUpWhenItsScreenIsRecreatedComesBackOnTheNewOneOnce() {
+        Settings.STARTUP_MESSAGE_DISMISSIBLE.save(false);
+        ActivityController<MainScreen> first = open();
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+        assertNotNull(dialog);
+        ShadowAlertDialog.reset();
+        first.get().changing = true;
+        first.pause().stop().destroy();
+
+        ActivityController<MainScreen> second = open();
+        AlertDialog back = ShadowAlertDialog.getLatestAlertDialog();
+        assertNotNull("the recreation lost a message still up", back);
+        assertTrue(back.isShowing());
+        assertEquals("Hey you", String.valueOf(shadowOf(back).getTitle()));
+        assertEquals("Go to bed before midnight", String.valueOf(shadowOf(back).getMessage()));
+        assertFalse("it came back dismissible", shadowOf(back).isCancelable());
+        ShadowAlertDialog.reset();
+
+        // A link stacks another main screen on the one with the message.
+        try (ActivityController<MainScreen> ignored = open()) {
+            assertNull("a stacked main screen got it too", ShadowAlertDialog.getLatestAlertDialog());
+        }
+
+        // Closed on the new screen, it stays closed through the next rotation.
+        back.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
+        shadowOf(Looper.getMainLooper()).idle();
+        second.get().changing = true;
+        second.pause().stop().destroy();
+        try (ActivityController<MainScreen> ignored = open()) {
+            assertNull("a closed message came back", ShadowAlertDialog.getLatestAlertDialog());
+        }
+    }
+
+    @Test public void aMessageClosedWithBackStaysClosedThroughARecreation() {
+        ActivityController<MainScreen> first = open();
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+        assertNotNull(dialog);
+        dialog.onBackPressed();
+        shadowOf(Looper.getMainLooper()).idle();
+        assertFalse("Back didn't close it", dialog.isShowing());
+        ShadowAlertDialog.reset();
+        first.get().changing = true;
+        first.pause().stop().destroy();
+
+        try (ActivityController<MainScreen> ignored = open()) {
+            assertNull("a closed message came back", ShadowAlertDialog.getLatestAlertDialog());
+        }
+    }
+
     /** #347's reporter: having it come up every time gets tiresome. */
     @Test public void dontShowAgainHidesThatMessageUntilItChanges() {
         ActivityController<MainScreen> first = open();

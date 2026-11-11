@@ -54,6 +54,8 @@ public final class RememberClearDisplayPatch {
     private static boolean applied;
     private static boolean manuallyChanged;
     private static volatile boolean awaitingNative;
+    /** The carry is for a remembered clear the panel turned down, so the next ask is a retry. */
+    private static boolean turnedDownCarry;
     private static WeakReference<Object> currentController = new WeakReference<>(null);
     private static WeakReference<Object> currentModel = new WeakReference<>(null);
     private static Condition activeCondition;
@@ -141,6 +143,7 @@ public final class RememberClearDisplayPatch {
         if (!carrying || clearNow || Settings.AUTOMATIC_CLEAR_DISPLAY.get()) return;
         Logger.printDebug(() -> "Clear display: the remembered clear never landed, letting the controls back");
         awaitingNative = false;
+        turnedDownCarry = false;
         setCarrying(false);
     };
     private static boolean observingPreferences;
@@ -253,8 +256,9 @@ public final class RememberClearDisplayPatch {
     }
 
     static void firstFrame(String id, Condition stillCurrent, ClearEvent event) {
-        // Progress or focus asking again for a clear the panel turned down on this video.
-        boolean retry = awaitingNative && id != null && id.equals(activeId);
+        // Progress or focus asking again for a clear the panel turned down on this video. Turned
+        // down before focus, nothing waits on progress, and the carry says it was asked already.
+        boolean retry = (awaitingNative || turnedDownCarry && carrying) && id != null && id.equals(activeId);
         activeId = id;
         activeCondition = stillCurrent;
         if (!observingPreferences) {
@@ -324,6 +328,7 @@ public final class RememberClearDisplayPatch {
             // window has focus, which asks again as it comes (S22, 2026-11-11). Turned down again,
             // or never taken within PAGE_LIMIT_MS, the controls come back.
             boolean carryTurnedDown = turnedDown && !retry;
+            turnedDownCarry = carryTurnedDown;
             setCarrying(remembered || carryTurnedDown);
             MAIN.removeCallbacks(END_TURNED_DOWN_CARRY);
             if (carryTurnedDown) MAIN.postDelayed(END_TURNED_DOWN_CARRY, PAGE_LIMIT_MS);
@@ -406,6 +411,7 @@ public final class RememberClearDisplayPatch {
         startLimitArmed = false;
         MAIN.removeCallbacks(END_START);
         MAIN.removeCallbacks(END_TURNED_DOWN_CARRY);
+        turnedDownCarry = false;
         endPageHold();
         openedPage.clear();
         frontPage.clear();
@@ -538,6 +544,7 @@ public final class RememberClearDisplayPatch {
             if (clear) {
                 endPageHold();
                 MAIN.removeCallbacks(END_TURNED_DOWN_CARRY);
+                turnedDownCarry = false;
             }
             if (clearNow != clear) {
                 clearNow = clear;

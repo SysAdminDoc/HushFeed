@@ -355,6 +355,7 @@ public class GridSortTest {
     private static void assertHeld(GridAdapter adapter) {
         assertEquals("out of sight", 0f, adapter.mmRecyclerView.getAlpha(), 0f);
         assertTrue("a cell nobody can see can't be tapped", holdOn(adapter).isClickable());
+        assertEquals("from the grid's top", 0, ((FrameLayout.LayoutParams) holdOn(adapter).getLayoutParams()).topMargin);
     }
 
     private static TextView holdCount(GridAdapter adapter) {

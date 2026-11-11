@@ -243,7 +243,7 @@ public final class LikedJump {
             if (grid == null) return;
             Object current = Reflect.invoke(grid, "getAdapter");
             boolean stale = Setting.isPaused() || (current != null && current != adapter)
-                    || grid.getParent() != getParent();
+                    || !GridSort.overGrid(this, grid);
             if (stale) {
                 setVisibility(View.GONE);
                 return;
@@ -254,8 +254,8 @@ public final class LikedJump {
     }
 
     private static Chip chipOn(View grid) {
-        if (grid == null || !(grid.getParent() instanceof FrameLayout)) return null;
-        FrameLayout frame = (FrameLayout) grid.getParent();
+        FrameLayout frame = GridSort.overlayFrame(grid);
+        if (frame == null) return null;
         for (int i = 0; i < frame.getChildCount(); i++) {
             View child = frame.getChildAt(i);
             if (child instanceof Chip && CHIP_TAG.equals(child.getTag())) return (Chip) child;
@@ -267,10 +267,10 @@ public final class LikedJump {
     static void showChip(Object adapter) {
         try {
             View grid = GridSort.gridView(adapter);
-            if (grid == null || !(grid.getParent() instanceof FrameLayout)) return;
+            FrameLayout frame = GridSort.overlayFrame(grid);
+            if (frame == null) return;
             Object current = Reflect.invoke(grid, "getAdapter");
             if (current != null && current != adapter) return;
-            FrameLayout frame = (FrameLayout) grid.getParent();
             Chip chip = chipOn(grid);
             boolean wanted = Settings.LIKED_JUMP_TO_DATE.get() && !Setting.isPaused();
             if (!wanted) {

@@ -8,6 +8,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
@@ -18,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -219,6 +221,34 @@ public class GridPositionTest {
 
             idle(GridPosition.IDLE_MS + 500);
             assertEquals(View.INVISIBLE, rail.getVisibility());
+        }
+    }
+
+    /** TikTok 47.7.3 holds the Favorites grid in a LinearLayout inside the tab's FrameLayout. */
+    @Test public void aGridInALinearLayoutGetsTheControlsInTheFrameAroundIt() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            Activity activity = controller.get();
+            FrameLayout frame = new FrameLayout(activity);
+            LinearLayout column = new LinearLayout(activity);
+            RecyclerView grid = new RecyclerView(activity);
+            grid.adapter.count = 200;
+            grid.onScreenRows(6);
+            column.addView(grid, new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            frame.addView(column, new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            activity.setContentView(frame);
+            idle(50);
+            Settings.GRID_POSITION_CONTROLS.save(true);
+            GridPosition.show(grid.adapter, grid);
+            idle(0);
+            GridPosition.Rail rail = frame.findViewWithTag(GridPosition.RAIL_TAG);
+            assertNotNull(rail);
+            assertSame(frame, rail.getParent());
+
+            scroll(rail, grid, 0);
+            scroll(rail, grid, 300);
+            assertEquals(View.VISIBLE, rail.getVisibility());
         }
     }
 

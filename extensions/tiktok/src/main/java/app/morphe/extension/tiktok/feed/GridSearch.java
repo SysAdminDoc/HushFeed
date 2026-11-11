@@ -312,17 +312,17 @@ public final class GridSearch {
                 Utils.runOnMainThread(() -> GridSort.reshow(narrowed));
             }
             boolean sameAdapter = current == null || current == adapter;
-            if (!off && sameAdapter && grid.isAttachedToWindow() && grid.getParent() != getParent()) {
+            if (!off && sameAdapter && grid.isAttachedToWindow() && !GridSort.overGrid(this, grid)) {
                 // TikTok moved the grid to another frame, so the chip goes with it.
                 ViewParent parent = getParent();
                 if (parent instanceof ViewGroup) ((ViewGroup) parent).removeView(this);
                 showChip(adapter);
                 // A parent that can't hold a chip leaves this one watching the grid, so its next
                 // move can still bring one along.
-                if (chipOn(grid) != null || grid.getParent() instanceof FrameLayout) follow(null);
+                if (chipOn(grid) != null || GridSort.overlayFrame(grid) != null) follow(null);
                 return;
             }
-            if (off || !sameAdapter || grid.getParent() != getParent()) {
+            if (off || !sameAdapter || !GridSort.overGrid(this, grid)) {
                 setVisibility(View.GONE);
                 return;
             }
@@ -332,8 +332,8 @@ public final class GridSearch {
     }
 
     private static Chip chipOn(View grid) {
-        if (grid == null || !(grid.getParent() instanceof FrameLayout)) return null;
-        FrameLayout frame = (FrameLayout) grid.getParent();
+        FrameLayout frame = GridSort.overlayFrame(grid);
+        if (frame == null) return null;
         for (int i = 0; i < frame.getChildCount(); i++) {
             View child = frame.getChildAt(i);
             if (child instanceof Chip && CHIP_TAG.equals(child.getTag())) return (Chip) child;
@@ -348,10 +348,10 @@ public final class GridSearch {
     static void showChip(Object adapter) {
         try {
             View grid = GridSort.gridView(adapter);
-            if (grid == null || !(grid.getParent() instanceof FrameLayout)) return;
+            FrameLayout frame = GridSort.overlayFrame(grid);
+            if (frame == null) return;
             Object current = Reflect.invoke(grid, "getAdapter");
             if (current != null && current != adapter) return;
-            FrameLayout frame = (FrameLayout) grid.getParent();
             Chip chip = chipOn(grid);
             if (!enabled() || !searchable(adapter)) {
                 // TikTok's list went on whole, but a page counts its new cells from the narrowed

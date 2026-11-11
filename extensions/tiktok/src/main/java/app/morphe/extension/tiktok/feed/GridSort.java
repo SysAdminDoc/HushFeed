@@ -167,6 +167,8 @@ public final class GridSort {
     private static final Map<Class<?>, Field> ADAPTER_FIELDS = new WeakHashMap<>();
     /** Per grid, its hold while its pages load. Main thread only. */
     private static final Map<View, Hold> HOLDS = new WeakHashMap<>();
+    /** Per frame class, whether it takes any view an overlay adds. Main thread only. */
+    private static final Map<Class<?>, Boolean> TAKES_VIEWS = new WeakHashMap<>();
 
     private GridSort() {
     }
@@ -806,7 +808,8 @@ public final class GridSort {
             if (Looper.myLooper() != Looper.getMainLooper() || size <= 0 || size >= LOAD_CAP) return;
             if (!loads(adapter)) return;
             View grid = gridView(adapter);
-            if (!onScreen(grid) || !(grid.getParent() instanceof FrameLayout)) return;
+            FrameLayout frame = overlayFrame(grid);
+            if (!onScreen(grid) || frame == null) return;
             Object currentAdapter = Reflect.invoke(grid, "getAdapter");
             if (currentAdapter != null && currentAdapter != adapter) return;
             Hold held = HOLDS.get(grid);
@@ -844,8 +847,11 @@ public final class GridSort {
                     Gravity.TOP | Gravity.CENTER_HORIZONTAL);
             boxAt.topMargin = SettingsUi.dp(context, 64);
             cover.addView(box, boxAt);
-            ((FrameLayout) grid.getParent()).addView(cover, new FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            FrameLayout.LayoutParams coverAt = new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            // From the grid down, so a header above it in the same frame can still be tapped.
+            coverAt.topMargin = Math.max(0, topInFrame(grid));
+            frame.addView(cover, coverAt);
             grid.setAlpha(0f);
 
             View.OnAttachStateChangeListener leaving = new View.OnAttachStateChangeListener() {
@@ -1013,9 +1019,67 @@ public final class GridSort {
         }
     }
 
+    /**
+     * The FrameLayout the grid's chips, rail and loading cover float in: the grid's own parent, or
+     * the frame around the LinearLayout TikTok wraps the Favorites grid in. On 47.7.3 that layout
+     * sits in a fragment container, which refuses any other view, inside a plain frame of the
+     * same size, so a frame that vets what's added to it is passed over, as is a scroll view.
+     */
+    static FrameLayout overlayFrame(View grid) {
+        if (grid == null) return null;
+        ViewParent parent = grid.getParent();
+        if (parent instanceof FrameLayout) return (FrameLayout) parent;
+        if (!(parent instanceof LinearLayout)) return null;
+        ViewParent above = parent.getParent();
+        for (int level = 0; level < 2 && above instanceof FrameLayout; level++, above = above.getParent()) {
+            if (takesViews(above.getClass())) return (FrameLayout) above;
+        }
+        return null;
+    }
+
+    /** Whether a frame takes any view, rather than checking each one in its own addView. */
+    private static boolean takesViews(Class<?> type) {
+        Boolean known = TAKES_VIEWS.get(type);
+        if (known != null) return known;
+        boolean takes = true;
+        for (Class<?> at = type; takes && at != null && at != FrameLayout.class; at = at.getSuperclass()) {
+            try {
+                at.getDeclaredMethod("addView", View.class, int.class, ViewGroup.LayoutParams.class);
+                takes = false;
+            } catch (NoSuchMethodException inherited) {
+                // This class leaves adding views to the one it extends.
+            } catch (LinkageError | SecurityException unreadable) {
+                // A class that can't be read could refuse a view, so it gets none.
+                takes = false;
+            }
+        }
+        TAKES_VIEWS.put(type, takes);
+        return takes;
+    }
+
+    /**
+     * The grid's top below its overlay frame's padding, through any layouts between them. An
+     * overlay at the frame's top already starts below that padding.
+     */
+    static int topInFrame(View grid) {
+        int top = grid.getTop();
+        FrameLayout frame = overlayFrame(grid);
+        if (frame == null) return top;
+        for (ViewParent at = grid.getParent(); at instanceof View && at != frame; at = at.getParent()) {
+            top += ((View) at).getTop() - ((View) at).getScrollY();
+        }
+        return top - frame.getPaddingTop();
+    }
+
+    /** Whether an overlay still sits in the grid's frame, rather than one TikTok moved it out of. */
+    static boolean overGrid(View overlay, View grid) {
+        FrameLayout frame = overlayFrame(grid);
+        return frame != null && overlay.getParent() == frame;
+    }
+
     private static SortChip controlOn(View grid) {
-        if (grid == null || !(grid.getParent() instanceof FrameLayout)) return null;
-        FrameLayout frame = (FrameLayout) grid.getParent();
+        FrameLayout frame = overlayFrame(grid);
+        if (frame == null) return null;
         for (int i = 0; i < frame.getChildCount(); i++) {
             View child = frame.getChildAt(i);
             if (child instanceof SortChip && CHIP_TAG.equals(child.getTag())) return (SortChip) child;
@@ -1043,9 +1107,8 @@ public final class GridSort {
         if (grid == null) return;
         Object currentAdapter = Reflect.invoke(grid, "getAdapter");
         if (currentAdapter != null && currentAdapter != adapter) return;
-        ViewParent parent = grid.getParent();
-        if (!(parent instanceof FrameLayout)) return;
-        FrameLayout frame = (FrameLayout) parent;
+        FrameLayout frame = overlayFrame(grid);
+        if (frame == null) return;
         SortChip chip = controlOn(grid);
         // Late reads from an inactive old grid cannot take over the current grid's control.
         // A newly attached grid can still bind its control before its first layout.
@@ -1176,8 +1239,7 @@ public final class GridSort {
                 Object currentAdapter = Reflect.invoke(grid, "getAdapter");
                 if (Setting.isPaused() || (currentAdapter != null && currentAdapter != chip.adapter)
                         || (chip.originalChosen && !onScreen(grid))) remove();
-                if (chip.getParent() != null && grid.isAttachedToWindow()
-                        && chip.getParent() != grid.getParent()) {
+                if (chip.getParent() != null && grid.isAttachedToWindow() && !overGrid(chip, grid)) {
                     remove();
                     showChip(chip.adapter, grid);
                 }
@@ -1211,7 +1273,7 @@ public final class GridSort {
                 bottoms[i] = row.getBottom();
                 widths[i] = row.getWidth();
             }
-            float y = grid.getTop() + chipOffset(grid.getWidth(), tops, bottoms, widths);
+            float y = topInFrame(grid) + chipOffset(grid.getWidth(), tops, bottoms, widths);
             if (chip.getTranslationY() != y) chip.setTranslationY(y);
         } catch (Throwable ex) {
             Logger.printException(() -> "Could not place the grid sort chip", ex);

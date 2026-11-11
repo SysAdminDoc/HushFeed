@@ -540,8 +540,9 @@ public final class GridSort {
         if (sameOrder(played, grid)) return;
         List<Object> before = new ArrayList<>(played);
         // The kept order is a copy once the list has been written, so if TikTok's list has changed
-        // since, the matches still go first and the rest keep that list's own order.
-        if (!follow(played, grid) && (grid == onGrid || !follow(played, GridSearch.withRest(onGrid, played)))) {
+        // since, the matches it still holds go first and the rest keep that list's own order.
+        if (!follow(played, grid) && (grid == onGrid
+                || !follow(played, GridSearch.withRest(stillIn(onGrid, played), played)))) {
             Logger.printDebug(() -> "Grid sort: the opened video's list doesn't hold the grid's videos, left as is");
             return;
         }
@@ -602,6 +603,17 @@ public final class GridSort {
             Logger.printDebug(() -> "Grid sort: TikTok's list can't be reordered (" + ex + ")");
             return false;
         }
+    }
+
+    /** The videos of {@code videos} that {@code list} still holds, in {@code videos}' order. */
+    private static List<Object> stillIn(List<?> videos, List<?> list) {
+        Map<Object, Boolean> held = new IdentityHashMap<>();
+        for (Object video : list) held.put(video, Boolean.TRUE);
+        List<Object> out = new ArrayList<>(videos.size());
+        for (Object video : videos) {
+            if (held.containsKey(video)) out.add(video);
+        }
+        return out;
     }
 
     private static boolean sameOrder(List<?> a, List<?> b) {

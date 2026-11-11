@@ -108,7 +108,10 @@ public final class GridSearch {
     /** What a search looks through on a video: its caption, its creator's name and handle, and its sound's name and author. */
     static String haystack(Object video) {
         StringBuilder text = new StringBuilder();
-        add(text, Reflect.string(video, "getDesc", "desc"));
+        // The caption's line is there even when it's empty, so a read made before TikTok filled
+        // the caption in can be told apart from one that had it.
+        String caption = Reflect.string(video, "getDesc", "desc");
+        text.append(caption == null ? "" : caption).append('\n');
         Object author = Reflect.property(video, "getAuthor", "author");
         if (author != null) {
             add(text, Reflect.string(author, "getNickname", "nickname"));
@@ -147,8 +150,8 @@ public final class GridSearch {
         for (Object video : list) {
             String text = texts.get(video);
             if (text == null && known != null) text = known.get(video);
-            // A video read before TikTok filled it in had nothing to keep, so it's read again.
-            if (text == null || text.isEmpty()) text = haystack(video);
+            // A video read before TikTok filled in its caption is read again.
+            if (text == null || text.startsWith("\n")) text = haystack(video);
             texts.put(video, text);
             boolean all = true;
             for (String word : words) {
@@ -284,8 +287,10 @@ public final class GridSearch {
                 // TikTok moved the grid to another frame, so the chip goes with it.
                 ViewParent parent = getParent();
                 if (parent instanceof ViewGroup) ((ViewGroup) parent).removeView(this);
-                follow(null);
                 showChip(adapter);
+                // A parent that can't hold a chip leaves this one watching the grid, so its next
+                // move can still bring one along.
+                if (chipOn(grid) != null || grid.getParent() instanceof FrameLayout) follow(null);
                 return;
             }
             if (off || !sameAdapter || grid.getParent() != getParent()) {

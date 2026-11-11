@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ss.android.ugc.aweme.feed.model.Aweme;
@@ -318,7 +319,8 @@ public class GridSearchTest {
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
             GridSortTest.GridAdapter adapter = gridOnScreen(controller.get(), GridSort.TAB_LIKED);
             List<Aweme> model = library();
-            Liked late = new Liked("g", 700, null, null, null);
+            // Its creator and sound are known before the caption is.
+            Liked late = new Liked("g", 700, null, new Creator("Gus", "gus"), new Sound("drums", "Gus"));
             model.add(late);
             adapter.mmItems = GridSort.data(adapter, model);
             idle(0);
@@ -348,6 +350,25 @@ public class GridSearchTest {
             model.add(0, new Liked("g", 700, "bread", new Creator("Ivy", "ivy"), new Sound("hum", "Ivy")));
             GridSort.playInGridOrder(adapter, model);
             assertEquals("the cell still opens its own video", "dgabcef", ids(model));
+        }
+    }
+
+    @Test public void aListThatLostAMatchTheGridStillShowsPlaysTheOtherMatchesFirst() {
+        Settings.GRID_SEARCH.save(true);
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            GridSortTest.GridAdapter adapter = gridOnScreen(controller.get(), GridSort.TAB_LIKED);
+            List<Aweme> model = library();
+            adapter.mmItems = GridSort.data(adapter, model);
+            idle(0);
+            GridSearch.search(adapter, "cat");
+            assertEquals("abcd", ids(adapter.mmItems));
+
+            // TikTok drops a match and puts a new video at the front without a page coming
+            // through, so the grid still shows the one it dropped.
+            model.remove(1);
+            model.add(0, new Liked("g", 700, "bread", new Creator("Ivy", "ivy"), new Sound("hum", "Ivy")));
+            GridSort.playInGridOrder(adapter, model);
+            assertEquals("acdgef", ids(model));
         }
     }
 
@@ -526,6 +547,38 @@ public class GridSearchTest {
             assertNotNull("the chip came along", after);
             assertSame(second, after.getParent());
             assertNull(before.getParent());
+            assertEquals("cat", String.valueOf(after.getText()));
+        }
+    }
+
+    @Test public void theChipComesBackAfterAStopWhereItCouldNotBeShown() {
+        Settings.GRID_SEARCH.save(true);
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            Activity activity = controller.get();
+            GridSortTest.GridAdapter adapter = gridOnScreen(activity, GridSort.TAB_LIKED);
+            adapter.mmItems = GridSort.data(adapter, library());
+            idle(0);
+            GridSearch.search(adapter, "cat");
+            assertNotNull(chip(adapter));
+
+            // First into a parent that can't hold a chip, then into a frame that can.
+            FrameLayout first = (FrameLayout) adapter.mmRecyclerView.getParent();
+            LinearLayout stop = new LinearLayout(activity);
+            first.removeView(adapter.mmRecyclerView);
+            stop.addView(adapter.mmRecyclerView);
+            activity.setContentView(stop);
+            idle(50);
+            assertNull(stop.findViewWithTag(GridSearch.CHIP_TAG));
+
+            FrameLayout last = new FrameLayout(activity);
+            stop.removeView(adapter.mmRecyclerView);
+            last.addView(adapter.mmRecyclerView, new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            activity.setContentView(last);
+            idle(50);
+            TextView after = chip(adapter);
+            assertNotNull("the chip came back", after);
+            assertSame(last, after.getParent());
             assertEquals("cat", String.valueOf(after.getText()));
         }
     }

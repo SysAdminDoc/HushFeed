@@ -108,35 +108,23 @@ val reviewedBouncyCastleRequests = setOf("1.85", safeBouncyCastleVersion)
 // contributes names that release and the check can never fail. Same trap as the resolved-version
 // check described above.
 val reviewedVersionlessBouncyCastleModules = setOf("bcprov-jdk18on")
-// Guarded by hand rather than by a synchronized wrapper: in a Kotlin build script `java` is the
-// Java extension, so the java.util package cannot be named here.
-val requestedBouncyCastleVersions = sortedSetOf<String>()
-// Module names, kept apart from the versions above so a name can never end up in the reviewed
-// version set by someone pasting it in.
-val unversionedBouncyCastleRequests = sortedSetOf<String>()
 val bouncyCastleRequestReason = rootProject.extra["bouncyCastleRequestReason"] as String
 
 configurations.configureEach {
     resolutionStrategy.eachDependency {
         if (requested.group == "org.bouncycastle") {
+            // The request goes along as the reason, in the root build's format, so the gate
+            // reads it off the components of the graphs it inspects and no others. Kept in a set
+            // here, a request from any configuration the build resolved counted: the Android test
+            // platform's 1.79 failed a test graph that asked for nothing new.
             // Recorded whatever it is, including a request that carries no version of its own.
-            // A ?.let dropped those: one arriving through a platform or a BOM was rewritten to
-            // the reviewed release like any other and then counted nowhere, so the unreviewed
-            // set stayed empty for it and the gate below had nothing to fail on. A request with
-            // no version is the one most worth reading, because nothing in this file chose
-            // what it would otherwise have resolved to.
+            // One arriving through a platform or a BOM is rewritten to the reviewed release like
+            // any other, and a request with no version is the one most worth reading, because
+            // nothing in this file chose what it would otherwise have resolved to.
             // Blank as well as null. A declaration with no version at all reports "" rather
-            // than null, so a plain null check counted it as a version and the failure read
-            // "asks for Bouncy Castle , which nobody has reviewed": it stopped the build, which
-            // is the point, but said nothing a reader could act on.
-            val asked = requested.version?.takeIf { it.isNotBlank() }
-            if (asked != null) {
-                synchronized(requestedBouncyCastleVersions) { requestedBouncyCastleVersions.add(asked) }
-            } else {
-                synchronized(unversionedBouncyCastleRequests) { unversionedBouncyCastleRequests.add(requested.name) }
-            }
+            // than null, and the gate reads blank as no version of its own.
             useVersion(safeBouncyCastleVersion)
-            because("The Robolectric test graph must use the reviewed security release.")
+            because(bouncyCastleRequestReason + (requested.version?.takeIf { it.isNotBlank() } ?: ""))
         }
     }
 }
@@ -145,44 +133,71 @@ val verifyBouncyCastleTestGraph = tasks.register("verifyBouncyCastleTestGraph") 
     group = "verification"
     description = "Checks the unit-test graphs for unreviewed Bouncy Castle requests."
 
+    // Taken while the build is configured, so the action below holds the graphs and plain values
+    // rather than this script or its project, which the configuration cache can't keep.
+    val classpaths = configurations
+        .filter { it.name.endsWith("UnitTestRuntimeClasspath") && it.isCanBeResolved }
+        .sortedBy { it.name }
+        .map { it.name to it.incoming.resolutionResult.rootComponent }
+    val requestReason = bouncyCastleRequestReason
+    val reviewedRequests = reviewedBouncyCastleRequests
+    val reviewedVersionless = reviewedVersionlessBouncyCastleModules
+    val pinned = safeBouncyCastleVersion
+
     doLast {
-        // Resolving is what runs the rewrite above, so the requests are collected here rather
-        // than being read from a set that nothing has filled yet.
-        val classpaths = configurations
-            .filter { it.name.endsWith("UnitTestRuntimeClasspath") && it.isCanBeResolved }
-            .sortedBy { it.name }
         if (classpaths.isEmpty()) {
             throw GradleException("This module has no unit-test runtime classpath to inspect.")
         }
+        val requested = sortedSetOf<String>()
+        // Module names, kept apart from the versions above so a name can never end up in the
+        // reviewed version set by someone pasting it in.
+        val unversioned = sortedSetOf<String>()
 
-        for (classpath in classpaths) {
+        for ((name, root) in classpaths) {
+            // Resolving is what runs the rewrite above, so the requests are read off the graph
+            // rather than out of anything filled before it.
+            val graph = linkedSetOf<org.gradle.api.artifacts.result.ResolvedComponentResult>()
+            val unresolved = mutableListOf<org.gradle.api.artifacts.component.ModuleComponentSelector>()
+            val queue = ArrayDeque(listOf(root.get()))
+            while (queue.isNotEmpty()) {
+                val component = queue.removeFirst()
+                if (!graph.add(component)) continue
+                for (dependency in component.dependencies) {
+                    if (dependency is org.gradle.api.artifacts.result.ResolvedDependencyResult) {
+                        queue.add(dependency.selected)
+                    } else if (dependency is org.gradle.api.artifacts.result.UnresolvedDependencyResult) {
+                        val attempted = dependency.attempted
+                        if (attempted is org.gradle.api.artifacts.component.ModuleComponentSelector) unresolved += attempted
+                    }
+                }
+            }
             // An edge that resolves to nothing has no component, so a request for a module the
             // reviewed release doesn't publish (bcprov-jdk15on stopped at 1.70) would pass here.
-            val unresolved = classpath.incoming.resolutionResult.allDependencies
-                .filterIsInstance<org.gradle.api.artifacts.result.UnresolvedDependencyResult>()
-                .mapNotNull { it.attempted as? org.gradle.api.artifacts.component.ModuleComponentSelector }
-                .filter { it.group == "org.bouncycastle" }
-            if (unresolved.isNotEmpty()) {
+            val missing = unresolved.filter { it.group == "org.bouncycastle" }
+            if (missing.isNotEmpty()) {
                 throw GradleException(
-                    "Bouncy Castle did not resolve in ${classpath.name}: " +
-                        unresolved.joinToString(", ") { "${it.module}:${it.version}" }
+                    "Bouncy Castle did not resolve in $name: " +
+                        missing.joinToString(", ") { "${it.module}:${it.version}" }
                 )
             }
-            val components = classpath.incoming.resolutionResult.allComponents
-                .filter { it.moduleVersion?.group == "org.bouncycastle" }
+            val components = graph.filter { it.moduleVersion?.group == "org.bouncycastle" }
             // Robolectric's requests reach eachDependency already rewritten by the root build's
-            // metadata rule, which leaves the original as the selection reason.
+            // metadata rule, which leaves the original as the selection reason too.
             for (component in components) {
-                for (reason in component.selectionReason.descriptions) {
-                    if (!reason.description.startsWith(bouncyCastleRequestReason)) continue
-                    val asked = reason.description.removePrefix(bouncyCastleRequestReason)
-                    if (asked.isNotBlank()) {
-                        synchronized(requestedBouncyCastleVersions) { requestedBouncyCastleVersions.add(asked) }
-                    } else {
-                        synchronized(unversionedBouncyCastleRequests) {
-                            unversionedBouncyCastleRequests.add(component.moduleVersion!!.name)
-                        }
-                    }
+                val reasons = component.selectionReason.descriptions
+                    .map { it.description }
+                    .filter { it.startsWith(requestReason) }
+                // Every request passes the rule above, so a component with none recorded means
+                // another rule's reason replaced it and this gate can no longer see what asked.
+                if (reasons.isEmpty()) {
+                    throw GradleException(
+                        "Bouncy Castle ${component.moduleVersion!!.name} in $name carries no recorded " +
+                            "request, so this gate can't tell what asked for it."
+                    )
+                }
+                for (reason in reasons) {
+                    val asked = reason.removePrefix(requestReason)
+                    if (asked.isNotBlank()) requested.add(asked) else unversioned.add(component.moduleVersion!!.name)
                 }
             }
             val modules = components.mapNotNull { it.moduleVersion }
@@ -190,27 +205,21 @@ val verifyBouncyCastleTestGraph = tasks.register("verifyBouncyCastleTestGraph") 
                 .sortedBy { it.name }
 
             if (modules.isEmpty()) {
-                throw GradleException("${classpath.name} contains no Bouncy Castle module.")
+                throw GradleException("$name contains no Bouncy Castle module.")
             }
             logger.lifecycle(
-                "Bouncy Castle in ${classpath.name}: " +
+                "Bouncy Castle in $name: " +
                     modules.joinToString(", ") { "${it.name}:${it.version}" }
             )
         }
 
-        val requested = synchronized(requestedBouncyCastleVersions) {
-            requestedBouncyCastleVersions.toSet()
-        }
-        val unversioned = synchronized(unversionedBouncyCastleRequests) {
-            unversionedBouncyCastleRequests.toSet()
-        }
-        val unreviewed = (requested - reviewedBouncyCastleRequests).sorted() +
-            (unversioned - reviewedVersionlessBouncyCastleModules).sorted()
+        val unreviewed = (requested - reviewedRequests).sorted() +
+            (unversioned - reviewedVersionless).sorted()
                 .map { "$it with no version of its own" }
         if (unreviewed.isNotEmpty()) {
             throw GradleException(
                 "The test graph now asks for Bouncy Castle " + unreviewed.joinToString(", ") +
-                    ", which nobody has reviewed. It is being rewritten to $safeBouncyCastleVersion. " +
+                    ", which nobody has reviewed. It is being rewritten to $pinned. " +
                     "Check the advisory for the requested release, then add a version to " +
                     "reviewedBouncyCastleRequests, or a module asking for no version of its own " +
                     "to reviewedVersionlessBouncyCastleModules once you have read what carries " +

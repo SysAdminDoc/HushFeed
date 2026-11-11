@@ -11,6 +11,9 @@ import com.android.tools.smali.dexlib2.iface.instruction.formats.ArrayPayload
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.value.IntEncodedValue
 import java.io.File
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import java.util.zip.ZipFile
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -190,6 +193,54 @@ class AmoledSheetTokensTest {
         }
     }
 
+    /**
+     * The X at the top right of the comments sat on a gray circle on the black sheet (#371).
+     * CommentPageActionBarAssem sets an oval shape on the X when TikTok draws round header buttons,
+     * and the oval's only fill is UISheetFlat2 (a28), which the dark themes send to aih and the light
+     * ones to axs. aih is #2C2C2C, #3A3A3A, #2A2F35 or #292D32 by palette, all under the plain gate.
+     */
+    @Test
+    fun `the comments' close button sits on UISheetFlat2, which the patch rewrites`() {
+        Fixtures.forEachDeclared { apk ->
+            val table = FixtureResourceTable(apk)
+            val version = Fixtures.versionOf(apk)
+
+            val oval = CLOSE_BUTTON_OVAL.getValue(version)
+            val ovalId = table.drawableIds[oval] ?: error("$version: no drawable $oval")
+            val actionBar = "Lcom/ss/android/ugc/aweme/commentv2/actionbar/CommentPageActionBarAssem;"
+            assertTrue("$version: the comments' action bar sets $oval", loadsConstant(apk, actionBar, "onViewCreated", ovalId))
+            val paths = table.drawableFiles[oval].orEmpty()
+            assertTrue("$version: $oval's files are $paths", paths.isNotEmpty() && paths.all { it.endsWith(".xml") })
+            ZipFile(apk).use { zip ->
+                for (path in paths) {
+                    val xml = zip.getInputStream(zip.getEntry(path)).use { it.readBytes() }
+                    val attrs = attributeIds(xml).map { table.attrNames[it] ?: Integer.toHexString(it) }.toSet()
+                    assertEquals("$version: $path fills with", setOf("a28"), attrs)
+                }
+            }
+
+            assertEquals("what the themes point a28 at", setOf("?attr/aih", "?attr/axs"), table.styleValues("a28").toSet())
+            val dark = table.styleValues("aih")
+            assertTrue("aih is a dark opaque literal wherever it is set: $dark", dark.isNotEmpty() && dark.all(::isDarkOpaqueLiteral))
+            assertTrue("axs stays light", table.styleValues("axs").none(::isDarkOpaqueLiteral))
+            assertTrue("the patch rewrites aih", "aih" in surfaceStyleItems(version))
+        }
+    }
+
+    /** The theme attributes a compiled XML file's values read: each Res_value of type attribute. */
+    private fun attributeIds(xml: ByteArray): Set<Int> {
+        val buffer = ByteBuffer.wrap(xml).order(ByteOrder.LITTLE_ENDIAN)
+        val ids = mutableSetOf<Int>()
+        for (at in 0..xml.size - 8) {
+            // size 8, res0 0, dataType 2 (attribute), then the attr id.
+            if (buffer.getShort(at).toInt() != 8 || xml[at + 2].toInt() != 0) continue
+            if (xml[at + 3].toInt() != FixtureResourceTable.TYPE_ATTRIBUTE) continue
+            val id = buffer.getInt(at + 4)
+            if (id ushr 24 == 0x7f) ids += id
+        }
+        return ids
+    }
+
     private fun loadsConstant(apk: File, type: String, method: String?, value: Int): Boolean {
         val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
         val classDef = container.dexEntryNames.asSequence().mapNotNull { entry ->
@@ -225,5 +276,10 @@ class AmoledSheetTokensTest {
             }
         }
         error("no $array array in $styleable")
+    }
+
+    private companion object {
+        /** The oval behind the comments' close X, per build: drawable names move with every build. */
+        val CLOSE_BUTTON_OVAL = mapOf("47.7.3" to "af9")
     }
 }

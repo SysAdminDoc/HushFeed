@@ -356,11 +356,18 @@ internal fun declaredVersions(): Set<String> =
  *   like this" one after Not interested) and of its popover menus, the comments' sort menu among
  *   them: TuxToast's background and TuxTooltip's popover background both point at a2_. Both
  *   stayed #3A3A3A under AMOLED through 0.81.0 (#368).
+ * - aih is UISheetFlat2's (attr/a28), the second fill on a sheet: the circle behind the comment
+ *   panel's close X (drawable af9, which CommentPageActionBarAssem sets on the X when TikTok draws
+ *   round header buttons), TuxTextCell's background, and other shapes, rows and panels on sheets.
+ *   Its 61 uses in 47.7.3's XML are all solids and backgrounds, none a text, icon or stroke color
+ *   (one is a 1px line under a card, which goes black with the sheet). It's #2C2C2C, #3A3A3A,
+ *   #2A2F35 or #292D32 by palette, all under the plain gate, and the light themes send a28 to axs.
+ *   The X stayed on a gray circle on the black comments before (#371).
  * The token names move a place or two with every build, and on 46.x a name these use now was
  * another surface tier, which is why only a build whose names were read is patched.
  */
 internal val SURFACE_STYLE_ITEMS: Map<String, Set<String>> = linkedMapOf(
-    "47.7.3" to setOf("agp", "c3", "aif", "ail", "ain", "bx", "ags", "agk", "agl", "agm", "agq", "agr", "aij"),
+    "47.7.3" to setOf("agp", "c3", "aif", "ail", "ain", "bx", "ags", "agk", "agl", "agm", "agq", "agr", "aij", "aih"),
 )
 
 /**

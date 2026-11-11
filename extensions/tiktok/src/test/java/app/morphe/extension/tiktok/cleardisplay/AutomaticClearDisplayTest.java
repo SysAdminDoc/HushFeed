@@ -1263,6 +1263,68 @@ public class AutomaticClearDisplayTest {
         Shadows.shadowOf(Looper.getMainLooper()).idle();
         assertEquals("progress stopped asking at the limit", 3, events.size());
         assertTrue("a clear the panel took after the limit didn't land", RememberClearDisplayPatch.isClearDisplayNow());
+
+        // Landed, the limit is behind it: TikTok's own exit and a refused ask carry again.
+        RememberClearDisplayPatch.rememberClearDisplayEvent(new Event(false, 6));
+        assertFalse(RememberClearDisplayPatch.isCarryingClear());
+        ready.set(false);
+        RememberClearDisplayPatch.firstFrame("late", () -> true, panel);
+        assertTrue("the limit from before the clear landed kept the next refused ask from carrying",
+                RememberClearDisplayPatch.isCarryingClear());
+    }
+
+    /** Past the limit a panel that never takes the clear is asked once a second, not on every tick. */
+    @Test public void pastTheLimitProgressAsksAtMostOncePerInterval() {
+        RememberClearDisplayPatch.resetForTests();
+        Settings.AUTOMATIC_CLEAR_DISPLAY.save(false);
+        Settings.CLEAR_DISPLAY.save(true);
+        Object controller = new Object();
+        org.robolectric.util.ReflectionHelpers.setStaticField(RememberClearDisplayPatch.class,
+                "currentController", new java.lang.ref.WeakReference<>(controller));
+        List<Boolean> events = new ArrayList<>();
+        RememberClearDisplayPatch.ClearEvent panel = value -> {
+            events.add(value);
+            return false;
+        };
+        RememberClearDisplayPatch.firstFrame("never", () -> true, panel);
+        RememberClearDisplayPatch.onPlaybackProgress(controller, "never");
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        RememberClearDisplayPatch.onPlaybackProgress(controller, "never");
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        assertEquals("before the limit every tick asks", 3, events.size());
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(RememberClearDisplayPatch.PAGE_LIMIT_MS));
+
+        for (int tick = 0; tick < 3; tick++) {
+            RememberClearDisplayPatch.onPlaybackProgress(controller, "never");
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+        }
+        assertEquals("three ticks in a row past the limit asked more than once", 4, events.size());
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(RememberClearDisplayPatch.LATE_ASK_MS));
+        RememberClearDisplayPatch.onPlaybackProgress(controller, "never");
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        assertEquals("a second later, progress stopped asking", 5, events.size());
+        assertFalse(RememberClearDisplayPatch.isCarryingClear());
+    }
+
+    /**
+     * An exit heard off the main thread ends the carry it was heard on. Swiped away and back
+     * before it ran, the video's new carry isn't that one.
+     */
+    @Test public void anExitHeardOffTheMainThreadLeavesALaterVisitsCarryAlone() throws Exception {
+        RememberClearDisplayPatch.resetForTests();
+        Settings.AUTOMATIC_CLEAR_DISPLAY.save(false);
+        Settings.CLEAR_DISPLAY.save(true);
+        RememberClearDisplayPatch.firstFrame("one", () -> true, value -> false);
+        assertTrue(RememberClearDisplayPatch.isCarryingClear());
+        Thread exit = new Thread(() -> RememberClearDisplayPatch.rememberClearDisplayEvent(new Event(false, 6)));
+        exit.start();
+        exit.join();
+
+        RememberClearDisplayPatch.firstFrame("two", () -> true, value -> false);
+        RememberClearDisplayPatch.firstFrame("one", () -> true, value -> false);
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        assertTrue("an exit from an earlier visit ended the carry of the video's next one",
+                RememberClearDisplayPatch.isCarryingClear());
     }
 
     /** The limit stays with the video it ran out on: the next video, and the first one again, carry. */

@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import app.morphe.extension.shared.Logger;
@@ -59,10 +60,23 @@ public final class RememberClearDisplayPatch {
     private static boolean turnedDownCarry;
     /** The video whose turned-down clear ran out of time; asking again there doesn't carry again. */
     private static String turnedDownEndedOn;
+    /**
+     * Past the limit the panel may never take the clear, and every progress tick asked: a native
+     * clear and a scan of the controls several times a second for the rest of the video. One ask
+     * per this long is enough for a clear taken late to still land.
+     */
+    static final long LATE_ASK_MS = 1000;
+    private static long lateAskAt = -LATE_ASK_MS;
     private static WeakReference<Object> currentController = new WeakReference<>(null);
     private static WeakReference<Object> currentModel = new WeakReference<>(null);
     private static Condition activeCondition;
-    private static String activeId;
+    /** Read by TikTok's clear events, which can come off the main thread. */
+    private static volatile String activeId;
+    /**
+     * Counts each time the first frame moves to another video. A clear event off the main thread
+     * ends the carry of the visit it came on, not of a later one to the same video.
+     */
+    private static volatile long visit;
     /** The video a clear by hand was made on. Focus coming back to it doesn't end that clear (#232). */
     private static String clearedByHandOn;
     private static final AtomicBoolean progressQueued = new AtomicBoolean();
@@ -257,6 +271,11 @@ public final class RememberClearDisplayPatch {
             if (observed != generation || !awaitingNative || pending != null || applied || manuallyChanged
                     || controller == null || currentController.get() != controller
                     || id == null || !clearStillWanted(id)) return;
+            if (id.equals(turnedDownEndedOn)) {
+                long now = SystemClock.uptimeMillis();
+                if (now - lateAskAt < LATE_ASK_MS) return;
+                lateAskAt = now;
+            }
             if (onFocus != null) onFocus.run();
         });
     }
@@ -265,7 +284,10 @@ public final class RememberClearDisplayPatch {
         // Progress or focus asking again for a clear the panel turned down on this video. Turned
         // down before focus, nothing waits on progress, and the carry says it was asked already.
         boolean retry = (awaitingNative || turnedDownCarry && carrying) && id != null && id.equals(activeId);
-        if (id == null || !id.equals(activeId)) turnedDownEndedOn = null;
+        if (id == null || !id.equals(activeId)) {
+            turnedDownEndedOn = null;
+            visit++;
+        }
         activeId = id;
         activeCondition = stillCurrent;
         if (!observingPreferences) {
@@ -424,6 +446,7 @@ public final class RememberClearDisplayPatch {
         MAIN.removeCallbacks(END_TURNED_DOWN_CARRY);
         turnedDownCarry = false;
         turnedDownEndedOn = null;
+        lateAskAt = -LATE_ASK_MS;
         endPageHold();
         openedPage.clear();
         frontPage.clear();
@@ -557,6 +580,8 @@ public final class RememberClearDisplayPatch {
                 endPageHold();
                 MAIN.removeCallbacks(END_TURNED_DOWN_CARRY);
                 turnedDownCarry = false;
+                // Landed, so a later ask the panel turns down on this video carries again.
+                turnedDownEndedOn = null;
             }
             if (clearNow != clear) {
                 clearNow = clear;
@@ -612,8 +637,9 @@ public final class RememberClearDisplayPatch {
         // included, even when focus never asked on it and the next ask reads as a first try. A
         // clear that had landed carries again if the panel turns down the ask after it.
         String endedOn = activeId;
+        long endedVisit = visit;
         Runnable endCarry = () -> {
-            if (!Objects.equals(endedOn, activeId)) return;
+            if (endedVisit != visit || !Objects.equals(endedOn, activeId)) return;
             MAIN.removeCallbacks(END_TURNED_DOWN_CARRY);
             if (turnedDownCarry) turnedDownEndedOn = endedOn;
             turnedDownCarry = false;

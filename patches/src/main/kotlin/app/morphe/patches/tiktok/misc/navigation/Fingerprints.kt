@@ -535,6 +535,18 @@ internal object ProfileTabSwitcherFingerprint : Fingerprint(
     strings = listOf("USER", "long_press_profile_tab", "switch_account_long_press"),
 )
 
+/**
+ * TikTok's switch_account_gesture experiment, the one `()Z` reader of it. The bottom bar asks it
+ * before it puts the hold that posts Profile's tag on the tab, and [ProfileTabSwitcherFingerprint]'s
+ * handler asks it again before the sheet. It answers no on some accounts, so holding Profile does
+ * nothing there (#388).
+ */
+internal object SwitchAccountGestureFingerprint : Fingerprint(
+    returnType = "Z",
+    parameters = listOf(),
+    strings = listOf("switch_account_gesture"),
+)
+
 internal const val HOME_VIEW_PAGER_ASSEM = "Lcom/ss/android/ugc/aweme/main/assems/mainfragment/HomeViewPagerAssem;"
 internal const val HOME_PAGE_EX_SERVICE = "Lcom/ss/android/ugc/aweme/homepage/IHomePageExService;"
 internal const val HOX = "Lcom/bytedance/hox/Hox;"

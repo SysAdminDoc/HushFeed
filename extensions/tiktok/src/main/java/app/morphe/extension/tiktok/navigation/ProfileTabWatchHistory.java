@@ -128,6 +128,20 @@ public final class ProfileTabWatchHistory {
         }
     }
 
+    /**
+     * Injection point: TikTok's read of its switch_account_gesture experiment. The bottom bar asks
+     * it before putting TikTok's hold on the Profile tab, the main page before setting up the
+     * hold's handler, and the handler again before it shows the account sheet. Some accounts get
+     * no, so holding Profile does nothing there; Long-press Profile to switch accounts answers yes
+     * (#388). Watch history still asks first in the handler, so that switch keeps the press.
+     *
+     * @param sent TikTok's own answer
+     */
+    @SuppressWarnings("unused")
+    public static boolean switcherGesture(boolean sent) {
+        return sent || Settings.PROFILE_TAB_SWITCHES_ACCOUNTS.get();
+    }
+
     /** Called on each layout pass of the main activity in front. */
     static void apply(Activity activity) {
         try {

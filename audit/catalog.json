@@ -5461,6 +5461,12 @@
     "row": "Long-press Home for Hushfeed settings"
    },
    {
+    "key": "profile_tab_switches_accounts",
+    "default": false,
+    "type": "bool",
+    "row": "Long-press Profile to switch accounts"
+   },
+   {
     "key": "inbox_tab_flips_read_receipts",
     "default": false,
     "type": "bool",

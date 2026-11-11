@@ -620,5 +620,16 @@ val feedTabNavigationPatch = bytecodePatch(
                 ExternalLabel("switcher", getInstruction(0)),
             )
         } ?: println("[Feed tab navigation] Left holding Profile to TikTok's account switcher on ${packageMetadata.versionName}")
+
+        // Long-press Profile to switch accounts: TikTok's own switcher hold, wherever its
+        // experiment left the hold off (#388). The read answers yes, so the tab gets TikTok's
+        // listener and the handler above shows the sheet.
+        val gesture = if (packageMetadata.versionName in declaredVersions()) {
+            SwitchAccountGestureFingerprint.method
+        } else {
+            SwitchAccountGestureFingerprint.methodOrNull
+        }
+        gesture?.answerThrough("$PROFILE_TAB_WATCH_HISTORY_CLASS_DESCRIPTOR->switcherGesture(Z)Z")
+            ?: println("[Feed tab navigation] Left TikTok's Profile switcher hold to its experiment on ${packageMetadata.versionName}")
     }
 }

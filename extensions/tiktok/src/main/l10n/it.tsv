@@ -2692,3 +2692,7 @@ Search Liked and Favorites grids	Cerca nelle griglie dei Mi piace e dei Preferit
 Adds a Search button to the top of the Liked and Favorites grids. Type a word from a caption, a creator or a sound to see only the loaded videos that have it.	Aggiunge un pulsante Ricerca in cima alle griglie dei Mi piace e dei Preferiti. Scrivi una parola di una didascalia, di un creator o di un suono per vedere solo i video caricati che la contengono.
 # context: Hint in the search box over a Liked or Favorites grid
 Caption, creator or sound	Didascalia, creator o suono
+# context: Row title of the switch that makes holding the Profile tab open TikTok's account switcher
+Long-press Profile to switch accounts	Tieni premuto su Profilo per cambiare account
+# context: Summary under that switch; Long-press Profile for Watch history is the row just above it
+Press and hold the Profile tab to pick one of your other accounts, where TikTok left that out. A tap on Profile works as before. While Long-press Profile for Watch history is on, it takes the press. Restart TikTok to apply this.	Tieni premuto sulla scheda Profilo per scegliere uno dei tuoi altri account, dove TikTok l'ha tolto. Un tocco su Profilo funziona come prima. Finché Tieni premuto su Profilo per la cronologia visualizzazioni è attivo, prende quel gesto. Riavvia TikTok per applicare la modifica.

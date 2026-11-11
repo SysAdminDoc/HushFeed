@@ -2692,3 +2692,7 @@ Search Liked and Favorites grids	Pesquisar nas grades de curtidas e Favoritos
 Adds a Search button to the top of the Liked and Favorites grids. Type a word from a caption, a creator or a sound to see only the loaded videos that have it.	Adiciona um botão Pesquisa no topo das grades de curtidas e Favoritos. Digite uma palavra de uma legenda, de um criador ou de um som para ver só os vídeos carregados que a tenham.
 # context: Hint in the search box over a Liked or Favorites grid
 Caption, creator or sound	Legenda, criador ou som
+# context: Row title of the switch that makes holding the Profile tab open TikTok's account switcher
+Long-press Profile to switch accounts	Toque e segure Perfil para trocar de conta
+# context: Summary under that switch; Long-press Profile for Watch history is the row just above it
+Press and hold the Profile tab to pick one of your other accounts, where TikTok left that out. A tap on Profile works as before. While Long-press Profile for Watch history is on, it takes the press. Restart TikTok to apply this.	Toque e segure a aba Perfil para escolher uma das suas outras contas, onde o TikTok tirou isso. Tocar em Perfil funciona como antes. Enquanto Toque e segure Perfil para abrir o histórico de exibição estiver ativado, ele assume esse gesto. Reinicie o TikTok para aplicar.

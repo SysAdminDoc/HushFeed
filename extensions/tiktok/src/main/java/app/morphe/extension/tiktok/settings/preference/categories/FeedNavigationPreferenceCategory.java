@@ -131,6 +131,17 @@ public class FeedNavigationPreferenceCategory extends ConditionalPreferenceCateg
                         + "press, and the name at the top of your profile still switches accounts.",
                 Settings.PROFILE_TAB_OPENS_WATCH_HISTORY
         ));
+        // The hold is TikTok's own, put on the tab by the feed tab hooks.
+        if (SettingsStatus.feedNavigationEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Long-press Profile to switch accounts",
+                    "Press and hold the Profile tab to pick one of your other accounts, where TikTok "
+                            + "left that out. A tap on Profile works as before. While Long-press Profile for "
+                            + "Watch history is on, it takes the press. Restart TikTok to apply this.",
+                    Settings.PROFILE_TAB_SWITCHES_ACCOUNTS
+            ));
+        }
         // The press rides on the feed tab hooks and flips the read receipt patch's switch, so it
         // needs both; with only the read receipt patch the page isn't offered at all.
         if (SettingsStatus.feedNavigationEnabled && SettingsStatus.hideReadReceiptsEnabled) {

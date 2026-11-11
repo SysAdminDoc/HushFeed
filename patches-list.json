@@ -4093,6 +4093,15 @@
           "values": null
         },
         {
+          "key": "profile_tab_switches_accounts",
+          "title": "Default: profile tab switches accounts",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "inbox_tab_flips_read_receipts",
           "title": "Default: inbox tab flips read receipts",
           "description": null,

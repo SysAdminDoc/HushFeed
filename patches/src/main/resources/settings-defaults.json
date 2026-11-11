@@ -306,6 +306,7 @@
       "keep_for_you_on_pull_down",
       "home_tab_opens_settings",
       "profile_tab_opens_watch_history",
+      "profile_tab_switches_accounts",
       "inbox_tab_flips_read_receipts",
       "search_instead_of_home",
       "start_page",
@@ -3571,6 +3572,12 @@
     "profile_tab_opens_watch_history": {
       "field": "PROFILE_TAB_OPENS_WATCH_HISTORY",
       "key": "profile_tab_opens_watch_history",
+      "type": "boolean",
+      "default": false
+    },
+    "profile_tab_switches_accounts": {
+      "field": "PROFILE_TAB_SWITCHES_ACCOUNTS",
+      "key": "profile_tab_switches_accounts",
       "type": "boolean",
       "default": false
     },

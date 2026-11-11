@@ -2695,3 +2695,7 @@ Search Liked and Favorites grids	Raster mit „Gefällt mir“-Angaben und Favor
 Adds a Search button to the top of the Liked and Favorites grids. Type a word from a caption, a creator or a sound to see only the loaded videos that have it.	Fügt oben in den Rastern mit „Gefällt mir“-Angaben und Favoriten eine Schaltfläche Suche hinzu. Gib ein Wort aus einer Beschreibung, einem Creator oder einem Sound ein, um nur die geladenen Videos zu sehen, die es enthalten.
 # context: Hint in the search box over a Liked or Favorites grid
 Caption, creator or sound	Beschreibung, Creator oder Sound
+# context: Row title of the switch that makes holding the Profile tab open TikTok's account switcher
+Long-press Profile to switch accounts	Profil lange drücken zum Kontowechsel
+# context: Summary under that switch; Long-press Profile for Watch history is the row just above it
+Press and hold the Profile tab to pick one of your other accounts, where TikTok left that out. A tap on Profile works as before. While Long-press Profile for Watch history is on, it takes the press. Restart TikTok to apply this.	Halte den Tab Profil gedrückt, um eines deiner anderen Konten zu wählen, wo TikTok das weggelassen hat. Ein Tippen auf Profil funktioniert wie bisher. Solange Profil lange drücken für Wiedergabeverlauf an ist, übernimmt es diesen Druck. TikTok neu starten, damit das gilt.

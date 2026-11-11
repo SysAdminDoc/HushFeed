@@ -72,6 +72,7 @@ public class ProfileTabWatchHistoryTest {
         FeedVisibility.resolveForTests(activity.getPackageName(), "47.7.3:oph", 0);
         ReflectionHelpers.setStaticField(SettingsStatus.class, "feedNavigationEnabled", false);
         Settings.PROFILE_TAB_OPENS_WATCH_HISTORY.resetToDefault();
+        Settings.PROFILE_TAB_SWITCHES_ACCOUNTS.resetToDefault();
         Settings.LOCAL_WATCH_HISTORY.resetToDefault();
         Settings.PROFILE_HOLD_OPENS_LOCAL_WATCH_HISTORY.resetToDefault();
         AlertDialog shown = ShadowAlertDialog.getLatestAlertDialog();
@@ -337,6 +338,42 @@ public class ProfileTabWatchHistoryTest {
         assertFalse(profile.isLongClickable());
         assertFalse("paused, TikTok's account switcher was skipped",
                 ProfileTabWatchHistory.takesSwitcherPress(ProfileTabWatchHistory.PROFILE_TAG));
+        assertNull(nextStarted());
+    }
+
+    /**
+     * #388: TikTok's switch_account_gesture experiment says no on some accounts, so the tab never
+     * gets TikTok's hold. The switch answers yes; off or paused, TikTok's own answer stands.
+     */
+    @Test public void theSwitchTurnsOnTikToksSwitcherHoldAndLeavesItsYesAlone() {
+        assertFalse("off, TikTok's no was changed", ProfileTabWatchHistory.switcherGesture(false));
+        assertTrue("off, TikTok's yes was taken away", ProfileTabWatchHistory.switcherGesture(true));
+
+        Settings.PROFILE_TAB_SWITCHES_ACCOUNTS.save(true);
+        assertTrue("on, TikTok's switcher hold stayed off", ProfileTabWatchHistory.switcherGesture(false));
+        assertTrue(ProfileTabWatchHistory.switcherGesture(true));
+
+        PausedProcess.set(true);
+        assertFalse("paused, the switcher hold was still forced on", ProfileTabWatchHistory.switcherGesture(false));
+        assertTrue(ProfileTabWatchHistory.switcherGesture(true));
+    }
+
+    /** With both switches on, the hold TikTok now puts on Profile opens Watch history, not the sheet. */
+    @Test public void watchHistoryStillTakesTheSwitcherHoldItTurnedOn() {
+        Settings.PROFILE_TAB_SWITCHES_ACCOUNTS.save(true);
+        Settings.PROFILE_TAB_OPENS_WATCH_HISTORY.save(true);
+        AtomicInteger sheets = new AtomicInteger();
+        if (ProfileTabWatchHistory.switcherGesture(false)) profile.setOnLongClickListener(switcher(sheets));
+        installAndResume();
+
+        assertTrue(profile.performLongClick());
+        assertNotNull("the hold didn't open Watch history", nextStarted());
+        assertEquals("the account sheet showed too", 0, sheets.get());
+
+        Settings.PROFILE_TAB_OPENS_WATCH_HISTORY.save(false);
+        layoutPass();
+        assertTrue(profile.performLongClick());
+        assertEquals("with Watch history off, the hold didn't show the account sheet", 1, sheets.get());
         assertNull(nextStarted());
     }
 

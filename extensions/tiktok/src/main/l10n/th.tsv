@@ -2695,3 +2695,7 @@ Search Liked and Favorites grids	ค้นหาในตารางที่�
 Adds a Search button to the top of the Liked and Favorites grids. Type a word from a caption, a creator or a sound to see only the loaded videos that have it.	เพิ่มปุ่มค้นหาที่ด้านบนของตารางที่ถูกใจและรายการโปรด พิมพ์คำจากคำบรรยาย ครีเอเตอร์ หรือเสียง เพื่อดูเฉพาะวิดีโอที่โหลดแล้วซึ่งมีคำนั้น
 # context: Hint in the search box over a Liked or Favorites grid
 Caption, creator or sound	คำบรรยาย ครีเอเตอร์ หรือเสียง
+# context: Row title of the switch that makes holding the Profile tab open TikTok's account switcher
+Long-press Profile to switch accounts	กดค้างที่โปรไฟล์เพื่อสลับบัญชี
+# context: Summary under that switch; Long-press Profile for Watch history is the row just above it
+Press and hold the Profile tab to pick one of your other accounts, where TikTok left that out. A tap on Profile works as before. While Long-press Profile for Watch history is on, it takes the press. Restart TikTok to apply this.	กดแท็บโปรไฟล์ค้างไว้เพื่อเลือกบัญชีอื่นของคุณ ในกรณีที่ TikTok ตัดส่วนนี้ออกไป การแตะที่โปรไฟล์จะยังคงทำงานตามปกติ ขณะที่เปิดกดค้างที่โปรไฟล์เพื่อเปิดประวัติการดูอยู่ การตั้งค่านั้นจะรับการกดนี้แทน รีสตาร์ท TikTok เพื่อนำสิ่งนี้ไปใช้

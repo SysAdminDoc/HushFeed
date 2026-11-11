@@ -614,6 +614,12 @@ public class Settings extends BaseSettings {
      * accounts that press is TikTok's account switcher, which this takes over while it's on.
      */
     public static final BooleanSetting PROFILE_TAB_OPENS_WATCH_HISTORY = new BooleanSetting("profile_tab_opens_watch_history", FALSE);
+    /**
+     * Holding the Profile tab opens TikTok's account switcher on accounts where TikTok left that
+     * hold off (#388). TikTok's switch_account_gesture experiment answers yes, which is what puts
+     * the hold on the tab and lets its handler show the sheet. Read as the bottom bar is built.
+     */
+    public static final BooleanSetting PROFILE_TAB_SWITCHES_ACCOUNTS = new BooleanSetting("profile_tab_switches_accounts", FALSE, true);
     /** A long press on the Inbox tab flips Hide read receipts and toasts the new state (#333). */
     public static final BooleanSetting INBOX_TAB_FLIPS_READ_RECEIPTS = new BooleanSetting("inbox_tab_flips_read_receipts", FALSE);
     /** The tab TikTok opens on from its icon: tiktok (its own pick), for_you, following, friends, inbox or profile. */

@@ -287,20 +287,44 @@ final class MediaTransport {
     }
 
     /**
-     * The synthetic answers a fake-IP resolver hands out: 198.18.0.0/15 and fc00::/18, the pools
-     * Clash and mihomo (198.18.0.1/16), Xray and sing-box use. Proxy apps that run in fake-IP mode
-     * answer every proxied hostname from that pool and map each address back to its hostname when
-     * the connection reaches them, so a TikTok CDN host comes back as 198.18.x.x on those phones
-     * (#145). Neither pool is a LAN or device address, and TLS still authenticates the hostname.
+     * The synthetic answers a fake-IP resolver hands out: 198.18.0.0/15, the pool Clash and mihomo
+     * (198.18.0.1/16), Xray and sing-box use, and unique-local fc00::/7 for IPv6. Proxy apps that
+     * run in fake-IP mode answer every proxied hostname from their pool and map each address back
+     * to its hostname when the connection reaches them, so a TikTok CDN host comes back as
+     * 198.18.x.x on those phones (#145). Xray and sing-box take fc00::/18, but mihomo has no
+     * default IPv6 pool and its documented one is fdfe:dcba:9876::1/64, so with IPv6 on every save
+     * failed (#387). Only HTTPS is opened, and TLS still authenticates the hostname.
      */
     static boolean isProxyMappedAddress(InetAddress address) {
         if (address == null) return false;
         byte[] bytes = address.getAddress();
         if (bytes.length == 4) return (bytes[0] & 255) == 198 && (bytes[1] & 0xfe) == 18;
-        if (bytes.length == 16) {
-            return (bytes[0] & 255) == 0xfc && bytes[1] == 0 && (bytes[2] & 0xc0) == 0;
-        }
+        if (bytes.length == 16) return (bytes[0] & 0xfe) == 0xfc;
         return false;
+    }
+
+    /**
+     * The special block a refused address sits in, so a diagnostic report says why a save was
+     * refused without carrying the address itself (#387).
+     */
+    static String blockOf(InetAddress address) {
+        byte[] bytes = address.getAddress();
+        if (bytes.length == 4) {
+            int value = ipv4At(bytes, 0);
+            for (int[] block : NOT_GLOBAL_V4) {
+                int mask = -1 << (32 - block[1]);
+                if ((value & mask) == (block[0] & mask)) {
+                    return ((block[0] >>> 24) & 255) + "." + ((block[0] >>> 16) & 255) + "."
+                            + ((block[0] >>> 8) & 255) + "." + (block[0] & 255) + "/" + block[1];
+                }
+            }
+            return "IPv4";
+        }
+        if ((bytes[0] & 0xfe) == 0xfc) return "fc00::/7";
+        if ((bytes[0] & 255) == 0xfe && (bytes[1] & 0xc0) == 0x80) return "fe80::/10";
+        if ((bytes[0] & 255) == 0xff) return "ff00::/8";
+        if (bytes[0] == 0 && bytes[1] == 0) return "::/16";
+        return "a special IPv6 block";
     }
 
     /** An address a checked media connection may open: public, or from a fake-IP pool. */
@@ -370,7 +394,7 @@ final class MediaTransport {
         if (proxyMapped) return addresses;
         for (InetAddress address : addresses) {
             if (!isPublicAddress(address)) {
-                throw new IOException("Media URL resolves to a non-public address");
+                throw new IOException("Media URL resolves to a non-public address in " + blockOf(address));
             }
         }
         return addresses;

@@ -210,12 +210,60 @@ public class MediaTransportSecurityTest {
         }
     }
 
+    /**
+     * mihomo has no default fake-ip-range6, and its documented example is fdfe:dcba:9876::1/64, so
+     * with IPv6 on a CDN host comes back as 198.18.x.x beside a unique-local address (#387).
+     */
+    @Test public void aFakeIpProxyWithAUniqueLocalPoolStillDownloads() throws Exception {
+        AtomicInteger opened = new AtomicInteger();
+        MediaTransport.Client client = new MediaTransport.Client(host -> new InetAddress[]{
+                InetAddress.getByName("fdfe:dcba:9876::7"), InetAddress.getByName("198.18.0.7")
+        }, (url, address) -> {
+            opened.incrementAndGet();
+            assertEquals("v16-webapp-prime.tiktokcdn.com", url.getHost());
+            return new FakeConnection(url, HTTP_OK, null, PNG);
+        });
+        File target = File.createTempFile("ula-fake-ip-media", ".tmp");
+        try {
+            assertEquals("png", RemoteMedia.fetch(
+                    List.of("https://v16-webapp-prime.tiktokcdn.com/media"), target,
+                    RemoteMedia.Kind.IMAGE, client));
+            assertArrayEquals(PNG, Files.readAllBytes(target.toPath()));
+            assertEquals(1, opened.get());
+        } finally {
+            target.delete();
+        }
+    }
+
+    @Test public void aRefusedAnswerNamesItsBlockAndNotTheAddress() throws Exception {
+        String[][] cases = {
+                {"192.168.1.2", "192.168.0.0/16"},
+                {"10.20.30.40", "10.0.0.0/8"},
+                {"100.64.9.9", "100.64.0.0/10"},
+                {"fe80::1", "fe80::/10"},
+        };
+        for (String[] each : cases) {
+            MediaTransport.Client client = new MediaTransport.Client(host -> new InetAddress[]{
+                    InetAddress.getByAddress(host, new byte[]{8, 8, 8, 8}),
+                    InetAddress.getByName(each[0])
+            }, (url, address) -> new FakeConnection(url, HTTP_OK, null, PNG));
+            IOException error = assertThrows(IOException.class, () -> client.open(
+                    "https://v16.tiktokcdn.com/media", MediaBudget.deadline(),
+                    1000, 1000, null, false));
+            assertTrue(error.getMessage(), error.getMessage().contains(each[1]));
+            assertFalse(error.getMessage(), error.getMessage().contains(each[0]));
+        }
+    }
+
     @Test public void fakeIpPoolsStopAtTheirEdges() throws Exception {
-        for (String address : new String[]{"198.18.0.1", "198.19.255.255", "fc00::1", "fc00:3fff:ffff::1"}) {
+        for (String address : new String[]{
+                "198.18.0.1", "198.19.255.255", "fc00::1", "fc00:3fff:ffff::1", "fc00:4000::1",
+                "fd00::1", "fdfe:dcba:9876::1", "fdff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"
+        }) {
             assertTrue(address, MediaTransport.isProxyMappedAddress(InetAddress.getByName(address)));
         }
         for (String address : new String[]{
-                "198.17.255.255", "198.20.0.1", "fc00:4000::1", "fc01::1", "fd00::1",
+                "198.17.255.255", "198.20.0.1", "fbff:ffff::1", "fe00::1", "fe80::1",
                 "10.0.0.1", "127.0.0.1", "192.168.1.2", "8.8.8.8", "2606:4700:4700::1111"
         }) {
             assertFalse(address, MediaTransport.isProxyMappedAddress(InetAddress.getByName(address)));

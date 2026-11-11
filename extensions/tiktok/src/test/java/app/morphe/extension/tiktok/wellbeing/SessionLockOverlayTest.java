@@ -823,17 +823,105 @@ public class SessionLockOverlayTest {
             Activity activity = owner.get();
             Utils.setActivity(activity);
             ViewGroup root = activity.findViewById(android.R.id.content);
+            FeedPage page = new FeedPage(activity, root);
+
+            SessionLockOverlay.sync();
+            assertEquals(ViewGroup.FOCUS_BLOCK_DESCENDANTS, page.video.getDescendantFocusability());
+            collect(takeThePanelOff(root));
+
+            page.homeTab.setSelected(false);
+            SessionLockOverlay.sync();
+            assertEquals("the feed stayed curtained off the feed",
+                    ViewGroup.FOCUS_AFTER_DESCENDANTS, page.video.getDescendantFocusability());
+            assertTrue("a reader still can't reach the feed off the feed",
+                    page.like.isImportantForAccessibility());
+        }
+    }
+
+    @Test public void aHoldCollectedWithNoRootToGoBackOnStillHandsTheFeedBack() throws Exception {
+        // A pass that finds no content root has no panel to lift through either.
+        Settings.SESSION_BUDGET_VIDEOS.save(1);
+        Settings.SESSION_BUDGET_LOCK_MINUTES.save(5);
+        SessionBudget.noteVideo("a");
+        assertTrue(SessionBudget.claimNotice());
+
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setActivity(activity);
+            ViewGroup root = activity.findViewById(android.R.id.content);
+            FeedPage page = new FeedPage(activity, root);
+
+            SessionLockOverlay.sync();
+            assertEquals(ViewGroup.FOCUS_BLOCK_DESCENDANTS, page.video.getDescendantFocusability());
+            collect(takeThePanelOff(root));
+
+            root.setId(View.NO_ID);
+            // No Home tab to read either, so the pass takes the page for the feed and goes on to
+            // attach. With the tab kept, its climb past the missing root to the smaller window
+            // reads it as scrolled away, and the off-the-feed branch hands everything back instead.
+            seedHomeTab(null);
+            SessionLockOverlay.sync();
+            assertEquals("the feed stayed curtained with no root for the panel",
+                    ViewGroup.FOCUS_AFTER_DESCENDANTS, page.video.getDescendantFocusability());
+            assertTrue(page.like.isImportantForAccessibility());
+        }
+    }
+
+    @Test public void aHoldCollectedOverTheCatcherLeavesTheCatchersCurtainUp() throws Exception {
+        // The pass that hands back what a collected hold covered must not hand back what a panel
+        // still up covers too: the catcher put up on coming back to the app, under the hold.
+        Settings.SESSION_BUDGET_VIDEOS.save(1);
+        Settings.SESSION_BUDGET_LOCK_MINUTES.save(5);
+        SessionBudget.noteVideo("a");
+        assertTrue(SessionBudget.claimNotice());
+
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setActivity(activity);
+            ViewGroup root = activity.findViewById(android.R.id.content);
+            FeedPage page = new FeedPage(activity, root);
+            View catcher = new View(activity);
+            root.addView(catcher);
+            SessionLockOverlay.hideBehind(root, catcher, true, page.bar);
+
+            SessionLockOverlay.sync();
+            assertEquals("the hold didn't go over the catcher",
+                    View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS, catcher.getImportantForAccessibility());
+            collect(takeThePanelOff(root));
+
+            page.homeTab.setSelected(false);
+            SessionLockOverlay.sync();
+            assertEquals("the catcher stayed curtained by a hold that's gone",
+                    View.IMPORTANT_FOR_ACCESSIBILITY_AUTO, catcher.getImportantForAccessibility());
+            assertEquals("the catcher's curtain came off the feed with the hold's",
+                    ViewGroup.FOCUS_BLOCK_DESCENDANTS, page.video.getDescendantFocusability());
+            assertFalse(page.like.isImportantForAccessibility());
+
+            SessionLockOverlay.hideBehind(root, catcher, false);
+            assertEquals(ViewGroup.FOCUS_AFTER_DESCENDANTS, page.video.getDescendantFocusability());
+            assertTrue(page.like.isImportantForAccessibility());
+        }
+    }
+
+    /** The feed under a hold: a video with a like button, and the tab bar with Home selected under it. */
+    private static final class FeedPage {
+        final FrameLayout video;
+        final android.widget.Button like;
+        final FrameLayout bar;
+        final android.widget.Button homeTab;
+
+        FeedPage(Activity activity, ViewGroup root) {
             FrameLayout page = new FrameLayout(activity);
-            FrameLayout video = new FrameLayout(activity);
+            video = new FrameLayout(activity);
             video.setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
-            android.widget.Button like = new android.widget.Button(activity);
+            like = new android.widget.Button(activity);
             video.addView(like);
             FrameLayout.LayoutParams videoParams = new FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             videoParams.bottomMargin = 100;
             page.addView(video, videoParams);
-            FrameLayout bar = new FrameLayout(activity);
-            android.widget.Button homeTab = new android.widget.Button(activity);
+            bar = new FrameLayout(activity);
+            homeTab = new android.widget.Button(activity);
             homeTab.setSelected(true);
             bar.addView(homeTab, new FrameLayout.LayoutParams(96, ViewGroup.LayoutParams.MATCH_PARENT));
             page.addView(bar, new FrameLayout.LayoutParams(
@@ -841,22 +929,6 @@ public class SessionLockOverlayTest {
             root.addView(page);
             layout(root, 480, 960);
             seedHomeTab(homeTab);
-
-            SessionLockOverlay.sync();
-            assertEquals(ViewGroup.FOCUS_BLOCK_DESCENDANTS, video.getDescendantFocusability());
-            java.lang.ref.WeakReference<View> panel = takeThePanelOff(root);
-            for (int attempt = 0; attempt < 20 && panel.get() != null; attempt++) {
-                System.gc();
-                Thread.sleep(10);
-            }
-            assertNull("the panel TikTok took off was never collected", panel.get());
-
-            homeTab.setSelected(false);
-            SessionLockOverlay.sync();
-            assertEquals("the feed stayed curtained off the feed",
-                    ViewGroup.FOCUS_AFTER_DESCENDANTS, video.getDescendantFocusability());
-            assertTrue("a reader still can't reach the feed off the feed",
-                    like.isImportantForAccessibility());
         }
     }
 
@@ -865,6 +937,15 @@ public class SessionLockOverlayTest {
         View panel = root.getChildAt(root.getChildCount() - 1);
         root.removeView(panel);
         return new java.lang.ref.WeakReference<>(panel);
+    }
+
+    /** Waits for the collector to take {@code panel}, as it does with nothing left holding it. */
+    private static void collect(java.lang.ref.WeakReference<View> panel) throws InterruptedException {
+        for (int attempt = 0; attempt < 20 && panel.get() != null; attempt++) {
+            System.gc();
+            Thread.sleep(10);
+        }
+        assertNull("the panel TikTok took off was never collected", panel.get());
     }
 
     @Test public void aTabBarDrawnAfterTheHoldComesBackIntoReach() throws Exception {

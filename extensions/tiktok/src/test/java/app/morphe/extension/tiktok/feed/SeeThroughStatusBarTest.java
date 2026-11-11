@@ -360,16 +360,22 @@ public class SeeThroughStatusBarTest {
             Settings.SEE_THROUGH_BOTTOM_BAR.save(true);
 
             VideoOverlayHider.applyTo(activity);
-            assertTheStillIsOnThePicture(surface, cover);
+            assertTheStillIsOnThePicture(surface, cover, cell);
 
+            // Lifted one view up: TikTok moving the cover's wrapper rather than the cover itself.
             cover.setTranslationY(0f);
+            wrapper.setTranslationY(-70.5f);
             VideoOverlayHider.applyTo(activity);
-            assertTheStillIsOnThePicture(surface, cover);
+            assertTheStillIsOnThePicture(surface, cover, cell);
+
+            wrapper.setTranslationY(0f);
+            VideoOverlayHider.applyTo(activity);
+            assertTheStillIsOnThePicture(surface, cover, cell);
             assertFalse("a cover in place left its center", cover.isPivotSet());
 
             surface.setTranslationY(0f);
             VideoOverlayHider.applyTo(activity);
-            assertTheStillIsOnThePicture(surface, cover);
+            assertTheStillIsOnThePicture(surface, cover, cell);
             assertFalse("the cover by a centered picture left its center", cover.isPivotSet());
 
             Settings.SEE_THROUGH_BOTTOM_BAR.save(false);
@@ -379,17 +385,26 @@ public class SeeThroughStatusBarTest {
         }
     }
 
-    /** The still, as tall as the picture and fitted in the middle of its cover, is drawn where the grown surface is. */
-    private static void assertTheStillIsOnThePicture(View surface, View cover) {
-        float scale = surface.getScaleY();
+    /** The still, as tall as the picture and fitted in the middle of its cover, is drawn where the grown picture is in {@code space}. */
+    private static void assertTheStillIsOnThePicture(View picture, View cover, View space) {
+        float scale = picture.getScaleY();
         assertTrue("the picture didn't fill", scale > 1f);
         assertEquals("the cover kept TikTok's size", scale, cover.getScaleY(), 0f);
-        float picture = surface.getTop() + surface.getTranslationY() + pivotY(surface) * (1f - scale);
+        float top = above(picture, space) + pivotY(picture) * (1f - scale);
         float pivot = pivotY(cover);
-        float inside = (cover.getHeight() - surface.getHeight()) / 2f;
-        float still = cover.getTop() + cover.getTranslationY() + pivot + scale * (inside - pivot);
+        float inside = (cover.getHeight() - picture.getHeight()) / 2f;
+        float still = above(cover, space) + pivot + scale * (inside - pivot);
         // Same height, same scale: tops that meet put the bottoms together too.
-        assertEquals("the still is off the picture", picture, still, 2f);
+        assertEquals("the still is off the picture", top, still, 2f);
+    }
+
+    /** How far down {@code space} the unscaled top of {@code view} sits, its own place and every view's between. */
+    private static float above(View view, View space) {
+        float top = 0f;
+        for (View at = view; at != space; at = (View) at.getParent()) {
+            top += at.getTop() + at.getTranslationY();
+        }
+        return top;
     }
 
     /** Robolectric reads 0 for a pivot nothing set, where Android follows the view's center. */
@@ -536,6 +551,12 @@ public class SeeThroughStatusBarTest {
             nextCover.setScaleY(1f);
             VideoOverlayHider.applyTo(activity);
             assertEquals(nextScale, nextCover.getScaleY(), 0f);
+
+            // TikTok places that player for the space it had before the spacer went, so it can sit
+            // low, and the still beside it lands where the grown player does.
+            nextPlayer.setTranslationY(120f);
+            VideoOverlayHider.applyTo(activity);
+            assertTheStillIsOnThePicture(nextPlayer, nextCover, space);
 
             Settings.SEE_THROUGH_STATUS_BAR.save(false);
             VideoOverlayHider.applyTo(activity);

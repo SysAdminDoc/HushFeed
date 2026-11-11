@@ -7130,6 +7130,15 @@
           "values": null
         },
         {
+          "key": "auto_record_live",
+          "title": "Default: auto record live",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "live_record_quality",
           "title": "Default: live record quality",
           "description": null,

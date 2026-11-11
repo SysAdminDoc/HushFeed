@@ -491,6 +491,7 @@ val extensionClasses = listOf(
     "app/morphe/patches/tiktok/interaction/seekbar/SoundSeekbarBridgesTest.class",
     "app/morphe/patches/tiktok/interaction/videooverlays/MusicDiscSpinAnchorsTest.class",
     "app/morphe/patches/tiktok/misc/diagnostics/BuildDetailsPatchTest.class",
+    "app/morphe/patches/tiktok/misc/diagnostics/OwnClassesTest.class",
     "app/morphe/patches/tiktok/misc/featuregatelab/FeatureGateLabFramesTest.class",
     "app/morphe/patches/tiktok/misc/inbox/InboxQueryOwnerFixturesTest.class",
     "app/morphe/patches/tiktok/misc/inbox/InboxRenderedModelsFixturesTest.class",

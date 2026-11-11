@@ -7,6 +7,7 @@ package app.morphe.extension.shared.diagnostics;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +39,10 @@ import app.morphe.extension.shared.Utils;
  * Hushfeed's came from another bundle. A bundle that only rewrites TikTok's own classes adds
  * nothing here and cannot be seen this way.
  *
+ * <p>Which classes are Hushfeed's comes from the list the patch writes into the APK, since another
+ * bundle can put classes under the same packages or ship its own copy of the shared library. An
+ * APK patched before that list existed goes by package name.
+ *
  * <p>The scan reads each dex file's sorted string table out of the installed APK and stops once
  * it is past the {@code Lapp/} names, so it never holds a dex file in memory. It still inflates a
  * good part of a few hundred megabytes, so it never runs on the main thread: a report copied
@@ -52,6 +57,12 @@ public final class OtherBundles {
     };
     /** Libraries Hushfeed's extension ships under their own names (the MP3 encoder). */
     private static final String[] OWN_LIBRARIES = {"de.sciss.jump3r."};
+    /** The patch's list of the classes Hushfeed's extension adds under app/, one descriptor a line. */
+    private static final String OWN_CLASSES_ASSET = "hushfeed-classes-v1.txt";
+    /** Over ten times the list's size in 0.81, so only a damaged asset trips it. */
+    private static final int OWN_CLASSES_MAX_BYTES = 4 << 20;
+    /** An APK patched before the list existed, or one whose list can't be read. */
+    private static final Set<String> NOT_LISTED = Collections.unmodifiableSet(new HashSet<>());
     private static final byte[] PREFIX = {'L', 'a', 'p', 'p', '/'};
     /** Longer than any class name a bundle ships; a longer string is not a class. */
     private static final int NAME_MAX_BYTES = 512;
@@ -61,8 +72,10 @@ public final class OtherBundles {
     private static final java.util.regex.Pattern SECTION = java.util.regex.Pattern.compile("\\[[A-Z][A-Z ]*\\]");
 
     private static final Object SCAN_LOCK = new Object();
+    private static final Object OWN_LOCK = new Object();
     private static final AtomicBoolean SCAN_STARTED = new AtomicBoolean();
     private static volatile Scan result;
+    private static volatile Set<String> ownClasses;
     private static volatile List<File> apksForTests;
     /** The scanning thread's id while it runs at background priority, else 0. */
     private static volatile int scanThread;
@@ -293,12 +306,50 @@ public final class OtherBundles {
     }
 
     private static boolean isOwn(String descriptor) {
+        Set<String> listed = ownClasses();
+        if (listed != null) return listed.contains(descriptor);
         for (String own : OWN_PACKAGES) {
             if (descriptor.startsWith(own)) return true;
         }
         // The extension's own R class sits directly in app/morphe/extension.
         return descriptor.startsWith("Lapp/morphe/extension/")
                 && descriptor.indexOf('/', "Lapp/morphe/extension/".length()) < 0;
+    }
+
+    /** The classes the patch listed as Hushfeed's, or null when there is no list to go by. */
+    private static Set<String> ownClasses() {
+        Set<String> listed = ownClasses;
+        if (listed == null) {
+            Context context = Utils.getContext();
+            if (context == null) return null;
+            synchronized (OWN_LOCK) {
+                listed = ownClasses;
+                if (listed == null) {
+                    try (InputStream input = context.getAssets().open(OWN_CLASSES_ASSET)) {
+                        listed = readOwnClasses(input);
+                    } catch (IOException unavailable) {
+                        listed = NOT_LISTED;
+                    }
+                    ownClasses = listed;
+                }
+            }
+        }
+        return listed == NOT_LISTED ? null : listed;
+    }
+
+    /** One descriptor a line. An empty or oversized list counts as no list. */
+    static Set<String> readOwnClasses(InputStream input) throws IOException {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        byte[] buffer = new byte[8192];
+        for (int count; (count = input.read(buffer)) != -1; ) {
+            if (bytes.size() + count > OWN_CLASSES_MAX_BYTES) return NOT_LISTED;
+            bytes.write(buffer, 0, count);
+        }
+        Set<String> names = new HashSet<>();
+        for (String line : bytes.toString("ISO-8859-1").split("\n")) {
+            if (line.startsWith("Lapp/") && line.endsWith(";")) names.add(line);
+        }
+        return names.isEmpty() ? NOT_LISTED : names;
     }
 
     /** "Lapp/ftl/extension/dpi/DensityPatch;" groups as "app.ftl.extension.dpi". */
@@ -406,6 +457,13 @@ public final class OtherBundles {
             apksForTests = apks;
             result = null;
             SCAN_STARTED.set(false);
+        }
+    }
+
+    /** Stands in for the APK's list; null reads the APK's own again. */
+    static void useOwnClassesForTests(Set<String> listed) {
+        synchronized (OWN_LOCK) {
+            ownClasses = listed == null ? null : listed.isEmpty() ? NOT_LISTED : listed;
         }
     }
 

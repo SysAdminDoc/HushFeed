@@ -56,12 +56,53 @@ public class OtherBundlesTest {
     @After
     public void forgetTheScan() {
         OtherBundles.useApksForTests(null);
+        OtherBundles.useOwnClassesForTests(null);
     }
 
     @Test
     public void aHushfeedOnlyApkSaysNone() throws Exception {
         File apk = apk(dex(concat(TIKTOK, HUSHFEED)));
         assertEquals(Collections.emptyMap(), OtherBundles.scan(Collections.singletonList(apk)));
+    }
+
+    @Test
+    public void aClassUnderHushfeedsPackagesThatIsNotOnItsListIsAnotherBundles() throws Exception {
+        // Another TikTok bundle built from the same template keeps Hushfeed's package names.
+        File apk = apk(dex(concat(TIKTOK, HUSHFEED, new String[]{
+                "Lapp/morphe/extension/shared/Extra;", "Lapp/morphe/extension/tiktok/other/Foreign;",
+        })));
+        String crash = "[STACK TRACE]\njava.lang.IllegalStateException\n"
+                + "\tat app.morphe.extension.tiktok.other.Foreign.run(Foreign.java:3)\n"
+                + "Caused by: java.lang.NullPointerException\n"
+                + "\tat app.morphe.extension.tiktok.feedfilter.FeedFilter.filter(FeedFilter.java:9)\n";
+
+        OtherBundles.useOwnClassesForTests(new HashSet<>(Arrays.asList(HUSHFEED)));
+        assertEquals("{app.morphe.extension.shared=1, app.morphe.extension.tiktok=1}",
+                OtherBundles.scan(Collections.singletonList(apk)).toString());
+        assertEquals(Arrays.asList(
+                "latest_crash_top_app_frame: at app.morphe.extension.tiktok.other.Foreign.run(Foreign.java:3)",
+                "latest_crash_top_app_frame_from: another patch bundle (app.morphe.extension.tiktok)",
+                "latest_crash_cause_app_frame: at app.morphe.extension.tiktok.feedfilter.FeedFilter.filter(FeedFilter.java:9)",
+                "latest_crash_cause_app_frame_from: Hushfeed",
+                "latest_crash_frames_from_other_bundles: 1"),
+                OtherBundles.crashLines(crash));
+
+        // An APK patched before the list existed goes by package name and can't tell them apart.
+        OtherBundles.useOwnClassesForTests(Collections.emptySet());
+        assertEquals(Collections.emptyMap(), OtherBundles.scan(Collections.singletonList(apk)));
+        assertEquals("latest_crash_top_app_frame_from: Hushfeed", OtherBundles.crashLines(crash).get(1));
+    }
+
+    @Test
+    public void theOwnClassListReadsOneDescriptorALine() throws Exception {
+        byte[] list = "Lapp/morphe/extension/R;\nLapp/morphe/extension/tiktok/A$1;\n\nnot a class\nLX/0abc;\n"
+                .getBytes("ISO-8859-1");
+        assertEquals(new HashSet<>(Arrays.asList("Lapp/morphe/extension/R;", "Lapp/morphe/extension/tiktok/A$1;")),
+                OtherBundles.readOwnClasses(new ByteArrayInputStream(list)));
+        assertTrue(OtherBundles.readOwnClasses(new ByteArrayInputStream(new byte[0])).isEmpty());
+        byte[] huge = new byte[(4 << 20) + 1];
+        Arrays.fill(huge, (byte) 'L');
+        assertTrue(OtherBundles.readOwnClasses(new ByteArrayInputStream(huge)).isEmpty());
     }
 
     @Test
@@ -90,6 +131,21 @@ public class OtherBundlesTest {
         Set<String> classes = new HashSet<>();
         OtherBundles.scanDex(() -> new ByteArrayInputStream(broken), classes);
         assertEquals(Collections.singleton("Lapp/morphe/extension/youtube/Shorts;"), classes);
+    }
+
+    @Test
+    public void aStringTablePointingIntoTheHeaderOrPast2GbIsRefused() throws Exception {
+        byte[] good = dex(concat(TIKTOK, new String[]{"Lapp/morphe/extension/youtube/Shorts;"}));
+        for (int offset : new int[]{0x10, -8}) {
+            // Out of id order, so the read sorts the ids and the bad one comes first.
+            byte[] broken = withLastStringOffset(good, offset);
+            try {
+                OtherBundles.scanDex(() -> new ByteArrayInputStream(broken), new HashSet<>());
+                throw new AssertionError("read a string at " + offset);
+            } catch (IOException expected) {
+                assertEquals("bad string table", expected.getMessage());
+            }
+        }
     }
 
     @Test

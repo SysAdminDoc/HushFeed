@@ -15,6 +15,7 @@ import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
+import app.morphe.patches.tiktok.misc.navigation.branchTargets
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.patches.tiktok.privacy.targetNames
@@ -28,6 +29,7 @@ import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction
+import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
@@ -37,6 +39,33 @@ import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 private const val EXTENSION = "Lapp/morphe/extension/tiktok/capture/ScreenCapture;"
 private const val LAYOUT_PARAMS = "Landroid/view/WindowManager\$LayoutParams;"
 private data class CaptureSite(val owner: ClassDef, val method: Method, val index: Int, val replacement: String)
+private const val WINDOW_FLAG_SECURE = 0x2000
+private val INT_CONSTANTS = setOf(Opcode.CONST_4, Opcode.CONST_16, Opcode.CONST, Opcode.CONST_HIGH16)
+
+/**
+ * Whether the Window addFlags or setFlags call at [index] could set the secure flag. One whose own
+ * block loads its flags as a constant without it can't, so it's left alone and its class isn't
+ * rewritten: on 47.7.3 that's 141 of the 267 classes this patch would rewrite, and the classes
+ * rewritten set Simple mode's patching peak (#339). [targets] are the method's branch targets.
+ */
+internal fun mayAddSecure(instructions: List<Instruction>, index: Int, targets: Set<Int>): Boolean {
+    val flags = when (val call = instructions[index]) {
+        is FiveRegisterInstruction -> call.registerD
+        is RegisterRangeInstruction -> call.startRegister + 1
+        else -> return true
+    }
+    for (i in index - 1 downTo 0) {
+        if (i + 1 in targets) return true
+        val instruction = instructions[i]
+        if (!instruction.opcode.canContinue()) return true
+        if (!instruction.opcode.setsRegister()) continue
+        val written = (instruction as? OneRegisterInstruction)?.registerA ?: return true
+        if (written != flags && !(instruction.opcode.setsWideRegister() && written + 1 == flags)) continue
+        return instruction.opcode !in INT_CONSTANTS ||
+            ((instruction as NarrowLiteralInstruction).narrowLiteral and WINDOW_FLAG_SECURE) != 0
+    }
+    return true
+}
 
 private fun writesLayoutFlags(instruction: Instruction) =
     instruction.opcode == Opcode.IPUT &&
@@ -83,11 +112,14 @@ val allowScreenCapturePatch = bytecodePatch(
         val names = targetNames(signatures.keys)
         val callers = classesCallingMethods(signatures.keys)
         val sites = mutableListOf<CaptureSite>()
+        val found = mutableSetOf<String>()
         for (callerType in callers) {
             if (callerType.startsWith("Lapp/morphe/extension/")) continue
             val owner = classDefByOrNull(callerType) ?: continue
             owner.methods.forEach { method ->
-                method.implementation?.instructions?.forEachIndexed { index, instruction ->
+                val instructions = method.implementation?.instructions?.toList() ?: return@forEach
+                val targets by lazy { method.branchTargets() }
+                instructions.forEachIndexed { index, instruction ->
                     // Opcode, then name, then the whole descriptor: every instruction of TikTok
                     // passes here, and a descriptor per instruction cost seconds a run (#54).
                     if (instruction.opcode != Opcode.INVOKE_VIRTUAL && instruction.opcode != Opcode.INVOKE_VIRTUAL_RANGE) {
@@ -97,6 +129,10 @@ val allowScreenCapturePatch = bytecodePatch(
                     if (reference.name !in names) return@forEachIndexed
                     val target = signatures[reference.toString()]
                     if (target != null) {
+                        found += reference.name
+                        if (reference.name != "setAttributes" && !mayAddSecure(instructions, index, targets)) {
+                            return@forEachIndexed
+                        }
                         val invoke = when (instruction) {
                             is FiveRegisterInstruction -> {
                                 val regs = listOf(instruction.registerC, instruction.registerD, instruction.registerE,
@@ -117,7 +153,7 @@ val allowScreenCapturePatch = bytecodePatch(
             }
         }
         listOf("addFlags", "setFlags", "setAttributes").forEach { name ->
-            if (sites.none { it.replacement.contains("->$name(") }) {
+            if (name !in found) {
                 throw PatchException(
                     "Allow screenshots and Circle to Search: no native Window.$name call was found.",
                 )

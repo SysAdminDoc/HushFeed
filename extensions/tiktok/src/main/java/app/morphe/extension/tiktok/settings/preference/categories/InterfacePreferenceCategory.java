@@ -374,6 +374,14 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                             Settings.LIKED_JUMP_TO_DATE
                     ));
                 }
+                if (SettingsStatus.likedGridSortEnabled) {
+                    addPreference(new TogglePreference(
+                            context,
+                            "Search Liked and Favorites grids",
+                            "Adds a Search button to the top of the Liked and Favorites grids. Type a word from a caption, a creator or a sound to see only the loaded videos that have it.",
+                            Settings.GRID_SEARCH
+                    ));
+                }
                 if (SettingsStatus.soundGridSortEnabled) {
                     addPreference(new ChoicePreference(context, "Sort loaded videos on sound pages",
                             Settings.SOUND_GRID_SORT,

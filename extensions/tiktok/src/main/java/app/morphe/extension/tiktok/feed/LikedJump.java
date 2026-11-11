@@ -324,7 +324,7 @@ public final class LikedJump {
         return null;
     }
 
-    private static Activity shownActivity(View anchor) {
+    static Activity shownActivity(View anchor) {
         Activity activity = activityOf(anchor.getContext());
         if (activity == null) activity = Utils.getVisibleActivity();
         if (activity == null || activity.isFinishing() || activity.isDestroyed()) return null;

@@ -2863,3 +2863,9 @@ Skipping videos from %1$s	Пропуск видео от %1$s
 Skipping videos tagged %1$s	Пропуск видео с хештегом %1$s
 # context: Toast when the list a chooser pick goes on already holds as much as it can
 That list is full	Этот список заполнен
+# context: Row title of the switch that adds a search to the Liked and Favorites tabs of a profile
+Search Liked and Favorites grids	Поиск в сетках «Понравилось» и «Избранное»
+# context: Summary under that switch; Search is the button's own label
+Adds a Search button to the top of the Liked and Favorites grids. Type a word from a caption, a creator or a sound to see only the loaded videos that have it.	Добавляет кнопку «Поиск» вверху сеток «Понравилось» и «Избранное». Введите слово из подписи, имени автора или названия звука, чтобы видеть только загруженные видео с ним.
+# context: Hint in the search box over a Liked or Favorites grid
+Caption, creator or sound	Подпись, автор или звук

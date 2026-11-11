@@ -57,6 +57,7 @@
       "liked_grid_sort",
       "sound_grid_sort",
       "liked_jump_to_date",
+      "grid_search",
       "grid_position_controls"
     ],
     "Always upload in HD": [
@@ -2014,6 +2015,12 @@
     "grid_position_controls": {
       "field": "GRID_POSITION_CONTROLS",
       "key": "grid_position_controls",
+      "type": "boolean",
+      "default": false
+    },
+    "grid_search": {
+      "field": "GRID_SEARCH",
+      "key": "grid_search",
       "type": "boolean",
       "default": false
     },

@@ -854,6 +854,8 @@ public class Settings extends BaseSettings {
     public static final StringSetting SOUND_GRID_SORT = new StringSetting("sound_grid_sort", "off");
     /** A chip on Liked grids that starts the list at a chosen year or month (#350). */
     public static final BooleanSetting LIKED_JUMP_TO_DATE = new BooleanSetting("liked_jump_to_date", FALSE);
+    /** A chip on Liked and Favorites grids that narrows the loaded videos to a search. */
+    public static final BooleanSetting GRID_SEARCH = new BooleanSetting("grid_search", FALSE);
     public static final BooleanSetting GRID_POSITION_CONTROLS = new BooleanSetting("grid_position_controls", FALSE);
     public static final BooleanSetting SHOW_EXACT_COUNTS = new BooleanSetting("show_exact_counts", FALSE);
     public static final BooleanSetting CLEAR_DISPLAY = new BooleanSetting("clear_display", FALSE);

@@ -2686,3 +2686,9 @@ Skipping videos from %1$s	%1$s videoları atlanıyor
 Skipping videos tagged %1$s	%1$s etiketli videolar atlanıyor
 # context: Toast when the list a chooser pick goes on already holds as much as it can
 That list is full	Bu liste dolu
+# context: Row title of the switch that adds a search to the Liked and Favorites tabs of a profile
+Search Liked and Favorites grids	Beğenilenler ve Favoriler ızgaralarında ara
+# context: Summary under that switch; Search is the button's own label
+Adds a Search button to the top of the Liked and Favorites grids. Type a word from a caption, a creator or a sound to see only the loaded videos that have it.	Beğenilenler ve Favoriler ızgaralarının üstüne bir Arama düğmesi ekler. Yalnızca onu içeren yüklenmiş videoları görmek için bir açıklamadan, içerik üreticisinden veya sesten bir kelime yazın.
+# context: Hint in the search box over a Liked or Favorites grid
+Caption, creator or sound	Açıklama, içerik üreticisi veya ses

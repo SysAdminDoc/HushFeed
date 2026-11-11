@@ -888,6 +888,12 @@
     "row": "Jump to a date on Liked grids"
    },
    {
+    "key": "grid_search",
+    "default": false,
+    "type": "bool",
+    "row": "Search Liked and Favorites grids"
+   },
+   {
     "key": "grid_position_controls",
     "default": false,
     "type": "bool",

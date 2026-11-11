@@ -790,6 +790,15 @@
           "values": null
         },
         {
+          "key": "grid_search",
+          "title": "Default: grid search",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "grid_position_controls",
           "title": "Default: grid position controls",
           "description": null,

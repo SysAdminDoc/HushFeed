@@ -176,6 +176,7 @@ public class FeedScreenCoverageTest {
         put("sound_grid_sort", NONE, NONE, NONE);
         // Where the Liked grid's list starts, which neither window draws (#350).
         put("liked_jump_to_date", NONE, NONE, NONE);
+        put("grid_search", NONE, NONE, NONE);
         // Controls over the profile, Liked and sound grids, which neither window draws (#378).
         put("grid_position_controls", NONE, NONE, NONE);
         put("show_author_region", YES, YES, NONE);

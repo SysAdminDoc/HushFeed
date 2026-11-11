@@ -1,0 +1,405 @@
+/*
+ * Copyright 2026 Hushfeed contributors
+ * https://github.com/SysAdminDoc/hushfeed
+ */
+package app.morphe.extension.tiktok.feed;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.graphics.Typeface;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.util.TypedValue;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.WeakHashMap;
+import java.util.regex.Pattern;
+
+import app.morphe.extension.shared.Logger;
+import app.morphe.extension.shared.settings.Setting;
+import app.morphe.extension.tiktok.blockauthor.Reflect;
+import app.morphe.extension.tiktok.feedfilter.SoundIdentity;
+import app.morphe.extension.tiktok.settings.L10n;
+import app.morphe.extension.tiktok.settings.Settings;
+import app.morphe.extension.tiktok.settings.preference.SettingsUi;
+
+/**
+ * Search on Liked and Favorites grids. A chip at the top of the grid opens a box that narrows what
+ * the grid draws to the loaded videos whose caption, creator or sound holds every word typed, in
+ * any case. TikTok keeps the whole list, so its paging, the order chip and the video page go on
+ * over every loaded video, and a cleared search puts the sorted grid back. While a search is on the
+ * grid loads on by itself up to the sort's cap, so it looks through more than the first screen.
+ */
+public final class GridSearch {
+    static final String CHIP_TAG = "hushfeed_grid_search_chip";
+    private static final Pattern SPACES = Pattern.compile("\\s+");
+
+    /** The search on each grid, by its adapter, trimmed and never blank. */
+    private static final Map<Object, String> QUERIES = new WeakHashMap<>();
+
+    /** The open search box's count line and the grid it counts. Main thread only. */
+    private static TextView openCount;
+    private static Object openFor;
+
+    private GridSearch() {
+    }
+
+    static boolean enabled() {
+        return Settings.GRID_SEARCH.get() && !Setting.isPaused();
+    }
+
+    /** Whether this adapter's grid takes a search: a Liked or Favorites tab. */
+    static boolean searchable(Object adapter) {
+        int tab = GridSort.tabOf(adapter);
+        return tab == GridSort.TAB_LIKED || tab == GridSort.TAB_FAVORITES || tab == GridSort.TAB_FAVORITE_VIDEOS;
+    }
+
+    static String queryOf(Object adapter) {
+        if (adapter == null) return null;
+        synchronized (QUERIES) {
+            return QUERIES.get(adapter);
+        }
+    }
+
+    /** Whether this adapter's grid is narrowed to a search right now. */
+    static boolean searching(Object adapter) {
+        return queryOf(adapter) != null && enabled() && searchable(adapter);
+    }
+
+    /** The words of a search, lowercased. */
+    static List<String> words(String query) {
+        List<String> out = new ArrayList<>();
+        if (query == null) return out;
+        for (String word : SPACES.split(query.trim().toLowerCase(Locale.ROOT))) {
+            if (!word.isEmpty()) out.add(word);
+        }
+        return out;
+    }
+
+    /** What a search looks through on a video: its caption, its creator's name and handle, and its sound's name and author. */
+    static String haystack(Object video) {
+        StringBuilder text = new StringBuilder();
+        add(text, Reflect.string(video, "getDesc", "desc"));
+        Object author = Reflect.property(video, "getAuthor", "author");
+        if (author != null) {
+            add(text, Reflect.string(author, "getNickname", "nickname"));
+            add(text, Reflect.string(author, "getUniqueId", "uniqueId"));
+        }
+        Object music = Reflect.property(video, "getMusic", "music");
+        if (music != null) {
+            add(text, SoundIdentity.nameOf(music));
+            add(text, SoundIdentity.authorOf(music));
+        }
+        return text.toString().toLowerCase(Locale.ROOT);
+    }
+
+    private static void add(StringBuilder text, String part) {
+        if (part != null) text.append(part).append('\n');
+    }
+
+    /** The videos of {@code list} that hold every word of {@code query}, in the list's order. */
+    static List<?> matching(List<?> list, String query) {
+        List<String> words = words(query);
+        if (list == null || words.isEmpty()) return list;
+        List<Object> out = new ArrayList<>();
+        for (Object video : list) {
+            String text = haystack(video);
+            boolean all = true;
+            for (String word : words) {
+                if (!text.contains(word)) {
+                    all = false;
+                    break;
+                }
+            }
+            if (all) out.add(video);
+        }
+        return out;
+    }
+
+    /** {@code list} as this adapter's grid draws it: narrowed to its search while one is on. */
+    static List<?> narrowed(Object adapter, List<?> list) {
+        return searching(adapter) ? matching(list, queryOf(adapter)) : list;
+    }
+
+    /**
+     * {@code matches} and then the videos of {@code all} that aren't among them, in {@code all}'s
+     * order: the list a narrowed grid's video page plays, so a cell opens its own video.
+     */
+    static List<?> withRest(List<?> matches, List<?> all) {
+        Map<Object, Boolean> seen = new IdentityHashMap<>();
+        List<Object> out = new ArrayList<>(all.size());
+        for (Object video : matches) {
+            out.add(video);
+            seen.put(video, Boolean.TRUE);
+        }
+        for (Object video : all) {
+            if (!seen.containsKey(video)) out.add(video);
+        }
+        return out;
+    }
+
+    /** Puts {@code query} on this adapter's grid, or takes the search off for a blank one. */
+    static void search(Object adapter, String query) {
+        String trimmed = query == null ? "" : query.trim();
+        synchronized (QUERIES) {
+            String before = QUERIES.get(adapter);
+            if (trimmed.equals(before == null ? "" : before)) return;
+            if (trimmed.isEmpty()) QUERIES.remove(adapter);
+            else QUERIES.put(adapter, trimmed);
+        }
+        GridSort.searchChanged(adapter);
+    }
+
+    /** Takes the search off this adapter's grid, and says whether it had one. */
+    private static boolean forget(Object adapter) {
+        synchronized (QUERIES) {
+            return QUERIES.remove(adapter) != null;
+        }
+    }
+
+    private static final class Chip extends TextView implements ViewTreeObserver.OnScrollChangedListener,
+            ViewTreeObserver.OnGlobalLayoutListener {
+        Object adapter;
+        View grid;
+
+        Chip(Context context) {
+            super(context);
+        }
+
+        @Override
+        protected void onAttachedToWindow() {
+            super.onAttachedToWindow();
+            ViewTreeObserver observer = getViewTreeObserver();
+            observer.addOnScrollChangedListener(this);
+            observer.addOnGlobalLayoutListener(this);
+        }
+
+        @Override
+        protected void onDetachedFromWindow() {
+            ViewTreeObserver observer = getViewTreeObserver();
+            observer.removeOnScrollChangedListener(this);
+            observer.removeOnGlobalLayoutListener(this);
+            super.onDetachedFromWindow();
+        }
+
+        @Override
+        public void onScrollChanged() {
+            place();
+        }
+
+        @Override
+        public void onGlobalLayout() {
+            place();
+        }
+
+        void place() {
+            if (grid == null) return;
+            Object current = Reflect.invoke(grid, "getAdapter");
+            boolean off = !enabled();
+            // A switch turned off or a pause gives the grid back its whole list.
+            if (off && forget(adapter)) {
+                Object narrowed = adapter;
+                post(() -> GridSort.reshow(narrowed));
+            }
+            if (off || (current != null && current != adapter) || grid.getParent() != getParent()) {
+                setVisibility(View.GONE);
+                return;
+            }
+            setVisibility(grid.isShown() ? View.VISIBLE : View.GONE);
+            GridSort.placeChip(this, grid);
+        }
+    }
+
+    private static Chip chipOn(View grid) {
+        if (grid == null || !(grid.getParent() instanceof FrameLayout)) return null;
+        FrameLayout frame = (FrameLayout) grid.getParent();
+        for (int i = 0; i < frame.getChildCount(); i++) {
+            View child = frame.getChildAt(i);
+            if (child instanceof Chip && CHIP_TAG.equals(child.getTag())) return (Chip) child;
+        }
+        return null;
+    }
+
+    /**
+     * The chip over the top middle of a Liked or Favorites grid while the switch is on, between the
+     * date chip and the order chip. It reads Search, or the search the grid is narrowed to.
+     */
+    static void showChip(Object adapter) {
+        try {
+            View grid = GridSort.gridView(adapter);
+            if (grid == null || !(grid.getParent() instanceof FrameLayout)) return;
+            Object current = Reflect.invoke(grid, "getAdapter");
+            if (current != null && current != adapter) return;
+            FrameLayout frame = (FrameLayout) grid.getParent();
+            Chip chip = chipOn(grid);
+            if (!enabled() || !searchable(adapter)) {
+                // TikTok's list just went on whole, so a search switched off goes without a reshow.
+                if (!enabled()) forget(adapter);
+                if (chip != null) frame.removeView(chip);
+                return;
+            }
+            if (chip == null) {
+                Context context = frame.getContext();
+                chip = new Chip(context);
+                chip.setTag(CHIP_TAG);
+                SettingsUi.markAsButton(chip);
+                chip.setTextColor(SettingsUi.OVERLAY_TEXT);
+                chip.setTextSize(TypedValue.COMPLEX_UNIT_SP, SettingsUi.TEXT_CAPTION);
+                chip.setMinWidth(SettingsUi.dp(context, 48));
+                chip.setMinHeight(SettingsUi.dp(context, 48));
+                // A long search shortens rather than run under the chips on either side.
+                chip.setMaxWidth(SettingsUi.dp(context, 120));
+                chip.setSingleLine(true);
+                chip.setEllipsize(TextUtils.TruncateAt.END);
+                chip.setGravity(Gravity.CENTER);
+                int paddingX = SettingsUi.dp(context, 10);
+                int paddingY = SettingsUi.dp(context, 5);
+                chip.setPadding(paddingX, paddingY, paddingX, paddingY);
+                // Words over thumbnails take the text scrim, the same as the grid's Top/Back/End.
+                chip.setBackground(SettingsUi.overlayBanner(context));
+                chip.setElevation(SettingsUi.dp(context, 2));
+                FrameLayout.LayoutParams layout = new FrameLayout.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
+                        Gravity.TOP | Gravity.CENTER_HORIZONTAL);
+                int margin = SettingsUi.dp(context, 8);
+                layout.setMargins(margin, margin, margin, margin);
+                frame.addView(chip, layout);
+            }
+            chip.adapter = adapter;
+            chip.grid = grid;
+            label(chip, queryOf(adapter));
+            chip.setOnClickListener(view -> open(adapter, view));
+            Chip placed = chip;
+            chip.post(placed::place);
+            if (openFor == adapter && openCount != null) showCount(openCount, adapter);
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Could not show the grid search chip", ex);
+        }
+    }
+
+    private static void label(TextView chip, String query) {
+        String name = L10n.t("Search");
+        chip.setText(query == null ? name : query);
+        // A description replaces the text for a screen reader, so it says what the words are.
+        chip.setContentDescription(query == null ? name : L10n.f("%1$s: %2$s", name, query));
+    }
+
+    /** How many of the loaded videos the grid shows, or that none match. Blank with no search. */
+    static void showCount(TextView count, Object adapter) {
+        List<?> loaded = GridSort.originalOf(adapter);
+        Object shown = Reflect.readField(adapter, "mmItems");
+        if (!searching(adapter) || loaded == null || !(shown instanceof List)) {
+            count.setText("");
+            return;
+        }
+        int matches = ((List<?>) shown).size();
+        count.setText(matches == 0 ? L10n.t("No videos match")
+                : L10n.f("%1$s of %2$s", String.valueOf(matches), String.valueOf(loaded.size())));
+    }
+
+    /** The search box, narrowing the grid as it's typed in. Done keeps the search, Clear takes it off. */
+    private static void open(Object adapter, View anchor) {
+        try {
+            Activity activity = LikedJump.shownActivity(anchor);
+            if (activity == null) return;
+            int gap = SettingsUi.dp(activity, 20);
+            EditText box = new EditText(activity);
+            box.setHint(L10n.t("Caption, creator or sound"));
+            box.setSingleLine(true);
+            box.setImeOptions(EditorInfo.IME_ACTION_DONE);
+            SettingsUi.styleEditText(box);
+            String before = queryOf(adapter);
+            if (before != null) {
+                box.setText(before);
+                box.setSelection(before.length());
+            }
+            TextView count = SettingsUi.text(activity, "", SettingsUi.TEXT_BODY_SMALL,
+                    SettingsUi.textSecondary(), Typeface.NORMAL);
+            count.setPadding(0, SettingsUi.dp(activity, 8), 0, 0);
+
+            LinearLayout page = new LinearLayout(activity);
+            page.setOrientation(LinearLayout.VERTICAL);
+            page.setPadding(gap, 0, gap, 0);
+            page.addView(box, new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            page.addView(count, new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            AlertDialog dialog = new AlertDialog.Builder(activity)
+                    .setTitle(L10n.t("Search"))
+                    .setView(page)
+                    .setPositiveButton(L10n.t("Done"), null)
+                    .setNeutralButton(L10n.t("Clear"), null)
+                    .create();
+            box.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence text, int start, int replaced, int added) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence text, int start, int replaced, int added) {
+                }
+
+                @Override
+                public void afterTextChanged(Editable text) {
+                    search(adapter, text.toString());
+                    Chip chip = chipOn(GridSort.gridView(adapter));
+                    if (chip != null) label(chip, queryOf(adapter));
+                    showCount(count, adapter);
+                }
+            });
+            box.setOnEditorActionListener((view, action, event) -> {
+                if (action != EditorInfo.IME_ACTION_DONE) return false;
+                dialog.dismiss();
+                return true;
+            });
+            dialog.setOnShowListener(ignored -> {
+                SettingsUi.styleStandardAlertDialog(dialog);
+                dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(view -> {
+                    box.setText("");
+                    dialog.dismiss();
+                });
+            });
+            dialog.setOnDismissListener(ignored -> {
+                if (openCount == count) {
+                    openCount = null;
+                    openFor = null;
+                }
+            });
+            Window window = dialog.getWindow();
+            if (window != null) window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            openCount = count;
+            openFor = adapter;
+            dialog.show();
+            showCount(count, adapter);
+            box.requestFocus();
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Could not open the grid search", ex);
+        }
+    }
+
+    static void resetForTests() {
+        synchronized (QUERIES) {
+            QUERIES.clear();
+        }
+        openCount = null;
+        openFor = null;
+    }
+}

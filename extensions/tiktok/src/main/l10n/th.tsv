@@ -2689,3 +2689,9 @@ Skipping videos from %1$s	กำลังข้ามวิดีโอจาก
 Skipping videos tagged %1$s	กำลังข้ามวิดีโอที่ติดแท็ก %1$s
 # context: Toast when the list a chooser pick goes on already holds as much as it can
 That list is full	รายการนั้นเต็มแล้ว
+# context: Row title of the switch that adds a search to the Liked and Favorites tabs of a profile
+Search Liked and Favorites grids	ค้นหาในตารางที่ถูกใจและรายการโปรด
+# context: Summary under that switch; Search is the button's own label
+Adds a Search button to the top of the Liked and Favorites grids. Type a word from a caption, a creator or a sound to see only the loaded videos that have it.	เพิ่มปุ่มค้นหาที่ด้านบนของตารางที่ถูกใจและรายการโปรด พิมพ์คำจากคำบรรยาย ครีเอเตอร์ หรือเสียง เพื่อดูเฉพาะวิดีโอที่โหลดแล้วซึ่งมีคำนั้น
+# context: Hint in the search box over a Liked or Favorites grid
+Caption, creator or sound	คำบรรยาย ครีเอเตอร์ หรือเสียง

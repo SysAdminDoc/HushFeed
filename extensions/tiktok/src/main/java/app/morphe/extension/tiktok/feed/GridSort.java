@@ -212,6 +212,15 @@ public final class GridSort {
         }
     }
 
+    /** TikTok's number for the adapter's tab, or {@link Integer#MIN_VALUE} where none came in. */
+    static int tabOf(Object adapter) {
+        if (adapter == null) return Integer.MIN_VALUE;
+        synchronized (ORIGINALS) {
+            Integer type = TABS.get(adapter);
+            return type == null ? Integer.MIN_VALUE : type;
+        }
+    }
+
     private static String hookName(Object adapter) {
         return isSound(adapter) ? "sound grid sort" : "profile grid sort";
     }
@@ -271,7 +280,10 @@ public final class GridSort {
             // same list back stays in sight. This has to happen here: a post runs after the frame.
             boolean fresh = before == 0 || size < before;
             if (fresh) startHold(adapter, size);
-            MAIN.post(() -> afterTikTok(adapter, 0, size, fresh));
+            MAIN.post(() -> {
+                if (GridSearch.searching(adapter)) reshow(adapter);
+                afterTikTok(adapter, 0, size, fresh);
+            });
             if (isLiked(adapter)) LikedJump.listIn(adapter, true);
         }
         return out;
@@ -280,7 +292,9 @@ public final class GridSort {
     /**
      * The adapter's setDataAfterLoadMore: the list it should keep. The adapter announces the page
      * as new cells at the end of the grid, which is wrong for a list that was reordered, so a list
-     * that moved anything also gets a full refresh once TikTok's own call is through.
+     * that moved anything also gets a full refresh once TikTok's own call is through. A grid
+     * narrowed to a search gets the whole list here too, since TikTok counts the new cells from it,
+     * and is narrowed again in that same post.
      */
     public static List<?> page(Object adapter, List<?> list) {
         String chosen = orderFor(adapter);
@@ -292,7 +306,8 @@ public final class GridSort {
             int size = list == null ? 0 : list.size();
             boolean moved = moved(list, out);
             MAIN.post(() -> {
-                if (moved && !holdTakesRefresh(adapter)) refresh(adapter);
+                if (GridSearch.searching(adapter)) reshow(adapter);
+                else if (moved && !holdTakesRefresh(adapter)) refresh(adapter);
                 afterTikTok(adapter, before, size, false);
             });
             if (isLiked(adapter)) LikedJump.listIn(adapter, false);
@@ -306,8 +321,18 @@ public final class GridSort {
      * while pages still add videos, so a profile with no more ends the chain.
      */
     static boolean wantsNextPage(String order, int before, int size, boolean onScreen) {
-        if (order == null || OFF.equals(order) || comparator(order) == null) return false;
+        return wantsNextPage(order, false, before, size, onScreen);
+    }
+
+    /** The same, for a grid that may be narrowed to a search, which loads on whatever its order. */
+    static boolean wantsNextPage(String order, boolean searching, int before, int size, boolean onScreen) {
+        if (!searching && (order == null || OFF.equals(order) || comparator(order) == null)) return false;
         return onScreen && size < LOAD_CAP && size > before;
+    }
+
+    /** Whether this adapter's grid loads its pages by itself: an order is chosen, or a search is on. */
+    private static boolean loads(Object adapter) {
+        return comparator(orderFor(adapter)) != null || GridSearch.searching(adapter);
     }
 
     /**
@@ -341,7 +366,7 @@ public final class GridSort {
             original = ORIGINALS.get(adapter);
         }
         if (original != null) {
-            List<?> out = sorted(original, orderFor(adapter));
+            List<?> out = GridSearch.narrowed(adapter, sorted(original, orderFor(adapter)));
             Field items = Reflect.field(adapter.getClass(), "mmItems");
             if (items != null) {
                 try {
@@ -354,11 +379,53 @@ public final class GridSort {
         }
         showChip(adapter, grid);
         int size = original == null ? 0 : original.size();
-        if (wantsNextPage(order, 0, size, onScreen(grid)) && loadMoreListener(adapter) != null) {
+        if (wantsNextPage(order, GridSearch.searching(adapter), 0, size, onScreen(grid))
+                && loadMoreListener(adapter) != null) {
             startHold(adapter, size);
             askForNextPage(adapter);
         } else {
             endHold(grid);
+        }
+    }
+
+    /** TikTok's list as this adapter last had it, in TikTok's order, or null. */
+    static List<?> originalOf(Object adapter) {
+        synchronized (ORIGINALS) {
+            return ORIGINALS.get(adapter);
+        }
+    }
+
+    /**
+     * Puts the adapter's list back on its grid in the chosen order, narrowed to its search, with
+     * a full refresh in the same pass, so the grid never draws from a list it wasn't told about.
+     */
+    static void reshow(Object adapter) {
+        List<?> original = originalOf(adapter);
+        Field items = original == null ? null : Reflect.field(adapter.getClass(), "mmItems");
+        if (items == null) return;
+        try {
+            items.set(adapter, GridSearch.narrowed(adapter, sorted(original, orderFor(adapter))));
+            refresh(adapter);
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Could not narrow a grid to its search", ex);
+        }
+    }
+
+    /**
+     * A search typed or cleared on the adapter's grid. The grid narrows at once, and while a
+     * search is on it loads on by itself, the way a sorted grid does, so it covers more than the
+     * first screen. It stays in sight as it loads: matches turning up is what a search is for.
+     */
+    static void searchChanged(Object adapter) {
+        reshow(adapter);
+        int size;
+        synchronized (ORIGINALS) {
+            Integer loaded = LOADED.get(adapter);
+            size = loaded == null ? 0 : loaded;
+        }
+        if (wantsNextPage(orderFor(adapter), GridSearch.searching(adapter), 0, size, onScreen(gridView(adapter)))
+                && loadMoreListener(adapter) != null) {
+            askForNextPage(adapter);
         }
     }
 
@@ -463,7 +530,10 @@ public final class GridSort {
         }
         Object shown = Reflect.readField(adapter, "mmItems");
         if (handed == null || played == null || !(shown instanceof List) || shown == played) return;
-        List<?> grid = (List<?>) shown;
+        List<?> onGrid = (List<?>) shown;
+        // A grid narrowed to a search plays its matches first, then the rest as they were.
+        List<?> grid = onGrid.size() != played.size() && GridSearch.searching(adapter)
+                ? GridSearch.withRest(onGrid, played) : onGrid;
         if (sameOrder(played, grid)) return;
         List<Object> before = new ArrayList<>(played);
         if (!follow(played, grid)) {
@@ -583,10 +653,12 @@ public final class GridSort {
             View gridShown = grid;
             showChip(adapter, grid);
             GridPosition.show(adapter, grid);
+            GridSearch.showChip(adapter);
             boolean shown = onScreen(grid);
             // TikTok takes the listener away once it knows it has no more. It decides that after it
             // hands the list over, so this post is the first point that can tell.
-            boolean next = wantsNextPage(orderFor(adapter), before, size, shown) && loadMoreListener(adapter) != null;
+            boolean next = wantsNextPage(orderFor(adapter), GridSearch.searching(adapter), before, size, shown)
+                    && loadMoreListener(adapter) != null;
             Logger.printDebug(() -> "Grid sort: page " + before + " -> " + size
                     + (gridShown == null ? ", no grid" : shown ? "" : ", off screen") + (next ? ", asking for more" : ""));
             if (next) {
@@ -629,7 +701,7 @@ public final class GridSort {
     private static void loadMore(Object adapter) {
         try {
             String order = orderFor(adapter);
-            if (OFF.equals(order) || comparator(order) == null || !onScreen(gridView(adapter))) {
+            if (!loads(adapter) || !onScreen(gridView(adapter))) {
                 synchronized (ORIGINALS) {
                     ASKED.remove(adapter);
                 }
@@ -713,7 +785,7 @@ public final class GridSort {
     private static void startHold(Object adapter, int size) {
         try {
             if (Looper.myLooper() != Looper.getMainLooper() || size <= 0 || size >= LOAD_CAP) return;
-            if (comparator(orderFor(adapter)) == null) return;
+            if (!loads(adapter)) return;
             View grid = gridView(adapter);
             if (!onScreen(grid) || !(grid.getParent() instanceof FrameLayout)) return;
             Object currentAdapter = Reflect.invoke(grid, "getAdapter");

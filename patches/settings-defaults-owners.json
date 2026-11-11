@@ -54,6 +54,7 @@
       "LIKED_GRID_SORT",
       "SOUND_GRID_SORT",
       "LIKED_JUMP_TO_DATE",
+      "GRID_SEARCH",
       "GRID_POSITION_CONTROLS"
     ],
     "Always upload in HD": [

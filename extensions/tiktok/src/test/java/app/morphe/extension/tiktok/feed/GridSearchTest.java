@@ -664,7 +664,37 @@ public class GridSearchTest {
             Settings.GRID_SEARCH.save(true);
             GridSearch.onSettingChanged();
             idle(50);
-            assertEquals("the search didn't come back with the switch", "abcd", ids(adapter.mmItems));
+            // The same as a grid whose chip sat in its frame: off dropped the search.
+            assertFalse("the old search came back with the switch", GridSearch.searching(adapter));
+            assertEquals("abcdef", ids(adapter.mmItems));
+        }
+    }
+
+    /** A grid on screen with its chip in the frame, the way TikTok shows it, through the settings' redraw. */
+    @Test public void theSwitchOffAndOnAgainLeavesAGridWholeWithItsChipReadingSearch() {
+        Settings.GRID_SEARCH.save(true);
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            GridSortTest.GridAdapter adapter = gridOnScreen(controller.get(), GridSort.TAB_LIKED);
+            adapter.mmItems = GridSort.data(adapter, library());
+            idle(0);
+            GridSearch.search(adapter, "cat");
+            GridSearch.showChip(adapter);
+            TextView control = chip(adapter);
+            assertEquals("cat", String.valueOf(control.getText()));
+
+            Settings.GRID_SEARCH.save(false);
+            GridSearch.onSettingChanged();
+            idle(0);
+            assertEquals("abcdef", ids(adapter.mmItems));
+
+            Settings.GRID_SEARCH.save(true);
+            GridSearch.onSettingChanged();
+            control.getViewTreeObserver().dispatchOnGlobalLayout();
+            idle(0);
+            assertEquals("abcdef", ids(adapter.mmItems));
+            assertEquals(View.VISIBLE, control.getVisibility());
+            assertEquals("the chip still named a search the grid no longer had", "Search",
+                    String.valueOf(control.getText()));
         }
     }
 
@@ -701,7 +731,9 @@ public class GridSearchTest {
             Setting.saveAll(Collections.singletonMap(Settings.GRID_SEARCH, true));
             BackupRuns.finish(BackupRuns.UNDO);
             idle(50);
-            assertEquals("an undo that turned search back on didn't narrow the grid", "abcd", ids(adapter.mmItems));
+            // The reset dropped the search the way the switch does, and an undo puts settings back, not searches.
+            assertFalse("the undo brought back a search the reset dropped", GridSearch.searching(adapter));
+            assertEquals("abcdef", ids(adapter.mmItems));
         }
     }
 

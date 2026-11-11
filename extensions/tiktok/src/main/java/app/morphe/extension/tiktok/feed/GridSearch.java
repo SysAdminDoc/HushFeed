@@ -214,14 +214,27 @@ public final class GridSearch {
     /**
      * The switch or Pause changed. Each searched grid is drawn again from its whole list, narrowed
      * only while search is on. A chip waiting off its grid for the grid's next frame does this on
-     * its own only when the grid moves, so a grid left where it was stayed narrowed.
+     * its own only when the grid moves, so a grid left where it was stayed narrowed. Off drops each
+     * search here too, the same as a chip in its frame does, so turning it back on finds every grid
+     * whole wherever its chip was.
      */
     public static void onSettingChanged() {
         List<Object> searched;
+        boolean off = !enabled();
         synchronized (QUERIES) {
             searched = new ArrayList<>(QUERIES.keySet());
+            if (off) {
+                QUERIES.clear();
+                HAYSTACKS.clear();
+            }
         }
-        for (Object adapter : searched) GridSort.reshow(adapter);
+        for (Object adapter : searched) {
+            if (off) {
+                Chip chip = chipOn(GridSort.gridView(adapter));
+                if (chip != null) label(chip, null);
+            }
+            GridSort.reshow(adapter);
+        }
     }
 
     /** Takes the search off this adapter's grid, and says whether it had one. */

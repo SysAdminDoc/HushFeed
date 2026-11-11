@@ -3208,7 +3208,7 @@ final class L10nTranslationsZh_Hans {
         table.put("Press and hold the Profile tab to open your Watch history. A tap on Profile works as before. If holding Profile switches accounts for you, this takes that press, and the name at the top of your profile still switches accounts.",
                 "按住“个人主页”选项卡可打开观看历史。点击“个人主页”仍像以前一样工作。如果按住“个人主页”会为你切换账号，此选项会接管该操作，个人主页顶部的名称仍可切换账号.");
         table.put("Press and hold the Profile tab to pick one of your other accounts, where TikTok left that out. A tap on Profile works as before. While Long-press Profile for Watch history is on, it takes the press. Restart TikTok to apply this.",
-                "按住“个人主页”选项卡可选择你的其他账号，适用于 TikTok 去掉了此功能的情况。点击“个人主页”仍像以前一样工作。开启“长按‘个人主页’打开观看历史”时，由它接管该操作。重新启动 TikTok 以应用此操作.");
+                "按住“个人主页”选项卡可选择你的其他账号，适用于 TikTok 去掉了此功能的情况。点击“个人主页”仍像以前一样工作。开启长按“个人主页”打开观看历史时，由它接管该操作。重新启动 TikTok 以应用此操作.");
         table.put("Press and hold the left or right third of the screen to jump back or forward. The middle third keeps the Long press action.",
                 "按住屏幕的左侧或右侧三分之一可向后或向前跳。中间三分之一保持长按动作.");
         table.put("Preview a translation from a received text message's menu. The original message stays unchanged.",

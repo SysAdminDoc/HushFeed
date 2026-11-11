@@ -636,6 +636,36 @@ public class GridSearchTest {
         }
     }
 
+    /** The grid stays where it is, so nothing brings the chip back, and the switch has to. */
+    @Test public void theSwitchAloneRedrawsAGridWhoseChipWaitsOutsideAFrame() {
+        Settings.GRID_SEARCH.save(true);
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            Activity activity = controller.get();
+            GridSortTest.GridAdapter adapter = gridOnScreen(activity, GridSort.TAB_LIKED);
+            adapter.mmItems = GridSort.data(adapter, library());
+            idle(0);
+            GridSearch.search(adapter, "cat");
+            FrameLayout first = (FrameLayout) adapter.mmRecyclerView.getParent();
+            LinearLayout stop = new LinearLayout(activity);
+            first.removeView(adapter.mmRecyclerView);
+            stop.addView(adapter.mmRecyclerView);
+            activity.setContentView(stop);
+            idle(50);
+            assertNull(stop.findViewWithTag(GridSearch.CHIP_TAG));
+            assertEquals("abcd", ids(adapter.mmItems));
+
+            Settings.GRID_SEARCH.save(false);
+            GridSearch.onSettingChanged();
+            idle(50);
+            assertEquals("the grid stayed narrowed", "abcdef", ids(adapter.mmItems));
+
+            Settings.GRID_SEARCH.save(true);
+            GridSearch.onSettingChanged();
+            idle(50);
+            assertEquals("the search didn't come back with the switch", "abcd", ids(adapter.mmItems));
+        }
+    }
+
     @Test public void theOpenBoxCountsAPageThatComesIn() {
         Settings.GRID_SEARCH.save(true);
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {

@@ -482,6 +482,9 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
                 || setting == Settings.FEED_TEXT_BACKDROP || setting == BaseSettings.PAUSED)) {
             app.morphe.extension.tiktok.feed.FeedTextSize.onSettingChanged();
         }
+        if (!applySettingToPreference && (setting == Settings.GRID_SEARCH || setting == BaseSettings.PAUSED)) {
+            app.morphe.extension.tiktok.feed.GridSearch.onSettingChanged();
+        }
         if (!applySettingToPreference && setting == BaseSettings.PAUSED) {
             refreshStatusCard();
         }
@@ -2234,6 +2237,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
     static void onSettingsBatchChanged(java.util.Map<Setting<?>, Object> previousValues) {
         app.morphe.extension.tiktok.feed.FeedTextSize.onSettingChanged();
         app.morphe.extension.tiktok.comment.CommenterDetails.onSettingChanged();
+        app.morphe.extension.tiktok.feed.GridSearch.onSettingChanged();
         TikTokPreferenceFragment current = activeFragment;
         if (current == null || !current.isAdded()) return;
         for (java.util.Map.Entry<Setting<?>, Object> entry : previousValues.entrySet()) {

@@ -211,6 +211,19 @@ public final class GridSearch {
         GridSort.searchChanged(adapter);
     }
 
+    /**
+     * The switch or Pause changed. Each searched grid is drawn again from its whole list, narrowed
+     * only while search is on. A chip waiting off its grid for the grid's next frame does this on
+     * its own only when the grid moves, so a grid left where it was stayed narrowed.
+     */
+    public static void onSettingChanged() {
+        List<Object> searched;
+        synchronized (QUERIES) {
+            searched = new ArrayList<>(QUERIES.keySet());
+        }
+        for (Object adapter : searched) GridSort.reshow(adapter);
+    }
+
     /** Takes the search off this adapter's grid, and says whether it had one. */
     private static boolean forget(Object adapter) {
         synchronized (QUERIES) {

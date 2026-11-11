@@ -497,11 +497,13 @@ public abstract class Setting<T> {
     /**
      * Identical to calling {@link #save(Object)} using {@link #defaultValue}.
      *
-     * @return The newly saved default value.
+     * @return The newly saved default value, or the value still held when the save failed.
      */
     public T resetToDefault() {
-        save(defaultValue);
-        return defaultValue;
+        // The same lock as save(), so the value read after a failed save is the one it kept.
+        synchronized (Setting.class) {
+            return save(defaultValue) ? defaultValue : value;
+        }
     }
 
     /** Apply a validated batch in one preference transaction. Call on a worker thread. */

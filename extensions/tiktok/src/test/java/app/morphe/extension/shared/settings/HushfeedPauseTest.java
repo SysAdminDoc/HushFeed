@@ -13,6 +13,8 @@ import static org.robolectric.Shadows.shadowOf;
 import android.app.ActivityManager;
 import android.app.ApplicationExitInfo;
 import android.content.Context;
+import android.content.ContextWrapper;
+import android.content.pm.ApplicationInfo;
 import android.os.Looper;
 
 import app.morphe.extension.shared.Utils;
@@ -233,6 +235,28 @@ public class HushfeedPauseTest {
         assertEquals("0", HushfeedPause.read(streak));
         start(null);
         assertFalse(Setting.isPaused());
+    }
+
+    @Test public void turningBackOnSaysSoWhenTheSwitchCouldNotBeSaved() {
+        BaseSettings.PAUSED.save(true);
+        // Only the main process writes settings, so a save from another one doesn't land.
+        Utils.setContext(new ContextWrapper(context) {
+            @Override public ApplicationInfo getApplicationInfo() {
+                ApplicationInfo info = new ApplicationInfo(super.getApplicationInfo());
+                info.processName = context.getPackageName() + ":push";
+                return info;
+            }
+        });
+        try {
+            assertFalse("the switch is still on", HushfeedPause.turnBackOn(context));
+            assertTrue(BaseSettings.PAUSED.savedValue());
+            assertEquals("the reset kept what the failed save left",
+                    Boolean.TRUE, BaseSettings.PAUSED.resetToDefault());
+        } finally {
+            Utils.setContext(context);
+        }
+        assertTrue(HushfeedPause.turnBackOn(context));
+        assertFalse(BaseSettings.PAUSED.savedValue());
     }
 
     @Test public void theStreakFileSurvivesNonsense() {

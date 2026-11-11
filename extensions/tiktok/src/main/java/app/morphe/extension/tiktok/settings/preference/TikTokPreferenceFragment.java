@@ -2065,20 +2065,24 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         // switch as never having changed and the restart it owes would go unsaid.
         noteRestartPending(BaseSettings.PAUSED, pausedBefore);
         noteRestartPending(BaseSettings.SAFE_MODE, safeModeBefore);
-        boolean markerGone = HushfeedPause.turnBackOn(context);
+        boolean turnedOn = HushfeedPause.turnBackOn(context);
+        // A save that didn't land leaves the switch where it was, and the row says so.
+        boolean notSaved = BaseSettings.SAFE_MODE.savedValue() || BaseSettings.PAUSED.savedValue();
         Preference row = findPreference(BaseSettings.PAUSED.key);
-        if (row instanceof TogglePreference) ((TogglePreference) row).setChecked(false);
+        if (row instanceof TogglePreference) ((TogglePreference) row).setChecked(BaseSettings.PAUSED.savedValue());
         noteRestartPending(BaseSettings.PAUSED, pausedBefore);
         noteRestartPending(BaseSettings.SAFE_MODE, safeModeBefore);
-        if (markerGone && HushfeedPause.reason() == HushfeedPause.Reason.MARKER_FILE) {
+        if (turnedOn && HushfeedPause.reason() == HushfeedPause.Reason.MARKER_FILE) {
             // The file is no setting, but the start it paused owes a restart all the same.
             AbstractPreferenceFragment.restartPending.add(HushfeedPause.MARKER_FILE_NAME);
             refreshRestartPending();
         }
         refreshStatusCard();
-        if (markerGone) {
+        if (turnedOn) {
             SettingsActionBanner.showRestart(context,
                     L10n.t(context, "Hushfeed turns back on when TikTok restarts."));
+        } else if (notSaved) {
+            SettingsActionBanner.showNotice(context, L10n.t(context, "Couldn't save the change. Try again."));
         } else {
             SettingsActionBanner.showNotice(context, L10n.t(context,
                     "The file hushfeed-safe-mode couldn't be removed. Delete it from TikTok's folder under Android/data to turn Hushfeed back on."));

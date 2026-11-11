@@ -103,15 +103,16 @@ public final class HushfeedPause {
      * Turns safe mode, the Pause switch and the marker file off, and starts the crash count
      * again. The change applies from the next start.
      *
-     * @return false when the marker file is still there and could not be removed.
+     * @return false when safe mode or the Pause switch could not be saved off, or the marker
+     *         file is still there and could not be removed.
      */
     public static boolean turnBackOn(Context context) {
-        BaseSettings.SAFE_MODE.save(false);
-        BaseSettings.PAUSED.save(false);
+        boolean saved = BaseSettings.SAFE_MODE.save(false);
+        saved &= BaseSettings.PAUSED.save(false);
         File dir = filesDir != null ? filesDir : context.getFilesDir();
         write(new File(dir, CRASH_STREAK_NAME), "0");
         File marker = markerFile(context);
-        return marker == null || !marker.exists() || marker.delete();
+        return (marker == null || !marker.exists() || marker.delete()) && saved;
     }
 
     /** The marker that pauses Hushfeed from outside the app, or null when there is no storage. */

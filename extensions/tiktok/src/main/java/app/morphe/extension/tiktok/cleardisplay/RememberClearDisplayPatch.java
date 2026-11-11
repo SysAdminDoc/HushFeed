@@ -22,6 +22,7 @@ import app.morphe.extension.tiktok.wellbeing.SessionBudget;
 import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -140,11 +141,13 @@ public final class RememberClearDisplayPatch {
         starting = false;
         VideoOverlayHider.refresh();
     };
-    /** A remembered clear TikTok's panel turned down and never took: the controls come back. */
+    /**
+     * A remembered clear TikTok's panel turned down and didn't take in time: the controls come
+     * back. Progress keeps asking, so a clear that lands later still lands.
+     */
     private static final Runnable END_TURNED_DOWN_CARRY = () -> {
         if (!carrying || clearNow || Settings.AUTOMATIC_CLEAR_DISPLAY.get()) return;
         Logger.printDebug(() -> "Clear display: the remembered clear never landed, letting the controls back");
-        awaitingNative = false;
         turnedDownCarry = false;
         turnedDownEndedOn = activeId;
         setCarrying(false);
@@ -605,12 +608,19 @@ public final class RememberClearDisplayPatch {
         hushfeedCleared = false;
         // TikTok's own change: the state is TikTok's or the user's from here.
         automaticHidden = false;
-        // A turned-down clear's next ask isn't carried again after it, a back press included, even
-        // when focus never asked on this video and the next ask reads as a first try.
-        MAIN.removeCallbacks(END_TURNED_DOWN_CARRY);
-        turnedDownCarry = false;
-        turnedDownEndedOn = activeId;
-        setCarrying(false);
+        // A turned-down clear it ends isn't carried again on that video's next ask, a back press
+        // included, even when focus never asked on it and the next ask reads as a first try. A
+        // clear that had landed carries again if the panel turns down the ask after it.
+        String endedOn = activeId;
+        Runnable endCarry = () -> {
+            if (!Objects.equals(endedOn, activeId)) return;
+            MAIN.removeCallbacks(END_TURNED_DOWN_CARRY);
+            if (turnedDownCarry) turnedDownEndedOn = endedOn;
+            turnedDownCarry = false;
+            setCarrying(false);
+        };
+        if (Looper.myLooper() == Looper.getMainLooper()) endCarry.run();
+        else MAIN.post(endCarry);
         // Exits TikTok makes by itself, not the reader's choice: on an opened video the first back
         // press leaves clear mode before the page (BACK_BUTTON from DetailPageComponent, OTHER_EXIT
         // from the clear-mode panel's Back key handler on 47.1.4), a screen recording or cast

@@ -23,9 +23,10 @@ import app.morphe.extension.shared.Logger;
  * every setting is saved to, and reads the key. The names it uses are compile-time constants, so
  * naming them loads none of the classes they come from.
  *
- * <p>It answers off when there is no application yet, when the file can't be read, and whenever
- * the start would run paused (the marker file, safe mode or the Pause switch), which is the same
- * answer the setting gives once the context is up.
+ * <p>A switch never saved reads the default a patch option gave it, off when none did. It answers
+ * off when there is no application yet, when the file can't be read, and whenever the start would
+ * run paused (the marker file, safe mode or the Pause switch), which is the same answer the
+ * setting gives once the context is up.
  */
 public final class EarlySwitch {
     /** {@link BaseSettings#PAUSED}'s key. */
@@ -66,7 +67,11 @@ public final class EarlySwitch {
         try {
             SharedPreferences preferences =
                     application.getSharedPreferences(Setting.PREFERENCES_NAME, Context.MODE_PRIVATE);
-            if (!preferences.getBoolean(key, false)) return false;
+            // A switch never saved reads its patch-option default, as the setting will.
+            boolean on = preferences.contains(key)
+                    ? preferences.getBoolean(key, false)
+                    : PatchDefaults.resolve(application, key, Boolean.FALSE);
+            if (!on) return false;
             if (preferences.getBoolean(PAUSED_KEY, false) || preferences.getBoolean(SAFE_MODE_KEY, false)) {
                 return false;
             }

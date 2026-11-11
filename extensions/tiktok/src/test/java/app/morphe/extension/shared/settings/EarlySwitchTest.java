@@ -14,6 +14,7 @@ import android.content.SharedPreferences;
 
 import app.morphe.extension.tiktok.SettingsContextRule;
 
+import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -25,6 +26,7 @@ import org.robolectric.annotation.Config;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 
 /** A switch read straight from the saved file, before Hushfeed's settings context exists. */
 @RunWith(RobolectricTestRunner.class)
@@ -67,6 +69,21 @@ public class EarlySwitchTest {
         assertTrue(EarlySwitch.isOn(KEY));
         saved.edit().putBoolean(KEY, false).commit();
         assertFalse(EarlySwitch.isOn(KEY));
+    }
+
+    @Test public void aSwitchNeverSavedReadsItsPatchOptionDefault() throws Exception {
+        Field defaults = PatchDefaults.class.getDeclaredField("defaults");
+        defaults.setAccessible(true);
+        defaults.set(null, new JSONObject().put(KEY, true));
+        try {
+            assertTrue("the default a patch option gave it", EarlySwitch.isOn(KEY));
+            saved.edit().putBoolean(KEY, false).commit();
+            assertFalse("a saved choice wins over the default", EarlySwitch.isOn(KEY));
+            saved.edit().remove(KEY).putBoolean(EarlySwitch.PAUSED_KEY, true).commit();
+            assertFalse("a paused start still reads off", EarlySwitch.isOn(KEY));
+        } finally {
+            defaults.set(null, null);
+        }
     }
 
     @Test public void aStartThatRunsPausedReadsOff() throws IOException {

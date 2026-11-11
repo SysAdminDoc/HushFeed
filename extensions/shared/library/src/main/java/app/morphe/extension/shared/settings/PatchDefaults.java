@@ -6,6 +6,11 @@
  */
 package app.morphe.extension.shared.settings;
 
+import android.content.Context;
+import android.content.res.AssetManager;
+
+import androidx.annotation.Nullable;
+
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import java.io.FileNotFoundException;
@@ -21,13 +26,24 @@ final class PatchDefaults {
 
     private PatchDefaults() {}
 
-    private static synchronized JSONObject defaults() {
+    private static JSONObject defaults() {
+        return defaults(Utils.getContext());
+    }
+
+    private static synchronized JSONObject defaults(@Nullable Context context) {
         if (defaults != null) return defaults;
-        android.content.Context context = Utils.getContext();
         // Too early to read the asset: answer stock values now and try again next time.
         if (context == null) return new JSONObject();
+        AssetManager assets;
+        try {
+            assets = context.getAssets();
+        } catch (RuntimeException notAttached) {
+            // An application still inside attachBaseContext has no base to ask yet.
+            return new JSONObject();
+        }
+        if (assets == null) return new JSONObject();
         JSONObject loaded = new JSONObject();
-        try (InputStream input = context.getAssets().open(ASSET)) {
+        try (InputStream input = assets.open(ASSET)) {
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             byte[] bytes = new byte[4096];
             int count;
@@ -50,6 +66,11 @@ final class PatchDefaults {
 
     static <T> T resolve(String key, T stock) {
         return resolve(defaults(), key, stock);
+    }
+
+    /** {@link #resolve(String, Object)} read through {@code context}, before the settings context exists. */
+    static <T> T resolve(@Nullable Context context, String key, T stock) {
+        return resolve(defaults(context), key, stock);
     }
 
     @SuppressWarnings("unchecked")

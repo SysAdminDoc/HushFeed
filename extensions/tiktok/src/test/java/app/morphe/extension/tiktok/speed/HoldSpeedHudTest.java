@@ -13,6 +13,7 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Looper;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -685,6 +686,66 @@ public class HoldSpeedHudTest {
         assertDim("the notch for 2.25x once left", notch(shot, circle, 7));
         assertTrue("the padlock shows when closed",
                 Color.red(shot.getPixel(size / 2, shackle)) > 180);
+    }
+
+    @Test
+    public void atTheDefaultFontSizeTheDialKeepsItsDpSizes() {
+        assertEquals(density, new HoldSpeedHud.Bubble(owner.get(), GRID).unit, 0f);
+        assertEquals(density, new HoldSpeedHud.Circle(owner.get(), GRID).unit, 0f);
+    }
+
+    @Test
+    @Config(sdk = 28, fontScale = 1.3f)
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    public void aLargerFontGrowsThePillAndKeepsItsSpeedClearOfThePadlockAndDots() {
+        assertPillGrowsAndFits(1.3f);
+    }
+
+    @Test
+    @Config(sdk = 28, fontScale = 2f)
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    public void theLargestFontGrowsBothStylesWithTheirSpeed() {
+        assertPillGrowsAndFits(2f);
+
+        HoldSpeedHud.Circle circle = new HoldSpeedHud.Circle(owner.get(), GRID);
+        assertEquals(2f * density, circle.unit, 0.001f);
+        circle.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        int size = circle.getMeasuredWidth();
+        assertEquals(Math.round(HoldSpeedHud.Circle.DIAMETER_DP * circle.unit), size);
+        circle.layout(0, 0, size, size);
+        circle.setSpeed(2.75f, false);
+        draw(circle, size);
+        assertEquals(13 * circle.unit, circle.text.getTextSize(), 0.01f);
+        circle.setLocked(true);
+        draw(circle, size);
+        assertEquals(11 * circle.unit, circle.text.getTextSize(), 0.01f);
+    }
+
+    /**
+     * At font scale {@code scale} the pill's speed is that much larger, the pill grows with it,
+     * and every speed's ink stays inside the pill, right of the padlock and above the dots.
+     */
+    private void assertPillGrowsAndFits(float scale) {
+        HoldSpeedHud.Bubble pill = new HoldSpeedHud.Bubble(owner.get(), GRID);
+        float unit = pill.unit;
+        assertEquals(scale * density, unit, 0.001f);
+        assertEquals(18 * unit, pill.text.getTextSize(), 0.01f);
+        pill.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        assertEquals(Math.round(44 * unit), pill.getMeasuredHeight());
+        int width = pill.getMeasuredWidth();
+        Rect ink = new Rect();
+        for (float step : GRID) {
+            String label = PlaybackSpeedPatch.speedLabel(step) + "x";
+            pill.text.getTextBounds(label, 0, label.length(), ink);
+            // Where onDraw puts the padlock (8 wide), the speed (5 past it, on 24) and the dots (on 35, 3 across).
+            float lock = (width - (13 * unit + pill.text.measureText(label))) / 2f;
+            float x = lock + 13 * unit;
+            float baseline = 24 * unit;
+            assertTrue(label + " runs into the padlock", x + ink.left >= lock + 8 * unit);
+            assertTrue(label + " runs past the pill's end", x + ink.right <= width);
+            assertTrue(label + " is cut off at the top", baseline + ink.top >= 0);
+            assertTrue(label + " runs into the dots", baseline + ink.bottom <= 32 * unit);
+        }
     }
 
     @Test

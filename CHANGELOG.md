@@ -91,6 +91,7 @@ Every Hushfeed release, newest first.
 * If you left a video cleared with `Keep Clear display across videos` on, the first video after you reopen TikTok clears too, instead of keeping its buttons. Its tabs and buttons also stay hidden while TikTok gets ready to clear it, so they don't flash up first.
 * With `Hide CAPTCHA popups` on, tapping hearts in a LIVE no longer hides TikTok's check. It shows, the same as it does for a save or a gift, because a hidden check left the hearts on screen while TikTok counted none of them. When TikTok turns your taps down, Hushfeed says so once, the way it does for a video like (#380).
 * The sort button and the jump buttons on profile, Liked and sound grids sit on a darker backdrop, so their words read over a white or busy thumbnail (#378).
+* The hold speed bubble follows your phone's font size now, in both the pill and the round dial. With large text on, the speed used to stay small while everything else in Hushfeed grew. The whole bubble grows with it, so the padlock and the dots keep their room.
 
 ## 0.81.0 (2026-11-05)
 

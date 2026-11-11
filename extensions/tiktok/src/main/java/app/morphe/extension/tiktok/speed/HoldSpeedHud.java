@@ -11,6 +11,8 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
@@ -469,7 +471,8 @@ public final class HoldSpeedHud {
      * {@link Circle} draws the same state its own way.
      */
     static class Bubble extends View {
-        final float density;
+        /** A dp grown with the phone's font size, so the whole dial grows with its speed. */
+        final float unit;
         final Paint fill = new Paint(Paint.ANTI_ALIAS_FLAG);
         final Paint text = new Paint(Paint.ANTI_ALIAS_FLAG);
         final Paint dot = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -482,15 +485,25 @@ public final class HoldSpeedHud {
         boolean locked;
 
         Bubble(Context context, float[] steps) {
+            this(context, steps, 18);
+        }
+
+        /**
+         * {@code labelSp} is the speed's size. The padlock, the dots and the dial around them
+         * scale with it, since a larger label in the same 44dp would clip, and at the default
+         * font size {@link #unit} is exactly one dp.
+         */
+        Bubble(Context context, float[] steps, float labelSp) {
             super(context);
             this.steps = steps.clone();
-            density = context.getResources().getDisplayMetrics().density;
+            DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+            unit = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, labelSp, metrics) / labelSp;
             fill.setColor(0xB3000000);
             text.setColor(0xFFFFFFFF);
             text.setTextAlign(Paint.Align.LEFT);
-            text.setTextSize(18 * density);
+            text.setTextSize(18 * unit);
             text.setTypeface(Typeface.DEFAULT_BOLD);
-            lock.setStrokeWidth(1.6f * density);
+            lock.setStrokeWidth(1.6f * unit);
             lock.setStrokeCap(Paint.Cap.ROUND);
             float widest = 0;
             for (float step : this.steps) {
@@ -527,9 +540,9 @@ public final class HoldSpeedHud {
 
         @Override
         protected void onMeasure(int widthSpec, int heightSpec) {
-            float content = widestLabel + 13 * density + 28 * density;
-            float dots = (steps.length * 9 + 20) * density;
-            setMeasuredDimension(Math.round(Math.max(content, dots)), Math.round(44 * density));
+            float content = widestLabel + 13 * unit + 28 * unit;
+            float dots = (steps.length * 9 + 20) * unit;
+            setMeasuredDimension(Math.round(Math.max(content, dots)), Math.round(44 * unit));
         }
 
         @Override
@@ -540,28 +553,28 @@ public final class HoldSpeedHud {
 
             // The padlock sits just left of the speed, the two centered together.
             float textWidth = text.measureText(label);
-            float left = (getWidth() - (8 * density + 5 * density + textWidth)) / 2f;
+            float left = (getWidth() - (8 * unit + 5 * unit + textWidth)) / 2f;
             lock.setColor(locked ? 0xFFFFFFFF : 0xB3FFFFFF);
             lock.setStyle(Paint.Style.STROKE);
-            float shackle = left + 4 * density;
+            float shackle = left + 4 * unit;
             // Open, the shackle stands higher and its left leg stops short of the body.
-            float lift = locked ? 0 : 2.5f * density;
-            bounds.set(shackle - 2.5f * density, 10.5f * density - lift, shackle + 2.5f * density, 15.5f * density - lift);
+            float lift = locked ? 0 : 2.5f * unit;
+            bounds.set(shackle - 2.5f * unit, 10.5f * unit - lift, shackle + 2.5f * unit, 15.5f * unit - lift);
             canvas.drawArc(bounds, 180, 180, false, lock);
-            canvas.drawLine(shackle - 2.5f * density, 13 * density - lift, shackle - 2.5f * density,
-                    locked ? 16 * density : 13 * density - lift + density, lock);
-            canvas.drawLine(shackle + 2.5f * density, 13 * density - lift, shackle + 2.5f * density, 16 * density, lock);
+            canvas.drawLine(shackle - 2.5f * unit, 13 * unit - lift, shackle - 2.5f * unit,
+                    locked ? 16 * unit : 13 * unit - lift + unit, lock);
+            canvas.drawLine(shackle + 2.5f * unit, 13 * unit - lift, shackle + 2.5f * unit, 16 * unit, lock);
             lock.setStyle(Paint.Style.FILL);
-            bounds.set(left, 16 * density, left + 8 * density, 23 * density);
-            canvas.drawRoundRect(bounds, 1.5f * density, 1.5f * density, lock);
-            canvas.drawText(label, left + 13 * density, 24 * density, text);
+            bounds.set(left, 16 * unit, left + 8 * unit, 23 * unit);
+            canvas.drawRoundRect(bounds, 1.5f * unit, 1.5f * unit, lock);
+            canvas.drawText(label, left + 13 * unit, 24 * unit, text);
 
-            float first = (getWidth() - (steps.length - 1) * 9 * density) / 2f;
-            float y = 35 * density;
+            float first = (getWidth() - (steps.length - 1) * 9 * unit) / 2f;
+            float y = 35 * unit;
             for (int i = 0; i < steps.length; i++) {
                 boolean lit = Float.compare(steps[i], speed) == 0;
                 dot.setColor(lit ? 0xFFFFFFFF : 0x66FFFFFF);
-                canvas.drawCircle(first + i * 9 * density, y, (lit ? 3 : 2) * density, dot);
+                canvas.drawCircle(first + i * 9 * unit, y, (lit ? 3 : 2) * unit, dot);
             }
         }
 
@@ -598,7 +611,7 @@ public final class HoldSpeedHud {
         private final RectF arc = new RectF();
 
         Circle(Context context, float[] steps) {
-            super(context, steps);
+            super(context, steps, 13);
             fill.setColor(0xBE101218);
             ring.setStyle(Paint.Style.STROKE);
             ring.setStrokeCap(Paint.Cap.ROUND);
@@ -613,12 +626,12 @@ public final class HoldSpeedHud {
 
         /** The ring's radius for a view {@code size} pixels across. */
         float ringRadius(float size) {
-            return size / 2f - density - 3.5f * density;
+            return size / 2f - unit - 3.5f * unit;
         }
 
         @Override
         protected void onMeasure(int widthSpec, int heightSpec) {
-            int diameter = Math.round(DIAMETER_DP * density);
+            int diameter = Math.round(DIAMETER_DP * unit);
             setMeasuredDimension(diameter, diameter);
         }
 
@@ -627,16 +640,16 @@ public final class HoldSpeedHud {
             float size = Math.min(getWidth(), getHeight());
             float cx = getWidth() / 2f;
             float cy = getHeight() / 2f;
-            float outer = size / 2f - density;
+            float outer = size / 2f - unit;
             canvas.drawCircle(cx, cy, outer, fill);
-            ring.setStrokeWidth(density);
+            ring.setStrokeWidth(unit);
             ring.setColor(0x23FFFFFF);
             canvas.drawCircle(cx, cy, outer, ring);
 
             if (steps.length > 0) {
                 float radius = ringRadius(size);
                 arc.set(cx - radius, cy - radius, cx + radius, cy + radius);
-                ring.setStrokeWidth(2 * density);
+                ring.setStrokeWidth(2 * unit);
                 ring.setColor(0x19FFFFFF);
                 canvas.drawArc(arc, START, SWEEP, false, ring);
                 int current = indexOf(steps, speed);
@@ -648,12 +661,12 @@ public final class HoldSpeedHud {
                     float y = cy + (float) (radius * Math.sin(angle));
                     if (i == current) {
                         dot.setColor(0x96FFFFFF);
-                        canvas.drawCircle(x, y, 3.5f * density, dot);
+                        canvas.drawCircle(x, y, 3.5f * unit, dot);
                         dot.setColor(0xFFFFFFFF);
-                        canvas.drawCircle(x, y, 1.8f * density, dot);
+                        canvas.drawCircle(x, y, 1.8f * unit, dot);
                     } else {
                         dot.setColor(0x32FFFFFF);
-                        canvas.drawCircle(x, y, 1.2f * density, dot);
+                        canvas.drawCircle(x, y, 1.2f * unit, dot);
                     }
                 }
             }
@@ -662,18 +675,18 @@ public final class HoldSpeedHud {
                 // A closed padlock over the speed: the shackle's arch, its legs and the body.
                 lock.setColor(0xDCFFFFFF);
                 lock.setStyle(Paint.Style.STROKE);
-                bounds.set(cx - 2.5f * density, cy - 12.5f * density, cx + 2.5f * density, cy - 7.5f * density);
+                bounds.set(cx - 2.5f * unit, cy - 12.5f * unit, cx + 2.5f * unit, cy - 7.5f * unit);
                 canvas.drawArc(bounds, 180, 180, false, lock);
-                canvas.drawLine(cx - 2.5f * density, cy - 10 * density, cx - 2.5f * density, cy - 7 * density, lock);
-                canvas.drawLine(cx + 2.5f * density, cy - 10 * density, cx + 2.5f * density, cy - 7 * density, lock);
+                canvas.drawLine(cx - 2.5f * unit, cy - 10 * unit, cx - 2.5f * unit, cy - 7 * unit, lock);
+                canvas.drawLine(cx + 2.5f * unit, cy - 10 * unit, cx + 2.5f * unit, cy - 7 * unit, lock);
                 lock.setStyle(Paint.Style.FILL);
-                bounds.set(cx - 4 * density, cy - 7 * density, cx + 4 * density, cy - 1.5f * density);
-                canvas.drawRoundRect(bounds, 1.5f * density, 1.5f * density, lock);
-                text.setTextSize(11 * density);
-                canvas.drawText(label, cx, cy + 9.5f * density, text);
+                bounds.set(cx - 4 * unit, cy - 7 * unit, cx + 4 * unit, cy - 1.5f * unit);
+                canvas.drawRoundRect(bounds, 1.5f * unit, 1.5f * unit, lock);
+                text.setTextSize(11 * unit);
+                canvas.drawText(label, cx, cy + 9.5f * unit, text);
             } else {
-                text.setTextSize(13 * density);
-                canvas.drawText(label, cx, cy + 4.5f * density, text);
+                text.setTextSize(13 * unit);
+                canvas.drawText(label, cx, cy + 4.5f * unit, text);
             }
         }
     }

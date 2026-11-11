@@ -226,6 +226,14 @@ final class HoldPanel extends LinearLayout {
 
     @Override public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
         super.onInitializeAccessibilityNodeInfo(info);
+        // The view is clickable so it swallows every touch, not so it can be pressed. Left on the
+        // node, that and focusable made TalkBack stop on the panel itself, read the whole hold
+        // again and offer to activate it, which does nothing. Its text and buttons are their own
+        // stops.
+        info.setClickable(false);
+        info.setFocusable(false);
+        info.removeAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_CLICK);
+        info.removeAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_FOCUS);
         if (!scrolls()) return;
         info.setScrollable(true);
         if (getScrollY() > minScroll) {

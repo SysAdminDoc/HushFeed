@@ -103,6 +103,7 @@ Every Hushfeed release, newest first.
 * On TikTok 47.7.3 the Favorites tab gets its sort button, position rail and Search button. TikTok tucks that grid inside an extra container there, so none of them showed up, and they now sit just under the Posts and Collections row (#180).
 * A background job that fails, like the media cache's start-up cleanup, now shows up in the diagnostics log. Before, nothing recorded it.
 * On the light theme, the shine that runs across the Hushfeed settings title no longer washes the letters out. It's softer there now, so the title stays readable while it passes.
+* TalkBack doesn't stop on the screen that holds the feed as a whole anymore. It used to read everything on it a second time and offer to activate it, which did nothing. The title, the countdown and both buttons are still read one by one.
 
 ## 0.81.0 (2026-11-05)
 

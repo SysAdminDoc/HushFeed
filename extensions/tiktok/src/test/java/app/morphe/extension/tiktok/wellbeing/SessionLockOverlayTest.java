@@ -540,6 +540,18 @@ public class SessionLockOverlayTest {
             assertEquals("the only way out of the hold is read as plain text",
                     android.widget.Button.class.getName(), String.valueOf(info.getClassName()));
 
+            // The panel is clickable only to swallow touches. Handed that, TalkBack stopped on the
+            // panel itself, read the whole hold again and said it could be activated.
+            var panelInfo = android.view.accessibility.AccessibilityNodeInfo.obtain();
+            panel.onInitializeAccessibilityNodeInfo(panelInfo);
+            assertFalse("a reader is told the panel itself can be pressed", panelInfo.isClickable());
+            assertFalse("a reader is told the panel itself can take focus", panelInfo.isFocusable());
+            assertFalse("a reader is offered a click on the panel itself", panelInfo.getActionList().contains(
+                    android.view.accessibility.AccessibilityNodeInfo.AccessibilityAction.ACTION_CLICK));
+            assertFalse("a reader is offered focus on the panel itself", panelInfo.getActionList().contains(
+                    android.view.accessibility.AccessibilityNodeInfo.AccessibilityAction.ACTION_FOCUS));
+            assertTrue("the panel stopped swallowing touches", panel.isClickable());
+
             // And the feed is handed back exactly as it was found.
             Method detach = SessionLockOverlay.class.getDeclaredMethod("detach");
             detach.setAccessible(true);
@@ -835,6 +847,8 @@ public class SessionLockOverlayTest {
             assertTrue("no scroll forward for a reader",
                     info.getActionList().contains(
                             android.view.accessibility.AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_FORWARD));
+            assertFalse("a scrolling panel is offered to a reader as a control",
+                    info.isClickable() || info.isFocusable());
             assertTrue(messages.performAccessibilityAction(
                     android.view.accessibility.AccessibilityNodeInfo.AccessibilityAction.ACTION_SHOW_ON_SCREEN.getId(),
                     null));

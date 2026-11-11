@@ -137,19 +137,23 @@ def cut(args) -> None:
     english = NOTES / "en.txt"
     table = read(english)
     drafted = section(table, "Unreleased")
-    if drafted is None or len(bullets(drafted)) != len(items):
-        warn("en.txt's Unreleased doesn't match the CHANGELOG, so it takes the CHANGELOG's bullets")
-        if drafted is not None:
-            table = table.replace("## Unreleased\n" + drafted, "", 1)
-        table = "## Unreleased\n\n" + "\n".join(items) + "\n\n" + table.lstrip("\n")
-    edits[english] = table.replace("## Unreleased\n", heading + "\n", 1)
+    # Already cut by a run whose CHANGELOG write then failed. Cut again, it would get a second heading.
+    if not re.search(rf"^## {re.escape(args.version)} ", table, re.MULTILINE):
+        if drafted is None or len(bullets(drafted)) != len(items):
+            warn("en.txt's Unreleased doesn't match the CHANGELOG, so it takes the CHANGELOG's bullets")
+            if drafted is not None:
+                table = table.replace("## Unreleased\n" + drafted, "", 1)
+            table = "## Unreleased\n\n" + "\n".join(items) + "\n\n" + table.lstrip("\n")
+        edits[english] = table.replace("## Unreleased\n", heading + "\n", 1)
     for lang in LANGUAGES:
         path = NOTES / f"{lang}.txt"
         if path.exists() and (section(read(path), "Unreleased") or "").strip():
             edits[path] = read(path).replace("## Unreleased\n", heading + "\n", 1)
-    for path, new_text in edits.items():
+    # The CHANGELOG last: release.ps1 reads its heading as a finished cut, so a write that fails
+    # before it leaves a cut the rerun does again rather than What's new tables nobody cuts.
+    for path, new_text in sorted(edits.items(), key=lambda item: item[0] == CHANGELOG):
         write(path, new_text)
-    translated = len(edits) - 2
+    translated = len(edits) - 1 - (english in edits)
     print(f"[release] {len(items)} bullets under {heading}; What's new drafted in {translated} of {len(LANGUAGES)} tables")
 
 

@@ -144,9 +144,9 @@ function Push-Main {
     foreach ($attempt in 1, 2) {
         Invoke-Git fetch -q origin main
         git.exe -C $work merge-base --is-ancestor HEAD origin/main; if ($LASTEXITCODE -eq 0) { return }
-        $tagged = git.exe -C $work tag --list $tag
-        if ($tagged) { git.exe -C $work merge-base --is-ancestor $tag origin/main }
-        if ($tagged -and $LASTEXITCODE -ne 0) { Invoke-Git merge --no-edit origin/main } else { Invoke-Git rebase origin/main }
+        $tagged = git.exe -C $work tag --list $tag; if ($tagged) { git.exe -C $work merge-base --is-ancestor $tag origin/main }
+        [string[]]$how = if ($tagged -and $LASTEXITCODE -ne 0) { 'merge', '--no-edit' } else { , 'rebase' }; git.exe -C $work @how origin/main 2>&1 | ForEach-Object { Write-Host $_ }
+        if ($LASTEXITCODE -ne 0) { git.exe -C $work $how[0] --abort; throw "main took a change that won't $($how[0]) onto this release, so the worktree is back as it was (a rerun would have committed the conflict). In $work, run git $($how[0]) origin/main, settle it, finish the $($how[0]), and rerun." }
         git.exe -C $work push origin HEAD:main 2>&1 | ForEach-Object { Write-Host $_ }
         if ($LASTEXITCODE -eq 0) { return }
     }
@@ -309,7 +309,7 @@ function Step-publish {
     Invoke-ReleaseText github-notes --version $Version --intro (Write-Text 'intro.txt' $text.Intro) --checked (Write-Text 'checked.txt' $checked) --out $notes
     $head = (git.exe -C $work rev-parse HEAD).Trim()
     $remote = ((git.exe -C $work ls-remote origin "refs/tags/$tag") -split '\s+')[0]
-    if ($remote -and $remote -ne $head) { throw "$tag on GitHub is $remote, not $head." }
+    if ($remote -and $remote -ne $head) { throw "$tag on GitHub is $remote, not $head, from a publish that stopped before a fix went in. While the release is still a draft, delete that tag with git -C $work push origin :refs/tags/$tag and rerun." }
     if (-not $remote) { Invoke-Git tag -f $tag $head; Invoke-Git push -q origin "refs/tags/$tag" }
     $repository = $Repo.Repository
     $release = gh release view $tag --repo $repository --json isDraft 2>$null | ConvertFrom-Json

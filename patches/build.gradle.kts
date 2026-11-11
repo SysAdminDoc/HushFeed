@@ -202,9 +202,9 @@ abstract class CaptureBundleSource : DefaultTask() {
  * MorpheSig1, the bundle signature morphe-patcher 2.1 checks and Morphe Manager 2.3 pins per
  * source: Ed25519 over "MorpheSig1" and the SHA-256 of the archive with an empty comment, stored
  * in the zip comment as "MorpheSig1 <public key> <signature>" (PatchBundleSignature.sign writes
- * the same bytes). MORPHE_SIGNING_KEY is the Base64 raw private key; scripts/release/release.ps1
- * loads it from HUSHFEED_BUNDLE_SIGNING_KEY. Without it the bundle stays unsigned, which a release
- * run refuses. Ed25519 is deterministic, so the same bundle always gets the same signature.
+ * the same bytes). HUSHFEED_BUNDLE_SIGNING_KEY is the Base64 raw private key. Without it the
+ * bundle stays unsigned, which a release run refuses. Ed25519 is deterministic, so the same
+ * bundle always gets the same signature.
  */
 fun signBundle(bundle: File, privateKey: String?, publicKey: String) {
     val bytes = bundle.readBytes()
@@ -234,7 +234,7 @@ fun signBundle(bundle: File, privateKey: String?, publicKey: String) {
         update(message)
         verify(signature)
     }
-    if (!matches) throw GradleException("MORPHE_SIGNING_KEY is not the key morphe-signing.pub publishes")
+    if (!matches) throw GradleException("HUSHFEED_BUNDLE_SIGNING_KEY is not the key morphe-signing.pub publishes")
     val comment = "MorpheSig1 $publicKey ${Base64.getEncoder().encodeToString(signature)}".toByteArray(Charsets.US_ASCII)
     unsigned[end + 20] = (comment.size and 0xFF).toByte()
     unsigned[end + 21] = (comment.size shr 8).toByte()
@@ -640,8 +640,23 @@ tasks {
         val bundleFile = layout.buildDirectory.file("libs/$releaseBundleName")
         val releaseDirectory = layout.buildDirectory.dir("release")
         val pinnedEpoch = sourceDateEpoch
-        val signingKey = providers.environmentVariable("MORPHE_SIGNING_KEY")
+        // Never MORPHE_SIGNING_KEY: since 2.1.0 the patches plugin signs build/libs in place from
+        // it (or from a morphe-signing.key file), and pinBundleTimestamp throws that signature
+        // away, so the bundle would be signed twice. With neither set the plugin warns that the
+        // libs bundle is unsigned, which is true and harmless: the release bundle is signed below.
+        val signingKey = providers.environmentVariable("HUSHFEED_BUNDLE_SIGNING_KEY")
         val publicKeyFile = rootProject.layout.projectDirectory.file("morphe-signing.pub")
+        val pluginKeyFile = rootProject.layout.projectDirectory.file("morphe-signing.key")
+        // Before the plugin's own action, which would sign with another Hush repo's key left in
+        // the shell by its scripts, or fail on it.
+        doFirst {
+            if (!System.getenv("MORPHE_SIGNING_KEY").isNullOrBlank()) throw GradleException(
+                "MORPHE_SIGNING_KEY is set, probably left by another Hush repo's script. hushfeed signs " +
+                    "with HUSHFEED_BUNDLE_SIGNING_KEY: clear it with Remove-Item env:MORPHE_SIGNING_KEY")
+            if (pluginKeyFile.asFile.exists()) throw GradleException(
+                "morphe-signing.key would have the patches plugin sign build/libs. hushfeed signs with " +
+                    "HUSHFEED_BUNDLE_SIGNING_KEY: move the file out of the repo")
+        }
         // Whether the bundle is signed changes the output, but the key itself is never an input.
         inputs.property("bundleSigned", signingKey.map { it.isNotBlank() }.orElse(false))
         val sourceRoot = rootProject.layout.projectDirectory.asFile

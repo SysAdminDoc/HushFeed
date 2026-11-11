@@ -32,7 +32,7 @@ pluginManagement {
     }
 }
 
-// app.morphe:morphe-patches-gradle-plugin 2.0.0 brings kotlin-gradle-plugin 2.4.21, outside
+// app.morphe:morphe-patches-gradle-plugin 2.1.0 (like 2.0.0) brings kotlin-gradle-plugin 2.4.21, outside
 // CVE-2026-53914 (GHSA-r937-wjx7-w2jp); 1.3.4 brought 2.4.10, inside it. Without a force this
 // classpath still resolved kotlin-stdlib and kotlin-reflect 2.4.10, the Kotlin Gradle 9.8.2
 // embeds, and stdlib-jdk7/jdk8 2.2.10 for AGP 9.1.0's tools, under that 2.4.21 plugin. Every
@@ -43,8 +43,9 @@ pluginManagement {
 // settings classpath itself. Move it with the plugin's kotlin-gradle-plugin;
 // gradle/verification-metadata.xml says which version actually resolved.
 //
-// The same classpath brings Bouncy Castle 1.79, by way of the patcher's 1.77 pin and the
-// Android build tools' own 1.79 request: 1.77 is inside all seven advisories (CVE-2025-8916
+// The same classpath brings Bouncy Castle 1.79, by way of the patcher's 1.77 pin, the plugin's
+// own 1.77 (its bundle signer, which this build never hands a key: see buildAndroid in
+// patches/build.gradle.kts) and the Android build tools' 1.79 request: 1.77 is inside all seven advisories (CVE-2025-8916
 // 1.44 to 1.78, CVE-2026-5588 1.67 to 1.83 apart from 1.80.2 and 1.81.1, CVE-2025-14813,
 // CVE-2026-0636 fixed in 1.84, CVE-2026-8763, CVE-2026-13506 fixed in 1.85, CVE-2026-97873
 // fixed in 1.86) and 1.79 is inside all but CVE-2025-8916.
@@ -80,7 +81,7 @@ val allowMavenLocal = providers.gradleProperty("allowMavenLocal")
     .getOrElse(false)
 
 plugins {
-    id("app.morphe.patches") version "2.0.0"
+    id("app.morphe.patches") version "2.1.0"
 }
 
 settings {

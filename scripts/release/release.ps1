@@ -391,7 +391,7 @@ if ($DryRun) {
 }
 if ($problems.Count) { throw "Can't start: $($problems -join '; ')" }
 
-$env:MORPHE_SIGNING_KEY = Get-RepoEnv 'BUNDLE_SIGNING_KEY'
+Remove-Item -Path env:MORPHE_SIGNING_KEY -ErrorAction SilentlyContinue # buildAndroid signs with HUSHFEED_BUNDLE_SIGNING_KEY and refuses this one
 $env:GITHUB_ACTOR = gh api user --jq .login
 $env:GITHUB_TOKEN = gh auth token
 

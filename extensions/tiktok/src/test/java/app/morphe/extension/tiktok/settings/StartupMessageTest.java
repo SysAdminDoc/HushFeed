@@ -192,6 +192,32 @@ public class StartupMessageTest {
         }
     }
 
+    /**
+     * A rotation already queued when the reader taps OK or Don't show again runs before anything
+     * the dialog posts, its dismiss listener included.
+     */
+    @Test public void aMessageClosedJustBeforeARecreationStaysClosed() {
+        Settings.STARTUP_MESSAGE_DISMISSIBLE.save(false);
+        for (int button : new int[] {AlertDialog.BUTTON_POSITIVE, AlertDialog.BUTTON_NEUTRAL}) {
+            StartupMessage.resetForTests();
+            Settings.STARTUP_MESSAGE_HIDDEN.resetToDefault();
+            ShadowAlertDialog.reset();
+            ActivityController<MainScreen> first = open();
+            AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+            assertNotNull(dialog);
+            dialog.getButton(button).performClick();
+            assertFalse("the tap didn't close it", dialog.isShowing());
+            ShadowAlertDialog.reset();
+            first.get().changing = true;
+            first.pause().stop().destroy();
+            try (ActivityController<MainScreen> ignored = open()) {
+                assertNull("a message closed with button " + button + " came back",
+                        ShadowAlertDialog.getLatestAlertDialog());
+            }
+        }
+        assertFalse("Don't show again saved nothing", Settings.STARTUP_MESSAGE_HIDDEN.get().isEmpty());
+    }
+
     /** #347's reporter: having it come up every time gets tiresome. */
     @Test public void dontShowAgainHidesThatMessageUntilItChanges() {
         ActivityController<MainScreen> first = open();

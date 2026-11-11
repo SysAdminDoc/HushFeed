@@ -48,6 +48,11 @@ public final class StartupMessage {
         final String text;
         final boolean dismissible;
         final String hidden;
+        /**
+         * The dialog once it's up. A recreation takes its window away without dismissing it, so
+         * it still says it's showing then, while every way the reader closes it dismisses it at once.
+         */
+        AlertDialog dialog;
 
         Showing(Activity on, String title, String text, boolean dismissible, String hidden) {
             this.on = new WeakReference<>(on);
@@ -94,6 +99,8 @@ public final class StartupMessage {
         if (message == null) return;
         Activity was = message.on.get();
         if (was == null || was == activity || !was.isDestroyed() || !was.isChangingConfigurations()) return;
+        // Closed just before the recreation, whose relaunch ran ahead of the dismiss listener.
+        if (message.dialog != null && !message.dialog.isShowing()) return;
         post(activity, message.title, message.text, message.dismissible, message.hidden);
     }
 
@@ -155,10 +162,7 @@ public final class StartupMessage {
             SettingsUi.syncDarkMode(activity);
             AlertDialog.Builder builder = new AlertDialog.Builder(activity)
                     .setPositiveButton(L10n.t("OK"), null)
-                    // Hides this message on this install, not the feature: a new title or text,
-                    // or TikTok installed or updated again, shows it again.
-                    .setNeutralButton(L10n.t("Don't show again"), (ignored, which) ->
-                            Settings.STARTUP_MESSAGE_HIDDEN.save(hidden))
+                    .setNeutralButton(L10n.t("Don't show again"), null)
                     .setCancelable(dismissible);
             if (!title.isEmpty()) builder.setTitle(title);
             if (!text.isEmpty()) builder.setMessage(text);
@@ -172,6 +176,16 @@ public final class StartupMessage {
                 }
             });
             dialog.show();
+            // The buttons close it at the tap. The dialog's own handlers run from a posted message,
+            // and a recreation already queued behind the tap brought the closed message back.
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(ignored -> dialog.dismiss());
+            dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(ignored -> {
+                // Hides this message on this install, not the feature: a new title or text, or
+                // TikTok installed or updated again, shows it again.
+                Settings.STARTUP_MESSAGE_HIDDEN.save(hidden);
+                dialog.dismiss();
+            });
+            if (showing != null && showing.on.get() == activity) showing.dialog = dialog;
         } catch (RuntimeException failure) {
             Logger.printException(() -> "Could not show the startup message", failure);
         }

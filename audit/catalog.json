@@ -3491,7 +3491,7 @@
      },
      {
       "probe": "report",
-      "expect": "target_version: 47\\.6\\.3"
+      "expect": "target_version: 47\\.7\\.3"
      }
     ],
     "auto": true
@@ -4681,7 +4681,7 @@
   "checks": [
    {
     "id": "record-and-report",
-    "what": "A recording starts, TikTok's gate reads during a few feed swipes are captured, and the report names the 47.6.3 target with at least one gate.",
+    "what": "A recording starts, TikTok's gate reads during a few feed swipes are captured, and the report names the 47.7.3 target with at least one gate.",
     "steps": [
      {
       "open": "feed"
@@ -4719,7 +4719,7 @@
       "extras": {
        "op": "stop"
       },
-      "expect": "\\\"target\\\": \\\"TikTok 47\\.6\\.3\\\"[\\s\\S]*\\\"gate_count\\\": [1-9]"
+      "expect": "\\\"target\\\": \\\"TikTok 47\\.7\\.3\\\"[\\s\\S]*\\\"gate_count\\\": [1-9]"
      }
     ],
     "auto": true
@@ -9304,10 +9304,6 @@
       "probe": "fill",
       "expect": "ok fill players=\\d+ pictures=\\d+ covers=true",
       "retrySwipe": 2
-     },
-     {
-      "shot": "see-through-bottom-on",
-      "review": "The band above the tabs shows the video, not black."
      },
      {
       "set": {

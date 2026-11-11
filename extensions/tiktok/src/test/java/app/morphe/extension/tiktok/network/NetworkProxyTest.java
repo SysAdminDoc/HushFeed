@@ -17,6 +17,7 @@ import android.preference.PreferenceScreen;
 import android.text.InputType;
 
 import app.morphe.extension.shared.Utils;
+import app.morphe.extension.shared.diagnostics.DiagnosticRedactor;
 import app.morphe.extension.shared.settings.Setting;
 import app.morphe.extension.shared.settings.StringSetting;
 import app.morphe.extension.tiktok.settings.Settings;
@@ -669,6 +670,24 @@ public class NetworkProxyTest {
         assertTrue(said, said.contains("proxy.example.com:8080") && said.contains("password"));
         assertFalse(said, said.contains(USER));
         assertFalse(said, said.contains(PASSWORD));
+    }
+
+    /** The address is the reader's own server, and the toast and the debug line both reach the buffer. */
+    @Test public void aSharedReportLeavesOutTheProxyAddress() {
+        NetworkProxy.Config config = NetworkProxy.parse("http", "proxy.example.com", "8080", "", "");
+        NetworkProxy.report(config, NetworkProxy.Probe.UNREACHABLE);
+        shadowOf(Looper.getMainLooper()).idle();
+        String said = ShadowToast.getTextOfLatestToast();
+        assertTrue("the reader still sees which proxy: " + said, said.contains("proxy.example.com:8080"));
+
+        for (String line : new String[]{"Showing toast: " + said,
+                "Network proxy: the " + config.describe() + " didn't answer"}) {
+            String shared = DiagnosticRedactor.redact(line);
+            assertFalse(shared, shared.contains("proxy.example"));
+            assertTrue(shared, shared.contains("[name omitted]"));
+        }
+        assertTrue("the control: a bare address is kept",
+                DiagnosticRedactor.redact(config.hostPort()).contains("proxy.example"));
     }
 
     @Test public void aProxyThatAnsweredInBetweenIsToldAboutAgain() {

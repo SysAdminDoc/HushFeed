@@ -149,9 +149,12 @@ public final class NetworkProxy {
                     InetSocketAddress.createUnresolved(host, port));
         }
 
-        /** For debug lines: the kind and the address, never the user name or password. */
+        /**
+         * For debug lines: the kind and the address, never the user name or password. The address
+         * is the reader's own server, so it goes in the isolate pair a shared report leaves out.
+         */
         String describe() {
-            return (socks() ? "SOCKS5" : "HTTP") + " proxy at " + hostPort();
+            return (socks() ? "SOCKS5" : "HTTP") + " proxy at " + L10n.isolate(hostPort());
         }
     }
 
@@ -517,16 +520,17 @@ public final class NetworkProxy {
             return;
         }
         if (!reported.compareAndSet(false, true)) return;
+        // Every toast is written to the diagnostics buffer too, so the address is isolated there.
+        String address = L10n.isolate(config.hostPort());
         if (probe == Probe.NEEDS_PASSWORD) {
             Logger.printInfo(() -> "Network proxy: the " + config.describe() + " wants a sign-in and none is set");
-            Utils.showToastLong(L10n.f("Proxy %1$s needs a user name and password", config.hostPort()));
+            Utils.showToastLong(L10n.f("Proxy %1$s needs a user name and password", address));
         } else if (probe == Probe.REFUSED_PASSWORD) {
             Logger.printInfo(() -> "Network proxy: the " + config.describe() + " turned down the sign-in");
-            Utils.showToastLong(L10n.f("Proxy %1$s refused your user name or password", config.hostPort()));
+            Utils.showToastLong(L10n.f("Proxy %1$s refused your user name or password", address));
         } else {
             Logger.printInfo(() -> "Network proxy: the " + config.describe() + " didn't answer");
-            Utils.showToastLong(L10n.f("Proxy %1$s is down. Turn it off if TikTok won't load.",
-                    config.hostPort()));
+            Utils.showToastLong(L10n.f("Proxy %1$s is down. Turn it off if TikTok won't load.", address));
         }
     }
 

@@ -121,12 +121,34 @@ public class DiagnosticRedactorTest {
                         + new VideoAuthor(null, null, null, null).label()));
     }
 
-    @Test public void aHandleOnItsOwnGoesWhileAnEmailAndAnObjectHashStay() {
+    /** An email is not cut into a name and a handle, and it goes as a whole. */
+    @Test public void aHandleOnItsOwnGoesAndAnEmailGoesWholeWhileAnObjectHashStays() {
         String text = DiagnosticRedactor.redact(
                 "@dana.q wrote to dana@example.com from Foo@1a2b3c and mentioned @dana_q2");
 
-        assertEquals("[handle omitted] wrote to dana@example.com from Foo@1a2b3c"
+        assertEquals("[handle omitted] wrote to [email omitted] from Foo@1a2b3c"
                 + " and mentioned [handle omitted]", text);
+    }
+
+    @Test public void anInternationalPhoneNumberGoesWhileVersionsAndTimesStay() {
+        String text = DiagnosticRedactor.redact("code sent to +12025550123, retry in 60s;"
+                + " 10:23:11.269 TikTok 47.7.3 offset +0500");
+
+        assertEquals("code sent to [phone omitted], retry in 60s;"
+                + " 10:23:11.269 TikTok 47.7.3 offset +0500", text);
+    }
+
+    @Test public void theFieldsThatNameAnAccountLoseTheirValues() {
+        String text = DiagnosticRedactor.redact("{\"nickname\":\"Dana Q\",\"unique_id\":\"dana.q\","
+                + "\"uniqueId\":\"dana.q2\",\"email\":\"d@x.io\",\"mobile\":\"2025550123\","
+                + "\"status\":\"ready\"} copy_comments_without_username=true");
+
+        for (String leaked : new String[]{"Dana Q", "dana.q", "d@x.io", "2025550123"}) {
+            assertFalse("an account detail survived: " + text, text.contains(leaked));
+        }
+        assertTrue(text, text.contains("\"status\":\"ready\""));
+        assertTrue("a switch named after a user name keeps its value: " + text,
+                text.contains("copy_comments_without_username=true"));
     }
 
     @Test public void theCreatorReferenceLineKeepsThePseudonymAndDropsTheVideoId() {

@@ -12,7 +12,10 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/** Removes request addresses, credentials and device identifiers before diagnostics are stored. */
+/**
+ * Removes request addresses, credentials, device identifiers and the details that name a person
+ * before diagnostics are stored.
+ */
 public final class DiagnosticRedactor {
     private static final int MAX_CHARS = 64_000;
     private static final String TRUNCATED = "\n[diagnostic text truncated]";
@@ -32,6 +35,22 @@ public final class DiagnosticRedactor {
     private static final String[] CONTENT_ID_NAMES = {"aid", "awemeid", "aweme_id", "itemid",
             "item_id", "groupid", "group_id", "cid", "commentid", "comment_id", "msgid",
             "msg_id", "messageid", "message_id"};
+    /**
+     * Names carrying who an account is or how to reach it, the way TikTok's own JSON spells
+     * them. Matched whole, so a switch such as {@code copy_comments_without_username} keeps its
+     * value.
+     */
+    private static final String[] PERSONAL_NAMES = {"username", "user_name", "uniqueid",
+            "unique_id", "nickname", "nick_name", "display_name", "displayname", "email", "phone",
+            "phone_number", "phonenumber", "mobile"};
+    /**
+     * An email address, and a phone number written the international way with nothing between
+     * its digits. A sign-in or contact screen's own log line can carry either. The domain is one
+     * flat class with no repeated group, for the same reason as {@link #HOSTS}.
+     */
+    private static final String EMAIL =
+            "(?<![\\w.+-])[\\w.+-]+@[A-Za-z0-9-][A-Za-z0-9.-]*\\.[A-Za-z]{2,}(?![\\w-])";
+    private static final String PHONE = "(?<![\\w+])\\+\\d{10,15}(?!\\d)";
     /**
      * A bare id, for the places that print a list of them with no name in front. TikTok's ids run
      * to nineteen digits; nothing else these reports carry is a number that long.
@@ -70,6 +89,8 @@ public final class DiagnosticRedactor {
     private static final Pattern HOSTS = Pattern.compile(
             "(?i)(?<![a-z0-9.-])[a-z0-9.-]+\\." + HOST_SUFFIXES + "\\b(?:[:/][^\\s\"'<>]*)?");
     private static final Pattern IDS = Pattern.compile(BARE_CONTENT_ID);
+    private static final Pattern EMAILS = Pattern.compile(EMAIL);
+    private static final Pattern PHONES = Pattern.compile(PHONE);
     private static final Pattern ADDRESSES = Pattern.compile(IPV4 + "|" + IPV6);
     private static final Pattern ASSIGNMENTS = Pattern.compile(
             "(?<![A-Za-z0-9_-])([A-Za-z0-9_-]+)(\\\\*[\"'])?\\s*[=:]\\s*");
@@ -86,6 +107,10 @@ public final class DiagnosticRedactor {
             text = HANDLES.matcher(text).replaceAll("[handle omitted]");
             text = redactFields(text);
             text = URLS.matcher(text).replaceAll("[url omitted]");
+            // After the handles, which leave an address alone, and after the URLs, so a user
+            // name inside a link goes with the link.
+            text = EMAILS.matcher(text).replaceAll("[email omitted]");
+            text = PHONES.matcher(text).replaceAll("[phone omitted]");
             text = HOSTS.matcher(text).replaceAll("[host omitted]");
             text = ADDRESSES.matcher(text).replaceAll("[address omitted]");
             text = IDS.matcher(text).replaceAll("[id omitted]");
@@ -108,7 +133,7 @@ public final class DiagnosticRedactor {
                 if (name.contains(token)) { credential = true; break; }
             }
             boolean contentId = isContentId(name);
-            if (!credential && !contentId) continue;
+            if (!credential && !contentId && !isPersonal(name)) continue;
             boolean quotedName = fields.group(2) != null;
             boolean header = !quotedName && (name.equals("authorization")
                     || name.equals("proxy-authorization") || name.equals("cookie") || name.equals("set-cookie"));
@@ -158,6 +183,13 @@ public final class DiagnosticRedactor {
             String prefix = name.substring(0, name.length() - suffix.length() - 1);
             if (!prefix.isEmpty() && prefix.charAt(0) != '_' && !prefix.contains("__")
                     && prefix.indexOf('-') < 0 && prefix.charAt(prefix.length() - 1) != '_') return true;
+        }
+        return false;
+    }
+
+    private static boolean isPersonal(String name) {
+        for (String whole : PERSONAL_NAMES) {
+            if (name.equals(whole)) return true;
         }
         return false;
     }

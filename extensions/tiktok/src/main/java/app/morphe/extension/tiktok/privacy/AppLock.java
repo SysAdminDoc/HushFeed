@@ -488,8 +488,9 @@ public final class AppLock {
         cover.setTag(COVER_TAG);
         // Opaque: the scrim the daily hold uses lets a little of the feed through.
         cover.setBackgroundColor(Color.BLACK);
-        // Swallows every touch, so nothing under it can be pressed.
+        // Swallows every touch, so nothing under it can be pressed, and every wheel.
         cover.setClickable(true);
+        SessionLockOverlay.keepTheWheel(cover);
         // Not a stop of its own for Tab or a screen reader, since pressing it does nothing. Unlock
         // is the stop. Set outright, since a clickable view counts as focusable from API 26.
         cover.setFocusable(false);

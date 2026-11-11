@@ -6,6 +6,7 @@ package app.morphe.extension.tiktok.wellbeing;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,6 +29,8 @@ import android.widget.ScrollView;
  */
 final class HoldPanel extends LinearLayout {
     private final int touchSlop;
+    /** How far one notch of a mouse wheel moves the panel, as it moves a list. */
+    private final float wheelStep;
     /** The scroll range from the last layout. The two are equal when everything fits. */
     private int minScroll;
     private int maxScroll;
@@ -39,6 +42,11 @@ final class HoldPanel extends LinearLayout {
     HoldPanel(Context context) {
         super(context);
         touchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
+        // Below Android 8 the factor isn't public. Lists there move a preferred list item's height
+        // per notch, the 64dp the public factor defaults to.
+        wheelStep = Build.VERSION.SDK_INT >= 26
+                ? ViewConfiguration.get(context).getScaledVerticalScrollFactor()
+                : 64 * context.getResources().getDisplayMetrics().density;
         // Content fades out at an edge it continues past, the one hint there's more to drag to.
         setVerticalFadingEdgeEnabled(true);
         setFadingEdgeLength(Math.round(24 * context.getResources().getDisplayMetrics().density));
@@ -188,6 +196,14 @@ final class HoldPanel extends LinearLayout {
         }
         // Still the scrim that swallows every touch, so nothing reaches the feed underneath.
         super.onTouchEvent(event);
+        return true;
+    }
+
+    @Override public boolean onGenericMotionEvent(MotionEvent event) {
+        if (!SessionLockOverlay.isWheel(event)) return super.onGenericMotionEvent(event);
+        // A wheel scrolls a panel with more to show, the way it scrolls a ScrollView, and stops
+        // here either way: a wheel nothing takes goes on to the feed under the panel.
+        if (scrolls()) scrollWithin(-Math.round(event.getAxisValue(MotionEvent.AXIS_VSCROLL) * wheelStep));
         return true;
     }
 

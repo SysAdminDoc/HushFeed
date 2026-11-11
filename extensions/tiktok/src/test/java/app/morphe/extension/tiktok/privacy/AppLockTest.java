@@ -97,6 +97,25 @@ public class AppLockTest {
         }
     }
 
+    /** A mouse wheel over the cover leaves the screen under it where it is until the unlock. */
+    @Test public void aWheelOverTheCoverNeverReachesTheScreenUnderIt() {
+        try (ActivityController<Screen> screen = Robolectric.buildActivity(Screen.class).setup()) {
+            Activity activity = screen.get();
+            idleFor(AppLock.ASK_DELAY_MS + 50);
+            View decor = activity.getWindow().getDecorView();
+            ViewGroup content = activity.findViewById(android.R.id.content);
+            int[] turns = app.morphe.extension.tiktok.Wheel.count(content.getChildAt(0));
+            assertNotNull(coverOf(activity));
+            assertTrue("nothing took the wheel", app.morphe.extension.tiktok.Wheel.turn(decor));
+            assertEquals("a wheel over the cover scrolled the screen under it", 0, turns[0]);
+
+            AppLock.succeeded();
+            assertNull(coverOf(activity));
+            assertTrue(app.morphe.extension.tiktok.Wheel.turn(decor));
+            assertEquals("the fixture's wheel never reaches the screen", 1, turns[0]);
+        }
+    }
+
     @Test public void aReturnInsideTheDelayStaysOpenAndOnePastItLocksAgain() {
         try (ActivityController<Screen> screen = Robolectric.buildActivity(Screen.class).setup()) {
             Activity activity = screen.get();

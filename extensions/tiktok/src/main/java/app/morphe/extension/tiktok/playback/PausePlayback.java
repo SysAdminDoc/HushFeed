@@ -496,6 +496,7 @@ public final class PausePlayback {
         catcher.setBackgroundColor(Color.TRANSPARENT);
         catcher.setContentDescription(label);
         catcher.setClickable(true);
+        SessionLockOverlay.keepTheWheel(catcher);
         catcher.setFocusable(true);
         // Its whole job is to be pressed, so it is offered as something to press. Without the
         // role a reader lands on an unnamed View and is told the label with no way to act on it.

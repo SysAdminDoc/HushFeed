@@ -23,6 +23,7 @@ import java.util.Map;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
+import app.morphe.extension.tiktok.wellbeing.SessionLockOverlay;
 
 /**
  * Keeps the start screen up until the tab a start opens on is showing (#360).
@@ -104,6 +105,7 @@ final class StartCover {
             super(context);
             this.key = key;
             setClickable(true);
+            SessionLockOverlay.keepTheWheel(this);
             setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
         }
 

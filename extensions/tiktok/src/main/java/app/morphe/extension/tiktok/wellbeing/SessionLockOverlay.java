@@ -13,6 +13,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.InputDevice;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -777,6 +779,25 @@ public final class SessionLockOverlay {
     private static ViewGroup parentOf(View view) {
         if (view == null) return null;
         return view.getParent() instanceof ViewGroup ? (ViewGroup) view.getParent() : null;
+    }
+
+    /**
+     * Whether the event is a mouse wheel or a touchpad scroll. Android hands those to the views
+     * under the pointer, front to back, until one takes it, rather than to the view a touch went
+     * down on, so a cover that swallows every touch still let them through to the feed.
+     */
+    static boolean isWheel(MotionEvent event) {
+        return event.isFromSource(InputDevice.SOURCE_CLASS_POINTER)
+                && event.getActionMasked() == MotionEvent.ACTION_SCROLL;
+    }
+
+    /**
+     * Keeps a wheel turned over {@code cover} from scrolling what is under it. Shared with the
+     * catcher, the app lock's cover, the start page's cover and the profile grid's sort hold,
+     * which swallow every touch for the same reason the hold's panel does.
+     */
+    public static void keepTheWheel(View cover) {
+        cover.setOnGenericMotionListener((view, event) -> isWheel(event));
     }
 
     /**

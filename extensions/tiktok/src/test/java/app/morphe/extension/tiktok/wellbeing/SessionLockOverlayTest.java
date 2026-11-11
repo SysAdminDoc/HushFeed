@@ -1389,6 +1389,83 @@ public class SessionLockOverlayTest {
         }
     }
 
+    /**
+     * A mouse wheel or a touchpad over the hold. Android hands those to whatever is under the
+     * pointer, and the panel swallowed touches but not them, so a wheel scrolled the feed behind it.
+     */
+    @Test public void aWheelOverTheHoldNeverReachesTheFeed() throws Exception {
+        Settings.SESSION_BUDGET_VIDEOS.save(1);
+        Settings.SESSION_BUDGET_LOCK_MINUTES.save(5);
+        SessionBudget.noteVideo("a");
+        assertTrue(SessionBudget.claimNotice());
+
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setActivity(activity);
+            ViewGroup root = activity.findViewById(android.R.id.content);
+            View feed = new View(activity);
+            root.addView(feed, 0, new FrameLayout.LayoutParams(-1, -1));
+            int[] turns = app.morphe.extension.tiktok.Wheel.count(feed);
+            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            assertTrue(app.morphe.extension.tiktok.Wheel.turn(root));
+            assertEquals("the fixture's wheel never reaches the feed", 1, turns[0]);
+
+            SessionLockOverlay.sync();
+            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            ViewGroup panel = (ViewGroup) root.getChildAt(root.getChildCount() - 1);
+            assertTrue("nothing took the wheel", app.morphe.extension.tiktok.Wheel.turn(root));
+            assertEquals("a wheel over the hold scrolled the feed", 1, turns[0]);
+            assertEquals("a panel that fits moved", 0, panel.getScrollY());
+        } finally {
+            Utils.setActivity(null);
+            SessionBudget.releaseLock();
+            SessionLockOverlay.sync();
+        }
+    }
+
+    /** A panel with more to show takes the wheel itself, a list item's 64dp a notch, as a list does. */
+    @Config(qualifiers = "w360dp-h240dp")
+    @Test public void aWheelScrollsAHoldTallerThanItsRoomAndNotTheFeed() throws Exception {
+        Settings.SESSION_BUDGET_VIDEOS.save(1);
+        Settings.SESSION_BUDGET_LOCK_MINUTES.save(5);
+        SessionBudget.noteVideo("a");
+        assertTrue(SessionBudget.claimNotice());
+
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setActivity(activity);
+            ViewGroup root = activity.findViewById(android.R.id.content);
+            FrameLayout inbox = new FrameLayout(activity);
+            root.addView(inbox, 0);
+            seedInboxTab(inbox);
+            View feed = new View(activity);
+            root.addView(feed, 0, new FrameLayout.LayoutParams(-1, -1));
+            int[] turns = app.morphe.extension.tiktok.Wheel.count(feed);
+            SessionLockOverlay.sync();
+            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+
+            ViewGroup panel = (ViewGroup) root.getChildAt(root.getChildCount() - 1);
+            assertTrue("the fixture's stack fits, so it proves nothing",
+                    naturalHeight(panel) > panel.getHeight());
+            float x = panel.getLeft() + panel.getWidth() / 2f;
+            float y = panel.getTop() + panel.getHeight() / 2f;
+            int top = panel.getScrollY();
+            int notch = app.morphe.extension.tiktok.settings.preference.SettingsUi.dp(activity, 64);
+            assertTrue("the panel has less than a notch to scroll, so the step goes unproven",
+                    naturalHeight(panel) - panel.getHeight() > notch);
+
+            assertTrue(app.morphe.extension.tiktok.Wheel.turn(root, x, y, -1f));
+            assertEquals("a notch is not a list item's height", notch, panel.getScrollY() - top);
+            assertTrue(app.morphe.extension.tiktok.Wheel.turn(root, x, y, 1f));
+            assertEquals("a notch back did not return to the title", top, panel.getScrollY());
+            assertEquals("a wheel over the hold scrolled the feed", 0, turns[0]);
+        } finally {
+            Utils.setActivity(null);
+            SessionBudget.releaseLock();
+            SessionLockOverlay.sync();
+        }
+    }
+
     /** The height the panel's visible children ask for, measured one by one with no limit. */
     private static int naturalHeight(ViewGroup panel) {
         int width = panel.getWidth() - panel.getPaddingLeft() - panel.getPaddingRight();

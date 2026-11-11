@@ -49,6 +49,7 @@ import app.morphe.extension.tiktok.blockauthor.Reflect;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.preference.SettingsUi;
+import app.morphe.extension.tiktok.wellbeing.SessionLockOverlay;
 
 /**
  * Sorts the videos a profile or Liked grid has loaded (#180). The patch hands this the list
@@ -794,6 +795,14 @@ public final class GridSort {
             letGoOfGrid(grid, this);
             return false;
         }
+
+        /** A mouse or touchpad over a cover whose grid has left lets go of it, as a touch does. */
+        @Override
+        public boolean dispatchGenericMotionEvent(MotionEvent event) {
+            if (onScreen(grid)) return super.dispatchGenericMotionEvent(event);
+            letGoOfGrid(grid, this);
+            return false;
+        }
     }
 
     /** Called from the middle of the parent's own removal or touch pass, so the removal waits for the post. */
@@ -824,6 +833,7 @@ public final class GridSort {
             FrameLayout cover = new HoldCover(context, grid);
             cover.setTag(HOLD_TAG);
             cover.setClickable(true);
+            SessionLockOverlay.keepTheWheel(cover);
 
             LinearLayout box = new LinearLayout(context);
             box.setGravity(Gravity.CENTER_VERTICAL);

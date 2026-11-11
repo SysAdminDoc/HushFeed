@@ -401,6 +401,29 @@ public class GridSortTest {
         }
     }
 
+    /** A mouse wheel over the hold leaves the grid behind it where it is until the hold ends. */
+    @Test public void aWheelOverTheHoldLeavesTheGridAlone() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            GridAdapter adapter = gridOnScreen(controller.get());
+            View frame = (View) adapter.mmRecyclerView.getParent();
+            int[] turns = app.morphe.extension.tiktok.Wheel.count(adapter.mmRecyclerView);
+            Settings.PROFILE_GRID_SORT.save("newest");
+            List<Aweme> model = posts(30);
+            adapter.mmItems = GridSort.data(adapter, model);
+            idle(0);
+            assertHeld(adapter);
+            assertTrue("nothing took the wheel", app.morphe.extension.tiktok.Wheel.turn(frame));
+            assertEquals("a wheel over the hold scrolled the grid", 0, turns[0]);
+
+            idle(GridSort.NEXT_PAGE_DELAY_MS + 100);
+            adapter.mmItems = GridSort.page(adapter, model);
+            idle(0);
+            assertInSight(adapter);
+            assertTrue(app.morphe.extension.tiktok.Wheel.turn(frame));
+            assertEquals("the fixture's wheel never reaches the grid", 1, turns[0]);
+        }
+    }
+
     @Test public void aHoldEndsAtTheCap() {
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
             GridAdapter capped = gridOnScreen(controller.get());
@@ -507,6 +530,26 @@ public class GridSortTest {
             FrameLayout hiddenFrame = (FrameLayout) hidden.mmRecyclerView.getParent();
             hidden.mmRecyclerView.setVisibility(View.GONE);
             assertFalse("a hidden grid's cover lets the first tap through", coverTakes(hiddenFrame));
+            idle(0);
+            assertEquals(1f, hidden.mmRecyclerView.getAlpha(), 0f);
+            assertNull(holdOn(hidden));
+        }
+    }
+
+    /** A wheel can be the first thing to reach the cover after its grid went, the way a tap can. */
+    @Test public void aHoldLetsGoOfAGridThatLeftOnAWheel() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            GridAdapter hidden = gridOnScreen(controller.get());
+            Settings.PROFILE_GRID_SORT.save("newest");
+            hidden.mmItems = GridSort.data(hidden, posts(30));
+            idle(0);
+            assertHeld(hidden);
+            FrameLayout frame = (FrameLayout) hidden.mmRecyclerView.getParent();
+            assertTrue("a cover in place takes the wheel", app.morphe.extension.tiktok.Wheel.turn(frame));
+
+            hidden.mmRecyclerView.setVisibility(View.GONE);
+            assertFalse("a hidden grid's cover lets the first wheel through",
+                    app.morphe.extension.tiktok.Wheel.turn(frame));
             idle(0);
             assertEquals(1f, hidden.mmRecyclerView.getAlpha(), 0f);
             assertNull(holdOn(hidden));

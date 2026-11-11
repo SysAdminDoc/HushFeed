@@ -286,6 +286,31 @@ public class PausePlaybackTest {
         }
     }
 
+    /** A mouse wheel over the catcher leaves the paused feed where it is until the tap. */
+    @Test public void aWheelOverTheCatcherNeverReachesTheFeed() {
+        Settings.NO_RESUME_ON_FOREGROUND.save(true);
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setActivity(activity);
+            ViewGroup root = activity.findViewById(android.R.id.content);
+            View feed = new View(activity);
+            root.addView(feed, new FrameLayout.LayoutParams(-1, -1));
+            int[] turns = app.morphe.extension.tiktok.Wheel.count(feed);
+
+            PausePlayback.setWasAwayForTests(true);
+            PausePlayback.onForeground(activity);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            View catcher = PausePlayback.catcherForTests();
+            assertNotNull(catcher);
+            assertTrue("nothing took the wheel", app.morphe.extension.tiktok.Wheel.turn(root));
+            assertEquals("a wheel over the catcher scrolled the feed", 0, turns[0]);
+
+            catcher.performClick();
+            assertTrue(app.morphe.extension.tiktok.Wheel.turn(root));
+            assertEquals("the fixture's wheel never reaches the feed", 1, turns[0]);
+        }
+    }
+
     /**
      * The stop says what it is and what ends it, and it is the only thing on the page.
      *

@@ -271,12 +271,6 @@ public final class HookStatus {
     }
 
     /**
-     * One line per family it has heard from: how many lookups bound, how many did not, and the
-     * first thing that went missing. A family nothing has touched yet says nothing, because a
-     * hook that has not run cannot be called broken. A family that stopped counting says so,
-     * rather than letting a catastrophically broken build read like a mildly broken one.
-     */
-    /**
      * One family's line, written as a whole sentence.
      *
      * <p>It used to be five pieces glued together here, and no translation table can hold a
@@ -302,6 +296,12 @@ public final class HookStatus {
         lineWriter = writer;
     }
 
+    /**
+     * One line per family it has heard from: how many lookups bound, how many did not, and the
+     * first thing that went missing. A family nothing has touched yet says nothing, because a
+     * hook that has not run cannot be called broken. A family that stopped counting says so,
+     * rather than letting a catastrophically broken build read like a mildly broken one.
+     */
     public static List<String> report() {
         return report(null);
     }

@@ -1561,7 +1561,10 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting COMMENT_SEARCH_FOLDED = new BooleanSetting("comment_search_folded", FALSE);
     public static final BooleanSetting COMMENT_LINKS = new BooleanSetting("comment_links", FALSE);
     public static final BooleanSetting HIDE_COMMENT_MEDIA = new BooleanSetting("hide_comment_media", FALSE);
-    /** Drops comments that are a voice recording, the ones TikTok gives media type 5. */
+    /**
+     * Drops comments carrying a voice recording with something to play (a vid or a local file),
+     * whatever media type TikTok gives them, so a picture comment with a recording goes too.
+     */
     public static final BooleanSetting HIDE_VOICE_COMMENTS = new BooleanSetting("hide_voice_comments", FALSE);
     /** Drops bot comments that point to a bio, a link or a messenger, or bait follows (#187). */
     public static final BooleanSetting HIDE_SPAM_COMMENTS = new BooleanSetting("hide_spam_comments", FALSE);

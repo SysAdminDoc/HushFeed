@@ -184,4 +184,21 @@ public class KeywordRulesTest {
         assertTrue(hides(keycap, "Top 5 " + keycap + "cats"));
         assertFalse(hides(keycap, "#cats"));
     }
+
+    @Test public void aHindiOrThaiTagGoesOnThroughItsVowelSigns() {
+        // Hindi "hind" and "hindi": the closing vowel sign is a spacing mark, not a letter.
+        String hind = "#" + text(0x939, 0x93F, 0x902, 0x926);
+        String hindi = hind + text(0x940);
+        assertTrue(hides(hindi, "my " + hindi + " video"));
+        assertTrue(hides(hind, hind + " " + hindi));
+        assertFalse(hides(hind, "my " + hindi + " video"));
+        // Thai "nam": a tone mark over the first letter.
+        String nam = "#" + text(0xE19, 0xE49, 0xE33);
+        assertTrue(hides(nam, nam));
+        assertFalse(hides("#" + text(0xE19), nam));
+    }
+
+    private static String text(int... codePoints) {
+        return new String(codePoints, 0, codePoints.length);
+    }
 }

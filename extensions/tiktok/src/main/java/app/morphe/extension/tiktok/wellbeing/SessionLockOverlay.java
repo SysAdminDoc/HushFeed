@@ -15,6 +15,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -56,19 +57,33 @@ public final class SessionLockOverlay {
     // All overlay geometry runs on the main thread. Reuse these on player and layout callbacks.
     private static final int[] ROOT_POSITION = new int[2];
     private static final int[] NAVIGATION_POSITION = new int[2];
-    /** What each view behind the panel said about itself before the hold covered it. */
-    /** What a curtained child was, and which panels are over it. */
+    /** What a curtained view said about itself before a panel covered it, and which panels are over it. */
     private static final class Curtained {
-        final int previous;
+        final int importance;
+        /** Its descendant focusability, or -1 for a view that is not a ViewGroup. */
+        final int focusability;
+        boolean focusable;
+        /** NOT_FOCUSABLE, FOCUSABLE or FOCUSABLE_AUTO from API 26, which is what it is put back to. */
+        int focusableMode;
+        boolean focusableInTouchMode;
         final java.util.Set<View> panels = java.util.Collections.newSetFromMap(
                 new java.util.WeakHashMap<>());
+        /** The panels hiding everything inside it as well, rather than only its own stop. */
+        final java.util.Set<View> whole = java.util.Collections.newSetFromMap(
+                new java.util.WeakHashMap<>());
+        boolean hidden;
 
-        Curtained(int previous) {
-            this.previous = previous;
+        Curtained(View view) {
+            importance = view.getImportantForAccessibility();
+            focusability = view instanceof ViewGroup
+                    ? ((ViewGroup) view).getDescendantFocusability() : -1;
+            focusable = view.isFocusable();
+            focusableMode = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ? view.getFocusable() : 0;
+            focusableInTouchMode = view.isFocusableInTouchMode();
         }
     }
 
-    private static final java.util.WeakHashMap<View, Curtained> previousAccessibilityImportance =
+    private static final java.util.WeakHashMap<View, Curtained> curtained =
             new java.util.WeakHashMap<>();
     private static WeakReference<TextView> titleReference = new WeakReference<>(null);
     private static WeakReference<TextView> remainingReference = new WeakReference<>(null);
@@ -229,10 +244,15 @@ public final class SessionLockOverlay {
                 releaseQuiet();
                 View existing = overlayReference.get();
                 if (existing != null) {
-                    existing.setVisibility(View.GONE);
                     // Hidden is not attached: the panel is left in place while the reader is on
                     // messages or a profile, and the feed has to be readable again meanwhile.
+                    // Handed back first, so focus leaving the hidden panel can land in it.
                     hideBehind(parentOf(existing), existing, false);
+                    existing.setVisibility(View.GONE);
+                } else {
+                    // A panel TikTok took off and the collector took away still left its curtain
+                    // on everything it covered.
+                    hideBehind(null, null, false);
                 }
                 return;
             }
@@ -243,7 +263,9 @@ public final class SessionLockOverlay {
             View overlay = attach(activity);
             if (overlay == null) {
                 // No content root to hold the panel. The feed is still running, so ask for the
-                // sound anyway rather than leaving the hold with nothing at all.
+                // sound anyway rather than leaving the hold with nothing at all. With no panel up,
+                // nothing behind one stays out of reach either.
+                hideBehind(null, null, false);
                 requestQuiet();
                 return;
             }
@@ -256,7 +278,10 @@ public final class SessionLockOverlay {
             // phone call to give the sound back once a second, for as long as the hold runs.
             boolean goingUp = before != overlay || overlay.getVisibility() != View.VISIBLE;
             overlay.setVisibility(View.VISIBLE);
-            if (goingUp) hideBehind(parentOf(overlay), overlay, true);
+            if (goingUp) {
+                ViewGroup root = parentOf(overlay);
+                hideBehind(root, overlay, true, navigationBar(activity, root));
+            }
             if (goingUp) requestQuiet();
             // Over a cleared screen the tabs the panel points to are gone: bring them back.
             if (goingUp) RememberClearDisplayPatch.leaveForHold();
@@ -406,6 +431,13 @@ public final class SessionLockOverlay {
         ViewGroup root = activity.findViewById(android.R.id.content);
         if (root == null) return null;
         if (existing != null && existing.getParent() == root) return existing;
+        if (existing != null) {
+            // A panel left on a page TikTok has since replaced. Its curtain would keep that
+            // page's feed out of reach, and going back there would find two panels.
+            ViewGroup oldRoot = parentOf(existing);
+            hideBehind(oldRoot, existing, false);
+            if (oldRoot != null) oldRoot.removeView(existing);
+        }
 
         // Scrolls once the stack is taller than the room above the tab bar, so both buttons stay
         // reachable at the largest font and display sizes (see HoldPanel).
@@ -417,7 +449,9 @@ public final class SessionLockOverlay {
         panel.setBackgroundColor(SettingsUi.OVERLAY_SCRIM_SOLID);
         // Swallows every touch, so the feed underneath stops scrolling without being emptied.
         panel.setClickable(true);
-        panel.setFocusable(true);
+        // Not a Tab stop of its own: pressing it does nothing. Explicit, because a clickable
+        // view counts as focusable from API 26 unless it says otherwise.
+        panel.setFocusable(false);
         // Touch was the only thing it swallowed. A screen reader was told nothing when the hold
         // went up, and could still swipe through to the like, comment and share controls behind
         // it, which is the one thing the hold exists to stop. The arrival is announced by the
@@ -548,7 +582,7 @@ public final class SessionLockOverlay {
             // hand. Needs a parent, which is why it is here and not beside the pane title.
             panel.announceForAccessibility(titleText);
         }
-        hideBehind(root, panel, true);
+        hideBehind(root, panel, true, navigationBar(activity, root));
         overlayReference = new WeakReference<>(panel);
         panel.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
             @Override public void onViewAttachedToWindow(View view) {
@@ -572,9 +606,18 @@ public final class SessionLockOverlay {
      * Unknown or implausible geometry keeps the feed fully covered until a later layout.
      */
     public static int navigationHeight(Activity activity, ViewGroup root) {
-        if (activity == null || root == null || root.getHeight() <= 0) return 0;
+        View bar = navigationBar(activity, root);
+        return bar == null ? 0 : marginUnder(root, bar);
+    }
+
+    /**
+     * TikTok's tab bar, when a panel over {@code root} stops above it: the row
+     * {@link #navigationHeight} measures, or null while it covers the whole root.
+     */
+    public static View navigationBar(Activity activity, ViewGroup root) {
+        if (activity == null || root == null || root.getHeight() <= 0) return null;
         View homeTab = FeedVisibility.homeTabView(activity);
-        if (homeTab == null) return 0;
+        if (homeTab == null) return null;
 
         View bar = homeTab;
         int contentWidth = root.getWidth() - root.getPaddingLeft() - root.getPaddingRight();
@@ -590,18 +633,21 @@ public final class SessionLockOverlay {
         // under the panel like the tabs do: covered, nothing on screen led anywhere but the
         // panel's own buttons.
         int height = bar.getHeight();
-        if (height <= 0 || height >= root.getHeight() / 3) return 0;
+        if (height <= 0 || height >= root.getHeight() / 3) return null;
         View ancestor = bar;
         while (ancestor != root && ancestor.getParent() instanceof View) {
             ancestor = (View) ancestor.getParent();
         }
-        if (ancestor != root) return 0;
+        if (ancestor != root) return null;
+        return marginUnder(root, bar) > 0 ? bar : null;
+    }
 
+    private static int marginUnder(ViewGroup root, View bar) {
         root.getLocationOnScreen(ROOT_POSITION);
         bar.getLocationOnScreen(NAVIGATION_POSITION);
         int margin = ROOT_POSITION[1] + root.getHeight() - root.getPaddingBottom()
                 - NAVIGATION_POSITION[1];
-        return margin >= height && margin < root.getHeight() / 3 ? margin : 0;
+        return margin >= bar.getHeight() && margin < root.getHeight() / 3 ? margin : 0;
     }
 
     /** A geometry change cannot request focus or change native playback. */
@@ -623,10 +669,15 @@ public final class SessionLockOverlay {
     private static void updateNavigationMargin(Activity activity, ViewGroup root, View overlay) {
         if (!(overlay.getLayoutParams() instanceof FrameLayout.LayoutParams)) return;
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) overlay.getLayoutParams();
-        int margin = navigationHeight(activity, root);
-        if (params.bottomMargin == margin) return;
-        params.bottomMargin = margin;
-        overlay.setLayoutParams(params);
+        View bar = navigationBar(activity, root);
+        int margin = bar == null ? 0 : marginUnder(root, bar);
+        if (params.bottomMargin != margin) {
+            params.bottomMargin = margin;
+            overlay.setLayoutParams(params);
+        }
+        // Every pass, not only when the bar comes out from under the panel or goes back under
+        // it: views TikTok adds beside the bar's parents after the panel went up are behind it too.
+        if (overlay.getVisibility() == View.VISIBLE) hideBehind(root, overlay, true, bar);
     }
 
     private static void watchGeometry(ViewGroup root) {
@@ -701,12 +752,26 @@ public final class SessionLockOverlay {
         remainingReference = new WeakReference<>(null);
         releaseReference = new WeakReference<>(null);
         hintReference = new WeakReference<>(null);
-        if (overlay == null) return;
-        ViewGroup parent = parentOf(overlay);
-        if (parent != null) {
-            hideBehind(parent, overlay, false);
-            parent.removeView(overlay);
+        if (overlay == null) {
+            // Collected after TikTok took it off and before it could lift. What only it was over
+            // is still curtained, and lifting no panel hands that back.
+            hideBehind(null, null, false);
+            return;
         }
+        ViewGroup parent = parentOf(overlay);
+        // Even when TikTok already took the panel off, what it curtained is still curtained.
+        hideBehind(parent, overlay, false);
+        if (parent != null) parent.removeView(overlay);
+    }
+
+    /**
+     * Where a view going over the feed is added to {@code root}: under the hold when one is up
+     * there. The hold has to stay on top, or the curtain of what went over it hides the hold's
+     * title and its way out from a screen reader and a keyboard.
+     */
+    public static int indexUnderTheHold(ViewGroup root) {
+        int hold = root.indexOfChild(overlayReference.get());
+        return hold >= 0 ? hold : root.getChildCount();
     }
 
     private static ViewGroup parentOf(View view) {
@@ -715,39 +780,138 @@ public final class SessionLockOverlay {
     }
 
     /**
-     * Takes everything behind the panel out of the reading order, or puts it back.
+     * Takes everything behind the panel out of the reading order and out of keyboard reach, or
+     * puts it back.
      *
      * <p>The panel covers the feed for anyone looking at it, and covers nothing at all for
-     * anyone swiping through it with a screen reader. Each view's own setting is kept so that
-     * putting it back does not hand TikTok a value this project invented. Shared with the
-     * catcher {@code PausePlayback} puts up on returning to the app, which is the same shape:
-     * one view over the content root that has to be the only thing on the page.
+     * anyone swiping through it with a screen reader, or pressing Tab on a keyboard or d-pad,
+     * which walked into the video and the like and comment buttons underneath. Each view's own
+     * settings are kept so that putting them back does not hand TikTok values this project
+     * invented. Shared with the catcher {@code PausePlayback} puts up on returning to the app and
+     * the app lock's cover, which are the same shape: one view over a root that has to be the
+     * only thing on the page, apart from the tab bar the hold and the catcher stop above.
      */
     public static void hideBehind(ViewGroup root, View panel, boolean hidden) {
+        hideBehind(root, panel, hidden, null);
+    }
+
+    /**
+     * As {@link #hideBehind(ViewGroup, View, boolean)}, leaving {@code keep} and everything in it
+     * readable and in reach. The panel stops above the tab bar so messages, profiles and search
+     * still work, and that has to hold for a screen reader and a keyboard too. The bar sits deep
+     * inside the same child of the root as the feed, so the curtain goes around it a level at a
+     * time instead of over that whole child.
+     */
+    public static void hideBehind(ViewGroup root, View panel, boolean hidden, View keep) {
+        if (!hidden) {
+            // Everything this panel curtained, wherever it sits now, so a tree TikTok rebuilt
+            // under the panel is still handed back.
+            for (View view : new java.util.ArrayList<>(curtained.keySet())) lift(view, panel);
+            return;
+        }
         if (root == null) return;
-        for (int index = 0; index < root.getChildCount(); index++) {
-            View child = root.getChildAt(index);
-            if (child == panel) continue;
-            if (hidden) {
-                Curtained state = previousAccessibilityImportance.get(child);
-                if (state == null) {
-                    state = new Curtained(child.getImportantForAccessibility());
-                    previousAccessibilityImportance.put(child, state);
-                }
-                // Per panel, not a flag: the hold panel and the tap catcher share this, and
-                // the later one lifting must not hand the feed back while the earlier one is
-                // up. A panel curtaining twice, as the hold does on a relayout, counts once.
-                state.panels.add(panel);
-                child.setImportantForAccessibility(
-                        View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
-            } else {
-                Curtained state = previousAccessibilityImportance.get(child);
-                if (state == null) continue;
-                state.panels.remove(panel);
-                if (!state.panels.isEmpty()) continue;
-                previousAccessibilityImportance.remove(child);
-                child.setImportantForAccessibility(state.previous);
+        // Only what is under the panel. The hold and the catcher share a root, and either one
+        // curtaining again as the bar moves must not take the other one, put up over it later.
+        // A panel TikTok already took off this root covers nothing in it.
+        int above = root.indexOfChild(panel);
+        if (above >= 0) curtainAround(root, above, panel, keep);
+    }
+
+    /** Curtains the first {@code count} children of {@code group}, going around {@code keep}. */
+    private static void curtainAround(ViewGroup group, int count, View panel, View keep) {
+        for (int index = 0; index < count; index++) {
+            View child = group.getChildAt(index);
+            if (child == keep) {
+                // A bar right under the root, curtained before it could be found.
+                lift(child, panel);
+                continue;
+            }
+            if (keep != null && child instanceof ViewGroup && encloses((ViewGroup) child, keep)) {
+                // Its own stop only, even when it was curtained whole before the bar was there to
+                // find, as on a cold start. On the S22 that is TikTok's full-screen pager around
+                // the feed and the tabs, an empty Tab stop that pages on an arrow key.
+                curtain(child, panel, false);
+                ViewGroup page = (ViewGroup) child;
+                curtainAround(page, page.getChildCount(), panel, keep);
+                continue;
+            }
+            curtain(child, panel, true);
+        }
+    }
+
+    /** Curtains {@code view} and, when {@code whole}, everything in it. */
+    private static void curtain(View view, View panel, boolean whole) {
+        Curtained state = curtained.get(view);
+        if (state == null) {
+            state = new Curtained(view);
+            curtained.put(view, state);
+        }
+        // Per panel, not a flag: the hold panel and the tap catcher share this, and the later
+        // one lifting must not hand the feed back while the earlier one is up. A panel
+        // curtaining twice, as the hold does on a relayout, counts once.
+        state.panels.add(panel);
+        // Per panel too. On a cold start the hold and the catcher both hide the page whole, and
+        // as each finds the bar inside it, the page must open up once neither hides it whole.
+        if (whole) state.whole.add(panel);
+        else state.whole.remove(panel);
+        hideInside(view, state);
+        // Blocking covers what is inside, not the view: the catcher under a hold is focusable
+        // itself. Read every pass, since TikTok can make a view focusable under the panel, as a
+        // click listener does to one left on FOCUSABLE_AUTO, and that is what goes back after.
+        if (view.isFocusable()) {
+            state.focusable = true;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) state.focusableMode = view.getFocusable();
+            // Going not focusable dropped this on an earlier pass, so a view that had it keeps it.
+            state.focusableInTouchMode |= view.isFocusableInTouchMode();
+            view.setFocusable(false);
+        }
+        // Cleared after the block, so wherever the window puts focus next is not back in here.
+        View focused = whole ? view.findFocus() : view.isFocused() ? view : null;
+        if (focused != null) focused.clearFocus();
+    }
+
+    /** Hides what is inside {@code view} while any panel over it hides it whole, and hands it back after. */
+    private static void hideInside(View view, Curtained state) {
+        if (!state.whole.isEmpty()) {
+            state.hidden = true;
+            view.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
+            if (state.focusability != -1) {
+                ((ViewGroup) view).setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+            }
+        } else if (state.hidden) {
+            state.hidden = false;
+            view.setImportantForAccessibility(state.importance);
+            if (state.focusability != -1) {
+                ((ViewGroup) view).setDescendantFocusability(state.focusability);
             }
         }
+    }
+
+    private static void lift(View view, View panel) {
+        Curtained state = curtained.get(view);
+        if (state == null) return;
+        state.panels.remove(panel);
+        state.whole.remove(panel);
+        // The sets are weak, so a panel collected before it lifted leaves them too: what no panel
+        // is over any more is handed back whichever panel lifts next.
+        hideInside(view, state);
+        if (!state.panels.isEmpty()) return;
+        curtained.remove(view);
+        if (state.focusable) {
+            // Going not focusable dropped this too. First, because it sets FOCUSABLE over AUTO.
+            if (state.focusableInTouchMode) view.setFocusableInTouchMode(true);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                view.setFocusable(state.focusableMode);
+            } else {
+                view.setFocusable(true);
+            }
+        }
+    }
+
+    private static boolean encloses(ViewGroup group, View view) {
+        for (ViewParent parent = view.getParent(); parent != null; parent = parent.getParent()) {
+            if (parent == group) return true;
+        }
+        return false;
     }
 }

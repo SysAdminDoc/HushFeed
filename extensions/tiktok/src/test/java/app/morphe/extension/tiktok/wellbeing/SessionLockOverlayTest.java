@@ -69,6 +69,7 @@ public class SessionLockOverlayTest {
         // Robolectric reuses its sandbox classloader across test classes, so a seeded tab view
         // would answer for every later test that asks whether there is an Inbox.
         seedInboxTab(null);
+        seedHomeTab(null);
         // The override is a static Boolean on the shared library and Robolectric reuses its
         // sandbox classloader across test classes, so leaving it set answers for every later
         // test that expects the system configuration.
@@ -558,6 +559,371 @@ public class SessionLockOverlayTest {
             detach.invoke(null);
             assertEquals("the feed was left out of the reading order after the hold ended",
                     before, behind.getImportantForAccessibility());
+        }
+    }
+
+    @Test public void aKeyboardReachesTheHoldAndTheTabsButNothingBehindThem() throws Exception {
+        // Tab on a keyboard or d-pad walked from the hold into the video and the like and
+        // comment buttons underneath it, and the panel itself was a stop that did nothing. The
+        // tab bar shares a parent with the video, and has to stay in reach all the same.
+        Settings.SESSION_BUDGET_VIDEOS.save(1);
+        Settings.SESSION_BUDGET_LOCK_MINUTES.save(5);
+        SessionBudget.noteVideo("a");
+        assertTrue(SessionBudget.claimNotice());
+
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setActivity(activity);
+            ViewGroup root = activity.findViewById(android.R.id.content);
+            FrameLayout page = new FrameLayout(activity);
+            // TikTok's pager around the feed and the tabs is a stop of its own.
+            page.setFocusable(true);
+            FrameLayout video = new FrameLayout(activity);
+            video.setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
+            android.widget.Button like = new android.widget.Button(activity);
+            like.setFocusableInTouchMode(true);
+            video.addView(like);
+            FrameLayout.LayoutParams videoParams = new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            videoParams.bottomMargin = 100;
+            page.addView(video, videoParams);
+            FrameLayout bar = new FrameLayout(activity);
+            android.widget.Button homeTab = new android.widget.Button(activity);
+            homeTab.setFocusableInTouchMode(true);
+            // Selected is what tells the hold it is on the feed.
+            homeTab.setSelected(true);
+            bar.addView(homeTab, new FrameLayout.LayoutParams(96, ViewGroup.LayoutParams.MATCH_PARENT));
+            page.addView(bar, new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, 100, Gravity.BOTTOM));
+            root.addView(page);
+            // The catcher PausePlayback leaves over the feed: a stop of its own, not a parent.
+            FrameLayout catcher = new FrameLayout(activity);
+            catcher.setClickable(true);
+            catcher.setFocusable(true);
+            catcher.setFocusableInTouchMode(true);
+            root.addView(catcher, new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            layout(root, 480, 960);
+            seedHomeTab(homeTab);
+            int pageBefore = page.getDescendantFocusability();
+            assertTrue(like.requestFocus());
+
+            SessionLockOverlay.sync();
+            ViewGroup panel = (ViewGroup) root.getChildAt(root.getChildCount() - 1);
+            // Open messages only shows with an Inbox tab to open, and this host has none.
+            View release = panel.getChildAt(3);
+            assertEquals(View.VISIBLE, release.getVisibility());
+
+            assertFalse("the feed kept keyboard focus under the hold", like.hasFocus());
+            java.util.ArrayList<View> stops = new java.util.ArrayList<>();
+            root.addFocusables(stops, View.FOCUS_FORWARD, View.FOCUSABLES_ALL);
+            assertFalse("Tab reaches the feed behind the hold", stops.contains(like));
+            assertFalse("Tab reaches the catcher behind the hold", stops.contains(catcher));
+            assertFalse("the panel itself is a Tab stop", stops.contains(panel));
+            assertFalse("the page around the feed and the tabs is an empty Tab stop",
+                    stops.contains(page));
+            assertTrue("Tab can't reach the way out of the hold", stops.contains(release));
+            assertTrue("Tab can't reach the tabs below the hold", stops.contains(homeTab));
+            assertFalse("the feed can still take focus behind the hold", like.requestFocus());
+            assertFalse("the catcher can still take focus behind the hold", catcher.requestFocus());
+            assertTrue("a reader can't reach the tabs below the hold",
+                    homeTab.isImportantForAccessibility());
+            assertFalse("a reader still reaches the feed behind the hold",
+                    like.isImportantForAccessibility());
+            assertEquals("the page holding the tabs was blocked whole",
+                    pageBefore, page.getDescendantFocusability());
+
+            // TikTok adds to the page after the hold went up, as its pager loading a page.
+            android.widget.Button late = new android.widget.Button(activity);
+            late.setFocusableInTouchMode(true);
+            page.addView(late, 0, new FrameLayout.LayoutParams(100, 100));
+            layout(root, 480, 960);
+            SessionLockOverlay.sync();
+            stops.clear();
+            root.addFocusables(stops, View.FOCUS_FORWARD, View.FOCUSABLES_ALL);
+            assertFalse("Tab reaches what TikTok added behind the hold", stops.contains(late));
+            assertFalse("a reader reaches what TikTok added behind the hold",
+                    late.isImportantForAccessibility());
+            assertTrue("Tab lost the tabs after TikTok added to the page", stops.contains(homeTab));
+
+            // The catcher curtains again when the bar moves under it. The hold went up after
+            // it and sits over it, so the hold has to stay in reach.
+            SessionLockOverlay.hideBehind(root, catcher, true, bar);
+            stops.clear();
+            root.addFocusables(stops, View.FOCUS_FORWARD, View.FOCUSABLES_ALL);
+            assertTrue("the catcher's curtain took the hold above it", stops.contains(release));
+            SessionLockOverlay.hideBehind(root, catcher, false);
+
+            // A catcher TikTok already took off the root still has a watcher on it. It covers
+            // nothing there, so it must not curtain the hold either.
+            View offTheRoot = new View(activity);
+            SessionLockOverlay.hideBehind(root, offTheRoot, true, bar);
+            stops.clear();
+            root.addFocusables(stops, View.FOCUS_FORWARD, View.FOCUSABLES_ALL);
+            assertTrue("a panel off the root curtained the hold", stops.contains(release));
+            SessionLockOverlay.hideBehind(root, offTheRoot, false);
+
+            // Off to messages: the panel is kept but hidden, and the page is handed back.
+            homeTab.setSelected(false);
+            SessionLockOverlay.sync();
+            assertEquals(View.GONE, panel.getVisibility());
+            assertEquals("the feed's own focus setting wasn't handed back off the feed",
+                    ViewGroup.FOCUS_AFTER_DESCENDANTS, video.getDescendantFocusability());
+            assertTrue("the feed can't take focus off the feed", like.requestFocus());
+            assertTrue("the page around the tabs stayed no stop off the feed", page.isFocusable());
+
+            Method detach = SessionLockOverlay.class.getDeclaredMethod("detach");
+            detach.setAccessible(true);
+            detach.invoke(null);
+            assertEquals("the feed's own focus setting wasn't handed back",
+                    ViewGroup.FOCUS_AFTER_DESCENDANTS, video.getDescendantFocusability());
+            assertTrue("the page around the tabs stayed no stop after the hold", page.isFocusable());
+            assertTrue("the catcher isn't focusable after the hold", catcher.isFocusable());
+            assertTrue("the catcher lost focus in touch mode", catcher.isFocusableInTouchMode());
+            assertTrue("the feed can't take focus after the hold", like.requestFocus());
+        }
+    }
+
+    @Test public void twoPanelsThatHidTheWholePageBothLetTheTabsBackIn() {
+        // A cold start puts the hold and the catcher up before the tab bar has a size, so both
+        // hide the page whole. Each one finding the bar later has to open the page up, even
+        // while the other one still hides it.
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            ViewGroup root = activity.findViewById(android.R.id.content);
+            FrameLayout page = new FrameLayout(activity);
+            page.setFocusable(true);
+            android.widget.Button like = new android.widget.Button(activity);
+            like.setFocusableInTouchMode(true);
+            page.addView(like, new FrameLayout.LayoutParams(100, 100));
+            FrameLayout bar = new FrameLayout(activity);
+            android.widget.Button homeTab = new android.widget.Button(activity);
+            homeTab.setFocusableInTouchMode(true);
+            bar.addView(homeTab, new FrameLayout.LayoutParams(96, ViewGroup.LayoutParams.MATCH_PARENT));
+            page.addView(bar, new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, 100, Gravity.BOTTOM));
+            root.addView(page);
+            View hold = new View(activity);
+            View catcher = new View(activity);
+            root.addView(hold);
+            root.addView(catcher);
+            layout(root, 480, 960);
+            int pageImportance = page.getImportantForAccessibility();
+            int pageFocusability = page.getDescendantFocusability();
+
+            SessionLockOverlay.hideBehind(root, hold, true, null);
+            SessionLockOverlay.hideBehind(root, catcher, true, null);
+            assertFalse(homeTab.isImportantForAccessibility());
+
+            SessionLockOverlay.hideBehind(root, hold, true, bar);
+            SessionLockOverlay.hideBehind(root, catcher, true, bar);
+            java.util.ArrayList<View> stops = new java.util.ArrayList<>();
+            root.addFocusables(stops, View.FOCUS_FORWARD, View.FOCUSABLES_ALL);
+            assertTrue("the tabs stayed out of Tab's reach once both panels found them",
+                    stops.contains(homeTab));
+            assertTrue("the tabs stayed out of a reader's reach once both panels found them",
+                    homeTab.isImportantForAccessibility());
+            assertFalse("Tab reaches the feed", stops.contains(like));
+            assertFalse("the page around the tabs is a Tab stop", stops.contains(page));
+
+            SessionLockOverlay.hideBehind(root, catcher, false);
+            stops.clear();
+            root.addFocusables(stops, View.FOCUS_FORWARD, View.FOCUSABLES_ALL);
+            assertTrue("the catcher lifting hid the tabs again", stops.contains(homeTab));
+            assertFalse("the catcher lifting handed the feed back under the hold", stops.contains(like));
+
+            SessionLockOverlay.hideBehind(root, hold, false);
+            assertEquals(pageImportance, page.getImportantForAccessibility());
+            assertEquals(pageFocusability, page.getDescendantFocusability());
+            assertTrue("the page wasn't handed its own focus back", page.isFocusable());
+            assertTrue(like.requestFocus());
+        }
+    }
+
+    @Test public void aViewTikTokMakesFocusableUnderThePanelIsNoStopEither() {
+        // A view left on FOCUSABLE_AUTO turns focusable the moment it gets a click listener. Its
+        // focus was read once, as it was curtained, so one TikTok bound after that was an empty
+        // Tab stop behind the panel for as long as the panel stayed.
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            ViewGroup root = activity.findViewById(android.R.id.content);
+            FrameLayout page = new FrameLayout(activity);
+            FrameLayout video = new FrameLayout(activity);
+            page.addView(video, new FrameLayout.LayoutParams(100, 100));
+            FrameLayout bar = new FrameLayout(activity);
+            android.widget.Button homeTab = new android.widget.Button(activity);
+            homeTab.setFocusableInTouchMode(true);
+            bar.addView(homeTab, new FrameLayout.LayoutParams(96, ViewGroup.LayoutParams.MATCH_PARENT));
+            page.addView(bar, new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, 100, Gravity.BOTTOM));
+            root.addView(page);
+            View hold = new View(activity);
+            root.addView(hold);
+            layout(root, 480, 960);
+
+            SessionLockOverlay.hideBehind(root, hold, true, bar);
+            page.setOnClickListener(view -> { });
+            video.setOnClickListener(view -> { });
+            assertTrue("a click listener didn't make the page focusable", page.isFocusable());
+            SessionLockOverlay.hideBehind(root, hold, true, bar);
+
+            java.util.ArrayList<View> stops = new java.util.ArrayList<>();
+            root.addFocusables(stops, View.FOCUS_FORWARD, View.FOCUSABLES_ALL);
+            assertFalse("the page TikTok made focusable under the panel is a Tab stop",
+                    stops.contains(page));
+            assertFalse("the video TikTok made focusable under the panel is a Tab stop",
+                    stops.contains(video));
+            assertTrue("Tab lost the tabs", stops.contains(homeTab));
+
+            SessionLockOverlay.hideBehind(root, hold, false);
+            assertTrue("the focus TikTok gave the page under the panel wasn't handed back",
+                    page.isFocusable());
+            assertTrue("the focus TikTok gave the video under the panel wasn't handed back",
+                    video.isFocusable());
+        }
+    }
+
+    @Test public void aHoldLeftOnAReplacedPageIsTakenDownWithItsCurtain() throws Exception {
+        // TikTok rebuilt its activity while the hold was up. The old page kept a panel whose
+        // curtain nothing would lift, and coming back to it found two.
+        Settings.SESSION_BUDGET_VIDEOS.save(1);
+        Settings.SESSION_BUDGET_LOCK_MINUTES.save(5);
+        SessionBudget.noteVideo("a");
+        assertTrue(SessionBudget.claimNotice());
+
+        try (var first = Robolectric.buildActivity(HostActivity.class).setup().visible();
+             var second = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            ViewGroup oldRoot = first.get().findViewById(android.R.id.content);
+            FrameLayout oldFeed = new FrameLayout(first.get());
+            oldRoot.addView(oldFeed);
+            Utils.setActivity(first.get());
+            SessionLockOverlay.sync();
+            assertEquals(2, oldRoot.getChildCount());
+            assertEquals(ViewGroup.FOCUS_BLOCK_DESCENDANTS, oldFeed.getDescendantFocusability());
+
+            Utils.setActivity(second.get());
+            SessionLockOverlay.sync();
+
+            assertEquals("the old page kept its panel", 1, oldRoot.getChildCount());
+            assertEquals("the old page's feed is still curtained",
+                    ViewGroup.FOCUS_BEFORE_DESCENDANTS, oldFeed.getDescendantFocusability());
+            assertEquals(View.IMPORTANT_FOR_ACCESSIBILITY_AUTO, oldFeed.getImportantForAccessibility());
+        }
+    }
+
+    @Test public void aHoldCollectedBeforeTheReaderLeftTheFeedStillHandsItBack() throws Exception {
+        // TikTok took the panel off and the collector took it before any pass lifted its curtain.
+        // Going off to messages lifted only through the panel, so the feed stayed out of reach.
+        Settings.SESSION_BUDGET_VIDEOS.save(1);
+        Settings.SESSION_BUDGET_LOCK_MINUTES.save(5);
+        SessionBudget.noteVideo("a");
+        assertTrue(SessionBudget.claimNotice());
+
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setActivity(activity);
+            ViewGroup root = activity.findViewById(android.R.id.content);
+            FrameLayout page = new FrameLayout(activity);
+            FrameLayout video = new FrameLayout(activity);
+            video.setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
+            android.widget.Button like = new android.widget.Button(activity);
+            video.addView(like);
+            FrameLayout.LayoutParams videoParams = new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            videoParams.bottomMargin = 100;
+            page.addView(video, videoParams);
+            FrameLayout bar = new FrameLayout(activity);
+            android.widget.Button homeTab = new android.widget.Button(activity);
+            homeTab.setSelected(true);
+            bar.addView(homeTab, new FrameLayout.LayoutParams(96, ViewGroup.LayoutParams.MATCH_PARENT));
+            page.addView(bar, new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, 100, Gravity.BOTTOM));
+            root.addView(page);
+            layout(root, 480, 960);
+            seedHomeTab(homeTab);
+
+            SessionLockOverlay.sync();
+            assertEquals(ViewGroup.FOCUS_BLOCK_DESCENDANTS, video.getDescendantFocusability());
+            java.lang.ref.WeakReference<View> panel = takeThePanelOff(root);
+            for (int attempt = 0; attempt < 20 && panel.get() != null; attempt++) {
+                System.gc();
+                Thread.sleep(10);
+            }
+            assertNull("the panel TikTok took off was never collected", panel.get());
+
+            homeTab.setSelected(false);
+            SessionLockOverlay.sync();
+            assertEquals("the feed stayed curtained off the feed",
+                    ViewGroup.FOCUS_AFTER_DESCENDANTS, video.getDescendantFocusability());
+            assertTrue("a reader still can't reach the feed off the feed",
+                    like.isImportantForAccessibility());
+        }
+    }
+
+    /** Takes the hold off the root as TikTok does, keeping nothing that holds on to it. */
+    private static java.lang.ref.WeakReference<View> takeThePanelOff(ViewGroup root) {
+        View panel = root.getChildAt(root.getChildCount() - 1);
+        root.removeView(panel);
+        return new java.lang.ref.WeakReference<>(panel);
+    }
+
+    @Test public void aTabBarDrawnAfterTheHoldComesBackIntoReach() throws Exception {
+        assertTabBarDrawnLateComesBack(true);
+    }
+
+    @Test public void aTabBarRightUnderTheRootDrawnAfterTheHoldComesBackIntoReach() throws Exception {
+        assertTabBarDrawnLateComesBack(false);
+    }
+
+    /**
+     * On a cold start the hold goes up before the tab bar has a size, and covers the whole page.
+     * Once the bar is there and the panel stops above it, the tabs are handed back, whether the
+     * bar sits inside the feed's page, as on the S22, or is a child of the root of its own.
+     */
+    private static void assertTabBarDrawnLateComesBack(boolean nested) throws Exception {
+        Settings.SESSION_BUDGET_VIDEOS.save(1);
+        Settings.SESSION_BUDGET_LOCK_MINUTES.save(5);
+        SessionBudget.noteVideo("a");
+        assertTrue(SessionBudget.claimNotice());
+
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setActivity(activity);
+            ViewGroup root = activity.findViewById(android.R.id.content);
+            FrameLayout page = new FrameLayout(activity);
+            android.widget.Button like = new android.widget.Button(activity);
+            like.setFocusableInTouchMode(true);
+            page.addView(like);
+            FrameLayout bar = new FrameLayout(activity);
+            android.widget.Button homeTab = new android.widget.Button(activity);
+            homeTab.setFocusableInTouchMode(true);
+            bar.addView(homeTab, new FrameLayout.LayoutParams(96, ViewGroup.LayoutParams.MATCH_PARENT));
+            FrameLayout.LayoutParams barParams = new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, 100, Gravity.BOTTOM);
+            root.addView(page);
+            if (nested) page.addView(bar, barParams);
+            else root.addView(bar, barParams);
+            layout(root, 480, 960);
+
+            SessionLockOverlay.sync();
+            View panel = root.getChildAt(root.getChildCount() - 1);
+            java.util.ArrayList<View> stops = new java.util.ArrayList<>();
+            root.addFocusables(stops, View.FOCUS_FORWARD, View.FOCUSABLES_ALL);
+            assertFalse("a bar the hold covers is still a Tab stop", stops.contains(homeTab));
+
+            seedHomeTab(homeTab);
+            Method update = SessionLockOverlay.class.getDeclaredMethod("updateNavigationMargin",
+                    Activity.class, ViewGroup.class, View.class);
+            update.setAccessible(true);
+            update.invoke(null, activity, root, panel);
+
+            stops.clear();
+            root.addFocusables(stops, View.FOCUS_FORWARD, View.FOCUSABLES_ALL);
+            assertTrue("the tabs stayed out of reach once the hold stopped above them",
+                    stops.contains(homeTab));
+            assertFalse("handing the tabs back handed the feed back", stops.contains(like));
+            assertTrue(homeTab.isImportantForAccessibility());
+            assertFalse(like.isImportantForAccessibility());
         }
     }
 

@@ -104,6 +104,8 @@ Every Hushfeed release, newest first.
 * A background job that fails, like the media cache's start-up cleanup, now shows up in the diagnostics log. Before, nothing recorded it.
 * On the light theme, the shine that runs across the Hushfeed settings title no longer washes the letters out. It's softer there now, so the title stays readable while it passes.
 * TalkBack doesn't stop on the screen that holds the feed as a whole anymore. It used to read everything on it a second time and offer to activate it, which did nothing. The title, the countdown and both buttons are still read one by one.
+* Tab on a keyboard or d-pad can't wander into the feed behind the daily hold anymore. It used to move from the hold into the video and the like and comment buttons underneath. Now it goes between the hold's buttons and the tabs along the bottom, which TalkBack can reach again too.
+* With the feed lock on, coming back to TikTok no longer puts the "Tap to start the feed" layer on top of the lock screen. It took the first tap there, which could start a video behind the lock.
 
 ## 0.81.0 (2026-11-05)
 

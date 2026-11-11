@@ -376,6 +376,126 @@ public class PausePlaybackTest {
     }
 
     /**
+     * A catcher TikTok took off the page goes back over the feed.
+     *
+     * <p>A content root TikTok rebuilds loses the catcher with everything else. It was still
+     * held, so the feed stayed curtained with nothing left to tap, and the curtain would have
+     * stayed for good once the catcher was collected. Dropping it instead would start the feed
+     * without the tap Pause first video asks for.
+     */
+    @Test public void aCatcherTikTokTookOffGoesBackOverTheFeed() {
+        Settings.NO_RESUME_ON_FOREGROUND.save(true);
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setActivity(activity);
+            ViewGroup root = activity.findViewById(android.R.id.content);
+            View feed = new View(activity);
+            root.addView(feed);
+            View homeTab = new View(activity);
+            homeTab.setId(0x7f0a4b89);
+            homeTab.setSelected(true);
+            root.addView(homeTab, new FrameLayout.LayoutParams(60, 40));
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            FeedVisibility.resolveForTests(activity.getPackageName(), "47.7.3:opf", homeTab.getId());
+            try {
+                PausePlayback.setWasAwayForTests(true);
+                PausePlayback.onForeground(activity);
+                View catcher = PausePlayback.catcherForTests();
+                assertNotNull(catcher);
+                assertEquals(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS,
+                        feed.getImportantForAccessibility());
+
+                root.removeView(catcher);
+                View rebuilt = new View(activity);
+                root.addView(rebuilt, 0);
+                root.getViewTreeObserver().dispatchOnGlobalLayout();
+                assertTrue("the catcher wasn't put back over the feed",
+                        catcher.getParent() == root
+                                && root.indexOfChild(catcher) == root.getChildCount() - 1);
+                assertTrue("a different catcher went up", PausePlayback.catcherForTests() == catcher);
+                assertEquals("the page drawn since isn't behind the catcher",
+                        View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS,
+                        rebuilt.getImportantForAccessibility());
+                assertTrue("the feed started without its tap", PausePlayback.quietenedForTests());
+
+                catcher.performClick();
+                assertNull(PausePlayback.catcherForTests());
+                assertEquals("the feed stayed curtained after the tap",
+                        View.IMPORTANT_FOR_ACCESSIBILITY_AUTO, feed.getImportantForAccessibility());
+                assertEquals(View.IMPORTANT_FOR_ACCESSIBILITY_AUTO, rebuilt.getImportantForAccessibility());
+            } finally {
+                FeedVisibility.resolveForTests(activity.getPackageName(), "47.7.3:opf", 0);
+            }
+        }
+    }
+
+    /**
+     * The feed lock's hold has to stay on top. A catcher put up over it took the first tap and
+     * Tab stop, which could start the feed behind the lock, and its curtain hid the hold's title
+     * and way out from a reader and a keyboard.
+     */
+    @Test public void aCatcherGoesUnderTheFeedLocksHold() {
+        Settings.NO_RESUME_ON_FOREGROUND.save(true);
+        Settings.FEED_LOCK.save(true);
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setActivity(activity);
+            ViewGroup root = activity.findViewById(android.R.id.content);
+            View feed = new View(activity);
+            root.addView(feed);
+            View homeTab = new View(activity);
+            homeTab.setId(0x7f0a4b89);
+            homeTab.setSelected(true);
+            root.addView(homeTab, new FrameLayout.LayoutParams(60, 40));
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            FeedVisibility.resolveForTests(activity.getPackageName(), "47.7.3:opf", homeTab.getId());
+            try {
+                app.morphe.extension.tiktok.wellbeing.SessionLockOverlay.sync();
+                assertEquals("the feed lock put up no hold", 3, root.getChildCount());
+                ViewGroup hold = (ViewGroup) root.getChildAt(2);
+
+                PausePlayback.setWasAwayForTests(true);
+                PausePlayback.onForeground(activity);
+                View catcher = PausePlayback.catcherForTests();
+                assertNotNull(catcher);
+                assertTrue("the catcher went up over the hold",
+                        root.indexOfChild(catcher) < root.indexOfChild(hold));
+                assertHoldInReach(hold);
+
+                root.removeView(catcher);
+                root.getViewTreeObserver().dispatchOnGlobalLayout();
+                assertTrue("the catcher was put back over the hold",
+                        catcher.getParent() == root && root.indexOfChild(catcher) < root.indexOfChild(hold));
+                assertHoldInReach(hold);
+                // The hold redrew its curtain before the catcher came back, so it covers the
+                // catcher on the layout pass putting it back asks for.
+                root.getViewTreeObserver().dispatchOnGlobalLayout();
+                assertEquals("the catcher isn't behind the hold",
+                        View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS,
+                        catcher.getImportantForAccessibility());
+            } finally {
+                FeedVisibility.resolveForTests(activity.getPackageName(), "47.7.3:opf", 0);
+                Settings.FEED_LOCK.resetToDefault();
+                app.morphe.extension.tiktok.wellbeing.SessionLockOverlay.sync();
+                // The hold's countdown is static: finished here so no later suite finds it ticking.
+                Runnable tick = org.robolectric.util.ReflectionHelpers.getStaticField(
+                        app.morphe.extension.tiktok.wellbeing.SessionLockOverlay.class, "TICK");
+                android.os.Handler handler = org.robolectric.util.ReflectionHelpers.getStaticField(
+                        app.morphe.extension.tiktok.wellbeing.SessionLockOverlay.class, "MAIN");
+                handler.removeCallbacks(tick);
+                tick.run();
+            }
+        }
+    }
+
+    private static void assertHoldInReach(ViewGroup hold) {
+        assertTrue("the catcher's curtain hid the hold from a reader",
+                hold.getImportantForAccessibility() != View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
+        assertTrue("the catcher's curtain took the hold's buttons out of Tab's reach",
+                hold.getDescendantFocusability() != ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+    }
+
+    /**
      * Two curtains over one root: the later one lifting must not hand the feed back while the
      * earlier one is still up. The hold panel and the tap catcher share the curtain.
      */

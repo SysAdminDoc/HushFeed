@@ -1651,7 +1651,7 @@ Stopped waiting for the file app. Nothing was exported.	หยุดรอแอ
 Stopped waiting for the file app. It hasn't said yet whether the export was saved.	หยุดรอแอปไฟล์แล้ว แอปยังไม่ได้แจ้งว่าบันทึกการส่งออกไว้หรือไม่
 The export wasn't saved. Try again.	ไม่ได้บันทึกการส่งออก โปรดลองอีกครั้ง
 Hide unpersonalized For You videos	ซ่อนวิดีโอ "สำหรับคุณ" ที่ไม่ได้รับการปรับเปลี่ยนในแบบของคุณ
-Hide the fill-in videos TikTok sends to For You without picking them for you. When a whole batch is fill-in, it stays so the feed doesn't run dry.	ซ่อนวิดีโอเสริมที่ TikTok ส่งมายัง "สำหรับคุณ" โดยไม่ได้คัดสรรมาให้คุณโดยเฉพาะ เมื่อทั้งชุดเป็นวิดีโอเสริม วิดีโอเหล่านั้นจะยังคงอยู่เพื่อไม่ให้ฟีดว่างเปล่า
+Hide the fill-in videos TikTok sends to For You without picking them for you. When a whole batch is fill-in, only its first video stays so the feed doesn't run dry.	ซ่อนวิดีโอเสริมที่ TikTok ส่งมายัง "สำหรับคุณ" โดยไม่ได้คัดสรรมาให้คุณโดยเฉพาะ เมื่อทั้งชุดเป็นวิดีโอเสริม จะเหลือไว้เพียงวิดีโอแรกเพื่อไม่ให้ฟีดว่างเปล่า
 Unpersonalized For You videos	วิดีโอ "สำหรับคุณ" ที่ไม่ได้รับการปรับเปลี่ยนในแบบของคุณ
 Reviewed presets for TikTok %1$s	พรีเซ็ตที่ผ่านการตรวจสอบแล้วสำหรับ TikTok %1$s
 No reviewed presets for TikTok %1$s yet	ยังไม่มีพรีเซ็ตที่ผ่านการตรวจสอบสำหรับ TikTok %1$s

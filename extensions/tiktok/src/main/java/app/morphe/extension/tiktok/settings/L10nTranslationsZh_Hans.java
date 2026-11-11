@@ -1943,8 +1943,8 @@ final class L10nTranslationsZh_Hans {
                 "隐藏活动徽章");
         table.put("Hide the expand button in comments",
                 "隐藏评论中的展开按钮");
-        table.put("Hide the fill-in videos TikTok sends to For You without picking them for you. When a whole batch is fill-in, it stays so the feed doesn't run dry.",
-                "隐藏 TikTok 发送给 For You 的填充视频，而不为你挑选。当整批信息流填满后，它会留下来，这样信息流就不会干涸.");
+        table.put("Hide the fill-in videos TikTok sends to For You without picking them for you. When a whole batch is fill-in, only its first video stays so the feed doesn't run dry.",
+                "隐藏 TikTok 没有为你挑选就发到 For You 的填充视频。整批都是填充视频时，只保留第一个，这样信息流不会断.");
         table.put("Hide the flag button TikTok puts above the creator's picture in some regions. You can still report a video from the share menu.",
                 "在某些地区隐藏创作者图片上方的标志按钮 TikTok。你仍然可以从共享菜单举报视频.");
         table.put("Hide the floating promotional badge over the feed.",

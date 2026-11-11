@@ -23,8 +23,8 @@ import org.robolectric.annotation.Config;
 
 /**
  * The For You fill-in rule: TikTok's for_you_page_999 videos with no recommendation reason leave
- * a For You batch, a batch that is nothing but fill-in stays whole, and the filter report says
- * how much of each batch came from which pool.
+ * a For You batch, a batch that is nothing but fill-in keeps only its first video, and the filter
+ * report says how much of each batch came from which pool.
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE, sdk = 28)
@@ -113,20 +113,20 @@ public class UnpersonalizedForYouFilterTest {
                 survivors(fill("fill"), picked, personal, unlabelled));
     }
 
-    @Test public void aBatchThatIsAllFillInStaysWholeAndInOrder() {
-        assertEquals(List.of("a", "b", "c"), survivors(fill("a"), fill("b"), fill("c")));
+    @Test public void aBatchThatIsAllFillInKeepsOnlyItsFirstVideo() {
+        assertEquals(List.of("a"), survivors(fill("a"), fill("b"), fill("c")));
         String line = reportLine(FeedItemsFilter.FOR_YOU_DISTRIBUTION_SOURCE);
-        assertTrue(FeedFilterCounters.report().toString(), line != null && line.contains(FeedItemsFilter.KEPT_WHOLE_KIND + " 1"));
-        assertTrue(line, line.contains("0 removed"));
+        assertTrue(FeedFilterCounters.report().toString(), line != null && line.contains(FeedItemsFilter.KEPT_ONE_KIND + " 1"));
+        assertTrue(line, line.contains("2 removed"));
         String feed = reportLine("FeedItemList:response");
-        assertFalse("a batch kept whole was counted as emptied: " + feed, feed != null && feed.contains("left empty"));
+        assertFalse("a batch cut to one was counted as emptied: " + feed, feed != null && feed.contains("left empty"));
     }
 
     @Test public void keepingTheBatchNeverPutsBackWhatAnotherRuleTookOut() {
         Settings.BLOCKED_CREATORS.save("blocked");
         Item blocked = fill("blocked");
         blocked.author = new Author("blocked");
-        assertEquals(List.of("a", "b"), survivors(blocked, fill("a"), fill("b")));
+        assertEquals(List.of("a"), survivors(blocked, fill("a"), fill("b")));
     }
 
     @Test public void anExceptedCreatorsFillInStays() {

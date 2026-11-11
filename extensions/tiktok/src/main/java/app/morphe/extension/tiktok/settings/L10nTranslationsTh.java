@@ -1943,8 +1943,8 @@ final class L10nTranslationsTh {
                 "ซ่อนป้ายกิจกรรม");
         table.put("Hide the expand button in comments",
                 "ซ่อนปุ่มขยายในความคิดเห็น");
-        table.put("Hide the fill-in videos TikTok sends to For You without picking them for you. When a whole batch is fill-in, it stays so the feed doesn't run dry.",
-                "ซ่อนวิดีโอเสริมที่ TikTok ส่งมายัง \"สำหรับคุณ\" โดยไม่ได้คัดสรรมาให้คุณโดยเฉพาะ เมื่อทั้งชุดเป็นวิดีโอเสริม วิดีโอเหล่านั้นจะยังคงอยู่เพื่อไม่ให้ฟีดว่างเปล่า");
+        table.put("Hide the fill-in videos TikTok sends to For You without picking them for you. When a whole batch is fill-in, only its first video stays so the feed doesn't run dry.",
+                "ซ่อนวิดีโอเสริมที่ TikTok ส่งมายัง \"สำหรับคุณ\" โดยไม่ได้คัดสรรมาให้คุณโดยเฉพาะ เมื่อทั้งชุดเป็นวิดีโอเสริม จะเหลือไว้เพียงวิดีโอแรกเพื่อไม่ให้ฟีดว่างเปล่า");
         table.put("Hide the flag button TikTok puts above the creator's picture in some regions. You can still report a video from the share menu.",
                 "ซ่อนปุ่มรูปธงที่ TikTok แสดงไว้เหนือรูปภาพของครีเอเตอร์ในบางภูมิภาค คุณยังคงรายงานวิดีโอได้จากเมนูแชร์");
         table.put("Hide the floating promotional badge over the feed.",

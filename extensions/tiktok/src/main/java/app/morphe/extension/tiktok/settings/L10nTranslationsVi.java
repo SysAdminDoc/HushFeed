@@ -1943,8 +1943,8 @@ final class L10nTranslationsVi {
                 "Ẩn huy hiệu sự kiện");
         table.put("Hide the expand button in comments",
                 "Ẩn nút mở rộng trong bình luận");
-        table.put("Hide the fill-in videos TikTok sends to For You without picking them for you. When a whole batch is fill-in, it stays so the feed doesn't run dry.",
-                "Ẩn các video điền đầy (fill-in) do TikTok gửi đến mục Dành cho bạn mà không được chọn riêng cho bạn. Khi toàn bộ lô là video điền đầy, chúng sẽ được giữ lại để bảng tin không bị trống.");
+        table.put("Hide the fill-in videos TikTok sends to For You without picking them for you. When a whole batch is fill-in, only its first video stays so the feed doesn't run dry.",
+                "Ẩn các video điền đầy (fill-in) do TikTok gửi đến mục Dành cho bạn mà không được chọn riêng cho bạn. Khi toàn bộ lô là video điền đầy, chỉ video đầu tiên được giữ lại để bảng tin không bị trống.");
         table.put("Hide the flag button TikTok puts above the creator's picture in some regions. You can still report a video from the share menu.",
                 "Ẩn nút cờ báo cáo mà TikTok đặt phía trên ảnh của nhà sáng tạo ở một số khu vực. Bạn vẫn có thể báo cáo video từ menu chia sẻ.");
         table.put("Hide the floating promotional badge over the feed.",

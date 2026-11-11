@@ -1752,6 +1752,51 @@ public final class Probe extends Instrumentation {
                         Log.i(TAG, "ok views " + text.length() + " chars in " + pieces + " pieces");
                         break;
                     }
+                    case "fillframes": {
+                        // Every frame for a while (-e ms, 6000 by default), each feed cell's
+                        // player on screen, the video surfaces in it and the cover still beside
+                        // it: where each one's picture spans in the window, its height, scale,
+                        // pivot and translation, and whether it shows. A line goes out only for a
+                        // frame where one of them changed, so a swipe made while this runs shows
+                        // the frame a picture jumps in (#390).
+                        final android.app.Activity activity = (android.app.Activity) loader.loadClass(UTILS)
+                                .getMethod("getActivity").invoke(null);
+                        if (activity == null) throw new IllegalStateException("no current activity");
+                        String asked = intent.getStringExtra("ms");
+                        final long started = android.os.SystemClock.uptimeMillis();
+                        final long until = started + (asked == null ? 6000L : Long.parseLong(asked));
+                        final int playerId = activity.getResources().getIdentifier("player_view", "id", activity.getPackageName());
+                        final int coverId = activity.getResources().getIdentifier("cover", "id", activity.getPackageName());
+                        if (playerId == 0) throw new IllegalStateException("no player_view id");
+                        final android.view.View decor = activity.getWindow().getDecorView();
+                        final String[] last = {""};
+                        final int[] lines = {0};
+                        decor.getViewTreeObserver().addOnPreDrawListener(new android.view.ViewTreeObserver.OnPreDrawListener() {
+                            @Override
+                            public boolean onPreDraw() {
+                                long now = android.os.SystemClock.uptimeMillis();
+                                if (now > until || lines[0] >= 800) {
+                                    if (decor.getViewTreeObserver().isAlive()) {
+                                        decor.getViewTreeObserver().removeOnPreDrawListener(this);
+                                    }
+                                    Log.i(TAG, "ok fillframes done, " + lines[0] + " lines");
+                                    return true;
+                                }
+                                StringBuilder frame = new StringBuilder();
+                                describePlayers(decor, decor.getHeight(), playerId, coverId, frame);
+                                String text = frame.toString();
+                                if (!text.equals(last[0])) {
+                                    last[0] = text;
+                                    lines[0]++;
+                                    Log.i(TAG, "fill +" + (now - started) + "ms" + text);
+                                }
+                                return true;
+                            }
+                        });
+                        decor.invalidate();
+                        Log.i(TAG, "ok fillframes watching");
+                        break;
+                    }
                     case "strings": {
                         // TikTok's own UI strings by resource id, resolved the way TikTok resolves
                         // them. Most of 47.0.3's strings are not in the APK's resource table (its
@@ -4280,6 +4325,81 @@ public final class Probe extends Instrumentation {
                     topViews(group.getChildAt(i), depth + 1, below, width, out, resources);
                 }
             }
+        }
+
+        /** Each player on screen with its surfaces and its cover still, for fillframes. */
+        private static void describePlayers(android.view.View view, int windowHeight, int playerId, int coverId,
+                StringBuilder out) {
+            if (view.getId() == playerId && view.getVisibility() == android.view.View.VISIBLE) {
+                float[] span = windowSpan(view);
+                if (span[1] <= 0f || span[0] >= windowHeight) return;
+                out.append("\n P").append(Integer.toHexString(System.identityHashCode(view)));
+                describeFrame(view, span, out);
+                if (view instanceof android.view.ViewGroup) {
+                    android.view.ViewGroup group = (android.view.ViewGroup) view;
+                    for (int i = 0, count = group.getChildCount(); i < count; i++) {
+                        android.view.View surface = group.getChildAt(i);
+                        if (!(surface instanceof android.view.SurfaceView) && !(surface instanceof android.view.TextureView)) {
+                            continue;
+                        }
+                        out.append(" | ").append(surface instanceof android.view.SurfaceView ? "S" : "T")
+                                .append(Integer.toHexString(System.identityHashCode(surface)));
+                        describeFrame(surface, windowSpan(surface), out);
+                        if (surface instanceof android.view.TextureView) {
+                            android.graphics.Matrix content = ((android.view.TextureView) surface).getTransform(null);
+                            if (!content.isIdentity()) {
+                                float[] values = new float[9];
+                                content.getValues(values);
+                                out.append(" tx=").append(values[android.graphics.Matrix.MSCALE_Y])
+                                        .append('@').append(values[android.graphics.Matrix.MTRANS_Y]);
+                            }
+                        }
+                    }
+                }
+                android.view.ViewParent space = view.getParent();
+                if (coverId != 0 && space instanceof android.view.ViewGroup) {
+                    android.view.View cover = ((android.view.ViewGroup) space).findViewById(coverId);
+                    if (cover != null) {
+                        out.append(" | C");
+                        describeFrame(cover, windowSpan(cover), out);
+                    }
+                }
+                return;
+            }
+            if (view instanceof android.view.ViewGroup) {
+                android.view.ViewGroup group = (android.view.ViewGroup) view;
+                for (int i = 0, count = group.getChildCount(); i < count; i++) {
+                    describePlayers(group.getChildAt(i), windowHeight, playerId, coverId, out);
+                }
+            }
+        }
+
+        private static void describeFrame(android.view.View view, float[] span, StringBuilder out) {
+            out.append(" y=").append(Math.round(span[0])).append("..").append(Math.round(span[1]))
+                    .append(" h=").append(view.getHeight())
+                    .append(" s=").append(view.getScaleY())
+                    .append(" pv=").append(view.getPivotY())
+                    .append(" ty=").append(view.getTranslationY());
+            if (view.getVisibility() != android.view.View.VISIBLE) out.append(" vis=").append(view.getVisibility());
+            if (view.getAlpha() != 1f) out.append(" a=").append(view.getAlpha());
+        }
+
+        /** Where the top and bottom edges of {@code view} land in its window, every transform applied. */
+        private static float[] windowSpan(android.view.View view) {
+            float[] points = {0f, 0f, 0f, view.getHeight()};
+            android.view.View at = view;
+            while (true) {
+                android.graphics.Matrix matrix = at.getMatrix();
+                if (!matrix.isIdentity()) matrix.mapPoints(points);
+                points[1] += at.getTop();
+                points[3] += at.getTop();
+                android.view.ViewParent parent = at.getParent();
+                if (!(parent instanceof android.view.View)) break;
+                at = (android.view.View) parent;
+                points[1] -= at.getScrollY();
+                points[3] -= at.getScrollY();
+            }
+            return new float[]{points[1], points[3]};
         }
 
         private static void walkViews(android.view.View view, int depth, String find, StringBuilder out,

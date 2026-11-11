@@ -49,9 +49,11 @@ public final class DiagnosticRedactor {
      * log line can carry either. The domain is one flat class with no repeated group, for the same
      * reason as {@link #HOSTS}. A drawable's density suffix such as ic_like@2x.webp is a file name,
      * while dana@2x.com is an address. No country code starts with 0, so a time zone offset such
-     * as +0500 is not a phone number. One from +1000 to +1400 is known by a real date after it, or
-     * by the clock in front of it when no more digits follow or logcat's process, thread and level
-     * columns do, each padded to five wide, so a number after a clock still goes.
+     * as +0500 is not a phone number. One from +1000 to +1400 is known by a date from 1900 to 2099
+     * after it, or by the clock in front of it when no more digits follow or
+     * logcat's process, thread and level columns do, each padded to five wide and no larger than a
+     * pid can be (4,199,999 here, a little over pid_max), so a number after a clock still goes. A
+     * number never ends right before a dot and a digit, so an IPv4 address after it stays whole.
      */
     private static final String EMAIL = "(?<![\\w.+-])[\\w.+-]+@"
             + "(?!\\d(?:\\.\\d)?x\\.(?i:png|apng|webp|jpe?g|gif|svg|bmp|heic|heif|avif|jxl|tiff?|json|ico|xml"
@@ -60,8 +62,9 @@ public final class DiagnosticRedactor {
     private static final String PHONE = "(?<![\\w+])"
             + "(?!(?<=\\d:\\d\\d(?:\\.\\d{1,9})?[ ]{1,2})\\+1[0-4]\\d\\d(?![ ().-]{0,2}\\d)"
             + "|(?<=\\d:\\d\\d\\.\\d{3}(?:\\d{3})?[ ]{1,2})\\+1[0-4]\\d\\d"
-            + "(?:[ ](?:[ ]{4}\\d|[ ]{3}\\d\\d|[ ]{2}\\d{3}|[ ]\\d{4}|\\d{5,7})){2}[ ][VDIWEFA][ /])"
-            + "\\+(?=[1-9])(?!\\d{1,4}[ ]+\\d{4}-[01]\\d-[0-3]\\d(?![\\d-]))(?:\\d[ ().-]{0,2}){9,14}\\d(?!\\d)";
+            + "(?:[ ](?:[ ]{4}\\d|[ ]{3}\\d\\d|[ ]{2}\\d{3}|[ ]\\d{4}|\\d{5,6}|[1-3]\\d{6}|4[01]\\d{5})){2}[ ][VDIWEFA][ /])"
+            + "\\+(?=[1-9])(?!\\d{1,4}[ ]+(?:19|20)\\d\\d-[01]\\d-[0-3]\\d(?![\\d-]))"
+            + "(?:\\d[ ().-]{0,2}){9,14}\\d(?!\\.?\\d)";
     /**
      * A bare id, for the places that print a list of them with no name in front. TikTok's ids run
      * to nineteen digits; nothing else these reports carry is a number that long.
@@ -131,6 +134,15 @@ public final class DiagnosticRedactor {
             "[ \\t]*(?:\\\\*[\"'])?[A-Za-z_][A-Za-z0-9_-]*(?:\\\\*[\"'])?[ \\t]*[=:]");
     /** What a backslash escapes in a JSON or Java string; anything else after one is a path. */
     private static final String JSON_ESCAPED = "\"'\\/bfnrtu";
+    /**
+     * A stack trace's line. A frame names a dotted method and its place in the source, so "at Dana(DQ)"
+     * is a name. Flat classes, for the same reason as {@link #HOSTS}.
+     */
+    private static final Pattern STACK_FRAME = Pattern.compile(
+            "at [\\p{L}\\p{M}\\p{N}_$<>@-]+[./][\\p{L}\\p{M}\\p{N}_$<>@./-]*"
+                    + "\\((?:[\\p{L}\\p{M}\\p{N}_$.-]*:\\d+|[\\p{L}\\p{M}\\p{N}_$-]+\\.(?:java|kt)"
+                    + "|Unknown Source(?::\\d+)?|SourceFile|Native Method)\\)"
+                    + "|\\.\\.\\. \\d+ more\\b|Caused by: |Suppressed: ");
     /** An HTML entity, so the semicolon in "Dana&amp;Co: Bakery" does not end the name. */
     private static final Pattern ENTITY = Pattern.compile("&(?:[A-Za-z]{2,8}|#\\d{1,7}|#[xX][0-9A-Fa-f]{1,6});");
 
@@ -172,10 +184,10 @@ public final class DiagnosticRedactor {
         boolean inSingle = false;
         while (fields.find()) {
             String name = fields.group(1).toLowerCase(Locale.ROOT);
-            boolean credential = false;
-            for (String token : CREDENTIAL_NAMES) {
-                if (name.contains(token)) { credential = true; break; }
-            }
+            // A key on a string's next line, as in "a\nunique_id: dq", has the escape's letter in front.
+            if (name.length() > 1 && "nrt".indexOf(name.charAt(0)) >= 0 && escapedAt(text, fields.start())
+                    && !isField(name) && isField(name.substring(1))) name = name.substring(1);
+            boolean credential = isCredential(name);
             boolean contentId = isContentId(name);
             // A name or an address can run to several words, so the value goes to the line's end.
             boolean words = !credential && !contentId && isPersonal(name);
@@ -219,12 +231,47 @@ public final class DiagnosticRedactor {
                     else if (c == '"') inDouble = !inDouble;
                     else if (c == '\'' && !inWord(text, quotesRead)) inSingle = !inSingle;
                 }
+                // A value can start on the string's next line, as in "phone:\n2025550123", unless
+                // that line is a stack frame or another field of ours and this one was empty.
+                int value = start;
+                while ((inDouble || inSingle) && value + 1 < text.length() && text.charAt(value) == '\\'
+                        && "nrt".indexOf(text.charAt(value + 1)) >= 0 && !pathAhead(text, value + 2)) {
+                    value += 2;
+                    while (value < text.length() && (text.charAt(value) == ' ' || text.charAt(value) == '\t')) value++;
+                }
+                Matcher key = ASSIGNMENTS.matcher(text).region(value, text.length());
+                if (!STACK_FRAME.matcher(text).region(value, text.length()).lookingAt()
+                        && !(key.lookingAt() && isField(key.group(1).toLowerCase(Locale.ROOT)))) start = value;
                 char around = openAround(text, fields.start());
                 StringBuilder opened = new StringBuilder();
                 end = start;
                 boolean path = false;
                 while (end < text.length()) {
                     char c = text.charAt(end);
+                    if ((inDouble || inSingle) && end > start && c < 128 && Character.isLetter(c)
+                            && !Character.isLetterOrDigit(text.charAt(end - 1)) && "_-".indexOf(text.charAt(end - 1)) < 0) {
+                        // A field of ours inside the name, as in "phone:\nlookup username=\"dq\"", goes
+                        // with it whole: its value's escaped quote would end the run and leave the value.
+                        // Only at a word's start, so a hyphenated run is read once. A key after an
+                        // escaped tab or line break has the escape's letter in front.
+                        Matcher inner = ASSIGNMENTS.matcher(text).region(end, text.length());
+                        boolean ours = inner.lookingAt() && isField(inner.group(1).toLowerCase(Locale.ROOT));
+                        if (!ours && "bfnrt".indexOf(c) >= 0 && escapedAt(text, end)) {
+                            inner.region(end + 1, text.length());
+                            ours = inner.lookingAt() && isField(inner.group(1).toLowerCase(Locale.ROOT));
+                        }
+                        if (ours) {
+                            int innerQuote = inner.end();
+                            while (innerQuote < text.length() && text.charAt(innerQuote) == '\\') innerQuote++;
+                            char opens = innerQuote < text.length() ? text.charAt(innerQuote) : 0;
+                            // An unescaped quote of the string's own kind closes the string instead.
+                            if ((opens == '"' || opens == '\'') && !(innerQuote == inner.end()
+                                    && (opens == '"' ? inDouble : inSingle))) {
+                                end = innerQuotedEnd(text, inner.end(), innerQuote, inDouble, inSingle);
+                                continue;
+                            }
+                        }
+                    }
                     if (c == '\\') {
                         // An odd run escapes what follows it; an even one is backslashes, as in C:\\new.
                         // A drive, or a backslash before what JSON can't escape here or further along
@@ -278,7 +325,7 @@ public final class DiagnosticRedactor {
                     char c = text.charAt(end);
                     if (Character.isWhitespace(c) || ";&\"'<>".indexOf(c) >= 0
                             || (quotedName && (c == ']' || c == '}'))
-                            || ((!contentId || quotedName) && c == ',')) break;
+                            || (c == ',' && (!contentId || quotedName || fieldFollows(text, end + 1)))) break;
                     end++;
                 }
             }
@@ -288,6 +335,17 @@ public final class DiagnosticRedactor {
             fields.region(end, text.length());
         }
         return copied == 0 ? text : result.append(text, copied, text.length()).toString();
+    }
+
+    private static boolean isCredential(String name) {
+        for (String token : CREDENTIAL_NAMES) {
+            if (name.contains(token)) return true;
+        }
+        return false;
+    }
+
+    private static boolean isField(String name) {
+        return isCredential(name) || isContentId(name) || isPersonal(name);
     }
 
     private static boolean isContentId(String name) {
@@ -379,6 +437,25 @@ public final class DiagnosticRedactor {
 
     private static boolean fieldFollows(String text, int at) {
         return NEXT_FIELD.matcher(text).region(at, text.length()).lookingAt();
+    }
+
+    /**
+     * Where a quoted value inside a name ends: after its closing quote, or first where its line or
+     * the string holding it ends, so a value cut short takes nothing from the lines after it.
+     */
+    private static int innerQuotedEnd(String text, int start, int quote, boolean inDouble, boolean inSingle) {
+        char delimiter = text.charAt(quote);
+        int escaping = quote - start;
+        int slashes = 0;
+        for (int i = quote + 1; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (c == '\\') { slashes++; continue; }
+            if (c == delimiter && slashes % (2 * (escaping + 1)) == escaping) return i + 1;
+            if (c == '\n' || c == '\r' || slashes == 0 && (c == '"' ? inDouble : c == '\'' && inSingle)) return i;
+            if (slashes % 2 == 1 && (c == 'n' || c == 'r') && !pathAhead(text, i + 1)) return i - slashes;
+            slashes = 0;
+        }
+        return text.length();
     }
 
     private static int quotedEnd(String text, int start, int quote) {

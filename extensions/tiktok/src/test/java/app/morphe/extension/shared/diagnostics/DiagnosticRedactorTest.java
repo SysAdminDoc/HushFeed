@@ -295,6 +295,83 @@ public class DiagnosticRedactorTest {
                 DiagnosticRedactor.redact("{\"msg\":\"nickname: Dana Quinn\\nnext\"}"));
     }
 
+    /** The escape in front of the next line's key is not part of it, and a value can start on that line. */
+    @Test public void aFieldOnAJsonStringsNextLineStillLosesItsValue() {
+        assertEquals("D/Profile: {\"dump\":\"nickname: [omitted]\\nunique_id: [omitted]\\nmobile: [omitted]\"}",
+                DiagnosticRedactor.redact("D/Profile: {\"dump\":\"nickname: Dana Quinn\\nunique_id: danaq77\\nmobile: 4155550123\"}"));
+        assertEquals("{\"m\":\"display_name: [omitted]\\r\\nusername: [omitted]\"}",
+                DiagnosticRedactor.redact("{\"m\":\"display_name: Dana Q\\r\\nusername: danaq77\"}"));
+        assertEquals("{\"log\":\"User profile\\nnickname: [omitted]\"}",
+                DiagnosticRedactor.redact("{\"log\":\"User profile\\nnickname: Dana Quinn\"}"));
+        assertEquals("{\"m\":\"a\\tusername=[omitted]\"}", DiagnosticRedactor.redact("{\"m\":\"a\\tusername=dq\"}"));
+        assertEquals("{\"msg\":\"phone:\\n[omitted]\"}", DiagnosticRedactor.redact("{\"msg\":\"phone:\\n2025550123\"}"));
+        assertEquals("{\"dump\":\"nickname:\\n\\t[omitted]\"}",
+                DiagnosticRedactor.redact("{\"dump\":\"nickname:\\n\\tDana Quinn\"}"));
+        assertEquals("{\"msg\":\"phone: \\r\\n[omitted]\"}",
+                DiagnosticRedactor.redact("{\"msg\":\"phone: \\r\\n(202) 555-0123\"}"));
+        // Not a key with the escape's letter taken off.
+        String note = "{\"m\":\"a\\nname: Dana\"}";
+        assertEquals(note, DiagnosticRedactor.redact(note));
+        // A next line that starts with a field of ours keeps its key for that field's own value.
+        assertEquals("{\"msg\":\"phone:\\nsession=\\\"[omitted]\\\"\"}",
+                DiagnosticRedactor.redact("{\"msg\":\"phone:\\nsession=\\\"abc123secret\\\"\"}"));
+        assertEquals("{\"msg\":\"phone:\\nusername=[omitted]\"}",
+                DiagnosticRedactor.redact("{\"msg\":\"phone:\\nusername=danaq77\"}"));
+        assertEquals("{\"m\":\"x\\naid=[omitted],nickname=[omitted]\"}",
+                DiagnosticRedactor.redact("{\"m\":\"x\\naid=7,nickname=Dana Quinn\"}"));
+        assertEquals("aid=[omitted],nickname=[omitted]", DiagnosticRedactor.redact("aid=7,nickname=Dana Quinn"));
+        assertEquals("aid=[omitted]", DiagnosticRedactor.redact("aid=7,8,9"));
+        assertEquals("aid=[omitted],video:7235", DiagnosticRedactor.redact("aid=video:7234,video:7235"));
+        // Any field after a comma ends an id, so a name behind it goes and the details stay.
+        assertEquals("aid=[omitted],extra:nickname=[omitted]", DiagnosticRedactor.redact("aid=7,extra:nickname=Dana Quinn"));
+        assertEquals("group_id=[omitted],meta:nickname=[omitted],uid=[omitted]",
+                DiagnosticRedactor.redact("group_id=7,meta:nickname=Dana Quinn,uid=5"));
+        assertEquals("aweme_id=[omitted],index=3,source=feed", DiagnosticRedactor.redact("aweme_id=7234,index=3,source=feed"));
+        assertEquals("Item(aweme_id=[omitted],desc=hi,count=3)", DiagnosticRedactor.redact("Item(aweme_id=7234,desc=hi,count=3)"));
+        // A field of ours inside a name goes with the name, quoted value and all.
+        assertEquals("{\"m\":\"phone:\\n[omitted]\"}",
+                DiagnosticRedactor.redact("{\"m\":\"phone:\\nlookup username=\\\"danaq77\\\" failed\"}"));
+        assertEquals("{\"m\":\"phone: [omitted]\"}",
+                DiagnosticRedactor.redact("{\"m\":\"phone: lookup username=\\\"danaq77\\\" failed\"}"));
+        assertEquals("'phone:\\n[omitted]'", DiagnosticRedactor.redact("'phone:\\nlookup username=\\'danaq77\\' failed'"));
+        assertEquals("{\"m\":\"nickname:\\n[omitted]\"}",
+                DiagnosticRedactor.redact("{\"m\":\"nickname:\\nUser: Dana session=\\\"s3cr3t\\\"\"}"));
+        assertEquals("{\"m\":\"x\\nnickname: [omitted]\"}",
+                DiagnosticRedactor.redact("{\"m\":\"x\\nnickname: Dana token=\\\"abc def\\\"\"}"));
+        assertEquals("{\"m\":\"aid=[omitted],nickname=[omitted]\"}",
+                DiagnosticRedactor.redact("{\"m\":\"aid=7,nickname=Dana unique_id=\\\"danaq77\\\"\"}"));
+        // The string's own closing quote right after that field isn't its value's opening one.
+        assertEquals("{\"m\":\"phone:\\n[omitted]\",\"n\":\"keep\"}",
+                DiagnosticRedactor.redact("{\"m\":\"phone:\\nlookup username=\",\"n\":\"keep\"}"));
+        // That field after an escaped tab, form feed or backspace goes too.
+        for (String escape : new String[]{"t", "f", "b"}) {
+            assertEquals("{\"m\":\"phone: [omitted]\"}",
+                    DiagnosticRedactor.redact("{\"m\":\"phone: x\\" + escape + "username=\\\"danaq77\\\" failed\"}"));
+        }
+        // A value cut short ends with its line or its string, so the lines after it stay.
+        String after = "\n\tat com.foo.Bar.run(Bar.java:12)\n11-11 10:23:11.123  1234  5678 E AndroidRuntime: main";
+        assertEquals("{\"m\":\"nickname: [omitted]\"}" + after,
+                DiagnosticRedactor.redact("{\"m\":\"nickname: Dana session=\\\"abc\"}" + after));
+        assertEquals("{\"m\":\"nickname: [omitted]\"}" + after,
+                DiagnosticRedactor.redact("{\"m\":\"nickname: Dana token='abc\"}" + after));
+        assertEquals("{\"m\":\"nickname: [omitted]\\nkeep\"}",
+                DiagnosticRedactor.redact("{\"m\":\"nickname: Dana token=\\\"abc\\nkeep\"}"));
+        // A name in front of brackets isn't a stack frame.
+        for (String name : new String[]{"at Jos" + (char) 0xE9 + "(DQ)", "at Dana.Quinn(DQ)", "at dana@home(work)"}) {
+            assertEquals("{\"m\":\"nickname:\\n[omitted]\"}", DiagnosticRedactor.redact("{\"m\":\"nickname:\\n" + name + "\"}"));
+        }
+        // Every way Java and Kotlin print the frames under an empty field stays readable.
+        for (String frame : new String[]{"at com.example.Signup.<init>(Signup.java:12)",
+                "at java.base/java.lang.Thread.run(Thread.java:1012)", "at app//com.example.Signup.check(Signup.java:12)",
+                "at com.example.Signup.check-Xyz12(Signup.kt:12)", "... 5 more", "Caused by: java.io.IOException",
+                "Suppressed: java.io.IOException", "at java.base@17.0.2/java.lang.Thread.run(Thread.java:833)",
+                "at com.caf" + (char) 0xE9 + ".Signup.run(Signup.java:3)",
+                "at com.example.Caf" + (char) 0xE9 + ".run(Caf" + (char) 0xE9 + ".java:3)"}) {
+            String trace = "{\"trace\":\"Invalid email: \\n\\t" + frame + "\"}";
+            assertEquals(trace, DiagnosticRedactor.redact(trace));
+        }
+    }
+
     /** A home network names its hosts in any language, and Java prints their addresses several ways. */
     @Test public void aLocalHostNameGoesWithItsAddressHoweverJavaPrintsIt() {
         assertEquals("failed to connect to [host omitted]/[address omitted].",
@@ -322,6 +399,23 @@ public class DiagnosticRedactorTest {
             assertEquals(line, DiagnosticRedactor.redact(line));
         }
         assertEquals("call [phone omitted] now", DiagnosticRedactor.redact("call +44 2079-46-09-58 now"));
+        // Shaped like a date, but with no real year.
+        assertEquals("call [phone omitted] now", DiagnosticRedactor.redact("call +44 7700-10-20 900 now"));
+        assertEquals("call [phone omitted] now", DiagnosticRedactor.redact("call +46 8123-12-31 now"));
+        // A real date keeps its offset whatever follows it.
+        for (String line : new String[]{"+1100 2026-11-11 2026-11-12", "+1100 2026-11-11 10.23.11"}) {
+            assertEquals(line, DiagnosticRedactor.redact(line));
+        }
+        String address = DiagnosticRedactor.redact("+1100 2026-11-11 203.0.113.45");
+        assertTrue(address, address.startsWith("+1100 2026-11-11 ") && !address.contains("phone"));
+        // A phone number ends before an address that follows it, so the address goes whole.
+        for (String line : new String[]{"+1100 2100-11-11 203.0.113.45", "+44 7700-10-20 203.0.113.45"}) {
+            String out = DiagnosticRedactor.redact(line);
+            assertTrue(out, out.startsWith("[phone omitted] ") && !out.contains("113") && !out.contains(".0."));
+        }
+        // logcat's pid column reaches 4,194,304.
+        String pid = "11-11 10:23:11.269 +1100 4194304 12345 I Tag";
+        assertEquals(pid, DiagnosticRedactor.redact(pid));
     }
 
     /** The clock only excuses a four-digit offset, so a phone number written after a time still goes. */
@@ -337,9 +431,14 @@ public class DiagnosticRedactorTest {
                 DiagnosticRedactor.redact("at 10:23:11.269 +1415 555 0123 I called"));
         assertEquals("10:23:11.269 [phone omitted] A new msg",
                 DiagnosticRedactor.redact("10:23:11.269 +1312 555 0100 A new msg"));
+        // Seven digits, but more than any process id can be.
+        assertEquals("at 10:23:11.269 [phone omitted] 12345 A x",
+                DiagnosticRedactor.redact("at 10:23:11.269 +1415 5550123 12345 A x"));
+        assertEquals("at 10:23:11.269 [phone omitted] 12345 I x",
+                DiagnosticRedactor.redact("at 10:23:11.269 +1415 4555012 12345 I x"));
     }
 
-    /** A long run of hyphenated words, styled letters or backslashes is read once, not once per word. */
+    /** A long run of hyphenated words, styled letters, backslashes or quoted values is read once, not once per word. */
     @Test(timeout = 5000) public void aLongHyphenatedOrEscapedRunIsRedactedInLinearTime() {
         String uuid = "123e4567-e89b-12d3-a456-426614174000-";
         for (String run : new String[]{"a-".repeat(32_000), "1-".repeat(32_000), uuid.repeat(1_700),
@@ -350,6 +449,13 @@ public class DiagnosticRedactorTest {
         assertEquals("nickname: [omitted]", DiagnosticRedactor.redact("nickname: x," + "\\".repeat(60_000)));
         assertEquals("{\"msg\":\"nickname: [omitted]\"}",
                 DiagnosticRedactor.redact("{\"msg\":\"nickname: x" + "\\".repeat(60_000) + "\"}"));
+        assertEquals("{\"m\":\"nickname: [omitted]\"}", DiagnosticRedactor.redact("{\"m\":\"nickname: " + "a-".repeat(31_000) + "\"}"));
+        assertEquals("{\"m\":\"phone: [omitted]\"}", DiagnosticRedactor.redact("{\"m\":\"phone: x " + "a-b ".repeat(15_000) + "y\"}"));
+        assertEquals("{\"m\":\"nickname: [omitted] \"}",
+                DiagnosticRedactor.redact("{\"m\":\"nickname: " + "x token=\\\"a ".repeat(5_000) + "\"}"));
+        assertEquals("nickname: [omitted] ", DiagnosticRedactor.redact("nickname: " + "x token=\"a ".repeat(5_000)));
+        String frames = "{\"m\":\"nickname:\\nat " + "a.".repeat(31_000) + "\"}";
+        assertTrue(DiagnosticRedactor.redact(frames).startsWith("{\"m\":\"nickname:\\n[omitted]"));
     }
 
     /** A version or a hash after a dash, a C++ name and a density file name are not accounts. */

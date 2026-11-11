@@ -83,6 +83,7 @@ Every Hushfeed release, newest first.
 * On a right-to-left phone, a setting's description now sits under its name on the icon's side, and a section's heading starts on that side too. Hushfeed's text is English, so those lines used to start at the far left, across the row from the name.
 * `Hide the LIVE button` now shows the restart button when you flip it, like the search and side menu switches. Turned off, the LIVE button stayed missing with nothing telling you it needed a restart.
 * If you left a video cleared with `Keep Clear display across videos` on, the first video after you reopen TikTok clears too, instead of keeping its buttons.
+* With `Hide CAPTCHA popups` on, tapping hearts in a LIVE no longer hides TikTok's check. It shows, the same as it does for a save or a gift, because a hidden check left the hearts on screen while TikTok counted none of them. When TikTok turns your taps down, Hushfeed says so once, the way it does for a video like (#380).
 
 ## 0.81.0 (2026-11-05)
 

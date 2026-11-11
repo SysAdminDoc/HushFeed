@@ -468,27 +468,33 @@ public final class FollowDiagnostics {
 
     /**
      * The answer to a batch of LIVE taps (#380): whether TikTok took them, for the room the
-     * batch was meant for. The room stays a hash.
+     * batch was meant for. The room stays a hash. Refused taps still fill the hearts on screen
+     * and the count drops back on the next visit, so the answer is read with logging off too and
+     * a refusal is named on screen once per process, the same as a video like.
      */
     private static void logLiveLikeResponse(Object request, Object response) {
-        if (!reserveNetworkEvent()) return;
-
         try {
-            String fullPath = requestUrl(request);
-            String room = liveRoomId(request, fullPath);
             Object body = response == null ? null : readField(response, "LIZIZ");
             FollowVerdict verdict = FollowVerdict.of(body);
+            boolean refused = FollowVerdict.isRefusalCode(verdict.statusCode);
+            if (refused) warnAboutRefusedLikeOnce(verdict);
+            if (!reserveNetworkEvent()) return;
+
+            String fullPath = requestUrl(request);
+            String room = liveRoomId(request, fullPath);
+            String suppressed = CaptchaGate.recentlySuppressedCheckId();
             String line = "[Morphe TikTok FollowProbe] live like response"
                     + " responseSuccess=" + (response == null ? "n/a" : invokeValue(response, "LIZJ"))
                     + " responseCode=" + (response == null ? "n/a" : invokeValue(response, "LIZ"))
                     + " status_code=" + verdict.statusCode
                     + " status_msg=" + safeShort(verdict.statusMsg)
+                    + " riskCheck=" + (suppressed == null ? "none" : safeShort(suppressed))
                     + " room=" + roomAgainstLastEnter(room)
                     + " roomHash=" + roomHash(room)
                     + " enteredHash=" + roomHash(lastEnteredRoom)
                     + " route=" + liveRoute(fullPath)
                     + " bodyFieldNames=" + describeFieldNames(body)
-                    + " outcome=" + (FollowVerdict.isRefusalCode(verdict.statusCode) ? "refused" : "server_accept");
+                    + " outcome=" + (refused ? "refused" : "server_accept");
             Logger.printDebug(() -> line);
         } catch (Throwable throwable) {
             Logger.printDebug(() -> "[Morphe TikTok FollowProbe] live like response read failed: " + throwable);

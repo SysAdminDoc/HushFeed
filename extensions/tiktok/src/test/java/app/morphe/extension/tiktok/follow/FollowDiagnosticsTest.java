@@ -451,6 +451,30 @@ public class FollowDiagnosticsTest {
         assertTrue(found, found.contains("status_code=4003"));
         assertTrue(found, found.contains("outcome=refused"));
         assertFalse("the room id stays out of the report", found.contains("7400000000000000001"));
+        assertTrue(found, found.contains(" riskCheck=none "));
+    }
+
+    /** Issue #380: refused LIVE taps keep their hearts on screen, so the refusal is named with logging off. */
+    @Test
+    public void refusedLiveTapsAreNamedOnceWithLoggingOff() {
+        ShadowToast.reset();
+        org.robolectric.shadows.ShadowLog.clear();
+
+        FollowDiagnostics.logParsedResponse(new CaptchaGateRequest("/webcast/room/like/?room_id=7400000000000000001"),
+                new ParsedResponse(new EnterBody()));
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        assertEquals("taken taps show nothing", 0, ShadowToast.shownToastCount());
+
+        for (int i = 0; i < 2; i++) {
+            FollowDiagnostics.logParsedResponse(new CaptchaGateRequest("/webcast/room/like/?room_id=7400000000000000001"),
+                    new ParsedResponse(new ChatBody()));
+        }
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+
+        assertEquals("one notice per process", 1, ShadowToast.shownToastCount());
+        assertEquals("TikTok refused the like: Slow down", ShadowToast.getTextOfLatestToast());
+        assertEquals("logging off writes no line", 0,
+                linesStarting("[Morphe TikTok FollowProbe] live like response ").size());
     }
 
     @Test

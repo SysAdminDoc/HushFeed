@@ -223,6 +223,11 @@ public final class CaptchaGate {
         if (value.contains("/gift/send/")) {
             return "gift";
         }
+        // LIVE taps go out in batches on their own path, not the video like's digg (#380). A
+        // puzzle hidden over a batch leaves the hearts on screen and none of them counted.
+        if (value.contains("/webcast/room/like/")) {
+            return "LIVE like";
+        }
         if (value.contains("/order/")
                 || value.contains("/cart/")
                 || value.contains("/checkout")

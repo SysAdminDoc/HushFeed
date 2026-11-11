@@ -354,6 +354,7 @@ public class CaptchaGateTest {
                 {"/v2/conversation/create/", "message"},
                 {"/tiktok/v1/gift/send/", "gift"},
                 {"/webcast/gift/send/", "gift"},
+                {"/webcast/room/like/", "LIVE like"},
                 {"/api/v1/trade/order/create", "purchase"},
                 {"/api/v1/shop/cart/add_item_to_cart", "purchase"},
                 {"/payment/v1/pay", "purchase"},

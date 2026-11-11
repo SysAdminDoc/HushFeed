@@ -174,9 +174,11 @@ public final class LogBufferManager {
             }
             // Only when the sections around the events are over the limit on their own.
             if (exportText.length() > CLIPBOARD_MAX_CHARS) {
-                exportText = "MORPHE DIAGNOSTIC REPORT\n"
-                        + "clipboard_note: older content omitted; use Save full report for everything\n\n"
-                        + exportText.substring(exportText.length() - CLIPBOARD_MAX_CHARS);
+                String head = "MORPHE DIAGNOSTIC REPORT\n"
+                        + "clipboard_note: older content omitted; use Save full report for everything\n\n";
+                // The head counts toward the limit too.
+                exportText = head + exportText.substring(
+                        exportText.length() - (CLIPBOARD_MAX_CHARS - head.length()));
             }
             Utils.setClipboard(exportText);
             Utils.showToastShort(say(copiedMessage, "Diagnostic report copied to the clipboard."));
@@ -351,7 +353,7 @@ public final class LogBufferManager {
      * The report, with the oldest selected events dropped when it would run past {@code limit}.
      * The events are the one section that grows without bound, so every other section stays whole.
      */
-    private static String buildExportText(int limit) {
+    static String buildExportText(int limit) {
         Set<String> selected = LogExportFilterPreference.parse(BaseSettings.DEBUG_LOG_FILTERS.get());
         boolean includeAll = selected.isEmpty() || selected.contains("all");
         String crash = DiagnosticRedactor.redact(readCrashReport(Utils.getContext()));
@@ -359,9 +361,13 @@ public final class LogBufferManager {
 
         List<DiagnosticEvent> snapshot = new ArrayList<>(logBuffer);
         StringBuilder events = new StringBuilder();
+        // Where each event begins. An exception event carries its stack trace on the lines
+        // below it, so a line break is not always the start of the next event.
+        List<Integer> eventStarts = new ArrayList<>();
         for (DiagnosticEvent event : snapshot) {
             if (!includeAll && !selected.contains(event.category.value)) continue;
             if (events.length() > 0) events.append('\n');
+            eventStarts.add(events.length());
             events.append(DiagnosticRedactor.redact(event.format()));
         }
 
@@ -483,9 +489,14 @@ public final class LogBufferManager {
         if (report.length() > limit && eventsStart >= 0) {
             String note = "clipboard_note: older events omitted; use Save full report for everything\n";
             int over = report.length() - limit + note.length();
-            // Whole lines only, so the oldest event kept is never cut in half.
-            int nextLine = over < events.length() ? events.indexOf("\n", over) : -1;
-            String kept = nextLine < 0 ? "" : events.substring(nextLine + 1);
+            // Whole events only, so the oldest event kept is never cut in half.
+            String kept = "";
+            for (int start : eventStarts) {
+                if (start >= over) {
+                    kept = events.substring(start);
+                    break;
+                }
+            }
             report.replace(eventsStart, eventsStart + events.length(), note + kept);
         }
         return report.toString();

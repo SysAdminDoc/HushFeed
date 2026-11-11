@@ -30,6 +30,69 @@ import java.util.concurrent.TimeUnit;
 public class LogBufferManagerExportTest {
     @Rule public final SettingsContextRule settingsContext = new SettingsContextRule();
     @Rule public final TemporaryFolder temporary = new TemporaryFolder();
+
+    @Test public void aTrimmedReportKeepsWholeEventsStackTracesIncluded() {
+        // An exception event carries its stack trace on the lines below it. Wherever the limit
+        // falls, the first event kept starts at its own first line, never at one of its frames.
+        app.morphe.extension.shared.Utils.setContext(RuntimeEnvironment.getApplication());
+        app.morphe.extension.shared.settings.BaseSettings.DEBUG_LOG_FILTERS.save("all");
+        app.morphe.extension.shared.diagnostics.HookStatus.clear();
+        LogBufferManager.clearLogBuffer();
+        try {
+            for (int index = 0; index < 40; index++) {
+                StringBuilder trace = new StringBuilder("phase=failed " + index);
+                for (int frame = 0; frame < 12; frame++) {
+                    trace.append("\n\tat app.Fixture.step").append(frame).append("(Fixture.java)");
+                }
+                LogBufferManager.appendEvent(app.morphe.extension.shared.diagnostics.DiagnosticCategory.DOWNLOADS,
+                        "Fixture", "ERROR", trace.toString());
+            }
+            String whole = LogBufferManager.buildExportText();
+            String note = "clipboard_note: older events omitted; use Save full report for everything\n";
+            for (int limit = whole.length() - 1; limit > whole.length() - 12_000; limit -= 37) {
+                String trimmed = LogBufferManager.buildExportText(limit);
+                assertTrue("over the limit of " + limit, trimmed.length() <= limit);
+                int cut = trimmed.indexOf(note);
+                assertTrue("no note at a limit of " + limit, cut >= 0);
+                String after = trimmed.substring(cut + note.length());
+                assertTrue("an event cut in half at a limit of " + limit + ": "
+                                + after.substring(0, Math.min(80, after.length())),
+                        after.startsWith("downloads | ") || after.startsWith("\n["));
+            }
+        } finally {
+            LogBufferManager.clearLogBuffer();
+        }
+    }
+
+    @Test public void aQuickCopyOfACrashTooLongOnItsOwnStaysWithinTheLimit() throws Exception {
+        // No events to drop, so the copy keeps the report's end behind a short head of its own,
+        // and the head counts toward the limit.
+        Context context = RuntimeEnvironment.getApplication();
+        app.morphe.extension.shared.Utils.setContext(context);
+        app.morphe.extension.shared.settings.BaseSettings.DEBUG_LOG_FILTERS.save("all");
+        app.morphe.extension.shared.diagnostics.HookStatus.clear();
+        LogBufferManager.clearLogBuffer();
+        try {
+            StringBuilder crash = new StringBuilder("complete: true\njava.lang.IllegalStateException: fixture");
+            for (int frame = 0; crash.length() < 70_000; frame++) {
+                crash.append("\n\tat app.Fixture.step").append(frame).append("(Fixture.java)");
+            }
+            LogBufferManager.persistCrashReport(context, crash.toString());
+            assertTrue(LogBufferManager.buildExportText().length() > 60_000);
+            LogBufferManager.exportToClipboard();
+            android.content.ClipboardManager clipboard =
+                    (android.content.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            String copied = clipboard.getPrimaryClip().getItemAt(0).getText().toString();
+            assertTrue("copied " + copied.length() + " characters", copied.length() <= 60_000);
+            assertTrue(copied, copied.startsWith("MORPHE DIAGNOSTIC REPORT\n"
+                    + "clipboard_note: older content omitted"));
+            assertTrue(copied, copied.contains("[BUILD DETAILS]"));
+        } finally {
+            // Takes the saved crash with it.
+            LogBufferManager.clearLogBuffer();
+        }
+    }
+
     @Test public void anOlderAndroidSaysNothingAboutTheLastExit() {
         // The history arrived in API 30 and this bundle runs from 23, so the section has to be
         // absent rather than empty or guessed at.

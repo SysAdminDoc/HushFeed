@@ -93,6 +93,7 @@ Every Hushfeed release, newest first.
 * The sort button and the jump buttons on profile, Liked and sound grids sit on a darker backdrop, so their words read over a white or busy thumbnail (#378).
 * The hold speed bubble follows your phone's font size now, in both the pill and the round dial. With large text on, the speed used to stay small while everything else in Hushfeed grew. The whole bubble grows with it, so the padlock and the dots keep their room.
 * With `Open TikTok on` set to Inbox, Profile or another tab, TalkBack can't land on the For You feed hidden under the start screen while TikTok opens.
+* Restoring a settings backup, resetting settings or undoing either one now updates the feed's text size and color, the commenter names and a searched Liked or Favorites grid right away, the same as flipping those switches by hand. A grid you'd searched stayed narrowed after a restore turned `Search Liked and Favorites grids` off.
 
 ## 0.81.0 (2026-11-05)
 

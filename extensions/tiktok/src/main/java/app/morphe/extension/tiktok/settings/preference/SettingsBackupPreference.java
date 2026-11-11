@@ -364,6 +364,14 @@ public final class SettingsBackupPreference extends Preference
     }
 
     private static void finishRun(int run, int action, WeakReference<TikTokPreferenceFragment> owner) {
+        // A restore, a reset or an undo writes every setting at once, past the switches' own
+        // redraws, and the page only puts the stored values back in its controls. What is on
+        // screen is redrawn here instead, the same as flipping each switch would.
+        if (action != EXPORT) {
+            app.morphe.extension.tiktok.feed.FeedTextSize.onSettingChanged();
+            app.morphe.extension.tiktok.comment.CommenterDetails.onSettingChanged();
+            app.morphe.extension.tiktok.feed.GridSearch.onSettingChanged();
+        }
         // A run that was stopped gave the rows back already, and they may be a later run's now.
         if (RUN.get() != run) {
             refreshRows();

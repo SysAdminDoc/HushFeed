@@ -30,10 +30,13 @@ import com.ss.android.ugc.aweme.feed.model.AwemeStatistics;
 import com.ss.android.ugc.aweme.feed.model.PhotoModeImageInfo;
 import com.ss.android.ugc.aweme.feed.model.PhotoModeTextInfo;
 
+import java.lang.ref.WeakReference;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.diagnostics.HookStatus;
@@ -41,7 +44,9 @@ import app.morphe.extension.shared.settings.Setting;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
+import app.morphe.extension.tiktok.settings.preference.SettingsBackupPreference;
 import app.morphe.extension.tiktok.settings.preference.SettingsUi;
+import app.morphe.extension.tiktok.settings.preference.TikTokPreferenceFragment;
 import app.morphe.extension.tiktok.settings.preference.categories.InterfacePreferenceCategory;
 
 import org.junit.After;
@@ -664,6 +669,48 @@ public class GridSearchTest {
             idle(50);
             assertEquals("the search didn't come back with the switch", "abcd", ids(adapter.mmItems));
         }
+    }
+
+    /**
+     * A restore, a reset or an undo writes the switch with every other setting at once, so it never
+     * goes through the switch's redraw, and the end of the run has to redraw the grid instead.
+     */
+    @Test public void aSettingsResetAndItsUndoRedrawAGridWhoseChipWaitsOutsideAFrame() throws Exception {
+        Settings.GRID_SEARCH.save(true);
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            Activity activity = controller.get();
+            GridSortTest.GridAdapter adapter = gridOnScreen(activity, GridSort.TAB_LIKED);
+            adapter.mmItems = GridSort.data(adapter, library());
+            idle(0);
+            GridSearch.search(adapter, "cat");
+            FrameLayout first = (FrameLayout) adapter.mmRecyclerView.getParent();
+            LinearLayout stop = new LinearLayout(activity);
+            first.removeView(adapter.mmRecyclerView);
+            stop.addView(adapter.mmRecyclerView);
+            activity.setContentView(stop);
+            idle(50);
+            assertEquals("abcd", ids(adapter.mmItems));
+
+            Setting.saveAll(Collections.singletonMap(Settings.GRID_SEARCH, false));
+            idle(50);
+            assertEquals("the batch write alone redrew the grid", "abcd", ids(adapter.mmItems));
+            finishBackupRun(7313);
+            idle(50);
+            assertEquals("a reset that turned search off left the grid narrowed", "abcdef", ids(adapter.mmItems));
+
+            Setting.saveAll(Collections.singletonMap(Settings.GRID_SEARCH, true));
+            finishBackupRun(7314);
+            idle(50);
+            assertEquals("an undo that turned search back on didn't narrow the grid", "abcd", ids(adapter.mmItems));
+        }
+    }
+
+    /** Ends the backup page's current run as its worker does, for a reset (7313) or an undo (7314). */
+    private static void finishBackupRun(int action) {
+        AtomicInteger run = ReflectionHelpers.getStaticField(SettingsBackupPreference.class, "RUN");
+        ReflectionHelpers.callStaticMethod(SettingsBackupPreference.class, "finishRun",
+                ClassParameter.from(int.class, run.get()), ClassParameter.from(int.class, action),
+                ClassParameter.from(WeakReference.class, new WeakReference<TikTokPreferenceFragment>(null)));
     }
 
     @Test public void theOpenBoxCountsAPageThatComesIn() {

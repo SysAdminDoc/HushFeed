@@ -1,6 +1,7 @@
 package app.morphe.extension.shared.settings.preference;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -76,6 +77,9 @@ public class LogBufferManagerExportTest {
             while (message.length() < 500) message.append(" x");
             LogBufferManager.appendEvent(app.morphe.extension.shared.diagnostics.DiagnosticCategory.DOWNLOADS,
                     "Fixture", "ERROR", message.toString());
+            // Built on the main thread, a report starts the other-bundles scan and says it's
+            // still being read, so a scan landing between two builds changed one of them.
+            settleOtherBundles();
             String whole = LogBufferManager.buildExportText();
             int section = whole.indexOf("\n\n[SELECTED EVENTS]\n");
             assertTrue(section > 0);
@@ -283,6 +287,18 @@ public class LogBufferManagerExportTest {
         LogBufferManager.exportToFile();
         app.morphe.extension.shared.Utils.awaitBackgroundTasksForTests();
         assertEquals("the slot stayed taken after the stalled save returned", 2, media.inserts.get());
+    }
+
+    /** Off the main thread the section waits for the scan, so every report after this agrees. */
+    private static void settleOtherBundles() {
+        Thread scan = new Thread(() -> app.morphe.extension.shared.diagnostics.OtherBundles.lines(""));
+        scan.start();
+        try {
+            scan.join(TimeUnit.SECONDS.toMillis(30));
+        } catch (InterruptedException interrupted) {
+            Thread.currentThread().interrupt();
+        }
+        assertFalse("the other-bundles scan never finished", scan.isAlive());
     }
 
     private static String unstamped(String report) {

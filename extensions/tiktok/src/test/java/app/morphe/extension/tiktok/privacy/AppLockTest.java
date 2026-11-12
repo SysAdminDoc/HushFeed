@@ -250,6 +250,66 @@ public class AppLockTest {
         }
     }
 
+    @Test public void aViewTikTokRaisesOnTheScreenStaysUnderTheCover() {
+        try (ActivityController<Screen> screen = Robolectric.buildActivity(Screen.class).setup()) {
+            Activity activity = screen.get();
+            ViewGroup decor = (ViewGroup) activity.getWindow().getDecorView();
+            View cover = coverOf(activity);
+            View raised = new View(activity);
+            raised.setTranslationZ(cover.getZ() + 500);
+            decor.addView(raised);
+            decor.getViewTreeObserver().dispatchOnGlobalLayout();
+            assertTrue("a view raised above the cover draws over it", cover.getZ() > raised.getZ());
+        }
+    }
+
+    @Test public void aReaderHearsTheTitleWithUnlockRatherThanAsAStopOfItsOwn() {
+        try (ActivityController<Screen> screen = Robolectric.buildActivity(Screen.class).setup()) {
+            ViewGroup column = (ViewGroup) ((ViewGroup) coverOf(screen.get())).getChildAt(0);
+            assertFalse("the title is a stop of its own", column.getChildAt(0).isImportantForAccessibility());
+            String said = String.valueOf(unlockOf(coverOf(screen.get())).getContentDescription());
+            assertTrue(said, said.contains(L10n.t("TikTok is locked")) && said.contains(L10n.t("Unlock")));
+        }
+    }
+
+    @Test public void aCoverTikTokTakesOffHandsBackItsCurtainAndGoesBackOn() {
+        try (ActivityController<Screen> screen = Robolectric.buildActivity(Screen.class).create()) {
+            Activity activity = screen.get();
+            android.widget.Button like = likeOn(activity);
+            screen.start().resume().visible();
+            ViewGroup decor = (ViewGroup) activity.getWindow().getDecorView();
+            View taken = coverOf(activity);
+            decor.removeView(taken);
+            idle();
+
+            View cover = coverOf(activity);
+            assertNotNull("the screen stayed open with the lock up", cover);
+            assertTrue(cover != taken);
+            assertFalse("a reader reaches the screen under the new cover", like.isImportantForAccessibility());
+
+            AppLock.succeeded();
+            assertNull(coverOf(activity));
+            assertTrue("the cover TikTok took off kept the screen from a reader", like.isImportantForAccessibility());
+            assertTrue("the cover TikTok took off kept the screen from Tab", like.requestFocus());
+        }
+    }
+
+    /** A button on the screen, which Tab and a reader can reach unless something covers it. */
+    private static android.widget.Button likeOn(Activity activity) {
+        android.widget.Button like = new android.widget.Button(activity);
+        like.setFocusableInTouchMode(true);
+        page(activity).addView(like);
+        return like;
+    }
+
+    private static ViewGroup page(Activity activity) {
+        return (ViewGroup) ((ViewGroup) activity.findViewById(android.R.id.content)).getChildAt(0);
+    }
+
+    private static View unlockOf(View cover) {
+        return ((ViewGroup) ((ViewGroup) cover).getChildAt(0)).getChildAt(1);
+    }
+
     @Test public void theSystemTakingThePromptDownAsksAgainButNotForever() {
         try (ActivityController<Screen> screen = Robolectric.buildActivity(Screen.class).setup()) {
             Activity activity = screen.get();

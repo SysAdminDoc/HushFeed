@@ -484,7 +484,7 @@ public final class AppLock {
         COVERED.add(activity);
         if (coverIn(decor) != null) return true;
 
-        FrameLayout cover = new Cover(activity);
+        Cover cover = new Cover(activity);
         cover.setTag(COVER_TAG);
         // Opaque: the scrim the daily hold uses lets a little of the feed through.
         cover.setBackgroundColor(Color.BLACK);
@@ -504,6 +504,7 @@ public final class AppLock {
         // Above anything TikTok raised on the decor, with no shadow to draw for it.
         cover.setOutlineProvider(null);
         cover.setTranslationZ(SettingsUi.dp(activity, 1000));
+        cover.staysAbove(decor);
 
         LinearLayout column = new LinearLayout(activity);
         column.setOrientation(LinearLayout.VERTICAL);
@@ -519,13 +520,15 @@ public final class AppLock {
         title.setTextSize(TypedValue.COMPLEX_UNIT_SP, SettingsUi.TEXT_HEADLINE);
         title.setGravity(Gravity.CENTER);
         ShimmerTitle.wear(title);
+        // Read with Unlock instead, so a reader's first stop is the one that does something.
+        title.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         column.addView(title);
 
         // The way back to the prompt once it was closed.
         TextView unlock = new TextView(activity);
         String unlockText = L10n.t(activity, "Unlock");
         unlock.setText(unlockText);
-        unlock.setContentDescription(unlockText);
+        unlock.setContentDescription(titleText + ". " + unlockText);
         SettingsUi.markAsButton(unlock);
         unlock.setTextColor(SettingsUi.OVERLAY_TEXT);
         unlock.setTextSize(TypedValue.COMPLEX_UNIT_SP, SettingsUi.TEXT_BODY);
@@ -558,8 +561,11 @@ public final class AppLock {
      * above it, where Tab and a screen reader would find it.
      */
     private static final class Cover extends FrameLayout implements ViewTreeObserver.OnGlobalLayoutListener {
-        Cover(Context context) {
-            super(context);
+        private final Activity activity;
+
+        Cover(Activity activity) {
+            super(activity);
+            this.activity = activity;
         }
 
         @Override protected void onAttachedToWindow() {
@@ -569,6 +575,14 @@ public final class AppLock {
 
         @Override protected void onDetachedFromWindow() {
             getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            // Its curtain goes with it, whoever took it off: uncover can only find it on the decor.
+            SessionLockOverlay.hideBehind(null, this, false);
+            // TikTok took it off a screen that's still locked and staying, so it goes back on.
+            if (locked && COVERED.contains(activity) && staying(activity)) {
+                MAIN.post(() -> guard(() -> {
+                    if (locked && staying(activity)) cover(activity);
+                }));
+            }
             super.onDetachedFromWindow();
         }
 
@@ -578,9 +592,28 @@ public final class AppLock {
                 ViewGroup decor = (ViewGroup) getParent();
                 // Reordered without a detach, so Unlock keeps its focus.
                 if (decor.indexOfChild(this) != decor.getChildCount() - 1) decor.bringChildToFront(this);
+                staysAbove(decor);
                 SessionLockOverlay.hideBehind(decor, this, true);
             });
         }
+
+        /**
+         * Drawn and touched above every other view on the decor. Both go by Z before the order of
+         * the children, so a view TikTok raised higher than the cover would show through it.
+         */
+        void staysAbove(ViewGroup decor) {
+            float highest = 0;
+            for (int index = 0; index < decor.getChildCount(); index++) {
+                View child = decor.getChildAt(index);
+                if (child != this) highest = Math.max(highest, child.getZ());
+            }
+            if (getZ() <= highest) setTranslationZ(highest + 1 - getElevation());
+        }
+    }
+
+    /** Its window goes away on a finish, a destroy and a rotation, and the cover with it. */
+    private static boolean staying(Activity activity) {
+        return !activity.isFinishing() && !activity.isDestroyed() && !activity.isChangingConfigurations();
     }
 
     private static void uncover(Activity activity) {

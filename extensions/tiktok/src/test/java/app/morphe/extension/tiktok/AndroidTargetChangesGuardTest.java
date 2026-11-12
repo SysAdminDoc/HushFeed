@@ -119,7 +119,11 @@ public class AndroidTargetChangesGuardTest {
             new ReviewedWrites("navigation/DiscoverTab.java", 2,
                     "safe: writes bottomTab on the tab layout TikTok parsed and handed the hook, "
                             + "and bottomTabKey on a bottom tab this class just built; findField() "
-                            + "skips a static field"));
+                            + "skips a static field"),
+            new ReviewedWrites("privacy/AppLock.java", 1,
+                    "safe: writes mViews on the WindowManagerGlobal instance getInstance() "
+                            + "returned, an instance field, with a list holding the same windows; "
+                            + "a refusal is caught and App lock finds the windows on its own passes"));
 
     /**
      * Addresses written into the payload, and what is done with them.
@@ -229,8 +233,8 @@ public class AndroidTargetChangesGuardTest {
         // Nine on 2026-09-19; four comment-menu instance writes were added for #169, and two
         // LIVE profile card label writes for #159, and the grid sort chip's re-sort for #180.
         // Four LIVE Audio only row writes for #265 on 2026-11-05, two Discover tab writes for #98.
-        // The grid search's reshow on 2026-11-10.
-        assertEquals("the audit counted twenty-three reflective writes on 2026-11-10", 23, total);
+        // The grid search's reshow on 2026-11-10, App lock's watched window list on 2026-11-12.
+        assertEquals("the audit counted twenty-four reflective writes on 2026-11-12", 24, total);
     }
 
     @Test

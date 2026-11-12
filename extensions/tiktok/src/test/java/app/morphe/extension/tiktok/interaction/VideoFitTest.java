@@ -215,6 +215,39 @@ public class VideoFitTest {
         }
     }
 
+    @Test public void fillLeavesAWideOrSquareVideoWholeOnATallWindow() {
+        // #394: a 16:9 video TikTok letterboxed on a 1220x2656 phone came out cropped to the
+        // middle quarter of its width with fill on.
+        assertFalse(VideoFit.wants(VideoFit.Mode.FILL, 1220, 686, 1220, 2656));
+        assertFalse(VideoFit.wants(VideoFit.Mode.FILL, 1220, 1220, 1220, 2656));
+        // A tall video on a wide window is the same mismatch the other way round.
+        assertFalse(VideoFit.wants(VideoFit.Mode.FILL, 1080, 1920, 2400, 1080));
+        // A wide video on a wide window still loses its bars.
+        assertTrue(VideoFit.wants(VideoFit.Mode.FILL, 1920, 1000, 2400, 1080));
+        // Fit is untouched by it: a wide video spilling past a tall window still comes back in.
+        assertTrue(VideoFit.wants(VideoFit.Mode.FIT, 4267, 2400, 1080, 2400));
+
+        try (var controller = Robolectric.buildActivity(android.app.Activity.class).setup().visible()) {
+            var activity = controller.get();
+            Utils.setContext(activity);
+            FrameLayout container = new FrameLayout(activity);
+            View video = new View(activity);
+            container.addView(video);
+            container.layout(0, 0, 1220, 2656);
+            video.setLayoutParams(new FrameLayout.LayoutParams(1220, 686));
+            Result wide = new Result(1220, 686, 0f, 985f, new Object());
+            try {
+                Settings.FILL_VIDEO_TO_SCREEN.save(true);
+                assertSame(wide, VideoFit.fitted(video, wide));
+                assertEquals(VideoFit.LEAVE, VideoFit.fitWidthFor(wide, video));
+                assertEquals(Float.valueOf(985f), VideoFit.fittedTranslation(wide, Float.valueOf(985f)));
+            } finally {
+                Settings.FILL_VIDEO_TO_SCREEN.save(false);
+                Settings.FIT_VIDEO_TO_SCREEN.save(false);
+            }
+        }
+    }
+
     /**
      * TikTok reuses a cell's video view, layout parameters and all, for the next video, and lays
      * its own result out with offsets that assume its own gravity. A view this code centred for

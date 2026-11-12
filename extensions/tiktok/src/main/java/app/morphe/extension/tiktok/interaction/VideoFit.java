@@ -449,11 +449,25 @@ public final class VideoFit {
         return value instanceof Integer ? (Integer) value : 0;
     }
 
-    /** Whether the video at this size needs changing: it overflows for fit, or leaves a gap for fill. */
+    /**
+     * Whether the video at this size needs changing: it overflows for fit, or leaves a gap for
+     * fill. Fill only takes a video standing the same way as the window. A wide video on a tall
+     * window covered it by losing three quarters of its width (#394), and a square one more than
+     * half; the switch is for the strip under a tall video, and the rest stay whole.
+     */
     static boolean wants(Mode mode, int width, int height, int containerWidth, int containerHeight) {
         if (mode == Mode.FIT) return width > containerWidth || height > containerHeight;
-        if (mode == Mode.FILL) return width < containerWidth || height < containerHeight;
+        if (mode == Mode.FILL) {
+            return sameWay(width, height, containerWidth, containerHeight)
+                    && (width < containerWidth || height < containerHeight);
+        }
         return false;
+    }
+
+    /** Both taller than wide, or both wider than tall. A square either way stands neither. */
+    static boolean sameWay(int width, int height, int containerWidth, int containerHeight) {
+        return (height > width && containerHeight > containerWidth)
+                || (width > height && containerWidth > containerHeight);
     }
 
     static int widthFor(Mode mode, int width, int height, int containerWidth, int containerHeight) {

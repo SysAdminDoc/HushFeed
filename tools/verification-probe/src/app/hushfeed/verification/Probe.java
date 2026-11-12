@@ -3290,6 +3290,10 @@ public final class Probe extends Instrumentation {
                         }, gap);
                         break;
                     }
+                    case "playerlog": {
+                        PlayerLog.toggle(loader, intent);
+                        break;
+                    }
                     case "startwatch": {
                         AutoAdvanceWatch.start(loader, intent);
                         break;

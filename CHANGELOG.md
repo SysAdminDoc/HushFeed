@@ -7,6 +7,7 @@ Every Hushfeed release, newest first.
 ### Bug Fixes
 
 * `Turn off haptics` also quiets Hushfeed's own buzzes now: holding the For You, Home, Inbox or Profile tab and dragging the block button were still vibrating with the switch on.
+* `Fold long comments` folds comments that TikTok already cuts with its own "... more". Those used to stay at TikTok's six lines. Now our more opens TikTok's cut text, and TikTok's more opens the rest.
 
 ## 0.82.0 (2026-11-12)
 

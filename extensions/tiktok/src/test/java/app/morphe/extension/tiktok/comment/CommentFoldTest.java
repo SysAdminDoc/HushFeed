@@ -147,6 +147,31 @@ public class CommentFoldTest {
         assertEquals("one\ntwo" + (char) 0x2026 + " more", body(cell).getText().toString());
     }
 
+    @Test public void aCommentTikTokAlreadyCutFoldsAndOpensToTikToksCut() {
+        // TikTok's own fold of a long comment, with the zero width space it puts after a
+        // keyword highlighted from a search (seen on 47.7.3).
+        String comment = LONG_PARAGRAPH + " The next batch got milk bread flour and came out softer.";
+        String tikToksCut = LONG_PARAGRAPH.replace("buns", "buns" + (char) 0x200B) + (char) 0x2026 + " more";
+        LinearLayout cell = bound(tikToksCut);
+        assertTrue("TikTok's cut in the fixture doesn't wrap past 4 lines",
+                body(cell).getLayout().getLineCount() > 4);
+
+        CommentFold.apply(cell, new Comment("1", comment));
+
+        String shown = body(cell).getText().toString();
+        assertTrue("TikTok's cut wasn't folded: " + shown, shown.endsWith((char) 0x2026 + " more")
+                && shown.length() < tikToksCut.length());
+        String kept = shown.substring(0, shown.length() - 6).replace(String.valueOf((char) 0x200B), "");
+        assertTrue("the fold isn't the start of the comment: " + kept, comment.startsWith(kept));
+        layOut(cell);
+        assertTrue("the fold runs to " + body(cell).getLayout().getLineCount() + " lines",
+                body(cell).getLayout().getLineCount() <= 4);
+
+        more(body(cell)).onClick(body(cell));
+
+        assertEquals(tikToksCut, body(cell).getText().toString());
+    }
+
     @Test public void moreOpensTheWholeCommentInPlace() {
         LinearLayout cell = bound(EIGHT_LINES);
         CommentFold.apply(cell, new Comment("1", EIGHT_LINES));

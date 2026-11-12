@@ -51,6 +51,14 @@ public final class CommentFold {
      */
     private static final int MIN_CHARS_PER_LINE = 10;
 
+    /** TikTok's own cut ends in an ellipsis and its "more", which no translation makes this long. */
+    private static final int MAX_MORE_CHARS = 24;
+
+    private static final char ELLIPSIS = (char) 0x2026;
+
+    /** TikTok puts a zero width space after a keyword it highlights from a search. */
+    private static final String ZERO_WIDTH_SPACE = String.valueOf((char) 0x200B);
+
     /** Which comment each folded or opened text view shows. Main thread only. */
     private static final Map<TextView, Shown> SHOWN = new WeakHashMap<>();
 
@@ -127,12 +135,35 @@ public final class CommentFold {
         return count;
     }
 
-    /** The view whose text carries the whole comment; the username's never does. */
+    /**
+     * Whether a view's text is the comment: the whole of it, or TikTok's own cut of a long one
+     * (its start, then an ellipsis and "more"). Our fold isn't, so a row TikTok didn't bind again
+     * stays the way it is.
+     */
+    static boolean shows(CharSequence shown, String comment) {
+        if (shown == null) return false;
+        if (shown instanceof Spanned && ((Spanned) shown).getSpans(0, shown.length(), More.class).length > 0) {
+            return false;
+        }
+        String text = shown.toString().replace(ZERO_WIDTH_SPACE, "");
+        String said = comment.replace(ZERO_WIDTH_SPACE, "");
+        if (text.contains(said)) return true;
+
+        int ellipsis = text.lastIndexOf(ELLIPSIS);
+        if (ellipsis < 0 || text.length() - ellipsis > MAX_MORE_CHARS || text.indexOf('\n', ellipsis) >= 0) {
+            return false;
+        }
+        int end = ellipsis;
+        while (end > 0 && Character.isWhitespace(text.charAt(end - 1))) end--;
+        // The username's view never ends in an ellipsis, and a cut this short isn't TikTok's.
+        return end >= Math.min(said.length(), MIN_CHARS_PER_LINE) && said.startsWith(text.substring(0, end));
+    }
+
+    /** The view whose text carries the comment; the username's never does. */
     private static TextView findCommentTextView(View view, String comment, int depth) {
         if (view == null || depth > MAX_DEPTH) return null;
         if (view instanceof TextView) {
-            CharSequence shown = ((TextView) view).getText();
-            return shown != null && shown.toString().contains(comment) ? (TextView) view : null;
+            return shows(((TextView) view).getText(), comment) ? (TextView) view : null;
         }
         if (!(view instanceof ViewGroup)) return null;
         ViewGroup group = (ViewGroup) view;
@@ -143,13 +174,16 @@ public final class CommentFold {
         return null;
     }
 
-    /** Cuts the text after {@code lines} lines and ends it with "more". */
+    /**
+     * Cuts the text after {@code lines} lines and ends it with "more". When TikTok already cut
+     * the comment, our more opens TikTok's cut, and its own more opens the rest.
+     */
     private static void fold(TextView view, String comment, int lines, String id) {
         Layout layout = view.getLayout();
         int width = view.getWidth() - view.getTotalPaddingLeft() - view.getTotalPaddingRight();
         CharSequence full = view.getText();
         // A row rebound for another comment before its first layout shows that one now.
-        if (layout == null || width <= 0 || full == null || !full.toString().contains(comment)) return;
+        if (layout == null || width <= 0 || !shows(full, comment)) return;
         if (layout.getLineCount() <= lines) return;
 
         String more = L10n.t("… more");

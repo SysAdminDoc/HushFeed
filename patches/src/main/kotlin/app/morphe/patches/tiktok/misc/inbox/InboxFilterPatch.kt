@@ -6,6 +6,7 @@
  */
 package app.morphe.patches.tiktok.misc.inbox
 
+import app.morphe.patcher.patch.packageMetadata
 import app.morphe.patcher.Fingerprint
 import app.morphe.util.addInstruction
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch

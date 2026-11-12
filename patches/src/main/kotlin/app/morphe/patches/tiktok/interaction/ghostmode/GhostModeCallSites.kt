@@ -6,10 +6,11 @@
  */
 package app.morphe.patches.tiktok.interaction.ghostmode
 
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.util.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.instructions
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patcher.util.smali.ExternalLabel
@@ -292,7 +293,7 @@ private fun MutableMethod.flagRegister(unsafe: Set<Int>, landingIndex: Int): Int
  *
  * @return how many call sites were guarded.
  */
-internal fun BytecodePatchContext.skipReportsAtEveryCallSite(reporters: List<Method>, guard: String): Int {
+internal fun skipReportsAtEveryCallSite(reporters: List<Method>, guard: String): Int {
     val wrapperTypes = reporters.map { it.definingClass }.toSet()
     val acceptedOwners = wrapperTypes + wrapperTypes.flatMap { classDefByOrNull(it)?.interfaces.orEmpty() }
     val signatures = reporters.map { it.name to it.parameterTypes.map(CharSequence::toString) }.toSet()

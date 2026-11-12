@@ -6,8 +6,10 @@
  */
 package app.morphe.patches.tiktok.misc.update
 
+import app.morphe.patcher.patch.resourceFile
+import app.morphe.patcher.patch.document
+import app.morphe.patcher.patch.patch
 import app.morphe.patcher.patch.PatchException
-import app.morphe.patcher.patch.resourcePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.diagnostics.BUILD_DETAILS_ASSET
 import app.morphe.patches.tiktok.misc.diagnostics.BuildChoice
@@ -17,7 +19,7 @@ import app.morphe.patches.tiktok.misc.diagnostics.buildChoicePatch
 private const val MAX_VERSION_CODE = Int.MAX_VALUE
 
 @Suppress("unused")
-val hidePlayStoreUpdatePatch = resourcePatch(
+val hidePlayStoreUpdatePatch = patch(
     name = "Hide Play Store update offer",
     description = "Stops the Play Store offering to swap the patched TikTok for the store " +
         "version. The catch: a build with a lower version number won't install over it, and " +
@@ -47,6 +49,6 @@ val hidePlayStoreUpdatePatch = resourcePatch(
                 .singleOrNull { it.nodeName.substringAfterLast(':') == "versionCode" }
                 ?.nodeValue == MAX_VERSION_CODE.toString()) { "Raised TikTok version code was not saved" }
         }
-        BuildDetails.raisedVersionCode(get(BUILD_DETAILS_ASSET))
+        BuildDetails.raisedVersionCode(resourceFile(BUILD_DETAILS_ASSET))
     }
 }

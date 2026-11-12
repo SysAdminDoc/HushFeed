@@ -32,8 +32,12 @@ public class RuntimePatchListTest {
     private static final Pattern REGISTRATION = Pattern.compile("registerForBuildDetails\\(\"(enable[A-Za-z0-9]+)\"\\)");
     /** What follows a registration: execute's closing brace, then the patch's. Nothing runs after it. */
     private static final String END_OF_EXECUTE = "\n    }\n}\n";
+    /**
+     * bytecodePatch and resourcePatch are the settings wrappers' import aliases. A named plain
+     * patch() is a resource patch: since patcher 2.3 that's what the resource patches declare with.
+     */
     private static final Pattern PATCH_START = Pattern.compile(
-            "(?m)^(?:(?:internal|private|public) )?val \\w+ = (bytecodePatch|resourcePatch|rawResourcePatch)\\(");
+            "(?m)^(?:(?:internal|private|public) )?val \\w+ = (bytecodePatch|resourcePatch|patch)\\(");
     /** A top-level patch declaration ends at the first closing brace in column 0. */
     private static final String END_OF_PATCH = "\n}\n";
     private static final Pattern PATCH_NAME = Pattern.compile("\\bname = \"([^\"]+)\"");
@@ -46,7 +50,7 @@ public class RuntimePatchListTest {
     private static final Pattern RESOURCE_RECORD = Pattern.compile(
             "(?m)^(?![ \\t]*//).*(?:buildChoicePatch\\(BuildChoice\\.|BuildDetails\\.applied\\()");
     private static final Pattern RESOURCE_APPLIED = Pattern.compile(
-            "(?m)^([ \\t]*)BuildDetails\\.applied\\(get\\(BUILD_DETAILS_ASSET\\), \"([^\"]*)\"\\)");
+            "(?m)^([ \\t]*)BuildDetails\\.applied\\(resourceFile\\(BUILD_DETAILS_ASSET\\), \"([^\"]*)\"\\)");
     /** BuildDetailsPatch.kt's resourcePatchName, which applied() requires. */
     private static final Pattern RESOURCE_NAME = Pattern.compile("[a-z][A-Za-z0-9]{0,63}");
 
@@ -93,12 +97,12 @@ public class RuntimePatchListTest {
         assertEquals(Collections.singleton("Quiet"), silentPatches(quiet.replace("    execute {\n",
                 "    execute {\n        registerForBuildDetails(\"enableQuiet\")\n")));
         assertEquals(Collections.emptySet(), silentPatches(quiet.replace("    execute {\n",
-                "    execute {\n        BuildDetails.applied(get(BUILD_DETAILS_ASSET), \"quiet\")\n")));
+                "    execute {\n        BuildDetails.applied(resourceFile(BUILD_DETAILS_ASSET), \"quiet\")\n")));
         assertEquals(Collections.emptySet(), silentPatches(quiet.replace(") {\n",
                 ") {\n    dependsOn(buildChoicePatch(BuildChoice.AMOLED))\n")));
         // A record that's commented out writes nothing.
         assertEquals(Collections.singleton("Quiet"), silentPatches(quiet.replace("    execute {\n",
-                "    execute {\n        // BuildDetails.applied(get(BUILD_DETAILS_ASSET), \"quiet\")\n")));
+                "    execute {\n        // BuildDetails.applied(resourceFile(BUILD_DETAILS_ASSET), \"quiet\")\n")));
     }
 
     @Test
@@ -121,7 +125,7 @@ public class RuntimePatchListTest {
                         RESOURCE_NAME.matcher(name).matches());
                 assertTrue(file + " records " + name + " for its own patch",
                         source.contains("val " + name + "Patch = resourcePatch(")
-                                || source.contains("val " + name + "Patch = rawResourcePatch("));
+                                || source.contains("val " + name + "Patch = patch("));
                 assertTrue(file + " already records " + name, applied.add(name));
                 assertTrue(file + " records " + name + " as the last statement of execute, at its indent",
                         call.group(1).equals("        ") && source.startsWith(END_OF_EXECUTE, call.end()));

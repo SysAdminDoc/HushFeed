@@ -8,7 +8,6 @@ import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.fieldAccess
 import app.morphe.patcher.instanceOf
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.util.smali.ExternalLabel
 import app.morphe.patches.tiktok.misc.theme.declaredVersions
 import app.morphe.patches.tiktok.shared.requireLocals
@@ -124,7 +123,7 @@ internal fun Method.containerViewField(): FieldReference? {
  * word, and left out on any other, which keeps the video fit. All are found and checked before
  * any is written. Takes the version so a test can stand in for a build that isn't declared.
  */
-internal fun BytecodePatchContext.hookPhotoSlides(versionName: String): Boolean {
+internal fun hookPhotoSlides(versionName: String): Boolean {
     val declaredBuild = versionName in declaredVersions()
     val scale = if (declaredBuild) SlideScaleTypeFingerprint.method else SlideScaleTypeFingerprint.methodOrNull
     val crop = if (declaredBuild) SlideContainerCropFingerprint.method else SlideContainerCropFingerprint.methodOrNull

@@ -4,9 +4,12 @@
  */
 package app.morphe.patches.tiktok.misc.absettings
 
+import app.morphe.patcher.PackageMetadata
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
+import app.morphe.patcher.patch.classDefForEach
+import app.morphe.patcher.patch.mutableClassDefBy
+import app.morphe.patcher.patch.packageMetadata
 import app.morphe.patcher.util.proxy.mutableTypes.MutableClass
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.shared.callThroughLocals
@@ -78,16 +81,16 @@ internal const val APP_AB_INT_KEY_REGISTER = "p3"
 /** The boolean getter's key sits after `this` and one int, which [APP_AB_BOOLEAN] holds it to. */
 internal const val APP_AB_BOOLEAN_KEY_REGISTER = "p2"
 
-private val resolved = WeakHashMap<BytecodePatchContext, String>()
+private val resolved = WeakHashMap<PackageMetadata, String>()
 
 /**
  * The type of the app AB class in the build being patched, found by the getters it carries.
  *
  * <p>Walked once per patch run and remembered, because three patches ask and the walk visits
- * every class.
+ * every class. Each run has its own package metadata, which is what tells the runs apart.
  */
-internal fun BytecodePatchContext.appAbClassType(): String = synchronized(resolved) {
-    resolved.getOrPut(this) {
+internal fun appAbClassType(): String = synchronized(resolved) {
+    resolved.getOrPut(packageMetadata) {
         val carriers = mutableListOf<ClassDef>()
         classDefForEach { classDef ->
             // The double getter's return type alone rules out nearly every class, so the shape
@@ -106,7 +109,7 @@ internal fun BytecodePatchContext.appAbClassType(): String = synchronized(resolv
     }
 }
 
-internal fun BytecodePatchContext.appAbClass(): MutableClass = mutableClassDefBy(appAbClassType())
+internal fun appAbClass(): MutableClass = mutableClassDefBy(appAbClassType())
 
 /**
  * The one method of the class with this shape. Two of them would mean the shape has stopped
@@ -140,18 +143,18 @@ internal fun MutableClass.methodsOfShape(shape: MethodShape, what: String): List
     return matches
 }
 
-internal fun BytecodePatchContext.hookAppAbIntBoundary(
+internal fun hookAppAbIntBoundary(
     extensionDescriptor: String,
     extensionMethod: String,
 ) = hookAppAbBoundary(APP_AB_INT, APP_AB_INT_KEY_REGISTER, "I", "App AB int boundary", extensionDescriptor, extensionMethod)
 
 /** As [hookAppAbIntBoundary], for the boolean getter: `(String key, boolean value)` returning boolean. */
-internal fun BytecodePatchContext.hookAppAbBooleanBoundary(
+internal fun hookAppAbBooleanBoundary(
     extensionDescriptor: String,
     extensionMethod: String,
 ) = hookAppAbBoundary(APP_AB_BOOLEAN, APP_AB_BOOLEAN_KEY_REGISTER, "Z", "App AB boolean boundary", extensionDescriptor, extensionMethod)
 
-private fun BytecodePatchContext.hookAppAbBoundary(
+private fun hookAppAbBoundary(
     shape: MethodShape,
     keyRegister: String,
     valueType: String,

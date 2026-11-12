@@ -6,12 +6,13 @@
  */
 package app.morphe.patches.tiktok.misc.inbox
 
+import app.morphe.patcher.patch.classDefBy
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.checkCast
 import app.morphe.patcher.methodCall
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patcher.util.smali.ExternalLabel
 import app.morphe.patches.tiktok.shared.requireLocals
@@ -130,10 +131,9 @@ internal fun Instruction.isIndexedListCall(): Boolean =
     } == true
 
 /** Resolve and validate the complete group before the patch writes any instruction. */
-context(patchContext: BytecodePatchContext)
 internal fun loadedInboxPublicationSeams(): InboxPublicationSeams {
     val indexed = InboxIndexedCallback.method
-    val owner = patchContext.mutableClassDefBy(INBOX_RESULT_FRAGMENT)
+    val owner = mutableClassDefBy(INBOX_RESULT_FRAGMENT)
     check(owner.methods.none { it.name == INBOX_INDICES_GATE }) { "Loaded Inbox index gate already exists" }
     val gate = loadedIndicesGate(indexed)
     val submit = InboxDiffSubmission.method
@@ -145,7 +145,7 @@ internal fun loadedInboxPublicationSeams(): InboxPublicationSeams {
     // setRefreshing(Z) has nothing the patcher can look up, so it's matched in the class that holds
     // the manual refresh InboxSpringManualRefresh found, rather than in every class of TikTok.
     val manualRefresh = InboxSpringManualRefresh.method
-    val refresh = InboxSpringRefresh.match(patchContext.classDefBy(manualRefresh.definingClass)).method
+    val refresh = InboxSpringRefresh.match(classDefBy(manualRefresh.definingClass)).method
     return InboxPublicationSeams(InboxListPublication.method,
         InboxStubPublication.method, submit, accepted,
         InboxFragmentPublication.method, indexed, InboxVisibleIndices.method, InboxNotificationClick.method,

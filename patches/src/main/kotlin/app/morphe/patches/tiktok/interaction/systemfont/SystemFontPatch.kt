@@ -4,11 +4,12 @@
  */
 package app.morphe.patches.tiktok.interaction.systemfont
 
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.methodCall
 import app.morphe.util.addInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
@@ -176,7 +177,7 @@ private val PAGE_CALLBACK_NAMES = setOf("onPageFinished", "onPageCommitVisible")
  * and URL. Use system font and AMOLED dark theme both style TikTok's web pages this way, and
  * when both are applied each callback calls both.
  */
-internal fun BytecodePatchContext.hookWebPageCallbacks(patch: String, target: String) {
+internal fun hookWebPageCallbacks(patch: String, target: String) {
     fun isClient(type: String): Boolean {
         var current: String? = classDefByOrNull(type)?.superclass
         repeat(32) {

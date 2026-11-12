@@ -4,8 +4,8 @@
  */
 package app.morphe.patches.tiktok.interaction.publishdate
 
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.theme.declaredVersions
@@ -120,7 +120,7 @@ internal fun gridTabField(init: Method): FieldReference? {
  * is built and in the two registers nothing reads after. Required on a declared build. On any
  * other the Liked grid follows the profile grids' order as it did before.
  */
-internal fun BytecodePatchContext.hookGridTab(versionName: String): Boolean {
+internal fun hookGridTab(versionName: String): Boolean {
     val declared = versionName in declaredVersions()
     val init = if (declared) GridAdapterInitFingerprint.method else GridAdapterInitFingerprint.methodOrNull
     val field = init?.let(::gridTabField)
@@ -222,7 +222,7 @@ internal fun gridPageLoaderIn(method: Method): GridPageLoader? {
  * loads within eight rows of the end, which stopped a sorted grid after its third page. Without
  * the loader `loadPage` stays false and the grid keeps using that listener.
  */
-internal fun BytecodePatchContext.fillGridPageLoader(versionName: String): Boolean {
+internal fun fillGridPageLoader(versionName: String): Boolean {
     val loader = GridLoadAfterRefreshFingerprint.methodOrNull?.let(::gridPageLoaderIn)
     if (loader == null) {
         println("[$PATCH] The sorted grid on $versionName loads pages through its footer only: no page loader found.")
@@ -301,7 +301,7 @@ private const val TAB_REFRESH_REASON = "fresh_type_has_filter_video"
  * fragment's where that's found. Says whether the request and tab refresh went in; required on a
  * declared build. The settings row shows only when they did.
  */
-internal fun BytecodePatchContext.hookLikedJump(versionName: String): Boolean {
+internal fun hookLikedJump(versionName: String): Boolean {
     val declared = versionName in declaredVersions()
     val request = if (declared) LikedListRequestFingerprint.method else LikedListRequestFingerprint.methodOrNull
     val tab = if (declared) ProfileTabRefreshFingerprint.method else ProfileTabRefreshFingerprint.methodOrNull
@@ -361,7 +361,7 @@ internal fun BytecodePatchContext.hookLikedJump(versionName: String): Boolean {
  * settings row shows only when the hooks went in. Takes the version so a test can stand in for a
  * build that isn't declared.
  */
-internal fun BytecodePatchContext.hookGridSortOn(versionName: String): Boolean {
+internal fun hookGridSortOn(versionName: String): Boolean {
     if (!hookGridSort(versionName)) return false
     fillGridPageLoader(versionName)
     hookGridOpen(versionName)
@@ -401,7 +401,7 @@ internal fun BytecodePatchContext.hookGridSortOn(versionName: String): Boolean {
  * takes it from any register. Required on a declared build. On any other, a click it can't find
  * leaves that grid sorted and its video page in TikTok's order. Says whether both went in.
  */
-internal fun BytecodePatchContext.hookGridOpen(versionName: String): Boolean {
+internal fun hookGridOpen(versionName: String): Boolean {
     val declared = versionName in declaredVersions()
     var hooked = 0
     for ((fingerprint, grid) in listOf(GridCellOpenFingerprint to "profile",ProfileTabCellOpenFingerprint to "Liked and private")) {
@@ -422,7 +422,7 @@ internal fun BytecodePatchContext.hookGridOpen(versionName: String): Boolean {
  * jumps and `p1` is the list. The page hook also hands over the adapter, which the extension
  * refreshes once TikTok's call is done, since TikTok announces a page as cells added at the end.
  */
-internal fun BytecodePatchContext.hookGridSort(versionName: String): Boolean {
+internal fun hookGridSort(versionName: String): Boolean {
     val declared = versionName in declaredVersions()
     val setData = if (declared) GridAdapterSetDataFingerprint.method else GridAdapterSetDataFingerprint.methodOrNull
     val page = if (declared) GridAdapterPageFingerprint.method else GridAdapterPageFingerprint.methodOrNull
@@ -565,7 +565,7 @@ internal fun keepsFirstParameter(init: Method): Boolean {
  * which sorts only a sound page's. Required on a declared build, where the anchors test holds it,
  * and left out with a note on any other, so the profile grids keep their sort.
  */
-internal fun BytecodePatchContext.hookSoundGridSort(versionName: String): Boolean {
+internal fun hookSoundGridSort(versionName: String): Boolean {
     val declared = versionName in declaredVersions()
     val init = if (declared) DetailGridInitFingerprint.method else DetailGridInitFingerprint.methodOrNull
     val setData = if (declared) DetailGridSetDataFingerprint.method else DetailGridSetDataFingerprint.methodOrNull
@@ -612,7 +612,7 @@ internal fun BytecodePatchContext.hookSoundGridSort(versionName: String): Boolea
  * grid got, so the extension's `detailModel` is filled with a call to the fragment's getter for it.
  * Required on a declared build. On any other, a sorted sound page opens videos in TikTok's order.
  */
-internal fun BytecodePatchContext.hookSoundOpen(versionName: String): Boolean {
+internal fun hookSoundOpen(versionName: String): Boolean {
     val declared = versionName in declaredVersions()
     val open = if (declared) SoundCellOpenFingerprint.method else SoundCellOpenFingerprint.methodOrNull
     val click = if (declared) DetailCellOpenFingerprint.method else DetailCellOpenFingerprint.methodOrNull

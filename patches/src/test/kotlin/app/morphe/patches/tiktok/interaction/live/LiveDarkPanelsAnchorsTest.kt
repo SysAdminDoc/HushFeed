@@ -1,5 +1,6 @@
 package app.morphe.patches.tiktok.interaction.live
 
+import app.morphe.patcher.patch.classDefBy
 import app.morphe.BridgeTypeFlow
 import app.morphe.Fixtures
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction

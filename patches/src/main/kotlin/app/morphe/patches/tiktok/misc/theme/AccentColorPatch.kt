@@ -4,10 +4,16 @@
  */
 package app.morphe.patches.tiktok.misc.theme
 
+import app.morphe.patcher.patch.resourceFile
+import app.morphe.patcher.patch.document
+import app.morphe.patcher.patch.listDecodableFiles
+import app.morphe.patcher.patch.decode
+import app.morphe.patcher.patch.listApkEntries
+import app.morphe.patcher.patch.packageMetadata
+import app.morphe.patcher.patch.patch
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.booleanOption
 import app.morphe.patcher.patch.colorOption
-import app.morphe.patcher.patch.resourcePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.branding.readXml
 import app.morphe.patches.tiktok.misc.diagnostics.BUILD_DETAILS_ASSET
@@ -38,7 +44,7 @@ internal val ACCENT_PRESETS: Map<String, String> = linkedMapOf(
 )
 
 @Suppress("unused")
-val accentColorPatch = resourcePatch(
+val accentColorPatch = patch(
     name = "Accent color",
     description = "Swaps the red of TikTok's main buttons and red text for blue, green, purple, " +
         "orange, teal or a color code you type in this patch's options, or for the color of the " +
@@ -93,13 +99,13 @@ val accentColorPatch = resourcePatch(
         val likeTarget = checkedAccent(likeColor, "Like color")
         val saveTarget = checkedAccent(saveColor, "Save color")
         val wallpaper = followWallpaper == true
-        val packageRoot = get("res").parentFile
+        val packageRoot = resourceFile("res").parentFile
         val decodedRoots = decodedPackageRoots(packageRoot)
         val decodable by lazy { listDecodableFiles("res/**").toSet() }
         val collisions = renamedPathCollisions(
             entries = listApkEntries("res/"),
             decodedDirectories = decodedResourceDirectories(decodedRoots),
-            aliasOf = { name -> get(name, false).relativeTo(packageRoot).invariantSeparatorsPath },
+            aliasOf = { name -> resourceFile(name, false).relativeTo(packageRoot).invariantSeparatorsPath },
             isDecoded = { name -> name in decodable || decodedRoots.any { it.resolve(name).isFile } },
         )
         if (collisions.isNotEmpty()) throw PatchException(renamedPathsRefusal(collisions.size, "Accent color"))
@@ -113,7 +119,7 @@ val accentColorPatch = resourcePatch(
                 *files.drawables.map { "res/drawable*/$it.png" }.toTypedArray(),
                 *(files.pictures + files.animations).map { "assets/$it" }.toTypedArray(),
             )
-            val folders = get("res").listFiles().orEmpty().filter { it.isDirectory }
+            val folders = resourceFile("res").listFiles().orEmpty().filter { it.isDirectory }
             val named = files.rawIcons.map { it to "raw" } + files.drawables.map { it to "drawable" }
             for ((name, type) in named) {
                 val pictures = folders.filter { it.name == type || it.name.startsWith("$type-") }
@@ -124,11 +130,11 @@ val accentColorPatch = resourcePatch(
                 }
             }
             for (path in files.pictures) {
-                val picture = get("assets/$path").takeIf { it.isFile } ?: throw PatchException(missingReactionRefusal(reaction.label, path))
+                val picture = resourceFile("assets/$path").takeIf { it.isFile } ?: throw PatchException(missingReactionRefusal(reaction.label, path))
                 reactionPictures += picture to (recolorPng(picture.readBytes(), shade) ?: throw PatchException(missingReactionRefusal(reaction.label, path)))
             }
             for (path in files.animations) {
-                val animation = get("assets/$path").takeIf { it.isFile } ?: throw PatchException(missingReactionRefusal(reaction.label, path))
+                val animation = resourceFile("assets/$path").takeIf { it.isFile } ?: throw PatchException(missingReactionRefusal(reaction.label, path))
                 val json = recolorLottie(animation.readText(Charsets.UTF_8), shade)
                     ?: throw PatchException(missingReactionRefusal(reaction.label, path))
                 reactionPictures += animation to json.toByteArray(Charsets.UTF_8)
@@ -139,7 +145,7 @@ val accentColorPatch = resourcePatch(
             val tokens = accentTokens(packageMetadata.versionName)
             val iconNames = accentIcons(packageMetadata.versionName)
             decode("res/values*/styles.xml")
-            val files = get("res").listFiles().orEmpty()
+            val files = resourceFile("res").listFiles().orEmpty()
                 .filter { it.isDirectory && it.name.startsWith("values") }
                 .map { it.resolve("styles.xml") }.filter { it.exists() }
             // A dry run on a throwaway copy of each file first: a refusal leaves every file as it was.
@@ -151,7 +157,7 @@ val accentColorPatch = resourcePatch(
             // can't take a color the phone picks later, so with the wallpaper choice each one splits into
             // a white layer and a red one the phone tints.
             decode(*iconNames.map { "res/drawable*/$it.png" }.toTypedArray())
-            val drawables = get("res").listFiles().orEmpty().filter { it.isDirectory && it.name.startsWith("drawable") }
+            val drawables = resourceFile("res").listFiles().orEmpty().filter { it.isDirectory && it.name.startsWith("drawable") }
             val pictures = iconNames.map { name ->
                 name to drawables.map { it.resolve("$name.png") }.filter { it.isFile }
                     .ifEmpty { throw PatchException(missingAccentIconRefusal(name)) }
@@ -166,7 +172,7 @@ val accentColorPatch = resourcePatch(
             // them, so each badge's own fill takes the accent instead (#192). Read first, like the rest.
             decode("res/values/$WALLPAPER_COLORS_FILE", "res/values-v31/$WALLPAPER_COLORS_FILE")
             decode(*accentBadges(packageMetadata.versionName).map { "res/drawable*/$it.xml" }.toTypedArray())
-            val colorsFile = get("res").resolve("values").resolve(WALLPAPER_COLORS_FILE)
+            val colorsFile = resourceFile("res").resolve("values").resolve(WALLPAPER_COLORS_FILE)
             val namedColors = if (colorsFile.isFile) colorLiterals(readXml(colorsFile)) else emptyMap()
             val badges = accentBadges(packageMetadata.versionName).flatMap { name ->
                 drawables.map { it.resolve("$name.xml") }.filter { it.isFile }
@@ -174,17 +180,17 @@ val accentColorPatch = resourcePatch(
                     .map { it to (badgeFill(readXml(it), namedColors) ?: throw PatchException(missingAccentBadgeRefusal(name))) }
             }
             val wallpaperLiterals = mutableSetOf<String>()
-            val colorFiles = if (wallpaper) wallpaperColorPaths(get("res")) else null
-            val lynxFiles = wallpaperColorPaths(get("res"), LYNX_COLOR_PREFIX)
+            val colorFiles = if (wallpaper) wallpaperColorPaths(resourceFile("res")) else null
+            val lynxFiles = wallpaperColorPaths(resourceFile("res"), LYNX_COLOR_PREFIX)
             val (lynxPlain, lynxSystem) = lynxColorEntries(wallpaper, target)
             for (file in files) {
-                document(file.relativeTo(get(".")).invariantSeparatorsPath).use {
+                document(file.relativeTo(resourceFile(".")).invariantSeparatorsPath).use {
                     recolorAccentItems(it, tokens, accentRecolor(wallpaper, target, wallpaperLiterals))
                 }
             }
             for ((badge, literal) in badges) {
                 val color = accentRecolor(wallpaper, target, wallpaperLiterals)(literal) ?: continue
-                document(badge.relativeTo(get(".")).invariantSeparatorsPath).use { setBadgeFill(it, color) }
+                document(badge.relativeTo(resourceFile(".")).invariantSeparatorsPath).use { setBadgeFill(it, color) }
             }
             for ((picture, bytes) in icons) picture.writeBytes(bytes)
             for ((name, picture, split) in layers) {
@@ -195,7 +201,7 @@ val accentColorPatch = resourcePatch(
             }
             for (name in layers.map { it.first }.distinct()) {
                 wallpaperLiterals.add(TIKTOK_ACCENT)
-                get("res").resolve("drawable").apply { mkdirs() }.resolve("$name.xml")
+                resourceFile("res").resolve("drawable").apply { mkdirs() }.resolve("$name.xml")
                     .writeText(wallpaperIconDrawable(name, wallpaperReference(TIKTOK_ACCENT)!!), Charsets.UTF_8)
             }
             if (colorFiles != null) writeWallpaperColors(colorFiles, wallpaperLiterals)
@@ -204,7 +210,7 @@ val accentColorPatch = resourcePatch(
             if (lynxSystem != null) appendColorEntries(lynxFiles.second, lynxSystem)
         }
         for ((file, bytes) in reactionPictures) file.writeBytes(bytes)
-        BuildDetails.applied(get(BUILD_DETAILS_ASSET), "accentColor")
+        BuildDetails.applied(resourceFile(BUILD_DETAILS_ASSET), "accentColor")
     }
 }
 

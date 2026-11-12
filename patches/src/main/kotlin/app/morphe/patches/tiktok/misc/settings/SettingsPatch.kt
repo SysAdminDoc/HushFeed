@@ -5,11 +5,13 @@
  */
 package app.morphe.patches.tiktok.misc.settings
 
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
+import app.morphe.patcher.patch.classDefByStrings
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
 import app.morphe.util.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
@@ -227,7 +229,7 @@ internal fun swapOpenDebugIcon(
  * generated toString() appends. Exactly one class carries it, and it has to have the one-int
  * constructor the patch calls, or the patch says so rather than assembling a call to nothing.
  */
-private fun BytecodePatchContext.vectorResourceClass(): String {
+private fun vectorResourceClass(): String {
     val carriers = classDefByStrings(VECTOR_RESOURCE_TO_STRING)
     val carrier = carriers.singleOrNull() ?: throw PatchException(
         "Settings: expected one class carrying \"$VECTOR_RESOURCE_TO_STRING\", found ${carriers.size}.",
@@ -330,7 +332,7 @@ internal fun resolveSettingsIconResourceId(
     return id
 }
 
-private fun BytecodePatchContext.settingsIconResourceId(): Int {
+private fun settingsIconResourceId(): Int {
     val renderer = mutableClassDefBy(AD_WEB_MORE_ACTION_SERVICE_DESCRIPTOR).methods.singleOrNull { method ->
         method.returnType == "V" && method.parameterTypes == listOf(
             SPARK_CONTEXT_DESCRIPTOR,

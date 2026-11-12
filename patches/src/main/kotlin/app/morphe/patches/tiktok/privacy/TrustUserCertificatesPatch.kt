@@ -4,8 +4,13 @@
  */
 package app.morphe.patches.tiktok.privacy
 
+import app.morphe.patcher.patch.resourceFile
+import app.morphe.patcher.patch.document
+import app.morphe.patcher.patch.listDecodableFiles
+import app.morphe.patcher.patch.decode
+import app.morphe.patcher.patch.listApkEntries
+import app.morphe.patcher.patch.patch
 import app.morphe.patcher.patch.PatchException
-import app.morphe.patcher.patch.resourcePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.branding.appResource
 import app.morphe.patches.tiktok.misc.branding.decodedXmlFiles
@@ -33,7 +38,7 @@ private const val CERTIFICATES = "certificates"
  * follows this file.
  */
 @Suppress("unused")
-val trustUserCertificatesPatch = resourcePatch(
+val trustUserCertificatesPatch = patch(
     name = "Trust user certificates",
     description = "Lets TikTok trust security certificates you install yourself, so a tool " +
         "like mitmproxy can show what the app sends. The risk: anyone who gets a certificate onto " +
@@ -45,29 +50,29 @@ val trustUserCertificatesPatch = resourcePatch(
     dependsOn(buildDetailsPatch)
 
     execute {
-        val packageRoot = get("res").parentFile
+        val packageRoot = resourceFile("res").parentFile
         val decodedRoots = decodedPackageRoots(packageRoot)
         val decodable by lazy { listDecodableFiles("res/**").toSet() }
         val collisions = renamedPathCollisions(
             entries = listApkEntries("res/"),
             decodedDirectories = decodedResourceDirectories(decodedRoots),
-            aliasOf = { name -> get(name, false).relativeTo(packageRoot).invariantSeparatorsPath },
+            aliasOf = { name -> resourceFile(name, false).relativeTo(packageRoot).invariantSeparatorsPath },
             isDecoded = { name -> name in decodable || decodedRoots.any { it.resolve(name).isFile } },
         )
         if (collisions.isNotEmpty()) throw PatchException(renamedConfigPathsRefusal(collisions.size))
 
-        val reference = networkSecurityConfigReference(readXml(get("AndroidManifest.xml")))
+        val reference = networkSecurityConfigReference(readXml(resourceFile("AndroidManifest.xml")))
         appResource(reference)?.let { (type, name) -> decode("res/$type*/$name.xml") }
-        val files = decodedXmlFiles(get("res"), reference)
+        val files = decodedXmlFiles(resourceFile("res"), reference)
         if (files.isEmpty()) {
             throw PatchException("Trust user certificates: TikTok's network security config $reference isn't in the app. Nothing was changed.")
         }
         // A dry run on a throwaway copy of each file first: a refusal leaves every file as it was.
         files.forEach { trustUserCertificates(readXml(it)) }
         for (file in files) {
-            document(file.relativeTo(get(".")).invariantSeparatorsPath).use { trustUserCertificates(it) }
+            document(file.relativeTo(resourceFile(".")).invariantSeparatorsPath).use { trustUserCertificates(it) }
         }
-        BuildDetails.applied(get(BUILD_DETAILS_ASSET), "trustUserCertificates")
+        BuildDetails.applied(resourceFile(BUILD_DETAILS_ASSET), "trustUserCertificates")
     }
 }
 

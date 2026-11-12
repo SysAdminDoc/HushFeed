@@ -4,9 +4,10 @@
  */
 package app.morphe.patches.tiktok.interaction.sharesheet
 
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.fieldAccess
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
@@ -248,7 +249,7 @@ internal fun Method.withOwnedShareBody(action: ClassDef): MutableMethod {
     }
 }
 
-internal fun BytecodePatchContext.hookOwnedShareActions() {
+internal fun hookOwnedShareActions() {
     val action = NativeReportActionFingerprint.classDef
     val helperReference = action.reportLabelHelper()
     val helper = mutableClassDefBy(helperReference.definingClass).methods.single {
@@ -290,7 +291,7 @@ internal fun BytecodePatchContext.hookOwnedShareActions() {
 }
 
 /** Adds [extension]'s actions to every finished share sheet row; its carriers answer through the shared hooks. */
-internal fun BytecodePatchContext.addOwnedShareAction(extension: String) {
+internal fun addOwnedShareAction(extension: String) {
     val snapshot = ShareSnapshotFingerprint.method
     snapshot.addShareActionToSnapshot(snapshot.snapshotActionFields(ShareSnapshotFingerprint.classDef), extension)
 }

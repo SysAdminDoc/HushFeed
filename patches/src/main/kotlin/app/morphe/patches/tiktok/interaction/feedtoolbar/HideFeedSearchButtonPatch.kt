@@ -6,11 +6,12 @@
  */
 package app.morphe.patches.tiktok.interaction.feedtoolbar
 
+import app.morphe.patcher.patch.mutableClassDefBy
+import app.morphe.patcher.patch.packageMetadata
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.methodCall
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
@@ -53,7 +54,7 @@ internal object ShrinkVideoSearchIconVisibilityFingerprint : Fingerprint(
  * Hands the icon's show-or-hide answer to the switch before TikTok reads it. A declared build
  * without the icon fails the patch; any other build keeps the toolbar half and leaves this out.
  */
-internal fun BytecodePatchContext.hideShrinkVideoSearchIcon(versionName: String): Boolean {
+internal fun hideShrinkVideoSearchIcon(versionName: String): Boolean {
     val method = ShrinkVideoSearchIconVisibilityFingerprint.methodOrNull
     if (method == null) {
         if (versionName in declaredVersions()) {
@@ -72,7 +73,7 @@ internal fun BytecodePatchContext.hideShrinkVideoSearchIcon(versionName: String)
     return true
 }
 
-private fun BytecodePatchContext.resolveSearchEnabledBoundary(): MutableMethod {
+private fun resolveSearchEnabledBoundary(): MutableMethod {
     val controllerSuperclasses = mutableSetOf<String>()
     for (match in InflatesSearchIconFingerprint.matchAll()) {
         val classDef = match.originalClassDef

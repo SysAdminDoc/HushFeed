@@ -4,6 +4,7 @@
  */
 package app.morphe.patches.tiktok.misc.theme
 
+import app.morphe.patcher.patch.packageMetadata
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch

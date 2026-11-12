@@ -4,10 +4,11 @@
  */
 package app.morphe.patches.tiktok.interaction.looping
 
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.fieldAccess
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
@@ -140,7 +141,7 @@ val storyControlsPatch = bytecodePatch(
     }
 }
 
-private fun BytecodePatchContext.findPlayModeEnum(): String {
+private fun findPlayModeEnum(): String {
     val found = StoryPlayModeEnumFingerprint.matchAll()
         .map { it.originalClassDef.type }
         .distinct()

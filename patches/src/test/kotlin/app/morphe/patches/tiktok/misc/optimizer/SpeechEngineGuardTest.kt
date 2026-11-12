@@ -4,10 +4,11 @@
  */
 package app.morphe.patches.tiktok.misc.optimizer
 
+import app.morphe.patcher.patch.mutableClassDefBy
+import app.morphe.patcher.patch.patch
 import app.morphe.Fixtures
 import app.morphe.patcher.Patcher
 import app.morphe.patcher.PatcherConfig
-import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.takes
 import com.android.tools.smali.dexlib2.AccessFlags
@@ -193,7 +194,7 @@ class SpeechEngineGuardTest {
     fun `the guard leaves the engine without its libraries on every declared build`() {
         Fixtures.forEachDeclared { apk ->
             var checked = false
-            val probe = bytecodePatch(name = "speech engine guard probe", default = false) {
+            val probe = patch(name = "speech engine guard probe", default = false) {
                 dependsOn(speechEngineGuardPatch)
                 execute {
                     // The proxies the guard edited, not the input's classes.

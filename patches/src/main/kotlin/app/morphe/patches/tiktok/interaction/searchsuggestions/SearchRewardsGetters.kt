@@ -4,8 +4,9 @@
  */
 package app.morphe.patches.tiktok.interaction.searchsuggestions
 
+import app.morphe.patcher.patch.mutableClassDefBy
+import app.morphe.patcher.patch.classDefByStrings
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.addInstructions
@@ -87,7 +88,7 @@ internal fun searchRewardsGetter(method: Method): SearchRewardsGetter? {
  * build where the coin's or the banner's getter can't be found fails here, before anything is
  * written.
  */
-internal fun BytecodePatchContext.searchRewardsGetters(): List<Pair<MutableMethod, SearchRewardsGetter>> {
+internal fun searchRewardsGetters(): List<Pair<MutableMethod, SearchRewardsGetter>> {
     val found = SEARCH_REWARDS_FEATURES
         .flatMap { feature -> classDefByStrings(feature) }
         .distinctBy { it.type }

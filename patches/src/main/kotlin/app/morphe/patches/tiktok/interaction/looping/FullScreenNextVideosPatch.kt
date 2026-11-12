@@ -4,6 +4,7 @@
  */
 package app.morphe.patches.tiktok.interaction.looping
 
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableClass

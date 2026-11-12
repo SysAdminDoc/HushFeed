@@ -4,14 +4,11 @@
  */
 package app.morphe.patches.tiktok.misc.theme
 
+import app.morphe.patcher.patch.patch
 import app.morphe.Fixtures
-import app.morphe.patcher.InternalApi
 import app.morphe.patcher.Patcher
 import app.morphe.patcher.PatcherConfig
-import app.morphe.patcher.PatcherContext
 import app.morphe.patcher.patch.PatchException
-import app.morphe.patcher.patch.ResourcePatchContext
-import app.morphe.patcher.patch.resourcePatch
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.nio.charset.StandardCharsets
@@ -149,8 +146,6 @@ class AmoledRestoreResourcesTest {
      * turns black, each style's stock items hold what that style gave the attribute, and the
      * restore styles point every attribute at its stock item. Patching the result again is refused.
      */
-    // The encoded resources APK is only reachable through the patcher's internal resource context.
-    @OptIn(InternalApi::class)
     @Test
     fun `the declared build keeps TikTok's grays and every id`() {
         Fixtures.forEachDeclared { apk ->
@@ -158,7 +153,7 @@ class AmoledRestoreResourcesTest {
             val before = FixtureResourceTable(apk)
             var restorable = emptyList<String>()
             var again: Throwable? = null
-            val probe = resourcePatch(name = "amoled restore probe") {
+            val probe = patch(name = "amoled restore probe") {
                 execute {
                     restorable = paintAmoledResources("#000000")
                     again = runCatching { paintAmoledResources("#000000") }.exceptionOrNull()
@@ -168,9 +163,7 @@ class AmoledRestoreResourcesTest {
             Patcher(PatcherConfig(apk, temporary.newFolder())).use { patcher ->
                 patcher += setOf(probe)
                 runBlocking { patcher().collect { result -> result.exception?.let { throw it } } }
-                val context = PatcherContext::class.java.getMethod("getResourceContext\$morphe_patcher")
-                    .invoke(patcher.context) as ResourcePatchContext
-                requireNotNull(context.get().resourcesApk) { "the patcher encoded no resources APK" }.copyTo(encoded)
+                requireNotNull(patcher.get().resources?.resourcesApk) { "the patcher encoded no resources APK" }.copyTo(encoded)
             }
             assertTrue("$version: patching twice is refused, not $again", again is PatchException && again!!.message.orEmpty().contains("already has resources named"))
             val after = FixtureResourceTable(encoded)

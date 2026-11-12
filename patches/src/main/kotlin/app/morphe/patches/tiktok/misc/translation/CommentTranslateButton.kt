@@ -4,10 +4,10 @@
  */
 package app.morphe.patches.tiktok.misc.translation
 
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.Match
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.shared.LazyAbGateSearch
@@ -265,7 +265,7 @@ internal fun MutableMethod.sendToggleStateThroughExtension() {
  * reported after TikTok's own comparison read: a change still refreshes the comment list. Fails
  * closed: everything is found and checked before anything is changed.
  */
-internal fun BytecodePatchContext.commentTranslateButtonTargets(): CommentTranslateButtonTargets {
+internal fun commentTranslateButtonTargets(): CommentTranslateButtonTargets {
     val (gate, enabledRead) = findLazyAbGate(
         "$PATCH_NAME (translate button)",
         AUTO_TRANSLATION_KEY,
@@ -300,10 +300,9 @@ internal fun BytecodePatchContext.commentTranslateButtonTargets(): CommentTransl
     return CommentTranslateButtonTargets(enabledRead, styleAnswers.single(), reads.single(), writes.single())
 }
 
-context(patchContext: BytecodePatchContext)
 internal fun installCommentTranslateButton() {
-    val targets = patchContext.commentTranslateButtonTargets()
-    fun mutable(method: Method) = patchContext.mutableClassDefBy(method.definingClass).findMutableMethodOf(method)
+    val targets = commentTranslateButtonTargets()
+    fun mutable(method: Method) = mutableClassDefBy(method.definingClass).findMutableMethodOf(method)
 
     val enabledRead = mutable(targets.enabledRead)
     val styleAnswer = mutable(targets.styleAnswer)

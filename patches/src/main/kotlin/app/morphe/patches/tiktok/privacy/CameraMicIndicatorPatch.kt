@@ -4,6 +4,7 @@
  */
 package app.morphe.patches.tiktok.privacy
 
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.util.addInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.patch.PatchException

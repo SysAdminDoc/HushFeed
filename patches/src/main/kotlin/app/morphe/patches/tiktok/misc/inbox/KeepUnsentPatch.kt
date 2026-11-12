@@ -6,6 +6,7 @@
  */
 package app.morphe.patches.tiktok.misc.inbox
 
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.shared.compat.AppCompatibilities

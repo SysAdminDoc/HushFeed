@@ -64,7 +64,7 @@ class DefaultSelectionPolicyTest {
         val root = File("src/main/kotlin").takeIf { it.isDirectory } ?: File("patches/src/main/kotlin")
         assertTrue("could not find the patch sources from ${File(".").absolutePath}", root.isDirectory)
         val header = Regex(
-            """(?:bytecodePatch|resourcePatch|rawResourcePatch)\(\s*\n(?:\s*//[^\n]*\n)*\s*name = "([^"]+)",(.*?)\n\) \{""",
+            """(?<![\w.])(?:bytecodePatch|resourcePatch|patch)\(\s*\n(?:\s*//[^\n]*\n)*\s*name = "([^"]+)",(.*?)\n\) \{""",
             RegexOption.DOT_MATCHES_ALL,
         )
         val declared = root.walkTopDown().filter { it.extension == "kt" }

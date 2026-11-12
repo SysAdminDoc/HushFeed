@@ -4,9 +4,9 @@
  */
 package app.morphe.patches.tiktok.misc.login.passkey
 
+import app.morphe.patcher.patch.classDefBy
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.methodCall
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
@@ -103,12 +103,11 @@ val skipPasskeySignInPatch = bytecodePatch(
  * The patch's hook, without its settings row, so a test can put it on a build that carries no
  * extension. With the switch off the check runs as TikTok wrote it.
  */
-context(patchContext: BytecodePatchContext)
 internal fun installPasskeySignInSwitch() {
     val check = PasskeyDeviceSupportFingerprint.method
     // A second method of this shape would mean the shape no longer picks out the check, and
     // answering no from the wrong one is a failure rather than a coin toss.
-    val shaped = patchContext.classDefBy(CREDENTIAL_MANAGER_SERVICE).methods.filter(::isPasskeyDeviceSupportCheck)
+    val shaped = classDefBy(CREDENTIAL_MANAGER_SERVICE).methods.filter(::isPasskeyDeviceSupportCheck)
     if (shaped.size != 1 || shaped.single().name != check.name) {
         throw PatchException(
             "$PATCH: expected one passkey support check in $CREDENTIAL_MANAGER_SERVICE, " +

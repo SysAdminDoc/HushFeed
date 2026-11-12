@@ -6,6 +6,7 @@
  */
 package app.morphe.patches.tiktok.captchapopup
 
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.util.addInstructions
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch

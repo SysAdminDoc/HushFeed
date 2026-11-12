@@ -5,7 +5,6 @@
 package app.morphe.patches.tiktok.misc.remoteconfig
 
 import app.morphe.patcher.Fingerprint
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
@@ -82,7 +81,6 @@ val freezeRemoteConfigPatch = bytecodePatch(
  * extension. Each store returns before it writes anything while the switch answers true, and runs
  * as TikTok wrote it otherwise.
  */
-context(patchContext: BytecodePatchContext)
 internal fun installRemoteConfigFreeze() {
     for (store in responseStores()) store.returnVoidWhenOn(PATCH, REMOTE_CONFIG_SWITCH)
     ChunkStoreFingerprint.method.returnVoidWhenOn(PATCH, REMOTE_CONFIG_SWITCH)
@@ -93,7 +91,6 @@ internal fun installRemoteConfigFreeze() {
  * Every store of a whole response. Holding only the first one the patcher finds would let the
  * other request's responses through, so each copy gets the guard.
  */
-context(patchContext: BytecodePatchContext)
 internal fun responseStores(): List<MutableMethod> {
     val stores = ResponseStoreFingerprint.matchAllOrNull().orEmpty().map { it.method }
     if (stores.isEmpty()) throw PatchException("$PATCH: found no store of a whole server settings response.")

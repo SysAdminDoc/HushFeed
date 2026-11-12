@@ -1,11 +1,12 @@
 package app.morphe.patches.tiktok.misc.inbox
 
+import app.morphe.patcher.patch.mutableClassDefBy
+import app.morphe.patcher.patch.patch
 import app.morphe.Fixtures
 import app.morphe.takes
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.Patcher
 import app.morphe.patcher.PatcherConfig
-import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.Opcode
@@ -271,7 +272,7 @@ class InboxQueryPublicationFixturesTest {
             val version = Fixtures.versionOf(apk)
             val (spring, native) = InboxSpringRefresh.soleMatch(Fixtures.dexContainer(apk, Opcodes.getDefault()).allClasses())
             var checked = false
-            val probe = bytecodePatch(name = "inbox refresh probe") {
+            val probe = patch(name = "inbox refresh probe") {
                 execute {
                     loadedInboxPublicationSeams().install()
                     val refresh = mutableClassDefBy(spring.type).methods.single { it.name == native.name &&

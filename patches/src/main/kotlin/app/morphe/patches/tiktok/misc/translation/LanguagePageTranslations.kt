@@ -4,8 +4,8 @@
  */
 package app.morphe.patches.tiktok.misc.translation
 
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.addInstructions
@@ -175,7 +175,7 @@ internal fun MutableMethod.keepTranslationOnVideos() {
  * Lets the reader keep See translation on videos when TikTok's server takes it off their account
  * (#143). Fails closed: exactly one method may read the value the way TikTok's lazy does.
  */
-internal fun BytecodePatchContext.hookFeedTranslations() {
+internal fun hookFeedTranslations() {
     FeedTranslationReverseFingerprint.method.keepTranslationOnVideos()
 }
 
@@ -183,7 +183,7 @@ internal fun BytecodePatchContext.hookFeedTranslations() {
  * Lets the reader bring back the translation rows TikTok hides on its Language page for some
  * accounts (#143). Fails closed: the page must have its onViewCreated with both gate reads.
  */
-internal fun BytecodePatchContext.hookLanguagePageTranslations() {
+internal fun hookLanguagePageTranslations() {
     val page = mutableClassDefBy(LANGUAGE_PAGE)
     val created = page.methods.filter {
         it.name == "onViewCreated" && it.returnType == "V" &&

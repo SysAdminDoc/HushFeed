@@ -4,7 +4,7 @@
  */
 package app.morphe.patches.tiktok.misc.translation
 
-import app.morphe.patcher.patch.BytecodePatchContext
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.addInstructions
@@ -181,7 +181,7 @@ internal fun MutableMethod.appendReceivedMenu(result: ReceivedMenuResult) {
     """)
 }
 
-internal fun BytecodePatchContext.hookReceivedDmTranslationPreview(targets: ReceivedPreviewTargets) {
+internal fun hookReceivedDmTranslationPreview(targets: ReceivedPreviewTargets) {
     fun mutable(method: Method) = mutableClassDefBy(method.definingClass).findMutableMethodOf(method)
     mutable(targets.bind).captureReceivedBinding()
     mutable(targets.unbind).addInstructions(0, "invoke-static/range {p0 .. p0}, $RECEIVED_PREVIEW->unbound($OBJECT)V")

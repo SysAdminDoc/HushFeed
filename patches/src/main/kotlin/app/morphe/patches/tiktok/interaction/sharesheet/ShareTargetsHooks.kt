@@ -4,10 +4,11 @@
  */
 package app.morphe.patches.tiktok.interaction.sharesheet
 
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.fieldAccess
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.smali.ExternalLabel
 import app.morphe.patches.tiktok.shared.requireLocals
@@ -119,7 +120,6 @@ internal fun Method.finishedChannelRowStore(): Int {
 }
 
 /** Adds the picked apps to the snapshot's finished channel row, right where it's stored. */
-context(patchContext: BytecodePatchContext)
 internal fun hookFinishedChannelRow() {
     val method = ShareSnapshotFingerprint.method
     val index = method.finishedChannelRowStore()
@@ -164,7 +164,6 @@ private object PhotoShareModeFingerprint : Fingerprint(
 )
 
 /** Gives an added app's channel the plain link share mode on videos and photo posts. */
-context(patchContext: BytecodePatchContext)
 internal fun hookShareModes() {
     for (fingerprint in listOf(VideoShareModeFingerprint, PhotoShareModeFingerprint)) {
         val method = fingerprint.method
@@ -224,7 +223,7 @@ private object GenericShareChannelInitFingerprint : Fingerprint(
 )
 
 /** Writes TikTok's members into the bodies of ShareTargets' three bridges. */
-internal fun BytecodePatchContext.hookShareTargets() {
+internal fun hookShareTargets() {
     val candidates = GenericShareChannelInitFingerprint.matchAllOrNull().orEmpty()
         .map { it.originalClassDef }
         .filter { it.isGenericShareChannel() }

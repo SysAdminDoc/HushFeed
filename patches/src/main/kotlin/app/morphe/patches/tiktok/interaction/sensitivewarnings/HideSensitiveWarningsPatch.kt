@@ -6,6 +6,7 @@
  */
 package app.morphe.patches.tiktok.interaction.sensitivewarnings
 
+import app.morphe.patcher.patch.packageMetadata
 import app.morphe.util.addInstruction
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.patch.PatchException

@@ -6,7 +6,9 @@
  */
 package app.morphe.patches.tiktok.interaction.downloads
 
-import app.morphe.patcher.patch.BytecodePatchContext
+import app.morphe.patcher.patch.classDefForEach
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.extendsClass
@@ -49,7 +51,7 @@ internal fun MethodReference.isStickerPreviewBind() =
  * carrying a `UrlModel`. Exactly one class matches on all three builds, and it is the one the
  * literal named.
  */
-internal fun BytecodePatchContext.resolveStickerPreviewBind(): MutableMethod {
+internal fun resolveStickerPreviewBind(): MutableMethod {
     val found = mutableListOf<Pair<ClassDef, Method>>()
     classDefForEach { classDef ->
         // The field check first: it reads the class alone, where the superclass walk looks up
@@ -80,5 +82,5 @@ internal fun BytecodePatchContext.resolveStickerPreviewBind(): MutableMethod {
     return mutableClassDefBy(classDef).findMutableMethodOf(bind)
 }
 
-private fun BytecodePatchContext.extendsLinearLayout(classDef: ClassDef): Boolean =
+private fun extendsLinearLayout(classDef: ClassDef): Boolean =
     extendsClass(classDef.type, LINEAR_LAYOUT, MAX_SUPERCLASS_DEPTH)

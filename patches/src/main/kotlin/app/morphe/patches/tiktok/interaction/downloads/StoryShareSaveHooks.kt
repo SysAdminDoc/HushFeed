@@ -4,9 +4,9 @@
  */
 package app.morphe.patches.tiktok.interaction.downloads
 
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.fieldAccess
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.interaction.sharesheet.SHARE_BUILDER_ACTIONS
@@ -265,7 +265,7 @@ internal fun Method.withStorySaveBody(actionType: String): MutableMethod {
 }
 
 /** Puts a save button in the share sheet a story's Share button opens (#93). */
-internal fun BytecodePatchContext.hookStoryShareSave() {
+internal fun hookStoryShareSave() {
     val constructor = NativeSaveActionFingerprint.method
     val action = NativeSaveActionFingerprint.classDef
     for ((what, flags) in listOf(

@@ -1,5 +1,6 @@
 package app.morphe.patches.tiktok.misc.commenttools
 
+import app.morphe.patcher.patch.classDefByOrNull
 import app.morphe.Fixtures
 import app.morphe.takes
 import com.android.tools.smali.dexlib2.Opcode

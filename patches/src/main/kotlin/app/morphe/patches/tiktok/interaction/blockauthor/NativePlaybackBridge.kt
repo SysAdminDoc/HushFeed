@@ -6,9 +6,10 @@
  */
 package app.morphe.patches.tiktok.interaction.blockauthor
 
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.util.addInstructions
 import app.morphe.patches.tiktok.shared.guardAtEntry
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.util.cloneMutable
 import app.morphe.util.singleOrPatchException
@@ -132,7 +133,7 @@ internal fun <M : Method> Iterable<M>.implementationResume(members: NativePlayba
             it.hasString(RESUME_LOG)
     }.singleOrPatchException("Block author: ${members.implementation}'s resume")
 
-internal fun BytecodePatchContext.resolveNativePlayback(): NativePlaybackMembers {
+internal fun resolveNativePlayback(): NativePlaybackMembers {
     fun method(type: String, name: String, parameters: List<String>): Method =
         (classDefByOrNull(type) ?: throw PatchException("Block author: $type isn't in this build."))
             .methods.filter { it.name == name && it.parameterTypes.map { p -> p.toString() } == parameters }
@@ -151,7 +152,7 @@ internal fun BytecodePatchContext.resolveNativePlayback(): NativePlaybackMembers
  * network change and a TopView ad's end all reach, and the manager implementation's resume, which
  * TikTok's feed events and closing sheets call without it. The hold's own resume goes through.
  */
-internal fun BytecodePatchContext.installSwitchPlayGuards(members: NativePlaybackMembers) {
+internal fun installSwitchPlayGuards(members: NativePlaybackMembers) {
     PlayerPlayFingerprint.method.apply {
         // The controller and its Aweme passed as one range, so the Aweme has to come right after.
         val aweme = awemeParameterRegister()
@@ -171,7 +172,7 @@ internal fun BytecodePatchContext.installSwitchPlayGuards(members: NativePlaybac
 }
 
 /** Writes the members into the hold's three bridge methods, whose own bodies serve the tests. */
-internal fun BytecodePatchContext.installNativePlayback(members: NativePlaybackMembers) {
+internal fun installNativePlayback(members: NativePlaybackMembers) {
     val hold = mutableClassDefBy(HOLD)
     fun rewrite(name: String, body: String) {
         val original = hold.methods.filter { it.name == name }

@@ -4,6 +4,7 @@
  */
 package app.morphe.patches.tiktok.promobanners
 
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.checkCast
 import app.morphe.patcher.fieldAccess

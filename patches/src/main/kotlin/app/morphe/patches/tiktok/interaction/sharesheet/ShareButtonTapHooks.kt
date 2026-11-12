@@ -6,7 +6,6 @@ package app.morphe.patches.tiktok.interaction.sharesheet
 
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patcher.util.smali.ExternalLabel
@@ -88,7 +87,6 @@ private fun FieldReference.smali() = "$definingClass->$name:$type"
  * item, before TikTok's method-id push, so a press Hushfeed takes leaves TikTok's bookkeeping as
  * it was. Each view the assem listens to also gets the screen reader label.
  */
-context(_: BytecodePatchContext)
 internal fun hookShareButtonTap() {
     ShareButtonClickFingerprint.method.apply {
         val read = shareItemRead()

@@ -4,8 +4,10 @@
  */
 package app.morphe.patches.tiktok.misc.branding
 
+import app.morphe.patcher.patch.resourceFile
+import app.morphe.patcher.patch.document
+import app.morphe.patcher.patch.patch
 import app.morphe.patcher.patch.PatchException
-import app.morphe.patcher.patch.resourcePatch
 import app.morphe.patcher.patch.stringOption
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.diagnostics.BUILD_DETAILS_ASSET
@@ -21,7 +23,7 @@ private const val LABEL = "android:label"
 internal const val MAX_APP_NAME = 50
 
 @Suppress("unused")
-val changeAppNamePatch = resourcePatch(
+val changeAppNamePatch = patch(
     name = "Change app name",
     description = "Shows a name you choose under the app icon, so the patched TikTok is easy " +
         "to tell apart from another copy. Type the name in this patch's options. Inside the app " +
@@ -43,7 +45,7 @@ val changeAppNamePatch = resourcePatch(
         // Checked before the manifest is opened, so a refused name changes nothing.
         val name = checkedAppName(appName)
         document("AndroidManifest.xml").use { xml -> renameApp(xml, name) }
-        BuildDetails.applied(get(BUILD_DETAILS_ASSET), "changeAppName")
+        BuildDetails.applied(resourceFile(BUILD_DETAILS_ASSET), "changeAppName")
     }
 }
 

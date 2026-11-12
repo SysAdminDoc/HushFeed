@@ -5,7 +5,10 @@
  */
 package app.morphe.patches.tiktok.misc.optimizer
 
-import app.morphe.patcher.patch.rawResourcePatch
+import app.morphe.patcher.patch.resourceFile
+import app.morphe.patcher.patch.decode
+import app.morphe.patcher.patch.packageMetadata
+import app.morphe.patcher.patch.patch
 import app.morphe.patcher.patch.stringOption
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.diagnostics.BUILD_DETAILS_ASSET
@@ -16,7 +19,7 @@ import app.morphe.patches.tiktok.misc.diagnostics.buildDetailsPatch
 import java.util.Locale
 
 @Suppress("unused")
-val p2pRelayBlockerPatch = rawResourcePatch(
+val p2pRelayBlockerPatch = patch(
     name = "Block P2P video relay",
     description = "Removes the files TikTok uses to pass videos on to other viewers through " +
         "your phone's internet connection. The app gets about 4.5 MB smaller. It's built in while " +
@@ -39,21 +42,21 @@ val p2pRelayBlockerPatch = rawResourcePatch(
             "lib/armeabi-v7a/libpunch.so",
         )
         val result = stripVerifiedResources(
-            get("."),
+            resourceFile("."),
             "P2P Relay Blocker",
             emptyList(),
             nativeFiles,
             p2pRelayProfiles,
-            resolveStandaloneFile = { path -> get(path) },
+            resolveStandaloneFile = { path -> resourceFile(path) },
             versionName = packageMetadata.versionName,
         )
-        BuildDetails.stripped(get(BUILD_DETAILS_ASSET), BuildChoice.P2P, result)
+        BuildDetails.stripped(resourceFile(BUILD_DETAILS_ASSET), BuildChoice.P2P, result)
         result.report("P2P Relay Blocker")
     }
 }
 
 @Suppress("unused")
-val coreAssetDebloatPatch = rawResourcePatch(
+val coreAssetDebloatPatch = patch(
     name = "Remove content credential and card scanner assets",
     description = "Removes TikTok's payment card scanner and content credential files, saving " +
         "about 11 MB of storage. Anything in TikTok that needs them may stop working. Only " +
@@ -86,20 +89,20 @@ val coreAssetDebloatPatch = rawResourcePatch(
         )
         decode("assets/microblink")
         val result = stripVerifiedResources(
-            get("."),
+            resourceFile("."),
             "Core Asset De-bloat",
             listOf("assets/microblink"),
             nativeFiles,
             coreAssetProfiles,
-            resolveStandaloneFile = { path -> get(path) },
+            resolveStandaloneFile = { path -> resourceFile(path) },
         )
-        BuildDetails.stripped(get(BUILD_DETAILS_ASSET), BuildChoice.CORE, result)
+        BuildDetails.stripped(resourceFile(BUILD_DETAILS_ASSET), BuildChoice.CORE, result)
         result.report("Core Asset De-bloat")
     }
 }
 
 @Suppress("unused")
-val languagePackPurgerPatch = rawResourcePatch(
+val languagePackPurgerPatch = patch(
     name = "Remove unused language packs",
     description = "Removes the app languages you don't list in this patch's options, saving " +
         "up to about 26 MB of storage. English is always kept. With no list it keeps them all. " +
@@ -121,12 +124,12 @@ val languagePackPurgerPatch = rawResourcePatch(
 
     execute {
         decode("assets/strings#lang_*")
-        val result = stripVerifiedLanguagePacks(get("."), targetLocales, languageInventories)
+        val result = stripVerifiedLanguagePacks(resourceFile("."), targetLocales, languageInventories)
         if (result.retainedLocales == null) {
             // Build details keep "unverified": nothing here was checked against a reviewed APK.
             println("[Language Pack Purger] Kept every language pack. This APK's set isn't a reviewed one, so none could be removed.")
         } else {
-            BuildDetails.languages(get(BUILD_DETAILS_ASSET), result)
+            BuildDetails.languages(resourceFile(BUILD_DETAILS_ASSET), result)
             if (result.missingLocales.isNotEmpty()) {
                 println(
                     "[Language Pack Purger] This TikTok has no pack for " +
@@ -143,7 +146,7 @@ val languagePackPurgerPatch = rawResourcePatch(
 }
 
 @Suppress("unused")
-val studioCreationDebloatPatch = rawResourcePatch(
+val studioCreationDebloatPatch = patch(
     name = "Remove creation tools",
     description = "Removes two effects engine libraries TikTok doesn't load for the camera, effects, " +
         "Retouch or the video editor, saving about 45 MB. Those all keep working. If a creation " +
@@ -160,20 +163,20 @@ val studioCreationDebloatPatch = rawResourcePatch(
         // effects kept working, and it is under 1 MB of the strip. libEffectCreatorJni stays
         // too (see studioNativeFiles).
         val result = stripVerifiedResources(
-            get("."),
+            resourceFile("."),
             "Studio & Creation De-bloat",
             emptyList(),
             studioNativeFiles,
             studioAssetProfiles,
-            resolveStandaloneFile = { path -> get(path) },
+            resolveStandaloneFile = { path -> resourceFile(path) },
         )
-        BuildDetails.stripped(get(BUILD_DETAILS_ASSET), BuildChoice.CREATION, result)
+        BuildDetails.stripped(resourceFile(BUILD_DETAILS_ASSET), BuildChoice.CREATION, result)
         result.report("Studio & Creation De-bloat")
     }
 }
 
 @Suppress("unused")
-val liveStreamSuiteOptimizerPatch = rawResourcePatch(
+val liveStreamSuiteOptimizerPatch = patch(
     name = "Remove LIVE extras",
     description = "Removes the script for games inside LIVEs and turns off animated gift effects. " +
         "It saves very little space. The catch: LIVE games and animated gifts may stop working. " +
@@ -187,20 +190,20 @@ val liveStreamSuiteOptimizerPatch = rawResourcePatch(
     execute {
         decode(*liveAssetDirectories.toTypedArray())
         val result = stripVerifiedResources(
-            get("."),
+            resourceFile("."),
             "LIVE Stream Suite Optimizer",
             liveAssetDirectories,
             emptyList(),
             liveAssetProfiles,
-            resolveStandaloneFile = { path -> get(path) },
+            resolveStandaloneFile = { path -> resourceFile(path) },
         )
-        BuildDetails.stripped(get(BUILD_DETAILS_ASSET), BuildChoice.LIVE, result)
+        BuildDetails.stripped(resourceFile(BUILD_DETAILS_ASSET), BuildChoice.LIVE, result)
         result.report("LIVE Stream Suite Optimizer")
     }
 }
 
 @Suppress("unused")
-val voiceToolsDebloatPatch = rawResourcePatch(
+val voiceToolsDebloatPatch = patch(
     name = "Remove voice tools",
     description = "Removes TikTok's speech recognition files, saving about 16 MB of storage. The " +
         "catch: voice search, naming a song by listening, talking to TikTok's AI assistant and " +
@@ -228,15 +231,15 @@ val voiceToolsDebloatPatch = rawResourcePatch(
             "lib/armeabi-v7a/libspeechspg.so",
         )
         val result = stripVerifiedResources(
-            get("."),
+            resourceFile("."),
             "Voice Tools De-bloat",
             emptyList(),
             nativeFiles,
             voiceToolsProfiles,
-            resolveStandaloneFile = { path -> get(path) },
+            resolveStandaloneFile = { path -> resourceFile(path) },
         )
         result.report("Voice Tools De-bloat")
-        BuildDetails.applied(get(BUILD_DETAILS_ASSET), "voiceToolsDebloat")
+        BuildDetails.applied(resourceFile(BUILD_DETAILS_ASSET), "voiceToolsDebloat")
     }
 }
 

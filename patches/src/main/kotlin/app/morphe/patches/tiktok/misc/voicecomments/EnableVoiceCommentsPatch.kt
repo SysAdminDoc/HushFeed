@@ -4,7 +4,6 @@
  */
 package app.morphe.patches.tiktok.misc.voicecomments
 
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
@@ -41,8 +40,7 @@ val enableVoiceCommentsPatch = bytecodePatch(
 }
 
 /** The patch's hook, without its settings row, so a test can put it on a build with no extension. */
-context(patchContext: BytecodePatchContext)
 internal fun installVoiceCommentSwitch() {
-    patchContext.resolveVoiceCommentPublishGate()
+    resolveVoiceCommentPublishGate()
         .returnBooleanWhenOn("Enable voice comments", VOICE_COMMENTS_SWITCH, true)
 }

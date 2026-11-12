@@ -6,7 +6,6 @@ package app.morphe.patches.tiktok.interaction.videooverlays
 
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patcher.util.smali.ExternalLabel
@@ -153,7 +152,7 @@ private fun Instruction.writes(register: Int) = opcode.setsRegister() &&
  * note on any other, so a reworked profile there doesn't take the rings down with it. The row
  * shows only when the hook went in.
  */
-internal fun BytecodePatchContext.hookStoryOverLiveOn(versionName: String): Boolean {
+internal fun hookStoryOverLiveOn(versionName: String): Boolean {
     if (!hookStoryOverLive(versionName)) return false
     SettingsStatusLoadFingerprint.method.addInstruction(
         0,
@@ -166,7 +165,7 @@ internal fun BytecodePatchContext.hookStoryOverLiveOn(versionName: String): Bool
  * The hooks alone, without the settings flag that shows the row, so a probe patch can run them.
  * The profile picture's is the one the switch needs; the Inbox's goes in alongside it.
  */
-internal fun BytecodePatchContext.hookStoryOverLive(versionName: String): Boolean {
+internal fun hookStoryOverLive(versionName: String): Boolean {
     val declared = versionName in declaredVersions()
     val tap = if (declared) ProfileAvatarClickFingerprint.method else ProfileAvatarClickFingerprint.methodOrNull
     if (tap == null) {

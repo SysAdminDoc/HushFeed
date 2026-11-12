@@ -4,8 +4,8 @@
  */
 package app.morphe.patches.tiktok.misc.translation
 
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.addInstructionsAtControlFlowLabel
@@ -50,7 +50,7 @@ internal fun Method.isTargetLanguageAnswer(): Boolean {
  * language the reader typed goes into each translation request instead of TikTok's choice.
  * Fails closed: the service must hold exactly one such answer, or nothing is added.
  */
-internal fun BytecodePatchContext.hookTranslateInto() {
+internal fun hookTranslateInto() {
     val service = mutableClassDefBy(TRANSLATION_SERVICE)
     val answers = service.methods.filter { it.isTargetLanguageAnswer() }
     if (answers.size != 1) {

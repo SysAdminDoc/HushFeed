@@ -4,9 +4,9 @@
  */
 package app.morphe.patches.tiktok.captchapopup
 
+import app.morphe.patcher.patch.classDefByOrNull
 import app.morphe.patcher.Fingerprint
 import app.morphe.util.addInstruction
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
@@ -104,7 +104,7 @@ private const val SEC_DISMISS = "LIZJ"
  * 46.2.3 and an unrelated final class on the two builds since, and invoke-interface against a
  * class is the same class-load failure the name check exists to prevent.
  */
-private fun BytecodePatchContext.dismissCall(type: String, name: String): String {
+private fun dismissCall(type: String, name: String): String {
     return captchaDismissCall(type, name) { classDefByOrNull(it) }
 }
 

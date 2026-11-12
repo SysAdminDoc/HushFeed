@@ -4,9 +4,10 @@
  */
 package app.morphe.patches.tiktok.privacy
 
+import app.morphe.patcher.patch.classDefForEach
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.checkCast
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.shared.compat.AppCompatibilities
@@ -67,19 +68,19 @@ val accountCleanupPatch = bytecodePatch(
         // The repost and like services keep their names and the extension reaches them itself.
         // These three are renamed in every build, so their bridges make them the way TikTok does.
         fillServiceBridge("likedListService",
-            liked.singleOrPatchException("Account cleanup: liked videos list service"), "liked videos list", this)
+            liked.singleOrPatchException("Account cleanup: liked videos list service"), "liked videos list")
         fillServiceBridge("favoritesService",
-            favorites.singleOrPatchException("Account cleanup: Favorites service"), "Favorites", this)
+            favorites.singleOrPatchException("Account cleanup: Favorites service"), "Favorites")
         fillServiceBridge("unavailableFavoritesService",
             unavailable.singleOrPatchException("Account cleanup: unavailable Favorites service"),
-            "unavailable Favorites", this)
+            "unavailable Favorites")
         SettingsStatusLoadFingerprint.method.addInstruction(0,
             "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableAccountCleanup()V")
     }
 }
 
 /** The bridge's name comes first so ExtensionBridgeLookupTest can read it at each call. */
-private fun fillServiceBridge(name: String, service: String, what: String, context: BytecodePatchContext) = with(context) {
+private fun fillServiceBridge(name: String, service: String, what: String) = run {
     // Only a method that casts to the service can make it, and the patcher's type index finds
     // those without reading the rest of TikTok.
     val recipe = Fingerprint(filters = listOf(checkCast(service))).matchAllOrNull().orEmpty()

@@ -4,10 +4,11 @@
  */
 package app.morphe.patches.tiktok.misc.optimizer
 
+import app.morphe.patcher.patch.classDefBy
+import app.morphe.patcher.patch.patch
 import app.morphe.Fixtures
 import app.morphe.patcher.Patcher
 import app.morphe.patcher.PatcherConfig
-import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
@@ -76,7 +77,7 @@ class BackgroundPushSetupTest {
                         .single { it.type == PUSH_OWNER }
                     val before = encoded(original)
                     var checked = false
-                    val probe = bytecodePatch(name = "push setup preservation probe") {
+                    val probe = patch(name = "push setup preservation probe") {
                         execute {
                             val buffer = BufferPreloadGateFingerprint.method.implementation!!.instructions.toList()
                             limitBackgroundTraffic(skips)
@@ -109,7 +110,7 @@ class BackgroundPushSetupTest {
             assertTrue("an explicit true skips push setup", skips)
             Fixtures.forEachDeclared { apk ->
                 var checked = false
-                val probe = bytecodePatch(name = "explicit push shutdown probe") {
+                val probe = patch(name = "explicit push shutdown probe") {
                     execute {
                         val push = InitPushTaskFingerprint.method.implementation!!.instructions.toList()
                         val buffer = BufferPreloadGateFingerprint.method.implementation!!.instructions.toList()

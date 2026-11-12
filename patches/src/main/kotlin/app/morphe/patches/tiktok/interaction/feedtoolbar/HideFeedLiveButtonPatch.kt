@@ -6,10 +6,10 @@
  */
 package app.morphe.patches.tiktok.interaction.feedtoolbar
 
+import app.morphe.patcher.patch.packageMetadata
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.methodCall
 import app.morphe.util.addInstruction
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
@@ -93,7 +93,7 @@ val hideFeedLiveButtonPatch = bytecodePatch(
  * doesn't take the LIVE switch down with it. Its settings row shows only when the hook went in.
  * Takes the version so a test can stand in for a build that isn't declared.
  */
-internal fun BytecodePatchContext.hookSidebarButtonOn(versionName: String): Boolean {
+internal fun hookSidebarButtonOn(versionName: String): Boolean {
     try {
         hookSidebarButton()
     } catch (problem: Exception) {
@@ -109,7 +109,7 @@ internal fun BytecodePatchContext.hookSidebarButtonOn(versionName: String): Bool
     return true
 }
 
-internal fun BytecodePatchContext.hookSidebarButton() {
+internal fun hookSidebarButton() {
     val sidebarGenerators = SidebarIconViewFingerprint.matchAllOrNull().orEmpty()
     if (sidebarGenerators.size != 1) {
         throw PatchException(

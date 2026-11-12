@@ -4,10 +4,11 @@
  */
 package app.morphe.patches.tiktok.interaction.publishdate
 
+import app.morphe.patcher.patch.classDefBy
+import app.morphe.patcher.patch.patch
 import app.morphe.Fixtures
 import app.morphe.patcher.Patcher
 import app.morphe.patcher.PatcherConfig
-import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.takes
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.Opcode
@@ -64,7 +65,7 @@ class LikedJumpHooksTest {
             )
 
             var checked = false
-            val probe = bytecodePatch(name = "liked jump probe") {
+            val probe = patch(name = "liked jump probe") {
                 extendWith(Supplier<InputStream> { OWNER.getResourceAsStream(EXTENSION)!! })
                 execute {
                     fun ops(m: Method) = m.implementation!!.instructions.filter { it.opcode != Opcode.NOP }.toList()

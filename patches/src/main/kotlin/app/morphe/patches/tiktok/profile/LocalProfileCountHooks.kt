@@ -4,7 +4,8 @@
  */
 package app.morphe.patches.tiktok.profile
 
-import app.morphe.patcher.patch.BytecodePatchContext
+import app.morphe.patcher.patch.classDefBy
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
@@ -176,7 +177,7 @@ internal fun MutableMethod.replaceProfileCount(index: Int, registers: List<Int>,
     replaceInstruction(index, "invoke-direct { p0, ${registers.joinToString(", ") { "v$it" }} }, $definingClass->$BRIDGE($args)${if (legacy) "V" else TEXT}")
 }
 
-internal fun BytecodePatchContext.hookLocalProfileCounts() {
+internal fun hookLocalProfileCounts() {
     val protocols = ProfileCountMetric.entries.associateWith { classDefBy(it.protocol) }
     val sites = protocols.mapValues { (metric, owner) -> owner.methods.flatMap { method ->
         method.profileCountFormats().map { method to it }

@@ -4,8 +4,10 @@
  */
 package app.morphe.patches.tiktok.misc.inbox
 
+import app.morphe.patcher.patch.classDefBy
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.addInstructionsWithLabels
@@ -157,7 +159,7 @@ internal class MessageSearchBridges(
 }
 
 /** The engine, its reset and catch-up, and the coroutine helpers they need. */
-internal fun BytecodePatchContext.messageSearchBridges(): MessageSearchBridges {
+internal fun messageSearchBridges(): MessageSearchBridges {
     val engine = MessageSearchCatchUpFingerprint.classDef
     val catchUp = MessageSearchCatchUpFingerprint.method
     val kit = classDefBy(scopeCancel(engine, catchUp.parameterTypes.single().toString()).definingClass)
@@ -165,7 +167,7 @@ internal fun BytecodePatchContext.messageSearchBridges(): MessageSearchBridges {
 }
 
 /** Replaces the extension's four stubs with [bridges]. */
-internal fun BytecodePatchContext.installMessageSearchRebuild(bridges: MessageSearchBridges) {
+internal fun installMessageSearchRebuild(bridges: MessageSearchBridges) {
     val extension = mutableClassDefBy(SEARCH_REBUILD)
     fun fill(name: String) {
         val stub = extension.methods.single { it.name == name }

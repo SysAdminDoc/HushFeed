@@ -6,9 +6,11 @@
  */
 package app.morphe.patches.tiktok.shared
 
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
+import app.morphe.patcher.patch.classDefForEach
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.methodCall
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.findMutableMethodOf
@@ -68,7 +70,7 @@ private val INTEGER_MOVES = setOf(Opcode.MOVE, Opcode.MOVE_FROM16, Opcode.MOVE_1
  * is called `invoke$n`, which would make this a one-line lookup and would be one more thing R8
  * chooses.
  */
-internal fun BytecodePatchContext.findLazyAbGate(
+internal fun findLazyAbGate(
     what: String,
     key: String,
     gate: (Method, ClassDef) -> Boolean,
@@ -111,7 +113,7 @@ internal fun BytecodePatchContext.findLazyAbGate(
     return search.find(what, key, gate, ::classDefForEach)
 }
 
-internal fun BytecodePatchContext.resolveLazyAbGate(
+internal fun resolveLazyAbGate(
     what: String,
     key: String,
     gate: (Method, ClassDef) -> Boolean,

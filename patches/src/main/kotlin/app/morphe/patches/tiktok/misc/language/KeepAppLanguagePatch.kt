@@ -4,8 +4,9 @@
  */
 package app.morphe.patches.tiktok.misc.language
 
+import app.morphe.patcher.patch.classDefBy
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
@@ -153,12 +154,11 @@ val keepAppLanguagePatch = bytecodePatch(
  * ActivityThread's application don't exist yet when it runs. With the switch off the reset runs
  * as TikTok wrote it.
  */
-context(patchContext: BytecodePatchContext)
 internal fun installAppLanguageSwitch() {
     val reset = AppLanguageResetFingerprint.method
     // A second method of this shape would mean it no longer picks out the reset, and skipping
     // the wrong one is a failure rather than a coin toss.
-    val shaped = patchContext.classDefBy(I18N_MANAGER_SERVICE).methods.filter { it.isAppLanguageReset() }
+    val shaped = classDefBy(I18N_MANAGER_SERVICE).methods.filter { it.isAppLanguageReset() }
     if (shaped.size != 1 || shaped.single().name != reset.name) {
         throw PatchException(
             "$PATCH: expected one language reset in $I18N_MANAGER_SERVICE, found ${shaped.map { it.name }}",
@@ -174,7 +174,6 @@ internal fun installAppLanguageSwitch() {
  * here, so no obfuscated name is written into its sources, and the extension decides with the
  * switch whether any of them runs.
  */
-context(patchContext: BytecodePatchContext)
 internal fun installLanguageAtStart() {
     val picked = PickedLocaleFingerprint.method
     val apply = ApplyPickedLocaleFingerprint.method
@@ -186,7 +185,7 @@ internal fun installLanguageAtStart() {
     val loadStrings = LoadStringsFingerprint.method
     val stringsLocale = StringsLocaleFingerprint.method
 
-    val extension = patchContext.mutableClassDefBy(APP_LANGUAGE)
+    val extension = mutableClassDefBy(APP_LANGUAGE)
     fun stub(name: String) = extension.methods.single { it.name == name }
     stub("pickedLocale").addInstructions(
         0,

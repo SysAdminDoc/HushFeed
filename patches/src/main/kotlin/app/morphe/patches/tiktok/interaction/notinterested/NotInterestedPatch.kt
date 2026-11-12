@@ -6,6 +6,7 @@
  */
 package app.morphe.patches.tiktok.interaction.notinterested
 
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions

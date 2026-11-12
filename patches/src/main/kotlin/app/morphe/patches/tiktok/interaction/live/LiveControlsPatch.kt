@@ -4,12 +4,14 @@
  */
 package app.morphe.patches.tiktok.interaction.live
 
+import app.morphe.patcher.patch.classDefBy
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.fieldAccess
 import app.morphe.patcher.methodCall
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
@@ -2607,7 +2609,7 @@ val liveControlsPatch = bytecodePatch(
  * Hands each site's count to the extension before the formatter and swaps TikTok's text for the
  * extension's after it.
  */
-private fun BytecodePatchContext.hookViewerCounts(type: String, sites: List<ViewerCountSite>) {
+private fun hookViewerCounts(type: String, sites: List<ViewerCountSite>) {
     val mutableWidget = mutableClassDefBy(type)
     for ((method, group) in sites.groupBy { it.method }) {
         val mutable = mutableWidget.findMutableMethodOf(method)

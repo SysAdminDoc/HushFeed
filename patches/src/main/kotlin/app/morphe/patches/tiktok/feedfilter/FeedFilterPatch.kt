@@ -4,13 +4,16 @@
  */
 package app.morphe.patches.tiktok.feedfilter
 
+import app.morphe.patcher.patch.classDefBy
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
+import app.morphe.patcher.patch.packageMetadata
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.fieldAccess
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
 import app.morphe.util.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
@@ -1284,7 +1287,7 @@ internal fun selectRecUserCardInsertion(
  * hook goes after the read, on the fall-through, and a branch into the next instruction keeps
  * its target: the register holds the list only on the path that read it.
  */
-internal fun BytecodePatchContext.filterProfileAdResponseReads() {
+internal fun filterProfileAdResponseReads() {
     val matches = ProfileAdResponseReadFingerprint.matchAllOrNull()
         ?.filterNot { it.originalClassDef.type.startsWith("Lapp/morphe/extension/") }
         .orEmpty()
@@ -1722,7 +1725,7 @@ private fun MutableMethod.filterProfileDetailAdEvent() {
 }
 
 /** The cold start's orchestrator, a method of its own, found by what it calls. */
-private fun BytecodePatchContext.findColdStartOrchestrators(golden: Method, offline: Method): List<MutableMethod> {
+private fun findColdStartOrchestrators(golden: Method, offline: Method): List<MutableMethod> {
     val sites = invokeSitesOf(setOf(golden.coldStartCall(), offline.coldStartCall()), static = true)
     val calls = sites.groupBy { it.method.coldStartCall() }.values.associate { group ->
         mutableClassDefBy(group.first().owner).findMutableMethodOf(group.first().method) to

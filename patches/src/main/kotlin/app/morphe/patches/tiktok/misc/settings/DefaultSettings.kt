@@ -6,19 +6,17 @@
  */
 package app.morphe.patches.tiktok.misc.settings
 
-import app.morphe.patcher.patch.BytecodePatchBuilder
 import app.morphe.patcher.patch.Option
-import app.morphe.patcher.patch.PatchBuilder
+import app.morphe.patcher.patch.PatchDefinition
 import app.morphe.patcher.patch.PatchException
-import app.morphe.patcher.patch.ResourcePatchBuilder
 import app.morphe.patcher.patch.booleanOption
 import app.morphe.patcher.patch.floatOption
 import app.morphe.patcher.patch.intOption
+import app.morphe.patcher.patch.listApkEntries
 import app.morphe.patcher.patch.longOption
-import app.morphe.patcher.patch.rawResourcePatch
+import app.morphe.patcher.patch.patch
+import app.morphe.patcher.patch.resourceFile
 import app.morphe.patcher.patch.stringOption
-import app.morphe.patcher.patch.bytecodePatch as buildBytecodePatch
-import app.morphe.patcher.patch.resourcePatch as buildResourcePatch
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.google.gson.JsonPrimitive
@@ -32,8 +30,8 @@ fun configurableBytecodePatch(
     name: String? = null,
     description: String? = null,
     default: Boolean = true,
-    block: BytecodePatchBuilder.() -> Unit = {},
-) = buildBytecodePatch(name, description, default) {
+    block: PatchDefinition.() -> Unit = {},
+) = patch(name, description, default) {
     block()
     if (name != null) addDefaultSettings(name)
 }
@@ -43,8 +41,8 @@ fun configurableResourcePatch(
     name: String? = null,
     description: String? = null,
     default: Boolean = true,
-    block: ResourcePatchBuilder.() -> Unit = {},
-) = buildResourcePatch(name, description, default) {
+    block: PatchDefinition.() -> Unit = {},
+) = patch(name, description, default) {
     block()
     if (name != null) addDefaultSettings(name)
 }
@@ -55,7 +53,7 @@ internal val defaultSettingsCatalog: JsonObject by lazy {
     stream.bufferedReader(StandardCharsets.UTF_8).use { JsonParser.parseReader(it).asJsonObject }
 }
 
-private fun PatchBuilder<*>.addDefaultSettings(patchName: String) {
+private fun PatchDefinition.addDefaultSettings(patchName: String) {
     val keys = defaultSettingsCatalog.getAsJsonObject("patches").getAsJsonArray(patchName) ?: return
     val settings = defaultSettingsCatalog.getAsJsonObject("settings")
     val configured = keys.map { entry ->
@@ -79,7 +77,7 @@ private fun PatchBuilder<*>.addDefaultSettings(patchName: String) {
     }
     // An individual dependency captures this patch's options. Run state is kept in the output
     // asset rather than in a singleton, so cancellation and a second build cannot leak values.
-    dependsOn(rawResourcePatch {
+    dependsOn(patch {
         execute {
             if (DEFAULT_SETTINGS_ASSET in listApkEntries(DEFAULT_SETTINGS_ASSET)) {
                 throw PatchException("Settings defaults already exist in the input APK; use an unpatched APK")
@@ -95,7 +93,7 @@ private fun PatchBuilder<*>.addDefaultSettings(patchName: String) {
                 }
                 if (encoded != stock) overrides.add(key, encoded)
             }
-            if (overrides.size() != 0) mergeDefaultSettings(get(DEFAULT_SETTINGS_ASSET), overrides, patchName)
+            if (overrides.size() != 0) mergeDefaultSettings(resourceFile(DEFAULT_SETTINGS_ASSET), overrides, patchName)
         }
     })
 }

@@ -4,6 +4,7 @@
  */
 package app.morphe.patches.tiktok.interaction.resume
 
+import app.morphe.patcher.patch.classDefByOrNull
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
 import app.morphe.util.addInstructionsWithLabels

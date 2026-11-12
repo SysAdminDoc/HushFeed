@@ -4,9 +4,9 @@
  */
 package app.morphe.patches.tiktok.interaction.feedtoolbar
 
+import app.morphe.patcher.patch.classDefByOrNull
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.methodCall
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
@@ -104,7 +104,7 @@ internal fun MutableMethod.filterSidebarSwipeAsks(asks: List<SidebarSwipeAsk>) {
  * settings row shows only when the hook went in. Takes the version so a test can stand in for a
  * build that isn't declared.
  */
-internal fun BytecodePatchContext.hookSidebarSwipeOn(versionName: String): Boolean {
+internal fun hookSidebarSwipeOn(versionName: String): Boolean {
     if (!hookSidebarSwipe(versionName)) return false
     SettingsStatusLoadFingerprint.method.addInstruction(
         0,
@@ -115,7 +115,7 @@ internal fun BytecodePatchContext.hookSidebarSwipeOn(versionName: String): Boole
 }
 
 /** The guard alone, without the settings flag that shows the row, so a probe patch can run it. */
-internal fun BytecodePatchContext.hookSidebarSwipe(versionName: String): Boolean {
+internal fun hookSidebarSwipe(versionName: String): Boolean {
     val sites = SidebarSwipeFingerprint.matchAllOrNull().orEmpty()
         .filterNot { it.originalClassDef.type.startsWith("Lapp/morphe/extension/") }
         .map { match -> match to sidebarSwipeAsks(match.originalMethod) { classDefByOrNull(it) } }

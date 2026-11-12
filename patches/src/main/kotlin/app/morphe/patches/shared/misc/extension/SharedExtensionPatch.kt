@@ -4,10 +4,10 @@
  */
 package app.morphe.patches.shared.misc.extension
 
+import app.morphe.patcher.patch.classDefBy
+import app.morphe.patcher.patch.patch
 import app.morphe.patcher.Fingerprint
 import app.morphe.util.addInstruction
-import app.morphe.patcher.patch.BytecodePatchContext
-import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.util.returnEarly
 import com.android.tools.smali.dexlib2.iface.Method
 import java.io.File
@@ -28,7 +28,7 @@ fun sharedExtensionPatch(
     extensionName: String,
     isYouTubeOrYouTubeMusic: Boolean,
     vararg hooks: ExtensionHook,
-) = bytecodePatch {
+) = patch {
     dependsOn(sharedExtensionPatch(isYouTubeOrYouTubeMusic, *hooks))
 
     extendWith("extensions/$extensionName.mpe")
@@ -43,7 +43,7 @@ fun sharedExtensionPatch(
 fun sharedExtensionPatch(
     isYouTubeOrYouTubeMusic: Boolean,
     vararg hooks: ExtensionHook,
-) = bytecodePatch {
+) = patch {
     val extensionName = if (isYouTubeOrYouTubeMusic) "shared-youtube" else "shared"
     extendWith("extensions/$extensionName.mpe")
 
@@ -100,16 +100,15 @@ internal fun localBundleFile(classUrl: URL?): File {
  */
 open class ExtensionHook(
     internal val fingerprint: Fingerprint,
-    private val insertIndexResolver: BytecodePatchContext.(Method) -> Int = { 0 },
-    private val contextRegisterResolver: BytecodePatchContext.(Method) -> String = { "p0" },
+    private val insertIndexResolver: (Method) -> Int = { 0 },
+    private val contextRegisterResolver: (Method) -> String = { "p0" },
     private val postContextClassDescriptor: String? = null,
     private val postContextMethodName: String? = null,
 ) {
-    context(patchContext: BytecodePatchContext)
     operator fun invoke(extensionClassDescriptor: String) {
-        with(patchContext) { fingerprint.method }.apply {
-            val insertIndex = with(patchContext) { insertIndexResolver(this@apply) }
-            val contextRegister = with(patchContext) { contextRegisterResolver(this@apply) }
+        fingerprint.method.apply {
+            val insertIndex = insertIndexResolver(this@apply)
+            val contextRegister = contextRegisterResolver(this@apply)
 
             addInstruction(
                 insertIndex,

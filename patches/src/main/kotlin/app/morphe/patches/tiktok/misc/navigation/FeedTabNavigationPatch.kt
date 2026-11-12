@@ -4,6 +4,10 @@
  */
 package app.morphe.patches.tiktok.misc.navigation
 
+import app.morphe.patcher.patch.classDefBy
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
+import app.morphe.patcher.patch.packageMetadata
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
 import app.morphe.util.addInstructionsWithLabels

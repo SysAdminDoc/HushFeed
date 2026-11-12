@@ -4,6 +4,8 @@
  */
 package app.morphe.patches.tiktok.interaction.speed
 
+import app.morphe.patcher.patch.mutableClassDefBy
+import app.morphe.patcher.patch.packageMetadata
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions

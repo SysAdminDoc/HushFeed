@@ -5,7 +5,6 @@
 package app.morphe.patches.tiktok.interaction.sharesheet
 
 import app.morphe.patcher.Fingerprint
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.misc.optimizer.isBranchTarget
@@ -90,6 +89,6 @@ internal fun MutableMethod.hookNewGroupButton() {
     )
 }
 
-internal fun BytecodePatchContext.hookNewGroupButtonToggle() {
+internal fun hookNewGroupButtonToggle() {
     NewGroupButtonToggleFingerprint.method.hookNewGroupButton()
 }

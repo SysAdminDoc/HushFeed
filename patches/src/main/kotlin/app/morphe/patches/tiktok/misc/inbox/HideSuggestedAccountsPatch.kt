@@ -9,7 +9,6 @@ package app.morphe.patches.tiktok.misc.inbox
 
 import app.morphe.patcher.Fingerprint
 import app.morphe.util.addInstruction
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.util.findMutableMethodOf
 import com.android.tools.smali.dexlib2.Opcode
@@ -101,7 +100,7 @@ internal fun isSuggestionListCell(type: String) =
  *
  * @return how many bind methods were hooked.
  */
-internal fun BytecodePatchContext.collapseSuggestionCells(): Int {
+internal fun collapseSuggestionCells(): Int {
     val matches = SuggestionListCellBindFingerprint.matchAll()
     requireSuggestionCellBinds(matches.map { it.originalClassDef.type })
     matches.forEach { match ->

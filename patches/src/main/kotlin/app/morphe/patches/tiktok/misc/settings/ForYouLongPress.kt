@@ -4,7 +4,9 @@
  */
 package app.morphe.patches.tiktok.misc.settings
 
-import app.morphe.patcher.patch.BytecodePatchContext
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
+import app.morphe.patcher.patch.packageMetadata
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.misc.navigation.isTopTabLayoutConstructor
 import app.morphe.patches.tiktok.misc.navigation.writes
@@ -154,7 +156,7 @@ internal fun MutableMethod.handTopTabOver(site: TopTabBindSite) {
  * exactly once: For You then stays as it is, and the settings row and the Home tab still open the
  * page.
  */
-internal fun BytecodePatchContext.hookForYouLongPress(): Boolean {
+internal fun hookForYouLongPress(): Boolean {
     val lookup = findTopTabBind { classDefByOrNull(it) }
     val site = lookup.site ?: run {
         println("[Settings] Left out the For You long press on ${packageMetadata.versionName}: ${lookup.miss}.")

@@ -6,6 +6,7 @@
  */
 package app.morphe.patches.tiktok.misc.optimizer
 
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.PatchException

@@ -6,12 +6,13 @@
  */
 package app.morphe.patches.tiktok.interaction.looping
 
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.fieldAccess
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
@@ -87,7 +88,7 @@ private class Registration(
  * read, so every copy is taken. They are required to agree on the strategy type, because two
  * different ones would mean these are not copies of one registration after all.
  */
-private fun BytecodePatchContext.resolveLazyRegistrations(): List<Registration> {
+private fun resolveLazyRegistrations(): List<Registration> {
     val found = mutableListOf<Registration>()
     for (match in LazyRegistrationFingerprint.matchAll()) {
         val method = match.originalMethod
@@ -286,7 +287,7 @@ internal fun <M : Method> indicatorShows(methods: Iterable<M>, method: String, c
     }
 
 /** The indicator's show method named [method], on the base class every auto scroll component extends. */
-private fun BytecodePatchContext.indicatorShow(method: String): MutableMethod =
+private fun indicatorShow(method: String): MutableMethod =
     indicatorShows(mutableClassDefBy(INDICATOR_BASE).methods, method) { classDefByOrNull(it) }
         .singleOrPatchException("Auto advance: indicator $method")
 

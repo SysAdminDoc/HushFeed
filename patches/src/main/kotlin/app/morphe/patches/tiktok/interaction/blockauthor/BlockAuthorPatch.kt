@@ -6,6 +6,7 @@
  */
 package app.morphe.patches.tiktok.interaction.blockauthor
 
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction

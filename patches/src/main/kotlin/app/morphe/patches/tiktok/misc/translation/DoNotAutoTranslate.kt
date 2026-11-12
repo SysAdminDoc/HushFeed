@@ -4,7 +4,7 @@
  */
 package app.morphe.patches.tiktok.misc.translation
 
-import app.morphe.patcher.patch.BytecodePatchContext
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.addInstructions
@@ -61,7 +61,7 @@ internal fun Method.doNotTranslateReads(): List<Int> {
  * Fails closed: the service must hold exactly [DO_NOT_TRANSLATE_READS] reads, each result in a
  * register a plain invoke can name. Anything else stops the hook before an instruction is added.
  */
-internal fun BytecodePatchContext.hookDoNotAutoTranslate() {
+internal fun hookDoNotAutoTranslate() {
     val service = mutableClassDefBy(TRANSLATION_SERVICE)
     val sites = service.methods.map { it to it.doNotTranslateReads() }.filter { it.second.isNotEmpty() }
     val total = sites.sumOf { it.second.size }

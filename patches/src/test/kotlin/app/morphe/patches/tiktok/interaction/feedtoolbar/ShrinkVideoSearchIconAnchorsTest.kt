@@ -4,10 +4,10 @@
  */
 package app.morphe.patches.tiktok.interaction.feedtoolbar
 
+import app.morphe.patcher.patch.patch
 import app.morphe.Fixtures
 import app.morphe.patcher.Patcher
 import app.morphe.patcher.PatcherConfig
-import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
@@ -37,7 +37,7 @@ class ShrinkVideoSearchIconAnchorsTest {
         Fixtures.forEachDeclared { apk ->
             val version = Fixtures.versionOf(apk)
             var checked = false
-            val probe = bytecodePatch(name = "comments video search icon probe") {
+            val probe = patch(name = "comments video search icon probe") {
                 execute {
                     val matches = ShrinkVideoSearchIconVisibilityFingerprint.matchAll()
                     assertEquals("$version: show-or-hide methods", 1, matches.size)

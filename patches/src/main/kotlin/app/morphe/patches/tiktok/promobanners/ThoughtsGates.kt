@@ -4,7 +4,6 @@
  */
 package app.morphe.patches.tiktok.promobanners
 
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.shared.checkBooleanWhenOn
@@ -38,16 +37,15 @@ private const val THOUGHTS_WHAT = "Turn on Thoughts"
  */
 internal class ThoughtsGates(val publish: MutableMethod, val consumption: MutableMethod)
 
-private fun BytecodePatchContext.resolveThoughtsGate(key: String): MutableMethod =
+private fun resolveThoughtsGate(key: String): MutableMethod =
     resolveLazyAbGate(THOUGHTS_WHAT, key) { method, _ ->
         method.returnType == "Z" && method.parameterTypes.none() && method.isLazyAbRead()
     }
 
 /** Both gates, checked for the hook before either is written. Throws when either is missing. */
-context(patchContext: BytecodePatchContext)
 internal fun resolveThoughtsGates(): ThoughtsGates {
-    val publish = patchContext.resolveThoughtsGate(THOUGHTS_PUBLISH_KEY)
-    val consumption = patchContext.resolveThoughtsGate(THOUGHTS_CONSUMPTION_KEY)
+    val publish = resolveThoughtsGate(THOUGHTS_PUBLISH_KEY)
+    val consumption = resolveThoughtsGate(THOUGHTS_CONSUMPTION_KEY)
     if (publish.definingClass == consumption.definingClass && publish.name == consumption.name) {
         throw PatchException("$THOUGHTS_WHAT: both keys led to ${publish.definingClass}->${publish.name}")
     }
@@ -60,7 +58,6 @@ internal fun resolveThoughtsGates(): ThoughtsGates {
  * With the switch on both gates answer yes, and with it off, or while Hushfeed is paused, TikTok
  * reads its own values. Whether a Thought written this way posts is still up to TikTok's servers.
  */
-context(patchContext: BytecodePatchContext)
 internal fun ThoughtsGates.installThoughtsSwitch() {
     publish.returnBooleanWhenOn(THOUGHTS_WHAT, THOUGHTS_SWITCH, true)
     consumption.returnBooleanWhenOn(THOUGHTS_WHAT, THOUGHTS_SWITCH, true)

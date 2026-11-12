@@ -4,6 +4,10 @@
  */
 package app.morphe.patches.tiktok.interaction.cleardisplay
 
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
+import app.morphe.patcher.patch.mutableClassDefByOrNull
+import app.morphe.patcher.patch.packageMetadata
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
 import app.morphe.patcher.patch.PatchException

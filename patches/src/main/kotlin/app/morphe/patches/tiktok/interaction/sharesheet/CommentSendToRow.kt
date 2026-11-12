@@ -5,7 +5,6 @@
 package app.morphe.patches.tiktok.interaction.sharesheet
 
 import app.morphe.patcher.Fingerprint
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.addInstruction
@@ -69,7 +68,7 @@ internal fun MutableMethod.hookCommentSendToAttach(patch: String) {
     addInstruction(attach + 1, "invoke-static {v$row}, $SEND_TO_ROW->onAttached(Landroid/view/View;)V")
 }
 
-internal fun BytecodePatchContext.hookCommentSendToRow() {
+internal fun hookCommentSendToRow() {
     CommentSendToLoadFingerprint.method.hookCommentSendToLoad()
     val attach = CommentSendToLoadFingerprint.classDef.methods.firstOrNull {
         it.name == "onAttachedToWindow" && it.parameterTypes.isEmpty()

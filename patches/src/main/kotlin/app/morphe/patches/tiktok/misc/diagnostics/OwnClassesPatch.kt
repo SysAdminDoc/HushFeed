@@ -4,8 +4,9 @@
  */
 package app.morphe.patches.tiktok.misc.diagnostics
 
+import app.morphe.patcher.patch.resourceFile
+import app.morphe.patcher.patch.patch
 import app.morphe.patcher.patch.PatchException
-import app.morphe.patcher.patch.rawResourcePatch
 import java.io.File
 import java.io.InputStream
 import java.nio.ByteBuffer
@@ -20,10 +21,10 @@ internal val OWN_EXTENSION_DEX = listOf("extensions/shared.mpe", "extensions/tik
  * Lists every class Hushfeed's extension adds under app/, so the diagnostic report can tell one
  * of its own from a class another bundle added under the same package.
  */
-internal val ownClassesPatch = rawResourcePatch {
+internal val ownClassesPatch = patch {
     execute {
         // The same class loader extendWith reads the extension dex files through.
-        OwnClasses.write(get(OWN_CLASSES_ASSET)) { path -> OwnClasses::class.java.classLoader.getResourceAsStream(path) }
+        OwnClasses.write(resourceFile(OWN_CLASSES_ASSET)) { path -> OwnClasses::class.java.classLoader.getResourceAsStream(path) }
     }
 }
 

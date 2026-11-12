@@ -6,6 +6,7 @@
  */
 package app.morphe.patches.tiktok.interaction.videofit
 
+import app.morphe.patcher.patch.packageMetadata
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.methodCall
 import app.morphe.util.addInstruction

@@ -41,6 +41,9 @@
  */
 package app.morphe.util
 
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
+import app.morphe.patcher.patch.mutableClassDefByOrNull
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.InstructionFilter
 import app.morphe.util.addInstruction
@@ -49,7 +52,6 @@ import app.morphe.util.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.instructions
 import app.morphe.patcher.extensions.InstructionExtensions.removeInstruction
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableClass
 import app.morphe.patcher.util.proxy.mutableTypes.MutableField
@@ -411,7 +413,7 @@ fun Instruction.argumentRegister(argumentIndex: Int): Int? =
  * The class and its superclasses, nearest first, as far as this context can resolve them and no
  * further than [maxDepth] steps. A cycle, which a damaged dex can carry, ends the walk.
  */
-fun BytecodePatchContext.superclassChain(type: String, maxDepth: Int = 20): Sequence<String> = sequence {
+fun superclassChain(type: String, maxDepth: Int = 20): Sequence<String> = sequence {
     val seen = mutableSetOf<String>()
     var at: String? = type
     var depth = 0
@@ -422,10 +424,10 @@ fun BytecodePatchContext.superclassChain(type: String, maxDepth: Int = 20): Sequ
 }
 
 /** Whether [type] is [target] or extends it within [maxDepth] superclasses. */
-fun BytecodePatchContext.extendsClass(type: String, target: String, maxDepth: Int = 20): Boolean =
+fun extendsClass(type: String, target: String, maxDepth: Int = 20): Boolean =
     superclassChain(type, maxDepth).any { it == target }
 
-fun BytecodePatchContext.traverseClassHierarchy(targetClass: MutableClass, callback: MutableClass.() -> Unit) {
+fun traverseClassHierarchy(targetClass: MutableClass, callback: MutableClass.() -> Unit) {
     callback(targetClass)
 
     targetClass.superclass ?: return
@@ -448,9 +450,8 @@ inline fun <reified T : Reference> Instruction.getReference() = (this as? Refere
 /**
  * @return The mutable method for this method call reference.
  */
-context(patchContext: BytecodePatchContext)
 fun MethodReference.getMutableMethod(): MutableMethod {
-    return patchContext.mutableClassDefBy(this.definingClass).methods.first { classMethod ->
+    return mutableClassDefBy(this.definingClass).methods.first { classMethod ->
         MethodUtil.methodSignaturesMatch(classMethod, this@getMutableMethod)
     }
 }
@@ -791,9 +792,8 @@ internal fun MutableMethod.insertLiteralOverride(literalIndex: Int, override: Bo
  *
  * **Fingerprint match indexes will be increased positively by [numberOfParameterRegistersLogical]**.
  */
-context(patchContext: BytecodePatchContext)
 fun Method.cloneMutableAndPreserveParameters() = cloneMutableAndPreserveParameters(
-    patchContext.mutableClassDefBy(definingClass)
+    mutableClassDefBy(definingClass)
 )
 
 /**
@@ -1347,7 +1347,7 @@ internal fun MutableField.removeFlags(vararg flags: AccessFlags) {
     this.accessFlags = this.accessFlags and bitField.inv()
 }
 
-internal fun BytecodePatchContext.addStaticFieldToExtension(
+internal fun addStaticFieldToExtension(
     className: String,
     methodName: String,
     fieldName: String,
@@ -1381,7 +1381,6 @@ internal fun BytecodePatchContext.addStaticFieldToExtension(
     }
 }
 
-context(patchContext: BytecodePatchContext)
 internal fun setExtensionIsPatchIncluded(patchExtensionClassType: String) {
     val methodName = "isPatchIncluded"
     val returnType = "Z"
@@ -1396,15 +1395,13 @@ internal fun setExtensionIsPatchIncluded(patchExtensionClassType: String) {
         }
     )
 
-    with(patchContext) {
-        if (fingerprint.methodOrNull == null) {
-            throw PatchException(
-                "Could not find required extension method: $patchExtensionClassType->$methodName()$returnType"
-            )
-        }
-
-        fingerprint.method.returnEarly(true)
+    if (fingerprint.methodOrNull == null) {
+        throw PatchException(
+            "Could not find required extension method: $patchExtensionClassType->$methodName()$returnType"
+        )
     }
+
+    fingerprint.method.returnEarly(true)
 }
 
 /**

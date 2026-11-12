@@ -4,9 +4,12 @@
  */
 package app.morphe.patches.tiktok.interaction.pip
 
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
+import app.morphe.patcher.patch.document
+import app.morphe.patcher.patch.patch
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
-import app.morphe.patcher.patch.resourcePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.interaction.blockauthor.sessionPlaybackBridgePatch
@@ -109,7 +112,7 @@ internal fun allowPictureInPicture(xml: Document) {
     if (missing.isNotEmpty()) throw PatchException("Picture-in-picture: the manifest doesn't declare $missing")
 }
 
-private val pictureInPictureManifestPatch = resourcePatch {
+private val pictureInPictureManifestPatch = patch {
     execute {
         document("AndroidManifest.xml").use { xml -> allowPictureInPicture(xml) }
     }

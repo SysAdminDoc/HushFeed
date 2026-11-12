@@ -4,12 +4,12 @@
  */
 package app.morphe.patches.tiktok.interaction.videooverlays
 
+import app.morphe.patcher.patch.patch
 import app.morphe.BridgeTypeFlow
 import app.morphe.Fixtures
 import app.morphe.patcher.Patcher
 import app.morphe.patcher.PatcherConfig
-import app.morphe.patcher.patch.BytecodePatch
-import app.morphe.patcher.patch.bytecodePatch
+import app.morphe.patcher.patch.Patch
 import app.morphe.takes
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.AccessFlags
@@ -80,7 +80,7 @@ class StoryOverLiveAnchorsTest {
         Fixtures.forEachDeclared { apk ->
             val version = Fixtures.versionOf(apk)
             var checked = false
-            val probe = bytecodePatch(name = "story over live probe") {
+            val probe = patch(name = "story over live probe") {
                 execute {
                     val method = ProfileAvatarClickFingerprint.method
                     val site = storyOverLiveSite(method)!!
@@ -148,7 +148,7 @@ class StoryOverLiveAnchorsTest {
         Fixtures.forEachDeclared { apk ->
             val version = Fixtures.versionOf(apk)
             var checked = false
-            val probe = bytecodePatch(name = "inbox story over live probe") {
+            val probe = patch(name = "inbox story over live probe") {
                 execute {
                     val method = InboxAvatarClickFingerprint.method
                     val site = inboxStorySite(method)!!
@@ -208,7 +208,7 @@ class StoryOverLiveAnchorsTest {
         assertNull("a picture off another object", inboxStorySite(inboxTap(pictureFrom = 0)))
     }
 
-    private fun run(apk: File, probe: BytecodePatch) {
+    private fun run(apk: File, probe: Patch) {
         ProfileAvatarClickFingerprint.clearMatch()
         InboxAvatarClickFingerprint.clearMatch()
         Patcher(PatcherConfig(apk, temporary.newFolder())).use { patcher ->

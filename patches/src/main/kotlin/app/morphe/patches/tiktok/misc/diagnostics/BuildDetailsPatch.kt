@@ -4,10 +4,13 @@
  */
 package app.morphe.patches.tiktok.misc.diagnostics
 
+import app.morphe.patcher.patch.resourceFile
+import app.morphe.patcher.patch.listApkEntries
+import app.morphe.patcher.patch.packageMetadata
+import app.morphe.patcher.patch.patch
 import app.morphe.patcher.PackageMetadata
 import app.morphe.patcher.Patcher
 import app.morphe.patcher.patch.PatchException
-import app.morphe.patcher.patch.rawResourcePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.shared.misc.extension.localBundleFile
 import app.morphe.patches.tiktok.misc.optimizer.StripSummary
@@ -21,10 +24,10 @@ import java.util.jar.JarFile
 internal const val BUILD_DETAILS_ASSET = "assets/hushfeed-build-v1.txt"
 
 /** A raw dependency also works when no bytecode or runtime extension is selected. */
-internal val buildDetailsPatch = rawResourcePatch {
+internal val buildDetailsPatch = patch {
     execute {
         refuseBuildAssetCollision(listApkEntries(BUILD_DETAILS_ASSET))
-        val output = get(BUILD_DETAILS_ASSET)
+        val output = resourceFile(BUILD_DETAILS_ASSET)
         BuildDetails.begin(output, packageMetadata, bundleManifest(), applyingPatcherVersion())
     }
 }
@@ -40,9 +43,9 @@ internal enum class BuildChoice(val field: String) {
 }
 
 /** Runs before every other dependency so a failed dependency cannot look like an unticked patch. */
-internal fun buildChoicePatch(choice: BuildChoice) = rawResourcePatch {
+internal fun buildChoicePatch(choice: BuildChoice) = patch {
     dependsOn(buildDetailsPatch)
-    execute { BuildDetails.selected(get(BUILD_DETAILS_ASSET), choice) }
+    execute { BuildDetails.selected(resourceFile(BUILD_DETAILS_ASSET), choice) }
 }
 
 /** Run state lives only in the patcher's output asset. There is no global collector to leak on cancellation. */

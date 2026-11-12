@@ -4,8 +4,9 @@
  */
 package app.morphe.patches.tiktok.profile
 
+import app.morphe.patcher.patch.classDefBy
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patcher.util.smali.ExternalLabel
@@ -699,7 +700,7 @@ internal fun ClassDef.userNameIdentity(): Method? = methods.singleOrNull { metho
         method.implementation?.instructions?.mapNotNull { it.getReference<StringReference>()?.string } == listOf("user_account_user_name")
 }
 
-internal fun BytecodePatchContext.hookLocalProfileAppearance() {
+internal fun hookLocalProfileAppearance() {
     val legacyOwner = classDefBy(LEGACY_NICKNAME_OWNER)
     val nicknameOwner = classDefBy(NICKNAME_OWNER)
     val navbarOwner = classDefBy(NAVBAR_NICKNAME_OWNER)

@@ -6,6 +6,8 @@
  */
 package app.morphe.patches.tiktok.misc.commenttools
 
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions

@@ -4,6 +4,9 @@
  */
 package app.morphe.patches.tiktok.misc.navigation
 
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
+import app.morphe.patcher.patch.packageMetadata
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.interaction.cleardisplay.FeedPagerPageSelectedFingerprint
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch

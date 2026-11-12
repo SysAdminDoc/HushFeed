@@ -5,7 +5,6 @@
 package app.morphe.patches.tiktok.misc.commentsort
 
 import app.morphe.patcher.Fingerprint
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.shared.readsLazyAb
 import app.morphe.patches.tiktok.shared.resolveLazyAbGate
@@ -47,7 +46,7 @@ internal object CommentSortOptionStyleFingerprint : Fingerprint(
  * that value reads is `comment_sort_opt_style`, the same one the style fingerprint above is
  * anchored on. That key is TikTok's own name and is on all three builds.
  */
-internal fun BytecodePatchContext.resolveCommentSortEligibility(): MutableMethod =
+internal fun resolveCommentSortEligibility(): MutableMethod =
     resolveLazyAbGate("Comment sort controls", COMMENT_SORT_STYLE_KEY) { method, owner ->
         method.returnType == "Z" &&
             method.parameterTypes.map(CharSequence::toString) ==

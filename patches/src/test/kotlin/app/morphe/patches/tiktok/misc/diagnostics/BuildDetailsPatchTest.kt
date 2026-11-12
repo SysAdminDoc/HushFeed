@@ -1,7 +1,6 @@
 package app.morphe.patches.tiktok.misc.diagnostics
 
 import app.morphe.patcher.PackageMetadata
-import app.morphe.patcher.patch.BytecodePatch
 import app.morphe.patcher.patch.Patch
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.shared.compat.AppCompatibilities
@@ -242,9 +241,8 @@ class BuildDetailsPatchTest {
         listOf(p2pRelayBlockerPatch, languagePackPurgerPatch,
             studioCreationDebloatPatch, hidePlayStoreUpdatePatch, changeAppNamePatch, customLauncherIconPatch,
             trustUserCertificatesPatch).forEach { patch ->
-            val closure = dependencies(patch)
-            assertTrue("${patch.name} has no metadata dependency", buildDetailsPatch in closure)
-            assertTrue("${patch.name} unexpectedly injects runtime hooks", closure.none { it is BytecodePatch })
+            assertTrue("${patch.name} has no metadata dependency", buildDetailsPatch in dependencies(patch))
+            assertEquals("${patch.name} brings more than the build record", emptySet<Patch>(), beyondBuildRecord(patch))
         }
         // Accent color stopped being resources only with #163: text on Lynx pages carries its own
         // colors, so each stored color asks the extension's LynxAccent first.
@@ -259,8 +257,8 @@ class BuildDetailsPatchTest {
         assertTrue("AMOLED has no metadata dependency", buildDetailsPatch in amoled)
         assertTrue("AMOLED lost the comment bar hook", sharedExtensionPatch in amoled)
         val shared = dependencies(sharedExtensionPatch) + dependencies(settingsPatch)
-        val amoledOwn = amoled.filterIsInstance<BytecodePatch>().filter { it !in shared }
-        assertEquals("AMOLED's own bytecode is the palette repaint, the comment bar, the web pages and the switch",
+        val amoledOwn = beyondBuildRecord(amoledThemePatch).filter { it !in shared && sharedExtensionPatch in it.dependencies }
+        assertEquals("AMOLED's own hooks are the palette repaint, the comment bar, the web pages and the switch",
             4, amoledOwn.size)
         assertTrue(amoledOwn.all { it.name == null })
         // The core asset strip returns out of the content credential service's start before it
@@ -268,16 +266,15 @@ class BuildDetailsPatchTest {
         val core = dependencies(coreAssetDebloatPatch)
         assertTrue("the asset strip has no metadata dependency", buildDetailsPatch in core)
         assertEquals("the asset strip's bytecode is the C2PA guard alone",
-            setOf(c2paInitGuardPatch), core.filterIsInstance<BytecodePatch>().toSet())
+            setOf(c2paInitGuardPatch), beyondBuildRecord(coreAssetDebloatPatch))
         assertTrue("the asset strip unexpectedly injects runtime hooks", sharedExtensionPatch !in core)
         // The voice strip leaves TikTok's speech engine without its libraries (#213), same idea.
         val voice = dependencies(voiceToolsDebloatPatch)
         assertTrue("the voice strip has no metadata dependency", buildDetailsPatch in voice)
         assertEquals("the voice strip's bytecode is the speech engine guard alone",
-            setOf(speechEngineGuardPatch), voice.filterIsInstance<BytecodePatch>().toSet())
+            setOf(speechEngineGuardPatch), beyondBuildRecord(voiceToolsDebloatPatch))
         assertTrue("the voice strip unexpectedly injects runtime hooks", sharedExtensionPatch !in voice)
-        assertEquals(setOf(liveGiftEffectOptimizerPatch),
-            dependencies(liveStreamSuiteOptimizerPatch).filterIsInstance<BytecodePatch>().toSet())
+        assertEquals(setOf(liveGiftEffectOptimizerPatch), beyondBuildRecord(liveStreamSuiteOptimizerPatch))
         assertTrue(buildDetailsPatch in dependencies(sharedExtensionPatch))
         assertEquals(null, buildDetailsPatch.name)
         assertEquals(null, liveStreamSuiteOptimizerPatch.dependencies.first().name)
@@ -288,6 +285,15 @@ class BuildDetailsPatchTest {
         fun visit(current: Patch) { if (add(current)) current.dependencies.forEach(::visit) }
         visit(patch)
     }
+
+    /**
+     * What a patch pulls in besides itself and the build record (buildDetailsPatch and the choice
+     * patches that only fill in its fields). Patcher 2.3 gives every patch the same type, so the
+     * record is told apart by identity and shape.
+     */
+    private fun beyondBuildRecord(patch: Patch): Set<Patch> = dependencies(patch).filterNot {
+        it === patch || it === buildDetailsPatch || it.name == null && it.dependencies == setOf(buildDetailsPatch)
+    }.toSet()
 
     private fun record(name: String, context: PackageMetadata = target, facts: Attributes = manifest(), engine: String? = "1.14.2") =
         temporary.newFolder(name).resolve(BUILD_DETAILS_ASSET).apply { BuildDetails.begin(this, context, facts, engine) }

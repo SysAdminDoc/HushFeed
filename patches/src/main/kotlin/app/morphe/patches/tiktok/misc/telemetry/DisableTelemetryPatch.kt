@@ -9,12 +9,12 @@
  */
 package app.morphe.patches.tiktok.misc.telemetry
 
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
 import app.morphe.util.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
@@ -38,7 +38,6 @@ import com.android.tools.smali.dexlib2.iface.reference.StringReference
 private const val EXTENSION_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/telemetry/DisableTelemetryPatch;"
 private const val BD_LOCATION_CONFIG_DESCRIPTOR = "Lcom/bytedance/bdlocation/client/BDLocationConfig;"
 
-context(patchContext: BytecodePatchContext)
 private fun Method.returnEarlyIfTelemetryDisabled(disabledInstructions: (register: Int) -> String) {
     val scratchRegister = implementation?.registerCount
         ?: throw PatchException("Cannot guard a method without an implementation: $this")
@@ -46,14 +45,14 @@ private fun Method.returnEarlyIfTelemetryDisabled(disabledInstructions: (registe
 
     val guardedMethod = if (numberOfParameterRegisters == 0) {
         cloneMutable(additionalRegisters = 1).also { clonedMethod ->
-            patchContext.mutableClassDefBy(definingClass).methods.apply {
+            mutableClassDefBy(definingClass).methods.apply {
                 remove(this@returnEarlyIfTelemetryDisabled)
                 add(clonedMethod)
             }
         }
     } else {
         // Keep the original parameters intact when the guard uses a shifted parameter register
-        with(patchContext) { cloneMutableAndPreserveParameters() }
+        cloneMutableAndPreserveParameters()
     }
 
     guardedMethod.addInstructionsWithLabels(

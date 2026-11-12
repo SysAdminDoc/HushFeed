@@ -4,7 +4,8 @@
  */
 package app.morphe.patches.tiktok.misc.translation
 
-import app.morphe.patcher.patch.BytecodePatchContext
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.addInstructions
@@ -67,7 +68,7 @@ internal fun MutableMethod.translateOnAttach(enableIndex: Int) {
  * their comments never reached it. The controller is switched on when the cell attaches, and
  * ignores a translate before that.
  */
-internal fun BytecodePatchContext.hookAttachedCommentTranslation() {
+internal fun hookAttachedCommentTranslation() {
     val attach = mutableClassDefBy(BASE_COMMENT_CELL).methods.singleOrNull {
         it.name == "onViewAttachedToWindow" && it.parameterTypes.isEmpty() && it.returnType == "V"
     } ?: throw PatchException("Translate comments: $BASE_COMMENT_CELL has no onViewAttachedToWindow.")

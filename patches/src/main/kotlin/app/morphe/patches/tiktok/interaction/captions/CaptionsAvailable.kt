@@ -4,8 +4,8 @@
  */
 package app.morphe.patches.tiktok.interaction.captions
 
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.shared.guardAtEntry
@@ -141,7 +141,7 @@ internal fun MutableMethod.keepCaptionControls(patch: String) = guardAtEntry(
  * where the caption controls are off, and the controls alone leave the Accessibility page without
  * its switch.
  */
-internal fun BytecodePatchContext.hookCaptionsAvailable(patch: String) {
+internal fun hookCaptionsAvailable(patch: String) {
     val row = CaptionsRowFingerprint.method
     val initializer = CaptionControlsGroupFingerprint.method
     val group = initializer.experimentGroupField()

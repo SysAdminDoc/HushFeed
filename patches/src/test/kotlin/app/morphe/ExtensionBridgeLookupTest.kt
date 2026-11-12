@@ -4,6 +4,7 @@
  */
 package app.morphe
 
+import app.morphe.patcher.patch.mutableClassDefBy
 import java.io.File
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -234,13 +235,13 @@ class ExtensionBridgeLookupTest {
                 fun text(name: String, type: String) = "invoke-virtual {v0}, ${'$'}HOST->${'$'}name()${'$'}type"
                 return mapOf("keyed" to text("notALookup", "Z"))
             }
-            fun BytecodePatchContext.walk() {
+            fun walk() {
                 val owner = mutableClassDefBy(HOLDER)
                 BRIDGES.map { (name, signature) ->
                     owner.methods.filter { it.name == name }
                 }
             }
-            fun BytecodePatchContext.go() {
+            fun go() {
                 val holder = mutableClassDefBy(HOLDER)
                 holder.methods.filter { it.name == "literal" }
                 holder.methods.singleOrNull { it.name == "single" }
@@ -274,7 +275,7 @@ class ExtensionBridgeLookupTest {
 
         val unreadable = scan("Unreadable.kt", """
             private const val HOLDER = "Lapp/morphe/extension/tiktok/Holder;"
-            fun BytecodePatchContext.go(names: List<String>) {
+            fun go(names: List<String>) {
                 val holder = mutableClassDefBy(HOLDER)
                 fun rewrite(name: String) { holder.methods.filter { it.name == name } }
                 names.forEach { rewrite(it) }

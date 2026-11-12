@@ -4,6 +4,9 @@
  */
 package app.morphe.patches.tiktok.interaction.seekbar
 
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
+import app.morphe.patcher.patch.packageMetadata
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions

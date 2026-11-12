@@ -4,6 +4,8 @@
  */
 package app.morphe.patches.tiktok.interaction.downloads
 
+import app.morphe.patcher.patch.mutableClassDefBy
+import app.morphe.patcher.patch.packageMetadata
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
 import app.morphe.util.addInstructionsWithLabels
@@ -11,7 +13,6 @@ import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.removeInstructions
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.PatchException
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.shared.compat.AppCompatibilities
@@ -47,14 +48,13 @@ private const val COMMENT_LIVE_PHOTO_CLASS_DESCRIPTOR = "Lapp/morphe/extension/t
 internal const val COMMENT_MODEL_DESCRIPTOR = "Lcom/ss/android/ugc/aweme/comment/model/Comment;"
 
 /** Each invocation captures its folder before consuming the staging name, without shared state. */
-context(patchContext: BytecodePatchContext)
 internal fun MutableMethod.withDownloadDestination(
     nameParameter: Int,
     pathGetter: String,
     consume: Boolean,
 ): MutableMethod {
     val cloned = captureDownloadDestination(nameParameter, pathGetter, consume)
-    patchContext.mutableClassDefBy(definingClass).methods.apply {
+    mutableClassDefBy(definingClass).methods.apply {
         remove(this@withDownloadDestination)
         add(cloned)
     }

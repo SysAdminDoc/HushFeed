@@ -6,10 +6,10 @@
  */
 package app.morphe.patches.tiktok.interaction.sharesheet
 
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.methodCall
 import app.morphe.util.addInstructions
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.shared.requireLocals
@@ -64,11 +64,10 @@ private object ShareRecipientBinderFingerprint : Fingerprint(
     custom = { method, _ -> method.isShareRecipientBinder() },
 )
 
-context(patchContext: BytecodePatchContext)
 internal fun hookShareModel() {
     val method = ShareSnapshotFingerprint.method
     val builder = method.parameterTypes.single().toString()
-    val packages = patchContext.mutableClassDefBy(builder).fields
+    val packages = mutableClassDefBy(builder).fields
         .filter { it.type == BASE_SHARE_PACKAGE }
     check(packages.isNotEmpty()) {
         "Share sheet: $builder holds no BaseSharePackage, so it is not the share model builder."
@@ -128,7 +127,6 @@ internal fun MutableMethod.injectShareSurface(packageField: String) {
  * Tells the extension each time a contact cell in the Send to row is bound, so it can run its
  * hiding pass on a panel window the activity's layout listener doesn't see being built.
  */
-context(patchContext: BytecodePatchContext)
 internal fun hookShareContactBinds() {
     ShareRecipientBinderFingerprint.method.notifyContactBound()
 }

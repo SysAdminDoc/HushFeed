@@ -4,8 +4,8 @@
  */
 package app.morphe.patches.tiktok.interaction.seekbar
 
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.addInstruction
@@ -317,7 +317,7 @@ internal fun soundPreviewBridgeBodies(members: SoundPreviewMembers): Map<String,
  * nothing yet. A bridge gets two more registers for v0 and v1, and its parameters have to stay
  * within v15, since the seek's call names p1 in a four-bit form.
  */
-internal fun BytecodePatchContext.soundPreviewBridges(members: SoundPreviewMembers): () -> Unit {
+internal fun soundPreviewBridges(members: SoundPreviewMembers): () -> Unit {
     val bodies = soundPreviewBridgeBodies(members)
     val owner = mutableClassDefBy(SOUND_SEEKBAR)
     val originals = SOUND_PREVIEW_BRIDGES.map { (name, signature) ->

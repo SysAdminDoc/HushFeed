@@ -5,7 +5,6 @@
 package app.morphe.patches.tiktok.misc.settings
 
 import app.morphe.patcher.Fingerprint
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.util.addInstruction
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.ClassDef
@@ -37,7 +36,7 @@ internal object SettingsStatusLoadFingerprint : Fingerprint(
  * Records that a patch with no settings row of its own went in, so Build details lists it with
  * the rest. Call it last in execute: a patch that fails partway must not claim to be present.
  */
-internal fun BytecodePatchContext.registerForBuildDetails(enable: String) {
+internal fun registerForBuildDetails(enable: String) {
     SettingsStatusLoadFingerprint.method.addInstruction(
         0,
         "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->$enable()V",

@@ -4,11 +4,14 @@
  */
 package app.morphe.patches.tiktok.shared
 
+import app.morphe.patcher.patch.classDefBy
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
+import app.morphe.patcher.patch.classDefForEach
+import app.morphe.patcher.patch.patch
 import app.morphe.Fixtures
 import app.morphe.patcher.Patcher
 import app.morphe.patcher.PatcherConfig
-import app.morphe.patcher.patch.BytecodePatchContext
-import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patches.tiktok.misc.login.passkey.PASSKEY_SIGN_IN_SWITCH
 import app.morphe.patches.tiktok.misc.login.passkey.PasskeyDeviceSupportFingerprint
 import app.morphe.patches.tiktok.misc.login.passkey.installPasskeySignInSwitch
@@ -118,7 +121,7 @@ class SwitchedReturnFixturesTest {
     )
 
     /** The splash gates the patch reviews: every public final no-argument boolean on the three classes. */
-    private fun BytecodePatchContext.splashGates(): List<Method> =
+    private fun splashGates(): List<Method> =
         listOf(SPLASH_SETTING_DESCRIPTOR, REALTIME_SPLASH_DESCRIPTOR, SPLASH_SERVICE_DESCRIPTOR).flatMap { type ->
             classDefBy(type).methods.filter { method ->
                 method.returnType == "Z" && method.parameterTypes.isEmpty() &&
@@ -133,9 +136,9 @@ class SwitchedReturnFixturesTest {
             var checked = 0
             var expected = -1
             var cacheChecked = false
-            val probe = bytecodePatch(name = "switched return probe") {
+            val probe = patch(name = "switched return probe") {
                 execute {
-                    val translateButton = findCommentTranslateButtonTargets(this::classDefByOrNull, this::classDefForEach)
+                    val translateButton = findCommentTranslateButtonTargets(::classDefByOrNull, ::classDefForEach)
                     val thoughts = resolveThoughtsGates()
                     val hooks = buildList {
                         listOf(

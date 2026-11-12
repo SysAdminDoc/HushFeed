@@ -4,8 +4,8 @@
  */
 package app.morphe.patches.tiktok.shared
 
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patcher.util.smali.ExternalLabel
@@ -31,14 +31,12 @@ private var switchedReturnLabels = 0
  * the original's place in its class, and a fingerprint's `method` matched before still points at
  * the original, so a cloned method (RealTimeSplashTask.run today) takes no other edit after this.
  */
-context(patchContext: BytecodePatchContext)
 internal fun MutableMethod.returnVoidWhenOn(patch: String, switch: String) {
     if (returnType != "V") throw PatchException("$patch: $definingClass->$name returns $returnType, not void.")
     returnWhenOn(patch, switch) { "return-void" }
 }
 
 /** [returnVoidWhenOn] for a method answering `Z`, which answers [value] with the switch on. */
-context(patchContext: BytecodePatchContext)
 internal fun MutableMethod.returnBooleanWhenOn(patch: String, switch: String, value: Boolean) {
     checkBooleanWhenOn(patch)
     val literal = if (value) "0x1" else "0x0"
@@ -46,7 +44,6 @@ internal fun MutableMethod.returnBooleanWhenOn(patch: String, switch: String, va
 }
 
 /** [returnVoidWhenOn] for a method answering an object, which answers null with the switch on. */
-context(patchContext: BytecodePatchContext)
 internal fun MutableMethod.returnNullWhenOn(patch: String, switch: String) {
     if (!returnType.startsWith("L") && !returnType.startsWith("[")) {
         throw PatchException("$patch: $definingClass->$name returns $returnType, not an object.")
@@ -78,7 +75,6 @@ private fun Method.checkReturnWhenOn(patch: String) {
 private fun constantInto(register: Int, literal: String): String =
     if (register <= 15) "const/4 v$register, $literal" else "const/16 v$register, $literal"
 
-context(patchContext: BytecodePatchContext)
 private fun MutableMethod.returnWhenOn(patch: String, switch: String, answer: (register: Int) -> String) {
     checkReturnWhenOn(patch)
     val body = implementation!!
@@ -94,13 +90,13 @@ private fun MutableMethod.returnWhenOn(patch: String, switch: String, answer: (r
     if (scratch > 255) throw PatchException("$patch: $definingClass->$name has no register move-result can reach.")
     val guarded = if (numberOfParameterRegisters == 0) {
         cloneMutable(additionalRegisters = 1).also { clone ->
-            patchContext.mutableClassDefBy(definingClass).methods.apply {
+            mutableClassDefBy(definingClass).methods.apply {
                 remove(this@returnWhenOn)
                 add(clone)
             }
         }
     } else {
-        with(patchContext) { cloneMutableAndPreserveParameters() }
+        cloneMutableAndPreserveParameters()
     }
     val at = numberOfParameterRegistersLogical
     val through = "morphe_switched_through_${switchedReturnLabels++}"

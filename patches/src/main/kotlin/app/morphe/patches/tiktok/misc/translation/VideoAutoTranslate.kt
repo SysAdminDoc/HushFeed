@@ -4,7 +4,7 @@
  */
 package app.morphe.patches.tiktok.misc.translation
 
-import app.morphe.patcher.patch.BytecodePatchContext
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.shared.guardAtEntry
@@ -281,7 +281,7 @@ internal fun <M : Method> publishedStateConstructor(methods: Collection<M>, stat
  * a state is cached, and the comment switch's default asks the last state TikTok published, before
  * the filter, or the stored switch, instead of either.
  */
-internal fun BytecodePatchContext.hookVideoAutoTranslate() {
+internal fun hookVideoAutoTranslate() {
     val state = MasterTranslationStateFingerprint.method
     val hooks = alwaysTranslateHooks(mutableClassDefBy(state.definingClass).methods, state)
     val constructor = publishedStateConstructor(mutableClassDefBy(hooks.stateType).methods, hooks.stateType)

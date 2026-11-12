@@ -4,7 +4,8 @@
  */
 package app.morphe.patches.tiktok.interaction.feedtext
 
-import app.morphe.patcher.patch.BytecodePatchContext
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
@@ -56,7 +57,7 @@ internal fun MutableMethod.bindAuthorSize() {
 }
 
 /** Resolve everything before writing any native method or extension bridge. */
-internal fun BytecodePatchContext.installFeedText() {
+internal fun installFeedText() {
     val native = resolveFeedText { classDefByOrNull(it) }
     val extension = mutableClassDefBy(FEED_TEXT)
     fun bridge(name: String) = extension.methods.singleOrNull { it.name == name }

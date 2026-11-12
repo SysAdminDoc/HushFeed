@@ -4,10 +4,10 @@
  */
 package app.morphe.patches.tiktok.interaction.feedtoolbar
 
+import app.morphe.patcher.patch.patch
 import app.morphe.Fixtures
 import app.morphe.patcher.Patcher
 import app.morphe.patcher.PatcherConfig
-import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.addInstructionsWithLabels
 import app.morphe.util.getReference
@@ -66,7 +66,7 @@ class SidebarSwipeAnchorsTest {
         Fixtures.forEachDeclared { apk ->
             val version = Fixtures.versionOf(apk)
             var checked = false
-            val probe = bytecodePatch(name = "side menu swipe probe") {
+            val probe = patch(name = "side menu swipe probe") {
                 execute {
                     val before = SidebarSwipeFingerprint.matchAll().associate { match ->
                         match.originalMethod.let { "${it.definingClass}->${it.name}" } to

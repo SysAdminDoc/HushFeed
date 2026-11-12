@@ -6,6 +6,8 @@
  */
 package app.morphe.patches.tiktok.interaction.favorites
 
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
 import app.morphe.util.addInstruction
 import app.morphe.patcher.patch.PatchException

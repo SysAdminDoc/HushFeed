@@ -4,13 +4,15 @@
  */
 package app.morphe.patches.tiktok.interaction.speed
 
+import app.morphe.patcher.patch.classDefForEach
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
 import app.morphe.util.addInstructionsAtControlFlowLabel
 import app.morphe.util.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patcher.util.smali.ExternalLabel
@@ -150,7 +152,7 @@ internal fun MutableMethod.hideHoldLockBannerOnShow() {
  * what the id gave. The id register carries the text across, so it has to be one nothing
  * reads again.
  */
-internal fun BytecodePatchContext.rewordHoldSpeedToasts(release: MutableMethod) {
+internal fun rewordHoldSpeedToasts(release: MutableMethod) {
     val calls = release.implementation!!.instructions.withIndex().mapNotNull { (index, instruction) ->
         if (instruction.opcode != Opcode.INVOKE_VIRTUAL) return@mapNotNull null
         val reference = instruction.getReference<MethodReference>() ?: return@mapNotNull null
@@ -285,7 +287,7 @@ internal fun Instruction.namesRegister(register: Int): Boolean {
  * flags in a state class R8 left package-private are opened here; a member it left with no
  * public class around it refuses.
  */
-internal fun BytecodePatchContext.openHoldLockMembers(kept: FieldReference, state: HoldLockState) {
+internal fun openHoldLockMembers(kept: FieldReference, state: HoldLockState) {
     listOf(kept, state.first, state.second).forEach { reference ->
         val owner = mutableClassDefBy(reference.definingClass)
         check(AccessFlags.PUBLIC.isSet(owner.accessFlags)) {
@@ -348,7 +350,7 @@ internal fun Method.menuToastShow(): Int {
  * can leave them out, and that method's stub gets the real call. [menuHandler] shows the speed
  * menu's message right after giving it its text; [release] shows the three the hold raises.
  */
-internal fun BytecodePatchContext.routeSpeedToastShows(release: MutableMethod, menuHandler: MutableMethod) {
+internal fun routeSpeedToastShows(release: MutableMethod, menuHandler: MutableMethod) {
     val sites = release.holdToastShows { reference ->
         reference.parameterTypes == listOf("I") && reference.returnType == "V" &&
             classDefByOrNull(reference.definingClass)?.methods?.any { method ->
@@ -394,7 +396,7 @@ internal fun BytecodePatchContext.routeSpeedToastShows(release: MutableMethod, m
  * gesture's own. The plain banner builds its label once, so it is reworded as it is shown and
  * hidden. Returns the lock banner's show method, for [hideHoldLockBannerOnShow].
  */
-internal fun BytecodePatchContext.rewordHoldSpeedBanners(receiver: Method): MutableMethod {
+internal fun rewordHoldSpeedBanners(receiver: Method): MutableMethod {
     val calls = receiver.implementation!!.instructions.mapNotNull { instruction ->
         instruction.getReference<MethodReference>()?.let { instruction.opcode to it }
     }

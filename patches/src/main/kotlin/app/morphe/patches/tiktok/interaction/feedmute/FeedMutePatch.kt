@@ -4,7 +4,9 @@
  */
 package app.morphe.patches.tiktok.interaction.feedmute
 
-import app.morphe.patcher.patch.BytecodePatchContext
+import app.morphe.patcher.patch.classDefBy
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
@@ -400,7 +402,7 @@ val feedMutePatch = bytecodePatch(
 }
 
 /** Writes TikTok's members into FeedMute's bridge methods, whose own bodies serve the tests. */
-private fun BytecodePatchContext.installFeedMuteBridges(
+private fun installFeedMuteBridges(
     members: FeedMuteMembers,
     pageHelper: String,
     pageRequest: String,

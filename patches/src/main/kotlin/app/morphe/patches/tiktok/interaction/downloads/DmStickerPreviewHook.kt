@@ -6,7 +6,9 @@
  */
 package app.morphe.patches.tiktok.interaction.downloads
 
-import app.morphe.patcher.patch.BytecodePatchContext
+import app.morphe.patcher.patch.classDefForEach
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.shared.requireLocals
@@ -87,7 +89,7 @@ internal fun MutableMethod.addDmStickerPreviewHook(previewCall: Int) {
     """)
 }
 
-internal fun BytecodePatchContext.hookDmStickerPreview() {
+internal fun hookDmStickerPreview() {
     val handler = classDefByOrNull(DM_STICKER_HANDLER)
         ?: throw PatchException("Downloads: DM sticker click handler is missing")
     val anchor = dmStickerPreviewAnchor(handler)

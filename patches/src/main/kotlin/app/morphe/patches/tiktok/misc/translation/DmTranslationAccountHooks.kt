@@ -4,7 +4,7 @@
  */
 package app.morphe.patches.tiktok.misc.translation
 
-import app.morphe.patcher.patch.BytecodePatchContext
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.addInstructions
@@ -91,7 +91,7 @@ internal fun MutableMethod.captureDmAccountEvent(switch: Boolean = false) = addI
     if (switch) "invoke-static/range {p1 .. p1}, $DM_ACCOUNT_EVENTS->switchResult(Z)V"
     else "invoke-static {}, $DM_ACCOUNT_EVENTS->changed()V")
 
-internal fun BytecodePatchContext.hookDmTranslationAccountEvents(targets: DmAccountTargets) {
+internal fun hookDmTranslationAccountEvents(targets: DmAccountTargets) {
     fun mutable(method: Method) = mutableClassDefBy(method.definingClass).findMutableMethodOf(method)
     mutable(targets.login).captureDmAccountEvent()
     mutable(targets.logout).captureDmAccountEvent()

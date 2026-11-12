@@ -4,10 +4,11 @@
  */
 package app.morphe.patches.tiktok.misc.theme
 
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.methodCall
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.navigation.branchTargets
@@ -190,7 +191,7 @@ private fun wrapperInit(instructions: List<Instruction>, create: Int): Int? {
 }
 
 /** Every Dialog constructor call in TikTok's code with room for a call right after it. */
-internal fun BytecodePatchContext.dialogSites(): List<DialogSite> {
+internal fun dialogSites(): List<DialogSite> {
     val sites = mutableListOf<DialogSite>()
     for (callerType in classesCallingMethods(DIALOG_INITS)) {
         if (callerType.startsWith("Lapp/morphe/extension/")) continue
@@ -228,7 +229,7 @@ internal fun BytecodePatchContext.dialogSites(): List<DialogSite> {
  * - Every new ContextThemeWrapper(context, theme), which becomes the extension's wrapper.
  * - Every Dialog constructor, which covers the sheets: each builds its own themed context.
  */
-internal fun BytecodePatchContext.hookAmoledThemeSwitch(): AmoledThemeSwitchSites {
+internal fun hookAmoledThemeSwitch(): AmoledThemeSwitchSites {
     val activities = AppCompatSetThemeFingerprint.matchAllOrNull().orEmpty()
     val activity = activities.singleOrNull()
         ?: throw PatchException("AMOLED dark theme: expected one AppCompatActivity setTheme, found ${activities.size}.")

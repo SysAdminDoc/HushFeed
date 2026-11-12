@@ -6,12 +6,13 @@
  */
 package app.morphe.patches.tiktok.interaction.blockauthor
 
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.anyInstruction
 import app.morphe.patcher.methodCall
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.findMutableMethodOf
@@ -68,7 +69,7 @@ private object AbandonAudioFocusFingerprint : Fingerprint(
     custom = { method, _ -> method.name != "<init>" && !AccessFlags.STATIC.isSet(method.accessFlags) },
 )
 
-internal fun BytecodePatchContext.resolveNativeFocus(): NativeFocus {
+internal fun resolveNativeFocus(): NativeFocus {
     val found = mutableListOf<Triple<ClassDef, Method, Method>>()
     val listenerOf = mutableMapOf<String, String>()
     val helpers = AbandonAudioFocusFingerprint.matchAllOrNull().orEmpty()
@@ -152,7 +153,7 @@ private fun Method.calls(predicate: (MethodReference) -> Boolean): Boolean =
  * sub-interface in front of one as a matter of course, and either leaves the direct list without
  * the name in it. That is the same brittleness the literals had, one level down.
  */
-private fun BytecodePatchContext.implementsAudioListener(
+private fun implementsAudioListener(
     type: String,
     seen: MutableSet<String> = mutableSetOf(),
 ): Boolean {

@@ -5,7 +5,6 @@
 package app.morphe.patches.tiktok.privacy
 
 import app.morphe.patcher.Fingerprint
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.shared.guardAtEntry
@@ -106,7 +105,7 @@ internal fun MutableMethod.guardRootSignal(signal: RootSignal) {
     guardAtEntry(ROOT, "invoke-static {}, $ROOT_GUARD->hideRoot()Z", answer)
 }
 
-internal fun BytecodePatchContext.hookRootSignals() {
+internal fun hookRootSignals() {
     // Resolve all five before changing any. A collision or missing ABI aborts the patch.
     val matches = RootSignal.entries.associateWith { signal ->
         singleRootSignal(signal, RootSignalFingerprint(signal).matchAllOrNull().orEmpty())

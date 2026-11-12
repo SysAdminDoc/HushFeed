@@ -4,6 +4,9 @@
  */
 package app.morphe.patches.tiktok.interaction.copyids
 
+import app.morphe.patcher.patch.classDefBy
+import app.morphe.patcher.patch.mutableClassDefBy
+import app.morphe.patcher.patch.classDefByStrings
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.patch.PatchException

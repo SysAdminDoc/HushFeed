@@ -4,6 +4,8 @@
  */
 package app.morphe.patches.tiktok.privacy
 
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
 import app.morphe.util.findMutableMethodOf
@@ -11,7 +13,6 @@ import app.morphe.util.getReference
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.InstructionFilter
 import app.morphe.patcher.fieldAccess
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patcher.string
@@ -154,7 +155,7 @@ private fun constantBefore(instructions: List<Instruction>, index: Int, register
 }
 
 /** The types of the classes holding an instruction [filter] matches, read off the patcher's index. */
-private fun BytecodePatchContext.classesWith(filter: InstructionFilter): Set<String> =
+private fun classesWith(filter: InstructionFilter): Set<String> =
     Fingerprint(filters = listOf(filter)).matchAllOrNull().orEmpty().mapTo(HashSet()) { it.originalClassDef.type }
 
 /**
@@ -163,7 +164,7 @@ private fun BytecodePatchContext.classesWith(filter: InstructionFilter): Set<Str
  * same register, so no other register is touched. A range call takes any register number, which
  * an iget's destination may be. Sites go in from the last, so an earlier index still holds.
  */
-private fun BytecodePatchContext.answerReads(
+private fun answerReads(
     types: Set<String>,
     sitesOf: (Method) -> List<AdIdReadSite>,
 ): List<AdIdReadSite> {

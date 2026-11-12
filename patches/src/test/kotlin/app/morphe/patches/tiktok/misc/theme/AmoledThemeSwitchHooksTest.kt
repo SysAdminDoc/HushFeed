@@ -4,11 +4,12 @@
  */
 package app.morphe.patches.tiktok.misc.theme
 
+import app.morphe.patcher.patch.classDefBy
+import app.morphe.patcher.patch.mutableClassDefBy
+import app.morphe.patcher.patch.patch
 import app.morphe.Fixtures
 import app.morphe.patcher.Patcher
 import app.morphe.patcher.PatcherConfig
-import app.morphe.patcher.patch.BytecodePatchContext
-import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.takes
 import app.morphe.util.findMutableMethodOf
 import app.morphe.util.getReference
@@ -62,7 +63,7 @@ class AmoledThemeSwitchHooksTest {
             assertTrue("$version: Dialog constructor calls, ${stock.dialogs}", stock.dialogs >= 10)
 
             var checked = false
-            val probe = bytecodePatch(name = "amoled switch probe") {
+            val probe = patch(name = "amoled switch probe") {
                 extendWith(Supplier<InputStream> { OWNER.getResourceAsStream(EXTENSION)!! })
                 execute {
                     assertHookTargets()
@@ -157,7 +158,7 @@ class AmoledThemeSwitchHooksTest {
     }
 
     /** Each hook the patch writes names a public static method of the merged extension, and none takes a boolean. */
-    private fun BytecodePatchContext.assertHookTargets() {
+    private fun assertHookTargets() {
         val theme = classDefBy(AMOLED_THEME_EXTENSION)
         for (hook in listOf(THEME_APPLY_STYLE_HOOK, SET_THEME_HOOK, DIALOG_HOOK, ACTIVITY_RESTORE_HOOK)) {
             val method = theme.methods.singleOrNull { smali(it) == hook }
@@ -174,7 +175,7 @@ class AmoledThemeSwitchHooksTest {
      * AppCompatActivity's setTheme hands the activity to the extension right before each return.
      * [stock] comes from the unpatched dex: the match already reads the patched body.
      */
-    private fun BytecodePatchContext.assertActivityHook(version: String, stock: List<Opcode>, matched: Method) {
+    private fun assertActivityHook(version: String, stock: List<Opcode>, matched: Method) {
         val patched = mutableClassDefBy(matched.definingClass).findMutableMethodOf(matched)
         val code = patched.implementation!!.instructions.filter { it.opcode != Opcode.NOP }
         val returns = stock.count { it == Opcode.RETURN_VOID }

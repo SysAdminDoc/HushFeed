@@ -4,10 +4,12 @@
  */
 package app.morphe.patches.tiktok.misc.inbox
 
+import app.morphe.patcher.patch.mutableClassDefBy
+import app.morphe.patcher.patch.document
+import app.morphe.patcher.patch.patch
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
-import app.morphe.patcher.patch.resourcePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
@@ -114,7 +116,7 @@ private fun Element.child(tag: String, attributes: Map<String, String>): Element
  * The alarm's receiver, declared switched off so it starts nothing until the streak is turned
  * on, and the permissions an alarm needs to come on time and to survive a reboot.
  */
-private val autoStreakManifestPatch = resourcePatch {
+private val autoStreakManifestPatch = patch {
     execute {
         document("AndroidManifest.xml").use { xml ->
             val manifest = xml.documentElement

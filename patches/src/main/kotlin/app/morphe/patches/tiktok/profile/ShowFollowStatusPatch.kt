@@ -4,6 +4,7 @@
  */
 package app.morphe.patches.tiktok.profile
 
+import app.morphe.patcher.patch.classDefBy
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch

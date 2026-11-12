@@ -7,7 +7,6 @@ package app.morphe.patches.tiktok.interaction.searchfeatures
 import app.morphe.patcher.Fingerprint
 import app.morphe.util.addInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.absettings.hookAppAbIntBoundary
@@ -21,7 +20,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 private const val FEATURE_CONTROLS_DESCRIPTOR =
     "Lapp/morphe/extension/tiktok/featurecontrols/FeatureControls;"
 
-private fun BytecodePatchContext.patchBooleanGate(
+private fun patchBooleanGate(
     fingerprint: Fingerprint,
     extensionMethod: String,
 ) {

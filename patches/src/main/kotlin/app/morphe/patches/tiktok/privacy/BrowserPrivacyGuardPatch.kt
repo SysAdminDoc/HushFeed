@@ -4,9 +4,11 @@
  */
 package app.morphe.patches.tiktok.privacy
 
+import app.morphe.patcher.patch.classDefForEach
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.util.addInstruction
 import app.morphe.patcher.patch.PatchException
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
@@ -133,7 +135,7 @@ val browserPrivacyGuardPatch = bytecodePatch(
 }
 
 /** Every interface the given classes implement, with the interfaces those extend. */
-private fun BytecodePatchContext.interfacesOf(types: Set<String>): Set<String> {
+private fun interfacesOf(types: Set<String>): Set<String> {
     val found = mutableSetOf<String>()
     val pending = ArrayDeque<String>()
     types.forEach { type -> classDefByOrNull(type)?.interfaces?.let(pending::addAll) }
@@ -158,7 +160,7 @@ private fun descendantsOf(baseType: String, children: Map<String, List<String>>)
     return types
 }
 
-private fun BytecodePatchContext.webViewClientCallbacks(children: Map<String, List<String>>): List<ClientCallback> {
+private fun webViewClientCallbacks(children: Map<String, List<String>>): List<ClientCallback> {
     val clientTypes = descendantsOf(WEB_VIEW_CLIENT, children)
     val callbacks = mutableListOf<ClientCallback>()
     for (type in clientTypes) {

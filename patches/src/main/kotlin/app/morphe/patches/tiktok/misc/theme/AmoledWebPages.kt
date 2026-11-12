@@ -4,6 +4,7 @@
  */
 package app.morphe.patches.tiktok.misc.theme
 
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patches.tiktok.interaction.systemfont.hookWebPageCallbacks
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch

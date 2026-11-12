@@ -4,10 +4,11 @@
  */
 package app.morphe.patches.tiktok.misc.theme
 
+import app.morphe.patcher.patch.mutableClassDefBy
+import app.morphe.patcher.patch.packageMetadata
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.fieldAccess
 import app.morphe.patcher.literal
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
@@ -170,7 +171,7 @@ internal fun MutableMethod.paintCards(field: FieldReference) {
  * The extension's AMOLED color, filled in with the picked one so composeCard can answer it, and
  * the LIVE comment panel can take it (#329).
  */
-internal fun BytecodePatchContext.fillAmoledThemeColor(argb: Int) {
+internal fun fillAmoledThemeColor(argb: Int) {
     val extension = mutableClassDefBy(AMOLED_THEME_EXTENSION)
     val stub = extension.methods.single { it.name == "color" && it.parameterTypes.isEmpty() }
     val filled = stub.cloneMutable(additionalRegisters = 1)

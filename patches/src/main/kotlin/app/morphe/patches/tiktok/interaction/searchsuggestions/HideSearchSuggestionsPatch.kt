@@ -6,6 +6,7 @@
  */
 package app.morphe.patches.tiktok.interaction.searchsuggestions
 
+import app.morphe.patcher.patch.classDefBy
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.checkCast
 import app.morphe.patcher.methodCall

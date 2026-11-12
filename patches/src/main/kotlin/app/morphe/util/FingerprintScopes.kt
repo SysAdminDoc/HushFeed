@@ -7,8 +7,6 @@ package app.morphe.util
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.Match
 import app.morphe.patcher.methodCall
-import app.morphe.patcher.patch.BytecodePatchContext
-
 /**
  * The types of the classes holding a call to some method of one of [owners], each an exact type
  * (`Lpkg/Type;`).
@@ -23,7 +21,7 @@ import app.morphe.patcher.patch.BytecodePatchContext
  * extension, so a class that calls one of these only after an earlier patch ran is not a case
  * this has to cover.
  */
-internal fun BytecodePatchContext.classesCalling(owners: Collection<String>): Set<String> {
+internal fun classesCalling(owners: Collection<String>): Set<String> {
     val types = HashSet<String>()
     for (owner in owners.toSet()) {
         require(owner.startsWith("L") && owner.endsWith(";")) { "classesCalling needs an exact type, not $owner" }
@@ -44,7 +42,7 @@ internal fun BytecodePatchContext.classesCalling(owners: Collection<String>): Se
  * in the filter the patcher's index narrows to the classes that name both, so each lookup holds a
  * few hundred matches instead.
  */
-internal fun BytecodePatchContext.classesCallingMethods(targets: Collection<String>): Set<String> {
+internal fun classesCallingMethods(targets: Collection<String>): Set<String> {
     val pairs = targets.mapTo(LinkedHashSet()) { target ->
         require(target.startsWith("L") && ";->" in target && "(" in target) {
             "classesCallingMethods needs a full method descriptor, not $target"

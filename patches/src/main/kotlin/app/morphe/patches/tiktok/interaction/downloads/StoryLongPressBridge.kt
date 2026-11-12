@@ -6,9 +6,11 @@
  */
 package app.morphe.patches.tiktok.interaction.downloads
 
+import app.morphe.patcher.patch.classDefForEach
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.util.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.smali.ExternalLabel
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
@@ -39,7 +41,7 @@ private const val RUNNABLE = "Ljava/lang/Runnable;"
  * drawing surface, full of Paints and RectFs; the story view is the one that holds an
  * `OnTouchListener`, which is a platform name and cannot be renamed.
  */
-internal fun BytecodePatchContext.resolveStoryLongPressTimer(): MutableMethod {
+internal fun resolveStoryLongPressTimer(): MutableMethod {
     val found = mutableListOf<Pair<ClassDef, Method>>()
     classDefForEach { classDef ->
         if (RUNNABLE !in classDef.interfaces) return@classDefForEach
@@ -73,7 +75,7 @@ internal fun BytecodePatchContext.resolveStoryLongPressTimer(): MutableMethod {
 }
 
 /** Whether the class reaches `android.view.View` through what it extends. */
-private fun BytecodePatchContext.extendsAndroidView(classDef: ClassDef): Boolean =
+private fun extendsAndroidView(classDef: ClassDef): Boolean =
     extendsClass(classDef.type, ANDROID_VIEW)
 
 internal fun MutableMethod.interceptStoryLongPress() {

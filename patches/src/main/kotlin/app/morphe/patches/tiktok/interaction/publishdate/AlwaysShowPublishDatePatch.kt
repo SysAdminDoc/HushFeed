@@ -6,6 +6,7 @@
  */
 package app.morphe.patches.tiktok.interaction.publishdate
 
+import app.morphe.patcher.patch.packageMetadata
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction

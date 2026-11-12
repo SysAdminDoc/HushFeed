@@ -12,7 +12,6 @@ import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.fieldAccess
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.methodCall
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patcher.util.smali.ExternalLabel
 import app.morphe.patches.tiktok.shared.requireLocals
@@ -92,7 +91,6 @@ internal fun Instruction.isCoroutineLaunch(): Boolean = opcode == Opcode.INVOKE_
             types[3] == "Lkotlin/jvm/functions/Function2;" && types[4] == "I" && ref.returnType.startsWith("L")
     } == true
 
-context(patchContext: BytecodePatchContext)
 internal fun loadedInboxRequestSeams() = InboxRequestSeams(loadedInboxRequestSpecs.map { it to it.fingerprint.method })
 
 internal class InboxRequestSeams(private val methods: List<Pair<InboxRequestSpec, MutableMethod>>) {

@@ -5,7 +5,7 @@
  */
 package app.morphe.patches.tiktok.misc.optimizer
 
-import app.morphe.patcher.patch.BytecodePatchContext
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.booleanOption
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
@@ -65,7 +65,6 @@ val instantLaunchSplashBlockerPatch = bytecodePatch(
  * carries no extension. The four preload tasks return at once and every reviewed splash gate
  * answers no, all of them only while the switch is on.
  */
-context(patchContext: BytecodePatchContext)
 internal fun installSplashAdSwitch() {
     // DeferredSplashAdManagerPreloadTask (47.1.x) only calls SplashAdManagerPreloadTask.run.
     val voidMethods = listOf(
@@ -75,7 +74,7 @@ internal fun installSplashAdSwitch() {
         RealTimeSplashTaskFingerprint.method,
     )
     fun reviewedBooleanMethods(classDescriptor: String, reviewedCounts: Set<List<Int>>, boundary: String) =
-        patchContext.mutableClassDefBy(classDescriptor).methods.filter { method ->
+        mutableClassDefBy(classDescriptor).methods.filter { method ->
             method.returnType == "Z" && method.parameterTypes.isEmpty() &&
                 AccessFlags.PUBLIC.isSet(method.accessFlags) && AccessFlags.FINAL.isSet(method.accessFlags)
         }.also { methods ->
@@ -102,7 +101,7 @@ internal fun installSplashAdSwitch() {
         setOf(listOf(3)),
         "RealTimeSplashManagerImpl",
     )
-    val splashService = patchContext.mutableClassDefBy(SPLASH_SERVICE_DESCRIPTOR)
+    val splashService = mutableClassDefBy(SPLASH_SERVICE_DESCRIPTOR)
     val serviceGates = splashService.methods.filter { method ->
         method.returnType == "Z" && method.parameterTypes.isEmpty() &&
             AccessFlags.PUBLIC.isSet(method.accessFlags) && AccessFlags.FINAL.isSet(method.accessFlags)
@@ -166,7 +165,6 @@ internal fun skipsPushSetup(option: Boolean?): Boolean = option == true
  * that carries no extension. Both ask the patch's one switch: the buffer preload gate answers no
  * with it on, and the push setup task, hooked only when the option asks for it, returns at once.
  */
-context(patchContext: BytecodePatchContext)
 internal fun limitBackgroundTraffic(skipPushSetup: Boolean) {
     BufferPreloadGateFingerprint.method.returnBooleanWhenOn(TRAFFIC, BACKGROUND_TRAFFIC_SWITCH, false)
     if (skipPushSetup) InitPushTaskFingerprint.method.returnVoidWhenOn(TRAFFIC, BACKGROUND_TRAFFIC_SWITCH)
@@ -201,12 +199,11 @@ val runtimeMemoryGovernorPatch = bytecodePatch(
  * first (#100). Fresco itself skips the preparer when its count is 0. With the switch off the
  * count is TikTok's own.
  */
-context(patchContext: BytecodePatchContext)
 internal fun installAnimatedImageCacheSwitch() {
     val factory = AnimatedDrawableFactoryFingerprint.method
     val builderCall = factory.backendBuilderCall()
         ?: throw PatchException("$ANIMATED_CACHE: no animation backend builder call.")
-    val builder = patchContext.mutableClassDefBy(factory.definingClass).methods.single {
+    val builder = mutableClassDefBy(factory.definingClass).methods.single {
         it.name == builderCall.name && it.parameterTypes.map(CharSequence::toString) == builderCall.parameterTypes.map(CharSequence::toString) &&
             it.returnType == builderCall.returnType
     }
@@ -257,7 +254,6 @@ val updatePromptSuppressorPatch = bytecodePatch(
 }
 
 /** Skip update checks' hooks, without its settings row: both tasks return at once with the switch on. */
-context(patchContext: BytecodePatchContext)
 internal fun installUpdateCheckSwitch() {
     listOf(
         UpdateBackgroundTaskFingerprint.method,

@@ -6,7 +6,8 @@
  */
 package app.morphe.patches.tiktok.interaction.sharesheet
 
-import app.morphe.patcher.patch.BytecodePatchContext
+import app.morphe.patcher.patch.mutableClassDefBy
+import app.morphe.patcher.patch.classDefByStrings
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.addInstruction
@@ -154,8 +155,7 @@ internal fun MutableMethod.notifyPanelBound() {
     }
 }
 
-context(patchContext: BytecodePatchContext)
 internal fun hookSharePanel() {
-    val method = resolveSharePanel(patchContext.classDefByStrings(PANEL_MARKER))
-    patchContext.mutableClassDefBy(method.definingClass).findMutableMethodOf(method).notifyPanelBound()
+    val method = resolveSharePanel(classDefByStrings(PANEL_MARKER))
+    mutableClassDefBy(method.definingClass).findMutableMethodOf(method).notifyPanelBound()
 }

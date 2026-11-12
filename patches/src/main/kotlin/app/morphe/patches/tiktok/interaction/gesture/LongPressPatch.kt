@@ -6,12 +6,12 @@
  */
 package app.morphe.patches.tiktok.interaction.gesture
 
+import app.morphe.patcher.patch.classDefByOrNull
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.methodCall
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patcher.util.smali.ExternalLabel
@@ -67,7 +67,7 @@ internal object CoordinateLongPressCallbackFingerprint : Fingerprint(
     custom = { _, classDef -> classDef.fields.any { it.type == FEED_PAGE_PARAMS } },
 )
 
-internal fun BytecodePatchContext.coordinateLongPressCallbacks(): List<MutableMethod> {
+internal fun coordinateLongPressCallbacks(): List<MutableMethod> {
     val matches = CoordinateLongPressCallbackFingerprint.matchAllOrNull().orEmpty()
     if (matches.size != 2) {
         throw PatchException(

@@ -4,6 +4,8 @@
  */
 package app.morphe.patches.tiktok.interaction.backgroundplay
 
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.methodCall
 import app.morphe.patcher.patch.PatchException

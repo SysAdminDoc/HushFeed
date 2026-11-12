@@ -4,7 +4,7 @@
  */
 package app.morphe.patches.tiktok.misc.translation
 
-import app.morphe.patcher.patch.BytecodePatchContext
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.addInstructions
@@ -174,7 +174,7 @@ internal fun MutableMethod.captureDmComposer() {
 internal fun MutableMethod.retireDmComposer() = addInstructions(0,
     "invoke-static/range {p0 .. p0}, $DM_PREVIEW->composerCleared($OBJECT)V")
 
-internal fun BytecodePatchContext.hookDmTranslationPreview(targets: DmPreviewTargets) {
+internal fun hookDmTranslationPreview(targets: DmPreviewTargets) {
     fun mutable(method: Method) = mutableClassDefBy(method.definingClass).findMutableMethodOf(method)
     mutable(targets.viewCreated).captureDmEditor(targets.editorStore)
     mutable(targets.constructor).captureDmComposer()

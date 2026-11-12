@@ -5,7 +5,6 @@
 package app.morphe.patches.tiktok.misc.inbox
 
 import app.morphe.patcher.Fingerprint
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.shared.guardAtEntry
@@ -157,7 +156,6 @@ internal class InboxFilterTabHooks(
     """
 }
 
-context(patchContext: BytecodePatchContext)
 internal fun inboxFilterTabHooks() = InboxFilterTabHooks(
     InboxModeProducerFingerprint.classDef,
     InboxModeGetterFingerprint.method,

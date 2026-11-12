@@ -4,12 +4,12 @@
  */
 package app.morphe.patches.tiktok.interaction.feedtoolbar
 
+import app.morphe.patcher.patch.patch
 import app.morphe.Fixtures
 import app.morphe.patcher.Patcher
 import app.morphe.patcher.PatcherConfig
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.PatchException
-import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
@@ -38,7 +38,7 @@ class SidebarButtonOptionalTest {
         Fixtures.forEachDeclared { apk ->
             val declared = Fixtures.versionOf(apk)
             var checked = false
-            val probe = bytecodePatch(name = "side menu button probe") {
+            val probe = patch(name = "side menu button probe") {
                 execute {
                     assertEquals("${apk.name}: the fixture's side menu button", 1,
                         SidebarIconViewFingerprint.matchAllOrNull().orEmpty().size)
@@ -85,7 +85,7 @@ class SidebarButtonOptionalTest {
     fun `the side menu button's view asks the switch first and leaves with no view`() {
         Fixtures.forEachDeclared { apk ->
             var checked = false
-            val probe = bytecodePatch(name = "side menu view probe") {
+            val probe = patch(name = "side menu view probe") {
                 execute {
                     hookSidebarButton()
                     val instructions = SidebarIconViewFingerprint.method.implementation!!.instructions.toList()

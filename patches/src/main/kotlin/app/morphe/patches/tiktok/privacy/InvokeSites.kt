@@ -4,9 +4,10 @@
  */
 package app.morphe.patches.tiktok.privacy
 
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.util.addInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
-import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.util.classesCallingMethods
 import app.morphe.util.findMutableMethodOf
 import app.morphe.util.getReference
@@ -50,7 +51,7 @@ private val INTERFACE_OPCODES = setOf(Opcode.INVOKE_INTERFACE, Opcode.INVOKE_INT
  * @param static whether the targets are static, which changes the opcodes that can reach them.
  * @param throughInterface whether the targets are interface methods, reached by invoke-interface.
  */
-internal fun BytecodePatchContext.invokeSitesOf(
+internal fun invokeSitesOf(
     targets: Set<String>,
     static: Boolean = false,
     throughInterface: Boolean = false,
@@ -129,7 +130,7 @@ internal fun InvokeSite.interfaceCall(): String =
  * site's own call right after it. The static takes the site's place rather than being inserted
  * before it, so a branch that jumped to the call now lands on the static and runs both.
  */
-internal fun BytecodePatchContext.prefixSites(sites: List<InvokeSite>, prefix: String) {
+internal fun prefixSites(sites: List<InvokeSite>, prefix: String) {
     sites.sortedWith(compareBy({ it.owner.type }, { it.method.toString() }, { -it.index })).forEach { site ->
         val method = mutableClassDefBy(site.owner).findMutableMethodOf(site.method)
         method.replaceInstruction(site.index, site.copy(registers = listOf(site.registers.first())).staticCall(prefix))
@@ -143,7 +144,7 @@ internal fun BytecodePatchContext.prefixSites(sites: List<InvokeSite>, prefix: S
  * <p>Sites are applied in reverse order within a method so an earlier index is still right
  * after a later one has been rewritten, which matters once an insertion is mixed in.
  */
-internal fun BytecodePatchContext.replaceSites(
+internal fun replaceSites(
     sites: List<InvokeSite>,
     replacements: Map<String, String>,
 ) {

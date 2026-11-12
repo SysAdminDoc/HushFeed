@@ -22,6 +22,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -39,10 +40,10 @@ import app.morphe.extension.shared.Utils;
 
 /**
  * A utility class for creating a customizable dialog with a title, message or EditText, and up to three buttons (OK, Cancel, Neutral).
- * The dialog supports themed colors, rounded corners, and dynamic button layout based on screen width. It is dismissible by default.
+ * The dialog supports themed colors, rounded corners, and dynamic button layout based on the dialog's width. It is dismissible by default.
  */
 public class CustomDialog {
-    /** The dialog's width as a percentage of the screen's portrait width. */
+    /** The dialog's width as a percentage of the screen's portrait width, or of the app's window when that's narrower. */
     private static final int WIDTH_PERCENT = 90;
 
     private final Context context;
@@ -53,8 +54,8 @@ public class CustomDialog {
      * Creates a custom dialog with a styled layout, including a title, message, buttons, and an optional EditText.
      * The dialog's appearance adapts to the app's dark mode setting, with rounded corners and customizable button actions.
      * Buttons adjust dynamically to their text content and are arranged in a single row if they fit the dialog's
-     * width, with the Neutral button aligned to the start and OK/Cancel buttons centered at the end.
-     * If buttons do not fit, each is placed on a separate row, all aligned to the right.
+     * width, Neutral, Cancel and OK from the start, each as wide as its text asks and all the same height.
+     * If buttons do not fit, each fills a row of its own, OK first.
      *
      * @param context                     Context used to create the dialog.
      * @param title                       Title text of the dialog.
@@ -114,7 +115,21 @@ public class CustomDialog {
         Window window = dialog.getWindow();
         if (window != null) {
             Utils.setDialogWindowParameters(window, Gravity.CENTER, 0, WIDTH_PERCENT, false);
+            WindowManager.LayoutParams attributes = window.getAttributes();
+            attributes.width = dialogWidth();
+            window.setAttributes(attributes);
         }
+    }
+
+    /**
+     * The dialog's width. Split screen or a pop-up view can give the app a window narrower than
+     * the display, and the dialog then takes its share of that window, so the buttons are judged
+     * against the width they really get.
+     */
+    private int dialogWidth() {
+        int width = Dim.pctPortraitWidth(WIDTH_PERCENT);
+        int windowDp = context.getResources().getConfiguration().screenWidthDp;
+        return windowDp > 0 ? Math.min(width, Dim.dp(windowDp) * WIDTH_PERCENT / 100) : width;
     }
 
     /**
@@ -348,7 +363,7 @@ public class CustomDialog {
         // Single button: stretch to full width.
         if (buttons.size() == 1) {
             layoutSingleButton(buttonContainer, buttons.get(0));
-        } else if (totalWidth <= Dim.pctPortraitWidth(WIDTH_PERCENT)
+        } else if (totalWidth <= dialogWidth()
                 - mainLayout.getPaddingLeft() - mainLayout.getPaddingRight()) {
             // Single row: Neutral, Cancel, OK.
             layoutButtonsInRow(buttonContainer, buttons, buttonWidths);
@@ -409,8 +424,9 @@ public class CustomDialog {
         ViewGroup parent = (ViewGroup) button.getParent();
         if (parent != null) parent.removeView(button);
 
+        // As tall as the row, so a label in a taller script doesn't leave its neighbours shorter.
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                0, LinearLayout.LayoutParams.WRAP_CONTENT, buttonWidths.get(i));
+                0, LinearLayout.LayoutParams.MATCH_PARENT, buttonWidths.get(i));
 
         // Set margins based on button type and combination. Start and end, so a right to left
         // layout keeps the gap between the buttons rather than at the dialog's edges.

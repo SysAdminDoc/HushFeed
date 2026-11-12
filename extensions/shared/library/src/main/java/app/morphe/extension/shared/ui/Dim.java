@@ -20,7 +20,7 @@ public final class Dim {
 
     private static final DisplayMetrics METRICS = Resources.getSystem().getDisplayMetrics();
 
-    /** The screen as it is now. A size kept from startup would miss a rotation. */
+    /** The screen as it is now. A size kept from startup would miss a fold or a display size change. */
     private static DisplayMetrics screen() {
         return Resources.getSystem().getDisplayMetrics();
     }
@@ -54,26 +54,6 @@ public final class Dim {
     public static int dp(float dp) {
         return Math.round(TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, dp, METRICS));
-    }
-
-    /**
-     * Converts a percentage of the screen height to pixels.
-     *
-     * @param percent The percentage (0–100).
-     * @return The pixel value corresponding to the percentage of screen height.
-     */
-    public static int pctHeight(int percent) {
-        return (screen().heightPixels * percent) / 100;
-    }
-
-    /**
-     * Converts a percentage of the screen width to pixels.
-     *
-     * @param percent The percentage (0–100).
-     * @return The pixel value corresponding to the percentage of screen width.
-     */
-    public static int pctWidth(int percent) {
-        return (screen().widthPixels * percent) / 100;
     }
 
     /**

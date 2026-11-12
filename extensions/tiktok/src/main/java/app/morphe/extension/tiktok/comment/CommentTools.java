@@ -414,10 +414,11 @@ public final class CommentTools {
             itemView.post(() -> releaseDislike(itemView));
         }
         boolean links = Settings.COMMENT_LINKS.get();
+        boolean fold = CommentFold.enabled();
         // The keyword filter judges a comment TikTok shows translated at its bind, and a cell it
         // collapsed gets its size back on a bind once the filter is off.
         boolean judging = TranslatedCommentFilter.active() || TranslatedCommentFilter.anyCollapsed();
-        if (!block && !links && !CommentSearch.enabled() && !judging) {
+        if (!block && !links && !fold && !CommentSearch.enabled() && !judging) {
             CommentSearch.onCellBound(itemView, null);
             return;
         }
@@ -433,8 +434,14 @@ public final class CommentTools {
             CommentSearch.onCellBound(itemView, comment);
             // Posted for the same reason the takeover is: the text view is not laid out while
             // the cell is being bound, and a link cannot be placed on a line that has no
-            // width yet.
-            if (links) itemView.post(() -> CommentLinks.apply(itemView, comment));
+            // width yet. Links go first: the fold no longer carries the whole comment, so
+            // Comment links would not find it, and "more" brings the links back with the rest.
+            if (links || fold) {
+                itemView.post(() -> {
+                    if (links) CommentLinks.apply(itemView, comment);
+                    if (fold) CommentFold.apply(itemView, comment);
+                });
+            }
             if (!block) {
                 return;
             }

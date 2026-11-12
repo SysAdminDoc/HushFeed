@@ -1570,6 +1570,10 @@ public class Settings extends BaseSettings {
     /** Keeps the comment search box behind a button in the sheet's header until it's tapped (#254). */
     public static final BooleanSetting COMMENT_SEARCH_FOLDED = new BooleanSetting("comment_search_folded", FALSE);
     public static final BooleanSetting COMMENT_LINKS = new BooleanSetting("comment_links", FALSE);
+    /** Shows the first few lines of a long comment and a "more" that opens the rest in place. */
+    public static final BooleanSetting FOLD_LONG_COMMENTS = new BooleanSetting("fold_long_comments", FALSE);
+    public static final IntegerSetting FOLD_LONG_COMMENTS_LINES = new IntegerSetting(
+            "fold_long_comments_lines", 4, false, Setting.parent(FOLD_LONG_COMMENTS)).withRange(1, 20);
     public static final BooleanSetting HIDE_COMMENT_MEDIA = new BooleanSetting("hide_comment_media", FALSE);
     /**
      * Drops comments carrying a voice recording with something to play (a vid or a local file),

@@ -2593,3 +2593,10 @@ Search Liked and Favorites grids,搜索“喜欢”和“收藏”网格
 "Caption, creator or sound",说明文字、创作者或音频
 Long-press Profile to switch accounts,长按“个人主页”切换账号
 "Press and hold the Profile tab to pick one of your other accounts, where TikTok left that out. A tap on Profile works as before. While Long-press Profile for Watch history is on, it takes the press. Restart TikTok to apply this.",按住“个人主页”选项卡可选择你的其他账号，适用于 TikTok 去掉了此功能的情况。点击“个人主页”仍像以前一样工作。开启长按“个人主页”打开观看历史时，由它接管该操作。重新启动 TikTok 以应用此操作.
+Fold long comments,折叠长评论
+A long comment shows its first few lines and more. Tap more to read the rest right where it is.,长评论只显示前几行和“更多”。点“更多”即可在原处读完其余内容.
+Fold after,折叠前显示
+How many lines of a long comment show before more.,长评论在“更多”之前显示多少行.
+%1$s line,%1$s 行
+%1$s lines,%1$s 行
+… more,…更多

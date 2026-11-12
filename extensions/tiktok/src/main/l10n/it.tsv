@@ -2696,3 +2696,17 @@ Caption, creator or sound	Didascalia, creator o suono
 Long-press Profile to switch accounts	Tieni premuto su Profilo per cambiare account
 # context: Summary under that switch; Long-press Profile for Watch history is the row just above it
 Press and hold the Profile tab to pick one of your other accounts, where TikTok left that out. A tap on Profile works as before. While Long-press Profile for Watch history is on, it takes the press. Restart TikTok to apply this.	Tieni premuto sulla scheda Profilo per scegliere uno dei tuoi altri account, dove TikTok l'ha tolto. Un tocco su Profilo funziona come prima. Finché Tieni premuto su Profilo per la cronologia visualizzazioni è attivo, prende quel gesto. Riavvia TikTok per applicare la modifica.
+# context: Row title of the Comments switch that cuts long comments short with a tap to read the rest
+Fold long comments	Comprimi i commenti lunghi
+# context: Summary under that switch; more is the word at the end of a cut comment (its own row below)
+A long comment shows its first few lines and more. Tap more to read the rest right where it is.	Un commento lungo mostra le prime righe e altro. Tocca altro per leggere il resto lì dove si trova.
+# context: Row title of the number under that switch; the row shows it followed by the count, as in Fold after 4 lines
+Fold after	Comprimi dopo
+# context: Summary under that number
+How many lines of a long comment show before more.	Quante righe di un commento lungo si vedono prima di altro.
+# context: The count shown on that row for one line
+%1$s line	%1$s riga
+# context: The count shown on that row for several lines
+%1$s lines	%1$s righe
+# context: The tappable word at the end of a cut comment, after an ellipsis, that opens the rest of it
+… more	… altro

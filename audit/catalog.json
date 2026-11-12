@@ -2505,6 +2505,18 @@
     "row": "Links in comments open"
    },
    {
+    "key": "fold_long_comments",
+    "default": false,
+    "type": "bool",
+    "row": "Fold long comments"
+   },
+   {
+    "key": "fold_long_comments_lines",
+    "default": 4,
+    "type": "int",
+    "row": "Fold after"
+   },
+   {
     "key": "hide_comment_media",
     "default": false,
     "type": "bool",
@@ -2718,6 +2730,45 @@
      {
       "set": {
        "comment_search": "false"
+      }
+     }
+    ],
+    "auto": false
+   },
+   {
+    "id": "long-comments-folded",
+    "what": "Review: with Fold long comments on at 4 lines, a comment longer than that shows 4 lines ending in '... more', and tapping more opens the rest in that row. Off, every comment is whole.",
+    "steps": [
+     {
+      "set": {
+       "fold_long_comments": "true",
+       "fold_long_comments_lines": "4"
+      }
+     },
+     {
+      "open": "feed"
+     },
+     {
+      "probe": "videoinfo",
+      "expect": "comments=(?:1000orFewer|over1000)",
+      "retrySwipe": 12,
+      "precondition": true
+     },
+     {
+      "probe": "comments",
+      "expect": "openComments\\([^)]*\\)=true",
+      "waitMs": 2500
+     },
+     {
+      "shot": "long-comments-folded",
+      "review": "Comment sheet with Fold long comments on: no comment runs past 4 lines, and a cut one ends in '... more' in the comment's own color, dimmed. Do not type, post or like anything."
+     },
+     {
+      "back": true
+     },
+     {
+      "set": {
+       "fold_long_comments": "false"
       }
      }
     ],

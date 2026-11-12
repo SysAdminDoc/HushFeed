@@ -2873,3 +2873,20 @@ Caption, creator or sound	Подпись, автор или звук
 Long-press Profile to switch accounts	Долгое нажатие на Профиль переключает аккаунт
 # context: Summary under that switch; Long-press Profile for Watch history is the row just above it
 Press and hold the Profile tab to pick one of your other accounts, where TikTok left that out. A tap on Profile works as before. While Long-press Profile for Watch history is on, it takes the press. Restart TikTok to apply this.	Нажмите и удерживайте вкладку Профиль, чтобы выбрать другой свой аккаунт, если TikTok убрал это. Обычное нажатие на Профиль работает как раньше. Пока включено «Долгое нажатие на Профиль открывает историю просмотров», нажатие занимает она. Перезапустите TikTok, чтобы это применить.
+# context: Row title of the Comments switch that cuts long comments short with a tap to read the rest
+Fold long comments	Сворачивать длинные комментарии
+# context: Summary under that switch; more is the word at the end of a cut comment (its own row below)
+A long comment shows its first few lines and more. Tap more to read the rest right where it is.	Длинный комментарий показывает первые строки и «ещё». Нажмите «ещё», чтобы прочитать остальное прямо на месте.
+# context: Row title of the number under that switch; the row shows it followed by the count, as in Fold after 4 lines
+Fold after	Сворачивать после
+# context: Summary under that number
+How many lines of a long comment show before more.	Сколько строк длинного комментария видно до «ещё».
+# context: The count shown on that row for one line
+%1$s line	%1$s строка
+# context: The count shown on that row for several lines
+%1$s lines	%1$s строк
+%1$s lines|one	%1$s строка
+%1$s lines|few	%1$s строки
+%1$s lines|many	%1$s строк
+# context: The tappable word at the end of a cut comment, after an ellipsis, that opens the rest of it
+… more	… ещё

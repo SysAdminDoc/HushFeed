@@ -46,6 +46,8 @@ source,target
 %1$s isn't installed or doesn't take links,%1$s isn't installed or doesn't take links
 %1$s items loaded,%1$s items loaded
 %1$s left,%1$s left
+%1$s line,%1$s line
+%1$s lines,%1$s lines
 %1$s millisecond,%1$s millisecond
 %1$s milliseconds,%1$s milliseconds
 %1$s min left,%1$s min left
@@ -145,6 +147,7 @@ A forced value applies to this copy of TikTok whichever account is signed in. It
 "A good place to stop, if you want one.","A good place to stop, if you want one."
 "A green square in the top corner while TikTok has the camera open, and an orange diamond while it records sound. They go when the access ends.","A green square in the top corner while TikTok has the camera open, and an orange diamond while it records sound. They go when the access ends."
 "A link to one video opens just that video, and the feed won't swipe past it. It swipes again once another video plays, like after a refresh or a tap on Following, or when you come back to TikTok after %1$d minutes or more away. Auto-advance doesn't move on from it either.","A link to one video opens just that video, and the feed won't swipe past it. It swipes again once another video plays, like after a refresh or a tap on Following, or when you come back to TikTok after %1$d minutes or more away. Auto-advance doesn't move on from it either."
+A long comment shows its first few lines and more. Tap more to read the rest right where it is.,A long comment shows its first few lines and more. Tap more to read the rest right where it is.
 A long press on Comment plays the video at the hold speed instead of opening the emoji row. It needs Long press on TikTok default and Seek from the edges off.,A long press on Comment plays the video at the hold speed instead of opening the emoji row. It needs Long press on TikTok default and Seek from the edges off.
 A long press on Favorites plays the video at the hold speed instead of offering a new collection. It needs Long press on TikTok default and Seek from the edges off.,A long press on Favorites plays the video at the hold speed instead of offering a new collection. It needs Long press on TikTok default and Seek from the edges off.
 A long press on Share plays the video at the hold speed instead of opening the quick share row. It needs Long press on TikTok default and Seek from the edges off.,A long press on Share plays the video at the hold speed instead of opening the quick share row. It needs Long press on TikTok default and Seek from the edges off.
@@ -698,6 +701,8 @@ First rejection:,First rejection:
 Fit the video to the screen,Fit the video to the screen
 Floating bottom bar,Floating bottom bar
 Focus,Focus
+Fold after,Fold after
+Fold long comments,Fold long comments
 Fold the search into a button,Fold the search into a button
 Follow probe,Follow probe
 Follow refused (%1$s). Maybe a hidden CAPTCHA.,Follow refused (%1$s). Maybe a hidden CAPTCHA.
@@ -1009,6 +1014,7 @@ Home tab name,Home tab name
 Hook status,Hook status
 How far each edge press moves the video.,How far each edge press moves the video.
 How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.,How long each photo stays on screen in a video made from a photo post. A story's video runs as long as the story does.
+How many lines of a long comment show before more.,How many lines of a long comment show before more.
 How many saves run at the same time. The others wait in line and start as each one ends.,How many saves run at the same time. The others wait in line and start as each one ends.
 How much of a video you watch before it's hidden next time. Zero counts it after a few seconds.,How much of a video you watch before it's hidden next time. Zero counts it after a few seconds.
 How much of the video shows through the glass pill on the main feed. Most see-through shows the most and Frosted the least.,How much of the video shows through the glass pill on the main feed. Most see-through shows the most and Frosted the least.
@@ -2593,3 +2599,4 @@ picture in picture PiP,picture in picture PiP
 save photos,save photos
 search suggestions,search suggestions
 this creator,this creator
+… more,… more

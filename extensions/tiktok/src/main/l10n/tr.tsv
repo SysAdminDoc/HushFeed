@@ -2696,3 +2696,17 @@ Caption, creator or sound	Açıklama, içerik üreticisi veya ses
 Long-press Profile to switch accounts	Hesap değiştirmek için Profil'e basılı tut
 # context: Summary under that switch; Long-press Profile for Watch history is the row just above it
 Press and hold the Profile tab to pick one of your other accounts, where TikTok left that out. A tap on Profile works as before. While Long-press Profile for Watch history is on, it takes the press. Restart TikTok to apply this.	Diğer hesaplarından birini seçmek için Profil sekmesine basılı tut, TikTok bunu kaldırdıysa. Profil'e dokunmak eskisi gibi çalışır. İzleme geçmişi için Profil'e basılı tut açıkken o hareketi o alır. Bunu uygulamak için TikTok'u yeniden başlat.
+# context: Row title of the Comments switch that cuts long comments short with a tap to read the rest
+Fold long comments	Uzun yorumları katla
+# context: Summary under that switch; more is the word at the end of a cut comment (its own row below)
+A long comment shows its first few lines and more. Tap more to read the rest right where it is.	Uzun bir yorum ilk birkaç satırını ve devamı yazısını gösterir. Kalanını olduğu yerde okumak için devamı yazısına dokun.
+# context: Row title of the number under that switch; the row shows it followed by the count, as in Fold after 4 lines
+Fold after	Katlama sınırı
+# context: Summary under that number
+How many lines of a long comment show before more.	Uzun bir yorumun devamı yazısından önce kaç satırı görünür.
+# context: The count shown on that row for one line
+%1$s line	%1$s satır
+# context: The count shown on that row for several lines
+%1$s lines	%1$s satır
+# context: The tappable word at the end of a cut comment, after an ellipsis, that opens the rest of it
+… more	… devamı

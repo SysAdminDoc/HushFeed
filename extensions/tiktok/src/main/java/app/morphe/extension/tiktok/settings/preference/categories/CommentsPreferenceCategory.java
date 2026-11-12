@@ -10,6 +10,7 @@ import android.preference.PreferenceScreen;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 import app.morphe.extension.tiktok.settings.preference.InputTextPreference;
+import app.morphe.extension.tiktok.settings.preference.NumberInputPreference;
 import app.morphe.extension.tiktok.settings.preference.SectionHeadingPreference;
 import app.morphe.extension.tiktok.settings.preference.TogglePreference;
 
@@ -182,6 +183,21 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
                             + "out by hand. Tapping anywhere else in the comment still does what "
                             + "it did.",
                     Settings.COMMENT_LINKS
+            ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Fold long comments",
+                    "A long comment shows its first few lines and more. Tap more to read the rest "
+                            + "right where it is.",
+                    Settings.FOLD_LONG_COMMENTS
+            ));
+            addPreference(new NumberInputPreference(
+                    context,
+                    "Fold after",
+                    "How many lines of a long comment show before more.",
+                    Settings.FOLD_LONG_COMMENTS_LINES,
+                    "%1$s line",
+                    "%1$s lines"
             ));
             addPreference(new TogglePreference(
                     context,

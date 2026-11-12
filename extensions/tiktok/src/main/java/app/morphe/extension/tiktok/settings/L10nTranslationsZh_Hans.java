@@ -627,7 +627,7 @@ final class L10nTranslationsZh_Hans {
         table.put("Applies to both video and photo downloads.",
                 "适用于视频和照片下载.");
         table.put("Apply",
-                "申请");
+                "应用");
         table.put("Apply enables these overrides. Undo last Lab change puts your previous rules back until you change anything else in the Lab.",
                 "应用启用这些覆盖。撤消上次实验室更改会恢复之前的规则，直到你更改实验室中的其他任何内容.");
         table.put("Apply overrides",

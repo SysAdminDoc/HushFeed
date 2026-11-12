@@ -7,19 +7,24 @@ package app.morphe.patches.tiktok.interaction.haptics
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
+import app.morphe.patches.tiktok.misc.extension.HostApplicationAttachBaseContextFingerprint
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.patches.tiktok.privacy.invokeSitesOf
 import app.morphe.patches.tiktok.privacy.replaceSites
 import app.morphe.util.addInstruction
+import app.morphe.util.getReference
+import app.morphe.util.indexOfFirstInstruction
+import com.android.tools.smali.dexlib2.AccessFlags
+import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 
 private const val HAPTICS = "Lapp/morphe/extension/tiktok/interaction/Haptics;"
 private const val VIEW = "Landroid/view/View;"
 private const val VIBRATOR = "Landroid/os/Vibrator;"
 private const val EFFECT = "Landroid/os/VibrationEffect;"
 private const val AUDIO_ATTRIBUTES = "Landroid/media/AudioAttributes;"
-private const val LONG_CLICK = "Landroid/view/View\$OnLongClickListener;"
 
 /*
  * TikTok 47.1.4 names View or Vibrator itself in every one of these calls, never a subclass:
@@ -39,14 +44,30 @@ internal val VIBRATIONS = mapOf(
     "$VIBRATOR->vibrate($EFFECT$AUDIO_ATTRIBUTES)V" to "$HAPTICS->vibrate($VIBRATOR$EFFECT$AUDIO_ATTRIBUTES)V",
 )
 
-/*
- * Android plays the long press buzz itself once a long click listener answers true, so the
- * listener is wrapped where TikTok sets it. 423 of the 428 calls on 47.1.4 name View itself; the
- * other five name an obfuscated class and stay as they are.
+/**
+ * Where the extension starts following TikTok's windows: just past the host application's call
+ * to the framework's attachBaseContext, before any activity exists, as App lock does. Android
+ * plays the long press buzz itself once a long click listener answers true, in framework code
+ * no call site reaches. Wrapping each listener where TikTok sets it took 443 rewrites in 281
+ * classes on 47.7.3, nearly all of them classes nothing else touches, and each one patched is
+ * held in memory to the end (#339). The windows see the finger instead.
  */
-internal val LONG_CLICKS = mapOf(
-    "$VIEW->setOnLongClickListener($LONG_CLICK)V" to "$HAPTICS->setOnLongClickListener($VIEW$LONG_CLICK)V",
-)
+internal fun hapticsInstallIndex(method: Method): Int {
+    if (AccessFlags.STATIC.isSet(method.accessFlags)) {
+        throw PatchException("Turn off haptics: the host application's attachBaseContext is static, so it has no application to follow.")
+    }
+    val superCall = method.indexOfFirstInstruction {
+        getReference<MethodReference>()?.let { reference ->
+            reference.definingClass == "Landroid/app/Application;" &&
+                reference.name == "attachBaseContext" &&
+                reference.parameterTypes == listOf("Landroid/content/Context;")
+        } == true
+    }
+    if (superCall < 0) {
+        throw PatchException("Turn off haptics: the host application no longer calls Application.attachBaseContext, so there is nowhere to start from.")
+    }
+    return superCall + 1
+}
 
 /**
  * Holds back the vibrations TikTok plays on its own taps and gestures. See the extension's
@@ -71,16 +92,20 @@ val turnOffHapticsPatch = bytecodePatch(
             0,
             "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableTurnOffHaptics()V",
         )
-        val replacements = VIEW_HAPTICS + VIBRATIONS + LONG_CLICKS
+        // A range invoke, so the parameter register's number never has to fit a 4-bit operand.
+        HostApplicationAttachBaseContextFingerprint.method.apply {
+            addInstruction(
+                hapticsInstallIndex(this),
+                "invoke-static/range { p0 .. p0 }, $HAPTICS->install(Landroid/content/Context;)V",
+            )
+        }
+        val replacements = VIEW_HAPTICS + VIBRATIONS
         val sites = invokeSitesOf(replacements.keys)
         if (sites.none { it.target in VIEW_HAPTICS }) {
             throw PatchException("Turn off haptics: found no View haptic call outside the extension.")
         }
         if (sites.none { it.target in VIBRATIONS }) {
             throw PatchException("Turn off haptics: found no vibrator call outside the extension.")
-        }
-        if (sites.none { it.target in LONG_CLICKS }) {
-            throw PatchException("Turn off haptics: found no long click listener outside the extension.")
         }
         replaceSites(sites, replacements)
     }

@@ -17,8 +17,7 @@ import java.io.File
  * The patch rewrites calls by their exact descriptor, so a haptic call that names a View subclass,
  * or a vibrator overload the patch doesn't list, would play on with the switch on. This pins that
  * every View haptic call names View itself, that every framework vibrate call is one the patch
- * rewrites or the patterned form it leaves to alerts, and that both kinds are there to rewrite,
- * along with the long click listeners set on View that the long press buzz follows.
+ * rewrites or the patterned form it leaves to alerts, and that both kinds are there to rewrite.
  */
 class HapticsAnchorsTest {
     @Test
@@ -42,9 +41,6 @@ class HapticsAnchorsTest {
                 emptyList<String>(),
                 vibrations.map { it.descriptor() }.filter { it !in VIBRATIONS && it != PATTERN }.distinct(),
             )
-
-            val longClicks = calls.filter { it.name == "setOnLongClickListener" }
-            assertTrue("$version: no long click listener set on View", longClicks.any { it.descriptor() in LONG_CLICKS })
         }
     }
 
@@ -73,8 +69,7 @@ class HapticsAnchorsTest {
             .mapNotNull { (it as? ReferenceInstruction)?.reference as? MethodReference }
             .filter { call ->
                 (call.name == "performHapticFeedback" && call.returnType == "Z") ||
-                    (call.name == "vibrate" && call.definingClass.startsWith("Landroid/")) ||
-                    (call.name == "setOnLongClickListener" && call.definingClass == "Landroid/view/View;")
+                    (call.name == "vibrate" && call.definingClass.startsWith("Landroid/"))
             }
             .toList()
     }

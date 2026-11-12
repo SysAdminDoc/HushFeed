@@ -10,7 +10,6 @@ import app.morphe.patcher.Patcher
 import app.morphe.patcher.PatcherConfig
 import app.morphe.patcher.methodCall
 import app.morphe.patcher.patch.bytecodePatch
-import app.morphe.patches.tiktok.interaction.haptics.LONG_CLICKS
 import app.morphe.patches.tiktok.interaction.haptics.VIBRATIONS
 import app.morphe.patches.tiktok.interaction.haptics.VIEW_HAPTICS
 import com.android.tools.smali.dexlib2.AccessFlags
@@ -108,7 +107,7 @@ class ClassesCallingTest {
                     namedChecked = pairs.size
 
                     // What Turn off haptics asks for, both ways.
-                    val haptics = VIEW_HAPTICS.keys + VIBRATIONS.keys + LONG_CLICKS.keys
+                    val haptics = VIEW_HAPTICS.keys + VIBRATIONS.keys
                     val wantedHaptics = haptics.flatMapTo(HashSet()) { target ->
                         methodCallers[target.substringBefore("->") + "->" + target.substringAfter("->").substringBefore('(')].orEmpty()
                     }

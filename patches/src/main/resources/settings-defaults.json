@@ -134,6 +134,8 @@
       "comment_export",
       "comment_search_folded",
       "comment_links",
+      "fold_long_comments",
+      "fold_long_comments_lines",
       "hide_comment_media",
       "hide_voice_comments",
       "hide_spam_comments",
@@ -1866,6 +1868,20 @@
       "key": "focus_waits_for_video",
       "type": "boolean",
       "default": false
+    },
+    "fold_long_comments": {
+      "field": "FOLD_LONG_COMMENTS",
+      "key": "fold_long_comments",
+      "type": "boolean",
+      "default": false
+    },
+    "fold_long_comments_lines": {
+      "field": "FOLD_LONG_COMMENTS_LINES",
+      "key": "fold_long_comments_lines",
+      "type": "integer",
+      "default": 4,
+      "minimum": 1,
+      "maximum": 20
     },
     "foldable_split_view": {
       "field": "FOLDABLE_SPLIT_VIEW",

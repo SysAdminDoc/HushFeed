@@ -1900,6 +1900,24 @@
           "values": null
         },
         {
+          "key": "fold_long_comments",
+          "title": "Default: fold long comments",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "fold_long_comments_lines",
+          "title": "Default: fold long comments lines",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 4,
+          "values": null
+        },
+        {
           "key": "hide_comment_media",
           "title": "Default: hide comment media",
           "description": null,

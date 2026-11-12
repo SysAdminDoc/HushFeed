@@ -20,6 +20,12 @@ import java.util.Map;
  * went) and the outermost one (the hook TikTok called), and TikTok's own innermost frame for the
  * busy samples without Hushfeed. Start it right before the action under test:
  * {@code -e action mainsample -e ms 4000 -e every 5}.
+ *
+ * {@code -e thread Thread-523} samples that thread instead, by its Java name, which is the name
+ * {@code /proc/<pid>/task/<tid>/stat} shows for a busy thread when it fits in 15 characters. Away
+ * from the main thread, a thread parked, waiting or sleeping also counts as idle, and the report
+ * adds the two TikTok frames under the innermost one, since a worker's innermost frame is often a
+ * shared loop.
  */
 final class MainThreadSampler {
     private static final String TAG = "HushfeedProbe";
@@ -36,30 +42,43 @@ final class MainThreadSampler {
             Log.i(TAG, "failed mainsample: a run is still going");
             return;
         }
+        String name = intent.getStringExtra("thread");
+        Thread target = name == null ? Looper.getMainLooper().getThread() : named(name);
+        if (target == null) {
+            Log.i(TAG, "failed mainsample: no live thread named " + name);
+            return;
+        }
         running = true;
-        Thread main = Looper.getMainLooper().getThread();
         new Thread(() -> {
             try {
-                sample(main, duration, every);
+                sample(target, duration, every);
             } catch (RuntimeException error) {
                 Log.e(TAG, "failed mainsample", error);
             } finally {
                 running = false;
             }
         }, "hushfeed-mainsample").start();
-        Log.i(TAG, "ok mainsample started " + duration + "ms every " + every + "ms");
+        Log.i(TAG, "ok mainsample started " + duration + "ms every " + every + "ms on " + target.getName());
     }
 
-    private static void sample(Thread main, long duration, long every) {
+    private static Thread named(String name) {
+        for (Thread thread : Thread.getAllStackTraces().keySet()) {
+            if (name.equals(thread.getName())) return thread;
+        }
+        return null;
+    }
+
+    private static void sample(Thread target, long duration, long every) {
+        boolean main = target == Looper.getMainLooper().getThread();
         Map<String, Integer> inner = new HashMap<>();
         Map<String, Integer> outer = new HashMap<>();
         Map<String, Integer> tiktok = new HashMap<>();
         int samples = 0, busy = 0, hushfeed = 0;
         long end = SystemClock.uptimeMillis() + duration;
         while (SystemClock.uptimeMillis() < end) {
-            StackTraceElement[] stack = main.getStackTrace();
+            StackTraceElement[] stack = target.getStackTrace();
             samples++;
-            if (!idle(stack)) {
+            if (!idle(stack) && (main || !blocked(stack))) {
                 busy++;
                 String innermost = null, outermost = null;
                 for (StackTraceElement frame : stack) {
@@ -73,7 +92,7 @@ final class MainThreadSampler {
                     inner.merge(innermost, 1, Integer::sum);
                     outer.merge(outermost, 1, Integer::sum);
                 } else {
-                    String own = appFrame(stack);
+                    String own = main ? appFrame(stack) : appFrames(stack, 3);
                     if (own != null) tiktok.merge(own, 1, Integer::sum);
                 }
             }
@@ -91,16 +110,33 @@ final class MainThreadSampler {
                 && "nativePollOnce".equals(stack[0].getMethodName());
     }
 
+    /** Parked, waiting or sleeping: a worker between jobs. */
+    private static boolean blocked(StackTraceElement[] stack) {
+        if (stack.length == 0) return true;
+        String place = stack[0].getClassName() + "." + stack[0].getMethodName();
+        return place.equals("jdk.internal.misc.Unsafe.park") || place.equals("sun.misc.Unsafe.park")
+                || place.equals("java.lang.Object.wait") || place.equals("java.lang.Thread.sleep");
+    }
+
     /** The innermost frame outside the platform and its libraries: TikTok's own code. */
     private static String appFrame(StackTraceElement[] stack) {
+        return appFrames(stack, 1);
+    }
+
+    /** Up to {@code count} of TikTok's own frames from the innermost out, joined by " < ". */
+    private static String appFrames(StackTraceElement[] stack, int count) {
+        StringBuilder out = new StringBuilder();
+        int found = 0;
         for (StackTraceElement frame : stack) {
             String name = frame.getClassName();
             if (name.startsWith("java.") || name.startsWith("android.") || name.startsWith("dalvik.")
                     || name.startsWith("libcore.") || name.startsWith("kotlin.") || name.startsWith("androidx.")
-                    || name.startsWith("com.android.") || name.startsWith("sun.")) continue;
-            return name + "." + frame.getMethodName();
+                    || name.startsWith("com.android.") || name.startsWith("sun.") || name.startsWith("jdk.")) continue;
+            if (found > 0) out.append(" < ");
+            out.append(name).append('.').append(frame.getMethodName());
+            if (++found == count) break;
         }
-        return null;
+        return found == 0 ? null : out.toString();
     }
 
     private static String top(Map<String, Integer> counts, int limit) {

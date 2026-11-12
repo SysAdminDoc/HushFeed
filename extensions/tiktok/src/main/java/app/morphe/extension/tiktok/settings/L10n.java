@@ -197,6 +197,15 @@ public final class L10n {
             if (last >= 2 && last <= 4 && (lastTwo < 12 || lastTwo > 14)) return "few";
             return "many";
         }
+        if ("ar".equals(language)) {
+            long lastTwo = count % 100;
+            if (count == 0) return "zero";
+            if (count == 1) return "one";
+            if (count == 2) return "two";
+            if (lastTwo >= 3 && lastTwo <= 10) return "few";
+            if (lastTwo >= 11) return "many";
+            return "other";
+        }
         if ("pt".equals(language)) {
             if (count == 1 || count == 0 && !"PT".equals(locale.getCountry())) return "one";
             if (count != 0 && count % 1_000_000 == 0) return "many";

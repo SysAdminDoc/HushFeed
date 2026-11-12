@@ -432,7 +432,7 @@ public class ReleaseNotesTest {
     @Test
     public void everyTableTranslatesTheSameReleases() throws Exception {
         java.util.Set<String> expected = null;
-        for (String tag : new String[]{"az", "de", "es", "in", "it", "pt-rbr", "ru", "th", "tr", "vi", "zh-hans"}) {
+        for (String tag : new String[]{"ar", "az", "de", "es", "in", "it", "pt-rbr", "ru", "th", "tr", "vi", "zh-hans"}) {
             java.util.Set<String> versions = versions(ReleaseNotesData.translated(tag));
             if (expected == null) expected = versions;
             assertEquals(tag + " translates different releases", expected, versions);

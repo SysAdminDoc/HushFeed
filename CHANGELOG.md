@@ -7,6 +7,7 @@ Every Hushfeed release, newest first.
 ### Features
 
 * `Hide search result tabs` takes tabs you never use off the strip above search results. Tick Shop, LIVE, Places or any other tab TikTok shows you and it's gone from every search, while Top always stays. The checklist sits under `Hide TikTok Shop in search` in Hushfeed settings > Feed filter, and it shows each tab by name in your settings language.
+* The settings screen now comes in Arabic, shown when TikTok runs in Arabic. It's a first pass, so corrections from Arabic speakers are welcome (D307).
 
 ### Bug Fixes
 

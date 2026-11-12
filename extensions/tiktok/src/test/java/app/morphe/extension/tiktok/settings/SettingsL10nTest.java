@@ -516,6 +516,12 @@ public class SettingsL10nTest {
         assertEquals("a Thai question lost its mark", '?', wantedTerminator("th", "Really?"));
         assertEquals("another language was let off its full stop",
                 '.', wantedTerminator("vi", "Hide the caption."));
+        // Arabic asks with its own question mark, and an English one left in is the finding.
+        assertEquals("an Arabic question was held to the English mark",
+                '؟', wantedTerminator("ar", "Really?"));
+        assertNotEquals("an Arabic row that kept the English question mark",
+                wantedTerminator("ar", "Really?"), terminator("حقا?"));
+        assertEquals("Arabic was let off its full stop", '.', wantedTerminator("ar", "Hide the caption."));
         // Thai writes its vowels as marks over the consonant, and they are part of the word.
         assertTrue("a Thai abbreviation was read as a sentence ending",
                 endsInAnAbbreviation("%1$s วิ."));
@@ -559,11 +565,14 @@ public class SettingsL10nTest {
      * The terminator a translation of this key ends with in that language.
      *
      * <p>The key's own, except in Thai, which ends a sentence with a space and writes no full
-     * stop. Its other terminators are the English ones.
+     * stop, and in Arabic, which asks with its own mirrored question mark. Their other
+     * terminators are the English ones.
      */
     private static char wantedTerminator(String language, String key) {
         char terminator = terminator(key);
-        return "th".equals(language) && terminator == '.' ? ' ' : terminator;
+        if ("th".equals(language) && terminator == '.') return ' ';
+        if ("ar".equals(language) && terminator == '?') return '\u061f';
+        return terminator;
     }
 
     /** The character a string ends a sentence with, or a space when it ends with none. */
@@ -571,7 +580,7 @@ public class SettingsL10nTest {
         String trimmed = text.trim();
         if (trimmed.isEmpty()) return ' ';
         char last = trimmed.charAt(trimmed.length() - 1);
-        return ".!?:\u2026".indexOf(last) >= 0 ? last : ' ';
+        return ".!?:\u2026\u061f".indexOf(last) >= 0 ? last : ' ';
     }
 
     @Test public void everyRuntimeToastGoesThroughTheTable() throws Exception {

@@ -33,9 +33,11 @@ public class L10nQuantityTest {
     @Test @Config(sdk = {23, 24, 28})
     public void shippedIntegerRulesSelectEveryExpectedCategory() {
         long[] counts = {0, 1, 2, 5, 11, 21, 22, 101};
-        for (String language : new String[]{"en", "az", "de", "es", "it", "tr", "pt-BR", "ru", "id", "in"}) {
+        for (String language : new String[]{"en", "az", "de", "es", "it", "tr", "pt-BR", "ru", "ar", "id", "in"}) {
             String[] expected = language.equals("ru")
                     ? new String[]{"many", "one", "few", "many", "many", "one", "few", "one"}
+                    : language.equals("ar")
+                    ? new String[]{"zero", "one", "two", "few", "many", "many", "many", "other"}
                     : language.equals("pt-BR")
                     ? new String[]{"one", "one", "other", "other", "other", "other", "other", "other"}
                     : language.equals("id") || language.equals("in")
@@ -60,6 +62,10 @@ public class L10nQuantityTest {
         assertEquals("other", L10n.pluralCategory(Locale.forLanguageTag("pt-PT"), 0));
         assertEquals("one", L10n.pluralCategory(new Locale("ru"), 9_007_199_254_741_001L));
         assertEquals("many", L10n.pluralCategory(new Locale("ru"), Long.MAX_VALUE));
+        // Arabic reads the last two digits past 100: 103 is few, 111 many, 200 other.
+        assertEquals("few", L10n.pluralCategory(new Locale("ar"), 103));
+        assertEquals("many", L10n.pluralCategory(new Locale("ar"), 111));
+        assertEquals("other", L10n.pluralCategory(new Locale("ar"), 200));
         for (String language : L10nTranslations.LANGUAGES) {
             assertEquals("other", L10n.pluralCategory(Locale.forLanguageTag(language), Long.MIN_VALUE));
             assertEquals("other", L10n.pluralCategory(Locale.forLanguageTag(language), -1));

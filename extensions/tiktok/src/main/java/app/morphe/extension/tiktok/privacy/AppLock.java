@@ -10,6 +10,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.KeyguardManager;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -36,8 +37,12 @@ import android.widget.TextView;
 import androidx.annotation.RequiresApi;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.Executor;
@@ -85,6 +90,19 @@ public final class AppLock {
     private static final Set<Activity> SECURED = weakSet();
     /** Screens told to leave no recents screenshot, Android 13 and up. */
     private static final Set<Activity> UNSNAPPED = weakSet();
+    /**
+     * Windows of a covered screen's own taken off the screen while the lock is up, with the
+     * visibility each had. A dialog, a popup or a bottom sheet is a window above the decor, out of
+     * the cover's reach.
+     */
+    private static final WeakHashMap<View, Integer> TUCKED = new WeakHashMap<>();
+    /** The window manager whose list of windows tells the lock about each one as it opens. */
+    private static WeakReference<Object> watchedWindows = new WeakReference<>(null);
+    private static Field windowViews;
+    private static boolean windowsUnreadable;
+    private static boolean windowsUnwatchable;
+    /** Leaves the window list alone, as on an Android where it can't be swapped. */
+    static boolean unwatchedForTests;
     private static WeakReference<Activity> resumed = new WeakReference<>(null);
     /** A new process has been away, which is how a cold start counts. */
     private static boolean away = true;
@@ -206,8 +224,12 @@ public final class AppLock {
             }
         }
         if (locked && !enabled) unlock(false);
-        // Before the screen's first frame, which comes after its resume.
-        if (locked) cover(activity);
+        // Before the screen's first frame, which comes after its resume. A dialog left open on the
+        // way out comes back with its screen, so it goes as well.
+        if (locked) {
+            cover(activity);
+            tuckAll();
+        }
         syncRecentsScreenshot(activity, enabled);
     }
 
@@ -226,6 +248,7 @@ public final class AppLock {
                 if (locked && !activity.isFinishing()) cover(activity);
             }));
         }
+        tuckAll();
         // A screen of TikTok's in front means the confirm screen isn't. Its answer comes before
         // the resume of the screen that asked, so one still outstanding was left behind, as when
         // a link's trampoline asked and then finished.
@@ -262,6 +285,7 @@ public final class AppLock {
         locked = true;
         declined = false;
         systemCancels = 0;
+        watchWindows();
         // The cover hides the feed but not its sound, and TikTok plays on under a prompt.
         SessionPlaybackHold.pauseForLock();
         Logger.printDebug(() -> "App lock is up");
@@ -275,6 +299,7 @@ public final class AppLock {
         MAIN.removeCallbacks(ASK);
         for (Activity activity : new ArrayList<>(COVERED)) uncover(activity);
         COVERED.clear();
+        untuckAll();
         SessionPlaybackHold.releaseForLock(resume);
     }
 
@@ -594,7 +619,14 @@ public final class AppLock {
                 if (decor.indexOfChild(this) != decor.getChildCount() - 1) decor.bringChildToFront(this);
                 staysAbove(decor);
                 SessionLockOverlay.hideBehind(decor, this, true);
+                if (locked) tuckAll();
             });
+        }
+
+        /** A window of TikTok's that took the focus off the locked screen, found if it slipped by. */
+        @Override public void onWindowFocusChanged(boolean hasWindowFocus) {
+            super.onWindowFocusChanged(hasWindowFocus);
+            if (!hasWindowFocus && locked) guard(AppLock::tuckAll);
         }
 
         /**
@@ -636,6 +668,139 @@ public final class AppLock {
         for (int index = 0; index < decor.getChildCount(); index++) {
             View child = decor.getChildAt(index);
             if (COVER_TAG.equals(child.getTag())) return child;
+        }
+        return null;
+    }
+
+    // ------------------------------------------------------------------ windows of their own
+
+    /**
+     * Has the window manager's list of windows tell the lock about each one as it's added, which
+     * is before that window's first frame. Put in once the lock first comes up, so a reader
+     * without App lock never has it. Without it the lock finds them on its own passes instead.
+     */
+    @SuppressWarnings("unchecked")
+    private static void watchWindows() {
+        if (windowsUnwatchable || unwatchedForTests) return;
+        try {
+            Object global = windowGlobal();
+            if (global == null || watchedWindows.get() == global) return;
+            Object views = windowViews.get(global);
+            if (!(views instanceof WatchedWindows)) {
+                if (!(views instanceof ArrayList)) throw new IllegalStateException("not a list: " + views);
+                // Windows open on the main thread, which is where this runs, so none is added
+                // between the copy and the swap.
+                windowViews.set(global, new WatchedWindows((ArrayList<View>) views));
+            }
+            watchedWindows = new WeakReference<>(global);
+        } catch (Throwable unwatchable) {
+            windowsUnwatchable = true;
+            Logger.printInfo(() -> "App lock finds TikTok's dialogs as it goes instead: " + unwatchable);
+        }
+    }
+
+    /** The window manager's list of windows, tucking away each one a covered screen opens. */
+    private static final class WatchedWindows extends ArrayList<View> {
+        WatchedWindows(Collection<View> views) {
+            super(views);
+        }
+
+        @Override public boolean add(View view) {
+            boolean added = super.add(view);
+            // Its layout parameters are set by now and its first traversal is still to come.
+            if (locked && Looper.myLooper() == Looper.getMainLooper()) guard(() -> tuck(view));
+            return added;
+        }
+    }
+
+    /** Every window open now, for the windows that opened before the list was watched. */
+    private static void tuckAll() {
+        if (!locked) return;
+        // In the order they opened, so a popup is reached after the dialog it opened on.
+        for (View root : windowRoots()) tuck(root);
+    }
+
+    /** Takes {@code root} off the screen if a covered screen opened it. */
+    private static void tuck(View root) {
+        // Hidden already, by TikTok or by the lock.
+        if (root.getVisibility() == View.GONE || !openedByCovered(root)) return;
+        TUCKED.put(root, root.getVisibility());
+        // As Dialog.hide does it: a window with its root gone has no surface and takes no touch.
+        root.setVisibility(View.GONE);
+    }
+
+    private static void untuckAll() {
+        for (Map.Entry<View, Integer> entry : new ArrayList<>(TUCKED.entrySet())) {
+            View root = entry.getKey();
+            if (root != null && root.getVisibility() == View.GONE) root.setVisibility(entry.getValue());
+        }
+        TUCKED.clear();
+    }
+
+    /**
+     * A dialog or a sheet carries its screen's token and is made from its screen, and a popup
+     * carries the token of the window it opened on. Toasts and other system-range windows aren't
+     * a screen's, and the screen's own window is the one under the cover.
+     */
+    private static boolean openedByCovered(View root) {
+        ViewGroup.LayoutParams layout = root.getLayoutParams();
+        if (!(layout instanceof WindowManager.LayoutParams)) return false;
+        WindowManager.LayoutParams params = (WindowManager.LayoutParams) layout;
+        if (params.type >= WindowManager.LayoutParams.FIRST_SYSTEM_WINDOW) return false;
+        Activity opener = activityOf(root.getContext());
+        List<Activity> screens = new ArrayList<>(COVERED);
+        screens.addAll(STARTED);
+        for (Activity screen : screens) {
+            Window window = screen.getWindow();
+            if (window == null) continue;
+            View decor = window.peekDecorView();
+            if (decor == root) return false;
+            if (opener == screen) return true;
+            if (params.token != null && (params.token == window.getAttributes().token
+                    || decor != null && params.token == decor.getWindowToken())) {
+                return true;
+            }
+        }
+        for (View tucked : TUCKED.keySet()) {
+            if (tucked != root && params.token != null && params.token == tucked.getWindowToken()) return true;
+        }
+        return false;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static List<View> windowRoots() {
+        try {
+            Object global = windowGlobal();
+            Object views = global == null ? null : windowViews.get(global);
+            // A copy: a window opened from another thread changes the live list.
+            if (views instanceof List) return new ArrayList<>((List<View>) views);
+        } catch (Throwable unreadable) {
+            Logger.printDebug(() -> "App lock can't read TikTok's windows: " + unreadable);
+        }
+        return Collections.emptyList();
+    }
+
+    /** WindowManagerGlobal, with its list of windows made readable, or null on an Android without them. */
+    private static Object windowGlobal() throws ReflectiveOperationException {
+        if (windowsUnreadable) return null;
+        try {
+            Class<?> globalClass = Class.forName("android.view.WindowManagerGlobal");
+            if (windowViews == null) {
+                Field views = globalClass.getDeclaredField("mViews");
+                views.setAccessible(true);
+                windowViews = views;
+            }
+            return globalClass.getMethod("getInstance").invoke(null);
+        } catch (ReflectiveOperationException | RuntimeException missing) {
+            windowsUnreadable = true;
+            throw missing;
+        }
+    }
+
+    private static Activity activityOf(Context context) {
+        while (context instanceof ContextWrapper) {
+            if (context instanceof Activity) return (Activity) context;
+            context = ((ContextWrapper) context).getBaseContext();
         }
         return null;
     }
@@ -685,6 +850,10 @@ public final class AppLock {
         COVERED.clear();
         SECURED.clear();
         UNSNAPPED.clear();
+        TUCKED.clear();
+        watchedWindows = new WeakReference<>(null);
+        windowsUnwatchable = false;
+        unwatchedForTests = false;
         resumed = new WeakReference<>(null);
         away = true;
         leftAt = NEVER;

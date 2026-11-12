@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
 import android.app.Application;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.app.KeyguardManager;
 import android.content.Context;
@@ -16,10 +17,13 @@ import android.hardware.biometrics.BiometricPrompt;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.PausedProcess;
@@ -116,6 +120,91 @@ public class AppLockTest {
             assertNull(coverOf(activity));
             assertTrue(app.morphe.extension.tiktok.Wheel.turn(decor));
             assertEquals("the fixture's wheel never reaches the screen", 1, turns[0]);
+        }
+    }
+
+    /** A dialog or a popup is a window above the cover, so the lock takes it off until the unlock. */
+    @Test public void aDialogOrPopupOpenedUnderTheLockStaysOffTheScreenUntilTheUnlock() {
+        try (ActivityController<Screen> screen = Robolectric.buildActivity(Screen.class).setup()) {
+            Activity activity = screen.get();
+            View decor = activity.getWindow().getDecorView();
+            assertNotNull(coverOf(activity));
+
+            Dialog dialog = new Dialog(activity);
+            dialog.setContentView(new TextView(activity));
+            dialog.show();
+            View dialogRoot = dialog.getWindow().getDecorView();
+            assertEquals("the dialog had a frame over the lock", View.GONE, dialogRoot.getVisibility());
+            PopupWindow popup = new PopupWindow(new TextView(activity), 200, 200);
+            popup.showAtLocation(decor, Gravity.CENTER, 0, 0);
+            View popupRoot = popup.getContentView().getRootView();
+            assertEquals("the popup had a frame over the lock", View.GONE, popupRoot.getVisibility());
+            idle();
+            assertEquals(View.GONE, dialogRoot.getVisibility());
+            assertEquals(View.GONE, popupRoot.getVisibility());
+            assertTrue("TikTok's dialog was closed instead of set aside", dialog.isShowing());
+            assertEquals("the locked screen itself was hidden", View.VISIBLE, decor.getVisibility());
+
+            AppLock.succeeded();
+            assertEquals("the dialog didn't come back", View.VISIBLE, dialogRoot.getVisibility());
+            assertEquals("the popup didn't come back", View.VISIBLE, popupRoot.getVisibility());
+            Dialog later = new Dialog(activity);
+            later.show();
+            assertEquals("a dialog after the unlock was hidden", View.VISIBLE,
+                    later.getWindow().getDecorView().getVisibility());
+            later.dismiss();
+            dialog.dismiss();
+            popup.dismiss();
+        }
+    }
+
+    /** One left open on the way out comes back with its screen, under the lock, as it was. */
+    @Test public void aDialogLeftOpenIsHiddenOnAReturnPastTheDelayAndOneTikTokHidStaysHidden() {
+        try (ActivityController<Screen> screen = Robolectric.buildActivity(Screen.class).setup()) {
+            Activity activity = screen.get();
+            idleFor(AppLock.ASK_DELAY_MS + 50);
+            AppLock.succeeded();
+            Dialog open = new Dialog(activity);
+            open.show();
+            Dialog hidden = new Dialog(activity);
+            hidden.show();
+            hidden.hide();
+            View openRoot = open.getWindow().getDecorView();
+            View hiddenRoot = hidden.getWindow().getDecorView();
+
+            screen.pause().stop();
+            idleFor(Duration.ofMinutes(6).toMillis());
+            screen.restart();
+            assertTrue(AppLock.isLocked());
+            assertEquals("the dialog left open showed over the lock", View.GONE, openRoot.getVisibility());
+            screen.resume();
+            idleFor(AppLock.ASK_DELAY_MS + 50);
+            assertEquals(View.GONE, openRoot.getVisibility());
+
+            AppLock.succeeded();
+            assertEquals("the dialog left open didn't come back", View.VISIBLE, openRoot.getVisibility());
+            assertEquals("the dialog TikTok hid came back", View.GONE, hiddenRoot.getVisibility());
+            open.dismiss();
+            hidden.dismiss();
+        }
+    }
+
+    /** Where the window list can't be watched, the lock still finds a dialog on its next pass. */
+    @Test public void withTheWindowListUnwatchedADialogIsStillFoundOnTheNextPass() {
+        AppLock.unwatchedForTests = true;
+        try (ActivityController<Screen> screen = Robolectric.buildActivity(Screen.class).setup()) {
+            Activity activity = screen.get();
+            Dialog dialog = new Dialog(activity);
+            dialog.show();
+            View dialogRoot = dialog.getWindow().getDecorView();
+            assertEquals("the fixture watched the window list after all", View.VISIBLE, dialogRoot.getVisibility());
+
+            activity.getWindow().getDecorView().requestLayout();
+            idle();
+            assertEquals("the dialog stayed over the lock", View.GONE, dialogRoot.getVisibility());
+            AppLock.succeeded();
+            assertEquals(View.VISIBLE, dialogRoot.getVisibility());
+            dialog.dismiss();
         }
     }
 

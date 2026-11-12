@@ -6,6 +6,7 @@ package app.morphe.extension.tiktok.wellbeing;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.media.AudioManager;
 
 import android.os.Build;
@@ -14,11 +15,13 @@ import android.os.Looper;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.InputDevice;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -33,6 +36,9 @@ import app.morphe.extension.tiktok.settings.preference.ShimmerTitle;
 import app.morphe.extension.tiktok.spoof.region.RegionSpoof;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Proxy;
 import java.util.Locale;
 
 /**
@@ -73,7 +79,10 @@ public final class SessionLockOverlay {
         /** The panels hiding everything inside it as well, rather than only its own stop. */
         final java.util.Set<View> whole = java.util.Collections.newSetFromMap(
                 new java.util.WeakHashMap<>());
+        /** Whether its descendants are blocked from focus. */
         boolean hidden;
+        /** The importance for accessibility a panel last set on it, or -1 while none is over it. */
+        int set = -1;
 
         Curtained(View view) {
             importance = view.getImportantForAccessibility();
@@ -87,6 +96,8 @@ public final class SessionLockOverlay {
 
     private static final java.util.WeakHashMap<View, Curtained> curtained =
             new java.util.WeakHashMap<>();
+    /** Windows whose callback keeps the keys that move focus off what a curtain goes around. */
+    private static final java.util.WeakHashMap<Window, Boolean> STEERED = new java.util.WeakHashMap<>();
     private static WeakReference<TextView> titleReference = new WeakReference<>(null);
     private static WeakReference<TextView> remainingReference = new WeakReference<>(null);
     private static WeakReference<TextView> releaseReference = new WeakReference<>(null);
@@ -866,6 +877,7 @@ public final class SessionLockOverlay {
                 // find, as on a cold start. On the S22 that is TikTok's full-screen pager around
                 // the feed and the tabs, an empty Tab stop that pages on an arrow key.
                 curtain(child, panel, false);
+                steerAround(child);
                 ViewGroup page = (ViewGroup) child;
                 curtainAround(page, page.getChildCount(), panel, keep);
                 continue;
@@ -908,22 +920,94 @@ public final class SessionLockOverlay {
     /** Hides what is inside {@code view} while any panel over it hides it whole, and hands it back after. */
     private static void hideInside(View view, Curtained state) {
         int now = view.getImportantForAccessibility();
-        boolean changed = state.hidden && now != View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS;
-        if (!state.whole.isEmpty()) {
-            // Set otherwise since the last pass means TikTok set it, and that is what goes back.
-            if (changed) state.importance = now;
+        // Set otherwise since the last pass means TikTok set it, and that is what goes back.
+        if (state.set != -1 && now != state.set) state.importance = now;
+        boolean whole = !state.whole.isEmpty();
+        // A view a panel only goes around is out of the reading order itself, its children kept:
+        // TalkBack's scroll actions on the pager around the feed and the tabs paged it sideways.
+        int importance = whole ? View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
+                : !state.panels.isEmpty() ? View.IMPORTANT_FOR_ACCESSIBILITY_NO : state.importance;
+        if (now != importance) view.setImportantForAccessibility(importance);
+        state.set = state.panels.isEmpty() ? -1 : importance;
+        if (state.focusability == -1) return;
+        if (whole) {
             state.hidden = true;
-            view.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
-            if (state.focusability != -1) {
-                ((ViewGroup) view).setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-            }
+            ((ViewGroup) view).setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
         } else if (state.hidden) {
             state.hidden = false;
-            if (!changed) view.setImportantForAccessibility(state.importance);
-            if (state.focusability != -1) {
-                ((ViewGroup) view).setDescendantFocusability(state.focusability);
-            }
+            ((ViewGroup) view).setDescendantFocusability(state.focusability);
         }
+    }
+
+    /**
+     * Wraps the window's callback once, as the idle wait does, so the keys that move focus skip
+     * the views a curtain goes around. TikTok's pager around the feed and the tabs pages on an
+     * arrow key whatever its own focus says, and on the S22 DPAD_RIGHT on the last tab paged it
+     * over to the creator's profile under the hold. Focus in there is in the tab bar, so those
+     * keys go to the bar alone, then to the window's own focus search, which finds the hold.
+     */
+    private static void steerAround(View view) {
+        try {
+            Activity activity = activityOf(view.getContext());
+            Window window = activity == null ? null : activity.getWindow();
+            if (window == null || STEERED.containsKey(window)) return;
+            Window.Callback inner = window.getCallback();
+            if (inner == null) return;
+            InvocationHandler steer = (proxy, method, args) -> {
+                try {
+                    if (args != null && args.length == 1 && args[0] instanceof KeyEvent
+                            && "dispatchKeyEvent".equals(method.getName())) {
+                        View kept = keptPart(window, (KeyEvent) args[0]);
+                        if (kept != null) {
+                            // Someone is at the keyboard, for an idle wait wrapped inside this.
+                            IdleLeave.stirred();
+                            return kept.dispatchKeyEvent((KeyEvent) args[0]);
+                        }
+                    }
+                    return method.invoke(inner, args);
+                } catch (InvocationTargetException ex) {
+                    throw ex.getCause() != null ? ex.getCause() : ex;
+                }
+            };
+            window.setCallback((Window.Callback) Proxy.newProxyInstance(
+                    Window.Callback.class.getClassLoader(), new Class<?>[]{Window.Callback.class}, steer));
+            STEERED.put(window, Boolean.TRUE);
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Could not keep the arrow keys off the page under the hold", ex);
+        }
+    }
+
+    /**
+     * Where a key that moves focus goes while focus is inside a view a curtain goes around: the
+     * child of the innermost one on the focus path. Null for any other key, or focus elsewhere.
+     */
+    private static View keptPart(Window window, KeyEvent event) {
+        switch (event.getKeyCode()) {
+            case KeyEvent.KEYCODE_DPAD_LEFT:
+            case KeyEvent.KEYCODE_DPAD_RIGHT:
+            case KeyEvent.KEYCODE_DPAD_UP:
+            case KeyEvent.KEYCODE_DPAD_DOWN:
+            case KeyEvent.KEYCODE_TAB:
+                break;
+            default:
+                return null;
+        }
+        View decor = window.peekDecorView();
+        View focused = decor == null ? null : decor.findFocus();
+        for (View view = focused; view != null && view.getParent() instanceof View;
+                view = (View) view.getParent()) {
+            Curtained state = curtained.get((View) view.getParent());
+            if (state != null && !state.panels.isEmpty() && state.whole.isEmpty()) return view;
+        }
+        return null;
+    }
+
+    private static Activity activityOf(Context context) {
+        while (context instanceof ContextWrapper) {
+            if (context instanceof Activity) return (Activity) context;
+            context = ((ContextWrapper) context).getBaseContext();
+        }
+        return null;
     }
 
     private static void lift(View view, View panel) {

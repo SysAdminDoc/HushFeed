@@ -684,6 +684,101 @@ public class SessionLockOverlayTest {
         }
     }
 
+    @Test public void arrowKeysOnTheTabsMoveFocusWithoutPagingThePageUnderTheHold() {
+        // TikTok's pager around the feed and the tabs pages on an arrow key whatever its own focus
+        // says. On the S22 DPAD_RIGHT on the last tab paged it over to the creator's profile
+        // under the hold, and TalkBack's scroll actions on it did the same.
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            ViewGroup root = activity.findViewById(android.R.id.content);
+            Pager page = new Pager(activity);
+            page.setFocusable(true);
+            page.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            FrameLayout bar = new FrameLayout(activity);
+            android.widget.Button homeTab = new android.widget.Button(activity);
+            homeTab.setFocusableInTouchMode(true);
+            bar.addView(homeTab, new FrameLayout.LayoutParams(96, ViewGroup.LayoutParams.MATCH_PARENT));
+            android.widget.Button lastTab = new android.widget.Button(activity);
+            lastTab.setFocusableInTouchMode(true);
+            bar.addView(lastTab, new FrameLayout.LayoutParams(
+                    96, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.END));
+            page.addView(bar, new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, 100, Gravity.BOTTOM));
+            root.addView(page);
+            FrameLayout panel = new FrameLayout(activity);
+            android.widget.Button release = new android.widget.Button(activity);
+            release.setFocusableInTouchMode(true);
+            panel.addView(release, new FrameLayout.LayoutParams(200, 100, Gravity.CENTER));
+            FrameLayout.LayoutParams panelParams = new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            panelParams.bottomMargin = 100;
+            root.addView(panel, panelParams);
+            layout(root, 480, 960);
+            SessionLockOverlay.hideBehind(root, panel, true, bar);
+            assertTrue(lastTab.requestFocus());
+            java.util.List<Integer> heard = new java.util.ArrayList<>();
+            lastTab.setOnKeyListener((view, code, event) -> {
+                if (event.getAction() == android.view.KeyEvent.ACTION_DOWN) heard.add(code);
+                return false;
+            });
+
+            press(activity, android.view.KeyEvent.KEYCODE_DPAD_RIGHT);
+            assertEquals("an arrow key on the last tab paged the page under the hold", 0, page.paged);
+            assertTrue("the tab bar no longer sees the arrow keys",
+                    heard.contains(android.view.KeyEvent.KEYCODE_DPAD_RIGHT));
+            press(activity, android.view.KeyEvent.KEYCODE_DPAD_LEFT);
+            assertTrue("an arrow key no longer moves along the tabs", homeTab.isFocused());
+            press(activity, android.view.KeyEvent.KEYCODE_DPAD_UP);
+            assertTrue("an arrow key no longer reaches the hold from the tabs", release.isFocused());
+            press(activity, android.view.KeyEvent.KEYCODE_DPAD_DOWN);
+            assertTrue("an arrow key no longer gets back to the tabs from the hold",
+                    homeTab.isFocused() || lastTab.isFocused());
+            assertEquals("an arrow key paged the page under the hold", 0, page.paged);
+            assertFalse("a reader can still scroll the page under the hold",
+                    page.isImportantForAccessibility());
+            assertTrue("a reader can't reach the tabs below the hold",
+                    lastTab.isImportantForAccessibility());
+
+            SessionLockOverlay.hideBehind(null, panel, false);
+            assertEquals("the page's own place in the reading order wasn't handed back",
+                    View.IMPORTANT_FOR_ACCESSIBILITY_YES, page.getImportantForAccessibility());
+            assertTrue(lastTab.requestFocus());
+            press(activity, android.view.KeyEvent.KEYCODE_DPAD_RIGHT);
+            assertEquals("the page's own arrow keys weren't handed back after the hold", 1, page.paged);
+        }
+    }
+
+    /** A key as the window hands it on: the screen first, then a move of focus if nothing took it. */
+    private static void press(Activity activity, int code) {
+        View decor = activity.getWindow().getDecorView();
+        if (!decor.dispatchKeyEvent(new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN, code))) {
+            int direction = code == android.view.KeyEvent.KEYCODE_DPAD_LEFT ? View.FOCUS_LEFT
+                    : code == android.view.KeyEvent.KEYCODE_DPAD_RIGHT ? View.FOCUS_RIGHT
+                    : code == android.view.KeyEvent.KEYCODE_DPAD_UP ? View.FOCUS_UP : View.FOCUS_DOWN;
+            View focused = decor.findFocus();
+            View next = focused == null ? null : focused.focusSearch(direction);
+            if (next != null) next.requestFocus(direction);
+        }
+        decor.dispatchKeyEvent(new android.view.KeyEvent(android.view.KeyEvent.ACTION_UP, code));
+    }
+
+    /** Pages on a DPAD_RIGHT nothing inside it took, whatever its own focus says, as TikTok's pager does. */
+    private static final class Pager extends FrameLayout {
+        int paged;
+
+        Pager(android.content.Context context) {
+            super(context);
+        }
+
+        @Override public boolean dispatchKeyEvent(android.view.KeyEvent event) {
+            if (super.dispatchKeyEvent(event)) return true;
+            if (event.getAction() != android.view.KeyEvent.ACTION_DOWN
+                    || event.getKeyCode() != android.view.KeyEvent.KEYCODE_DPAD_RIGHT) return false;
+            paged++;
+            return true;
+        }
+    }
+
     @Test public void twoPanelsThatHidTheWholePageBothLetTheTabsBackIn() {
         // A cold start puts the hold and the catcher up before the tab bar has a size, so both
         // hide the page whole. Each one finding the bar later has to open the page up, even

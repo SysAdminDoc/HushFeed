@@ -296,10 +296,11 @@ val feedTabNavigationPatch = bytecodePatch(
         }
         // The bottom bar's size, read in several places that all have to agree. Same rule as above.
         val barHeightSites = try {
-            bottomBarHeightSites({ classDefByOrNull(it) }) { targets ->
+            val sites = bottomBarHeightSites({ classDefByOrNull(it) }) { targets ->
                 val types = if (targets.all { "->" in it }) classesCallingMethods(targets) else classesCalling(targets)
                 types.mapNotNull { classDefByOrNull(it) }
             }
+            sites to barCellConstructor(classDefBy(TabCountDotVisibilityFingerprint.method.definingClass))
         } catch (problem: PatchException) {
             if (packageMetadata.versionName in declaredVersions()) throw problem
             println("[Feed tab navigation] Left out the bottom bar height on ${packageMetadata.versionName}: ${problem.message}")
@@ -435,12 +436,15 @@ val feedTabNavigationPatch = bytecodePatch(
             )
         }
 
-        barHeightSites?.let { sites ->
+        barHeightSites?.let { (sites, cellConstructor) ->
             sites.hooksByMethod().forEach { (site, hooks) ->
                 mutableClassDefBy(site.first).findMutableMethodOf(site.second).addBottomBarHooks(hooks)
             }
             mutableClassDefBy(sites.navHeight.owner).findMutableMethodOf(sites.navHeight.method)
                 .adjustNavHeight(sites.navHeight)
+            // TikTok pins each tab's icon to its top and name to its bottom, which meet on a
+            // shorter bar unless both move in.
+            icon.methods.mutableCopyOf(cellConstructor).holdBarCellContent()
             SettingsStatusLoadFingerprint.method.addInstruction(
                 0,
                 "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableBottomBarHeight()V",

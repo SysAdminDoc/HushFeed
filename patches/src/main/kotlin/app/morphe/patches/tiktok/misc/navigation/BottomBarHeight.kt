@@ -236,6 +236,32 @@ internal fun MutableMethod.addBottomBarHooks(hooks: List<Pair<Int, String>>) {
     hooks.sortedByDescending { it.first }.forEach { (index, code) -> addInstructions(index, code) }
 }
 
+/**
+ * The bottom tab's constructor, where the extension moves the tab's icon and name as they go in.
+ * The hook reads the tab (p0) at the one return, so nothing before it may reuse that register.
+ */
+internal fun barCellConstructor(cell: ClassDef): Method {
+    fun fail(problem: String): Nothing = throw PatchException("Bottom bar height: $problem")
+    val constructor = cell.methods.filter { it.name == "<init>" }.singleOrNull()
+        ?: fail("${cell.type} has more than one constructor.")
+    val code = constructor.implementation ?: fail("${cell.type}'s constructor has no code.")
+    if (code.instructions.count { it.opcode == Opcode.RETURN_VOID } != 1) {
+        fail("${cell.type}'s constructor doesn't end in one return.")
+    }
+    val tab = code.registerCount - constructor.parameters.sumOf { if (it.type == "J" || it.type == "D") 2 else 1 } - 1
+    if (code.instructions.any { it.writes(tab) }) fail("${cell.type}'s constructor reuses its own register.")
+    return constructor
+}
+
+/** Hands the finished tab to the extension. */
+internal fun MutableMethod.holdBarCellContent() {
+    val returnIndex = implementation!!.instructions.indexOfFirst { it.opcode == Opcode.RETURN_VOID }
+    addInstructionsAtControlFlowLabel(
+        returnIndex,
+        "invoke-static/range {p0 .. p0}, $BOTTOM_BAR_HEIGHT_EXTENSION->onBarCell(Landroid/view/View;)V",
+    )
+}
+
 /** Passes the nav height through the extension once the extra above the bar is stored. */
 internal fun MutableMethod.adjustNavHeight(site: NavHeightStatic) {
     val field = "${site.field.definingClass}->${site.field.name}:${site.field.type}"

@@ -7,6 +7,11 @@ package app.morphe.extension.tiktok.navigation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.Setting;
 import app.morphe.extension.tiktok.SettingsContextRule;
@@ -18,6 +23,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import org.robolectric.util.ReflectionHelpers.ClassParameter;
@@ -106,6 +112,74 @@ public class BottomBarHeightTest {
             ReflectionHelpers.setStaticField(Utils.class, "context", context);
         }
         assertEquals(46, BottomBarHeight.navHeight(49));
+    }
+
+    /** At 2x TikTok's bar is 94 pixels and a 40 dp one 80, so the icon and the name each move 7. */
+    @Test public void aTabsContentMovesHalfWhatTheBarGaveUp() {
+        assertEquals(0, BottomBarHeight.contentShift(2f));
+        pick(BottomBarHeight.SHORTER);
+        assertEquals(7, BottomBarHeight.contentShift(2f));
+        // Once the bar's dimension is read, its own pixels count: 138 * 7 / 94 is 10.3.
+        BottomBarHeight.barPixels(138);
+        assertEquals(10, BottomBarHeight.contentShift(2f));
+        pick(BottomBarHeight.TALLER);
+        BottomBarHeight.barPixels(138f);
+        assertEquals(-13, BottomBarHeight.contentShift(2f));
+    }
+
+    /** On a 40 dp bar the name sat over the icon, each pinned to its own edge of the tab. */
+    @Test public void aShorterBarBringsTheIconAndTheNameIn() {
+        pick(BottomBarHeight.SHORTER);
+        BottomBarHeight.barPixels(138);
+        FrameLayout tab = new FrameLayout(RuntimeEnvironment.getApplication());
+        View icon = child(tab, Gravity.TOP | Gravity.CENTER_HORIZONTAL, 11, 0);
+        View centered = child(tab, Gravity.CENTER, 0, 0);
+        View unpinned = child(tab, -1, 5, 0);
+        View filling = new View(tab.getContext());
+        tab.addView(filling, new FrameLayout.LayoutParams(-1, ViewGroup.LayoutParams.MATCH_PARENT));
+
+        BottomBarHeight.onBarCell(tab);
+        View name = new View(tab.getContext());
+        FrameLayout.LayoutParams nameParams = new FrameLayout.LayoutParams(-1, -2, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
+        nameParams.bottomMargin = 11;
+        tab.addView(name, nameParams);
+
+        assertEquals(1, margins(icon).topMargin);
+        assertEquals(1, margins(name).bottomMargin);
+        assertEquals(-5, margins(unpinned).topMargin);
+        assertEquals(0, margins(centered).topMargin);
+        assertEquals(0, margins(centered).bottomMargin);
+        assertEquals(0, margins(filling).topMargin);
+
+        // Taken out and put back, it stays where it went the first time.
+        tab.removeView(name);
+        tab.addView(name);
+        assertEquals(1, margins(name).bottomMargin);
+    }
+
+    @Test public void aTallerBarMovesThemApartAndTikToksLeavesThemBe() {
+        FrameLayout tab = new FrameLayout(RuntimeEnvironment.getApplication());
+        View icon = child(tab, Gravity.TOP, 11, 0);
+        BottomBarHeight.onBarCell(tab);
+        assertEquals(11, margins(icon).topMargin);
+
+        pick(BottomBarHeight.TALLER);
+        BottomBarHeight.barPixels(138);
+        BottomBarHeight.onBarCell(tab);
+        assertEquals(24, margins(icon).topMargin);
+    }
+
+    private static View child(FrameLayout tab, int gravity, int top, int bottom) {
+        View view = new View(tab.getContext());
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(-2, -2, gravity);
+        params.topMargin = top;
+        params.bottomMargin = bottom;
+        tab.addView(view, params);
+        return view;
+    }
+
+    private static FrameLayout.LayoutParams margins(View view) {
+        return (FrameLayout.LayoutParams) view.getLayoutParams();
     }
 
     @Test public void pausedHushfeedKeepsTikToksBar() {

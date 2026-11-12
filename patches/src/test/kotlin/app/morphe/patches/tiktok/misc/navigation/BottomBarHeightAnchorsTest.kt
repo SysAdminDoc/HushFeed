@@ -67,7 +67,28 @@ class BottomBarHeightAnchorsTest {
 
             checkFrameHooks(version, sites, sites.reads.first { it.owner == BOTTOM_BAR_FRAMES.first() })
             checkNavHook(version, nav)
+            checkCellHook(version, app)
         }
+    }
+
+    /** The tab icon, the class whose badge setters Feed tab navigation answers, hands itself over once built. */
+    private fun checkCellHook(version: String, app: Map<String, ClassDef>) {
+        val cells = app.values.filter { classDef ->
+            classDef.methods.any { it.name == "getCountDotView" } && classDef.methods.any { it.name == "getRedDotVIew" }
+        }
+        assertEquals("$version: tab icon classes ${cells.map { it.type }}", 1, cells.size)
+        val method = MutableMethod(barCellConstructor(cells.single()))
+        val size = method.implementation!!.instructions.size
+        method.holdBarCellContent()
+        val after = method.implementation!!.instructions.toList()
+        assertEquals(size + 1, after.size)
+        val returnIndex = after.indexOfFirst { it.opcode == Opcode.RETURN_VOID }
+        val call = after[returnIndex - 1]
+        assertEquals(Opcode.INVOKE_STATIC_RANGE, call.opcode)
+        assertEquals("onBarCell", call.getReference<MethodReference>()!!.name)
+        val tab = method.implementation!!.registerCount - method.parameters.size - 1
+        assertEquals("$version: the tab itself", tab, (call as RegisterRangeInstruction).startRegister)
+        assertEquals(1, call.registerCount)
     }
 
     private fun checkFrameHooks(version: String, sites: BottomBarHeightSites, read: BarRead) {

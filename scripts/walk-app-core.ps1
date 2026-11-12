@@ -43,6 +43,11 @@ $WalkLabels = @{
 # (At least 18, then Continue). None of them signs in or acts on an account.
 $WalkLaunchGateLabel = '^(Close|At least 18|Continue)$'
 
+# TikTok's own consent prompts (the Facebook friends list and email one opens over Friends) cover
+# the bottom tabs and ignore Back, so the walk declines them. Two copies can stack, one per tap.
+# The 0.81.0 and 0.82.0 release walks both lost every tab after Friends to it.
+$WalkConsentDeclineLabel = '^(Don.t allow|Non consentire)$'
+
 # What the walk opens. MainFeed is swiped first, OtherFeeds are visited from it and Tabs are the
 # bottom tabs after Home. The receipt's profile name comes from walk-receipt.ps1's $WalkProfilePackages.
 $WalkProfiles = @{

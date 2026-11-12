@@ -334,6 +334,11 @@ function Restore-WalkTabs([string]$From, [int]$Height) {
         # The comma keeps the empty list a list: a bare @() reaches the caller as $null, and
         # Find-UiNode then stopped the whole walk on $null.Text instead of logging "no Friends tab".
         if (-not (Get-WalkForeground).StartsWith("$WalkPackage/", [StringComparison]::Ordinal)) { return , @() }
+        $decline = @(Find-UiNode -Nodes $nodes -Label $WalkConsentDeclineLabel | Where-Object Clickable) | Select-Object -First 1
+        if ($decline) {
+            Invoke-WalkTap $decline "decline '$($decline.Text)' after $From"
+            continue
+        }
         Invoke-WalkBack $From
     }
     return , @()

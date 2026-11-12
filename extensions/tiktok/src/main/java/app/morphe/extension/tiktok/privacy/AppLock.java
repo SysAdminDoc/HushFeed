@@ -631,7 +631,8 @@ public final class AppLock {
         return decor instanceof ViewGroup ? (ViewGroup) decor : null;
     }
 
-    static View coverIn(ViewGroup decor) {
+    /** App lock's cover on {@code decor}, or null when it isn't up there. */
+    public static View coverIn(ViewGroup decor) {
         for (int index = 0; index < decor.getChildCount(); index++) {
             View child = decor.getChildAt(index);
             if (COVER_TAG.equals(child.getTag())) return child;

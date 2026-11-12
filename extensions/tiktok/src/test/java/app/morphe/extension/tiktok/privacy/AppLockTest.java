@@ -23,8 +23,11 @@ import android.widget.FrameLayout;
 
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.PausedProcess;
+import app.morphe.extension.tiktok.navigation.BottomTabLabels;
+import app.morphe.extension.tiktok.navigation.StartPage;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
+import app.morphe.extension.tiktok.settings.SettingsStatus;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -294,6 +297,67 @@ public class AppLockTest {
         }
     }
 
+    @Test public void aStartPageCoverPutUpUnderTheLockLeavesUnlockInReach() {
+        boolean labelsWere = SettingsStatus.bottomTabLabelsEnabled;
+        SettingsStatus.bottomTabLabelsEnabled = true;
+        Settings.START_PAGE.save(StartPage.PROFILE);
+        try (ActivityController<Screen> screen = Robolectric.buildActivity(Screen.class, launcher()).create().start()) {
+            Activity activity = screen.get();
+            android.widget.Button like = likeOn(activity);
+            View[] tabs = startOnProfile(activity);
+            screen.resume().visible();
+            ViewGroup decor = (ViewGroup) activity.getWindow().getDecorView();
+            View cover = coverOf(activity);
+            View start = startCoverIn(decor);
+            assertNotNull(start);
+            assertTrue("the start page's cover went over the lock", decor.indexOfChild(start) < decor.indexOfChild(cover));
+            assertOnlyUnlockInReach(decor, cover);
+
+            showTab(decor, tabs);
+            assertNull(startCoverIn(decor));
+            assertOnlyUnlockInReach(decor, cover);
+            assertFalse("the screen came out from under the lock", like.isImportantForAccessibility());
+
+            AppLock.succeeded();
+            assertTrue(like.isImportantForAccessibility());
+            assertTrue(like.requestFocus());
+        } finally {
+            SettingsStatus.bottomTabLabelsEnabled = labelsWere;
+            Settings.START_PAGE.resetToDefault();
+        }
+    }
+
+    @Test public void aLockOverTheStartPageCoverLeavesTheScreenReadableWhicheverComesOffFirst() {
+        boolean labelsWere = SettingsStatus.bottomTabLabelsEnabled;
+        SettingsStatus.bottomTabLabelsEnabled = true;
+        Settings.START_PAGE.save(StartPage.PROFILE);
+        try (ActivityController<Screen> screen = Robolectric.buildActivity(Screen.class, launcher()).create()) {
+            Activity activity = screen.get();
+            android.widget.Button like = likeOn(activity);
+            View[] tabs = startOnProfile(activity);
+            screen.start().resume().visible();
+            ViewGroup decor = (ViewGroup) activity.getWindow().getDecorView();
+            View cover = coverOf(activity);
+            assertNotNull(startCoverIn(decor));
+            assertOnlyUnlockInReach(decor, cover);
+
+            AppLock.succeeded();
+            assertFalse("the screen came out from under the start page's cover",
+                    like.isImportantForAccessibility());
+            showTab(decor, tabs);
+            assertNull(startCoverIn(decor));
+            assertTrue(like.isImportantForAccessibility());
+            assertTrue(like.requestFocus());
+        } finally {
+            SettingsStatus.bottomTabLabelsEnabled = labelsWere;
+            Settings.START_PAGE.resetToDefault();
+        }
+    }
+
+    private static Intent launcher() {
+        return new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER);
+    }
+
     /** A button on the screen, which Tab and a reader can reach unless something covers it. */
     private static android.widget.Button likeOn(Activity activity) {
         android.widget.Button like = new android.widget.Button(activity);
@@ -304,6 +368,43 @@ public class AppLockTest {
 
     private static ViewGroup page(Activity activity) {
         return (ViewGroup) ((ViewGroup) activity.findViewById(android.R.id.content)).getChildAt(0);
+    }
+
+    /** Home and Profile in the bottom bar, Home selected, and a launcher start that opens on Profile. */
+    private static View[] startOnProfile(Activity activity) {
+        View home = new View(activity);
+        View profile = new View(activity);
+        page(activity).addView(home);
+        page(activity).addView(profile);
+        BottomTabLabels.tabCreated(home, "HOME");
+        BottomTabLabels.tabCreated(profile, "USER");
+        home.setSelected(true);
+        assertEquals("USER", StartPage.coldStartTag(activity, "HOME", null));
+        return new View[] {home, profile};
+    }
+
+    /** Profile comes up, which takes the start page's cover off before the next frame. */
+    private static void showTab(ViewGroup decor, View[] tabs) {
+        tabs[0].setSelected(false);
+        tabs[1].setSelected(true);
+        decor.getViewTreeObserver().dispatchOnPreDraw();
+        idle();
+    }
+
+    private static View startCoverIn(ViewGroup decor) {
+        for (int index = 0; index < decor.getChildCount(); index++) {
+            View child = decor.getChildAt(index);
+            if (child.getClass().getName().endsWith("StartCover$Cover")) return child;
+        }
+        return null;
+    }
+
+    private static void assertOnlyUnlockInReach(ViewGroup decor, View cover) {
+        View unlock = unlockOf(cover);
+        assertTrue("a reader can't reach Unlock", unlock.isImportantForAccessibility());
+        ArrayList<View> stops = new ArrayList<>();
+        decor.addFocusables(stops, View.FOCUS_FORWARD, View.FOCUSABLES_ALL);
+        assertEquals("Tab goes somewhere other than Unlock", List.of(unlock), stops);
     }
 
     private static View unlockOf(View cover) {

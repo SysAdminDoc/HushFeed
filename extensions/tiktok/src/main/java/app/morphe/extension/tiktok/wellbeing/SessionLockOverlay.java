@@ -61,7 +61,7 @@ public final class SessionLockOverlay {
     private static final int[] NAVIGATION_POSITION = new int[2];
     /** What a curtained view said about itself before a panel covered it, and which panels are over it. */
     private static final class Curtained {
-        final int importance;
+        int importance;
         /** Its descendant focusability, or -1 for a view that is not a ViewGroup. */
         final int focusability;
         boolean focusable;
@@ -907,7 +907,11 @@ public final class SessionLockOverlay {
 
     /** Hides what is inside {@code view} while any panel over it hides it whole, and hands it back after. */
     private static void hideInside(View view, Curtained state) {
+        int now = view.getImportantForAccessibility();
+        boolean changed = state.hidden && now != View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS;
         if (!state.whole.isEmpty()) {
+            // Set otherwise since the last pass means TikTok set it, and that is what goes back.
+            if (changed) state.importance = now;
             state.hidden = true;
             view.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
             if (state.focusability != -1) {
@@ -915,7 +919,7 @@ public final class SessionLockOverlay {
             }
         } else if (state.hidden) {
             state.hidden = false;
-            view.setImportantForAccessibility(state.importance);
+            if (!changed) view.setImportantForAccessibility(state.importance);
             if (state.focusability != -1) {
                 ((ViewGroup) view).setDescendantFocusability(state.focusability);
             }

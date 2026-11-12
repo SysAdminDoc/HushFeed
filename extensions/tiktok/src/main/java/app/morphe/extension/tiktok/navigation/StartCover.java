@@ -17,11 +17,9 @@ import android.view.ViewParent;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.diagnostics.HookStatus;
+import app.morphe.extension.tiktok.privacy.AppLock;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 import app.morphe.extension.tiktok.wellbeing.SessionLockOverlay;
 
@@ -76,8 +74,11 @@ final class StartCover {
         if (!(decor instanceof ViewGroup)) return;
         Cover cover = new Cover(decor.getContext(), key);
         cover.setBackground(lookOf(decor));
-        ((ViewGroup) decor).addView(cover, new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        // Under App lock's cover when it's up, which has to stay the one thing in reach.
+        ViewGroup views = (ViewGroup) decor;
+        View lock = AppLock.coverIn(views);
+        views.addView(cover, lock == null ? views.getChildCount() : views.indexOfChild(lock),
+                new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         HookStatus.bound(StartPage.FAMILY, "start cover");
     }
 
@@ -93,18 +94,21 @@ final class StartCover {
      * The cover itself: takes the touches meant for the Home under it, and checks before each frame.
      * A screen reader doesn't go by what's drawn on top, so the window's other views are hidden from
      * it for as long as the cover hides them from sight, or TalkBack could start reading the feed
-     * the reader chose not to open on.
+     * the reader chose not to open on. The curtain is the hold's, which App lock's cover shares, so
+     * whichever of the two comes off first leaves what the other still covers hidden.
      */
     static final class Cover extends View implements ViewTreeObserver.OnPreDrawListener {
         final String key;
         private final Runnable timeout = () -> lift("timed out");
-        private final Map<View, Integer> hidden = new LinkedHashMap<>();
         private boolean lifting;
 
         Cover(Context context, String key) {
             super(context);
             this.key = key;
             setClickable(true);
+            // Not a Tab stop, since pressing it does nothing. Set outright, since a clickable view
+            // counts as focusable from API 26.
+            setFocusable(false);
             SessionLockOverlay.keepTheWheel(this);
             setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
         }
@@ -115,28 +119,14 @@ final class StartCover {
             getViewTreeObserver().addOnPreDrawListener(this);
             postDelayed(timeout, LONGEST_MS);
             ViewParent parent = getParent();
-            if (!(parent instanceof ViewGroup)) return;
-            ViewGroup window = (ViewGroup) parent;
-            for (int i = 0; i < window.getChildCount(); i++) {
-                View child = window.getChildAt(i);
-                if (child == this) continue;
-                hidden.put(child, child.getImportantForAccessibility());
-                child.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
-            }
+            if (parent instanceof ViewGroup) SessionLockOverlay.hideBehind((ViewGroup) parent, this, true);
         }
 
         @Override
         protected void onDetachedFromWindow() {
             getViewTreeObserver().removeOnPreDrawListener(this);
             removeCallbacks(timeout);
-            // A view TikTok set otherwise while the cover was up keeps TikTok's choice.
-            for (Map.Entry<View, Integer> entry : hidden.entrySet()) {
-                View child = entry.getKey();
-                if (child.getImportantForAccessibility() == IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS) {
-                    child.setImportantForAccessibility(entry.getValue());
-                }
-            }
-            hidden.clear();
+            SessionLockOverlay.hideBehind(null, this, false);
             super.onDetachedFromWindow();
         }
 

@@ -81,6 +81,10 @@ public final class PausePlayback {
     /** Watches the feed go away under the catcher, so the catcher goes with it. */
     private static android.view.ViewTreeObserver.OnGlobalLayoutListener feedWatcher;
     private static WeakReference<ViewGroup> watchedRootReference = new WeakReference<>(null);
+    /** Layout passes in a row that found the catcher taken off and put it back. */
+    private static int putsBack;
+    /** A root that takes the catcher off on every pass is left alone after this many tries. */
+    static final int MAX_PUTS_BACK = 5;
     private static boolean installed;
     /** TikTok's screens that are started, weakly: the app is away once the last one stops. */
     private static final java.util.Set<Activity> STARTED =
@@ -551,6 +555,7 @@ public final class PausePlayback {
      */
     private static void watchTheFeed(Activity activity, ViewGroup root, View catcher) {
         stopWatchingTheFeed();
+        putsBack = 0;
         // Held here, not only weakly: once TikTok takes the catcher off, nothing else holds it,
         // and one collected before it was put back would leave its curtain over the feed.
         feedWatcher = () -> {
@@ -568,10 +573,22 @@ public final class PausePlayback {
                 // waits for its tap. Dropped, it would leave the feed curtained with nothing on
                 // top to tap, or start it without the tap Pause first video asks for.
                 if (catcher.getParent() != root) {
+                    // A root that strips what it doesn't know on every pass takes it off as fast
+                    // as it goes back, and each addView asks for the next pass, so the two would
+                    // lay out every frame for as long as the feed waits. After a few tries the
+                    // curtain lifts and the video stays stopped for TikTok's own tap to start.
+                    if (++putsBack > MAX_PUTS_BACK) {
+                        Logger.printDebug(() -> "TikTok kept taking the catcher off, so it's let go");
+                        removeCatcher();
+                        if (!heldElsewhere()) handBack(false);
+                        return;
+                    }
                     if (catcher.getParent() instanceof ViewGroup) {
                         ((ViewGroup) catcher.getParent()).removeView(catcher);
                     }
                     root.addView(catcher, SessionLockOverlay.indexUnderTheHold(root));
+                } else {
+                    putsBack = 0;
                 }
                 // On a cold start the tab bar is drawn after the catcher goes up, so the room
                 // left for it is measured again until it's there.
@@ -665,13 +682,17 @@ public final class PausePlayback {
      * closing either must leave the video stopped until the other has gone too.
      */
     private static void unquieten() {
-        View sheet = sheetReference.get();
-        if (catcherReference.get() != null || (sheet != null && sheet.getWindowToken() != null)
-                || panelHeld) return;
+        if (catcherReference.get() != null || heldElsewhere()) return;
         Activity owner = quietOwnerReference.get();
         Object page = quietPageReference.get();
         handBack(ownsForeground(owner) && page != null
                 && samePage(page, FeedVisibility.playbackPage(owner), owner));
+    }
+
+    /** An open sheet or a panel holds the feed apart from the catcher. */
+    private static boolean heldElsewhere() {
+        View sheet = sheetReference.get();
+        return (sheet != null && sheet.getWindowToken() != null) || panelHeld;
     }
 
     /** Native detail navigation must not carry the old page's comment hold to its player. */

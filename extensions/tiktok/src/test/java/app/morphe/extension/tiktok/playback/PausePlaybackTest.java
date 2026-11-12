@@ -455,6 +455,65 @@ public class PausePlaybackTest {
     }
 
     /**
+     * A root that takes off what it doesn't know on every layout pass would loop with the catcher
+     * going back, each addView asking for another pass, for as long as the feed waits. After a
+     * few tries the catcher and its curtain go, and the feed isn't started for the reader.
+     */
+    @Test public void aCatcherTakenOffOnEveryPassIsLetGo() {
+        Settings.NO_RESUME_ON_FOREGROUND.save(true);
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setActivity(activity);
+            ViewGroup root = activity.findViewById(android.R.id.content);
+            View feed = new View(activity);
+            root.addView(feed);
+            View homeTab = new View(activity);
+            homeTab.setId(0x7f0a4b89);
+            homeTab.setSelected(true);
+            root.addView(homeTab, new FrameLayout.LayoutParams(60, 40));
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            FeedVisibility.resolveForTests(activity.getPackageName(), "47.7.3:opf", homeTab.getId());
+            View[] seen = new View[1];
+            // TikTok's own listener, there before the catcher: whatever isn't its own comes off.
+            android.view.ViewTreeObserver.OnGlobalLayoutListener strip = () -> {
+                if (seen[0] != null && seen[0].getParent() == root) root.removeView(seen[0]);
+            };
+            root.getViewTreeObserver().addOnGlobalLayoutListener(strip);
+            int[] putBack = new int[1];
+            root.setOnHierarchyChangeListener(new ViewGroup.OnHierarchyChangeListener() {
+                @Override public void onChildViewAdded(View parent, View child) {
+                    if (child == seen[0]) putBack[0]++;
+                }
+
+                @Override public void onChildViewRemoved(View parent, View child) {}
+            });
+            try {
+                PausePlayback.setWasAwayForTests(true);
+                PausePlayback.onForeground(activity);
+                seen[0] = PausePlayback.catcherForTests();
+                assertNotNull(seen[0]);
+
+                root.getViewTreeObserver().dispatchOnGlobalLayout();
+                assertTrue("the first time it was taken off, it wasn't put back",
+                        seen[0].getParent() == root && PausePlayback.catcherForTests() == seen[0]);
+                assertTrue(PausePlayback.quietenedForTests());
+                for (int pass = 0; pass < 20; pass++) root.getViewTreeObserver().dispatchOnGlobalLayout();
+
+                assertEquals("the catcher kept going back", PausePlayback.MAX_PUTS_BACK, putBack[0]);
+                assertNull(PausePlayback.catcherForTests());
+                assertNull(seen[0].getParent());
+                assertEquals("the feed stayed curtained with nothing over it",
+                        View.IMPORTANT_FOR_ACCESSIBILITY_AUTO, feed.getImportantForAccessibility());
+                assertFalse("the feed kept its sound held", PausePlayback.quietenedForTests());
+            } finally {
+                root.getViewTreeObserver().removeOnGlobalLayoutListener(strip);
+                root.setOnHierarchyChangeListener(null);
+                FeedVisibility.resolveForTests(activity.getPackageName(), "47.7.3:opf", 0);
+            }
+        }
+    }
+
+    /**
      * The feed lock's hold has to stay on top. A catcher put up over it took the first tap and
      * Tab stop, which could start the feed behind the lock, and its curtain hid the hold's title
      * and way out from a reader and a keyboard.

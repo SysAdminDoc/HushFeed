@@ -163,7 +163,7 @@ class AmoledRestoreResourcesTest {
             Patcher(PatcherConfig(apk, temporary.newFolder())).use { patcher ->
                 patcher += setOf(probe)
                 runBlocking { patcher().collect { result -> result.exception?.let { throw it } } }
-                requireNotNull(patcher.get().resources?.resourcesApk) { "the patcher encoded no resources APK" }.copyTo(encoded)
+                requireNotNull(patcher.get().resources.resourcesApk) { "the patcher encoded no resources APK" }.copyTo(encoded)
             }
             assertTrue("$version: patching twice is refused, not $again", again is PatchException && again!!.message.orEmpty().contains("already has resources named"))
             val after = FixtureResourceTable(encoded)

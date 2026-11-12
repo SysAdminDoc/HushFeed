@@ -181,7 +181,11 @@ public final class CommentBatchTranslator {
                 lastManager = new WeakReference<>(manager);
             }
 
-            translateLoadedBatchIfReady(manager, false);
+            // This runs mid-bind, right after TikTok writes the row's manager and before it writes
+            // the row's text. A request made here let the native batch change a comment's
+            // translation state under the bind, and a row could keep the comment it showed on the
+            // previous sheet (#383). Posted, it goes out once the bind has finished.
+            Utils.runOnMainThread(() -> translateLoadedBatchIfReady(manager, false));
             itemView.postDelayed(() -> translateLoadedBatchIfReady(manager, true), 350);
         } catch (Throwable ex) {
             Logger.printDebug(() -> "[Morphe CommentBatchTranslator] register failed", asException(ex));

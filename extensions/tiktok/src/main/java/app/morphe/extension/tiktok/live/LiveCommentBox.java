@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import app.morphe.extension.shared.Logger;
+import app.morphe.extension.tiktok.theme.AmoledTheme;
 
 /**
  * The comment box a viewer types in inside a LIVE room, under Dark LIVE panels (#267, #323, #329).
@@ -50,6 +51,11 @@ import app.morphe.extension.shared.Logger;
  * Colored buttons, photos, emoji art and anything on a ground of its own keep their look. The
  * panel behind the picker's delete and send keys is a picture, a white box with a soft glow, so a
  * plain white picture takes the panel's fill too, keeping its glow's see-through edge.
+ *
+ * <p>The panel's own fill isn't the AMOLED color, though: the bar and the picker are the LIVE
+ * module's night grays (#121212, the grid #1b1b1b), which AMOLED dark theme's resources don't
+ * reach. So with a picked AMOLED color other than the default black, that color is the fill, and
+ * the panel's opaque near-black grays take it as well, so the bar, the picker and its boxes match.
  */
 public final class LiveCommentBox {
     static final int TEXT = Color.WHITE;
@@ -58,6 +64,11 @@ public final class LiveCommentBox {
     private static final int MIN_FILL_ALPHA = 0x80;
     /** How far apart a white or gray fill's channels may be, so colored buttons keep their color. */
     private static final int MAX_GRAY_SPREAD = 0x30;
+    /**
+     * A gray below this in every channel is one of the module's night grounds, the same ceiling
+     * AMOLED dark theme rewrites TikTok's own dark grays under.
+     */
+    private static final int NIGHT_GRAY_CEILING = 0x40;
     private static final int MAX_DEPTH = 64;
     /** Panels already watched, so one isn't hooked twice. */
     private static final Map<View, Boolean> WATCHED = Collections.synchronizedMap(new WeakHashMap<>());
@@ -137,9 +148,17 @@ public final class LiveCommentBox {
 
     /** Swaps the panel's light fills for its own dark one and gathers the text and icons to keep light. */
     static void darken(View root, List<View> ink) {
-        int fill = panelFill(root);
+        darken(root, AmoledTheme.customColor(), ink);
+    }
+
+    /**
+     * The same, with the picked AMOLED color, or 0 to keep the panel's own fill. A picked color
+     * replaces the panel's night grays too.
+     */
+    static void darken(View root, int custom, List<View> ink) {
+        int fill = custom != 0 ? custom : panelFill(root);
         ink.clear();
-        darken(root, fill, ink, 0, false, false);
+        darken(root, fill, custom != 0, ink, 0, false, false);
         for (View view : ink) LivePanelTheme.lightInk(view);
     }
 
@@ -147,12 +166,16 @@ public final class LiveCommentBox {
      * Inside a list, such as the picker's emoji grid, an image is art: a black heart has to stay
      * black. So there an image is only drawn light on a box this made dark, like a delete button's.
      */
-    private static void darken(View view, int fill, List<View> ink, int depth, boolean listed, boolean onDarkened) {
+    private static void darken(View view, int fill, boolean grays, List<View> ink, int depth, boolean listed,
+            boolean onDarkened) {
         if (view == null || depth > MAX_DEPTH || view.getVisibility() != View.VISIBLE) return;
         boolean picture = view instanceof ImageView && ((ImageView) view).getDrawable() != null;
-        if (!picture && swapFill(view.getBackground(), fill)) {
-            view.invalidate();
-            DARKENED.put(view, Boolean.TRUE);
+        if (!picture) {
+            // Only a box that was light counts as made dark: a night gray one's ink was light already.
+            boolean light = swapFill(view.getBackground(), fill, false);
+            boolean night = grays && swapFill(view.getBackground(), fill, true);
+            if (light || night) view.invalidate();
+            if (light) DARKENED.put(view, Boolean.TRUE);
         }
         onDarkened |= DARKENED.containsKey(view);
         if (ownGround(view.getBackground()) || view instanceof EditText) return;
@@ -164,7 +187,7 @@ public final class LiveCommentBox {
         ViewGroup group = (ViewGroup) view;
         boolean list = isList(group);
         for (int index = 0; index < group.getChildCount(); index++) {
-            darken(group.getChildAt(index), fill, ink, depth + 1, listed || list, onDarkened && !list);
+            darken(group.getChildAt(index), fill, grays, ink, depth + 1, listed || list, onDarkened && !list);
         }
     }
 
@@ -211,20 +234,21 @@ public final class LiveCommentBox {
     /**
      * Gives the white and light gray parts of a background the panel's fill, each keeping its own
      * see-through amount: a solid or rounded fill, the stops of a fade, the layers of a layered
-     * one, a plain white picture. True when something changed.
+     * one, a plain white picture. With [grays], the opaque near-black grays take it too. True when
+     * something changed.
      */
-    static boolean swapFill(Drawable background, int fill) {
+    static boolean swapFill(Drawable background, int fill, boolean grays) {
         if (background == null) return false;
         if (background instanceof DrawableContainer) {
             // Its states can share their drawables with other views' copies until it's mutated.
             Drawable current = background.mutate().getCurrent();
-            return current != background && swapFill(current, fill);
+            return current != background && swapFill(current, fill, grays);
         }
         if (background instanceof LayerDrawable) {
             LayerDrawable layers = (LayerDrawable) background;
             boolean changed = false;
             for (int index = 0; index < layers.getNumberOfLayers(); index++) {
-                if (layers.getId(index) != android.R.id.mask) changed |= swapFill(layers.getDrawable(index), fill);
+                if (layers.getId(index) != android.R.id.mask) changed |= swapFill(layers.getDrawable(index), fill, grays);
             }
             return changed;
         }
@@ -238,7 +262,7 @@ public final class LiveCommentBox {
         }
         if (background instanceof ColorDrawable) {
             ColorDrawable solid = (ColorDrawable) background;
-            if (!whiteFill(solid.getColor())) return false;
+            if (!swappable(solid.getColor(), fill, grays)) return false;
             solid.mutate();
             solid.setColor(onFill(solid.getColor(), fill));
             return true;
@@ -247,18 +271,19 @@ public final class LiveCommentBox {
         GradientDrawable shape = (GradientDrawable) background;
         ColorStateList colors = shape.getColor();
         if (colors != null) {
-            if (!whiteFill(colors.getDefaultColor())) return false;
+            if (!swappable(colors.getDefaultColor(), fill, grays)) return false;
             shape.mutate();
             shape.setColor(onFill(colors.getDefaultColor(), fill));
             return true;
         }
         int[] stops = shape.getColors();
         if (stops == null) return false;
-        boolean white = false;
-        for (int stop : stops) white |= whiteFill(stop);
-        if (!white) return false;
+        boolean swapped = false;
+        for (int stop : stops) swapped |= swappable(stop, fill, grays);
+        if (!swapped) return false;
         for (int index = 0; index < stops.length; index++) {
-            if (gray(stops[index]) && LivePanelTheme.isLight(stops[index])) stops[index] = onFill(stops[index], fill);
+            int stop = stops[index];
+            if (gray(stop) && (LivePanelTheme.isLight(stop) || (grays && nightGray(stop)))) stops[index] = onFill(stop, fill);
         }
         shape.mutate();
         shape.setColors(stops);
@@ -337,6 +362,16 @@ public final class LiveCommentBox {
 
     private static boolean whiteFill(int color) {
         return lightFill(color) && gray(color);
+    }
+
+    /** A white or light gray ground, or with [grays] an opaque night gray that isn't the fill already. */
+    private static boolean swappable(int color, int fill, boolean grays) {
+        return whiteFill(color) || (grays && Color.alpha(color) == 0xFF && gray(color) && nightGray(color)
+                && (color & 0x00FFFFFF) != (fill & 0x00FFFFFF));
+    }
+
+    private static boolean nightGray(int color) {
+        return Math.max(Color.red(color), Math.max(Color.green(color), Color.blue(color))) < NIGHT_GRAY_CEILING;
     }
 
     private static boolean gray(int color) {

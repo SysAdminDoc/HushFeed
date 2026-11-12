@@ -24,6 +24,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -391,5 +393,71 @@ public class LiveCommentBoxTest {
         root.getViewTreeObserver().dispatchOnPreDraw();
         assertNotNull(delete.getColorFilter());
         assertNull(blackHeart.getColorFilter());
+    }
+
+    /** The LIVE module's own night grays: the bar and its boxes, and the emoji grid's ground. */
+    private static final int NIGHT_BAR = 0xFF121212;
+    private static final int NIGHT_GRID = 0xFF1B1B1B;
+
+    private static FrameLayout nightBar(FrameLayout root) {
+        FrameLayout bar = new FrameLayout(root.getContext());
+        bar.setBackground(new ColorDrawable(NIGHT_BAR));
+        root.addView(bar);
+        return bar;
+    }
+
+    /**
+     * #329: with a picked AMOLED color, the bar, the picker's grid and the boxes behind send and
+     * delete take it in place of the LIVE module's grays, so none of them is left a different hue.
+     * A raised gray, a colored button, a see-through tile and the emoji keep their look.
+     */
+    @Test
+    @Config(qualifiers = "night")
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    public void aPickedAmoledColorReplacesThePanelsNightGrays() {
+        FrameLayout root = new FrameLayout(RuntimeEnvironment.getApplication());
+        FrameLayout bar = nightBar(root);
+        RecyclerView grid = new RecyclerView(root.getContext());
+        grid.setBackground(new ColorDrawable(NIGHT_GRID));
+        bar.addView(grid);
+        FrameLayout cell = new FrameLayout(root.getContext());
+        GradientDrawable cellGround = new GradientDrawable();
+        cellGround.setCornerRadius(8f);
+        cellGround.setColor(NIGHT_GRID);
+        cell.setBackground(cellGround);
+        grid.addView(cell, new FrameLayout.LayoutParams(60, 60));
+        ImageView blackHeart = icon(cell, 0xFF161823);
+        View sendBox = filled(bar, new ColorDrawable(Color.WHITE));
+        View raised = filled(bar, new ColorDrawable(0xFF4A4A4A));
+        View yellow = filled(bar, new ColorDrawable(0xFFFFC400));
+        View tile = filled(bar, new ColorDrawable(0x29FFFFFF));
+        layOut(root);
+
+        LiveCommentBox.darken(root, AMOLED, new ArrayList<>());
+
+        assertEquals("the bar", AMOLED, solid(bar));
+        assertEquals("the emoji grid", AMOLED, solid(grid));
+        assertEquals("a cell in it", AMOLED, cellGround.getColor().getDefaultColor());
+        assertEquals("the send box", AMOLED, solid(sendBox));
+        assertEquals("a raised gray stays", 0xFF4A4A4A, solid(raised));
+        assertEquals("a colored button keeps its color", 0xFFFFC400, solid(yellow));
+        assertEquals("a see-through tile stays", 0x29FFFFFF, solid(tile));
+        assertNull("an emoji on a night gray cell keeps its ink", blackHeart.getColorFilter());
+    }
+
+    /** With the default black, or the AMOLED switch off, the grays stay and a white box takes the bar's. */
+    @Test
+    @Config(qualifiers = "night")
+    public void withoutAPickedColorTheNightGraysStay() {
+        FrameLayout root = new FrameLayout(RuntimeEnvironment.getApplication());
+        FrameLayout bar = nightBar(root);
+        View grid = filled(bar, new ColorDrawable(NIGHT_GRID));
+        View sendBox = filled(bar, new ColorDrawable(Color.WHITE));
+
+        LiveCommentBox.darken(root, 0, new ArrayList<>());
+
+        assertEquals(NIGHT_BAR, solid(bar));
+        assertEquals(NIGHT_GRID, solid(grid));
+        assertEquals(NIGHT_BAR, solid(sendBox));
     }
 }

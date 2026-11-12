@@ -162,6 +162,20 @@ public class AmoledThemeTest {
         assertEquals(tikToks, AmoledTheme.composeCard(tikToks));
     }
 
+    /** #329: the LIVE comment panel takes a picked color while on; black, off and unpatched keep its grays. */
+    @Test public void theLiveCommentPanelTakesOnlyAPickedColorWhileOn() {
+        AmoledTheme.setForTests(MOCHA, lightRestore());
+        assertEquals(MOCHA, AmoledTheme.customColor());
+        AmoledTheme.setForTests(BLACK, lightRestore());
+        assertEquals("the default black", 0, AmoledTheme.customColor());
+        AmoledTheme.resetForTests();
+        assertEquals("not patched in", 0, AmoledTheme.customColor());
+
+        switchOff();
+        AmoledTheme.setForTests(MOCHA, lightRestore());
+        assertEquals(0, AmoledTheme.customColor());
+    }
+
     @Test public void aThemeSettingEverySurfaceTakesTheStyleForAll() {
         AmoledTheme.Ids ids = new AmoledTheme.Ids(
                 new int[]{android.R.attr.colorBackground, android.R.attr.textColorPrimary}, new int[]{11, 12}, 99);

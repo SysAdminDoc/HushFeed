@@ -196,6 +196,17 @@ public final class AmoledTheme {
         return ((long) argb & 0xFFFFFFFFL) << 32;
     }
 
+    /**
+     * The color the LIVE comment panel takes in place of the LIVE module's own night grays
+     * (#329): the picked AMOLED color while the switch is on. Zero while it's off, in a build
+     * without AMOLED dark theme, and for the default black, which keeps those grays as before.
+     */
+    public static int customColor() {
+        int argb = amoledColor();
+        if ((argb & 0x00FFFFFF) == 0 || restoring()) return 0;
+        return argb | 0xFF000000;
+    }
+
     private static int amoledColor() {
         int forTests = colorForTests;
         return forTests != 0 ? forTests : color();

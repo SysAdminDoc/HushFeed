@@ -166,7 +166,10 @@ internal fun MutableMethod.paintCards(field: FieldReference) {
     }
 }
 
-/** The extension's AMOLED color, filled in with the picked one so composeCard can answer it. */
+/**
+ * The extension's AMOLED color, filled in with the picked one so composeCard can answer it, and
+ * the LIVE comment panel can take it (#329).
+ */
 internal fun BytecodePatchContext.fillAmoledThemeColor(argb: Int) {
     val extension = mutableClassDefBy(AMOLED_THEME_EXTENSION)
     val stub = extension.methods.single { it.name == "color" && it.parameterTypes.isEmpty() }

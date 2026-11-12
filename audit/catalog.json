@@ -6280,6 +6280,32 @@
   "notes": "The patch makes TikTok's 'Google auth available' check return false early so the app uses its web flow. It matters only at sign-in with Google; the account here is already signed in, and signing in is a credentials step the audit does not perform. Owed natural check: Sign in with Google on a fresh install completes instead of failing."
  },
  {
+  "name": "Fix Spotify login",
+  "category": "Settings",
+  "default": true,
+  "kind": "infrastructure",
+  "source": [
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/misc/login/spotify/FixSpotifyLoginPatch.kt",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/misc/SpotifyWebLogin.java"
+  ],
+  "settings": [],
+  "surface": "app-start",
+  "checks": [
+   {
+    "id": "registered",
+    "what": "The patch applied: it registered itself with the build details.",
+    "steps": [
+     {
+      "probe": "report",
+      "expect": "registered_switches:[^\\n]*\\bspotifyLoginFix\\b"
+     }
+    ],
+    "auto": true
+   }
+  ],
+  "notes": "The guard sits first in TikTok's activity startActivityForResult wrapper and takes only Spotify's START_AUTH_FLOW hand-off for request 1138, opening accounts.spotify.com/authorize in a WebView and answering the SDK's LoginActivity with the code from the www.tiktok.com redirect. It matters only when Add to Spotify asks to link an account with the Spotify app installed. Owed natural check: with the Spotify app installed, Add to Spotify on a sound opens Spotify's sign-in page, and after signing in the sound lands in the linked account's library. Signing in to Spotify is a credentials step the audit does not perform."
+ },
+ {
   "name": "Foldable split comment view",
   "category": "Comments",
   "default": true,

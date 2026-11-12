@@ -102,6 +102,7 @@ class ExtensionHostsTest {
         val ALLOWED_HOSTS = setOf(
             "github.com", "api.github.com", "ko-fi.com", "gitlab.com", "www.gnu.org", "www.tiktok.com",
             "music.youtube.com", "git.iem.at", "central.sonatype.com", "www.apache.org",
+            "accounts.spotify.com",
         )
         /**
          * The media transport (the client, and the connection it pins to a checked address), and

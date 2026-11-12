@@ -199,7 +199,8 @@ public class RuntimePatchListTest {
                 "enableFeatureGateLab", "enableFollowDiagnostics", "enableGoogleLoginFix",
                 "enableNetworkRequestReport", "enableNoLoginRequirement", "enableNoScreenCaptureDetection",
                 "enableRepostDiagnostics", "enableRiskControlCaptcha", "enableRunBesideStoreApp",
-                "enableSavedStickers", "enableSettings", "enableStickerCreator", "enableStickerRecents")), registered);
+                "enableSavedStickers", "enableSettings", "enableSpotifyLoginFix", "enableStickerCreator",
+                "enableStickerRecents")), registered);
     }
 
     private static List<Path> patchSources() throws Exception {

@@ -933,6 +933,8 @@ public class SettingsStatus {
     public static void enableNoLoginRequirement() { noLoginRequirementEnabled = true; }
     public static boolean googleLoginFixEnabled = false;
     public static void enableGoogleLoginFix() { googleLoginFixEnabled = true; }
+    public static boolean spotifyLoginFixEnabled = false;
+    public static void enableSpotifyLoginFix() { spotifyLoginFixEnabled = true; }
     public static boolean runBesideStoreAppEnabled = false;
     public static void enableRunBesideStoreApp() { runBesideStoreAppEnabled = true; }
     public static boolean commentPublishDiagnosticsEnabled = false;

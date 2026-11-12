@@ -10,6 +10,7 @@ Every Hushfeed release, newest first.
 * `Delete watched offline videos` clears the offline videos you've already watched every time TikTok starts, so the next download fills their spots with new ones. A video counts as watched once it's been on screen. It starts off, sits with the offline rows in Hushfeed settings > Downloads, and shows how many unwatched videos you have left.
 * `Bottom bar height` makes TikTok's bottom bar shorter or taller, in five steps from Shorter to Taller. Videos and the other tabs make room for it at the new height. It sits under `Bottom bar icons` in Hushfeed settings > Feed tabs and takes hold after a restart.
 * `Hide profile tabs` takes tabs off the strip above a profile's videos. Tick Reposts, Liked videos, Favorites, Shop or any of the others and they're gone from every profile you open, yours included. Videos always stays. The checklist sits under `Hide profile shortcuts` in Hushfeed settings > App and takes hold after a restart.
+* `Fix Spotify login` gets Add to Spotify past its sign-in. The Spotify app won't link a patched TikTok, so you now sign in on Spotify's own page inside TikTok and it links your account from there. It's on as soon as you patch it in, with no switch.
 * The settings screen now comes in Arabic, shown when TikTok runs in Arabic. It's a first pass, so corrections from Arabic speakers are welcome (D307).
 
 ### Bug Fixes

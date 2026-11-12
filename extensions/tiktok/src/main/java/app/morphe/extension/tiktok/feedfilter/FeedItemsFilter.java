@@ -143,7 +143,6 @@ public final class FeedItemsFilter {
     private static final AtomicInteger batchLogCount = new AtomicInteger();
     private static final AtomicInteger itemLogCount = new AtomicInteger();
     private static final AtomicInteger filterExceptionLogCount = new AtomicInteger();
-    private static final AtomicInteger listReplacementLogCount = new AtomicInteger();
     private static final AtomicInteger filterCallProbeCount = new AtomicInteger();
     private static final Map<Integer, ProbeSeenList> filterCallProbeSeenLists = new HashMap<>();
     private static final Map<Integer, ProcessedListState> processedListCache = new HashMap<>();
@@ -177,7 +176,6 @@ public final class FeedItemsFilter {
         batchLogCount.set(0);
         itemLogCount.set(0);
         filterExceptionLogCount.set(0);
-        listReplacementLogCount.set(0);
         profileAdRefusalLogCount.set(0);
         filterCallProbeCount.set(0);
         synchronized (filterCallProbeSeenLists) {
@@ -1601,18 +1599,10 @@ public final class FeedItemsFilter {
 
         List resultList = list;
         if (removed > 0) {
-            try {
-                list.clear();
-                list.addAll(kept);
-            } catch (RuntimeException exception) {
-                resultList = replaceOwnerList(owner, kept);
-                if (listReplacementLogCount.getAndIncrement() < 3) {
-                    Logger.printException(
-                        () -> "[Morphe TikTok FeedFilter] Replaced a non-mutable " + source + " list",
-                        exception
-                    );
-                }
-            }
+            // TikTok may clone a response while another consumer reads it. Mutating the
+            // published ArrayList in place lets that clone observe a modCount change and throw
+            // ConcurrentModificationException. Publish a snapshot instead.
+            resultList = replaceOwnerList(owner, kept);
         }
 
         if (probeEnabled) {

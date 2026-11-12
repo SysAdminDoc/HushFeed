@@ -282,8 +282,8 @@ public class AdvancedDownloadsTest {
     /**
      * 47.0.3 serves some heights only as ByteVC2, which nothing but TikTok's own player decodes
      * (a saved file's video track came out as codec tag bvc2 on the S22). Those are never chosen;
-     * at the same height H.264 is taken over HEVC; with nothing playable left the save is
-     * TikTok's own.
+     * at the same height the higher-quality rendition is taken, with H.264 only breaking a
+     * quality tie; with nothing playable left the save is TikTok's own.
      */
     @Test public void onlyRenditionsOtherPlayersOpenAreChosen() {
         Gear bvc2High = new Gear("adapt_lower_720_2", 500, "https://example.com/720-bvc2").codec(2);
@@ -292,10 +292,10 @@ public class AdvancedDownloadsTest {
         Gear hevcMid = new Gear("lower_540_1", 200, "https://example.com/540-hevc").codec(1);
         Gear h264Mid = new Gear("normal_540_0", 150, "https://example.com/540-h264").codec(0);
         List<Gear> gears = List.of(bvc2High, hevcHigh, bvc2Mid, hevcMid, h264Mid);
-        assertSame("720: the ByteVC2 720 is skipped for the playable 540", h264Mid, QualitySelector.chooseForFile(gears, "720"));
+        assertSame("720: the ByteVC2 720 is skipped for the higher-quality playable 540", hevcMid, QualitySelector.chooseForFile(gears, "720"));
         assertSame("highest: the playable 1080", hevcHigh, QualitySelector.chooseForFile(gears, "highest"));
-        assertSame("540: H.264 over HEVC and ByteVC2 at the same height", h264Mid, QualitySelector.chooseForFile(gears, "540"));
-        assertSame("lowest: still H.264 at the same height", h264Mid, QualitySelector.chooseForFile(gears, "lowest"));
+        assertSame("540: higher bitrate HEVC over lower bitrate H.264", hevcMid, QualitySelector.chooseForFile(gears, "540"));
+        assertSame("lowest: lower bitrate H.264 at the same height", h264Mid, QualitySelector.chooseForFile(gears, "lowest"));
         assertSame("without H.264, HEVC", hevcMid, QualitySelector.chooseForFile(List.of(bvc2Mid, hevcMid), "540"));
         assertNull("nothing playable: TikTok's own save", QualitySelector.chooseForFile(List.of(bvc2High, bvc2Mid), "720"));
         assertNull("and for the download's own choice too",
@@ -304,6 +304,27 @@ public class AdvancedDownloadsTest {
         assertSame("and for the address TikTok's save is handed", h264Mid.playAddr, QualitySelector.download(new VideoData47(gears)));
         // TikTok's own player decodes ByteVC2, so the choice for playback keeps it.
         assertSame("playback still takes the ByteVC2 720", bvc2High, QualitySelector.choose(gears, "720"));
+    }
+
+    @Test public void h264BreaksAnOtherwiseEqualQualityTie() {
+        Gear hevc = new Gear("adapt_720_1", 200, "https://example.com/720-hevc").codec(1);
+        Gear h264 = new Gear("normal_720_0", 200, "https://example.com/720-h264").codec(0);
+
+        assertSame(h264, QualitySelector.chooseForFile(List.of(hevc, h264), "720"));
+    }
+
+    @Test public void downloadCodecSettingChoosesTheRequestedCodec() {
+        Gear h264 = new Gear("normal_720_0", 200, "https://example.com/720-h264").codec(0);
+        Gear hevc = new Gear("adapt_720_1", 400, "https://example.com/720-hevc").codec(1);
+        Gear bytevc2 = new Gear("adapt_720_2", 600, "https://example.com/720-bytevc2").codec(2);
+        VideoData video = new VideoData(List.of(h264, hevc, bytevc2));
+
+        Settings.DOWNLOAD_VIDEO_CODEC.save("h264");
+        assertSame(h264, VideoDownloads.selectedGear(video, "720", false));
+        Settings.DOWNLOAD_VIDEO_CODEC.save("hevc");
+        assertSame(hevc, VideoDownloads.selectedGear(video, "720", false));
+        Settings.DOWNLOAD_VIDEO_CODEC.save("bytevc2");
+        assertSame(bytevc2, VideoDownloads.selectedGear(video, "720", false));
     }
 
     /**

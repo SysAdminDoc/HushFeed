@@ -103,7 +103,7 @@ val hideProfileShortcutsPatch = bytecodePatch(
             null
         }
         // Hide profile tabs, held by ProfileTabsAnchorsTest: the pager's reads of its tab lists
-        // and TikTok's map from tab type to name.
+        // and the pager's number for each tab name.
         val profileTabs = try {
             resolveProfileTabHooks(PATCH_NAME)
         } catch (problem: Exception) {

@@ -12,27 +12,29 @@ import app.morphe.patches.tiktok.misc.optimizer.isBranchTarget
 import app.morphe.util.addInstructions
 import app.morphe.util.getReference
 import app.morphe.util.singleOrPatchException
-import app.morphe.util.toPublicAccessFlags
-import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.Instruction
+import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+import com.android.tools.smali.dexlib2.iface.reference.StringReference
 
 internal const val PROFILE_TABS = "Lapp/morphe/extension/tiktok/profile/ProfileTabs;"
 private const val TAB_LIST = "Ljava/util/List;"
-private const val TAB_NAME_MAP = "Ljava/util/Map;"
 private const val PROFILE_TAB_USER = "Lcom/ss/android/ugc/aweme/profile/model/User;"
+private const val TAB_NAME_PREFIX = "profile_tab_"
+private const val VIDEOS_TAB = "profile_tab_public_post"
 
 /**
- * TikTok's reading of a profile's server-sent components into the tab types the pager lays out.
- * Its class also keeps the map from each tab type to a name that stays put between builds,
- * profile_tab_<kind>, which the extension matches the picks against.
+ * TikTok's reading of a profile's server-sent components into the tab types the pager lays out:
+ * each component's name, profile_tab_<kind>, which stays put between builds, matched in turn and
+ * turned into the pager's number for that tab.
  */
 internal object ProfileTabTypesFingerprint : Fingerprint(
     returnType = TAB_LIST,
     parameters = listOf(PROFILE_TAB_USER, TAB_LIST),
-    strings = listOf("profile_tab_public_post", "repost_biz"),
+    strings = listOf(VIDEOS_TAB, "repost_biz"),
 )
 
 /** The profile pager's read of the saved tab order, on the class that lays out a profile's tabs. */
@@ -42,10 +44,49 @@ internal object ProfileTabOrderFingerprint : Fingerprint(
     strings = listOf("profile_tabs_order"),
 )
 
-/** The map getter: the only static method on the class that takes nothing and returns a Map. */
-internal fun isProfileTabNameMap(method: Method): Boolean =
-    AccessFlags.STATIC.isSet(method.accessFlags) && method.parameterTypes.isEmpty() &&
-        method.returnType == TAB_NAME_MAP
+private val TAB_TYPE_LOADS = setOf(Opcode.CONST_4, Opcode.CONST_16, Opcode.CONST)
+private val TAB_TYPE_JUMPS = setOf(Opcode.GOTO, Opcode.GOTO_16, Opcode.GOTO_32)
+
+private fun Instruction.isTabTypeLoad() = opcode in TAB_TYPE_LOADS
+
+/**
+ * The pager's number for each tab name, read from the tab type reader. Each name is compared to
+ * the component's and then loaded as a number into one register, the one most names load just
+ * before jumping to where the number joins the list. The first such load after a name, before the
+ * next name, is its number: some names check a service first, music loads an unrelated number
+ * on the way, and the shop showcase adds its number on the spot.
+ *
+ * TikTok keeps a second map in the same class, from the component ids to the same names. Its
+ * numbers are not the pager's, so it can't be used here.
+ */
+internal fun profileTabTypes(method: Method): Map<Int, String> {
+    val instructions = method.implementation?.instructions?.toList().orEmpty()
+    val register = instructions.indices
+        .filter { instructions[it].isTabTypeLoad() && instructions.getOrNull(it + 1)?.opcode in TAB_TYPE_JUMPS }
+        .groupingBy { (instructions[it] as OneRegisterInstruction).registerA }
+        .eachCount().maxByOrNull { it.value }?.key ?: return emptyMap()
+    val names = instructions.indices.mapNotNull { index ->
+        val name = instructions[index].takeIf { it.opcode == Opcode.CONST_STRING || it.opcode == Opcode.CONST_STRING_JUMBO }
+            ?.getReference<StringReference>()?.string?.takeIf { it.startsWith(TAB_NAME_PREFIX) }
+            ?: return@mapNotNull null
+        val compare = instructions.getOrNull(index + 1)?.getReference<MethodReference>()
+        if (compare?.definingClass != "Ljava/lang/String;" || compare.name != "equals") return@mapNotNull null
+        index to name
+    }
+    val types = sortedMapOf<Int, String>()
+    names.forEachIndexed { at, (start, name) ->
+        val end = names.getOrNull(at + 1)?.first ?: instructions.size
+        val load = (start + 1 until end).firstOrNull {
+            instructions[it].isTabTypeLoad() && (instructions[it] as OneRegisterInstruction).registerA == register
+        } ?: return@forEachIndexed
+        val type = (instructions[load] as NarrowLiteralInstruction).narrowLiteral
+        val known = types.putIfAbsent(type, name)
+        if (known != null && known != name) {
+            throw PatchException("Profile tab type $type reads as both $known and $name.")
+        }
+    }
+    return types
+}
 
 /**
  * The pager's two tab lists, for a profile it has the User of and for one it only has the id of:
@@ -81,19 +122,22 @@ internal fun <M : Method> profileTabSites(pager: Iterable<M>, lists: List<Method
         }
     }
 
-internal class ProfileTabHooks(val names: MutableMethod, val stub: MutableMethod, val sites: List<Pair<MutableMethod, Int>>)
+internal class ProfileTabHooks(val types: Map<Int, String>, val stub: MutableMethod, val sites: List<Pair<MutableMethod, Int>>)
 
 /**
- * Everything Hide profile tabs needs, found before anything is written: the map getter, opened
- * to the extension's bridge, and each read of a tab list in the pager, where the list goes
- * through the extension before the pager lays out a tab for each entry.
+ * Everything Hide profile tabs needs, found before anything is written: the pager's number for
+ * each tab name, handed to the extension's bridge, and each read of a tab list in the pager,
+ * where the list goes through the extension before the pager lays out a tab for each entry.
  */
 internal fun resolveProfileTabHooks(patch: String): ProfileTabHooks {
-    val owner = ProfileTabTypesFingerprint.classDef
-    if (!AccessFlags.PUBLIC.isSet(owner.accessFlags)) {
-        throw PatchException("$patch: ${owner.type} is not public, so the extension cannot read the tab names.")
+    val types = try {
+        profileTabTypes(ProfileTabTypesFingerprint.method)
+    } catch (problem: PatchException) {
+        throw PatchException("$patch: ${problem.message}")
     }
-    val names = owner.methods.filter(::isProfileTabNameMap).singleOrPatchException("$patch: the profile tab name map")
+    if (types[0] != VIDEOS_TAB || types.size < 4) {
+        throw PatchException("$patch: could not read the profile tab types, got $types.")
+    }
     val stub = mutableClassDefBy(PROFILE_TABS).methods.filter { it.name == "tabNamesNative" }
         .singleOrPatchException("$patch: extension tabNamesNative bridge")
 
@@ -107,16 +151,18 @@ internal fun resolveProfileTabHooks(patch: String): ProfileTabHooks {
         }
     }
     if (sites.isEmpty()) throw PatchException("$patch: nothing in the profile pager reads its tab lists.")
-    return ProfileTabHooks(names, stub, sites)
+    return ProfileTabHooks(types, stub, sites)
 }
 
+/** The pager's numbers and their names as the extension reads them: 0=profile_tab_public_post,2=... */
+internal fun Map<Int, String>.encodeProfileTabTypes(): String =
+    entries.sortedBy { it.key }.joinToString(",") { "${it.key}=${it.value}" }
+
 internal fun ProfileTabHooks.install() {
-    names.accessFlags = names.accessFlags.toPublicAccessFlags()
     stub.addInstructions(
         0,
         """
-            invoke-static {}, ${names.definingClass}->${names.name}()$TAB_NAME_MAP
-            move-result-object v0
+            const-string v0, "${types.encodeProfileTabTypes()}"
             return-object v0
         """,
     )

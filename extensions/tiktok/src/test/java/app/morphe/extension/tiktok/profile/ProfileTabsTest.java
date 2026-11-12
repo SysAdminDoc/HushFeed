@@ -11,7 +11,6 @@ import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.settings.Settings;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,16 +28,11 @@ import org.robolectric.annotation.Config;
 public class ProfileTabsTest {
     @Rule public final SettingsContextRule settingsContext = new SettingsContextRule();
 
-    /** 47.7.3's map, cut to the tabs a profile usually shows. */
-    private static final Map<Object, Object> NAMES = new HashMap<>();
-    static {
-        NAMES.put(0, "profile_tab_public_post");
-        NAMES.put(14, "profile_tab_private");
-        NAMES.put(18, "profile_tab_repost");
-        NAMES.put(8, "profile_tab_favorite");
-        NAMES.put(1, "profile_tab_like");
-        NAMES.put(16, "profile_tab_ecommerce_showcase");
-    }
+    /** What the patch writes for 47.7.3, cut to the tabs a profile usually shows. */
+    private static final Map<Integer, String> NAMES = ProfileTabs.parseTabNames(
+            "0=profile_tab_public_post,2=profile_tab_like,6=profile_tab_favorite,10=profile_tab_private,"
+                    + "12=profile_tab_ecommerce_showcase,15=profile_tab_repost,16=profile_tab_sticker_store,"
+                    + "21=profile_tab_cast");
 
     @After public void reset() {
         PausedProcess.set(false);
@@ -46,28 +40,39 @@ public class ProfileTabsTest {
     }
 
     @Test public void thePickedTabsGoAndTheRestKeepTheirOrder() {
-        List<Integer> types = Arrays.asList(0, 14, 18, 8, 1, 16);
-        List<?> kept = ProfileTabs.filter(types, NAMES, ProfileTabs.namesFor("repost, Like, shop"));
-        assertEquals(List.of(0, 14, 8), kept);
+        // Your own profile's strip on 47.7.3: Videos, Stickers, AI theater, Private, Reposts,
+        // Favorites, Liked.
+        List<Integer> types = Arrays.asList(0, 16, 21, 10, 15, 6, 2);
+        List<?> kept = ProfileTabs.filter(types, NAMES, ProfileTabs.namesFor("repost, Like, favorite"));
+        assertEquals(List.of(0, 16, 21, 10), kept);
         assertNotSame("a new list, since the pager swaps entries in the one it gets", types, kept);
+        assertEquals(List.of(0, 15, 6), ProfileTabs.filter(Arrays.asList(0, 12, 15, 6), NAMES,
+                ProfileTabs.namesFor("shop")));
     }
 
     @Test public void videosStaysWhateverTheNamesSay() {
-        List<Integer> types = Arrays.asList(0, 18);
+        List<Integer> types = Arrays.asList(0, 15);
         List<?> kept = ProfileTabs.filter(types, NAMES, Set.of(ProfileTabs.VIDEOS, "profile_tab_repost"));
         assertEquals(List.of(0), kept);
     }
 
     @Test public void theStripIsNeverLeftEmpty() {
-        List<Integer> types = Arrays.asList(18, 1);
+        List<Integer> types = Arrays.asList(15, 2);
         assertSame(types, ProfileTabs.filter(types, NAMES, ProfileTabs.namesFor("repost, like")));
     }
 
     @Test public void nothingPickedOnTheStripKeepsThePagersOwnList() {
-        List<Integer> types = Arrays.asList(0, 14, 99);
+        List<Integer> types = Arrays.asList(0, 10, 99);
         assertSame("a tab with no name and one not picked both stay", types,
                 ProfileTabs.filter(types, NAMES, ProfileTabs.namesFor("repost")));
         assertSame("no map, TikTok's tabs", types, ProfileTabs.filter(types, null, ProfileTabs.namesFor("repost")));
+    }
+
+    @Test public void thePairsThePatchWroteReadBack() {
+        assertEquals(Map.of(0, "profile_tab_public_post", 15, "profile_tab_repost"),
+                ProfileTabs.parseTabNames(" 0=profile_tab_public_post, 15 = profile_tab_repost ,x=profile_tab_like,7=,=8,9"));
+        assertTrue(ProfileTabs.parseTabNames(null).isEmpty());
+        assertTrue("unpatched, so no names and nothing hidden", ProfileTabs.parseTabNames(ProfileTabs.tabNamesNative()).isEmpty());
     }
 
     @Test public void oneRowCoversEveryTabOfItsKind() {
@@ -82,7 +87,7 @@ public class ProfileTabsTest {
         assertEquals(Set.of("profile_tab_repost"), ProfileTabs.hiddenNames());
         PausedProcess.set(true);
         assertTrue(ProfileTabs.hiddenNames().isEmpty());
-        List<Integer> types = Arrays.asList(0, 18);
+        List<Integer> types = Arrays.asList(0, 15);
         assertSame(types, ProfileTabs.filter(types));
     }
 }

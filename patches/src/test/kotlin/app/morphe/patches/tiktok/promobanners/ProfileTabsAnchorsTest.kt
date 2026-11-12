@@ -17,19 +17,27 @@ import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation
+import com.android.tools.smali.dexlib2.immutable.instruction.ImmutableInstruction10t
 import com.android.tools.smali.dexlib2.immutable.instruction.ImmutableInstruction11n
 import com.android.tools.smali.dexlib2.immutable.instruction.ImmutableInstruction11x
+import com.android.tools.smali.dexlib2.immutable.instruction.ImmutableInstruction21c
+import com.android.tools.smali.dexlib2.immutable.instruction.ImmutableInstruction21s
+import com.android.tools.smali.dexlib2.immutable.instruction.ImmutableInstruction35c
+import com.android.tools.smali.dexlib2.immutable.reference.ImmutableMethodReference
+import com.android.tools.smali.dexlib2.immutable.reference.ImmutableStringReference
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * What Hide profile tabs hooks, held to each declared build: the class that reads a profile's tab
- * types, public with one static name map, and the pager's two tab lists, each read by the pager at
- * a move-result the filter can follow without landing inside a branch.
+ * What Hide profile tabs hooks, held to each declared build: the pager's number for each tab name,
+ * read from the method that turns a profile's components into tab types, and the pager's two tab
+ * lists, each read by the pager at a move-result the filter can follow without landing inside a
+ * branch.
  */
 class ProfileTabsAnchorsTest {
     @Test
@@ -50,10 +58,12 @@ class ProfileTabsAnchorsTest {
             assertEquals("$version: tab type readers ${types.map { it.first.definingClass }}", 1, types.size)
             assertEquals("$version: tab order reads ${orders.map { it.first.definingClass }}", 1, orders.size)
 
-            val owner = types.single().second
-            assertTrue("$version: ${owner.type} is public", AccessFlags.PUBLIC.isSet(owner.accessFlags))
-            val names = owner.methods.filter(::isProfileTabNameMap)
-            assertEquals("$version: name maps on ${owner.type}", 1, names.size)
+            val tabTypes = profileTabTypes(types.single().first)
+            assertEquals("$version: Videos is the pager's 0 in $tabTypes", "profile_tab_public_post", tabTypes[0])
+            for (name in CHECKLIST_NAMES) {
+                assertTrue("$version: $name has a pager number in $tabTypes", name in tabTypes.values)
+            }
+            EXPECTED_TYPES[version]?.let { assertEquals("$version: the pager's numbers", it, tabTypes) }
 
             val (order, pagerClass) = orders.single()
             val pager = pagerClass.methods.map(::MutableMethod)
@@ -69,15 +79,13 @@ class ProfileTabsAnchorsTest {
             }
 
             val before = sites.associate { (method, _) -> method to method.implementation!!.instructions.toList() }
-            ProfileTabHooks(MutableMethod(names.single()), MutableMethod(stub()), sites).also { hooks ->
+            ProfileTabHooks(tabTypes, MutableMethod(stub()), sites).also { hooks ->
                 hooks.install()
-                assertTrue("$version: the name map is opened", AccessFlags.PUBLIC.isSet(hooks.names.accessFlags))
                 val bridge = hooks.stub.implementation!!.instructions.toList()
-                assertEquals(listOf(Opcode.INVOKE_STATIC, Opcode.MOVE_RESULT_OBJECT, Opcode.RETURN_OBJECT),
-                    bridge.take(3).map { it.opcode })
-                val asked = bridge[0].getReference<MethodReference>()!!
-                assertEquals(owner.type, asked.definingClass)
-                assertEquals(names.single().name, asked.name)
+                assertEquals(listOf(Opcode.CONST_STRING, Opcode.RETURN_OBJECT), bridge.take(2).map { it.opcode })
+                val written = bridge[0].getReference<StringReference>()!!.string
+                assertEquals("$version: the bridge hands every pair",
+                    tabTypes.entries.joinToString(",") { "${it.key}=${it.value}" }, written)
             }
             sites.groupBy({ it.first }, { it.second }).forEach { (method, indices) ->
                 val after = method.implementation!!.instructions.toList()
@@ -101,9 +109,50 @@ class ProfileTabsAnchorsTest {
         }
     }
 
+    @Test
+    fun `a number loaded on the way to a name's own is not taken for it`() {
+        // Music's branch loads 14 into another register for a service lookup before its own 3,
+        // and the showcase adds its 12 on the spot with no jump after it.
+        val reader = ImmutableMethod(
+            "LX/0OHg;", "LIZIZ", emptyList(), "Ljava/util/List;",
+            AccessFlags.PUBLIC.value or AccessFlags.STATIC.value, null, null,
+            ImmutableMethodImplementation(
+                3,
+                listOf(
+                    ImmutableInstruction21c(Opcode.CONST_STRING, 0, ImmutableStringReference("profile_tab_public_post")),
+                    equals(),
+                    ImmutableInstruction11n(Opcode.CONST_4, 1, 0),
+                    ImmutableInstruction10t(Opcode.GOTO, 2),
+                    ImmutableInstruction21c(Opcode.CONST_STRING, 0, ImmutableStringReference("profile_tab_music")),
+                    equals(),
+                    ImmutableInstruction21s(Opcode.CONST_16, 2, 14),
+                    ImmutableInstruction11n(Opcode.CONST_4, 1, 3),
+                    ImmutableInstruction10t(Opcode.GOTO, 2),
+                    ImmutableInstruction21c(Opcode.CONST_STRING, 0, ImmutableStringReference("profile_tab_ecommerce_showcase")),
+                    equals(),
+                    ImmutableInstruction21s(Opcode.CONST_16, 1, 12),
+                    ImmutableInstruction21c(Opcode.CONST_STRING, 0, ImmutableStringReference("profile_tab_used_elsewhere")),
+                    ImmutableInstruction11n(Opcode.CONST_4, 1, 7),
+                    ImmutableInstruction11x(Opcode.RETURN_OBJECT, 0),
+                ),
+                null,
+                null,
+            ),
+        )
+        assertEquals(
+            sortedMapOf(0 to "profile_tab_public_post", 3 to "profile_tab_music", 12 to "profile_tab_ecommerce_showcase"),
+            profileTabTypes(reader),
+        )
+    }
+
+    private fun equals() = ImmutableInstruction35c(
+        Opcode.INVOKE_VIRTUAL, 2, 1, 0, 0, 0, 0,
+        ImmutableMethodReference("Ljava/lang/String;", "equals", listOf("Ljava/lang/Object;"), "Z"),
+    )
+
     /** The extension's bridge as javac leaves it: return null. */
     private fun stub(): Method = ImmutableMethod(
-        PROFILE_TABS, "tabNamesNative", emptyList(), "Ljava/util/Map;",
+        PROFILE_TABS, "tabNamesNative", emptyList(), "Ljava/lang/String;",
         AccessFlags.PUBLIC.value or AccessFlags.STATIC.value, null, null,
         ImmutableMethodImplementation(
             1,
@@ -115,5 +164,31 @@ class ProfileTabsAnchorsTest {
 
     private companion object {
         const val USER = "Lcom/ss/android/ugc/aweme/profile/model/User;"
+
+        /** The names the checklist's rows hide (ProfileTabs.ROWS in the extension). */
+        val CHECKLIST_NAMES = listOf(
+            "profile_tab_private", "profile_tab_repost", "profile_tab_favorite", "profile_tab_like",
+            "profile_tab_ecommerce_showcase", "profile_tab_ecommerce_store", "profile_tab_music",
+            "profile_tab_effect", "profile_tab_short_drama", "profile_tab_drama_download",
+            "profile_tab_pine_drama_watch_history", "profile_tab_sticker_store",
+        )
+
+        /**
+         * 47.7.3's numbers, read off the tab type reader's disassembly (LX/0OHg;->LIZIZ) by hand:
+         * the constant each name's branch loads before it joins the list. Your own profile's strip
+         * logged 0, 16, 21, 10, 15, 6, 2 for Videos, Stickers, AI theater, Private, Reposts,
+         * Favorites and Liked.
+         */
+        val EXPECTED_TYPES = mapOf(
+            "47.7.3" to sortedMapOf(
+                0 to "profile_tab_public_post", 2 to "profile_tab_like", 3 to "profile_tab_music",
+                4 to "profile_tab_effect", 6 to "profile_tab_favorite", 10 to "profile_tab_private",
+                12 to "profile_tab_ecommerce_showcase", 14 to "profile_tab_ecommerce_store",
+                15 to "profile_tab_repost", 16 to "profile_tab_sticker_store", 17 to "profile_tab_business_page",
+                18 to "profile_tab_short_drama", 19 to "profile_tab_live_game_org_account",
+                20 to "profile_tab_pine_drama_watch_history", 21 to "profile_tab_cast",
+                22 to "profile_tab_drama_download",
+            ),
+        )
     }
 }

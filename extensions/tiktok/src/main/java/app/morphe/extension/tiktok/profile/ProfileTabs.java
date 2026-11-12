@@ -6,6 +6,7 @@ package app.morphe.extension.tiktok.profile;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -21,9 +22,9 @@ import app.morphe.extension.tiktok.settings.Settings;
  *
  * <p>TikTok's profile pager asks for the tab types it is about to lay out, a list of numbers, and
  * builds one tab for each. The numbers are TikTok's own and can move between builds, so they are
- * matched through TikTok's map from each number to a name that stays put,
- * {@code profile_tab_<kind>}. One row of the checklist can cover several names, like Shop's
- * showcase and store tabs.
+ * matched through a name that stays put, {@code profile_tab_<kind>}: the patch reads which
+ * number TikTok gives each name and writes the pairs into {@link #tabNamesNative()}. One row of
+ * the checklist can cover several names, like Shop's showcase and store tabs.
  */
 public final class ProfileTabs {
     /** TikTok's name for the Videos tab. */
@@ -57,8 +58,13 @@ public final class ProfileTabs {
                     "profile_tab_pine_drama_watch_history"),
             new Row("sticker", "Stickers", "profile_tab_sticker_store"));
 
-    /** Replaced with a call to TikTok's map from each tab type to its name. */
-    public static Map<?, ?> tabNamesNative() {
+    private static volatile Map<Integer, String> tabNames;
+
+    /**
+     * Replaced with the pager's number for each tab name, as the patch read them from TikTok:
+     * {@code 0=profile_tab_public_post,2=profile_tab_like,...}.
+     */
+    public static String tabNamesNative() {
         return null;
     }
 
@@ -68,11 +74,29 @@ public final class ProfileTabs {
             if (types == null || types.isEmpty()) return types;
             Set<String> hidden = hiddenNames();
             if (hidden.isEmpty()) return types;
-            return filter(types, tabNamesNative(), hidden);
+            Map<Integer, String> names = tabNames;
+            if (names == null) tabNames = names = parseTabNames(tabNamesNative());
+            return filter(types, names, hidden);
         } catch (Throwable error) {
             Logger.printException(() -> "Profile tabs: could not filter the tabs", error);
             return types;
         }
+    }
+
+    /** The pairs the patch wrote, read back into a map. A pair that doesn't read is left out. */
+    static Map<Integer, String> parseTabNames(String encoded) {
+        Map<Integer, String> names = new HashMap<>();
+        if (encoded == null) return names;
+        for (String pair : encoded.split(",")) {
+            int split = pair.indexOf('=');
+            if (split <= 0 || split == pair.length() - 1) continue;
+            try {
+                names.put(Integer.valueOf(pair.substring(0, split).trim()), pair.substring(split + 1).trim());
+            } catch (NumberFormatException ignored) {
+                // Not a number before the '=', so not a pair the patch wrote.
+            }
+        }
+        return names;
     }
 
     static List<?> filter(List<?> types, Map<?, ?> names, Set<String> hidden) {

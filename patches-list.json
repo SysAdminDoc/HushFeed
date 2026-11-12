@@ -1091,6 +1091,15 @@
           "values": null
         },
         {
+          "key": "pause_before_feed_seconds",
+          "title": "Default: pause before feed seconds",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 0,
+          "values": null
+        },
+        {
           "key": "keep_paused_on_return",
           "title": "Default: keep paused on return",
           "description": null,

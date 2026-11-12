@@ -76,6 +76,7 @@
     "Block author button": [
       "no_resume_on_foreground",
       "pause_first_video",
+      "pause_before_feed_seconds",
       "keep_paused_on_return",
       "leave_on_rest_reminder",
       "idle_leave_minutes",
@@ -3492,6 +3493,14 @@
       "key": "open_story_over_live",
       "type": "boolean",
       "default": false
+    },
+    "pause_before_feed_seconds": {
+      "field": "PAUSE_BEFORE_FEED_SECONDS",
+      "key": "pause_before_feed_seconds",
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "maximum": 60
     },
     "pause_first_video": {
       "field": "PAUSE_FIRST_VIDEO",

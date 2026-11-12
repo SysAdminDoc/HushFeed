@@ -2713,3 +2713,11 @@ How many lines of a long comment show before more.	จำนวนบรรท�
 %1$s lines	%1$s บรรทัด
 # context: The tappable word at the end of a cut comment, after an ellipsis, that opens the rest of it
 … more	… เพิ่มเติม
+# context: A setting and the title of the screen it puts over the For You feed
+Pause before the feed	หยุดพักก่อนเข้าฟีด
+Zero switches this off. The first time the feed opens after TikTok starts or comes back from the background, a countdown covers it for that many seconds before you can continue, or leave. Messages, profiles and search open without it.	ศูนย์จะเป็นการปิดใช้งาน ครั้งแรกที่ฟีดเปิดขึ้นหลังจาก TikTok เริ่มทำงานหรือกลับมาจากเบื้องหลัง การนับถอยหลังจะบังฟีดไว้ตามจำนวนวินาทีดังกล่าวก่อนที่คุณจะดำเนินการต่อหรือออกได้ ข้อความ โปรไฟล์ และการค้นหาจะเปิดได้โดยไม่ต้องรอ
+# context: The button on that screen that opens the feed once the countdown ends
+Continue	ดำเนินการต่อ
+# context: The button on that screen that sends TikTok to the background instead
+Leave TikTok	ออกจาก TikTok
+You can continue now.	ตอนนี้คุณดำเนินการต่อได้แล้ว

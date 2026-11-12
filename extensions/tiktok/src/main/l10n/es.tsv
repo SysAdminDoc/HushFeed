@@ -2710,3 +2710,11 @@ How many lines of a long comment show before more.	Cuántas líneas de un coment
 %1$s lines	%1$s líneas
 # context: The tappable word at the end of a cut comment, after an ellipsis, that opens the rest of it
 … more	… más
+# context: A setting and the title of the screen it puts over the For You feed
+Pause before the feed	Pausa antes del feed
+Zero switches this off. The first time the feed opens after TikTok starts or comes back from the background, a countdown covers it for that many seconds before you can continue, or leave. Messages, profiles and search open without it.	Cero lo desactiva. La primera vez que se abre el feed después de que TikTok se inicie o vuelva del segundo plano, una cuenta atrás lo cubre durante esos segundos antes de que puedas continuar o salir. Los mensajes, los perfiles y la búsqueda se abren sin ella.
+# context: The button on that screen that opens the feed once the countdown ends
+Continue	Continuar
+# context: The button on that screen that sends TikTok to the background instead
+Leave TikTok	Salir de TikTok
+You can continue now.	Ya puedes continuar.

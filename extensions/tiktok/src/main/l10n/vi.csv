@@ -2600,3 +2600,8 @@ How many lines of a long comment show before more.,Số dòng của bình luận
 %1$s line,%1$s dòng
 %1$s lines,%1$s dòng
 … more,… thêm
+Pause before the feed,Tạm dừng trước bảng tin
+"Zero switches this off. The first time the feed opens after TikTok starts or comes back from the background, a countdown covers it for that many seconds before you can continue, or leave. Messages, profiles and search open without it.","Số 0 để tắt tính năng này. Lần đầu bảng tin mở ra sau khi TikTok khởi động hoặc quay lại từ chạy ngầm, một bộ đếm ngược sẽ che nó trong số giây đó trước khi bạn có thể tiếp tục hoặc rời đi. Tin nhắn, trang cá nhân và tìm kiếm vẫn mở bình thường."
+Continue,Tiếp tục
+Leave TikTok,Rời TikTok
+You can continue now.,Bạn có thể tiếp tục ngay bây giờ.

@@ -80,6 +80,11 @@ public class BudgetChangesTest {
         assertTrue(BudgetChanges.loosens(Settings.SESSION_BUDGET_LOCK_MINUTES, 10, 0));
         assertFalse(BudgetChanges.loosens(Settings.SESSION_BUDGET_LOCK_MINUTES, 10, 15));
         assertFalse(BudgetChanges.loosens(Settings.SESSION_BUDGET_LOCK_MINUTES, 0, 5));
+        // Pause before the feed the same way: shorter or none loosens, longer or a first one doesn't.
+        assertTrue(BudgetChanges.loosens(Settings.PAUSE_BEFORE_FEED_SECONDS, 10, 5));
+        assertTrue(BudgetChanges.loosens(Settings.PAUSE_BEFORE_FEED_SECONDS, 10, 0));
+        assertFalse(BudgetChanges.loosens(Settings.PAUSE_BEFORE_FEED_SECONDS, 10, 15));
+        assertFalse(BudgetChanges.loosens(Settings.PAUSE_BEFORE_FEED_SECONDS, 0, 5));
         for (Setting<?> toggle : new Setting<?>[]{Settings.SESSION_BUDGET_LOCK,
                 Settings.SESSION_BUDGET_WAIT_TO_LOOSEN}) {
             assertTrue(toggle.key, BudgetChanges.loosens(toggle, true, false));

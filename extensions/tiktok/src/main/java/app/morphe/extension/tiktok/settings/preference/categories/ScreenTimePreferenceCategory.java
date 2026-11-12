@@ -105,6 +105,16 @@ public final class ScreenTimePreferenceCategory extends ConditionalPreferenceCat
                 "When you open TikTok from its icon, the first video in the feed waits for one tap "
                         + "before it plays. A link, a notification or a shortcut opens as usual.",
                 Settings.PAUSE_FIRST_VIDEO));
+        addPreference(new NumberInputPreference(context, "Pause before the feed",
+                "Zero switches this off. The first time the feed opens after TikTok starts or "
+                        + "comes back from the background, a countdown covers it for that many "
+                        + "seconds before you can continue, or leave. Messages, profiles and "
+                        + "search open without it.",
+                Settings.PAUSE_BEFORE_FEED_SECONDS, "%1$s second", "%1$s seconds") {
+            @Override protected String extraSummaryLine() {
+                return waitingLine(getContext(), Settings.PAUSE_BEFORE_FEED_SECONDS, this::shown);
+            }
+        }.zeroMeansOff());
         addPreference(new TogglePreference(context, "Keep a paused video paused",
                 "A video you paused stays paused when you come back to the app instead of "
                         + "starting again. One you left playing starts as usual. "
@@ -302,7 +312,7 @@ public final class ScreenTimePreferenceCategory extends ConditionalPreferenceCat
                 return true;
             });
         }
-        for (Setting<?> setting : new Setting<?>[]{Settings.SESSION_BUDGET_VIDEOS,
+        for (Setting<?> setting : new Setting<?>[]{Settings.PAUSE_BEFORE_FEED_SECONDS, Settings.SESSION_BUDGET_VIDEOS,
                 Settings.SESSION_BUDGET_MINUTES, Settings.SESSION_BUDGET_LOCK_MINUTES,
                 Settings.SESSION_BUDGET_RESET_HOUR, Settings.SESSION_BUDGET_PASSES_PER_DAY,
                 Settings.SESSION_BUDGET_WAIT_TO_LOOSEN}) {
@@ -364,8 +374,8 @@ public final class ScreenTimePreferenceCategory extends ConditionalPreferenceCat
 
     /** Every row a budget change or a new day can move, in the order the page shows them. */
     private static Setting<?>[] budgetRows() {
-        return new Setting<?>[]{Settings.FEED_LOCK, Settings.FEED_LOCK_HOURS, Settings.SESSION_BUDGET_VIDEOS,
-                Settings.SESSION_BUDGET_MINUTES, Settings.SESSION_BUDGET_LOCK_MINUTES,
+        return new Setting<?>[]{Settings.FEED_LOCK, Settings.FEED_LOCK_HOURS, Settings.PAUSE_BEFORE_FEED_SECONDS,
+                Settings.SESSION_BUDGET_VIDEOS, Settings.SESSION_BUDGET_MINUTES, Settings.SESSION_BUDGET_LOCK_MINUTES,
                 Settings.SESSION_BUDGET_RESET_HOUR, Settings.SESSION_BUDGET_LOCK,
                 Settings.SESSION_BUDGET_PASSES_PER_DAY, Settings.SESSION_BUDGET_WAIT_TO_LOOSEN};
     }

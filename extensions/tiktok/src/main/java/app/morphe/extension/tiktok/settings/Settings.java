@@ -927,6 +927,13 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting PAUSE_FIRST_VIDEO = new BooleanSetting(
             "pause_first_video", FALSE, true);
     /**
+     * Seconds of countdown in front of the first feed after TikTok starts or comes back from the
+     * background, or zero for none. Off by default. A shorter pause loosens the budget, so it
+     * waits for the next day the way the budget's own numbers do. See PausePlayback.
+     */
+    public static final IntegerSetting PAUSE_BEFORE_FEED_SECONDS = new IntegerSetting(
+            "pause_before_feed_seconds", 0).withRange(0, 60);
+    /**
      * Keep a paused video paused. It reads the player in the pre-pause callback, which arrived in
      * Android 10, so older versions have nothing to read it by and the row is greyed there.
      */

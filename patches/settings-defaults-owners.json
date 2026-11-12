@@ -76,6 +76,7 @@
     "Block author button": [
       "NO_RESUME_ON_FOREGROUND",
       "PAUSE_FIRST_VIDEO",
+      "PAUSE_BEFORE_FEED_SECONDS",
       "KEEP_PAUSED_ON_RETURN",
       "LEAVE_ON_REST_REMINDER",
       "IDLE_LEAVE_MINUTES",

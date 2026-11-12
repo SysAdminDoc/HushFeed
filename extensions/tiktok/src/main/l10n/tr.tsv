@@ -2710,3 +2710,11 @@ How many lines of a long comment show before more.	Uzun bir yorumun devamı yaz�
 %1$s lines	%1$s satır
 # context: The tappable word at the end of a cut comment, after an ellipsis, that opens the rest of it
 … more	… devamı
+# context: A setting and the title of the screen it puts over the For You feed
+Pause before the feed	Akıştan önce mola
+Zero switches this off. The first time the feed opens after TikTok starts or comes back from the background, a countdown covers it for that many seconds before you can continue, or leave. Messages, profiles and search open without it.	Sıfır bunu kapatır. TikTok açıldıktan veya arka plandan döndükten sonra akış ilk kez açıldığında, devam edebilmeden ya da çıkabilmeden önce bir geri sayım onu o kadar saniye boyunca kapatır. Mesajlar, profiller ve arama onsuz açılır.
+# context: The button on that screen that opens the feed once the countdown ends
+Continue	Devam et
+# context: The button on that screen that sends TikTok to the background instead
+Leave TikTok	TikTok'tan çık
+You can continue now.	Artık devam edebilirsin.

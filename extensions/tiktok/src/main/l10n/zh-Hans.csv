@@ -2600,3 +2600,8 @@ How many lines of a long comment show before more.,长评论在“更多”之�
 %1$s line,%1$s 行
 %1$s lines,%1$s 行
 … more,…更多
+Pause before the feed,信息流前暂停
+"Zero switches this off. The first time the feed opens after TikTok starts or comes back from the background, a countdown covers it for that many seconds before you can continue, or leave. Messages, profiles and search open without it.",零将其关闭。TikTok 启动或从后台返回后第一次打开信息流时，倒计时会遮住它这么多秒，然后你才能继续或离开。消息、个人资料和搜索照常打开，不受影响.
+Continue,继续
+Leave TikTok,离开 TikTok
+You can continue now.,现在可以继续了.

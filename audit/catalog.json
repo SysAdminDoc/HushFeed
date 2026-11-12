@@ -1382,6 +1382,12 @@
     "default": false,
     "type": "bool",
     "row": "Show the block sound button"
+   },
+   {
+    "key": "pause_before_feed_seconds",
+    "default": 0,
+    "type": "int",
+    "row": "Pause before the feed"
    }
   ],
   "surface": "feed",
@@ -1489,6 +1495,56 @@
      }
     ],
     "auto": true
+   },
+   {
+    "id": "pause-before-feed",
+    "what": "Review: with Pause before the feed at 10 seconds, a restart opens For You behind a countdown with Continue dimmed until the count ends; Continue then lets the feed play. At 0 the feed opens as stock.",
+    "steps": [
+     {
+      "set": {
+       "pause_before_feed_seconds": "10"
+      }
+     },
+     {
+      "restart": true
+     },
+     {
+      "open": "feed"
+     },
+     {
+      "wait": 2500
+     },
+     {
+      "shot": "pause-before-feed",
+      "review": "For You covered by a dark panel titled 'Pause before the feed' with a seconds count, a dimmed Continue and a Leave TikTok button; the tab bar stays visible under it and nothing plays. Failing looks like the feed playing with no panel."
+     },
+     {
+      "wait": 9000
+     },
+     {
+      "shot": "pause-before-feed-done",
+      "review": "Same panel after the count: it reads 'You can continue now.' and Continue is at full brightness. Do not tap Leave TikTok."
+     },
+     {
+      "set": {
+       "pause_before_feed_seconds": "0"
+      }
+     },
+     {
+      "restart": true
+     },
+     {
+      "open": "feed"
+     },
+     {
+      "wait": 2500
+     },
+     {
+      "shot": "pause-before-feed-off",
+      "review": "At 0 the feed opens and plays with no panel."
+     }
+    ],
+    "auto": false
    }
   ],
   "notes": "The buttons are never pressed (a press sends a real block request). Hide this creator and Block this sound need the Feed filter patch in the build (SettingsStatus.feedFilterEnabled, BlockAuthorOverlay.java:setFeedVisible), true on an all-patches APK. The sound button also needs a usable sound on the current video and the overlay only shows on the recommendation feed with no comment sheet open, so a sound-less first video (a photo post or LIVE) can make that one finddesc fail; swipe once and rerun. The probe set for block_author_button runs the overlay refresh itself, the restart is for the other two switches."

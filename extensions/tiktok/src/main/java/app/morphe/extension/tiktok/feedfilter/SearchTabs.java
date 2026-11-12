@@ -42,9 +42,33 @@ public final class SearchTabs {
         }
     }
 
+    /**
+     * TikTok's English names for the keys its strip uses, for a tab served without a name
+     * (47.7.3 serves every tab nameless). The checklist shows them through L10n.
+     */
+    private static final Map<String, String> KNOWN_NAMES = Map.of(
+            "user", "Users",
+            "video", "Videos",
+            "photos", "Photos",
+            "music", "Sounds",
+            "live", "LIVE",
+            "shop", "Shop",
+            "place", "Places",
+            "hashtag", "Hashtags");
+
     /** The tab's key as the picks hold it, or "" for a tab without one. */
     static String key(Object tab) {
         return canonical(Reflect.string(tab, "getTabKey", "tabKey"));
+    }
+
+    /** The key of a tab in TikTok's default strip, which keeps it in its name field. */
+    static String defaultKey(Object tab) {
+        return canonical(Reflect.string(tab, "getTabName", "tabName"));
+    }
+
+    /** The English name for a key TikTok's strip uses, or null for one it doesn't. */
+    public static String knownName(String key) {
+        return KNOWN_NAMES.get(canonical(key));
     }
 
     public static String canonical(String value) {

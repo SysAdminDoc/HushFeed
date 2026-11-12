@@ -171,6 +171,22 @@ class SearchTabAnchorsTest {
         }
     }
 
+    @Test
+    fun `every declared build fills the default search tab list in one method the picked tabs leave too`() {
+        Fixtures.forEachDeclared { apk ->
+            val taken = load(apk).values.flatMap { classDef ->
+                classDef.methods.filter { SearchDefaultTabsFillFingerprint.takes(it, classDef) }
+            }
+            assertEquals("${apk.name}: methods the default tabs fingerprint takes", 1, taken.size)
+            val fills = taken.single().implementation!!.instructions.filter { it.isTabListFill() }
+            assertTrue("${apk.name}: no fill of the default list", fills.isNotEmpty())
+            fills.forEach { fill ->
+                // The hook reads and writes back the source list, the second argument.
+                assertEquals("${apk.name}: a fill takes two lists", 2, (fill as FiveRegisterInstruction).registerCount)
+            }
+        }
+    }
+
     private fun load(apk: File): Map<String, ClassDef> {
         val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
         val classes = HashMap<String, ClassDef>()

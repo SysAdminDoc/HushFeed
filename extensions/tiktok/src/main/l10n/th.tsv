@@ -7,12 +7,16 @@ Couldn't add the caption. Saving without it.	ไม่สามารถเพ�
 Dim when idle	หรี่แสงเมื่อไม่ได้ใช้งาน
 Dim when idle and shift	หรี่แสงเมื่อไม่ได้ใช้งานและเลื่อนตำแหน่ง
 For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to a quarter, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes.	สำหรับหน้าจอ OLED หลังจากไม่มีการสัมผัสเป็นเวลา 5 วินาที ปุ่ม คำบรรยาย และแท็บต่างๆ บนวิดีโอจะหรี่ลงเหลือหนึ่งในสี่ และการสัมผัสครั้งต่อไปจะทำให้กลับคืนมา การเลื่อนตำแหน่งยังจะขยับทุกอย่างบนฟีดไปสองสามพิกเซลทุกๆ 2 นาที
+Hashtags	แฮชแท็ก
 Importing new history ended Undo for the earlier clear. You can clear the imported history.	การนำเข้าประวัติใหม่ทำให้การเลิกทำสำหรับการล้างก่อนหน้านี้สิ้นสุดลง คุณสามารถล้างประวัติที่นำเข้ามาได้
 %1$d setting in that file can't be restored here and was skipped	การตั้งค่า %1$d รายการในไฟล์นั้นไม่สามารถกู้คืนที่นี่ได้และถูกข้ามไป
 %1$d settings in that file can't be restored here and were skipped	การตั้งค่า %1$d รายการในไฟล์นั้นไม่สามารถกู้คืนที่นี่ได้และถูกข้ามไป
 Import watch history	นำเข้าประวัติการดู
 Keep the language picked in TikTok	รักษาภาษาที่เลือกไว้ใน TikTok
 Freeze TikTok's experiments	ตรึงการทดลองของ TikTok
+Photos	รูปภาพ
+Places	สถานที่
+Sounds	เสียง
 TikTok's servers keep sending it new settings, which is how it tests new layouts and features on people. With this on, TikTok keeps the ones it has now and ignores new ones. If something in TikTok stops working, turn this off so it can get fixes.	เซิร์ฟเวอร์ของ TikTok ส่งการตั้งค่าใหม่มาอย่างต่อเนื่อง ซึ่งเป็นวิธีที่ TikTok ใช้ทดสอบเลย์เอาต์และฟีเจอร์ใหม่ๆ กับผู้ใช้ เมื่อเปิดตัวเลือกนี้ไว้ TikTok จะคงค่าที่มีอยู่ในปัจจุบันและละเว้นค่าใหม่ หากมีบางอย่างใน TikTok ใช้งานไม่ได้ ให้ปิดตัวเลือกนี้เพื่อให้สามารถรับการแก้ไขได้
 Nothing is playing to speed up	ไม่มีสิ่งที่กำลังเล่นอยู่ให้เร่งความเร็ว
 One language code, like en or es. Comments and captions TikTok translates come out in this language instead of the app's. Leave it empty to keep TikTok's choice.	รหัสภาษาหนึ่งรหัส เช่น en หรือ es โดยความคิดเห็นและคำบรรยายที่ TikTok แปลจะแสดงเป็นภาษานี้แทนภาษาของแอป ปล่อยว่างไว้เพื่อใช้ค่าที่ TikTok เลือก
@@ -36,6 +40,8 @@ Translate into	แปลเป็น
 Type one language code here, like en.	พิมพ์รหัสภาษาหนึ่งรหัสที่นี่ เช่น en
 Use this account's TikTok JSON export, up to %1$s MB and %2$s entries. Dates without a time zone use this phone's time zone.	ใช้ไฟล์ส่งออก JSON ของ TikTok สำหรับบัญชีนี้ สูงสุด %1$s MB และ %2$s รายการ วันที่ที่ไม่มีเขตเวลาจะใช้เขตเวลาของโทรศัพท์นี้
 Sign in to TikTok before importing watch history.	เข้าสู่ระบบ TikTok ก่อนนำเข้าประวัติการดู
+Users	ผู้ใช้
+Videos	วิดีโอ
 When TikTok starts and decides the phone's language changed, it forgets the language you picked in its settings and follows the phone. With this on, your pick stays. Counts from TikTok's next start.	เมื่อ TikTok เริ่มทำงานและพบว่าภาษาของโทรศัพท์เปลี่ยนไป แอปจะลืมภาษาที่คุณเลือกไว้ในการตั้งค่าและเปลี่ยนตามโทรศัพท์ เมื่อเปิดตัวเลือกนี้ไว้ ภาษาที่คุณเลือกจะยังคงอยู่ มีผลตั้งแต่การเริ่มทำงานครั้งต่อไปของ TikTok
 Write the username and caption on the video	เขียนชื่อผู้ใช้และคำบรรยายลงบนวิดีโอ
 Writing the caption on the video	กำลังเขียนคำบรรยายลงบนวิดีโอ

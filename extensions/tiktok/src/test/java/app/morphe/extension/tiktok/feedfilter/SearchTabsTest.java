@@ -153,6 +153,76 @@ public class SearchTabsTest {
         assertEquals("user=Users, video=Videos, shop=Tienda, live=LIVE, place=Places", catalog());
     }
 
+    /** A tab of TikTok's own default strip: its key sits in the name field, with no getter. */
+    public static final class DefaultTab {
+        private String tabName;
+        public DefaultTab(String key) { this.tabName = key; }
+        public void setTabName(String tabName) { this.tabName = tabName; }
+    }
+
+    /** The default strip 47.7.3 fills before a search opens, in the order of TikTok's enum. */
+    private static List defaults() {
+        List tabs = new ArrayList();
+        for (String key : Arrays.asList("general", "user", "video", "shop", "live", "place")) {
+            tabs.add(new DefaultTab(key));
+        }
+        return tabs;
+    }
+
+    private static List<String> defaultKeys(List tabs) {
+        List<String> keys = new ArrayList<>();
+        for (Object tab : tabs) keys.add(((DefaultTab) tab).tabName);
+        return keys;
+    }
+
+    @Test public void theDefaultStripLosesThePickedTabsTooSoBothListsStayTheSameSize() {
+        Settings.SEARCH_TAB_PICKS.save("Shop, live");
+        List strip = defaults();
+        List shown = TakoAiFilter.filterDefaultSearchTabs(strip);
+        assertNotSame("a new list, the default one untouched", strip, shown);
+        assertEquals(Arrays.asList("general", "user", "video", "place"), defaultKeys(shown));
+        assertEquals(6, strip.size());
+        // TikTok swaps the served strip in only when it's as long as the default one.
+        assertEquals(TakoAiFilter.filterSearchTabs(served()).size(), shown.size());
+        assertTrue(report(), report().contains("search tabs: 2 found, 0 missing"));
+    }
+
+    @Test public void theDefaultStripKeepsTopAndGoesThroughWithNothingPicked() {
+        List strip = defaults();
+        assertSame(strip, TakoAiFilter.filterDefaultSearchTabs(strip));
+        assertFalse(report(), report().contains("search tabs:"));
+        Settings.SEARCH_TAB_PICKS.save("general");
+        assertSame(strip, TakoAiFilter.filterDefaultSearchTabs(strip));
+    }
+
+    @Test public void pausedTheDefaultStripIsLeftAlone() {
+        Settings.SEARCH_TAB_PICKS.save("shop, live");
+        PausedProcess.set(true);
+        try {
+            List strip = defaults();
+            assertSame(strip, TakoAiFilter.filterDefaultSearchTabs(strip));
+        } finally {
+            PausedProcess.set(false);
+        }
+    }
+
+    @Test public void aDefaultTabWithoutAKeyStays() {
+        Settings.SEARCH_TAB_PICKS.save("shop");
+        List strip = defaults();
+        strip.add(new Object());
+        assertEquals(Arrays.asList("general", "user", "video", "live", "place"),
+                defaultKeys(TakoAiFilter.filterDefaultSearchTabs(strip).subList(0, 5)));
+        assertEquals(6, TakoAiFilter.filterDefaultSearchTabs(strip).size());
+    }
+
+    @Test public void aNamelessTabShowsTikToksNameForItsKey() {
+        assertEquals("Sounds", SearchTabs.knownName("music"));
+        assertEquals("LIVE", SearchTabs.knownName(" Live "));
+        assertEquals("Hashtags", SearchTabs.knownName("hashtag"));
+        assertEquals(null, SearchTabs.knownName("store"));
+        assertEquals(null, SearchTabs.knownName(null));
+    }
+
     @Test public void pausedTheCatalogStillReadsWhatWasSeen() {
         TakoAiFilter.filterSearchTabs(served());
         PausedProcess.set(true);

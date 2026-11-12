@@ -1132,6 +1132,45 @@ internal object SearchDynamicTabListGetSearchTabListFingerprint : Fingerprint(
     parameters = emptyList(),
 )
 
+private const val SEARCH_REORDER_AND_CHOOSE_TAB_VIEW_MODEL_DESCRIPTOR =
+    "Lcom/ss/android/ugc/aweme/search/pages/result/common/tabs/core/viewmodel/SearchReorderAndChooseTabViewModel;"
+
+/** Whether the instruction refills one list from another through a static (List, List) helper. */
+internal fun Instruction.isTabListFill(): Boolean =
+    opcode == Opcode.INVOKE_STATIC &&
+        getReference<MethodReference>()?.let { call ->
+            call.returnType == "V" &&
+                call.parameterTypes.map(CharSequence::toString) == listOf("Ljava/util/List;", "Ljava/util/List;")
+        } == true
+
+/**
+ * The static setup each search results page runs before its strip: it fills TikTok's own default
+ * tab list (tab infos that keep their key in their name field) from the local tab config, or from
+ * TikTok's choose and reorder tabs, each time through one clear-and-add-all helper, and hands that
+ * list on as the strip's fallback. On 47.7.3 the strip's view model takes the served list only
+ * when it holds as many tabs as this default and keeps the default otherwise, so tabs the served
+ * list loses have to go from this one too. R8-named class and method with real-named parameters;
+ * the one static taking them that asks for the choose and reorder view model.
+ */
+internal object SearchDefaultTabsFillFingerprint : Fingerprint(
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
+    returnType = "V",
+    parameters = listOf(
+        "Lcom/ss/android/ugc/aweme/search/model/SearchResultParam;",
+        "Lcom/ss/android/ugc/aweme/search/pages/result/common/tabs/core/viewmodel/SearchDynamicTabViewModel;",
+        "L",
+        "Landroidx/fragment/app/Fragment;",
+    ),
+    custom = { method, _ ->
+        val instructions = method.implementation?.instructions?.toList().orEmpty()
+        instructions.any { it.isTabListFill() } && instructions.any { instruction ->
+            instruction.opcode == Opcode.CONST_CLASS &&
+                instruction.getReference<com.android.tools.smali.dexlib2.iface.reference.TypeReference>()?.type ==
+                SEARCH_REORDER_AND_CHOOSE_TAB_VIEW_MODEL_DESCRIPTOR
+        }
+    },
+)
+
 /**
  * The fragment that inflates the search results tab strip, with the Ask Tako pill at its head when
  * TikTok's own Tako gate allows it: a text view keeping the real id name tv_tab_tako_entrance, in a

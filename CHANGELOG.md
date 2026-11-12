@@ -4,6 +4,10 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+### Features
+
+* `Hide search result tabs` takes tabs you never use off the strip above search results. Tick Shop, LIVE, Places or any other tab TikTok shows you and it's gone from every search, while Top always stays. The checklist sits under `Hide TikTok Shop in search` in Hushfeed settings > Feed filter, and it shows each tab by name in your settings language.
+
 ### Bug Fixes
 
 * `Turn off haptics` also quiets Hushfeed's own buzzes now: holding the For You, Home, Inbox or Profile tab and dragging the block button were still vibrating with the switch on.

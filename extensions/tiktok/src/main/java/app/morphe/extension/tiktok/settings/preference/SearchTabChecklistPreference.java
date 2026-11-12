@@ -111,7 +111,7 @@ public final class SearchTabChecklistPreference extends DialogPreference {
         }
         for (SearchTabs.Entry entry : catalog) {
             CheckBox check = new CheckBox(getContext());
-            check.setText(entry.label);
+            check.setText(rowLabel(entry));
             SettingsUi.styleCheckBoxRow(check);
             check.setTag("search_tab_" + entry.key);
             check.setChecked(selected.contains(entry.key));
@@ -122,6 +122,16 @@ public final class SearchTabChecklistPreference extends DialogPreference {
             rows.addView(check, new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         }
+    }
+
+    /**
+     * The name TikTok served for the tab, or, for a tab served nameless (every tab on 47.7.3),
+     * TikTok's name for its key in the settings language. An unknown nameless tab shows its key.
+     */
+    private String rowLabel(SearchTabs.Entry entry) {
+        if (!entry.label.equals(entry.key)) return entry.label;
+        String known = SearchTabs.knownName(entry.key);
+        return known == null ? entry.label : L10n.t(getContext(), known);
     }
 
     private void addState(String title, String summary) {

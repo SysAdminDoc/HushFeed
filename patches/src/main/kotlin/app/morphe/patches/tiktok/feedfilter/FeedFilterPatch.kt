@@ -702,6 +702,27 @@ val feedFilterPatch = bytecodePatch(
             }
         }
 
+        // The view model swaps the served list in only when it holds as many tabs as TikTok's own
+        // default list, and otherwise keeps the default with every tab on it (47.7.3), so the
+        // same tabs go from the default at each of its fills. The source list is filtered before
+        // the clear-and-add-all, so the fallback the setup hands on is the filtered one too.
+        SearchDefaultTabsFillFingerprint.method.apply {
+            val fills = implementationOrPatchException("Feed filter").instructions.withIndex()
+                .filter { it.value.isTabListFill() }
+                .toList()
+            if (fills.isEmpty()) throw PatchException("Feed filter: no fill of the default search tab list in $name")
+            fills.asReversed().forEach { (index, fill) ->
+                val source = (fill as FiveRegisterInstruction).registerD
+                addInstructionsAtControlFlowLabel(
+                    index,
+                    """
+                        invoke-static/range {v$source .. v$source}, $TAKO_AI_FILTER_CLASS_DESCRIPTOR->filterDefaultSearchTabs(Ljava/util/List;)Ljava/util/List;
+                        move-result-object v$source
+                    """,
+                )
+            }
+        }
+
         // The Ask Tako pill at the head of every search results page, the one Tako surface the
         // switch left standing (issue #21's screenshots). It is not a served tab but a view the
         // fragment inflates with the strip and styles before it returns, so the extension is

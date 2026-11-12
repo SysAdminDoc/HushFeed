@@ -8,12 +8,16 @@ Couldn't add the caption. Saving without it.,Keterangan gagal ditambah. Disimpan
 Dim when idle,Redupkan saat diam
 Dim when idle and shift,Redupkan saat diam dan geser
 "For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to a quarter, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes.","Untuk layar OLED. Setelah 5 detik tanpa sentuhan, tombol, keterangan, dan tab di atas video meredup menjadi seperempat, dan sentuhan berikutnya mengembalikannya. Geser juga memindahkan semua yang ada di feed beberapa piksel setiap 2 menit."
+Hashtags,Tagar
 Importing new history ended Undo for the earlier clear. You can clear the imported history.,Impor riwayat baru mengakhiri opsi Urungkan untuk penghapusan sebelumnya. Anda dapat menghapus riwayat yang diimpor.
 %1$d setting in that file can't be restored here and was skipped,%1$d pengaturan dalam berkas tidak dapat dipulihkan di sini dan dilewati
 %1$d settings in that file can't be restored here and were skipped,%1$d pengaturan dalam berkas tidak dapat dipulihkan di sini dan dilewati
 "Import watch history","Impor riwayat tontonan"
 Keep the language picked in TikTok,Pertahankan bahasa yang dipilih di TikTok
 Freeze TikTok's experiments,Bekukan eksperimen TikTok
+Photos,Foto
+Places,Tempat
+Sounds,Suara
 "TikTok's servers keep sending it new settings, which is how it tests new layouts and features on people. With this on, TikTok keeps the ones it has now and ignores new ones. If something in TikTok stops working, turn this off so it can get fixes.","Server TikTok terus mengirim pengaturan baru, begitulah TikTok menguji tata letak dan fitur baru pada orang-orang. Jika ini menyala, TikTok menyimpan pengaturan yang ada sekarang dan mengabaikan yang baru. Jika ada yang berhenti berfungsi di TikTok, matikan ini agar TikTok bisa mendapat perbaikan."
 Nothing is playing to speed up,Tidak ada yang diputar untuk dipercepat
 "One language code, like en or es. Comments and captions TikTok translates come out in this language instead of the app's. Leave it empty to keep TikTok's choice.","Satu kode bahasa, seperti en atau es. Komentar dan keterangan yang diterjemahkan TikTok muncul dalam bahasa ini, bukan bahasa aplikasi. Biarkan kosong untuk memakai pilihan TikTok."
@@ -34,6 +38,8 @@ Translate into,Terjemahkan ke
 "Type one language code here, like en.","Ketik satu kode bahasa di sini, seperti en."
 "Use this account's TikTok JSON export, up to %1$s MB and %2$s entries. Dates without a time zone use this phone's time zone.","Gunakan ekspor JSON TikTok akun ini, maksimal %1$s MB dan %2$s entri. Tanggal tanpa zona waktu memakai zona waktu ponsel ini."
 "Sign in to TikTok before importing watch history.","Masuk ke TikTok sebelum mengimpor riwayat tontonan."
+Users,Pengguna
+Videos,Video
 "When TikTok starts and decides the phone's language changed, it forgets the language you picked in its settings and follows the phone. With this on, your pick stays. Counts from TikTok's next start.","Saat TikTok dimulai dan menganggap bahasa ponsel berubah, TikTok membuang bahasa yang kamu pilih di pengaturannya dan mengikuti ponsel. Jika ini menyala, pilihanmu tetap. Berlaku sejak TikTok dimulai lagi."
 Write the username and caption on the video,Tulis nama pengguna dan keterangan di video
 Writing the caption on the video,Menulis keterangan di video

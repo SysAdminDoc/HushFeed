@@ -7,12 +7,16 @@ Couldn't add the caption. Saving without it.	No se añadió la descripción. Se 
 Dim when idle	Atenuar en reposo
 Dim when idle and shift	Atenuar en reposo y desplazar
 For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to a quarter, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes.	Para pantallas OLED. Tras 5 segundos sin tocar, los botones, la descripción y las pestañas sobre el vídeo se atenúan a una cuarta parte, y tu siguiente toque los devuelve. Desplazar también mueve todo el feed unos píxeles cada 2 minutos.
+Hashtags	Hashtags
 Importing new history ended Undo for the earlier clear. You can clear the imported history.	Importar un historial nuevo impide deshacer el borrado anterior. Puedes borrar el historial importado.
 %1$d setting in that file can't be restored here and was skipped	%1$d ajuste del archivo no se puede restaurar aquí y se omitió
 %1$d settings in that file can't be restored here and were skipped	%1$d ajustes del archivo no se pueden restaurar aquí y se omitieron
 Import watch history	Importar historial de visualización
 Keep the language picked in TikTok	Mantener el idioma elegido en TikTok
 Freeze TikTok's experiments	Congelar los experimentos de TikTok
+Photos	Fotos
+Places	Lugares
+Sounds	Sonidos
 TikTok's servers keep sending it new settings, which is how it tests new layouts and features on people. With this on, TikTok keeps the ones it has now and ignores new ones. If something in TikTok stops working, turn this off so it can get fixes.	Los servidores de TikTok le envían ajustes nuevos todo el tiempo, y así prueba diseños y funciones nuevas con la gente. Con esto activado, TikTok conserva los que tiene ahora e ignora los nuevos. Si algo de TikTok deja de funcionar, desactívalo para que pueda recibir arreglos.
 Nothing is playing to speed up	No hay nada reproduciéndose que acelerar
 One language code, like en or es. Comments and captions TikTok translates come out in this language instead of the app's. Leave it empty to keep TikTok's choice.	Un código de idioma, como en o es. Los comentarios y descripciones que TikTok traduce salen en este idioma en vez del de la app. Déjalo vacío para mantener la elección de TikTok.
@@ -36,6 +40,8 @@ Translate into	Traducir al
 Type one language code here, like en.	Escribe aquí un código de idioma, como en.
 Use this account's TikTok JSON export, up to %1$s MB and %2$s entries. Dates without a time zone use this phone's time zone.	Usa la exportación JSON de TikTok de esta cuenta, con un máximo de %1$s MB y %2$s entradas. Las fechas sin zona horaria usan la de este teléfono.
 Sign in to TikTok before importing watch history.	Inicia sesión en TikTok antes de importar el historial de visualización.
+Users	Usuarios
+Videos	Vídeos
 When TikTok starts and decides the phone's language changed, it forgets the language you picked in its settings and follows the phone. With this on, your pick stays. Counts from TikTok's next start.	Cuando TikTok se inicia y decide que el idioma del teléfono cambió, descarta el idioma que elegiste en sus ajustes y sigue al teléfono. Con esto activado, tu elección se mantiene. Cuenta desde el próximo inicio de TikTok.
 Write the username and caption on the video	Escribir el nombre de usuario y la descripción en el video
 Writing the caption on the video	Escribiendo la descripción en el video

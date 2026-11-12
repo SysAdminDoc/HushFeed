@@ -165,6 +165,36 @@ public final class TakoAiFilter {
         }
     }
 
+    /**
+     * TikTok's own default strip, filled each time a search page opens and kept whenever the
+     * served list doesn't hold as many tabs as it does (47.7.3). The tabs the served list loses
+     * go from this one too, so the two still line up and the strip TikTok falls back on is
+     * filtered as well. Its tabs keep their key in the name field. Fails open.
+     */
+    public static List filterDefaultSearchTabs(List tabs) {
+        if (tabs == null || tabs.isEmpty()) return tabs;
+        try {
+            boolean hide = Settings.HIDE_TAKO_AI.get();
+            Set<String> picked = SearchTabs.hiddenKeys();
+            if (!picked.isEmpty()) HookStatus.bound(PICKED_TABS_FAMILY, "default tabs read");
+            if (picked.isEmpty() && !hide) return tabs;
+            List kept = null;
+            for (int i = 0; i < tabs.size(); i++) {
+                Object tab = tabs.get(i);
+                boolean drop = isTakoTab(tab) ? hide : picked.contains(SearchTabs.defaultKey(tab));
+                if (drop) {
+                    if (kept == null) kept = new ArrayList(tabs.subList(0, i));
+                } else if (kept != null) {
+                    kept.add(tab);
+                }
+            }
+            return kept == null ? tabs : kept;
+        } catch (Throwable failure) {
+            HookStatus.threw(PICKED_TABS_FAMILY, "default search tabs", failure);
+            return tabs;
+        }
+    }
+
     static boolean isTakoTab(Object tab) {
         String key = Reflect.string(tab, "getTabKey", "tabKey");
         if (key != null && TAKO_TAB_KEYS.contains(key.trim().toLowerCase(java.util.Locale.ROOT))) return true;

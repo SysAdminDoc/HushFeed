@@ -301,6 +301,22 @@ public class DeepFeedFilterBoundaryTest {
     }
 
     @Test
+    public void responseFilteringPublishesSnapshotInsteadOfMutatingPublishedList() {
+        Settings.REMOVE_ADS.save(true);
+        FeedItemList page = new FeedItemList();
+        Video advert = new Video("advert", true, 500, "");
+        Video ordinary = new Video("ordinary", false, 500, "");
+        List<Object> published = new ArrayList<>(Arrays.asList(advert, ordinary));
+        page.items = published;
+
+        FeedItemsFilter.filter(page);
+
+        assertEquals(Arrays.asList(advert, ordinary), published);
+        assertEquals(List.of(ordinary), page.items);
+        assertNotSame(published, page.items);
+    }
+
+    @Test
     public void repeatedResponseIsRescannedWhenCommissionMetadataArrives() {
         Settings.REMOVE_ADS.save(true);
         BaseSettings.DEBUG.save(true);

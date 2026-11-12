@@ -49,8 +49,13 @@ final class VideoDownloads {
     static Object selectedGear(Object video, String quality, boolean withCaptions) {
         Object rates = QualitySelector.rawGears(video);
         if (!(rates instanceof List<?>)) return null;
-        if (!"auto".equals(quality)) return QualitySelector.chooseForFile(video, (List<?>) rates, quality);
-        return withCaptions ? QualitySelector.chooseForFile(video, (List<?>) rates, "highest") : tallerThanTikToksFile(video);
+        String codec = Settings.DOWNLOAD_VIDEO_CODEC.get();
+        if (!"auto".equals(quality)) {
+            return QualitySelector.chooseForFile(video, (List<?>) rates, quality, codec);
+        }
+        return withCaptions
+                ? QualitySelector.chooseForFile(video, (List<?>) rates, "highest", codec)
+                : tallerThanTikToksFile(video);
     }
 
     /**
@@ -63,7 +68,11 @@ final class VideoDownloads {
      */
     private static Object tallerThanTikToksFile(Object video) {
         if (!DownloadsPatch.shouldRemoveWatermark()) return null;
-        Object gear = storyGear(video);
+        Object rates = QualitySelector.rawGears(video);
+        Object gear = rates instanceof List<?>
+                ? QualitySelector.chooseForFile(video, (List<?>) rates, "highest",
+                        Settings.DOWNLOAD_VIDEO_CODEC.get())
+                : null;
         if (gear == null || !videoAddress(gear)) return null;
         if (QualitySelector.ownHeight(video) <= 0 && QualitySelector.heightOf(gear) <= QualitySelector.TALL_ENOUGH) return null;
         boolean dash = Boolean.TRUE.equals(Reflect.invoke(video, "hasDashBitrate"));
@@ -109,7 +118,8 @@ final class VideoDownloads {
     static Object storyGear(Object video) {
         Object rates = QualitySelector.rawGears(video);
         if (!(rates instanceof List<?>)) return null;
-        Object gear = QualitySelector.chooseForFile(video, (List<?>) rates, "highest");
+        Object gear = QualitySelector.chooseForFile(video, (List<?>) rates, "highest",
+                Settings.DOWNLOAD_VIDEO_CODEC.get());
         return gear != null && QualitySelector.ownHeight(video) < QualitySelector.heightOf(gear) ? gear : null;
     }
 

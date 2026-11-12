@@ -89,7 +89,8 @@ public final class QualitySelector {
         // Separate DASH tracks need the full download path and muxer, not a video-only URL.
         if (Boolean.TRUE.equals(Reflect.invoke(video, "hasDashBitrate"))) return null;
         Object raw = rawGears(video);
-        Object gear = raw instanceof List<?> ? chooseForFile(video, (List<?>) raw, mode) : null;
+        Object gear = raw instanceof List<?> ? chooseForFile(
+                video, (List<?>) raw, mode, Settings.DOWNLOAD_VIDEO_CODEC.get()) : null;
         Object address = Reflect.property(gear, "getPlayAddr", "playAddr");
         return address instanceof UrlModel ? (UrlModel) address : null;
     }
@@ -100,11 +101,16 @@ public final class QualitySelector {
     }
 
     /**
-     * The rendition a saved file is made from: only one other players open ({@link #playable}),
-     * and at the same height H.264 over HEVC.
+     * The rendition a saved file is made from: automatic mode keeps only codecs other players
+     * open ({@link #playable}); an explicit codec setting may choose any listed codec. At the
+     * same height, quality is compared first and H.264 is only a tie-breaker.
      */
     static Object chooseForFile(List<?> gears, String mode) {
-        return choose(gears, mode, true);
+        return chooseForFile(null, gears, mode, "auto");
+    }
+
+    static Object chooseForFile(Object video, List<?> gears, String mode, String preferredCodec) {
+        return choose(gears, mode, true, preferredCodec);
     }
 
     /**
@@ -138,6 +144,10 @@ public final class QualitySelector {
     }
 
     private static Object choose(List<?> gears, String mode, boolean forFile) {
+        return choose(gears, mode, forFile, "auto");
+    }
+
+    private static Object choose(List<?> gears, String mode, boolean forFile, String preferredCodec) {
         if (gears == null || "auto".equals(mode)) return null;
         int target;
         switch (mode == null ? "" : mode) {
@@ -152,7 +162,8 @@ public final class QualitySelector {
         int bestHeight = 0;
         for (Object gear : gears) {
             if (!hasUsableAddress(gear)) continue;
-            if (forFile && !playable(gear)) continue;
+            if (forFile && !codecMatches(gear, preferredCodec)) continue;
+            if (forFile && "auto".equals(preferredCodec) && !playable(gear)) continue;
             int height = height(gear);
             if (target > 0 && height == 0) continue;
             if (best == null || better(gear, height, best, bestHeight, target, lowest, forFile)) {
@@ -161,6 +172,16 @@ public final class QualitySelector {
             }
         }
         return best;
+    }
+
+    private static boolean codecMatches(Object gear, String preferredCodec) {
+        if (preferredCodec == null || "auto".equals(preferredCodec)) return true;
+        switch (preferredCodec) {
+            case "h264": return codec(gear) == 0;
+            case "hevc": return codec(gear) == 1;
+            case "bytevc2": return codec(gear) == 2;
+            default: return true;
+        }
     }
 
     /**
@@ -176,8 +197,9 @@ public final class QualitySelector {
     /**
      * Whether a saved file of this rendition plays outside TikTok. 47.0.3 serves some heights only
      * as ByteVC2 (gear names ending in _2): saved, those came out with a video track no player
-     * knew (codec tag bvc2, S22, 2026-09-23). None of them is chosen for a file; when nothing else
-     * is left, TikTok's own save, which is H.264, runs instead. Playback keeps them.
+     * knew (codec tag bvc2, S22, 2026-09-23). Automatic mode excludes them; an explicit ByteVC2
+     * choice can still select one, with the compatibility warning shown in settings. Playback
+     * keeps them.
      */
     static boolean playable(Object gear) {
         int code = codec(gear);
@@ -190,11 +212,17 @@ public final class QualitySelector {
             if ((a <= target) != (b <= target)) return a <= target;
             if (a != b) return a <= target ? a > b : a < b;
         }
-        // At the same height, the file more players can open: H.264 over HEVC.
-        if (forFile && a == b && codec(candidate) != codec(current)) return codec(candidate) < codec(current);
         int compare = Integer.compare(a, b);
-        if (compare == 0) compare = Long.compare(number(candidate, "getBitRate", "bitRate"), number(current, "getBitRate", "bitRate"));
+        if (compare == 0) {
+            compare = Long.compare(number(candidate, "getBitRate", "bitRate"),
+                    number(current, "getBitRate", "bitRate"));
+        }
         if (compare == 0) compare = Long.compare(size(candidate), size(current));
+        // Prefer the codec other players open only when quality is otherwise tied. Choosing
+        // H.264 before bitrate can select a visibly softer file over a higher-quality HEVC file.
+        if (compare == 0 && forFile && a == b && codec(candidate) != codec(current)) {
+            return codec(candidate) < codec(current);
+        }
         return lowest ? compare < 0 : compare > 0;
     }
 

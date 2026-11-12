@@ -81,6 +81,8 @@ public class PauseAnswersUnpatchedTest {
             "profile_shortcut_catalog",
             // The popup labels TikTok has tried to show, recorded for the checklist the same way.
             "popup_label_catalog",
+            // The search result tabs TikTok has served, recorded for the checklist the same way.
+            "search_tab_catalog",
             // The budget's day is worked out from this hour, paused or not.
             "session_budget_reset_hour",
             // The day the streak's message last went, so a pause can't send a second one.

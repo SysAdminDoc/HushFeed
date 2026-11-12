@@ -860,6 +860,7 @@ Hide reply previews,Hide reply previews
 Hide root,Hide root
 Hide root status and details about root tools from TikTok.,Hide root status and details about root tools from TikTok.
 Hide rows by title,Hide rows by title
+Hide search result tabs,Hide search result tabs
 Hide search rewards,Hide search rewards
 Hide search suggestions above comments,Hide search suggestions above comments
 Hide share actions,Hide share actions
@@ -1335,6 +1336,7 @@ No profile shortcuts have been seen yet,No profile shortcuts have been seen yet
 No reviewed presets for TikTok %1$s yet,No reviewed presets for TikTok %1$s yet
 No rule matches this text.,No rule matches this text.
 "No rules yet, so nothing would match.","No rules yet, so nothing would match."
+No search tabs have been seen yet,No search tabs have been seen yet
 No seen videos recorded yet.,No seen videos recorded yet.
 No share actions have been seen yet,No share actions have been seen yet
 No share actions match this search,No share actions match this search
@@ -1505,6 +1507,7 @@ Pick the buttons to take off the column. The rest stay where they are.,Pick the 
 "Pick the phone the effects server is told about, or type any model. An effect turned down for one phone may open for another. Empty means the Galaxy S24 Ultra.","Pick the phone the effects server is told about, or type any model. An effect turned down for one phone may open for another. Empty means the Galaxy S24 Ultra."
 "Pick the popups to stop. The list holds the ones TikTok has tried to show on this phone, so a popup appears here after its first showing. CAPTCHA, verification, sign-in, age, ban and legal consent screens are never listed or blocked.","Pick the popups to stop. The list holds the ones TikTok has tried to show on this phone, so a popup appears here after its first showing. CAPTCHA, verification, sign-in, age, ban and legal consent screens are never listed or blocked."
 "Pick the shortcuts to remove from the row under a profile's bio, such as TikTok Studio or Your orders. Restart TikTok to apply this.","Pick the shortcuts to remove from the row under a profile's bio, such as TikTok Studio or Your orders. Restart TikTok to apply this."
+"Pick the tabs to remove from the top of the search results, such as Shop, LIVE or Places. The list holds the tabs TikTok has shown you, and Top always stays.","Pick the tabs to remove from the top of the search results, such as Shop, LIVE or Places. The list holds the tabs TikTok has shown you, and Top always stays."
 Pick videos to save from profile grids,Pick videos to save from profile grids
 "Picked %1$s. Save, then tap Pick all for more.","Picked %1$s. Save, then tap Pick all for more."
 Picked videos,Picked videos
@@ -1810,6 +1813,7 @@ Search by name or gate key,Search by name or gate key
 "Search by name, description or category.","Search by name, description or category."
 Search countries or operators,Search countries or operators
 Search didn't open. Restart TikTok and try again.,Search didn't open. Restart TikTok and try again.
+"Search for something once, then return here to choose its tabs.","Search for something once, then return here to choose its tabs."
 Search hidden creators,Search hidden creators
 Search instead of Home,Search instead of Home
 Search is unavailable on this screen,Search is unavailable on this screen

@@ -3543,6 +3543,15 @@
           "values": null
         },
         {
+          "key": "search_tab_picks",
+          "title": "Default: search tab picks",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
           "key": "hide_story",
           "title": "Default: hide story",
           "description": null,

@@ -24,6 +24,7 @@ import app.morphe.extension.tiktok.settings.preference.LocalWatchHistoryPreferen
 import app.morphe.extension.tiktok.settings.preference.SeenHistoryFilePreference;
 import app.morphe.extension.tiktok.settings.preference.NumberInputPreference;
 import app.morphe.extension.tiktok.settings.preference.CreatorListPreference;
+import app.morphe.extension.tiktok.settings.preference.SearchTabChecklistPreference;
 import app.morphe.extension.tiktok.settings.preference.SectionHeadingPreference;
 import app.morphe.extension.tiktok.settings.preference.TogglePreference;
 import app.morphe.extension.tiktok.feedfilter.AdvancedFeedRules;
@@ -81,6 +82,7 @@ public class FeedFilterPreferenceCategory extends ConditionalPreferenceCategory 
                 "Hide TikTok Shop in search", "Hide the Products block and product cards in search results.",
                 Settings.HIDE_SEARCH_SHOP
         ));
+        addPreference(new SearchTabChecklistPreference(context));
         addPreference(new TogglePreference(
                 context,
                 "Hide LIVE videos", "Hide LIVE videos from the feed.",

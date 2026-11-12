@@ -4943,6 +4943,8 @@
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feedfilter/LiveFilter.java",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feedfilter/ContentMarkerFilters.java",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feedfilter/KeywordRules.java",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feedfilter/SearchTabs.java",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/settings/preference/SearchTabChecklistPreference.java",
    "extensions/shared/library/src/main/java/app/morphe/extension/shared/diagnostics/FeedFilterCounters.java"
   ],
   "settings": [
@@ -5109,10 +5111,70 @@
     "default": false,
     "type": "bool",
     "row": "Show how many were filtered"
+   },
+   {
+    "key": "search_tab_picks",
+    "default": "",
+    "type": "string",
+    "row": "Hide search result tabs"
+   },
+   {
+    "key": "search_tab_catalog",
+    "default": "",
+    "type": "string",
+    "row": "(internal list behind the Hide search result tabs checklist, no row)"
    }
   ],
   "surface": "feed",
   "checks": [
+   {
+    "id": "search-tabs-hidden",
+    "what": "With Shop, LIVE and Places picked in Hide search result tabs, a search reports the picked tabs hidden (Hook status 'search tabs' says 'picked tabs hidden') and the catalog behind the checklist holds the served tabs. The strip is read on every search, so no restart.",
+    "steps": [
+     {
+      "set": {
+       "search_tab_picks": "shop,live,place"
+      }
+     },
+     {
+      "open": "search:cats"
+     },
+     {
+      "wait": 4000
+     },
+     {
+      "probe": "hookdetails",
+      "extras": {
+       "family": "search tabs"
+      },
+      "expect": "^hookdetail search tabs ",
+      "precondition": true
+     },
+     {
+      "probe": "hookdetails",
+      "extras": {
+       "family": "search tabs"
+      },
+      "expect": "^hookdetail search tabs bound=\\[[^\\]]*picked tabs hidden"
+     },
+     {
+      "probe": "get",
+      "extras": {
+       "key": "search_tab_catalog"
+      },
+      "expect": "ok get search_tab_catalog=\\S"
+     },
+     {
+      "back": true
+     },
+     {
+      "set": {
+       "search_tab_picks": ""
+      }
+     }
+    ],
+    "auto": true
+   },
    {
     "id": "ads-removed",
     "what": "With Remove feed ads on, none of eight videos swiped through is a native or soft ad, and the filter's counters show the main feed route ran.",

@@ -251,6 +251,7 @@
       "hide_live",
       "hide_shop",
       "hide_search_shop",
+      "search_tab_picks",
       "hide_story",
       "hide_image",
       "min_max_views",
@@ -3773,6 +3774,12 @@
       "key": "search_instead_of_home",
       "type": "boolean",
       "default": false
+    },
+    "search_tab_picks": {
+      "field": "SEARCH_TAB_PICKS",
+      "key": "search_tab_picks",
+      "type": "string",
+      "default": ""
     },
     "see_through_bottom_bar": {
       "field": "SEE_THROUGH_BOTTOM_BAR",

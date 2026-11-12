@@ -2898,3 +2898,9 @@ Continue	Продолжить
 # context: The button on that screen that sends TikTok to the background instead
 Leave TikTok	Выйти из TikTok
 You can continue now.	Теперь можно продолжить.
+# context: A checklist in Feed filter of the tabs along the top of TikTok's search results (Top, Shop, LIVE, Places...)
+Hide search result tabs	Скрывать вкладки результатов поиска
+Pick the tabs to remove from the top of the search results, such as Shop, LIVE or Places. The list holds the tabs TikTok has shown you, and Top always stays.	Выберите вкладки, которые нужно убрать сверху результатов поиска, например Магазин, LIVE или Места. В списке есть вкладки, которые TikTok вам показывал, а Топ остаётся всегда.
+# context: Shown in that checklist before TikTok has served any search tabs on this phone
+No search tabs have been seen yet	Вкладки поиска пока не встречались
+Search for something once, then return here to choose its tabs.	Один раз что-нибудь найдите, затем вернитесь сюда, чтобы выбрать вкладки.

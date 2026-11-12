@@ -3,6 +3,7 @@ package app.morphe.patches.tiktok.interaction.gesture
 import app.morphe.Fixtures
 import app.morphe.takes
 import com.android.tools.smali.dexlib2.Opcodes
+import com.android.tools.smali.dexlib2.iface.Method
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -43,6 +44,32 @@ class PlayerLayerAnchorsTest {
                 "the three are one helper class's",
                 setOf(reparent[0], shown[0], detach[0]).map { it.substringBefore("->") }.toSet().size == 1,
             )
+        }
+    }
+
+    /**
+     * #259: the LIVE player's setSurfaceControl, and in it the two calls (SurfaceManager and its
+     * own) that hand the stream its layer's Surface, each with the parent and the size still in
+     * the locals the method copied them to, low enough for a plain invoke.
+     */
+    @Test
+    fun `the LIVE hook goes before both calls that hand the stream its Surface`() {
+        Fixtures.forEachDeclared { apk ->
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            val taken = mutableListOf<Method>()
+            for (entry in container.dexEntryNames) {
+                val classDef = container.getEntry(entry)!!.dexFile.classes.firstOrNull { it.type == LIVE_MANAGER } ?: continue
+                classDef.methods.filterTo(taken) { LiveLayerFingerprint.takes(it, classDef) }
+                break
+            }
+            assertEquals("setSurfaceControl methods taken: ${taken.map { it.name }}", 1, taken.size)
+
+            val calls = liveLayerCalls(taken[0])
+            assertEquals("calls handing the stream its Surface: $calls", 2, calls.size)
+            val first = calls[0]
+            assertTrue("$calls", calls.all { it.parent == first.parent && it.width == first.width && it.height == first.height })
+            assertEquals("$first", 3, setOf(first.parent, first.width, first.height).size)
+            assertTrue("$calls", calls.all { listOf(it.parent, it.surface, it.width, it.height).all { register -> register <= 15 } })
         }
     }
 }

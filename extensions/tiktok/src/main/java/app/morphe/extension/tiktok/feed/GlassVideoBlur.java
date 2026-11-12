@@ -438,20 +438,26 @@ final class GlassVideoBlur {
         return new Handler(Looper.getMainLooper());
     }
 
+    /**
+     * The player's own layer. Its Surface is copied whole into a small frame of the layer's shape
+     * and the pill's strip cut from that, because the buffer behind it needn't be the size the
+     * player gave the layer: on 47.7.3 the S22's feed layer is placed at 1080x1920 and fed 720x1280
+     * frames, so a strip asked for at the placed size lay outside the buffer and every read failed
+     * (#259).
+     */
     @android.annotation.TargetApi(26)
     private static final class LayerSource implements Source {
         private final SurfaceView view;
         private final Surface surface;
         private final Rect bounds;
-        private final int width;
-        private final int height;
+        private final Bitmap frame;
 
         LayerSource(SurfaceView view, Surface surface, Rect bounds, int width, int height) {
             this.view = view;
             this.surface = surface;
             this.bounds = bounds;
-            this.width = width;
-            this.height = height;
+            int[] size = sampleSize(width, height);
+            frame = Bitmap.createBitmap(size[0], size[1], Bitmap.Config.ARGB_8888);
         }
 
         @Override public Rect bounds() {
@@ -459,11 +465,11 @@ final class GlassVideoBlur {
         }
 
         @Override public int bufferWidth() {
-            return width;
+            return frame.getWidth();
         }
 
         @Override public int bufferHeight() {
-            return height;
+            return frame.getHeight();
         }
 
         @Override public boolean current() {
@@ -473,7 +479,11 @@ final class GlassVideoBlur {
         }
 
         @Override public void read(Rect from, Bitmap into, Done done) {
-            PixelCopy.request(surface, from, into, result -> done.done(result == PixelCopy.SUCCESS), mainHandler());
+            PixelCopy.request(surface, frame, result -> {
+                boolean copied = result == PixelCopy.SUCCESS;
+                if (copied) copyStrip(frame, from, into);
+                done.done(copied);
+            }, mainHandler());
         }
     }
 

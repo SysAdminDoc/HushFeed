@@ -156,6 +156,25 @@ public class PlayerLayersTest {
         assertNull("the oldest placement made room", PlayerLayers.placedUnder(cell));
     }
 
+    @Test public void theLivePlayersLayerIsFoundUnderTheLiveCellUntilANullParentTakesItDown() {
+        Parent cell = new Parent("de056db SurfaceView[MainActivity]@0", 1);
+        Parent next = new Parent("9ed6bd SurfaceView[MainActivity]@0", 2);
+        Surface stream = player().surface;
+
+        PlayerLayers.live(cell, stream, 1080, 1920);
+        PlayerLayers.Layer layer = PlayerLayers.placedUnder(cell);
+        assertSame(stream, layer.surface);
+        assertEquals(1080, layer.width);
+        assertEquals(1920, layer.height);
+
+        PlayerLayers.live(next, stream, 1080, 1920);
+        assertNull("the stream moved to the next LIVE cell", PlayerLayers.placedUnder(cell));
+        assertSame(stream, PlayerLayers.placedUnder(next).surface);
+
+        PlayerLayers.live(null, stream, 0, 0);
+        assertNull(PlayerLayers.placedUnder(next));
+    }
+
     @Test public void aLayerNameIsReadOnlyFromSurfaceControlsOwnShape() {
         assertEquals("91fe2b6 SurfaceView[com.zhiliaoapp.musically/MainActivity]@0",
                 PlayerLayers.layerName("Surface(name=91fe2b6 SurfaceView[com.zhiliaoapp.musically/MainActivity]@0)/@0x5c1d3"));

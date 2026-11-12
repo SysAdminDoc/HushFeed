@@ -16,7 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Where TikTok's player draws each video, so the Long press frame save can read it back.
+ * Where TikTok's player draws each video, so the Long press frame save and the glass blur can read
+ * it back.
  *
  * <p>TikTok's player can draw into a layer of its own instead of into the feed cell's SurfaceView:
  * TTPlayerSurface builds a SurfaceControl named TTPlayerVideoLayer-n with a Surface on it, and the
@@ -27,6 +28,10 @@ import java.util.List;
  * TTPlayerVideoLayer-0 as the only buffer under the cell). TTPlayerSurface's own nativeReparent
  * calls the first helper too, but the player goes straight to the helpers, so those are what the
  * patch hands here, and the layer's own Surface is what PixelCopy reads.
+ *
+ * <p>The LIVE player does the same without TTPlayerSurface: on 47.7.3 it builds a Live-n layer on
+ * SurfaceControl itself and hangs it under the LIVE cell's SurfaceView (the S22, 2026-11-11, #259).
+ * Its hook hands over that layer's Surface, which stands in for the player here.
  *
  * <p>Both calls arrive on the player's threads and the read on the main thread, so the list is
  * guarded. Players and parents are held weakly: a player TikTok lets go of drops out on its own.
@@ -111,6 +116,18 @@ public final class PlayerLayers {
         }
     }
 
+    /**
+     * Hooked just before the LIVE player points its stream at {@code surface}, the Surface of the
+     * layer it hangs under {@code parent} at the parent's size. A null parent takes the layer down.
+     */
+    public static void live(Object parent, Surface surface, int width, int height) {
+        if (parent == null) {
+            detached(surface);
+        } else {
+            reparented(surface, parent, width, height, true);
+        }
+    }
+
     /** The player layer drawing under {@code view}, or null when the player draws into the view. */
     public static Layer under(SurfaceView view) {
         // SurfaceView hands out its SurfaceControl from Android 10, the first TikTok builds one on.
@@ -179,6 +196,7 @@ public final class PlayerLayers {
     }
 
     private static Surface surfaceOf(Object player) {
+        if (player instanceof Surface) return (Surface) player;
         Object surface = Reflect.property(player, "getSurface", "mSurface");
         return surface instanceof Surface ? (Surface) surface : null;
     }

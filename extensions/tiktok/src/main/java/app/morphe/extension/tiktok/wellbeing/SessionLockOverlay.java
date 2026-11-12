@@ -851,8 +851,14 @@ public final class SessionLockOverlay {
         for (int index = 0; index < count; index++) {
             View child = group.getChildAt(index);
             if (child == keep) {
-                // A bar right under the root, curtained before it could be found.
+                // A bar right under the root, curtained before it could be found, and whatever
+                // an earlier pass curtained inside it while the bar was found further down.
                 lift(child, panel);
+                if (keep instanceof ViewGroup) {
+                    for (View view : new java.util.ArrayList<>(curtained.keySet())) {
+                        if (encloses((ViewGroup) keep, view)) lift(view, panel);
+                    }
+                }
                 continue;
             }
             if (keep != null && child instanceof ViewGroup && encloses((ViewGroup) child, keep)) {

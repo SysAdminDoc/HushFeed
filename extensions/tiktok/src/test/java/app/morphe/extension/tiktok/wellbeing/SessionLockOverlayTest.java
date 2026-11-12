@@ -770,6 +770,43 @@ public class SessionLockOverlayTest {
         }
     }
 
+    @Test public void whatWasCurtainedInsideABarFoundHigherUpIsHandedBack() {
+        // The bar is the highest row that spans the width under the home tab, so a later pass
+        // can find it a level up. What sat beside the old bar inside the new one was curtained
+        // whole and stayed that way, out of reach right in the tab bar, until the panel lifted.
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            ViewGroup root = activity.findViewById(android.R.id.content);
+            FrameLayout page = new FrameLayout(activity);
+            View video = new View(activity);
+            page.addView(video, new FrameLayout.LayoutParams(100, 100));
+            FrameLayout outer = new FrameLayout(activity);
+            FrameLayout inner = new FrameLayout(activity);
+            inner.addView(new android.widget.Button(activity));
+            View badge = new View(activity);
+            outer.addView(inner);
+            outer.addView(badge);
+            page.addView(outer, new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, 100, Gravity.BOTTOM));
+            root.addView(page);
+            View hold = new View(activity);
+            root.addView(hold);
+            layout(root, 480, 960);
+
+            SessionLockOverlay.hideBehind(root, hold, true, inner);
+            assertEquals("the badge beside the first bar wasn't curtained",
+                    View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS, badge.getImportantForAccessibility());
+
+            SessionLockOverlay.hideBehind(root, hold, true, outer);
+            assertEquals("what's inside the bar now stayed curtained",
+                    View.IMPORTANT_FOR_ACCESSIBILITY_AUTO, badge.getImportantForAccessibility());
+            assertEquals("the video beside the bar came out from behind the panel",
+                    View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS, video.getImportantForAccessibility());
+
+            SessionLockOverlay.hideBehind(root, hold, false);
+        }
+    }
+
     @Test public void aViewTikTokMakesFocusableUnderThePanelIsNoStopEither() {
         // A view left on FOCUSABLE_AUTO turns focusable the moment it gets a click listener. Its
         // focus was read once, as it was curtained, so one TikTok bound after that was an empty

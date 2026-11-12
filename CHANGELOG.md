@@ -4,6 +4,10 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+### Bug Fixes
+
+* `Turn off haptics` also quiets Hushfeed's own buzzes now: holding the For You, Home, Inbox or Profile tab and dragging the block button were still vibrating with the switch on.
+
 ## 0.82.0 (2026-11-12)
 
 ### Features

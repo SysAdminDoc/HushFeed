@@ -15,6 +15,7 @@ import java.lang.ref.WeakReference;
 import app.morphe.extension.shared.GlobalLayoutHook;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
+import app.morphe.extension.tiktok.interaction.Haptics;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsReturn;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
@@ -68,7 +69,7 @@ public final class HomeTabSettingsShortcut {
         try {
             // Search instead of Home takes the tab's release: this one ends a long press.
             SearchInsteadOfHome.noteLongPress();
-            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+            Haptics.performHapticFeedback(view, HapticFeedbackConstants.LONG_PRESS);
             TikTokActivityHook.openSettings();
         } catch (Throwable error) {
             Logger.printException(() -> "Could not open Hushfeed settings from the Home tab", error);

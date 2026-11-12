@@ -17,6 +17,7 @@ import java.lang.reflect.Field;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
+import app.morphe.extension.tiktok.interaction.Haptics;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.preference.LocalWatchHistoryPreference;
 
@@ -70,7 +71,7 @@ public final class ProfileTabWatchHistory {
         try {
             // Still on a tab after the switches went off (see takeOff): the release is a tap again.
             if (!wanted()) return false;
-            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+            Haptics.performHapticFeedback(view, HapticFeedbackConstants.LONG_PRESS);
             open(view.getContext());
         } catch (Throwable error) {
             Logger.printException(() -> "Could not open Watch history from the Profile tab", error);

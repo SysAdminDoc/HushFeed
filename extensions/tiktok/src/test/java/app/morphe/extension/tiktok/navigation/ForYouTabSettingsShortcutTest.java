@@ -2,6 +2,7 @@ package app.morphe.extension.tiktok.navigation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -84,6 +85,7 @@ public class ForYouTabSettingsShortcutTest {
 
     @After public void tearDown() {
         PausedProcess.set(false);
+        Settings.TURN_OFF_HAPTICS.resetToDefault();
         Settings.LOCAL_WATCH_HISTORY.resetToDefault();
         Settings.FOR_YOU_HOLD_OPENS_WATCH_HISTORY.resetToDefault();
         AlertDialog shown = ShadowAlertDialog.getLatestAlertDialog();
@@ -141,6 +143,18 @@ public class ForYouTabSettingsShortcutTest {
         assertEquals("the long press gave no long-press vibration",
                 HapticFeedbackConstants.LONG_PRESS, Shadows.shadowOf(tab).lastHapticFeedbackPerformed());
         assertEquals("letting go after the long press was also a tap that reloads the feed", 0, tab.taps);
+    }
+
+    @Test public void withTurnOffHapticsOnTheLongPressOpensSettingsWithoutABuzz() {
+        Settings.TURN_OFF_HAPTICS.save(true);
+        TopTab tab = tab();
+        ForYouTabSettingsShortcut.onTopTab(tab, FOR_YOU);
+
+        press(tab, longPress());
+
+        assertOpenedSettings();
+        assertNotEquals("Turn off haptics let Hushfeed's own long press buzz",
+                HapticFeedbackConstants.LONG_PRESS, Shadows.shadowOf(tab).lastHapticFeedbackPerformed());
     }
 
     @Test public void aTapOnForYouIsStillTikToks() {

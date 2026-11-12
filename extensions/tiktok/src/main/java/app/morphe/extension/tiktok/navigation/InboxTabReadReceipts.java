@@ -14,6 +14,7 @@ import java.lang.reflect.Field;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
+import app.morphe.extension.tiktok.interaction.Haptics;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
@@ -47,7 +48,7 @@ public final class InboxTabReadReceipts {
 
     static final View.OnLongClickListener FLIP = view -> {
         try {
-            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+            Haptics.performHapticFeedback(view, HapticFeedbackConstants.LONG_PRESS);
             flip(view);
         } catch (Throwable error) {
             Logger.printException(() -> "Could not flip Hide read receipts from the Inbox tab", error);

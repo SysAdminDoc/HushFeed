@@ -23,6 +23,7 @@ import java.util.WeakHashMap;
 
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
+import app.morphe.extension.tiktok.interaction.Haptics;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.TikTokActivityHook;
@@ -184,7 +185,7 @@ public final class ForYouTabSettingsShortcut {
                 // Not asked for, and letting go is TikTok's tap, as it is without Hushfeed.
                 if (!open(tab)) return;
                 opened = true;
-                tab.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+                Haptics.performHapticFeedback(tab, HapticFeedbackConstants.LONG_PRESS);
                 // The tab lets go of its press here, so letting go of the screen isn't a tap on it.
                 long now = SystemClock.uptimeMillis();
                 MotionEvent cancel = MotionEvent.obtain(now, now, MotionEvent.ACTION_CANCEL, downX, downY, 0);

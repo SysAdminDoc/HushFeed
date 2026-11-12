@@ -31,6 +31,7 @@ import app.morphe.extension.shared.settings.StringSetting;
 import app.morphe.extension.tiktok.download.OriginalPhotos;
 import app.morphe.extension.tiktok.feedfilter.SoundIdentity;
 import app.morphe.extension.tiktok.interaction.GestureActions;
+import app.morphe.extension.tiktok.interaction.Haptics;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SystemBarInsets;
 import app.morphe.extension.tiktok.settings.preference.SettingsUi;
@@ -687,7 +688,7 @@ public final class BlockAuthorOverlay {
             if (pressedControlReference.get() != view) return false;
             dragging = true;
             view.setAlpha(0.75f);
-            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+            Haptics.performHapticFeedback(view, HapticFeedbackConstants.LONG_PRESS);
             if (positionSetting(view).get().isEmpty()) {
                 Utils.showToastShort(L10n.t("Drag to move, release to place"));
             }

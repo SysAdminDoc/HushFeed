@@ -5,7 +5,10 @@ import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.ShapeDrawable;
 import android.os.Looper;
 import android.util.DisplayMetrics;
 import android.util.Pair;
@@ -17,6 +20,7 @@ import android.widget.LinearLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -70,11 +74,30 @@ public class CustomDialogTest {
         }
     }
 
-    @Test @Config(qualifiers = "w360dp-h640dp-port-mdpi", fontScale = 2f)
+    @Test @Config(qualifiers = "w360dp-h640dp-port-notnight-mdpi", fontScale = 2f)
     public void largeTextFitsInEveryButton() {
+        assertLargeTextFitsInEveryButton(false);
+    }
+
+    @Test @Config(qualifiers = "w360dp-h640dp-port-night-mdpi", fontScale = 2f)
+    public void darkLargeTextFitsInEveryButton() {
+        assertLargeTextFitsInEveryButton(true);
+    }
+
+    @After
+    public void restoreDarkMode() {
+        Utils.setIsDarkModeEnabled(true);
+    }
+
+    private static void assertLargeTextFitsInEveryButton(boolean dark) {
         try (var owner = Robolectric.buildActivity(Activity.class).setup().visible()) {
             Activity activity = owner.get();
             assertEquals(2f, activity.getResources().getConfiguration().fontScale, 0);
+            int night = activity.getResources().getConfiguration().uiMode
+                    & Configuration.UI_MODE_NIGHT_MASK;
+            assertEquals("the theme under test never reached the dialog, so this proves nothing",
+                    dark, night == Configuration.UI_MODE_NIGHT_YES);
+            Utils.setIsDarkModeEnabled(dark);
             List<Button> checked = new ArrayList<>();
             // One button alone, two in a row, and three stacked.
             for (Pair<Boolean, String> shape : List.of(new Pair<Boolean, String>(false, null),
@@ -89,6 +112,12 @@ public class CustomDialogTest {
                                         + "px tall for " + text + "px of text",
                                 button.getHeight() >= text + button.getCompoundPaddingTop()
                                         + button.getCompoundPaddingBottom());
+                        assertTrue("\"" + button.getText() + "\" has no fill of its own",
+                                button.getBackground() instanceof ShapeDrawable);
+                        int fill = ((ShapeDrawable) button.getBackground()).getPaint().getColor();
+                        double ratio = contrast(button.getCurrentTextColor(), fill);
+                        assertTrue("\"" + button.getText() + "\" is " + ratio + ":1 on its fill",
+                                ratio >= 4.5);
                         checked.add(button);
                     }
                 } finally {
@@ -166,5 +195,21 @@ public class CustomDialogTest {
             else if (child instanceof ViewGroup) found.addAll(buttonsIn((ViewGroup) child));
         }
         return found;
+    }
+
+    /** WCAG contrast between two opaque colours. */
+    private static double contrast(int first, int second) {
+        double one = luminance(first), two = luminance(second);
+        return (Math.max(one, two) + 0.05) / (Math.min(one, two) + 0.05);
+    }
+
+    private static double luminance(int colour) {
+        double[] parts = new double[3];
+        int[] raw = {Color.red(colour), Color.green(colour), Color.blue(colour)};
+        for (int at = 0; at < 3; at++) {
+            double channel = raw[at] / 255.0;
+            parts[at] = channel <= 0.03928 ? channel / 12.92 : Math.pow((channel + 0.055) / 1.055, 2.4);
+        }
+        return 0.2126 * parts[0] + 0.7152 * parts[1] + 0.0722 * parts[2];
     }
 }

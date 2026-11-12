@@ -1647,6 +1647,20 @@ public final class Probe extends Instrumentation {
                                     android.os.SystemClock.uptimeMillis(), android.view.MotionEvent.ACTION_UP, x, y), holdMs);
                             clicked += " held=" + holdMs + "ms";
                         }
+                        // -e a11yfocus true: TalkBack's focus on the match's list row (the match
+                        // itself outside a list), so a walk can start one row above a setting deep
+                        // in a page and step onto it with TalkBack's own next-item key. Only works
+                        // while TalkBack is on; answers whether the row took it.
+                        if ("true".equals(intent.getStringExtra("a11yfocus"))) {
+                            android.view.View row = found;
+                            while (row.getParent() instanceof android.view.View
+                                    && !(row.getParent() instanceof android.widget.AbsListView)) {
+                                row = (android.view.View) row.getParent();
+                            }
+                            if (!(row.getParent() instanceof android.widget.AbsListView)) row = found;
+                            clicked += " a11yfocus=" + row.performAccessibilityAction(
+                                    android.view.accessibility.AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS, null);
+                        }
                         Log.i(TAG, "ok findtext found at=" + at[0] + "," + at[1] + " size=" + found.getWidth() + "x" + found.getHeight() + sibling + clicked
                                 + " (" + matches + " matches" + places + ")");
                         break;

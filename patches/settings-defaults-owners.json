@@ -171,6 +171,7 @@
     "Custom offline videos limit": [
       "CUSTOM_OFFLINE_VIDEOS",
       "CUSTOM_OFFLINE_VIDEO_LIMIT",
+      "DELETE_WATCHED_OFFLINE_VIDEOS",
       "KEEP_OFFLINE_VIDEOS"
     ],
     "Device privacy guard": [

@@ -171,6 +171,7 @@
     "Custom offline videos limit": [
       "custom_offline_videos",
       "custom_offline_video_limit",
+      "delete_watched_offline_videos",
       "keep_offline_videos"
     ],
     "Device privacy guard": [
@@ -1410,6 +1411,12 @@
     "default_speed_enabled": {
       "field": "DEFAULT_SPEED_ENABLED",
       "key": "default_speed_enabled",
+      "type": "boolean",
+      "default": false
+    },
+    "delete_watched_offline_videos": {
+      "field": "DELETE_WATCHED_OFFLINE_VIDEOS",
+      "key": "delete_watched_offline_videos",
       "type": "boolean",
       "default": false
     },

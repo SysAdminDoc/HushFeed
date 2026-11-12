@@ -327,6 +327,13 @@ public class SettingsStatus {
         keepOfflineVideosEnabled = true;
     }
 
+    /** Custom offline videos limit found TikTok's watched-video clean-up on this build and hooked it. */
+    public static boolean offlineWatchedDeleteEnabled = false;
+
+    public static void enableOfflineWatchedDelete() {
+        offlineWatchedDeleteEnabled = true;
+    }
+
     public static void enableSimSpoof() {
         simSpoofEnabled = true;
     }

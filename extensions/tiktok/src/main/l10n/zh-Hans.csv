@@ -2038,6 +2038,10 @@ TikTok refused the follow: %1$s,TikTok 拒绝了关注：%1$s
 Follow refused (%1$s). Maybe a hidden CAPTCHA.,关注被拒绝（%1$s）。可能是隐藏的 CAPTCHA.
 TikTok refused this request (%1$s).,TikTok 拒绝了此请求 (%1$s).
 "TikTok removes videos saved for offline viewing after a set time, sometimes only two days, watched or not. With this on they stay until you delete them in TikTok's Offline videos settings. TikTok can still clear watched ones when your phone is low on space.",TikTok 在设定的时间（有时仅两天）后删除保存用于离线观看的视频，无论观看与否。启用此功能后，它们会一直保留，直到你在 TikTok 的离线视频设置中删除它们为止。当你的手机空间不足时，TikTok 仍然可以清除观看的内容.
+Delete watched offline videos,删除已看过的离线视频
+"Each time TikTok starts, deletes the offline videos you've already watched, so the next download fills their places with new ones. A video counts as watched once it's been on screen.",每次 TikTok 启动时，删除你已看过的离线视频，让下一次下载用新视频填补它们的位置。视频只要在屏幕上出现过，就算已看过.
+1 unwatched offline video left,还剩 1 个未看的离线视频
+%1$d unwatched offline videos left,还剩 %1$d 个未看的离线视频
 TikTok reports additional filtered accounts. This list is incomplete.,TikTok 报告其他已过滤的账号。此列表不完整.
 TikTok reports no more items in this list.,TikTok 报告此列表中不再有任何项目.
 TikTok sees an empty contact list instead of yours. Find Friends and People you may know can no longer use your contacts.,TikTok 看到的是一个空的联系人列表，而不是你的。查找你可能认识的朋友和人无法再使用你的联系人.

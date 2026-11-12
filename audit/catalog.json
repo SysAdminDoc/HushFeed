@@ -3359,7 +3359,9 @@
   "source": [
    "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/offlinevideos/CustomOfflineVideosLimitPatch.kt",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/offline/CustomOfflineVideosLimitPatch.java",
-   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/offline/OfflineVideoExpiry.java"
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/offline/OfflineVideoExpiry.java",
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/offlinevideos/OfflineWatchedDelete.kt",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/offline/OfflineWatchedDelete.java"
   ],
   "settings": [
    {
@@ -3381,6 +3383,13 @@
     "default": false,
     "type": "bool",
     "row": "Keep offline videos until you delete them",
+    "restart": true
+   },
+   {
+    "key": "delete_watched_offline_videos",
+    "default": false,
+    "type": "bool",
+    "row": "Delete watched offline videos",
     "restart": true
    }
   ],
@@ -3463,6 +3472,43 @@
      {
       "probe": "report",
       "expect": "registered_switches:[^\\n]*\\bkeepOfflineVideos\\b"
+     },
+     {
+      "probe": "report",
+      "expect": "registered_switches:[^\\n]*\\bofflineWatchedDelete\\b"
+     }
+    ],
+    "auto": true
+   },
+   {
+    "id": "watched-delete",
+    "what": "With Delete watched offline videos on, TikTok's watched-video clean-up runs at start (HookStatus 'offline watched delete').",
+    "steps": [
+     {
+      "set": {
+       "delete_watched_offline_videos": "true"
+      }
+     },
+     {
+      "restart": true
+     },
+     {
+      "open": "feed"
+     },
+     {
+      "wait": 4000
+     },
+     {
+      "probe": "hookdetails",
+      "extras": {
+       "family": "offline watched delete"
+      },
+      "expect": "deleted watched|nothing watched|skipped while playing offline"
+     },
+     {
+      "set": {
+       "delete_watched_offline_videos": "false"
+      }
      }
     ],
     "auto": true

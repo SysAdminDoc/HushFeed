@@ -2427,6 +2427,15 @@
           "values": null
         },
         {
+          "key": "delete_watched_offline_videos",
+          "title": "Default: delete watched offline videos",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "keep_offline_videos",
           "title": "Default: keep offline videos",
           "description": null,

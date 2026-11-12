@@ -12,8 +12,10 @@ import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
+import app.morphe.util.cloneMutable
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.patch.PatchException
+import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.patches.tiktok.misc.theme.declaredVersions
@@ -34,6 +36,8 @@ private const val PATCH_NAME = "Custom offline videos limit"
 
 private const val CUSTOM_OFFLINE_VIDEOS_HELPER =
     "Lapp/morphe/extension/tiktok/offline/CustomOfflineVideosLimitPatch;"
+
+private const val WATCHED_DELETE_EXTENSION = "Lapp/morphe/extension/tiktok/offline/OfflineWatchedDelete;"
 
 /** The option enum's constructor: the name, the ordinal, the limit, the minutes and the size. */
 private val OPTION_CONSTRUCTOR = listOf("Ljava/lang/String;", "I", "I", "I", "I")
@@ -167,6 +171,27 @@ val customOfflineVideosLimitPatch = bytecodePatch(
             null
         }
 
+        // Delete watched offline videos runs TikTok's own low-storage clean-up at every start,
+        // without the server switch, the storage check and the window that keep it from running.
+        // The extension makes the clean-up's two calls itself and reads its played-offline flag,
+        // and the settings row counts what is left through the query beside the watched one.
+        // Required on a declared build, where OfflineWatchedDeleteAnchorsTest holds it, and left
+        // out with a note on any other.
+        val watchedDelete = try {
+            val cleanup = OfflineWatchedDeleteFingerprint.method
+            val calls = watchedDeleteCalls(cleanup, PATCH_NAME)
+            val query = UnwatchedOfflineCountQueryFingerprint.method
+            val queryTypes = setOf(query.definingClass) +
+                classDefByOrNull(query.definingClass)?.interfaces.orEmpty()
+            val holder = classDefByOrNull(calls.watched.definingClass)
+                ?: throw PatchException("$PATCH_NAME: ${calls.watched.definingClass} is not in the app.")
+            Triple(cleanup, calls, unwatchedCountGetter(holder, query, queryTypes, PATCH_NAME))
+        } catch (problem: Exception) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[$PATCH_NAME] Left out Delete watched offline videos on ${packageMetadata.versionName}: ${problem.message}")
+            null
+        }
+
         settingsStatus.addInstruction(
             0,
             "invoke-static {}, " +
@@ -206,8 +231,63 @@ val customOfflineVideosLimitPatch = bytecodePatch(
                     "Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableKeepOfflineVideos()V",
             )
         }
+
+        watchedDelete?.let { (cleanup, calls, countGetter) ->
+            // The extension's four private stubs become the calls themselves. Each one returns
+            // before its own body, which only answers a test's fake.
+            val extension = mutableClassDefBy(WATCHED_DELETE_EXTENSION)
+            fun fill(stub: MutableMethod, smali: String) {
+                val filled = stub.cloneMutable(additionalRegisters = 1)
+                extension.methods.remove(stub)
+                extension.methods.add(filled)
+                filled.addInstructions(0, smali)
+            }
+            fill(
+                extension.methods.single { it.name == "watchedAids" },
+                """
+                    invoke-static {}, ${smaliOf(calls.watched)}
+                    move-result-object v0
+                    return-object v0
+                """,
+            )
+            fill(
+                extension.methods.single { it.name == "deleteNow" },
+                """
+                    invoke-static {p0}, ${smaliOf(calls.delete)}
+                    return-void
+                """,
+            )
+            fill(
+                extension.methods.single { it.name == "unwatchedCount" },
+                """
+                    invoke-static {}, ${smaliOf(countGetter)}
+                    move-result-object v0
+                    return-object v0
+                """,
+            )
+            fill(
+                extension.methods.single { it.name == "consumedThisSession" },
+                """
+                    sget-boolean v0, ${calls.consumed.definingClass}->${calls.consumed.name}:${calls.consumed.type}
+                    return v0
+                """,
+            )
+
+            // At the front, which takes no register and splits nothing. The step is a suspend
+            // function and comes back through here when it resumes; the extension runs once.
+            cleanup.addInstruction(0, "invoke-static {}, $WATCHED_DELETE_EXTENSION->onBootCleanup()V")
+            settingsStatus.addInstruction(
+                0,
+                "invoke-static {}, " +
+                    "Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableOfflineWatchedDelete()V",
+            )
+        }
     }
 }
+
+/** A method as smali names it in a call. */
+private fun smaliOf(method: MethodReference) =
+    "${method.definingClass}->${method.name}(${method.parameterTypes.joinToString("")})${method.returnType}"
 
 /** The list in [register], handed to the extension to have the custom limit added to it. */
 private fun wrapOptions(register: Int) =

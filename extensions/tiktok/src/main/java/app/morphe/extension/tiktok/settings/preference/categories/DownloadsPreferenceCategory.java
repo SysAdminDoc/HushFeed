@@ -12,6 +12,7 @@ import android.text.format.Formatter;
 
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.offline.CustomOfflineVideosLimitPatch;
+import app.morphe.extension.tiktok.offline.OfflineWatchedDelete;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
@@ -325,6 +326,24 @@ public class DownloadsPreferenceCategory extends ConditionalPreferenceCategory {
                                 + "phone is low on space.",
                         Settings.KEEP_OFFLINE_VIDEOS
                 ));
+            }
+            if (SettingsStatus.offlineWatchedDeleteEnabled) {
+                TogglePreference deleteWatched = new TogglePreference(
+                        context,
+                        "Delete watched offline videos",
+                        "Each time TikTok starts, deletes the offline videos you've already "
+                                + "watched, so the next download fills their places with new ones. "
+                                + "A video counts as watched once it's been on screen.",
+                        Settings.DELETE_WATCHED_OFFLINE_VIDEOS
+                );
+                addPreference(deleteWatched);
+                // The count is a query on TikTok's database, which refuses the main thread.
+                Utils.runOnBackgroundThread(() -> {
+                    Integer left = OfflineWatchedDelete.unwatchedCountOrNull();
+                    if (left == null) return;
+                    Utils.runOnMainThread(() -> deleteWatched.showExtraLine(L10n.quantity(context, left,
+                            "1 unwatched offline video left", "%1$d unwatched offline videos left")));
+                });
             }
         }
     }

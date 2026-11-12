@@ -2024,6 +2024,10 @@ Hide Check your sources warnings	ซ่อนคำเตือนตรวจ�
 Hide the Check your sources banner TikTok puts across the top of some videos, and the prompt it shows when you share one.	ซ่อนแบนเนอร์ตรวจสอบแหล่งที่มาของคุณที่ TikTok วางไว้ด้านบนสุดของบางวิดีโอ และข้อความแจ้งเตือนที่แสดงเมื่อคุณแชร์วิดีโอดังกล่าว
 Keep offline videos until you delete them	เก็บวิดีโอออฟไลน์ไว้จนกว่าคุณจะลบออก
 TikTok removes videos saved for offline viewing after a set time, sometimes only two days, watched or not. With this on they stay until you delete them in TikTok's Offline videos settings. TikTok can still clear watched ones when your phone is low on space.	TikTok จะลบวิดีโอที่บันทึกไว้สำหรับดูแบบออฟไลน์หลังจากผ่านไประยะหนึ่ง บางครั้งอาจเพียงสองวันไม่ว่าจะดูแล้วหรือไม่ก็ตาม หากเปิดตัวเลือกนี้ไว้ วิดีโอจะยังคงอยู่จนกว่าคุณจะลบออกในการตั้งค่าวิดีโอออฟไลน์ของ TikTok แต่ TikTok ยังคงสามารถล้างวิดีโอที่ดูแล้วได้เมื่อโทรศัพท์ของคุณมีพื้นที่เหลือน้อย
+Delete watched offline videos	ลบวิดีโอออฟไลน์ที่ดูแล้ว
+Each time TikTok starts, deletes the offline videos you've already watched, so the next download fills their places with new ones. A video counts as watched once it's been on screen.	ทุกครั้งที่ TikTok เริ่มทำงาน จะลบวิดีโอออฟไลน์ที่คุณดูแล้ว เพื่อให้การดาวน์โหลดครั้งถัดไปเติมวิดีโอใหม่เข้ามาแทนที่ วิดีโอจะนับว่าดูแล้วทันทีที่ปรากฏบนหน้าจอ
+1 unwatched offline video left	เหลือวิดีโอออฟไลน์ที่ยังไม่ได้ดู 1 รายการ
+%1$d unwatched offline videos left	เหลือวิดีโอออฟไลน์ที่ยังไม่ได้ดู %1$d รายการ
 Hide Thoughts on profiles	ซ่อน Thoughts บนโปรไฟล์
 Hide the Thoughts bubble TikTok shows above a profile picture, and the prompt to share one on your own profile. Restart TikTok to apply this.	ซ่อนฟองข้อความ Thoughts ที่ TikTok แสดงเหนือรูปโปรไฟล์ และข้อความแจ้งเตือนให้แชร์บนโปรไฟล์ของคุณเอง รีสตาร์ท TikTok เพื่อเริ่มใช้งาน
 Turn on Thoughts	เปิดใช้งาน Thoughts

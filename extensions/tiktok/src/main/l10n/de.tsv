@@ -2024,6 +2024,10 @@ Hide Check your sources warnings	Warnungen „Prüfe deine Quellen“ ausblenden
 Hide the Check your sources banner TikTok puts across the top of some videos, and the prompt it shows when you share one.	Blende das Banner „Prüfe deine Quellen“ aus, das TikTok oben über manche Videos legt, und den Hinweis, den es beim Teilen eines solchen Videos zeigt.
 Keep offline videos until you delete them	Offline-Videos behalten, bis du sie löschst
 TikTok removes videos saved for offline viewing after a set time, sometimes only two days, watched or not. With this on they stay until you delete them in TikTok's Offline videos settings. TikTok can still clear watched ones when your phone is low on space.	TikTok entfernt für die Offline-Ansicht gespeicherte Videos nach einer festen Zeit, manchmal schon nach zwei Tagen, ob angesehen oder nicht. Ist das an, bleiben sie, bis du sie in TikToks Offline-Video-Einstellungen löschst. TikTok kann angesehene Videos trotzdem entfernen, wenn dein Telefon wenig Speicher hat.
+Delete watched offline videos	Angesehene Offline-Videos löschen
+Each time TikTok starts, deletes the offline videos you've already watched, so the next download fills their places with new ones. A video counts as watched once it's been on screen.	Löscht bei jedem Start von TikTok die Offline-Videos, die du schon angesehen hast, damit der nächste Download ihre Plätze mit neuen füllt. Ein Video gilt als angesehen, sobald es auf dem Bildschirm war.
+1 unwatched offline video left	1 ungesehenes Offline-Video übrig
+%1$d unwatched offline videos left	%1$d ungesehene Offline-Videos übrig
 Hide Thoughts on profiles	Thoughts auf Profilen ausblenden
 Hide the Thoughts bubble TikTok shows above a profile picture, and the prompt to share one on your own profile. Restart TikTok to apply this.	Die Thoughts-Blase ausblenden, die TikTok über einem Profilbild zeigt, und auf deinem eigenen Profil die Aufforderung, einen zu teilen. TikTok neu starten, damit das gilt.
 Turn on Thoughts	Thoughts einschalten

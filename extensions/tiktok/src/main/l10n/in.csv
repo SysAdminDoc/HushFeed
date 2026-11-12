@@ -1998,6 +1998,10 @@ Hide Check your sources warnings,Sembunyikan peringatan Periksa sumbermu
 "Hide the Check your sources banner TikTok puts across the top of some videos, and the prompt it shows when you share one.","Sembunyikan spanduk Periksa sumbermu yang dipasang TikTok di bagian atas beberapa video, dan peringatan yang muncul saat kamu membagikannya."
 Keep offline videos until you delete them,Simpan video offline sampai kamu menghapusnya
 "TikTok removes videos saved for offline viewing after a set time, sometimes only two days, watched or not. With this on they stay until you delete them in TikTok's Offline videos settings. TikTok can still clear watched ones when your phone is low on space.","TikTok menghapus video yang disimpan untuk ditonton offline setelah waktu tertentu, kadang hanya dua hari, sudah ditonton atau belum. Saat ini menyala, video tetap ada sampai kamu menghapusnya di pengaturan Video offline TikTok. TikTok masih bisa menghapus yang sudah ditonton saat ruang ponselmu menipis."
+Delete watched offline videos,Hapus video offline yang sudah ditonton
+"Each time TikTok starts, deletes the offline videos you've already watched, so the next download fills their places with new ones. A video counts as watched once it's been on screen.","Setiap kali TikTok dibuka, video offline yang sudah kamu tonton dihapus, supaya unduhan berikutnya mengisi tempatnya dengan video baru. Video dihitung sudah ditonton begitu muncul di layar."
+1 unwatched offline video left,Tersisa 1 video offline yang belum ditonton
+%1$d unwatched offline videos left,Tersisa %1$d video offline yang belum ditonton
 Hide Thoughts on profiles,Sembunyikan Thoughts di profil
 "Hide the Thoughts bubble TikTok shows above a profile picture, and the prompt to share one on your own profile. Restart TikTok to apply this.","Sembunyikan gelembung Thoughts yang TikTok tampilkan di atas foto profil, dan ajakan untuk membagikannya di profilmu sendiri. Mulai ulang TikTok agar berlaku."
 Turn on Thoughts,Aktifkan Thoughts

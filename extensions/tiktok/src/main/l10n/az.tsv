@@ -2021,6 +2021,10 @@ Hide Check your sources warnings	Mənbələrini yoxla xəbərdarlıqlarını giz
 Hide the Check your sources banner TikTok puts across the top of some videos, and the prompt it shows when you share one.	TikTok-un bəzi videoların üst hissəsinə qoyduğu Mənbələrini yoxla bannerini və belə videonu paylaşanda göstərdiyi xəbərdarlığı gizlət.
 Keep offline videos until you delete them	Oflayn videoları siz silənə qədər saxlayın
 TikTok removes videos saved for offline viewing after a set time, sometimes only two days, watched or not. With this on they stay until you delete them in TikTok's Offline videos settings. TikTok can still clear watched ones when your phone is low on space.	TikTok oflayn izləmək üçün saxlanan videoları müəyyən vaxtdan sonra, bəzən cəmi iki gündən sonra, izlənsə də izlənməsə də silir. Bu açıq olduqda onlar TikTok-un Offline videos ayarlarında özünüz silənə qədər qalır. Telefonda yer azaldıqda TikTok izlənmişləri yenə də silə bilər.
+Delete watched offline videos	İzlənmiş oflayn videoları silin
+Each time TikTok starts, deletes the offline videos you've already watched, so the next download fills their places with new ones. A video counts as watched once it's been on screen.	TikTok hər dəfə açılanda artıq izlədiyiniz oflayn videoları silir ki, növbəti endirmə onların yerini yeniləri ilə doldursun. Video ekranda göründüyü anda izlənmiş sayılır.
+1 unwatched offline video left	1 izlənməmiş oflayn video qalıb
+%1$d unwatched offline videos left	%1$d izlənməmiş oflayn video qalıb
 Hide Thoughts on profiles	Profillərdə Thoughts-u gizlədin
 Hide the Thoughts bubble TikTok shows above a profile picture, and the prompt to share one on your own profile. Restart TikTok to apply this.	TikTok-un profil şəklinin üstündə göstərdiyi Thoughts balonunu və öz profilinizdə onu paylaşmaq təklifini gizlədin. Tətbiq etmək üçün TikTok-u yenidən başladın.
 Turn on Thoughts	Thoughts-u aktivləşdirin

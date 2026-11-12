@@ -2248,6 +2248,14 @@ Hide Check your sources warnings	إخفاء تحذيرات «تحقق من مص�
 Hide the Check your sources banner TikTok puts across the top of some videos, and the prompt it shows when you share one.	أخفِ بانر تحقق من مصادرك الذي يضعه TikTok أعلى بعض الفيديوهات، والمطالبة التي يعرضها عند مشاركة أحدها.
 Keep offline videos until you delete them	احتفظ بفيديوهات بلا اتصال حتى تحذفها
 TikTok removes videos saved for offline viewing after a set time, sometimes only two days, watched or not. With this on they stay until you delete them in TikTok's Offline videos settings. TikTok can still clear watched ones when your phone is low on space.	يزيل TikTok الفيديوهات المحفوظة للعرض دون اتصال بعد فترة محددة، أحيانا بعد يومين فقط، سواء شاهدتها أم لا. مع تفعيل هذا تبقى حتى تحذفها في إعدادات فيديوهات دون اتصال في TikTok. يمكن لـ TikTok مسح الفيديوهات التي تمت مشاهدتها عندما تكون مساحة هاتفك منخفضة.
+Delete watched offline videos	احذف فيديوهات بلا اتصال التي شاهدتها
+Each time TikTok starts, deletes the offline videos you've already watched, so the next download fills their places with new ones. A video counts as watched once it's been on screen.	في كل مرة يبدأ فيها TikTok، يحذف فيديوهات دون اتصال التي شاهدتها بالفعل، لكي يملأ التنزيل التالي أماكنها بفيديوهات جديدة. يُحتسب الفيديو مشاهَدا بمجرد ظهوره على الشاشة.
+1 unwatched offline video left	بقي مقطع فيديو واحد دون اتصال لم تشاهده
+%1$d unwatched offline videos left	بقي %1$d مقطع فيديو دون اتصال لم تشاهده
+%1$d unwatched offline videos left|zero	بقي %1$d مقطع فيديو دون اتصال لم تشاهده
+%1$d unwatched offline videos left|two	بقي %1$d مقطعا فيديو دون اتصال لم تشاهدهما
+%1$d unwatched offline videos left|few	بقيت %1$d مقاطع فيديو دون اتصال لم تشاهدها
+%1$d unwatched offline videos left|many	بقي %1$d مقطع فيديو دون اتصال لم تشاهده
 Hide Thoughts on profiles	إخفاء Thoughts في الملفات الشخصية
 Hide the Thoughts bubble TikTok shows above a profile picture, and the prompt to share one on your own profile. Restart TikTok to apply this.	يخفي فقاعة Thoughts التي يعرضها TikTok فوق صورة الملف الشخصي، والمطالبة بمشاركة واحدة في ملفك الشخصي. أعد تشغيل TikTok لتطبيق هذا.
 Turn on Thoughts	تشغيل Thoughts

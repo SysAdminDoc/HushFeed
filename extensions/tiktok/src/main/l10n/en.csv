@@ -17,6 +17,7 @@ source,target
 %1$d settings in that file can't be restored here and were skipped,%1$d settings in that file can't be restored here and were skipped
 %1$d settings weren't in that file and were left as they are,%1$d settings weren't in that file and were left as they are
 %1$d unavailable,%1$d unavailable
+%1$d unwatched offline videos left,%1$d unwatched offline videos left
 %1$s (%2$s),%1$s (%2$s)
 %1$s (TikTok value),%1$s (TikTok value)
 "%1$s (custom, unverified)","%1$s (custom, unverified)"
@@ -124,6 +125,7 @@ source,target
 1 min left,1 min left
 1 result,1 result
 1 result so far,1 result so far
+1 unwatched offline video left,1 unwatched offline video left
 1 video left,1 video left
 "1, from Background play in the long-press menu","1, from Background play in the long-press menu"
 2 taps a second,2 taps a second
@@ -571,6 +573,7 @@ Default,Default
 Default playback speed,Default playback speed
 Delete recording files,Delete recording files
 Delete search,Delete search
+Delete watched offline videos,Delete watched offline videos
 Deletes %1$s from TikTok's storage.,Deletes %1$s from TikTok's storage.
 Delivery unconfirmed: %1$d/%2$d chats. Remaining chats still need a message.,Delivery unconfirmed: %1$d/%2$d chats. Remaining chats still need a message.
 Delivery unconfirmed: %1$d/%2$d chats. Those chats won't be retried today.,Delivery unconfirmed: %1$d/%2$d chats. Those chats won't be retried today.
@@ -620,6 +623,7 @@ Drama and Series,Drama and Series
 "Draw a larger handle and a slightly thicker line on the progress bar, so it's easier to see where you are.","Draw a larger handle and a slightly thicker line on the progress bar, so it's easier to see where you are."
 "Draw the main feed's floating pill as glass, lighter and more see-through, with a bright rim along its top edge. Needs Floating bottom bar.","Draw the main feed's floating pill as glass, lighter and more see-through, with a bright rim along its top edge. Needs Floating bottom bar."
 Each area shows how many of the things Hushfeed looks for were found in this TikTok and how many are missing.,Each area shows how many of the things Hushfeed looks for were found in this TikTok and how many are missing.
+"Each time TikTok starts, deletes the offline videos you've already watched, so the next download fills their places with new ones. A video counts as watched once it's been on screen.","Each time TikTok starts, deletes the offline videos you've already watched, so the next download fills their places with new ones. A video counts as watched once it's been on screen."
 Earlier this session,Earlier this session
 Easier comment likes,Easier comment likes
 Edge strip width,Edge strip width

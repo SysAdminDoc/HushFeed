@@ -2149,6 +2149,10 @@ TikTok refused the like with code %1$s,TikTok từ chối lượt thích với m
 TikTok refused the like: %1$s,TikTok từ chối lượt thích: %1$s
 TikTok refused this request (%1$s).,TikTok đã từ chối yêu cầu này (%1$s).
 "TikTok removes videos saved for offline viewing after a set time, sometimes only two days, watched or not. With this on they stay until you delete them in TikTok's Offline videos settings. TikTok can still clear watched ones when your phone is low on space.","TikTok xóa các video đã lưu để xem ngoại tuyến sau một khoảng thời gian nhất định (thỉnh thoảng chỉ hai ngày), dù đã xem hay chưa. Khi bật tính năng này, các video sẽ được giữ lại cho đến khi bạn tự xóa chúng trong phần cài đặt Video ngoại tuyến của TikTok. TikTok vẫn có thể xóa các video đã xem khi điện thoại của bạn sắp hết dung lượng."
+Delete watched offline videos,Xóa video ngoại tuyến đã xem
+"Each time TikTok starts, deletes the offline videos you've already watched, so the next download fills their places with new ones. A video counts as watched once it's been on screen.","Mỗi lần TikTok khởi động, xóa các video ngoại tuyến bạn đã xem, để lần tải xuống tiếp theo lấp chỗ của chúng bằng video mới. Một video được tính là đã xem ngay khi nó xuất hiện trên màn hình."
+1 unwatched offline video left,Còn 1 video ngoại tuyến chưa xem
+%1$d unwatched offline videos left,Còn %1$d video ngoại tuyến chưa xem
 TikTok reports additional filtered accounts. This list is incomplete.,TikTok báo cáo có thêm các tài khoản bị lọc. Danh sách này chưa đầy đủ.
 TikTok reports no more items in this list.,TikTok báo cáo không còn mục nào khác trong danh sách này.
 TikTok sees an empty contact list instead of yours. Find Friends and People you may know can no longer use your contacts.,TikTok nhìn thấy danh sách liên hệ trống thay vì danh sách của bạn. Các tính năng Tìm bạn bè và Người bạn có thể biết sẽ không thể sử dụng danh sách liên hệ của bạn nữa.

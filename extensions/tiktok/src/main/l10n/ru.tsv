@@ -2189,6 +2189,13 @@ Hide Check your sources warnings	Скрывать предупреждения �
 Hide the Check your sources banner TikTok puts across the top of some videos, and the prompt it shows when you share one.	Скрывать баннер «Проверьте свои источники», который TikTok показывает поверх некоторых видео, и предупреждение при попытке поделиться таким видео.
 Keep offline videos until you delete them	Хранить офлайн-видео, пока вы их не удалите
 TikTok removes videos saved for offline viewing after a set time, sometimes only two days, watched or not. With this on they stay until you delete them in TikTok's Offline videos settings. TikTok can still clear watched ones when your phone is low on space.	TikTok удаляет видео, сохранённые для просмотра офлайн, через определённое время, иногда всего через два дня, просмотрены они или нет. Когда это включено, они остаются, пока вы сами не удалите их в настройках офлайн-видео TikTok. TikTok всё же может удалить просмотренные, если на телефоне мало места.
+Delete watched offline videos	Удалять просмотренные офлайн-видео
+Each time TikTok starts, deletes the offline videos you've already watched, so the next download fills their places with new ones. A video counts as watched once it's been on screen.	При каждом запуске TikTok удаляет офлайн-видео, которые вы уже посмотрели, чтобы следующая загрузка заменила их новыми. Видео считается просмотренным, как только оно появилось на экране.
+1 unwatched offline video left	Осталось 1 непросмотренное офлайн-видео
+%1$d unwatched offline videos left	Осталось %1$d непросмотренных офлайн-видео
+%1$d unwatched offline videos left|one	Осталось %1$d непросмотренное офлайн-видео
+%1$d unwatched offline videos left|few	Осталось %1$d непросмотренных офлайн-видео
+%1$d unwatched offline videos left|many	Осталось %1$d непросмотренных офлайн-видео
 Hide Thoughts on profiles	Скрывать Thoughts в профилях
 Hide the Thoughts bubble TikTok shows above a profile picture, and the prompt to share one on your own profile. Restart TikTok to apply this.	Скрывать облачко Thoughts, которое TikTok показывает над фото профиля, а в вашем профиле и предложение поделиться им. Перезапустите TikTok, чтобы это применить.
 Turn on Thoughts	Включить Thoughts

@@ -414,6 +414,7 @@
       "hide_profile_menu_minis_icons",
       "hidden_profile_shortcuts",
       "profile_shortcut_picks",
+      "profile_tab_picks",
       "hide_profile_thoughts",
       "enable_thoughts"
     ],
@@ -3614,6 +3615,12 @@
       "key": "profile_tab_opens_watch_history",
       "type": "boolean",
       "default": false
+    },
+    "profile_tab_picks": {
+      "field": "PROFILE_TAB_PICKS",
+      "key": "profile_tab_picks",
+      "type": "string",
+      "default": ""
     },
     "profile_tab_switches_accounts": {
       "field": "PROFILE_TAB_SWITCHES_ACCOUNTS",

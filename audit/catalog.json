@@ -8328,6 +8328,13 @@
     "row": "(internal list behind the Hide profile shortcuts checklist, no row)"
    },
    {
+    "key": "profile_tab_picks",
+    "default": "",
+    "type": "string",
+    "row": "Hide profile tabs",
+    "restart": true
+   },
+   {
     "key": "hide_profile_thoughts",
     "default": false,
     "type": "bool",

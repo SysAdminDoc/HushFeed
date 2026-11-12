@@ -5448,7 +5448,7 @@
     },
     {
       "name": "Hide profile shortcuts",
-      "description": "Hides the shortcuts you pick from the row under a profile's bio, like TikTok Studio or Your orders, and can hide the Thoughts bubble, and Balance and the TikTok Minis icons in your profile's menu. It can also turn Thoughts on for accounts TikTok left out. Starts off. Turn it on in Hushfeed settings > App, then restart TikTok.",
+      "description": "Hides the shortcuts you pick from the row under a profile's bio, like TikTok Studio or Your orders, and the profile tabs you pick, like Reposts or Liked videos. It can hide the Thoughts bubble, and Balance and the TikTok Minis icons in your profile's menu. It can also turn Thoughts on for accounts TikTok left out. Starts off. Turn it on in Hushfeed settings > App, then restart TikTok.",
       "category": "Feed",
       "use": true,
       "dependencies": [

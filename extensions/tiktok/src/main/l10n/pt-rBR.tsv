@@ -156,6 +156,24 @@ Forget the seen video.	Esquecer o vídeo visto.
 Forget the video @%2$s has seen.	Esquecer o vídeo que @%2$s viu.
 Got it	Entendi
 Hide profile shortcuts	Ocultar atalhos do perfil
+# context: Title of the checklist that hides tabs from the strip above a profile's videos
+Hide profile tabs	Ocultar abas do perfil
+# context: Note under that title. Reposts and Liked videos are two of the checklist's rows, Videos is the profile's first tab
+Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos. The Videos tab always stays. Restart TikTok to apply this.	Escolha as abas a ocultar na faixa acima dos vídeos de um perfil, como Republicações ou Vídeos curtidos. A aba Vídeos sempre fica. Reinicie o TikTok para aplicar.
+# context: Checklist row for the profile tab with the account's private videos (lock icon)
+Private videos	Vídeos privados
+# context: Checklist row for the profile tab with the videos the account reposted
+Reposts	Republicações
+# context: Checklist row for the profile tab with the account's saved videos (bookmark icon)
+Favorites	Favoritos
+# context: Checklist row for the profile tab with the account's sounds
+Music	Música
+# context: Checklist row for the profile tab with the account's camera effects
+Effects	Efeitos
+# context: Checklist row for the profile tab with the account's paid series and short dramas
+Series	Séries
+# context: Checklist row for the profile tab with the account's stickers
+Stickers	Figurinhas
 Hide profile shortcuts by name	Ocultar atalhos do perfil pelo nome
 Hide the status bar in LIVE rooms	Ocultar a barra de status nas LIVEs
 How much of a video you watch before it's hidden next time. Zero counts it after a few seconds.	Quanto de um vídeo você assiste antes que ele seja ocultado na próxima vez. Com zero, conta depois de alguns segundos.

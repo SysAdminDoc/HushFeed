@@ -1652,6 +1652,9 @@ public class Settings extends BaseSettings {
     // which the checklist offers. The strip is read on every search, so no restart.
     public static final StringSetting SEARCH_TAB_PICKS = new StringSetting("search_tab_picks", "");
     public static final StringSetting SEARCH_TAB_CATALOG = new StringSetting("search_tab_catalog", "");
+    // Profile tabs: the checklist rows picked to hide (private, repost, favorite and the rest). Read
+    // whenever a profile lays out its tabs, so a profile opened after a change follows it.
+    public static final StringSetting PROFILE_TAB_PICKS = new StringSetting("profile_tab_picks", "");
     /** The Thoughts bubble above a profile picture (#122). Read when a profile's picture is built. */
     public static final BooleanSetting HIDE_PROFILE_THOUGHTS = new BooleanSetting("hide_profile_thoughts", FALSE, true);
     /** TikTok's two Thoughts gates answer yes (#186). A restart, since TikTok keeps what it built. */

@@ -201,6 +201,24 @@ Forget the seen video.	Забыть просмотренное видео.
 Forget the video @%2$s has seen.	Забыть видео, просмотренное аккаунтом @%2$s.
 Got it	Понятно
 Hide profile shortcuts	Скрыть ярлыки профиля
+# context: Title of the checklist that hides tabs from the strip above a profile's videos
+Hide profile tabs	Скрыть вкладки профиля
+# context: Note under that title. Reposts and Liked videos are two of the checklist's rows, Videos is the profile's first tab
+Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos. The Videos tab always stays. Restart TikTok to apply this.	Выберите вкладки, которые нужно скрыть над видео профиля, например Репосты или Понравившиеся видео. Вкладка Видео остаётся всегда. Перезапустите TikTok, чтобы это применить.
+# context: Checklist row for the profile tab with the account's private videos (lock icon)
+Private videos	Личные видео
+# context: Checklist row for the profile tab with the videos the account reposted
+Reposts	Репосты
+# context: Checklist row for the profile tab with the account's saved videos (bookmark icon)
+Favorites	Избранное
+# context: Checklist row for the profile tab with the account's sounds
+Music	Музыка
+# context: Checklist row for the profile tab with the account's camera effects
+Effects	Эффекты
+# context: Checklist row for the profile tab with the account's paid series and short dramas
+Series	Сериалы
+# context: Checklist row for the profile tab with the account's stickers
+Stickers	Стикеры
 Hide profile shortcuts by name	Скрыть ярлыки профиля по названию
 Hide the status bar in LIVE rooms	Скрывать строку состояния в LIVE-трансляциях
 How much of a video you watch before it's hidden next time. Zero counts it after a few seconds.	Какую часть видео нужно посмотреть, чтобы оно в следующий раз считалось просмотренным. При значении «0» оно засчитывается уже через несколько секунд.

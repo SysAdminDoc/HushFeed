@@ -156,6 +156,24 @@ Forget the seen video.	Olvidar el vídeo visto.
 Forget the video @%2$s has seen.	Olvidar el vídeo que ha visto @%2$s.
 Got it	Entendido
 Hide profile shortcuts	Ocultar accesos directos del perfil
+# context: Title of the checklist that hides tabs from the strip above a profile's videos
+Hide profile tabs	Ocultar pestañas del perfil
+# context: Note under that title. Reposts and Liked videos are two of the checklist's rows, Videos is the profile's first tab
+Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos. The Videos tab always stays. Restart TikTok to apply this.	Elige las pestañas que quieres ocultar en la franja sobre los vídeos de un perfil, como Republicaciones o Vídeos que le gustaron. La pestaña Vídeos siempre se queda. Reinicia TikTok para que se aplique.
+# context: Checklist row for the profile tab with the account's private videos (lock icon)
+Private videos	Vídeos privados
+# context: Checklist row for the profile tab with the videos the account reposted
+Reposts	Republicaciones
+# context: Checklist row for the profile tab with the account's saved videos (bookmark icon)
+Favorites	Favoritos
+# context: Checklist row for the profile tab with the account's sounds
+Music	Música
+# context: Checklist row for the profile tab with the account's camera effects
+Effects	Efectos
+# context: Checklist row for the profile tab with the account's paid series and short dramas
+Series	Series
+# context: Checklist row for the profile tab with the account's stickers
+Stickers	Stickers
 Hide profile shortcuts by name	Ocultar accesos directos del perfil por nombre
 Hide the status bar in LIVE rooms	Ocultar la barra de estado en los LIVE
 How much of a video you watch before it's hidden next time. Zero counts it after a few seconds.	Cuánto de un vídeo ves antes de que se oculte la próxima vez. Con cero cuenta tras unos segundos.

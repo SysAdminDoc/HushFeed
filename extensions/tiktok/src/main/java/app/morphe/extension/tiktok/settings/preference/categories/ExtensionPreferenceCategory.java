@@ -17,6 +17,7 @@ import app.morphe.extension.tiktok.settings.preference.ChoicePreference;
 import app.morphe.extension.tiktok.settings.preference.ImportedFontPreference;
 import app.morphe.extension.tiktok.settings.preference.InputTextPreference;
 import app.morphe.extension.tiktok.settings.preference.ProfileShortcutChecklistPreference;
+import app.morphe.extension.tiktok.settings.preference.ProfileTabChecklistPreference;
 import app.morphe.extension.tiktok.settings.preference.LocalProfileCountsPreference;
 import app.morphe.extension.tiktok.settings.preference.SectionHeadingPreference;
 import app.morphe.extension.tiktok.settings.preference.TogglePreference;
@@ -319,6 +320,9 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                             + "such as TikTok Studio or Your orders. Restart TikTok to apply this.",
                     Settings.HIDDEN_PROFILE_SHORTCUTS
             ));
+            if (SettingsStatus.profileTabsEnabled) {
+                addPreference(new ProfileTabChecklistPreference(context));
+            }
             if (SettingsStatus.profileThoughtsEnabled) {
                 addPreference(new TogglePreference(
                         context,

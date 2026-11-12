@@ -628,6 +628,7 @@ Each area shows how many of the things Hushfeed looks for were found in this Tik
 Earlier this session,Earlier this session
 Easier comment likes,Easier comment likes
 Edge strip width,Edge strip width
+Effects,Effects
 "Effects ask TikTok's server whether your phone can run them, and some get turned down on older phones. This tells the effects server you have a Galaxy S24 Ultra instead, or the phone you type below. Sign-in and everything else still see your real phone. An effect your phone really can't run may still fail or look wrong.","Effects ask TikTok's server whether your phone can run them, and some get turned down on older phones. This tells the effects server you have a Galaxy S24 Ultra instead, or the phone you type below. Sign-in and everything else still see your real phone. An effect your phone really can't run may still fail or look wrong."
 Empty,Empty
 "Empty the menu that opens when you press and hold TikTok's icon on the home screen. Turning this off asks TikTok to build them again. Tapping the icon still opens the app, and a shortcut you pinned yourself stays where you put it.","Empty the menu that opens when you press and hold TikTok's icon on the home screen. Turning this off asks TikTok to build them again. Tapping the icon still opens the app, and a shortcut you pinned yourself stays where you put it."
@@ -670,6 +671,7 @@ Extra bold,Extra bold
 Fade the feed out before the hold,Fade the feed out before the hold
 Fade the video controls,Fade the video controls
 Fall back to the watermarked copy,Fall back to the watermarked copy
+Favorites,Favorites
 Favorites range,Favorites range
 Favorites removed: %1$d,Favorites removed: %1$d
 Feature Gate Lab,Feature Gate Lab
@@ -856,6 +858,7 @@ Hide playlist videos,Hide playlist videos
 Hide profile pictures in comments,Hide profile pictures in comments
 Hide profile shortcuts,Hide profile shortcuts
 Hide profile shortcuts by name,Hide profile shortcuts by name
+Hide profile tabs,Hide profile tabs
 Hide profile views,Hide profile views
 Hide profile visits,Hide profile visits
 Hide promotional music,Hide promotional music
@@ -1283,6 +1286,7 @@ Move left,Move left
 Move right,Move right
 "Move to the next video when the current one ends. Pauses, open dialogs and screen-time holds stop it. Restart TikTok to apply this.","Move to the next video when the current one ends. Pauses, open dialogs and screen-time holds stop it. Restart TikTok to apply this."
 Move up,Move up
+Music,Music
 Music disc,Music disc
 Mute feed videos,Mute feed videos
 Muted,Muted
@@ -1514,6 +1518,7 @@ Pick the buttons to take off the column. The rest stay where they are.,Pick the 
 "Pick the phone the effects server is told about, or type any model. An effect turned down for one phone may open for another. Empty means the Galaxy S24 Ultra.","Pick the phone the effects server is told about, or type any model. An effect turned down for one phone may open for another. Empty means the Galaxy S24 Ultra."
 "Pick the popups to stop. The list holds the ones TikTok has tried to show on this phone, so a popup appears here after its first showing. CAPTCHA, verification, sign-in, age, ban and legal consent screens are never listed or blocked.","Pick the popups to stop. The list holds the ones TikTok has tried to show on this phone, so a popup appears here after its first showing. CAPTCHA, verification, sign-in, age, ban and legal consent screens are never listed or blocked."
 "Pick the shortcuts to remove from the row under a profile's bio, such as TikTok Studio or Your orders. Restart TikTok to apply this.","Pick the shortcuts to remove from the row under a profile's bio, such as TikTok Studio or Your orders. Restart TikTok to apply this."
+"Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos. The Videos tab always stays. Restart TikTok to apply this.","Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos. The Videos tab always stays. Restart TikTok to apply this."
 "Pick the tabs to remove from the top of the search results, such as Shop, LIVE or Places. The list holds the tabs TikTok has shown you, and Top always stays.","Pick the tabs to remove from the top of the search results, such as Shop, LIVE or Places. The list holds the tabs TikTok has shown you, and Top always stays."
 Pick videos to save from profile grids,Pick videos to save from profile grids
 "Picked %1$s. Save, then tap Pick all for more.","Picked %1$s. Save, then tap Pick all for more."
@@ -1563,6 +1568,7 @@ Preview with a made-up post:,Preview with a made-up post:
 Privacy,Privacy
 Privacy and app,Privacy and app
 Private account,Private account
+Private videos,Private videos
 Problem detected.,Problem detected.
 Problem detected. Story views may still be reported. Check Ghost mode diagnostics. The warning stays until TikTok restarts.,Problem detected. Story views may still be reported. Check Ghost mode diagnostics. The warning stays until TikTok restarts.
 Profile,Profile
@@ -1666,6 +1672,7 @@ Report a newer phone to effects,Report a newer phone to effects
 Report a problem,Report a problem
 Report saved to %1$s,Report saved to %1$s
 Repost with a comment,Repost with a comment
+Reposts,Reposts
 Reposts removed: %1$d,Reposts removed: %1$d
 Required,Required
 Researched,Researched
@@ -1874,6 +1881,7 @@ Separate usernames or display names with commas. Their comments are hidden.,Sepa
 "Separate words with commas, like music, chat. A LIVE is hidden when its category, topic tags or game name contains one. Capital letters don't matter.","Separate words with commas, like music, chat. A LIVE is hidden when its category, topic tags or game name contains one. Capital letters don't matter."
 "Separate words with commas, like saxophone, to match against sound names. Capital letters don't matter.","Separate words with commas, like saxophone, to match against sound names. Capital letters don't matter."
 "Separate words with commas. A comment is hidden if it contains any of them. Capital letters don't matter. Write ""a"" & ""b"" to need both phrases, or ""a"" !& ""b"" to need the first without the second.","Separate words with commas. A comment is hidden if it contains any of them. Capital letters don't matter. Write ""a"" & ""b"" to need both phrases, or ""a"" !& ""b"" to need the first without the second."
+Series,Series
 Series posts,Series posts
 Set a sleep timer that closes TikTok,Set a sleep timer that closes TikTok
 Settings,Settings
@@ -2050,6 +2058,7 @@ Sticker,Sticker
 Sticker added to Saved,Sticker added to Saved
 Sticker destination,Sticker destination
 Sticker saved to %1$s,Sticker saved to %1$s
+Stickers,Stickers
 "Stickers can't be saved to the folder in that file, so your sticker folder was kept","Stickers can't be saved to the folder in that file, so your sticker folder was kept"
 Stickers: %1$s,Stickers: %1$s
 Still here. Nothing is waiting.,Still here. Nothing is waiting.

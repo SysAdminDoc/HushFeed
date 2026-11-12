@@ -829,6 +829,13 @@ public class SettingsStatus {
         profileMenuCellsEnabled = true;
     }
 
+    /** Hide profile shortcuts found the profile pager's tab list and TikTok's tab names, and hooked them. */
+    public static boolean profileTabsEnabled = false;
+
+    public static void enableProfileTabs() {
+        profileTabsEnabled = true;
+    }
+
     /** Skip the splash ad put its switch in front of the splash tasks and gates. */
     public static boolean skipSplashAdEnabled = false;
 

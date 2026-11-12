@@ -56,7 +56,8 @@ private const val PATCH_NAME = "Hide profile shortcuts"
 val hideProfileShortcutsPatch = bytecodePatch(
     name = "Hide profile shortcuts",
     description = "Hides the shortcuts you pick from the row under a profile's bio, like " +
-        "TikTok Studio or Your orders, and can hide the Thoughts bubble, and Balance and the " +
+        "TikTok Studio or Your orders, and the profile tabs you pick, like Reposts or Liked " +
+        "videos. It can hide the Thoughts bubble, and Balance and the " +
         "TikTok Minis icons in your profile's menu. It can also turn Thoughts on for accounts " +
         "TikTok left out. Starts off. Turn it on in Hushfeed settings > App, then restart TikTok.",
     default = true,
@@ -101,6 +102,15 @@ val hideProfileShortcutsPatch = bytecodePatch(
             println("[$PATCH_NAME] Left out Turn on Thoughts on ${packageMetadata.versionName}: ${problem.message}")
             null
         }
+        // Hide profile tabs, held by ProfileTabsAnchorsTest: the pager's reads of its tab lists
+        // and TikTok's map from tab type to name.
+        val profileTabs = try {
+            resolveProfileTabHooks(PATCH_NAME)
+        } catch (problem: Exception) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[$PATCH_NAME] Left out Hide profile tabs on ${packageMetadata.versionName}: ${problem.message}")
+            null
+        }
         OwnProfileConversionFingerprint.method.filterProfileUserParameter(0)
         ProfileConversionFingerprint.method.filterProfileUserParameter(1)
 
@@ -125,6 +135,13 @@ val hideProfileShortcutsPatch = bytecodePatch(
             SettingsStatusLoadFingerprint.method.addInstruction(
                 0,
                 "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableThoughtsSwitch()V",
+            )
+        }
+        if (profileTabs != null) {
+            profileTabs.install()
+            SettingsStatusLoadFingerprint.method.addInstruction(
+                0,
+                "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableProfileTabs()V",
             )
         }
     }

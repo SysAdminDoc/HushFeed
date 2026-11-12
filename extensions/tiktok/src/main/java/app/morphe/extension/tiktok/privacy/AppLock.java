@@ -553,7 +553,7 @@ public final class AppLock {
         TextView unlock = new TextView(activity);
         String unlockText = L10n.t(activity, "Unlock");
         unlock.setText(unlockText);
-        unlock.setContentDescription(titleText + ". " + unlockText);
+        unlock.setContentDescription(L10n.f(activity, "%1$s. %2$s", titleText, unlockText));
         SettingsUi.markAsButton(unlock);
         unlock.setTextColor(SettingsUi.OVERLAY_TEXT);
         unlock.setTextSize(TypedValue.COMPLEX_UNIT_SP, SettingsUi.TEXT_BODY);

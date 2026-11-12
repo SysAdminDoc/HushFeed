@@ -161,6 +161,13 @@ public final class HomeTabSettingsShortcut {
         return view != null && attached.get() == view;
     }
 
+    /** Whether a long press on Home opens the settings right now (#244). */
+    public static boolean opensSettingsNow() {
+        View home = attached.get();
+        return home != null && Settings.HOME_TAB_OPENS_SETTINGS.get()
+                && ForYouTabSettingsShortcut.reachable(home);
+    }
+
     static void resetForTests() {
         LAYOUT.detach();
         FRONT.resetForTests();

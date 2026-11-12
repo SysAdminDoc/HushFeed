@@ -17,6 +17,7 @@ import app.morphe.extension.shared.settings.PausedProcess;
 import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
+import app.morphe.extension.tiktok.settings.TikTokActivityHook;
 
 import org.junit.After;
 import org.junit.Before;
@@ -28,6 +29,7 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.util.ReflectionHelpers;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -256,6 +258,29 @@ public class HomeTabSettingsShortcutTest {
             assertFalse(buried.isLongClickable());
         } finally {
             launcher.destroy();
+        }
+    }
+
+    /** With Hide the Hushfeed row on, the Home long press is enough to take the row away (#244). */
+    @Test public void theHomeLongPressLetsTheHushfeedRowGo() {
+        Settings.HIDE_SETTINGS_ROW.save(true);
+        try {
+            installAndResume();
+            ShadowLooper.idleMainLooper();
+            assertTrue(HomeTabSettingsShortcut.opensSettingsNow());
+            assertFalse("the row stayed although Home opens the settings", TikTokActivityHook.showSettingsRow());
+
+            ((View) home.getParent()).setVisibility(View.GONE);
+            assertTrue("the bottom bar is hidden, yet the row stayed away", TikTokActivityHook.showSettingsRow());
+            ((View) home.getParent()).setVisibility(View.VISIBLE);
+            assertFalse(TikTokActivityHook.showSettingsRow());
+
+            Settings.HOME_TAB_OPENS_SETTINGS.save(false);
+            layoutPass();
+            assertFalse(HomeTabSettingsShortcut.opensSettingsNow());
+            assertTrue("Home lost its long press, yet the row stayed away", TikTokActivityHook.showSettingsRow());
+        } finally {
+            Settings.HIDE_SETTINGS_ROW.resetToDefault();
         }
     }
 

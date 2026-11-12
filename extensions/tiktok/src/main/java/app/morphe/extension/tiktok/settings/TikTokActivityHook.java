@@ -19,6 +19,8 @@ import java.util.List;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.diagnostics.BuildDetails;
+import app.morphe.extension.tiktok.navigation.ForYouTabSettingsShortcut;
+import app.morphe.extension.tiktok.navigation.HomeTabSettingsShortcut;
 import app.morphe.extension.tiktok.settings.preference.SettingsActionBanner;
 import app.morphe.extension.tiktok.settings.preference.SettingsUi;
 import app.morphe.extension.tiktok.settings.preference.TikTokPreferenceFragment;
@@ -46,7 +48,14 @@ public class TikTokActivityHook {
      */
     public static boolean showSettingsRow() {
         try {
-            return !Settings.HIDE_SETTINGS_ROW.get();
+            if (!Settings.HIDE_SETTINGS_ROW.get()) return true;
+            // Hidden only while a long press still opens the settings, so the switch can't lock
+            // anyone out: a hidden tab strip, For You sent to the watch history or a Home without
+            // its press brings the row back (#244).
+            boolean reachable = ForYouTabSettingsShortcut.opensSettingsNow()
+                    || HomeTabSettingsShortcut.opensSettingsNow();
+            if (!reachable) Logger.printInfo(() -> "No long press opens Hushfeed settings, so its row stays");
+            return !reachable;
         } catch (Throwable failure) {
             Logger.printException(() -> "showSettingsRow failure", failure);
             return true;

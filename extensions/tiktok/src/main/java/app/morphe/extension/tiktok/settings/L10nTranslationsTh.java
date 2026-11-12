@@ -4449,8 +4449,8 @@ final class L10nTranslationsTh {
                 "ระบบ");
         table.put("Tag saved videos with their details",
                 "แท็กรายละเอียดลงในวิดีโอที่บันทึกไว้");
-        table.put("Take Hushfeed out of TikTok's Settings and privacy. To open these settings, press and hold For You at the top of the feed, or Home if Long-press Home for Hushfeed settings is on.",
-                "นำ Hushfeed ออกจากการตั้งค่าและความเป็นส่วนตัวของ TikTok ในการเปิดการตั้งค่าเหล่านี้ ให้กดค้างที่ \"สำหรับคุณ\" ที่ด้านบนของฟีด หรือ \"หน้าหลัก\" หากเปิดใช้ \"กดปุ่มหน้าแรกค้างไว้เพื่อเข้าสู่การตั้งค่า Hushfeed\"");
+        table.put("Take Hushfeed out of TikTok's Settings and privacy. To open these settings, press and hold For You at the top of the feed, or Home if Long-press Home for Hushfeed settings is on. If neither press can open them, the row stays.",
+                "นำ Hushfeed ออกจากการตั้งค่าและความเป็นส่วนตัวของ TikTok ในการเปิดการตั้งค่าเหล่านี้ ให้กดค้างที่ \"สำหรับคุณ\" ที่ด้านบนของฟีด หรือ \"หน้าหลัก\" หากเปิดใช้ \"กดปุ่มหน้าแรกค้างไว้เพื่อเข้าสู่การตั้งค่า Hushfeed\" หากเปิดไม่ได้ทั้งสองแบบ แถวนี้จะยังอยู่");
         table.put("Take the Add comment bar off videos you open from a profile, a hashtag, a sound or search, so the video fills the screen down to the bottom. The comment button on the right still opens comments.",
                 "นำแถบ \"เพิ่มความคิดเห็น\" ออกจากวิดีโอที่คุณเปิดจากโปรไฟล์ แฮชแท็ก เสียง หรือการค้นหา เพื่อให้วิดีโอแสดงเต็มหน้าจอลงไปจนถึงด้านล่าง ปุ่มความคิดเห็นทางด้านขวาจะยังคงเปิดดูความคิดเห็นได้");
         table.put("Take the pulsing LIVE ring off profile pictures on the feed, in comments and on profiles. Tapping the picture of a creator who's live opens their profile instead of the LIVE.",

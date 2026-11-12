@@ -119,6 +119,38 @@ public final class ForYouTabSettingsShortcut {
         return Settings.FOR_YOU_HOLD_OPENS_WATCH_HISTORY.get() && Settings.LOCAL_WATCH_HISTORY.get();
     }
 
+    /**
+     * Whether a long press on For You opens the settings right now, so Hide the Hushfeed row can
+     * take the row away without leaving the settings out of reach (#244).
+     */
+    public static boolean opensSettingsNow() {
+        if (opensWatchHistory() || NavigationTabsFilter.shouldHideTopTabStrip()) return false;
+        synchronized (PRESSES) {
+            for (Map.Entry<View, Press> entry : PRESSES.entrySet()) {
+                View tab = entry.getKey();
+                if (tab != null && entry.getValue().forYou && !tab.isLongClickable() && reachable(tab)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Whether a finger can find the view: attached, laid out and with nothing above it hidden.
+     * The window's root is skipped, since a stopped activity's decor is invisible while Settings
+     * and privacy sits on top of it.
+     */
+    static boolean reachable(View view) {
+        if (!view.isAttachedToWindow() || view.getWidth() <= 0 || view.getHeight() <= 0) return false;
+        View root = view.getRootView();
+        for (View at = view; at != null && at != root; ) {
+            if (at.getVisibility() != View.VISIBLE) return false;
+            at = at.getParent() instanceof View ? (View) at.getParent() : null;
+        }
+        return true;
+    }
+
     /** Times a press on one top tab, and opens the settings when the tab is For You. */
     static final class Press implements View.OnTouchListener {
         private final Runnable fire = this::fire;

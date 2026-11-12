@@ -470,7 +470,7 @@ public class ShareSheetToolsTest {
                 idle();
                 assertSame(decor, dialog.getWindow().getDecorView());
                 ViewTreeObserver reopenedObserver = decor.getViewTreeObserver();
-                assertSame(reopenedObserver, ReflectionHelpers.getField(sheet, "observer"));
+                assertSame(reopenedObserver, observer(sheet));
                 assertEquals(View.VISIBLE, cell.getVisibility());
                 assertEquals(137, cell.getLayoutParams().width);
                 cell.title.setText("Report");
@@ -507,7 +507,7 @@ public class ShareSheetToolsTest {
                     assertNull(dialog.findViewById(0x7f000301));
                     GlobalLayoutHook sheet = ReflectionHelpers.getStaticField(ShareSheetTools.class, "SHEET_LAYOUT_HOOK");
                     assertSame("inactive settings must still attach to the panel observer",
-                            dialog.getWindow().getDecorView().getViewTreeObserver(), ReflectionHelpers.getField(sheet, "observer"));
+                            dialog.getWindow().getDecorView().getViewTreeObserver(), observer(sheet));
                     assertEquals(View.VISIBLE, cell.getVisibility());
 
                     ReflectionHelpers.setStaticField(Setting.class, "pausedForProcess", false);
@@ -841,6 +841,11 @@ public class ShareSheetToolsTest {
     private static void panelLayout(Dialog dialog) {
         dialog.getWindow().getDecorView().getViewTreeObserver().dispatchOnGlobalLayout();
         idle();
+    }
+
+    /** The observer a layout hook holds, weakly since d104f9108. */
+    private static Object observer(GlobalLayoutHook hook) {
+        return ((WeakReference<?>) ReflectionHelpers.getField(hook, "observer")).get();
     }
 
     private static void idle() {

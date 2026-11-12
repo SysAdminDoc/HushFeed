@@ -318,14 +318,26 @@ public final class GestureActions {
      * Hushfeed took keeps its second touch: the press is swallowed and nothing else runs.
      */
     public static boolean onLongPress(MotionEvent event) {
-        if (event == null ? isTakenDoubleTap() : isTakenDoubleTap(event.getDownTime())) return true;
-        return handleLongPress(edgeSeekDelta(event), sideOf(event));
+        boolean taken = (event == null ? isTakenDoubleTap() : isTakenDoubleTap(event.getDownTime()))
+                || handleLongPress(edgeSeekDelta(event), sideOf(event));
+        logPress("detector", event == null ? Float.NaN : event.getX(), taken);
+        return taken;
     }
 
     /** Ordinary feed cells deliver the saved local DOWN x through their native timer. */
     public static boolean onLongPress(float x) {
-        if (isTakenDoubleTap()) return true;
-        return handleLongPress(edgeSeekDelta(x), sideOf(x));
+        boolean taken = isTakenDoubleTap() || handleLongPress(edgeSeekDelta(x), sideOf(x));
+        logPress("timer", x, taken);
+        return taken;
+    }
+
+    /**
+     * One debug line per long press naming the path it came by, so a menu that opens twice for
+     * one press (#330) shows in a report whether both paths handed that press to TikTok.
+     */
+    private static void logPress(String path, float x, boolean taken) {
+        Logger.printDebug(() -> "Long press by the " + path + " at x " + x
+                + (taken ? ", taken by Hushfeed" : ", left to TikTok"));
     }
 
     private static boolean handleLongPress(long delta, int side) {

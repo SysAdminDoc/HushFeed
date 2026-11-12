@@ -412,9 +412,9 @@ public class NetworkProxyTest {
 
         try (Socket client = new Socket(route)) {
             client.setSoTimeout(TIMEOUT_MS);
-            client.connect(InetSocketAddress.createUnresolved("api16.example.test", 443), TIMEOUT_MS);
+            client.connect(InetSocketAddress.createUnresolved("api16-normal-useast5.tiktokv.us", 443), TIMEOUT_MS);
         }
-        assertTrue(tunnel.toString(), tunnel.toString().startsWith("CONNECT api16.example.test:443 HTTP/1.1\r\n"));
+        assertTrue(tunnel.toString(), tunnel.toString().startsWith("CONNECT api16-normal-useast5.tiktokv.us:443 HTTP/1.1\r\n"));
     }
 
     @Test public void aProxyWithoutAPasswordIsTalkedToStraight() throws Exception {

@@ -41,6 +41,8 @@ public class ProxyRelayTest {
     private static final String USER = "alice";
     private static final String PASSWORD = "s3cret-pass";
     private static final int TIMEOUT_MS = 5000;
+    /** One of TikTok's API hosts, as 47.7.3's TTNet asks for it. */
+    private static final String SITE = "api16-normal-useast5.tiktokv.us";
 
     private final List<ServerSocket> servers = new ArrayList<>();
     private final List<Socket> sockets = new ArrayList<>();
@@ -73,11 +75,11 @@ public class ProxyRelayTest {
         });
         relay = ProxyRelay.start(config("http", proxy, USER, PASSWORD));
 
-        Socket client = askForSite("api16.example.test", 443);
+        Socket client = askForSite(SITE, 443);
         assertEquals("the tunnel opened", 0, answerTo(client));
         assertTrue(asked.await(TIMEOUT_MS, TimeUnit.MILLISECONDS));
         String expected = Base64.getEncoder().encodeToString((USER + ":" + PASSWORD).getBytes(StandardCharsets.UTF_8));
-        assertTrue(request.toString(), request.toString().startsWith("CONNECT api16.example.test:443 HTTP/1.1\r\n"));
+        assertTrue(request.toString(), request.toString().startsWith("CONNECT " + SITE + ":443 HTTP/1.1\r\n"));
         assertTrue(request.toString(), request.toString().contains("Proxy-Authorization: Basic " + expected + "\r\n"));
         assertEchoes(client);
     }
@@ -105,10 +107,10 @@ public class ProxyRelayTest {
         });
         relay = ProxyRelay.start(config("socks5", proxy, USER, PASSWORD));
 
-        Socket client = askForSite("api16.example.test", 443);
+        Socket client = askForSite(SITE, 443);
         assertEquals(0, answerTo(client));
         assertTrue(asked.await(TIMEOUT_MS, TimeUnit.MILLISECONDS));
-        assertEquals(List.of("[5, 2, 0, 2]", USER, PASSWORD, "[5, 1, 0, 3]", "api16.example.test", "[1, -69]"), seen);
+        assertEquals(List.of("[5, 2, 0, 2]", USER, PASSWORD, "[5, 1, 0, 3]", SITE, "[1, -69]"), seen);
         assertEchoes(client);
     }
 
@@ -124,11 +126,15 @@ public class ProxyRelayTest {
         Socket client = new Socket(relay.route().javaProxy());
         sockets.add(client);
         client.setSoTimeout(TIMEOUT_MS);
-        client.connect(InetSocketAddress.createUnresolved("api16.example.test", 443), TIMEOUT_MS);
+        client.connect(InetSocketAddress.createUnresolved(SITE, 443), TIMEOUT_MS);
         assertEchoes(client);
     }
 
-    @Test public void addressesGetTheShapeAnHttpProxyExpects() throws Exception {
+    /**
+     * Another app on the phone can reach the relay but not send its own traffic through the proxy:
+     * only TikTok's domains get a tunnel, and the proxy never hears of the rest.
+     */
+    @Test public void onlyTikToksDomainsGetATunnel() throws Exception {
         List<String> targets = Collections.synchronizedList(new ArrayList<>());
         ServerSocket proxy = proxy(socket -> {
             targets.add(readHead(socket.getInputStream()).split("\r\n")[0]);
@@ -136,14 +142,28 @@ public class ProxyRelayTest {
         });
         relay = ProxyRelay.start(config("http", proxy, USER, PASSWORD));
 
+        for (String other : List.of("www.example.com", "tiktokv.com.example.com", "nottiktokv.com", "com", "192.0.2.7")) {
+            Socket client = askForSite(other, 443);
+            assertEquals(other, 2, answerTo(client));
+            assertEquals("then it hangs up", -1, client.getInputStream().read());
+        }
+        // TikTok's stacks never send an address, and an address can't be told apart from any other.
         Socket v4 = open();
         request(v4, 1, InetAddress.getByName("192.0.2.7").getAddress(), 443);
-        assertEquals(0, answerTo(v4));
+        assertEquals(2, answerTo(v4));
         Socket v6 = open();
         request(v6, 4, InetAddress.getByName("2001:db8::1").getAddress(), 8443);
-        assertEquals(0, answerTo(v6));
+        assertEquals(2, answerTo(v6));
 
-        assertEquals(List.of("CONNECT 192.0.2.7:443 HTTP/1.1", "CONNECT [2001:db8:0:0:0:0:0:1]:8443 HTTP/1.1"), targets);
+        for (String own : List.of("tiktokv.com", "API16-NORMAL-C-USEAST2A.TIKTOKV.COM", "p16-sign-va.tiktokcdn.com.",
+                "abtest-va-tiktok.byteoversea.com", "media0.giphy.com")) {
+            assertEquals(own, 0, answerTo(askForSite(own, 443)));
+        }
+        long deadline = System.currentTimeMillis() + TIMEOUT_MS;
+        while (targets.size() < 5 && System.currentTimeMillis() < deadline) Thread.sleep(10);
+        assertEquals(List.of("CONNECT tiktokv.com:443 HTTP/1.1", "CONNECT API16-NORMAL-C-USEAST2A.TIKTOKV.COM:443 HTTP/1.1",
+                "CONNECT p16-sign-va.tiktokcdn.com.:443 HTTP/1.1", "CONNECT abtest-va-tiktok.byteoversea.com:443 HTTP/1.1",
+                "CONNECT media0.giphy.com:443 HTTP/1.1"), targets);
     }
 
     /** A name with a line break in it would put lines of the client's choosing into the CONNECT request. */
@@ -155,18 +175,22 @@ public class ProxyRelayTest {
         });
         relay = ProxyRelay.start(config("http", proxy, USER, PASSWORD));
 
-        Socket forged = askForSite("api16.example.test\r\nX-Forged: yes\r\n", 443);
+        Socket forged = askForSite(SITE + "\r\nX-Forged: yes\r\n", 443);
         assertEquals(8, answerTo(forged));
         assertEquals("then it hangs up", -1, forged.getInputStream().read());
-        Socket spaced = askForSite("api16.example.test HTTP/1.1", 443);
+        Socket spaced = askForSite(SITE + " HTTP/1.1", 443);
         assertEquals(8, answerTo(spaced));
-        // Letters beside a colon aren't an IPv6 literal; in brackets they'd carry a port of their own.
-        Socket ported = askForSite("evil.example:80", 443);
+        Socket ported = askForSite("evil.example:80 " + SITE, 443);
         assertEquals(8, answerTo(ported));
+        // An IPv6 literal by name is an address too, and colons are never part of a name.
         Socket literal = askForSite("2001:db8::1", 443);
-        assertEquals(0, answerTo(literal));
+        assertEquals(8, answerTo(literal));
+        Socket plain = askForSite(SITE, 443);
+        assertEquals(0, answerTo(plain));
 
-        assertEquals(List.of("CONNECT [2001:db8::1]:443 HTTP/1.1"), targets);
+        long deadline = System.currentTimeMillis() + TIMEOUT_MS;
+        while (targets.isEmpty() && System.currentTimeMillis() < deadline) Thread.sleep(10);
+        assertEquals(List.of("CONNECT " + SITE + ":443 HTTP/1.1"), targets);
     }
 
     /**
@@ -182,6 +206,13 @@ public class ProxyRelayTest {
         named.write(new byte[]{5, 1, 0, 3, (byte) name.length});
         named.write(name);
         assertEquals(8, answerToLateEnd(named.toByteArray(), new byte[]{1, (byte) 187}));
+        byte[] other = "www.example.com".getBytes(StandardCharsets.US_ASCII);
+        ByteArrayOutputStream elsewhere = new ByteArrayOutputStream();
+        elsewhere.write(new byte[]{5, 1, 0, 3, (byte) other.length});
+        elsewhere.write(other);
+        assertEquals(2, answerToLateEnd(elsewhere.toByteArray(), new byte[]{1, (byte) 187}));
+        // An address, with its port late.
+        assertEquals(2, answerToLateEnd(new byte[]{5, 1, 0, 1, (byte) 192, 0, 2, 7}, new byte[]{1, (byte) 187}));
         // BIND, with its port late.
         assertEquals(7, answerToLateEnd(new byte[]{5, 2, 0, 1, 1, 2, 3, 4}, new byte[]{0, 80}));
     }
@@ -223,7 +254,7 @@ public class ProxyRelayTest {
         });
         relay = ProxyRelay.start(config("http", proxy, USER, "wrong"));
 
-        Socket client = askForSite("api16.example.test", 443);
+        Socket client = askForSite(SITE, 443);
         assertNotEquals(0, answerTo(client));
         assertEquals("then it hangs up", -1, client.getInputStream().read());
     }
@@ -241,7 +272,7 @@ public class ProxyRelayTest {
         });
         relay = ProxyRelay.start(config("socks5", proxy, USER, PASSWORD));
 
-        assertEquals("host unreachable, from the proxy", 4, answerTo(askForSite("gone.example.test", 443)));
+        assertEquals("host unreachable, from the proxy", 4, answerTo(askForSite("gone.tiktokv.com", 443)));
     }
 
     @Test public void aProxyThatIsDownIsAFailedTunnelAndNeverAHang() throws Exception {
@@ -251,7 +282,7 @@ public class ProxyRelayTest {
         }
         relay = ProxyRelay.start(NetworkProxy.parse("http", "127.0.0.1", String.valueOf(port), USER, PASSWORD));
 
-        assertEquals(1, answerTo(askForSite("api16.example.test", 443)));
+        assertEquals(1, answerTo(askForSite(SITE, 443)));
     }
 
     /** A web page can point at a loopback port. It gets nowhere, and the proxy never hears of it. */
@@ -295,7 +326,7 @@ public class ProxyRelayTest {
         assertEquals("the refused client is hung up on", -1, readOrEnd(refused));
         awaitOpenConnections(0);
 
-        Socket client = askForSite("api16.example.test", 443);
+        Socket client = askForSite(SITE, 443);
         assertEquals("the next connection still gets its tunnel", 0, answerTo(client));
         assertEchoes(client);
         assertNothingEscaped();
@@ -307,7 +338,7 @@ public class ProxyRelayTest {
         // Start 3 is the first connection's pump from the proxy back to TikTok.
         relay = ProxyRelay.start(config("http", proxy, USER, PASSWORD), failingThreadStart(3));
 
-        Socket first = askForSite("api16.example.test", 443);
+        Socket first = askForSite(SITE, 443);
         assertEquals(0, answerTo(first));
         assertEquals("a tunnel that can't carry bytes is closed", -1, readOrEnd(first));
         // The proxy's side ends cleanly, well before its own read would time out.
@@ -315,7 +346,7 @@ public class ProxyRelayTest {
                 firstTunnelEnded.await(TIMEOUT_MS / 3, TimeUnit.MILLISECONDS));
         awaitOpenConnections(0);
 
-        Socket client = askForSite("api16.example.test", 443);
+        Socket client = askForSite(SITE, 443);
         assertEquals(0, answerTo(client));
         assertEchoes(client);
         // Before, the error went on out of the first connection's thread, which on a phone ends

@@ -21,6 +21,12 @@ import java.net.Proxy;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -34,8 +40,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * the proxy selector never sees.
  *
  * <p>Loopback isn't private to one app, so another app on the phone could reach the port while
- * TikTok runs and use the proxy, though it never learns the password. The user name row says so.
- * The user name, password and tunnel targets are never logged.
+ * TikTok runs. It never learns the password, and the relay only opens tunnels to the domains
+ * TikTok's own stacks use, so it can't send its traffic anywhere else through the proxy. The user
+ * name row says the port can be reached. The user name, password and tunnel targets are never
+ * logged. A turned-down host is, once, so a domain TikTok starts using shows up in a debug log.
  */
 final class ProxyRelay {
     private static final String THREAD_NAME = "Hushfeed proxy relay";
@@ -59,8 +67,35 @@ final class ProxyRelay {
     private static final int ADDRESS_IPV6 = 4;
     private static final int ANSWER_OK = 0;
     private static final int ANSWER_FAILED = 1;
+    private static final int ANSWER_NOT_ALLOWED = 2;
     private static final int ANSWER_COMMAND_UNSUPPORTED = 7;
     private static final int ANSWER_ADDRESS_UNSUPPORTED = 8;
+
+    /**
+     * Where TikTok's own stacks connect: ByteDance's API, CDN, effect, shop and short-link domains,
+     * and the few outside services TikTok's screens call (GIF search, shop payments, Facebook and
+     * Apple Music links, push sign-up). Read from 47.7.3's dex strings. A name matches an entry or
+     * any name under it.
+     */
+    private static final Set<String> TIKTOK_DOMAINS = new HashSet<>(Arrays.asList(
+            "braintreegateway.com", "bytedance.com", "bytedance.net", "byteeffecttos-g.com", "byteimg.com",
+            "byteintl.com", "byteintlapi.com", "byteoversea.com", "byteoversea.net", "capcut.com",
+            "firebaseinstallations.googleapis.com", "giphy.com", "graph.facebook.com", "helo-api.com",
+            "ibytedtos.com", "ibyteimg.com", "ifdmimgs.com", "ifdmstatic.com", "ipstatp.com", "isnssdk.com",
+            "lemon8-app.com", "letschattos3.com", "music.apple.com", "muscdn.com", "musical.ly",
+            "oecsccdn.com", "oecstatic.com", "p16-tiktokcdn-com.akamaized.net", "paypal.com", "pipopay.com",
+            "pipopayment.com", "pipopayment.us", "pstap.com", "pstatp.com", "resso.app", "resso.com",
+            "sgpstatp.com", "sgsnssdk.com", "snssdk.com", "stripe.com", "tenor.com", "tik-global.com",
+            "tik-lol.com", "tik-to.com", "tik-tokapi.com", "tik-tokcdn.com", "tikitoks.com", "tiklol.com",
+            "tiktok.com", "tiktok-eu.net", "tiktok-minis.com", "tiktok-minis.us", "tiktok-row.net",
+            "tiktok-row.org", "tiktok-shops.eu", "tiktok-shops.us", "tiktok-us.org", "tiktokapis.com",
+            "tiktokcdn.com", "tiktokcdn-eu.com", "tiktokcdn-us.com", "tiktokv.com", "tiktokv.eu",
+            "tiktokv.us", "tiktokw.eu", "tiktokw.us", "tokopedia.com", "tokopediax.com", "tt-best.com",
+            "tt-in.com", "tt-lol.com", "tt-mov.com", "tt-video.com", "ttwstatic.com"));
+
+    /** Turned-down hosts already logged. Capped, since whoever reaches the port picks the names. */
+    private static final Set<String> REFUSALS_LOGGED = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private static final int MOST_REFUSALS_LOGGED = 64;
 
     /** Starts each of a relay's threads. A test passes one that stands in for a phone out of threads. */
     interface ThreadStarter {
@@ -241,28 +276,33 @@ final class ProxyRelay {
         int type = head[3] & 0xFF;
         byte[] address;
         String host;
-        if (type == ADDRESS_IPV4) {
-            address = readExactly(in, 4);
+        if (type == ADDRESS_IPV4 || type == ADDRESS_IPV6) {
+            // TikTok's stacks ask by name. An address comes from a caller that looked the name
+            // up itself, and no list of domains can say where an address belongs.
+            address = readExactly(in, type == ADDRESS_IPV4 ? 4 : 16);
             host = InetAddress.getByAddress(address).getHostAddress();
-        } else if (type == ADDRESS_IPV6) {
-            address = readExactly(in, 16);
-            host = "[" + InetAddress.getByAddress(address).getHostAddress() + "]";
+            if (refusal == ANSWER_OK) {
+                refusal = ANSWER_NOT_ALLOWED;
+                logRefusal(host);
+            }
         } else if (type == ADDRESS_NAME) {
             int length = in.read();
             if (length < 0) return null;
             byte[] name = readExactly(in, length);
-            if ((length == 0 || !isHostName(name)) && refusal == ANSWER_OK) {
-                // A line break or a space in a "name" would let whoever reached this port put
-                // lines of their own into the CONNECT request that carries the user's sign-in.
-                refusal = ANSWER_ADDRESS_UNSUPPORTED;
-            }
             ByteArrayOutputStream whole = new ByteArrayOutputStream(length + 1);
             whole.write(length);
             whole.write(name);
             address = whole.toByteArray();
-            String text = new String(name, StandardCharsets.US_ASCII);
-            // Chromium sends an IPv6 literal by name and bare; a CONNECT line wants it in brackets.
-            host = text.indexOf(':') >= 0 ? "[" + text + "]" : text;
+            host = new String(name, StandardCharsets.US_ASCII);
+            if ((length == 0 || !isHostName(name)) && refusal == ANSWER_OK) {
+                // A line break, a space or a colon in a "name" would let whoever reached this port
+                // put lines or a port of their own into the CONNECT request that carries the
+                // user's sign-in.
+                refusal = ANSWER_ADDRESS_UNSUPPORTED;
+            } else if (!isTikTokHost(host) && refusal == ANSWER_OK) {
+                refusal = ANSWER_NOT_ALLOWED;
+                logRefusal(host);
+            }
         } else {
             // No telling how long an address of an unknown type is, so this one can't wait.
             answer(out, refusal == ANSWER_OK ? ANSWER_ADDRESS_UNSUPPORTED : refusal);
@@ -277,24 +317,35 @@ final class ProxyRelay {
     }
 
     /**
-     * Letters, digits, dots, hyphens and underscores: what a host name is made of. A name with a
-     * colon in it is an IPv6 literal, so it may hold only hex digits, colons and dots; bracketed,
-     * anything else would read as a second port or a path to the proxy.
+     * Letters, digits, dots, hyphens and underscores: what a host name is made of. An IPv6
+     * literal by name has colons, and it's an address the domain list can't place either.
      */
     private static boolean isHostName(byte[] name) {
-        boolean literal = false;
-        for (byte b : name) literal |= b == ':';
         for (byte b : name) {
             boolean digit = b >= '0' && b <= '9';
-            if (literal) {
-                boolean hex = digit || (b >= 'a' && b <= 'f') || (b >= 'A' && b <= 'F');
-                if (!hex && b != ':' && b != '.') return false;
-            } else {
-                boolean letter = (b >= 'a' && b <= 'z') || (b >= 'A' && b <= 'Z');
-                if (!letter && !digit && b != '.' && b != '-' && b != '_') return false;
-            }
+            boolean letter = (b >= 'a' && b <= 'z') || (b >= 'A' && b <= 'Z');
+            if (!letter && !digit && b != '.' && b != '-' && b != '_') return false;
         }
         return true;
+    }
+
+    /** A name on {@link #TIKTOK_DOMAINS} or under one. A bare IPv4 address never is. */
+    static boolean isTikTokHost(String name) {
+        String rest = name.toLowerCase(Locale.ROOT);
+        // A fully qualified name ends in a dot, and it's the same host.
+        if (rest.endsWith(".")) rest = rest.substring(0, rest.length() - 1);
+        while (true) {
+            if (TIKTOK_DOMAINS.contains(rest)) return true;
+            int dot = rest.indexOf('.');
+            if (dot < 0) return false;
+            rest = rest.substring(dot + 1);
+        }
+    }
+
+    /** Once a host, and only so many, since another app could send any number of names. */
+    private static void logRefusal(String host) {
+        if (REFUSALS_LOGGED.size() >= MOST_REFUSALS_LOGGED || !REFUSALS_LOGGED.add(host)) return;
+        Logger.printDebug(() -> "Network proxy relay: turned down " + host + ", which isn't a domain TikTok uses");
     }
 
     /** The reply TikTok's stack reads: it never looks at the bound address, so it's all zeros. */

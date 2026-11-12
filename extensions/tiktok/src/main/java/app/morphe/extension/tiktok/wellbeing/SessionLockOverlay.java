@@ -776,6 +776,14 @@ public final class SessionLockOverlay {
         return hold >= 0 ? hold : root.getChildCount();
     }
 
+    /**
+     * Puts a view just added under the hold behind its curtain now. Left to the hold's next
+     * layout pass, it was a Tab stop for that frame and TalkBack could announce it.
+     */
+    public static void curtainWhatWentUnder(ViewGroup root) {
+        if (root != null && parentOf(overlayReference.get()) == root) syncGeometry();
+    }
+
     private static ViewGroup parentOf(View view) {
         if (view == null) return null;
         return view.getParent() instanceof ViewGroup ? (ViewGroup) view.getParent() : null;

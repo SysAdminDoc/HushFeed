@@ -545,18 +545,15 @@ public class PausePlaybackTest {
                 assertTrue("the catcher went up over the hold",
                         root.indexOfChild(catcher) < root.indexOfChild(hold));
                 assertHoldInReach(hold);
+                // From the moment it's added, not from the hold's next layout pass.
+                assertBehindTheHold(catcher);
 
                 root.removeView(catcher);
                 root.getViewTreeObserver().dispatchOnGlobalLayout();
                 assertTrue("the catcher was put back over the hold",
                         catcher.getParent() == root && root.indexOfChild(catcher) < root.indexOfChild(hold));
                 assertHoldInReach(hold);
-                // The hold redrew its curtain before the catcher came back, so it covers the
-                // catcher on the layout pass putting it back asks for.
-                root.getViewTreeObserver().dispatchOnGlobalLayout();
-                assertEquals("the catcher isn't behind the hold",
-                        View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS,
-                        catcher.getImportantForAccessibility());
+                assertBehindTheHold(catcher);
             } finally {
                 FeedVisibility.resolveForTests(activity.getPackageName(), "47.7.3:opf", 0);
                 Settings.FEED_LOCK.resetToDefault();
@@ -577,6 +574,12 @@ public class PausePlaybackTest {
                 hold.getImportantForAccessibility() != View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
         assertTrue("the catcher's curtain took the hold's buttons out of Tab's reach",
                 hold.getDescendantFocusability() != ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+    }
+
+    private static void assertBehindTheHold(View catcher) {
+        assertEquals("a reader can reach the catcher under the hold",
+                View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS, catcher.getImportantForAccessibility());
+        assertFalse("the catcher under the hold is a Tab stop", catcher.isFocusable());
     }
 
     /**

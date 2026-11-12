@@ -542,6 +542,7 @@ public final class PausePlayback {
         // to the like and comment buttons underneath. The tab bar it stops above stays in reach.
         SessionLockOverlay.hideBehind(root, catcher, true,
                 SessionLockOverlay.navigationBar(activity, root));
+        SessionLockOverlay.curtainWhatWentUnder(root);
         watchTheFeed(activity, root, catcher);
     }
 
@@ -604,6 +605,7 @@ public final class PausePlayback {
                 // went up are behind it too.
                 SessionLockOverlay.hideBehind(root, catcher, true,
                         SessionLockOverlay.navigationBar(activity, root));
+                if (putsBack > 0) SessionLockOverlay.curtainWhatWentUnder(root);
             } catch (Throwable error) {
                 // Runs inside TikTok's layout pass, where a throw would take the app down.
                 Logger.printException(() -> "Could not keep the catcher over the feed", error);

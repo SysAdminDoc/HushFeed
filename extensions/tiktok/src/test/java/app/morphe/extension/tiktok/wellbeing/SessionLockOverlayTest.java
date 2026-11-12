@@ -740,6 +740,36 @@ public class SessionLockOverlayTest {
         }
     }
 
+    @Test public void focusTikTokGivesAfterTheLastPassStandsAfterTheLift() {
+        // Read on a pass, set on a pass. A view TikTok made focusable after the last one was
+        // handed the mode recorded before it, so TikTok's own change was lost on the lift.
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            ViewGroup root = activity.findViewById(android.R.id.content);
+            View changed = new View(activity);
+            View left = new View(activity);
+            for (View view : new View[] {changed, left}) {
+                view.setFocusable(View.FOCUSABLE_AUTO);
+                view.setOnClickListener(clicked -> { });
+                root.addView(view);
+            }
+            View hold = new View(activity);
+            root.addView(hold);
+            layout(root, 480, 960);
+
+            SessionLockOverlay.hideBehind(root, hold, true, null);
+            assertFalse(changed.isFocusable());
+            changed.setFocusable(View.FOCUSABLE);
+            SessionLockOverlay.hideBehind(root, hold, false);
+
+            assertEquals("TikTok's own focus setting was undone by the lift",
+                    View.FOCUSABLE, changed.getFocusable());
+            assertEquals("a view TikTok left alone didn't get its own mode back",
+                    View.FOCUSABLE_AUTO, left.getFocusable());
+            assertTrue(left.isFocusable());
+        }
+    }
+
     @Test public void aViewTikTokMakesFocusableUnderThePanelIsNoStopEither() {
         // A view left on FOCUSABLE_AUTO turns focusable the moment it gets a click listener. Its
         // focus was read once, as it was curtained, so one TikTok bound after that was an empty

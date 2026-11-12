@@ -927,10 +927,14 @@ public final class SessionLockOverlay {
         if (!state.panels.isEmpty()) return;
         curtained.remove(view);
         if (state.focusable) {
-            // Going not focusable dropped this too. First, because it sets FOCUSABLE over AUTO.
+            // Focusable again means TikTok set it after the last pass, and its latest word stands.
+            boolean refocused = view.isFocusable();
+            int now = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ? view.getFocusable() : View.FOCUSABLE;
+            // Going not focusable dropped this too, and making a view focusable doesn't bring it
+            // back. First, because it sets FOCUSABLE over AUTO.
             if (state.focusableInTouchMode) view.setFocusableInTouchMode(true);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                view.setFocusable(state.focusableMode);
+                view.setFocusable(refocused ? now : state.focusableMode);
             } else {
                 view.setFocusable(true);
             }

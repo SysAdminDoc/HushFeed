@@ -300,6 +300,7 @@
       "discover_bottom_tab",
       "friends_top_tab",
       "bottom_tab_icon_style",
+      "bottom_bar_height",
       "hide_tab_badges",
       "hide_bottom_tab_labels",
       "bottom_tab_name_home",
@@ -1091,6 +1092,12 @@
       "key": "blocked_words_in_stickers",
       "type": "boolean",
       "default": false
+    },
+    "bottom_bar_height": {
+      "field": "BOTTOM_BAR_HEIGHT",
+      "key": "bottom_bar_height",
+      "type": "string",
+      "default": "tiktok"
     },
     "bottom_navigation": {
       "field": "BOTTOM_NAVIGATION",

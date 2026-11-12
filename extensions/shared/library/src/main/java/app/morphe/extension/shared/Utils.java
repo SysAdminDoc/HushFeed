@@ -541,6 +541,15 @@ public class Utils {
         return activity != null ? activity : getContext();
     }
 
+    /**
+     * Whether the extension hook has handed over the app's context yet. A hook TikTok can reach
+     * while its Application is still attaching asks this before it reads a setting, since the
+     * settings load their preferences from that context once and for good.
+     */
+    public static boolean hasContext() {
+        return context != null;
+    }
+
     public static Context getContext() {
         if (context == null) {
             Logger.printException(() -> "Context is not set by extension hook, returning null");

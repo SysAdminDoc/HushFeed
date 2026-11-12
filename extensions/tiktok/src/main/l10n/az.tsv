@@ -2668,6 +2668,18 @@ TikTok tests more than one set of icons for the bottom bar. Pick one here, or le
 New style 1	Yeni üslub 1
 # context: Choice value for the bottom bar's icons, TikTok's other newer icon set
 New style 2	Yeni üslub 2
+# context: Row title of the Feed tabs choice that sets how tall the bottom bar is
+Bottom bar height	Alt panelin hündürlüyü
+# context: Note under that choice
+Videos and the other tabs make room for the bar at its new height. With the tab names hidden, the icons fit the shorter bars best.	Videolar və digər tablar panelin yeni hündürlüyünə görə yer açır. Tab adları gizlədiləndə ikonlar alçaq panellərə daha yaxşı sığır.
+# context: Choice value for the bottom bar's height, the lowest of the five
+Shorter	Çox alçaq
+# context: Choice value for the bottom bar's height, a little lower than TikTok's
+Short	Alçaq
+# context: Choice value for the bottom bar's height, a little higher than TikTok's
+Tall	Hündür
+# context: Choice value for the bottom bar's height, the highest of the five
+Taller	Çox hündür
 # context: Row title of the Feed tabs switch that adds Friends to the row of tabs along the top of the feed
 Friends in the top tabs	Yuxarı tablarda Dostlar
 # context: Summary under that switch; Friends and Following are TikTok's tab names

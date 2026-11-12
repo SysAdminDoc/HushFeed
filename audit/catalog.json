@@ -5670,6 +5670,12 @@
     "row": "Bottom bar icons"
    },
    {
+    "key": "bottom_bar_height",
+    "default": "tiktok",
+    "type": "string",
+    "row": "Bottom bar height"
+   },
+   {
     "key": "home_tab_opens_settings",
     "default": true,
     "type": "bool",

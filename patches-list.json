@@ -3888,7 +3888,7 @@
     },
     {
       "name": "Feed tab navigation",
-      "description": "Lets you hide feed and bottom tabs you don't use, put Discover in the bottom bar and Friends in the top tabs, rename the bottom tabs, pick the bottom bar's icons, choose the tab TikTok opens on, stop For You reloading when you tap Home and hold Profile to open your Watch history. Starts off, except holding Home to open Hushfeed settings. Find it in Hushfeed settings > Feed tabs.",
+      "description": "Lets you hide feed and bottom tabs you don't use, put Discover in the bottom bar and Friends in the top tabs, rename the bottom tabs, pick the bottom bar's icons and height, choose the tab TikTok opens on, stop For You reloading when you tap Home and hold Profile to open your Watch history. Starts off, except holding Home to open Hushfeed settings. Find it in Hushfeed settings > Feed tabs.",
       "category": "Settings",
       "use": true,
       "dependencies": [
@@ -3999,6 +3999,15 @@
         {
           "key": "bottom_tab_icon_style",
           "title": "Default: bottom tab icon style",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "tiktok",
+          "values": null
+        },
+        {
+          "key": "bottom_bar_height",
+          "title": "Default: bottom bar height",
           "description": null,
           "required": false,
           "type": "kotlin.String",

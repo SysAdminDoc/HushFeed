@@ -2911,6 +2911,18 @@ TikTok tests more than one set of icons for the bottom bar. Pick one here, or le
 New style 1	النمط الجديد 1
 # context: Choice value for the bottom bar's icons, TikTok's other newer icon set
 New style 2	النمط الجديد 2
+# context: Row title of the Feed tabs choice that sets how tall the bottom bar is
+Bottom bar height	ارتفاع الشريط السفلي
+# context: Note under that choice
+Videos and the other tabs make room for the bar at its new height. With the tab names hidden, the icons fit the shorter bars best.	تفسح الفيديوهات وعلامات التبويب الأخرى مكانًا للشريط بارتفاعه الجديد. عند إخفاء أسماء علامات التبويب، تناسب الأيقونات الأشرطة الأقصر أكثر.
+# context: Choice value for the bottom bar's height, the lowest of the five
+Shorter	منخفض جدًا
+# context: Choice value for the bottom bar's height, a little lower than TikTok's
+Short	منخفض
+# context: Choice value for the bottom bar's height, a little higher than TikTok's
+Tall	مرتفع
+# context: Choice value for the bottom bar's height, the highest of the five
+Taller	مرتفع جدًا
 # context: Row title of the Feed tabs switch that adds Friends to the row of tabs along the top of the feed
 Friends in the top tabs	الأصدقاء في التبويبات العلوية
 # context: Summary under that switch; Friends and Following are TikTok's tab names

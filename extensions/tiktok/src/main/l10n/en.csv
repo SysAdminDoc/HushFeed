@@ -349,6 +349,7 @@ Blur strength,Blur strength
 "Blur the part of the video that sits behind the glass pill on the main feed, so it looks like frosted glass. Needs Liquid glass look and Android 12 and up.","Blur the part of the video that sits behind the glass pill on the main feed, so it looks like frosted glass. Needs Liquid glass look and Android 12 and up."
 Blur the video behind the bar,Blur the video behind the bar
 Bold,Bold
+Bottom bar height,Bottom bar height
 Bottom bar icons,Bottom bar icons
 Bottom left double tap,Bottom left double tap
 Bottom right double tap,Bottom right double tap
@@ -1890,8 +1891,10 @@ Shop,Shop
 Shop order updates and coupon messages no longer take up rows in the Inbox. Your orders are unchanged.,Shop order updates and coupon messages no longer take up rows in the Inbox. Your orders are unchanged.
 Shop posts,Shop posts
 Shop tab name,Shop tab name
+Short,Short
 Short date,Short date
 Short pulse,Short pulse
+Shorter,Shorter
 Shortest first,Shortest first
 Show,Show
 Show @username beside a video instead of the display name the creator chose.,Show @username beside a video instead of the display name the creator chose.
@@ -2137,6 +2140,8 @@ Take the rings off the creator's picture in the feed's right column. Needs Remov
 Takes TikTok's AI Cast button off the camera's side toolbar. Open the camera again to see the change.,Takes TikTok's AI Cast button off the camera's side toolbar. Open the camera again to see the change.
 Takes TikTok's own Auto scroll action out of the video panel and the Auto scroll label off the top of videos. Tablets and unfolded foldables also lose the Auto scroll switch beside videos. Works with Auto-advance off too.,Takes TikTok's own Auto scroll action out of the video panel and the Auto scroll label off the top of videos. Tablets and unfolded foldables also lose the Auto scroll switch beside videos. Works with Auto-advance off too.
 "Takes out the small bar above the progress bar that says a friend reposted the video, or asks you to repost it.","Takes out the small bar above the progress bar that says a friend reposted the video, or asks you to repost it."
+Tall,Tall
+Taller,Taller
 Tap @names in bios,Tap @names in bios
 Tap Repost on the bar under a video twice within %1$d seconds. A repost with a note is left alone.,Tap Repost on the bar under a video twice within %1$d seconds. A repost with a note is left alone.
 Tap Stop or leave the room to save it.,Tap Stop or leave the room to save it.
@@ -2512,6 +2517,7 @@ Video saved,Video saved
 Video saved with %1$s subtitles in %2$s,Video saved with %1$s subtitles in %2$s
 Video text color,Video text color
 Videos,Videos
+"Videos and the other tabs make room for the bar at its new height. With the tab names hidden, the icons fit the shorter bars best.","Videos and the other tabs make room for the bar at its new height. With the tab names hidden, the icons fit the shorter bars best."
 "Videos can't be saved to the folder in that file, so your video folder was kept","Videos can't be saved to the folder in that file, so your video folder was kept"
 Videos from %1$s,Videos from %1$s
 Videos in search results show their cover and play when you open them. The feed and the videos you open play as usual.,Videos in search results show their cover and play when you open them. The feed and the videos you open play as usual.

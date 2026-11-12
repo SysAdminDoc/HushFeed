@@ -370,6 +370,12 @@ public class SettingsStatus {
         bottomTabIconsEnabled = true;
     }
 
+    public static boolean bottomBarHeightEnabled = false;
+
+    public static void enableBottomBarHeight() {
+        bottomBarHeightEnabled = true;
+    }
+
     public static void enableDiscoverTab() {
         discoverTabEnabled = true;
     }

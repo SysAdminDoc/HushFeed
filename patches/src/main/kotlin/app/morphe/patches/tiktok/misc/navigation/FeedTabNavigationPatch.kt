@@ -29,6 +29,9 @@ import app.morphe.patches.tiktok.shared.objectIn
 import app.morphe.patches.tiktok.shared.requireLocals
 import app.morphe.patches.tiktok.shared.valueIn
 import app.morphe.util.addInstructionsAtControlFlowLabel
+import app.morphe.util.classesCalling
+import app.morphe.util.classesCallingMethods
+import app.morphe.util.findMutableMethodOf
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
@@ -258,7 +261,7 @@ internal fun MutableMethod.offerBottomTabIcons() {
 val feedTabNavigationPatch = bytecodePatch(
     name = "Feed tab navigation",
     description = "Lets you hide feed and bottom tabs you don't use, put Discover in the " +
-        "bottom bar and Friends in the top tabs, rename the bottom tabs, pick the bottom bar's icons, " +
+        "bottom bar and Friends in the top tabs, rename the bottom tabs, pick the bottom bar's icons and height, " +
         "choose the tab TikTok opens on, stop For You reloading when you tap Home and hold " +
         "Profile to open your Watch history. Starts off, " +
         "except holding Home to open Hushfeed settings. Find it in Hushfeed settings > Feed tabs.",
@@ -290,6 +293,17 @@ val feedTabNavigationPatch = bytecodePatch(
             if (packageMetadata.versionName in declaredVersions()) throw problem
             println("[Feed tab navigation] Left out the Discover tab on ${packageMetadata.versionName}: ${problem.message}")
             emptyList()
+        }
+        // The bottom bar's size, read in several places that all have to agree. Same rule as above.
+        val barHeightSites = try {
+            bottomBarHeightSites({ classDefByOrNull(it) }) { targets ->
+                val types = if (targets.all { "->" in it }) classesCallingMethods(targets) else classesCalling(targets)
+                types.mapNotNull { classDefByOrNull(it) }
+            }
+        } catch (problem: PatchException) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[Feed tab navigation] Left out the bottom bar height on ${packageMetadata.versionName}: ${problem.message}")
+            null
         }
 
         SettingsStatusLoadFingerprint.method.addInstruction(
@@ -418,6 +432,18 @@ val feedTabNavigationPatch = bytecodePatch(
             SettingsStatusLoadFingerprint.method.addInstruction(
                 0,
                 "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableBottomTabIcons()V",
+            )
+        }
+
+        barHeightSites?.let { sites ->
+            sites.hooksByMethod().forEach { (site, hooks) ->
+                mutableClassDefBy(site.first).findMutableMethodOf(site.second).addBottomBarHooks(hooks)
+            }
+            mutableClassDefBy(sites.navHeight.owner).findMutableMethodOf(sites.navHeight.method)
+                .adjustNavHeight(sites.navHeight)
+            SettingsStatusLoadFingerprint.method.addInstruction(
+                0,
+                "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableBottomBarHeight()V",
             )
         }
 

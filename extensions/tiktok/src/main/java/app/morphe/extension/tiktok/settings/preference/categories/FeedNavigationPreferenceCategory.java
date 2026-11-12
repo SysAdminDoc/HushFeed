@@ -8,6 +8,7 @@ import android.content.Context;
 import android.preference.PreferenceScreen;
 
 import app.morphe.extension.shared.settings.StringSetting;
+import app.morphe.extension.tiktok.navigation.BottomBarHeight;
 import app.morphe.extension.tiktok.navigation.BottomTabIcons;
 import app.morphe.extension.tiktok.navigation.StartPage;
 import app.morphe.extension.tiktok.settings.Settings;
@@ -181,6 +182,13 @@ public class FeedNavigationPreferenceCategory extends ConditionalPreferenceCateg
                     new String[]{"TikTok default", "Original", "New style 1", "New style 2"},
                     new String[]{BottomTabIcons.TIKTOK, BottomTabIcons.ORIGINAL, BottomTabIcons.NEW_STYLE_1, BottomTabIcons.NEW_STYLE_2})
                     .withNote("TikTok tests more than one set of icons for the bottom bar. Pick one here, or leave it to TikTok."));
+        }
+        // Left out on a build where the bar's size wasn't found.
+        if (SettingsStatus.bottomBarHeightEnabled) {
+            addPreference(new ChoicePreference(context, "Bottom bar height", Settings.BOTTOM_BAR_HEIGHT,
+                    new String[]{"Shorter", "Short", "TikTok default", "Tall", "Taller"},
+                    new String[]{BottomBarHeight.SHORTER, BottomBarHeight.SHORT, BottomBarHeight.TIKTOK, BottomBarHeight.TALL, BottomBarHeight.TALLER})
+                    .withNote("Videos and the other tabs make room for the bar at its new height. With the tab names hidden, the icons fit the shorter bars best."));
         }
         // Left out with their hooks on a build where the tab icons' names weren't found.
         if (SettingsStatus.bottomTabLabelsEnabled) {

@@ -127,7 +127,7 @@ public class ChangedSettingsReportTest {
         }
 
         assertEquals(new TreeSet<>(List.of(
-                "app_lock_timeout", "bottom_navigation_tabs", "burn_in_guard", "caption_background",
+                "app_lock_timeout", "bottom_bar_height", "bottom_navigation_tabs", "burn_in_guard", "caption_background",
                 "caption_font_weight", "default_speed", "double_tap_action", "double_tap_bottom_left_action",
                 "double_tap_bottom_right_action", "double_tap_top_left_action", "double_tap_top_right_action",
                 "download_saves_at_once",

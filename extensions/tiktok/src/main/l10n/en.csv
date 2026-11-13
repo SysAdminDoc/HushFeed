@@ -166,6 +166,7 @@ A removal is already running,A removal is already running
 "A screen's layout is recorded. Export the diagnostic report to send it, or tap to record another.","A screen's layout is recorded. Export the diagnostic report to send it, or tap to record another."
 "A small eye button at the top left of the main feed. Tap it and the buttons, caption and tabs go invisible but still take taps, which helps against burn-in on OLED screens. Tap it again to bring them back. They stay the way you left them across videos and restarts. Videos you open from a profile or search keep their controls.","A small eye button at the top left of the main feed. Tap it and the buttons, caption and tabs go invisible but still take taps, which helps against burn-in on OLED screens. Tap it again to bring them back. They stay the way you left them across videos and restarts. Videos you open from a profile or search keep their controls."
 "A small label on the feed shows the minutes or videos left of today's budget, whichever is closer to running out.","A small label on the feed shows the minutes or videos left of today's budget, whichever is closer to running out."
+"A soft dark fade behind the clock and status icons, so they stay easy to read over a bright video. Needs See-through status bar.","A soft dark fade behind the clock and status icons, so they stay easy to read over a bright video. Needs See-through status bar."
 A tap on Home or on the For You tab while For You is showing no longer reloads it. The video you're on stays.,A tap on Home or on the For You tab while For You is showing no longer reloads it. The video you're on stays.
 A video you paused stays paused when you come back to the app instead of starting again. One you left playing starts as usual. It works on Android 10 and newer.,A video you paused stays paused when you come back to the app instead of starting again. One you left playing starts as usual. It works on Android 10 and newer.
 A web address someone left in a comment can be tapped instead of copied out by hand. Tapping anywhere else in the comment still does what it did.,A web address someone left in a comment can be tapped instead of copied out by hand. Tapping anywhere else in the comment still does what it did.
@@ -1174,7 +1175,7 @@ Let other apps play until a video starts,Let other apps play until a video start
 Let the Offline videos menu use your own limit instead of TikTok's fixed one. Restart TikTok to apply this.,Let the Offline videos menu use your own limit instead of TikTok's fixed one. Restart TikTok to apply this.
 Let the last video finish,Let the last video finish
 Let the video reach the bottom of the screen on the main feed and show the tabs over it with no bar behind them.,Let the video reach the bottom of the screen on the main feed and show the tabs over it with no bar behind them.
-"Let the video reach the top of the screen on the main feed, with the clock and status icons over it. The tabs at the top stay where they are.","Let the video reach the top of the screen on the main feed, with the clock and status icons over it. The tabs at the top stay where they are."
+"Let the video reach the top of the screen, with the clock and status icons over it. Works on the main feed and on videos you open from search, a profile or your Liked and Favorites. The tabs at the top stay where they are.","Let the video reach the top of the screen, with the clock and status icons over it. Works on the main feed and on videos you open from search, a profile or your Liked and Favorites. The tabs at the top stay where they are."
 Licenses,Licenses
 Lift text length limits,Lift text length limits
 "Lifts spoken captions above TikTok's spot while the phone is sideways. Use 0 for TikTok's spot, or up to %1$d.","Lifts spoken captions above TikTok's spot while the phone is sideways. Use 0 for TikTok's spot, or up to %1$d."
@@ -1901,6 +1902,7 @@ Settings couldn't refresh completely. Reopen settings and try again.,Settings co
 Settings restored. Restart TikTok to apply all changes.,Settings restored. Restart TikTok to apply all changes.
 Settings restored. The Feature Gate Lab rules were for another TikTok version and were left out. Restart TikTok to apply all changes.,Settings restored. The Feature Gate Lab rules were for another TikTok version and were left out. Restart TikTok to apply all changes.
 Several photos in one comment,Several photos in one comment
+Shade behind the status bar,Shade behind the status bar
 Share,Share
 Share sheet,Share sheet
 Shares range,Shares range

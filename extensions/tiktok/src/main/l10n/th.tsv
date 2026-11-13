@@ -2271,7 +2271,7 @@ Hide the Add friends button at the top of your profile. The menu button stays wh
 Hide Balance in the profile menu	ซ่อนยอดคงเหลือในเมนูโปรไฟล์
 Hide Balance from the menu your profile's top right button opens. Your coins and gifts stay as they are.	ซ่อนยอดคงเหลือจากเมนูที่เปิดด้วยปุ่มมุมขวาบนของโปรไฟล์คุณ เหรียญและของขวัญของคุณจะยังคงอยู่เหมือนเดิม
 See-through status bar	แถบสถานะแบบโปร่งใส
-Let the video reach the top of the screen on the main feed, with the clock and status icons over it. The tabs at the top stay where they are.	ให้วิดีโอขยายไปจนถึงขอบบนสุดของหน้าจอในฟีดหลัก โดยมีนาฬิกาและไอคอนสถานะแสดงทับอยู่ด้านบน แท็บที่ด้านบนจะยังคงอยู่ที่เดิม
+Let the video reach the top of the screen, with the clock and status icons over it. Works on the main feed and on videos you open from search, a profile or your Liked and Favorites. The tabs at the top stay where they are.	ให้วิดีโอขยายไปจนถึงขอบบนสุดของหน้าจอ โดยมีนาฬิกาและไอคอนสถานะแสดงทับอยู่ด้านบน ใช้ได้ในฟีดหลักและในวิดีโอที่คุณเปิดจากการค้นหา โปรไฟล์ หรือรายการที่ถูกใจและรายการโปรดของคุณ แท็บที่ด้านบนจะยังคงอยู่ที่เดิม
 Floating bottom bar	แถบด้านล่างแบบลอย
 Show the main feed's tabs on a rounded, see-through dark pill that floats over the video. Needs See-through bottom bar.	แสดงแท็บของฟีดหลักบนแถบแคปซูลสีเข้มโปร่งใสขอบมนที่ลอยอยู่เหนือวิดีโอ จำเป็นต้องเปิดใช้แถบด้านล่างแบบโปร่งใส
 Liquid glass look	รูปลักษณ์ Liquid glass
@@ -2780,3 +2780,5 @@ Pick stories to save	เลือกสตอรี่ที่จะบัน�
 Story %1$s	สตอรี่ %1$s
 On screen	บนหน้าจอ
 Pick at least one story	เลือกอย่างน้อยหนึ่งสตอรี่
+Shade behind the status bar	เงาด้านหลังแถบสถานะ
+A soft dark fade behind the clock and status icons, so they stay easy to read over a bright video. Needs See-through status bar.	ไล่เฉดสีเข้มแบบนุ่มนวลด้านหลังนาฬิกาและไอคอนสถานะ เพื่อให้อ่านได้ง่ายบนวิดีโอที่สว่าง ต้องเปิดใช้แถบสถานะแบบโปร่งใส

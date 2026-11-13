@@ -2268,7 +2268,7 @@ Hide the Add friends button at the top of your profile. The menu button stays wh
 Hide Balance in the profile menu	Esconder Saldo no menu do perfil
 Hide Balance from the menu your profile's top right button opens. Your coins and gifts stay as they are.	Oculte o Saldo do menu que o botão no canto superior direito do seu perfil abre. Suas moedas e presentes ficam como estão.
 See-through status bar	Barra de status transparente
-Let the video reach the top of the screen on the main feed, with the clock and status icons over it. The tabs at the top stay where they are.	No feed principal, deixe o vídeo chegar até o topo da tela, com o relógio e os ícones de status por cima. As abas do topo continuam onde estão.
+Let the video reach the top of the screen, with the clock and status icons over it. Works on the main feed and on videos you open from search, a profile or your Liked and Favorites. The tabs at the top stay where they are.	Deixe o vídeo chegar até o topo da tela, com o relógio e os ícones de status por cima. Funciona no feed principal e nos vídeos que você abre pela busca, por um perfil ou pelas suas Curtidas e Favoritos. As abas do topo continuam onde estão.
 Floating bottom bar	Barra inferior flutuante
 Show the main feed's tabs on a rounded, see-through dark pill that floats over the video. Needs See-through bottom bar.	Mostra as abas do feed principal sobre uma pílula escura, arredondada e transparente que flutua sobre o vídeo. Precisa de Barra inferior transparente.
 Liquid glass look	Visual de vidro líquido
@@ -2777,3 +2777,5 @@ Pick stories to save	Escolha os stories para salvar
 Story %1$s	Story %1$s
 On screen	Na tela
 Pick at least one story	Escolha pelo menos um story
+Shade behind the status bar	Sombra atrás da barra de status
+A soft dark fade behind the clock and status icons, so they stay easy to read over a bright video. Needs See-through status bar.	Um degradê escuro suave atrás do relógio e dos ícones de status, para que fiquem fáceis de ler sobre um vídeo claro. Precisa de Barra de status transparente.

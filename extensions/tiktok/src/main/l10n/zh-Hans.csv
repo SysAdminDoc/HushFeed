@@ -988,7 +988,7 @@ Let a LIVE fill the screen up to the top edge. The status bar comes back when yo
 Let the Offline videos menu use your own limit instead of TikTok's fixed one. Restart TikTok to apply this.,让离线视频菜单使用你自己的限制，而不是 TikTok 的固定限制。重新启动 TikTok 以应用此操作.
 Let the last video finish,让最后一个视频结束吧
 Let the video reach the bottom of the screen on the main feed and show the tabs over it with no bar behind them.,让视频到达主信息流的屏幕底部，并在其上方显示选项卡，且后面没有任何栏.
-"Let the video reach the top of the screen on the main feed, with the clock and status icons over it. The tabs at the top stay where they are.",让视频到达主信息流的屏幕顶部，并在其上方显示时钟和状态图标。顶部的选项卡保持在原来的位置.
+"Let the video reach the top of the screen, with the clock and status icons over it. Works on the main feed and on videos you open from search, a profile or your Liked and Favorites. The tabs at the top stay where they are.",让视频延伸到屏幕顶部，并在其上方显示时钟和状态图标。适用于主信息流，以及你从搜索、个人主页或你的“喜欢”和“收藏”中打开的视频。顶部的选项卡保持在原来的位置.
 Licenses,许可证
 Lift text length limits,解除文本长度限制
 Like,喜欢
@@ -2646,3 +2646,5 @@ Pick stories to save,选择要保存的快拍
 Story %1$s,快拍 %1$s
 On screen,屏幕上
 Pick at least one story,请至少选择一条快拍
+Shade behind the status bar,状态栏后的阴影
+"A soft dark fade behind the clock and status icons, so they stay easy to read over a bright video. Needs See-through status bar.",在时钟和状态图标后面加一层柔和的深色渐变，让它们在明亮的视频上也清晰易读。需要透视状态栏.

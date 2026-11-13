@@ -6,6 +6,9 @@ package app.morphe.extension.tiktok.feed;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.view.SurfaceView;
 import android.view.TextureView;
@@ -13,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.Window;
+import android.view.WindowInsets;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,9 +31,13 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
 /**
  * The window and video halves of See-through status bar (#145). VideoOverlayHider collapses the
  * spacer TikTok keeps above each feed video for the bar, so the picture reaches the top edge; this
- * clears the bar's own color while the feed is in front, so the picture shows through it. Android
- * 15 and up draw every app's bar see through already and ignore the color, so there it's only the
- * spacer.
+ * clears the bar's own color while the feed or an opened video is in front, so the picture shows
+ * through it (opened videos since #407). Android 15 and up draw every app's bar see through already
+ * and ignore the color, so there it's only the spacer.
+ *
+ * <p>Shade behind the status bar (#407) lays a fade in the window's overlay, twice the bar's
+ * height, dark at the top and clear at the bottom, so the clock stays readable over a bright video.
+ * It's drawn over everything in the window, so it comes off the moment the bar isn't see through.
  *
  * <p>Nothing else about the window changes: no flags, no insets, no cutout mode. The color TikTok
  * last gave the bar is kept, and given back when the feed leaves the front, the switch goes off or
@@ -50,6 +58,10 @@ public final class SeeThroughStatusBar {
     static final float MAX_FILL_SCALE = 1.2f;
     /** Windows whose bar this cleared, with the color TikTok last gave it. */
     private static final Map<Window, Integer> CLEARED = new WeakHashMap<>();
+    /** Windows the status bar's fade lies over, with the fade. */
+    private static final Map<Window, Drawable> SHADES = new WeakHashMap<>();
+    /** The fade from the top edge down: half black, a quarter, then clear. */
+    private static final int[] SHADE_COLORS = {0x80000000, 0x40000000, 0x00000000};
     /** Video surfaces and players this grew, with the scale it wrote. */
     private static final Map<View, Float> FILLED = new WeakHashMap<>();
     /** Surfaces whose pivot this moved off their center, so it goes back with the scale. */
@@ -84,6 +96,63 @@ public final class SeeThroughStatusBar {
     static boolean isCleared(Activity activity) {
         Window window = activity.getWindow();
         return window != null && CLEARED.containsKey(window);
+    }
+
+    /**
+     * One layout pass of Shade behind the status bar (#407): while {@code wanted}, a dark fade lies
+     * over the top of the window, half black under the clock and clear at twice the bar's height,
+     * so the clock and icons stay readable over a bright video. It sits in the window's overlay,
+     * over the picture and TikTok's top row alike, and moves no view. A phone that picks dark or
+     * light icons from what's under them reads the fade too. Otherwise it comes off.
+     */
+    static void shade(Activity activity, boolean wanted) {
+        Window window = activity.getWindow();
+        if (window == null) return;
+        View decor = window.peekDecorView();
+        if (decor == null) return;
+        Drawable shade = SHADES.get(window);
+        if (!wanted) {
+            if (shade != null) {
+                decor.getOverlay().remove(shade);
+                SHADES.remove(window);
+            }
+            return;
+        }
+        if (shade == null) {
+            shade = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, SHADE_COLORS);
+            SHADES.put(window, shade);
+            decor.getOverlay().add(shade);
+        }
+        int width = decor.getWidth();
+        int height = 2 * statusBarHeight(decor);
+        Rect bounds = shade.getBounds();
+        if (bounds.left != 0 || bounds.top != 0 || bounds.right != width || bounds.bottom != height) {
+            shade.setBounds(0, 0, width, height);
+        }
+    }
+
+    /** The fade over {@code activity}'s window, or null while there's none. */
+    static Drawable shadeOf(Activity activity) {
+        Window window = activity.getWindow();
+        return window == null ? null : SHADES.get(window);
+    }
+
+    /**
+     * How tall the status bar over {@code decor} is: the window's top inset, or the platform's
+     * bar height before the window has any.
+     */
+    @SuppressWarnings("deprecation")
+    static int statusBarHeight(View decor) {
+        WindowInsets insets = decor.getRootWindowInsets();
+        int top = insets == null ? 0 : insets.getSystemWindowInsetTop();
+        if (top > 0) return top;
+        android.content.res.Resources resources = decor.getResources();
+        int id = resources.getIdentifier("status_bar_height", "dimen", "android");
+        if (id != 0) {
+            int height = resources.getDimensionPixelSize(id);
+            if (height > 0) return height;
+        }
+        return Math.round(24 * resources.getDisplayMetrics().density);
     }
 
     /**

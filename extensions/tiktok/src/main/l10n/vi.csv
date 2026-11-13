@@ -1058,7 +1058,7 @@ Let other apps play until a video starts,Cho phép ứng dụng khác phát nh�
 Let the Offline videos menu use your own limit instead of TikTok's fixed one. Restart TikTok to apply this.,Cho phép menu Video ngoại tuyến sử dụng giới hạn riêng của bạn thay vì giới hạn cố định của TikTok. Khởi động lại TikTok để áp dụng.
 Let the last video finish,Cho phép video cuối cùng phát xong
 Let the video reach the bottom of the screen on the main feed and show the tabs over it with no bar behind them.,Cho phép video tràn xuống đáy màn hình trên bảng tin chính và hiển thị các thẻ đè lên trên mà không có thanh nền phía sau.
-"Let the video reach the top of the screen on the main feed, with the clock and status icons over it. The tabs at the top stay where they are.",Cho phép video tràn lên đỉnh màn hình trên bảng tin chính với đồng hồ và biểu tượng trạng thái đè lên. Các thẻ ở đầu màn hình giữ nguyên vị trí.
+"Let the video reach the top of the screen, with the clock and status icons over it. Works on the main feed and on videos you open from search, a profile or your Liked and Favorites. The tabs at the top stay where they are.","Cho phép video tràn lên đỉnh màn hình với đồng hồ và biểu tượng trạng thái đè lên. Áp dụng cho bảng tin chính và các video bạn mở từ tìm kiếm, trang cá nhân hoặc mục Đã thích và Yêu thích của bạn. Các thẻ ở đầu màn hình giữ nguyên vị trí."
 Licenses,Giấy phép
 Lift text length limits,Gỡ bỏ giới hạn độ dài văn bản
 "Lifts spoken captions above TikTok's spot while the phone is sideways. Use 0 for TikTok's spot, or up to %1$d.","Nâng vị trí phụ đề lời nói lên trên vị trí mặc định của TikTok khi xoay ngang điện thoại. Nhập 0 để dùng vị trí mặc định của TikTok, hoặc tối đa %1$d."
@@ -2646,3 +2646,5 @@ Pick stories to save,Chọn tin để lưu
 Story %1$s,Tin %1$s
 On screen,Trên màn hình
 Pick at least one story,Hãy chọn ít nhất một tin
+Shade behind the status bar,Bóng mờ sau thanh trạng thái
+"A soft dark fade behind the clock and status icons, so they stay easy to read over a bright video. Needs See-through status bar.",Một dải tối mờ dần phía sau đồng hồ và biểu tượng trạng thái để chúng vẫn dễ đọc trên video sáng. Yêu cầu bật Thanh trạng thái trong suốt.

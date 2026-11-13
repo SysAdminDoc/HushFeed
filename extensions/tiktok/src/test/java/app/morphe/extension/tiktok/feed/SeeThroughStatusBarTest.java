@@ -32,7 +32,7 @@ import org.robolectric.annotation.Config;
  * See-through status bar (#145): on the main feed the spacer TikTok keeps above each video for
  * the status bar goes and the bar's color is cleared, so the video reaches the top edge under the
  * clock. Off and Pause give both back exactly, Hide the status bar wins, and a video opened from
- * a profile or search is left as TikTok draws it.
+ * search or a profile goes up the same way (#407).
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 28)
@@ -57,6 +57,7 @@ public class SeeThroughStatusBarTest {
     @After
     public void tearDown() {
         Settings.SEE_THROUGH_STATUS_BAR.resetToDefault();
+        Settings.STATUS_BAR_SHADE.resetToDefault();
         Settings.SEE_THROUGH_BOTTOM_BAR.resetToDefault();
         SeeThroughBottomBar.reset();
         Settings.HIDE_STATUS_BAR.resetToDefault();
@@ -751,17 +752,83 @@ public class SeeThroughStatusBarTest {
         }
     }
 
+    /**
+     * A video opened from search, a profile or the Liked and Favorites grids keeps the same spacer
+     * and band in its cell as the feed (Login2, 2026-11-13: dvu and wo4 at 0 to 136 in every detail
+     * cell), so it goes up under the clock too, and off gives it all back (#407).
+     */
     @Test
-    public void aVideoOpenedFromAProfileOrSearchIsLeftAlone() {
+    public void aVideoOpenedFromSearchOrAProfileGoesUpUnderTheBarToo() {
         try (var controller = Robolectric.buildActivity(DetailActivity.class).setup().visible()) {
             Activity activity = controller.get();
             Utils.setContext(activity);
-            View spacer = feedCell(activity, View.VISIBLE);
+            View spacer = feedCell(activity, View.INVISIBLE);
+            FrameLayout cell = activity.findViewById(CELL_ID);
+            View band = new View(activity);
+            band.setId(BAND_ID);
+            band.setBackgroundColor(Color.BLACK);
+            cell.addView(band, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, 75));
             activity.getWindow().setStatusBarColor(OWN_BAR_COLOR);
             Settings.SEE_THROUGH_STATUS_BAR.save(true);
             VideoOverlayHider.applyTo(activity);
-            assertEquals("an opened video lost its strip", View.VISIBLE, spacer.getVisibility());
+            assertEquals("an opened video kept its strip", View.GONE, spacer.getVisibility());
+            assertEquals("the band still covered the opened video's top", View.INVISIBLE, band.getVisibility());
+            assertEquals(Color.TRANSPARENT, activity.getWindow().getStatusBarColor());
+
+            Settings.SEE_THROUGH_STATUS_BAR.save(false);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(View.INVISIBLE, spacer.getVisibility());
+            assertEquals(View.VISIBLE, band.getVisibility());
             assertEquals(OWN_BAR_COLOR, activity.getWindow().getStatusBarColor());
+        }
+    }
+
+    /**
+     * Shade behind the status bar (#407): a fade over the top of the window, twice the bar's height
+     * and as wide as the window, dark at the top and clear at the bottom, while the bar is see
+     * through. It needs See-through status bar, goes with Pause and with its own switch, and the
+     * window keeps one fade however many passes run.
+     */
+    @Test
+    public void theShadeLiesBehindTheClockOnlyWhileTheBarIsSeeThrough() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            feedCell(activity, View.INVISIBLE);
+            View decor = activity.getWindow().getDecorView();
+            layOut(decor, 1080, 2340);
+            Settings.STATUS_BAR_SHADE.save(true);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("the shade showed without See-through status bar", null, SeeThroughStatusBar.shadeOf(activity));
+
+            Settings.SEE_THROUGH_STATUS_BAR.save(true);
+            VideoOverlayHider.applyTo(activity);
+            android.graphics.drawable.Drawable shade = SeeThroughStatusBar.shadeOf(activity);
+            assertTrue("no shade behind the clock", shade instanceof android.graphics.drawable.GradientDrawable);
+            assertTrue("the shade isn't in the window's overlay", shade.getCallback() != null);
+            int bar = SeeThroughStatusBar.statusBarHeight(decor);
+            assertTrue(bar > 0);
+            assertEquals(new android.graphics.Rect(0, 0, 1080, 2 * bar), shade.getBounds());
+            int[] colors = ((android.graphics.drawable.GradientDrawable) shade).getColors();
+            assertEquals("the top isn't dark", 0x80, Color.alpha(colors[0]));
+            assertEquals("the bottom isn't clear", 0, Color.alpha(colors[colors.length - 1]));
+
+            VideoOverlayHider.applyTo(activity);
+            assertTrue("another pass made a second shade", shade == SeeThroughStatusBar.shadeOf(activity));
+
+            PausedProcess.set(true);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("Pause kept the shade", null, SeeThroughStatusBar.shadeOf(activity));
+            assertEquals("the shade stayed drawn after Pause", null, shade.getCallback());
+            PausedProcess.set(false);
+            VideoOverlayHider.applyTo(activity);
+            assertTrue(SeeThroughStatusBar.shadeOf(activity) != null);
+
+            Settings.STATUS_BAR_SHADE.save(false);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("the shade's switch didn't take it off", null, SeeThroughStatusBar.shadeOf(activity));
+        } finally {
+            Settings.STATUS_BAR_SHADE.resetToDefault();
         }
     }
 }

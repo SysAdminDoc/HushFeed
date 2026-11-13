@@ -2448,7 +2448,7 @@ Hide the Add friends button at the top of your profile. The menu button stays wh
 Hide Balance in the profile menu	Скрывать «Баланс» в меню профиля
 Hide Balance from the menu your profile's top right button opens. Your coins and gifts stay as they are.	Скрывать «Баланс» в меню, которое открывает кнопка справа вверху вашего профиля. Ваши монеты и подарки остаются как есть.
 See-through status bar	Прозрачная строка состояния
-Let the video reach the top of the screen on the main feed, with the clock and status icons over it. The tabs at the top stay where they are.	В основной ленте видео доходит до верхнего края экрана, а часы и значки состояния показываются поверх него. Вкладки вверху остаются на месте.
+Let the video reach the top of the screen, with the clock and status icons over it. Works on the main feed and on videos you open from search, a profile or your Liked and Favorites. The tabs at the top stay where they are.	Видео доходит до верхнего края экрана, а часы и значки состояния показываются поверх него. Работает в основной ленте и в видео, которые вы открываете из поиска, профиля или своих разделов «Понравившиеся» и «Избранное». Вкладки вверху остаются на месте.
 Floating bottom bar	Плавающая нижняя панель
 Show the main feed's tabs on a rounded, see-through dark pill that floats over the video. Needs See-through bottom bar.	Вкладки основной ленты показываются на скруглённой полупрозрачной тёмной плашке, которая парит над видео. Нужна «Прозрачная нижняя панель».
 Liquid glass look	Эффект жидкого стекла
@@ -2960,3 +2960,5 @@ Pick stories to save	Выберите истории для сохранения
 Story %1$s	История %1$s
 On screen	На экране
 Pick at least one story	Выберите хотя бы одну историю
+Shade behind the status bar	Затемнение под строкой состояния
+A soft dark fade behind the clock and status icons, so they stay easy to read over a bright video. Needs See-through status bar.	Мягкий тёмный градиент за часами и значками состояния, чтобы их было легко читать на светлом видео. Нужна «Прозрачная строка состояния».

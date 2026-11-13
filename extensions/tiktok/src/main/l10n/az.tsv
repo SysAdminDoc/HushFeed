@@ -2268,7 +2268,7 @@ Hide the Add friends button at the top of your profile. The menu button stays wh
 Hide Balance in the profile menu	Profil menyusunda Balansı gizlədin
 Hide Balance from the menu your profile's top right button opens. Your coins and gifts stay as they are.	Profilinizin sağ yuxarıdakı düyməsinin açdığı menyudan Balansı gizlədin. Sikkələriniz və hədiyyələriniz olduğu kimi qalır.
 See-through status bar	Şəffaf status paneli
-Let the video reach the top of the screen on the main feed, with the clock and status icons over it. The tabs at the top stay where they are.	Videonun əsas lentdə ekranın yuxarısına qədər uzanmasına icazə verin, saat və status ikonları onun üzərində qalsın. Yuxarıdakı tablar yerində qalır.
+Let the video reach the top of the screen, with the clock and status icons over it. Works on the main feed and on videos you open from search, a profile or your Liked and Favorites. The tabs at the top stay where they are.	Videonun ekranın yuxarısına qədər uzanmasına icazə verin, saat və status ikonları onun üzərində qalsın. Əsas lentdə və axtarışdan, profildən və ya Bəyənilənlər və Sevimlilərdən açdığınız videolarda işləyir. Yuxarıdakı tablar yerində qalır.
 Floating bottom bar	Üzən alt panel
 Show the main feed's tabs on a rounded, see-through dark pill that floats over the video. Needs See-through bottom bar.	Əsas lentin tablarını videonun üzərində üzən yuvarlaq, şəffaf tünd kapsulun üstündə göstərin. Şəffaf alt panel açıq olmalıdır.
 Liquid glass look	Maye şüşə görünüşü
@@ -2777,3 +2777,5 @@ Pick stories to save	Saxlanacaq hekayələri seç
 Story %1$s	Hekayə %1$s
 On screen	Ekranda
 Pick at least one story	Ən azı bir hekayə seç
+Shade behind the status bar	Status panelinin arxasında kölgə
+A soft dark fade behind the clock and status icons, so they stay easy to read over a bright video. Needs See-through status bar.	Saat və status ikonlarının arxasında yumşaq tünd keçid, parlaq videonun üzərində asan oxunsunlar deyə. Şəffaf status paneli tələb olunur.

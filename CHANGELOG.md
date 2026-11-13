@@ -14,6 +14,7 @@ Every Hushfeed release, newest first.
 * The settings screen now comes in Arabic, shown when TikTok runs in Arabic. It's a first pass, so corrections from Arabic speakers are welcome (D307).
 * `Video download codec` picks which codec a saved video comes in when TikTok has the same quality in both. Automatic keeps H.264, which nearly every player opens. HEVC first saves the HEVC copy, which is often sharper since TikTok can send its H.264 at a lower bitrate. H.264 only never saves HEVC, for older players and TVs. It sits under `Video download quality`. Thanks to @Tegar30 (#400).
 * `Pick which stories to save` lets you save more than one of someone's stories at once. With it on, saving a story opens a checklist of their stories with the one you're watching already ticked, and a story you held to save waits, paused, until the list closes. Tick the others you want, or Pick all, and they save together with one progress count. TikTok loads a person's stories a few at a time as you watch, so the list says how many are still to come. It starts off and sits under `Save a story from its share sheet` in Hushfeed settings > Downloads (#393).
+* `See-through status bar` now also works on videos you open from search, a profile or your Liked and Favorites. A new `Shade behind the status bar` puts a soft dark fade behind the clock and icons so they're still easy to read over a bright video. It's off to start with and sits right under `See-through status bar` (#407).
 
 ### Bug Fixes
 

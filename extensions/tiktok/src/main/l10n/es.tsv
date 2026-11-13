@@ -2268,7 +2268,7 @@ Hide the Add friends button at the top of your profile. The menu button stays wh
 Hide Balance in the profile menu	Ocultar Saldo en el menú del perfil
 Hide Balance from the menu your profile's top right button opens. Your coins and gifts stay as they are.	Oculta Saldo del menú que abre el botón de arriba a la derecha de tu perfil. Tus monedas y regalos se quedan como están.
 See-through status bar	Barra de estado transparente
-Let the video reach the top of the screen on the main feed, with the clock and status icons over it. The tabs at the top stay where they are.	Deja que el vídeo llegue en el feed principal hasta el borde superior de la pantalla, con el reloj y los iconos de estado encima. Las pestañas de arriba se quedan donde están.
+Let the video reach the top of the screen, with the clock and status icons over it. Works on the main feed and on videos you open from search, a profile or your Liked and Favorites. The tabs at the top stay where they are.	Deja que el vídeo llegue hasta el borde superior de la pantalla, con el reloj y los iconos de estado encima. Funciona en el feed principal y en los vídeos que abres desde la búsqueda, un perfil o tus Me gusta y Favoritos. Las pestañas de arriba se quedan donde están.
 Floating bottom bar	Barra inferior flotante
 Show the main feed's tabs on a rounded, see-through dark pill that floats over the video. Needs See-through bottom bar.	Muestra las pestañas del feed principal sobre una píldora oscura, redondeada y transparente que flota sobre el vídeo. Necesita Barra inferior transparente.
 Liquid glass look	Aspecto de cristal líquido
@@ -2777,3 +2777,5 @@ Pick stories to save	Elige las historias que guardar
 Story %1$s	Historia %1$s
 On screen	En pantalla
 Pick at least one story	Elige al menos una historia
+Shade behind the status bar	Sombra detrás de la barra de estado
+A soft dark fade behind the clock and status icons, so they stay easy to read over a bright video. Needs See-through status bar.	Un degradado oscuro suave detrás del reloj y los iconos de estado, para que se lean bien sobre un vídeo claro. Necesita Barra de estado transparente.

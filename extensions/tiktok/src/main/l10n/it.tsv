@@ -2268,7 +2268,7 @@ Hide the Add friends button at the top of your profile. The menu button stays wh
 Hide Balance in the profile menu	Nascondi Saldo nel menu del profilo
 Hide Balance from the menu your profile's top right button opens. Your coins and gifts stay as they are.	Nascondi Saldo dal menu che si apre con il pulsante in alto a destra del tuo profilo. Le tue monete e i tuoi regali restano come sono.
 See-through status bar	Barra di stato trasparente
-Let the video reach the top of the screen on the main feed, with the clock and status icons over it. The tabs at the top stay where they are.	Nel feed principale, fai arrivare il video fino in cima allo schermo, con l'orologio e le icone di stato sopra. Le schede in alto restano dove sono.
+Let the video reach the top of the screen, with the clock and status icons over it. Works on the main feed and on videos you open from search, a profile or your Liked and Favorites. The tabs at the top stay where they are.	Fai arrivare il video fino in cima allo schermo, con l'orologio e le icone di stato sopra. Vale nel feed principale e nei video che apri dalla ricerca, da un profilo o dai tuoi Mi piace e Preferiti. Le schede in alto restano dove sono.
 Floating bottom bar	Barra inferiore fluttuante
 Show the main feed's tabs on a rounded, see-through dark pill that floats over the video. Needs See-through bottom bar.	Mostra le schede del feed principale su una pillola scura, arrotondata e trasparente che fluttua sopra il video. Richiede Barra inferiore trasparente.
 Liquid glass look	Aspetto vetro liquido
@@ -2777,3 +2777,5 @@ Pick stories to save	Scegli le storie da salvare
 Story %1$s	Storia %1$s
 On screen	Sullo schermo
 Pick at least one story	Scegli almeno una storia
+Shade behind the status bar	Ombra dietro la barra di stato
+A soft dark fade behind the clock and status icons, so they stay easy to read over a bright video. Needs See-through status bar.	Una leggera sfumatura scura dietro l'orologio e le icone di stato, così restano facili da leggere su un video chiaro. Richiede Barra di stato trasparente.

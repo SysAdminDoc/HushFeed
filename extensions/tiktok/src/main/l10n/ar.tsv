@@ -2511,7 +2511,7 @@ Hide the Add friends button at the top of your profile. The menu button stays wh
 Hide Balance in the profile menu	إخفاء «الرصيد» في قائمة الملف الشخصي
 Hide Balance from the menu your profile's top right button opens. Your coins and gifts stay as they are.	أخف الرصيد من القائمة التي يفتحها الزر أعلى يمين ملفك الشخصي. عملاتك وهداياك تبقى كما هي.
 See-through status bar	شريط حالة شفاف
-Let the video reach the top of the screen on the main feed, with the clock and status icons over it. The tabs at the top stay where they are.	يتيح للفيديو أن يصل إلى أعلى الشاشة في الخلاصة الرئيسية، مع ظهور الساعة وأيقونات الحالة فوقه. تبقى علامات التبويب في الأعلى مكانها.
+Let the video reach the top of the screen, with the clock and status icons over it. Works on the main feed and on videos you open from search, a profile or your Liked and Favorites. The tabs at the top stay where they are.	يتيح للفيديو أن يصل إلى أعلى الشاشة، مع ظهور الساعة وأيقونات الحالة فوقه. يعمل في الخلاصة الرئيسية وفي الفيديوهات التي تفتحها من البحث أو من ملف شخصي أو من الإعجابات والمفضلة. تبقى علامات التبويب في الأعلى مكانها.
 Floating bottom bar	شريط سفلي عائم
 Show the main feed's tabs on a rounded, see-through dark pill that floats over the video. Needs See-through bottom bar.	اعرض تبويبات الخلاصة الرئيسية على كبسولة مستديرة شفافة داكنة تطفو فوق الفيديو. يتطلب شريط سفلي شفاف.
 Liquid glass look	مظهر الزجاج السائل
@@ -3024,3 +3024,5 @@ Pick stories to save	اختر القصص المراد حفظها
 Story %1$s	القصة %1$s
 On screen	على الشاشة
 Pick at least one story	اختر قصة واحدة على الأقل
+Shade behind the status bar	تظليل خلف شريط الحالة
+A soft dark fade behind the clock and status icons, so they stay easy to read over a bright video. Needs See-through status bar.	تدرج داكن خفيف خلف الساعة وأيقونات الحالة، لتبقى سهلة القراءة فوق فيديو ساطع. يتطلب «شريط حالة شفاف».

@@ -717,9 +717,11 @@ public final class VideoOverlayHider {
             // which it shows only in Clear display; see gateClearControls.
             boolean clearControls = !HushfeedPause.isPaused() && Settings.HIDE_CLEAR_DISPLAY_CONTROLS.get();
             boolean statusBar = Settings.HIDE_STATUS_BAR.get();
-            // The main feed's video goes up under a see-through status bar: the spacer TikTok keeps
-            // for the bar above each video goes, as it does with the bar hidden, which wins (#145).
-            boolean seeThroughStatusBar = Settings.SEE_THROUGH_STATUS_BAR.get() && !detailPager && !statusBar;
+            // The video goes up under a see-through status bar: the spacer TikTok keeps for the bar
+            // above each video goes, as it does with the bar hidden, which wins (#145). A video
+            // opened from search, a profile or the Liked and Favorites grids keeps the same spacer
+            // and band in its cell, so it goes up too (#407).
+            boolean seeThroughStatusBar = Settings.SEE_THROUGH_STATUS_BAR.get() && !statusBar;
             // The bottom bar goes clear and the spacer under each video goes, on the main feed
             // only: the opened-post pager has no tab bar (#145).
             boolean seeThroughBar = Settings.SEE_THROUGH_BOTTOM_BAR.get() && !detailPager;
@@ -948,8 +950,11 @@ public final class VideoOverlayHider {
             ProfileTopBar.apply(activity.findViewById(android.R.id.content));
 
             setStatusBarHidden(activity, statusBar);
-            // Only while the feed is in front: the window's other pages keep the color TikTok gives them.
-            SeeThroughStatusBar.apply(activity, seeThroughStatusBar && FeedVisibility.isOnFeed(activity));
+            // Only while the feed or an opened video is in front: the window's other pages keep the
+            // color TikTok gives them.
+            boolean seeThroughShown = seeThroughStatusBar && FeedVisibility.isOnFeed(activity);
+            SeeThroughStatusBar.apply(activity, seeThroughShown);
+            SeeThroughStatusBar.shade(activity, seeThroughShown && Settings.STATUS_BAR_SHADE.get());
         } catch (Throwable ex) {
             Logger.printException(() -> "Video overlay hider failed", ex);
         }

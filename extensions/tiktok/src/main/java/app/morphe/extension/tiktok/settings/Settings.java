@@ -1234,6 +1234,9 @@ public class Settings extends BaseSettings {
      * this goes off or Hushfeed is paused. Read on each layout.
      */
     public static final BooleanSetting SEE_THROUGH_STATUS_BAR = new BooleanSetting("see_through_status_bar", FALSE);
+    /** A dark fade behind the clock while See-through status bar shows the video under it (#407). */
+    public static final BooleanSetting STATUS_BAR_SHADE = new BooleanSetting("status_bar_shade", FALSE, false,
+            Setting.parent(SEE_THROUGH_STATUS_BAR));
     /**
      * Burn-in guard for OLED screens (BurnInGuard): "dim" draws the controls the fade covers at a
      * quarter after a few seconds without a touch, "dim_shift" also moves the window's content a

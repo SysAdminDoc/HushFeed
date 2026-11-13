@@ -2271,7 +2271,7 @@ Hide the Add friends button at the top of your profile. The menu button stays wh
 Hide Balance in the profile menu	Kontostand im Profilmenü ausblenden
 Hide Balance from the menu your profile's top right button opens. Your coins and gifts stay as they are.	Blende den Kontostand im Menü aus, das die Schaltfläche oben rechts in deinem Profil öffnet. Deine Münzen und Geschenke bleiben, wie sie sind.
 See-through status bar	Durchsichtige Statusleiste
-Let the video reach the top of the screen on the main feed, with the clock and status icons over it. The tabs at the top stay where they are.	Das Video reicht im Haupt-Feed bis zum oberen Bildschirmrand, und Uhr und Statussymbole liegen darüber. Die Tabs oben bleiben, wo sie sind.
+Let the video reach the top of the screen, with the clock and status icons over it. Works on the main feed and on videos you open from search, a profile or your Liked and Favorites. The tabs at the top stay where they are.	Das Video reicht bis zum oberen Bildschirmrand, und Uhr und Statussymbole liegen darüber. Gilt im Haupt-Feed und für Videos, die du aus der Suche, einem Profil oder deinen Likes und Favoriten öffnest. Die Tabs oben bleiben, wo sie sind.
 Floating bottom bar	Schwebende untere Leiste
 Show the main feed's tabs on a rounded, see-through dark pill that floats over the video. Needs See-through bottom bar.	Die Tabs im Haupt-Feed liegen auf einer abgerundeten, durchsichtigen dunklen Pille, die über dem Video schwebt. Braucht Durchsichtige untere Leiste.
 Liquid glass look	Liquid-Glass-Look
@@ -2780,3 +2780,5 @@ Pick stories to save	Storys zum Speichern auswählen
 Story %1$s	Story %1$s
 On screen	Auf dem Bildschirm
 Pick at least one story	Wähle mindestens eine Story aus
+Shade behind the status bar	Schatten hinter der Statusleiste
+A soft dark fade behind the clock and status icons, so they stay easy to read over a bright video. Needs See-through status bar.	Ein weicher dunkler Verlauf hinter Uhr und Statussymbolen, damit sie über einem hellen Video gut lesbar bleiben. Braucht Durchsichtige Statusleiste.

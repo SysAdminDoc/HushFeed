@@ -471,6 +471,7 @@
       "glass_haptics",
       "glass_haptic_style",
       "see_through_status_bar",
+      "status_bar_shade",
       "burn_in_guard",
       "hide_share_guide",
       "hide_rail_follow",
@@ -4203,6 +4204,12 @@
       "key": "startup_message_title",
       "type": "string",
       "default": ""
+    },
+    "status_bar_shade": {
+      "field": "STATUS_BAR_SHADE",
+      "key": "status_bar_shade",
+      "type": "boolean",
+      "default": false
     },
     "stop_ai_profiling": {
       "field": "STOP_AI_PROFILING",

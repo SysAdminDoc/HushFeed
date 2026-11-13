@@ -2268,7 +2268,7 @@ Hide the Add friends button at the top of your profile. The menu button stays wh
 Hide Balance in the profile menu	Profil menüsünde Bakiye'yi gizle
 Hide Balance from the menu your profile's top right button opens. Your coins and gifts stay as they are.	Profilinin sağ üstündeki düğmenin açtığı menüden Bakiye'yi gizle. Jetonların ve hediyelerin olduğu gibi kalır.
 See-through status bar	Şeffaf durum çubuğu
-Let the video reach the top of the screen on the main feed, with the clock and status icons over it. The tabs at the top stay where they are.	Ana akışta videonun ekranın üstüne kadar uzanmasını sağlar, saat ve durum simgeleri videonun üzerinde görünür. Üstteki sekmeler yerinde kalır.
+Let the video reach the top of the screen, with the clock and status icons over it. Works on the main feed and on videos you open from search, a profile or your Liked and Favorites. The tabs at the top stay where they are.	Videonun ekranın üstüne kadar uzanmasını sağlar, saat ve durum simgeleri videonun üzerinde görünür. Ana akışta ve aramadan, bir profilden ya da Beğenilenler ve Favoriler'inden açtığın videolarda çalışır. Üstteki sekmeler yerinde kalır.
 Floating bottom bar	Yüzen alt çubuk
 Show the main feed's tabs on a rounded, see-through dark pill that floats over the video. Needs See-through bottom bar.	Ana akıştaki sekmeleri videonun üzerinde yüzen yuvarlak, şeffaf koyu bir kapsülde gösterir. Şeffaf alt çubuk açık olmalıdır.
 Liquid glass look	Sıvı cam görünümü
@@ -2777,3 +2777,5 @@ Pick stories to save	Kaydedilecek hikayeleri seç
 Story %1$s	Hikaye %1$s
 On screen	Ekranda
 Pick at least one story	En az bir hikaye seç
+Shade behind the status bar	Durum çubuğunun arkasında gölge
+A soft dark fade behind the clock and status icons, so they stay easy to read over a bright video. Needs See-through status bar.	Saatin ve durum simgelerinin arkasında yumuşak koyu bir geçiş, parlak bir videonun üzerinde kolay okunsunlar diye. Şeffaf durum çubuğu gerekir.

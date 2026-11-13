@@ -149,6 +149,19 @@ public final class FeedItemsFilter {
     private static final Map<Integer, ProcessedListState> processedListCache = new HashMap<>();
     private static final Object filterCallProbeSummaryLock = new Object();
     private static ProbeSummary filterCallProbeSummary = new ProbeSummary(System.currentTimeMillis());
+    /**
+     * Two reads of one fresh list on two threads (a preload and FeedItemList.clone, say) could
+     * each filter it and each rewrite it in place. The second rewrite could then land while clone
+     * was still walking the list the first one left, which throws ConcurrentModificationException
+     * there (#400). One filter at a time per list: the later read finds the list already filtered
+     * and leaves it as it is. The write stays in place, since a swapped copy would miss whoever
+     * already holds the list. Striped by the list's identity so other lists don't wait, and never
+     * TikTok's own monitor.
+     */
+    private static final Object[] LIST_LOCKS = new Object[16];
+    static {
+        for (int stripe = 0; stripe < LIST_LOCKS.length; stripe++) LIST_LOCKS[stripe] = new Object();
+    }
 
     private FeedItemsFilter() {}
 
@@ -1411,6 +1424,20 @@ public final class FeedItemsFilter {
         FilterPhase phase
     ) {
         if (list == null) return;
+        synchronized (LIST_LOCKS[System.identityHashCode(list) & (LIST_LOCKS.length - 1)]) {
+            filterFeedListLocked(source, owner, list, extractor, verbose, allowRecentSkip, phase);
+        }
+    }
+
+    private static void filterFeedListLocked(
+        String source,
+        Object owner,
+        List list,
+        AwemeExtractor extractor,
+        boolean verbose,
+        boolean allowRecentSkip,
+        FilterPhase phase
+    ) {
         FeedFilterCounters.sawList(source, list.size());
 
         boolean forYou = phase == FilterPhase.RESPONSE && owner instanceof FeedItemList;

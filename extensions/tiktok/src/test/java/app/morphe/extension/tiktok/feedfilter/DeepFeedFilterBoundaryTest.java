@@ -15,6 +15,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -298,6 +301,52 @@ public class DeepFeedFilterBoundaryTest {
         assertNotNull(summary);
         assertTrue(summary, summary.contains("cacheHits=1"));
         assertTrue(summary, summary.contains("scans=1"));
+    }
+
+    /**
+     * Two threads reading one fresh list each used to filter it and rewrite it in place, and the
+     * second rewrite could land while FeedItemList.clone walked the list, which throws
+     * ConcurrentModificationException in TikTok (#400). The second read now waits, finds the list
+     * filtered and leaves it alone.
+     */
+    @Test
+    public void twoReadsOfOneFreshListRewriteItOnce() throws Exception {
+        Settings.REMOVE_ADS.save(true);
+        Video advert = new Video("advert", true, 500, "");
+        Video ordinary = new Video("ordinary", false, 500, "");
+        CountDownLatch firstWriteStarted = new CountDownLatch(1);
+        CountDownLatch finishFirstWrite = new CountDownLatch(1);
+        AtomicInteger writes = new AtomicInteger();
+        List<Object> published = new ArrayList<Object>(Arrays.asList(advert, ordinary)) {
+            @Override public void clear() {
+                if (writes.incrementAndGet() == 1) {
+                    firstWriteStarted.countDown();
+                    try {
+                        finishFirstWrite.await(5, TimeUnit.SECONDS);
+                    } catch (InterruptedException interrupted) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+                super.clear();
+            }
+        };
+        FeedItemList page = new FeedItemList();
+        page.items = published;
+
+        Thread first = new Thread(() -> FeedItemsFilter.filterOnRead(page));
+        first.start();
+        assertTrue("the first read reached its write", firstWriteStarted.await(5, TimeUnit.SECONDS));
+        Thread second = new Thread(() -> FeedItemsFilter.filterOnRead(page));
+        second.start();
+        // Unheld, the second read gets through its own filter and write in this time.
+        second.join(500);
+        finishFirstWrite.countDown();
+        first.join(5_000);
+        second.join(5_000);
+
+        assertEquals("the list was rewritten once", 1, writes.get());
+        assertSame(published, page.items);
+        assertEquals(List.of(ordinary), page.items);
     }
 
     @Test

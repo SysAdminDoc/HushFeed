@@ -638,14 +638,17 @@ public final class FeatureGateLabStore {
                     "background_play_enable:INT:1", "fyp_auto_scroll:INT:1"),
             new Preset("feed_timestamps", "Post dates in the feed", CATALOG_BUILDS,
                     "feed_title_timestamp_trial:STRING:v3"),
-            // Korea's one-line comments that scroll across a video (#98). Group 1 or 2 turns the
-            // feature on once TikTok's own strategy switch allows it, and the landscape flag
-            // only counts after that. Each video still carries its own server flag for them
-            // (Aweme.isSupportDanmaku, read by DanmakuServiceImpl on 47.5.3), so the note says so:
-            // on the S22 a 30-minute landscape post showed no scrolling comments with both rules on.
+            // Korea's one-line comments that scroll across a video (#98), TikTok's "one-liners".
+            // Group 1 or 2 turns the feature on once TikTok's own strategy switch allows it, and
+            // the landscape flag only counts after that. Each video still carries its own server
+            // flag for them (Aweme.isSupportDanmaku, read by DanmakuServiceImpl). On 47.7.3 the
+            // server sets it on wide (1024x576) posts for a US account, and with both rules on
+            // those get Add one-liner under the video and a one-liner bar in the landscape player;
+            // with the rules off the same creator's wide post shows only Full screen. Portrait
+            // posts come without the flag, so the note points at wide videos.
             new Preset("scrolling_comments", "Scrolling comments on videos", CATALOG_BUILDS,
                     "danmaku_exp:INT:1", "landscape_support_danmaku:INT:1")
-                    .note("Comments only scroll on videos TikTok has turned them on for, so most videos stay the same."),
+                    .note("Wide videos TikTok allows it on get an Add one-liner button under the video and a one-liner bar in full screen. Other videos stay the same."),
             // Japan's LIVE chat auto-translate (#98). The audience setting is an INT in LIVE's own
             // settings, 0 by default. Anything above 0 counts as on for the audience, and above 1
             // also runs the buffered automatic translation, so 2 is the one that translates by

@@ -36,6 +36,7 @@ Every Hushfeed release, newest first.
 * Hushfeed settings and the Lab scroll on under the gesture bar instead of stopping at a solid band above it, and the last row still scrolls clear of the bar (#408).
 * With `Dark LIVE panels in dark mode` on, the Blocked, Muted and Moderation lists in a LIVE's settings show their title, back arrow, help icon and Quit button in white. TikTok paints those in a fixed dark gray, so they almost vanished on the dark sheet. With `AMOLED dark theme` on, those lists are black now, like the Settings sheet they open from. They stayed gray unless you'd opened the LIVE from search (#362).
 * With `Dark LIVE panels in dark mode` on, the tip that points at the creator's message button keeps its dark text on white. It had gone white on white (#362).
+* The Lab's `Scrolling comments on videos` preset now tells you where to look. TikTok only allows them on some wide videos, and those get an Add one-liner button under the video and a one-liner bar in full screen. The old note just said most videos stay the same (#98).
 
 ## 0.82.0 (2026-11-12)
 

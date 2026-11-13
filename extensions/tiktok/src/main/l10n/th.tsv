@@ -2202,7 +2202,7 @@ Let the video reach the bottom of the screen on the main feed and show the tabs 
 LIVE chat auto-translate	แปลแชท LIVE โดยอัตโนมัติ
 
 The Translate comments button in a LIVE room also needs a Japanese SIM. Turn on Override SIM details in Hushfeed settings > Region, set SIM country preset to Japan, NTT DOCOMO (44010), then restart TikTok.	ปุ่มแปลความคิดเห็นในห้อง LIVE จำเป็นต้องใช้ SIM ของญี่ปุ่นด้วย ให้เปิด "แทนที่รายละเอียด SIM" ในการตั้งค่า Hushfeed > ภูมิภาค แล้วตั้งค่า SIM ประเทศล่วงหน้าเป็นญี่ปุ่น, NTT DOCOMO (44010) จากนั้นรีสตาร์ท TikTok
-Comments only scroll on videos TikTok has turned them on for, so most videos stay the same.	ความคิดเห็นจะเลื่อนผ่านเฉพาะในวิดีโอที่ TikTok เปิดใช้งานไว้เท่านั้น ดังนั้นวิดีโอส่วนใหญ่จะยังคงเหมือนเดิม
+Wide videos TikTok allows it on get an Add one-liner button under the video and a one-liner bar in full screen. Other videos stay the same.	วิดีโอแนวนอนที่ TikTok อนุญาตจะมีปุ่มเพิ่มความคิดเห็นบรรทัดเดียวใต้วิดีโอ และมีแถบสำหรับความคิดเห็นเหล่านั้นเมื่อดูแบบเต็มจอ วิดีโออื่นยังคงเหมือนเดิม
 
 Pick videos to save from profile grids	เลือกวิดีโอที่จะบันทึกจากตารางโปรไฟล์
 Puts a circle on each video in a profile, Liked or Favorites grid. Pick up to %1$s, then tap Save to save them one after another, with a count and Cancel.	วางวงกลมบนแต่ละวิดีโอในตารางโปรไฟล์ วิดีโอที่ถูกใจ หรือรายการโปรด เลือกได้สูงสุด %1$s รายการ จากนั้นแตะ "บันทึก" เพื่อบันทึกทีละรายการอย่างต่อเนื่อง พร้อมตัวนับและปุ่มยกเลิก

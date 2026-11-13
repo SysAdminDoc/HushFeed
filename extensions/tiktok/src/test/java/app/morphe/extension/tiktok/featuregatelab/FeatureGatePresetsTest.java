@@ -120,8 +120,9 @@ public class FeatureGatePresetsTest {
     @Test public void aPresetsNoteLeadsItsPreview() throws Exception {
         JSONObject presets = FeatureGateLabStore.reviewedPresets().getJSONObject("47.7.3");
         assertTrue(presets.getJSONObject("live_translate").getString("note").contains("Japanese SIM"));
-        // Scrolling comments still need each video's own server flag, which no rule sets.
-        assertTrue(presets.getJSONObject("scrolling_comments").getString("note").contains("turned them on for"));
+        // Scrolling comments still need each video's own server flag, which no rule sets, so
+        // the note says where it shows: the Add one-liner button on wide videos TikTok allows.
+        assertTrue(presets.getJSONObject("scrolling_comments").getString("note").contains("Add one-liner"));
         assertFalse(presets.getJSONObject("see_translation").has("note"));
         Map<String, FeatureGateCatalog.Entry> everything = new LinkedHashMap<>();
         for (FeatureGateCatalog.Entry entry : FeatureGateCatalog.readStaticCatalog("47.7.3")) {

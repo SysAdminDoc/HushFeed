@@ -171,6 +171,7 @@ public final class LivePanelTheme {
     private static volatile boolean sparkFailureLogged;
     private static volatile boolean bubbleFailureLogged;
     private static volatile boolean roomStyleFailureLogged;
+    private static volatile boolean colorThemeFailureLogged;
 
     private LivePanelTheme() {
     }
@@ -1152,12 +1153,14 @@ public final class LivePanelTheme {
 
     /**
      * Called first in the constructor of the gift guide bubble a LIVE room shows over its gift
-     * button ("Support this LIVE"), with the context it inflates its views through. TikTok draws the
-     * bubble white, and its text takes the color the room's theme gives text by default, which over
+     * button ("Support this LIVE"), and of the container its toolbar tips (the creator's direct
+     * message tip) show in, with the context it inflates its views through. TikTok draws both
+     * white, and their text takes the color the room's theme gives text by default, which over
      * a room the room hook darkened is the dark app theme's white, so the text was white on white
-     * (#362). While Dark LIVE panels is on in dark mode, the bubble inflates over the room's theme as
+     * (#362). While Dark LIVE panels is on in dark mode, the view inflates over the room's theme as
      * it was before the dark app theme went on, as TikTok shows it in light mode, with every style
-     * TikTok gave the room since ({@link #roomStyle}). A room the hook never darkened, and anything
+     * TikTok gave the room since ({@link #roomStyle}) and LIVE's light color overlay where the room
+     * took the dark one ({@link #liveColorTheme}). A room the hook never darkened, and anything
      * that fails, keeps TikTok's context.
      */
     public static Context lightRoomView(Context context) {
@@ -1223,12 +1226,10 @@ public final class LivePanelTheme {
 
     /**
      * Called in place of each style TikTok applies to a LIVE room's theme after the room hook has
-     * taken its light copy: the room's color scheme styles in its setTheme, the style its base
-     * applies in onCreate, and TikTok's LIVE color theme, which the room's LIVE fragments apply
-     * when they're created. Applies the style as TikTok asked, then to the room's light copy too,
-     * so the copy has every attribute the room has. The LIVE color theme defines attributes the
-     * room's views look up, and a gift guide bubble inflated over a copy without them threw on
-     * its text (#362, S22, 2026-11-08). [force] is non-zero for TikTok's force.
+     * taken its light copy: the room's color scheme styles in its setTheme and the style its base
+     * applies in onCreate. Applies the style as TikTok asked, then to the room's light copy too,
+     * so the copy has every attribute the room has. TikTok's LIVE color theme reaches the copy
+     * its own way ({@link #liveColorTheme}). [force] is non-zero for TikTok's force.
      *
      * Both themes take the style through AMOLED dark mode's stand-in for applyStyle, which is a plain
      * applyStyle unless that switch is off (#372). The AMOLED patch swaps every applyStyle call in
@@ -1255,6 +1256,61 @@ public final class LivePanelTheme {
                 Logger.printException(() -> "Could not give a LIVE room's light copy its style", failure);
             }
         }
+    }
+
+    /**
+     * Called first in TikTok's LIVE color theme, which LIVE's themed fragments run on their
+     * context as they're created. It asks LIVE's dark theme answer, which the switch turns to yes
+     * in dark mode, and applies LIVE's dark or light color overlay without force. A room the room
+     * hook darkened takes the dark one, as its panels should, and the room's light copy needs the
+     * light one: the creator's DM tip and the gift guide bubble take their text color from these
+     * overlays, and the dark one's is white, on their white bubbles (#362, Login2, 2026-11-13).
+     * So before TikTok styles the room, its color theme runs once on the room's light copy, with
+     * the dark theme answer left to TikTok as in light mode. Every other context is TikTok's alone.
+     */
+    public static void liveColorTheme(Context context, boolean force) {
+        try {
+            Context light = lightColorTheme(context);
+            if (light == null) {
+                return;
+            }
+            STOCK_ANSWER.set(Boolean.TRUE);
+            try {
+                applyLiveColorTheme(light, force);
+            } finally {
+                STOCK_ANSWER.remove();
+            }
+        } catch (Throwable failure) {
+            if (!colorThemeFailureLogged) {
+                colorThemeFailureLogged = true;
+                Logger.printException(() -> "Could not give a LIVE room's light copy its light colors", failure);
+            }
+        }
+    }
+
+    /**
+     * A context whose theme is the light copy of the darkened room that [context]'s theme belongs
+     * to, so a style applied through it lands on the copy, or null: any other theme, the copy's
+     * own included, so the color theme's second run stops there.
+     */
+    static Context lightColorTheme(Context context) {
+        if (context == null || LIGHT_ROOMS.isEmpty()) {
+            return null;
+        }
+        Resources.Theme theme = context.getTheme();
+        synchronized (LIGHT_ROOMS) {
+            for (Map.Entry<Activity, Resources.Theme> kept : LIGHT_ROOMS.entrySet()) {
+                Activity room = kept.getKey();
+                if (room != null && room.getTheme() == theme) {
+                    return new ContextThemeWrapper(context, kept.getValue());
+                }
+            }
+        }
+        return null;
+    }
+
+    /** TikTok's LIVE color theme. The patch rewrites this to call it. */
+    static void applyLiveColorTheme(Context context, boolean force) {
     }
 
     /**

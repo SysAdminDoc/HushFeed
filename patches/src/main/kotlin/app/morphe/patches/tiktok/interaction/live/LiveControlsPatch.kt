@@ -1655,15 +1655,31 @@ internal fun guideBubbleView(builder: Method, classOf: (String) -> ClassDef?): S
     }
 
 /**
- * Hands the context the bubble's constructor gets to the extension before anything reads it, which
- * answers the room's light theme over a darkened room, so the bubble inflates as TikTok shows it in
- * light mode. Nothing touches the view before its super call, so the swap goes in first.
+ * The container LIVE anchors its toolbar tips in, the creator's direct message tip among them
+ * (X.0Xoe on 47.7.3, #362): the one FrameLayout answering getWindowRect, beside getAnchorRect.
+ * TikTok draws the tip white, and its text took the darkened room's white, so it read white on
+ * white. Its (Context) constructor builds the tip's own view from that context too.
  */
-internal fun hookGuideBubble(constructor: MutableMethod) {
+internal object LiveAnchorTipFingerprint : Fingerprint(
+    returnType = "Landroid/graphics/Rect;",
+    parameters = listOf(),
+    custom = { method, classDef ->
+        method.name == "getWindowRect" && classDef.superclass == "Landroid/widget/FrameLayout;" &&
+            classDef.methods.any { it.name == "getAnchorRect" }
+    },
+)
+
+/**
+ * Hands the context a white LIVE view's constructor gets to the extension before anything reads
+ * it, which answers the room's light theme over a darkened room, so the view inflates as TikTok
+ * shows it in light mode. Nothing touches the view before its super call, so the swap goes in
+ * first.
+ */
+internal fun hookLightRoomView(constructor: MutableMethod, view: String) {
     if (constructor.name != "<init>" ||
         constructor.parameterTypes.map(CharSequence::toString) != listOf("Landroid/content/Context;")
     ) {
-        throw PatchException("LIVE controls: the gift guide bubble has no constructor taking a Context")
+        throw PatchException("LIVE controls: $view has no constructor taking a Context")
     }
     constructor.addInstructions(
         0,
@@ -1698,6 +1714,29 @@ internal fun liveColorTheme(onCreate: Method): MethodReference? =
                 it.parameterTypes.map(CharSequence::toString) == listOf("Landroid/content/Context;", "Z")
         }
     }?.distinct()?.singleOrNull()
+
+/**
+ * TikTok's LIVE color theme asks LIVE's dark theme answer and applies the dark or the light LIVE
+ * color overlay. Over a darkened room it picks the dark one, and the room's light copy needs the
+ * light one: the creator's DM tip took the dark one's white text on its white bubble (#362, Login2,
+ * 2026-11-13). Its first instruction hands its context and force to the extension, which runs it
+ * once more on the copy through [bridge], the empty extension method this fills with the call.
+ */
+internal fun hookLiveColorTheme(colorTheme: MutableMethod, bridge: MutableMethod) {
+    val parameters = colorTheme.parameterTypes.map(CharSequence::toString)
+    if (!AccessFlags.STATIC.isSet(colorTheme.accessFlags) || colorTheme.returnType != "V" ||
+        parameters != listOf("Landroid/content/Context;", "Z")
+    ) {
+        throw PatchException("LIVE controls: TikTok's LIVE color theme isn't a static (Context, boolean) call")
+    }
+    val styles = colorTheme.implementation?.instructions?.count {
+        ((it as? ReferenceInstruction)?.reference as? MethodReference)?.let(::appliesRoomStyle) == true
+    } ?: 0
+    if (styles == 0) throw PatchException("LIVE controls: TikTok's LIVE color theme applies no style")
+    val call = "${colorTheme.definingClass}->${colorTheme.name}(Landroid/content/Context;Z)V"
+    colorTheme.addInstructions(0, "invoke-static {p0, p1}, $PANEL_THEME->liveColorTheme(Landroid/content/Context;Z)V")
+    bridge.addInstructions(0, "invoke-static {p0, p1}, $call")
+}
 
 /**
  * Sends every style [method] applies to a theme through the extension, which applies it with the
@@ -2386,14 +2425,19 @@ val liveControlsPatch = bytecodePatch(
         // room's white (#362), so its view inflates over the room's light theme.
         val bubble = guideBubbleView(LiveGuideBubbleFingerprint.method) { classDefByOrNull(it) }
             ?: throw PatchException("LIVE controls: the gift guide bubble's view is gone")
-        hookGuideBubble(mutableClassDefBy(bubble).methods.single {
+        hookLightRoomView(mutableClassDefBy(bubble).methods.single {
             it.name == "<init>" && it.parameterTypes.map(CharSequence::toString) == listOf("Landroid/content/Context;")
-        })
+        }, "the gift guide bubble")
+        // The toolbar tips (the creator's direct message tip) are white too, with text that took
+        // the darkened room's white (#362), so their container inflates over the light theme too.
+        hookLightRoomView(LiveAnchorTipFingerprint.classDef.methods.single {
+            it.name == "<init>" && it.parameterTypes.map(CharSequence::toString) == listOf("Landroid/content/Context;")
+        }, "the toolbar tip")
         // That light copy is taken before the room's color scheme styles, the style its base adds
         // in onCreate and TikTok's LIVE color theme, which the room's LIVE fragments apply as
         // they're created. The bubble inflated over a copy without them threw on its text (S22,
-        // 2026-11-08), so each of those calls goes through the extension, which gives the copy
-        // the style too.
+        // 2026-11-08), so the first two go through the extension, which gives the copy the style
+        // too, and the color theme runs on the copy as well, where it picks the light overlay.
         if (hookRoomStyles(LivePlayActivityThemeFingerprint.method) == 0) {
             throw PatchException("LIVE controls: the room's setTheme applies no color scheme style")
         }
@@ -2408,9 +2452,13 @@ val liveControlsPatch = bytecodePatch(
         }
         val colorTheme = liveColorTheme(LiveThemedFragmentCreateFingerprint.method)
             ?: throw PatchException("LIVE controls: TikTok's LIVE color theme wasn't found")
-        if (hookRoomStyles(mutableClassDefBy(colorTheme.definingClass).findMutableMethodOf(colorTheme)) == 0) {
-            throw PatchException("LIVE controls: TikTok's LIVE color theme applies no style")
-        }
+        hookLiveColorTheme(
+            mutableClassDefBy(colorTheme.definingClass).findMutableMethodOf(colorTheme),
+            mutableClassDefBy(PANEL_THEME).methods.single {
+                it.name == "applyLiveColorTheme" && it.returnType == "V" &&
+                    it.parameterTypes.map(CharSequence::toString) == listOf("Landroid/content/Context;", "Z")
+            },
+        )
         // Its group chat row is the same kind of fixed white shape under text in the card theme's
         // colors (Login2, 2026-10-20), so the extension gives it the event box's fill.
         hookGroupChat(mutableClassDefBy(LiveProfileGroupChatFingerprint.method.definingClass).methods)

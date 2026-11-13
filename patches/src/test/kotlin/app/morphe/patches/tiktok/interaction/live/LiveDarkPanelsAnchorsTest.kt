@@ -555,7 +555,7 @@ class LiveDarkPanelsAnchorsTest {
 
             val original = constructor.implementation!!.instructions.filter { it.opcode != Opcode.NOP }
             val hooked = MutableMethod(constructor)
-            hookGuideBubble(hooked)
+            hookLightRoomView(hooked, "the gift guide bubble")
             val code = hooked.implementation!!.instructions.filter { it.opcode != Opcode.NOP }
             val context = constructor.implementation!!.registerCount - 1
             val hook = code[0] as RegisterRangeInstruction
@@ -572,7 +572,48 @@ class LiveDarkPanelsAnchorsTest {
             assertEquals("${apk.name}", emptyList<BridgeTypeFlow.Problem>(), BridgeTypeFlow.check(hooked))
         }
         assertThrows(PatchException::class.java) {
-            hookGuideBubble(badgeBind("nop"))
+            hookLightRoomView(badgeBind("nop"), "the gift guide bubble")
+        }
+    }
+
+    /**
+     * #362: the toolbar tips a room anchors to its buttons, the creator's direct message tip among
+     * them, are white with text in the room theme's default color, white over a darkened room. Their
+     * container is the one FrameLayout answering getWindowRect on each build, and its constructor
+     * swaps its Context for the extension's answer before the super call and the tip's own view
+     * read it.
+     */
+    @Test
+    fun `each declared build hands the toolbar tip container's context to the extension first`() {
+        Fixtures.forEachDeclared { apk ->
+            val classes = classes(apk)
+            val containers = classes.values.filter { owner -> owner.methods.any { LiveAnchorTipFingerprint.takes(it, owner) } }
+            assertEquals("${apk.name}: the tip container", 1, containers.size)
+            val constructor = containers.single().methods.single {
+                it.name == "<init>" && it.parameterTypes.map(CharSequence::toString) == listOf("Landroid/content/Context;")
+            }
+
+            val original = constructor.implementation!!.instructions.filter { it.opcode != Opcode.NOP }
+            val hooked = MutableMethod(constructor)
+            hookLightRoomView(hooked, "the toolbar tip")
+            val code = hooked.implementation!!.instructions.filter { it.opcode != Opcode.NOP }
+            val context = constructor.implementation!!.registerCount - 1
+            val hook = code[0] as RegisterRangeInstruction
+            assertEquals("${apk.name}: the swap goes first", "lightRoomView",
+                ((hook as ReferenceInstruction).reference as MethodReference).name)
+            assertEquals("${apk.name}: from the Context parameter", listOf(context, 1), listOf(hook.startRegister, hook.registerCount))
+            assertEquals("${apk.name}: back into it", context, (code[1] as OneRegisterInstruction).registerA)
+            assertEquals("${apk.name}: nothing else moves", original.map { it.opcode }, code.drop(2).map { it.opcode })
+            val readers = code.drop(2).mapNotNull { instruction ->
+                val call = (instruction as? ReferenceInstruction)?.reference as? MethodReference
+                call?.takeIf {
+                    instruction.opcode == Opcode.INVOKE_DIRECT && it.name == "<init>" &&
+                        (instruction as FiveRegisterInstruction).let { args -> args.registerCount > 1 && args.registerD == context }
+                }?.definingClass
+            }
+            assertTrue("${apk.name}: the FrameLayout and the tip's view take the swapped Context, not $readers",
+                readers.containsAll(listOf("Landroid/widget/FrameLayout;")) && readers.size >= 2)
+            assertEquals("${apk.name}", emptyList<BridgeTypeFlow.Problem>(), BridgeTypeFlow.check(hooked))
         }
     }
 
@@ -581,11 +622,23 @@ class LiveDarkPanelsAnchorsTest {
         return call.definingClass == "Landroid/content/res/Resources\$Theme;" && call.name == "applyStyle"
     }
 
+    /** TikTok's LIVE color theme, the one static (Context, boolean) call LIVE's fragment onCreate makes. */
+    private fun colorTheme(apk: java.io.File, classes: Map<String, ClassDef>): Method {
+        val fragment = classes.getValue(LIVE_THEMED_FRAGMENT)
+        val fragmentCreate = fragment.methods.filter { LiveThemedFragmentCreateFingerprint.takes(it, fragment) }
+        assertEquals("${apk.name}: LIVE's fragment onCreate", 1, fragmentCreate.size)
+        val call = liveColorTheme(fragmentCreate.single())
+        assertNotNull("${apk.name}: TikTok's LIVE color theme", call)
+        return classes.getValue(call!!.definingClass).methods.single {
+            it.name == call.name && it.parameterTypes.map(CharSequence::toString) == call.parameterTypes.map(CharSequence::toString)
+        }
+    }
+
     /**
      * #362, S22 2026-11-08: the room's light copy missed the styles TikTok gives the room after the
-     * room hook (the color scheme in setTheme, the room base's onCreate style, TikTok's LIVE color
-     * theme), so the gift guide bubble inflated over a copy without them and threw on its text.
-     * Each of those calls goes to the extension in place, with its own registers.
+     * room hook (the color scheme in setTheme, the room base's onCreate style), so the gift guide
+     * bubble inflated over a copy without them and threw on its text. Each of those calls goes to
+     * the extension in place, with its own registers.
      */
     @Test
     fun `each declared build sends the styles a room gets after its light copy through the extension`() {
@@ -596,17 +649,8 @@ class LiveDarkPanelsAnchorsTest {
             val create = classes.getValue(room.superclass!!).methods.single {
                 it.name == "onCreate" && it.parameterTypes.map(CharSequence::toString) == listOf("Landroid/os/Bundle;")
             }
-            val fragment = classes.getValue(LIVE_THEMED_FRAGMENT)
-            val fragmentCreate = fragment.methods.filter { LiveThemedFragmentCreateFingerprint.takes(it, fragment) }
-            assertEquals("${apk.name}: LIVE's fragment onCreate", 1, fragmentCreate.size)
-            val colorThemeCall = liveColorTheme(fragmentCreate.single())
-            assertNotNull("${apk.name}: TikTok's LIVE color theme", colorThemeCall)
-            val colorTheme = classes.getValue(colorThemeCall!!.definingClass).methods.single {
-                it.name == colorThemeCall.name && it.parameterTypes.map(CharSequence::toString) ==
-                    colorThemeCall.parameterTypes.map(CharSequence::toString)
-            }
 
-            for ((what, method) in listOf("setTheme" to setTheme, "the base's onCreate" to create, "the color theme" to colorTheme)) {
+            for ((what, method) in listOf("setTheme" to setTheme, "the base's onCreate" to create)) {
                 val stock = method.implementation!!.instructions.filter { it.opcode != Opcode.NOP }
                 val calls = stock.indices.filter { appliesStyle(stock[it]) }
                 assertTrue("${apk.name}: $what applies no style", calls.isNotEmpty())
@@ -654,12 +698,64 @@ class LiveDarkPanelsAnchorsTest {
                 }
             }
             if ("47.7.3" in apk.name) {
-                // X.0JgL.LIZ: style/v_ and style/vb set attr/car, which the bubble's text reads
-                // (aapt2 dump, 2026-11-08); the room's setTheme applies six color scheme styles.
-                val literals = colorTheme.implementation!!.instructions.mapNotNull { (it as? NarrowLiteralInstruction)?.narrowLiteral }
-                assertTrue("${apk.name}: v_ and vb", literals.containsAll(listOf(0x7f120304, 0x7f120306)))
+                // The room's setTheme applies six color scheme styles (aapt2 dump, 2026-11-08).
                 assertEquals("${apk.name}: setTheme's styles", 6, setTheme.implementation!!.instructions.count { appliesStyle(it) })
             }
+        }
+    }
+
+    /** The extension's empty stand-in the patch fills with the color theme call. */
+    private fun colorThemeBridge() = MutableMethod(ImmutableMethod("Lapp/morphe/extension/tiktok/live/LivePanelTheme;",
+        "applyLiveColorTheme", listOf(ImmutableMethodParameter("Landroid/content/Context;", null, null),
+            ImmutableMethodParameter("Z", null, null)), "V", AccessFlags.STATIC.value,
+        null, null, ImmutableMethodImplementation(2, emptyList(), null, null))).apply {
+        addInstructionsWithLabels(0, "return-void")
+    }
+
+    /**
+     * #362, Login2 2026-11-13: over a darkened room TikTok's LIVE color theme picks LIVE's dark
+     * overlay, which the room's light copy then took too, so the creator's DM tip read white text
+     * on its white bubble. The color theme's first instruction hands its own context and force to
+     * the extension, the rest runs as before, and the extension's stand-in calls it back.
+     */
+    @Test
+    fun `each declared build hands TikTok's LIVE color theme to the extension first`() {
+        Fixtures.forEachDeclared { apk ->
+            val colorTheme = colorTheme(apk, classes(apk))
+            val stock = colorTheme.implementation!!.instructions.filter { it.opcode != Opcode.NOP }
+            assertTrue("${apk.name}: the color theme applies a style", stock.any { appliesStyle(it) })
+            val hooked = MutableMethod(colorTheme)
+            val bridge = colorThemeBridge()
+            hookLiveColorTheme(hooked, bridge)
+
+            val code = hooked.implementation!!.instructions.filter { it.opcode != Opcode.NOP }
+            assertEquals("${apk.name}: one call goes first", stock.size + 1, code.size)
+            assertEquals("${apk.name}: the rest is TikTok's", stock.map { it.opcode }, code.drop(1).map { it.opcode })
+            val first = code.first() as FiveRegisterInstruction
+            val reference = (first as ReferenceInstruction).reference as MethodReference
+            assertEquals(Opcode.INVOKE_STATIC, code.first().opcode)
+            assertEquals(listOf("liveColorTheme", "Lapp/morphe/extension/tiktok/live/LivePanelTheme;"),
+                listOf(reference.name, reference.definingClass))
+            val registers = colorTheme.implementation!!.registerCount
+            assertEquals("${apk.name}: its own context and force",
+                listOf(2, registers - 2, registers - 1), listOf(first.registerCount, first.registerC, first.registerD))
+            assertEquals("${apk.name}", emptyList<BridgeTypeFlow.Problem>(), BridgeTypeFlow.check(hooked))
+
+            val back = bridge.implementation!!.instructions.first()
+            val target = (back as ReferenceInstruction).reference as MethodReference
+            assertEquals(Opcode.INVOKE_STATIC, back.opcode)
+            assertEquals(listOf(colorTheme.definingClass, colorTheme.name, listOf("Landroid/content/Context;", "Z")),
+                listOf(target.definingClass, target.name, target.parameterTypes.map(CharSequence::toString)))
+            assertEquals(listOf(2, 0, 1), (back as FiveRegisterInstruction).let { listOf(it.registerCount, it.registerC, it.registerD) })
+            if ("47.7.3" in apk.name) {
+                // X.0JgL.LIZ: style/v_ sets attr/f7j, the DM tip's text, to #fff6f6f6 and style/vb
+                // to #ff000000 (aapt2 dump, 2026-11-13).
+                val literals = colorTheme.implementation!!.instructions.mapNotNull { (it as? NarrowLiteralInstruction)?.narrowLiteral }
+                assertTrue("${apk.name}: v_ and vb", literals.containsAll(listOf(0x7f120304, 0x7f120306)))
+            }
+        }
+        assertThrows(PatchException::class.java) {
+            hookLiveColorTheme(colorThemeBridge(), colorThemeBridge())
         }
     }
 

@@ -35,6 +35,7 @@ Every Hushfeed release, newest first.
 * `Blur the video behind the bar` lets go of a video once the pill isn't over it. Scroll slowly and the pill used to keep a blurred piece of the last video until the next one started playing. Now it goes back to plain glass right away (#408).
 * Hushfeed settings and the Lab scroll on under the gesture bar instead of stopping at a solid band above it, and the last row still scrolls clear of the bar (#408).
 * With `Dark LIVE panels in dark mode` on, the Blocked, Muted and Moderation lists in a LIVE's settings show their title, back arrow, help icon and Quit button in white. TikTok paints those in a fixed dark gray, so they almost vanished on the dark sheet. With `AMOLED dark theme` on, those lists are black now, like the Settings sheet they open from. They stayed gray unless you'd opened the LIVE from search (#362).
+* With `Dark LIVE panels in dark mode` on, the tip that points at the creator's message button keeps its dark text on white. It had gone white on white (#362).
 
 ## 0.82.0 (2026-11-12)
 

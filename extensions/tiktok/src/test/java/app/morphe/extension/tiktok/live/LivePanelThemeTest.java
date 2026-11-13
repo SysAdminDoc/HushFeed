@@ -524,7 +524,7 @@ public class LivePanelThemeTest {
     }
 
     /**
-     * #362, S22 2026-11-08: TikTok applies its LIVE color theme to the room after the room hook took
+     * #362, S22 2026-11-08: TikTok applies color scheme styles to the room after the room hook took
      * the light copy, so the bubble inflated over a copy missing attributes its text looks up and
      * threw. Every style the room gets afterwards reaches the copy too, with TikTok's force.
      */
@@ -560,6 +560,45 @@ public class LivePanelThemeTest {
         Activity plain = room();
         LivePanelTheme.roomStyle(plain.getTheme(), PARTIAL_OVERLAY, 0);
         assertTrue(hasOverlay(plain));
+    }
+
+    /**
+     * #362, Login2 2026-11-13: over a darkened room TikTok's LIVE color theme picks LIVE's dark
+     * overlay, and the room's light copy took it too, so the creator's DM tip had white text on its
+     * white bubble. The color theme now runs once more through a context whose theme is the copy,
+     * asking TikTok's own answer, so the copy takes the light overlay.
+     */
+    @Test public void tikToksLiveColorThemeRunsAgainOnTheRoomsLightCopy() {
+        RuntimeEnvironment.setQualifiers("+night");
+        Settings.DARK_LIVE_PANELS.save(true);
+        Activity live = room();
+        int roomText = textColor(live);
+        assertNull("nothing kept yet", LivePanelTheme.lightColorTheme(live));
+        LivePanelTheme.darkLiveRoom(live, android.R.style.Theme_Black);
+
+        Context light = LivePanelTheme.lightColorTheme(live);
+        assertNotNull(light);
+        assertSame("its theme is the copy itself",
+                ReflectionHelpers.<Map<Activity, Resources.Theme>>getStaticField(LivePanelTheme.class, "LIGHT_ROOMS").get(live),
+                light.getTheme());
+        assertNotNull("found through the room's own theme from a wrapper without one",
+                LivePanelTheme.lightColorTheme(new ContextThemeWrapper(live, live.getTheme())));
+        light.getTheme().applyStyle(PARTIAL_OVERLAY, false);
+        assertTrue("a style applied through it reaches the copy", hasOverlay(LivePanelTheme.lightRoomView(live)));
+        assertTrue("and not the room", !hasOverlay(live));
+        assertEquals(roomText, textColor(LivePanelTheme.lightRoomView(live)));
+
+        assertNull("the copy's own theme", LivePanelTheme.lightColorTheme(light));
+        assertNull("a bubble over the copy", LivePanelTheme.lightColorTheme(LivePanelTheme.lightRoomView(live)));
+        assertNull("a wrapper with a theme of its own", LivePanelTheme.lightColorTheme(new ContextThemeWrapper(live, PARTIAL_OVERLAY)));
+        assertNull("another theme", LivePanelTheme.lightColorTheme(RuntimeEnvironment.getApplication()));
+        assertNull(LivePanelTheme.lightColorTheme(null));
+
+        LivePanelTheme.liveColorTheme(live, true);
+        assertTrue("TikTok's answer is its own again afterwards", !LivePanelTheme.askingStock());
+        LivePanelTheme.liveColorTheme(null, false);
+        LivePanelTheme.liveColorTheme(RuntimeEnvironment.getApplication(), false);
+        assertTrue(!LivePanelTheme.askingStock());
     }
 
     /** Sets only the window animations, the way TikTok's light LIVE overlay leaves most of a theme alone. */

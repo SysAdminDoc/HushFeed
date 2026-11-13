@@ -22,6 +22,7 @@ Every Hushfeed release, newest first.
 * `Hide the Hushfeed row` only takes the row out of Settings and privacy while holding For You or Home really opens Hushfeed settings. Hiding the feed tab strip or pointing For You at your watch history used to leave no way back in. Now the row stays until a long press works again (#244).
 * `Fill the screen with the video` leaves wide and square videos whole. On a tall phone it used to zoom them in until they covered the screen, so you only saw the middle of a landscape video. Tall videos still lose the black strip under them (#394).
 * `Foldable split comment view` puts comments beside the video after you unfold with TikTok open. TikTok rebuilt the feed for the wider screen but still reported the folded width, so comments kept opening over the video until a restart. Folding back now drops the side panel too (#398).
+* A translated comment could still land in the wrong row when you scrolled fast. TikTok fades a translation in a moment after it arrives, and if the row got reused for another comment in that moment, the old comment's text was written over the new one. The fade is now called off when the row moves on (#383).
 
 ## 0.82.0 (2026-11-12)
 

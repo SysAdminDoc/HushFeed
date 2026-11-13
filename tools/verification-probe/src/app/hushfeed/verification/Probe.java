@@ -1470,6 +1470,15 @@ public final class Probe extends Instrumentation {
                                                 observers.setAccessible(true);
                                                 out.append(" listening=").append(((java.util.Map<?, ?>) observers.get(updates)).containsKey(manager));
                                             }
+                                            // The writer and fade CommentBatchTranslator would stop when
+                                            // this row is reused, as manager field / writer class.fade field.
+                                            Method writerOf = loader.loadClass("app.morphe.extension.tiktok.translation.CommentBatchTranslator")
+                                                    .getDeclaredMethod("rowWriter", Object.class);
+                                            writerOf.setAccessible(true);
+                                            Field[] writer = (Field[]) writerOf.invoke(null, manager);
+                                            out.append(" writer=").append(writer.length == 2
+                                                    ? writer[0].getName() + "/" + writer[1].getDeclaringClass().getName() + "." + writer[1].getName()
+                                                    : "none");
                                         }
                                     } catch (Throwable failure) {
                                         out.append(" ?(").append(failure.getClass().getSimpleName()).append(' ').append(failure.getMessage()).append(')');

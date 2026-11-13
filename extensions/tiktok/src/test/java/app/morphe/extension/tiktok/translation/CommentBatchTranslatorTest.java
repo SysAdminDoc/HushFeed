@@ -717,6 +717,40 @@ public class CommentBatchTranslatorTest {
         assertTrue("a rebind to the same comment stopped its translation", shown.observers.contains(manager));
     }
 
+    @Test public void aWriteStartedForTheOldCommentNeverLandsInTheReusedRow() {
+        // #383: TikTok writes an update's text when a 100 ms fade ends, and a bind never stopped
+        // the fade the row's last writer had going, so the old comment's text landed in the row
+        // after it began showing the new one.
+        android.widget.TextView text = new android.widget.TextView(context);
+        text.setText("new comment");
+        ObservedManager manager = new ObservedManager(new Comment("aid-row", "cid-row-faded"));
+        RowWriter writer = new RowWriter(text);
+        manager.writer = writer;
+        writer.write("old comment");
+        CommentRow row = new CommentRow(new View(context), manager);
+
+        CommentBatchTranslator.releaseStaleObserver(row, new Comment("aid-row", "cid-row-next"), ObservedManager.class);
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(500));
+
+        assertEquals("the old comment's text landed in the reused row", "new comment", text.getText().toString());
+    }
+
+    @Test public void aWriteForTheCommentTheRowStillShowsLands() {
+        // The positive control: without it the test above would pass against a fade that never runs.
+        android.widget.TextView text = new android.widget.TextView(context);
+        text.setText("original");
+        ObservedManager manager = new ObservedManager(new Comment("aid-row", "cid-row-kept"));
+        RowWriter writer = new RowWriter(text);
+        manager.writer = writer;
+        writer.write("translated");
+        CommentRow row = new CommentRow(new View(context), manager);
+
+        CommentBatchTranslator.releaseStaleObserver(row, new Comment("aid-row", "cid-row-kept"), ObservedManager.class);
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(500));
+
+        assertEquals("translated", text.getText().toString());
+    }
+
     private static void clearTranslatorState() throws Exception {
         Field lockField = CommentBatchTranslator.class.getDeclaredField("LOCK");
         lockField.setAccessible(true);
@@ -1037,11 +1071,47 @@ public class CommentBatchTranslatorTest {
     /** The type the row's state holder declares for its manager. */
     public abstract static class TranslationManagerBase {}
 
+    /** Stands in for the interface 47.7.3's manager declares its row writer under. */
+    public interface Writer {}
+
+    /**
+     * The row's text writer as 47.7.3 has it: an update's text goes in when a 100 ms fade-out
+     * ends, and the set's cancel listener takes the listeners off its fades, so a cancel drops it.
+     */
+    public static final class RowWriter implements Writer {
+        final android.widget.TextView text;
+        android.animation.AnimatorSet fade;
+
+        RowWriter(android.widget.TextView text) {
+            this.text = text;
+        }
+
+        void write(CharSequence translated) {
+            android.animation.ValueAnimator out = android.animation.ValueAnimator.ofFloat(1f, 0f).setDuration(100);
+            out.addListener(new android.animation.AnimatorListenerAdapter() {
+                @Override public void onAnimationEnd(android.animation.Animator animation) {
+                    text.setText(translated);
+                }
+            });
+            android.animation.ValueAnimator in = android.animation.ValueAnimator.ofFloat(0f, 1f).setDuration(100);
+            android.animation.AnimatorSet set = new android.animation.AnimatorSet();
+            set.addListener(new android.animation.AnimatorListenerAdapter() {
+                @Override public void onAnimationCancel(android.animation.Animator animation) {
+                    for (android.animation.Animator child : set.getChildAnimations()) child.removeAllListeners();
+                }
+            });
+            set.playSequentially(out, in);
+            fade = set;
+            set.start();
+        }
+    }
+
     /** The row's translation manager, which observes the updates of the comment it shows. */
     public static final class ObservedManager extends TranslationManagerBase implements Observer {
         public final Comment comment;
         public final TranslationContext context;
         public final ObservedTranslator translator = new ObservedTranslator();
+        Writer writer;
 
         ObservedManager(Comment comment) {
             this.comment = comment;

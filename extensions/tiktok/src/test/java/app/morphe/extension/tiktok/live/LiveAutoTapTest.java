@@ -278,7 +278,7 @@ public class LiveAutoTapTest {
     }
 
     @Test public void tapsLandOnTheHostsSideAndStayClearOfTargets() {
-        float[] point = LiveAutoTap.tapPoint(1000, 2000, List.of(), 20, 0, new Random(4));
+        float[] point = LiveAutoTap.tapPoint(1000, 2000, List.of(), List.of(), 20, 0, new Random(4));
         assertNotNull(point);
         assertTrue(point[0] >= 220 && point[0] <= 280);
         assertTrue(point[1] >= 700 && point[1] <= 820);
@@ -287,21 +287,133 @@ public class LiveAutoTapTest {
         // Covers every place the first spot can move to; the next one sits above it.
         List<Rect> firstSpotTaken = List.of(new Rect(210, 690, 290, 830));
         for (int seed = 0; seed < 50; seed++) {
-            float[] moved = LiveAutoTap.tapPoint(1000, 2000, firstSpotTaken, 20, 0, new Random(seed));
+            float[] moved = LiveAutoTap.tapPoint(1000, 2000, firstSpotTaken, List.of(), 20, 0, new Random(seed));
             assertNotNull("seed " + seed, moved);
             Rect clear = new Rect(190, 670, 310, 850);
             assertFalse("seed " + seed, clear.contains((int) moved[0], (int) moved[1]));
         }
 
-        assertNull(LiveAutoTap.tapPoint(1000, 2000, List.of(new Rect(0, 0, 1000, 2000)), 20, 0, new Random(4)));
-        assertNull(LiveAutoTap.tapPoint(0, 2000, List.of(), 20, 0, new Random(4)));
+        assertNull(LiveAutoTap.tapPoint(1000, 2000, List.of(new Rect(0, 0, 1000, 2000)), List.of(), 20, 0, new Random(4)));
+        assertNull(LiveAutoTap.tapPoint(0, 2000, List.of(), List.of(), 20, 0, new Random(4)));
+    }
+
+    @Test public void aSeatCoveringMostOfTheRoomIsTheHostsOwnPicture() {
+        // A room read off a 720x1600 screen (#335): the host fills the room and two guests sit in a
+        // column down its right edge. Tapping the host's picture likes, the same as with no guests.
+        List<Rect> seats = List.of(new Rect(6, 136, 714, 1552), new Rect(552, 972, 704, 1198),
+                new Rect(552, 1201, 704, 1428));
+        List<Rect> taken = List.of(new Rect(541, 472, 696, 568), new Rect(557, 360, 696, 456),
+                new Rect(600, 584, 696, 680), new Rect(656, 164, 704, 212), new Rect(592, 168, 632, 208),
+                new Rect(482, 164, 568, 212), new Rect(24, 152, 442, 224), new Rect(293, 160, 433, 216),
+                new Rect(24, 236, 220, 284), new Rect(0, 296, 251, 344), new Rect(174, 296, 247, 344),
+                new Rect(0, 302, 167, 339), new Rect(552, 972, 704, 1198), new Rect(552, 1201, 704, 1428),
+                new Rect(0, 1040, 536, 1247), new Rect(0, 1247, 536, 1368), new Rect(0, 1368, 536, 1440),
+                new Rect(92, 1040, 512, 1239), new Rect(112, 1440, 344, 1544), new Rect(16, 1440, 104, 1552),
+                new Rect(352, 1440, 440, 1552), new Rect(448, 1456, 520, 1528), new Rect(616, 1440, 704, 1552));
+        for (int seed = 0; seed < 100; seed++) {
+            float[] point = LiveAutoTap.tapPoint(720, 1600, taken, seats, 32, 0, new Random(seed));
+            assertNotNull("seed " + seed, point);
+            assertTrue("the host's side " + point[2], point[2] < LiveAutoTap.ABOVE_SEATS);
+            assertClear(point, taken, seats.subList(1, 3), 32);
+            assertTrue(point[0] < 720 * 0.45f);
+        }
+    }
+
+    @Test public void aGuestGridSendsTheTapsJustAboveTheSeats() {
+        // A nine-seat room read off a 1080x2316 screen (#335): the host's tile on the left, eight
+        // seats beside it, a banner across the room just above them, and under them chat lines
+        // that run the room's width, each with its avatar, name and text on the left.
+        List<Rect> seats = new ArrayList<>(List.of(new Rect(13, 441, 537, 1440)));
+        for (int row = 0; row < 4; row++) {
+            int top = 441 + row * 251;
+            seats.add(new Rect(542, top, 801, top + 246));
+            seats.add(new Rect(807, top, 1066, top + 246));
+        }
+        List<Rect> taken = new ArrayList<>(List.of(
+                new Rect(831, 529, 1046, 664), new Rect(163, 338, 917, 414), new Rect(34, 216, 424, 284),
+                new Rect(0, 2015, 1080, 2116), new Rect(130, 2039, 1046, 2091)));
+        for (int line = 0; line < 5; line++) {
+            int top = 1461 + line * 122;
+            taken.add(new Rect(0, top, 1080, top + 122));
+            taken.add(new Rect(34, top, 113, top + 79));
+            taken.add(new Rect(130, top + 3, 221, top + 55));
+            taken.add(new Rect(226, top + 55, 489 + line * 60, top + 103));
+        }
+        for (int seed = 0; seed < 200; seed++) {
+            float[] point = LiveAutoTap.tapPoint(1080, 2316, taken, seats, 48, 0, new Random(seed));
+            assertNotNull("seed " + seed, point);
+            assertEquals(LiveAutoTap.ABOVE_SEATS, (int) point[2]);
+            assertClear(point, taken, seats, 48);
+            assertTrue("above the grid " + point[1], point[1] <= 441 - 48 && point[1] >= 284 + 48);
+        }
+
+        // The same room without its seats: the host's side, as before.
+        float[] host = LiveAutoTap.tapPoint(1080, 2316, taken, List.of(), 48, 0, new Random(3));
+        assertEquals(0, (int) host[2]);
+    }
+
+    @Test public void aTenSeatGridFindsTheOpenEdgesOfTheRowAbove() {
+        // A ten-seat room read off a 720x1600 screen (#335). A banner fills the middle of the row
+        // between the top chips and the seats, so only its two ends are open.
+        List<Rect> seats = new ArrayList<>(List.of(new Rect(9, 396, 358, 735), new Rect(361, 396, 710, 735)));
+        int[] lefts = {9, 185, 361, 538};
+        for (int left : lefts) {
+            seats.add(new Rect(left, 739, left + 172, 892));
+            seats.add(new Rect(left, 896, left + 172, 1049));
+        }
+        List<Rect> taken = List.of(new Rect(541, 376, 696, 472), new Rect(600, 376, 696, 472),
+                new Rect(557, 1065, 696, 1161), new Rect(656, 164, 704, 212), new Rect(592, 168, 632, 208),
+                new Rect(468, 164, 568, 212), new Rect(24, 152, 442, 224), new Rect(293, 160, 433, 216),
+                new Rect(24, 236, 230, 284), new Rect(116, 328, 604, 372), new Rect(17, 404, 116, 432),
+                new Rect(0, 1345, 720, 1440), new Rect(24, 1353, 80, 1409), new Rect(92, 1353, 696, 1432),
+                new Rect(112, 1440, 344, 1544), new Rect(16, 1440, 104, 1552), new Rect(448, 1456, 520, 1528));
+        for (int seed = 0; seed < 200; seed++) {
+            float[] point = LiveAutoTap.tapPoint(720, 1600, taken, seats, 32, 0, new Random(seed));
+            assertNotNull("seed " + seed, point);
+            assertEquals(LiveAutoTap.ABOVE_SEATS, (int) point[2]);
+            assertClear(point, taken, seats, 32);
+            assertTrue("an open end " + point[0], point[0] < 116 - 32 || point[0] > 604 + 32);
+        }
+    }
+
+    @Test public void withNothingOpenAboveAGuestGridTheTapsGoJustUnderIt() {
+        // The host and two guests split the room (#335), with a goal bar filling the row above them
+        // and chat lines from a little way under them.
+        List<Rect> seats = List.of(new Rect(0, 428, 358, 1080), new Rect(361, 428, 720, 752),
+                new Rect(361, 755, 720, 1080));
+        List<Rect> taken = new ArrayList<>(List.of(new Rect(0, 230, 720, 420)));
+        for (int line = 0; line < 3; line++) taken.add(new Rect(0, 1169 + line * 90, 720, 1259 + line * 90));
+        for (int seed = 0; seed < 200; seed++) {
+            float[] point = LiveAutoTap.tapPoint(720, 1600, taken, seats, 32, 0, new Random(seed));
+            assertNotNull("seed " + seed, point);
+            assertEquals(LiveAutoTap.BELOW_SEATS, (int) point[2]);
+            assertClear(point, taken, seats, 32);
+            assertTrue("in the gap " + point[1], point[1] >= 1080 + 32 && point[1] <= 1169 - 32);
+        }
+
+        // Without that gap, nothing near the seats is open and no tap goes out.
+        List<Rect> noGap = new ArrayList<>(taken);
+        noGap.add(new Rect(0, 1080, 720, 1169));
+        assertNull(LiveAutoTap.tapPoint(720, 1600, noGap, seats, 32, 0, new Random(5)));
+        // A tap below the seats that opened something is skipped next time.
+        assertNull(LiveAutoTap.tapPoint(720, 1600, taken, seats, 32, 1 << LiveAutoTap.BELOW_SEATS, new Random(5)));
+    }
+
+    private static void assertClear(float[] point, List<Rect> taken, List<Rect> seats, int clear) {
+        for (List<Rect> rects : List.of(taken, seats)) {
+            for (Rect rect : rects) {
+                assertFalse(point[0] + "," + point[1] + " by " + rect.toShortString(),
+                        point[0] > rect.left - clear && point[0] < rect.right + clear
+                                && point[1] > rect.top - clear && point[1] < rect.bottom + clear);
+            }
+        }
     }
 
     @Test public void noTapEverReachesTheOtherCreatorsHalf() {
         // In a battle the right half is the other creator, and a tap there opens their card (#335).
         for (int skip = 0; skip < 31; skip++) {
             for (int seed = 0; seed < 40; seed++) {
-                float[] point = LiveAutoTap.tapPoint(1080, 2316, List.of(), 16, skip, new Random(seed));
+                float[] point = LiveAutoTap.tapPoint(1080, 2316, List.of(), List.of(), 16, skip, new Random(seed));
                 assertNotNull("skip " + skip, point);
                 assertTrue("skip " + skip + " seed " + seed + " x " + point[0], point[0] < 1080 * 0.45f);
                 assertTrue(point[1] > 2316 * 0.25f && point[1] < 2316 * 0.5f);
@@ -310,10 +422,25 @@ public class LiveAutoTapTest {
         }
     }
 
+    @Test public void aBattleDrawnAsTwoSeatsStillNeverTapsEitherPane() {
+        // A battle shows no seat views today. Should one ever give each creator a seat, the taps
+        // stay off both panes rather than reaching the other creator's (#335).
+        List<Rect> panes = List.of(new Rect(0, 396, 358, 897), new Rect(361, 396, 720, 897));
+        List<Rect> taken = List.of(new Rect(24, 236, 230, 284), new Rect(24, 152, 442, 224));
+        for (int seed = 0; seed < 200; seed++) {
+            float[] point = LiveAutoTap.tapPoint(720, 1600, taken, panes, 32, 0, new Random(seed));
+            assertNotNull("seed " + seed, point);
+            assertClear(point, taken, panes, 32);
+            assertTrue("open room by the panes", (int) point[2] == LiveAutoTap.ABOVE_SEATS
+                    || (int) point[2] == LiveAutoTap.BELOW_SEATS);
+        }
+    }
+
     @Test public void aSpotThatOpenedACardIsSkippedUntilEveryOneHas() {
         assertEquals(1, LiveAutoTap.skipAfterCard(0, 0));
         assertEquals(0b101, LiveAutoTap.skipAfterCard(0b001, 2));
-        assertEquals("all five opened something: start over", 0, LiveAutoTap.skipAfterCard(0b01111, 4));
+        assertEquals("the chat's end is still left", 0b11111, LiveAutoTap.skipAfterCard(0b01111, 4));
+        assertEquals("all seven opened something: start over", 0, LiveAutoTap.skipAfterCard(0b0111111, 6));
         assertEquals("no tap yet", 0b10, LiveAutoTap.skipAfterCard(0b10, -1));
     }
 
@@ -367,6 +494,7 @@ public class LiveAutoTapTest {
         Settings.LIVE_AUTO_TAP_RATE.save(Settings.LIVE_AUTO_TAP_RATE.defaultValue);
         SettingsStatus.liveControlsEnabled = false;
         LiveAutoTap.forgetSkippedSpotsForTests();
+        LiveAutoTap.seatIdForTests(-1);
     }
 
     private FakePage openRoom() {
@@ -437,6 +565,41 @@ public class LiveAutoTapTest {
         assertEquals("no taps after Stop", afterStop, downs());
         assertSame("the window's own callback is back", own, activity.getWindow().getCallback());
         assertEquals("Auto tap", chip().getText().toString());
+    }
+
+    @Test public void inAGuestGridTheTapsStayOffEverySeat() {
+        openRoom();
+        int width = room.getWidth();
+        int height = room.getHeight();
+        int seat = View.generateViewId();
+        LiveAutoTap.seatIdForTests(seat);
+        // The host's tile and two guests beside it, none of them taking a tap themselves, from a
+        // fifth of the way down to past the middle: tapping any of them opens a card (#335).
+        int top = height / 5;
+        int bottom = height * 62 / 100;
+        List<Rect> placed = List.of(new Rect(0, top, width / 2, bottom),
+                new Rect(width / 2, top, width, (top + bottom) / 2),
+                new Rect(width / 2, (top + bottom) / 2, width, bottom));
+        for (Rect rect : placed) {
+            View view = new View(activity);
+            view.setId(seat);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(rect.width(), rect.height());
+            params.leftMargin = rect.left;
+            params.topMargin = rect.top;
+            room.addView(view, params);
+        }
+        shadowOf(Looper.getMainLooper()).idle();
+
+        chip().performClick();
+        shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(1500));
+
+        assertTrue("taps " + downs(), downs() >= 5);
+        for (int[] touch : touches) {
+            for (Rect rect : placed) {
+                assertFalse("on a seat at " + touch[1] + "," + touch[2], rect.contains(touch[1], touch[2]));
+            }
+            assertTrue("just above the seats at " + touch[2], touch[2] < top && touch[2] > height * 0.15f);
+        }
     }
 
     @Test public void aRealFingerHoldsTheTaps() {

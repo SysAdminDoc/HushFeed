@@ -26,6 +26,7 @@ Every Hushfeed release, newest first.
 * A translated comment could still land in the wrong row when you scrolled fast. TikTok fades a translation in a moment after it arrives, and if the row got reused for another comment in that moment, the old comment's text was written over the new one. The fade is now called off when the row moves on (#383).
 * Patching the 47.7.3 APK marked arm64-v8a alone stops right away with a message naming the file to get. APKMirror added that APK on November 12, and TikTok compiled it separately from the bundle and the arm64-v8a + armeabi-v7a APK, so eight patches failed on it and others hooked the wrong code (#402).
 * Two parts of TikTok reading the same new batch of feed videos at once could both run the feed filter on it and both rewrite it, and the second rewrite could crash TikTok while it was copying that batch. The filter now handles one batch at a time, so the second read finds it already done. Thanks to @Tegar30 for spotting it (#400).
+* `Auto tap` in LIVE rooms with guests keeps its taps off the guests' seats. In a grid of guests, a tap on any seat opened that person's card or the gift panel and stopped the tapping, so now it taps the open room just above or below the seats instead (#335).
 
 ## 0.82.0 (2026-11-12)
 

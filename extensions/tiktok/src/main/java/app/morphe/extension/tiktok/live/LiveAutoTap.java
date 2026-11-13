@@ -332,15 +332,35 @@ public final class LiveAutoTap {
     // ---- one tap ----------------------------------------------------------------------------
 
     /**
-     * Where the taps go, as fractions of the room's width and height, tried in this order. All of
-     * them sit on the host's side: the left pane in a battle and the top-left tile in a guest grid,
-     * which are drawn into one mixed stream with no views to dodge. The other creator's or a
-     * guest's part of the picture opens their card when tapped (#335). In a room with only the
-     * host, the left side likes the same as the middle.
+     * Where the taps go, as fractions of the room's width and height, tried in this order. All five
+     * sit on the host's side: the left pane in a battle is drawn into one mixed stream with no views
+     * to dodge, and the other creator's half opens their card when tapped (#335). In a room with
+     * only the host, the left side likes the same as the middle.
+     *
+     * In a guest grid the room's like layer opens a seat's card or the gift panel when a tap lands
+     * over that seat, the host's seat too, even where none of the seat's own views take it. So the
+     * seats are kept clear, and when that rules out all five, the taps go to open room just above
+     * the seats ({@link #ABOVE_SEATS}) or, failing that, just below them ({@link #BELOW_SEATS}),
+     * which like the room the same as open space does. A seat covering half the room or more is
+     * the host's own picture with guests along its edge, and taps on it like as in a solo room.
      */
     private static final float[][] SPOTS = {{0.25f, 0.38f}, {0.25f, 0.30f}, {0.25f, 0.46f}, {0.15f, 0.38f}, {0.36f, 0.38f}};
+    /** The spot index for taps in the open row above a guest grid's seats. */
+    static final int ABOVE_SEATS = SPOTS.length;
+    /** The spot index for taps in the open row between a guest grid's seats and the chat. */
+    static final int BELOW_SEATS = SPOTS.length + 1;
     /** Every spot skipped. */
-    private static final int ALL_SPOTS = (1 << SPOTS.length) - 1;
+    private static final int ALL_SPOTS = (1 << (BELOW_SEATS + 1)) - 1;
+    /** Across a row by a guest grid, the places tried, from the host's side out, as fractions of the room's width. */
+    private static final float[] ROW_SPOTS = {0.25f, 0.15f, 0.36f, 0.06f, 0.45f, 0.55f, 0.65f, 0.75f, 0.85f, 0.94f};
+    /** How far into the room's top and bottom a row by a guest grid may go: past it are the room's own bars. */
+    private static final float ROW_EDGE = 0.15f;
+    /** How far under a guest grid's seats the row below them may go, as a fraction of the room's height. */
+    private static final float BELOW_GAP = 0.06f;
+    /** A guest grid seat's id name in TikTok's LIVE layouts. */
+    private static final String SEAT_ID = "ttlive_link_layout_layer_mic_window";
+    /** The seat id once looked up, 0 when TikTok has none; -1 until then. */
+    private static int seatId = -1;
 
     // A spot whose tap opened a card is skipped the next time tapping starts in that room.
     private static String skipRoom;
@@ -349,28 +369,74 @@ public final class LiveAutoTap {
 
     /**
      * A point in a {@code width} by {@code height} room to tap, kept {@code clear} pixels away from
-     * every rect in {@code taken} and off the spots set in {@code skip}, as {x, y, spot index}, or
-     * null when every spot is covered. Each spot moves up to 3% of the room each way so the taps
-     * don't all hit one pixel.
+     * every rect in {@code taken} and every seat smaller than half the room, and off the spots set
+     * in {@code skip}, as {x, y, spot index}, or null when every spot is covered. Each spot moves up
+     * to 3% of the room each way, and the rows by a guest grid start a little nearer or farther,
+     * so the taps don't all hit one pixel.
      */
-    static float[] tapPoint(int width, int height, List<Rect> taken, int clear, int skip, Random random) {
+    static float[] tapPoint(int width, int height, List<Rect> taken, List<Rect> seats, int clear, int skip,
+            Random random) {
         if (width <= 0 || height <= 0) return null;
+        List<Rect> small = new ArrayList<>();
+        int top = height;
+        int bottom = 0;
+        for (Rect seat : seats) {
+            if ((long) seat.width() * seat.height() * 2 >= (long) width * height) continue;
+            small.add(seat);
+            top = Math.min(top, seat.top);
+            bottom = Math.max(bottom, seat.bottom);
+        }
         for (int i = 0; i < SPOTS.length; i++) {
             if ((skip & (1 << i)) != 0) continue;
             float x = width * (SPOTS[i][0] + (random.nextFloat() - 0.5f) * 0.06f);
             float y = height * (SPOTS[i][1] + (random.nextFloat() - 0.5f) * 0.06f);
-            if (free(x, y, taken, clear)) return new float[]{x, y, i};
+            if (free(x, y, small, clear) && free(x, y, taken, clear)) return new float[]{x, y, i};
+        }
+        if (small.isEmpty()) return null;
+        // Rows a half clear apart, nearest the seats first, each tried from the host's side out.
+        // The first row moves by up to a step, but never out of a band that has room for one.
+        int step = Math.max(1, clear / 2);
+        if ((skip & (1 << ABOVE_SEATS)) == 0) {
+            int edge = Math.round(height * ROW_EDGE);
+            int first = top - clear;
+            for (int y = Math.max(first - random.nextInt(step), Math.min(first, edge + 1)); y > edge; y -= step) {
+                float[] point = alongRow(width, y, taken, small, clear, ABOVE_SEATS, random);
+                if (point != null) return point;
+            }
+        }
+        if ((skip & (1 << BELOW_SEATS)) == 0) {
+            // Only the gap right under the seats: lower down, the chat's lines take taps without
+            // showing it, and tapping them likes nothing.
+            int first = bottom + clear;
+            int last = Math.min(first + Math.round(height * BELOW_GAP), Math.round(height * (1 - ROW_EDGE)));
+            for (int y = Math.min(first + random.nextInt(step), Math.max(first, last)); y <= last; y += step) {
+                float[] point = alongRow(width, y, taken, small, clear, BELOW_SEATS, random);
+                if (point != null) return point;
+            }
+        }
+        return null;
+    }
+
+    /** The first free place across the row at {@code y}, moved up to 1.5% of the room each way, as {x, y, spot}. */
+    private static float[] alongRow(int width, int y, List<Rect> taken, List<Rect> seats, int clear, int spot,
+            Random random) {
+        for (float at : ROW_SPOTS) {
+            float x = width * (at + (random.nextFloat() - 0.5f) * 0.03f);
+            if (x > 0 && x < width && free(x, y, seats, clear) && free(x, y, taken, clear)) {
+                return new float[]{x, y, spot};
+            }
         }
         return null;
     }
 
     /** The spots to skip once the tap at {@code spot} opened a card; when every spot has, they all get another go. */
     static int skipAfterCard(int skip, int spot) {
-        if (spot < 0 || spot >= SPOTS.length) return skip;
+        if (spot < 0 || spot > BELOW_SEATS) return skip;
         int next = skip | (1 << spot);
         return next == ALL_SPOTS ? 0 : next;
     }
 
+    /** Whether ({@code x}, {@code y}) is {@code clear} pixels from every rect in {@code taken}. */
     private static boolean free(float x, float y, List<Rect> taken, int clear) {
         for (Rect rect : taken) {
             if (x > rect.left - clear && x < rect.right + clear && y > rect.top - clear && y < rect.bottom + clear) {
@@ -378,6 +444,31 @@ public final class LiveAutoTap {
             }
         }
         return true;
+    }
+
+    /**
+     * Every visible guest grid seat under {@code root}, in {@code area}'s coordinates. A seat opens
+     * a card or the gift panel wherever it's tapped, even where none of its own views take a tap.
+     */
+    static void seats(View root, int seat, Rect area, List<Rect> out) {
+        if (seat == 0 || root.getVisibility() != View.VISIBLE) return;
+        if (root.getId() == seat) {
+            Rect rect = new Rect();
+            if (root.getGlobalVisibleRect(rect)) {
+                rect.offset(-area.left, -area.top);
+                out.add(rect);
+            }
+            return;
+        }
+        if (root instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) root;
+            for (int i = 0; i < group.getChildCount(); i++) seats(group.getChildAt(i), seat, area, out);
+        }
+    }
+
+    static int seatId(Context context) {
+        if (seatId == -1) seatId = context.getResources().getIdentifier(SEAT_ID, "id", context.getPackageName());
+        return seatId;
     }
 
     /**
@@ -394,7 +485,9 @@ public final class LiveAutoTap {
         if (!content.isShown() || !content.getGlobalVisibleRect(area)) return false;
         List<Rect> taken = new ArrayList<>();
         LiveRecordChip.tapTargets(content, null, area, (long) area.width() * area.height() / 4, taken);
-        float[] point = tapPoint(area.width(), area.height(), taken, dp(activity, CLEAR_DP), skipSpots, random);
+        List<Rect> seats = new ArrayList<>();
+        seats(content, seatId(activity), area, seats);
+        float[] point = tapPoint(area.width(), area.height(), taken, seats, dp(activity, CLEAR_DP), skipSpots, random);
         if (point == null) return false;
         lastSpot = (int) point[2];
         float x = area.left + point[0];
@@ -642,6 +735,11 @@ public final class LiveAutoTap {
         skipRoom = null;
         skipSpots = 0;
         lastSpot = -1;
+    }
+
+    /** Stands in for TikTok's seat id, which a test app doesn't have; -1 looks it up again. */
+    static void seatIdForTests(int id) {
+        seatId = id;
     }
 
     /** Whether a real finger is holding the taps right now. */

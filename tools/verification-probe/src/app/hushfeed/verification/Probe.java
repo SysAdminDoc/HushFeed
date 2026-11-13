@@ -3674,6 +3674,208 @@ public final class Probe extends Instrumentation {
                         Log.i(TAG, "ok liveroom " + hidden.size() + " rooms");
                         break;
                     }
+                    case "taptargets": {
+                        // What LIVE auto tap keeps its taps off in the room in front (#335): every
+                        // view it counts as a button, by class, id and place, how many guest seats
+                        // it found, and the spot it would pick now with no spot skipped.
+                        // The LIVE activity auto tap holds, not the feed behind it.
+                        Field held = loader.loadClass("app.morphe.extension.tiktok.live.LiveAutoTap").getDeclaredField("host");
+                        held.setAccessible(true);
+                        android.app.Activity activity = (android.app.Activity)
+                                ((java.lang.ref.WeakReference<?>) held.get(null)).get();
+                        if (activity == null) {
+                            Log.i(TAG, "ok taptargets no LIVE room held");
+                            break;
+                        }
+                        android.view.ViewGroup content = activity.findViewById(android.R.id.content);
+                        android.graphics.Rect area = new android.graphics.Rect();
+                        content.getGlobalVisibleRect(area);
+                        long largest = (long) area.width() * area.height() / 4;
+                        StringBuilder out = new StringBuilder(" area=").append(area.toShortString());
+                        java.util.List<android.graphics.Rect> taken = new java.util.ArrayList<>();
+                        java.util.ArrayDeque<android.view.View> queue = new java.util.ArrayDeque<>();
+                        queue.add(content);
+                        while (!queue.isEmpty()) {
+                            android.view.View view = queue.poll();
+                            if (view.getVisibility() != android.view.View.VISIBLE || view.getAlpha() == 0f) continue;
+                            android.graphics.Rect rect = new android.graphics.Rect();
+                            if ((view.isClickable() || view.isLongClickable()) && view.getGlobalVisibleRect(rect)
+                                    && (long) rect.width() * rect.height() < largest) {
+                                rect.offset(-area.left, -area.top);
+                                taken.add(rect);
+                                String id = idName(view, activity.getResources());
+                                out.append("\n  ").append(view.getClass().getName()).append(' ').append(id)
+                                        .append(' ').append(rect.toShortString());
+                            } else if (!(view instanceof android.view.TextureView || view instanceof android.view.SurfaceView)
+                                    && view.getGlobalVisibleRect(rect) && rect.width() * 50L >= area.width()
+                                    && rect.height() * 50L >= area.height()
+                                    && (long) rect.width() * rect.height() * 50 >= (long) area.width() * area.height()
+                                    && (long) rect.width() * rect.height() * 10 < (long) area.width() * area.height() * 6) {
+                                // A box between a fiftieth and six tenths of the room: guest seats show up here.
+                                rect.offset(-area.left, -area.top);
+                                out.append("\n  box ").append(view.getClass().getName()).append(' ')
+                                        .append(idName(view, activity.getResources())).append(' ').append(rect.toShortString());
+                            } else if ((view instanceof android.view.TextureView || view instanceof android.view.SurfaceView)
+                                    && view.getGlobalVisibleRect(rect)) {
+                                // Each picture in the room and the three views above it, so a
+                                // guest grid shows whether its seats are drawn apart.
+                                out.append("\n  video ").append(view.getClass().getName()).append(' ')
+                                        .append(idName(view, activity.getResources())).append(' ').append(rect.toShortString());
+                                android.view.ViewParent parent = view.getParent();
+                                for (int up = 0; up < 3 && parent instanceof android.view.View; up++) {
+                                    android.view.View above = (android.view.View) parent;
+                                    android.graphics.Rect box = new android.graphics.Rect();
+                                    above.getGlobalVisibleRect(box);
+                                    out.append(" < ").append(above.getClass().getName()).append(' ')
+                                            .append(idName(above, activity.getResources())).append(' ').append(box.toShortString());
+                                    parent = above.getParent();
+                                }
+                            }
+                            if (view instanceof android.view.ViewGroup) {
+                                android.view.ViewGroup group = (android.view.ViewGroup) view;
+                                for (int i = 0; i < group.getChildCount(); i++) queue.add(group.getChildAt(i));
+                            }
+                        }
+                        Class<?> autoTap = loader.loadClass("app.morphe.extension.tiktok.live.LiveAutoTap");
+                        Method seatId = autoTap.getDeclaredMethod("seatId", android.content.Context.class);
+                        seatId.setAccessible(true);
+                        Method seatsOf = autoTap.getDeclaredMethod("seats", android.view.View.class, int.class,
+                                android.graphics.Rect.class, java.util.List.class);
+                        seatsOf.setAccessible(true);
+                        java.util.List<android.graphics.Rect> seats = new java.util.ArrayList<>();
+                        seatsOf.invoke(null, content, seatId.invoke(null, activity), area, seats);
+                        out.append("\n  seats=").append(seats.size());
+                        for (android.graphics.Rect seat : seats) out.append("\n  seat ").append(seat.toShortString());
+                        Method pick = autoTap.getDeclaredMethod("tapPoint", int.class, int.class, java.util.List.class,
+                                java.util.List.class, int.class, int.class, java.util.Random.class);
+                        pick.setAccessible(true);
+                        int clear = Math.round(16 * activity.getResources().getDisplayMetrics().density);
+                        float[] point = (float[]) pick.invoke(null, area.width(), area.height(), taken, seats, clear, 0,
+                                new java.util.Random(1));
+                        out.append("\n  pick=").append(point == null ? "none" : Math.round(point[0]) + "," + Math.round(point[1]) + " spot " + (int) point[2]);
+                        // One line per entry: a LIVE room has more views than one log entry holds.
+                        for (String line : ("ok taptargets" + out).split("\n")) Log.i(TAG, line);
+                        break;
+                    }
+                    case "touchpath": {
+                        // Which views a touch at -e x -e y (window pixels) goes through in the LIVE
+                        // room auto tap holds (#335), and which one takes it: a touch down goes in
+                        // through the window, each ViewGroup's touch target is followed down from
+                        // the decor view, and a cancel ends the touch so nothing is clicked. Each
+                        // step shows the view's class, id, place and its touch listener's class.
+                        Field held = loader.loadClass("app.morphe.extension.tiktok.live.LiveAutoTap").getDeclaredField("host");
+                        held.setAccessible(true);
+                        android.app.Activity activity = (android.app.Activity)
+                                ((java.lang.ref.WeakReference<?>) held.get(null)).get();
+                        if (activity == null) {
+                            Log.i(TAG, "ok touchpath no LIVE room held");
+                            break;
+                        }
+                        float x = Float.parseFloat(intent.getStringExtra("x"));
+                        float y = Float.parseFloat(intent.getStringExtra("y"));
+                        android.view.View decor = activity.getWindow().getDecorView();
+                        long now = android.os.SystemClock.uptimeMillis();
+                        android.view.MotionEvent down = android.view.MotionEvent.obtain(now, now,
+                                android.view.MotionEvent.ACTION_DOWN, x, y, 0);
+                        down.setSource(android.view.InputDevice.SOURCE_TOUCHSCREEN);
+                        boolean taken = decor.dispatchTouchEvent(down);
+                        down.recycle();
+                        StringBuilder out = new StringBuilder(" at ").append(Math.round(x)).append(',')
+                                .append(Math.round(y)).append(" taken=").append(taken);
+                        Field first = android.view.ViewGroup.class.getDeclaredField("mFirstTouchTarget");
+                        first.setAccessible(true);
+                        Field info = android.view.View.class.getDeclaredField("mListenerInfo");
+                        info.setAccessible(true);
+                        android.view.View view = decor;
+                        for (int depth = 0; view != null && depth < 80; depth++) {
+                            android.graphics.Rect rect = new android.graphics.Rect();
+                            view.getGlobalVisibleRect(rect);
+                            String listener = null;
+                            Object listeners = info.get(view);
+                            if (listeners != null) {
+                                Field touch = listeners.getClass().getDeclaredField("mOnTouchListener");
+                                touch.setAccessible(true);
+                                Object onTouch = touch.get(listeners);
+                                if (onTouch != null) listener = onTouch.getClass().getName();
+                            }
+                            out.append("\n  ").append(view.getClass().getName()).append(' ')
+                                    .append(idName(view, activity.getResources())).append(' ').append(rect.toShortString())
+                                    .append(view.isClickable() ? " clickable" : "").append(listener == null ? "" : " touch=" + listener);
+                            android.view.View next = null;
+                            if (view instanceof android.view.ViewGroup) {
+                                Object target = first.get(view);
+                                if (target != null) {
+                                    Field child = target.getClass().getDeclaredField("child");
+                                    child.setAccessible(true);
+                                    next = (android.view.View) child.get(target);
+                                }
+                            }
+                            view = next;
+                        }
+                        long later = android.os.SystemClock.uptimeMillis();
+                        android.view.MotionEvent cancel = android.view.MotionEvent.obtain(now, later,
+                                android.view.MotionEvent.ACTION_CANCEL, x, y, 0);
+                        cancel.setSource(android.view.InputDevice.SOURCE_TOUCHSCREEN);
+                        decor.dispatchTouchEvent(cancel);
+                        cancel.recycle();
+                        for (String line : ("ok touchpath" + out).split("\n")) Log.i(TAG, line);
+                        break;
+                    }
+                    case "layertap": {
+                        // Taps sent straight to one view's own touch handling, past every child
+                        // in front of it (#335): the view with id -e id in the LIVE room auto tap
+                        // holds, or the view -e up levels above it, at -e x -e y in window pixels,
+                        // -e taps times (5 by default) 250 ms apart. Logs what each call returned.
+                        Field held = loader.loadClass("app.morphe.extension.tiktok.live.LiveAutoTap").getDeclaredField("host");
+                        held.setAccessible(true);
+                        final android.app.Activity activity = (android.app.Activity)
+                                ((java.lang.ref.WeakReference<?>) held.get(null)).get();
+                        if (activity == null) {
+                            Log.i(TAG, "ok layertap no LIVE room held");
+                            break;
+                        }
+                        int id = activity.getResources().getIdentifier(intent.getStringExtra("id"), "id", activity.getPackageName());
+                        android.view.View found = id == 0 ? null : activity.findViewById(id);
+                        String upText = intent.getStringExtra("up");
+                        for (int up = upText == null ? 0 : Integer.parseInt(upText); found != null && up > 0; up--) {
+                            found = found.getParent() instanceof android.view.View ? (android.view.View) found.getParent() : null;
+                        }
+                        if (found == null) {
+                            Log.i(TAG, "ok layertap no such view");
+                            break;
+                        }
+                        final android.view.View layer = found;
+                        int[] at = new int[2];
+                        layer.getLocationInWindow(at);
+                        final float x = Float.parseFloat(intent.getStringExtra("x")) - at[0];
+                        final float y = Float.parseFloat(intent.getStringExtra("y")) - at[1];
+                        String tapsText = intent.getStringExtra("taps");
+                        final int taps = tapsText == null ? 5 : Integer.parseInt(tapsText);
+                        Log.i(TAG, "layertap on " + layer.getClass().getName() + " " + idName(layer, activity.getResources())
+                                + " at local " + Math.round(x) + "," + Math.round(y));
+                        final android.os.Handler main = new android.os.Handler(android.os.Looper.getMainLooper());
+                        for (int i = 0; i < taps; i++) {
+                            final int index = i;
+                            main.postDelayed(() -> {
+                                long downAt = android.os.SystemClock.uptimeMillis();
+                                android.view.MotionEvent down = android.view.MotionEvent.obtain(downAt, downAt,
+                                        android.view.MotionEvent.ACTION_DOWN, x, y, 0);
+                                down.setSource(android.view.InputDevice.SOURCE_TOUCHSCREEN);
+                                boolean tookDown = layer.onTouchEvent(down);
+                                down.recycle();
+                                main.postDelayed(() -> {
+                                    android.view.MotionEvent lift = android.view.MotionEvent.obtain(downAt,
+                                            android.os.SystemClock.uptimeMillis(), android.view.MotionEvent.ACTION_UP, x, y, 0);
+                                    lift.setSource(android.view.InputDevice.SOURCE_TOUCHSCREEN);
+                                    boolean tookUp = layer.onTouchEvent(lift);
+                                    lift.recycle();
+                                    Log.i(TAG, "layertap " + index + " down=" + tookDown + " up=" + tookUp);
+                                    if (index == taps - 1) Log.i(TAG, "ok layertap done");
+                                }, 50);
+                            }, 250L * i);
+                        }
+                        break;
+                    }
                     case "livechip": {
                         // Each check the Record button's watcher makes on the LIVE room page it
                         // holds (#37), so a button that never stays up shows which one says no.

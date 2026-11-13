@@ -32,6 +32,7 @@ Every Hushfeed release, newest first.
 * `Foldable split comment view` works in a desktop window too, like TikTok on a Googlebook or Chromebook, in DeX or in Android's desktop mode. Those windows count as sharing the screen with other apps, so comments always came up from the bottom there, however wide the window or low the minimum width. Now the window's width decides, and dragging it across the minimum width switches the layout. Split screen still leaves comments to TikTok (#405).
 * `Fill the screen with the video` reaches the bottom on videos you open from search, a profile or a grid too. The comment bar under those videos kept a solid black strip, so filling changed nothing there. Now the video runs all the way down behind the comment bar, and the caption and buttons stay above it (#406).
 * `Blur the video behind the bar` lets go of a video once the pill isn't over it. Scroll slowly and the pill used to keep a blurred piece of the last video until the next one started playing. Now it goes back to plain glass right away (#408).
+* Hushfeed settings and the Lab scroll on under the gesture bar instead of stopping at a solid band above it, and the last row still scrolls clear of the bar (#408).
 
 ## 0.82.0 (2026-11-12)
 

@@ -65,6 +65,7 @@ import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.diagnostics.DiagnosticRedactor;
 import app.morphe.extension.shared.settings.SettingsJson;
 import app.morphe.extension.tiktok.settings.SettingsOperationJournal;
+import app.morphe.extension.tiktok.settings.SystemBarInsets;
 import app.morphe.extension.tiktok.settings.preference.DocumentOperation;
 import app.morphe.extension.tiktok.settings.preference.RestartPendingPreference;
 import app.morphe.extension.tiktok.settings.preference.SettingsActionBanner;
@@ -517,6 +518,12 @@ public final class FeatureGateLabFragment extends Fragment {
         list.setDividerHeight(0);
         list.setPadding(FeatureGateLabUi.dp(context, 16), 0, FeatureGateLabUi.dp(context, 16), FeatureGateLabUi.dp(context, 24));
         list.setClipToPadding(false);
+        list.setOnApplyWindowInsetsListener((view, insets) -> {
+            padListAbove(selectionBar != null && selectionBar.getVisibility() == View.VISIBLE
+                    ? selectionBar.getHeight() : -1);
+            return insets;
+        });
+        SystemBarInsets.requestWhenAttached(list);
         list.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
         adapter = new GateAdapter(context, visible);
         list.setAdapter(adapter);
@@ -585,6 +592,7 @@ public final class FeatureGateLabFragment extends Fragment {
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         barParams.gravity = Gravity.BOTTOM;
         listContainer.addView(selectionOverlay, barParams);
+        SystemBarInsets.liftAboveBottomBar(selectionOverlay, 0);
         root.addView(listContainer, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
 
         master.setOnCheckedChangeListener((button, checked) -> onMasterChanged(checked));
@@ -1161,9 +1169,11 @@ public final class FeatureGateLabFragment extends Fragment {
 
     /** Room under the last gate for a bar this tall, or the plain end margin with none (-1). */
     private void padListAbove(int barHeight) {
-        int bottomPad = barHeight < 0 ? FeatureGateLabUi.dp(list.getContext(), 24)
+        // The rows run on under the gesture bar, and the last gate and the bar both end above it.
+        int underGestureBar = SystemBarInsets.underBottomBar(list.getRootWindowInsets());
+        int bottomPad = underGestureBar + (barHeight < 0 ? FeatureGateLabUi.dp(list.getContext(), 24)
                 : Math.max(FeatureGateLabUi.dp(list.getContext(), 80),
-                        barHeight + FeatureGateLabUi.dp(list.getContext(), 8));
+                        barHeight + FeatureGateLabUi.dp(list.getContext(), 8)));
         if (list.getPaddingBottom() == bottomPad) return;
         list.setPadding(list.getPaddingLeft(), list.getPaddingTop(), list.getPaddingRight(), bottomPad);
     }

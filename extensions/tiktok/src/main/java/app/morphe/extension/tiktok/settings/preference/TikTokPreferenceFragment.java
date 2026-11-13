@@ -47,6 +47,7 @@ import app.morphe.extension.tiktok.featuregatelab.FeatureGateLabFragment;
 import app.morphe.extension.tiktok.featuregatelab.FeatureGateLabRuntime;
 import app.morphe.extension.tiktok.settings.ProblemReport;
 import app.morphe.extension.tiktok.settings.Settings;
+import app.morphe.extension.tiktok.settings.SystemBarInsets;
 import app.morphe.extension.tiktok.share.ShareUrlSanitizer;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 import app.morphe.extension.tiktok.settings.preference.categories.CommentsPreferenceCategory;
@@ -887,7 +888,8 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
             int side = 0;
             list.setPadding(SettingsUi.dp(getActivity(), side), 0,
                     SettingsUi.dp(getActivity(), side), SettingsUi.dp(getActivity(), 24));
-            list.setClipToPadding(false);
+            // The rows run on under the gesture bar, and the last one scrolls clear of it.
+            SystemBarInsets.padUnderBottomBar(list, SettingsUi.dp(getActivity(), 24));
             list.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         }
 

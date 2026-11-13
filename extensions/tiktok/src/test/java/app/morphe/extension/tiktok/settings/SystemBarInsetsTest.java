@@ -1,6 +1,7 @@
 package app.morphe.extension.tiktok.settings;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -55,9 +56,96 @@ public class SystemBarInsetsTest {
         view.dispatchApplyWindowInsets(insets);
 
         assertEquals("the status bar", 24, view.getPaddingTop());
-        assertEquals("the navigation bar", 48, view.getPaddingBottom());
+        assertEquals("the navigation bar is left to the pages, which scroll under it", 0, view.getPaddingBottom());
         assertEquals("the display cutout", 36, view.getPaddingLeft());
         assertEquals(0, view.getPaddingRight());
+    }
+
+    /**
+     * A scrolling page runs on under the gesture bar instead of stopping at a band of the root's
+     * colour, and its last row still scrolls clear of the bar (#408). An open keyboard pads the
+     * root instead, and the page adds nothing for a bar the keyboard covers.
+     */
+    @Test public void aPageScrollsUnderTheGestureBarAndItsLastRowClearsIt() {
+        Activity activity = Robolectric.buildActivity(Activity.class).setup().get();
+        FrameLayout root = new FrameLayout(activity);
+        android.widget.ListView list = new android.widget.ListView(activity);
+        root.addView(list);
+        View card = new View(activity);
+        root.addView(card, new FrameLayout.LayoutParams(-1, 100, android.view.Gravity.BOTTOM));
+        SystemBarInsets.applyTo(root);
+        SystemBarInsets.padUnderBottomBar(list, 30);
+        SystemBarInsets.liftAboveBottomBar(card, 16);
+
+        root.dispatchApplyWindowInsets(new WindowInsets.Builder()
+                .setInsets(WindowInsets.Type.systemBars(), Insets.of(0, 24, 0, 48))
+                .build());
+        assertEquals(0, root.getPaddingBottom());
+        assertEquals("the last row clears the bar", 30 + 48, list.getPaddingBottom());
+        assertFalse("the rows draw on under the bar", list.getClipToPadding());
+        assertEquals("the card sits above the bar", 16 + 48,
+                ((FrameLayout.LayoutParams) card.getLayoutParams()).bottomMargin);
+
+        root.dispatchApplyWindowInsets(new WindowInsets.Builder()
+                .setInsets(WindowInsets.Type.systemBars(), Insets.of(0, 24, 0, 48))
+                .setInsets(WindowInsets.Type.ime(), Insets.of(0, 0, 0, 900))
+                .setVisible(WindowInsets.Type.ime(), true)
+                .build());
+        assertEquals("the keyboard pads the root", 900, root.getPaddingBottom());
+        assertEquals(30, list.getPaddingBottom());
+        assertEquals(16, ((FrameLayout.LayoutParams) card.getLayoutParams()).bottomMargin);
+    }
+
+    /**
+     * The Lab is a page pushed onto the open settings screen. Its views are built before the page
+     * is attached, after the window has handed its insets out, so its selection bar sat behind the
+     * gesture bar (Login2, 2026-11-13, #408).
+     */
+    @Test public void aPagePushedOntoTheOpenScreenStillEndsAboveTheGestureBar() {
+        Activity activity = Robolectric.buildActivity(Activity.class).setup().get();
+        int[] requests = {0};
+        FrameLayout screen = gestureBarScreen(activity, requests);
+
+        FrameLayout page = new FrameLayout(activity);
+        android.widget.ListView list = new android.widget.ListView(activity);
+        page.addView(list);
+        View bar = new View(activity);
+        bar.setVisibility(View.GONE);
+        page.addView(bar, new FrameLayout.LayoutParams(-1, 100, android.view.Gravity.BOTTOM));
+        SystemBarInsets.padUnderBottomBar(list, 30);
+        SystemBarInsets.liftAboveBottomBar(bar, 0);
+        screen.addView(page);
+        idle();
+
+        assertTrue("the page never asked for the insets", requests[0] > 0);
+        assertEquals("the bar sits above the gesture bar", 48,
+                ((FrameLayout.LayoutParams) bar.getLayoutParams()).bottomMargin);
+        assertEquals("the last row clears the bar", 30 + 48, list.getPaddingBottom());
+    }
+
+    /**
+     * An open edge-to-edge screen, as TikTok's are from target 35, whose window has already handed
+     * out a 48 px gesture bar. Like a phone's window, it hands them out again whenever a view on it
+     * asks, which Robolectric's window doesn't do after its first pass.
+     */
+    private static FrameLayout gestureBarScreen(Activity activity, int[] requests) {
+        FrameLayout screen = new FrameLayout(activity) {
+            @Override
+            public void requestFitSystemWindows() {
+                requests[0]++;
+                post(() -> dispatchApplyWindowInsets(new WindowInsets.Builder()
+                        .setInsets(WindowInsets.Type.systemBars(), Insets.of(0, 24, 0, 48))
+                        .build()));
+            }
+        };
+        activity.setContentView(screen);
+        idle();
+        requests[0] = 0;
+        return screen;
+    }
+
+    private static void idle() {
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(100));
     }
 
     @Test public void theInsetsAreHandedOnRatherThanEatenOnTheWayPast() {
@@ -90,7 +178,10 @@ public class SystemBarInsetsTest {
                 .build());
 
         assertEquals("the status bar", 24, view.getPaddingTop());
-        assertEquals("the navigation bar", 48, view.getPaddingBottom());
+        assertEquals("the navigation bar is left to the pages", 0, view.getPaddingBottom());
+        assertEquals(48, SystemBarInsets.underBottomBar(new WindowInsets.Builder()
+                .setSystemWindowInsets(Insets.of(0, 24, 0, 48))
+                .build()));
     }
 
     @Test public void theSettingsScreenItselfMovesOutFromUnderTheBars() {
@@ -110,7 +201,12 @@ public class SystemBarInsetsTest {
                 .build());
 
         assertEquals("the first row still sits under the status bar", 24, root.getPaddingTop());
-        assertEquals("the last row still sits under the navigation bar", 48, root.getPaddingBottom());
+        assertEquals("a band of the root's colour sat over the gesture bar", 0, root.getPaddingBottom());
+        android.widget.ListView list = activity.findViewById(android.R.id.list);
+        assertNotNull("the settings list", list);
+        assertEquals("the last row still sits under the navigation bar",
+                SettingsUi.dp(activity, 24) + 48, list.getPaddingBottom());
+        assertFalse(list.getClipToPadding());
         // The padding only moves the rows. Without a background here the padded strip would show
         // whatever TikTok's own theme paints, which is what the dead colour calls used to hide.
         assertTrue("the strip behind the bars is not painted",

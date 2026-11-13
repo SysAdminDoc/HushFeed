@@ -182,6 +182,7 @@ public final class FeatureGateDetailFragment extends Fragment {
                 ViewGroup.LayoutParams.WRAP_CONTENT
         ));
         screen.addView(scroll, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
+        app.morphe.extension.tiktok.settings.SystemBarInsets.padUnderBottomBar(scroll, 0);
 
         TextView title = FeatureGateLabUi.heading(context, entry.title);
         title.setMaxLines(3);

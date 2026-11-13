@@ -228,6 +228,7 @@ public final class SettingsActionBanner {
         int margin = SettingsUi.dp(activity, 16);
         params.setMargins(margin, margin, margin, margin);
         root.addView(banner, params);
+        app.morphe.extension.tiktok.settings.SystemBarInsets.liftAboveBottomBar(banner, margin);
         banner.bringToFront();
         current = new WeakReference<>(banner);
         return banner;

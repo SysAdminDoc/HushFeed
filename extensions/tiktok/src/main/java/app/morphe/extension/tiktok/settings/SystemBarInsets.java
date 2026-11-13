@@ -22,27 +22,106 @@ import android.view.WindowInsets;
  * android.view.Window#setNavigationBarColor}, do nothing from that target either. Left alone, the
  * settings screen puts its first row under the status bar and its last under the navigation bar.
  *
- * <p>The padding goes on the root view rather than the list inside it, because a view paints its
- * background across its padding: the screen still fills the display, and only the rows move.
+ * <p>The top and side padding goes on the root view rather than the list inside it, because a
+ * view paints its background across its padding: the screen still fills the display, and only the
+ * rows move. The bottom is left to the pages ({@link #padUnderBottomBar}), so the rows scroll on
+ * under the gesture bar instead of stopping at a band of the root's own colour (#408). Only the
+ * keyboard pads the root's bottom, since nothing shows through it.
  */
 public final class SystemBarInsets {
     private SystemBarInsets() {
     }
 
-    /** Keeps {@code view} padded by the system bars and any display cutout. */
+    /** Keeps {@code view} padded by the status bar, any display cutout and an open keyboard. */
     public static void applyTo(View view) {
         if (view == null) return;
         view.setOnApplyWindowInsetsListener((target, insets) -> {
             Rect bars = systemBarsAndCutout(insets);
-            int bottom = bars.bottom;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                int imeBottom = insets.getInsets(WindowInsets.Type.ime()).bottom;
-                if (imeBottom > bottom) bottom = imeBottom;
-            }
-            target.setPadding(bars.left, bars.top, bars.right, bottom);
+            target.setPadding(bars.left, bars.top, bars.right, keyboard(insets));
             return insets;
         });
         view.requestApplyInsets();
+    }
+
+    /**
+     * Keeps {@code view}'s bottom padding at {@code base} plus the navigation bar under it, and
+     * lets it draw into that padding, so a scrolling page runs on under the gesture bar while its
+     * last row still scrolls clear of it.
+     */
+    public static void padUnderBottomBar(View view, int base) {
+        if (view == null) return;
+        if (view instanceof android.view.ViewGroup) ((android.view.ViewGroup) view).setClipToPadding(false);
+        view.setPadding(view.getPaddingLeft(), view.getPaddingTop(), view.getPaddingRight(),
+                base + underBottomBar(view.getRootWindowInsets()));
+        view.setOnApplyWindowInsetsListener((target, insets) -> {
+            target.setPadding(target.getPaddingLeft(), target.getPaddingTop(), target.getPaddingRight(),
+                    base + underBottomBar(insets));
+            return insets;
+        });
+        requestWhenAttached(view);
+    }
+
+    /**
+     * Keeps {@code view}'s bottom margin at {@code base} plus the navigation bar under it: a card
+     * along the bottom of the screen sits above the gesture bar rather than behind it.
+     */
+    public static void liftAboveBottomBar(View view, int base) {
+        if (view == null) return;
+        setBottomMargin(view, base + underBottomBar(view.getRootWindowInsets()));
+        view.setOnApplyWindowInsetsListener((target, insets) -> {
+            setBottomMargin(target, base + underBottomBar(insets));
+            return insets;
+        });
+        requestWhenAttached(view);
+    }
+
+    /**
+     * Asks the window to hand its insets out again once {@code view} is on screen. A view built
+     * before its page is attached asks into nothing, and a page pushed onto the open settings
+     * screen, like the Lab, never gets the insets the window already handed out, so its selection
+     * bar sat behind the gesture bar (Login2, 2026-11-13, #408).
+     */
+    public static void requestWhenAttached(View view) {
+        if (view == null) return;
+        if (view.isAttachedToWindow()) {
+            view.requestApplyInsets();
+            return;
+        }
+        view.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+            @Override
+            public void onViewAttachedToWindow(View attached) {
+                attached.removeOnAttachStateChangeListener(this);
+                attached.requestApplyInsets();
+            }
+
+            @Override
+            public void onViewDetachedFromWindow(View detached) {
+            }
+        });
+    }
+
+    private static void setBottomMargin(View view, int margin) {
+        if (!(view.getLayoutParams() instanceof android.view.ViewGroup.MarginLayoutParams)) return;
+        android.view.ViewGroup.MarginLayoutParams params =
+                (android.view.ViewGroup.MarginLayoutParams) view.getLayoutParams();
+        if (params.bottomMargin == margin) return;
+        params.bottomMargin = margin;
+        view.setLayoutParams(params);
+    }
+
+    /**
+     * How far the navigation bar reaches over the settings screen's bottom: all of it, less
+     * whatever an open keyboard already took off the root ({@link #applyTo}).
+     */
+    public static int underBottomBar(WindowInsets insets) {
+        if (insets == null) return 0;
+        return Math.max(0, systemBarsAndCutout(insets).bottom - keyboard(insets));
+    }
+
+    /** The open keyboard's height, or nothing where the typed insets API isn't there to ask. */
+    static int keyboard(WindowInsets insets) {
+        if (insets == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.R) return 0;
+        return insets.getInsets(WindowInsets.Type.ime()).bottom;
     }
 
     /** Current bars and cutout for an app-owned overlay attached to {@code view}'s window. */

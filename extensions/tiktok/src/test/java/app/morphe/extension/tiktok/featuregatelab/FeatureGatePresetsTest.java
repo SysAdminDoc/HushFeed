@@ -148,6 +148,8 @@ public class FeatureGatePresetsTest {
             assertTrue("the note comes before the values", note < text.indexOf("live_auto_translate_model_audience"));
             preview.dismiss();
 
+            // The Lab's own catalog load can land in the idle above and replace the snapshot.
+            field.set(lab, new FeatureGateCatalog.Snapshot(List.copyOf(everything.values()), everything, 0, 0, true));
             show.invoke(lab, "47.7.3", "see_translation");
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             preview = (AlertDialog) ShadowDialog.getLatestDialog();

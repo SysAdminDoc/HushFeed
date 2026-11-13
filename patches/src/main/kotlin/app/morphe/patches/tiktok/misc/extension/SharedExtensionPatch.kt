@@ -20,6 +20,7 @@ import app.morphe.patches.shared.misc.extension.ExtensionHook
 import app.morphe.patches.shared.misc.extension.sharedExtensionPatch as extendShared
 import app.morphe.patches.tiktok.misc.diagnostics.buildDetailsPatch
 import app.morphe.patches.tiktok.misc.diagnostics.ownClassesPatch
+import app.morphe.patches.tiktok.misc.diagnostics.targetBuildPatch
 import app.morphe.util.getReference
 import app.morphe.util.indexOfFirstInstructionOrThrow
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
@@ -102,5 +103,5 @@ private val tiktokExtensionPatch = extendShared(
 )
 
 val sharedExtensionPatch = bytecodePatch {
-    dependsOn(buildDetailsPatch, ownClassesPatch, tiktokExtensionPatch)
+    dependsOn(targetBuildPatch, buildDetailsPatch, ownClassesPatch, tiktokExtensionPatch)
 }

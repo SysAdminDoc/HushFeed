@@ -23,6 +23,7 @@ Every Hushfeed release, newest first.
 * `Fill the screen with the video` leaves wide and square videos whole. On a tall phone it used to zoom them in until they covered the screen, so you only saw the middle of a landscape video. Tall videos still lose the black strip under them (#394).
 * `Foldable split comment view` puts comments beside the video after you unfold with TikTok open. TikTok rebuilt the feed for the wider screen but still reported the folded width, so comments kept opening over the video until a restart. Folding back now drops the side panel too (#398).
 * A translated comment could still land in the wrong row when you scrolled fast. TikTok fades a translation in a moment after it arrives, and if the row got reused for another comment in that moment, the old comment's text was written over the new one. The fade is now called off when the row moves on (#383).
+* Patching the 47.7.3 APK marked arm64-v8a alone stops right away with a message naming the file to get. APKMirror added that APK on November 12, and TikTok compiled it separately from the bundle and the arm64-v8a + armeabi-v7a APK, so eight patches failed on it and others hooked the wrong code (#402).
 
 ## 0.82.0 (2026-11-12)
 

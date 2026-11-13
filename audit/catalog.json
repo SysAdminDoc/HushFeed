@@ -377,6 +377,12 @@
     "row": "Save a story from its share sheet"
    },
    {
+    "key": "save_story_pick",
+    "default": false,
+    "type": "bool",
+    "row": "Pick which stories to save"
+   },
+   {
     "key": "pick_grid_videos",
     "default": false,
     "type": "bool",

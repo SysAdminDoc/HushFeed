@@ -2770,3 +2770,10 @@ Video download codec	Video endirmə kodeki
 HEVC first	Əvvəlcə HEVC
 H.264 only	Yalnız H.264
 At the same quality, Automatic saves H.264, which nearly every player opens. HEVC is often sharper, but some older players and TVs can't play it.	Eyni keyfiyyətdə Avtomatik H.264 ilə saxlayır, onu demək olar ki, hər pleyer açır. HEVC çox vaxt daha aydın olur, amma bəzi köhnə pleyerlər və televizorlar onu oxuya bilmir.
+Pick which stories to save	Hansı hekayələrin saxlanacağını seç
+When someone has more than one story, saving asks which ones to keep. The story you're watching is already checked.	Kiminsə birdən çox hekayəsi olanda saxlama hansılarını saxlamaq istədiyini soruşur. İzlədiyin hekayə artıq seçilib.
+Pick stories to save	Saxlanacaq hekayələri seç
+%1$s of %2$s stories are loaded. Watch further to load the rest.	%2$s hekayədən %1$s yükləndi. Qalanlarını yükləmək üçün izləməyə davam et.
+Story %1$s	Hekayə %1$s
+On screen	Ekranda
+Pick at least one story	Ən azı bir hekayə seç

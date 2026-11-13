@@ -60,6 +60,13 @@ public final class StoryDownloads {
         }
     }
 
+    /** What the play areas bound, a copy: the per-person models whose lists {@link StoryPicker} reads. */
+    static List<Object> boundModels() {
+        synchronized (STORIES) {
+            return new ArrayList<>(STORIES.values());
+        }
+    }
+
     /**
      * Called with a play area and the view it created. A view holds one long click listener, so
      * this only takes it when the feature is on; turning the switch on takes effect the next time
@@ -256,6 +263,14 @@ public final class StoryDownloads {
      * @return true when the save was taken on or the reader was told why it couldn't be.
      */
     static boolean saveStory(Context context, Object aweme) {
+        // With Pick which stories to save on and more than one story loaded, a checklist
+        // comes first and saves the picks itself (#393).
+        if (StoryPicker.offer(context, aweme)) return true;
+        return saveSingle(context, aweme);
+    }
+
+    /** One story's save, which the checklist also uses when one story is picked. */
+    static boolean saveSingle(Context context, Object aweme) {
         if (context == null) return false;
         if (aweme == null) {
             Utils.showToastShort(L10n.t("Open the story again and try once more"));

@@ -2639,3 +2639,10 @@ Video download codec,Codec tải video xuống
 HEVC first,Ưu tiên HEVC
 H.264 only,Chỉ H.264
 "At the same quality, Automatic saves H.264, which nearly every player opens. HEVC is often sharper, but some older players and TVs can't play it.","Ở cùng chất lượng, Tự động lưu bằng H.264, định dạng mà hầu hết trình phát đều mở được. HEVC thường nét hơn, nhưng một số trình phát và TV cũ không phát được."
+Pick which stories to save,Chọn tin để lưu
+"When someone has more than one story, saving asks which ones to keep. The story you're watching is already checked.","Khi ai đó có nhiều hơn một tin, lúc lưu sẽ hỏi bạn muốn giữ những tin nào. Tin bạn đang xem đã được chọn sẵn."
+Pick stories to save,Chọn tin để lưu
+%1$s of %2$s stories are loaded. Watch further to load the rest.,Đã tải %1$s trên %2$s tin. Xem tiếp để tải phần còn lại.
+Story %1$s,Tin %1$s
+On screen,Trên màn hình
+Pick at least one story,Hãy chọn ít nhất một tin

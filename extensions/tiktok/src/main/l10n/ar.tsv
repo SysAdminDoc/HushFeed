@@ -3017,3 +3017,10 @@ Video download codec	ترميز تنزيل الفيديو
 HEVC first	HEVC أولاً
 H.264 only	H.264 فقط
 At the same quality, Automatic saves H.264, which nearly every player opens. HEVC is often sharper, but some older players and TVs can't play it.	عند الجودة نفسها، يحفظ الوضع التلقائي بصيغة H.264 التي تفتحها معظم المشغلات. غالباً ما يكون HEVC أوضح، لكن بعض المشغلات وأجهزة التلفاز القديمة لا تستطيع تشغيله.
+Pick which stories to save	اختيار القصص التي تريد حفظها
+When someone has more than one story, saving asks which ones to keep. The story you're watching is already checked.	عندما يكون لدى شخص أكثر من قصة، يسألك الحفظ عن القصص التي تريد الاحتفاظ بها. القصة التي تشاهدها محددة مسبقًا.
+Pick stories to save	اختر القصص المراد حفظها
+%1$s of %2$s stories are loaded. Watch further to load the rest.	تم تحميل %1$s من %2$s قصة. تابع المشاهدة لتحميل الباقي.
+Story %1$s	القصة %1$s
+On screen	على الشاشة
+Pick at least one story	اختر قصة واحدة على الأقل

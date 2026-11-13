@@ -3674,6 +3674,51 @@ public final class Probe extends Instrumentation {
                         Log.i(TAG, "ok liveroom " + hidden.size() + " rooms");
                         break;
                     }
+                    case "storylist": {
+                        // Each story the story viewer bound (#393), and the list of its author's
+                        // stories it carries: Aweme.getUserStory().getStories(), its size, and
+                        // where the bound story sits in it.
+                        Field stories = loader.loadClass("app.morphe.extension.tiktok.download.StoryDownloads")
+                                .getDeclaredField("STORIES");
+                        stories.setAccessible(true);
+                        java.util.Map<?, ?> bound = (java.util.Map<?, ?>) stories.get(null);
+                        StringBuilder out = new StringBuilder();
+                        java.util.List<Object> awemes;
+                        synchronized (bound) {
+                            awemes = new java.util.ArrayList<>(bound.values());
+                        }
+                        for (Object aweme : awemes) {
+                            Object userStory = aweme.getClass().getMethod("getUserStory").invoke(aweme);
+                            Object boundId = aweme.getClass().getMethod("getAid").invoke(aweme);
+                            out.append("\n  story ").append(boundId).append(" userStory=")
+                                    .append(userStory == null ? "null" : userStory.getClass().getSimpleName());
+                            if (userStory == null) continue;
+                            java.util.List<?> list = (java.util.List<?>) userStory.getClass().getMethod("getStories").invoke(userStory);
+                            out.append(" stories=").append(list == null ? "null" : list.size())
+                                    .append(" total=").append(userStory.getClass().getMethod("getTotalCount").invoke(userStory))
+                                    .append(" more=").append(userStory.getClass().getMethod("getHasMoreBefore").invoke(userStory))
+                                    .append('/').append(userStory.getClass().getMethod("getHasMoreAfter").invoke(userStory));
+                            if (list == null) continue;
+                            for (Object item : list) {
+                                if (item == null) {
+                                    out.append("\n    null");
+                                    continue;
+                                }
+                                Object id = item.getClass().getMethod("getAid").invoke(item);
+                                Object video = item.getClass().getMethod("getVideo").invoke(item);
+                                Object play = video == null ? null : video.getClass().getMethod("getPlayAddr").invoke(video);
+                                java.util.List<?> urls = play == null ? null
+                                        : (java.util.List<?>) play.getClass().getMethod("getUrlList").invoke(play);
+                                out.append("\n    ").append(id).append(String.valueOf(id).equals(String.valueOf(boundId)) ? " this" : "")
+                                        .append(" type=").append(item.getClass().getMethod("getAwemeType").invoke(item))
+                                        .append(" urls=").append(urls == null ? "null" : urls.size())
+                                        .append(" photos=").append(item.getClass().getMethod("getPhotoModeImageInfo").invoke(item) != null)
+                                        .append(" created=").append(item.getClass().getMethod("getCreateTime").invoke(item));
+                            }
+                        }
+                        Log.i(TAG, "ok storylist bound=" + awemes.size() + out);
+                        break;
+                    }
                     case "taptargets": {
                         // What LIVE auto tap keeps its taps off in the room in front (#335): every
                         // view it counts as a button, by class, id and place, how many guest seats

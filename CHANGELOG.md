@@ -13,6 +13,7 @@ Every Hushfeed release, newest first.
 * `Fix Spotify login` gets Add to Spotify past its sign-in. The Spotify app won't link a patched TikTok, so you now sign in on Spotify's own page inside TikTok and it links your account from there. It's on as soon as you patch it in, with no switch.
 * The settings screen now comes in Arabic, shown when TikTok runs in Arabic. It's a first pass, so corrections from Arabic speakers are welcome (D307).
 * `Video download codec` picks which codec a saved video comes in when TikTok has the same quality in both. Automatic keeps H.264, which nearly every player opens. HEVC first saves the HEVC copy, which is often sharper since TikTok can send its H.264 at a lower bitrate. H.264 only never saves HEVC, for older players and TVs. It sits under `Video download quality`. Thanks to @Tegar30 (#400).
+* `Pick which stories to save` lets you save more than one of someone's stories at once. With it on, saving a story opens a checklist of their stories with the one you're watching already ticked, and a story you held to save waits, paused, until the list closes. Tick the others you want, or Pick all, and they save together with one progress count. TikTok loads a person's stories a few at a time as you watch, so the list says how many are still to come. It starts off and sits under `Save a story from its share sheet` in Hushfeed settings > Downloads (#393).
 
 ### Bug Fixes
 

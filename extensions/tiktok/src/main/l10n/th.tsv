@@ -2773,3 +2773,10 @@ Video download codec	โคเดกการดาวน์โหลดวิ�
 HEVC first	HEVC ก่อน
 H.264 only	H.264 เท่านั้น
 At the same quality, Automatic saves H.264, which nearly every player opens. HEVC is often sharper, but some older players and TVs can't play it.	ที่คุณภาพเดียวกัน อัตโนมัติจะบันทึกเป็น H.264 ซึ่งแทบทุกเครื่องเล่นเปิดได้ HEVC มักคมชัดกว่า แต่เครื่องเล่นและทีวีรุ่นเก่าบางรุ่นเล่นไม่ได้
+Pick which stories to save	เลือกสตอรี่ที่จะบันทึก
+When someone has more than one story, saving asks which ones to keep. The story you're watching is already checked.	เมื่อมีคนมีสตอรี่มากกว่าหนึ่งเรื่อง การบันทึกจะถามว่าจะเก็บเรื่องไหน สตอรี่ที่คุณกำลังดูถูกเลือกไว้แล้ว
+Pick stories to save	เลือกสตอรี่ที่จะบันทึก
+%1$s of %2$s stories are loaded. Watch further to load the rest.	โหลดสตอรี่แล้ว %1$s จาก %2$s เรื่อง ดูต่อเพื่อโหลดที่เหลือ
+Story %1$s	สตอรี่ %1$s
+On screen	บนหน้าจอ
+Pick at least one story	เลือกอย่างน้อยหนึ่งสตอรี่

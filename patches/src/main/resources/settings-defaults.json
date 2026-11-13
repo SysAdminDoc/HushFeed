@@ -34,6 +34,7 @@
       "save_profile_picture",
       "save_story",
       "save_story_from_share",
+      "save_story_pick",
       "pick_grid_videos",
       "download_video_path",
       "download_photo_path",
@@ -3794,6 +3795,12 @@
     "save_story_from_share": {
       "field": "SAVE_STORY_FROM_SHARE",
       "key": "save_story_from_share",
+      "type": "boolean",
+      "default": false
+    },
+    "save_story_pick": {
+      "field": "SAVE_STORY_PICK",
+      "key": "save_story_pick",
       "type": "boolean",
       "default": false
     },

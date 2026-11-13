@@ -267,6 +267,9 @@ public class DownloadsPreferenceCategory extends ConditionalPreferenceCategory {
                     "Puts a save button in the sheet a story's Share button opens. It saves the story "
                             + "you're watching, and holding a story still pauses it.",
                     Settings.SAVE_STORY_FROM_SHARE));
+            addPreference(new TogglePreference(context, "Pick which stories to save",
+                    "When someone has more than one story, saving asks which ones to keep. The story "
+                            + "you're watching is already checked.", Settings.SAVE_STORY_PICK));
         }
         if (SettingsStatus.subtitleToolsEnabled) {
             addPreference(new SectionHeadingPreference(context, "Subtitles"));

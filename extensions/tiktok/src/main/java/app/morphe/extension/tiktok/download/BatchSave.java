@@ -56,6 +56,18 @@ final class BatchSave {
 
     /** Queues the run. False when it couldn't start: no posts, no permission or a full queue. */
     static boolean start(Context context, List<Object> posts) {
+        return start(context, posts, false);
+    }
+
+    /**
+     * The stories picked in {@link StoryPicker} as one run (#393), each video taken the way a
+     * single story save takes it ({@link #storySource}).
+     */
+    static boolean startStories(Context context, List<Object> stories) {
+        return start(context, stories, true);
+    }
+
+    private static boolean start(Context context, List<Object> posts, boolean stories) {
         if (context == null || posts == null || posts.isEmpty()) return false;
         if (android.os.Build.VERSION.SDK_INT < 29
                 && context.checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -67,7 +79,8 @@ final class BatchSave {
         List<Object> snapshot = Collections.unmodifiableList(
                 new ArrayList<>(posts.subList(0, Math.min(posts.size(), GridPicker.MAX_PICKED))));
         Context app = context.getApplicationContext() != null ? context.getApplicationContext() : context;
-        Saver saver = saverForTests != null ? saverForTests : BatchSave::saveOne;
+        Saver saver = saverForTests != null ? saverForTests
+                : stories ? BatchSave::saveStory : BatchSave::saveOne;
         SaveProgress progress = SaveProgress.queuedFiles(snapshot.size());
         MediaJobScheduler.Job job = progress.submit(LABEL, null, snapshot.size(),
                 () -> run(app, snapshot, saver, progress), null);
@@ -117,6 +130,16 @@ final class BatchSave {
 
     /** The real saver: a photo post's photos, or the video. */
     static Result saveOne(Context app, Object post, MediaFileWriter.Saved[] last) throws IOException {
+        return saveOne(app, post, last, false);
+    }
+
+    /** The saver for a run of stories: as {@link #saveOne}, with each video from {@link #storySource}. */
+    static Result saveStory(Context app, Object story, MediaFileWriter.Saved[] last) throws IOException {
+        return saveOne(app, story, last, true);
+    }
+
+    private static Result saveOne(Context app, Object post, MediaFileWriter.Saved[] last, boolean story)
+            throws IOException {
         String id = Reflect.string(post, "getAid", "aid");
         if (id == null) throw new IOException("A picked post has no id");
         boolean checkSaved = Settings.CHECK_SAVED_VIDEOS.get();
@@ -143,7 +166,9 @@ final class BatchSave {
         long generation = SavedVideoArchive.generation();
 
         Object video = Reflect.property(post, "getVideo", "video");
-        Source source = source(video, Settings.DOWNLOAD_VIDEO_QUALITY.get(), Settings.DOWNLOAD_WITHOUT_SOUND.get());
+        String quality = Settings.DOWNLOAD_VIDEO_QUALITY.get();
+        boolean muted = Settings.DOWNLOAD_WITHOUT_SOUND.get();
+        Source source = story ? storySource(video, quality, muted) : source(video, quality, muted);
         if (source.video.isEmpty()) throw new IOException("This video isn't available as a complete file");
         String name = DownloadFilenameFormatter.formatSelectedVideoName(post);
         String path = DownloadFilenameFormatter.destinationPath(post, false);
@@ -208,6 +233,26 @@ final class BatchSave {
         List<String> audio = VideoDownloads.audioUrls(video, gear);
         if (audio.isEmpty()) return new Source(Collections.<String>emptyList(), audio, false);
         return new Source(urls, audio, false);
+    }
+
+    /**
+     * Where one story of a run comes from, as a single story save takes it. On Automatic that's
+     * the tallest rendition other players open ({@link VideoDownloads#storyBest}), since the
+     * file TikTok lists for a story can be a shorter copy than the one on screen (#155). A chosen
+     * quality, or a story with nothing ranked, takes {@link #source}. Last comes whatever address
+     * the story carries, clean before streamed before stamped, as the single save falls back to.
+     */
+    static Source storySource(Object video, String quality, boolean muted) {
+        if ("auto".equals(quality)) {
+            Object best = VideoDownloads.storyBest(video);
+            List<String> urls = best == null ? Collections.<String>emptyList()
+                    : VideoDownloads.urls(Reflect.property(best, "getPlayAddr", "playAddr"));
+            if (!urls.isEmpty()) return new Source(urls, Collections.<String>emptyList(), muted);
+        }
+        Source chosen = source(video, quality, muted);
+        if (!chosen.video.isEmpty()) return chosen;
+        List<String> carried = StoryDownloads.videoSource(video).urls;
+        return new Source(carried, Collections.<String>emptyList(), muted && !carried.isEmpty());
     }
 
     /**

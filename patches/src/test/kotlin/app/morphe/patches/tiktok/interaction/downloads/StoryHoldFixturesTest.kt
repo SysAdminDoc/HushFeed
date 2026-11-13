@@ -2,8 +2,11 @@ package app.morphe.patches.tiktok.interaction.downloads
 
 import app.morphe.Fixtures
 import com.android.tools.smali.dexlib2.AccessFlags
+import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.iface.ClassDef
+import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.value.ArrayEncodedValue
 import com.android.tools.smali.dexlib2.iface.value.StringEncodedValue
 import java.io.File
@@ -33,7 +36,10 @@ class StoryHoldFixturesTest {
             val kept = classesOf(apk) { def ->
                 def.type == params || def.type == CELL_COMPONENT || ability in def.interfaces ||
                     (RUNNABLE in def.interfaces && def.fields.count() == 1) ||
-                    def.fields.any { it.type == TOUCH_LISTENER }
+                    def.fields.any { it.type == TOUCH_LISTENER } ||
+                    // Interfaces shaped like the hold's listener: a pause and a release.
+                    (AccessFlags.INTERFACE.isSet(def.accessFlags) && def.methods.count() == 2 &&
+                        def.methods.all { it.returnType == "V" && it.parameterTypes.isEmpty() })
             }.associateBy { it.type }
 
             val monitors = kept.values.filter { ability in it.interfaces }
@@ -76,6 +82,28 @@ class StoryHoldFixturesTest {
                 "$apk: ${view.type} holds no field a ${ability} component can sit in",
                 view.fields.any { it.type in monitorTypes },
             )
+
+            // The timer pauses through the hold's listener before its panel, and the monitor
+            // answers to that listener with a release of its own, which the story checklist holds
+            // back while it is up (#393).
+            val timer = timers.single().methods.single {
+                it.name != "<init>" && it.name != "run" && it.returnType == "V" && it.parameterTypes.isEmpty()
+            }
+            val pause = timer.implementation!!.instructions.first { it.opcode == Opcode.INVOKE_INTERFACE }
+                .let { (it as ReferenceInstruction).reference as MethodReference }
+            val listener = kept[pause.definingClass]
+            assertNotNull("$apk: the hold's listener ${pause.definingClass} is a pause and a release", listener)
+            val release = listener!!.methods.single { it.name != pause.name }.name
+            val answering = monitors.filter { listener.type in it.interfaces }
+            assertTrue("$apk: no ${ability} component answers to ${listener.type}", answering.isNotEmpty())
+            for (monitor in answering) {
+                val own = monitor.methods.singleOrNull {
+                    it.name == release && it.returnType == "V" && it.parameterTypes.isEmpty()
+                }
+                assertNotNull("$apk: ${monitor.type}.$release()", own?.implementation)
+                assertTrue("$apk: ${monitor.type}.$release() has no free register below this",
+                    own!!.implementation!!.registerCount in 2..16)
+            }
 
             val cellParams = kept[params]
             assertNotNull("$apk: $params", cellParams)

@@ -2639,3 +2639,10 @@ Video download codec,视频下载编码
 HEVC first,优先 HEVC
 H.264 only,仅 H.264
 "At the same quality, Automatic saves H.264, which nearly every player opens. HEVC is often sharper, but some older players and TVs can't play it.",在相同画质下，自动会保存为几乎所有播放器都能打开的 H.264。HEVC 通常更清晰，但一些较旧的播放器和电视无法播放.
+Pick which stories to save,选择要保存的快拍
+"When someone has more than one story, saving asks which ones to keep. The story you're watching is already checked.",当某人有不止一条快拍时，保存时会询问要保留哪些。你正在看的那条已勾选.
+Pick stories to save,选择要保存的快拍
+%1$s of %2$s stories are loaded. Watch further to load the rest.,已加载 %1$s / %2$s 条快拍。继续观看即可加载其余快拍.
+Story %1$s,快拍 %1$s
+On screen,屏幕上
+Pick at least one story,请至少选择一条快拍

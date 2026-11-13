@@ -2770,3 +2770,10 @@ Video download codec	Codec de download de vídeo
 HEVC first	HEVC primeiro
 H.264 only	Somente H.264
 At the same quality, Automatic saves H.264, which nearly every player opens. HEVC is often sharper, but some older players and TVs can't play it.	Na mesma qualidade, Automático salva em H.264, que quase todo player abre. HEVC costuma ficar mais nítido, mas alguns players e TVs mais antigos não conseguem reproduzi-lo.
+Pick which stories to save	Escolher quais stories salvar
+When someone has more than one story, saving asks which ones to keep. The story you're watching is already checked.	Quando alguém tem mais de um story, salvar pergunta quais manter. O story que você está vendo já vem marcado.
+Pick stories to save	Escolha os stories para salvar
+%1$s of %2$s stories are loaded. Watch further to load the rest.	%1$s de %2$s stories foram carregados. Continue assistindo para carregar o resto.
+Story %1$s	Story %1$s
+On screen	Na tela
+Pick at least one story	Escolha pelo menos um story

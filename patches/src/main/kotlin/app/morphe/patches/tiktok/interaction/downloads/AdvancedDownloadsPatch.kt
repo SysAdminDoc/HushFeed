@@ -368,7 +368,7 @@ val advancedDownloadsPatch = bytecodePatch(
                 )
             }
 
-        resolveStoryLongPressTimer().interceptStoryLongPress()
+        holdStoryReleaseForPicker(resolveStoryLongPressTimer().interceptStoryLongPress())
         hookStoryShareSave()
         addOwnedShareAction(SHARE_SAVE_COVER)
         // The grid cell holder's bind, which the count hook above already found, for picking

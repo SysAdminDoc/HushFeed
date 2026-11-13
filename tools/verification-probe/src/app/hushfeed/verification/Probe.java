@@ -4139,10 +4139,33 @@ public final class Probe extends Instrumentation {
                         Class<?> type = loader.loadClass(required(intent, "class"));
                         android.view.View view = (android.view.View) type
                                 .getConstructor(android.content.Context.class).newInstance(activity);
+                        // -e layout 0x7f0d2e90 then inflates that layout from the view's own
+                        // context into it, the way TikTok fills the view later (#362's DM-creator
+                        // tip: the tip's text layout goes into X.0Xoe from X.0Xoe's context).
+                        String layout = intent.getStringExtra("layout");
+                        if (layout != null && view instanceof android.view.ViewGroup) {
+                            android.view.LayoutInflater.from(view.getContext())
+                                    .inflate(Integer.decode(layout), (android.view.ViewGroup) view, true);
+                        }
                         String text = intent.getStringExtra("text");
                         StringBuilder out = new StringBuilder("ok addview ").append(type.getName())
                                 .append(" in ").append(activity.getClass().getSimpleName()).append(" context=")
                                 .append(view.getContext() == activity ? "the activity" : view.getContext().getClass().getName());
+                        // -e attr 0x7f061023 resolves that color attribute on the view's context
+                        // and on the activity's, the colors a view draws by hand (the tip's bubble).
+                        String attr = intent.getStringExtra("attr");
+                        if (attr != null) {
+                            for (Context themed : new Context[] {view.getContext(), activity}) {
+                                android.util.TypedValue value = new android.util.TypedValue();
+                                boolean found = themed.getTheme().resolveAttribute(Integer.decode(attr), value, true);
+                                out.append("\n  attr ").append(attr).append(themed == activity ? " on the activity=" : " on the view=")
+                                        .append(!found ? "unset" : value.type >= android.util.TypedValue.TYPE_FIRST_COLOR_INT
+                                                && value.type <= android.util.TypedValue.TYPE_LAST_COLOR_INT
+                                                ? Integer.toHexString(value.data)
+                                                : value.resourceId != 0 ? Integer.toHexString(themed.getColor(value.resourceId))
+                                                : "type " + value.type);
+                            }
+                        }
                         java.util.ArrayDeque<android.view.View> queue = new java.util.ArrayDeque<>();
                         queue.add(view);
                         while (!queue.isEmpty()) {

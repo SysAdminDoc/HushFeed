@@ -2635,3 +2635,7 @@ Hide search result tabs,Ẩn các tab kết quả tìm kiếm
 "Pick the tabs to remove from the top of the search results, such as Shop, LIVE or Places. The list holds the tabs TikTok has shown you, and Top always stays.","Chọn các tab cần bỏ khỏi phía trên kết quả tìm kiếm, như Cửa hàng, LIVE hoặc Địa điểm. Danh sách gồm các tab TikTok đã hiển thị cho bạn, và Top luôn được giữ lại."
 No search tabs have been seen yet,Chưa xuất hiện tab tìm kiếm nào
 "Search for something once, then return here to choose its tabs.","Hãy tìm kiếm một lần, rồi quay lại đây để chọn tab."
+Video download codec,Codec tải video xuống
+HEVC first,Ưu tiên HEVC
+H.264 only,Chỉ H.264
+"At the same quality, Automatic saves H.264, which nearly every player opens. HEVC is often sharper, but some older players and TVs can't play it.","Ở cùng chất lượng, Tự động lưu bằng H.264, định dạng mà hầu hết trình phát đều mở được. HEVC thường nét hơn, nhưng một số trình phát và TV cũ không phát được."

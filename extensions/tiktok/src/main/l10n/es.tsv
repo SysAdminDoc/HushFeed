@@ -2766,3 +2766,7 @@ Pick the tabs to remove from the top of the search results, such as Shop, LIVE o
 # context: Shown in that checklist before TikTok has served any search tabs on this phone
 No search tabs have been seen yet	Todavía no se ha visto ninguna pestaña de búsqueda
 Search for something once, then return here to choose its tabs.	Busca algo una vez y vuelve aquí para elegir sus pestañas.
+Video download codec	Códec de descarga del vídeo
+HEVC first	HEVC primero
+H.264 only	Solo H.264
+At the same quality, Automatic saves H.264, which nearly every player opens. HEVC is often sharper, but some older players and TVs can't play it.	Con la misma calidad, Automático guarda en H.264, que abre casi cualquier reproductor. HEVC suele verse más nítido, pero algunos reproductores y televisores antiguos no pueden reproducirlo.

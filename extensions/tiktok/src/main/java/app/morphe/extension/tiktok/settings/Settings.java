@@ -144,6 +144,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting PLAY_SDR = new BooleanSetting("play_sdr", FALSE);
     public static final BooleanSetting PREFER_H264 = new BooleanSetting("prefer_h264", FALSE);
     public static final StringSetting DOWNLOAD_VIDEO_QUALITY = new StringSetting("download_video_quality", "auto");
+    /** At the same height a save takes H.264 first ("auto"), HEVC first ("hevc") or H.264 alone ("h264"). */
+    public static final StringSetting DOWNLOAD_VIDEO_CODEC = new StringSetting("download_video_codec", "auto");
     /** Download lists the video's renditions and saves the one picked, for that save alone. */
     public static final BooleanSetting DOWNLOAD_ASK_QUALITY = new BooleanSetting("download_ask_quality", FALSE);
     public static final BooleanSetting DOWNLOAD_ORIGINAL_PHOTOS = new BooleanSetting("download_original_photos", FALSE);

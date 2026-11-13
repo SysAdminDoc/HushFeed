@@ -2766,3 +2766,7 @@ Pick the tabs to remove from the top of the search results, such as Shop, LIVE o
 # context: Shown in that checklist before TikTok has served any search tabs on this phone
 No search tabs have been seen yet	Hələ heç bir axtarış tabı görünməyib
 Search for something once, then return here to choose its tabs.	Bir dəfə nəsə axtarın, sonra tablarını seçmək üçün bura qayıdın.
+Video download codec	Video endirmə kodeki
+HEVC first	Əvvəlcə HEVC
+H.264 only	Yalnız H.264
+At the same quality, Automatic saves H.264, which nearly every player opens. HEVC is often sharper, but some older players and TVs can't play it.	Eyni keyfiyyətdə Avtomatik H.264 ilə saxlayır, onu demək olar ki, hər pleyer açır. HEVC çox vaxt daha aydın olur, amma bəzi köhnə pleyerlər və televizorlar onu oxuya bilmir.

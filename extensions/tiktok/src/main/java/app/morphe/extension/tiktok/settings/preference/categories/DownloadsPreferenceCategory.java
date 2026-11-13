@@ -155,6 +155,11 @@ public class DownloadsPreferenceCategory extends ConditionalPreferenceCategory {
             addPreference(new ChoicePreference(context, "Video download quality", Settings.DOWNLOAD_VIDEO_QUALITY,
                     new String[]{"Automatic", "Highest", "Lowest", "1080p", "720p", "540p", "480p", "360p"},
                     new String[]{"auto", "highest", "lowest", "1080", "720", "540", "480", "360"}));
+            addPreference(new ChoicePreference(context, "Video download codec", Settings.DOWNLOAD_VIDEO_CODEC,
+                    new String[]{"Automatic", "HEVC first", "H.264 only"},
+                    new String[]{"auto", "hevc", "h264"})
+                    .withNote("At the same quality, Automatic saves H.264, which nearly every player opens. "
+                            + "HEVC is often sharper, but some older players and TVs can't play it."));
             addPreference(new TogglePreference(context, "Ask for the quality on each save",
                     "Download lists the qualities this video comes in, with the size TikTok gives for each, and saves the one you pick. The quality above stays as it is for the next save.",
                     Settings.DOWNLOAD_ASK_QUALITY));

@@ -96,15 +96,31 @@ public final class QualitySelector {
 
     /** The rendition TikTok's player is to play: any codec, since TikTok decodes them all. */
     public static Object choose(List<?> gears, String mode) {
-        return choose(gears, mode, false);
+        return choose(gears, mode, null);
+    }
+
+    /**
+     * Which of the renditions other players open a saved file is made from, by the download
+     * codec setting (#400). Automatic takes H.264 over HEVC at the same height, since nearly every
+     * player opens it. HEVC first takes the HEVC one there, often the sharper file at that height
+     * (TikTok can serve its H.264 at a lower bitrate). H.264 only never saves HEVC.
+     */
+    enum FileCodec {
+        H264_FIRST, HEVC_FIRST, H264_ONLY;
+
+        static FileCodec of(String value) {
+            if ("hevc".equals(value)) return HEVC_FIRST;
+            if ("h264".equals(value)) return H264_ONLY;
+            return H264_FIRST;
+        }
     }
 
     /**
      * The rendition a saved file is made from: only one other players open ({@link #playable}),
-     * and at the same height H.264 over HEVC.
+     * and at the same height the codec the download codec setting puts first.
      */
     static Object chooseForFile(List<?> gears, String mode) {
-        return choose(gears, mode, true);
+        return choose(gears, mode, FileCodec.of(Settings.DOWNLOAD_VIDEO_CODEC.get()));
     }
 
     /**
@@ -118,7 +134,7 @@ public final class QualitySelector {
         Object chosen = chooseForFile(gears, mode);
         if (chosen == null || "lowest".equals(mode)) return chosen;
         int chosenHeight = height(chosen);
-        Object tallest = choose(gears, mode, false);
+        Object tallest = choose(gears, mode, null);
         if (tallest == null || height(tallest) <= chosenHeight) return chosen;
         int own = ownHeight(video);
         int asked = "highest".equals(mode) ? 0 : Integer.parseInt(mode);
@@ -137,7 +153,8 @@ public final class QualitySelector {
         return usable(address) ? dimension(address) : 0;
     }
 
-    private static Object choose(List<?> gears, String mode, boolean forFile) {
+    /** {@code file} is null for playback, which takes any codec. */
+    private static Object choose(List<?> gears, String mode, FileCodec file) {
         if (gears == null || "auto".equals(mode)) return null;
         int target;
         switch (mode == null ? "" : mode) {
@@ -152,10 +169,11 @@ public final class QualitySelector {
         int bestHeight = 0;
         for (Object gear : gears) {
             if (!hasUsableAddress(gear)) continue;
-            if (forFile && !playable(gear)) continue;
+            if (file != null && !playable(gear)) continue;
+            if (file == FileCodec.H264_ONLY && codec(gear) != 0) continue;
             int height = height(gear);
             if (target > 0 && height == 0) continue;
-            if (best == null || better(gear, height, best, bestHeight, target, lowest, forFile)) {
+            if (best == null || better(gear, height, best, bestHeight, target, lowest, file)) {
                 best = gear;
                 bestHeight = height;
             }
@@ -185,13 +203,18 @@ public final class QualitySelector {
     }
 
     private static boolean better(Object candidate, int a, Object current, int b,
-                                  int target, boolean lowest, boolean forFile) {
+                                  int target, boolean lowest, FileCodec file) {
         if (target > 0) {
             if ((a <= target) != (b <= target)) return a <= target;
             if (a != b) return a <= target ? a > b : a < b;
         }
-        // At the same height, the file more players can open: H.264 over HEVC.
-        if (forFile && a == b && codec(candidate) != codec(current)) return codec(candidate) < codec(current);
+        // At the same height, the codec the setting puts first. A file is only ever H.264 (0) or
+        // HEVC (1) here, since ByteVC2 never gets this far.
+        if (file != null && a == b && codec(candidate) != codec(current)) {
+            return file == FileCodec.HEVC_FIRST
+                ? codec(candidate) > codec(current)
+                : codec(candidate) < codec(current);
+        }
         int compare = Integer.compare(a, b);
         if (compare == 0) compare = Long.compare(number(candidate, "getBitRate", "bitRate"), number(current, "getBitRate", "bitRate"));
         if (compare == 0) compare = Long.compare(size(candidate), size(current));

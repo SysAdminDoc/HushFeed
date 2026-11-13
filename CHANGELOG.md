@@ -12,6 +12,7 @@ Every Hushfeed release, newest first.
 * `Hide profile tabs` takes tabs off the strip above a profile's videos. Tick Videos, Reposts, Liked videos, Favorites, AI theater, Shop or any of the others and they're gone from every profile you open, yours included, so you can keep just Favorites and Liked if that's all you swipe between. With Videos hidden a profile opens on the first tab left, and at least one tab always stays. The checklist sits under `Hide profile shortcuts` in Hushfeed settings > App and takes hold after a restart (#392, #399).
 * `Fix Spotify login` gets Add to Spotify past its sign-in. The Spotify app won't link a patched TikTok, so you now sign in on Spotify's own page inside TikTok and it links your account from there. It's on as soon as you patch it in, with no switch.
 * The settings screen now comes in Arabic, shown when TikTok runs in Arabic. It's a first pass, so corrections from Arabic speakers are welcome (D307).
+* `Video download codec` picks which codec a saved video comes in when TikTok has the same quality in both. Automatic keeps H.264, which nearly every player opens. HEVC first saves the HEVC copy, which is often sharper since TikTok can send its H.264 at a lower bitrate. H.264 only never saves HEVC, for older players and TVs. It sits under `Video download quality`. Thanks to @Tegar30 (#400).
 
 ### Bug Fixes
 

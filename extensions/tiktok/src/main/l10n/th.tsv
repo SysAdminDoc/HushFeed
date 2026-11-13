@@ -2769,3 +2769,7 @@ Pick the tabs to remove from the top of the search results, such as Shop, LIVE o
 # context: Shown in that checklist before TikTok has served any search tabs on this phone
 No search tabs have been seen yet	ยังไม่พบแท็บการค้นหา
 Search for something once, then return here to choose its tabs.	ค้นหาอะไรสักอย่างหนึ่งครั้ง แล้วกลับมาที่นี่เพื่อเลือกแท็บ
+Video download codec	โคเดกการดาวน์โหลดวิดีโอ
+HEVC first	HEVC ก่อน
+H.264 only	H.264 เท่านั้น
+At the same quality, Automatic saves H.264, which nearly every player opens. HEVC is often sharper, but some older players and TVs can't play it.	ที่คุณภาพเดียวกัน อัตโนมัติจะบันทึกเป็น H.264 ซึ่งแทบทุกเครื่องเล่นเปิดได้ HEVC มักคมชัดกว่า แต่เครื่องเล่นและทีวีรุ่นเก่าบางรุ่นเล่นไม่ได้

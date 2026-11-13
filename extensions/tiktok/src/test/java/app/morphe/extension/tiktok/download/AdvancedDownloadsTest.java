@@ -44,6 +44,7 @@ public class AdvancedDownloadsTest {
         Settings.DOWNLOAD_VIDEO_FILENAME_TEMPLATE.resetToDefault();
         Settings.DOWNLOAD_PHOTO_FILENAME_TEMPLATE.resetToDefault();
         Settings.KEEP_PHOTOS_AS_SENT.resetToDefault();
+        Settings.DOWNLOAD_VIDEO_CODEC.resetToDefault();
     }
     public static final class Address extends UrlModel {
         private final String url;
@@ -304,6 +305,37 @@ public class AdvancedDownloadsTest {
         assertSame("and for the address TikTok's save is handed", h264Mid.playAddr, QualitySelector.download(new VideoData47(gears)));
         // TikTok's own player decodes ByteVC2, so the choice for playback keeps it.
         assertSame("playback still takes the ByteVC2 720", bvc2High, QualitySelector.choose(gears, "720"));
+    }
+
+    /**
+     * TikTok can serve a height's H.264 at a lower bitrate than its HEVC, and Automatic saves
+     * the H.264 one there (#400). HEVC first saves the HEVC one, H.264 only never saves HEVC, and
+     * neither lets ByteVC2 in.
+     */
+    @Test public void theCodecSettingPicksTheCodecAtTheSameHeight() {
+        Gear bvc2High = new Gear("adapt_lower_720_2", 500, "https://example.com/720-bvc2").codec(2);
+        Gear hevcHigh = new Gear("adapt_lowest_1080_1", 450, "https://example.com/1080-hevc").codec(1);
+        Gear hevcMid = new Gear("lower_540_1", 200, "https://example.com/540-hevc").codec(1);
+        Gear h264Mid = new Gear("normal_540_0", 150, "https://example.com/540-h264").codec(0);
+        List<Gear> gears = List.of(bvc2High, hevcHigh, hevcMid, h264Mid);
+        VideoData47 video = new VideoData47(gears);
+
+        assertSame("Automatic: H.264 at the same height", h264Mid, VideoDownloads.selectedGear(video, "540", false));
+
+        Settings.DOWNLOAD_VIDEO_CODEC.save("hevc");
+        assertSame("HEVC first: the HEVC 540", hevcMid, VideoDownloads.selectedGear(video, "540", false));
+        assertSame("and for Lowest", hevcMid, VideoDownloads.selectedGear(video, "lowest", false));
+        assertSame("ByteVC2 still stays out", hevcMid, VideoDownloads.selectedGear(video, "720", false));
+        assertSame("a height with only H.264 still saves", h264Mid,
+                VideoDownloads.selectedGear(new VideoData47(List.of(bvc2High, h264Mid)), "720", false));
+        Settings.DOWNLOAD_VIDEO_QUALITY.save("540");
+        assertSame("the address TikTok's save is handed", hevcMid.playAddr, QualitySelector.download(video));
+
+        Settings.DOWNLOAD_VIDEO_CODEC.save("h264");
+        assertSame("H.264 only: the 540 over the HEVC 1080", h264Mid, VideoDownloads.selectedGear(video, "highest", false));
+        assertNull("no H.264 at all: TikTok's own save", VideoDownloads.selectedGear(
+                new VideoData47(List.of(bvc2High, hevcHigh, hevcMid)), "720", false));
+        assertSame("playback takes any codec", bvc2High, QualitySelector.choose(gears, "720"));
     }
 
     /**

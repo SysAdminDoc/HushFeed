@@ -2635,3 +2635,7 @@ Hide search result tabs,隐藏搜索结果标签
 "Pick the tabs to remove from the top of the search results, such as Shop, LIVE or Places. The list holds the tabs TikTok has shown you, and Top always stays.",选择要从搜索结果顶部移除的标签，例如商店、LIVE 或地点。列表中是 TikTok 向你显示过的标签，“综合”始终保留.
 No search tabs have been seen yet,尚未看到搜索标签
 "Search for something once, then return here to choose its tabs.",先搜索一次，然后回到这里选择标签.
+Video download codec,视频下载编码
+HEVC first,优先 HEVC
+H.264 only,仅 H.264
+"At the same quality, Automatic saves H.264, which nearly every player opens. HEVC is often sharper, but some older players and TVs can't play it.",在相同画质下，自动会保存为几乎所有播放器都能打开的 H.264。HEVC 通常更清晰，但一些较旧的播放器和电视无法播放.

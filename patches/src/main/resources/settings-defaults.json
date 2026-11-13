@@ -7,6 +7,7 @@
       "download_button",
       "download_button_position",
       "download_video_quality",
+      "download_video_codec",
       "download_ask_quality",
       "download_original_photos",
       "keep_photos_as_sent",
@@ -1649,6 +1650,12 @@
       "key": "download_unmetered_only",
       "type": "boolean",
       "default": false
+    },
+    "download_video_codec": {
+      "field": "DOWNLOAD_VIDEO_CODEC",
+      "key": "download_video_codec",
+      "type": "string",
+      "default": "auto"
     },
     "download_video_filename_template": {
       "field": "DOWNLOAD_VIDEO_FILENAME_TEMPLATE",

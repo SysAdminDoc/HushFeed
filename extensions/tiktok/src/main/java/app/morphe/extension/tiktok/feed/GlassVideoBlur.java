@@ -284,7 +284,7 @@ final class GlassVideoBlur {
             step(SystemClock.uptimeMillis());
         } catch (RuntimeException failure) {
             running = false;
-            hasFrame = false;
+            letGo(bar.get());
             Logger.printException(() -> "Could not blur the video behind the bar", failure);
         }
     }
@@ -311,7 +311,7 @@ final class GlassVideoBlur {
         if (source != null && !source.current()) {
             // Another video now: its picture, not the last one's, or none until it's read.
             source = null;
-            hasFrame = false;
+            letGo(view);
             still = 0;
         }
         if (source == null || now - lastFind >= FIND_MS) {
@@ -325,7 +325,7 @@ final class GlassVideoBlur {
                 : background.getBounds();
         if (video == null || pill.isEmpty()) {
             note("none", "no video found behind the bar");
-            hasFrame = false;
+            letGo(view);
             return;
         }
         view.getLocationInWindow(spot);
@@ -333,7 +333,7 @@ final class GlassVideoBlur {
         Rect from = sourceRect(pillInWindow, video.bounds(), video.bufferWidth(), video.bufferHeight());
         if (from == null) {
             note("off", "the pill " + pillInWindow + " isn't over the video " + video.bounds());
-            hasFrame = false;
+            letGo(view);
             return;
         }
         int[] size = sampleSize(pill.width(), pill.height());
@@ -351,14 +351,14 @@ final class GlassVideoBlur {
         } catch (RuntimeException refused) {
             // PixelCopy turns down a surface that's already gone, a swipe at the same moment.
             copying = false;
-            failed(now);
+            failed(view, now);
         }
     }
 
     private void finished(View view, boolean copied) {
         copying = false;
         if (!copied) {
-            failed(lastRead);
+            failed(view, lastRead);
             return;
         }
         failures = 0;
@@ -370,15 +370,27 @@ final class GlassVideoBlur {
         view.invalidate();
     }
 
-    private void failed(long now) {
+    private void failed(View view, long now) {
         source = null;
         if (++failures >= MAX_FAILURES) {
             // Nothing readable behind the pill: the plain glass shows until the next try.
             note("failed", "the video behind the bar can't be read, plain glass for now");
             failures = 0;
-            hasFrame = false;
+            letGo(view);
             retryAt = now + RETRY_MS;
         }
+    }
+
+    /**
+     * Drops the picture and redraws the bar, so the pill shows the plain glass now. The bar is
+     * only redrawn when a read lands, and it sits still while the feed scrolls under it, so a
+     * pill dragged off the video kept the last blurred frame in it until the next video played
+     * (#408).
+     */
+    private void letGo(View view) {
+        if (!hasFrame) return;
+        hasFrame = false;
+        if (view != null) view.invalidate();
     }
 
     private void note(String now, String line) {

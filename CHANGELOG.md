@@ -29,6 +29,7 @@ Every Hushfeed release, newest first.
 * Two parts of TikTok reading the same new batch of feed videos at once could both run the feed filter on it and both rewrite it, and the second rewrite could crash TikTok while it was copying that batch. The filter now handles one batch at a time, so the second read finds it already done. Thanks to @Tegar30 for spotting it (#400).
 * `Auto tap` in LIVE rooms with guests keeps its taps off the guests' seats. In a grid of guests, a tap on any seat opened that person's card or the gift panel and stopped the tapping, so now it taps the open room just above or below the seats instead (#335).
 * `Foldable split comment view` works in a desktop window too, like TikTok on a Googlebook or Chromebook, in DeX or in Android's desktop mode. Those windows count as sharing the screen with other apps, so comments always came up from the bottom there, however wide the window or low the minimum width. Now the window's width decides, and dragging it across the minimum width switches the layout. Split screen still leaves comments to TikTok (#405).
+* `Blur the video behind the bar` lets go of a video once the pill isn't over it. Scroll slowly and the pill used to keep a blurred piece of the last video until the next one started playing. Now it goes back to plain glass right away (#408).
 
 ## 0.82.0 (2026-11-12)
 

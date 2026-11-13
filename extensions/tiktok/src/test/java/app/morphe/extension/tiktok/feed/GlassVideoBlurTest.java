@@ -174,6 +174,35 @@ public class GlassVideoBlurTest {
         }
     }
 
+    /**
+     * A drag up the feed slides the next video, still black, under the pill. The bar stays put
+     * while the feed moves, so nothing else redraws it: the blur has to, or the pill keeps the
+     * last blurred frame over the black (#408).
+     */
+    @Test
+    public void aPillDraggedOffTheVideoIsRedrawnAsPlainGlass() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            Bar bar = (Bar) bar(controller.get());
+            Settings.GLASS_VIDEO_BLUR.save(true);
+            SeeThroughBottomBar.setBackgroundClear(bar, true, true, true, false, true);
+            SeeThroughBottomBar.GlassBackground glass = (SeeThroughBottomBar.GlassBackground) bar.getBackground();
+            glass.setBounds(0, 0, WIDTH, HEIGHT);
+            glass.draw(new Canvas(Bitmap.createBitmap(WIDTH, HEIGHT, Bitmap.Config.ARGB_8888)));
+            glass.blur.step(1000);
+            assertTrue(glass.blur.hasFrame());
+
+            video.current = false;
+            video = new Video(new Rect(0, 1000, WIDTH, 2400));
+            bar.invalidations = 0;
+            glass.blur.step(1000 + GlassVideoBlur.SAMPLE_MS);
+            assertFalse(glass.blur.hasFrame());
+            assertEquals("the bar was asked to draw the plain glass", 1, bar.invalidations);
+
+            glass.blur.step(1000 + 2 * GlassVideoBlur.SAMPLE_MS);
+            assertEquals("and not again while the pill stays off the video", 1, bar.invalidations);
+        }
+    }
+
     @Test
     public void theBlurSwapsInAndOutWithTheSwitchAndGivesTheOriginalBack() {
         try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
@@ -516,6 +545,7 @@ public class GlassVideoBlurTest {
     /** A bar whose window focus the test sets, since Robolectric never gives a window focus. */
     private static final class Bar extends FrameLayout {
         boolean focused = true;
+        int invalidations;
 
         Bar(Activity activity) {
             super(activity);
@@ -523,6 +553,11 @@ public class GlassVideoBlurTest {
 
         @Override public boolean hasWindowFocus() {
             return focused;
+        }
+
+        @Override public void invalidate() {
+            invalidations++;
+            super.invalidate();
         }
     }
 

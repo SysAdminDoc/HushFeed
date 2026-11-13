@@ -3921,6 +3921,47 @@ public final class Probe extends Instrumentation {
                         }
                         break;
                     }
+                    case "danmaku": {
+                        // Scrolling comments (#98): the current video's own danmaku flags, its
+                        // frame size, and every yes/no TikTok's danmaku service answers for it or
+                        // for the app, so a landscape player with no overlay shows which check
+                        // says no. -e force true sets the video's support flag the way a server
+                        // answer would, on this one video object only, then answers again.
+                        Object aweme = currentAweme();
+                        if (aweme == null) throw new IllegalStateException("no current video");
+                        StringBuilder out = new StringBuilder();
+                        Object video = optional(aweme, "getVideo");
+                        out.append(" frame=").append(optional(video, "getWidth")).append('x').append(optional(video, "getHeight"));
+                        if ("true".equals(intent.getStringExtra("force"))) {
+                            aweme.getClass().getMethod("setSupportDanmaku", boolean.class).invoke(aweme, true);
+                            out.append(" forced");
+                        }
+                        out.append(" support=").append(optional(aweme, "isSupportDanmaku"))
+                                .append(" has=").append(optional(aweme, "isHasDanmaku"));
+                        Class<?> awemeType = loader.loadClass("com.ss.android.ugc.aweme.feed.model.Aweme");
+                        Object service = loader.loadClass("com.ss.android.ugc.aweme.service.DanmakuServiceImpl")
+                                .getDeclaredConstructor().newInstance();
+                        java.util.List<Method> answers = new java.util.ArrayList<>();
+                        for (Method method : service.getClass().getDeclaredMethods()) {
+                            if (method.getReturnType() != boolean.class || java.lang.reflect.Modifier.isStatic(method.getModifiers())) continue;
+                            Class<?>[] params = method.getParameterTypes();
+                            if (params.length == 0 || (params.length == 1 && params[0] == awemeType)) answers.add(method);
+                        }
+                        java.util.Collections.sort(answers, (a, b) -> a.getName().compareTo(b.getName()));
+                        for (Method method : answers) {
+                            Object answer;
+                            try {
+                                method.setAccessible(true);
+                                answer = method.getParameterTypes().length == 0 ? method.invoke(service) : method.invoke(service, aweme);
+                            } catch (java.lang.reflect.InvocationTargetException failed) {
+                                answer = "threw " + failed.getCause().getClass().getSimpleName();
+                            }
+                            out.append(' ').append(method.getName()).append(method.getParameterTypes().length == 0 ? "()" : "(v)")
+                                    .append('=').append(answer);
+                        }
+                        Log.i(TAG, "ok danmaku" + out);
+                        break;
+                    }
                     case "livechip": {
                         // Each check the Record button's watcher makes on the LIVE room page it
                         // holds (#37), so a button that never stays up shows which one says no.

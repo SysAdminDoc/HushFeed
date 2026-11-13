@@ -751,6 +751,9 @@ public final class VideoOverlayHider {
             // already running under the same comment bar, so the bar's solid row is all that has
             // to come off there (#406). The main feed has no comment bar, so nothing is found.
             boolean clearBarGround = !detailCommentBar && VideoFit.fillsScreen();
+            // Filling, an opened video also runs on under the gesture bar, below its comment bar
+            // or where the bar was taken away (#408).
+            View openedBar = VideoFit.fillsScreen() ? openedCommentBar(activity) : null;
             boolean liftForStrip = seeThroughBar || fillUnderBar;
             boolean counts = Settings.HIDE_RAIL_COUNTS.get();
             // The search box at the top of an opened video goes with the feed's search button,
@@ -785,6 +788,7 @@ public final class VideoOverlayHider {
                     || clearControls || detailSearchBox
                     || statusBar || seeThroughStatusBar || SeeThroughStatusBar.anyFilled()
                     || seeThroughBar || fillUnderBar || SeeThroughBottomBar.holdsBackground()
+                    || openedBar != null || VideoUnderGestureBar.holdsAny()
                     || anyRail || !HIDDEN_HERE.isEmpty() || !FADED_HERE.isEmpty() || !WIDGETS_LIFTED.isEmpty()
                     || !SEEK_BARS_LIFTED.isEmpty()
                     || !LIVE_CAPTIONS_LIFTED.isEmpty()
@@ -893,9 +897,15 @@ public final class VideoOverlayHider {
                     int cardHintId = seeThroughBar
                             ? resolveIdentifier(activity, activity.getPackageName(), CARD_SWIPE_HINT_ID, false) : 0;
                     List<View> roomLayers = selectedViews(found, TRAVERSAL.selected, WIDGET_LAYER_TARGET);
-                    View tabs = floatingBarNow ? bottomBar(activity, root) : null;
+                    View bottomTabs = bottomBar(activity, root);
+                    View tabs = floatingBarNow ? bottomTabs : null;
                     int rise = tabs != null && tabs.isShown() ? SeeThroughBottomBar.riseOver(tabs) : 0;
                     pillRiseNow = rise;
+                    // The feed goes on under the gesture bar too, while it's the page in front: the
+                    // tab host's other pages keep the room TikTok gives them (#408).
+                    VideoUnderGestureBar.FEED.apply(activity, bottomTabs,
+                            seeThroughBar && FeedVisibility.isOnFeed(activity));
+                    VideoUnderGestureBar.OPENED.apply(activity, openedBar, openedBar != null);
                     // Before the guard, so it measures the caption where this pass leaves it.
                     liftWidgetLayers(strips, liftForStrip, layerId, cellId, infoIds, cardHintId, rise, roomLayers,
                             roomAbove);
@@ -1475,13 +1485,21 @@ public final class VideoOverlayHider {
             BAR_GROUNDS_CLEARED.clear();
             return;
         }
+        View bar = openedCommentBar(activity);
+        if (bar != null && bar.getWidth() > 0) clearSolidGrounds(bar, bar.getWidth());
+    }
+
+    /** The comment bar of a video opened in this window, or null on the main feed. */
+    @Nullable
+    private static View openedCommentBar(Activity activity) {
         View root = activity.findViewById(android.R.id.content);
-        if (root == null) return;
+        if (root == null) return null;
         for (String name : DETAIL_COMMENT_BAR_IDS) {
             int id = resolveIdentifier(activity, activity.getPackageName(), name, false);
             View bar = id == 0 ? null : root.findViewById(id);
-            if (bar != null && bar.getWidth() > 0) clearSolidGrounds(bar, bar.getWidth());
+            if (bar != null) return bar;
         }
+        return null;
     }
 
     private static void clearSolidGrounds(View view, int barWidth) {
@@ -1716,6 +1734,10 @@ public final class VideoOverlayHider {
      *
      * <p>An opened video's strip gone for Fill the screen with the video lifts its layers the same
      * way, so the caption stays above the comment bar (#406).
+     *
+     * <p>A video run on under the gesture bar (see {@link VideoUnderGestureBar}) grows every cell in
+     * its frame by as much more at the bottom, and each of their layers goes up by that on top of
+     * the rest (#408).
      */
     private static void liftWidgetLayers(List<View> strips, boolean liftForStrip, int layerId, int cellId,
                                          int[] infoIds, int cardHintId, int rise, List<View> roomLayers, int room) {
@@ -1738,6 +1760,14 @@ public final class VideoOverlayHider {
             for (View layer : roomLayers) {
                 Float gained = lifts.get(layer);
                 lifts.put(layer, Math.max(gained == null ? 0f : gained, room));
+            }
+        }
+        if (VideoUnderGestureBar.holdsAny()) {
+            for (View layer : roomLayers) {
+                if (!lifts.containsKey(layer) && VideoUnderGestureBar.reachOver(layer) > 0) lifts.put(layer, 0f);
+            }
+            for (Map.Entry<View, Float> lift : lifts.entrySet()) {
+                lift.setValue(lift.getValue() + VideoUnderGestureBar.reachOver(lift.getKey()));
             }
         }
         for (Map.Entry<View, Float> lift : lifts.entrySet()) {

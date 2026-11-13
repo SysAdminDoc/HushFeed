@@ -69,7 +69,7 @@ public final class FoldableSplitView {
         if (activity == null) activity = Utils.getActivity();
         if (activity == null || activity.isFinishing() || activity.isDestroyed()) return false;
         try {
-            if (Build.VERSION.SDK_INT >= 24 && (activity.isInMultiWindowMode() || activity.isInPictureInPictureMode())) return false;
+            if (besideOtherApps(activity)) return false;
             if (width <= 0) width = widthDp(activity, null);
             return width >= threshold();
         } catch (RuntimeException error) {
@@ -82,8 +82,37 @@ public final class FoldableSplitView {
         return Math.max(320, Math.min(1600, Settings.FOLDABLE_SPLIT_VIEW_MIN_WIDTH_DP.get()));
     }
 
+    /**
+     * Split screen and picture in picture, where TikTok shares the screen and keeps its own
+     * layout. A desktop window (a Googlebook or Chromebook, DeX, Android's desktop windowing) is
+     * in multi-window mode too, but it's a window of its own that the user sizes, so its width
+     * decides like a full screen's. Left out with the rest, the comments there always opened over
+     * the video, whatever the width or the threshold (#405).
+     */
     private static boolean besideOtherApps(Activity activity) {
-        return Build.VERSION.SDK_INT >= 24 && (activity.isInMultiWindowMode() || activity.isInPictureInPictureMode());
+        if (Build.VERSION.SDK_INT < 24) return false;
+        if (activity.isInPictureInPictureMode()) return true;
+        return activity.isInMultiWindowMode() && !desktopWindow(activity);
+    }
+
+    private static boolean desktopWindow(Activity activity) {
+        try {
+            return isDesktopWindow(activity.getResources().getConfiguration());
+        } catch (RuntimeException error) {
+            Logger.printException(() -> "Could not read the window mode", error);
+            return false;
+        }
+    }
+
+    /**
+     * Whether a configuration is a freeform window's. Android names the window mode only in the
+     * configuration's text (API 28 on), as {@code mWindowingMode=freeform}; the display's own
+     * mode sits beside it as {@code mDisplayWindowingMode}, which a full-screen app on a desktop
+     * display shares, so only the window's counts.
+     */
+    static boolean isDesktopWindow(Configuration configuration) {
+        if (configuration == null || Build.VERSION.SDK_INT < 28) return false;
+        return configuration.toString().contains(" mWindowingMode=freeform");
     }
 
     /**

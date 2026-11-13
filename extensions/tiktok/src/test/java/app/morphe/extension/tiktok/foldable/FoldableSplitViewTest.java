@@ -440,6 +440,61 @@ public class FoldableSplitViewTest {
             assertFalse(FoldableSplitView.shouldForce(activity, configuration));
         }
     }
+    /** Puts a window mode on a configuration the way the system does, through the framework's own setter. */
+    private static void windowingMode(Configuration configuration, String setter, int mode) throws Exception {
+        Object window = Configuration.class.getField("windowConfiguration").get(configuration);
+        window.getClass().getMethod(setter, int.class).invoke(window, mode);
+    }
+
+    private static final int FULLSCREEN = 1, SPLIT_SCREEN_PRIMARY = 3, FREEFORM = 5;
+
+    @Test public void onlyAFreeformWindowIsADesktopWindow() throws Exception {
+        Configuration configuration = new Configuration();
+        assertFalse(FoldableSplitView.isDesktopWindow(configuration));
+        windowingMode(configuration, "setWindowingMode", FREEFORM);
+        assertTrue(FoldableSplitView.isDesktopWindow(configuration));
+        windowingMode(configuration, "setWindowingMode", SPLIT_SCREEN_PRIMARY);
+        assertFalse(FoldableSplitView.isDesktopWindow(configuration));
+        windowingMode(configuration, "setWindowingMode", FULLSCREEN);
+        assertFalse(FoldableSplitView.isDesktopWindow(configuration));
+        assertFalse(FoldableSplitView.isDesktopWindow(null));
+        // A full-screen app on a desktop display carries the display's freeform beside its own mode.
+        Object window = Configuration.class.getField("windowConfiguration").get(configuration);
+        boolean displayMode = java.util.Arrays.stream(window.getClass().getMethods())
+                .anyMatch(method -> method.getName().equals("setDisplayWindowingMode"));
+        if (displayMode) {
+            windowingMode(configuration, "setDisplayWindowingMode", FREEFORM);
+            assertTrue(configuration.toString().contains("mDisplayWindowingMode=freeform"));
+            assertFalse(FoldableSplitView.isDesktopWindow(configuration));
+        }
+    }
+
+    @Test public void aDesktopWindowSplitsByItsWidthAndIsBuiltAgainWhenResizedAcross() throws Exception {
+        Settings.FOLDABLE_SPLIT_VIEW.save(true);
+        java.util.List<android.app.Activity> rebuilt = new java.util.ArrayList<>();
+        FoldableSplitView.recreator = rebuilt::add;
+        try (var owner = Robolectric.buildActivity(TestActivity.class).setup()) {
+            TestActivity activity = owner.get();
+            Utils.setActivity(activity);
+            // A Googlebook's TikTok window reports multi-window like split screen does (#405).
+            activity.multiWindow = true;
+            assertFalse(FoldableSplitView.shouldForce(activity, width(activity, 900)));
+
+            windowingMode(activity.getResources().getConfiguration(), "setWindowingMode", FREEFORM);
+            assertTrue(FoldableSplitView.shouldForce(activity, width(activity, 900)));
+            assertFalse(FoldableSplitView.shouldForce(activity, width(activity, 599)));
+            assertTrue(FoldableSplitView.shouldForceContainer());
+
+            // Dragged narrower than the threshold, the feed is built again for comments over the video.
+            FoldableSplitView.onConfigurationChanged(activity, width(activity, 380));
+            assertEquals(java.util.Collections.singletonList(activity), rebuilt);
+
+            // Picture in picture still leaves the comments to TikTok, desktop window or not.
+            activity.pictureInPicture = true;
+            assertFalse(FoldableSplitView.shouldForce(activity, width(activity, 900)));
+        }
+    }
+
     @Test public void containerUsesCurrentActivityAndNeverRecreatesIt() {
         Settings.FOLDABLE_SPLIT_VIEW.save(true);
         assertFalse(FoldableSplitView.shouldForceContainer());

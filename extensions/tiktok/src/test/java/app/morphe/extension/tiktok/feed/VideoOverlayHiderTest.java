@@ -2021,6 +2021,148 @@ public class VideoOverlayHiderTest {
         }
     }
 
+    private static final int LAYER_ID = 0x7f0a0d51;
+
+    /**
+     * Fill the screen with the video on a video opened from search (#406, Login2 2026-11-13): the
+     * feed's cell reaches the bottom edge, but an opened video's cell stopped a strip's height up
+     * over the strip TikTok keeps under the comment bar, and TikTok's own crop already covered
+     * that shorter cell, so the switch changed nothing there. With it on the strip goes, the cell
+     * gets the room, the comment bar stays over the picture, and the cell's widget layer goes up by
+     * the strip's height so the caption ends where it did, above the bar. The bar's solid black
+     * row comes off so the picture shows under the pill, which keeps its own fill. The main feed's
+     * strip under the tabs is left alone, and off puts it all back.
+     */
+    @Test
+    public void fillingTheScreenTakesAnOpenedVideosStripAndKeepsTheCaptionAboveTheBar() {
+        resolveCommentBarIds();
+        VideoOverlayHider.resolveForTests("widget_container", LAYER_ID);
+        boolean patched = app.morphe.extension.tiktok.settings.SettingsStatus.videoFitEnabled;
+        app.morphe.extension.tiktok.settings.SettingsStatus.videoFitEnabled = true;
+        Settings.FILL_VIDEO_TO_SCREEN.save(true);
+        try (var main = Robolectric.buildActivity(Activity.class).setup();
+             var detailController = Robolectric.buildActivity(
+                     com.ss.android.ugc.aweme.detail.ui.DetailActivity.class).create().start()) {
+            View feedStrip = new View(main.get());
+            main.get().setContentView(pagerColumn(main.get(), feedStrip));
+            VideoOverlayHider.applyTo(main.get());
+            assertEquals("the main feed's strip under the tabs went", View.VISIBLE, feedStrip.getVisibility());
+
+            Activity detail = detailController.get();
+            View[] views = openedVideo(detail, false);
+            View strip = views[2];
+            FrameLayout cell = views[0].findViewById(CELL_ID);
+            View caption = views[3];
+            FrameLayout layer = new FrameLayout(detail);
+            layer.setId(LAYER_ID);
+            cell.removeView(caption);
+            layer.addView(caption, caption.getLayoutParams());
+            cell.addView(layer, new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+            // The bar as TikTok draws it: a row with a solid black backdrop under a narrower pill.
+            View plainBar = views[0].findViewById(BAR_ID);
+            FrameLayout bar = new FrameLayout(detail);
+            bar.setId(BAR_ID);
+            View row = new View(detail);
+            android.graphics.drawable.ColorDrawable black =
+                    new android.graphics.drawable.ColorDrawable(android.graphics.Color.BLACK);
+            row.setBackground(black);
+            bar.addView(row, new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+            View pill = new View(detail);
+            android.graphics.drawable.ColorDrawable gray = new android.graphics.drawable.ColorDrawable(0xff333333);
+            pill.setBackground(gray);
+            FrameLayout.LayoutParams pillParams = new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT, 60, android.view.Gravity.CENTER);
+            pillParams.leftMargin = 36;
+            pillParams.rightMargin = 36;
+            bar.addView(pill, pillParams);
+            FrameLayout root = (FrameLayout) views[0];
+            root.addView(bar, root.indexOfChild(plainBar), plainBar.getLayoutParams());
+            root.removeView(plainBar);
+            layOutAt(views[0]);
+            assertEquals(2067, cell.getHeight());
+            float captionEnd = bottomOf(caption);
+
+            VideoOverlayHider.applyTo(detail);
+            layOutAt(views[0]);
+            VideoOverlayHider.applyTo(detail);
+            assertEquals(View.GONE, strip.getVisibility());
+            assertEquals("the comment bar went with the strip", View.VISIBLE, bar.getVisibility());
+            assertEquals("the picture didn't get the strip's room", 2205, cell.getHeight());
+            assertEquals("the caption came down behind the comment bar", -138f, layer.getTranslationY(), 0f);
+            assertEquals(captionEnd, bottomOf(caption), 0.5f);
+            assertNull("the bar's black row still hid the picture under it", row.getBackground());
+            assertSame("the pill lost its own fill", gray, pill.getBackground());
+
+            Settings.FILL_VIDEO_TO_SCREEN.save(false);
+            VideoOverlayHider.applyTo(detail);
+            assertEquals(View.VISIBLE, strip.getVisibility());
+            assertEquals(0f, layer.getTranslationY(), 0f);
+            assertSame("the bar's row didn't get its black back", black, row.getBackground());
+        } finally {
+            Settings.FILL_VIDEO_TO_SCREEN.save(false);
+            app.morphe.extension.tiktok.settings.SettingsStatus.videoFitEnabled = patched;
+            VideoOverlayHider.resolveForTests("widget_container", 0);
+        }
+    }
+
+    /**
+     * On 47.7.3 a video picked from search results plays in the main activity, not the opened-post
+     * pager, with the same comment bar laid over a cell that already runs to the bottom (#406,
+     * Login2 2026-11-13). Only the bar's solid black row stood between the picture and the bar's
+     * pill there, and it came off only in the pager, so the switch still left search videos on a
+     * black band. The cell has nothing to gain there, so nothing in it moves.
+     */
+    @Test
+    public void fillingTheScreenClearsTheCommentBarsRowOnASearchVideoInTheMainActivity() {
+        resolveCommentBarIds();
+        boolean patched = app.morphe.extension.tiktok.settings.SettingsStatus.videoFitEnabled;
+        app.morphe.extension.tiktok.settings.SettingsStatus.videoFitEnabled = true;
+        Settings.FILL_VIDEO_TO_SCREEN.save(true);
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            Activity main = controller.get();
+            FrameLayout root = new FrameLayout(main);
+            FrameLayout cell = new FrameLayout(main);
+            cell.setId(CELL_ID);
+            root.addView(cell, new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+            FrameLayout bar = new FrameLayout(main);
+            bar.setId(BAR_ID);
+            View row = new View(main);
+            android.graphics.drawable.ColorDrawable black =
+                    new android.graphics.drawable.ColorDrawable(android.graphics.Color.BLACK);
+            row.setBackground(black);
+            bar.addView(row, new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+            View pill = new View(main);
+            android.graphics.drawable.ColorDrawable gray = new android.graphics.drawable.ColorDrawable(0xff333333);
+            pill.setBackground(gray);
+            FrameLayout.LayoutParams pillParams = new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT, 60, android.view.Gravity.CENTER);
+            pillParams.leftMargin = 36;
+            pillParams.rightMargin = 36;
+            bar.addView(pill, pillParams);
+            root.addView(bar, new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT, 138, android.view.Gravity.BOTTOM));
+            main.setContentView(root);
+            layOutAt(root);
+
+            VideoOverlayHider.applyTo(main);
+            assertNull("the bar's black row still hid the picture under it", row.getBackground());
+            assertSame("the pill lost its own fill", gray, pill.getBackground());
+            assertEquals("the bar went", View.VISIBLE, bar.getVisibility());
+            assertEquals("the cell moved", 0f, cell.getTranslationY(), 0f);
+
+            Settings.FILL_VIDEO_TO_SCREEN.save(false);
+            VideoOverlayHider.applyTo(main);
+            assertSame("the bar's row didn't get its black back", black, row.getBackground());
+        } finally {
+            Settings.FILL_VIDEO_TO_SCREEN.save(false);
+            app.morphe.extension.tiktok.settings.SettingsStatus.videoFitEnabled = patched;
+        }
+    }
+
     private static final int DISC_ID = 0x7f0a0215;
 
     /** TikTok's spinning disc at the bottom right of {@code cell}, the way the cell lays it out. */

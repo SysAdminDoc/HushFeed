@@ -29,6 +29,7 @@ import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.preference.LogBufferManager;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
 import app.morphe.extension.tiktok.settings.Settings;
+import app.morphe.extension.tiktok.settings.SettingsStatus;
 
 /**
  * Puts the whole of a video on screen instead of cropping it to the window.
@@ -54,6 +55,15 @@ public final class VideoFit {
         if (Settings.FIT_VIDEO_TO_SCREEN.get()) return Mode.FIT;
         if (Settings.FILL_VIDEO_TO_SCREEN.get()) return Mode.FILL;
         return Mode.LEAVE_ALONE;
+    }
+
+    /**
+     * Whether the video is asked to cover the screen and the patch that does it is in. An opened
+     * video keeps a strip under its comment bar that the feed doesn't have, so the overlay pass
+     * gives that strip to the video too while this holds (#406).
+     */
+    public static boolean fillsScreen() {
+        return SettingsStatus.videoFitEnabled && mode() == Mode.FILL;
     }
 
     /** What the last decision on this thread settled: which result, the height for it and where it sits. */

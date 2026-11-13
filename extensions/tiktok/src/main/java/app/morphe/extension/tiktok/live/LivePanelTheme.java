@@ -161,7 +161,10 @@ public final class LivePanelTheme {
     /** The profile card's badge tiles, image views whose dark backgrounds the fill pass counts as fills. */
     private static final Map<View, Boolean> BADGE_TILES = Collections.synchronizedMap(new WeakHashMap<>());
     private static final Map<ImageView, IconCheck> ICONS = Collections.synchronizedMap(new WeakHashMap<>());
+    /** Each page view's background as last judged, and whether it was a dark outline turned white. */
+    private static final Map<View, OutlineCheck> OUTLINES = Collections.synchronizedMap(new WeakHashMap<>());
     private static volatile boolean frameFailureLogged;
+    private static volatile boolean pageFailureLogged;
     private static volatile boolean overlayFailureLogged;
     private static volatile boolean rowFailureLogged;
     private static volatile boolean viewContextFailureLogged;
@@ -181,8 +184,9 @@ public final class LivePanelTheme {
      * answering dark (#159). While Dark LIVE panels is on and the panel's context is in dark
      * mode, the panel's views inflate through its own theme overlay, which the provider hook
      * makes TikTok's dark LIVE theme, applied with force the way TikTok applies the light one. A
-     * room's own fragments aren't panels and keep TikTok's inflater, and anything that fails
-     * hands TikTok's back.
+     * LIVE page under a darkened panel inflates through that panel's dark context, a room's own
+     * fragments aren't panels and keep TikTok's inflater, and anything that fails hands TikTok's
+     * back.
      * A stock panel, and any fragment under one, inflates through the overlay TikTok's own
      * provider answer gives the stock panel instead, its light LIVE theme in a room, applied with
      * force the way TikTok applies it in a dark app. Left with TikTok's inflater, the provider
@@ -204,7 +208,11 @@ public final class LivePanelTheme {
                 return stockInflater(inflater, context, stockOverlay(stock, context));
             }
             if (!isPanel(panel.getClass())) {
-                return inflater;
+                // A LIVE page under a panel this darkened takes the panel's dark context. The
+                // moderator settings' Moderation, Blocked and Muted lists are such pages, and with
+                // the room's theme their sheet stayed LIVE's fixed gray under a black AMOLED
+                // Settings sheet, black only where search hosts the room (#362).
+                return panelSeen && panelType(panel.getClass()) == THEMED ? darkPanelPage(panel, inflater) : inflater;
             }
             int overlay = themeOverlay(panel, context);
             if (overlay == 0) {
@@ -887,10 +895,10 @@ public final class LivePanelTheme {
      * ranking's lists took the room's dark app theme and their rows read white on the ranking's
      * white sheet (Login2, 2026-10-19). While Dark LIVE panels is on in dark mode, a plain
      * fragment under a stock panel inflates through the overlay that panel gets. The same goes for
-     * a dark panel: the moderator settings' muted and blocked lists are plain fragments under it,
-     * and over the room's light LIVE colors their names read dark on the dark sheet (#362), so a
-     * plain fragment under a panel darkLivePanel darkened inflates through that panel's dark
-     * context. LIVE's themed fragments and dialogs have their own hook, and every other fragment
+     * a dark panel: over the room's light LIVE colors a plain fragment's text under it reads dark
+     * on the dark sheet (#362), so a plain fragment under a panel darkLivePanel darkened inflates
+     * through that panel's dark context. LIVE's themed fragments and dialogs come through
+     * darkLivePanel instead, which does the same for its pages, and every other fragment
      * keeps TikTok's inflater. Every fragment in the app comes through here, so nothing is looked
      * up before a stock panel has inflated or a panel was darkened.
      */
@@ -914,9 +922,9 @@ public final class LivePanelTheme {
     }
 
     /**
-     * The inflater of a plain fragment under a panel darkLivePanel darkened: one on that panel's
-     * dark context. The walk stops at a stock panel, which keeps its light look, and at a panel
-     * that wasn't darkened; anything else hands TikTok's inflater back.
+     * The inflater of a plain fragment or LIVE page under a panel darkLivePanel darkened: one on
+     * that panel's dark context. The walk stops at a stock panel, which keeps its light look, and
+     * at a panel that wasn't darkened; anything else hands TikTok's inflater back.
      */
     private static LayoutInflater darkPanelPage(Object fragment, LayoutInflater inflater) {
         Object current = Reflect.invoke(fragment, "getParentFragment");
@@ -930,11 +938,216 @@ public final class LivePanelTheme {
                 if (dark == null || !LiveControls.darkLivePanels(inflater.getContext())) {
                     return inflater;
                 }
+                inkPage(fragment);
                 return inflater.cloneInContext(dark);
             }
             current = Reflect.invoke(current, "getParentFragment");
         }
         return inflater;
+    }
+
+    /**
+     * Lights the fixed dark ink of a page under a darkened panel. The moderator settings'
+     * Blocked, Muted and Moderation lists draw their title, back arrow, help icon and Quit button
+     * in TikTok's fixed #161823, which no theme reaches, so on the dark sheet they read dark on
+     * dark (#362). The page's view doesn't exist yet when its inflater is asked for, so it's
+     * looked for on the next frames. While it's on screen its dark gray text and one-ink icons go
+     * white before each frame, and so does a button's dark outline. Anything on a light chip of
+     * its own keeps its ink.
+     */
+    static void inkPage(Object page) {
+        new Handler(Looper.getMainLooper()).post(() -> inkPage(page, 0));
+    }
+
+    private static void inkPage(Object page, int attempt) {
+        try {
+            Object view = Reflect.invoke(page, "getView");
+            if (!(view instanceof View)) {
+                if (attempt < SETTLE_TRIES) {
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> inkPage(page, attempt + 1), SETTLE_DELAY_MS);
+                }
+                return;
+            }
+            View root = (View) view;
+            if (WATCHED.put(root, Boolean.TRUE) != null) {
+                return;
+            }
+            PageInk ink = new PageInk(root);
+            root.addOnAttachStateChangeListener(ink);
+            if (root.isAttachedToWindow()) {
+                ink.onViewAttachedToWindow(root);
+            }
+        } catch (Throwable failure) {
+            Logger.printException(() -> "Could not light a LIVE panel page", failure);
+        }
+    }
+
+    /**
+     * Keeps a page's ink light while the page is on screen: gathered again on each layout, since
+     * its lists bind rows as they scroll, and lit again before each frame, since TikTok sets the
+     * fixed colors back as it rebinds. It only listens while the page is in a window, so a page
+     * that was closed is let go.
+     */
+    private static final class PageInk implements View.OnAttachStateChangeListener,
+            ViewTreeObserver.OnGlobalLayoutListener, ViewTreeObserver.OnPreDrawListener {
+        private final View page;
+        private final List<View> ink = new ArrayList<>();
+        private final List<View> outlines = new ArrayList<>();
+
+        PageInk(View page) {
+            this.page = page;
+        }
+
+        @Override
+        public void onViewAttachedToWindow(View view) {
+            ViewTreeObserver observer = view.getViewTreeObserver();
+            observer.addOnGlobalLayoutListener(this);
+            observer.addOnPreDrawListener(this);
+            onGlobalLayout();
+        }
+
+        @Override
+        public void onViewDetachedFromWindow(View view) {
+            ViewTreeObserver observer = view.getViewTreeObserver();
+            observer.removeOnGlobalLayoutListener(this);
+            observer.removeOnPreDrawListener(this);
+        }
+
+        @Override
+        public void onGlobalLayout() {
+            try {
+                ink.clear();
+                outlines.clear();
+                // The page's own ground is the panel's: its children are judged, not it.
+                if (page instanceof ViewGroup) {
+                    ViewGroup group = (ViewGroup) page;
+                    for (int i = 0; i < group.getChildCount(); i++) {
+                        gatherPage(group.getChildAt(i), ink, outlines, 0);
+                    }
+                }
+            } catch (Throwable failure) {
+                if (!pageFailureLogged) {
+                    pageFailureLogged = true;
+                    Logger.printException(() -> "Could not find a LIVE panel page's ink", failure);
+                }
+            }
+        }
+
+        @Override
+        public boolean onPreDraw() {
+            try {
+                for (View view : ink) {
+                    lightInk(view);
+                }
+                for (View view : outlines) {
+                    lightOutline(view);
+                }
+            } catch (Throwable failure) {
+                if (!pageFailureLogged) {
+                    pageFailureLogged = true;
+                    Logger.printException(() -> "Could not keep a LIVE panel page light", failure);
+                }
+            }
+            return true;
+        }
+    }
+
+    /**
+     * Gathers a page's text and icon views, and the views drawing a dark outline as their
+     * background. A view on a backdrop of its own, other than such an outline, keeps the ink it
+     * was picked for, and so does anything marked to stay light.
+     */
+    private static void gatherPage(View view, List<View> ink, List<View> outlines, int depth) {
+        if (view.getVisibility() != View.VISIBLE || KEEP_LIGHT.containsKey(view) || depth > MAX_TREE_DEPTH) {
+            return;
+        }
+        Drawable background = view.getBackground();
+        if (background != null) {
+            if (darkOutline(view)) {
+                outlines.add(view);
+            } else if (ownBackdrop(background)) {
+                return;
+            }
+        }
+        if (view instanceof TextView || view instanceof ImageView) {
+            ink.add(view);
+            return;
+        }
+        if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) view;
+            for (int i = 0; i < group.getChildCount(); i++) {
+                gatherPage(group.getChildAt(i), ink, outlines, depth + 1);
+            }
+        }
+    }
+
+    /**
+     * True for a view whose background is one dark gray outline around a clear middle, like the
+     * page's Quit button, judged once per background. One already turned white still counts.
+     */
+    private static boolean darkOutline(View view) {
+        Drawable background = view.getBackground();
+        OutlineCheck seen = OUTLINES.get(view);
+        if (seen != null && seen.drawable.get() == background) {
+            return seen.outline;
+        }
+        if (background == null) {
+            return false;
+        }
+        int viewWidth = view.getWidth();
+        int viewHeight = view.getHeight();
+        if (viewWidth <= 0 || viewHeight <= 0) {
+            // Not laid out yet: judged on a later layout.
+            return false;
+        }
+        float scale = Math.min(1f, SAMPLE_SIZE / (float) Math.max(viewWidth, viewHeight));
+        int width = Math.max(1, Math.round(viewWidth * scale));
+        int height = Math.max(1, Math.round(viewHeight * scale));
+        int[] pixels = backgroundPixels(background, viewWidth, viewHeight, width, height);
+        int middle = pixels[(height / 2) * width + width / 2];
+        boolean outline = Color.alpha(middle) < MIN_INK_ALPHA && darkMonochrome(pixels);
+        OUTLINES.put(view, new OutlineCheck(background, outline));
+        return outline;
+    }
+
+    /** A background drawn small at its view's size, its pixels. */
+    private static int[] backgroundPixels(Drawable background, int viewWidth, int viewHeight, int width, int height) {
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Rect bounds = background.copyBounds();
+        try {
+            Canvas canvas = new Canvas(bitmap);
+            canvas.scale(width / (float) viewWidth, height / (float) viewHeight);
+            background.setBounds(0, 0, viewWidth, viewHeight);
+            background.draw(canvas);
+            int[] pixels = new int[width * height];
+            bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
+            return pixels;
+        } finally {
+            background.setBounds(bounds);
+            bitmap.recycle();
+        }
+    }
+
+    /** Draws a judged dark outline white, once per background TikTok gives the view. */
+    private static void lightOutline(View view) {
+        Drawable background = view.getBackground();
+        if (background == null || !darkOutline(view) || background.getColorFilter() == WHITE_INK) {
+            return;
+        }
+        Drawable own = background.mutate();
+        own.setColorFilter(WHITE_INK);
+        OUTLINES.put(view, new OutlineCheck(own, true));
+        view.invalidate();
+    }
+
+    private static final class OutlineCheck {
+        final WeakReference<Drawable> drawable;
+        final boolean outline;
+
+        OutlineCheck(Drawable drawable, boolean outline) {
+            this.drawable = new WeakReference<>(drawable);
+            this.outline = outline;
+        }
     }
 
     /**

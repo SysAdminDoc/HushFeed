@@ -348,7 +348,7 @@ public class LivePanelThemeTest {
         assertSame("without the patch", tiktok, LivePanelTheme.darkLivePage(list, tiktok));
     }
 
-    /** #362: the moderator settings' muted and blocked lists are plain fragments under a dark panel. */
+    /** #362: a plain fragment under a dark panel reads dark on its dark sheet with the room's colors. */
     @Test public void aPlainFragmentUnderADarkenedPanelTakesItsDarkContext() {
         LayoutInflater tiktok = LayoutInflater.from(dark);
         Settings.DARK_LIVE_PANELS.save(true);
@@ -388,6 +388,110 @@ public class LivePanelThemeTest {
         ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, false));
         SettingsStatus.liveControlsEnabled = false;
         assertSame("without the patch", tiktok, LivePanelTheme.darkLivePage(list, tiktok));
+    }
+
+    /**
+     * #362: the moderator settings' Moderation, Blocked and Muted lists are LIVE pages under the
+     * dark panel. With the room's theme their sheet kept LIVE's fixed gray under the black AMOLED
+     * Settings sheet, and went black only where search hosts the room.
+     */
+    @Test public void aLivePageUnderADarkenedPanelTakesItsDarkContext() {
+        LayoutInflater tiktok = LayoutInflater.from(dark);
+        Settings.DARK_LIVE_PANELS.save(true);
+        ShareDialog admin = dialog();
+        assertSame("before any panel was darkened", tiktok, LivePanelTheme.darkLivePanel(page(admin), tiktok));
+
+        LayoutInflater sheet = LivePanelTheme.darkLivePanel(admin, tiktok);
+        LayoutInflater list = LivePanelTheme.darkLivePanel(page(admin), tiktok);
+        assertNotSame(tiktok, list);
+        assertSame("the panel's own dark context", sheet.getContext(), list.getContext());
+        assertEquals(textColor(new ContextThemeWrapper(dark, OVERLAY)), textColor(list.getContext()));
+        assertSame("a page under a page", sheet.getContext(), LivePanelTheme.darkLivePanel(page(page(admin)), tiktok).getContext());
+
+        assertSame("a room's own page", tiktok, LivePanelTheme.darkLivePanel(page(null), tiktok));
+        assertSame("a page under a panel that wasn't darkened", tiktok, LivePanelTheme.darkLivePanel(page(dialog()), tiktok));
+        LayoutInflater day = LayoutInflater.from(light);
+        assertSame("light mode", day, LivePanelTheme.darkLivePanel(page(admin), day));
+        ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, true));
+        assertSame("paused", tiktok, LivePanelTheme.darkLivePanel(page(admin), tiktok));
+        ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, false));
+    }
+
+    /** A LIVE page with its view, the way the moderator settings' lists sit under the panel. */
+    public static final class ManageList extends LiveThemeAwareFragment {
+    }
+
+    /**
+     * #362: the moderator settings' Blocked, Muted and Moderation lists draw their title, back arrow
+     * and Quit button in TikTok's fixed #161823, so under the dark panel they read dark on dark.
+     */
+    @Test @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
+    public void aPageUnderADarkenedPanelHasItsFixedDarkInkLit() {
+        Settings.DARK_LIVE_PANELS.save(true);
+        ShareDialog admin = dialog();
+        LayoutInflater tiktok = LayoutInflater.from(dark);
+        LivePanelTheme.darkLivePanel(admin, tiktok);
+
+        android.widget.LinearLayout root = new android.widget.LinearLayout(dark);
+        root.setOrientation(android.widget.LinearLayout.VERTICAL);
+        // The page's ground is the panel's, whatever drawable paints it.
+        root.setBackground(new LayerDrawable(new Drawable[]{new ColorDrawable(Color.BLACK)}));
+        TextView title = text(dark, 0xFF161823);
+        root.addView(title);
+        android.widget.ImageView back = new android.widget.ImageView(dark);
+        back.setScaleType(android.widget.ImageView.ScaleType.FIT_XY);
+        back.setPadding(10, 10, 10, 10);
+        back.setImageDrawable(new ColorDrawable(0xFF161823));
+        root.addView(back, new android.widget.LinearLayout.LayoutParams(40, 40));
+        GradientDrawable outline = new GradientDrawable();
+        outline.setStroke(6, 0xFF161823);
+        outline.setCornerRadius(12);
+        FrameLayout quit = new FrameLayout(dark);
+        quit.setBackground(outline);
+        TextView quitLabel = text(dark, 0xFF161823);
+        quit.addView(quitLabel);
+        root.addView(quit, new android.widget.LinearLayout.LayoutParams(200, 60));
+        GradientDrawable white = new GradientDrawable();
+        white.setColor(Color.WHITE);
+        FrameLayout chip = new FrameLayout(dark);
+        chip.setBackground(white);
+        TextView onChip = text(dark, 0xFF161823);
+        chip.addView(onChip);
+        root.addView(chip, new android.widget.LinearLayout.LayoutParams(200, 60));
+
+        ManageList page = new ManageList();
+        page.parent = admin;
+        assertNotSame(tiktok, LivePanelTheme.darkLivePanel(page, tiktok));
+        // The page's view comes after its inflater.
+        page.view = root;
+        Dialog shown = dialogWith(root);
+        shadowOf(Looper.getMainLooper()).idleFor(java.time.Duration.ofSeconds(1));
+        nextFrame(shown);
+
+        assertEquals("the title", Color.WHITE, title.getCurrentTextColor());
+        assertNotNull("the back arrow goes white", back.getColorFilter());
+        assertEquals("the Quit label", Color.WHITE, quitLabel.getCurrentTextColor());
+        assertNotNull("the Quit outline goes white", outline.getColorFilter());
+        assertEquals("text on its own light chip keeps its ink", 0xFF161823, onChip.getCurrentTextColor());
+        assertNull("the chip keeps its look", white.getColorFilter());
+
+        // TikTok sets the fixed color back as it binds the page again.
+        title.setTextColor(0xFF161823);
+        nextFrame(shown);
+        assertEquals(Color.WHITE, title.getCurrentTextColor());
+
+        // A page under a panel that wasn't darkened is left alone.
+        TextView stockTitle = text(dark, 0xFF161823);
+        FrameLayout stockRoot = new FrameLayout(dark);
+        stockRoot.addView(stockTitle);
+        ManageList stock = new ManageList();
+        stock.parent = dialog();
+        stock.view = stockRoot;
+        assertSame(tiktok, LivePanelTheme.darkLivePanel(stock, tiktok));
+        Dialog stockShown = dialogWith(stockRoot);
+        shadowOf(Looper.getMainLooper()).idleFor(java.time.Duration.ofSeconds(1));
+        nextFrame(stockShown);
+        assertEquals(0xFF161823, stockTitle.getCurrentTextColor());
     }
 
     /** #362: the gift guide bubble is white, so over a darkened room it inflates over the room's light theme. */

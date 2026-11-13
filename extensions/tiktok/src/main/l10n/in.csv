@@ -155,7 +155,7 @@ Forget the video @%2$s has seen.,Lupakan video yang telah dilihat @%2$s.
 Got it,Mengerti
 Hide profile shortcuts,Sembunyikan pintasan profil
 Hide profile tabs,Sembunyikan tab profil
-"Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos. The Videos tab always stays. Restart TikTok to apply this.","Pilih tab yang disembunyikan dari strip di atas video profil, misalnya Postingan ulang atau Video yang disukai. Tab Video selalu ada. Mulai ulang TikTok agar berlaku."
+"Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos. One tab always stays. Restart TikTok to apply this.","Pilih tab yang disembunyikan dari strip di atas video profil, misalnya Postingan ulang atau Video yang disukai. Satu tab selalu tetap ada. Mulai ulang TikTok agar berlaku."
 Private videos,Video pribadi
 Reposts,Postingan ulang
 Favorites,Favorit
@@ -163,6 +163,7 @@ Music,Musik
 Effects,Efek
 Series,Serial
 Stickers,Stiker
+AI theater,Teater AI
 Hide profile shortcuts by name,Sembunyikan pintasan profil berdasarkan nama
 Hide the status bar in LIVE rooms,Sembunyikan bilah status di ruang LIVE
 How much of a video you watch before it's hidden next time. Zero counts it after a few seconds.,Berapa banyak video yang kamu tonton sebelum video itu disembunyikan lain kali. Nol menghitungnya setelah beberapa detik.

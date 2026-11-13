@@ -50,15 +50,21 @@ public class ProfileTabsTest {
                 ProfileTabs.namesFor("shop")));
     }
 
-    @Test public void videosStaysWhateverTheNamesSay() {
-        List<Integer> types = Arrays.asList(0, 15);
-        List<?> kept = ProfileTabs.filter(types, NAMES, Set.of(ProfileTabs.VIDEOS, "profile_tab_repost"));
-        assertEquals(List.of(0), kept);
+    @Test public void videosAndTheAiTabGoWhenPicked() {
+        // #399 swipes only between Favorites and Liked: Videos, Stickers, AI theater, Private and
+        // Reposts all picked.
+        List<Integer> types = Arrays.asList(0, 16, 21, 10, 15, 6, 2);
+        assertEquals(List.of(6, 2), ProfileTabs.filter(types, NAMES,
+                ProfileTabs.namesFor("videos, sticker, cast, private, repost")));
+        assertEquals(Set.of(ProfileTabs.VIDEOS, "profile_tab_cast"), ProfileTabs.namesFor("Videos\ncast"));
     }
 
     @Test public void theStripIsNeverLeftEmpty() {
         List<Integer> types = Arrays.asList(15, 2);
         assertSame(types, ProfileTabs.filter(types, NAMES, ProfileTabs.namesFor("repost, like")));
+        List<Integer> all = Arrays.asList(0, 10);
+        assertSame("every tab picked, so TikTok's strip", all,
+                ProfileTabs.filter(all, NAMES, ProfileTabs.namesFor("videos, private")));
     }
 
     @Test public void nothingPickedOnTheStripKeepsThePagersOwnList() {

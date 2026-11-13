@@ -217,8 +217,8 @@ Got it	فهمت
 Hide profile shortcuts	إخفاء اختصارات الملف الشخصي
 # context: Title of the checklist that hides tabs from the strip above a profile's videos
 Hide profile tabs	إخفاء علامات تبويب الملف الشخصي
-# context: Note under that title. Reposts and Liked videos are two of the checklist's rows, Videos is the profile's first tab
-Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos. The Videos tab always stays. Restart TikTok to apply this.	اختر علامات التبويب التي تريد إخفاءها من الشريط فوق فيديوهات الملف الشخصي، مثل إعادات النشر أو الفيديوهات التي أعجبتك. تبقى علامة تبويب الفيديوهات دائمًا. أعد تشغيل TikTok لتطبيق هذا.
+# context: Note under that title. Reposts and Liked videos are two of the checklist's rows, and the checklist never takes away every tab
+Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos. One tab always stays. Restart TikTok to apply this.	اختر علامات التبويب التي تريد إخفاءها من الشريط فوق فيديوهات الملف الشخصي، مثل إعادات النشر أو الفيديوهات التي أعجبتك. تبقى علامة تبويب واحدة دائمًا. أعد تشغيل TikTok لتطبيق هذا.
 # context: Checklist row for the profile tab with the account's private videos (lock icon)
 Private videos	الفيديوهات الخاصة
 # context: Checklist row for the profile tab with the videos the account reposted
@@ -233,6 +233,8 @@ Effects	التأثيرات
 Series	المسلسلات
 # context: Checklist row for the profile tab with the account's stickers
 Stickers	الملصقات
+# context: Checklist row for the profile tab TikTok calls AI theater, with the account's AI-made videos
+AI theater	مسرح الذكاء الاصطناعي
 Hide profile shortcuts by name	إخفاء اختصارات الملف الشخصي بالاسم
 Hide the status bar in LIVE rooms	إخفاء شريط الحالة في غرف LIVE
 How much of a video you watch before it's hidden next time. Zero counts it after a few seconds.	مقدار ما تشاهده من مقطع فيديو قبل أن يخفى في المرة القادمة. الصفر يحتسبه بعد بضع ثوان.

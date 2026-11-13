@@ -777,7 +777,7 @@ Hide playlist videos,Ẩn video trong danh sách phát
 "Hide posts only a creator's subscribers can watch, the ones with a lock, on the feed and on profiles.",Ẩn các bài đăng có biểu tượng khóa (chỉ dành riêng cho người đăng ký kênh của nhà sáng tạo) trên bảng tin và trên trang cá nhân.
 Hide profile shortcuts,Ẩn lối tắt trang cá nhân
 Hide profile tabs,Ẩn thẻ trang cá nhân
-"Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos. The Videos tab always stays. Restart TikTok to apply this.","Chọn các thẻ cần ẩn khỏi dải phía trên video của trang cá nhân, chẳng hạn Đăng lại hoặc Video đã thích. Thẻ Video luôn được giữ lại. Khởi động lại TikTok để áp dụng."
+"Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos. One tab always stays. Restart TikTok to apply this.","Chọn các thẻ cần ẩn khỏi dải phía trên video của trang cá nhân, chẳng hạn Đăng lại hoặc Video đã thích. Luôn giữ lại một thẻ. Khởi động lại TikTok để áp dụng."
 Private videos,Video riêng tư
 Reposts,Đăng lại
 Favorites,Yêu thích
@@ -785,6 +785,7 @@ Music,Âm nhạc
 Effects,Hiệu ứng
 Series,Phim bộ
 Stickers,Nhãn dán
+AI theater,Rạp AI
 Hide profile shortcuts by name,Ẩn lối tắt trang cá nhân theo tên
 Hide profile views,Ẩn lượt xem trang cá nhân
 Hide promotional music,Ẩn nhạc quảng cáo

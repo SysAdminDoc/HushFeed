@@ -161,8 +161,8 @@ Got it	รับทราบ
 Hide profile shortcuts	ซ่อนทางลัดในโปรไฟล์
 # context: Title of the checklist that hides tabs from the strip above a profile's videos
 Hide profile tabs	ซ่อนแท็บในโปรไฟล์
-# context: Note under that title. Reposts and Liked videos are two of the checklist's rows, Videos is the profile's first tab
-Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos. The Videos tab always stays. Restart TikTok to apply this.	เลือกแท็บที่จะซ่อนจากแถบเหนือวิดีโอของโปรไฟล์ เช่น รีโพสต์ หรือ วิดีโอที่ถูกใจ แท็บวิดีโอจะอยู่เสมอ รีสตาร์ท TikTok เพื่อนำการเปลี่ยนแปลงนี้ไปใช้
+# context: Note under that title. Reposts and Liked videos are two of the checklist's rows, and the checklist never takes away every tab
+Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos. One tab always stays. Restart TikTok to apply this.	เลือกแท็บที่จะซ่อนจากแถบเหนือวิดีโอของโปรไฟล์ เช่น รีโพสต์ หรือ วิดีโอที่ถูกใจ จะเหลือแท็บไว้อย่างน้อยหนึ่งแท็บเสมอ รีสตาร์ท TikTok เพื่อนำการเปลี่ยนแปลงนี้ไปใช้
 # context: Checklist row for the profile tab with the account's private videos (lock icon)
 Private videos	วิดีโอส่วนตัว
 # context: Checklist row for the profile tab with the videos the account reposted
@@ -177,6 +177,8 @@ Effects	เอฟเฟกต์
 Series	ซีรีส์
 # context: Checklist row for the profile tab with the account's stickers
 Stickers	สติกเกอร์
+# context: Checklist row for the profile tab TikTok calls AI theater, with the account's AI-made videos
+AI theater	โรงละคร AI
 Hide profile shortcuts by name	ซ่อนทางลัดในโปรไฟล์ตามชื่อ
 Hide the status bar in LIVE rooms	ซ่อนแถบสถานะในห้อง LIVE
 How much of a video you watch before it's hidden next time. Zero counts it after a few seconds.	สัดส่วนของวิดีโอที่คุณรับชมก่อนที่จะถูกซ่อนในครั้งต่อไป หากตั้งเป็นศูนย์จะนับหลังจากผ่านไปไม่กี่วินาที

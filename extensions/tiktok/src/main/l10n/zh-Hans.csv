@@ -733,7 +733,7 @@ Hide playlist videos,隐藏播放列表视频
 Hide subscriber-only videos,隐藏仅限订阅者的视频
 Hide profile shortcuts,隐藏个人资料快捷方式
 Hide profile tabs,隐藏个人资料标签页
-"Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos. The Videos tab always stays. Restart TikTok to apply this.",选择要在个人资料视频上方的标签栏中隐藏的标签页，例如转发或喜欢的视频。视频标签页始终保留。重新启动 TikTok 以应用此操作.
+"Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos. One tab always stays. Restart TikTok to apply this.",选择要在个人资料视频上方的标签栏中隐藏的标签页，例如转发或喜欢的视频。始终保留一个标签页。重新启动 TikTok 以应用此操作.
 Private videos,私密视频
 Reposts,转发
 Favorites,收藏
@@ -741,6 +741,7 @@ Music,音乐
 Effects,特效
 Series,系列
 Stickers,贴纸
+AI theater,AI 剧场
 Hide profile shortcuts by name,按名称隐藏配置文件快捷方式
 Hide profile views,隐藏个人资料视图
 Hide promotional music,隐藏促销音乐

@@ -17,8 +17,9 @@ import app.morphe.extension.shared.Logger;
 import app.morphe.extension.tiktok.settings.Settings;
 
 /**
- * Hides the tabs you pick from the strip over a profile's videos: Private, Reposts, Favorites,
- * Liked, Shop and the rest. Videos is never offered and never hidden.
+ * Hides the tabs you pick from the strip over a profile's videos: Videos, Private, Reposts,
+ * Favorites, Liked, Shop and the rest. The strip always keeps one tab, and with Videos gone the
+ * profile opens on the first tab left, which TikTok's pager already copes with (#399).
  *
  * <p>TikTok's profile pager asks for the tab types it is about to lay out, a list of numbers, and
  * builds one tab for each. The numbers are TikTok's own and can move between builds, so they are
@@ -47,6 +48,7 @@ public final class ProfileTabs {
     }
 
     public static final List<Row> ROWS = List.of(
+            new Row("videos", "Videos", VIDEOS),
             new Row("private", "Private videos", "profile_tab_private"),
             new Row("repost", "Reposts", "profile_tab_repost"),
             new Row("favorite", "Favorites", "profile_tab_favorite"),
@@ -56,7 +58,8 @@ public final class ProfileTabs {
             new Row("effect", "Effects", "profile_tab_effect"),
             new Row("series", "Series", "profile_tab_short_drama", "profile_tab_drama_download",
                     "profile_tab_pine_drama_watch_history"),
-            new Row("sticker", "Stickers", "profile_tab_sticker_store"));
+            new Row("sticker", "Stickers", "profile_tab_sticker_store"),
+            new Row("cast", "AI theater", "profile_tab_cast"));
 
     private static volatile Map<Integer, String> tabNames;
 
@@ -104,7 +107,7 @@ public final class ProfileTabs {
         List<Object> kept = new ArrayList<>(types.size());
         for (Object type : types) {
             Object name = names.get(type);
-            boolean hide = name instanceof String && !VIDEOS.equals(name) && hidden.contains(name);
+            boolean hide = name instanceof String && hidden.contains(name);
             Logger.printDebug(() -> "Profile tabs: " + type + " " + name + (hide ? " hidden" : " kept"));
             if (!hide) kept.add(type);
         }

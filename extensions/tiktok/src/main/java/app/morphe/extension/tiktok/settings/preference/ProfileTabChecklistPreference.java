@@ -46,7 +46,7 @@ public final class ProfileTabChecklistPreference extends DialogPreference {
         super(context);
         setKey("profile_tab_checklist");
         setTitle("Hide profile tabs");
-        setSummary("Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos. The Videos tab always stays. Restart TikTok to apply this.");
+        setSummary("Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos. One tab always stays. Restart TikTok to apply this.");
     }
 
     @Override

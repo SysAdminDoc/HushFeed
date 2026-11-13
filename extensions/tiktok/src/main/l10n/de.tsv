@@ -161,8 +161,8 @@ Got it	Verstanden
 Hide profile shortcuts	Profil-Verknüpfungen ausblenden
 # context: Title of the checklist that hides tabs from the strip above a profile's videos
 Hide profile tabs	Profil-Tabs ausblenden
-# context: Note under that title. Reposts and Liked videos are two of the checklist's rows, Videos is the profile's first tab
-Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos. The Videos tab always stays. Restart TikTok to apply this.	Wähle die Tabs, die über den Videos eines Profils ausgeblendet werden, etwa Reposts oder Gelikte Videos. Der Videos-Tab bleibt immer. TikTok neu starten, damit das gilt.
+# context: Note under that title. Reposts and Liked videos are two of the checklist's rows, and the checklist never takes away every tab
+Pick the tabs to hide from the strip above a profile's videos, such as Reposts or Liked videos. One tab always stays. Restart TikTok to apply this.	Wähle die Tabs, die über den Videos eines Profils ausgeblendet werden, etwa Reposts oder Gelikte Videos. Ein Tab bleibt immer. TikTok neu starten, damit das gilt.
 # context: Checklist row for the profile tab with the account's private videos (lock icon)
 Private videos	Private Videos
 # context: Checklist row for the profile tab with the videos the account reposted
@@ -177,6 +177,8 @@ Effects	Effekte
 Series	Serien
 # context: Checklist row for the profile tab with the account's stickers
 Stickers	Sticker
+# context: Checklist row for the profile tab TikTok calls AI theater, with the account's AI-made videos
+AI theater	KI-Theater
 Hide profile shortcuts by name	Profil-Verknüpfungen nach Namen ausblenden
 Hide the status bar in LIVE rooms	Statusleiste in LIVE-Räumen ausblenden
 How much of a video you watch before it's hidden next time. Zero counts it after a few seconds.	Wie viel eines Videos du ansiehst, bevor es beim nächsten Mal ausgeblendet wird. Bei null zählt es nach wenigen Sekunden.

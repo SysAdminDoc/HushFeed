@@ -2806,6 +2806,92 @@ public final class Probe extends Instrumentation {
                         Log.i(TAG, "ok fields" + out);
                         break;
                     }
+                    case "splitstate": {
+                        // TikTok's split comment containers after a fold or a rebuild (#398): its
+                        // static registry, keyed HOME_ or FRIENDS_FEED_ plus an activity's hash,
+                        // with each container alive or gone and whether it says split (LJIIL),
+                        // then the tag each feed list panel asks comments for and the activity it
+                        // is attached to, against the current activity's hash.
+                        Object current = loader.loadClass("app.morphe.extension.shared.Utils").getMethod("getActivity").invoke(null);
+                        StringBuilder out = new StringBuilder(" activity=").append(current == null ? "none" : current.hashCode());
+                        // Each width the split checks could read, in dp: the activity's resources,
+                        // the application's, the system's, and the window's own bounds.
+                        if (current instanceof android.app.Activity) {
+                            android.app.Activity shown = (android.app.Activity) current;
+                            out.append(" widths res=").append(shown.getResources().getConfiguration().screenWidthDp)
+                                    .append(" app=").append(shown.getApplicationContext().getResources().getConfiguration().screenWidthDp)
+                                    .append(" sys=").append(android.content.res.Resources.getSystem().getConfiguration().screenWidthDp);
+                            if (Build.VERSION.SDK_INT >= 30) {
+                                float density = android.content.res.Resources.getSystem().getDisplayMetrics().density;
+                                out.append(" window=").append(Math.round(shown.getWindowManager().getCurrentWindowMetrics().getBounds().width() / density));
+                            }
+                        }
+                        Class<?> registry = loader.loadClass("com.ss.android.ugc.aweme.tablet.impl.business.split.split.SplitContainerManager");
+                        for (Field field : registry.getDeclaredFields()) {
+                            if (!java.lang.reflect.Modifier.isStatic(field.getModifiers())
+                                    || !java.util.Map.class.isAssignableFrom(field.getType())) continue;
+                            field.setAccessible(true);
+                            Object map = field.get(null);
+                            out.append(' ').append(field.getName()).append("={");
+                            if (map != null) {
+                                for (java.util.Map.Entry<?, ?> entry : new java.util.ArrayList<>(((java.util.Map<?, ?>) map).entrySet())) {
+                                    Object value = entry.getValue();
+                                    out.append(entry.getKey()).append("->");
+                                    if (value instanceof java.lang.ref.Reference) {
+                                        Object container = ((java.lang.ref.Reference<?>) value).get();
+                                        out.append(container == null ? "gone" : container.getClass().getName() + " split=" + callNoArg(container, "LJIIL"));
+                                    } else {
+                                        out.append(value instanceof CharSequence || value instanceof Number ? value : ref(value));
+                                    }
+                                    out.append(';');
+                                }
+                            }
+                            out.append('}');
+                        }
+                        Class<?> panelType = loader.loadClass("com.ss.android.ugc.aweme.feed.panel.BaseListFragmentPanel");
+                        Field tag = panelType.getDeclaredField("c");
+                        tag.setAccessible(true);
+                        Field owner = null;
+                        for (Class<?> c = panelType; c != null && owner == null; c = c.getSuperclass()) {
+                            try {
+                                owner = c.getDeclaredField("activity");
+                            } catch (NoSuchFieldException notHere) {
+                                // Declared further up.
+                            }
+                        }
+                        if (owner != null) owner.setAccessible(true);
+                        for (Object panel : reachableOfType(current, panelType)) {
+                            Object attached = owner == null ? null : owner.get(panel);
+                            out.append(" panel ").append(ref(panel)).append(" tag=").append(tag.get(panel))
+                                    .append(" attached=").append(attached == null ? "none" : attached.hashCode());
+                        }
+                        // The container each MainFragment's view builder kept (MainFragment.Pb() on
+                        // 47.7.3), registered or not: when the container check says no, the builder
+                        // gets back a plain view holder that never reaches the registry.
+                        java.util.ArrayDeque<Object> managers = new java.util.ArrayDeque<>();
+                        Object top = callNoArg(current, "getSupportFragmentManager");
+                        if (top != null && !"?".equals(top)) managers.add(top);
+                        while (!managers.isEmpty()) {
+                            Object manager = managers.poll();
+                            // getFragments() is renamed on 47.7.3.
+                            Object fragments = callNoArg(manager, "getFragments");
+                            if (!(fragments instanceof java.util.List)) fragments = callNoArg(manager, "LJJLIIIJLJLI");
+                            if (!(fragments instanceof java.util.List)) continue;
+                            for (Object fragment : (java.util.List<?>) fragments) {
+                                if (fragment == null) continue;
+                                if (fragment.getClass().getName().endsWith(".MainFragment")) {
+                                    Object held = callNoArg(fragment, "Pb");
+                                    out.append(" main ").append(ref(fragment)).append(" view=").append(callNoArg(fragment, "getView") != null)
+                                            .append(" holder=").append(held == null ? "none" : held.getClass().getName())
+                                            .append(" split=").append(callNoArg(held, "LJIIL"));
+                                }
+                                Object child = callNoArg(fragment, "getChildFragmentManager");
+                                if (child != null && !"?".equals(child)) managers.add(child);
+                            }
+                        }
+                        Log.i(TAG, "ok splitstate" + out);
+                        break;
+                    }
                     case "call": {
                         // A public static method of one of Hushfeed's own classes that takes no
                         // arguments, and what it returned when that is a number or a yes/no:
@@ -5426,6 +5512,59 @@ public final class Probe extends Instrumentation {
          * path it was found by. Detached pages leave the manager's added list but stay in its map
          * of active ones, one level further down, so the walk goes that deep.
          */
+        /**
+         * Every instance of a type reachable from a root through object fields, collections, maps
+         * and arrays, breadth first and bounded, without entering views, classes or text.
+         */
+        private static java.util.List<Object> reachableOfType(Object root, Class<?> type) {
+            java.util.List<Object> found = new java.util.ArrayList<>();
+            java.util.Set<Object> seen = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+            java.util.ArrayDeque<Object[]> queue = new java.util.ArrayDeque<>();
+            queue.add(new Object[] { root, 0 });
+            while (!queue.isEmpty() && seen.size() < 60000 && found.size() < 16) {
+                Object[] next = queue.poll();
+                Object value = next[0];
+                int depth = (Integer) next[1];
+                if (value == null || !seen.add(value)) continue;
+                if (type.isInstance(value)) {
+                    found.add(value);
+                    continue;
+                }
+                if (depth >= 14 || value instanceof android.view.View || value instanceof Class
+                        || value instanceof CharSequence || (value instanceof Context && value != root)) continue;
+                try {
+                    if (value instanceof java.util.Collection) {
+                        for (Object item : new java.util.ArrayList<>((java.util.Collection<?>) value)) queue.add(new Object[] { item, depth + 1 });
+                        continue;
+                    }
+                    if (value instanceof java.util.Map) {
+                        for (Object item : new java.util.ArrayList<>(((java.util.Map<?, ?>) value).values())) queue.add(new Object[] { item, depth + 1 });
+                        continue;
+                    }
+                } catch (RuntimeException unreadable) {
+                    continue;
+                }
+                if (value.getClass().isArray()) {
+                    if (!value.getClass().getComponentType().isPrimitive()) {
+                        for (Object item : (Object[]) value) queue.add(new Object[] { item, depth + 1 });
+                    }
+                    continue;
+                }
+                for (Class<?> c = value.getClass(); c != null && !c.getName().startsWith("java."); c = c.getSuperclass()) {
+                    for (Field field : c.getDeclaredFields()) {
+                        if (java.lang.reflect.Modifier.isStatic(field.getModifiers()) || field.getType().isPrimitive()) continue;
+                        try {
+                            field.setAccessible(true);
+                            queue.add(new Object[] { field.get(value), depth + 1 });
+                        } catch (ReflectiveOperationException | RuntimeException unreadable) {
+                            // Skipped.
+                        }
+                    }
+                }
+            }
+            return found;
+        }
+
         private static java.util.Map<Object, String> reachableFragments(Object manager, Class<?> fragmentType) {
             java.util.Map<Object, String> found = new java.util.IdentityHashMap<>();
             java.util.Set<Object> seen = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());

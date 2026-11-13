@@ -8,7 +8,10 @@ package app.morphe.extension.tiktok.foldable;
 
 import android.app.Activity;
 import android.content.res.Configuration;
+import android.graphics.Insets;
 import android.os.Build;
+import android.view.WindowInsets;
+import android.view.WindowMetrics;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.diagnostics.HookStatus;
@@ -25,9 +28,10 @@ public final class FoldableSplitView {
      * current with the switch on. TikTok builds the containers once, when the feed attaches, and
      * its feed activity takes size changes itself, so they stay whatever the window does next.
      *
-     * <p>The live check, container check and rebuild comparison use the same available width.
-     * {@link Configuration#screenWidthDp} takes precedence over window metrics, which may
-     * include system bars below API 35. An unavailable width is not a narrow build or a crossing.
+     * <p>The live check, container check and rebuild comparison use the same available width:
+     * a configuration TikTok hands over, else the window's own bounds without the bars and
+     * cutout a configuration's width leaves out, else the activity's configuration. An
+     * unavailable width is not a narrow build or a crossing.
      */
     private static final Map<Activity, Built> BUILT_FOR = new WeakHashMap<>();
 
@@ -82,18 +86,45 @@ public final class FoldableSplitView {
         return Build.VERSION.SDK_INT >= 24 && (activity.isInMultiWindowMode() || activity.isInPictureInPictureMode());
     }
 
-    /** Supplied width, current configuration, then current bounds when both widths are undefined. */
+    /**
+     * Supplied width, the window's bounds, then the activity's configuration. TikTok keeps the
+     * screen width its process started with in the configuration its activities report (#398),
+     * so after the feed was built again for a wider window the new activity still said the old
+     * width, the container check said no, and comments opened over the video. A configuration
+     * handed over with a change is the new one, so it still comes first.
+     */
     private static int widthDp(Activity activity, Configuration configuration) {
+        int width = configuration == null ? 0 : configuration.screenWidthDp;
+        if (width <= 0) width = windowWidthDp(activity);
+        if (width > 0) return width;
         try {
-            int width = configuration == null ? 0 : configuration.screenWidthDp;
-            if (width <= 0) width = activity.getResources().getConfiguration().screenWidthDp;
-            if (width <= 0 && Build.VERSION.SDK_INT >= 30) {
-                float density = activity.getResources().getDisplayMetrics().density;
-                if (density > 0) width = Math.round(activity.getWindowManager().getCurrentWindowMetrics().getBounds().width() / density);
-            }
-            return width;
+            return activity.getResources().getConfiguration().screenWidthDp;
         } catch (RuntimeException error) {
             Logger.printException(() -> "Could not determine the comment panel width", error);
+            return 0;
+        }
+    }
+
+    /**
+     * The window's width in dp, or 0 below API 30 or when it can't be read. A configuration's
+     * width leaves out the system bars and cutout below API 35 and for apps targeting less, so
+     * they come off here too and the build record and later changes compare the same thing.
+     */
+    private static int windowWidthDp(Activity activity) {
+        if (Build.VERSION.SDK_INT < 30) return 0;
+        try {
+            WindowMetrics metrics = activity.getWindowManager().getCurrentWindowMetrics();
+            int width = metrics.getBounds().width();
+            if (Build.VERSION.SDK_INT < 35 || activity.getApplicationInfo().targetSdkVersion < 35) {
+                Insets bars = metrics.getWindowInsets().getInsetsIgnoringVisibility(
+                        WindowInsets.Type.systemBars() | WindowInsets.Type.displayCutout());
+                width -= bars.left + bars.right;
+            }
+            float density = Build.VERSION.SDK_INT >= 34 ? metrics.getDensity()
+                    : activity.getResources().getDisplayMetrics().density;
+            return density > 0 && width > 0 ? Math.round(width / density) : 0;
+        } catch (RuntimeException error) {
+            Logger.printException(() -> "Could not read the window width", error);
             return 0;
         }
     }

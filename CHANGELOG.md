@@ -21,6 +21,7 @@ Every Hushfeed release, newest first.
 * With a password on `Network proxy`, the small relay TikTok signs in through only connects to the domains TikTok uses. Another app on the phone could reach it while TikTok was open and send its own traffic through your proxy. Now it gets turned away.
 * `Hide the Hushfeed row` only takes the row out of Settings and privacy while holding For You or Home really opens Hushfeed settings. Hiding the feed tab strip or pointing For You at your watch history used to leave no way back in. Now the row stays until a long press works again (#244).
 * `Fill the screen with the video` leaves wide and square videos whole. On a tall phone it used to zoom them in until they covered the screen, so you only saw the middle of a landscape video. Tall videos still lose the black strip under them (#394).
+* `Foldable split comment view` puts comments beside the video after you unfold with TikTok open. TikTok rebuilt the feed for the wider screen but still reported the folded width, so comments kept opening over the video until a restart. Folding back now drops the side panel too (#398).
 
 ## 0.82.0 (2026-11-12)
 

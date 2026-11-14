@@ -4642,6 +4642,30 @@ public final class Probe extends Instrumentation {
                     out.append(' ').append(source.getIntrinsicWidth()).append('x').append(source.getIntrinsicHeight())
                             .append(' ').append(image.getScaleType());
                 }
+                // An icon class that paints a box of its own from a field (LIVE's LiveIconView)
+                // shows no background: each Drawable field it holds, with its tint and filter.
+                for (Class<?> type = view.getClass(); type != null && type != android.widget.ImageView.class; type = type.getSuperclass()) {
+                    for (Field field : type.getDeclaredFields()) {
+                        if (java.lang.reflect.Modifier.isStatic(field.getModifiers())
+                                || !android.graphics.drawable.Drawable.class.isAssignableFrom(field.getType())) continue;
+                        try {
+                            field.setAccessible(true);
+                            android.graphics.drawable.Drawable held = (android.graphics.drawable.Drawable) field.get(view);
+                            out.append(" field ").append(type.getSimpleName()).append('.').append(field.getName())
+                                    .append('=').append(describeDrawable(held, 0));
+                            if (held != null) {
+                                out.append(" class=").append(held.getClass().getName());
+                                if (held.getColorFilter() != null) out.append(" filter=").append(held.getColorFilter().getClass().getSimpleName());
+                                if (android.os.Build.VERSION.SDK_INT >= 29 && held instanceof android.graphics.drawable.ColorStateListDrawable) {
+                                    out.append(" csl=#").append(Integer.toHexString(((android.graphics.drawable.ColorStateListDrawable) held)
+                                            .getColorStateList().getDefaultColor()));
+                                }
+                            }
+                        } catch (ReflectiveOperationException | RuntimeException failure) {
+                            out.append(" field ").append(field.getName()).append("=?");
+                        }
+                    }
+                }
             }
             if (view.getAlpha() < 1f) out.append(" alpha=").append(view.getAlpha());
             // What this view and everything under it paints at the point, drawn again into a

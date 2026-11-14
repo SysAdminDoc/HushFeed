@@ -47,6 +47,18 @@ public final class LiveControls {
     }
 
     /**
+     * Called first in the countdown of the newer Summary card, the bottom card some rooms get
+     * instead of or beside the older one (#418). True runs the card's own hide instead, so the
+     * card never claims the bottom-card slot, and one already up goes away. Same switch as
+     * {@link #hideAiSummary()}. Paused, the switch answers off.
+     */
+    public static boolean hideNewAiSummary() {
+        boolean hide = SettingsStatus.liveControlsEnabled && Settings.HIDE_LIVE_AI_SUMMARY.get();
+        if (hide) Logger.printDebug(() -> "LIVE preview: newer Summary card hidden by its switch");
+        return hide;
+    }
+
+    /**
      * True while LIVE rooms should offer TikTok's newer quality picker and a pick should
      * carry to the next room. TikTok's own setting for both is off unless its server turns it on,
      * which leaves a quality pick only in rooms whose stream asks for the older one. Paused, the

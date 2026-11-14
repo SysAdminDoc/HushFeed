@@ -85,6 +85,18 @@ public class LiveControlsTest {
         assertFalse("the card was hidden without the LIVE controls patch", LiveControls.hideAiSummary());
     }
 
+    /** #418: the newer Summary card answers to the same switch as the older one. */
+    @Test public void newerSummaryCardFollowsTheSameSwitch() {
+        assertFalse("the newer card was hidden with the switch off", LiveControls.hideNewAiSummary());
+        Settings.HIDE_LIVE_AI_SUMMARY.save(true);
+        assertTrue("the newer card still showed with the switch on", LiveControls.hideNewAiSummary());
+        setPaused(true);
+        assertFalse("Pause left the newer card hidden", LiveControls.hideNewAiSummary());
+        setPaused(false);
+        SettingsStatus.liveControlsEnabled = false;
+        assertFalse("the newer card was hidden without the LIVE controls patch", LiveControls.hideNewAiSummary());
+    }
+
     /** #57: off, TikTok's server setting decides which rooms offer clear screen. */
     @Test public void clearScreenIsOffByDefaultAndFollowsItsSwitch() {
         assertFalse(Settings.OFFER_LIVE_CLEAR_SCREEN.defaultValue);

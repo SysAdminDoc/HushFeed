@@ -165,6 +165,40 @@ internal object LiveAiSummaryShowFingerprint : Fingerprint(
     parameters = listOf(),
 )
 
+/**
+ * The newer AI Summary card, a bottom card the LIVE preview's interaction layer loads instead of
+ * or beside the older one when the room's LiveNewAiSummaryConfig is enabled (#418). It never goes
+ * through the base widget's show, so the older card's guard can't reach it. Real-named on 47.7.3.
+ */
+internal const val LIVE_AI_SUMMARY_NEW_WIDGET =
+    "Lcom/ss/android/ugc/aweme/feed/adapter/widget/aisummary/LivePreviewAiSummaryNewWidget;"
+
+/** The room's newer-card settings, a real-named server config read through LX/1KO2 on 47.7.3. */
+internal const val LIVE_NEW_AI_SUMMARY_CONFIG = "Lcom/ss/android/ugc/aweme/ab/LiveNewAiSummaryConfig;"
+
+/**
+ * The newer card's countdown (startCountDownToShow, e2 on 47.7.3). Its bind, its slot observer
+ * and its holder-selected path all run it, and it's the only place that arms the runnable that
+ * claims the bottom-card slot and makes the card visible, after the room's delayShowInterval.
+ */
+internal object LiveAiSummaryNewCountdownFingerprint : Fingerprint(
+    definingClass = LIVE_AI_SUMMARY_NEW_WIDGET,
+    returnType = "V",
+    parameters = listOf(),
+    filters = listOf(fieldAccess(definingClass = LIVE_NEW_AI_SUMMARY_CONFIG, name = "delayShowInterval")),
+)
+
+/**
+ * The newer card's hide (f2 on 47.7.3). Handed false it sets the card's view GONE and frees the
+ * bottom-card slot, and it returns at once when the card isn't up.
+ */
+internal object LiveAiSummaryNewHideFingerprint : Fingerprint(
+    definingClass = LIVE_AI_SUMMARY_NEW_WIDGET,
+    returnType = "V",
+    parameters = listOf("Z"),
+    strings = listOf("ttlive_preview_ai_summary"),
+)
+
 /** TikTok's server setting for its newer LIVE quality picker, real-named on 47.1.4. */
 internal const val LIVE_RESOLUTION_SELECTION_SETTING =
     "Lcom/bytedance/android/livesdk/livesetting/watchlive/LiveShowResolutionSelectionSetting;"
@@ -2370,6 +2404,14 @@ val liveControlsPatch = bytecodePatch(
             "LIVE controls",
             "invoke-static {}, $EXTENSION->hideAiSummary()Z",
             "invoke-virtual {p0}, $LIVE_WIDGET_HIDE\nreturn-void",
+        )
+        // The newer card never arms its show, and one already up (the switch flipped while it
+        // showed) goes through the card's own hide, which frees the bottom-card slot.
+        val newHide = LiveAiSummaryNewHideFingerprint.method
+        LiveAiSummaryNewCountdownFingerprint.method.guardAtEntry(
+            "LIVE controls",
+            "invoke-static {}, $EXTENSION->hideNewAiSummary()Z",
+            "const/4 v0, 0x0\ninvoke-virtual {p0, v0}, $LIVE_AI_SUMMARY_NEW_WIDGET->${newHide.name}(Z)V\nreturn-void",
         )
         // Both answer true while the switch is on; every other reader of the setting goes
         // through these two.

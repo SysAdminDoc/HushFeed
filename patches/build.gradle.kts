@@ -592,6 +592,20 @@ object NativeTestAreas {
                 .filter { (_, prefix) -> folder == prefix || folder.startsWith("$prefix/") }
                 .maxByOrNull { it.second.length }?.first ?: SHARED
         }
+        val sourceFiles = sourceRoot.walkTopDown().filter { it.isFile }.map { it.relativeTo(sourceRoot).invariantSeparatorsPath }.toSortedSet()
+        val byFileName = sourceFiles.groupBy { it.substringAfterLast('/') }
+        val sourceFolders = HashSet<String>()
+        for (file in sourceFiles) {
+            var folder = file.substringBeforeLast('/', "")
+            while (folder.isNotEmpty() && sourceFolders.add(folder)) folder = folder.substringBeforeLast('/', "")
+        }
+        // Whether a test class's string names a patch source file or folder that exists. Every class's
+        // own name matches sourcePath and its SourceFile matches sourceName, and neither names one.
+        fun namesSource(part: Outer, text: String): Boolean {
+            sourcePath.matchEntire(text)?.let { val path = it.groupValues[1]; return path in sourceFiles || path in sourceFolders }
+            val fileName = sourceName.find(text)?.groupValues?.get(1) ?: return false
+            return fileName !in part.sourceFiles && fileName in byFileName
+        }
         // Why a test can't run on its area's slice: it walks the source tree, scans the classpath
         // or reads a repository file that is not a patch source.
         fun needsEverything(test: Outer): String? {
@@ -606,7 +620,7 @@ object NativeTestAreas {
             // A test that names a file under the root reads that file, which becomes its input, and
             // the walk it reaches is another one (Fixtures lists the fixture folder).
             val walker = parts.firstOrNull { part -> part.members.any { it in walks } } ?: return null
-            if (parts.any { part -> part.strings.any { sourcePath.matchEntire(it) != null || sourceName.find(it) != null } }) return null
+            if (parts.any { part -> part.strings.any { namesSource(part, it) } }) return null
             for (part in parts) {
                 part.strings.firstOrNull { "src/main" in it && ' ' !in it && sourcePath.matchEntire(it) == null }
                     ?.let { return "walks $it from ${part.name} in ${walker.name}" }
@@ -625,8 +639,6 @@ object NativeTestAreas {
         val empty = seeds.filterValues { it.isEmpty() }.keys
         if (empty.isNotEmpty()) throw GradleException("nativeTest areas with no test classes: $empty")
 
-        val sourceFiles = sourceRoot.walkTopDown().filter { it.isFile }.map { it.relativeTo(sourceRoot).invariantSeparatorsPath }.toSortedSet()
-        val byFileName = sourceFiles.groupBy { it.substringAfterLast('/') }
         output.deleteRecursively()
         val summary = StringBuilder()
         for ((area, members) in seeds) {

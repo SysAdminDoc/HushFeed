@@ -3032,10 +3032,10 @@ final class L10nTranslationsTh {
                 "ในแท็บเพื่อน ให้ซ่อนโพสต์ รีโพสต์ และ LIVE จากบัญชีที่ไม่ได้ติดตามซึ่งกันและกัน รวมถึงบัญชีที่แนะนำด้วย โพสต์ของคุณเองจะยังคงอยู่");
         table.put("On the main feed, a light tick each time the glass lens passes a tab, as it slides after a tap or under your finger. Needs Glass lens on the current tab.",
                 "ในฟีดหลัก จะมีการสั่นเบาๆ ทุกครั้งที่เลนส์กระจกเลื่อนผ่านแท็บ ไม่ว่าจะเลื่อนหลังจากการแตะหรือเลื่อนตามนิ้วของคุณ จำเป็นต้องเปิดใช้เลนส์กระจกบนแท็บปัจจุบัน");
-        table.put("On the main feed, a raised bubble of glass sits behind the tab you're on and slides to the next tab you pick. Needs Liquid glass look.",
-                "ในฟีดหลัก ฟองกระจกนูนจะปรากฏอยู่ด้านหลังแท็บที่คุณใช้งานอยู่และเลื่อนไปยังแท็บถัดไปที่คุณเลือก จำเป็นต้องเปิดใช้รูปลักษณ์ Liquid glass");
-        table.put("On the main feed, slide a finger along the glass pill and the lens follows it. Let go and that tab opens. Taps and long presses work as before. Needs Glass lens on the current tab.",
-                "ในฟีดหลัก ให้เลื่อนนิ้วไปตามแถบแคปซูลกระจกแล้วเลนส์จะเลื่อนตาม เมื่อปล่อยนิ้ว แท็บนั้นจะเปิดขึ้น การแตะและการกดค้างจะยังคงใช้งานได้ตามปกติ จำเป็นต้องเปิดใช้เลนส์กระจกบนแท็บปัจจุบัน");
+        table.put("On the main feed, a raised bubble of glass sits behind the tab you're on and slides to the next tab you pick. Works on any bottom bar, with or without Liquid glass look.",
+                "ในฟีดหลัก ฟองกระจกนูนจะปรากฏอยู่ด้านหลังแท็บที่คุณใช้งานอยู่และเลื่อนไปยังแท็บถัดไปที่คุณเลือก ใช้ได้กับแถบด้านล่างทุกแบบ ไม่ว่าจะเปิดรูปลักษณ์ Liquid glass หรือไม่");
+        table.put("On the main feed, slide a finger along the tabs and the lens follows it. Let go and that tab opens. Taps and long presses work as before. Needs Glass lens on the current tab.",
+                "ในฟีดหลัก ให้เลื่อนนิ้วไปตามแท็บแล้วเลนส์จะเลื่อนตาม เมื่อปล่อยนิ้ว แท็บนั้นจะเปิดขึ้น การแตะและการกดค้างจะยังคงใช้งานได้ตามปกติ จำเป็นต้องเปิดใช้เลนส์กระจกบนแท็บปัจจุบัน");
         table.put("On. Hushfeed hasn't seen TikTok send any reports since it started.",
                 "เปิด Hushfeed ยังไม่พบว่า TikTok ส่งการรายงานใดๆ นับตั้งแต่เริ่มทำงาน");
         table.put("Once a day when TikTok opens, ask GitHub if a newer Hushfeed is out and show a card when it is. The request carries your Hushfeed version and nothing else.",

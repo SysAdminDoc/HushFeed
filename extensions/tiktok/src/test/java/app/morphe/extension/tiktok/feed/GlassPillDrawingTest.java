@@ -89,6 +89,65 @@ public class GlassPillDrawingTest {
                 Math.abs(light(clear) - light(GRAY)) < Math.abs(light(frosted) - light(GRAY)));
     }
 
+    /** A W x H bar of five 80 px tabs, the middle one selected, wearing {@code background}. */
+    private static void barWearing(Drawable background) {
+        android.content.Context context = RuntimeEnvironment.getApplication();
+        android.widget.LinearLayout bar = new android.widget.LinearLayout(context);
+        for (int i = 0; i < 5; i++) {
+            bar.addView(new android.view.View(context), new android.widget.LinearLayout.LayoutParams(80, H));
+        }
+        bar.measure(android.view.View.MeasureSpec.makeMeasureSpec(W, android.view.View.MeasureSpec.EXACTLY),
+                android.view.View.MeasureSpec.makeMeasureSpec(H, android.view.View.MeasureSpec.EXACTLY));
+        bar.layout(0, 0, W, H);
+        bar.getChildAt(2).setSelected(true);
+        bar.setBackground(background);
+    }
+
+    /**
+     * The lens on TikTok's own bar (#416): TikTok's color everywhere but behind the selected
+     * tab, a lighter bubble there on a dark bar, and a darker one on a white bar, where white
+     * glass wouldn't show. A bar background that isn't a plain color gets the same.
+     */
+    @Test
+    public void theLensShowsOnTikToksOwnDarkAndWhiteBars() {
+        SeeThroughBottomBar.ColorLensBackground dark = new SeeThroughBottomBar.ColorLensBackground(Color.BLACK, false, 1f);
+        barWearing(dark);
+        Bitmap onDark = drawn(dark);
+        assertEquals("TikTok's color didn't draw", Color.BLACK, onDark.getPixel(40, H / 2));
+        int darkLens = onDark.getPixel(W / 2, H / 2);
+        assertTrue("no lens on the dark bar: " + Integer.toHexString(darkLens), light(darkLens) > light(Color.BLACK) + 60);
+
+        SeeThroughBottomBar.ColorLensBackground white = new SeeThroughBottomBar.ColorLensBackground(Color.WHITE, false, 1f);
+        barWearing(white);
+        Bitmap onWhite = drawn(white);
+        assertEquals(Color.WHITE, onWhite.getPixel(40, H / 2));
+        int whiteLens = onWhite.getPixel(W / 2, H / 2);
+        assertTrue("the lens on the white bar doesn't show: " + Integer.toHexString(whiteLens),
+                light(whiteLens) < light(Color.WHITE) - 30);
+
+        android.graphics.drawable.GradientDrawable shape = new android.graphics.drawable.GradientDrawable();
+        shape.setColor(Color.WHITE);
+        SeeThroughBottomBar.LensOverBackground over = new SeeThroughBottomBar.LensOverBackground(shape, 1f);
+        barWearing(over);
+        Bitmap onShape = drawn(over);
+        assertEquals(Color.WHITE, onShape.getPixel(40, H / 2));
+        assertTrue("the lens on a white shape doesn't show",
+                light(onShape.getPixel(W / 2, H / 2)) < light(Color.WHITE) - 30);
+    }
+
+    /** The clear bar's lens (#416): the video untouched around it, lighter behind the selected tab. */
+    @Test
+    public void theLensShowsOnTheClearBar() {
+        SeeThroughBottomBar.ColorLensBackground clear =
+                new SeeThroughBottomBar.ColorLensBackground(Color.TRANSPARENT, true, 1f);
+        barWearing(clear);
+        Bitmap bitmap = drawn(clear);
+        assertEquals("the clear bar covered the video", GRAY, bitmap.getPixel(40, H / 2));
+        assertTrue("no lens on the clear bar", light(bitmap.getPixel(W / 2, H / 2)) > light(GRAY) + 30);
+        clear.setAlpha(0);
+        assertEquals("a faded bar still drew its lens", GRAY, drawn(clear).getPixel(W / 2, H / 2));
+    }
+
     @Test
     public void aFadedGlassDrawsNothing() {
         SeeThroughBottomBar.GlassPill pill = new SeeThroughBottomBar.GlassPill(1f);

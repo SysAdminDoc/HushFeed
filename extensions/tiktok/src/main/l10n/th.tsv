@@ -2293,9 +2293,9 @@ Most see-through	โปร่งใสมากที่สุด
 More see-through	โปร่งใสขึ้น
 Frosted	กระจกฝ้า
 How much of the video shows through the glass pill on the main feed. Most see-through shows the most and Frosted the least.	ระดับที่วิดีโอจะมองทะลุผ่านแถบแคปซูลกระจกบนฟีดหลัก ตัวเลือกโปร่งใสมากที่สุดจะมองเห็นได้มากที่สุด และกระจกฝ้าจะมองเห็นได้น้อยที่สุด
-On the main feed, a raised bubble of glass sits behind the tab you're on and slides to the next tab you pick. Needs Liquid glass look.	ในฟีดหลัก ฟองกระจกนูนจะปรากฏอยู่ด้านหลังแท็บที่คุณใช้งานอยู่และเลื่อนไปยังแท็บถัดไปที่คุณเลือก จำเป็นต้องเปิดใช้รูปลักษณ์ Liquid glass
+On the main feed, a raised bubble of glass sits behind the tab you're on and slides to the next tab you pick. Works on any bottom bar, with or without Liquid glass look.	ในฟีดหลัก ฟองกระจกนูนจะปรากฏอยู่ด้านหลังแท็บที่คุณใช้งานอยู่และเลื่อนไปยังแท็บถัดไปที่คุณเลือก ใช้ได้กับแถบด้านล่างทุกแบบ ไม่ว่าจะเปิดรูปลักษณ์ Liquid glass หรือไม่
 Slide across the tabs	เลื่อนผ่านแท็บต่างๆ
-On the main feed, slide a finger along the glass pill and the lens follows it. Let go and that tab opens. Taps and long presses work as before. Needs Glass lens on the current tab.	ในฟีดหลัก ให้เลื่อนนิ้วไปตามแถบแคปซูลกระจกแล้วเลนส์จะเลื่อนตาม เมื่อปล่อยนิ้ว แท็บนั้นจะเปิดขึ้น การแตะและการกดค้างจะยังคงใช้งานได้ตามปกติ จำเป็นต้องเปิดใช้เลนส์กระจกบนแท็บปัจจุบัน
+On the main feed, slide a finger along the tabs and the lens follows it. Let go and that tab opens. Taps and long presses work as before. Needs Glass lens on the current tab.	ในฟีดหลัก ให้เลื่อนนิ้วไปตามแท็บแล้วเลนส์จะเลื่อนตาม เมื่อปล่อยนิ้ว แท็บนั้นจะเปิดขึ้น การแตะและการกดค้างจะยังคงใช้งานได้ตามปกติ จำเป็นต้องเปิดใช้เลนส์กระจกบนแท็บปัจจุบัน
 Haptics on the tabs	การสั่นตอบสนองบนแท็บ
 On the main feed, a light tick each time the glass lens passes a tab, as it slides after a tap or under your finger. Needs Glass lens on the current tab.	ในฟีดหลัก จะมีการสั่นเบาๆ ทุกครั้งที่เลนส์กระจกเลื่อนผ่านแท็บ ไม่ว่าจะเลื่อนหลังจากการแตะหรือเลื่อนตามนิ้วของคุณ จำเป็นต้องเปิดใช้เลนส์กระจกบนแท็บปัจจุบัน
 Haptic style	รูปแบบการสั่นตอบสนอง

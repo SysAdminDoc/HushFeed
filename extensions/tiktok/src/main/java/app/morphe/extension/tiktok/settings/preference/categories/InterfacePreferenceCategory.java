@@ -872,13 +872,13 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             addPreference(new TogglePreference(
                     context,
                     "Glass lens on the current tab",
-                    "On the main feed, a raised bubble of glass sits behind the tab you're on and slides to the next tab you pick. Needs Liquid glass look.",
+                    "On the main feed, a raised bubble of glass sits behind the tab you're on and slides to the next tab you pick. Works on any bottom bar, with or without Liquid glass look.",
                     Settings.GLASS_TAB_LENS
             ));
             addPreference(new TogglePreference(
                     context,
                     "Slide across the tabs",
-                    "On the main feed, slide a finger along the glass pill and the lens follows it. Let go and that tab opens. Taps and long presses work as before. Needs Glass lens on the current tab.",
+                    "On the main feed, slide a finger along the tabs and the lens follows it. Let go and that tab opens. Taps and long presses work as before. Needs Glass lens on the current tab.",
                     Settings.GLASS_TAB_SLIDE
             ));
             addPreference(new TogglePreference(

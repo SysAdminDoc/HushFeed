@@ -3405,10 +3405,10 @@ final class L10nTranslationsAr {
                 "في تبويب الأصدقاء، يخفي المنشورات وإعادات النشر وبثوث LIVE من الحسابات التي لا تتابعها بشكل متبادل، بما في ذلك الحسابات المقترحة. تبقى منشوراتك الخاصة كما هي.");
         table.put("On the main feed, a light tick each time the glass lens passes a tab, as it slides after a tap or under your finger. Needs Glass lens on the current tab.",
                 "في الخلاصة الرئيسية، صوت نقرة خفيفة في كل مرة تمر فيها العدسة الزجاجية فوق تبويب، أثناء انزلاقها بعد النقر أو تحت إصبعك. يتطلب «عدسة زجاجية على التبويب الحالي».");
-        table.put("On the main feed, a raised bubble of glass sits behind the tab you're on and slides to the next tab you pick. Needs Liquid glass look.",
-                "في الخلاصة الرئيسية، توجد فقاعة زجاجية بارزة خلف التبويب الذي أنت فيه وتنزلق إلى التبويب التالي الذي تختاره. يتطلب مظهر الزجاج السائل.");
-        table.put("On the main feed, slide a finger along the glass pill and the lens follows it. Let go and that tab opens. Taps and long presses work as before. Needs Glass lens on the current tab.",
-                "في الخلاصة الرئيسية، مرر إصبعك على الكبسولة الزجاجية وستتبعها العدسة. اترك إصبعك وسيفتح هذا التبويب. النقرات والضغط المطول يعملان كما في السابق. يتطلب عدسة زجاجية على التبويب الحالي.");
+        table.put("On the main feed, a raised bubble of glass sits behind the tab you're on and slides to the next tab you pick. Works on any bottom bar, with or without Liquid glass look.",
+                "في الخلاصة الرئيسية، توجد فقاعة زجاجية بارزة خلف التبويب الذي أنت فيه وتنزلق إلى التبويب التالي الذي تختاره. يعمل مع أي شريط سفلي، مع مظهر الزجاج السائل أو بدونه.");
+        table.put("On the main feed, slide a finger along the tabs and the lens follows it. Let go and that tab opens. Taps and long presses work as before. Needs Glass lens on the current tab.",
+                "في الخلاصة الرئيسية، مرر إصبعك على التبويبات وستتبعه العدسة. اترك إصبعك وسيفتح هذا التبويب. النقرات والضغط المطول يعملان كما في السابق. يتطلب عدسة زجاجية على التبويب الحالي.");
         table.put("On. Hushfeed hasn't seen TikTok send any reports since it started.",
                 "مفعّل. لم يلاحظ Hushfeed أي تقارير يرسلها TikTok منذ بدء تشغيله.");
         table.put("Once a day when TikTok opens, ask GitHub if a newer Hushfeed is out and show a card when it is. The request carries your Hushfeed version and nothing else.",

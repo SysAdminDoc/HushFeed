@@ -2533,9 +2533,9 @@ Most see-through	الأكثر شفافية
 More see-through	أكثر شفافية
 Frosted	مصنفر
 How much of the video shows through the glass pill on the main feed. Most see-through shows the most and Frosted the least.	كم يظهر من الفيديو عبر الحبة الزجاجية في الخلاصة الرئيسية. الأكثر شفافية يُظهر الأكثر، والمصنفر يُظهر الأقل.
-On the main feed, a raised bubble of glass sits behind the tab you're on and slides to the next tab you pick. Needs Liquid glass look.	في الخلاصة الرئيسية، توجد فقاعة زجاجية بارزة خلف التبويب الذي أنت فيه وتنزلق إلى التبويب التالي الذي تختاره. يتطلب مظهر الزجاج السائل.
+On the main feed, a raised bubble of glass sits behind the tab you're on and slides to the next tab you pick. Works on any bottom bar, with or without Liquid glass look.	في الخلاصة الرئيسية، توجد فقاعة زجاجية بارزة خلف التبويب الذي أنت فيه وتنزلق إلى التبويب التالي الذي تختاره. يعمل مع أي شريط سفلي، مع مظهر الزجاج السائل أو بدونه.
 Slide across the tabs	التمرير عبر التبويبات
-On the main feed, slide a finger along the glass pill and the lens follows it. Let go and that tab opens. Taps and long presses work as before. Needs Glass lens on the current tab.	في الخلاصة الرئيسية، مرر إصبعك على الكبسولة الزجاجية وستتبعها العدسة. اترك إصبعك وسيفتح هذا التبويب. النقرات والضغط المطول يعملان كما في السابق. يتطلب عدسة زجاجية على التبويب الحالي.
+On the main feed, slide a finger along the tabs and the lens follows it. Let go and that tab opens. Taps and long presses work as before. Needs Glass lens on the current tab.	في الخلاصة الرئيسية، مرر إصبعك على التبويبات وستتبعه العدسة. اترك إصبعك وسيفتح هذا التبويب. النقرات والضغط المطول يعملان كما في السابق. يتطلب عدسة زجاجية على التبويب الحالي.
 Haptics on the tabs	الاهتزاز على التبويبات
 On the main feed, a light tick each time the glass lens passes a tab, as it slides after a tap or under your finger. Needs Glass lens on the current tab.	في الخلاصة الرئيسية، صوت نقرة خفيفة في كل مرة تمر فيها العدسة الزجاجية فوق تبويب، أثناء انزلاقها بعد النقر أو تحت إصبعك. يتطلب «عدسة زجاجية على التبويب الحالي».
 Haptic style	نمط الاهتزاز

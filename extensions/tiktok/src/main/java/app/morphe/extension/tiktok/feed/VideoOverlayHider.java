@@ -488,7 +488,10 @@ public final class VideoOverlayHider {
     private static final Map<View, Float> SEEK_BARS_LIFTED = new WeakHashMap<>();
     /** Whether that pill is drawn as glass this pass (#218). */
     private static boolean glassBarNow;
-    /** Whether that glass pill carries the lens behind the selected tab this pass (#231). */
+    /**
+     * Whether the bar carries the lens behind the selected tab this pass (#231): on the glass
+     * pill, the plain pill, the clear bar or TikTok's own bar (#416).
+     */
     private static boolean lensBarNow;
     /** Whether that glass pill blurs the video behind it this pass (#231). */
     private static boolean blurBarNow;
@@ -735,7 +738,8 @@ public final class VideoOverlayHider {
             seeThroughBarNow = seeThroughBar;
             floatingBarNow = seeThroughBar && Settings.FLOATING_BOTTOM_BAR.get();
             glassBarNow = floatingBarNow && Settings.LIQUID_GLASS_BOTTOM_BAR.get();
-            lensBarNow = glassBarNow && Settings.GLASS_TAB_LENS.get();
+            // The lens rides any of the bar's looks, TikTok's own included (#416).
+            lensBarNow = !detailPager && Settings.GLASS_TAB_LENS.get();
             blurBarNow = glassBarNow && Settings.GLASS_VIDEO_BLUR.get();
             // On the S22 the main feed's room for the bar is the pager column's strip, the one an
             // opened post keeps under its comment bar; the spacer in each cell is already 0 there.
@@ -792,7 +796,7 @@ public final class VideoOverlayHider {
                     || skylight || storiesGlassNow || StoriesPillGlass.holdsAny()
                     || clearControls || detailSearchBox
                     || statusBar || seeThroughStatusBar || SeeThroughStatusBar.anyFilled()
-                    || seeThroughBar || fillUnderBar || SeeThroughBottomBar.holdsBackground()
+                    || seeThroughBar || lensBarNow || fillUnderBar || SeeThroughBottomBar.holdsBackground()
                     || openedBar != null || VideoUnderGestureBar.holdsAny()
                     || anyRail || !HIDDEN_HERE.isEmpty() || !FADED_HERE.isEmpty() || !WIDGETS_LIFTED.isEmpty()
                     || !SEEK_BARS_LIFTED.isEmpty()
@@ -2525,8 +2529,8 @@ public final class VideoOverlayHider {
                         boolean clearBar = seeThroughBarNow && !wanted;
                         // Floating bottom bar draws a rounded pill there instead (#124).
                         if (target == BOTTOM_TABS_TARGET) {
-                            SeeThroughBottomBar.setBackgroundClear(view, clearBar, floatingBarNow, glassBarNow, lensBarNow,
-                                    blurBarNow);
+                            SeeThroughBottomBar.setBackgroundClear(view, clearBar, floatingBarNow, glassBarNow,
+                                    lensBarNow && !wanted, blurBarNow);
                         }
                         if (target == BOTTOM_TABS_DIVIDER_TARGET && clearBar) {
                             setFaded(view, 100);

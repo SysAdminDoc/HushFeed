@@ -1184,12 +1184,12 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting LIQUID_GLASS_BOTTOM_BAR = new BooleanSetting(
             "liquid_glass_bottom_bar", FALSE, false, Setting.parent(FLOATING_BOTTOM_BAR));
     /**
-     * With Liquid glass look, draws a smaller piece of glass behind the selected tab that slides
-     * to the next tab picked (#231). Part of the bar's background, so the tabs and their taps
-     * don't move. Read on each layout.
+     * Draws a smaller piece of glass behind the selected tab that slides to the next tab picked
+     * (#231), over any of the bar's looks: the glass pill, the plain pill, the clear bar or
+     * TikTok's own bar (#416). Part of the bar's background, so the tabs and their taps don't
+     * move. Read on each layout.
      */
-    public static final BooleanSetting GLASS_TAB_LENS = new BooleanSetting(
-            "glass_tab_lens", FALSE, false, Setting.parent(LIQUID_GLASS_BOTTOM_BAR));
+    public static final BooleanSetting GLASS_TAB_LENS = new BooleanSetting("glass_tab_lens", FALSE);
     /**
      * With Liquid glass look on Android 12 and newer, blurs the strip of video behind the glass
      * pill instead of drawing a frost over it (#231). The strip is read back from the player's

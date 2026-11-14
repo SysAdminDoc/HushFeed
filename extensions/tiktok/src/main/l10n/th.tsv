@@ -2852,3 +2852,5 @@ Previous video	วิดีโอก่อนหน้า
 Next video	วิดีโอถัดไป
 Sort loaded videos in collections	จัดเรียงวิดีโอที่โหลดแล้วในคอลเลกชัน
 Same as Favorites grids	เหมือนกับตารางรายการโปรด
+Hide the summary on LIVE previews	ซ่อนสรุปในตัวอย่าง LIVE
+A LIVE in the feed can show a Summary card that sums up the stream. This keeps it hidden.	LIVE ในฟีดอาจแสดงการ์ดสรุปที่บอกว่าไลฟ์นั้นเกี่ยวกับอะไร การตั้งค่านี้จะซ่อนการ์ดดังกล่าวไว้

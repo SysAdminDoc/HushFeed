@@ -36,6 +36,17 @@ public final class LiveControls {
     }
 
     /**
+     * Called first in the feed LIVE preview's Summary card show (#418). True runs the card's own
+     * hide instead, the state TikTok leaves it in when a LIVE has no summary, so the card doesn't
+     * show and its show event isn't sent. Paused, the switch answers off.
+     */
+    public static boolean hideAiSummary() {
+        boolean hide = SettingsStatus.liveControlsEnabled && Settings.HIDE_LIVE_AI_SUMMARY.get();
+        if (hide) Logger.printDebug(() -> "LIVE preview: Summary card hidden by its switch");
+        return hide;
+    }
+
+    /**
      * True while LIVE rooms should offer TikTok's newer quality picker and a pick should
      * carry to the next room. TikTok's own setting for both is off unless its server turns it on,
      * which leaves a quality pick only in rooms whose stream asks for the older one. Paused, the

@@ -119,6 +119,10 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                     "A LIVE in the feed can show a Service+ line under the creator's name, such as "
                             + "Ask me anything. This keeps it hidden.",
                     Settings.HIDE_LIVE_SERVICE_PLUS));
+            addPreference(new TogglePreference(context, "Hide the summary on LIVE previews",
+                    "A LIVE in the feed can show a Summary card that sums up the stream. This keeps "
+                            + "it hidden.",
+                    Settings.HIDE_LIVE_AI_SUMMARY));
             addPreference(new TogglePreference(context, "Show exact LIVE viewer counts",
                     "A LIVE room shows how many people are watching as a rounded number like 1.2K. "
                             + "This shows the exact count instead.",

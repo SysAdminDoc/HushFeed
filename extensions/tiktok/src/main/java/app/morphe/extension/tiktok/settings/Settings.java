@@ -764,6 +764,11 @@ public class Settings extends BaseSettings {
      */
     public static final BooleanSetting HIDE_LIVE_SERVICE_PLUS = new BooleanSetting("hide_live_service_plus", FALSE);
     /**
+     * Hides the AI Summary card on a LIVE preview in the feed; the LIVE controls patch. Read each
+     * time the card would show, so no restart.
+     */
+    public static final BooleanSetting HIDE_LIVE_AI_SUMMARY = new BooleanSetting("hide_live_ai_summary", FALSE);
+    /**
      * Shows a LIVE's exact viewer count in its room instead of TikTok's rounded one; the LIVE
      * controls patch. Read each time the count is drawn, so no restart.
      */

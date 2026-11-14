@@ -145,6 +145,26 @@ internal object LivePreviewAutoEnterFingerprint : Fingerprint(
     strings = listOf("live_preview_page_enable_auto_entering_guide", "homepage_follow"),
 )
 
+/** The AI Summary card on a feed LIVE preview, real-named on 47.7.3 (#418). */
+internal const val LIVE_AI_SUMMARY_WIDGET =
+    "Lcom/ss/android/ugc/aweme/feed/adapter/widget/aisummary/LiveAiSummaryWidget;"
+
+/** The base widget's hide, which TikTok's own paths run on the card when a LIVE has no summary. */
+internal const val LIVE_WIDGET_HIDE = "Lcom/bytedance/android/widget/Widget;->hide()V"
+
+/**
+ * The card's show override. Both of its own show paths (the bind with the LIVE's summary, and a
+ * new summary arriving from the room) call the base widget's show, which lands here, and the
+ * override then sends the card's livesdk_ai_summary_show event. Returning through the card's hide
+ * at entry leaves it the way TikTok leaves a LIVE with no summary.
+ */
+internal object LiveAiSummaryShowFingerprint : Fingerprint(
+    definingClass = LIVE_AI_SUMMARY_WIDGET,
+    name = "show",
+    returnType = "V",
+    parameters = listOf(),
+)
+
 /** TikTok's server setting for its newer LIVE quality picker, real-named on 47.1.4. */
 internal const val LIVE_RESOLUTION_SELECTION_SETTING =
     "Lcom/bytedance/android/livesdk/livesetting/watchlive/LiveShowResolutionSelectionSetting;"
@@ -2327,7 +2347,7 @@ val liveControlsPatch = bytecodePatch(
         "clear screen in more LIVE rooms, and keep your quality pick after TikTok restarts. " +
         "Starts off. Turn it on in Hushfeed settings > Playback. " +
         "It also keeps a LIVE in the feed from showing the Service+ row of the LIVE before it " +
-        "(or hides that row altogether), " +
+        "(or hides that row altogether), can hide the AI summary on LIVE previews, " +
         "and can add a Record button to a LIVE room that saves what you watch from when you tap it.",
 ) {
     category("Playback")
@@ -2344,6 +2364,12 @@ val liveControlsPatch = bytecodePatch(
             "LIVE controls",
             "invoke-static {}, $EXTENSION->skipAutoEnter()Z",
             "return-void",
+        )
+        // The feed LIVE preview's Summary card hides itself instead of showing (#418).
+        LiveAiSummaryShowFingerprint.method.guardAtEntry(
+            "LIVE controls",
+            "invoke-static {}, $EXTENSION->hideAiSummary()Z",
+            "invoke-virtual {p0}, $LIVE_WIDGET_HIDE\nreturn-void",
         )
         // Both answer true while the switch is on; every other reader of the setting goes
         // through these two.

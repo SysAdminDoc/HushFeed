@@ -136,6 +136,7 @@ source,target
 8 taps a second,8 taps a second
 A LIVE in the feed can count down and take you into the room on its own. This keeps you in the feed until you tap it.,A LIVE in the feed can count down and take you into the room on its own. This keeps you in the feed until you tap it.
 "A LIVE in the feed can show a Service+ line under the creator's name, such as Ask me anything. This keeps it hidden.","A LIVE in the feed can show a Service+ line under the creator's name, such as Ask me anything. This keeps it hidden."
+A LIVE in the feed can show a Summary card that sums up the stream. This keeps it hidden.,A LIVE in the feed can show a Summary card that sums up the stream. This keeps it hidden.
 A LIVE room shows how many people are watching as a rounded number like 1.2K. This shows the exact count instead.,A LIVE room shows how many people are watching as a rounded number like 1.2K. This shows the exact count instead.
 "A LIVE you swipe to comes back with its chat, gifts and buttons showing. This keeps clear screen on from room to room until you turn it off.","A LIVE you swipe to comes back with its chat, gifts and buttons showing. This keeps clear screen on from room to room until you turn it off."
 A Lab change is already running,A Lab change is already running
@@ -998,6 +999,7 @@ Hide the status bar,Hide the status bar
 Hide the status bar in LIVE rooms,Hide the status bar in LIVE rooms
 Hide the streak button in a chat and the reminder message that goes with it.,Hide the streak button in a chat and the reminder message that goes with it.
 Hide the suggested-search strip above the bottom tabs and let video details and side controls use its space. The top search button and comments stay unchanged.,Hide the suggested-search strip above the bottom tabs and let video details and side controls use its space. The top search button and comments stay unchanged.
+Hide the summary on LIVE previews,Hide the summary on LIVE previews
 Hide the tab names above the feed,Hide the tab names above the feed
 "Hide the tags above a video's description that invite you to try an effect, a template, CapCut or an AI style. Location labels and the music line have their own switches.","Hide the tags above a video's description that invite you to try an effect, a template, CapCut or an AI style. Location labels and the music line have their own switches."
 Hide the thumbs down beside the heart on each comment. It stays while Thumbs down blocks the commenter is on.,Hide the thumbs down beside the heart on each comment. It stays while Thumbs down blocks the commenter is on.

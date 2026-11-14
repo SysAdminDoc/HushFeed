@@ -41,6 +41,7 @@ public class LiveControlsTest {
         SettingsStatus.liveControlsEnabled = false;
         Settings.STOP_LIVE_AUTO_ENTER.save(Settings.STOP_LIVE_AUTO_ENTER.defaultValue);
         Settings.HIDE_LIVE_SERVICE_PLUS.save(Settings.HIDE_LIVE_SERVICE_PLUS.defaultValue);
+        Settings.HIDE_LIVE_AI_SUMMARY.save(Settings.HIDE_LIVE_AI_SUMMARY.defaultValue);
         Settings.SHOW_EXACT_LIVE_VIEWERS.save(Settings.SHOW_EXACT_LIVE_VIEWERS.defaultValue);
         Settings.OFFER_LIVE_QUALITY.save(Settings.OFFER_LIVE_QUALITY.defaultValue);
         Settings.REMEMBER_LIVE_QUALITY.save(Settings.REMEMBER_LIVE_QUALITY.defaultValue);
@@ -69,6 +70,19 @@ public class LiveControlsTest {
         setPaused(false);
         SettingsStatus.liveControlsEnabled = false;
         assertFalse(LiveRecordChip.enabled());
+    }
+
+    /** #418: the LIVE preview's Summary card shows until switched off, and Pause shows it again. */
+    @Test public void summaryCardHidesOnlyWhileItsSwitchIsOn() {
+        assertFalse(Settings.HIDE_LIVE_AI_SUMMARY.defaultValue);
+        assertFalse("the card was hidden with the switch off", LiveControls.hideAiSummary());
+        Settings.HIDE_LIVE_AI_SUMMARY.save(true);
+        assertTrue("the card still showed with the switch on", LiveControls.hideAiSummary());
+        setPaused(true);
+        assertFalse("Pause left the card hidden", LiveControls.hideAiSummary());
+        setPaused(false);
+        SettingsStatus.liveControlsEnabled = false;
+        assertFalse("the card was hidden without the LIVE controls patch", LiveControls.hideAiSummary());
     }
 
     /** #57: off, TikTok's server setting decides which rooms offer clear screen. */

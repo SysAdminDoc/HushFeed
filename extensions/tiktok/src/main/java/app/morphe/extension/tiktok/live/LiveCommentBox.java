@@ -6,6 +6,7 @@ package app.morphe.extension.tiktok.live;
 
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -59,7 +60,9 @@ import app.morphe.extension.tiktok.theme.AmoledTheme;
  * reach. So with a picked AMOLED color other than the default black, that color is the fill, and
  * the panel's opaque near-black grays take it as well, so the bar, the picker and its boxes match.
  * The delete key's box isn't a background: TikTok's LiveIconView keeps it as the icon's own box
- * and draws it with the glyph, so that box is looked up on the view and takes the color too.
+ * and draws it with the glyph, so that box is looked up on the view and takes the color too. That
+ * box is one of TikTok's own drawables, a rounded rect that sets its paint's color on every draw,
+ * so it's read where it paints and, when that's a night gray, filtered to the color.
  */
 public final class LiveCommentBox {
     static final int TEXT = Color.WHITE;
@@ -84,6 +87,8 @@ public final class LiveCommentBox {
     private static final Map<Bitmap, Boolean> WHITE_PICTURES = Collections.synchronizedMap(new WeakHashMap<>());
     /** Each LiveIconView class's field holding its icon's box, or null when it has no single one. */
     private static final Map<Class<?>, Field> ICON_BOX_FIELDS = Collections.synchronizedMap(new WeakHashMap<>());
+    /** Drawn icon boxes read as an opaque color that isn't a night gray, so they're not read again. */
+    private static final Map<Drawable, Boolean> KEPT_BOXES = Collections.synchronizedMap(new WeakHashMap<>());
     /** How many points across and down a picture is read at. */
     private static final int SAMPLES = 12;
     private static volatile boolean frameFailureLogged;
@@ -183,7 +188,14 @@ public final class LiveCommentBox {
             if (light || night) view.invalidate();
             if (light) DARKENED.put(view, Boolean.TRUE);
         }
-        if (grays && swapFill(iconBox(view), fill, true)) view.invalidate();
+        Drawable box = grays ? iconBox(view) : null;
+        if (box != null) {
+            // Like a background, an icon's light box made dark counts as made dark, so its glyph turns light.
+            boolean light = swapBox(box, fill, false);
+            boolean night = swapBox(box, fill, true);
+            if (light || night) view.invalidate();
+            if (light) DARKENED.put(view, Boolean.TRUE);
+        }
         onDarkened |= DARKENED.containsKey(view);
         if (ownGround(view.getBackground()) || view instanceof EditText) return;
         if (view instanceof TextView || view instanceof ImageView) {
@@ -233,6 +245,48 @@ public final class LiveCommentBox {
             }
         }
         return null;
+    }
+
+    /**
+     * Gives an icon's own box the fill when it's light, or with [grays] a night gray. A fill the swap
+     * knows is swapped as usual. TikTok's drawn box (X.0fG9 on 47.7.3) sets its paint's color on
+     * every draw, so it's read where it paints, at its middle, and a match there takes the fill as a
+     * filter.
+     */
+    static boolean swapBox(Drawable box, int fill, boolean grays) {
+        if (box == null) return false;
+        if (box instanceof ColorDrawable || box instanceof GradientDrawable || box instanceof LayerDrawable
+                || box instanceof DrawableContainer || box instanceof BitmapDrawable) {
+            return swapFill(box, fill, grays);
+        }
+        if (TINTED.containsKey(box) || KEPT_BOXES.containsKey(box)) return false;
+        int painted = paintedAt(box);
+        // Not drawn yet (no bounds, or no color before its first layout): looked at again on the next.
+        if (Color.alpha(painted) != 0xFF) return false;
+        if (!swappable(painted, fill, grays)) {
+            // Only the full look settles it: a night gray box passed over for light ones is still open.
+            if (grays && (painted & 0x00FFFFFF) != (fill & 0x00FFFFFF)) KEPT_BOXES.put(box, Boolean.TRUE);
+            return false;
+        }
+        box.mutate();
+        box.setColorFilter(new PorterDuffColorFilter(fill | 0xFF000000, PorterDuff.Mode.SRC_IN));
+        TINTED.put(box, Boolean.TRUE);
+        return true;
+    }
+
+    /** The color a drawable paints at the middle of its bounds, or 0 when it has none yet. */
+    static int paintedAt(Drawable drawable) {
+        android.graphics.Rect bounds = drawable.getBounds();
+        if (bounds.isEmpty()) return 0;
+        Bitmap pixel = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
+        try {
+            Canvas canvas = new Canvas(pixel);
+            canvas.translate(-bounds.exactCenterX(), -bounds.exactCenterY());
+            drawable.draw(canvas);
+            return pixel.getPixel(0, 0);
+        } finally {
+            pixel.recycle();
+        }
     }
 
     private static Field boxField(Class<?> type) {

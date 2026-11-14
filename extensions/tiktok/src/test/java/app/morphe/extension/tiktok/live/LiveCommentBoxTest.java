@@ -6,12 +6,18 @@ package app.morphe.extension.tiktok.live;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.Paint;
+import android.graphics.PixelFormat;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -464,15 +470,118 @@ public class LiveCommentBoxTest {
         assertEquals(NIGHT_BAR, deleteBox.getColor());
     }
 
-    /** TikTok's LIVE icon view keeps its box in a field and draws it inside the icon, not as a background. */
+    /**
+     * TikTok's LIVE icon view keeps its box in a field and draws it inside the icon, not as a
+     * background. Its glyph sits in a field of a Drawable subclass's type, which isn't the box.
+     */
     static final class LiveIconView extends ImageView {
+        private final ColorDrawable glyph = new ColorDrawable(Color.WHITE);
         private Drawable iconBackground;
 
         LiveIconView(android.content.Context context, Drawable box) {
             super(context);
             iconBackground = box;
-            setImageDrawable(new ColorDrawable(Color.WHITE));
+            setImageDrawable(glyph);
         }
+    }
+
+    /** TikTok's drawn icon box (X.0fG9 on 47.7.3): a rounded rect whose paint takes its color on every draw. */
+    static final class DrawnBox extends Drawable {
+        private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        private final int color;
+
+        DrawnBox(int color) {
+            this.color = color;
+            setBounds(0, 0, 158, 113);
+        }
+
+        @Override
+        public void draw(Canvas canvas) {
+            paint.setColor(color);
+            canvas.drawRoundRect(new RectF(getBounds()), 24f, 24f, paint);
+        }
+
+        @Override
+        public void setAlpha(int alpha) {
+            paint.setAlpha(alpha);
+        }
+
+        @Override
+        public void setColorFilter(ColorFilter filter) {
+            paint.setColorFilter(filter);
+        }
+
+        @Override
+        public int getOpacity() {
+            return PixelFormat.TRANSLUCENT;
+        }
+    }
+
+    private static int middle(Drawable box) {
+        Bitmap drawn = Bitmap.createBitmap(box.getBounds().width(), box.getBounds().height(), Bitmap.Config.ARGB_8888);
+        box.draw(new Canvas(drawn));
+        return drawn.getPixel(drawn.getWidth() / 2, drawn.getHeight() / 2);
+    }
+
+    /**
+     * #329 on the S22, second pass: the delete key's box is TikTok's own drawn box, no fill the swap
+     * knows, so it's read where it paints and filtered to the picked color. A colored drawn box and
+     * one not laid out yet keep their look, and a second pass leaves the color as it is.
+     */
+    @Test
+    @Config(qualifiers = "night")
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    public void aPickedAmoledColorReachesTikToksDrawnDeleteBox() {
+        FrameLayout root = new FrameLayout(RuntimeEnvironment.getApplication());
+        FrameLayout bar = nightBar(root);
+        DrawnBox deleteBox = new DrawnBox(NIGHT_BAR);
+        bar.addView(new LiveIconView(root.getContext(), deleteBox));
+        DrawnBox pink = new DrawnBox(0xFFFE2C55);
+        bar.addView(new LiveIconView(root.getContext(), pink));
+        DrawnBox unplaced = new DrawnBox(NIGHT_BAR);
+        unplaced.setBounds(0, 0, 0, 0);
+        bar.addView(new LiveIconView(root.getContext(), unplaced));
+        layOut(root);
+
+        LiveCommentBox.darken(root, AMOLED, new ArrayList<>());
+        LiveCommentBox.darken(root, AMOLED, new ArrayList<>());
+
+        assertEquals("the delete key's drawn box", AMOLED, middle(deleteBox));
+        assertEquals("a colored drawn box keeps its color", 0xFFFE2C55, middle(pink));
+        assertNull("a box with no size yet is left for the next layout", unplaced.paint.getColorFilter());
+        unplaced.setBounds(0, 0, 158, 113);
+        LiveCommentBox.darken(root, AMOLED, new ArrayList<>());
+        assertEquals("and takes the color once it has one", AMOLED, middle(unplaced));
+    }
+
+    /**
+     * An icon's light box made dark counts as made dark, like a background, so its glyph is drawn
+     * light even inside a list. One on a night gray box was light already and is left as it is.
+     */
+    @Test
+    @Config(qualifiers = "night")
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    public void anIconsLightBoxMadeDarkInAListGetsALightGlyph() {
+        FrameLayout root = new FrameLayout(RuntimeEnvironment.getApplication());
+        FrameLayout bar = nightBar(root);
+        RecyclerView grid = new RecyclerView(root.getContext());
+        bar.addView(grid);
+        DrawnBox whiteBox = new DrawnBox(Color.WHITE);
+        LiveIconView onWhite = new LiveIconView(root.getContext(), whiteBox);
+        grid.addView(onWhite);
+        LiveIconView onNight = new LiveIconView(root.getContext(), new DrawnBox(NIGHT_BAR));
+        grid.addView(onNight);
+        layOut(root);
+
+        ArrayList<View> ink = new ArrayList<>();
+        LiveCommentBox.darken(root, AMOLED, ink);
+        assertEquals("the white box", AMOLED, middle(whiteBox));
+        assertTrue("its glyph turns light", ink.contains(onWhite));
+        assertFalse("a night gray box's glyph was light already", ink.contains(onNight));
+
+        // The box is dark already on the next pass, and its glyph is still drawn light.
+        LiveCommentBox.darken(root, AMOLED, ink);
+        assertTrue(ink.contains(onWhite));
     }
 
     /**

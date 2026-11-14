@@ -282,8 +282,9 @@ public class FeedScreenCoverageTest {
         put("glass_tab_slide", YES, NONE, NONE);
         put("glass_haptics", YES, NONE, NONE);
         put("glass_haptic_style", YES, NONE, NONE);
-        // The main feed only: an opened video keeps the strip under its own top bar (#145).
-        put("see_through_status_bar", YES, NONE, NONE);
+        // An opened video keeps the feed's status bar spacer, so it goes under the bar too (#407).
+        put("see_through_status_bar", YES, YES, NONE);
+        put("status_bar_shade", YES, YES, NONE);
         // The guard runs with the overlay pass, which walks both windows and no LIVE room.
         put("burn_in_guard", YES, YES, NONE);
 

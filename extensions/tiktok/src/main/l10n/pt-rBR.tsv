@@ -2779,3 +2779,5 @@ On screen	Na tela
 Pick at least one story	Escolha pelo menos um story
 Shade behind the status bar	Sombra atrás da barra de status
 A soft dark fade behind the clock and status icons, so they stay easy to read over a bright video. Needs See-through status bar.	Um degradê escuro suave atrás do relógio e dos ícones de status, para que fiquem fáceis de ler sobre um vídeo claro. Precisa de Barra de status transparente.
+Glass Stories button on Following	Botão de Stories de vidro em Seguindo
+The Stories button at the top of the Following feed turns to glass with round ends. On Android 12 and up, the video behind it is blurred too.	O botão de Stories no topo do feed Seguindo vira vidro com as pontas arredondadas. No Android 12 ou mais recente, o vídeo atrás dele também fica desfocado.

@@ -426,6 +426,8 @@ final class SeeThroughBottomBar {
     static final class GlassPill extends Drawable {
         private final float density;
         private final float rim;
+        /** True for the bar's pill, shaped by Pill corners and tinted by Glass opacity. */
+        private final boolean forBar;
         private final Paint tint = new Paint(Paint.ANTI_ALIAS_FLAG);
         private final Paint frost = new Paint(Paint.ANTI_ALIAS_FLAG);
         private final Paint sheen = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -434,7 +436,13 @@ final class SeeThroughBottomBar {
         private int alpha = 255;
 
         GlassPill(float density) {
+            this(density, true);
+        }
+
+        /** One not {@code forBar} has round ends and the standard tint, the Stories pill's glass (#409). */
+        GlassPill(float density, boolean forBar) {
             this.density = density;
+            this.forBar = forBar;
             rim = Math.max(1f, density);
             edge.setStyle(Paint.Style.STROKE);
             edge.setStrokeWidth(rim);
@@ -457,10 +465,11 @@ final class SeeThroughBottomBar {
             Rect bounds = getBounds();
             if (bounds.isEmpty()) return;
             box.set(bounds);
-            float radius = cornerPx(Settings.GLASS_CORNERS.get(), false, box.height(), density);
+            float radius = forBar ? cornerPx(Settings.GLASS_CORNERS.get(), false, box.height(), density)
+                    : box.height() / 2f;
             // Glass opacity scales the tint and, up to its full strength, the frost; a shader's
             // colors are scaled by its paint's alpha, the tint's own alpha is scaled here.
-            float scale = opacityScale(Settings.GLASS_OPACITY.get());
+            float scale = forBar ? opacityScale(Settings.GLASS_OPACITY.get()) : 1f;
             tint.setColor(withAlpha(GLASS_TINT, Color.alpha(GLASS_TINT) * alpha / 255f * scale));
             frost.setAlpha(Math.round(alpha * Math.min(1f, scale)));
             canvas.drawRoundRect(box, radius, radius, tint);

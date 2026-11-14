@@ -206,6 +206,8 @@ public class FeedScreenCoverageTest {
         // All and Create sit in the Following row (and the Inbox's, which is no video window).
         put("hide_following_all_button", YES, NONE, NONE);
         put("hide_story_create", YES, NONE, NONE);
+        // The Stories pill is the Following tab's, found by the main feed's overlay pass (#409).
+        put("glass_stories_pill", YES, NONE, NONE);
         // The chip is a cell component, and the feed and the detail pager build the same cell (#319).
         put("hide_repost_chip", YES, YES, NONE);
         put("hide_visual_search", YES, YES, NONE);

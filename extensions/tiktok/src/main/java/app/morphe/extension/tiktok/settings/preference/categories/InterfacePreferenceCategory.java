@@ -550,6 +550,12 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                         Settings.HIDE_FOLLOWING_LIVE_ROW
                 ));
             }
+            addPreference(new TogglePreference(
+                    context,
+                    "Glass Stories button on Following",
+                    "The Stories button at the top of the Following feed turns to glass with round ends. On Android 12 and up, the video behind it is blurred too.",
+                    Settings.GLASS_STORIES_PILL
+            ));
             if (SettingsStatus.storyRowButtonsEnabled) {
                 addPreference(new TogglePreference(
                         context,

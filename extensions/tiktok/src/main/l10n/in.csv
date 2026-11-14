@@ -2650,3 +2650,5 @@ On screen,Di layar
 Pick at least one story,Pilih setidaknya satu story
 Shade behind the status bar,Bayangan di belakang bilah status
 "A soft dark fade behind the clock and status icons, so they stay easy to read over a bright video. Needs See-through status bar.","Gradasi gelap lembut di belakang jam dan ikon status, agar tetap mudah dibaca di atas video yang terang. Perlu Bilah status transparan."
+Glass Stories button on Following,Tombol Cerita kaca di Mengikuti
+"The Stories button at the top of the Following feed turns to glass with round ends. On Android 12 and up, the video behind it is blurred too.","Tombol Cerita di bagian atas feed Mengikuti berubah jadi kaca dengan ujung bulat. Di Android 12 ke atas, video di belakangnya juga diburamkan."

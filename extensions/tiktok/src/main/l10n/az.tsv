@@ -2779,3 +2779,5 @@ On screen	Ekranda
 Pick at least one story	Ən azı bir hekayə seç
 Shade behind the status bar	Status panelinin arxasında kölgə
 A soft dark fade behind the clock and status icons, so they stay easy to read over a bright video. Needs See-through status bar.	Saat və status ikonlarının arxasında yumşaq tünd keçid, parlaq videonun üzərində asan oxunsunlar deyə. Şəffaf status paneli tələb olunur.
+Glass Stories button on Following	İzlənilənlərdə şüşə Hekayələr düyməsi
+The Stories button at the top of the Following feed turns to glass with round ends. On Android 12 and up, the video behind it is blurred too.	İzlənilənlər lentinin yuxarısındakı Hekayələr düyməsi yumru kənarlı şüşəyə çevrilir. Android 12 və daha yeni versiyalarda arxasındakı video da bulanıqlaşır.

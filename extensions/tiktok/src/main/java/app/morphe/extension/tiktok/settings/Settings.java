@@ -1096,6 +1096,11 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_FOOTNOTES = new BooleanSetting("hide_footnotes", FALSE);
     /** The LIVE and stories row across the top of the Following tab and its count pill (#262). */
     public static final BooleanSetting HIDE_FOLLOWING_LIVE_ROW = new BooleanSetting("hide_following_live_row", FALSE);
+    /**
+     * The Stories pill under the Following tab drawn as glass, with the video behind it blurred
+     * on Android 12 and newer, in place of TikTok's flat gray (#409). Read on each layout.
+     */
+    public static final BooleanSetting GLASS_STORIES_PILL = new BooleanSetting("glass_stories_pill", FALSE);
     /** The All button at the end of the Following tab's story row, which opens the following list (#308). */
     public static final BooleanSetting HIDE_FOLLOWING_ALL_BUTTON = new BooleanSetting("hide_following_all_button", FALSE, true);
     /** The Create circle at the start of the Following and Inbox story rows, while the viewer has no Story up (#309). */

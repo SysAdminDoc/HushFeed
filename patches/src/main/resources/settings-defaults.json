@@ -445,6 +445,7 @@
       "hide_feed_surveys",
       "hide_footnotes",
       "hide_following_live_row",
+      "glass_stories_pill",
       "hide_following_all_button",
       "hide_story_create",
       "hide_repost_chip",
@@ -2034,6 +2035,12 @@
     "glass_refraction": {
       "field": "GLASS_REFRACTION",
       "key": "glass_refraction",
+      "type": "boolean",
+      "default": false
+    },
+    "glass_stories_pill": {
+      "field": "GLASS_STORIES_PILL",
+      "key": "glass_stories_pill",
       "type": "boolean",
       "default": false
     },

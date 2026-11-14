@@ -2782,3 +2782,5 @@ On screen	บนหน้าจอ
 Pick at least one story	เลือกอย่างน้อยหนึ่งสตอรี่
 Shade behind the status bar	เงาด้านหลังแถบสถานะ
 A soft dark fade behind the clock and status icons, so they stay easy to read over a bright video. Needs See-through status bar.	ไล่เฉดสีเข้มแบบนุ่มนวลด้านหลังนาฬิกาและไอคอนสถานะ เพื่อให้อ่านได้ง่ายบนวิดีโอที่สว่าง ต้องเปิดใช้แถบสถานะแบบโปร่งใส
+Glass Stories button on Following	ปุ่มสตอรี่แบบกระจกในกำลังติดตาม
+The Stories button at the top of the Following feed turns to glass with round ends. On Android 12 and up, the video behind it is blurred too.	ปุ่มสตอรี่ที่ด้านบนของฟีดกำลังติดตามจะกลายเป็นกระจกที่มีปลายโค้งมน บน Android 12 ขึ้นไป วิดีโอที่อยู่ด้านหลังจะเบลอด้วย

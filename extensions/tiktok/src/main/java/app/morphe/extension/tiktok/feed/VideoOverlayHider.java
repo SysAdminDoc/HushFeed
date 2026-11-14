@@ -492,6 +492,8 @@ public final class VideoOverlayHider {
     private static boolean lensBarNow;
     /** Whether that glass pill blurs the video behind it this pass (#231). */
     private static boolean blurBarNow;
+    /** Whether the Following tab's Stories pill is drawn as glass this pass (#409). */
+    private static boolean storiesGlassNow;
 
     /**
      * Whether the current pass is in Clear display with the fade between 0 and 100 (#84). The
@@ -783,8 +785,11 @@ public final class VideoOverlayHider {
             int roomAbove = detailPager ? 0 : SeekbarTime.roomAbove();
             // The Following tab's LIVE row (#262) is the main feed's; an opened video has none.
             boolean skylight = Settings.HIDE_FOLLOWING_LIVE_ROW.get() && !detailPager && !HushfeedPause.isPaused();
+            // Its Stories pill can be glass (#409); a pill that has the glass keeps the pass going
+            // until TikTok's own background is back. An opened video over the feed keeps it as is.
+            storiesGlassNow = StoriesPillGlass.wanted();
             if (caption || music || actionBar || surveys || tabStrip || carry || detailCommentBar || anchor
-                    || skylight
+                    || skylight || storiesGlassNow || StoriesPillGlass.holdsAny()
                     || clearControls || detailSearchBox
                     || statusBar || seeThroughStatusBar || SeeThroughStatusBar.anyFilled()
                     || seeThroughBar || fillUnderBar || SeeThroughBottomBar.holdsBackground()
@@ -2532,6 +2537,7 @@ public final class VideoOverlayHider {
                         // The Following stories pill is the strip's neighbour at the top of the
                         // feed, so it fades with the tabs; it was only ever hidden (#84). The
                         // invisible controls take them to 0 as well: the button stays findable.
+                        if (target == FOLLOWING_STORY_TARGET) StoriesPillGlass.apply(view, storiesGlassNow);
                         setFaded(view, wanted ? 100 : ghostNow ? 0 : Math.max(NAVIGATION_FADE_FLOOR, fadeLevel));
                         setHidden(view, wanted);
                     } else setHidden(view, wanted);

@@ -7,10 +7,15 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
+import android.content.Context;
+import android.os.Build;
 import android.os.Looper;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.accessibility.AccessibilityEvent;
+import android.view.accessibility.AccessibilityManager;
+import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -18,6 +23,7 @@ import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
+import app.morphe.extension.tiktok.wellbeing.SessionLockOverlay;
 
 import org.junit.After;
 import org.junit.Before;
@@ -166,6 +172,172 @@ public class PauseBeforeFeedTest {
         }
     }
 
+    @Test public void aScreenReaderIsMovedOntoTheTitleWhenTheWindowComesBack() {
+        Settings.PAUSE_BEFORE_FEED_SECONDS.save(20);
+        Settings.NO_RESUME_ON_FOREGROUND.save(true);
+        try (var owner = Robolectric.buildActivity(HostActivity.class).create()) {
+            Activity activity = owner.get();
+            screenReaderOn(activity);
+            PausePlayback.install(activity);
+            View home = standOnTheFeed(activity);
+            owner.start().resume().visible();
+            Utils.setActivity(activity);
+            layout(activity);
+            TextView title = button(PausePlayback.catcherForTests(), "Pause before the feed");
+
+            // Back from the home screen the panel is up before the window has its focus back,
+            // and TalkBack reads the window and picks a stop of its own: the Home tab, on the S22.
+            owner.windowFocusChanged(true);
+            focus(home);
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(1));
+            assertTrue("TalkBack was left on the tab bar and never said the title",
+                    title.isAccessibilityFocused());
+            assertFalse(home.isAccessibilityFocused());
+
+            // A reader who has gone on to the tab bar since stays there when the window only lost
+            // its focus to the notification shade or a permission prompt.
+            focus(home);
+            owner.windowFocusChanged(false);
+            owner.windowFocusChanged(true);
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(1));
+            assertTrue("the shade closing pulled the reader back off the tab bar",
+                    home.isAccessibilityFocused());
+            assertFalse(title.isAccessibilityFocused());
+
+            // The home screen and back again: TikTok took the pause down as it went and puts a new
+            // one up, and TalkBack is on the tab again.
+            owner.windowFocusChanged(false);
+            owner.pause().stop();
+            owner.restart().resume();
+            layout(activity);
+            TextView again = button(PausePlayback.catcherForTests(), "Pause before the feed");
+            owner.windowFocusChanged(true);
+            focus(home);
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(1));
+            assertTrue("the second return left the reader on the tab bar", again.isAccessibilityFocused());
+        }
+    }
+
+    @Test public void aPauseUnderAppLockLeavesTheReaderToTheLock() {
+        Settings.PAUSE_BEFORE_FEED_SECONDS.save(20);
+        Settings.NO_RESUME_ON_FOREGROUND.save(true);
+        try (var owner = Robolectric.buildActivity(HostActivity.class).create()) {
+            Activity activity = owner.get();
+            screenReaderOn(activity);
+            PausePlayback.install(activity);
+            standOnTheFeed(activity);
+            owner.start().resume().visible();
+            Utils.setActivity(activity);
+            layout(activity);
+            TextView title = button(PausePlayback.catcherForTests(), "Pause before the feed");
+
+            // App lock covers the whole window as TikTok comes back, the pause included, and
+            // curtains everything under it the way it does in AppLock.cover.
+            ViewGroup decor = (ViewGroup) activity.getWindow().getDecorView();
+            TextView lock = new TextView(activity);
+            lock.setText("Unlock TikTok");
+            decor.addView(lock, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT));
+            SessionLockOverlay.hideBehind(decor, lock, true);
+            owner.windowFocusChanged(true);
+            focus(lock);
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(1));
+            assertFalse("the reader was moved under App lock onto a title it can't read",
+                    title.isAccessibilityFocused());
+            assertTrue(lock.isAccessibilityFocused());
+
+            // Unlocked: the fingerprint prompt goes, the cover with it, and the pause is the first
+            // thing on the window.
+            owner.windowFocusChanged(false);
+            SessionLockOverlay.hideBehind(decor, lock, false);
+            decor.removeView(lock);
+            owner.windowFocusChanged(true);
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(1));
+            assertTrue("unlocked, the reader wasn't brought to the pause", title.isAccessibilityFocused());
+        }
+    }
+
+    @Test public void aCoverComingOffInPlaceBringsTheReaderToThePause() {
+        Settings.PAUSE_BEFORE_FEED_SECONDS.save(20);
+        Settings.NO_RESUME_ON_FOREGROUND.save(true);
+        try (var owner = Robolectric.buildActivity(HostActivity.class).create()) {
+            Activity activity = owner.get();
+            screenReaderOn(activity);
+            PausePlayback.install(activity);
+            View home = standOnTheFeed(activity);
+            owner.start().resume().visible();
+            Utils.setActivity(activity);
+            layout(activity);
+            TextView title = button(PausePlayback.catcherForTests(), "Pause before the feed");
+
+            // A cover over the pause that goes with no window change to try again on, as
+            // StartCover timing out or the feed lock's hold ending does.
+            ViewGroup decor = (ViewGroup) activity.getWindow().getDecorView();
+            TextView cover = new TextView(activity);
+            cover.setText("Inbox");
+            decor.addView(cover, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT));
+            SessionLockOverlay.hideBehind(decor, cover, true);
+            owner.windowFocusChanged(true);
+            focus(cover);
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(1));
+            decor.getViewTreeObserver().dispatchOnGlobalLayout();
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(1));
+            assertFalse("the reader was moved onto the pause with the cover still over it",
+                    title.isAccessibilityFocused());
+            assertTrue(cover.isAccessibilityFocused());
+
+            // The curtain comes off with nothing removed or hidden and nothing laid out by hand, as
+            // when the panel that put it up was collected before it lifted.
+            SessionLockOverlay.hideBehind(decor, cover, false);
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(1));
+            assertTrue("the cover came off and the reader was never brought to the pause",
+                    title.isAccessibilityFocused());
+
+            // Said once: later layouts leave a reader who went on to the tab bar there.
+            focus(home);
+            decor.getViewTreeObserver().dispatchOnGlobalLayout();
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(1));
+            assertTrue("a later layout pulled the reader back onto the pause", home.isAccessibilityFocused());
+        }
+    }
+
+    /**
+     * Only a reader exploring by touch can be moved. Before Android 9 there is no pane title to
+     * say the pause either, so any other reader is told the title, once.
+     */
+    @Test @Config(sdk = {23, 28}) public void aReaderThatCantBeMovedIsToldThePauseBeforeAndroid9() {
+        Settings.PAUSE_BEFORE_FEED_SECONDS.save(20);
+        Settings.NO_RESUME_ON_FOREGROUND.save(true);
+        try (var owner = Robolectric.buildActivity(HostActivity.class).create()) {
+            Activity activity = owner.get();
+            var manager = (AccessibilityManager) activity.getSystemService(Context.ACCESSIBILITY_SERVICE);
+            Shadows.shadowOf(manager).setEnabled(true);
+            Shadows.shadowOf(manager).setTouchExplorationEnabled(false);
+            PausePlayback.install(activity);
+            standOnTheFeed(activity);
+            owner.start().resume().visible();
+            Utils.setActivity(activity);
+            layout(activity);
+            owner.windowFocusChanged(true);
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(1));
+            long expected = Build.VERSION.SDK_INT < Build.VERSION_CODES.P ? 1 : 0;
+            assertEquals(expected, announcements(manager, "Pause before the feed"));
+
+            // A reader that explores by touch hears it from the focus move alone.
+            Shadows.shadowOf(manager).setTouchExplorationEnabled(true);
+            owner.windowFocusChanged(false);
+            owner.pause().stop();
+            owner.restart().resume();
+            layout(activity);
+            owner.windowFocusChanged(true);
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(1));
+            assertTrue(button(PausePlayback.catcherForTests(), "Pause before the feed").isAccessibilityFocused());
+            assertEquals("the title was said twice, once moved onto and once told",
+                    expected, announcements(manager, "Pause before the feed"));
+        }
+    }
+
     @Test public void zeroLeavesTheFeedAlone() {
         try (var owner = Robolectric.buildActivity(HostActivity.class).create()) {
             Activity activity = owner.get();
@@ -208,6 +380,25 @@ public class PauseBeforeFeedTest {
         home.setSelected(true);
         ReflectionHelpers.setStaticField(FeedVisibility.class, "homeTabReference", new WeakReference<>(home));
         return home;
+    }
+
+    private static void screenReaderOn(Activity activity) {
+        var manager = (AccessibilityManager) activity.getSystemService(Context.ACCESSIBILITY_SERVICE);
+        Shadows.shadowOf(manager).setEnabled(true);
+        Shadows.shadowOf(manager).setTouchExplorationEnabled(true);
+    }
+
+    /** Where TalkBack puts its own focus, as a swipe or its pick on a window change does. */
+    private static void focus(View view) {
+        assertTrue(view.performAccessibilityAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS, null));
+    }
+
+    /** How many times a screen reader was told [said] out loud. */
+    private static long announcements(AccessibilityManager manager, CharSequence said) {
+        return Shadows.shadowOf(manager).getSentAccessibilityEvents().stream()
+                .filter(event -> event.getEventType() == AccessibilityEvent.TYPE_ANNOUNCEMENT)
+                .filter(event -> event.getText().stream().anyMatch(text -> said.toString().contentEquals(text)))
+                .count();
     }
 
     private static TextView button(View panel, String label) {

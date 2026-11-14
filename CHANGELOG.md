@@ -22,6 +22,7 @@ Every Hushfeed release, newest first.
 
 * `Turn off haptics` also quiets Hushfeed's own buzzes now: holding the For You, Home, Inbox or Profile tab and dragging the block button were still vibrating with the switch on.
 * `Fold long comments` folds comments that TikTok already cuts with its own "... more". Those used to stay at TikTok's six lines. Now our more opens TikTok's cut text, and TikTok's more opens the rest.
+* When `Pause before the feed` or the daily hold comes up, TalkBack moves to its title and reads it. Coming back to TikTok from the home screen, TalkBack used to land on the Home tab and never said what was covering the feed. Once you've moved on to a button or a tab, pulling down the notification shade won't send you back to the title.
 * In Simplified Chinese, the Lab's Apply button said 申请, which reads as applying for something. It says 应用 now.
 * With a password on `Network proxy`, the small relay TikTok signs in through only connects to the domains TikTok uses. Another app on the phone could reach it while TikTok was open and send its own traffic through your proxy. Now it gets turned away.
 * `Hide the Hushfeed row` only takes the row out of Settings and privacy while holding For You or Home really opens Hushfeed settings. Hiding the feed tab strip or pointing For You at your watch history used to leave no way back in. Now the row stays until a long press works again (#244).

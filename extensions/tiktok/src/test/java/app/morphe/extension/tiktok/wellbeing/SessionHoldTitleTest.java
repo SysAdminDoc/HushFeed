@@ -5,15 +5,24 @@
 package app.morphe.extension.tiktok.wellbeing;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.os.Build;
+import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
+import android.view.accessibility.AccessibilityEvent;
+import android.view.accessibility.AccessibilityManager;
+import android.view.accessibility.AccessibilityNodeInfo;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import app.morphe.extension.shared.Utils;
@@ -152,6 +161,106 @@ public class SessionHoldTitleTest {
         } finally {
             Utils.setActivity(null);
         }
+    }
+
+    /** Before Android 9 too, where the hold has no pane title and nothing else says it. */
+    @Test @Config(sdk = {23, 28}) @GraphicsMode(GraphicsMode.Mode.LEGACY)
+    public void aScreenReaderIsMovedOntoTheTitleEachTimeTheHoldArrives() {
+        Settings.SESSION_BUDGET_VIDEOS.save(1);
+        Settings.SESSION_BUDGET_LOCK_MINUTES.save(5);
+        SessionBudget.noteVideo("a");
+        assertTrue(SessionBudget.claimNotice());
+
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            var manager = (AccessibilityManager) activity.getSystemService(Context.ACCESSIBILITY_SERVICE);
+            Shadows.shadowOf(manager).setEnabled(true);
+            Shadows.shadowOf(manager).setTouchExplorationEnabled(true);
+            // Where TalkBack's focus is outside the hold, as a tab is.
+            View tab = new View(activity);
+            ((ViewGroup) activity.findViewById(android.R.id.content)).addView(tab,
+                    new FrameLayout.LayoutParams(96, 100, Gravity.BOTTOM));
+            // The window already has the focus, as on the feed in the middle of a visit.
+            owner.windowFocusChanged(true);
+            Utils.setActivity(activity);
+            SessionLockOverlay.sync();
+            TextView title = holdTitle(activity);
+            assertFalse("the reader was moved before TalkBack had read the window",
+                    title.isAccessibilityFocused());
+            focus(tab);
+            settle();
+            assertTrue("the hold went up and the reader was left where they were",
+                    title.isAccessibilityFocused());
+
+            // TikTok goes to the home screen with the hold still up and comes back to it. TalkBack
+            // reads the window again and picks the tab.
+            owner.windowFocusChanged(false);
+            View decor = activity.getWindow().getDecorView();
+            decor.dispatchWindowVisibilityChanged(View.GONE);
+            decor.dispatchWindowVisibilityChanged(View.VISIBLE);
+            owner.windowFocusChanged(true);
+            focus(tab);
+            settle();
+            assertTrue("back from the home screen, the reader was left on the tab",
+                    title.isAccessibilityFocused());
+
+            // Away on messages the hold is hidden, and it shows again on the way back to the feed.
+            View panel = (View) title.getParent();
+            focus(tab);
+            panel.setVisibility(View.GONE);
+            panel.setVisibility(View.VISIBLE);
+            settle();
+            assertTrue("the hold shown again left the reader on the tab", title.isAccessibilityFocused());
+
+            // The reader goes on to the tab once it's said, and the notification shade coming
+            // and going leaves them there.
+            focus(tab);
+            owner.windowFocusChanged(false);
+            owner.windowFocusChanged(true);
+            settle();
+            assertTrue("the shade closing pulled the reader back onto the title", tab.isAccessibilityFocused());
+        } finally {
+            Utils.setActivity(null);
+        }
+    }
+
+    /** A reader that doesn't explore by touch can't be moved, and before Android 9 is told instead. */
+    @Test @Config(sdk = {23, 28}) @GraphicsMode(GraphicsMode.Mode.LEGACY)
+    public void aReaderThatCantBeMovedIsToldTheHoldOnceBeforeAndroid9() {
+        Settings.SESSION_BUDGET_VIDEOS.save(1);
+        Settings.SESSION_BUDGET_LOCK_MINUTES.save(5);
+        SessionBudget.noteVideo("a");
+        assertTrue(SessionBudget.claimNotice());
+
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            var manager = (AccessibilityManager) activity.getSystemService(Context.ACCESSIBILITY_SERVICE);
+            Shadows.shadowOf(manager).setEnabled(true);
+            Shadows.shadowOf(manager).setTouchExplorationEnabled(false);
+            owner.windowFocusChanged(true);
+            Utils.setActivity(activity);
+            SessionLockOverlay.sync();
+            settle();
+            // The hold already up and synced again says nothing new.
+            SessionLockOverlay.sync();
+            settle();
+            CharSequence said = holdTitle(activity).getText();
+            long told = Shadows.shadowOf(manager).getSentAccessibilityEvents().stream()
+                    .filter(event -> event.getEventType() == AccessibilityEvent.TYPE_ANNOUNCEMENT)
+                    .filter(event -> event.getText().stream().anyMatch(text -> said.toString().contentEquals(text)))
+                    .count();
+            assertEquals(Build.VERSION.SDK_INT < Build.VERSION_CODES.P ? 1 : 0, told);
+        } finally {
+            Utils.setActivity(null);
+        }
+    }
+
+    private static void settle() {
+        Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofSeconds(1));
+    }
+
+    private static void focus(View view) {
+        assertTrue(view.performAccessibilityAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS, null));
     }
 
     @Test public void everyStopReadsWhereTheScrimIsThinnest() {

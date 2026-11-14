@@ -60,6 +60,7 @@ public final class FeedPause {
         title.setGravity(Gravity.CENTER);
         ShimmerTitle.wear(title);
         panel.addView(title);
+        panel.titledBy(title);
 
         // Not a live region while it counts: one announcement a second would talk over
         // everything else. It becomes one for the line that replaces the count at the end.

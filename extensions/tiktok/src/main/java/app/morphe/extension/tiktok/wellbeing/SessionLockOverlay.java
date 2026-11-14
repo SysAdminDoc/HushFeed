@@ -298,12 +298,6 @@ public final class SessionLockOverlay {
             if (goingUp) requestQuiet();
             // Over a cleared screen the tabs the panel points to are gone: bring them back.
             if (goingUp) RememberClearDisplayPatch.leaveForHold();
-            if (goingUp && before == overlay && Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
-                // A retained panel shown again after the reader was away on messages or search.
-                // From P the pane title announces the arrival each time; before it, the one
-                // announcement made at attach has already been spent.
-                overlay.announceForAccessibility(holdTitle());
-            }
             // Only as the panel goes up. Whether there is an Inbox tab changes when TikTok
             // rebuilds its tab bar, not second by second, and for a reader who has hidden Inbox
             // the answer is a failed lookup every time: asking on every tick would be a walk of
@@ -454,7 +448,7 @@ public final class SessionLockOverlay {
 
         // Scrolls once the stack is taller than the room above the tab bar, so both buttons stay
         // reachable at the largest font and display sizes (see HoldPanel).
-        LinearLayout panel = new HoldPanel(activity);
+        HoldPanel panel = new HoldPanel(activity);
         panel.setOrientation(LinearLayout.VERTICAL);
         panel.setGravity(Gravity.CENTER);
         int sidePad = SettingsUi.dp(activity, 24);
@@ -468,7 +462,8 @@ public final class SessionLockOverlay {
         // Touch was the only thing it swallowed. A screen reader was told nothing when the hold
         // went up, and could still swipe through to the like, comment and share controls behind
         // it, which is the one thing the hold exists to stop. The arrival is announced by the
-        // pane title below, and the countdown carries the live region itself: marking the whole
+        // pane title below and by moving the reader onto the title (see HoldPanel.titledBy),
+        // and the countdown carries the live region itself: marking the whole
         // panel read the entire hold out again on every tick, because a live region announces
         // for anything that changes anywhere under it.
 
@@ -485,6 +480,7 @@ public final class SessionLockOverlay {
         // for a dark ground, which this scrim is in either theme.
         ShimmerTitle.wear(title);
         panel.addView(title);
+        panel.titledBy(title);
         titleReference = new WeakReference<>(title);
 
         TextView remaining = new TextView(activity);
@@ -589,12 +585,10 @@ public final class SessionLockOverlay {
                 FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
         params.bottomMargin = navigationHeight(activity, root);
         panel.setLayoutParams(params);
+        // Nothing announced here, before P either, where there is no pane title: as it arrives the
+        // panel moves a screen reader onto its title, or tells it the title when it can't be
+        // moved (HoldPanel.focusTitle), and that is what says it, once.
         root.addView(panel);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
-            // There is no pane title before P, so on those builds the arrival is said once by
-            // hand. Needs a parent, which is why it is here and not beside the pane title.
-            panel.announceForAccessibility(titleText);
-        }
         hideBehind(root, panel, true, navigationBar(activity, root));
         overlayReference = new WeakReference<>(panel);
         panel.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
@@ -1020,6 +1014,10 @@ public final class SessionLockOverlay {
         hideInside(view, state);
         if (!state.panels.isEmpty()) return;
         curtained.remove(view);
+        // A curtain can come off with nothing removed or hidden, as when the panel that put it up
+        // was collected before it lifted. A pause waiting under it for the cover to come off
+        // (HoldPanel) hears about it on the layout pass this asks for.
+        view.requestLayout();
         if (state.focusable) {
             // Focusable again means TikTok set it after the last pass, and its latest word stands.
             boolean refocused = view.isFocusable();

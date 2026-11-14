@@ -8,6 +8,7 @@ import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
@@ -15,6 +16,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstructio
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
+import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
@@ -211,16 +213,26 @@ class PhotoSaveJobFixturesTest {
             val original = method.implementation!!.instructions.toList()
             val returns = original.count { it.opcode == Opcode.RETURN_OBJECT }
             assertTrue("the copy returns what landed", returns >= 1)
+            val registers = method.implementation!!.registerCount
             method.recordPhotoGalleryCopy()
             val hooked = method.implementation!!.instructions.toList()
-            assertEquals(original.size + returns, hooked.size)
+            assertEquals(registers, method.implementation!!.registerCount)
+            assertEquals(original.size + 2 * returns, hooked.size)
             val addresses = hooked.runningFold(0) { address, instruction -> address + instruction.codeUnits }
             val tries = method.implementation!!.tryBlocks.map {
                 it.startCodeAddress until it.startCodeAddress + it.codeUnitCount
             }
             hooked.forEachIndexed { index, instruction ->
                 if (instruction.opcode != Opcode.RETURN_OBJECT) return@forEachIndexed
+                val copyCall = hooked[index - 2]
                 val call = hooked[index - 1]
+                assertEquals(Opcode.INVOKE_STATIC_RANGE, copyCall.opcode)
+                assertEquals(1, (copyCall as RegisterRangeInstruction).registerCount)
+                assertEquals("the copy itself, p0", registers - method.numberOfParameterRegisters, copyCall.startRegister)
+                val copyTarget = copyCall.getReference<MethodReference>()!!
+                assertEquals("Lapp/morphe/extension/tiktok/download/NativePhotoSaves;", copyTarget.definingClass)
+                assertEquals("copyEnding", copyTarget.name)
+                assertEquals(listOf(OBJECT), copyTarget.parameterTypes.map(CharSequence::toString))
                 assertEquals(Opcode.INVOKE_STATIC_RANGE, call.opcode)
                 assertEquals(1, (call as RegisterRangeInstruction).registerCount)
                 assertEquals("the set that is returned", (instruction as OneRegisterInstruction).registerA, call.startRegister)
@@ -228,14 +240,63 @@ class PhotoSaveJobFixturesTest {
                 assertEquals("Lapp/morphe/extension/tiktok/download/NativePhotoSaves;", target.definingClass)
                 assertEquals("copied", target.name)
                 assertEquals(listOf(OBJECT), target.parameterTypes.map(CharSequence::toString))
-                // A handler around either would turn the report's own failure into the copy's.
-                for (at in listOf(addresses[index - 1], addresses[index])) {
+                // A handler around any of them would turn the report's own failure into the copy's.
+                for (at in listOf(addresses[index - 2], addresses[index - 1], addresses[index])) {
                     assertTrue("the report and its return sit outside every try range", tries.none { at in it })
                 }
             }
             assertEquals("everything else is left as it was",
-                original.map { it.opcode }, hooked.filterNot { it.getReference<MethodReference>()?.name == "copied" &&
-                    it.getReference<MethodReference>()?.definingClass?.contains("NativePhotoSaves") == true }.map { it.opcode })
+                original.map { it.opcode }, hooked.filterNot {
+                    it.getReference<MethodReference>()?.definingClass?.contains("NativePhotoSaves") == true
+                }.map { it.opcode })
+        }
+    }
+
+    /**
+     * #197: TikTok's album copies for a DM or a share run the same gallery copy as the photo job.
+     * The extension tells the job's own apart by the map it was handed: the job hands one of its
+     * static maps, every other maker builds a map of its own.
+     */
+    @Test
+    fun `only the photo job hands the gallery copy one of its static maps`() {
+        Fixtures.forEachDeclared { apk ->
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            val classes = container.dexEntryNames.flatMap { container.getEntry(it)!!.dexFile.classes }
+            val job = classes.single { owner -> owner.methods.any { it.isPhotoSaveJob(owner) } }.type
+            val copy = classes.single { owner -> owner.methods.any { PhotoGalleryCopyFingerprint.takes(it, owner) } }
+            val init = copy.methods.single { it.name == "<init>" }
+            val mapAt = init.parameterTypes.map(CharSequence::toString).indexOf("Ljava/util/Map;")
+            assertTrue("the copy is handed a map", mapAt >= 0)
+
+            val handed = mutableMapOf<String, String>()
+            for (maker in classes) for (method in maker.methods) {
+                val instructions = method.implementation?.instructions?.toList() ?: continue
+                instructions.forEachIndexed { index, instruction ->
+                    val ref = instruction.getReference<MethodReference>()
+                    if (ref?.definingClass != copy.type || ref.name != "<init>") return@forEachIndexed
+                    // The receiver is the first register, so the map is one further in.
+                    val map = when (instruction) {
+                        is RegisterRangeInstruction -> instruction.startRegister + mapAt + 1
+                        is FiveRegisterInstruction -> listOf(instruction.registerC, instruction.registerD,
+                            instruction.registerE, instruction.registerF, instruction.registerG)[mapAt + 1]
+                        else -> return@forEachIndexed
+                    }
+                    val write = instructions.subList(0, index).lastOrNull {
+                        it.opcode.setsRegister() && (it as? OneRegisterInstruction)?.registerA == map
+                    }
+                    val field = write?.takeIf { it.opcode == Opcode.SGET_OBJECT }?.getReference<FieldReference>()
+                    handed["${maker.type}->${method.name}"] =
+                        if (field?.definingClass == job && field.type == "Ljava/util/Map;") "job's" else "own"
+                }
+            }
+            val jobMakes = classes.single { it.type == job }.methods.flatMap { method ->
+                method.implementation?.instructions?.toList().orEmpty().filter { it.opcode == Opcode.NEW_INSTANCE }
+                    .mapNotNull { it.getReference<TypeReference>()?.type }
+            }.toSet()
+            val jobs = handed.filterValues { it == "job's" }.keys
+            assertTrue("the photo job never hands its copy its map, so nothing would be recorded: $handed", jobs.isNotEmpty())
+            assertTrue("only the job's own coroutines hand it its map: $handed",
+                jobs.all { it.substringBefore("->") in jobMakes })
         }
     }
 

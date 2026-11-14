@@ -289,14 +289,21 @@ internal object PhotoGalleryCopyFingerprint : Fingerprint(
     custom = { method, _ -> method.isPhotoGalleryCopy() },
 )
 
-/** Reports what the gallery copy hands back, right before each return. */
+/**
+ * Reports what the gallery copy hands back, right before each return. The copy itself goes over
+ * first: TikTok runs the same copy for a DM's or a share's photos, and only the job's own is
+ * handed the job's static map.
+ */
 internal fun MutableMethod.recordPhotoGalleryCopy() {
     check(isPhotoGalleryCopy()) { "Advanced downloads: unexpected gallery copy signature or markers." }
     findInstructionIndicesReversedOrThrow { opcode == Opcode.RETURN_OBJECT }.forEach { index ->
         val landed = getInstruction<OneRegisterInstruction>(index).registerA
         addInstructionsAtControlFlowLabel(
             index,
-            "invoke-static/range { v$landed .. v$landed }, ${EXTENSION}NativePhotoSaves;->copied(Ljava/lang/Object;)V",
+            """
+                invoke-static/range { p0 .. p0 }, ${EXTENSION}NativePhotoSaves;->copyEnding(Ljava/lang/Object;)V
+                invoke-static/range { v$landed .. v$landed }, ${EXTENSION}NativePhotoSaves;->copied(Ljava/lang/Object;)V
+            """,
         )
     }
 }

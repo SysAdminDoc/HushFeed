@@ -19,6 +19,9 @@ import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 
+import com.ss.android.ugc.aweme.feed.model.Aweme;
+import com.ss.android.ugc.aweme.feed.model.PhotoModeImageInfo;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -205,6 +208,48 @@ public class PhotoPostSavedRecordTest {
         } finally {
             Settings.DOWNLOAD_PHOTOS_AS_VIDEO.save(previousAsVideo);
         }
+    }
+
+    @Test public void aPhotoStorySavedAgainFromTikToksSheetOrTheSaveButtonIsCalledAStory() throws Exception {
+        ownIds.add("story-sheet");
+        List<AdvancedDownloadsTest.Photo> images = new ArrayList<>();
+        for (int i = 0; i < 2; i++) images.add(new AdvancedDownloadsTest.Photo("https://example.com/story-sheet/" + i));
+        PhotoStory story = new PhotoStory("story-sheet", images);
+        assertTrue(OriginalPhotos.startPhotos(story, null, false));
+        finish();
+        assertNotNull("the story never reached the record", SavedVideoArchive.find(context, "story-sheet"));
+
+        assertTrue(OriginalPhotos.startPhotos(story, null, false));
+        finish();
+        AlertDialog sheet = ShadowAlertDialog.getLatestAlertDialog();
+        assertNotNull("no already-saved choice came up", sheet);
+        assertEquals("This story is already saved", Shadows.shadowOf(sheet).getTitle().toString());
+        sheet.dismiss();
+        finish();
+
+        OriginalPhotos.startFromButton(story, owner.get());
+        finish();
+        AlertDialog button = ShadowAlertDialog.getLatestAlertDialog();
+        assertNotNull("the save button never asked", button);
+        assertTrue("the save button's choice is a new one", button != sheet);
+        assertEquals("This story is already saved", Shadows.shadowOf(button).getTitle().toString());
+    }
+
+    /** A photo story as TikTok's own post, its photos on the field a photo post keeps them on. */
+    public static final class PhotoStory extends Aweme {
+        public final AdvancedDownloadsTest.Info photoModeImageInfo;
+        private final String aid;
+
+        PhotoStory(String aid, List<AdvancedDownloadsTest.Photo> photos) {
+            this.aid = aid;
+            photoModeImageInfo = new AdvancedDownloadsTest.Info(photos);
+        }
+
+        @Override public String getAid() { return aid; }
+        @Override public boolean getIsTikTokStory() { return true; }
+        @Override public int getAwemeType() { return 0; }
+        @Override public PhotoModeImageInfo getPhotoModeImageInfo() { return null; }
+        @Override public long getCreateTime() { return 0L; }
     }
 
     @Test public void withTheCheckOffNothingIsRecorded() throws Exception {

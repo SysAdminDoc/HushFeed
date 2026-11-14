@@ -18,6 +18,8 @@ import app.morphe.extension.tiktok.settings.Settings;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -50,6 +52,8 @@ public final class NativePhotoSaves {
     private static volatile Field jobPost;
     /** Set while a held job starts again, so its hook lets it through. */
     private static final ThreadLocal<Boolean> RERUNNING = new ThreadLocal<>();
+    /** The gallery copy about to hand back what landed, set right before {@link #copied}. */
+    private static final ThreadLocal<Object> COPY = new ThreadLocal<>();
 
     private NativePhotoSaves() {}
 
@@ -149,15 +153,26 @@ public final class NativePhotoSaves {
     }
 
     /**
+     * TikTok's gallery copy {@code copy} is about to return. The hook calls this right before
+     * {@link #copied}, on the same thread, so that one knows whose copy it was.
+     */
+    public static void copyEnding(Object copy) {
+        COPY.set(copy);
+    }
+
+    /**
      * TikTok has copied a photo save's files to the gallery: {@code copied} holds a content Uri
-     * for each one that landed. The first is recorded when the job's own post is a save
-     * {@link #hold} accepted.
+     * for each one that landed. The first is recorded when the copy is the job's own and the
+     * job's post is a save {@link #hold} accepted.
      */
     public static void copied(Object copied) {
+        Object copy = COPY.get();
+        COPY.remove();
         try {
             Field post = jobPost;
             forgetStale();
             if (PENDING.isEmpty() || post == null || !(copied instanceof Iterable<?>)) return;
+            if (!jobsCopy(copy, post.getDeclaringClass())) return;
             Uri landed = null;
             for (Object item : (Iterable<?>) copied) {
                 if (item instanceof Uri) {
@@ -173,14 +188,44 @@ public final class NativePhotoSaves {
             Context application = context.getApplicationContext();
             Context app = application == null ? context : application;
             Uri first = landed;
-            Utils.runOnBackgroundThread(() -> {
+            Runnable record = () -> {
                 MediaFileWriter.Saved saved = saved(app, first);
                 SavedVideoArchive.rememberQuietly(app, pending.id, saved, pending.generation);
                 Logger.printInfo(() -> "Recorded TikTok's photo save of " + pending.id + " as " + saved.name);
-            });
-        } catch (ReflectiveOperationException | RuntimeException failure) {
+            };
+            if (Utils.runOnBackgroundThread(record)) return;
+            // The copy runs on TikTok's own worker, so a full queue records it right here.
+            if (Looper.myLooper() != Looper.getMainLooper()) record.run();
+            else Logger.printInfo(() -> "TikTok's photo save of " + pending.id + " wasn't recorded, the queue is full");
+        } catch (ReflectiveOperationException | RuntimeException | LinkageError failure) {
             Logger.printException(() -> "Could not record TikTok's photo save", failure);
         }
+    }
+
+    /**
+     * Whether {@code copy} is the job's own gallery copy. The job hands its copy one of its
+     * static maps, while the album copies TikTok runs for a DM or a share make a map of their
+     * own, and the job's post can still be set when one of those lands.
+     */
+    static boolean jobsCopy(Object copy, Class<?> job) throws IllegalAccessException {
+        if (copy == null) return false;
+        List<Object> maps = new ArrayList<>();
+        for (Field field : job.getDeclaredFields()) {
+            if (!Modifier.isStatic(field.getModifiers()) || !Map.class.isAssignableFrom(field.getType())) continue;
+            field.setAccessible(true);
+            Object map = field.get(null);
+            if (map != null) maps.add(map);
+        }
+        if (maps.isEmpty()) return false;
+        for (Field field : copy.getClass().getDeclaredFields()) {
+            if (Modifier.isStatic(field.getModifiers()) || !Map.class.isAssignableFrom(field.getType())) continue;
+            field.setAccessible(true);
+            Object held = field.get(copy);
+            for (Object map : maps) {
+                if (held == map) return true;
+            }
+        }
+        return false;
     }
 
     /** What the record keeps for one landed photo. */
@@ -249,6 +294,7 @@ public final class NativePhotoSaves {
         PENDING.clear();
         jobPost = null;
         RERUNNING.remove();
+        COPY.remove();
     }
 
     static Pending pendingForTests(String id) {

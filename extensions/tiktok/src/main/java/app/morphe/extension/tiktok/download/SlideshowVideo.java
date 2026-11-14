@@ -74,7 +74,7 @@ public final class SlideshowVideo {
      * or no screen to ask on leaves the save where it was going.
      */
     static boolean offer(Object aweme, Set<?> indices) {
-        return offer(aweme, indices, seconds(Settings.PHOTO_VIDEO_SECONDS.get()), false);
+        return offer(aweme, indices, seconds(Settings.PHOTO_VIDEO_SECONDS.get()), StoryShareSave.isStory(aweme));
     }
 
     /** {@code story} names it a story, not a photo post, when it turns out to be saved already. */

@@ -61,7 +61,7 @@ public final class OriginalPhotos {
         boolean started;
         if (Reflect.property(aweme, "getPhotoModeImageInfo", "photoModeImageInfo") != null) {
             AudioDownloads.start(aweme, context);
-            started = savePhotos(aweme, context, null, false, true, false);
+            started = savePhotos(aweme, context, null, false, true, StoryShareSave.isStory(aweme));
         } else {
             // TikTok's file by name, which saves the sound itself when that's wanted.
             started = VideoDownloads.startPicked(aweme, context, VideoDownloads.AUTOMATIC);
@@ -176,7 +176,7 @@ public final class OriginalPhotos {
     }
 
     private static boolean savePhotos(Object aweme, Context context, Set<?> indices, boolean conversion) {
-        return savePhotos(aweme, context, indices, conversion, false, false);
+        return savePhotos(aweme, context, indices, conversion, false, StoryShareSave.isStory(aweme));
     }
 
     /**

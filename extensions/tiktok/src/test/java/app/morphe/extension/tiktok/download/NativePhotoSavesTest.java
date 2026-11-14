@@ -18,6 +18,7 @@ import android.net.Uri;
 import android.os.Looper;
 import android.provider.MediaStore;
 
+import app.morphe.extension.shared.BackgroundPoolSaturation;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.settings.Settings;
@@ -45,8 +46,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -72,6 +75,8 @@ public class NativePhotoSavesTest {
     public static final class Job {
         static final Job INSTANCE = new Job();
         static AdvancedDownloadsTest.PhotoPost post;
+        /** What the job hands its gallery copy, as 47.7.3's keeps a static map for it. */
+        static Map<String, Object> progress = new HashMap<>();
         static final List<String> RAN = new ArrayList<>();
         /** Set for a job that fails as it starts. */
         static boolean refuse;
@@ -93,6 +98,7 @@ public class NativePhotoSavesTest {
     public static final class StoryJob {
         static final StoryJob INSTANCE = new StoryJob();
         static Aweme post;
+        static Map<String, Object> progress = new HashMap<>();
 
         public static void save(StoryJob job, String from, String key, Object extra, Aweme aweme,
                 Set<?> indices, Object share, boolean video, Object callback, int defaults) {
@@ -101,6 +107,19 @@ public class NativePhotoSavesTest {
             post = aweme;
             Job.RAN.add(aweme.getAid() + " " + from + " " + defaults);
         }
+    }
+
+    /**
+     * TikTok's gallery copy, holding what it was handed: the job's static map for the job's own
+     * copy, or a map of its own for the album copies a DM or a share runs.
+     */
+    static final class Copy {
+        private final Map<?, ?> progress;
+        private final Set<?> chosen = Set.of(0L);
+
+        Copy(Map<?, ?> progress) { this.progress = progress; }
+
+        @Override public String toString() { return "copy of " + progress + " " + chosen; }
     }
 
     /** A photo story, as TikTok's own post says it is one. */
@@ -170,7 +189,7 @@ public class NativePhotoSavesTest {
     @Test public void theFirstGalleryCopyIsRecordedAndMarked() throws Exception {
         save(post("recorded"));
         settle();
-        NativePhotoSaves.copied(landed(photo("recorded-1.jpeg"), photo("recorded-2.jpeg")));
+        copiedByJob(landed(photo("recorded-1.jpeg"), photo("recorded-2.jpeg")));
         settle();
 
         MediaFileWriter.Saved found = SavedVideoArchive.find(context, "recorded");
@@ -182,7 +201,7 @@ public class NativePhotoSavesTest {
     @Test public void aSecondSaveOffersOpenOrSaveAgainWordedForAPhotoPost() throws Exception {
         save(post("again"));
         settle();
-        NativePhotoSaves.copied(landed(photo("again-1.jpeg")));
+        copiedByJob(landed(photo("again-1.jpeg")));
         settle();
 
         save(post("again"));
@@ -204,6 +223,7 @@ public class NativePhotoSavesTest {
         saveStory(story);
         settle();
         assertEquals(List.of("story-again feed 384"), Job.RAN);
+        NativePhotoSaves.copyEnding(new Copy(StoryJob.progress));
         NativePhotoSaves.copied(landed(photo("story-1.jpeg")));
         settle();
         assertNotNull("TikTok's own story save never reached the record", SavedVideoArchive.find(context, "story-again"));
@@ -220,7 +240,7 @@ public class NativePhotoSavesTest {
         assertTrue(Utils.runOnBackgroundThread(() -> save(post("worker"))));
         settle();
         assertFalse(Job.ranOnMain);
-        NativePhotoSaves.copied(landed(photo("worker.jpeg")));
+        copiedByJob(landed(photo("worker.jpeg")));
         settle();
 
         assertTrue(Utils.runOnBackgroundThread(() -> save(post("worker"))));
@@ -237,7 +257,7 @@ public class NativePhotoSavesTest {
         save(post("late"));
         settle();
         Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(NativePhotoSaves.PENDING_MILLIS + 1));
-        NativePhotoSaves.copied(landed(photo("late.jpeg")));
+        copiedByJob(landed(photo("late.jpeg")));
         settle();
         assertNull("a copy long after the save was taken for it", SavedVideoArchive.find(context, "late"));
         assertNull(NativePhotoSaves.pendingForTests("late"));
@@ -247,10 +267,45 @@ public class NativePhotoSavesTest {
         save(post("held"));
         settle();
         Job.post = post("someone-else");
-        NativePhotoSaves.copied(landed(photo("other.jpeg")));
+        copiedByJob(landed(photo("other.jpeg")));
         settle();
         assertNull(SavedVideoArchive.find(context, "held"));
         assertNotNull("a copy that wasn't this save's used up its record", NativePhotoSaves.pendingForTests("held"));
+    }
+
+    @Test public void anAlbumCopyFromADmOrAShareIsNotTakenForTheJobs() throws Exception {
+        save(post("held-for-job"));
+        settle();
+        // A DM's or a share's album copy lands while the job's post is still this save's.
+        NativePhotoSaves.copyEnding(new Copy(Map.of("dm-photo", true)));
+        NativePhotoSaves.copied(landed(photo("from-a-chat.jpeg")));
+        NativePhotoSaves.copied(landed(photo("no-copy-handed.jpeg")));
+        settle();
+        assertNull("another copy's photo was recorded as this save", SavedVideoArchive.find(context, "held-for-job"));
+        assertNotNull("another copy used up this save's record", NativePhotoSaves.pendingForTests("held-for-job"));
+
+        copiedByJob(landed(photo("job-1.jpeg")));
+        settle();
+        MediaFileWriter.Saved found = SavedVideoArchive.find(context, "held-for-job");
+        assertNotNull(found);
+        assertEquals("job-1.jpeg", found.name);
+    }
+
+    @Test public void aCopyThatLandsWithTheQueueFullIsStillRecorded() throws Exception {
+        save(post("queue-full"));
+        settle();
+        Uri first = photo("queue-full.jpeg");
+        Thread copy = new Thread(() -> copiedByJob(landed(first)));
+        try (BackgroundPoolSaturation full = BackgroundPoolSaturation.fill()) {
+            copy.start();
+            copy.join(5000);
+            assertFalse(copy.isAlive());
+            assertNull(NativePhotoSaves.pendingForTests("queue-full"));
+        }
+        settle();
+        MediaFileWriter.Saved found = SavedVideoArchive.find(context, "queue-full");
+        assertNotNull("a full queue lost TikTok's photo save", found);
+        assertEquals("queue-full.jpeg", found.name);
     }
 
     @Test public void twoSavesBeforeEitherCopyLandsAreBothRecorded() throws Exception {
@@ -261,9 +316,9 @@ public class NativePhotoSavesTest {
         assertEquals(2, Job.RAN.size());
 
         Job.post = post("first");
-        NativePhotoSaves.copied(landed(photo("first.jpeg")));
+        copiedByJob(landed(photo("first.jpeg")));
         Job.post = post("second");
-        NativePhotoSaves.copied(landed(photo("second.jpeg")));
+        copiedByJob(landed(photo("second.jpeg")));
         settle();
         assertNotNull("the later save pushed out the earlier one's record", SavedVideoArchive.find(context, "first"));
         assertNotNull(SavedVideoArchive.find(context, "second"));
@@ -272,12 +327,12 @@ public class NativePhotoSavesTest {
     @Test public void aCopyWithNothingInItKeepsTheSaveWaiting() throws Exception {
         save(post("empty"));
         settle();
-        NativePhotoSaves.copied(new LinkedHashSet<>());
-        NativePhotoSaves.copied(null);
+        copiedByJob(new LinkedHashSet<>());
+        copiedByJob(null);
         settle();
         assertNull(SavedVideoArchive.find(context, "empty"));
 
-        NativePhotoSaves.copied(landed(photo("empty.jpeg")));
+        copiedByJob(landed(photo("empty.jpeg")));
         settle();
         assertNotNull("an empty copy used up the save's record", SavedVideoArchive.find(context, "empty"));
     }
@@ -317,7 +372,7 @@ public class NativePhotoSavesTest {
         assertFalse("the record's ids didn't load", marked("unknown"));
         save(post("fresh"));
         assertEquals("a post the record can't hold waited for the check", 1, Job.RAN.size());
-        NativePhotoSaves.copied(landed(photo("fresh.jpeg")));
+        copiedByJob(landed(photo("fresh.jpeg")));
         settle();
         assertNotNull(SavedVideoArchive.find(context, "fresh"));
     }
@@ -326,7 +381,7 @@ public class NativePhotoSavesTest {
         Settings.CHECK_SAVED_VIDEOS.save(false);
         save(post("unchecked"));
         assertEquals(1, Job.RAN.size());
-        NativePhotoSaves.copied(landed(photo("unchecked.jpeg")));
+        copiedByJob(landed(photo("unchecked.jpeg")));
         settle();
         assertNull(SavedVideoArchive.find(context, "unchecked"));
     }
@@ -373,6 +428,12 @@ public class NativePhotoSavesTest {
             out.write(new byte[]{1, 2, 3, 4});
         }
         return ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
+    }
+
+    /** The job's own gallery copy returning {@code landed}, as the patch reports it. */
+    private static void copiedByJob(Object landed) {
+        NativePhotoSaves.copyEnding(new Copy(Job.progress));
+        NativePhotoSaves.copied(landed);
     }
 
     /** What TikTok's gallery copy hands back: the Uris that landed, in order. */

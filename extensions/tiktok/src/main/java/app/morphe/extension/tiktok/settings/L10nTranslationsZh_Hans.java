@@ -15,7 +15,7 @@ final class L10nTranslationsZh_Hans {
     }
 
     static Map<String, String> build() {
-        Map<String, String> table = new HashMap<>(5408);
+        Map<String, String> table = new HashMap<>(5410);
         fill0(table);
         fill1(table);
         fill2(table);
@@ -4314,6 +4314,8 @@ final class L10nTranslationsZh_Hans {
                 "有些回复未能加载，因此不在文件中.");
         table.put("Something is missing from %1$s. Tap for the whole report.",
                 "%1$s 缺少某些内容。点击查看整个报告.");
+        table.put("Sort loaded videos on Favorites grids",
+                "对“收藏”网格中已加载的视频排序");
         table.put("Sort loaded videos on Liked grids",
                 "对“喜欢”网格中已加载的视频排序");
         table.put("Sort loaded videos on profile grids",
@@ -4366,11 +4368,11 @@ final class L10nTranslationsZh_Hans {
                 "开始功能门记录");
         table.put("Start recording",
                 "开始录音");
-        table.put("Start recording a LIVE's stream when you enter the room. Stop won't restart it until you leave and enter again. Screen recordings still need a tap and Android's permission.",
-                "进入直播间时自动开始录制直播流。点击停止后，只有退出并重新进入该直播间才会再次录制。录屏仍需手动点击并获得 Android 授权.");
     }
 
     private static void fill35(Map<String, String> table) {
+        table.put("Start recording a LIVE's stream when you enter the room. Stop won't restart it until you leave and enter again. Screen recordings still need a tap and Android's permission.",
+                "进入直播间时自动开始录制直播流。点击停止后，只有退出并重新进入该直播间才会再次录制。录屏仍需手动点击并获得 Android 授权.");
         table.put("Start tapping this LIVE",
                 "开始点击此 LIVE");
         table.put("Start the day at",
@@ -4489,11 +4491,11 @@ final class L10nTranslationsZh_Hans {
                 "停止等待文件应用程序。没有任何东西被出口.");
         table.put("Stopped waiting for the file app. Nothing was imported.",
                 "停止等待文件应用程序。没有进口任何东西.");
-        table.put("Stopped. %1$d removed.",
-                "已停止。已移除 %1$d 项.");
     }
 
     private static void fill36(Map<String, String> table) {
+        table.put("Stopped. %1$d removed.",
+                "已停止。已移除 %1$d 项.");
         table.put("Stopped. Search carries on later.",
                 "已停止。搜索稍后会继续.");
         table.put("Stopping after this file",
@@ -4612,11 +4614,11 @@ final class L10nTranslationsZh_Hans {
                 "再次点击即可重新发布");
         table.put("Tap the feed Follow button twice within %1$d seconds.",
                 "在 %1$d 秒内点击信息流 Follow 按钮两次.");
-        table.put("Tap the like heart twice within %1$d seconds. Removing a like stays immediate.",
-                "在 %1$d 秒内点击相似的心两次。立即删除点赞.");
     }
 
     private static void fill37(Map<String, String> table) {
+        table.put("Tap the like heart twice within %1$d seconds. Removing a like stays immediate.",
+                "在 %1$d 秒内点击相似的心两次。立即删除点赞.");
         table.put("Tap to start the feed",
                 "点击以开始信息流");
         table.put("Tap to start, then scroll until the feed problem shows up and come back here to save it. The file has no captions or names, and videos and creators appear only as short codes. Read it before you share it.",
@@ -4735,11 +4737,11 @@ final class L10nTranslationsZh_Hans {
                 "“正在关注”信息流顶部的故事按钮会变成两端圆润的玻璃效果。在 Android 12 及更高版本上，它后面的视频也会被模糊处理.");
         table.put("The Tako assistant's conversation leaves the Inbox list. The Tako bubble on the feed has its own switch under Feed tabs.",
                 "Tako 助理的对话离开收件箱列表。 信息流上的 Tako 气泡在信息流选项卡下有自己的开关.");
-        table.put("The Translate comments button in a LIVE room also needs a Japanese SIM. Turn on Override SIM details in Hushfeed settings > Region, set SIM country preset to Japan, NTT DOCOMO (44010), then restart TikTok.",
-                "LIVE 直播间里的“翻译评论”按钮还需要日本 SIM 卡。在 Hushfeed 设置 > 地区中开启“覆盖 SIM 卡详细信息”，将“SIM 卡国家/地区预设”设为 Japan, NTT DOCOMO (44010)，然后重启 TikTok.");
     }
 
     private static void fill38(Map<String, String> table) {
+        table.put("The Translate comments button in a LIVE room also needs a Japanese SIM. Turn on Override SIM details in Hushfeed settings > Region, set SIM country preset to Japan, NTT DOCOMO (44010), then restart TikTok.",
+                "LIVE 直播间里的“翻译评论”按钮还需要日本 SIM 卡。在 Hushfeed 设置 > 地区中开启“覆盖 SIM 卡详细信息”，将“SIM 卡国家/地区预设”设为 Japan, NTT DOCOMO (44010)，然后重启 TikTok.");
         table.put("The accounts TikTok suggests you follow no longer take up rows in the Inbox.",
                 "TikTok 建议你关注的账号不再占用收件箱中的行.");
         table.put("The activity status control leaves the Inbox header. Whether others see you as active is unchanged.",
@@ -4858,11 +4860,11 @@ final class L10nTranslationsZh_Hans {
                 "该设置无法完成更新。显示其保存值.");
         table.put("The settings backup was rejected. Nothing was altered.",
                 "设置备份被拒绝。一切都没有改变.");
-        table.put("The smallest value is above the largest",
-                "最小值高于最大值");
     }
 
     private static void fill39(Map<String, String> table) {
+        table.put("The smallest value is above the largest",
+                "最小值高于最大值");
         table.put("The sound couldn't be saved. Try again.",
                 "声音无法保存。再试一次.");
         table.put("The sticker couldn't be saved. Try again.",
@@ -4981,11 +4983,11 @@ final class L10nTranslationsZh_Hans {
                 "TikTok 检查它是如何签名和安装的。这将按照 Play 商店版本的方式回答这些检查。如果关注或喜欢在刷新后自行撤消，请尝试一下。它可能没有帮助，因为 TikTok 还有其他检查.");
         table.put("TikTok closed during these saves",
                 "TikTok 在这些保存期间关闭");
-        table.put("TikTok closed three times within a minute of starting, so Hushfeed paused itself. Your settings stay as they are.",
-                "TikTok 在启动后一分钟内关闭了 3 次，因此 Hushfeed 自行暂停。你的设置保持原样.");
     }
 
     private static void fill40(Map<String, String> table) {
+        table.put("TikTok closed three times within a minute of starting, so Hushfeed paused itself. Your settings stay as they are.",
+                "TikTok 在启动后一分钟内关闭了 3 次，因此 Hushfeed 自行暂停。你的设置保持原样.");
         table.put("TikTok closed. What was recorded is saved to %1$s",
                 "TikTok 已关闭。录制的内容保存到 %1$s");
         table.put("TikTok closes at %1$s",
@@ -5104,11 +5106,11 @@ final class L10nTranslationsZh_Hans {
                 "今天又开始了");
         table.put("Today's budget is locked. The day starts over at %1$s.",
                 "今天的预算已锁定。这一天从 %1$s 开始.");
-        table.put("Today's budget is locked. The feed opens again at %1$s. Messages, profiles and search still work.",
-                "今天的预算已锁定。该信息流在 %1$s 再次打开。消息、个人资料和搜索仍然有效.");
     }
 
     private static void fill41(Map<String, String> table) {
+        table.put("Today's budget is locked. The feed opens again at %1$s. Messages, profiles and search still work.",
+                "今天的预算已锁定。该信息流在 %1$s 再次打开。消息、个人资料和搜索仍然有效.");
         table.put("Today's budget is locked. This can be changed again at %1$s.",
                 "今天的预算已锁定。可以在 %1$s 再次更改此设置.");
         table.put("Today: %1$d minute",
@@ -5227,11 +5229,11 @@ final class L10nTranslationsZh_Hans {
                 "在个人资料的@用户名下，说明它是关注你还是不关注你。关注者和关注者列表标记了你关注但未关注你的账号.");
         table.put("Under the @username on someone else's profile, show the month and year the account was made. It's read from the account's ID, so very old accounts show nothing.",
                 "在别人个人资料的@用户名下方显示该账号创建的年月。这是从账号 ID 中读出的，所以很老的账号不显示任何内容.");
-        table.put("Undid an interrupted change. Restart TikTok to apply.",
-                "已撤销中断的更改。重启 TikTok 以生效.");
     }
 
     private static void fill42(Map<String, String> table) {
+        table.put("Undid an interrupted change. Restart TikTok to apply.",
+                "已撤销中断的更改。重启 TikTok 以生效.");
         table.put("Undo",
                 "撤消");
         table.put("Undo clearing seen videos",
@@ -5350,11 +5352,11 @@ final class L10nTranslationsZh_Hans {
                 "视频 (MP4)");
         table.put("Video ID copied",
                 "视频 ID 已复制");
-        table.put("Video and details saved to %1$s",
-                "视频和详细信息保存到 %1$s");
     }
 
     private static void fill43(Map<String, String> table) {
+        table.put("Video and details saved to %1$s",
+                "视频和详细信息保存到 %1$s");
         table.put("Video destination",
                 "视频目的地");
         table.put("Video download codec",
@@ -5473,11 +5475,11 @@ final class L10nTranslationsZh_Hans {
                 "当诊断日志记录打开时，一条消息会指出 Hushfeed 失败的部分。关闭仅在报告中保留失败.");
         table.put("While the controls are invisible on the main feed, the creator's name, the caption and the music line stay in sight.",
                 "在主信息流上控件隐形时，创作者名称、标题和音乐行仍然可见.");
-        table.put("While you hold a video, slide left or right to step through the speed menu's speeds, and a bubble shows the one you're on. Your next hold starts there. Letting go goes back to normal. A pull-down lock keeps the speed you slid to. On a locked video, letting go locks the new speed.",
-                "按住视频时向左或向右滑动，可在速度菜单的各个速度之间切换，气泡会显示当前速度。下次按住时从这个速度开始。松手后恢复正常。下拉锁定会保留你滑到的速度。在已锁定的视频上，松手会锁定新的速度.");
     }
 
     private static void fill44(Map<String, String> table) {
+        table.put("While you hold a video, slide left or right to step through the speed menu's speeds, and a bubble shows the one you're on. Your next hold starts there. Letting go goes back to normal. A pull-down lock keeps the speed you slid to. On a locked video, letting go locks the new speed.",
+                "按住视频时向左或向右滑动，可在速度菜单的各个速度之间切换，气泡会显示当前速度。下次按住时从这个速度开始。松手后恢复正常。下拉锁定会保留你滑到的速度。在已锁定的视频上，松手会锁定新的速度.");
         table.put("White",
                 "白色");
         table.put("Who to message",
@@ -5596,11 +5598,11 @@ final class L10nTranslationsZh_Hans {
                 "对话框 弹窗 问候");
         table.put("expanded",
                 "扩大");
-        table.put("picture in picture PiP",
-                "画中画 PiP");
     }
 
     private static void fill45(Map<String, String> table) {
+        table.put("picture in picture PiP",
+                "画中画 PiP");
         table.put("save photos",
                 "保存照片");
         table.put("search suggestions",

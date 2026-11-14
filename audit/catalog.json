@@ -882,6 +882,12 @@
     "row": "Sort loaded videos on Liked grids"
    },
    {
+    "key": "favorites_grid_sort",
+    "default": "profile",
+    "type": "string",
+    "row": "Sort loaded videos on Favorites grids"
+   },
+   {
     "key": "sound_grid_sort",
     "default": "off",
     "type": "string",

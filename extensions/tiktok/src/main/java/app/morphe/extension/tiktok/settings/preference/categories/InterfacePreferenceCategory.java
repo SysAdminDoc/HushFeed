@@ -365,6 +365,13 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                                     "Most liked first", "Least liked first"},
                             new String[]{"profile", "off", "newest", "oldest", "longest", "shortest", "most_viewed",
                                     "least_viewed", "most_liked", "least_liked"}));
+                    addPreference(new ChoicePreference(context, "Sort loaded videos on Favorites grids",
+                            Settings.FAVORITES_GRID_SORT,
+                            new String[]{"Same as profile grids", "Original order", "Newest first", "Oldest first",
+                                    "Longest first", "Shortest first", "Most viewed first", "Least viewed first",
+                                    "Most liked first", "Least liked first"},
+                            new String[]{"profile", "off", "newest", "oldest", "longest", "shortest", "most_viewed",
+                                    "least_viewed", "most_liked", "least_liked"}));
                 }
                 if (SettingsStatus.likedJumpEnabled) {
                     addPreference(new TogglePreference(

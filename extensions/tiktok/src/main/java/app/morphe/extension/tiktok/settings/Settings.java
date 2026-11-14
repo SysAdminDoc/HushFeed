@@ -875,6 +875,8 @@ public class Settings extends BaseSettings {
     public static final StringSetting PROFILE_GRID_SORT = new StringSetting("profile_grid_sort", "off");
     /** The Liked tab's own order (#180): "profile" follows PROFILE_GRID_SORT, otherwise one of GridSort's orders. */
     public static final StringSetting LIKED_GRID_SORT = new StringSetting("liked_grid_sort", "profile");
+    /** The Favorites tab's own order (#180): "profile" follows PROFILE_GRID_SORT, otherwise one of GridSort's orders. */
+    public static final StringSetting FAVORITES_GRID_SORT = new StringSetting("favorites_grid_sort", "profile");
     /** The order of a sound page's video grid (#180): off, or one of GridSort's orders. */
     public static final StringSetting SOUND_GRID_SORT = new StringSetting("sound_grid_sort", "off");
     /** A chip on Liked grids that starts the list at a chosen year or month (#350). */

@@ -15,7 +15,7 @@ final class L10nTranslationsAr {
     }
 
     static Map<String, String> build() {
-        Map<String, String> table = new HashMap<>(5896);
+        Map<String, String> table = new HashMap<>(5898);
         fill0(table);
         fill1(table);
         fill2(table);
@@ -4746,6 +4746,8 @@ final class L10nTranslationsAr {
     private static void fill38(Map<String, String> table) {
         table.put("Something is missing from %1$s. Tap for the whole report.",
                 "ينقص شيء من %1$s. انقر لعرض التقرير الكامل.");
+        table.put("Sort loaded videos on Favorites grids",
+                "رتب الفيديوهات المحملة في شبكات المفضلات");
         table.put("Sort loaded videos on Liked grids",
                 "رتب الفيديوهات المحملة في شبكات أعجبني");
         table.put("Sort loaded videos on profile grids",
@@ -4862,11 +4864,11 @@ final class L10nTranslationsAr {
                 "أوقف TikTok عن تحميل مقاطع الفيديو القادمة مسبقا. يستهلك ذلك بيانات أقل، لكن قد تستغرق مقاطع الفيديو لحظة أطول لبدء التشغيل.");
         table.put("Stop TikTok reading what you copied. Copying a link from TikTok still works.",
                 "أوقف TikTok عن قراءة ما نسخته. نسخ رابط من TikTok لا يزال يعمل.");
-        table.put("Stop TikTok's built-in AI engine from starting, so it doesn't get a copy of everything TikTok logs about your use. TikTok works as if the engine weren't there.",
-                "منع محرك الذكاء الاصطناعي المدمج في TikTok من البدء، حتى لا يحصل على نسخة من كل ما يسجله TikTok عن استخدامك. يعمل TikTok كما لو أن المحرك غير موجود.");
     }
 
     private static void fill39(Map<String, String> table) {
+        table.put("Stop TikTok's built-in AI engine from starting, so it doesn't get a copy of everything TikTok logs about your use. TikTok works as if the engine weren't there.",
+                "منع محرك الذكاء الاصطناعي المدمج في TikTok من البدء، حتى لا يحصل على نسخة من كل ما يسجله TikTok عن استخدامك. يعمل TikTok كما لو أن المحرك غير موجود.");
         table.put("Stop TikTok's speed tests",
                 "إيقاف اختبارات سرعة TikTok");
         table.put("Stop a long press on Like from opening TikTok's repost action.",
@@ -4985,11 +4987,11 @@ final class L10nTranslationsAr {
                 "لغة الترجمة");
         table.put("Subtitles",
                 "ترجمات");
-        table.put("Subtitles: %1$s",
-                "الترجمات: %1$s");
     }
 
     private static void fill40(Map<String, String> table) {
+        table.put("Subtitles: %1$s",
+                "الترجمات: %1$s");
         table.put("Support",
                 "الدعم");
         table.put("Support Hushfeed",
@@ -5108,11 +5110,11 @@ final class L10nTranslationsAr {
                 "ذلك %1$d دقيقة اليوم");
         table.put("That is %1$d minutes today|few",
                 "ذلك %1$d دقائق اليوم");
-        table.put("That is %1$d minutes today|many",
-                "ذلك %1$d دقيقة اليوم");
     }
 
     private static void fill41(Map<String, String> table) {
+        table.put("That is %1$d minutes today|many",
+                "ذلك %1$d دقيقة اليوم");
         table.put("That is %1$d minutes today|two",
                 "ذلك %1$d دقيقتان اليوم");
         table.put("That is %1$d minutes today|zero",
@@ -5231,11 +5233,11 @@ final class L10nTranslationsAr {
                 "تم فتح الخلاصة مرة أخرى");
         table.put("The feed locks by itself during these hours, on your phone's clock. Write days and hours like Mon-Fri 21:00-07:00; Sat Sun 13:00-15:00. Leave the days out for every day. A time that ends earlier than it starts runs past midnight.",
                 "تقفل الخلاصة تلقائيًا خلال هذه الساعات، حسب ساعة هاتفك. اكتب الأيام والساعات مثل Mon-Fri 21:00-07:00؛ Sat Sun 13:00-15:00. اترك الأيام فارغة ليعمل كل يوم. الوقت الذي ينتهي قبل أن يبدأ يتجاوز منتصف الليل.");
-        table.put("The feed slowly dims during the last 45 seconds before the hold, so it doesn't come as a sudden stop. Needs a time budget and a hold.",
-                "تخفت الخلاصة تدريجيًا خلال آخر 45 ثانية قبل القفل، حتى لا يتوقف فجأة. يتطلب ذلك ميزانية وقت وقفلًا.");
     }
 
     private static void fill42(Map<String, String> table) {
+        table.put("The feed slowly dims during the last 45 seconds before the hold, so it doesn't come as a sudden stop. Needs a time budget and a hold.",
+                "تخفت الخلاصة تدريجيًا خلال آخر 45 ثانية قبل القفل، حتى لا يتوقف فجأة. يتطلب ذلك ميزانية وقت وقفلًا.");
         table.put("The feed stops when this video ends.",
                 "تتوقف الخلاصة عند انتهاء هذا الفيديو.");
         table.put("The feed waits for one tap before it starts playing again when you come back to the app. Messages, profiles and search are still one tap away.",
@@ -5354,11 +5356,11 @@ final class L10nTranslationsAr {
                 "هذه منشورات حفظها حسابك المسجل دخوله. لا تدرج فئات المفضلات الأخرى.");
         table.put("These loaded values are for a different TikTok version",
                 "هذه القيم المحملة لإصدار مختلف من TikTok");
-        table.put("These notes are in English.",
-                "هذه الملاحظات باللغة الإنجليزية.");
     }
 
     private static void fill43(Map<String, String> table) {
+        table.put("These notes are in English.",
+                "هذه الملاحظات باللغة الإنجليزية.");
         table.put("This LIVE's stream can't be saved",
                 "لا يمكن حفظ بث هذا LIVE");
         table.put("This account can't make stickers",
@@ -5477,11 +5479,11 @@ final class L10nTranslationsAr {
                 "يفتح TikTok ورقة المشاركة إلى بعد بضع ثوانٍ من حفظه لمقطع فيديو. هذا يمنعه. يبقى زر المشاركة وإشعار الحفظ كما هما.");
         table.put("TikTok read it",
                 "قرأه TikTok");
-        table.put("TikTok read it, but the override couldn't be applied. Reset it and save it again.",
-                "قرأه TikTok، ولكن تعذر تطبيق التجاوز. أعد تعيينه واحفظه مرة أخرى.");
     }
 
     private static void fill44(Map<String, String> table) {
+        table.put("TikTok read it, but the override couldn't be applied. Reset it and save it again.",
+                "قرأه TikTok، ولكن تعذر تطبيق التجاوز. أعد تعيينه واحفظه مرة أخرى.");
         table.put("TikTok refused the follow with code %1$s",
                 "رفض TikTok المتابعة بالرمز %1$s");
         table.put("TikTok refused the follow: %1$s",
@@ -5600,11 +5602,11 @@ final class L10nTranslationsAr {
                 "نقر مزدوج أعلى اليمين");
         table.put("Tracking",
                 "التتبع");
-        table.put("Tracking, device access and links",
-                "التتبع والوصول إلى الجهاز والروابط");
     }
 
     private static void fill45(Map<String, String> table) {
+        table.put("Tracking, device access and links",
+                "التتبع والوصول إلى الجهاز والروابط");
         table.put("Translate button in comments",
                 "زر ترجمة في التعليقات");
         table.put("Translate comments as they load, using TikTok's own translator.",
@@ -5723,11 +5725,11 @@ final class L10nTranslationsAr {
                 "تحت @username في الملف الشخصي، اعرض ما إذا كان يتابعك أم لا يتابعك بالمقابل. قائمة المتابعين وقائمة الذين تتابعهم تحددان الحسابات التي تتابعها ولا تتابعك بالمقابل.");
         table.put("Under the @username on someone else's profile, show the month and year the account was made. It's read from the account's ID, so very old accounts show nothing.",
                 "أسفل @username في ملف شخص آخر، اعرض الشهر والسنة اللذين أنشئ فيهما الحساب. يقرأ ذلك من معرف الحساب، لذا لا تظهر الحسابات القديمة جدا شيئا.");
-        table.put("Undid an interrupted change. Restart TikTok to apply.",
-                "تم التراجع عن تغيير متقطع. أعد تشغيل TikTok لتطبيقه.");
     }
 
     private static void fill46(Map<String, String> table) {
+        table.put("Undid an interrupted change. Restart TikTok to apply.",
+                "تم التراجع عن تغيير متقطع. أعد تشغيل TikTok لتطبيقه.");
         table.put("Undo",
                 "تراجع");
         table.put("Undo clearing seen videos",
@@ -5846,11 +5848,11 @@ final class L10nTranslationsAr {
                 "فيديو (MP4)");
         table.put("Video ID copied",
                 "تم نسخ ID الفيديو");
-        table.put("Video and details saved to %1$s",
-                "تم حفظ الفيديو والتفاصيل في %1$s");
     }
 
     private static void fill47(Map<String, String> table) {
+        table.put("Video and details saved to %1$s",
+                "تم حفظ الفيديو والتفاصيل في %1$s");
         table.put("Video destination",
                 "وجهة الفيديو");
         table.put("Video download codec",
@@ -5969,11 +5971,11 @@ final class L10nTranslationsAr {
                 "عندما تترك TikTok أثناء تشغيل فيديو، يستمر في التشغيل في نافذة صغيرة فوق تطبيقاتك الأخرى، مع زر لإيقافه مؤقتًا. يعمل في الخلاصة وفي الفيديوهات التي تفتحها من ملف شخصي أو بحث أو صوت. يتطلب Android 8 أو أحدث.");
         table.put("When you open TikTok from its icon, the first video in the feed waits for one tap before it plays. A link, a notification or a shortcut opens as usual.",
                 "عند فتح TikTok من أيقونته، ينتظر أول فيديو في الخلاصة نقرة واحدة قبل أن يبدأ التشغيل. يفتح الرابط أو الإشعار أو الاختصار كالمعتاد.");
-        table.put("Where the time goes",
-                "مكان عرض الوقت");
     }
 
     private static void fill48(Map<String, String> table) {
+        table.put("Where the time goes",
+                "مكان عرض الوقت");
         table.put("While Clear display is on, also hide the progress bar, the close button and the pause and speed buttons at the bottom. You can still drag along the bottom edge to move through the video. To leave Clear display, press and hold the video and tap Restore display, or pinch the screen.",
                 "أثناء تفعيل عرض نظيف، أخفِ أيضًا شريط التقدم وزر الإغلاق وزرَي الإيقاف المؤقت والسرعة في الأسفل. لا يزال بإمكانك السحب على طول الحافة السفلية للتنقل عبر الفيديو. لمغادرة عرض نظيف، اضغط مطولاً على الفيديو وانقر على استعادة العرض، أو اقرص الشاشة.");
         table.put("While diagnostic logging is on, a message names the part of Hushfeed that failed. Off keeps failures in the report only.",
@@ -6092,11 +6094,11 @@ final class L10nTranslationsAr {
                 "الصفر يوقف هذا. أول مرة تفتح فيها الخلاصة بعد بدء TikTok أو عودته من الخلفية، يغطيها عداد تنازلي لعدد الثواني المحدد قبل أن تتمكن من المتابعة أو المغادرة. تفتح الرسائل والملفات الشخصية والبحث بدونها.");
         table.put("autoplay auto play",
                 "تشغيل تلقائي تلقائي التشغيل");
-        table.put("collapsed",
-                "مطوي");
     }
 
     private static void fill49(Map<String, String> table) {
+        table.put("collapsed",
+                "مطوي");
         table.put("debug debugging logs logging",
                 "تصحيح أخطاء تنقيح سجل سجلات تسجيل");
         table.put("dialog popup greeting",

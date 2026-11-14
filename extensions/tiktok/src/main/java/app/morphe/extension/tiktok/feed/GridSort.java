@@ -78,8 +78,8 @@ import app.morphe.extension.tiktok.wellbeing.SessionLockOverlay;
  * being lost. A grid now stays out of sight while the chain runs and comes back once, sorted
  * ({@link Hold}).
  *
- * <p>The Liked tab has its own order, which follows the profile grids until one is chosen for it
- * there or from its chip ({@link #orderFor}).
+ * <p>The Liked and Favorites tabs each have their own order, which follows the profile grids until
+ * one is chosen for it there or from its chip ({@link #orderFor}).
  *
  * <p>A sound's page draws its videos through TikTok's detail page adapter, which hashtag and
  * effect pages share. The patch hands over the label each one is built with, and only a sound's
@@ -230,11 +230,12 @@ public final class GridSort {
     }
 
     /**
-     * The order the grid this adapter draws follows. The Liked tab has its own setting, which
-     * follows the profile grids ("profile", its default) until an order is chosen for it. Posts, Favorites and the private
-     * tab follow the profile setting, and a tab TikTok numbers some other way keeps TikTok's
-     * order. A sound's page has its own setting. An adapter whose tab never came in (a build the
-     * patch couldn't hook) follows the profile setting, as every grid did before Liked got its own.
+     * The order the grid this adapter draws follows. The Liked and Favorites tabs each have their
+     * own setting, which follows the profile grids ("profile", its default) until an order is
+     * chosen for it. Posts and the private tab follow the profile setting, and a tab TikTok numbers
+     * some other way keeps TikTok's order. A sound's page has its own setting. An adapter whose
+     * tab never came in (a build the patch couldn't hook) follows the profile setting, as every
+     * grid did before Liked got its own.
      */
     static String orderFor(Object adapter) {
         Integer type;
@@ -244,12 +245,12 @@ public final class GridSort {
         if (type == null) return Settings.PROFILE_GRID_SORT.get();
         switch (type) {
             case TAB_LIKED:
-                String liked = Settings.LIKED_GRID_SORT.get();
-                return indexOf(liked) >= 0 ? liked : Settings.PROFILE_GRID_SORT.get();
-            case TAB_POSTS:
+                return ownOrProfile(Settings.LIKED_GRID_SORT);
             case TAB_FAVORITES:
-            case TAB_PRIVATE:
             case TAB_FAVORITE_VIDEOS:
+                return ownOrProfile(Settings.FAVORITES_GRID_SORT);
+            case TAB_POSTS:
+            case TAB_PRIVATE:
                 return Settings.PROFILE_GRID_SORT.get();
             case TAB_SOUND:
                 return Settings.SOUND_GRID_SORT.get();
@@ -258,14 +259,30 @@ public final class GridSort {
         }
     }
 
+    /** A tab's own order, or the profile grids' while it's "profile" or a value no order has. */
+    private static String ownOrProfile(StringSetting own) {
+        String order = own.get();
+        return indexOf(order) >= 0 ? order : Settings.PROFILE_GRID_SORT.get();
+    }
+
     /** The setting a choice on this adapter's chip saves to. */
     static StringSetting settingFor(Object adapter) {
         Integer type;
         synchronized (ORIGINALS) {
             type = adapter == null ? null : TABS.get(adapter);
         }
-        if (type != null && type == TAB_LIKED) return Settings.LIKED_GRID_SORT;
-        return type != null && type == TAB_SOUND ? Settings.SOUND_GRID_SORT : Settings.PROFILE_GRID_SORT;
+        if (type == null) return Settings.PROFILE_GRID_SORT;
+        switch (type) {
+            case TAB_LIKED:
+                return Settings.LIKED_GRID_SORT;
+            case TAB_FAVORITES:
+            case TAB_FAVORITE_VIDEOS:
+                return Settings.FAVORITES_GRID_SORT;
+            case TAB_SOUND:
+                return Settings.SOUND_GRID_SORT;
+            default:
+                return Settings.PROFILE_GRID_SORT;
+        }
     }
 
     /**
@@ -984,6 +1001,7 @@ public final class GridSort {
             public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
                 if (key != null && !Settings.PROFILE_GRID_SORT.key.equals(key)
                         && !Settings.LIKED_GRID_SORT.key.equals(key)
+                        && !Settings.FAVORITES_GRID_SORT.key.equals(key)
                         && !Settings.SOUND_GRID_SORT.key.equals(key)) return;
                 synchronized (Setting.class) {
                     if (originalWatch != this || !originalChosen) return;

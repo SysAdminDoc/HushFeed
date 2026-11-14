@@ -57,6 +57,7 @@
       "video_length_on_grid",
       "profile_grid_sort",
       "liked_grid_sort",
+      "favorites_grid_sort",
       "sound_grid_sort",
       "liked_jump_to_date",
       "grid_search",
@@ -1780,6 +1781,12 @@
       "key": "fade_in_clear_display",
       "type": "boolean",
       "default": true
+    },
+    "favorites_grid_sort": {
+      "field": "FAVORITES_GRID_SORT",
+      "key": "favorites_grid_sort",
+      "type": "string",
+      "default": "profile"
     },
     "feed_author_text_size": {
       "field": "FEED_AUTHOR_TEXT_SIZE",

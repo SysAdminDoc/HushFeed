@@ -132,6 +132,7 @@ public class PhotoPostSavedRecordTest {
         AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
         assertNotNull("no already-saved choice came up", dialog);
         assertTrue(dialog.isShowing());
+        assertEquals("This photo post is already saved", Shadows.shadowOf(dialog).getTitle().toString());
         // #356: "Saving" said before the choice reads as a second copy on its way.
         assertFalse("photos never fetched said they were saving",
                 ShadowToast.showedToast("Saving 2 original photos"));
@@ -161,7 +162,10 @@ public class PhotoPostSavedRecordTest {
         assertTrue(SlideshowVideo.start(post, null));
         finish();
         assertEquals("a second video was made with no word", 1, made[0]);
-        assertNotNull("no already-saved choice came up", ShadowAlertDialog.getLatestAlertDialog());
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+        assertNotNull("no already-saved choice came up", dialog);
+        // The post is a photo post, whatever form it was saved in (#197).
+        assertEquals("This photo post is already saved", Shadows.shadowOf(dialog).getTitle().toString());
         assertFalse("a video never made said it was being made",
                 ShadowToast.showedToast("Making a video of the photos"));
     }

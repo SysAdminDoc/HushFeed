@@ -108,11 +108,12 @@ public final class SavedVideoArchive {
 
     /**
      * For a photo post's save, off the main thread: offers Open or Save again when the post is
-     * recorded, as a video's save does. {@code OFFERED} means the offer owns the save and calls
-     * {@code release} when it's done with it; {@code FAILED} has said so and nothing is saved.
+     * recorded, as a video's save does, under a photo post's title even when it was saved as a
+     * video. {@code OFFERED} means the offer owns the save and calls {@code release} when it's done
+     * with it; {@code FAILED} has said so and nothing is saved.
      */
     static Check check(Context context, String id, Runnable saveAgain, Runnable release) {
-        return check(context, id, L10n.t("This video is already saved"), saveAgain, release);
+        return check(context, id, L10n.t("This photo post is already saved"), saveAgain, release);
     }
 
     /** {@link #check} for a save that isn't a video, under the offer's own {@code title}. */

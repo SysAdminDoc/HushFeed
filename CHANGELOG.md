@@ -21,6 +21,7 @@ Every Hushfeed release, newest first.
 
 ### Bug Fixes
 
+* Saving a photo post you've already saved now says the photo post is already saved. The choice to open it or save it again used to call it a video, even when you'd saved it as photos (#197).
 * `Turn off haptics` also quiets Hushfeed's own buzzes now: holding the For You, Home, Inbox or Profile tab and dragging the block button were still vibrating with the switch on.
 * `Fold long comments` folds comments that TikTok already cuts with its own "... more". Those used to stay at TikTok's six lines. Now our more opens TikTok's cut text, and TikTok's more opens the rest.
 * When `Pause before the feed` or the daily hold comes up, TalkBack moves to its title and reads it. Coming back to TikTok from the home screen, TalkBack used to land on the Home tab and never said what was covering the feed. Once you've moved on to a button or a tab, pulling down the notification shade won't send you back to the title.

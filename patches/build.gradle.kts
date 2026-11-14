@@ -595,11 +595,21 @@ object NativeTestAreas {
         // Why a test can't run on its area's slice: it walks the source tree, scans the classpath
         // or reads a repository file that is not a patch source.
         fun needsEverything(test: Outer): String? {
-            for (part in closure(listOf(test))) {
-                if (part.main) continue
+            val parts = closure(listOf(test)).filter { !it.main }
+            for (part in parts) {
                 if (part.members.any { it in walks } && part.strings.any { "src/main" in it }) return "walks the sources in ${part.name}"
                 if (part.members.any { it in scans }) return "scans the classpath in ${part.name}"
                 part.strings.firstOrNull { ' ' !in it && repoFile.containsMatchIn(it) }?.let { return "reads $it in ${part.name}" }
+            }
+            // A source root named in one class and walked in another. No source gets named for it,
+            // so on an area's slice the test would stay up to date while the sources it walks change.
+            // A test that names a file under the root reads that file, which becomes its input, and
+            // the walk it reaches is another one (Fixtures lists the fixture folder).
+            val walker = parts.firstOrNull { part -> part.members.any { it in walks } } ?: return null
+            if (parts.any { part -> part.strings.any { sourcePath.matchEntire(it) != null || sourceName.find(it) != null } }) return null
+            for (part in parts) {
+                part.strings.firstOrNull { "src/main" in it && ' ' !in it && sourcePath.matchEntire(it) == null }
+                    ?.let { return "walks $it from ${part.name} in ${walker.name}" }
             }
             return null
         }

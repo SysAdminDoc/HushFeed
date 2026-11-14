@@ -90,6 +90,13 @@ public final class BlockAuthorOverlay {
     private static WeakReference<Application> followed = new WeakReference<>(null);
     private static ViewTreeObserver.OnGlobalLayoutListener visibilityListener;
     private static WeakReference<View> undoReference = new WeakReference<>(null);
+    /**
+     * The root size the controls were last placed against. Positions are pixels, so a root that
+     * shrinks (the small picture-in-picture window) and grows back has to place them again from
+     * their saved fractions: the clamp alone left them packed into the small window's corner.
+     */
+    private static int placedWidth;
+    private static int placedHeight;
 
     /** Guards against a double tap blocking, then unblocking, the same account. */
     private static volatile boolean requestInFlight;
@@ -354,6 +361,8 @@ public final class BlockAuthorOverlay {
             float[] fractions = defaultFractions(view, root, button, size, step);
             applySavedPosition(view, root, size, positionSetting(view), fractions[0], fractions[1]);
         }
+        placedWidth = root.getWidth();
+        placedHeight = root.getHeight();
     }
 
     /**
@@ -411,9 +420,17 @@ public final class BlockAuthorOverlay {
         visibilityListener = () -> {
             syncVisibility();
             ViewGroup current = rootReference.get();
-            if (current != null) clampCurrentPositions(current);
+            if (current == null) return;
+            if (resized(current)) applyPositions(current);
+            clampCurrentPositions(current);
         };
         root.getViewTreeObserver().addOnGlobalLayoutListener(visibilityListener);
+    }
+
+    /** Whether the root has a size other than the one the controls were placed against, outside a drag. */
+    private static boolean resized(ViewGroup root) {
+        if (dragging || root.getWidth() == 0 || root.getHeight() == 0) return false;
+        return root.getWidth() != placedWidth || root.getHeight() != placedHeight;
     }
 
     /** Re-applies only the safe-area bounds, without moving a control back during a drag. */

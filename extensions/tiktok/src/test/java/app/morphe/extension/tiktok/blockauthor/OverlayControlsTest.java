@@ -526,6 +526,35 @@ public class OverlayControlsTest {
         }
     }
 
+    @Test public void theControlsGoBackToTheirSpotsWhenTheSmallWindowGrowsBack() throws Exception {
+        ViewGroup root = attachedRoot(1080, 2316);
+        View button = held("buttonReference");
+        View sound = held("soundButtonReference");
+        int buttonLeft = leftOf(button);
+        int buttonTop = topOf(button);
+        int soundTop = topOf(sound);
+
+        // The picture-in-picture window: the activity's root shrinks to the small window...
+        root.measure(View.MeasureSpec.makeMeasureSpec(300, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(530, View.MeasureSpec.EXACTLY));
+        root.layout(0, 0, 300, 530);
+        root.getViewTreeObserver().dispatchOnGlobalLayout();
+        assertTrue("the block control was left outside the small window",
+                leftOf(button) < 300 && topOf(button) < 530);
+
+        // ...and grows back when the reader opens TikTok again.
+        root.measure(View.MeasureSpec.makeMeasureSpec(1080, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(2316, View.MeasureSpec.EXACTLY));
+        root.layout(0, 0, 1080, 2316);
+        root.getViewTreeObserver().dispatchOnGlobalLayout();
+
+        assertEquals("the block control stayed squeezed into the small window's corner",
+                buttonLeft, leftOf(button));
+        assertEquals(buttonTop, topOf(button));
+        assertEquals("the sound control stayed squeezed into the small window's corner",
+                soundTop, topOf(sound));
+    }
+
     @Test public void aFailedOverlayActionReportsFailureInsteadOfSuccess() {
         Activity activity = Robolectric.buildActivity(Activity.class).setup().visible().get();
         Utils.setContext(activity);

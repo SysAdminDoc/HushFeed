@@ -696,6 +696,7 @@
       "morphe_language",
       "morphe_show_menu_icons",
       "hide_settings_row",
+      "settings_row_picks",
       "settings_as_list",
       "startup_message",
       "startup_message_title",
@@ -3966,6 +3967,12 @@
       "key": "settings_as_list",
       "type": "boolean",
       "default": false
+    },
+    "settings_row_picks": {
+      "field": "SETTINGS_ROW_PICKS",
+      "key": "settings_row_picks",
+      "type": "string",
+      "default": ""
     },
     "share_added_apps": {
       "field": "SHARE_ADDED_APPS",

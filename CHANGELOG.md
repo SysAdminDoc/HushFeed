@@ -6,6 +6,7 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* `Hide Settings and privacy rows` takes TikTok's own rows you never use off its Settings and privacy page, like Ads or Shake to report. Tick them in the checklist under `Hide the Hushfeed row` in Hushfeed settings > App and they're gone the next time that page opens. A section that loses every row loses its title too, and pausing Hushfeed brings them all back (#244).
 * `Show message times` puts the time each message was sent under it in a chat, in small gray text below the bubble. TikTok only shows a time above a message that comes after a gap. It starts off and sits under `Turn off swipe to reply` in Hushfeed settings > Inbox.
 * `Glass Stories button on Following` swaps the flat gray Stories button at the top of the Following feed for glass with round ends, and on Android 12 and up the video behind it shows through blurred. It starts off and sits under `Hide the LIVE row on Following` in Hushfeed settings > Feed screen. Turning it off or pausing Hushfeed brings TikTok's own button back (#409).
 * `Hide search result tabs` takes tabs you never use off the strip above search results. Tick Shop, LIVE, Places or any other tab TikTok shows you and it's gone from every search, while Top always stays. The checklist sits under `Hide TikTok Shop in search` in Hushfeed settings > Feed filter, and it shows each tab by name in your settings language.

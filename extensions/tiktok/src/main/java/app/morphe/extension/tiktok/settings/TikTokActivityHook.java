@@ -66,13 +66,18 @@ public class TikTokActivityHook {
      * Puts the Hushfeed row first in Settings and privacy unless {@link #showSettingsRow()} says
      * no. The patch calls this rather than branching inside TikTok's list builder: that branch
      * made ART's JIT crash (SIGSEGV in HScheduler::Schedule) compiling the builder once the
-     * switch was on, and TikTok then offered its "Restore your experience" safe mode.
+     * switch was on, and TikTok then offered its "Restore your experience" safe mode. The list is
+     * the whole sorted page, so TikTok's own picked rows come out of it here first (#244).
      */
     public static void addSettingsRowFirst(List<Object> rows, Object row) {
+        SettingsRows.filter(rows);
         if (showSettingsRow()) rows.add(0, row);
     }
 
-    /** Same as {@link #addSettingsRowFirst} for builds that append the row at the end. */
+    /**
+     * Same as {@link #addSettingsRowFirst} for builds that append the row at the end. That list
+     * holds only the support section's header when this runs, so nothing is picked out of it.
+     */
     public static void addSettingsRowLast(List<Object> rows, Object row) {
         if (showSettingsRow()) rows.add(row);
     }

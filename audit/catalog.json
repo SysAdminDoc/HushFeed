@@ -14156,6 +14156,18 @@
     "default": true,
     "type": "bool",
     "row": "Long-press Home for Hushfeed settings"
+   },
+   {
+    "key": "settings_row_picks",
+    "default": "",
+    "type": "string",
+    "row": "Hide Settings and privacy rows"
+   },
+   {
+    "key": "settings_row_catalog",
+    "default": "",
+    "type": "string",
+    "row": "(internal list behind the Hide Settings and privacy rows checklist, no row)"
    }
   ],
   "surface": "settings",

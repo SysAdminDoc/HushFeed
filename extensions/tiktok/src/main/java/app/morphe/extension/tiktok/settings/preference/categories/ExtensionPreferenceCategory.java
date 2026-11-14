@@ -20,6 +20,7 @@ import app.morphe.extension.tiktok.settings.preference.ProfileShortcutChecklistP
 import app.morphe.extension.tiktok.settings.preference.ProfileTabChecklistPreference;
 import app.morphe.extension.tiktok.settings.preference.LocalProfileCountsPreference;
 import app.morphe.extension.tiktok.settings.preference.SectionHeadingPreference;
+import app.morphe.extension.tiktok.settings.preference.SettingsRowChecklistPreference;
 import app.morphe.extension.tiktok.settings.preference.TogglePreference;
 
 /**
@@ -484,6 +485,7 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                         + "Hushfeed settings is on. If neither press can open them, the row stays.",
                 Settings.HIDE_SETTINGS_ROW
         ));
+        addPreference(new SettingsRowChecklistPreference(context));
         // Shown from the same start of TikTok's main screen as the settings row, so every bundle has it.
         addPreference(new TogglePreference(
                 context,

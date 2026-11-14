@@ -2386,6 +2386,54 @@ Collapsed	Daraltılmış
 This setting isn't available. Search for another setting.	Bu ayar kullanılamıyor. Başka bir ayar arayın.
 Hide the Hushfeed row	Hushfeed satırını gizle
 Take Hushfeed out of TikTok's Settings and privacy. To open these settings, press and hold For You at the top of the feed, or Home if Long-press Home for Hushfeed settings is on. If neither press can open them, the row stays.	Hushfeed'i TikTok'un Ayarlar ve gizlilik listesinden çıkarır. Bu ayarları açmak için akışın üstündeki Senin İçin'e basılı tut, ya da Hushfeed ayarları için Ana Sayfa'ya basılı tut açıksa Ana Sayfa'ya. İkisi de açamıyorsa satır kalır.
+# context: Title of the checklist that hides rows from TikTok's own Settings and privacy page
+Hide Settings and privacy rows	Ayarlar ve gizlilik satırlarını gizle
+# context: Note under that title. A section's title is the small heading over a group of rows on that page
+Pick the rows to take out of TikTok's Settings and privacy page. This applies the next time the page opens, and a section left with no rows loses its title too.	TikTok'un Ayarlar ve gizlilik sayfasından çıkarılacak satırları seç. Bu, sayfa bir sonraki açılışında geçerli olur ve satırı kalmayan bir bölüm başlığını da kaybeder.
+# context: Checklist rows, each one a row of TikTok's Settings and privacy page. Use the label TikTok itself shows for that row in this language
+Activity center	Etkinlik merkezi
+Manage posts	Gönderileri yönet
+Content preferences	İçerik tercihleri
+Notifications	Bildirimler
+Time and well-being	Zaman ve sağlık
+Family Pairing	Aile Eşleştirme
+Sign up	Kaydol
+Account	Hesap
+Security & permissions	Güvenlik ve izinler
+Analytics	Analizler
+Orders	Siparişler
+Balance	Bakiye
+QR code	QR kodu
+Share profile	Profili paylaş
+TikTok Plus	TikTok Plus
+Invite friends	Arkadaşlarını davet et
+Inbox mode	Gelen kutusu modu
+Audience controls	Kitle kontrolleri
+Background audio	Arka planda ses
+Display	Ekran
+Commercial content library	Ticari içerik kütüphanesi
+Accessibility	Erişilebilirlik
+Home screen shortcuts	Ana ekran kısayolları
+Join Amplify	Amplify'a katıl
+Contacts and location	Kişiler ve konum
+Shake to report	Bildirmek için salla
+Free up space	Yer aç
+Data Saver	Veri Tasarrufu
+Free data	Ücretsiz veri
+Live wallpaper	Canlı duvar kağıdı
+Check for updates	Güncellemeleri kontrol et
+Lite mode	Lite modu
+TikTok Beta	TikTok Beta
+Safety Center	Güvenlik Merkezi
+Privacy Center	Gizlilik Merkezi
+Privacy checkup	Gizlilik kontrolü
+Support	Destek
+Deactivate or delete account	Hesabı devre dışı bırak veya sil
+Terms and Policies	Koşullar ve Politikalar
+Policy updates	Politika güncellemeleri
+What's new on TikTok	TikTok'taki yenilikler
+Switch account	Hesap değiştir
+Log out	Çıkış yap
 Open the search page	Arama sayfasını aç
 Search didn't open. Restart TikTok and try again.	Arama açılmadı. TikTok'u yeniden başlatıp dene.
 Fold the search into a button	Aramayı bir düğmeye katla

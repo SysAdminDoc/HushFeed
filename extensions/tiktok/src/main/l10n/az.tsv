@@ -2386,6 +2386,54 @@ Collapsed	Yığılıb
 This setting isn't available. Search for another setting.	Bu ayar əlçatan deyil. Başqa ayar axtarın.
 Hide the Hushfeed row	Hushfeed sətrini gizlət
 Take Hushfeed out of TikTok's Settings and privacy. To open these settings, press and hold For You at the top of the feed, or Home if Long-press Home for Hushfeed settings is on. If neither press can open them, the row stays.	Hushfeed-i TikTok-un Parametrlər və məxfilik siyahısından çıxarın. Bu ayarları açmaq üçün lentin yuxarısında Sənin üçün düyməsini basılı saxlayın, ya da Hushfeed ayarları üçün Ana səhifəni uzun basın açıqdırsa, Ana səhifəni. Heç biri onları aça bilmirsə, sətir qalır.
+# context: Title of the checklist that hides rows from TikTok's own Settings and privacy page
+Hide Settings and privacy rows	Parametrlər və məxfilik sətirlərini gizlət
+# context: Note under that title. A section's title is the small heading over a group of rows on that page
+Pick the rows to take out of TikTok's Settings and privacy page. This applies the next time the page opens, and a section left with no rows loses its title too.	TikTok-un Parametrlər və məxfilik səhifəsindən çıxarılacaq sətirləri seçin. Bu, səhifə növbəti dəfə açılanda tətbiq olunur və sətri qalmayan bölmə başlığını da itirir.
+# context: Checklist rows, each one a row of TikTok's Settings and privacy page. Use the label TikTok itself shows for that row in this language
+Activity center	Fəaliyyət mərkəzi
+Manage posts	Paylaşımları idarə et
+Content preferences	Məzmun seçimləri
+Notifications	Bildirişlər
+Time and well-being	Vaxt və rifah
+Family Pairing	Ailə Cütləşməsi
+Sign up	Qeydiyyatdan keç
+Account	Hesab
+Security & permissions	Təhlükəsizlik və icazələr
+Analytics	Analitika
+Orders	Sifarişlər
+Balance	Balans
+QR code	QR kod
+Share profile	Profili paylaş
+TikTok Plus	TikTok Plus
+Invite friends	Dostları dəvət et
+Inbox mode	Gələnlər rejimi
+Audience controls	Auditoriya nəzarəti
+Background audio	Arxa fon səsi
+Display	Ekran
+Commercial content library	Kommersiya məzmunu kitabxanası
+Accessibility	Əlçatanlıq
+Home screen shortcuts	Əsas ekran qısayolları
+Join Amplify	Amplify-a qoşul
+Contacts and location	Kontaktlar və məkan
+Shake to report	Bildirmək üçün silkələ
+Free up space	Yer boşalt
+Data Saver	Data qənaəti
+Free data	Pulsuz data
+Live wallpaper	Canlı divar kağızı
+Check for updates	Yeniləmələri yoxla
+Lite mode	Lite rejimi
+TikTok Beta	TikTok Beta
+Safety Center	Təhlükəsizlik Mərkəzi
+Privacy Center	Məxfilik Mərkəzi
+Privacy checkup	Məxfilik yoxlaması
+Support	Dəstək
+Deactivate or delete account	Hesabı deaktiv et və ya sil
+Terms and Policies	Şərtlər və Siyasətlər
+Policy updates	Siyasət yeniləmələri
+What's new on TikTok	TikTok-da yeniliklər
+Switch account	Hesabı dəyiş
+Log out	Çıxış
 Open the search page	Axtarış səhifəsini aç
 Search didn't open. Restart TikTok and try again.	Axtarış açılmadı. TikTok-u yenidən başladıb yoxlayın.
 Fold the search into a button	Axtarışı düyməyə yığ

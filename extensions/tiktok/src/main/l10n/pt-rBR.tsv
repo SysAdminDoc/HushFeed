@@ -2386,6 +2386,54 @@ Collapsed	Recolhido
 This setting isn't available. Search for another setting.	Esta configuração não está disponível. Procure outra configuração.
 Hide the Hushfeed row	Ocultar a linha do Hushfeed
 Take Hushfeed out of TikTok's Settings and privacy. To open these settings, press and hold For You at the top of the feed, or Home if Long-press Home for Hushfeed settings is on. If neither press can open them, the row stays.	Tira o Hushfeed de Configurações e privacidade do TikTok. Para abrir estas configurações, toque e segure Para você no topo do feed, ou Início se Toque e segure Início para abrir as configurações do Hushfeed estiver ligado. Se nenhum dos dois conseguir abri-las, a linha continua.
+# context: Title of the checklist that hides rows from TikTok's own Settings and privacy page
+Hide Settings and privacy rows	Ocultar linhas de Configurações e privacidade
+# context: Note under that title. A section's title is the small heading over a group of rows on that page
+Pick the rows to take out of TikTok's Settings and privacy page. This applies the next time the page opens, and a section left with no rows loses its title too.	Escolha as linhas para tirar da página Configurações e privacidade do TikTok. Vale na próxima vez que a página abrir, e uma seção que fica sem linhas perde o título também.
+# context: Checklist rows, each one a row of TikTok's Settings and privacy page. Use the label TikTok itself shows for that row in this language
+Activity center	Central de atividades
+Manage posts	Gerenciar publicações
+Content preferences	Preferências de conteúdo
+Notifications	Notificações
+Time and well-being	Tempo e bem-estar
+Family Pairing	Sincronização Familiar
+Sign up	Cadastrar-se
+Account	Conta
+Security & permissions	Segurança e permissões
+Analytics	Análises
+Orders	Pedidos
+Balance	Saldo
+QR code	QR code
+Share profile	Compartilhar perfil
+TikTok Plus	TikTok Plus
+Invite friends	Convidar amigos
+Inbox mode	Modo da caixa de entrada
+Audience controls	Controles de público
+Background audio	Áudio em segundo plano
+Display	Tela
+Commercial content library	Biblioteca de conteúdo comercial
+Accessibility	Acessibilidade
+Home screen shortcuts	Atalhos da tela inicial
+Join Amplify	Participar do Amplify
+Contacts and location	Contatos e localização
+Shake to report	Agitar para denunciar
+Free up space	Liberar espaço
+Data Saver	Economia de dados
+Free data	Dados grátis
+Live wallpaper	Papel de parede animado
+Check for updates	Verificar atualizações
+Lite mode	Modo Lite
+TikTok Beta	TikTok Beta
+Safety Center	Central de Segurança
+Privacy Center	Central de Privacidade
+Privacy checkup	Verificação de privacidade
+Support	Suporte
+Deactivate or delete account	Desativar ou excluir conta
+Terms and Policies	Termos e políticas
+Policy updates	Atualizações de políticas
+What's new on TikTok	Novidades do TikTok
+Switch account	Trocar de conta
+Log out	Sair
 Open the search page	Abrir a página de busca
 Search didn't open. Restart TikTok and try again.	A busca não abriu. Reinicie o TikTok e tente de novo.
 Fold the search into a button	Recolher a busca em um botão

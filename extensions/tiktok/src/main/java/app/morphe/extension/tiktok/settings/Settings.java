@@ -378,6 +378,12 @@ public class Settings extends BaseSettings {
      */
     public static final BooleanSetting HIDE_SETTINGS_ROW =
             new BooleanSetting("hide_settings_row", FALSE);
+    /**
+     * TikTok's own Settings and privacy rows picked to hide, by enum name (#244), and the names
+     * this phone has listed, which the checklist offers. Read each time the page is built.
+     */
+    public static final StringSetting SETTINGS_ROW_PICKS = new StringSetting("settings_row_picks", "");
+    public static final StringSetting SETTINGS_ROW_CATALOG = new StringSetting("settings_row_catalog", "");
     /** A message of the reader's own, shown each time TikTok opens (#347). */
     public static final BooleanSetting STARTUP_MESSAGE = new BooleanSetting("startup_message", FALSE);
     public static final StringSetting STARTUP_MESSAGE_TITLE = new StringSetting(
@@ -1768,7 +1774,7 @@ public class Settings extends BaseSettings {
                 LOCAL_HIDE_BUTTON_POSITION, BLOCK_SOUND_BUTTON_POSITION, NOT_INTERESTED_BUTTON_POSITION,
                 FEED_MUTE_BUTTON_POSITION, DOWNLOAD_BUTTON_POSITION, COMMENT_TRANSLATE_BUTTON_TURNED_ON,
                 SHARE_ACTION_CATALOG, PROFILE_SHORTCUT_CATALOG, POPUP_LABEL_CATALOG, SEARCH_TAB_CATALOG,
-                DIAGNOSTIC_REPORT_SALT, AUTO_STREAK_STATE,
+                SETTINGS_ROW_CATALOG, DIAGNOSTIC_REPORT_SALT, AUTO_STREAK_STATE,
                 // The settings screen still searches while paused. Answering the empty default
                 // hid the recent searches, and the next search saved itself over all of them.
                 RECENT_SETTINGS_SEARCHES,

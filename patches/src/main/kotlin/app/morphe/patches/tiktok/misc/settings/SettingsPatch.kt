@@ -353,7 +353,8 @@ val settingsPatch = bytecodePatch(
     name = "Settings",
     description = "Adds the Hushfeed settings page to TikTok, at the top of Settings and " +
         "privacy. Pressing and holding For You at the top of the feed opens it too. That's where " +
-        "you turn Hushfeed's features on and off. Works as soon as you patch it in, with no switch.",
+        "you turn Hushfeed's features on and off, and pick any of TikTok's own Settings and " +
+        "privacy rows to hide. Works as soon as you patch it in, with no switch.",
     default = true,
 ) {
     category("Settings")

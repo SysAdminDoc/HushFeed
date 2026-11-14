@@ -2389,6 +2389,54 @@ Collapsed	Eingeklappt
 This setting isn't available. Search for another setting.	Diese Einstellung ist nicht verfügbar. Suche nach einer anderen Einstellung.
 Hide the Hushfeed row	Hushfeed-Zeile ausblenden
 Take Hushfeed out of TikTok's Settings and privacy. To open these settings, press and hold For You at the top of the feed, or Home if Long-press Home for Hushfeed settings is on. If neither press can open them, the row stays.	Nimmt Hushfeed aus TikToks Einstellungen und Datenschutz. Um diese Einstellungen zu öffnen, halte Für dich oben im Feed gedrückt, oder Startseite, wenn Startseite lange drücken für Hushfeed-Einstellungen an ist. Kann keins von beiden sie öffnen, bleibt die Zeile.
+# context: Title of the checklist that hides rows from TikTok's own Settings and privacy page
+Hide Settings and privacy rows	Zeilen in Einstellungen und Datenschutz ausblenden
+# context: Note under that title. A section's title is the small heading over a group of rows on that page
+Pick the rows to take out of TikTok's Settings and privacy page. This applies the next time the page opens, and a section left with no rows loses its title too.	Wähle die Zeilen, die aus TikToks Seite Einstellungen und Datenschutz verschwinden sollen. Das gilt beim nächsten Öffnen der Seite, und ein Abschnitt ohne Zeilen verliert auch seinen Titel.
+# context: Checklist rows, each one a row of TikTok's Settings and privacy page. Use the label TikTok itself shows for that row in this language
+Activity center	Aktivitätscenter
+Manage posts	Beiträge verwalten
+Content preferences	Inhaltspräferenzen
+Notifications	Benachrichtigungen
+Time and well-being	Zeit und Wohlbefinden
+Family Pairing	Begleiteter Modus
+Sign up	Registrieren
+Account	Konto
+Security & permissions	Sicherheit und Berechtigungen
+Analytics	Analysen
+Orders	Bestellungen
+Balance	Guthaben
+QR code	QR-Code
+Share profile	Profil teilen
+TikTok Plus	TikTok Plus
+Invite friends	Freunde einladen
+Inbox mode	Posteingangsmodus
+Audience controls	Zielgruppenkontrollen
+Background audio	Hintergrundwiedergabe
+Display	Anzeige
+Commercial content library	Bibliothek kommerzieller Inhalte
+Accessibility	Barrierefreiheit
+Home screen shortcuts	Startbildschirm-Verknüpfungen
+Join Amplify	Amplify beitreten
+Contacts and location	Kontakte und Standort
+Shake to report	Schütteln zum Melden
+Free up space	Speicherplatz freigeben
+Data Saver	Datensparmodus
+Free data	Kostenlose Daten
+Live wallpaper	Live-Hintergrund
+Check for updates	Nach Updates suchen
+Lite mode	Lite-Modus
+TikTok Beta	TikTok Beta
+Safety Center	Sicherheitscenter
+Privacy Center	Datenschutzcenter
+Privacy checkup	Datenschutzcheck
+Support	Support
+Deactivate or delete account	Konto deaktivieren oder löschen
+Terms and Policies	Bedingungen und Richtlinien
+Policy updates	Richtlinien-Updates
+What's new on TikTok	Neu auf TikTok
+Switch account	Konto wechseln
+Log out	Abmelden
 Open the search page	Suchseite öffnen
 Search didn't open. Restart TikTok and try again.	Suche nicht geöffnet. Starte TikTok neu, dann nochmal.
 Fold the search into a button	Suche in einen Knopf falten

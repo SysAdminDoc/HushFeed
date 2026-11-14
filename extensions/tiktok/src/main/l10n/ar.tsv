@@ -2629,6 +2629,54 @@ Collapsed	مطوي
 This setting isn't available. Search for another setting.	هذا الإعداد غير متاح. ابحث عن إعداد آخر.
 Hide the Hushfeed row	إخفاء صف Hushfeed
 Take Hushfeed out of TikTok's Settings and privacy. To open these settings, press and hold For You at the top of the feed, or Home if Long-press Home for Hushfeed settings is on. If neither press can open them, the row stays.	أخرج Hushfeed من الإعدادات والخصوصية في TikTok. لفتح هذه الإعدادات، اضغط باستمرار على «لك» أعلى الخلاصة، أو «الرئيسية» إذا كان خيار اضغط باستمرار على «الرئيسية» لفتح إعدادات Hushfeed قيد التشغيل. إذا لم يتمكن أي منهما من فتحها، يبقى الصف.
+# context: Title of the checklist that hides rows from TikTok's own Settings and privacy page
+Hide Settings and privacy rows	إخفاء صفوف الإعدادات والخصوصية
+# context: Note under that title. A section's title is the small heading over a group of rows on that page
+Pick the rows to take out of TikTok's Settings and privacy page. This applies the next time the page opens, and a section left with no rows loses its title too.	اختر الصفوف التي تريد إزالتها من صفحة الإعدادات والخصوصية في TikTok. يُطبَّق هذا في المرة التالية التي تُفتح فيها الصفحة، والقسم الذي لا يبقى فيه أي صف يفقد عنوانه أيضًا.
+# context: Checklist rows, each one a row of TikTok's Settings and privacy page. Use the label TikTok itself shows for that row in this language
+Activity center	مركز النشاط
+Manage posts	إدارة المنشورات
+Content preferences	تفضيلات المحتوى
+Notifications	الإشعارات
+Time and well-being	الوقت والرفاهية
+Family Pairing	الاقتران العائلي
+Sign up	التسجيل
+Account	الحساب
+Security & permissions	الأمان والأذونات
+Analytics	التحليلات
+Orders	الطلبات
+Balance	الرصيد
+QR code	رمز QR
+Share profile	مشاركة الملف الشخصي
+TikTok Plus	TikTok Plus
+Invite friends	دعوة الأصدقاء
+Inbox mode	وضع البريد الوارد
+Audience controls	عناصر التحكم في الجمهور
+Background audio	الصوت في الخلفية
+Display	العرض
+Commercial content library	مكتبة المحتوى التجاري
+Accessibility	إمكانية الوصول
+Home screen shortcuts	اختصارات الشاشة الرئيسية
+Join Amplify	الانضمام إلى Amplify
+Contacts and location	جهات الاتصال والموقع
+Shake to report	هزّ للإبلاغ
+Free up space	تحرير مساحة
+Data Saver	توفير البيانات
+Free data	بيانات مجانية
+Live wallpaper	خلفية حية
+Check for updates	التحقق من التحديثات
+Lite mode	وضع Lite
+TikTok Beta	TikTok Beta
+Safety Center	مركز الأمان
+Privacy Center	مركز الخصوصية
+Privacy checkup	فحص الخصوصية
+Support	الدعم
+Deactivate or delete account	إلغاء تنشيط الحساب أو حذفه
+Terms and Policies	الشروط والسياسات
+Policy updates	تحديثات السياسة
+What's new on TikTok	الجديد على TikTok
+Switch account	تبديل الحساب
+Log out	تسجيل الخروج
 Open the search page	فتح صفحة البحث
 Search didn't open. Restart TikTok and try again.	لم يتم فتح البحث. أعد تشغيل TikTok وحاول مرة أخرى.
 Fold the search into a button	طي البحث في زر

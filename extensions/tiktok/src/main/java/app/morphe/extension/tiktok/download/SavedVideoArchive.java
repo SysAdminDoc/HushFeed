@@ -222,6 +222,21 @@ public final class SavedVideoArchive {
     }
 
     /**
+     * Whether the ids are read and leave {@code id} out, so a save of it needs no question. Like
+     * {@link #isSaved} it never touches the database: before the ids are read this answers false
+     * and has them read off the main thread.
+     */
+    static boolean knownUnsaved(String id) {
+        if (id == null || id.isEmpty()) return false;
+        Set<String> ids = savedIds;
+        if (ids == null) {
+            readIdsLater();
+            return false;
+        }
+        return !ids.contains(id);
+    }
+
+    /**
      * Has the ids read off the main thread, unless they are read already, a read is under way, or
      * the last one failed less than {@link #IDS_RETRY_MS} ago.
      */

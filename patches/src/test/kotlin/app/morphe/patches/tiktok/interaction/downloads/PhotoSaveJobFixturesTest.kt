@@ -122,4 +122,126 @@ class PhotoSaveJobFixturesTest {
             original.forEachIndexed { index, instruction -> assertSame(instruction, hooked[index + 4]) }
         }
     }
+
+    /**
+     * #197: the photo saves Hushfeed leaves to TikTok go through the extension first, with all ten
+     * arguments as they came, so a held save can start again through the same entry. The
+     * extension finds that entry and the job's post by reflection, so each is the only one of its shape.
+     */
+    @Test
+    fun `each declared photo save job hands every argument to the extension first`() {
+        val owners = mapOf("47.7.3" to "LX/0ESf;")
+        Fixtures.forEachDeclared { apk ->
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            val classes = container.dexEntryNames.flatMap { container.getEntry(it)!!.dexFile.classes }
+            val owner = classes.single { owner -> owner.methods.any { it.isPhotoSaveJob(owner) } }
+            assertEquals(owners.getValue(Fixtures.versionOf(apk)), owner.type)
+
+            val postTypes = mutableSetOf<String>()
+            fun climb(type: String) {
+                if (type == OBJECT || !postTypes.add(type)) return
+                classes.firstOrNull { it.type == type }?.let { def ->
+                    def.superclass?.let(::climb)
+                    def.interfaces.forEach(::climb)
+                }
+            }
+            climb(AWEME)
+            val posts = owner.fields.filter { AccessFlags.STATIC.isSet(it.accessFlags) && it.type in postTypes }
+            assertEquals("static fields that could hold the post ${posts.map { it.name }}", 1, posts.size)
+            val entries = owner.methods.filter { method ->
+                val types = method.parameterTypes.map(CharSequence::toString)
+                AccessFlags.STATIC.isSet(method.accessFlags) && method.returnType == "V" && types.size == 10 &&
+                    types[0] == owner.type && types[1] == STRING && types[2] == STRING && types[4] in postTypes &&
+                    types[5] == "Ljava/util/Set;" && types[7] == "Z" && types[9] == "I"
+            }
+            assertEquals("entries reflection could take for the job ${entries.map { it.name }}", 1, entries.size)
+            val job = entries.single()
+            assertTrue(job.isPhotoSaveJob(owner))
+
+            val method = MutableMethod(job)
+            val original = method.implementation!!.instructions.toList()
+            val registers = method.implementation!!.registerCount
+            method.interceptPhotoSaveJob()
+            val hooked = method.implementation!!.instructions.toList()
+            assertEquals(registers, method.implementation!!.registerCount)
+            assertEquals(original.size + 4, hooked.size)
+            assertEquals(Opcode.INVOKE_STATIC_RANGE, hooked[0].opcode)
+            val call = hooked[0] as RegisterRangeInstruction
+            assertEquals("p0 to p9, in order", 10, call.registerCount)
+            assertEquals(registers - 10, call.startRegister)
+            val target = hooked[0].getReference<MethodReference>()!!
+            assertEquals("Lapp/morphe/extension/tiktok/download/OriginalPhotos;", target.definingClass)
+            assertEquals("startPhotoJob", target.name)
+            // The live-video flag goes over as an int: a hook never takes a boolean.
+            assertEquals(listOf(OBJECT, STRING, STRING, OBJECT, OBJECT, "Ljava/util/Set;", OBJECT, "I", OBJECT, "I"),
+                target.parameterTypes.map(CharSequence::toString))
+            assertEquals("Z", target.returnType)
+            assertEquals(Opcode.MOVE_RESULT, hooked[1].opcode)
+            assertEquals(0, (hooked[1] as OneRegisterInstruction).registerA)
+            assertEquals(Opcode.IF_EQZ, hooked[2].opcode)
+            assertEquals(0, (hooked[2] as OneRegisterInstruction).registerA)
+            assertEquals(Opcode.RETURN_VOID, hooked[3].opcode)
+            val branchAddress = hooked.take(2).sumOf { it.codeUnits }
+            assertEquals("a save the extension lets through enters the original first instruction",
+                hooked.take(4).sumOf { it.codeUnits }, branchAddress + (hooked[2] as OffsetInstruction).codeOffset)
+            original.forEachIndexed { index, instruction -> assertSame(instruction, hooked[index + 4]) }
+        }
+    }
+
+    /** #197: what TikTok's photo save copied to the gallery reaches the extension before each return. */
+    @Test
+    fun `each declared gallery copy is reported before every return`() {
+        val owners = mapOf("47.7.3" to "LX/0VKk;")
+        Fixtures.forEachDeclared { apk ->
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            val matches = container.dexEntryNames.asSequence().flatMap { entry ->
+                container.getEntry(entry)!!.dexFile.classes.asSequence().flatMap { owner ->
+                    owner.methods.asSequence().filter { PhotoGalleryCopyFingerprint.takes(it, owner) }
+                }
+            }.toList()
+            assertEquals("gallery copies ${matches.map { "${it.definingClass}->${it.name}" }}", 1, matches.size)
+            val copy = matches.single()
+            assertEquals(owners.getValue(Fixtures.versionOf(apk)), copy.definingClass)
+            assertTrue("the copy writes photos to the gallery", copy.implementation!!.instructions.any {
+                it.getReference<MethodReference>()?.parameterTypes?.map(CharSequence::toString) ==
+                    listOf("Landroid/content/Context;", STRING, STRING, "Z", STRING, "I")
+            })
+
+            val method = MutableMethod(copy)
+            val original = method.implementation!!.instructions.toList()
+            val returns = original.count { it.opcode == Opcode.RETURN_OBJECT }
+            assertTrue("the copy returns what landed", returns >= 1)
+            method.recordPhotoGalleryCopy()
+            val hooked = method.implementation!!.instructions.toList()
+            assertEquals(original.size + returns, hooked.size)
+            val addresses = hooked.runningFold(0) { address, instruction -> address + instruction.codeUnits }
+            val tries = method.implementation!!.tryBlocks.map {
+                it.startCodeAddress until it.startCodeAddress + it.codeUnitCount
+            }
+            hooked.forEachIndexed { index, instruction ->
+                if (instruction.opcode != Opcode.RETURN_OBJECT) return@forEachIndexed
+                val call = hooked[index - 1]
+                assertEquals(Opcode.INVOKE_STATIC_RANGE, call.opcode)
+                assertEquals(1, (call as RegisterRangeInstruction).registerCount)
+                assertEquals("the set that is returned", (instruction as OneRegisterInstruction).registerA, call.startRegister)
+                val target = call.getReference<MethodReference>()!!
+                assertEquals("Lapp/morphe/extension/tiktok/download/NativePhotoSaves;", target.definingClass)
+                assertEquals("copied", target.name)
+                assertEquals(listOf(OBJECT), target.parameterTypes.map(CharSequence::toString))
+                // A handler around either would turn the report's own failure into the copy's.
+                for (at in listOf(addresses[index - 1], addresses[index])) {
+                    assertTrue("the report and its return sit outside every try range", tries.none { at in it })
+                }
+            }
+            assertEquals("everything else is left as it was",
+                original.map { it.opcode }, hooked.filterNot { it.getReference<MethodReference>()?.name == "copied" &&
+                    it.getReference<MethodReference>()?.definingClass?.contains("NativePhotoSaves") == true }.map { it.opcode })
+        }
+    }
+
+    private companion object {
+        const val OBJECT = "Ljava/lang/Object;"
+        const val STRING = "Ljava/lang/String;"
+        const val AWEME = "Lcom/ss/android/ugc/aweme/feed/model/Aweme;"
+    }
 }

@@ -92,6 +92,24 @@ public final class OriginalPhotos {
     }
 
     /**
+     * TikTok's photo save job with all it was handed, {@code job} its own instance and
+     * {@code defaults} its default-arguments mask: {@link #startPhotos} first, then, for a save
+     * that stays TikTok's, the already-saved check and record ({@link NativePhotoSaves}, #197).
+     * {@code video} is the job's live-photo flag, handed over as an int (0 or 1).
+     *
+     * @return true when TikTok's own job must not run now.
+     */
+    public static boolean startPhotoJob(Object job, String from, String key, Object extra, Object aweme,
+            Set<?> indices, Object share, int video, Object callback, int defaults) {
+        // The job held for the check, started again: it was TikTok's the first time too.
+        if (NativePhotoSaves.rerunning()) return false;
+        boolean live = video != 0;
+        if (startPhotos(aweme, indices, live)) return true;
+        return NativePhotoSaves.hold(job, aweme,
+                new Object[]{job, from, key, extra, aweme, indices, share, live, callback, defaults});
+    }
+
+    /**
      * The separate "Download video" choice that compiles a still photo and its sound into an
      * MP4. This runs before TikTok starts that job. Its callback expects a video path and opens
      * video sharing, so the image job never calls it, including on failure or cancellation.

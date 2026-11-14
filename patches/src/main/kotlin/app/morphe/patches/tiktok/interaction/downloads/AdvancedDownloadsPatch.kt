@@ -8,10 +8,15 @@ package app.morphe.patches.tiktok.interaction.downloads
 
 import app.morphe.patcher.patch.classDefByOrNull
 import app.morphe.patcher.patch.mutableClassDefBy
+import app.morphe.patcher.patch.packageMetadata
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.StringComparisonType
 import app.morphe.patcher.methodCall
+import app.morphe.patcher.string
 import app.morphe.util.addInstruction
+import app.morphe.util.addInstructionsAtControlFlowLabel
 import app.morphe.util.addInstructionsWithLabels
+import app.morphe.util.findInstructionIndicesReversedOrThrow
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
@@ -26,6 +31,7 @@ import app.morphe.patches.tiktok.interaction.sharesheet.SHARE_SAVE_COVER
 import app.morphe.patches.tiktok.interaction.sharesheet.addOwnedShareAction
 import app.morphe.patches.tiktok.interaction.sharesheet.ownedShareActionsPatch
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
+import app.morphe.patches.tiktok.misc.theme.declaredVersions
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.patches.tiktok.shared.requireLocals
@@ -33,9 +39,11 @@ import app.morphe.util.getReference
 import app.morphe.util.implementationOrPatchException
 import app.morphe.util.numberOfParameterRegisters
 import com.android.tools.smali.dexlib2.AccessFlags
+import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.Field
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 
 private const val VIDEO = "Lcom/ss/android/ugc/aweme/feed/model/Video;"
@@ -243,6 +251,56 @@ private object PhotoSaveJobFingerprint : Fingerprint(
     custom = { method, classDef -> method.isPhotoSaveJob(classDef) },
 )
 
+/**
+ * Hands the photo save job everything it was given, so the extension can hold it for the
+ * already-saved check and start it again unchanged (#197). The live-video flag goes over as an
+ * int, since a hook never takes a boolean.
+ */
+internal fun MutableMethod.interceptPhotoSaveJob() {
+    check(implementation != null && numberOfParameterRegisters == 10) {
+        "Advanced downloads: the photo save job no longer takes ten single-register arguments."
+    }
+    requireLocals("Advanced downloads", 1)
+    addInstructionsWithLabels(0, """
+        invoke-static/range { p0 .. p9 }, ${EXTENSION}OriginalPhotos;->startPhotoJob(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Set;Ljava/lang/Object;ILjava/lang/Object;I)Z
+        move-result v0
+        if-eqz v0, :original
+        return-void
+    """, ExternalLabel("original", getInstruction(0)))
+}
+
+private const val OBJECT = "Ljava/lang/Object;"
+
+/**
+ * The coroutine that copies a photo save's files to the gallery. On Android 10 and later it
+ * returns the content Uris that landed (null before that), and the post it belongs to is still
+ * the job's static one when it does.
+ */
+internal fun Method.isPhotoGalleryCopy(): Boolean =
+    name == "invokeSuspend" && returnType == OBJECT &&
+        parameterTypes.map(CharSequence::toString) == listOf(OBJECT) &&
+        containsString(".copyMultiPhotoToGallery")
+
+internal object PhotoGalleryCopyFingerprint : Fingerprint(
+    name = "invokeSuspend",
+    returnType = OBJECT,
+    parameters = listOf(OBJECT),
+    filters = listOf(string(".copyMultiPhotoToGallery", StringComparisonType.CONTAINS)),
+    custom = { method, _ -> method.isPhotoGalleryCopy() },
+)
+
+/** Reports what the gallery copy hands back, right before each return. */
+internal fun MutableMethod.recordPhotoGalleryCopy() {
+    check(isPhotoGalleryCopy()) { "Advanced downloads: unexpected gallery copy signature or markers." }
+    findInstructionIndicesReversedOrThrow { opcode == Opcode.RETURN_OBJECT }.forEach { index ->
+        val landed = getInstruction<OneRegisterInstruction>(index).registerA
+        addInstructionsAtControlFlowLabel(
+            index,
+            "invoke-static/range { v$landed .. v$landed }, ${EXTENSION}NativePhotoSaves;->copied(Ljava/lang/Object;)V",
+        )
+    }
+}
+
 private val PHOTO_VIDEO_CONVERSION_STRINGS = listOf(
     "photo_mode_save_image_as_video", "photo_mode_save_live_photo_as_video", "saveImageAsVideo start aid=",
 )
@@ -310,19 +368,16 @@ val advancedDownloadsPatch = bytecodePatch(
         }
         // A photo post's own saves, which the start above never sees on 47.0.3. The job is
         // handed the post (p4), the photos asked for (p5) and the live-video flag (p7); the
-        // extension keeps a live photo's video and anything it can't take TikTok's.
-        PhotoSaveJobFingerprint.method.apply {
-            requireLocals("Advanced downloads", 3)
-            addInstructionsWithLabels(0, """
-                move-object/from16 v0, p4
-                move-object/from16 v1, p5
-                move/from16 v2, p7
-                invoke-static { v0, v1, v2 }, ${EXTENSION}OriginalPhotos;->startPhotos(Ljava/lang/Object;Ljava/util/Set;Z)Z
-                move-result v0
-                if-eqz v0, :original
-                return-void
-            """, ExternalLabel("original", getInstruction(0)))
+        // extension keeps a live photo's video and anything it can't take TikTok's, and with
+        // the already-saved check on it checks and records those too (#197).
+        PhotoSaveJobFingerprint.method.interceptPhotoSaveJob()
+        // Only the record needs the gallery copy, so a build where it moved keeps the rest.
+        val galleryCopy = if (packageMetadata.versionName in declaredVersions()) {
+            PhotoGalleryCopyFingerprint.method
+        } else {
+            PhotoGalleryCopyFingerprint.methodOrNull
         }
+        galleryCopy?.recordPhotoGalleryCopy()
         PhotoVideoConversionFingerprint.method.interceptPhotoVideoConversion()
         ProfileUserResponseFingerprint.method.addInstruction(
             0,

@@ -1351,6 +1351,9 @@ public class Settings extends BaseSettings {
             new BooleanSetting("turn_off_chat_double_tap", FALSE);
     public static final BooleanSetting TURN_OFF_CHAT_SWIPE_REPLY =
             new BooleanSetting("turn_off_chat_swipe_reply", FALSE);
+    /** The time under each message in a chat, read at each row bind. See MessageTimes. */
+    public static final BooleanSetting SHOW_MESSAGE_TIMES =
+            new BooleanSetting("show_message_times", FALSE);
     public static final StringSetting HIDE_INBOX_CUSTOM_TITLES =
             new StringSetting("hide_inbox_custom_titles", "");
     // Feed filter additions. The list based ones are read live, so a sound blocked from

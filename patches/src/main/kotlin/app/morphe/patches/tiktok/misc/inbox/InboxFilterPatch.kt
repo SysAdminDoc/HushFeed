@@ -67,8 +67,8 @@ val inboxFilterPatch = bytecodePatch(
     description = "Lets you hide Inbox rows you don't use, like message requests, TikTok Shop, " +
         "the stories row and the On this day memory in it, plus call buttons and suggested replies in chats. Each has its own " +
         "switch. Also offers search in loaded Activity notifications and TikTok's Main, Requests, " +
-        "Unread and Starred tabs on any account, a way to rebuild message search and room to pin " +
-        "more than 5 chats. Starts off. " +
+        "Unread and Starred tabs on any account, a way to rebuild message search, room to pin " +
+        "more than 5 chats and the time under each chat message. Starts off. " +
         "Turn it on in Hushfeed settings > Inbox.",
 ) {
     category("Inbox")
@@ -124,6 +124,14 @@ val inboxFilterPatch = bytecodePatch(
         } catch (problem: Exception) {
             if (packageMetadata.versionName in declaredVersions()) throw problem
             println("[$PATCH_NAME] Left out Pin more chats on ${packageMetadata.versionName}: ${problem.message}")
+            null
+        }
+        // Show message times, held the same way by MessageTimesAnchorsTest.
+        val messageTimes = try {
+            messageTimeHooks(PATCH_NAME)
+        } catch (problem: Exception) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[$PATCH_NAME] Left out Show message times on ${packageMetadata.versionName}: ${problem.message}")
             null
         }
         val binding = InboxRowBindingFingerprint.method
@@ -209,6 +217,15 @@ val inboxFilterPatch = bytecodePatch(
             SettingsStatusLoadFingerprint.method.addInstruction(
                 0,
                 "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enablePinMoreChats()V",
+            )
+        }
+
+        // The time under each chat message, from the message each row bind just padded.
+        if (messageTimes != null) {
+            messageTimes.install(PATCH_NAME)
+            SettingsStatusLoadFingerprint.method.addInstruction(
+                0,
+                "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableMessageTimes()V",
             )
         }
     }

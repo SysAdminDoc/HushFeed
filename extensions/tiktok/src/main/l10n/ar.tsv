@@ -3028,3 +3028,7 @@ Shade behind the status bar	تظليل خلف شريط الحالة
 A soft dark fade behind the clock and status icons, so they stay easy to read over a bright video. Needs See-through status bar.	تدرج داكن خفيف خلف الساعة وأيقونات الحالة، لتبقى سهلة القراءة فوق فيديو ساطع. يتطلب «شريط حالة شفاف».
 Glass Stories button on Following	زر القصص الزجاجي في أتابعه
 The Stories button at the top of the Following feed turns to glass with round ends. On Android 12 and up, the video behind it is blurred too.	يتحول زر القصص أعلى خلاصة أتابعه إلى زجاج بأطراف دائرية. على Android 12 والأحدث، يصبح الفيديو خلفه ضبابيًا أيضًا.
+# context: Row title of the Inbox switch that shows the send time under each message in a chat
+Show message times	إظهار أوقات الرسائل
+# context: Summary under that switch; TikTok itself only shows a time over a message after a gap
+Puts the time each message was sent under it in a chat. TikTok's own timestamps stay where they are.	يعرض تحت كل رسالة في الدردشة وقت إرسالها. تبقى الأوقات التي يعرضها TikTok في مكانها.

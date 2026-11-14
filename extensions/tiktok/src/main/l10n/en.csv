@@ -1611,6 +1611,7 @@ Put the comment search away,Put the comment search away
 "Puts a circle on each video in a profile, Liked or Favorites grid. Pick up to %1$s, then tap Save to save them one after another, with a count and Cancel.","Puts a circle on each video in a profile, Liked or Favorites grid. Pick up to %1$s, then tap Save to save them one after another, with a count and Cancel."
 "Puts a save button in the sheet a story's Share button opens. It saves the story you're watching, and holding a story still pauses it.","Puts a save button in the sheet a story's Share button opens. It saves the story you're watching, and holding a story still pauses it."
 "Puts a ✓ by videos and photo posts you saved with Hushfeed, on profile grids and next to the time in the feed. Works only while Check for already-saved videos is on.","Puts a ✓ by videos and photo posts you saved with Hushfeed, on profile grids and next to the time in the feed. Works only while Check for already-saved videos is on."
+Puts the time each message was sent under it in a chat. TikTok's own timestamps stay where they are.,Puts the time each message was sent under it in a chat. TikTok's own timestamps stay where they are.
 "Puts your time zone after the time to the second, like EDT.","Puts your time zone after the time to the second, like EDT."
 Putting seen videos back,Putting seen videos back
 Putting the saved videos back,Putting the saved videos back
@@ -1945,6 +1946,7 @@ Show how many were filtered,Show how many were filtered
 Show inbox filters,Show inbox filters
 Show last report,Show last report
 "Show likes, comments, shares and saves as a percentage of views, next to the creator's name and after the view count on profile grids.","Show likes, comments, shares and saves as a percentage of views, next to the creator's name and after the view count on profile grids."
+Show message times,Show message times
 Show only LIVEs from creators with this many followers.,Show only LIVEs from creators with this many followers.
 Show only LIVEs with this many people watching.,Show only LIVEs with this many people watching.
 Show only mutual friends on the Friends tab,Show only mutual friends on the Friends tab

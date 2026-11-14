@@ -2650,3 +2650,5 @@ Shade behind the status bar,状态栏后的阴影
 "A soft dark fade behind the clock and status icons, so they stay easy to read over a bright video. Needs See-through status bar.",在时钟和状态图标后面加一层柔和的深色渐变，让它们在明亮的视频上也清晰易读。需要透视状态栏.
 Glass Stories button on Following,“正在关注”中的玻璃故事按钮
 "The Stories button at the top of the Following feed turns to glass with round ends. On Android 12 and up, the video behind it is blurred too.",“正在关注”信息流顶部的故事按钮会变成两端圆润的玻璃效果。在 Android 12 及更高版本上，它后面的视频也会被模糊处理.
+Show message times,显示消息时间
+Puts the time each message was sent under it in a chat. TikTok's own timestamps stay where they are.,在聊天中的每条消息下方显示它的发送时间。TikTok 自带的时间标记保持不变.

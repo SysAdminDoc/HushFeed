@@ -235,6 +235,15 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
                             + "presses work as before.",
                     Settings.TURN_OFF_CHAT_SWIPE_REPLY
             ));
+            if (SettingsStatus.messageTimesEnabled) {
+                addPreference(new TogglePreference(
+                        context,
+                        "Show message times",
+                        "Puts the time each message was sent under it in a chat. TikTok's own "
+                                + "timestamps stay where they are.",
+                        Settings.SHOW_MESSAGE_TIMES
+                ));
+            }
         }
         if (SettingsStatus.notificationControlsEnabled || SettingsStatus.expandActivityListEnabled
                 || SettingsStatus.suggestedVideoPushBlockEnabled) {

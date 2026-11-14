@@ -406,7 +406,8 @@
       "turn_off_chat_swipe_reply",
       "hide_inbox_custom_titles",
       "show_inbox_filters",
-      "pin_more_chats"
+      "pin_more_chats",
+      "show_message_times"
     ],
     "Hide inbox stories": [
       "hide_inbox_stories"
@@ -4071,6 +4072,12 @@
     "show_join_date": {
       "field": "SHOW_JOIN_DATE",
       "key": "show_join_date",
+      "type": "boolean",
+      "default": false
+    },
+    "show_message_times": {
+      "field": "SHOW_MESSAGE_TIMES",
+      "key": "show_message_times",
       "type": "boolean",
       "default": false
     },

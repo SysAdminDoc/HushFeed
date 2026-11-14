@@ -2650,3 +2650,5 @@ Shade behind the status bar,Bóng mờ sau thanh trạng thái
 "A soft dark fade behind the clock and status icons, so they stay easy to read over a bright video. Needs See-through status bar.",Một dải tối mờ dần phía sau đồng hồ và biểu tượng trạng thái để chúng vẫn dễ đọc trên video sáng. Yêu cầu bật Thanh trạng thái trong suốt.
 Glass Stories button on Following,Nút Tin dạng kính trên Đang theo dõi
 "The Stories button at the top of the Following feed turns to glass with round ends. On Android 12 and up, the video behind it is blurred too.","Nút Tin ở đầu bảng tin Đang theo dõi chuyển thành kính với hai đầu bo tròn. Trên Android 12 trở lên, video phía sau nút cũng được làm mờ."
+Show message times,Hiện giờ gửi tin nhắn
+Puts the time each message was sent under it in a chat. TikTok's own timestamps stay where they are.,Hiện giờ gửi dưới mỗi tin nhắn trong cuộc trò chuyện. Các mốc thời gian sẵn có của TikTok vẫn giữ nguyên chỗ.

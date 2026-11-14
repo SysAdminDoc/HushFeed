@@ -7942,6 +7942,12 @@
     "default": false,
     "type": "bool",
     "row": "Pin more chats"
+   },
+   {
+    "key": "show_message_times",
+    "default": false,
+    "type": "bool",
+    "row": "Show message times"
    }
   ],
   "surface": "inbox",

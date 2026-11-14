@@ -6,6 +6,7 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* `Show message times` puts the time each message was sent under it in a chat, in small gray text below the bubble. TikTok only shows a time above a message that comes after a gap. It starts off and sits under `Turn off swipe to reply` in Hushfeed settings > Inbox.
 * `Glass Stories button on Following` swaps the flat gray Stories button at the top of the Following feed for glass with round ends, and on Android 12 and up the video behind it shows through blurred. It starts off and sits under `Hide the LIVE row on Following` in Hushfeed settings > Feed screen. Turning it off or pausing Hushfeed brings TikTok's own button back (#409).
 * `Hide search result tabs` takes tabs you never use off the strip above search results. Tick Shop, LIVE, Places or any other tab TikTok shows you and it's gone from every search, while Top always stays. The checklist sits under `Hide TikTok Shop in search` in Hushfeed settings > Feed filter, and it shows each tab by name in your settings language.
 * `Delete watched offline videos` clears the offline videos you've already watched every time TikTok starts, so the next download fills their spots with new ones. A video counts as watched once it's been on screen. It starts off, sits with the offline rows in Hushfeed settings > Downloads, and shows how many unwatched videos you have left.

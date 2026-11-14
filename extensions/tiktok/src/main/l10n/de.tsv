@@ -2784,3 +2784,7 @@ Shade behind the status bar	Schatten hinter der Statusleiste
 A soft dark fade behind the clock and status icons, so they stay easy to read over a bright video. Needs See-through status bar.	Ein weicher dunkler Verlauf hinter Uhr und Statussymbolen, damit sie über einem hellen Video gut lesbar bleiben. Braucht Durchsichtige Statusleiste.
 Glass Stories button on Following	Storys-Button aus Glas bei „Gefolgt“
 The Stories button at the top of the Following feed turns to glass with round ends. On Android 12 and up, the video behind it is blurred too.	Der Storys-Button oben im Feed „Gefolgt“ wird zu Glas mit runden Enden. Ab Android 12 wird auch das Video dahinter verschwommen.
+# context: Row title of the Inbox switch that shows the send time under each message in a chat
+Show message times	Nachrichtenzeiten anzeigen
+# context: Summary under that switch; TikTok itself only shows a time over a message after a gap
+Puts the time each message was sent under it in a chat. TikTok's own timestamps stay where they are.	Zeigt unter jeder Nachricht in einem Chat die Uhrzeit, zu der sie gesendet wurde. TikToks eigene Zeitangaben bleiben, wo sie sind.

@@ -2781,3 +2781,7 @@ Shade behind the status bar	Durum çubuğunun arkasında gölge
 A soft dark fade behind the clock and status icons, so they stay easy to read over a bright video. Needs See-through status bar.	Saatin ve durum simgelerinin arkasında yumuşak koyu bir geçiş, parlak bir videonun üzerinde kolay okunsunlar diye. Şeffaf durum çubuğu gerekir.
 Glass Stories button on Following	Takip Edilenler'de cam Hikayeler düğmesi
 The Stories button at the top of the Following feed turns to glass with round ends. On Android 12 and up, the video behind it is blurred too.	Takip Edilenler akışının üstündeki Hikayeler düğmesi yuvarlak uçlu bir cama dönüşür. Android 12 ve sonrasında arkasındaki video da bulanıklaşır.
+# context: Row title of the Inbox switch that shows the send time under each message in a chat
+Show message times	Mesaj saatlerini göster
+# context: Summary under that switch; TikTok itself only shows a time over a message after a gap
+Puts the time each message was sent under it in a chat. TikTok's own timestamps stay where they are.	Bir sohbetteki her mesajın altında gönderildiği saati gösterir. TikTok'un kendi zaman damgaları olduğu yerde kalır.

@@ -43,6 +43,7 @@ Every Hushfeed release, newest first.
 * With `Dark LIVE panels in dark mode` on, the Blocked, Muted and Moderation lists in a LIVE's settings show their title, back arrow, help icon and Quit button in white. TikTok paints those in a fixed dark gray, so they almost vanished on the dark sheet. With `AMOLED dark theme` on, those lists are black now, like the Settings sheet they open from. They stayed gray unless you'd opened the LIVE from search (#362).
 * With `Dark LIVE panels in dark mode` on, the tip that points at the creator's message button keeps its dark text on white. It had gone white on white (#362).
 * With `Dark LIVE panels in dark mode` on, the Rose card that comes up the first time you tap a LIVE's quick gift reads white on its dark card. Its title and text stayed dark, so they almost vanished. The Request to join as a guest sheet goes black too, where its light text sat on a white sheet (#362).
+* With a color picked in `AMOLED dark theme` and `Dark LIVE panels in dark mode` on, the box behind the delete key in a LIVE room's emoji picker takes that color too. It was the last spot in the picker still showing TikTok's own dark gray (#329).
 * The Lab's `Scrolling comments on videos` preset now tells you where to look. TikTok only allows them on some wide videos, and those get an Add one-liner button under the video and a one-liner bar in full screen. The old note just said most videos stay the same (#98).
 
 ### Build

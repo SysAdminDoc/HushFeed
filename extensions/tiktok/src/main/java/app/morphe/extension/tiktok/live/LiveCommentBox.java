@@ -24,6 +24,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -56,6 +58,8 @@ import app.morphe.extension.tiktok.theme.AmoledTheme;
  * module's night grays (#121212, the grid #1b1b1b), which AMOLED dark theme's resources don't
  * reach. So with a picked AMOLED color other than the default black, that color is the fill, and
  * the panel's opaque near-black grays take it as well, so the bar, the picker and its boxes match.
+ * The delete key's box isn't a background: TikTok's LiveIconView keeps it as the icon's own box
+ * and draws it with the glyph, so that box is looked up on the view and takes the color too.
  */
 public final class LiveCommentBox {
     static final int TEXT = Color.WHITE;
@@ -78,6 +82,8 @@ public final class LiveCommentBox {
     private static final Map<Drawable, Boolean> TINTED = Collections.synchronizedMap(new WeakHashMap<>());
     /** Each picture's answer to whether it's a plain white ground, so it's read once. */
     private static final Map<Bitmap, Boolean> WHITE_PICTURES = Collections.synchronizedMap(new WeakHashMap<>());
+    /** Each LiveIconView class's field holding its icon's box, or null when it has no single one. */
+    private static final Map<Class<?>, Field> ICON_BOX_FIELDS = Collections.synchronizedMap(new WeakHashMap<>());
     /** How many points across and down a picture is read at. */
     private static final int SAMPLES = 12;
     private static volatile boolean frameFailureLogged;
@@ -177,6 +183,7 @@ public final class LiveCommentBox {
             if (light || night) view.invalidate();
             if (light) DARKENED.put(view, Boolean.TRUE);
         }
+        if (grays && swapFill(iconBox(view), fill, true)) view.invalidate();
         onDarkened |= DARKENED.containsKey(view);
         if (ownGround(view.getBackground()) || view instanceof EditText) return;
         if (view instanceof TextView || view instanceof ImageView) {
@@ -198,6 +205,50 @@ public final class LiveCommentBox {
             if ("RecyclerView".equals(type.getSimpleName())) return true;
         }
         return false;
+    }
+
+    /**
+     * The box a LIVE icon draws behind its glyph, like the picker's delete key's, or null. TikTok's
+     * LiveIconView keeps it in its one Drawable field and paints it inside the icon, so it's no
+     * background and the view counts as a picture.
+     */
+    static Drawable iconBox(View view) {
+        if (!(view instanceof ImageView)) return null;
+        for (Class<?> type = view.getClass(); type != null && type != ImageView.class; type = type.getSuperclass()) {
+            if (!"LiveIconView".equals(type.getSimpleName())) continue;
+            Field field;
+            synchronized (ICON_BOX_FIELDS) {
+                if (ICON_BOX_FIELDS.containsKey(type)) {
+                    field = ICON_BOX_FIELDS.get(type);
+                } else {
+                    field = boxField(type);
+                    ICON_BOX_FIELDS.put(type, field);
+                }
+            }
+            if (field == null) return null;
+            try {
+                return (Drawable) field.get(view);
+            } catch (IllegalAccessException | RuntimeException failure) {
+                return null;
+            }
+        }
+        return null;
+    }
+
+    private static Field boxField(Class<?> type) {
+        Field found = null;
+        for (Field field : type.getDeclaredFields()) {
+            if (field.getType() != Drawable.class || Modifier.isStatic(field.getModifiers())) continue;
+            if (found != null) return null;
+            found = field;
+        }
+        if (found == null) return null;
+        try {
+            found.setAccessible(true);
+            return found;
+        } catch (RuntimeException failure) {
+            return null;
+        }
     }
 
     /** The first opaque dark fill under the root, nearest it first: the panel's own, in any hue. */

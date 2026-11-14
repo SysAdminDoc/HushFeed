@@ -453,11 +453,49 @@ public class LiveCommentBoxTest {
         FrameLayout bar = nightBar(root);
         View grid = filled(bar, new ColorDrawable(NIGHT_GRID));
         View sendBox = filled(bar, new ColorDrawable(Color.WHITE));
+        ColorDrawable deleteBox = new ColorDrawable(NIGHT_BAR);
+        bar.addView(new LiveIconView(root.getContext(), deleteBox));
 
         LiveCommentBox.darken(root, 0, new ArrayList<>());
 
         assertEquals(NIGHT_BAR, solid(bar));
         assertEquals(NIGHT_GRID, solid(grid));
         assertEquals(NIGHT_BAR, solid(sendBox));
+        assertEquals(NIGHT_BAR, deleteBox.getColor());
+    }
+
+    /** TikTok's LIVE icon view keeps its box in a field and draws it inside the icon, not as a background. */
+    static final class LiveIconView extends ImageView {
+        private Drawable iconBackground;
+
+        LiveIconView(android.content.Context context, Drawable box) {
+            super(context);
+            iconBackground = box;
+            setImageDrawable(new ColorDrawable(Color.WHITE));
+        }
+    }
+
+    /**
+     * #329 on the S22: the picker's delete key is a LiveIconView whose night gray box is drawn with
+     * its glyph, so a picked AMOLED color reaches that box too. A colored icon box keeps its color.
+     */
+    @Test
+    @Config(qualifiers = "night")
+    public void aPickedAmoledColorReachesTheDeleteKeysOwnBox() {
+        FrameLayout root = new FrameLayout(RuntimeEnvironment.getApplication());
+        FrameLayout bar = nightBar(root);
+        GradientDrawable deleteBox = new GradientDrawable();
+        deleteBox.setCornerRadius(8f);
+        deleteBox.setColor(NIGHT_BAR);
+        bar.addView(new LiveIconView(root.getContext(), deleteBox));
+        ColorDrawable pink = new ColorDrawable(0xFFFE2C55);
+        bar.addView(new LiveIconView(root.getContext(), pink));
+        layOut(root);
+
+        LiveCommentBox.darken(root, AMOLED, new ArrayList<>());
+
+        assertEquals("the delete key's box", AMOLED, deleteBox.getColor().getDefaultColor());
+        assertEquals("a colored icon box keeps its color", 0xFFFE2C55, pink.getColor());
+        assertNull("a plain image has no icon box", LiveCommentBox.iconBox(new ImageView(root.getContext())));
     }
 }

@@ -124,14 +124,31 @@ public final class LivePanelTheme {
      */
     static final String TALENT_QUALITY_PICKER =
             "com.bytedance.android.livesdk.definition.talent.LiveTalentDefinitionSelectionDialog";
+    /**
+     * The Rose's first-time card a LIVE room shows on a tap of its quick gift (#362, 47.7.3). The
+     * card fills from a theme color the dark overlay turns black, but its title, description and
+     * footer are fixed #161823 inks, so they read dark on black.
+     */
+    static final String QUICK_GIFT = "com.bytedance.android.livesdk.widgets.giftwidget.presenter.FastGiftConfirmDialog";
+    /**
+     * The base of the guest panels a LIVE room's guest button opens: Request or Join as a guest
+     * over the host's picture and yours (#362, 47.7.3). Their sheet is a fixed white shape while
+     * the title and the line under it read the dark overlay, so they came out light on white.
+     */
+    static final String GUEST_PANEL =
+            "com.bytedance.android.live.liveinteract.multiguestv3.main.media.guest.previewv1.PreviewDialogFragment";
     /** What the older quality picker's white card becomes: the black sheet the newer one draws (S22, 2026-11-08). */
     static final int SHEET_FILL = 0xFF000000;
     /**
      * Class name pieces of the panels whose own fixed light fills get swapped: the profile card,
-     * the fan club and both quality pickers.
+     * the fan club, both quality pickers, the quick gift's card and the guest panels.
      */
-    private static final String[] FILL_PANELS =
-            {".fansclub.", ".superfan.", ".livesdk.profile.", QUALITY_PICKER, TALENT_QUALITY_PICKER};
+    private static final String[] FILL_PANELS = {".fansclub.", ".superfan.", ".livesdk.profile.",
+            QUALITY_PICKER, TALENT_QUALITY_PICKER, QUICK_GIFT, GUEST_PANEL};
+    /** The panels whose own view is their sheet, lit even where its fill was dark already. */
+    private static final String[] SHEET_PANELS = {QUALITY_PICKER, TALENT_QUALITY_PICKER, QUICK_GIFT};
+    /** The guest panels' white sheets, kept so a sheet is known again once its fill went dark. */
+    private static final Map<View, Boolean> GUEST_SHEETS = Collections.synchronizedMap(new WeakHashMap<>());
     private static final int LIGHT_NAVIGATION_BAR_FLAG = 0x10;
     private static final int SETTLE_TRIES = 5;
     private static final long SETTLE_DELAY_MS = 100;
@@ -272,12 +289,12 @@ public final class LivePanelTheme {
             List<View> ink = new ArrayList<>();
             ViewTreeObserver observer = watched.getViewTreeObserver();
             if (fills) {
-                darkFills(watched, sheet(panel), ink);
+                darkPanelFills(panel, watched, ink);
                 observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
                     public void onGlobalLayout() {
                         try {
-                            darkFills(watched, sheet(panel), ink);
+                            darkPanelFills(panel, watched, ink);
                         } catch (Throwable failure) {
                             Logger.printException(() -> "Could not darken a LIVE panel's fills", failure);
                         }
@@ -445,17 +462,86 @@ public final class LivePanelTheme {
     }
 
     /**
-     * The panel's own view when the panel is a quality picker (#168): the older one's root is its
-     * card, the newer one's is a dark sheet with its close X drawn in a dark gray. Null otherwise
+     * The panel's own view when the panel is a quality picker (#168) or the quick gift's card
+     * (#362): the older picker's root is its card, the newer one's is a dark sheet with its close
+     * X drawn in a dark gray, and the quick gift's is the dim around its dark card. Null otherwise
      * or before the views exist.
      */
     static View sheet(Object panel) {
-        if (!hasClassName(panel.getClass(), QUALITY_PICKER)
-                && !hasClassName(panel.getClass(), TALENT_QUALITY_PICKER)) {
+        for (String name : SHEET_PANELS) {
+            if (hasClassName(panel.getClass(), name)) {
+                Object view = Reflect.invoke(panel, "getView");
+                return view instanceof View ? (View) view : null;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * The panel's sheet in its window: its own view for the panels above, and for a guest panel
+     * its white sheet, which sits inside the page the panel shows rather than at its root.
+     */
+    static View sheet(Object panel, View root) {
+        View own = sheet(panel);
+        if (own != null || root == null || root.getWidth() <= 0 || !guestPanel(panel)) {
+            return own;
+        }
+        return guestSheet(root, root.getWidth(), 0);
+    }
+
+    private static boolean guestPanel(Object panel) {
+        return hasClassName(panel.getClass(), GUEST_PANEL);
+    }
+
+    /**
+     * Swaps the panel's light fills once it can tell them apart: a guest panel's sheet is known
+     * from its rows by its width, so its fills wait for the window's first layout, which comes
+     * before its first frame.
+     */
+    private static void darkPanelFills(Object panel, View root, List<View> ink) {
+        if (root.getWidth() <= 0 && guestPanel(panel)) {
+            return;
+        }
+        darkFills(root, sheet(panel, root), ink);
+    }
+
+    /**
+     * The outermost shown view with a light solid fill as wide as the window, or the one found
+     * before, whose fill has gone dark since (Login2, 2026-11-13: the sheet under the Request
+     * button is a #FFFFFF shape the page's own views sit on).
+     */
+    private static View guestSheet(View view, int width, int depth) {
+        if (view.getVisibility() != View.VISIBLE || depth > MAX_TREE_DEPTH) {
             return null;
         }
-        Object view = Reflect.invoke(panel, "getView");
-        return view instanceof View ? (View) view : null;
+        if (GUEST_SHEETS.containsKey(view)) {
+            return view;
+        }
+        if (view.getWidth() >= width && lightSolid(view.getBackground())) {
+            GUEST_SHEETS.put(view, Boolean.TRUE);
+            return view;
+        }
+        if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) view;
+            for (int i = 0; i < group.getChildCount(); i++) {
+                View found = guestSheet(group.getChildAt(i), width, depth + 1);
+                if (found != null) {
+                    return found;
+                }
+            }
+        }
+        return null;
+    }
+
+    private static boolean lightSolid(Drawable background) {
+        if (background instanceof ColorDrawable) {
+            return lightFill(((ColorDrawable) background).getColor());
+        }
+        if (background instanceof GradientDrawable && Build.VERSION.SDK_INT >= 24) {
+            ColorStateList colors = ((GradientDrawable) background).getColor();
+            return colors != null && lightFill(colors.getDefaultColor());
+        }
+        return false;
     }
 
     private static boolean hasClassName(Class<?> type, String name) {

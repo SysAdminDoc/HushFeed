@@ -36,11 +36,13 @@ import android.widget.TextView;
 import com.bytedance.android.live.design.resource.theme.LiveThemeAwareDialogFragment;
 import com.bytedance.android.live.design.resource.theme.LiveThemeAwareFragment;
 import com.bytedance.android.live.design.view.sheet.LiveSheetFragment;
+import com.bytedance.android.live.liveinteract.multiguestv3.main.userinfo.guest.MultiLiveGuestUserInfoDialog;
 import com.bytedance.android.live.rank.impl.list.RankListDialog;
 import com.bytedance.android.livesdk.definition.LiveDefinitionSelectionDialog;
 import com.bytedance.android.livesdk.definition.talent.LiveTalentDefinitionSelectionDialog;
 import com.bytedance.android.livesdk.fansclub.FansClubPanel;
 import com.bytedance.android.livesdk.profile.ProfilePanel;
+import com.bytedance.android.livesdk.widgets.giftwidget.presenter.FastGiftConfirmDialog;
 
 import androidx.cardview.widget.CardView;
 import com.bytedance.android.live.rank.impl.list.view.PopularityRankingEducationDialog;
@@ -1398,6 +1400,147 @@ public class LivePanelThemeTest {
         assertNull("colored art stays", art.getColorFilter());
         assertEquals("the sheet stays black", Color.BLACK,
                 ((GradientDrawable) root.getBackground()).getColor().getDefaultColor());
+    }
+
+    /**
+     * #362: the Rose's first-time quick gift card fills from the dark theme, but its title,
+     * description and footer are fixed #161823 inks, so they read dark on the black card.
+     */
+    @Test public void theQuickGiftCardsFixedDarkTextTurnsLightOnItsDarkCard() {
+        FrameLayout root = new FrameLayout(dark);
+        root.setBackground(new ColorDrawable(0x80000000));
+        android.widget.LinearLayout card = new android.widget.LinearLayout(dark);
+        card.setOrientation(android.widget.LinearLayout.VERTICAL);
+        GradientDrawable fill = new GradientDrawable();
+        fill.setCornerRadius(12f);
+        fill.setColor(Color.BLACK);
+        card.setBackground(fill);
+        TextView title = text(dark, 0xFF161823);
+        TextView description = text(dark, 0xBF161823);
+        TextView price = text(dark, 0xFFFE2C55);
+        FrameLayout button = new FrameLayout(dark);
+        GradientDrawable pink = new GradientDrawable();
+        pink.setColor(0xFFFE2C55);
+        button.setBackground(pink);
+        TextView send = text(dark, Color.WHITE);
+        button.addView(send);
+        TextView footer = text(dark, 0x88161823);
+        card.addView(title);
+        card.addView(description);
+        card.addView(price);
+        card.addView(button);
+        card.addView(footer);
+        root.addView(card);
+        FastGiftConfirmDialog gift = new FastGiftConfirmDialog();
+        gift.overlay = OVERLAY;
+        gift.view = root;
+        gift.dialog = dialogWith(root);
+
+        LivePanelTheme.darkLivePanel(gift, LayoutInflater.from(dark));
+        assertEquals("the switch starts off", 0xFF161823, title.getCurrentTextColor());
+
+        Settings.DARK_LIVE_PANELS.save(true);
+        LivePanelTheme.darkLivePanel(gift, LayoutInflater.from(light));
+        assertEquals("TikTok Light stays stock", 0xFF161823, title.getCurrentTextColor());
+
+        LivePanelTheme.darkLivePanel(gift, LayoutInflater.from(dark));
+        assertEquals("the title turns white", Color.WHITE, title.getCurrentTextColor());
+        assertEquals("the description keeps its see-through amount", 0xBFFFFFFF, description.getCurrentTextColor());
+        assertEquals("so does the footer", 0x88FFFFFF, footer.getCurrentTextColor());
+        assertEquals("the pink price keeps its color", 0xFFFE2C55, price.getCurrentTextColor());
+        assertEquals("the white text on the pink button stays white", Color.WHITE, send.getCurrentTextColor());
+        assertEquals("the dark card stays as it is", Color.BLACK, fill.getColor().getDefaultColor());
+        assertEquals("so does the dim around it", 0x80000000, ((ColorDrawable) root.getBackground()).getColor());
+        assertTrue(LivePanelTheme.fillPanel(FastGiftConfirmDialog.class));
+        assertSame("its root is its sheet", root, LivePanelTheme.sheet(gift));
+    }
+
+    /**
+     * #362: the guest panel a room's guest button opens sits on a fixed white sheet as wide as its
+     * window while its title and the line under it follow the dark theme, so they read light on
+     * white. The sheet goes black, an inset light row on it takes the tiles' fill, and the row's
+     * fixed dark text turns light.
+     */
+    @Test public void theGuestPanelsWhiteSheetGoesBlackUnderItsLightText() {
+        FrameLayout root = new FrameLayout(dark);
+        android.widget.LinearLayout sheet = new android.widget.LinearLayout(dark);
+        sheet.setOrientation(android.widget.LinearLayout.VERTICAL);
+        GradientDrawable white = new GradientDrawable();
+        white.setCornerRadii(new float[] {16f, 16f, 16f, 16f, 0f, 0f, 0f, 0f});
+        white.setColor(Color.WHITE);
+        sheet.setBackground(white);
+        TextView title = text(dark, 0xE6FFFFFF);
+        TextView line = text(dark, 0x99FFFFFF);
+        FrameLayout row = new FrameLayout(dark);
+        row.setBackground(new ColorDrawable(0xFFF1F1F2));
+        TextView rowText = text(dark, 0xFF161823);
+        row.addView(rowText);
+        android.widget.LinearLayout.LayoutParams inset = new android.widget.LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        inset.setMargins(32, 16, 32, 16);
+        sheet.addView(title);
+        sheet.addView(line);
+        sheet.addView(row, inset);
+        root.addView(sheet, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        MultiLiveGuestUserInfoDialog guest = new MultiLiveGuestUserInfoDialog();
+        guest.overlay = OVERLAY;
+        guest.view = root;
+        layOut(root);
+
+        LivePanelTheme.darkLivePanel(guest, LayoutInflater.from(dark));
+        assertEquals("the switch starts off", Color.WHITE, white.getColor().getDefaultColor());
+
+        Settings.DARK_LIVE_PANELS.save(true);
+        LivePanelTheme.darkLivePanel(guest, LayoutInflater.from(light));
+        assertEquals("TikTok Light stays stock", Color.WHITE, white.getColor().getDefaultColor());
+
+        LivePanelTheme.darkLivePanel(guest, LayoutInflater.from(dark));
+        assertEquals("the sheet goes black", LivePanelTheme.SHEET_FILL,
+                ((GradientDrawable) sheet.getBackground()).getColor().getDefaultColor());
+        assertEquals("the inset row takes the tiles' fill", LivePanelTheme.DARK_FILL,
+                ((ColorDrawable) row.getBackground()).getColor());
+        assertEquals("the row's dark text turns light", Color.WHITE, rowText.getCurrentTextColor());
+        assertEquals("the title keeps its light color", 0xE6FFFFFF, title.getCurrentTextColor());
+        assertEquals("so does the line under it", 0x99FFFFFF, line.getCurrentTextColor());
+
+        // The page lays out again with its fills dark: the sheet is still the sheet.
+        layOut(root);
+        ReflectionHelpers.callInstanceMethod(root.getViewTreeObserver(), "dispatchOnGlobalLayout");
+        assertSame(sheet, LivePanelTheme.sheet(guest, root));
+        assertEquals("the sheet stays black", LivePanelTheme.SHEET_FILL,
+                ((GradientDrawable) sheet.getBackground()).getColor().getDefaultColor());
+        assertEquals("the row stays dark", LivePanelTheme.DARK_FILL, ((ColorDrawable) row.getBackground()).getColor());
+        assertTrue(LivePanelTheme.fillPanel(MultiLiveGuestUserInfoDialog.class));
+    }
+
+    /** #362: before its first layout a guest panel's sheet can't be told from its rows, so its fills wait for it. */
+    @Test public void aGuestPanelsFillsWaitForItsFirstLayout() {
+        FrameLayout root = new FrameLayout(dark);
+        FrameLayout sheet = new FrameLayout(dark);
+        GradientDrawable white = new GradientDrawable();
+        white.setColor(Color.WHITE);
+        sheet.setBackground(white);
+        FrameLayout row = new FrameLayout(dark);
+        row.setBackground(new ColorDrawable(0xFFF1F1F2));
+        FrameLayout.LayoutParams inset = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        inset.setMargins(32, 16, 32, 16);
+        sheet.addView(row, inset);
+        root.addView(sheet);
+        MultiLiveGuestUserInfoDialog guest = new MultiLiveGuestUserInfoDialog();
+        guest.overlay = OVERLAY;
+        guest.view = root;
+        Settings.DARK_LIVE_PANELS.save(true);
+
+        LivePanelTheme.darkLivePanel(guest, LayoutInflater.from(dark));
+        assertEquals("nothing is swapped before the layout", Color.WHITE, white.getColor().getDefaultColor());
+        assertNull(LivePanelTheme.sheet(guest, root));
+
+        layOut(root);
+        ReflectionHelpers.callInstanceMethod(root.getViewTreeObserver(), "dispatchOnGlobalLayout");
+        assertEquals("the sheet goes black, not gray", LivePanelTheme.SHEET_FILL, white.getColor().getDefaultColor());
+        assertEquals(LivePanelTheme.DARK_FILL, ((ColorDrawable) row.getBackground()).getColor());
     }
 
     /** A plain LIVE sheet with a window, like the gift sheet: dark through its overlay, no fills of its own. */

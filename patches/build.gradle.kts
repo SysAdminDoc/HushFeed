@@ -1,4 +1,5 @@
 import java.io.ByteArrayOutputStream
+import java.io.DataInputStream
 import java.io.File
 import java.security.KeyFactory
 import java.security.MessageDigest
@@ -474,6 +475,212 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
 }
 
+/**
+ * Splits nativeTest's classes by area. Each area gets its test classes (seeds), the test classes
+ * (lib.jar) and patch classes (main.jar) those reach, and a copy of the patch sources they come
+ * from or name (src). Reach is read off the class files: any app/morphe name in a constant, in
+ * internal, descriptor or dotted form, so a Class.forName string counts too. A class a test reaches
+ * some other way fails that test with NoClassDefFoundError rather than passing it.
+ *
+ * Inside an object for the reason BundleRelease is: a script function would take the script along.
+ */
+object NativeTestAreas {
+    const val SHARED = "Shared"
+    private val reference = Regex("""app[/.]morphe[/.][\w/.$]+""")
+    // A patch source or folder named by path, from src/main/kotlin, the project or the repository.
+    private val sourcePath = Regex("""^(?:patches/)?(?:src/main/kotlin/)?(app/morphe/[\w/]+(?:\.kt)?)$""")
+    // A source file named alone, or at the end of a string template's recipe (\x01 is its argument).
+    private val sourceName = Regex("""(?:^|[/\x01])([\w$-]+\.kt)$""")
+    private val repoFile = Regex("""(?:^|/)src/(?:main/resources|test)/|\.gradle\.kts$|patches-list\.json|^\.\./""")
+    private val walks = listOf("walk", "walkTopDown", "walkBottomUp").map { "kotlin/io/FilesKt.$it" } +
+        listOf("listFiles", "list").map { "java/io/File.$it" } +
+        listOf("walk", "list", "newDirectoryStream", "find", "walkFileTree").map { "java/nio/file/Files.$it" } +
+        listOf("listDirectoryEntries", "walk", "useDirectoryEntries", "forEachDirectoryEntry").map { "kotlin/io/path/PathsKt.$it" }
+    private val scans = setOf("java/lang/ClassLoader.getResources", "java/util/ServiceLoader.load")
+
+    /** One outer class with its nested ones, from the main or the test classes. */
+    private class Outer(val main: Boolean, val name: String) {
+        val classes = sortedMapOf<String, File>()
+        val strings = HashSet<String>()
+        val members = HashSet<String>()
+        val sourceFiles = sortedSetOf<String>()
+        val reaches = LinkedHashSet<Outer>()
+    }
+
+    /** The constant pool's strings and member references, and the SourceFile attribute. */
+    private fun read(file: File, into: Outer) {
+        val input = DataInputStream(file.readBytes().inputStream())
+        input.skipBytes(8)
+        val count = input.readUnsignedShort()
+        val utf = arrayOfNulls<String>(count)
+        val classNames = IntArray(count)
+        val memberNames = IntArray(count)
+        val memberRefs = ArrayList<Pair<Int, Int>>()
+        var index = 1
+        while (index < count) {
+            when (val tag = input.readUnsignedByte()) {
+                1 -> utf[index] = input.readUTF()
+                3, 4, 17, 18 -> input.skipBytes(4)
+                5, 6 -> { input.skipBytes(8); index++ }
+                7 -> classNames[index] = input.readUnsignedShort()
+                8, 16, 19, 20 -> input.skipBytes(2)
+                9, 10, 11 -> memberRefs.add(input.readUnsignedShort() to input.readUnsignedShort())
+                12 -> { memberNames[index] = input.readUnsignedShort(); input.skipBytes(2) }
+                15 -> input.skipBytes(3)
+                else -> throw GradleException("$file: constant pool tag $tag")
+            }
+            index++
+        }
+        memberRefs.mapTo(into.members) { (owner, member) -> "${utf[classNames[owner]]}.${utf[memberNames[member]]}" }
+        utf.filterNotNullTo(into.strings)
+        input.skipBytes(6)
+        input.skipBytes(2 * input.readUnsignedShort())
+        repeat(2) { // fields, then methods
+            repeat(input.readUnsignedShort()) {
+                input.skipBytes(6)
+                repeat(input.readUnsignedShort()) { input.skipBytes(2); input.skipBytes(input.readInt()) }
+            }
+        }
+        repeat(input.readUnsignedShort()) {
+            val name = utf[input.readUnsignedShort()]
+            val length = input.readInt()
+            if (name == "SourceFile") utf[input.readUnsignedShort()]?.let { into.sourceFiles.add(it) } else input.skipBytes(length)
+        }
+    }
+
+    fun split(mainDirs: Set<File>, testDirs: Set<File>, sourceRoot: File, areas: Map<String, List<String>>,
+              excluded: Set<String>, output: File) {
+        val outers = HashMap<String, MutableList<Outer>>()
+        val known = HashSet<String>()
+        val mainExtras = sortedMapOf<String, File>()
+        val testExtras = sortedMapOf<String, File>()
+        for ((dirs, main) in listOf(mainDirs to true, testDirs to false)) for (dir in dirs.filter { it.isDirectory }) {
+            dir.walkTopDown().filter { it.isFile }.forEach { file ->
+                val path = file.relativeTo(dir).invariantSeparatorsPath
+                if (!path.endsWith(".class")) {
+                    (if (main) mainExtras else testExtras)[path] = file
+                    return@forEach
+                }
+                val name = path.removeSuffix(".class")
+                val parts = outers.getOrPut(name.substringBefore('$')) { ArrayList(2) }
+                val outer = parts.firstOrNull { it.main == main } ?: Outer(main, name.substringBefore('$')).also { parts.add(it) }
+                outer.classes[name] = file
+                read(file, outer)
+                known.add(name)
+            }
+        }
+        for (outer in outers.values.flatten()) for (text in outer.strings) {
+            if ("morphe" !in text) continue
+            for (match in reference.findAll(text)) {
+                var candidate = match.value.replace('.', '/')
+                while (candidate !in known && '/' in candidate) {
+                    val last = candidate.substringAfterLast('/')
+                    candidate = if ('$' in last) candidate.substringBeforeLast('$') else candidate.substringBeforeLast('/')
+                }
+                if (candidate in known) outers.getValue(candidate.substringBefore('$')).filterTo(outer.reaches) { it !== outer }
+            }
+        }
+        fun closure(seeds: Collection<Outer>): Set<Outer> {
+            val seen = LinkedHashSet(seeds)
+            val todo = ArrayList(seeds)
+            while (todo.isNotEmpty()) for (next in todo.removeAt(todo.lastIndex).reaches) if (seen.add(next)) todo.add(next)
+            return seen
+        }
+        fun areaOf(name: String): String {
+            val folder = name.substringBeforeLast('/')
+            return areas.flatMap { (area, prefixes) -> prefixes.map { area to it } }
+                .filter { (_, prefix) -> folder == prefix || folder.startsWith("$prefix/") }
+                .maxByOrNull { it.second.length }?.first ?: SHARED
+        }
+        // Why a test can't run on its area's slice: it walks the source tree, scans the classpath
+        // or reads a repository file that is not a patch source.
+        fun needsEverything(test: Outer): String? {
+            for (part in closure(listOf(test))) {
+                if (part.main) continue
+                if (part.members.any { it in walks } && part.strings.any { "src/main" in it }) return "walks the sources in ${part.name}"
+                if (part.members.any { it in scans }) return "scans the classpath in ${part.name}"
+                part.strings.firstOrNull { ' ' !in it && repoFile.containsMatchIn(it) }?.let { return "reads $it in ${part.name}" }
+            }
+            return null
+        }
+
+        val seeds = (areas.keys + SHARED).associateWith { sortedMapOf<String, Outer>() }
+        val reasons = sortedMapOf<String, String>()
+        for (outer in outers.values.flatten()) {
+            if (outer.main || outer.name in excluded) continue
+            var area = areaOf(outer.name)
+            if (area != SHARED) needsEverything(outer)?.let { reasons[outer.name] = it; area = SHARED }
+            seeds.getValue(area)[outer.name] = outer
+        }
+        val empty = seeds.filterValues { it.isEmpty() }.keys
+        if (empty.isNotEmpty()) throw GradleException("nativeTest areas with no test classes: $empty")
+
+        val sourceFiles = sourceRoot.walkTopDown().filter { it.isFile }.map { it.relativeTo(sourceRoot).invariantSeparatorsPath }.toSortedSet()
+        val byFileName = sourceFiles.groupBy { it.substringAfterLast('/') }
+        output.deleteRecursively()
+        val summary = StringBuilder()
+        for ((area, members) in seeds) {
+            val folder = File(output, area)
+            val reached = closure(members.values)
+            val named = sortedSetOf<String>()
+            for (part in reached) {
+                if (part.main) {
+                    for (file in part.sourceFiles) named.add(part.name.substringBeforeLast('/') + "/" + file)
+                    continue
+                }
+                for (text in part.strings) {
+                    val path = sourcePath.matchEntire(text)?.groupValues?.get(1)
+                    if (path != null) {
+                        if (path in sourceFiles) named.add(path) else sourceFiles.filterTo(named) { it.startsWith("$path/") }
+                        continue
+                    }
+                    val fileName = sourceName.find(text)?.groupValues?.get(1) ?: continue
+                    if (fileName !in part.sourceFiles) byFileName[fileName]?.let { named.addAll(it) }
+                }
+            }
+            named.retainAll(sourceFiles)
+            File(folder, "seeds").mkdirs()
+            for (outer in members.values) for ((name, file) in outer.classes) file.copyTo(File(folder, "seeds/$name.class"))
+            File(folder, "src").mkdirs()
+            for (path in named) File(sourceRoot, path).copyTo(File(folder, "src/$path"))
+            fun jar(name: String, main: Boolean, extras: Map<String, File>) {
+                val entries = sortedMapOf<String, File>()
+                entries.putAll(extras)
+                for (part in reached) if (part.main == main && (main || part.name !in members)) {
+                    for ((className, file) in part.classes) entries["$className.class"] = file
+                }
+                ZipOutputStream(File(folder, name).outputStream().buffered()).use { zip ->
+                    for ((path, file) in entries) {
+                        zip.putNextEntry(ZipEntry(path).apply { time = 0 })
+                        file.inputStream().use { it.copyTo(zip) }
+                        zip.closeEntry()
+                    }
+                }
+            }
+            jar("main.jar", true, mainExtras)
+            jar("lib.jar", false, testExtras)
+            summary.append("$area: ${members.size} test classes, ${reached.count { it.main }} patch classes, ${named.size} sources\n")
+        }
+        for ((name, reason) in reasons) summary.append("Shared, $name: $reason\n")
+        File(output, "areas.txt").writeText(summary.toString())
+    }
+}
+
+abstract class SplitNativeTests : DefaultTask() {
+    @get:InputFiles @get:PathSensitive(PathSensitivity.RELATIVE) abstract val mainClasses: ConfigurableFileCollection
+    @get:InputFiles @get:PathSensitive(PathSensitivity.RELATIVE) abstract val testClasses: ConfigurableFileCollection
+    @get:InputDirectory @get:PathSensitive(PathSensitivity.RELATIVE) abstract val sources: DirectoryProperty
+    // Area name to folder prefixes, space-separated.
+    @get:Input abstract val areas: MapProperty<String, String>
+    @get:Input abstract val excluded: ListProperty<String>
+    @get:OutputDirectory abstract val outputDirectory: DirectoryProperty
+
+    @TaskAction fun split() {
+        NativeTestAreas.split(mainClasses.files, testClasses.files, sources.get().asFile,
+            areas.get().mapValues { (_, prefixes) -> prefixes.split(' ') }, excluded.get().toSet(), outputDirectory.get().asFile)
+    }
+}
+
 // The patch tests that read extension sources or the extension bundle. They stay in :patches:test,
 // which a runtime Java edit reruns. Every other patch test runs in nativeTest, whose inputs leave
 // the extensions out, so that edit reuses the long fixture fingerprint scans.
@@ -516,26 +723,82 @@ val nativeTestResources = tasks.register<Sync>("nativeTestResources") {
     exclude("extensions/**")
     into(layout.buildDirectory.dir("resources/nativeTest"))
 }
-val nativeTest = tasks.register<Test>("nativeTest") {
-    group = "verification"
-    description = "Runs the patch tests that read neither extension sources nor the extension bundle."
-    testClassesDirs = sourceSets.test.get().output.classesDirs
-    val mainResources = sourceSets.main.get().output.resourcesDir
-    classpath = sourceSets.test.get().runtimeClasspath.filter { it != mainResources } + files(nativeTestResources)
-    exclude(extensionClasses)
-    inputs.property("suiteSelection", provider {
-        (tasks.test.get().filter as DefaultTestFilter).commandLineIncludePatterns
-    })
-    failOnNoDiscoveredTests.set(provider {
-        (tasks.test.get().filter as DefaultTestFilter).commandLineIncludePatterns.isEmpty()
-    })
-    doFirst {
-        val selected = (tasks.test.get().filter as DefaultTestFilter).commandLineIncludePatterns
-        if (selected.isNotEmpty()) {
-            setTestNameIncludePatterns(selected.toList())
-            filter.isFailOnNoMatchingTests = false
+// nativeTest runs in areas, so an edit reruns only the areas whose tests can reach it. A prefix
+// names a folder under app/morphe/patches/tiktok/ and takes its subfolders, the longest prefix
+// winning, so bare "interaction" and "misc" take what the named folders leave. A test no prefix
+// takes (app/morphe, util, gatecatalog, patches/shared) runs in Shared, and so does any test that
+// walks the source tree or reads a repo file other than one patch source. The areas are sized by
+// run time, not by meaning: tiktok/shared sits in Feed.
+val nativeTestAreas = linkedMapOf(
+    "Feed" to "feedfilter captchapopup promobanners privacy profile shared",
+    "Playback" to "interaction/live interaction/blockauthor interaction/resume interaction/looping " +
+        "interaction/backgroundplay interaction/pip interaction/soundrestore interaction/feedmute interaction/videofit",
+    "Player" to "interaction interaction/seekbar interaction/videooverlays interaction/cleardisplay interaction/speed " +
+        "interaction/gesture interaction/quickactions interaction/confirmation interaction/feedtext " +
+        "interaction/feedtoolbar interaction/captions interaction/systemfont interaction/haptics",
+    "Sharing" to "interaction/downloads interaction/sharesheet interaction/offlinevideos interaction/copyids " +
+        "interaction/hdupload interaction/duetstitch interaction/publishdate interaction/ghostmode " +
+        "interaction/antirecording interaction/authorregion interaction/engagement interaction/searchautoplay " +
+        "interaction/searchsuggestions interaction/sensitivewarnings",
+    "Messages" to "misc/inbox misc/translation misc/comment misc/commenttools misc/commentpublish",
+    "Look" to "misc/theme misc/branding misc/navigation",
+    "App" to "misc",
+)
+val splitNativeTests = tasks.register<SplitNativeTests>("splitNativeTests") {
+    mainClasses.from(sourceSets.main.get().output.classesDirs)
+    testClasses.from(sourceSets.test.get().output.classesDirs)
+    sources.set(layout.projectDirectory.dir("src/main/kotlin"))
+    areas.set(nativeTestAreas.mapValues { (_, folders) -> folders.split(' ').joinToString(" ") { "app/morphe/patches/tiktok/$it" } })
+    excluded.set(extensionClasses.map { it.removeSuffix(".class") })
+    outputDirectory.set(layout.buildDirectory.dir("nativeTestAreas"))
+}
+val mainResources = sourceSets.main.get().output.resourcesDir
+val nativeTestClasspath = sourceSets.test.get().runtimeClasspath.filter { it != mainResources } + files(nativeTestResources)
+val nativeTestAreaTasks = (nativeTestAreas.keys + NativeTestAreas.SHARED).map { area ->
+    tasks.register<Test>("nativeTest$area") {
+        group = "verification"
+        description = "Runs the $area patch tests that read neither extension sources nor the extension bundle."
+        val folder = splitNativeTests.flatMap { it.outputDirectory.dir(area) }
+        testClassesDirs = files(folder.map { it.dir("seeds") })
+        if (area == NativeTestAreas.SHARED) {
+            // These read the whole source tree, the patch list and this build file, so every class
+            // and every source is theirs.
+            classpath = files(folder.map { it.dir("seeds") }) + nativeTestClasspath
+            inputs.dir("src/main").withPropertyName("patchSources").withPathSensitivity(PathSensitivity.RELATIVE)
+            inputs.files(rootProject.file("patches-list.json"), file("build.gradle.kts")).withPropertyName("repoFiles")
+                .withPathSensitivity(PathSensitivity.RELATIVE)
+            mustRunAfter("generatePatchesList")
+        } else {
+            // Only the classes this area's tests reach, and the sources they come from or name.
+            val compiled = sourceSets.main.get().output.classesDirs + sourceSets.test.get().output.classesDirs
+            classpath = files(folder.map { it.dir("seeds") }, folder.map { it.file("lib.jar") }, folder.map { it.file("main.jar") }) +
+                nativeTestClasspath.filter { it !in compiled }
+            inputs.dir(folder.map { it.dir("src") }).withPropertyName("patchSources").withPathSensitivity(PathSensitivity.RELATIVE)
+        }
+        exclude(extensionClasses)
+        // Under test-results/nativeTest, one folder per area, where the single task's results were.
+        reports.junitXml.outputLocation.set(layout.buildDirectory.dir("test-results/nativeTest/$area"))
+        binaryResultsDirectory.set(layout.buildDirectory.dir("test-results/nativeTest/$area/binary"))
+        reports.html.outputLocation.set(layout.buildDirectory.dir("reports/tests/nativeTest/$area"))
+        inputs.property("suiteSelection", provider {
+            (tasks.test.get().filter as DefaultTestFilter).commandLineIncludePatterns
+        })
+        failOnNoDiscoveredTests.set(provider {
+            (tasks.test.get().filter as DefaultTestFilter).commandLineIncludePatterns.isEmpty()
+        })
+        doFirst {
+            val selected = (tasks.test.get().filter as DefaultTestFilter).commandLineIncludePatterns
+            if (selected.isNotEmpty()) {
+                setTestNameIncludePatterns(selected.toList())
+                filter.isFailOnNoMatchingTests = false
+            }
         }
     }
+}
+val nativeTest = tasks.register("nativeTest") {
+    group = "verification"
+    description = "Runs every nativeTest area."
+    dependsOn(nativeTestAreaTasks)
 }
 // The fixture tests skip when this is unset and read the folder when it is set. Blank counts as
 // unset, as Fixtures.kt reads it; File("") would be the whole project.
@@ -561,18 +824,18 @@ val fixtureDigests by lazy {
         }
     }.getOrElse(emptyMap())
 }
-// Both partitions that open TikTok APKs.
-tasks.withType<Test>().matching { it.name == "test" || it.name == "nativeTest" }.configureEach {
+// Every partition that opens TikTok APKs.
+tasks.withType<Test>().matching { it.name == "test" || it.name.startsWith("nativeTest") }.configureEach {
     // GateCatalogFixturesTest runs the catalog generator on each declared build, and the
     // generator holds a whole APK's dex (some 430 MB on 47.1.x, feature modules included)
     // while it walks it; the fixture scans in nativeTest hold the same dex. Gradle's default
     // test heap is 512 MB, where that ran out of memory.
     maxHeapSize = "4g"
-    // nativeTest is some 600 single-threaded scans over the one declared build's dex. Two forks
-    // each decode it once (the [fixtures] line in the report counts decodes) and split the
-    // classes, which takes the two workers the build governor allows. 2 GB holds one 47.1.4 dex
-    // and a scan, so two forks take no more heap than the single 4 GB JVM did.
-    if (name == "nativeTest") {
+    // The nativeTest areas are some 600 single-threaded scans over the one declared build's dex.
+    // Two forks per area each decode it once (the [fixtures] line in the report counts decodes)
+    // and split the classes, which takes the two workers the build governor allows. 2 GB holds
+    // one 47.1.4 dex and a scan, so two forks take no more heap than the single 4 GB JVM did.
+    if (name.startsWith("nativeTest")) {
         maxParallelForks = 2
         maxHeapSize = "2g"
     }

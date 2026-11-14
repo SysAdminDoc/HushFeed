@@ -42,6 +42,10 @@ Every Hushfeed release, newest first.
 * With `Dark LIVE panels in dark mode` on, the Rose card that comes up the first time you tap a LIVE's quick gift reads white on its dark card. Its title and text stayed dark, so they almost vanished. The Request to join as a guest sheet goes black too, where its light text sat on a white sheet (#362).
 * The Lab's `Scrolling comments on videos` preset now tells you where to look. TikTok only allows them on some wide videos, and those get an Add one-liner button under the video and a one-liner bar in full screen. The old note just said most videos stay the same (#98).
 
+### Build
+
+* The patch tests that don't read the extension run in eight groups now, one per area (feed, playback, player, sharing, messages, look, the rest of the app) plus one for the tests that read the whole source tree. Each group's classpath holds only the patch classes its tests reach, and its inputs only the sources they read. Change one patch and Gradle reruns that patch's group and the shared one, while the rest stay up to date. An edit to Hide profile tabs took 14 minutes instead of the full run's 39. A full run still runs every group, and a group that finds no tests on a full run fails it.
+
 ## 0.82.0 (2026-11-12)
 
 ### Features

@@ -483,6 +483,50 @@ public class LiveCommentBoxTest {
             iconBackground = box;
             setImageDrawable(glyph);
         }
+
+        LiveIconView(android.content.Context context, Drawable box, Drawable image) {
+            super(context);
+            iconBackground = box;
+            setImageDrawable(image);
+        }
+
+        @Override
+        protected void onDraw(Canvas canvas) {
+            // The box first, then the glyph over it.
+            if (iconBackground != null) iconBackground.draw(canvas);
+            super.onDraw(canvas);
+        }
+    }
+
+    /** A glyph of one ink in the middle half of its bounds, with clear pixels around it. */
+    static final class Glyph extends Drawable {
+        private final Paint paint = new Paint();
+
+        Glyph(int color) {
+            paint.setColor(color);
+        }
+
+        @Override
+        public void draw(Canvas canvas) {
+            android.graphics.Rect bounds = getBounds();
+            canvas.drawRect(bounds.left + bounds.width() / 4f, bounds.top + bounds.height() / 4f,
+                    bounds.right - bounds.width() / 4f, bounds.bottom - bounds.height() / 4f, paint);
+        }
+
+        @Override
+        public void setAlpha(int alpha) {
+            paint.setAlpha(alpha);
+        }
+
+        @Override
+        public void setColorFilter(ColorFilter filter) {
+            paint.setColorFilter(filter);
+        }
+
+        @Override
+        public int getOpacity() {
+            return PixelFormat.TRANSLUCENT;
+        }
     }
 
     /** TikTok's drawn icon box (X.0fG9 on 47.7.3): a rounded rect whose paint takes its color on every draw. */
@@ -582,6 +626,30 @@ public class LiveCommentBoxTest {
         // The box is dark already on the next pass, and its glyph is still drawn light.
         LiveCommentBox.darken(root, AMOLED, ink);
         assertTrue(ink.contains(onWhite));
+    }
+
+    /**
+     * The glyph on a box made dark is judged without the box, so it turns light whatever hue the
+     * picked color has. Drawn together, a teal box made the icon read as colored art and the dark
+     * glyph stayed dark on it.
+     */
+    @Test
+    @Config(qualifiers = "night")
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    public void aDarkGlyphOnItsBoxMadeDarkTurnsLightInAnyPickedColor() {
+        int teal = 0xFF002B36;
+        FrameLayout root = new FrameLayout(RuntimeEnvironment.getApplication());
+        FrameLayout bar = nightBar(root);
+        LiveIconView delete = new LiveIconView(root.getContext(), new DrawnBox(Color.WHITE), new Glyph(0xFF161823));
+        bar.addView(delete, new FrameLayout.LayoutParams(158, 113));
+        layOut(root);
+
+        LiveCommentBox.darken(root, teal, new ArrayList<>());
+
+        Bitmap drawn = Bitmap.createBitmap(158, 113, Bitmap.Config.ARGB_8888);
+        delete.draw(new Canvas(drawn));
+        assertEquals("the box takes the picked color", teal, drawn.getPixel(20, 56));
+        assertEquals("and the glyph on it turns light", Color.WHITE, drawn.getPixel(79, 56));
     }
 
     /**

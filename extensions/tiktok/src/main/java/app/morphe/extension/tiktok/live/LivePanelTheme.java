@@ -876,7 +876,8 @@ public final class LivePanelTheme {
         int tries = seen != null && seen.drawable == null ? seen.emptyTries + 1 : 0;
         int[] pixels;
         try {
-            pixels = pixelsOf(image);
+            // On a box made dark the glyph alone is judged, since the box now has the picked color in any hue.
+            pixels = pixelsOf(image, LiveCommentBox.onBoxMadeDark(image) ? drawable : null);
         } catch (RuntimeException unreadable) {
             // A hardware bitmap can't be drawn in software: it keeps its look and isn't tried again.
             pixels = null;
@@ -914,8 +915,11 @@ public final class LivePanelTheme {
         }
     }
 
-    /** The view drawn small into a bitmap, its pixels, or null when it has no size yet. */
-    private static int[] pixelsOf(View view) {
+    /**
+     * The view drawn small into a bitmap, its pixels, or null when it has no size yet. With an
+     * image, only that image is drawn, where the view draws it.
+     */
+    private static int[] pixelsOf(View view, Drawable alone) {
         int width = view.getWidth();
         int height = view.getHeight();
         if (width <= 0 || height <= 0) {
@@ -928,7 +932,15 @@ public final class LivePanelTheme {
         try {
             Canvas canvas = new Canvas(bitmap);
             canvas.scale(scale, scale);
-            view.draw(canvas);
+            if (alone == null) {
+                view.draw(canvas);
+            } else {
+                // Placed the way ImageView places its image.
+                ImageView image = (ImageView) view;
+                canvas.translate(image.getPaddingLeft(), image.getPaddingTop());
+                canvas.concat(image.getImageMatrix());
+                alone.draw(canvas);
+            }
             int[] pixels = new int[sampleWidth * sampleHeight];
             bitmap.getPixels(pixels, 0, sampleWidth, 0, 0, sampleWidth, sampleHeight);
             return pixels;

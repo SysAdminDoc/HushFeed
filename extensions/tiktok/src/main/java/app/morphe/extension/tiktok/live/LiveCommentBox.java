@@ -87,7 +87,7 @@ public final class LiveCommentBox {
     private static final Map<Bitmap, Boolean> WHITE_PICTURES = Collections.synchronizedMap(new WeakHashMap<>());
     /** Each LiveIconView class's field holding its icon's box, or null when it has no single one. */
     private static final Map<Class<?>, Field> ICON_BOX_FIELDS = Collections.synchronizedMap(new WeakHashMap<>());
-    /** Drawn icon boxes read as an opaque color that isn't a night gray, so they're not read again. */
+    /** Drawn icon boxes that keep their look (a color, the fill already, see-through), so they're not read again. */
     private static final Map<Drawable, Boolean> KEPT_BOXES = Collections.synchronizedMap(new WeakHashMap<>());
     /** How many points across and down a picture is read at. */
     private static final int SAMPLES = 12;
@@ -135,7 +135,6 @@ public final class LiveCommentBox {
     private static void watch(View root) {
         if (WATCHED.put(root, Boolean.TRUE) != null) return;
         List<View> ink = new ArrayList<>();
-        darken(root, ink);
         ViewTreeObserver observer = root.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(() -> {
             try {
@@ -155,6 +154,8 @@ public final class LiveCommentBox {
             }
             return true;
         });
+        // Last, so a pass that fails still leaves the panel looked at again on its next layout.
+        darken(root, ink);
     }
 
     /** Swaps the panel's light fills for its own dark one and gathers the text and icons to keep light. */
@@ -260,18 +261,30 @@ public final class LiveCommentBox {
             return swapFill(box, fill, grays);
         }
         if (TINTED.containsKey(box) || KEPT_BOXES.containsKey(box)) return false;
-        int painted = paintedAt(box);
+        int painted;
+        try {
+            painted = paintedAt(box);
+        } catch (RuntimeException unreadable) {
+            // One that can't be drawn in software, such as a hardware bitmap, keeps its look.
+            KEPT_BOXES.put(box, Boolean.TRUE);
+            return false;
+        }
         // Not drawn yet (no bounds, or no color before its first layout): looked at again on the next.
-        if (Color.alpha(painted) != 0xFF) return false;
-        if (!swappable(painted, fill, grays)) {
+        if (Color.alpha(painted) == 0) return false;
+        if (Color.alpha(painted) != 0xFF || !swappable(painted, fill, grays)) {
             // Only the full look settles it: a night gray box passed over for light ones is still open.
-            if (grays && (painted & 0x00FFFFFF) != (fill & 0x00FFFFFF)) KEPT_BOXES.put(box, Boolean.TRUE);
+            if (grays) KEPT_BOXES.put(box, Boolean.TRUE);
             return false;
         }
         box.mutate();
         box.setColorFilter(new PorterDuffColorFilter(fill | 0xFF000000, PorterDuff.Mode.SRC_IN));
         TINTED.put(box, Boolean.TRUE);
         return true;
+    }
+
+    /** True when an icon's own light box was made dark here, so its glyph is judged on its own. */
+    static boolean onBoxMadeDark(View view) {
+        return DARKENED.containsKey(view) && iconBox(view) != null;
     }
 
     /** The color a drawable paints at the middle of its bounds, or 0 when it has none yet. */

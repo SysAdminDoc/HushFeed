@@ -1831,6 +1831,55 @@ public final class Probe extends Instrumentation {
                                 + " pieces encoding=base64-utf8 bytes=" + bytes.length + " sha256=" + hash);
                         break;
                     }
+                    case "rootsignals": {
+                        // Calls TikTok's own root checks and prints what each one answers. Each
+                        // extra (status, packages, paths, whichsu, sucommand) names one static
+                        // method as Class.method taking nothing or a Context. Off the main thread,
+                        // since the su checks start a shell and wait on it.
+                        final String[] names = {"status", "packages", "paths", "whichsu", "sucommand"};
+                        final String[] targets = new String[names.length];
+                        for (int i = 0; i < names.length; i++) targets[i] = intent.getStringExtra(names[i]);
+                        new Thread(() -> {
+                            StringBuilder out = new StringBuilder();
+                            for (int i = 0; i < names.length; i++) {
+                                if (targets[i] == null) continue;
+                                out.append(' ').append(names[i]).append('=');
+                                try {
+                                    int dot = targets[i].lastIndexOf('.');
+                                    Class<?> owner = loader.loadClass(targets[i].substring(0, dot));
+                                    String method = targets[i].substring(dot + 1);
+                                    Object result = null;
+                                    boolean called = false;
+                                    for (Method candidate : owner.getDeclaredMethods()) {
+                                        Class<?> returns = candidate.getReturnType();
+                                        if (!candidate.getName().equals(method)
+                                                || !Modifier.isStatic(candidate.getModifiers())
+                                                || (returns != boolean.class && !Map.class.isAssignableFrom(returns))) {
+                                            continue;
+                                        }
+                                        Class<?>[] types = candidate.getParameterTypes();
+                                        candidate.setAccessible(true);
+                                        if (types.length == 0) {
+                                            result = candidate.invoke(null);
+                                        } else if (types.length == 1 && types[0] == Context.class) {
+                                            result = candidate.invoke(null, app);
+                                        } else {
+                                            continue;
+                                        }
+                                        called = true;
+                                        break;
+                                    }
+                                    out.append(called ? String.valueOf(result) : "nomethod");
+                                } catch (Throwable failure) {
+                                    Throwable cause = failure instanceof java.lang.reflect.InvocationTargetException
+                                            && failure.getCause() != null ? failure.getCause() : failure;
+                                    out.append("failed:").append(cause.getClass().getSimpleName());
+                                }
+                            }
+                            Log.i(TAG, "ok rootsignals" + out);
+                        }).start();
+                        break;
+                    }
                     case "get": {
                         String key = required(intent, "key");
                         Log.i(TAG, "ok get " + key + "=" + valueOf(find(key)));

@@ -422,6 +422,12 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             ));
             addPreference(new TogglePreference(
                     context,
+                    "Show the country and date under the caption",
+                    "Moves the country and the post date off the creator's row onto a line of their own below the caption.",
+                    Settings.COUNTRY_DATE_UNDER_CAPTION
+            ));
+            addPreference(new TogglePreference(
+                    context,
                     "Show the handle instead of the name",
                     "Show @username beside a video instead of the display name the creator chose.",
                     Settings.SHOW_AUTHOR_HANDLE

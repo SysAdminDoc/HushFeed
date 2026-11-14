@@ -183,6 +183,8 @@ public class FeedScreenCoverageTest {
         put("show_author_region", YES, YES, NONE);
         // Only how the region label shows its code, so it reaches where the label does (#157).
         put("region_as_flag", YES, YES, NONE);
+        // The same row's country and date, moved under the caption beside it (#410).
+        put("country_date_under_caption", YES, YES, NONE);
         put("show_author_handle", YES, YES, NONE);
         put("show_engagement_rate", YES, YES, NONE);
         put("hide_feed_caption", YES, YES, NONE);

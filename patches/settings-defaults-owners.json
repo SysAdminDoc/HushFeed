@@ -711,6 +711,7 @@
     "Show author region": [
       "SHOW_AUTHOR_REGION",
       "REGION_AS_FLAG",
+      "COUNTRY_DATE_UNDER_CAPTION",
       "SHOW_AUTHOR_HANDLE"
     ],
     "Show commenter handle and region": [

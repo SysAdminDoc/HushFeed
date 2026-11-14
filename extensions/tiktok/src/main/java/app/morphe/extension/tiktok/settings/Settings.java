@@ -1290,6 +1290,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting SHOW_AUTHOR_REGION = new BooleanSetting("show_author_region", FALSE);
     /** The country as its flag in place of its two letters, by the creator's name and a comment's time (#157). */
     public static final BooleanSetting REGION_AS_FLAG = new BooleanSetting("region_as_flag", FALSE);
+    /** The country and the post time on a line of their own under the caption, off the creator's row (#410). */
+    public static final BooleanSetting COUNTRY_DATE_UNDER_CAPTION = new BooleanSetting("country_date_under_caption", FALSE);
     public static final BooleanSetting SHOW_AUTHOR_HANDLE = new BooleanSetting("show_author_handle", FALSE);
     public static final BooleanSetting SHOW_ENGAGEMENT_RATE = new BooleanSetting("show_engagement_rate", FALSE);
     public static final BooleanSetting BLOCK_AUTHOR_BUTTON =

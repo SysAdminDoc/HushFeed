@@ -102,6 +102,7 @@ feed/FeedOverlayControls.java|inline|view_rootview|app|com.ss.android.ugc.aweme.
 feed/FeedOverlayControls.java|inline|feed_multi_tag_layout|app|com.ss.android.ugc.aweme.fcpanchor.access.VideoFeedMultiTagAssem|at:1
 feed/AuthorRegion.java|NAME_ID|title|app|com.by.andInflater.common_feed_layout_video_title|at:4
 feed/AuthorRegion.java|POST_TIME_ID|tv_post_time|app|com.ss.android.ugc.aweme.feed.assem.videoauthorinfo.VideoAuthorInfoRelationAssem|on:TuxTextView#1
+feed/CaptionLine.java|CAPTION_ID|desc|app|com.ss.android.ugc.aweme.feed.assem.desc.VideoDescAssem|on:View
 feed/LiveStatusBar.java|VIDEO_CONTAINER|video_view_container|app|com.bytedance.android.livesdk.chatroom.ui.LivePlayFragment|on:ViewGroup#2
 inbox/InboxFilter.java|LIST_IDS|47.7.3:l8h|app|com.ss.android.ugc.aweme.inbox.BaseInboxFragment|at:2
 inbox/InboxFilter.java|SYSTEM_ROW_IDS|47.7.3:v3k|app|layout:com.ss.android.ugc.aweme.inbox.lego.PreloadInboxTask|tag:MultiSelectConstraintLayout

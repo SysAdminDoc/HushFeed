@@ -724,6 +724,7 @@
     "Show author region": [
       "show_author_region",
       "region_as_flag",
+      "country_date_under_caption",
       "show_author_handle"
     ],
     "Show commenter handle and region": [
@@ -1373,6 +1374,12 @@
       "key": "copy_ids",
       "type": "boolean",
       "default": true
+    },
+    "country_date_under_caption": {
+      "field": "COUNTRY_DATE_UNDER_CAPTION",
+      "key": "country_date_under_caption",
+      "type": "boolean",
+      "default": false
     },
     "creator_filter_exceptions": {
       "field": "CREATOR_FILTER_EXCEPTIONS",

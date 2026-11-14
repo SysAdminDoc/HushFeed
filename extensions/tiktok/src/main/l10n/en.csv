@@ -1320,6 +1320,7 @@ Move left,Move left
 Move right,Move right
 "Move to the next video when the current one ends. Pauses, open dialogs and screen-time holds stop it. Restart TikTok to apply this.","Move to the next video when the current one ends. Pauses, open dialogs and screen-time holds stop it. Restart TikTok to apply this."
 Move up,Move up
+Moves the country and the post date off the creator's row onto a line of their own below the caption.,Moves the country and the post date off the creator's row onto a line of their own below the caption.
 Music,Music
 Music disc,Music disc
 Mute feed videos,Mute feed videos
@@ -2005,6 +2006,7 @@ Show the block sound button,Show the block sound button
 Show the controls,Show the controls
 Show the country a commenter's account is set to after the comment's time. Comments from accounts TikTok sends no country for stay as they are.,Show the country a commenter's account is set to after the comment's time. Comments from accounts TikTok sends no country for stay as they are.
 Show the country a video was posted from next to the creator's name.,Show the country a video was posted from next to the creator's name.
+Show the country and date under the caption,Show the country and date under the caption
 Show the country as a flag,Show the country as a flag
 Show the current spoken caption while the other controls are hidden.,Show the current spoken caption while the other controls are hidden.
 Show the day each video was posted under its view count on profile grids.,Show the day each video was posted under its view count on profile grids.

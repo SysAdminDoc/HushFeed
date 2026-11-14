@@ -14681,6 +14681,12 @@
     "row": "Show the country as a flag"
    },
    {
+    "key": "country_date_under_caption",
+    "default": false,
+    "type": "bool",
+    "row": "Show the country and date under the caption"
+   },
+   {
     "key": "show_author_handle",
     "default": false,
     "type": "bool",

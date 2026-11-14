@@ -9880,6 +9880,15 @@
           "values": null
         },
         {
+          "key": "country_date_under_caption",
+          "title": "Default: country date under caption",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "show_author_handle",
           "title": "Default: show author handle",
           "description": null,

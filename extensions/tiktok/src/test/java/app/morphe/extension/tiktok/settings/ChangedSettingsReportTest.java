@@ -131,7 +131,7 @@ public class ChangedSettingsReportTest {
                 "caption_font_weight", "default_speed", "double_tap_action", "double_tap_bottom_left_action",
                 "double_tap_bottom_right_action", "double_tap_top_left_action", "double_tap_top_right_action",
                 "download_saves_at_once",
-                "download_sound_format", "download_sticker_format",
+                "download_sound_format", "download_sticker_format", "download_video_codec",
                 "download_video_quality", "feed_navigation_tabs", "feed_text_backdrop", "feed_text_color",
                 "glass_bar_height", "glass_blur_strength",
                 "glass_corners", "glass_haptic_style", "glass_opacity", "hold_speed", "hold_speed_hud_style",

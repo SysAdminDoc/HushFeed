@@ -2901,6 +2901,42 @@ public final class Probe extends Instrumentation {
                         Log.i(TAG, "ok splitstate" + out);
                         break;
                     }
+                    case "showdialog": {
+                        // One of TikTok's dialog fragments shown over the current activity, made
+                        // from its class name with no arguments: -e class com.bytedance.android.
+                        // livesdk.widgets.giftwidget.presenter.FastGiftConfirmDialog. For a theme
+                        // check of a card an account's rooms never offer (the Rose's quick gift
+                        // card only shows where the room has a quick gift button). It's only
+                        // shown, nothing on it is pressed, and back closes it.
+                        String name = required(intent, "class");
+                        Object current = resumedActivity("showdialog", loader);
+                        Object manager = callNoArg(current, "getSupportFragmentManager");
+                        if (manager == null || "?".equals(manager)) {
+                            Log.i(TAG, "fail showdialog no fragment manager on " + ref(current));
+                            break;
+                        }
+                        Object dialog = loader.loadClass(name).getDeclaredConstructor().newInstance();
+                        // show(FragmentManager, String), found by its shape where the name is gone.
+                        Method show = null;
+                        for (Class<?> c = dialog.getClass(); c != null && show == null; c = c.getSuperclass()) {
+                            for (Method m : c.getDeclaredMethods()) {
+                                Class<?>[] types = m.getParameterTypes();
+                                if (types.length == 2 && types[1] == String.class && types[0].isInstance(manager)
+                                        && m.getReturnType() == void.class && !m.getName().equals("showNow")) {
+                                    show = m;
+                                    if (m.getName().equals("show")) break;
+                                }
+                            }
+                        }
+                        if (show == null) {
+                            Log.i(TAG, "fail showdialog no show method on " + name);
+                            break;
+                        }
+                        show.setAccessible(true);
+                        show.invoke(dialog, manager, "hushfeed_probe");
+                        Log.i(TAG, "ok showdialog " + name + " via " + show.getDeclaringClass().getName() + "." + show.getName());
+                        break;
+                    }
                     case "call": {
                         // A public static method of one of Hushfeed's own classes that takes no
                         // arguments, and what it returned when that is a number or a yes/no:
@@ -4143,30 +4179,7 @@ public final class Probe extends Instrumentation {
                         // gift guide bubble: -e class X.0zJ8 on 47.7.3). -e text fills its empty
                         // TextViews; the context the view ended up with and each TextView's color go
                         // to the log. -e remove true takes it off again.
-                        // The resumed activity comes from ActivityThread's records: Hushfeed's
-                        // tracked activity stays MainActivity while a LIVE room is in front, and a
-                        // LIVE view built on MainActivity's theme fails on a missing LIVE attribute.
-                        android.app.Activity activity = null;
-                        try {
-                            Class<?> threadClass = Class.forName("android.app.ActivityThread");
-                            Object thread = threadClass.getMethod("currentActivityThread").invoke(null);
-                            java.lang.reflect.Field records = threadClass.getDeclaredField("mActivities");
-                            records.setAccessible(true);
-                            for (Object record : ((java.util.Map<?, ?>) records.get(thread)).values()) {
-                                java.lang.reflect.Field paused = record.getClass().getDeclaredField("paused");
-                                paused.setAccessible(true);
-                                if (paused.getBoolean(record)) continue;
-                                java.lang.reflect.Field held = record.getClass().getDeclaredField("activity");
-                                held.setAccessible(true);
-                                activity = (android.app.Activity) held.get(record);
-                            }
-                        } catch (ReflectiveOperationException | RuntimeException e) {
-                            Log.w(TAG, "addview: no resumed activity from ActivityThread, using the tracked one: " + e);
-                        }
-                        if (activity == null) {
-                            activity = (android.app.Activity) loader.loadClass(UTILS).getMethod("getActivity").invoke(null);
-                        }
-                        if (activity == null) throw new IllegalStateException("no current activity");
+                        android.app.Activity activity = resumedActivity("addview", loader);
                         android.view.View content = activity.findViewById(android.R.id.content);
                         if (!(content instanceof android.widget.FrameLayout)) throw new IllegalStateException("no content frame");
                         android.widget.FrameLayout frame = (android.widget.FrameLayout) content;
@@ -5183,6 +5196,36 @@ public final class Probe extends Instrumentation {
                 return Math.round(android.util.TypedValue.deriveDimension(android.util.TypedValue.COMPLEX_UNIT_SP, px, metrics));
             }
             return Math.round(px / metrics.scaledDensity);
+        }
+
+        /**
+         * The resumed activity, from ActivityThread's records: Hushfeed's tracked activity stays
+         * MainActivity while a LIVE room is in front, so a LIVE view or dialog built on it fails or
+         * never shows. The tracked one when the records can't be read.
+         */
+        private static android.app.Activity resumedActivity(String action, ClassLoader loader) throws Exception {
+            android.app.Activity activity = null;
+            try {
+                Class<?> threadClass = Class.forName("android.app.ActivityThread");
+                Object thread = threadClass.getMethod("currentActivityThread").invoke(null);
+                java.lang.reflect.Field records = threadClass.getDeclaredField("mActivities");
+                records.setAccessible(true);
+                for (Object record : ((java.util.Map<?, ?>) records.get(thread)).values()) {
+                    java.lang.reflect.Field paused = record.getClass().getDeclaredField("paused");
+                    paused.setAccessible(true);
+                    if (paused.getBoolean(record)) continue;
+                    java.lang.reflect.Field held = record.getClass().getDeclaredField("activity");
+                    held.setAccessible(true);
+                    activity = (android.app.Activity) held.get(record);
+                }
+            } catch (ReflectiveOperationException | RuntimeException e) {
+                Log.w(TAG, action + ": no resumed activity from ActivityThread, using the tracked one: " + e);
+            }
+            if (activity == null) {
+                activity = (android.app.Activity) loader.loadClass(UTILS).getMethod("getActivity").invoke(null);
+            }
+            if (activity == null) throw new IllegalStateException("no current activity");
+            return activity;
         }
 
         private static java.util.List<android.view.View> windowRoots() throws Exception {

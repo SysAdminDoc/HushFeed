@@ -11,6 +11,7 @@ import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.misc.optimizer.isBranchTarget
 import app.morphe.util.addInstructions
 import app.morphe.util.getReference
+import app.morphe.util.returnEarly
 import app.morphe.util.singleOrPatchException
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.Method
@@ -159,13 +160,7 @@ internal fun Map<Int, String>.encodeProfileTabTypes(): String =
     entries.sortedBy { it.key }.joinToString(",") { "${it.key}=${it.value}" }
 
 internal fun ProfileTabHooks.install() {
-    stub.addInstructions(
-        0,
-        """
-            const-string v0, "${types.encodeProfileTabTypes()}"
-            return-object v0
-        """,
-    )
+    stub.returnEarly(types.encodeProfileTabTypes())
     // Last index first in each method, so the earlier ones stay where they were found.
     sites.sortedByDescending { it.second }.forEach { (method, index) ->
         val register = (method.implementation!!.instructions.elementAt(index) as OneRegisterInstruction).registerA

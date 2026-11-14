@@ -793,6 +793,15 @@
           "values": null
         },
         {
+          "key": "collection_grid_sort",
+          "title": "Default: collection grid sort",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "favorites",
+          "values": null
+        },
+        {
           "key": "sound_grid_sort",
           "title": "Default: sound grid sort",
           "description": null,

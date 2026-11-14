@@ -174,6 +174,7 @@ public class FeedScreenCoverageTest {
         put("profile_grid_sort", NONE, NONE, NONE);
         put("liked_grid_sort", NONE, NONE, NONE);
         put("favorites_grid_sort", NONE, NONE, NONE);
+        put("collection_grid_sort", NONE, NONE, NONE);
         put("sound_grid_sort", NONE, NONE, NONE);
         // Where the Liked grid's list starts, which neither window draws (#350).
         put("liked_jump_to_date", NONE, NONE, NONE);

@@ -58,6 +58,7 @@
       "profile_grid_sort",
       "liked_grid_sort",
       "favorites_grid_sort",
+      "collection_grid_sort",
       "sound_grid_sort",
       "liked_jump_to_date",
       "grid_search",
@@ -1254,6 +1255,12 @@
       "key": "clear_display",
       "type": "boolean",
       "default": false
+    },
+    "collection_grid_sort": {
+      "field": "COLLECTION_GRID_SORT",
+      "key": "collection_grid_sort",
+      "type": "string",
+      "default": "favorites"
     },
     "color_commenter_names": {
       "field": "COLOR_COMMENTER_NAMES",

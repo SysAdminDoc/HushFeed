@@ -4,18 +4,23 @@
  */
 package app.morphe.patches.tiktok.interaction.publishdate
 
+import app.morphe.patcher.patch.classDefByOrNull
 import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.patch.PatchException
+import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.theme.declaredVersions
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
 import app.morphe.util.addInstructionsAtControlFlowLabel
 import app.morphe.util.addInstructionsWithLabels
+import app.morphe.util.argumentRegister
 import app.morphe.util.getReference
+import app.morphe.util.superclassChain
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
@@ -23,6 +28,9 @@ import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
+import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation
+import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
 
 private const val PATCH = "Always show publish date"
 private const val GRID_SORT = "Lapp/morphe/extension/tiktok/feed/GridSort;"
@@ -386,6 +394,13 @@ internal fun hookGridSortOn(versionName: String): Boolean {
                 "Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableSoundGridSort()V",
         )
     }
+    if (hookCollectionGridSort(versionName)) {
+        SettingsStatusLoadFingerprint.method.addInstruction(
+            0,
+            "invoke-static {}, " +
+                "Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableCollectionGridSort()V",
+        )
+    }
     SettingsStatusLoadFingerprint.method.addInstruction(
         0,
         "invoke-static {}, " +
@@ -637,5 +652,121 @@ internal fun hookSoundOpen(versionName: String): Boolean {
         """,
     )
     open.addInstruction(0, "invoke-static/range { p0 .. p0 }, $GRID_SORT->beforeOpen(Ljava/lang/Object;)V")
+    return true
+}
+
+private const val COLLECTION_CONTENT_ASSEM =
+    "Lcom/ss/android/ugc/aweme/favorites/business/collection/assem/CollectionContentAssem;"
+
+/** What a collection folder's cell click logs when the tapped video can't open. */
+private const val COLLECTION_OPEN_ERROR = "onClickItemViewHolderToEnterAwemeDetail error: aweme: "
+
+/**
+ * A Favorites collection folder's grid adapter's constructor (X/1KKF on 47.7.3), the one taking
+ * CollectionContentAssem, a name TikTok keeps, as its second parameter. The folder draws its rows
+ * through this adapter, not the profile grid's, and hands it every loaded row through addData each
+ * time the folder changes.
+ */
+internal object CollectionGridAdapterInitFingerprint : Fingerprint(
+    name = "<init>",
+    returnType = "V",
+    custom = { method, classDef ->
+        method.parameterTypes.getOrNull(1)?.toString() == COLLECTION_CONTENT_ASSEM &&
+            classDef.methods.any { it.name == "onBindBasicViewHolder" }
+    },
+)
+
+/**
+ * The folder's cell click (a state lambda on 47.7.3), which builds the video page's list from the
+ * folder's state in TikTok's order, hands it to TikTok's video list, and opens the tapped video by
+ * its id.
+ */
+internal object CollectionCellOpenFingerprint : Fingerprint(
+    strings = listOf(COLLECTION_OPEN_ERROR),
+)
+
+private fun Method.takesOneList() =
+    name == "addData" && returnType == "V" && parameterTypes.map { it.toString() } == listOf("Ljava/util/List;")
+
+/**
+ * The superclass of the folder adapter whose `addData(List)` it inherits, the one an override can
+ * call on: the adapter declares none of its own, and the class that does keeps the list in
+ * `mmItems`, which the extension sorts in place. Null when the adapter's shape is any other.
+ */
+internal fun collectionDataOwner(adapter: ClassDef): String? {
+    if (adapter.methods.any { it.takesOneList() }) return null
+    val superclass = adapter.superclass ?: return null
+    val owner = superclassChain(superclass).firstOrNull { type ->
+        classDefByOrNull(type)?.methods?.any { it.takesOneList() } == true
+    } ?: return null
+    val owned = classDefByOrNull(owner) ?: return null
+    val addData = owned.methods.single { it.takesOneList() }
+    if (AccessFlags.FINAL.isSet(addData.accessFlags) || AccessFlags.STATIC.isSet(addData.accessFlags)) return null
+    if (owned.fields.none { it.name == "mmItems" && it.type == "Ljava/util/List;" }) return null
+    return superclass
+}
+
+/**
+ * Where the folder's click hands its list to TikTok's video list: the index of its one call taking
+ * (List, long, boolean, String), and the register the list is in. Null when there isn't exactly one.
+ */
+internal fun Method.collectionPlayCall(): Pair<Int, Int>? {
+    val code = implementation?.instructions?.toList() ?: return null
+    val calls = code.indices.filter { index ->
+        val call = code[index]
+        (call.opcode == Opcode.INVOKE_VIRTUAL || call.opcode == Opcode.INVOKE_VIRTUAL_RANGE) &&
+            call.getReference<MethodReference>()?.let { ref ->
+                ref.returnType == "V" && ref.parameterTypes.map { it.toString() } ==
+                    listOf("Ljava/util/List;", "J", "Z", "Ljava/lang/String;")
+            } == true
+    }
+    val index = calls.singleOrNull() ?: return null
+    val list = code[index].argumentRegister(1) ?: return null
+    return index to list
+}
+
+/** The addData the folder adapter gets: the list goes through the extension, then on to TikTok's own. */
+internal fun collectionAddData(adapter: String, superclass: String) = MutableMethod(
+    ImmutableMethod(
+        adapter, "addData", listOf(ImmutableMethodParameter("Ljava/util/List;", null, null)),
+        "V", AccessFlags.PUBLIC.value, null, null, ImmutableMethodImplementation(2, emptyList(), null, null),
+    ),
+).apply {
+    addInstructions(
+        0,
+        """
+            invoke-static { p0, p1 }, $GRID_SORT->collectionData(Ljava/lang/Object;Ljava/util/List;)Ljava/util/List;
+            move-result-object p1
+            invoke-super { p0, p1 }, $superclass->addData(Ljava/util/List;)V
+            return-void
+        """,
+    )
+}
+
+/**
+ * Sorts a Favorites collection folder (#180) with the profile grids' extension code. The folder's
+ * adapter gets its own addData, which puts each list through the extension before TikTok's, and
+ * the folder's cell click puts the video page's list in the folder's order just before handing it
+ * over. Required on a declared build, where the anchors test holds it, and left out with a note on
+ * any other, so the other grids keep their sort.
+ */
+internal fun hookCollectionGridSort(versionName: String): Boolean {
+    val declared = versionName in declaredVersions()
+    val init = if (declared) CollectionGridAdapterInitFingerprint.method else CollectionGridAdapterInitFingerprint.methodOrNull
+    val click = if (declared) CollectionCellOpenFingerprint.method else CollectionCellOpenFingerprint.methodOrNull
+    val adapter = init?.let { mutableClassDefBy(it.definingClass) }
+    val superclass = adapter?.let(::collectionDataOwner)
+    val play = click?.collectionPlayCall()
+    if (adapter == null || superclass == null || click == null || play == null) {
+        if (declared) throw PatchException("$PATCH: no collection folder adapter or cell click to sort on $versionName.")
+        println("[$PATCH] Left out the collection folder sort on $versionName: no folder adapter or cell click found.")
+        return false
+    }
+    adapter.methods.add(collectionAddData(adapter.type, superclass))
+    val (index, list) = play
+    click.addInstructionsAtControlFlowLabel(
+        index,
+        "invoke-static/range { v$list .. v$list }, $GRID_SORT->collectionPlay(Ljava/util/List;)V",
+    )
     return true
 }

@@ -1766,6 +1766,7 @@ SIM country preset,SIM country preset
 SOCKS5,SOCKS5
 STEM,STEM
 Safety Center,Safety Center
+Same as Favorites grids,Same as Favorites grids
 Same as profile grids,Same as profile grids
 Same as the room,Same as the room
 "Same as the room records the quality you're watching. Highest records the best stream the room has, even while you watch it lower. A number records that quality, or the closest one the room has when it isn't offered.","Same as the room records the quality you're watching. Highest records the best stream the room has, even while you watch it lower. A number records that quality, or the closest one the room has when it isn't offered."
@@ -2076,6 +2077,7 @@ Some of these notes are in English.,Some of these notes are in English.
 Some recording files remain. Try deleting them again.,Some recording files remain. Try deleting them again.
 "Some replies weren't loaded, so they aren't in the file.","Some replies weren't loaded, so they aren't in the file."
 Something is missing from %1$s. Tap for the whole report.,Something is missing from %1$s. Tap for the whole report.
+Sort loaded videos in collections,Sort loaded videos in collections
 Sort loaded videos on Favorites grids,Sort loaded videos on Favorites grids
 Sort loaded videos on Liked grids,Sort loaded videos on Liked grids
 Sort loaded videos on profile grids,Sort loaded videos on profile grids

@@ -744,6 +744,13 @@ public class SettingsStatus {
         soundGridSortEnabled = true;
     }
 
+    /** A Favorites collection folder's adapter and its cell click were hooked, so a folder can be sorted (#180). */
+    public static boolean collectionGridSortEnabled = false;
+
+    public static void enableCollectionGridSort() {
+        collectionGridSortEnabled = true;
+    }
+
     public static void enableFeedSidebarSwipe() {
         feedSidebarSwipeEnabled = true;
     }

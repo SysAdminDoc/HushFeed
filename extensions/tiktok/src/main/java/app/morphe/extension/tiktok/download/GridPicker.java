@@ -353,7 +353,7 @@ public final class GridPicker {
      * there, so they come back null and are passed over like a story. The field is found by its
      * type, since TikTok renames it between builds.
      */
-    static Object postIn(Object row) {
+    public static Object postIn(Object row) {
         if (row == null || row instanceof Aweme) return row;
         for (Field field : postFields(row.getClass())) {
             try {
@@ -364,6 +364,11 @@ public final class GridPicker {
             }
         }
         return null;
+    }
+
+    /** Whether rows of this class wrap a post, as a collection folder's do, header rows included. */
+    public static boolean wrapsPost(Object row) {
+        return row != null && !(row instanceof Aweme) && !postFields(row.getClass()).isEmpty();
     }
 
     private static List<Field> postFields(Class<?> type) {

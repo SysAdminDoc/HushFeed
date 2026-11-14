@@ -888,6 +888,12 @@
     "row": "Sort loaded videos on Favorites grids"
    },
    {
+    "key": "collection_grid_sort",
+    "default": "favorites",
+    "type": "string",
+    "row": "Sort loaded videos in collections"
+   },
+   {
     "key": "sound_grid_sort",
     "default": "off",
     "type": "string",

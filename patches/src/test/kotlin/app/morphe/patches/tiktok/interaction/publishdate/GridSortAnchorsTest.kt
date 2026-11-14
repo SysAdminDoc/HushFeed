@@ -4,6 +4,7 @@
  */
 package app.morphe.patches.tiktok.interaction.publishdate
 
+import app.morphe.patcher.patch.classDefBy
 import app.morphe.patcher.patch.patch
 import app.morphe.Fixtures
 import app.morphe.patcher.Patcher
@@ -381,6 +382,86 @@ class GridSortAnchorsTest {
         assertFalse("another name", GridAdapterSetDataFingerprint.takes(method("addData"), adapter(tagged = true)))
         assertFalse("static", GridAdapterSetDataFingerprint.takes(method("setData", static = true), adapter(tagged = true)))
         assertFalse("another adapter", GridAdapterSetDataFingerprint.takes(method("setData"), adapter(tagged = false)))
+    }
+
+    @Test
+    fun `each declared build has one collection folder adapter and one folder cell click that hands its list over`() {
+        Fixtures.forEachDeclared { apk ->
+            val version = Fixtures.versionOf(apk)
+            val inits = mutableListOf<Method>()
+            val clicks = mutableListOf<Method>()
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            for (entry in container.dexEntryNames) {
+                for (classDef in container.getEntry(entry)!!.dexFile.classes) {
+                    for (method in classDef.methods) {
+                        if (CollectionGridAdapterInitFingerprint.takes(method, classDef)) inits += method
+                        if (CollectionCellOpenFingerprint.takes(method, classDef)) clicks += method
+                    }
+                }
+            }
+            assertEquals("$version: folder adapters ${inits.map { it.definingClass }}", 1, inits.map { it.definingClass }.distinct().size)
+            assertEquals("$version: folder clicks ${clicks.map { it.definingClass }}", 1, clicks.size)
+            assertTrue("$version: one call hands the video page its list", clicks.single().collectionPlayCall() != null)
+        }
+    }
+
+    @Test
+    fun `the collection hooks assemble on each declared build`() {
+        Fixtures.forEachDeclared { apk ->
+            val version = Fixtures.versionOf(apk)
+            var checked = false
+            val probe = patch(name = "collection grid sort probe") {
+                execute {
+                    fun smali(ref: MethodReference) =
+                        "${ref.definingClass}->${ref.name}(${ref.parameterTypes.joinToString("")})${ref.returnType}"
+                    val adapterType = CollectionGridAdapterInitFingerprint.method.definingClass
+                    val superclass = classDefBy(adapterType).superclass!!
+                    val clickBefore = CollectionCellOpenFingerprint.method.implementation!!.instructions.count()
+                    clearCollectionMatches()
+                    assertTrue("$version: the hooks went in", hookCollectionGridSort(version))
+                    clearCollectionMatches()
+
+                    val addData = classDefBy(adapterType).methods.single {
+                        it.name == "addData" && it.parameterTypes.map(CharSequence::toString) == listOf("Ljava/util/List;")
+                    }
+                    val code = addData.implementation!!.instructions.toList()
+                    assertEquals(
+                        listOf(Opcode.INVOKE_STATIC, Opcode.MOVE_RESULT_OBJECT, Opcode.INVOKE_SUPER, Opcode.RETURN_VOID),
+                        code.map { it.opcode },
+                    )
+                    assertEquals(
+                        "Lapp/morphe/extension/tiktok/feed/GridSort;->collectionData(Ljava/lang/Object;Ljava/util/List;)Ljava/util/List;",
+                        smali(code[0].getReference<MethodReference>()!!),
+                    )
+                    assertEquals("$superclass->addData(Ljava/util/List;)V", smali(code[2].getReference<MethodReference>()!!))
+
+                    val click = CollectionCellOpenFingerprint.method
+                    val (index, list) = click.collectionPlayCall()!!
+                    val clickCode = click.implementation!!.instructions.toList()
+                    assertEquals("$version: one hook more", clickBefore + 1, clickCode.size)
+                    val hook = clickCode[index - 1]
+                    assertEquals(Opcode.INVOKE_STATIC_RANGE, hook.opcode)
+                    assertEquals(
+                        "Lapp/morphe/extension/tiktok/feed/GridSort;->collectionPlay(Ljava/util/List;)V",
+                        smali(hook.getReference<MethodReference>()!!),
+                    )
+                    assertEquals("$version: the list the call hands over", list, (hook as RegisterRangeInstruction).startRegister)
+                    checked = true
+                }
+            }
+            clearCollectionMatches()
+            Patcher(PatcherConfig(apk, temporary.newFolder())).use { patcher ->
+                patcher += setOf(probe)
+                runBlocking { patcher().collect { result -> result.exception?.let { throw it } } }
+            }
+            clearCollectionMatches()
+            assertTrue("$version: the probe never ran", checked)
+        }
+    }
+
+    private fun clearCollectionMatches() {
+        CollectionGridAdapterInitFingerprint.clearMatch()
+        CollectionCellOpenFingerprint.clearMatch()
     }
 
     private fun method(name: String, static: Boolean = false): Method =

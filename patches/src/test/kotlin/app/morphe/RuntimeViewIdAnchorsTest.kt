@@ -285,6 +285,13 @@ class RuntimeViewIdAnchorsTest {
 
         /** A class that declares these real method names, joined by +, loads the id somewhere in that class. */
         data class ClassMethod(val name: String) : Owner
+
+        /**
+         * A class whose code names this semantic string, as its own log tag, loads the id somewhere
+         * in that class: for an obfuscated class with no real method names that sets the id in a
+         * method other than the one naming the string, as LIVE's guest seat container does.
+         */
+        data class ClassString(val value: String) : Owner
     }
 
     /**
@@ -359,6 +366,7 @@ class RuntimeViewIdAnchorsTest {
             anchors.mapNotNull { (it.owner as? Owner.ClassMethod)?.name }.toSet(),
             layouts.keys,
             anchors.mapNotNull { (it.owner as? Owner.LayoutMethodString)?.value }.toSet(),
+            anchors.mapNotNull { (it.owner as? Owner.ClassString)?.value }.toSet(),
         )
         val elements = mutableMapOf<String, List<IdUse>>()
         ZipFile(apk).use { zip ->
@@ -478,6 +486,14 @@ class RuntimeViewIdAnchorsTest {
                         "no class that declares ${owner.name} loads ${hex(wanted)}, the id of $used", uses.map { it.id }.toSet())
                 }
                 loads = "a class that declares ${owner.name} loads $used"
+            }
+            is Owner.ClassString -> {
+                uses = facts.semantic.classStringUses[owner.value].orEmpty()
+                if (wanted !in facts.semantic.classStrings[owner.value].orEmpty()) {
+                    return Coverage(anchor, State.BROKEN,
+                        "no class whose code names ${owner.value} loads ${hex(wanted)}, the id of $used", uses.map { it.id }.toSet())
+                }
+                loads = "a class whose code names ${owner.value} loads $used"
             }
         }
         val candidates = uses.map { it.id }.toSet()
@@ -664,6 +680,9 @@ class RuntimeViewIdAnchorsTest {
         val classMethodUses: Map<String, List<IdUse>>,
         /** Layout ids loaded by the methods naming each layout owner's string. */
         val methodStringLayouts: Map<String, Set<Int>> = emptyMap(),
+        /** Ids loaded anywhere in the classes whose code names each class string owner's string. */
+        val classStrings: Map<String, Set<Int>>,
+        val classStringUses: Map<String, List<IdUse>>,
     )
 
     /**
@@ -680,14 +699,17 @@ class RuntimeViewIdAnchorsTest {
         classMethods: Set<String>,
         layoutIds: Set<Int> = emptySet(),
         layoutStrings: Set<String> = emptySet(),
+        classStrings: Set<String> = emptySet(),
     ): SemanticLiterals {
         val byString = methodStrings.associateWith { mutableSetOf<Int>() }.toMutableMap()
         val byMethod = classMethods.associateWith { mutableSetOf<Int>() }.toMutableMap()
         val usesByString = methodStrings.associateWith { mutableListOf<IdUse>() }.toMutableMap()
         val usesByMethod = classMethods.associateWith { mutableListOf<IdUse>() }.toMutableMap()
         val layoutsByString = layoutStrings.associateWith { mutableSetOf<Int>() }.toMutableMap()
-        if (methodStrings.isEmpty() && classMethods.isEmpty() && layoutStrings.isEmpty()) {
-            return SemanticLiterals(byString, byMethod, usesByString, usesByMethod, layoutsByString)
+        val byClassString = classStrings.associateWith { mutableSetOf<Int>() }.toMutableMap()
+        val usesByClassString = classStrings.associateWith { mutableListOf<IdUse>() }.toMutableMap()
+        if (methodStrings.isEmpty() && classMethods.isEmpty() && layoutStrings.isEmpty() && classStrings.isEmpty()) {
+            return SemanticLiterals(byString, byMethod, usesByString, usesByMethod, layoutsByString, byClassString, usesByClassString)
         }
 
         fun scan(dexFile: DexFile) {
@@ -696,7 +718,16 @@ class RuntimeViewIdAnchorsTest {
                 val declared = methods.map { it.name }.toSet()
                 val classHits = mutableSetOf<Int>()
                 val classUses = mutableListOf<IdUse>()
-                val declaresWanted = classMethods.any { declaresAll(declared, it) }
+                // The class string owners this class's code names, read before its ids so their
+                // uses come out in the class's code order like a class-method owner's.
+                val namedByClass = if (classStrings.isEmpty()) emptyList() else {
+                    val named = methods.flatMap { method ->
+                        method.implementation?.instructions?.filterIsInstance<ReferenceInstruction>()
+                            ?.mapNotNull { (it.reference as? StringReference)?.string } ?: emptyList()
+                    }.toSet()
+                    classStrings.filter { it in named }
+                }
+                val declaresWanted = classMethods.any { declaresAll(declared, it) } || namedByClass.isNotEmpty()
                 for (method in methods) {
                     val instructions = method.implementation?.instructions?.toList() ?: continue
                     val literals = instructions.filterIsInstance<NarrowLiteralInstruction>().map { it.narrowLiteral }
@@ -728,6 +759,10 @@ class RuntimeViewIdAnchorsTest {
                         usesByMethod.getValue(name) += classUses
                     }
                 }
+                for (value in namedByClass) {
+                    byClassString.getValue(value) += classHits
+                    usesByClassString.getValue(value) += classUses
+                }
             }
         }
         val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
@@ -742,7 +777,7 @@ class RuntimeViewIdAnchorsTest {
                 }
             }
         }
-        return SemanticLiterals(byString, byMethod, usesByString, usesByMethod, layoutsByString)
+        return SemanticLiterals(byString, byMethod, usesByString, usesByMethod, layoutsByString, byClassString, usesByClassString)
     }
 
     /**
@@ -820,6 +855,11 @@ class RuntimeViewIdAnchorsTest {
                     val name = ownerField.removePrefix(CLASS_METHOD_OWNER)
                     assertTrue("bad class method owner in: $line", name.split('+').all { it.matches(METHOD_NAME) })
                     Owner.ClassMethod(name)
+                }
+                ownerField.startsWith(CLASS_STRING_OWNER) -> {
+                    val value = ownerField.removePrefix(CLASS_STRING_OWNER)
+                    assertTrue("empty class string owner in: $line", value.isNotBlank())
+                    Owner.ClassString(value)
                 }
                 else -> {
                     assertTrue("bad owner in: $line", ownerField.matches(CLASS_NAME))
@@ -1007,6 +1047,8 @@ class RuntimeViewIdAnchorsTest {
         const val LAYOUT_METHOD_STRING_OWNER = "layout-method-string:"
         /** An owner written `class-method:<name>[+<name>...]`: a class declaring every one of the methods loads the id. */
         const val CLASS_METHOD_OWNER = "class-method:"
+        /** An owner written `class-string:<text>`: a class whose code names the text loads the id. */
+        const val CLASS_STRING_OWNER = "class-string:"
         const val ANDROID_ID = 0x010100d0
 
         /** A dynamic feature module's code: `lib/arm64-v8a/libdex_df_search_biz.so`. */

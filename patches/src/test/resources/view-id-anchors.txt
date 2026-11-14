@@ -15,7 +15,9 @@
 #          layout-method-string:<text>, one method naming a semantic string loads a layout that
 #          sets the id (for a layout an obfuscated class inflates); or
 #          class-method:<name>, a class that declares a real method name and loads the id, with
-#          +<name> for each further name that class must declare too. Use - only where none
+#          +<name> for each further name that class must declare too; or class-string:<text>,
+#          a class whose code names a semantic string (a log tag R8 keeps) loads the id somewhere
+#          in that class, for an obfuscated class with no real method names. Use - only where none
 #          exists. A dynamic feature module's classes count: its code ships as
 #          lib/<abi>/libdex_<module>.so, which the test reads
 # tell     what tells the id from the other ids the same owner loads, since an owner that loads
@@ -138,3 +140,4 @@ captions/CaptionStyle.java|BACKGROUND_IDS|47.7.3:dng|app|layout-method-string:ca
 feedfilter/TakoAiFilter.java|SEARCH_TAB_ENTRANCE_ID|tv_tab_tako_entrance|app|layout:com.ss.android.ugc.aweme.search.pages.core.ui.fragment.SearchContainerFragment|tag:TuxTextView
 profile/ProfileTopBar.java|END_ROW_IDS|47.7.3:pvt|app|com.ss.android.ugc.profile.platform.business.navbar.assemble.sub.ProfileNavBarBaseComponent|at:2
 profile/ProfileTopBar.java|VIEWS_CAPSULE_IDS|47.7.3:tet|app|class-method:getIvFootprintFromXml|at:1
+live/LiveAutoTap.java|SEAT_ID|ttlive_link_layout_layer_mic_window|app|class-string:LayoutViewProviderImpl|at:4

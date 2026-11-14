@@ -337,3 +337,8 @@ patches/src/main/kotlin/app/morphe/patches/tiktok/profile/LocalProfileAppearance
 patches/src/main/kotlin/app/morphe/patches/tiktok/profile/LocalProfileAppearanceHooks.kt|LLJLLL
 # Not a TikTok name: SimpleDateFormat's stand-alone full month pattern, used for the Liked grid's month labels.
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/LikedJump.java|LLLL
+# The supported 47.7.3 compile's own names, on purpose: TargetBuildPatch refuses an APK that
+# doesn't define them, which is how it tells a separately compiled file of the same version (#402).
+patches/src/main/kotlin/app/morphe/patches/tiktok/misc/diagnostics/TargetBuildPatch.kt|LX/
+patches/src/main/kotlin/app/morphe/patches/tiktok/misc/diagnostics/TargetBuildPatch.kt|LX/03hz;
+patches/src/main/kotlin/app/morphe/patches/tiktok/misc/diagnostics/TargetBuildPatch.kt|LX/041W;

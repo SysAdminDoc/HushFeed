@@ -268,6 +268,15 @@
           "values": null
         },
         {
+          "key": "download_video_codec",
+          "title": "Default: download video codec",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "auto",
+          "values": null
+        },
+        {
           "key": "download_ask_quality",
           "title": "Default: download ask quality",
           "description": null,
@@ -495,6 +504,15 @@
         {
           "key": "save_story_from_share",
           "title": "Default: save story from share",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "save_story_pick",
+          "title": "Default: save story pick",
           "description": null,
           "required": false,
           "type": "kotlin.Boolean",
@@ -5969,6 +5987,15 @@
           "values": null
         },
         {
+          "key": "glass_stories_pill",
+          "title": "Default: glass stories pill",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "hide_following_all_button",
           "title": "Default: hide following all button",
           "description": null,
@@ -6196,6 +6223,15 @@
         {
           "key": "see_through_status_bar",
           "title": "Default: see through status bar",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "status_bar_shade",
+          "title": "Default: status bar shade",
           "description": null,
           "required": false,
           "type": "kotlin.Boolean",

@@ -327,6 +327,9 @@ public class Settings extends BaseSettings {
     /** The opposite: crop the video until it covers the window (issue #29). Fit wins when both are on. */
     public static final BooleanSetting FILL_VIDEO_TO_SCREEN =
             new BooleanSetting("fill_video_to_screen", FALSE);
+    /** Cover the window with the whole video by stretching it instead of cropping (#406). */
+    public static final BooleanSetting STRETCH_VIDEO_TO_SCREEN =
+            new BooleanSetting("stretch_video_to_screen", FALSE);
     public static final BooleanSetting UNCAP_REFRESH_RATE =
             new BooleanSetting("uncap_refresh_rate", FALSE);
     /**

@@ -6,6 +6,7 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* `Stretch the video to the screen` is a third choice under Playback, next to Fit and Fill. It covers the whole screen without cropping anything by making the video a little taller or wider. Videos far from your screen's shape stay as they are, so a landscape video never gets squashed into a tall one. It starts off, and turning it on turns the other two off (#406).
 * `Hide Settings and privacy rows` takes TikTok's own rows you never use off its Settings and privacy page, like Ads or Shake to report. Tick them in the checklist under `Hide the Hushfeed row` in Hushfeed settings > App and they're gone the next time that page opens. A section that loses every row loses its title too, and pausing Hushfeed brings them all back (#244).
 * `Show message times` puts the time each message was sent under it in a chat, in small gray text below the bubble. TikTok only shows a time above a message that comes after a gap. It starts off and sits under `Turn off swipe to reply` in Hushfeed settings > Inbox.
 * `Glass Stories button on Following` swaps the flat gray Stories button at the top of the Following feed for glass with round ends, and on Android 12 and up the video behind it shows through blurred. It starts off and sits under `Hide the LIVE row on Following` in Hushfeed settings > Feed screen. Turning it off or pausing Hushfeed brings TikTok's own button back (#409).

@@ -44,16 +44,20 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
 public final class VideoFit {
     private VideoFit() {}
 
-    /** What the two switches ask for: the whole video inside the window, the window covered, or nothing. */
-    enum Mode { LEAVE_ALONE, FIT, FILL }
+    /**
+     * What the three switches ask for: the whole video inside the window, the window covered by
+     * cropping, the window covered by stretching the whole video to it (#406), or nothing.
+     */
+    enum Mode { LEAVE_ALONE, FIT, FILL, STRETCH }
 
     /**
-     * Fit wins when both switches are on. The page keeps them apart, and a restored backup that
-     * carries both should show the whole video rather than crop it.
+     * Fit wins when more than one switch is on, then fill. The page keeps them apart, and a
+     * restored backup that carries two should show the whole video rather than crop it.
      */
     static Mode mode() {
         if (Settings.FIT_VIDEO_TO_SCREEN.get()) return Mode.FIT;
         if (Settings.FILL_VIDEO_TO_SCREEN.get()) return Mode.FILL;
+        if (Settings.STRETCH_VIDEO_TO_SCREEN.get()) return Mode.STRETCH;
         return Mode.LEAVE_ALONE;
     }
 
@@ -63,7 +67,9 @@ public final class VideoFit {
      * gives that strip to the video too while this holds (#406).
      */
     public static boolean fillsScreen() {
-        return SettingsStatus.videoFitEnabled && mode() == Mode.FILL;
+        if (!SettingsStatus.videoFitEnabled) return false;
+        Mode mode = mode();
+        return mode == Mode.FILL || mode == Mode.STRETCH;
     }
 
     /** What the last decision on this thread settled: which result, the height for it and where it sits. */
@@ -471,7 +477,26 @@ public final class VideoFit {
             return sameWay(width, height, containerWidth, containerHeight)
                     && (width < containerWidth || height < containerHeight);
         }
+        if (mode == Mode.STRETCH) {
+            return sameWay(width, height, containerWidth, containerHeight)
+                    && closeInShape(width, height, containerWidth, containerHeight)
+                    && (width != containerWidth || height != containerHeight);
+        }
         return false;
+    }
+
+    /**
+     * How far stretch pulls a video out of shape before it leaves the video alone. A 9:16 video
+     * on a 20:9 phone is a quarter off, and past a third faces look plainly squashed.
+     */
+    static final double MAX_STRETCH = 4.0 / 3.0;
+
+    /** Whether the two shapes are within {@link #MAX_STRETCH} of each other, either way. */
+    static boolean closeInShape(int width, int height, int containerWidth, int containerHeight) {
+        double video = width / (double) height;
+        double space = containerWidth / (double) containerHeight;
+        double apart = video > space ? video / space : space / video;
+        return apart <= MAX_STRETCH + 1e-9;
     }
 
     /** Both taller than wide, or both wider than tall. A square either way stands neither. */
@@ -480,13 +505,16 @@ public final class VideoFit {
                 || (width > height && containerWidth > containerHeight);
     }
 
+    /** Stretch takes the window's own size, each side scaled on its own. */
     static int widthFor(Mode mode, int width, int height, int containerWidth, int containerHeight) {
+        if (mode == Mode.STRETCH) return containerWidth;
         return mode == Mode.FILL
                 ? fillWidth(width, height, containerWidth, containerHeight)
                 : fitWidth(width, height, containerWidth, containerHeight);
     }
 
     static int heightFor(Mode mode, int width, int height, int containerWidth, int containerHeight) {
+        if (mode == Mode.STRETCH) return containerHeight;
         return mode == Mode.FILL
                 ? fillHeight(width, height, containerWidth, containerHeight)
                 : fitHeight(width, height, containerWidth, containerHeight);
@@ -613,7 +641,8 @@ public final class VideoFit {
                 reporting = true;
                 LogBufferManager.registerReportSection(Report.INSTANCE);
             }
-            String line = (mode == Mode.FIT ? "Fit" : "Fill") + ", " + cell + ": TikTok's size "
+            String label = mode == Mode.FIT ? "Fit" : mode == Mode.FILL ? "Fill" : "Stretch";
+            String line = label + ", " + cell + ": TikTok's size "
                     + videoWidth + "x" + videoHeight + ", space " + spaceWidth + "x" + spaceHeight
                     + (width == LEAVE ? ", left as it was" : ", made " + width + "x" + height)
                     + ". Above the video: " + chain(view);
@@ -682,12 +711,14 @@ public final class VideoFit {
 
         @Override public List<String> lines() {
             List<String> lines = new ArrayList<>();
-            // The saved choices: Pause reads both as off, and says so on a line of its own.
+            // The saved choices: Pause reads them all as off, and says so on a line of its own.
             boolean fit = Settings.FIT_VIDEO_TO_SCREEN.savedValue();
             boolean fill = Settings.FILL_VIDEO_TO_SCREEN.savedValue();
+            boolean stretch = Settings.STRETCH_VIDEO_TO_SCREEN.savedValue();
             lines.add("Fit the video to the screen: " + (fit ? "on" : "off"));
             lines.add("Fill the screen with the video: " + (fill ? "on" : "off"));
-            if ((fit || fill) && !Settings.FIT_VIDEO_TO_SCREEN.get() && !Settings.FILL_VIDEO_TO_SCREEN.get()) {
+            lines.add("Stretch the video to the screen: " + (stretch ? "on" : "off"));
+            if ((fit || fill || stretch) && mode() == Mode.LEAVE_ALONE) {
                 lines.add("Hushfeed is paused, so videos keep TikTok's size");
             }
             // Counted per check, and the feed checks twice for each video it shows.

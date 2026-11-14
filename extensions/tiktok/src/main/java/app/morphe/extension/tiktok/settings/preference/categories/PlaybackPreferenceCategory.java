@@ -9,6 +9,7 @@ package app.morphe.extension.tiktok.settings.preference.categories;
 import android.content.Context;
 import android.preference.PreferenceScreen;
 import android.text.InputType;
+import app.morphe.extension.shared.settings.BooleanSetting;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
@@ -280,24 +281,31 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                     "Crop the video until it covers the whole window. On a tall phone the black "
                             + "strip TikTok leaves under a video goes and so does a little of each side.",
                     Settings.FILL_VIDEO_TO_SCREEN);
-            // One or the other: the whole video inside the window and the window covered can't
-            // both hold, so turning either on turns the other off.
-            fit.setOnPreferenceChangeListener((preference, value) -> {
-                if (Boolean.TRUE.equals(value)) {
-                    Settings.FILL_VIDEO_TO_SCREEN.save(false);
-                    fill.setChecked(false);
-                }
-                return true;
-            });
-            fill.setOnPreferenceChangeListener((preference, value) -> {
-                if (Boolean.TRUE.equals(value)) {
-                    Settings.FIT_VIDEO_TO_SCREEN.save(false);
-                    fit.setChecked(false);
-                }
-                return true;
-            });
+            TogglePreference stretch = new TogglePreference(context, "Stretch the video to the screen",
+                    "Cover the whole window without cropping anything. The video gets a little "
+                            + "taller or wider to do it. A video far from the screen's shape keeps "
+                            + "TikTok's size.",
+                    Settings.STRETCH_VIDEO_TO_SCREEN);
+            // One at a time: each sizes the video its own way, so turning one on turns the rest off.
+            TogglePreference[] rows = {fit, fill, stretch};
+            BooleanSetting[] switches = {Settings.FIT_VIDEO_TO_SCREEN, Settings.FILL_VIDEO_TO_SCREEN,
+                    Settings.STRETCH_VIDEO_TO_SCREEN};
+            for (int index = 0; index < rows.length; index++) {
+                int chosen = index;
+                rows[index].setOnPreferenceChangeListener((preference, value) -> {
+                    if (Boolean.TRUE.equals(value)) {
+                        for (int other = 0; other < rows.length; other++) {
+                            if (other == chosen) continue;
+                            switches[other].save(false);
+                            rows[other].setChecked(false);
+                        }
+                    }
+                    return true;
+                });
+            }
             addPreference(fit);
             addPreference(fill);
+            addPreference(stretch);
         }
         if (SettingsStatus.feedMuteEnabled) {
             addPreference(new TogglePreference(context, "Mute feed videos",

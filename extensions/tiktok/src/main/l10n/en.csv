@@ -558,6 +558,7 @@ Country filters,Country filters
 Counts under the buttons,Counts under the buttons
 Cover,Cover
 Cover saved to %1$s,Cover saved to %1$s
+Cover the whole window without cropping anything. The video gets a little taller or wider to do it. A video far from the screen's shape keeps TikTok's size.,Cover the whole window without cropping anything. The video gets a little taller or wider to do it. A video far from the screen's shape keeps TikTok's size.
 Create,Create
 Creator exceptions,Creator exceptions
 Creators and sounds,Creators and sounds
@@ -2179,6 +2180,7 @@ Story saved to %1$s,Story saved to %1$s
 Streak,Streak
 Stream only,Stream only
 "Stream only saves the room's own video, as before. Screen records what your phone shows while you watch, with the sound the app plays when TikTok has the microphone permission. Android asks you to allow screen recording each time, and shows its own notice while it records.","Stream only saves the room's own video, as before. Screen records what your phone shows while you watch, with the sound the app plays when TikTok has the microphone permission. Android asks you to allow screen recording each time, and shows its own notice while it records."
+Stretch the video to the screen,Stretch the video to the screen
 Strong blur,Strong blur
 Structured value observed,Structured value observed
 Subscriber-only posts,Subscriber-only posts

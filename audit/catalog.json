@@ -6137,6 +6137,12 @@
     "default": false,
     "type": "bool",
     "row": "Fill the screen with the video"
+   },
+   {
+    "key": "stretch_video_to_screen",
+    "default": false,
+    "type": "bool",
+    "row": "Stretch the video to the screen"
    }
   ],
   "surface": "feed",
@@ -6233,13 +6239,51 @@
     "auto": true
    },
    {
-    "id": "off-leaves-feed-alone",
-    "what": "With both off VideoFit records nothing new and the feed still plays.",
+    "id": "stretch-decision-recorded",
+    "what": "With Stretch on (Fit and Fill off) the export records a Stretch decision. It swipes three times, since a photo post records no decision.",
     "steps": [
      {
       "set": {
        "fit_video_to_screen": "false",
-       "fill_video_to_screen": "false"
+       "fill_video_to_screen": "false",
+       "stretch_video_to_screen": "true"
+      }
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 2000
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 2000
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 2000
+     },
+     {
+      "probe": "report",
+      "expect": "Stretch, feed: TikTok\\'s size \\d+x\\d+, space \\d+x\\d+, (left as it was|made \\d+x\\d+)",
+      "waitMs": 10000
+     }
+    ],
+    "auto": true
+   },
+   {
+    "id": "off-leaves-feed-alone",
+    "what": "With all three off VideoFit records nothing new and the feed still plays.",
+    "steps": [
+     {
+      "set": {
+       "fit_video_to_screen": "false",
+       "fill_video_to_screen": "false",
+       "stretch_video_to_screen": "false"
       }
      },
      {

@@ -105,9 +105,12 @@ public final class MessageTimes {
     }
 
     /** The time of day for {@code millis}, the way the phone's clock shows it. */
+    @SuppressWarnings("deprecation") // getTimeFormat reads the same field
     static String format(Context context, long millis) {
         boolean twentyFour = DateFormat.is24HourFormat(context);
-        Locale locale = Locale.getDefault();
+        // The row's language, which TikTok's in-app language sets and the pattern follows. The
+        // process default can stay on the phone's language.
+        Locale locale = context.getResources().getConfiguration().locale;
         TimeZone zone = TimeZone.getDefault();
         if (format == null || formatTwentyFour != twentyFour || !locale.equals(formatLocale)
                 || !zone.getID().equals(formatZone)) {

@@ -12,6 +12,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -188,6 +189,20 @@ public class MessageTimesTest {
         assertEquals("10:07", MessageTimes.format(context(), SENT));
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Tokyo"));
         assertEquals("00:07", MessageTimes.format(context(), SENT));
+    }
+
+    @Test
+    public void theTimeFollowsTikToksInAppLanguage() {
+        // TikTok's in-app language sets the context's locale; the process default can stay on the phone's.
+        clock("12");
+        String english = MessageTimes.format(context(), SENT);
+        assertTrue(english, english.contains("PM"));
+
+        Configuration japanese = new Configuration(context().getResources().getConfiguration());
+        japanese.setLocale(Locale.JAPAN);
+        String time = MessageTimes.format(context().createConfigurationContext(japanese), SENT);
+        assertEquals(Locale.US, Locale.getDefault());
+        assertTrue(time, time.contains("午後") && time.contains("4:07") && !time.contains("PM"));
     }
 
     @Test

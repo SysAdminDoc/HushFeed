@@ -61,7 +61,7 @@ public final class OriginalPhotos {
         boolean started;
         if (Reflect.property(aweme, "getPhotoModeImageInfo", "photoModeImageInfo") != null) {
             AudioDownloads.start(aweme, context);
-            started = savePhotos(aweme, context, null, false, true);
+            started = savePhotos(aweme, context, null, false, true, false);
         } else {
             // TikTok's file by name, which saves the sound itself when that's wanted.
             started = VideoDownloads.startPicked(aweme, context, VideoDownloads.AUTOMATIC);
@@ -115,9 +115,10 @@ public final class OriginalPhotos {
     /**
      * "Save photos" in the photos-or-video question. The question already took the save from
      * TikTok, so the picked photos go out as originals whatever Download original photos says.
+     * {@code story} is a question a story asked, not a photo post.
      */
-    static void savePicked(Object aweme, Set<?> indices) {
-        savePhotos(aweme, Utils.getContext(), indices, false, true);
+    static void savePicked(Object aweme, Set<?> indices, boolean story) {
+        savePhotos(aweme, Utils.getContext(), indices, false, true, story);
     }
 
     /**
@@ -157,15 +158,16 @@ public final class OriginalPhotos {
     }
 
     private static boolean savePhotos(Object aweme, Context context, Set<?> indices, boolean conversion) {
-        return savePhotos(aweme, context, indices, conversion, false);
+        return savePhotos(aweme, context, indices, conversion, false, false);
     }
 
     /**
      * {@code asked} is a save the photos-or-video question already took from TikTok: it runs
      * whatever the switch says, and a failure says so, since there's no native save behind it.
+     * {@code story} titles the already-saved choice for a story.
      */
     private static boolean savePhotos(Object aweme, Context context, Set<?> indices, boolean conversion,
-            boolean asked) {
+            boolean asked, boolean story) {
         if (!asked && !Settings.DOWNLOAD_ORIGINAL_PHOTOS.get()) return false;
         boolean owned = conversion || asked;
         if (context == null) return failedConversion(owned);
@@ -205,17 +207,17 @@ public final class OriginalPhotos {
                 SystemClock.elapsedRealtime(), details);
         // The scheduler already reports a refusal. A requested image save must not become a
         // native converted video merely because the image queue is full.
-        return queue(context.getApplicationContext(), run, true) || owned;
+        return queue(context.getApplicationContext(), run, SavedVideoArchive.photoTitle(story)) || owned;
     }
 
     /**
      * Queues the save of {@code run}'s photos, in the post's order. False only when the media
      * queue refused it, which the queue has already said; a save of the same post still running
      * says so and counts as taken. With Check for already-saved videos on, a post saved here
-     * before is offered Open or Save again first ({@code check}, false for Save again and Retry),
-     * and the first photo that lands is recorded under the post's id.
+     * before is offered Open or Save again first under {@code checkTitle} (null for Save again
+     * and Retry, which don't ask), and the first photo that lands is recorded under the post's id.
      */
-    private static boolean queue(Context app, Retry run, boolean check) {
+    private static boolean queue(Context app, Retry run, String checkTitle) {
         String key = jobKey(run.id);
         if (!ACTIVE.add(run.id)) {
             Utils.showToastShort(MediaJobScheduler.busyMessage(key));
@@ -230,7 +232,7 @@ public final class OriginalPhotos {
         AtomicBoolean asking = new AtomicBoolean();
         // With the check on, "Saving" waits for its answer, so it never shows just before an
         // already-saved choice for photos that are never fetched (#356).
-        boolean checking = checkSaved && check;
+        boolean checking = checkSaved && checkTitle != null;
         String saying = L10n.quantity(app, chosen.size(), "Saving one original photo", "Saving %1$s original photos");
         MediaJobScheduler.Job job = progress.submit("original photos", key, () -> {
             // The banner's Open lands on the newest photo, which is where the gallery puts the rest.
@@ -241,10 +243,10 @@ public final class OriginalPhotos {
                 if (checking) {
                     Runnable saveAgain = () -> {
                         ACTIVE.remove(run.id);
-                        if (!queue(app, run, false)) Utils.showToastLong(L10n.t("None of the photos could be saved. Try again."));
+                        if (!queue(app, run, null)) Utils.showToastLong(L10n.t("None of the photos could be saved. Try again."));
                     };
                     asking.set(true);
-                    SavedVideoArchive.Check found = SavedVideoArchive.check(app, run.id, saveAgain,
+                    SavedVideoArchive.Check found = SavedVideoArchive.check(app, run.id, checkTitle, saveAgain,
                             () -> ACTIVE.remove(run.id));
                     if (found == SavedVideoArchive.Check.OFFERED) {
                         progress.dismiss();
@@ -326,7 +328,7 @@ public final class OriginalPhotos {
             return;
         }
         Context context = Utils.getContext();
-        if (context == null || !queue(context.getApplicationContext(), failed, false)) failed.giveBack();
+        if (context == null || !queue(context.getApplicationContext(), failed, null)) failed.giveBack();
     }
 
     /** The media queue's key for a post's photo save. A key, never text the reader sees. */

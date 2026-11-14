@@ -170,6 +170,43 @@ public class PhotoPostSavedRecordTest {
                 ShadowToast.showedToast("Making a video of the photos"));
     }
 
+    @Test public void aPhotoStorySavedAsAVideoAgainIsCalledAStory() throws Exception {
+        var story = post("story-video", 2);
+        SlideshowVideo.makerForTests = (name, seconds) -> file(name);
+        assertTrue(SlideshowVideo.saveStory(story));
+        finish();
+        assertNotNull("the story's video never reached the record", SavedVideoArchive.find(context, "story-video"));
+
+        assertTrue(SlideshowVideo.saveStory(story));
+        finish();
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+        assertNotNull("no already-saved choice came up", dialog);
+        assertEquals("This story is already saved", Shadows.shadowOf(dialog).getTitle().toString());
+    }
+
+    @Test public void aPhotoStorysPhotosSavedAgainFromTheQuestionAreCalledAStory() throws Exception {
+        boolean previousAsVideo = Settings.DOWNLOAD_PHOTOS_AS_VIDEO.savedValue();
+        SettingsStatus.advancedDownloadsEnabled = true;
+        Settings.DOWNLOAD_PHOTOS_AS_VIDEO.save(true);
+        try {
+            var story = post("story-photos", 2);
+            for (int round = 0; round < 2; round++) {
+                assertTrue(SlideshowVideo.saveStory(story));
+                finish();
+                AlertDialog question = ShadowAlertDialog.getLatestAlertDialog();
+                assertNotNull("the story never asked between photos and a video", question);
+                assertEquals("Save photos or a video?", Shadows.shadowOf(question).getTitle().toString());
+                question.getButton(AlertDialog.BUTTON_NEGATIVE).performClick();
+                finish();
+            }
+            assertEquals("the second save fetched the photos again", List.of(0, 1), tried);
+            AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+            assertEquals("This story is already saved", Shadows.shadowOf(dialog).getTitle().toString());
+        } finally {
+            Settings.DOWNLOAD_PHOTOS_AS_VIDEO.save(previousAsVideo);
+        }
+    }
+
     @Test public void withTheCheckOffNothingIsRecorded() throws Exception {
         Settings.CHECK_SAVED_VIDEOS.save(false);
         var post = post("photos-unchecked", 2);

@@ -74,10 +74,11 @@ public final class SlideshowVideo {
      * or no screen to ask on leaves the save where it was going.
      */
     static boolean offer(Object aweme, Set<?> indices) {
-        return offer(aweme, indices, seconds(Settings.PHOTO_VIDEO_SECONDS.get()));
+        return offer(aweme, indices, seconds(Settings.PHOTO_VIDEO_SECONDS.get()), false);
     }
 
-    private static boolean offer(Object aweme, Set<?> indices, int seconds) {
+    /** {@code story} names it a story, not a photo post, when it turns out to be saved already. */
+    private static boolean offer(Object aweme, Set<?> indices, int seconds, boolean story) {
         if (!enabled()) return false;
         Object info = Reflect.property(aweme, "getPhotoModeImageInfo", "photoModeImageInfo");
         Object raw = Reflect.property(info, "getImageList", "imageList");
@@ -85,11 +86,11 @@ public final class SlideshowVideo {
         Activity activity = Utils.getVisibleActivity();
         if (activity == null || activity.isFinishing() || activity.isDestroyed()) return false;
         Set<Object> picked = indices == null ? null : new HashSet<Object>(indices);
-        Utils.runOnMainThread(() -> ask(aweme, picked, seconds));
+        Utils.runOnMainThread(() -> ask(aweme, picked, seconds, story));
         return true;
     }
 
-    private static void ask(Object aweme, Set<?> picked, int seconds) {
+    private static void ask(Object aweme, Set<?> picked, int seconds, boolean story) {
         try {
             Activity activity = Utils.getVisibleActivity();
             if (activity == null || activity.isFinishing() || activity.isDestroyed()) {
@@ -98,8 +99,8 @@ public final class SlideshowVideo {
             SettingsUi.syncDarkMode(activity);
             AlertDialog dialog = new AlertDialog.Builder(activity)
                     .setTitle(L10n.t("Save photos or a video?"))
-                    .setNegativeButton(L10n.t("Save photos"), (ignored, which) -> OriginalPhotos.savePicked(aweme, picked))
-                    .setPositiveButton(L10n.t("Save as video"), (ignored, which) -> start(aweme, picked, true, seconds))
+                    .setNegativeButton(L10n.t("Save photos"), (ignored, which) -> OriginalPhotos.savePicked(aweme, picked, story))
+                    .setPositiveButton(L10n.t("Save as video"), (ignored, which) -> start(aweme, picked, true, seconds, story))
                     .setNeutralButton(L10n.t("Cancel"), null)
                     .create();
             dialog.setOnShowListener(ignored -> SettingsUi.styleStandardAlertDialog(dialog));
@@ -107,7 +108,7 @@ public final class SlideshowVideo {
         } catch (RuntimeException failure) {
             // Download was pressed, so the photos still go out rather than nothing.
             Logger.printException(() -> "Could not ask between photos and a video", failure);
-            OriginalPhotos.savePicked(aweme, picked);
+            OriginalPhotos.savePicked(aweme, picked, story);
         }
     }
 
@@ -117,7 +118,7 @@ public final class SlideshowVideo {
      * video's path, so a failure says so itself instead of falling back.
      */
     static boolean start(Object aweme, Set<?> indices) {
-        return start(aweme, indices, true, seconds(Settings.PHOTO_VIDEO_SECONDS.get()));
+        return start(aweme, indices, true, seconds(Settings.PHOTO_VIDEO_SECONDS.get()), false);
     }
 
     /**
@@ -126,7 +127,7 @@ public final class SlideshowVideo {
      */
     static boolean saveStory(Object aweme) {
         int seconds = storySeconds(aweme);
-        return offer(aweme, null, seconds) || start(aweme, null, true, seconds);
+        return offer(aweme, null, seconds, true) || start(aweme, null, true, seconds, true);
     }
 
     /** How long TikTok keeps a story with no video of its own on screen, on its default settings. */
@@ -137,9 +138,9 @@ public final class SlideshowVideo {
     /**
      * With Check for already-saved videos on, a post saved here before is offered Open or Save
      * again first ({@code check}, false for Save again), and the video that's made is recorded
-     * under the post's id.
+     * under the post's id. {@code story} titles that choice for a story.
      */
-    private static boolean start(Object aweme, Set<?> indices, boolean check, int seconds) {
+    private static boolean start(Object aweme, Set<?> indices, boolean check, int seconds, boolean story) {
         Context context = Utils.getContext();
         if (context == null) return failed();
         if (android.os.Build.VERSION.SDK_INT < 29
@@ -186,11 +187,11 @@ public final class SlideshowVideo {
                 if (checking) {
                     Runnable saveAgain = () -> {
                         ACTIVE.remove(id);
-                        start(aweme, indices, false, seconds);
+                        start(aweme, indices, false, seconds, story);
                     };
                     asking.set(true);
-                    SavedVideoArchive.Check found = SavedVideoArchive.check(app, id, saveAgain,
-                            () -> ACTIVE.remove(id));
+                    SavedVideoArchive.Check found = SavedVideoArchive.check(app, id,
+                            SavedVideoArchive.photoTitle(story), saveAgain, () -> ACTIVE.remove(id));
                     if (found == SavedVideoArchive.Check.OFFERED) {
                         progress.dismiss();
                         return;

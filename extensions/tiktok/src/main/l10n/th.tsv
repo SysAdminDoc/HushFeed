@@ -2854,3 +2854,12 @@ Sort loaded videos in collections	จัดเรียงวิดีโอท�
 Same as Favorites grids	เหมือนกับตารางรายการโปรด
 Hide the summary on LIVE previews	ซ่อนสรุปในตัวอย่าง LIVE
 A LIVE in the feed can show a Summary card that sums up the stream. This keeps it hidden.	LIVE ในฟีดอาจแสดงการ์ดสรุปที่บอกว่าไลฟ์นั้นเกี่ยวกับอะไร การตั้งค่านี้จะซ่อนการ์ดดังกล่าวไว้
+Look up a commenter's country	ค้นหาประเทศของผู้แสดงความคิดเห็น
+Press and hold a comment to find Show account country in its menu. It asks TikTok where that account is based, private accounts too.	กดค้างที่ความคิดเห็นเพื่อค้นหา "แสดงประเทศของบัญชี" ในเมนู ระบบจะถาม TikTok ว่าบัญชีนั้นอยู่ที่ไหน รวมถึงบัญชีส่วนตัวด้วย
+Show account country	แสดงประเทศของบัญชี
+Account based in %1$s	บัญชีอยู่ที่ %1$s
+TikTok gives no country for this account	TikTok ไม่ได้ระบุประเทศของบัญชีนี้
+Couldn't get the country. Try again.	ดึงข้อมูลประเทศไม่สำเร็จ ลองอีกครั้ง
+Account country on profiles	ประเทศของบัญชีบนโปรไฟล์
+A profile's share sheet gets an Account country button. It asks TikTok where that account is based, private accounts too.	แผงแชร์ของโปรไฟล์จะมีปุ่ม "ประเทศของบัญชี" ซึ่งจะถาม TikTok ว่าบัญชีนั้นอยู่ที่ไหน รวมถึงบัญชีส่วนตัวด้วย
+Account country	ประเทศของบัญชี

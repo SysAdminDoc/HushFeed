@@ -3034,3 +3034,12 @@ Sort loaded videos in collections	Сортировать загруженные 
 Same as Favorites grids	Как в сетках «Избранное»
 Hide the summary on LIVE previews	Скрывать сводку в превью LIVE
 A LIVE in the feed can show a Summary card that sums up the stream. This keeps it hidden.	LIVE в ленте может показывать карточку «Сводка» с кратким описанием эфира. С этим она остаётся скрытой.
+Look up a commenter's country	Узнать страну автора комментария
+Press and hold a comment to find Show account country in its menu. It asks TikTok where that account is based, private accounts too.	Нажмите и удерживайте комментарий, чтобы найти в меню пункт «Показать страну аккаунта». Он спрашивает у TikTok, где находится этот аккаунт, даже закрытый.
+Show account country	Показать страну аккаунта
+Account based in %1$s	Страна аккаунта: %1$s
+TikTok gives no country for this account	TikTok не сообщает страну этого аккаунта
+Couldn't get the country. Try again.	Не удалось узнать страну. Попробуйте ещё раз.
+Account country on profiles	Страна аккаунта в профилях
+A profile's share sheet gets an Account country button. It asks TikTok where that account is based, private accounts too.	В меню «Поделиться» профиля появляется кнопка «Страна аккаунта». Она спрашивает у TikTok, где находится этот аккаунт, даже закрытый.
+Account country	Страна аккаунта

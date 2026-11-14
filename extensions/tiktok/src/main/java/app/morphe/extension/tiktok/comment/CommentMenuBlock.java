@@ -8,6 +8,8 @@ import android.app.Activity;
 import android.view.ViewGroup;
 
 import app.morphe.extension.shared.Logger;
+import app.morphe.extension.shared.ResourceType;
+import app.morphe.extension.shared.ResourceUtils;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.tiktok.SignedInUser;
@@ -34,19 +36,23 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Block this commenter in the menu a long press on a comment opens (#169).
+ * Block this commenter (#169) and Show account country (#417) in the menu a long press on a
+ * comment opens.
  *
  * <p>TikTok builds that menu as a list of action rows and hands the finished list to the panel's
- * adapter in one place, which the patch routes through {@link #items}. The owned row is built
- * through the same constructor as TikTok's Report row and goes right after it, taking Report's
- * bottom corners when Report closes its group. A tap closes the menu, blocks through the same
- * BlockApi as Block this creator, and then posts TikTok's own user-blocked event: the one a block
- * from a profile posts, and the one the open comment list answers by dropping that account's
- * comments.
+ * adapter in one place, which the patch routes through {@link #items}. The owned rows are built
+ * through the same constructor as TikTok's Report row and go right after it, the last of them
+ * taking Report's bottom corners when Report closes its group. A Block tap closes the menu,
+ * blocks through the same BlockApi as Block this creator, and then posts TikTok's own
+ * user-blocked event: the one a block from a profile posts, and the one the open comment list
+ * answers by dropping that account's comments. A country tap closes the menu and asks TikTok's
+ * profile reply where the account is based ({@link AccountCountry}).
  */
 public final class CommentMenuBlock {
     /** TikTok's own key for its profile Block action. The menu's click log carries the row's key. */
     static final String KEY = "block_user";
+    /** The country row's key. TikTok has no row of its own for this. */
+    static final String COUNTRY_KEY = "hushfeed_account_country";
     static final String FAMILY = "comment menu block";
     private static final String COMMENT = "com.ss.android.ugc.aweme.comment.model.Comment";
     private static final String DELETE_VM =
@@ -61,6 +67,8 @@ public final class CommentMenuBlock {
     private static final List<Moved> MOVED = new ArrayList<>();
     /** TikTok's block glyph, as its profile Block action draws it. The patch fills it in. */
     private static volatile int icon;
+    /** TikTok's globe glyph for the country row, looked up by name once; below zero until then. */
+    static volatile int globe = -1;
 
     private CommentMenuBlock() {}
 
@@ -69,8 +77,23 @@ public final class CommentMenuBlock {
         icon = id;
     }
 
-    private static boolean enabled() {
-        return SettingsStatus.commentToolsEnabled && Settings.BLOCK_FROM_COMMENT_MENU.get();
+    /** The owned rows, in the order they follow Report. */
+    enum Kind { BLOCK, COUNTRY }
+
+    private static boolean enabled(Kind kind) {
+        if (!SettingsStatus.commentToolsEnabled) return false;
+        return kind == Kind.BLOCK ? Settings.BLOCK_FROM_COMMENT_MENU.get()
+                : Settings.COUNTRY_FROM_COMMENT_MENU.get();
+    }
+
+    private static int globe() {
+        int id = globe;
+        if (id < 0) {
+            // TikTok's icons are raw resources; icon_globe is the outline globe its menus draw.
+            id = Math.max(0, ResourceUtils.getIdentifier(ResourceType.RAW, "icon_globe"));
+            globe = id;
+        }
+        return id;
     }
 
     // ---- the menu ---------------------------------------------------------------------
@@ -89,9 +112,8 @@ public final class CommentMenuBlock {
                 if (built == null) row.add(item);
                 else built.retired = true;
             }
-            if (enabled()) {
-                Object owned = build(panel, row);
-                if (owned != null) HookStatus.bound(FAMILY, "menu row");
+            if (enabled(Kind.BLOCK) || enabled(Kind.COUNTRY)) {
+                if (build(panel, row) > 0) HookStatus.bound(FAMILY, "menu row");
             }
             return sameRow(items, row) ? items : row;
         } catch (Throwable failure) {
@@ -102,65 +124,86 @@ public final class CommentMenuBlock {
                 else built.retired = true;
             }
             HookStatus.threw(FAMILY, "menu row", failure);
-            Logger.printException(() -> "Could not add Block this commenter to the comment menu", failure);
+            Logger.printException(() -> "Could not add Hushfeed's rows to the comment menu", failure);
             return sameRow(items, row) ? items : row;
         }
     }
 
-    /** Adds the owned row after Report, or nothing when this comment can't be blocked from here. */
-    private static Object build(Object panel, List<Object> row) throws ReflectiveOperationException {
+    /**
+     * Adds the switched-on owned rows after Report and answers how many, none when this comment's
+     * account can't be acted on from here.
+     */
+    private static int build(Object panel, List<Object> row) throws ReflectiveOperationException {
         int report = reportIndex(row);
-        if (report < 0 || panel == null) return null;
+        if (report < 0 || panel == null) return 0;
         Object comment = commentOf(panel);
         Object user = comment == null ? null : Reflect.property(comment, "getUser", "user");
-        if (user == null) return null;
+        if (user == null) return 0;
         String uid = uid(Reflect.string(user, "getUid", "uid"));
         String account = uid(SignedInUser.id());
         // Signed out, no readable commenter, or your own comment: no row.
-        if (uid == null || account == null || account.equals(uid)) return null;
+        if (uid == null || account == null || account.equals(uid)) return 0;
+        List<Kind> kinds = new ArrayList<>(2);
+        for (Kind kind : Kind.values()) if (enabled(kind)) kinds.add(kind);
+        if (kinds.isEmpty()) return 0;
 
         Object template = row.get(report);
         Shape shape = Shape.of(template.getClass());
-        if (shape == null) return null;
+        if (shape == null) return 0;
         Object reportStyle = shape.style.get(template);
-        if (reportStyle == null) return null;
+        if (reportStyle == null) return 0;
         int corners = shape.corners.getInt(reportStyle);
-        Object style = shape.newStyle(reportStyle, corners & BOTTOM);
-        Integer glyph = icon != 0 ? Integer.valueOf(icon) : (Integer) shape.icon.get(template);
+        Integer fallback = (Integer) shape.icon.get(template);
 
         VideoAuthor author = new VideoAuthor(uid, Reflect.string(user, "getSecUid", "secUid"),
                 Reflect.firstNonBlank(Reflect.string(user, "getUniqueId", "uniqueId"),
                         Reflect.string(user, "getNickname", "nickname")),
                 Reflect.string(comment, "getCid", "cid"));
-        Built built = new Built(panel, comment, user, author, account);
-        Object click = Proxy.newProxyInstance(shape.click.getClassLoader(), new Class<?>[]{shape.click},
-                (proxy, method, arguments) -> {
-                    switch (method.getName()) {
-                        case "invoke":
-                            if (arguments == null || arguments.length == 0) click(built);
-                            return null;
-                        case "hashCode":
-                            return System.identityHashCode(proxy);
-                        case "equals":
-                            return arguments != null && arguments.length == 1 && proxy == arguments[0];
-                        case "toString":
-                            return "Block this commenter";
-                        default:
-                            return null;
-                    }
-                });
-        Object owned = shape.constructor.newInstance(KEY, glyph, L10n.t("Block this commenter"), click,
-                style, null);
-        built.row = new WeakReference<>(owned);
-        remember(built);
+        int at = report;
+        for (int i = 0; i < kinds.size(); i++) {
+            Kind kind = kinds.get(i);
+            // Only the last owned row closes the group, and only when Report did.
+            Object style = shape.newStyle(reportStyle, i == kinds.size() - 1 ? corners & BOTTOM : 0);
+            int own = kind == Kind.BLOCK ? icon : globe();
+            Integer glyph = own != 0 ? Integer.valueOf(own) : fallback;
+            String label = kind == Kind.BLOCK ? L10n.t("Block this commenter") : L10n.t("Show account country");
+            Built built = new Built(kind, panel, comment, user, author, account);
+            Object owned = shape.constructor.newInstance(kind == Kind.BLOCK ? KEY : COUNTRY_KEY, glyph,
+                    label, clickFor(shape, built), style, null);
+            built.row = new WeakReference<>(owned);
+            remember(built);
+            row.add(++at, owned);
+        }
         if ((corners & BOTTOM) != 0) {
             shape.corners.setInt(reportStyle, corners & ~BOTTOM);
             synchronized (MOVED) {
                 MOVED.add(new Moved(reportStyle, shape.corners));
             }
         }
-        row.add(report + 1, owned);
-        return owned;
+        return kinds.size();
+    }
+
+    /** The row's click callback, a proxy of the menu's one-method click interface. */
+    private static Object clickFor(Shape shape, Built built) {
+        return Proxy.newProxyInstance(shape.click.getClassLoader(), new Class<?>[]{shape.click},
+                (proxy, method, arguments) -> {
+                    switch (method.getName()) {
+                        case "invoke":
+                            if (arguments == null || arguments.length == 0) {
+                                if (built.kind == Kind.BLOCK) click(built);
+                                else lookUp(built);
+                            }
+                            return null;
+                        case "hashCode":
+                            return System.identityHashCode(proxy);
+                        case "equals":
+                            return arguments != null && arguments.length == 1 && proxy == arguments[0];
+                        case "toString":
+                            return built.kind == Kind.BLOCK ? "Block this commenter" : "Show account country";
+                        default:
+                            return null;
+                    }
+                });
     }
 
     /** The row whose key is TikTok's "report". */
@@ -349,6 +392,7 @@ public final class CommentMenuBlock {
     // ---- the tap ----------------------------------------------------------------------
 
     private static final class Built {
+        final Kind kind;
         final WeakReference<Object> panel;
         final WeakReference<Object> comment;
         final Object user;
@@ -357,7 +401,8 @@ public final class CommentMenuBlock {
         WeakReference<Object> row = new WeakReference<>(null);
         volatile boolean retired;
 
-        Built(Object panel, Object comment, Object user, VideoAuthor author, String account) {
+        Built(Kind kind, Object panel, Object comment, Object user, VideoAuthor author, String account) {
+            this.kind = kind;
             this.panel = new WeakReference<>(panel);
             this.comment = new WeakReference<>(comment);
             this.user = user;
@@ -398,21 +443,48 @@ public final class CommentMenuBlock {
         return found;
     }
 
-    /** Whether [row] is an owned Block row. */
+    /** Whether [row] is an owned row. */
     static boolean owns(Object row) {
         return row != null && find(row) != null;
     }
 
-    /** The owned row's tap. Acts only for the comment and account the row was built for. */
+    /**
+     * The panel, while the row still belongs to the comment and account it was built for and
+     * its switch is on; null otherwise.
+     */
+    private static Object stillFor(Built built) {
+        Object panel = built.panel.get();
+        if (built.retired || panel == null || !enabled(built.kind)) return null;
+        // A panel reused for another comment is not this row's any more.
+        Object comment = commentOf(panel);
+        if (comment == null || comment != built.comment.get()
+                || !built.author.uid.equals(uidOf(comment))) return null;
+        if (!built.account.equals(uid(SignedInUser.id()))) return null;
+        return panel;
+    }
+
+    /** The country row's tap: closes the menu and asks TikTok where the account is based. */
+    private static void lookUp(Built built) {
+        try {
+            Object panel = stillFor(built);
+            if (panel == null) return;
+            built.retired = true;
+            dismiss(panel);
+            AccountCountry.Callback answered = answer -> notice(AccountCountry.answered(built.author.uid, answer));
+            Lookup stand = lookupForTests;
+            if (stand != null) stand.lookup(built.author.uid, built.author.secUid, answered);
+            else AccountCountry.lookup(built.author.uid, built.author.secUid, answered);
+        } catch (Throwable failure) {
+            Logger.printException(() -> "Could not look up the commenter's country", failure);
+            notice(AccountCountry.answered(built.author.uid, AccountCountry.failed()));
+        }
+    }
+
+    /** The Block row's tap. Acts only for the comment and account the row was built for. */
     private static void click(Built built) {
         try {
-            Object panel = built.panel.get();
-            if (built.retired || panel == null || !enabled()) return;
-            // A panel reused for another comment is not this row's any more.
-            Object comment = commentOf(panel);
-            if (comment == null || comment != built.comment.get()
-                    || !built.author.uid.equals(uidOf(comment))) return;
-            if (!built.account.equals(uid(SignedInUser.id()))) return;
+            Object panel = stillFor(built);
+            if (panel == null) return;
             built.retired = true;
             Activity activity = Utils.getVisibleActivity();
             WeakReference<Activity> from = new WeakReference<>(activity);
@@ -568,6 +640,8 @@ public final class CommentMenuBlock {
         void request(VideoAuthor author, String account, boolean undo, BlockAuthorService.Callback callback);
     }
     interface Feedback { void undo(String message, Runnable undo); void notice(String message); }
+    interface Lookup { void lookup(String uid, String secUid, AccountCountry.Callback callback); }
     static volatile Transport transportForTests;
     static volatile Feedback feedbackForTests;
+    static volatile Lookup lookupForTests;
 }

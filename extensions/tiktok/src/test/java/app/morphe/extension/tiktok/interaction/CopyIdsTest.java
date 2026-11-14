@@ -76,6 +76,7 @@ public class CopyIdsTest {
         Settings.COPY_IDS.save(previousSetting);
         SettingsStatus.copyIdsEnabled = previousStatus;
         Settings.ACCOUNT_FACTS.resetToDefault();
+        Settings.COUNTRY_ON_PROFILES.resetToDefault();
         CopyIds.onSharePackage(null);
         if (owner != null) owner.close();
     }
@@ -232,6 +233,33 @@ public class CopyIdsTest {
 
         Settings.ACCOUNT_FACTS.save(false);
         assertTrue(CopyIds.targetsOf(profile("6812345678901234567", "nasa")).isEmpty());
+    }
+
+    @Test public void accountCountryAddsItsButtonAfterTheFactsOnProfileSheetsOnly() {
+        assertEquals("off by default", 2, CopyIds.targetsOf(profile("6812345678901234567", "nasa")).size());
+        Settings.COUNTRY_ON_PROFILES.save(true);
+        Settings.ACCOUNT_FACTS.save(true);
+        List<CopyIds.Target> profile = CopyIds.targetsOf(profile("6812345678901234567", "nasa"));
+        assertEquals(4, profile.size());
+        assertEquals(AccountFacts.SHOW_FACTS, profile.get(2).label);
+        assertEquals(CopyIds.SHOW_COUNTRY, profile.get(3).label);
+        assertNotNull(profile.get(3).action);
+        assertEquals(1, CopyIds.targetsOf(video("7312345678901234567")).size());
+
+        Settings.ACCOUNT_FACTS.save(false);
+        Settings.COPY_IDS.save(false);
+        profile = CopyIds.targetsOf(profile("6812345678901234567", "nasa"));
+        assertEquals("the button stands without the copy buttons", 1, profile.size());
+        assertEquals(CopyIds.SHOW_COUNTRY, profile.get(0).label);
+        assertTrue("a profile without an account id", CopyIds.targetsOf(profile(null, "nasa")).isEmpty());
+
+        FrameLayout panel = panel();
+        CopyIds.onSharePackage(profile("6812345678901234567", "nasa"));
+        CopyIds.onSharePanel(panel);
+        idle();
+        LinearLayout row = (LinearLayout) panel.getChildAt(1);
+        assertEquals(1, row.getChildCount());
+        assertEquals("Account country", ((TextView) row.getChildAt(0)).getText().toString());
     }
 
     @Test public void theFactsButtonOpensTheSheetAndCopyTakesItAll() {

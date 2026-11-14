@@ -36,6 +36,7 @@ import java.util.WeakHashMap;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
+import app.morphe.extension.tiktok.comment.AccountCountry;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
@@ -63,6 +64,8 @@ public final class CopyIds {
     static final String COPY_USERNAME = "Copy username";
     static final String COPY_USER_ID = "Copy user ID";
     static final String COPY_VIDEO_ID = "Copy video ID";
+    /** A profile's button that asks TikTok where the account is based (#417). */
+    static final String SHOW_COUNTRY = "Account country";
     /** Marks the button row this class adds, so a reattached panel reuses it. */
     static final String ROW_TAG = "hushfeed_copy_ids";
 
@@ -330,7 +333,8 @@ public final class CopyIds {
 
     /**
      * The buttons the sheet built from {@code sharePackage} gets, in order: the copy buttons with
-     * Copy bio and IDs on, and a profile's Account facts with that switch on.
+     * Copy bio and IDs on, and a profile's Account facts and Account country with their switches
+     * on.
      */
     static List<Target> targetsOf(@Nullable Object sharePackage) {
         if (sharePackage == null) return Collections.emptyList();
@@ -349,6 +353,11 @@ public final class CopyIds {
             }
             if (user != null && AccountFacts.enabled()) {
                 targets.add(new Target(AccountFacts.SHOW_FACTS, () -> AccountFacts.show(user)));
+            }
+            String account = user == null ? null : Reflect.string(user, "getUid", "uid");
+            if (account != null && AccountCountry.onProfiles()) {
+                String secUid = Reflect.string(user, "getSecUid", "secUid");
+                targets.add(new Target(SHOW_COUNTRY, () -> AccountCountry.tell(account, secUid)));
             }
             return targets;
         }

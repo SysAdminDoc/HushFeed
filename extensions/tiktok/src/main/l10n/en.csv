@@ -162,6 +162,7 @@ A message is already on its way,A message is already on its way
 A name of your own under this tab's icon. Leave it empty to keep TikTok's.,A name of your own under this tab's icon. Leave it empty to keep TikTok's.
 A port is a whole number from 1 to 65535,A port is a whole number from 1 to 65535
 A press on Share under a video copies its link instead of opening the share sheet. Press Share again right after to open the sheet.,A press on Share under a video copies its link instead of opening the share sheet. Press Share again right after to open the sheet.
+"A profile's share sheet gets an Account country button. It asks TikTok where that account is based, private accounts too.","A profile's share sheet gets an Account country button. It asks TikTok where that account is based, private accounts too."
 "A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.","A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched."
 A removal is already running,A removal is already running
 "A screen's layout is recorded. Export the diagnostic report to send it, or tap to record another.","A screen's layout is recorded. Export the diagnostic report to send it, or tap to record another."
@@ -186,6 +187,9 @@ About overrides,About overrides
 Above the bar,Above the bar
 Accessibility,Accessibility
 Account,Account
+Account based in %1$s,Account based in %1$s
+Account country,Account country
+Account country on profiles,Account country on profiles
 Account facts,Account facts
 Account facts copied,Account facts copied
 Account facts on profiles,Account facts on profiles
@@ -501,6 +505,7 @@ Couldn't copy the report. Use Save report instead.,Couldn't copy the report. Use
 Couldn't copy. Use Save build details instead.,Couldn't copy. Use Save build details instead.
 Couldn't finish wiping TikTok's data. Tap to try again.,Couldn't finish wiping TikTok's data. Tap to try again.
 Couldn't forget the saved videos. Try again.,Couldn't forget the saved videos. Try again.
+Couldn't get the country. Try again.,Couldn't get the country. Try again.
 Couldn't import watch history. Your saved history is unchanged.,Couldn't import watch history. Your saved history is unchanged.
 Couldn't list your apps. Tap here to try again.,Couldn't list your apps. Tap here to try again.
 Couldn't make the sticker. Try again.,Couldn't make the sticker. Try again.
@@ -1265,6 +1270,7 @@ Long-press Profile to switch accounts,Long-press Profile to switch accounts
 "Long-press a bio to copy it. A profile's share sheet gets buttons that copy its username and user ID, and a video's share sheet one that copies the video ID. On a LIVE profile card, long-press the name, username or bio to copy it, or tap the copy mark by the username.","Long-press a bio to copy it. A profile's share sheet gets buttons that copy its username and user ID, and a video's share sheet one that copies the video ID. On a LIVE profile card, long-press the name, username or bio to copy it, or tap the copy mark by the username."
 Long-press menu on every post,Long-press menu on every post
 Longest first,Longest first
+Look up a commenter's country,Look up a commenter's country
 Looking for apps,Looking for apps
 Loop a story,Loop a story
 Lowest,Lowest
@@ -1599,6 +1605,7 @@ Preset applied,Preset applied
 Preset doesn't match the gates. Nothing changed.,Preset doesn't match the gates. Nothing changed.
 Preset saved. Turn on overrides to use it.,Preset saved. Turn on overrides to use it.
 Press and hold a comment to find Block this commenter in its menu. Their comments leave the list right away and an undo banner follows.,Press and hold a comment to find Block this commenter in its menu. Their comments leave the list right away and an undo banner follows.
+"Press and hold a comment to find Show account country in its menu. It asks TikTok where that account is based, private accounts too.","Press and hold a comment to find Show account country in its menu. It asks TikTok where that account is based, private accounts too."
 Press and hold a profile picture to save the full size original to your photo destination.,Press and hold a profile picture to save the full size original to your photo destination.
 "Press and hold a story to save it. Stories have no save button of their own, and holding one is how TikTok pauses it, so this takes that gesture over.","Press and hold a story to save it. Stories have no save button of their own, and holding one is how TikTok pauses it, so this takes that gesture over."
 Press and hold the Home tab to open these settings. A tap on Home works as before.,Press and hold the Home tab to open these settings. A tap on Home works as before.
@@ -1973,6 +1980,7 @@ Show a message of your own each time TikTok opens.,Show a message of your own ea
 Show a progress bar while a video saves.,Show a progress bar while a video saves.
 Show a verified badge on your own profile on this phone. Other people see your real status.,Show a verified badge on your own profile on this phone. Other people see your real status.
 Show a video preview thumbnail while dragging the progress bar.,Show a video preview thumbnail while dragging the progress bar.
+Show account country,Show account country
 Show all settings as a list,Show all settings as a list
 Show chosen counts on your own profile on this phone. Other people see the real counts.,Show chosen counts on your own profile on this phone. Other people see the real counts.
 Show commenters' handles,Show commenters' handles
@@ -2419,6 +2427,7 @@ TikTok didn't unblock %1$s. Try again in a moment.,TikTok didn't unblock %1$s. T
 TikTok forgets the LIVE quality you picked when it closes. This starts rooms at that quality again after a restart. A room whose stream doesn't have it opens at TikTok's choice.,TikTok forgets the LIVE quality you picked when it closes. This starts rooms at that quality again after a restart. A room whose stream doesn't have it opens at TikTok's choice.
 "TikTok gets a blank advertising ID, like the one Android gives after you delete yours. Apps can't use it to recognize your phone.","TikTok gets a blank advertising ID, like the one Android gives after you delete yours. Apps can't use it to recognize your phone."
 TikTok gets no location from your phone. The Region settings change your country and time zone. This switch stops the exact position.,TikTok gets no location from your phone. The Region settings change your country and time zone. This switch stops the exact position.
+TikTok gives no country for this account,TikTok gives no country for this account
 TikTok goes back to this phone's IDs after the restart. Tap again to cancel.,TikTok goes back to this phone's IDs after the restart. Tap again to cancel.
 "TikTok hasn't loaded this setting yet. Open the part of the app that uses it, then come back.","TikTok hasn't loaded this setting yet. Open the part of the app that uses it, then come back."
 TikTok is locked,TikTok is locked

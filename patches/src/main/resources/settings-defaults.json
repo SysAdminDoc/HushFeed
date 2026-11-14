@@ -132,6 +132,7 @@
       "comment_blocked_users",
       "block_from_comment",
       "block_from_comment_menu",
+      "country_from_comment_menu",
       "hide_comment_like_count",
       "hide_comment_dislike",
       "hide_comment_avatars",
@@ -167,6 +168,7 @@
     "Copy bio and IDs": [
       "copy_ids",
       "account_facts",
+      "country_on_profiles",
       "bio_mention_links"
     ],
     "Copy comments without username": [
@@ -1386,6 +1388,18 @@
     "country_date_under_caption": {
       "field": "COUNTRY_DATE_UNDER_CAPTION",
       "key": "country_date_under_caption",
+      "type": "boolean",
+      "default": false
+    },
+    "country_from_comment_menu": {
+      "field": "COUNTRY_FROM_COMMENT_MENU",
+      "key": "country_from_comment_menu",
+      "type": "boolean",
+      "default": false
+    },
+    "country_on_profiles": {
+      "field": "COUNTRY_ON_PROFILES",
+      "key": "country_on_profiles",
       "type": "boolean",
       "default": false
     },

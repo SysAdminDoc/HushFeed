@@ -1865,6 +1865,15 @@
           "values": null
         },
         {
+          "key": "country_from_comment_menu",
+          "title": "Default: country from comment menu",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "hide_comment_like_count",
           "title": "Default: hide comment like count",
           "description": null,
@@ -2218,6 +2227,15 @@
         {
           "key": "account_facts",
           "title": "Default: account facts",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "country_on_profiles",
+          "title": "Default: country on profiles",
           "description": null,
           "required": false,
           "type": "kotlin.Boolean",

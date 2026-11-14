@@ -2714,3 +2714,12 @@ Sort loaded videos in collections,Urutkan video yang dimuat di koleksi
 Same as Favorites grids,Sama seperti kisi Favorit
 Hide the summary on LIVE previews,Sembunyikan ringkasan di pratinjau LIVE
 A LIVE in the feed can show a Summary card that sums up the stream. This keeps it hidden.,LIVE di feed bisa menampilkan kartu Ringkasan yang merangkum siaran. Ini membuatnya tetap tersembunyi.
+Look up a commenter's country,Cari negara pengomentar
+"Press and hold a comment to find Show account country in its menu. It asks TikTok where that account is based, private accounts too.","Tekan lama komentar untuk menemukan Tampilkan negara akun di menunya. Fitur ini menanyakan ke TikTok di mana akun itu berada, termasuk akun privat."
+Show account country,Tampilkan negara akun
+Account based in %1$s,Akun berbasis di %1$s
+TikTok gives no country for this account,TikTok tidak memberi negara untuk akun ini
+Couldn't get the country. Try again.,Gagal mengambil negaranya. Coba lagi.
+Account country on profiles,Negara akun di profil
+"A profile's share sheet gets an Account country button. It asks TikTok where that account is based, private accounts too.","Lembar bagikan profil mendapat tombol Negara akun. Tombol ini menanyakan ke TikTok di mana akun itu berada, termasuk akun privat."
+Account country,Negara akun

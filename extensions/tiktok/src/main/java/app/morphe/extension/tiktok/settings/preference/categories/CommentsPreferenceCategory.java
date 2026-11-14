@@ -245,6 +245,15 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
                     Settings.COLOR_COMMENTER_NAMES
             ));
         }
+        if (SettingsStatus.commentToolsEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Look up a commenter's country",
+                    "Press and hold a comment to find Show account country in its menu. It asks "
+                            + "TikTok where that account is based, private accounts too.",
+                    Settings.COUNTRY_FROM_COMMENT_MENU
+            ));
+        }
 
         boolean hiding = SettingsStatus.hideCommentQuickReactionsEnabled
                 || SettingsStatus.hideCommentEggsEnabled

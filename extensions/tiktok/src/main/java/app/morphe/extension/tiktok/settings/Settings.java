@@ -1606,6 +1606,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting BLOCK_FROM_COMMENT = new BooleanSetting("block_from_comment", FALSE);
     /** Adds Block this commenter to the menu a long press on a comment opens (#169). */
     public static final BooleanSetting BLOCK_FROM_COMMENT_MENU = new BooleanSetting("block_from_comment_menu", FALSE);
+    /** Adds Show account country to the same menu, asking TikTok where the commenter is based (#417). */
+    public static final BooleanSetting COUNTRY_FROM_COMMENT_MENU = new BooleanSetting("country_from_comment_menu", FALSE);
     /** Takes the number beside the heart off each comment (#317). A row isn't handed it back until a restart. */
     public static final BooleanSetting HIDE_COMMENT_LIKE_COUNT = new BooleanSetting("hide_comment_like_count", FALSE, true);
     /** Takes the thumbs down off each comment (#314), unless Block from comment has taken it over. */
@@ -1718,6 +1720,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting COPY_IDS = new BooleanSetting("copy_ids", TRUE);
     // An Account facts button on a profile's share sheet, from what TikTok already sent about the account.
     public static final BooleanSetting ACCOUNT_FACTS = new BooleanSetting("account_facts", FALSE);
+    // An Account country button on a profile's share sheet that asks TikTok where the account is based (#417).
+    public static final BooleanSetting COUNTRY_ON_PROFILES = new BooleanSetting("country_on_profiles", FALSE);
     // @usernames in a profile's bio open those profiles on a tap (#247).
     public static final BooleanSetting BIO_MENTION_LINKS = new BooleanSetting("bio_mention_links", TRUE);
     // Package names of the apps added to the Share via row, comma separated, in the order picked.

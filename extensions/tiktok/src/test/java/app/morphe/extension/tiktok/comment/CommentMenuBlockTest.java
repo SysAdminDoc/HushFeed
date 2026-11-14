@@ -13,6 +13,7 @@ import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.SignedInUser;
 import app.morphe.extension.tiktok.blockauthor.BlockAuthorService;
 import app.morphe.extension.tiktok.blockauthor.VideoAuthor;
+import app.morphe.extension.tiktok.feed.AuthorRegion;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 
@@ -35,7 +36,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-/** Block this commenter in the comment menu (#169), against stand-ins shaped like 47.1.4's rows. */
+/**
+ * Block this commenter (#169) and Show account country (#417) in the comment menu, against
+ * stand-ins shaped like 47.1.4's rows.
+ */
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE, sdk = 28, qualifiers = "en")
 public class CommentMenuBlockTest {
@@ -120,12 +124,26 @@ public class CommentMenuBlockTest {
         }
     }
 
+    private static final class Asked {
+        final String uid;
+        final String secUid;
+        final AccountCountry.Callback callback;
+
+        Asked(String uid, String secUid, AccountCountry.Callback callback) {
+            this.uid = uid; this.secUid = secUid; this.callback = callback;
+        }
+    }
+
+    private static final int GLOBE_GLYPH = 0x7f010801;
+
     private final List<Request> requests = new ArrayList<>();
+    private final List<Asked> lookups = new ArrayList<>();
     private final List<Runnable> undos = new ArrayList<>();
     private final List<String> messages = new ArrayList<>();
     private final List<String> notices = new ArrayList<>();
     private Activity activity;
     private boolean oldMenu;
+    private boolean oldCountry;
     private boolean oldTools;
 
     @Before public void setUp() {
@@ -133,8 +151,12 @@ public class CommentMenuBlockTest {
         Utils.setActivity(activity);
         oldTools = SettingsStatus.commentToolsEnabled;
         oldMenu = Settings.BLOCK_FROM_COMMENT_MENU.get();
+        oldCountry = Settings.COUNTRY_FROM_COMMENT_MENU.get();
         SettingsStatus.commentToolsEnabled = true;
         Settings.BLOCK_FROM_COMMENT_MENU.save(true);
+        Settings.COUNTRY_FROM_COMMENT_MENU.save(false);
+        AuthorRegion.forgetSeenRegions();
+        CommentMenuBlock.lookupForTests = (uid, secUid, callback) -> lookups.add(new Asked(uid, secUid, callback));
         SignedInUser.idForTests = "100";
         CommentMenuBlock.setIcon(BLOCK_GLYPH);
         CommentMenuBlock.transportForTests = (author, account, undo, callback) ->
@@ -152,7 +174,11 @@ public class CommentMenuBlockTest {
     @After public void tearDown() {
         CommentMenuBlock.transportForTests = null;
         CommentMenuBlock.feedbackForTests = null;
+        CommentMenuBlock.lookupForTests = null;
+        CommentMenuBlock.globe = -1;
         CommentMenuBlock.setIcon(0);
+        AuthorRegion.forgetSeenRegions();
+        Settings.COUNTRY_FROM_COMMENT_MENU.save(oldCountry);
         ((List<?>) ReflectionHelpers.getStaticField(CommentMenuBlock.class, "BUILT")).clear();
         ((Map<?, ?>) ReflectionHelpers.getStaticField(CommentMenuBlock.class, "IN_FLIGHT")).clear();
         ((List<?>) ReflectionHelpers.getStaticField(CommentMenuBlock.class, "MOVED")).clear();
@@ -181,14 +207,115 @@ public class CommentMenuBlockTest {
     }
 
     private static Row owned(List<?> rows) {
+        return keyed(rows, CommentMenuBlock.KEY);
+    }
+
+    private static Row country(List<?> rows) {
+        return keyed(rows, CommentMenuBlock.COUNTRY_KEY);
+    }
+
+    private static Row keyed(List<?> rows, String key) {
         Row found = null;
         for (Object item : rows) {
-            if (item instanceof Row && CommentMenuBlock.KEY.equals(((Row) item).key)) {
-                assertNull("one Block row", found);
+            if (item instanceof Row && key.equals(((Row) item).key)) {
+                assertNull("one " + key + " row", found);
                 found = (Row) item;
             }
         }
         return found;
+    }
+
+    // ---- Show account country (#417) ----------------------------------------------------
+
+    @Test public void theCountryRowGoesLastAndOnlyItClosesTheGroup() {
+        Settings.COUNTRY_FROM_COMMENT_MENU.save(true);
+        CommentMenuBlock.globe = GLOBE_GLYPH;
+        Panel panel = new Panel(new UserComment("c1", user("200")));
+        List<Object> nativeRows = menu();
+        Row report = (Row) nativeRows.get(2);
+
+        List<?> both = CommentMenuBlock.items(panel, nativeRows);
+        assertEquals(5, both.size());
+        Row block = owned(both);
+        Row country = country(both);
+        assertSame(report, both.get(2));
+        assertSame(block, both.get(3));
+        assertSame(country, both.get(4));
+        assertEquals("Block sits inside the group now", 0, block.style.corners);
+        assertEquals(BOTTOM, country.style.corners);
+        assertEquals(0, report.style.corners);
+        assertEquals("Show account country", country.label);
+        assertEquals(Integer.valueOf(GLOBE_GLYPH), country.icon);
+        assertSame(Tone.PLAIN, country.style.tone);
+        assertNull(country.measure);
+        assertTrue(CommentMenuBlock.owns(country));
+
+        Settings.BLOCK_FROM_COMMENT_MENU.save(false);
+        List<?> alone = CommentMenuBlock.items(panel, new ArrayList<>(both));
+        assertEquals(4, alone.size());
+        assertNull(owned(alone));
+        assertSame(country(alone), alone.get(3));
+        assertEquals(BOTTOM, country(alone).style.corners);
+        assertEquals(0, report.style.corners);
+
+        Settings.COUNTRY_FROM_COMMENT_MENU.save(false);
+        List<?> none = CommentMenuBlock.items(panel, new ArrayList<>(alone));
+        assertEquals(3, none.size());
+        assertEquals("Report gets its corners back", BOTTOM, report.style.corners);
+    }
+
+    @Test public void withoutTikToksGlobeTheCountryRowBorrowsReportsGlyph() {
+        Settings.BLOCK_FROM_COMMENT_MENU.save(false);
+        Settings.COUNTRY_FROM_COMMENT_MENU.save(true);
+        Row country = country(CommentMenuBlock.items(new Panel(new UserComment("c1", user("200"))), menu()));
+        assertEquals(Integer.valueOf(REPORT_GLYPH), country.icon);
+        assertEquals("a missing globe is looked up once", 0, CommentMenuBlock.globe);
+    }
+
+    @Test public void aCountryTapAsksTikTokAndShowsAndRemembersTheCountry() {
+        Settings.COUNTRY_FROM_COMMENT_MENU.save(true);
+        Panel panel = new Panel(new UserComment("c1", user("200")));
+        Row country = country(CommentMenuBlock.items(panel, menu()));
+        country.click.invoke();
+
+        assertEquals(1, lookups.size());
+        assertEquals("200", lookups.get(0).uid);
+        assertTrue("the country row never blocks", requests.isEmpty());
+        lookups.get(0).callback.onAnswer(new AccountCountry.Answer(AccountCountry.Outcome.FOUND, "DE"));
+        assertEquals(Arrays.asList("Account based in Germany"), notices);
+        assertEquals("comments by that account can show it now", "DE", AuthorRegion.seenRegionByUid("200"));
+
+        country.click.invoke();
+        assertEquals("a used row asks nothing more", 1, lookups.size());
+    }
+
+    @Test public void noCountryOrAFailedLookupSaysSo() {
+        Settings.COUNTRY_FROM_COMMENT_MENU.save(true);
+        country(CommentMenuBlock.items(new Panel(new UserComment("c1", user("200"))), menu())).click.invoke();
+        lookups.get(0).callback.onAnswer(new AccountCountry.Answer(AccountCountry.Outcome.NONE, null));
+        country(CommentMenuBlock.items(new Panel(new UserComment("c2", user("300"))), menu())).click.invoke();
+        lookups.get(1).callback.onAnswer(AccountCountry.failed());
+        assertEquals(Arrays.asList("TikTok gives no country for this account", "Couldn't get the country. Try again."), notices);
+        assertNull(AuthorRegion.seenRegionByUid("200"));
+        assertNull(AuthorRegion.seenRegionByUid("300"));
+
+        CommentMenuBlock.lookupForTests = (uid, secUid, callback) -> { throw new IllegalStateException("no client"); };
+        country(CommentMenuBlock.items(new Panel(new UserComment("c3", user("400"))), menu())).click.invoke();
+        assertEquals("Couldn't get the country. Try again.", notices.get(2));
+    }
+
+    @Test public void anOldOrSwitchedOffCountryRowAsksNothing() {
+        Settings.COUNTRY_FROM_COMMENT_MENU.save(true);
+        Panel panel = new Panel(new UserComment("c1", user("200")));
+        Row country = country(CommentMenuBlock.items(panel, menu()));
+        panel.comment = new UserComment("c2", user("300"));
+        country.click.invoke();
+
+        Row second = country(CommentMenuBlock.items(new Panel(new UserComment("c3", user("200"))), menu()));
+        Settings.COUNTRY_FROM_COMMENT_MENU.save(false);
+        second.click.invoke();
+        assertTrue(lookups.isEmpty());
+        assertTrue(notices.isEmpty());
     }
 
     @Test public void addsTheRowAfterReportAndTakesItsBottomCorners() {

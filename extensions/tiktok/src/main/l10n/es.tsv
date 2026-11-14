@@ -2851,3 +2851,12 @@ Sort loaded videos in collections	Ordenar los vídeos cargados en las coleccione
 Same as Favorites grids	Igual que las cuadrículas de Favoritos
 Hide the summary on LIVE previews	Ocultar el resumen en las vistas previas de LIVE
 A LIVE in the feed can show a Summary card that sums up the stream. This keeps it hidden.	Un LIVE en el feed puede mostrar una tarjeta de resumen de la transmisión. Esto la mantiene oculta.
+Look up a commenter's country	Consultar el país de quien comenta
+Press and hold a comment to find Show account country in its menu. It asks TikTok where that account is based, private accounts too.	Mantén pulsado un comentario para encontrar Mostrar país de la cuenta en su menú. Le pregunta a TikTok dónde está esa cuenta, también las privadas.
+Show account country	Mostrar país de la cuenta
+Account based in %1$s	Cuenta ubicada en %1$s
+TikTok gives no country for this account	TikTok no da ningún país para esta cuenta
+Couldn't get the country. Try again.	No se pudo obtener el país. Inténtalo de nuevo.
+Account country on profiles	País de la cuenta en los perfiles
+A profile's share sheet gets an Account country button. It asks TikTok where that account is based, private accounts too.	El menú para compartir de un perfil tiene un botón País de la cuenta. Le pregunta a TikTok dónde está esa cuenta, también las privadas.
+Account country	País de la cuenta

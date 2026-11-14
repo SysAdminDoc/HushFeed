@@ -2851,3 +2851,12 @@ Sort loaded videos in collections	Koleksiyonlarda yüklenen videoları sırala
 Same as Favorites grids	Favoriler ızgaralarıyla aynı
 Hide the summary on LIVE previews	LIVE önizlemelerinde özeti gizle
 A LIVE in the feed can show a Summary card that sums up the stream. This keeps it hidden.	Akıştaki bir LIVE, yayını özetleyen bir Özet kartı gösterebilir. Bu onu gizli tutar.
+Look up a commenter's country	Yorum yazanın ülkesini öğren
+Press and hold a comment to find Show account country in its menu. It asks TikTok where that account is based, private accounts too.	Bir yoruma basılı tutun ve menüsünde Hesabın ülkesini göster seçeneğini bulun. TikTok'a bu hesabın nerede olduğunu sorar, gizli hesaplar dahil.
+Show account country	Hesabın ülkesini göster
+Account based in %1$s	Hesabın ülkesi: %1$s
+TikTok gives no country for this account	TikTok bu hesap için ülke vermiyor
+Couldn't get the country. Try again.	Ülke alınamadı. Tekrar deneyin.
+Account country on profiles	Profillerde hesabın ülkesi
+A profile's share sheet gets an Account country button. It asks TikTok where that account is based, private accounts too.	Bir profilin paylaşım sayfasına Hesabın ülkesi düğmesi eklenir. TikTok'a bu hesabın nerede olduğunu sorar, gizli hesaplar dahil.
+Account country	Hesabın ülkesi

@@ -92,7 +92,8 @@ public final class PrivacyPreferenceCategory extends ConditionalPreferenceCatego
                     context,
                     "Stop analytics and tracking",
                     "Stops TikTok from sending usage reports, ad tracking and crash reports. "
-                            + "TikTok's own diagnostic tools go quiet too.",
+                            + "TikTok's own diagnostic tools go quiet too. The settings TikTok "
+                            + "downloads to check its own requests still come through.",
                     Settings.DISABLE_ANALYTICS
             ));
         }

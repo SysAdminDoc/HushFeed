@@ -194,6 +194,62 @@ public class ReplyPagesTest {
         assertTrue("a thread past the cap was still asked for", after.asked.isEmpty());
     }
 
+    @Test public void anEmptyLastPageOnAThreadStillShortOfItsCountIsIncomplete() throws Exception {
+        Scripted withheld = new Scripted().page("10", Collections.emptyList(), 0, false);
+        assertFalse(run(withheld, new ReplyPages.Load(), new ArrayList<>(), missing("10", 5, "10-1")).complete);
+
+        // An empty last page after the count is met is just the end.
+        Scripted ended = new Scripted()
+                .page("10", replyList("10", 1, 2), 2, true)
+                .page("10", Collections.emptyList(), 2, false);
+        assertTrue(run(ended, new ReplyPages.Load(), new ArrayList<>(), missing("10", 2)).complete);
+    }
+
+    @Test public void theCapIsExactWhenPagesDoNotDivideIt() throws Exception {
+        // Two big pages cross the cap partway through the second, so it has to cut mid-page.
+        int perPage = ReplyPages.MAX_FETCHED_REPLIES * 2 / 3 - 1;
+        ReplyPages.Fetcher big = new ReplyPages.Fetcher() {
+            int pages;
+
+            @Override
+            public ReplyPages.Page page(String threadId, String itemId, long cursor, int count, ReplyPages.Load load) {
+                pages++;
+                return new ReplyPages.Page(replyList(threadId + "p" + pages, 1, perPage), cursor + perPage, true);
+            }
+        };
+        ReplyPages.Outcome outcome = run(big, new ReplyPages.Load(), new ArrayList<>(), missing("10", 9000));
+        assertFalse(outcome.complete);
+        assertEquals(ReplyPages.MAX_FETCHED_REPLIES, outcome.fetched);
+        assertEquals(ReplyPages.MAX_FETCHED_REPLIES, outcome.byThread.get("10").size());
+    }
+
+    @Test public void aStopDuringTheGapBetweenPagesSendsNothingMore() throws Exception {
+        ReplyPages.Load load = new ReplyPages.Load();
+        Scripted fetcher = new Scripted()
+                .page("10", replyList("10", 1, 2), 2, false)
+                .page("20", replyList("20", 1, 2), 2, false);
+        ReplyPages.Outcome outcome = new ReplyPages.Outcome();
+        ReplyPages.run(fetcher, "7300", Arrays.asList(missing("10", 2), missing("20", 2)), load, outcome,
+                (fetched, wanted) -> new Thread(() -> {
+                    try {
+                        Thread.sleep(ReplyPages.PAGE_GAP_MS / 5);
+                    } catch (InterruptedException ignored) {
+                        Thread.currentThread().interrupt();
+                    }
+                    load.stop();
+                }).start());
+        assertFalse(outcome.complete);
+        assertEquals(Collections.singletonList("10@0/20/7300"), fetcher.asked);
+    }
+
+    @Test public void pagesFailingInARowEndTheLoad() throws Exception {
+        Scripted refusing = new Scripted();
+        ReplyPages.Outcome outcome = run(refusing, new ReplyPages.Load(), new ArrayList<>(),
+                missing("10", 2), missing("20", 2), missing("30", 2), missing("40", 2), missing("50", 2));
+        assertFalse(outcome.complete);
+        assertEquals(ReplyPages.MAX_FAILED_PAGES_IN_A_ROW, refusing.asked.size());
+    }
+
     @Test public void theWantedCountIsOnlyWhatTheSheetIsMissing() {
         assertEquals(3, ReplyPages.wanted(Arrays.asList(missing("10", 5, "a", "b"), missing("20", 1, "c", "d"))));
         assertEquals(0, ReplyPages.wanted(Collections.emptyList()));
@@ -242,6 +298,16 @@ public class ReplyPagesTest {
         assertNull(ReplyPages.asPage(Thread.State.NEW));
         assertNull(ReplyPages.asPage("failure"));
         assertNull(ReplyPages.asPage(null));
+        // A refusal: an empty list carrying TikTok's error status.
+        assertNull(ReplyPages.asPage(new Refused()));
+    }
+
+    /** What TikTok answers when it turns the call down: a reply list with status_code set. */
+    public static final class Refused {
+        public List<Object> items = Collections.emptyList();
+        public long cursor;
+        public boolean hasMore;
+        public int status_code = 8;
     }
 
     // ---- TikTok's call, made the way a suspend call is ----------------------------------
@@ -338,6 +404,14 @@ public class ReplyPagesTest {
                     return SUSPENDED;
                 case "throws":
                     throw new IllegalStateException("no network module");
+                case "direct":
+                    return "not a reply list";
+                case "strict":
+                    // A Kotlin override checks its non-null Strings on the way in.
+                    if (top == null || session == null) {
+                        throw new NullPointerException("Parameter specified as non-null is null");
+                    }
+                    return page;
                 default:
                     return SUSPENDED;
             }
@@ -412,6 +486,24 @@ public class ReplyPagesTest {
         assertNull(ask(call, new ReplyPages.Load()));
         mode = "throws";
         assertNull(ask(call, new ReplyPages.Load()));
+    }
+
+    @Test public void anAnswerThatIsNotAReplyListIsNoPageWithoutWaiting() throws Exception {
+        mode = "direct";
+        long started = System.nanoTime();
+        assertNull(ask(ReplyPages.TikTokCall.find(ApiImpl.class), new ReplyPages.Load()));
+        long waited = (System.nanoTime() - started) / 1_000_000L;
+        assertTrue("waited " + waited + " ms for an answer that had come", waited < ReplyPages.PAGE_TIMEOUT_MS / 3);
+    }
+
+    @Test public void aRefusedNullIsAskedAgainWithBlanks() throws Exception {
+        mode = "strict";
+        ReplyPages.Fetcher call = ReplyPages.TikTokCall.find(ApiImpl.class);
+        ReplyPages.Page page = ask(call, new ReplyPages.Load());
+        assertNotNull(page);
+        assertArrayEquals(new Object[]{"10", 4L, 20, "", "7300", "", false, null, ""}, lastArgs);
+        // And straight away from then on.
+        assertNotNull(ask(call, new ReplyPages.Load()));
     }
 
     @Test public void aStopEndsTheWaitForACallThatNeverAnswers() throws Exception {

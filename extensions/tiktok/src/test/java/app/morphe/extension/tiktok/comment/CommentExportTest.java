@@ -566,6 +566,56 @@ public class CommentExportTest {
         }
     }
 
+    @Test public void aLoadThatEndsWithTikTokInTheBackgroundOpensThePickerOnItsReturn() throws Exception {
+        HeldPages pages = new HeldPages(false, new Comment("4", "paged reply", "d", "D"));
+        ReplyPages.setFetcherForTests(pages);
+        try (var controller = Robolectric.buildActivity(SettingsWindow.class).setup().visible()) {
+            Activity activity = controller.get();
+            LinearLayout exports = exportRow(activity, threadShortOf(2));
+            TextView csv = (TextView) exports.getChildAt(1);
+
+            csv.performClick();
+            shadowOf(Looper.getMainLooper()).idle();
+            assertTrue("the reply call was never made", pages.asked.await(5, TimeUnit.SECONDS));
+            controller.pause().stop();
+            pages.release.countDown();
+            awaitReplies();
+            assertNull("the picker was started from the background",
+                    shadowOf(activity).getNextStartedActivityForResult());
+
+            controller.restart().start().resume();
+            shadowOf(Looper.getMainLooper()).idle();
+            var started = shadowOf(activity).getNextStartedActivityForResult();
+            assertNotNull("the export was lost while TikTok was away", started);
+            assertEquals("text/csv", started.intent.getType());
+            // A tap on the button after the load, while the picker is up, starts nothing more.
+            csv.performClick();
+            shadowOf(Looper.getMainLooper()).idle();
+            assertNull(shadowOf(activity).getNextStartedActivityForResult());
+        } finally {
+            endReplies(pages);
+        }
+    }
+
+    @Test public void aThreadOpenedAfterScrollingOnIsExportedUnderItsComment() {
+        Comment first = new Comment("10", "top", "a", "A");
+        Comment second = new Comment("20", "second", "c", "C");
+        // Shown when the thread was opened, after the sheet had already shown the second comment.
+        Comment opened = new Comment("15", "opened later", "g", "G");
+        opened.rootCommentId = "10";
+        opened.createTime = 1_700_000_500;
+        List<CommentExport.Row> rows = CommentExport.collect(Arrays.asList(first, second, opened));
+        Comment older = new Comment("12", "paged", "e", "E");
+        older.createTime = 1_700_000_100;
+        Map<String, List<Object>> fetched = new LinkedHashMap<>();
+        fetched.put("10", Collections.singletonList(older));
+
+        List<String> order = new ArrayList<>();
+        for (CommentExport.Row row : CommentExport.merge(rows, fetched)) order.add(row.id + "<" + row.parentId);
+
+        assertEquals(Arrays.asList("10<", "12<10", "15<10", "20<"), order);
+    }
+
     @Test public void closingTheSheetStopsTheLoadAndExportsWhatCame() throws Exception {
         HeldPages pages = new HeldPages(true, new Comment("4", "paged reply", "d", "D"));
         ReplyPages.setFetcherForTests(pages);

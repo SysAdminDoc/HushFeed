@@ -51,6 +51,8 @@ final class ReplyPages {
     static final long PAGE_TIMEOUT_MS = 15_000L;
     /** A page that keeps moving its cursor without ending can't hold the load forever. */
     private static final int MAX_PAGES = 2 * MAX_FETCHED_REPLIES / PAGE_SIZE;
+    /** Pages in a row that came back with nothing: TikTok is refusing, so the rest would too. */
+    static final int MAX_FAILED_PAGES_IN_A_ROW = 3;
 
     static final String REPLY_PATH = "/aweme/v1/comment/list/reply/";
     private static final String API_CLASS = "com.ss.android.ugc.aweme.commentv2.commentlist.CommentApiV2";
@@ -159,8 +161,10 @@ final class ReplyPages {
             Progress progress) throws InterruptedException {
         int wanted = wanted(threads);
         int pages = 0;
+        int failedInARow = 0;
         for (Missing thread : threads) {
-            if (load.stopped() || outcome.fetched >= MAX_FETCHED_REPLIES || pages >= MAX_PAGES) {
+            if (load.stopped() || outcome.fetched >= MAX_FETCHED_REPLIES || pages >= MAX_PAGES
+                    || failedInARow >= MAX_FAILED_PAGES_IN_A_ROW) {
                 outcome.complete = false;
                 return;
             }
@@ -169,21 +173,42 @@ final class ReplyPages {
             outcome.byThread.put(thread.threadId, got);
             long cursor = 0;
             while (true) {
-                if (pages > 0) Thread.sleep(PAGE_GAP_MS);
+                if (pages > 0) {
+                    Thread.sleep(PAGE_GAP_MS);
+                    // A stop during the gap sends nothing more.
+                    if (load.stopped()) {
+                        outcome.complete = false;
+                        return;
+                    }
+                }
                 Page page = fetcher.page(thread.threadId, itemId, cursor, PAGE_SIZE, load);
                 pages++;
                 if (page == null) {
+                    failedInARow++;
                     outcome.complete = false;
                     break;
                 }
+                failedInARow = 0;
+                boolean capped = false;
                 for (Object reply : page.items) {
                     if (reply == null) continue;
                     String id = Reflect.string(reply, "getCid", "cid");
-                    if (id == null || !seen.add(id)) continue;
+                    if (id == null || seen.contains(id)) continue;
+                    if (outcome.fetched >= MAX_FETCHED_REPLIES) {
+                        capped = true;
+                        break;
+                    }
+                    seen.add(id);
                     got.add(reply);
                     outcome.fetched++;
                 }
                 progress.update(outcome.fetched, Math.max(wanted, outcome.fetched));
+                // An empty page on a thread still short of its count is TikTok holding replies
+                // back, not the end of them, whatever it says about more.
+                if (capped || page.items.isEmpty() && seen.size() < thread.expected) {
+                    outcome.complete = false;
+                    break;
+                }
                 if (!page.hasMore) break;
                 // A page that doesn't move on, or a load told to end, leaves the thread short.
                 if (page.items.isEmpty() || page.cursor <= cursor || load.stopped()
@@ -199,6 +224,8 @@ final class ReplyPages {
     // ---- TikTok's own call --------------------------------------------------------------
 
     private static volatile Fetcher fetcherForTests;
+    /** Found once: the scan reads every method of TikTok's comment API. */
+    private static volatile TikTokCall found;
 
     static void setFetcherForTests(Fetcher fetcher) {
         fetcherForTests = fetcher;
@@ -208,8 +235,10 @@ final class ReplyPages {
     static Fetcher tiktok() {
         Fetcher forTests = fetcherForTests;
         if (forTests != null) return forTests;
+        TikTokCall call = found;
+        if (call != null) return call;
         try {
-            return TikTokCall.find(Class.forName(API_CLASS));
+            return found = TikTokCall.find(Class.forName(API_CLASS));
         } catch (ReflectiveOperationException | RuntimeException | LinkageError unavailable) {
             Logger.printInfo(() -> "Comment replies can't be loaded on this build: " + unavailable);
             return null;
@@ -234,6 +263,9 @@ final class ReplyPages {
         if (value == null) return null;
         Class<?> type = value.getClass();
         if (Reflect.method(type, "getItems") == null && Reflect.field(type, "items") == null) return null;
+        // A refusal still comes back as a reply list, empty and with TikTok's error status on it.
+        Object status = Reflect.property(value, "getStatusCode", "status_code");
+        if (status instanceof Number && ((Number) status).longValue() != 0) return null;
         Object items = Reflect.property(value, "getItems", "items");
         Object cursor = Reflect.property(value, "getCursor", "cursor");
         Object more = Reflect.property(value, "isHasMore", "isHasMore");
@@ -316,6 +348,11 @@ final class ReplyPages {
         private final String[] names;
         private final Class<?> continuationType;
         private final Class<?> contextType;
+        /**
+         * Queries the paging doesn't fill go as "" rather than null once TikTok's class has
+         * refused a null: its Kotlin methods can check their String parameters on the way in.
+         */
+        private volatile boolean blankStrings;
 
         private TikTokCall(Object api, Method method, String[] names, Class<?> continuationType,
                 Class<?> contextType) {
@@ -396,6 +433,7 @@ final class ReplyPages {
                 else if ("count".equals(name)) args[index] = number(types[index], count);
                 // TikTok's own call sends an empty list here rather than leaving it out.
                 else if ("insert_ids".equals(name) && types[index] == String.class) args[index] = "";
+                else if (blankStrings && types[index] == String.class) args[index] = "";
                 else args[index] = zero(types[index]);
             }
             args[types.length - 1] = continuation;
@@ -422,7 +460,7 @@ final class ReplyPages {
                     });
             Object returned;
             try {
-                returned = method.invoke(api, arguments(threadId, itemId, cursor, count, continuation));
+                returned = invoke(threadId, itemId, cursor, count, continuation);
             } catch (InvocationTargetException failed) {
                 Logger.printInfo(() -> "A reply page failed: " + failed.getCause());
                 return null;
@@ -430,8 +468,13 @@ final class ReplyPages {
                 Logger.printInfo(() -> "A reply page couldn't be asked for: " + refused);
                 return null;
             }
-            Page now = asPage(returned);
-            if (now != null) return now;
+            // Kotlin's COROUTINE_SUSPENDED marker is an enum constant, and a reply list never
+            // is: anything else came back at once and is the whole answer.
+            if (!(returned instanceof Enum)) {
+                Page now = asPage(returned);
+                if (now == null) Logger.printInfo(() -> "A reply page came back at once without replies: " + describe(returned));
+                return now;
+            }
             long deadline = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(PAGE_TIMEOUT_MS);
             while (!answered.await(200, TimeUnit.MILLISECONDS)) {
                 if (load.stopped()) return null;
@@ -444,6 +487,19 @@ final class ReplyPages {
             Page page = asPage(result);
             if (page == null) Logger.printInfo(() -> "A reply page came back without replies: " + describe(result));
             return page;
+        }
+
+        /** The call, once more with "" for the unfilled Strings when a null was refused. */
+        private Object invoke(String threadId, String itemId, long cursor, int count, Object continuation)
+                throws InvocationTargetException, IllegalAccessException {
+            try {
+                return method.invoke(api, arguments(threadId, itemId, cursor, count, continuation));
+            } catch (InvocationTargetException failed) {
+                if (blankStrings || !(failed.getCause() instanceof NullPointerException)) throw failed;
+                blankStrings = true;
+                Logger.printInfo(() -> "The reply call refused a null, asking again with blanks: " + failed.getCause());
+                return method.invoke(api, arguments(threadId, itemId, cursor, count, continuation));
+            }
         }
     }
 }

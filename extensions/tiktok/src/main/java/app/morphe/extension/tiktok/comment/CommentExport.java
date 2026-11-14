@@ -193,29 +193,46 @@ public final class CommentExport {
     }
 
     /**
-     * {@code rows} with each thread's fetched replies after the last row that thread already
-     * had, skipping any reply the rows hold.
+     * {@code rows} with each thread's replies, the ones the sheet showed and the ones fetched,
+     * together under the comment they answer and oldest first, skipping any reply the rows hold.
+     * The sheet keeps comments in the order they were shown, so a thread opened after scrolling
+     * on sits apart from its comment until here.
      */
     static List<Row> merge(List<Row> rows, Map<String, ? extends List<?>> fetched) {
         if (fetched == null || fetched.isEmpty()) return rows;
         Set<String> seen = new HashSet<>();
-        Map<String, Integer> last = new HashMap<>();
-        for (int index = 0; index < rows.size(); index++) {
-            Row row = rows.get(index);
+        Set<String> comments = new HashSet<>();
+        for (Row row : rows) {
             if (!row.id.isEmpty()) seen.add(row.id);
-            last.put(row.isReply() ? row.parentId : row.id, index);
+            if (!row.isReply() && !row.id.isEmpty()) comments.add(row.id);
         }
-        String[] ends = new String[rows.size()];
-        for (Map.Entry<String, Integer> end : last.entrySet()) ends[end.getValue()] = end.getKey();
+        Map<String, List<Row>> threads = new HashMap<>();
+        for (Row row : rows) {
+            if (!row.isReply() || !comments.contains(row.parentId)) continue;
+            List<Row> thread = threads.get(row.parentId);
+            if (thread == null) threads.put(row.parentId, thread = new ArrayList<>());
+            thread.add(row);
+        }
         List<Row> merged = new ArrayList<>(rows.size());
-        for (int index = 0; index < rows.size(); index++) {
-            merged.add(rows.get(index));
-            String thread = ends[index];
-            List<?> replies = thread == null || thread.isEmpty() ? null : fetched.get(thread);
-            if (replies == null) continue;
-            for (Object reply : replies) addRow(merged, seen, reply, thread);
+        for (Row row : rows) {
+            // Placed with the rest of its thread, under its comment.
+            if (row.isReply() && comments.contains(row.parentId)) continue;
+            merged.add(row);
+            if (row.isReply() || row.id.isEmpty()) continue;
+            List<Row> thread = threads.get(row.id);
+            if (thread == null) thread = new ArrayList<>();
+            List<?> replies = fetched.get(row.id);
+            if (replies != null) for (Object reply : replies) addRow(thread, seen, reply, row.id);
+            oldestFirst(thread);
+            merged.addAll(thread);
         }
         return merged;
+    }
+
+    /** A thread in posting order, left as it is when any reply has no time to go by. */
+    private static void oldestFirst(List<Row> thread) {
+        for (Row reply : thread) if (reply.createdEpoch <= 0) return;
+        Collections.sort(thread, (left, right) -> Long.compare(left.createdEpoch, right.createdEpoch));
     }
 
     private static String orEmpty(String value) {
@@ -417,6 +434,9 @@ public final class CommentExport {
                 notice(activity, progress(activity, loadingFetched, loadingWanted));
                 return;
             }
+            // The picker is already on its way, often from a Stop tapped just as the load ended
+            // and the button went back to Export: that tap meant this export, not a second one.
+            if (activity.getFragmentManager().findFragmentByTag(FRAGMENT_TAG) != null) return;
             if (DocumentOperation.busy(DocumentOperation.Kind.COMMENT_FILE)) {
                 tellFileOut(activity);
                 return;
@@ -542,6 +562,9 @@ public final class CommentExport {
      * goes to whoever asked and TikTok's activities aren't ours to hook for it.
      */
     public static final class Request extends Fragment {
+        private static final String ASKED = "hushfeed_asked";
+        private boolean asked;
+
         public Request() {}
 
         @Override
@@ -549,7 +572,30 @@ public final class CommentExport {
             super.onCreate(state);
             // Restored with the picker already up: stay, so its answer still lands here after a
             // rotation or a theme change.
-            if (state != null) return;
+            asked = state != null && state.getBoolean(ASKED, true);
+        }
+
+        @Override
+        public void onSaveInstanceState(Bundle out) {
+            super.onSaveInstanceState(out);
+            out.putBoolean(ASKED, asked);
+        }
+
+        /**
+         * The picker opens here rather than in onCreate: a replies load that ends while TikTok
+         * is in the background adds this to a stopped activity, and Android doesn't let an app
+         * in the background start the picker, so it waits until TikTok is back.
+         */
+        @Override
+        public void onResume() {
+            super.onResume();
+            if (asked) return;
+            asked = true;
+            if (pendingRows == null) {
+                // The process restarted before TikTok came back: nothing is left to write.
+                leave();
+                return;
+            }
             Bundle arguments = getArguments();
             try {
                 Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT)

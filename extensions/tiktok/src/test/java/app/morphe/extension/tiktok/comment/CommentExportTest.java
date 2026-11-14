@@ -39,7 +39,13 @@ import java.nio.file.Files;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /** What Export comments writes, when it shows, and what it does with a file app that hangs. */
 @RunWith(RobolectricTestRunner.class)
@@ -54,7 +60,7 @@ public class CommentExportTest {
 
     /** Stands in for TikTok's Comment, with the field names all three declared builds carry. */
     public static final class Comment {
-        public String cid, text, rootCommentId = "0", commentLanguage = "en";
+        public String cid, text, rootCommentId = "0", commentLanguage = "en", awemeId;
         public Author user;
         public int createTime = 1_700_000_000, diggCount, replyCount, stickPosition;
         public long replyCommentTotal;
@@ -231,6 +237,71 @@ public class CommentExportTest {
         assertEquals(4, CommentExport.count(Arrays.asList(parent, opened, second, other)));
     }
 
+    @Test public void onlyThreadsShortOfTikToksCountAreLoaded() {
+        Comment shortThread = new Comment("10", "top", "a", "A");
+        shortThread.replyCommentTotal = 5;
+        shortThread.replyComments.add(new Comment("11", "preview", "b", "B"));
+        Comment whole = new Comment("20", "whole", "c", "C");
+        whole.replyCount = 1;
+        whole.replyComments.add(new Comment("21", "the only reply", "d", "D"));
+        Comment none = new Comment("30", "no replies", "e", "E");
+        // A reply TikTok counts replies under is still part of its parent's thread.
+        Comment reply = new Comment("12", "reply", "f", "F");
+        reply.rootCommentId = "10";
+        reply.replyCount = 4;
+
+        List<ReplyPages.Missing> missing = CommentExport.missingReplies(
+                CommentExport.collect(Arrays.asList(shortThread, whole, none, reply)));
+
+        assertEquals(1, missing.size());
+        assertEquals("10", missing.get(0).threadId);
+        assertEquals(5, missing.get(0).expected);
+        assertEquals(new java.util.HashSet<>(Arrays.asList("11", "12")), missing.get(0).known);
+    }
+
+    @Test public void fetchedRepliesLandAfterTheirThreadOnceEach() {
+        Comment first = new Comment("10", "top", "a", "A");
+        first.replyComments.add(new Comment("11", "preview", "b", "B"));
+        Comment second = new Comment("20", "second", "c", "C");
+        Comment third = new Comment("30", "third", "d", "D");
+        List<CommentExport.Row> rows = CommentExport.collect(Arrays.asList(first, second, third));
+        Map<String, List<Object>> fetched = new LinkedHashMap<>();
+        // The page brings the preview again, and a reply whose model doesn't name its parent.
+        fetched.put("10", Arrays.asList(new Comment("11", "preview", "b", "B"), new Comment("12", "paged", "e", "E")));
+        fetched.put("30", Collections.singletonList(new Comment("31", "paged too", "f", "F")));
+
+        List<CommentExport.Row> merged = CommentExport.merge(rows, fetched);
+
+        List<String> order = new ArrayList<>();
+        for (CommentExport.Row row : merged) order.add(row.id + "<" + row.parentId);
+        assertEquals(Arrays.asList("10<", "11<10", "12<10", "20<", "30<", "31<30"), order);
+        // The sheet's own rows are left as they were.
+        assertEquals(4, rows.size());
+        assertTrue(CommentExport.merge(rows, Collections.emptyMap()) == rows);
+    }
+
+    @Test public void theVideoIsTheFirstCommentThatNamesOne() {
+        Comment unnamed = new Comment("1", "one", "a", "A");
+        Comment zero = new Comment("2", "two", "b", "B");
+        zero.awemeId = "0";
+        Comment named = new Comment("3", "three", "c", "C");
+        named.awemeId = "7300000000000000001";
+        assertEquals("7300000000000000001", CommentExport.itemIdOf(Arrays.asList(unnamed, zero, named)));
+        assertNull(CommentExport.itemIdOf(Arrays.asList(unnamed, zero)));
+        assertNull(CommentExport.itemIdOf(null));
+    }
+
+    @Test public void aJsonSaysWhetherEveryReplyThreadLoaded() throws Exception {
+        List<CommentExport.Row> rows = Arrays.asList(row("1", "", "top"), row("2", "1", "reply"));
+        JSONObject whole = new JSONObject(CommentExport.toJson(rows, "2026-11-14T00:00:00Z"));
+        assertTrue(whole.getBoolean("replies_complete"));
+        assertTrue(whole.getString("note"), whole.getString("note").contains("Every reply thread was loaded"));
+        JSONObject cut = new JSONObject(CommentExport.toJson(rows, "2026-11-14T00:00:00Z", true, false));
+        assertFalse(cut.getBoolean("replies_complete"));
+        assertTrue(cut.getString("note"), cut.getString("note").contains("Some replies couldn't be loaded"));
+        assertTrue(cut.getString("note"), cut.getString("note").contains("more comments loaded than Hushfeed keeps"));
+    }
+
     @Test public void aModelThatCannotBeReadStillExportsAnEmptyRowRatherThanFailing() {
         List<CommentExport.Row> rows = CommentExport.collect(Arrays.asList(new Object(), null));
         assertEquals(1, rows.size());
@@ -325,6 +396,201 @@ public class CommentExportTest {
             CommentSearch.setQuery("");
             Settings.COMMENT_SEARCH.save(false);
             Settings.COMMENT_EXPORT.save(false);
+        }
+    }
+
+    // ---- loading the replies the sheet didn't show --------------------------------------
+
+    /** TikTok's reply call, holding its one page until the test lets it go. */
+    private static final class HeldPages implements ReplyPages.Fetcher {
+        final CountDownLatch asked = new CountDownLatch(1);
+        final CountDownLatch release = new CountDownLatch(1);
+        final List<String> calls = new CopyOnWriteArrayList<>();
+        final List<Object> items;
+        final boolean more;
+
+        HeldPages(boolean more, Object... items) {
+            this.more = more;
+            this.items = Arrays.asList(items);
+        }
+
+        @Override
+        public ReplyPages.Page page(String threadId, String itemId, long cursor, int count, ReplyPages.Load load)
+                throws InterruptedException {
+            calls.add(threadId + "@" + cursor + "/" + itemId);
+            asked.countDown();
+            if (!release.await(10, TimeUnit.SECONDS)) return null;
+            return new ReplyPages.Page(items, cursor + items.size(), more);
+        }
+    }
+
+    /** A parent showing one of {@code total} replies, under video 7300, and a second comment. */
+    private static Comment[] threadShortOf(long total) {
+        Comment parent = new Comment("1", "top", "a", "A");
+        parent.awemeId = "7300";
+        parent.replyCommentTotal = total;
+        parent.replyComments.add(new Comment("2", "a preview reply", "b", "B"));
+        Comment second = new Comment("3", "second", "c", "C");
+        second.awemeId = "7300";
+        return new Comment[]{parent, second};
+    }
+
+    private static void awaitReplies() throws Exception {
+        long deadline = System.nanoTime() + Duration.ofSeconds(10).toNanos();
+        while (CommentExport.loadingReplies() && System.nanoTime() < deadline) {
+            Thread.sleep(10);
+            shadowOf(Looper.getMainLooper()).idle();
+        }
+        Utils.awaitBackgroundTasksForTests();
+        shadowOf(Looper.getMainLooper()).idle();
+        assertFalse("the replies never finished loading", CommentExport.loadingReplies());
+    }
+
+    /** Whatever a failed test left running ends here, so the next test starts with no load. */
+    private static void endReplies(HeldPages pages) throws Exception {
+        ReplyPages.setFetcherForTests(null);
+        pages.release.countDown();
+        CommentExport.stopLoadingReplies();
+        long deadline = System.nanoTime() + Duration.ofSeconds(10).toNanos();
+        while (CommentExport.loadingReplies() && System.nanoTime() < deadline) {
+            Thread.sleep(10);
+            shadowOf(Looper.getMainLooper()).idle();
+        }
+        CommentSearch.setQuery("");
+        Settings.COMMENT_SEARCH.save(false);
+        Settings.COMMENT_EXPORT.save(false);
+    }
+
+    private static LinearLayout exportRow(Activity activity, Comment... comments) {
+        Utils.setContext(activity);
+        Settings.COMMENT_SEARCH.save(true);
+        Settings.COMMENT_EXPORT.save(true);
+        LinearLayout column = new LinearLayout(activity);
+        column.setOrientation(LinearLayout.VERTICAL);
+        activity.setContentView(column);
+        sheet(activity, column, comments);
+        return (LinearLayout) column.findViewWithTag(CommentSearch.EXPORT_TAG);
+    }
+
+    private static List<String> csvThreads(DocumentExportProvider provider) throws Exception {
+        String written = new String(Files.readAllBytes(provider.file.toPath()), StandardCharsets.UTF_8);
+        List<List<String>> parsed = parseCsv(written.substring(1));
+        List<String> ids = new ArrayList<>();
+        for (List<String> record : parsed.subList(1, parsed.size())) ids.add(record.get(0) + "<" + record.get(1));
+        return ids;
+    }
+
+    @Test public void exportLoadsEveryReplyThreadFirstAndShowsHowFarItGot() throws Exception {
+        HeldPages pages = new HeldPages(false, new Comment("2", "a preview reply", "b", "B"),
+                new Comment("4", "paged reply", "d", "D"), new Comment("5", "paged reply two", "e", "E"));
+        ReplyPages.setFetcherForTests(pages);
+        try (var controller = Robolectric.buildActivity(SettingsWindow.class).setup().visible()) {
+            Activity activity = controller.get();
+            LinearLayout exports = exportRow(activity, threadShortOf(3));
+            TextView count = (TextView) exports.findViewWithTag(CommentSearch.EXPORT_COUNT_TAG);
+            TextView csv = (TextView) exports.getChildAt(1);
+            TextView json = (TextView) exports.getChildAt(2);
+            assertEquals("3 comments and replies loaded", count.getText().toString());
+
+            var provider = DocumentExportProvider.register(activity);
+            csv.performClick();
+            shadowOf(Looper.getMainLooper()).idle();
+            assertTrue("the reply call was never made", pages.asked.await(5, TimeUnit.SECONDS));
+            assertEquals("Loading replies, 0 of 2", count.getText().toString());
+            assertEquals("Stop", csv.getText().toString());
+            assertFalse(json.isEnabled());
+            assertNull("the picker opened before the replies loaded",
+                    shadowOf(activity).getNextStartedActivityForResult());
+            // A second tap while they load says how far it got rather than starting over.
+            json.performClick();
+            shadowOf(Looper.getMainLooper()).idle();
+            assertEquals("Loading replies, 0 of 2", bannerText(activity));
+
+            pages.release.countDown();
+            awaitReplies();
+            assertEquals(Collections.singletonList("1@0/7300"), pages.calls);
+            assertEquals("Export CSV", csv.getText().toString());
+            assertTrue(json.isEnabled());
+            assertEquals("3 comments and replies loaded", count.getText().toString());
+
+            var started = shadowOf(activity).getNextStartedActivityForResult();
+            assertNotNull("the file picker was never opened", started);
+            assertEquals("text/csv", started.intent.getType());
+            answer(activity, started.requestCode, provider);
+            awaitWorker(DocumentOperation.Kind.COMMENT_FILE);
+            // The paged replies follow the one the sheet showed, and the preview isn't written twice.
+            assertEquals(Arrays.asList("1<", "2<1", "4<1", "5<1", "3<"), csvThreads(provider));
+            assertEquals("Exported 2 comments and 3 replies", bannerText(activity));
+        } finally {
+            endReplies(pages);
+        }
+    }
+
+    @Test public void stopEndsTheLoadAndTheFileSaysSomeRepliesAreMissing() throws Exception {
+        HeldPages pages = new HeldPages(true, new Comment("4", "paged reply", "d", "D"));
+        ReplyPages.setFetcherForTests(pages);
+        try (var controller = Robolectric.buildActivity(SettingsWindow.class).setup().visible()) {
+            Activity activity = controller.get();
+            LinearLayout exports = exportRow(activity, threadShortOf(30));
+            TextView csv = (TextView) exports.getChildAt(1);
+            TextView json = (TextView) exports.getChildAt(2);
+
+            var provider = DocumentExportProvider.register(activity);
+            json.performClick();
+            shadowOf(Looper.getMainLooper()).idle();
+            assertTrue("the reply call was never made", pages.asked.await(5, TimeUnit.SECONDS));
+            assertEquals("Stop", json.getText().toString());
+            assertFalse(csv.isEnabled());
+            json.performClick();
+            pages.release.countDown();
+            awaitReplies();
+            // The page in flight is kept, and nothing after it is asked for.
+            assertEquals(1, pages.calls.size());
+            assertEquals("Export JSON", json.getText().toString());
+
+            var started = shadowOf(activity).getNextStartedActivityForResult();
+            assertNotNull("the stop didn't go on to the export", started);
+            assertEquals("application/json", started.intent.getType());
+            answer(activity, started.requestCode, provider);
+            awaitWorker(DocumentOperation.Kind.COMMENT_FILE);
+            JSONObject root = new JSONObject(new String(Files.readAllBytes(provider.file.toPath()), StandardCharsets.UTF_8));
+            assertFalse(root.getBoolean("replies_complete"));
+            assertEquals(4, root.getInt("total"));
+            JSONObject paged = root.getJSONArray("comments").getJSONObject(2);
+            assertEquals("4", paged.getString("cid"));
+            assertEquals("1", paged.getString("parent_cid"));
+            assertEquals("Exported 2 comments and 2 replies\nSome replies weren't loaded, so they aren't in the file.",
+                    bannerText(activity));
+        } finally {
+            endReplies(pages);
+        }
+    }
+
+    @Test public void closingTheSheetStopsTheLoadAndExportsWhatCame() throws Exception {
+        HeldPages pages = new HeldPages(true, new Comment("4", "paged reply", "d", "D"));
+        ReplyPages.setFetcherForTests(pages);
+        try (var controller = Robolectric.buildActivity(SettingsWindow.class).setup().visible()) {
+            Activity activity = controller.get();
+            LinearLayout exports = exportRow(activity, threadShortOf(30));
+            TextView csv = (TextView) exports.getChildAt(1);
+
+            var provider = DocumentExportProvider.register(activity);
+            csv.performClick();
+            shadowOf(Looper.getMainLooper()).idle();
+            assertTrue("the reply call was never made", pages.asked.await(5, TimeUnit.SECONDS));
+            ((ViewGroup) exports.getParent()).removeView(exports);
+            pages.release.countDown();
+            awaitReplies();
+            assertEquals(1, pages.calls.size());
+
+            var started = shadowOf(activity).getNextStartedActivityForResult();
+            assertNotNull("closing the sheet dropped the export", started);
+            answer(activity, started.requestCode, provider);
+            awaitWorker(DocumentOperation.Kind.COMMENT_FILE);
+            assertEquals(Arrays.asList("1<", "2<1", "4<1", "3<"), csvThreads(provider));
+            assertTrue(bannerText(activity), bannerText(activity).endsWith("Some replies weren't loaded, so they aren't in the file."));
+        } finally {
+            endReplies(pages);
         }
     }
 

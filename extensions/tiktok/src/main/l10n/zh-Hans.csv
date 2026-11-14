@@ -190,7 +190,7 @@ Added 1 seen video,添加了 1 个看过的视频
 Added 1 seen video.,添加了 1 个看过的视频.
 Added one older seen video to this account,向此账号添加了一个较早看过的视频
 Added to this account.,添加到此账号.
-"Adds Export CSV and Export JSON buttons under the search box, so Search within comments must be on. They save the comments and replies loaded so far to a file you pick. Open the reply threads you want first.",在搜索框下方添加“导出 CSV”和“导出 JSON”按钮，因此必须打开“在评论中搜索”。这些按钮会把目前已加载的评论和回复保存到你选择的文件中。请先打开需要保存的回复串.
+"Adds Export CSV and Export JSON buttons under the search box, so Search within comments must be on. They save the comments loaded so far to a file you pick, and load every reply under them first.",在搜索框下方添加“导出 CSV”和“导出 JSON”按钮，因此必须打开“在评论中搜索”。这些按钮会先加载已加载评论下的所有回复，再把它们保存到你选择的文件中.
 "Adds Save cover next to Download when you share a video, so you save the cover only when you want it. While this is on, Download saves just the video, even with Save the cover as well on.",分享视频时，在“下载”旁边添加“保存封面”，让你只在需要时保存封面。启用后，“下载”只保存视频，即使“封面也保存下来”已开启.
 "Adds TikTok's translate button next to the comment count. One tap translates every comment, and another shows the originals again.",在评论计数旁边添加 TikTok 的翻译按钮。只需轻按一下即可翻译每条评论，再轻按一下即可再次显示原文.
 "Adds a search box that finds comments already loaded on this video, by words or username. It doesn't search all of TikTok.",添加一个搜索框，可按单词或用户名查找已加载到该视频的评论。它不会搜索整个 TikTok.
@@ -570,6 +570,8 @@ Export comments,导出评论
 Export diagnostic report,导出诊断报告
 Export loaded values,导出加载的值
 Exported %1$d comments and %2$d replies,已导出 %1$d 评论和 %2$d 回复
+"Loading replies, %1$d of %2$d",正在加载回复，%1$d/%2$d
+"Some replies weren't loaded, so they aren't in the file.",有些回复未能加载，因此不在文件中.
 Exported %1$d loaded values,导出的 %1$d 加载值
 Exported 1 loaded value,导出 1 个加载值
 "Fade the buttons, caption and tabs over the video to this level instead of hiding them. 100 leaves them as TikTok draws them. Faded controls still take taps. At 0 the buttons and caption are hidden, and the tabs stay at 10.",将视频上的按钮、标题和选项卡淡入淡出至此级别，而不是隐藏它们。 100 留下它们，因为 TikTok 绘制它们。褪色的控件仍然需要点击。为 0 时，按钮和标题被隐藏，选项卡保持为 10.

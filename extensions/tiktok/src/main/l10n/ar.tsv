@@ -1947,7 +1947,7 @@ Video of photos	فيديو من الصور
 # context: search words for the Log diagnostics switch. Never shown, only matched when someone searches settings. Give the words people type for debug logging in this language, separated by spaces.
 debug debugging logs logging	تصحيح أخطاء تنقيح سجل سجلات تسجيل
 Export comments	تصدير التعليقات
-Adds Export CSV and Export JSON buttons under the search box, so Search within comments must be on. They save the comments and replies loaded so far to a file you pick. Open the reply threads you want first.	يضيف زرّي Export CSV و Export JSON أسفل مربع البحث، لذا يجب أن يكون البحث داخل التعليقات مفعلاً. يحفظان التعليقات والردود المحملة حتى الآن في ملف تختاره. افتح سلاسل الردود التي تريدها أولاً.
+Adds Export CSV and Export JSON buttons under the search box, so Search within comments must be on. They save the comments loaded so far to a file you pick, and load every reply under them first.	يضيف زرّي Export CSV و Export JSON أسفل مربع البحث، لذا يجب أن يكون البحث داخل التعليقات مفعلاً. يحفظان التعليقات المحملة حتى الآن في ملف تختاره، بعد تحميل كل الردود عليها أولاً.
 Export CSV	تصدير CSV
 Export JSON	تصدير JSON
 1 comment or reply loaded	تم تحميل تعليق أو رد واحد
@@ -1958,6 +1958,9 @@ Export JSON	تصدير JSON
 %1$d comments and replies loaded|many	%1$d تعليق ورد محمل
 No comments are loaded to export yet.	لم يتم تحميل أي تعليقات للتصدير بعد.
 Exported %1$d comments and %2$d replies	تم تصدير %1$d تعليق و%2$d رد
+# context: Shown beside the Export buttons while the replies load. The first number is the replies loaded so far, the second how many TikTok says there are
+Loading replies, %1$d of %2$d	جارٍ تحميل الردود، %1$d من %2$d
+Some replies weren't loaded, so they aren't in the file.	لم يتم تحميل بعض الردود، لذا ليست في الملف.
 Comment export failed	فشل تصدير التعليقات
 Some of these notes are in English.	بعض هذه الملاحظات باللغة الإنجليزية.
 More than %1$d comments were loaded, so the rest aren't in the file.	تم تحميل أكثر من %1$d تعليق، لذا البقية ليست في الملف.

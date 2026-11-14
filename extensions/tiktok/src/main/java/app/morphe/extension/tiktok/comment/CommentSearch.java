@@ -394,12 +394,90 @@ public final class CommentSearch {
         button.setClickable(true);
         button.setFocusable(true);
         button.setOnClickListener(view -> {
+            if (CommentExport.stopIfStop(view)) return;
             LoadedComments loaded = LOADED_COMMENTS.get(listView);
             android.app.Activity activity = activityOf(view.getContext());
+            ViewGroup row = view.getParent() instanceof ViewGroup ? (ViewGroup) view.getParent() : null;
             CommentExport.begin(activity, format, loaded == null ? null : loaded.byId.values(),
-                    loaded != null && loaded.truncated);
+                    loaded != null && loaded.truncated,
+                    row == null ? null : new RowLoading(row, button, label, listView));
         });
         return button;
+    }
+
+    /** The count beside the buttons: everything the sheet has loaded, replies included. */
+    private static String exportCount(Context context, LoadedComments loaded) {
+        int total = loaded == null ? 0 : CommentExport.count(loaded.byId.values());
+        return L10n.quantity(context, total, "1 comment or reply loaded", "%1$d comments and replies loaded");
+    }
+
+    /**
+     * The export row while a tap's replies load: the count shows how far it got, the tapped
+     * button is Stop and the other one waits. Closing the sheet stops the load too, and the
+     * export goes ahead with what came.
+     */
+    private static final class RowLoading implements CommentExport.LoadingRow, View.OnAttachStateChangeListener {
+        private final ViewGroup row;
+        private final TextView stop;
+        private final String label;
+        private final ViewGroup listView;
+        private boolean watching;
+
+        RowLoading(ViewGroup row, TextView stop, String label, ViewGroup listView) {
+            this.row = row;
+            this.stop = stop;
+            this.label = label;
+            this.listView = listView;
+        }
+
+        @Override
+        public void showLoading(String progress) {
+            View count = row.findViewWithTag(EXPORT_COUNT_TAG);
+            if (count instanceof TextView) SettingsUi.setTextIfChanged((TextView) count, progress);
+            SettingsUi.setTextIfChanged(stop, L10n.t(stop.getContext(), "Stop"));
+            for (int index = 0; index < row.getChildCount(); index++) {
+                View child = row.getChildAt(index);
+                if (child == stop || child == count) continue;
+                child.setEnabled(false);
+                child.setAlpha(0.4f);
+            }
+            if (!watching) {
+                watching = true;
+                row.addOnAttachStateChangeListener(this);
+            }
+        }
+
+        @Override
+        public void doneLoading() {
+            if (watching) {
+                watching = false;
+                row.removeOnAttachStateChangeListener(this);
+            }
+            Context context = stop.getContext();
+            stop.setText(L10n.t(context, label));
+            for (int index = 0; index < row.getChildCount(); index++) {
+                View child = row.getChildAt(index);
+                child.setEnabled(true);
+                child.setAlpha(1f);
+            }
+            View count = row.findViewWithTag(EXPORT_COUNT_TAG);
+            if (count instanceof TextView) {
+                SettingsUi.setTextIfChanged((TextView) count, exportCount(context, LOADED_COMMENTS.get(listView)));
+            }
+        }
+
+        @Override
+        public boolean isStop(View tapped) {
+            return tapped == stop;
+        }
+
+        @Override
+        public void onViewAttachedToWindow(View view) {}
+
+        @Override
+        public void onViewDetachedFromWindow(View view) {
+            CommentExport.stopLoadingReplies();
+        }
     }
 
     private static android.app.Activity activityOf(Context context) {
@@ -711,6 +789,8 @@ public final class CommentSearch {
             if (exports == null) return;
             View view = exports.findViewWithTag(EXPORT_COUNT_TAG);
             if (!(view instanceof TextView)) return;
+            // While replies load for an export, the line shows how far that got instead.
+            if (CommentExport.loadingReplies()) return;
             // Every row bind lands here, and counting reads each loaded comment through
             // reflection, so it runs when the set changed. A model can also grow its reply
             // previews in place, which no change count sees, so it runs once a second anyway.
@@ -719,10 +799,7 @@ public final class CommentSearch {
             if (changes == countedChanges && now - countedAt < 1000L) return;
             countedChanges = changes;
             countedAt = now;
-            int total = loaded == null ? 0 : CommentExport.count(loaded.byId.values());
-            Context context = view.getContext();
-            SettingsUi.setTextIfChanged((TextView) view, L10n.quantity(context, total,
-                    "1 comment or reply loaded", "%1$d comments and replies loaded"));
+            SettingsUi.setTextIfChanged((TextView) view, exportCount(view.getContext(), loaded));
         }
 
         void updateResult(String wanted, Matches matches) {

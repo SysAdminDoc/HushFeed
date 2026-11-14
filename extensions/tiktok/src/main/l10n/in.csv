@@ -1734,13 +1734,15 @@ Couldn't make the video. Try again.,Video gagal dibuat. Coba lagi.
 Video of photos,Video dari foto
 debug debugging logs logging,debug debugging log catatan
 Export comments,Ekspor komentar
-"Adds Export CSV and Export JSON buttons under the search box, so Search within comments must be on. They save the comments and replies loaded so far to a file you pick. Open the reply threads you want first.","Menambahkan tombol Export CSV dan Export JSON di bawah kotak pencarian, jadi “Cari dalam komentar” harus menyala. Tombol itu menyimpan komentar dan balasan yang sudah dimuat ke file pilihanmu. Buka dulu utas balasan yang kamu mau."
+"Adds Export CSV and Export JSON buttons under the search box, so Search within comments must be on. They save the comments loaded so far to a file you pick, and load every reply under them first.","Menambahkan tombol Export CSV dan Export JSON di bawah kotak pencarian, jadi “Cari dalam komentar” harus menyala. Tombol itu menyimpan komentar yang sudah dimuat ke file pilihanmu, dan lebih dulu memuat semua balasannya."
 Export CSV,Ekspor CSV
 Export JSON,Ekspor JSON
 1 comment or reply loaded,1 komentar atau balasan dimuat
 %1$d comments and replies loaded,%1$d komentar dan balasan dimuat
 No comments are loaded to export yet.,Belum ada komentar yang dimuat untuk diekspor.
 Exported %1$d comments and %2$d replies,%1$d komentar dan %2$d balasan diekspor
+"Loading replies, %1$d of %2$d","Memuat balasan, %1$d dari %2$d"
+"Some replies weren't loaded, so they aren't in the file.","Beberapa balasan tidak termuat, jadi tidak ada di berkas."
 Comment export failed,Ekspor komentar gagal
 Some of these notes are in English.,Sebagian catatan ini dalam bahasa Inggris.
 "More than %1$d comments were loaded, so the rest aren't in the file.","Lebih dari %1$d komentar dimuat, jadi sisanya tidak ada di berkas."

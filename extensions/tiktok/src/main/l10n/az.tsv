@@ -1760,13 +1760,16 @@ Video of photos	Fotolardan video
 # context: search words for the Log diagnostics switch. Never shown, only matched when someone searches settings. Give the words people type for debug logging in this language, separated by spaces.
 debug debugging logs logging	sazlama xəta axtarışı jurnallar loglar
 Export comments	Şərhləri ixrac et
-Adds Export CSV and Export JSON buttons under the search box, so Search within comments must be on. They save the comments and replies loaded so far to a file you pick. Open the reply threads you want first.	Axtarış qutusunun altına Export CSV və Export JSON düymələri əlavə edir, ona görə də “Şərhlər daxilində axtarın” açıq olmalıdır. Onlar indiyə qədər yüklənmiş şərhləri və cavabları seçdiyiniz fayla saxlayır. Əvvəlcə istədiyiniz cavab zəncirlərini açın.
+Adds Export CSV and Export JSON buttons under the search box, so Search within comments must be on. They save the comments loaded so far to a file you pick, and load every reply under them first.	Axtarış qutusunun altına Export CSV və Export JSON düymələri əlavə edir, ona görə də “Şərhlər daxilində axtarın” açıq olmalıdır. Onlar indiyə qədər yüklənmiş şərhləri seçdiyiniz fayla saxlayır və əvvəlcə onların altındakı bütün cavabları yükləyir.
 Export CSV	CSV ixracı
 Export JSON	JSON ixracı
 1 comment or reply loaded	1 şərh və ya cavab yüklənib
 %1$d comments and replies loaded	%1$d şərh və cavab yüklənib
 No comments are loaded to export yet.	İxrac üçün hələ şərh yüklənməyib.
 Exported %1$d comments and %2$d replies	%1$d şərh və %2$d cavab ixrac edildi
+# context: Shown beside the Export buttons while the replies load. The first number is the replies loaded so far, the second how many TikTok says there are
+Loading replies, %1$d of %2$d	Cavablar yüklənir, %1$d / %2$d
+Some replies weren't loaded, so they aren't in the file.	Bəzi cavablar yüklənmədi, ona görə də faylda yoxdur.
 Comment export failed	Şərh ixracı alınmadı
 Some of these notes are in English.	Bu qeydlərin bir hissəsi ingilis dilindədir.
 More than %1$d comments were loaded, so the rest aren't in the file.	%1$d-dən çox şərh yüklənmişdi, ona görə qalanları faylda yoxdur.

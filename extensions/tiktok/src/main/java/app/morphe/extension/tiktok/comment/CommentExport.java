@@ -32,21 +32,27 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 
 /**
- * Saves the comments and replies a comment sheet has loaded to a CSV or JSON file.
+ * Saves the comments a comment sheet has loaded, with their whole reply threads, to a CSV or
+ * JSON file.
  *
- * <p>It reads the comment models TikTok already holds, the same ones the search box counts, so
- * nothing is fetched. TikTok pages comments and replies, and a reply thread that hasn't been
- * opened isn't loaded, so the file holds what the sheet has seen and says how many of each in its
- * header (JSON) and in the notice. The file goes through the same file picker worker the settings
- * backup uses, so a file app that hangs offers "Stop waiting".
+ * <p>It reads the comment models TikTok already holds, the same ones the search box counts. A
+ * reply thread the sheet hasn't opened in full is then paged in through TikTok's own reply call
+ * ({@link ReplyPages}), with the count beside the buttons showing how far it got and the tapped
+ * button turned into Stop. A stop, the cap, a failed page or a build where the call can't be
+ * found still exports what loaded, and the file header (JSON) and the notice say some replies
+ * are missing. The file goes through the same file picker worker the settings backup uses, so a
+ * file app that hangs offers "Stop waiting".
  */
 public final class CommentExport {
     public enum Format {
@@ -154,6 +160,64 @@ public final class CommentExport {
         }
     }
 
+    /**
+     * The top-level comments that hold fewer replies than TikTok counts for them, each with the
+     * replies already there so a page doesn't bring them twice.
+     */
+    static List<ReplyPages.Missing> missingReplies(List<Row> rows) {
+        Map<String, Set<String>> known = new HashMap<>();
+        for (Row row : rows) {
+            if (!row.isReply()) continue;
+            Set<String> replies = known.get(row.parentId);
+            if (replies == null) known.put(row.parentId, replies = new HashSet<>());
+            replies.add(row.id);
+        }
+        List<ReplyPages.Missing> missing = new ArrayList<>();
+        for (Row row : rows) {
+            if (row.isReply() || row.id.isEmpty()) continue;
+            Set<String> replies = known.get(row.id);
+            if (replies == null) replies = Collections.emptySet();
+            if (row.replyCount > replies.size()) missing.add(new ReplyPages.Missing(row.id, row.replyCount, replies));
+        }
+        return missing;
+    }
+
+    /** The video the comments are under, which the reply call asks for with each thread. */
+    static String itemIdOf(Collection<?> loaded) {
+        if (loaded == null) return null;
+        for (Object comment : loaded) {
+            String id = Reflect.string(comment, "getAwemeId", "awemeId");
+            if (id != null && !"0".equals(id)) return id;
+        }
+        return null;
+    }
+
+    /**
+     * {@code rows} with each thread's fetched replies after the last row that thread already
+     * had, skipping any reply the rows hold.
+     */
+    static List<Row> merge(List<Row> rows, Map<String, ? extends List<?>> fetched) {
+        if (fetched == null || fetched.isEmpty()) return rows;
+        Set<String> seen = new HashSet<>();
+        Map<String, Integer> last = new HashMap<>();
+        for (int index = 0; index < rows.size(); index++) {
+            Row row = rows.get(index);
+            if (!row.id.isEmpty()) seen.add(row.id);
+            last.put(row.isReply() ? row.parentId : row.id, index);
+        }
+        String[] ends = new String[rows.size()];
+        for (Map.Entry<String, Integer> end : last.entrySet()) ends[end.getValue()] = end.getKey();
+        List<Row> merged = new ArrayList<>(rows.size());
+        for (int index = 0; index < rows.size(); index++) {
+            merged.add(rows.get(index));
+            String thread = ends[index];
+            List<?> replies = thread == null || thread.isEmpty() ? null : fetched.get(thread);
+            if (replies == null) continue;
+            for (Object reply : replies) addRow(merged, seen, reply, thread);
+        }
+        return merged;
+    }
+
     private static String orEmpty(String value) {
         return value == null ? "" : value;
     }
@@ -226,11 +290,17 @@ public final class CommentExport {
 
     /** The header counts what the file holds, so a reader can tell a partial export from a whole one. */
     static String toJson(List<Row> rows, String exportedAt) throws JSONException {
-        return toJson(rows, exportedAt, false);
+        return toJson(rows, exportedAt, false, true);
     }
 
     /** As above; {@code truncated} says the sheet held more than the search keeps. */
     static String toJson(List<Row> rows, String exportedAt, boolean truncated) throws JSONException {
+        return toJson(rows, exportedAt, truncated, true);
+    }
+
+    /** As above; {@code repliesComplete} says every reply thread was loaded to its end. */
+    static String toJson(List<Row> rows, String exportedAt, boolean truncated, boolean repliesComplete)
+            throws JSONException {
         JSONObject root = new JSONObject();
         int top = topLevel(rows);
         root.put("exported_at", exportedAt);
@@ -238,8 +308,11 @@ public final class CommentExport {
         root.put("reply_count", rows.size() - top);
         root.put("total", rows.size());
         root.put("truncated", truncated);
-        root.put("note", "Comments and replies the sheet had loaded when this was exported. "
-                + "Reply threads that weren't opened aren't included."
+        root.put("replies_complete", repliesComplete);
+        root.put("note", "Comments the sheet had loaded when this was exported, with their replies. "
+                + (repliesComplete ? "Every reply thread was loaded to its end, though TikTok leaves out "
+                        + "replies it hides or that were deleted."
+                        : "Some replies couldn't be loaded, so they aren't included.")
                 + (truncated ? " The sheet had more comments loaded than Hushfeed keeps, so the "
                         + "later ones aren't in this file either." : ""));
         JSONArray comments = new JSONArray();
@@ -274,12 +347,14 @@ public final class CommentExport {
 
     /** The bytes of the file. CSV leads with a byte order mark so a spreadsheet reads emoji right. */
     static byte[] encode(Format format, List<Row> rows, String exportedAt) throws JSONException {
-        return encode(format, rows, exportedAt, false);
+        return encode(format, rows, exportedAt, false, true);
     }
 
-    static byte[] encode(Format format, List<Row> rows, String exportedAt, boolean truncated)
-            throws JSONException {
-        if (format == Format.JSON) return toJson(rows, exportedAt, truncated).getBytes(StandardCharsets.UTF_8);
+    static byte[] encode(Format format, List<Row> rows, String exportedAt, boolean truncated,
+            boolean repliesComplete) throws JSONException {
+        if (format == Format.JSON) {
+            return toJson(rows, exportedAt, truncated, repliesComplete).getBytes(StandardCharsets.UTF_8);
+        }
         byte[] body = toCsv(rows).getBytes(StandardCharsets.UTF_8);
         byte[] out = new byte[body.length + 3];
         out[0] = (byte) 0xEF;
@@ -298,18 +373,50 @@ public final class CommentExport {
     private static Format pendingFormat;
     private static List<Row> pendingRows;
     private static boolean pendingTruncated;
+    private static boolean pendingRepliesComplete;
     private static DocumentOperation fileOperation;
     private static boolean stopOffered;
 
+    /**
+     * The export row a tap came from, so loading replies can show how far it got there. Main
+     * thread only.
+     */
+    interface LoadingRow {
+        /** Shows {@code progress} in place of the count and turns the tapped button into Stop. */
+        void showLoading(String progress);
+
+        /** Puts the count and both buttons back. */
+        void doneLoading();
+
+        /** Whether {@code tapped} is the button showing Stop. */
+        boolean isStop(android.view.View tapped);
+    }
+
+    /** The reply load a tap started, until its picker opens. Main thread only. */
+    private static ReplyPages.Load loading;
+    private static LoadingRow loadingRow;
+    private static int loadingFetched;
+    private static int loadingWanted;
+
     /** From the Export button: takes the rows now, so the file is what the count beside it said. */
     static void begin(Activity activity, Format format, Collection<?> loaded) {
-        begin(activity, format, loaded, false);
+        begin(activity, format, loaded, false, null);
     }
 
     /** {@code truncated}: the sheet stopped keeping comments, so the file and notice say so. */
     static void begin(Activity activity, Format format, Collection<?> loaded, boolean truncated) {
+        begin(activity, format, loaded, truncated, null);
+    }
+
+    /** As above, with {@code row} showing the replies load when there is one. */
+    static void begin(Activity activity, Format format, Collection<?> loaded, boolean truncated,
+            LoadingRow row) {
         if (activity == null) return;
         try {
+            if (loading != null) {
+                notice(activity, progress(activity, loadingFetched, loadingWanted));
+                return;
+            }
             if (DocumentOperation.busy(DocumentOperation.Kind.COMMENT_FILE)) {
                 tellFileOut(activity);
                 return;
@@ -319,9 +426,96 @@ public final class CommentExport {
                 notice(activity, L10n.t(activity, "No comments are loaded to export yet."));
                 return;
             }
+            List<ReplyPages.Missing> missing = missingReplies(rows);
+            if (missing.isEmpty()) {
+                openPicker(activity, format, rows, truncated, true);
+                return;
+            }
+            ReplyPages.Fetcher fetcher = ReplyPages.tiktok();
+            String itemId = itemIdOf(loaded);
+            if (fetcher == null || itemId == null) {
+                if (itemId == null) Logger.printInfo(() -> "No video id on the loaded comments, so replies aren't loaded");
+                openPicker(activity, format, rows, truncated, false);
+                return;
+            }
+            loadReplies(activity, format, rows, truncated, missing, fetcher, itemId, row);
+        } catch (Throwable error) {
+            Logger.printException(() -> "Could not open the picker for a comment export", error);
+            notice(activity, L10n.t(activity, "Couldn't open the file picker to export. Try again."));
+        }
+    }
+
+    private static void loadReplies(Activity activity, Format format, List<Row> rows, boolean truncated,
+            List<ReplyPages.Missing> missing, ReplyPages.Fetcher fetcher, String itemId, LoadingRow row) {
+        ReplyPages.Load[] started = new ReplyPages.Load[1];
+        ReplyPages.Load load = ReplyPages.start(fetcher, itemId, missing, new ReplyPages.Listener() {
+            @Override
+            public void progress(int fetched, int wanted) {
+                if (loading != started[0]) return;
+                loadingFetched = fetched;
+                loadingWanted = wanted;
+                if (row != null) row.showLoading(CommentExport.progress(activity, fetched, wanted));
+            }
+
+            @Override
+            public void finished(ReplyPages.Outcome outcome) {
+                if (loading != started[0]) return;
+                loading = null;
+                loadingRow = null;
+                if (row != null) row.doneLoading();
+                if (activity.isFinishing() || activity.isDestroyed()) return;
+                openPicker(activity, format, merge(rows, outcome.byThread), truncated, outcome.complete);
+            }
+        });
+        if (load == null) {
+            openPicker(activity, format, rows, truncated, false);
+            return;
+        }
+        started[0] = load;
+        loading = load;
+        loadingRow = row;
+        loadingFetched = 0;
+        loadingWanted = ReplyPages.wanted(missing);
+        if (row != null) row.showLoading(progress(activity, 0, loadingWanted));
+    }
+
+    private static String progress(Context context, int fetched, int wanted) {
+        return L10n.f(context, "Loading replies, %1$d of %2$d", fetched, Math.max(fetched, wanted));
+    }
+
+    /** True while replies load for an export. Main thread only. */
+    static boolean loadingReplies() {
+        return loading != null;
+    }
+
+    /**
+     * Ends the replies load after the page in flight, and the export goes ahead with what came.
+     * Main thread only.
+     */
+    static void stopLoadingReplies() {
+        ReplyPages.Load load = loading;
+        if (load != null) load.stop();
+    }
+
+    /** A tap on the button showing Stop: stops the load and returns true. Main thread only. */
+    static boolean stopIfStop(android.view.View tapped) {
+        LoadingRow row = loadingRow;
+        if (loading == null || row == null || !row.isStop(tapped)) return false;
+        stopLoadingReplies();
+        return true;
+    }
+
+    private static void openPicker(Activity activity, Format format, List<Row> rows, boolean truncated,
+            boolean repliesComplete) {
+        try {
+            if (DocumentOperation.busy(DocumentOperation.Kind.COMMENT_FILE)) {
+                tellFileOut(activity);
+                return;
+            }
             pendingFormat = format;
             pendingRows = rows;
             pendingTruncated = truncated;
+            pendingRepliesComplete = repliesComplete;
             Request request = new Request();
             Bundle arguments = new Bundle();
             arguments.putString("name", fileName(format));
@@ -330,6 +524,7 @@ public final class CommentExport {
             FragmentManager fragments = activity.getFragmentManager();
             fragments.beginTransaction().add(request, FRAGMENT_TAG).commitAllowingStateLoss();
         } catch (Throwable error) {
+            pendingRows = null;
             Logger.printException(() -> "Could not open the picker for a comment export", error);
             notice(activity, L10n.t(activity, "Couldn't open the file picker to export. Try again."));
         }
@@ -380,6 +575,7 @@ public final class CommentExport {
             Format format = pendingFormat;
             List<Row> rows = pendingRows;
             boolean truncated = pendingTruncated;
+            boolean repliesComplete = pendingRepliesComplete;
             pendingRows = null;
             if (uri == null || activity == null) return;
             if (format == null || rows == null) {
@@ -388,7 +584,7 @@ public final class CommentExport {
                 notice(activity, L10n.t(activity, "Couldn't open the file picker to export. Try again."));
                 return;
             }
-            write(activity.getApplicationContext(), activity, uri, format, rows, truncated);
+            write(activity.getApplicationContext(), activity, uri, format, rows, truncated, repliesComplete);
         }
 
         private void leave() {
@@ -398,10 +594,10 @@ public final class CommentExport {
     }
 
     private static void write(Context context, Activity window, Uri uri, Format format, List<Row> rows,
-            boolean truncated) {
+            boolean truncated, boolean repliesComplete) {
         DocumentOperation[] started = new DocumentOperation[1];
         started[0] = DocumentOperation.start(DocumentOperation.Kind.COMMENT_FILE,
-                file -> exportTo(context, window, uri, format, rows, truncated, file),
+                file -> exportTo(context, window, uri, format, rows, truncated, repliesComplete, file),
                 () -> fileOperationChanged(window, started[0]));
         if (started[0] != null) {
             fileOperation = started[0];
@@ -414,11 +610,12 @@ public final class CommentExport {
     }
 
     private static void exportTo(Context context, Activity window, Uri uri, Format format,
-            List<Row> rows, boolean truncated, DocumentOperation file) {
+            List<Row> rows, boolean truncated, boolean repliesComplete, DocumentOperation file) {
         ContentResolver resolver = context.getContentResolver();
         boolean opened = false;
         try {
-            byte[] bytes = encode(format, rows, iso(System.currentTimeMillis() / 1000L), truncated);
+            byte[] bytes = encode(format, rows, iso(System.currentTimeMillis() / 1000L), truncated,
+                    repliesComplete);
             if (!file.publish()) {
                 DocumentOperation.removeUnsaved(resolver, uri, false);
                 return;
@@ -429,9 +626,13 @@ public final class CommentExport {
             }
             file.finish();
             int top = topLevel(rows);
+            // The count has no full stop of its own in any language, so what follows starts a line.
             String exported = L10n.f(context, "Exported %1$d comments and %2$d replies", top, rows.size() - top);
+            if (!repliesComplete) {
+                exported += "\n" + L10n.t(context, "Some replies weren't loaded, so they aren't in the file.");
+            }
             if (truncated) {
-                exported += " " + L10n.f(context, "More than %1$d comments were loaded, so the rest aren't in the file.",
+                exported += "\n" + L10n.f(context, "More than %1$d comments were loaded, so the rest aren't in the file.",
                         CommentSearch.MAX_LOADED_COMMENTS);
             }
             notice(window, exported);

@@ -1760,13 +1760,16 @@ Video of photos	Fotoğraflardan video
 # context: search words for the Log diagnostics switch. Never shown, only matched when someone searches settings. Give the words people type for debug logging in this language, separated by spaces.
 debug debugging logs logging	hata ayıklama günlükler loglar
 Export comments	Yorumları dışa aktar
-Adds Export CSV and Export JSON buttons under the search box, so Search within comments must be on. They save the comments and replies loaded so far to a file you pick. Open the reply threads you want first.	Arama kutusunun altına Export CSV ve Export JSON düğmelerini ekler, bu yüzden “Yorumların içinde ara” açık olmalı. Şimdiye kadar yüklenen yorumları ve yanıtları seçtiğin bir dosyaya kaydederler. Önce istediğin yanıt dizilerini aç.
+Adds Export CSV and Export JSON buttons under the search box, so Search within comments must be on. They save the comments loaded so far to a file you pick, and load every reply under them first.	Arama kutusunun altına Export CSV ve Export JSON düğmelerini ekler, bu yüzden “Yorumların içinde ara” açık olmalı. Şimdiye kadar yüklenen yorumları seçtiğin bir dosyaya kaydederler ve önce altlarındaki tüm yanıtları yüklerler.
 Export CSV	CSV dışa aktar
 Export JSON	JSON dışa aktar
 1 comment or reply loaded	1 yorum veya yanıt yüklendi
 %1$d comments and replies loaded	%1$d yorum ve yanıt yüklendi
 No comments are loaded to export yet.	Dışa aktarılacak yüklenmiş yorum henüz yok.
 Exported %1$d comments and %2$d replies	%1$d yorum ve %2$d yanıt dışa aktarıldı
+# context: Shown beside the Export buttons while the replies load. The first number is the replies loaded so far, the second how many TikTok says there are
+Loading replies, %1$d of %2$d	Yanıtlar yükleniyor, %1$d / %2$d
+Some replies weren't loaded, so they aren't in the file.	Bazı yanıtlar yüklenemedi, bu yüzden dosyada yoklar.
 Comment export failed	Yorumlar dışa aktarılamadı
 Some of these notes are in English.	Bu notların bir kısmı İngilizcedir.
 More than %1$d comments were loaded, so the rest aren't in the file.	%1$d yorumdan fazlası yüklenmişti, kalanlar dosyada yok.

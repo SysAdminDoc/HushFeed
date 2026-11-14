@@ -1898,13 +1898,16 @@ Video of photos	Видео из фото
 # context: search words for the Log diagnostics switch. Never shown, only matched when someone searches settings. Give the words people type for debug logging in this language, separated by spaces.
 debug debugging logs logging	отладка дебаг логи журналы
 Export comments	Экспорт комментариев
-Adds Export CSV and Export JSON buttons under the search box, so Search within comments must be on. They save the comments and replies loaded so far to a file you pick. Open the reply threads you want first.	Добавляет под полем поиска кнопки Export CSV и Export JSON, поэтому «Поиск по комментариям» должен быть включён. Они сохраняют в выбранный вами файл комментарии и ответы, загруженные на данный момент. Сначала откройте нужные ветки ответов.
+Adds Export CSV and Export JSON buttons under the search box, so Search within comments must be on. They save the comments loaded so far to a file you pick, and load every reply under them first.	Добавляет под полем поиска кнопки Export CSV и Export JSON, поэтому «Поиск по комментариям» должен быть включён. Они сохраняют в выбранный вами файл комментарии, загруженные на данный момент, и сначала подгружают все ответы к ним.
 Export CSV	Экспорт CSV
 Export JSON	Экспорт JSON
 1 comment or reply loaded	Загружен 1 комментарий или ответ
 %1$d comments and replies loaded	Загружено комментариев и ответов: %1$d
 No comments are loaded to export yet.	Пока нет загруженных комментариев для экспорта.
 Exported %1$d comments and %2$d replies	Экспортировано комментариев: %1$d, ответов: %2$d
+# context: Shown beside the Export buttons while the replies load. The first number is the replies loaded so far, the second how many TikTok says there are
+Loading replies, %1$d of %2$d	Загрузка ответов: %1$d из %2$d
+Some replies weren't loaded, so they aren't in the file.	Некоторые ответы не загрузились, поэтому их нет в файле.
 Comment export failed	Не удалось экспортировать комментарии
 %1$d comments and replies loaded|one	Загружен %1$d комментарий или ответ
 %1$d comments and replies loaded|few	Загружено %1$d комментария или ответа

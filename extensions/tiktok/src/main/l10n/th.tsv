@@ -1763,13 +1763,16 @@ Video of photos	วิดีโอจากรูปภาพ
 # context: search words for the Log diagnostics switch. Never shown, only matched when someone searches settings. Give the words people type for debug logging in this language, separated by spaces.
 debug debugging logs logging	ดีบัก แก้จุดบกพร่อง บันทึก ล็อก logs log
 Export comments	ส่งออกความคิดเห็น
-Adds Export CSV and Export JSON buttons under the search box, so Search within comments must be on. They save the comments and replies loaded so far to a file you pick. Open the reply threads you want first.	เพิ่มปุ่มส่งออกเป็น CSV และส่งออกเป็น JSON ใต้ช่องค้นหา ดังนั้นต้องเปิด "ค้นหาในความคิดเห็น" ตัวเลือกเหล่านี้จะบันทึกความคิดเห็นและการตอบกลับที่โหลดไว้จนถึงตอนนี้ลงในไฟล์ที่คุณเลือก โปรดเปิดเธรดการตอบกลับที่คุณต้องการก่อน
+Adds Export CSV and Export JSON buttons under the search box, so Search within comments must be on. They save the comments loaded so far to a file you pick, and load every reply under them first.	เพิ่มปุ่มส่งออกเป็น CSV และส่งออกเป็น JSON ใต้ช่องค้นหา ดังนั้นต้องเปิด "ค้นหาในความคิดเห็น" ตัวเลือกเหล่านี้จะโหลดการตอบกลับทั้งหมดของความคิดเห็นที่โหลดไว้จนถึงตอนนี้ก่อน แล้วบันทึกลงในไฟล์ที่คุณเลือก
 Export CSV	ส่งออกเป็น CSV
 Export JSON	ส่งออกเป็น JSON
 1 comment or reply loaded	โหลดแล้ว 1 ความคิดเห็นหรือการตอบกลับ
 %1$d comments and replies loaded	โหลดแล้ว %1$d ความคิดเห็นและการตอบกลับ
 No comments are loaded to export yet.	ยังไม่มีความคิดเห็นที่โหลดไว้เพื่อส่งออก
 Exported %1$d comments and %2$d replies	ส่งออกแล้ว %1$d ความคิดเห็นและ %2$d การตอบกลับ
+# context: Shown beside the Export buttons while the replies load. The first number is the replies loaded so far, the second how many TikTok says there are
+Loading replies, %1$d of %2$d	กำลังโหลดการตอบกลับ %1$d จาก %2$d
+Some replies weren't loaded, so they aren't in the file.	การตอบกลับบางส่วนโหลดไม่สำเร็จ จึงไม่อยู่ในไฟล์
 Comment export failed	ส่งออกความคิดเห็นไม่สำเร็จ
 Some of these notes are in English.	บางส่วนของบันทึกเหล่านี้เป็นภาษาอังกฤษ
 More than %1$d comments were loaded, so the rest aren't in the file.	โหลดความคิดเห็นมากกว่า %1$d รายการ ส่วนที่เหลือจึงไม่รวมอยู่ในไฟล์

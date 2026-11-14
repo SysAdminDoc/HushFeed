@@ -1760,13 +1760,16 @@ Video of photos	Vídeo de fotos
 # context: search words for the Log diagnostics switch. Never shown, only matched when someone searches settings. Give the words people type for debug logging in this language, separated by spaces.
 debug debugging logs logging	depurar depuración registros logs
 Export comments	Exportar comentarios
-Adds Export CSV and Export JSON buttons under the search box, so Search within comments must be on. They save the comments and replies loaded so far to a file you pick. Open the reply threads you want first.	Añade los botones Export CSV y Export JSON bajo el cuadro de búsqueda, así que Buscar en los comentarios debe estar activado. Guardan en un archivo que elijas los comentarios y respuestas cargados hasta ahora. Abre antes los hilos de respuestas que quieras.
+Adds Export CSV and Export JSON buttons under the search box, so Search within comments must be on. They save the comments loaded so far to a file you pick, and load every reply under them first.	Añade los botones Export CSV y Export JSON bajo el cuadro de búsqueda, así que Buscar en los comentarios debe estar activado. Guardan en un archivo que elijas los comentarios cargados hasta ahora, y antes cargan todas sus respuestas.
 Export CSV	Exportar CSV
 Export JSON	Exportar JSON
 1 comment or reply loaded	1 comentario o respuesta cargado
 %1$d comments and replies loaded	%1$d comentarios y respuestas cargados
 No comments are loaded to export yet.	Aún no hay comentarios cargados para exportar.
 Exported %1$d comments and %2$d replies	Se exportaron %1$d comentarios y %2$d respuestas
+# context: Shown beside the Export buttons while the replies load. The first number is the replies loaded so far, the second how many TikTok says there are
+Loading replies, %1$d of %2$d	Cargando respuestas, %1$d de %2$d
+Some replies weren't loaded, so they aren't in the file.	Algunas respuestas no se cargaron, así que no están en el archivo.
 Comment export failed	No se pudo exportar los comentarios
 Some of these notes are in English.	Algunas de estas notas están en inglés.
 More than %1$d comments were loaded, so the rest aren't in the file.	Había más de %1$d comentarios cargados, así que el resto no está en el archivo.

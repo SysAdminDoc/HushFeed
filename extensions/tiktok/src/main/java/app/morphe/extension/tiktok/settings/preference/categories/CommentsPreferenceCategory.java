@@ -171,9 +171,8 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
                     context,
                     "Export comments",
                     "Adds Export CSV and Export JSON buttons under the search box, so Search "
-                            + "within comments must be on. They save the comments and replies "
-                            + "loaded so far to a file you pick. Open the reply threads you "
-                            + "want first.",
+                            + "within comments must be on. They save the comments loaded so far "
+                            + "to a file you pick, and load every reply under them first.",
                     Settings.COMMENT_EXPORT
             ));
             addPreference(new TogglePreference(

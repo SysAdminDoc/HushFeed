@@ -190,7 +190,7 @@ Added 1 seen video.,Đã thêm 1 video đã xem.
 Added one older seen video to this account,Đã thêm 1 video đã xem cũ hơn vào tài khoản này
 Added to this account.,Đã thêm vào tài khoản này.
 "Adds (unsent) after the text of a message that was kept, so you can tell it apart from the rest.",Thêm nhãn (đã thu hồi) vào sau văn bản của tin nhắn được giữ lại để bạn dễ dàng phân biệt với các tin nhắn khác.
-"Adds Export CSV and Export JSON buttons under the search box, so Search within comments must be on. They save the comments and replies loaded so far to a file you pick. Open the reply threads you want first.",Thêm các nút Xuất CSV và Xuất JSON dưới ô tìm kiếm (yêu cầu tính năng Tìm kiếm trong bình luận phải được bật). Các nút này lưu các bình luận và phản hồi đã tải vào tệp bạn chọn. Hãy mở chuỗi phản hồi bạn muốn trước.
+"Adds Export CSV and Export JSON buttons under the search box, so Search within comments must be on. They save the comments loaded so far to a file you pick, and load every reply under them first.","Thêm các nút Xuất CSV và Xuất JSON dưới ô tìm kiếm (yêu cầu tính năng Tìm kiếm trong bình luận phải được bật). Các nút này tải hết phản hồi của các bình luận đã tải, rồi lưu chúng vào tệp bạn chọn."
 "Adds Save cover next to Download when you share a video, so you save the cover only when you want it. While this is on, Download saves just the video, even with Save the cover as well on.","Thêm nút Lưu ảnh bìa cạnh nút Tải xuống khi bạn chia sẻ video, giúp bạn chỉ lưu ảnh bìa khi muốn. Khi bật tính năng này, nút Tải xuống sẽ chỉ lưu video, ngay cả khi Cũng lưu ảnh bìa đang bật."
 "Adds TikTok's translate button next to the comment count. One tap translates every comment, and another shows the originals again.",Thêm nút dịch của TikTok cạnh số lượng bình luận. Chạm một lần để dịch mọi bình luận và chạm lần nữa để hiển thị lại bản gốc.
 "Adds a search box that finds comments already loaded on this video, by words or username. It doesn't search all of TikTok.",Thêm hộp tìm kiếm giúp tìm các bình luận đã được tải trên video này theo từ khóa hoặc tên người dùng. Tính năng này không tìm kiếm trên toàn bộ TikTok.
@@ -600,6 +600,8 @@ Export loaded values,Xuất các giá trị đã tải
 Export may be incomplete. The recordings are kept.,Có thể xuất chưa đủ. Bản ghi hình vẫn được giữ.
 Export recording files,Xuất tệp ghi hình
 Exported %1$d comments and %2$d replies,Đã xuất %1$d bình luận và %2$d phản hồi
+"Loading replies, %1$d of %2$d","Đang tải phản hồi, %1$d/%2$d"
+"Some replies weren't loaded, so they aren't in the file.",Một số phản hồi không tải được nên không có trong tệp.
 Exported %1$d loaded values,Đã xuất %1$d giá trị đã tải
 Exported 1 loaded value,Đã xuất 1 giá trị đã tải
 Extra bold,Rất đậm

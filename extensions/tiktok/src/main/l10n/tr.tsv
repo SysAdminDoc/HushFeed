@@ -1836,7 +1836,7 @@ A LIVE you swipe to comes back with its chat, gifts and buttons showing. This ke
 Dark LIVE panels in dark mode	Karanlık modda koyu LIVE panelleri
 With TikTok in dark mode, a LIVE room still opens its share menu, fan club and other panels in light colors. This opens them dark.	TikTok karanlık moddayken bile bir LIVE odası paylaşım menüsünü, hayran kulübünü ve diğer panelleri açık renklerle açar. Bu ayar onları koyu açar.
 Keep watching in a small window	Küçük bir pencerede izlemeye devam et
-When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with a button to pause it. Works in the feed and on videos you open from a profile, search or a sound. Needs Android 8 or later.	Bir video oynarken TikTok'tan çıktığınızda, video diğer uygulamalarınızın üzerinde küçük bir pencerede oynamaya devam eder ve duraklatmak için bir düğme bulunur. Akışta ve bir profilden, aramadan veya bir sesten açtığınız videolarda çalışır. Android 8 veya üstü gerekir.
+When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with buttons to pause it and to go to the previous or next video. Works in the feed and on videos you open from a profile, search or a sound. Needs Android 8 or later.	Bir video oynarken TikTok'tan çıktığınızda, video diğer uygulamalarınızın üzerinde küçük bir pencerede oynamaya devam eder ve duraklatmak, önceki veya sonraki videoya geçmek için düğmeler bulunur. Akışta ve bir profilden, aramadan veya bir sesten açtığınız videolarda çalışır. Android 8 veya üstü gerekir.
 Play	Oynat
 Pause	Duraklat
 Posting	Paylaşım
@@ -2843,3 +2843,7 @@ Cover the whole window without cropping anything. The video gets a little taller
 Sort loaded videos on Favorites grids	Favoriler ızgaralarında yüklenen videoları sırala
 Show the country and date under the caption	Ülkeyi ve tarihi açıklamanın altında göster
 Moves the country and the post date off the creator's row onto a line of their own below the caption.	Ülkeyi ve paylaşım tarihini içerik üreticisinin satırından alıp açıklamanın altındaki ayrı bir satıra taşır.
+# context: picture-in-picture window button that moves TikTok's feed
+Previous video	Önceki video
+# context: picture-in-picture window button that moves TikTok's feed
+Next video	Sonraki video

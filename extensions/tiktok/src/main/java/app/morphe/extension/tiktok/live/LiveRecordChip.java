@@ -265,6 +265,7 @@ public final class LiveRecordChip {
                     removeChip();
                     clearScreen = false;
                     CLEAR_ROOM_STATES.clear();
+                    LivePipRecord.forget(destroyed);
                     page = new WeakReference<>(null);
                     host = new WeakReference<>(null);
                 }
@@ -473,6 +474,7 @@ public final class LiveRecordChip {
     }
 
     private static void refresh() {
+        LivePipRecord.update(host.get());
         TextView view = chip;
         if (view == null) return;
         view.setVisibility(hidesChip(recorder == null ? null : recorder.target(), clearScreen)
@@ -613,6 +615,40 @@ public final class LiveRecordChip {
                 Utils.showToastShort(L10n.t("The recording couldn't be saved. Try again."));
             }
         }
+    }
+
+    /** The LIVE room's activity, the one TikTok's picture-in-picture window belongs to. */
+    static Activity hostActivity() {
+        return host.get();
+    }
+
+    /** Which Record button TikTok's own picture-in-picture window shows (#413). */
+    static int pipButtonState() {
+        return pipButtonState(enabled(), LiveRecordSource.screen(), saving,
+                recorder != null && recorder.recording());
+    }
+
+    static int pipButtonState(boolean enabled, boolean screen, boolean saving, boolean recording) {
+        if (!enabled || screen) return LivePipRecord.HIDDEN;
+        if (saving) return LivePipRecord.SAVING;
+        return recording ? LivePipRecord.STOP : LivePipRecord.RECORD;
+    }
+
+    /**
+     * The window's Record button: it records the LIVE playing in the window, which the
+     * once-a-second check follows too, and its Stop works like the chip's.
+     */
+    static void onPipButton() {
+        try {
+            Activity activity = host.get();
+            if (!saving && (recorder == null || !recorder.recording()) && nativePip(activity)) {
+                Object playing = currentPipPage(activity);
+                if (playing != null) follow(playing);
+            }
+        } catch (Throwable failure) {
+            Logger.printException(() -> "Could not find the LIVE in the window", failure);
+        }
+        onChipTap();
     }
 
     /** Stops a running recording so it's saved; false when none is running. */

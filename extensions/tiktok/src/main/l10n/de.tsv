@@ -1839,7 +1839,7 @@ A LIVE you swipe to comes back with its chat, gifts and buttons showing. This ke
 Dark LIVE panels in dark mode	Dunkle LIVE-Fenster im Dunkelmodus
 With TikTok in dark mode, a LIVE room still opens its share menu, fan club and other panels in light colors. This opens them dark.	Auch im Dunkelmodus öffnet ein LIVE-Raum sein Teilen-Menü, den Fanclub und andere Fenster in hellen Farben. Damit öffnen sie sich dunkel.
 Keep watching in a small window	In einem kleinen Fenster weiterschauen
-When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with a button to pause it. Works in the feed and on videos you open from a profile, search or a sound. Needs Android 8 or later.	Wenn du TikTok verlässt, während ein Video läuft, läuft es in einem kleinen Fenster über deinen anderen Apps weiter, mit einer Taste zum Pausieren. Funktioniert im Feed und bei Videos, die du über ein Profil, die Suche oder einen Sound öffnest. Erfordert Android 8 oder neuer.
+When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with buttons to pause it and to go to the previous or next video. Works in the feed and on videos you open from a profile, search or a sound. Needs Android 8 or later.	Wenn du TikTok verlässt, während ein Video läuft, läuft es in einem kleinen Fenster über deinen anderen Apps weiter, mit Tasten zum Pausieren und zum Wechseln zum vorherigen oder nächsten Video. Funktioniert im Feed und bei Videos, die du über ein Profil, die Suche oder einen Sound öffnest. Erfordert Android 8 oder neuer.
 Play	Abspielen
 Pause	Pausieren
 Posting	Posten
@@ -2846,3 +2846,7 @@ Cover the whole window without cropping anything. The video gets a little taller
 Sort loaded videos on Favorites grids	Geladene Videos in Favoriten-Rastern sortieren
 Show the country and date under the caption	Land und Datum unter der Beschreibung anzeigen
 Moves the country and the post date off the creator's row onto a line of their own below the caption.	Verschiebt das Land und das Veröffentlichungsdatum aus der Zeile des Creators in eine eigene Zeile unter der Beschreibung.
+# context: picture-in-picture window button that moves TikTok's feed
+Previous video	Vorheriges Video
+# context: picture-in-picture window button that moves TikTok's feed
+Next video	Nächstes Video

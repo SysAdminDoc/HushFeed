@@ -346,7 +346,8 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
         if (SettingsStatus.pictureInPictureEnabled) {
             addPreference(new TogglePreference(context, "Keep watching in a small window",
                     "When you leave TikTok while a video plays, it keeps playing in a small window "
-                            + "over your other apps, with a button to pause it. Works in the feed and "
+                            + "over your other apps, with buttons to pause it and to go to the previous "
+                            + "or next video. Works in the feed and "
                             + "on videos you open from a profile, search or a sound. Needs Android 8 "
                             + "or later.",
                     Settings.PICTURE_IN_PICTURE));

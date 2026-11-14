@@ -6,8 +6,10 @@ import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.iface.ClassDef
+import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -72,6 +74,47 @@ class LiveRecordAnchorsTest {
                 user = user.superclass?.let { byType[it] }
             }
             assertTrue("${apk.name}: the owner's handle field", found)
+        }
+    }
+
+    /**
+     * #413: the Record button joins TikTok's own LIVE picture-in-picture buttons. Each declared
+     * build has one room page method that builds them, and its one setActions call takes the
+     * list the method made itself and ends up on the activity's window.
+     */
+    @Test
+    fun `each declared build sets its LIVE window buttons once from a list it made`() {
+        Fixtures.forEachDeclared { apk ->
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            val classes = container.dexEntryNames.asSequence()
+                .flatMap { container.getEntry(it)!!.dexFile.classes.asSequence() }.toList()
+            val taken = classes.flatMap { cls ->
+                cls.methods.filter { it.implementation != null && LivePipActionsFingerprint.takes(it, cls) }
+            }
+            assertEquals("${apk.name}: ${taken.map { "${it.definingClass}->${it.name}" }}", 1, taken.size)
+            val method = taken.single()
+            assertEquals(LIVE_PLAY_FRAGMENT, method.definingClass)
+
+            val instructions = method.implementation!!.instructions.toList()
+            val (index, list) = livePipActionsCall(method)
+            val made = instructions.withIndex().filter { (_, it) ->
+                it.opcode == Opcode.NEW_INSTANCE &&
+                    ((it as ReferenceInstruction).reference as TypeReference).type == "Ljava/util/ArrayList;"
+            }
+            assertEquals("${apk.name}: one list made", 1, made.size)
+            assertTrue("${apk.name}: the list is made before it's set", made.single().index < index)
+            assertEquals(
+                "${apk.name}: setActions takes the list the method made",
+                (made.single().value as OneRegisterInstruction).registerA,
+                list,
+            )
+            assertTrue(
+                "${apk.name}: the buttons go on the activity's window",
+                instructions.drop(index + 1).any {
+                    val call = (it as? ReferenceInstruction)?.reference as? MethodReference
+                    call?.name == "setPictureInPictureParams"
+                },
+            )
         }
     }
 }

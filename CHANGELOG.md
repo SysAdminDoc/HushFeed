@@ -25,6 +25,7 @@ Every Hushfeed release, newest first.
 * Favorites grids get their own order. `Sort loaded videos on Favorites grids` starts at `Same as profile grids`, and the sort button on a Favorites grid now changes only that order, so Liked and your profile keep theirs. It sits right under the Liked row (#180).
 * `Show the country and date under the caption`, next to `Show the country as a flag`, puts the creator's country and the post date on a line of their own right below the caption, so the row with the name stays short. The line uses the same small print as the date, exact times and the saved mark included. Turn it off and both go back where they were (#410).
 * `Glass lens on the current tab` works on any bottom bar now, not just the glass one. Turn it on with whatever bar style you use, TikTok's own included, and the bubble sits behind your tab. `Slide across the tabs` and `Haptics on the tabs` come along with it. On a white bar the lens turns a soft gray so you can still see it, and TikTok's own bar color stays underneath (#416).
+* The small window from `Keep watching in a small window` has previous and next buttons on both sides of play and pause, so you can move through the feed without opening TikTok. An arrow dims when there's no video that way. And when `Record LIVEs you watch` is on, TikTok's own small window for a LIVE gets a Record button next to its play and pause. Tap it again to stop, and the recording saves like one started from the room (#413).
 
 ### Bug Fixes
 

@@ -9,11 +9,14 @@ public class VerticalViewPager extends FrameLayout {
     public int scrollState;
     public int advances;
     public boolean hasNext = true;
+    public boolean hasPrevious;
     public Object adapter;
     public VerticalViewPager(Context context) { super(context); }
     public int getCurrentItem() { return current; }
     public Object getAdapter() { return adapter; }
     public int getScrollState() { return scrollState; }
     public void setCurrentItem(int index) { current = index; advances++; }
-    @Override public boolean canScrollVertically(int direction) { return direction == 1 && hasNext; }
+    @Override public boolean canScrollVertically(int direction) {
+        return direction == 1 ? hasNext : direction == -1 && hasPrevious;
+    }
 }

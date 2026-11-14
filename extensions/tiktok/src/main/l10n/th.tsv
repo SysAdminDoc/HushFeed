@@ -1839,7 +1839,7 @@ A LIVE you swipe to comes back with its chat, gifts and buttons showing. This ke
 Dark LIVE panels in dark mode	พาเนล LIVE สีมืดในโหมดมืด
 With TikTok in dark mode, a LIVE room still opens its share menu, fan club and other panels in light colors. This opens them dark.	แม้ TikTok จะอยู่ในโหมดมืด ห้อง LIVE ก็ยังคงเปิดเมนูแชร์ แฟนคลับ และพาเนลอื่นๆ ในธีมสีสว่าง การตั้งค่านี้จะเปิดพาเนลเหล่านั้นเป็นธีมสีมืด
 Keep watching in a small window	ดูต่อในหน้าต่างขนาดเล็ก
-When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with a button to pause it. Works in the feed and on videos you open from a profile, search or a sound. Needs Android 8 or later.	เมื่อคุณออกจาก TikTok ขณะที่วิดีโอกำลังเล่น วิดีโอจะเล่นต่อในหน้าต่างขนาดเล็กทับแอปอื่นๆ ของคุณ โดยมีปุ่มสำหรับหยุดชั่วคราว ใช้งานได้ในฟีดและวิดีโอที่คุณเปิดจากโปรไฟล์ การค้นหา หรือเสียง ต้องใช้ Android 8 ขึ้นไป
+When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with buttons to pause it and to go to the previous or next video. Works in the feed and on videos you open from a profile, search or a sound. Needs Android 8 or later.	เมื่อคุณออกจาก TikTok ขณะที่วิดีโอกำลังเล่น วิดีโอจะเล่นต่อในหน้าต่างขนาดเล็กทับแอปอื่นๆ ของคุณ โดยมีปุ่มสำหรับหยุดชั่วคราวและไปยังวิดีโอก่อนหน้าหรือถัดไป ใช้งานได้ในฟีดและวิดีโอที่คุณเปิดจากโปรไฟล์ การค้นหา หรือเสียง ต้องใช้ Android 8 ขึ้นไป
 Play	เล่น
 Pause	หยุดชั่วคราว
 Posting	การโพสต์
@@ -2846,3 +2846,7 @@ Cover the whole window without cropping anything. The video gets a little taller
 Sort loaded videos on Favorites grids	จัดเรียงวิดีโอที่โหลดแล้วในตารางรายการโปรด
 Show the country and date under the caption	แสดงประเทศและวันที่ใต้คำบรรยาย
 Moves the country and the post date off the creator's row onto a line of their own below the caption.	ย้ายประเทศและวันที่โพสต์ออกจากแถวของครีเอเตอร์ไปไว้ในบรรทัดของตัวเองใต้คำบรรยาย
+# context: picture-in-picture window button that moves TikTok's feed
+Previous video	วิดีโอก่อนหน้า
+# context: picture-in-picture window button that moves TikTok's feed
+Next video	วิดีโอถัดไป

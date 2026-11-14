@@ -2027,7 +2027,7 @@ A LIVE you swipe to comes back with its chat, gifts and buttons showing. This ke
 Dark LIVE panels in dark mode	لوحات LIVE داكنة في الوضع الداكن
 With TikTok in dark mode, a LIVE room still opens its share menu, fan club and other panels in light colors. This opens them dark.	عندما يكون TikTok في الوضع الداكن، لا تزال غرفة LIVE تفتح قائمة المشاركة ونادي المعجبين ولوحات أخرى بألوان فاتحة. هذا يفتحها داكنة.
 Keep watching in a small window	مواصلة المشاهدة في نافذة صغيرة
-When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with a button to pause it. Works in the feed and on videos you open from a profile, search or a sound. Needs Android 8 or later.	عندما تترك TikTok أثناء تشغيل فيديو، يستمر في التشغيل في نافذة صغيرة فوق تطبيقاتك الأخرى، مع زر لإيقافه مؤقتًا. يعمل في الخلاصة وفي الفيديوهات التي تفتحها من ملف شخصي أو بحث أو صوت. يتطلب Android 8 أو أحدث.
+When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with buttons to pause it and to go to the previous or next video. Works in the feed and on videos you open from a profile, search or a sound. Needs Android 8 or later.	عندما تترك TikTok أثناء تشغيل فيديو، يستمر في التشغيل في نافذة صغيرة فوق تطبيقاتك الأخرى، مع أزرار لإيقافه مؤقتًا وللانتقال إلى الفيديو السابق أو التالي. يعمل في الخلاصة وفي الفيديوهات التي تفتحها من ملف شخصي أو بحث أو صوت. يتطلب Android 8 أو أحدث.
 Play	تشغيل
 Pause	إيقاف مؤقت
 Posting	النشر
@@ -3090,3 +3090,7 @@ Cover the whole window without cropping anything. The video gets a little taller
 Sort loaded videos on Favorites grids	رتب الفيديوهات المحملة في شبكات المفضلات
 Show the country and date under the caption	اعرض البلد والتاريخ تحت الوصف
 Moves the country and the post date off the creator's row onto a line of their own below the caption.	ينقل البلد وتاريخ النشر من صف صانع المحتوى إلى سطر خاص بهما أسفل الوصف.
+# context: picture-in-picture window button that moves TikTok's feed
+Previous video	الفيديو السابق
+# context: picture-in-picture window button that moves TikTok's feed
+Next video	الفيديو التالي

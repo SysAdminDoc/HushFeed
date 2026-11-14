@@ -58,6 +58,7 @@ private const val RECORD_EXTENSION = "Lapp/morphe/extension/tiktok/live/LiveReco
 private const val PANEL_THEME = "Lapp/morphe/extension/tiktok/live/LivePanelTheme;"
 private const val QUALITY_LIST_COLORS = "Lapp/morphe/extension/tiktok/live/LiveQualityListColors;"
 private const val AUDIO_ONLY = "Lapp/morphe/extension/tiktok/live/LiveAudioOnly;"
+private const val PIP_RECORD_EXTENSION = "Lapp/morphe/extension/tiktok/live/LivePipRecord;"
 
 /** A LIVE room page, one fragment per room in the room pager, real-named on 47.1.4. */
 internal const val LIVE_PLAY_FRAGMENT = "Lcom/bytedance/android/livesdk/chatroom/ui/LivePlayFragment;"
@@ -77,6 +78,39 @@ internal object LivePlayFragmentResumeFingerprint : Fingerprint(
     returnType = "V",
     parameters = listOf(),
 )
+
+private const val PIP_PARAMS_BUILDER = "Landroid/app/PictureInPictureParams\$Builder;"
+
+/**
+ * Where a LIVE room page sets the buttons of TikTok's own picture-in-picture window (#413): it
+ * builds a list holding its play and pause button, a "media_control" broadcast, and hands it to
+ * the window's params builder. The hook adds the Record button to that list just before.
+ */
+internal object LivePipActionsFingerprint : Fingerprint(
+    definingClass = LIVE_PLAY_FRAGMENT,
+    returnType = "V",
+    strings = listOf("media_control"),
+    filters = listOf(
+        methodCall(
+            opcode = Opcode.INVOKE_VIRTUAL,
+            definingClass = PIP_PARAMS_BUILDER,
+            name = "setActions",
+            parameters = listOf("Ljava/util/List;"),
+        ),
+    ),
+)
+
+/** The one `setActions` call of [method] and the register holding its list. */
+internal fun livePipActionsCall(method: Method): Pair<Int, Int> {
+    val calls = method.implementation?.instructions?.withIndex()?.filter { (_, instruction) ->
+        val reference = (instruction as? ReferenceInstruction)?.reference as? MethodReference
+        instruction.opcode == Opcode.INVOKE_VIRTUAL && reference?.definingClass == PIP_PARAMS_BUILDER &&
+            reference.name == "setActions"
+    }.orEmpty()
+    val call = calls.singleOrNull()
+        ?: throw PatchException("LIVE controls: expected one PiP setActions call, found ${calls.size}")
+    return call.index to (call.value as FiveRegisterInstruction).registerD
+}
 
 /**
  * The one field of [fragment] that holds its room. The recording button reads the room from the
@@ -2492,6 +2526,14 @@ val liveControlsPatch = bytecodePatch(
             0,
             "invoke-static/range {p0 .. p0}, $RECORD_EXTENSION->noteRoomFragment(Ljava/lang/Object;)V",
         )
+        // The same button in TikTok's own picture-in-picture window, next to its play and pause (#413).
+        LivePipActionsFingerprint.method.let { pipActions ->
+            val (setActions, list) = livePipActionsCall(pipActions)
+            pipActions.addInstructionsAtControlFlowLabel(
+                setActions,
+                "invoke-static/range {v$list .. v$list}, $PIP_RECORD_EXTENSION->addTo(Ljava/util/List;)V",
+            )
+        }
 
         // TikTok's LIVE Clear screen is separate from the feed's Clear display. The room's
         // controller changes state for both the menu and swipe gestures. Its constructor also

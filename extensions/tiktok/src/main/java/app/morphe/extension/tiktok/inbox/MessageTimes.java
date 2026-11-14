@@ -67,6 +67,7 @@ public final class MessageTimes {
     private static java.text.DateFormat format;
     private static boolean formatTwentyFour;
     @Nullable private static Locale formatLocale;
+    @Nullable private static Locale formatDefaultLocale;
     @Nullable private static String formatZone;
 
     private MessageTimes() {
@@ -105,20 +106,23 @@ public final class MessageTimes {
     }
 
     /** The time of day for {@code millis}, the way the phone's clock shows it. */
-    @SuppressWarnings("deprecation") // getTimeFormat reads the same field
+    @SuppressWarnings("deprecation") // getTimeFormat's pattern reads the same field
     static String format(Context context, long millis) {
         boolean twentyFour = DateFormat.is24HourFormat(context);
         // The row's language, which TikTok's in-app language sets and the pattern follows. The
-        // process default can stay on the phone's language.
+        // process default can stay on the phone's language, and before Android 9 getTimeFormat
+        // takes the AM and PM words and the digits from it, so both are part of the key.
         Locale locale = context.getResources().getConfiguration().locale;
+        Locale defaultLocale = Locale.getDefault();
         TimeZone zone = TimeZone.getDefault();
         if (format == null || formatTwentyFour != twentyFour || !locale.equals(formatLocale)
-                || !zone.getID().equals(formatZone)) {
+                || !defaultLocale.equals(formatDefaultLocale) || !zone.getID().equals(formatZone)) {
             // The pattern the status bar clock uses, for the language and the 12 or 24 hour setting.
             format = DateFormat.getTimeFormat(context);
             format.setTimeZone(zone);
             formatTwentyFour = twentyFour;
             formatLocale = locale;
+            formatDefaultLocale = defaultLocale;
             formatZone = zone.getID();
         }
         return format.format(new Date(millis));

@@ -206,6 +206,20 @@ public class MessageTimesTest {
     }
 
     @Test
+    @Config(sdk = 26)
+    public void beforeAndroid9TheAmPmWordsFollowThePhonesLanguage() {
+        // Android 8.1 and older build getTimeFormat's pattern from the context but take its AM and
+        // PM words from the process default, so a new phone language under TikTok's own one counts.
+        clock("12");
+        String english = MessageTimes.format(context(), SENT);
+        assertTrue(english, english.contains("PM"));
+
+        Locale.setDefault(Locale.JAPAN);
+        String time = MessageTimes.format(context(), SENT);
+        assertTrue(time, time.contains("午後") && time.contains("4:07") && !time.contains("PM"));
+    }
+
+    @Test
     public void theBubbleIsTheWidestPartInsideAFullWidthLayer() {
         FrameLayout row = row(1000, 200);
         FrameLayout gestures = layer(row, 0, 0, 1000, 200);

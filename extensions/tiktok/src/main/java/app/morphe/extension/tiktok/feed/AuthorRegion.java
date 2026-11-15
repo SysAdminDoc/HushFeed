@@ -210,8 +210,8 @@ public final class AuthorRegion {
             // Resolving the text first keeps the view tree search off the layout path for
             // every video that has nothing to show.
             Object aweme = CurrentVideoAuthor.getAweme();
-            String[] wanted = decoration(aweme);
             boolean line = CaptionLine.wanted();
+            String[] wanted = decoration(aweme, line);
             if (wanted == null && !line) {
                 restore();
                 CaptionLine.clear();
@@ -220,15 +220,16 @@ public final class AuthorRegion {
 
             View content = activity.findViewById(android.R.id.content);
             TextView name = findName(content);
+            if (line && !CaptionLine.show(name, content, lineCountry(aweme))) {
+                // No caption to go under (#410), so the country stays beside the name.
+                wanted = decoration(aweme, false);
+            } else if (!line) {
+                CaptionLine.clear();
+            }
             if (wanted == null) {
                 restore();
             } else {
                 decorate(name, wanted[0], wanted[1]);
-            }
-            if (line) {
-                CaptionLine.show(name, content, lineCountry(aweme));
-            } else {
-                CaptionLine.clear();
             }
         } catch (Throwable ex) {
             Logger.printException(() -> "Could not show the author region", ex);
@@ -703,6 +704,11 @@ public final class AuthorRegion {
      * needs its own patch, or a switch saved before it was left out would still show.
      */
     static String[] decoration(Object aweme) {
+        return decoration(aweme, CaptionLine.wanted());
+    }
+
+    /** As above, with {@code line} saying whether the country goes on the caption's line instead. */
+    static String[] decoration(Object aweme, boolean line) {
         boolean names = SettingsStatus.authorRegionEnabled;
         String handle = names && Settings.SHOW_AUTHOR_HANDLE.get() ? handle(aweme) : null;
         boolean showRegion = names && Settings.SHOW_AUTHOR_REGION.get();
@@ -711,7 +717,7 @@ public final class AuthorRegion {
         boolean wantSeen = names && SettingsStatus.commenterDetailsEnabled && Settings.SHOW_COMMENTER_REGION.get();
         String read = showRegion || wantSeen ? region(aweme) : null;
         // With the line under the caption on, the country goes there instead (#410).
-        String region = showRegion && !CaptionLine.wanted() ? shown(read) : null;
+        String region = showRegion && !line ? shown(read) : null;
         String rate = EngagementRate.forVideo(aweme);
         String tail = region == null ? rate : rate == null ? region : region + SEPARATOR + rate;
         return handle == null && tail == null ? null : new String[]{handle, tail};

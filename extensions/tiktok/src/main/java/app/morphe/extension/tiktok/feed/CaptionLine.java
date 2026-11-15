@@ -76,19 +76,21 @@ public final class CaptionLine {
 
     /**
      * Writes the line under the caption of the cell {@code name} sits in, with {@code country}
-     * (or none) and the row's post time. With no caption to put it under, or nothing to say, no
-     * line shows and the row keeps its post time.
+     * (or none) and the row's post time, and says whether it shows. With no caption to put it
+     * under, or nothing to say, no line shows and the row keeps its post time. A post with no
+     * caption still has the caption's views, with TikTok hiding the block that holds them, and a
+     * line in there would carry the date off screen.
      */
-    static void show(TextView name, View root, String country) {
+    static boolean show(TextView name, View root, String country) {
         if (name == null) {
             hideOthers(null);
-            return;
+            return false;
         }
         TextView postTime = postTimeBeside(name);
         View caption = caption(name, root);
         LinearLayout host = null;
         View holder = caption;
-        if (caption != null) {
+        if (caption != null && shownUpTo(caption, root)) {
             for (ViewParent parent = caption.getParent(); parent instanceof View; parent = parent.getParent()) {
                 if (isColumn(parent)) {
                     host = (LinearLayout) parent;
@@ -103,7 +105,7 @@ public final class CaptionLine {
         if (host == null || text == null) {
             putBack(postTime);
             hideOthers(null);
-            return;
+            return false;
         }
 
         if (date != null && postTime.getText().length() > 0) {
@@ -119,6 +121,18 @@ public final class CaptionLine {
             line.setVisibility(View.VISIBLE);
         }
         hideOthers(line);
+        return true;
+    }
+
+    /** Whether {@code view} and everything above it up to {@code root} is set to show. */
+    private static boolean shownUpTo(View view, View root) {
+        for (View at = view; at != null; ) {
+            if (at.getVisibility() != View.VISIBLE) return false;
+            if (at == root) return true;
+            ViewParent parent = at.getParent();
+            at = parent instanceof View ? (View) parent : null;
+        }
+        return true;
     }
 
     /** Takes every line out and gives the rows their post times back. */
@@ -183,13 +197,26 @@ public final class CaptionLine {
         return date == null ? country : country + AuthorRegion.SEPARATOR + date;
     }
 
-    /** The post time in the name's row, which is how AuthorRegion told the row apart. */
+    /**
+     * The post time in the name's row, which is how AuthorRegion told the row apart. A photo
+     * post's row keeps the name in a group of its own with the Photo label, so the post time is
+     * the first one found going up from the name, never past the name's cell.
+     */
     private static TextView postTimeBeside(TextView name) {
-        ViewParent row = name.getParent();
-        if (!(row instanceof ViewGroup)) return null;
-        View postTime = ((ViewGroup) row).findViewById(AuthorRegion.postTimeId());
-        return postTime instanceof TextView ? (TextView) postTime : null;
+        int id = AuthorRegion.postTimeId();
+        View cell = GestureActions.cellOf(name);
+        ViewParent parent = name.getParent();
+        for (int depth = 0; depth < ROW_DEPTH && parent instanceof ViewGroup; depth++) {
+            View postTime = ((ViewGroup) parent).findViewById(id);
+            if (postTime instanceof TextView) return (TextView) postTime;
+            if (parent == cell) break;
+            parent = parent.getParent();
+        }
+        return null;
     }
+
+    /** How many groups up from the name the post time is looked for. */
+    private static final int ROW_DEPTH = 3;
 
     /**
      * The caption in the name's cell. A video in a detail page with no pager around it has its

@@ -2852,11 +2852,12 @@ Same as Favorites grids	Sevimlilər şəbəkələri ilə eyni
 Hide the summary on LIVE previews	LIVE önizləmələrində xülasəni gizlət
 A LIVE in the feed can show a Summary card that sums up the stream. This keeps it hidden.	Lentdəki LIVE yayımı qısaca izah edən Xülasə kartı göstərə bilər. Bu onu gizli saxlayır.
 Look up a commenter's country	Şərh yazanın ölkəsini öyrənin
-Press and hold a comment to find Show account country in its menu. It asks TikTok where that account is based, private accounts too.	Şərhə basıb saxlayın və menyusunda Hesabın ölkəsini göstərin seçimini tapın. O, TikTok-dan bu hesabın harada olduğunu soruşur, gizli hesablar da daxil olmaqla.
+Press and hold a comment to find Show account country in its menu. It asks TikTok where that account is based, or where its latest videos were posted from.	Şərhə basıb saxlayın və menyusunda Hesabın ölkəsini göstərin seçimini tapın. O, TikTok-dan bu hesabın harada olduğunu, ya da son videolarının haradan paylaşıldığını soruşur.
 Show account country	Hesabın ölkəsini göstərin
 Account based in %1$s	Hesabın ölkəsi: %1$s
 TikTok gives no country for this account	TikTok bu hesab üçün ölkə vermir
 Couldn't get the country. Try again.	Ölkəni öyrənmək alınmadı. Yenidən cəhd edin.
 Account country on profiles	Profillərdə hesabın ölkəsi
-A profile's share sheet gets an Account country button. It asks TikTok where that account is based, private accounts too.	Profilin paylaşma panelinə Hesabın ölkəsi düyməsi əlavə olunur. O, TikTok-dan bu hesabın harada olduğunu soruşur, gizli hesablar da daxil olmaqla.
+A profile's share sheet gets an Account country button. It asks TikTok where that account is based, or where its latest videos were posted from.	Profilin paylaşma panelinə Hesabın ölkəsi düyməsi əlavə olunur. O, TikTok-dan bu hesabın harada olduğunu, ya da son videolarının haradan paylaşıldığını soruşur.
 Account country	Hesabın ölkəsi
+Videos posted from %1$s	Videoların paylaşıldığı ölkə: %1$s

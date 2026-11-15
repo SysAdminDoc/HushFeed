@@ -250,7 +250,7 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
                     context,
                     "Look up a commenter's country",
                     "Press and hold a comment to find Show account country in its menu. It asks "
-                            + "TikTok where that account is based, private accounts too.",
+                            + "TikTok where that account is based, or where its latest videos were posted from.",
                     Settings.COUNTRY_FROM_COMMENT_MENU
             ));
         }

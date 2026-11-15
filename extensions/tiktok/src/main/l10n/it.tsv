@@ -2852,11 +2852,12 @@ Same as Favorites grids	Come le griglie dei Preferiti
 Hide the summary on LIVE previews	Nascondi il riepilogo nelle anteprime LIVE
 A LIVE in the feed can show a Summary card that sums up the stream. This keeps it hidden.	Un LIVE nel feed può mostrare una scheda Riepilogo che riassume la diretta. Questo la tiene nascosta.
 Look up a commenter's country	Cerca il paese di chi commenta
-Press and hold a comment to find Show account country in its menu. It asks TikTok where that account is based, private accounts too.	Tieni premuto un commento per trovare Mostra paese dell'account nel suo menu. Chiede a TikTok dove si trova quell'account, anche se privato.
+Press and hold a comment to find Show account country in its menu. It asks TikTok where that account is based, or where its latest videos were posted from.	Tieni premuto un commento per trovare Mostra paese dell'account nel suo menu. Chiede a TikTok dove si trova quell'account, o da dove sono stati pubblicati i suoi ultimi video.
 Show account country	Mostra paese dell'account
 Account based in %1$s	Paese dell'account: %1$s
 TikTok gives no country for this account	TikTok non indica un paese per questo account
 Couldn't get the country. Try again.	Impossibile ottenere il paese. Riprova.
 Account country on profiles	Paese dell'account nei profili
-A profile's share sheet gets an Account country button. It asks TikTok where that account is based, private accounts too.	Il menu di condivisione di un profilo ottiene un pulsante Paese dell'account. Chiede a TikTok dove si trova quell'account, anche se privato.
+A profile's share sheet gets an Account country button. It asks TikTok where that account is based, or where its latest videos were posted from.	Il menu di condivisione di un profilo ottiene un pulsante Paese dell'account. Chiede a TikTok dove si trova quell'account, o da dove sono stati pubblicati i suoi ultimi video.
 Account country	Paese dell'account
+Videos posted from %1$s	Paese dei video: %1$s

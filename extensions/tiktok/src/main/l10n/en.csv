@@ -162,7 +162,7 @@ A message is already on its way,A message is already on its way
 A name of your own under this tab's icon. Leave it empty to keep TikTok's.,A name of your own under this tab's icon. Leave it empty to keep TikTok's.
 A port is a whole number from 1 to 65535,A port is a whole number from 1 to 65535
 A press on Share under a video copies its link instead of opening the share sheet. Press Share again right after to open the sheet.,A press on Share under a video copies its link instead of opening the share sheet. Press Share again right after to open the sheet.
-"A profile's share sheet gets an Account country button. It asks TikTok where that account is based, private accounts too.","A profile's share sheet gets an Account country button. It asks TikTok where that account is based, private accounts too."
+"A profile's share sheet gets an Account country button. It asks TikTok where that account is based, or where its latest videos were posted from.","A profile's share sheet gets an Account country button. It asks TikTok where that account is based, or where its latest videos were posted from."
 "A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.","A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched."
 A removal is already running,A removal is already running
 "A screen's layout is recorded. Export the diagnostic report to send it, or tap to record another.","A screen's layout is recorded. Export the diagnostic report to send it, or tap to record another."
@@ -1605,7 +1605,7 @@ Preset applied,Preset applied
 Preset doesn't match the gates. Nothing changed.,Preset doesn't match the gates. Nothing changed.
 Preset saved. Turn on overrides to use it.,Preset saved. Turn on overrides to use it.
 Press and hold a comment to find Block this commenter in its menu. Their comments leave the list right away and an undo banner follows.,Press and hold a comment to find Block this commenter in its menu. Their comments leave the list right away and an undo banner follows.
-"Press and hold a comment to find Show account country in its menu. It asks TikTok where that account is based, private accounts too.","Press and hold a comment to find Show account country in its menu. It asks TikTok where that account is based, private accounts too."
+"Press and hold a comment to find Show account country in its menu. It asks TikTok where that account is based, or where its latest videos were posted from.","Press and hold a comment to find Show account country in its menu. It asks TikTok where that account is based, or where its latest videos were posted from."
 Press and hold a profile picture to save the full size original to your photo destination.,Press and hold a profile picture to save the full size original to your photo destination.
 "Press and hold a story to save it. Stories have no save button of their own, and holding one is how TikTok pauses it, so this takes that gesture over.","Press and hold a story to save it. Stories have no save button of their own, and holding one is how TikTok pauses it, so this takes that gesture over."
 Press and hold the Home tab to open these settings. A tap on Home works as before.,Press and hold the Home tab to open these settings. A tap on Home works as before.
@@ -2614,6 +2614,7 @@ Videos,Videos
 "Videos can't be saved to the folder in that file, so your video folder was kept","Videos can't be saved to the folder in that file, so your video folder was kept"
 Videos from %1$s,Videos from %1$s
 Videos in search results show their cover and play when you open them. The feed and the videos you open play as usual.,Videos in search results show their cover and play when you open them. The feed and the videos you open play as usual.
+Videos posted from %1$s,Videos posted from %1$s
 Videos tagged %1$s,Videos tagged %1$s
 Videos with the sound %1$s,Videos with the sound %1$s
 Videos you watch show up here,Videos you watch show up here

@@ -284,7 +284,7 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                     context,
                     "Account country on profiles",
                     "A profile's share sheet gets an Account country button. It asks TikTok where "
-                            + "that account is based, private accounts too.",
+                            + "that account is based, or where its latest videos were posted from.",
                     Settings.COUNTRY_ON_PROFILES
             ));
             addPreference(new TogglePreference(

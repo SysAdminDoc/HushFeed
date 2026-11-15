@@ -13,6 +13,7 @@ import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
@@ -32,9 +33,14 @@ import java.util.concurrent.RejectedExecutionException;
  * Asks TikTok which country an account is based in (#417), from the comment menu's Show account
  * country row and a profile share sheet's Account country button.
  *
- * <p>A comment's account often comes without its country, but the profile reply TikTok's own
- * assistant card reads, {@code /aweme/v1/user/profile/other/}, carries the account's full user
- * record, region included, private accounts too. The request goes out through TikTok's own
+ * <p>A comment's account often comes without its country. The profile reply TikTok's own
+ * assistant card reads, {@code /aweme/v1/user/profile/other/}, is asked first and its
+ * {@code region} or {@code account_region} wins, but on 47.7 that reply leaves both out for
+ * anyone but the viewer (66 user keys and no country on @tiktok, 2026-11-14). So the account's
+ * newest videos from {@code /aweme/v1/aweme/post/} come next, and the country most of them were
+ * posted from is the answer, worded as where the videos were posted from rather than where the
+ * account is based. A private account's videos stay hidden, so it gets no country. The request
+ * goes out through TikTok's own
  * client the way its block action's does: {@code ServiceManager} hands out the
  * {@code IRetrofitService}, whose {@code createNewRetrofit} builds a client for the API host in
  * {@code Api}, and TTNet's {@code INetworkApi} on that client fetches the raw reply, so it is
@@ -49,7 +55,14 @@ public final class AccountCountry {
     private static final String NETWORK_API = "com.bytedance.ttnet.INetworkApi";
     private static final String TYPED_INPUT = "com.bytedance.retrofit2.mime.TypedInput";
     static final String PATH = "/aweme/v1/user/profile/other/";
-    /** The reply size TikTok's own raw GETs allow. A profile reply is a few dozen kilobytes. */
+    /** The account's own videos, newest first, as its profile grid asks for them. */
+    static final String POSTS_PATH = "/aweme/v1/aweme/post/";
+    /** How many of the newest videos are read for where they were posted from. */
+    static final int POSTS = 6;
+    /**
+     * The reply size TikTok's own raw GETs allow. A profile reply is under 10 KB and the post
+     * list about 100 KB a video (496 KB for five on 2026-11-14).
+     */
     private static final int MAX_BODY = 5 * 1024 * 1024;
 
     private static volatile Object cachedApi;
@@ -57,7 +70,11 @@ public final class AccountCountry {
 
     private AccountCountry() {}
 
-    public enum Outcome { FOUND, NONE, FAILED }
+    /**
+     * FOUND is the account's own country from its profile record, POSTED the country most of its
+     * newest videos were posted from, the same one the feed shows next to a creator's name.
+     */
+    public enum Outcome { FOUND, POSTED, NONE, FAILED }
 
     /** What the lookup came back with: a two letter country code when it found one. */
     public static final class Answer {
@@ -93,10 +110,11 @@ public final class AccountCountry {
      * account first, so Show where commenters are from draws it on that account's comments too.
      */
     static String answered(String uid, Answer answer) {
-        if (answer.outcome == Outcome.FOUND) {
+        if (answer.outcome == Outcome.FOUND || answer.outcome == Outcome.POSTED) {
             AuthorRegion.rememberSeen(uid, null, answer.code);
             CommenterDetails.onSettingChanged();
-            return L10n.f("Account based in %1$s", countryName(answer.code));
+            return L10n.f(answer.outcome == Outcome.FOUND ? "Account based in %1$s" : "Videos posted from %1$s",
+                    countryName(answer.code));
         }
         if (answer.outcome == Outcome.NONE) return L10n.t("TikTok gives no country for this account");
         return L10n.t("Couldn't get the country. Try again.");
@@ -116,7 +134,7 @@ public final class AccountCountry {
             Utils.submitOnBackgroundThread(() -> {
                 Answer answer = failed();
                 try {
-                    answer = parse(fetch(uid, secUid));
+                    answer = find(uid, secUid);
                 } catch (UnsupportedOperationException missing) {
                     Logger.printInfo(() -> "Account country lookup unavailable: " + missing.getMessage());
                 } catch (Throwable failure) {
@@ -129,6 +147,70 @@ public final class AccountCountry {
         } catch (RejectedExecutionException failure) {
             Logger.printException(() -> "Account country lookup could not be queued", failure);
             Utils.runOnMainThread(() -> callback.onAnswer(failed()));
+        }
+    }
+
+    /**
+     * The profile record first. TikTok often leaves another account's country out of it, so
+     * then the account's newest videos say where they were posted from.
+     */
+    private static Answer find(String uid, String secUid) throws Exception {
+        Answer account = parse(fetch(PATH, query(uid, secUid)));
+        if (account.outcome == Outcome.FOUND) return account;
+        Map<String, String> posts = query(uid, secUid);
+        posts.put("max_cursor", "0");
+        posts.put("count", String.valueOf(POSTS));
+        return either(account, parsePosts(fetch(POSTS_PATH, posts), uid));
+    }
+
+    /** The profile's country, else the videos' one; no country when either reply had none. */
+    static Answer either(Answer account, Answer posted) {
+        if (account.outcome == Outcome.FOUND) return account;
+        if (posted.outcome == Outcome.POSTED) return posted;
+        if (account.outcome == Outcome.NONE || posted.outcome == Outcome.NONE) return new Answer(Outcome.NONE, null);
+        return failed();
+    }
+
+    /**
+     * Where an account's newest videos were posted from: the country most of them carry, the
+     * newest winning a tie. Videos by anyone else are skipped. No videos, as a private
+     * account's list comes back, is no country; a refused reply is a failure.
+     */
+    static Answer parsePosts(String body, String uid) {
+        if (body == null || body.isEmpty()) return failed();
+        try {
+            JSONObject root = new JSONObject(body);
+            int status = root.optInt("status_code", 0);
+            if (status != 0) {
+                Logger.printInfo(() -> "Account country posts refused with status " + status);
+                return failed();
+            }
+            JSONArray items = root.optJSONArray("aweme_list");
+            Map<String, Integer> counts = new LinkedHashMap<>();
+            String best = null;
+            int bestCount = 0;
+            for (int i = 0; items != null && i < items.length(); i++) {
+                JSONObject item = items.optJSONObject(i);
+                if (item == null) continue;
+                JSONObject author = item.optJSONObject("author");
+                String by = author == null ? null : author.optString("uid", null);
+                if (uid != null && by != null && !by.isEmpty() && !uid.equals(by)) continue;
+                String code = twoLetters(item.optString("region", null));
+                if (code == null) continue;
+                Integer before = counts.get(code);
+                int count = before == null ? 1 : before + 1;
+                counts.put(code, count);
+                if (count > bestCount) {
+                    best = code;
+                    bestCount = count;
+                }
+            }
+            int seen = items == null ? 0 : items.length();
+            Logger.printDebug(() -> "Account country posts: " + seen + " videos, countries " + counts);
+            return best == null ? new Answer(Outcome.NONE, null) : new Answer(Outcome.POSTED, best);
+        } catch (Exception unreadable) {
+            Logger.printInfo(() -> "Account country posts were not readable: " + unreadable.getMessage());
+            return failed();
         }
     }
 
@@ -179,16 +261,20 @@ public final class AccountCountry {
 
     // ---- the request ------------------------------------------------------------------
 
-    private static String fetch(String uid, String secUid) throws Exception {
+    private static Map<String, String> query(String uid, String secUid) {
+        Map<String, String> query = new LinkedHashMap<>();
+        query.put("user_id", uid == null ? "" : uid);
+        if (secUid != null && !secUid.isEmpty()) query.put("sec_user_id", secUid);
+        return query;
+    }
+
+    private static String fetch(String path, Map<String, String> query) throws Exception {
         Object api = api();
         Class<?> networkApi = Class.forName(NETWORK_API);
         Method get = networkApi.getMethod("doGetBytes", boolean.class, int.class, String.class,
                 Map.class, List.class, Object.class);
-        Map<String, String> query = new LinkedHashMap<>();
-        query.put("user_id", uid == null ? "" : uid);
-        if (secUid != null && !secUid.isEmpty()) query.put("sec_user_id", secUid);
         // True asks TikTok's client to add its usual device parameters, as its own raw GETs do.
-        Object call = get.invoke(api, true, MAX_BODY, cachedHost + PATH, query, new ArrayList<>(), null);
+        Object call = get.invoke(api, true, MAX_BODY, cachedHost + path, query, new ArrayList<>(), null);
         if (call == null) throw new UnsupportedOperationException("no call from INetworkApi");
         Method execute = call.getClass().getMethod("execute");
         execute.setAccessible(true);

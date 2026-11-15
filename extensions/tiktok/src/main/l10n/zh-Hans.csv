@@ -2713,11 +2713,12 @@ Same as Favorites grids,与“收藏”网格相同
 Hide the summary on LIVE previews,隐藏 LIVE 预览上的摘要
 A LIVE in the feed can show a Summary card that sums up the stream. This keeps it hidden.,信息流中的 LIVE 可以显示一张概括直播内容的摘要卡片。这会让它保持隐藏.
 Look up a commenter's country,查询评论者的国家/地区
-"Press and hold a comment to find Show account country in its menu. It asks TikTok where that account is based, private accounts too.",按住评论可在其菜单中找到“显示账号国家/地区”。它会向 TikTok 询问该账号所在的位置，私密账号也可以.
+"Press and hold a comment to find Show account country in its menu. It asks TikTok where that account is based, or where its latest videos were posted from.",按住评论可在其菜单中找到“显示账号国家/地区”。它会向 TikTok 询问该账号所在的位置，或其最新视频的发布地.
 Show account country,显示账号国家/地区
 Account based in %1$s,账号所在地：%1$s
 TikTok gives no country for this account,TikTok 未提供该账号的国家/地区
 Couldn't get the country. Try again.,无法获取国家/地区，请重试.
 Account country on profiles,个人资料上的账号国家/地区
-"A profile's share sheet gets an Account country button. It asks TikTok where that account is based, private accounts too.",个人资料的分享面板会多一个“账号国家/地区”按钮。它会向 TikTok 询问该账号所在的位置，私密账号也可以.
+"A profile's share sheet gets an Account country button. It asks TikTok where that account is based, or where its latest videos were posted from.",个人资料的分享面板会多一个“账号国家/地区”按钮。它会向 TikTok 询问该账号所在的位置，或其最新视频的发布地.
 Account country,账号国家/地区
+Videos posted from %1$s,视频发布地：%1$s

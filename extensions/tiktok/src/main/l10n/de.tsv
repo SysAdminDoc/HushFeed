@@ -2855,11 +2855,12 @@ Same as Favorites grids	Wie Favoriten-Raster
 Hide the summary on LIVE previews	Zusammenfassung bei LIVE-Vorschauen ausblenden
 A LIVE in the feed can show a Summary card that sums up the stream. This keeps it hidden.	Ein LIVE im Feed kann eine Zusammenfassungskarte zeigen, die den Stream zusammenfasst. Damit bleibt sie ausgeblendet.
 Look up a commenter's country	Land eines Kommentierenden nachschlagen
-Press and hold a comment to find Show account country in its menu. It asks TikTok where that account is based, private accounts too.	Halte einen Kommentar gedrückt, um „Kontoland anzeigen“ im Menü zu finden. Es fragt TikTok, wo dieses Konto ansässig ist, auch bei privaten Konten.
+Press and hold a comment to find Show account country in its menu. It asks TikTok where that account is based, or where its latest videos were posted from.	Halte einen Kommentar gedrückt, um „Kontoland anzeigen“ im Menü zu finden. Es fragt TikTok, wo dieses Konto ansässig ist oder von wo seine neuesten Videos gepostet wurden.
 Show account country	Kontoland anzeigen
 Account based in %1$s	Kontoland: %1$s
 TikTok gives no country for this account	TikTok nennt für dieses Konto kein Land
 Couldn't get the country. Try again.	Land konnte nicht abgerufen werden. Versuch es erneut.
 Account country on profiles	Kontoland auf Profilen
-A profile's share sheet gets an Account country button. It asks TikTok where that account is based, private accounts too.	Das Teilen-Menü eines Profils bekommt eine Schaltfläche „Kontoland“. Sie fragt TikTok, wo dieses Konto ansässig ist, auch bei privaten Konten.
+A profile's share sheet gets an Account country button. It asks TikTok where that account is based, or where its latest videos were posted from.	Das Teilen-Menü eines Profils bekommt eine Schaltfläche „Kontoland“. Sie fragt TikTok, wo dieses Konto ansässig ist oder von wo seine neuesten Videos gepostet wurden.
 Account country	Kontoland
+Videos posted from %1$s	Herkunft der Videos: %1$s

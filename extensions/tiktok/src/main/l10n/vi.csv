@@ -2713,11 +2713,12 @@ Same as Favorites grids,Giống như lưới Yêu thích
 Hide the summary on LIVE previews,Ẩn bản tóm tắt trên bản xem trước LIVE
 A LIVE in the feed can show a Summary card that sums up the stream. This keeps it hidden.,LIVE trong bảng tin có thể hiện thẻ Tóm tắt về buổi phát. Tùy chọn này giữ nó ẩn đi.
 Look up a commenter's country,Tra quốc gia của người bình luận
-"Press and hold a comment to find Show account country in its menu. It asks TikTok where that account is based, private accounts too.","Nhấn giữ một bình luận để tìm tùy chọn ""Hiện quốc gia của tài khoản"" trong menu. Tùy chọn này hỏi TikTok tài khoản đó ở đâu, kể cả tài khoản riêng tư."
+"Press and hold a comment to find Show account country in its menu. It asks TikTok where that account is based, or where its latest videos were posted from.","Nhấn giữ một bình luận để tìm tùy chọn ""Hiện quốc gia của tài khoản"" trong menu. Tùy chọn này hỏi TikTok tài khoản đó ở đâu, hoặc các video mới nhất của tài khoản đó được đăng từ đâu."
 Show account country,Hiện quốc gia của tài khoản
 Account based in %1$s,Quốc gia của tài khoản: %1$s
 TikTok gives no country for this account,TikTok không cho biết quốc gia của tài khoản này
 Couldn't get the country. Try again.,Không lấy được quốc gia. Hãy thử lại.
 Account country on profiles,Quốc gia của tài khoản trên trang cá nhân
-"A profile's share sheet gets an Account country button. It asks TikTok where that account is based, private accounts too.","Bảng chia sẻ của trang cá nhân có thêm nút ""Quốc gia của tài khoản"". Nút này hỏi TikTok tài khoản đó ở đâu, kể cả tài khoản riêng tư."
+"A profile's share sheet gets an Account country button. It asks TikTok where that account is based, or where its latest videos were posted from.","Bảng chia sẻ của trang cá nhân có thêm nút ""Quốc gia của tài khoản"". Nút này hỏi TikTok tài khoản đó ở đâu, hoặc các video mới nhất của tài khoản đó được đăng từ đâu."
 Account country,Quốc gia của tài khoản
+Videos posted from %1$s,Video được đăng từ %1$s

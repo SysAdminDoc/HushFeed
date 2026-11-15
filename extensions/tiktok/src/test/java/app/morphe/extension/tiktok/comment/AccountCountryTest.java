@@ -57,6 +57,57 @@ public class AccountCountryTest {
         outcome(null, AccountCountry.Outcome.FAILED);
     }
 
+    private static String post(String uid, String region) {
+        return "{\"aweme_id\":\"1\",\"author\":{\"uid\":\"" + uid + "\"},\"region\":\"" + region + "\"}";
+    }
+
+    private static String list(String... posts) {
+        return "{\"status_code\":0,\"aweme_list\":[" + String.join(",", posts) + "]}";
+    }
+
+    private static void posts(String body, AccountCountry.Outcome outcome) {
+        AccountCountry.Answer answer = AccountCountry.parsePosts(body, "200");
+        assertEquals(body, outcome, answer.outcome);
+        assertNull(body, answer.code);
+    }
+
+    @Test public void theNewestVideosSayWhereTheyWerePostedFromTheMostCommonCountryFirst() {
+        AccountCountry.Answer answer = AccountCountry.parsePosts(
+                list(post("200", "DE"), post("200", "PL"), post("200", "pl")), "200");
+        assertEquals(AccountCountry.Outcome.POSTED, answer.outcome);
+        assertEquals("PL", answer.code);
+        assertEquals("a tie goes to the newest", "DE",
+                AccountCountry.parsePosts(list(post("200", "de"), post("200", "PL")), "200").code);
+        assertEquals("someone else's video doesn't count", "DE", AccountCountry.parsePosts(
+                list(post("999", "BR"), post("999", "BR"), post("200", "DE")), "200").code);
+        assertEquals("a video with no country is passed over", "US",
+                AccountCountry.parsePosts(list(post("200", ""), post("200", "US")), "200").code);
+    }
+
+    @Test public void noVideosOrNoCountryIsNoneAndARefusedListIsAFailure() {
+        posts(list(), AccountCountry.Outcome.NONE);
+        posts("{\"status_code\":0,\"aweme_list\":null}", AccountCountry.Outcome.NONE);
+        posts("{\"status_code\":0}", AccountCountry.Outcome.NONE);
+        posts(list(post("200", ""), post("200", "U1")), AccountCountry.Outcome.NONE);
+        posts("{\"status_code\":2053,\"status_msg\":\"Private account\"}", AccountCountry.Outcome.FAILED);
+        posts("<html>blocked</html>", AccountCountry.Outcome.FAILED);
+        posts("", AccountCountry.Outcome.FAILED);
+        posts(null, AccountCountry.Outcome.FAILED);
+    }
+
+    @Test public void theProfilesOwnCountryWinsThenTheVideosThenNoCountry() {
+        AccountCountry.Answer found = new AccountCountry.Answer(AccountCountry.Outcome.FOUND, "US");
+        AccountCountry.Answer posted = new AccountCountry.Answer(AccountCountry.Outcome.POSTED, "DE");
+        AccountCountry.Answer none = new AccountCountry.Answer(AccountCountry.Outcome.NONE, null);
+        AccountCountry.Answer failed = AccountCountry.failed();
+        assertSame(found, AccountCountry.either(found, posted));
+        assertSame(posted, AccountCountry.either(none, posted));
+        assertSame(posted, AccountCountry.either(failed, posted));
+        assertEquals(AccountCountry.Outcome.NONE, AccountCountry.either(none, failed).outcome);
+        assertEquals(AccountCountry.Outcome.NONE, AccountCountry.either(failed, none).outcome);
+        assertEquals(AccountCountry.Outcome.FAILED, AccountCountry.either(failed, failed).outcome);
+    }
+
     @Test public void onlyTwoLettersCount() {
         assertEquals("US", AccountCountry.twoLetters(" us "));
         assertNull(AccountCountry.twoLetters("USA"));
@@ -77,6 +128,9 @@ public class AccountCountryTest {
         assertEquals("Account based in Japan",
                 AccountCountry.answered("200", new AccountCountry.Answer(AccountCountry.Outcome.FOUND, "JP")));
         assertEquals("JP", AuthorRegion.seenRegionByUid("200"));
+        assertEquals("Videos posted from Poland",
+                AccountCountry.answered("400", new AccountCountry.Answer(AccountCountry.Outcome.POSTED, "PL")));
+        assertEquals("PL", AuthorRegion.seenRegionByUid("400"));
         assertEquals("TikTok gives no country for this account",
                 AccountCountry.answered("300", new AccountCountry.Answer(AccountCountry.Outcome.NONE, null)));
         assertEquals("Couldn't get the country. Try again.", AccountCountry.answered("300", AccountCountry.failed()));

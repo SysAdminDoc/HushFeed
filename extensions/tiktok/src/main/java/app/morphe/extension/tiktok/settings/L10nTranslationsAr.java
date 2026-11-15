@@ -15,7 +15,7 @@ final class L10nTranslationsAr {
     }
 
     static Map<String, String> build() {
-        Map<String, String> table = new HashMap<>(5932);
+        Map<String, String> table = new HashMap<>(5934);
         fill0(table);
         fill1(table);
         fill2(table);
@@ -680,8 +680,8 @@ final class L10nTranslationsAr {
                 "المنفذ هو عدد صحيح من 1 إلى 65535");
         table.put("A press on Share under a video copies its link instead of opening the share sheet. Press Share again right after to open the sheet.",
                 "الضغط على «مشاركة» تحت الفيديو ينسخ رابطه بدلاً من فتح نافذة المشاركة. اضغط «مشاركة» مرة أخرى مباشرة بعد ذلك لفتح النافذة.");
-        table.put("A profile's share sheet gets an Account country button. It asks TikTok where that account is based, private accounts too.",
-                "تحصل ورقة المشاركة في الملف الشخصي على زر بلد الحساب. يسأل TikTok عن مكان هذا الحساب، حتى الحسابات الخاصة.");
+        table.put("A profile's share sheet gets an Account country button. It asks TikTok where that account is based, or where its latest videos were posted from.",
+                "تحصل ورقة المشاركة في الملف الشخصي على زر بلد الحساب. يسأل TikTok عن مكان هذا الحساب، أو من أين نُشرت أحدث فيديوهاته.");
     }
 
     private static void fill5(Map<String, String> table) {
@@ -3729,8 +3729,8 @@ final class L10nTranslationsAr {
                 "تم حفظ الإعداد المسبق. تشغيل التجاوزات لاستخدامه.");
         table.put("Press and hold a comment to find Block this commenter in its menu. Their comments leave the list right away and an undo banner follows.",
                 "اضغط مطولاً على تعليق لتجد حظر هذا المعلق في قائمته. تختفي تعليقاته فورًا من القائمة ويظهر بعدها شريط تراجع.");
-        table.put("Press and hold a comment to find Show account country in its menu. It asks TikTok where that account is based, private accounts too.",
-                "اضغط مطولاً على تعليق لتجد إظهار بلد الحساب في قائمته. يسأل TikTok عن مكان هذا الحساب، حتى الحسابات الخاصة.");
+        table.put("Press and hold a comment to find Show account country in its menu. It asks TikTok where that account is based, or where its latest videos were posted from.",
+                "اضغط مطولاً على تعليق لتجد إظهار بلد الحساب في قائمته. يسأل TikTok عن مكان هذا الحساب، أو من أين نُشرت أحدث فيديوهاته.");
         table.put("Press and hold a profile picture to save the full size original to your photo destination.",
                 "اضغط باستمرار على صورة الملف الشخصي لحفظ النسخة الأصلية بحجمها الكامل في وجهة الصور لديك.");
         table.put("Press and hold a story to save it. Stories have no save button of their own, and holding one is how TikTok pauses it, so this takes that gesture over.",
@@ -5921,6 +5921,8 @@ final class L10nTranslationsAr {
                 "فيديوهات من %1$s");
         table.put("Videos in search results show their cover and play when you open them. The feed and the videos you open play as usual.",
                 "تعرض الفيديوهات في نتائج البحث غلافها وتعمل عند فتحها. تعمل الخلاصة والفيديوهات التي تفتحها كالمعتاد.");
+        table.put("Videos posted from %1$s",
+                "الفيديوهات منشورة من %1$s");
         table.put("Videos tagged %1$s",
                 "فيديوهات موسومة بـ %1$s");
         table.put("Videos with the sound %1$s",
@@ -5969,11 +5971,11 @@ final class L10nTranslationsAr {
                 "WebP، تمامًا كما أرسله TikTok");
         table.put("What TikTok gets",
                 "ما يحصل عليه TikTok");
-        table.put("What gets sent each day.",
-                "ما يتم إرساله كل يوم.");
     }
 
     private static void fill48(Map<String, String> table) {
+        table.put("What gets sent each day.",
+                "ما يتم إرساله كل يوم.");
         table.put("What the message says.",
                 "ما تقوله الرسالة.");
         table.put("What's new",
@@ -6092,11 +6094,11 @@ final class L10nTranslationsAr {
                 "تغير حسابك. افتح محرر العدادات مرة أخرى.");
         table.put("Your downloader app isn't installed. Check Downloads.",
                 "تطبيق التنزيل لديك غير مثبت. تحقق من «التنزيلات».");
-        table.put("Your feed",
-                "خلاصتك");
     }
 
     private static void fill49(Map<String, String> table) {
+        table.put("Your feed",
+                "خلاصتك");
         table.put("Your feed. Your rules.",
                 "خلاصتك. قواعدك.");
         table.put("Your filters hid everything TikTok just sent. Most were %1$s.",

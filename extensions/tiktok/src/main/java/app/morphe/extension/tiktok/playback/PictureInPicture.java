@@ -12,6 +12,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.graphics.drawable.Icon;
 import android.os.Build;
@@ -46,7 +47,9 @@ import java.util.List;
  * A video playing in the feed, or in a video opened from a profile, search or a sound, keeps going
  * in a small window when the reader leaves TikTok. TikTok has picture-in-picture for LIVE only. Its
  * feed activity already declares support for it (for LIVE), and the patch declares it for the
- * detail pager too, which takes size changes itself like the feed does.
+ * detail pager too, which takes size changes itself like the feed does. TikTok's LIVE window waits
+ * on a switch of its own that viewers rarely get offered, so this one turns that on as well
+ * ({@link #liveWindowSwitch()}).
  *
  * <p>The patch hands over two moments: leaving (onUserLeaveHint, in the base activity both windows
  * share) and the window opening or closing (ComponentActivity's onPictureInPictureModeChanged).
@@ -72,6 +75,14 @@ public final class PictureInPicture {
 
     /** Android shows three buttons in a phone's window; with room for fewer, only play and pause. */
     static final int ROOM_FOR_ARROWS = 3;
+
+    /**
+     * How wide a window has to be, in dp, to show three buttons whole. Android's are 48dp with a
+     * small gap between, and it cuts off whatever doesn't fit (emulator, Android 16: a tall
+     * video's 110dp window showed previous and pause, and next was gone, #413). Two fit the
+     * smallest window Android opens, 108dp.
+     */
+    static final int THREE_BUTTONS_DP = 160;
 
     /** How often a move's slide is checked for having settled, and how many times at most. */
     private static final long SETTLE_CHECK_MS = 300;
@@ -125,6 +136,59 @@ public final class PictureInPicture {
         return SettingsStatus.pictureInPictureEnabled && Settings.PICTURE_IN_PICTURE.get();
     }
 
+    /** Where the note that Hushfeed turned TikTok's own LIVE window on is kept. */
+    static final String STATE = "hushfeed_picture_in_picture";
+    static final String LIVE_WINDOW_OURS = "live_window_ours";
+
+    /**
+     * What TikTok's own LIVE window switch should hold as a LIVE comes up, or null to leave it
+     * (#413). TikTok opens a small window for a LIVE only with that switch on, and it offers the
+     * switch to viewers in one place, a prompt after buying coins on the web, so a LIVE left with
+     * Keep watching in a small window on closed instead. The switch goes on with this one, and
+     * back off when this one is turned off, only if it was Hushfeed that turned it on. Never throws.
+     */
+    public static Boolean liveWindowSwitch() {
+        if (Build.VERSION.SDK_INT < 26) return null;
+        try {
+            Context context = Utils.getContext();
+            if (context == null) return null;
+            SharedPreferences state = context.getSharedPreferences(STATE, Context.MODE_PRIVATE);
+            boolean ours = state.getBoolean(LIVE_WINDOW_OURS, false);
+            Boolean wanted = liveWindowSwitch(enabled(), ours);
+            if (wanted != null && wanted != ours) state.edit().putBoolean(LIVE_WINDOW_OURS, wanted).apply();
+            return wanted;
+        } catch (RuntimeException failure) {
+            Logger.printException(() -> "Couldn't decide TikTok's LIVE window switch", failure);
+            return null;
+        }
+    }
+
+    /** On with this switch; off when this switch is off and Hushfeed turned it on; else as it is. */
+    static Boolean liveWindowSwitch(boolean on, boolean ours) {
+        if (on) return Boolean.TRUE;
+        return ours ? Boolean.FALSE : null;
+    }
+
+    /**
+     * TikTok's answer to "is this a tablet or foldable?" inside its LIVE window's device check, as
+     * the check should see it (#413). TikTok refuses the LIVE window on large screens, and its
+     * answer counts the largest window it has ever been shown in, so a phone once run in a big
+     * window or split screen stays refused. Non-zero means large. Never throws.
+     */
+    public static int liveWindowLargeScreen(int large) {
+        try {
+            return liveWindowLargeScreen(large != 0, enabled()) ? 1 : 0;
+        } catch (RuntimeException failure) {
+            Logger.printException(() -> "Couldn't decide the LIVE window's screen check", failure);
+            return large;
+        }
+    }
+
+    /** Large only while this switch is off; with it on the window opens on any screen Android allows. */
+    static boolean liveWindowLargeScreen(boolean large, boolean on) {
+        return large && !on;
+    }
+
     /** Called first in the feed windows' shared onUserLeaveHint. */
     public static void onUserLeaveHint(Activity activity) {
         if (Build.VERSION.SDK_INT < 26) return;
@@ -165,9 +229,14 @@ public final class PictureInPicture {
     private static void follow(Activity activity, boolean inWindow) {
         // Only the window this class opened: TikTok's own LIVE window is TikTok's.
         if (activity == null || opened.get() != activity) return;
+        View decor = activity.getWindow().getDecorView();
+        decor.removeOnLayoutChangeListener(RESIZED);
         if (inWindow) {
-            keepAsideWhileUp(activity.getWindow().getDecorView());
+            keepAsideWhileUp(decor);
             listen(activity);
+            // The buttons were picked before Android sized the window; these fit the window it opened.
+            decor.addOnLayoutChangeListener(RESIZED);
+            activity.setPictureInPictureParams(params(activity, videoView(decor), !readerPaused));
             WeakReference<Activity> owner = new WeakReference<>(activity);
             for (long delay : RESUME_CHECKS_MS) {
                 Utils.runOnMainThreadDelayed(() -> keepPlaying(owner.get()), delay);
@@ -179,6 +248,29 @@ public final class PictureInPicture {
             WeakReference<Activity> owner = new WeakReference<>(activity);
             Utils.runOnMainThreadDelayed(() -> stopIfClosed(owner.get()), CLOSED_CHECK_MS);
         }
+    }
+
+    /** A window the reader makes bigger or smaller gets the buttons that fit it now. */
+    private static final View.OnLayoutChangeListener RESIZED =
+            (view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+                if (right - left != oldRight - oldLeft) view.post(PictureInPicture::onResized);
+            };
+
+    private static void onResized() {
+        if (Build.VERSION.SDK_INT < 26) return;
+        try {
+            refit();
+        } catch (RuntimeException failure) {
+            Logger.printException(() -> "Picture-in-picture couldn't fit its buttons", failure);
+        }
+    }
+
+    @RequiresApi(26)
+    private static void refit() {
+        Activity activity = opened.get();
+        if (activity == null || !activity.isInPictureInPictureMode()) return;
+        activity.setPictureInPictureParams(params(activity,
+                videoView(activity.getWindow().getDecorView()), !readerPaused));
     }
 
     /**
@@ -456,19 +548,34 @@ public final class PictureInPicture {
         return builder.build();
     }
 
-    /** How many buttons Android shows in the window; one when it won't say. */
+    /**
+     * How many buttons the window shows whole: as many as Android allows (one when it won't say),
+     * and in a window that's up, no more than its width holds.
+     */
     @RequiresApi(26)
     private static int room(Activity activity) {
+        int most;
         try {
-            return activity.getMaxNumPictureInPictureActions();
+            most = activity.getMaxNumPictureInPictureActions();
         } catch (RuntimeException unknown) {
             return 1;
         }
+        if (!activity.isInPictureInPictureMode()) return most;
+        float density = activity.getResources().getDisplayMetrics().density;
+        int width = activity.getWindow().getDecorView().getWidth();
+        return room(most, density > 0 ? width / density : 0);
+    }
+
+    /** {@code most} buttons, or two in a window narrower than three need; a width of 0 is unknown. */
+    static int room(int most, float widthDp) {
+        if (widthDp <= 0 || widthDp >= THREE_BUTTONS_DP) return most;
+        return Math.min(most, 2);
     }
 
     /**
      * The window's buttons: play or pause, between the previous and next arrows when the video
-     * sits in a pager and the window has room for three. An arrow with no video its way, or held
+     * sits in a pager and the window has room for three. With room for two, play or pause and the
+     * next arrow, since moving on is what a feed is for. An arrow with no video its way, or held
      * by a lock, shows dimmed and does nothing, so the buttons don't shift between videos.
      */
     @RequiresApi(26)
@@ -477,13 +584,19 @@ public final class PictureInPicture {
         String label = playing ? L10n.t("Pause") : L10n.t("Play");
         RemoteAction toggle = action(context, ACTION_TOGGLE, 0,
                 playing ? android.R.drawable.ic_media_pause : android.R.drawable.ic_media_play, label);
-        if (!arrows || room < ROOM_FOR_ARROWS) return Collections.singletonList(toggle);
-        RemoteAction previous = action(context, ACTION_PREVIOUS, 1,
-                android.R.drawable.ic_media_previous, L10n.t("Previous video"));
-        previous.setEnabled(back);
+        if (!arrows || room < 2) return Collections.singletonList(toggle);
         RemoteAction next = action(context, ACTION_NEXT, 2,
                 android.R.drawable.ic_media_next, L10n.t("Next video"));
         next.setEnabled(forward);
+        if (room < ROOM_FOR_ARROWS) {
+            List<RemoteAction> two = new ArrayList<>(2);
+            two.add(toggle);
+            two.add(next);
+            return two;
+        }
+        RemoteAction previous = action(context, ACTION_PREVIOUS, 1,
+                android.R.drawable.ic_media_previous, L10n.t("Previous video"));
+        previous.setEnabled(back);
         List<RemoteAction> all = new ArrayList<>(ROOM_FOR_ARROWS);
         all.add(previous);
         all.add(toggle);

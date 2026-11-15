@@ -5502,8 +5502,8 @@ final class L10nTranslationsDe {
                 "Wenn das Video ohne Wasserzeichen nicht geladen werden kann, wird stattdessen TikToks eigene Kopie mit Wasserzeichen gespeichert, mit Hinweis. Sie hat die Größe, die TikToks eigenes Speichern nutzt, und kann daher kleiner sein als die gewählte Qualität.");
         table.put("When to send",
                 "Wann senden");
-        table.put("When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with buttons to pause it and to go to the previous or next video. Works in the feed and on videos you open from a profile, search or a sound. Needs Android 8 or later.",
-                "Wenn du TikTok verlässt, während ein Video läuft, läuft es in einem kleinen Fenster über deinen anderen Apps weiter, mit Tasten zum Pausieren und zum Wechseln zum vorherigen oder nächsten Video. Funktioniert im Feed und bei Videos, die du über ein Profil, die Suche oder einen Sound öffnest. Erfordert Android 8 oder neuer.");
+        table.put("When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with buttons to pause it and to go to the previous or next video. Works in the feed, in LIVEs and on videos you open from a profile, search or a sound. Needs Android 8 or later.",
+                "Wenn du TikTok verlässt, während ein Video läuft, läuft es in einem kleinen Fenster über deinen anderen Apps weiter, mit Tasten zum Pausieren und zum Wechseln zum vorherigen oder nächsten Video. Funktioniert im Feed, in LIVEs und bei Videos, die du über ein Profil, die Suche oder einen Sound öffnest. Erfordert Android 8 oder neuer.");
         table.put("When you open TikTok from its icon, the first video in the feed waits for one tap before it plays. A link, a notification or a shortcut opens as usual.",
                 "Wenn du TikTok über das Symbol öffnest, wartet das erste Video im Feed auf ein Tippen, bevor es abspielt. Ein Link, eine Benachrichtigung oder eine Verknüpfung öffnet sich wie gewohnt.");
         table.put("Where the time goes",

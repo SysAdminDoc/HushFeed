@@ -9,7 +9,9 @@ import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
 import android.app.RemoteAction;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Looper;
 import android.util.Rational;
 import android.view.TextureView;
@@ -17,6 +19,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.Setting;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.settings.Settings;
@@ -105,6 +108,44 @@ public class PictureInPictureTest {
         assertFalse(PictureInPicture.fromTheButton(null));
     }
 
+    /** #413: TikTok's LIVE window switch goes on with this one, and back off only if Hushfeed turned it on. */
+    @Test public void tiktoksLiveWindowSwitchFollowsThisOne() {
+        SharedPreferences state = Utils.getContext()
+                .getSharedPreferences(PictureInPicture.STATE, Context.MODE_PRIVATE);
+        state.edit().clear().commit();
+
+        Settings.PICTURE_IN_PICTURE.save(false);
+        assertNull("never turned on here, so TikTok's own choice stands", PictureInPicture.liveWindowSwitch());
+
+        Settings.PICTURE_IN_PICTURE.save(true);
+        assertEquals(Boolean.TRUE, PictureInPicture.liveWindowSwitch());
+        assertTrue(state.getBoolean(PictureInPicture.LIVE_WINDOW_OURS, false));
+
+        Settings.PICTURE_IN_PICTURE.save(false);
+        assertEquals(Boolean.FALSE, PictureInPicture.liveWindowSwitch());
+        assertFalse(state.getBoolean(PictureInPicture.LIVE_WINDOW_OURS, true));
+        assertNull("turned back off once, then left to TikTok", PictureInPicture.liveWindowSwitch());
+
+        // Left out of the patch: the room page never asks, and the answer leaves TikTok's switch alone.
+        SettingsStatus.pictureInPictureEnabled = false;
+        Settings.PICTURE_IN_PICTURE.save(true);
+        assertNull(PictureInPicture.liveWindowSwitch());
+    }
+
+    /** #413: with this switch on, TikTok's LIVE window stops refusing screens it files as tablets. */
+    @Test public void theLiveWindowOpensOnScreensTikTokCallsLarge() {
+        Settings.PICTURE_IN_PICTURE.save(false);
+        assertEquals("off, TikTok's answer stands", 1, PictureInPicture.liveWindowLargeScreen(1));
+        assertEquals(0, PictureInPicture.liveWindowLargeScreen(0));
+
+        Settings.PICTURE_IN_PICTURE.save(true);
+        assertEquals(0, PictureInPicture.liveWindowLargeScreen(1));
+        assertEquals(0, PictureInPicture.liveWindowLargeScreen(0));
+
+        SettingsStatus.pictureInPictureEnabled = false;
+        assertEquals("left out of the patch, TikTok's answer stands", 1, PictureInPicture.liveWindowLargeScreen(1));
+    }
+
     /** #413: previous, play or pause, then next, when the video is in a pager and the window has room. */
     @Test public void theArrowsSitEitherSideOfPlayAndPause() {
         Activity activity = owner.get();
@@ -126,14 +167,34 @@ public class PictureInPictureTest {
         assertNotSame(buttons.get(0).getActionIntent(), buttons.get(2).getActionIntent());
     }
 
-    @Test public void withoutAPagerOrRoomForThreeOnlyPlayAndPauseShow() {
+    @Test public void withoutAPagerOnlyPlayAndPauseShow() {
         Activity activity = owner.get();
         List<RemoteAction> alone = PictureInPicture.actions(activity, true, false, true, true, 3);
         assertEquals(1, alone.size());
         assertEquals(PictureInPicture.ACTION_TOGGLE, sentBy(alone.get(0)).getAction());
-        List<RemoteAction> narrow = PictureInPicture.actions(activity, true, true, true, true, 2);
-        assertEquals(1, narrow.size());
+        List<RemoteAction> one = PictureInPicture.actions(activity, true, true, true, true, 1);
+        assertEquals(1, one.size());
+        assertEquals(PictureInPicture.ACTION_TOGGLE, sentBy(one.get(0)).getAction());
+    }
+
+    /**
+     * #413: a tall video's window opens about 108dp wide, and Android cut the next arrow off the
+     * end of three. A window that holds two shows play or pause and next, and three come back
+     * once the window is wide enough.
+     */
+    @Test public void aNarrowWindowKeepsPlayAndNext() {
+        Activity activity = owner.get();
+        List<RemoteAction> narrow = PictureInPicture.actions(activity, true, true, true, false, 2);
+        assertEquals(2, narrow.size());
         assertEquals(PictureInPicture.ACTION_TOGGLE, sentBy(narrow.get(0)).getAction());
+        assertEquals(PictureInPicture.ACTION_NEXT, sentBy(narrow.get(1)).getAction());
+        assertFalse("nothing after the last video, so next is dimmed", narrow.get(1).isEnabled());
+
+        assertEquals("the emulator's 110dp window", 2, PictureInPicture.room(3, 110f));
+        assertEquals(2, PictureInPicture.room(3, 137f));
+        assertEquals("a wide video's 197dp window", 3, PictureInPicture.room(3, 197f));
+        assertEquals("a window not up yet", 3, PictureInPicture.room(3, 0f));
+        assertEquals("never more than Android allows", 1, PictureInPicture.room(1, 110f));
     }
 
     @Test public void theVideosPagerIsItsNearestVerticalPager() {

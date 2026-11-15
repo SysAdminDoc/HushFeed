@@ -5502,8 +5502,8 @@ final class L10nTranslationsVi {
                 "Khi không thể tải về video không có watermark, ứng dụng sẽ lưu bản có watermark mặc định của TikTok và thông báo cho bạn. Đây là kích thước lưu mặc định của TikTok nên có thể sẽ nhỏ hơn chất lượng bạn đã chọn.");
         table.put("When to send",
                 "Thời điểm gửi");
-        table.put("When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with buttons to pause it and to go to the previous or next video. Works in the feed and on videos you open from a profile, search or a sound. Needs Android 8 or later.",
-                "Khi bạn rời khỏi TikTok trong lúc video đang phát, video sẽ tiếp tục phát trong một cửa sổ nhỏ nổi trên các ứng dụng khác, kèm theo các nút tạm dừng và chuyển sang video trước hoặc video tiếp theo. Hoạt động trên bảng tin và các video mở từ trang cá nhân, tìm kiếm hoặc âm thanh. Yêu cầu Android 8 trở lên.");
+        table.put("When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with buttons to pause it and to go to the previous or next video. Works in the feed, in LIVEs and on videos you open from a profile, search or a sound. Needs Android 8 or later.",
+                "Khi bạn rời khỏi TikTok trong lúc video đang phát, video sẽ tiếp tục phát trong một cửa sổ nhỏ nổi trên các ứng dụng khác, kèm theo các nút tạm dừng và chuyển sang video trước hoặc video tiếp theo. Hoạt động trên bảng tin, trong các buổi LIVE và các video mở từ trang cá nhân, tìm kiếm hoặc âm thanh. Yêu cầu Android 8 trở lên.");
         table.put("When you open TikTok from its icon, the first video in the feed waits for one tap before it plays. A link, a notification or a shortcut opens as usual.",
                 "Khi bạn mở TikTok từ biểu tượng ứng dụng, video đầu tiên trên bảng tin sẽ chờ một lần chạm trước khi bắt đầu phát. Các liên kết, thông báo hoặc lối tắt mở ứng dụng hoạt động bình thường như cũ.");
         table.put("Where the time goes",

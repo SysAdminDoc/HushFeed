@@ -7,6 +7,7 @@ package app.morphe.patches.tiktok.interaction.pip
 import app.morphe.Fixtures
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
+import app.morphe.patches.tiktok.interaction.live.LIVE_PLAY_FRAGMENT
 import app.morphe.util.getReference
 import com.android.apksig.internal.apk.AndroidBinXmlParser
 import com.android.tools.smali.dexlib2.AccessFlags
@@ -14,6 +15,8 @@ import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.Instruction
+import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.immutable.ImmutableClassDef
@@ -21,6 +24,12 @@ import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
 import com.android.tools.smali.dexlib2.immutable.instruction.ImmutableInstruction10x
+import com.android.tools.smali.dexlib2.immutable.instruction.ImmutableInstruction11x
+import com.android.tools.smali.dexlib2.immutable.instruction.ImmutableInstruction21c
+import com.android.tools.smali.dexlib2.immutable.instruction.ImmutableInstruction35c
+import com.android.tools.smali.dexlib2.immutable.reference.ImmutableFieldReference
+import com.android.tools.smali.dexlib2.immutable.reference.ImmutableMethodReference
+import com.android.tools.smali.dexlib2.immutable.reference.ImmutableStringReference
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
@@ -149,6 +158,156 @@ class PictureInPictureAnchorsTest {
         val xml = manifest("""<activity android:name="com.ss.android.ugc.aweme.main.MainActivity"/>""")
         assertThrows(PatchException::class.java) { allowPictureInPicture(xml) }
     }
+
+    @Test
+    fun `each declared build finds TikTok's LIVE window switch and sets it as a room comes up`() {
+        Fixtures.forEachDeclared { apk ->
+            val classes = classesOf(apk)
+            val switch = liveWindowSwitch { classes[it] }
+            assertEquals("${apk.name}: the switch is written through its own setting", switch.field.type, switch.write.definingClass)
+            assertTrue("${apk.name}: the room page's check reads another setting",
+                switch.fieldSmali in liveWindowCheckReads { classes[it] })
+
+            val resume = classes.getValue(LIVE_PLAY_FRAGMENT).methods.single {
+                it.name == "onResume" && it.parameterTypes.isEmpty() && it.implementation != null
+            }
+            val mutable = MutableMethod(resume)
+            val body = mutable.implementation!!.instructions.map { it.opcode }
+            mutable.keepLiveWindowSwitch(switch)
+            val instructions = mutable.implementation!!.instructions.toList()
+            assertEquals("${apk.name}: TikTok's onResume changed", body, instructions.drop(6).map { it.opcode })
+            assertEquals(
+                listOf(Opcode.INVOKE_STATIC, Opcode.MOVE_RESULT_OBJECT, Opcode.IF_EQZ, Opcode.SGET_OBJECT, Opcode.INVOKE_VIRTUAL, Opcode.NOP),
+                instructions.take(6).map { it.opcode },
+            )
+            val ask = instructions[0].getReference<MethodReference>()!!
+            assertEquals(EXTENSION, ask.definingClass)
+            assertEquals("liveWindowSwitch", ask.name)
+            assertEquals(switch.write.name, instructions[4].getReference<MethodReference>()!!.name)
+            // v0 and v1 are locals, below p0.
+            assertTrue("${apk.name}: the write lands on this", mutable.implementation!!.registerCount - 1 >= 2)
+        }
+    }
+
+    @Test
+    fun `a prompt writing a setting the room page doesn't check stops the patch`() {
+        val checked = "LX/Prefs;->open:LX/Pref;"
+        fun classes(written: String) = mapOf(
+            LIVE_WINDOW_PROMPT to ImmutableClassDef(
+                LIVE_WINDOW_PROMPT, AccessFlags.PUBLIC.value, "Ljava/lang/Object;", null, null, null, emptyList(),
+                listOf(code(LIVE_WINDOW_PROMPT, "onClick", listOf("Landroid/view/View;"), "V", false,
+                    ImmutableInstruction21c(Opcode.CONST_STRING, 0, ImmutableStringReference("select_type")),
+                    ImmutableInstruction21c(Opcode.SGET_OBJECT, 1, ImmutableFieldReference("LX/Prefs;", written, "LX/Pref;")),
+                    ImmutableInstruction35c(Opcode.INVOKE_VIRTUAL, 2, 1, 2, 0, 0, 0,
+                        ImmutableMethodReference("LX/Pref;", "set", listOf("Ljava/lang/Object;"), "V")),
+                    ImmutableInstruction10x(Opcode.RETURN_VOID))),
+            ),
+            LIVE_PLAY_FRAGMENT to ImmutableClassDef(
+                LIVE_PLAY_FRAGMENT, AccessFlags.PUBLIC.value, "Ljava/lang/Object;", null, null, null, emptyList(),
+                listOf(code(LIVE_PLAY_FRAGMENT, "check", emptyList(), "Ljava/lang/String;", false,
+                    ImmutableInstruction21c(Opcode.CONST_STRING, 0, ImmutableStringReference("encrypted room")),
+                    ImmutableInstruction35c(Opcode.INVOKE_STATIC, 0, 0, 0, 0, 0, 0,
+                        ImmutableMethodReference("LX/Gate;", "open", emptyList(), "Z")),
+                    ImmutableInstruction21c(Opcode.CONST_STRING, 0, ImmutableStringReference(LIVE_WINDOW_OFF_REASON)),
+                    ImmutableInstruction11x(Opcode.RETURN_OBJECT, 0))),
+            ),
+            "LX/Gate;" to ImmutableClassDef(
+                "LX/Gate;", AccessFlags.PUBLIC.value, "Ljava/lang/Object;", null, null, null, emptyList(),
+                listOf(code("LX/Gate;", "open", emptyList(), "Z", true,
+                    ImmutableInstruction21c(Opcode.SGET_OBJECT, 0, ImmutableFieldReference("LX/Prefs;", "open", "LX/Pref;")),
+                    ImmutableInstruction11x(Opcode.RETURN, 0))),
+            ),
+        )
+        val right = classes("open")
+        assertEquals(checked, liveWindowSwitch { right[it] }.fieldSmali)
+        val wrong = classes("audio")
+        assertThrows(PatchException::class.java) { liveWindowSwitch { wrong[it] } }
+        assertThrows(PatchException::class.java) { liveWindowSwitch { if (it == LIVE_WINDOW_PROMPT) null else right[it] } }
+    }
+
+    @Test
+    fun `each declared build hands the LIVE window's tablet answer to the extension`() {
+        Fixtures.forEachDeclared { apk ->
+            val classes = classesOf(apk)
+            val check = liveWindowLargeScreenCheck { classes[it] }
+            val stock = check.method.implementation!!.instructions.toList()
+            assertEquals("${apk.name}: the answer comes from TikTok's tablet service",
+                HOST_PAD, stock[check.result - 1].getReference<MethodReference>()!!.definingClass)
+            val mutable = MutableMethod(check.method)
+            mutable.keepLiveWindowOnLargeScreens(check.result)
+            val patched = mutable.implementation!!.instructions.toList()
+            val answer = (stock[check.result] as OneRegisterInstruction).registerA
+            val hand = patched[check.result + 1]
+            assertEquals(Opcode.INVOKE_STATIC_RANGE, hand.opcode)
+            assertEquals(answer, (hand as RegisterRangeInstruction).startRegister)
+            assertEquals(1, hand.registerCount)
+            val ask = hand.getReference<MethodReference>()!!
+            assertEquals(EXTENSION, ask.definingClass)
+            assertEquals("liveWindowLargeScreen", ask.name)
+            assertEquals(Opcode.MOVE_RESULT, patched[check.result + 2].opcode)
+            assertEquals(answer, (patched[check.result + 2] as OneRegisterInstruction).registerA)
+            assertEquals("${apk.name}: TikTok's device check changed",
+                stock.map { it.opcode }.filter { it != Opcode.NOP },
+                (patched.take(check.result + 1) + patched.drop(check.result + 3)).map { it.opcode }.filter { it != Opcode.NOP })
+        }
+    }
+
+    @Test
+    fun `a device check that doesn't ask the tablet service once, or drops the answer, stops the patch`() {
+        val ask = ImmutableInstruction35c(Opcode.INVOKE_INTERFACE, 1, 0, 0, 0, 0, 0,
+            ImmutableMethodReference(HOST_PAD, "isPad", emptyList(), "Z"))
+        val keep = ImmutableInstruction11x(Opcode.MOVE_RESULT, 0)
+        val right = largeScreenClasses(ask, keep)
+        val found = liveWindowLargeScreenCheck { right[it] }
+        assertEquals("LX/Device;", found.method.definingClass)
+        assertEquals(1, found.result)
+
+        val none = largeScreenClasses(ImmutableInstruction11x(Opcode.MOVE_RESULT, 0))
+        assertThrows(PatchException::class.java) { liveWindowLargeScreenCheck { none[it] } }
+        val twice = largeScreenClasses(ask, keep, ask, keep)
+        assertThrows(PatchException::class.java) { liveWindowLargeScreenCheck { twice[it] } }
+        val dropped = largeScreenClasses(ask, ImmutableInstruction10x(Opcode.NOP))
+        assertThrows(PatchException::class.java) { liveWindowLargeScreenCheck { dropped[it] } }
+    }
+
+    /** A room page whose window check's gate asks LX/Device; first, with [device] before its return. */
+    private fun largeScreenClasses(vararg device: Instruction): Map<String, ClassDef> = mapOf(
+        LIVE_PLAY_FRAGMENT to ImmutableClassDef(
+            LIVE_PLAY_FRAGMENT, AccessFlags.PUBLIC.value, "Ljava/lang/Object;", null, null, null, emptyList(),
+            listOf(code(LIVE_PLAY_FRAGMENT, "check", emptyList(), "Ljava/lang/String;", false,
+                ImmutableInstruction21c(Opcode.CONST_STRING, 0, ImmutableStringReference("encrypted room")),
+                ImmutableInstruction35c(Opcode.INVOKE_STATIC, 0, 0, 0, 0, 0, 0,
+                    ImmutableMethodReference("LX/Gate;", "open", emptyList(), "Z")),
+                ImmutableInstruction21c(Opcode.CONST_STRING, 0, ImmutableStringReference(LIVE_WINDOW_OFF_REASON)),
+                ImmutableInstruction11x(Opcode.RETURN_OBJECT, 0))),
+        ),
+        "LX/Gate;" to ImmutableClassDef(
+            "LX/Gate;", AccessFlags.PUBLIC.value, "Ljava/lang/Object;", null, null, null, emptyList(),
+            listOf(code("LX/Gate;", "open", emptyList(), "Z", true,
+                ImmutableInstruction35c(Opcode.INVOKE_STATIC, 0, 0, 0, 0, 0, 0,
+                    ImmutableMethodReference("LX/Device;", "fits", emptyList(), "Z")),
+                ImmutableInstruction11x(Opcode.MOVE_RESULT, 0),
+                ImmutableInstruction11x(Opcode.RETURN, 0))),
+        ),
+        "LX/Device;" to ImmutableClassDef(
+            "LX/Device;", AccessFlags.PUBLIC.value, "Ljava/lang/Object;", null, null, null, emptyList(),
+            listOf(code("LX/Device;", "fits", emptyList(), "Z", true,
+                *device, ImmutableInstruction11x(Opcode.RETURN, 0))),
+        ),
+    )
+
+    private fun code(
+        owner: String,
+        name: String,
+        parameters: List<String>,
+        returnType: String,
+        static: Boolean,
+        vararg instructions: Instruction,
+    ): Method = ImmutableMethod(
+        owner, name, parameters.map { ImmutableMethodParameter(it, null, null) }, returnType,
+        AccessFlags.PUBLIC.value or (if (static) AccessFlags.STATIC.value else 0), null, null,
+        ImmutableMethodImplementation(4, instructions.toList(), null, null),
+    )
 
     /** The call is a prefix: TikTok's own handler, super call and listeners included, runs after it. */
     private fun assertHandsOverFirst(

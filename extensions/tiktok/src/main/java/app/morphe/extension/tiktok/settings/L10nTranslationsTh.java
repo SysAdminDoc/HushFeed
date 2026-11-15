@@ -5502,8 +5502,8 @@ final class L10nTranslationsTh {
                 "เมื่อไม่สามารถดึงวิดีโอที่ไม่มีลายน้ำได้ ให้บันทึกสำเนาที่มีลายน้ำของ TikTok เองแทนและแจ้งให้ทราบ โดยจะมีขนาดเดียวกับการบันทึกของ TikTok เอง จึงอาจมีขนาดเล็กกว่าคุณภาพที่คุณเลือกไว้");
         table.put("When to send",
                 "เวลาที่จะส่ง");
-        table.put("When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with buttons to pause it and to go to the previous or next video. Works in the feed and on videos you open from a profile, search or a sound. Needs Android 8 or later.",
-                "เมื่อคุณออกจาก TikTok ขณะที่วิดีโอกำลังเล่น วิดีโอจะเล่นต่อในหน้าต่างขนาดเล็กทับแอปอื่นๆ ของคุณ โดยมีปุ่มสำหรับหยุดชั่วคราวและไปยังวิดีโอก่อนหน้าหรือถัดไป ใช้งานได้ในฟีดและวิดีโอที่คุณเปิดจากโปรไฟล์ การค้นหา หรือเสียง ต้องใช้ Android 8 ขึ้นไป");
+        table.put("When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with buttons to pause it and to go to the previous or next video. Works in the feed, in LIVEs and on videos you open from a profile, search or a sound. Needs Android 8 or later.",
+                "เมื่อคุณออกจาก TikTok ขณะที่วิดีโอกำลังเล่น วิดีโอจะเล่นต่อในหน้าต่างขนาดเล็กทับแอปอื่นๆ ของคุณ โดยมีปุ่มสำหรับหยุดชั่วคราวและไปยังวิดีโอก่อนหน้าหรือถัดไป ใช้งานได้ในฟีด ใน LIVE และวิดีโอที่คุณเปิดจากโปรไฟล์ การค้นหา หรือเสียง ต้องใช้ Android 8 ขึ้นไป");
         table.put("When you open TikTok from its icon, the first video in the feed waits for one tap before it plays. A link, a notification or a shortcut opens as usual.",
                 "เมื่อคุณเปิด TikTok จากไอคอน วิดีโอแรกในฟีดจะรอให้แตะหนึ่งครั้งก่อนจึงจะเริ่มเล่น ลิงก์ การแจ้งเตือน หรือทางลัดจะเปิดตามปกติ");
         table.put("Where the time goes",

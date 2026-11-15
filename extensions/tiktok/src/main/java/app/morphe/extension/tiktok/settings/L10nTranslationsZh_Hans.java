@@ -5502,8 +5502,8 @@ final class L10nTranslationsZh_Hans {
                 "当无法获取没有水印的视频时，请保存TikTok自己的带水印的副本并说出来。这是TikTok自己保存使用的尺寸，因此它可能比你选择的质量小.");
         table.put("When to send",
                 "何时发送");
-        table.put("When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with buttons to pause it and to go to the previous or next video. Works in the feed and on videos you open from a profile, search or a sound. Needs Android 8 or later.",
-                "当你在视频播放时离开 TikTok 时，视频会在其他应用程序上方的小窗口中继续播放，并有按钮可以暂停以及切换到上一个或下一个视频。适用于信息流以及通过个人资料、搜索或声音打开的视频。需要 Android 8 或更高版本.");
+        table.put("When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with buttons to pause it and to go to the previous or next video. Works in the feed, in LIVEs and on videos you open from a profile, search or a sound. Needs Android 8 or later.",
+                "当你在视频播放时离开 TikTok 时，视频会在其他应用程序上方的小窗口中继续播放，并有按钮可以暂停以及切换到上一个或下一个视频。适用于信息流、LIVE 以及通过个人资料、搜索或声音打开的视频。需要 Android 8 或更高版本.");
         table.put("When you open TikTok from its icon, the first video in the feed waits for one tap before it plays. A link, a notification or a shortcut opens as usual.",
                 "当你从图标打开 TikTok 时，信息流中的第一个视频会等待点击一下才能播放。链接、通知或快捷方式照常打开.");
         table.put("Where the time goes",

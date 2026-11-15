@@ -5502,8 +5502,8 @@ final class L10nTranslationsIn {
                 "Jika video tanpa tanda air tidak bisa diambil, simpan salinan bertanda air milik TikTok sebagai gantinya dan beri tahu. Ukurannya sama dengan yang dipakai penyimpanan TikTok sendiri, jadi bisa lebih kecil dari kualitas yang kamu pilih.");
         table.put("When to send",
                 "Kapan dikirim");
-        table.put("When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with buttons to pause it and to go to the previous or next video. Works in the feed and on videos you open from a profile, search or a sound. Needs Android 8 or later.",
-                "Saat Anda meninggalkan TikTok ketika video sedang diputar, video tetap diputar di jendela kecil di atas aplikasi lain, dengan tombol untuk menjedanya dan untuk pindah ke video sebelumnya atau berikutnya. Berfungsi di feed dan pada video yang Anda buka dari profil, pencarian, atau suara. Memerlukan Android 8 atau yang lebih baru.");
+        table.put("When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with buttons to pause it and to go to the previous or next video. Works in the feed, in LIVEs and on videos you open from a profile, search or a sound. Needs Android 8 or later.",
+                "Saat Anda meninggalkan TikTok ketika video sedang diputar, video tetap diputar di jendela kecil di atas aplikasi lain, dengan tombol untuk menjedanya dan untuk pindah ke video sebelumnya atau berikutnya. Berfungsi di feed, di LIVE, dan pada video yang Anda buka dari profil, pencarian, atau suara. Memerlukan Android 8 atau yang lebih baru.");
         table.put("When you open TikTok from its icon, the first video in the feed waits for one tap before it plays. A link, a notification or a shortcut opens as usual.",
                 "Saat kamu membuka TikTok dari ikonnya, video pertama di feed menunggu satu ketukan sebelum diputar. Tautan, notifikasi, atau pintasan tetap terbuka seperti biasa.");
         table.put("Where the time goes",

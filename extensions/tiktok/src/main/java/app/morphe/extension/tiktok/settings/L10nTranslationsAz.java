@@ -5502,8 +5502,8 @@ final class L10nTranslationsAz {
                 "Su nişanı olmayan video alına bilmədikdə, əvəzində TikTok-un öz su nişanlı nüsxəsini saxlayın və bunu bildirin. Ölçüsü TikTok-un öz saxlamasındakı kimidir, ona görə seçdiyiniz keyfiyyətdən kiçik ola bilər.");
         table.put("When to send",
                 "Nə vaxt göndərilsin");
-        table.put("When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with buttons to pause it and to go to the previous or next video. Works in the feed and on videos you open from a profile, search or a sound. Needs Android 8 or later.",
-                "Video oynayarkən TikTok-dan çıxdığınız zaman o, digər tətbiqlərin üzərində kiçik pəncərədə oynamağa davam edir və onu dayandırmaq, əvvəlki və ya növbəti videoya keçmək üçün düymələr olur. Lentdə, həmçinin profildən, axtarışdan və ya səsdən açdığınız videolarda işləyir. Android 8 və ya daha yeni versiya tələb olunur.");
+        table.put("When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with buttons to pause it and to go to the previous or next video. Works in the feed, in LIVEs and on videos you open from a profile, search or a sound. Needs Android 8 or later.",
+                "Video oynayarkən TikTok-dan çıxdığınız zaman o, digər tətbiqlərin üzərində kiçik pəncərədə oynamağa davam edir və onu dayandırmaq, əvvəlki və ya növbəti videoya keçmək üçün düymələr olur. Lentdə, LIVE-larda, həmçinin profildən, axtarışdan və ya səsdən açdığınız videolarda işləyir. Android 8 və ya daha yeni versiya tələb olunur.");
         table.put("When you open TikTok from its icon, the first video in the feed waits for one tap before it plays. A link, a notification or a shortcut opens as usual.",
                 "TikTok-u ikonundan açanda lentdəki ilk video oynamazdan əvvəl bir toxunuş gözləyir. Keçid, bildiriş və ya qısayol həmişəki kimi açılır.");
         table.put("Where the time goes",

@@ -5502,8 +5502,8 @@ final class L10nTranslationsPt_rBR {
                 "Se o vídeo sem marca d'água não puder ser baixado, salva a cópia com marca d'água do próprio TikTok e avisa. Ela tem o tamanho que o salvamento do TikTok usa, então pode ser menor que a qualidade que você escolheu.");
         table.put("When to send",
                 "Quando enviar");
-        table.put("When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with buttons to pause it and to go to the previous or next video. Works in the feed and on videos you open from a profile, search or a sound. Needs Android 8 or later.",
-                "Quando você sai do TikTok com um vídeo tocando, ele continua em uma janela pequena sobre seus outros apps, com botões para pausar e para ir ao vídeo anterior ou ao próximo. Funciona no feed e em vídeos abertos de um perfil, da busca ou de um som. Requer Android 8 ou mais recente.");
+        table.put("When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with buttons to pause it and to go to the previous or next video. Works in the feed, in LIVEs and on videos you open from a profile, search or a sound. Needs Android 8 or later.",
+                "Quando você sai do TikTok com um vídeo tocando, ele continua em uma janela pequena sobre seus outros apps, com botões para pausar e para ir ao vídeo anterior ou ao próximo. Funciona no feed, em LIVEs e em vídeos abertos de um perfil, da busca ou de um som. Requer Android 8 ou mais recente.");
         table.put("When you open TikTok from its icon, the first video in the feed waits for one tap before it plays. A link, a notification or a shortcut opens as usual.",
                 "Quando você abre o TikTok pelo ícone, o primeiro vídeo do feed espera um toque antes de tocar. Um link, uma notificação ou um atalho abrem normalmente.");
         table.put("Where the time goes",

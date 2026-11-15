@@ -5880,8 +5880,8 @@ final class L10nTranslationsRu {
                 "Если видео без водяного знака не удаётся загрузить, сохраняется собственная копия TikTok с водяным знаком, и об этом сообщается. У неё размер, который использует сохранение TikTok, поэтому она может быть меньше выбранного качества.");
         table.put("When to send",
                 "Когда отправлять");
-        table.put("When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with buttons to pause it and to go to the previous or next video. Works in the feed and on videos you open from a profile, search or a sound. Needs Android 8 or later.",
-                "Если выйти из TikTok во время воспроизведения видео, оно продолжит воспроизводиться в маленьком окне поверх других приложений, с кнопками паузы и перехода к предыдущему или следующему видео. Работает в ленте и в видео, открытых из профиля, поиска или звука. Требуется Android 8 или новее.");
+        table.put("When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with buttons to pause it and to go to the previous or next video. Works in the feed, in LIVEs and on videos you open from a profile, search or a sound. Needs Android 8 or later.",
+                "Если выйти из TikTok во время воспроизведения видео, оно продолжит воспроизводиться в маленьком окне поверх других приложений, с кнопками паузы и перехода к предыдущему или следующему видео. Работает в ленте, в LIVE и в видео, открытых из профиля, поиска или звука. Требуется Android 8 или новее.");
         table.put("When you open TikTok from its icon, the first video in the feed waits for one tap before it plays. A link, a notification or a shortcut opens as usual.",
                 "Когда вы открываете TikTok с иконки, первое видео в ленте ждёт одного касания, прежде чем начать. Ссылка, уведомление или ярлык открываются как обычно.");
         table.put("Where the time goes",

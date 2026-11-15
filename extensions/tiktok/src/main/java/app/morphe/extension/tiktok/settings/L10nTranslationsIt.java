@@ -5502,8 +5502,8 @@ final class L10nTranslationsIt {
                 "Se il video senza filigrana non si riesce a scaricare, salva invece la copia con filigrana di TikTok e avvisa. Ha la dimensione usata dal salvataggio di TikTok, quindi può essere più piccola della qualità che hai scelto.");
         table.put("When to send",
                 "Quando inviare");
-        table.put("When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with buttons to pause it and to go to the previous or next video. Works in the feed and on videos you open from a profile, search or a sound. Needs Android 8 or later.",
-                "Quando esci da TikTok mentre un video è in riproduzione, continua in una piccola finestra sopra le altre app, con pulsanti per metterlo in pausa e passare al video precedente o successivo. Funziona nel feed e nei video aperti da un profilo, dalla ricerca o da un suono. Richiede Android 8 o versioni successive.");
+        table.put("When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with buttons to pause it and to go to the previous or next video. Works in the feed, in LIVEs and on videos you open from a profile, search or a sound. Needs Android 8 or later.",
+                "Quando esci da TikTok mentre un video è in riproduzione, continua in una piccola finestra sopra le altre app, con pulsanti per metterlo in pausa e passare al video precedente o successivo. Funziona nel feed, nei LIVE e nei video aperti da un profilo, dalla ricerca o da un suono. Richiede Android 8 o versioni successive.");
         table.put("When you open TikTok from its icon, the first video in the feed waits for one tap before it plays. A link, a notification or a shortcut opens as usual.",
                 "Quando apri TikTok dalla sua icona, il primo video del feed aspetta un tocco prima di partire. Un link, una notifica o una scorciatoia si aprono come sempre.");
         table.put("Where the time goes",

@@ -6006,8 +6006,8 @@ final class L10nTranslationsAr {
                 "عند تعذر جلب الفيديو بدون العلامة المائية، احفظ نسخة TikTok الخاصة التي تحتوي على العلامة المائية بدلًا من ذلك، وأخبر بذلك. حجمها هو الحجم الذي يستخدمه الحفظ الخاص في TikTok، لذا قد تكون أصغر من الجودة التي اخترتها.");
         table.put("When to send",
                 "وقت الإرسال");
-        table.put("When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with buttons to pause it and to go to the previous or next video. Works in the feed and on videos you open from a profile, search or a sound. Needs Android 8 or later.",
-                "عندما تترك TikTok أثناء تشغيل فيديو، يستمر في التشغيل في نافذة صغيرة فوق تطبيقاتك الأخرى، مع أزرار لإيقافه مؤقتًا وللانتقال إلى الفيديو السابق أو التالي. يعمل في الخلاصة وفي الفيديوهات التي تفتحها من ملف شخصي أو بحث أو صوت. يتطلب Android 8 أو أحدث.");
+        table.put("When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with buttons to pause it and to go to the previous or next video. Works in the feed, in LIVEs and on videos you open from a profile, search or a sound. Needs Android 8 or later.",
+                "عندما تترك TikTok أثناء تشغيل فيديو، يستمر في التشغيل في نافذة صغيرة فوق تطبيقاتك الأخرى، مع أزرار لإيقافه مؤقتًا وللانتقال إلى الفيديو السابق أو التالي. يعمل في الخلاصة وفي LIVE وفي الفيديوهات التي تفتحها من ملف شخصي أو بحث أو صوت. يتطلب Android 8 أو أحدث.");
         table.put("When you open TikTok from its icon, the first video in the feed waits for one tap before it plays. A link, a notification or a shortcut opens as usual.",
                 "عند فتح TikTok من أيقونته، ينتظر أول فيديو في الخلاصة نقرة واحدة قبل أن يبدأ التشغيل. يفتح الرابط أو الإشعار أو الاختصار كالمعتاد.");
         table.put("Where the time goes",

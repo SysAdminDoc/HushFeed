@@ -5502,8 +5502,8 @@ final class L10nTranslationsTr {
                 "Filigransız video alınamazsa onun yerine TikTok'un kendi filigranlı kopyasını kaydet ve bunu söyle. Boyutu TikTok'un kendi kaydetmesinin kullandığı boyuttur, bu yüzden seçtiğin kaliteden küçük olabilir.");
         table.put("When to send",
                 "Ne zaman gönderilsin");
-        table.put("When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with buttons to pause it and to go to the previous or next video. Works in the feed and on videos you open from a profile, search or a sound. Needs Android 8 or later.",
-                "Bir video oynarken TikTok'tan çıktığınızda, video diğer uygulamalarınızın üzerinde küçük bir pencerede oynamaya devam eder ve duraklatmak, önceki veya sonraki videoya geçmek için düğmeler bulunur. Akışta ve bir profilden, aramadan veya bir sesten açtığınız videolarda çalışır. Android 8 veya üstü gerekir.");
+        table.put("When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with buttons to pause it and to go to the previous or next video. Works in the feed, in LIVEs and on videos you open from a profile, search or a sound. Needs Android 8 or later.",
+                "Bir video oynarken TikTok'tan çıktığınızda, video diğer uygulamalarınızın üzerinde küçük bir pencerede oynamaya devam eder ve duraklatmak, önceki veya sonraki videoya geçmek için düğmeler bulunur. Akışta, LIVE'larda ve bir profilden, aramadan veya bir sesten açtığınız videolarda çalışır. Android 8 veya üstü gerekir.");
         table.put("When you open TikTok from its icon, the first video in the feed waits for one tap before it plays. A link, a notification or a shortcut opens as usual.",
                 "TikTok'u simgesinden açtığında akıştaki ilk video oynamadan önce bir dokunuş bekler. Bağlantı, bildirim veya kısayol her zamanki gibi açılır.");
         table.put("Where the time goes",

@@ -189,6 +189,32 @@ public final class PictureInPicture {
         return large && !on;
     }
 
+    /**
+     * TikTok's "is the feed's activity paused?" inside its page-select step, as the step should see
+     * it (#413). TikTok starts the next video only for a resumed activity or its own background
+     * play, so the window's next arrow moved the pager onto a black cell. Non-zero means paused.
+     * Never throws.
+     */
+    public static int pageSelectPaused(int paused) {
+        try {
+            return pageSelectPaused(paused != 0, windowUp()) ? 1 : 0;
+        } catch (RuntimeException failure) {
+            Logger.printException(() -> "Couldn't decide the page-select pause check", failure);
+            return paused;
+        }
+    }
+
+    /** Paused only while no Hushfeed window holds the feed; in the window the step plays on. */
+    static boolean pageSelectPaused(boolean paused, boolean windowUp) {
+        return paused && !windowUp;
+    }
+
+    private static boolean windowUp() {
+        if (Build.VERSION.SDK_INT < 26) return false;
+        Activity activity = opened.get();
+        return activity != null && activity.isInPictureInPictureMode();
+    }
+
     /** Called first in the feed windows' shared onUserLeaveHint. */
     public static void onUserLeaveHint(Activity activity) {
         if (Build.VERSION.SDK_INT < 26) return;

@@ -8,11 +8,13 @@ import app.morphe.Fixtures
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.interaction.live.LIVE_PLAY_FRAGMENT
+import app.morphe.takes
 import app.morphe.util.getReference
 import com.android.apksig.internal.apk.AndroidBinXmlParser
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
+import com.android.tools.smali.dexlib2.builder.BuilderOffsetInstruction
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction
@@ -268,6 +270,59 @@ class PictureInPictureAnchorsTest {
         assertThrows(PatchException::class.java) { liveWindowLargeScreenCheck { twice[it] } }
         val dropped = largeScreenClasses(ask, ImmutableInstruction10x(Opcode.NOP))
         assertThrows(PatchException::class.java) { liveWindowLargeScreenCheck { dropped[it] } }
+    }
+
+    @Test
+    fun `each declared build hands the page-select step's paused answer over on every path that sets it`() {
+        Fixtures.forEachDeclared { apk ->
+            val classes = classesOf(apk)
+            val taken = classes.values.flatMap { classDef ->
+                classDef.methods.filter { FeedPageSelectPlayFingerprint.takes(it, classDef) }
+            }
+            assertEquals("${apk.name}: ${taken.map { "${it.definingClass}->${it.name}" }}", 1, taken.size)
+            val step = taken.single()
+            val result = pageSelectPausedResult(step)
+            val mutable = MutableMethod(step)
+            val stock = mutable.implementation!!.instructions.toList()
+            val answer = (stock[result] as OneRegisterInstruction).registerA
+            // TikTok's other two answers (yes and no) jump straight past the call.
+            val jumps = stock.filterIsInstance<BuilderOffsetInstruction>().filter { it.target.location.index == result + 1 }
+            assertTrue("${apk.name}: ${jumps.size} paths jump past the paused call", jumps.size >= 2)
+            val stockOpcodes = stock.map { it.opcode }
+
+            mutable.keepPageSelectPlayingInWindow(result)
+            val patched = mutable.implementation!!.instructions.toList()
+            val hand = patched[result + 1]
+            assertEquals(Opcode.INVOKE_STATIC_RANGE, hand.opcode)
+            assertEquals(answer, (hand as RegisterRangeInstruction).startRegister)
+            assertEquals(1, hand.registerCount)
+            val ask = hand.getReference<MethodReference>()!!
+            assertEquals(EXTENSION, ask.definingClass)
+            assertEquals("pageSelectPaused", ask.name)
+            assertEquals(listOf("I"), ask.parameterTypes.map(CharSequence::toString))
+            assertEquals(Opcode.MOVE_RESULT, patched[result + 2].opcode)
+            assertEquals(answer, (patched[result + 2] as OneRegisterInstruction).registerA)
+            jumps.forEach { assertEquals("${apk.name}: a path skips the hook", result + 1, it.target.location.index) }
+            assertEquals("${apk.name}: TikTok's page-select step changed",
+                stockOpcodes.filter { it != Opcode.NOP },
+                (patched.take(result + 1) + patched.drop(result + 3)).map { it.opcode }.filter { it != Opcode.NOP })
+        }
+    }
+
+    @Test
+    fun `a page-select step that doesn't ask isPaused once, or drops the answer, stops the patch`() {
+        val ask = ImmutableInstruction35c(Opcode.INVOKE_INTERFACE, 1, 0, 0, 0, 0, 0,
+            ImmutableMethodReference("LX/Page;", "isPaused", emptyList(), "Z"))
+        val keep = ImmutableInstruction11x(Opcode.MOVE_RESULT, 1)
+        val other = ImmutableInstruction35c(Opcode.INVOKE_INTERFACE, 1, 0, 0, 0, 0, 0,
+            ImmutableMethodReference("LX/Page;", "isPaused", emptyList(), "V"))
+        fun step(vararg body: Instruction) =
+            code("LX/Step;", "LJ", listOf("I", "Z"), "V", false, *body, ImmutableInstruction10x(Opcode.RETURN_VOID))
+
+        assertEquals(2, pageSelectPausedResult(step(other, ask, keep)))
+        assertThrows(PatchException::class.java) { pageSelectPausedResult(step(other, keep)) }
+        assertThrows(PatchException::class.java) { pageSelectPausedResult(step(ask, keep, ask, keep)) }
+        assertThrows(PatchException::class.java) { pageSelectPausedResult(step(ask, ImmutableInstruction10x(Opcode.NOP))) }
     }
 
     /** A room page whose window check's gate asks LX/Device; first, with [device] before its return. */

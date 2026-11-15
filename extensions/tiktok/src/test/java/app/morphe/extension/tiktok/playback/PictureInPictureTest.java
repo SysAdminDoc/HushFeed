@@ -8,6 +8,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
+import android.app.PictureInPictureParams;
 import android.app.RemoteAction;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +28,7 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
 
 import com.ss.android.ugc.aweme.common.widget.VerticalViewPager;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import org.junit.After;
@@ -144,6 +146,31 @@ public class PictureInPictureTest {
 
         SettingsStatus.pictureInPictureEnabled = false;
         assertEquals("left out of the patch, TikTok's answer stands", 1, PictureInPicture.liveWindowLargeScreen(1));
+    }
+
+    /**
+     * #413: in the window the feed's activity is paused, and TikTok's page select starts the next
+     * video only for a resumed one, so the window's arrows answered "not paused" to it.
+     */
+    @Test public void thePageSelectPlaysOnOnlyWhileTheWindowIsUp() {
+        assertTrue(PictureInPicture.pageSelectPaused(true, false));
+        assertFalse(PictureInPicture.pageSelectPaused(true, true));
+        assertFalse(PictureInPicture.pageSelectPaused(false, false));
+        assertFalse(PictureInPicture.pageSelectPaused(false, true));
+
+        Activity activity = owner.get();
+        assertEquals("no window, TikTok's answer stands", 1, PictureInPicture.pageSelectPaused(1));
+        assertEquals(0, PictureInPicture.pageSelectPaused(0));
+        try {
+            ReflectionHelpers.setStaticField(PictureInPicture.class, "opened", new WeakReference<>(activity));
+            assertEquals("opened, but not in the window yet", 1, PictureInPicture.pageSelectPaused(1));
+            activity.enterPictureInPictureMode(new PictureInPictureParams.Builder().build());
+            assertEquals(0, PictureInPicture.pageSelectPaused(1));
+            assertEquals(0, PictureInPicture.pageSelectPaused(0));
+        } finally {
+            ReflectionHelpers.setStaticField(PictureInPicture.class, "opened", new WeakReference<Activity>(null));
+        }
+        assertEquals(1, PictureInPicture.pageSelectPaused(1));
     }
 
     /** #413: previous, play or pause, then next, when the video is in a pager and the window has room. */

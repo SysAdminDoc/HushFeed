@@ -19,8 +19,10 @@ import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.patches.tiktok.shared.requireLocals
+import app.morphe.patcher.Fingerprint
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
+import app.morphe.util.addInstructionsAtControlFlowLabel
 import app.morphe.util.addInstructionsWithLabels
 import app.morphe.util.findMutableMethodOf
 import com.android.tools.smali.dexlib2.AccessFlags
@@ -253,6 +255,50 @@ internal fun MutableMethod.keepLiveWindowOnLargeScreens(result: Int) {
     )
 }
 
+/**
+ * TikTok's feed step that runs as the pager picks a video (`LJ` on `X.09l1`, 47.7.3). It stops the
+ * last video and starts the new one, but only while the feed's activity isn't paused or TikTok's
+ * own background play holds it, and the feed window pauses the activity (#413). Its logs name it.
+ */
+internal object FeedPageSelectPlayFingerprint : Fingerprint(
+    returnType = "V",
+    parameters = listOf("I", "Z"),
+    strings = listOf("onPageSelected-> not pause activityBackground:", "onPageSelectStartPlay>>>  isMultiInvoke:"),
+)
+
+private fun Instruction.isPausedCall() = opcode == Opcode.INVOKE_INTERFACE &&
+    ((this as ReferenceInstruction).reference as? MethodReference)?.let {
+        it.name == "isPaused" && it.parameterTypes.isEmpty() && it.returnType == "Z"
+    } == true
+
+/** Where the page-select step keeps its "is the feed's activity paused?" answer: that move-result's index. */
+internal fun pageSelectPausedResult(method: Method): Int {
+    val instructions = method.implementation!!.instructions.toList()
+    val asks = instructions.indices.filter { instructions[it].isPausedCall() }
+    val ask = asks.singleOrNull()
+        ?: throw PatchException("Picture-in-picture: the page-select step asks isPaused ${asks.size} times, not once")
+    if (instructions.getOrNull(ask + 1)?.opcode != Opcode.MOVE_RESULT) {
+        throw PatchException("Picture-in-picture: the page-select step doesn't keep its isPaused answer")
+    }
+    return ask + 1
+}
+
+/**
+ * Hands the page-select step's paused answer to the extension, which says no while the feed window
+ * is up, so the window's arrows start the video they move to. TikTok sets the same answer on two
+ * other paths that jump to the instruction after, so the hook takes that instruction's label.
+ */
+internal fun MutableMethod.keepPageSelectPlayingInWindow(result: Int) {
+    val register = (implementation!!.instructions[result] as OneRegisterInstruction).registerA
+    addInstructionsAtControlFlowLabel(
+        result + 1,
+        """
+            invoke-static/range { v$register .. v$register }, $EXTENSION->pageSelectPaused(I)I
+            move-result v$register
+        """,
+    )
+}
+
 /** The room page's window check's static gate: the call it makes after "encrypted room". */
 internal fun liveWindowGate(classDefByOrNull: (String) -> ClassDef?): Method {
     val page = classDefByOrNull(LIVE_PLAY_FRAGMENT)
@@ -324,6 +370,8 @@ val pictureInPicturePatch = bytecodePatch(
         val largeScreen = liveWindowLargeScreenCheck { classDefByOrNull(it) }
         mutableClassDefBy(largeScreen.method.definingClass).findMutableMethodOf(largeScreen.method)
             .keepLiveWindowOnLargeScreens(largeScreen.result)
+        // The feed window's arrows move the pager, and the video they land on has to start too.
+        FeedPageSelectPlayFingerprint.method.let { it.keepPageSelectPlayingInWindow(pageSelectPausedResult(it)) }
         SettingsStatusLoadFingerprint.method.addInstruction(
             0,
             "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enablePictureInPicture()V",

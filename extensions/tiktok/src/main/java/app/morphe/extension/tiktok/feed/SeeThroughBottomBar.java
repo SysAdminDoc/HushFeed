@@ -844,6 +844,10 @@ final class SeeThroughBottomBar {
                 watch.off();
                 return true;
             }
+            // Slide across the tabs turned on while the bar stands still: a plain pill over a
+            // playing video never redraws, so the slide is hooked in on the window's next frame
+            // instead of waiting for the bar's (#416, the first slide after the switch did nothing).
+            keepSlide(bar);
             if (selectionMoved(bar)) owner.invalidateSelf();
             return true;
         }

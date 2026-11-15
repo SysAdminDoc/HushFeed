@@ -781,6 +781,36 @@ public class SeeThroughBottomBarTest {
         }
     }
 
+    /**
+     * Slide across the tabs turned on while the bar stands still (#416): nothing redraws a plain
+     * pill over a playing video, so the window's next frame hooks the slide in.
+     */
+    @Test
+    public void slideAcrossTheTabsTurnedOnLaterNeedsNoRedrawOfTheBar() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            float density = activity.getResources().getDisplayMetrics().density;
+            SeeThroughBottomBar.ColorLensBackground lens =
+                    new SeeThroughBottomBar.ColorLensBackground(Color.BLACK, false, density);
+            LinearLayout bar = tabBar(activity, lens);
+            FrameLayout root = new FrameLayout(activity);
+            root.addView(bar, new FrameLayout.LayoutParams(1080, 150));
+            activity.setContentView(root);
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            lens.setBounds(0, 0, 1080, 150);
+            lens.draw(new android.graphics.Canvas(
+                    android.graphics.Bitmap.createBitmap(1080, 150, android.graphics.Bitmap.Config.ARGB_8888)));
+            assertTrue("a slide watched the window with the switch off",
+                    GlassTabSlide.installedIn(activity.getWindow()) == null);
+
+            Settings.GLASS_TAB_SLIDE.save(true);
+            bar.getViewTreeObserver().dispatchOnPreDraw();
+            GlassTabSlide slide = GlassTabSlide.installedIn(activity.getWindow());
+            assertTrue("the slide waited for the bar to redraw", slide != null && slide.bar() == bar);
+        }
+    }
+
     private static android.view.MotionEvent touch(int action, float x, float y) {
         long now = android.os.SystemClock.uptimeMillis();
         return android.view.MotionEvent.obtain(now, now, action, x, y, 0);

@@ -53,6 +53,13 @@ public final class LiveListen {
     static final long TICK_MS = 1_000;
     /** How long after the room's page resumes the tick keeps looking for it before giving up. */
     static final long LOOK_MS = 5_000;
+    /**
+     * How long a room may go without a stream address before listening gives up on it. A room's
+     * page resumes before TikTok fills in its stream fields: both pages of a room looked 130 ms
+     * after it opened, found nothing and dropped it, while 4 s later it had FLV at every quality
+     * (S22, 2026-11-16).
+     */
+    static final long ADDRESS_WAIT_MS = 10_000;
     /** How long a full pipe may sit unread, while speech hasn't ended, before it counts as ignored. */
     static final long NOT_READING_MS = 6_000;
     /** How long a start may take to say it's ready, the first one loading the speech model. */
@@ -99,6 +106,11 @@ public final class LiveListen {
         Audio start(String url, LiveSpeechAudio.Sink sink);
     }
 
+    /** The address to listen to in a room object, or null while it has none. */
+    interface Streams {
+        String address(Object room);
+    }
+
     static final Pipes OS_PIPES = OsPipe::new;
     static final AudioSource NETWORK_AUDIO = (url, sink) -> {
         LiveSpeechAudio audio = LiveSpeechAudio.start(url, sink);
@@ -110,6 +122,7 @@ public final class LiveListen {
 
     static volatile Pipes pipes = OS_PIPES;
     static volatile AudioSource audioSource = NETWORK_AUDIO;
+    static volatile Streams streams = LiveRoomStream::listenAddress;
     static volatile long nowForTests;
     static volatile Problem problem = Problem.NONE;
 
@@ -119,6 +132,9 @@ public final class LiveListen {
     /** A room with no sound to listen to or no way to listen, so the tick doesn't try it each second. */
     private static String deadRoom;
     private static long lookUntil;
+    /** The room waiting for its stream address, and since when. */
+    private static String addressWaitRoom;
+    private static long addressWaitSince;
 
     private LiveListen() {
     }
@@ -141,6 +157,7 @@ public final class LiveListen {
             host = new WeakReference<>(activity);
             // Back from the settings, say: a room that couldn't listen gets another look.
             deadRoom = null;
+            addressWaitRoom = null;
             lookUntil = now() + LOOK_MS;
             registerCallbacks(activity);
             HANDLER.removeCallbacks(TICK);
@@ -185,23 +202,35 @@ public final class LiveListen {
         }
     }
 
-    private static void start(Activity activity, String room, Object roomObject) {
+    static void start(Activity activity, String room, Object roomObject) {
         Context context = activity.getApplicationContext();
         if (!microphoneAllowed(context)) {
+            Logger.printInfo(() -> "LIVE listen: TikTok has no microphone permission");
             problem = Problem.NEEDS_MICROPHONE;
             deadRoom = room;
             return;
         }
         if (!recognitionAvailable(context)) {
+            Logger.printInfo(() -> "LIVE listen: the phone has no speech recognition");
             deadRoom = room;
             return;
         }
-        String address = LiveRoomStream.listenAddress(roomObject);
+        String address = streams.address(roomObject);
         if (address == null) {
-            Logger.printInfo(() -> "LIVE listen: this room has no FLV stream to listen to");
-            deadRoom = room;
+            // Not filled in yet, most likely: the tick asks again each second for a while.
+            long now = now();
+            if (!room.equals(addressWaitRoom)) {
+                addressWaitRoom = room;
+                addressWaitSince = now;
+            }
+            if (now - addressWaitSince >= ADDRESS_WAIT_MS) {
+                Logger.printInfo(() -> "LIVE listen: this room has no FLV stream to listen to");
+                deadRoom = room;
+            }
             return;
         }
+        addressWaitRoom = null;
+        Logger.printDebug(() -> "LIVE listen: listening to the room's sound");
         Session started = new Session(context, room, address);
         session = started;
         started.begin();
@@ -699,14 +728,21 @@ public final class LiveListen {
         return session;
     }
 
+    static String deadRoomForTests() {
+        return deadRoom;
+    }
+
     static void resetForTests() {
         end();
         host = new WeakReference<>(null);
         deadRoom = null;
+        addressWaitRoom = null;
+        addressWaitSince = 0;
         lookUntil = 0;
         problem = Problem.NONE;
         pipes = OS_PIPES;
         audioSource = NETWORK_AUDIO;
+        streams = LiveRoomStream::listenAddress;
         nowForTests = 0;
     }
 }

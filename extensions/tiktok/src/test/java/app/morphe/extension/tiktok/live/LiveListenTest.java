@@ -322,6 +322,42 @@ public class LiveListenTest {
                 + "Download one in Android's speech settings, then open the LIVE again.", LiveListen.statusLine(context));
     }
 
+    @Test public void aRoomWhoseStreamIsNotFilledInYetIsAskedAgain() {
+        Activity room = Robolectric.buildActivity(Activity.class).setup().get();
+        String[] offered = {null};
+        LiveListen.streams = roomObject -> offered[0];
+
+        // Both of a room's pages resume before TikTok fills in its stream fields.
+        LiveListen.start(room, ROOM, new Object());
+        LiveListen.start(room, ROOM, new Object());
+        assertNull(LiveListen.currentForTests());
+        assertNull(LiveListen.deadRoomForTests());
+
+        LiveListen.nowForTests = START + LiveListen.TICK_MS;
+        offered[0] = ADDRESS;
+        LiveListen.start(room, ROOM, new Object());
+
+        assertNotNull(LiveListen.currentForTests());
+        assertEquals(ADDRESS, audioUrl);
+    }
+
+    @Test public void aRoomThatNeverGetsAStreamIsGivenUpOn() {
+        Activity room = Robolectric.buildActivity(Activity.class).setup().get();
+        LiveListen.streams = roomObject -> null;
+
+        LiveListen.start(room, ROOM, new Object());
+        LiveListen.nowForTests = START + LiveListen.ADDRESS_WAIT_MS - 1;
+        LiveListen.start(room, ROOM, new Object());
+        assertNull(LiveListen.deadRoomForTests());
+
+        LiveListen.nowForTests = START + LiveListen.ADDRESS_WAIT_MS;
+        LiveListen.start(room, ROOM, new Object());
+
+        assertEquals(ROOM, LiveListen.deadRoomForTests());
+        assertNull(LiveListen.currentForTests());
+        assertNull(audioUrl);
+    }
+
     @Test public void leavingTheRoomStopsEverything() {
         LiveListen.Session session = listening();
         ShadowSpeechRecognizer recognizer = recognizer();

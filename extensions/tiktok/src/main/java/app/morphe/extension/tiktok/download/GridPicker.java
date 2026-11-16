@@ -5,6 +5,7 @@
 package app.morphe.extension.tiktok.download;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -85,6 +86,8 @@ public final class GridPicker {
     private static WeakReference<View> lastCell = new WeakReference<>(null);
     /** For the tests: what was handed to a save run. Null starts a real one. */
     static volatile List<List<Object>> runsForTests;
+    /** For the tests, beside {@link #runsForTests}: whether each run joins its photo posts. */
+    static volatile List<Boolean> joinsForTests;
 
     private GridPicker() {
     }
@@ -289,18 +292,49 @@ public final class GridPicker {
 
     /**
      * Save on the bar: the picked posts, in the order picked, go to one run. The picks are
-     * cleared at once, so the grid is TikTok's again while the run saves.
+     * cleared at once, so the grid is TikTok's again while the run saves. With Save photo posts
+     * as a video on and two or more photo posts picked, it first asks whether they go out as one
+     * video or one per post (#430); Cancel there keeps the picks.
      */
     static void saveAll(Context context) {
         List<Object> posts = new ArrayList<>(PICKED.values());
+        if (!posts.isEmpty() && context instanceof Activity && SlideshowVideo.enabled()
+                && BatchSave.joinableCount(posts) >= 2) {
+            askJoin((Activity) context, posts);
+            return;
+        }
         clear();
         if (posts.isEmpty()) return;
+        hand(context, posts, false);
+    }
+
+    private static void askJoin(Activity activity, List<Object> posts) {
+        SettingsUi.syncDarkMode(activity);
+        AlertDialog dialog = new AlertDialog.Builder(activity)
+                .setTitle(L10n.t(activity, "Save the photo posts as one video?"))
+                .setPositiveButton(L10n.t(activity, "One video"), (shown, which) -> {
+                    clear();
+                    hand(activity, posts, true);
+                })
+                .setNegativeButton(L10n.t(activity, "One per post"), (shown, which) -> {
+                    clear();
+                    hand(activity, posts, false);
+                })
+                .setNeutralButton(L10n.t(activity, "Cancel"), null)
+                .create();
+        dialog.setOnShowListener(ignored -> SettingsUi.styleStandardAlertDialog(dialog));
+        dialog.show();
+    }
+
+    private static void hand(Context context, List<Object> posts, boolean joinPhotos) {
         List<List<Object>> log = runsForTests;
         if (log != null) {
             log.add(posts);
+            List<Boolean> joins = joinsForTests;
+            if (joins != null) joins.add(joinPhotos);
             return;
         }
-        BatchSave.start(context, posts);
+        BatchSave.start(context, posts, joinPhotos);
     }
 
     /**
@@ -533,5 +567,6 @@ public final class GridPicker {
         hideBar();
         lastCell = new WeakReference<>(null);
         runsForTests = null;
+        joinsForTests = null;
     }
 }

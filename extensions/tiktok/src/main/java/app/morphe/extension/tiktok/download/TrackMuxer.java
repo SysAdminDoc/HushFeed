@@ -15,6 +15,8 @@ import app.morphe.extension.shared.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 /** Copies compressed samples and original timestamps; it does not re-encode either track. */
 final class TrackMuxer {
@@ -109,6 +111,62 @@ final class TrackMuxer {
             release(muxer);
         }
         if (output.length() == 0) throw new IOException("Video muxer wrote an empty file");
+    }
+
+    /**
+     * Several sounds one after another in one track, each starting at its {@code startsUs}: the
+     * posts of a joined photo video, each under its own photos (#430). The samples go across as
+     * they are, which only plays right when every part has the same shape, so parts that differ
+     * are refused before anything is written and the caller takes one sound instead.
+     */
+    static void joinAudio(List<File> parts, long[] startsUs, File output) throws IOException {
+        if (parts.isEmpty() || parts.size() != startsUs.length) throw new IOException("There are no sounds to join");
+        MediaBudget.check(null);
+        long bytes = 0;
+        for (File part : parts) bytes += part.length();
+        MediaBudget.checkDiskSpace(output.getParentFile(), bytes);
+        List<MediaExtractor> sounds = new ArrayList<>();
+        MediaMuxer muxer = null;
+        try {
+            MediaFormat shape = null;
+            for (File part : parts) {
+                MediaExtractor sound = new MediaExtractor();
+                sounds.add(sound);
+                sound.setDataSource(part.getAbsolutePath());
+                MediaFormat format = select(sound, "audio/");
+                if (shape == null) shape = format;
+                else if (!sameSound(shape, format)) throw new IOException("The sounds to join differ in format");
+            }
+            muxer = new MediaMuxer(output.getAbsolutePath(), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+            int track = muxer.addTrack(shape);
+            muxer.start();
+            for (int i = 0; i < sounds.size(); i++) {
+                MediaExtractor sound = sounds.get(i);
+                copy(sound, muxer, track, leadIn(sound) - startsUs[i]);
+            }
+            muxer.stop();
+            MediaBudget.check(null);
+        } finally {
+            for (MediaExtractor sound : sounds) sound.release();
+            release(muxer);
+        }
+        if (output.length() == 0) throw new IOException("Audio muxer wrote an empty file");
+    }
+
+    /** Whether two sound tracks can share one track: the same codec, rate, channels and setup. */
+    static boolean sameSound(MediaFormat a, MediaFormat b) {
+        String mime = a.getString(MediaFormat.KEY_MIME);
+        if (mime == null || !mime.equals(b.getString(MediaFormat.KEY_MIME))) return false;
+        int rate = integer(a, MediaFormat.KEY_SAMPLE_RATE);
+        if (rate <= 0 || rate != integer(b, MediaFormat.KEY_SAMPLE_RATE)) return false;
+        if (integer(a, MediaFormat.KEY_CHANNEL_COUNT) != integer(b, MediaFormat.KEY_CHANNEL_COUNT)) return false;
+        ByteBuffer one = a.containsKey("csd-0") ? a.getByteBuffer("csd-0") : null;
+        ByteBuffer two = b.containsKey("csd-0") ? b.getByteBuffer("csd-0") : null;
+        return one == null ? two == null : one.equals(two);
+    }
+
+    private static int integer(MediaFormat format, String key) {
+        return format.containsKey(key) ? format.getInteger(key) : -1;
     }
 
     /**

@@ -7,6 +7,7 @@ package app.morphe.extension.tiktok.download;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
@@ -230,6 +231,71 @@ public class BatchSaveTest {
 
         gear.videoExtra = "{\"audio_file_id\":\"missing\"}";
         assertTrue("a silent video was offered as a complete one", BatchSave.source(video, "highest", false).video.isEmpty());
+    }
+
+    private static AdvancedDownloadsTest.PhotoPost photoPost(String id, AdvancedDownloadsTest.Photo... photos) {
+        return new AdvancedDownloadsTest.PhotoPost(id, List.of(photos));
+    }
+
+    /**
+     * #430: One video gathers the picked photo posts into one item where the first of them was
+     * picked. Videos and a post with a live photo stay one per post, around it.
+     */
+    @Test public void joiningPutsThePhotoPostsInOneItemWhereTheFirstWasPicked() throws Exception {
+        Object a = "video-a", b = "video-b";
+        Object one = photoPost("join-1", new AdvancedDownloadsTest.Photo("https://example.com/join/1"));
+        Object two = photoPost("join-2", new AdvancedDownloadsTest.Photo("https://example.com/join/2"));
+        Object live = photoPost("join-live", new AdvancedDownloadsTest.Photo("https://example.com/join/live").live());
+        List<Object> items = BatchSave.joined(List.of(a, one, live, b, two));
+        assertEquals(4, items.size());
+        assertEquals(a, items.get(0));
+        assertTrue("the photo posts weren't joined", items.get(1) instanceof BatchSave.Joined);
+        assertEquals(List.of(one, two), ((BatchSave.Joined) items.get(1)).posts);
+        assertEquals("a live photo went into the video", live, items.get(2));
+        assertEquals(b, items.get(3));
+
+        List<Object> lone = List.of(a, one, b);
+        assertSame("one photo post was joined with nothing", lone, BatchSave.joined(lone));
+
+        CountDownLatch done = new CountDownLatch(4);
+        List<Object> seen = new java.util.concurrent.CopyOnWriteArrayList<>();
+        BatchSave.saverForTests = (app, post, last) -> {
+            seen.add(post);
+            done.countDown();
+            return BatchSave.Result.SAVED;
+        };
+        assertTrue(BatchSave.start(context, new ArrayList<>(List.of(a, one, live, b, two)), true));
+        assertTrue("the run never saved its items", done.await(10, TimeUnit.SECONDS));
+        SaveRecordsFixtures.drain();
+        assertEquals(4, seen.size());
+        assertTrue(seen.get(1) instanceof BatchSave.Joined);
+        assertEquals("Saved 4 videos", said());
+    }
+
+    /** #430: the joined video is made once, named as its first post's, and isn't any post's saved video. */
+    @Test public void theJoinedVideoIsMadeOnceAndNamedAfterItsFirstPost() throws Exception {
+        SettingsStatus.advancedDownloadsEnabled = true;
+        Settings.DOWNLOAD_PHOTOS_AS_VIDEO.save(true);
+        Settings.CHECK_SAVED_VIDEOS.save(true);
+        List<String> made = new ArrayList<>();
+        SlideshowVideo.makerForTests = (name, seconds) -> {
+            made.add(name);
+            java.io.File file = new java.io.File(context.getCacheDir(), "joined-photo-video.mp4");
+            java.nio.file.Files.write(file.toPath(), new byte[]{1, 2, 3, 4});
+            return new MediaFileWriter.Saved(name, null, file);
+        };
+        Object first = photoPost("joined-first", new AdvancedDownloadsTest.Photo("https://example.com/joined/1"));
+        Object second = photoPost("joined-second", new AdvancedDownloadsTest.Photo("https://example.com/joined/2"),
+                new AdvancedDownloadsTest.Photo("https://example.com/joined/3"));
+        MediaFileWriter.Saved[] last = {null};
+
+        assertEquals(BatchSave.Result.SAVED,
+                BatchSave.saveOne(context, new BatchSave.Joined(List.of(first, second)), last));
+        assertEquals(List.of(DownloadFilenameFormatter.formatSelectedVideoName(first)), made);
+        assertNotNull(last[0]);
+        assertFalse("the joined video was taken as the first post's own",
+                SavedVideoArchiveAccess.isRecorded(context, "joined-first"));
+        assertFalse(SavedVideoArchiveAccess.isRecorded(context, "joined-second"));
     }
 
     /** #197: with Save photo posts as a video on, a picked photo post comes out as that video. */

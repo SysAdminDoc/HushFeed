@@ -2756,3 +2756,6 @@ Off: this phone's speech recognition only hears the microphone. Turn this off an
 "TikTok needs the microphone permission for speech recognition. Allow it in Android's app settings, then open the LIVE again.",TikTok 需要麦克风权限才能使用语音识别。在 Android 的应用设置里允许，然后重新打开 LIVE.
 "Speech recognition has no model for your phone's language. Download one in Android's speech settings, then open the LIVE again.",语音识别没有适用于你手机语言的模型。在 Android 的语音设置里下载一个，然后重新打开 LIVE.
 Speech recognition kept failing in the last LIVE. Open the LIVE again to retry.,语音识别在上一个 LIVE 里一直失败。重新打开 LIVE 即可重试.
+Save the photo posts as one video?,将照片帖子保存为一个视频?
+One video,一个视频
+One per post,每个帖子一个

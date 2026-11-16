@@ -89,6 +89,12 @@ final class MediaBudget {
         }
     }
 
+    /** Whether Cancel was tapped on the run of saves this thread is working for. */
+    static boolean cancelled() {
+        Deadline deadline = CURRENT_DEADLINE.get();
+        return deadline != null && deadline.cancellation != null && deadline.cancellation.get();
+    }
+
     static void check(Deadline deadline) throws IOException {
         if (deadline == null) deadline = CURRENT_DEADLINE.get();
         if (deadline != null && deadline.expired()) {

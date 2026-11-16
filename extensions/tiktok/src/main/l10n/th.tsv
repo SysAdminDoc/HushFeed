@@ -2906,3 +2906,6 @@ This phone has no speech recognition. Choose one under Android's voice input set
 TikTok needs the microphone permission for speech recognition. Allow it in Android's app settings, then open the LIVE again.	TikTok ต้องได้รับสิทธิ์ไมโครโฟนสำหรับระบบจดจำเสียงพูด อนุญาตในการตั้งค่าแอปของ Android แล้วเปิด LIVE อีกครั้ง
 Speech recognition has no model for your phone's language. Download one in Android's speech settings, then open the LIVE again.	ระบบจดจำเสียงพูดไม่มีโมเดลสำหรับภาษาของโทรศัพท์คุณ ดาวน์โหลดในการตั้งค่าเสียงพูดของ Android แล้วเปิด LIVE อีกครั้ง
 Speech recognition kept failing in the last LIVE. Open the LIVE again to retry.	ระบบจดจำเสียงพูดล้มเหลวซ้ำๆ ใน LIVE ล่าสุด เปิด LIVE อีกครั้งเพื่อลองใหม่
+Save the photo posts as one video?	บันทึกโพสต์รูปภาพเป็นวิดีโอเดียว?
+One video	วิดีโอเดียว
+One per post	แยกตามโพสต์

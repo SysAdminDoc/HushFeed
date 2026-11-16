@@ -12,6 +12,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.Shadows;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowToast;
 
 /**
@@ -61,9 +63,18 @@ public class GridPickerTest {
         final String aid;
         boolean story;
         boolean ad;
+        /** Set on a photo post, which is where its photos are read from. */
+        public AdvancedDownloadsTest.Info photoModeImageInfo;
 
         Post(String aid) {
             this.aid = aid;
+        }
+
+        static Post photos(String aid) {
+            Post post = new Post(aid);
+            post.photoModeImageInfo = new AdvancedDownloadsTest.Info(
+                    List.of(new AdvancedDownloadsTest.Photo("https://example.com/" + aid)));
+            return post;
         }
 
         @Override public String getAid() { return aid; }
@@ -86,6 +97,7 @@ public class GridPickerTest {
     @After public void tearDown() {
         GridPicker.resetForTests();
         PausedProcess.set(false);
+        Settings.DOWNLOAD_PHOTOS_AS_VIDEO.resetToDefault();
         Settings.PICK_GRID_VIDEOS.save(false);
         SettingsStatus.advancedDownloadsEnabled = false;
         Utils.setActivity(null);
@@ -250,6 +262,83 @@ public class GridPickerTest {
         assertNull("the bar stayed up", GridPicker.barForTests());
         assertEquals("the cells still take the tap", View.GONE, cover(cell).getVisibility());
         assertFalse(circle(cell).isSelected());
+    }
+
+    private void pick(FrameLayout cell, Post... posts) {
+        for (Post post : posts) {
+            GridPicker.bind(cell, post);
+            circle(cell).performClick();
+        }
+    }
+
+    private static AlertDialog asked() {
+        idle();
+        AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+        return dialog != null && dialog.isShowing() ? dialog : null;
+    }
+
+    /**
+     * #430: with Save photo posts as a video on and two photo posts picked, Save asks whether
+     * they go out as one video. Cancel keeps every pick; One video and One per post each start
+     * the run with all the picks, and only One video joins the photos.
+     */
+    @Test public void saveAsksWhetherThePickedPhotoPostsGoOutAsOneVideo() {
+        Settings.DOWNLOAD_PHOTOS_AS_VIDEO.save(true);
+        List<Boolean> joins = new ArrayList<>();
+        GridPicker.joinsForTests = joins;
+        FrameLayout cell = cell();
+        Post one = Post.photos("p1"), video = new Post("v"), two = Post.photos("p2");
+        pick(cell, one, video, two);
+
+        barText("Save").performClick();
+        AlertDialog dialog = asked();
+        assertNotNull("Save didn't ask", dialog);
+        assertEquals("Save the photo posts as one video?", Shadows.shadowOf(dialog).getTitle().toString());
+        assertEquals("One video", dialog.getButton(AlertDialog.BUTTON_POSITIVE).getText().toString());
+        assertEquals("One per post", dialog.getButton(AlertDialog.BUTTON_NEGATIVE).getText().toString());
+        assertEquals("Cancel", dialog.getButton(AlertDialog.BUTTON_NEUTRAL).getText().toString());
+        assertTrue("the run started before an answer", runs.isEmpty());
+        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).performClick();
+        idle();
+        assertTrue("Cancel saved anyway", runs.isEmpty());
+        assertEquals("Cancel dropped the picks", 3, GridPicker.pickedCount());
+        assertNotNull(GridPicker.barForTests());
+
+        barText("Save").performClick();
+        asked().getButton(AlertDialog.BUTTON_POSITIVE).performClick();
+        idle();
+        assertEquals(List.of(List.of(one, video, two)), runs);
+        assertEquals(List.of(true), joins);
+        assertEquals(0, GridPicker.pickedCount());
+        assertNull("the bar stayed up", GridPicker.barForTests());
+
+        pick(cell, two, one);
+        barText("Save").performClick();
+        asked().getButton(AlertDialog.BUTTON_NEGATIVE).performClick();
+        idle();
+        assertEquals(List.of(two, one), runs.get(1));
+        assertEquals(List.of(true, false), joins);
+    }
+
+    /** One photo post, a live photo, or the video switch off: Save starts the run without asking. */
+    @Test public void saveDoesNotAskWithNothingToJoin() {
+        List<Boolean> joins = new ArrayList<>();
+        GridPicker.joinsForTests = joins;
+        FrameLayout cell = cell();
+        Settings.DOWNLOAD_PHOTOS_AS_VIDEO.save(true);
+        Post live = Post.photos("live");
+        live.photoModeImageInfo.imageList.get(0).live();
+        pick(cell, Post.photos("p1"), new Post("v"), live);
+        barText("Save").performClick();
+        assertNull("one photo post to join was asked about", asked());
+        assertEquals(1, runs.size());
+
+        Settings.DOWNLOAD_PHOTOS_AS_VIDEO.save(false);
+        pick(cell, Post.photos("p2"), Post.photos("p3"));
+        barText("Save").performClick();
+        assertNull("the video switch is off, but Save asked", asked());
+        assertEquals(2, runs.size());
+        assertEquals(List.of(false, false), joins);
     }
 
     @Test public void cancelUnpicksEverythingAndSavesNothing() {

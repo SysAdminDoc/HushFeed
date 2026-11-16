@@ -2903,3 +2903,6 @@ This phone has no speech recognition. Choose one under Android's voice input set
 TikTok needs the microphone permission for speech recognition. Allow it in Android's app settings, then open the LIVE again.	TikTok'un konuşma tanıma için mikrofon iznine ihtiyacı var. Android'in uygulama ayarlarından izin ver, sonra LIVE'ı yeniden aç.
 Speech recognition has no model for your phone's language. Download one in Android's speech settings, then open the LIVE again.	Konuşma tanımanın telefonunun dili için modeli yok. Android'in konuşma ayarlarından bir tane indir, sonra LIVE'ı yeniden aç.
 Speech recognition kept failing in the last LIVE. Open the LIVE again to retry.	Konuşma tanıma son LIVE'da defalarca başarısız oldu. Yeniden denemek için LIVE'ı tekrar aç.
+Save the photo posts as one video?	Fotoğraf gönderileri tek video olarak kaydedilsin mi?
+One video	Tek video
+One per post	Gönderi başına bir

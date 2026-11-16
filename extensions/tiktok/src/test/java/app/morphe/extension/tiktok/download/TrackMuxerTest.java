@@ -115,6 +115,60 @@ public class TrackMuxerTest {
         assertTrue(output.delete());
     }
 
+    /**
+     * #430: a joined photo video's sound is each post's sound in turn, in one track. Each part
+     * starts where its post's photos start, its own lead-in taken off first.
+     */
+    @Test public void joinAudioLaysEachSoundAtItsOwnStartInOneTrack() throws Exception {
+        SampleExtractor.useAudio(LEAD_IN_TIMES, LEAD_IN_SIZES, LEAD_IN_FLAGS);
+        File first = files.newFile(), second = files.newFile(), output = files.newFile();
+        Files.write(first.toPath(), SOURCE);
+        Files.write(second.toPath(), SOURCE);
+        ShadowMediaExtractor.addTrack(DataSource.toDataSource(first.getAbsolutePath()),
+                MediaFormat.createAudioFormat("audio/mp4a-latm", 44_100, 2), LEAD_IN_AUDIO);
+        ShadowMediaExtractor.addTrack(DataSource.toDataSource(second.getAbsolutePath()),
+                MediaFormat.createAudioFormat("audio/mp4a-latm", 44_100, 2), new byte[]{7, 8, 9, 10, 11, 12});
+
+        TrackMuxer.joinAudio(List.of(first, second), new long[]{0, 6_000_000}, output);
+
+        assertEquals("the parts weren't one track", 1, RecordingMuxer.formats.size());
+        long[] times = {0, 46_440, 184_134, 6_000_000, 6_046_440, 6_184_134};
+        byte[][] payloads = {{1, 2}, {3, 4}, {5, 6}, {7, 8}, {9, 10}, {11, 12}};
+        assertEquals(times.length, RecordingMuxer.samples.size());
+        for (int i = 0; i < times.length; i++) {
+            Sample sample = RecordingMuxer.samples.get(i);
+            assertEquals(0, sample.track);
+            assertEquals("sample " + i, times[i], sample.timeUs);
+            assertArrayEquals(payloads[i], sample.payload);
+        }
+        assertEquals(List.of("setup", "add", "start", "write", "write", "write", "write", "write", "write",
+                "stop", "release"), RecordingMuxer.events);
+    }
+
+    /** Sounds of different shapes can't share a track, and nothing is written before that's known. */
+    @Test public void joinAudioRefusesSoundsThatDifferBeforeWritingAnything() throws Exception {
+        File first = files.newFile(), second = files.newFile(), output = files.newFile();
+        Files.write(first.toPath(), SOURCE);
+        Files.write(second.toPath(), SOURCE);
+        ShadowMediaExtractor.addTrack(DataSource.toDataSource(first.getAbsolutePath()),
+                MediaFormat.createAudioFormat("audio/mp4a-latm", 44_100, 2), AUDIO);
+        ShadowMediaExtractor.addTrack(DataSource.toDataSource(second.getAbsolutePath()),
+                MediaFormat.createAudioFormat("audio/mp4a-latm", 48_000, 2), AUDIO);
+
+        assertThrows(IOException.class,
+                () -> TrackMuxer.joinAudio(List.of(first, second), new long[]{0, 3_000_000}, output));
+        assertTrue("the muxer was set up for sounds that can't be joined", RecordingMuxer.events.isEmpty());
+        assertTrue(SampleExtractor.last.released);
+
+        MediaFormat mono = MediaFormat.createAudioFormat("audio/mp4a-latm", 44_100, 1);
+        MediaFormat stereo = MediaFormat.createAudioFormat("audio/mp4a-latm", 44_100, 2);
+        assertFalse(TrackMuxer.sameSound(stereo, mono));
+        assertTrue(TrackMuxer.sameSound(stereo, MediaFormat.createAudioFormat("audio/mp4a-latm", 44_100, 2)));
+        MediaFormat setUp = MediaFormat.createAudioFormat("audio/mp4a-latm", 44_100, 2);
+        setUp.setByteBuffer("csd-0", ByteBuffer.wrap(new byte[]{0x12, 0x10}));
+        assertFalse("a different encoder setup was taken as the same sound", TrackMuxer.sameSound(stereo, setUp));
+    }
+
     @Test public void videoOnlyPreservesRotationBeforeStartingAndCopiesOnlyVideoSamples() throws Exception {
         for (int rotation : new int[]{90, 180, 270}) assertVideoOnly(rotation);
     }

@@ -1482,9 +1482,11 @@ One at a time,One at a time
 One minute left,One minute left
 One more save waiting,One more save waiting
 "One of the quote marks in that list has nothing to close it, so the rest of the line reads as one phrase. Add the missing quote or take the stray one out.","One of the quote marks in that list has nothing to close it, so the rest of the line reads as one phrase. Add the missing quote or take the stray one out."
+One per post,One per post
 One picked,One picked
 "One speed from %1$s to %2$s, like 1.8, for the hold and its pull-down lock. It takes the place of the speed above. Leave empty to use that one.","One speed from %1$s to %2$s, like 1.8, for the hold and its pull-down lock. It takes the place of the speed above. Leave empty to use that one."
 One value per line,One value per line
+One video,One video
 One video was recorded before each account kept its own list. It hides nothing until you add it here.,One video was recorded before each account kept its own list. It hides nothing until you add it here.
 One was already saved,One was already saved
 Only a watermarked copy existed. Saved to %1$s,Only a watermarked copy existed. Saved to %1$s
@@ -1830,6 +1832,7 @@ Save the cover as well,Save the cover as well
 Save the feed capture,Save the feed capture
 Save the frame on screen as a photo,Save the frame on screen as a photo
 Save the original sound,Save the original sound
+Save the photo posts as one video?,Save the photo posts as one video?
 Save the sound as well,Save the sound as well
 Save the video's cover,Save the video's cover
 "Save the video's cover picture at the largest size TikTok has, each time you tap Download. It goes to your photo folder, named after the video.","Save the video's cover picture at the largest size TikTok has, each time you tap Download. It goes to your photo folder, named after the video."

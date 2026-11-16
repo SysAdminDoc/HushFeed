@@ -2756,3 +2756,6 @@ Off: this phone's speech recognition only hears the microphone. Turn this off an
 "TikTok needs the microphone permission for speech recognition. Allow it in Android's app settings, then open the LIVE again.","TikTok cần quyền micrô để nhận dạng giọng nói. Cho phép trong cài đặt ứng dụng của Android, rồi mở lại LIVE."
 "Speech recognition has no model for your phone's language. Download one in Android's speech settings, then open the LIVE again.","Tính năng nhận dạng giọng nói không có mô hình cho ngôn ngữ của điện thoại bạn. Tải một mô hình trong cài đặt giọng nói của Android, rồi mở lại LIVE."
 Speech recognition kept failing in the last LIVE. Open the LIVE again to retry.,Tính năng nhận dạng giọng nói liên tục lỗi trong LIVE vừa rồi. Mở lại LIVE để thử lại.
+Save the photo posts as one video?,Lưu các bài đăng ảnh thành một video?
+One video,Một video
+One per post,Mỗi bài một video

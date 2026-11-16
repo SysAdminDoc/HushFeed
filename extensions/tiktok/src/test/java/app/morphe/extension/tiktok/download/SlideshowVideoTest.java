@@ -251,6 +251,31 @@ public class SlideshowVideoTest {
         assertNull(MediaJobScheduler.job("photo video " + post.getAid()));
     }
 
+    /**
+     * #430: picked photo posts joined into one video keep the order they were picked in, each
+     * post's sound goes under that post's own photos, and a post without its photos is left out.
+     */
+    @Test public void joinedPostsKeepThePickOrderAndEachPostsOwnSound() {
+        var first = post("slideshow-join-first", List.of(photo("https://example.com/join/b0"),
+                photo("https://example.com/join/b1")));
+        var missing = post("slideshow-join-missing", List.of());
+        var last = storyWithSound("slideshow-join-last");
+
+        SlideshowVideo.Plan plan = SlideshowVideo.plan(List.of(first, missing, last));
+
+        assertSame("the video isn't named after the first post with photos", first, plan.first);
+        assertEquals(3, plan.photos.size());
+        assertTrue(plan.photos.get(0).contains("https://example.com/join/b0"));
+        assertTrue(plan.photos.get(1).contains("https://example.com/join/b1"));
+        assertTrue(plan.photos.get(2).contains("https://example.com/one"));
+        assertEquals("a post without photos got a sound", 2, plan.sounds.size());
+        assertEquals(2, plan.sounds.get(0).photos);
+        assertTrue("a post with no sound borrowed one", plan.sounds.get(0).sources.isEmpty());
+        assertEquals(1, plan.sounds.get(1).photos);
+        assertTrue(plan.sounds.get(1).sources.contains("https://example.com/sound"));
+        assertNull(SlideshowVideo.plan(List.of(missing)).first);
+    }
+
     @Test public void aPhotoStoryWithASoundRunsTenSecondsAndASilentOneFive() {
         var silent = post("slideshow-story-silent", List.of(photo("https://example.com/one")));
         assertEquals(5, SlideshowVideo.storySeconds(silent));

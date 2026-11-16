@@ -31,7 +31,8 @@ import java.util.List;
  * Remove watermark is on (TikTok's own when it is off and the quality is Automatic), its sound
  * put back in when the rendition carries it separately, or left out with Save videos without
  * sound. A photo post saves every photo at full size, or as one video with Save photo posts as a
- * video on, as a single download does. With Check for already-saved videos on, a
+ * video on, as a single download does; with that switch on, several picked photo posts can also
+ * go out together as one video (#430, {@link Joined}). With Check for already-saved videos on, a
  * video or photo post saved here before is counted and left alone, and a post this run saves is
  * remembered.
  * Details files, subtitles, tags and a caption written on the video are single-save extras and
@@ -56,7 +57,15 @@ final class BatchSave {
 
     /** Queues the run. False when it couldn't start: no posts, no permission or a full queue. */
     static boolean start(Context context, List<Object> posts) {
-        return start(context, posts, false);
+        return start(context, posts, false, false);
+    }
+
+    /**
+     * As {@link #start(Context, List)}, with {@code joinPhotos} saving the picked photo posts as
+     * one video (#430) where the first of them was picked, and everything else one per post.
+     */
+    static boolean start(Context context, List<Object> posts, boolean joinPhotos) {
+        return start(context, posts, false, joinPhotos);
     }
 
     /**
@@ -64,10 +73,56 @@ final class BatchSave {
      * single story save takes it ({@link #storySource}).
      */
     static boolean startStories(Context context, List<Object> stories) {
-        return start(context, stories, true);
+        return start(context, stories, true, false);
     }
 
-    private static boolean start(Context context, List<Object> posts, boolean stories) {
+    /** Photo posts saved as one video in a run (#430), in the order they were picked. */
+    static final class Joined {
+        final List<Object> posts;
+
+        Joined(List<Object> posts) {
+            this.posts = Collections.unmodifiableList(new ArrayList<>(posts));
+        }
+    }
+
+    /** Whether a post can go into a joined video: a photo post with no live photo in it. */
+    static boolean joinable(Object post) {
+        return Reflect.property(post, "getPhotoModeImageInfo", "photoModeImageInfo") != null
+                && !OriginalPhotos.anyChosenIsLive(post, null);
+    }
+
+    static int joinableCount(List<?> posts) {
+        int count = 0;
+        for (Object post : posts) if (joinable(post)) count++;
+        return count;
+    }
+
+    /**
+     * The run's items with the joinable photo posts gathered into one {@link Joined} where the
+     * first of them was, and every other post left where it was. Fewer than two to join leaves
+     * the list as it is.
+     */
+    static List<Object> joined(List<Object> posts) {
+        if (joinableCount(posts) < 2) return posts;
+        List<Object> items = new ArrayList<>();
+        List<Object> photos = new ArrayList<>();
+        int at = -1;
+        for (Object post : posts) {
+            if (!joinable(post)) {
+                items.add(post);
+                continue;
+            }
+            if (at < 0) {
+                at = items.size();
+                items.add(null);
+            }
+            photos.add(post);
+        }
+        items.set(at, new Joined(photos));
+        return Collections.unmodifiableList(items);
+    }
+
+    private static boolean start(Context context, List<Object> posts, boolean stories, boolean joinPhotos) {
         if (context == null || posts == null || posts.isEmpty()) return false;
         if (android.os.Build.VERSION.SDK_INT < 29
                 && context.checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -76,8 +131,9 @@ final class BatchSave {
             return false;
         }
         // List.copyOf is API 30; the payload's floor is 23.
-        List<Object> snapshot = Collections.unmodifiableList(
+        List<Object> picked = Collections.unmodifiableList(
                 new ArrayList<>(posts.subList(0, Math.min(posts.size(), GridPicker.MAX_PICKED))));
+        List<Object> snapshot = joinPhotos && !stories ? joined(picked) : picked;
         Context app = context.getApplicationContext() != null ? context.getApplicationContext() : context;
         Saver saver = saverForTests != null ? saverForTests
                 : stories ? BatchSave::saveStory : BatchSave::saveOne;
@@ -140,6 +196,7 @@ final class BatchSave {
 
     private static Result saveOne(Context app, Object post, MediaFileWriter.Saved[] last, boolean story)
             throws IOException {
+        if (post instanceof Joined) return saveJoined(app, (Joined) post, last);
         String id = Reflect.string(post, "getAid", "aid");
         if (id == null) throw new IOException("A picked post has no id");
         boolean checkSaved = Settings.CHECK_SAVED_VIDEOS.get();
@@ -199,6 +256,20 @@ final class BatchSave {
         } finally {
             for (File file : temporary) if (!MediaCache.delete(file)) Logger.printInfo(() -> "Could not remove a run's temporary file");
         }
+    }
+
+    /**
+     * The picked photo posts as one video (#430). It isn't any one post's video, so it's left out
+     * of the record of saved posts, and each post can still be saved on its own later.
+     */
+    private static Result saveJoined(Context app, Joined joined, MediaFileWriter.Saved[] last) throws IOException {
+        for (Object post : joined.posts) {
+            String id = Reflect.string(post, "getAid", "aid");
+            // A single save of one of them is under way; the two would race for its photos.
+            if (id != null && SlideshowVideo.saving(id)) throw new IOException("A picked post is already being saved as a video");
+        }
+        last[0] = SlideshowVideo.makeJoined(app, joined.posts);
+        return Result.SAVED;
     }
 
     /** Where one video comes from: its addresses, its separate sound's, and whether to strip the sound. */

@@ -21,6 +21,10 @@ import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.util.findMutableMethodOf
 import app.morphe.util.getReference
+import app.morphe.patcher.patch.PatchException
+import app.morphe.patcher.util.proxy.mutableTypes.MutableClass
+import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
+import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
@@ -28,6 +32,81 @@ import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import app.morphe.patches.tiktok.shared.requireLocals
 
 private const val EXTENSION_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/spoof/sim/SpoofSimPatch;"
+internal const val IMAGE_LOADS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/spoof/sim/ImageLoads;"
+
+/** Where the IMAGE LOADS hooks go in Fresco's network producer, all of it found before a write. */
+internal class ImageLoadHooks(
+    val failure: MutableMethod,
+    /** The instruction the fetch-state hook goes in front of, right after the state is made. */
+    val stateIndex: Int,
+    val stateRegister: Int,
+)
+
+private fun imageLoadSignature(name: String, parameters: List<CharSequence>, returnType: String) =
+    name + parameters.joinToString("", "(", ")") + returnType
+
+/**
+ * Finds the producer's own failure method (the one in its class taking the fetch state and a
+ * Throwable) and the spot right after the fetcher hands back a new fetch state. Throws when either
+ * is gone or ambiguous, or when anything jumps to either spot, so a build that moved them fails
+ * the patch by name with nothing written.
+ */
+internal fun planImageLoadHooks(produceResults: MutableMethod, producerClass: MutableClass): ImageLoadHooks {
+    val instructions = produceResults.implementation?.instructions?.toList()
+        ?: throw PatchException("SIM spoof: the network fetch producer has no code")
+    val failures = instructions.mapNotNull { it.getReference<MethodReference>() }.filter {
+        it.definingClass == producerClass.type && it.returnType == "V" &&
+            it.parameterTypes.size == 2 && it.parameterTypes[1].toString() == "Ljava/lang/Throwable;"
+    }.map { imageLoadSignature(it.name, it.parameterTypes, it.returnType) }.distinct()
+    val failureSignature = failures.singleOrNull()
+        ?: throw PatchException("SIM spoof: expected one image fetch failure call, found ${failures.size}")
+    val failure = producerClass.methods.singleOrNull {
+        imageLoadSignature(it.name, it.parameterTypes, it.returnType) == failureSignature &&
+            !AccessFlags.STATIC.isSet(it.accessFlags)
+    } ?: throw PatchException("SIM spoof: the image fetch failure method $failureSignature is gone")
+    val failureCode = failure.implementation?.instructions
+        ?: throw PatchException("SIM spoof: the image fetch failure method has no code")
+    if (failureCode.first().location.labels.isNotEmpty()) {
+        throw PatchException("SIM spoof: something jumps to the start of the image fetch failure method")
+    }
+    val stateType = failure.parameterTypes[0].toString()
+
+    val made = instructions.indices.filter { index ->
+        instructions[index].opcode in STATE_CALLS &&
+            instructions[index].getReference<MethodReference>()?.returnType == stateType
+    }.let {
+        it.singleOrNull()
+            ?: throw PatchException("SIM spoof: expected one image fetch state made, found ${it.size}")
+    }
+    val move = instructions.getOrNull(made + 1)
+    if (move?.opcode != Opcode.MOVE_RESULT_OBJECT || instructions.getOrNull(made + 2) == null) {
+        throw PatchException("SIM spoof: the image fetch state isn't kept in a register")
+    }
+    if (move.location.labels.isNotEmpty() || instructions[made + 2].location.labels.isNotEmpty()) {
+        throw PatchException("SIM spoof: something jumps to where the image fetch state is made")
+    }
+    return ImageLoadHooks(failure, made + 2, (move as OneRegisterInstruction).registerA)
+}
+
+private val STATE_CALLS = setOf(
+    Opcode.INVOKE_INTERFACE, Opcode.INVOKE_INTERFACE_RANGE, Opcode.INVOKE_VIRTUAL, Opcode.INVOKE_VIRTUAL_RANGE,
+)
+
+/** Writes both hooks: each fetch state as it's made, and each failure as the producer takes it. */
+internal fun writeImageLoadHooks(produceResults: MutableMethod, hooks: ImageLoadHooks) {
+    produceResults.addInstruction(
+        hooks.stateIndex,
+        "invoke-static/range { v${hooks.stateRegister} .. v${hooks.stateRegister} }, " +
+            "$IMAGE_LOADS_DESCRIPTOR->requested(Ljava/lang/Object;)V",
+    )
+    // p1 and p2: this takes one register below them, and both parameters are references.
+    val state = hooks.failure.implementation!!.registerCount - 2
+    hooks.failure.addInstruction(
+        0,
+        "invoke-static/range { v$state .. v${state + 1} }, " +
+            "$IMAGE_LOADS_DESCRIPTOR->failed(Ljava/lang/Object;Ljava/lang/Throwable;)V",
+    )
+}
 
 private object SimSpoofTargetFingerprint : Fingerprint(
     filters = listOf(
@@ -68,6 +147,11 @@ val simSpoofPatch = bytecodePatch(
         // Checked before the first write: the SIM change task's injection writes v0 and then
         // falls into TikTok's own first instruction, so v0 has to be a local.
         CheckSimChangeTaskFingerprint.method.requireLocals("SIM spoof", 1)
+        // The IMAGE LOADS report's two hooks are worked out before the first write as well, so
+        // a build that moved Fresco's network producer fails SIM spoof by name with nothing
+        // written. They sit here because grey covers with a spoofed SIM are what they're for.
+        val produceResults = NetworkFetchProducerFingerprint.method
+        val imageLoads = planImageLoadHooks(produceResults, mutableClassDefBy(produceResults.definingClass))
 
         val replacements = mapOf(
             "getSimCountryIso" to "getCountryIso",
@@ -151,5 +235,7 @@ val simSpoofPatch = bytecodePatch(
             0,
             "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableSimSpoof()V",
         )
+
+        writeImageLoadHooks(produceResults, imageLoads)
     }
 }

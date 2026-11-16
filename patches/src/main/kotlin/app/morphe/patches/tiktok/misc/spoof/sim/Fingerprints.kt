@@ -29,6 +29,19 @@ import app.morphe.patcher.Fingerprint
  * subscription count goes through TikTok's telephony wrappers at all, so what the event still
  * carries is the phone's real SIM count and the fact that its hardware changed.
  */
+/**
+ * Fresco's network fetch producer, `produceResults(Consumer, ProducerContext)` (`LX/0CT5;->LIZ`
+ * on 47.7.3). It builds the fetch state through the fetcher (`LX/03zQ;->LIZIZ`, returning
+ * `LX/0Eoc;`), turns an expired signed URL down on the phone by calling its own failure method
+ * (`LJFF(FetchState, Throwable)`) with the second string, and otherwise hands the state to the
+ * fetcher, whose callbacks reach the same failure method. Every image fetch and every failed one
+ * pass through it, which is what the IMAGE LOADS report counts (#415).
+ */
+internal object NetworkFetchProducerFingerprint : Fingerprint(
+    returnType = "V",
+    strings = listOf("NetworkFetchProducer", "The expired url does not initiate the request"),
+)
+
 internal object CheckSimChangeTaskFingerprint : Fingerprint(
     returnType = "V",
     parameters = listOf("Landroid/content/Context;"),

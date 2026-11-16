@@ -6,6 +6,7 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* Diagnostic reports get an `IMAGE LOADS` section. It counts the images TikTok fetched from each server since it started, how many of them failed and why, so a report can show what's behind covers and avatars that stay grey. Only the server's name goes in, never the image's address (#415).
 * `Crop and stretch to fill the screen` covers the whole screen with a bit of both. It crops half as much as `Fill the screen with the video` and stretches half as much as `Stretch the video to the screen`, so neither one stands out. Turn it on in Hushfeed settings > Playback.
 * `Caption spot in Clear display` lets the caption you keep in Clear display sit lower, near the bottom, instead of up where TikTok puts it to clear the description. Clear display hides the description anyway, so the line doesn't have to float over an empty gap. `Caption height in Clear display` lifts it from whichever spot you pick. It's under `Keep captions in Clear display` in Hushfeed settings > Interface (#428).
 * `Share the video after a save` opens Android's share sheet with the file as soon as a video is saved, video stories included, so you can send it straight to WhatsApp, Telegram or any other app without digging through your gallery. Photo posts you save as a video count too. Picked videos saved together still get the usual notice. It starts off and sits under `Show download progress` in Hushfeed settings > Downloads (#423).

@@ -478,6 +478,12 @@ public final class SessionPlaybackHold {
         }
     }
 
+    /** TikTok's player (a PlayerController) of the last reported video, or null. */
+    public static Object currentController() {
+        Target target = current;
+        return target == null ? null : target.controller.get();
+    }
+
     /** The post the player of the last reported video has on screen, or null. */
     public static Object currentPlayingAweme() {
         Target target = current;

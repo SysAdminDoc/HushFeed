@@ -335,6 +335,147 @@ public class PictureInPictureTest {
         }
     }
 
+    @Test public void anArrowLandsOnTheFirstVideoPastTheLivesOnThePagersList() throws Exception {
+        assertEquals(2, PictureInPicture.landing(0, 1, 5, page -> page == 1, 3));
+        assertEquals("nothing live, the very next", 1, PictureInPicture.landing(0, 1, 5, page -> false, 3));
+        assertEquals("previous steps back past them", 1,
+                PictureInPicture.landing(4, -1, 5, page -> page == 3 || page == 2, 3));
+        assertEquals("three LIVEs is the most it steps over", 4,
+                PictureInPicture.landing(0, 1, 10, page -> page <= 3, 3));
+        assertEquals("more than that, the very next", 1,
+                PictureInPicture.landing(0, 1, 10, page -> page <= 4, 3));
+        assertEquals("only LIVEs to the end, the very next", 4,
+                PictureInPicture.landing(3, 1, 5, page -> page == 4, 3));
+    }
+
+    /**
+     * #413 on the phone: resizing into the window scrolls TikTok's pager with no rest after, so
+     * its player still thought a swipe was going and parked the next video's play for the end of
+     * it, which never came. Resuming the player can't start a video it never loaded, so the window
+     * stayed black (with the LIVE preview after it playing out of sight).
+     */
+    @Test public void nextPlaysAVideoTikTokWouldHaveParkedForAScrollThatNeverEnds() throws Exception {
+        Player[] players = new Player[1];
+        VerticalViewPager pager = new VerticalViewPager(owner.get()) {
+            @Override public void setCurrentItem(int index) {
+                super.setCurrentItem(index);
+                players[0].select(index);
+            }
+        };
+        Player player = new Player(pager, new Clip("a", 0), new Clip("live", 7), new Clip("c", 0));
+        players[0] = player;
+        player.playOnScrollEndController.scrolling = true;
+        pager.adapter = new Feed(player.clips);
+
+        moveNextIn(pager, player);
+
+        assertEquals("went straight past the LIVE on the list", 2, pager.current);
+        assertEquals(1, pager.advances);
+        assertEquals("c", player.prepared);
+        assertTrue(player.manager.playing);
+    }
+
+    /** A play parked during the slide itself is let go once the pager is at rest. */
+    @Test public void aPlayParkedDuringTheSlideStartsOnceThePagerRests() throws Exception {
+        Player[] players = new Player[1];
+        VerticalViewPager pager = new VerticalViewPager(owner.get()) {
+            @Override public void setCurrentItem(int index) {
+                super.setCurrentItem(index);
+                players[0].playOnScrollEndController.scrolling = true;
+                players[0].select(index);
+            }
+        };
+        Player player = new Player(pager, new Clip("a", 0), new Clip("b", 0));
+        players[0] = player;
+
+        moveNextIn(pager, player);
+
+        assertEquals(1, pager.current);
+        assertEquals("b", player.prepared);
+        assertTrue(player.manager.playing);
+        assertFalse(player.playOnScrollEndController.scrolling);
+    }
+
+    /**
+     * Opens the window on the first of the player's clips in {@code pager}, presses Next and lets
+     * it settle. Resuming plays only the clip the player has loaded, as TikTok's player does.
+     */
+    private void moveNextIn(VerticalViewPager pager, Player player) throws Exception {
+        Activity activity = owner.get();
+        FrameLayout content = new FrameLayout(activity);
+        FrameLayout pagerCell = new FrameLayout(activity);
+        pagerCell.addView(new TextureView(activity), new FrameLayout.LayoutParams(400, 700));
+        pager.addView(pagerCell, new FrameLayout.LayoutParams(400, 700));
+        content.addView(pager, new FrameLayout.LayoutParams(400, 700));
+        activity.setContentView(content);
+        decor.measure(View.MeasureSpec.makeMeasureSpec(400, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(800, View.MeasureSpec.EXACTLY));
+        decor.layout(0, 0, 400, 800);
+        pager.current = 0;
+        player.prepared = player.clips[0].getAid();
+
+        Class<?> controls = Class.forName(SessionPlaybackHold.class.getName() + "$NativeControls");
+        Object fake = Proxy.newProxyInstance(controls.getClassLoader(), new Class<?>[] {controls},
+                (proxy, method, args) -> {
+                    switch (method.getName()) {
+                        case "currentAweme": return ((Player) args[0]).clips[pager.current];
+                        case "resume":
+                            ((Manager) args[0]).resumes++;
+                            if (player.clips[pager.current].getAid().equals(player.prepared)) {
+                                ((Manager) args[0]).playing = true;
+                            }
+                            return null;
+                        case "pause": ((Manager) args[0]).playing = false; return null;
+                        case "hashCode": return System.identityHashCode(proxy);
+                        case "equals": return proxy == args[0];
+                        default: return "fake controls";
+                    }
+                });
+        try {
+            ReflectionHelpers.setStaticField(SessionPlaybackHold.class, "nativeForTests", fake);
+            SessionPlaybackHold.onPlayerProgress(player, player.clips[0].getAid());
+            ReflectionHelpers.setStaticField(PictureInPicture.class, "opened", new WeakReference<>(activity));
+            activity.enterPictureInPictureMode(new PictureInPictureParams.Builder().build());
+            player.manager.playing = false;
+
+            PictureInPicture.onMove(1);
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(3));
+        } finally {
+            ReflectionHelpers.setStaticField(PictureInPicture.class, "opened", new WeakReference<Activity>(null));
+            ReflectionHelpers.setStaticField(SessionPlaybackHold.class, "current", null);
+            ReflectionHelpers.setStaticField(SessionPlaybackHold.class, "nativeForTests", null);
+        }
+    }
+
+    /** The pager's list of posts, TikTok's feed adapter. */
+    public static final class Feed {
+        private final Aweme[] posts;
+
+        Feed(Aweme... posts) {
+            this.posts = posts;
+        }
+
+        public int getCount() { return posts.length; }
+        public Aweme getItem(int page) { return posts[page]; }
+    }
+
+    /** PlayerController's scroll-end hold: the flag a scroll raises, the play parked under it, its owner. */
+    public static final class ScrollEndHold {
+        boolean scrolling;
+        Parked parked;
+        final Player owner;
+
+        ScrollEndHold(Player owner) {
+            this.owner = owner;
+        }
+    }
+
+    public static final class Parked {
+        Aweme post;
+        boolean fromStart;
+        int at;
+    }
+
     /** A feed post; a LIVE preview carries a room id. */
     public static final class Clip extends Aweme {
         private final String aid;
@@ -359,11 +500,16 @@ public class PictureInPictureTest {
         public boolean isPaused() { return !playing; }
     }
 
-    /** TikTok's one feed player, whose video is whichever cell the pager is on. */
+    /**
+     * TikTok's one feed player, whose video is whichever cell the pager is on. A page selected
+     * while its scroll flag is up is parked until the pager comes to rest.
+     */
     public static final class Player {
         final VerticalViewPager pager;
         final Clip[] clips;
         final Manager manager = new Manager();
+        final ScrollEndHold playOnScrollEndController = new ScrollEndHold(this);
+        String prepared;
 
         Player(VerticalViewPager pager, Clip... clips) {
             this.pager = pager;
@@ -372,6 +518,28 @@ public class PictureInPictureTest {
         }
 
         public Manager getPlayerManager() { return manager; }
+
+        public void onPageScrollStateChanged(int state) {
+            if (state != 0) return;
+            playOnScrollEndController.scrolling = false;
+            Parked parked = playOnScrollEndController.parked;
+            if (parked != null && parked.post == clips[pager.current]) play(pager.current);
+        }
+
+        void select(int page) {
+            if (!playOnScrollEndController.scrolling) {
+                play(page);
+                return;
+            }
+            Parked parked = new Parked();
+            parked.post = clips[page];
+            playOnScrollEndController.parked = parked;
+        }
+
+        private void play(int page) {
+            prepared = clips[page].getAid();
+            manager.playing = true;
+        }
     }
 
     @Test public void offByDefault() {

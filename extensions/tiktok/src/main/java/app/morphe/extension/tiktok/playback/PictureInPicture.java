@@ -42,6 +42,7 @@ import app.morphe.extension.tiktok.wellbeing.SessionPlaybackHold;
 import com.ss.android.ugc.aweme.feed.model.Aweme;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -340,12 +341,19 @@ public final class PictureInPicture {
         }
     }
 
-    /** Starts the video again when TikTok stopped it as the window opened, unless the reader paused it. */
+    /**
+     * Starts the video again when TikTok stopped it as the window opened, unless the reader paused
+     * it. After an arrow, the video the player has moved to is the one it starts.
+     */
     @RequiresApi(26)
     private static void keepPlaying(Activity activity) {
         if (activity == null || opened.get() != activity || readerPaused) return;
         if (!activity.isInPictureInPictureMode()) return;
-        if (Boolean.FALSE.equals(SessionPlaybackHold.currentPlaying())) {
+        Object post = SessionPlaybackHold.followCurrentPlayer();
+        Boolean playing = SessionPlaybackHold.currentPlaying();
+        Logger.printDebug(() -> "Picture-in-picture keep playing: playing " + playing + ", "
+                + ParkedPlay.describe(SessionPlaybackHold.currentController(), post));
+        if (Boolean.FALSE.equals(playing)) {
             SessionPlaybackHold.setCurrentPlaying(true);
         }
     }
@@ -382,8 +390,12 @@ public final class PictureInPicture {
 
     /**
      * Moves TikTok's pager one video up or down, the way a swipe would, so TikTok picks and plays
-     * the next video itself. What was set aside comes back first, since the video slides in from a
-     * cell beside this one, and once the pager has settled the new video is kept alone again.
+     * the next video itself, stepping over LIVE previews the pager's list shows on the way. What
+     * was set aside comes back first, since the video slides in from a cell beside this one, and
+     * once the pager has settled the new video is kept alone again.
+     *
+     * <p>The player is told its pager is at rest first, so a scroll flag the window's resize left
+     * up doesn't park the new video's play ({@link ParkedPlay}).
      */
     @RequiresApi(26)
     private static void move(int direction) {
@@ -393,13 +405,59 @@ public final class PictureInPicture {
         if (!canMove(pager, direction)) return;
         Object position = Reflect.invoke(pager, "getCurrentItem");
         if (!(position instanceof Integer) || (Integer) position < 0) return;
+        int from = (Integer) position;
+        int page = landing(pager, from, direction);
+        Object controller = SessionPlaybackHold.currentController();
+        Logger.printDebug(() -> "Picture-in-picture move " + from + " -> " + page + ": "
+                + ParkedPlay.describe(controller, SessionPlaybackHold.currentPlayingAweme()));
+        if (Boolean.TRUE.equals(ParkedPlay.holding(controller))) ParkedPlay.release(controller);
         bringBack();
-        if (!turn(pager, (Integer) position + direction)) {
+        if (!turn(pager, page)) {
             keepAsideWhileUp(activity.getWindow().getDecorView());
             return;
         }
         readerPaused = false;
         settle(new WeakReference<>(activity), SETTLE_CHECKS, direction, LIVE_SKIPS);
+    }
+
+    /**
+     * The page an arrow lands on, read off the pager's list: the next one that way, or the first
+     * after it that isn't a LIVE preview. Without a readable list, the next one, and the LIVE is
+     * stepped over once the pager settles.
+     */
+    private static int landing(View pager, int from, int direction) {
+        Object adapter = Reflect.invoke(pager, "getAdapter");
+        if (adapter == null) return from + direction;
+        try {
+            // Made accessible: the adapter's own class need not be public.
+            Method count = adapter.getClass().getMethod("getCount");
+            Method item = adapter.getClass().getMethod("getItem", int.class);
+            count.setAccessible(true);
+            item.setAccessible(true);
+            int size = (Integer) count.invoke(adapter);
+            return landing(from, direction, size, at -> isLive(item.invoke(adapter, at)), LIVE_SKIPS);
+        } catch (ReflectiveOperationException | RuntimeException unreadable) {
+            return from + direction;
+        }
+    }
+
+    /** Whether the post on a page of the pager's list is a LIVE preview. */
+    interface PageCheck {
+        boolean live(int page) throws ReflectiveOperationException;
+    }
+
+    /**
+     * The first page past {@code from} in {@code direction}, among the next {@code skips} + 1 of
+     * the {@code count} pages, that isn't a LIVE, or the very next page when they all are (the
+     * arrow still moves, and the window shows what TikTok does with it).
+     */
+    static int landing(int from, int direction, int count, PageCheck live, int skips)
+            throws ReflectiveOperationException {
+        int next = from + direction;
+        for (int page = next, step = 0; step <= skips && page >= 0 && page < count; step++, page += direction) {
+            if (!live.live(page)) return page;
+        }
+        return next;
     }
 
     /** Sets TikTok's pager to a page. The native pager clamps to its adapter and runs its own selection callbacks. */
@@ -436,6 +494,13 @@ public final class PictureInPicture {
                     return;
                 }
             }
+            Object controller = SessionPlaybackHold.currentController();
+            Boolean playing = SessionPlaybackHold.currentPlaying();
+            Logger.printDebug(() -> "Picture-in-picture settled on " + Reflect.invoke(pager, "getCurrentItem")
+                    + " (rest " + (pager == null || idle(pager)) + "): playing " + playing + ", "
+                    + ParkedPlay.describe(controller, post));
+            // The slide is over: a play TikTok parked for its end starts now if it hasn't.
+            if (!Boolean.TRUE.equals(playing)) ParkedPlay.release(controller);
             keepAsideWhileUp(decor);
             activity.setPictureInPictureParams(params(activity, videoView(decor), true));
             for (long delay : RESUME_CHECKS_MS) {

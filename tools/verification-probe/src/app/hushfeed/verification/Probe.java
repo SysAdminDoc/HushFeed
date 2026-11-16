@@ -61,6 +61,8 @@ import java.util.Map;
  *       -e action secure-popup-close
  *       -e action labrule -e manager abmock -e key favorite_reverse -e type INT -e value 1
  *       -e action labclear
+ *       -e action labexport      (before labrule; labrestore puts the phone's own Lab back)
+ *       -e action labrestore
  *       -e action mediacache -e op plant
  *   adb -s S logcat -d | grep HushfeedProbe
  * </pre>
@@ -72,6 +74,8 @@ public final class Probe extends Instrumentation {
     private static final String SETTING = "app.morphe.extension.shared.settings.Setting";
     private static final String SETTINGS = "app.morphe.extension.tiktok.settings.Settings";
     private static final String UTILS = "app.morphe.extension.shared.Utils";
+    /** labexport's copy of the phone's own Feature Gate Lab, in TikTok's files, until labrestore. */
+    private static final String LAB_COPY = "hushfeed-probe-lab-copy.json";
     private static final java.util.Set<String> OVERLAY_KEYS = new java.util.HashSet<>(java.util.Arrays.asList(
             "block_author_button", "local_hide_button", "block_sound_button",
             "not_interested_button", "feed_mute_button"));
@@ -1960,6 +1964,45 @@ public final class Probe extends Instrumentation {
                                 "app.morphe.extension.tiktok.featuregatelab.FeatureGateLabStore");
                         store.getMethod("resetAllLabData").invoke(null);
                         Log.i(TAG, "ok labclear");
+                        break;
+                    }
+                    case "labexport": {
+                        // The Lab's rules, master switch and warning answer, kept in TikTok's
+                        // files before a check writes labrule overrides, so labrestore can put
+                        // the phone's own Lab back exactly. An older copy is never overwritten:
+                        // a second export would keep the check's rules as the "original".
+                        java.io.File copy = new java.io.File(context.getFilesDir(), LAB_COPY);
+                        if (copy.exists()) {
+                            Log.i(TAG, "ok labexport kept the copy already there (" + copy.length() + " bytes)");
+                            break;
+                        }
+                        Class<?> store = loader.loadClass(
+                                "app.morphe.extension.tiktok.featuregatelab.FeatureGateLabStore");
+                        org.json.JSONObject settings = (org.json.JSONObject) store.getMethod("exportSettings").invoke(null);
+                        try (java.io.FileOutputStream out = new java.io.FileOutputStream(copy)) {
+                            out.write(settings.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                        }
+                        Log.i(TAG, "ok labexport rules=" + settings.getJSONArray("rules").length()
+                                + " master=" + settings.getBoolean("master"));
+                        break;
+                    }
+                    case "labrestore": {
+                        java.io.File copy = new java.io.File(context.getFilesDir(), LAB_COPY);
+                        if (!copy.exists()) throw new IllegalStateException("no labexport copy to put back");
+                        Class<?> store = loader.loadClass(
+                                "app.morphe.extension.tiktok.featuregatelab.FeatureGateLabStore");
+                        byte[] bytes = java.nio.file.Files.readAllBytes(copy.toPath());
+                        org.json.JSONObject settings = new org.json.JSONObject(
+                                new String(bytes, java.nio.charset.StandardCharsets.UTF_8));
+                        Object rules = store.getMethod("parseSettings", org.json.JSONObject.class).invoke(null, settings);
+                        store.getMethod("replaceSettings", List.class, boolean.class, boolean.class, boolean.class)
+                                .invoke(null, rules, settings.getBoolean("master"), settings.getBoolean("acknowledged"), true);
+                        boolean same = (Boolean) store.getMethod("settingsMatch", org.json.JSONObject.class)
+                                .invoke(null, settings);
+                        if (!same) throw new IllegalStateException("the Lab doesn't match the copy after putting it back");
+                        if (!copy.delete()) throw new IllegalStateException("couldn't remove the labexport copy");
+                        Log.i(TAG, "ok labrestore rules=" + ((List<?>) rules).size() + " master="
+                                + settings.getBoolean("master") + " same=true");
                         break;
                     }
                     case "views": {

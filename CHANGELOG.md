@@ -6,6 +6,7 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* `Crop and stretch to fill the screen` covers the whole screen with a bit of both. It crops half as much as `Fill the screen with the video` and stretches half as much as `Stretch the video to the screen`, so neither one stands out. Turn it on in Hushfeed settings > Playback.
 * `Caption spot in Clear display` lets the caption you keep in Clear display sit lower, near the bottom, instead of up where TikTok puts it to clear the description. Clear display hides the description anyway, so the line doesn't have to float over an empty gap. `Caption height in Clear display` lifts it from whichever spot you pick. It's under `Keep captions in Clear display` in Hushfeed settings > Interface (#428).
 * `Share the video after a save` opens Android's share sheet with the file as soon as a video is saved, video stories included, so you can send it straight to WhatsApp, Telegram or any other app without digging through your gallery. Photo posts you save as a video count too. Picked videos saved together still get the usual notice. It starts off and sits under `Show download progress` in Hushfeed settings > Downloads (#423).
 * `Long-press Profile for Activity center` opens TikTok's Activity center when you hold the Profile tab, so your watch history, comments and time spent are one press away. A tap on Profile works as before, and while `Long-press Profile for Watch history` is on, that one keeps the press. If TikTok hasn't given your account an Activity center, the press opens Settings and privacy instead (#425).
@@ -35,6 +36,7 @@ Every Hushfeed release, newest first.
 
 ### Bug Fixes
 
+* With `Stretch the video to the screen` on, the still picture TikTok shows before a video starts gets stretched the same way as the video. It used to show a different shape and flick when the video took over.
 * `Show where a video was posted` no longer shows FAKE-AD on ads. TikTok gives ads a made up country, so only a real two-letter country shows now, and an ad's never gets remembered for that brand's comments.
 * With `Lock the hold speed with a pull down` on, pulling down while you hold the side of a video locks the speed again. The feed took that pull as a scroll back to the last video, or as a refresh on For You, and the hold ended before the lock could catch it. `Slide to change the hold speed` keeps its slide the same way, so a long slide no longer scrolls the feed out from under you (#422).
 * With `Let other apps play until a video starts` on, backing out of a video you opened from a chat gives your music back as fast as leaving the feed does. It used to stay paused for about two seconds (#283).

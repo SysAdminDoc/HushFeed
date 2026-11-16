@@ -290,10 +290,15 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                             + "taller or wider to do it. A video far from the screen's shape keeps "
                             + "TikTok's size.",
                     Settings.STRETCH_VIDEO_TO_SCREEN);
+            TogglePreference blend = new TogglePreference(context, "Crop and stretch to fill the screen",
+                    "Cover the whole window with half the crop of Fill and half the stretch of "
+                            + "Stretch, so neither is easy to spot. A video far from the screen's "
+                            + "shape keeps TikTok's size.",
+                    Settings.BLEND_VIDEO_TO_SCREEN);
             // One at a time: each sizes the video its own way, so turning one on turns the rest off.
-            TogglePreference[] rows = {fit, fill, stretch};
+            TogglePreference[] rows = {fit, fill, stretch, blend};
             BooleanSetting[] switches = {Settings.FIT_VIDEO_TO_SCREEN, Settings.FILL_VIDEO_TO_SCREEN,
-                    Settings.STRETCH_VIDEO_TO_SCREEN};
+                    Settings.STRETCH_VIDEO_TO_SCREEN, Settings.BLEND_VIDEO_TO_SCREEN};
             for (int index = 0; index < rows.length; index++) {
                 int chosen = index;
                 rows[index].setOnPreferenceChangeListener((preference, value) -> {
@@ -310,6 +315,7 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
             addPreference(fit);
             addPreference(fill);
             addPreference(stretch);
+            addPreference(blend);
         }
         if (SettingsStatus.feedMuteEnabled) {
             addPreference(new TogglePreference(context, "Mute feed videos",

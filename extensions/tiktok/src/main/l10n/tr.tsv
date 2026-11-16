@@ -2872,3 +2872,7 @@ Caption spot in Clear display	Temiz ekranda altyazı konumu
 Where TikTok shows it	TikTok'un gösterdiği yer
 # context: The other choice for Caption spot in Clear display: the kept caption sits lower on the screen
 Lower, near the bottom	Daha aşağıda, alta yakın
+# context: A switch on the Playback page beside Fit, Fill and Stretch: the video covers the screen with a little cropping and a little stretching
+Crop and stretch to fill the screen	Ekranı doldurmak için kırp ve uzat
+# context: Summary for Crop and stretch to fill the screen. Fill and Stretch are the names of the switches above it
+Cover the whole window with half the crop of Fill and half the stretch of Stretch, so neither is easy to spot. A video far from the screen's shape keeps TikTok's size.	Tüm pencereyi Doldur'un yarısı kadar kırpma ve Uzat'ın yarısı kadar uzatmayla kaplar, böylece ikisi de pek fark edilmez. Şekli ekrandan çok farklı olan bir video TikTok'un boyutunu korur.

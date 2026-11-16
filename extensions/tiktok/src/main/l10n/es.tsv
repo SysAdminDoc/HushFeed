@@ -2872,3 +2872,7 @@ Caption spot in Clear display	Posición de los subtítulos con los controles ocu
 Where TikTok shows it	Donde TikTok los muestra
 # context: The other choice for Caption spot in Clear display: the kept caption sits lower on the screen
 Lower, near the bottom	Más abajo, cerca del borde inferior
+# context: A switch on the Playback page beside Fit, Fill and Stretch: the video covers the screen with a little cropping and a little stretching
+Crop and stretch to fill the screen	Recortar y estirar para llenar la pantalla
+# context: Summary for Crop and stretch to fill the screen. Fill and Stretch are the names of the switches above it
+Cover the whole window with half the crop of Fill and half the stretch of Stretch, so neither is easy to spot. A video far from the screen's shape keeps TikTok's size.	Cubre toda la ventana con la mitad del recorte de Llenar y la mitad del estiramiento de Estirar, así ninguno se nota mucho. Un video con una forma muy distinta a la de la pantalla mantiene el tamaño de TikTok.

@@ -2875,3 +2875,7 @@ Caption spot in Clear display	ตำแหน่งคำบรรยายใ�
 Where TikTok shows it	ตำแหน่งที่ TikTok แสดง
 # context: The other choice for Caption spot in Clear display: the kept caption sits lower on the screen
 Lower, near the bottom	ต่ำลง ใกล้ด้านล่าง
+# context: A switch on the Playback page beside Fit, Fill and Stretch: the video covers the screen with a little cropping and a little stretching
+Crop and stretch to fill the screen	ครอปและยืดวิดีโอให้เต็มหน้าจอ
+# context: Summary for Crop and stretch to fill the screen. Fill and Stretch are the names of the switches above it
+Cover the whole window with half the crop of Fill and half the stretch of Stretch, so neither is easy to spot. A video far from the screen's shape keeps TikTok's size.	แสดงวิดีโอเต็มทั้งหน้าต่าง โดยครอปเพียงครึ่งหนึ่งของแบบเต็มหน้าจอและยืดเพียงครึ่งหนึ่งของแบบยืด จึงแทบไม่สังเกตเห็นทั้งสองอย่าง วิดีโอที่มีรูปทรงต่างจากหน้าจอมากจะคงขนาดของ TikTok

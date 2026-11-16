@@ -335,6 +335,9 @@ public class Settings extends BaseSettings {
     /** Cover the window with the whole video by stretching it instead of cropping (#406). */
     public static final BooleanSetting STRETCH_VIDEO_TO_SCREEN =
             new BooleanSetting("stretch_video_to_screen", FALSE);
+    /** Cover the window with half the crop of fill and half the stretch of stretch (#421). */
+    public static final BooleanSetting BLEND_VIDEO_TO_SCREEN =
+            new BooleanSetting("blend_video_to_screen", FALSE);
     public static final BooleanSetting UNCAP_REFRESH_RATE =
             new BooleanSetting("uncap_refresh_rate", FALSE);
     /**

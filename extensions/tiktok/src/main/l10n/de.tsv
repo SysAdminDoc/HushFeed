@@ -2875,3 +2875,7 @@ Caption spot in Clear display	Untertitelposition in der freien Ansicht
 Where TikTok shows it	Wo TikTok sie zeigt
 # context: The other choice for Caption spot in Clear display: the kept caption sits lower on the screen
 Lower, near the bottom	Tiefer, nahe am unteren Rand
+# context: A switch on the Playback page beside Fit, Fill and Stretch: the video covers the screen with a little cropping and a little stretching
+Crop and stretch to fill the screen	Zuschneiden und strecken, um den Bildschirm zu füllen
+# context: Summary for Crop and stretch to fill the screen. Fill and Stretch are the names of the switches above it
+Cover the whole window with half the crop of Fill and half the stretch of Stretch, so neither is easy to spot. A video far from the screen's shape keeps TikTok's size.	Deckt das ganze Fenster ab, halb so stark zugeschnitten wie beim Füllen und halb so stark gestreckt wie beim Strecken, sodass beides kaum auffällt. Ein Video, dessen Form stark vom Bildschirm abweicht, behält die Größe von TikTok.

@@ -338,7 +338,8 @@
     "Fit the video to the screen": [
       "fit_video_to_screen",
       "fill_video_to_screen",
-      "stretch_video_to_screen"
+      "stretch_video_to_screen",
+      "blend_video_to_screen"
     ],
     "Foldable split comment view": [
       "foldable_split_view",
@@ -995,6 +996,12 @@
       "key": "bio_mention_links",
       "type": "boolean",
       "default": true
+    },
+    "blend_video_to_screen": {
+      "field": "BLEND_VIDEO_TO_SCREEN",
+      "key": "blend_video_to_screen",
+      "type": "boolean",
+      "default": false
     },
     "block_advertising_id": {
       "field": "BLOCK_ADVERTISING_ID",

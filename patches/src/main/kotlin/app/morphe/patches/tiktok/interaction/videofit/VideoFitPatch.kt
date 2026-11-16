@@ -88,8 +88,8 @@ val videoFitPatch = bytecodePatch(
     name = "Fit the video to the screen",
     description = "Shows the whole video instead of cutting off its sides on folding phones, " +
         "squarer screens and split screen, and fits photo slideshows whole on squarer screens. " +
-        "Two more switches cover the whole screen instead, one by cropping the video and one " +
-        "by stretching it. Starts off. Turn it on in Hushfeed settings > Playback.",
+        "Three more switches cover the whole screen instead. One crops the video, one stretches " +
+        "it and one does a little of each. Starts off. Turn it on in Hushfeed settings > Playback.",
 ) {
     category("Playback")
     dependsOn(settingsPatch, sharedExtensionPatch)

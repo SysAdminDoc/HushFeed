@@ -353,7 +353,8 @@
       "ghost_hide_online_status",
       "ghost_hide_story_views",
       "ghost_hide_profile_visits",
-      "ghost_hide_typing"
+      "ghost_hide_typing",
+      "ghost_hide_live_views"
     ],
     "Hide CAPTCHA popups": [
       "hide_browsing_captcha_popups"
@@ -565,6 +566,9 @@
       "live_auto_tap",
       "live_auto_tap_rate",
       "live_audio_only",
+      "live_name_alerts",
+      "live_name_alert_names",
+      "live_name_alerts_listen",
       "remembered_live_quality"
     ],
     "Lift text length limits": [
@@ -2021,6 +2025,12 @@
       "type": "boolean",
       "default": false
     },
+    "ghost_hide_live_views": {
+      "field": "GHOST_HIDE_LIVE_VIEWS",
+      "key": "ghost_hide_live_views",
+      "type": "boolean",
+      "default": false
+    },
     "ghost_hide_online_status": {
       "field": "GHOST_HIDE_ONLINE_STATUS",
       "key": "ghost_hide_online_status",
@@ -3198,6 +3208,24 @@
       "key": "live_min_max_viewers",
       "type": "string",
       "default": "0-9223372036854775807"
+    },
+    "live_name_alert_names": {
+      "field": "LIVE_NAME_ALERT_NAMES",
+      "key": "live_name_alert_names",
+      "type": "string",
+      "default": ""
+    },
+    "live_name_alerts": {
+      "field": "LIVE_NAME_ALERTS",
+      "key": "live_name_alerts",
+      "type": "boolean",
+      "default": false
+    },
+    "live_name_alerts_listen": {
+      "field": "LIVE_NAME_ALERTS_LISTEN",
+      "key": "live_name_alerts_listen",
+      "type": "boolean",
+      "default": false
     },
     "live_record_quality": {
       "field": "LIVE_RECORD_QUALITY",

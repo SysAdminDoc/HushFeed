@@ -358,6 +358,28 @@ public class LiveListenTest {
         assertNull(audioUrl);
     }
 
+    @Test public void aRoomGhostModeHidesYouFromWaitsForTheEyeAndThenListens() {
+        Activity room = Robolectric.buildActivity(Activity.class).setup().get();
+        String[] offered = {null};
+        boolean[] hiding = {true};
+        LiveListen.streams = roomObject -> offered[0];
+        LiveListen.hidden = key -> hiding[0];
+
+        // Held for a minute: no stream fields until the eye sends the room's enter.
+        LiveListen.start(room, ROOM, new Object());
+        LiveListen.nowForTests = START + LiveListen.ADDRESS_WAIT_MS * 6;
+        LiveListen.start(room, ROOM, new Object());
+        assertNull(LiveListen.deadRoomForTests());
+
+        hiding[0] = false;
+        LiveListen.nowForTests += LiveListen.TICK_MS;
+        offered[0] = ADDRESS;
+        LiveListen.start(room, ROOM, new Object());
+
+        assertNotNull(LiveListen.currentForTests());
+        assertEquals(ADDRESS, audioUrl);
+    }
+
     @Test public void leavingTheRoomStopsEverything() {
         LiveListen.Session session = listening();
         ShadowSpeechRecognizer recognizer = recognizer();

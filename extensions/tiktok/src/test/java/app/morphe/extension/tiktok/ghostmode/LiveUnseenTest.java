@@ -156,6 +156,18 @@ public class LiveUnseenTest {
         assertEquals(0, LiveUnseen.heldForTests());
     }
 
+    @Test public void aRoomIsHiddenFromWhileBothSwitchesAreOnAndUntilTheEye() throws Exception {
+        assertFalse("off by default", LiveUnseen.hiding(ROOM));
+        on();
+        assertTrue(LiveUnseen.hiding(ROOM));
+        assertFalse(LiveUnseen.hiding(null));
+
+        reveal(ROOM);
+
+        assertFalse(LiveUnseen.hiding(ROOM));
+        assertTrue("another room is still hidden from", LiveUnseen.hiding("7400000000000000999"));
+    }
+
     @Test public void anUnreadableRequestGoesOutAsItAlwaysDid() throws IOException {
         on();
         LiveUnseen.holdEnter(new Object(), "chain");

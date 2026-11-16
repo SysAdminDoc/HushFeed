@@ -207,6 +207,14 @@ public final class LiveUnseen {
     }
 
     /**
+     * Whether Ghost mode keeps {@code room}'s enters back right now. Such a room has no stream
+     * fields of its own until the eye is tapped, since TikTok fills them in from the enter.
+     */
+    public static boolean hiding(String room) {
+        return room != null && enabled() && !revealed(room);
+    }
+
+    /**
      * The eye tapped in {@code room}, shown by {@code page}: its enters go out from now on. When
      * an enter was held for it, the page enters the room again through TikTok's own enter, so the
      * chat, the host bar and the rest that a successful enter builds come in. When the page can't,

@@ -31,9 +31,11 @@ import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.function.Predicate;
 
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.tiktok.download.LiveSpeechAudio;
+import app.morphe.extension.tiktok.ghostmode.LiveUnseen;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
 
@@ -123,6 +125,8 @@ public final class LiveListen {
     static volatile Pipes pipes = OS_PIPES;
     static volatile AudioSource audioSource = NETWORK_AUDIO;
     static volatile Streams streams = LiveRoomStream::listenAddress;
+    /** Rooms Ghost mode keeps you out of, whose stream fields come with the enter the eye sends. */
+    static volatile Predicate<String> hidden = LiveUnseen::hiding;
     static volatile long nowForTests;
     static volatile Problem problem = Problem.NONE;
 
@@ -217,9 +221,11 @@ public final class LiveListen {
         }
         String address = streams.address(roomObject);
         if (address == null) {
-            // Not filled in yet, most likely: the tick asks again each second for a while.
+            // Not filled in yet, most likely: the tick asks again each second for a while. A room
+            // Ghost mode hides you from gets its fields only once the eye is tapped, so its wait
+            // starts over each second until then (#420).
             long now = now();
-            if (!room.equals(addressWaitRoom)) {
+            if (!room.equals(addressWaitRoom) || hidden.test(room)) {
                 addressWaitRoom = room;
                 addressWaitSince = now;
             }
@@ -743,6 +749,7 @@ public final class LiveListen {
         pipes = OS_PIPES;
         audioSource = NETWORK_AUDIO;
         streams = LiveRoomStream::listenAddress;
+        hidden = LiveUnseen::hiding;
         nowForTests = 0;
     }
 }

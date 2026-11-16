@@ -133,6 +133,14 @@ public class FeedNavigationPreferenceCategory extends ConditionalPreferenceCateg
                         + "press, and the name at the top of your profile still switches accounts.",
                 Settings.PROFILE_TAB_OPENS_WATCH_HISTORY
         ));
+        addPreference(new TogglePreference(
+                context,
+                "Long-press Profile for Activity center",
+                "Press and hold the Profile tab to open TikTok's Activity center. A tap on Profile "
+                        + "works as before. While Long-press Profile for Watch history is on, that one "
+                        + "takes the press.",
+                Settings.PROFILE_TAB_OPENS_ACTIVITY_CENTER
+        ));
         // The hold is TikTok's own, put on the tab by the feed tab hooks.
         if (SettingsStatus.feedNavigationEnabled) {
             addPreference(new TogglePreference(

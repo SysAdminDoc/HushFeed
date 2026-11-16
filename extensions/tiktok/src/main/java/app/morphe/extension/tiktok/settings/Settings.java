@@ -631,6 +631,8 @@ public class Settings extends BaseSettings {
      * accounts that press is TikTok's account switcher, which this takes over while it's on.
      */
     public static final BooleanSetting PROFILE_TAB_OPENS_WATCH_HISTORY = new BooleanSetting("profile_tab_opens_watch_history", FALSE);
+    /** A long press on the Profile tab opens TikTok's Activity center (#425), while Watch history's is off. */
+    public static final BooleanSetting PROFILE_TAB_OPENS_ACTIVITY_CENTER = new BooleanSetting("profile_tab_opens_activity_center", FALSE);
     /**
      * Holding the Profile tab opens TikTok's account switcher on accounts where TikTok left that
      * hold off (#388). TikTok's switch_account_gesture experiment answers yes, which is what puts

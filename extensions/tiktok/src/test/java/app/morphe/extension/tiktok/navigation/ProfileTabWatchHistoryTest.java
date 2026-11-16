@@ -168,6 +168,29 @@ public class ProfileTabWatchHistoryTest {
         assertNull("a tap opened Watch history", nextStarted());
     }
 
+    /** #425: the hold opens Activity center through TikTok's router, and gives way to Watch history. */
+    @Test public void aLongPressOnProfileOpensActivityCenter() {
+        com.bytedance.router.SmartRouter.OPENED.clear();
+        Settings.PROFILE_TAB_OPENS_ACTIVITY_CENTER.save(true);
+        try {
+            installAndResume();
+
+            assertTrue("the long press was not handled", profile.performLongClick());
+            assertEquals(java.util.List.of(ProfileTabWatchHistory.ACTIVITY_CENTER_ROUTE),
+                    com.bytedance.router.SmartRouter.OPENED);
+            assertNull("an outside link opened too", nextStarted());
+            assertEquals("a long press also counted as a tap", 0, taps.get());
+
+            Settings.PROFILE_TAB_OPENS_WATCH_HISTORY.save(true);
+            assertTrue(profile.performLongClick());
+            assertEquals("Watch history gave way", 1, com.bytedance.router.SmartRouter.OPENED.size());
+            assertNotNull("Watch history didn't open", nextStarted());
+        } finally {
+            Settings.PROFILE_TAB_OPENS_ACTIVITY_CENTER.resetToDefault();
+            com.bytedance.router.SmartRouter.OPENED.clear();
+        }
+    }
+
     @Test public void offByDefaultTheTabIsLeftAsItWas() {
         installAndResume();
 

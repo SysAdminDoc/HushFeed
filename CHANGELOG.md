@@ -74,6 +74,7 @@ Every Hushfeed release, newest first.
 ### Build
 
 * The patch tests that don't read the extension run in eight groups now, one per area (feed, playback, player, sharing, messages, look, the rest of the app) plus one for the tests that read the whole source tree. An area's classpath holds only the patch classes its tests reach, and its inputs only the sources they read. Change a patch and Gradle reruns the groups whose tests reach it and the shared one, while the rest stay up to date. An edit to Hide profile tabs took 14 minutes instead of the full run's 39. Settings and navigation code reaches every group, so an edit there still reruns all of them. A full run still runs every group, and a group that finds no tests on a full run fails it.
+* The patches are built with Morphe patcher 2.4.0 now, so the next bundle needs Morphe Manager 2.6.0 or newer, or morphe-desktop 2.2.0 from a computer. Older Managers won't load it.
 
 ## 0.82.0 (2026-11-12)
 

@@ -32,12 +32,12 @@ pluginManagement {
     }
 }
 
-// app.morphe:morphe-patches-gradle-plugin 2.1.0 (like 2.0.0) brings kotlin-gradle-plugin 2.4.21, outside
+// app.morphe:morphe-patches-gradle-plugin 2.1.1 (like 2.0.0 and 2.1.0) brings kotlin-gradle-plugin 2.4.21, outside
 // CVE-2026-53914 (GHSA-r937-wjx7-w2jp); 1.3.4 brought 2.4.10, inside it. Without a force this
 // classpath still resolved kotlin-stdlib and kotlin-reflect 2.4.10, the Kotlin Gradle 9.8.2
 // embeds, and stdlib-jdk7/jdk8 2.2.10 for AGP 9.1.0's tools, under that 2.4.21 plugin. Every
 // org.jetbrains.kotlin request here is held to the plugin's 2.4.21 (which also fixes KT-88453, a
-// scripting stream the compiler left open), the runtime patcher 2.3.0 keeps in
+// scripting stream the compiler left open), the runtime patcher 2.4.0 keeps in
 // :patches:patcherProvidedClasspath. Nothing in this tree requests a Kotlin plugin by id, so
 // pluginManagement's eachPlugin has nothing to rewrite: the version has to be forced on the
 // settings classpath itself. Move it with the plugin's kotlin-gradle-plugin;
@@ -81,7 +81,7 @@ val allowMavenLocal = providers.gradleProperty("allowMavenLocal")
     .getOrElse(false)
 
 plugins {
-    id("app.morphe.patches") version "2.1.0"
+    id("app.morphe.patches") version "2.1.1"
 }
 
 settings {

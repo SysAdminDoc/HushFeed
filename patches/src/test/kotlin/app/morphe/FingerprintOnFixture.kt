@@ -81,20 +81,27 @@ internal fun Fingerprint.takes(method: Method, classDef: ClassDef): Boolean {
 /*
  * The fields a fingerprint was declared with. Morphe patcher 1.15 made these internal (its #230:
  * a partial type written there reads like the matched method's whole one), so tests that judge a
- * fingerprint by its own declaration read the backing fields.
+ * fingerprint by its own declaration read the backing fields. Since patcher 2.4.0 the types are
+ * lazy: each sits in a `declared...` field as a function giving the text the fingerprint wrote.
  */
-internal val Fingerprint.declaredDefiningClass: String? get() = declared("definingClass")
+internal val Fingerprint.declaredDefiningClass: String? get() = declaredText("declaredDefiningClass")
 internal val Fingerprint.declaredName: String? get() = declared("name")
 internal val Fingerprint.declaredAccessFlags: Int? get() = declared("accessFlags")
 internal val Fingerprint.declaredIsStatic: Boolean? get() = declared("isStatic")
-internal val Fingerprint.declaredReturnType: String? get() = declared("returnType")
-internal val Fingerprint.declaredParameters: List<String>? get() = declared("parameters")
-internal val Fingerprint.declaredSuperclass: String? get() = declared("superclass")
-internal val Fingerprint.declaredInterfaces: List<String>? get() = declared("interfaces")
+internal val Fingerprint.declaredReturnType: String? get() = declaredText("declaredReturnType")
+internal val Fingerprint.declaredParameters: List<String>? get() = declaredTexts("declaredParameters")
+internal val Fingerprint.declaredSuperclass: String? get() = declaredText("declaredSuperclass")
+internal val Fingerprint.declaredInterfaces: List<String>? get() = declaredTexts("declaredInterfaces")
 
 @Suppress("UNCHECKED_CAST")
 private fun <T> Fingerprint.declared(field: String): T? =
     Fingerprint::class.java.getDeclaredField(field).also { it.isAccessible = true }.get(this) as T?
+
+private fun Fingerprint.declaredText(field: String): String? =
+    declared<() -> CharSequence?>(field)?.invoke()?.toString()
+
+private fun Fingerprint.declaredTexts(field: String): List<String>? =
+    declared<() -> List<CharSequence>?>(field)?.invoke()?.map { it.toString() }
 
 /** The patcher's comparison for a type as a fingerprint writes it (StringComparisonType). */
 internal fun typeMatches(actual: String, wanted: String): Boolean = when {

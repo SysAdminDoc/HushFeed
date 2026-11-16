@@ -90,8 +90,9 @@ final class SaveNotice {
         ViewGroup root = topWindowRoot(activity);
         if (root == null) root = activity.findViewById(android.R.id.content);
         // A quick save lands inside the two seconds of its own "Saving" toast, and the banner
-        // drew over the toast's text (#299). It says the newer thing, so the toast goes.
-        Utils.cancelLatestToast();
+        // drew over the toast's text (#299). It says the newer thing, so the toasts go: the one
+        // up and any queued behind it, which would come up over the banner next.
+        Utils.cancelToasts();
         if (retry == null) {
             BlockAuthorOverlay.showActionBanner(root, message, L10n.t("Open"), () -> open(uri));
         } else if (uri == null) {
@@ -142,7 +143,7 @@ final class SaveNotice {
             send.setClipData(ClipData.newRawUri(null, uri));
             activity.startActivity(Intent.createChooser(send, null));
             // The share sheet takes the banner's place, so its words go up as a toast.
-            Utils.cancelLatestToast();
+            Utils.cancelToasts();
             Utils.showToastShort(message);
             return true;
         } catch (ActivityNotFoundException | SecurityException noSheet) {

@@ -173,13 +173,13 @@ public class MediaStopPropagationTest {
         Files.write(source.toPath(), new byte[]{70, 71, 72});
         ShadowMediaExtractor.addTrack(DataSource.toDataSource(source.getAbsolutePath()),
                 MediaFormat.createAudioFormat("audio/mp4a-latm", 44100, 2), new byte[]{91, 92, 93});
+        String said;
         try (RunningDeadline budget = new RunningDeadline()) {
             budget.expire();
-            StoryDownloads.saveSound(RuntimeEnvironment.getApplication(), "story.m4a", source, folder);
+            said = StoryDownloads.saveSound(RuntimeEnvironment.getApplication(), "story.m4a", source, folder);
         }
-        Shadows.shadowOf(Looper.getMainLooper()).idle();
-        assertEquals("The sound couldn't be saved. Try again.",
-                org.robolectric.shadows.ShadowToast.getTextOfLatestToast());
+        // The story's banner says it, so no toast comes up over that banner (#299).
+        assertEquals("The sound couldn't be saved. Try again.", said);
         assertFalse(new File(new File(Environment.getExternalStorageDirectory(), folder), "story.m4a").exists());
     }
 

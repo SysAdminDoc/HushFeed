@@ -369,6 +369,7 @@ final class VideoDownloads {
             File[] sound = {null};
             int[] subtitles = {0};
             boolean[] soundSkipped = {false};
+            boolean[] soundSaved = {false};
             boolean[] remembered = {!checkSaved};
             boolean[] stamped = {false};
             try {
@@ -441,14 +442,15 @@ final class VideoDownloads {
                         // The sound is already on disk: the separate stream when the video has
                         // one, otherwise the video itself, which still carries it because the
                         // copy that dropped it went to a different file. Fetching it again would
-                        // download twice. Its word keeps to a toast, so the video's banner below
-                        // isn't taken down.
-                        // The writer says a failure by toast and answers false; the count has
-                        // to know, or a lost sound would read as a save with everything in it.
+                        // download twice. Its word goes on the video's banner below, which a
+                        // banner or toast of its own would be taken down by or come up over.
+                        // The writer answers false for a failure; the count has to know, or a
+                        // lost sound would read as a save with everything in it.
                         if (!AudioDownloads.write(app, audioNameSnapshot, sound[0] == null ? picture[0] : sound[0], path, false)) {
                             soundSkipped[0] = true;
                             throw new IOException("The sound beside the video was not saved");
                         }
+                        soundSaved[0] = true;
                     } else {
                         SubtitleDownloads.saveOne(app, captionSnapshot.get(index - firstSubtitle), published[0].name, path);
                         subtitles[0]++;
@@ -475,10 +477,8 @@ final class VideoDownloads {
                     boolean onlyTracks = details == null && outcome.cancelled == 0
                             && outcome.stop == SaveProgress.Stop.NONE && !soundSkipped[0];
                     String said = onlyTracks ? own : SaveProgress.message(outcome, own);
-                    SaveNotice.savedVideo(said, published[0]);
-                    // A count took the banner, so the watermark is said on its own.
-                    if (stamped[0] && !said.equals(own)) Utils.showToastLong(own);
-                    if (!remembered[0]) Utils.showToastLong(L10n.t("Saved, but a later save may make a second copy"));
+                    SaveNotice.savedVideo(withNotes(said, own, soundSaved[0] ? AudioDownloads.savedLine(path) : null,
+                            soundSkipped[0], stamped[0], remembered[0]), published[0]);
                 }
             } catch (RuntimeException exception) {
                 Logger.printException(() -> "Selected-quality download failed", exception);
@@ -532,6 +532,23 @@ final class VideoDownloads {
      * What to say once the file is written. Three separate sentences rather than one built
      * from pieces: a translator needs the whole sentence to move the words around inside it.
      */
+    /**
+     * Everything a finished save has to say, on its one banner: what landed, then where the
+     * sound went or that it didn't, a watermarked copy a count left out, and a save the
+     * already-saved check couldn't note. Each was a toast after the banner, which Android queued
+     * behind "Saving" and brought up over the banner, or which the banner took down (#299).
+     */
+    static String withNotes(String said, String own, String soundLine, boolean soundSkipped,
+            boolean stamped, boolean remembered) {
+        StringBuilder text = new StringBuilder(said);
+        if (soundLine != null) text.append('\n').append(soundLine);
+        if (soundSkipped) text.append('\n').append(L10n.t("The sound couldn't be saved. Try again."));
+        // A count took the first line, so the watermark is said on its own.
+        if (stamped && !said.equals(own)) text.append('\n').append(own);
+        if (!remembered) text.append('\n').append(L10n.t("Saved, but a later save may make a second copy"));
+        return text.toString();
+    }
+
     private static String subtitleResult(int wanted, int saved, String path) {
         if (wanted == 0) return L10n.t("Video saved");
         if (saved == wanted) {

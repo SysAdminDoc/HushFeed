@@ -415,12 +415,14 @@ public final class StoryDownloads {
             RemoteMedia.fetch(urls, temp, RemoteMedia.Kind.VIDEO);
             MediaFileWriter.Saved saved = MediaFileWriter.publishForResult(app, temp,
                     name, "video/mp4", path, true);
-            // The sound keeps to a toast: its banner went up first and the story's, a tick
-            // later, took it down before anyone saw it (refutation review of 3d5395f2).
-            if (audioName != null) saveSound(app, audioName, temp, path);
-            SaveNotice.savedVideo(stamped
+            // The sound's word goes on the story's banner. Its own banner went up first and the
+            // story's, a tick later, took it down before anyone saw it (refutation review of
+            // 3d5395f2), and its toast came up over the story's banner or went down with it (#299).
+            String sound = audioName == null ? null : saveSound(app, audioName, temp, path);
+            String said = stamped
                     ? L10n.f("Only a watermarked copy existed. Saved to %1$s", path)
-                    : L10n.f("Story saved to %1$s", path), saved);
+                    : L10n.f("Story saved to %1$s", path);
+            SaveNotice.savedVideo(sound == null ? said : said + "\n" + sound, saved);
         } finally {
             if (!MediaCache.delete(temp)) Logger.printInfo(() -> "Could not remove story temporary file");
         }
@@ -429,15 +431,19 @@ public final class StoryDownloads {
     /**
      * The sound beside a story that is already published. A sound stopped for space or time is
      * the sound's failure alone: letting it reach the job said the story had failed, and a retry
-     * made a second copy of it. It goes beside the story, in {@code storyPath}.
+     * made a second copy of it. It goes beside the story, in {@code storyPath}. Answers the line
+     * the story's banner adds about it, or null with the switch off.
      */
-    static void saveSound(Context app, String audioName, File source, String storyPath) {
+    static String saveSound(Context app, String audioName, File source, String storyPath) {
+        if (!AudioDownloads.enabled()) return null;
         try {
-            AudioDownloads.write(app, audioName, source, storyPath, false);
+            if (AudioDownloads.write(app, audioName, source, storyPath, false)) {
+                return AudioDownloads.savedLine(storyPath);
+            }
         } catch (MediaBudget.StopException refusal) {
             Logger.printException(() -> "Story sound save stopped", refusal);
-            Utils.showToastLong(L10n.t("The sound couldn't be saved. Try again."));
         }
+        return L10n.t("The sound couldn't be saved. Try again.");
     }
 
     private static void savePhotos(Context app, List<String> names, String path, List<List<String>> photos,

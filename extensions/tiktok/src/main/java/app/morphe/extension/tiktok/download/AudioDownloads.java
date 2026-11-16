@@ -118,14 +118,15 @@ final class AudioDownloads {
     }
 
     /**
-     * {@code announce} false keeps this save's word to a plain toast: a video or story save that
-     * carries the sound shows one banner, its own, and a second banner a tick later would take
-     * the first one down before anyone saw it.
+     * {@code announce} false leaves the word to the caller: a video or story save that carries
+     * the sound shows one banner, its own, which says where the sound went or that it didn't
+     * land. A second banner a tick later took the first one down before anyone saw it, and a
+     * toast queued up over the banner or went down with it (#299).
      */
     /**
-     * True when the sound landed; false when the switch is off or the save failed (said by toast).
-     * {@code videoPath} is the folder the video itself went to, creator folder included, so the
-     * pair stays together.
+     * True when the sound landed; false when the switch is off or the save failed (said by toast
+     * when {@code announce} is true). {@code videoPath} is the folder the video itself went to,
+     * creator folder included, so the pair stays together.
      */
     static boolean write(Context app, String name, File source, String videoPath, boolean announce)
             throws MediaBudget.StopException {
@@ -161,20 +162,24 @@ final class AudioDownloads {
                     : mp3 ? SoundFormat.withExtension(name, Mp3Transcoder.EXTENSION) : name;
             MediaFileWriter.Saved saved = MediaFileWriter.publishForResult(app, publish, fileName,
                     opus ? "audio/ogg" : mp3 ? Mp3Transcoder.MIME_TYPE : "audio/mp4", path, true);
-            if (announce) SaveNotice.saved(L10n.f("Sound saved to %1$s", path), saved);
-            else Utils.showToastShort(L10n.f("Sound saved to %1$s", path));
+            if (announce) SaveNotice.saved(savedLine(videoPath), saved);
             return true;
         } catch (MediaBudget.StopException refusal) {
             throw refusal;
         } catch (IOException | RuntimeException exception) {
             Logger.printException(() -> "Sound save failed", exception);
-            Utils.showToastLong(L10n.t("The sound couldn't be saved. Try again."));
+            if (announce) Utils.showToastLong(L10n.t("The sound couldn't be saved. Try again."));
             return false;
         } finally {
             if (output != null && !MediaCache.delete(output)) {
                 Logger.printInfo(() -> "Could not remove sound temporary file");
             }
         }
+    }
+
+    /** What a save says about the sound that landed beside its video or story in {@code videoPath}. */
+    static String savedLine(String videoPath) {
+        return L10n.f("Sound saved to %1$s", audioPath(videoPath));
     }
 
     /**

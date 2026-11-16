@@ -44,6 +44,7 @@ Every Hushfeed release, newest first.
 ### Bug Fixes
 
 * The Advanced downloads description sent you to Downloads for `Show the save button on videos`, but the switch is in Feed screen under Buttons on videos. The description says where it is now, and Downloads has a row that takes you straight to it. Searching settings for "download button" finds it too (#299).
+* The "Saving video" message doesn't sit on top of the saved banner anymore. It still did when another message was waiting behind it, like the sound's with `Save the sound as well` on. Where the sound went, and the notes about a watermarked copy or a possible second copy, are lines on the banner now (#299).
 * With `Stretch the video to the screen` on, the still picture TikTok shows before a video starts gets stretched the same way as the video. It used to show a different shape and flick when the video took over (#421).
 * With Ghost mode on, stories you watched from the inbox stay watched after you close and reopen TikTok. TikTok never heard you watched them, so their rings used to light up again on the next launch (#427).
 * `Show where a video was posted` no longer shows FAKE-AD on ads. TikTok gives ads a made up country, so only a real two-letter country shows now, and an ad's never gets remembered for that brand's comments (#410).

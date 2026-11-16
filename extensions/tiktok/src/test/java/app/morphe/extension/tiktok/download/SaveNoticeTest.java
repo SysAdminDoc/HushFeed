@@ -2,6 +2,7 @@ package app.morphe.extension.tiktok.download;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -133,6 +134,62 @@ public class SaveNoticeTest {
             idlePastTheSheetSettle();
 
             assertTrue("the toast is still up under the banner", Shadows.shadowOf(saving).isCancelled());
+        }
+    }
+
+    /**
+     * #299 again on 0.82.0: a toast after "Saving" took the one slot the cancel kept, so the
+     * banner cancelled that one and "Saving" stayed on top of it. Android shows an app's toasts
+     * one at a time, so every toast still up or waiting goes.
+     */
+    @Test public void theBannerTakesDownSavingEvenWithAnotherToastQueuedBehindIt() {
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            Utils.setActivity(owner.get());
+            Utils.showToastShort("Saving video to DCIM/TikTok");
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            android.widget.Toast saving = ShadowToast.getLatestToast();
+            Utils.showToastShort("Sound saved to Music/TikTok");
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            android.widget.Toast queued = ShadowToast.getLatestToast();
+            assertNotSame(saving, queued);
+
+            SaveNotice.saved("Video saved", new MediaFileWriter.Saved("a.mp4",
+                    Uri.parse("content://media/external/video/media/79")));
+            idlePastTheSheetSettle();
+
+            assertTrue("Saving is still up over the banner", Shadows.shadowOf(saving).isCancelled());
+            assertTrue("the queued toast would come up over the banner next",
+                    Shadows.shadowOf(queued).isCancelled());
+            assertNotNull(find(owner.get().findViewById(android.R.id.content), "Video saved"));
+        }
+    }
+
+    /**
+     * What a video save said in toasts after its banner rides on the banner instead: a toast
+     * queued up over it, and the cancel above would now take it down unread (#299).
+     */
+    @Test public void aVideoSavesOtherNewsGoesOnItsBannerAsLines() {
+        assertEquals("Video saved", VideoDownloads.withNotes("Video saved", "Video saved", null,
+                false, false, true));
+        assertEquals("Video saved\nSound saved to Music/TikTok\nSaved, but a later save may make a second copy",
+                VideoDownloads.withNotes("Video saved", "Video saved", "Sound saved to Music/TikTok",
+                        false, false, false));
+        String own = "No clean copy yet. Saved the watermarked one to DCIM/TikTok";
+        assertEquals("Saved 1 of 2, the rest ran out of time\nThe sound couldn't be saved. Try again.\n" + own,
+                VideoDownloads.withNotes("Saved 1 of 2, the rest ran out of time", own, null,
+                        true, true, true));
+        // When the watermark is the first line already, it isn't said twice.
+        assertEquals(own, VideoDownloads.withNotes(own, own, null, false, true, true));
+
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            Utils.setActivity(owner.get());
+            String said = VideoDownloads.withNotes("Video saved", "Video saved",
+                    "Sound saved to Music/TikTok", false, false, true);
+            SaveNotice.savedVideo(said, new MediaFileWriter.Saved("a.mp4",
+                    Uri.parse("content://media/external/video/media/80")));
+            idlePastTheSheetSettle();
+            assertNotNull("the banner dropped the sound's line",
+                    find(owner.get().findViewById(android.R.id.content), said));
         }
     }
 

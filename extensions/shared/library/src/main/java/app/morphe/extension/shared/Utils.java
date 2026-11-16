@@ -843,23 +843,31 @@ public class Utils {
             } else {
                 Logger.printDebug(() -> "Showing toast: " + messageToToast);
                 Toast toast = Toast.makeText(currentContext, messageToToast, toastDuration);
-                latestToast = toast;
+                shownToasts.addLast(toast);
+                while (shownToasts.size() > SHOWN_TOASTS_KEPT) shownToasts.removeFirst();
                 toast.show();
             }
         });
     }
 
-    /** The toast shown last, for {@link #cancelLatestToast()}. Main thread only. */
-    private static Toast latestToast;
+    /**
+     * The toasts that may still be up or waiting their turn, oldest first, for
+     * {@link #cancelToasts()}. Android shows an app's toasts one after another, so keeping only
+     * the newest missed the one on screen: a toast queued behind "Saving" was the one cancelled,
+     * and "Saving" stayed on top of the banner that replaced it. Main thread only.
+     */
+    private static final java.util.ArrayDeque<Toast> shownToasts = new java.util.ArrayDeque<>();
+
+    /** Plenty for one save's worth of toasts. Older ones have long since gone. */
+    private static final int SHOWN_TOASTS_KEPT = 8;
 
     /**
-     * Takes the latest toast off the screen, for something about to say the next thing in the
-     * same spot. Harmless when it has already gone. Main thread only.
+     * Takes this app's toasts off the screen, the one up and any queued behind it, for something
+     * about to say the next thing in the same spot. Harmless for those already gone. Main thread
+     * only.
      */
-    public static void cancelLatestToast() {
-        Toast toast = latestToast;
-        latestToast = null;
-        if (toast != null) toast.cancel();
+    public static void cancelToasts() {
+        while (!shownToasts.isEmpty()) shownToasts.removeFirst().cancel();
     }
 
     /**

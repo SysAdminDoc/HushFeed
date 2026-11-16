@@ -25,11 +25,14 @@ import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.patches.tiktok.shared.guardAtEntry
 import app.morphe.util.addInstructionsAtControlFlowLabel
+import app.morphe.util.cloneMutable
 import app.morphe.util.findMutableMethodOf
+import app.morphe.util.singleOrPatchException
 import app.morphe.util.getReference
 import app.morphe.util.numberOfParameterRegisters
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
@@ -162,6 +165,118 @@ internal object LiveRoomLeaveFingerprint : Fingerprint(
     strings = listOf("paid room fail to enter the room", "jump to other room"),
 )
 
+/**
+ * The LIVE room page's room enter (#420), which takes the room id and whether a tap opened it.
+ * It makes the enter's callback from the page and the room id, keeps it on the page, and hands
+ * it to the page's send. That callback's success builds the room's chat, host bar and close
+ * button. Its log keys for the enter's start time and the pre-enter cache meet only here on 47.7.3.
+ */
+internal object LiveRoomEnterFingerprint : Fingerprint(
+    definingClass = LIVE_PLAY_FRAGMENT,
+    returnType = "V",
+    parameters = listOf("J", "Z"),
+    strings = listOf("param_live_enter_room_api_start_time", "pre_enter_cache"),
+)
+
+/** The room page's reset of an enter still pending, which cancels it and logs the room. */
+internal object LiveRoomEnterResetFingerprint : Fingerprint(
+    definingClass = LIVE_PLAY_FRAGMENT,
+    returnType = "V",
+    parameters = listOf(),
+    strings = listOf("resetEnterRoom -> roomId="),
+)
+
+/** What the eye's second enter is made of, all read off the page's own room enter (#420). */
+internal class LiveReEnter(
+    /** The page's reset of a pending enter, so its send doesn't stop at the held one. */
+    val reset: MethodReference,
+    /** The enter callback's constructor, which takes the page and the room id. */
+    val callback: MethodReference,
+    /** The page field the room enter keeps that callback in. */
+    val kept: FieldReference,
+    /** The page's send, which takes the room id and the callback. */
+    val send: MethodReference,
+)
+
+/**
+ * Reads the eye's second enter off the page's room enter: the one callback it makes from the page
+ * and the room id, the one page field it keeps that callback in, and the one page call taking the
+ * room id and an interface the callback implements. The extension calls each piece from its own
+ * package, so every one has to be public. Throws by name when any is gone, doubled or hidden, so
+ * a moved room enter fails Ghost mode with nothing written.
+ */
+internal fun planLiveReEnter(enter: Method, reset: Method, classOf: (String) -> ClassDef?): LiveReEnter {
+    val page = enter.definingClass
+    val code = enter.implementation?.instructions?.toList()
+        ?: throw PatchException("Ghost mode: the LIVE room enter has no body.")
+    fun <T> List<T>.one(what: String): T = distinctBy { it.toString() }.singleOrNull()
+        ?: throw PatchException("Ghost mode: expected one $what in the LIVE room enter, found ${distinctBy { it.toString() }.size}.")
+    fun refused(what: String): Nothing =
+        throw PatchException("Ghost mode: the LIVE room's $what isn't public, so the eye can't enter the room again.")
+
+    val callback = code.filter { it.opcode == Opcode.INVOKE_DIRECT }
+        .mapNotNull { it.getReference<MethodReference>() }
+        .filter { it.name == "<init>" && it.parameterTypes.map(CharSequence::toString) == listOf(page, "J") }
+        .one("enter callback made from the page and the room id")
+    val kept = code.filter { it.opcode == Opcode.IPUT_OBJECT }
+        .mapNotNull { it.getReference<FieldReference>() }
+        .filter { it.definingClass == page && it.type == callback.definingClass }
+        .one("page field keeping the enter callback")
+    val callbackClass = classOf(callback.definingClass)
+        ?: throw PatchException("Ghost mode: the LIVE enter callback ${callback.definingClass} isn't in the app.")
+    val send = code.filter { it.opcode == Opcode.INVOKE_VIRTUAL }
+        .mapNotNull { it.getReference<MethodReference>() }
+        .filter {
+            it.definingClass == page && it.returnType == "V" && it.parameterTypes.size == 2 &&
+                it.parameterTypes[0].toString() == "J" && it.parameterTypes[1].toString() in callbackClass.interfaces
+        }
+        .one("send taking the room id and the enter callback")
+
+    val pageClass = classOf(page) ?: throw PatchException("Ghost mode: the LIVE room page $page isn't in the app.")
+    fun Int.public() = AccessFlags.PUBLIC.isSet(this)
+    fun ClassDef.method(reference: MethodReference) = methods.firstOrNull {
+        it.name == reference.name && it.returnType == reference.returnType &&
+            it.parameterTypes.map(CharSequence::toString) == reference.parameterTypes.map(CharSequence::toString)
+    }
+    if (!pageClass.accessFlags.public()) refused("page")
+    if (!callbackClass.accessFlags.public() || callbackClass.method(callback)?.accessFlags?.public() != true) {
+        refused("enter callback")
+    }
+    if (pageClass.fields.firstOrNull { it.name == kept.name && it.type == kept.type }?.accessFlags?.public() != true) {
+        refused("enter callback field")
+    }
+    if (pageClass.method(send)?.accessFlags?.public() != true) refused("send")
+    if (reset.definingClass != page || !reset.accessFlags.public() || AccessFlags.STATIC.isSet(reset.accessFlags)) {
+        refused("enter reset")
+    }
+    return LiveReEnter(reset, callback, kept, send)
+}
+
+/**
+ * Fills the extension's enterAgain(Object, long) stub with the page's own room enter: the pending
+ * enter reset, a new callback kept where the room enter keeps it, and the send. Answers true once
+ * the enter is on its way; the callback's success then builds the rest of the room.
+ */
+internal fun MutableMethod.enterLiveRoomAgain(plan: LiveReEnter) {
+    if (returnType != "Z" || parameterTypes.map(CharSequence::toString) != listOf("Ljava/lang/Object;", "J")) {
+        throw PatchException("Ghost mode: the extension's LIVE re-enter bridge isn't (Object, long) to boolean.")
+    }
+    val page = plan.send.definingClass
+    addInstructions(
+        0,
+        """
+            check-cast p0, $page
+            invoke-virtual { p0 }, ${plan.reset.definingClass}->${plan.reset.name}()V
+            new-instance v0, ${plan.callback.definingClass}
+            invoke-direct { v0, p0, p1, p2 }, ${plan.callback}
+            iput-object v0, p0, ${plan.kept}
+            invoke-virtual { p0, p1, p2, v0 }, ${plan.send}
+            const/4 v0, 0x1
+            return v0
+        """,
+    )
+}
+
 /** Where the LIVE enter hold goes: in front of the lancet's send, with the send's two registers. */
 internal class LiveEnterHold(val index: Int, val interceptor: Int, val chain: Int)
 
@@ -293,6 +408,17 @@ val ghostModePatch = bytecodePatch(
         val liveEnterHold = planLiveEnterHold(lancet)
         val roomResume = LivePlayFragmentResumeFingerprint.method
         val roomLeave = LiveRoomLeaveFingerprint.method
+        val roomEnters = LiveRoomEnterFingerprint.matchAllOrNull().orEmpty().map { it.method }
+        val roomResets = LiveRoomEnterResetFingerprint.matchAllOrNull().orEmpty().map { it.method }
+        if (roomEnters.size != 1 || roomResets.size != 1) {
+            throw PatchException(
+                "Ghost mode: expected one LIVE room enter and one enter reset, found ${roomEnters.size} and ${roomResets.size}.",
+            )
+        }
+        val reEnter = planLiveReEnter(roomEnters.single(), roomResets.single()) { classDefByOrNull(it) }
+        val unseen = mutableClassDefBy(LIVE_UNSEEN_EXTENSION)
+        val reEnterStub = unseen.methods.filter { it.name == "enterAgain" }
+            .singleOrPatchException("Ghost mode: extension bridge enterAgain")
 
         SettingsStatusLoadFingerprint.method.addInstruction(
             0,
@@ -372,6 +498,12 @@ val ghostModePatch = bytecodePatch(
                 "$LIVE_UNSEEN_EXTENSION->keepRoom(Ljava/lang/Object;Ljava/lang/Object;)Z",
             "return-void",
         )
+        // The eye has the page enter the room again through its own enter, whose success builds
+        // the chat, host bar and close button the held enter never brought.
+        val reEnterBridge = reEnterStub.cloneMutable(additionalRegisters = 1)
+        unseen.methods.remove(reEnterStub)
+        unseen.methods.add(reEnterBridge)
+        reEnterBridge.enterLiveRoomAgain(reEnter)
         // The room's eye button, which lets the host of the room you're in see you.
         roomResume.addInstruction(
             0,

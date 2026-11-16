@@ -5,7 +5,9 @@
 package app.morphe.patches.tiktok.interaction.ghostmode
 
 import app.morphe.Fixtures
+import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.patch.PatchException
+import app.morphe.patches.tiktok.interaction.live.LIVE_PLAY_FRAGMENT
 import app.morphe.takes
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import com.android.tools.smali.dexlib2.AccessFlags
@@ -18,7 +20,12 @@ import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation
+import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
 import com.android.tools.smali.dexlib2.immutable.instruction.ImmutableInstruction10x
+import com.android.tools.smali.dexlib2.immutable.instruction.ImmutableInstruction11n
+import com.android.tools.smali.dexlib2.immutable.instruction.ImmutableInstruction11x
+import com.android.tools.smali.dexlib2.immutable.reference.ImmutableFieldReference
+import com.android.tools.smali.dexlib2.immutable.reference.ImmutableMethodReference
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
@@ -114,6 +121,109 @@ class LiveEnterHoldTest {
             )
         }
     }
+
+    /**
+     * The eye lets the host see you by having the page enter the room again through its own
+     * enter, whose success builds the chat and host bar the held enter never brought. On each
+     * declared build the room enter and its reset are one page method each, the plan reads one
+     * public callback, field and send off the enter, and the filled bridge resets, makes the
+     * callback from the page and the room id, keeps it and sends it, then answers true.
+     */
+    @Test
+    fun `each declared build enters a LIVE room again through the page's own enter`() {
+        Fixtures.forEachDeclared { apk ->
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            val classes = container.dexEntryNames.asSequence()
+                .flatMap { container.getEntry(it)!!.dexFile.classes.asSequence() }.toList()
+            val byType = classes.associateBy { it.type }
+            fun matches(fingerprint: Fingerprint) = classes.flatMap { cls ->
+                cls.methods.filter { it.implementation != null && fingerprint.takes(it, cls) }
+            }.distinctBy { it.toString() }
+            val enters = matches(LiveRoomEnterFingerprint)
+            val resets = matches(LiveRoomEnterResetFingerprint)
+            assertEquals("${apk.name}: room enters ${enters.map { it.name }}", 1, enters.size)
+            assertEquals("${apk.name}: enter resets ${resets.map { it.name }}", 1, resets.size)
+
+            val plan = planLiveReEnter(enters.single(), resets.single()) { byType[it] }
+            assertEquals(listOf(LIVE_PLAY_FRAGMENT, "J"), plan.callback.parameterTypes.map { it.toString() })
+            assertEquals(LIVE_PLAY_FRAGMENT, plan.kept.definingClass)
+            assertEquals(plan.callback.definingClass, plan.kept.type)
+            assertEquals(LIVE_PLAY_FRAGMENT, plan.send.definingClass)
+            assertEquals("J", plan.send.parameterTypes[0].toString())
+            assertTrue(
+                "${apk.name}: the callback is what the send takes",
+                plan.send.parameterTypes[1].toString() in byType.getValue(plan.callback.definingClass).interfaces,
+            )
+
+            val bridge = MutableMethod(reEnterStub())
+            bridge.enterLiveRoomAgain(plan)
+            val code = bridge.implementation!!.instructions.toList()
+            assertEquals(
+                listOf(
+                    Opcode.CHECK_CAST, Opcode.INVOKE_VIRTUAL, Opcode.NEW_INSTANCE, Opcode.INVOKE_DIRECT,
+                    Opcode.IPUT_OBJECT, Opcode.INVOKE_VIRTUAL, Opcode.CONST_4, Opcode.RETURN,
+                ),
+                code.take(8).map { it.opcode },
+            )
+            fun ref(index: Int) = (code[index] as ReferenceInstruction).reference.toString()
+            assertEquals("$LIVE_PLAY_FRAGMENT->${resets.single().name}()V", ref(1))
+            assertEquals(plan.callback.definingClass, ref(2))
+            assertEquals(plan.callback.toString(), ref(3))
+            assertEquals(plan.kept.toString(), ref(4))
+            assertEquals(plan.send.toString(), ref(5))
+            // p0 is v2 and the room id p1-p2 is v3-v4 in the stub's five registers.
+            val made = code[3] as FiveRegisterInstruction
+            assertEquals(listOf(0, 2, 3, 4), listOf(made.registerC, made.registerD, made.registerE, made.registerF))
+            val sent = code[5] as FiveRegisterInstruction
+            assertEquals(listOf(2, 3, 4, 0), listOf(sent.registerC, sent.registerD, sent.registerE, sent.registerF))
+        }
+    }
+
+    @Test
+    fun `a room enter without its callback, or a bridge of the wrong shape, stops the patch`() {
+        val enter = ImmutableMethod(
+            LIVE_PLAY_FRAGMENT, "U30",
+            listOf(ImmutableMethodParameter("J", null, null), ImmutableMethodParameter("Z", null, null)),
+            "V", AccessFlags.PUBLIC.value, null, null,
+            ImmutableMethodImplementation(4, listOf(ImmutableInstruction10x(Opcode.RETURN_VOID)), null, null),
+        )
+        val reset = ImmutableMethod(
+            LIVE_PLAY_FRAGMENT, "W20", emptyList(), "V", AccessFlags.PUBLIC.value, null, null,
+            ImmutableMethodImplementation(1, listOf(ImmutableInstruction10x(Opcode.RETURN_VOID)), null, null),
+        )
+        assertThrows(PatchException::class.java) { planLiveReEnter(enter, reset) { null } }
+
+        val plan = LiveReEnter(
+            reset,
+            ImmutableMethodReference("LX/cb;", "<init>", listOf(LIVE_PLAY_FRAGMENT, "J"), "V"),
+            ImmutableFieldReference(LIVE_PLAY_FRAGMENT, "n2", "LX/cb;"),
+            ImmutableMethodReference(LIVE_PLAY_FRAGMENT, "T30", listOf("J", "LX/iface;"), "V"),
+        )
+        val voidBridge = ImmutableMethod(
+            LIVE_UNSEEN_EXTENSION, "enterAgain",
+            listOf(ImmutableMethodParameter("Ljava/lang/Object;", null, null), ImmutableMethodParameter("J", null, null)),
+            "V", AccessFlags.STATIC.value, null, null,
+            ImmutableMethodImplementation(5, listOf(ImmutableInstruction10x(Opcode.RETURN_VOID)), null, null),
+        )
+        assertThrows(PatchException::class.java) { MutableMethod(voidBridge).enterLiveRoomAgain(plan) }
+    }
+
+    /** The extension's enterAgain(Object, long) stub, `return false`, with the spare register the patch adds. */
+    private fun reEnterStub(): Method = ImmutableMethod(
+        LIVE_UNSEEN_EXTENSION,
+        "enterAgain",
+        listOf(ImmutableMethodParameter("Ljava/lang/Object;", null, null), ImmutableMethodParameter("J", null, null)),
+        "Z",
+        AccessFlags.STATIC.value,
+        null,
+        null,
+        ImmutableMethodImplementation(
+            5,
+            listOf(ImmutableInstruction11n(Opcode.CONST_4, 0, 0), ImmutableInstruction11x(Opcode.RETURN, 0)),
+            null,
+            null,
+        ),
+    )
 
     @Test
     fun `a lancet without the send stops the patch`() {

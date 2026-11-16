@@ -24,6 +24,7 @@ import com.bytedance.android.livesdkapi.depend.model.live.Room;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -40,8 +41,9 @@ import org.robolectric.shadows.ShadowToast;
 /**
  * Watch LIVEs unseen (#420). A room enter is what puts you on a LIVE host's viewer list, and with
  * Ghost mode and the switch on the hook in front of TikTok's network send fails it on the phone,
- * as a connection TikTok's own code already handles. The eye in the room sends the held enter
- * later through TikTok's same send, and that room's enters go out from then on.
+ * as a connection TikTok's own code already handles. The eye in the room has the page enter the
+ * room again through TikTok's own enter (or sends the held enter when it can't), and that room's
+ * enters go out from then on.
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 30)
@@ -179,6 +181,58 @@ public class LiveUnseenTest {
                 new Interceptor(ENTER.replace(ROOM, "7570000000000000001")), "chain"));
     }
 
+    @Test public void theEyeEntersTheRoomAgainOnItsPageSoTheChatAndHostBarComeIn() throws Exception {
+        on();
+        Interceptor interceptor = new Interceptor(ENTER);
+        assertThrows(IOException.class, () -> LiveUnseen.holdEnter(interceptor, "chain"));
+        Page page = new Page(ROOM);
+        List<Object> entered = new ArrayList<>();
+        LiveUnseen.reentry = (onPage, room) -> {
+            assertSame("on the main thread", Looper.getMainLooper(), Looper.myLooper());
+            entered.add(onPage);
+            entered.add(room);
+            return true;
+        };
+
+        assertEquals(LiveUnseen.Reveal.SENT, reveal(page, ROOM));
+        assertEquals(Arrays.asList(page, Long.parseLong(ROOM)), entered);
+        assertTrue("the held enter isn't sent as well", interceptor.sentWith.isEmpty());
+        assertEquals(0, LiveUnseen.heldForTests());
+        assertTrue(LiveUnseen.revealed(ROOM));
+        // The page's own enter that follows goes out.
+        LiveUnseen.holdEnter(new Interceptor(ENTER), "chain");
+    }
+
+    @Test public void aPageThatCantEnterAgainSendsTheHeldEnterInstead() throws Exception {
+        LiveUnseen.Reentry[] bridges = {
+                LiveUnseen::enterAgain,
+                (page, room) -> false,
+                (page, room) -> {
+                    throw new IllegalStateException("moved");
+                },
+        };
+        for (LiveUnseen.Reentry bridge : bridges) {
+            LiveUnseen.resetForTests();
+            on();
+            Interceptor interceptor = new Interceptor(ENTER);
+            Object chain = new Object();
+            assertThrows(IOException.class, () -> LiveUnseen.holdEnter(interceptor, chain));
+            LiveUnseen.reentry = bridge;
+            assertEquals(LiveUnseen.Reveal.SENT, reveal(new Page(ROOM), ROOM));
+            assertEquals(1, interceptor.sentWith.size());
+            assertSame(chain, interceptor.sentWith.get(0));
+        }
+    }
+
+    @Test public void aRoomWithNothingHeldIsNotEnteredAgain() throws Exception {
+        on();
+        List<Long> entered = new ArrayList<>();
+        LiveUnseen.reentry = (page, room) -> entered.add(room);
+        assertEquals(LiveUnseen.Reveal.NEXT_TIME, reveal(new Page(ROOM), ROOM));
+        assertTrue("a room already entered isn't entered twice", entered.isEmpty());
+        assertTrue(LiveUnseen.revealed(ROOM));
+    }
+
     @Test public void aRoomWithNothingHeldIsSeenNextTime() throws Exception {
         on();
         assertEquals(LiveUnseen.Reveal.NEXT_TIME, reveal(ROOM));
@@ -219,10 +273,15 @@ public class LiveUnseenTest {
         return String.valueOf(ShadowToast.getTextOfLatestToast());
     }
 
-    /** Taps the eye for {@code room} and waits for the outcome the main thread gets. */
+    /** Taps the eye for {@code room} with no page known and waits for the outcome. */
     private static LiveUnseen.Reveal reveal(String room) throws InterruptedException {
+        return reveal(null, room);
+    }
+
+    /** Taps the eye on {@code page} for {@code room} and waits for the outcome the main thread gets. */
+    private static LiveUnseen.Reveal reveal(Object page, String room) throws InterruptedException {
         AtomicReference<LiveUnseen.Reveal> outcome = new AtomicReference<>();
-        LiveUnseen.reveal(room, outcome::set);
+        LiveUnseen.reveal(page, room, outcome::set);
         for (int i = 0; i < 200 && outcome.get() == null; i++) {
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             if (outcome.get() == null) Thread.sleep(10);

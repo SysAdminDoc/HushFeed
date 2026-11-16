@@ -220,7 +220,8 @@ public final class LiveUnseenButton {
 
     static void onTapped(Activity activity) {
         if (revealing) return;
-        String room = roomInFront(activity);
+        Object page = pageInFront(activity);
+        String room = page == null ? null : LiveRecordChip.roomKey(LiveRecordChip.roomOf(page));
         if (room == null) {
             Utils.showToastShort(L10n.t("Couldn't tell which LIVE this is. Open it again."));
             return;
@@ -232,7 +233,7 @@ public final class LiveUnseenButton {
         revealing = true;
         TextView button = buttonReference.get();
         if (button != null) SettingsUi.setBusy(button, true, L10n.t(activity, "Letting the host see you"));
-        LiveUnseen.reveal(room, outcome -> {
+        LiveUnseen.reveal(page, room, outcome -> {
             revealing = false;
             TextView shown = buttonReference.get();
             if (shown != null) {
@@ -259,6 +260,12 @@ public final class LiveUnseenButton {
 
     /** The room of the page with the most of itself on screen, or the only page known. */
     static String roomInFront(Activity activity) {
+        Object page = pageInFront(activity);
+        return page == null ? null : LiveRecordChip.roomKey(LiveRecordChip.roomOf(page));
+    }
+
+    /** The room page with the most of itself on screen, or the only page known. */
+    static Object pageInFront(Activity activity) {
         Object best = null;
         Object only = null;
         int pages = 0;
@@ -274,7 +281,7 @@ public final class LiveUnseenButton {
             }
         }
         if (best == null && pages == 1 && !Boolean.FALSE.equals(Reflect.invoke(only, "isResumed"))) best = only;
-        return best == null ? null : LiveRecordChip.roomKey(LiveRecordChip.roomOf(best));
+        return best;
     }
 
     static void resetForTests() {

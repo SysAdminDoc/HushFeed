@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 /**
  * Watch LIVEs unseen (#420). Opening a LIVE room sends TikTok's room enter request, and that is
@@ -32,9 +33,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * down on the phone, as a failed connection, before anything is sent. The stream itself comes
  * from the room TikTok already loaded with the feed.
  *
- * <p>The eye in the room ({@code LiveUnseenButton}) lets the room you're in see you: the enter
- * that was held for it goes out then, and the room's later enters go out as usual until TikTok
- * is closed.
+ * <p>While hidden, the room shows the video and the eye, and nothing a successful enter builds
+ * (the chat, the host bar, the close button). The eye in the room ({@code LiveUnseenButton})
+ * lets the room you're in see you: the room page enters again through TikTok's own enter, which
+ * builds the rest of the room, and the room's later enters go out as usual until TikTok is
+ * closed.
  *
  * <p>The hook fails open. With a switch off, Hushfeed paused, the settings not loaded yet, or
  * the request unreadable, the request goes out as it always does.
@@ -52,6 +55,8 @@ public final class LiveUnseen {
     static final String ENTER_FAILED = "ENTER_FAILED";
     /** The hook in front of the room page's leave, by its name in the diagnostics. */
     static final String ROOM_KEPT = "live room kept";
+    /** The bridge into the room page's own enter, by its name in the diagnostics. */
+    static final String ROOM_ENTERED_AGAIN = "live room entered again";
     /** How long after an enter held with no readable room a failed enter is still taken as ours. */
     static final long UNKNOWN_ROOM_WINDOW_MS = 15_000;
     private static final long NEVER = -1;
@@ -76,6 +81,13 @@ public final class LiveUnseen {
             this.chain = chain;
         }
     }
+
+    /** The room page entering a room again; the patch's bridge, swapped out in tests. */
+    interface Reentry {
+        boolean enter(Object page, long room);
+    }
+
+    static volatile Reentry reentry = LiveUnseen::enterAgain;
 
     /** What happened to a room when the eye was tapped. */
     public enum Reveal {
@@ -195,10 +207,13 @@ public final class LiveUnseen {
     }
 
     /**
-     * The eye tapped in {@code room}: its enters go out from now on, and the one held when it
-     * opened is sent now, off the main thread. {@code done} gets the outcome on the main thread.
+     * The eye tapped in {@code room}, shown by {@code page}: its enters go out from now on. When
+     * an enter was held for it, the page enters the room again through TikTok's own enter, so the
+     * chat, the host bar and the rest that a successful enter builds come in. When the page can't,
+     * the held enter is sent as it was, off the main thread, and the room keeps showing just the
+     * video. {@code done} gets the outcome on the main thread.
      */
-    public static void reveal(String room, java.util.function.Consumer<Reveal> done) {
+    public static void reveal(Object page, String room, Consumer<Reveal> done) {
         if (room == null) {
             Utils.runOnMainThread(() -> done.accept(Reveal.NEXT_TIME));
             return;
@@ -212,11 +227,17 @@ public final class LiveUnseen {
             Utils.runOnMainThread(() -> done.accept(Reveal.NEXT_TIME));
             return;
         }
-        boolean queued = Utils.runOnBackgroundThread(() -> {
-            Reveal outcome = send(held);
-            Utils.runOnMainThread(() -> done.accept(outcome));
+        Utils.runOnMainThread(() -> {
+            if (enterAgainOnMain(page, room)) {
+                done.accept(Reveal.SENT);
+                return;
+            }
+            boolean queued = Utils.runOnBackgroundThread(() -> {
+                Reveal outcome = send(held);
+                Utils.runOnMainThread(() -> done.accept(outcome));
+            });
+            if (!queued) done.accept(Reveal.FAILED);
         });
-        if (!queued) Utils.runOnMainThread(() -> done.accept(Reveal.FAILED));
     }
 
     /** Sends a held enter through TikTok's own call, and lets its answer go. */
@@ -248,6 +269,41 @@ public final class LiveUnseen {
         return null;
     }
 
+    /**
+     * The room page entering {@code room} again on the main thread, through the bridge the patch
+     * fills. Returns false when the page or the room id can't be used or the bridge refused, so
+     * the held enter is sent instead.
+     */
+    static boolean enterAgainOnMain(Object page, String room) {
+        if (page == null) return false;
+        long id;
+        try {
+            id = Long.parseLong(room);
+        } catch (NumberFormatException notAnId) {
+            return false;
+        }
+        try {
+            if (!reentry.enter(page, id)) return false;
+        } catch (Throwable failure) {
+            HookStatus.threw(HOOK_FAMILY, ROOM_ENTERED_AGAIN, failure);
+            return false;
+        }
+        HookStatus.bound(HOOK_FAMILY, ROOM_ENTERED_AGAIN);
+        Logger.diagnosticInfo(DiagnosticCategory.OTHER, "GhostMode",
+                () -> "Ghost mode entered a LIVE room again after the eye was tapped");
+        return true;
+    }
+
+    /**
+     * Filled in by the patch with the room page's own enter: the pending enter reset, a new enter
+     * callback made from the page and the room id and kept where the page keeps it, and the page's
+     * send. The callback's success is what builds the room's chat, host bar and close button.
+     * Returns true once that enter is on its way. As written here it does nothing.
+     */
+    static boolean enterAgain(Object page, long room) {
+        return false;
+    }
+
     /** The eye tapped again: the room's next enter is held again. The host already saw this one. */
     public static void hideAgain(String room) {
         if (room != null) REVEALED.remove(room);
@@ -260,6 +316,7 @@ public final class LiveUnseen {
     }
 
     static void resetForTests() {
+        reentry = LiveUnseen::enterAgain;
         REVEALED.clear();
         synchronized (HELD) {
             HELD.clear();

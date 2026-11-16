@@ -136,6 +136,13 @@ public final class PrivacyPreferenceCategory extends ConditionalPreferenceCatego
                             + "last status can linger.",
                     Settings.GHOST_HIDE_ONLINE_STATUS
             ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Watch LIVEs unseen",
+                    "You stay off the viewer list of LIVEs you open. Tap the eye in a LIVE to let "
+                            + "that host see you. Needs Ghost mode on.",
+                    Settings.GHOST_HIDE_LIVE_VIEWS
+            ));
             HookStatusPreference diagnostics = new HookStatusPreference(context);
             diagnostics.setKey("action_ghost_mode_diagnostics");
             diagnostics.setTitle(L10n.t(context, "Ghost mode diagnostics"));

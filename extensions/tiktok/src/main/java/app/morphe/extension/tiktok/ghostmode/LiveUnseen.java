@@ -1,0 +1,210 @@
+/*
+ * Copyright 2026 Hushfeed contributors
+ * https://github.com/SysAdminDoc/hushfeed
+ */
+package app.morphe.extension.tiktok.ghostmode;
+
+import app.morphe.extension.shared.Logger;
+import app.morphe.extension.shared.Utils;
+import app.morphe.extension.shared.diagnostics.DiagnosticCategory;
+import app.morphe.extension.shared.diagnostics.HookStatus;
+import app.morphe.extension.tiktok.blockauthor.Reflect;
+import app.morphe.extension.tiktok.follow.FollowDiagnostics;
+import app.morphe.extension.tiktok.settings.Settings;
+import app.morphe.extension.tiktok.settings.SettingsStatus;
+
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+/**
+ * Watch LIVEs unseen (#420). Opening a LIVE room sends TikTok's room enter request, and that is
+ * what puts you on the host's viewer list and the "joined" line in the chat. While Ghost mode and
+ * its Watch LIVEs unseen switch are on, the hook in TikTok's network layer turns every room enter
+ * down on the phone, as a failed connection, before anything is sent. The stream itself comes
+ * from the room TikTok already loaded with the feed.
+ *
+ * <p>The eye in the room ({@code LiveUnseenButton}) lets the room you're in see you: the enter
+ * that was held for it goes out then, and the room's later enters go out as usual until TikTok
+ * is closed.
+ *
+ * <p>The hook fails open. With a switch off, Hushfeed paused, the settings not loaded yet, or
+ * the request unreadable, the request goes out as it always does.
+ */
+public final class LiveUnseen {
+    static final String HOOK_FAMILY = "ghost mode";
+    static final String ENTER_PATH = "/webcast/room/enter/";
+    /** TikTok's own call the hook stands in front of, made later when a room is revealed. */
+    static final String TWIN =
+            "com_bytedance_retrofit2_CallServerInterceptor__executeCall$___twin___";
+    /** How many held enters are kept to send later; the oldest goes first. */
+    static final int HELD_LIMIT = 8;
+    static final String HELD_MESSAGE = "Hushfeed Ghost mode kept this LIVE from seeing you";
+
+    /** Rooms the eye was tapped in, whose enters go out. Until TikTok is closed. */
+    private static final Set<String> REVEALED = ConcurrentHashMap.newKeySet();
+    /** The latest enter held for each room, guarded by itself. */
+    private static final Map<String, HeldEnter> HELD = new LinkedHashMap<>();
+    private static volatile boolean loggedHold;
+
+    /** TikTok's network interceptor and chain for one enter it was about to send. */
+    static final class HeldEnter {
+        final Object interceptor;
+        final Object chain;
+
+        HeldEnter(Object interceptor, Object chain) {
+            this.interceptor = interceptor;
+            this.chain = chain;
+        }
+    }
+
+    /** What happened to a room when the eye was tapped. */
+    public enum Reveal {
+        /** The room's held enter went out: the host sees you now. */
+        SENT,
+        /** No enter was held for it: you'll be seen the next time you open it. */
+        NEXT_TIME,
+        /** Its held enter couldn't be sent: reopening the room sends a new one. */
+        FAILED,
+    }
+
+    private LiveUnseen() {
+    }
+
+    /** Whether the switch is on, read where the hook runs, so flipping it needs no restart. */
+    public static boolean enabled() {
+        try {
+            return Utils.getContext() != null && SettingsStatus.ghostModeEnabled
+                    && Settings.GHOST_MODE.get() && Settings.GHOST_HIDE_LIVE_VIEWS.get();
+        } catch (Throwable unreadable) {
+            return false;
+        }
+    }
+
+    /**
+     * Called by TikTok's network interceptor right before it sends a request, with itself and its
+     * chain. Throws for a LIVE room enter while it's held, which TikTok handles as a connection
+     * that failed, and returns for everything else.
+     */
+    public static void holdEnter(Object interceptor, Object chain) throws IOException {
+        if (!enabled()) return;
+        String room;
+        try {
+            Object request = Reflect.requiredField(interceptor, "mOriginalRequest", HOOK_FAMILY);
+            Object path = Reflect.required(request, "getPath", HOOK_FAMILY);
+            if (!isEnter(path instanceof String ? (String) path : null)) return;
+            room = FollowDiagnostics.liveRoomIdOf(request);
+            if (!GhostMode.holdLiveEnter(room != null && REVEALED.contains(room))) return;
+            if (room != null) keep(room, new HeldEnter(interceptor, chain));
+        } catch (Throwable unreadable) {
+            HookStatus.threw(HOOK_FAMILY, GhostMode.LIVE_ENTER, unreadable);
+            return;
+        }
+        if (!loggedHold) {
+            loggedHold = true;
+            Logger.diagnosticInfo(DiagnosticCategory.OTHER, "GhostMode",
+                    () -> "Ghost mode held back a LIVE room enter");
+        }
+        throw new IOException(HELD_MESSAGE);
+    }
+
+    /** A room enter or its newer and prefetch forms, by the request's path. */
+    static boolean isEnter(String path) {
+        return path != null && path.toLowerCase(Locale.ROOT).contains(ENTER_PATH);
+    }
+
+    private static void keep(String room, HeldEnter held) {
+        synchronized (HELD) {
+            HELD.remove(room);
+            HELD.put(room, held);
+            Iterator<String> oldest = HELD.keySet().iterator();
+            while (HELD.size() > HELD_LIMIT && oldest.hasNext()) {
+                oldest.next();
+                oldest.remove();
+            }
+        }
+    }
+
+    /** Whether the host of {@code room} can see you, because the eye was tapped there. */
+    public static boolean revealed(String room) {
+        return room != null && REVEALED.contains(room);
+    }
+
+    /**
+     * The eye tapped in {@code room}: its enters go out from now on, and the one held when it
+     * opened is sent now, off the main thread. {@code done} gets the outcome on the main thread.
+     */
+    public static void reveal(String room, java.util.function.Consumer<Reveal> done) {
+        if (room == null) {
+            Utils.runOnMainThread(() -> done.accept(Reveal.NEXT_TIME));
+            return;
+        }
+        REVEALED.add(room);
+        HeldEnter held;
+        synchronized (HELD) {
+            held = HELD.remove(room);
+        }
+        if (held == null) {
+            Utils.runOnMainThread(() -> done.accept(Reveal.NEXT_TIME));
+            return;
+        }
+        boolean queued = Utils.runOnBackgroundThread(() -> {
+            Reveal outcome = send(held);
+            Utils.runOnMainThread(() -> done.accept(outcome));
+        });
+        if (!queued) Utils.runOnMainThread(() -> done.accept(Reveal.FAILED));
+    }
+
+    /** Sends a held enter through TikTok's own call, and lets its answer go. */
+    static Reveal send(HeldEnter held) {
+        try {
+            Method call = twin(held.interceptor.getClass());
+            if (call == null) return Reveal.FAILED;
+            call.invoke(held.interceptor, held.chain);
+            Logger.diagnosticInfo(DiagnosticCategory.OTHER, "GhostMode",
+                    () -> "Ghost mode sent a held LIVE room enter after the eye was tapped");
+            return Reveal.SENT;
+        } catch (Throwable failure) {
+            Throwable cause = failure.getCause() != null ? failure.getCause() : failure;
+            Logger.diagnosticInfo(DiagnosticCategory.OTHER, "GhostMode",
+                    () -> "Ghost mode could not send a held LIVE room enter: " + cause.getClass().getSimpleName());
+            return Reveal.FAILED;
+        }
+    }
+
+    private static Method twin(Class<?> type) {
+        for (Class<?> current = type; current != null && current != Object.class; current = current.getSuperclass()) {
+            for (Method method : current.getDeclaredMethods()) {
+                if (method.getName().equals(TWIN) && method.getParameterTypes().length == 1) {
+                    method.setAccessible(true);
+                    return method;
+                }
+            }
+        }
+        return null;
+    }
+
+    /** The eye tapped again: the room's next enter is held again. The host already saw this one. */
+    public static void hideAgain(String room) {
+        if (room != null) REVEALED.remove(room);
+    }
+
+    static int heldForTests() {
+        synchronized (HELD) {
+            return HELD.size();
+        }
+    }
+
+    static void resetForTests() {
+        REVEALED.clear();
+        synchronized (HELD) {
+            HELD.clear();
+        }
+        loggedHold = false;
+    }
+}

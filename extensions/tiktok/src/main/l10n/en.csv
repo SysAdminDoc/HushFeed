@@ -517,6 +517,7 @@ Couldn't open the file picker to import. Try again.,Couldn't open the file picke
 Couldn't open your photos. Try again.,Couldn't open your photos. Try again.
 Couldn't put back the diagnostic data. Try again.,Couldn't put back the diagnostic data. Try again.
 Couldn't put the saved videos back. Try again.,Couldn't put the saved videos back. Try again.
+Couldn't reach TikTok. Open this LIVE again.,Couldn't reach TikTok. Open this LIVE again.
 Couldn't read %1$s. Write days and hours like Mon-Fri 21:00-07:00.,Couldn't read %1$s. Write days and hours like Mon-Fri 21:00-07:00.
 Couldn't read TikTok's current values. Refresh values from the menu to try again.,Couldn't read TikTok's current values. Refresh values from the menu to try again.
 Couldn't read a field value. Check and try again.,Couldn't read a field value. Check and try again.
@@ -551,6 +552,7 @@ Couldn't start the import. Try again in a moment.,Couldn't start the import. Try
 Couldn't start the report export. Try again.,Couldn't start the report export. Try again.
 Couldn't start the settings change. Try again in a moment.,Couldn't start the settings change. Try again in a moment.
 Couldn't stop it. Try again.,Couldn't stop it. Try again.
+Couldn't tell which LIVE this is. Open it again.,Couldn't tell which LIVE this is. Open it again.
 Couldn't tell which folder to update. Choose it again.,Couldn't tell which folder to update. Choose it again.
 Couldn't translate this draft. Try again.,Couldn't translate this draft. Try again.
 Couldn't translate this message. Try again.,Couldn't translate this message. Try again.
@@ -1206,9 +1208,11 @@ Let a LIVE fill the screen up to the top edge. The status bar comes back when yo
 Let other apps play until a video starts,Let other apps play until a video starts
 "Let screenshots, screen recording and Circle to Search work on TikTok again. Restart TikTok to apply this.","Let screenshots, screen recording and Circle to Search work on TikTok again. Restart TikTok to apply this."
 Let the Offline videos menu use your own limit instead of TikTok's fixed one. Restart TikTok to apply this.,Let the Offline videos menu use your own limit instead of TikTok's fixed one. Restart TikTok to apply this.
+Let the host see you,Let the host see you
 Let the last video finish,Let the last video finish
 Let the video reach the bottom of the screen on the main feed and show the tabs over it with no bar behind them.,Let the video reach the bottom of the screen on the main feed and show the tabs over it with no bar behind them.
 "Let the video reach the top of the screen, with the clock and status icons over it. Works on the main feed and on videos you open from search, a profile or your Liked and Favorites. The tabs at the top stay where they are.","Let the video reach the top of the screen, with the clock and status icons over it. Works on the main feed and on videos you open from search, a profile or your Liked and Favorites. The tabs at the top stay where they are."
+Letting the host see you,Letting the host see you
 Licenses,Licenses
 Lift text length limits,Lift text length limits
 "Lifts spoken captions above TikTok's spot while the phone is sideways. Use 0 for TikTok's spot, or up to %1$d.","Lifts spoken captions above TikTok's spot while the phone is sideways. Use 0 for TikTok's spot, or up to %1$d."
@@ -2332,6 +2336,10 @@ The frame couldn't be read. Try again.,The frame couldn't be read. Try again.
 The frame couldn't be saved. Try again.,The frame couldn't be saved. Try again.
 "The glass pill's edges bend the blurred feed video behind them, like the rim of real glass, and its colors come through a little richer. Needs Blur the video behind the bar and Android 13 and up.","The glass pill's edges bend the blurred feed video behind them, like the rim of real glass, and its colors come through a little richer. Needs Blur the video behind the bar and Android 13 and up."
 The heading at the top. Leave it empty for none.,The heading at the top. Leave it empty for none.
+The host can already see you in this LIVE,The host can already see you in this LIVE
+The host can see you,The host can see you
+The host can see you now,The host can see you now
+The host sees you next time you open it,The host sees you next time you open it
 "The hour both budgets reset, on a 24 hour clock. The default is 4 in the morning, so a late night still counts as the same day.","The hour both budgets reset, on a 24 hour clock. The default is 4 in the morning, so a late night still counts as the same day."
 The last feed capture wasn't saved. Tap to try again.,The last feed capture wasn't saved. Tap to try again.
 The last one is still waiting for Wi-Fi,The last one is still waiting for Wi-Fi
@@ -2639,6 +2647,7 @@ Waiting to record. Go to the screen you want recorded.,Waiting to record. Go to 
 Waiting to save %1$s files,Waiting to save %1$s files
 Waiting to save one file,Waiting to save one file
 Waiting to save video,Waiting to save video
+Watch LIVEs unseen,Watch LIVEs unseen
 Watch history cleared,Watch history cleared
 Watch history was imported for the account that chose the file. Switch back to see it.,Watch history was imported for the account that chose the file. Switch back to see it.
 "WebP, exactly as TikTok sent it","WebP, exactly as TikTok sent it"
@@ -2696,6 +2705,7 @@ You can continue now.,You can continue now.
 You can pick up to %1$s at a time,You can pick up to %1$s at a time
 "You have %1$s. Update the patches in Morphe Manager, then patch TikTok again.","You have %1$s. Update the patches in Morphe Manager, then patch TikTok again."
 You stay off the Profile views list of people whose profile you open. Needs Ghost mode on.,You stay off the Profile views list of people whose profile you open. Needs Ghost mode on.
+You stay off the viewer list of LIVEs you open. Tap the eye in a LIVE to let that host see you. Needs Ghost mode on.,You stay off the viewer list of LIVEs you open. Tap the eye in a LIVE to let that host see you. Needs Ghost mode on.
 You stay off the viewer list of stories you watch. Needs Ghost mode on.,You stay off the viewer list of stories you watch. Needs Ghost mode on.
 YouTube Music didn't open. Open it yourself to search.,YouTube Music didn't open. Open it yourself to search.
 YouTube Music isn't installed,YouTube Music isn't installed

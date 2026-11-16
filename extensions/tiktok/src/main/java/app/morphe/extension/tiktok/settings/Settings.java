@@ -1461,6 +1461,10 @@ public class Settings extends BaseSettings {
             new BooleanSetting("ghost_hide_profile_visits", TRUE, false, Setting.parent(GHOST_MODE));
     public static final BooleanSetting GHOST_HIDE_TYPING =
             new BooleanSetting("ghost_hide_typing", TRUE, false, Setting.parent(GHOST_MODE));
+    // Holds back a LIVE room's enter request, which is what puts you on the host's viewer list
+    // (#420). Off by default, like Hide online status, and read at each request, so no restart.
+    public static final BooleanSetting GHOST_HIDE_LIVE_VIEWS =
+            new BooleanSetting("ghost_hide_live_views", FALSE, false, Setting.parent(GHOST_MODE));
     public static final BooleanSetting DISABLE_ANALYTICS = new BooleanSetting("disable_analytics", FALSE);
     // Stop on-device AI profiling, in the default selection with this off. TikTok starts the
     // engine during launch, so a restart applies it.

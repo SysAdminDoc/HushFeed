@@ -546,6 +546,15 @@ public final class FollowDiagnostics {
         }
     }
 
+    /** The room a LIVE request names, by its URL's query or its form body, or null. Never throws. */
+    public static String liveRoomIdOf(Object request) {
+        try {
+            return liveRoomId(request, requestUrl(request));
+        } catch (Throwable unreadable) {
+            return null;
+        }
+    }
+
     /** The room_id in a form-encoded body, or null. */
     static String roomIdFromForm(String encodedBody) {
         return formValue(encodedBody, "room_id");

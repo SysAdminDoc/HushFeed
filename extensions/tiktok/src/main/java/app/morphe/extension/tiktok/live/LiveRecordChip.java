@@ -348,11 +348,12 @@ public final class LiveRecordChip {
 
     /**
      * Hushfeed's own buttons over a LIVE room stack top to bottom in this order: the Record chip,
-     * Auto tap, then the block button.
+     * Auto tap, the block button, then Ghost mode's eye.
      */
     public static final int STACK_RECORD = 1;
     public static final int STACK_AUTO_TAP = 2;
     public static final int STACK_BLOCK = 3;
+    public static final int STACK_UNSEEN = 4;
 
     /** A stacked button's place in the stack, the top it asks for and the gap it keeps, in pixels. */
     private static final class StackSlot {
@@ -1079,7 +1080,7 @@ public final class LiveRecordChip {
     }
 
     /** Stable room identity across the native controller and the resumed room page. */
-    static String roomKey(Object room) {
+    public static String roomKey(Object room) {
         if (room == null) return null;
         Object text = Reflect.readField(room, "idStr");
         if (text instanceof String && !((String) text).isEmpty()) return (String) text;

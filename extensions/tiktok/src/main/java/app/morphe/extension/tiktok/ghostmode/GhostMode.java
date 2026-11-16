@@ -55,6 +55,7 @@ public final class GhostMode {
     private static final String TYPING_STATUS = "typing status";
     private static final String STORY_PLAY_STATS = "story play stats";
     private static final String ONLINE_STATUS = "online status";
+    static final String LIVE_ENTER = "live enter";
 
     /** TikTok's aweme types for a story; getIsTikTokStory covers the rest. */
     private static final int STORY_TYPE = 40;
@@ -155,6 +156,15 @@ public final class GhostMode {
      */
     public static boolean shouldBlockOnlineStatus() {
         return answer(ONLINE_STATUS, Settings.GHOST_HIDE_ONLINE_STATUS);
+    }
+
+    /**
+     * A LIVE room enter, the request that puts you on the host's viewer list (#420). Held back
+     * while Ghost mode and its Watch LIVEs unseen switch are on, unless the eye was tapped in
+     * that room to let the host see you.
+     */
+    static boolean holdLiveEnter(boolean revealed) {
+        return answer(LIVE_ENTER, !revealed && Settings.GHOST_MODE.get() && Settings.GHOST_HIDE_LIVE_VIEWS.get());
     }
 
     static boolean isStory(Aweme aweme) {

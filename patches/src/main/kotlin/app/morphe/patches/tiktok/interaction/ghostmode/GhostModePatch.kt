@@ -8,6 +8,8 @@
 package app.morphe.patches.tiktok.interaction.ghostmode
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.patch.classDefByOrNull
+import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.fieldAccess
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
@@ -16,16 +18,23 @@ import app.morphe.patches.tiktok.misc.optimizer.isBranchTarget
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.shared.compat.AppCompatibilities
+import app.morphe.patches.tiktok.interaction.live.LivePlayFragmentResumeFingerprint
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.patches.tiktok.shared.guardAtEntry
+import app.morphe.util.addInstructionsAtControlFlowLabel
+import app.morphe.util.findMutableMethodOf
+import app.morphe.util.getReference
 import app.morphe.util.numberOfParameterRegisters
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
+import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 
 // The classes each reporter lives in, a suffix like /Name;, shared by its fingerprint and the
 // narrowed search below.
@@ -129,6 +138,64 @@ internal fun MutableMethod.keepWatchedStoriesWatched() {
     )
 }
 
+internal const val CALL_SERVER_INTERCEPTOR = "Lcom/bytedance/retrofit2/CallServerInterceptor;"
+/** TikTok's lancet around every request its network layer sends, the static form with the interceptor first. */
+internal const val NETWORK_EXECUTE_CALL =
+    "com_bytedance_retrofit2_CallServerInterceptor_com_ss_android_ugc_aweme_feed_lancet_NetworkUtilsLancet_executeCall"
+/** The interceptor's own send, which the lancet calls inside its try. */
+internal const val NETWORK_EXECUTE_CALL_TWIN = "com_bytedance_retrofit2_CallServerInterceptor__executeCall\$___twin___"
+internal const val LIVE_UNSEEN_EXTENSION = "Lapp/morphe/extension/tiktok/ghostmode/LiveUnseen;"
+internal const val LIVE_UNSEEN_BUTTON_EXTENSION = "Lapp/morphe/extension/tiktok/ghostmode/LiveUnseenButton;"
+
+/** Where the LIVE enter hold goes: in front of the lancet's send, with the send's two registers. */
+internal class LiveEnterHold(val index: Int, val interceptor: Int, val chain: Int)
+
+/**
+ * Finds the one call to the interceptor's own send in the lancet, and checks that a try covers
+ * it whose handler takes an Exception, so the IOException the hold throws reaches TikTok's own
+ * failed-request path rather than crashing the call (#420). Throws by name when the send is gone,
+ * doubled, or outside such a try, so a moved lancet fails Ghost mode with nothing written.
+ */
+internal fun planLiveEnterHold(method: Method): LiveEnterHold {
+    val implementation = method.implementation
+        ?: throw PatchException("Ghost mode: TikTok's network call has no body.")
+    val code = implementation.instructions.toList()
+    val sends = code.indices.filter { index ->
+        code[index].opcode == Opcode.INVOKE_VIRTUAL &&
+            code[index].getReference<MethodReference>()?.name == NETWORK_EXECUTE_CALL_TWIN
+    }
+    val index = sends.singleOrNull()
+        ?: throw PatchException("Ghost mode: expected one network send to hold LIVE enters at, found ${sends.size}.")
+    val send = code[index] as FiveRegisterInstruction
+    if (send.registerCount != 2) {
+        throw PatchException("Ghost mode: the network send takes ${send.registerCount} registers, not the interceptor and its chain.")
+    }
+    var address = 0
+    for (i in 0 until index) address += code[i].codeUnits
+    val covered = implementation.tryBlocks.any { block ->
+        address >= block.startCodeAddress && address < block.startCodeAddress + block.codeUnitCount &&
+            block.exceptionHandlers.any {
+                it.exceptionType in setOf(null, "Ljava/lang/Exception;", "Ljava/io/IOException;", "Ljava/lang/Throwable;")
+            }
+    }
+    if (!covered) {
+        throw PatchException("Ghost mode: the network send is no longer inside a try that takes a failed request.")
+    }
+    return LiveEnterHold(index, send.registerC, send.registerD)
+}
+
+/**
+ * Writes the hold. It takes the send's labels and its place at the start of the try, so it runs
+ * on every path that reaches the send, and what it throws goes to the same handler.
+ */
+internal fun MutableMethod.holdLiveEnters(hold: LiveEnterHold) {
+    addInstructionsAtControlFlowLabel(
+        hold.index,
+        "invoke-static {v${hold.interceptor}, v${hold.chain}}, " +
+            "$LIVE_UNSEEN_EXTENSION->holdEnter(Ljava/lang/Object;Ljava/lang/Object;)V",
+    )
+}
+
 /**
  * The two coroutine bodies that send TikTok's activity status report (/tiktok/v1/activity_status/
  * report, the call that lights the green dot and "Active now" for your friends). The regular
@@ -192,8 +259,8 @@ val ghostModePatch = bytecodePatch(
     name = "Ghost mode",
     description = "Stops TikTok telling people you viewed their story or profile, or that " +
         "you're typing. What TikTok already recorded stays. Each of the three has its own switch " +
-        "under it, and a separate one hides your online status. Starts off. Turn it on in " +
-        "Hushfeed settings > Privacy.",
+        "under it, and separate ones hide your online status and let you watch LIVEs unseen. " +
+        "Starts off. Turn it on in Hushfeed settings > Privacy.",
 ) {
     category("Privacy")
     dependsOn(settingsPatch, sharedExtensionPatch)
@@ -201,6 +268,16 @@ val ghostModePatch = bytecodePatch(
     compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
+        // Worked out before the first write, so a build that moved TikTok's network lancet
+        // fails Ghost mode by name with nothing written.
+        val lancets = classDefByOrNull(CALL_SERVER_INTERCEPTOR)?.methods
+            ?.filter { it.name == NETWORK_EXECUTE_CALL && it.implementation != null }.orEmpty()
+        val lancet = lancets.singleOrNull()
+            ?.let { mutableClassDefBy(it.definingClass).findMutableMethodOf(it) }
+            ?: throw PatchException("Ghost mode: expected one network call to hold LIVE enters in, found ${lancets.size}.")
+        val liveEnterHold = planLiveEnterHold(lancet)
+        val roomResume = LivePlayFragmentResumeFingerprint.method
+
         SettingsStatusLoadFingerprint.method.addInstruction(
             0,
             "invoke-static {}, " +
@@ -266,5 +343,15 @@ val ghostModePatch = bytecodePatch(
         // A story whose report is held back above comes back unwatched from the server on the
         // next launch. The inbox's story row keeps it watched (#427).
         StoryInboxItemFingerprint.method.keepWatchedStoriesWatched()
+
+        // Watch LIVEs unseen (#420): a room enter, the request that puts you on the host's
+        // viewer list, fails on the phone while it's held. Other patches hook this lancet too
+        // and each finds its own anchors by name when it runs.
+        lancet.holdLiveEnters(liveEnterHold)
+        // The room's eye button, which lets the host of the room you're in see you.
+        roomResume.addInstruction(
+            0,
+            "invoke-static/range {p0 .. p0}, $LIVE_UNSEEN_BUTTON_EXTENSION->noteRoomFragment(Ljava/lang/Object;)V",
+        )
     }
 }

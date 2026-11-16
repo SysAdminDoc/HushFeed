@@ -136,12 +136,15 @@ public final class GhostMode {
      * A story's carries its aid, play_delta=1 and story_consumption_type beside the
      * reportStoryViewed call above, and with only that call blocked a second account still saw
      * the viewer (#39). Only a story's report is held back; a feed video's goes as before, and
-     * asks nothing of the export.
+     * asks nothing of the export. A story held back here is remembered as watched, so the inbox
+     * doesn't light its ring again after a restart (#427).
      */
     public static boolean shouldBlockStoryStats(Aweme aweme) {
         if (!isStory(aweme)) return false;
         // Either call alone puts you on the viewer list, so both follow the story views switch.
-        return answer(STORY_PLAY_STATS, Settings.GHOST_HIDE_STORY_VIEWS);
+        boolean block = answer(STORY_PLAY_STATS, Settings.GHOST_HIDE_STORY_VIEWS);
+        if (block) StoryReads.remember(aweme);
+        return block;
     }
 
     /**

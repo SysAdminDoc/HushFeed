@@ -8,8 +8,11 @@
 package app.morphe.patches.tiktok.interaction.ghostmode
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.fieldAccess
 import app.morphe.util.addInstruction
+import app.morphe.util.addInstructions
 import app.morphe.patcher.patch.PatchException
+import app.morphe.patches.tiktok.misc.optimizer.isBranchTarget
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.shared.compat.AppCompatibilities
@@ -19,6 +22,10 @@ import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.patches.tiktok.shared.guardAtEntry
 import app.morphe.util.numberOfParameterRegisters
 import com.android.tools.smali.dexlib2.AccessFlags
+import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 
 // The classes each reporter lives in, a suffix like /Name;, shared by its fingerprint and the
 // narrowed search below.
@@ -74,6 +81,53 @@ internal object AwemeStatsSenderFingerprint : Fingerprint(
     strings = listOf("aweme_stats_monitor"),
     custom = { method, _ -> AccessFlags.STATIC.isSet(method.accessFlags) },
 )
+
+internal const val STORY_INBOX_ITEM = "Lcom/ss/android/ugc/aweme/story/inbox/StoryInboxItem;"
+internal const val STORY_READS_EXTENSION = "Lapp/morphe/extension/tiktok/ghostmode/StoryReads;"
+
+/**
+ * An item of the inbox's story row. Its constructor asks TikTok's story status store how the
+ * person's ring should look and keeps the answer in storyStatusForInbox (#427). Real-named class
+ * with one constructor.
+ */
+internal object StoryInboxItemFingerprint : Fingerprint(
+    definingClass = STORY_INBOX_ITEM,
+    name = "<init>",
+    returnType = "V",
+    filters = listOf(fieldAccess(opcode = Opcode.IPUT, definingClass = STORY_INBOX_ITEM, name = "storyStatusForInbox", type = "I")),
+)
+
+/**
+ * Hands the status the constructor just stored to [STORY_READS_EXTENSION], which marks the
+ * stories Ghost mode kept unreported as watched, and stores its answer instead. It goes right
+ * after TikTok's own store and uses that store's two registers, which a 4-bit iput already keeps
+ * under v16.
+ */
+internal fun MutableMethod.keepWatchedStoriesWatched() {
+    val code = implementation?.instructions?.toList()
+        ?: throw PatchException("Ghost mode: the inbox story item has no constructor body.")
+    val store = code.indexOfFirst { instruction ->
+        instruction.opcode == Opcode.IPUT &&
+            ((instruction as ReferenceInstruction).reference as? FieldReference)?.let {
+                it.definingClass == STORY_INBOX_ITEM && it.name == "storyStatusForInbox"
+            } == true
+    }
+    if (store < 0) throw PatchException("Ghost mode: the inbox story item no longer stores its status.")
+    if (isBranchTarget(store + 1)) {
+        throw PatchException("Ghost mode: something branches past the inbox story item's status.")
+    }
+    val put = code[store] as TwoRegisterInstruction
+    val status = put.registerA
+    val item = put.registerB
+    addInstructions(
+        store + 1,
+        """
+            invoke-static {v$item, v$status}, $STORY_READS_EXTENSION->inboxStatus(Ljava/lang/Object;I)I
+            move-result v$status
+            iput v$status, v$item, $STORY_INBOX_ITEM->storyStatusForInbox:I
+        """,
+    )
+}
 
 /**
  * The two coroutine bodies that send TikTok's activity status report (/tiktok/v1/activity_status/
@@ -208,5 +262,9 @@ val ghostModePatch = bytecodePatch(
                 "$GHOST_MODE_EXTENSION->shouldBlockStoryStats(Lcom/ss/android/ugc/aweme/feed/model/Aweme;)Z",
             "return-void",
         )
+
+        // A story whose report is held back above comes back unwatched from the server on the
+        // next launch. The inbox's story row keeps it watched (#427).
+        StoryInboxItemFingerprint.method.keepWatchedStoriesWatched()
     }
 }

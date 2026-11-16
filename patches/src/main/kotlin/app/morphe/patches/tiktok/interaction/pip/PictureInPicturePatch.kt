@@ -266,21 +266,40 @@ internal object FeedPageSelectPlayFingerprint : Fingerprint(
     strings = listOf("onPageSelected-> not pause activityBackground:", "onPageSelectStartPlay>>>  isMultiInvoke:"),
 )
 
-private fun Instruction.isPausedCall() = opcode == Opcode.INVOKE_INTERFACE &&
+private fun Instruction.asksBoolean(call: Opcode, name: String) = opcode == call &&
     ((this as ReferenceInstruction).reference as? MethodReference)?.let {
-        it.name == "isPaused" && it.parameterTypes.isEmpty() && it.returnType == "Z"
+        it.name == name && it.parameterTypes.isEmpty() && it.returnType == "Z"
     } == true
 
-/** Where the page-select step keeps its "is the feed's activity paused?" answer: that move-result's index. */
-internal fun pageSelectPausedResult(method: Method): Int {
+/** Where the page-select step keeps the answer of its one [name]()Z call: that move-result's index. */
+private fun pageSelectAnswer(method: Method, call: Opcode, name: String): Int {
     val instructions = method.implementation!!.instructions.toList()
-    val asks = instructions.indices.filter { instructions[it].isPausedCall() }
+    val asks = instructions.indices.filter { instructions[it].asksBoolean(call, name) }
     val ask = asks.singleOrNull()
-        ?: throw PatchException("Picture-in-picture: the page-select step asks isPaused ${asks.size} times, not once")
+        ?: throw PatchException("Picture-in-picture: the page-select step asks $name ${asks.size} times, not once")
     if (instructions.getOrNull(ask + 1)?.opcode != Opcode.MOVE_RESULT) {
-        throw PatchException("Picture-in-picture: the page-select step doesn't keep its isPaused answer")
+        throw PatchException("Picture-in-picture: the page-select step doesn't keep its $name answer")
     }
     return ask + 1
+}
+
+/** Where the page-select step keeps its "is the feed's activity paused?" answer: that move-result's index. */
+internal fun pageSelectPausedResult(method: Method) = pageSelectAnswer(method, Opcode.INVOKE_INTERFACE, "isPaused")
+
+/** Where the page-select step keeps the feed panel's "am I on screen?" answer: that move-result's index. */
+internal fun pageSelectVisibleResult(method: Method) =
+    pageSelectAnswer(method, Opcode.INVOKE_VIRTUAL, "getUserVisibleHint")
+
+/** Runs the answer kept at [result] through the extension's [hook](I)I before anything reads it. */
+private fun MutableMethod.handPageSelectAnswer(result: Int, hook: String) {
+    val register = (implementation!!.instructions[result] as OneRegisterInstruction).registerA
+    addInstructionsAtControlFlowLabel(
+        result + 1,
+        """
+            invoke-static/range { v$register .. v$register }, $EXTENSION->$hook(I)I
+            move-result v$register
+        """,
+    )
 }
 
 /**
@@ -288,16 +307,14 @@ internal fun pageSelectPausedResult(method: Method): Int {
  * is up, so the window's arrows start the video they move to. TikTok sets the same answer on two
  * other paths that jump to the instruction after, so the hook takes that instruction's label.
  */
-internal fun MutableMethod.keepPageSelectPlayingInWindow(result: Int) {
-    val register = (implementation!!.instructions[result] as OneRegisterInstruction).registerA
-    addInstructionsAtControlFlowLabel(
-        result + 1,
-        """
-            invoke-static/range { v$register .. v$register }, $EXTENSION->pageSelectPaused(I)I
-            move-result v$register
-        """,
-    )
-}
+internal fun MutableMethod.keepPageSelectPlayingInWindow(result: Int) = handPageSelectAnswer(result, "pageSelectPaused")
+
+/**
+ * Hands the feed panel's on-screen answer in the same step to the extension, which says yes while
+ * the feed window is up: the panel says no once the activity pauses, and the step skips the start
+ * for a panel off screen as well as for a paused activity.
+ */
+internal fun MutableMethod.showPageSelectFeedInWindow(result: Int) = handPageSelectAnswer(result, "pageSelectVisible")
 
 /** The room page's window check's static gate: the call it makes after "encrypted room". */
 internal fun liveWindowGate(classDefByOrNull: (String) -> ClassDef?): Method {
@@ -371,7 +388,11 @@ val pictureInPicturePatch = bytecodePatch(
         mutableClassDefBy(largeScreen.method.definingClass).findMutableMethodOf(largeScreen.method)
             .keepLiveWindowOnLargeScreens(largeScreen.result)
         // The feed window's arrows move the pager, and the video they land on has to start too.
-        FeedPageSelectPlayFingerprint.method.let { it.keepPageSelectPlayingInWindow(pageSelectPausedResult(it)) }
+        FeedPageSelectPlayFingerprint.method.let { step ->
+            step.keepPageSelectPlayingInWindow(pageSelectPausedResult(step))
+            // Found after the first hook moved the instructions along.
+            step.showPageSelectFeedInWindow(pageSelectVisibleResult(step))
+        }
         SettingsStatusLoadFingerprint.method.addInstruction(
             0,
             "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enablePictureInPicture()V",

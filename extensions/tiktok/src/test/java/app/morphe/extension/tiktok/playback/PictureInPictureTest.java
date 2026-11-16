@@ -177,6 +177,31 @@ public class PictureInPictureTest {
         assertEquals(1, PictureInPicture.pageSelectPaused(1));
     }
 
+    /**
+     * #413: the step also skips the start for a feed panel that says it's off screen, which it says
+     * as soon as the activity pauses, so the window counts it as on screen.
+     */
+    @Test public void thePageSelectSeesTheFeedOnlyWhileTheWindowIsUp() {
+        assertTrue(PictureInPicture.pageSelectVisible(true, false));
+        assertTrue(PictureInPicture.pageSelectVisible(true, true));
+        assertFalse(PictureInPicture.pageSelectVisible(false, false));
+        assertTrue(PictureInPicture.pageSelectVisible(false, true));
+
+        Activity activity = owner.get();
+        assertEquals("no window, TikTok's answer stands", 0, PictureInPicture.pageSelectVisible(0));
+        assertEquals(1, PictureInPicture.pageSelectVisible(1));
+        try {
+            ReflectionHelpers.setStaticField(PictureInPicture.class, "opened", new WeakReference<>(activity));
+            assertEquals("opened, but not in the window yet", 0, PictureInPicture.pageSelectVisible(0));
+            activity.enterPictureInPictureMode(new PictureInPictureParams.Builder().build());
+            assertEquals(1, PictureInPicture.pageSelectVisible(0));
+            assertEquals(1, PictureInPicture.pageSelectVisible(1));
+        } finally {
+            ReflectionHelpers.setStaticField(PictureInPicture.class, "opened", new WeakReference<Activity>(null));
+        }
+        assertEquals(0, PictureInPicture.pageSelectVisible(0));
+    }
+
     /** #413: previous, play or pause, then next, when the video is in a pager and the window has room. */
     @Test public void theArrowsSitEitherSideOfPlayAndPause() {
         Activity activity = owner.get();

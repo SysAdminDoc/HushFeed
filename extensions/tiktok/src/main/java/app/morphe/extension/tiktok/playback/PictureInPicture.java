@@ -218,6 +218,25 @@ public final class PictureInPicture {
         return paused && !windowUp;
     }
 
+    /**
+     * The feed panel's "am I on screen?" inside the same page-select step (#413). The panel drops
+     * it as the activity pauses, and the step skips the start for an unseen panel too, so with only
+     * the pause answered the arrows still landed on a black cell. Non-zero means visible. Never throws.
+     */
+    public static int pageSelectVisible(int visible) {
+        try {
+            return pageSelectVisible(visible != 0, windowUp()) ? 1 : 0;
+        } catch (RuntimeException failure) {
+            Logger.printException(() -> "Couldn't decide the page-select visibility check", failure);
+            return visible;
+        }
+    }
+
+    /** The window shows the feed, so the panel counts as on screen while it's up. */
+    static boolean pageSelectVisible(boolean visible, boolean windowUp) {
+        return visible || windowUp;
+    }
+
     private static boolean windowUp() {
         if (Build.VERSION.SDK_INT < 26) return false;
         Activity activity = opened.get();

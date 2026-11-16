@@ -310,6 +310,61 @@ class PictureInPictureAnchorsTest {
     }
 
     @Test
+    fun `each declared build hands the page-select step's on-screen answer over right before the step reads it`() {
+        Fixtures.forEachDeclared { apk ->
+            val classes = classesOf(apk)
+            val step = classes.values.flatMap { classDef ->
+                classDef.methods.filter { FeedPageSelectPlayFingerprint.takes(it, classDef) }
+            }.single()
+            val mutable = MutableMethod(step)
+            // The patch's order: the paused answer first, then this one, found after that hook.
+            mutable.keepPageSelectPlayingInWindow(pageSelectPausedResult(mutable))
+            val result = pageSelectVisibleResult(mutable)
+            val before = mutable.implementation!!.instructions.toList()
+            val answer = (before[result] as OneRegisterInstruction).registerA
+            val read = before[result + 1]
+            assertEquals("${apk.name}: the step reads the answer straight away", Opcode.IF_NEZ, read.opcode)
+            assertEquals(answer, (read as OneRegisterInstruction).registerA)
+            val jumps = before.filterIsInstance<BuilderOffsetInstruction>().filter { it.target.location.index == result + 1 }
+            val beforeOpcodes = before.map { it.opcode }
+
+            mutable.showPageSelectFeedInWindow(result)
+            val patched = mutable.implementation!!.instructions.toList()
+            val hand = patched[result + 1]
+            assertEquals(Opcode.INVOKE_STATIC_RANGE, hand.opcode)
+            assertEquals(answer, (hand as RegisterRangeInstruction).startRegister)
+            assertEquals(1, hand.registerCount)
+            val ask = hand.getReference<MethodReference>()!!
+            assertEquals(EXTENSION, ask.definingClass)
+            assertEquals("pageSelectVisible", ask.name)
+            assertEquals(listOf("I"), ask.parameterTypes.map(CharSequence::toString))
+            assertEquals(Opcode.MOVE_RESULT, patched[result + 2].opcode)
+            assertEquals(answer, (patched[result + 2] as OneRegisterInstruction).registerA)
+            assertEquals(Opcode.IF_NEZ, patched[result + 3].opcode)
+            jumps.forEach { assertEquals("${apk.name}: a path skips the hook", result + 1, it.target.location.index) }
+            assertEquals("${apk.name}: TikTok's page-select step changed",
+                beforeOpcodes.filter { it != Opcode.NOP },
+                (patched.take(result + 1) + patched.drop(result + 3)).map { it.opcode }.filter { it != Opcode.NOP })
+        }
+    }
+
+    @Test
+    fun `a page-select step that doesn't ask getUserVisibleHint once, or drops the answer, stops the patch`() {
+        val ask = ImmutableInstruction35c(Opcode.INVOKE_VIRTUAL, 1, 0, 0, 0, 0, 0,
+            ImmutableMethodReference("LX/Panel;", "getUserVisibleHint", emptyList(), "Z"))
+        val keep = ImmutableInstruction11x(Opcode.MOVE_RESULT, 1)
+        val static = ImmutableInstruction35c(Opcode.INVOKE_STATIC, 1, 0, 0, 0, 0, 0,
+            ImmutableMethodReference("LX/Panel;", "getUserVisibleHint", listOf("LX/Panel;"), "Z"))
+        fun step(vararg body: Instruction) =
+            code("LX/Step;", "LJ", listOf("I", "Z"), "V", false, *body, ImmutableInstruction10x(Opcode.RETURN_VOID))
+
+        assertEquals(2, pageSelectVisibleResult(step(static, ask, keep)))
+        assertThrows(PatchException::class.java) { pageSelectVisibleResult(step(static, keep)) }
+        assertThrows(PatchException::class.java) { pageSelectVisibleResult(step(ask, keep, ask, keep)) }
+        assertThrows(PatchException::class.java) { pageSelectVisibleResult(step(ask, ImmutableInstruction10x(Opcode.NOP))) }
+    }
+
+    @Test
     fun `a page-select step that doesn't ask isPaused once, or drops the answer, stops the patch`() {
         val ask = ImmutableInstruction35c(Opcode.INVOKE_INTERFACE, 1, 0, 0, 0, 0, 0,
             ImmutableMethodReference("LX/Page;", "isPaused", emptyList(), "Z"))

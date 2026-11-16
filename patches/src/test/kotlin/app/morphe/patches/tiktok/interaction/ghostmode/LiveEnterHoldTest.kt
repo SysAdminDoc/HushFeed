@@ -6,6 +6,7 @@ package app.morphe.patches.tiktok.interaction.ghostmode
 
 import app.morphe.Fixtures
 import app.morphe.patcher.patch.PatchException
+import app.morphe.takes
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
@@ -79,6 +80,37 @@ class LiveEnterHoldTest {
             assertEquals(
                 stockCode.map { it.opcode },
                 code.filterIndexed { index, _ -> index != hookIndex }.map { it.opcode },
+            )
+        }
+    }
+
+    /**
+     * The held enter comes back to TikTok as a failed one, and the room page's leave then slides
+     * on to the next LIVE. Each declared build has one such leave on the room page, an instance
+     * method whose reason (p1) is an enum with ENTER_FAILED, with a local for the guard.
+     */
+    @Test
+    fun `each declared build has one room page leave that takes ENTER_FAILED`() {
+        Fixtures.forEachDeclared { apk ->
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            val classes = container.dexEntryNames.asSequence()
+                .flatMap { container.getEntry(it)!!.dexFile.classes.asSequence() }.toList()
+            val byType = classes.associateBy { it.type }
+            val leaves = classes.flatMap { cls ->
+                cls.methods.filter { it.implementation != null && LiveRoomLeaveFingerprint.takes(it, cls) }
+            }.distinctBy { it.toString() }
+            assertEquals("${apk.name}: ${leaves.map { "${it.definingClass}->${it.name}" }}", 1, leaves.size)
+
+            val leave = leaves.single()
+            assertTrue("${apk.name}: instance method, p0 is the page", !AccessFlags.STATIC.isSet(leave.accessFlags))
+            val wide = leave.parameterTypes.count { it.toString() == "J" || it.toString() == "D" }
+            val parameterRegisters = 1 + leave.parameterTypes.size + wide
+            assertTrue("${apk.name}: a local for the guard", leave.implementation!!.registerCount > parameterRegisters)
+            val reason = byType[leave.parameterTypes.first().toString()]
+            assertTrue("${apk.name}: the reason is an enum", reason != null && reason.superclass == "Ljava/lang/Enum;")
+            assertTrue(
+                "${apk.name}: the reason has ENTER_FAILED",
+                reason!!.staticFields.any { it.name == "ENTER_FAILED" && it.type == reason.type },
             )
         }
     }

@@ -18,6 +18,7 @@ import app.morphe.patches.tiktok.misc.optimizer.isBranchTarget
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.shared.compat.AppCompatibilities
+import app.morphe.patches.tiktok.interaction.live.LIVE_PLAY_FRAGMENT
 import app.morphe.patches.tiktok.interaction.live.LivePlayFragmentResumeFingerprint
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
@@ -146,6 +147,20 @@ internal const val NETWORK_EXECUTE_CALL =
 internal const val NETWORK_EXECUTE_CALL_TWIN = "com_bytedance_retrofit2_CallServerInterceptor__executeCall\$___twin___"
 internal const val LIVE_UNSEEN_EXTENSION = "Lapp/morphe/extension/tiktok/ghostmode/LiveUnseen;"
 internal const val LIVE_UNSEEN_BUTTON_EXTENSION = "Lapp/morphe/extension/tiktok/ghostmode/LiveUnseenButton;"
+
+/**
+ * The LIVE room page's leave (#420), which takes the reason (an obfuscated enum: ENTER_FAILED,
+ * USER_CLOSE_CLICK, PLAYER_ERROR and the rest keep their names), a message and a code. A failed
+ * room enter reaches it as ENTER_FAILED, and it then shows the "Unstable connection" toast and
+ * slides on to the next LIVE. Its log lines for a paid room and the jump to another room are
+ * only in this method on 47.7.3.
+ */
+internal object LiveRoomLeaveFingerprint : Fingerprint(
+    definingClass = LIVE_PLAY_FRAGMENT,
+    returnType = "V",
+    parameters = listOf("L", "Ljava/lang/String;", "I"),
+    strings = listOf("paid room fail to enter the room", "jump to other room"),
+)
 
 /** Where the LIVE enter hold goes: in front of the lancet's send, with the send's two registers. */
 internal class LiveEnterHold(val index: Int, val interceptor: Int, val chain: Int)
@@ -277,6 +292,7 @@ val ghostModePatch = bytecodePatch(
             ?: throw PatchException("Ghost mode: expected one network call to hold LIVE enters in, found ${lancets.size}.")
         val liveEnterHold = planLiveEnterHold(lancet)
         val roomResume = LivePlayFragmentResumeFingerprint.method
+        val roomLeave = LiveRoomLeaveFingerprint.method
 
         SettingsStatusLoadFingerprint.method.addInstruction(
             0,
@@ -348,6 +364,14 @@ val ghostModePatch = bytecodePatch(
         // viewer list, fails on the phone while it's held. Other patches hook this lancet too
         // and each finds its own anchors by name when it runs.
         lancet.holdLiveEnters(liveEnterHold)
+        // TikTok takes the held enter as a failed one and leaves the room for the next LIVE.
+        // The page stays when the failed enter was one Ghost mode held for its room.
+        roomLeave.guardAtEntry(
+            "Ghost mode",
+            "invoke-static/range {p0 .. p1}, " +
+                "$LIVE_UNSEEN_EXTENSION->keepRoom(Ljava/lang/Object;Ljava/lang/Object;)Z",
+            "return-void",
+        )
         // The room's eye button, which lets the host of the room you're in see you.
         roomResume.addInstruction(
             0,

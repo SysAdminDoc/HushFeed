@@ -4,12 +4,15 @@
  */
 package app.morphe.extension.tiktok.ghostmode;
 
+import android.os.SystemClock;
+
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.diagnostics.DiagnosticCategory;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
 import app.morphe.extension.tiktok.follow.FollowDiagnostics;
+import app.morphe.extension.tiktok.live.LiveRecordChip;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 
@@ -45,12 +48,23 @@ public final class LiveUnseen {
     /** How many held enters are kept to send later; the oldest goes first. */
     static final int HELD_LIMIT = 8;
     static final String HELD_MESSAGE = "Hushfeed Ghost mode kept this LIVE from seeing you";
+    /** The reason TikTok's room page gives itself for leaving when its room enter failed. */
+    static final String ENTER_FAILED = "ENTER_FAILED";
+    /** The hook in front of the room page's leave, by its name in the diagnostics. */
+    static final String ROOM_KEPT = "live room kept";
+    /** How long after an enter held with no readable room a failed enter is still taken as ours. */
+    static final long UNKNOWN_ROOM_WINDOW_MS = 15_000;
+    private static final long NEVER = -1;
 
     /** Rooms the eye was tapped in, whose enters go out. Until TikTok is closed. */
     private static final Set<String> REVEALED = ConcurrentHashMap.newKeySet();
     /** The latest enter held for each room, guarded by itself. */
     private static final Map<String, HeldEnter> HELD = new LinkedHashMap<>();
+    /** When an enter was last held, and when one was last held without a readable room. */
+    private static volatile long heldAt = NEVER;
+    private static volatile long unknownHeldAt = NEVER;
     private static volatile boolean loggedHold;
+    private static volatile boolean loggedKept;
 
     /** TikTok's network interceptor and chain for one enter it was about to send. */
     static final class HeldEnter {
@@ -100,7 +114,10 @@ public final class LiveUnseen {
             if (!isEnter(path instanceof String ? (String) path : null)) return;
             room = FollowDiagnostics.liveRoomIdOf(request);
             if (!GhostMode.holdLiveEnter(room != null && REVEALED.contains(room))) return;
+            long now = SystemClock.elapsedRealtime();
+            heldAt = now;
             if (room != null) keep(room, new HeldEnter(interceptor, chain));
+            else unknownHeldAt = now;
         } catch (Throwable unreadable) {
             HookStatus.threw(HOOK_FAMILY, GhostMode.LIVE_ENTER, unreadable);
             return;
@@ -111,6 +128,48 @@ public final class LiveUnseen {
                     () -> "Ghost mode held back a LIVE room enter");
         }
         throw new IOException(HELD_MESSAGE);
+    }
+
+    /**
+     * Called by TikTok's LIVE room page at the start of its leave, with itself and the reason.
+     * TikTok takes the enter Ghost mode held back as a failed one and leaves the room for the
+     * next LIVE with an "Unstable connection" toast. Returns true to stay in the room when the
+     * reason is a failed enter that Ghost mode held for this room; any other leave goes ahead.
+     */
+    public static boolean keepRoom(Object page, Object reason) {
+        try {
+            if (!(reason instanceof Enum) || !ENTER_FAILED.equals(((Enum<?>) reason).name())) return false;
+            if (!enabled()) return false;
+            String room = LiveRecordChip.roomKey(LiveRecordChip.roomOf(page));
+            if (!heldFor(room, SystemClock.elapsedRealtime())) return false;
+        } catch (Throwable unreadable) {
+            HookStatus.threw(HOOK_FAMILY, ROOM_KEPT, unreadable);
+            return false;
+        }
+        HookStatus.bound(HOOK_FAMILY, ROOM_KEPT);
+        if (!loggedKept) {
+            loggedKept = true;
+            Logger.diagnosticInfo(DiagnosticCategory.OTHER, "GhostMode",
+                    () -> "Ghost mode kept a LIVE open after holding back its room enter");
+        }
+        return true;
+    }
+
+    /**
+     * Whether the failed enter of {@code room} at {@code now} was one Ghost mode held: its enter
+     * is still held, or a recent one was held without a readable room. A page with no readable
+     * room counts any recent hold.
+     */
+    static boolean heldFor(String room, long now) {
+        if (room == null) return recent(heldAt, now);
+        synchronized (HELD) {
+            if (HELD.containsKey(room)) return true;
+        }
+        return recent(unknownHeldAt, now);
+    }
+
+    private static boolean recent(long at, long now) {
+        return at != NEVER && now >= at && now - at <= UNKNOWN_ROOM_WINDOW_MS;
     }
 
     /** A room enter or its newer and prefetch forms, by the request's path. */
@@ -205,6 +264,9 @@ public final class LiveUnseen {
         synchronized (HELD) {
             HELD.clear();
         }
+        heldAt = NEVER;
+        unknownHeldAt = NEVER;
         loggedHold = false;
+        loggedKept = false;
     }
 }

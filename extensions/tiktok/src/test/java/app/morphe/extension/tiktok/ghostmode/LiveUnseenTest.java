@@ -12,12 +12,15 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import android.os.Looper;
+import android.os.SystemClock;
 
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.shared.settings.PausedProcess;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
+
+import com.bytedance.android.livesdkapi.depend.model.live.Room;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -226,6 +229,62 @@ public class LiveUnseenTest {
         }
         assertFalse("the outcome reached the main thread", outcome.get() == null);
         return outcome.get();
+    }
+
+    /** Stands in for TikTok's reasons a LIVE room page leaves, by their real names. */
+    enum Leave { ENTER_FAILED, USER_CLOSE_CLICK, PLAYER_ERROR }
+
+    /** Stands in for TikTok's LIVE room page: the room it shows. */
+    public static final class Page {
+        final Room room = new Room();
+
+        Page(String id) {
+            room.idStr = id;
+        }
+    }
+
+    @Test public void aRoomWhoseEnterWasHeldStaysOpenInsteadOfMovingOnToTheNextLive() {
+        on();
+        assertThrows(IOException.class, () -> LiveUnseen.holdEnter(new Interceptor(ENTER), "chain"));
+        assertTrue(LiveUnseen.keepRoom(new Page(ROOM), Leave.ENTER_FAILED));
+
+        // Every other leave goes ahead, and so does a failed enter of a room nothing was held for.
+        assertFalse(LiveUnseen.keepRoom(new Page(ROOM), Leave.USER_CLOSE_CLICK));
+        assertFalse(LiveUnseen.keepRoom(new Page(ROOM), Leave.PLAYER_ERROR));
+        assertFalse(LiveUnseen.keepRoom(new Page("7570000000000000001"), Leave.ENTER_FAILED));
+        assertFalse(LiveUnseen.keepRoom(new Page(ROOM), "ENTER_FAILED"));
+        assertFalse(LiveUnseen.keepRoom(new Page(ROOM), null));
+    }
+
+    @Test public void aFailedEnterLeavesAsAlwaysWithTheSwitchOffOrAfterTheEye() throws Exception {
+        on();
+        assertThrows(IOException.class, () -> LiveUnseen.holdEnter(new Interceptor(ENTER), "chain"));
+        Settings.GHOST_HIDE_LIVE_VIEWS.save(false);
+        assertFalse(LiveUnseen.keepRoom(new Page(ROOM), Leave.ENTER_FAILED));
+
+        on();
+        assertEquals(LiveUnseen.Reveal.SENT, reveal(ROOM));
+        assertFalse("a real failed enter after the eye still moves on",
+                LiveUnseen.keepRoom(new Page(ROOM), Leave.ENTER_FAILED));
+    }
+
+    @Test public void anEnterHeldWithoutItsRoomKeepsAFailedRoomForAWhile() {
+        on();
+        assertFalse(LiveUnseen.keepRoom(new Page(ROOM), Leave.ENTER_FAILED));
+        assertThrows(IOException.class, () -> LiveUnseen.holdEnter(
+                new Interceptor("https://webcast.tiktokv.com/webcast/room/enter/?aid=1233"), "chain"));
+        long heldAt = SystemClock.elapsedRealtime();
+        assertTrue(LiveUnseen.keepRoom(new Page(ROOM), Leave.ENTER_FAILED));
+        assertTrue(LiveUnseen.heldFor(ROOM, heldAt + LiveUnseen.UNKNOWN_ROOM_WINDOW_MS));
+        assertFalse(LiveUnseen.heldFor(ROOM, heldAt + LiveUnseen.UNKNOWN_ROOM_WINDOW_MS + 1));
+    }
+
+    @Test public void aPageWithNoReadableRoomCountsARecentHold() {
+        on();
+        assertFalse(LiveUnseen.keepRoom(new Object(), Leave.ENTER_FAILED));
+        assertThrows(IOException.class, () -> LiveUnseen.holdEnter(new Interceptor(ENTER), "chain"));
+        assertTrue(LiveUnseen.keepRoom(new Object(), Leave.ENTER_FAILED));
+        assertTrue(LiveUnseen.keepRoom(null, Leave.ENTER_FAILED));
     }
 
     @Test public void noRoomReadsAsNoRoom() {

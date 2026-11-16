@@ -2453,6 +2453,8 @@ search suggestions	sugerencias de búsqueda
 AI chat	chat de IA
 AI Tako	IA Tako
 save photos	guardar fotos
+download button	botón de descarga descargar
+It's in %1$s, under %2$s. Tap to go there.	Está en %1$s, en %2$s. Toca para ir allí.
 Lock the feed at set times	Bloquear el feed a ciertas horas
 The feed locks by itself during these hours, on your phone's clock. Write days and hours like Mon-Fri 21:00-07:00; Sat Sun 13:00-15:00. Leave the days out for every day. A time that ends earlier than it starts runs past midnight.	El feed se bloquea solo durante estas horas, según el reloj de tu teléfono. Escribe días y horas así: Mon-Fri 21:00-07:00; Sat Sun 13:00-15:00. Omite los días para que valga todos los días. Un horario que termina antes de empezar pasa de la medianoche.
 Couldn't read %1$s. Write days and hours like Mon-Fri 21:00-07:00.	No se pudo leer %1$s. Escribe días y horas así: Mon-Fri 21:00-07:00.

@@ -2696,6 +2696,8 @@ search suggestions	اقتراحات البحث
 AI chat	دردشة AI
 AI Tako	AI Tako
 save photos	حفظ الصور
+download button	زر التنزيل تنزيل
+It's in %1$s, under %2$s. Tap to go there.	تجده في %1$s ضمن %2$s. اضغط للانتقال إليه.
 Lock the feed at set times	اقفل الخلاصة في أوقات محددة
 The feed locks by itself during these hours, on your phone's clock. Write days and hours like Mon-Fri 21:00-07:00; Sat Sun 13:00-15:00. Leave the days out for every day. A time that ends earlier than it starts runs past midnight.	تقفل الخلاصة تلقائيًا خلال هذه الساعات، حسب ساعة هاتفك. اكتب الأيام والساعات مثل Mon-Fri 21:00-07:00؛ Sat Sun 13:00-15:00. اترك الأيام فارغة ليعمل كل يوم. الوقت الذي ينتهي قبل أن يبدأ يتجاوز منتصف الليل.
 Couldn't read %1$s. Write days and hours like Mon-Fri 21:00-07:00.	تعذرت قراءة %1$s. اكتب الأيام والساعات مثل Mon-Fri 21:00-07:00.

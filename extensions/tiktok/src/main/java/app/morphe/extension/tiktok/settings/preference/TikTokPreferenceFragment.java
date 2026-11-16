@@ -1570,6 +1570,9 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
             Settings.HIDE_INBOX_TAKO.key, "AI chat",
             Settings.HIDE_CHAT_AI_REPLIES.key, "AI Tako",
             Settings.DOWNLOAD_ORIGINAL_PHOTOS.key, "save photos",
+            // The save button's switch sits with the other buttons on videos, on Feed screen, and
+            // people who call it the download button looked for it there in vain (#299).
+            Settings.DOWNLOAD_BUTTON.key, "download button",
             Settings.STARTUP_MESSAGE.key, "dialog popup greeting");
 
     private static String searchKeywords(Context context, String key) {
@@ -2227,6 +2230,15 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
     static TikTokPreferenceFragment active() {
         TikTokPreferenceFragment current = activeFragment;
         return current != null && current.isAdded() ? current : null;
+    }
+
+    /**
+     * Opens Feed screen at one of its rows, for a row on another page that points there. The
+     * page the pointer sits on is the one in front, so it opens in place, scrolls and flashes.
+     */
+    public static void openFeedScreenRow(String key) {
+        TikTokPreferenceFragment open = active();
+        if (open != null) open.openSection(Section.INTERFACE, key, null);
     }
 
     /**

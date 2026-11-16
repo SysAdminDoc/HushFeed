@@ -2456,6 +2456,8 @@ search suggestions	Suchvorschläge
 AI chat	KI-Chat
 AI Tako	KI Tako
 save photos	Fotos speichern
+download button	Download-Button herunterladen
+It's in %1$s, under %2$s. Tap to go there.	Zu finden unter %1$s bei %2$s. Tippe, um dorthin zu springen.
 Lock the feed at set times	Feed zu festen Zeiten sperren
 The feed locks by itself during these hours, on your phone's clock. Write days and hours like Mon-Fri 21:00-07:00; Sat Sun 13:00-15:00. Leave the days out for every day. A time that ends earlier than it starts runs past midnight.	Der Feed sperrt sich in diesen Stunden von selbst, nach der Uhr deines Handys. Schreibe Tage und Uhrzeiten wie Mon-Fri 21:00-07:00; Sat Sun 13:00-15:00. Lass die Tage weg, dann gilt es jeden Tag. Eine Zeit, die früher endet als sie beginnt, läuft über Mitternacht.
 Couldn't read %1$s. Write days and hours like Mon-Fri 21:00-07:00.	%1$s konnte nicht gelesen werden. Schreibe Tage und Uhrzeiten wie Mon-Fri 21:00-07:00.

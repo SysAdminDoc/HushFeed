@@ -2453,6 +2453,8 @@ search suggestions	axtarış təklifləri
 AI chat	Sİ söhbəti
 AI Tako	Sİ Tako
 save photos	fotoları saxla
+download button	yükləmə düyməsi yüklə
+It's in %1$s, under %2$s. Tap to go there.	%1$s bölməsində, %2$s altındadır. Ora keçmək üçün toxunun.
 Lock the feed at set times	Lenti müəyyən saatlarda kilidlə
 The feed locks by itself during these hours, on your phone's clock. Write days and hours like Mon-Fri 21:00-07:00; Sat Sun 13:00-15:00. Leave the days out for every day. A time that ends earlier than it starts runs past midnight.	Lent bu saatlarda telefonunun saatına görə özü kilidlənir. Günləri və saatları belə yaz: Mon-Fri 21:00-07:00; Sat Sun 13:00-15:00. Hər gün üçün günləri yazma. Başladığından tez bitən vaxt gecə yarısını keçir.
 Couldn't read %1$s. Write days and hours like Mon-Fri 21:00-07:00.	%1$s oxuna bilmədi. Günləri və saatları Mon-Fri 21:00-07:00 kimi yaz.

@@ -2401,6 +2401,8 @@ search suggestions,saran pencarian
 AI chat,chat AI
 AI Tako,AI Tako
 save photos,simpan foto
+download button,tombol unduh download
+"It's in %1$s, under %2$s. Tap to go there.","Ada di %1$s, di bawah %2$s. Ketuk untuk ke sana."
 Lock the feed at set times,Kunci feed pada waktu tertentu
 "The feed locks by itself during these hours, on your phone's clock. Write days and hours like Mon-Fri 21:00-07:00; Sat Sun 13:00-15:00. Leave the days out for every day. A time that ends earlier than it starts runs past midnight.","Feed terkunci sendiri selama jam-jam ini, menurut jam ponselmu. Tulis hari dan jam seperti Mon-Fri 21:00-07:00; Sat Sun 13:00-15:00. Kosongkan hari agar berlaku setiap hari. Waktu yang berakhir lebih awal dari mulainya berlanjut melewati tengah malam."
 Couldn't read %1$s. Write days and hours like Mon-Fri 21:00-07:00.,Tidak dapat membaca %1$s. Tulis hari dan jam seperti Mon-Fri 21:00-07:00.

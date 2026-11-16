@@ -2456,6 +2456,8 @@ search suggestions	คำแนะนำการค้นหา
 AI chat	แชท AI
 AI Tako	AI Tako
 save photos	บันทึกรูปภาพ
+download button	ปุ่มดาวน์โหลด ดาวน์โหลด
+It's in %1$s, under %2$s. Tap to go there.	อยู่ใน %1$s ใต้ %2$s แตะเพื่อไปที่นั่น
 Lock the feed at set times	ล็อกฟีดตามเวลาที่กำหนด
 The feed locks by itself during these hours, on your phone's clock. Write days and hours like Mon-Fri 21:00-07:00; Sat Sun 13:00-15:00. Leave the days out for every day. A time that ends earlier than it starts runs past midnight.	ฟีดจะล็อกโดยอัตโนมัติในช่วงเวลาเหล่านี้ตามนาฬิกาของโทรศัพท์คุณ ระบุวันและเวลา เช่น Mon-Fri 21:00-07:00; Sat Sun 13:00-15:00 ไม่ต้องระบุวันหากต้องการให้มีผลทุกวัน เวลาที่สิ้นสุดเร็วกว่าเวลาเริ่มต้นจะครอบคลุมข้ามเที่ยงคืน
 Couldn't read %1$s. Write days and hours like Mon-Fri 21:00-07:00.	ไม่สามารถอ่าน %1$s ได้ ระบุวันและเวลา เช่น Mon-Fri 21:00-07:00

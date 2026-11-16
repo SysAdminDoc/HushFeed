@@ -1111,6 +1111,7 @@ Inserted cards,Inserted cards
 Instead of these settings. The list has a button that brings you back here.,Instead of these settings. The list has a button that brings you back here.
 Invisible controls button,Invisible controls button
 Invite friends,Invite friends
+"It's in %1$s, under %2$s. Tap to go there.","It's in %1$s, under %2$s. Tap to go there."
 Join Amplify,Join Amplify
 Joined,Joined
 Joined %s,Joined %s
@@ -2756,6 +2757,7 @@ autoplay auto play,autoplay auto play
 collapsed,collapsed
 debug debugging logs logging,debug debugging logs logging
 dialog popup greeting,dialog popup greeting
+download button,download button
 expanded,expanded
 picture in picture PiP,picture in picture PiP
 save photos,save photos

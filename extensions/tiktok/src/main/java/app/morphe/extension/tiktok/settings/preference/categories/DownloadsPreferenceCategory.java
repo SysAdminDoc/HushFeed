@@ -7,6 +7,7 @@
 package app.morphe.extension.tiktok.settings.preference.categories;
 
 import android.content.Context;
+import android.preference.Preference;
 import android.preference.PreferenceScreen;
 import android.text.format.Formatter;
 
@@ -23,6 +24,7 @@ import app.morphe.extension.tiktok.settings.preference.InputTextPreference;
 import app.morphe.extension.tiktok.settings.preference.NumberInputPreference;
 import app.morphe.extension.tiktok.settings.preference.SavesNowPreference;
 import app.morphe.extension.tiktok.settings.preference.SectionHeadingPreference;
+import app.morphe.extension.tiktok.settings.preference.TikTokPreferenceFragment;
 import app.morphe.extension.tiktok.settings.preference.TogglePreference;
 import app.morphe.extension.tiktok.download.DownloadDestination;
 import app.morphe.extension.tiktok.download.DownloadNamePreview;
@@ -152,6 +154,7 @@ public class DownloadsPreferenceCategory extends ConditionalPreferenceCategory {
         }
         if (SettingsStatus.advancedDownloadsEnabled) {
             addPreference(new SectionHeadingPreference(context, "Video"));
+            addPreference(saveButtonPointer(context));
             addPreference(new ChoicePreference(context, "Video download quality", Settings.DOWNLOAD_VIDEO_QUALITY,
                     new String[]{"Automatic", "Highest", "Lowest", "1080p", "720p", "540p", "480p", "360p"},
                     new String[]{"auto", "highest", "lowest", "1080", "720", "540", "480", "360"}));
@@ -359,5 +362,22 @@ public class DownloadsPreferenceCategory extends ConditionalPreferenceCategory {
                 });
             }
         }
+    }
+
+    /**
+     * The save button's switch is on Feed screen with every other button drawn on the video, and
+     * Downloads is where people look for it (#299). This row takes them there. It has no key, so
+     * the settings search lists the real row only.
+     */
+    static Preference saveButtonPointer(Context context) {
+        Preference pointer = new Preference(context);
+        pointer.setTitle(L10n.t(context, "Show the save button on videos"));
+        pointer.setSummary(L10n.f(context, "It's in %1$s, under %2$s. Tap to go there.",
+                L10n.t(context, "Feed screen"), L10n.t(context, "Buttons on videos")));
+        pointer.setOnPreferenceClickListener(row -> {
+            TikTokPreferenceFragment.openFeedScreenRow(Settings.DOWNLOAD_BUTTON.key);
+            return true;
+        });
+        return pointer;
     }
 }

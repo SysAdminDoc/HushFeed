@@ -2399,6 +2399,8 @@ search suggestions,搜索建议
 AI chat,AI 聊天
 AI Tako,AI Tako
 save photos,保存照片
+download button,下载按钮 下载
+"It's in %1$s, under %2$s. Tap to go there.",在%1$s的%2$s中。点击前往.
 Lock the feed at set times,在设定时间锁定信息流
 "The feed locks by itself during these hours, on your phone's clock. Write days and hours like Mon-Fri 21:00-07:00; Sat Sun 13:00-15:00. Leave the days out for every day. A time that ends earlier than it starts runs past midnight.",信息流会在这些时间按手机时钟自动锁定。像这样填写日期和时间：Mon-Fri 21:00-07:00; Sat Sun 13:00-15:00。不写日期表示每天。结束早于开始的时间段会跨过午夜.
 Couldn't read %1$s. Write days and hours like Mon-Fri 21:00-07:00.,无法读取 %1$s。请像 Mon-Fri 21:00-07:00 这样填写日期和时间.

@@ -2444,6 +2444,8 @@ debug debugging logs logging,gỡ lỗi gỡ lỗi nhật ký ghi nhật ký
 expanded,Đã mở rộng
 picture in picture PiP,hình trong hình PiP
 save photos,lưu ảnh
+download button,nút tải xuống tải về
+"It's in %1$s, under %2$s. Tap to go there.","Nằm trong %1$s, mục %2$s. Chạm để đến đó."
 search suggestions,gợi ý tìm kiếm
 this creator,nhà sáng tạo này
 Hide read receipts,Ẩn trạng thái đã đọc

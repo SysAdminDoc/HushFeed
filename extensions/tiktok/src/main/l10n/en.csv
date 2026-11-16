@@ -568,6 +568,7 @@ Country filters,Country filters
 Counts under the buttons,Counts under the buttons
 Cover,Cover
 Cover saved to %1$s,Cover saved to %1$s
+"Cover the whole window and keep the middle of the video at its own shape. A little comes off the sides, and only the top and bottom are stretched. A video far from the screen's shape keeps TikTok's size.","Cover the whole window and keep the middle of the video at its own shape. A little comes off the sides, and only the top and bottom are stretched. A video far from the screen's shape keeps TikTok's size."
 "Cover the whole window with half the crop of Fill and half the stretch of Stretch, so neither is easy to spot. A video far from the screen's shape keeps TikTok's size.","Cover the whole window with half the crop of Fill and half the stretch of Stretch, so neither is easy to spot. A video far from the screen's shape keeps TikTok's size."
 Cover the whole window without cropping anything. The video gets a little taller or wider to do it. A video far from the screen's shape keeps TikTok's size.,Cover the whole window without cropping anything. The video gets a little taller or wider to do it. A video far from the screen's shape keeps TikTok's size.
 Create,Create
@@ -1143,6 +1144,7 @@ Keep the LIVE quality after TikTok restarts,Keep the LIVE quality after TikTok r
 Keep the caption in sight,Keep the caption in sight
 Keep the clock and status icons off the screen while TikTok is open. Swipe down from the top to peek at them.,Keep the clock and status icons off the screen while TikTok is open. Swipe down from the top to peek at them.
 Keep the language picked in TikTok,Keep the language picked in TikTok
+Keep the middle unstretched,Keep the middle unstretched
 Keep the music disc still,Keep the music disc still
 Keep the next videos in full screen,Keep the next videos in full screen
 Keep the progress bar,Keep the progress bar

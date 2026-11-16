@@ -449,6 +449,64 @@ public class VideoFitTest {
         }
     }
 
+    /**
+     * #421: Keep the middle needs Android 13's shader. Below it, a switch carried in by a backup
+     * crops and stretches like blend, the page doesn't offer it, and the report says why.
+     */
+    @Test public void keepTheMiddleCropsAndStretchesBelowAndroid13() {
+        try (var controller = Robolectric.buildActivity(android.app.Activity.class).setup().visible()) {
+            var activity = controller.get();
+            Utils.setContext(activity);
+            FrameLayout container = new FrameLayout(activity);
+            View video = new View(activity);
+            container.addView(video);
+            container.layout(0, 0, 1080, 2400);
+            video.setLayoutParams(new FrameLayout.LayoutParams(1080, 1920));
+            KeepMiddle.resetForTests();
+            VideoFit.resetReportForTests();
+            try {
+                Settings.KEEP_MIDDLE_VIDEO_TO_SCREEN.save(true);
+                assertFalse(KeepMiddle.supported());
+                assertEquals(VideoFit.Mode.BLEND, VideoFit.mode());
+                Result blended = (Result) VideoFit.fitted(video, new Result(1080, 1920, 0f, 0f, null));
+                assertEquals(1207, blended.getWidth());
+                assertEquals(2400, blended.getHeight());
+                assertFalse(KeepMiddle.warped(video));
+                assertTrue(VideoFit.Report.INSTANCE.lines().contains(
+                        "Keep the middle needs Android 13, so videos are cropped and stretched instead"));
+                // Nothing here can draw it, so TikTok keeps its own player view.
+                assertEquals(1, VideoFit.videoSurfaceGate(KeepMiddle.SURFACE_VIEW_GATE, 1));
+            } finally {
+                Settings.KEEP_MIDDLE_VIDEO_TO_SCREEN.save(false);
+                KeepMiddle.resetForTests();
+                VideoFit.resetReportForTests();
+            }
+        }
+        try (var controller = Robolectric.buildActivity(TestActivity.class).setup()) {
+            var activity = controller.get();
+            Utils.setContext(activity);
+            boolean was = SettingsStatus.videoFitEnabled;
+            SettingsStatus.videoFitEnabled = true;
+            try {
+                PreferenceScreen screen = activity.getPreferenceManager().createPreferenceScreen(activity);
+                new PlaybackPreferenceCategory(activity, screen);
+                assertNotNull(screen.findPreference(Settings.BLEND_VIDEO_TO_SCREEN.key));
+                assertNull("keep the middle was offered below Android 13",
+                        screen.findPreference(Settings.KEEP_MIDDLE_VIDEO_TO_SCREEN.key));
+                // A backup's hidden switch still goes off when another one comes on.
+                Settings.KEEP_MIDDLE_VIDEO_TO_SCREEN.save(true);
+                android.preference.TwoStatePreference fit =
+                        (android.preference.TwoStatePreference) screen.findPreference(Settings.FIT_VIDEO_TO_SCREEN.key);
+                assertTrue(fit.getOnPreferenceChangeListener().onPreferenceChange(fit, true));
+                assertFalse(Settings.KEEP_MIDDLE_VIDEO_TO_SCREEN.get());
+            } finally {
+                SettingsStatus.videoFitEnabled = was;
+                Settings.KEEP_MIDDLE_VIDEO_TO_SCREEN.save(false);
+                Settings.FIT_VIDEO_TO_SCREEN.save(false);
+            }
+        }
+    }
+
     @Test public void fillLeavesAWideOrSquareVideoWholeOnATallWindow() {
         // #394: a 16:9 video TikTok letterboxed on a 1220x2656 phone came out cropped to the
         // middle quarter of its width with fill on.
@@ -831,13 +889,14 @@ public class VideoFitTest {
             assertEquals("Fill the screen with the video: off", lines.get(1));
             assertEquals("Stretch the video to the screen: off", lines.get(2));
             assertEquals("Crop and stretch to fill the screen: off", lines.get(3));
-            assertEquals("Fit checks since TikTok started: 2 resized the video, 1 left it at TikTok's size", lines.get(4));
-            assertEquals("The last 2, oldest first:", lines.get(5));
+            assertEquals("Keep the middle unstretched: off", lines.get(4));
+            assertEquals("Fit checks since TikTok started: 2 resized the video, 1 left it at TikTok's size", lines.get(5));
+            assertEquals("The last 2, oldest first:", lines.get(6));
             String above = ". Above the video: FrameLayout 1080x1500, FrameLayout 1080x2213 (the page); window 1080x2213";
             assertEquals("Fit, feed: TikTok's size 1245x2213, space 1080x1500, made 844x1500" + above + " (2 in a row)",
-                    lines.get(6));
-            assertEquals("Fit, feed: TikTok's size 800x1400, space 1080x1500, left as it was" + above, lines.get(7));
-            assertEquals(8, lines.size());
+                    lines.get(7));
+            assertEquals("Fit, feed: TikTok's size 800x1400, space 1080x1500, left as it was" + above, lines.get(8));
+            assertEquals(9, lines.size());
 
             // A stretch says so on its own line.
             Settings.FIT_VIDEO_TO_SCREEN.save(false);
@@ -874,6 +933,7 @@ public class VideoFitTest {
                     "Fill the screen with the video: on",
                     "Stretch the video to the screen: off",
                     "Crop and stretch to fill the screen: off",
+                    "Keep the middle unstretched: off",
                     "Hushfeed is paused, so videos keep TikTok's size",
                     "Fit checks since TikTok started: 0 resized the video, 0 left it at TikTok's size"),
                     VideoFit.Report.INSTANCE.lines());

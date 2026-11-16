@@ -2909,3 +2909,7 @@ Speech recognition kept failing in the last LIVE. Open the LIVE again to retry.	
 Save the photo posts as one video?	Die Fotobeiträge als ein Video speichern?
 One video	Ein Video
 One per post	Eins pro Beitrag
+# context: A switch on the Playback page beside Fit, Fill, Stretch and Crop and stretch: the video covers the screen, its middle keeps its own shape and only bands along the top and bottom are stretched
+Keep the middle unstretched	Die Mitte nicht strecken
+# context: Summary for Keep the middle unstretched
+Cover the whole window and keep the middle of the video at its own shape. A little comes off the sides, and only the top and bottom are stretched. A video far from the screen's shape keeps TikTok's size.	Deckt das ganze Fenster ab und lässt die Mitte des Videos in ihrer eigenen Form. An den Seiten fällt ein wenig weg, und nur oben und unten wird gestreckt. Ein Video, dessen Form stark vom Bildschirm abweicht, behält die Größe von TikTok.

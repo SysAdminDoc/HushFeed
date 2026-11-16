@@ -2909,3 +2909,7 @@ Speech recognition kept failing in the last LIVE. Open the LIVE again to retry.	
 Save the photo posts as one video?	บันทึกโพสต์รูปภาพเป็นวิดีโอเดียว?
 One video	วิดีโอเดียว
 One per post	แยกตามโพสต์
+# context: A switch on the Playback page beside Fit, Fill, Stretch and Crop and stretch: the video covers the screen, its middle keeps its own shape and only bands along the top and bottom are stretched
+Keep the middle unstretched	คงสัดส่วนตรงกลางไว้ไม่ยืด
+# context: Summary for Keep the middle unstretched
+Cover the whole window and keep the middle of the video at its own shape. A little comes off the sides, and only the top and bottom are stretched. A video far from the screen's shape keeps TikTok's size.	แสดงวิดีโอเต็มทั้งหน้าต่างโดยคงรูปทรงเดิมของส่วนกลางไว้ ด้านข้างจะถูกครอปออกเล็กน้อย และยืดเฉพาะด้านบนกับด้านล่าง วิดีโอที่มีรูปทรงต่างจากหน้าจอมากจะคงขนาดของ TikTok

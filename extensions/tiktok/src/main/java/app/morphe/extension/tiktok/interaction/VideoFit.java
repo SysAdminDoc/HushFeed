@@ -46,22 +46,38 @@ public final class VideoFit {
     private VideoFit() {}
 
     /**
-     * What the four switches ask for: the whole video inside the window, the window covered by
+     * What the five switches ask for: the whole video inside the window, the window covered by
      * cropping, the window covered by stretching the whole video to it (#406), the window covered
-     * by a little of each (#421), or nothing.
+     * by a little of each (#421), the window covered with the middle of the video at its own
+     * shape (#421), or nothing.
      */
-    enum Mode { LEAVE_ALONE, FIT, FILL, STRETCH, BLEND }
+    enum Mode { LEAVE_ALONE, FIT, FILL, STRETCH, BLEND, KEEP_MIDDLE }
 
     /**
      * Fit wins when more than one switch is on, then fill. The page keeps them apart, and a
-     * restored backup that carries two should show the whole video rather than crop it.
+     * restored backup that carries two should show the whole video rather than crop it. Keep the
+     * middle needs Android 13 for its shader, and below that crops and stretches like blend.
      */
     static Mode mode() {
         if (Settings.FIT_VIDEO_TO_SCREEN.get()) return Mode.FIT;
         if (Settings.FILL_VIDEO_TO_SCREEN.get()) return Mode.FILL;
         if (Settings.STRETCH_VIDEO_TO_SCREEN.get()) return Mode.STRETCH;
         if (Settings.BLEND_VIDEO_TO_SCREEN.get()) return Mode.BLEND;
+        if (Settings.KEEP_MIDDLE_VIDEO_TO_SCREEN.get()) {
+            return KeepMiddle.supported() ? Mode.KEEP_MIDDLE : Mode.BLEND;
+        }
         return Mode.LEAVE_ALONE;
+    }
+
+    /**
+     * The mode {@code view} is sized by. Keep the middle crops and stretches like blend wherever
+     * its shader can't reach the picture: TikTok still playing on a SurfaceView, until a restart
+     * lets {@link #videoSurfaceGate} answer. The video and its cover both go by the same answer,
+     * so the cover never takes a size the video doesn't.
+     */
+    static Mode modeFor(View view) {
+        Mode mode = mode();
+        return mode == Mode.KEEP_MIDDLE && !KeepMiddle.canWarp(view) ? Mode.BLEND : mode;
     }
 
     /**
@@ -72,12 +88,41 @@ public final class VideoFit {
     public static boolean fillsScreen() {
         if (!SettingsStatus.videoFitEnabled) return false;
         Mode mode = mode();
-        return mode == Mode.FILL || mode == Mode.STRETCH || mode == Mode.BLEND;
+        return mode == Mode.FILL || mode == Mode.STRETCH || mode == Mode.BLEND || mode == Mode.KEEP_MIDDLE;
     }
 
     /** Whether the mode changes the video's shape, which the cover then has to follow. */
     static boolean reshapes(Mode mode) {
-        return mode == Mode.STRETCH || mode == Mode.BLEND;
+        return mode == Mode.STRETCH || mode == Mode.BLEND || mode == Mode.KEEP_MIDDLE;
+    }
+
+    /**
+     * Every App AB int TikTok reads passes here (#421). Only {@link KeepMiddle#SURFACE_VIEW_GATE}
+     * is answered, with 0 while Keep the middle is on, which has TikTok play into a TextureView
+     * the window draws and the shader reaches. Whatever answer TikTok ends up with is noted, the
+     * see-through bottom bar's own 0 included, since that hook may run after this one.
+     */
+    public static int videoSurfaceGate(String key, int value) {
+        if (!KeepMiddle.SURFACE_VIEW_GATE.equals(key)) return value;
+        int answer = value;
+        if (answer != 0 && KeepMiddle.wanted()) {
+            answer = 0;
+            Logger.printInfo(() -> "Feed video drawn in the app's window to keep its middle unstretched: "
+                    + key + " came back " + value);
+        }
+        if (answer == 0 || (Settings.SEE_THROUGH_BOTTOM_BAR.get() && Settings.SEE_THROUGH_VIDEO_IN_WINDOW.get())) {
+            KeepMiddle.videoInWindow = true;
+        }
+        return answer;
+    }
+
+    /** Draws a video kept in the middle with the shader, and gives any other one its own drawing back. */
+    private static void warpFor(Mode mode, View view, int videoWidth, int videoHeight, int width, int height) {
+        if (mode == Mode.KEEP_MIDDLE) {
+            KeepMiddle.warp(view, videoWidth, videoHeight, width, height);
+        } else {
+            KeepMiddle.clear(view);
+        }
     }
 
     /** What the last decision on this thread settled: which result, the height for it and where it sits. */
@@ -124,7 +169,7 @@ public final class VideoFit {
         try {
             // The switches before the reads: this runs twice for every video the feed binds, off
             // is the default, and the reflection below is only worth paying for with one on.
-            Mode mode = mode();
+            Mode mode = modeFor(view);
             if (mode == Mode.LEAVE_ALONE) return untouched(view, result);
             int videoWidth = size(result, "getWidth");
             int videoHeight = size(result, "getHeight");
@@ -147,6 +192,7 @@ public final class VideoFit {
             note("feed", mode, view, videoWidth, videoHeight, containerWidth, containerHeight, width, height);
             if (centred) watch(view, videoWidth, videoHeight, width, height);
             shapeCover(view, reshapes(mode));
+            warpFor(mode, view, videoWidth, videoHeight, width, height);
             return copy;
         } catch (Exception exception) {
             Logger.printException(() -> "Could not fit the video to the window", exception);
@@ -260,6 +306,7 @@ public final class VideoFit {
         unwatch(view);
         uncentre(view);
         shapeCover(view, false);
+        KeepMiddle.clear(view);
         return result;
     }
 
@@ -268,6 +315,7 @@ public final class VideoFit {
         unwatch(view);
         uncentre(view);
         shapeCover(view, false);
+        KeepMiddle.clear(view);
         return LEAVE;
     }
 
@@ -424,7 +472,7 @@ public final class VideoFit {
     static void refit(View view, Watch watch) {
         try {
             if (WATCHES.get(view) != watch) return;
-            Mode mode = mode();
+            Mode mode = modeFor(view);
             ViewGroup.LayoutParams params = view.getLayoutParams();
             if (mode == Mode.LEAVE_ALONE || !(params instanceof FrameLayout.LayoutParams)
                     || params.width != watch.width || params.height != watch.height
@@ -446,6 +494,7 @@ public final class VideoFit {
             view.setLayoutParams(params);
             watch.width = width;
             watch.height = height;
+            warpFor(change ? mode : Mode.LEAVE_ALONE, view, watch.videoWidth, watch.videoHeight, width, height);
             note("after the space changed", mode, view, watch.videoWidth, watch.videoHeight,
                     spaceWidth, spaceHeight, width, height);
         } catch (Throwable failure) {
@@ -472,7 +521,7 @@ public final class VideoFit {
         LAST.remove();
         if (view == null || result == null) return LEAVE;
         try {
-            Mode mode = mode();
+            Mode mode = modeFor(view);
             if (mode == Mode.LEAVE_ALONE) return leave(view);
             int videoWidth = size(result, "getWidth");
             int videoHeight = size(result, "getHeight");
@@ -495,6 +544,7 @@ public final class VideoFit {
             note("story", mode, view, videoWidth, videoHeight, containerWidth, containerHeight, width, height);
             if (centred) watch(view, videoWidth, videoHeight, width, height);
             shapeCover(view, reshapes(mode));
+            warpFor(mode, view, videoWidth, videoHeight, width, height);
             return width;
         } catch (Exception exception) {
             Logger.printException(() -> "Could not fit the video to the window", exception);
@@ -576,6 +626,13 @@ public final class VideoFit {
                     && (blendWidth(width, height, containerWidth, containerHeight) != width
                     || blendHeight(width, height, containerWidth, containerHeight) != height);
         }
+        if (mode == Mode.KEEP_MIDDLE) {
+            // The shader makes up a gap in height only, the strip under a tall video, and no
+            // more of it than stretching the edge twice as tall covers.
+            return sameWay(width, height, containerWidth, containerHeight)
+                    && KeepMiddle.plan(width, height, containerWidth, containerHeight) != null
+                    && (width != containerWidth || height != containerHeight);
+        }
         return false;
     }
 
@@ -601,7 +658,8 @@ public final class VideoFit {
 
     /** Stretch takes the window's own size, each side scaled on its own. */
     static int widthFor(Mode mode, int width, int height, int containerWidth, int containerHeight) {
-        if (mode == Mode.STRETCH) return containerWidth;
+        // Keep the middle is laid out at the window's size too, and its shader draws the shape back.
+        if (mode == Mode.STRETCH || mode == Mode.KEEP_MIDDLE) return containerWidth;
         if (mode == Mode.BLEND) return blendWidth(width, height, containerWidth, containerHeight);
         return mode == Mode.FILL
                 ? fillWidth(width, height, containerWidth, containerHeight)
@@ -609,7 +667,7 @@ public final class VideoFit {
     }
 
     static int heightFor(Mode mode, int width, int height, int containerWidth, int containerHeight) {
-        if (mode == Mode.STRETCH) return containerHeight;
+        if (mode == Mode.STRETCH || mode == Mode.KEEP_MIDDLE) return containerHeight;
         if (mode == Mode.BLEND) return blendHeight(width, height, containerWidth, containerHeight);
         return mode == Mode.FILL
                 ? fillHeight(width, height, containerWidth, containerHeight)
@@ -765,7 +823,8 @@ public final class VideoFit {
                 LogBufferManager.registerReportSection(Report.INSTANCE);
             }
             String label = mode == Mode.FIT ? "Fit" : mode == Mode.FILL ? "Fill"
-                    : mode == Mode.BLEND ? "Crop and stretch" : "Stretch";
+                    : mode == Mode.BLEND ? "Crop and stretch"
+                    : mode == Mode.KEEP_MIDDLE ? "Keep the middle" : "Stretch";
             String line = label + ", " + cell + ": TikTok's size "
                     + videoWidth + "x" + videoHeight + ", space " + spaceWidth + "x" + spaceHeight
                     + (width == LEAVE ? ", left as it was" : ", made " + width + "x" + height)
@@ -840,12 +899,19 @@ public final class VideoFit {
             boolean fill = Settings.FILL_VIDEO_TO_SCREEN.savedValue();
             boolean stretch = Settings.STRETCH_VIDEO_TO_SCREEN.savedValue();
             boolean blend = Settings.BLEND_VIDEO_TO_SCREEN.savedValue();
+            boolean middle = Settings.KEEP_MIDDLE_VIDEO_TO_SCREEN.savedValue();
             lines.add("Fit the video to the screen: " + (fit ? "on" : "off"));
             lines.add("Fill the screen with the video: " + (fill ? "on" : "off"));
             lines.add("Stretch the video to the screen: " + (stretch ? "on" : "off"));
             lines.add("Crop and stretch to fill the screen: " + (blend ? "on" : "off"));
-            if ((fit || fill || stretch || blend) && mode() == Mode.LEAVE_ALONE) {
+            lines.add("Keep the middle unstretched: " + (middle ? "on" : "off"));
+            if ((fit || fill || stretch || blend || middle) && mode() == Mode.LEAVE_ALONE) {
                 lines.add("Hushfeed is paused, so videos keep TikTok's size");
+            } else if (middle && mode() == Mode.BLEND && !blend) {
+                lines.add("Keep the middle needs Android 13, so videos are cropped and stretched instead");
+            } else if (middle && mode() == Mode.KEEP_MIDDLE && !KeepMiddle.videoInWindow) {
+                lines.add("TikTok still plays videos on a layer of their own, so they're cropped and "
+                        + "stretched until TikTok restarts");
             }
             // Counted per check, and the feed checks twice for each video it shows.
             lines.add("Fit checks since TikTok started: " + RESIZED.get() + " resized the video, "

@@ -16,6 +16,7 @@ import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patcher.util.smali.ExternalLabel
 import app.morphe.patches.shared.compat.AppCompatibilities
+import app.morphe.patches.tiktok.misc.absettings.hookAppAbIntBoundary
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
@@ -88,8 +89,9 @@ val videoFitPatch = bytecodePatch(
     name = "Fit the video to the screen",
     description = "Shows the whole video instead of cutting off its sides on folding phones, " +
         "squarer screens and split screen, and fits photo slideshows whole on squarer screens. " +
-        "Three more switches cover the whole screen instead. One crops the video, one stretches " +
-        "it and one does a little of each. Starts off. Turn it on in Hushfeed settings > Playback.",
+        "Four more switches cover the whole screen instead. One crops the video, one stretches it, " +
+        "one does a little of each and one keeps the middle at its own shape and stretches only " +
+        "the top and bottom. Starts off. Turn it on in Hushfeed settings > Playback.",
 ) {
     category("Playback")
     dependsOn(settingsPatch, sharedExtensionPatch)
@@ -210,6 +212,11 @@ val videoFitPatch = bytecodePatch(
         }
 
         hookPhotoSlides(packageMetadata.versionName)
+
+        // Keep the middle unstretched draws over the video with a shader, which only reaches a
+        // video TikTok draws in its window. Its App AB key for the player's view is answered
+        // here, every int TikTok reads passing through (#421).
+        hookAppAbIntBoundary(EXTENSION, "videoSurfaceGate")
 
         settingsStatus.addInstruction(
             0,

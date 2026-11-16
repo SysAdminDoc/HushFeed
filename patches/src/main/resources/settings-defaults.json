@@ -339,7 +339,8 @@
       "fit_video_to_screen",
       "fill_video_to_screen",
       "stretch_video_to_screen",
-      "blend_video_to_screen"
+      "blend_video_to_screen",
+      "keep_middle_video_to_screen"
     ],
     "Foldable split comment view": [
       "foldable_split_view",
@@ -3057,6 +3058,12 @@
     "keep_live_clear_screen": {
       "field": "KEEP_LIVE_CLEAR_SCREEN",
       "key": "keep_live_clear_screen",
+      "type": "boolean",
+      "default": false
+    },
+    "keep_middle_video_to_screen": {
+      "field": "KEEP_MIDDLE_VIDEO_TO_SCREEN",
+      "key": "keep_middle_video_to_screen",
       "type": "boolean",
       "default": false
     },

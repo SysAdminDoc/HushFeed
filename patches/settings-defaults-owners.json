@@ -339,7 +339,8 @@
       "FIT_VIDEO_TO_SCREEN",
       "FILL_VIDEO_TO_SCREEN",
       "STRETCH_VIDEO_TO_SCREEN",
-      "BLEND_VIDEO_TO_SCREEN"
+      "BLEND_VIDEO_TO_SCREEN",
+      "KEEP_MIDDLE_VIDEO_TO_SCREEN"
     ],
     "Foldable split comment view": [
       "FOLDABLE_SPLIT_VIEW",

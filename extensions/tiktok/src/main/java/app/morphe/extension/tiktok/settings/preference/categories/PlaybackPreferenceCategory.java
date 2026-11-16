@@ -7,6 +7,7 @@
 package app.morphe.extension.tiktok.settings.preference.categories;
 
 import android.content.Context;
+import android.os.Build;
 import android.preference.PreferenceScreen;
 import android.text.InputType;
 import app.morphe.extension.shared.Utils;
@@ -330,18 +331,32 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                             + "Stretch, so neither is easy to spot. A video far from the screen's "
                             + "shape keeps TikTok's size.",
                     Settings.BLEND_VIDEO_TO_SCREEN);
+            // Drawn with a shader Android 13 brought in (#421). Below that it would only crop
+            // and stretch like the row above, so it isn't offered.
+            TogglePreference middle = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                    ? new TogglePreference(context, "Keep the middle unstretched",
+                    "Cover the whole window and keep the middle of the video at its own shape. "
+                            + "A little comes off the sides, and only the top and bottom are "
+                            + "stretched. A video far from the screen's shape keeps TikTok's size.",
+                    Settings.KEEP_MIDDLE_VIDEO_TO_SCREEN)
+                    : null;
             // One at a time: each sizes the video its own way, so turning one on turns the rest off.
-            TogglePreference[] rows = {fit, fill, stretch, blend};
+            TogglePreference[] rows = middle == null
+                    ? new TogglePreference[]{fit, fill, stretch, blend}
+                    : new TogglePreference[]{fit, fill, stretch, blend, middle};
             BooleanSetting[] switches = {Settings.FIT_VIDEO_TO_SCREEN, Settings.FILL_VIDEO_TO_SCREEN,
-                    Settings.STRETCH_VIDEO_TO_SCREEN, Settings.BLEND_VIDEO_TO_SCREEN};
+                    Settings.STRETCH_VIDEO_TO_SCREEN, Settings.BLEND_VIDEO_TO_SCREEN,
+                    Settings.KEEP_MIDDLE_VIDEO_TO_SCREEN};
             for (int index = 0; index < rows.length; index++) {
                 int chosen = index;
                 rows[index].setOnPreferenceChangeListener((preference, value) -> {
                     if (Boolean.TRUE.equals(value)) {
-                        for (int other = 0; other < rows.length; other++) {
+                        // Every other switch, the one not offered below Android 13 included, so
+                        // a backup that carried it can't take over once this goes off again.
+                        for (int other = 0; other < switches.length; other++) {
                             if (other == chosen) continue;
                             switches[other].save(false);
-                            rows[other].setChecked(false);
+                            if (other < rows.length) rows[other].setChecked(false);
                         }
                     }
                     return true;
@@ -351,6 +366,7 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
             addPreference(fill);
             addPreference(stretch);
             addPreference(blend);
+            if (middle != null) addPreference(middle);
         }
         if (SettingsStatus.feedMuteEnabled) {
             addPreference(new TogglePreference(context, "Mute feed videos",

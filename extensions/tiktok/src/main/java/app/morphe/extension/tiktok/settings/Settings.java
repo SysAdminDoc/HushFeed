@@ -338,6 +338,12 @@ public class Settings extends BaseSettings {
     /** Cover the window with half the crop of fill and half the stretch of stretch (#421). */
     public static final BooleanSetting BLEND_VIDEO_TO_SCREEN =
             new BooleanSetting("blend_video_to_screen", FALSE);
+    /**
+     * Cover the window with the middle of the video kept at its own shape (#421). TikTok picks
+     * the view it plays into as the player starts, so it takes a restart.
+     */
+    public static final BooleanSetting KEEP_MIDDLE_VIDEO_TO_SCREEN =
+            new BooleanSetting("keep_middle_video_to_screen", FALSE, true);
     public static final BooleanSetting UNCAP_REFRESH_RATE =
             new BooleanSetting("uncap_refresh_rate", FALSE);
     /**

@@ -10,11 +10,9 @@ package app.morphe.patches.tiktok.interaction.ghostmode
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.patch.classDefByOrNull
 import app.morphe.patcher.patch.mutableClassDefBy
-import app.morphe.patcher.fieldAccess
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
 import app.morphe.patcher.patch.PatchException
-import app.morphe.patches.tiktok.misc.optimizer.isBranchTarget
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.shared.compat.AppCompatibilities
@@ -35,8 +33,6 @@ import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
-import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
-import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 
@@ -95,50 +91,36 @@ internal object AwemeStatsSenderFingerprint : Fingerprint(
     custom = { method, _ -> AccessFlags.STATIC.isSet(method.accessFlags) },
 )
 
-internal const val STORY_INBOX_ITEM = "Lcom/ss/android/ugc/aweme/story/inbox/StoryInboxItem;"
+internal const val STORY_USER = "Lcom/ss/android/ugc/aweme/profile/model/User;"
+internal const val STORY_FILTER_INFO = "Lcom/ss/android/ugc/aweme/profile/model/UserFilterStoryInfo;"
+internal const val STORY_ALL_METADATA = "Lcom/ss/android/ugc/aweme/profile/model/UserAllStoryMetadata;"
 internal const val STORY_READS_EXTENSION = "Lapp/morphe/extension/tiktok/ghostmode/StoryReads;"
 
 /**
- * An item of the inbox's story row. Its constructor asks TikTok's story status store how the
- * person's ring should look and keeps the answer in storyStatusForInbox (#427). Real-named class
- * with one constructor.
+ * TikTok working out a person's story ring (#427). It takes the person's story status, or on
+ * another branch each story's viewed flag, and its answer goes into the status store the inbox,
+ * the profile and the feed all draw their rings from. R8 names it (47.7.3 LX/0D0D;->LJI); its
+ * log line and its three model parameters find it.
  */
-internal object StoryInboxItemFingerprint : Fingerprint(
-    definingClass = STORY_INBOX_ITEM,
-    name = "<init>",
-    returnType = "V",
-    filters = listOf(fieldAccess(opcode = Opcode.IPUT, definingClass = STORY_INBOX_ITEM, name = "storyStatusForInbox", type = "I")),
+internal object StoryStatusComputeFingerprint : Fingerprint(
+    parameters = listOf(STORY_USER, STORY_FILTER_INFO, STORY_ALL_METADATA),
+    strings = listOf("computeStoryStatusByMetaData, previousStatus: "),
 )
 
 /**
- * Hands the status the constructor just stored to [STORY_READS_EXTENSION], which marks the
- * stories Ghost mode kept unreported as watched, and stores its answer instead. It goes right
- * after TikTok's own store and uses that store's two registers, which a 4-bit iput already keeps
- * under v16.
+ * Hands the person and the stories TikTok leaves out of the ring to [STORY_READS_EXTENSION] at
+ * the top of the method, so the stories Ghost mode kept unreported are already marked watched
+ * when TikTok reads the status and the flags.
  */
 internal fun MutableMethod.keepWatchedStoriesWatched() {
-    val code = implementation?.instructions?.toList()
-        ?: throw PatchException("Ghost mode: the inbox story item has no constructor body.")
-    val store = code.indexOfFirst { instruction ->
-        instruction.opcode == Opcode.IPUT &&
-            ((instruction as ReferenceInstruction).reference as? FieldReference)?.let {
-                it.definingClass == STORY_INBOX_ITEM && it.name == "storyStatusForInbox"
-            } == true
+    if (parameterTypes.map { it.toString() }.take(2) != listOf(STORY_USER, STORY_FILTER_INFO)) {
+        throw PatchException("Ghost mode: the story ring no longer starts with the person and the left-out stories.")
     }
-    if (store < 0) throw PatchException("Ghost mode: the inbox story item no longer stores its status.")
-    if (isBranchTarget(store + 1)) {
-        throw PatchException("Ghost mode: something branches past the inbox story item's status.")
-    }
-    val put = code[store] as TwoRegisterInstruction
-    val status = put.registerA
-    val item = put.registerB
+    val user = if (AccessFlags.STATIC.isSet(accessFlags)) 0 else 1
     addInstructions(
-        store + 1,
-        """
-            invoke-static {v$item, v$status}, $STORY_READS_EXTENSION->inboxStatus(Ljava/lang/Object;I)I
-            move-result v$status
-            iput v$status, v$item, $STORY_INBOX_ITEM->storyStatusForInbox:I
-        """,
+        0,
+        "invoke-static/range {p$user .. p${user + 1}}, " +
+            "$STORY_READS_EXTENSION->markWatched(Ljava/lang/Object;Ljava/lang/Object;)V",
     )
 }
 
@@ -482,9 +464,9 @@ val ghostModePatch = bytecodePatch(
             "return-void",
         )
 
-        // A story whose report is held back above comes back unwatched from the server on the
-        // next launch. The inbox's story row keeps it watched (#427).
-        StoryInboxItemFingerprint.method.keepWatchedStoriesWatched()
+        // A story whose report is held back above comes back unwatched from the server once
+        // TikTok's own record of the play is gone. Its ring is worked out as watched (#427).
+        StoryStatusComputeFingerprint.method.keepWatchedStoriesWatched()
 
         // Watch LIVEs unseen (#420): a room enter, the request that puts you on the host's
         // viewer list, fails on the phone while it's held. Other patches hook this lancet too

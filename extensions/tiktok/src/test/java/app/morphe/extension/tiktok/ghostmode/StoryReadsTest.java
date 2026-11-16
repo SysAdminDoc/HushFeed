@@ -26,8 +26,8 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 /**
- * A story watched while Ghost mode held its view back stays watched in the inbox's story row
- * after a restart (#427), the way TikTok shows it right after it plays.
+ * A story watched while Ghost mode held its view back keeps a watched ring after a restart
+ * (#427), the way TikTok shows it right after it plays.
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 30)
@@ -53,46 +53,52 @@ public class StoryReadsTest {
         HookStatus.clear();
     }
 
-    @Test public void aStoryGhostModeHeldBackIsWatchedInTheInboxAfterARestart() {
+    @Test public void aStoryGhostModeHeldBackHasAWatchedRingAfterARestart() {
         assertTrue(GhostMode.shouldBlockStoryStats(story("7001")));
         restart();
 
-        Item item = item(lite(7001, false));
-        assertEquals(StoryReads.ALL_WATCHED, StoryReads.inboxStatus(item, StoryReads.UNWATCHED));
-        assertTrue(item.collection.author.metadata.storyLiteMetadata.get(0).viewed);
-        assertEquals(StoryReads.ALL_WATCHED, item.collection.author.storyStatus);
+        User user = user(lite(7001, false));
+        StoryReads.markWatched(user, null);
+        assertTrue(user.metadata.storyLiteMetadata.get(0).viewed);
+        assertEquals(StoryReads.ALL_WATCHED, user.storyStatus);
     }
 
     @Test public void aNewStoryBesideAWatchedOneKeepsTheRingLit() {
         GhostMode.shouldBlockStoryStats(story("7001"));
-        Item item = item(lite(7001, false), lite(7002, false));
+        User user = user(lite(7001, false), lite(7002, false));
 
-        assertEquals(StoryReads.UNWATCHED, StoryReads.inboxStatus(item, StoryReads.UNWATCHED));
-        assertTrue(item.collection.author.metadata.storyLiteMetadata.get(0).viewed);
-        assertFalse(item.collection.author.metadata.storyLiteMetadata.get(1).viewed);
-        assertEquals(StoryReads.UNWATCHED, item.collection.author.storyStatus);
+        StoryReads.markWatched(user, null);
+        assertTrue(user.metadata.storyLiteMetadata.get(0).viewed);
+        assertFalse(user.metadata.storyLiteMetadata.get(1).viewed);
+        assertEquals(StoryReads.UNWATCHED, user.storyStatus);
     }
 
     @Test public void aStoryTikTokLeavesOutOfTheRingDoesNotKeepItLit() {
         GhostMode.shouldBlockStoryStats(story("7001"));
-        Item item = item(lite(7001, false), lite(7003, false));
-        item.collection.userStory.info.filterStoryIds = new ArrayList<>(List.of(7003L));
+        User user = user(lite(7001, false), lite(7003, false));
+        FilterInfo filter = new FilterInfo();
+        filter.filterStoryIds = new ArrayList<>(List.of(7003L));
 
-        assertEquals(StoryReads.ALL_WATCHED, StoryReads.inboxStatus(item, StoryReads.UNWATCHED));
+        StoryReads.markWatched(user, filter);
+        assertEquals(StoryReads.ALL_WATCHED, user.storyStatus);
     }
 
     @Test public void withTheStorySwitchOffTheViewIsReportedAndNothingIsKept() {
         Settings.GHOST_HIDE_STORY_VIEWS.save(false);
         assertFalse(GhostMode.shouldBlockStoryStats(story("7001")));
 
-        assertEquals(StoryReads.UNWATCHED, StoryReads.inboxStatus(item(lite(7001, false)), StoryReads.UNWATCHED));
+        User user = user(lite(7001, false));
+        StoryReads.markWatched(user, null);
+        assertEquals(StoryReads.UNWATCHED, user.storyStatus);
     }
 
     @Test public void anotherAccountStillSeesTheStoryUnwatched() {
         GhostMode.shouldBlockStoryStats(story("7001"));
         SignedInUser.idForTests = "222";
 
-        assertEquals(StoryReads.UNWATCHED, StoryReads.inboxStatus(item(lite(7001, false)), StoryReads.UNWATCHED));
+        User user = user(lite(7001, false));
+        StoryReads.markWatched(user, null);
+        assertEquals(StoryReads.UNWATCHED, user.storyStatus);
     }
 
     @Test public void aStoryWatchedMoreThanTwoDaysAgoIsForgotten() {
@@ -100,23 +106,26 @@ public class StoryReadsTest {
         StoryReads.nowForTests = NOW + StoryReads.KEEP_MS + 1;
         restart();
 
-        assertEquals(StoryReads.UNWATCHED, StoryReads.inboxStatus(item(lite(7001, false)), StoryReads.UNWATCHED));
+        User user = user(lite(7001, false));
+        StoryReads.markWatched(user, null);
+        assertEquals(StoryReads.UNWATCHED, user.storyStatus);
     }
 
     @Test public void aPausedProcessShowsWhatTikTokSent() {
         GhostMode.shouldBlockStoryStats(story("7001"));
         PausedProcess.set(true);
-        Item item = item(lite(7001, false));
+        User user = user(lite(7001, false));
 
-        assertEquals(StoryReads.UNWATCHED, StoryReads.inboxStatus(item, StoryReads.UNWATCHED));
-        assertFalse(item.collection.author.metadata.storyLiteMetadata.get(0).viewed);
+        StoryReads.markWatched(user, null);
+        assertEquals(StoryReads.UNWATCHED, user.storyStatus);
+        assertFalse(user.metadata.storyLiteMetadata.get(0).viewed);
     }
 
-    @Test public void anItemItCannotReadKeepsTikToksStatus() {
+    @Test public void aPersonItCannotReadKeepsTikToksRing() {
         GhostMode.shouldBlockStoryStats(story("7001"));
 
-        assertEquals(StoryReads.UNWATCHED, StoryReads.inboxStatus(new Object(), StoryReads.UNWATCHED));
-        assertEquals(StoryReads.UNWATCHED, StoryReads.inboxStatus(null, StoryReads.UNWATCHED));
+        StoryReads.markWatched(new Object(), new Object());
+        StoryReads.markWatched(null, null);
     }
 
     /** A new process: the stories come back from the saved file. */
@@ -139,33 +148,20 @@ public class StoryReadsTest {
         return lite;
     }
 
-    private static Item item(Lite... stories) {
-        Item item = new Item();
-        item.collection.author.metadata.storyLiteMetadata = new ArrayList<>(Arrays.asList(stories));
-        return item;
+    private static User user(Lite... stories) {
+        User user = new User();
+        user.metadata.storyLiteMetadata = new ArrayList<>(Arrays.asList(stories));
+        return user;
     }
 
-    /** Stand-ins with the names TikTok's StoryInboxItem, Aweme, User and story models use. */
-    public static final class Item {
-        final Collection collection = new Collection();
-
-        public Collection getStoryCollection() { return collection; }
-    }
-
-    public static final class Collection {
-        final Author author = new Author();
-        final UserStory userStory = new UserStory();
-
-        public Author getAuthor() { return author; }
-
-        public UserStory getUserStory() { return userStory; }
-    }
-
-    public static final class Author {
+    /** Stand-ins with the names TikTok's Aweme, User and story models use. */
+    public static final class User {
         final AllMetadata metadata = new AllMetadata();
         int storyStatus = StoryReads.UNWATCHED;
 
         public AllMetadata getAllStoryMetadata() { return metadata; }
+
+        public int getStoryStatus() { return storyStatus; }
 
         public void setStoryStatus(int status) { storyStatus = status; }
     }
@@ -179,12 +175,6 @@ public class StoryReadsTest {
         public boolean viewed;
 
         public void setViewed(boolean viewed) { this.viewed = viewed; }
-    }
-
-    public static final class UserStory {
-        final FilterInfo info = new FilterInfo();
-
-        public FilterInfo getUserFilterStoryInfo() { return info; }
     }
 
     public static final class FilterInfo {

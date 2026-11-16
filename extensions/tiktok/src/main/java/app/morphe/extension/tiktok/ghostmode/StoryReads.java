@@ -21,18 +21,18 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * The stories you watched while Ghost mode held the view back, so the inbox's story row still
- * shows them as watched after a restart (#427).
+ * The stories you watched while Ghost mode held the view back, so their rings stay watched after
+ * a restart (#427).
  *
  * <p>TikTok marks a story watched on the phone as it plays, and the server learns it from the
- * view report. Ghost mode stops that report, so the next launch brings the story back from the
- * server unwatched and its ring lights up again. {@link #remember} is told each story whose report
- * Ghost mode held back, and {@link #inboxStatus} marks those stories watched on each item the
- * inbox's story row builds, the way TikTok does once a story plays.
+ * view report. Ghost mode stops that report, so once TikTok's own record of the play is gone the
+ * server's copy brings the story back unwatched and its ring lights up again. {@link #remember} is
+ * told each story whose report Ghost mode held back, and {@link #markWatched} marks those stories
+ * watched on each person TikTok works a ring out for, before it does, so the inbox, the profile
+ * and the feed all draw the ring TikTok would after a reported view.
  *
- * <p>The profile page loads its own copy of the person, so its ring keeps what the server knows,
- * which is how you can still see that the view went unreported. Stories last a day, so a story is
- * kept for two and then forgotten. Each is kept under the account that watched it.
+ * <p>Stories last a day, so a story is kept for two and then forgotten. Each is kept under the
+ * account that watched it.
  */
 @SuppressWarnings("unused")
 public final class StoryReads {
@@ -73,22 +73,21 @@ public final class StoryReads {
     }
 
     /**
-     * Called as the inbox's story row builds an item, with the status TikTok gave it. Marks the
-     * person's remembered stories watched and answers the status to keep: watched when nothing
-     * else is left, otherwise TikTok's own. Never throws.
+     * Called as TikTok starts working out a person's story ring, with the person (a User) and the
+     * stories it leaves out of the ring (a UserFilterStoryInfo, or null). Marks the person's
+     * remembered stories watched, and the person's whole ring watched when nothing else is left
+     * to watch, so the status TikTok works out, caches and draws is the watched one. Never throws.
      */
-    public static int inboxStatus(Object item, int status) {
+    public static void markWatched(Object user, Object filter) {
         try {
-            if (item == null || HushfeedPause.isPaused()) return status;
+            if (user == null || HushfeedPause.isPaused()) return;
             String account = SignedInUser.id();
-            if (account == null) return status;
+            if (account == null) return;
             load();
-            if (watched.isEmpty()) return status;
-            Object story = call(item, "getStoryCollection");
-            Object author = call(story, "getAuthor");
-            Object metadata = read(call(author, "getAllStoryMetadata"), "storyLiteMetadata");
-            if (!(metadata instanceof List)) return status;
-            Set<Long> hidden = hiddenStories(story);
+            if (watched.isEmpty()) return;
+            Object metadata = read(call(user, "getAllStoryMetadata"), "storyLiteMetadata");
+            if (!(metadata instanceof List)) return;
+            Set<Long> hidden = hiddenStories(filter);
             int marked = 0;
             int left = 0;
             for (Object entry : (List<?>) metadata) {
@@ -102,23 +101,21 @@ public final class StoryReads {
                     left++;
                 }
             }
-            if (marked == 0 || left > 0) return status;
-            author.getClass().getMethod("setStoryStatus", int.class).invoke(author, ALL_WATCHED);
-            int was = status;
-            Logger.printInfo(() -> "Kept watched stories watched; status " + was);
-            return status == UNWATCHED ? ALL_WATCHED : status;
+            if (marked == 0 || left > 0) return;
+            Object was = call(user, "getStoryStatus");
+            if (!Integer.valueOf(UNWATCHED).equals(was)) return;
+            user.getClass().getMethod("setStoryStatus", int.class).invoke(user, ALL_WATCHED);
+            Logger.printInfo(() -> "Kept watched stories watched");
         } catch (Throwable unreadable) {
-            // The row shows what TikTok sent.
-            Logger.printDebug(() -> "Could not mark watched stories in the inbox: " + unreadable);
-            return status;
+            // The ring shows what TikTok sent.
+            Logger.printDebug(() -> "Could not mark watched stories: " + unreadable);
         }
     }
 
     /** The stories TikTok leaves out of a ring (filterStoryIds), which never count as unwatched. */
-    private static Set<Long> hiddenStories(Object story) {
+    private static Set<Long> hiddenStories(Object filter) {
         try {
-            Object info = call(call(story, "getUserStory"), "getUserFilterStoryInfo");
-            Object ids = read(info, "filterStoryIds");
+            Object ids = read(filter, "filterStoryIds");
             if (!(ids instanceof List)) return Collections.emptySet();
             Set<Long> hidden = new HashSet<>();
             for (Object id : (List<?>) ids) {

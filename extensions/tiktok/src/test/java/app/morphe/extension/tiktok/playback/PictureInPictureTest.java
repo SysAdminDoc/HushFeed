@@ -25,10 +25,14 @@ import app.morphe.extension.shared.settings.Setting;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
+import app.morphe.extension.tiktok.wellbeing.SessionPlaybackHold;
 
 import com.ss.android.ugc.aweme.common.widget.VerticalViewPager;
+import com.ss.android.ugc.aweme.feed.model.Aweme;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Proxy;
+import java.time.Duration;
 import java.util.List;
 
 import org.junit.After;
@@ -250,6 +254,99 @@ public class PictureInPictureTest {
         pager.scrollState = 2;
         assertFalse("mid-slide, a second move would skip a video", PictureInPicture.canMove(pager, 1));
         assertFalse(PictureInPicture.canMove(null, 1));
+    }
+
+    /**
+     * #413: after Next the feed's player moved to the new video, but play and pause still named
+     * the one it left, so the window kept a still frame with no sound. And a LIVE preview never
+     * plays in this window, so the arrow steps over it to the next video.
+     */
+    @Test public void nextPlaysTheVideoThePlayerMovedToAndStepsOverALive() throws Exception {
+        Activity activity = owner.get();
+        FrameLayout content = new FrameLayout(activity);
+        VerticalViewPager pager = new VerticalViewPager(activity);
+        FrameLayout pagerCell = new FrameLayout(activity);
+        pagerCell.addView(new TextureView(activity), new FrameLayout.LayoutParams(400, 700));
+        pager.addView(pagerCell, new FrameLayout.LayoutParams(400, 700));
+        content.addView(pager, new FrameLayout.LayoutParams(400, 700));
+        activity.setContentView(content);
+        decor.measure(View.MeasureSpec.makeMeasureSpec(400, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(800, View.MeasureSpec.EXACTLY));
+        decor.layout(0, 0, 400, 800);
+
+        Player player = new Player(pager, new Clip("a", 0), new Clip("live", 7), new Clip("c", 0));
+        pager.current = 0;
+        Class<?> controls = Class.forName(SessionPlaybackHold.class.getName() + "$NativeControls");
+        Object fake = Proxy.newProxyInstance(controls.getClassLoader(), new Class<?>[] {controls},
+                (proxy, method, args) -> {
+                    switch (method.getName()) {
+                        case "currentAweme": return ((Player) args[0]).clips[pager.current];
+                        case "resume": ((Manager) args[0]).resumes++; ((Manager) args[0]).playing = true; return null;
+                        case "pause": ((Manager) args[0]).playing = false; return null;
+                        case "hashCode": return System.identityHashCode(proxy);
+                        case "equals": return proxy == args[0];
+                        default: return "fake controls";
+                    }
+                });
+        try {
+            ReflectionHelpers.setStaticField(SessionPlaybackHold.class, "nativeForTests", fake);
+            SessionPlaybackHold.onPlayerProgress(player, "a");
+            ReflectionHelpers.setStaticField(PictureInPicture.class, "opened", new WeakReference<>(activity));
+            activity.enterPictureInPictureMode(new PictureInPictureParams.Builder().build());
+            // TikTok doesn't start the next video in the window by itself.
+            player.manager.playing = false;
+
+            PictureInPicture.onMove(1);
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(3));
+
+            assertEquals("stepped over the LIVE", 2, pager.current);
+            assertEquals(2, pager.advances);
+            assertEquals("c", SessionPlaybackHold.currentAwemeId());
+            assertEquals("the new video was started once", 1, player.manager.resumes);
+        } finally {
+            ReflectionHelpers.setStaticField(PictureInPicture.class, "opened", new WeakReference<Activity>(null));
+            ReflectionHelpers.setStaticField(SessionPlaybackHold.class, "current", null);
+            ReflectionHelpers.setStaticField(SessionPlaybackHold.class, "nativeForTests", null);
+        }
+    }
+
+    /** A feed post; a LIVE preview carries a room id. */
+    public static final class Clip extends Aweme {
+        private final String aid;
+        private final long liveId;
+
+        Clip(String aid, long liveId) {
+            this.aid = aid;
+            this.liveId = liveId;
+        }
+
+        @Override public String getAid() { return aid; }
+        @Override public long getLiveId() { return liveId; }
+        @Override public boolean isLiveReplay() { return false; }
+        @Override public String getLiveType() { return null; }
+    }
+
+    public static final class Manager {
+        boolean playing = true;
+        int resumes;
+
+        public boolean isPlaying() { return playing; }
+        public boolean isPaused() { return !playing; }
+    }
+
+    /** TikTok's one feed player, whose video is whichever cell the pager is on. */
+    public static final class Player {
+        final VerticalViewPager pager;
+        final Clip[] clips;
+        final Manager manager = new Manager();
+
+        Player(VerticalViewPager pager, Clip... clips) {
+            this.pager = pager;
+            this.clips = clips;
+            pager.hasNext = true;
+        }
+
+        public Manager getPlayerManager() { return manager; }
     }
 
     @Test public void offByDefault() {

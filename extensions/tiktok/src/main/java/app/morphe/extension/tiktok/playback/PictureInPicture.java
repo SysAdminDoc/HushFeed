@@ -31,12 +31,15 @@ import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
+import app.morphe.extension.tiktok.feedfilter.LiveFilter;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 import app.morphe.extension.tiktok.wellbeing.FeedLock;
 import app.morphe.extension.tiktok.wellbeing.SessionBudget;
 import app.morphe.extension.tiktok.wellbeing.SessionPlaybackHold;
+
+import com.ss.android.ugc.aweme.feed.model.Aweme;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -87,6 +90,12 @@ public final class PictureInPicture {
     /** How often a move's slide is checked for having settled, and how many times at most. */
     private static final long SETTLE_CHECK_MS = 300;
     private static final int SETTLE_CHECKS = 8;
+
+    /**
+     * How many LIVE previews in a row an arrow steps over. A LIVE plays in TikTok's own LIVE
+     * window, never this one, so landing on one left the window black (#413).
+     */
+    static final int LIVE_SKIPS = 3;
 
     /**
      * Carried by the window's own button. Before Android 13 a receiver registered at run time
@@ -366,28 +375,47 @@ public final class PictureInPicture {
         Object position = Reflect.invoke(pager, "getCurrentItem");
         if (!(position instanceof Integer) || (Integer) position < 0) return;
         bringBack();
-        try {
-            // The native pager clamps to its adapter and runs its own selection callbacks.
-            pager.getClass().getMethod("setCurrentItem", int.class).invoke(pager, (Integer) position + direction);
-        } catch (ReflectiveOperationException | RuntimeException failure) {
-            Logger.printException(() -> "Picture-in-picture couldn't move the pager", failure);
+        if (!turn(pager, (Integer) position + direction)) {
             keepAsideWhileUp(activity.getWindow().getDecorView());
             return;
         }
         readerPaused = false;
-        settle(new WeakReference<>(activity), SETTLE_CHECKS);
+        settle(new WeakReference<>(activity), SETTLE_CHECKS, direction, LIVE_SKIPS);
     }
 
+    /** Sets TikTok's pager to a page. The native pager clamps to its adapter and runs its own selection callbacks. */
+    private static boolean turn(View pager, int page) {
+        try {
+            pager.getClass().getMethod("setCurrentItem", int.class).invoke(pager, page);
+            return true;
+        } catch (ReflectiveOperationException | RuntimeException failure) {
+            Logger.printException(() -> "Picture-in-picture couldn't move the pager", failure);
+            return false;
+        }
+    }
+
+    /**
+     * Once the pager stops, the player's new video becomes the one the window plays, a LIVE is
+     * stepped over the same way, and the video is kept alone and started again.
+     */
     @RequiresApi(26)
-    private static void settle(WeakReference<Activity> owner, int checksLeft) {
+    private static void settle(WeakReference<Activity> owner, int checksLeft, int direction, int skipsLeft) {
         Utils.runOnMainThreadDelayed(() -> {
             Activity activity = owner.get();
             if (activity == null || opened.get() != activity || !activity.isInPictureInPictureMode()) return;
             View decor = activity.getWindow().getDecorView();
             View pager = pagerOf(videoView(decor));
             if (pager != null && !idle(pager) && checksLeft > 1) {
-                settle(owner, checksLeft - 1);
+                settle(owner, checksLeft - 1, direction, skipsLeft);
                 return;
+            }
+            Object post = SessionPlaybackHold.followCurrentPlayer();
+            if (skipsLeft > 0 && isLive(post) && canMove(pager, direction)) {
+                Object position = Reflect.invoke(pager, "getCurrentItem");
+                if (position instanceof Integer && turn(pager, (Integer) position + direction)) {
+                    settle(owner, SETTLE_CHECKS, direction, skipsLeft - 1);
+                    return;
+                }
             }
             keepAsideWhileUp(decor);
             activity.setPictureInPictureParams(params(activity, videoView(decor), true));
@@ -420,6 +448,15 @@ public final class PictureInPicture {
 
     private static boolean idle(View pager) {
         return Integer.valueOf(0).equals(Reflect.invoke(pager, "getScrollState"));
+    }
+
+    private static boolean isLive(Object post) {
+        if (!(post instanceof Aweme)) return false;
+        try {
+            return LiveFilter.isLive((Aweme) post);
+        } catch (RuntimeException unreadable) {
+            return false;
+        }
     }
 
     /**

@@ -454,6 +454,30 @@ public final class SessionPlaybackHold {
         return control(Reflect.invoke(controller, "getPlayerManager"), !play);
     }
 
+    /**
+     * Makes the video the player of the last reported one has on screen now the current one, and
+     * returns it, or null when there's no such player or post. The feed's player moves to the next
+     * video before that video reports anything, and in a picture-in-picture window it doesn't
+     * report at all until it plays, so its play and pause went to the video it left (#413).
+     */
+    public static Object followCurrentPlayer() {
+        synchronized (OWNER_LOCK) {
+            Target target = current;
+            Object controller = target == null ? null : target.controller.get();
+            if (controller == null) return null;
+            Object aweme;
+            try {
+                aweme = currentAweme(controller);
+            } catch (RuntimeException notAController) {
+                return null;
+            }
+            Object aid = Reflect.invoke(aweme, "getAid");
+            if (!(aid instanceof String) || ((String) aid).isEmpty()) return null;
+            if (!aid.equals(target.awemeId)) current = new Target(controller, (String) aid);
+            return aweme;
+        }
+    }
+
     /** The post the player of the last reported video has on screen, or null. */
     public static Object currentPlayingAweme() {
         Target target = current;

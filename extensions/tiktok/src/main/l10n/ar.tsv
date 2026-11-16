@@ -3111,3 +3111,11 @@ Videos posted from %1$s	الفيديوهات منشورة من %1$s
 Long-press Profile for Activity center	اضغط باستمرار على «الملف الشخصي» لمركز النشاط
 # context: Summary under that switch; Long-press Profile for Watch history is the row just above it
 Press and hold the Profile tab to open TikTok's Activity center. A tap on Profile works as before. While Long-press Profile for Watch history is on, that one takes the press.	اضغط باستمرار على تبويب «الملف الشخصي» لفتح مركز النشاط في TikTok. النقر على «الملف الشخصي» يعمل كما كان. أثناء تفعيل اضغط باستمرار على «الملف الشخصي» لسجل المشاهدة، تتولى تلك الميزة الضغطة.
+Share the video after a save	مشاركة الفيديو بعد حفظه
+# context: Summary under Share the video after a save, a switch in Downloads
+Opens Android's share sheet with the file as soon as a video is saved, video stories included, so you can send it straight to WhatsApp, Telegram or any other app. Picked videos saved together get the usual notice.	يفتح نافذة المشاركة في أندرويد مع الملف فور حفظ الفيديو، بما في ذلك قصص الفيديو، لتتمكن من إرساله مباشرة إلى واتساب أو تيليجرام أو أي تطبيق آخر. الفيديوهات المختارة التي تُحفظ معًا تحصل على الإشعار المعتاد.
+Caption spot in Clear display	موضع التسميات التوضيحية في عرض نظيف
+# context: A choice for Caption spot in Clear display: the kept caption stays where TikTok draws its own
+Where TikTok shows it	حيث يعرضها TikTok
+# context: The other choice for Caption spot in Clear display: the kept caption sits lower on the screen
+Lower, near the bottom	أدنى، قرب الأسفل

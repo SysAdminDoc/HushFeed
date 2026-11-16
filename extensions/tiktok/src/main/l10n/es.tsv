@@ -2864,3 +2864,11 @@ Videos posted from %1$s	Videos publicados desde %1$s
 Long-press Profile for Activity center	Mantener pulsado Perfil para abrir el Centro de actividad
 # context: Summary under that switch; Long-press Profile for Watch history is the row just above it
 Press and hold the Profile tab to open TikTok's Activity center. A tap on Profile works as before. While Long-press Profile for Watch history is on, that one takes the press.	Mantén pulsada la pestaña Perfil para abrir el Centro de actividad de TikTok. Tocar Perfil funciona como antes. Mientras Mantener pulsado Perfil para abrir el historial de visualización esté activado, ocupa ese gesto.
+Share the video after a save	Compartir el vídeo después de guardarlo
+# context: Summary under Share the video after a save, a switch in Downloads
+Opens Android's share sheet with the file as soon as a video is saved, video stories included, so you can send it straight to WhatsApp, Telegram or any other app. Picked videos saved together get the usual notice.	Abre el panel de compartir de Android con el archivo en cuanto se guarda un vídeo, historias de vídeo incluidas, para que puedas enviarlo directamente a WhatsApp, Telegram o cualquier otra app. Los vídeos elegidos que se guardan juntos reciben el aviso habitual.
+Caption spot in Clear display	Posición de los subtítulos con los controles ocultos
+# context: A choice for Caption spot in Clear display: the kept caption stays where TikTok draws its own
+Where TikTok shows it	Donde TikTok los muestra
+# context: The other choice for Caption spot in Clear display: the kept caption sits lower on the screen
+Lower, near the bottom	Más abajo, cerca del borde inferior

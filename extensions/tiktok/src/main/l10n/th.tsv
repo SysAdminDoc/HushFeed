@@ -2867,3 +2867,11 @@ Videos posted from %1$s	วิดีโอโพสต์จาก %1$s
 Long-press Profile for Activity center	กดค้างที่โปรไฟล์เพื่อเปิดศูนย์กิจกรรม
 # context: Summary under that switch; Long-press Profile for Watch history is the row just above it
 Press and hold the Profile tab to open TikTok's Activity center. A tap on Profile works as before. While Long-press Profile for Watch history is on, that one takes the press.	กดแท็บโปรไฟล์ค้างไว้เพื่อเปิดศูนย์กิจกรรมของ TikTok การแตะที่โปรไฟล์จะยังคงทำงานตามปกติ ขณะที่เปิดกดค้างที่โปรไฟล์เพื่อเปิดประวัติการดูอยู่ การตั้งค่านั้นจะรับการกดนี้แทน
+Share the video after a save	แชร์วิดีโอหลังบันทึก
+# context: Summary under Share the video after a save, a switch in Downloads
+Opens Android's share sheet with the file as soon as a video is saved, video stories included, so you can send it straight to WhatsApp, Telegram or any other app. Picked videos saved together get the usual notice.	เปิดหน้าต่างแชร์ของ Android พร้อมไฟล์ทันทีที่บันทึกวิดีโอ รวมถึงสตอรี่วิดีโอ เพื่อให้คุณส่งต่อไปยัง WhatsApp, Telegram หรือแอปอื่นได้ทันที วิดีโอที่เลือกซึ่งบันทึกพร้อมกันจะได้รับการแจ้งเตือนตามปกติ
+Caption spot in Clear display	ตำแหน่งคำบรรยายในจอแสดงผลที่ชัดเจน
+# context: A choice for Caption spot in Clear display: the kept caption stays where TikTok draws its own
+Where TikTok shows it	ตำแหน่งที่ TikTok แสดง
+# context: The other choice for Caption spot in Clear display: the kept caption sits lower on the screen
+Lower, near the bottom	ต่ำลง ใกล้ด้านล่าง

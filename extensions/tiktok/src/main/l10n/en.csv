@@ -394,6 +394,7 @@ Caption height,Caption height
 Caption height in Clear display,Caption height in Clear display
 Caption height in landscape,Caption height in landscape
 Caption languages,Caption languages
+Caption spot in Clear display,Caption spot in Clear display
 Caption text size,Caption text size
 "Caption, creator or sound","Caption, creator or sound"
 Captions,Captions
@@ -1274,6 +1275,7 @@ Longest first,Longest first
 Look up a commenter's country,Look up a commenter's country
 Looking for apps,Looking for apps
 Loop a story,Loop a story
+"Lower, near the bottom","Lower, near the bottom"
 Lowest,Lowest
 "MP3 (.mp3), plays anywhere","MP3 (.mp3), plays anywhere"
 MP3 didn't work. Saving TikTok's own file.,MP3 didn't work. Saving TikTok's own file.
@@ -1503,6 +1505,7 @@ Open the search page,Open the search page
 Open the story again and try once more,Open the story again and try once more
 "Open your profile once, then return here to choose its shortcuts.","Open your profile once, then return here to choose its shortcuts."
 Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound while a video plays and gives it back when you leave the video.,Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound while a video plays and gives it back when you leave the video.
+"Opens Android's share sheet with the file as soon as a video is saved, video stories included, so you can send it straight to WhatsApp, Telegram or any other app. Picked videos saved together get the usual notice.","Opens Android's share sheet with the file as soon as a video is saved, video stories included, so you can send it straight to WhatsApp, Telegram or any other app. Picked videos saved together get the usual notice."
 "Opens TikTok's own profile background editor in Edit profile, and shows the backgrounds other profiles have set. TikTok's servers may still refuse to save one for an account TikTok hasn't offered it to yet.","Opens TikTok's own profile background editor in Edit profile, and shows the backgrounds other profiles have set. TikTok's servers may still refuse to save one for an account TikTok hasn't offered it to yet."
 Opens a GitHub report with your versions and settings filled in. Add what happened.,Opens a GitHub report with your versions and settings filled in. Add what happened.
 Opens github.com in your browser,Opens github.com in your browser
@@ -1960,6 +1963,7 @@ Shake to report,Shake to report
 Share,Share
 Share profile,Share profile
 Share sheet,Share sheet
+Share the video after a save,Share the video after a save
 Shares range,Shares range
 Shop,Shop
 Shop order updates and coupon messages no longer take up rows in the Inbox. Your orders are unchanged.,Shop order updates and coupon messages no longer take up rows in the Inbox. Your orders are unchanged.
@@ -2655,6 +2659,7 @@ What's new on TikTok,What's new on TikTok
 When to send,When to send
 "When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with buttons to pause it and to go to the previous or next video. Works in the feed, in LIVEs and on videos you open from a profile, search or a sound. Needs Android 8 or later.","When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with buttons to pause it and to go to the previous or next video. Works in the feed, in LIVEs and on videos you open from a profile, search or a sound. Needs Android 8 or later."
 "When you open TikTok from its icon, the first video in the feed waits for one tap before it plays. A link, a notification or a shortcut opens as usual.","When you open TikTok from its icon, the first video in the feed waits for one tap before it plays. A link, a notification or a shortcut opens as usual."
+Where TikTok shows it,Where TikTok shows it
 Where the time goes,Where the time goes
 "While Clear display is on, also hide the progress bar, the close button and the pause and speed buttons at the bottom. You can still drag along the bottom edge to move through the video. To leave Clear display, press and hold the video and tap Restore display, or pinch the screen.","While Clear display is on, also hide the progress bar, the close button and the pause and speed buttons at the bottom. You can still drag along the bottom edge to move through the video. To leave Clear display, press and hold the video and tap Restore display, or pinch the screen."
 "While diagnostic logging is on, a message names the part of Hushfeed that failed. Off keeps failures in the report only.","While diagnostic logging is on, a message names the part of Hushfeed that failed. Off keeps failures in the report only."

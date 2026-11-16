@@ -2864,3 +2864,11 @@ Videos posted from %1$s	Videoların paylaşıldığı ölkə: %1$s
 Long-press Profile for Activity center	Fəaliyyət mərkəzi üçün Profili uzun basın
 # context: Summary under that switch; Long-press Profile for Watch history is the row just above it
 Press and hold the Profile tab to open TikTok's Activity center. A tap on Profile works as before. While Long-press Profile for Watch history is on, that one takes the press.	TikTok-un Fəaliyyət mərkəzini açmaq üçün Profil nişanını basıb saxlayın. Profilə toxunmaq əvvəlki kimi işləyir. Baxış tarixçəsi üçün Profili uzun basın açıq olduqda həmin basmanı o götürür.
+Share the video after a save	Yadda saxladıqdan sonra videonu paylaşın
+# context: Summary under Share the video after a save, a switch in Downloads
+Opens Android's share sheet with the file as soon as a video is saved, video stories included, so you can send it straight to WhatsApp, Telegram or any other app. Picked videos saved together get the usual notice.	Video yadda saxlanılan kimi Android-in paylaşma vərəqini faylla açır, video hekayələr də daxil olmaqla, beləliklə onu birbaşa WhatsApp, Telegram və ya istənilən başqa tətbiqə göndərə bilərsiniz. Birlikdə yadda saxlanılan seçilmiş videolar adi bildirişi alır.
+Caption spot in Clear display	Təmiz ekranda başlıq yeri
+# context: A choice for Caption spot in Clear display: the kept caption stays where TikTok draws its own
+Where TikTok shows it	TikTok-un göstərdiyi yerdə
+# context: The other choice for Caption spot in Clear display: the kept caption sits lower on the screen
+Lower, near the bottom	Daha aşağıda, alta yaxın

@@ -2724,3 +2724,8 @@ Account country,账号国家/地区
 Videos posted from %1$s,视频发布地：%1$s
 Long-press Profile for Activity center,长按“个人主页”打开活动中心
 "Press and hold the Profile tab to open TikTok's Activity center. A tap on Profile works as before. While Long-press Profile for Watch history is on, that one takes the press.",按住“个人主页”选项卡可打开 TikTok 的活动中心。点击“个人主页”仍像以前一样工作。开启长按“个人主页”打开观看历史时，由它接管该操作.
+Share the video after a save,保存后分享视频
+"Opens Android's share sheet with the file as soon as a video is saved, video stories included, so you can send it straight to WhatsApp, Telegram or any other app. Picked videos saved together get the usual notice.",视频一保存（包括视频快拍），就用该文件打开 Android 的分享面板，方便你直接发送到 WhatsApp、Telegram 或其他任何应用。一起保存的所选视频仍显示平常的提示.
+Caption spot in Clear display,清晰显示时的字幕位置
+Where TikTok shows it,TikTok 显示的位置
+"Lower, near the bottom",更低，靠近底部

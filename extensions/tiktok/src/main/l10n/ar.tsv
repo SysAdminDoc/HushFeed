@@ -3108,3 +3108,6 @@ Account country on profiles	بلد الحساب في الملفات الشخصي
 A profile's share sheet gets an Account country button. It asks TikTok where that account is based, or where its latest videos were posted from.	تحصل ورقة المشاركة في الملف الشخصي على زر بلد الحساب. يسأل TikTok عن مكان هذا الحساب، أو من أين نُشرت أحدث فيديوهاته.
 Account country	بلد الحساب
 Videos posted from %1$s	الفيديوهات منشورة من %1$s
+Long-press Profile for Activity center	اضغط باستمرار على «الملف الشخصي» لمركز النشاط
+# context: Summary under that switch; Long-press Profile for Watch history is the row just above it
+Press and hold the Profile tab to open TikTok's Activity center. A tap on Profile works as before. While Long-press Profile for Watch history is on, that one takes the press.	اضغط باستمرار على تبويب «الملف الشخصي» لفتح مركز النشاط في TikTok. النقر على «الملف الشخصي» يعمل كما كان. أثناء تفعيل اضغط باستمرار على «الملف الشخصي» لسجل المشاهدة، تتولى تلك الميزة الضغطة.

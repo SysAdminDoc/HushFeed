@@ -2861,3 +2861,6 @@ Account country on profiles	País de la cuenta en los perfiles
 A profile's share sheet gets an Account country button. It asks TikTok where that account is based, or where its latest videos were posted from.	El menú para compartir de un perfil tiene un botón País de la cuenta. Le pregunta a TikTok dónde está esa cuenta, o desde dónde se publicaron sus últimos videos.
 Account country	País de la cuenta
 Videos posted from %1$s	Videos publicados desde %1$s
+Long-press Profile for Activity center	Mantener pulsado Perfil para abrir el Centro de actividad
+# context: Summary under that switch; Long-press Profile for Watch history is the row just above it
+Press and hold the Profile tab to open TikTok's Activity center. A tap on Profile works as before. While Long-press Profile for Watch history is on, that one takes the press.	Mantén pulsada la pestaña Perfil para abrir el Centro de actividad de TikTok. Tocar Perfil funciona como antes. Mientras Mantener pulsado Perfil para abrir el historial de visualización esté activado, ocupa ese gesto.

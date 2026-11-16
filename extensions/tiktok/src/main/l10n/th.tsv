@@ -2864,3 +2864,6 @@ Account country on profiles	ประเทศของบัญชีบนโ�
 A profile's share sheet gets an Account country button. It asks TikTok where that account is based, or where its latest videos were posted from.	แผงแชร์ของโปรไฟล์จะมีปุ่ม "ประเทศของบัญชี" ซึ่งจะถาม TikTok ว่าบัญชีนั้นอยู่ที่ไหน หรือวิดีโอล่าสุดของบัญชีนั้นโพสต์จากที่ไหน
 Account country	ประเทศของบัญชี
 Videos posted from %1$s	วิดีโอโพสต์จาก %1$s
+Long-press Profile for Activity center	กดค้างที่โปรไฟล์เพื่อเปิดศูนย์กิจกรรม
+# context: Summary under that switch; Long-press Profile for Watch history is the row just above it
+Press and hold the Profile tab to open TikTok's Activity center. A tap on Profile works as before. While Long-press Profile for Watch history is on, that one takes the press.	กดแท็บโปรไฟล์ค้างไว้เพื่อเปิดศูนย์กิจกรรมของ TikTok การแตะที่โปรไฟล์จะยังคงทำงานตามปกติ ขณะที่เปิดกดค้างที่โปรไฟล์เพื่อเปิดประวัติการดูอยู่ การตั้งค่านั้นจะรับการกดนี้แทน

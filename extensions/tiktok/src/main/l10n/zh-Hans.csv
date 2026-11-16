@@ -2722,3 +2722,5 @@ Account country on profiles,个人资料上的账号国家/地区
 "A profile's share sheet gets an Account country button. It asks TikTok where that account is based, or where its latest videos were posted from.",个人资料的分享面板会多一个“账号国家/地区”按钮。它会向 TikTok 询问该账号所在的位置，或其最新视频的发布地.
 Account country,账号国家/地区
 Videos posted from %1$s,视频发布地：%1$s
+Long-press Profile for Activity center,长按“个人主页”打开活动中心
+"Press and hold the Profile tab to open TikTok's Activity center. A tap on Profile works as before. While Long-press Profile for Watch history is on, that one takes the press.",按住“个人主页”选项卡可打开 TikTok 的活动中心。点击“个人主页”仍像以前一样工作。开启长按“个人主页”打开观看历史时，由它接管该操作.

@@ -2861,3 +2861,6 @@ Account country on profiles	Profillerde hesabın ülkesi
 A profile's share sheet gets an Account country button. It asks TikTok where that account is based, or where its latest videos were posted from.	Bir profilin paylaşım sayfasına Hesabın ülkesi düğmesi eklenir. TikTok'a bu hesabın nerede olduğunu ya da son videolarının nereden paylaşıldığını sorar.
 Account country	Hesabın ülkesi
 Videos posted from %1$s	Videoların paylaşıldığı ülke: %1$s
+Long-press Profile for Activity center	Etkinlik merkezi için Profil'e basılı tut
+# context: Summary under that switch; Long-press Profile for Watch history is the row just above it
+Press and hold the Profile tab to open TikTok's Activity center. A tap on Profile works as before. While Long-press Profile for Watch history is on, that one takes the press.	TikTok'un Etkinlik merkezini açmak için Profil sekmesine basılı tut. Profil'e dokunmak eskisi gibi çalışır. İzleme geçmişi için Profil'e basılı tut açıkken o hareketi o alır.

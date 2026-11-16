@@ -39,7 +39,8 @@
       "download_video_path",
       "download_photo_path",
       "download_video_filename_template",
-      "download_photo_filename_template"
+      "download_photo_filename_template",
+      "share_after_save"
     ],
     "Allow Duet and Stitch": [
       "allow_duet_and_stitch",
@@ -318,6 +319,7 @@
       "keep_for_you_on_pull_down",
       "home_tab_opens_settings",
       "profile_tab_opens_watch_history",
+      "profile_tab_opens_activity_center",
       "profile_tab_switches_accounts",
       "inbox_tab_flips_read_receipts",
       "search_instead_of_home",
@@ -812,6 +814,7 @@
       "caption_background",
       "keep_captions_clear_display",
       "caption_clear_display_offset",
+      "caption_clear_display_spot",
       "keep_captions_available"
     ],
     "Swipe-left controls": [
@@ -1206,6 +1209,12 @@
       "default": 0,
       "minimum": 0,
       "maximum": 300
+    },
+    "caption_clear_display_spot": {
+      "field": "CAPTION_CLEAR_DISPLAY_SPOT",
+      "key": "caption_clear_display_spot",
+      "type": "string",
+      "default": "tiktok"
     },
     "caption_font_weight": {
       "field": "CAPTION_FONT_WEIGHT",
@@ -3671,6 +3680,12 @@
       "type": "string",
       "default": ""
     },
+    "profile_tab_opens_activity_center": {
+      "field": "PROFILE_TAB_OPENS_ACTIVITY_CENTER",
+      "key": "profile_tab_opens_activity_center",
+      "type": "boolean",
+      "default": false
+    },
     "profile_tab_opens_watch_history": {
       "field": "PROFILE_TAB_OPENS_WATCH_HISTORY",
       "key": "profile_tab_opens_watch_history",
@@ -4022,6 +4037,12 @@
       "key": "share_added_apps",
       "type": "string",
       "default": ""
+    },
+    "share_after_save": {
+      "field": "SHARE_AFTER_SAVE",
+      "key": "share_after_save",
+      "type": "boolean",
+      "default": false
     },
     "share_block_author": {
       "field": "SHARE_BLOCK_AUTHOR",

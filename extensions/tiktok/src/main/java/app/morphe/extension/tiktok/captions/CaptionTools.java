@@ -255,12 +255,15 @@ public final class CaptionTools {
     /**
      * Lines the kept caption's bottom up with the strip's, or the old spot before one was seen,
      * then lifts it by the Clear display height, upright or sideways: the landscape height is
-     * TikTok's own caption's.
+     * TikTok's own caption's. TikTok keeps its strip above the description, which Clear display
+     * hides, so Caption spot in Clear display can put the line down at the old spot instead
+     * (#428), and the height lifts from there.
      */
     private static void place(TextView text, View decor) {
         if (!(text.getLayoutParams() instanceof FrameLayout.LayoutParams)) return;
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) text.getLayoutParams();
-        int margin = (stripGap < 0 || decor == null || decor.getHeight() != stripGapHeight
+        boolean low = "bottom".equals(Settings.CAPTION_CLEAR_DISPLAY_SPOT.get());
+        int margin = (low || stripGap < 0 || decor == null || decor.getHeight() != stripGapHeight
                 ? fallbackMargin(text)
                 : Math.max(0, stripGap - decor.getPaddingBottom()))
                 + CaptionStyle.heightPx(text, Settings.CAPTION_CLEAR_DISPLAY_OFFSET);

@@ -467,7 +467,8 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
                 || setting == Settings.COMMENT_SEARCH_FOLDED)) {
             CommentSearch.onSettingChanged();
         }
-        if (!applySettingToPreference && setting == Settings.KEEP_CAPTIONS_CLEAR_DISPLAY) {
+        if (!applySettingToPreference && (setting == Settings.KEEP_CAPTIONS_CLEAR_DISPLAY
+                || setting == Settings.CAPTION_CLEAR_DISPLAY_SPOT || setting == Settings.CAPTION_CLEAR_DISPLAY_OFFSET)) {
             CaptionTools.onSettingChanged();
         }
         if (!applySettingToPreference && setting == Settings.COMMENT_BATCH_TRANSLATION) {

@@ -120,6 +120,9 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting KEEP_CAPTIONS_CLEAR_DISPLAY = new BooleanSetting("keep_captions_clear_display", FALSE);
     public static final IntegerSetting CAPTION_CLEAR_DISPLAY_OFFSET = new IntegerSetting(
             "caption_clear_display_offset", 0, Setting.parent(KEEP_CAPTIONS_CLEAR_DISPLAY)).withRange(0, 300);
+    /** Where the kept caption sits in Clear display: "tiktok" at TikTok's own caption spot, "bottom" lower, where the description was (#428). */
+    public static final StringSetting CAPTION_CLEAR_DISPLAY_SPOT = new StringSetting(
+            "caption_clear_display_spot", "tiktok", false, Setting.parent(KEEP_CAPTIONS_CLEAR_DISPLAY));
     /** The Accessibility page's Captions switch and the caption controls, where TikTok leaves them off (CaptionsAvailable). */
     public static final BooleanSetting KEEP_CAPTIONS_AVAILABLE = new BooleanSetting("keep_captions_available", FALSE, true);
     public static final BooleanSetting ALLOW_SCREEN_CAPTURE = new BooleanSetting("allow_screen_capture", FALSE, true);

@@ -52,6 +52,7 @@ public class CaptionToolsTest {
         Settings.CAPTION_BOTTOM_OFFSET.save(0);
         Settings.CAPTION_LANDSCAPE_OFFSET.save(0);
         Settings.CAPTION_CLEAR_DISPLAY_OFFSET.save(0);
+        Settings.CAPTION_CLEAR_DISPLAY_SPOT.save("tiktok");
         Settings.KEEP_CAPTIONS_CLEAR_DISPLAY.save(false);
         CaptionTools.onVideoChanged(null);
     }
@@ -811,6 +812,65 @@ public class CaptionToolsTest {
             lay(decor);
             assertEquals("TikTok's caption didn't go back to its spot", tiktokBottom, bottom(strip));
             assertEquals(0, source.getTranslationY(), 0.01f);
+        }
+    }
+
+    /**
+     * TikTok keeps its caption strip above the description, and Clear display hides the
+     * description, so the kept line floated high over an empty band (#428). The lower spot puts
+     * it down where the old fallback spot is, and the Clear display height still lifts from there.
+     */
+    @Test @Config(qualifiers = "w360dp-h780dp-xxhdpi")
+    public void captionSpotInClearDisplayPutsTheKeptLineLower() {
+        try (var owner = Robolectric.buildActivity(CaptionActivity.class).setup().visible()) {
+            var activity = owner.get();
+            Utils.setContext(activity);
+            int stripId = View.generateViewId();
+            CaptionStyle.resolveForTests("47.7.3:dng", stripId);
+            FrameLayout source = new FrameLayout(activity);
+            FrameLayout strip = new FrameLayout(activity);
+            strip.setId(stripId);
+            FrameLayout.LayoutParams spot = new FrameLayout.LayoutParams(-1, 90, android.view.Gravity.BOTTOM);
+            spot.bottomMargin = 700;
+            source.addView(strip, spot);
+            activity.setContentView(source);
+            owner.windowFocusChanged(true);
+            Settings.KEEP_CAPTIONS_CLEAR_DISPLAY.save(true);
+            View decor = activity.getWindow().getDecorView();
+
+            CaptionTools.onVideoChanged("low");
+            CaptionTools.onCaption(source, "low", "EXPANDED", "Kept cue");
+            lay(decor);
+            int tiktokBottom = bottom(strip);
+            decor.getViewTreeObserver().dispatchOnPreDraw();
+            decor.getViewTreeObserver().dispatchOnPreDraw();
+            CaptionTools.onClear(new Video("low"), true);
+            lay(decor);
+            TextView caption = find(decor, "Kept cue");
+            assertNotNull(caption);
+            assertEquals(View.VISIBLE, caption.getVisibility());
+            assertEquals("the kept line left TikTok's spot by default", tiktokBottom, bottom(caption));
+
+            CaptionTools.onClear(new Video("low"), false);
+            Settings.CAPTION_CLEAR_DISPLAY_SPOT.save("bottom");
+            CaptionTools.onClear(new Video("low"), true);
+            lay(decor);
+            int low = decor.getHeight() - decor.getPaddingBottom() - Math.round(dp(12)) * 8;
+            assertTrue("the lower spot isn't below TikTok's", low > tiktokBottom);
+            assertEquals("Caption spot in Clear display didn't put the kept line lower", low, bottom(caption));
+
+            CaptionTools.onClear(new Video("low"), false);
+            Settings.CAPTION_CLEAR_DISPLAY_OFFSET.save(30);
+            CaptionTools.onClear(new Video("low"), true);
+            lay(decor);
+            assertEquals("the Clear display height didn't lift from the lower spot",
+                    low - Math.round(dp(30)), bottom(caption));
+
+            CaptionTools.onClear(new Video("low"), false);
+            Settings.CAPTION_CLEAR_DISPLAY_SPOT.save("tiktok");
+            CaptionTools.onClear(new Video("low"), true);
+            lay(decor);
+            assertEquals("TikTok's spot didn't come back", tiktokBottom - Math.round(dp(30)), bottom(caption));
         }
     }
 

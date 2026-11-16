@@ -765,6 +765,9 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     new String[]{"default", "transparent", "dark", "black"}));
             addPreference(new TogglePreference(context, "Keep captions in Clear display",
                     "Show the current spoken caption while the other controls are hidden.", Settings.KEEP_CAPTIONS_CLEAR_DISPLAY));
+            addPreference(new ChoicePreference(context, "Caption spot in Clear display", Settings.CAPTION_CLEAR_DISPLAY_SPOT,
+                    new String[]{"Where TikTok shows it", "Lower, near the bottom"},
+                    new String[]{"tiktok", "bottom"}));
             addPreference(captionHeight(context, "Caption height in Clear display",
                     "Lifts the kept caption above its usual spot in Clear display. Use 0 for the usual spot, or up to %1$d.",
                     Settings.CAPTION_CLEAR_DISPLAY_OFFSET));

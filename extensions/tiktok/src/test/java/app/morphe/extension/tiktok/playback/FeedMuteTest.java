@@ -847,6 +847,34 @@ public class FeedMuteTest {
         }
     }
 
+    /**
+     * A video opened from a chat plays in a screen of its own, and backing out closes it while its
+     * player still says it plays. The sound went back to the music only after the whole report
+     * gap, a solid two seconds (#283). A closed screen's video has stopped.
+     */
+    @Test public void backingOutOfAVideoFromAChatGivesTheFocusBackRightAway() {
+        Settings.FOCUS_WAITS_FOR_VIDEO.save(true);
+        assertTrue(FeedMute.holdPageFocus("page"));
+        ActivityController<OtherScreen> chat = openOverFeed(OtherScreen.class);
+        chat.pause();
+        ActivityController<OtherScreen> video = Robolectric.buildActivity(OtherScreen.class).setup();
+        FeedMute.pausedForTests = false;
+        try {
+            FeedMute.onVideoPlaying(new Controller(video.get()));
+            idleMain();
+            calls.clear();
+
+            video.get().finish();
+            video.pause();
+            chat.resume();
+            video.stop().destroy();
+            idleFor(FeedMute.LEAVE_PAUSED_MS + FeedMute.LEAVE_CHECK_MS);
+            assertEquals(List.of("abandon page page"), calls);
+        } finally {
+            chat.pause().stop().destroy();
+        }
+    }
+
     /** The Friends tab starts a video of its own after the feed's pauses, so it waits as before. */
     @Test public void aPausedVideoLeftForTheFriendsTabWaitsForTheFriendsVideo() {
         Settings.FOCUS_WAITS_FOR_VIDEO.save(true);

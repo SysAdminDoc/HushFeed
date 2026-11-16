@@ -129,6 +129,15 @@ public final class FeedMute {
     private static volatile WeakReference<Object> grantedSession = new WeakReference<>(null);
     private static volatile WeakReference<Object> grantedPage = new WeakReference<>(null);
     private static volatile long lastPlayingAt;
+    /**
+     * The controller that reported last and the screen it plays in. A video opened from a chat
+     * plays in a screen of its own, and backing out closes it with its player still saying it
+     * plays, so the sound came back only after the whole report gap (#283). Once that screen
+     * has closed the video counts as stopped.
+     */
+    private static volatile WeakReference<Object> playingController = new WeakReference<>(null);
+    private static volatile WeakReference<Activity> playingScreen = new WeakReference<>(null);
+    private static volatile boolean playingScreenClosed;
     /** Main thread. */
     private static boolean leaveCheckRunning;
     static final long LEAVE_CHECK_MS = 250L;
@@ -175,6 +184,7 @@ public final class FeedMute {
             }
 
             @Override public void onActivityPaused(Activity paused) {
+                if (paused.isFinishing()) noteScreenClosed(paused);
                 if (!isFeedHost(paused)) return;
                 RESUMED_FEED.remove(paused);
                 // A buried copy pausing leaves the feed in front, still muted.
@@ -201,8 +211,13 @@ public final class FeedMute {
             @Override public void onActivitySaveInstanceState(Activity activity, Bundle state) { }
             @Override public void onActivityDestroyed(Activity destroyed) {
                 RESUMED_FEED.remove(destroyed);
+                noteScreenClosed(destroyed);
             }
         });
+    }
+
+    private static void noteScreenClosed(Activity closed) {
+        if (closed == playingScreen.get()) playingScreenClosed = true;
     }
 
     public static boolean isMuted() {
@@ -289,7 +304,7 @@ public final class FeedMute {
                 record(id, feed, isFeedHost(Reflect.readField(controller, "activity")));
                 settle(id, feed && feedInFront);
             }
-            if (playsOnScreen(controller)) onVideoPlaying();
+            if (playsOnScreen(controller)) onVideoPlaying(controller);
             HookStatus.bound(HOOK_FAMILY, "controller play");
         } catch (Throwable failure) {
             HookStatus.threw(HOOK_FAMILY, "controller play", failure);
@@ -391,6 +406,18 @@ public final class FeedMute {
      * for since TikTok came to the front is asked for again, so the video takes the sound as
      * TikTok meant it to. Any thread.
      */
+    public static void onVideoPlaying(Object controller) {
+        if (!SettingsStatus.feedMuteEnabled) return;
+        if (controller != null && controller != playingController.get()) {
+            Object host = Reflect.readField(controller, "activity");
+            playingController = new WeakReference<>(controller);
+            playingScreen = new WeakReference<>(host instanceof Activity ? (Activity) host : null);
+            playingScreenClosed = false;
+        }
+        onVideoPlaying();
+    }
+
+    /** {@link #onVideoPlaying(Object)} with the controller unknown. Any thread. */
     public static void onVideoPlaying() {
         if (!SettingsStatus.feedMuteEnabled) return;
         lastPlayingAt = SystemClock.uptimeMillis();
@@ -463,7 +490,8 @@ public final class FeedMute {
         if (front == null || FeedVisibility.isDetailPager(front) || LiveStatusBar.isLiveRoom(front)) return false;
         if (front.getClass() == feedActivity && FeedVisibility.isOnFeed(front)) return false;
         return quiet >= LEAVE_QUIET_MS
-                || (playerPaused() && !BottomTabLabels.tabSelected(BottomNavigationTabOptions.FRIENDS));
+                || ((playerPaused() || playingScreenClosed)
+                        && !BottomTabLabels.tabSelected(BottomNavigationTabOptions.FRIENDS));
     }
 
     /** Whether the player that reported last has its video paused. */
@@ -774,6 +802,9 @@ public final class FeedMute {
         forgetPlayedVideo();
         leaveCheckRunning = false;
         lastPlayingAt = 0L;
+        playingController = new WeakReference<>(null);
+        playingScreen = new WeakReference<>(null);
+        playingScreenClosed = false;
         feedActivity = null;
         nativeForTests = null;
         pausedForTests = null;

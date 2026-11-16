@@ -617,6 +617,99 @@ class LiveDarkPanelsAnchorsTest {
         }
     }
 
+    /**
+     * #362: a host's pinned comment lays LIVE's dark overlay over the room's theme, the darkened one
+     * with the switch on. On each declared build the pinned comment base keeps its name, the widget
+     * manager's overlay inflater hands its inflater and overlay over first, each manager names the
+     * widget right before each overlay inflater call (the receiver of the getThemeOverlay that call's
+     * overlay came from), and the six loaders hand their widget and background flag over first.
+     */
+    @Test
+    fun `each declared build names LIVE's widgets to the extension before their overlay inflater`() {
+        val called = { instruction: com.android.tools.smali.dexlib2.iface.instruction.Instruction ->
+            ((instruction as? ReferenceInstruction)?.reference as? MethodReference)?.name
+        }
+        Fixtures.forEachDeclared { apk ->
+            val classes = classes(apk)
+            assertNotNull("${apk.name}: the pinned comment base",
+                classes["Lcom/bytedance/android/live/pin/widget/BaseCommentPinnedWidget;"])
+            val chain = generateSequence("Lcom/bytedance/android/live/pin/widget/BaseCommentPinnedWidget;") { classes[it]?.superclass }
+                .toList()
+            assertTrue("${apk.name}: the pinned comment base builds on LIVE's widget, not $chain", LIVE_WIDGET in chain)
+            assertTrue("${apk.name}: the widget keeps the context field the extension reads by name",
+                classes.getValue(LIVE_WIDGET).fields.any { it.name == "context" && it.type == "Landroid/content/Context;" })
+            for (manager in LIVE_WIDGET_MANAGERS.drop(1)) {
+                assertTrue("${apk.name}: $manager keeps the base's overlay inflater",
+                    classes[manager]?.methods?.none(::isWidgetOverlayInflater) != false)
+            }
+
+            val overlayInflater = classes.getValue(LIVE_WIDGET_MANAGER).methods.single(::isWidgetOverlayInflater)
+            val inflaterOriginal = overlayInflater.implementation!!.instructions.filter { it.opcode != Opcode.NOP }
+            val hookedInflater = MutableMethod(overlayInflater)
+            hookWidgetOverlayInflater(hookedInflater)
+            val inflaterCode = hookedInflater.implementation!!.instructions.filter { it.opcode != Opcode.NOP }
+            val inflater = overlayInflater.implementation!!.registerCount - 2
+            val swap = inflaterCode[0] as RegisterRangeInstruction
+            assertEquals("${apk.name}: the inflater goes first", "widgetInflater", called(inflaterCode[0]))
+            assertEquals("${apk.name}: with the overlay", listOf(inflater, 2), listOf(swap.startRegister, swap.registerCount))
+            assertEquals("${apk.name}: back into the inflater", Opcode.MOVE_RESULT_OBJECT, inflaterCode[1].opcode)
+            assertEquals("${apk.name}: back into the inflater", inflater, (inflaterCode[1] as OneRegisterInstruction).registerA)
+            assertEquals("${apk.name}: nothing else moves", inflaterOriginal.map { it.opcode }, inflaterCode.drop(2).map { it.opcode })
+            assertTrue("${apk.name}: the overlay still wraps it", inflaterCode.any { called(it) == "cloneInContext" })
+            assertEquals("${apk.name}", emptyList<BridgeTypeFlow.Problem>(), BridgeTypeFlow.check(hookedInflater))
+
+            val callers = mutableListOf<String>()
+            val loaders = mutableListOf<String>()
+            for (manager in LIVE_WIDGET_MANAGERS) {
+                val owner = classes[manager] ?: continue
+                for (method in owner.methods) {
+                    val original = method.implementation?.instructions?.filter { it.opcode != Opcode.NOP } ?: continue
+                    val hooked = MutableMethod(method)
+                    val named = hookWidgetLoads(hooked)
+                    val flag = widgetLoaderFlag(method)
+                    if (flag != null) hookWidgetLoader(hooked)
+                    if (named == 0 && flag == null) continue
+                    var code = hooked.implementation!!.instructions.filter { it.opcode != Opcode.NOP }
+                    val where = "${apk.name}: ${owner.type}->${method.name}"
+                    if (flag != null) {
+                        val (index, widgetFirst) = flag
+                        val background = method.implementation!!.registerCount - method.parameterTypes.size + index
+                        val ask = code[0] as RegisterRangeInstruction
+                        assertEquals("$where: the loader asks first",
+                            if (widgetFirst) "widgetInBackground" else "backgroundWidget", called(code[0]))
+                        assertEquals("$where: with the widget beside the flag",
+                            listOf(if (widgetFirst) background - 1 else background, 2), listOf(ask.startRegister, ask.registerCount))
+                        assertEquals("$where: the answer is the flag", Opcode.MOVE_RESULT, code[1].opcode)
+                        assertEquals("$where: the answer is the flag", background, (code[1] as OneRegisterInstruction).registerA)
+                        code = code.drop(2)
+                        loaders += "${owner.type}->${method.name}"
+                    }
+                    val marks = code.indices.filter { called(code[it]) == "widgetLoading" }
+                    assertEquals("$where: one name per overlay inflater call", named, marks.size)
+                    for (mark in marks) {
+                        assertEquals("$where: right before the overlay inflater", "getThemeOverlayLayoutInflater", called(code[mark + 1]))
+                        val overlay = (mark - 1 downTo 0).first { called(code[it]) == "getThemeOverlay" }
+                        val widget = when (val read = code[overlay]) {
+                            is FiveRegisterInstruction -> read.registerC
+                            is RegisterRangeInstruction -> read.startRegister
+                            else -> -1
+                        }
+                        val mine = code[mark] as RegisterRangeInstruction
+                        assertEquals("$where: the widget whose overlay it is", listOf(widget, 1), listOf(mine.startRegister, mine.registerCount))
+                    }
+                    assertEquals("$where: nothing else moves", original.map { it.opcode },
+                        code.filterIndexed { at, _ -> at !in marks }.map { it.opcode })
+                    assertEquals(where, emptyList<BridgeTypeFlow.Problem>(), BridgeTypeFlow.check(hooked))
+                    if (named > 0) callers += "${owner.type}->${method.name}"
+                }
+            }
+            assertEquals("${apk.name}: the overlay inflater's callers, $callers", 5, callers.size)
+            assertEquals("${apk.name}: the loaders, $loaders", 6, loaders.size)
+        }
+        assertThrows(PatchException::class.java) { hookWidgetOverlayInflater(badgeBind("nop")) }
+        assertThrows(PatchException::class.java) { hookWidgetLoader(badgeBind("nop")) }
+    }
+
     private fun appliesStyle(instruction: com.android.tools.smali.dexlib2.iface.instruction.Instruction): Boolean {
         val call = (instruction as? ReferenceInstruction)?.reference as? MethodReference ?: return false
         return call.definingClass == "Landroid/content/res/Resources\$Theme;" && call.name == "applyStyle"

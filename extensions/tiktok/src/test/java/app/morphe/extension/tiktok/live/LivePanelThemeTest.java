@@ -37,12 +37,14 @@ import com.bytedance.android.live.design.resource.theme.LiveThemeAwareDialogFrag
 import com.bytedance.android.live.design.resource.theme.LiveThemeAwareFragment;
 import com.bytedance.android.live.design.view.sheet.LiveSheetFragment;
 import com.bytedance.android.live.liveinteract.multiguestv3.main.userinfo.guest.MultiLiveGuestUserInfoDialog;
+import com.bytedance.android.live.pin.widget.BaseCommentPinnedWidget;
 import com.bytedance.android.live.rank.impl.list.RankListDialog;
 import com.bytedance.android.livesdk.definition.LiveDefinitionSelectionDialog;
 import com.bytedance.android.livesdk.definition.talent.LiveTalentDefinitionSelectionDialog;
 import com.bytedance.android.livesdk.fansclub.FansClubPanel;
 import com.bytedance.android.livesdk.profile.ProfilePanel;
 import com.bytedance.android.livesdk.widgets.giftwidget.presenter.FastGiftConfirmDialog;
+import com.bytedance.android.widget.Widget;
 
 import androidx.cardview.widget.CardView;
 import com.bytedance.android.live.rank.impl.list.view.PopularityRankingEducationDialog;
@@ -523,6 +525,62 @@ public class LivePanelThemeTest {
         ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, false));
         SettingsStatus.liveControlsEnabled = false;
         assertSame("without the patch", live, LivePanelTheme.lightRoomView(live));
+    }
+
+    /** A pinned comment as LIVE ships it, a subclass of the base the extension looks for. */
+    private static final class PinnedComment extends BaseCommentPinnedWidget {
+    }
+
+    /**
+     * #362: a host's pinned comment takes LIVE's dark overlay over the room's theme, so over a
+     * darkened room its tags came out in other colors than with the switch off. The pinned widget
+     * the manager names loads in the foreground and inflates over the room's light copy.
+     */
+    @Test public void aPinnedCommentOverADarkenedRoomInflatesOverTheRoomsLightTheme() {
+        RuntimeEnvironment.setQualifiers("+night");
+        Activity live = room();
+        int roomText = textColor(live);
+        LayoutInflater tiktok = LayoutInflater.from(live);
+        PinnedComment pinned = new PinnedComment();
+        pinned.context = live;
+        Widget other = new Widget();
+        other.context = live;
+
+        LivePanelTheme.widgetLoading(pinned);
+        assertSame("the switch starts off", tiktok, LivePanelTheme.widgetInflater(tiktok, PARTIAL_OVERLAY));
+        assertTrue("off, a pinned comment loads where TikTok says", LivePanelTheme.widgetInBackground(pinned, true));
+
+        Settings.DARK_LIVE_PANELS.save(true);
+        LivePanelTheme.darkLiveRoom(live, android.R.style.Theme_Black);
+        assertTrue("the room went dark", roomText != textColor(live));
+        assertTrue("another widget keeps the background", LivePanelTheme.widgetInBackground(other, true));
+        assertTrue("a pinned comment loads in the foreground", !LivePanelTheme.widgetInBackground(pinned, true));
+        assertTrue("with the flag first too", !LivePanelTheme.backgroundWidget(true, pinned));
+        assertTrue("a foreground load stays there", !LivePanelTheme.widgetInBackground(pinned, false));
+
+        LivePanelTheme.widgetLoading(pinned);
+        LayoutInflater lit = LivePanelTheme.widgetInflater(tiktok, PARTIAL_OVERLAY);
+        assertNotSame(tiktok, lit);
+        assertSame("the comment still sits in the room", live, LivePanelTheme.roomOf(lit.getContext()));
+        assertEquals("its text takes the room's light color", roomText, textColor(lit.getContext()));
+        assertTrue("the room itself stays dark", roomText != textColor(live));
+        assertSame("the name answers one inflater", tiktok, LivePanelTheme.widgetInflater(tiktok, PARTIAL_OVERLAY));
+
+        LivePanelTheme.widgetLoading(pinned);
+        LivePanelTheme.widgetLoading(other);
+        assertSame("another widget named after it", tiktok, LivePanelTheme.widgetInflater(tiktok, PARTIAL_OVERLAY));
+        LivePanelTheme.widgetLoading(pinned);
+        assertSame("no overlay to lay over", tiktok, LivePanelTheme.widgetInflater(tiktok, 0));
+        assertSame("and that used the name up", tiktok, LivePanelTheme.widgetInflater(tiktok, PARTIAL_OVERLAY));
+
+        ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, true));
+        LivePanelTheme.widgetLoading(pinned);
+        assertSame("paused", tiktok, LivePanelTheme.widgetInflater(tiktok, PARTIAL_OVERLAY));
+        assertTrue("paused, it loads where TikTok says", LivePanelTheme.widgetInBackground(pinned, true));
+        ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, false));
+        SettingsStatus.liveControlsEnabled = false;
+        LivePanelTheme.widgetLoading(pinned);
+        assertSame("without the patch", tiktok, LivePanelTheme.widgetInflater(tiktok, PARTIAL_OVERLAY));
     }
 
     /**

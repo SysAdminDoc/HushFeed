@@ -189,6 +189,17 @@ public final class LivePanelTheme {
     private static volatile boolean bubbleFailureLogged;
     private static volatile boolean roomStyleFailureLogged;
     private static volatile boolean colorThemeFailureLogged;
+    private static volatile boolean pinnedLogged;
+    private static volatile boolean pinnedFailureLogged;
+    /**
+     * The base of LIVE's pinned comment widgets, the card a host pins over the chat with its
+     * Pinned and timer tags (#362, real-named on 47.7.3).
+     */
+    static final String PINNED_WIDGET = "com.bytedance.android.live.pin.widget.BaseCommentPinnedWidget";
+    /** Whether each widget class builds on {@link #PINNED_WIDGET}. */
+    private static final Map<Class<?>, Boolean> PINNED_CLASSES = new ConcurrentHashMap<>();
+    /** Set by a widget manager right before it asks for a pinned widget's overlay inflater. */
+    private static final ThreadLocal<Boolean> PINNED_LOADING = new ThreadLocal<>();
 
     private LivePanelTheme() {
     }
@@ -1279,6 +1290,107 @@ public final class LivePanelTheme {
                 Logger.printException(() -> "Could not give a LIVE room's gift guide its light theme", failure);
             }
             return context;
+        }
+    }
+
+    /** True for one of LIVE's pinned comment widgets, by its class chain. */
+    static boolean isPinnedWidget(Object widget) {
+        if (widget == null) {
+            return false;
+        }
+        Class<?> type = widget.getClass();
+        Boolean pinned = PINNED_CLASSES.get(type);
+        if (pinned == null) {
+            pinned = hasClassName(type, PINNED_WIDGET);
+            PINNED_CLASSES.put(type, pinned);
+        }
+        return pinned;
+    }
+
+    /**
+     * Called first by LIVE's widget loaders with the widget and whether it's to inflate in the
+     * background. The background inflater builds its context on its own thread, out of reach of
+     * {@link #widgetInflater}, so while Dark LIVE panels is on over a darkened room a pinned
+     * comment loads in the foreground, as TikTok loads any widget it's told to. Everything else
+     * keeps TikTok's answer.
+     */
+    public static boolean widgetInBackground(Object widget, boolean background) {
+        try {
+            if (!background || !isPinnedWidget(widget)) {
+                return background;
+            }
+            Object context = Reflect.readField(widget, "context");
+            Activity room = sparkRoom(context instanceof Context ? (Context) context : null);
+            return room == null || !LiveControls.darkLivePanels(room);
+        } catch (Throwable failure) {
+            if (!pinnedFailureLogged) {
+                pinnedFailureLogged = true;
+                Logger.printException(() -> "Could not load a LIVE pinned comment in the foreground", failure);
+            }
+            return background;
+        }
+    }
+
+    /** The same answer for loaders that take the flag before the widget. */
+    public static boolean backgroundWidget(boolean background, Object widget) {
+        return widgetInBackground(widget, background);
+    }
+
+    /**
+     * Called by LIVE's widget managers right before they ask for a widget's overlay inflater, with
+     * the widget. Each call answers for the inflater asked for next on this thread.
+     */
+    public static void widgetLoading(Object widget) {
+        try {
+            if (isPinnedWidget(widget)) {
+                PINNED_LOADING.set(Boolean.TRUE);
+            } else {
+                PINNED_LOADING.remove();
+            }
+        } catch (Throwable failure) {
+            PINNED_LOADING.remove();
+        }
+    }
+
+    /**
+     * Called first by the widget manager's overlay inflater (getThemeOverlayLayoutInflater) with the
+     * manager's inflater and the widget's theme overlay, which it wraps the inflater's context in.
+     * A pinned comment's overlay is LIVE's dark one, laid over the room's theme, so over a room the
+     * room hook darkened it sat on TikTok's dark app theme instead of the room's light one and its
+     * Pinned and timer tags took other colors than with the switch off (#362). While Dark LIVE
+     * panels is on in dark mode, the pinned widget the manager just named gets an inflater over the
+     * room's light copy, which the overlay then goes on as before. Every other widget, and anything
+     * that fails, keeps TikTok's inflater.
+     */
+    public static LayoutInflater widgetInflater(LayoutInflater inflater, int overlay) {
+        boolean pinned = PINNED_LOADING.get() != null;
+        PINNED_LOADING.remove();
+        try {
+            if (!pinned || inflater == null || overlay == 0) {
+                return inflater;
+            }
+            Context context = inflater.getContext();
+            if (!LiveControls.darkLivePanels(context)) {
+                return inflater;
+            }
+            Resources.Theme light = lightRoom(context);
+            if (light == null) {
+                return inflater;
+            }
+            Resources.Theme theme = context.getResources().newTheme();
+            theme.setTo(light);
+            LayoutInflater lit = inflater.cloneInContext(new ContextThemeWrapper(context, theme));
+            if (!pinnedLogged) {
+                pinnedLogged = true;
+                Logger.printDebug(() -> "Gave a LIVE pinned comment its room's light theme");
+            }
+            return lit;
+        } catch (Throwable failure) {
+            if (!pinnedFailureLogged) {
+                pinnedFailureLogged = true;
+                Logger.printException(() -> "Could not give a LIVE pinned comment its room's light theme", failure);
+            }
+            return inflater;
         }
     }
 

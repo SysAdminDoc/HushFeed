@@ -179,11 +179,25 @@ public final class DiagnosticRedactor {
     }
 
     public static String redact(String text) {
+        return redact(text, false);
+    }
+
+    /**
+     * {@link #redact} for a line that counts TikTok's servers by name, such as the image loads
+     * section, which is there to say which server covers and avatars failed from. A server's bare
+     * name stays. One with a path, a port or an address after it still goes, and every other rule
+     * runs as usual.
+     */
+    public static String redactKeepingServerNames(String text) {
+        return redact(text, true);
+    }
+
+    private static String redact(String text, boolean keepServerNames) {
         if (text == null || text.isEmpty()) return "";
         try {
             boolean truncated = text.length() > MAX_CHARS;
             if (truncated) text = prefix(text, MAX_CHARS);
-            text = redactText(text, 0);
+            text = redactText(text, 0, keepServerNames);
             return truncated || text.length() > MAX_CHARS
                     ? prefix(text, MAX_CHARS - TRUNCATED.length()) + TRUNCATED : text;
         } catch (Throwable failure) {
@@ -193,11 +207,11 @@ public final class DiagnosticRedactor {
     }
 
     /** One level of text: the JSON strings in it first, each as the text it holds, then the rest. */
-    private static String redactText(String text, int depth) {
+    private static String redactText(String text, int depth, boolean keepServerNames) {
         text = unmarked(text);
         text = NAMES.matcher(text).replaceAll("[name omitted]");
         List<String> values = new ArrayList<>();
-        if (depth < MAX_DEPTH) text = maskStrings(text, depth, values);
+        if (depth < MAX_DEPTH) text = maskStrings(text, depth, values, keepServerNames);
         text = HANDLES.matcher(text).replaceAll("[handle omitted]");
         text = redactFields(text, depth > 0);
         text = URLS.matcher(text).replaceAll("[url omitted]");
@@ -205,11 +219,32 @@ public final class DiagnosticRedactor {
         // name inside a link goes with the link.
         text = EMAILS.matcher(text).replaceAll("[email omitted]");
         text = PHONES.matcher(text).replaceAll("[phone omitted]");
-        text = HOSTS.matcher(text).replaceAll("[host omitted]");
+        text = keepServerNames ? bareHostsKept(text) : HOSTS.matcher(text).replaceAll("[host omitted]");
         text = RESOLVED_NAMES.matcher(text).replaceAll("[host omitted]");
         text = ADDRESSES.matcher(text).replaceAll("[address omitted]");
         text = IDS.matcher(text).replaceAll("[id omitted]");
         return values.isEmpty() ? text : unmask(text, values);
+    }
+
+    /**
+     * {@link #HOSTS} with a bare server name left in place. A name followed by nothing, or by a
+     * lone colon or slash as in "name: 3 fetched", is bare. One followed by a port or a path is a
+     * request address and goes.
+     */
+    private static String bareHostsKept(String text) {
+        Matcher match = HOSTS.matcher(text);
+        StringBuilder out = null;
+        int copied = 0;
+        while (match.find()) {
+            String found = match.group();
+            int tail = 0;
+            while (tail < found.length() && found.charAt(tail) != ':' && found.charAt(tail) != '/') tail++;
+            if (tail >= found.length() - 1) continue;
+            if (out == null) out = new StringBuilder(text.length());
+            out.append(text, copied, match.start()).append("[host omitted]");
+            copied = match.end();
+        }
+        return out == null ? text : out.append(text, copied, text.length()).toString();
     }
 
     /**
@@ -220,7 +255,7 @@ public final class DiagnosticRedactor {
      * printed with its quotes escaped, as in {\"msg\":\"...\"}, is read the same way after one more
      * unescape. One whose escapes JSON would refuse, such as C:\new\Dana, is left whole to them.
      */
-    private static String maskStrings(String text, int depth, List<String> values) {
+    private static String maskStrings(String text, int depth, List<String> values, boolean keepServerNames) {
         StringBuilder masked = null;
         int copied = 0;
         int i = 0;
@@ -249,7 +284,7 @@ public final class DiagnosticRedactor {
             String plain = raw;
             for (int pass = 0; pass <= levels && plain != null; pass++) plain = unescape(plain);
             if (plain == null) continue;
-            String redacted = redactText(plain, depth + 1);
+            String redacted = redactText(plain, depth + 1, keepServerNames);
             String value = raw;
             if (!redacted.equals(plain)) {
                 value = redacted;

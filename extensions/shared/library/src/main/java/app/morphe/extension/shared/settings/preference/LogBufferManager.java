@@ -327,6 +327,14 @@ public final class LogBufferManager {
         List<String> lines();
     }
 
+    /**
+     * A section that counts TikTok's servers by name. Its lines keep a server's bare name through
+     * {@link app.morphe.extension.shared.diagnostics.DiagnosticRedactor#redactKeepingServerNames},
+     * which is the fact it is there to give, and lose everything else the redactor takes out.
+     */
+    public interface ServerNamingSection extends ReportSection {
+    }
+
     private static final List<ReportSection> REPORT_SECTIONS = new CopyOnWriteArrayList<>();
 
     /** Adds a section after Hook status; a section registered twice is kept once. */
@@ -439,8 +447,10 @@ public final class LogBufferManager {
                 }
                 if (lines == null || lines.isEmpty()) continue;
                 report.append("\n[").append(section.title()).append("]\n");
+                boolean namesServers = section instanceof ServerNamingSection;
                 for (String line : lines) {
-                    report.append(DiagnosticRedactor.redact(line)).append('\n');
+                    report.append(namesServers ? DiagnosticRedactor.redactKeepingServerNames(line)
+                            : DiagnosticRedactor.redact(line)).append('\n');
                 }
             }
         }

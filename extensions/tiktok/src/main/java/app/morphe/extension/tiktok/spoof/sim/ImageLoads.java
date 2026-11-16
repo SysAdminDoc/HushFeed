@@ -28,9 +28,10 @@ import app.morphe.extension.shared.settings.preference.LogBufferManager;
  * of Fresco's network producer passes through the two hooks here.
  *
  * <p>Only the host goes in. An image URL's path and query carry signed tokens, so they never
- * reach the report, and a URL inside a failure's message is cut down to its host as well.
+ * reach the report, and a URL inside a failure's message is cut down to its host as well. The
+ * export keeps those bare host names, which every other section loses to the redactor.
  */
-public final class ImageLoads implements LogBufferManager.ReportSection {
+public final class ImageLoads implements LogBufferManager.ServerNamingSection {
     static final String TITLE = "IMAGE LOADS";
     static final int HOST_LIMIT = 24;
     static final int KIND_LIMIT = 4;

@@ -114,7 +114,11 @@ public class ImageLoadsTest {
         LogBufferManager.appendEvent(DiagnosticCategory.FEED_AND_NAVIGATION, "Test", "INFO", "something worth reporting");
         String report = LogBufferManager.buildExportText();
         assertTrue(report, report.contains("[" + ImageLoads.TITLE + "]\n"
-            + "Since the app started: 4 image fetches, 4 failed"));
+            + "Since the app started: 4 image fetches, 4 failed\n"
+            + "p16-sign-sg.tiktokcdn.com: 3 fetched, 4 failed\n"));
+        assertTrue(report, report.contains("\np16-sign-va.tiktokcdn.com: 1 fetched, 0 failed\n"));
+        assertTrue(report, report.contains("\np16-sign-sg.tiktokcdn.com, IOException: unexpected end of stream"
+            + " < UnknownHostException: Unable to resolve host \"[host omitted]\": No address: 2 times\n"));
         assertFalse(report, report.contains("SECRETSIG"));
     }
 

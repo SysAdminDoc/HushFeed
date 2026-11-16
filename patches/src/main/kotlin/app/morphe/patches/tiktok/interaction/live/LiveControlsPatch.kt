@@ -30,6 +30,7 @@ import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
 import app.morphe.util.addInstructionsAtControlFlowLabel
 import app.morphe.util.addInstructionsWithLabels
+import app.morphe.util.findInstructionIndicesReversedOrThrow
 import app.morphe.util.findMutableMethodOf
 import app.morphe.util.literalReads
 import app.morphe.util.returnEarly
@@ -293,6 +294,45 @@ internal object LiveClearScreenSessionFingerprint : Fingerprint(
     returnType = "Z",
     parameters = listOf(),
 )
+
+/** The full screen button of a portrait LIVE room, both versions real-named on 47.7.3. */
+internal const val LIVE_FULL_VIDEO_BUTTON = "Lcom/bytedance/android/livesdk/chatroom/viewmodule/FullVideoButtonWidget;"
+internal const val LIVE_FULL_VIDEO_BUTTON_V2 = "Lcom/bytedance/android/livesdk/chatroom/viewmodule/FullVideoButtonWidgetV2;"
+
+/**
+ * Whether a LIVE room loads its full screen button (#57). It answers true only for a LIVE Studio
+ * or screen share room that isn't a star room, or while live_mt_mock_landscape is on, and on the
+ * way it notes whether the room is a multi-stream one. Once loaded, the button shows while the
+ * video is wide, and a tap turns the room to landscape. Its last return carries that answer; the
+ * first one answers false for a widget that has no data channel yet.
+ */
+internal object LiveFullVideoButtonAttachFingerprint : Fingerprint(
+    definingClass = LIVE_FULL_VIDEO_BUTTON,
+    name = "shouldAttach",
+    returnType = "Z",
+    parameters = listOf(),
+)
+
+/** The same answer for the button's second version, which rooms load in its place. */
+internal object LiveFullVideoButtonV2AttachFingerprint : Fingerprint(
+    definingClass = LIVE_FULL_VIDEO_BUTTON_V2,
+    name = "shouldAttach",
+    returnType = "Z",
+    parameters = listOf(),
+)
+
+/**
+ * Hands a full screen button's shouldAttach answer to the extension at its last return, on that
+ * return's label so the branch onto it runs the call too (#57).
+ */
+internal fun hookFullScreenAttach(method: MutableMethod) = method.apply {
+    val last = findInstructionIndicesReversedOrThrow { opcode == Opcode.RETURN }.first()
+    val register = getInstruction<OneRegisterInstruction>(last).registerA
+    addInstructionsAtControlFlowLabel(last, """
+        invoke-static/range { v$register .. v$register }, $EXTENSION->offerFullScreen(Z)Z
+        move-result v$register
+    """)
+}
 
 /**
  * LIVE's per-room controller (X.0Las on 47.7.3, whose obfuscated name moves every build), found by
@@ -2585,6 +2625,13 @@ val liveControlsPatch = bytecodePatch(
             "invoke-static {}, $EXTENSION->keepClearScreen()Z",
             "const/4 v0, 0x1\nreturn v0",
         )
+        // Both versions of the room's full screen button pass their answer through the extension
+        // at their last return, which answers true while its switch is on, so every room loads
+        // the button (#57). TikTok's own answer runs first, so the multi-stream flag it notes on
+        // the way is still set, and the early false for a widget with no data channel stays.
+        listOf(LiveFullVideoButtonAttachFingerprint, LiveFullVideoButtonV2AttachFingerprint).forEach {
+            hookFullScreenAttach(it.method)
+        }
         // Answers true while its switch is on and the panel's context is in dark mode, so LIVE
         // panels take TikTok's dark LIVE theme in rooms too (#159).
         LiveDarkThemeFingerprint.method.guardAtEntry(

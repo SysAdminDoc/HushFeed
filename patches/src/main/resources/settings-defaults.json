@@ -558,6 +558,7 @@
       "remember_live_quality",
       "offer_live_clear_screen",
       "keep_live_clear_screen",
+      "offer_live_full_screen",
       "dark_live_panels",
       "record_live",
       "auto_record_live",
@@ -3594,6 +3595,12 @@
     "offer_live_clear_screen": {
       "field": "OFFER_LIVE_CLEAR_SCREEN",
       "key": "offer_live_clear_screen",
+      "type": "boolean",
+      "default": false
+    },
+    "offer_live_full_screen": {
+      "field": "OFFER_LIVE_FULL_SCREEN",
+      "key": "offer_live_full_screen",
       "type": "boolean",
       "default": false
     },

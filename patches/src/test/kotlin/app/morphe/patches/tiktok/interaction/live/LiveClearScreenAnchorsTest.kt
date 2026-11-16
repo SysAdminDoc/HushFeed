@@ -5,8 +5,13 @@ import app.morphe.Fixtures
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.shared.guardAtEntry
 import app.morphe.takes
+import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
+import com.android.tools.smali.dexlib2.builder.BuilderOffsetInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
+import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import org.junit.Assert.assertEquals
@@ -113,6 +118,56 @@ class LiveClearScreenAnchorsTest {
             assertEquals("${apk.name}: no readable clear state", 1, controller.methods.count {
                 it.returnType == "Z" && it.parameterTypes.isEmpty()
             })
+        }
+    }
+
+    /**
+     * #57: both full screen buttons pass their answer through the extension at the last return,
+     * after TikTok's own gate (LIVE Studio or screen share) and its multi-stream note have run.
+     * Every branch onto that return lands on the call, and the early false stays as it was.
+     */
+    @Test
+    fun `each declared build hands both full screen buttons' answers to the extension`() {
+        val room = LIVE_ROOM_TYPE
+        Fixtures.forEachDeclared { apk ->
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            val classes = container.dexEntryNames.asSequence()
+                .flatMap { container.getEntry(it)!!.dexFile.classes.asSequence() }.toList()
+            listOf(LiveFullVideoButtonAttachFingerprint, LiveFullVideoButtonV2AttachFingerprint).forEach { fingerprint ->
+                val taken = classes.flatMap { cls -> cls.methods.filter { fingerprint.takes(it, cls) } }
+                assertEquals("${apk.name}: ${taken.map { it.definingClass }}", 1, taken.size)
+                val stock = taken.single()
+                val reads = stock.implementation!!.instructions.mapNotNull {
+                    ((it as? ReferenceInstruction)?.reference as? FieldReference)?.takeIf { field -> field.definingClass == room }?.name
+                }.toSet()
+                assertTrue("${apk.name}: ${stock.definingClass} gate reads $reads", reads.containsAll(listOf("isThirdParty", "isScreenshot")))
+
+                val hooked = MutableMethod(stock)
+                hookFullScreenAttach(hooked)
+                val built = hooked.implementation!!.instructions.toList()
+                val calls = built.indices.filter {
+                    ((built[it] as? ReferenceInstruction)?.reference as? MethodReference)?.name == "offerFullScreen"
+                }
+                // The method goes on past its last return (the multi-stream false jumps back up), so
+                // the answer's return is the last RETURN, not the last instruction.
+                val returns = built.indices.filter { built[it].opcode == Opcode.RETURN }
+                assertEquals("${apk.name}: the early false and the answer", 2, returns.size)
+                val answerReturn = returns.last()
+                assertEquals("${apk.name}: one call, right before the answer's return", listOf(answerReturn - 2), calls)
+                val call = calls.single()
+                val answer = (built[call] as RegisterRangeInstruction).startRegister
+                assertEquals(Opcode.MOVE_RESULT, built[call + 1].opcode)
+                assertEquals(answer, (built[call + 1] as OneRegisterInstruction).registerA)
+                assertEquals(answer, (built[answerReturn] as OneRegisterInstruction).registerA)
+                val note = built.indexOfLast {
+                    it.opcode == Opcode.IPUT_BOOLEAN && ((it as ReferenceInstruction).reference as FieldReference).definingClass == stock.definingClass
+                }
+                assertTrue("${apk.name}: the multi-stream note runs before the call", note in 0 until call)
+                val targets = built.filterIsInstance<BuilderOffsetInstruction>().map { it.target.location.index }
+                assertTrue("${apk.name}: a branch skips the call", targets.none { it == call + 1 || it == answerReturn })
+                assertTrue("${apk.name}: no branch lands on the call", call in targets)
+                assertEquals("${apk.name}", emptyList<Any>(), BridgeTypeFlow.check(hooked))
+            }
         }
     }
 }

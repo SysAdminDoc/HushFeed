@@ -99,6 +99,16 @@ public final class LiveControls {
     }
 
     /**
+     * Called with TikTok's answer as a LIVE room decides whether to load its full screen button
+     * (#57). TikTok loads it only in LIVE Studio and screen share rooms, though the button itself
+     * shows only while the video is wide and rotates any room. True while the switch is on, so
+     * every room gets it; otherwise TikTok's answer stands. Paused, the switch answers off.
+     */
+    public static boolean offerFullScreen(boolean attach) {
+        return attach || (SettingsStatus.liveControlsEnabled && Settings.OFFER_LIVE_FULL_SCREEN.get());
+    }
+
+    /**
      * Called as a LIVE panel asks whether to take TikTok's dark LIVE theme, with the panel's
      * context. TikTok answers no in every LIVE room even in dark mode, so the share menu, the fan
      * club and the first gift dialog opened white over a dark room (#159). True while the switch is

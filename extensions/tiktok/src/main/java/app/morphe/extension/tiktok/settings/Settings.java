@@ -821,6 +821,13 @@ public class Settings extends BaseSettings {
      */
     public static final BooleanSetting KEEP_LIVE_CLEAR_SCREEN = new BooleanSetting("keep_live_clear_screen", FALSE);
     /**
+     * Gives every LIVE room TikTok's full screen button, which it attaches only in LIVE Studio
+     * and screen share rooms (#57); the LIVE controls patch. TikTok still shows the button only
+     * while the room's video is wide. Read as each room loads its widgets, so the next room
+     * follows a change.
+     */
+    public static final BooleanSetting OFFER_LIVE_FULL_SCREEN = new BooleanSetting("offer_live_full_screen", FALSE);
+    /**
      * Opens LIVE panels in TikTok's dark LIVE theme while TikTok is in dark mode (#159); the LIVE
      * controls patch. Read as each panel opens, so the next panel follows a change. The provider
      * answer alone only turned the panels' navigation bar dark on the S25, so each themed

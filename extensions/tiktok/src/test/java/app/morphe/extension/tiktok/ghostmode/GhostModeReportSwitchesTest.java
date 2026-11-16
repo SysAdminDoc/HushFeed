@@ -44,10 +44,13 @@ import org.robolectric.annotation.Config;
 @SuppressWarnings("deprecation")
 public class GhostModeReportSwitchesTest {
     @Rule public final SettingsContextRule settingsContext = new SettingsContextRule();
-    private static final List<BooleanSetting> CHILDREN = List.of(
-            Settings.GHOST_HIDE_STORY_VIEWS, Settings.GHOST_HIDE_PROFILE_VISITS, Settings.GHOST_HIDE_TYPING);
     private boolean installed;
     private boolean telemetryInstalled;
+
+    /** Read once the rule has set a context: Settings can't load before there is one. */
+    private static List<BooleanSetting> children() {
+        return List.of(Settings.GHOST_HIDE_STORY_VIEWS, Settings.GHOST_HIDE_PROFILE_VISITS, Settings.GHOST_HIDE_TYPING);
+    }
 
     @Before public void setUp() {
         installed = SettingsStatus.ghostModeEnabled;
@@ -66,7 +69,7 @@ public class GhostModeReportSwitchesTest {
     }
 
     @Test public void everyChildIsOnByDefaultSoGhostModeStillHoldsBackAllThree() {
-        for (BooleanSetting child : CHILDREN) {
+        for (BooleanSetting child : children()) {
             assertTrue(child.key + " must default on", child.defaultValue);
             assertTrue(child.key, child.savedValue());
         }
@@ -78,20 +81,20 @@ public class GhostModeReportSwitchesTest {
     }
 
     @Test public void everyChildHangsOffGhostMode() {
-        for (BooleanSetting child : CHILDREN) {
+        for (BooleanSetting child : children()) {
             assertEquals(child.key, List.of(Settings.GHOST_MODE), child.getParentSettings());
             assertFalse(child.key + " is offered with Ghost mode off", child.isAvailable());
         }
         Settings.GHOST_MODE.save(true);
-        for (BooleanSetting child : CHILDREN) assertTrue(child.key, child.isAvailable());
+        for (BooleanSetting child : children()) assertTrue(child.key, child.isAvailable());
     }
 
     @Test public void onlineStatusFollowsOnlyItsOwnSwitch() {
         Settings.GHOST_MODE.save(true);
-        for (BooleanSetting child : CHILDREN) child.save(false);
+        for (BooleanSetting child : children()) child.save(false);
         Settings.GHOST_HIDE_ONLINE_STATUS.save(true);
         assertTrue(GhostMode.shouldBlockOnlineStatus());
-        for (BooleanSetting child : CHILDREN) child.save(true);
+        for (BooleanSetting child : children()) child.save(true);
         Settings.GHOST_HIDE_ONLINE_STATUS.save(false);
         assertFalse(GhostMode.shouldBlockOnlineStatus());
     }
@@ -153,9 +156,9 @@ public class GhostModeReportSwitchesTest {
             assertNotNull(ghostMode);
             int previous = ghostMode.getOrder();
             List<String> titles = List.of("Hide story views", "Hide profile visits", "Hide typing");
-            for (int i = 0; i < CHILDREN.size(); i++) {
-                Preference row = page.findPreference(CHILDREN.get(i).key);
-                assertNotNull("no row for " + CHILDREN.get(i).key, row);
+            for (int i = 0; i < children().size(); i++) {
+                Preference row = page.findPreference(children().get(i).key);
+                assertNotNull("no row for " + children().get(i).key, row);
                 assertEquals(titles.get(i), row.getTitle().toString());
                 assertTrue(row.getKey() + " sits after the row before it", row.getOrder() > previous);
                 previous = row.getOrder();
@@ -170,14 +173,14 @@ public class GhostModeReportSwitchesTest {
         SettingsStatus.disableTelemetryEnabled = true;
         try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
             TikTokPreferenceFragment page = privacy(owner.get());
-            for (BooleanSetting child : CHILDREN) assertNull(child.key, page.findPreference(child.key));
+            for (BooleanSetting child : children()) assertNull(child.key, page.findPreference(child.key));
         }
     }
 
     private static void resetSwitches() {
         Settings.GHOST_MODE.save(false);
         Settings.GHOST_HIDE_ONLINE_STATUS.save(false);
-        for (BooleanSetting child : CHILDREN) child.save(child.defaultValue);
+        for (BooleanSetting child : children()) child.save(child.defaultValue);
     }
 
     private static Aweme story() {

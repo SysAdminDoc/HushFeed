@@ -244,13 +244,7 @@ public final class AccountCountry {
 
     /** A two letter country code in upper case, or null for anything else. */
     static String twoLetters(String raw) {
-        String code = AuthorRegion.regionCode(raw);
-        if (code == null || code.length() != 2) return null;
-        for (int i = 0; i < 2; i++) {
-            char c = code.charAt(i);
-            if (c < 'A' || c > 'Z') return null;
-        }
-        return code;
+        return AuthorRegion.countryCode(raw);
     }
 
     /** Whether {@code value} is a bare https origin, the way {@code Api} keeps its host. */

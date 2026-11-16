@@ -32,6 +32,7 @@ Every Hushfeed release, newest first.
 
 ### Bug Fixes
 
+* `Show where a video was posted` no longer shows FAKE-AD on ads. TikTok gives ads a made up country, so only a real two-letter country shows now, and an ad's never gets remembered for that brand's comments.
 * With `Stop video looping` on, the screen turns off on its usual timeout again once a video ends. TikTok keeps the screen lit for as long as the feed is open, so a phone left on a finished video never went dark. It stays on while anything plays (#414).
 * Saving a photo post you've already saved now says the photo post is already saved, and a photo story says the story is. The choice to open it or save it again used to call it a video, even when you'd saved it as photos (#197).
 * `Turn off haptics` also quiets Hushfeed's own buzzes now: holding the For You, Home, Inbox or Profile tab and dragging the block button were still vibrating with the switch on.

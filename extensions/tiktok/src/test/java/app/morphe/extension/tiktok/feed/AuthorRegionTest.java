@@ -307,6 +307,21 @@ public class AuthorRegionTest {
         }
     }
 
+    /** #410: an ad's made up region never shows as a country or teaches the comment caches. */
+    @Test
+    public void anAdsFakeRegionShowsNoCountry() {
+        Settings.SHOW_AUTHOR_HANDLE.save(false);
+        Settings.SHOW_AUTHOR_REGION.save(true);
+        try {
+            assertNull(AuthorRegion.decoration(playing("ad", "brand", "Brand", "FAKE-AD")));
+            assertNull(AuthorRegion.seenRegion("brand"));
+            assertNull(AuthorRegion.countryCode("419"));
+            assertEquals("BD", AuthorRegion.countryCode(" bd "));
+        } finally {
+            Settings.SHOW_AUTHOR_REGION.resetToDefault();
+        }
+    }
+
     @Test
     public void aVideoWithNothingToShowAsksForNothing() {
         Settings.SHOW_AUTHOR_HANDLE.save(true);

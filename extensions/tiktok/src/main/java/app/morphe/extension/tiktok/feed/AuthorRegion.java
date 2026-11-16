@@ -534,7 +534,7 @@ public final class AuthorRegion {
             return regionValue;
         }
 
-        regionValue = regionCode(Reflect.string(aweme, "getRegion", "region"));
+        regionValue = countryCode(Reflect.string(aweme, "getRegion", "region"));
         regionAweme = new WeakReference<>(aweme);
         Object author = Reflect.property(aweme, "getAuthor", "author");
         rememberSeen(Reflect.string(author, "getUid", "uid"), handle(aweme), regionValue);
@@ -591,7 +591,7 @@ public final class AuthorRegion {
 
     /** Remembers a country under the account's id and its handle, whichever of the two is known. */
     public static void rememberSeen(String uid, String handle, String region) {
-        String code = regionCode(region);
+        String code = countryCode(region);
         if (code == null) {
             return;
         }
@@ -615,7 +615,7 @@ public final class AuthorRegion {
      * feed bound is never replaced by a comment's.
      */
     public static void learnFromComment(String uid, String handle, String region) {
-        String code = regionCode(region);
+        String code = countryCode(region);
         if (code == null) {
             return;
         }
@@ -674,6 +674,24 @@ public final class AuthorRegion {
     public static String regionCode(String raw) {
         String trimmed = raw == null ? null : raw.trim();
         return trimmed == null || trimmed.isEmpty() ? null : trimmed.toUpperCase(Locale.ROOT);
+    }
+
+    /**
+     * A real country: two letters A to Z, upper case, or null. Ads carry a made up region such
+     * as {@code FAKE-AD} (#410), which must never show as a country or land in the caches.
+     */
+    public static String countryCode(String raw) {
+        String code = regionCode(raw);
+        if (code == null || code.length() != 2) {
+            return null;
+        }
+        for (int i = 0; i < 2; i++) {
+            char c = code.charAt(i);
+            if (c < 'A' || c > 'Z') {
+                return null;
+            }
+        }
+        return code;
     }
 
     /**

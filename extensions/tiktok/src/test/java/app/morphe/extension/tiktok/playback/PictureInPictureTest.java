@@ -202,6 +202,30 @@ public class PictureInPictureTest {
         assertEquals(0, PictureInPicture.pageSelectVisible(0));
     }
 
+    /**
+     * #413: the player's own can-play check refuses a player whose activity isn't in front, and the
+     * window pauses the activity, so the window counts it as in front.
+     */
+    @Test public void thePlayerCountsAsInFrontOnlyWhileTheWindowIsUp() {
+        assertTrue(PictureInPicture.playerForeground(true, false));
+        assertTrue(PictureInPicture.playerForeground(true, true));
+        assertFalse(PictureInPicture.playerForeground(false, false));
+        assertTrue(PictureInPicture.playerForeground(false, true));
+
+        Activity activity = owner.get();
+        assertEquals("no window, TikTok's answer stands", 0, PictureInPicture.playerForeground(0));
+        assertEquals(1, PictureInPicture.playerForeground(1));
+        try {
+            ReflectionHelpers.setStaticField(PictureInPicture.class, "opened", new WeakReference<>(activity));
+            assertEquals("opened, but not in the window yet", 0, PictureInPicture.playerForeground(0));
+            activity.enterPictureInPictureMode(new PictureInPictureParams.Builder().build());
+            assertEquals(1, PictureInPicture.playerForeground(0));
+        } finally {
+            ReflectionHelpers.setStaticField(PictureInPicture.class, "opened", new WeakReference<Activity>(null));
+        }
+        assertEquals(0, PictureInPicture.playerForeground(0));
+    }
+
     /** #413: previous, play or pause, then next, when the video is in a pager and the window has room. */
     @Test public void theArrowsSitEitherSideOfPlayAndPause() {
         Activity activity = owner.get();

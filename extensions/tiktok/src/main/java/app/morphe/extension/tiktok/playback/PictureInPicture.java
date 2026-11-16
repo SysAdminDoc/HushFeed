@@ -238,6 +238,25 @@ public final class PictureInPicture {
         return visible || windowUp;
     }
 
+    /**
+     * The feed player's "is my activity in front?" inside its can-play check (#413). The window
+     * pauses the activity, so with both page-select answers handled the player still refused the
+     * video the arrows moved to. Non-zero means in front. Never throws.
+     */
+    public static int playerForeground(int foreground) {
+        try {
+            return playerForeground(foreground != 0, windowUp()) ? 1 : 0;
+        } catch (RuntimeException failure) {
+            Logger.printException(() -> "Couldn't decide the player's foreground check", failure);
+            return foreground;
+        }
+    }
+
+    /** The window is the feed in front of the user, so the player counts as in front while it's up. */
+    static boolean playerForeground(boolean foreground, boolean windowUp) {
+        return foreground || windowUp;
+    }
+
     private static boolean windowUp() {
         if (Build.VERSION.SDK_INT < 26) return false;
         Activity activity = opened.get();

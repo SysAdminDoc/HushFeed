@@ -12,6 +12,7 @@ import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.shared.compat.AppCompatibilities
+import app.morphe.patches.tiktok.interaction.blockauthor.PLAYER_CONTROLLER
 import app.morphe.patches.tiktok.interaction.blockauthor.sessionPlaybackBridgePatch
 import app.morphe.patches.tiktok.interaction.live.LIVE_PLAY_FRAGMENT
 import app.morphe.patches.tiktok.interaction.live.LivePlayFragmentResumeFingerprint
@@ -316,6 +317,50 @@ internal fun MutableMethod.keepPageSelectPlayingInWindow(result: Int) = handPage
  */
 internal fun MutableMethod.showPageSelectFeedInWindow(result: Int) = handPageSelectAnswer(result, "pageSelectVisible")
 
+private const val PLAYER_FOREGROUND = "$PLAYER_CONTROLLER->mIsForeGround:Z"
+
+private fun Instruction.readsPlayerForeground() = opcode == Opcode.IGET_BOOLEAN &&
+    (this as ReferenceInstruction).reference.let { it is FieldReference && it.key() == PLAYER_FOREGROUND }
+
+/**
+ * The feed player's "may this video play now?" check (`LLLFF` on 47.7.3), which its start step
+ * asks before it plays the video a page select picked. It says no for a player whose activity
+ * isn't in front, and the feed window pauses the activity, so every video the window's arrows
+ * moved to got refused (#413, the start step's "21"). The field it reads keeps TikTok's own name.
+ */
+internal object PlayerCanPlayFingerprint : Fingerprint(
+    definingClass = PLAYER_CONTROLLER,
+    returnType = "Z",
+    parameters = listOf("Lcom/ss/android/ugc/aweme/feed/model/Aweme;", "Z"),
+    custom = { method, _ ->
+        method.implementation?.instructions?.any { it.readsPlayerForeground() } == true &&
+            method.implementation!!.instructions.any { it.asksBoolean(Opcode.INVOKE_INTERFACE, "needPauseFeed") }
+    },
+)
+
+/** Where the can-play check reads the player's in-front flag: that iget's index. */
+internal fun playerForegroundRead(method: Method): Int {
+    val instructions = method.implementation!!.instructions.toList()
+    val reads = instructions.indices.filter { instructions[it].readsPlayerForeground() }
+    return reads.singleOrNull()
+        ?: throw PatchException("Picture-in-picture: the can-play check reads mIsForeGround ${reads.size} times, not once")
+}
+
+/**
+ * Hands the can-play check's in-front flag to the extension right after the read, which says yes
+ * while the feed window is up, so the video the window's arrows land on is allowed to start.
+ */
+internal fun MutableMethod.letPlayerPlayInWindow(read: Int) {
+    val register = (implementation!!.instructions[read] as OneRegisterInstruction).registerA
+    addInstructions(
+        read + 1,
+        """
+            invoke-static/range { v$register .. v$register }, $EXTENSION->playerForeground(I)I
+            move-result v$register
+        """,
+    )
+}
+
 /** The room page's window check's static gate: the call it makes after "encrypted room". */
 internal fun liveWindowGate(classDefByOrNull: (String) -> ClassDef?): Method {
     val page = classDefByOrNull(LIVE_PLAY_FRAGMENT)
@@ -393,6 +438,8 @@ val pictureInPicturePatch = bytecodePatch(
             // Found after the first hook moved the instructions along.
             step.showPageSelectFeedInWindow(pageSelectVisibleResult(step))
         }
+        // The start that step calls still asks whether the player's activity is in front.
+        PlayerCanPlayFingerprint.method.let { check -> check.letPlayerPlayInWindow(playerForegroundRead(check)) }
         SettingsStatusLoadFingerprint.method.addInstruction(
             0,
             "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enablePictureInPicture()V",

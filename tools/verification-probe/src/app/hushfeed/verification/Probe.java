@@ -2986,6 +2986,32 @@ public final class Probe extends Instrumentation {
                         Log.i(TAG, "ok showdialog " + name + " via " + show.getDeclaringClass().getName() + "." + show.getName());
                         break;
                     }
+                    case "filterbanner": {
+                        // The feed filter's notice over the current screen, from three wiped
+                        // lists of ten handed to FeedFilterFeedback.onBatchResult the way
+                        // FeedItemsFilter hands them over: -e filter VerifiedFilter gives the
+                        // named banner (Show the switch), -e filter none the generic one
+                        // (Filter settings). A real run needs one marker switch to wipe three
+                        // lists of five or more on one route, which no test account's feed
+                        // does. The feedback state is reset first, so a cooldown left by an
+                        // earlier notice doesn't swallow this one.
+                        String filter = required(intent, "filter");
+                        Class<?> feedback = loader.loadClass("app.morphe.extension.tiktok.feedfilter.FeedFilterFeedback");
+                        Method reset = feedback.getDeclaredMethod("resetForTests");
+                        reset.setAccessible(true);
+                        reset.invoke(null);
+                        Method batch = feedback.getDeclaredMethod("onBatchResult", String.class, int.class,
+                                int.class, java.util.Map.class, long.class);
+                        batch.setAccessible(true);
+                        java.util.Map<String, Integer> reasons = new java.util.HashMap<>();
+                        reasons.put("none".equals(filter) ? "ViewCountFilter" : filter, 10);
+                        long now = System.currentTimeMillis();
+                        for (int i = 0; i < 3; i++) {
+                            batch.invoke(null, "FeedItemList:probe", 10, 0, reasons, now + i);
+                        }
+                        Log.i(TAG, "ok filterbanner " + filter + " three wiped lists of 10");
+                        break;
+                    }
                     case "call": {
                         // A public static method of one of Hushfeed's own classes that takes no
                         // arguments, and what it returned when that is a number or a yes/no:

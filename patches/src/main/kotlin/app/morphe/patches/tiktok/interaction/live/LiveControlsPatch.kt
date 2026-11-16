@@ -79,6 +79,32 @@ internal object LivePlayFragmentResumeFingerprint : Fingerprint(
     parameters = listOf(),
 )
 
+internal const val LIVE_MENTIONS_EXTENSION = "Lapp/morphe/extension/tiktok/live/LiveMentions;"
+
+/** A message from the LIVE message server, real-named on 47.7.3. */
+internal const val LIVE_MESSAGE = "Lcom/ss/ugc/live/sdk/message/data/IMessage;"
+
+/**
+ * The LIVE message manager's dispatch of one message (#424), in the obfuscated manager that
+ * implements the room's message manager. It tells TikTok's event listeners a message is about to
+ * go out, stamps "dispatch_strategy" and "dispatch_time" on its tracking, then hands it to each
+ * listener. Every chat line and caption a room gets passes here once, so the name alert reads
+ * each one at the top of the method.
+ */
+internal object LiveMessageDispatchFingerprint : Fingerprint(
+    returnType = "V",
+    parameters = listOf(LIVE_MESSAGE),
+    strings = listOf("dispatch_strategy", "dispatch_time"),
+    filters = listOf(
+        methodCall(
+            opcode = Opcode.INVOKE_INTERFACE,
+            definingClass = "Lcom/ss/ugc/live/sdk/message/interfaces/EventListener;",
+            name = "onPreDispatchMessage",
+            parameters = listOf(LIVE_MESSAGE),
+        ),
+    ),
+)
+
 private const val PIP_PARAMS_BUILDER = "Landroid/app/PictureInPictureParams\$Builder;"
 
 /**
@@ -2739,6 +2765,11 @@ val liveControlsPatch = bytecodePatch(
         LivePlayFragmentResumeFingerprint.method.addInstruction(
             0,
             "invoke-static/range {p0 .. p0}, $RECORD_EXTENSION->noteRoomFragment(Ljava/lang/Object;)V",
+        )
+        // Each message a LIVE room gets, for the name alert, before TikTok hands it out (#424).
+        LiveMessageDispatchFingerprint.method.addInstruction(
+            0,
+            "invoke-static/range {p1 .. p1}, $LIVE_MENTIONS_EXTENSION->onMessage(Ljava/lang/Object;)V",
         )
         // The same button in TikTok's own picture-in-picture window, next to its play and pause (#413).
         LivePipActionsFingerprint.method.let { pipActions ->

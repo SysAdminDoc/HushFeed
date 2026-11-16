@@ -183,6 +183,17 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
             addPreference(new ChoicePreference(context, "Auto tap speed", Settings.LIVE_AUTO_TAP_RATE,
                     app.morphe.extension.tiktok.live.LiveAutoTap.RATE_LABELS,
                     app.morphe.extension.tiktok.live.LiveAutoTap.RATE_VALUES));
+            addPreference(new TogglePreference(context, "LIVE name alerts",
+                    "Tells you when your name comes up in a LIVE, in the chat or said out loud in a room "
+                            + "with captions on. You get a notification when TikTok's notifications are on, "
+                            + "and a banner in the room when they're off.",
+                    Settings.LIVE_NAME_ALERTS));
+            InputTextPreference alertNames = new InputTextPreference(context, "Names to listen for",
+                    "Your handle and TikTok name are on the list already. Add other names people call "
+                            + "you, separated by commas.",
+                    Settings.LIVE_NAME_ALERT_NAMES);
+            alertNames.withNameKeyboard();
+            addPreference(alertNames);
         }
         if (SettingsStatus.stopVideoLoopingEnabled) {
             addPreference(new TogglePreference(

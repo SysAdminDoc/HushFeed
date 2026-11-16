@@ -861,6 +861,16 @@ public class Settings extends BaseSettings {
      */
     public static final StringSetting LIVE_AUTO_TAP_RATE = new StringSetting("live_auto_tap_rate", "4");
     /**
+     * Alerts you when your name comes up in a LIVE (#424); the LIVE controls patch. Read on each
+     * message the room gets, so no restart.
+     */
+    public static final BooleanSetting LIVE_NAME_ALERTS = new BooleanSetting("live_name_alerts", FALSE);
+    /**
+     * More names for LIVE name alerts to listen for, separated by commas (#424). The handle and
+     * TikTok name are always on the list. Read within seconds of a change, so no restart.
+     */
+    public static final StringSetting LIVE_NAME_ALERT_NAMES = new StringSetting("live_name_alert_names", "");
+    /**
      * Plays the audio TikTok mutes on a post whose sound was pulled; the Keep pulled sounds
      * patch. Read as each video starts, so no restart.
      */

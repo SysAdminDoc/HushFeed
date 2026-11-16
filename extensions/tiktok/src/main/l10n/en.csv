@@ -1165,6 +1165,7 @@ LIVE ended or dropped. Recording saved to %1$s,LIVE ended or dropped. Recording 
 LIVE feed,LIVE feed
 LIVE feed countries,LIVE feed countries
 LIVE followers range,LIVE followers range
+LIVE name alerts,LIVE name alerts
 LIVE recording quality,LIVE recording quality
 LIVE recording saved to %1$s,LIVE recording saved to %1$s
 LIVE recording source,LIVE recording source
@@ -1344,6 +1345,7 @@ Mute feed videos,Mute feed videos
 Muted,Muted
 My watch history,My watch history
 Name copied,Name copied
+Names to listen for,Names to listen for
 Nearby,Nearby
 Network error. %1$d removed.,Network error. %1$d removed.
 Network proxy,Network proxy
@@ -2255,6 +2257,7 @@ Tapping a sticker someone sent you in a chat opens a box with Save media. Turn t
 Tapping more under a video opens its comments with the whole caption at the top instead of spreading the caption over the video. A tap on the caption itself does the same. Photo posts keep TikTok's own page for this.,Tapping more under a video opens its comments with the whole caption at the top instead of spreading the caption over the video. A tap on the caption itself does the same. Photo posts keep TikTok's own page for this.
 Technical details,Technical details
 "Technical details, %1$s","Technical details, %1$s"
+"Tells you when your name comes up in a LIVE, in the chat or said out loud in a room with captions on. You get a notification when TikTok's notifications are on, and a banner in the room when they're off.","Tells you when your name comes up in a LIVE, in the chat or said out loud in a room with captions on. You get a notification when TikTok's notifications are on, and a banner in the room when they're off."
 Terms and Policies,Terms and Policies
 Text sticker words,Text sticker words
 That JSON file doesn't contain the supported TikTok watch history.,That JSON file doesn't contain the supported TikTok watch history.
@@ -2718,6 +2721,8 @@ Your feed,Your feed
 Your feed. Your rules.,Your feed. Your rules.
 Your filters hid everything TikTok just sent. Most were %1$s.,Your filters hid everything TikTok just sent. Most were %1$s.
 "Your filters hid everything TikTok sent, %1$d times in a row. Most were %2$s.","Your filters hid everything TikTok sent, %1$d times in a row. Most were %2$s."
+"Your handle and TikTok name are on the list already. Add other names people call you, separated by commas.","Your handle and TikTok name are on the list already. Add other names people call you, separated by commas."
+Your name came up in a LIVE,Your name came up in a LIVE
 "Your network proxy was kept, since a backup can't change it","Your network proxy was kept, since a backup can't change it"
 "Your operator's name, like T-Mobile.","Your operator's name, like T-Mobile."
 "Your operator's numeric code, like 310260.","Your operator's numeric code, like 310260."

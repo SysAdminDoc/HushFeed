@@ -6,6 +6,7 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* `LIVE name alerts` tells you when your name comes up in a LIVE. It catches chat lines that mention you or type your name, and in a room with captions on, your name said out loud. With TikTok's notifications on you get a notification that vibrates, and with them off a banner shows in the room. Your handle and TikTok name are always listened for, and `Names to listen for` adds the other names people call you. Both sit under `Auto tap speed` in Hushfeed settings > Playback, with `LIVE controls` patched (#424).
 * `Watch LIVEs unseen` keeps you off the viewer list of the LIVEs you open, so the host doesn't see you come in. A crossed-out eye in the room means you're hidden, and a tap on it lets that host see you until you close TikTok. It starts off and sits under Ghost mode in Hushfeed settings > Privacy (#420).
 * Diagnostic reports get an `IMAGE LOADS` section. It counts the images TikTok fetched from each server since it started, how many of them failed and why, so a report can show what's behind covers and avatars that stay grey. Only the server's name goes in, never the image's address (#415).
 * `Crop and stretch to fill the screen` covers the whole screen with a bit of both. It crops half as much as `Fill the screen with the video` and stretches half as much as `Stretch the video to the screen`, so neither one stands out. Turn it on in Hushfeed settings > Playback.

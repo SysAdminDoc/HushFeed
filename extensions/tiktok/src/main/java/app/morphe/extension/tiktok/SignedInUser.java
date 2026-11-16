@@ -71,6 +71,18 @@ public final class SignedInUser {
         return curUserString("getUniqueId");
     }
 
+    /** The TikTok name a test stands in with, read while {@link #idForTests} is set. */
+    public static volatile String nicknameForTests;
+
+    /** The signed-in account's TikTok name, the one shown above the handle, or null. */
+    public static String nickname() {
+        if (idForTests != null) {
+            String forTests = nicknameForTests;
+            return forTests == null || forTests.isEmpty() ? null : forTests;
+        }
+        return curUserString("getNickname");
+    }
+
     /**
      * The signed-in account's secure uid, the id TikTok's own list requests carry, or null.
      */

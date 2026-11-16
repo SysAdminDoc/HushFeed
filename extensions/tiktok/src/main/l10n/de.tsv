@@ -2913,3 +2913,5 @@ One per post	Eins pro Beitrag
 Keep the middle unstretched	Die Mitte nicht strecken
 # context: Summary for Keep the middle unstretched
 Cover the whole window and keep the middle of the video at its own shape. A little comes off the sides, and only the top and bottom are stretched. A video far from the screen's shape keeps TikTok's size.	Deckt das ganze Fenster ab und lässt die Mitte des Videos in ihrer eigenen Form. An den Seiten fällt ein wenig weg, und nur oben und unten wird gestreckt. Ein Video, dessen Form stark vom Bildschirm abweicht, behält die Größe von TikTok.
+# context: A Feature Gate Lab preset title: when a video is paused, TikTok shows a search tag on things in the frame, which opens its visual search
+Visual search on paused videos	Visuelle Suche bei pausierten Videos

@@ -15,7 +15,7 @@ final class L10nTranslationsVi {
     }
 
     static Map<String, String> build() {
-        Map<String, String> table = new HashMap<>(5524);
+        Map<String, String> table = new HashMap<>(5526);
         fill0(table);
         fill1(table);
         fill2(table);
@@ -5509,6 +5509,8 @@ final class L10nTranslationsVi {
                 "Khoảng lượt xem");
         table.put("Visual search",
                 "Tìm kiếm hình ảnh (Visual search)");
+        table.put("Visual search on paused videos",
+                "Tìm kiếm hình ảnh trên video đang tạm dừng");
         table.put("Volume",
                 "Âm lượng");
         table.put("Wait a day to loosen the budget",
@@ -5597,11 +5599,11 @@ final class L10nTranslationsVi {
                 "Cả năm");
         table.put("Wide videos TikTok allows it on get an Add one-liner button under the video and a one-liner bar in full screen. Other videos stay the same.",
                 "Video ngang mà TikTok cho phép sẽ có nút thêm bình luận một dòng bên dưới video và một thanh dành cho chúng khi xem toàn màn hình. Các video khác giữ nguyên.");
-        table.put("Window width needed to enable the layout. Restart TikTok to apply this.",
-                "Chiều rộng cửa sổ cần thiết để bật bố cục này. Khởi động lại TikTok để áp dụng.");
     }
 
     private static void fill45(Map<String, String> table) {
+        table.put("Window width needed to enable the layout. Restart TikTok to apply this.",
+                "Chiều rộng cửa sổ cần thiết để bật bố cục này. Khởi động lại TikTok để áp dụng.");
         table.put("Wipes TikTok's data once, on the next start, and goes back to this phone's real Android ID and advertising ID. You'll be signed out and lose your drafts.",
                 "Xóa dữ liệu TikTok một lần ở lần khởi động tiếp theo và quay lại Android ID cùng ID quảng cáo thật của điện thoại này. Bạn sẽ bị đăng xuất và mất bản nháp.");
         table.put("With Hide LIVE videos on, these creators' LIVEs stay when TikTok sends them. Separate handles or user IDs with commas.",
@@ -5720,11 +5722,11 @@ final class L10nTranslationsVi {
                 "hình trong hình PiP");
         table.put("save photos",
                 "lưu ảnh");
-        table.put("search suggestions",
-                "gợi ý tìm kiếm");
     }
 
     private static void fill46(Map<String, String> table) {
+        table.put("search suggestions",
+                "gợi ý tìm kiếm");
         table.put("this creator",
                 "nhà sáng tạo này");
         table.put("… more",

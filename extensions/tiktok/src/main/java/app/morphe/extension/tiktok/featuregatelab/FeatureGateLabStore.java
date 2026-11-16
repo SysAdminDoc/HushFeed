@@ -627,6 +627,13 @@ public final class FeatureGateLabStore {
                     "manage_topics_enable:BOOLEAN:true"),
             new Preset("visual_search", "Visual search", CATALOG_BUILDS,
                     "show_visual_search_entrance:BOOLEAN:true"),
+            // Japan's search tag on a paused video (#98). SearchVisualTagComponentTrigger adds it
+            // only with enable_vision_search and visual_search_enable_feed_tag both at 1. With a
+            // home page that blocks Circle to Search, show_tag_after_circle_search_block at 1 lets
+            // it through; otherwise the server's Crowd enableVTag still has a say.
+            new Preset("visual_search_pause", "Visual search on paused videos", CATALOG_BUILDS,
+                    "enable_vision_search:INT:1", "visual_search_enable_feed_tag:INT:1",
+                    "show_tag_after_circle_search_block:INT:1"),
             new Preset("ai_self", "AI Self", CATALOG_BUILDS,
                     "ai_self_enable:BOOLEAN:true", "ai_self_effects_panel_enabled:BOOLEAN:true",
                     "ai_self_free_create_enable:BOOLEAN:true"),

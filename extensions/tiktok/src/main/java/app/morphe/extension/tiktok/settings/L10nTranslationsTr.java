@@ -15,7 +15,7 @@ final class L10nTranslationsTr {
     }
 
     static Map<String, String> build() {
-        Map<String, String> table = new HashMap<>(5524);
+        Map<String, String> table = new HashMap<>(5526);
         fill0(table);
         fill1(table);
         fill2(table);
@@ -5509,6 +5509,8 @@ final class L10nTranslationsTr {
                 "Görüntülenme aralığı");
         table.put("Visual search",
                 "Görsel arama");
+        table.put("Visual search on paused videos",
+                "Duraklatılmış videolarda görsel arama");
         table.put("Volume",
                 "Ses");
         table.put("Wait a day to loosen the budget",
@@ -5597,11 +5599,11 @@ final class L10nTranslationsTr {
                 "Tüm yıl");
         table.put("Wide videos TikTok allows it on get an Add one-liner button under the video and a one-liner bar in full screen. Other videos stay the same.",
                 "TikTok'un izin verdiği geniş videolarda videonun altında tek satırlık yorum ekleme düğmesi, tam ekranda da bunlar için bir çubuk görünür. Diğer videolar aynı kalır.");
-        table.put("Window width needed to enable the layout. Restart TikTok to apply this.",
-                "Düzeni etkinleştirmek için gereken pencere genişliği. Bunu uygulamak için TikTok'u yeniden başlat.");
     }
 
     private static void fill45(Map<String, String> table) {
+        table.put("Window width needed to enable the layout. Restart TikTok to apply this.",
+                "Düzeni etkinleştirmek için gereken pencere genişliği. Bunu uygulamak için TikTok'u yeniden başlat.");
         table.put("Wipes TikTok's data once, on the next start, and goes back to this phone's real Android ID and advertising ID. You'll be signed out and lose your drafts.",
                 "Bir sonraki açılışta TikTok verilerini bir kez siler ve bu telefonun gerçek Android kimliği ile reklam kimliğine döner. Oturumunuz kapanır ve taslaklarınızı kaybedersiniz.");
         table.put("With Hide LIVE videos on, these creators' LIVEs stay when TikTok sends them. Separate handles or user IDs with commas.",
@@ -5720,11 +5722,11 @@ final class L10nTranslationsTr {
                 "resim içinde resim PiP");
         table.put("save photos",
                 "fotoğrafları kaydet");
-        table.put("search suggestions",
-                "arama önerileri");
     }
 
     private static void fill46(Map<String, String> table) {
+        table.put("search suggestions",
+                "arama önerileri");
         table.put("this creator",
                 "bu içerik üreticisi");
         table.put("… more",

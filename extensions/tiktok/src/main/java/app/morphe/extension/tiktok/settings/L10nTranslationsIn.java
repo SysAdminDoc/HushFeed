@@ -15,7 +15,7 @@ final class L10nTranslationsIn {
     }
 
     static Map<String, String> build() {
-        Map<String, String> table = new HashMap<>(5524);
+        Map<String, String> table = new HashMap<>(5526);
         fill0(table);
         fill1(table);
         fill2(table);
@@ -5509,6 +5509,8 @@ final class L10nTranslationsIn {
                 "Rentang tayangan");
         table.put("Visual search",
                 "Pencarian visual");
+        table.put("Visual search on paused videos",
+                "Pencarian visual di video yang dijeda");
         table.put("Volume",
                 "Volume");
         table.put("Wait a day to loosen the budget",
@@ -5597,11 +5599,11 @@ final class L10nTranslationsIn {
                 "Satu tahun penuh");
         table.put("Wide videos TikTok allows it on get an Add one-liner button under the video and a one-liner bar in full screen. Other videos stay the same.",
                 "Video lebar yang diizinkan TikTok mendapat tombol untuk menambah komentar satu baris di bawah video dan bilah untuk komentar itu dalam layar penuh. Video lain tetap sama.");
-        table.put("Window width needed to enable the layout. Restart TikTok to apply this.",
-                "Lebar jendela yang dibutuhkan agar tata letaknya aktif. Mulai ulang TikTok agar berlaku.");
     }
 
     private static void fill45(Map<String, String> table) {
+        table.put("Window width needed to enable the layout. Restart TikTok to apply this.",
+                "Lebar jendela yang dibutuhkan agar tata letaknya aktif. Mulai ulang TikTok agar berlaku.");
         table.put("Wipes TikTok's data once, on the next start, and goes back to this phone's real Android ID and advertising ID. You'll be signed out and lose your drafts.",
                 "Menghapus data TikTok sekali, saat mulai berikutnya, dan kembali ke Android ID serta ID iklan asli ponsel ini. Anda akan keluar dan kehilangan draf.");
         table.put("With Hide LIVE videos on, these creators' LIVEs stay when TikTok sends them. Separate handles or user IDs with commas.",
@@ -5720,11 +5722,11 @@ final class L10nTranslationsIn {
                 "gambar dalam gambar PiP");
         table.put("save photos",
                 "simpan foto");
-        table.put("search suggestions",
-                "saran pencarian");
     }
 
     private static void fill46(Map<String, String> table) {
+        table.put("search suggestions",
+                "saran pencarian");
         table.put("this creator",
                 "kreator ini");
         table.put("… more",

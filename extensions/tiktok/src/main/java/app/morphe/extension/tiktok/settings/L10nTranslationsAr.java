@@ -15,7 +15,7 @@ final class L10nTranslationsAr {
     }
 
     static Map<String, String> build() {
-        Map<String, String> table = new HashMap<>(6012);
+        Map<String, String> table = new HashMap<>(6014);
         fill0(table);
         fill1(table);
         fill2(table);
@@ -6005,6 +6005,8 @@ final class L10nTranslationsAr {
                 "نطاق المشاهدات");
         table.put("Visual search",
                 "البحث المرئي");
+        table.put("Visual search on paused videos",
+                "البحث المرئي في الفيديوهات المتوقفة مؤقتًا");
         table.put("Volume",
                 "مستوى الصوت");
         table.put("Wait a day to loosen the budget",
@@ -6093,11 +6095,11 @@ final class L10nTranslationsAr {
                 "بينما تكون عناصر التحكم غير مرئية في الخلاصة الرئيسية، يظل اسم المنشئ والتسمية التوضيحية وسطر الموسيقى ظاهرين.");
         table.put("While you hold a video, slide left or right to step through the speed menu's speeds, and a bubble shows the one you're on. Your next hold starts there. Letting go goes back to normal. A pull-down lock keeps the speed you slid to. On a locked video, letting go locks the new speed.",
                 "أثناء الضغط المطول على الفيديو، اسحب لليسار أو لليمين للتنقل بين سرعات قائمة السرعة، ويعرض فقاعة السرعة التي أنت عليها. يبدأ الضغط المطول التالي من هناك. عند الإفلات تعود السرعة إلى الوضع العادي. قفل السحب لأسفل يبقي السرعة التي انتقلت إليها. وفي الفيديو المقفل، يؤدي الإفلات إلى قفل السرعة الجديدة.");
-        table.put("White",
-                "أبيض");
     }
 
     private static void fill49(Map<String, String> table) {
+        table.put("White",
+                "أبيض");
         table.put("Who to message",
                 "المرسل إليه");
         table.put("Whole year",
@@ -6216,11 +6218,11 @@ final class L10nTranslationsAr {
                 "مطوي");
         table.put("debug debugging logs logging",
                 "تصحيح أخطاء تنقيح سجل سجلات تسجيل");
-        table.put("dialog popup greeting",
-                "نافذة منبثقة حوار تحية");
     }
 
     private static void fill50(Map<String, String> table) {
+        table.put("dialog popup greeting",
+                "نافذة منبثقة حوار تحية");
         table.put("expanded",
                 "موسع");
         table.put("picture in picture PiP",

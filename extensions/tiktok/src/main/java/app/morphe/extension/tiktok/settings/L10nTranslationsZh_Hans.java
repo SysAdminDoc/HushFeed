@@ -15,7 +15,7 @@ final class L10nTranslationsZh_Hans {
     }
 
     static Map<String, String> build() {
-        Map<String, String> table = new HashMap<>(5524);
+        Map<String, String> table = new HashMap<>(5526);
         fill0(table);
         fill1(table);
         fill2(table);
@@ -5509,6 +5509,8 @@ final class L10nTranslationsZh_Hans {
                 "观看范围");
         table.put("Visual search",
                 "视觉搜索");
+        table.put("Visual search on paused videos",
+                "在暂停的视频上使用视觉搜索");
         table.put("Volume",
                 "体积");
         table.put("Wait a day to loosen the budget",
@@ -5597,11 +5599,11 @@ final class L10nTranslationsZh_Hans {
                 "全年");
         table.put("Wide videos TikTok allows it on get an Add one-liner button under the video and a one-liner bar in full screen. Other videos stay the same.",
                 "TikTok 允许的横屏视频会在视频下方显示添加单行评论的按钮，全屏时还会显示单行评论栏。其他视频保持不变.");
-        table.put("Window width needed to enable the layout. Restart TikTok to apply this.",
-                "启用布局所需的窗口宽度。重新启动 TikTok 以应用此操作.");
     }
 
     private static void fill45(Map<String, String> table) {
+        table.put("Window width needed to enable the layout. Restart TikTok to apply this.",
+                "启用布局所需的窗口宽度。重新启动 TikTok 以应用此操作.");
         table.put("Wipes TikTok's data once, on the next start, and goes back to this phone's real Android ID and advertising ID. You'll be signed out and lose your drafts.",
                 "在下次启动时清除一次 TikTok 的数据,并换回这部手机真实的 Android ID 和广告 ID. 你会退出登录并丢失草稿.");
         table.put("With Hide LIVE videos on, these creators' LIVEs stay when TikTok sends them. Separate handles or user IDs with commas.",
@@ -5720,11 +5722,11 @@ final class L10nTranslationsZh_Hans {
                 "画中画 PiP");
         table.put("save photos",
                 "保存照片");
-        table.put("search suggestions",
-                "搜索建议");
     }
 
     private static void fill46(Map<String, String> table) {
+        table.put("search suggestions",
+                "搜索建议");
         table.put("this creator",
                 "这位创造者");
         table.put("… more",

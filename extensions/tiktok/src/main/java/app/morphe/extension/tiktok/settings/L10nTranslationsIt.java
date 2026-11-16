@@ -15,7 +15,7 @@ final class L10nTranslationsIt {
     }
 
     static Map<String, String> build() {
-        Map<String, String> table = new HashMap<>(5524);
+        Map<String, String> table = new HashMap<>(5526);
         fill0(table);
         fill1(table);
         fill2(table);
@@ -5509,6 +5509,8 @@ final class L10nTranslationsIt {
                 "Intervallo delle visualizzazioni");
         table.put("Visual search",
                 "Ricerca visiva");
+        table.put("Visual search on paused videos",
+                "Ricerca visiva nei video in pausa");
         table.put("Volume",
                 "Volume");
         table.put("Wait a day to loosen the budget",
@@ -5597,11 +5599,11 @@ final class L10nTranslationsIt {
                 "Tutto l'anno");
         table.put("Wide videos TikTok allows it on get an Add one-liner button under the video and a one-liner bar in full screen. Other videos stay the same.",
                 "I video orizzontali su cui TikTok lo consente mostrano sotto il video un pulsante per aggiungere commenti di una riga e, a schermo intero, una barra per scriverli. Gli altri video restano uguali.");
-        table.put("Window width needed to enable the layout. Restart TikTok to apply this.",
-                "Larghezza della finestra necessaria per attivare il layout. Riavvia TikTok per applicare la modifica.");
     }
 
     private static void fill45(Map<String, String> table) {
+        table.put("Window width needed to enable the layout. Restart TikTok to apply this.",
+                "Larghezza della finestra necessaria per attivare il layout. Riavvia TikTok per applicare la modifica.");
         table.put("Wipes TikTok's data once, on the next start, and goes back to this phone's real Android ID and advertising ID. You'll be signed out and lose your drafts.",
                 "Cancella i dati di TikTok una volta, al prossimo avvio, e torna all'ID Android e all'ID pubblicitario reali di questo telefono. Verrai disconnesso e perderai le bozze.");
         table.put("With Hide LIVE videos on, these creators' LIVEs stay when TikTok sends them. Separate handles or user IDs with commas.",
@@ -5720,11 +5722,11 @@ final class L10nTranslationsIt {
                 "picture in picture PiP");
         table.put("save photos",
                 "salva foto");
-        table.put("search suggestions",
-                "suggerimenti di ricerca");
     }
 
     private static void fill46(Map<String, String> table) {
+        table.put("search suggestions",
+                "suggerimenti di ricerca");
         table.put("this creator",
                 "questo creator");
         table.put("… more",

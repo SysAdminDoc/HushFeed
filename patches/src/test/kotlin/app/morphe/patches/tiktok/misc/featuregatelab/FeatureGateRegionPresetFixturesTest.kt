@@ -30,6 +30,7 @@ class FeatureGateRegionPresetFixturesTest {
         val owners = setOf(
             DANMAKU_READ, DANMAKU_HOLDER, DANMAKU_MASTER, LANDSCAPE_READ, DANMAKU_SERVICE, AWEME,
             PHOTOS_READ, PHOTOS_GATE, PUBLISH, KEYBOARD, TAB_READ, AB_READS, AB_CALLBACK,
+            TAG_TRIGGER, FEED_TAG_GATE, FEED_TAG_READ, AFTER_BLOCK_HOLDER, AFTER_BLOCK_READ, VISION_GATE, VISION_READ,
         )
         container.dexEntryNames.flatMap { entry ->
             container.getEntry(entry)!!.dexFile.classes.filter { it.type in owners }
@@ -120,6 +121,77 @@ class FeatureGateRegionPresetFixturesTest {
     }
 
     @Test
+    fun `a paused video's search tag needs enable_vision_search and the feed tag at one`() {
+        for ((read, key) in listOf(VISION_READ to "enable_vision_search", FEED_TAG_READ to "visual_search_enable_feed_tag",
+            AFTER_BLOCK_READ to "show_tag_after_circle_search_block")) {
+            val invoke = method(read, "invoke")
+            assertEquals(listOf(key), invoke.strings())
+            assertEquals(AB_INT_READ, invoke.calls().single { it.returnType == "I" }.toString())
+        }
+        for ((holder, read) in listOf(VISION_GATE to VISION_READ, FEED_TAG_GATE to FEED_TAG_READ,
+            AFTER_BLOCK_HOLDER to AFTER_BLOCK_READ)) {
+            assertTrue("$holder keeps $read as its lazy", method(holder, "<clinit>").created().contains(read))
+        }
+
+        // The tag is mounted only when TikTok's visual search part is there and both gates pass.
+        val trigger = method(TAG_TRIGGER, "qq")
+        for (loaded in listOf(false, true)) for (feedTag in listOf(false, true)) for (vision in listOf(false, true)) {
+            assertEquals("loaded=$loaded feedTag=$feedTag vision=$vision", loaded && feedTag && vision,
+                run(trigger) { call, _ ->
+                    when (call.toString()) {
+                        "$VISUAL_SEARCH_LOADED->LIZIZ()Z" -> loaded.toInt()
+                        "Ljava/lang/Object;->getClass()Ljava/lang/Class;" -> Any()
+                        "$FEED_TAG_GATE->LIZ()Z" -> feedTag.toInt()
+                        "$VISION_GATE->LIZ()Z" -> vision.toInt()
+                        else -> error("Unexpected call: $call")
+                    }
+                })
+        }
+
+        val vision = method(VISION_GATE, "LIZ")
+        for (value in -1..3) {
+            assertEquals("enable_vision_search=$value", value == 1, run(vision) { call, args ->
+                when (call.toString()) {
+                    "LX/02pj;->getValue()Ljava/lang/Object;" -> value
+                    "Ljava/lang/Number;->intValue()I" -> args.single()
+                    else -> error("Unexpected call: $call")
+                }
+            })
+        }
+
+        // The feed tag at 1 comes first. A home page that blocks Circle to Search then takes
+        // show_tag_after_circle_search_block at 1. Anything else falls to the server's Crowd: none
+        // at all lets it through, and so does enableVTag (or enableFallbackVTag) from 100 to 199.
+        val gate = method(FEED_TAG_GATE, "LIZ")
+        for (feedTag in 0..2) for (blocked in listOf(false, true)) for (after in 0..2) for (crowd in listOf(null, 0, 150)) {
+            val expected = feedTag == 1 && ((blocked && after == 1) || crowd == null || crowd == 150)
+            val field = { read: FieldReference, _: Any? ->
+                when (read.toString()) {
+                    "$CROWD->enableVTag:Ljava/lang/Integer;", "$CROWD->enableFallbackVTag:Ljava/lang/Integer;" -> Boxed(crowd!!)
+                    else -> error("Unexpected field read: $read")
+                }
+            }
+            assertEquals("feedTag=$feedTag blocked=$blocked after=$after crowd=$crowd", expected, run(gate, field) { call, args ->
+                when (call.toString()) {
+                    "LX/02pj;->getValue()Ljava/lang/Object;" -> when (args.single()) {
+                        "$FEED_TAG_GATE->LIZIZ:LX/02pj;" -> feedTag
+                        "$AFTER_BLOCK_HOLDER->LIZ:LX/02pj;" -> after
+                        else -> error("Unexpected lazy: ${args.single()}")
+                    }
+                    "Ljava/lang/Number;->intValue()I" -> args.single()
+                    "Ljava/lang/Integer;->intValue()I" -> (args.single() as Boxed).value
+                    "$SERVICES->get()$SERVICES" -> Any()
+                    "$SERVICES->getService(Ljava/lang/Class;)Ljava/lang/Object;" -> Any()
+                    "Lcom/ss/android/ugc/aweme/spi/IHomePageService;->LJ()Z" -> blocked.toInt()
+                    "Ljava/lang/Object;->getClass()Ljava/lang/Class;" -> Any()
+                    "LX/0BuO;->LIZ()$CROWD" -> if (crowd == null) null else Any()
+                    else -> error("Unexpected call: $call")
+                }
+            })
+        }
+    }
+
+    @Test
     fun `the home tab rows are a TabConfig read through the typed object getter the Lab hooks`() {
         val read = method(TAB_READ, "invoke")
         assertEquals(listOf("tab_fcp_config_v2"), read.strings())
@@ -161,11 +233,21 @@ class FeatureGateRegionPresetFixturesTest {
         error("v$register is never written")
     }
 
+    private fun Boolean.toInt() = if (this) 1 else 0
+
+    /** A boxed Integer a native gate null-checks before unboxing it. */
+    private data class Boxed(val value: Int)
+
     /**
      * Runs a small native gate to its return, with each call answered by [answer] (booleans as
-     * 0 and 1). Boolean.valueOf passes its argument through.
+     * 0 and 1) and each object field read by [field]. Boolean.valueOf passes its argument
+     * through, and a static object read leaves the field's name in its register.
      */
-    private fun run(method: Method, answer: (MethodReference, List<Any?>) -> Any?): Boolean {
+    private fun run(
+        method: Method,
+        field: (FieldReference, Any?) -> Any? = { read, _ -> error("Unexpected field read: $read") },
+        answer: (MethodReference, List<Any?>) -> Any?,
+    ): Boolean {
         val implementation = method.implementation!!
         val code = implementation.instructions.toList()
         val addresses = code.runningFold(0) { address, instruction -> address + instruction.codeUnits }.dropLast(1)
@@ -180,7 +262,13 @@ class FeatureGateRegionPresetFixturesTest {
                     (instruction as NarrowLiteralInstruction).narrowLiteral
                 Opcode.CONST_STRING, Opcode.CONST_STRING_JUMBO ->
                     registers[(instruction as OneRegisterInstruction).registerA] = instruction.getReference<StringReference>()!!.string
-                Opcode.SGET_OBJECT -> registers[(instruction as OneRegisterInstruction).registerA] = Any()
+                Opcode.SGET_OBJECT -> registers[(instruction as OneRegisterInstruction).registerA] =
+                    instruction.getReference<FieldReference>()!!.toString()
+                Opcode.CONST_CLASS -> registers[(instruction as OneRegisterInstruction).registerA] = Any()
+                Opcode.IGET_OBJECT -> {
+                    instruction as TwoRegisterInstruction
+                    registers[instruction.registerA] = field(instruction.getReference<FieldReference>()!!, registers[instruction.registerB])
+                }
                 Opcode.CHECK_CAST -> Unit
                 Opcode.INVOKE_STATIC, Opcode.INVOKE_VIRTUAL, Opcode.INVOKE_INTERFACE,
                 Opcode.INVOKE_STATIC_RANGE, Opcode.INVOKE_VIRTUAL_RANGE, Opcode.INVOKE_INTERFACE_RANGE -> {
@@ -200,8 +288,15 @@ class FeatureGateRegionPresetFixturesTest {
                     val equal = registers[instruction.registerA] == registers[instruction.registerB]
                     branch = if (instruction.opcode == Opcode.IF_EQ) equal else !equal
                 }
+                Opcode.IF_GT, Opcode.IF_GE -> {
+                    instruction as TwoRegisterInstruction
+                    val a = registers[instruction.registerA] as Int
+                    val b = registers[instruction.registerB] as Int
+                    branch = if (instruction.opcode == Opcode.IF_GT) a > b else a >= b
+                }
                 Opcode.IF_EQZ, Opcode.IF_NEZ -> {
-                    val zero = (registers[(instruction as OneRegisterInstruction).registerA] as Int) == 0
+                    val value = registers[(instruction as OneRegisterInstruction).registerA]
+                    val zero = value == null || value == 0
                     branch = if (instruction.opcode == Opcode.IF_EQZ) zero else !zero
                 }
                 Opcode.GOTO, Opcode.GOTO_16 -> branch = true
@@ -231,5 +326,15 @@ class FeatureGateRegionPresetFixturesTest {
         const val TAB_CONFIG = "Lcom/ss/android/ugc/aweme/experiment/TabConfig;"
         const val AB_READS = "LX/03OH;"
         const val AB_CALLBACK = "LX/03eV;"
+        const val TAG_TRIGGER = "Lcom/ss/android/ugc/aweme/search/entry/visualsearch/ui/SearchVisualTagComponentTrigger;"
+        const val VISUAL_SEARCH_LOADED = "LX/0B4D;"
+        const val FEED_TAG_GATE = "LX/0Art;"
+        const val FEED_TAG_READ = "LX/0Aru;"
+        const val AFTER_BLOCK_HOLDER = "LX/0Arv;"
+        const val AFTER_BLOCK_READ = "LX/0Arw;"
+        const val VISION_GATE = "LX/0Arx;"
+        const val VISION_READ = "LX/0Ary;"
+        const val CROWD = "Lcom/ss/android/ugc/aweme/config/Crowd;"
+        const val SERVICES = "Lcom/ss/android/ugc/aweme/framework/services/ServiceManager;"
     }
 }

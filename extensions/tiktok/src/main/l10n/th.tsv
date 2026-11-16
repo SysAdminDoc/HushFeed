@@ -2913,3 +2913,5 @@ One per post	แยกตามโพสต์
 Keep the middle unstretched	คงสัดส่วนตรงกลางไว้ไม่ยืด
 # context: Summary for Keep the middle unstretched
 Cover the whole window and keep the middle of the video at its own shape. A little comes off the sides, and only the top and bottom are stretched. A video far from the screen's shape keeps TikTok's size.	แสดงวิดีโอเต็มทั้งหน้าต่างโดยคงรูปทรงเดิมของส่วนกลางไว้ ด้านข้างจะถูกครอปออกเล็กน้อย และยืดเฉพาะด้านบนกับด้านล่าง วิดีโอที่มีรูปทรงต่างจากหน้าจอมากจะคงขนาดของ TikTok
+# context: A Feature Gate Lab preset title: when a video is paused, TikTok shows a search tag on things in the frame, which opens its visual search
+Visual search on paused videos	การค้นหาด้วยภาพในวิดีโอที่หยุดชั่วคราว

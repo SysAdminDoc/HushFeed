@@ -15,7 +15,7 @@ final class L10nTranslationsRu {
     }
 
     static Map<String, String> build() {
-        Map<String, String> table = new HashMap<>(5890);
+        Map<String, String> table = new HashMap<>(5892);
         fill0(table);
         fill1(table);
         fill2(table);
@@ -5881,6 +5881,8 @@ final class L10nTranslationsRu {
                 "Диапазон просмотров");
         table.put("Visual search",
                 "Визуальный поиск");
+        table.put("Visual search on paused videos",
+                "Визуальный поиск на видео на паузе");
         table.put("Volume",
                 "Громкость");
         table.put("Wait a day to loosen the budget",
@@ -5969,11 +5971,11 @@ final class L10nTranslationsRu {
                 "Удерживая видео, проведите влево или вправо, чтобы переключать скорости из меню скорости. Текущую показывает пузырь. Следующее удержание начнётся с неё. Когда отпустите, скорость станет обычной. Блокировка свайпом вниз сохраняет выбранную скорость. На заблокированном видео при отпускании блокируется новая скорость.");
         table.put("White",
                 "Белый");
-        table.put("Who to message",
-                "Кому писать");
     }
 
     private static void fill48(Map<String, String> table) {
+        table.put("Who to message",
+                "Кому писать");
         table.put("Whole year",
                 "Весь год");
         table.put("Wide videos TikTok allows it on get an Add one-liner button under the video and a one-liner bar in full screen. Other videos stay the same.",
@@ -6092,11 +6094,11 @@ final class L10nTranslationsRu {
                 "отладка дебаг логи журналы");
         table.put("dialog popup greeting",
                 "диалог всплывающее окно приветствие");
-        table.put("expanded",
-                "развёрнуто");
     }
 
     private static void fill49(Map<String, String> table) {
+        table.put("expanded",
+                "развёрнуто");
         table.put("picture in picture PiP",
                 "картинка в картинке PiP");
         table.put("save photos",

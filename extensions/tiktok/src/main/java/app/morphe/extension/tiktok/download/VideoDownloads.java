@@ -475,7 +475,7 @@ final class VideoDownloads {
                     boolean onlyTracks = details == null && outcome.cancelled == 0
                             && outcome.stop == SaveProgress.Stop.NONE && !soundSkipped[0];
                     String said = onlyTracks ? own : SaveProgress.message(outcome, own);
-                    SaveNotice.saved(said, published[0]);
+                    SaveNotice.savedVideo(said, published[0]);
                     // A count took the banner, so the watermark is said on its own.
                     if (stamped[0] && !said.equals(own)) Utils.showToastLong(own);
                     if (!remembered[0]) Utils.showToastLong(L10n.t("Saved, but a later save may make a second copy"));

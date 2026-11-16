@@ -418,7 +418,7 @@ public final class StoryDownloads {
             // The sound keeps to a toast: its banner went up first and the story's, a tick
             // later, took it down before anyone saw it (refutation review of 3d5395f2).
             if (audioName != null) saveSound(app, audioName, temp, path);
-            SaveNotice.saved(stamped
+            SaveNotice.savedVideo(stamped
                     ? L10n.f("Only a watermarked copy existed. Saved to %1$s", path)
                     : L10n.f("Story saved to %1$s", path), saved);
         } finally {

@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.SettingsContextRule;
+import app.morphe.extension.tiktok.settings.Settings;
 
 import org.junit.After;
 import org.junit.Before;
@@ -50,6 +51,70 @@ public class SaveNoticeTest {
     @After public void tearDown() {
         Utils.setActivity(null);
         SaveNotice.windowRootsForTests = null;
+        SaveNotice.foregroundForTests = null;
+        Settings.SHARE_AFTER_SAVE.save(false);
+    }
+
+    /** #423: with Share the video after a save on, a saved video opens the share sheet on its file. */
+    @Test public void withShareOnASavedVideoOpensTheShareSheetOnItsFile() {
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setActivity(activity);
+            Settings.SHARE_AFTER_SAVE.save(true);
+            SaveNotice.foregroundForTests = true;
+            Uri row = Uri.parse("content://media/external/video/media/80");
+
+            SaveNotice.savedVideo("Video saved to DCIM/TikTok", new MediaFileWriter.Saved("a.mp4", row));
+            idlePastTheSheetSettle();
+
+            Intent started = Shadows.shadowOf(activity).getNextStartedActivity();
+            assertNotNull("no share sheet came up", started);
+            assertEquals(Intent.ACTION_CHOOSER, started.getAction());
+            Intent send = started.getParcelableExtra(Intent.EXTRA_INTENT);
+            assertNotNull(send);
+            assertEquals(Intent.ACTION_SEND, send.getAction());
+            assertEquals(row, send.getParcelableExtra(Intent.EXTRA_STREAM));
+            assertEquals("video/mp4", send.getType());
+            assertEquals("the app picked can't read the file", Intent.FLAG_GRANT_READ_URI_PERMISSION,
+                    send.getFlags() & Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            assertEquals(row, send.getClipData().getItemAt(0).getUri());
+            assertEquals("Video saved to DCIM/TikTok", ShadowToast.getTextOfLatestToast());
+            assertNull("the banner went up under the share sheet",
+                    find(activity.findViewById(android.R.id.content), "Open"));
+        }
+    }
+
+    @Test public void withShareOffASavedVideoKeepsTheBanner() {
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setActivity(activity);
+            SaveNotice.foregroundForTests = true;
+
+            SaveNotice.savedVideo("Video saved to DCIM/TikTok",
+                    new MediaFileWriter.Saved("a.mp4", Uri.parse("content://media/external/video/media/81")));
+            idlePastTheSheetSettle();
+
+            assertNull("a share sheet came up with the switch off",
+                    Shadows.shadowOf(activity).getNextStartedActivity());
+            assertNotNull(find(activity.findViewById(android.R.id.content), "Open"));
+        }
+    }
+
+    /** Android opens no share sheet for an app in the background, so the banner says it instead. */
+    @Test public void aVideoSavedWhileTikTokIsInTheBackgroundGetsTheBanner() {
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setActivity(activity);
+            Settings.SHARE_AFTER_SAVE.save(true);
+            SaveNotice.foregroundForTests = false;
+
+            SaveNotice.savedVideo("Story saved to DCIM/TikTok",
+                    new MediaFileWriter.Saved("a.mp4", Uri.parse("content://media/external/video/media/82")));
+            idlePastTheSheetSettle();
+
+            assertNull(Shadows.shadowOf(activity).getNextStartedActivity());
+            assertNotNull("the save went unsaid", find(activity.findViewById(android.R.id.content), "Open"));
+        }
     }
 
     /** A quick save finished inside its own two-second toast, and the banner drew over it (#299). */

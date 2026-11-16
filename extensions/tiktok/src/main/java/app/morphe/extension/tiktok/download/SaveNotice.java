@@ -5,7 +5,9 @@
 package app.morphe.extension.tiktok.download;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.ActivityNotFoundException;
+import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
@@ -17,6 +19,7 @@ import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.blockauthor.BlockAuthorOverlay;
 import app.morphe.extension.tiktok.settings.L10n;
+import app.morphe.extension.tiktok.settings.Settings;
 
 /**
  * Says a save landed, with a way to it. The two-second toast carried a folder path and offered
@@ -51,30 +54,104 @@ final class SaveNotice {
         // fresh one, and a banner put on whichever window was top at that instant landed on the
         // dying sheet, under the new one (found by the view walk, invisible on the S22, top and
         // bottom placement alike). The swap settles well inside this wait.
+        Utils.runOnMainThreadDelayed(() -> announce(message, uri, retry), SHEET_SETTLE_MS);
+    }
+
+    /**
+     * Announces a saved video or story as {@link #saved(String, MediaFileWriter.Saved)} does, or,
+     * with Share the video after a save on, opens Android's share sheet on the file in place of
+     * the banner, so it can go straight to a chat app (#423). The words go up as a toast then. A
+     * save that lands while TikTok is in the background, where Android opens no share sheet, gets
+     * the banner as before.
+     */
+    static void savedVideo(String message, MediaFileWriter.Saved saved) {
+        if (saved == null || (saved.uri == null && saved.file == null) || !Settings.SHARE_AFTER_SAVE.get()) {
+            saved(message, saved);
+            return;
+        }
+        MediaJobScheduler.said(message);
         Utils.runOnMainThreadDelayed(() -> {
-            Activity activity = Utils.getActivity();
-            if (activity == null || activity.isFinishing() || activity.isDestroyed()) {
-                Utils.showToastShort(message);
-                return;
-            }
-            // TikTok brings its share sheet back over the feed when a download finishes, and the
-            // sheet is a window of its own: a banner on the activity stood underneath it, where
-            // the old toast would have floated above. The banner goes on the top window instead,
-            // which is the sheet while it is up and the activity's own decor otherwise.
-            ViewGroup root = topWindowRoot(activity);
-            if (root == null) root = activity.findViewById(android.R.id.content);
-            // A quick save lands inside the two seconds of its own "Saving" toast, and the banner
-            // drew over the toast's text (#299). It says the newer thing, so the toast goes.
-            Utils.cancelLatestToast();
-            if (retry == null) {
-                BlockAuthorOverlay.showActionBanner(root, message, L10n.t("Open"), () -> open(uri));
-            } else if (uri == null) {
-                BlockAuthorOverlay.showActionBanner(root, message, L10n.t("Retry"), retry);
-            } else {
-                BlockAuthorOverlay.showActionBanner(root, message, L10n.t("Open"), () -> open(uri),
-                        L10n.t("Retry"), retry);
-            }
+            if (!share(Utils.getActivity(), saved, message)) announce(message, saved.uri, null);
         }, SHEET_SETTLE_MS);
+    }
+
+    /** The banner on the top window, or the toast when there's no row, no Retry or no screen. */
+    private static void announce(String message, Uri uri, Runnable retry) {
+        Activity activity = Utils.getActivity();
+        if ((uri == null && retry == null)
+                || activity == null || activity.isFinishing() || activity.isDestroyed()) {
+            Utils.showToastShort(message);
+            return;
+        }
+        // TikTok brings its share sheet back over the feed when a download finishes, and the
+        // sheet is a window of its own: a banner on the activity stood underneath it, where
+        // the old toast would have floated above. The banner goes on the top window instead,
+        // which is the sheet while it is up and the activity's own decor otherwise.
+        ViewGroup root = topWindowRoot(activity);
+        if (root == null) root = activity.findViewById(android.R.id.content);
+        // A quick save lands inside the two seconds of its own "Saving" toast, and the banner
+        // drew over the toast's text (#299). It says the newer thing, so the toast goes.
+        Utils.cancelLatestToast();
+        if (retry == null) {
+            BlockAuthorOverlay.showActionBanner(root, message, L10n.t("Open"), () -> open(uri));
+        } else if (uri == null) {
+            BlockAuthorOverlay.showActionBanner(root, message, L10n.t("Retry"), retry);
+        } else {
+            BlockAuthorOverlay.showActionBanner(root, message, L10n.t("Open"), () -> open(uri),
+                    L10n.t("Retry"), retry);
+        }
+    }
+
+    /** For the tests, where the process has no real importance; null asks Android. */
+    static volatile Boolean foregroundForTests;
+
+    /** Whether one of TikTok's screens shows, which Android needs before it opens a share sheet. */
+    private static boolean inForeground() {
+        Boolean forTests = foregroundForTests;
+        if (forTests != null) return forTests;
+        ActivityManager.RunningAppProcessInfo state = new ActivityManager.RunningAppProcessInfo();
+        ActivityManager.getMyMemoryState(state);
+        return state.importance <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
+    }
+
+    /**
+     * Opens Android's share sheet on the saved file, or answers false so the banner says it. Below
+     * Android 10 the file has no row yet, so the scanner gives it one first.
+     */
+    private static boolean share(Activity activity, MediaFileWriter.Saved saved, String message) {
+        if (activity == null || activity.isFinishing() || activity.isDestroyed() || !inForeground()) {
+            return false;
+        }
+        if (saved.uri != null) return share(activity, saved.uri, message);
+        android.media.MediaScannerConnection.scanFile(activity.getApplicationContext(),
+                new String[]{saved.file.getAbsolutePath()}, null,
+                (path, uri) -> Utils.runOnMainThread(() -> {
+                    if (uri == null || !share(activity, uri, message)) announce(message, uri, null);
+                }));
+        return true;
+    }
+
+    private static boolean share(Activity activity, Uri uri, String message) {
+        try {
+            String type = activity.getContentResolver().getType(uri);
+            Intent send = new Intent(Intent.ACTION_SEND)
+                    .setType(type != null ? type : "video/mp4")
+                    .putExtra(Intent.EXTRA_STREAM, uri)
+                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            // The share sheet's preview and the app picked read the file through this grant.
+            send.setClipData(ClipData.newRawUri(null, uri));
+            activity.startActivity(Intent.createChooser(send, null));
+            // The share sheet takes the banner's place, so its words go up as a toast.
+            Utils.cancelLatestToast();
+            Utils.showToastShort(message);
+            return true;
+        } catch (ActivityNotFoundException | SecurityException noSheet) {
+            Logger.printDebug(() -> "No share sheet for the saved file: " + noSheet);
+            return false;
+        } catch (RuntimeException failure) {
+            Logger.printException(() -> "Could not share the saved file", failure);
+            return false;
+        }
     }
 
     /** How long TikTok gets to finish swapping its share sheet before the banner picks a window. */

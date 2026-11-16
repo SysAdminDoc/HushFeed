@@ -210,7 +210,7 @@ public final class SlideshowVideo {
                             : L10n.t("Couldn't make the video. Try again."));
                 } else {
                     if (checkSaved) SavedVideoArchive.rememberQuietly(app, id, saved[0], archiveGeneration);
-                    SaveNotice.saved(silent[0]
+                    SaveNotice.savedVideo(silent[0]
                             ? L10n.f("Saved to %1$s, but without sound", path)
                             : L10n.f("Saved the photos as a video in %1$s", path), saved[0]);
                 }

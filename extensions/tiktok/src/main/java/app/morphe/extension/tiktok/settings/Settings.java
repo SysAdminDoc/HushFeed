@@ -170,6 +170,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting DOWNLOAD_WITHOUT_SOUND =
             new BooleanSetting("download_without_sound", FALSE);
     public static final BooleanSetting DOWNLOAD_PROGRESS = new BooleanSetting("download_progress", false);
+    /** Android's share sheet on the saved file once a video or story save finishes, in place of the banner (#423). */
+    public static final BooleanSetting SHARE_AFTER_SAVE = new BooleanSetting("share_after_save", FALSE);
     /** The Share to sheet TikTok opens a few seconds after its own downloader saves a video. */
     public static final BooleanSetting SKIP_POST_DOWNLOAD_SHARE_SHEET =
             new BooleanSetting("skip_post_download_share_sheet", FALSE);

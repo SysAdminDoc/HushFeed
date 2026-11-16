@@ -185,6 +185,11 @@ public class DownloadsPreferenceCategory extends ConditionalPreferenceCategory {
                     Settings.SAVE_COVER_BUTTON));
             addPreference(new TogglePreference(context, "Show download progress",
                     "Show a progress bar while a video saves.", Settings.DOWNLOAD_PROGRESS));
+            addPreference(new TogglePreference(context, "Share the video after a save",
+                    "Opens Android's share sheet with the file as soon as a video is saved, video stories included, "
+                            + "so you can send it straight to WhatsApp, Telegram or any other app. "
+                            + "Picked videos saved together get the usual notice.",
+                    Settings.SHARE_AFTER_SAVE));
             addPreference(new TogglePreference(context, "Pick videos to save from profile grids",
                     L10n.f(context, "Puts a circle on each video in a profile, Liked or Favorites "
                             + "grid. Pick up to %1$s, then tap Save to save them one after another, "

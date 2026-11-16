@@ -55,6 +55,21 @@ public class LiveRoomStreamTest {
                 LiveRoomStream.forRecording(null, null));
     }
 
+    /** #424: name alerts listen to the room's sound alone where the room has it, else its smallest FLV. */
+    @Test public void listeningTakesTheSoundOnlyStreamElseTheSmallestFlv() {
+        assertEquals("https://p.example.com/ao.flv", LiveRoomStream.listenAddress(JSON, null));
+        String noSoundOnly = "{\"data\":{"
+                + "\"hd\":{\"main\":{\"flv\":\"https://p.example.com/hd.flv\"}},"
+                + "\"sd\":{\"main\":{\"flv\":\"https://p.example.com/sd.flv\"}},"
+                + "\"ao\":{\"main\":{\"flv\":\"http://p.example.com/ao.flv\"}}}}";
+        assertEquals("a plain http sound stream is passed over",
+                "https://p.example.com/sd.flv", LiveRoomStream.listenAddress(noSoundOnly, null));
+        String hlsOnly = "{\"data\":{\"hd\":{\"main\":{\"hls\":\"https://p.example.com/hd.m3u8\"}}}}";
+        assertNull("an HLS room has nothing to listen to", LiveRoomStream.listenAddress(hlsOnly, null));
+        assertNull(LiveRoomStream.listenAddress(null, null));
+        assertNull(LiveRoomStream.listenAddress((Object) null));
+    }
+
     private static final String ALL = "{\"data\":{"
             + "\"origin\":{\"main\":{\"flv\":\"https://p.example.com/origin.flv\"}},"
             + "\"uhd\":{\"main\":{\"flv\":\"https://p.example.com/uhd.flv\"}},"

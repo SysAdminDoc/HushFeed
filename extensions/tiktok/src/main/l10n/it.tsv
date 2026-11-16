@@ -2891,3 +2891,11 @@ Tells you when your name comes up in a LIVE, in the chat or said out loud in a r
 Names to listen for	Nomi da ascoltare
 Your handle and TikTok name are on the list already. Add other names people call you, separated by commas.	Il tuo nome utente e il tuo nome TikTok sono già nella lista. Aggiungi altri nomi con cui ti chiamano, separati da virgole.
 Your name came up in a LIVE	Il tuo nome è venuto fuori in una LIVE
+Listen for your name	Ascolta il tuo nome
+Also listens to the LIVE's sound, so your name counts when it's said out loud in rooms without captions. Your phone's own speech recognition does the listening, with TikTok's microphone permission. It hears only the LIVE, though Android shows its microphone dot, and it uses a little more data.	Ascolta anche l'audio della LIVE, così il tuo nome conta quando viene detto ad alta voce nelle stanze senza sottotitoli. Ad ascoltare è il riconoscimento vocale del tuo telefono, con l'autorizzazione al microfono di TikTok. Sente solo la LIVE, anche se Android mostra il suo puntino del microfono, e usa un po' più di dati.
+Needs Android 13 or newer.	Richiede Android 13 o versioni successive.
+Off: this phone's speech recognition only hears the microphone. Turn this off and on to try again.	Disattivato: il riconoscimento vocale di questo telefono sente solo il microfono. Disattiva e riattiva l'opzione per riprovare.
+This phone has no speech recognition. Choose one under Android's voice input settings, then open the LIVE again.	Questo telefono non ha il riconoscimento vocale. Scegline uno nelle impostazioni di input vocale di Android, poi riapri la LIVE.
+TikTok needs the microphone permission for speech recognition. Allow it in Android's app settings, then open the LIVE again.	TikTok ha bisogno dell'autorizzazione al microfono per il riconoscimento vocale. Consentila nelle impostazioni delle app di Android, poi riapri la LIVE.
+Speech recognition has no model for your phone's language. Download one in Android's speech settings, then open the LIVE again.	Il riconoscimento vocale non ha un modello per la lingua del telefono. Scaricane uno nelle impostazioni vocali di Android, poi riapri la LIVE.
+Speech recognition kept failing in the last LIVE. Open the LIVE again to retry.	Il riconoscimento vocale ha continuato a non funzionare nell'ultima LIVE. Riapri la LIVE per riprovare.

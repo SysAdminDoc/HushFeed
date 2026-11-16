@@ -194,6 +194,8 @@ public final class LiveRecordChip {
             registerCallbacks(activity);
             // Auto tap (#335) follows the same pages and keeps its own chip and checks.
             LiveAutoTap.roomResumed(activity);
+            // So does listening for your name in the room's sound (#424).
+            LiveListen.roomResumed(activity);
             // A PiP room has no full-size resumed page. Its current fragment is selected by
             // TikTok's player, not by whichever adjacent page last received onResume.
             if (nativePip(activity)) {

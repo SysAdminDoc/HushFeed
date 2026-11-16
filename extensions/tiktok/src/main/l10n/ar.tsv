@@ -3138,3 +3138,11 @@ Tells you when your name comes up in a LIVE, in the chat or said out loud in a r
 Names to listen for	أسماء للاستماع إليها
 Your handle and TikTok name are on the list already. Add other names people call you, separated by commas.	اسم المستخدم واسمك على TikTok في القائمة بالفعل. أضف أسماء أخرى يناديك بها الناس، مفصولة بفواصل.
 Your name came up in a LIVE	ذُكر اسمك في LIVE
+Listen for your name	استمع إلى اسمك
+Also listens to the LIVE's sound, so your name counts when it's said out loud in rooms without captions. Your phone's own speech recognition does the listening, with TikTok's microphone permission. It hears only the LIVE, though Android shows its microphone dot, and it uses a little more data.	يستمع أيضًا إلى صوت LIVE، فيُحتسب اسمك عندما يُقال بصوت عالٍ في الغرف التي لا ترجمة نصية فيها. يتولى الاستماع التعرّف على الكلام في هاتفك نفسه، بإذن الميكروفون الخاص بـ TikTok. لا يسمع إلا صوت LIVE، مع أن Android يُظهر نقطة الميكروفون، ويستهلك بيانات أكثر قليلًا.
+Needs Android 13 or newer.	يتطلب Android 13 أو أحدث.
+Off: this phone's speech recognition only hears the microphone. Turn this off and on to try again.	متوقف: التعرّف على الكلام في هذا الهاتف لا يسمع إلا الميكروفون. أوقف هذا الخيار ثم شغّله لتحاول مجددًا.
+This phone has no speech recognition. Choose one under Android's voice input settings, then open the LIVE again.	لا يوجد في هذا الهاتف تعرّف على الكلام. اختر واحدًا من إعدادات الإدخال الصوتي في Android، ثم افتح LIVE مجددًا.
+TikTok needs the microphone permission for speech recognition. Allow it in Android's app settings, then open the LIVE again.	يحتاج TikTok إلى إذن الميكروفون للتعرّف على الكلام. اسمح به من إعدادات التطبيقات في Android، ثم افتح LIVE مجددًا.
+Speech recognition has no model for your phone's language. Download one in Android's speech settings, then open the LIVE again.	لا يتوفر نموذج للتعرّف على الكلام بلغة هاتفك. نزّل واحدًا من إعدادات الكلام في Android، ثم افتح LIVE مجددًا.
+Speech recognition kept failing in the last LIVE. Open the LIVE again to retry.	استمر فشل التعرّف على الكلام في آخر LIVE. افتح LIVE مجددًا لتحاول من جديد.

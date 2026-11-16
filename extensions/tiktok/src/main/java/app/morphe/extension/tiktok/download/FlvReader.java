@@ -59,9 +59,18 @@ final class FlvReader {
     private int codec = -1;
     private int nalLengthSize = 4;
     private long firstMillis = Long.MIN_VALUE;
+    /** Video tags are skipped unread, so a video format the reader can't save doesn't matter. */
+    private boolean soundOnly;
 
     private FlvReader(boolean hevc,boolean relativeOrigin) {
         this.hevc = hevc;if(relativeOrigin)firstMillis=0;
+    }
+
+    /** Reads the sound of {@code input} alone, for LIVE name alerts (#424). Video is skipped. */
+    static void readSound(InputStream input, Listener listener) throws IOException {
+        FlvReader reader = new FlvReader(true, true);
+        reader.soundOnly = true;
+        reader.run(new DataInputStream(input), listener);
     }
 
     /** Reads all of {@code input}. */
@@ -96,6 +105,10 @@ final class FlvReader {
             long timestamp = ((tagHeader[8] & 0xFF) << 16) | ((tagHeader[9] & 0xFF) << 8) | (tagHeader[10] & 0xFF)
                     | ((long) (tagHeader[11] & 0xFF) << 24);
             if (size < 0 || size > MAX_TAG_BYTES) throw new IOException("FLV tag size " + size + " is not believable");
+            if (soundOnly && type != TAG_AUDIO) {
+                skipFully(in, size);
+                continue;
+            }
             byte[] body = new byte[size];
             if (!readFully(in, body, size)) return;
             if (type == TAG_VIDEO) video(body, timestamp, listener);

@@ -2891,3 +2891,11 @@ Tells you when your name comes up in a LIVE, in the chat or said out loud in a r
 Names to listen for	Dinlənəcək adlar
 Your handle and TikTok name are on the list already. Add other names people call you, separated by commas.	İstifadəçi adınız və TikTok adınız artıq siyahıdadır. İnsanların sizi çağırdığı başqa adları vergüllə ayıraraq əlavə edin.
 Your name came up in a LIVE	Adınız LIVE-da çəkildi
+Listen for your name	Adını səsdə dinlə
+Also listens to the LIVE's sound, so your name counts when it's said out loud in rooms without captions. Your phone's own speech recognition does the listening, with TikTok's microphone permission. It hears only the LIVE, though Android shows its microphone dot, and it uses a little more data.	LIVE-ın səsini də dinləyir, beləliklə altyazısız otaqlarda adın ucadan deyiləndə də nəzərə alınır. Dinləməni telefonunun öz nitq tanıması TikTok-un mikrofon icazəsi ilə edir. Yalnız LIVE-ı eşidir, Android mikrofon nöqtəsini göstərsə də, və bir az daha çox data işlədir.
+Needs Android 13 or newer.	Android 13 və ya daha yenisi lazımdır.
+Off: this phone's speech recognition only hears the microphone. Turn this off and on to try again.	Söndürülüb: bu telefonun nitq tanıması yalnız mikrofonu eşidir. Yenidən yoxlamaq üçün bunu söndürüb yandır.
+This phone has no speech recognition. Choose one under Android's voice input settings, then open the LIVE again.	Bu telefonda nitq tanıma yoxdur. Android-in səsli daxiletmə ayarlarında birini seç, sonra LIVE-ı yenidən aç.
+TikTok needs the microphone permission for speech recognition. Allow it in Android's app settings, then open the LIVE again.	TikTok-a nitq tanıma üçün mikrofon icazəsi lazımdır. Android-in tətbiq ayarlarında icazə ver, sonra LIVE-ı yenidən aç.
+Speech recognition has no model for your phone's language. Download one in Android's speech settings, then open the LIVE again.	Nitq tanımanın telefonunun dili üçün modeli yoxdur. Android-in nitq ayarlarında birini endir, sonra LIVE-ı yenidən aç.
+Speech recognition kept failing in the last LIVE. Open the LIVE again to retry.	Son LIVE-da nitq tanıma dəfələrlə alınmadı. Yenidən yoxlamaq üçün LIVE-ı təkrar aç.

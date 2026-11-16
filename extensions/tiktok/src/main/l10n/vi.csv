@@ -2746,3 +2746,11 @@ LIVE name alerts,Cảnh báo tên trong LIVE
 Names to listen for,Tên cần lắng nghe
 "Your handle and TikTok name are on the list already. Add other names people call you, separated by commas.","Tên người dùng và tên TikTok của bạn đã có trong danh sách. Thêm các tên khác mà mọi người gọi bạn, cách nhau bằng dấu phẩy."
 Your name came up in a LIVE,Tên bạn được nhắc trong LIVE
+Listen for your name,Nghe tên của bạn
+"Also listens to the LIVE's sound, so your name counts when it's said out loud in rooms without captions. Your phone's own speech recognition does the listening, with TikTok's microphone permission. It hears only the LIVE, though Android shows its microphone dot, and it uses a little more data.","Nghe cả âm thanh của LIVE, nên tên bạn được tính khi ai đó nói to trong phòng không có phụ đề. Việc nghe do tính năng nhận dạng giọng nói của chính điện thoại bạn đảm nhận, với quyền micrô của TikTok. Nó chỉ nghe LIVE, dù Android vẫn hiện chấm micrô, và dùng thêm một ít dữ liệu."
+Needs Android 13 or newer.,Cần Android 13 trở lên.
+Off: this phone's speech recognition only hears the microphone. Turn this off and on to try again.,Đang tắt: tính năng nhận dạng giọng nói của điện thoại này chỉ nghe micrô. Tắt rồi bật lại mục này để thử lại.
+"This phone has no speech recognition. Choose one under Android's voice input settings, then open the LIVE again.","Điện thoại này không có tính năng nhận dạng giọng nói. Chọn một dịch vụ trong cài đặt nhập liệu bằng giọng nói của Android, rồi mở lại LIVE."
+"TikTok needs the microphone permission for speech recognition. Allow it in Android's app settings, then open the LIVE again.","TikTok cần quyền micrô để nhận dạng giọng nói. Cho phép trong cài đặt ứng dụng của Android, rồi mở lại LIVE."
+"Speech recognition has no model for your phone's language. Download one in Android's speech settings, then open the LIVE again.","Tính năng nhận dạng giọng nói không có mô hình cho ngôn ngữ của điện thoại bạn. Tải một mô hình trong cài đặt giọng nói của Android, rồi mở lại LIVE."
+Speech recognition kept failing in the last LIVE. Open the LIVE again to retry.,Tính năng nhận dạng giọng nói liên tục lỗi trong LIVE vừa rồi. Mở lại LIVE để thử lại.

@@ -2748,3 +2748,11 @@ LIVE name alerts,Peringatan nama di LIVE
 Names to listen for,Nama yang didengarkan
 "Your handle and TikTok name are on the list already. Add other names people call you, separated by commas.","Nama pengguna dan nama TikTok-mu sudah ada di daftar. Tambahkan nama lain yang biasa dipakai orang untuk memanggilmu, pisahkan dengan koma."
 Your name came up in a LIVE,Namamu disebut di LIVE
+Listen for your name,Dengarkan namamu
+"Also listens to the LIVE's sound, so your name counts when it's said out loud in rooms without captions. Your phone's own speech recognition does the listening, with TikTok's microphone permission. It hears only the LIVE, though Android shows its microphone dot, and it uses a little more data.","Juga mendengarkan suara LIVE, jadi namamu terhitung saat diucapkan keras-keras di ruang tanpa subtitel. Yang mendengarkan adalah pengenalan suara bawaan ponselmu, dengan izin mikrofon TikTok. Ia hanya mendengar LIVE, meski Android menampilkan titik mikrofonnya, dan memakai sedikit lebih banyak data."
+Needs Android 13 or newer.,Perlu Android 13 atau yang lebih baru.
+Off: this phone's speech recognition only hears the microphone. Turn this off and on to try again.,Mati: pengenalan suara ponsel ini hanya mendengar mikrofon. Matikan lalu nyalakan lagi untuk mencoba lagi.
+"This phone has no speech recognition. Choose one under Android's voice input settings, then open the LIVE again.","Ponsel ini tidak punya pengenalan suara. Pilih satu di setelan input suara Android, lalu buka LIVE lagi."
+"TikTok needs the microphone permission for speech recognition. Allow it in Android's app settings, then open the LIVE again.","TikTok perlu izin mikrofon untuk pengenalan suara. Izinkan di setelan aplikasi Android, lalu buka LIVE lagi."
+"Speech recognition has no model for your phone's language. Download one in Android's speech settings, then open the LIVE again.","Pengenalan suara tidak punya model untuk bahasa ponselmu. Unduh satu di setelan ucapan Android, lalu buka LIVE lagi."
+Speech recognition kept failing in the last LIVE. Open the LIVE again to retry.,Pengenalan suara terus gagal di LIVE terakhir. Buka LIVE lagi untuk mencoba ulang.

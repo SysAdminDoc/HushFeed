@@ -268,6 +268,43 @@ public final class LiveRoomStream {
         return fallback instanceof String ? (String) fallback : null;
     }
 
+    /**
+     * The address LIVE name alerts listen to (#424): the room's audio-only FLV stream, else its
+     * smallest FLV one. Null when the room has neither. Never throws.
+     */
+    @SuppressWarnings("unchecked")
+    public static String listenAddress(Object room) {
+        if (room == null) return null;
+        try {
+            Object streamUrl = Reflect.readField(room, "streamUrl");
+            if (streamUrl == null) return null;
+            Object flv = Reflect.readField(streamUrl, "flvPullUrl");
+            return listenAddress(streamData(room, streamUrl), flv instanceof Map ? (Map<String, String>) flv : null);
+        } catch (Throwable failure) {
+            return null;
+        }
+    }
+
+    static String listenAddress(String streamDataJson, Map<String, String> flvMap) {
+        String sound = soundOnlyFlv(streamDataJson);
+        if (sound != null) return sound;
+        Pick smallest = choose(streamDataJson, flvMap, null, null, LOWEST, null, null);
+        return smallest.target != null && smallest.target.transport == LiveRecorder.Transport.FLV
+                ? smallest.target.url : null;
+    }
+
+    private static String soundOnlyFlv(String streamDataJson) {
+        if (streamDataJson == null || streamDataJson.isEmpty()) return null;
+        try {
+            JSONObject data = new JSONObject(streamDataJson).optJSONObject("data");
+            JSONObject entry = data == null ? null : data.optJSONObject(LiveAudioOnly.KEY);
+            JSONObject main = entry == null ? null : entry.optJSONObject("main");
+            return main == null ? null : clean(main.optString("flv", null));
+        } catch (Throwable unreadable) {
+            return null;
+        }
+    }
+
     /** Reads the room off TikTok's room object. Never throws. */
     @SuppressWarnings("unchecked")
     public static Pick fromRoom(Object room, String preferred) {

@@ -2891,3 +2891,11 @@ Tells you when your name comes up in a LIVE, in the chat or said out loud in a r
 Names to listen for	Dinlenecek isimler
 Your handle and TikTok name are on the list already. Add other names people call you, separated by commas.	Kullanıcı adın ve TikTok adın zaten listede. İnsanların sana seslendiği diğer adları virgülle ayırarak ekle.
 Your name came up in a LIVE	Adın bir LIVE'da geçti
+Listen for your name	Adını dinle
+Also listens to the LIVE's sound, so your name counts when it's said out loud in rooms without captions. Your phone's own speech recognition does the listening, with TikTok's microphone permission. It hears only the LIVE, though Android shows its microphone dot, and it uses a little more data.	LIVE'ın sesini de dinler, böylece altyazısız odalarda adın yüksek sesle söylendiğinde de sayılır. Dinlemeyi telefonunun kendi konuşma tanıması, TikTok'un mikrofon izniyle yapar. Yalnızca LIVE'ı duyar, Android mikrofon noktasını gösterse de, ve biraz daha fazla veri kullanır.
+Needs Android 13 or newer.	Android 13 veya daha yenisi gerekir.
+Off: this phone's speech recognition only hears the microphone. Turn this off and on to try again.	Kapalı: bu telefonun konuşma tanıması yalnızca mikrofonu duyuyor. Yeniden denemek için bunu kapatıp aç.
+This phone has no speech recognition. Choose one under Android's voice input settings, then open the LIVE again.	Bu telefonda konuşma tanıma yok. Android'in sesli giriş ayarlarından birini seç, sonra LIVE'ı yeniden aç.
+TikTok needs the microphone permission for speech recognition. Allow it in Android's app settings, then open the LIVE again.	TikTok'un konuşma tanıma için mikrofon iznine ihtiyacı var. Android'in uygulama ayarlarından izin ver, sonra LIVE'ı yeniden aç.
+Speech recognition has no model for your phone's language. Download one in Android's speech settings, then open the LIVE again.	Konuşma tanımanın telefonunun dili için modeli yok. Android'in konuşma ayarlarından bir tane indir, sonra LIVE'ı yeniden aç.
+Speech recognition kept failing in the last LIVE. Open the LIVE again to retry.	Konuşma tanıma son LIVE'da defalarca başarısız oldu. Yeniden denemek için LIVE'ı tekrar aç.

@@ -2894,3 +2894,11 @@ Tells you when your name comes up in a LIVE, in the chat or said out loud in a r
 Names to listen for	ชื่อที่ต้องการให้ฟัง
 Your handle and TikTok name are on the list already. Add other names people call you, separated by commas.	ชื่อผู้ใช้และชื่อ TikTok ของคุณอยู่ในรายการแล้ว เพิ่มชื่ออื่นที่คนใช้เรียกคุณ คั่นด้วยเครื่องหมายจุลภาค
 Your name came up in a LIVE	มีคนพูดถึงชื่อคุณใน LIVE
+Listen for your name	ฟังชื่อของคุณ
+Also listens to the LIVE's sound, so your name counts when it's said out loud in rooms without captions. Your phone's own speech recognition does the listening, with TikTok's microphone permission. It hears only the LIVE, though Android shows its microphone dot, and it uses a little more data.	ฟังเสียงของ LIVE ด้วย ชื่อของคุณจึงนับเมื่อมีคนพูดออกเสียงในห้องที่ไม่มีคำบรรยาย การฟังทำโดยระบบจดจำเสียงพูดของโทรศัพท์คุณเอง โดยใช้สิทธิ์ไมโครโฟนของ TikTok ระบบได้ยินเฉพาะ LIVE แม้ Android จะแสดงจุดไมโครโฟน และใช้ข้อมูลมากขึ้นเล็กน้อย
+Needs Android 13 or newer.	ต้องใช้ Android 13 ขึ้นไป
+Off: this phone's speech recognition only hears the microphone. Turn this off and on to try again.	ปิดอยู่: ระบบจดจำเสียงพูดของโทรศัพท์นี้ได้ยินแค่ไมโครโฟน ปิดแล้วเปิดตัวเลือกนี้อีกครั้งเพื่อลองใหม่
+This phone has no speech recognition. Choose one under Android's voice input settings, then open the LIVE again.	โทรศัพท์นี้ไม่มีระบบจดจำเสียงพูด เลือกระบบหนึ่งในการตั้งค่าการป้อนข้อมูลด้วยเสียงของ Android แล้วเปิด LIVE อีกครั้ง
+TikTok needs the microphone permission for speech recognition. Allow it in Android's app settings, then open the LIVE again.	TikTok ต้องได้รับสิทธิ์ไมโครโฟนสำหรับระบบจดจำเสียงพูด อนุญาตในการตั้งค่าแอปของ Android แล้วเปิด LIVE อีกครั้ง
+Speech recognition has no model for your phone's language. Download one in Android's speech settings, then open the LIVE again.	ระบบจดจำเสียงพูดไม่มีโมเดลสำหรับภาษาของโทรศัพท์คุณ ดาวน์โหลดในการตั้งค่าเสียงพูดของ Android แล้วเปิด LIVE อีกครั้ง
+Speech recognition kept failing in the last LIVE. Open the LIVE again to retry.	ระบบจดจำเสียงพูดล้มเหลวซ้ำๆ ใน LIVE ล่าสุด เปิด LIVE อีกครั้งเพื่อลองใหม่

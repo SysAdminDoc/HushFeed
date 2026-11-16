@@ -2746,3 +2746,11 @@ LIVE name alerts,LIVE 点名提醒
 Names to listen for,要留意的名字
 "Your handle and TikTok name are on the list already. Add other names people call you, separated by commas.",你的用户名和 TikTok 名字已经在列表里。添加别人称呼你的其他名字，用逗号分隔.
 Your name came up in a LIVE,有人在 LIVE 中提到了你的名字
+Listen for your name,收听你的名字
+"Also listens to the LIVE's sound, so your name counts when it's said out loud in rooms without captions. Your phone's own speech recognition does the listening, with TikTok's microphone permission. It hears only the LIVE, though Android shows its microphone dot, and it uses a little more data.",也会收听 LIVE 的声音，这样在没有字幕的直播间里，有人大声说出你的名字也算数。收听由你手机自带的语音识别完成，使用 TikTok 的麦克风权限。它只听 LIVE 的声音，不过 Android 会显示麦克风圆点，而且会多用一点流量.
+Needs Android 13 or newer.,需要 Android 13 或更高版本.
+Off: this phone's speech recognition only hears the microphone. Turn this off and on to try again.,已关闭：这台手机的语音识别只能听到麦克风。关闭后再打开即可重试.
+"This phone has no speech recognition. Choose one under Android's voice input settings, then open the LIVE again.",这台手机没有语音识别。在 Android 的语音输入设置里选择一个，然后重新打开 LIVE.
+"TikTok needs the microphone permission for speech recognition. Allow it in Android's app settings, then open the LIVE again.",TikTok 需要麦克风权限才能使用语音识别。在 Android 的应用设置里允许，然后重新打开 LIVE.
+"Speech recognition has no model for your phone's language. Download one in Android's speech settings, then open the LIVE again.",语音识别没有适用于你手机语言的模型。在 Android 的语音设置里下载一个，然后重新打开 LIVE.
+Speech recognition kept failing in the last LIVE. Open the LIVE again to retry.,语音识别在上一个 LIVE 里一直失败。重新打开 LIVE 即可重试.

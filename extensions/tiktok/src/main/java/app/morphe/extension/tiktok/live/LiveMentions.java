@@ -160,6 +160,18 @@ public final class LiveMentions {
         alert(new Alert(room, speaker, firstLine < 0 ? line : line.substring(0, firstLine), true));
     }
 
+    /**
+     * Called with a line speech recognition heard in {@code room}'s sound, for rooms without
+     * captions. Whether it named you; the room's quiet time still decides whether you hear it.
+     */
+    static boolean heard(String room, String said) {
+        if (said == null || room == null || !enabled()) return false;
+        String line = said.trim();
+        if (line.isEmpty() || matchingName(line, currentNames()) == null) return false;
+        alert(new Alert(room, null, line, true));
+        return true;
+    }
+
     // ---- Names ----
 
     /** Your handle, your TikTok name and the names from settings, normalized, refreshed now and then. */

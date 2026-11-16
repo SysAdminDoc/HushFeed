@@ -871,6 +871,19 @@ public class Settings extends BaseSettings {
      */
     public static final StringSetting LIVE_NAME_ALERT_NAMES = new StringSetting("live_name_alert_names", "");
     /**
+     * LIVE name alerts also listen to the room's sound through the phone's speech recognition
+     * (#424). Starts with the next room, so no restart.
+     */
+    public static final BooleanSetting LIVE_NAME_ALERTS_LISTEN =
+            new BooleanSetting("live_name_alerts_listen", FALSE, false, Setting.parent(LIVE_NAME_ALERTS));
+    /**
+     * Set when the phone's speech recognition left the LIVE's sound unread, which means it
+     * listens to the microphone instead (#424). Listening stays off until the switch is turned
+     * off and on again. Not a choice, so a backup leaves it out.
+     */
+    public static final BooleanSetting LIVE_LISTEN_SOUND_IGNORED =
+            new BooleanSetting("live_listen_sound_ignored", FALSE, false, false);
+    /**
      * Plays the audio TikTok mutes on a post whose sound was pulled; the Keep pulled sounds
      * patch. Read as each video starts, so no restart.
      */

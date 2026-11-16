@@ -262,6 +262,7 @@ Also apply these filters to downloaded videos TikTok uses when the feed can't lo
 Also change the region TikTok reports internally and set TikTok to the country's time zone. Keeps your interface language. Your IP address and your account's own rules still apply.,Also change the region TikTok reports internally and set TikTok to the country's time zone. Keeps your interface language. Your IP address and your account's own rules still apply.
 Also filter it,Also filter it
 Also hide videos whose text stickers match a blocked caption word. Text stickers are the words a creator types over the video in TikTok's editor. Text that's part of the picture itself can't be read.,Also hide videos whose text stickers match a blocked caption word. Text stickers are the words a creator types over the video in TikTok's editor. Text that's part of the picture itself can't be read.
+"Also listens to the LIVE's sound, so your name counts when it's said out loud in rooms without captions. Your phone's own speech recognition does the listening, with TikTok's microphone permission. It hears only the LIVE, though Android shows its microphone dot, and it uses a little more data.","Also listens to the LIVE's sound, so your name counts when it's said out loud in rooms without captions. Your phone's own speech recognition does the listening, with TikTok's microphone permission. It hears only the LIVE, though Android shows its microphone dot, and it uses a little more data."
 "Also on a block list, so still hidden: %1$s","Also on a block list, so still hidden: %1$s"
 Also on opened videos,Also on opened videos
 Also replaces the saved region and country code TikTok sends with every request. Signing in still sends your real region. Your IP address and your account's own rules still apply.,Also replaces the saved region and country code TikTok sends with every request. Signing in still sends your real region. Your IP address and your account's own rules still apply.
@@ -1236,6 +1237,7 @@ Link copied,Link copied
 Links,Links
 Links in comments open,Links in comments open
 Liquid glass look,Liquid glass look
+Listen for your name,Listen for your name
 "Lists the videos you watch on this phone, with who posted each one and its caption. It stays on your phone.","Lists the videos you watch on this phone, with who posted each one and its caption. It stays on your phone."
 Lite mode,Lite mode
 Live photo clip,Live photo clip
@@ -1347,6 +1349,7 @@ My watch history,My watch history
 Name copied,Name copied
 Names to listen for,Names to listen for
 Nearby,Nearby
+Needs Android 13 or newer.,Needs Android 13 or newer.
 Network error. %1$d removed.,Network error. %1$d removed.
 Network proxy,Network proxy
 Never from these countries,Never from these countries
@@ -1452,6 +1455,7 @@ Off,Off
 "Off until you tap it. Wipes TikTok's data once, on the next start, and gives it a new Android ID and advertising ID, so it sees a phone it hasn't met. You'll be signed out and lose your drafts. Hushfeed's settings stay.","Off until you tap it. Wipes TikTok's data once, on the next start, and gives it a new Android ID and advertising ID, so it sees a phone it hasn't met. You'll be signed out and lose your drafts. Hushfeed's settings stay."
 "Off, only its button closes it.","Off, only its button closes it."
 Off. TikTok can report views and typing.,Off. TikTok can report views and typing.
+Off: this phone's speech recognition only hears the microphone. Turn this off and on to try again.,Off: this phone's speech recognition only hears the microphone. Turn this off and on to try again.
 Offer Audio only in LIVE quality,Offer Audio only in LIVE quality
 Offer LIVE quality in more rooms,Offer LIVE quality in more rooms
 Offer clear screen in every LIVE room,Offer clear screen in every LIVE room
@@ -2119,6 +2123,8 @@ Sound saved to %1$s,Sound saved to %1$s
 Sound: %1$s,Sound: %1$s
 Sounds,Sounds
 Source,Source
+"Speech recognition has no model for your phone's language. Download one in Android's speech settings, then open the LIVE again.","Speech recognition has no model for your phone's language. Download one in Android's speech settings, then open the LIVE again."
+Speech recognition kept failing in the last LIVE. Open the LIVE again to retry.,Speech recognition kept failing in the last LIVE. Open the LIVE again to retry.
 Speed,Speed
 Speed menu choices,Speed menu choices
 "Speed up this video, double tap again to undo","Speed up this video, double tap again to undo"
@@ -2410,6 +2416,7 @@ This list is too long to preview here. Saving still follows the usual limit.,Thi
 This list isn't available on this TikTok build.,This list isn't available on this TikTok build.
 This original sound isn't on YouTube Music,This original sound isn't on YouTube Music
 "This phone has no file picker, so there's no way to choose a file here","This phone has no file picker, so there's no way to choose a file here"
+"This phone has no speech recognition. Choose one under Android's voice input settings, then open the LIVE again.","This phone has no speech recognition. Choose one under Android's voice input settings, then open the LIVE again."
 This photo post is already saved,This photo post is already saved
 This preset isn't available for your installed TikTok version.,This preset isn't available for your installed TikTok version.
 This profile picture isn't available to save,This profile picture isn't available to save
@@ -2453,6 +2460,7 @@ TikTok is locked,TikTok is locked
 "TikTok isn't ready yet. Open your Inbox, then try again.","TikTok isn't ready yet. Open your Inbox, then try again."
 "TikTok lets you pick a LIVE's quality only in some rooms. This adds Video quality to the menu in most of the others, and the next room opens at the quality you picked last.","TikTok lets you pick a LIVE's quality only in some rooms. This adds Video quality to the menu in most of the others, and the next room opens at the quality you picked last."
 "TikTok may have taken this message. Delivery isn't confirmed, so it won't be retried today.","TikTok may have taken this message. Delivery isn't confirmed, so it won't be retried today."
+"TikTok needs the microphone permission for speech recognition. Allow it in Android's app settings, then open the LIVE again.","TikTok needs the microphone permission for speech recognition. Allow it in Android's app settings, then open the LIVE again."
 TikTok opens a Share to sheet a few seconds after it saves a video. This stops it. The share button and the saved notice stay as they are.,TikTok opens a Share to sheet a few seconds after it saves a video. This stops it. The share button and the saved notice stay as they are.
 TikTok read it,TikTok read it
 "TikTok read it, but the override couldn't be applied. Reset it and save it again.","TikTok read it, but the override couldn't be applied. Reset it and save it again."

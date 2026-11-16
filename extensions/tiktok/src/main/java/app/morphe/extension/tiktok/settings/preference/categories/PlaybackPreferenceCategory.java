@@ -9,6 +9,7 @@ package app.morphe.extension.tiktok.settings.preference.categories;
 import android.content.Context;
 import android.preference.PreferenceScreen;
 import android.text.InputType;
+import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.BooleanSetting;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.L10n;
@@ -194,6 +195,25 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                     Settings.LIVE_NAME_ALERT_NAMES);
             alertNames.withNameKeyboard();
             addPreference(alertNames);
+            TogglePreference listen = new TogglePreference(context, "Listen for your name",
+                    "Also listens to the LIVE's sound, so your name counts when it's said out loud in "
+                            + "rooms without captions. Your phone's own speech recognition does the "
+                            + "listening, with TikTok's microphone permission. It hears only the LIVE, "
+                            + "though Android shows its microphone dot, and it uses a little more data.",
+                    Settings.LIVE_NAME_ALERTS_LISTEN);
+            Runnable refreshListen = () -> listen.showExtraLine(
+                    app.morphe.extension.tiktok.live.LiveListen.statusLine(context));
+            refreshListen.run();
+            // The listener runs before the change is saved, so the work waits a turn of the main thread.
+            listen.setOnPreferenceChangeListener((preference, value) -> {
+                boolean on = Boolean.TRUE.equals(value);
+                Utils.runOnMainThread(() -> {
+                    app.morphe.extension.tiktok.live.LiveListen.settingChanged(context, on);
+                    refreshListen.run();
+                });
+                return true;
+            });
+            addPreference(listen);
         }
         if (SettingsStatus.stopVideoLoopingEnabled) {
             addPreference(new TogglePreference(

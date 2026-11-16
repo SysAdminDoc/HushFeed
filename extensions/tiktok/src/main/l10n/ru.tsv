@@ -3074,3 +3074,11 @@ Tells you when your name comes up in a LIVE, in the chat or said out loud in a r
 Names to listen for	Имена для отслеживания
 Your handle and TikTok name are on the list already. Add other names people call you, separated by commas.	Ваш никнейм и имя в TikTok уже в списке. Добавьте другие имена, которыми вас называют, через запятую.
 Your name came up in a LIVE	Ваше имя прозвучало в LIVE
+Listen for your name	Слушать ваше имя
+Also listens to the LIVE's sound, so your name counts when it's said out loud in rooms without captions. Your phone's own speech recognition does the listening, with TikTok's microphone permission. It hears only the LIVE, though Android shows its microphone dot, and it uses a little more data.	Также слушает звук LIVE, чтобы ваше имя засчитывалось, когда его произносят вслух в комнатах без субтитров. Слушает встроенное распознавание речи вашего телефона, с разрешением TikTok на микрофон. Оно слышит только LIVE, хотя Android показывает значок микрофона, и тратит немного больше трафика.
+Needs Android 13 or newer.	Нужен Android 13 или новее.
+Off: this phone's speech recognition only hears the microphone. Turn this off and on to try again.	Выключено: распознавание речи на этом телефоне слышит только микрофон. Выключите и снова включите, чтобы попробовать ещё раз.
+This phone has no speech recognition. Choose one under Android's voice input settings, then open the LIVE again.	На этом телефоне нет распознавания речи. Выберите его в настройках голосового ввода Android, затем снова откройте LIVE.
+TikTok needs the microphone permission for speech recognition. Allow it in Android's app settings, then open the LIVE again.	TikTok нужно разрешение на микрофон для распознавания речи. Разрешите его в настройках приложений Android, затем снова откройте LIVE.
+Speech recognition has no model for your phone's language. Download one in Android's speech settings, then open the LIVE again.	У распознавания речи нет модели для языка вашего телефона. Скачайте её в настройках речи Android, затем снова откройте LIVE.
+Speech recognition kept failing in the last LIVE. Open the LIVE again to retry.	Распознавание речи раз за разом не срабатывало в последнем LIVE. Откройте LIVE снова, чтобы повторить.

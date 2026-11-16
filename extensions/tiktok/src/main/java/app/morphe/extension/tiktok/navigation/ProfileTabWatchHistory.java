@@ -13,6 +13,8 @@ import android.view.View;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
@@ -56,11 +58,16 @@ public final class ProfileTabWatchHistory {
             + "%26enable_search_history%3D1%26enter_from%3Dprofile_menu";
 
     /**
-     * TikTok's own route to Activity center (#425), the one its Settings and privacy rows open.
-     * TikTok's deep link handler drops it from outside (S22, 47.7.3), so it goes through TikTok's
-     * router in the app.
+     * Where TikTok keeps the Activity center address its Settings and privacy row opens (#425).
+     * The address comes from TikTok's servers, so it's read from here at each hold. A fixed
+     * {@code aweme://pns/activity_center} route reached TikTok's router and opened nothing (S22,
+     * 47.7.3), and its deep link handler drops the route from outside.
      */
-    static final String ACTIVITY_CENTER_ROUTE = "aweme://pns/activity_center?enter_from=profile_menu";
+    static final String ENTRANCE_CLASS = "com.ss.android.ugc.aweme.ActivityCenterEntranceExperiment";
+    /** What TikTok's row adds to the address before opening it. */
+    static final String ENTRANCE_SUFFIX = "%26grey_bg%3D1";
+    /** Settings and privacy, one tap from Activity center, for an account TikTok sent no address. */
+    static final String SETTINGS_ROUTE = "aweme://setting";
     static final String ROUTER_CLASS = "com.bytedance.router.SmartRouter";
 
     /** The tab tag TikTok's switcher handler gets for Profile. */
@@ -126,12 +133,57 @@ public final class ProfileTabWatchHistory {
         context.startActivity(intent);
     }
 
-    /** Opens Activity center the way TikTok's own rows do, through its router. */
+    /** Opens Activity center the way TikTok's Settings and privacy row does, through its router. */
     static void openActivityCenter(Context context) throws ReflectiveOperationException {
+        String address = activityCenterAddress();
+        if (address == null) {
+            Logger.printInfo(() -> "TikTok sent no Activity center address; opening Settings and privacy");
+            address = SETTINGS_ROUTE;
+        }
         Class<?> router = Class.forName(ROUTER_CLASS, true, ProfileTabWatchHistory.class.getClassLoader());
         Object route = router.getMethod("buildRoute", Context.class, String.class)
-                .invoke(null, context, ACTIVITY_CENTER_ROUTE);
+                .invoke(null, context, address);
         route.getClass().getMethod("open").invoke(route);
+    }
+
+    /**
+     * The address TikTok's Settings and privacy row opens, or null when TikTok has none. The
+     * experiment class holds a built-in model with no address and a lazy one with the address its
+     * servers sent; the static fields are read by their values, since their names are obfuscated.
+     */
+    static String activityCenterAddress() {
+        try {
+            Class<?> entrance = Class.forName(ENTRANCE_CLASS, true, ProfileTabWatchHistory.class.getClassLoader());
+            for (Field field : entrance.getFields()) {
+                if (!Modifier.isStatic(field.getModifiers())) continue;
+                String url = modelUrl(field.get(null));
+                if (url != null) return url + ENTRANCE_SUFFIX;
+            }
+        } catch (Throwable error) {
+            Logger.printException(() -> "Could not read TikTok's Activity center address", error);
+        }
+        return null;
+    }
+
+    private static String modelUrl(Object value) throws ReflectiveOperationException {
+        if (value != null && !isEntranceModel(value)) {
+            Method get;
+            try {
+                get = value.getClass().getMethod("getValue");
+            } catch (NoSuchMethodException notLazy) {
+                return null;
+            }
+            // The lazy's class isn't public, so its public getValue still needs the access opened.
+            get.setAccessible(true);
+            value = get.invoke(value);
+        }
+        if (value == null || !isEntranceModel(value)) return null;
+        Object url = value.getClass().getField("url").get(value);
+        return url instanceof String && !((String) url).isEmpty() ? (String) url : null;
+    }
+
+    private static boolean isEntranceModel(Object value) {
+        return value.getClass().getName().equals(ENTRANCE_CLASS + "$ActivityCenterSettingModel");
     }
 
     /**

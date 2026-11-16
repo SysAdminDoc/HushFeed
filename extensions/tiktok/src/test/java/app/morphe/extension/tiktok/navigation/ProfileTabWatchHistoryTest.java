@@ -168,16 +168,20 @@ public class ProfileTabWatchHistoryTest {
         assertNull("a tap opened Watch history", nextStarted());
     }
 
-    /** #425: the hold opens Activity center through TikTok's router, and gives way to Watch history. */
+    /**
+     * #425: the hold opens the Activity center address TikTok's servers sent, the way its Settings
+     * and privacy row does, through its router, and gives way to Watch history.
+     */
     @Test public void aLongPressOnProfileOpensActivityCenter() {
+        String served = "aweme://lynxview?url=https%3A%2F%2Finapp.tiktokv.com%2Factivity_center";
         com.bytedance.router.SmartRouter.OPENED.clear();
+        com.ss.android.ugc.aweme.ActivityCenterEntranceExperiment.SERVED.url = served;
         Settings.PROFILE_TAB_OPENS_ACTIVITY_CENTER.save(true);
         try {
             installAndResume();
 
             assertTrue("the long press was not handled", profile.performLongClick());
-            assertEquals(java.util.List.of(ProfileTabWatchHistory.ACTIVITY_CENTER_ROUTE),
-                    com.bytedance.router.SmartRouter.OPENED);
+            assertEquals(java.util.List.of(served + "%26grey_bg%3D1"), com.bytedance.router.SmartRouter.OPENED);
             assertNull("an outside link opened too", nextStarted());
             assertEquals("a long press also counted as a tap", 0, taps.get());
 
@@ -185,6 +189,22 @@ public class ProfileTabWatchHistoryTest {
             assertTrue(profile.performLongClick());
             assertEquals("Watch history gave way", 1, com.bytedance.router.SmartRouter.OPENED.size());
             assertNotNull("Watch history didn't open", nextStarted());
+        } finally {
+            Settings.PROFILE_TAB_OPENS_ACTIVITY_CENTER.resetToDefault();
+            com.ss.android.ugc.aweme.ActivityCenterEntranceExperiment.SERVED.url = null;
+            com.bytedance.router.SmartRouter.OPENED.clear();
+        }
+    }
+
+    /** #425: with no address from TikTok, the hold still lands one tap away, on Settings and privacy. */
+    @Test public void withNoActivityCenterAddressTheHoldOpensSettings() {
+        com.bytedance.router.SmartRouter.OPENED.clear();
+        Settings.PROFILE_TAB_OPENS_ACTIVITY_CENTER.save(true);
+        try {
+            installAndResume();
+
+            assertTrue("the long press was not handled", profile.performLongClick());
+            assertEquals(java.util.List.of("aweme://setting"), com.bytedance.router.SmartRouter.OPENED);
         } finally {
             Settings.PROFILE_TAB_OPENS_ACTIVITY_CENTER.resetToDefault();
             com.bytedance.router.SmartRouter.OPENED.clear();

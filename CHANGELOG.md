@@ -70,7 +70,7 @@ Every Hushfeed release, newest first.
 * With `Dark LIVE panels in dark mode` on, a host's pinned comment looks the way it does with the switch off, its Pinned and timer tags included. Those tags came out in other colors over the darkened room (#362).
 * With `Dark LIVE panels in dark mode` on, the Rose card that comes up the first time you tap a LIVE's quick gift reads white on its dark card. Its title and text stayed dark, so they almost vanished. The Request to join as a guest sheet goes black too, where its light text sat on a white sheet (#362).
 * With a color picked in `AMOLED dark theme` and `Dark LIVE panels in dark mode` on, the box behind the delete key in a LIVE room's emoji picker takes that color too. It was the last spot in the picker still showing TikTok's own dark gray (#329).
-* The block button and Hushfeed's other feed buttons go back to their spots after you close the picture-in-picture window and open TikTok again. They used to stay bunched up in the top corner over the feed tabs until you restarted TikTok.
+* The block button and Hushfeed's other feed buttons go back to their spots after you close the picture-in-picture window and open TikTok again. They used to stay bunched up in the top corner over the feed tabs until you restarted TikTok (#413).
 * The Lab's `Scrolling comments on videos` preset now tells you where to look. TikTok only allows them on some wide videos, and those get an Add one-liner button under the video and a one-liner bar in full screen. The old note just said most videos stay the same (#98).
 
 ### Build

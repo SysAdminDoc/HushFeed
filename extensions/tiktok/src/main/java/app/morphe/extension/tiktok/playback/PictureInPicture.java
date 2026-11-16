@@ -137,7 +137,7 @@ public final class PictureInPicture {
     }
 
     /** Where the note that Hushfeed turned TikTok's own LIVE window on is kept. */
-    static final String STATE = "hushfeed_picture_in_picture";
+    public static final String STATE = "hushfeed_picture_in_picture";
     static final String LIVE_WINDOW_OURS = "live_window_ours";
 
     /**

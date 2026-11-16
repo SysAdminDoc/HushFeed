@@ -66,7 +66,7 @@ public class LaunchCrashCleanupTest {
                 Arrays.copyOf(kept, TIKTOK_KEEPS.length));
         assertEquals(Arrays.asList("morphe_prefs", "morphe_feature_gate_lab",
                         "hushfeed_release_notes", "hushfeed_device_identity", "hushfeed_group_chats",
-                        "hushfeed_sticker_recents", "hushfeed_new_dots"),
+                        "hushfeed_sticker_recents", "hushfeed_new_dots", "hushfeed_picture_in_picture"),
                 Arrays.asList(kept).subList(TIKTOK_KEEPS.length, kept.length));
         assertArrayEquals(LaunchCrashCleanup.HUSHFEED_FILES, LaunchCrashCleanup.keepHushfeedFiles(null));
     }
@@ -83,6 +83,7 @@ public class LaunchCrashCleanupTest {
                 "PREFS_NAME", "PREFS_NAME", "PREFS_NAME"));
         expected.put("inbox/GroupChats.java", Arrays.asList("PREFS_NAME", "PREFS_NAME"));
         expected.put("misc/RemoteConfigFreeze.java", Arrays.asList("Setting.PREFERENCES_NAME"));
+        expected.put("playback/PictureInPicture.java", Arrays.asList("STATE"));
         expected.put("privacy/DeviceIdentity.java", Arrays.asList("PREFERENCES", "PREFERENCES"));
         expected.put("translation/DmTranslationPreview.java", Arrays.asList("Setting.preferences.name"));
         expected.put("translation/ReceivedDmTranslationPreview.java", Arrays.asList("Setting.preferences.name"));
@@ -96,6 +97,7 @@ public class LaunchCrashCleanupTest {
 
         List<String> kept = Arrays.asList(LaunchCrashCleanup.HUSHFEED_FILES);
         assertTrue(kept.contains(Setting.preferences.name));
+        assertTrue(kept.contains(app.morphe.extension.tiktok.playback.PictureInPicture.STATE));
         assertTrue(kept.contains(constant(JavaCrashCapture.class, "PREFS_NAME")));
         assertTrue(kept.contains(FeatureGateLabStore.PREFS_NAME));
         assertTrue(kept.contains(ReleaseNotes.PREFS_NAME));

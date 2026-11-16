@@ -31,6 +31,7 @@ public final class LaunchCrashCleanup {
             app.morphe.extension.tiktok.inbox.GroupChats.PREFS_NAME,
             app.morphe.extension.tiktok.comment.StickerRecents.PREFS_NAME,
             app.morphe.extension.tiktok.settings.preference.NewSettingDots.FILE,
+            app.morphe.extension.tiktok.playback.PictureInPicture.STATE,
     };
 
     private LaunchCrashCleanup() {

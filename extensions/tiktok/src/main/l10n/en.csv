@@ -458,6 +458,7 @@ Close,Close
 Close TikTok after,Close TikTok after
 Close with Back or a tap outside,Close with Back or a tap outside
 Collapsed,Collapsed
+Collections aren't available for this video,Collections aren't available for this video
 Color commenter names,Color commenter names
 "Colors the description, the author's name and the post date on videos.","Colors the description, the author's name and the post date on videos."
 Colors these settings and Hushfeed's own pop-ups.,Colors these settings and Hushfeed's own pop-ups.
@@ -1896,6 +1897,7 @@ Save the video's cover,Save the video's cover
 "Save the videos @%1$s has seen, and when, to a JSON file. Anyone who opens the file can see that viewing history.","Save the videos @%1$s has seen, and when, to a JSON file. Anyone who opens the file can see that viewing history."
 "Save this account's seen videos, and when they were watched, to a JSON file. Anyone who opens the file can see that viewing history.","Save this account's seen videos, and when they were watched, to a JSON file. Anyone who opens the file can see that viewing history."
 Save this video,Save this video
+Save to a collection,Save to a collection
 Save videos without sound,Save videos without sound
 "Save, restore, reset and undo your settings","Save, restore, reset and undo your settings"
 Saved,Saved

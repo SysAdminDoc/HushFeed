@@ -2840,3 +2840,5 @@ Pick at least one episode,请至少选择一集
 Saving %1$s. Tap Save again for the rest.,正在保存 %1$s 集。再次点按保存即可保存其余剧集.
 Save episodes button in the share sheet,分享面板中的保存剧集按钮
 Adds Save episodes when you share an episode of a mini drama. It lists the drama's episodes so you can pick several and save them in one go. An episode you haven't unlocked saves only its preview.,分享短剧的某一集时，添加“保存剧集”。它会列出该剧的所有剧集，你可以选择多集一次保存。尚未解锁的剧集只保存预览.
+Save to a collection,保存到收藏夹
+Collections aren't available for this video,该视频无法保存到收藏夹

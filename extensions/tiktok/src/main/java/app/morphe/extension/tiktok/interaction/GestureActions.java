@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.Window;
 import app.morphe.extension.shared.Logger;
+import app.morphe.extension.shared.ResourceIdCache;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.tiktok.blockauthor.CurrentVideoAuthor;
@@ -51,6 +52,8 @@ public final class GestureActions {
         String videoId;
         /** The post bound with the id, for the long press actions that need more than its id. */
         WeakReference<Object> aweme = new WeakReference<>(null);
+        /** Where TikTok says the cell's post was opened from, for the collections popup's enter_from. */
+        String eventType;
     }
 
     private static CommentControl commentControl(Object owner) {
@@ -74,6 +77,7 @@ public final class GestureActions {
         CommentControl control = commentControl(owner);
         control.videoId = Reflect.string(aweme, "getAid", "aid");
         control.aweme = new WeakReference<>(aweme);
+        control.eventType = Reflect.string(params, "getEventType", "mEventType");
     }
 
     /**
@@ -958,6 +962,8 @@ public final class GestureActions {
     private static boolean swipeHeld;
     private static boolean swipeTracking;
     private static boolean swipeFired;
+    /** What this gesture opens once it counts, picked at its touch down. */
+    private static Runnable swipeOpener;
 
     /** Each event, at the start of the pager's dispatch: before anything in it asks whether it may page. */
     public static void onMainPagerDispatch(Object pager, MotionEvent event) {
@@ -968,8 +974,16 @@ public final class GestureActions {
         swipeDownY = event.getY();
         swipePagingOn = false;
         swipeHeld = false;
-        swipeTracking = "comments".equals(Settings.SWIPE_LEFT_ACTION.get()) && onFeedPage(pager);
+        swipeOpener = swipeOpener(Settings.SWIPE_LEFT_ACTION.get());
+        swipeTracking = swipeOpener != null && onFeedPage(pager);
         swipeFired = false;
+    }
+
+    /** What a left swipe set to this choice opens, or null for one that opens nothing. */
+    static Runnable swipeOpener(String action) {
+        if ("comments".equals(action)) return swipeCommentsOpener;
+        if ("collection".equals(action)) return swipeCollectionOpener;
+        return null;
     }
 
     /**
@@ -1014,17 +1028,18 @@ public final class GestureActions {
      * Each event the pager's intercept or its own touch handling sees: from the intercept until it
      * takes the gesture, from onTouchEvent after. A child that takes the gesture for itself, a
      * photo carousel for one, keeps the rest from both, so only a swipe nothing else wanted gets
-     * this far. With Swipe left set to comments, a clearly sideways move toward the profile from
-     * the feed page opens the video's comments, once a swipe, where TikTok itself would page.
+     * this far. With Swipe left set to comments or to a collection, a clearly sideways move toward
+     * the profile from the feed page opens the video's comments or TikTok's collections popup, once
+     * a swipe, where TikTok itself would page.
      */
     public static void onMainPagerTouch(Object pager, MotionEvent event) {
         if (event == null || event.getActionMasked() != MotionEvent.ACTION_MOVE) return;
-        if (!swipeTracking || swipeFired || !swipePagingOn) return;
+        if (!swipeTracking || swipeFired || !swipePagingOn || swipeOpener == null) return;
         float dx = event.getX() - swipeDownX;
         float dy = event.getY() - swipeDownY;
         if (towardProfile(pager, dx) < swipeDistance() || Math.abs(dx) < 2 * Math.abs(dy)) return;
         swipeFired = true;
-        swipeCommentsOpener.run();
+        swipeOpener.run();
     }
 
     /**
@@ -1050,6 +1065,139 @@ public final class GestureActions {
 
     /** What a left swipe set to comments does; a test stands in its own. */
     static Runnable swipeCommentsOpener = GestureActions::openOnScreenComments;
+
+    /** What a left swipe set to a collection does; a test stands in its own. */
+    static Runnable swipeCollectionOpener = GestureActions::openOnScreenCollections;
+
+    /** The Hook status family the collections popup reports under. */
+    static final String COLLECTION_FAMILY = "swipe left collections";
+    static final String SERVICE_MANAGER = "com.ss.android.ugc.aweme.framework.services.ServiceManager";
+    static final String FAVORITE_SERVICE = "com.ss.android.ugc.aweme.favorites.service.IFavoriteService";
+    static final String ACCOUNT_SERVICE = "com.ss.android.ugc.aweme.IAccountUserService";
+    /**
+     * The view TikTok's own long press on Favorites places its popup beside (i_0 on 47.8.3), then
+     * the Favorites button itself.
+     */
+    static final String[] FAVORITE_ANCHOR_IDS = {"47.8.3:i_0", "47.8.3:ia4"};
+    static final ResourceIdCache ANCHOR_IDS = new ResourceIdCache();
+    /** What TikTok's feed calls itself when it opens the popup with no cell to ask. */
+    static final String FEED_ENTER_FROM = "homepage_hot";
+
+    /**
+     * Opens TikTok's save to a collection popup for the video on screen, the one a long press on
+     * its Favorites button opens, or says it can't (#445).
+     */
+    static void openOnScreenCollections() {
+        if (!openVisibleCollections()) {
+            Utils.showToastShort(L10n.t("Collections aren't available for this video"));
+        }
+    }
+
+    /**
+     * TikTok's long press on Favorites (VideoFavoriteAssem on 47.8.3) hands the button's place on
+     * screen to the cell's dialog controller, which asks IFavoriteService for its quick favorite
+     * popup: the one method there taking a context, the post, where it was opened from and that
+     * place as left, top, right and bottom. The popup lists the account's collections beside that
+     * place and saves the post to the one picked. The post is the one a swipe set to comments
+     * opens, so a LIVE or an ad on screen gets nothing, and a signed out account gets nothing, as
+     * TikTok's own long press does.
+     */
+    static boolean openVisibleCollections() {
+        Object aweme = onScreenAweme();
+        Activity activity = Utils.getVisibleActivity();
+        if (aweme == null || activity == null) return false;
+        Class<?> manager = Reflect.requiredClass(SERVICE_MANAGER, COLLECTION_FAMILY);
+        Class<?> favorites = Reflect.requiredClass(FAVORITE_SERVICE, COLLECTION_FAMILY);
+        Class<?> accounts = Reflect.requiredClass(ACCOUNT_SERVICE, COLLECTION_FAMILY);
+        Method open = quickFavorite(favorites, aweme.getClass());
+        if (manager == null || open == null || accounts == null) return false;
+        Object account = service(manager, accounts);
+        Method isLogin = Reflect.requiredMethod(accounts, "isLogin", COLLECTION_FAMILY);
+        if (!Boolean.TRUE.equals(Reflect.invokeRequired(isLogin, account, COLLECTION_FAMILY))) return false;
+        Object service = service(manager, favorites);
+        if (service == null) return false;
+        OnScreen screen = onScreen(Reflect.string(CurrentVideoAuthor.getAweme(), "getAid", "aid"));
+        String from = screen.control == null ? null : screen.control.eventType;
+        if (from == null || from.isEmpty()) from = FEED_ENTER_FROM;
+        android.util.DisplayMetrics metrics = activity.getResources().getDisplayMetrics();
+        int[] place = anchorOf(screen.view, metrics.widthPixels, metrics.heightPixels);
+        try {
+            open.invoke(service, activity, aweme, from, place);
+            return true;
+        } catch (ReflectiveOperationException | RuntimeException exception) {
+            Logger.printException(() -> "Could not open the collections popup from the swipe", exception);
+            return false;
+        }
+    }
+
+    /** TikTok's service of this type, or null. */
+    private static Object service(Class<?> manager, Class<?> type) {
+        Method get = Reflect.requiredMethod(manager, "get", COLLECTION_FAMILY);
+        Object services = Reflect.invokeRequired(get, null, COLLECTION_FAMILY);
+        if (services == null) return null;
+        Method getService = Reflect.requiredMethod(manager, "getService", COLLECTION_FAMILY, Class.class);
+        return Reflect.invokeRequired(getService, services, COLLECTION_FAMILY, type);
+    }
+
+    /**
+     * The quick favorite popup on IFavoriteService: its one method taking a context, a post, a
+     * String and an int array and returning nothing (LJIILJJIL on 47.8.3), found by that shape.
+     * Null, and Hook status says why, without one or with more than one.
+     */
+    static Method quickFavorite(Class<?> service, Class<?> post) {
+        if (service == null) return null;
+        Method found = null;
+        for (Method candidate : service.getMethods()) {
+            Class<?>[] types = candidate.getParameterTypes();
+            if (types.length != 4 || candidate.getReturnType() != void.class
+                    || types[0] != Context.class || !types[1].isAssignableFrom(post)
+                    || types[1] == Object.class || types[2] != String.class || types[3] != int[].class) {
+                continue;
+            }
+            if (found != null) {
+                HookStatus.missingMember(COLLECTION_FAMILY, "one quick favorite method on", service.getName(), "popup");
+                return null;
+            }
+            found = candidate;
+        }
+        if (found == null) {
+            HookStatus.missingMember(COLLECTION_FAMILY, "method", service.getName(), "quick favorite popup");
+            return null;
+        }
+        found.setAccessible(true);
+        HookStatus.bound(COLLECTION_FAMILY, service.getName() + "#" + found.getName());
+        return found;
+    }
+
+    /**
+     * Where the popup goes, as TikTok's own long press measures it: left, top, right and bottom of
+     * the Favorites button in the comment button's cell. Measured by its place in the window rather
+     * than its visible part, since Clear display hides the rail and keeps its layout. The comment
+     * button, right above it on the rail, stands in for a build that moved it, and the right edge
+     * halfway down the screen for a cell with neither.
+     */
+    static int[] anchorOf(View button, int width, int height) {
+        View anchor = null;
+        if (button != null) {
+            View cell = cellOf(button);
+            for (String name : FAVORITE_ANCHOR_IDS) {
+                int id = ANCHOR_IDS.resolve(cell.getResources(), cell.getContext().getPackageName(), name, false);
+                View found = id == 0 ? null : cell.findViewById(id);
+                if (found != null && found.getWidth() > 0 && found.getHeight() > 0) {
+                    anchor = found;
+                    break;
+                }
+            }
+            if (anchor == null && button.getWidth() > 0 && button.getHeight() > 0) anchor = button;
+        }
+        if (anchor == null) {
+            int side = Math.max(1, width / 8);
+            return new int[]{width - side, height / 2 - side / 2, width, height / 2 + side / 2};
+        }
+        int[] at = new int[2];
+        anchor.getLocationInWindow(at);
+        return new int[]{at[0], at[1], at[0] + anchor.getWidth(), at[1] + anchor.getHeight()};
+    }
 
     private static Method currentItem;
     private static Class<?> currentItemOwner;

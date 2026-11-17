@@ -1031,8 +1031,8 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
         }
         if (SettingsStatus.swipeLeftEnabled) {
             addPreference(new ChoicePreference(context, "Swipe left", Settings.SWIPE_LEFT_ACTION,
-                    new String[]{"TikTok default (open the creator's profile)", "Do nothing", "Open comments"},
-                    new String[]{"default", "nothing", "comments"}));
+                    new String[]{"TikTok default (open the creator's profile)", "Do nothing", "Open comments", "Save to a collection"},
+                    new String[]{"default", "nothing", "comments", "collection"}));
         }
         if (SettingsStatus.longPressEnabled) {
             // Double tap's actions and a like, which TikTok's own double tap already does.

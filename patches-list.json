@@ -386,6 +386,15 @@
           "values": null
         },
         {
+          "key": "save_episodes_button",
+          "title": "Default: save episodes button",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "download_without_sound",
           "title": "Default: download without sound",
           "description": null,
@@ -8549,7 +8558,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "original_audio",
+          "title": "Default: original audio",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Playback quality",
@@ -11396,7 +11415,7 @@
     },
     {
       "name": "Swipe-left controls",
-      "description": "Lets a left swipe on a video open its comments or do nothing, instead of opening the creator's profile. Starts off. Pick an action in Hushfeed settings > Feed screen.",
+      "description": "Lets a left swipe on a video open its comments, open the popup that saves it to one of your collections, or do nothing, instead of opening the creator's profile. Starts off. Pick an action in Hushfeed settings > Feed screen.",
       "category": "Interaction",
       "use": true,
       "dependencies": [

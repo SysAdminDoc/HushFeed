@@ -1,9 +1,11 @@
 package app.morphe.extension.tiktok.interaction;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.SystemClock;
@@ -19,6 +21,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
@@ -82,7 +85,10 @@ public class SwipeLeftTest {
     private static final int PROFILE = 2;
 
     private Runnable original;
+    private Runnable originalCollection;
     private int opened;
+    /** Collections popups opened, for Swipe left set to a collection (#445). */
+    private int collected;
     private Pager pager;
     /** TikTok's own answer during a gesture: yes on the feed, no where TikTok turns paging off. */
     private boolean tiktokPages = true;
@@ -90,11 +96,15 @@ public class SwipeLeftTest {
     @Before public void setUp() {
         pager = new Pager();
         original = GestureActions.swipeCommentsOpener;
+        originalCollection = GestureActions.swipeCollectionOpener;
         GestureActions.swipeCommentsOpener = () -> opened++;
+        GestureActions.swipeCollectionOpener = () -> collected++;
     }
 
     @After public void tearDown() {
         GestureActions.swipeCommentsOpener = original;
+        GestureActions.swipeCollectionOpener = originalCollection;
+        GestureActions.ANCHOR_IDS.clear();
         Settings.SWIPE_LEFT_ACTION.resetToDefault();
     }
 
@@ -108,7 +118,7 @@ public class SwipeLeftTest {
     }
 
     @Test public void doNothingAndCommentsHoldOnlyTheFeedPage() {
-        for (String action : new String[]{"nothing", "comments"}) {
+        for (String action : new String[]{"nothing", "comments", "collection"}) {
             Settings.SWIPE_LEFT_ACTION.save(action);
             pager.pages = 3;
             pager.page = FEED;
@@ -239,7 +249,99 @@ public class SwipeLeftTest {
             Settings.SWIPE_LEFT_ACTION.save(action);
             swipe(900, 1000, 200, 1000);
             assertEquals(action, 0, opened);
+            assertEquals(action, 0, collected);
         }
+    }
+
+    /**
+     * Set to a collection, a left swipe from the feed opens TikTok's save to a collection popup
+     * (#445), once a swipe, and the comments stay shut. The same swipe set to comments opens only
+     * the comments. A swipe from the profile page, or one more down than sideways, opens nothing.
+     */
+    @Test public void aLeftSwipeSetToACollectionOpensThePopupOnce() {
+        Settings.SWIPE_LEFT_ACTION.save("collection");
+        swipe(900, 1000, 890, 1002, 600, 1010, 200, 1020);
+        assertEquals("one swipe, one popup", 1, collected);
+        assertEquals("the comments stay shut", 0, opened);
+        swipe(900, 1000, 500, 1400);
+        pager.page = PROFILE;
+        swipe(900, 1000, 200, 1000);
+        pager.page = FEED;
+        assertEquals("more down than sideways, or from the profile", 1, collected);
+        Settings.SWIPE_LEFT_ACTION.save("comments");
+        swipe(900, 1000, 200, 1000);
+        assertEquals("set to comments", 1, opened);
+        assertEquals("set to comments", 1, collected);
+    }
+
+    /** The post type the quick favorite popup takes, standing in for TikTok's Aweme. */
+    public static class Post {}
+
+    /** A post subclass, as TikTok hands a feed cell's post. */
+    public static final class FeedPost extends Post {}
+
+    /** IFavoriteService by the shapes that matter on 47.8.3: the popup and its near misses. */
+    public interface FavoriteService {
+        void LJIILJJIL(Context context, Post post, String enterFrom, int[] place);
+        void LJIIJ(Context context, Post post, String enterFrom);
+        boolean LJIIJJI(Context context, Post post, String enterFrom, int[] place);
+        void LJIIL(Context context, Object anything, String enterFrom, int[] place);
+    }
+
+    /** A service that grew a second popup of the same shape, which can't be told apart. */
+    public interface TwoPopups {
+        void LIZ(Context context, Post post, String enterFrom, int[] place);
+        void LIZIZ(Context context, Post post, String enterFrom, int[] place);
+    }
+
+    @Test public void theQuickFavoritePopupIsFoundByItsShape() throws Exception {
+        assertEquals("LJIILJJIL", GestureActions.quickFavorite(FavoriteService.class, FeedPost.class).getName());
+        assertEquals(null, GestureActions.quickFavorite(TwoPopups.class, FeedPost.class));
+        assertEquals("a post of another type", null, GestureActions.quickFavorite(FavoriteService.class, String.class));
+        assertEquals(null, GestureActions.quickFavorite(null, FeedPost.class));
+    }
+
+    /**
+     * The popup sits beside the Favorites button of the cell on screen, measured by its place in
+     * the window as left, top, right and bottom, the way TikTok's own long press measures it. The
+     * comment button stands in for a cell without one, and the right edge halfway down the screen
+     * for no button at all.
+     */
+    @Test public void thePopupSitsBesideTheFavoritesButton() {
+        // Attached to a window, since a detached view has no place in one.
+        Activity activity = Robolectric.buildActivity(Activity.class).setup().get();
+        Context context = activity;
+        com.ss.android.ugc.aweme.common.widget.VerticalViewPager feed =
+                new com.ss.android.ugc.aweme.common.widget.VerticalViewPager(context);
+        activity.setContentView(feed);
+        FrameLayout cell = new FrameLayout(context);
+        FrameLayout rail = new FrameLayout(context);
+        View comments = new View(context);
+        View favorites = new View(context);
+        favorites.setId(0x7f0a2c7c);
+        rail.addView(comments);
+        rail.addView(favorites);
+        cell.addView(rail);
+        feed.addView(cell);
+        feed.layout(0, 0, 1080, 2340);
+        cell.layout(0, 0, 1080, 2340);
+        rail.layout(950, 1200, 1080, 1800);
+        comments.layout(0, 100, 130, 230);
+        favorites.layout(0, 260, 130, 390);
+        int[] origin = new int[2];
+        feed.getLocationInWindow(origin);
+        int x = origin[0];
+        int y = origin[1];
+        GestureActions.ANCHOR_IDS.putForTests(context.getPackageName(), "47.8.3:i_0", 0x7f0a2c7c);
+        assertArrayEquals(new int[]{x + 950, y + 1460, x + 1080, y + 1590},
+                GestureActions.anchorOf(comments, 1080, 2340));
+        GestureActions.ANCHOR_IDS.clear();
+        GestureActions.ANCHOR_IDS.putForTests(context.getPackageName(), "47.8.3:i_0", 0);
+        GestureActions.ANCHOR_IDS.putForTests(context.getPackageName(), "47.8.3:ia4", 0);
+        assertArrayEquals("the comment button", new int[]{x + 950, y + 1300, x + 1080, y + 1430},
+                GestureActions.anchorOf(comments, 1080, 2340));
+        assertArrayEquals("the right edge halfway down", new int[]{945, 1103, 1080, 1237},
+                GestureActions.anchorOf(null, 1080, 2340));
     }
 
     @Test public void eachNewSwipeCountsAgain() {

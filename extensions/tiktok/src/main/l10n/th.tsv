@@ -530,6 +530,8 @@ Filters, translation and copy options	ตัวเลือกตัวกรอ
 First caller	ผู้เรียกแรก
 First rejection:	การปฏิเสธแรก:
 Fit the video to the screen	ปรับวิดีโอให้พอดีกับหน้าจอ
+Fill a tall screen instead	เติมเต็มหน้าจอสูงแทน
+With the switch above on, the video is cropped to fill a tall screen like a folding phone's front screen. A squarer one, like the big screen opened up, still shows the whole video.	เมื่อเปิดสวิตช์ด้านบน วิดีโอจะถูกครอปให้เต็มหน้าจอสูงอย่างหน้าจอด้านนอกของโทรศัพท์พับได้ ส่วนหน้าจอที่เกือบเป็นสี่เหลี่ยมจัตุรัสอย่างหน้าจอใหญ่ตอนกางออกยังคงแสดงวิดีโอทั้งหมด
 Fill the screen with the video	แสดงวิดีโอเต็มหน้าจอ
 Crop the video until it covers the whole window. On a tall phone the black strip TikTok leaves under a video goes and so does a little of each side.	ครอปวิดีโอจนครอบคลุมทั้งหน้าต่าง บนโทรศัพท์จอสูง แถบสีดำที่ TikTok แสดงไว้ใต้วิดีโอจะหายไป รวมถึงขอบด้านข้างเล็กน้อยด้วย
 Focus	โฟกัส

@@ -367,6 +367,12 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                 });
             }
             addPreference(fit);
+            // #345: Fit for a folding phone's opened screen, Fill for its tall front one.
+            addPreference(new TogglePreference(context, "Fill a tall screen instead",
+                    "With the switch above on, the video is cropped to fill a tall screen like a "
+                            + "folding phone's front screen. A squarer one, like the big screen "
+                            + "opened up, still shows the whole video.",
+                    Settings.FIT_FILLS_TALL_SCREEN));
             addPreference(fill);
             addPreference(stretch);
             addPreference(blend);

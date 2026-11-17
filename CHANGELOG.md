@@ -45,6 +45,7 @@ Every Hushfeed release, newest first.
 * `Settings theme` keeps Hushfeed's own settings and pop-ups dark or light whatever mode TikTok is in. `Match TikTok` is the old way and stays the default, while `Always dark` and `Always light` hold that look. The row is on the first page of Hushfeed settings, under `Pause Hushfeed`, and the page repaints as soon as you pick (#434).
 * `Size of the LIVE buttons` makes Hushfeed's Record, Auto tap, Block and eye buttons in a LIVE room smaller, so they stop covering the room's own buttons on a small screen. Pick Small or Smallest in Hushfeed settings > Playback, under `Auto tap speed`. Normal keeps the size they've always had (#359).
 * `Hushfeed language` shows Hushfeed's settings and messages in the language you pick, even when TikTok and your phone are set to another one. Each language is listed in its own name, and `Match TikTok` keeps the old way and stays the default. It's on the first page of Hushfeed settings, under `Settings theme` (#431).
+* `Fill a tall screen instead`, right under `Fit the video to the screen`, gives a folding phone both looks. The tall front screen gets cropped to fill like `Fill the screen with the video`, while the big screen opened up (or a phone turned sideways) keeps the whole video. It switches as you fold and unfold (#345).
 
 ### Bug Fixes
 

@@ -6163,6 +6163,12 @@
     "row": "Fit the video to the screen"
    },
    {
+    "key": "fit_fills_tall_screen",
+    "default": false,
+    "type": "bool",
+    "row": "Fill a tall screen instead"
+   },
+   {
     "key": "fill_video_to_screen",
     "default": false,
     "type": "bool",

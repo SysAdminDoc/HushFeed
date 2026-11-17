@@ -25,8 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import app.morphe.extension.tiktok.settings.Settings;
-import app.morphe.extension.tiktok.settings.SettingsStatus;
+import app.morphe.extension.tiktok.interaction.VideoFit;
 
 /**
  * The window and video halves of See-through status bar (#145). VideoOverlayHider collapses the
@@ -264,7 +263,7 @@ public final class SeeThroughStatusBar {
 
     /** Whether Fit the video to the screen is on, so a picture it shrank stays whole. */
     private static boolean fitWins() {
-        return SettingsStatus.videoFitEnabled && Settings.FIT_VIDEO_TO_SCREEN.get();
+        return VideoFit.fitsWhole();
     }
 
     /** {@link #grow(View, float, float)} from the view's center. */

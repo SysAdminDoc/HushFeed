@@ -59,7 +59,9 @@ public final class VideoFit {
      * middle needs Android 13 for its shader, and below that crops and stretches like blend.
      */
     static Mode mode() {
-        if (Settings.FIT_VIDEO_TO_SCREEN.get()) return Mode.FIT;
+        if (Settings.FIT_VIDEO_TO_SCREEN.get()) {
+            return Settings.FIT_FILLS_TALL_SCREEN.get() && tallWindow() ? Mode.FILL : Mode.FIT;
+        }
         if (Settings.FILL_VIDEO_TO_SCREEN.get()) return Mode.FILL;
         if (Settings.STRETCH_VIDEO_TO_SCREEN.get()) return Mode.STRETCH;
         if (Settings.BLEND_VIDEO_TO_SCREEN.get()) return Mode.BLEND;
@@ -67,6 +69,28 @@ public final class VideoFit {
             return KeepMiddle.supported() ? Mode.KEEP_MIDDLE : Mode.BLEND;
         }
         return Mode.LEAVE_ALONE;
+    }
+
+    /**
+     * Whether TikTok's window is phone shaped, narrower than {@link PhotoSlideFit#SQUARISH} wide
+     * over tall: a folded phone's front screen, where Fill a tall screen instead crops to cover,
+     * and not the opened inner screen or a phone turned sideways, which keep the whole video
+     * (#345). The app's own configuration follows a fold, an unfold and split view as they happen.
+     */
+    static boolean tallWindow() {
+        Context context = Utils.getContext();
+        if (context == null) return false;
+        android.content.res.Configuration configuration = context.getResources().getConfiguration();
+        return tallWindow(configuration.screenWidthDp, configuration.screenHeightDp);
+    }
+
+    static boolean tallWindow(int widthDp, int heightDp) {
+        return widthDp > 0 && heightDp > 0 && !PhotoSlideFit.squarish(widthDp, heightDp);
+    }
+
+    /** Whether the video is shown whole, Fit's way, so a picture it shrank stays whole. */
+    public static boolean fitsWhole() {
+        return SettingsStatus.videoFitEnabled && mode() == Mode.FIT;
     }
 
     /**
@@ -905,6 +929,10 @@ public final class VideoFit {
             lines.add("Stretch the video to the screen: " + (stretch ? "on" : "off"));
             lines.add("Crop and stretch to fill the screen: " + (blend ? "on" : "off"));
             lines.add("Keep the middle unstretched: " + (middle ? "on" : "off"));
+            if (Settings.FIT_FILLS_TALL_SCREEN.savedValue()) {
+                lines.add("Fill a tall screen instead: on"
+                        + (tallWindow() ? ", this window is tall" : ", this window is squarish"));
+            }
             if ((fit || fill || stretch || blend || middle) && mode() == Mode.LEAVE_ALONE) {
                 lines.add("Hushfeed is paused, so videos keep TikTok's size");
             } else if (middle && mode() == Mode.BLEND && !blend) {

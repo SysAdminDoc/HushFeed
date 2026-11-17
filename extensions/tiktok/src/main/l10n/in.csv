@@ -512,6 +512,8 @@ Filter: %1$s,Filter: %1$s
 First caller,Pemanggil pertama
 First rejection:,Penolakan pertama:
 Fit the video to the screen,Sesuaikan video dengan layar
+Fill a tall screen instead,Penuhi layar tinggi sebagai gantinya
+"With the switch above on, the video is cropped to fill a tall screen like a folding phone's front screen. A squarer one, like the big screen opened up, still shows the whole video.","Saat tombol di atas aktif, video dipotong sampai memenuhi layar tinggi seperti layar depan ponsel lipat. Layar yang lebih persegi, seperti layar besar saat dibuka, tetap menampilkan seluruh video."
 Fill the screen with the video,Penuhi layar dengan video
 Crop the video until it covers the whole window. On a tall phone the black strip TikTok leaves under a video goes and so does a little of each side.,Memotong video sampai menutupi seluruh jendela. Di ponsel yang tinggi garis hitam yang ditinggalkan TikTok di bawah video hilang dan sedikit dari tiap sisi ikut hilang.
 Focus,Fokus

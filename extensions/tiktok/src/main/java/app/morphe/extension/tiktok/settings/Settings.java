@@ -333,6 +333,9 @@ public class Settings extends BaseSettings {
             new StringSetting("swipe_levels_right", "volume", false, Setting.parent(SWIPE_LEVELS));
     public static final BooleanSetting FIT_VIDEO_TO_SCREEN =
             new BooleanSetting("fit_video_to_screen", FALSE);
+    /** With Fit on, a tall window like a folded phone's front screen is filled instead (#345). */
+    public static final BooleanSetting FIT_FILLS_TALL_SCREEN =
+            new BooleanSetting("fit_fills_tall_screen", FALSE, false, Setting.parent(FIT_VIDEO_TO_SCREEN));
     /** The opposite: crop the video until it covers the window (issue #29). Fit wins when both are on. */
     public static final BooleanSetting FILL_VIDEO_TO_SCREEN =
             new BooleanSetting("fill_video_to_screen", FALSE);

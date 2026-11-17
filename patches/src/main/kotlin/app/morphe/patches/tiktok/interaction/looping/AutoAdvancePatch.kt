@@ -492,6 +492,8 @@ val autoAdvancePatch = bytecodePatch(
         // reports its end all the same (#311).
         FeedPlayCompletedFingerprint.method.addInstruction(0,
             "invoke-static/range { p1 .. p1 }, Lapp/morphe/extension/tiktok/interaction/DetailAutoAdvance;->onPlayCompleted(Ljava/lang/String;)V")
+        // With the screen off that page plays one video and stops, so it gets TikTok's queue (#292).
+        queueProfilePagesInBackground()
         val available = Availability.method
         val returns = available.implementationOrPatchException("Auto advance").instructions
             .withIndex().filter { it.value.opcode == Opcode.RETURN }

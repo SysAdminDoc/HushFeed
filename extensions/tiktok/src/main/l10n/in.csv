@@ -2202,6 +2202,8 @@ Show the time zone,Tampilkan zona waktu
 "Puts your time zone after the time to the second, like EDT.","Menaruh zona waktumu setelah waktu hingga detik, seperti EDT."
 Short date,Tanggal singkat
 "Writes the date before the time to the second the short way your language does, like 10/7/25.","Menulis tanggal sebelum waktu hingga detik dengan cara singkat bahasamu, seperti 07/10/25."
+Day before month,Hari sebelum bulan
+"Writes TikTok's date by the creator's name day first, like 29.09, with the year after it for an older video. Ages like 2d ago stay as they are.","Menulis tanggal TikTok di samping nama kreator dengan hari lebih dulu, seperti 29.09, dengan tahun di belakangnya untuk video yang lebih lama. Usia seperti 2 hr lalu tetap apa adanya."
 Color commenter names,Warnai nama pengomentar
 "Give each commenter's name a color of its own, the same one every time you see that account, so a long thread is easier to follow.","Beri nama setiap pengomentar warnanya sendiri, selalu sama setiap kali kamu melihat akun itu, supaya utas yang panjang lebih mudah diikuti."
 Show the country as a flag,Tampilkan negara sebagai bendera

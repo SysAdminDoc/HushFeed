@@ -152,6 +152,7 @@ public class AlwaysShowPublishDatePatchTest {
         Settings.PUBLISH_DATE_EXACT_TIME.resetToDefault();
         Settings.PUBLISH_DATE_TIME_ZONE.resetToDefault();
         Settings.PUBLISH_DATE_SHORT_DATE.resetToDefault();
+        Settings.PUBLISH_DATE_DAY_FIRST.resetToDefault();
         Settings.PUBLISH_DATE_ON_GRID.resetToDefault();
         Settings.SHOW_ENGAGEMENT_RATE.resetToDefault();
     }
@@ -193,6 +194,34 @@ public class AlwaysShowPublishDatePatchTest {
         assertEquals("2d ago", AlwaysShowPublishDatePatch.postTime("2d ago", post));
         assertNull(AlwaysShowPublishDatePatch.gridDate(post));
         assertEquals("12.3K", ProfileGridCount.text("12.3K", post));
+    }
+
+    /**
+     * Issue #438: with the switch on, TikTok's month-first date by the creator's name ("09-29",
+     * or "2024-09-29" from another year) reads day first with dots, keeping the year only where
+     * TikTok wrote one. Ages like "2d ago" and dates in words stay TikTok's.
+     */
+    @Test
+    public void theRowDateReadsDayFirstOnlyWithTheSwitchOn() {
+        assertEquals(Boolean.FALSE, Settings.PUBLISH_DATE_DAY_FIRST.defaultValue);
+        Post thisYear = new Post(utcSeconds(2026, 9, 29, 14, 5), POSTED_ID);
+        Post older = new Post(utcSeconds(2024, 3, 7, 23, 30), POSTED_ID);
+        assertEquals("09-29", AlwaysShowPublishDatePatch.postTime("09-29", thisYear));
+
+        Settings.PUBLISH_DATE_DAY_FIRST.save(true);
+        assertEquals("29.09", AlwaysShowPublishDatePatch.postTime("09-29", thisYear));
+        assertEquals("29.09", AlwaysShowPublishDatePatch.postTime("9-29", thisYear));
+        assertEquals("07.03.24", AlwaysShowPublishDatePatch.postTime("2024-03-07", older));
+        assertEquals("07.03.24", AlwaysShowPublishDatePatch.postTime("2024-3-7", older));
+        assertEquals("2d ago", AlwaysShowPublishDatePatch.postTime("2d ago", thisYear));
+        assertEquals("Sep 29", AlwaysShowPublishDatePatch.postTime("Sep 29", thisYear));
+        assertEquals("9月29日", AlwaysShowPublishDatePatch.postTime("9月29日", thisYear));
+        assertEquals("2026", AlwaysShowPublishDatePatch.postTime("2026", thisYear));
+        assertEquals("09-29", AlwaysShowPublishDatePatch.postTime("09-29", new Post(0L, null)));
+
+        // The time to the second writes its own date, so day first leaves it be.
+        Settings.PUBLISH_DATE_EXACT_TIME.save(true);
+        assertTrue(AlwaysShowPublishDatePatch.postTime("09-29", thisYear).contains("2026"));
     }
 
     @Test

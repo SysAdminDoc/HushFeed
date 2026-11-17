@@ -2236,6 +2236,8 @@ Works only with YTDLnis (com.deniscerri.ytdl). Starts the download in the backgr
 Write the username and caption on the video,在视频上写下用户名和标题
 "Write the video's sound beside it, in the format picked under Sound format. Android 10 and later file audio separately, so it lands in Music under the same folder name as your videos.",按照在声音格式下选择的格式在其旁边写下视频的声音。 Android 10 及更高版本单独归档音频，因此它位于与视频相同的文件夹名称下的音乐中.
 "Writes the date before the time to the second the short way your language does, like 10/7/25.",按照你的语言的缩写方式将时间之前的日期写成秒，例如 10/7/25.
+Day before month,日在月前
+"Writes TikTok's date by the creator's name day first, like 29.09, with the year after it for an older video. Ages like 2d ago stay as they are.",将创作者名字旁的 TikTok 日期写成日在前，如 29.09，较旧的视频后面加上年份。像 2天前 这样的时长保持不变.
 Writing,写作
 Writing the caption on the video,在视频上写标题
 Writing the caption on the video: %1$s,在视频上写下标题：%1$s

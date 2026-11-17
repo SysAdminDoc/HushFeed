@@ -338,6 +338,12 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             ));
             addPreference(new TogglePreference(
                     context,
+                    "Day before month",
+                    "Writes TikTok's date by the creator's name day first, like 29.09, with the year after it for an older video. Ages like 2d ago stay as they are.",
+                    Settings.PUBLISH_DATE_DAY_FIRST
+            ));
+            addPreference(new TogglePreference(
+                    context,
                     "Show dates on profile grids",
                     "Show the day each video was posted under its view count on profile grids.",
                     Settings.PUBLISH_DATE_ON_GRID

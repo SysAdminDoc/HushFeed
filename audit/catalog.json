@@ -858,6 +858,12 @@
     "row": "Short date"
    },
    {
+    "key": "publish_date_day_first",
+    "default": false,
+    "type": "bool",
+    "row": "Day before month"
+   },
+   {
     "key": "publish_date_on_grid",
     "default": false,
     "type": "bool",

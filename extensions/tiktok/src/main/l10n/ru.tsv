@@ -2428,6 +2428,8 @@ Show the time zone	Показывать часовой пояс
 Puts your time zone after the time to the second, like EDT.	Добавляет ваш часовой пояс после времени до секунды, например EDT.
 Short date	Короткая дата
 Writes the date before the time to the second the short way your language does, like 10/7/25.	Пишет дату перед временем до секунды так коротко, как принято в вашем языке, например 07.10.2025.
+Day before month	День перед месяцем
+Writes TikTok's date by the creator's name day first, like 29.09, with the year after it for an older video. Ages like 2d ago stay as they are.	Пишет дату TikTok рядом с именем автора, начиная с дня, например 29.09, а для старого видео добавляет год. Возраст вроде 2 дн. назад остаётся как есть.
 Color commenter names	Цветные имена комментаторов
 Give each commenter's name a color of its own, the same one every time you see that account, so a long thread is easier to follow.	Давать имени каждого автора комментария свой цвет, всегда один и тот же для этого аккаунта, чтобы за длинной веткой было легче следить.
 Show the country as a flag	Показывать страну флагом

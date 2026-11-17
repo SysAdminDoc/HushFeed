@@ -68,7 +68,7 @@ public final class AlwaysShowPublishDatePatch {
 
     private static String exactOrOriginal(String original, Object item) {
         if (!Settings.PUBLISH_DATE_EXACT_TIME.get()) {
-            return original;
+            return Settings.PUBLISH_DATE_DAY_FIRST.get() ? dayFirst(original, item) : original;
         }
         try {
             long now = System.currentTimeMillis();
@@ -88,6 +88,49 @@ public final class AlwaysShowPublishDatePatch {
             Logger.printException(() -> "Could not write the exact posting time", ex);
             return original;
         }
+    }
+
+    /**
+     * TikTok's date written day first with dots (#438): "09-29" becomes "29.09", and "2024-09-29"
+     * from another year becomes "29.09.24". The day and month come from the video's own time,
+     * and the year only where TikTok wrote one. Anything that isn't all numbers, like "2d ago" or
+     * a date in words, is TikTok's to keep.
+     */
+    static String dayFirst(String original, Object item) {
+        try {
+            int groups = numberGroups(original);
+            if (groups < 2 || groups > 3) return original;
+            long seconds = postedAt(item, System.currentTimeMillis());
+            if (seconds <= 0) return original;
+            Calendar posted = Calendar.getInstance();
+            posted.setTimeInMillis(seconds * 1000L);
+            String day = String.format(Locale.ROOT, "%02d.%02d",
+                    posted.get(Calendar.DAY_OF_MONTH), posted.get(Calendar.MONTH) + 1);
+            return groups == 2 ? day : day + String.format(Locale.ROOT, ".%02d", posted.get(Calendar.YEAR) % 100);
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Could not write the date day first", ex);
+            return original;
+        }
+    }
+
+    /** How many runs of digits a date like "09-29" holds, or 0 when anything but digits and - . / is in it. */
+    private static int numberGroups(String text) {
+        if (text == null) return 0;
+        int groups = 0;
+        boolean inDigits = false;
+        String trimmed = text.trim();
+        for (int i = 0; i < trimmed.length(); i++) {
+            char c = trimmed.charAt(i);
+            if (Character.isDigit(c)) {
+                if (!inDigits) groups++;
+                inDigits = true;
+            } else if (c == '-' || c == '.' || c == '/') {
+                inDigits = false;
+            } else {
+                return 0;
+            }
+        }
+        return groups;
     }
 
     /**

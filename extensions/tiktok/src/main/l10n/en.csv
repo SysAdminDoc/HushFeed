@@ -597,6 +597,7 @@ Dark Favorites popup,Dark Favorites popup
 Dark LIVE panels in dark mode,Dark LIVE panels in dark mode
 Dark gray,Dark gray
 Data Saver,Data Saver
+Day before month,Day before month
 Days to remember a video. Zero removes the age limit. History keeps at most %1$s videos.,Days to remember a video. Zero removes the age limit. History keeps at most %1$s videos.
 "Days. Zero keeps every age. Posts without a usable timestamp, including future posts, stay visible.","Days. Zero keeps every age. Posts without a usable timestamp, including future posts, stay visible."
 Deactivate or delete account,Deactivate or delete account
@@ -2713,6 +2714,7 @@ Works only with YTDLnis (com.deniscerri.ytdl). Picks audio or video when the sav
 Works only with YTDLnis (com.deniscerri.ytdl). Starts the download in the background without showing its download card.,Works only with YTDLnis (com.deniscerri.ytdl). Starts the download in the background without showing its download card.
 Write the username and caption on the video,Write the username and caption on the video
 "Write the video's sound beside it, in the format picked under Sound format. Android 10 and later file audio separately, so it lands in Music under the same folder name as your videos.","Write the video's sound beside it, in the format picked under Sound format. Android 10 and later file audio separately, so it lands in Music under the same folder name as your videos."
+"Writes TikTok's date by the creator's name day first, like 29.09, with the year after it for an older video. Ages like 2d ago stay as they are.","Writes TikTok's date by the creator's name day first, like 29.09, with the year after it for an older video. Ages like 2d ago stay as they are."
 "Writes the date before the time to the second the short way your language does, like 10/7/25.","Writes the date before the time to the second the short way your language does, like 10/7/25."
 Writing,Writing
 Writing the caption on the video,Writing the caption on the video

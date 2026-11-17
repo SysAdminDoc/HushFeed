@@ -2491,6 +2491,8 @@ Show the time zone	إظهار المنطقة الزمنية
 Puts your time zone after the time to the second, like EDT.	يضع منطقتك الزمنية بعد الوقت بالثانية، مثل EDT.
 Short date	تاريخ قصير
 Writes the date before the time to the second the short way your language does, like 10/7/25.	يكتب التاريخ قبل الوقت بالثواني بالطريقة القصيرة التي تستخدمها لغتك، مثل 10/7/25.
+Day before month	اليوم قبل الشهر
+Writes TikTok's date by the creator's name day first, like 29.09, with the year after it for an older video. Ages like 2d ago stay as they are.	يكتب تاريخ TikTok بجانب اسم صانع المحتوى باليوم أولًا، مثل 29.09، مع السنة بعده للفيديو الأقدم. تبقى الأعمار مثل منذ يومين كما هي.
 Color commenter names	تلوين أسماء المعلقين
 Give each commenter's name a color of its own, the same one every time you see that account, so a long thread is easier to follow.	امنح اسم كل معلق لونًا خاصًا به، نفس اللون في كل مرة ترى فيها ذلك الحساب، لتسهيل متابعة سلسلة طويلة من الردود.
 Show the country as a flag	إظهار الدولة كعلم

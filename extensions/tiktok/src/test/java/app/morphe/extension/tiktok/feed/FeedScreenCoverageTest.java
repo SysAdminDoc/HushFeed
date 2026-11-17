@@ -168,6 +168,8 @@ public class FeedScreenCoverageTest {
         // Both only shape the exact time, so they reach where it does.
         put("publish_date_time_zone", YES, YES, NONE);
         put("publish_date_short_date", YES, YES, NONE);
+        // Day first rewrites TikTok's own date by the creator's name, so it reaches where that row does (#438).
+        put("publish_date_day_first", YES, YES, NONE);
         // Profile grids only.
         put("publish_date_on_grid", NONE, NONE, NONE);
         put("video_length_on_grid", NONE, NONE, NONE);

@@ -920,6 +920,8 @@ public class Settings extends BaseSettings {
     /** The language's short date ("10/7/25") before the exact time, in place of its medium one ("Oct 7, 2025"). */
     public static final BooleanSetting PUBLISH_DATE_SHORT_DATE = new BooleanSetting(
             "publish_date_short_date", FALSE, false, Setting.parent(PUBLISH_DATE_EXACT_TIME));
+    /** TikTok's date by the creator's name written day first with dots, 29.09 (#438). */
+    public static final BooleanSetting PUBLISH_DATE_DAY_FIRST = new BooleanSetting("publish_date_day_first", FALSE);
     public static final BooleanSetting PUBLISH_DATE_ON_GRID = new BooleanSetting("publish_date_on_grid", FALSE);
     public static final BooleanSetting VIDEO_LENGTH_ON_GRID = new BooleanSetting("video_length_on_grid", FALSE);
     /** How loaded profile and Liked grids are ordered (#180): off, or one of the orders in GridSort. */

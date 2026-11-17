@@ -2251,6 +2251,8 @@ Show the time zone	แสดงเขตเวลา
 Puts your time zone after the time to the second, like EDT.	แสดงเขตเวลาของคุณต่อท้ายเวลาแบบระบุวินาที เช่น EDT
 Short date	วันที่แบบสั้น
 Writes the date before the time to the second the short way your language does, like 10/7/25.	แสดงวันที่ก่อนเวลาแบบระบุวินาทีในรูปแบบสั้นตามภาษาของคุณ เช่น 10/7/25
+Day before month	วันก่อนเดือน
+Writes TikTok's date by the creator's name day first, like 29.09, with the year after it for an older video. Ages like 2d ago stay as they are.	เขียนวันที่ของ TikTok ข้างชื่อครีเอเตอร์โดยขึ้นต้นด้วยวัน เช่น 29.09 และต่อท้ายด้วยปีสำหรับวิดีโอที่เก่ากว่า อายุอย่าง 2 วันที่แล้ว ยังคงเหมือนเดิม
 Color commenter names	ใส่สีชื่อผู้แสดงความคิดเห็น
 Give each commenter's name a color of its own, the same one every time you see that account, so a long thread is easier to follow.	กำหนดสีเฉพาะให้กับชื่อของผู้แสดงความคิดเห็นแต่ละคน โดยจะใช้สีเดิมทุกครั้งที่คุณเห็นบัญชีนั้น เพื่อให้ติดตามเธรดขนาดยาวได้ง่ายขึ้น
 Show the country as a flag	แสดงประเทศเป็นรูปธง

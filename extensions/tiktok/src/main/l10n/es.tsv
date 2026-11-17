@@ -2248,6 +2248,8 @@ Show the time zone	Mostrar la zona horaria
 Puts your time zone after the time to the second, like EDT.	Pone tu zona horaria después de la hora al segundo, como EDT.
 Short date	Fecha corta
 Writes the date before the time to the second the short way your language does, like 10/7/25.	Escribe la fecha antes de la hora al segundo en la forma corta de tu idioma, como 7/10/25.
+Day before month	Día antes del mes
+Writes TikTok's date by the creator's name day first, like 29.09, with the year after it for an older video. Ages like 2d ago stay as they are.	Escribe la fecha de TikTok junto al nombre del creador con el día primero, como 29.09, y el año detrás en un video más antiguo. Las edades como hace 2 d se quedan como están.
 Color commenter names	Colorear los nombres de quienes comentan
 Give each commenter's name a color of its own, the same one every time you see that account, so a long thread is easier to follow.	Dar al nombre de cada persona que comenta un color propio, siempre el mismo para esa cuenta, para que un hilo largo sea más fácil de seguir.
 Show the country as a flag	Mostrar el país como bandera

@@ -103,6 +103,7 @@ public class FeedScreenCoverageTest {
             "hide_playlist_bar", "hide_event_badge", "hide_inserted_cards", "hide_share_guide",
             "caption_text_size", "caption_background", "keep_captions_clear_display", "caption_font_weight",
             "caption_bottom_offset", "caption_landscape_offset", "caption_clear_display_offset",
+            "caption_clear_display_spot",
             "double_tap_action", "double_tap_split_zones", "double_tap_top_left_action",
             "double_tap_top_right_action", "double_tap_bottom_left_action", "double_tap_bottom_right_action",
             "confirm_quick_repost");
@@ -251,6 +252,8 @@ public class FeedScreenCoverageTest {
         put("caption_landscape_offset", YES, UNCHECKED, NONE);
         // The kept line Hushfeed draws itself, beside keep_captions_clear_display.
         put("caption_clear_display_offset", YES, UNCHECKED, NONE);
+        // Where that kept line sits, the same line (#428).
+        put("caption_clear_display_spot", YES, UNCHECKED, NONE);
         // One answer every caption control asks, wherever the video plays (#217).
         put("keep_captions_available", YES, YES, NONE);
 

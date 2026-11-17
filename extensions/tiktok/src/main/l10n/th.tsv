@@ -2986,3 +2986,13 @@ White on black	ขาวบนดำ
 Black on white	ดำบนขาว
 Material You	Material You
 Your icon	ไอคอนของคุณ
+Save episodes	บันทึกตอน
+Pick episodes to save	เลือกตอนที่จะบันทึก
+Episode %1$s	ตอนที่ %1$s
+Preview only	ตัวอย่างเท่านั้น
+Loading episodes	กำลังโหลดตอน
+Couldn't load the episodes. Try again.	โหลดตอนไม่ได้ ลองอีกครั้ง
+Pick at least one episode	เลือกอย่างน้อยหนึ่งตอน
+Saving %1$s. Tap Save again for the rest.	กำลังบันทึก %1$s ตอน แตะบันทึกอีกครั้งเพื่อบันทึกที่เหลือ
+Save episodes button in the share sheet	ปุ่มบันทึกตอนในเมนูแชร์
+Adds Save episodes when you share an episode of a mini drama. It lists the drama's episodes so you can pick several and save them in one go. An episode you haven't unlocked saves only its preview.	เพิ่มบันทึกตอนเมื่อคุณแชร์ตอนหนึ่งของมินิดราม่า แสดงรายการตอนของเรื่องให้คุณเลือกหลายตอนแล้วบันทึกทีเดียว ตอนที่คุณยังไม่ได้ปลดล็อกจะบันทึกได้แค่ตัวอย่าง

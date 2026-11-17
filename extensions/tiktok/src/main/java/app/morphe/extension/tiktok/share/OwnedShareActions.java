@@ -10,8 +10,8 @@ import android.widget.ImageView;
 
 /**
  * The share sheet actions Hushfeed builds on TikTok's native Report carrier: Block this creator
- * (Share sheet tools), Save cover (Advanced downloads) and Make sticker (Create stickers). The
- * carrier's key, label, click and icon hooks land here once and each action answers only for the
+ * (Share sheet tools), Save cover and Save episodes (Advanced downloads) and Make sticker (Create
+ * stickers). The carrier's key, label, click and icon hooks land here once and each action answers only for the
  * carriers it built, so a carrier none of them owns keeps every original Report instruction.
  */
 public final class OwnedShareActions {
@@ -19,13 +19,15 @@ public final class OwnedShareActions {
 
     public static boolean owns(Object action) {
         return ShareBlockAuthor.owns(action) || ShareSaveCover.owns(action)
-                || ShareLiveQuality.owns(action) || ShareMakeSticker.owns(action);
+                || ShareLiveQuality.owns(action) || ShareMakeSticker.owns(action)
+                || ShareSaveEpisodes.owns(action);
     }
 
     public static String key(Object action) {
         String key = ShareBlockAuthor.key(action);
         if (key == null) key = ShareSaveCover.key(action);
         if (key == null) key = ShareMakeSticker.key(action);
+        if (key == null) key = ShareSaveEpisodes.key(action);
         return key != null ? key : ShareLiveQuality.key(action);
     }
 
@@ -33,6 +35,7 @@ public final class OwnedShareActions {
         String label = ShareBlockAuthor.label(action);
         if (label == null) label = ShareSaveCover.label(action);
         if (label == null) label = ShareMakeSticker.label(action);
+        if (label == null) label = ShareSaveEpisodes.label(action);
         return label != null ? label : ShareLiveQuality.label(action);
     }
 
@@ -40,6 +43,7 @@ public final class OwnedShareActions {
         return ShareBlockAuthor.click(action, context, sharePackage)
                 || ShareSaveCover.click(action, context, sharePackage)
                 || ShareMakeSticker.click(action, context, sharePackage)
+                || ShareSaveEpisodes.click(action, context, sharePackage)
                 || ShareLiveQuality.click(action, context, sharePackage);
     }
 
@@ -60,6 +64,7 @@ public final class OwnedShareActions {
         ShareBlockAuthor.bindIcon(action, image);
         ShareSaveCover.bindIcon(action, image);
         ShareMakeSticker.bindIcon(action, image);
+        ShareSaveEpisodes.bindIcon(action, image);
         ShareLiveQuality.bindIcon(action, image);
     }
 

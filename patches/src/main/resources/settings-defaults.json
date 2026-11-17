@@ -22,6 +22,7 @@
       "download_watermark_fallback",
       "download_cover",
       "save_cover_button",
+      "save_episodes_button",
       "download_without_sound",
       "download_progress",
       "download_saves_at_once",
@@ -651,6 +652,9 @@
     ],
     "Play SDR instead of HDR": [
       "play_sdr"
+    ],
+    "Play original audio": [
+      "original_audio"
     ],
     "Playback quality": [
       "playback_quality",
@@ -3678,6 +3682,12 @@
       "type": "boolean",
       "default": false
     },
+    "original_audio": {
+      "field": "ORIGINAL_AUDIO",
+      "key": "original_audio",
+      "type": "boolean",
+      "default": false
+    },
     "pause_before_feed_seconds": {
       "field": "PAUSE_BEFORE_FEED_SECONDS",
       "key": "pause_before_feed_seconds",
@@ -3949,6 +3959,12 @@
     "save_cover_button": {
       "field": "SAVE_COVER_BUTTON",
       "key": "save_cover_button",
+      "type": "boolean",
+      "default": false
+    },
+    "save_episodes_button": {
+      "field": "SAVE_EPISODES_BUTTON",
+      "key": "save_episodes_button",
       "type": "boolean",
       "default": false
     },

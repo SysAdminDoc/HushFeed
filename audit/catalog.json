@@ -311,7 +311,10 @@
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/download/StoryDownloads.java",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/download/ProfileAvatarSaver.java",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/share/ShareSaveCover.java",
-   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/download/QualitySelector.java"
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/download/QualitySelector.java",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/share/ShareSaveEpisodes.java",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/download/EpisodePicker.java",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/download/DramaEpisodes.java"
   ],
   "settings": [
    {
@@ -367,6 +370,12 @@
     "default": false,
     "type": "bool",
     "row": "Save cover button in the share sheet"
+   },
+   {
+    "key": "save_episodes_button",
+    "default": false,
+    "type": "bool",
+    "row": "Save episodes button in the share sheet"
    },
    {
     "key": "save_profile_picture",

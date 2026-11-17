@@ -262,7 +262,12 @@ public final class AccountCountry {
         return query;
     }
 
-    private static String fetch(String path, Map<String, String> query) throws Exception {
+    /**
+     * A GET on TikTok's API host through TikTok's own client, signed and with its device
+     * parameters as its raw GETs are, and the reply's text. Save episodes reads a drama's
+     * episode list through it too (#444).
+     */
+    public static String fetch(String path, Map<String, String> query) throws Exception {
         Object api = api();
         Class<?> networkApi = Class.forName(NETWORK_API);
         Method get = networkApi.getMethod("doGetBytes", boolean.class, int.class, String.class,

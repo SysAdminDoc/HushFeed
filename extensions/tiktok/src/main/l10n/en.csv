@@ -224,6 +224,7 @@ Added to this account.,Added to this account.
 "Adds Audio only to a LIVE's Video quality list. The room plays its sound without the picture, which uses much less data, until you pick another quality or leave. Recording from the stream still saves the video.","Adds Audio only to a LIVE's Video quality list. The room plays its sound without the picture, which uses much less data, until you pick another quality or leave. Recording from the stream still saves the video."
 "Adds Export CSV and Export JSON buttons under the search box, so Search within comments must be on. They save the comments loaded so far to a file you pick, and load every reply under them first.","Adds Export CSV and Export JSON buttons under the search box, so Search within comments must be on. They save the comments loaded so far to a file you pick, and load every reply under them first."
 "Adds Save cover next to Download when you share a video, so you save the cover only when you want it. While this is on, Download saves just the video, even with Save the cover as well on.","Adds Save cover next to Download when you share a video, so you save the cover only when you want it. While this is on, Download saves just the video, even with Save the cover as well on."
+Adds Save episodes when you share an episode of a mini drama. It lists the drama's episodes so you can pick several and save them in one go. An episode you haven't unlocked saves only its preview.,Adds Save episodes when you share an episode of a mini drama. It lists the drama's episodes so you can pick several and save them in one go. An episode you haven't unlocked saves only its preview.
 "Adds TikTok's own background play row to the long-press menu, so you pick it for one video and other videos stop as usual. Has no effect while Keep playing in the background is on. Restart TikTok to apply this.","Adds TikTok's own background play row to the long-press menu, so you pick it for one video and other videos stop as usual. Has no effect while Keep playing in the background is on. Restart TikTok to apply this."
 "Adds TikTok's translate button next to the comment count. One tap translates every comment, and another shows the originals again.","Adds TikTok's translate button next to the comment count. One tap translates every comment, and another shows the originals again."
 Adds a Record button to LIVE rooms. Tap it to start or stop recording. Leaving the room also stops a recording.,Adds a Record button to LIVE rooms. Tap it to start or stop recording. Leaving the room also stops a recording.
@@ -520,6 +521,7 @@ Couldn't forget the saved videos. Try again.,Couldn't forget the saved videos. T
 Couldn't get the country. Try again.,Couldn't get the country. Try again.
 Couldn't import watch history. Your saved history is unchanged.,Couldn't import watch history. Your saved history is unchanged.
 Couldn't list your apps. Tap here to try again.,Couldn't list your apps. Tap here to try again.
+Couldn't load the episodes. Try again.,Couldn't load the episodes. Try again.
 Couldn't load your comments. Try again.,Couldn't load your comments. Try again.
 Couldn't make the sticker. Try again.,Couldn't make the sticker. Try again.
 Couldn't make the video. Try again.,Couldn't make the video. Try again.
@@ -699,6 +701,7 @@ Enter up to %1$d comma-separated speeds from %2$s to %3$s,Enter up to %1$d comma
 Enter who to message below to start.,Enter who to message below to start.
 Entry %1$d has a field with the wrong data type.,Entry %1$d has a field with the wrong data type.
 Entry %1$d isn't an object.,Entry %1$d isn't an object.
+Episode %1$s,Episode %1$s
 Errors,Errors
 Español,Español
 Expand activity list,Expand activity list
@@ -1278,6 +1281,7 @@ Load more,Load more
 Loaded current values. Loading all known gates…,Loaded current values. Loading all known gates…
 Loaded-value file export failed,Loaded-value file export failed
 Loading cancelled. The list is incomplete.,Loading cancelled. The list is incomplete.
+Loading episodes,Loading episodes
 Loading gates…,Loading gates…
 Loading page %1$s…,Loading page %1$s…
 "Loading replies, %1$d of %2$d","Loading replies, %1$d of %2$d"
@@ -1614,8 +1618,10 @@ Pick a .ttf or .otf file of up to %1$s MB.,Pick a .ttf or .otf file of up to %1$
 Pick a video quality to record the screen,Pick a video quality to record the screen
 Pick all,Pick all
 "Pick apps to add to the Share via row, before More. Each gets the same link the other apps get.","Pick apps to add to the Share via row, before More. Each gets the same link the other apps get."
+Pick at least one episode,Pick at least one episode
 Pick at least one story,Pick at least one story
 Pick comments from your comment history to delete.,Pick comments from your comment history to delete.
+Pick episodes to save,Pick episodes to save
 Pick for saving,Pick for saving
 Pick stories to save,Pick stories to save
 Pick the actions to remove from the share sheet. Names you typed by hand that TikTok hasn't shown yet stay in the list above.,Pick the actions to remove from the share sheet. Names you typed by hand that TikTok hasn't shown yet stay in the list above.
@@ -1676,6 +1682,7 @@ Press and hold the left or right third of the screen to jump back or forward. Th
 Press and hold the save button in the right column to save the video with your download settings. A tap still adds it to Favorites. It wins over Hold speed on Favorites.,Press and hold the save button in the right column to save the video with your download settings. A tap still adds it to Favorites. It wins over Hold speed on Favorites.
 Preview a translation from a received text message's menu. The original message stays unchanged.,Preview a translation from a received text message's menu. The original message stays unchanged.
 Preview a translation of your draft before sending it.,Preview a translation of your draft before sending it.
+Preview only,Preview only
 Preview shortened. Save report keeps the full report.,Preview shortened. Save report keeps the full report.
 Preview translation,Preview translation
 Preview with a made-up post:,Preview with a made-up post:
@@ -1863,6 +1870,8 @@ Save cover,Save cover
 Save cover button in the share sheet,Save cover button in the share sheet
 Save details as JSON,Save details as JSON
 Save details beside the video,Save details beside the video
+Save episodes,Save episodes
+Save episodes button in the share sheet,Save episodes button in the share sheet
 "Save every photo in the post at full size, not as the screen shows it. Each one is a JPEG unless Keep photos as TikTok sent them is on.","Save every photo in the post at full size, not as the screen shows it. Each one is a JPEG unless Keep photos as TikTok sent them is on."
 Save field values,Save field values
 Save full report,Save full report
@@ -1929,6 +1938,7 @@ Saving,Saving
 Saving %1$s of %2$s,Saving %1$s of %2$s
 Saving %1$s of %2$s: %3$s,Saving %1$s of %2$s: %3$s
 Saving %1$s original photos,Saving %1$s original photos
+Saving %1$s. Tap Save again for the rest.,Saving %1$s. Tap Save again for the rest.
 Saving and sharing,Saving and sharing
 Saving frames needs Android 7 or newer,Saving frames needs Android 7 or newer
 Saving one original photo,Saving one original photo

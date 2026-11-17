@@ -28,6 +28,7 @@ import app.morphe.patches.tiktok.interaction.blockauthor.blockAuthorPatch
 import app.morphe.patches.tiktok.interaction.engagement.ProfileGridHolderBindFingerprint
 import app.morphe.patches.tiktok.interaction.engagement.profileGridCountPatch
 import app.morphe.patches.tiktok.interaction.sharesheet.SHARE_SAVE_COVER
+import app.morphe.patches.tiktok.interaction.sharesheet.SHARE_SAVE_EPISODES
 import app.morphe.patches.tiktok.interaction.sharesheet.addOwnedShareAction
 import app.morphe.patches.tiktok.interaction.sharesheet.ownedShareActionsPatch
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
@@ -343,8 +344,9 @@ val advancedDownloadsPatch = bytecodePatch(
     name = "Advanced downloads",
     description = "Adds more ways to save: pick the video quality, save full-size photos, the " +
         "sound on its own or a photo post as one video, hold a profile picture or story to save " +
-        "it, save a story or a video's cover from the share sheet, put a save button on the " +
-        "video, and pick videos on a profile grid to save in one run. Starts off. Turn it on in " +
+        "it, save a story, a video's cover or a mini drama's episodes from the share sheet, put " +
+        "a save button on the video, and pick videos on a profile grid to save in one run. " +
+        "Starts off. Turn it on in " +
         "Hushfeed settings > Downloads. The save button's switch is in Feed screen > Buttons " +
         "on videos.",
 ) {
@@ -434,6 +436,8 @@ val advancedDownloadsPatch = bytecodePatch(
         holdStoryReleaseForPicker(resolveStoryLongPressTimer().interceptStoryLongPress())
         hookStoryShareSave()
         addOwnedShareAction(SHARE_SAVE_COVER)
+        // Save episodes on a short drama episode's share sheet: a checklist of the drama (#444).
+        addOwnedShareAction(SHARE_SAVE_EPISODES)
         // The grid cell holder's bind, which the count hook above already found, for picking
         // several posts on a profile, Liked or Favorites grid and saving them in one run (#27).
         ProfileGridHolderBindFingerprint.method.hookGridPick { classDefByOrNull(it)?.superclass }

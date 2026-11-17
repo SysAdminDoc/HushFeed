@@ -1554,6 +1554,22 @@ A file named hushfeed-safe-mode in TikTok's folder under Android/data paused Hus
 Turn Hushfeed back on	Снова включить Hushfeed
 Pause Hushfeed	Поставить Hushfeed на паузу
 Settings theme	Тема настроек
+Hushfeed language	Язык Hushfeed
+For Hushfeed's settings and messages. TikTok keeps its own language.	Для настроек и сообщений Hushfeed. TikTok остаётся на своём языке.
+# context: the rows below are each language's own name in the Hushfeed language list, kept as they are in every table
+English	English
+العربية	العربية
+Azərbaycan dili	Azərbaycan dili
+Deutsch	Deutsch
+Español	Español
+Bahasa Indonesia	Bahasa Indonesia
+Italiano	Italiano
+Português (Brasil)	Português (Brasil)
+Русский	Русский
+ไทย	ไทย
+Türkçe	Türkçe
+Tiếng Việt	Tiếng Việt
+简体中文	简体中文
 Match TikTok	Как в TikTok
 Always dark	Всегда тёмная
 Always light	Всегда светлая

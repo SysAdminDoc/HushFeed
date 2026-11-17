@@ -1776,6 +1776,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         screen.addPreference(status);
         screen.addPreference(pauseRow(context));
         screen.addPreference(themeRow(context));
+        screen.addPreference(languageRow(context));
         if (Section.DIAGNOSTICS.isAvailable()) addMenu(screen, Section.DIAGNOSTICS);
         addAbout(screen);
         addReportProblem(screen);
@@ -2080,6 +2081,24 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
             return true;
         });
         return theme;
+    }
+
+    /**
+     * Hushfeed language (#431): these pages and Hushfeed's messages in TikTok's language, or in
+     * one picked here whatever TikTok shows. The page is built again so every row reads the pick.
+     */
+    private ChoicePreference languageRow(Context context) {
+        ChoicePreference language = new ChoicePreference(context, "Hushfeed language", Settings.HUSHFEED_LANGUAGE,
+                L10n.PICK_LABELS, L10n.PICK_VALUES)
+                .withNote("For Hushfeed's settings and messages. TikTok keeps its own language.");
+        language.setIcon(SettingsMenuPreference.lineIconDrawable(context, SettingsMenuPreference.Icon.REGION));
+        language.setOnPreferenceChangeListener((preference, value) -> {
+            Settings.HUSHFEED_LANGUAGE.save(String.valueOf(value));
+            Activity activity = getActivity();
+            if (activity != null) activity.getWindow().getDecorView().post(activity::recreate);
+            return true;
+        });
+        return language;
     }
 
     /** The paused status card's action: safe mode, the switch and the marker file all go. */

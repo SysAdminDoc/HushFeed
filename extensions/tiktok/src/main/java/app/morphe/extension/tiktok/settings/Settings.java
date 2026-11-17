@@ -136,6 +136,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting AMOLED_DARK_MODE = new BooleanSetting("amoled_dark_mode", TRUE, true);
     /** Colors of Hushfeed's settings and its own pop-ups: TikTok's mode, or always dark or light (#434). */
     public static final StringSetting SETTINGS_THEME = new StringSetting("settings_theme", "tiktok");
+    /** The language of Hushfeed's settings and messages: TikTok's, or one picked under Hushfeed language (#431). */
+    public static final StringSetting HUSHFEED_LANGUAGE = new StringSetting(L10n.PICK_KEY, "tiktok");
     // Off by default: both patches are in the default selection, so the switch is the ask.
     public static final BooleanSetting TURN_OFF_HAPTICS = new BooleanSetting("turn_off_haptics", FALSE);
     public static final BooleanSetting TURN_OFF_SCREEN_TRANSITIONS =

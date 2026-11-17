@@ -323,6 +323,7 @@ Automatic (TikTok's file),Automatic (TikTok's file)
 Automatic Clear display,Automatic Clear display
 Automatically record LIVEs you enter,Automatically record LIVEs you enter
 Avatar and follow button,Avatar and follow button
+Azərbaycan dili,Azərbaycan dili
 Back,Back
 Back up settings,Back up settings
 Backdrop behind video text,Backdrop behind video text
@@ -330,6 +331,7 @@ Background audio,Background audio
 Background play in the long-press menu,Background play in the long-press menu
 "Background play in the long-press menu is on in Hushfeed's Playback settings, so TikTok gets 1 for this key and an override here has no effect until that switch is off.","Background play in the long-press menu is on in Hushfeed's Playback settings, so TikTok gets 1 for this key and an override here has no effect until that switch is off."
 Backup and restore,Backup and restore
+Bahasa Indonesia,Bahasa Indonesia
 Balance,Balance
 Bend the video at the edges,Bend the video at the edges
 Beside the bar,Beside the bar
@@ -616,6 +618,7 @@ Description text size,Description text size
 "Descriptions, captions and text on videos stay in the language they were made in, even with TikTok's Always translate on. See translation still works when you tap it. Comments have their own switch above.","Descriptions, captions and text on videos stay in the language they were made in, even with TikTok's Always translate on. See translation still works when you tap it. Comments have their own switch above."
 Destination updated,Destination updated
 Details: %1$s,Details: %1$s
+Deutsch,Deutsch
 Device access,Device access
 "Device language, then original","Device language, then original"
 Diagnostic data cleared. Tap again to put it back.,Diagnostic data cleared. Tap again to put it back.
@@ -670,6 +673,7 @@ Empty,Empty
 Enable,Enable
 Enabled,Enabled
 End,End
+English,English
 Enter a JSON object or array,Enter a JSON object or array
 Enter a creator handle or id,Enter a creator handle or id
 Enter a finite number,Enter a finite number
@@ -688,6 +692,7 @@ Enter who to message below to start.,Enter who to message below to start.
 Entry %1$d has a field with the wrong data type.,Entry %1$d has a field with the wrong data type.
 Entry %1$d isn't an object.,Entry %1$d isn't an object.
 Errors,Errors
+Español,Español
 Expand activity list,Expand activity list
 Expanded,Expanded
 Explore or Community,Explore or Community
@@ -754,6 +759,7 @@ Follow refused (%1$s). Maybe a hidden CAPTCHA.,Follow refused (%1$s). Maybe a hi
 Followers,Followers
 Following,Following
 Follows you,Follows you
+For Hushfeed's settings and messages. TikTok keeps its own language.,For Hushfeed's settings and messages. TikTok keeps its own language.
 "For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to a quarter, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes.","For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to a quarter, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes."
 For You,For You
 "For You, Following and the other feed tabs stay behind a calm panel and won't swipe. Messages, profiles and search work as usual, a link to one video still opens that video, and the app opens on Inbox instead of the feed.","For You, Following and the other feed tabs stay behind a calm panel and won't swipe. Messages, profiles and search work as usual, a link to one video still opens that video, and the app opens on Inbox instead of the feed."
@@ -1085,6 +1091,7 @@ Hushfeed can't read the creator pattern %1$s,Hushfeed can't read the creator pat
 Hushfeed is active,Hushfeed is active
 Hushfeed is paused,Hushfeed is paused
 Hushfeed is paused. Ghost mode isn't active.,Hushfeed is paused. Ghost mode isn't active.
+Hushfeed language,Hushfeed language
 Hushfeed turns back on when TikTok restarts.,Hushfeed turns back on when TikTok restarts.
 "Hushfeed's downloader doesn't fill this in, so it's kept as typed: %1$s","Hushfeed's downloader doesn't fill this in, so it's kept as typed: %1$s"
 Hushfeed's downloader: %1$s,Hushfeed's downloader: %1$s
@@ -1117,6 +1124,7 @@ Instead of these settings. The list has a button that brings you back here.,Inst
 Invisible controls button,Invisible controls button
 Invite friends,Invite friends
 "It's in %1$s, under %2$s. Tap to go there.","It's in %1$s, under %2$s. Tap to go there."
+Italiano,Italiano
 Join Amplify,Join Amplify
 Joined,Joined
 Joined %s,Joined %s
@@ -1626,6 +1634,7 @@ Plays videos that TikTok covers with a content warning without asking you to tap
 Policy updates,Policy updates
 Popular,Popular
 Popups,Popups
+Português (Brasil),Português (Brasil)
 Post age,Post age
 Post dates in the feed,Post dates in the feed
 Post every video as if you'd turned on TikTok's own HD upload on the post page. A clip TikTok doesn't count as high quality posts as before.,Post every video as if you'd turned on TikTok's own HD upload on the post page. A clip TikTok doesn't count as high quality posts as before.
@@ -2520,6 +2529,7 @@ Time and well-being,Time and well-being
 Time zone,Time zone
 Timed logging stopped,Timed logging stopped
 Times you can open the feed anyway,Times you can open the feed anyway
+Tiếng Việt,Tiếng Việt
 Today can't start over while Wait a day to loosen the budget is on. The day starts over at %1$s.,Today can't start over while Wait a day to loosen the budget is on. The day starts over at %1$s.
 "Today has moved on, so there's nothing to put back","Today has moved on, so there's nothing to put back"
 Today is back where it was,Today is back where it was
@@ -2581,6 +2591,7 @@ Type another model,Type another model
 "Type one language code here, like en.","Type one language code here, like en."
 Type some sample text to see whether these rules match it.,Type some sample text to see whether these rules match it.
 "Type the other app's ID, like com.dv.adm. The save button sends the video's link there instead of saving. Leave empty to save here.","Type the other app's ID, like com.dv.adm. The save button sends the video's link there instead of saving. Leave empty to save here."
+Türkçe,Türkçe
 Unavailable,Unavailable
 Unblock,Unblock
 Unblock this commenter,Unblock this commenter
@@ -2780,4 +2791,8 @@ picture in picture PiP,picture in picture PiP
 save photos,save photos
 search suggestions,search suggestions
 this creator,this creator
+Русский,Русский
+العربية,العربية
+ไทย,ไทย
 … more,… more
+简体中文,简体中文

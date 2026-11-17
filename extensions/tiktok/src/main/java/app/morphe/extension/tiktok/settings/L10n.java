@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.LocaleList;
 
 import app.morphe.extension.shared.Utils;
+import app.morphe.extension.shared.settings.Setting;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -240,9 +241,14 @@ public final class L10n {
      * Every tag worth trying, in the order the phone asks for them, each one most specific
      * first, so a table for "pt-rbr" wins over one for "pt". Android resolves a string
      * resource against the whole language list rather than the first entry alone, and reading
-     * the table by hand has to do the same or a second choice language never shows.
+     * the table by hand has to do the same or a second choice language never shows. A language
+     * picked under Hushfeed language comes ahead of all of them (#431).
      */
     static List<String> tags(Context context) {
+        String picked = pickedLanguage(context);
+        if (picked != null) {
+            return Collections.singletonList(picked);
+        }
         List<String> tags = new ArrayList<>(4);
         List<String> seenLanguages = new ArrayList<>(4);
         for (Locale locale : locales(context)) {
@@ -273,6 +279,44 @@ public final class L10n {
             tags.add(Locale.getDefault().getLanguage().toLowerCase(Locale.ROOT));
         }
         return tags;
+    }
+
+    /**
+     * Hushfeed language's choices (#431): TikTok's language, then English and every language
+     * with a table, each listed in its own name.
+     */
+    public static final String[] PICK_VALUES = {"tiktok", "en", "ar", "az", "de", "es", "in", "it",
+            "pt-rbr", "ru", "th", "tr", "vi", "zh-hans"};
+    public static final String[] PICK_LABELS = {"Match TikTok", "English", "العربية", "Azərbaycan dili",
+            "Deutsch", "Español", "Bahasa Indonesia", "Italiano", "Português (Brasil)", "Русский", "ไทย",
+            "Türkçe", "Tiếng Việt", "简体中文"};
+
+    /** Hushfeed language's saved key, shared with {@link Settings#HUSHFEED_LANGUAGE}. */
+    public static final String PICK_KEY = "hushfeed_language";
+
+    /**
+     * The language picked under Hushfeed language, as a table tag or "en", or null to follow
+     * TikTok's. A value no build offers, from a hand-edited backup, follows TikTok too. Read
+     * straight from the settings file through the context: strings are asked for before the
+     * settings load, and a settings class that fails to load stays broken for the whole run.
+     */
+    static String pickedLanguage(Context context) {
+        if (context == null) {
+            return null;
+        }
+        String picked;
+        try {
+            picked = context.getSharedPreferences(Setting.PREFERENCES_NAME, Context.MODE_PRIVATE)
+                    .getString(PICK_KEY, null);
+        } catch (RuntimeException notReadable) {
+            return null;
+        }
+        for (int index = 1; index < PICK_VALUES.length; index++) {
+            if (PICK_VALUES[index].equals(picked)) {
+                return picked;
+            }
+        }
+        return null;
     }
 
     /** The languages the phone is set to, or the default when there is no context to ask. */

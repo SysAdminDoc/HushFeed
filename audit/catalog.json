@@ -14260,6 +14260,12 @@
     "default": "tiktok",
     "type": "string",
     "row": "Settings theme"
+   },
+   {
+    "key": "hushfeed_language",
+    "default": "tiktok",
+    "type": "string",
+    "row": "Hushfeed language"
    }
   ],
   "surface": "settings",

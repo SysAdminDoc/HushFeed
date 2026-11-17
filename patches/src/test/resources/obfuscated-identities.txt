@@ -125,6 +125,8 @@ extensions/tiktok/src/main/java/app/morphe/extension/tiktok/inbox/InboxRenderedM
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/inbox/InboxRenderedModels.java|LLLII
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/inbox/InboxRenderedModels.java|LLLIIIIL
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/inbox/InboxRenderedModels.java|LLLIIL
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/interaction/GestureActions.java|i_0
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/interaction/GestureActions.java|ia4
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/profile/ProfileTopBar.java|pwq
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/profile/ProfileTopBar.java|tfw
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/repost/RepostDiagnostics.java|LIZ

@@ -337,6 +337,12 @@ public class SwipeLeftTest {
                 GestureActions.anchorOf(comments, 1080, 2340));
         GestureActions.ANCHOR_IDS.clear();
         GestureActions.ANCHOR_IDS.putForTests(context.getPackageName(), "47.8.3:i_0", 0);
+        GestureActions.ANCHOR_IDS.putForTests(context.getPackageName(), "47.8.3:ia4", 0x7f0a2c7c);
+        assertArrayEquals("the Favorites button when its popup anchor is missing",
+                new int[]{x + 950, y + 1460, x + 1080, y + 1590},
+                GestureActions.anchorOf(comments, 1080, 2340));
+        GestureActions.ANCHOR_IDS.clear();
+        GestureActions.ANCHOR_IDS.putForTests(context.getPackageName(), "47.8.3:i_0", 0);
         GestureActions.ANCHOR_IDS.putForTests(context.getPackageName(), "47.8.3:ia4", 0);
         assertArrayEquals("the comment button", new int[]{x + 950, y + 1300, x + 1080, y + 1430},
                 GestureActions.anchorOf(comments, 1080, 2340));

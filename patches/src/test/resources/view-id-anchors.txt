@@ -142,3 +142,5 @@ feedfilter/TakoAiFilter.java|SEARCH_TAB_ENTRANCE_ID|tv_tab_tako_entrance|app|lay
 profile/ProfileTopBar.java|END_ROW_IDS|47.8.3:pwq|app|com.ss.android.ugc.profile.platform.business.navbar.assemble.sub.ProfileNavBarBaseComponent|at:2
 profile/ProfileTopBar.java|VIEWS_CAPSULE_IDS|47.8.3:tfw|app|class-method:getIvFootprintFromXml|at:1
 live/LiveAutoTap.java|SEAT_ID|ttlive_link_layout_layer_mic_window|app|class-string:LayoutViewProviderImpl|at:4
+interaction/GestureActions.java|FAVORITE_POPUP_ANCHOR_IDS|47.8.3:i_0|app|com.by.andInflater.common_feed_layout_video_favorite|on:InteractFrameLayout#2
+interaction/GestureActions.java|FAVORITE_BUTTON_IDS|47.8.3:ia4|app|com.by.andInflater.common_feed_layout_video_favorite|on:InteractFrameLayout#1

@@ -1074,11 +1074,10 @@ public final class GestureActions {
     static final String SERVICE_MANAGER = "com.ss.android.ugc.aweme.framework.services.ServiceManager";
     static final String FAVORITE_SERVICE = "com.ss.android.ugc.aweme.favorites.service.IFavoriteService";
     static final String ACCOUNT_SERVICE = "com.ss.android.ugc.aweme.IAccountUserService";
-    /**
-     * The view TikTok's own long press on Favorites places its popup beside (i_0 on 47.8.3), then
-     * the Favorites button itself.
-     */
-    static final String[] FAVORITE_ANCHOR_IDS = {"47.8.3:i_0", "47.8.3:ia4"};
+    /** The view TikTok's own long press on Favorites places its popup beside (i_0 on 47.8.3). */
+    static final String[] FAVORITE_POPUP_ANCHOR_IDS = {"47.8.3:i_0"};
+    /** The Favorites button itself, for a cell where that view isn't laid out. */
+    static final String[] FAVORITE_BUTTON_IDS = {"47.8.3:ia4"};
     static final ResourceIdCache ANCHOR_IDS = new ResourceIdCache();
     /** What TikTok's feed calls itself when it opens the popup with no cell to ask. */
     static final String FEED_ENTER_FROM = "homepage_hot";
@@ -1180,14 +1179,8 @@ public final class GestureActions {
         View anchor = null;
         if (button != null) {
             View cell = cellOf(button);
-            for (String name : FAVORITE_ANCHOR_IDS) {
-                int id = ANCHOR_IDS.resolve(cell.getResources(), cell.getContext().getPackageName(), name, false);
-                View found = id == 0 ? null : cell.findViewById(id);
-                if (found != null && found.getWidth() > 0 && found.getHeight() > 0) {
-                    anchor = found;
-                    break;
-                }
-            }
+            anchor = laidOut(cell, FAVORITE_POPUP_ANCHOR_IDS);
+            if (anchor == null) anchor = laidOut(cell, FAVORITE_BUTTON_IDS);
             if (anchor == null && button.getWidth() > 0 && button.getHeight() > 0) anchor = button;
         }
         if (anchor == null) {
@@ -1197,6 +1190,16 @@ public final class GestureActions {
         int[] at = new int[2];
         anchor.getLocationInWindow(at);
         return new int[]{at[0], at[1], at[0] + anchor.getWidth(), at[1] + anchor.getHeight()};
+    }
+
+    /** The first of these views the cell holds with a size, or null. */
+    private static View laidOut(View cell, String[] names) {
+        for (String name : names) {
+            int id = ANCHOR_IDS.resolve(cell.getResources(), cell.getContext().getPackageName(), name, false);
+            View found = id == 0 ? null : cell.findViewById(id);
+            if (found != null && found.getWidth() > 0 && found.getHeight() > 0) return found;
+        }
+        return null;
     }
 
     private static Method currentItem;

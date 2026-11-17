@@ -18,7 +18,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 /**
- * TikTok pads a host near the top of each page by the gesture bar on 47.7.3, so the feed under its
+ * TikTok pads a host near the top of each page by the gesture bar on 47.8.3, so the feed under its
  * tabs and an opened video under its comment bar stopped over a strip of the window's black (#408).
  */
 @RunWith(RobolectricTestRunner.class)
@@ -99,7 +99,7 @@ public class VideoUnderGestureBarTest {
     }
 
     /**
-     * Login2, 47.7.3, a video opened from search: the padded frame holds the pager four levels
+     * Login2, 47.8.3, a video opened from search: the padded frame holds the pager four levels
      * down, and the pager gives its page plain layout params.
      */
     @Test

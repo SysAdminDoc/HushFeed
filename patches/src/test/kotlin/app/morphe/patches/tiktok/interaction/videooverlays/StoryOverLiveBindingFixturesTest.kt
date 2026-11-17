@@ -71,6 +71,8 @@ class StoryOverLiveBindingFixturesTest {
         const val STRING = "Ljava/lang/String;"
         const val AVATAR = "Lcom/ss/android/ugc/aweme/avatar/AvatarComponentView;"
         const val ROW = "Lcom/ss/android/ugc/aweme/im/chatlist/impl/ui/viewholder/chatlistvo/NewChatListSingleChatVH;"
-        const val BIND = "LJIIIIZZ"
+        // The six-argument avatar bind (LifecycleOwner, Object, String, Function1, Z, Z): LJIIIIZZ
+        // on 47.7.3, LIZIZ on 47.8.3, where LJIIIIZZ is now a ()Z.
+        const val BIND = "LIZIZ"
     }
 }

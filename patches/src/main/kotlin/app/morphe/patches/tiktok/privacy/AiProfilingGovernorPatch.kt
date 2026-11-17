@@ -38,7 +38,7 @@ val aiProfilingGovernorPatch = bytecodePatch(
 
 /**
  * The patch's hooks, without its settings row, so a test can put them on a build that carries no
- * extension. With the switch off all three run as TikTok wrote them.
+ * extension. With the switch off both run as TikTok wrote them.
  */
 internal fun installAiProfilingSwitch() {
     // No plugin: TikTok takes its own "not installed" path, so the plugin's start-up (its
@@ -47,5 +47,4 @@ internal fun installAiProfilingSwitch() {
     // Should the plugin arrive another way, its engine still can't attach, and TikTok's
     // stand-in core keeps answering "host not ready".
     PitayaRealProviderFingerprint.method.returnVoidWhenOn(PATCH, AI_PROFILING_SWITCH)
-    PitayaLiteStartFingerprint.method.returnVoidWhenOn(PATCH, AI_PROFILING_SWITCH)
 }

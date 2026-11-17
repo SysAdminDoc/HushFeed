@@ -55,13 +55,15 @@ private fun Method.stickerMethodCalls(): List<MethodReference> =
     implementation?.instructions?.mapNotNull { (it as? ReferenceInstruction)?.reference as? MethodReference } ?: emptyList()
 
 /**
- * StickerApiV2's im/sticker/save: type, uri, width, height, tags, source, create source and the
- * continuation. R8 renames it (LJIIJJI on TikTok 47.5.3).
+ * StickerApiV2's im/sticker/save: type, uri, width, height, tags, source, create source, the
+ * canvas text (null when there is none, new on 47.8.3) and the continuation. R8 renames it
+ * (LIZIZ on TikTok 47.8.3).
  */
 internal fun MethodReference.isStickerSaveCall(): Boolean {
     val parameters = parameterTypes.map { it.toString() }
-    return definingClass == STICKER_API && returnType == STICKER_OBJECT && parameters.size == 8 &&
-        parameters.subList(0, 7) == listOf("I", STICKER_STRING, "I", "I", "Ljava/util/List;", STICKER_STRING, "Ljava/lang/Integer;")
+    return definingClass == STICKER_API && returnType == STICKER_OBJECT && parameters.size == 9 &&
+        parameters.subList(0, 8) ==
+        listOf("I", STICKER_STRING, "I", "I", "Ljava/util/List;", STICKER_STRING, "Ljava/lang/Integer;", STICKER_STRING)
 }
 
 /** The Saved page of the comment sticker panel, which the patch gives a Create button. */
@@ -103,13 +105,14 @@ internal object StickerServerParameterFingerprint : Fingerprint(
 )
 
 /**
- * The DM canvas saver (14hO.LIZIZ on TikTok 47.5.3): it saves a
+ * The DM canvas saver (0hMc.LIZIZ on TikTok 47.8.3): it saves a
  * drawing through im/sticker/save and adds the answer to Saved. Every call the bridges make comes
- * out of it.
+ * out of it. 47.8.3 grew its parameters from four to nine (the canvas text, flags and two
+ * callbacks), and a sibling in the same class that posts to the sticker store carries
+ * "dm_ai_canvas" too, so the save and the Saved store call are what pick it, not its parameters.
  */
 internal object CanvasStickerSaverFingerprint : Fingerprint(
     returnType = STICKER_OBJECT,
-    parameters = listOf("Landroid/content/Context;", STICKER_STRING, "L", "Z"),
     strings = listOf("dm_ai_canvas"),
     custom = { method, _ ->
         val calls = method.stickerMethodCalls()
@@ -221,16 +224,27 @@ internal fun stickerCreatorBridges(
                 return-object v0
             """,
         ),
-        // One local ahead of the eight arguments, so the API object and the arguments make one range.
+        // The save takes the canvas text between the create source and the continuation, so the
+        // API object, the seven arguments, a null text and the continuation are copied into one
+        // range of ten locals ahead of the stub's eight arguments.
         stickerBridge(
             "saveSticker",
             listOf("I", STICKER_STRING, "I", "I", "Ljava/util/List;", STICKER_STRING, "Ljava/lang/Integer;", STICKER_OBJECT),
-            STICKER_OBJECT, 1, flagsFor("saveSticker"),
+            STICKER_OBJECT, 10, flagsFor("saveSticker"),
             """
                 invoke-static { }, ${calls.stickerApi.reference.stickerDescriptor()}
                 move-result-object v0
-                check-cast p7, $continuation
-                ${calls.save.invoke}/range { v0 .. v8 }, ${calls.save.reference.stickerDescriptor()}
+                move/from16 v1, p0
+                move-object/from16 v2, p1
+                move/from16 v3, p2
+                move/from16 v4, p3
+                move-object/from16 v5, p4
+                move-object/from16 v6, p5
+                move-object/from16 v7, p6
+                const/4 v8, 0x0
+                move-object/from16 v9, p7
+                check-cast v9, $continuation
+                ${calls.save.invoke}/range { v0 .. v9 }, ${calls.save.reference.stickerDescriptor()}
                 move-result-object v0
                 return-object v0
             """,
@@ -280,7 +294,7 @@ internal fun MutableClass.swapStickerStubs(calls: StickerCreatorCalls) {
 }
 
 /**
- * The profile's Stickers tab gate (0Pvq.LIZ on TikTok 47.7.3, #214): static, takes the User, asks
+ * The profile's Stickers tab gate (0Pvq.LIZ on TikTok 47.8.3, #214): static, takes the User, asks
  * the IM sticker store whether the profile owns a sticker set and otherwise reads the profile's own
  * showStickerTab flag. 47.6.3 read only the flag.
  */
@@ -346,7 +360,7 @@ internal object ProfileStickerPageFingerprint : Fingerprint(
 
 /**
  * Hands the page's curated-set experiment answer to ProfileStickerTab with the profile's uid, right
- * after it's read. 47.7.3 asks the sticker store's Z(Z) check, then on yes asks the store for the
+ * after it's read. 47.8.3 asks the sticker store's Z(Z) check, then on yes asks the store for the
  * curated page with (uid, view model key, is self); on no it builds the 47.6.3 sticker sets pager.
  */
 internal fun MutableMethod.keepProfileStickerPage() {

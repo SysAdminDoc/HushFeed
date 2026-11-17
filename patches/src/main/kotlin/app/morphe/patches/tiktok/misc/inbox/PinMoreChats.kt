@@ -29,8 +29,8 @@ private fun MethodReference.isSettingsIntRead() =
 
 /**
  * The lazy that answers how many chats may be pinned (#385): a static lambda body that reads
- * [PIN_CHAT_LIMIT_KEY] from TikTok's settings with a default of 5 and boxes the answer. On 47.7.3
- * it is `AFwS158S0000000_33_I1.invoke$714`, the value behind `X.1B46.LIZ`, and the one reader of
+ * [PIN_CHAT_LIMIT_KEY] from TikTok's settings with a default of 5 and boxes the answer. On 47.8.3
+ * it is `AFwS160S0000000_33_I1.invoke$1173`, a lazy's value, and the one reader of
  * that lazy is `IMChatListImpl`'s pin check, which counts the pinned chats in both Inbox tabs and
  * refuses the pin with TikTok's "pin up to" toast once the count reaches the cap. Every pin entry
  * (the chat's settings switch and the Inbox's long press) goes through that one check. The key's

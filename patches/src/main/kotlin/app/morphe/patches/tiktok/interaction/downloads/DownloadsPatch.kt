@@ -351,6 +351,11 @@ val downloadsPatch = bytecodePatch(
                 )
             }
 
+            // TikTok 47.8.3 builds the StickerItem from the coroutine's CommentStickerStruct and
+            // keeps it in no register up to the binds, so each bind builds it again from p0.
+            val source = stickerPreviewSource()
+                ?: throw PatchException("Downloads: the sticker preview source builds no StickerItem from its struct.")
+
             bindCallIndices.asReversed().forEach { bindCallIndex ->
                 val bindInstruction = implementation!!.instructions[bindCallIndex]
                 val previewRegister = when (bindInstruction) {
@@ -374,7 +379,10 @@ val downloadsPatch = bytecodePatch(
                     bindCallIndex,
                     """
                         move-object/from16 v$previewTempRegister, v$previewRegister
-                        move-object/from16 v$sourceTempRegister, p2
+                        move-object/from16 v$sourceTempRegister, p0
+                        iget-object v$sourceTempRegister, v$sourceTempRegister, ${source.struct}
+                        invoke-static {v$sourceTempRegister}, ${source.convert}
+                        move-result-object v$sourceTempRegister
                         invoke-static {v$previewTempRegister, v$sourceTempRegister}, $STICKER_EXTENSION_CLASS_DESCRIPTOR->registerStickerSource(Ljava/lang/Object;Ljava/lang/Object;)V
                     """,
                 )

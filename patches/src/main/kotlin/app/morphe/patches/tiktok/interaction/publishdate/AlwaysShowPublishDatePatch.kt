@@ -25,6 +25,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.WideLiteralInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
@@ -33,7 +34,9 @@ import java.util.BitSet
 private const val EXTENSION_CLASS_DESCRIPTOR =
     "Lapp/morphe/extension/tiktok/publishdate/AlwaysShowPublishDatePatch;"
 private const val AWEME = "Lcom/ss/android/ugc/aweme/feed/model/Aweme;"
+private const val VIDEO_ITEM_PARAMS = "Lcom/ss/android/ugc/aweme/feed/model/VideoItemParams;"
 private const val WHAT = "Always show publish date"
+private val MOVE_OBJECTS = setOf(Opcode.MOVE_OBJECT, Opcode.MOVE_OBJECT_FROM16, Opcode.MOVE_OBJECT_16)
 private val FORMATTER_CALLS = setOf(
     Opcode.INVOKE_STATIC, Opcode.INVOKE_STATIC_RANGE, Opcode.INVOKE_VIRTUAL, Opcode.INVOKE_VIRTUAL_RANGE,
 )
@@ -62,12 +65,17 @@ val alwaysShowPublishDatePatch = bytecodePatch(
         VideoAuthorInfoStateFingerprint.method.apply {
             // The post time text sits after the visibility gates, so it goes in first and the
             // gates' indices still hold.
+            // The empty check's result is false on this path, so it holds the video while the
+            // hook runs and gets its false back after.
             val site = postTimeSite()
             addInstructions(
                 site.insertAt,
                 """
-                    invoke-static { v${site.textRegister}, v${site.itemRegister} }, $EXTENSION_CLASS_DESCRIPTOR->postTime(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;
+                    invoke-virtual/range { v${site.paramsRegister} .. v${site.paramsRegister} }, $VIDEO_ITEM_PARAMS->getAweme()$AWEME
+                    move-result-object v${site.scratchRegister}
+                    invoke-static { v${site.textRegister}, v${site.scratchRegister} }, $EXTENSION_CLASS_DESCRIPTOR->postTime(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;
                     move-result-object v${site.textRegister}
+                    const/4 v${site.scratchRegister}, 0x0
                 """,
             )
             showPostTimeForMainFeeds()
@@ -87,15 +95,42 @@ private fun Instruction.writes(register: Int): Boolean {
 
 /**
  * Where the author row's post time text is ready: [insertAt] is the first instruction past
- * TikTok's empty check of [textRegister], and [itemRegister] holds the video's Aweme there.
+ * TikTok's empty check of [textRegister]. [paramsRegister] is the method's VideoItemParams, whose
+ * video the time was read from, and [scratchRegister] the empty check's result, false there.
  * [formatters] counts the date formatters whose text can reach it.
  */
 internal data class PostTimeSite(
     val insertAt: Int,
     val textRegister: Int,
-    val itemRegister: Int,
+    val scratchRegister: Int,
+    val paramsRegister: Int,
     val formatters: Int,
 )
+
+/** The instructions whose write of [register] can reach [at], with -1 for the method's start. */
+private fun writersOf(
+    instructions: List<Instruction>,
+    predecessors: Array<MutableList<Int>>,
+    register: Int,
+    at: Int,
+): Set<Int> {
+    val writers = sortedSetOf<Int>()
+    if (at == 0) writers += -1
+    val seen = BitSet()
+    val pending = ArrayDeque(predecessors[at])
+    while (pending.isNotEmpty()) {
+        val from = pending.removeFirst()
+        if (seen[from]) continue
+        seen.set(from)
+        if (instructions[from].writes(register)) {
+            writers += from
+            continue
+        }
+        if (from == 0) writers += -1
+        pending.addAll(predecessors[from])
+    }
+    return writers
+}
 
 /**
  * The row's post time runs `item.getCreateTime()`, times 1000, through one of a few static
@@ -105,9 +140,11 @@ internal data class PostTimeSite(
  * date TikTok is about to show, which is where the hook goes. 47.1.x hands it to a small static
  * helper there and 47.0.3 builds the row text inline, so the anchor is the check, not what follows.
  *
- * The hook reads the item from the register the time was asked of, so every path into the hook
- * has to come through that call with nothing writing the register on the way, and nothing may
- * jump straight to the hooked instruction, which would skip it.
+ * The hook asks the method's VideoItemParams for its video again, which is the item the time was
+ * read from: 47.8.3 reads the time twice and the second read's long lands on the item's register.
+ * So the parameter must never be written, the item must come from its getAweme(), every path into
+ * the hook has to come through the read, and nothing may jump straight to the hooked instruction,
+ * which would skip it.
  */
 internal fun Method.postTimeSite(): PostTimeSite {
     val flow = ControlFlow.of(this)
@@ -121,7 +158,6 @@ internal fun Method.postTimeSite(): PostTimeSite {
             (instructions.getOrNull(index + 2) as? WideLiteralInstruction)?.wideLiteral == 1000L &&
             instructions.getOrNull(index + 3)?.opcode == Opcode.MUL_LONG_2ADDR
     } ?: throw PatchException("$WHAT: expected one post time read turned into milliseconds in the author row.")
-    val itemRegister = (instructions[read] as FiveRegisterInstruction).registerC
 
     val emptyCheck = (read + 4 until count).firstOrNull { instructions[it].calls("Landroid/text/TextUtils;", "isEmpty") }
         ?: throw PatchException("$WHAT: the post time is never checked for text.")
@@ -135,6 +171,7 @@ internal fun Method.postTimeSite(): PostTimeSite {
         throw PatchException("$WHAT: the post time's empty check doesn't skip an empty text.")
     }
     val textRegister = (instructions[emptyCheck] as FiveRegisterInstruction).registerC
+    val scratchRegister = (result as OneRegisterInstruction).registerA
     val insertAt = emptyCheck + 3
     if (insertAt >= count) throw PatchException("$WHAT: the post time's empty check ends the method.")
 
@@ -184,32 +221,36 @@ internal fun Method.postTimeSite(): PostTimeSite {
         pendingFromStart.addAll(flow.normal[at] + flow.exceptional[at])
     }
 
-    // Nothing between the read and the hook writes the item's register: an instruction on such a
-    // path is one the read reaches without passing the hook, and that reaches the hook without
-    // passing the read.
-    val afterRead = BitSet()
-    val pendingAfter = ArrayDeque(flow.normal[read] + flow.exceptional[read])
-    while (pendingAfter.isNotEmpty()) {
-        val at = pendingAfter.removeFirst()
-        if (afterRead[at] || at == insertAt || at == read) continue
-        afterRead.set(at)
-        pendingAfter.addAll(flow.normal[at] + flow.exceptional[at])
+    // The VideoItemParams parameter keeps its value all through the method.
+    val code = implementation ?: throw PatchException("$WHAT: the author row has no code.")
+    val paramsAt = parameterTypes.indexOfFirst { it.toString() == VIDEO_ITEM_PARAMS }
+    if (paramsAt < 0) throw PatchException("$WHAT: the author row takes no VideoItemParams.")
+    val width = { type: CharSequence -> if (type.toString() == "J" || type.toString() == "D") 2 else 1 }
+    val parameterRegisters = 1 + parameterTypes.sumOf { width(it) }
+    val paramsRegister = code.registerCount - parameterRegisters + 1 +
+        parameterTypes.take(paramsAt).sumOf { width(it) }
+    instructions.indexOfFirst { it.writes(paramsRegister) }.takeIf { it >= 0 }?.let {
+        throw PatchException("$WHAT: instruction $it writes the author row's VideoItemParams.")
     }
-    val beforeHook = BitSet()
-    val pendingBefore = ArrayDeque(predecessors[insertAt])
-    while (pendingBefore.isNotEmpty()) {
-        val at = pendingBefore.removeFirst()
-        if (beforeHook[at] || at == read) continue
-        beforeHook.set(at)
-        pendingBefore.addAll(predecessors[at])
-    }
-    afterRead.and(beforeHook)
-    var on = afterRead.nextSetBit(0)
-    while (on >= 0) {
-        if (instructions[on].writes(itemRegister)) {
-            throw PatchException("$WHAT: instruction $on writes the item's register between its time and the post time text.")
+
+    // The time is read from that parameter's video: the item register's every value reaching the
+    // read is getAweme()'s result, asked of the parameter or a copy of it.
+    val itemRegister = (instructions[read] as FiveRegisterInstruction).registerC
+    writersOf(instructions, predecessors, itemRegister, read).forEach { at ->
+        val ask = instructions.getOrNull(at - 1)
+        if (at < 0 || instructions[at].opcode != Opcode.MOVE_RESULT_OBJECT || ask == null ||
+            !ask.calls(VIDEO_ITEM_PARAMS, "getAweme")
+        ) {
+            throw PatchException("$WHAT: the post time is read from an item that isn't the VideoItemParams' video.")
         }
-        on = afterRead.nextSetBit(on + 1)
+        val receiver = (ask as? FiveRegisterInstruction)?.registerC
+            ?: throw PatchException("$WHAT: the post time's video is asked for in a range call.")
+        val holdsParams = receiver == paramsRegister ||
+            writersOf(instructions, predecessors, receiver, at - 1).all { copy ->
+                copy >= 0 && instructions[copy].opcode in MOVE_OBJECTS &&
+                    (instructions[copy] as TwoRegisterInstruction).registerB == paramsRegister
+            }
+        if (!holdsParams) throw PatchException("$WHAT: the post time's video is asked of something other than the VideoItemParams.")
     }
 
     // Code put in front of an instruction runs only for the paths that fall into it: a branch to
@@ -217,11 +258,11 @@ internal fun Method.postTimeSite(): PostTimeSite {
     if (predecessors[insertAt] != listOf(emptyCheck + 2)) {
         throw PatchException("$WHAT: something other than the empty check leads to the post time text.")
     }
-    // The 4-bit invoke names both registers.
-    if (textRegister > 15 || itemRegister > 15) {
-        throw PatchException("$WHAT: v$textRegister or v$itemRegister doesn't fit a short invoke.")
+    // The 4-bit invoke names the text and the video, which can't share a register.
+    if (textRegister > 15 || scratchRegister > 15 || textRegister == scratchRegister) {
+        throw PatchException("$WHAT: v$textRegister and v$scratchRegister don't fit a short invoke.")
     }
-    return PostTimeSite(insertAt, textRegister, itemRegister, formatters.size)
+    return PostTimeSite(insertAt, textRegister, scratchRegister, paramsRegister, formatters.size)
 }
 
 private fun app.morphe.patcher.util.proxy.mutableTypes.MutableMethod.showPostTimeForMainFeeds() {

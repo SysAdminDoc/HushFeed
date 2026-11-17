@@ -257,7 +257,7 @@ internal fun MutableMethod.keepLiveWindowOnLargeScreens(result: Int) {
 }
 
 /**
- * TikTok's feed step that runs as the pager picks a video (`LJ` on `X.09l1`, 47.7.3). It stops the
+ * TikTok's feed step that runs as the pager picks a video (`LJ` on `X.09l1`, 47.8.3). It stops the
  * last video and starts the new one, but only while the feed's activity isn't paused or TikTok's
  * own background play holds it, and the feed window pauses the activity (#413). Its logs name it.
  */
@@ -323,7 +323,7 @@ private fun Instruction.readsPlayerForeground() = opcode == Opcode.IGET_BOOLEAN 
     (this as ReferenceInstruction).reference.let { it is FieldReference && it.key() == PLAYER_FOREGROUND }
 
 /**
- * The feed player's "may this video play now?" check (`LLLFF` on 47.7.3), which its start step
+ * The feed player's "may this video play now?" check (`LLLFF` on 47.8.3), which its start step
  * asks before it plays the video a page select picked. It says no for a player whose activity
  * isn't in front, and the feed window pauses the activity, so every video the window's arrows
  * moved to got refused (#413, the start step's "21"). The field it reads keeps TikTok's own name.

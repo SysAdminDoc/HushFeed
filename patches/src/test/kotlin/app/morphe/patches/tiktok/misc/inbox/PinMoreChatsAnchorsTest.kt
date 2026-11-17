@@ -111,7 +111,7 @@ class PinMoreChatsAnchorsTest {
     private val SETTINGS_READ = ImmutableMethodReference(SETTINGS_MANAGER, "LJ", listOf("Ljava/lang/String;", "I"), "I")
 
     /**
-     * The lambda cut down, as 47.7.3 has it: load the key into v1 and the default 5 into v0, read
+     * The lambda cut down, as 47.8.3 has it: load the key into v1 and the default 5 into v0, read
      * into v0 (index 4), box and return it. Without the key, a class is loaded in its place.
      */
     private fun read(
@@ -138,7 +138,7 @@ class PinMoreChatsAnchorsTest {
             ImmutableInstruction11x(Opcode.RETURN_OBJECT, 0),
         )
         return ImmutableMethod(
-            "Lkotlin/jvm/internal/AFwS158S0000000_33_I1;", "invoke\$714", listOf(), "Ljava/lang/Object;",
+            "Lkotlin/jvm/internal/AFwS160S0000000_33_I1;", "invoke\$1173", listOf(), "Ljava/lang/Object;",
             AccessFlags.PUBLIC.value or AccessFlags.STATIC.value, null, null,
             ImmutableMethodImplementation(2, instructions, null, null),
         )

@@ -28,8 +28,8 @@ class ObfuscatedIdentityTest {
     @Test
     fun `java binary class names are inventoried as exact tokens`() {
         assertEquals(
-            setOf("X.0Lzc"),
-            identitiesIn("""Class.forName("X.0Lzc")""", extensionTree = true),
+            setOf("X.0Lud"),
+            identitiesIn("""Class.forName("X.0Lud")""", extensionTree = true),
         )
         assertTrue(
             identitiesIn("""Class.forName("LX.0Lze")""", extensionTree = true).isEmpty(),

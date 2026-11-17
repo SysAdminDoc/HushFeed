@@ -527,7 +527,7 @@ internal object FeedButtonStateFingerprint : Fingerprint(
  * TikTok's handler for a hold on a bottom tab, where holding Profile opens the account switcher
  * sheet: ProfileTabLongPressHandlerImpl's observer of the tab tag the long press posts. It checks
  * the tag is "USER", logs long_press_profile_tab and shows the sheet with the
- * switch_account_long_press source, which nothing else on 47.7.3 loads.
+ * switch_account_long_press source, which nothing else on 47.8.3 loads.
  */
 internal object ProfileTabSwitcherFingerprint : Fingerprint(
     returnType = "V",

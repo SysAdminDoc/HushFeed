@@ -21,17 +21,17 @@ class ProgressStoreTest {
     /** The names on one build: the holder, its Lazy and its record type. */
     private class Build(val holder: String, val lazy: String, val record: String)
 
-    private val v4623 = Build("LX/0Lzc;", "LX/01wV;", "LX/0NhP;")
-    private val v4683 = Build("LX/0Nz2;", "LX/018i;", "LX/0NnO;")
+    private val v4623 = Build("LX/0Lud;", "LX/01vv;", "LX/0Nbn;")
+    private val v4683 = Build("LX/0NtG;", "LX/017z;", "LX/0Nhm;")
 
     @Test
     fun `the store is read off the put that ends the progress callback`() {
         val store = storeOf(v4623)
-        assertEquals("LX/0Lzc;->LIZLLL:LX/01wV;", store.cache.smali())
-        assertEquals("LX/01wV;->getValue()Ljava/lang/Object;", store.cacheValue.smali())
+        assertEquals("LX/0Lud;->LIZLLL:LX/01vv;", store.cache.smali())
+        assertEquals("LX/01vv;->getValue()Ljava/lang/Object;", store.cacheValue.smali())
         assertEquals("invoke-interface", store.cacheValueInvoke)
-        assertEquals("LX/0Lzc;->LJ:LX/0NhP;", store.lastRecord.smali())
-        assertEquals("LX/0Lzc;->LJFF:Ljava/lang/String;", store.lastAid.smali())
+        assertEquals("LX/0Lud;->LJ:LX/0Nbn;", store.lastRecord.smali())
+        assertEquals("LX/0Lud;->LJFF:Ljava/lang/String;", store.lastAid.smali())
     }
 
     @Test
@@ -39,10 +39,10 @@ class ProgressStoreTest {
         // 46.8.3, where every one of the three classes has another name and LX/0Lze; is a
         // class with no fields at all.
         val store = storeOf(v4683)
-        assertEquals("LX/0Nz2;->LIZLLL:LX/018i;", store.cache.smali())
-        assertEquals("LX/018i;->getValue()Ljava/lang/Object;", store.cacheValue.smali())
-        assertEquals("LX/0Nz2;->LJ:LX/0NnO;", store.lastRecord.smali())
-        assertEquals("LX/0Nz2;->LJFF:Ljava/lang/String;", store.lastAid.smali())
+        assertEquals("LX/0NtG;->LIZLLL:LX/017z;", store.cache.smali())
+        assertEquals("LX/017z;->getValue()Ljava/lang/Object;", store.cacheValue.smali())
+        assertEquals("LX/0NtG;->LJ:LX/0Nhm;", store.lastRecord.smali())
+        assertEquals("LX/0NtG;->LJFF:Ljava/lang/String;", store.lastAid.smali())
     }
 
     @Test

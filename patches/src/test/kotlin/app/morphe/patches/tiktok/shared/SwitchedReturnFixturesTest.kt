@@ -50,7 +50,6 @@ import app.morphe.patches.tiktok.misc.voicecomments.VOICE_COMMENTS_SWITCH
 import app.morphe.patches.tiktok.misc.voicecomments.installVoiceCommentSwitch
 import app.morphe.patches.tiktok.misc.voicecomments.resolveVoiceCommentPublishGate
 import app.morphe.patches.tiktok.privacy.AI_PROFILING_SWITCH
-import app.morphe.patches.tiktok.privacy.PitayaLiteStartFingerprint
 import app.morphe.patches.tiktok.privacy.PitayaPluginLookupFingerprint
 import app.morphe.patches.tiktok.privacy.PitayaRealProviderFingerprint
 import app.morphe.patches.tiktok.privacy.installAiProfilingSwitch
@@ -152,7 +151,6 @@ class SwitchedReturnFixturesTest {
                         add(before(UpdateBootFinishedTaskFingerprint.method, UPDATE_CHECKS_SWITCH))
                         add(before(PitayaPluginLookupFingerprint.method, AI_PROFILING_SWITCH))
                         add(before(PitayaRealProviderFingerprint.method, AI_PROFILING_SWITCH))
-                        add(before(PitayaLiteStartFingerprint.method, AI_PROFILING_SWITCH))
                         add(before(resolveVoiceCommentPublishGate(), VOICE_COMMENTS_SWITCH, true))
                         add(before(PasskeyDeviceSupportFingerprint.method, PASSKEY_SIGN_IN_SWITCH, false))
                         add(before(translateButton.enabledRead, COMMENT_TRANSLATE_BUTTON_SWITCH, true))
@@ -164,7 +162,7 @@ class SwitchedReturnFixturesTest {
                         add(before(OptimizedChunkStoreFingerprint.method, REMOTE_CONFIG_SWITCH))
                     }
                     // Four tasks, the reviewed gates (two or three on the splash service), the
-                    // buffer gate, push setup, two update tasks, three Pitaya doors, the voice gate,
+                    // buffer gate, push setup, two update tasks, two Pitaya doors, the voice gate,
                     // the passkey support check, the translate button's two gates, the two
                     // Thoughts gates and the server settings stores (two whole-response copies on
                     // 47.6.3, then the two chunk stores).
@@ -225,7 +223,7 @@ class SwitchedReturnFixturesTest {
                 SplashPreloadTaskFingerprint, SplashPreloadEntryFingerprint, TopViewPreloadTaskFingerprint,
                 RealTimeSplashTaskFingerprint, BufferPreloadGateFingerprint, InitPushTaskFingerprint,
                 UpdateBackgroundTaskFingerprint, UpdateBootFinishedTaskFingerprint,
-                PitayaPluginLookupFingerprint, PitayaRealProviderFingerprint, PitayaLiteStartFingerprint,
+                PitayaPluginLookupFingerprint, PitayaRealProviderFingerprint,
                 AnimatedDrawableFactoryFingerprint, PasskeyDeviceSupportFingerprint,
                 ResponseStoreFingerprint, ChunkStoreFingerprint, OptimizedChunkStoreFingerprint,
             ).forEach { it.clearMatch() }

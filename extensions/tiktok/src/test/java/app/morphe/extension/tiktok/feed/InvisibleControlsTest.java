@@ -53,12 +53,12 @@ import org.robolectric.annotation.Config;
 public class InvisibleControlsTest {
     @Rule public final SettingsContextRule settingsContext = new SettingsContextRule();
 
-    private static final String[] NAMES = {"view_rootview", "47.7.3:lkj", "47.7.3:bs2",
-            "videomusiccoverblock", "47.7.3:lk8", "47.7.3:v1f", "47.7.3:opn"};
+    private static final String[] NAMES = {"view_rootview", "47.8.3:lkp", "47.8.3:bsm",
+            "videomusiccoverblock", "47.8.3:lkd", "47.8.3:v2h", "47.8.3:oql"};
     private static final int[] IDS = {0x7f0a1101, 0x7f0a1102, 0x7f0a1103,
             0x7f0a1104, 0x7f0a1105, 0x7f0a1106, 0x7f0a1107};
     private static final int HOME_ID = 0x7f0a1108;
-    private static final String HOME_NAME = "47.7.3:opf";
+    private static final String HOME_NAME = "47.8.3:oqd";
 
     private boolean overlays;
     private ActivityController<Activity> controller;
@@ -104,7 +104,7 @@ public class InvisibleControlsTest {
     }
 
     /**
-     * For You as 47.7.3 lays it out: the top tab row over a feed pager whose cell holds the rail's
+     * For You as 47.8.3 lays it out: the top tab row over a feed pager whose cell holds the rail's
      * column, the caption frame, the music disc and the search bar, and the bottom bar with Home
      * selected in it.
      */

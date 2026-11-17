@@ -22,7 +22,7 @@ internal const val REMOTE_CONFIG_SWITCH =
 /**
  * The store of a whole A/B settings response. It parses a response that already arrived, then
  * writes its feature flags into the values TikTok reads, logging each step under these names.
- * 47.7.3 has the same code twice, `X.0GWL.LIZ` for FetchABTestCommonTask and a runnable's `LIZ$0`
+ * 47.8.3 has the same code twice, `X.0GTG.LIZ` for FetchABTestCommonTask and a runnable's `LIZ$0`
  * for FetchABTestCommonRequest, so [responseStores] takes every match.
  */
 internal object ResponseStoreFingerprint : Fingerprint(

@@ -17,10 +17,11 @@ import org.junit.Test
  * Where Show the time to the second rewrites the creator's row, held to every declared build.
  *
  * <p>VideoAuthorInfoVM.paramSync2StateAccept turns the item's createTime into milliseconds and
- * hands it to one of the date formatters, and they meet at one empty check. The hook goes past
- * that check's `if-nez` with the text in v0 and the Aweme in the register its createTime was asked
- * of: v11 on 47.4.3, with nine formatter calls (v10 and eight on 47.1.4, v12 on 47.0.3). The text
- * is read right after the hook, by a small static helper or the row text's append.
+ * hands it to one of nine date formatters, and they meet at one empty check. The hook goes past
+ * that check's `if-nez` with the text in v0 and the check's false in v1, which holds the video the
+ * hook asks the VideoItemParams parameter (v21 on 47.8.3, of 22 registers) for. 47.8.3 reads the
+ * time a second time into v0 and v1, over the item in v1. The text is read right after the hook,
+ * by the row text's append.
  */
 class PublishDateAnchorsTest {
     @Test
@@ -37,15 +38,14 @@ class PublishDateAnchorsTest {
             val method = taken.single()
 
             val site = runCatching { method.postTimeSite() }.getOrElse { throw AssertionError("$version: ${it.message}", it) }
-            assertEquals("$version: date formatters, text and item registers",
-                Triple(9, 0, 11), Triple(site.formatters, site.textRegister, site.itemRegister))
+            assertEquals("$version: date formatters, text, scratch and VideoItemParams registers",
+                listOf(9, 0, 1, 21), listOf(site.formatters, site.textRegister, site.scratchRegister, site.paramsRegister))
 
             val instructions = method.implementation!!.instructions.toList()
             assertEquals("$version: the hook follows the empty check", Opcode.IF_NEZ, instructions[site.insertAt - 1].opcode)
             val read = instructions.indexOfLast { instruction ->
                 instruction.opcode == Opcode.INVOKE_VIRTUAL &&
-                    instruction.getReference<MethodReference>()?.name == "getCreateTime" &&
-                    (instruction as FiveRegisterInstruction).registerC == site.itemRegister
+                    instruction.getReference<MethodReference>()?.name == "getCreateTime"
             }
             assertTrue("$version: the item's createTime isn't read before the hook", read in 0 until site.insertAt)
             val next = (site.insertAt until minOf(site.insertAt + 5, instructions.size)).firstOrNull { index ->

@@ -23,7 +23,7 @@ import org.junit.Test
  */
 class RenderFirstFrameAnchorTest {
     private val controller = "Lcom/ss/android/ugc/aweme/feed/controller/PlayerController;"
-    private val event = "LX/0pb0;"
+    private val event = "LX/0pbt;"
     private val other = "LX/0000;"
 
     @Test

@@ -31,7 +31,7 @@ import java.util.WeakHashMap;
  * its post time come off the creator's row and go on a line of their own right under the
  * caption, "United States · 2d ago".
  *
- * <p>The caption is {@code desc}, in TikTok's generated caption layout (47.7.3's
+ * <p>The caption is {@code desc}, in TikTok's generated caption layout (47.8.3's
  * common_feed_layout_video_desc): a vertical LinearLayout holding the caption block, a
  * LinearLayout subclass of TikTok's own with {@code desc} inside it. The line goes in the
  * nearest plain vertical LinearLayout above the caption, right after the child that holds it,

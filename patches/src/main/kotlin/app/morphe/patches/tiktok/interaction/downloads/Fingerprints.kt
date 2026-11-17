@@ -11,6 +11,9 @@ import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 
@@ -199,38 +202,55 @@ internal object CommentPhotoSaveFingerprint : Fingerprint(
     strings = listOf("bpea-comment_photo_save_request_storage"),
 )
 
+private const val PREVIEW_STICKER_ITEM = "Lcom/ss/android/ugc/aweme/im/common/model/StickerItem;"
+private const val PREVIEW_COMMENT_STICKER = "Lcom/ss/android/ugc/aweme/comment/model/CommentStickerStruct;"
+
+/**
+ * Where the tapped comment sticker's StickerItem comes from in the preview coroutine: the
+ * coroutine's own CommentStickerStruct field, read right into the static converter that builds
+ * the item (0hUa.LLJJIJIIJIL and 0Hgs.LIZ on TikTok 47.8.3). The converter only reads the
+ * struct, so calling it again before each bind hands the extension the same sticker.
+ */
+internal data class StickerPreviewSource(val struct: FieldReference, val convert: MethodReference)
+
+internal fun Method.stickerPreviewSource(): StickerPreviewSource? {
+    val instructions = implementation?.instructions?.toList() ?: return null
+    return instructions.indices.mapNotNull { index ->
+        val call = instructions[index].takeIf { it.opcode == Opcode.INVOKE_STATIC } as? FiveRegisterInstruction
+            ?: return@mapNotNull null
+        val convert = call.getReference<MethodReference>()?.takeIf {
+            it.returnType == PREVIEW_STICKER_ITEM && it.parameterTypes.map(CharSequence::toString) == listOf(PREVIEW_COMMENT_STICKER)
+        } ?: return@mapNotNull null
+        val read = instructions.getOrNull(index - 1)?.takeIf { it.opcode == Opcode.IGET_OBJECT } as? TwoRegisterInstruction
+            ?: return@mapNotNull null
+        val struct = read.getReference<FieldReference>()?.takeIf {
+            it.definingClass == definingClass && it.type == PREVIEW_COMMENT_STICKER && read.registerA == call.registerC
+        } ?: return@mapNotNull null
+        StickerPreviewSource(struct, convert)
+    }.distinct().singleOrNull()
+}
+
 internal object StickerPreviewSourceFingerprint : Fingerprint(
-    returnType = "V",
-    parameters = listOf(
-        "Ljava/lang/String;",
-        "Lcom/ss/android/ugc/aweme/im/common/model/StickerItem;",
-        "Landroid/view/View;",
-        "Z",
-        "Ljava/lang/String;",
-        "Ljava/util/Map;",
-        "Lkotlin/jvm/functions/Function0;",
-        "Lkotlin/jvm/functions/Function0;",
-        "Lkotlin/jvm/functions/Function0;",
-        "Lkotlin/jvm/functions/Function2;",
-        "Ljava/lang/Long;",
-    ),
-    // The parameter list names StickerItem, which TikTok does not rename, and no other method
-    // shares it. The class was `LX/0UL9;` on 46.2.3, `LX/0WU6;` and `LX/0m0M;` on the two builds
-    // after, and is `LX/0MG8;->LJI` on 47.7.3. 47.7.2 added the Function2 and the Long at the end
-    // (the patcher matches the whole list, so the old nine took nothing there). What is left is
-    // that it calls the preview bind, by that bind's shape rather than by its name.
+    name = "invokeSuspend",
+    returnType = "Ljava/lang/Object;",
+    parameters = listOf("Ljava/lang/Object;"),
+    // TikTok 47.8.3 inlined the sticker preview (`LX/0MG8;->LJI(String, StickerItem, View, ...)`
+    // on 47.7.3) into the comment sticker tap's coroutine, CommentImageComponent's
+    // bindListStickerOnClick (`LX/0hUa;` there). The StickerItem is no longer a parameter: the
+    // coroutine builds it from its CommentStickerStruct (see [stickerPreviewSource]). What holds
+    // is that it calls the preview bind, by that bind's shape rather than by its name.
     //
-    // Instance, because the source hook reads the StickerItem out of p2 and a static method of
-    // the same declared parameter list would have the View there.
+    // Instance, because the source hook reads the struct out of p0.
     //
-    // It reads the item's StickerBase for the sticker type first thing, and the patcher can look
-    // that read up, so it reads only the classes that make it rather than every class of TikTok.
-    filters = listOf(fieldAccess(definingClass = "Lcom/ss/android/ugc/aweme/im/common/model/StickerItem;", name = "stickerBase")),
+    // It reads the item's StickerBase for the sticker type, and the patcher can look that read
+    // up, so it reads only the classes that make it rather than every class of TikTok.
+    filters = listOf(fieldAccess(definingClass = PREVIEW_STICKER_ITEM, name = "stickerBase")),
     custom = { method, _ ->
         AccessFlags.STATIC.value and method.accessFlags == 0 &&
             method.implementation?.instructions?.any { instruction ->
                 instruction.getReference<MethodReference>()?.isStickerPreviewBind() == true
-            } == true
+            } == true &&
+            method.stickerPreviewSource() != null
     },
 )
 

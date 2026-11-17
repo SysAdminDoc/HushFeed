@@ -19,7 +19,7 @@ import org.junit.Test
  * written into the patch as `p2`, which is the List on the newer builds.
  */
 class InsertionPayloadKeyTest {
-    private val payload = "LX/0SID;"
+    private val payload = "LX/0S9F;"
 
     @Test
     fun `the key is found wherever the constructor puts it`() {

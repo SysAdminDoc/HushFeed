@@ -55,7 +55,7 @@ public class DiscoverTabTest {
         return found;
     }
 
-    /** The row the test account gets on 47.7.3, with Friends going just left of Following. */
+    /** The row the test account gets on 47.8.3, with Friends going just left of Following. */
     @Test public void friendsGoesJustLeftOfFollowing() {
         TabConfig config = topRow("live", "stem", "following", "mall", "hot");
 

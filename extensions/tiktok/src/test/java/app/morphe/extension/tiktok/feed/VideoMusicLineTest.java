@@ -41,7 +41,7 @@ public class VideoMusicLineTest {
     @Rule public final SettingsContextRule settingsContext = new SettingsContextRule();
 
     /** The declared build. OLD_TITLE stands for the id an older build gave the title. */
-    private static final String[] BUILDS = {"47.7.3"};
+    private static final String[] BUILDS = {"47.8.3"};
     private static final int CELL = 0x7f0a7800;
     private static final int OLD_TITLE = 0x7f0a7801;
     private static final int NEW_TITLE = 0x7f0a7802;
@@ -211,10 +211,10 @@ public class VideoMusicLineTest {
         VideoOverlayHider.resolveForTests("desc", CAPTION);
         VideoOverlayHider.resolveForTests("videomusiccoverblock", COVER);
         VideoOverlayHider.resolveForTests("o7a", OLD_TITLE);
-        VideoOverlayHider.resolveForTests("o93", NEW_TITLE);
+        VideoOverlayHider.resolveForTests("o9o", NEW_TITLE);
         for (String candidate : BUILDS) {
-            String title = candidate + ":o93";
-            String disc = candidate + ":pq_";
+            String title = candidate + ":o9o";
+            String disc = candidate + ":pr7";
             // The cache's test override is literal. Another build resolves to zero in the app.
             VideoOverlayHider.resolveForTests(title, BuildNames.entryName(title) == null ? 0 : titleId(candidate));
             VideoOverlayHider.resolveForTests(disc, BuildNames.entryName(disc) == null ? 0 : discId(candidate));

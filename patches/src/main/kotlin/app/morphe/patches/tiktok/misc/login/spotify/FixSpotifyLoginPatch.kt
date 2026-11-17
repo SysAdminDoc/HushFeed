@@ -17,7 +17,7 @@ internal const val SPOTIFY_WEB_LOGIN = "Lapp/morphe/extension/tiktok/misc/Spotif
 
 /**
  * TikTok's wrapper around `Activity.startActivityForResult(Intent, int)` (`X/03NM->LJIILJJIL` on
- * 47.7.3): static, the request code first, then the activity, the intent and the wrapper's call
+ * 47.8.3): static, the request code first, then the activity, the intent and the wrapper's call
  * context. It names the wrapped call in strings for its interceptor chain. The Spotify SDK in the
  * music feature dex sends its sign-in hand-off through it, and the feature dex itself is a zip
  * inside `lib/`, out of the patcher's reach, so this is the nearest point the patch can hold.

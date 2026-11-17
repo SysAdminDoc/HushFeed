@@ -30,9 +30,9 @@ import app.morphe.patcher.Fingerprint
  * carries is the phone's real SIM count and the fact that its hardware changed.
  */
 /**
- * Fresco's network fetch producer, `produceResults(Consumer, ProducerContext)` (`LX/0CT5;->LIZ`
- * on 47.7.3). It builds the fetch state through the fetcher (`LX/03zQ;->LIZIZ`, returning
- * `LX/0Eoc;`), turns an expired signed URL down on the phone by calling its own failure method
+ * Fresco's network fetch producer, `produceResults(Consumer, ProducerContext)` (`LX/0CQL;->LIZ`
+ * on 47.8.3). It builds the fetch state through the fetcher (`LX/03zU;->LJ`, returning
+ * `LX/0Elc;`), turns an expired signed URL down on the phone by calling its own failure method
  * (`LJFF(FetchState, Throwable)`) with the second string, and otherwise hands the state to the
  * fetcher, whose callbacks reach the same failure method. Every image fetch and every failed one
  * pass through it, which is what the IMAGE LOADS report counts (#415).

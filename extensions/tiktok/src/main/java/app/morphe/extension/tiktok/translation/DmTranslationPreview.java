@@ -104,7 +104,7 @@ public final class DmTranslationPreview {
     public static void inputReady(Object assem) {
         main(() -> {
             try {
-                Field cached = assem.getClass().getDeclaredField("LLJJJ");
+                Field cached = assem.getClass().getDeclaredField("LLJJIJIL");
                 cached.setAccessible(true);
                 Object view = cached.get(assem);
                 for (Binding binding : INPUTS.values()) if (binding.editor.get() == view) {
@@ -430,14 +430,14 @@ public final class DmTranslationPreview {
                 || !vm.getClass().getName().equals("com.ss.android.ugc.aweme.im.sdk.chat.viewmodel.SingleChatInputViewModel")
                 || !input.getClass().getName().equals("com.ss.android.ugc.aweme.im.chatroom.input.components.inputfield.InputFieldVM")
                 || !assem.getClass().getName().equals("com.ss.android.ugc.aweme.im.chatroom.input.components.inputfield.InputFieldAssem")
-                || !session.getClass().getName().equals("X.0jXM")) return null;
+                || !session.getClass().getName().equals("X.12At")) return null;
         ClassLoader loader = vm.getClass().getClassLoader();
-        if (NativeDmTranslation.field(vm.getClass(), "LLJJJJJIL", NativeDmTranslation.type(loader,
+        if (NativeDmTranslation.field(vm.getClass(), "LLJJJJ", NativeDmTranslation.type(loader,
                 "com.ss.android.ugc.aweme.im.chatroom.input.components.inputfield.IInputFieldAbility")).get(vm) != input
-                || NativeDmTranslation.field(vm.getClass(), "LLJL", NativeDmTranslation.type(loader,
+                || NativeDmTranslation.field(vm.getClass(), "LLJJLIIIJLLLLLLLZ", NativeDmTranslation.type(loader,
                 "com.ss.android.ugc.aweme.im.chatroom.api.model.SessionInfo")).get(vm) != session
-                || NativeDmTranslation.field(input.getClass(), "LLJJIJIL", EditText.class).get(input) != editor
-                || NativeDmTranslation.field(assem.getClass(), "LLJJJ", NativeDmTranslation.type(loader, "X.032W")).get(assem) != editor
+                || NativeDmTranslation.field(input.getClass(), "LLJJIJIIJIL", EditText.class).get(input) != editor
+                || NativeDmTranslation.field(assem.getClass(), "LLJJIJIL", NativeDmTranslation.type(loader, "X.032f")).get(assem) != editor
                 || !Boolean.TRUE.equals(session.getClass().getMethod("isSingleChat").invoke(session))
                 || Boolean.TRUE.equals(session.getClass().getMethod("isPreviewMode").invoke(session))
                 || Boolean.TRUE.equals(session.getClass().getMethod("isReportPage").invoke(session))) return null;

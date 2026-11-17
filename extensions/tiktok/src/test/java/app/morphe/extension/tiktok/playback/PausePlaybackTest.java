@@ -375,7 +375,7 @@ public class PausePlaybackTest {
             homeTab.setSelected(true);
             root.addView(homeTab, new FrameLayout.LayoutParams(60, 40));
             Shadows.shadowOf(Looper.getMainLooper()).idle();
-            FeedVisibility.resolveForTests(activity.getPackageName(), "47.7.3:opf", homeTab.getId());
+            FeedVisibility.resolveForTests(activity.getPackageName(), "47.8.3:oqd", homeTab.getId());
             try {
                 PausePlayback.setWasAwayForTests(true);
                 PausePlayback.onForeground(activity);
@@ -395,7 +395,7 @@ public class PausePlaybackTest {
                 assertFalse("the sound was held for a feed nobody is looking at",
                         PausePlayback.quietenedForTests());
             } finally {
-                FeedVisibility.resolveForTests(activity.getPackageName(), "47.7.3:opf", 0);
+                FeedVisibility.resolveForTests(activity.getPackageName(), "47.8.3:oqd", 0);
             }
         }
     }
@@ -421,7 +421,7 @@ public class PausePlaybackTest {
             homeTab.setSelected(true);
             root.addView(homeTab, new FrameLayout.LayoutParams(60, 40));
             Shadows.shadowOf(Looper.getMainLooper()).idle();
-            FeedVisibility.resolveForTests(activity.getPackageName(), "47.7.3:opf", homeTab.getId());
+            FeedVisibility.resolveForTests(activity.getPackageName(), "47.8.3:oqd", homeTab.getId());
             try {
                 PausePlayback.setWasAwayForTests(true);
                 PausePlayback.onForeground(activity);
@@ -449,7 +449,7 @@ public class PausePlaybackTest {
                         View.IMPORTANT_FOR_ACCESSIBILITY_AUTO, feed.getImportantForAccessibility());
                 assertEquals(View.IMPORTANT_FOR_ACCESSIBILITY_AUTO, rebuilt.getImportantForAccessibility());
             } finally {
-                FeedVisibility.resolveForTests(activity.getPackageName(), "47.7.3:opf", 0);
+                FeedVisibility.resolveForTests(activity.getPackageName(), "47.8.3:oqd", 0);
             }
         }
     }
@@ -472,7 +472,7 @@ public class PausePlaybackTest {
             homeTab.setSelected(true);
             root.addView(homeTab, new FrameLayout.LayoutParams(60, 40));
             Shadows.shadowOf(Looper.getMainLooper()).idle();
-            FeedVisibility.resolveForTests(activity.getPackageName(), "47.7.3:opf", homeTab.getId());
+            FeedVisibility.resolveForTests(activity.getPackageName(), "47.8.3:oqd", homeTab.getId());
             View[] seen = new View[1];
             // TikTok's own listener, there before the catcher: whatever isn't its own comes off.
             android.view.ViewTreeObserver.OnGlobalLayoutListener strip = () -> {
@@ -508,7 +508,7 @@ public class PausePlaybackTest {
             } finally {
                 root.getViewTreeObserver().removeOnGlobalLayoutListener(strip);
                 root.setOnHierarchyChangeListener(null);
-                FeedVisibility.resolveForTests(activity.getPackageName(), "47.7.3:opf", 0);
+                FeedVisibility.resolveForTests(activity.getPackageName(), "47.8.3:oqd", 0);
             }
         }
     }
@@ -532,7 +532,7 @@ public class PausePlaybackTest {
             homeTab.setSelected(true);
             root.addView(homeTab, new FrameLayout.LayoutParams(60, 40));
             Shadows.shadowOf(Looper.getMainLooper()).idle();
-            FeedVisibility.resolveForTests(activity.getPackageName(), "47.7.3:opf", homeTab.getId());
+            FeedVisibility.resolveForTests(activity.getPackageName(), "47.8.3:oqd", homeTab.getId());
             try {
                 app.morphe.extension.tiktok.wellbeing.SessionLockOverlay.sync();
                 assertEquals("the feed lock put up no hold", 3, root.getChildCount());
@@ -555,7 +555,7 @@ public class PausePlaybackTest {
                 assertHoldInReach(hold);
                 assertBehindTheHold(catcher);
             } finally {
-                FeedVisibility.resolveForTests(activity.getPackageName(), "47.7.3:opf", 0);
+                FeedVisibility.resolveForTests(activity.getPackageName(), "47.8.3:oqd", 0);
                 Settings.FEED_LOCK.resetToDefault();
                 app.morphe.extension.tiktok.wellbeing.SessionLockOverlay.sync();
                 // The hold's countdown is static: finished here so no later suite finds it ticking.
@@ -825,7 +825,7 @@ public class PausePlaybackTest {
             bar.addView(home, new android.widget.LinearLayout.LayoutParams(80, 60));
             root.addView(bar, new FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, 60, android.view.Gravity.BOTTOM));
-            FeedVisibility.resolveForTests(activity.getPackageName(), "47.7.3:opf", home.getId());
+            FeedVisibility.resolveForTests(activity.getPackageName(), "47.8.3:oqd", home.getId());
             try {
                 Shadows.shadowOf(Looper.getMainLooper()).idle();
                 root.getViewTreeObserver().dispatchOnGlobalLayout();
@@ -837,7 +837,7 @@ public class PausePlaybackTest {
                 assertEquals("the catcher covers the tabs that arrived after it", tabs,
                         ((FrameLayout.LayoutParams) catcher.getLayoutParams()).bottomMargin);
             } finally {
-                FeedVisibility.resolveForTests(activity.getPackageName(), "47.7.3:opf", 0);
+                FeedVisibility.resolveForTests(activity.getPackageName(), "47.8.3:oqd", 0);
             }
         }
     }

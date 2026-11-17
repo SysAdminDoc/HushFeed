@@ -300,8 +300,9 @@ private val microblinkFiles = listOf(
 // the arm64 and armeabi-v7a P2P video relay. 47.6.3 kept the editor and speech libraries and
 // rebuilt the main C2PA, log monitor and avmdl relay libraries. 47.7.2 kept the C2PA, monitor,
 // editor and speech libraries and rebuilt the avmdl relay library. 47.7.3's universal APK changed
-// none of these files (read 2026-11-07).
-private const val REVIEWED_BUILD = "47.7.3"
+// none of these files (read 2026-11-07). 47.8.3 rebuilt the log monitor, the avmdl relay and the
+// LIVE game core and kept the rest (read 2026-11-17).
+private const val REVIEWED_BUILD = "47.8.3"
 
 private val c2paArm64Files = listOf(
     file("lib/arm64-v8a/libtt_c2pa_sdk.so", "4b4b8e8435f9d1786b5e54c13690ca7b728bd976abd10c3ccf67a257fcd9b763"),
@@ -313,20 +314,20 @@ private val c2paArmeabiFiles = listOf(
     file("lib/armeabi-v7a/libtt_c2pa_sdk_d.so", "a96af4a99de68503234e3ab658d9702ac436ae1e0650dc5551e4e29a89700b0c"),
 )
 
-// 47.7.2 (APKMirror's universal APK, read on 2026-11-05, the same bytes as 47.6.3's). Its split
-// bundle holds the universal APK's bytes for every file it carries.
+// 47.8.3 (APKMirror's universal APK, read on 2026-11-17). Its split bundle holds the universal
+// APK's bytes for every file it carries.
 private val monitorFiles = listOf(
-    file("lib/arm64-v8a/libartlog_monitor.so", "886bdb40824e3f2712c304a080f1b3e6d23ae0f760f834095004e248070d6b21"),
-    file("lib/armeabi-v7a/libartlog_monitor.so", "fa4961c5254836f8fb8e0041f7f795d6d1e6da0dad6113c25b7f07630b717efe"),
+    file("lib/arm64-v8a/libartlog_monitor.so", "f32e19f982cfc498608d77970d66763a7d08116628fa629cea4416ebb7cec569"),
+    file("lib/armeabi-v7a/libartlog_monitor.so", "1e4041dac369bc587dbc44962f1c2b8705d5d92c68aa1f25b0b486902490b1e1"),
 )
 
-// APKMirror also sells TikTok as a split bundle (tiktok-47-7-3, "arm64-v8a + armeabi-v7a",
-// 120-640dpi, read on 2026-11-07, 107 splits). Morphe Manager and the desktop CLI merge every
+// APKMirror also sells TikTok as a split bundle (tiktok-47-8-3, "arm64-v8a + armeabi-v7a",
+// 120-640dpi, read on 2026-11-17, 123 splits). Morphe Manager and the desktop CLI merge every
 // split in one, and every file the merged APK shares with the universal APK is byte-identical.
-// 47.7.3's bundle carries every arm64 file of these groups, where 47.7.2's lacked the arm64 effect
-// libraries, C2PA debug library and P2P relay. It still lacks the armeabi-v7a copies of the C2PA
-// debug, editor, effect, speech epg and spg and P2P relay libraries. Each bundle profile is the
-// universal APK's profile less those files. It keeps 25 languages.
+// 47.8.3's bundle, like 47.7.3's, carries every arm64 file of these groups, where 47.7.2's lacked
+// the arm64 effect libraries, C2PA debug library and P2P relay. It still lacks the armeabi-v7a
+// copies of the C2PA debug, editor, effect, speech epg and spg and P2P relay libraries. Each bundle
+// profile is the universal APK's profile less those files. It keeps 27 languages.
 
 /**
  * [profile] without [absent], every one of which it must list: its build's split bundle. A bundle
@@ -378,7 +379,7 @@ internal val liveAssetProfiles = listOf(
     ResourceProfile(
         "TikTok $REVIEWED_BUILD",
         listOf(
-            file("assets/native_runtime_server/game/scripts/ttmg-core.js.zip", "9727cb446d3caa26e853e43efeedba6269ed95936e661d393a55a5a4e28c6331"),
+            file("assets/native_runtime_server/game/scripts/ttmg-core.js.zip", "f2b9463038c30259594d19aa95e39edd91d804068463cdcfe89d95218e655218"),
         ),
     ),
 )
@@ -386,9 +387,9 @@ internal val liveAssetProfiles = listOf(
 private val p2pRelay = ResourceProfile(
     "TikTok $REVIEWED_BUILD",
     listOf(
-        file("lib/arm64-v8a/libavmdlp2pv2.so", "7b6e8848a03e590c41446918a79d4f1cbf4ceaf91e805e8b61d3a6e8245c54d5"),
+        file("lib/arm64-v8a/libavmdlp2pv2.so", "c807f5bae04adbca9dc989d6826f561af96f81a7fade10821cbd72c2453a76c1"),
         file("lib/arm64-v8a/libp2plivevdp.so", "ed35b032fac7c169860d3f37bc3be1933df9bddc8ac6785413f9608945946337"),
-        file("lib/armeabi-v7a/libavmdlp2pv2.so", "1f3ac5a18eed8735e66a23e826baa3d9371a5cb1b69061c722f3d3253af1ec56"),
+        file("lib/armeabi-v7a/libavmdlp2pv2.so", "98af5f5bf22c6ed6bf92cfc922216eace1615478d9b3160a0abfbc807a3b6821"),
         file("lib/armeabi-v7a/libp2plivevdp.so", "dd8a626f8b0efe36a883096923bed56ecb457e9408b26262c844442901dc1d09"),
         // The LIVE relay's own base and NAT punch libraries (#70). Only libp2plivevdp needs
         // libbase_live, and nothing links libpunch. libbase_live is also df_live_p2p's load probe,
@@ -445,15 +446,15 @@ internal val languageInventories = listOf(
             "ru", "sk", "sl", "sq", "sv", "sw", "ta", "te", "th", "tr", "uk", "ur", "uz", "vi", "zh", "zu",
         ),
         pathManifestSha256 = "38f412319f00a31a025e03095ea9bf4266b412c2322d2a6b0b4a031a073b0c08",
-        contentManifestSha256 = setOf("89f50764cefcb40ae44610f80259dd050d6dc6c3c0166fec96b73caf7c119e9b"),
+        contentManifestSha256 = setOf("fa0bf603163e902e9fa0015b3c02c5ecc0de098481cd9b2244adabf21d26c166"),
     ),
-    // The split bundle: 25 language splits and 102 files.
+    // The split bundle: 27 language splits and 106 files (47.8.3 added Hebrew, as he and iw).
     LanguageInventoryContract(
         directories = setOf(
-            "ar", "de", "en", "es", "et", "fi", "fr", "hi", "hu", "id", "in", "it", "ja", "ko",
-            "ms", "nl", "pl", "pt", "ru", "sv", "th", "tr", "uk", "vi", "zh",
+            "ar", "de", "en", "es", "et", "fi", "fr", "he", "hi", "hu", "id", "in", "it", "iw", "ja",
+            "ko", "ms", "nl", "pl", "pt", "ru", "sv", "th", "tr", "uk", "vi", "zh",
         ),
-        pathManifestSha256 = "33aad0753feebf540e226b415eecfc59323d40f7b52dfc70a06bd278e7acc9a6",
-        contentManifestSha256 = setOf("0e7043ab92246960b5ee5757691726000bf3d092d00499e7acdfe309284773f2"),
+        pathManifestSha256 = "1b372a3b46779664920ebc1031ca38eb787dce81da9089a5867723290041dcac",
+        contentManifestSha256 = setOf("59d8ffdb1487755402349cab0e769509044648766c07e304c943e2298d3c3741"),
     ),
 )

@@ -165,12 +165,24 @@ internal fun Method.recentStickerRows(): RecentStickerRows? {
     return RecentStickerRows(index, registers.registerC, registers.registerD, pageType, title, item)
 }
 
-/** How a bridge reaches Recently used from the page: its store getter, the store's flow, the flow's value. */
+/**
+ * The IM sticker service's lazy getter of the sticker store, kept by name. It builds the store
+ * from the store's holder, which a static provider hands out (03AM.LLLZIL on TikTok 47.8.3).
+ */
+internal object StickerRepositoryDiFingerprint : Fingerprint(
+    definingClass = "Lcom/ss/android/ugc/aweme/im/sticker/basic/provider/BasicStickerApiProviderService;",
+    name = "getStickerRepositoryDi",
+    parameters = listOf(),
+)
+
+/**
+ * How a bridge reaches Recently used: the static provider of the store's holder, the holder's
+ * flow field (the one the add writes) and the flow's value.
+ */
 internal data class RecentStickerStore(
-    val getter: String,
-    val getterInvoke: String,
-    val recentFlow: String,
-    val storeInvoke: String,
+    val provider: String,
+    val holderType: String,
+    val flowField: String,
     val value: String,
     val flowInvoke: String,
 )
@@ -178,27 +190,51 @@ internal data class RecentStickerStore(
 private fun ClassDef.recentRowInvoke() = if (AccessFlags.INTERFACE.isSet(accessFlags)) "invoke-interface" else "invoke-virtual"
 
 /**
- * The page's one public getter whose type declares getRecentStickersFlow() (the IM sticker
- * store), so the row reads the same list a sent sticker goes on.
+ * The holder of the add's [holder] field as the sticker service gets it: the static no-argument
+ * call in [repository] whose Object is cast to the holder's class. That provider hands out the
+ * process's one holder, the same one the add and the reset write. TikTok 47.8.3 strips the
+ * store's getRecentStickersFlow() (nothing in the app reads Recently used), so the row reads the
+ * holder's flow itself. The bridges run from the extension's package, so every step must be public.
  */
-internal fun recentStickerStore(page: ClassDef, classDef: (String) -> ClassDef?): RecentStickerStore {
-    fun ClassDef.recentFlow() = methods.singleOrNull { it.name == "getRecentStickersFlow" && it.parameterTypes.isEmpty() }
-    val getters = page.methods.filter {
-        AccessFlags.PUBLIC.isSet(it.accessFlags) && !AccessFlags.STATIC.isSet(it.accessFlags) &&
-            it.parameterTypes.isEmpty() && classDef(it.returnType)?.recentFlow() != null
+internal fun recentStickerStore(repository: Method, add: Method, holder: String, classDef: (String) -> ClassDef?): RecentStickerStore {
+    if (repository.returnType != add.definingClass) {
+        throw PatchException("Keep recent stickers: the sticker service's store is ${repository.returnType}, not ${add.definingClass}")
     }
-    val getter = getters.singleOrNull()
-        ?: throw PatchException("Keep recent stickers: ${getters.size} sticker store getters on ${page.type}, expected 1")
-    val store = classDef(getter.returnType)!!
-    val recentFlow = store.recentFlow()!!
-    val flow = classDef(recentFlow.returnType)
-        ?: throw PatchException("Keep recent stickers: no class ${recentFlow.returnType} for the recent stickers flow")
+    val holderType = holder.substringBefore("->")
+    val instructions = repository.implementation?.instructions?.toList().orEmpty()
+    val providers = instructions.indices.mapNotNull { index ->
+        val call = instructions[index].takeIf { it.opcode == Opcode.INVOKE_STATIC }?.getReference<MethodReference>()
+        val result = instructions.getOrNull(index + 1)?.takeIf { it.opcode == Opcode.MOVE_RESULT_OBJECT } as? OneRegisterInstruction
+        val cast = instructions.getOrNull(index + 2)?.takeIf { it.opcode == Opcode.CHECK_CAST } as? OneRegisterInstruction
+        call?.takeIf {
+            it.parameterTypes.isEmpty() && it.returnType == "Ljava/lang/Object;" && result != null && cast != null &&
+                cast.registerA == result.registerA && cast.getReference<TypeReference>()?.type == holderType
+        }
+    }
+    val provider = providers.singleOrNull()
+        ?: throw PatchException("Keep recent stickers: ${providers.size} providers of $holderType in the sticker service, expected 1")
+    val flowType = holder.substringAfterLast(':')
+    val flow = classDef(flowType) ?: throw PatchException("Keep recent stickers: no class $flowType for the recent stickers flow")
+    fun mustBePublic(found: Boolean, what: String) {
+        if (!found) throw PatchException("Keep recent stickers: $what isn't public")
+    }
+    val providerClass = classDef(provider.definingClass)
+    mustBePublic(providerClass != null && AccessFlags.PUBLIC.isSet(providerClass.accessFlags) && providerClass.methods.any {
+        it.name == provider.name && it.parameterTypes.isEmpty() && it.returnType == provider.returnType &&
+            AccessFlags.PUBLIC.isSet(it.accessFlags) && AccessFlags.STATIC.isSet(it.accessFlags)
+    }, "${provider.definingClass}->${provider.name}()")
+    val holderClass = classDef(holderType)
+    mustBePublic(holderClass != null && AccessFlags.PUBLIC.isSet(holderClass.accessFlags) && holderClass.fields.any {
+        "${it.definingClass}->${it.name}:${it.type}" == holder && AccessFlags.PUBLIC.isSet(it.accessFlags)
+    }, holder)
+    mustBePublic(AccessFlags.PUBLIC.isSet(flow.accessFlags) && flow.methods.any {
+        it.name == "getValue" && it.parameterTypes.isEmpty() && it.returnType == "Ljava/lang/Object;" && AccessFlags.PUBLIC.isSet(it.accessFlags)
+    }, "$flowType->getValue()")
     return RecentStickerStore(
-        "${page.type}->${getter.name}()${getter.returnType}",
-        page.recentRowInvoke(),
-        "${store.type}->getRecentStickersFlow()${recentFlow.returnType}",
-        store.recentRowInvoke(),
-        "${flow.type}->getValue()Ljava/lang/Object;",
+        "${provider.definingClass}->${provider.name}()${provider.returnType}",
+        holderType,
+        holder,
+        "$flowType->getValue()Ljava/lang/Object;",
         flow.recentRowInvoke(),
     )
 }
@@ -219,12 +255,12 @@ internal fun recentRowBridges(
 ): List<MutableMethod> = listOf(
     recentRowBridge(
         "recentStickers", "Ljava/lang/Object;", flagsFor("recentStickers"),
+        // The page is no longer needed: the holder is the process's one, so the provider gives it.
         """
-            check-cast p0, ${rows.pageType}
-            ${store.getterInvoke} { p0 }, ${store.getter}
+            invoke-static { }, ${store.provider}
             move-result-object v0
-            ${store.storeInvoke} { v0 }, ${store.recentFlow}
-            move-result-object v0
+            check-cast v0, ${store.holderType}
+            iget-object v0, v0, ${store.flowField}
             ${store.flowInvoke} { v0 }, ${store.value}
             move-result-object v0
             return-object v0
@@ -307,9 +343,7 @@ val keepRecentStickersPatch = bytecodePatch(
         val rowsMethod = RecentStickerRowsFingerprint.method
         val rows = rowsMethod.recentStickerRows()
             ?: throw PatchException("Keep recent stickers: the Saved page's rows changed shape")
-        val page = classDefByOrNull(rows.pageType)
-            ?: throw PatchException("Keep recent stickers: no class ${rows.pageType} for the Saved page")
-        val store = recentStickerStore(page) { classDefByOrNull(it) }
+        val store = recentStickerStore(StickerRepositoryDiFingerprint.method, add, addWrite.holder) { classDefByOrNull(it) }
         requirePublicRowClass(classDefByOrNull(rows.title), rows.title, "Ljava/lang/String;")
         requirePublicRowClass(classDefByOrNull(rows.item), rows.item, RECENT_STICKER_ITEM)
 

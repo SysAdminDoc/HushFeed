@@ -316,7 +316,7 @@ class StartPageAnchorsTest {
      * Boolean unboxed into v1, then Following's type loaded and v1 tested.
      */
     private fun defaultPage(boxedResult: Boolean = false, jumpBack: Boolean = false, getter: String = "getIsChangeFollowTab"): Method {
-        val holder = "LX/06o4;"
+        val holder = "LX/06nk;"
         val instructions = mutableListOf<Instruction>(
             ImmutableInstruction35c(Opcode.INVOKE_VIRTUAL, 1, 0, 0, 0, 0, 0,
                 ImmutableMethodReference(SHARE_PREF_CACHE, getter, listOf(), holder)),
@@ -464,12 +464,12 @@ class StartPageAnchorsTest {
         addInstructionsWithLabels(
             0,
             """
-                iget-object v1, p0, $BACK_REFRESH_STRATEGY_ASSEM->LL:LX/06XR;
+                iget-object v1, p0, $BACK_REFRESH_STRATEGY_ASSEM->LL:LX/06X7;
                 iget-object v0, p0, $BACK_REFRESH_STRATEGY_ASSEM->tabs:$tagFrom
                 invoke-virtual {v0}, $tagFrom->g53()Ljava/lang/String;
                 move-result-object v0
-                invoke-interface {v1, v0}, LX/06XR;->LIZIZ(Ljava/lang/String;)V
-                invoke-interface {v1}, LX/06XR;->LIZ()Z
+                invoke-interface {v1, v0}, LX/06X7;->LIZIZ(Ljava/lang/String;)V
+                invoke-interface {v1}, LX/06X7;->LIZ()Z
                 move-result v0
                 if-eqz v0, :not_guide
                 return-void

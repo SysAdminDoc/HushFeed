@@ -114,25 +114,25 @@ public final class LivePanelTheme {
     /**
      * The older Video quality picker, the one Share > Video quality opens in some rooms. Its rows
      * read the theme, but its card is a fixed white shape and its title a fixed #161823, so the
-     * dark overlay alone left light rows on a white card (#168, 47.7.3).
+     * dark overlay alone left light rows on a white card (#168, 47.8.3).
      */
     static final String QUALITY_PICKER = "com.bytedance.android.livesdk.definition.LiveDefinitionSelectionDialog";
     /**
-     * The Video quality picker Share opens (S22, 47.7.3). Its sheet goes dark, but its list sits on
+     * The Video quality picker Share opens (S22, 47.8.3). Its sheet goes dark, but its list sits on
      * a rounded card filled from a theme color TikTok's dark LIVE palette also sets to white, so its
      * dark rows read on a white card (#168).
      */
     static final String TALENT_QUALITY_PICKER =
             "com.bytedance.android.livesdk.definition.talent.LiveTalentDefinitionSelectionDialog";
     /**
-     * The Rose's first-time card a LIVE room shows on a tap of its quick gift (#362, 47.7.3). The
+     * The Rose's first-time card a LIVE room shows on a tap of its quick gift (#362, 47.8.3). The
      * card fills from a theme color the dark overlay turns black, but its title, description and
      * footer are fixed #161823 inks, so they read dark on black.
      */
     static final String QUICK_GIFT = "com.bytedance.android.livesdk.widgets.giftwidget.presenter.FastGiftConfirmDialog";
     /**
      * The base of the guest panels a LIVE room's guest button opens: Request or Join as a guest
-     * over the host's picture and yours (#362, 47.7.3). Their sheet is a fixed white shape while
+     * over the host's picture and yours (#362, 47.8.3). Their sheet is a fixed white shape while
      * the title and the line under it read the dark overlay, so they came out light on white.
      */
     static final String GUEST_PANEL =
@@ -193,7 +193,7 @@ public final class LivePanelTheme {
     private static volatile boolean pinnedFailureLogged;
     /**
      * The base of LIVE's pinned comment widgets, the card a host pins over the chat with its
-     * Pinned and timer tags (#362, real-named on 47.7.3).
+     * Pinned and timer tags (#362, real-named on 47.8.3).
      */
     static final String PINNED_WIDGET = "com.bytedance.android.live.pin.widget.BaseCommentPinnedWidget";
     /** Whether each widget class builds on {@link #PINNED_WIDGET}. */

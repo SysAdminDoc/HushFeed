@@ -12,6 +12,8 @@ import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import java.io.File
@@ -46,9 +48,13 @@ class LiveDrawRoomPageTest {
             assertTrue("${apk.name}: the hook writes v1 and v2, the handler has $locals local(s)", locals >= 3)
             assertEquals("${apk.name}: the list is the second parameter", "Ljava/util/List;", handler.parameterTypes[1].toString())
 
-            val instructions = body.instructions.toList()
+            // Through 47.7.3 the handler compared the request type itself. 47.8.3 moved that into
+            // a method of the provider (LX/0Jyf;->LJLIL(I)V) the handler calls on p0, so the
+            // comparison is looked for there, and the call has to be on the handler's own p0.
+            val check = requestTypeCheck(apk.name, provider, handler, locals)
+            val instructions = check.implementation!!.instructions.toList()
             val load = instructions.indexOfFirst { it.loads(loaded) }
-            assertTrue("${apk.name}: the handler never loads $loaded", load >= 0)
+            assertTrue("${apk.name}: ${check.name} never loads $loaded", load >= 0)
             val call = (load until instructions.size).firstOrNull { at ->
                 val instruction = instructions[at]
                 (instruction.opcode == Opcode.INVOKE_VIRTUAL || instruction.opcode == Opcode.INVOKE_VIRTUAL_RANGE) &&
@@ -109,6 +115,48 @@ class LiveDrawRoomPageTest {
             assertTrue("${apk.name}: the feed's own request type is gone: $names", feed in names)
             assertTrue("${apk.name}: a row prefix takes the feed's request type", rows.none { feed.startsWith(it) })
         }
+    }
+
+    /**
+     * The method that compares the provider's request type with [loaded]: the [handler] when it
+     * loads the string, else the one method of the [provider] the handler invokes virtually on its
+     * p0 (or a plain copy of it) that does.
+     */
+    private fun requestTypeCheck(apk: String, provider: ClassDef, handler: Method, locals: Int): Method {
+        val instructions = handler.implementation!!.instructions.toList()
+        if (instructions.any { it.loads(loaded) }) return handler
+        val p0 = locals
+        val calls = instructions.withIndex().mapNotNull { (at, instruction) ->
+            if (instruction.opcode != Opcode.INVOKE_VIRTUAL && instruction.opcode != Opcode.INVOKE_VIRTUAL_RANGE) return@mapNotNull null
+            val reference = (instruction as ReferenceInstruction).reference as? MethodReference ?: return@mapNotNull null
+            if (reference.definingClass != provider.type) return@mapNotNull null
+            val target = provider.methods.singleOrNull {
+                it.name == reference.name && it.returnType == reference.returnType &&
+                    it.parameterTypes.map(CharSequence::toString) == reference.parameterTypes.map(CharSequence::toString)
+            } ?: return@mapNotNull null
+            if (!target.loadsAll(loaded, "tiktok_message_inner_loadmore")) return@mapNotNull null
+            Triple(at, instruction, target)
+        }
+        assertEquals("${apk}: provider methods the handler calls that compare the request type", 1, calls.size)
+        val (at, call, target) = calls.single()
+        assertFalse("${apk}: ${target.name} is static", AccessFlags.STATIC.isSet(target.accessFlags))
+        val receiver = when (call) {
+            is FiveRegisterInstruction -> call.registerC
+            is RegisterRangeInstruction -> call.startRegister
+            else -> error("${apk}: ${call.opcode} names no receiver")
+        }
+        if (receiver != p0) {
+            val write = (at - 1 downTo 0).first { index ->
+                instructions[index].opcode.setsRegister() && (instructions[index] as? OneRegisterInstruction)?.registerA == receiver
+            }
+            val copy = instructions[write]
+            assertTrue(
+                "${apk}: ${target.name} is called on v$receiver, last written by ${copy.opcode}, not a copy of p0 (v$p0)",
+                copy.opcode in setOf(Opcode.MOVE_OBJECT, Opcode.MOVE_OBJECT_FROM16, Opcode.MOVE_OBJECT_16) &&
+                    (copy as TwoRegisterInstruction).registerB == p0,
+            )
+        }
+        return target
     }
 
     private fun Method.loadsAll(vararg wanted: String): Boolean = strings().containsAll(wanted.toList())

@@ -792,7 +792,7 @@ public class GridSortTest {
         }
     }
 
-    /** A collection folder's row, as 47.7.3's X/1KK6 holds it: its video and its kind. A header's video is empty. */
+    /** A collection folder's row, as 47.8.3's X/0wFj holds it: its video and its kind. A header's video is empty. */
     public static final class Row {
         public final Aweme LIZ;
         public final int LIZIZ;

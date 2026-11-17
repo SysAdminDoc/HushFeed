@@ -28,7 +28,7 @@ import org.robolectric.annotation.Config;
 public class ProfileTabsTest {
     @Rule public final SettingsContextRule settingsContext = new SettingsContextRule();
 
-    /** What the patch writes for 47.7.3, cut to the tabs a profile usually shows. */
+    /** What the patch writes for 47.8.3, cut to the tabs a profile usually shows. */
     private static final Map<Integer, String> NAMES = ProfileTabs.parseTabNames(
             "0=profile_tab_public_post,2=profile_tab_like,6=profile_tab_favorite,10=profile_tab_private,"
                     + "12=profile_tab_ecommerce_showcase,15=profile_tab_repost,16=profile_tab_sticker_store,"
@@ -40,7 +40,7 @@ public class ProfileTabsTest {
     }
 
     @Test public void thePickedTabsGoAndTheRestKeepTheirOrder() {
-        // Your own profile's strip on 47.7.3: Videos, Stickers, AI theater, Private, Reposts,
+        // Your own profile's strip on 47.8.3: Videos, Stickers, AI theater, Private, Reposts,
         // Favorites, Liked.
         List<Integer> types = Arrays.asList(0, 16, 21, 10, 15, 6, 2);
         List<?> kept = ProfileTabs.filter(types, NAMES, ProfileTabs.namesFor("repost, Like, favorite"));

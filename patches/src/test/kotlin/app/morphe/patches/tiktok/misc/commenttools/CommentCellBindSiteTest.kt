@@ -97,15 +97,15 @@ class CommentCellBindSiteTest {
         val cell = "Lcom/ss/android/ugc/aweme/commentv2/commentlist/powercell/BaseCommentCell;"
         val method = MutableMethod(
             ImmutableMethod(
-                cell, "s7", listOf(ImmutableMethodParameter("LX/0H0z;", null, null)), "V", AccessFlags.PUBLIC.value,
+                cell, "s7", listOf(ImmutableMethodParameter("LX/0Gxm;", null, null)), "V", AccessFlags.PUBLIC.value,
                 null, null, ImmutableMethodImplementation(4, emptyList(), null, null),
             ),
         )
         method.addInstructions(
             (if (branchFirst) "if-eqz p1, :done\n" else "") +
                 """
-                    invoke-super {p0, p1}, Lcom/bytedance/ies/powerlist/PowerCell;->onBindItemView(LX/07Fb;)V
-                    invoke-virtual {$receiver}, LX/0H0y;->LIZ()Lcom/ss/android/ugc/aweme/comment/model/Comment;
+                    invoke-super {p0, p1}, Lcom/bytedance/ies/powerlist/PowerCell;->onBindItemView(LX/07F6;)V
+                    invoke-virtual {$receiver}, LX/0Gxl;->LIZ()Lcom/ss/android/ugc/aweme/comment/model/Comment;
                     move-result-object v0
                     invoke-virtual {p0, v0}, $cell->P8(Lcom/ss/android/ugc/aweme/comment/model/Comment;)V
                     :done

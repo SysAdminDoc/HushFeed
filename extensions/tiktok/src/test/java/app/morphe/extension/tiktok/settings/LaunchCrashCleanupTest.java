@@ -80,6 +80,7 @@ public class LaunchCrashCleanupTest {
         expected.put("diagnostics/JavaCrashCapture.java", Arrays.asList("PREFS_NAME"));
         expected.put("featuregatelab/FeatureGateLabStore.java", Arrays.asList("PREFS_NAME"));
         expected.put("ghostmode/StoryReads.java", Arrays.asList("PREFS_NAME"));
+        expected.put("settings/L10n.java", Arrays.asList("Setting.PREFERENCES_NAME"));
         expected.put("settings/preference/NewSettingDots.java", Arrays.asList("FILE"));
         expected.put("settings/preference/ReleaseNotes.java", Arrays.asList(
                 "PREFS_NAME", "PREFS_NAME", "PREFS_NAME"));

@@ -805,7 +805,7 @@ public class GridSearchTest {
     }
 
     /**
-     * TikTok 47.7.3 holds the Favorites grid in a LinearLayout, in a fragment container that
+     * TikTok 47.8.3 holds the Favorites grid in a LinearLayout, in a fragment container that
      * refuses other views, in a plain FrameLayout of the same size.
      */
     @Test public void aFavoritesGridInALinearLayoutGetsItsChipsInTheFrameAroundIt() {

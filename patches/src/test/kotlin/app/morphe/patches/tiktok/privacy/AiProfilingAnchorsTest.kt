@@ -46,7 +46,6 @@ class AiProfilingAnchorsTest {
             val lookup = taken(PitayaPluginLookupFingerprint)
             assertTrue("$version: the lookup is not static", lookup.accessFlags and STATIC != 0)
             assertEquals("$version: returnEarly() needs a void method", "V", taken(PitayaRealProviderFingerprint).returnType)
-            assertEquals("$version: returnEarly() needs a void method", "V", taken(PitayaLiteStartFingerprint).returnType)
 
             val methods = classes.values.flatMap { it.methods }.filter { it.implementation != null }
             var lookups = 0

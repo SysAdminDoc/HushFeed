@@ -29,9 +29,9 @@ public class GateCallersTest {
 
     private static final String[][] BUILDS = {
             // app AB class, settings cache, default wrapper, boolean lambda
-            {"X.0BYZ", "X.0Cvq", "X.0Cu2", "X.0Cu7"},
-            {"X.03ID", "X.03Bf", "X.04Kf", "X.03jM"},
-            {"X.03IU", "X.03HM", "X.03pG", "X.04Pg"},
+            {"X.0BVt", "X.0Ct3", "X.0CrF", "X.0CrK"},
+            {"X.03IL", "X.03Bn", "X.04Kl", "X.03jN"},
+            {"X.03Ic", "X.03HU", "X.03pJ", "X.04Pm"},
     };
 
     @Test
@@ -81,8 +81,8 @@ public class GateCallersTest {
         // TikTok keeps many experiments in a Kotlin lazy. The lambda R8 merged into
         // kotlin.jvm.internal is TikTok's code and is the caller; the Lazy machinery is not.
         StackTraceElement[] lambda = stack(
-                "X.03IU#LIZ", "kotlin.jvm.internal.AFwS194S0000000_4#invoke",
-                "kotlin.SynchronizedLazyImpl#getValue", "X.0Cnl#LIZ", HOST + "#run");
+                "X.03Ic#LIZ", "kotlin.jvm.internal.AFwS194S0000000_4#invoke",
+                "kotlin.SynchronizedLazyImpl#getValue", "X.0Ckz#LIZ", HOST + "#run");
         assertEquals("kotlin.jvm.internal.AFwS194S0000000_4#invoke", GateCallers.hostCaller(lambda));
 
         StackTraceElement[] plumbing = stack(

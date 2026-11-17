@@ -75,9 +75,22 @@ class ReactionColorsTest {
             for (animation in like.animations + SAVE_FILES.getValue(version).animations) {
                 assertTrue("$version: nothing loads $animation", animation in loaded)
             }
-            // The save button names its saved picture, raw or asset, by experiment group.
-            for (name in SAVE_FILES.getValue(version).rawIcons.filter { it.contains("favoriate") || it.endsWith("alt_1") }) {
-                assertTrue("$version: nothing names $name.png", "$name.png" in loaded)
+            // The save button's helper picks its saved bookmark from the yellow raw icon and the drawables,
+            // TikTok's icon table loads the rest, and the fill animation names its pictures.
+            val save = SAVE_FILES.getValue(version)
+            val savedIds = listOf(table.rawIds.getValue("icon_color_bookmark_yellow_shadow_alt_1")) +
+                save.drawables.map { table.drawableIds.getValue(it) }
+            assertTrue("$version: no method picks the saved bookmark from $savedIds", methods.any { literals(it).containsAll(savedIds) })
+            val loadedIds = methods.flatMap { literals(it) }.toSet()
+            for (name in save.rawIcons) {
+                assertTrue("$version: nothing loads raw $name", table.rawIds.getValue(name) in loadedIds || "$name.png" in loaded)
+            }
+            val animated = ZipFile(apk).use { zip ->
+                save.animations.joinToString(" ") { String(zip.read("assets/$it") ?: error("$version: no $it"), Charsets.UTF_8) }
+            }
+            for (picture in save.pictures) {
+                val file = picture.substringAfterLast('/')
+                assertTrue("$version: nothing loads $picture", file in loaded || "\"$file\"" in animated)
             }
         }
     }
@@ -145,8 +158,8 @@ class ReactionColorsTest {
 
     @Test
     fun `only a changed reaction recolors and an unread build is refused`() {
-        assertTrue(reactionRecolors("47.7.3", TIKTOK_ACCENT, TIKTOK_SAVE).isEmpty())
-        assertEquals(listOf("Save color"), reactionRecolors("47.7.3", TIKTOK_ACCENT, "#2D7FF9").map { it.label })
+        assertTrue(reactionRecolors("47.8.3", TIKTOK_ACCENT, TIKTOK_SAVE).isEmpty())
+        assertEquals(listOf("Save color"), reactionRecolors("47.8.3", TIKTOK_ACCENT, "#2D7FF9").map { it.label })
         assertTrue(reactionRecolors(null, TIKTOK_ACCENT, TIKTOK_SAVE).isEmpty())
         try {
             reactionRecolors("47.6.3", "#2D7FF9", TIKTOK_SAVE)

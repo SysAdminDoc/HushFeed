@@ -2,8 +2,11 @@ package app.morphe.patches.tiktok.interaction.gesture
 
 import app.morphe.Fixtures
 import app.morphe.takes
+import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -11,8 +14,8 @@ import org.junit.Test
 /**
  * The player layer hooks, held to each TikTok build the bundle declares: one static helper each,
  * the reparents taking the TTPlayerSurface, the parent layer and the buffer size (and the first
- * whether it shows), the recycle taking the player's id and then the TTPlayerSurface, which is the
- * order the extension reads its registers in.
+ * whether it shows), the recycle taking the TTPlayerSurface and then the player's id (the other way
+ * round before 47.8.3), which is the order the extension reads its registers in.
  */
 class PlayerLayerAnchorsTest {
     @Test
@@ -39,7 +42,7 @@ class PlayerLayerAnchorsTest {
             assertEquals("Android 13 reparent helpers taken: $shown", 1, shown.size)
             assertTrue(shown[0], shown[0].contains("[$PLAYER_SURFACE, Landroid/view/SurfaceControl;, I, I, J, "))
             assertEquals("recycle helpers taken: $detach", 1, detach.size)
-            assertTrue(detach[0], detach[0].endsWith("[J, $PLAYER_SURFACE]"))
+            assertTrue(detach[0], detach[0].endsWith("[$PLAYER_SURFACE, J]"))
             assertTrue(
                 "the three are one helper class's",
                 setOf(reparent[0], shown[0], detach[0]).map { it.substringBefore("->") }.toSet().size == 1,
@@ -65,11 +68,22 @@ class PlayerLayerAnchorsTest {
             assertEquals("setSurfaceControl methods taken: ${taken.map { it.name }}", 1, taken.size)
 
             val calls = liveLayerCalls(taken[0])
-            assertEquals("calls handing the stream its Surface: $calls", 2, calls.size)
+            assertEquals("calls handing the stream its Surface: $calls", 1, calls.size)
             val first = calls[0]
             assertTrue("$calls", calls.all { it.parent == first.parent && it.width == first.width && it.height == first.height })
             assertEquals("$first", 3, setOf(first.parent, first.width, first.height).size)
             assertTrue("$calls", calls.all { listOf(it.parent, it.surface, it.width, it.height).all { register -> register <= 15 } })
+
+            // The hook steps over itself when the call's boolean is false. That register is its own,
+            // and the path where no layer was built is the one that loads it with zero.
+            val code = taken[0].implementation!!.instructions.toList()
+            calls.forEach { call ->
+                assertTrue("$call", call.built !in setOf(call.parent, call.surface, call.width, call.height))
+                assertTrue("$call: no path zeroes the boolean", code.any {
+                    it.opcode == Opcode.CONST_4 && (it as OneRegisterInstruction).registerA == call.built &&
+                        (it as NarrowLiteralInstruction).narrowLiteral == 0
+                })
+            }
         }
     }
 }

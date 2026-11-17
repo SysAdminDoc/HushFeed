@@ -76,19 +76,6 @@ internal object PitayaRealProviderFingerprint : Fingerprint(
     parameters = listOf("Lcom/bytedance/pitaya/api/CoreProvider;"),
 )
 
-/**
- * TikTok's start of Pitaya Lite, which hands PitayaLite its settings and the device id. Stopped
- * here rather than inside PitayaLite, whose class initializer loads libAndroidPitayaProxy.
- */
-internal object PitayaLiteStartFingerprint : Fingerprint(
-    returnType = "V",
-    parameters = listOf(),
-    strings = listOf("pitaya_lite_settings"),
-    custom = { method, _ ->
-        method.implementation?.instructions?.any {
-            ((it as? ReferenceInstruction)?.reference as? MethodReference)?.definingClass == PITAYA_LITE
-        } == true
-    },
-)
-
-internal const val PITAYA_LITE = "Lcom/bytedance/pitaya/api/PitayaLite;"
+// 47.8.3 dropped Pitaya Lite from the Java side: PitayaLite keeps only two native stubs that
+// nothing calls, the "pitaya_lite_settings" and "pitaya_lite_mode" reads are gone, and the start
+// method the patch used to stop no longer exists.

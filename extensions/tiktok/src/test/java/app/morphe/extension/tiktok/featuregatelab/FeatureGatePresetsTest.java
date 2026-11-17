@@ -41,7 +41,7 @@ public class FeatureGatePresetsTest {
         Utils.awaitBackgroundTasksForTests();
         FeatureGateCatalog.awaitForTests();
         Shadows.shadowOf(Looper.getMainLooper()).idle();
-        BuildNames.setRunningBuildForTests("47.7.3");
+        BuildNames.setRunningBuildForTests("47.8.3");
         FeatureGateLabStore.resetAllLabData();
         FeatureGateLabUndo.resetForTests();
         FeatureGateLabFragment.resetForTests();
@@ -50,7 +50,7 @@ public class FeatureGatePresetsTest {
         FeatureGateLabSession.begin();
         Utils.setIsDarkModeEnabled(true);
         catalog = new LinkedHashMap<>();
-        for (FeatureGateCatalog.Entry entry : FeatureGateCatalog.readStaticCatalog("47.7.3")) {
+        for (FeatureGateCatalog.Entry entry : FeatureGateCatalog.readStaticCatalog("47.8.3")) {
             if (entry.key.equals("feed_translation_reverse")
                     || entry.key.equals("cla_translate_button_weaken_v2")) catalog.put(entry.identity(), entry);
         }
@@ -70,7 +70,7 @@ public class FeatureGatePresetsTest {
         FeatureGateLabStore.saveRule("abmock", "feed_translation_reverse", "INT", "1", false);
         FeatureGateLabStore.saveRule("abmock", "unrelated", "BOOLEAN", "true", true);
         JSONObject before = FeatureGateLabStore.exportSettings();
-        FeatureGateLabUndo.applyPreset("47.7.3", "see_translation", catalog);
+        FeatureGateLabUndo.applyPreset("47.8.3", "see_translation", catalog);
         for (FeatureGateCatalog.Entry entry : catalog.values()) {
             FeatureGateLabStore.Rule rule = FeatureGateLabStore.rule(entry.manager, entry.key, entry.type);
             assertEquals("0", rule.value);
@@ -118,14 +118,14 @@ public class FeatureGatePresetsTest {
      * The preview says so ahead of the values; a preset with nothing more to say adds no line.
      */
     @Test public void aPresetsNoteLeadsItsPreview() throws Exception {
-        JSONObject presets = FeatureGateLabStore.reviewedPresets().getJSONObject("47.7.3");
+        JSONObject presets = FeatureGateLabStore.reviewedPresets().getJSONObject("47.8.3");
         assertTrue(presets.getJSONObject("live_translate").getString("note").contains("Japanese SIM"));
         // Scrolling comments still need each video's own server flag, which no rule sets, so
         // the note says where it shows: the Add one-liner button on wide videos TikTok allows.
         assertTrue(presets.getJSONObject("scrolling_comments").getString("note").contains("Add one-liner"));
         assertFalse(presets.getJSONObject("see_translation").has("note"));
         Map<String, FeatureGateCatalog.Entry> everything = new LinkedHashMap<>();
-        for (FeatureGateCatalog.Entry entry : FeatureGateCatalog.readStaticCatalog("47.7.3")) {
+        for (FeatureGateCatalog.Entry entry : FeatureGateCatalog.readStaticCatalog("47.8.3")) {
             everything.put(entry.identity(), entry);
         }
         try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
@@ -140,7 +140,7 @@ public class FeatureGatePresetsTest {
             field.set(lab, new FeatureGateCatalog.Snapshot(List.copyOf(everything.values()), everything, 0, 0, true));
             var show = FeatureGateLabFragment.class.getDeclaredMethod("showPreset", String.class, String.class);
             show.setAccessible(true);
-            show.invoke(lab, "47.7.3", "live_translate");
+            show.invoke(lab, "47.8.3", "live_translate");
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             AlertDialog preview = (AlertDialog) ShadowDialog.getLatestDialog();
             String text = ((TextView) preview.findViewById(android.R.id.message)).getText().toString();
@@ -151,7 +151,7 @@ public class FeatureGatePresetsTest {
 
             // The Lab's own catalog load can land in the idle above and replace the snapshot.
             field.set(lab, new FeatureGateCatalog.Snapshot(List.copyOf(everything.values()), everything, 0, 0, true));
-            show.invoke(lab, "47.7.3", "see_translation");
+            show.invoke(lab, "47.8.3", "see_translation");
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             preview = (AlertDialog) ShadowDialog.getLatestDialog();
             text = ((TextView) preview.findViewById(android.R.id.message)).getText().toString();
@@ -161,11 +161,11 @@ public class FeatureGatePresetsTest {
 
     @Test public void aMissingGateOrAnotherBuildCannotApplyHalfAPreset() throws Exception {
         catalog.remove("abmock\nfeed_translation_reverse");
-        assertThrows(JSONException.class, () -> FeatureGateLabUndo.applyPreset("47.7.3", "see_translation", catalog));
+        assertThrows(JSONException.class, () -> FeatureGateLabUndo.applyPreset("47.8.3", "see_translation", catalog));
         assertTrue(FeatureGateLabStore.rules().isEmpty());
         assertFalse(FeatureGateLabUndo.canUndo());
         BuildNames.setRunningBuildForTests("47.2.1");
-        assertThrows(JSONException.class, () -> FeatureGateLabUndo.applyPreset("47.7.3", "see_translation", catalog));
+        assertThrows(JSONException.class, () -> FeatureGateLabUndo.applyPreset("47.8.3", "see_translation", catalog));
         assertTrue(FeatureGateLabStore.rules().isEmpty());
         assertFalse(FeatureGateLabUndo.canUndo());
     }
@@ -188,7 +188,7 @@ public class FeatureGatePresetsTest {
             org.robolectric.shadows.ShadowToast.reset();
             var show = FeatureGateLabFragment.class.getDeclaredMethod("showPreset", String.class, String.class);
             show.setAccessible(true);
-            show.invoke(lab, "47.7.3", "see_translation");
+            show.invoke(lab, "47.8.3", "see_translation");
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertEquals("Still reading loaded values. Try again soon.",
                     org.robolectric.shadows.ShadowToast.getTextOfLatestToast());
@@ -239,7 +239,7 @@ public class FeatureGatePresetsTest {
             BuildNames.setRunningBuildForTests("47.2.1");
             var show = FeatureGateLabFragment.class.getDeclaredMethod("showPreset", String.class, String.class);
             show.setAccessible(true);
-            show.invoke(lab, "47.7.3", "see_translation");
+            show.invoke(lab, "47.8.3", "see_translation");
             AlertDialog mismatch = (AlertDialog) ShadowDialog.getLatestDialog();
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             View apply = mismatch.getButton(AlertDialog.BUTTON_POSITIVE);

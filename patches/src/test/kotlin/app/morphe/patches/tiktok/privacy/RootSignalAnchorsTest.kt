@@ -44,13 +44,13 @@ class RootSignalAnchorsTest {
         Fixtures.forEachDeclared { apk ->
             val found = find(apk)
             val expected = mapOf(
-                RootSignal.STATUS to "classes5.dex:LX/07gw;->LJIL()Z",
-                RootSignal.PACKAGES to "classes40.dex:LX/1OMb;->LJ(Landroid/content/Context;)$MAP",
-                RootSignal.PATHS to "classes40.dex:LX/1OMb;->LJFF()$MAP",
-                RootSignal.WHICH_SU to "classes40.dex:LX/1OMb;->LJIILIIL()$MAP",
-                RootSignal.SU_COMMAND to "classes40.dex:LX/1OMb;->LJI()$MAP",
+                RootSignal.STATUS to "classes5.dex:LX/07gR;->LJIL()Z",
+                RootSignal.PACKAGES to "classes23.dex:LX/0lmL;->LJ(Landroid/content/Context;)$MAP",
+                RootSignal.PATHS to "classes23.dex:LX/0lmL;->LJFF()$MAP",
+                RootSignal.WHICH_SU to "classes23.dex:LX/0lmL;->LJIILIIL()$MAP",
+                RootSignal.SU_COMMAND to "classes23.dex:LX/0lmL;->LJI()$MAP",
             )
-            assertEquals("47.7.3", Fixtures.versionOf(apk))
+            assertEquals("47.8.3", Fixtures.versionOf(apk))
             assertEquals(expected, found.targets.mapValues { (_, target) -> "${target.dex}:${signature(target.method)}" })
             assertEquals(1, found.targets.filterKeys { it != RootSignal.STATUS }.values.map { it.owner.type }.toSet().size)
             for ((signal, target) in found.targets) {
@@ -144,7 +144,7 @@ class RootSignalAnchorsTest {
         Fixtures.forEachDeclared { apk ->
             val found = find(apk)
             val code = found.collector.implementation!!.instructions.toList()
-            assertEquals("LX/0EB4;->LIZ(${STRING}LX/0qtX;)LX/0qtY;", signature(found.collector))
+            assertEquals("LX/0E8A;->LIZ(${STRING}LX/0gjN;)LX/0gjO;", signature(found.collector))
             for ((key, signal) in mapOf("root_packages" to RootSignal.PACKAGES, "root_paths" to RootSignal.PATHS,
                 "which_su" to RootSignal.WHICH_SU, "su_command" to RootSignal.SU_COMMAND, "is_root" to RootSignal.STATUS)) {
                 assertTrue(strings(found.collector).contains(key))

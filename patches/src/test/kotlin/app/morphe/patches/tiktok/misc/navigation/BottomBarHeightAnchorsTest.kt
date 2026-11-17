@@ -25,7 +25,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /** What a trace of each build found: the bar's dimension id and how many times the app reads it. */
-private val TRACED = mapOf("47.7.3" to (0x7f090499 to 8))
+private val TRACED = mapOf("47.8.3" to (0x7f090495 to 8))
 
 /**
  * The bottom bar's height. Each of its three sources is found the way the patch finds it, held
@@ -61,7 +61,9 @@ class BottomBarHeightAnchorsTest {
             assertEquals("I", nav.field.type)
             assertEquals("<clinit>", nav.method.name)
             val clinit = nav.method.implementation!!.instructions.toList()
-            assertEquals(LOW_SCREEN_AB, clinit.first().getReference<MethodReference>()?.definingClass)
+            // 47.8.3 asks the service map first and falls back to the low screen AB's instance.
+            assertTrue("$version: the static's class reads the low screen AB",
+                clinit.any { it.getReference<FieldReference>()?.definingClass == LOW_SCREEN_AB })
             assertEquals(Opcode.SPUT, clinit[nav.after - 1].opcode)
             assertNotEquals("$version: the extra lands elsewhere", nav.field.name, clinit[nav.after - 1].getReference<FieldReference>()!!.name)
 

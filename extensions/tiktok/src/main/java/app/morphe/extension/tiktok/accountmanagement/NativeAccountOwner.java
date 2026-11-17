@@ -4,6 +4,7 @@
  */
 package app.morphe.extension.tiktok.accountmanagement;
 
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -26,7 +27,7 @@ final class NativeAccountOwner implements AccountListSession.Accounts {
         Class<?> api = NativeAccountRows.type(loader, "com.ss.android.ugc.aweme.IAccountUserService");
         Object services = manager.getMethod("get").invoke(null);
         Object service = manager.getMethod("getService", Class.class).invoke(services, api);
-        return register(service, api, NativeAccountRows.type(loader, "X.03IM"),
+        return register(service, api, NativeAccountRows.type(loader, "X.044c"),
                 NativeAccountRows.type(loader, NativeAccountRows.USER), changed);
     }
 
@@ -34,9 +35,9 @@ final class NativeAccountOwner implements AccountListSession.Accounts {
             Class<?> user, Runnable changed) throws ReflectiveOperationException {
         if (service == null || !api.isInstance(service) || !listenerType.isInterface())
             throw new IllegalArgumentException("Unsupported account observer owner");
-        Method add = NativeAccountRows.method(api, "LJJIIJ", void.class, listenerType);
-        Method remove = NativeAccountRows.method(api, "LJIIZILJ", void.class, listenerType);
-        Method event = NativeAccountRows.method(listenerType, "LLLLZI", void.class, int.class, user, user);
+        Method add = NativeAccountRows.method(api, "LJJII", void.class, listenerType);
+        Method remove = NativeAccountRows.method(api, "LJIILL", void.class, listenerType);
+        Method event = NativeAccountRows.method(listenerType, "onChanged", void.class, int.class, user, user, Bundle.class);
         AtomicBoolean active = new AtomicBoolean(true);
         Object listener = Proxy.newProxyInstance(listenerType.getClassLoader(), new Class<?>[]{listenerType}, (proxy, method, args) -> {
             if (method.equals(event)) {

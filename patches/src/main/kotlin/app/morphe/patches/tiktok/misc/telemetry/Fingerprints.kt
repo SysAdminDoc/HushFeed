@@ -279,7 +279,7 @@ internal const val RESOLVER_LOOKUP_HOST = "whoami.akamai.net"
  * The Orbu SDK's log upload: the suspend call that builds a put-logs body and posts it to
  * proxy.telemetry.us-ashburn-1.oci.oraclecloud.com, the host #379's DNS log shows being called
  * thousands of times a day. The SDK's classes are renamed but its model classes keep their
- * names. Only this implementation builds the body (47.7.3: Lttpobfuscated/ld;->a).
+ * names. Only this implementation builds the body (47.8.3: Lttpobfuscated/ld;->a).
  */
 internal object OrbuLogSendFingerprint : Fingerprint(
     returnType = "Ljava/lang/Object;",
@@ -294,7 +294,7 @@ internal fun buildsOrbuLogBody(method: Method): Boolean =
 
 /**
  * The lookups of whoami.akamai.net, TikTok's way of learning which DNS resolver the phone uses.
- * Seven copies on 47.7.3, in the video and upload libraries and two renamed classes.
+ * Seven copies on 47.8.3, in the video and upload libraries and two renamed classes.
  */
 internal object ResolverLookupFingerprint : Fingerprint(strings = listOf(RESOLVER_LOOKUP_HOST))
 

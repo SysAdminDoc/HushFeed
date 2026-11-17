@@ -50,7 +50,8 @@ private const val CONTEXT = "Landroid/content/Context;"
  * TikTok's own code:
  * - the feed engine's player field and the player type that declares `getSourceId()`, from the
  *   first thing the engine's play() reads off itself and casts;
- * - TTVideoEngine's public setIsMute forwarder, the `(Z)V` that calls the impl logging it;
+ * - TTVideoEngine's public setIsMute forwarder, the `(Z)V` that calls the impl logging it (on
+ *   47.8.3 through the engine interface TTVideoEngine implements, by the impl's name);
  * - the player session's focus request, the `()V` beside its give-up that calls the manager's
  *   request;
  * - the session's give-up: its own `()V` through 47.4.3, and on 47.5.3, where R8 inlined it into
@@ -246,10 +247,12 @@ internal fun sessionAbandonMethod(session: String, body: String): MutableMethod 
         addInstructionsWithLabels(0, body)
     }
 
-private fun Method.invokes(target: Method): Boolean =
+/** Whether this calls [target], on its own class or on one of [owners] by the same name. */
+private fun Method.invokes(target: Method, owners: Set<String> = emptySet()): Boolean =
     implementation?.instructions?.any { instruction ->
         val called = (instruction as? ReferenceInstruction)?.reference as? MethodReference
-        called != null && called.definingClass == target.definingClass && called.name == target.name &&
+        called != null && (called.definingClass == target.definingClass || called.definingClass in owners) &&
+            called.name == target.name &&
             called.parameterTypes.map(CharSequence::toString) == target.parameterTypes.map(CharSequence::toString)
     } == true
 
@@ -291,9 +294,12 @@ internal fun resolveFeedMuteMembers(
     } ?: throw PatchException("$PATCH: $player, the engine's player, declares no getSourceId().")
 
     val engineBase = classOf(TT_VIDEO_ENGINE) ?: throw PatchException("$PATCH: $TT_VIDEO_ENGINE isn't in this build.")
+    // Through 47.7.3 the forwarder calls the impl's class. 47.8.3 calls the engine interface
+    // TTVideoEngine itself implements, on the inner engine it holds, whose method is the impl.
+    val engineInterfaces = engineBase.interfaces.map(CharSequence::toString).toSet()
     val forwarder = engineBase.methods.filter {
         isInstance(it) && it.returnType == "V" &&
-            it.parameterTypes.map(CharSequence::toString) == listOf("Z") && it.invokes(setIsMuteImpl)
+            it.parameterTypes.map(CharSequence::toString) == listOf("Z") && it.invokes(setIsMuteImpl, engineInterfaces)
     }.singleOrPatchException("$PATCH: TTVideoEngine's forwarder to ${setIsMuteImpl.definingClass}->${setIsMuteImpl.name}")
     val isMute = engineBase.methods.singleOrNull {
         it.name == "isMute" && it.parameterTypes.isEmpty() && it.returnType == "Z" && isInstance(it)

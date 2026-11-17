@@ -529,7 +529,7 @@ public class LiveCommentBoxTest {
         }
     }
 
-    /** TikTok's drawn icon box (X.0fG9 on 47.7.3): a rounded rect whose paint takes its color on every draw. */
+    /** TikTok's drawn icon box (X.0zD9 on 47.8.3): a rounded rect whose paint takes its color on every draw. */
     static final class DrawnBox extends Drawable {
         private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         private final int color;

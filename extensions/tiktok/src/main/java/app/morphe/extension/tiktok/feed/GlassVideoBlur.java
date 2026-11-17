@@ -473,7 +473,7 @@ final class GlassVideoBlur {
     /**
      * The player's own layer. Its Surface is copied whole into a small frame of the layer's shape
      * and the pill's strip cut from that, because the buffer behind it needn't be the size the
-     * player gave the layer: on 47.7.3 the S22's feed layer is placed at 1080x1920 and fed 720x1280
+     * player gave the layer: on 47.8.3 the S22's feed layer is placed at 1080x1920 and fed 720x1280
      * frames, so a strip asked for at the placed size lay outside the buffer and every read failed
      * (#259).
      */

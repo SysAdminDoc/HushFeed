@@ -42,7 +42,7 @@ import org.robolectric.annotation.Config;
 
 /**
  * #410: the country and the post date go on a line of their own under the caption, off the
- * creator's row. The cell below is laid out the way 47.7.3's generated caption layout is: a
+ * creator's row. The cell below is laid out the way 47.8.3's generated caption layout is: a
  * vertical column holding TikTok's own caption block (a LinearLayout subclass with a hidden
  * {@code title} and the {@code desc} caption inside), then a spacer.
  */

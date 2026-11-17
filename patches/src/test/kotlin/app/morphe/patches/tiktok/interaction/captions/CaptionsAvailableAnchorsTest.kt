@@ -130,22 +130,22 @@ class CaptionsAvailableAnchorsTest {
         assertEquals("the read's move-result", 4, read(EXPERIMENT_READ).experimentReadAnswer())
         assertEquals("no key loaded", -1, read(EXPERIMENT_READ, loadsKey = false).experimentReadAnswer())
         assertEquals("a read answered as a boolean", -1,
-            read(ImmutableMethodReference("LX/03Nn;", "LJIIJJI", listOf("I", "I", "Ljava/lang/String;", "Z"), "Z")).experimentReadAnswer())
+            read(ImmutableMethodReference("LX/03Nu;", "LJIIJJI", listOf("I", "I", "Ljava/lang/String;", "Z"), "Z")).experimentReadAnswer())
         assertEquals("a read with other parameters", -1,
-            read(ImmutableMethodReference("LX/03Nn;", "LJIIJJI", listOf("I", "Ljava/lang/String;"), "I")).experimentReadAnswer())
+            read(ImmutableMethodReference("LX/03Nu;", "LJIIJJI", listOf("I", "Ljava/lang/String;"), "I")).experimentReadAnswer())
     }
 
     @Test
     fun `the controls question reads the stored group and nothing else is taken`() {
-        val group = ImmutableFieldReference("LX/0BuN;", "LIZIZ", "I")
+        val group = ImmutableFieldReference("LX/0Brc;", "LIZIZ", "I")
         assertTrue(question(group).asksCaptionControlsGroup(group))
-        assertFalse("another field", question(ImmutableFieldReference("LX/0BuN;", "LJ", "I")).asksCaptionControlsGroup(group))
+        assertFalse("another field", question(ImmutableFieldReference("LX/0Brc;", "LJ", "I")).asksCaptionControlsGroup(group))
         assertFalse("takes a parameter", question(group, parameters = listOf("I")).asksCaptionControlsGroup(group))
         assertFalse("not static", question(group, static = false).asksCaptionControlsGroup(group))
     }
 
     private val EXPERIMENT_READ =
-        ImmutableMethodReference("LX/03Nn;", "LJIIJJI", listOf("I", "I", "Ljava/lang/String;", "Z"), "I")
+        ImmutableMethodReference("LX/03Nu;", "LJIIJJI", listOf("I", "I", "Ljava/lang/String;", "Z"), "I")
 
     /**
      * The row lambda cut down, as 47.4.3 has it: get the experiments, load the key into v3, read
@@ -159,7 +159,7 @@ class CaptionsAvailableAnchorsTest {
         }
         val instructions = listOf(
             ImmutableInstruction35c(Opcode.INVOKE_STATIC, 0, 0, 0, 0, 0, 0,
-                ImmutableMethodReference("LX/03Nn;", "LJIIIZ", listOf(), "LX/03Nn;")),
+                ImmutableMethodReference("LX/03Nu;", "LJIIIZ", listOf(), "LX/03Nu;")),
             ImmutableInstruction11x(Opcode.MOVE_RESULT_OBJECT, 4),
             key,
             ImmutableInstruction35c(Opcode.INVOKE_VIRTUAL, 5, 4, 1, 0, 3, 2, call),
@@ -182,7 +182,7 @@ class CaptionsAvailableAnchorsTest {
         parameters: List<String> = listOf(),
         static: Boolean = true,
     ): Method = ImmutableMethod(
-        "LX/0BuN;", "LIZ", parameters.map { ImmutableMethodParameter(it, null, null) }, "Z",
+        "LX/0Brc;", "LIZ", parameters.map { ImmutableMethodParameter(it, null, null) }, "Z",
         AccessFlags.PUBLIC.value or (if (static) AccessFlags.STATIC.value else 0), null, null,
         ImmutableMethodImplementation(
             1 + parameters.size + (if (static) 0 else 1),

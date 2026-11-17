@@ -52,6 +52,9 @@ class FeedMuteAnchorsTest {
             assertEquals("$TT_VIDEO_ENGINE->play()V", (first as ReferenceInstruction).reference.toString())
 
             val members = resolveFeedMuteMembers(play, setIsMute, abandon, request) { classes[it] }
+            // 47.8.3's TTVideoEngine reaches the impl through the engine interface it implements.
+            assertEquals("$version: the mute forwarder", "$TT_VIDEO_ENGINE->LJIILJJIL(Z)V",
+                "${members.setMute.definingClass}->${members.setMute.name}(${members.setMute.parameterTypes.joinToString("")})${members.setMute.returnType}")
             val session = classes.getValue(members.session)
             val sessionRequest = session.methods.single { it.name == members.sessionRequest && it.parameterTypes.isEmpty() }
             val body = sessionRequest.implementation!!
@@ -63,7 +66,7 @@ class FeedMuteAnchorsTest {
             // 47.5.3 inlined the session's give-up into the player's release(), so the patch adds
             // a copy of the block to the session. Every member it names must exist as named, and
             // the smali compiler must have kept all 33 instructions (it drops what won't fit).
-            val synthesized = version == "47.7.3"
+            val synthesized = version == "47.8.3"
             assertEquals("$version: the give-up is copied onto the session", synthesized, members.sessionAbandonBody != null)
             assertEquals("$version: the bridge's give-up name", if (synthesized) SESSION_ABANDON else abandon.name,
                 members.sessionAbandon)

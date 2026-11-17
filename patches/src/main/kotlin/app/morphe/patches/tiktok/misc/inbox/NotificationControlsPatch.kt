@@ -56,12 +56,13 @@ internal val WAKE_LOCK_CALLS = mapOf(
  * kept its name; the method did not, so it is found by the call it makes. Nothing else on
  * MessageShowHandler calls notify, and its parameters are checked below before the message
  * is read out of p1. Block suggested video notifications reroutes that call through its filter,
- * and either patch can run first, so the rerouted call counts too.
+ * and either patch can run first, so the rerouted call counts too. Since TikTok 47.8.3 it answers
+ * whether it posted (LJIJJLI there), and false is its own answer when there's no notification.
  */
 internal object PushNotifyFingerprint : Fingerprint(
     definingClass = "Lcom/ss/android/ugc/awemepushlib/manager/MessageShowHandler;",
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
-    returnType = "V",
+    returnType = "Z",
     filters = listOf(
         anyInstruction(
             methodCall(
@@ -146,10 +147,14 @@ val notificationControlsPatch = bytecodePatch(
             ) {
                 "Notification controls: the push handler no longer takes the message in p1."
             }
+            // A dropped push reports nothing posted.
             guardAtEntry(
                 "Notification controls",
                 "invoke-static/range { p1 .. p1 }, $EXTENSION->shouldDropPush(Ljava/lang/Object;)Z",
-                "return-void",
+                """
+                    const/4 v0, 0x0
+                    return v0
+                """,
             )
         }
 

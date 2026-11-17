@@ -125,7 +125,7 @@ public final class SearchTabChecklistPreference extends DialogPreference {
     }
 
     /**
-     * The name TikTok served for the tab, or, for a tab served nameless (every tab on 47.7.3),
+     * The name TikTok served for the tab, or, for a tab served nameless (every tab on 47.8.3),
      * TikTok's name for its key in the settings language. An unknown nameless tab shows its key.
      */
     private String rowLabel(SearchTabs.Entry entry) {

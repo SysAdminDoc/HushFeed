@@ -149,7 +149,7 @@ public class CommentFoldTest {
 
     @Test public void aCommentTikTokAlreadyCutFoldsAndOpensToTikToksCut() {
         // TikTok's own fold of a long comment, with the zero width space it puts after a
-        // keyword highlighted from a search (seen on 47.7.3).
+        // keyword highlighted from a search (seen on 47.8.3).
         String comment = LONG_PARAGRAPH + " The next batch got milk bread flour and came out softer.";
         String tikToksCut = LONG_PARAGRAPH.replace("buns", "buns" + (char) 0x200B) + (char) 0x2026 + " more";
         LinearLayout cell = bound(tikToksCut);

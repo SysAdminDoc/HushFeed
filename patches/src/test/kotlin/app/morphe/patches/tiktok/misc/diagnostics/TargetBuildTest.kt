@@ -22,14 +22,14 @@ class TargetBuildTest {
     }
 
     @Test fun `another compile of the same version is refused with the files to use`() {
-        // The arm64-v8a-only 47.7.3 APK defines LX/0HUC; with other members, and the others not at all.
-        val other = ImmutableClassDef("LX/0HUC;", AccessFlags.PUBLIC.value, "Ljava/lang/Object;", emptyList(), null,
-            emptySet(), emptyList(), listOf(ImmutableMethod("LX/0HUC;", "LIZ", listOf(ImmutableMethodParameter("LX/0HUB;", null, null)),
+        // The arm64-v8a-only 47.8.3 APK defines LX/0HQt; with other members, and the others not at all.
+        val other = ImmutableClassDef("LX/0HQt;", AccessFlags.PUBLIC.value, "Ljava/lang/Object;", emptyList(), null,
+            emptySet(), emptyList(), listOf(ImmutableMethod("LX/0HQt;", "LIZ", listOf(ImmutableMethodParameter("LX/0HQs;", null, null)),
                 "V", AccessFlags.PUBLIC.value, emptySet(), emptySet(), null)))
-        val lookup: (String) -> ClassDef? = { if (it == "LX/0HUC;") other else null }
+        val lookup: (String) -> ClassDef? = { if (it == "LX/0HQt;") other else null }
         assertEquals(TARGET_BUILD_ANCHORS, missingTargetAnchors(lookup))
-        val refusal = assertThrows(PatchException::class.java) { checkTargetBuild("47.7.3", lookup) }
-        assertTrue(refusal.message!!, refusal.message!!.startsWith("This TikTok 47.7.3 file is a different build"))
+        val refusal = assertThrows(PatchException::class.java) { checkTargetBuild("47.8.3", lookup) }
+        assertTrue(refusal.message!!, refusal.message!!.startsWith("This TikTok 47.8.3 file is a different build"))
         assertTrue(refusal.message!!, TARGET_BUILD_FILES in refusal.message!!)
     }
 
@@ -37,14 +37,14 @@ class TargetBuildTest {
         val owners = TARGET_BUILD_ANCHORS.groupBy({ it.substringBefore("->") }, { it.substringAfter("->") })
         val classes = owners.mapValues { (type, members) ->
             ImmutableClassDef(type, AccessFlags.PUBLIC.value, "Ljava/lang/Object;", emptyList(), null, emptySet(), emptyList(),
-                members.drop(if (type == "LX/041W;") 1 else 0).map { member ->
+                members.drop(if (type == "LX/041Z;") 1 else 0).map { member ->
                     val parameters = Regex("L[^;]+;|\\[*[ZBSCIJFD]").findAll(member.substringAfter('(').substringBefore(')'))
                         .map { ImmutableMethodParameter(it.value, null, null) }.toList()
                     ImmutableMethod(type, member.substringBefore('('), parameters, member.substringAfter(')'),
                         AccessFlags.PUBLIC.value, emptySet(), emptySet(), null)
                 })
         }
-        assertEquals(listOf("LX/041W;->LIZJ()Lcom/ss/android/ugc/aweme/ILoginService;"), missingTargetAnchors { classes[it] })
+        assertEquals(listOf("LX/041Z;->LIZJ()Lcom/ss/android/ugc/aweme/ILoginService;"), missingTargetAnchors { classes[it] })
         assertThrows(PatchException::class.java) { checkTargetBuild(null) { classes[it] } }
     }
 

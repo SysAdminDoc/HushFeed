@@ -408,7 +408,7 @@ public class ShareMakeStickerTest {
         assertFalse(ShareMakeSticker.creatorAllows(null));
     }
 
-    /** Shaped like 47.7.3's InteractPermission and InteractionPermission. */
+    /** Shaped like 47.8.3's InteractPermission and InteractionPermission. */
     public static final class Permissions {
         public final Permission allowCreateSticker;
         Permissions(Permission allowCreateSticker) { this.allowCreateSticker = allowCreateSticker; }
@@ -429,7 +429,7 @@ public class ShareMakeStickerTest {
         };
     }
 
-    /** Stand-ins for TikTok's ServiceManager and its external ability services, shaped like 47.7.3's. */
+    /** Stand-ins for TikTok's ServiceManager and its external ability services, shaped like 47.8.3's. */
     public static final class Services {
         static ExternalService external;
         private static final Services INSTANCE = new Services();

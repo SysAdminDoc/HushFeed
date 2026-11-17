@@ -19,11 +19,11 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** Native value contracts reviewed for the two single-key presets on TikTok 47.7.3. */
+/** Native value contracts reviewed for the two single-key presets on TikTok 47.8.3. */
 class FeatureGatePresetFixturesTest {
     private val app by lazy {
-        val container = Fixtures.dexContainer(Fixtures.apkOf("47.7.3"), Opcodes.getDefault())
-        val owners = setOf("Lfej/e;", "LX/0Gip;", "LX/0Gim;", "LX/0DPU;", "LX/0k8a;")
+        val container = Fixtures.dexContainer(Fixtures.apkOf("47.8.3"), Opcodes.getDefault())
+        val owners = setOf("Lufj/e;", "LX/0Gfj;", "LX/0Gfg;", "LX/0DMd;", "LX/0iBT;")
         container.dexEntryNames.flatMap { entry ->
             container.getEntry(entry)!!.dexFile.classes.filter { it.type in owners }
         }.associateBy { it.type }.also { assertEquals(owners, it.keys) }
@@ -31,8 +31,8 @@ class FeatureGatePresetFixturesTest {
 
     @Test
     fun `the hashtag switch and maximum use separate typed reads`() {
-        val switch = method("Lfej/e;", "LIZJ")
-        val maximum = method("Lfej/e;", "LIZ")
+        val switch = method("Lufj/e;", "LIZJ")
+        val maximum = method("Lufj/e;", "LIZ")
         assertEquals(listOf("studio_publish_limit_hashtag_switch"), switch.strings())
         assertEquals(listOf("studio_publish_hashtag_max_limit"), maximum.strings())
         val booleanRead = switch.calls().single { it.returnType == "Z" }
@@ -44,23 +44,23 @@ class FeatureGatePresetFixturesTest {
 
     @Test
     fun `the lazy UI reader and independent catalog reader share the same INT boundary`() {
-        val lazyRead = method("LX/0Gip;", "invoke")
+        val lazyRead = method("LX/0Gfj;", "invoke")
         assertEquals(listOf("tt_cmt_new_emoji"), lazyRead.strings())
         val intRead = lazyRead.calls().single { it.returnType == "I" }
         assertEquals(listOf("I", "I", "Ljava/lang/String;", "Z"), intRead.parameterTypes)
-        val catalogRead = method("LX/0DPU;", "LIZ")
+        val catalogRead = method("LX/0DMd;", "LIZ")
         assertEquals(intRead.toString(), catalogRead.calls().single {
             it.returnType == "I" && it.parameterTypes == intRead.parameterTypes
         }.toString())
-        assertTrue(method("LX/0Gim;", "<clinit>").implementation!!.instructions.any {
-            it.opcode == Opcode.NEW_INSTANCE && it.getReference<TypeReference>()?.type == "LX/0Gip;"
+        assertTrue(method("LX/0Gfg;", "<clinit>").implementation!!.instructions.any {
+            it.opcode == Opcode.NEW_INSTANCE && it.getReference<TypeReference>()?.type == "LX/0Gfj;"
         })
         assertEquals(listOf("tt_im_new_emoji", "tt_cmt_new_emoji", "tt_repost_new_emoji"),
-            method("LX/0DPU;", "LIZIZ").strings())
-        assertTrue(method("LX/0k8a;", "LIZLLL").calls().any {
-            it.definingClass == "LX/0DPU;" && it.name == "LIZIZ" && it.returnType == "Z"
+            method("LX/0DMd;", "LIZIZ").strings())
+        assertTrue(method("LX/0iBT;", "LIZLLL").calls().any {
+            it.definingClass == "LX/0DMd;" && it.name == "LIZIZ" && it.returnType == "Z"
         })
-        assertTrue("eligible loading retains the native catalog request", method("LX/0k8a;", "LJFF").calls().any {
+        assertTrue("eligible loading retains the native catalog request", method("LX/0iBT;", "LJFF").calls().any {
             it.definingClass == "Lcom/ss/android/ugc/aweme/ui/adapter/newemoji/INewEmojiApi;" && it.name == "getEmojis"
         })
     }
@@ -69,21 +69,21 @@ class FeatureGatePresetFixturesTest {
     fun `group two permits sending and viewing while native availability and downgrade still win`() {
         for (group in 0..3) {
             assertEquals("send group $group", group == 2 || group == 3,
-                gate("LX/0Gim;", "LIZIZ", group, available = true, downgraded = false))
+                gate("LX/0Gfg;", "LIZIZ", group, available = true, downgraded = false))
             assertEquals("view group $group", group != 1,
-                gate("LX/0Gim;", "LIZJ", group, available = true, downgraded = false))
+                gate("LX/0Gfg;", "LIZJ", group, available = true, downgraded = false))
         }
         for (available in listOf(false, true)) for (downgraded in listOf(false, true)) {
             for (reader in listOf("LIZIZ", "LIZJ")) {
                 assertEquals("$reader availability=$available downgrade=$downgraded", available && !downgraded,
-                    gate("LX/0Gim;", reader, 2, available, downgraded))
+                    gate("LX/0Gfg;", reader, 2, available, downgraded))
             }
         }
         // Other experiments stay in their disabled group. The comment override alone must be
         // enough for the catalog loader, and it must still respect service availability.
-        assertFalse(gate("LX/0DPU;", "LIZIZ", 1, available = true, downgraded = false))
-        assertTrue(gate("LX/0DPU;", "LIZIZ", 2, available = true, downgraded = false))
-        assertFalse(gate("LX/0DPU;", "LIZIZ", 2, available = false, downgraded = false))
+        assertFalse(gate("LX/0DMd;", "LIZIZ", 1, available = true, downgraded = false))
+        assertTrue(gate("LX/0DMd;", "LIZIZ", 2, available = true, downgraded = false))
+        assertFalse(gate("LX/0DMd;", "LIZIZ", 2, available = false, downgraded = false))
     }
 
     private fun method(owner: String, name: String): Method = app.getValue(owner).methods.single { it.name == name }
@@ -110,7 +110,7 @@ class FeatureGatePresetFixturesTest {
                     registers[(instruction as OneRegisterInstruction).registerA] = instruction.getReference<StringReference>()!!.string
                 Opcode.SGET_OBJECT -> registers[(instruction as OneRegisterInstruction).registerA] = Any()
                 Opcode.SGET_BOOLEAN -> {
-                    assertEquals("LX/0DPU;->LIZJ:Z", instruction.getReference<FieldReference>().toString())
+                    assertEquals("LX/0DMd;->LIZJ:Z", instruction.getReference<FieldReference>().toString())
                     registers[(instruction as OneRegisterInstruction).registerA] = if (downgraded) 1 else 0
                 }
                 Opcode.INVOKE_VIRTUAL -> {
@@ -120,10 +120,10 @@ class FeatureGatePresetFixturesTest {
                 Opcode.INVOKE_STATIC -> {
                     val call = instruction.getReference<MethodReference>()!!
                     result = when ("${call.definingClass}->${call.name}") {
-                        "LX/0Gim;->LIZ" -> group
-                        "LX/0DPU;->LIZJ" -> if (available) 1 else 0
-                        "LX/0DPU;->LIZLLL" -> if (gate("LX/0DPU;", "LIZLLL", group, available, downgraded)) 1 else 0
-                        "LX/0DPU;->LIZ" -> if (registers[(instruction as FiveRegisterInstruction).registerC] == "tt_cmt_new_emoji") group else 1
+                        "LX/0Gfg;->LIZ" -> group
+                        "LX/0DMd;->LIZJ" -> if (available) 1 else 0
+                        "LX/0DMd;->LIZLLL" -> if (gate("LX/0DMd;", "LIZLLL", group, available, downgraded)) 1 else 0
+                        "LX/0DMd;->LIZ" -> if (registers[(instruction as FiveRegisterInstruction).registerC] == "tt_cmt_new_emoji") group else 1
                         else -> error("Unexpected native gate call: $call")
                     }
                 }

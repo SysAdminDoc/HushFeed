@@ -111,11 +111,11 @@ final class SecurePopupProbe {
     }
 
     /**
-     * Compose's PopupProperties, Density, PopupPositionProvider and PopupLayout as TikTok 47.7.3's
+     * Compose's PopupProperties, Density, PopupPositionProvider and PopupLayout as TikTok 47.8.3's
      * R8 named them.
      */
     private static String[] composeNames() {
-        return new String[]{"X.011b", "X.01o6", "X.011Z", "X.01t2"};
+        return new String[]{"X.010u", "X.01nR", "X.010s", "X.01sF"};
     }
 
     private static int dp(Activity activity, int value) {

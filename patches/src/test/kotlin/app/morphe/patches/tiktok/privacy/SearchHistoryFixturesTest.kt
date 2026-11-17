@@ -22,12 +22,12 @@ import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** The two search-history writers on every declared host, and the guard put in front of them. */
+/** The search-history writer on every declared host, and the guard put in front of it. */
 class SearchHistoryFixturesTest {
     @Test
-    fun `each declared host has exactly one history recorder and one manual search log`() {
+    fun `each declared host has exactly one history recorder and no manual search log`() {
         val expected = mapOf(
-            "47.7.3" to "LX/0Erq;",
+            "47.8.3" to "LX/0Eoq;",
         )
         assertEquals(Fixtures.declaredVersions().toSet(), expected.keys)
         Fixtures.forEachDeclared { apk ->
@@ -56,11 +56,12 @@ class SearchHistoryFixturesTest {
                 setOf(recorder.definingClass), historyWriters.map { it.definingClass }.toSet())
             assertEquals("$version: record and delete", 2, historyWriters.size)
 
-            val manual = methods.filter(::isManualSearchRecorder)
-            assertEquals("$version manual search log", 1, manual.size)
-            assertEquals(MANUAL_SEARCH_PV_STORE, manual.single().definingClass)
+            // 47.7.3's second writer, the per-account typed-query log, is gone. If a host brings
+            // it back, it needs its own guard again.
+            assertTrue("$version: ManualSearchPvStore is back",
+                methods.none { it.definingClass == MANUAL_SEARCH_PV_STORE })
 
-            for (method in recorders + manual) {
+            for (method in recorders) {
                 assertTrue("$version ${method.name}: the guard needs a local",
                     method.implementation!!.registerCount - parameterRegisters(method) >= 1)
                 assertGuarded(method)
@@ -70,28 +71,25 @@ class SearchHistoryFixturesTest {
 
     @Test
     fun `the delete method and a changed recorder are not taken for the record method`() {
-        val delete = method("LX/0FsF;", listOf(SEARCH_HISTORY, "Ljava/lang/String;"), static = false,
+        val delete = method("LX/0FpE;", listOf(SEARCH_HISTORY, "Ljava/lang/String;"), static = false,
             "const-string v0, \"deleteSearchHistory, repo = \"\nreturn-void")
         assertFalse(isSearchHistoryRecorder(delete))
-        val renamedTag = method("LX/0FsF;", listOf(SEARCH_HISTORY, "Ljava/lang/String;"), static = false,
+        val renamedTag = method("LX/0FpE;", listOf(SEARCH_HISTORY, "Ljava/lang/String;"), static = false,
             "const-string v0, \"recordSearchHistoryV2, repo:\"\nreturn-void")
         assertFalse("the tag is matched whole", isSearchHistoryRecorder(renamedTag))
         // The tag on its own is not what the host loads: every line opens with it and a comma.
-        val bareTag = method("LX/0FsF;", listOf(SEARCH_HISTORY, "Ljava/lang/String;"), static = false,
+        val bareTag = method("LX/0FpE;", listOf(SEARCH_HISTORY, "Ljava/lang/String;"), static = false,
             "const-string v0, \"recordSearchHistory\"\nreturn-void")
         assertFalse(isSearchHistoryRecorder(bareTag))
-        val record = method("LX/0FsF;", listOf(SEARCH_HISTORY, "Ljava/lang/String;"), static = false,
+        val record = method("LX/0FpE;", listOf(SEARCH_HISTORY, "Ljava/lang/String;"), static = false,
             "const-string v0, \"recordSearchHistory, repo:\"\nreturn-void")
         assertTrue(isSearchHistoryRecorder(record))
-        val wrongStore = method("LX/0K8m;", listOf("Ljava/lang/String;", "Ljava/lang/String;"), static = true,
-            "iput-object v0, v0, $MANUAL_SEARCH_USER_STATE->lastHistoryChannelSearchMs:Ljava/lang/Long;\nreturn-void")
-        assertFalse("the log is on ManualSearchPvStore only", isManualSearchRecorder(wrongStore))
     }
 
     @Test
     fun `a writer without a free local refuses the guard before writing it`() {
         val full = MutableMethod(ImmutableMethod(
-            "LX/0FsF;", "LIZ", listOf(ImmutableMethodParameter(SEARCH_HISTORY, null, null),
+            "LX/0FpE;", "LIZ", listOf(ImmutableMethodParameter(SEARCH_HISTORY, null, null),
                 ImmutableMethodParameter("Ljava/lang/String;", null, null)), "V",
             AccessFlags.PUBLIC.value, null, null,
             ImmutableMethodImplementation(3, listOf(ImmutableInstruction10x(Opcode.RETURN_VOID)), null, null),

@@ -334,12 +334,13 @@ val feedFilterPatch = bytecodePatch(
         // The same handler fills the LIVE rows outside the feed: the Following tab's row of
         // creators who are LIVE, the Inbox's LIVE line and the feed behind it, a push's room
         // (#212). The provider (p0) names which with its request type, through the getter the
-        // handler calls right after loading following_window_live_cell_loadmore to compare the
-        // two, so the filter gets the type as well and leaves those rows to the block list. At
-        // index 0 no local holds anything yet, so v1 and v2 carry the arguments into reach.
+        // handler (on 47.8.3 the provider method it calls) uses right after loading
+        // following_window_live_cell_loadmore to compare the two, so the filter gets the type as
+        // well and leaves those rows to the block list. At index 0 no local holds anything yet,
+        // so v1 and v2 carry the arguments into reach.
         val livePage = if (declaredBuild) LiveDrawRoomPageFingerprint.method else LiveDrawRoomPageFingerprint.methodOrNull
         livePage?.apply {
-            val requestType = liveRequestTypeGetter()
+            val requestType = liveRequestTypeGetter(LiveDrawRoomPageFingerprint.originalClassDef)
             requireLocals("Feed filter", 3)
             addInstructions(
                 0,
@@ -703,7 +704,7 @@ val feedFilterPatch = bytecodePatch(
         }
 
         // The view model swaps the served list in only when it holds as many tabs as TikTok's own
-        // default list, and otherwise keeps the default with every tab on it (47.7.3), so the
+        // default list, and otherwise keeps the default with every tab on it (47.8.3), so the
         // same tabs go from the default at each of its fills. The source list is filtered before
         // the clear-and-add-all, so the fallback the setup hands on is the filtered one too.
         SearchDefaultTabsFillFingerprint.method.apply {
@@ -1606,22 +1607,25 @@ internal fun MutableMethod.insertionPayloadKeyRegister(): String {
 /**
  * The provider's request-type getter, as the LIVE page handler calls it, written for an invoke.
  *
- * <p>The handler loads `following_window_live_cell_loadmore`, asks the provider (its first
- * parameter, p0) for the request type through a no-argument String getter, and compares the two,
- * so the first such virtual call after that load is the getter (#212). It has to be the
- * provider's own, since the hook calls it on p0 without a cast. The strings sit in the handler's
+ * <p>The handler, or from 47.8.3 the provider's method it calls for this ([liveRequestTypeCheck]),
+ * loads `following_window_live_cell_loadmore`, asks the provider (the handler's first parameter,
+ * p0) for the request type through a no-argument String getter, and compares the two, so the
+ * first such virtual call after that load is the getter (#212). It has to be the provider's own,
+ * since the hook calls it on p0 without a cast. The strings are part of the handler's
  * fingerprint, so a build that renames them never gets this far.
  */
-internal fun MutableMethod.liveRequestTypeGetter(): String {
-    val load = indexOfFirstInstructionOrThrow {
+internal fun Method.liveRequestTypeGetter(providerClass: ClassDef): String {
+    val check = liveRequestTypeCheck(providerClass)
+        ?: throw PatchException("Feed filter: the LIVE page handler compares no request type")
+    val load = check.indexOfFirstInstructionOrThrow {
         (opcode == Opcode.CONST_STRING || opcode == Opcode.CONST_STRING_JUMBO) &&
             getReference<StringReference>()?.string == "following_window_live_cell_loadmore"
     }
-    val call = indexOfFirstInstructionOrThrow(load) {
+    val call = check.indexOfFirstInstructionOrThrow(load) {
         (opcode == Opcode.INVOKE_VIRTUAL || opcode == Opcode.INVOKE_VIRTUAL_RANGE) &&
             getReference<MethodReference>()?.let { it.returnType == "Ljava/lang/String;" && it.parameterTypes.isEmpty() } == true
     }
-    val getter = getInstruction<ReferenceInstruction>(call).getReference<MethodReference>()!!
+    val getter = check.implementation!!.instructions.elementAt(call).getReference<MethodReference>()!!
     val provider = parameterTypes.firstOrNull()?.toString()
     if (getter.definingClass != provider) {
         throw PatchException(

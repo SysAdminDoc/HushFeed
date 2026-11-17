@@ -17,6 +17,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+import com.android.tools.smali.dexlib2.iface.reference.StringReference
 
 private const val BASE_LIST_FRAGMENT_PANEL_DESCRIPTOR =
     "Lcom/ss/android/ugc/aweme/feed/panel/BaseListFragmentPanel;"
@@ -1147,7 +1148,7 @@ internal fun Instruction.isTabListFill(): Boolean =
  * The static setup each search results page runs before its strip: it fills TikTok's own default
  * tab list (tab infos that keep their key in their name field) from the local tab config, or from
  * TikTok's choose and reorder tabs, each time through one clear-and-add-all helper, and hands that
- * list on as the strip's fallback. On 47.7.3 the strip's view model takes the served list only
+ * list on as the strip's fallback. On 47.8.3 the strip's view model takes the served list only
  * when it holds as many tabs as this default and keeps the default otherwise, so tabs the served
  * list loses have to go from this one too. R8-named class and method with real-named parameters;
  * the one static taking them that asks for the choose and reorder view model.
@@ -1403,18 +1404,58 @@ internal object ShareGuideFingerprint : Fingerprint(
  * shape is pinned too: the provider itself first, then the page, its FeedExtra and a String, an
  * int, the booleans and the default-argument mask last. Only the number of booleans is left
  * open, since 47.5.3 added a fifth one ({@code LX/0IkF;->LJJLIIJ}).
+ *
+ * <p>47.8.3 ({@code LX/0Jyf;->LJJZZI}) added a sixth boolean and an int after them, answers an
+ * int instead of nothing, and moved the request-type comparison that loads the two strings into
+ * an instance method of the provider ({@code LJLIL(I)V}) that the handler calls with the page's
+ * size, so the strings are looked for in the handler or in that method (see
+ * [liveRequestTypeCheck]). The same six callers reach it on both builds. Without the strings the
+ * search is narrowed by the page's log_pb read, which about fifteen methods make on each build.
  */
 internal object LiveDrawRoomPageFingerprint : Fingerprint(
-    returnType = "V",
-    strings = listOf("following_window_live_cell_loadmore", "tiktok_message_inner_loadmore"),
+    filters = listOf(methodCall(definingClass = "Lcom/bytedance/android/live/base/model/feed/FeedExtra;", name = "getLogPb")),
     custom = { method, classDef ->
         val parameters = method.parameterTypes.map(CharSequence::toString)
         AccessFlags.STATIC.isSet(method.accessFlags) && parameters.size >= 7 &&
             parameters.take(5) == listOf(classDef.type, "Ljava/util/List;",
                 "Lcom/bytedance/android/live/base/model/feed/FeedExtra;", "Ljava/lang/String;", "I") &&
-            parameters.last() == "I" && parameters.subList(5, parameters.size - 1).all { it == "Z" }
+            parameters.last() == "I" &&
+            parameters.subList(5, parameters.size - 1).let { flags ->
+                flags.firstOrNull() == "Z" && flags.dropWhile { it == "Z" }.all { it == "I" }
+            } &&
+            (method.returnType == "V" || method.returnType == "I") &&
+            method.liveRequestTypeCheck(classDef) != null
     },
 )
+
+private val LIVE_REQUEST_TYPES = listOf("following_window_live_cell_loadmore", "tiktok_message_inner_loadmore")
+
+private fun Method.loadsLiveRequestTypes(): Boolean {
+    val loaded = implementation?.instructions?.mapNotNullTo(HashSet()) { instruction ->
+        if (instruction.opcode != Opcode.CONST_STRING && instruction.opcode != Opcode.CONST_STRING_JUMBO) null
+        else instruction.getReference<StringReference>()?.string
+    } ?: return false
+    return loaded.containsAll(LIVE_REQUEST_TYPES)
+}
+
+/**
+ * Where the LIVE page handler compares its provider's request type with the LIVE rows' names:
+ * the handler itself through 47.7.3, or the one method of the [provider] it calls virtually
+ * that loads both names (47.8.3's {@code LJLIL(I)V}). Null when neither loads them.
+ */
+internal fun Method.liveRequestTypeCheck(provider: ClassDef): Method? {
+    if (loadsLiveRequestTypes()) return this
+    val called = implementation?.instructions?.mapNotNull { instruction ->
+        if (instruction.opcode != Opcode.INVOKE_VIRTUAL && instruction.opcode != Opcode.INVOKE_VIRTUAL_RANGE) null
+        else instruction.getReference<MethodReference>()?.takeIf { it.definingClass == provider.type }
+    } ?: return null
+    return provider.methods.filter { candidate ->
+        !AccessFlags.STATIC.isSet(candidate.accessFlags) && called.any { call ->
+            call.name == candidate.name && call.returnType == candidate.returnType &&
+                call.parameterTypes.map(CharSequence::toString) == candidate.parameterTypes.map(CharSequence::toString)
+        }
+    }.singleOrNull { it.loadsLiveRequestTypes() }
+}
 
 internal object RecUserCardSurfaceFingerprint : Fingerprint(
     strings = listOf("friend_recommend_card"),

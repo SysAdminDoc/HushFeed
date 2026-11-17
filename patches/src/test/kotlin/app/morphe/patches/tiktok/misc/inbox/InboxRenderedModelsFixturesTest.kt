@@ -67,18 +67,18 @@ class InboxRenderedModelsFixturesTest {
         Fixtures.forEachDeclared { apk ->
             val schema = Schema.of(Fixtures.dexContainer(apk, Opcodes.getDefault()).let { dex ->
                 dex.dexEntryNames.flatMap { dex.getEntry(it)!!.dexFile.classes } })
-            assertEquals(listOf("LLLIIIL", "LJ", "LLLIIII", "LJIIJJI"), schema.count.fields().map { it.name })
+            assertEquals(listOf("LLLIIIIL", "LJ", "LLLII", "LJIIJJI"), schema.count.fields().map { it.name })
             val stubs = schema.adapterMethod(schema.aggregate.calls().first { it.definingClass == ADAPTER })
             assertEquals("Ljava/util/List;", stubs.returnType)
             val primary = schema.adapterMethod(stubs.calls().first())
             assertEquals(STUB, primary.returnType)
-            assertEquals(listOf("LLJJLIIIJLLLLLLLZ"), stubs.fields().map { it.name })
+            assertEquals(listOf("LLJJL"), stubs.fields().map { it.name })
             assertTrue(stubs.calls().any { method -> method.parameterTypes.map(CharSequence::toString) ==
                 listOf("Ljava/util/Collection;", "Ljava/lang/Iterable;") && method.returnType == "Ljava/util/List;" })
-            assertEquals(listOf("LLJJL"), primary.fields().map { it.name })
+            assertEquals(listOf("LLJJJJLIIL"), primary.fields().map { it.name })
 
             val aggregate = schema.aggregate.implementation!!.instructions.toList()
-            assertEquals(listOf("LLLF", "LLLIILIL", "LLJZ", "LLJJIJIL", "LIZIZ", "LIZIZ", "Refresh", "LLJZ"),
+            assertEquals(listOf("LLL", "LLLIIL", "LLJLLL", "LLJJIJIIJIL", "LIZIZ", "LIZIZ", "Refresh", "LLJLLL"),
                 aggregate.mapNotNull { it.getReference<FieldReference>()?.name })
             val stateRead = aggregate.single { it.getReference<FieldReference>()?.let { field ->
                 field.definingClass == schema.model && field.name == "LIZIZ" } == true } as TwoRegisterInstruction
@@ -112,11 +112,11 @@ class InboxRenderedModelsFixturesTest {
 
         /** Owner, name and type of each instance field the extension reads, in its read order. */
         fun fields() = listOf(
-            Triple(ADAPTER, "LLLIIII", diff), Triple(diff, "LJIIJJI", "Ljava/util/List;"),
-            Triple(ADAPTER, "LLLIIIL", config), Triple(config, "LJ", "Z"),
-            Triple(ADAPTER, "LLJJL", STUB), Triple(ADAPTER, "LLJJLIIIJLLLLLLLZ", "Ljava/util/List;"),
-            Triple(STUB, "LLLF", "Ljava/util/List;"), Triple(ADAPTER, "LLLIILIL", "Ljava/lang/Class;"),
-            Triple(ADAPTER, "LLJZ", loading), Triple(loading, "LLJJIJIL", model),
+            Triple(ADAPTER, "LLLII", diff), Triple(diff, "LJIIJJI", "Ljava/util/List;"),
+            Triple(ADAPTER, "LLLIIIIL", config), Triple(config, "LJ", "Z"),
+            Triple(ADAPTER, "LLJJJJLIIL", STUB), Triple(ADAPTER, "LLJJL", "Ljava/util/List;"),
+            Triple(STUB, "LLL", "Ljava/util/List;"), Triple(ADAPTER, "LLLIIL", "Ljava/lang/Class;"),
+            Triple(ADAPTER, "LLJLLL", loading), Triple(loading, "LLJJIJIIJIL", model),
             Triple(model, "LIZIZ", state), Triple(state, "LIZIZ", phase)
         )
         fun classOf(type: String) = byType.getValue(type)

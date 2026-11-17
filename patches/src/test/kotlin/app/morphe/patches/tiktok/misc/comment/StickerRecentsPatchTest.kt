@@ -138,11 +138,11 @@ class StickerRecentsPatchTest {
 
     @Test
     fun `the row bridges call what the Saved page reaches and pass the verifier's typing`() {
-        val lines = mapOf("recentStickers" to 8, "recentTitle" to 3, "recentItem" to 4)
+        val lines = mapOf("recentStickers" to 7, "recentTitle" to 3, "recentItem" to 4)
         fixtures { apk, classes ->
             val byType = classes.associateBy { it.type }
             val rows = rowsCollector(classes).recentStickerRows()!!
-            val store = recentStickerStore(byType.getValue(rows.pageType)) { byType[it] }
+            val store = store(classes)
             val methods = classes.flatMap { classDef -> classDef.methods.map { it.recentSignature() } }.toSet()
             val bridges = recentRowBridges(rows, store)
             assertEquals(apk, lines.keys, bridges.map { it.name }.toSet())
@@ -153,8 +153,13 @@ class StickerRecentsPatchTest {
                     assertTrue("$apk: ${bridge.name} calls ${reference.recentSignature()}", reference.recentSignature() in methods)
                 }
             }
-            assertTrue("$apk: the store getter ${store.getter}", store.getter.startsWith(rows.pageType + "->"))
-            assertEquals(apk, "invoke-interface", store.storeInvoke)
+            // The row reads the very flow the add writes, from the holder the static provider hands out.
+            assertEquals(apk, adds(classes).single().second.recentStickersAddWrite().holder, store.flowField)
+            val provider = byType.getValue(store.provider.substringBefore("->")).methods
+                .single { "${it.definingClass}->${it.name}(${it.parameterTypes.joinToString("")})${it.returnType}" == store.provider }
+            assertTrue("$apk: ${store.provider} is public static",
+                AccessFlags.PUBLIC.isSet(provider.accessFlags) && AccessFlags.STATIC.isSet(provider.accessFlags))
+            assertEquals(apk, "invoke-virtual", store.flowInvoke)
         }
     }
 
@@ -183,9 +188,8 @@ class StickerRecentsPatchTest {
     fun `the row bridges replace public static stubs with their flags kept and refuse an instance stub`() {
         val publicStatic = AccessFlags.PUBLIC.value or AccessFlags.STATIC.value
         fixtures { apk, classes ->
-            val byType = classes.associateBy { it.type }
             val rows = rowsCollector(classes).recentStickerRows()!!
-            val store = recentStickerStore(byType.getValue(rows.pageType)) { byType[it] }
+            val store = store(classes)
             val stubs = recentRowBridges(rows, store) { publicStatic }
             val extension = MutableClass(stickerRecents(stubs))
             extension.swapRecentRowStubs(rows, store)
@@ -220,6 +224,14 @@ class StickerRecentsPatchTest {
 
     private fun rowsCollector(classes: List<ClassDef>): Method =
         classes.flatMap { classDef -> classDef.methods.filter { RecentStickerRowsFingerprint.takes(it, classDef) } }.single()
+
+    /** What the patch finds: the sticker service's store getter, the add and the add's holder. */
+    private fun store(classes: List<ClassDef>): RecentStickerStore {
+        val byType = classes.associateBy { it.type }
+        val add = adds(classes).single().second
+        val repository = classes.flatMap { classDef -> classDef.methods.filter { StickerRepositoryDiFingerprint.takes(it, classDef) } }.single()
+        return recentStickerStore(repository, add, add.recentStickersAddWrite().holder) { byType[it] }
+    }
 
     private fun stickerRecents(methods: List<MutableMethod>) = ImmutableClassDef(
         "Lapp/morphe/extension/tiktok/comment/StickerRecents;", AccessFlags.PUBLIC.value or AccessFlags.FINAL.value,

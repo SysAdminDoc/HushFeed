@@ -6,6 +6,7 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* Hushfeed moves to TikTok 47.8.3, and only that one. 47.7.3 isn't supported anymore. Get the 47.8.3 bundle or APK from APKMirror and patch it with your usual signing key so your login and settings come along.
 * `Tap a video to remove it` (under Account cleanup on the Privacy page) turns a tap in your own Liked videos, Favorites or Reposts into a removal. The video dims while TikTok takes it back, then leaves the grid, and nothing opens. Other people's profiles and your own videos open as usual. It's off by default. (#401)
 * Picked photo posts can come out as one video. With `Save photo posts as a video` on, pick two or more photo posts on a grid and tap Save, and you're asked whether you want one video or one per post. One video plays each post's photos in the order you picked them, each with its own sound, and any videos you picked still save on their own (#430).
 * `Offer full screen in more LIVEs` gives LIVEs streamed from a phone the full screen button TikTok keeps for LIVEs from a computer or a shared screen. TikTok still shows it only when the stream is wide, and a tap turns the room sideways to fill the screen (#57).

@@ -52,7 +52,7 @@ class StickerCreatorPatchTest {
 
     @Test
     fun `the bridges call what the canvas saver calls and pass the verifier's typing`() {
-        val lines = mapOf("uploadConfig" to 4, "uploadServerParameter" to 3, "saveSticker" to 6, "addToSaved" to 8, "continuationType" to 2)
+        val lines = mapOf("uploadConfig" to 4, "uploadServerParameter" to 3, "saveSticker" to 15, "addToSaved" to 8, "continuationType" to 2)
         fixtures { apk, classes ->
             val calls = stickerCreatorCalls(
                 taken(StickerUploadConfigFingerprint, classes).single(),

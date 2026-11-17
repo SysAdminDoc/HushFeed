@@ -40,7 +40,7 @@ internal val SKIPPED = setOf(
 private val STEP_IDS = setOf(
     "ad_choice", "ad_subscription", "age_gate", "consent_box_page", "consent_box_page_hu",
     "content_language", "deep_link", "feed_refresh", "follow_trending_creators", "free_trial",
-    "gender_selection", "interest_list", "interest_sub_tag", "login", "m2_one_tap_login",
+    "gender_selection", "interest_list", "interest_sub_tag", "login", "login_routing", "m2_one_tap_login",
     "privacy_for_teens", "private_account", "push_auth_preposition_page", "push_page_advance",
     "push_popup_background", "server_delay", "skippable_login", "slogan_consent_box_page",
     "slogan_page", "store_age_check", "swipe_up",

@@ -82,10 +82,12 @@ class AmoledInputBarTest {
                 added += (index - 4 until index)
             }
             assertEquals("$version: every return was hooked", 4 * returns, added.size)
+            // A goto the added instructions push out of reach is widened, which is the same jump.
+            fun Opcode.width() = if (this == Opcode.GOTO_16 || this == Opcode.GOTO_32) Opcode.GOTO else this
             assertEquals(
                 "$version: TikTok's own instructions keep their order",
-                before.map { it.opcode },
-                after.filterIndexed { index, _ -> index !in added }.map { it.opcode },
+                before.map { it.opcode.width() },
+                after.filterIndexed { index, _ -> index !in added }.map { it.opcode.width() },
             )
         }
     }

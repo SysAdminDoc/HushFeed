@@ -82,7 +82,7 @@ internal object LivePlayFragmentResumeFingerprint : Fingerprint(
 
 internal const val LIVE_MENTIONS_EXTENSION = "Lapp/morphe/extension/tiktok/live/LiveMentions;"
 
-/** A message from the LIVE message server, real-named on 47.7.3. */
+/** A message from the LIVE message server, real-named on 47.8.3. */
 internal const val LIVE_MESSAGE = "Lcom/ss/ugc/live/sdk/message/data/IMessage;"
 
 /**
@@ -172,7 +172,7 @@ internal object LivePreviewAutoEnterFingerprint : Fingerprint(
     strings = listOf("live_preview_page_enable_auto_entering_guide", "homepage_follow"),
 )
 
-/** The AI Summary card on a feed LIVE preview, real-named on 47.7.3 (#418). */
+/** The AI Summary card on a feed LIVE preview, real-named on 47.8.3 (#418). */
 internal const val LIVE_AI_SUMMARY_WIDGET =
     "Lcom/ss/android/ugc/aweme/feed/adapter/widget/aisummary/LiveAiSummaryWidget;"
 
@@ -195,16 +195,16 @@ internal object LiveAiSummaryShowFingerprint : Fingerprint(
 /**
  * The newer AI Summary card, a bottom card the LIVE preview's interaction layer loads instead of
  * or beside the older one when the room's LiveNewAiSummaryConfig is enabled (#418). It never goes
- * through the base widget's show, so the older card's guard can't reach it. Real-named on 47.7.3.
+ * through the base widget's show, so the older card's guard can't reach it. Real-named on 47.8.3.
  */
 internal const val LIVE_AI_SUMMARY_NEW_WIDGET =
     "Lcom/ss/android/ugc/aweme/feed/adapter/widget/aisummary/LivePreviewAiSummaryNewWidget;"
 
-/** The room's newer-card settings, a real-named server config read through LX/1KO2 on 47.7.3. */
+/** The room's newer-card settings, a real-named server config read through LX/1KO2 on 47.8.3. */
 internal const val LIVE_NEW_AI_SUMMARY_CONFIG = "Lcom/ss/android/ugc/aweme/ab/LiveNewAiSummaryConfig;"
 
 /**
- * The newer card's countdown (startCountDownToShow, e2 on 47.7.3). Its bind, its slot observer
+ * The newer card's countdown (startCountDownToShow, e2 on 47.8.3). Its bind, its slot observer
  * and its holder-selected path all run it, and it's the only place that arms the runnable that
  * claims the bottom-card slot and makes the card visible, after the room's delayShowInterval.
  */
@@ -216,7 +216,7 @@ internal object LiveAiSummaryNewCountdownFingerprint : Fingerprint(
 )
 
 /**
- * The newer card's hide (f2 on 47.7.3). Handed false it sets the card's view GONE and frees the
+ * The newer card's hide (f2 on 47.8.3). Handed false it sets the card's view GONE and frees the
  * bottom-card slot, and it returns at once when the card isn't up.
  */
 internal object LiveAiSummaryNewHideFingerprint : Fingerprint(
@@ -295,7 +295,7 @@ internal object LiveClearScreenSessionFingerprint : Fingerprint(
     parameters = listOf(),
 )
 
-/** The full screen button of a portrait LIVE room, both versions real-named on 47.7.3. */
+/** The full screen button of a portrait LIVE room, both versions real-named on 47.8.3. */
 internal const val LIVE_FULL_VIDEO_BUTTON = "Lcom/bytedance/android/livesdk/chatroom/viewmodule/FullVideoButtonWidget;"
 internal const val LIVE_FULL_VIDEO_BUTTON_V2 = "Lcom/bytedance/android/livesdk/chatroom/viewmodule/FullVideoButtonWidgetV2;"
 
@@ -335,7 +335,7 @@ internal fun hookFullScreenAttach(method: MutableMethod) = method.apply {
 }
 
 /**
- * LIVE's per-room controller (X.0Las on 47.7.3, whose obfuscated name moves every build), found by
+ * LIVE's per-room controller (X.0LVx on 47.8.3, whose obfuscated name moves every build), found by
  * its constructor. It owns the actual clear state, including swipe gestures, and that constructor
  * may restore Clear screen before the room page has resumed.
  */
@@ -489,7 +489,7 @@ internal const val LIVE_STREAM_URL = "Lcom/bytedance/android/livesdkapi/depend/m
 internal const val AUDIO_SWITCH_REFUSED = "not support switch to audio, streamFormat: "
 
 /**
- * The LIVE player's message loop (X.0Jxr on 47.7.3). A switch to "ao", a room's sound on its own,
+ * The LIVE player's message loop (X.0JtB on 47.8.3). A switch to "ao", a room's sound on its own,
  * goes through there only while the server's EnableOnlyAudioInAoRes flag is on, and logs
  * [AUDIO_SWITCH_REFUSED] otherwise (#265).
  */
@@ -501,7 +501,7 @@ internal object LiveAudioSwitchGateFingerprint : Fingerprint(
 )
 
 /**
- * Whether the player is on a room's sound alone (LLJJJJLIIL on 47.7.3), which adds
+ * Whether the player is on a room's sound alone (LLJJJJLIIL on 47.8.3), which adds
  * only_audio=1 to the room's address so the picture stops downloading. It checks the same flag.
  */
 internal object LiveAudioUrlGateFingerprint : Fingerprint(
@@ -1270,7 +1270,7 @@ private const val DATA_CHANNEL = "Lcom/bytedance/ies/sdk/datachannel/DataChannel
 /**
  * Adds Audio only to the older picker's rows (#265), the one Share > Video quality opens on some
  * accounts (Login2, 2026-11-05). [viewCreated] gets its rows from a static builder that takes the
- * room's data channel (X.0fUN.LIZ on 47.7.3). TikTok also reads that builder to find the next lower
+ * room's data channel (X.0yBd.LIZ on 47.8.3). TikTok also reads that builder to find the next lower
  * quality on a weak connection, so the row goes only into the dialog's copy: right after the
  * builder answers, the extension answers the rows. A jump to the instruction after the answer
  * skips the hook, as it should, since the rows didn't just come from the builder there. Returns
@@ -1636,7 +1636,7 @@ private const val SET_BACKGROUND = "Landroid/view/View;->setBackground(Landroid/
  * view, from a lazy field and gives it a rounded shape drawn from the badge's server background
  * (a border around the server's art, a server color, or a border alone). The server draws that
  * art and the text over it for the white card, the low levels' "Lv." tile see-through, so on the
- * dark card the tile and its text went dark gray together (Login2, 2026-10-20). On 47.7.3 the
+ * dark card the tile and its text went dark gray together (Login2, 2026-10-20). On 47.8.3 the
  * bind is X.10n1.LJIJI again: it takes the badge and returns nothing, like 47.6.3's X.0wa2.LJIJI,
  * and sets the tile's background on each of those three paths. 47.7.2 had inlined it into
  * X.11kh.LJJIIZI(User)Z, with the same three calls.
@@ -1810,7 +1810,7 @@ internal fun guideBubbleView(builder: Method, classOf: (String) -> ClassDef?): S
 
 /**
  * The container LIVE anchors its toolbar tips in, the creator's direct message tip among them
- * (X.0Xoe on 47.7.3, #362): the one FrameLayout answering getWindowRect, beside getAnchorRect.
+ * (X.0XZJ on 47.8.3, #362): the one FrameLayout answering getWindowRect, beside getAnchorRect.
  * TikTok draws the tip white, and its text took the darkened room's white, so it read white on
  * white. Its (Context) constructor builds the tip's own view from that context too.
  */
@@ -1844,13 +1844,13 @@ internal fun hookLightRoomView(constructor: MutableMethod, view: String) {
     )
 }
 
-/** LIVE's widget base, real-named on 47.7.3. */
+/** LIVE's widget base, real-named on 47.8.3. */
 internal const val LIVE_WIDGET = "Lcom/bytedance/android/widget/Widget;"
 
-/** The manager LIVE's widgets load through, real-named on 47.7.3. */
+/** The manager LIVE's widgets load through, real-named on 47.8.3. */
 internal const val LIVE_WIDGET_MANAGER = "Lcom/bytedance/android/widget/WidgetManager;"
 
-/** The managers a LIVE room loads widgets through: the base and its two recycling kinds, real-named on 47.7.3. */
+/** The managers a LIVE room loads widgets through: the base and its two recycling kinds, real-named on 47.8.3. */
 internal val LIVE_WIDGET_MANAGERS = listOf(
     LIVE_WIDGET_MANAGER,
     "Lcom/bytedance/ies/sdk/widgets/RecyclableWidgetManager;",
@@ -1973,7 +1973,7 @@ private const val ANDROID_THEME = "Landroid/content/res/Resources\$Theme;"
 
 /**
  * LIVE's themed fragment base being created (#362). It hands its context, in a room the room
- * activity, to TikTok's LIVE color theme (X.0JgL.LIZ on 47.7.3), which applies one of LIVE's color
+ * activity, to TikTok's LIVE color theme (X.0Jbq.LIZ on 47.8.3), which applies one of LIVE's color
  * theme styles to that context's theme without force. Those styles define attributes the room's
  * views look up, the gift guide bubble's text among them, and they reach the room after the room
  * hook took its light copy.

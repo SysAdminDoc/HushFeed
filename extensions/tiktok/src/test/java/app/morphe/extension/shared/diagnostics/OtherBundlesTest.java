@@ -46,7 +46,7 @@ public class OtherBundlesTest {
     @Rule public final TemporaryFolder temporary = new TemporaryFolder();
 
     private static final String[] TIKTOK = {
-            "LX/0abc;", "Lcom/ss/android/ugc/aweme/main/MainActivity;", "Ljava/lang/String;", "run",
+            "LX/0b0s;", "Lcom/ss/android/ugc/aweme/main/MainActivity;", "Ljava/lang/String;", "run",
     };
     private static final String[] HUSHFEED = {
             "Lapp/morphe/extension/R;", "Lapp/morphe/extension/shared/Utils;",
@@ -117,7 +117,7 @@ public class OtherBundlesTest {
 
     @Test
     public void theOwnClassListReadsOneDescriptorALine() throws Exception {
-        byte[] list = "Lapp/morphe/extension/R;\nLapp/morphe/extension/tiktok/A$1;\n\nnot a class\nLX/0abc;\n"
+        byte[] list = "Lapp/morphe/extension/R;\nLapp/morphe/extension/tiktok/A$1;\n\nnot a class\nLX/0b0s;\n"
                 .getBytes("ISO-8859-1");
         assertEquals(new HashSet<>(Arrays.asList("Lapp/morphe/extension/R;", "Lapp/morphe/extension/tiktok/A$1;")),
                 OtherBundles.readOwnClasses(new ByteArrayInputStream(list)));
@@ -173,7 +173,7 @@ public class OtherBundlesTest {
     @Test
     public void stringDataBeforeTheIdsTableIsReadAgainFromTheStart() throws Exception {
         List<byte[]> strings = new ArrayList<>();
-        for (String name : new String[]{"LX/0abc;", "Lapp/rvx/extension/Patch;", "Lcom/ss/A;"}) {
+        for (String name : new String[]{"LX/0b0s;", "Lapp/rvx/extension/Patch;", "Lcom/ss/A;"}) {
             strings.add(name.getBytes("ISO-8859-1"));
         }
         byte[] dataFirst = dexWithDataFirst(strings);
@@ -208,7 +208,7 @@ public class OtherBundlesTest {
         // it looks like it comes after "Lapp/", and stopping there would miss every bundle.
         List<byte[]> strings = new ArrayList<>();
         strings.add(new byte[]{(byte) 0xC0, (byte) 0x80, 'x'});
-        for (String name : new String[]{"LX/0abc;", "Lapp/rvx/extension/Patch;", "Lcom/ss/A;"}) {
+        for (String name : new String[]{"LX/0b0s;", "Lapp/rvx/extension/Patch;", "Lcom/ss/A;"}) {
             strings.add(name.getBytes("ISO-8859-1"));
         }
         Set<String> classes = new HashSet<>();
@@ -232,7 +232,7 @@ public class OtherBundlesTest {
                 + "java.lang.IllegalStateException: boom\n"
                 + "\tat java.util.Objects.requireNonNull(Objects.java:220)\n"
                 + "\tat app.ftl.extension.dpi.DensityPatch.apply(DensityPatch.kt:20)\n"
-                + "\tat X.0abc.run(Unknown Source:4)\n"
+                + "\tat X.0b0s.run(Unknown Source:4)\n"
                 + "Caused by: java.lang.NullPointerException\n"
                 + "\tat app.ftl.extension.dpi.DensityPatch.apply(DensityPatch.kt:20)\n"
                 + "\tat app.ftl.extension.addsave.SaveDataPatch.save(SaveDataPatch.kt:9)\n"
@@ -304,11 +304,11 @@ public class OtherBundlesTest {
     public void aSuppressedExceptionsCauseIsNotTakenForTheChain() {
         // Breadth first, a suppressed exception's own cause can come after the crash's real one.
         String crash = "[STACK TRACE]\njava.lang.RuntimeException: outer\n"
-                + "\tat X.0abc.run(Unknown Source:4)\n"
+                + "\tat X.0b0s.run(Unknown Source:4)\n"
                 + "Caused by: java.lang.IllegalStateException: inner\n"
                 + "\tat app.ftl.extension.dpi.DensityPatch.apply(DensityPatch.kt:20)\n"
                 + "Suppressed: java.io.IOException: close\n"
-                + "\tat X.0def.close(Unknown Source:1)\n"
+                + "\tat X.0Ty3.close(Unknown Source:1)\n"
                 + "Caused by: java.io.IOException: disk\n"
                 + "\tat app.rvx.extension.cache.Cache.close(Cache.java:3)\n";
         List<String> lines = OtherBundles.crashLines(crash, null);

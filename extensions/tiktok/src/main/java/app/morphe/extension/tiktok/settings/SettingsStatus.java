@@ -145,6 +145,7 @@ public class SettingsStatus {
     public static boolean hideInboxStoriesEnabled = false;
     public static boolean chatDeclutterEnabled = false;
     public static boolean expandActivityListEnabled = false;
+    public static boolean bundleActivityLikesEnabled = false;
     public static boolean commentToolsEnabled = false;
     public static boolean hideCommentEggsEnabled = false;
     public static boolean commentSortControlsEnabled = false;
@@ -570,6 +571,10 @@ public class SettingsStatus {
 
     public static void enableExpandActivityList() {
         expandActivityListEnabled = true;
+    }
+
+    public static void enableBundleActivityLikes() {
+        bundleActivityLikesEnabled = true;
     }
 
     public static void enableDuetStitch() {

@@ -498,6 +498,8 @@ Entry %1$d has a field with the wrong data type.	A entrada %1$d tem um campo com
 Entry %1$d isn't an object.	A entrada %1$d não é um objeto.
 Errors	Erros
 Expand activity list	Expandir a lista de atividades
+Group likes per comment	Agrupar curtidas por comentário
+Show one row for each comment or video people liked, with everyone who liked it counted, instead of a new row for every few likes. Applies the next time the Likes list loads.	Mostra uma linha para cada comentário ou vídeo que as pessoas curtiram, contando todo mundo que curtiu, em vez de uma linha nova a cada poucas curtidas. Vale na próxima vez que a lista de curtidas carregar.
 Explore or Community	Explorar ou Comunidade
 Export diagnostic report	Exportar o relatório de diagnóstico
 Export loaded values	Exportar os valores carregados

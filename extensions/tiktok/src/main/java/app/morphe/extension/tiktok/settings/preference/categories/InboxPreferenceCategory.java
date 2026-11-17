@@ -37,6 +37,7 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
                 || SettingsStatus.inboxOnThisDayEnabled
                 || SettingsStatus.chatDeclutterEnabled
                 || SettingsStatus.expandActivityListEnabled
+                || SettingsStatus.bundleActivityLikesEnabled
                 || SettingsStatus.notificationControlsEnabled
                 || SettingsStatus.keepUnsentEnabled
                 || SettingsStatus.suggestedVideoPushBlockEnabled
@@ -246,6 +247,7 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
             }
         }
         if (SettingsStatus.notificationControlsEnabled || SettingsStatus.expandActivityListEnabled
+                || SettingsStatus.bundleActivityLikesEnabled
                 || SettingsStatus.suggestedVideoPushBlockEnabled) {
             addPreference(new SectionHeadingPreference(context, "Controls"));
         }
@@ -300,6 +302,16 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
                     "Show the whole Activity and New followers lists instead of stopping at a "
                             + "View all button.",
                     Settings.EXPAND_ACTIVITY_LIST
+            ));
+        }
+        if (SettingsStatus.bundleActivityLikesEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Group likes per comment",
+                    "Show one row for each comment or video people liked, with everyone who "
+                            + "liked it counted, instead of a new row for every few likes. Applies "
+                            + "the next time the Likes list loads.",
+                    Settings.BUNDLE_ACTIVITY_LIKES
             ));
         }
         if (SettingsStatus.autoStreakEnabled) {

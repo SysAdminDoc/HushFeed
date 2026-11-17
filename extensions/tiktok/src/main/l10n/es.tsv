@@ -498,6 +498,8 @@ Entry %1$d has a field with the wrong data type.	La entrada %1$d tiene un campo 
 Entry %1$d isn't an object.	La entrada %1$d no es un objeto.
 Errors	Errores
 Expand activity list	Ampliar la lista de actividad
+Group likes per comment	Agrupar los Me gusta por comentario
+Show one row for each comment or video people liked, with everyone who liked it counted, instead of a new row for every few likes. Applies the next time the Likes list loads.	Muestra una fila por cada comentario o video que le gustó a la gente, contando a todos los que le dieron Me gusta, en lugar de una fila nueva cada pocos Me gusta. Se aplica la próxima vez que se cargue la lista de Me gusta.
 Explore or Community	Explorar o Comunidad
 Export diagnostic report	Exportar el informe de diagnóstico
 Export loaded values	Exportar los valores cargados

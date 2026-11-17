@@ -561,6 +561,8 @@ Entry %1$d has a field with the wrong data type.	الإدخال %1$d يحتوي 
 Entry %1$d isn't an object.	العنصر %1$d ليس كائن.
 Errors	الأخطاء
 Expand activity list	توسيع قائمة النشاط
+Group likes per comment	تجميع الإعجابات حسب التعليق
+Show one row for each comment or video people liked, with everyone who liked it counted, instead of a new row for every few likes. Applies the next time the Likes list loads.	يعرض صفًا واحدًا لكل تعليق أو فيديو أعجب الناس، مع احتساب كل من أعجبه، بدلًا من صف جديد كل بضع إعجابات. يُطبَّق في المرة التالية التي تُحمَّل فيها قائمة الإعجابات.
 Explore or Community	استكشف أو المجتمع
 Export diagnostic report	تصدير التقرير التشخيصي
 Export loaded values	تصدير القيم المحملة

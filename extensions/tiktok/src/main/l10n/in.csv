@@ -483,6 +483,8 @@ Entry %1$d has a field with the wrong data type.,Entri %1$d memiliki kolom denga
 Entry %1$d isn't an object.,Entri %1$d bukan objek.
 Errors,Kesalahan
 Expand activity list,Bentangkan daftar aktivitas
+Group likes per comment,Kelompokkan suka per komentar
+"Show one row for each comment or video people liked, with everyone who liked it counted, instead of a new row for every few likes. Applies the next time the Likes list loads.","Menampilkan satu baris untuk setiap komentar atau video yang disukai orang, dengan semua yang menyukainya terhitung, bukan baris baru setiap beberapa suka. Berlaku saat daftar Suka dimuat berikutnya."
 Explore or Community,Jelajahi atau Komunitas
 Export diagnostic report,Ekspor laporan diagnostik
 Export loaded values,Ekspor nilai yang dimuat

@@ -500,6 +500,8 @@ Entry %1$d has a field with the wrong data type.	%1$d numaralı girdide veri tü
 Entry %1$d isn't an object.	%1$d numaralı girdi bir nesne değil.
 Errors	Hatalar
 Expand activity list	Etkinlik listesini genişlet
+Group likes per comment	Beğenileri yoruma göre grupla
+Show one row for each comment or video people liked, with everyone who liked it counted, instead of a new row for every few likes. Applies the next time the Likes list loads.	Beğenilen her yorum veya video için tek bir satır gösterir ve beğenen herkesi sayar; birkaç beğenide bir yeni satır açılmaz. Beğeniler listesi bir sonraki yüklendiğinde geçerli olur.
 Explore or Community	Keşfet veya Topluluk
 Export diagnostic report	Tanılama raporunu dışa aktar
 Export loaded values	Yüklenen değerleri dışa aktar

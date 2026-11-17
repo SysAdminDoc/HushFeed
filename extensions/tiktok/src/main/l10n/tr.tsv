@@ -2959,3 +2959,13 @@ Keep the middle unstretched	Ortayı uzatmadan koru
 Cover the whole window and keep the middle of the video at its own shape. A little comes off the sides, and only the top and bottom are stretched. A video far from the screen's shape keeps TikTok's size.	Tüm pencereyi kaplar ve videonun ortasını kendi şeklinde tutar. Kenarlardan biraz kırpılır, yalnızca üst ve alt kısım uzatılır. Şekli ekrandan çok farklı olan bir video TikTok'un boyutunu korur.
 # context: A Feature Gate Lab preset title: when a video is paused, TikTok shows a search tag on things in the frame, which opens its visual search
 Visual search on paused videos	Duraklatılmış videolarda görsel arama
+App icon	Uygulama simgesi
+Some home screens drop the icon when it changes. If yours does, add TikTok back from the app list.	Bazı ana ekranlar simge değiştiğinde onu kaldırır. Seninki de öyle yaparsa TikTok'u uygulama listesinden yeniden ekle.
+Icon changed	Simge değişti
+Couldn't change the icon. Try again.	Simge değiştirilemedi. Tekrar dene.
+TikTok colors	TikTok renkleri
+Black background	Siyah arka plan
+White on black	Siyah üzerine beyaz
+Black on white	Beyaz üzerine siyah
+Material You	Material You
+Your icon	Senin simgen

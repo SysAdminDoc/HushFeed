@@ -2962,3 +2962,13 @@ Keep the middle unstretched	คงสัดส่วนตรงกลางไ�
 Cover the whole window and keep the middle of the video at its own shape. A little comes off the sides, and only the top and bottom are stretched. A video far from the screen's shape keeps TikTok's size.	แสดงวิดีโอเต็มทั้งหน้าต่างโดยคงรูปทรงเดิมของส่วนกลางไว้ ด้านข้างจะถูกครอปออกเล็กน้อย และยืดเฉพาะด้านบนกับด้านล่าง วิดีโอที่มีรูปทรงต่างจากหน้าจอมากจะคงขนาดของ TikTok
 # context: A Feature Gate Lab preset title: when a video is paused, TikTok shows a search tag on things in the frame, which opens its visual search
 Visual search on paused videos	การค้นหาด้วยภาพในวิดีโอที่หยุดชั่วคราว
+App icon	ไอคอนแอป
+Some home screens drop the icon when it changes. If yours does, add TikTok back from the app list.	หน้าจอหลักบางแบบจะเอาไอคอนออกเมื่อไอคอนเปลี่ยน ถ้าของคุณเป็นแบบนั้น ให้เพิ่ม TikTok กลับจากรายการแอป
+Icon changed	เปลี่ยนไอคอนแล้ว
+Couldn't change the icon. Try again.	เปลี่ยนไอคอนไม่ได้ ลองอีกครั้ง
+TikTok colors	สีของ TikTok
+Black background	พื้นหลังสีดำ
+White on black	ขาวบนดำ
+Black on white	ดำบนขาว
+Material You	Material You
+Your icon	ไอคอนของคุณ

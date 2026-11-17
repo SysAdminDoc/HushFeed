@@ -11,6 +11,7 @@ import app.morphe.patcher.patch.decode
 import app.morphe.patcher.patch.listApkEntries
 import app.morphe.patcher.patch.patch
 import app.morphe.patcher.patch.PatchException
+import app.morphe.patcher.patch.booleanOption
 import app.morphe.patcher.patch.stringOption
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.diagnostics.BUILD_DETAILS_ASSET
@@ -157,13 +158,26 @@ val customLauncherIconPatch = patch(
             "note keeps it as it is. Hushfeed's H swaps it for a sharp H on every screen.",
         required = false,
     )
+    val iconPicker by booleanOption(
+        key = "iconPicker",
+        default = false,
+        title = "Pick the icon in Hushfeed",
+        description = "Puts every icon style in Hushfeed's settings under Appearance, so you can " +
+            "switch the home screen icon without patching again. A picture or background color " +
+            "you set here shows up there as Your icon and starts as the one in use. Android 8 " +
+            "and up. Some home screens drop the icon when it changes, so add it back from the app list.",
+        required = false,
+    )
+    dependsOn(appIconPickerPatch { iconPicker == true })
 
     execute {
         // Checked before anything is read, so a refused style, color or picture changes nothing.
         val chosen = iconStyle(style)
-        val background = iconBackground(backgroundColor) ?: chosen.background
+        val ownBackground = iconBackground(backgroundColor)
+        val background = ownBackground ?: chosen.background
         val picture = launcherPicture(pictureFile)
         val statusIcon = notificationIcon(notification)
+        val picker = iconPicker == true
         val packageRoot = resourceFile("res").parentFile
         val decodedRoots = decodedPackageRoots(packageRoot)
         val decodable by lazy { listDecodableFiles("res/**").toSet() }
@@ -176,7 +190,9 @@ val customLauncherIconPatch = patch(
         if (collisions.isNotEmpty()) throw PatchException(renamedIconPathsRefusal(collisions.size))
 
         val res = resourceFile("res")
-        val icons = launcherIconReferences(readXml(resourceFile("AndroidManifest.xml")))
+        val manifest = readXml(resourceFile("AndroidManifest.xml"))
+        if (picker) pickerLauncherEntry(manifest)
+        val icons = launcherIconReferences(manifest)
         icons.mapNotNull(::appResource).forEach { (type, name) -> decode("res/$type*/$name.xml") }
         val adaptiveIcons = icons.flatMap { adaptiveIconFiles(res, it) }.distinct()
         if (adaptiveIcons.isEmpty()) {
@@ -188,7 +204,8 @@ val customLauncherIconPatch = patch(
                 .mapNotNull { appResource(it.getAttribute(DRAWABLE)) }
                 .forEach { (type, name) -> decode("res/$type*/$name.xml") }
         }
-        val colorFiles = if (chosen != IconStyle.MATERIAL_YOU) emptyMap() else {
+        // The picker offers Material You whatever style was chosen, so it needs the colors too.
+        val colorFiles = if (chosen != IconStyle.MATERIAL_YOU && !picker) emptyMap() else {
             decode(*MATERIAL_YOU_COLORS.keys.map { "res/$it/$WALLPAPER_COLORS_FILE" }.toTypedArray())
             materialYouColorFiles(res)
         }
@@ -196,6 +213,23 @@ val customLauncherIconPatch = patch(
         // A dry run on a throwaway copy of each icon first: a refusal leaves every file as it was.
         val layers = adaptiveIcons.associateWith { file ->
             IconLayers.of(res, readXml(file)).also { restyleAdaptiveIcon(readXml(file), it, chosen, pictureReference, background) }
+        }
+        // The picker's icons are drawn from TikTok's own before it's restyled, and built whole in
+        // memory here, so they're also this dry run.
+        val pickerKeys = if (picker) pickerIconKeys(custom = picture != null || ownBackground != null) else emptyList()
+        val pickerIcons = if (!picker) emptyMap() else {
+            val sources = adaptiveIconFiles(res, icons.first())
+            if (sources.isEmpty()) {
+                throw PatchException("Custom launcher icon: TikTok's app icon ${icons.first()} has no adaptive version for the icon picker to copy.")
+            }
+            sources.flatMap { file ->
+                pickerKeys.map { key -> pickerIconFile(file, key) to pickerIcon(file, layers.getValue(file), key, chosen, pictureReference, background) }
+            }.toMap()
+        }
+        val legacyIcon = appResource(icons.first())?.let { (type, name) -> "@$type/$name" }
+        val legacyIcons = pickerKeys.associate { res.resolve("mipmap/${iconResourceName(it)}.xml") to legacyPickerIcon(legacyIcon!!) }
+        (pickerIcons.keys + legacyIcons.keys).firstOrNull { it.exists() }?.let {
+            throw PatchException("Custom launcher icon: this TikTok already has ${it.name}, so it looks patched with the icon picker before. Nothing was changed.")
         }
         if (statusIcon != NotificationIcon.TIKTOK) {
             decode("res/drawable*/$STATUS_ICON.png")
@@ -206,10 +240,16 @@ val customLauncherIconPatch = patch(
         // Morphe Manager patches on the phone, where there's no image library to resize it with.
         picture?.let { res.resolve("drawable-nodpi/$PICTURE_NAME.png").apply { parentFile.mkdirs() }.writeBytes(it.bytes) }
         for ((folder, file) in colorFiles) appendColorEntries(file, materialYouColorEntries(folder))
+        for ((file, icon) in pickerIcons) writeXml(icon, file)
+        for ((file, text) in legacyIcons) file.apply { parentFile.mkdirs() }.writeText(text, Charsets.UTF_8)
         for ((file, layer) in layers) {
             document(file.relativeTo(resourceFile(".")).invariantSeparatorsPath).use { icon ->
                 restyleAdaptiveIcon(icon, layer, chosen, pictureReference, background)
             }
+        }
+        if (picker) {
+            val enabled = if (CUSTOM_ICON_KEY in pickerKeys) CUSTOM_ICON_KEY else chosen.key
+            document("AndroidManifest.xml").use { addIconPicker(it, pickerKeys, enabled) }
         }
         if (statusIcon == NotificationIcon.HUSHFEED) {
             // An anydpi file wins over TikTok's xhdpi picture on every screen, and the picture

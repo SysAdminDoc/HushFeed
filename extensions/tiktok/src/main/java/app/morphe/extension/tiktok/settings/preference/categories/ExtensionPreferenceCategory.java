@@ -13,6 +13,7 @@ import app.morphe.extension.tiktok.misc.EffectDeviceSpoof;
 import app.morphe.extension.tiktok.privacy.StoreIdentity;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
+import app.morphe.extension.tiktok.settings.preference.AppIconPreference;
 import app.morphe.extension.tiktok.settings.preference.ChoicePreference;
 import app.morphe.extension.tiktok.settings.preference.ImportedFontPreference;
 import app.morphe.extension.tiktok.settings.preference.InputTextPreference;
@@ -51,6 +52,7 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                 || SettingsStatus.systemFontEnabled
                 || SettingsStatus.turnOffHapticsEnabled
                 || SettingsStatus.screenTransitionsEnabled
+                || hasAppIconPicker()
                 || SettingsStatus.nonPersonalizedSearchEnabled
                 || SettingsStatus.liveSearchEnabled
                 || SettingsStatus.hideSearchSuggestionsEnabled
@@ -77,6 +79,14 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                 || hasPerformance();
     }
 
+    /**
+     * The App icon row, when the icon patch put the picker in. Android 6 and 7 launchers draw
+     * none of the patch's styles, so the row would only switch between copies of one icon.
+     */
+    private static boolean hasAppIconPicker() {
+        return SettingsStatus.appIconPickerEnabled && android.os.Build.VERSION.SDK_INT >= 26;
+    }
+
     /** The four Performance patches, each with one switch in front of its hooks. */
     private static boolean hasPerformance() {
         return SettingsStatus.skipSplashAdEnabled
@@ -101,7 +111,8 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                     Settings.FOLDABLE_SPLIT_VIEW_MIN_WIDTH_DP, "%1$s dp", "%1$s dp"));
         }
         if (SettingsStatus.amoledDarkModeEnabled || SettingsStatus.systemFontEnabled
-                || SettingsStatus.turnOffHapticsEnabled || SettingsStatus.screenTransitionsEnabled) {
+                || SettingsStatus.turnOffHapticsEnabled || SettingsStatus.screenTransitionsEnabled
+                || hasAppIconPicker()) {
             addPreference(new SectionHeadingPreference(context, "Appearance"));
         }
         if (SettingsStatus.amoledDarkModeEnabled) {
@@ -162,6 +173,10 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                             + "still follow your finger.",
                     Settings.TURN_OFF_SCREEN_TRANSITIONS
             ));
+        }
+        if (hasAppIconPicker()) {
+            // Discussion #114: the home screen icon, switched without patching again.
+            addPreference(new AppIconPreference(context));
         }
         boolean hasSearch = SettingsStatus.nonPersonalizedSearchEnabled || SettingsStatus.liveSearchEnabled
                 || SettingsStatus.hideSearchSuggestionsEnabled || SettingsStatus.searchAutoplayEnabled;

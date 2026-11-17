@@ -99,6 +99,7 @@ public class SettingsStatus {
     public static boolean turnOffHapticsEnabled = false;
     public static boolean amoledDarkModeEnabled = false;
     public static boolean screenTransitionsEnabled = false;
+    public static boolean appIconPickerEnabled = false;
     public static boolean diagnosticsEnabled = false;
     public static boolean blockAuthorEnabled = false;
     public static boolean authorRegionEnabled = false;
@@ -516,6 +517,10 @@ public class SettingsStatus {
 
     public static void enableScreenTransitions() {
         screenTransitionsEnabled = true;
+    }
+
+    public static void enableAppIconPicker() {
+        appIconPickerEnabled = true;
     }
 
     public static void enableAlwaysShowPublishDate() {

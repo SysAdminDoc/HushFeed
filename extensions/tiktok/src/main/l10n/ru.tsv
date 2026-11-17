@@ -3142,3 +3142,13 @@ Keep the middle unstretched	Не растягивать середину
 Cover the whole window and keep the middle of the video at its own shape. A little comes off the sides, and only the top and bottom are stretched. A video far from the screen's shape keeps TikTok's size.	Заполняет всё окно, а середина видео сохраняет свою форму. По бокам немного обрезается, а растягиваются только верх и низ. Видео, форма которого сильно отличается от экрана, сохраняет размер TikTok.
 # context: A Feature Gate Lab preset title: when a video is paused, TikTok shows a search tag on things in the frame, which opens its visual search
 Visual search on paused videos	Визуальный поиск на видео на паузе
+App icon	Значок приложения
+Some home screens drop the icon when it changes. If yours does, add TikTok back from the app list.	Некоторые рабочие столы убирают значок, когда он меняется. Если ваш так делает, добавьте TikTok снова из списка приложений.
+Icon changed	Значок изменён
+Couldn't change the icon. Try again.	Не удалось изменить значок. Попробуйте ещё раз.
+TikTok colors	Цвета TikTok
+Black background	Чёрный фон
+White on black	Белый на чёрном
+Black on white	Чёрный на белом
+Material You	Material You
+Your icon	Ваш значок

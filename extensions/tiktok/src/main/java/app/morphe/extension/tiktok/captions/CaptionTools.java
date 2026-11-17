@@ -37,6 +37,14 @@ public final class CaptionTools {
     private static String currentId, cueId, cue = "";
     private static boolean clear;
     /**
+     * TikTok's clear display signal for a video that isn't the current one yet, and what it said.
+     * With clear display carried over a swipe, 47.7.3 clears the incoming video about 25 ms before
+     * the feed names it current, so the signal was dropped and the kept line came back on the
+     * first video only (#428). The next video change takes it when it names that video.
+     */
+    private static String earlyClearId;
+    private static boolean earlyClear;
+    /**
      * How far above the window's bottom TikTok's caption strip last ended, in pixels, or -1
      * before one has been seen. The kept line used to sit at a fixed 96 dp, near the bottom edge
      * and below where the reader had been looking (#141), so it takes the strip's spot now. It
@@ -72,6 +80,8 @@ public final class CaptionTools {
             cueId = null;
             cue = "";
             clear = false;
+            earlyClearId = null;
+            earlyClear = false;
         });
     }
 
@@ -81,7 +91,8 @@ public final class CaptionTools {
             currentId = id;
             cueId = null;
             cue = "";
-            clear = false;
+            clear = id != null && id.equals(earlyClearId) && earlyClear;
+            earlyClearId = null;
             refresh();
         });
     }
@@ -89,7 +100,10 @@ public final class CaptionTools {
     public static void onClear(Object aweme, boolean enabled) {
         String id = Reflect.string(aweme, "getAid", "aid");
         Utils.runOnMainThreadNowOrLater(() -> {
-            if (id != null && id.equals(currentId)) {
+            if (id != null && !id.equals(currentId)) {
+                earlyClearId = id;
+                earlyClear = enabled;
+            } else if (id != null) {
                 // TikTok hasn't hidden its strip yet, so it still sits where the reader saw it.
                 View decor = observedDecor.get();
                 if (enabled && !clear && decor != null) noteStrip(decor, true);

@@ -626,6 +626,43 @@ public class CaptionToolsTest {
     }
 
     /**
+     * Clear display carried over a swipe (#428). On 47.7.3 TikTok clears the incoming video about
+     * 25 ms before the feed names it current, so the kept line came back on the first video only:
+     * every video after a swipe got its cues with clear display off.
+     */
+    @Test public void clearDisplayCarriedOverASwipeKeepsTheCaptionOnTheNextVideo() {
+        try (var owner = Robolectric.buildActivity(CaptionActivity.class).setup().visible()) {
+            var activity = owner.get();
+            Utils.setContext(activity);
+            FrameLayout source = new FrameLayout(activity);
+            activity.setContentView(source);
+            owner.windowFocusChanged(true);
+            Settings.KEEP_CAPTIONS_CLEAR_DISPLAY.save(true);
+            CaptionTools.onVideoChanged("first");
+            CaptionTools.onCaption(source, "first", "EXPANDED", "First cue");
+            CaptionTools.onClear(new Video("first"), true);
+            TextView caption = find(activity.getWindow().getDecorView(), "First cue");
+            assertNotNull(caption);
+            assertEquals(View.VISIBLE, caption.getVisibility());
+
+            // The order the swipe arrived in on the emulator: the old video leaves clear
+            // display, the new one enters it, and only then does the feed name it current.
+            CaptionTools.onClear(new Video("first"), false);
+            CaptionTools.onClear(new Video("second"), true);
+            CaptionTools.onVideoChanged("second");
+            CaptionTools.onCaption(source, "second", "EXPANDED", "Second cue");
+            assertEquals("Second cue", caption.getText().toString());
+            assertEquals("the kept caption stayed away after the swipe", View.VISIBLE, caption.getVisibility());
+
+            // A signal for a video the feed never landed on doesn't carry to the one it did.
+            CaptionTools.onClear(new Video("skipped"), true);
+            CaptionTools.onVideoChanged("third");
+            CaptionTools.onCaption(source, "third", "EXPANDED", "Third cue");
+            assertEquals(View.GONE, caption.getVisibility());
+        }
+    }
+
+    /**
      * The line is for clear display, and on 47.0.3 clear display sets TikTok's tab bar GONE. The
      * feed check read that as "not the feed", so the line hid itself as soon as it was wanted: on
      * the S22 on 2026-09-23 it had been laid out with a cue, and stayed GONE through every later

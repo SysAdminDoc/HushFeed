@@ -12,6 +12,7 @@ import android.view.ViewConfiguration;
 import android.widget.FrameLayout;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.tiktok.SettingsContextRule;
+import app.morphe.extension.tiktok.blockauthor.CurrentVideoAuthor;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 import java.time.Duration;
@@ -53,6 +54,14 @@ public class RailHoldTest {
         Settings.EDGE_SEEK_SECONDS.resetToDefault();
         RailHold.resetForTests();
         HookStatus.clear();
+        // A video another test left playing would be the one the Favorites hold saves.
+        try {
+            java.lang.reflect.Method clear = CurrentVideoAuthor.class.getDeclaredMethod("resetForTests");
+            clear.setAccessible(true);
+            clear.invoke(null);
+        } catch (ReflectiveOperationException e) {
+            throw new AssertionError(e);
+        }
     }
 
     /**

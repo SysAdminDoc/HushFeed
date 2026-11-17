@@ -64,6 +64,31 @@ internal val APP_AB_SHAPES = listOf(
     APP_AB_BOOLEAN, APP_AB_DOUBLE, APP_AB_FLOAT, APP_AB_INT, APP_AB_LONG, APP_AB_STRING, APP_AB_RAW,
 )
 
+/** The six typed getters, which the [AppAbRole.TWIN] carries without the raw one. */
+internal val APP_AB_TYPED_SHAPES = APP_AB_SHAPES - APP_AB_RAW
+
+/**
+ * What a class is to the app AB settings, judged by the getters it carries.
+ *
+ * <p>Every 47.x build carries two such classes. The [MAIN] one has all seven getters and is the
+ * one the patches hooked alone through 46.x. The [TWIN] has the six typed getters with the same
+ * parameters (so the same key registers) but no raw one, reads through a store of its own, and is
+ * where nearly every gate read lands: on 47.8.3 `Lsp4/m;` takes 6,299 int reads and 7,026 boolean
+ * reads to `LX/03JE;`'s four and four. 47.1.4 has `LX/032I;` beside `LX/02yF;`, 47.7.3 `LX/03OH;`
+ * beside `LX/03J6;`. A hook on the main class alone never saw `basic_vv_batch_size`, the Favorites
+ * gates or the surface view gate.
+ */
+internal enum class AppAbRole { MAIN, TWIN }
+
+internal fun appAbRole(classDef: ClassDef): AppAbRole? {
+    // The double getter's return type alone rules out nearly every class, so the shape set is
+    // only built for the few that have one.
+    if (classDef.methods.none { it.returnType == "D" && it.shape() == APP_AB_DOUBLE }) return null
+    val shapes = classDef.methods.mapTo(HashSet()) { it.shape() }
+    if (!APP_AB_TYPED_SHAPES.all { it in shapes }) return null
+    return if (APP_AB_RAW in shapes) AppAbRole.MAIN else AppAbRole.TWIN
+}
+
 /**
  * The class's typed object getter: `(String key, boolean, boolean, Class type, int)`, `LJIIJ` on
  * 47.8.3. Every generated accessor for a class-typed gate ends here, with the key in p1 and the
@@ -81,35 +106,48 @@ internal const val APP_AB_INT_KEY_REGISTER = "p3"
 /** The boolean getter's key sits after `this` and one int, which [APP_AB_BOOLEAN] holds it to. */
 internal const val APP_AB_BOOLEAN_KEY_REGISTER = "p2"
 
-private val resolved = WeakHashMap<PackageMetadata, String>()
+private class AppAbClasses(val main: String, val twins: List<String>)
+
+private val resolved = WeakHashMap<PackageMetadata, AppAbClasses>()
 
 /**
- * The type of the app AB class in the build being patched, found by the getters it carries.
+ * The app AB classes in the build being patched, found by the getters they carry.
  *
- * <p>Walked once per patch run and remembered, because three patches ask and the walk visits
+ * <p>Walked once per patch run and remembered, because several patches ask and the walk visits
  * every class. Each run has its own package metadata, which is what tells the runs apart.
  */
-internal fun appAbClassType(): String = synchronized(resolved) {
+private fun appAbClasses(): AppAbClasses = synchronized(resolved) {
     resolved.getOrPut(packageMetadata) {
-        val carriers = mutableListOf<ClassDef>()
+        val main = mutableListOf<String>()
+        val twins = mutableListOf<String>()
         classDefForEach { classDef ->
-            // The double getter's return type alone rules out nearly every class, so the shape
-            // set is only built for the few that have one.
-            if (classDef.methods.none { it.returnType == "D" && it.shape() == APP_AB_DOUBLE }) return@classDefForEach
-            val shapes = classDef.methods.mapTo(HashSet()) { it.shape() }
-            if (APP_AB_SHAPES.all { it in shapes }) carriers += classDef
+            when (appAbRole(classDef)) {
+                AppAbRole.MAIN -> main += classDef.type
+                AppAbRole.TWIN -> twins += classDef.type
+                null -> Unit
+            }
         }
-        if (carriers.size != 1) {
+        if (main.size != 1) {
             throw PatchException(
                 "App AB boundary: expected one class carrying all seven AB getter shapes, " +
-                    "found ${carriers.size}.",
+                    "found ${main.size}.",
             )
         }
-        carriers.single().type
+        AppAbClasses(main.single(), twins)
     }
 }
 
+/** The type of the class carrying all seven getters, the raw one included. */
+internal fun appAbClassType(): String = appAbClasses().main
+
 internal fun appAbClass(): MutableClass = mutableClassDefBy(appAbClassType())
+
+/**
+ * Every class carrying the six typed getters: the main class first, then its twins (none before
+ * 47.x). A typed getter hook goes on all of them, since TikTok reads most gates through the twin.
+ */
+internal fun appAbTypedClasses(): List<MutableClass> =
+    appAbClasses().let { listOf(it.main) + it.twins }.map { mutableClassDefBy(it) }
 
 /**
  * The one method of the class with this shape. Two of them would mean the shape has stopped
@@ -161,8 +199,8 @@ private fun hookAppAbBoundary(
     what: String,
     extensionDescriptor: String,
     extensionMethod: String,
-) {
-    appAbClass().methodOfShape(shape, what).apply {
+) = appAbTypedClasses().forEach { holder ->
+    holder.methodOfShape(shape, what).apply {
         val returns = implementation!!.instructions.withIndex()
             .filter { it.value.opcode == Opcode.RETURN }
             .map { it.index }

@@ -14,6 +14,7 @@ import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -78,27 +79,59 @@ class AppAbShapeTest {
         assertTrue(refused.message, refused.message.orEmpty().contains("found 2"))
     }
 
-    private fun method(name: String, returnType: String, parameters: List<String>) = ImmutableMethod(
+    @Test
+    fun `all seven getters make the main class`() {
+        assertEquals(AppAbRole.MAIN, appAbRole(classDefWith(gettersOf(APP_AB_SHAPES))))
+    }
+
+    /** 47.x reads most gates through a class with the typed getters and no raw one. */
+    @Test
+    fun `the six typed getters without the raw one make a twin`() {
+        assertEquals(AppAbRole.TWIN, appAbRole(classDefWith(gettersOf(APP_AB_TYPED_SHAPES))))
+    }
+
+    @Test
+    fun `a class missing a typed getter is neither`() {
+        assertNull(appAbRole(classDefWith(gettersOf(APP_AB_SHAPES - APP_AB_INT))))
+        assertNull(appAbRole(classDefWith(gettersOf(APP_AB_TYPED_SHAPES - APP_AB_DOUBLE))))
+    }
+
+    /** The hooks read the key from an instance method's registers, so static getters can't stand in. */
+    @Test
+    fun `static getters of the same signatures are neither`() {
+        val statics = gettersOf(APP_AB_TYPED_SHAPES, AccessFlags.PUBLIC.value or AccessFlags.STATIC.value)
+        assertNull(appAbRole(classDefWith(statics)))
+    }
+
+    private fun gettersOf(shapes: List<MethodShape>, flags: Int = AccessFlags.PUBLIC.value or AccessFlags.FINAL.value) =
+        shapes.mapIndexed { index, shape -> method("getter$index", shape.returnType, shape.parameters, flags) }
+
+    private fun method(
+        name: String,
+        returnType: String,
+        parameters: List<String>,
+        flags: Int = AccessFlags.PUBLIC.value or AccessFlags.FINAL.value,
+    ) = ImmutableMethod(
         "LX/03JN;",
         name,
         parameters.map { ImmutableMethodParameter(it, null, null) },
         returnType,
-        AccessFlags.PUBLIC.value or AccessFlags.FINAL.value,
+        flags,
         null,
         null,
         ImmutableMethodImplementation(8, emptyList(), null, null),
     )
 
-    private fun classWith(vararg methods: ImmutableMethod) = MutableClass(
-        ImmutableClassDef(
-            "LX/03JN;",
-            AccessFlags.PUBLIC.value,
-            "Ljava/lang/Object;",
-            null,
-            null,
-            null,
-            null,
-            methods.toList(),
-        ),
+    private fun classDefWith(methods: List<ImmutableMethod>) = ImmutableClassDef(
+        "LX/03JN;",
+        AccessFlags.PUBLIC.value,
+        "Ljava/lang/Object;",
+        null,
+        null,
+        null,
+        null,
+        methods,
     )
+
+    private fun classWith(vararg methods: ImmutableMethod) = MutableClass(classDefWith(methods.toList()))
 }

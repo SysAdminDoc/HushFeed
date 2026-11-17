@@ -16,6 +16,7 @@ import app.morphe.patches.tiktok.misc.absettings.APP_AB_RAW
 import app.morphe.patches.tiktok.misc.absettings.APP_AB_TYPED_OBJECT
 import app.morphe.patches.tiktok.misc.absettings.MethodShape
 import app.morphe.patches.tiktok.misc.absettings.appAbClass
+import app.morphe.patches.tiktok.misc.absettings.appAbTypedClasses
 import app.morphe.patches.tiktok.misc.absettings.methodOfShape
 import app.morphe.patches.tiktok.misc.absettings.methodsOfShape
 import app.morphe.patches.tiktok.misc.absettings.shape
@@ -110,9 +111,14 @@ val featureGateLabPatch = bytecodePatch(
     compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
-        boundaries.forEach { boundary ->
-            val target = if (boundary.targetDescriptor == APP_AB) appAbClass()
-            else mutableClassDefBy(boundary.targetDescriptor)
+        // The app AB rows go on its twin too, where nearly every gate read lands on 47.x (see
+        // AppAbRole). Only the twin's outer getters: each hands on to an inner one with an extra
+        // int that a few hundred callers also use directly, and hooking both would hand the outer
+        // hook the forced value as the original, which is what the Lab then shows.
+        boundaries.flatMap { boundary ->
+            if (boundary.targetDescriptor == APP_AB) appAbTypedClasses().map { boundary to it }
+            else listOf(boundary to mutableClassDefBy(boundary.targetDescriptor))
+        }.forEach { (boundary, target) ->
             val shape = MethodShape(boundary.returnType, boundary.parameters, boundary.isStatic)
             // Whether the name is required turns on whether R8 assigned it, not on whether the
             // class name did. SettingsManager keeps its own name and calls its getters LIZ and

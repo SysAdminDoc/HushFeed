@@ -135,6 +135,15 @@ internal object LookupScan {
         for (match in GET_IDENTIFIER_CALL.findAll(text)) {
             if (source.quoted[match.range.first]) continue
             val arguments = splitArguments(argumentText(text, match.range.last + 1))
+            // The shared ResourceUtils.getIdentifier(ResourceType.X, name) form: its type is the
+            // enum constant. Any type but ID is not a view id; an ID there names no package this
+            // could check, so it is reported.
+            val resourceType = if (arguments.size == 2) RESOURCE_TYPE.matchEntire(arguments[0].trim())?.groupValues?.get(1) else null
+            if (resourceType != null) {
+                if (resourceType == "ID") found += Call(match.range.first, "", "",
+                    "a view id looked up through ResourceUtils names no package; write getIdentifier(name, \"id\", package)")
+                continue
+            }
             if (arguments.size != 3) {
                 found += Call(match.range.first, "", "",
                     "a getIdentifier with ${arguments.size} argument(s) cannot be read as (name, type, package)")
@@ -446,6 +455,7 @@ internal object LookupScan {
     private val RESOURCE_ID_CACHE_FIELD = Regex("""\bResourceIdCache\s+(\w+)\s*=""")
     private val RESOLVE_CALL = Regex("""\b(\w+)\s*\.\s*resolve\s*\(""")
     private val GET_IDENTIFIER_CALL = Regex("""\bgetIdentifier\s*\(""")
+    private val RESOURCE_TYPE = Regex("""(?:\w+\.)*ResourceType\.([A-Z_]+)""")
     private val CONSTANT = Regex("""static\s+final\s+String((?:\s*\[])*)\s+(\w+)\s*=\s*([^;]+);""")
     private val LOCAL_ARRAY = Regex("""String\[]\s+(\w+)\s*=\s*(\{[^}]*})""")
     /** A class-level method: four spaces of indentation, then modifiers, a type, the name and its parameters. */

@@ -123,7 +123,11 @@ public class AndroidTargetChangesGuardTest {
             new ReviewedWrites("privacy/AppLock.java", 1,
                     "safe: writes mViews on the WindowManagerGlobal instance getInstance() "
                             + "returned, an instance field, with a list holding the same windows; "
-                            + "a refusal is caught and App lock finds the windows on its own passes"));
+                            + "a refusal is caught and App lock finds the windows on its own passes"),
+            new ReviewedWrites("privacy/QuickRemove.java", 1,
+                    "safe: writes mmItems on the profile grid adapter the tapped cell belongs "
+                            + "to, the same instance field GridSort writes, with a copy of the "
+                            + "list minus the removed video, only when that list can't change"));
 
     /**
      * Addresses written into the payload, and what is done with them.
@@ -183,6 +187,11 @@ public class AndroidTargetChangesGuardTest {
                         + "it carries the client id, scopes and redirect from TikTok's own request, "
                         + "and the WebView stops at the www.tiktok.com redirect. Spotify's "
                         + "certificates are publicly logged, so CT enforcement passes it");
+        REVIEWED_ADDRESSES.put("https://localhost/",
+                "not a remote host: the base URL Orbu's telemetry uploads are pointed at with "
+                        + "Disable telemetry on (#379), the phone itself, which has nothing "
+                        + "listening there, so the connection is refused before any certificate "
+                        + "is shown");
         REVIEWED_ADDRESSES.put("https://github.com/SysAdminDoc/HushFeed/releases/tag/",
                 "not fetched: the update card's release page, opened in the reader's browser "
                         + "when Morphe Manager isn't installed");
@@ -240,7 +249,8 @@ public class AndroidTargetChangesGuardTest {
         // LIVE profile card label writes for #159, and the grid sort chip's re-sort for #180.
         // Four LIVE Audio only row writes for #265 on 2026-11-05, two Discover tab writes for #98.
         // The grid search's reshow on 2026-11-10, App lock's watched window list on 2026-11-12.
-        assertEquals("the audit counted twenty-four reflective writes on 2026-11-12", 24, total);
+        // Tap to remove's fixed-list grid copy on 2026-11-17.
+        assertEquals("the audit counted twenty-five reflective writes on 2026-11-17", 25, total);
     }
 
     @Test

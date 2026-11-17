@@ -2661,6 +2661,14 @@ Not available on this TikTok version	Non disponibile in questa versione di TikTo
 Sign in to TikTok first	Prima accedi a TikTok
 A removal is already running	Una rimozione è già in corso
 Cancelled	Annullato
+# context: A switch under Clean up your account on the Privacy page
+Tap a video to remove it	Tocca un video per rimuoverlo
+In your own Liked videos, Favorites and Reposts, a tap takes the video off that list instead of opening it.	Nei tuoi video con Mi piace, nei Preferiti e nelle ripubblicazioni, un tocco toglie il video da quell'elenco invece di aprirlo.
+# context: Toasts after one tap on your own Liked, Favorites or Reposts grid removes a video, or fails to
+Couldn't remove that video. Try again.	Impossibile rimuovere il video. Riprova.
+Removed from Liked videos	Rimosso dai video con Mi piace
+Removed from Favorites	Rimosso dai Preferiti
+Removed from Reposts	Rimosso dalle ripubblicazioni
 Show inbox filters	Mostra i filtri della posta in arrivo
 Adds the Main, Requests, Unread and Starred tabs above your chats, the ones TikTok gives creator accounts.	Aggiunge sopra le tue chat le schede Principale, Richieste, Non letti e Preferiti, quelle che TikTok dà agli account creator.
 Rebuild message search	Ricostruisci la ricerca dei messaggi

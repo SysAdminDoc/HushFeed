@@ -974,6 +974,10 @@ public class SettingsStatus {
     public static boolean accountCleanupEnabled = false;
     public static void enableAccountCleanup() { accountCleanupEnabled = true; }
 
+    /** Account cleanup's grid and Reposts tap hooks went in, so Tap a video to remove it can work (#401). */
+    public static boolean quickRemoveEnabled = false;
+    public static void enableQuickRemove() { quickRemoveEnabled = true; }
+
     private static final String SWITCH_SUFFIX = "Enabled";
 
     /**

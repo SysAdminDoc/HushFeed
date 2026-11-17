@@ -2664,6 +2664,14 @@ Not available on this TikTok version	In dieser TikTok-Version nicht verfügbar
 Sign in to TikTok first	Melde dich zuerst bei TikTok an
 A removal is already running	Es läuft bereits eine Entfernung
 Cancelled	Abgebrochen
+# context: A switch under Clean up your account on the Privacy page
+Tap a video to remove it	Zum Entfernen auf ein Video tippen
+In your own Liked videos, Favorites and Reposts, a tap takes the video off that list instead of opening it.	In deinen eigenen gelikten Videos, Favoriten und Reposts entfernt ein Tippen das Video aus dieser Liste, statt es zu öffnen.
+# context: Toasts after one tap on your own Liked, Favorites or Reposts grid removes a video, or fails to
+Couldn't remove that video. Try again.	Video nicht entfernt. Versuch es erneut.
+Removed from Liked videos	Aus gelikten Videos entfernt
+Removed from Favorites	Aus Favoriten entfernt
+Removed from Reposts	Aus Reposts entfernt
 Show inbox filters	Posteingangsfilter anzeigen
 Adds the Main, Requests, Unread and Starred tabs above your chats, the ones TikTok gives creator accounts.	Fügt über deinen Chats die Tabs Haupt, Anfragen, Ungelesen und Markiert hinzu, die TikTok sonst Creator-Konten gibt.
 Rebuild message search	Nachrichtensuche neu aufbauen

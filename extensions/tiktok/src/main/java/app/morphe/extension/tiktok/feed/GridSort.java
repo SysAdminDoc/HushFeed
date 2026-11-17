@@ -47,6 +47,7 @@ import app.morphe.extension.shared.settings.Setting;
 import app.morphe.extension.shared.settings.StringSetting;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
 import app.morphe.extension.tiktok.download.GridPicker;
+import app.morphe.extension.tiktok.privacy.QuickRemove;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.preference.SettingsUi;
@@ -490,6 +491,24 @@ public final class GridSort {
             askForNextPage(adapter);
         } else {
             endHold(grid);
+        }
+    }
+
+    /**
+     * A video taken off this adapter's grid by Tap a video to remove it (#401). It leaves the lists
+     * kept to sort and search the grid too, so a later sort doesn't bring it back. TikTok's own
+     * list loses it in place, since later pages are matched to it by identity.
+     */
+    public static void forget(Object adapter, String id) {
+        if (adapter == null || id == null) return;
+        synchronized (ORIGINALS) {
+            List<?> handed = HANDED.get(adapter);
+            boolean handedDropped = handed == null || QuickRemove.dropIn(handed, id);
+            if (handed != null) LOADED.put(adapter, handed.size());
+            List<?> original = ORIGINALS.get(adapter);
+            if (original != null && !(original == handed ? handedDropped : QuickRemove.dropIn(original, id))) {
+                ORIGINALS.put(adapter, QuickRemove.without(original, id));
+            }
         }
     }
 

@@ -431,10 +431,14 @@ public final class GridPicker {
      * such list.
      */
     static List<?> listOf(View cell) {
+        Object data = Reflect.invoke(adapterOf(cell), "getData");
+        return data instanceof List ? (List<?>) data : null;
+    }
+
+    /** The adapter of the grid a cell sits in, or null. */
+    public static Object adapterOf(View cell) {
         for (android.view.ViewParent parent = cell.getParent(); parent instanceof View; parent = parent.getParent()) {
-            if (!isRecyclerView(parent.getClass())) continue;
-            Object data = Reflect.invoke(Reflect.invoke(parent, "getAdapter"), "getData");
-            return data instanceof List ? (List<?>) data : null;
+            if (isRecyclerView(parent.getClass())) return Reflect.invoke(parent, "getAdapter");
         }
         return null;
     }

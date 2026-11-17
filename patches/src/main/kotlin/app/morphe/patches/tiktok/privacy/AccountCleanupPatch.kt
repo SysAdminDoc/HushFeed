@@ -6,6 +6,7 @@ package app.morphe.patches.tiktok.privacy
 
 import app.morphe.patcher.patch.classDefForEach
 import app.morphe.patcher.patch.mutableClassDefBy
+import app.morphe.patcher.patch.packageMetadata
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.checkCast
 import app.morphe.patcher.patch.PatchException
@@ -51,7 +52,8 @@ val accountCleanupPatch = bytecodePatch(
     name = "Account cleanup",
     description = "Adds Remove all reposts, Remove all likes and Clear Favorites to Hushfeed " +
         "settings > Privacy. Each one takes items off your account one at a time through TikTok's " +
-        "own requests, with a pause between them, and stops on the first error.",
+        "own requests, with a pause between them, and stops on the first error. A switch there " +
+        "also lets one tap remove a video from your own Liked videos, Favorites or Reposts.",
 ) {
     category("Privacy")
     dependsOn(settingsPatch, sharedExtensionPatch)
@@ -74,6 +76,10 @@ val accountCleanupPatch = bytecodePatch(
         fillServiceBridge("unavailableFavoritesService",
             unavailable.singleOrPatchException("Account cleanup: unavailable Favorites service"),
             "unavailable Favorites")
+        if (hookQuickRemove(packageMetadata.versionName)) {
+            SettingsStatusLoadFingerprint.method.addInstruction(0,
+                "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableQuickRemove()V")
+        }
         SettingsStatusLoadFingerprint.method.addInstruction(0,
             "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableAccountCleanup()V")
     }

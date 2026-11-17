@@ -534,6 +534,7 @@ Couldn't read that photo. Try another one.,Couldn't read that photo. Try another
 Couldn't read this list. Close it and try again.,Couldn't read this list. Close it and try again.
 Couldn't rebuild search. Try again.,Couldn't rebuild search. Try again.
 Couldn't recover a change. Restore a backup if needed.,Couldn't recover a change. Restore a backup if needed.
+Couldn't remove that video. Try again.,Couldn't remove that video. Try again.
 Couldn't remove the imported font. Try again.,Couldn't remove the imported font. Try again.
 Couldn't reset the settings. Try again.,Couldn't reset the settings. Try again.
 Couldn't reset this override. Try again.,Couldn't reset this override. Try again.
@@ -1111,6 +1112,7 @@ Importing new history ended Undo for the earlier clear. You can clear the import
 Importing watch history,Importing watch history
 In a chat,In a chat
 "In use: TikTok sees the identity you made here, and it stays the same on every start. Tap to make another one, which wipes TikTok's data again.","In use: TikTok sees the identity you made here, and it stays the same on every start. Tap to make another one, which wipes TikTok's data again."
+"In your own Liked videos, Favorites and Reposts, a tap takes the video off that list instead of opening it.","In your own Liked videos, Favorites and Reposts, a tap takes the video off that list instead of opening it."
 Inbox,Inbox
 Inbox mode,Inbox mode
 Inbox tab name,Inbox tab name
@@ -1756,6 +1758,9 @@ Remove the LIVE ring,Remove the LIVE ring
 Remove the imported font,Remove the imported font
 Remove watermark,Remove watermark
 Removed %1$s,Removed %1$s
+Removed from Favorites,Removed from Favorites
+Removed from Liked videos,Removed from Liked videos
+Removed from Reposts,Removed from Reposts
 Removed: %1$d,Removed: %1$d
 "Removed: %1$d. The other %2$d are still there. Open your Inbox, then try again.","Removed: %1$d. The other %2$d are still there. Open your Inbox, then try again."
 Removes every message that was kept. Each chat shows TikTok's usual notice that a message was unsent.,Removes every message that was kept. Each chat shows TikTok's usual notice that a message was unsent.
@@ -2283,6 +2288,7 @@ Tap Repost on the bar under a video twice within %1$d seconds. A repost with a n
 Tap Stop or leave the room to save it.,Tap Stop or leave the room to save it.
 Tap a comment's heart twice within %1$d seconds. A double tap on the comment needs a second one too. Removing a like stays immediate.,Tap a comment's heart twice within %1$d seconds. A double tap on the comment needs a second one too. Removing a like stays immediate.
 Tap a story's heart twice within %1$d seconds. Removing a like stays immediate.,Tap a story's heart twice within %1$d seconds. Removing a like stays immediate.
+Tap a video to remove it,Tap a video to remove it
 Tap again to follow,Tap again to follow
 Tap again to like,Tap again to like
 Tap again to repost,Tap again to repost

@@ -316,6 +316,15 @@ public final class PrivacyPreferenceCategory extends ConditionalPreferenceCatego
             addPreference(new AccountCleanupPreference(context, Kind.REPOSTS));
             addPreference(new AccountCleanupPreference(context, Kind.LIKES));
             addPreference(new AccountCleanupPreference(context, Kind.FAVORITES));
+            if (SettingsStatus.quickRemoveEnabled) {
+                addPreference(new TogglePreference(
+                        context,
+                        "Tap a video to remove it",
+                        "In your own Liked videos, Favorites and Reposts, a tap takes the video off "
+                                + "that list instead of opening it.",
+                        Settings.TAP_TO_REMOVE
+                ));
+            }
         }
     }
 }

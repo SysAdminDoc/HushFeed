@@ -1549,6 +1549,9 @@ public class Settings extends BaseSettings {
     // Off by default: TikTok's own hybrid pages, the shop checkout and the CAPTCHA page among
     // them, are built on that bridge and stop working without it.
     public static final BooleanSetting BLOCK_WEBVIEW_JS_INTERFACES = new BooleanSetting("block_webview_js_interfaces", FALSE);
+    // Off by default: with it on, a tap in your own Liked videos, Favorites or Reposts removes
+    // the video instead of opening it (#401). Read at each tap by QuickRemove.
+    public static final BooleanSetting TAP_TO_REMOVE = new BooleanSetting("tap_to_remove", FALSE);
     public static final BooleanSetting CAMERA_MIC_INDICATOR = new BooleanSetting("camera_mic_indicator", FALSE);
     // On once the patch is picked, which is the opt-in. A restart, because TikTok works its
     // signature hash out once and keeps it.

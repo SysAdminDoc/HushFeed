@@ -265,9 +265,18 @@
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/privacy/AccountCleanup.java",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/privacy/AccountCleanupSources.java",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/privacy/CleanupRunner.java",
-   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/privacy/TikTokCalls.java"
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/privacy/TikTokCalls.java",
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/privacy/QuickRemoveHooks.kt",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/privacy/QuickRemove.java"
   ],
-  "settings": [],
+  "settings": [
+   {
+    "key": "tap_to_remove",
+    "default": false,
+    "type": "bool",
+    "row": "Tap a video to remove it"
+   }
+  ],
   "surface": "settings",
   "checks": [
    {

@@ -119,6 +119,17 @@ public class SeekbarTimeTest {
     }
 
     @Test
+    public void theLastReportBeforeTheEndReadsTheWholeLength() {
+        // The player reports about every 300 ms, so a 14.6 s video's last report is at 14.35 s.
+        // That read 0:14 / 0:15 as auto-advance moved on, which looked like a cut (#432).
+        assertEquals("0:15 / 0:15", SeekbarTime.readout(14_350f / 146f, 14_600L));
+        assertEquals("0:15 / 0:15", SeekbarTime.readout(14_050f / 146f, 14_600L));
+        assertEquals("0:13 / 0:15", SeekbarTime.readout(13_900f / 146f, 14_600L));
+        assertEquals("0:07 / 0:15", SeekbarTime.readout(50f, 14_600L));
+        assertEquals("0:14 / 0:14", SeekbarTime.readout(13_900f / 142f, 14_200L));
+    }
+
+    @Test
     public void theWidestReadoutKeepsTheShapeOfTheLength() {
         assertEquals("0:00 / 0:00", SeekbarTime.widest(0L));
         assertEquals("0:00 / 0:00", SeekbarTime.widest(90_000L));

@@ -53,6 +53,8 @@ public final class SeekbarTime {
     static final float SAME_PERCENT = 0.0001f;
     /** The bar's drag styles. While one is up TikTok shows its own big readout instead. */
     static final int FIRST_DRAG_STYLE = 100;
+    /** How close to the end the readout shows the whole length: two of the player's reports. */
+    static final long END_MS = 600L;
 
     private static final int KEPT_TICKS = 4;
     private static final Tick[] TICKS = new Tick[KEPT_TICKS];
@@ -195,11 +197,19 @@ public final class SeekbarTime {
                 || aweme.getAwemeType() == AWEME_TYPE_LIVE;
     }
 
-    /** "0:42 / 1:30" for the percent of a video this long. */
+    /**
+     * "0:42 / 1:30" for the percent of a video this long. The player reports where it is about
+     * every 300 ms, so its last report before the end lands up to that far short of it. Counted
+     * down to the whole second, a 14.6 s video's last report read 0:14 / 0:15 right as
+     * auto-advance moved on, and the video looked cut a second early (#432). Inside the last
+     * {@link #END_MS} the readout is the whole length.
+     */
     static String readout(float percent, long durationMs) {
         long total = Math.round(durationMs / 1000.0);
         float through = Math.max(0f, Math.min(100f, percent));
-        long played = (long) Math.floor(durationMs * (double) through / 100_000.0);
+        double playedMs = durationMs * (double) through / 100.0;
+        long played = through > 0f && durationMs - playedMs < END_MS
+                ? total : (long) Math.floor(playedMs / 1000.0);
         return clock(Math.min(played, total)) + " / " + clock(total);
     }
 

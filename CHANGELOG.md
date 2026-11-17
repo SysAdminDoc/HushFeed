@@ -77,6 +77,7 @@ Every Hushfeed release, newest first.
 * The block button and Hushfeed's other feed buttons go back to their spots after you close the picture-in-picture window and open TikTok again. They used to stay bunched up in the top corner over the feed tabs until you restarted TikTok (#413).
 * The next and previous buttons in the picture-in-picture window play the video they move to. It used to sit on its first frame with no sound, and play and pause still went to the video you left. A LIVE in the way gets skipped, since it can't play in that window (#413).
 * The Lab's `Scrolling comments on videos` preset now tells you where to look. TikTok only allows them on some wide videos, and those get an Add one-liner button under the video and a one-liner bar in full screen. The old note just said most videos stay the same (#98).
+* `Show the time beside the progress bar` counts all the way to the video's length at the end. TikTok reports where a video is a few times a second, and the last report before the end came up to a third of a second short, so a 15 second video read 0:14 / 0:15 as auto scroll moved on and looked cut off a second early (#432).
 
 ### Build
 

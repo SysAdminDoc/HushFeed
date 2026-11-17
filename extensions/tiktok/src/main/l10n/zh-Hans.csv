@@ -2470,6 +2470,15 @@ Proxy %1$s needs a user name and password,代理 %1$s 需要用户名和密码
 Proxy %1$s refused your user name or password,代理 %1$s 拒绝了你的用户名或密码
 Save this video,保存此视频
 Show the save button on videos,在视频上显示保存按钮
+Hold TikTok's save button to download,长按 TikTok 的收藏按钮来下载
+Press and hold the save button in the right column to save the video with your download settings. A tap still adds it to Favorites. It wins over Hold speed on Favorites.,长按右侧栏的收藏按钮，用你的下载设置保存视频。轻点仍会加入收藏。它的优先级高于“在收藏夹上保持速度”.
+Size of the buttons on videos,视频上按钮的大小
+Smallest,最小
+Small,小
+Large,大
+Line them up over the right column,排在右侧栏上方
+"Stack the buttons above TikTok's own on the right, starting over the avatar. They follow the column instead of staying where you dragged them.",把按钮叠放在右侧 TikTok 自带按钮的上方，从头像上方开始。它们会跟随右侧栏，而不是停在你拖到的位置.
+Turn off Line them up over the right column to move it,关闭“排在右侧栏上方”即可移动它
 Add a button beside the block control that saves the video on screen in one tap. Drag it wherever you like.,在块控件旁边添加一个按钮，点一下即可保存屏幕上的视频。可以把它拖到任意位置.
 Couldn't save this one. Try again.,无法保存。再试一次.
 Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound while a video plays and gives it back when you leave the video.,打开 TikTok 或你的消息时，不再暂停其他应用的音乐。TikTok 只在视频播放时占用声音，离开视频后就会交还.

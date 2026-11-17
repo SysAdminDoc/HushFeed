@@ -1054,6 +1054,7 @@ Hiding,Hiding
 Highest,Highest
 Historical,Historical
 Historical values,Historical values
+Hold TikTok's save button to download,Hold TikTok's save button to download
 Hold a gate to choose several,Hold a gate to choose several
 Hold a photo story,Hold a photo story
 Hold speed bubble style,Hold speed bubble style
@@ -1187,6 +1188,7 @@ Lab data reset with no undo,Lab data reset with no undo
 Lab overrides reset,Lab overrides reset
 Lab settings put back,Lab settings put back
 Language,Language
+Large,Large
 Larger (1.25x),Larger (1.25x)
 Last change put back. Restart TikTok to apply all changes.,Last change put back. Restart TikTok to apply all changes.
 Last change put back. The Feature Gate Lab rules were for another TikTok version and were left out. Restart TikTok to apply all changes.,Last change put back. The Feature Gate Lab rules were for another TikTok version and were left out. Restart TikTok to apply all changes.
@@ -1240,6 +1242,7 @@ Likes range,Likes range
 Likes removed: %1$d,Likes removed: %1$d
 Limit background traffic,Limit background traffic
 Limits,Limits
+Line them up over the right column,Line them up over the right column
 Link copied,Link copied
 Links,Links
 Links in comments open,Links in comments open
@@ -1641,6 +1644,7 @@ Press and hold the Home tab to open these settings. A tap on Home works as befor
 "Press and hold the Profile tab to open your Watch history. A tap on Profile works as before. If holding Profile switches accounts for you, this takes that press, and the name at the top of your profile still switches accounts.","Press and hold the Profile tab to open your Watch history. A tap on Profile works as before. If holding Profile switches accounts for you, this takes that press, and the name at the top of your profile still switches accounts."
 "Press and hold the Profile tab to pick one of your other accounts, where TikTok left that out. A tap on Profile works as before. While Long-press Profile for Watch history is on, it takes the press. Restart TikTok to apply this.","Press and hold the Profile tab to pick one of your other accounts, where TikTok left that out. A tap on Profile works as before. While Long-press Profile for Watch history is on, it takes the press. Restart TikTok to apply this."
 Press and hold the left or right third of the screen to jump back or forward. The middle third keeps the Long press action.,Press and hold the left or right third of the screen to jump back or forward. The middle third keeps the Long press action.
+Press and hold the save button in the right column to save the video with your download settings. A tap still adds it to Favorites. It wins over Hold speed on Favorites.,Press and hold the save button in the right column to save the video with your download settings. A tap still adds it to Favorites. It wins over Hold speed on Favorites.
 Preview a translation from a received text message's menu. The original message stays unchanged.,Preview a translation from a received text message's menu. The original message stays unchanged.
 Preview a translation of your draft before sending it.,Preview a translation of your draft before sending it.
 Preview shortened. Save report keeps the full report.,Preview shortened. Save report keeps the full report.
@@ -2097,6 +2101,7 @@ Sign in to view this list,Sign in to view this list
 Sign in without a passkey,Sign in without a passkey
 Sign up,Sign up
 Size limit reached. Recording saved to %1$s,Size limit reached. Recording saved to %1$s
+Size of the buttons on videos,Size of the buttons on videos
 Skip TikTok's setup screens,Skip TikTok's setup screens
 Skip content warnings,Skip content warnings
 Skip the Share to sheet after a save,Skip the Share to sheet after a save
@@ -2112,6 +2117,8 @@ Skipping videos with %1$s,Skipping videos with %1$s
 Sleep timer off,Sleep timer off
 Slide across the tabs,Slide across the tabs
 Slide to change the hold speed,Slide to change the hold speed
+Small,Small
+Smallest,Smallest
 Soft blur,Soft blur
 Soft tick,Soft tick
 Some of these notes are in English.,Some of these notes are in English.
@@ -2144,6 +2151,7 @@ Speed menu choices,Speed menu choices
 Speed while you hold the video,Speed while you hold the video
 Spin the music disc,Spin the music disc
 Split comment minimum width,Split comment minimum width
+"Stack the buttons above TikTok's own on the right, starting over the avatar. They follow the column instead of staying where you dragged them.","Stack the buttons above TikTok's own on the right, starting over the avatar. They follow the column instead of staying where you dragged them."
 Standard,Standard
 Start each new video at your default. A manual choice lasts until the video changes.,Start each new video at your default. A manual choice lasts until the video changes.
 Start feature gate recording,Start feature gate recording
@@ -2543,6 +2551,7 @@ Try a different word or clear the search. Switches from patches you didn't tick 
 "Try again, or go back to TikTok.","Try again, or go back to TikTok."
 Turn Clear display on or off,Turn Clear display on or off
 Turn Hushfeed back on,Turn Hushfeed back on
+Turn off Line them up over the right column to move it,Turn off Line them up over the right column to move it
 Turn off double tap to react,Turn off double tap to react
 Turn off haptics,Turn off haptics
 Turn off push notifications,Turn off push notifications

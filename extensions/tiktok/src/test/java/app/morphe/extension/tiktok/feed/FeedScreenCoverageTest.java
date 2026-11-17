@@ -156,6 +156,12 @@ public class FeedScreenCoverageTest {
         }
         // The chooser after a Not interested tap, so it reaches where that button does.
         put("not_interested_also_filter", YES, YES, NONE);
+        // Their size and the line over TikTok's column go wherever the buttons do (#433). TikTok's
+        // save button is in both feed windows' column, and the overlay pass that watches it runs
+        // in both; a LIVE room has neither.
+        put("video_button_size", YES, YES, NONE);
+        put("video_buttons_over_rail", YES, YES, NONE);
+        put("hold_save_to_download", YES, YES, NONE);
 
         // Video info. The text sizes, the date and the creator row hook TikTok's own owners,
         // which both windows share.

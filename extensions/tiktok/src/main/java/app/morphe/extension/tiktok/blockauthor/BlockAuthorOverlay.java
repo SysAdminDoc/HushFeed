@@ -29,6 +29,7 @@ import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.Setting;
 import app.morphe.extension.shared.settings.StringSetting;
 import app.morphe.extension.tiktok.download.OriginalPhotos;
+import app.morphe.extension.tiktok.feed.VideoOverlayHider;
 import app.morphe.extension.tiktok.feedfilter.SoundIdentity;
 import app.morphe.extension.tiktok.interaction.GestureActions;
 import app.morphe.extension.tiktok.interaction.Haptics;
@@ -61,7 +62,11 @@ public final class BlockAuthorOverlay {
     // TouchDelegate to make up the difference. They sit in a column on the feed, where a
     // miss is a like or a follow on somebody's video.
     private static final int BUTTON_SIZE_DP = 48;
+    /** The sizes Hushfeed button size offers (#433), smallest to largest. */
+    static final int MIN_BUTTON_SIZE_DP = 32, MAX_BUTTON_SIZE_DP = 56;
     private static final int BUTTON_GAP_DP = 8;
+    /** Room left under the top of the screen for TikTok's For You and Following header. */
+    private static final int HEADER_ROOM_DP = 56;
     private static final long UNDO_VISIBLE_MS = 6_000L;
     private static final long BLOCK_UNDO_VISIBLE_MS = 2_000L;
 
@@ -97,6 +102,8 @@ public final class BlockAuthorOverlay {
      */
     private static int placedWidth;
     private static int placedHeight;
+    /** Whether the last placing lined the controls up over TikTok's column (#433). */
+    private static boolean placedOverRail;
 
     /** Guards against a double tap blocking, then unblocking, the same account. */
     private static volatile boolean requestInFlight;
@@ -275,7 +282,13 @@ public final class BlockAuthorOverlay {
             View existing = buttonReference.get();
             if (existing != null && existing.getParent() == root) {
                 syncVisibility();
-                clampCurrentPositions(root);
+                // Back from settings with another size, or the column switch flipped: placed
+                // again from their saved spots, or lined up over TikTok's column (#433).
+                if (resize(root) || placedOverRail != overRail()) {
+                    root.post(() -> applyPositions(root));
+                } else {
+                    clampCurrentPositions(root);
+                }
                 return;
             }
             // The controls are on another window: the feed behind a detail pager that just
@@ -283,7 +296,7 @@ public final class BlockAuthorOverlay {
             if (existing != null) detach();
 
             final View button = createButton(activity);
-            final int size = SettingsUi.dp(activity, BUTTON_SIZE_DP);
+            final int size = SettingsUi.dp(activity, buttonSizeDp());
             // Absolute LEFT, not START. Every position here is a pixel worked out from a raw
             // touch and written to leftMargin, and a mirrored layout resolves START to RIGHT and
             // then reads rightMargin, which nothing sets: the saved position was discarded, a
@@ -351,7 +364,7 @@ public final class BlockAuthorOverlay {
         if (button.getParent() != root) return;
         if (root.getWidth() == 0 || root.getHeight() == 0) return;
 
-        int size = SettingsUi.dp(root.getContext(), BUTTON_SIZE_DP);
+        int size = SettingsUi.dp(root.getContext(), buttonSizeDp());
         int step = size + SettingsUi.dp(root.getContext(), BUTTON_GAP_DP);
         // The block button first: the other three default to positions relative to wherever it
         // ended up, so it has to be off its own saved fraction before they are worked out.
@@ -363,6 +376,147 @@ public final class BlockAuthorOverlay {
         }
         placedWidth = root.getWidth();
         placedHeight = root.getHeight();
+        placedOverRail = overRail();
+        if (placedOverRail) placeOverRail(root);
+    }
+
+    /** Every control, in the order they stand over TikTok's column, the block button lowest. */
+    private static View[] controls() {
+        return new View[]{buttonReference.get(), localHideReference.get(), soundButtonReference.get(),
+                notInterestedReference.get(), muteReference.get(), downloadReference.get()};
+    }
+
+    /** Hushfeed button size (#433), in dp: the standard 48 for anything it doesn't offer. */
+    static int buttonSizeDp() {
+        try {
+            int dp = Integer.parseInt(Settings.VIDEO_BUTTON_SIZE.get().trim());
+            if (dp >= MIN_BUTTON_SIZE_DP && dp <= MAX_BUTTON_SIZE_DP) return dp;
+        } catch (NumberFormatException ignored) {
+            // The standard size below.
+        }
+        return BUTTON_SIZE_DP;
+    }
+
+    private static boolean overRail() {
+        return Settings.VIDEO_BUTTONS_OVER_RAIL.get();
+    }
+
+    /** Gives every control the size Hushfeed button size asks for. True when one changed. */
+    private static boolean resize(ViewGroup root) {
+        int size = SettingsUi.dp(root.getContext(), buttonSizeDp());
+        boolean changed = false;
+        for (View view : controls()) {
+            if (view == null || view.getParent() != root) continue;
+            ViewGroup.LayoutParams params = view.getLayoutParams();
+            if (params.width == size && params.height == size) continue;
+            params.width = size;
+            params.height = size;
+            view.setLayoutParams(params);
+            changed = true;
+        }
+        return changed;
+    }
+
+    /**
+     * Lines the shown controls up over TikTok's right column (#433): centered on its buttons, the
+     * block button a gap above the avatar and each next one above that, with a second column to
+     * the left once the first would reach TikTok's header. While no column is on screen (Hide the
+     * right column, a LIVE) the controls stay where they were.
+     */
+    private static boolean placeOverRail(ViewGroup root) {
+        if (root.getWidth() == 0 || root.getHeight() == 0) return false;
+        Activity activity = controlsActivity();
+        if (activity == null) return false;
+        View rail = currentRail(activity, root);
+        if (rail == null) return false;
+        int[] at = new int[2];
+        rail.getLocationOnScreen(at);
+        int columnTop = at[1];
+        if (rail instanceof ViewGroup) {
+            // The column's own view spans the screen's width and starts at its first button;
+            // its first shown child is where that button begins once the avatar is hidden.
+            ViewGroup group = (ViewGroup) rail;
+            int top = Integer.MAX_VALUE;
+            for (int i = 0; i < group.getChildCount(); i++) {
+                View child = group.getChildAt(i);
+                if (child.getVisibility() != View.VISIBLE || child.getHeight() == 0) continue;
+                child.getLocationOnScreen(at);
+                top = Math.min(top, at[1]);
+            }
+            if (top != Integer.MAX_VALUE) columnTop = top;
+        }
+        View icon = firstShownImage(rail);
+        View across = icon != null ? icon : rail;
+        across.getLocationOnScreen(at);
+        float centerX = at[0] + across.getWidth() / 2f - parentLeft(root);
+        columnTop -= parentTop(root);
+
+        int size = SettingsUi.dp(root.getContext(), buttonSizeDp());
+        int gap = SettingsUi.dp(root.getContext(), BUTTON_GAP_DP);
+        int step = size + gap;
+        int ceiling = Math.max(0, SystemBarInsets.current(root).top)
+                + SettingsUi.dp(root.getContext(), HEADER_ROOM_DP);
+        float left = centerX - size / 2f;
+        int top = columnTop - gap - size;
+        int inColumn = 0;
+        for (View view : controls()) {
+            if (view == null || view.getParent() != root || view.getVisibility() != View.VISIBLE) continue;
+            if (inColumn > 0 && top < ceiling) {
+                left -= step;
+                top = columnTop - gap - size;
+                inColumn = 0;
+            }
+            moveTo(view, root, left, top);
+            top -= step;
+            inColumn++;
+        }
+        return true;
+    }
+
+    private static WeakReference<View> railReference = new WeakReference<>(null);
+
+    /**
+     * TikTok's right column on the video in front. The pager keeps its neighbours' columns laid
+     * out above and below the screen, so the one wanted is the one mostly in sight.
+     */
+    private static View currentRail(Activity activity, ViewGroup root) {
+        View held = railReference.get();
+        if (held != null && mostlyInSight(held)) return held;
+        int id = VideoOverlayHider.rightColumnId(activity);
+        View found = id == 0 ? null : railIn(root, id);
+        railReference = new WeakReference<>(found);
+        return found;
+    }
+
+    private static View railIn(View view, int id) {
+        if (view.getVisibility() != View.VISIBLE) return null;
+        if (view.getId() == id && mostlyInSight(view)) return view;
+        if (!(view instanceof ViewGroup)) return null;
+        ViewGroup group = (ViewGroup) view;
+        for (int i = 0; i < group.getChildCount(); i++) {
+            View found = railIn(group.getChildAt(i), id);
+            if (found != null) return found;
+        }
+        return null;
+    }
+
+    private static boolean mostlyInSight(View view) {
+        if (!view.isAttachedToWindow() || !view.isShown() || view.getHeight() == 0) return false;
+        Rect visible = new Rect();
+        return view.getGlobalVisibleRect(visible) && visible.height() * 2 >= view.getHeight();
+    }
+
+    /** The column's first picture in sight, the avatar unless something hid it. */
+    private static View firstShownImage(View view) {
+        if (view.getVisibility() != View.VISIBLE) return null;
+        if (view instanceof android.widget.ImageView && view.getWidth() > 0) return view;
+        if (!(view instanceof ViewGroup)) return null;
+        ViewGroup group = (ViewGroup) view;
+        for (int i = 0; i < group.getChildCount(); i++) {
+            View found = firstShownImage(group.getChildAt(i));
+            if (found != null) return found;
+        }
+        return null;
     }
 
     /**
@@ -421,7 +575,8 @@ public final class BlockAuthorOverlay {
             syncVisibility();
             ViewGroup current = rootReference.get();
             if (current == null) return;
-            if (resized(current)) applyPositions(current);
+            if (resized(current) || placedOverRail != overRail()) applyPositions(current);
+            else if (placedOverRail) placeOverRail(current);
             clampCurrentPositions(current);
         };
         root.getViewTreeObserver().addOnGlobalLayoutListener(visibilityListener);
@@ -677,6 +832,8 @@ public final class BlockAuthorOverlay {
                 info.setLongClickable(false);
                 info.removeAction(android.view.accessibility.AccessibilityNodeInfo.AccessibilityAction
                         .ACTION_LONG_CLICK);
+                // Lined up over TikTok's column, the controls go where the column is (#433).
+                if (overRail()) return;
                 // What the refused long-press owed a reader: a way to park the control, and a
                 // way back if it ends up somewhere useless.
                 info.addAction(moveAction(host, ACTION_MOVE_UP, "Move up"));
@@ -691,6 +848,7 @@ public final class BlockAuthorOverlay {
                 if (action == android.view.accessibility.AccessibilityNodeInfo.ACTION_LONG_CLICK) {
                     return false;
                 }
+                if (overRail() && action >= ACTION_MOVE_UP && action <= ACTION_RESET_POSITION) return false;
                 if (action == ACTION_MOVE_UP) return nudge(host, 0, -1);
                 if (action == ACTION_MOVE_DOWN) return nudge(host, 0, 1);
                 if (action == ACTION_MOVE_LEFT) return nudge(host, -1, 0);
@@ -703,6 +861,10 @@ public final class BlockAuthorOverlay {
             // Accessibility ACTION_LONG_CLICK has no pointer down or release. Entering raw drag
             // mode from it left every later click stuck behind a gesture that could never finish.
             if (pressedControlReference.get() != view) return false;
+            if (overRail()) {
+                Utils.showToastShort(L10n.t("Turn off Line them up over the right column to move it"));
+                return true;
+            }
             dragging = true;
             view.setAlpha(0.75f);
             Haptics.performHapticFeedback(view, HapticFeedbackConstants.LONG_PRESS);
@@ -734,7 +896,7 @@ public final class BlockAuthorOverlay {
                 : null;
         if (parent == null || parent.getWidth() == 0 || parent.getHeight() == 0) return false;
 
-        int step = SettingsUi.dp(view.getContext(), BUTTON_SIZE_DP);
+        int step = SettingsUi.dp(view.getContext(), buttonSizeDp());
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
         moveTo(view, parent, params.leftMargin + stepsX * step, params.topMargin + stepsY * step);
         savePosition(view, parent);
@@ -759,7 +921,7 @@ public final class BlockAuthorOverlay {
 
         StringSetting setting = positionSetting(view);
         if (!saveAction(setting, setting.defaultValue)) return false;
-        int size = SettingsUi.dp(parent.getContext(), BUTTON_SIZE_DP);
+        int size = SettingsUi.dp(parent.getContext(), buttonSizeDp());
         int step = size + SettingsUi.dp(parent.getContext(), BUTTON_GAP_DP);
         float[] fractions = defaultFractions(view, parent, button, size, step);
         applySavedPosition(view, parent, size, setting, fractions[0], fractions[1]);
@@ -925,7 +1087,7 @@ public final class BlockAuthorOverlay {
 
         View button = buttonReference.get();
         if (button == null) return;
-        int size = SettingsUi.dp(parent.getContext(), BUTTON_SIZE_DP);
+        int size = SettingsUi.dp(parent.getContext(), buttonSizeDp());
         int step = size + SettingsUi.dp(parent.getContext(), BUTTON_GAP_DP);
         float[] defaults = defaultFractions(view, parent, button, size, step);
         applySavedPosition(view, parent, size, setting, defaults[0], defaults[1]);

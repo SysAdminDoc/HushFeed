@@ -1145,6 +1145,12 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting FEED_MUTE_BUTTON = new BooleanSetting("feed_mute_button", FALSE);
     /** A save button on the video itself, so a save doesn't start with a long press or the share sheet (#299). */
     public static final BooleanSetting DOWNLOAD_BUTTON = new BooleanSetting("download_button", FALSE);
+    /** How big Hushfeed's buttons on videos are, in dp (#433). */
+    public static final StringSetting VIDEO_BUTTON_SIZE = new StringSetting("video_button_size", "48");
+    /** Those buttons stand in a column over TikTok's own on the right, not where they were dragged (#433). */
+    public static final BooleanSetting VIDEO_BUTTONS_OVER_RAIL = new BooleanSetting("video_buttons_over_rail", FALSE);
+    /** Holding TikTok's own save button in the right column downloads the video (#433). */
+    public static final BooleanSetting HOLD_SAVE_TO_DOWNLOAD = new BooleanSetting("hold_save_to_download", FALSE);
     /** TikTok's audio focus waits for a video to play, so opening the app or a chat leaves other apps' music alone (#283). */
     public static final BooleanSetting FOCUS_WAITS_FOR_VIDEO = new BooleanSetting("focus_waits_for_video", FALSE);
     public static final BooleanSetting HIDE_FEED_CAPTION = new BooleanSetting("hide_feed_caption", FALSE);

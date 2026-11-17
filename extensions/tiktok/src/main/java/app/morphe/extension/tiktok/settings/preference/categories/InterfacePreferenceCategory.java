@@ -275,6 +275,13 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "Add a button beside the block control that saves the video on screen in one tap. Drag it wherever you like.",
                     Settings.DOWNLOAD_BUTTON));
         }
+        // #433: how big this card's buttons are, and where they stand.
+        addPreference(new ChoicePreference(context, "Size of the buttons on videos", Settings.VIDEO_BUTTON_SIZE,
+                new String[]{"Smallest", "Small", "Normal", "Large"},
+                new String[]{"32", "40", "48", "56"}));
+        addPreference(new TogglePreference(context, "Line them up over the right column",
+                "Stack the buttons above TikTok's own on the right, starting over the avatar. They follow the column instead of staying where you dragged them.",
+                Settings.VIDEO_BUTTONS_OVER_RAIL));
     }
 
     private void addVideoInfo(Context context) {
@@ -1072,6 +1079,13 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "A long press on Favorites plays the video at the hold speed instead of offering a new collection. "
                             + "It needs Long press on TikTok default and Seek from the edges off.",
                     Settings.RAIL_HOLD_FAVORITES));
+            // #433: TikTok's own long press on Favorites, which the hook above can skip.
+            if (SettingsStatus.advancedDownloadsEnabled) {
+                addPreference(new TogglePreference(context, "Hold TikTok's save button to download",
+                        "Press and hold the save button in the right column to save the video with your download "
+                                + "settings. A tap still adds it to Favorites. It wins over Hold speed on Favorites.",
+                        Settings.HOLD_SAVE_TO_DOWNLOAD));
+            }
         }
         // Three more long presses, each its own patch. They sat under Player on the App page,
         // two pages away from the Long press row they belong beside.

@@ -2,6 +2,7 @@ package app.morphe.extension.tiktok.interaction;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.os.Handler;
@@ -12,6 +13,7 @@ import android.widget.FrameLayout;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.settings.Settings;
+import app.morphe.extension.tiktok.settings.SettingsStatus;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import org.junit.After;
@@ -24,6 +26,7 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowSystemClock;
+import org.robolectric.shadows.ShadowToast;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 28)
@@ -44,6 +47,7 @@ public class RailHoldTest {
         Settings.RAIL_HOLD_COMMENT.resetToDefault();
         Settings.RAIL_HOLD_SHARE.resetToDefault();
         Settings.RAIL_HOLD_FAVORITES.resetToDefault();
+        Settings.HOLD_SAVE_TO_DOWNLOAD.resetToDefault();
         Settings.LONG_PRESS_ACTION.resetToDefault();
         Settings.EDGE_SEEK.resetToDefault();
         Settings.EDGE_SEEK_SECONDS.resetToDefault();
@@ -185,6 +189,41 @@ public class RailHoldTest {
         RailHold.setShareLongClick(share, menu(true));
         share.performLongClick();
         assertEquals("Share's menu opens", 1, menus[0]);
+    }
+
+    /**
+     * #433: holding TikTok's own save button downloads the video. TikTok's long press on it, the
+     * one that offers a new collection, runs the save instead, and Favorites stops being a place
+     * the hold speed starts, so one press never does both.
+     */
+    @Test @Config(sdk = 28, qualifiers = "en")
+    public void aHoldOnFavoritesSavesTheVideoWhenAsked() {
+        boolean wasEnabled = SettingsStatus.advancedDownloadsEnabled;
+        try {
+            SettingsStatus.advancedDownloadsEnabled = true;
+            ShadowToast.reset();
+            assertFalse("switched off, Favorites offers its collection", RailHold.skipFavoritesMenu());
+            assertNull("and nothing is saved", ShadowToast.getTextOfLatestToast());
+
+            Settings.HOLD_SAVE_TO_DOWNLOAD.save(true);
+            assertTrue("the collection offer is skipped", RailHold.skipFavoritesMenu());
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertEquals("and the save ran, which says so with no video here to save",
+                    "No video selected. Open a video first.", ShadowToast.getTextOfLatestToast());
+
+            Settings.RAIL_HOLD_FAVORITES.save(true);
+            assertTrue("a press on Favorites stays no hold", RailHold.favoritesStopsHold(true));
+            assertTrue("so the long press is still the save", RailHold.skipFavoritesMenu());
+
+            SettingsStatus.advancedDownloadsEnabled = false;
+            ShadowToast.reset();
+            assertFalse("without the download patch the hold speed has Favorites back",
+                    RailHold.favoritesStopsHold(true));
+            assertTrue("and skips the offer as before", RailHold.skipFavoritesMenu());
+            assertNull("with no save", ShadowToast.getTextOfLatestToast());
+        } finally {
+            SettingsStatus.advancedDownloadsEnabled = wasEnabled;
+        }
     }
 
     @Test public void noListenerStaysNoListener() {

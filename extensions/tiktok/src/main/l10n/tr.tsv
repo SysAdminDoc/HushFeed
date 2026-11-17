@@ -2527,6 +2527,15 @@ Proxy %1$s needs a user name and password	%1$s proxy'si ad ve parola istiyor
 Proxy %1$s refused your user name or password	%1$s proxy'si adı veya parolayı reddetti
 Save this video	Bu videoyu kaydet
 Show the save button on videos	Videolarda kaydetme düğmesini göster
+Hold TikTok's save button to download	İndirmek için TikTok'un kaydet düğmesini basılı tut
+Press and hold the save button in the right column to save the video with your download settings. A tap still adds it to Favorites. It wins over Hold speed on Favorites.	Videoyu indirme ayarlarınla kaydetmek için sağ sütundaki kaydet düğmesini basılı tut. Dokunmak yine Favorilere ekler. Favoriler'de basılı tutma hızı ayarına üstün gelir.
+Size of the buttons on videos	Videolardaki düğmelerin boyutu
+Smallest	En küçük
+Small	Küçük
+Large	Büyük
+Line them up over the right column	Sağ sütunun üstüne diz
+Stack the buttons above TikTok's own on the right, starting over the avatar. They follow the column instead of staying where you dragged them.	Düğmeleri sağdaki TikTok düğmelerinin üstüne, avatarın üzerinden başlayarak dizer. Sürüklediğin yerde kalmak yerine sütunu takip ederler.
+Turn off Line them up over the right column to move it	Taşımak için Sağ sütunun üstüne diz ayarını kapat
 Add a button beside the block control that saves the video on screen in one tap. Drag it wherever you like.	Engelleme düğmesinin yanına, ekrandaki videoyu tek dokunuşla kaydeden bir düğme ekle. Düğmeyi istediğin yere sürükle.
 Couldn't save this one. Try again.	Kaydedilemedi. Tekrar dene.
 Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound while a video plays and gives it back when you leave the video.	TikTok'u veya mesajlarını açmak artık başka bir uygulamadaki müziği duraklatmaz. TikTok sesi video oynarken alır ve videodan çıktığında geri verir.

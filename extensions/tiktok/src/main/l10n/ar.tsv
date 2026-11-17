@@ -2770,6 +2770,15 @@ Proxy %1$s needs a user name and password	الوكيل %1$s يحتاج إلى ا
 Proxy %1$s refused your user name or password	رفض الوكيل %1$s اسم المستخدم أو كلمة المرور
 Save this video	احفظ هذا الفيديو
 Show the save button on videos	إظهار زر الحفظ على الفيديوهات
+Hold TikTok's save button to download	اضغط مطولًا على زر الحفظ في TikTok للتنزيل
+Press and hold the save button in the right column to save the video with your download settings. A tap still adds it to Favorites. It wins over Hold speed on Favorites.	اضغط مطولًا على زر الحفظ في العمود الأيمن لحفظ الفيديو بإعدادات التنزيل لديك. النقرة العادية تضيفه إلى المفضلة كما هي. لها الأولوية على سرعة التثبيت على المفضلات.
+Size of the buttons on videos	حجم الأزرار على الفيديوهات
+Smallest	الأصغر
+Small	صغير
+Large	كبير
+Line them up over the right column	صفّها فوق العمود الأيمن
+Stack the buttons above TikTok's own on the right, starting over the avatar. They follow the column instead of staying where you dragged them.	ضع الأزرار فوق أزرار TikTok على اليمين، بدءًا من فوق الصورة الرمزية. تتبع العمود بدلًا من البقاء حيث سحبتها.
+Turn off Line them up over the right column to move it	أوقف خيار صفّها فوق العمود الأيمن لتحريكه
 Add a button beside the block control that saves the video on screen in one tap. Drag it wherever you like.	أضف زراً بجانب عنصر الحظر يحفظ الفيديو على الشاشة بنقرة واحدة. اسحبه أينما شئت.
 Couldn't save this one. Try again.	تعذر حفظ هذا. حاول مرة أخرى.
 Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound while a video plays and gives it back when you leave the video.	فتح TikTok أو رسائلك لم يعد يوقف الموسيقى من تطبيق آخر. يأخذ TikTok الصوت أثناء تشغيل الفيديو ويعيده عند مغادرة الفيديو.

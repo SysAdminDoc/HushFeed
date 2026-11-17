@@ -46,6 +46,8 @@ public class OverlayControlsTest {
         Settings.NOT_INTERESTED_BUTTON_POSITION.resetToDefault();
         Settings.FEED_MUTE_BUTTON_POSITION.resetToDefault();
         Settings.DOWNLOAD_BUTTON_POSITION.resetToDefault();
+        Settings.VIDEO_BUTTON_SIZE.resetToDefault();
+        Settings.VIDEO_BUTTONS_OVER_RAIL.resetToDefault();
     }
 
     /** One tap saves what's on screen, and a tap with nothing to save says so rather than nothing (#299). */
@@ -755,6 +757,110 @@ public class OverlayControlsTest {
         assertEquals("a saved position was not honoured over the new default",
                 Math.round(0.91f * 1080 - moved.width / 2f), moved.leftMargin);
         assertEquals(Math.round(0.40f * 2316 - moved.height / 2f), moved.topMargin);
+    }
+
+    /** #433: the size picked under Size of the buttons on videos, on the controls there and to come. */
+    @Test public void theControlsTakeTheSizePickedForThem() throws Exception {
+        Settings.VIDEO_BUTTON_SIZE.save("32");
+        ViewGroup root = attachedRoot();
+        int small = SettingsUi.dp(root.getContext(), 32);
+        for (String name : CONTROLS) {
+            assertEquals(name + " is not the size picked", small, held(name).getLayoutParams().width);
+            assertEquals(name + " is not the size picked", small, held(name).getLayoutParams().height);
+        }
+
+        // Back from settings with another size: the same controls take it.
+        Settings.VIDEO_BUTTON_SIZE.save("56");
+        declared("attach", VideoAuthor.class)
+                .invoke(null, new VideoAuthor("1", "sec", "someone", "7712345"));
+        org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+        int large = SettingsUi.dp(root.getContext(), 56);
+        for (String name : CONTROLS) {
+            assertEquals(name + " kept the old size", large, held(name).getLayoutParams().width);
+            assertEquals(name + " kept the old size", large, held(name).getLayoutParams().height);
+        }
+
+        Method size = declared("buttonSizeDp");
+        Settings.VIDEO_BUTTON_SIZE.save("400");
+        assertEquals("a size the list doesn't offer is the standard one", 48, size.invoke(null));
+        Settings.VIDEO_BUTTON_SIZE.save("tiny");
+        assertEquals(48, size.invoke(null));
+    }
+
+    /**
+     * #433: Line them up over the right column stacks the shown controls above TikTok's avatar,
+     * centered on its buttons, and keeps them with the column when it moves. The column is
+     * 47.7.3's on the S22: a full-width view from y 969 whose buttons sit in its last 226 px,
+     * the avatar at 932,1011 to 1057,1136. The screen is the S22's too, since only the column in
+     * sight counts and a smaller window would cut it off.
+     */
+    @Test @Config(sdk = 28, qualifiers = "en-w1080dp-h2316dp")
+    public void theControlsLineUpOverTikToksColumnAndFollowIt() throws Exception {
+        ViewGroup root = attachedRoot(1080, 2316);
+        int columnId = View.generateViewId();
+        Method resolve = app.morphe.extension.tiktok.feed.VideoOverlayHider.class
+                .getDeclaredMethod("resolveForTests", String.class, int.class);
+        resolve.setAccessible(true);
+        resolve.invoke(null, "47.7.3:lkj", columnId);
+        try {
+            FrameLayout column = new FrameLayout(root.getContext());
+            column.setId(columnId);
+            FrameLayout cell = new FrameLayout(root.getContext());
+            android.widget.ImageView avatar = new android.widget.ImageView(root.getContext());
+            FrameLayout.LayoutParams avatarAt = new FrameLayout.LayoutParams(125, 125);
+            avatarAt.leftMargin = 78;
+            avatarAt.topMargin = 42;
+            cell.addView(avatar, avatarAt);
+            FrameLayout.LayoutParams cellAt = new FrameLayout.LayoutParams(226, 169);
+            cellAt.leftMargin = 854;
+            column.addView(cell, cellAt);
+            FrameLayout.LayoutParams columnAt = new FrameLayout.LayoutParams(1080, 1066);
+            columnAt.topMargin = 969;
+            root.addView(column, 0, columnAt);
+            layOut(root, 1080, 2316);
+            for (String name : CONTROLS) held(name).setVisibility(View.VISIBLE);
+
+            Settings.VIDEO_BUTTONS_OVER_RAIL.save(true);
+            declared("applyPositions", ViewGroup.class).invoke(null, root);
+            int size = SettingsUi.dp(root.getContext(), 48);
+            int below = 969;
+            for (String name : CONTROLS) {
+                View chip = held(name);
+                assertEquals(name + " isn't centered on TikTok's buttons", 994.5f, leftOf(chip) + size / 2f, 1f);
+                assertTrue(name + " at " + topOf(chip) + " isn't stacked above the one under it at " + below,
+                        topOf(chip) + size <= below);
+                below = topOf(chip);
+            }
+
+            // The avatar goes (a LIVE badge, a hidden avatar): the column starts lower, and so do they.
+            FrameLayout.LayoutParams lower = (FrameLayout.LayoutParams) column.getLayoutParams();
+            lower.topMargin = 1100;
+            column.setLayoutParams(lower);
+            layOut(root, 1080, 2316);
+            declared("placeOverRail", ViewGroup.class).invoke(null, root);
+            View block = held("buttonReference");
+            assertTrue("the block button stayed behind at " + topOf(block),
+                    topOf(block) + size <= 1100 && topOf(block) + size > 969);
+
+            // Lined up, a long press doesn't pick a control up: the column decides where it is.
+            java.lang.reflect.Field dragging = BlockAuthorOverlay.class.getDeclaredField("dragging");
+            dragging.setAccessible(true);
+            ShadowToast.reset();
+            pressDown(block, 10f, 10f);
+            assertTrue(block.performLongClick());
+            assertFalse("the long press started a drag", dragging.getBoolean(null));
+            assertEquals("Turn off Line them up over the right column to move it",
+                    ShadowToast.getTextOfLatestToast());
+            dragging.setBoolean(null, false);
+        } finally {
+            resolve.invoke(null, "47.7.3:lkj", 0);
+        }
+    }
+
+    private static void layOut(ViewGroup root, int width, int height) {
+        root.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
+        root.layout(0, 0, width, height);
     }
 
     private static ViewGroup attachedRoot() throws Exception {

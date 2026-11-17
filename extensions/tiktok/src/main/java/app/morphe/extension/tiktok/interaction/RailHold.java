@@ -4,14 +4,19 @@
  */
 package app.morphe.extension.tiktok.interaction;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.view.View;
 import android.view.ViewConfiguration;
 
+import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.shared.settings.BooleanSetting;
+import app.morphe.extension.shared.settings.HushfeedPause;
+import app.morphe.extension.tiktok.download.OriginalPhotos;
 import app.morphe.extension.tiktok.settings.Settings;
+import app.morphe.extension.tiktok.settings.SettingsStatus;
 
 /**
  * A long press on the Comment, Share or Favorites button plays the video at the hold speed while
@@ -64,7 +69,7 @@ public final class RailHold {
         /** TikTok's hold check asks whether a press is on this button, where a hold doesn't start. */
         boolean stopsHold(boolean onButton) {
             HookStatus.bound(FAMILY, label + " check");
-            if (!onButton || !setting.get()) return onButton;
+            if (!onButton || !setting.get() || (this == FAVORITES && holdDownloads())) return onButton;
             HookStatus.bound(FAMILY, "held on " + label);
             heldAt = SystemClock.uptimeMillis();
             return false;
@@ -111,9 +116,27 @@ public final class RailHold {
     /**
      * Favorites' long press, about to offer a new collection. TikTok marks the press as a long one
      * before it gets here, so a true answer skips the offer and letting go doesn't save the video.
+     * With Hold TikTok's save button to download on, the press saves the video with the download
+     * settings instead (#433).
      */
     public static boolean skipFavoritesMenu() {
+        if (holdDownloads()) {
+            HookStatus.bound(FAMILY, "favorites hold download");
+            Context context = Utils.getActivity();
+            OriginalPhotos.startFromButton(GestureActions.onScreenAweme(),
+                    context != null ? context : Utils.getContext());
+            return true;
+        }
         return Button.FAVORITES.skipsMenu();
+    }
+
+    /**
+     * Whether a long press on Favorites downloads the video (#433). It takes Favorites from the
+     * hold speed too, so one press never both speeds the video up and saves it.
+     */
+    static boolean holdDownloads() {
+        return Settings.HOLD_SAVE_TO_DOWNLOAD.get() && SettingsStatus.advancedDownloadsEnabled
+                && !HushfeedPause.isPaused();
     }
 
     /** Where TikTok gives the Share button, or one of its children, its long press. */

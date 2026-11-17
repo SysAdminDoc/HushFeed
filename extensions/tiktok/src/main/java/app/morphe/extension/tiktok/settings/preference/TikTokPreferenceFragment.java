@@ -456,7 +456,9 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
                 || setting == Settings.BLOCK_SOUND_BUTTON
                 || setting == Settings.NOT_INTERESTED_BUTTON
                 || setting == Settings.FEED_MUTE_BUTTON
-                || setting == Settings.DOWNLOAD_BUTTON)) {
+                || setting == Settings.DOWNLOAD_BUTTON
+                || setting == Settings.VIDEO_BUTTON_SIZE
+                || setting == Settings.VIDEO_BUTTONS_OVER_RAIL)) {
             BlockAuthorOverlay.refresh();
         }
         if (!applySettingToPreference && setting == Settings.FEED_MUTED) {

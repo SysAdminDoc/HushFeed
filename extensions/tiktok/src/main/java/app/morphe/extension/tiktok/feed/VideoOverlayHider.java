@@ -3142,6 +3142,19 @@ public final class VideoOverlayHider {
         return searchModule ? "overlay (search)" : "overlay";
     }
 
+    /** TikTok's right column for the running build, or 0 where it has none (#433). */
+    public static int rightColumnId(Activity activity) {
+        return firstIdentifier(activity, ACTION_BAR_IDS);
+    }
+
+    private static int firstIdentifier(Activity activity, String[] names) {
+        for (String name : names) {
+            int id = identifier(activity, activity.getPackageName(), name);
+            if (id != 0) return id;
+        }
+        return 0;
+    }
+
     private static int identifier(Activity activity, String packageName, String name) {
         boolean retryMissing = SEARCH_MODULE_PACKAGE.equals(packageName);
         int id = resolveIdentifier(activity, packageName, name, retryMissing);

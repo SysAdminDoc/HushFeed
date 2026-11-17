@@ -1390,6 +1390,18 @@
   ],
   "settings": [
    {
+    "key": "video_button_size",
+    "default": "48",
+    "type": "string",
+    "row": "Size of the buttons on videos"
+   },
+   {
+    "key": "video_buttons_over_rail",
+    "default": false,
+    "type": "bool",
+    "row": "Line them up over the right column"
+   },
+   {
     "key": "block_author_button",
     "default": false,
     "type": "bool",
@@ -11407,6 +11419,12 @@
     "default": false,
     "type": "bool",
     "row": "Full long-press menu on a creator's videos"
+   },
+   {
+    "key": "hold_save_to_download",
+    "default": false,
+    "type": "bool",
+    "row": "Hold TikTok's save button to download"
    }
   ],
   "surface": "feed",

@@ -19,6 +19,8 @@ import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.wellbeing.FeedLock;
 import app.morphe.extension.tiktok.wellbeing.SessionBudget;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -32,7 +34,8 @@ import java.util.WeakHashMap;
  * move ends it with nothing playing. TikTok has a second background session that plays a page's
  * videos in turn, but gives it only to your own collections. A page opened from a profile gets it
  * too while Auto-advance and Background play are both on, so its videos keep coming with the
- * screen off (#292). That session moves on by itself, so the limit and the holds are applied as
+ * screen off (#292), and is turned on as TikTok's collection switch would turn it on. That
+ * session moves on by itself, so the limit and the holds are applied as
  * each video there ends, and its foreground twin, which would move the page a second time, waits
  * for this class instead.
  */
@@ -45,6 +48,13 @@ public final class DetailAutoAdvance {
     static final String PROFILE_SCOPE = "hushfeed_profile_";
     /** TikTok's mode for that queue: 1 plays your collections in turn, without its bottom bar. */
     private static final int QUEUE_ON = 1;
+    private static final String QUEUE_SCENE = "com.ss.android.ugc.aweme.backgroundplay.ScopedBgPlayScene";
+    private static final String QUEUE_STATE = "com.ss.android.ugc.aweme.backgroundplay.ScopedBgPlaySessionState";
+    private static final String QUEUE_SCOPE_ID = "scopeId";
+    private static final String QUEUE_OFF = "OFF";
+    private static final String QUEUE_ACTIVE = "ACTIVE";
+    // Profile queues turned on here, so one TikTok's switch turned off stays off.
+    private static final Map<Object, Boolean> ARMED = new WeakHashMap<>();
     // One session per page, so the limit counts this page's videos, as it does for each feed.
     private static final Map<Activity, AutoAdvance.Control> SESSIONS = new WeakHashMap<>();
     // TikTok's background queue reports its ends off the page, so it keeps a count of its own.
@@ -128,6 +138,55 @@ public final class DetailAutoAdvance {
             Logger.printException(() -> "Could not check the limit for TikTok's background queue", error);
             return hasNext;
         }
+    }
+
+    /**
+     * Called where TikTok, as the app leaves the screen, checks that a page's background queue was
+     * turned on before it arms it. TikTok's switch for that sits on your own collections only, so
+     * a profile page's queue is still off there and TikTok skips it, after it has already passed
+     * over the one-video session: the video stopped on Home (#292 on the S22). A profile page's
+     * queue is turned on here instead, once per session, so TikTok's own switch can still turn it
+     * off again.
+     */
+    public static void armProfileQueue(Object session) {
+        try {
+            if (session == null || !profileQueue()) return;
+            Field sceneField = fieldOfType(session.getClass(), QUEUE_SCENE);
+            Field stateField = fieldOfType(session.getClass(), QUEUE_STATE);
+            if (sceneField == null || stateField == null) {
+                HookStatus.missingMember(FAMILY, "field", session.getClass().getName(),
+                        sceneField == null ? QUEUE_SCENE : QUEUE_STATE);
+                return;
+            }
+            Object scene = sceneField.get(session);
+            if (scene == null) return;
+            Object scope = scene.getClass().getField(QUEUE_SCOPE_ID).get(scene);
+            if (!(scope instanceof String) || !((String) scope).startsWith(PROFILE_SCOPE)) return;
+            Object state = stateField.get(session);
+            if (!(state instanceof Enum) || !QUEUE_OFF.equals(((Enum<?>) state).name())) return;
+            synchronized (ARMED) {
+                if (ARMED.containsKey(session)) return;
+                ARMED.put(session, Boolean.TRUE);
+            }
+            @SuppressWarnings({"unchecked", "rawtypes"})
+            Object on = Enum.valueOf((Class) stateField.getType(), QUEUE_ACTIVE);
+            stateField.set(session, on);
+            HookStatus.bound(FAMILY, "profile background queue");
+            Logger.printDebug(() -> "Background queue turned on for " + scope);
+        } catch (Throwable error) {
+            Logger.printException(() -> "Could not turn on the background queue for a profile page", error);
+        }
+    }
+
+    private static Field fieldOfType(Class<?> type, String typeName) {
+        for (Class<?> at = type; at != null && at != Object.class; at = at.getSuperclass()) {
+            for (Field field : at.getDeclaredFields()) {
+                if (Modifier.isStatic(field.getModifiers()) || !typeName.equals(field.getType().getName())) continue;
+                field.setAccessible(true);
+                return field;
+            }
+        }
+        return null;
     }
 
     /** Called from {@code PlayerController.onPlayCompleted} with the video that finished. */

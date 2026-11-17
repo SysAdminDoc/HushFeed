@@ -49,6 +49,9 @@ internal const val FOREGROUND_NEXT_SKIPPED = "foreground_auto_next_skipped"
 internal const val QUEUE_MODE_KEY = "background_play_collection_enable"
 internal const val QUEUE_END = "play_completed"
 internal const val QUEUE_END_STATE = "hasNext="
+internal const val QUEUE_SESSION_OFF = "session_disabled"
+internal const val QUEUE_ARMED = "result=armed, scene="
+internal const val QUEUE_SESSION_STATE = "Lcom/ss/android/ugc/aweme/backgroundplay/ScopedBgPlaySessionState;"
 internal const val BACKGROUND_SCOPE = "hushfeedBackgroundScope"
 internal const val FOREGROUND_SCOPE = "hushfeedForegroundScope"
 private const val PROFILE_UID = "getFromProfileUid"
@@ -72,6 +75,38 @@ internal object QueueModeFingerprint : Fingerprint(
     returnType = "Ljava/lang/Object;",
     strings = listOf(QUEUE_MODE_KEY),
 )
+
+/**
+ * TikTok's trigger as the app leaves the screen (BackgroundPlayServiceImpl.LJII on 47.8.3). On a
+ * page with a queue key it arms that queue and skips the one-video session, but only once the
+ * queue's session was turned on, which TikTok's own switch does for your collections alone.
+ */
+internal object QueueTriggerFingerprint : Fingerprint(strings = listOf(QUEUE_SESSION_OFF, QUEUE_ARMED))
+
+/** Where the trigger asks whether the page's queue session is on, and the register holding that session. */
+internal class QueueSessionCheck(val at: Int, val session: Int, val sessionType: String)
+
+internal fun Method.queueSessionCheck(): QueueSessionCheck? {
+    val code = implementation?.instructions?.toList() ?: return null
+    val off = code.indexOfFirst {
+        (it.opcode == Opcode.CONST_STRING || it.opcode == Opcode.CONST_STRING_JUMBO) &&
+            it.getReference<StringReference>()?.string == QUEUE_SESSION_OFF
+    }
+    if (off < 0) return null
+    // The last yes-or-no question before the skip is the session's own "am I on".
+    val check = code.take(off).indexOfLast { call ->
+        call.opcode == Opcode.INVOKE_VIRTUAL && call.getReference<MethodReference>()?.let {
+            it.returnType == "Z" && it.parameterTypes.isEmpty()
+        } == true
+    }
+    if (check < 0) return null
+    val session = (code[check] as FiveRegisterInstruction).registerC
+    if (session > 15) return null
+    return QueueSessionCheck(check, session, code[check].getReference<MethodReference>()!!.definingClass)
+}
+
+internal fun queueArmHook(check: QueueSessionCheck) =
+    "invoke-static {v${check.session}}, $DETAIL->armProfileQueue(Ljava/lang/Object;)V"
 
 private fun Instruction.isStaticCall() = opcode == Opcode.INVOKE_STATIC || opcode == Opcode.INVOKE_STATIC_RANGE
 
@@ -261,7 +296,9 @@ internal fun Method.queueModeHook(): Pair<Int, String> {
  * Auto-advance and Background play are on. The places that put up the collection's bottom bar
  * keep TikTok's answer, and TikTok's own move to the next video on screen is turned away while
  * Auto-advance makes that move. The queue's end of a video asks the extension too, so the limit
- * and the holds stop it the way reaching its last video does.
+ * and the holds stop it the way reaching its last video does. TikTok arms a queue as the app
+ * leaves the screen only when its session was turned on, which its switch does for your
+ * collections alone, so the trigger's check turns a profile page's session on first.
  */
 internal fun queueProfilePagesInBackground() {
     val registrar = mutableClassDefBy(SCOPED_REGISTRAR)
@@ -302,6 +339,14 @@ internal fun queueProfilePagesInBackground() {
     val mode = QueueModeFingerprint.method
     val (at, hook) = mode.queueModeHook()
     mode.addInstructionsAtControlFlowLabel(at, hook)
+
+    val trigger = QueueTriggerFingerprint.method
+    val check = trigger.queueSessionCheck()
+        ?: throw PatchException("Auto advance: TikTok's background trigger no longer asks its queue session before \"$QUEUE_SESSION_OFF\".")
+    if (classDefByOrNull(check.sessionType)?.fields?.any { it.type == QUEUE_SESSION_STATE } != true) {
+        throw PatchException("Auto advance: ${check.sessionType} no longer holds the queue session's state.")
+    }
+    trigger.addInstructionsAtControlFlowLabel(check.at, queueArmHook(check))
     println("[Automatic video advance] Profile pages use the background queue: $backgroundSites starting reads, " +
-        "$foregroundSites on screen, the end of a video and the mode read.")
+        "$foregroundSites on screen, the end of a video, the mode read and the trigger's session check.")
 }

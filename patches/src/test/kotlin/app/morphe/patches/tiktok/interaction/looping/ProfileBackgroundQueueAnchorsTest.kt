@@ -128,6 +128,35 @@ class ProfileBackgroundQueueAnchorsTest {
         }
     }
 
+    /**
+     * #292 on the S22: with the profile key in place the video stopped on Home. TikTok's trigger
+     * skipped the profile page's queue as "session_disabled" (its switch turns a queue on for your
+     * own collections only) after passing over the one-video session. The arming hook goes in on
+     * the trigger's check of the session, so every path into that check meets it.
+     */
+    @Test
+    fun `the trigger's session check takes the arming hook`() {
+        Fixtures.forEachDeclared { apk ->
+            val all = classes(apk)
+            val triggers = all.flatMap { it.methods }.filter { it.holds(QUEUE_SESSION_OFF) && it.holds(QUEUE_ARMED) }
+            assertEquals("triggers: ${triggers.map { "${it.definingClass}->${it.name}" }}", 1, triggers.size)
+            val check = triggers.single().queueSessionCheck()
+            assertNotNull("the trigger no longer asks its session before \"$QUEUE_SESSION_OFF\"", check)
+            val session = all.single { it.type == check!!.sessionType }
+            assertTrue("${session.type} holds no session state", session.fields.any { it.type == QUEUE_SESSION_STATE })
+            assertTrue(
+                "${session.type} holds no scene",
+                session.fields.any { it.type == "Lcom/ss/android/ugc/aweme/backgroundplay/ScopedBgPlayScene;" },
+            )
+            val patched = MutableMethod(triggers.single())
+            patched.addInstructionsAtControlFlowLabel(check!!.at, queueArmHook(check))
+            assertEquals(emptyList<BridgeTypeFlow.Problem>(), BridgeTypeFlow.check(patched))
+            val code = patched.implementation!!.instructions.toList()
+            assertEquals("armProfileQueue", code[check.at].getReference<MethodReference>()?.name)
+            assertEquals(check.sessionType, code[check.at + 1].getReference<MethodReference>()?.definingClass)
+        }
+    }
+
     @Test
     fun `the mode hook sits where every path meets`() {
         Fixtures.forEachDeclared { apk ->

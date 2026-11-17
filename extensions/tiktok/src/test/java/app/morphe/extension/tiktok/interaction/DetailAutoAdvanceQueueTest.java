@@ -13,6 +13,8 @@ import app.morphe.extension.shared.settings.PausedProcess;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.wellbeing.SessionBudget;
+import com.ss.android.ugc.aweme.backgroundplay.ScopedBgPlayScene;
+import com.ss.android.ugc.aweme.backgroundplay.ScopedBgPlaySessionState;
 
 import org.junit.After;
 import org.junit.Before;
@@ -129,6 +131,62 @@ public class DetailAutoAdvanceQueueTest {
     @Test public void theLastVideoStaysTheLast() {
         bothOn();
         assertFalse(DetailAutoAdvance.backgroundNext(false, new Object(), "a"));
+    }
+
+    /** TikTok's queue session as 47.8.3 lays it out: obfuscated fields, the scene and the state among them. */
+    private static final class Session {
+        private final String LIZ = "owner";
+        private final ScopedBgPlayScene LIZIZ;
+        private ScopedBgPlaySessionState LJFF = ScopedBgPlaySessionState.OFF;
+
+        Session(String scope) {
+            LIZIZ = new ScopedBgPlayScene("collection", scope);
+        }
+    }
+
+    /**
+     * #292 on the S22: TikTok skipped a profile page's queue as the app left the screen because
+     * its session was never turned on, and the video stopped on Home.
+     */
+    @Test public void aProfilePagesQueueIsTurnedOnAtTheTrigger() {
+        bothOn();
+        Session session = new Session(DetailAutoAdvance.PROFILE_SCOPE + "107955");
+        DetailAutoAdvance.armProfileQueue(session);
+        assertEquals(ScopedBgPlaySessionState.ACTIVE, session.LJFF);
+    }
+
+    @Test public void yourOwnCollectionsKeepTikToksSwitch() {
+        bothOn();
+        Session session = new Session("7301234567");
+        DetailAutoAdvance.armProfileQueue(session);
+        assertEquals(ScopedBgPlaySessionState.OFF, session.LJFF);
+    }
+
+    @Test public void eitherSwitchOffLeavesTheQueueOff() {
+        Settings.AUTO_ADVANCE.save(true);
+        Session session = new Session(DetailAutoAdvance.PROFILE_SCOPE + "107955");
+        DetailAutoAdvance.armProfileQueue(session);
+        assertEquals(ScopedBgPlaySessionState.OFF, session.LJFF);
+    }
+
+    /** TikTok's own switch can turn the queue off again, and the next trigger leaves it off. */
+    @Test public void aQueueTurnedOffAgainStaysOff() {
+        bothOn();
+        Session session = new Session(DetailAutoAdvance.PROFILE_SCOPE + "107955");
+        DetailAutoAdvance.armProfileQueue(session);
+        session.LJFF = ScopedBgPlaySessionState.OFF;
+        DetailAutoAdvance.armProfileQueue(session);
+        assertEquals(ScopedBgPlaySessionState.OFF, session.LJFF);
+    }
+
+    @Test public void anEndedQueueIsLeftEnded() {
+        bothOn();
+        Session session = new Session(DetailAutoAdvance.PROFILE_SCOPE + "107955");
+        session.LJFF = ScopedBgPlaySessionState.ENDED;
+        DetailAutoAdvance.armProfileQueue(session);
+        assertEquals(ScopedBgPlaySessionState.ENDED, session.LJFF);
+        DetailAutoAdvance.armProfileQueue(null);
+        DetailAutoAdvance.armProfileQueue(new Object());
     }
 
     @Test public void withAutoAdvanceOffTikToksAnswerGoesThrough() {

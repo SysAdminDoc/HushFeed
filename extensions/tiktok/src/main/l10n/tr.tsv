@@ -2654,6 +2654,18 @@ Clearing Favorites in %1$d	Favoriler temizleniyor: %1$d
 Reposts removed: %1$d	Kaldırılan yeniden yayınlamalar: %1$d
 Likes removed: %1$d	Kaldırılan beğeniler: %1$d
 Favorites removed: %1$d	Favorilerden kaldırılan: %1$d
+Remove all comments	Tüm yorumları kaldır
+Deletes every comment you've posted one after another.	Paylaştığın her yorumu sırayla siler.
+Remove selected comments	Seçili yorumları kaldır
+Pick comments from your comment history to delete.	Yorum geçmişinden silinecek yorumları seç.
+Removing all comments in %1$d	Yorumlar kaldırılıyor: %1$d
+Removing the picked comments in %1$d	Seçili yorumlar kaldırılıyor: %1$d
+Comments removed: %1$d	Kaldırılan yorumlar: %1$d
+TikTok refused to list your comments	TikTok yorumlarını listelemeyi reddetti
+Couldn't load your comments. Try again.	Yorumların yüklenemedi. Tekrar dene.
+Loading your comments	Yorumların yükleniyor
+No comments to show	Gösterilecek yorum yok
+No text	Metin yok
 Nothing to remove	Kaldırılacak bir şey yok
 Done. %1$d removed.	Bitti. %1$d kaldırıldı.
 Stopped. %1$d removed.	Durduruldu. %1$d kaldırıldı.

@@ -2657,6 +2657,18 @@ Clearing Favorites in %1$d	กำลังล้างรายการโป�
 Reposts removed: %1$d	ลบรีโพสต์แล้ว: %1$d
 Likes removed: %1$d	ลบการถูกใจแล้ว: %1$d
 Favorites removed: %1$d	ลบออกจากรายการโปรดแล้ว: %1$d
+Remove all comments	ลบความคิดเห็นทั้งหมด
+Deletes every comment you've posted one after another.	ลบทุกความคิดเห็นที่คุณโพสต์ทีละรายการ
+Remove selected comments	ลบความคิดเห็นที่เลือก
+Pick comments from your comment history to delete.	เลือกความคิดเห็นที่จะลบจากประวัติความคิดเห็นของคุณ
+Removing all comments in %1$d	กำลังลบความคิดเห็นทั้งหมดใน %1$d
+Removing the picked comments in %1$d	กำลังลบความคิดเห็นที่เลือกใน %1$d
+Comments removed: %1$d	ลบความคิดเห็นแล้ว: %1$d
+TikTok refused to list your comments	TikTok ปฏิเสธการแสดงความคิดเห็นของคุณ
+Couldn't load your comments. Try again.	โหลดความคิดเห็นของคุณไม่ได้ ลองอีกครั้ง
+Loading your comments	กำลังโหลดความคิดเห็นของคุณ
+No comments to show	ไม่มีความคิดเห็นที่จะแสดง
+No text	ไม่มีข้อความ
 Nothing to remove	ไม่มีข้อมูลให้ลบ
 Done. %1$d removed.	เสร็จสิ้น ลบแล้ว %1$d รายการ
 Stopped. %1$d removed.	หยุดแล้ว ลบแล้ว %1$d รายการ

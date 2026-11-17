@@ -155,6 +155,44 @@ final class FakeTikTok {
         return new Call(new Response(body));
     }
 
+    /**
+     * The response as TikTok's general request service hands it back: no body(), its fields
+     * renamed, the body the one held as a plain Object.
+     */
+    public static final class RenamedResponse {
+        private final int LIZ = 200;
+        private final Object LIZIZ;
+
+        RenamedResponse(Object body) {
+            this.LIZIZ = body;
+        }
+    }
+
+    /**
+     * TikTok's general request service (com.bytedance.ttnet.INetworkApi): any path, with the
+     * query and form as maps, its answer's body a JSON string. It carries no request
+     * annotations, so each request logs its path and maps.
+     */
+    public static final class Network {
+        private final Account account;
+
+        Network(Account account) {
+            this.account = account;
+        }
+
+        public Call doGet(boolean addCommonParam, int maxLength, String url, Map<String, String> query,
+                List<Object> headers, Object extraInfo) {
+            account.log("doGet " + url + " " + query + (addCommonParam ? "" : " without the app's query"));
+            return new Call(new RenamedResponse(account.commentHistory(url, query)));
+        }
+
+        public Call doPost(int maxLength, String url, Map<String, String> query, Map<String, String> fields,
+                List<Object> headers, Object extraInfo) {
+            account.log("doPost " + url + " " + fields);
+            return new Call(new RenamedResponse(account.deleteComment(url, fields)));
+        }
+    }
+
     /** Rx's observer shape: the cleanup subscribes with a proxy of it. */
     public interface Observer {
         void onSubscribe(Object disposable);
@@ -260,7 +298,7 @@ final class FakeTikTok {
     }
 
     /**
-     * An account with reposts, likes and Favorites behind the five services a cleanup uses. Lists
+     * An account with reposts, likes, Favorites and comments behind the services a cleanup uses. Lists
      * are read by offset; a removal takes the item off. Removing {@link #refuse} answers a
      * non-zero status code instead. Unavailable Favorites never show in the Favorites list and
      * only go with the request that clears them all.
@@ -270,9 +308,13 @@ final class FakeTikTok {
         final List<String> likes = new ArrayList<>();
         final List<String> favorites = new ArrayList<>();
         final List<String> unavailable = new ArrayList<>();
+        /** Your comments, newest first, as the comment history lists them. */
+        final List<String> comments = new ArrayList<>();
         final List<String> requests = new ArrayList<>();
         volatile String refuse;
         volatile boolean refuseUnavailable;
+        /** The status code the comment history answers with; zero lists. */
+        volatile int commentHistoryStatus;
 
         Account withReposts(int count) {
             for (int index = 0; index < count; index++) reposts.add("r" + index);
@@ -292,6 +334,51 @@ final class FakeTikTok {
         Account withUnavailableFavorites(int count) {
             for (int index = 0; index < count; index++) unavailable.add("u" + index);
             return this;
+        }
+
+        Account withComments(int count) {
+            for (int index = 0; index < count; index++) comments.add("c" + index);
+            return this;
+        }
+
+        void log(String request) {
+            synchronized (requests) {
+                requests.add(request);
+            }
+        }
+
+        @Override
+        public Object network() {
+            return new Network(this);
+        }
+
+        /**
+         * A page of the comment history by offset, as JSON. Each page also lists one comment
+         * TikTok took down, apart from the rest, which is never yours to delete.
+         */
+        String commentHistory(String url, Map<String, String> query) {
+            if (!"/tiktok/comment/history/list/v2/".equals(url)) throw new AssertionError("asked " + url);
+            if (commentHistoryStatus != 0) {
+                return "{\"status_code\":" + commentHistoryStatus + ",\"status_msg\":\"no\"}";
+            }
+            int offset = Integer.parseInt(query.get("offset"));
+            int count = Integer.parseInt(query.get("count"));
+            StringBuilder list = new StringBuilder();
+            for (String cid : page(comments, offset, count)) {
+                if (list.length() > 0) list.append(',');
+                list.append("{\"cid\":\"").append(cid).append("\",\"text\":\"said ").append(cid)
+                        .append("\",\"create_time\":1763000000}");
+            }
+            return "{\"status_code\":0,\"comment_list\":[" + list + "],"
+                    + "\"illegal_comment_list\":[{\"cid\":\"taken-down\",\"text\":\"gone\"}],"
+                    + "\"offset\":" + (offset + count) + ",\"has_more\":"
+                    + (offset + count < comments.size() ? 1 : 0) + "}";
+        }
+
+        String deleteComment(String url, Map<String, String> fields) {
+            if (!"/aweme/v1/comment/delete/".equals(url)) throw new AssertionError("posted " + url);
+            Status status = remove(comments, fields.get("cid"));
+            return "{\"status_code\":" + status.status_code + "}";
         }
 
         @Override

@@ -22,6 +22,7 @@ public final class AccountCleanupPreference extends Preference implements Immedi
     static final String REPOSTS_KEY = "action_remove_reposts";
     static final String LIKES_KEY = "action_remove_likes";
     static final String FAVORITES_KEY = "action_clear_favorites";
+    static final String COMMENTS_KEY = "action_remove_comments";
 
     @Override public boolean actsOnTap() {
         return true;
@@ -40,6 +41,11 @@ public final class AccountCleanupPreference extends Preference implements Immedi
                 setKey(LIKES_KEY);
                 setTitle(L10n.t(context, "Remove all likes"));
                 setSummary(L10n.t(context, "Unlikes every video one after another."));
+                break;
+            case COMMENTS:
+                setKey(COMMENTS_KEY);
+                setTitle(L10n.t(context, "Remove all comments"));
+                setSummary(L10n.t(context, "Deletes every comment you've posted one after another."));
                 break;
             default:
                 setKey(FAVORITES_KEY);

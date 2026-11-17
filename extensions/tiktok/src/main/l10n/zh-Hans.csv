@@ -2596,6 +2596,18 @@ Clearing Favorites in %1$d,%1$d 秒后清空收藏
 Reposts removed: %1$d,已移除转发：%1$d
 Likes removed: %1$d,已取消点赞：%1$d
 Favorites removed: %1$d,已移出收藏：%1$d
+Remove all comments,删除所有评论
+Deletes every comment you've posted one after another.,逐条删除你发布过的每条评论.
+Remove selected comments,删除所选评论
+Pick comments from your comment history to delete.,从你的评论记录中挑选要删除的评论.
+Removing all comments in %1$d,%1$d 秒后删除所有评论
+Removing the picked comments in %1$d,%1$d 秒后删除所选评论
+Comments removed: %1$d,已删除评论：%1$d
+TikTok refused to list your comments,TikTok 拒绝列出你的评论
+Couldn't load your comments. Try again.,无法加载你的评论。请重试.
+Loading your comments,正在加载你的评论
+No comments to show,没有可显示的评论
+No text,无文字
 Nothing to remove,没有可移除的内容
 Done. %1$d removed.,完成。已移除 %1$d 项.
 Stopped. %1$d removed.,已停止。已移除 %1$d 项.

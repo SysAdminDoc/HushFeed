@@ -2834,6 +2834,18 @@ Clearing Favorites in %1$d	Очистка Избранного через %1$d
 Reposts removed: %1$d	Удалено репостов: %1$d
 Likes removed: %1$d	Снято лайков: %1$d
 Favorites removed: %1$d	Убрано из Избранного: %1$d
+Remove all comments	Удалить все комментарии
+Deletes every comment you've posted one after another.	Удаляет все ваши комментарии по очереди.
+Remove selected comments	Удалить выбранные комментарии
+Pick comments from your comment history to delete.	Выберите в истории комментариев те, что нужно удалить.
+Removing all comments in %1$d	Удаление всех комментариев через %1$d
+Removing the picked comments in %1$d	Удаление выбранных комментариев через %1$d
+Comments removed: %1$d	Удалено комментариев: %1$d
+TikTok refused to list your comments	TikTok отказался показать ваши комментарии
+Couldn't load your comments. Try again.	Не удалось загрузить ваши комментарии. Попробуйте ещё раз.
+Loading your comments	Загрузка ваших комментариев
+No comments to show	Нет комментариев
+No text	Без текста
 Nothing to remove	Нечего удалять
 Done. %1$d removed.	Готово. Удалено: %1$d.
 Stopped. %1$d removed.	Остановлено. Удалено: %1$d.

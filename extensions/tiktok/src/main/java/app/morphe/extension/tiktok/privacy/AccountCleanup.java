@@ -7,6 +7,9 @@ package app.morphe.extension.tiktok.privacy;
 import android.content.Context;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Executor;
 
@@ -45,10 +48,72 @@ public final class AccountCleanup {
 
     /** Starts the countdown for {@code kind}, or says why it can't. */
     public static void start(Context context, Kind kind) {
-        Utils.runOnMainThreadNowOrLater(() -> begin(context, kind));
+        Utils.runOnMainThreadNowOrLater(() -> begin(context, kind, null));
     }
 
-    private static void begin(Context context, Kind kind) {
+    /** Starts the countdown for deleting the comments picked from the history (#442). */
+    public static void startPicked(Context context, Collection<String> cids) {
+        if (cids == null || cids.isEmpty()) return;
+        List<String> picked = new ArrayList<>(cids);
+        Utils.runOnMainThreadNowOrLater(() -> begin(context, Kind.COMMENTS, picked));
+    }
+
+    /** TikTok's services, or a test's stand-ins. */
+    static AccountCleanupSources.Services services() {
+        AccountCleanupSources.Services services = servicesForTests;
+        return services != null ? services : AccountCleanupSources.TIKTOK;
+    }
+
+    /** Hears, on the main thread, a page of the comment history or why it couldn't be read. */
+    public interface CommentsLoaded {
+        void loaded(AccountCleanupSources.Comments page);
+
+        void failed(End end);
+    }
+
+    /** Reads one page of the comment history from {@code offset} off the main thread, for the picker. */
+    public static void loadComments(long offset, CommentsLoaded callback) {
+        background(() -> {
+            try {
+                if (SignedInUser.id() == null) throw new Failure(End.STOPPED, "signed out");
+                AccountCleanupSources.Comments page = AccountCleanupSources.commentPage(services(), offset);
+                Utils.runOnMainThread(() -> callback.loaded(page));
+            } catch (Failure failure) {
+                Logger.printInfo(() -> "Comment history not read: " + failure.getMessage());
+                Utils.runOnMainThread(() -> callback.failed(failure.end()));
+            } catch (Throwable unexpected) {
+                Logger.printException(() -> "Comment history not read", unexpected);
+                Utils.runOnMainThread(() -> callback.failed(End.UNSUPPORTED));
+            }
+        });
+    }
+
+    /** What the picker says when the comment history couldn't be read. */
+    public static String loadFailedText(Context context, End end) {
+        switch (end) {
+            case STOPPED:
+                return L10n.t(context, "Sign in to TikTok first");
+            case UNSUPPORTED:
+                return L10n.t(context, "Not available on this TikTok version");
+            case REFUSED:
+                return L10n.t(context, "TikTok refused to list your comments");
+            default:
+                return L10n.t(context, "Couldn't load your comments. Try again.");
+        }
+    }
+
+    private static void background(Runnable work) {
+        Executor executor = executorForTests;
+        if (executor != null) {
+            executor.execute(work);
+            return;
+        }
+        Thread thread = new Thread(work, "Hushfeed account cleanup");
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    private static void begin(Context context, Kind kind, List<String> picked) {
         if (SignedInUser.id() == null) {
             SettingsActionBanner.showNotice(context, L10n.t(context, "Sign in to TikTok first"));
             return;
@@ -64,7 +129,7 @@ public final class AccountCleanup {
                 }
                 return;
             }
-            run = new Run(context, kind);
+            run = new Run(context, kind, picked);
             active = run;
         }
         run.tick(COUNTDOWN_SECONDS);
@@ -83,12 +148,15 @@ public final class AccountCleanup {
         }
     }
 
-    static String countdownText(Context context, Kind kind, int seconds) {
+    static String countdownText(Context context, Kind kind, boolean picked, int seconds) {
+        if (picked) return L10n.f(context, "Removing the picked comments in %1$d", seconds);
         switch (kind) {
             case REPOSTS:
                 return L10n.f(context, "Removing all reposts in %1$d", seconds);
             case LIKES:
                 return L10n.f(context, "Removing all likes in %1$d", seconds);
+            case COMMENTS:
+                return L10n.f(context, "Removing all comments in %1$d", seconds);
             default:
                 return L10n.f(context, "Clearing Favorites in %1$d", seconds);
         }
@@ -100,6 +168,8 @@ public final class AccountCleanup {
                 return L10n.f(context, "Reposts removed: %1$d", count);
             case LIKES:
                 return L10n.f(context, "Likes removed: %1$d", count);
+            case COMMENTS:
+                return L10n.f(context, "Comments removed: %1$d", count);
             default:
                 return L10n.f(context, "Favorites removed: %1$d", count);
         }
@@ -127,16 +197,19 @@ public final class AccountCleanup {
         /** For text once the settings window is gone; never a screen. */
         private final Context application;
         private final Kind kind;
+        /** The comments picked from the history, or null for a whole list. */
+        private final List<String> picked;
         private final Runnable cancel = this::cancel;
         private final Runnable stop = this::stop;
         private volatile CleanupRunner runner;
         private boolean cancelled;
 
-        Run(Context context, Kind kind) {
+        Run(Context context, Kind kind, List<String> picked) {
             this.context = new WeakReference<>(context);
             Context app = context.getApplicationContext();
             this.application = app != null ? app : context;
             this.kind = kind;
+            this.picked = picked;
         }
 
         private Context ui() {
@@ -159,7 +232,7 @@ public final class AccountCleanup {
                 launch();
                 return;
             }
-            if (!SettingsActionBanner.showProgress(ui, countdownText(ui, kind, seconds),
+            if (!SettingsActionBanner.showProgress(ui, countdownText(ui, kind, picked != null, seconds),
                     L10n.t(ui, "Cancel"), cancel, first)) {
                 cancelled = true;
                 finished(this);
@@ -191,9 +264,8 @@ public final class AccountCleanup {
         private void launch() {
             Source source;
             try {
-                AccountCleanupSources.Services services = servicesForTests;
-                source = AccountCleanupSources.sourceFor(kind,
-                        services != null ? services : AccountCleanupSources.TIKTOK);
+                source = picked != null ? AccountCleanupSources.pickedCommentsFor(picked, services())
+                        : AccountCleanupSources.sourceFor(kind, services());
             } catch (Failure failure) {
                 end(failure.end(), 0);
                 return;
@@ -222,14 +294,7 @@ public final class AccountCleanup {
                         + " after " + started.removed());
                 Utils.runOnMainThread(() -> end(result, started.removed()));
             };
-            Executor executor = executorForTests;
-            if (executor != null) {
-                executor.execute(work);
-            } else {
-                Thread thread = new Thread(work, "Hushfeed account cleanup");
-                thread.setDaemon(true);
-                thread.start();
-            }
+            background(work);
         }
 
         private void end(End end, int count) {

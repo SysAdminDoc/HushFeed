@@ -17,8 +17,10 @@ import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference
+import com.android.tools.smali.dexlib2.immutable.ImmutableClassDef
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation
+import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
 import com.android.tools.smali.dexlib2.immutable.instruction.ImmutableInstruction11n
 import com.android.tools.smali.dexlib2.immutable.instruction.ImmutableInstruction11x
 import com.android.tools.smali.dexlib2.immutable.instruction.ImmutableInstruction21c
@@ -27,6 +29,7 @@ import com.android.tools.smali.dexlib2.immutable.reference.ImmutableFieldReferen
 import com.android.tools.smali.dexlib2.immutable.reference.ImmutableMethodReference
 import com.android.tools.smali.dexlib2.immutable.reference.ImmutableTypeReference
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -38,11 +41,12 @@ private const val SERVICE = "LX/1UyX;"
 /**
  * What Account cleanup (#332) bridges to, held to each declared build: one liked videos list
  * service, one Favorites service and one service that clears unavailable Favorites, each made one
- * way in TikTok, and a bridge that makes it the same way and passes the verifier's typing.
+ * way in TikTok, and a bridge that makes it the same way and passes the verifier's typing. The
+ * comment cleanup (#442) adds TikTok's general request service, made on the liked list's client.
  */
 class AccountCleanupServicesTest {
     @Test
-    fun `each build has one liked list, one Favorites and one unavailable Favorites service, each made one way`() {
+    fun `each build has the services the cleanup bridges to, each made one way`() {
         Fixtures.forEachDeclared { apk ->
             val version = Fixtures.versionOf(apk)
             val liked = mutableSetOf<String>()
@@ -80,6 +84,11 @@ class AccountCleanupServicesTest {
                 checkBridge("$version $service", service, recipes.single())
                 checkBridgeCanReach("$version $service", classes, service, recipes.single())
             }
+            assertTrue("$version: $NETWORK_API with one doGet and one doPost",
+                classes[NETWORK_API]?.let(::isNetworkApi) == true)
+            val apiHost = made.getValue(liked.single()).single()
+            checkBridge("$version general requests", NETWORK_API, apiHost)
+            checkBridgeCanReach("$version general requests", classes, NETWORK_API, apiHost)
         }
     }
 
@@ -105,6 +114,28 @@ class AccountCleanupServicesTest {
         assertEquals("the class handed to create isn't the one loaded", emptyList<Any>(),
             serviceRecipes(maker(createRegisters = 1 to 1)))
     }
+
+    @Test
+    fun `a general request service that changed shape is not taken`() {
+        val get = "doGet" to listOf("Z", "I", "Ljava/lang/String;", "Ljava/util/Map;", "Ljava/util/List;", "Ljava/lang/Object;")
+        val post = "doPost" to listOf("I", "Ljava/lang/String;", "Ljava/util/Map;", "Ljava/util/Map;", "Ljava/util/List;", "Ljava/lang/Object;")
+        assertTrue("47.8.3's shape", isNetworkApi(networkApi(get, post)))
+        assertFalse("no doPost", isNetworkApi(networkApi(get)))
+        assertFalse("a second doGet", isNetworkApi(networkApi(get, post, "doGet" to listOf("Ljava/lang/String;"))))
+        assertFalse("doGet without its first flag", isNetworkApi(networkApi("doGet" to get.second.drop(1), post)))
+        assertFalse("a class, not an interface", isNetworkApi(networkApi(get, post, flags = AccessFlags.PUBLIC.value)))
+    }
+
+    private fun networkApi(
+        vararg methods: Pair<String, List<String>>,
+        flags: Int = AccessFlags.PUBLIC.value or AccessFlags.INTERFACE.value or AccessFlags.ABSTRACT.value,
+    ): ClassDef = ImmutableClassDef(
+        NETWORK_API, flags, "Ljava/lang/Object;", null, null, null, null,
+        methods.map { (name, parameters) ->
+            ImmutableMethod(NETWORK_API, name, parameters.map { ImmutableMethodParameter(it, null, null) },
+                "LX/05S6;", AccessFlags.PUBLIC.value or AccessFlags.ABSTRACT.value, null, null, null)
+        },
+    )
 
     private fun Instruction.casts(type: String) =
         opcode == Opcode.CHECK_CAST && getReference<TypeReference>()?.type == type

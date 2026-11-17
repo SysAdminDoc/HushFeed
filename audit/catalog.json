@@ -267,7 +267,8 @@
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/privacy/CleanupRunner.java",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/privacy/TikTokCalls.java",
    "patches/src/main/kotlin/app/morphe/patches/tiktok/privacy/QuickRemoveHooks.kt",
-   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/privacy/QuickRemove.java"
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/privacy/QuickRemove.java",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/settings/preference/CommentPickerPreference.java"
   ],
   "settings": [
    {

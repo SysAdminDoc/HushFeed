@@ -2897,6 +2897,18 @@ Clearing Favorites in %1$d	مسح المفضلات خلال %1$d
 Reposts removed: %1$d	تمت إزالة إعادة النشر: %1$d
 Likes removed: %1$d	الإعجابات المحذوفة: %1$d
 Favorites removed: %1$d	أزيل من المفضلات: %1$d
+Remove all comments	إزالة كل التعليقات
+Deletes every comment you've posted one after another.	يحذف كل تعليق نشرته واحدا تلو الآخر.
+Remove selected comments	إزالة التعليقات المحددة
+Pick comments from your comment history to delete.	اختر من سجل تعليقاتك ما تريد حذفه.
+Removing all comments in %1$d	إزالة جميع التعليقات خلال %1$d
+Removing the picked comments in %1$d	إزالة التعليقات المختارة خلال %1$d
+Comments removed: %1$d	التعليقات المحذوفة: %1$d
+TikTok refused to list your comments	رفض TikTok عرض تعليقاتك
+Couldn't load your comments. Try again.	تعذر تحميل تعليقاتك. حاول مرة أخرى.
+Loading your comments	جار تحميل تعليقاتك
+No comments to show	لا توجد تعليقات لعرضها
+No text	بلا نص
 Nothing to remove	لا شيء للإزالة
 Done. %1$d removed.	تم. تمت إزالة %1$d.
 Stopped. %1$d removed.	تم الإيقاف. تمت إزالة %1$d.

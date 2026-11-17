@@ -469,6 +469,7 @@ Comments,Comments
 Comments aren't available for this video,Comments aren't available for this video
 Comments beside the video,Comments beside the video
 Comments range,Comments range
+Comments removed: %1$d,Comments removed: %1$d
 Commercial content library,Commercial content library
 Compact,Compact
 Compact comment header,Compact comment header
@@ -519,6 +520,7 @@ Couldn't forget the saved videos. Try again.,Couldn't forget the saved videos. T
 Couldn't get the country. Try again.,Couldn't get the country. Try again.
 Couldn't import watch history. Your saved history is unchanged.,Couldn't import watch history. Your saved history is unchanged.
 Couldn't list your apps. Tap here to try again.,Couldn't list your apps. Tap here to try again.
+Couldn't load your comments. Try again.,Couldn't load your comments. Try again.
 Couldn't make the sticker. Try again.,Couldn't make the sticker. Try again.
 Couldn't make the video. Try again.,Couldn't make the video. Try again.
 Couldn't open that video. Try again.,Couldn't open that video. Try again.
@@ -617,6 +619,7 @@ Delete recording files,Delete recording files
 Delete search,Delete search
 Delete watched offline videos,Delete watched offline videos
 Deletes %1$s from TikTok's storage.,Deletes %1$s from TikTok's storage.
+Deletes every comment you've posted one after another.,Deletes every comment you've posted one after another.
 Delivery unconfirmed: %1$d/%2$d chats. Remaining chats still need a message.,Delivery unconfirmed: %1$d/%2$d chats. Remaining chats still need a message.
 Delivery unconfirmed: %1$d/%2$d chats. Those chats won't be retried today.,Delivery unconfirmed: %1$d/%2$d chats. Those chats won't be retried today.
 Description text size,Description text size
@@ -1279,6 +1282,7 @@ Loading gates…,Loading gates…
 Loading page %1$s…,Loading page %1$s…
 "Loading replies, %1$d of %2$d","Loading replies, %1$d of %2$d"
 Loading the gate list and TikTok's current values…,Loading the gate list and TikTok's current values…
+Loading your comments,Loading your comments
 Local profile counts,Local profile counts
 Local verified badge,Local verified badge
 Location-tagged videos,Location-tagged videos
@@ -1402,6 +1406,7 @@ No apps match this search,No apps match this search
 No clean copy yet. Saved the watermarked one to %1$s,No clean copy yet. Saved the watermarked one to %1$s
 No cleared videos fit the current history limits,No cleared videos fit the current history limits
 No comments are loaded to export yet.,No comments are loaded to export yet.
+No comments to show,No comments to show
 No creator to block on this video,No creator to block on this video
 No creator to hide on this video,No creator to hide on this video
 "No creators are hidden yet. Hide one from a video, or add a handle above.","No creators are hidden yet. Hide one from a video, or add a handle above."
@@ -1440,6 +1445,7 @@ No share actions match this search,No share actions match this search
 No sound to block on this video,No sound to block on this video
 No stream found to record. Reopen the LIVE.,No stream found to record. Reopen the LIVE.
 No suggested accounts to clear,No suggested accounts to clear
+No text,No text
 No video saved. The original photos are missing.,No video saved. The original photos are missing.
 No video selected. Open a video first.,No video selected. Open a video first.
 No videos match,No videos match
@@ -1609,6 +1615,7 @@ Pick a video quality to record the screen,Pick a video quality to record the scr
 Pick all,Pick all
 "Pick apps to add to the Share via row, before More. Each gets the same link the other apps get.","Pick apps to add to the Share via row, before More. Each gets the same link the other apps get."
 Pick at least one story,Pick at least one story
+Pick comments from your comment history to delete.,Pick comments from your comment history to delete.
 Pick for saving,Pick for saving
 Pick stories to save,Pick stories to save
 Pick the actions to remove from the share sheet. Names you typed by hand that TikTok hasn't shown yet stay in the list above.,Pick the actions to remove from the share sheet. Names you typed by hand that TikTok hasn't shown yet stay in the list above.
@@ -1753,6 +1760,7 @@ Remember the last speed,Remember the last speed
 Remind me every,Remind me every
 Remove,Remove
 Remove %1$s,Remove %1$s
+Remove all comments,Remove all comments
 Remove all likes,Remove all likes
 Remove all overrides,Remove all overrides
 Remove all reposts,Remove all reposts
@@ -1761,6 +1769,7 @@ Remove feed ads,Remove feed ads
 Remove rings in comments,Remove rings in comments
 Remove rings on profiles,Remove rings on profiles
 Remove rings on the feed,Remove rings on the feed
+Remove selected comments,Remove selected comments
 Remove story rings,Remove story rings
 Remove the LIVE ring,Remove the LIVE ring
 Remove the imported font,Remove the imported font
@@ -1774,9 +1783,11 @@ Removed: %1$d,Removed: %1$d
 Removes every message that was kept. Each chat shows TikTok's usual notice that a message was unsent.,Removes every message that was kept. Each chat shows TikTok's usual notice that a message was unsent.
 Removes every repost from your account one after another.,Removes every repost from your account one after another.
 Removes every video from Favorites one after another.,Removes every video from Favorites one after another.
+Removing all comments in %1$d,Removing all comments in %1$d
 Removing all likes in %1$d,Removing all likes in %1$d
 Removing all reposts in %1$d,Removing all reposts in %1$d
 Removing the kept messages,Removing the kept messages
+Removing the picked comments in %1$d,Removing the picked comments in %1$d
 "Reopen Hushfeed settings, then choose the file","Reopen Hushfeed settings, then choose the file"
 Replace values when TikTok asks for them,Replace values when TikTok asks for them
 Replay a story from the start when it ends instead of moving to the next one. Tap or swipe to move on.,Replay a story from the start when it ends instead of moving to the next one. Tap or swipe to move on.
@@ -2517,6 +2528,7 @@ TikTok refused the follow: %1$s,TikTok refused the follow: %1$s
 TikTok refused the like with code %1$s,TikTok refused the like with code %1$s
 TikTok refused the like: %1$s,TikTok refused the like: %1$s
 TikTok refused this request (%1$s).,TikTok refused this request (%1$s).
+TikTok refused to list your comments,TikTok refused to list your comments
 TikTok refused. %1$d removed.,TikTok refused. %1$d removed.
 "TikTok removes videos saved for offline viewing after a set time, sometimes only two days, watched or not. With this on they stay until you delete them in TikTok's Offline videos settings. TikTok can still clear watched ones when your phone is low on space.","TikTok removes videos saved for offline viewing after a set time, sometimes only two days, watched or not. With this on they stay until you delete them in TikTok's Offline videos settings. TikTok can still clear watched ones when your phone is low on space."
 TikTok reports additional filtered accounts. This list is incomplete.,TikTok reports additional filtered accounts. This list is incomplete.

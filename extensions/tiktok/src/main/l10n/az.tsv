@@ -2654,6 +2654,18 @@ Clearing Favorites in %1$d	Favoritlər təmizlənir: %1$d
 Reposts removed: %1$d	Silinən yenidən paylaşmalar: %1$d
 Likes removed: %1$d	Silinən bəyənmələr: %1$d
 Favorites removed: %1$d	Favoritlərdən silinən: %1$d
+Remove all comments	Bütün şərhləri silin
+Deletes every comment you've posted one after another.	Yazdığınız bütün şərhləri bir-bir silir.
+Remove selected comments	Seçilmiş şərhləri silin
+Pick comments from your comment history to delete.	Şərh tarixçənizdən silinəcək şərhləri seçin.
+Removing all comments in %1$d	Şərhlər silinir: %1$d
+Removing the picked comments in %1$d	Seçilmiş şərhlər silinir: %1$d
+Comments removed: %1$d	Silinən şərhlər: %1$d
+TikTok refused to list your comments	TikTok şərhlərinizi göstərməkdən imtina etdi
+Couldn't load your comments. Try again.	Şərhləriniz yüklənmədi. Yenidən cəhd edin.
+Loading your comments	Şərhləriniz yüklənir
+No comments to show	Göstəriləcək şərh yoxdur
+No text	Mətn yoxdur
 Nothing to remove	Silinəcək heç nə yoxdur
 Done. %1$d removed.	Hazırdır. Silindi: %1$d.
 Stopped. %1$d removed.	Dayandırıldı. Silindi: %1$d.

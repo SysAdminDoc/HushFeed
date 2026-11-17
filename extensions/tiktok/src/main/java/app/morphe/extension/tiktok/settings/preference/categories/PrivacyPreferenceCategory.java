@@ -16,6 +16,7 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.preference.AccountCleanupPreference;
 import app.morphe.extension.tiktok.settings.preference.ChoicePreference;
+import app.morphe.extension.tiktok.settings.preference.CommentPickerPreference;
 import app.morphe.extension.tiktok.settings.preference.DeviceIdentityPreference;
 import app.morphe.extension.tiktok.settings.preference.GhostModePreference;
 import app.morphe.extension.tiktok.settings.preference.HookStatusPreference;
@@ -325,6 +326,9 @@ public final class PrivacyPreferenceCategory extends ConditionalPreferenceCatego
                         Settings.TAP_TO_REMOVE
                 ));
             }
+            // Your comments, all of them or the ones picked from your history (#442).
+            addPreference(new AccountCleanupPreference(context, Kind.COMMENTS));
+            addPreference(new CommentPickerPreference(context));
         }
     }
 }

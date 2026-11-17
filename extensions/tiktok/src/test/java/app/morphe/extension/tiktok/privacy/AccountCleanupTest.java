@@ -7,11 +7,16 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.os.Looper;
 import android.preference.Preference;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.FrameLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.time.Duration;
@@ -40,11 +45,13 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.Shadows;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.util.ReflectionHelpers;
 
 /**
- * Remove all reposts, Remove all likes and Clear Favorites (#332) from the tap to the count: a
+ * Remove all reposts, Remove all likes, Clear Favorites (#332) and your comments (#442) from the
+ * tap to the count: a
  * countdown with Cancel and no dialog, then the removal with its count and Stop, then the count
  * it reached, with TikTok's services stood in by annotated fakes.
  */
@@ -368,23 +375,31 @@ public class AccountCleanupTest {
         assertEquals("Network error. 0 removed.", AccountCleanup.endText(activity, End.NETWORK, 0));
         assertEquals("Not available on this TikTok version", AccountCleanup.endText(activity, End.UNSUPPORTED, 4));
         assertEquals("Favorites removed: 7", AccountCleanup.progressText(activity, Kind.FAVORITES, 7));
-        assertEquals("Clearing Favorites in 2", AccountCleanup.countdownText(activity, Kind.FAVORITES, 2));
+        assertEquals("Clearing Favorites in 2", AccountCleanup.countdownText(activity, Kind.FAVORITES, false, 2));
+        assertEquals("Removing all comments in 3", AccountCleanup.countdownText(activity, Kind.COMMENTS, false, 3));
+        assertEquals("Removing the picked comments in 4",
+                AccountCleanup.countdownText(activity, Kind.COMMENTS, true, 4));
+        assertEquals("Comments removed: 9", AccountCleanup.progressText(activity, Kind.COMMENTS, 9));
     }
 
-    @Test public void thePrivacyPageHasTheThreeRowsOnlyWithThePatch() {
+    @Test public void thePrivacyPageHasTheCleanupRowsOnlyWithThePatch() {
         SettingsStatus.ghostModeEnabled = true;
         assertEquals(List.of(), cleanupRows(privacyPage()));
 
         SettingsStatus.accountCleanupEnabled = true;
         SettingsMenuPreference privacy = privacyPage();
         List<Preference> rows = cleanupRows(privacy);
-        assertEquals(3, rows.size());
+        assertEquals(5, rows.size());
         assertEquals("Remove all reposts", rows.get(0).getTitle().toString());
         assertEquals("Removes every repost from your account one after another.", rows.get(0).getSummary().toString());
         assertEquals("Remove all likes", rows.get(1).getTitle().toString());
         assertEquals("Unlikes every video one after another.", rows.get(1).getSummary().toString());
         assertEquals("Clear Favorites", rows.get(2).getTitle().toString());
         assertEquals("Removes every video from Favorites one after another.", rows.get(2).getSummary().toString());
+        assertEquals("Remove all comments", rows.get(3).getTitle().toString());
+        assertEquals("Deletes every comment you've posted one after another.", rows.get(3).getSummary().toString());
+        assertEquals("Remove selected comments", rows.get(4).getTitle().toString());
+        assertEquals("Pick comments from your comment history to delete.", rows.get(4).getSummary().toString());
         int heading = indexOf(privacy, rows.get(0)) - 1;
         assertEquals("Clean up your account", privacy.getPreference(heading).getTitle().toString());
 
@@ -394,6 +409,156 @@ public class AccountCleanupTest {
         assertTrue(likes.getOnPreferenceClickListener().onPreferenceClick(likes));
         assertEquals("Removing all likes in 5", bannerText());
         assertNotNull(bannerAction());
+    }
+
+    @Test public void removeAllCommentsDeletesEveryCommentFromTheHistory() {
+        FakeTikTok.Account account = new FakeTikTok.Account().withComments(17);
+        AccountCleanup.servicesForTests = account;
+
+        AccountCleanup.start(activity, Kind.COMMENTS);
+        assertEquals("Removing all comments in 5", bannerText());
+        assertEquals("Cancel", bannerAction().getText().toString());
+        countDown();
+
+        assertEquals("Done. 17 removed.", bannerText());
+        assertEquals(List.of(), account.comments);
+        assertEquals("doGet /tiktok/comment/history/list/v2/ {offset=0, count=15, sort_type=0}",
+                account.requests.get(0));
+        assertEquals("doPost /aweme/v1/comment/delete/ {cid=c0}", account.requests.get(1));
+        assertEquals(17, account.requests.stream().filter(request -> request.startsWith("doPost ")).count());
+        assertFalse("a comment TikTok took down isn't asked about",
+                account.requests.stream().anyMatch(request -> request.contains("taken-down")));
+        assertEquals("every request but the first waited", account.requests.size() - 1, pauses.size());
+    }
+
+    @Test public void commentsStopAtTikToksFirstRefusal() {
+        FakeTikTok.Account account = new FakeTikTok.Account().withComments(3);
+        account.refuse = "c1";
+        AccountCleanup.servicesForTests = account;
+
+        AccountCleanup.start(activity, Kind.COMMENTS);
+        countDown();
+
+        assertEquals("TikTok refused. 1 removed.", bannerText());
+        assertEquals(List.of("c1", "c2"), account.comments);
+    }
+
+    @Test public void aCommentHistoryTikTokWontListEndsTheRun() {
+        FakeTikTok.Account account = new FakeTikTok.Account().withComments(3);
+        account.commentHistoryStatus = 8;
+        AccountCleanup.servicesForTests = account;
+
+        AccountCleanup.start(activity, Kind.COMMENTS);
+        countDown();
+
+        assertEquals("TikTok refused. 0 removed.", bannerText());
+        assertEquals(3, account.comments.size());
+        assertFalse(AccountCleanup.running());
+    }
+
+    @Test public void pickedCommentsAreTheOnlyOnesDeleted() {
+        FakeTikTok.Account account = new FakeTikTok.Account().withComments(5);
+        AccountCleanup.servicesForTests = account;
+
+        AccountCleanup.startPicked(activity, List.of());
+        assertFalse("nothing picked starts nothing", AccountCleanup.running());
+
+        AccountCleanup.startPicked(activity, List.of("c3", "c1"));
+        assertEquals("Removing the picked comments in 5", bannerText());
+        countDown();
+
+        assertEquals("Done. 2 removed.", bannerText());
+        assertEquals(List.of("c0", "c2", "c4"), account.comments);
+        assertEquals("the history isn't read again, only the picked ones go", List.of(
+                "doPost /aweme/v1/comment/delete/ {cid=c3}",
+                "doPost /aweme/v1/comment/delete/ {cid=c1}"), account.requests);
+    }
+
+    @Test public void thePickerListsYourCommentsAndRemovesTheTickedOnes() {
+        SettingsStatus.ghostModeEnabled = true;
+        SettingsStatus.accountCleanupEnabled = true;
+        FakeTikTok.Account account = new FakeTikTok.Account().withComments(20);
+        AccountCleanup.servicesForTests = account;
+        Preference picker = row(privacyPage(), "action_pick_comments");
+
+        assertTrue(picker.getOnPreferenceClickListener().onPreferenceClick(picker));
+        looper.idle();
+        AlertDialog dialog = (AlertDialog) ShadowAlertDialog.getLatestDialog();
+        assertNotNull("a tap opens the list", dialog);
+        assertTrue(dialog.isShowing());
+        ListView list = dialog.getWindow().getDecorView().findViewWithTag("hushfeed_comment_picker_list");
+        Button remove = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        Button more = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+        assertEquals("one page of the history", 15, list.getAdapter().getCount());
+        assertEquals(View.VISIBLE, list.getVisibility());
+        assertFalse("nothing ticked, nothing to remove", remove.isEnabled());
+        assertEquals(View.VISIBLE, more.getVisibility());
+
+        assertTrue(more.performClick());
+        looper.idle();
+        assertEquals(20, list.getAdapter().getCount());
+        assertEquals("the history has no more", View.GONE, more.getVisibility());
+
+        list.performItemClick(list.getAdapter().getView(3, null, list), 3, 3);
+        list.performItemClick(list.getAdapter().getView(16, null, list), 16, 16);
+        list.performItemClick(list.getAdapter().getView(5, null, list), 5, 5);
+        list.performItemClick(list.getAdapter().getView(5, null, list), 5, 5);
+        CheckBox fourth = (CheckBox) ((ViewGroup) list.getAdapter().getView(3, null, list)).getChildAt(0);
+        assertEquals("said c3", fourth.getText().toString());
+        assertTrue(fourth.isChecked());
+        CheckBox sixth = (CheckBox) ((ViewGroup) list.getAdapter().getView(5, null, list)).getChildAt(0);
+        assertFalse("a second tap takes the tick off", sixth.isChecked());
+        assertTrue(remove.isEnabled());
+        assertEquals("nothing goes out before Remove", 2, account.requests.size());
+
+        assertTrue(remove.performClick());
+        looper.idle();
+        assertFalse(dialog.isShowing());
+        assertEquals("Removing the picked comments in 5", bannerText());
+        countDown();
+
+        assertEquals("Done. 2 removed.", bannerText());
+        assertEquals(18, account.comments.size());
+        assertFalse(account.comments.contains("c3"));
+        assertFalse(account.comments.contains("c16"));
+        assertTrue(account.comments.contains("c5"));
+    }
+
+    @Test public void thePickerSaysWhyItHasNothingToShow() {
+        SettingsStatus.ghostModeEnabled = true;
+        SettingsStatus.accountCleanupEnabled = true;
+        FakeTikTok.Account account = new FakeTikTok.Account();
+        account.commentHistoryStatus = 8;
+        AccountCleanup.servicesForTests = account;
+        Preference picker = row(privacyPage(), "action_pick_comments");
+
+        assertTrue(picker.getOnPreferenceClickListener().onPreferenceClick(picker));
+        looper.idle();
+        AlertDialog dialog = (AlertDialog) ShadowAlertDialog.getLatestDialog();
+        TextView state = dialog.getWindow().getDecorView().findViewWithTag("hushfeed_comment_picker_state");
+        assertEquals("TikTok refused to list your comments", state.getText().toString());
+        assertEquals("asking again stays possible", View.VISIBLE,
+                dialog.getButton(AlertDialog.BUTTON_NEUTRAL).getVisibility());
+
+        account.commentHistoryStatus = 0;
+        assertTrue(dialog.getButton(AlertDialog.BUTTON_NEUTRAL).performClick());
+        looper.idle();
+        assertEquals("No comments to show", state.getText().toString());
+        assertFalse(dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled());
+        dialog.dismiss();
+
+        SignedInUser.idForTests = "";
+        assertTrue(picker.getOnPreferenceClickListener().onPreferenceClick(picker));
+        looper.idle();
+        assertEquals("Sign in to TikTok first", bannerText());
+    }
+
+    private static Preference row(SettingsMenuPreference group, String key) {
+        for (int index = 0; index < group.getPreferenceCount(); index++) {
+            Preference row = group.getPreference(index);
+            if (key.equals(row.getKey())) return row;
+        }
+        throw new AssertionError("no row " + key);
     }
 
     private SettingsMenuPreference privacyPage() {
@@ -419,7 +584,8 @@ public class AccountCleanupTest {
             Preference row = group.getPreference(index);
             String key = row.getKey();
             if (key != null && (key.equals("action_remove_reposts") || key.equals("action_remove_likes")
-                    || key.equals("action_clear_favorites"))) {
+                    || key.equals("action_clear_favorites") || key.equals("action_remove_comments")
+                    || key.equals("action_pick_comments"))) {
                 rows.add(row);
             }
         }

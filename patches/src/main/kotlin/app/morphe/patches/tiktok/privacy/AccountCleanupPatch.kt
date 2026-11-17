@@ -4,6 +4,7 @@
  */
 package app.morphe.patches.tiktok.privacy
 
+import app.morphe.patcher.patch.classDefByOrNull
 import app.morphe.patcher.patch.classDefForEach
 import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.patch.packageMetadata
@@ -50,10 +51,11 @@ internal const val REMOVE_UNAVAILABLE_PATH = "/aweme/v1/aweme/collect/removeinva
 @Suppress("unused")
 val accountCleanupPatch = bytecodePatch(
     name = "Account cleanup",
-    description = "Adds Remove all reposts, Remove all likes and Clear Favorites to Hushfeed " +
-        "settings > Privacy. Each one takes items off your account one at a time through TikTok's " +
-        "own requests, with a pause between them, and stops on the first error. A switch there " +
-        "also lets one tap remove a video from your own Liked videos, Favorites or Reposts.",
+    description = "Adds Remove all reposts, Remove all likes, Clear Favorites, Remove all comments " +
+        "and Remove selected comments to Hushfeed settings > Privacy. Each one takes items off your " +
+        "account one at a time through TikTok's own requests, with a pause between them, and stops " +
+        "on the first error. A switch there also lets one tap remove a video from your own Liked " +
+        "videos, Favorites or Reposts.",
 ) {
     category("Privacy")
     dependsOn(settingsPatch, sharedExtensionPatch)
@@ -69,13 +71,20 @@ val accountCleanupPatch = bytecodePatch(
         }
         // The repost and like services keep their names and the extension reaches them itself.
         // These three are renamed in every build, so their bridges make them the way TikTok does.
-        fillServiceBridge("likedListService",
-            liked.singleOrPatchException("Account cleanup: liked videos list service"), "liked videos list")
-        fillServiceBridge("favoritesService",
-            favorites.singleOrPatchException("Account cleanup: Favorites service"), "Favorites")
-        fillServiceBridge("unavailableFavoritesService",
-            unavailable.singleOrPatchException("Account cleanup: unavailable Favorites service"),
-            "unavailable Favorites")
+        val likedService = liked.singleOrPatchException("Account cleanup: liked videos list service")
+        val apiHost = serviceRecipe(likedService, "liked videos list")
+        fillServiceBridge("likedListService", likedService, apiHost)
+        val favoritesService = favorites.singleOrPatchException("Account cleanup: Favorites service")
+        fillServiceBridge("favoritesService", favoritesService, serviceRecipe(favoritesService, "Favorites"))
+        val unavailableService = unavailable.singleOrPatchException("Account cleanup: unavailable Favorites service")
+        fillServiceBridge("unavailableFavoritesService", unavailableService,
+            serviceRecipe(unavailableService, "unavailable Favorites"))
+        // No named service lists or deletes your comments (#442). TikTok's general request
+        // service asks any path, and made on the liked list's client it asks the same API host.
+        if (classDefByOrNull(NETWORK_API)?.let(::isNetworkApi) != true) {
+            throw PatchException("Account cleanup: TikTok's general request service ($NETWORK_API) changed")
+        }
+        fillServiceBridge("networkService", NETWORK_API, apiHost)
         if (hookQuickRemove(packageMetadata.versionName)) {
             SettingsStatusLoadFingerprint.method.addInstruction(0,
                 "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableQuickRemove()V")
@@ -85,16 +94,19 @@ val accountCleanupPatch = bytecodePatch(
     }
 }
 
-/** The bridge's name comes first so ExtensionBridgeLookupTest can read it at each call. */
-private fun fillServiceBridge(name: String, service: String, what: String) = run {
+/** How TikTok makes [service], which has to be one way. */
+private fun serviceRecipe(service: String, what: String): ServiceRecipe =
     // Only a method that casts to the service can make it, and the patcher's type index finds
     // those without reading the rest of TikTok.
-    val recipe = Fingerprint(filters = listOf(checkCast(service))).matchAllOrNull().orEmpty()
+    Fingerprint(filters = listOf(checkCast(service))).matchAllOrNull().orEmpty()
         .flatMap { match -> serviceRecipes(match.originalMethod) }
         .filter { (made, _) -> made == service }
         .map { (_, recipe) -> recipe }
         .distinct()
         .singleOrPatchException("Account cleanup: how TikTok makes the $what service")
+
+/** The bridge's name comes first so ExtensionBridgeLookupTest can read it at each call. */
+private fun fillServiceBridge(name: String, service: String, recipe: ServiceRecipe) = run {
     val sources = mutableClassDefBy(ACCOUNT_CLEANUP_SOURCES)
     val original = sources.methods.filter { it.name == name }
         .singleOrPatchException("Account cleanup: extension $name bridge")
@@ -138,6 +150,24 @@ internal fun isLikedListService(classDef: ClassDef) = AccessFlags.INTERFACE.isSe
 internal fun isFavoritesService(classDef: ClassDef) = AccessFlags.INTERFACE.isSet(classDef.accessFlags) &&
     classDef.methods.any { it.annotatedWith(COLLECT_PATH) && it.requestNames() == listOf("aweme_id", "action") } &&
     classDef.methods.any { it.annotatedWith(LIST_COLLECTION_PATH) }
+
+/**
+ * TikTok's general request service, kept by name: a GET or a form POST to any path on its
+ * client's host, the answer's body a String. The comment cleanup (#442) calls these by name.
+ */
+internal const val NETWORK_API = "Lcom/bytedance/ttnet/INetworkApi;"
+private val DO_GET = listOf("Z", "I", "Ljava/lang/String;", "Ljava/util/Map;", "Ljava/util/List;", "Ljava/lang/Object;")
+private val DO_POST = listOf("I", "Ljava/lang/String;", "Ljava/util/Map;", "Ljava/util/Map;", "Ljava/util/List;", "Ljava/lang/Object;")
+
+/** The general request service with the one doGet and one doPost the extension calls. */
+internal fun isNetworkApi(classDef: ClassDef): Boolean {
+    if (classDef.type != NETWORK_API || !AccessFlags.INTERFACE.isSet(classDef.accessFlags) ||
+        !AccessFlags.PUBLIC.isSet(classDef.accessFlags)) return false
+    // The extension finds each by name and parameter count, so an overload would be a guess.
+    fun only(name: String, parameters: List<String>) = classDef.methods.filter { it.name == name }
+        .let { found -> found.size == 1 && found.single().parameterTypes.map { it.toString() } == parameters }
+    return only("doGet", DO_GET) && only("doPost", DO_POST)
+}
 
 /** The service the Favorites page's "unavailable" notice clears deleted saved videos with, from a cursor. */
 internal fun isUnavailableFavoritesService(classDef: ClassDef) = AccessFlags.INTERFACE.isSet(classDef.accessFlags) &&

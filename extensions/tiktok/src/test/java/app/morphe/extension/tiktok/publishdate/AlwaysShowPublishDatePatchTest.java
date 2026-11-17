@@ -219,9 +219,40 @@ public class AlwaysShowPublishDatePatchTest {
         assertEquals("2026", AlwaysShowPublishDatePatch.postTime("2026", thisYear));
         assertEquals("09-29", AlwaysShowPublishDatePatch.postTime("09-29", new Post(0L, null)));
 
-        // The time to the second writes its own date, so day first leaves it be.
+        // The time to the second puts the day first too: the switch sits under Short date, and on
+        // the S22 (47.8.3) the short date still read 11/15/26 with it on.
         Settings.PUBLISH_DATE_EXACT_TIME.save(true);
-        assertTrue(AlwaysShowPublishDatePatch.postTime("09-29", thisYear).contains("2026"));
+        String exact = AlwaysShowPublishDatePatch.postTime("09-29", thisYear);
+        assertTrue(exact, exact.startsWith("29 Sep 2026 "));
+        assertTrue(exact, Pattern.compile("\\b2:05:00\\b").matcher(exact).find());
+        Settings.PUBLISH_DATE_SHORT_DATE.save(true);
+        String exactShort = AlwaysShowPublishDatePatch.postTime("09-29", thisYear);
+        assertTrue(exactShort, exactShort.startsWith("29.09.26 "));
+        assertFalse(exactShort, exactShort.contains("9/29"));
+        Settings.PUBLISH_DATE_DAY_FIRST.save(false);
+        assertTrue(AlwaysShowPublishDatePatch.postTime("09-29", thisYear).startsWith("9/29/26"));
+    }
+
+    @Test
+    public void dayFirstKeepsTheLanguagesClockAndZone() {
+        TimeZone utc = TimeZone.getTimeZone("UTC");
+        String full = AlwaysShowPublishDatePatch.exactTime(POSTED, Locale.US, utc, false, true, false, true);
+        assertTrue(full, full.startsWith("7 Oct 2025 "));
+        assertTrue(full, Pattern.compile("\\b3:04:05\\b").matcher(full).find());
+        assertTrue(full, full.contains("PM") && full.contains("UTC"));
+
+        String short24 = AlwaysShowPublishDatePatch.exactTime(POSTED, Locale.US, utc, true, false, true, true);
+        assertTrue(short24, short24.startsWith("07.10.25 15:04:05"));
+        assertFalse(short24, short24.contains("PM") || short24.contains("UTC"));
+
+        String padded = AlwaysShowPublishDatePatch.exactTime(POSTED, Locale.ITALY, TimeZone.getTimeZone("GMT-04:00"),
+                true, true, true, true);
+        assertTrue(padded, padded.startsWith("07.10.25 11:04:05"));
+        assertTrue(padded, padded.endsWith("GMT-4"));
+
+        // Off, it's the language's own date, as before.
+        assertEquals(AlwaysShowPublishDatePatch.exactTime(POSTED, Locale.US, utc, false, true, true),
+                AlwaysShowPublishDatePatch.exactTime(POSTED, Locale.US, utc, false, true, true, false));
     }
 
     @Test

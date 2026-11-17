@@ -83,7 +83,8 @@ public final class AlwaysShowPublishDatePatch {
                     ? android.text.format.DateFormat.is24HourFormat(context)
                     : ((SimpleDateFormat) DateFormat.getTimeInstance(DateFormat.LONG)).toPattern().indexOf('H') >= 0;
             return exactTime(seconds, Locale.getDefault(), TimeZone.getDefault(), hour24,
-                    Settings.PUBLISH_DATE_TIME_ZONE.get(), Settings.PUBLISH_DATE_SHORT_DATE.get());
+                    Settings.PUBLISH_DATE_TIME_ZONE.get(), Settings.PUBLISH_DATE_SHORT_DATE.get(),
+                    Settings.PUBLISH_DATE_DAY_FIRST.get());
         } catch (Throwable ex) {
             Logger.printException(() -> "Could not write the exact posting time", ex);
             return original;
@@ -218,6 +219,31 @@ public final class AlwaysShowPublishDatePatch {
      */
     static String exactTime(long seconds, Locale locale, TimeZone zone, boolean hour24, boolean showZone,
             boolean shortDate) {
+        return exactTime(seconds, locale, zone, hour24, showZone, shortDate, false);
+    }
+
+    /**
+     * The same, with Day before month (#438) writing the date day first in front of the
+     * language's own time: "07.10.25" with the short date, "7 Oct 2025" without. The switch sits
+     * under Short date, so a row showing the time to the second has to follow it too.
+     */
+    static String exactTime(long seconds, Locale locale, TimeZone zone, boolean hour24, boolean showZone,
+            boolean shortDate, boolean dayFirst) {
+        if (dayFirst) {
+            Date when = new Date(seconds * 1000L);
+            SimpleDateFormat date = new SimpleDateFormat(shortDate ? "dd.MM.yy" : "d MMM y", locale);
+            date.setTimeZone(zone);
+            DateFormat time = DateFormat.getTimeInstance(showZone ? DateFormat.LONG : DateFormat.MEDIUM, locale);
+            if (time instanceof SimpleDateFormat) {
+                SimpleDateFormat simple = (SimpleDateFormat) time;
+                String pattern = simple.toPattern();
+                String clock = hourStyle(pattern, hour24);
+                if (!clock.equals(pattern)) simple.applyPattern(clock);
+            }
+            time.setTimeZone(zone);
+            String text = date.format(when) + " " + time.format(when);
+            return showZone ? compactOffset(text) : text;
+        }
         // A new instance per call: DateFormat isn't thread safe.
         DateFormat format = DateFormat.getDateTimeInstance(shortDate ? DateFormat.SHORT : DateFormat.MEDIUM,
                 showZone ? DateFormat.LONG : DateFormat.MEDIUM, locale);

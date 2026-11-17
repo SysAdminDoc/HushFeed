@@ -501,6 +501,13 @@ Entry %1$d has a field with the wrong data type.	Eintrag %1$d enthält ein Feld 
 Entry %1$d isn't an object.	Eintrag %1$d ist kein Objekt.
 Errors	Fehler
 Expand activity list	Aktivitätsliste ausklappen
+Swap lists	Listen tauschen
+Split the Activity page	Aktivitätsseite teilen
+Show your newest comments at the top of the Activity page and likes below, each scrolling on its own. The bar between them swaps the two lists or hides the lower one until you bring it back. Picking another list from Activity still shows just that list. Applies the next time the page opens.	Zeigt deine neuesten Kommentare oben auf der Aktivitätsseite und Likes darunter, beide getrennt scrollbar. Die Leiste dazwischen tauscht die beiden Listen oder blendet die untere aus, bis du sie wieder einblendest. Wählst du unter Aktivität eine andere Liste, siehst du weiterhin nur diese. Gilt beim nächsten Öffnen der Seite.
+Hide likes	Likes ausblenden
+Show likes	Likes einblenden
+Hide comments	Kommentare ausblenden
+Show comments	Kommentare einblenden
 Explore or Community	Entdecken oder Community
 Export diagnostic report	Diagnosebericht exportieren
 Export loaded values	Geladene Werte exportieren

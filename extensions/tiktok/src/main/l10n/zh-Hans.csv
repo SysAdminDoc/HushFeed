@@ -565,6 +565,13 @@ Entry %1$d isn't an object.,条目 %1$d 不是对象.
 Errors,错误
 All loaded items are picked or saved. Scroll for more.,已加载的项目均已选中或保存，向下滚动查看更多.
 Expand activity list,展开活动列表
+Swap lists,交换列表
+Split the Activity page,拆分活动页面
+"Show your newest comments at the top of the Activity page and likes below, each scrolling on its own. The bar between them swaps the two lists or hides the lower one until you bring it back. Picking another list from Activity still shows just that list. Applies the next time the page opens.",在活动页面顶部显示你最新的评论，下方显示点赞，两部分各自滚动。中间的栏可以交换两个列表，或隐藏下方的列表直到你重新显示。在“活动”中选择其他列表时仍只显示该列表。下次打开该页面时生效.
+Hide likes,隐藏点赞
+Show likes,显示点赞
+Hide comments,隐藏评论
+Show comments,显示评论
 Explore or Community,探索或社区
 Export CSV,导出CSV
 Export JSON,导出JSON

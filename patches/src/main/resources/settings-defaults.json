@@ -812,6 +812,9 @@
     "Skip update checks": [
       "skip_update_checks"
     ],
+    "Split activity list": [
+      "split_activity_list"
+    ],
     "Stay on the video in full screen": [
       "full_screen_hold"
     ],
@@ -4383,6 +4386,12 @@
     "spin_music_disc": {
       "field": "SPIN_MUSIC_DISC",
       "key": "spin_music_disc",
+      "type": "boolean",
+      "default": false
+    },
+    "split_activity_list": {
+      "field": "SPLIT_ACTIVITY_LIST",
+      "key": "split_activity_list",
       "type": "boolean",
       "default": false
     },

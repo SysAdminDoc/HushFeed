@@ -498,6 +498,13 @@ Entry %1$d has a field with the wrong data type.	La entrada %1$d tiene un campo 
 Entry %1$d isn't an object.	La entrada %1$d no es un objeto.
 Errors	Errores
 Expand activity list	Ampliar la lista de actividad
+Swap lists	Intercambiar listas
+Split the Activity page	Dividir la página de actividad
+Show your newest comments at the top of the Activity page and likes below, each scrolling on its own. The bar between them swaps the two lists or hides the lower one until you bring it back. Picking another list from Activity still shows just that list. Applies the next time the page opens.	Muestra tus comentarios más recientes arriba en la página de actividad y los Me gusta debajo, cada uno con su propio desplazamiento. La barra entre ellas intercambia las dos listas u oculta la de abajo hasta que la vuelvas a mostrar. Si eliges otra lista en Actividad, se sigue mostrando solo esa lista. Se aplica la próxima vez que se abra la página.
+Hide likes	Ocultar Me gusta
+Show likes	Mostrar Me gusta
+Hide comments	Ocultar comentarios
+Show comments	Mostrar comentarios
 Explore or Community	Explorar o Comunidad
 Export diagnostic report	Exportar el informe de diagnóstico
 Export loaded values	Exportar los valores cargados

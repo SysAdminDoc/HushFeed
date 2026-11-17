@@ -37,6 +37,7 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
                 || SettingsStatus.inboxOnThisDayEnabled
                 || SettingsStatus.chatDeclutterEnabled
                 || SettingsStatus.expandActivityListEnabled
+                || SettingsStatus.splitActivityListEnabled
                 || SettingsStatus.notificationControlsEnabled
                 || SettingsStatus.keepUnsentEnabled
                 || SettingsStatus.suggestedVideoPushBlockEnabled
@@ -246,6 +247,7 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
             }
         }
         if (SettingsStatus.notificationControlsEnabled || SettingsStatus.expandActivityListEnabled
+                || SettingsStatus.splitActivityListEnabled
                 || SettingsStatus.suggestedVideoPushBlockEnabled) {
             addPreference(new SectionHeadingPreference(context, "Controls"));
         }
@@ -300,6 +302,17 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
                     "Show the whole Activity and New followers lists instead of stopping at a "
                             + "View all button.",
                     Settings.EXPAND_ACTIVITY_LIST
+            ));
+        }
+        if (SettingsStatus.splitActivityListEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Split the Activity page",
+                    "Show your newest comments at the top of the Activity page and likes below, "
+                            + "each scrolling on its own. The bar between them swaps the two lists or "
+                            + "hides the lower one until you bring it back. Picking another list from "
+                            + "Activity still shows just that list. Applies the next time the page opens.",
+                    Settings.SPLIT_ACTIVITY_LIST
             ));
         }
         if (SettingsStatus.autoStreakEnabled) {

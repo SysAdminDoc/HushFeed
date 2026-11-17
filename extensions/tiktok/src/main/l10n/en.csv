@@ -886,6 +886,7 @@ Hide comment polls,Hide comment polls
 Hide comment popup ads,Hide comment popup ads
 Hide comment surveys,Hide comment surveys
 Hide comment typing suggestions,Hide comment typing suggestions
+Hide comments,Hide comments
 Hide comments made of a voice recording instead of words.,Hide comments made of a voice recording instead of words.
 Hide comments made of an image or a sticker instead of words.,Hide comments made of an image or a sticker instead of words.
 "Hide comments that contain any of the words below, or that come from the accounts below.","Hide comments that contain any of the words below, or that come from the accounts below."
@@ -900,6 +901,7 @@ Hide floating promotions,Hide floating promotions
 Hide gaming LIVEs,Hide gaming LIVEs
 Hide inserted cards,Hide inserted cards
 Hide like counts on comments,Hide like counts on comments
+Hide likes,Hide likes
 Hide location labels,Hide location labels
 Hide message requests,Hide message requests
 Hide message streaks,Hide message streaks
@@ -2065,6 +2067,7 @@ Show account country,Show account country
 Show all settings as a list,Show all settings as a list
 Show chosen counts on your own profile on this phone. Other people see the real counts.,Show chosen counts on your own profile on this phone. Other people see the real counts.
 Show commenters' handles,Show commenters' handles
+Show comments,Show comments
 "Show counts as full numbers, like 1,234,567 instead of 1.2M.","Show counts as full numbers, like 1,234,567 instead of 1.2M."
 Show dates on profile grids,Show dates on profile grids
 Show download progress,Show download progress
@@ -2079,6 +2082,7 @@ Show how long each video runs under its view count on profile grids. Photo posts
 Show how many were filtered,Show how many were filtered
 Show inbox filters,Show inbox filters
 Show last report,Show last report
+Show likes,Show likes
 "Show likes, comments, shares and saves as a percentage of views, next to the creator's name and after the view count on profile grids.","Show likes, comments, shares and saves as a percentage of views, next to the creator's name and after the view count on profile grids."
 Show message times,Show message times
 Show only LIVEs from creators with this many followers.,Show only LIVEs from creators with this many followers.
@@ -2127,6 +2131,7 @@ Show when an account was made,Show when an account was made
 Show when the camera or microphone is in use,Show when the camera or microphone is in use
 Show where a video was posted,Show where a video was posted
 Show where commenters are from,Show where commenters are from
+"Show your newest comments at the top of the Activity page and likes below, each scrolling on its own. The bar between them swaps the two lists or hides the lower one until you bring it back. Picking another list from Activity still shows just that list. Applies the next time the page opens.","Show your newest comments at the top of the Activity page and likes below, each scrolling on its own. The bar between them swaps the two lists or hides the lower one until you bring it back. Picking another list from Activity still shows just that list. Applies the next time the page opens."
 Showing %1$s again,Showing %1$s again
 Shows Add to Story in the share sheet and on stories even when the creator turned off content reuse. TikTok may still refuse to post it.,Shows Add to Story in the share sheet and on stories even when the creator turned off content reuse. TikTok may still refuse to post it.
 "Shows TikTok's full sort menu on every post, with hot, newest, media and creator options, instead of the shorter one your account got. Restart TikTok to see the change.","Shows TikTok's full sort menu on every post, with hot, newest, media and creator options, instead of the shorter one your account got. Restart TikTok to see the change."
@@ -2199,6 +2204,7 @@ Speed menu choices,Speed menu choices
 Speed while you hold the video,Speed while you hold the video
 Spin the music disc,Spin the music disc
 Split comment minimum width,Split comment minimum width
+Split the Activity page,Split the Activity page
 "Stack the buttons above TikTok's own on the right, starting over the avatar. They follow the column instead of staying where you dragged them.","Stack the buttons above TikTok's own on the right, starting over the avatar. They follow the column instead of staying where you dragged them."
 Standard,Standard
 Start each new video at your default. A manual choice lasts until the video changes.,Start each new video at your default. A manual choice lasts until the video changes.
@@ -2295,6 +2301,7 @@ Subtitles,Subtitles
 Subtitles: %1$s,Subtitles: %1$s
 Support,Support
 Support Hushfeed,Support Hushfeed
+Swap lists,Swap lists
 Swap the website in shared links,Swap the website in shared links
 Swipe for brightness and volume,Swipe for brightness and volume
 Swipe left,Swipe left

@@ -500,6 +500,13 @@ Entry %1$d has a field with the wrong data type.	%1$d nömrəli girişdə səhv 
 Entry %1$d isn't an object.	%1$d nömrəli giriş obyekt deyil.
 Errors	Xətalar
 Expand activity list	Fəaliyyət siyahısını genişləndirin
+Swap lists	Siyahıların yerini dəyiş
+Split the Activity page	Fəaliyyət səhifəsini böl
+Show your newest comments at the top of the Activity page and likes below, each scrolling on its own. The bar between them swaps the two lists or hides the lower one until you bring it back. Picking another list from Activity still shows just that list. Applies the next time the page opens.	Fəaliyyət səhifəsinin yuxarısında ən yeni şərhlərini, altında isə bəyənmələri göstərir, hər biri ayrıca sürüşdürülür. Aradakı zolaq iki siyahının yerini dəyişir və ya sən geri qaytarana qədər aşağıdakını gizlədir. Fəaliyyət bölməsindən başqa siyahı seçsən, yalnız o siyahı göstərilir. Səhifə növbəti dəfə açılanda tətbiq olunur.
+Hide likes	Bəyənmələri gizlət
+Show likes	Bəyənmələri göstər
+Hide comments	Şərhləri gizlət
+Show comments	Şərhləri göstər
 Explore or Community	Kəşf et və ya İcma
 Export diagnostic report	Diaqnostik hesabatı ixrac edin
 Export loaded values	Yüklənmiş dəyərləri ixrac edin

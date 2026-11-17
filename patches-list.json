@@ -386,6 +386,15 @@
           "values": null
         },
         {
+          "key": "save_episodes_button",
+          "title": "Default: save episodes button",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "download_without_sound",
           "title": "Default: download without sound",
           "description": null,
@@ -8549,7 +8558,17 @@
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "original_audio",
+          "title": "Default: original audio",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Playback quality",
@@ -10893,6 +10912,55 @@
         {
           "key": "skip_update_checks",
           "title": "Default: skip update checks",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
+    },
+    {
+      "name": "Split activity list",
+      "description": "Shows the Inbox's Activity page as two lists, your newest comments on top and likes below, each scrolling on its own, with a bar between them that swaps them or hides the lower one. Starts off. Turn it on in Hushfeed settings > Inbox.",
+      "category": "Inbox",
+      "use": true,
+      "dependencies": [
+        "Patch",
+        "Settings"
+      ],
+      "compatiblePackages": {
+        "com.zhiliaoapp.musically": [
+          "47.8.3"
+        ]
+      },
+      "compatibility": [
+        {
+          "name": "TikTok",
+          "packageName": "com.zhiliaoapp.musically",
+          "description": null,
+          "appIconColor": 16657493,
+          "signatures": [
+            "9041803e91bcb814b4b4399fb5c85a91640b755e5e8ba76813814bf4cf2ab5ba"
+          ],
+          "targets": [
+            {
+              "version": "47.8.3",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 2024708030,
+                "ARMEABI_V7A": 2024708030,
+                "X86": 2024708030,
+                "X86_64": 2024708030
+              }
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "split_activity_list",
+          "title": "Default: split activity list",
           "description": null,
           "required": false,
           "type": "kotlin.Boolean",

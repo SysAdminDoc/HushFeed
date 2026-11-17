@@ -501,6 +501,13 @@ Entry %1$d has a field with the wrong data type.	รายการ %1$d มี�
 Entry %1$d isn't an object.	รายการ %1$d ไม่ใช่ออบเจ็กต์
 Errors	ข้อผิดพลาด
 Expand activity list	ขยายรายการกิจกรรม
+Swap lists	สลับรายการ
+Split the Activity page	แบ่งหน้ากิจกรรม
+Show your newest comments at the top of the Activity page and likes below, each scrolling on its own. The bar between them swaps the two lists or hides the lower one until you bring it back. Picking another list from Activity still shows just that list. Applies the next time the page opens.	แสดงความคิดเห็นล่าสุดของคุณไว้ด้านบนของหน้ากิจกรรมและยอดถูกใจไว้ด้านล่าง โดยเลื่อนแยกกันได้ แถบระหว่างสองรายการจะสลับรายการ หรือซ่อนรายการล่างไว้จนกว่าคุณจะแสดงอีกครั้ง หากเลือกรายการอื่นจากกิจกรรม ก็จะยังแสดงเฉพาะรายการนั้น มีผลเมื่อเปิดหน้านี้ครั้งถัดไป
+Hide likes	ซ่อนยอดถูกใจ
+Show likes	แสดงยอดถูกใจ
+Hide comments	ซ่อนความคิดเห็น
+Show comments	แสดงความคิดเห็น
 Explore or Community	สำรวจหรือชุมชน
 Export diagnostic report	ส่งออกรายงานการวินิจฉัย
 Export loaded values	ส่งออกค่าที่โหลดแล้ว

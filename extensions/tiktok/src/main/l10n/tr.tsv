@@ -500,6 +500,13 @@ Entry %1$d has a field with the wrong data type.	%1$d numaralı girdide veri tü
 Entry %1$d isn't an object.	%1$d numaralı girdi bir nesne değil.
 Errors	Hatalar
 Expand activity list	Etkinlik listesini genişlet
+Swap lists	Listelerin yerini değiştir
+Split the Activity page	Etkinlik sayfasını böl
+Show your newest comments at the top of the Activity page and likes below, each scrolling on its own. The bar between them swaps the two lists or hides the lower one until you bring it back. Picking another list from Activity still shows just that list. Applies the next time the page opens.	Etkinlik sayfasının üstünde en yeni yorumlarını, altında beğenileri gösterir; ikisi ayrı ayrı kaydırılır. Aradaki çubuk iki listenin yerini değiştirir ya da sen geri getirene kadar alttakini gizler. Etkinlik'ten başka bir liste seçersen yalnızca o liste gösterilir. Sayfa bir sonraki açıldığında geçerli olur.
+Hide likes	Beğenileri gizle
+Show likes	Beğenileri göster
+Hide comments	Yorumları gizle
+Show comments	Yorumları göster
 Explore or Community	Keşfet veya Topluluk
 Export diagnostic report	Tanılama raporunu dışa aktar
 Export loaded values	Yüklenen değerleri dışa aktar

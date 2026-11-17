@@ -501,6 +501,13 @@ Entry %1$d has a field with the wrong data type.	La voce %1$d ha un campo con il
 Entry %1$d isn't an object.	La voce %1$d non è un oggetto.
 Errors	Errori
 Expand activity list	Espandi l'elenco delle attività
+Swap lists	Scambia elenchi
+Split the Activity page	Dividi la pagina Attività
+Show your newest comments at the top of the Activity page and likes below, each scrolling on its own. The bar between them swaps the two lists or hides the lower one until you bring it back. Picking another list from Activity still shows just that list. Applies the next time the page opens.	Mostra i commenti più recenti in alto nella pagina Attività e i Mi piace sotto, ognuno con il proprio scorrimento. La barra tra i due elenchi li scambia o nasconde quello in basso finché non lo mostri di nuovo. Se scegli un altro elenco da Attività, vedi ancora solo quell'elenco. Vale dalla prossima apertura della pagina.
+Hide likes	Nascondi Mi piace
+Show likes	Mostra Mi piace
+Hide comments	Nascondi commenti
+Show comments	Mostra commenti
 Explore or Community	Esplora o Community
 Export diagnostic report	Esporta rapporto diagnostico
 Export loaded values	Esporta i valori caricati

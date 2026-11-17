@@ -546,6 +546,13 @@ Entry %1$d has a field with the wrong data type.	В записи %1$d поле �
 Entry %1$d isn't an object.	Запись %1$d не является объектом.
 Errors	Ошибки
 Expand activity list	Развернуть список активности
+Swap lists	Поменять списки местами
+Split the Activity page	Разделить страницу активности
+Show your newest comments at the top of the Activity page and likes below, each scrolling on its own. The bar between them swaps the two lists or hides the lower one until you bring it back. Picking another list from Activity still shows just that list. Applies the next time the page opens.	Показывает новые комментарии вверху страницы активности, а лайки под ними, и каждый список прокручивается отдельно. Панель между ними меняет списки местами или скрывает нижний, пока вы не вернёте его. Если выбрать другой список в разделе «Активность», будет показан только он. Применяется при следующем открытии страницы.
+Hide likes	Скрыть лайки
+Show likes	Показать лайки
+Hide comments	Скрыть комментарии
+Show comments	Показать комментарии
 Explore or Community	Обзор или Сообщество
 Export diagnostic report	Экспортировать диагностический отчёт
 Export loaded values	Экспортировать загруженные значения

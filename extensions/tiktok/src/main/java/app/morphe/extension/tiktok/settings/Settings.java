@@ -875,6 +875,8 @@ public class Settings extends BaseSettings {
      * than 8 as 8. Read as tapping starts, so no restart.
      */
     public static final StringSetting LIVE_AUTO_TAP_RATE = new StringSetting("live_auto_tap_rate", "4");
+    /** How big Hushfeed's buttons in a LIVE room are, in dp (#359). Read as a room's buttons are drawn. */
+    public static final StringSetting LIVE_BUTTON_SIZE = new StringSetting("live_button_size", "48");
     /**
      * Alerts you when your name comes up in a LIVE (#424); the LIVE controls patch. Read on each
      * message the room gets, so no restart.

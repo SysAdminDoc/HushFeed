@@ -189,6 +189,10 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
             addPreference(new ChoicePreference(context, "Auto tap speed", Settings.LIVE_AUTO_TAP_RATE,
                     app.morphe.extension.tiktok.live.LiveAutoTap.RATE_LABELS,
                     app.morphe.extension.tiktok.live.LiveAutoTap.RATE_VALUES));
+            // #359: Record, Auto tap, Block and the eye can cover the room's own buttons on small screens.
+            addPreference(new ChoicePreference(context, "Size of the LIVE buttons", Settings.LIVE_BUTTON_SIZE,
+                    new String[]{"Smallest", "Small", "Normal"},
+                    new String[]{"32", "40", "48"}));
             addPreference(new TogglePreference(context, "LIVE name alerts",
                     "Tells you when your name comes up in a LIVE, in the chat or said out loud in a room "
                             + "with captions on. You get a notification when TikTok's notifications are on, "

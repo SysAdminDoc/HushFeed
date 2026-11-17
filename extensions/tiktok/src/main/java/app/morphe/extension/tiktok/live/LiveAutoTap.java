@@ -8,9 +8,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.app.KeyguardManager;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Rect;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -587,21 +585,13 @@ public final class LiveAutoTap {
     }
 
     private static void showChip(Activity activity) {
-        if (chip != null && chip.getContext() == activity && chip.getParent() != null) return;
+        if (chip != null && chip.getContext() == activity && chip.getParent() != null
+                && !LiveRecordChip.drawnAtOtherSize(chip)) return;
         removeChip();
         ViewGroup content = activity.findViewById(android.R.id.content);
         if (content == null) return;
         TextView view = new TextView(activity);
-        view.setTextColor(Color.WHITE);
-        view.setTextSize(13);
-        view.setGravity(Gravity.CENTER);
-        view.setMinHeight(dp(activity, 48));
-        view.setMinWidth(dp(activity, 48));
-        view.setPadding(dp(activity, 14), 0, dp(activity, 14), 0);
-        GradientDrawable background = new GradientDrawable();
-        background.setCornerRadius(dp(activity, 24));
-        background.setColor(0xB3000000);
-        view.setBackground(background);
+        LiveRecordChip.styleChip(view);
         view.setOnClickListener(clicked -> onChipTap());
         LiveRecordChip.markStacked(view, LiveRecordChip.STACK_AUTO_TAP, dp(activity, TOP_DP), dp(activity, GAP_DP));
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(

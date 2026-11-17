@@ -157,7 +157,9 @@ public final class LiveUnseenButton {
             return;
         }
         TextView button = buttonReference.get();
-        if (button == null || button.getContext() != activity || button.getParent() == null) {
+        if (button == null || button.getContext() != activity || button.getParent() == null
+                || button.getLayoutParams() == null
+                || button.getLayoutParams().width != SettingsUi.dp(activity, LiveRecordChip.scaledDp(SIZE_DP))) {
             removeButton();
             button = showButton(activity);
             if (button == null) return;
@@ -188,7 +190,8 @@ public final class LiveUnseenButton {
         drawnRevealed = null;
         LiveRecordChip.markStacked(button, LiveRecordChip.STACK_UNSEEN,
                 SettingsUi.dp(activity, TOP_DP), SettingsUi.dp(activity, GAP_DP));
-        int size = SettingsUi.dp(activity, SIZE_DP);
+        // Size of the LIVE buttons (#359).
+        int size = SettingsUi.dp(activity, LiveRecordChip.scaledDp(SIZE_DP));
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(size, size, Gravity.TOP | Gravity.END);
         params.topMargin = SettingsUi.dp(activity, TOP_DP);
         params.rightMargin = SettingsUi.dp(activity, SIDE_DP);

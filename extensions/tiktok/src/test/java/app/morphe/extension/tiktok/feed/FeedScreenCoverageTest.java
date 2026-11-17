@@ -179,6 +179,7 @@ public class FeedScreenCoverageTest {
         // Profile grids only.
         put("publish_date_on_grid", NONE, NONE, NONE);
         put("video_length_on_grid", NONE, NONE, NONE);
+        put("hide_grid_view_count", NONE, NONE, NONE);
         // The order of the profile, Liked, Favorites and sound page grids, which neither window draws (#180).
         put("profile_grid_sort", NONE, NONE, NONE);
         put("liked_grid_sort", NONE, NONE, NONE);

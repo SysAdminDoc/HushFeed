@@ -38,6 +38,7 @@ import app.morphe.patches.tiktok.interaction.exactcounts.isCountFormatter
 import app.morphe.patches.tiktok.interaction.engagement.ProfileGridBindFingerprint
 import app.morphe.patches.tiktok.interaction.engagement.ProfileGridHolderBindFingerprint
 import app.morphe.patches.tiktok.interaction.engagement.gridCountSite
+import app.morphe.patches.tiktok.interaction.engagement.holderCountShows
 import app.morphe.patches.tiktok.interaction.engagement.holderCountSites
 import app.morphe.patches.tiktok.interaction.feedtoolbar.SidebarIconViewFingerprint
 import app.morphe.patches.tiktok.interaction.feedtoolbar.isToolbarEnabledCheck
@@ -765,11 +766,22 @@ class TikTokPatchAnchorsMatchFixturesTest {
             assertTrue("highest first", found.sites.zipWithNext().all { (a, b) -> a.insertAt > b.insertAt })
             val instructions = bind.implementation!!.instructions.toList()
             val thisRegister = bind.implementation!!.registerCount - bind.parameters.size - 1
-            val views = found.sites.map { site ->
+            // Hide view counts on profile grids (#449) swaps these setText calls for the extension's.
+            val shows = runCatching { bind.holderCountShows(found) }.getOrElse { throw AssertionError(it.message, it) }
+            val views = found.sites.mapIndexed { at, site ->
                 val setText = (site.insertAt until instructions.size).first {
                     val reference = (instructions[it] as? ReferenceInstruction)?.reference as? MethodReference
                     reference?.name == "setText" && reference.parameterTypes.map(CharSequence::toString) == listOf("Ljava/lang/CharSequence;")
                 }
+                assertEquals("the count's setText", setText, shows[at])
+                // TikTok's play icon goes on the same view right before the text.
+                val icon = (site.insertAt until setText).lastOrNull {
+                    val reference = (instructions[it] as? ReferenceInstruction)?.reference as? MethodReference
+                    instructions[it].opcode == Opcode.INVOKE_STATIC &&
+                        reference?.parameterTypes?.map(CharSequence::toString) ==
+                        listOf("Lcom/bytedance/tux/input/TuxTextView;", "Landroid/graphics/drawable/Drawable;")
+                }
+                assertNotNull("the play icon is set right before the count", icon)
                 val call = instructions[setText] as FiveRegisterInstruction
                 assertEquals("the cell's text is the formatted count", site.textRegister, call.registerD)
                 // The view is the holder's own count field, read right before the call.

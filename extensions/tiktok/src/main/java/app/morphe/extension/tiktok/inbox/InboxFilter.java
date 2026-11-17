@@ -177,10 +177,75 @@ public final class InboxFilter {
     }
 
     private static void applyOnThisDay() {
-        if (ON_THIS_DAY_CELLS.isEmpty()) return;
-        boolean hide = Settings.HIDE_INBOX_ON_THIS_DAY.get();
-        for (View cell : ON_THIS_DAY_CELLS.keySet()) {
-            if (cell != null) setCellHidden(cell, hide);
+        if (!ON_THIS_DAY_CELLS.isEmpty()) {
+            boolean hide = Settings.HIDE_INBOX_ON_THIS_DAY.get();
+            for (View cell : ON_THIS_DAY_CELLS.keySet()) {
+                if (cell != null) setCellHidden(cell, hide);
+            }
+        }
+        if (!LIVE_CELLS.isEmpty()) {
+            boolean hide = Settings.HIDE_INBOX_SUGGESTED_LIVES.get();
+            for (Map.Entry<View, Boolean> cell : LIVE_CELLS.entrySet()) {
+                if (cell.getKey() != null) setCellHidden(cell.getKey(), hide && Boolean.TRUE.equals(cell.getValue()));
+            }
+        }
+        if (!WIDGET_GUIDE_CELLS.isEmpty()) {
+            boolean hide = Settings.HIDE_INBOX_WIDGET_GUIDE.get();
+            for (View cell : WIDGET_GUIDE_CELLS.keySet()) {
+                if (cell != null) setCellHidden(cell, hide);
+            }
+        }
+    }
+
+    /**
+     * LIVE cells TikTok has bound into the stories tray, each with whether its account is one the
+     * viewer doesn't follow (#449). Two LIVEs share a cell class, so a recycled cell can go from a
+     * suggested account to a followed one; each bind writes the answer for the item it shows.
+     */
+    private static final WeakHashMap<View, Boolean> LIVE_CELLS = new WeakHashMap<>();
+    /** The Widget circle at the end of the tray (#449). */
+    private static final WeakHashMap<View, Boolean> WIDGET_GUIDE_CELLS = new WeakHashMap<>();
+
+    /**
+     * Called at the top of TikTok's bind of a LIVE circle in the stories tray, with the item it's
+     * about to show. Only LIVEs from accounts the viewer doesn't follow go; a followed account's
+     * LIVE stays where TikTok put it.
+     */
+    public static void onLiveCellBound(Object cell, Object item) {
+        try {
+            Object found = app.morphe.extension.tiktok.blockauthor.Reflect.readField(cell, "itemView");
+            if (!(found instanceof View)) return;
+            View view = (View) found;
+            boolean suggested = isSuggestedLive(item);
+            LIVE_CELLS.put(view, suggested);
+            boolean hide = suggested && Settings.HIDE_INBOX_SUGGESTED_LIVES.get();
+            HookStatus.bound("suggested LIVEs", hide ? "cell hidden" : suggested ? "suggested, left" : "followed, left");
+            setCellHidden(view, hide);
+        } catch (Throwable ex) {
+            Logger.printException(() -> "LIVE cell bind failed", ex);
+        }
+    }
+
+    /**
+     * TikTok's own answer for a tray LIVE: its item's {@code isUnfollow()}, true when the item has
+     * no account or the viewer doesn't follow it. An item without that answer is left showing.
+     */
+    static boolean isSuggestedLive(Object item) {
+        return Boolean.TRUE.equals(app.morphe.extension.tiktok.blockauthor.Reflect.invoke(item, "isUnfollow"));
+    }
+
+    /** Called at the top of TikTok's bind of the Widget circle at the end of the stories tray. */
+    public static void onWidgetGuideBound(Object cell) {
+        try {
+            Object found = app.morphe.extension.tiktok.blockauthor.Reflect.readField(cell, "itemView");
+            if (!(found instanceof View)) return;
+            View view = (View) found;
+            WIDGET_GUIDE_CELLS.put(view, Boolean.TRUE);
+            boolean hide = Settings.HIDE_INBOX_WIDGET_GUIDE.get();
+            HookStatus.bound("widget circle", hide ? "cell hidden" : "cell left");
+            setCellHidden(view, hide);
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Widget circle bind failed", ex);
         }
     }
 

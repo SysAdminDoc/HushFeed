@@ -5,6 +5,8 @@
 package app.morphe.patches.tiktok.interaction.engagement
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
+import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.methodCall
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
@@ -246,6 +248,41 @@ internal fun Method.holderCountSites(): HolderCountSites {
     return HolderCountSites(itemRegister, sites.sortedByDescending { it.insertAt })
 }
 
+private val SET_TEXT_PARAMETERS = listOf("Ljava/lang/CharSequence;")
+
+/**
+ * Where each holder count goes on screen: the first TextView.setText(CharSequence) after the
+ * count's hook, which TikTok runs right after putting the play icon in front of the same view
+ * (0OMJ.c6 on 47.8.3). Nothing between the hook and that call may rewrite the text's register or
+ * leave the stretch, so the call sets exactly the count the hook answered. Taken before any hook
+ * goes in, in the same order as [HolderCountSites.sites].
+ */
+internal fun Method.holderCountShows(sites: HolderCountSites): List<Int> {
+    val instructions = implementation?.instructions?.toList()
+        ?: throw PatchException("$WHAT: the grid holder's bind has no code.")
+    return sites.sites.map { site ->
+        (site.insertAt until instructions.size).firstOrNull { index ->
+            val instruction = instructions[index]
+            val reference = instruction.getReference<MethodReference>()
+            val setsText = instruction.opcode == Opcode.INVOKE_VIRTUAL && reference?.name == "setText" &&
+                reference.definingClass == "Landroid/widget/TextView;" &&
+                reference.parameterTypes.map(CharSequence::toString) == SET_TEXT_PARAMETERS
+            if (setsText) {
+                val call = instruction as FiveRegisterInstruction
+                if (call.registerD != site.textRegister) {
+                    throw PatchException("$WHAT: the grid holder sets another text than its count at $index.")
+                }
+                if (call.registerC > 15) throw PatchException("$WHAT: v${call.registerC} doesn't fit a short invoke.")
+            } else if (instruction.writes(site.textRegister) || instruction.opcode in GOTOS ||
+                instruction.opcode == Opcode.RETURN_VOID || instruction.opcode == Opcode.THROW
+            ) {
+                throw PatchException("$WHAT: a grid holder count leaves its stretch at $index before it's set.")
+            }
+            setsText
+        } ?: throw PatchException("$WHAT: a grid holder count is never set on its view.")
+    }
+}
+
 private val GOTOS = setOf(Opcode.GOTO, Opcode.GOTO_16, Opcode.GOTO_32)
 private val WIDE_CONSTANTS = setOf(Opcode.CONST_WIDE_16, Opcode.CONST_WIDE_32, Opcode.CONST_WIDE, Opcode.CONST_WIDE_HIGH16)
 
@@ -306,6 +343,15 @@ internal val profileGridCountPatch = bytecodePatch {
                 throw PatchException("$WHAT: the grid holder's bind is static.")
             }
             val sites = holderCountSites()
+            // The count's own setText first, so Hide view counts on profile grids can take the
+            // play icon off with it. Swapping one invoke for another moves no index.
+            holderCountShows(sites).forEach { at ->
+                val call = getInstruction<FiveRegisterInstruction>(at)
+                replaceInstruction(
+                    at,
+                    "invoke-static { v${call.registerC}, v${call.registerD} }, $EXTENSION->show(Landroid/widget/TextView;Ljava/lang/CharSequence;)V",
+                )
+            }
             sites.sites.forEach { site ->
                 addInstructions(
                     site.insertAt,

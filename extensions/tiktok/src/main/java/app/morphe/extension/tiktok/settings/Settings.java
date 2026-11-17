@@ -940,6 +940,7 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting PUBLISH_DATE_DAY_FIRST = new BooleanSetting("publish_date_day_first", FALSE);
     public static final BooleanSetting PUBLISH_DATE_ON_GRID = new BooleanSetting("publish_date_on_grid", FALSE);
     public static final BooleanSetting VIDEO_LENGTH_ON_GRID = new BooleanSetting("video_length_on_grid", FALSE);
+    public static final BooleanSetting HIDE_GRID_VIEW_COUNT = new BooleanSetting("hide_grid_view_count", FALSE);
     /** How loaded profile and Liked grids are ordered (#180): off, or one of the orders in GridSort. */
     public static final StringSetting PROFILE_GRID_SORT = new StringSetting("profile_grid_sort", "off");
     /** The Liked tab's own order (#180): "profile" follows PROFILE_GRID_SORT, otherwise one of GridSort's orders. */
@@ -1400,6 +1401,12 @@ public class Settings extends BaseSettings {
     /** The On this day memory at the front of the Inbox's stories tray (#358). */
     public static final BooleanSetting HIDE_INBOX_ON_THIS_DAY =
             new BooleanSetting("hide_inbox_on_this_day", FALSE);
+    /** LIVEs in the Inbox's stories tray from accounts the viewer doesn't follow (#449). */
+    public static final BooleanSetting HIDE_INBOX_SUGGESTED_LIVES =
+            new BooleanSetting("hide_inbox_suggested_lives", FALSE);
+    /** The Widget circle at the end of the Inbox's stories tray (#449). */
+    public static final BooleanSetting HIDE_INBOX_WIDGET_GUIDE =
+            new BooleanSetting("hide_inbox_widget_guide", FALSE);
     public static final BooleanSetting HIDE_INBOX_NEW_FOLLOWERS = new BooleanSetting("hide_inbox_new_followers", FALSE);
     public static final BooleanSetting HIDE_INBOX_ACTIVITY = new BooleanSetting("hide_inbox_activity", FALSE);
     public static final BooleanSetting HIDE_INBOX_ARCHIVE = new BooleanSetting("hide_inbox_archive", FALSE);

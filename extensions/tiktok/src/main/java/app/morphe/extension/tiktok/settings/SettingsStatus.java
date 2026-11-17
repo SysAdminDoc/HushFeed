@@ -841,6 +841,20 @@ public class SettingsStatus {
         inboxOnThisDayEnabled = true;
     }
 
+    /** Hide inbox items found the stories tray's two LIVE cells on this build and hooked their binds. */
+    public static boolean inboxSuggestedLivesEnabled = false;
+
+    public static void enableInboxSuggestedLives() {
+        inboxSuggestedLivesEnabled = true;
+    }
+
+    /** Hide inbox items found the stories tray's Widget cell on this build and hooked its bind. */
+    public static boolean inboxWidgetGuideEnabled = false;
+
+    public static void enableInboxWidgetGuide() {
+        inboxWidgetGuideEnabled = true;
+    }
+
     /** Hide profile shortcuts found the profile picture's Thoughts bubble on this build and hooked it. */
     public static boolean profileThoughtsEnabled = false;
 

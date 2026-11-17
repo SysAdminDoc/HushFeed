@@ -192,6 +192,22 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
                     Settings.HIDE_INBOX_ON_THIS_DAY
             ));
         }
+        if (SettingsStatus.inboxSuggestedLivesEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Hide LIVEs from accounts you don't follow",
+                    "LIVEs from accounts you don't follow leave the stories tray. LIVEs from accounts you follow stay.",
+                    Settings.HIDE_INBOX_SUGGESTED_LIVES
+            ));
+        }
+        if (SettingsStatus.inboxWidgetGuideEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Hide the Widget circle",
+                    "The Widget circle at the end of the stories tray goes. TikTok's home screen widget still works.",
+                    Settings.HIDE_INBOX_WIDGET_GUIDE
+            ));
+        }
         if (SettingsStatus.inboxFilterEnabled || SettingsStatus.hideSuggestedAccountsEnabled) {
         addPreference(new TogglePreference(
                 context,

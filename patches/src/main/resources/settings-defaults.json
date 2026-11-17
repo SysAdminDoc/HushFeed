@@ -64,6 +64,7 @@
       "publish_date_day_first",
       "publish_date_on_grid",
       "video_length_on_grid",
+      "hide_grid_view_count",
       "profile_grid_sort",
       "liked_grid_sort",
       "favorites_grid_sort",
@@ -409,6 +410,8 @@
     "Hide inbox items": [
       "hide_inbox_stories",
       "hide_inbox_on_this_day",
+      "hide_inbox_suggested_lives",
+      "hide_inbox_widget_guide",
       "hide_inbox_new_followers",
       "hide_inbox_activity",
       "hide_inbox_archive",
@@ -2446,6 +2449,12 @@
       "type": "boolean",
       "default": false
     },
+    "hide_grid_view_count": {
+      "field": "HIDE_GRID_VIEW_COUNT",
+      "key": "hide_grid_view_count",
+      "type": "boolean",
+      "default": false
+    },
     "hide_homepage_coin": {
       "field": "HIDE_HOMEPAGE_COIN",
       "key": "hide_homepage_coin",
@@ -2548,9 +2557,21 @@
       "type": "boolean",
       "default": false
     },
+    "hide_inbox_suggested_lives": {
+      "field": "HIDE_INBOX_SUGGESTED_LIVES",
+      "key": "hide_inbox_suggested_lives",
+      "type": "boolean",
+      "default": false
+    },
     "hide_inbox_tako": {
       "field": "HIDE_INBOX_TAKO",
       "key": "hide_inbox_tako",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_inbox_widget_guide": {
+      "field": "HIDE_INBOX_WIDGET_GUIDE",
+      "key": "hide_inbox_widget_guide",
       "type": "boolean",
       "default": false
     },

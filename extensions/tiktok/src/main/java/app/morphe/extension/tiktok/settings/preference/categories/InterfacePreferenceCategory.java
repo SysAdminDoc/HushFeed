@@ -361,6 +361,12 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "Show how long each video runs under its view count on profile grids. Photo posts and videos TikTok sent no length for show none.",
                     Settings.VIDEO_LENGTH_ON_GRID
             ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Hide view counts on profile grids",
+                    "Takes the view count and its play icon off each video on profile grids. Dates, lengths and the engagement rate you turned on move up in its place.",
+                    Settings.HIDE_GRID_VIEW_COUNT
+            ));
             if (SettingsStatus.gridSortEnabled) {
                 addPreference(new ChoicePreference(context, "Sort loaded videos on profile grids",
                         Settings.PROFILE_GRID_SORT,

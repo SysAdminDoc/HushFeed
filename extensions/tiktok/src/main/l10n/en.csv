@@ -859,6 +859,7 @@ Hide Footnotes,Hide Footnotes
 Hide LIVE replays,Hide LIVE replays
 Hide LIVE videos,Hide LIVE videos
 Hide LIVE videos from the feed.,Hide LIVE videos from the feed.
+Hide LIVEs from accounts you don't follow,Hide LIVEs from accounts you don't follow
 Hide LIVEs hosted by verified accounts.,Hide LIVEs hosted by verified accounts.
 Hide LIVEs that TikTok labels as a paid partnership or promotional content.,Hide LIVEs that TikTok labels as a paid partnership or promotional content.
 Hide LIVEs that TikTok tags with a game or a gaming category.,Hide LIVEs that TikTok tags with a game or a gaming category.
@@ -986,6 +987,7 @@ Hide the Tako bubble,Hide the Tako bubble
 Hide the Tako chat,Hide the Tako chat
 "Hide the Thoughts bubble TikTok shows above a profile picture, and the prompt to share one on your own profile. Restart TikTok to apply this.","Hide the Thoughts bubble TikTok shows above a profile picture, and the prompt to share one on your own profile. Restart TikTok to apply this."
 Hide the TikTok Minis icons in the profile menu,Hide the TikTok Minis icons in the profile menu
+Hide the Widget circle,Hide the Widget circle
 Hide the actions row of the share sheet.,Hide the actions row of the share sheet.
 Hide the add people icon,Hide the add people icon
 Hide the bottom tab names,Hide the bottom tab names
@@ -1063,6 +1065,7 @@ Hide videos with a lot of views and few comments. Works the same way as views pe
 "Hide videos with a lot of views and few likes. Lower numbers are stricter, zero turns the rule off, and one video is kept back if everything the feed just sent would go.","Hide videos with a lot of views and few likes. Lower numbers are stricter, zero turns the rule off, and one video is kept back if everything the feed just sent would go."
 Hide videos with blocked sounds,Hide videos with blocked sounds
 Hide videos you have already seen,Hide videos you have already seen
+Hide view counts on profile grids,Hide view counts on profile grids
 Hide voice comments,Hide voice comments
 "Hide voting cards and poll results above the comments, including polls that have ended.","Hide voting cards and poll results above the comments, including polls that have ended."
 Hide your account warning,Hide your account warning
@@ -1209,6 +1212,7 @@ LIVE settings,LIVE settings
 LIVE share actions,LIVE share actions
 LIVE videos,LIVE videos
 LIVE viewers range,LIVE viewers range
+LIVEs from accounts you don't follow leave the stories tray. LIVEs from accounts you follow stay.,LIVEs from accounts you don't follow leave the stories tray. LIVEs from accounts you follow stay.
 Lab data reset,Lab data reset
 Lab data reset with no undo,Lab data reset with no undo
 Lab overrides reset,Lab overrides reset
@@ -2324,6 +2328,7 @@ Take the rings off the creator's picture in the feed's right column. Needs Remov
 Takes TikTok's AI Cast button off the camera's side toolbar. Open the camera again to see the change.,Takes TikTok's AI Cast button off the camera's side toolbar. Open the camera again to see the change.
 Takes TikTok's own Auto scroll action out of the video panel and the Auto scroll label off the top of videos. Tablets and unfolded foldables also lose the Auto scroll switch beside videos. Works with Auto-advance off too.,Takes TikTok's own Auto scroll action out of the video panel and the Auto scroll label off the top of videos. Tablets and unfolded foldables also lose the Auto scroll switch beside videos. Works with Auto-advance off too.
 "Takes out the small bar above the progress bar that says a friend reposted the video, or asks you to repost it.","Takes out the small bar above the progress bar that says a friend reposted the video, or asks you to repost it."
+"Takes the view count and its play icon off each video on profile grids. Dates, lengths and the engagement rate you turned on move up in its place.","Takes the view count and its play icon off each video on profile grids. Dates, lengths and the engagement rate you turned on move up in its place."
 Tall,Tall
 Taller,Taller
 Tap @names in bios,Tap @names in bios
@@ -2398,6 +2403,7 @@ The New followers row leaves the top of the Inbox. The accounts still follow you
 "The Stories button at the top of the Following feed turns to glass with round ends. On Android 12 and up, the video behind it is blurred too.","The Stories button at the top of the Following feed turns to glass with round ends. On Android 12 and up, the video behind it is blurred too."
 The Tako assistant's conversation leaves the Inbox list. The Tako bubble on the feed has its own switch under Feed tabs.,The Tako assistant's conversation leaves the Inbox list. The Tako bubble on the feed has its own switch under Feed tabs.
 "The Translate comments button in a LIVE room also needs a Japanese SIM. Turn on Override SIM details in Hushfeed settings > Region, set SIM country preset to Japan, NTT DOCOMO (44010), then restart TikTok.","The Translate comments button in a LIVE room also needs a Japanese SIM. Turn on Override SIM details in Hushfeed settings > Region, set SIM country preset to Japan, NTT DOCOMO (44010), then restart TikTok."
+The Widget circle at the end of the stories tray goes. TikTok's home screen widget still works.,The Widget circle at the end of the stories tray goes. TikTok's home screen widget still works.
 The accounts TikTok suggests you follow no longer take up rows in the Inbox.,The accounts TikTok suggests you follow no longer take up rows in the Inbox.
 The activity status control leaves the Inbox header. Whether others see you as active is unchanged.,The activity status control leaves the Inbox header. Whether others see you as active is unchanged.
 "The add people icon leaves the Inbox header. Only the shortcut goes, so friend suggestions elsewhere are unchanged.","The add people icon leaves the Inbox header. Only the shortcut goes, so friend suggestions elsewhere are unchanged."

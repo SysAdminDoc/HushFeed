@@ -3251,3 +3251,11 @@ Save episodes button in the share sheet	زر حفظ الحلقات في ورقة
 Adds Save episodes when you share an episode of a mini drama. It lists the drama's episodes so you can pick several and save them in one go. An episode you haven't unlocked saves only its preview.	يضيف حفظ الحلقات عند مشاركة حلقة من دراما قصيرة. يعرض حلقات الدراما لتختار عدة حلقات وتحفظها دفعة واحدة. الحلقة التي لم تفتحها تُحفظ معاينتها فقط.
 Save to a collection	حفظ في مجموعة
 Collections aren't available for this video	المجموعات غير متاحة لهذا الفيديو
+# context: Inbox settings, two switches under Hide On this day. The first hides LIVE circles in the stories tray from accounts the user doesn't follow. The second hides the Widget circle TikTok puts at the end of the tray, which offers its home screen widget.
+Hide LIVEs from accounts you don't follow	إخفاء LIVE من حسابات لا تتابعها
+LIVEs from accounts you don't follow leave the stories tray. LIVEs from accounts you follow stay.	تختفي مقاطع LIVE من الحسابات التي لا تتابعها من شريط القصص. تبقى مقاطع LIVE من الحسابات التي تتابعها.
+Hide the Widget circle	إخفاء دائرة الأداة (Widget)
+The Widget circle at the end of the stories tray goes. TikTok's home screen widget still works.	تختفي دائرة الأداة (Widget) في نهاية شريط القصص. تبقى أداة TikTok على الشاشة الرئيسية تعمل.
+# context: Feed screen settings, a switch under Show video length on profile grids. It removes the view count and the play icon from each video tile on profile grids. If the date, video length or engagement rate are switched on, they take the first line instead.
+Hide view counts on profile grids	إخفاء عدد المشاهدات في شبكات الملف الشخصي
+Takes the view count and its play icon off each video on profile grids. Dates, lengths and the engagement rate you turned on move up in its place.	يزيل عدد المشاهدات وأيقونة التشغيل بجانبه من كل فيديو في شبكات الملف الشخصي. التواريخ والمدد ونسبة التفاعل التي فعّلتها تنتقل إلى مكانه.

@@ -101,6 +101,22 @@ public class SavedVideoMarkTest {
                 SavedVideoMark.gridText("4.1M", new Cell("8")));
     }
 
+    /** #449: with the count hidden and nothing else on, a saved video keeps its mark alone. */
+    @Test public void aHiddenCountLeavesTheMarkOnItsOwn() throws Exception {
+        boolean publishDate = SettingsStatus.alwaysShowPublishDateEnabled;
+        try {
+            SettingsStatus.alwaysShowPublishDateEnabled = true;
+            Settings.HIDE_GRID_VIEW_COUNT.save(true);
+            SavedVideoArchive.remember(context, "7", saved("seven"), SavedVideoArchive.generation());
+            readIds();
+            assertEquals(SavedVideoMark.MARK, ProfileGridCount.text("12.3K", new Cell("7")));
+            assertEquals("", ProfileGridCount.text("12.3K", new Cell("8")));
+        } finally {
+            SettingsStatus.alwaysShowPublishDateEnabled = publishDate;
+            Settings.HIDE_GRID_VIEW_COUNT.resetToDefault();
+        }
+    }
+
     @Test public void theGridCountCarriesTheMark() throws Exception {
         SavedVideoArchive.remember(context, "7", saved("seven"), SavedVideoArchive.generation());
         readIds();

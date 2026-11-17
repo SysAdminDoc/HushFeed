@@ -75,7 +75,8 @@ public final class SavedVideoMark {
         try {
             if (!enabled()) return text;
             String id = ((Aweme) item).getAid();
-            return SavedVideoArchive.isSaved(id) ? MARK + GAP + text : text;
+            if (!SavedVideoArchive.isSaved(id)) return text;
+            return text.isEmpty() ? MARK : MARK + GAP + text;
         } catch (Throwable ex) {
             Logger.printException(() -> "Could not mark a saved video", ex);
             return text;

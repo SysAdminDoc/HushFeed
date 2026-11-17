@@ -3004,3 +3004,11 @@ Save episodes button in the share sheet	Botón Guardar episodios en el panel de 
 Adds Save episodes when you share an episode of a mini drama. It lists the drama's episodes so you can pick several and save them in one go. An episode you haven't unlocked saves only its preview.	Añade Guardar episodios cuando compartes un episodio de un minidrama. Muestra los episodios del drama para que elijas varios y los guardes de una vez. De un episodio que no has desbloqueado solo se guarda la vista previa.
 Save to a collection	Guardar en una colección
 Collections aren't available for this video	Las colecciones no están disponibles para este vídeo
+# context: Inbox settings, two switches under Hide On this day. The first hides LIVE circles in the stories tray from accounts the user doesn't follow. The second hides the Widget circle TikTok puts at the end of the tray, which offers its home screen widget.
+Hide LIVEs from accounts you don't follow	Ocultar los LIVE de cuentas que no sigues
+LIVEs from accounts you don't follow leave the stories tray. LIVEs from accounts you follow stay.	Los LIVE de cuentas que no sigues salen de la bandeja de historias. Los LIVE de cuentas que sigues se quedan.
+Hide the Widget circle	Ocultar el círculo de Widget
+The Widget circle at the end of the stories tray goes. TikTok's home screen widget still works.	El círculo de Widget al final de la bandeja de historias desaparece. El widget de TikTok para la pantalla de inicio sigue funcionando.
+# context: Feed screen settings, a switch under Show video length on profile grids. It removes the view count and the play icon from each video tile on profile grids. If the date, video length or engagement rate are switched on, they take the first line instead.
+Hide view counts on profile grids	Ocultar las visualizaciones en la cuadrícula del perfil
+Takes the view count and its play icon off each video on profile grids. Dates, lengths and the engagement rate you turned on move up in its place.	Quita el número de visualizaciones y su icono de reproducción de cada vídeo en la cuadrícula del perfil. Las fechas, las duraciones y la tasa de interacción que activaste suben a su lugar.

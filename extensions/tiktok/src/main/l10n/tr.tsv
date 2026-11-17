@@ -3004,3 +3004,11 @@ Save episodes button in the share sheet	Paylaşım menüsünde Bölümleri kayde
 Adds Save episodes when you share an episode of a mini drama. It lists the drama's episodes so you can pick several and save them in one go. An episode you haven't unlocked saves only its preview.	Bir mini dizinin bölümünü paylaşırken Bölümleri kaydet ekler. Dizinin bölümlerini listeler, böylece birkaçını seçip tek seferde kaydedebilirsin. Kilidini açmadığın bir bölümün yalnızca önizlemesi kaydedilir.
 Save to a collection	Bir koleksiyona kaydet
 Collections aren't available for this video	Bu video için koleksiyonlar kullanılamıyor
+# context: Inbox settings, two switches under Hide On this day. The first hides LIVE circles in the stories tray from accounts the user doesn't follow. The second hides the Widget circle TikTok puts at the end of the tray, which offers its home screen widget.
+Hide LIVEs from accounts you don't follow	Takip etmediğin hesapların CANLI yayınlarını gizle
+LIVEs from accounts you don't follow leave the stories tray. LIVEs from accounts you follow stay.	Takip etmediğin hesapların CANLI yayınları hikaye şeridinden çıkar. Takip ettiğin hesapların CANLI yayınları kalır.
+Hide the Widget circle	Widget dairesini gizle
+The Widget circle at the end of the stories tray goes. TikTok's home screen widget still works.	Hikaye şeridinin sonundaki Widget dairesi kaybolur. TikTok'un ana ekran widget'ı çalışmaya devam eder.
+# context: Feed screen settings, a switch under Show video length on profile grids. It removes the view count and the play icon from each video tile on profile grids. If the date, video length or engagement rate are switched on, they take the first line instead.
+Hide view counts on profile grids	Profil ızgarasında görüntülenme sayılarını gizle
+Takes the view count and its play icon off each video on profile grids. Dates, lengths and the engagement rate you turned on move up in its place.	Profil ızgarasında her videodan görüntülenme sayısını ve oynatma simgesini kaldırır. Açtığın tarihler, süreler ve etkileşim oranı onun yerine yukarı çıkar.

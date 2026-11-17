@@ -102,6 +102,21 @@ val inboxFilterPatch = bytecodePatch(
             println("[$PATCH_NAME] Left out the On this day switch on ${packageMetadata.versionName}: ${problem.message}")
             null
         }
+        // The tray's LIVE circles and its Widget circle (#449), held the same way by InboxTrayCellsAnchorsTest.
+        val liveBinds = try {
+            listOf(InboxLiveBindFingerprint.method, InboxLiveDoubleBindFingerprint.method)
+        } catch (problem: Exception) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[$PATCH_NAME] Left out the suggested LIVEs switch on ${packageMetadata.versionName}: ${problem.message}")
+            null
+        }
+        val widgetGuide = try {
+            StoryWidgetGuideBindFingerprint.method
+        } catch (problem: Exception) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[$PATCH_NAME] Left out the Widget circle switch on ${packageMetadata.versionName}: ${problem.message}")
+            null
+        }
         // Show inbox filters, held the same way by InboxFilterTabsAnchorsTest.
         val filterTabs = try {
             inboxFilterTabHooks()
@@ -187,6 +202,22 @@ val inboxFilterPatch = bytecodePatch(
             SettingsStatusLoadFingerprint.method.addInstruction(
                 0,
                 "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableInboxOnThisDay()V",
+            )
+        }
+
+        // LIVEs from accounts the viewer doesn't follow, and the Widget circle, in the same tray (#449).
+        if (liveBinds != null) {
+            liveBinds.forEach { it.reportInboxLiveBind(PATCH_NAME) }
+            SettingsStatusLoadFingerprint.method.addInstruction(
+                0,
+                "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableInboxSuggestedLives()V",
+            )
+        }
+        if (widgetGuide != null) {
+            widgetGuide.reportWidgetGuideBind(PATCH_NAME)
+            SettingsStatusLoadFingerprint.method.addInstruction(
+                0,
+                "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableInboxWidgetGuide()V",
             )
         }
 

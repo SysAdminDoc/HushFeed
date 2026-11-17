@@ -55,6 +55,19 @@ public final class EngagementRate {
         }
     }
 
+    /**
+     * The rate alone for a grid cell whose view count is hidden, or null when the switch is off or
+     * the cell has no views to work it out from.
+     */
+    public static String gridRate(Object item) {
+        try {
+            return enabled() ? rateOf(item) : null;
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Could not work out a grid cell's engagement rate", ex);
+            return null;
+        }
+    }
+
     /** The rate for the video on screen, or null when the switch is off or there's nothing to show. */
     static String forVideo(Object item) {
         if (!enabled()) {

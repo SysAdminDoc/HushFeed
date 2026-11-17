@@ -11,6 +11,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
@@ -20,6 +21,7 @@ import app.morphe.extension.tiktok.settings.L10n;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
@@ -95,6 +97,34 @@ public class ActivitySplitTest {
         assertEquals(L10n.t(context, "Likes"), panel.topTitle.getText().toString());
         assertEquals(L10n.t(context, "Comments"), panel.middleTitle.getText().toString());
         assertEquals(L10n.t(context, "Hide comments"), panel.closeButton.getContentDescription().toString());
+    }
+
+    /** Counts the times it was told it left the window. */
+    public static final class DetachCounter extends View {
+        int detached;
+        public DetachCounter(Context context) { super(context); }
+        @Override protected void onDetachedFromWindow() { detached++; super.onDetachedFromWindow(); }
+    }
+
+    @Test public void swappingNeverTakesTheListsOffTheWindow() {
+        Activity activity = Robolectric.buildActivity(Activity.class).setup().get();
+        ActivitySplit.Panel panel = new ActivitySplit.Panel(null, null, null);
+        panel.build(activity, false, false);
+        activity.setContentView(panel.root);
+        DetachCounter inComments = new DetachCounter(activity), inLikes = new DetachCounter(activity);
+        ((FrameLayout) panel.commentsBox).addView(inComments);
+        ((FrameLayout) panel.likesBox).addView(inLikes);
+        assertTrue(inComments.isAttachedToWindow());
+
+        panel.arrange(true);
+        panel.arrange(false);
+
+        assertOrder(panel, panel.topHeader, panel.commentsBox, panel.middleBar, panel.likesBox, panel.restore);
+        // A search on either list (Search loaded activity) closes when its list leaves the window.
+        assertEquals(0, inComments.detached);
+        assertEquals(0, inLikes.detached);
+        assertTrue(inComments.isAttachedToWindow());
+        assertTrue(inLikes.isAttachedToWindow());
     }
 
     @Test public void closingHidesWhicheverListIsBelowTheBarAndTheBarWithIt() {

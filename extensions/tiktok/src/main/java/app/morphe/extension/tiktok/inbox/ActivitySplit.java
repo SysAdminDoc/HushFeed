@@ -61,7 +61,12 @@ public final class ActivitySplit {
     private static final long ATTACH_RETRY_MS = 100;
     private static final int SELECT_ATTEMPTS = 30;
 
-    private static final Map<Object, Panel> PANELS = Collections.synchronizedMap(new WeakHashMap<>());
+    /**
+     * The panel over each type pager. Held weakly: a panel's views live in the pager's own tree,
+     * so a strong value would keep its key, and the whole page, alive after the page is gone. The
+     * panel's buttons keep it alive while the page is shown.
+     */
+    private static final Map<Object, WeakReference<Panel>> PANELS = Collections.synchronizedMap(new WeakHashMap<>());
 
     private ActivitySplit() {}
 
@@ -77,7 +82,7 @@ public final class ActivitySplit {
             View pager = findPager(root);
             if (pager == null || !(pager.getParent() instanceof FrameLayout)) return;
             Panel panel = new Panel(page, (FrameLayout) pager.getParent(), pager);
-            PANELS.put(pager, panel);
+            PANELS.put(pager, new WeakReference<>(panel));
             panel.install();
         } catch (Throwable failure) {
             Logger.printException(() -> "Split activity list: page skipped", failure);
@@ -87,7 +92,7 @@ public final class ActivitySplit {
     /** Called first in the type pager's setCurrentItem(index, smooth). */
     public static void onPagerSelect(Object pager, int index) {
         try {
-            Panel panel = PANELS.get(pager);
+            Panel panel = panelOf(pager);
             if (panel != null) panel.showFor(index);
         } catch (Throwable failure) {
             Logger.printException(() -> "Split activity list: page switch skipped", failure);
@@ -103,13 +108,21 @@ public final class ActivitySplit {
         try {
             if (PANELS.isEmpty()) return;
             new Handler(Looper.getMainLooper()).post(() -> {
-                List<Panel> panels;
+                List<WeakReference<Panel>> panels;
                 synchronized (PANELS) { panels = new ArrayList<>(PANELS.values()); }
-                for (Panel panel : panels) panel.redrawLists();
+                for (WeakReference<Panel> reference : panels) {
+                    Panel panel = reference.get();
+                    if (panel != null) panel.redrawLists();
+                }
             });
         } catch (Throwable failure) {
             Logger.printException(() -> "Split activity list: emoji redraw skipped", failure);
         }
+    }
+
+    static Panel panelOf(Object pager) {
+        WeakReference<Panel> reference = PANELS.get(pager);
+        return reference == null ? null : reference.get();
     }
 
     /** Marks every row of each list under [view] changed, so TikTok binds them again. */
@@ -202,6 +215,30 @@ public final class ActivitySplit {
         throw new NoSuchMethodException(name);
     }
 
+    /** The panel's column, which can reorder its rows without them leaving the window. */
+    static final class Rows extends LinearLayout {
+        Rows(Context context) { super(context); }
+
+        /**
+         * Puts [order] first, in that order. A row already here moves with detach/attachViewToParent,
+         * which skips onDetachedFromWindow: removeView would tell every view in a moved list it left
+         * the window, and Search loaded activity takes that as its list being closed.
+         */
+        void reorder(View... order) {
+            for (int i = 0; i < order.length; i++) {
+                View view = order[i];
+                if (view.getParent() != this) {
+                    addView(view, i);
+                } else if (indexOfChild(view) != i) {
+                    detachViewFromParent(view);
+                    attachViewToParent(view, i, view.getLayoutParams());
+                }
+            }
+            requestLayout();
+            invalidate();
+        }
+    }
+
     /**
      * The panel over one page's pager, top to bottom: the upper list's title, the upper list, the
      * bar between the lists (the lower list's title with the swap and close buttons), the lower
@@ -212,7 +249,7 @@ public final class ActivitySplit {
         private final WeakReference<Object> page;
         private final WeakReference<FrameLayout> host;
         private final WeakReference<View> pager;
-        LinearLayout root;
+        Rows root;
         View topHeader, middleBar, commentsBox, likesBox;
         TextView topTitle, middleTitle, closeButton, restore;
         private int commentsId, likesId, text;
@@ -248,7 +285,7 @@ public final class ActivitySplit {
             text = dark ? Color.WHITE : Color.BLACK;
             int touch = SettingsUi.dp(context, 48);
 
-            root = new LinearLayout(context);
+            root = new Rows(context);
             root.setOrientation(LinearLayout.VERTICAL);
             root.setClickable(true);
 
@@ -305,14 +342,12 @@ public final class ActivitySplit {
 
         /**
          * Puts the lists in order around the bar between them and names them. Each list stays in
-         * its own container, so moving a container keeps its fragment, scroll position and loaded
-         * pages.
+         * its own container and the containers never leave the window, so a list keeps its
+         * fragment, scroll position, loaded pages and anything attached to it, like a search.
          */
         void arrange(boolean likesFirst) {
             this.likesFirst = likesFirst;
-            View[] sections = {topHeader, upper(), middleBar, lower()};
-            for (View section : sections) if (section.getParent() == root) root.removeView(section);
-            for (int i = 0; i < sections.length; i++) root.addView(sections[i], i);
+            root.reorder(topHeader, upper(), middleBar, lower());
             Context context = root.getContext();
             topTitle.setText(L10n.t(context, likesFirst ? "Likes" : "Comments"));
             middleTitle.setText(L10n.t(context, likesFirst ? "Comments" : "Likes"));

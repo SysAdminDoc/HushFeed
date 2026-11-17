@@ -33,6 +33,31 @@ public final class DisableTelemetryPatch {
         return isTelemetryDisabled() ? "localhost" : host;
     }
 
+    /** Where Orbu's telemetry uploads go with the switch on: the phone itself, which refuses them. */
+    static final String LOCAL_BASE_URL = "https://localhost/";
+
+    /**
+     * A base URL Orbu builds its requests on (#379). Its log, sampling and challenge uploads all
+     * post to proxy.telemetry.us-ashburn-1.oci.oraclecloud.com, and a config can name another
+     * region. With the switch on, any host with a telemetry label points at the phone, so the
+     * name is never looked up and nothing leaves it. Orbu's configuration host is left alone.
+     */
+    public static String orbuBaseUrl(String url) {
+        if (url == null || !isTelemetryDisabled() || !hasTelemetryLabel(url)) return url;
+        return LOCAL_BASE_URL;
+    }
+
+    private static boolean hasTelemetryLabel(String url) {
+        int scheme = url.indexOf("://");
+        int start = scheme < 0 ? 0 : scheme + 3;
+        int end = start;
+        while (end < url.length() && "/:?#".indexOf(url.charAt(end)) < 0) end++;
+        for (String label : url.substring(start, end).split("\\.")) {
+            if (label.equalsIgnoreCase("telemetry")) return true;
+        }
+        return false;
+    }
+
     public static boolean isTelemetryDisabled() {
         // Keep analytics enabled if the context isn't initialized yet
         return Utils.getContext() != null && Settings.DISABLE_ANALYTICS.get();

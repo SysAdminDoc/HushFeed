@@ -55,6 +55,29 @@ public class DisableTelemetryPatchTest {
         assertEquals("localhost", DisableTelemetryPatch.resolverLookupHost("whoami.akamai.net"));
     }
 
+    /**
+     * Issue #379: with the switch on, Orbu's telemetry proxy (the log, sampling and challenge
+     * uploads all post there) points at the phone itself, in whatever case or region a config
+     * names it. Orbu's own configuration host keeps working, and so does any host that only
+     * contains the word.
+     */
+    @Test
+    public void orbuTelemetryHostsPointAtThePhoneOnlyWithTheSwitchOn() {
+        String proxy = "https://proxy.telemetry.us-ashburn-1.oci.oraclecloud.com/";
+        String config = "https://config.mtp.sag.us-ashburn-1.oci.oraclecloud.com/";
+        assertEquals(proxy, DisableTelemetryPatch.orbuBaseUrl(proxy));
+
+        Settings.DISABLE_ANALYTICS.save(true);
+        assertEquals("https://localhost/", DisableTelemetryPatch.orbuBaseUrl(proxy));
+        assertEquals("https://localhost/",
+                DisableTelemetryPatch.orbuBaseUrl("https://PROXY.Telemetry.us-phoenix-1.oci.oraclecloud.com:443/v2/"));
+        assertEquals("https://localhost/", DisableTelemetryPatch.orbuBaseUrl("proxy.telemetry.example.com"));
+        assertEquals(config, DisableTelemetryPatch.orbuBaseUrl(config));
+        assertEquals("https://notelemetry.example.com/telemetry/",
+                DisableTelemetryPatch.orbuBaseUrl("https://notelemetry.example.com/telemetry/"));
+        assertEquals(null, DisableTelemetryPatch.orbuBaseUrl(null));
+    }
+
     @Test
     public void telemetryStaysEnabledBeforeTheContextIsSet() {
         Utils.setContext(null);

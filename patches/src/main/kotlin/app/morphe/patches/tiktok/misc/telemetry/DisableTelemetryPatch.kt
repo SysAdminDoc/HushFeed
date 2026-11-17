@@ -29,6 +29,7 @@ import app.morphe.util.findMutableMethodOf
 import app.morphe.util.getReference
 import app.morphe.util.numberOfParameterRegisters
 import app.morphe.util.numberOfParameterRegistersLogical
+import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
@@ -176,6 +177,33 @@ val disableTelemetryPatch = bytecodePatch(
         ResolverLookupFingerprint.matchAllOrNull().orEmpty().forEach { match ->
             match.method.redirectResolverLookups()
         }
+
+        // Orbu's sampling and challenge uploads (#379) post to the same proxy.telemetry host as
+        // its log upload. Every base URL a request is built on comes from a server type's default
+        // or a server config, so both point the telemetry host at the phone with the switch on.
+        OrbuServerTypeBaseUrlFingerprint.methodOrNull?.let { getter ->
+            getter.implementation!!.instructions.withIndex()
+                .filter { it.value.opcode == Opcode.RETURN_OBJECT }
+                .map { it.index }
+                .reversed()
+                .forEach { index ->
+                    val register = getter.getInstruction<OneRegisterInstruction>(index).registerA
+                    getter.addInstructions(
+                        index,
+                        """
+                            invoke-static { v$register }, $EXTENSION_CLASS_DESCRIPTOR->orbuBaseUrl(Ljava/lang/String;)Ljava/lang/String;
+                            move-result-object v$register
+                        """,
+                    )
+                }
+        }
+        OrbuServerConfigInitFingerprint.methodOrNull?.addInstructions(
+            0,
+            """
+                invoke-static { p2 }, $EXTENSION_CLASS_DESCRIPTOR->orbuBaseUrl(Ljava/lang/String;)Ljava/lang/String;
+                move-result-object p2
+            """,
+        )
     }
 }
 

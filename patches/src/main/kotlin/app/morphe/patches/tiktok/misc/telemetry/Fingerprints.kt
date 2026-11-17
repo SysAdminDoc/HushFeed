@@ -297,3 +297,33 @@ internal fun buildsOrbuLogBody(method: Method): Boolean =
  * Seven copies on 47.7.3, in the video and upload libraries and two renamed classes.
  */
 internal object ResolverLookupFingerprint : Fingerprint(strings = listOf(RESOLVER_LOOKUP_HOST))
+
+internal const val ORBU_SERVER_TYPE = "Lttp/orbu/sdk/configuration/model/ServerAPIType;"
+internal const val ORBU_SERVER_CONFIG = "Lttp/orbu/sdk/configuration/model/ServerConfig;"
+
+/**
+ * The default base URL of each Orbu server type (#379). LOGGING, SAMPLING and CHALLENGE all
+ * default to proxy.telemetry.us-ashburn-1.oci.oraclecloud.com, and this getter is the only
+ * reader of the field. The SDK's model classes keep their names.
+ */
+internal object OrbuServerTypeBaseUrlFingerprint : Fingerprint(
+    definingClass = ORBU_SERVER_TYPE,
+    name = "getBaseUrl",
+    returnType = "Ljava/lang/String;",
+    parameters = listOf(),
+)
+
+/**
+ * The one constructor of an Orbu server config (#379), the base URL the SDK's interceptor
+ * rewrites every request's host to. Defaults, fallbacks and remote configs parsed from JSON all
+ * come through it, with the base URL second after the server type.
+ */
+internal object OrbuServerConfigInitFingerprint : Fingerprint(
+    definingClass = ORBU_SERVER_CONFIG,
+    name = "<init>",
+    custom = { method, _ ->
+        method.parameterTypes.size >= 2 &&
+            method.parameterTypes[0].toString() == ORBU_SERVER_TYPE &&
+            method.parameterTypes[1].toString() == "Ljava/lang/String;"
+    },
+)

@@ -13,6 +13,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import org.junit.Assert.assertEquals
@@ -363,6 +364,44 @@ class TelemetrySendAnchorsTest {
                     method.calls().any { it.definingClass == "Ljava/net/InetAddress;" && it.name == "getByName" },
                 )
             }
+        }
+    }
+
+    /**
+     * Issue #379: Orbu's log, sampling and challenge uploads all post to proxy.telemetry, and
+     * every base URL Orbu builds a request on comes from two places: its server type's default,
+     * read only through getBaseUrl, and a server config, whose one constructor is the only writer
+     * of its base URL, remote configs included. Each is matched by exactly one hook.
+     */
+    @Test
+    fun `each declared build takes every Orbu base URL from the two hooked methods`() {
+        onEachDeclared {
+            val getters = mutableListOf<Signature>()
+            val inits = mutableListOf<Signature>()
+            val typeReads = mutableSetOf<Signature>()
+            val configWrites = mutableSetOf<Signature>()
+            classes().forEach { classDef ->
+                classDef.methods.filter { it.implementation != null }.forEach { method ->
+                    if (OrbuServerTypeBaseUrlFingerprint.takes(method, classDef)) getters += method.signature()
+                    if (OrbuServerConfigInitFingerprint.takes(method, classDef)) inits += method.signature()
+                    method.implementation!!.instructions.forEach { instruction ->
+                        val field = (instruction as? ReferenceInstruction)?.reference as? FieldReference
+                        if (field?.name != "baseUrl") return@forEach
+                        if (field.definingClass == ORBU_SERVER_TYPE && instruction.opcode == Opcode.IGET_OBJECT) {
+                            typeReads += method.signature()
+                        }
+                        if (field.definingClass == ORBU_SERVER_CONFIG && instruction.opcode == Opcode.IPUT_OBJECT) {
+                            configWrites += method.signature()
+                        }
+                    }
+                }
+            }
+            assertEquals(1, getters.size)
+            assertEquals(1, inits.size)
+            assertEquals(getters.toSet(), typeReads)
+            assertEquals(inits.toSet(), configWrites)
+            assertEquals(ORBU_SERVER_TYPE, inits.single().parameters[0])
+            assertEquals("Ljava/lang/String;", inits.single().parameters[1])
         }
     }
 

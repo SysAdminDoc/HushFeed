@@ -911,6 +911,11 @@ public class Settings extends BaseSettings {
      */
     public static final BooleanSetting KEEP_PULLED_SOUNDS = new BooleanSetting("keep_pulled_sounds", FALSE);
     /**
+     * Hides TikTok's AI dub tracks so videos and mini dramas play their original audio; the
+     * Play original audio patch. Read as each video is prepared, so no restart.
+     */
+    public static final BooleanSetting ORIGINAL_AUDIO = new BooleanSetting("original_audio", FALSE);
+    /**
      * Keeps the playing video going in a small window when the reader leaves TikTok; the
      * Picture-in-picture patch. Read as the reader leaves, so no restart.
      */

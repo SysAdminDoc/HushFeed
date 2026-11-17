@@ -12314,6 +12314,79 @@
   "notes": "The behavior (the video shrinking into a floating window when TikTok is left) cannot be reached: the runner has no step that leaves the app. The manifest regex only asks that some activity has the attribute; PictureInPicturePatch.kt allowPictureInPicture sets it on the feed activity and the detail pager, and the feed activity already declares it for LIVE on every build, so an inert patch could still pass the manifest line. The flag is the proof that the hooks were applied. Manual check: switch on, play a video, press Home, expect a small window."
  },
  {
+  "name": "Play original audio",
+  "category": "Playback",
+  "default": true,
+  "kind": "runtime",
+  "source": [
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/originalaudio/OriginalAudioPatch.kt",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/playback/OriginalAudio.java"
+  ],
+  "settings": [
+   {
+    "key": "original_audio",
+    "default": false,
+    "type": "bool",
+    "row": "Play original audio"
+   }
+  ],
+  "surface": "feed",
+  "checks": [
+   {
+    "id": "patch-applied",
+    "what": "SettingsStatus.originalAudioEnabled is true, so the patch is in this APK and the extension loaded it.",
+    "steps": [
+     {
+      "probe": "fields",
+      "extras": {
+       "class": "app.morphe.extension.tiktok.settings.SettingsStatus",
+       "names": "originalAudioEnabled"
+      },
+      "expect": "\\boriginalAudioEnabled=true\\b",
+      "waitMs": 1500
+     }
+    ],
+    "auto": true
+   },
+   {
+    "id": "switch-drives-hook",
+    "what": "With the switch on, the hook that hides a post's AI dub tracks answers true (and false when off).",
+    "steps": [
+     {
+      "set": {
+       "original_audio": "true"
+      }
+     },
+     {
+      "probe": "call",
+      "extras": {
+       "class": "app.morphe.extension.tiktok.playback.OriginalAudio",
+       "method": "on"
+      },
+      "expect": "^ok call on -> true",
+      "waitMs": 1500
+     },
+     {
+      "set": {
+       "original_audio": "false"
+      }
+     },
+     {
+      "probe": "call",
+      "extras": {
+       "class": "app.morphe.extension.tiktok.playback.OriginalAudio",
+       "method": "on"
+      },
+      "expect": "^ok call on -> false",
+      "waitMs": 1500
+     }
+    ],
+    "auto": true
+   }
+  ],
+  "notes": "dubTracks(List) takes an argument, so the audit calls on(), which it reads. A dubbed post (TikTok adds dub tracks only for some languages and regions) is not something the audit can find on demand; the manual check is a dubbed mini drama playing in its own language with the switch on."
+ },
+ {
   "name": "Play SDR instead of HDR",
   "category": "Playback",
   "default": true,

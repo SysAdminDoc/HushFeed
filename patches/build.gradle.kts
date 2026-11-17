@@ -754,7 +754,8 @@ val nativeTestResources = tasks.register<Sync>("nativeTestResources") {
 val nativeTestAreas = linkedMapOf(
     "Feed" to "feedfilter captchapopup promobanners privacy profile shared",
     "Playback" to "interaction/live interaction/blockauthor interaction/resume interaction/looping " +
-        "interaction/backgroundplay interaction/pip interaction/soundrestore interaction/feedmute interaction/videofit",
+        "interaction/backgroundplay interaction/pip interaction/soundrestore interaction/feedmute interaction/videofit " +
+        "interaction/originalaudio",
     "Player" to "interaction interaction/seekbar interaction/videooverlays interaction/cleardisplay interaction/speed " +
         "interaction/gesture interaction/quickactions interaction/confirmation interaction/feedtext " +
         "interaction/feedtoolbar interaction/captions interaction/systemfont interaction/haptics",

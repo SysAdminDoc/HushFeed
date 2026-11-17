@@ -40,6 +40,7 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                 || SettingsStatus.storyControlsEnabled
                 || SettingsStatus.liveControlsEnabled
                 || SettingsStatus.feedMuteEnabled || SettingsStatus.keepPulledSoundsEnabled
+                || SettingsStatus.originalAudioEnabled
                 || SettingsStatus.backgroundPlayEnabled || SettingsStatus.pictureInPictureEnabled
                 || SettingsStatus.showSeekbarEnabled || SettingsStatus.seekbarThumbnailEnabled
                 || SettingsStatus.stopVideoLoopingEnabled || SettingsStatus.resumeVideoAfterScrollEnabled
@@ -244,7 +245,8 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
         // leave. The bar rows were on App and the frame rows under Quality, which they aren't.
         if (SettingsStatus.showSeekbarEnabled || SettingsStatus.seekbarThumbnailEnabled
                 || SettingsStatus.videoFitEnabled || SettingsStatus.feedMuteEnabled
-                || SettingsStatus.keepPulledSoundsEnabled || SettingsStatus.backgroundPlayEnabled
+                || SettingsStatus.keepPulledSoundsEnabled || SettingsStatus.originalAudioEnabled
+                || SettingsStatus.backgroundPlayEnabled
                 || SettingsStatus.pictureInPictureEnabled) {
             addPreference(new SectionHeadingPreference(context, "Player"));
         }
@@ -395,6 +397,12 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                             + "copyright or in your region. TikTok may still say the sound isn't "
                             + "available.",
                     Settings.KEEP_PULLED_SOUNDS));
+        }
+        if (SettingsStatus.originalAudioEnabled) {
+            addPreference(new TogglePreference(context, "Play original audio",
+                    "Play videos and mini dramas in their own language instead of TikTok's AI dub "
+                            + "in your app language. Captions and translations stay as they are.",
+                    Settings.ORIGINAL_AUDIO));
         }
         if (SettingsStatus.backgroundPlayEnabled) {
             addPreference(new TogglePreference(context, "Keep playing in the background",

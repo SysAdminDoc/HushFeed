@@ -8513,6 +8513,45 @@
       ]
     },
     {
+      "name": "Play original audio",
+      "description": "Plays videos and mini dramas with their original audio instead of TikTok's AI dub in your app language. Captions and translations stay as they are. Starts off. Turn it on in Hushfeed settings > Playback.",
+      "category": "Playback",
+      "use": true,
+      "dependencies": [
+        "Patch",
+        "Settings"
+      ],
+      "compatiblePackages": {
+        "com.zhiliaoapp.musically": [
+          "47.8.3"
+        ]
+      },
+      "compatibility": [
+        {
+          "name": "TikTok",
+          "packageName": "com.zhiliaoapp.musically",
+          "description": null,
+          "appIconColor": 16657493,
+          "signatures": [
+            "9041803e91bcb814b4b4399fb5c85a91640b755e5e8ba76813814bf4cf2ab5ba"
+          ],
+          "targets": [
+            {
+              "version": "47.8.3",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 2024708030,
+                "ARMEABI_V7A": 2024708030,
+                "X86": 2024708030,
+                "X86_64": 2024708030
+              }
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Playback quality",
       "description": "Lets you choose the video quality, like highest, lowest or 720p, and set a lower quality for mobile data to use less data. Starts off. Pick a quality in Hushfeed settings > Playback.",
       "category": "Playback",

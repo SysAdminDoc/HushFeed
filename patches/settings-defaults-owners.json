@@ -643,6 +643,9 @@
     "Picture-in-picture": [
       "PICTURE_IN_PICTURE"
     ],
+    "Play original audio": [
+      "ORIGINAL_AUDIO"
+    ],
     "Play SDR instead of HDR": [
       "PLAY_SDR"
     ],

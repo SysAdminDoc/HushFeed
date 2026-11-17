@@ -25,14 +25,14 @@ Hushfeed is a set of [Morphe](https://github.com/MorpheApp/morphe-manager) patch
 
 Most switches start off, so a freshly patched TikTok looks and works the way it ships until you turn something on. What changed in each version is in the [changelog](CHANGELOG.md).
 
-**[Add Hushfeed to Morphe](https://morphe.software/add-source?github=SysAdminDoc%2Fhushfeed)** | [Download the latest bundle](https://github.com/SysAdminDoc/hushfeed/releases/latest) | [Browse the 148 source patches](#patches)
+**[Add Hushfeed to Morphe](https://morphe.software/add-source?github=SysAdminDoc%2Fhushfeed)** | [Download the latest bundle](https://github.com/SysAdminDoc/hushfeed/releases/latest) | [Browse the 149 source patches](#patches)
 
 > [!IMPORTANT]
 > Hushfeed targets the global TikTok package, `com.zhiliaoapp.musically`, version [47.7.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-7-3-release/). Patch that exact build, as the bundle or the APK ([step 1](#install) says which). See [Supported target](#supported-target) for the build details.
 
 Hushfeed v0.82.0 contains 147 patches for TikTok 47.7.3. New in this one: TikTok moves to 47.7.3. You can jump to a date on your Liked grid, search your Liked and Favorites, fold long comments and put a short pause in front of For You. It needs Morphe Manager 2.5.0 or newer.
 
-The main branch contains 148 patches, v0.82.0's set plus Fix Spotify login.
+The main branch contains 149 patches, v0.82.0's set plus Fix Spotify login and Play original audio.
 
 ## What it changes
 
@@ -235,6 +235,7 @@ Simple mode in Morphe Manager selects 128 of these patches. Each row says what t
 | `Open external links directly` | Opens website links from profiles and stories in your phone's own browser instead of TikTok's built-in one. On by default. Turn it off in Hushfeed settings > Privacy. |
 | `Open the comments at full height` | Opens the comment sheet at the full height of the screen instead of part way up. Starts off. Turn it on in Hushfeed settings > Comments. |
 | `Picture-in-picture` | Keeps the video playing in a small window when you leave TikTok, so you can keep watching while you use other apps. Starts off. Turn it on in Hushfeed settings > Playback. |
+| `Play original audio` | Plays videos and mini dramas with their original audio instead of TikTok's AI dub in your app language. Captions and translations stay as they are. Starts off. Turn it on in Hushfeed settings > Playback. |
 | `Play SDR instead of HDR` | Plays the normal version of HDR videos, so your screen doesn't suddenly jump to full brightness. Starts off. Turn it on in Hushfeed settings > Playback. |
 | `Playback quality` | Lets you choose the video quality, like highest, lowest or 720p, and set a lower quality for mobile data to use less data. Starts off. Pick a quality in Hushfeed settings > Playback. |
 | `Playback speed` | Remembers the speed you picked for the next video, and lets you set a default speed, add speeds up to 3x to the menu and choose the speed for press and hold. On by default. Turn it off in Hushfeed settings > Playback. |

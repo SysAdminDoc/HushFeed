@@ -2565,6 +2565,8 @@ How much of the video shows through the glass pill on the main feed. Most see-th
 On the main feed, a raised bubble of glass sits behind the tab you're on and slides to the next tab you pick. Works on any bottom bar, with or without Liquid glass look.	في الخلاصة الرئيسية، توجد فقاعة زجاجية بارزة خلف التبويب الذي أنت فيه وتنزلق إلى التبويب التالي الذي تختاره. يعمل مع أي شريط سفلي، مع مظهر الزجاج السائل أو بدونه.
 Slide across the tabs	التمرير عبر التبويبات
 On the main feed, slide a finger along the tabs and the lens follows it. Let go and that tab opens. Taps and long presses work as before. Needs Glass lens on the current tab.	في الخلاصة الرئيسية، مرر إصبعك على التبويبات وستتبعه العدسة. اترك إصبعك وسيفتح هذا التبويب. النقرات والضغط المطول يعملان كما في السابق. يتطلب عدسة زجاجية على التبويب الحالي.
+Liquid glass when held	زجاج سائل عند الإمساك
+On the main feed, hold a finger on the tabs and the glass lens swells, then wobbles back when you let go. With Blur the video behind the bar on Android 13 and up, the video under it bends harder and splits into color at its edge. Needs Glass lens on the current tab.	في الخلاصة الرئيسية، أبقِ إصبعك على التبويبات فتنتفخ العدسة الزجاجية، ثم تعود متمايلة عندما ترفع إصبعك. مع ضبابية الفيديو خلف الشريط على Android 13 وأحدث، ينحني الفيديو تحتها أكثر وينقسم إلى ألوان عند حافتها. يتطلب عدسة زجاجية على التبويب الحالي.
 Haptics on the tabs	الاهتزاز على التبويبات
 On the main feed, a light tick each time the glass lens passes a tab, as it slides after a tap or under your finger. Needs Glass lens on the current tab.	في الخلاصة الرئيسية، صوت نقرة خفيفة في كل مرة تمر فيها العدسة الزجاجية فوق تبويب، أثناء انزلاقها بعد النقر أو تحت إصبعك. يتطلب «عدسة زجاجية على التبويب الحالي».
 Haptic style	نمط الاهتزاز

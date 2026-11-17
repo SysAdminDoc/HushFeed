@@ -594,6 +594,10 @@ final class SeeThroughBottomBar {
     static final int LENS_INSET_DP = 3, LENS_GROW_DP = 4;
     /** How much larger the bubble is midway through a slide and under a finger. */
     static final float BUBBLE_SWELL = 0.08f;
+    /** With Liquid glass when held, how much larger a fully held bubble is (#440). */
+    static final float LIQUID_SWELL = 0.2f;
+    /** How long a held lens takes to swell all the way, and to wobble back to rest once let go. */
+    static final long LIQUID_PRESS_MS = 160, LIQUID_RELEASE_MS = 560;
     /** How long the lens takes to slide to a newly picked tab. */
     static final long LENS_SLIDE_MS = 280;
     /** How long a bar remembers where its last lens was, for the lens that replaces it. */
@@ -630,6 +634,33 @@ final class SeeThroughBottomBar {
         float swell = 1f + BUBBLE_SWELL * (float) Math.sin(Math.PI * t);
         float carried = 1f + Math.max(0f, from - 1f) * (1f - t);
         return Math.max(swell, carried);
+    }
+
+    /**
+     * How pressed a held lens is {@code elapsed} ms after a finger went down on it ({@code held})
+     * or let go, starting from {@code from}: 0 at rest, 1 fully held. Going down it eases out to 1
+     * over {@link #LIQUID_PRESS_MS}. Let go, it springs back over {@link #LIQUID_RELEASE_MS},
+     * past rest once (a fifth of where it started, so the bubble dips below its size) and a
+     * little back, and lands on 0, like a drop of liquid settling.
+     */
+    static float liquidPress(long elapsed, boolean held, float from) {
+        if (held) {
+            if (elapsed >= LIQUID_PRESS_MS) return 1f;
+            float rest = 1f - Math.max(0f, elapsed) / (float) LIQUID_PRESS_MS;
+            return from + (1f - from) * (1f - rest * rest);
+        }
+        if (elapsed >= LIQUID_RELEASE_MS) return 0f;
+        double t = Math.max(0f, elapsed) / (double) LIQUID_RELEASE_MS;
+        return (float) (from * Math.exp(-4.0 * t) * Math.cos(2.5 * Math.PI * t));
+    }
+
+    /**
+     * The bubble's size with a held lens's press on top of {@code bubble}, the size its slide
+     * gives it: the larger of the two while pressed, and smaller than that while it wobbles back.
+     */
+    static float heldBubble(float bubble, float press) {
+        float liquid = 1f + LIQUID_SWELL * press;
+        return press >= 0f ? Math.max(bubble, liquid) : bubble * liquid;
     }
 
     /**
@@ -672,7 +703,8 @@ final class SeeThroughBottomBar {
      * drawn and a new one slides on from there when that was moments ago (S22, 2026-10-21: the
      * lens jumped between tabs with animations on). With Slide across the tabs the lens follows a
      * finger ({@link GlassTabSlide}), and with Glass haptics it ticks each time its middle passes a
-     * tab ({@link GlassBarHaptics}).
+     * tab ({@link GlassBarHaptics}). With Liquid glass when held a finger on the pill swells it,
+     * the magnifier bends harder under it, and it wobbles back once let go ({@link #liquidPress}).
      */
     static final class TabLens {
         /** Where each bar's lens was last drawn, kept only as long as the bar is. */
@@ -705,6 +737,13 @@ final class SeeThroughBottomBar {
         private long lastDraw;
         /** The bubble's size now, and at the start of the slide it is in. */
         private float bubbleNow = 1f, bubbleFrom = 1f;
+        /** Whether a finger holds the lens (Liquid glass when held). */
+        boolean held;
+        /** When {@link #held} last changed, 0 before it ever did, and how pressed the lens was then. */
+        private long heldChange;
+        private float pressFrom;
+        /** How pressed this draw found the lens, and the bubble's size with that press on it. */
+        private float pressNow, bubbleShown = 1f;
         /** Where a finger sliding across the tabs holds the lens's middle, NaN without one. */
         float dragX = Float.NaN;
         /** The tab the lens's middle was over at the last draw, null before the first. */
@@ -784,6 +823,8 @@ final class SeeThroughBottomBar {
             if (Float.isNaN(dragX)) {
                 bubbleNow = animatorsEnabled() ? bubbleScale(now - slideStart, bubbleFrom) : 1f;
             }
+            pressNow = press(now);
+            bubbleShown = heldBubble(bubbleNow, pressNow);
             shown.set(lerp(fromLeft, toLeft, done), target.top, lerp(fromRight, toRight, done), target.bottom);
             LensSpot spot = LAST_SPOT.get(bar);
             if (spot == null) LAST_SPOT.put(bar, spot = new LensSpot());
@@ -793,36 +834,60 @@ final class SeeThroughBottomBar {
             spot.at = now;
             tick(bar, shown.centerX());
             paintBubble(canvas, bar, area, alpha, onLight);
-            if (done < 1f || bubbleNow != 1f) owner.invalidateSelf();
+            if (done < 1f || bubbleNow != 1f || pressMoving(now)) owner.invalidateSelf();
+        }
+
+        /** A finger went down on the lens ({@code now} true) or let go of it. */
+        void hold(boolean now) {
+            if (now == held) return;
+            long at = SystemClock.uptimeMillis();
+            pressFrom = press(at);
+            held = now;
+            heldChange = at;
+        }
+
+        /** How pressed the lens is at {@code now}: 0 with Liquid glass when held off. */
+        float press(long now) {
+            if (!Settings.GLASS_LIQUID_HOLD.get() || heldChange == 0) return 0f;
+            if (!animatorsEnabled()) return held ? 1f : 0f;
+            return liquidPress(now - heldChange, held, pressFrom);
+        }
+
+        /** Whether the press is still swelling or wobbling, so the next frame has to draw. */
+        private boolean pressMoving(long now) {
+            if (!Settings.GLASS_LIQUID_HOLD.get() || heldChange == 0 || !animatorsEnabled()) return false;
+            return now - heldChange < (held ? LIQUID_PRESS_MS : LIQUID_RELEASE_MS);
         }
 
         /**
-         * The bubble at {@link #shown}, swollen by {@link #bubbleNow}: the magnified video where
-         * the glass blurs it, the fill, then the sheen and the rim, all at {@code alpha}.
+         * The bubble at {@link #shown}, swollen to {@link #bubbleShown}: the magnified video where
+         * the glass blurs it, the fill, then the sheen and the rim, all at {@code alpha}. A held
+         * lens bends harder and its tint and fill clear a little, so the bend shows through.
          */
         private void paintBubble(Canvas canvas, ViewGroup bar, Rect area, int alpha, boolean onLight) {
             float corner = cornerPx(Settings.GLASS_CORNERS.get(), true, shown.height(), density);
             capsule.set(shown);
-            if (bubbleNow != 1f) {
-                float swell = (bubbleNow - 1f) / 2f;
+            if (bubbleShown != 1f) {
+                float swell = (bubbleShown - 1f) / 2f;
                 capsule.inset(-capsule.width() * swell, -capsule.height() * swell);
-                corner *= bubbleNow;
+                corner *= bubbleShown;
             }
+            float clear = 1f - 0.4f * Math.max(0f, pressNow);
             RenderNode backdrop = blur == null ? null : blur.drawnBackdrop();
             // Only at full strength: a faded bar would show the magnified video solid.
             if (backdrop != null && alpha == 255 && GlassLens.supported()) {
                 if (magnifier == null) magnifier = new GlassLens();
                 if (magnifier.paint(canvas, backdrop, area.left, area.top, bar.getWidth(), bar.getHeight(),
-                        capsule, corner)) {
+                        capsule, corner, pressNow)) {
                     // The pill's tint goes back over it so the bubble reads as part of the pill.
                     int glass = onLight ? GLASS_TINT_ON_LIGHT : GLASS_TINT;
                     magnifiedTint.setColor(withAlpha(glass,
-                            Color.alpha(glass) * opacityScale(Settings.GLASS_OPACITY.get())));
+                            Color.alpha(glass) * opacityScale(Settings.GLASS_OPACITY.get()) * clear));
                     canvas.drawRoundRect(capsule, corner, corner, magnifiedTint);
                 }
             }
             int fill = onLight ? LENS_FILL_ON_LIGHT : LENS_FILL;
-            lensFill.setColor(withAlpha(fill, Color.alpha(fill) * alpha / 255f));
+            lensFill.setColor(withAlpha(fill, Color.alpha(fill) * alpha / 255f * clear));
             canvas.drawRoundRect(capsule, corner, corner, lensFill);
             Paint rim = onLight ? bubbleRimOnLight : bubbleRim;
             shade.setScale(1f, Math.max(1f, capsule.height()));
@@ -862,14 +927,15 @@ final class SeeThroughBottomBar {
          * this bar. One slide serves every lens the bar wears ({@link LensHost}).
          */
         private static void keepSlide(ViewGroup bar) {
-            if (!Settings.GLASS_TAB_SLIDE.get()) return;
+            if (!Settings.GLASS_TAB_SLIDE.get() && !Settings.GLASS_LIQUID_HOLD.get()) return;
             Activity activity = activityOf(bar.getContext());
             Window window = activity == null ? null : activity.getWindow();
             if (window == null) return;
             GlassTabSlide installed = GlassTabSlide.installedIn(window);
             if (installed != null && installed.bar() == bar) return;
             GlassTabSlide.install(window, new GlassTabSlide(bar, new LensHost(bar),
-                    () -> Settings.GLASS_TAB_SLIDE.get() && bar.getBackground() instanceof LensCarrier));
+                    () -> Settings.GLASS_TAB_SLIDE.get() && bar.getBackground() instanceof LensCarrier,
+                    () -> Settings.GLASS_LIQUID_HOLD.get() && bar.getBackground() instanceof LensCarrier));
         }
 
         /** Where the last draw put the lens; empty when that draw found no tab to put it behind. */
@@ -1190,6 +1256,14 @@ final class SeeThroughBottomBar {
             Drawable background = bar.getBackground();
             if (!(background instanceof LensCarrier)) return;
             ((LensCarrier) background).lens().dragX = x;
+            background.invalidateSelf();
+        }
+
+        @Override
+        public void hold(boolean held) {
+            Drawable background = bar.getBackground();
+            if (!(background instanceof LensCarrier)) return;
+            ((LensCarrier) background).lens().hold(held);
             background.invalidateSelf();
         }
     }

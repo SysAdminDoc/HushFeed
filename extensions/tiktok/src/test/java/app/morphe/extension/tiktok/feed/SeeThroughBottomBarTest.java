@@ -99,6 +99,7 @@ public class SeeThroughBottomBarTest {
         Settings.LIQUID_GLASS_BOTTOM_BAR.save(false);
         Settings.GLASS_TAB_LENS.save(false);
         Settings.GLASS_TAB_SLIDE.save(false);
+        Settings.GLASS_LIQUID_HOLD.save(false);
         SeeThroughBottomBar.reset();
         VideoOverlayHider.resolveForTests("view_rootview", 0);
     }
@@ -659,6 +660,112 @@ public class SeeThroughBottomBarTest {
                 SeeThroughBottomBar.bubbleScale(SeeThroughBottomBar.LENS_SLIDE_MS / 2, 1f), 0.0001f);
         assertEquals(1f, SeeThroughBottomBar.bubbleScale(SeeThroughBottomBar.LENS_SLIDE_MS, 1.08f), 0f);
         assertEquals("a finger's swell carries on", 1.08f, SeeThroughBottomBar.bubbleScale(0, 1.08f), 0.0001f);
+    }
+
+    /**
+     * Liquid glass when held (#440): a held lens eases out to fully pressed, and let go it springs
+     * back past rest once, about a fifth of the way, before landing on rest. A quick tap's release
+     * starts from where its press got to, and the press swells the bubble past a slide's own swell.
+     */
+    @Test
+    public void aHeldLensSwellsThenWobblesBackToRest() {
+        long in = SeeThroughBottomBar.LIQUID_PRESS_MS, out = SeeThroughBottomBar.LIQUID_RELEASE_MS;
+        assertEquals(0f, SeeThroughBottomBar.liquidPress(0, true, 0f), 0f);
+        assertEquals("it doesn't ease out", 0.75f, SeeThroughBottomBar.liquidPress(in / 2, true, 0f), 0.0001f);
+        assertEquals(1f, SeeThroughBottomBar.liquidPress(in, true, 0f), 0f);
+        assertEquals(1f, SeeThroughBottomBar.liquidPress(0, false, 1f), 0.0001f);
+        float lowest = 1f;
+        for (long ms = 0; ms <= out; ms += 5) {
+            float press = SeeThroughBottomBar.liquidPress(ms, false, 1f);
+            assertTrue("it bounced past where it started at " + ms + " ms", press <= 1f);
+            lowest = Math.min(lowest, press);
+        }
+        assertEquals("the wobble's dip past rest", -0.23f, lowest, 0.01f);
+        assertEquals(0f, SeeThroughBottomBar.liquidPress(out, false, 1f), 0f);
+        assertEquals("it jumps onto rest", 0f, SeeThroughBottomBar.liquidPress(out - 1, false, 1f), 0.005f);
+        assertTrue("a quick tap let go from fully pressed", SeeThroughBottomBar.liquidPress(10, false, 0.4f) <= 0.4f);
+
+        assertEquals(1f + SeeThroughBottomBar.LIQUID_SWELL, SeeThroughBottomBar.heldBubble(1f, 1f), 0.0001f);
+        assertEquals("a slide's bigger swell lost", 1.08f, SeeThroughBottomBar.heldBubble(1.08f, 0.2f), 0.0001f);
+        assertTrue("no dip below its size as it wobbles", SeeThroughBottomBar.heldBubble(1f, -0.2f) < 1f);
+    }
+
+    /**
+     * Liquid glass when held without Slide across the tabs (#440): a finger down on the pill holds
+     * the lens and every touch still goes on to TikTok. Sideways it stays held, since there's no
+     * slide to start, and it lets go as the finger lifts. A swipe up or down lets go at once. With
+     * Slide across the tabs on as well, the slide still starts, and lifting the finger lets go.
+     */
+    @Test
+    public void aFingerOnThePillHoldsTheLensUntilItLifts() {
+        Settings.GLASS_LIQUID_HOLD.save(true);
+        try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            float density = activity.getResources().getDisplayMetrics().density;
+            SeeThroughBottomBar.GlassLensBackground lens = new SeeThroughBottomBar.GlassLensBackground(density);
+            LinearLayout bar = tabBar(activity, lens);
+            FrameLayout root = new FrameLayout(activity);
+            root.addView(bar, new FrameLayout.LayoutParams(1080, 150));
+            activity.setContentView(root);
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            lens.setBounds(0, 0, 1080, 150);
+            lens.draw(new android.graphics.Canvas(
+                    android.graphics.Bitmap.createBitmap(1080, 150, android.graphics.Bitmap.Config.ARGB_8888)));
+            GlassTabSlide slide = GlassTabSlide.installedIn(activity.getWindow());
+            assertTrue("nothing watches the window for a hold", slide != null && slide.bar() == bar);
+
+            java.util.List<Integer> passed = new java.util.ArrayList<>();
+            android.view.Window.Callback inner = (android.view.Window.Callback) java.lang.reflect.Proxy.newProxyInstance(
+                    android.view.Window.Callback.class.getClassLoader(), new Class<?>[]{android.view.Window.Callback.class},
+                    (proxy, method, args) -> {
+                        if ("dispatchTouchEvent".equals(method.getName())) {
+                            passed.add(((android.view.MotionEvent) args[0]).getActionMasked());
+                        }
+                        return method.getReturnType() == boolean.class ? Boolean.FALSE : null;
+                    });
+            int[] at = new int[2];
+            bar.getLocationOnScreen(at);
+            float y = at[1] + lens.pillRect.centerY();
+            float from = at[0] + middle(bar.getChildAt(1)), to = at[0] + middle(bar.getChildAt(3));
+            float slop = android.view.ViewConfiguration.get(activity).getScaledTouchSlop();
+            SeeThroughBottomBar.TabLens held = lens.lens();
+
+            assertFalse(slide.onTouch(touch(android.view.MotionEvent.ACTION_DOWN, from, y), inner));
+            assertTrue("the finger didn't hold the lens", held.held);
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(
+                    java.time.Duration.ofMillis(SeeThroughBottomBar.LIQUID_PRESS_MS));
+            assertEquals(1f, held.press(android.os.SystemClock.uptimeMillis()), 0f);
+            assertFalse("a hold kept a sideways move from TikTok",
+                    slide.onTouch(touch(android.view.MotionEvent.ACTION_MOVE, to, y), inner));
+            assertTrue("moving sideways let go of the lens", held.held);
+            assertFalse(slide.onTouch(touch(android.view.MotionEvent.ACTION_UP, to, y), inner));
+            assertFalse("lifting the finger kept the lens held", held.held);
+            assertTrue("a hold sent TikTok a cancel", passed.isEmpty());
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(
+                    java.time.Duration.ofMillis(SeeThroughBottomBar.LIQUID_RELEASE_MS));
+            assertEquals(0f, held.press(android.os.SystemClock.uptimeMillis()), 0f);
+
+            // Up or down first: a swipe on the bar, so the lens lets go at once.
+            assertFalse(slide.onTouch(touch(android.view.MotionEvent.ACTION_DOWN, from, y), inner));
+            assertTrue(held.held);
+            assertFalse(slide.onTouch(touch(android.view.MotionEvent.ACTION_MOVE, from, y - slop - 5), inner));
+            assertFalse("a swipe up kept the lens held", held.held);
+            assertFalse(slide.onTouch(touch(android.view.MotionEvent.ACTION_UP, from, y - slop - 5), inner));
+
+            // Both switches: the slide still starts, and lifting the finger lets go.
+            Settings.GLASS_TAB_SLIDE.save(true);
+            assertFalse(slide.onTouch(touch(android.view.MotionEvent.ACTION_DOWN, from, y), inner));
+            assertTrue(held.held);
+            assertTrue(slide.onTouch(touch(android.view.MotionEvent.ACTION_MOVE, from + slop + 5, y), inner));
+            assertEquals(GlassTabSlide.SLIDING, slide.state());
+            assertTrue("starting the slide let go of the lens", held.held);
+            assertTrue(slide.onTouch(touch(android.view.MotionEvent.ACTION_UP, to, y), inner));
+            assertFalse("the slide's end kept the lens held", held.held);
+        } finally {
+            Settings.GLASS_LIQUID_HOLD.save(false);
+            Settings.GLASS_TAB_SLIDE.save(false);
+        }
     }
 
     /**

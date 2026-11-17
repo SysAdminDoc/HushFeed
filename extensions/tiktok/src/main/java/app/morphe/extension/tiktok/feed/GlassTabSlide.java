@@ -39,6 +39,11 @@ import java.util.WeakHashMap;
  * clicks nothing. Either way the lens goes back to the selected tab, sliding as it does after a
  * tap. With the switch off or the lens gone, every touch goes on and nothing starts. Anything
  * that throws ends the slide and the touch goes on to TikTok.
+ *
+ * <p>With Liquid glass when held (#440) a finger that goes down on the pill also holds the lens
+ * ({@link Host#hold}) until it lifts, slides or not, so the window is watched with either switch
+ * on. Only a finger that turns out to be a swipe up or down, a second finger, or a failure lets
+ * go early. Holding keeps nothing from TikTok.
  */
 final class GlassTabSlide {
     /** What a slide needs from the glass it moves. */
@@ -48,6 +53,9 @@ final class GlassTabSlide {
 
         /** Puts the lens's middle at {@code x}, in the bar's own pixels, or sends it back to the selected tab for NaN. */
         void follow(float x);
+
+        /** A finger went down on the pill and holds the lens ({@code true}), or let go of it. */
+        void hold(boolean held);
     }
 
     /** Whether slides may start and go on right now; java.util.function needs API 24. */
@@ -71,6 +79,8 @@ final class GlassTabSlide {
     private final ViewGroup bar;
     private final Host host;
     private final Running running;
+    /** Whether a finger on the pill holds the lens right now (Liquid glass when held). */
+    private final Running holds;
     private final float slop;
     private final int[] place = new int[2];
     private int state = IDLE;
@@ -79,11 +89,19 @@ final class GlassTabSlide {
     private float barLeft;
     /** Whether the tab under the finger as it went down has a long press of its own. */
     private boolean tabHolds;
+    /** Whether the host was told a finger holds the lens and not yet that it let go. */
+    private boolean holding;
 
     GlassTabSlide(ViewGroup bar, Host host, Running running) {
+        this(bar, host, running, () -> false);
+    }
+
+    /** {@code running} lets slides start and go on, {@code holds} lets a finger hold the lens. */
+    GlassTabSlide(ViewGroup bar, Host host, Running running, Running holds) {
         this.bar = bar;
         this.host = host;
         this.running = running;
+        this.holds = holds;
         this.slop = ViewConfiguration.get(bar.getContext()).getScaledTouchSlop();
     }
 
@@ -169,8 +187,10 @@ final class GlassTabSlide {
         if (action == MotionEvent.ACTION_DOWN) {
             // A slide whose end never came lets the lens go back first.
             if (state == SLIDING) host.follow(Float.NaN);
+            letGo();
             state = IDLE;
-            if (!running.now() || !barStill()) return false;
+            boolean slides = running.now();
+            if ((!slides && !holds.now()) || !barStill()) return false;
             bar.getLocationOnScreen(place);
             float x = event.getRawX() - place[0];
             float y = event.getRawY() - place[1];
@@ -181,21 +201,34 @@ final class GlassTabSlide {
             downX = event.getRawX();
             downY = event.getRawY();
             state = WATCHING;
+            if (holds.now()) {
+                holding = true;
+                host.hold(true);
+            }
             return false;
         }
         boolean ends = action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL;
         switch (state) {
             case WATCHING:
-                if (ends || action == MotionEvent.ACTION_POINTER_DOWN || !running.now()) {
+                if (ends || action == MotionEvent.ACTION_POINTER_DOWN || (!running.now() && !holding)) {
                     state = ends ? IDLE : REFUSED;
+                    letGo();
                     return false;
                 }
                 if (action != MotionEvent.ACTION_MOVE) return false;
                 float dx = Math.abs(event.getRawX() - downX);
                 float dy = Math.abs(event.getRawY() - downY);
                 if (dx < slop || dx <= dy) {
-                    // Up or down first: a swipe on the bar, never a slide.
-                    if (dy >= slop) state = REFUSED;
+                    // Up or down first: a swipe on the bar, never a slide, and no hold.
+                    if (dy >= slop) {
+                        state = REFUSED;
+                        letGo();
+                    }
+                    return false;
+                }
+                if (!running.now()) {
+                    // Held without Slide across the tabs: the finger keeps the lens until it lifts.
+                    state = REFUSED;
                     return false;
                 }
                 if (tabHolds && event.getEventTime() - event.getDownTime() >= ViewConfiguration.getLongPressTimeout()) {
@@ -209,6 +242,7 @@ final class GlassTabSlide {
                 if (!running.now()) {
                     state = ends ? IDLE : DROPPED;
                     host.follow(Float.NaN);
+                    letGo();
                     return true;
                 }
                 if (action == MotionEvent.ACTION_MOVE) {
@@ -217,13 +251,17 @@ final class GlassTabSlide {
                     state = IDLE;
                     if (action == MotionEvent.ACTION_UP) open(event.getRawX() - barLeft);
                     host.follow(Float.NaN);
+                    letGo();
                 }
                 return true;
             case DROPPED:
                 if (ends) state = IDLE;
                 return true;
             case REFUSED:
-                if (ends) state = IDLE;
+                if (ends) {
+                    state = IDLE;
+                    letGo();
+                }
                 return false;
             default:
                 return false;
@@ -234,12 +272,20 @@ final class GlassTabSlide {
     void giveUp() {
         boolean sliding = state == SLIDING;
         state = REFUSED;
-        if (!sliding) return;
         try {
-            host.follow(Float.NaN);
+            if (sliding) host.follow(Float.NaN);
+            letGo();
         } catch (RuntimeException failure) {
+            holding = false;
             Logger.printException(() -> "Could not slide across the tabs", failure);
         }
+    }
+
+    /** Tells the host the finger let go of the lens, once, when it was told the finger held it. */
+    private void letGo() {
+        if (!holding) return;
+        holding = false;
+        host.hold(false);
     }
 
     /** Whether the bar is attached, shown and not moved off its place by an animation. */

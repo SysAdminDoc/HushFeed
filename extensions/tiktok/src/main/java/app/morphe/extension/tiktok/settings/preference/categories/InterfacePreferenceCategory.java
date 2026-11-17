@@ -908,6 +908,12 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             ));
             addPreference(new TogglePreference(
                     context,
+                    "Liquid glass when held",
+                    "On the main feed, hold a finger on the tabs and the glass lens swells, then wobbles back when you let go. With Blur the video behind the bar on Android 13 and up, the video under it bends harder and splits into color at its edge. Needs Glass lens on the current tab.",
+                    Settings.GLASS_LIQUID_HOLD
+            ));
+            addPreference(new TogglePreference(
+                    context,
                     "Haptics on the tabs",
                     "On the main feed, a light tick each time the glass lens passes a tab, as it slides after a tap or under your finger. Needs Glass lens on the current tab.",
                     Settings.GLASS_HAPTICS

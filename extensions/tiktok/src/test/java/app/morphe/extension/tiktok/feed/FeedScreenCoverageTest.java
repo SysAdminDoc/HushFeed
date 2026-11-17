@@ -297,6 +297,7 @@ public class FeedScreenCoverageTest {
         put("glass_opacity", YES, NONE, NONE);
         put("glass_blur_strength", YES, NONE, NONE);
         put("glass_tab_slide", YES, NONE, NONE);
+        put("glass_liquid_hold", YES, NONE, NONE);
         put("glass_haptics", YES, NONE, NONE);
         put("glass_haptic_style", YES, NONE, NONE);
         // An opened video keeps the feed's status bar spacer, so it goes under the bar too (#407).

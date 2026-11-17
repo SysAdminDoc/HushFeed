@@ -19,7 +19,9 @@ import app.morphe.extension.shared.Logger;
  * The magnifier in the glass lens's bubble, on Android 13 and newer: the blurred video under the
  * lens drawn a little larger, bending more toward the bubble's rim, as glass would. It is the
  * blurred strip GlassVideoBlur already draws into the pill, run through a small shader into a
- * render node of its own, so nothing more is read back from the video. Before Android 13 there is
+ * render node of its own, so nothing more is read back from the video. Held under a finger with
+ * Liquid glass when held (#440), it bends harder and splits the light at its rim, red bending a
+ * little less than blue, the way thick glass does. Before Android 13 there is
  * no shader to run and the bubble has its rim and sheen alone. A failure turns the magnifier off
  * for this lens and the bubble carries on.
  */
@@ -27,6 +29,10 @@ final class GlassLens {
     /** How much the centre of the bubble magnifies, and how much more its rim bends the video. */
     static final float CENTRE_MAGNIFY = 0.10f;
     static final float RIM_BEND = 0.14f;
+    /** What a fully held lens adds to each, and how far apart its red and blue land at the rim. */
+    static final float HELD_CENTRE = 0.06f;
+    static final float HELD_RIM = 0.16f;
+    static final float HELD_SPREAD = 0.05f;
 
     private static final String SHADER = ""
             + "uniform shader content;\n"
@@ -34,6 +40,7 @@ final class GlassLens {
             + "uniform float radius;\n"
             + "uniform float centre;\n"
             + "uniform float rim;\n"
+            + "uniform float spread;\n"
             + "half4 main(float2 p) {\n"
             + "  float2 mid = (box.xy + box.zw) * 0.5;\n"
             + "  float2 hs = (box.zw - box.xy) * 0.5;\n"
@@ -43,8 +50,13 @@ final class GlassLens {
             + "  if (inside <= 0.0) return half4(0.0);\n"
             + "  float depth = clamp(-d / max(1.0, min(hs.x, hs.y)), 0.0, 1.0);\n"
             + "  float bend = (1.0 - depth) * (1.0 - depth);\n"
-            + "  float2 source = mid + (p - mid) * (1.0 - centre - rim * bend);\n"
-            + "  return content.eval(source) * inside;\n"
+            + "  float k = 1.0 - centre - rim * bend;\n"
+            + "  half4 g = content.eval(mid + (p - mid) * k);\n"
+            + "  if (spread <= 0.0) return g * inside;\n"
+            + "  float s = spread * bend;\n"
+            + "  half4 r = content.eval(mid + (p - mid) * (k + s));\n"
+            + "  half4 b = content.eval(mid + (p - mid) * (k - s));\n"
+            + "  return half4(r.r, g.g, b.b, max(g.a, max(r.a, b.a))) * inside;\n"
             + "}\n";
 
     /** Whether this Android can run the magnifier at all. */
@@ -59,11 +71,11 @@ final class GlassLens {
     /**
      * Draws the magnified video over {@code box} ({@code radius} corners), in the bar's
      * coordinates, into {@code canvas}. {@code backdrop} is the blurred strip, which the pill
-     * draws at {@code left}, {@code top}. {@code width} and {@code height} are the bar's. Says
-     * whether it drew.
+     * draws at {@code left}, {@code top}. {@code width} and {@code height} are the bar's.
+     * {@code held} is how far a finger has pressed the lens, 0 to 1. Says whether it drew.
      */
     boolean paint(Canvas canvas, RenderNode backdrop, float left, float top, int width, int height,
-            RectF box, float radius) {
+            RectF box, float radius, float held) {
         if (broken || Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU || backdrop == null
                 || width <= 0 || height <= 0 || !canvas.isHardwareAccelerated()) {
             return false;
@@ -73,8 +85,10 @@ final class GlassLens {
             if (node == null) node = new RenderNode("hushfeed-glass-lens");
             shader.setFloatUniform("box", box.left, box.top, box.right, box.bottom);
             shader.setFloatUniform("radius", Math.max(0f, radius));
-            shader.setFloatUniform("centre", CENTRE_MAGNIFY);
-            shader.setFloatUniform("rim", RIM_BEND);
+            float press = Math.max(0f, Math.min(1f, held));
+            shader.setFloatUniform("centre", CENTRE_MAGNIFY + HELD_CENTRE * press);
+            shader.setFloatUniform("rim", RIM_BEND + HELD_RIM * press);
+            shader.setFloatUniform("spread", HELD_SPREAD * press);
             node.setPosition(0, 0, width, height);
             node.setRenderEffect(RenderEffect.createRuntimeShaderEffect(shader, "content"));
             Canvas recording = node.beginRecording(width, height);

@@ -42,15 +42,55 @@ private fun writesRefreshRate(instruction: Instruction) =
  * ask at all. Every write is followed by Window.setAttributes and nothing waits on the value.
  * The others are LIVE's RefreshFrequencyTutor (a 30 to 60 Hz pick), a rate while dragging
  * and one an AB sets.
+ *
+ * The extension is merged before the search, and RefreshRate.apply makes the same store to
+ * pass the answer on. Routed too, that store became a call to apply from inside apply, and
+ * TikTok died of a StackOverflowError the first time it asked for a rate. Our own classes
+ * are left out.
  */
 internal object RefreshRateWriteFingerprint : Fingerprint(
     // The filter repeats a reference the custom block requires, so the patcher reads only the
     // classes that make it (#54).
     filters = listOf(fieldAccess(definingClass = LAYOUT_PARAMS, name = "preferredRefreshRate", opcode = Opcode.IPUT)),
-    custom = { method, _ ->
-        method.implementation?.instructions?.any(::writesRefreshRate) == true
+    custom = { method, classDef ->
+        !classDef.type.startsWith("Lapp/morphe/") &&
+            method.implementation?.instructions?.any(::writesRefreshRate) == true
     },
 )
+
+/**
+ * Sends every store to the window's preferredRefreshRate through the extension's apply, and
+ * returns each store it replaced as `owner->method`.
+ */
+internal fun routeRefreshRateWrites(): List<String> {
+    val routed = mutableListOf<String>()
+    RefreshRateWriteFingerprint.matchAll().forEach { match ->
+        val method = match.method
+        val implementation = method.implementation ?: return@forEach
+
+        // Later writes first, because replacing one does not move the others but reading
+        // them fresh each time would.
+        val writes = implementation.instructions.withIndex()
+            .filter { writesRefreshRate(it.value) }
+            .map { it.index }
+            .toList()
+
+        writes.asReversed().forEach { index ->
+            val store = method.implementation!!.instructions.elementAt(index)
+                as TwoRegisterInstruction
+            // The store is replaced rather than its value rewritten. PlayerController puts
+            // the same register into its own lastRefreshRate on the next line, and taking
+            // the value away from it there would leave TikTok's bookkeeping holding zero.
+            method.replaceInstruction(
+                index,
+                "invoke-static { v${store.registerB}, v${store.registerA} }, " +
+                    "$EXTENSION->apply(${LAYOUT_PARAMS}F)V",
+            )
+            routed += "${match.originalClassDef.type}->${method.name}"
+        }
+    }
+    return routed
+}
 
 @Suppress("unused")
 val refreshRatePatch = bytecodePatch(
@@ -66,34 +106,7 @@ val refreshRatePatch = bytecodePatch(
     compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
-        var patched = 0
-        RefreshRateWriteFingerprint.matchAll().forEach { match ->
-            val method = match.method
-            val implementation = method.implementation ?: return@forEach
-
-            // Later writes first, because replacing one does not move the others but reading
-            // them fresh each time would.
-            val writes = implementation.instructions.withIndex()
-                .filter { writesRefreshRate(it.value) }
-                .map { it.index }
-                .toList()
-
-            writes.asReversed().forEach { index ->
-                val store = method.implementation!!.instructions.elementAt(index)
-                    as TwoRegisterInstruction
-                // The store is replaced rather than its value rewritten. PlayerController puts
-                // the same register into its own lastRefreshRate on the next line, and taking
-                // the value away from it there would leave TikTok's bookkeeping holding zero.
-                method.replaceInstruction(
-                    index,
-                    "invoke-static { v${store.registerB}, v${store.registerA} }, " +
-                        "$EXTENSION->apply(${LAYOUT_PARAMS}F)V",
-                )
-                patched++
-            }
-        }
-
-        if (patched == 0) throw PatchException("Keep the screen's refresh rate: nothing asks for one.")
+        if (routeRefreshRateWrites().isEmpty()) throw PatchException("Keep the screen's refresh rate: nothing asks for one.")
 
         SettingsStatusLoadFingerprint.method.addInstruction(
             0,

@@ -62,6 +62,7 @@ Every Hushfeed release, newest first.
 
 ### Bug Fixes
 
+* TikTok no longer closes when it asks your screen for a slower refresh rate. `Keep the screen's refresh rate` had caught its own change of the rate along with TikTok's, so the first time TikTok asked, Hushfeed kept handing the request back to itself until TikTok crashed, with the switch on or off. TikTok doesn't ask on every phone, which is how it went unnoticed.
 * On TikTok 47, switches that work by changing one of TikTok's own settings reach the copy TikTok reads again. TikTok 47 keeps those settings twice and reads almost all of them from the second copy, which Hushfeed didn't look at. That covers `Keep the Favorites tab`, `Use non-personalized search`, `Show the progress bar thumbnail` and `Stop the blink under the bar`, and lets `Keep the middle unstretched` work there. Feature Gate Lab rules on those settings take hold too (#448).
 * `Hide surveys` catches the Not interested and Interested buttons under a video's description again when TikTok draws them from one of its templates, which got past both of the old checks. The diagnostic report also names what type each feed component was (#439).
 * With `Open the comments at full height` on, TikTok's faded search icon no longer sits on top of the X that closes the comments. That icon belongs over the small video TikTok shows above the comments, and at full height there's no video up there for it (#435).

@@ -62,6 +62,7 @@ Every Hushfeed release, newest first.
 
 ### Bug Fixes
 
+* `Hide surveys` catches the Not interested and Interested buttons under a video's description again when TikTok draws them from one of its templates, which got past both of the old checks. The diagnostic report also names what type each feed component was (#439).
 * With `Open the comments at full height` on, TikTok's faded search icon no longer sits on top of the X that closes the comments. That icon belongs over the small video TikTok shows above the comments, and at full height there's no video up there for it (#435).
 * The Advanced downloads description sent you to Downloads for `Show the save button on videos`, but the switch is in Feed screen under Buttons on videos. The description says where it is now, and Downloads has a row that takes you straight to it. Searching settings for "download button" finds it too (#299).
 * The "Saving video" message doesn't sit on top of the saved banner anymore. It still did when another message was waiting behind it, like the sound's with `Save the sound as well` on. Where the sound went, and the notes about a watermarked copy or a possible second copy, are lines on the banner now (#299).

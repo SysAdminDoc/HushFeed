@@ -14,6 +14,7 @@ import com.android.tools.smali.dexlib2.builder.BuilderOffsetInstruction
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
@@ -94,16 +95,31 @@ internal fun anoleContainerRead(instructions: List<Instruction>): Int =
     } ?: -1
 
 /**
- * Tells the build report the name of each kind of component a video gets (#293). A report with
- * the buttons on screen could otherwise not say what drew them. Straight-line, and a factory
- * without this read still gets the button hook above.
+ * Hands each component's type and container type to Hide surveys right after the factory reads
+ * the container type, and takes back the one its name checks compare (#439). TikTok can send the
+ * interest buttons to a template renderer ("hybrid" first, before any name), which the button
+ * hook above never sees, so an empty name back makes the factory skip them on every route. Also
+ * tells the build report what each video got (#293). The type is read into the register the
+ * next instruction overwrites with "hybrid", so nothing TikTok keeps is touched. Straight-line,
+ * and a factory without this read still gets the button hook above.
  */
 internal fun MutableMethod.reportFeedComponents() {
-    val read = anoleContainerRead(implementation!!.instructions.toList())
+    val instructions = implementation!!.instructions.toList()
+    val read = anoleContainerRead(instructions)
     if (read < 0) return
-    val register = (implementation!!.instructions[read] as OneRegisterInstruction).registerA
+    if (implementation!!.instructions.any { it is BuilderOffsetInstruction && it.target.location.index == read + 1 }) return
+    val container = (instructions[read] as TwoRegisterInstruction)
+    val model = container.registerB
+    val register = container.registerA
+    val free = (instructions[read + 1] as OneRegisterInstruction).registerA
+    if (maxOf(model, register, free) > 15 || free == register) return
+    val modelClass = instructions[read].getReference<FieldReference>()!!.definingClass
     addInstructions(
         read + 1,
-        "invoke-static/range { v$register .. v$register }, Lapp/morphe/extension/tiktok/feed/FeedOverlayControls;->feedComponentBuilt(Ljava/lang/String;)V",
+        """
+            iget-object v$free, v$model, $modelClass->type:Ljava/lang/String;
+            invoke-static { v$free, v$register }, Lapp/morphe/extension/tiktok/feed/FeedOverlayControls;->feedComponent(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+            move-result-object v$register
+        """,
     )
 }

@@ -14,8 +14,11 @@ import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
@@ -87,25 +90,43 @@ class InterestButtonsAnchorsTest {
         }
     }
 
+    /**
+     * #439: the buttons still showed with Hide surveys on, so they reached a renderer the
+     * button-group hook never sees ("hybrid" is matched first). The hook hands the component's
+     * type and container type over right after the read and puts the answer back in the register
+     * every name check compares, before "hybrid" is even loaded.
+     */
     @Test
-    fun `the component report reads the container type each name check compares`() {
+    fun `every name check compares the container type Hide surveys handed back`() {
         Fixtures.forEachDeclared { apk ->
             val version = Fixtures.versionOf(apk)
             val native = methodsOf(apk) { _, method -> isAnoleComponentFactory(method) && loads(method, INTEREST_BUTTON_GROUP) }.single().second
             val before = native.implementation!!.instructions.toList()
             val read = anoleContainerRead(before)
             assertTrue("$version: the container read", read > 0)
+            val container = before[read] as TwoRegisterInstruction
+            val hybrid = before[read + 1] as OneRegisterInstruction
 
             val hooked = MutableMethod(native)
             hooked.reportFeedComponents()
             val after = hooked.implementation!!.instructions.toList()
-            val call = after[read + 1]
-            assertEquals("$version: the hook", Opcode.INVOKE_STATIC_RANGE, call.opcode)
+            assertEquals("$version: the hook",
+                listOf(Opcode.IGET_OBJECT, Opcode.INVOKE_STATIC, Opcode.MOVE_RESULT_OBJECT, Opcode.CONST_STRING),
+                after.subList(read + 1, read + 5).map { it.opcode })
+            val type = after[read + 1]
+            assertEquals("type", type.getReference<FieldReference>()!!.name)
+            assertEquals(container.registerB, (type as TwoRegisterInstruction).registerB)
+            assertEquals("$version: the type goes in the register \"hybrid\" overwrites", hybrid.registerA, type.registerA)
+            val call = after[read + 2]
             val target = call.getReference<MethodReference>()!!
             assertEquals(CONTROLS, target.definingClass)
-            assertEquals("feedComponentBuilt", target.name)
-            assertEquals((before[read] as OneRegisterInstruction).registerA, (call as RegisterRangeInstruction).startRegister)
-            assertEquals("$version: only the call was added", before.size + 1, after.size)
+            assertEquals("feedComponent", target.name)
+            assertEquals(listOf(hybrid.registerA, container.registerA),
+                (call as FiveRegisterInstruction).let { listOf(it.registerC, it.registerD) })
+            assertEquals(2, call.registerCount)
+            assertEquals(container.registerA, (after[read + 3] as OneRegisterInstruction).registerA)
+            assertEquals("hybrid", after[read + 4].getReference<StringReference>()!!.string)
+            assertEquals("$version: only the hook was added", before.size + 3, after.size)
         }
     }
 

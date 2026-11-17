@@ -15,6 +15,7 @@ import app.morphe.extension.shared.settings.BooleanSetting;
 import app.morphe.extension.tiktok.settings.Settings;
 import java.lang.ref.WeakReference;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -94,6 +95,29 @@ public final class FeedOverlayControls {
         if (containerType == null || FEED_COMPONENT_NAMES.size() >= MAX_FEED_COMPONENT_NAMES
                 || !FEED_COMPONENT_NAMES.add(containerType)) return;
         HookStatus.bound("feed component " + containerType, "built");
+    }
+
+    /**
+     * The container type the Anole factory matches its names against, asked right after it reads
+     * it (#439). TikTok can send the Not interested and Interested buttons to a renderer other
+     * than the native button group (a "hybrid" or "ugen" template draws them with no view of
+     * ours to find), so with Hide surveys on any component whose type or container type names
+     * interest feedback gets an empty container type back. The factory matches no name to it and
+     * skips the component, whichever renderer it was headed for. Also reports both names.
+     */
+    public static String feedComponent(String type, String containerType) {
+        feedComponentBuilt(containerType == null || type == null || type.equals(containerType)
+                ? containerType : containerType + " (" + type + ")");
+        if (containerType == null || !(isInterestFeedback(type) || isInterestFeedback(containerType))) {
+            return containerType;
+        }
+        boolean hide = Settings.HIDE_FEED_SURVEYS.get();
+        HookStatus.bound("interest buttons", hide ? "component skipped" : "component left");
+        return hide ? "" : containerType;
+    }
+
+    private static boolean isInterestFeedback(String name) {
+        return name != null && name.toLowerCase(Locale.ROOT).contains("interest_feedback");
     }
 
     /**

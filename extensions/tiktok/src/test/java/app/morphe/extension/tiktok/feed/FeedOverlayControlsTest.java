@@ -127,6 +127,39 @@ public class FeedOverlayControlsTest {
     }
 
     /**
+     * Issue #439: with Hide surveys on, the interest buttons went to a renderer the button-group
+     * hook never sees. Every component naming interest feedback, in its type or its container
+     * type, gets an empty container type back, which the factory skips. Other components, the
+     * switch off and Pause all leave TikTok's name as it was.
+     */
+    @Test public void theInterestButtonsAreSkippedOnEveryRenderer() {
+        try {
+            HookStatus.clear();
+            assertEquals("hybrid", FeedOverlayControls.feedComponent("interest_feedback_button_group", "hybrid"));
+            Settings.HIDE_FEED_SURVEYS.save(true);
+            assertEquals("", FeedOverlayControls.feedComponent("interest_feedback_button_group", "hybrid"));
+            assertEquals("", FeedOverlayControls.feedComponent("Interest_Feedback_Card", "ugen"));
+            assertEquals("", FeedOverlayControls.feedComponent(null, "interest_feedback_button_group"));
+            assertEquals("", FeedOverlayControls.feedComponent("issue439_type", "interest_feedback_button_group"));
+            assertEquals("another component was skipped", "feed_cta", FeedOverlayControls.feedComponent("feed_cta", "feed_cta"));
+            assertEquals("a template that isn't the buttons was skipped", "hybrid", FeedOverlayControls.feedComponent("issue439_card", "hybrid"));
+            assertNull(FeedOverlayControls.feedComponent("interest_feedback_button_group", null));
+            PausedProcess.set(true);
+            assertEquals("a paused Hushfeed still skipped the buttons", "hybrid",
+                    FeedOverlayControls.feedComponent("interest_feedback_button_group", "hybrid"));
+            PausedProcess.set(false);
+            String report = String.join("\n", HookStatus.report());
+            assertTrue(report, report.contains("feed component hybrid (interest_feedback_button_group): 1 found"));
+            assertTrue(report, report.contains("feed component hybrid (issue439_card): 1 found"));
+            assertTrue(report, report.contains("interest buttons"));
+        } finally {
+            PausedProcess.set(false);
+            HookStatus.clear();
+            Settings.HIDE_FEED_SURVEYS.resetToDefault();
+        }
+    }
+
+    /**
      * Issue #293: the Not interested and Interested buttons go with Hide surveys. Another
      * component type stays unmatched whatever the switch says, and Pause hands TikTok's match back.
      */

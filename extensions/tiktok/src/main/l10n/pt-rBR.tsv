@@ -500,6 +500,13 @@ Errors	Erros
 Expand activity list	Expandir a lista de atividades
 Group likes per comment	Agrupar curtidas por comentário
 Show one row for each comment or video people liked, with everyone who liked it counted, instead of a new row for every few likes. Applies the next time the Likes list loads.	Mostra uma linha para cada comentário ou vídeo que as pessoas curtiram, contando todo mundo que curtiu, em vez de uma linha nova a cada poucas curtidas. Vale na próxima vez que a lista de curtidas carregar.
+Swap lists	Trocar listas
+Split the Activity page	Dividir a página de atividade
+Show your newest comments at the top of the Activity page and likes below, each scrolling on its own. The bar between them swaps the two lists or hides the lower one until you bring it back. Picking another list from Activity still shows just that list. Applies the next time the page opens.	Mostra seus comentários mais recentes no topo da página de atividade e as curtidas embaixo, cada um rolando separadamente. A barra entre elas troca as duas listas ou oculta a de baixo até você mostrá-la de novo. Escolher outra lista em Atividade continua mostrando só essa lista. Vale na próxima vez que a página abrir.
+Hide likes	Ocultar curtidas
+Show likes	Mostrar curtidas
+Hide comments	Ocultar comentários
+Show comments	Mostrar comentários
 Explore or Community	Explorar ou Comunidade
 Export diagnostic report	Exportar o relatório de diagnóstico
 Export loaded values	Exportar os valores carregados

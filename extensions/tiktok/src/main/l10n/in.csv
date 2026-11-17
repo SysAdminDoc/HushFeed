@@ -485,6 +485,13 @@ Errors,Kesalahan
 Expand activity list,Bentangkan daftar aktivitas
 Group likes per comment,Kelompokkan suka per komentar
 "Show one row for each comment or video people liked, with everyone who liked it counted, instead of a new row for every few likes. Applies the next time the Likes list loads.","Menampilkan satu baris untuk setiap komentar atau video yang disukai orang, dengan semua yang menyukainya terhitung, bukan baris baru setiap beberapa suka. Berlaku saat daftar Suka dimuat berikutnya."
+Swap lists,Tukar daftar
+Split the Activity page,Bagi halaman Aktivitas
+"Show your newest comments at the top of the Activity page and likes below, each scrolling on its own. The bar between them swaps the two lists or hides the lower one until you bring it back. Picking another list from Activity still shows just that list. Applies the next time the page opens.","Menampilkan komentar terbarumu di bagian atas halaman Aktivitas dan suka di bawahnya, masing-masing bisa digulir sendiri. Bilah di antaranya menukar kedua daftar atau menyembunyikan daftar bawah sampai kamu menampilkannya lagi. Memilih daftar lain dari Aktivitas tetap hanya menampilkan daftar itu. Berlaku saat halaman dibuka berikutnya."
+Hide likes,Sembunyikan suka
+Show likes,Tampilkan suka
+Hide comments,Sembunyikan komentar
+Show comments,Tampilkan komentar
 Explore or Community,Jelajahi atau Komunitas
 Export diagnostic report,Ekspor laporan diagnostik
 Export loaded values,Ekspor nilai yang dimuat

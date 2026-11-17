@@ -812,6 +812,9 @@
     "Keep the next videos in full screen": [
       "FULL_SCREEN_NEXT_VIDEOS"
     ],
+    "Split activity list": [
+      "SPLIT_ACTIVITY_LIST"
+    ],
     "Stay on the video in full screen": [
       "FULL_SCREEN_HOLD"
     ],
@@ -894,6 +897,8 @@
     "SESSION_BUDGET_PENDING": "Runtime state or legacy migration data; not a configurable feature default.",
     "SESSION_BUDGET_STATE": "Runtime state or legacy migration data; not a configurable feature default.",
     "SHARE_ACTION_CATALOG": "Runtime state or legacy migration data; not a configurable feature default.",
+    "SPLIT_ACTIVITY_BOTTOM_HIDDEN": "Runtime state or legacy migration data; not a configurable feature default.",
+    "SPLIT_ACTIVITY_LIKES_FIRST": "Runtime state or legacy migration data; not a configurable feature default.",
     "PROFILE_SHORTCUT_CATALOG": "Runtime state or legacy migration data; not a configurable feature default.",
     "POPUP_LABEL_CATALOG": "Runtime state or legacy migration data; not a configurable feature default.",
     "SEARCH_TAB_CATALOG": "Runtime state or legacy migration data; not a configurable feature default.",

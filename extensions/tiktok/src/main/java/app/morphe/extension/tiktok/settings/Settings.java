@@ -1438,6 +1438,12 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting EXPAND_ACTIVITY_LIST = new BooleanSetting("expand_activity_list", FALSE);
     /** Folds the Likes list's rows into one row per liked comment or video. Read per loaded page. */
     public static final BooleanSetting BUNDLE_ACTIVITY_LIKES = new BooleanSetting("bundle_activity_likes", FALSE);
+    /** Shows the Activity page as comments on top and likes below. Read when the page opens. */
+    public static final BooleanSetting SPLIT_ACTIVITY_LIST = new BooleanSetting("split_activity_list", FALSE);
+    /** Whether the split page's lower list was closed with its button; kept until it's brought back. */
+    public static final BooleanSetting SPLIT_ACTIVITY_BOTTOM_HIDDEN = new BooleanSetting("split_activity_bottom_hidden", FALSE);
+    /** Whether the split page shows likes above comments; flipped with its swap button. */
+    public static final BooleanSetting SPLIT_ACTIVITY_LIKES_FIRST = new BooleanSetting("split_activity_likes_first", FALSE);
     /** Chat screen clutter. Each is off by default and read live when a chat opens. */
     public static final BooleanSetting HIDE_CHAT_CALL_BUTTONS =
             new BooleanSetting("hide_chat_call_buttons", FALSE);

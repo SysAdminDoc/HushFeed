@@ -563,6 +563,13 @@ Errors	الأخطاء
 Expand activity list	توسيع قائمة النشاط
 Group likes per comment	تجميع الإعجابات حسب التعليق
 Show one row for each comment or video people liked, with everyone who liked it counted, instead of a new row for every few likes. Applies the next time the Likes list loads.	يعرض صفًا واحدًا لكل تعليق أو فيديو أعجب الناس، مع احتساب كل من أعجبه، بدلًا من صف جديد كل بضع إعجابات. يُطبَّق في المرة التالية التي تُحمَّل فيها قائمة الإعجابات.
+Swap lists	تبديل القائمتين
+Split the Activity page	تقسيم صفحة النشاط
+Show your newest comments at the top of the Activity page and likes below, each scrolling on its own. The bar between them swaps the two lists or hides the lower one until you bring it back. Picking another list from Activity still shows just that list. Applies the next time the page opens.	يعرض أحدث تعليقاتك في أعلى صفحة النشاط والإعجابات تحتها، ولكل منهما تمريره الخاص. يبدّل الشريط الذي بينهما القائمتين أو يخفي السفلية حتى تعيد إظهارها. إذا اخترت قائمة أخرى من النشاط فستظهر تلك القائمة وحدها. يُطبَّق عند فتح الصفحة في المرة التالية.
+Hide likes	إخفاء الإعجابات
+Show likes	إظهار الإعجابات
+Hide comments	إخفاء التعليقات
+Show comments	إظهار التعليقات
 Explore or Community	استكشف أو المجتمع
 Export diagnostic report	تصدير التقرير التشخيصي
 Export loaded values	تصدير القيم المحملة

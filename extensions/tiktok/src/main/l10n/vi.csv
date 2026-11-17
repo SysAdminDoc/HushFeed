@@ -594,6 +594,13 @@ Errors,Lỗi
 Expand activity list,Mở rộng danh sách hoạt động
 Group likes per comment,Gộp lượt thích theo bình luận
 "Show one row for each comment or video people liked, with everyone who liked it counted, instead of a new row for every few likes. Applies the next time the Likes list loads.","Hiện một dòng cho mỗi bình luận hoặc video được mọi người thích, đếm đủ tất cả người đã thích, thay vì một dòng mới sau mỗi vài lượt thích. Áp dụng khi danh sách Lượt thích tải lần tới."
+Swap lists,Đổi chỗ danh sách
+Split the Activity page,Chia đôi trang Hoạt động
+"Show your newest comments at the top of the Activity page and likes below, each scrolling on its own. The bar between them swaps the two lists or hides the lower one until you bring it back. Picking another list from Activity still shows just that list. Applies the next time the page opens.","Hiện các bình luận mới nhất của bạn ở đầu trang Hoạt động và lượt thích ở bên dưới, mỗi phần cuộn riêng. Thanh ở giữa đổi chỗ hai danh sách hoặc ẩn danh sách dưới cho đến khi bạn hiện lại. Chọn danh sách khác trong Hoạt động vẫn chỉ hiện danh sách đó. Áp dụng khi trang được mở lần tới."
+Hide likes,Ẩn lượt thích
+Show likes,Hiện lượt thích
+Hide comments,Ẩn bình luận
+Show comments,Hiện bình luận
 Expanded,Đã mở rộng
 Explore or Community,Khám phá hoặc Cộng đồng
 Export CSV,Xuất CSV

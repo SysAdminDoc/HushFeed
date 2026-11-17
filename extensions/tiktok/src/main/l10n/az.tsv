@@ -502,6 +502,13 @@ Errors	Xətalar
 Expand activity list	Fəaliyyət siyahısını genişləndirin
 Group likes per comment	Bəyənmələri şərhə görə qruplaşdır
 Show one row for each comment or video people liked, with everyone who liked it counted, instead of a new row for every few likes. Applies the next time the Likes list loads.	Bəyənilən hər şərh və ya video üçün bir sətir göstərir və bəyənən hər kəsi sayır, bir neçə bəyənmədən bir yeni sətir açılmır. Bəyənmələr siyahısı növbəti dəfə yüklənəndə tətbiq olunur.
+Swap lists	Siyahıların yerini dəyiş
+Split the Activity page	Fəaliyyət səhifəsini böl
+Show your newest comments at the top of the Activity page and likes below, each scrolling on its own. The bar between them swaps the two lists or hides the lower one until you bring it back. Picking another list from Activity still shows just that list. Applies the next time the page opens.	Fəaliyyət səhifəsinin yuxarısında ən yeni şərhlərini, altında isə bəyənmələri göstərir, hər biri ayrıca sürüşdürülür. Aradakı zolaq iki siyahının yerini dəyişir və ya sən geri qaytarana qədər aşağıdakını gizlədir. Fəaliyyət bölməsindən başqa siyahı seçsən, yalnız o siyahı göstərilir. Səhifə növbəti dəfə açılanda tətbiq olunur.
+Hide likes	Bəyənmələri gizlət
+Show likes	Bəyənmələri göstər
+Hide comments	Şərhləri gizlət
+Show comments	Şərhləri göstər
 Explore or Community	Kəşf et və ya İcma
 Export diagnostic report	Diaqnostik hesabatı ixrac edin
 Export loaded values	Yüklənmiş dəyərləri ixrac edin

@@ -503,6 +503,13 @@ Errors	Errori
 Expand activity list	Espandi l'elenco delle attività
 Group likes per comment	Raggruppa i Mi piace per commento
 Show one row for each comment or video people liked, with everyone who liked it counted, instead of a new row for every few likes. Applies the next time the Likes list loads.	Mostra una riga per ogni commento o video che è piaciuto alle persone, contando tutti quelli che hanno messo Mi piace, invece di una riga nuova ogni pochi Mi piace. Vale dal prossimo caricamento dell'elenco dei Mi piace.
+Swap lists	Scambia elenchi
+Split the Activity page	Dividi la pagina Attività
+Show your newest comments at the top of the Activity page and likes below, each scrolling on its own. The bar between them swaps the two lists or hides the lower one until you bring it back. Picking another list from Activity still shows just that list. Applies the next time the page opens.	Mostra i commenti più recenti in alto nella pagina Attività e i Mi piace sotto, ognuno con il proprio scorrimento. La barra tra i due elenchi li scambia o nasconde quello in basso finché non lo mostri di nuovo. Se scegli un altro elenco da Attività, vedi ancora solo quell'elenco. Vale dalla prossima apertura della pagina.
+Hide likes	Nascondi Mi piace
+Show likes	Mostra Mi piace
+Hide comments	Nascondi commenti
+Show comments	Mostra commenti
 Explore or Community	Esplora o Community
 Export diagnostic report	Esporta rapporto diagnostico
 Export loaded values	Esporta i valori caricati

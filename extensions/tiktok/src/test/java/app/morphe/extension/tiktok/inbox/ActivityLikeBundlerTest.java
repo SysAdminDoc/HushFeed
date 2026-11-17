@@ -78,6 +78,7 @@ public class ActivityLikeBundlerTest {
         }
     }
     public static final class FakeNotice {
+        public String nid;
         public int type;
         public boolean hasRead;
         public FakeTemplate templateNotice;
@@ -104,6 +105,7 @@ public class ActivityLikeBundlerTest {
             target.awemeId = video;
         }
         FakeNotice notice = new FakeNotice(label);
+        notice.nid = label;
         notice.type = type;
         notice.hasRead = read;
         notice.templateNotice = new FakeTemplate(sub, read,
@@ -162,6 +164,43 @@ public class ActivityLikeBundlerTest {
         assertEquals(1, count(fresh));
     }
 
+    @Test public void aNoticeThatComesBackOnALaterPageIsDroppedWithoutCountingItTwice() {
+        FakeViewModel vm = new FakeViewModel(ActivityLikeBundler.LIKES_GROUP);
+        FakeNotice first = like("a1", "v1", "c1", 2, true, "u1", "u2");
+        ActivityLikeBundler.onPage(vm, page(first), Reason.FIRST_REFRESH);
+        FakeNotice next = like("a2", "v1", "c1", 7, true, "u3");
+        ActivityLikeBundler.onPage(vm, page(next), Reason.LOAD_MORE);
+        assertEquals(9, count(first));
+
+        // The same notice object again, and a freshly parsed copy of it, as an overlapping page brings them.
+        FakeResponse replay = page(next);
+        ActivityLikeBundler.onPage(vm, replay, Reason.LOAD_MORE);
+        FakeResponse reparsed = page(like("a2", "v1", "c1", 7, true, "u3"));
+        ActivityLikeBundler.onPage(vm, reparsed, Reason.LOAD_MORE);
+        assertTrue(rows(replay).isEmpty());
+        assertTrue(rows(reparsed).isEmpty());
+        assertEquals(9, count(first));
+
+        // A refresh forgets what was counted.
+        FakeNotice again = like("a2", "v1", "c1", 7, true, "u3");
+        FakeResponse refreshed = page(again);
+        ActivityLikeBundler.onPage(vm, refreshed, Reason.REFRESH);
+        assertEquals(Arrays.asList(again), rows(refreshed));
+        assertEquals(7, count(again));
+    }
+
+    @Test public void commentLikesWithoutTheCommentsIdAreNotGrouped() {
+        FakeNotice one = like("a1", "v1", "c1", 1, true, "u1");
+        FakeNotice other = like("a2", "v1", "c2", 1, true, "u2");
+        one.templateNotice.extraData.comment.cid = "0";
+        other.templateNotice.extraData.comment.cid = null;
+        FakeResponse response = page(one, other);
+        ActivityLikeBundler.onPage(new FakeViewModel(ActivityLikeBundler.LIKES_GROUP), response, Reason.FIRST_REFRESH);
+        assertEquals(Arrays.asList(one, other), rows(response));
+        assertEquals(1, count(one));
+        assertEquals(1, count(other));
+    }
+
     @Test public void anUnreadOlderRowLeavesTheFoldedRowUnread() {
         FakeNotice newest = like("a1", "v1", "c1", 1, true, "u1");
         FakeNotice olderUnread = like("a2", "v1", "c1", 1, false, "u2");
@@ -209,15 +248,16 @@ public class ActivityLikeBundlerTest {
         FakeNotice broken = like("a2", "v1", "c1", 1, true, "u2");
         broken.templateNotice = new FakeTemplate(3, true, broken.templateNotice.extraData, new FakeUi(null));
         List<Object> list = new ArrayList<>(Arrays.asList(kept, broken));
-        assertEquals(0, ActivityLikeBundler.fold(list, new java.util.HashMap<>(), new java.util.HashMap<>()));
+        assertEquals(0, ActivityLikeBundler.fold(list, new java.util.HashMap<>(), new java.util.HashMap<>(), new java.util.HashSet<>()));
         assertEquals(2, list.size());
         assertSame(kept, list.get(0));
     }
 
     @Test public void onlyFoldsIntoRowsOfEarlierPagesCountAsNeedingARedraw() throws Exception {
         java.util.Map<String, Object> kept = new java.util.HashMap<>();
+        java.util.Set<String> counted = new java.util.HashSet<>();
         FakeNotice shown = like("a1", "v1", "c1", 1, true, "u1");
-        assertEquals(0, ActivityLikeBundler.fold(new ArrayList<>(Arrays.asList(shown)), kept, new java.util.HashMap<>()));
+        assertEquals(0, ActivityLikeBundler.fold(new ArrayList<>(Arrays.asList(shown)), kept, new java.util.HashMap<>(), counted));
 
         java.util.Map<String, Object> earlier = new java.util.HashMap<>(kept);
         FakeNotice intoShown = like("a2", "v1", "c1", 4, true, "u2");
@@ -225,7 +265,7 @@ public class ActivityLikeBundlerTest {
         FakeNotice intoFresh = like("b2", "v2", "c2", 1, true, "u4");
         List<Object> next = new ArrayList<>(Arrays.asList(intoShown, fresh, intoFresh));
         // One fold lands on a row already on screen; the other on a row of this same page.
-        assertEquals(1, ActivityLikeBundler.fold(next, kept, earlier));
+        assertEquals(1, ActivityLikeBundler.fold(next, kept, earlier, counted));
         assertEquals(Arrays.asList(fresh), next);
         assertEquals(5, count(shown));
         assertEquals(2, count(fresh));

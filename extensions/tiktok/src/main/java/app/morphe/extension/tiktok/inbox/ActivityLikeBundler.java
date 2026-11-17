@@ -16,9 +16,11 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 /**
@@ -49,6 +51,9 @@ public final class ActivityLikeBundler {
     private static final long REDRAW_DELAY_MS = 250;
 
     private static final Map<Object, Map<String, Object>> KEPT =
+            Collections.synchronizedMap(new WeakHashMap<>());
+    /** The notice ids already counted in each view model's list, so a page that comes back adds nothing. */
+    private static final Map<Object, Set<String>> COUNTED =
             Collections.synchronizedMap(new WeakHashMap<>());
     /** The list view each view model's rows were last drawn in. */
     private static final Map<Object, WeakReference<View>> LISTS =
@@ -115,17 +120,22 @@ public final class ActivityLikeBundler {
             if (viewModel == null || response == null) return;
             if (!Settings.BUNDLE_ACTIVITY_LIKES.get()) {
                 KEPT.remove(viewModel);
+                COUNTED.remove(viewModel);
                 return;
             }
             Object group = Reflect.invoke(viewModel, "getGroupType");
             if (!(group instanceof Integer) || (Integer) group != LIKES_GROUP) return;
             boolean append = reason instanceof Enum && APPEND_REASON.equals(((Enum<?>) reason).name());
             Map<String, Object> kept;
+            Set<String> counted;
             synchronized (KEPT) {
                 kept = append ? KEPT.get(viewModel) : null;
-                if (kept == null) {
+                counted = append ? COUNTED.get(viewModel) : null;
+                if (kept == null || counted == null) {
                     kept = new HashMap<>();
+                    counted = new HashSet<>();
                     KEPT.put(viewModel, kept);
+                    COUNTED.put(viewModel, counted);
                 }
             }
             Object lists = Reflect.readField(response, "notices");
@@ -137,7 +147,7 @@ public final class ActivityLikeBundler {
                 Object notices = Reflect.readField(items, "items");
                 if (notices instanceof List) {
                     @SuppressWarnings("unchecked") List<Object> page = (List<Object>) notices;
-                    foldedIntoEarlier += fold(page, kept, earlier);
+                    foldedIntoEarlier += fold(page, kept, earlier, counted);
                 }
             }
             if (foldedIntoEarlier > 0) redraw(viewModel);
@@ -151,8 +161,12 @@ public final class ActivityLikeBundler {
      * that row. Rows arrive newest first, so the kept row of a target is its newest one.
      * Returns how many rows were folded into a row of {@code earlier}, the rows kept by previous
      * pages, which are already on screen.
+     *
+     * <p>{@code counted} holds the ids of the notices already counted in this list. A notice that
+     * shows up again, on a page that overlaps or repeats an earlier one, is dropped without adding
+     * its likes a second time.
      */
-    static int fold(List<Object> page, Map<String, Object> kept, Map<String, Object> earlier)
+    static int fold(List<Object> page, Map<String, Object> kept, Map<String, Object> earlier, Set<String> counted)
             throws ReflectiveOperationException {
         int foldedIntoEarlier = 0;
         for (Iterator<Object> rows = page.iterator(); rows.hasNext(); ) {
@@ -160,6 +174,12 @@ public final class ActivityLikeBundler {
             String target = targetOf(row);
             if (target == null) continue;
             Object first = kept.get(target);
+            if (first == row) continue;
+            String id = text(Reflect.readField(row, "nid"));
+            if (id != null && !counted.add(id)) {
+                rows.remove();
+                continue;
+            }
             if (first == null) {
                 kept.put(target, row);
             } else if (first != row && absorb(first, row)) {
@@ -179,6 +199,8 @@ public final class ActivityLikeBundler {
         Object extra = Reflect.readField(template, "extraData");
         Object comment = Reflect.readField(extra, "comment");
         String commentId = text(Reflect.readField(comment, "cid"));
+        // A comment like without its comment's id can't be told from a like on another comment.
+        if (comment != null && commentId == null) return null;
         String videoId = text(Reflect.invoke(Reflect.readField(extra, "aweme"), "getAid"));
         if (videoId == null) videoId = text(Reflect.readField(comment, "awemeId"));
         if (videoId == null && commentId == null) return null;

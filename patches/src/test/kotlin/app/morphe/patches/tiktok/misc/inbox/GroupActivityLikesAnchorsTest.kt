@@ -61,6 +61,7 @@ class GroupActivityLikesAnchorsTest {
             }
             field(NOTICE_LISTS_RESPONSE_DESCRIPTOR, "notices", "Ljava/util/List;")
             field("${BEAN}NoticeItems;", "items", "Ljava/util/List;")
+            field("${BEAN}MusNotice;", "nid", "Ljava/lang/String;")
             field("${BEAN}MusNotice;", "type", "I")
             field("${BEAN}MusNotice;", "hasRead", "Z")
             field("${BEAN}MusNotice;", "templateNotice", "${BEAN}GeneralTemplateNotice;")

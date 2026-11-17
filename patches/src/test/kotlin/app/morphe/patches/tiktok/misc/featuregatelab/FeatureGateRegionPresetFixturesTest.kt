@@ -29,7 +29,7 @@ class FeatureGateRegionPresetFixturesTest {
         val container = Fixtures.dexContainer(Fixtures.apkOf("47.8.3"), Opcodes.getDefault())
         val owners = setOf(
             DANMAKU_READ, DANMAKU_HOLDER, DANMAKU_MASTER, LANDSCAPE_READ, DANMAKU_SERVICE, AWEME,
-            PHOTOS_READ, PHOTOS_GATE, PUBLISH, KEYBOARD, TAB_READ, AB_READS, AB_CALLBACK,
+            PHOTOS_READ, PHOTOS_GATE, PHOTO_COUNT, PUBLISH, KEYBOARD, TAB_READ, AB_READS, AB_CALLBACK,
             TAG_TRIGGER, FEED_TAG_GATE, FEED_TAG_READ, AFTER_BLOCK_HOLDER, AFTER_BLOCK_READ, VISION_GATE, VISION_READ,
         )
         container.dexEntryNames.flatMap { entry ->

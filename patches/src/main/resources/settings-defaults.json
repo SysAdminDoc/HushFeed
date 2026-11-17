@@ -3,8 +3,12 @@
     "AMOLED dark theme": [
       "amoled_dark_mode"
     ],
+    "Account cleanup": [
+      "tap_to_remove"
+    ],
     "Advanced downloads": [
       "download_button",
+      "hold_save_to_download",
       "download_button_position",
       "download_video_quality",
       "download_video_codec",
@@ -40,7 +44,9 @@
       "download_photo_path",
       "download_video_filename_template",
       "download_photo_filename_template",
-      "share_after_save"
+      "share_after_save",
+      "video_button_size",
+      "video_buttons_over_rail"
     ],
     "Allow Duet and Stitch": [
       "allow_duet_and_stitch",
@@ -54,6 +60,7 @@
       "publish_date_exact_time",
       "publish_date_time_zone",
       "publish_date_short_date",
+      "publish_date_day_first",
       "publish_date_on_grid",
       "video_length_on_grid",
       "profile_grid_sort",
@@ -104,7 +111,9 @@
       "block_sound_button",
       "block_author_button_position",
       "local_hide_button_position",
-      "block_sound_button_position"
+      "block_sound_button_position",
+      "video_button_size",
+      "video_buttons_over_rail"
     ],
     "Block contact list access": [
       "block_contact_list"
@@ -337,6 +346,7 @@
     ],
     "Fit the video to the screen": [
       "fit_video_to_screen",
+      "fit_fills_tall_screen",
       "fill_video_to_screen",
       "stretch_video_to_screen",
       "blend_video_to_screen",
@@ -480,6 +490,7 @@
       "glass_bar_height",
       "glass_corners",
       "glass_tab_slide",
+      "glass_liquid_hold",
       "glass_haptics",
       "glass_haptic_style",
       "see_through_status_bar",
@@ -567,6 +578,7 @@
       "live_record_source",
       "live_auto_tap",
       "live_auto_tap_rate",
+      "live_button_size",
       "live_audio_only",
       "live_name_alerts",
       "live_name_alert_names",
@@ -588,6 +600,7 @@
       "rail_hold_comment",
       "rail_hold_share",
       "rail_hold_favorites",
+      "hold_save_to_download",
       "long_press_full_menu_on_profiles",
       "long_press_full_menu_in_search",
       "long_press_compact_menu",
@@ -602,7 +615,9 @@
       "feed_muted",
       "feed_mute_button",
       "feed_mute_button_position",
-      "focus_waits_for_video"
+      "focus_waits_for_video",
+      "video_button_size",
+      "video_buttons_over_rail"
     ],
     "Network proxy": [
       "network_proxy",
@@ -615,7 +630,9 @@
     "Not interested button": [
       "not_interested_button",
       "not_interested_also_filter",
-      "not_interested_button_position"
+      "not_interested_button_position",
+      "video_button_size",
+      "video_buttons_over_rail"
     ],
     "Notification controls": [
       "hide_follower_notifications",
@@ -709,6 +726,8 @@
     ],
     "Settings": [
       "morphe_language",
+      "hushfeed_language",
+      "settings_theme",
       "morphe_show_menu_icons",
       "hide_settings_row",
       "settings_row_picks",
@@ -1939,6 +1958,12 @@
       "type": "boolean",
       "default": false
     },
+    "fit_fills_tall_screen": {
+      "field": "FIT_FILLS_TALL_SCREEN",
+      "key": "fit_fills_tall_screen",
+      "type": "boolean",
+      "default": false
+    },
     "fit_video_to_screen": {
       "field": "FIT_VIDEO_TO_SCREEN",
       "key": "fit_video_to_screen",
@@ -2090,6 +2115,12 @@
     "glass_haptics": {
       "field": "GLASS_HAPTICS",
       "key": "glass_haptics",
+      "type": "boolean",
+      "default": false
+    },
+    "glass_liquid_hold": {
+      "field": "GLASS_LIQUID_HOLD",
+      "key": "glass_liquid_hold",
       "type": "boolean",
       "default": false
     },
@@ -2927,6 +2958,12 @@
       "type": "boolean",
       "default": false
     },
+    "hold_save_to_download": {
+      "field": "HOLD_SAVE_TO_DOWNLOAD",
+      "key": "hold_save_to_download",
+      "type": "boolean",
+      "default": false
+    },
     "hold_speed": {
       "field": "HOLD_SPEED",
       "key": "hold_speed",
@@ -2962,6 +2999,12 @@
       "key": "home_tab_opens_settings",
       "type": "boolean",
       "default": true
+    },
+    "hushfeed_language": {
+      "field": "HUSHFEED_LANGUAGE",
+      "key": "hushfeed_language",
+      "type": "string",
+      "default": "tiktok"
     },
     "idle_leave_minutes": {
       "field": "IDLE_LEAVE_MINUTES",
@@ -3156,6 +3199,12 @@
       "key": "live_auto_tap_rate",
       "type": "string",
       "default": "4"
+    },
+    "live_button_size": {
+      "field": "LIVE_BUTTON_SIZE",
+      "key": "live_button_size",
+      "type": "string",
+      "default": "48"
     },
     "live_feed_countries": {
       "field": "LIVE_FEED_COUNTRIES",
@@ -3753,6 +3802,12 @@
       "type": "boolean",
       "default": false
     },
+    "publish_date_day_first": {
+      "field": "PUBLISH_DATE_DAY_FIRST",
+      "key": "publish_date_day_first",
+      "type": "boolean",
+      "default": false
+    },
     "publish_date_exact_time": {
       "field": "PUBLISH_DATE_EXACT_TIME",
       "key": "publish_date_exact_time",
@@ -4080,6 +4135,12 @@
       "key": "settings_row_picks",
       "type": "string",
       "default": ""
+    },
+    "settings_theme": {
+      "field": "SETTINGS_THEME",
+      "key": "settings_theme",
+      "type": "string",
+      "default": "tiktok"
     },
     "share_added_apps": {
       "field": "SHARE_ADDED_APPS",
@@ -4479,6 +4540,12 @@
       "type": "boolean",
       "default": false
     },
+    "tap_to_remove": {
+      "field": "TAP_TO_REMOVE",
+      "key": "tap_to_remove",
+      "type": "boolean",
+      "default": false
+    },
     "touch_target_scale": {
       "field": "TOUCH_TARGET_SCALE",
       "key": "touch_target_scale",
@@ -4524,6 +4591,18 @@
     "uncap_refresh_rate": {
       "field": "UNCAP_REFRESH_RATE",
       "key": "uncap_refresh_rate",
+      "type": "boolean",
+      "default": false
+    },
+    "video_button_size": {
+      "field": "VIDEO_BUTTON_SIZE",
+      "key": "video_button_size",
+      "type": "string",
+      "default": "48"
+    },
+    "video_buttons_over_rail": {
+      "field": "VIDEO_BUTTONS_OVER_RAIL",
+      "key": "video_buttons_over_rail",
       "type": "boolean",
       "default": false
     },

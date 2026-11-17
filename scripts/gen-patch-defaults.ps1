@@ -101,6 +101,9 @@ function ConvertFrom-PatchDefaultsValue {
             return Get-PatchDefaultsConstant $Root 'extensions/tiktok/src/main/java/app/morphe/extension/tiktok/settings/Settings.java' 'SHARE_HIDDEN_ITEMS_FOLLOW_VIDEO'
         }
         'AppLanguage.DEFAULT' { return 'DEFAULT' }
+        'L10n.PICK_KEY' {
+            return Get-PatchDefaultsConstant $Root 'extensions/tiktok/src/main/java/app/morphe/extension/tiktok/settings/L10n.java' 'PICK_KEY'
+        }
     }
     if ($Expression.StartsWith('"')) { return ConvertFrom-Json -InputObject $Expression }
     if ($Expression -cmatch '^(TRUE|FALSE|true|false)$') { return $Expression.ToLowerInvariant() -ceq 'true' }
@@ -121,7 +124,7 @@ function Get-PatchDefaultsDeclarations {
             $field = $declaration.Groups[2].Value
             $entry = [ordered]@{
                 field = $field
-                key = ConvertFrom-Json -InputObject $arguments.Values[0]
+                key = ConvertFrom-PatchDefaultsValue $Root $arguments.Values[0]
                 type = $declaration.Groups[1].Value.Replace('Setting', '').ToLowerInvariant()
                 default = $arguments.Values[1]
             }

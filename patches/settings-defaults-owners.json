@@ -2,6 +2,7 @@
   "patches": {
     "Advanced downloads": [
       "DOWNLOAD_BUTTON",
+      "HOLD_SAVE_TO_DOWNLOAD",
       "DOWNLOAD_BUTTON_POSITION",
       "DOWNLOAD_VIDEO_QUALITY",
       "DOWNLOAD_VIDEO_CODEC",
@@ -37,7 +38,9 @@
       "DOWNLOAD_PHOTO_PATH",
       "DOWNLOAD_VIDEO_FILENAME_TEMPLATE",
       "DOWNLOAD_PHOTO_FILENAME_TEMPLATE",
-      "SHARE_AFTER_SAVE"
+      "SHARE_AFTER_SAVE",
+      "VIDEO_BUTTON_SIZE",
+      "VIDEO_BUTTONS_OVER_RAIL"
     ],
     "Allow Duet and Stitch": [
       "ALLOW_DUET_AND_STITCH",
@@ -51,6 +54,7 @@
       "PUBLISH_DATE_EXACT_TIME",
       "PUBLISH_DATE_TIME_ZONE",
       "PUBLISH_DATE_SHORT_DATE",
+      "PUBLISH_DATE_DAY_FIRST",
       "PUBLISH_DATE_ON_GRID",
       "VIDEO_LENGTH_ON_GRID",
       "PROFILE_GRID_SORT",
@@ -104,7 +108,9 @@
       "BLOCK_SOUND_BUTTON",
       "BLOCK_AUTHOR_BUTTON_POSITION",
       "LOCAL_HIDE_BUTTON_POSITION",
-      "BLOCK_SOUND_BUTTON_POSITION"
+      "BLOCK_SOUND_BUTTON_POSITION",
+      "VIDEO_BUTTON_SIZE",
+      "VIDEO_BUTTONS_OVER_RAIL"
     ],
     "Block contact list access": [
       "BLOCK_CONTACT_LIST"
@@ -337,6 +343,7 @@
     ],
     "Fit the video to the screen": [
       "FIT_VIDEO_TO_SCREEN",
+      "FIT_FILLS_TALL_SCREEN",
       "FILL_VIDEO_TO_SCREEN",
       "STRETCH_VIDEO_TO_SCREEN",
       "BLEND_VIDEO_TO_SCREEN",
@@ -477,6 +484,7 @@
       "GLASS_BAR_HEIGHT",
       "GLASS_CORNERS",
       "GLASS_TAB_SLIDE",
+      "GLASS_LIQUID_HOLD",
       "GLASS_HAPTICS",
       "GLASS_HAPTIC_STYLE",
       "SEE_THROUGH_STATUS_BAR",
@@ -566,6 +574,7 @@
       "LIVE_RECORD_SOURCE",
       "LIVE_AUTO_TAP",
       "LIVE_AUTO_TAP_RATE",
+      "LIVE_BUTTON_SIZE",
       "LIVE_AUDIO_ONLY",
       "LIVE_NAME_ALERTS",
       "LIVE_NAME_ALERT_NAMES",
@@ -581,6 +590,7 @@
       "RAIL_HOLD_COMMENT",
       "RAIL_HOLD_SHARE",
       "RAIL_HOLD_FAVORITES",
+      "HOLD_SAVE_TO_DOWNLOAD",
       "LONG_PRESS_FULL_MENU_ON_PROFILES",
       "LONG_PRESS_FULL_MENU_IN_SEARCH",
       "LONG_PRESS_COMPACT_MENU",
@@ -595,7 +605,9 @@
       "FEED_MUTED",
       "FEED_MUTE_BUTTON",
       "FEED_MUTE_BUTTON_POSITION",
-      "FOCUS_WAITS_FOR_VIDEO"
+      "FOCUS_WAITS_FOR_VIDEO",
+      "VIDEO_BUTTON_SIZE",
+      "VIDEO_BUTTONS_OVER_RAIL"
     ],
     "Network proxy": [
       "NETWORK_PROXY",
@@ -608,7 +620,9 @@
     "Not interested button": [
       "NOT_INTERESTED_BUTTON",
       "NOT_INTERESTED_ALSO_FILTER",
-      "NOT_INTERESTED_BUTTON_POSITION"
+      "NOT_INTERESTED_BUTTON_POSITION",
+      "VIDEO_BUTTON_SIZE",
+      "VIDEO_BUTTONS_OVER_RAIL"
     ],
     "Keep unsent messages": [
       "KEEP_UNSENT_MESSAGES",
@@ -699,6 +713,8 @@
     ],
     "Settings": [
       "MORPHE_LANGUAGE",
+      "HUSHFEED_LANGUAGE",
+      "SETTINGS_THEME",
       "SHOW_MENU_ICONS",
       "HIDE_SETTINGS_ROW",
       "SETTINGS_ROW_PICKS",
@@ -850,6 +866,9 @@
       "SYSTEM_FONT",
       "SYSTEM_EMOJI",
       "IMPORTED_FONT"
+    ],
+    "Account cleanup": [
+      "TAP_TO_REMOVE"
     ]
   },
   "excluded": {

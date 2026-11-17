@@ -49,12 +49,13 @@ internal object FeedPlayProgressFingerprint : Fingerprint(
     parameters = listOf("Ljava/lang/String;", "J", "J"),
 )
 
-// The method that answers "where should this video start", read out of the 46.2.3 fixture. The
-// signature alone is unique across the app's 1,872,612 methods; the string is one of three
-// landscape tags it compares and is here so a build that renames the method still fails loudly
-// rather than binding to something else.
+// The method that answers "where should this video start". It's found by the one read of the
+// config's event_type_list, the check the patch hooks: 47.8.3 gave the method a third parameter
+// and moved the landscape tags it used to be found by into a helper of their own.
 internal object FeedProgressResumePositionFingerprint : Fingerprint(
     returnType = "J",
-    parameters = listOf("Lcom/ss/android/ugc/aweme/feed/model/Aweme;", "Ljava/lang/String;"),
-    strings = listOf("landscape_change_keep_tag"),
+    filters = listOf(fieldAccess(definingClass = CONTINUE_CONFIG, name = "event_type_list")),
+    custom = { method, _ ->
+        method.parameterTypes.firstOrNull()?.toString() == "Lcom/ss/android/ugc/aweme/feed/model/Aweme;"
+    },
 )

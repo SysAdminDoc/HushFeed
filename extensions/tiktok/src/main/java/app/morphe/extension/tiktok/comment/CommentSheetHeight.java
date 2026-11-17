@@ -117,6 +117,16 @@ public final class CommentSheetHeight {
     }
 
     /**
+     * Injection point, first thing in the method that shows or hides the search icon TikTok lays
+     * over the shrunken video while comments are open (#435). At full height there is no video
+     * left above the sheet, so the icon landed on the sheet's close button. Non-zero shows it, 0
+     * hides it. Never throws.
+     */
+    public static int searchIconShown(int shown) {
+        return openAtFullHeight() ? 0 : shown;
+    }
+
+    /**
      * Injection point, on the sheet's mode as its sizing reads it. A mode of 0 or below sends the
      * sheet to a fixed height that never asks the pixels method, so with the switch on it becomes
      * 1, one of the modes that does. Any other mode is left as it is. Never throws.

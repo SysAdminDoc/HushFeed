@@ -12,6 +12,7 @@ import app.morphe.patcher.string
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
+import app.morphe.patches.tiktok.interaction.feedtoolbar.ShrinkVideoSearchIconVisibilityFingerprint
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
@@ -227,6 +228,23 @@ val commentSheetHeightPatch = bytecodePatch(
         keepPanelHeight(resize, panelHeightWrites(resize, "Landroid/widget/FrameLayout\$LayoutParams;").take(1))
         val inputCheck = CommentInputCheckFingerprint.method
         keepPanelHeight(inputCheck, panelHeightWrites(inputCheck, "Landroid/view/ViewGroup\$LayoutParams;"))
+
+        // TikTok lays a search icon over the shrunken video while comments are open. At full
+        // height there is no video above the sheet, so the icon sat on its close button (#435).
+        // Its show-or-hide method takes the answer in p1; Hide feed search button hooks the same
+        // spot, and the two chain.
+        val searchIcon = ShrinkVideoSearchIconVisibilityFingerprint.methodOrNull
+        if (searchIcon == null) {
+            println("[$PATCH] No search icon over the comments video on this build.")
+        } else {
+            searchIcon.addInstructions(
+                0,
+                """
+                    invoke-static {p1}, $EXTENSION->searchIconShown(I)I
+                    move-result p1
+                """,
+            )
+        }
 
         SettingsStatusLoadFingerprint.method.addInstruction(
             0,

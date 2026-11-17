@@ -63,6 +63,18 @@ public class CommentSheetHeightTest {
         assertFalse(CommentSheetHeight.openAtFullHeight());
     }
 
+    /** #435: the search icon over the shrunken video sat on the full height sheet's close button. */
+    @Test public void atFullHeightTikToksSearchIconOverTheVideoStaysHidden() throws Exception {
+        java.lang.reflect.Method shown = CommentSheetHeight.class.getMethod("searchIconShown", int.class);
+        assertEquals("off, TikTok's answer stands", 1, shown.invoke(null, 1));
+        assertEquals(0, shown.invoke(null, 0));
+        Settings.COMMENTS_FULL_HEIGHT.save(true);
+        assertEquals("at full height there is no video above the sheet for the icon", 0, shown.invoke(null, 1));
+        assertEquals(0, shown.invoke(null, 0));
+        PausedProcess.set(true);
+        assertEquals("paused, TikTok's answer stands", 1, shown.invoke(null, 1));
+    }
+
     @Test public void switchedOnAModeWithNoShareIsLiftedAndTheOthersStay() {
         Settings.COMMENTS_FULL_HEIGHT.save(true);
         assertEquals("a mode of 0 never asks for the height, so it becomes one that does",

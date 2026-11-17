@@ -2907,6 +2907,72 @@ public final class Probe extends Instrumentation {
                         Log.i(TAG, "ok fields" + out);
                         break;
                     }
+                    case "orbuurls": {
+                        // The base URL each Orbu server type posts to, read through the getter
+                        // `Stop analytics and tracking` hooks (#379): LOGGING, SAMPLING and
+                        // CHALLENGE name proxy.telemetry with the switch off and localhost with it
+                        // on, while CONFIGURATION keeps its own host either way.
+                        Class<?> type = loader.loadClass("ttp.orbu.sdk.configuration.model.ServerAPIType");
+                        Method baseUrl = type.getMethod("getBaseUrl");
+                        StringBuilder out = new StringBuilder();
+                        for (Object constant : type.getEnumConstants()) {
+                            out.append(' ').append(((Enum<?>) constant).name()).append('=').append(baseUrl.invoke(constant));
+                        }
+                        Log.i(TAG, "ok orbuurls" + out);
+                        break;
+                    }
+                    case "dubinfo": {
+                        // The current video's AI dub tracks (#443): how many the post carries
+                        // and their language codes, read from the field, against what the getter
+                        // `Play original audio` hooks hands the player (none while it is on).
+                        Object aweme = currentAweme();
+                        if (aweme == null) throw new IllegalStateException("no current video");
+                        Object audio = optional(aweme, "getAudio");
+                        Object stored = audio == null ? null : fieldValue(audio, "TtsInfos");
+                        Object served = audio == null ? null : audio.getClass().getMethod("getTtsInfos").invoke(audio);
+                        StringBuilder langs = new StringBuilder();
+                        if (stored instanceof java.util.Collection) {
+                            for (Object track : (java.util.Collection<?>) stored) {
+                                langs.append(langs.length() == 0 ? "" : ",").append(fieldValue(track, "languageCode"));
+                            }
+                        }
+                        Object originals = audio == null ? null : fieldValue(audio, "originalSoundInfos");
+                        Log.i(TAG, "ok dubinfo audio=" + (audio != null)
+                                + " stored=" + (stored instanceof java.util.Collection ? ((java.util.Collection<?>) stored).size() : String.valueOf(stored))
+                                + " langs=" + (langs.length() == 0 ? "none" : langs)
+                                + " served=" + (served instanceof java.util.Collection ? ((java.util.Collection<?>) served).size() : String.valueOf(served))
+                                + " originals=" + (originals instanceof java.util.Collection ? ((java.util.Collection<?>) originals).size() : String.valueOf(originals)));
+                        break;
+                    }
+                    case "antirecord": {
+                        // TikTok's own LIVE anti-recording controller on the foreground window, for
+                        // Allow screenshots without a LIVE room whose server asks for a secure screen.
+                        // -e class names it (47.8.3: X.0K4T, the class logging "AntiScreenRecordController"),
+                        // -e method its one-boolean switch (LIZ), -e on true or false. On, TikTok's own
+                        // Window.setFlags(FLAG_SECURE) runs, the call the patch rewrites; off clears it.
+                        android.app.Activity activity = (android.app.Activity) loader.loadClass(UTILS)
+                                .getMethod("getActivity").invoke(null);
+                        if (activity == null) throw new IllegalStateException("TikTok has no foreground activity");
+                        android.view.Window window = activity.getWindow();
+                        Class<?> controller = loader.loadClass(required(intent, "class"));
+                        Class<?> function0 = loader.loadClass("kotlin.jvm.functions.Function0");
+                        Object supplier = java.lang.reflect.Proxy.newProxyInstance(loader, new Class<?>[]{function0},
+                                (proxy, method, arguments) -> {
+                                    switch (method.getName()) {
+                                        case "invoke": return window;
+                                        case "hashCode": return System.identityHashCode(proxy);
+                                        case "equals": return arguments != null && proxy == arguments[0];
+                                        default: return "hushfeed window supplier";
+                                    }
+                                });
+                        Object instance = controller.getConstructor(function0).newInstance(supplier);
+                        boolean on = Boolean.parseBoolean(required(intent, "on"));
+                        controller.getMethod(required(intent, "method"), boolean.class).invoke(instance, on);
+                        boolean secure = (window.getAttributes().flags
+                                & android.view.WindowManager.LayoutParams.FLAG_SECURE) != 0;
+                        Log.i(TAG, "ok antirecord " + controller.getName() + " on=" + on + " windowSecure=" + secure);
+                        break;
+                    }
                     case "splitstate": {
                         // TikTok's split comment containers after a fold or a rebuild (#398): its
                         // static registry, keyed HOME_ or FRIENDS_FEED_ plus an activity's hash,

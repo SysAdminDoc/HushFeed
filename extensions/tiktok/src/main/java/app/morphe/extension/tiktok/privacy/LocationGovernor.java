@@ -63,5 +63,19 @@ public final class LocationGovernor {
         manager.requestLocationUpdates(provider, minTime, minDistance, listener, looper);
     }
 
+    /** Where TikTok's location API goes with the switch on: the phone itself, which refuses it. */
+    static final String LOCAL_BASE_URL = "https://localhost/";
+
+    /**
+     * A URL TikTok's own location API is built on (#379). Apart from the phone's location
+     * services, TikTok calls location.tiktokv.com, which it routes to location-v6.tiktokv.us, and
+     * that server places the phone by its address. With the switch on the request goes to the
+     * phone itself, so the name is never looked up and nothing leaves it.
+     */
+    public static String locationApiUrl(String url) {
+        if (url == null || !blocks("location API request to " + url)) return url;
+        return LOCAL_BASE_URL;
+    }
+
     private LocationGovernor() {}
 }

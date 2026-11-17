@@ -5,7 +5,13 @@
 package app.morphe.patches.tiktok.privacy
 
 import app.morphe.util.addInstruction
+import app.morphe.util.addInstructions
+import app.morphe.util.getReference
+import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.patch.PatchException
+import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
+import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
@@ -52,5 +58,29 @@ val locationGovernorPatch = bytecodePatch(
         }
         replaceSites(sites, replacements)
         println("[Location governor] Intercepted ${sites.size} location access sites.")
+
+        // TikTok's own location API (#379), which places the phone by its address and never
+        // goes through LocationManager. Every load of its host goes through the extension.
+        val hosts = LocationApiHostFingerprint.matchAllOrNull().orEmpty()
+        hosts.forEach { it.method.redirectLocationApiHost() }
+        println("[Location governor] Redirected the location API host in ${hosts.size} methods.")
     }
+}
+
+/** Puts the extension's URL choice between each load of the location API host and its use. */
+internal fun MutableMethod.redirectLocationApiHost() {
+    implementation!!.instructions.withIndex()
+        .filter { it.value.getReference<StringReference>()?.string == LOCATION_API_HOST }
+        .map { it.index }
+        .reversed()
+        .forEach { load ->
+            val register = getInstruction<OneRegisterInstruction>(load).registerA
+            addInstructions(
+                load + 1,
+                """
+                    invoke-static/range { v$register .. v$register }, $EXTENSION->locationApiUrl(Ljava/lang/String;)Ljava/lang/String;
+                    move-result-object v$register
+                """,
+            )
+        }
 }

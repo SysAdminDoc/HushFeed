@@ -258,6 +258,21 @@ public class PrivacySwitchesTest {
         assertEquals(51.5, answered.getLatitude(), 0.0001);
     }
 
+    /** Issue #379: location-v6.tiktokv.us was still asked with Block location on. */
+    @Test public void locationApiGoesToThePhoneWhileTheSwitchIsOn() {
+        String host = "https://location.tiktokv.com";
+
+        Settings.BLOCK_LOCATION.save(true);
+        String blocked = LocationGovernor.locationApiUrl(host);
+        assertEquals("https://localhost/", blocked);
+        // The backend caller turns the host into its v6 URL; the phone's own name has nothing to swap.
+        assertEquals("https://localhost/", blocked.replace(".com", ".v6.com"));
+
+        Settings.BLOCK_LOCATION.save(false);
+        assertEquals(host, LocationGovernor.locationApiUrl(host));
+        assertNull(LocationGovernor.locationApiUrl(null));
+    }
+
     @Test public void clipboardReadsAreEmptyWhileTheSwitchIsOn() {
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
         clipboard.setPrimaryClip(ClipData.newPlainText("label", "hello"));

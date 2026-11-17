@@ -29,6 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
+import android.widget.TextView;
 
 import app.morphe.extension.tiktok.settings.Settings;
 
@@ -63,6 +64,11 @@ final class SeeThroughBottomBar {
     static final int PILL_COLOR = 0x99000000;
     /** The pill's hairline, light enough to find the pill's edge over a dark video. */
     static final int PILL_EDGE_COLOR = 0x40FFFFFF;
+    /**
+     * The pill where TikTok draws its tabs for a light bar, dark ink as on Home's Community grid
+     * (#436): pale, so the dark tabs read, with a dark hairline to find its edge on white.
+     */
+    static final int PILL_COLOR_ON_LIGHT = 0xD9FFFFFF, PILL_EDGE_ON_LIGHT = 0x1F000000;
     /**
      * The floating pill's proportions, HushGram's glass tab bar's: 5% of the bar's width clear on
      * each side, at least 16dp, and never wider than 420dp on a wide screen.
@@ -315,6 +321,8 @@ final class SeeThroughBottomBar {
         final Rect pillRect = new Rect();
         /** The Pill height and Pill corners the pill was last laid out with. */
         private String height, corners;
+        /** True while the pill is painted for TikTok's light bar ({@link #tabsOnLight}, #436). */
+        boolean onLight;
         private final FrameWatch watch = new FrameWatch(this::beforeFrame);
 
         FloatingBackground(float density) {
@@ -363,9 +371,29 @@ final class SeeThroughBottomBar {
                 watch.on(bar);
                 // Also here, so the first frame already has them in place.
                 placeTabs(bar, pillRect, density);
+                followTabs(bar);
             }
             drawBehindPill(canvas);
             super.draw(canvas);
+        }
+
+        /**
+         * Paints the pill light or dark to go with the ink TikTok gave {@code bar}'s tabs (#436),
+         * true when that changed.
+         */
+        private boolean followTabs(ViewGroup bar) {
+            boolean light = tabsOnLight(bar);
+            if (light == onLight) return false;
+            onLight = light;
+            Drawable inner = getDrawable();
+            if (inner instanceof GlassPill) {
+                ((GlassPill) inner).setOnLight(light);
+            } else if (inner instanceof GradientDrawable) {
+                ((GradientDrawable) inner).setColor(light ? PILL_COLOR_ON_LIGHT : PILL_COLOR);
+                ((GradientDrawable) inner).setStroke(Math.max(1, Math.round(density)),
+                        light ? PILL_EDGE_ON_LIGHT : PILL_EDGE_COLOR);
+            }
+            return true;
         }
 
         /** What goes under the pill: nothing for the plain one. */
@@ -384,6 +412,8 @@ final class SeeThroughBottomBar {
                 return true;
             }
             placeTabs(bar, pillRect, density);
+            // A tab's new ink redraws the tab alone, never the bar's background under it.
+            if (followTabs(bar)) invalidateSelf();
             return true;
         }
 
@@ -409,6 +439,13 @@ final class SeeThroughBottomBar {
     static final int GLASS_SHEEN = 0x40FFFFFF;
     /** The rim: bright along the top edge where the light catches it, faint on the sides, a little back at the bottom. */
     static final int GLASS_RIM_TOP = 0x99FFFFFF, GLASS_RIM_SIDE = 0x26FFFFFF, GLASS_RIM_BOTTOM = 0x4DFFFFFF;
+    /**
+     * The glass over TikTok's light bar (#436): a white tint for its dark tabs, and a dark rim,
+     * faint along the top and a little deeper at the bottom, since a white one vanishes on white.
+     */
+    static final int GLASS_TINT_ON_LIGHT = 0x99FFFFFF;
+    static final int GLASS_RIM_TOP_ON_LIGHT = 0x14000000, GLASS_RIM_SIDE_ON_LIGHT = 0x1F000000,
+            GLASS_RIM_BOTTOM_ON_LIGHT = 0x33000000;
 
     /**
      * Liquid glass look (#218): the floating pill drawn as glass, in the same place. A view can
@@ -454,9 +491,22 @@ final class SeeThroughBottomBar {
         private final Paint edge = new Paint(Paint.ANTI_ALIAS_FLAG);
         private final RectF box = new RectF();
         private int alpha = 255;
+        /** True for the white glass over TikTok's light bar (#436). */
+        private boolean onLight;
 
         GlassPill(float density) {
             this(density, true);
+        }
+
+        void setOnLight(boolean light) {
+            if (onLight == light) return;
+            onLight = light;
+            onBoundsChange(getBounds());
+            invalidateSelf();
+        }
+
+        boolean onLight() {
+            return onLight;
         }
 
         /** One not {@code forBar} has round ends and the standard tint, the Stories pill's glass (#409). */
@@ -476,8 +526,9 @@ final class SeeThroughBottomBar {
             sheen.setShader(new LinearGradient(0, top, 0, (top + bottom) / 2f,
                     GLASS_SHEEN, GLASS_SHEEN & 0x00FFFFFF, Shader.TileMode.CLAMP));
             edge.setShader(new LinearGradient(0, top, 0, bottom,
-                    new int[]{GLASS_RIM_TOP, GLASS_RIM_SIDE, GLASS_RIM_BOTTOM}, new float[]{0f, 0.5f, 1f},
-                    Shader.TileMode.CLAMP));
+                    onLight ? new int[]{GLASS_RIM_TOP_ON_LIGHT, GLASS_RIM_SIDE_ON_LIGHT, GLASS_RIM_BOTTOM_ON_LIGHT}
+                            : new int[]{GLASS_RIM_TOP, GLASS_RIM_SIDE, GLASS_RIM_BOTTOM},
+                    new float[]{0f, 0.5f, 1f}, Shader.TileMode.CLAMP));
         }
 
         @Override
@@ -490,7 +541,8 @@ final class SeeThroughBottomBar {
             // Glass opacity scales the tint and, up to its full strength, the frost; a shader's
             // colors are scaled by its paint's alpha, the tint's own alpha is scaled here.
             float scale = forBar ? opacityScale(Settings.GLASS_OPACITY.get()) : 1f;
-            tint.setColor(withAlpha(GLASS_TINT, Color.alpha(GLASS_TINT) * alpha / 255f * scale));
+            int glass = onLight ? GLASS_TINT_ON_LIGHT : GLASS_TINT;
+            tint.setColor(withAlpha(glass, Color.alpha(glass) * alpha / 255f * scale));
             frost.setAlpha(Math.round(alpha * Math.min(1f, scale)));
             canvas.drawRoundRect(box, radius, radius, tint);
             canvas.drawRoundRect(box, radius, radius, frost);
@@ -763,8 +815,9 @@ final class SeeThroughBottomBar {
                 if (magnifier.paint(canvas, backdrop, area.left, area.top, bar.getWidth(), bar.getHeight(),
                         capsule, corner)) {
                     // The pill's tint goes back over it so the bubble reads as part of the pill.
-                    magnifiedTint.setColor(withAlpha(GLASS_TINT,
-                            Color.alpha(GLASS_TINT) * opacityScale(Settings.GLASS_OPACITY.get())));
+                    int glass = onLight ? GLASS_TINT_ON_LIGHT : GLASS_TINT;
+                    magnifiedTint.setColor(withAlpha(glass,
+                            Color.alpha(glass) * opacityScale(Settings.GLASS_OPACITY.get())));
                     canvas.drawRoundRect(capsule, corner, corner, magnifiedTint);
                 }
             }
@@ -905,7 +958,7 @@ final class SeeThroughBottomBar {
         public void draw(Canvas canvas) {
             super.draw(canvas);
             ViewGroup bar = bar();
-            if (bar != null) lens.draw(canvas, bar, pillRect, getDrawable().getAlpha(), false);
+            if (bar != null) lens.draw(canvas, bar, pillRect, getDrawable().getAlpha(), onLight);
         }
 
         @Override
@@ -940,7 +993,7 @@ final class SeeThroughBottomBar {
         public void draw(Canvas canvas) {
             super.draw(canvas);
             ViewGroup bar = bar();
-            if (bar != null) lens.draw(canvas, bar, pillRect, getDrawable().getAlpha(), false);
+            if (bar != null) lens.draw(canvas, bar, pillRect, getDrawable().getAlpha(), onLight);
         }
 
         @Override
@@ -968,6 +1021,38 @@ final class SeeThroughBottomBar {
     static boolean isLight(int color) {
         if (Color.alpha(color) < 0x80) return false;
         return 0.299f * Color.red(color) + 0.587f * Color.green(color) + 0.114f * Color.blue(color) > 0.6f * 255f;
+    }
+
+    /**
+     * True when TikTok draws {@code bar}'s tabs for a light bar, in dark ink, as over Home's
+     * Community grid (#436), so a pill under them goes light. Read from the tabs' shown labels,
+     * most of them deciding so a badge's white number can't; with none, from TikTok's own
+     * background this class holds.
+     */
+    static boolean tabsOnLight(ViewGroup bar) {
+        int[] inks = new int[2];
+        countInks(bar, 0, inks);
+        if (inks[0] + inks[1] > 0) return inks[0] > inks[1];
+        return isLight(BACKGROUNDS.get(bar));
+    }
+
+    /** Counts {@code group}'s shown labels a few levels down: dark ink in [0], the rest in [1]. */
+    private static void countInks(ViewGroup group, int depth, int[] inks) {
+        for (int i = 0; i < group.getChildCount(); i++) {
+            View child = group.getChildAt(i);
+            if (child.getVisibility() != View.VISIBLE) continue;
+            if (child instanceof TextView) {
+                if (((TextView) child).length() > 0) inks[isDarkInk(((TextView) child).getCurrentTextColor()) ? 0 : 1]++;
+            } else if (child instanceof ViewGroup && depth < 4) {
+                countInks((ViewGroup) child, depth + 1, inks);
+            }
+        }
+    }
+
+    /** True for dark ink at any strength: TikTok dims its unpicked tabs' labels, black or white. */
+    static boolean isDarkInk(int color) {
+        if (Color.alpha(color) == 0) return false;
+        return 0.299f * Color.red(color) + 0.587f * Color.green(color) + 0.114f * Color.blue(color) < 0.4f * 255f;
     }
 
     /** Whether {@code background} is light, as far as its color can be read. */

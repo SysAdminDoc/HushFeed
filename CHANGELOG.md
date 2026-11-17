@@ -80,6 +80,7 @@ Every Hushfeed release, newest first.
 * The Lab's `Scrolling comments on videos` preset now tells you where to look. TikTok only allows them on some wide videos, and those get an Add one-liner button under the video and a one-liner bar in full screen. The old note just said most videos stay the same (#98).
 * `Show the time beside the progress bar` counts all the way to the video's length at the end. TikTok reports where a video is a few times a second, and the last report before the end came up to a third of a second short, so a 15 second video read 0:14 / 0:15 as auto scroll moved on and looked cut off a second early (#432).
 * `Keep captions in Clear display` keeps the caption on screen after you swipe to the next video with Clear display still on. It only stayed on the first video you cleared, because TikTok clears the next video a moment before it says that video is playing (#428).
+* `Floating bottom bar` and its glass look go pale where TikTok turns its tabs black, like on Home's Community grid. The dark pill used to stay put there, so the black icons sat on a gray smear. Now the pill and the glass turn white with a thin dark edge, the lens behind your tab goes gray to match, and they go dark again as soon as you're back on the videos (#436).
 * `Stop analytics and tracking` also points TikTok's Orbu telemetry hosts, like proxy.telemetry, back at your phone, so their lookups never leave it. TikTok still looked them up on 47.7.3 with the switch on (#379).
 
 ### Build

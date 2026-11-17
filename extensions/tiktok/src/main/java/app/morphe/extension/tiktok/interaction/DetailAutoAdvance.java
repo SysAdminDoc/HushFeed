@@ -60,13 +60,18 @@ public final class DetailAutoAdvance {
      * TikTok's key for a page's background queue, as the places that start that queue read it.
      * TikTok answers only for your own collections, so a page opened from a profile gets a key of
      * its own here, and leaving the app hands it to the queue rather than to the one-video session
-     * that rewinds and pauses at the end (#292).
+     * that rewinds and pauses at the end (#292). A page opened from a profile's grid names the
+     * profile only as the page's user ({@code pageUid}); {@code profileUid} is filled on the
+     * routes that say which profile they came from, and wins when both are there.
      */
-    public static String backgroundScope(String scope, String profileUid) {
+    public static String backgroundScope(String scope, String profileUid, String pageUid) {
         try {
+            Logger.printDebug(() -> "Background queue key " + scope + " profile " + profileUid
+                    + " page " + pageUid + " auto-advance+background " + profileQueue());
             if (scope != null && !scope.isEmpty()) return scope;
-            if (profileUid == null || profileUid.isEmpty() || !profileQueue()) return scope;
-            return PROFILE_SCOPE + profileUid;
+            String profile = profileUid != null && !profileUid.isEmpty() ? profileUid : pageUid;
+            if (profile == null || profile.isEmpty() || !profileQueue()) return scope;
+            return PROFILE_SCOPE + profile;
         } catch (Throwable error) {
             Logger.printException(() -> "Could not choose a background queue for a profile page", error);
             return scope;
@@ -89,7 +94,9 @@ public final class DetailAutoAdvance {
     /** TikTok's mode for the queue, read once a process; a page needs it on to use the queue. */
     public static int collectionMode(int served) {
         try {
-            return served < QUEUE_ON && profileQueue() ? QUEUE_ON : served;
+            int mode = served < QUEUE_ON && profileQueue() ? QUEUE_ON : served;
+            Logger.printDebug(() -> "Background queue mode " + served + " -> " + mode);
+            return mode;
         } catch (Throwable error) {
             Logger.printException(() -> "Could not read the background queue settings", error);
             return served;
@@ -103,6 +110,7 @@ public final class DetailAutoAdvance {
      */
     public static boolean backgroundNext(boolean hasNext, Object queue, String id) {
         try {
+            Logger.printDebug(() -> "Background queue end of " + id + " hasNext " + hasNext);
             if (!hasNext || !Settings.AUTO_ADVANCE.get()) return hasNext;
             if (SessionBudget.isLocked() || FeedLock.linkVideoAlone()) return false;
             if (queue == null || id == null) return true;

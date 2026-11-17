@@ -52,6 +52,7 @@ internal const val QUEUE_END_STATE = "hasNext="
 internal const val BACKGROUND_SCOPE = "hushfeedBackgroundScope"
 internal const val FOREGROUND_SCOPE = "hushfeedForegroundScope"
 private const val PROFILE_UID = "getFromProfileUid"
+internal const val PAGE_UID = "getUid"
 private val SCOPE_READS = setOf("getVideoCollectionId", PROFILE_UID, "isOwnCollection")
 
 /** Where the player records which page owns the video it selects (09j5.LJ on 47.8.3). */
@@ -126,22 +127,33 @@ private fun scopeWrapper(scope: Method, name: String, registers: Int) = MutableM
     ),
 )
 
+/** The page parameters' read of the page's user, which a profile grid's page fills. */
+internal fun Method.isPageUidRead(): Boolean =
+    name == PAGE_UID && returnType == STRING && parameterTypes.isEmpty() && !AccessFlags.STATIC.isSet(accessFlags)
+
 /** The key for the places that start the queue: TikTok's, or a profile page's own when it has none. */
 internal fun backgroundScopeWrapper(scope: Method): MutableMethod {
     val uid = (scope.implementation?.instructions ?: emptyList()).firstOrNull {
         it.getReference<MethodReference>()?.name == PROFILE_UID
     } ?: throw PatchException("Auto advance: the background queue key no longer reads $PROFILE_UID.")
     val invoke = if (uid.opcode == Opcode.INVOKE_INTERFACE) "invoke-interface" else "invoke-virtual"
-    return scopeWrapper(scope, BACKGROUND_SCOPE, 3).apply {
+    val profileUid = uid.getReference<MethodReference>()!!
+    // A page opened from a profile's grid leaves the profile uid empty and names the profile as
+    // its user, the "userid" extra (#292 on the S22: every key read there had no profile uid).
+    val pageUid = "${profileUid.definingClass}->$PAGE_UID()$STRING"
+    return scopeWrapper(scope, BACKGROUND_SCOPE, 4).apply {
         addInstructions(0, """
             invoke-static {p0}, $scope
             move-result-object v0
             const/4 v1, 0x0
+            const/4 v2, 0x0
             if-eqz p0, :read
-            $invoke {p0}, ${uid.getReference<MethodReference>()}
+            $invoke {p0}, $profileUid
             move-result-object v1
+            $invoke {p0}, $pageUid
+            move-result-object v2
             :read
-            invoke-static {v0, v1}, $DETAIL->backgroundScope(${STRING}${STRING})$STRING
+            invoke-static {v0, v1, v2}, $DETAIL->backgroundScope(${STRING}${STRING}${STRING})$STRING
             move-result-object v0
             return-object v0
         """)
@@ -257,6 +269,10 @@ internal fun queueProfilePagesInBackground() {
         ?: throw PatchException("Auto advance: $SCOPED_REGISTRAR no longer reads the background queue key.")
     val owner = mutableClassDefBy(scope.definingClass)
     val background = backgroundScopeWrapper(scope).also { owner.methods.add(it) }
+    val params = scope.parameterTypes.single().toString()
+    if (classDefByOrNull(params)?.methods?.any { it.isPageUidRead() } != true) {
+        throw PatchException("Auto advance: the page parameters no longer have $PAGE_UID.")
+    }
     val foreground = foregroundScopeWrapper(scope).also { owner.methods.add(it) }
 
     var backgroundSites = 0

@@ -43,27 +43,38 @@ public class DetailAutoAdvanceQueueTest {
 
     @Test public void aProfilePageGetsAQueueKeyOfItsOwn() {
         bothOn();
-        assertEquals(DetailAutoAdvance.PROFILE_SCOPE + "6890", DetailAutoAdvance.backgroundScope(null, "6890"));
-        assertEquals(DetailAutoAdvance.PROFILE_SCOPE + "6890", DetailAutoAdvance.backgroundScope("", "6890"));
+        assertEquals(DetailAutoAdvance.PROFILE_SCOPE + "6890", DetailAutoAdvance.backgroundScope(null, "6890", null));
+        assertEquals(DetailAutoAdvance.PROFILE_SCOPE + "6890", DetailAutoAdvance.backgroundScope("", "6890", null));
+    }
+
+    /** A page opened from a profile's grid names the profile only as the page's user (S22 trace). */
+    @Test public void aProfileGridPageGetsAKeyFromItsUser() {
+        bothOn();
+        assertEquals(DetailAutoAdvance.PROFILE_SCOPE + "7123", DetailAutoAdvance.backgroundScope(null, null, "7123"));
+        assertEquals(DetailAutoAdvance.PROFILE_SCOPE + "7123", DetailAutoAdvance.backgroundScope("", "", "7123"));
+        // The route that says which profile it came from wins over the page's user.
+        assertEquals(DetailAutoAdvance.PROFILE_SCOPE + "6890", DetailAutoAdvance.backgroundScope(null, "6890", "7123"));
+        Settings.BACKGROUND_PLAY.save(false);
+        assertNull(DetailAutoAdvance.backgroundScope(null, null, "7123"));
     }
 
     @Test public void tikToksOwnKeyIsKept() {
         bothOn();
-        assertEquals("collection-12", DetailAutoAdvance.backgroundScope("collection-12", "6890"));
+        assertEquals("collection-12", DetailAutoAdvance.backgroundScope("collection-12", "6890", null));
     }
 
     @Test public void aPageFromNoProfileKeepsTikToksAnswer() {
         bothOn();
-        assertNull(DetailAutoAdvance.backgroundScope(null, null));
-        assertEquals("", DetailAutoAdvance.backgroundScope("", ""));
+        assertNull(DetailAutoAdvance.backgroundScope(null, null, null));
+        assertEquals("", DetailAutoAdvance.backgroundScope("", "", null));
     }
 
     @Test public void eitherSwitchOffLeavesTheKeyAlone() {
         Settings.AUTO_ADVANCE.save(true);
-        assertNull(DetailAutoAdvance.backgroundScope(null, "6890"));
+        assertNull(DetailAutoAdvance.backgroundScope(null, "6890", null));
         Settings.AUTO_ADVANCE.save(false);
         Settings.BACKGROUND_PLAY.save(true);
-        assertNull(DetailAutoAdvance.backgroundScope(null, "6890"));
+        assertNull(DetailAutoAdvance.backgroundScope(null, "6890", null));
     }
 
     @Test public void tikToksNextOnScreenWaitsForAutoAdvance() {

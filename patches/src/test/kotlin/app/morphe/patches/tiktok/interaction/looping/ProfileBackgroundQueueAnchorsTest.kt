@@ -51,6 +51,33 @@ class ProfileBackgroundQueueAnchorsTest {
         }
     }
 
+    /**
+     * #292 on the S22: a page opened from a profile's grid had no profile uid at any key read, so
+     * it never got a key. The page parameters name that profile as the page's user instead, on
+     * the same class the key reads its profile uid from (where the wrapper calls both), and the
+     * detail page's intent parser fills it from the "userid" extra.
+     */
+    @Test
+    fun `the page parameters name a profile grid's user where the wrapper reads it`() {
+        Fixtures.forEachDeclared { apk ->
+            val all = classes(apk)
+            val scope = scopeOf(all)
+            val params = scope.parameterTypes.single().toString()
+            val profileRead = scope.implementation!!.instructions
+                .mapNotNull { it.getReference<MethodReference>() }
+                .first { it.name == "getFromProfileUid" }
+            assertEquals(params, profileRead.definingClass)
+            val byType = all.associateBy { it.type }
+            assertEquals(1, byType.getValue(params).methods.count { it.isPageUidRead() })
+            val fills = all.asSequence().flatMap { it.methods.asSequence() }.any { method ->
+                method.holds("userid") && method.implementation!!.instructions.any { call ->
+                    call.getReference<MethodReference>()?.let { it.definingClass == params && it.name == "setUid" } == true
+                }
+            }
+            assertTrue("no detail parser fills $PAGE_UID from \"userid\"", fills)
+        }
+    }
+
     @Test
     fun `every read of the queue key is moved or kept on purpose`() {
         Fixtures.forEachDeclared { apk ->

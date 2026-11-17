@@ -1,3 +1,7 @@
+/*
+ * Copyright 2026 Hushfeed contributors
+ * https://github.com/SysAdminDoc/hushfeed
+ */
 package app.morphe.extension.tiktok.speed;
 
 import android.view.MotionEvent;

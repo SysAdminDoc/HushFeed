@@ -44,6 +44,8 @@ internal const val NICKNAME_REPAINT = "LX/0PQj;"
 internal const val NAVBAR_NICKNAME_OWNER = "Lcom/ss/android/ugc/profile/business/ur/ProfileNavbarNickNameProtocol;"
 internal const val NAVBAR_NICKNAME_REPAINT = "LX/0POH;"
 internal const val NAVBAR_ADD_NAME_REPAINT = "LX/0POI;"
+/** Where both navbar repaint callbacks keep their navbar, shared by the bridge and the site checks so a retarget moves both. */
+internal const val NAVBAR_REPAINT_OWNER = "LLJJIJIIJIL:$NAVBAR_NICKNAME_OWNER"
 internal const val NICKNAME_DATA = "Lcom/ss/android/ugc/profile/business/ur/platform/NickNameData;"
 internal const val ADD_NAME_VIEW = "LX/0hTk;"
 internal const val BADGE_ICON = "LX/04cI;"
@@ -279,7 +281,7 @@ internal fun Method.navbarRepaintSite(): Int? {
     if (definingClass != NAVBAR_NICKNAME_REPAINT || !isInstance("LIZ", "V", emptyList(), 9)) return null
     val code = implementation!!.instructions.toList()
     return code.indices.singleOrNull { at -> at >= 2 && at + 4 < code.size &&
-        code[at - 2].getReference<FieldReference>()?.toString() == "$NAVBAR_NICKNAME_REPAINT->LLJJIJIIJIL:$NAVBAR_NICKNAME_OWNER" &&
+        code[at - 2].getReference<FieldReference>()?.toString() == "$NAVBAR_NICKNAME_REPAINT->$NAVBAR_REPAINT_OWNER" &&
         code[at - 2].namedRegisters() == listOf(3, 8) &&
         code[at - 1].getReference<FieldReference>()?.toString() == "$NAVBAR_NICKNAME_REPAINT->LLJJIJIL:$INTEGER" &&
         code[at - 1].namedRegisters() == listOf(0, 8) &&
@@ -300,7 +302,7 @@ internal fun Method.nullableNavbarCapture(): Boolean {
     val code = implementation!!.instructions.toList()
     if (code.map { it.opcode } != listOf(Opcode.IPUT_OBJECT, Opcode.IPUT_OBJECT, Opcode.IPUT_OBJECT,
             Opcode.IPUT_OBJECT, Opcode.IPUT, Opcode.IPUT_OBJECT, Opcode.INVOKE_DIRECT, Opcode.RETURN_VOID)) return false
-    val fields = listOf("LL:$TEXT_VIEW", "LLJJIJI:$OBJECT_REF", "LLJJIJIIJIL:$NAVBAR_NICKNAME_OWNER",
+    val fields = listOf("LL:$TEXT_VIEW", "LLJJIJI:$OBJECT_REF", NAVBAR_REPAINT_OWNER,
         "LLJJIJIL:$INTEGER", "LLJJJ:I", "LLJJJIL:$STRING")
     return fields.indices.all { at -> code[at].getReference<FieldReference>()?.toString() == "$definingClass->${fields[at]}" &&
         code[at].namedRegisters() == listOf(at + 1, 0) } && code[6].calls("$OBJECT-><init>()V") && code[6].registers() == listOf(0)
@@ -311,7 +313,7 @@ internal fun Method.navbarAddNameRepaintSite(): Boolean {
     val code = implementation!!.instructions.toList()
     return code.indices.count { at -> at >= 3 && code[at].calls("$NAVBAR_NICKNAME_OWNER->LJLLLLLL(I$STRING$STRING)V") &&
         code[at].registers() == listOf(2, 1, 5, 0) &&
-        code[at - 3].getReference<FieldReference>()?.toString() == "$NAVBAR_ADD_NAME_REPAINT->LLJJIJIIJIL:$NAVBAR_NICKNAME_OWNER" &&
+        code[at - 3].getReference<FieldReference>()?.toString() == "$NAVBAR_ADD_NAME_REPAINT->$NAVBAR_REPAINT_OWNER" &&
         code[at - 3].namedRegisters() == listOf(2, 8) &&
         code[at - 2].getReference<FieldReference>()?.toString() == "$NAVBAR_ADD_NAME_REPAINT->LLJJJ:I" &&
         code[at - 2].namedRegisters() == listOf(1, 8) &&
@@ -489,7 +491,7 @@ internal fun nicknameBeginBridge(getter: Method, owner: String) = bridge(owner, 
 
 internal fun nicknameCurrentBridge(getter: Method, repaint: String) = bridge(repaint, APPEARANCE_CURRENT,
     emptyList(), "Z", 4, instructions = """
-        iget-object v0, p0, $repaint->${if (repaint == NICKNAME_REPAINT) "LL:$NICKNAME_OWNER" else "LLJJIJIL:$NAVBAR_NICKNAME_OWNER"}
+        iget-object v0, p0, $repaint->${if (repaint == NICKNAME_REPAINT) "LL:$NICKNAME_OWNER" else NAVBAR_REPAINT_OWNER}
         if-eqz v0, :stale
         ${uidRead(getter, 1, 3, "identity_ready", "v0")}
         :identity_ready

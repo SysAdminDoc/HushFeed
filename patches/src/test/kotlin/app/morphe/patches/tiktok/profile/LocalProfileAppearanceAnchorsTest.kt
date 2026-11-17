@@ -225,6 +225,51 @@ class LocalProfileAppearanceAnchorsTest {
         }
     }
 
+    @Test fun `every bridge reads only fields and calls only methods the declared build has`() {
+        Fixtures.forEachDeclared { apk ->
+            val found = find(apk)
+            val classes = found.classes
+            val protocolGetter = classes.getValue(PROFILE_PROTOCOL).commonInfoGetter()!!
+            val legacyGetter = classes.getValue(BASE_UI_COMPONENT).commonInfoGetter()!!
+            val identity = classes.getValue(LEGACY_NICKNAME_OWNER).userNameIdentity()!!.name
+            // The same set the patch adds to the host's classes.
+            val bridges: List<Method> = buildList {
+                add(legacyAppearanceBridge(legacyGetter, found.legacy.second.original, identity))
+                for (owner in listOf(NICKNAME_OWNER, NAVBAR_NICKNAME_OWNER)) {
+                    add(nicknameAppearanceBridge(protocolGetter, owner))
+                    add(nicknameRenderBridge(owner))
+                    add(nicknameBeginBridge(protocolGetter, owner))
+                    add(nicknameAppendBridge(protocolGetter, owner))
+                }
+                add(nicknameAddNameBridge())
+                add(nicknameCachedBridge())
+                for (callback in listOf(NICKNAME_REPAINT, NAVBAR_NICKNAME_REPAINT, NAVBAR_ADD_NAME_REPAINT)) {
+                    add(nicknameCurrentBridge(protocolGetter, callback))
+                }
+                add(noticeAppearanceBridge(protocolGetter))
+            }
+            fun Method.matches(ref: MethodReference) = name == ref.name && returnType == ref.returnType &&
+                parameterTypes.map { it.toString() } == ref.parameterTypes.map { it.toString() }
+            val missing = bridges.flatMap { bridge ->
+                bridge.implementation!!.instructions.mapNotNull { instruction ->
+                    val field = instruction.getReference<FieldReference>()
+                    val call = instruction.getReference<MethodReference>()
+                    when {
+                        field != null && field.definingClass in classes && hierarchy(classes, field.definingClass).none { owner ->
+                            owner.fields.any { it.name == field.name && it.type == field.type } } ->
+                            "${bridge.definingClass}->${bridge.name} reads $field"
+                        call != null && call.definingClass in classes && hierarchy(classes, call.definingClass).none { owner ->
+                            owner.methods.any { it.matches(call) } } &&
+                            bridges.none { it.definingClass == call.definingClass && it.matches(call) } ->
+                            "${bridge.definingClass}->${bridge.name} calls $call"
+                        else -> null
+                    }
+                }
+            }
+            assertEquals("references the build doesn't have", emptyList<String>(), missing)
+        }
+    }
+
     @Test fun `native unresolved resource joins do not prove absent verification metadata`() {
         Fixtures.forEachDeclared { apk ->
             val found = find(apk)
@@ -553,6 +598,20 @@ class LocalProfileAppearanceAnchorsTest {
         return checkNotNull(Regex("""VERIFIED_BADGE = 0x([0-9a-f]{8});""").find(source.readText())) {
             "LocalProfileAppearance no longer declares VERIFIED_BADGE"
         }.groupValues[1].toLong(16).toInt()
+    }
+
+    /** The class and every superclass and interface the build itself defines. */
+    private fun hierarchy(classes: Map<String, ClassDef>, type: String): List<ClassDef> {
+        val out = mutableListOf<ClassDef>()
+        val todo = ArrayDeque(listOf(type))
+        val seen = mutableSetOf<String>()
+        while (todo.isNotEmpty()) {
+            val current = classes[todo.removeFirst().takeIf(seen::add) ?: continue] ?: continue
+            out += current
+            current.superclass?.let(todo::add)
+            todo += current.interfaces
+        }
+        return out
     }
 
     private fun addressIndex(code: List<Instruction>, address: Int): Int =

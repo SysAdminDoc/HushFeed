@@ -1436,6 +1436,11 @@ TikTok closed three times within a minute of starting, so Hushfeed paused itself
 A file named hushfeed-safe-mode in TikTok's folder under Android/data paused Hushfeed. Your settings stay as they are.	Eine Datei namens hushfeed-safe-mode im TikTok-Ordner unter Android/data hat Hushfeed pausiert. Deine Einstellungen bleiben, wie sie sind.
 Turn Hushfeed back on	Hushfeed wieder einschalten
 Pause Hushfeed	Hushfeed pausieren
+Settings theme	Design der Einstellungen
+Match TikTok	Wie TikTok
+Always dark	Immer dunkel
+Always light	Immer hell
+Colors these settings and Hushfeed's own pop-ups.	Färbt diese Einstellungen und Hushfeeds eigene Pop-ups.
 Pause Hushfeed's switches after TikTok restarts. Your settings stay saved. Changes made when you patched, like the app's name or icon, stay.	Pausiere Hushfeeds Schalter nach dem Neustart von TikTok. Deine Einstellungen bleiben gespeichert. Was du beim Patchen geändert hast, etwa Name oder Symbol der App, bleibt.
 Hushfeed turns back on when TikTok restarts.	Hushfeed ist wieder aktiv, sobald TikTok neu startet.
 The file hushfeed-safe-mode couldn't be removed. Delete it from TikTok's folder under Android/data to turn Hushfeed back on.	Die Datei hushfeed-safe-mode konnte nicht entfernt werden. Lösche sie im TikTok-Ordner unter Android/data, um Hushfeed wieder einzuschalten.

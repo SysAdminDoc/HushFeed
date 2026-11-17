@@ -267,6 +267,8 @@ Also hide videos whose text stickers match a blocked caption word. Text stickers
 Also on opened videos,Also on opened videos
 Also replaces the saved region and country code TikTok sends with every request. Signing in still sends your real region. Your IP address and your account's own rules still apply.,Also replaces the saved region and country code TikTok sends with every request. Signing in still sends your real region. Your IP address and your account's own rules still apply.
 Also turns on TikTok's own Auto scroll for videos opened from search. Restart TikTok to apply this.,Also turns on TikTok's own Auto scroll for videos opened from search. Restart TikTok to apply this.
+Always dark,Always dark
+Always light,Always light
 Always show publish date,Always show publish date
 Always show the publish date in video author information. Restart TikTok to apply this.,Always show the publish date in video author information. Restart TikTok to apply this.
 Always upload in HD,Always upload in HD
@@ -452,6 +454,7 @@ Close with Back or a tap outside,Close with Back or a tap outside
 Collapsed,Collapsed
 Color commenter names,Color commenter names
 "Colors the description, the author's name and the post date on videos.","Colors the description, the author's name and the post date on videos."
+Colors these settings and Hushfeed's own pop-ups.,Colors these settings and Hushfeed's own pop-ups.
 "Comma separated names exactly as the row under a profile's bio shows them, such as TikTok Studio or Your orders. Restart TikTok to apply this.","Comma separated names exactly as the row under a profile's bio shows them, such as TikTok Studio or Your orders. Restart TikTok to apply this."
 Comment export failed,Comment export failed
 Comment media filename,Comment media filename
@@ -1307,6 +1310,7 @@ Manager,Manager
 Mark kept messages,Mark kept messages
 Mark saved videos,Mark saved videos
 Marked as not interested,Marked as not interested
+Match TikTok,Match TikTok
 Match locale and timezone to country,Match locale and timezone to country
 Match region fields in requests,Match region fields in requests
 Match text stickers too,Match text stickers too
@@ -1977,6 +1981,7 @@ Settings couldn't open,Settings couldn't open
 Settings couldn't refresh completely. Reopen settings and try again.,Settings couldn't refresh completely. Reopen settings and try again.
 Settings restored. Restart TikTok to apply all changes.,Settings restored. Restart TikTok to apply all changes.
 Settings restored. The Feature Gate Lab rules were for another TikTok version and were left out. Restart TikTok to apply all changes.,Settings restored. The Feature Gate Lab rules were for another TikTok version and were left out. Restart TikTok to apply all changes.
+Settings theme,Settings theme
 Several photos in one comment,Several photos in one comment
 Shade behind the status bar,Shade behind the status bar
 Shake to report,Shake to report

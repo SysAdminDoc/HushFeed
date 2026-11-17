@@ -1773,6 +1773,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         status.setTurnBackOnAction(this::turnHushfeedBackOn);
         screen.addPreference(status);
         screen.addPreference(pauseRow(context));
+        screen.addPreference(themeRow(context));
         if (Section.DIAGNOSTICS.isAvailable()) addMenu(screen, Section.DIAGNOSTICS);
         addAbout(screen);
         addReportProblem(screen);
@@ -2057,6 +2058,26 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
             return true;
         });
         return pause;
+    }
+
+    /**
+     * Settings theme (#434): these pages and Hushfeed's own pop-ups in TikTok's mode, or always
+     * dark or light. Every surface reads the palette as it paints, so the page is built again to
+     * repaint, and a recreated page comes back on the same rows.
+     */
+    private ChoicePreference themeRow(Context context) {
+        ChoicePreference theme = new ChoicePreference(context, "Settings theme", Settings.SETTINGS_THEME,
+                new String[]{"Match TikTok", "Always dark", "Always light"},
+                new String[]{"tiktok", "dark", "light"})
+                .withNote("Colors these settings and Hushfeed's own pop-ups.");
+        mark(theme, SettingsIcons.MOON);
+        theme.setOnPreferenceChangeListener((preference, value) -> {
+            Settings.SETTINGS_THEME.save(String.valueOf(value));
+            Activity activity = getActivity();
+            if (activity != null) activity.getWindow().getDecorView().post(activity::recreate);
+            return true;
+        });
+        return theme;
     }
 
     /** The paused status card's action: safe mode, the switch and the marker file all go. */

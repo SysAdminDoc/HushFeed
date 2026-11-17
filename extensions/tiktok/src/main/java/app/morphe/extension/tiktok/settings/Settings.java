@@ -134,6 +134,8 @@ public class Settings extends BaseSettings {
     // On by default: AMOLED dark theme is in a build only when it was picked, so black is the ask.
     // Off puts TikTok's own dark grays back at the next start (#372).
     public static final BooleanSetting AMOLED_DARK_MODE = new BooleanSetting("amoled_dark_mode", TRUE, true);
+    /** Colors of Hushfeed's settings and its own pop-ups: TikTok's mode, or always dark or light (#434). */
+    public static final StringSetting SETTINGS_THEME = new StringSetting("settings_theme", "tiktok");
     // Off by default: both patches are in the default selection, so the switch is the ask.
     public static final BooleanSetting TURN_OFF_HAPTICS = new BooleanSetting("turn_off_haptics", FALSE);
     public static final BooleanSetting TURN_OFF_SCREEN_TRANSITIONS =

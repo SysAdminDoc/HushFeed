@@ -1436,6 +1436,11 @@ TikTok closed three times within a minute of starting, so Hushfeed paused itself
 A file named hushfeed-safe-mode in TikTok's folder under Android/data paused Hushfeed. Your settings stay as they are.	ไฟล์ชื่อ hushfeed-safe-mode ในโฟลเดอร์ของ TikTok ภายใต้ Android/data ทำให้ Hushfeed หยุดทำงานชั่วคราว การตั้งค่าของคุณจะยังคงเหมือนเดิม
 Turn Hushfeed back on	เปิด Hushfeed อีกครั้ง
 Pause Hushfeed	หยุด Hushfeed ชั่วคราว
+Settings theme	ธีมของการตั้งค่า
+Match TikTok	ตาม TikTok
+Always dark	มืดเสมอ
+Always light	สว่างเสมอ
+Colors these settings and Hushfeed's own pop-ups.	กำหนดสีของการตั้งค่านี้และป๊อปอัปของ Hushfeed เอง
 Pause Hushfeed's switches after TikTok restarts. Your settings stay saved. Changes made when you patched, like the app's name or icon, stay.	หยุดสวิตช์ของ Hushfeed ชั่วคราวหลังจาก TikTok รีสตาร์ท การตั้งค่าของคุณจะยังคงบันทึกไว้ การเปลี่ยนแปลงที่ทำตอนแพตช์ เช่น ชื่อหรือไอคอนของแอป จะยังคงอยู่
 Hushfeed turns back on when TikTok restarts.	Hushfeed จะเปิดกลับมาทำงานอีกครั้งเมื่อ TikTok รีสตาร์ท
 The file hushfeed-safe-mode couldn't be removed. Delete it from TikTok's folder under Android/data to turn Hushfeed back on.	ไม่สามารถลบไฟล์ hushfeed-safe-mode ได้ โปรดลบไฟล์ดังกล่าวออกจากโฟลเดอร์ของ TikTok ภายใต้ Android/data เพื่อเปิด Hushfeed อีกครั้ง

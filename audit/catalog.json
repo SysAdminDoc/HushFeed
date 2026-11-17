@@ -14230,6 +14230,12 @@
     "default": "",
     "type": "string",
     "row": "(internal list behind the Hide Settings and privacy rows checklist, no row)"
+   },
+   {
+    "key": "settings_theme",
+    "default": "tiktok",
+    "type": "string",
+    "row": "Settings theme"
    }
   ],
   "surface": "settings",

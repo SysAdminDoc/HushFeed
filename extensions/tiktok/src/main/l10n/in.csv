@@ -1414,6 +1414,11 @@ Hushfeed is paused,Hushfeed dijeda
 A file named hushfeed-safe-mode in TikTok's folder under Android/data paused Hushfeed. Your settings stay as they are.,File bernama hushfeed-safe-mode di folder TikTok di dalam Android/data menjeda Hushfeed. Pengaturanmu tetap seperti semula.
 Turn Hushfeed back on,Aktifkan Hushfeed lagi
 Pause Hushfeed,Jeda Hushfeed
+Settings theme,Tema pengaturan
+Match TikTok,Ikuti TikTok
+Always dark,Selalu gelap
+Always light,Selalu terang
+Colors these settings and Hushfeed's own pop-ups.,Mewarnai pengaturan ini dan pop-up milik Hushfeed sendiri.
 "Pause Hushfeed's switches after TikTok restarts. Your settings stay saved. Changes made when you patched, like the app's name or icon, stay.","Jeda sakelar Hushfeed setelah TikTok dimulai ulang. Pengaturanmu tetap tersimpan. Perubahan yang dibuat saat kamu mem-patch, seperti nama atau ikon aplikasi, tetap ada."
 Hushfeed turns back on when TikTok restarts.,Hushfeed aktif lagi saat TikTok dimulai ulang.
 The file hushfeed-safe-mode couldn't be removed. Delete it from TikTok's folder under Android/data to turn Hushfeed back on.,File hushfeed-safe-mode tidak bisa dihapus. Hapus dari folder TikTok di dalam Android/data untuk mengaktifkan Hushfeed lagi.

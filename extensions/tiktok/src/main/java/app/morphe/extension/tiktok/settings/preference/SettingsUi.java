@@ -225,11 +225,23 @@ public final class SettingsUi {
         }
     }
 
-    /** Sync before painting any surface, since TikTok's theme can differ from the system's. */
+    /**
+     * Sync before painting any surface, since TikTok's theme can differ from the system's. The
+     * reader can hold Hushfeed's own screens dark or light whatever TikTok shows (#434).
+     */
     public static void syncDarkMode(Context context) {
         int nightMode = context.getResources().getConfiguration().uiMode
                 & Configuration.UI_MODE_NIGHT_MASK;
-        Utils.setIsDarkModeEnabled(nightMode == Configuration.UI_MODE_NIGHT_YES);
+        Utils.setIsDarkModeEnabled(darkFor(
+                app.morphe.extension.tiktok.settings.Settings.SETTINGS_THEME.get(),
+                nightMode == Configuration.UI_MODE_NIGHT_YES));
+    }
+
+    /** The Settings theme choice against TikTok's own mode: "dark" and "light" win, anything else follows TikTok. */
+    static boolean darkFor(String choice, boolean tiktokDark) {
+        if ("dark".equals(choice)) return true;
+        if ("light".equals(choice)) return false;
+        return tiktokDark;
     }
 
     public static boolean isDarkMode() {

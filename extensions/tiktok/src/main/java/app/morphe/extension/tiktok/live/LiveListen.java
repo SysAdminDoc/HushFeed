@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.function.Predicate;
 
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.tiktok.download.LiveSpeechAudio;
@@ -119,6 +118,11 @@ public final class LiveListen {
         return audio::stop;
     };
 
+    /** Whether Ghost mode hides you in a room. API 24's Predicate is above the payload's floor. */
+    interface Hidden {
+        boolean test(String room);
+    }
+
     private static final Handler HANDLER = new Handler(Looper.getMainLooper());
     private static final Runnable TICK = LiveListen::tick;
 
@@ -126,7 +130,7 @@ public final class LiveListen {
     static volatile AudioSource audioSource = NETWORK_AUDIO;
     static volatile Streams streams = LiveRoomStream::listenAddress;
     /** Rooms Ghost mode keeps you out of, whose stream fields come with the enter the eye sends. */
-    static volatile Predicate<String> hidden = LiveUnseen::hiding;
+    static volatile Hidden hidden = LiveUnseen::hiding;
     static volatile long nowForTests;
     static volatile Problem problem = Problem.NONE;
 

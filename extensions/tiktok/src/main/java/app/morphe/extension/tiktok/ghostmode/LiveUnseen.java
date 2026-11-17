@@ -24,7 +24,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 
 /**
  * Watch LIVEs unseen (#420). Opening a LIVE room sends TikTok's room enter request, and that is
@@ -214,6 +213,11 @@ public final class LiveUnseen {
         return room != null && enabled() && !revealed(room);
     }
 
+    /** Gets the outcome of {@link #reveal}. API 24's Consumer is above the payload's floor. */
+    public interface RevealDone {
+        void accept(Reveal outcome);
+    }
+
     /**
      * The eye tapped in {@code room}, shown by {@code page}: its enters go out from now on. When
      * an enter was held for it, the page enters the room again through TikTok's own enter, so the
@@ -221,7 +225,7 @@ public final class LiveUnseen {
      * the held enter is sent as it was, off the main thread, and the room keeps showing just the
      * video. {@code done} gets the outcome on the main thread.
      */
-    public static void reveal(Object page, String room, Consumer<Reveal> done) {
+    public static void reveal(Object page, String room, RevealDone done) {
         if (room == null) {
             Utils.runOnMainThread(() -> done.accept(Reveal.NEXT_TIME));
             return;

@@ -4828,6 +4828,55 @@
       ]
     },
     {
+      "name": "Group likes per comment",
+      "description": "Shows one row in the Inbox's Likes list for each comment or video people liked, with everyone counted, instead of a new row every few likes. Starts off. Turn it on in Hushfeed settings > Inbox.",
+      "category": "Inbox",
+      "use": true,
+      "dependencies": [
+        "Patch",
+        "Settings"
+      ],
+      "compatiblePackages": {
+        "com.zhiliaoapp.musically": [
+          "47.8.3"
+        ]
+      },
+      "compatibility": [
+        {
+          "name": "TikTok",
+          "packageName": "com.zhiliaoapp.musically",
+          "description": null,
+          "appIconColor": 16657493,
+          "signatures": [
+            "9041803e91bcb814b4b4399fb5c85a91640b755e5e8ba76813814bf4cf2ab5ba"
+          ],
+          "targets": [
+            {
+              "version": "47.8.3",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 2024708030,
+                "ARMEABI_V7A": 2024708030,
+                "X86": 2024708030,
+                "X86_64": 2024708030
+              }
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "bundle_activity_likes",
+          "title": "Default: bundle activity likes",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        }
+      ]
+    },
+    {
       "name": "Hide CAPTCHA popups",
       "description": "Skips the puzzle TikTok shows while you're just browsing. A puzzle right after you like, follow, comment or repost still shows, and so do sign-in, SMS and two-step checks. Starts off. Turn it on in Hushfeed settings > Feed screen, then restart TikTok.",
       "category": "Feed",

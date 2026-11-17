@@ -501,6 +501,8 @@ Entry %1$d has a field with the wrong data type.	รายการ %1$d มี�
 Entry %1$d isn't an object.	รายการ %1$d ไม่ใช่ออบเจ็กต์
 Errors	ข้อผิดพลาด
 Expand activity list	ขยายรายการกิจกรรม
+Group likes per comment	รวมยอดถูกใจตามความคิดเห็น
+Show one row for each comment or video people liked, with everyone who liked it counted, instead of a new row for every few likes. Applies the next time the Likes list loads.	แสดงหนึ่งแถวต่อความคิดเห็นหรือวิดีโอที่มีคนกดถูกใจ โดยนับทุกคนที่กดถูกใจ แทนที่จะขึ้นแถวใหม่ทุกครั้งที่ได้ถูกใจไม่กี่ครั้ง มีผลเมื่อโหลดรายการถูกใจครั้งถัดไป
 Explore or Community	สำรวจหรือชุมชน
 Export diagnostic report	ส่งออกรายงานการวินิจฉัย
 Export loaded values	ส่งออกค่าที่โหลดแล้ว

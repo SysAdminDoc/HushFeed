@@ -546,6 +546,8 @@ Entry %1$d has a field with the wrong data type.	В записи %1$d поле �
 Entry %1$d isn't an object.	Запись %1$d не является объектом.
 Errors	Ошибки
 Expand activity list	Развернуть список активности
+Group likes per comment	Группировать лайки по комментариям
+Show one row for each comment or video people liked, with everyone who liked it counted, instead of a new row for every few likes. Applies the next time the Likes list loads.	Показывает одну строку для каждого комментария или видео, которое понравилось людям, и учитывает всех, кто поставил лайк, вместо новой строки на каждые несколько лайков. Применяется при следующей загрузке списка лайков.
 Explore or Community	Обзор или Сообщество
 Export diagnostic report	Экспортировать диагностический отчёт
 Export loaded values	Экспортировать загруженные значения

@@ -565,6 +565,8 @@ Entry %1$d isn't an object.,条目 %1$d 不是对象.
 Errors,错误
 All loaded items are picked or saved. Scroll for more.,已加载的项目均已选中或保存，向下滚动查看更多.
 Expand activity list,展开活动列表
+Group likes per comment,按评论合并点赞
+"Show one row for each comment or video people liked, with everyone who liked it counted, instead of a new row for every few likes. Applies the next time the Likes list loads.",每条被点赞的评论或视频只显示一行，并计入所有点赞的人，而不是每隔几个赞就新增一行。下次加载点赞列表时生效.
 Explore or Community,探索或社区
 Export CSV,导出CSV
 Export JSON,导出JSON

@@ -592,6 +592,8 @@ Entry %1$d has a field with the wrong data type.,Mục %1$d có một trường 
 Entry %1$d isn't an object.,Mục %1$d không phải là một đối tượng.
 Errors,Lỗi
 Expand activity list,Mở rộng danh sách hoạt động
+Group likes per comment,Gộp lượt thích theo bình luận
+"Show one row for each comment or video people liked, with everyone who liked it counted, instead of a new row for every few likes. Applies the next time the Likes list loads.","Hiện một dòng cho mỗi bình luận hoặc video được mọi người thích, đếm đủ tất cả người đã thích, thay vì một dòng mới sau mỗi vài lượt thích. Áp dụng khi danh sách Lượt thích tải lần tới."
 Expanded,Đã mở rộng
 Explore or Community,Khám phá hoặc Cộng đồng
 Export CSV,Xuất CSV

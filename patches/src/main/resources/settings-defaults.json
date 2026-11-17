@@ -368,6 +368,9 @@
       "ghost_hide_typing",
       "ghost_hide_live_views"
     ],
+    "Group likes per comment": [
+      "bundle_activity_likes"
+    ],
     "Hide CAPTCHA popups": [
       "hide_browsing_captcha_popups"
     ],
@@ -1205,6 +1208,12 @@
       "key": "bottom_tab_name_shop",
       "type": "string",
       "default": ""
+    },
+    "bundle_activity_likes": {
+      "field": "BUNDLE_ACTIVITY_LIKES",
+      "key": "bundle_activity_likes",
+      "type": "boolean",
+      "default": false
     },
     "burn_in_guard": {
       "field": "BURN_IN_GUARD",

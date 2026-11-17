@@ -1436,6 +1436,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting PIN_MORE_CHATS =
             new BooleanSetting("pin_more_chats", FALSE, true);
     public static final BooleanSetting EXPAND_ACTIVITY_LIST = new BooleanSetting("expand_activity_list", FALSE);
+    /** Folds the Likes list's rows into one row per liked comment or video. Read per loaded page. */
+    public static final BooleanSetting BUNDLE_ACTIVITY_LIKES = new BooleanSetting("bundle_activity_likes", FALSE);
     /** Chat screen clutter. Each is off by default and read live when a chat opens. */
     public static final BooleanSetting HIDE_CHAT_CALL_BUTTONS =
             new BooleanSetting("hide_chat_call_buttons", FALSE);

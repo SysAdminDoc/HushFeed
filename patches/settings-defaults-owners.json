@@ -365,6 +365,9 @@
       "GHOST_HIDE_TYPING",
       "GHOST_HIDE_LIVE_VIEWS"
     ],
+    "Group likes per comment": [
+      "BUNDLE_ACTIVITY_LIKES"
+    ],
     "Hide already seen videos": [
       "HIDE_SEEN_VIDEOS",
       "SEEN_VIDEO_RETENTION_DAYS",

@@ -109,6 +109,10 @@ public class AndroidTargetChangesGuardTest {
                     "safe: writes the search results' mItems, friendFeedData and, since #12, the "
                             + "Following feed's items field (mItems up to 46.8.3, items from "
                             + "46.9.3), each an instance field on the response the hook was given"),
+            new ReviewedWrites("inbox/ActivityLikeBundler.java", 1,
+                    "safe: write() refuses a static field, then writes mergeCount and fromUsers on "
+                            + "a like row's title template and hasRead on the row and its template, "
+                            + "all instances in the Likes page TikTok just received"),
             new ReviewedWrites("live/LivePanelTheme.java", 2,
                     "safe: writes a LIVE profile card label's background and that background's "
                             + "colorCode, and lightLabel() skips either field when it's static"),
@@ -249,8 +253,9 @@ public class AndroidTargetChangesGuardTest {
         // LIVE profile card label writes for #159, and the grid sort chip's re-sort for #180.
         // Four LIVE Audio only row writes for #265 on 2026-11-05, two Discover tab writes for #98.
         // The grid search's reshow on 2026-11-10, App lock's watched window list on 2026-11-12.
-        // Tap to remove's fixed-list grid copy on 2026-11-17.
-        assertEquals("the audit counted twenty-five reflective writes on 2026-11-17", 25, total);
+        // Tap to remove's fixed-list grid copy on 2026-11-17, Group likes per comment's folded rows
+        // the same day.
+        assertEquals("the audit counted twenty-six reflective writes on 2026-11-17", 26, total);
     }
 
     @Test

@@ -501,6 +501,8 @@ Entry %1$d has a field with the wrong data type.	Eintrag %1$d enthält ein Feld 
 Entry %1$d isn't an object.	Eintrag %1$d ist kein Objekt.
 Errors	Fehler
 Expand activity list	Aktivitätsliste ausklappen
+Group likes per comment	Likes pro Kommentar bündeln
+Show one row for each comment or video people liked, with everyone who liked it counted, instead of a new row for every few likes. Applies the next time the Likes list loads.	Zeigt eine Zeile pro Kommentar oder Video, das Leuten gefällt, und zählt alle mit, die es geliked haben, statt alle paar Likes eine neue Zeile. Gilt beim nächsten Laden der Likes-Liste.
 Explore or Community	Entdecken oder Community
 Export diagnostic report	Diagnosebericht exportieren
 Export loaded values	Geladene Werte exportieren

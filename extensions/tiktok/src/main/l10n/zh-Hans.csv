@@ -2860,3 +2860,9 @@ Hide view counts on profile grids,在个人资料网格上隐藏观看次数
 Video bitrate limit,视频码率上限
 %1$s Mb/s,%1$s Mb/s
 "A video heavier than this plays a lighter version. If none fits, it plays its lightest one.",超过此值的视频会播放较轻的版本。如果都不符合，就播放最轻的版本.
+Use an imported emoji font,使用导入的表情字体
+"Shows emoji in the font file you import below, whichever font the text is in. Restart TikTok to see the change.",无论文字使用哪种字体，都用你在下面导入的字体文件显示表情。重启 TikTok 即可看到变化.
+Import an emoji font file,导入表情字体文件
+Remove the imported emoji font,删除导入的表情字体
+No emoji font is imported,没有导入表情字体
+%1$s is imported. Turn on Use an imported emoji font to see it.,%1$s 已导入。打开“使用导入的表情字体”即可查看它.

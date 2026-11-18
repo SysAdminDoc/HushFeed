@@ -879,7 +879,8 @@
     "Use system font": [
       "SYSTEM_FONT",
       "SYSTEM_EMOJI",
-      "IMPORTED_FONT"
+      "IMPORTED_FONT",
+      "IMPORTED_EMOJI_FONT"
     ],
     "Account cleanup": [
       "TAP_TO_REMOVE"

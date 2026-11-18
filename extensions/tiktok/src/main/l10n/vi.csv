@@ -2860,3 +2860,9 @@ Hide view counts on profile grids,Ẩn số lượt xem trên lưới trang cá 
 Video bitrate limit,Giới hạn bitrate video
 %1$s Mb/s,%1$s Mb/s
 "A video heavier than this plays a lighter version. If none fits, it plays its lightest one.","Video nặng hơn sẽ phát bản nhẹ hơn. Nếu không có bản nào phù hợp, video sẽ phát bản nhẹ nhất."
+Use an imported emoji font,Sử dụng phông chữ emoji đã nhập
+"Shows emoji in the font file you import below, whichever font the text is in. Restart TikTok to see the change.","Hiển thị emoji bằng tệp phông chữ bạn nhập bên dưới, dù văn bản dùng phông chữ nào. Khởi động lại TikTok để xem thay đổi."
+Import an emoji font file,Nhập tệp phông chữ emoji
+Remove the imported emoji font,Xóa phông chữ emoji đã nhập
+No emoji font is imported,Chưa nhập phông chữ emoji nào
+%1$s is imported. Turn on Use an imported emoji font to see it.,"%1$s đã được nhập. Bật ""Sử dụng phông chữ emoji đã nhập"" để xem."

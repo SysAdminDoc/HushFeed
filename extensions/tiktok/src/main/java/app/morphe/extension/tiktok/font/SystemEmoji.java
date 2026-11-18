@@ -48,7 +48,8 @@ public final class SystemEmoji {
      */
     public static boolean leaveToDevice() {
         try {
-            boolean on = Settings.SYSTEM_EMOJI.get();
+            // An imported emoji font is reached the same way, through the text face (#458).
+            boolean on = Settings.SYSTEM_EMOJI.get() || EmojiFont.active();
             // Reported whichever way the switch is set, so an export separates "patch not
             // present" from "present and off" from "present and leaving emoji to the device".
             HookStatus.bound(HOOK_FAMILY, on ? "device" : "emojicompat");

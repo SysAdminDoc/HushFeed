@@ -882,7 +882,8 @@
     "Use system font": [
       "system_font",
       "system_emoji",
-      "imported_font"
+      "imported_font",
+      "imported_emoji_font"
     ]
   },
   "settings": {
@@ -3051,6 +3052,12 @@
       "default": 0,
       "minimum": 0,
       "maximum": 240
+    },
+    "imported_emoji_font": {
+      "field": "IMPORTED_EMOJI_FONT",
+      "key": "imported_emoji_font",
+      "type": "boolean",
+      "default": false
     },
     "imported_font": {
       "field": "IMPORTED_FONT",

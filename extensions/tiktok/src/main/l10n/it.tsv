@@ -3015,3 +3015,9 @@ Takes the view count and its play icon off each video on profile grids. Dates, l
 Video bitrate limit	Limite di bitrate dei video
 %1$s Mb/s	%1$s Mb/s
 A video heavier than this plays a lighter version. If none fits, it plays its lightest one.	Un video più pesante viene riprodotto in una versione più leggera. Se nessuna rientra, viene riprodotta la più leggera.
+Use an imported emoji font	Usa un carattere emoji importato
+Shows emoji in the font file you import below, whichever font the text is in. Restart TikTok to see the change.	Mostra le emoji con il file di carattere che importi qui sotto, qualunque sia il carattere del testo. Riavvia TikTok per vedere la modifica.
+Import an emoji font file	Importa un file di carattere emoji
+Remove the imported emoji font	Rimuovi il carattere emoji importato
+No emoji font is imported	Nessun carattere emoji importato
+%1$s is imported. Turn on Use an imported emoji font to see it.	%1$s è stato importato. Attiva Usa un carattere emoji importato per vederlo.

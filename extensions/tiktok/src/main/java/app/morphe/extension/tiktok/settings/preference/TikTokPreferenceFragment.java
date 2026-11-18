@@ -325,9 +325,9 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
     }
 
     /** Import a font file, whose picker answers the page that asked. */
-    public static void openImportedFontPicker() {
+    public static void openImportedFontPicker(boolean emoji) {
         if (activeFragment != null && activeFragment.isAdded()) {
-            ImportedFontPreference.pickFile(activeFragment);
+            ImportedFontPreference.pickFile(activeFragment, emoji);
         } else {
             SettingsActionBanner.showNotice(Utils.getContext(), L10n.t(
                     "Reopen Hushfeed settings, then choose the file"));

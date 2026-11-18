@@ -37,6 +37,7 @@ source,target
 %1$s is a kind of value the Lab can't override.,%1$s is a kind of value the Lab can't override.
 %1$s is already hidden,%1$s is already hidden
 %1$s is imported. Restart TikTok to see it.,%1$s is imported. Restart TikTok to see it.
+%1$s is imported. Turn on Use an imported emoji font to see it.,%1$s is imported. Turn on Use an imported emoji font to see it.
 %1$s is imported. Turn on Use an imported font to see it.,%1$s is imported. Turn on Use an imported font to see it.
 %1$s is removed,%1$s is removed
 %1$s is removed. Restart TikTok to see the change.,%1$s is removed. Restart TikTok to see the change.
@@ -1122,6 +1123,7 @@ Icon changed,Icon changed
 "If that name is taken, Hushfeed adds a number to the new file.","If that name is taken, Hushfeed adds a number to the new file."
 "If the feed's video blinks as you swipe with See-through bottom bar on, this draws it inside TikTok instead of on a layer of its own. It can use a little more battery. Needs See-through bottom bar.","If the feed's video blinks as you swipe with See-through bottom bar on, this draws it inside TikTok instead of on a layer of its own. It can use a little more battery. Needs See-through bottom bar."
 Import a font file,Import a font file
+Import an emoji font file,Import an emoji font file
 Import finished,Import finished
 Import loaded values,Import loaded values
 Import watch history,Import watch history
@@ -1427,6 +1429,7 @@ No creator to hide on this video,No creator to hide on this video
 No current value,No current value
 No current value and no active override,No current value and no active override
 No delay,No delay
+No emoji font is imported,No emoji font is imported
 No folder picker here. Type the folder in the row.,No folder picker here. Type the folder in the row.
 No font is imported,No font is imported
 "No full file at this quality, so TikTok saves it","No full file at this quality, so TikTok saves it"
@@ -1791,6 +1794,7 @@ Remove rings on the feed,Remove rings on the feed
 Remove selected comments,Remove selected comments
 Remove story rings,Remove story rings
 Remove the LIVE ring,Remove the LIVE ring
+Remove the imported emoji font,Remove the imported emoji font
 Remove the imported font,Remove the imported font
 Remove watermark,Remove watermark
 Removed %1$s,Removed %1$s
@@ -2150,6 +2154,7 @@ Shows Add to Story in the share sheet and on stories even when the creator turne
 Shows TikTok's text in your phone's font instead of TikTok Sans. Icons and gift animations keep their own fonts. Restart TikTok to see the change.,Shows TikTok's text in your phone's font instead of TikTok Sans. Icons and gift animations keep their own fonts. Restart TikTok to see the change.
 "Shows a search button at the top left of the comments instead of the box, so the comments get that room back. Tap it to search, and tap it again to put the box away. Search within comments must be on.","Shows a search button at the top left of the comments instead of the box, so the comments get that room back. Tap it to search, and tap it again to put the box away. Search within comments must be on."
 "Shows a small count under TikTok's top tabs of what the feed filter has removed since TikTok started. It shows only on the feed, and taps on it go through to the video under it.","Shows a small count under TikTok's top tabs of what the feed filter has removed since TikTok started. It shows only on the feed, and taps on it go through to the video under it."
+"Shows emoji in the font file you import below, whichever font the text is in. Restart TikTok to see the change.","Shows emoji in the font file you import below, whichever font the text is in. Restart TikTok to see the change."
 Shows every emoji in your phone's own emoji font. The newest emoji your phone doesn't have yet may show as a box or in pieces.,Shows every emoji in your phone's own emoji font. The newest emoji your phone doesn't have yet may show as a box or in pieces.
 Shows the Duet and Stitch options even when the creator turned them off. TikTok may still refuse to accept the result.,Shows the Duet and Stitch options even when the creator turned them off. TikTok may still refuse to accept the result.
 "Shows the country's flag in place of its two letters, by the creator's name and by a commenter's time.","Shows the country's flag in place of its two letters, by the creator's name and by a commenter's time."
@@ -2686,6 +2691,7 @@ Use TikTok for a while. A popup shows up here after TikTok first tries to show i
 "Use TikTok's own hold, pull down and release gesture to keep playing at the hold speed, 2x unless Playback sets another.","Use TikTok's own hold, pull down and release gesture to keep playing at the hold speed, 2x unless Playback sets another."
 Use a default playback speed,Use a default playback speed
 "Use a whole number from 0 to %1$s, or leave the field empty.","Use a whole number from 0 to %1$s, or leave the field empty."
+Use an imported emoji font,Use an imported emoji font
 Use an imported font,Use an imported font
 Use non-personalized search,Use non-personalized search
 Use screen lock,Use screen lock

@@ -39,12 +39,18 @@ import java.util.Locale;
  * a TrueType or OpenType signature, and Android has to build a face from it. Android 8 and 9
  * answer a file they can't read with {@link Typeface#DEFAULT} rather than an error, so that
  * answer counts as a refusal too.
+ *
+ * <p>The emoji font is a second file kept the same way, in a folder of its own so either can be
+ * replaced or removed alone ({@link #EMOJI}, #458). The static methods are the text font's.
  */
 public final class ImportedFont {
     /** The largest font file the import takes. Large CJK fonts run to about 16 MB. */
     public static final long MAX_BYTES = 20L * 1024 * 1024;
+    /** The largest emoji font. Color emoji are pictures, so these run far larger. */
+    public static final long EMOJI_MAX_BYTES = 200L * 1024 * 1024;
 
     static final String DIRECTORY = "hushfeed_fonts";
+    static final String EMOJI_DIRECTORY = "hushfeed_emoji_fonts";
     /** Where an import waits while it's checked. A dot name, so it's never taken for the font. */
     static final String INCOMING = ".incoming";
     /** The prefix the earlier font waits under while its replacement moves in. A dot name too. */
@@ -66,10 +72,12 @@ public final class ImportedFont {
 
     /** A checked file waiting to replace the imported font. */
     public static final class Incoming {
+        private final ImportedFont store;
         private final File file;
         private final String name;
 
-        private Incoming(File file, String name) {
+        private Incoming(ImportedFont store, File file, String name) {
+            this.store = store;
             this.file = file;
             this.name = name;
         }
@@ -113,7 +121,7 @@ public final class ImportedFont {
                         Logger.printDebug(() -> "Could not delete the earlier font " + aside.getName() + " yet");
                     }
                 }
-                forget();
+                store.drop();
             }
             return name;
         }
@@ -146,15 +154,23 @@ public final class ImportedFont {
     static volatile Moves moves = FILES;
 
     private static final Object LOCK = new Object();
+
+    /** The font TikTok's text is drawn in. */
+    public static final ImportedFont TEXT = new ImportedFont(DIRECTORY, MAX_BYTES);
+    /** The font emoji are drawn in. */
+    public static final ImportedFont EMOJI = new ImportedFont(EMOJI_DIRECTORY, EMOJI_MAX_BYTES);
+
+    private final String directoryName;
+    private final long maxBytes;
     /** Whether {@link #kept} holds this process's answer, a face or null. */
-    private static volatile boolean known;
-    private static volatile Typeface kept;
+    private volatile boolean known;
+    private volatile Typeface kept;
     /**
      * What the last look for the face found, in words, for the diagnostic export. Every way the
      * face can come back null says why here, so an export tells a file Android refused apart
      * from one that loaded and still didn't show (#346).
      */
-    private static volatile String outcome = "not looked for yet";
+    private volatile String outcome = "not looked for yet";
 
     /** A face from a file, or the reason there isn't one. */
     private static final class Attempt {
@@ -167,7 +183,14 @@ public final class ImportedFont {
         }
     }
 
-    private ImportedFont() {
+    private ImportedFont(String directoryName, long maxBytes) {
+        this.directoryName = directoryName;
+        this.maxBytes = maxBytes;
+    }
+
+    /** The largest file this font may be. */
+    public long limit() {
+        return maxBytes;
     }
 
     /**
@@ -176,6 +199,11 @@ public final class ImportedFont {
      * is asked from inside TikTok's font engine.
      */
     public static Typeface typeface() {
+        return TEXT.face();
+    }
+
+    /** This font's face, by the rules of {@link #typeface}. */
+    public Typeface face() {
         if (known) return kept;
         try {
             Context context = Utils.getContext();
@@ -208,17 +236,31 @@ public final class ImportedFont {
 
     /** What the last look for the face found, for the diagnostic export. */
     static String outcome() {
+        return TEXT.lastOutcome();
+    }
+
+    String lastOutcome() {
         return outcome;
     }
 
     /** The imported font's file name, or null when there is none. */
     public static String name(Context context) {
-        File file = file(context);
+        return TEXT.fileName(context);
+    }
+
+    /** This font's file name, or null when there is none. */
+    public String fileName(Context context) {
+        File file = fontFile(context);
         return file == null ? null : file.getName();
     }
 
     /** The imported font's file, or null when there is none. */
     static File file(Context context) {
+        return TEXT.fontFile(context);
+    }
+
+    /** This font's file, or null when there is none. */
+    File fontFile(Context context) {
         if (context == null) return null;
         synchronized (LOCK) {
             return storedFile(context);
@@ -233,6 +275,11 @@ public final class ImportedFont {
      * @throws Rejected when the file is too large or isn't a font Android can use.
      */
     public static Incoming receive(Context context, InputStream input, String displayName) throws IOException {
+        return TEXT.take(context, input, displayName);
+    }
+
+    /** Copies a file in and checks it for this font, by the rules of {@link #receive}. */
+    public Incoming take(Context context, InputStream input, String displayName) throws IOException {
         File directory = directory(context);
         if (!directory.isDirectory() && !directory.mkdirs()) {
             input.close();
@@ -241,11 +288,11 @@ public final class ImportedFont {
         File incoming = new File(directory, INCOMING);
         boolean accepted = false;
         try {
-            byte[] head = copy(input, incoming);
+            byte[] head = copy(input, incoming, maxBytes);
             String extension = extensionFor(head);
             if (extension == null || load(incoming).face == null) throw new Rejected(Reason.NOT_A_FONT);
             accepted = true;
-            return new Incoming(incoming, storedName(displayName, extension));
+            return new Incoming(this, incoming, storedName(displayName, extension));
         } finally {
             if (!accepted && incoming.exists() && !incoming.delete()) {
                 Logger.printDebug(() -> "Could not delete a refused font import");
@@ -255,6 +302,11 @@ public final class ImportedFont {
 
     /** Removes the imported font. True when there's none left afterwards. */
     public static boolean remove(Context context) {
+        return TEXT.clear(context);
+    }
+
+    /** Removes this font. True when there's none left afterwards. */
+    public boolean clear(Context context) {
         synchronized (LOCK) {
             boolean gone = true;
             File directory = directory(context);
@@ -264,13 +316,17 @@ public final class ImportedFont {
             if (gone) {
                 for (File file : fontFiles(directory)) gone &= moves.delete(file);
             }
-            forget();
+            drop();
             return gone;
         }
     }
 
     /** Drops the kept face, so the next ask reads the file again. Tests use it between cases. */
     static void forget() {
+        TEXT.drop();
+    }
+
+    void drop() {
         synchronized (LOCK) {
             kept = null;
             known = false;
@@ -278,12 +334,12 @@ public final class ImportedFont {
         }
     }
 
-    private static File directory(Context context) {
-        return new File(context.getFilesDir(), DIRECTORY);
+    private File directory(Context context) {
+        return new File(context.getFilesDir(), directoryName);
     }
 
     /** The imported font, the newest if a crash ever left two. Called holding {@link #LOCK}. */
-    private static File storedFile(Context context) {
+    private File storedFile(Context context) {
         File directory = directory(context);
         recover(directory);
         File newest = null;
@@ -329,8 +385,8 @@ public final class ImportedFont {
         return files == null ? new File[0] : files;
     }
 
-    /** Copies at most {@link #MAX_BYTES}, and hands back the first four bytes. */
-    private static byte[] copy(InputStream input, File target) throws IOException {
+    /** Copies at most {@code limit} bytes, and hands back the first four. */
+    private static byte[] copy(InputStream input, File target, long limit) throws IOException {
         byte[] head = new byte[4];
         int headLength = 0;
         long total = 0;
@@ -339,7 +395,7 @@ public final class ImportedFont {
             int read;
             while ((read = in.read(buffer)) != -1) {
                 total += read;
-                if (total > MAX_BYTES) throw new Rejected(Reason.TOO_LARGE);
+                if (total > limit) throw new Rejected(Reason.TOO_LARGE);
                 for (int index = 0; index < read && headLength < head.length; index++) {
                     head[headLength++] = buffer[index];
                 }

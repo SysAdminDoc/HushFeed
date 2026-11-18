@@ -131,6 +131,8 @@ public class Settings extends BaseSettings {
     // Use system font's hook draws TikTok's text in the imported font file while this is on and
     // the file loads; it wins over SYSTEM_FONT. The file itself lives in TikTok's files, not here.
     public static final BooleanSetting IMPORTED_FONT = new BooleanSetting("imported_font", FALSE, true);
+    // The same hook puts this file behind the text font, for emoji alone (#458).
+    public static final BooleanSetting IMPORTED_EMOJI_FONT = new BooleanSetting("imported_emoji_font", FALSE, true);
     // On by default: AMOLED dark theme is in a build only when it was picked, so black is the ask.
     // Off puts TikTok's own dark grays back at the next start (#372).
     public static final BooleanSetting AMOLED_DARK_MODE = new BooleanSetting("amoled_dark_mode", TRUE, true);

@@ -11,6 +11,7 @@ import android.preference.PreferenceScreen;
 
 import app.morphe.extension.tiktok.misc.EffectDeviceSpoof;
 import app.morphe.extension.tiktok.privacy.StoreIdentity;
+import app.morphe.extension.tiktok.font.EmojiFont;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 import app.morphe.extension.tiktok.settings.preference.AppIconPreference;
@@ -155,6 +156,17 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
             ));
             addPreference(ImportedFontPreference.pickRow(context));
             addPreference(ImportedFontPreference.removeRow(context));
+            if (android.os.Build.VERSION.SDK_INT >= EmojiFont.MIN_SDK) {
+                addPreference(new TogglePreference(
+                        context,
+                        "Use an imported emoji font",
+                        "Shows emoji in the font file you import below, whichever font the text "
+                                + "is in. Restart TikTok to see the change.",
+                        Settings.IMPORTED_EMOJI_FONT
+                ));
+                addPreference(ImportedFontPreference.emojiPickRow(context));
+                addPreference(ImportedFontPreference.emojiRemoveRow(context));
+            }
         }
         if (SettingsStatus.turnOffHapticsEnabled) {
             addPreference(new TogglePreference(

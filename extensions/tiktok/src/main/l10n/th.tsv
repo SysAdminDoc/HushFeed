@@ -3018,3 +3018,9 @@ Takes the view count and its play icon off each video on profile grids. Dates, l
 Video bitrate limit	จำกัดบิตเรตของวิดีโอ
 %1$s Mb/s	%1$s Mb/s
 A video heavier than this plays a lighter version. If none fits, it plays its lightest one.	วิดีโอที่หนักกว่านี้จะเล่นเวอร์ชันที่เบากว่า ถ้าไม่มีเวอร์ชันที่เข้าเกณฑ์ จะเล่นเวอร์ชันที่เบาที่สุด
+Use an imported emoji font	ใช้แบบอักษรอีโมจิที่นำเข้า
+Shows emoji in the font file you import below, whichever font the text is in. Restart TikTok to see the change.	แสดงอีโมจิด้วยไฟล์แบบอักษรที่คุณนำเข้าด้านล่างนี้ ไม่ว่าข้อความจะใช้แบบอักษรใด รีสตาร์ท TikTok เพื่อดูการเปลี่ยนแปลง
+Import an emoji font file	นำเข้าไฟล์แบบอักษรอีโมจิ
+Remove the imported emoji font	ลบแบบอักษรอีโมจิที่นำเข้า
+No emoji font is imported	ไม่ได้นำเข้าแบบอักษรอีโมจิ
+%1$s is imported. Turn on Use an imported emoji font to see it.	นำเข้า %1$s แล้ว เปิด "ใช้แบบอักษรอีโมจิที่นำเข้า" เพื่อดูการเปลี่ยนแปลง

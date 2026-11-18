@@ -88,20 +88,30 @@ public final class SystemFont {
         // from "present and off" from "present and swapping". The FONT section says which font.
         HookStatus.bound(HOOK_FAMILY, family == null ? "tiktok" : family == Typeface.DEFAULT ? "system" : "imported");
         report(family);
-        if (family == null) return original;
+        boolean emoji = EmojiFont.active();
+        if (family == null && !emoji) return original;
         try {
-            if (original == null) {
-                int[] request = REQUESTED.get();
-                return restyled(family, request[0], request[1] != 0);
-            }
-            if (Build.VERSION.SDK_INT >= 28) {
-                return Typeface.create(family, original.getWeight(), original.isItalic());
-            }
-            return Typeface.create(family, original.getStyle());
+            Typeface text = textFace(family, original);
+            if (!emoji) return text;
+            boolean imported = family != null && family != Typeface.DEFAULT;
+            return EmojiFont.over(text, imported ? ImportedFont.file(Utils.getContext()) : null);
         } catch (Throwable failure) {
             HookStatus.threw(HOOK_FAMILY, "systemize", failure);
             return original;
         }
+    }
+
+    /** The face text is drawn in: {@code family} at the weight wanted, or TikTok's own without one. */
+    private static Typeface textFace(Typeface family, Typeface original) {
+        if (family == null && original != null) return original;
+        if (original == null) {
+            int[] request = REQUESTED.get();
+            return restyled(family == null ? Typeface.DEFAULT : family, request[0], request[1] != 0);
+        }
+        if (Build.VERSION.SDK_INT >= 28) {
+            return Typeface.create(family, original.getWeight(), original.isItalic());
+        }
+        return Typeface.create(family, original.getStyle());
     }
 
     private static Typeface restyled(Typeface family, int weight, boolean italic) {
@@ -174,6 +184,9 @@ public final class SystemFont {
             File file = ImportedFont.file(context);
             lines.add("Imported file: " + (file == null ? "none" : file.getName() + ", " + file.length() + " bytes"));
             lines.add("Imported face: " + ImportedFont.outcome());
+            lines.add("Use an imported emoji font: " + (Settings.IMPORTED_EMOJI_FONT.savedValue() ? "on" : "off"));
+            String emoji = ImportedFont.EMOJI.fileName(context);
+            lines.add("Imported emoji font: " + (emoji == null ? "none" : emoji) + ", " + EmojiFont.outcome());
             lines.add("Faces built this run: " + IN_IMPORTED.get() + " in the imported font, "
                     + IN_SYSTEM.get() + " in the system font, " + IN_TIKTOK.get() + " in TikTok's own");
             String samsungStyle = samsungFontStyle(context);

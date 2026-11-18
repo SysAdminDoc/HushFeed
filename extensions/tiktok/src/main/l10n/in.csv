@@ -2862,3 +2862,9 @@ Hide view counts on profile grids,Sembunyikan jumlah tayangan di kisi profil
 Video bitrate limit,Batas bitrate video
 %1$s Mb/s,%1$s Mb/s
 "A video heavier than this plays a lighter version. If none fits, it plays its lightest one.","Video yang lebih berat diputar dalam versi lebih ringan. Jika tidak ada yang pas, diputar versi paling ringan."
+Use an imported emoji font,Gunakan font emoji yang diimpor
+"Shows emoji in the font file you import below, whichever font the text is in. Restart TikTok to see the change.","Menampilkan emoji dengan berkas font yang kamu impor di bawah, apa pun font teksnya. Mulai ulang TikTok untuk melihat perubahannya."
+Import an emoji font file,Impor berkas font emoji
+Remove the imported emoji font,Hapus font emoji yang diimpor
+No emoji font is imported,Belum ada font emoji yang diimpor
+%1$s is imported. Turn on Use an imported emoji font to see it.,%1$s sudah diimpor. Nyalakan Gunakan font emoji yang diimpor untuk melihatnya.

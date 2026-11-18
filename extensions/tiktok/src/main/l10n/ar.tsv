@@ -3262,3 +3262,9 @@ Takes the view count and its play icon off each video on profile grids. Dates, l
 Video bitrate limit	حد معدل البت للفيديو
 %1$s Mb/s	%1$s ميجابت/ث
 A video heavier than this plays a lighter version. If none fits, it plays its lightest one.	الفيديو الأثقل من هذا يعمل بنسخة أخف. إذا لم تناسبه أي نسخة، يعمل بأخف نسخة.
+Use an imported emoji font	استخدام خط إيموجي مستورد
+Shows emoji in the font file you import below, whichever font the text is in. Restart TikTok to see the change.	يعرض الإيموجي بملف الخط الذي تستورده أدناه، أيًا كان خط النص. أعد تشغيل TikTok لرؤية التغيير.
+Import an emoji font file	استيراد ملف خط إيموجي
+Remove the imported emoji font	أزل خط الإيموجي المستورد
+No emoji font is imported	لا يوجد خط إيموجي مستورد
+%1$s is imported. Turn on Use an imported emoji font to see it.	تم استيراد %1$s. فعّل «استخدام خط إيموجي مستورد» لرؤيته.

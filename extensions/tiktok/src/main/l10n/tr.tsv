@@ -3015,3 +3015,9 @@ Takes the view count and its play icon off each video on profile grids. Dates, l
 Video bitrate limit	Video bit hızı sınırı
 %1$s Mb/s	%1$s Mb/sn
 A video heavier than this plays a lighter version. If none fits, it plays its lightest one.	Daha ağır bir video daha hafif bir sürümle oynatılır. Hiçbiri uymazsa en hafif sürüm oynatılır.
+Use an imported emoji font	İçe aktarılan emoji yazı tipini kullan
+Shows emoji in the font file you import below, whichever font the text is in. Restart TikTok to see the change.	Metnin yazı tipi ne olursa olsun emojileri aşağıda içe aktardığınız yazı tipi dosyasıyla gösterir. Değişikliği görmek için TikTok'u yeniden başlatın.
+Import an emoji font file	Emoji yazı tipi dosyası içe aktar
+Remove the imported emoji font	İçe aktarılan emoji yazı tipini kaldır
+No emoji font is imported	İçe aktarılmış emoji yazı tipi yok
+%1$s is imported. Turn on Use an imported emoji font to see it.	%1$s içe aktarıldı. Görmek için İçe aktarılan emoji yazı tipini kullan ayarını açın.

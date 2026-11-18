@@ -29,6 +29,8 @@ public class PlaybackQualityTest {
     @Rule public final SettingsContextRule settingsContext = new SettingsContextRule();
     @After public void tearDown() {
         SettingsStatus.playbackQualityEnabled = false;
+        Settings.PLAYBACK_BITRATE_LIMIT.resetToDefault();
+        Settings.PLAYBACK_QUALITY.resetToDefault();
     }
     private static Map<String, Object> stream(String name, int width, int height, int rate) {
         return Map.of("gear_name", name, "vwidth", width, "vheight", height, "bitrate", rate,
@@ -39,6 +41,61 @@ public class PlaybackQualityTest {
                 "dynamic_type", "segment_base",
                 "dynamic_video_list", List.of(stream("1080p", 1080, 1920, 400), stream("360p", 360, 640, 100)),
                 "dynamic_audio_list", List.of(Map.of("file_id", "sound", "main_url", "https://example.com/audio"))));
+    }
+
+    /** #454: one heavy video drops to a lighter gear, and ordinary ones keep what they had. */
+    @Test public void theBitrateLimitTakesOutOnlyTheGearsOverIt() {
+        Utils.setContext(RuntimeEnvironment.getApplication());
+        PlaybackQuality.resetForTests();
+        var light = new AdvancedDownloadsTest.Gear("360p", 900_000, "https://example.com/light");
+        var middle = new AdvancedDownloadsTest.Gear("720p", 1_800_000, "https://example.com/middle");
+        var heavy = new AdvancedDownloadsTest.Gear("1080p", 50_000_000, "https://example.com/heavy");
+        var gears = List.of(heavy, middle, light);
+        Object cached = new Object();
+        Settings.PLAYBACK_QUALITY.save("auto");
+        assertSame("no limit leaves the list alone", gears, PlaybackQuality.filterVideoGears(gears));
+        assertSame(cached, PlaybackQuality.cacheModel(cached));
+
+        Settings.PLAYBACK_BITRATE_LIMIT.save("2");
+        assertEquals(List.of(middle, light), PlaybackQuality.filterVideoGears(gears));
+        assertEquals(List.of(middle, light), PlaybackQuality.filterPlayerUrlModelGears(gears));
+        assertNull("TikTok's parsed model would keep the heavy gear", PlaybackQuality.cacheModel(cached));
+        var ordinary = List.of(middle, light);
+        assertSame("nothing over the limit, nothing changes", ordinary, PlaybackQuality.filterVideoGears(ordinary));
+
+        var alsoHeavy = new AdvancedDownloadsTest.Gear("720p", 20_000_000, "https://example.com/also");
+        assertEquals("nothing fits, so the lightest plays", List.of(alsoHeavy),
+                PlaybackQuality.filterVideoGears(List.of(heavy, alsoHeavy)));
+
+        Settings.PLAYBACK_QUALITY.save("highest");
+        assertEquals("a chosen quality picks inside the limit", List.of(middle),
+                PlaybackQuality.filterVideoGears(gears));
+    }
+
+    @Test public void theBitrateLimitReachesTheAdaptiveModels() throws Exception {
+        Utils.setContext(RuntimeEnvironment.getApplication());
+        PlaybackQuality.resetForTests();
+        Map<String, Object> original = Map.of("video_id", "one", "dynamic_video", Map.of(
+                "dynamic_type", "segment_base",
+                "dynamic_video_list", List.of(stream("1080p", 1080, 1920, 50_000_000),
+                        stream("720p", 720, 1280, 1_800_000), stream("360p", 360, 640, 900_000)),
+                "dynamic_audio_list", List.of(Map.of("file_id", "sound", "main_url", "https://example.com/audio"))));
+        Settings.PLAYBACK_QUALITY.save("auto");
+        Settings.PLAYBACK_BITRATE_LIMIT.save("2");
+
+        Map<?, ?> dynamic = (Map<?, ?>) PlaybackQuality.filterMap(original).get("dynamic_video");
+        List<?> kept = (List<?>) dynamic.get("dynamic_video_list");
+        assertEquals(2, kept.size());
+        assertEquals("720p", ((Map<?, ?>) kept.get(0)).get("gear_name"));
+
+        String json = new JSONObject(original).toString();
+        var filtered = new JSONObject(PlaybackQuality.filterVideoModelJson(json)).getJSONObject("dynamic_video");
+        assertEquals(2, filtered.getJSONArray("dynamic_video_list").length());
+        assertEquals(1, filtered.getJSONArray("dynamic_audio_list").length());
+
+        Settings.PLAYBACK_BITRATE_LIMIT.save("1");
+        filtered = new JSONObject(PlaybackQuality.filterVideoModelJson(json)).getJSONObject("dynamic_video");
+        assertEquals("a new limit is read again", 1, filtered.getJSONArray("dynamic_video_list").length());
     }
 
     @Test public void listSelectionDoesNotMutateDownloadVariantsOrReenterNativeGetter() {
@@ -168,6 +225,7 @@ public class PlaybackQualityTest {
             new PlaybackPreferenceCategory(activity, screen);
             assertNotNull(screen.findPreference("playback_quality"));
             assertNotNull(screen.findPreference("playback_quality_metered"));
+            assertNotNull(screen.findPreference("playback_bitrate_limit"));
             activity.setPreferenceScreen(screen);
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             app.morphe.extension.tiktok.UiCapture.save(activity.getWindow().getDecorView(), "playback-settings.png");

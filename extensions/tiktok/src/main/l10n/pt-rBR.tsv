@@ -3012,3 +3012,6 @@ The Widget circle at the end of the stories tray goes. TikTok's home screen widg
 # context: Feed screen settings, a switch under Show video length on profile grids. It removes the view count and the play icon from each video tile on profile grids. If the date, video length or engagement rate are switched on, they take the first line instead.
 Hide view counts on profile grids	Esconder as visualizações na grade do perfil
 Takes the view count and its play icon off each video on profile grids. Dates, lengths and the engagement rate you turned on move up in its place.	Tira o número de visualizações e o ícone de play de cada vídeo na grade do perfil. Datas, durações e a taxa de engajamento que você ativou sobem para o lugar dele.
+Video bitrate limit	Limite de bitrate do vídeo
+%1$s Mb/s	%1$s Mb/s
+A video heavier than this plays a lighter version. If none fits, it plays its lightest one.	Um vídeo mais pesado toca em uma versão mais leve. Se nenhuma couber, toca a mais leve.

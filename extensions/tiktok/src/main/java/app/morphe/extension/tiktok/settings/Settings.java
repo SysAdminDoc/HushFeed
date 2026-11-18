@@ -148,6 +148,8 @@ public class Settings extends BaseSettings {
                     Setting.parent(AUTOMATIC_CLEAR_DISPLAY)).withRange(0, 30000);
     public static final StringSetting PLAYBACK_QUALITY = new StringSetting("playback_quality", "auto");
     public static final StringSetting PLAYBACK_QUALITY_METERED = new StringSetting("playback_quality_metered", "off");
+    /** The heaviest video to play, in Mb/s, or "off" (#454). */
+    public static final StringSetting PLAYBACK_BITRATE_LIMIT = new StringSetting("playback_bitrate_limit", "off");
     public static final BooleanSetting PLAY_SDR = new BooleanSetting("play_sdr", FALSE);
     public static final BooleanSetting PREFER_H264 = new BooleanSetting("prefer_h264", FALSE);
     public static final StringSetting DOWNLOAD_VIDEO_QUALITY = new StringSetting("download_video_quality", "auto");

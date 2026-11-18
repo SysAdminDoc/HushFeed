@@ -117,6 +117,39 @@ public final class PlaybackQuality {
         }
     }
 
+    /** The Video bitrate limit in bits a second, or 0 with none set (#454). */
+    static long bitrateCap() {
+        String limit = Settings.PLAYBACK_BITRATE_LIMIT.get();
+        if (limit == null || "off".equals(limit)) return 0;
+        try {
+            return Math.max(0, Long.parseLong(limit)) * 1_000_000L;
+        } catch (NumberFormatException ignored) {
+            return 0;
+        }
+    }
+
+    /**
+     * The gears a video may play under the limit, judged per video, so a clip with an ordinary
+     * bitrate keeps every gear it came with (#454). A gear that doesn't say its bitrate stays.
+     * With every gear over the limit, the lightest one that can play is what's left.
+     */
+    static List<?> underCap(List<?> gears, long cap) {
+        if (cap <= 0 || gears == null || gears.size() < 2) return gears;
+        List<Object> kept = new ArrayList<>(gears.size());
+        Object lightest = null;
+        long lightestRate = Long.MAX_VALUE;
+        for (Object gear : gears) {
+            long rate = QualitySelector.bitRateOf(gear);
+            if (rate <= cap) kept.add(gear);
+            if (rate > 0 && rate < lightestRate && QualitySelector.hasUsableAddress(gear)) {
+                lightest = gear;
+                lightestRate = rate;
+            }
+        }
+        if (kept.isEmpty() && lightest != null) kept.add(lightest);
+        return PreferredGears.narrow(gears, kept, "Video bitrate limit");
+    }
+
     private static boolean isMetered() {
         long now = SystemClock.elapsedRealtime();
         MeteredState cached = meteredState;
@@ -170,10 +203,20 @@ public final class PlaybackQuality {
      */
     private static List<?> filterGears(List<?> original, String owner, String member) {
         String mode = mode();
-        if (original == null || original.isEmpty() || "auto".equals(mode)) return original;
+        long cap = bitrateCap();
+        boolean automatic = "auto".equals(mode);
+        if (original == null || original.isEmpty() || (automatic && cap == 0)) return original;
         // With Prefer H.264 video or Play SDR instead of HDR on, the choice is made among the
-        // gears those switches keep, whichever of the setter hooks runs first.
-        List<?> offered = H264Playback.preferredGears(original);
+        // gears those switches keep, whichever of the setter hooks runs first. The bitrate
+        // limit then takes out what's too heavy for this video.
+        List<?> preferred = H264Playback.preferredGears(original);
+        List<?> offered = underCap(preferred, cap);
+        describeCap(owner, member, cap, preferred, offered);
+        if (automatic) {
+            // TikTok goes on choosing, among what the limit left.
+            HookStatus.bound(FAMILY, owner + '#' + member);
+            return offered;
+        }
         Object selected = QualitySelector.choose(offered, mode);
         if (selected == null) {
             HookStatus.missingMember(FAMILY, "playable gear list from", owner, member);
@@ -218,24 +261,41 @@ public final class PlaybackQuality {
         Logger.printInfo(() -> line);
     }
 
+    /** One line per kind of cut, with the rates, which is what shows the limit reads them right. */
+    private static void describeCap(String owner, String member, long cap, List<?> before, List<?> after) {
+        if (before == after) return;
+        String kind = "limit " + cap + '|' + owner + '#' + member + '|' + before.size() + '|' + after.size();
+        if (CHOICES.size() >= MAX_CHOICES) CHOICES.clear();
+        if (!CHOICES.add(kind)) return;
+        StringBuilder gears = new StringBuilder();
+        for (Object gear : before) {
+            if (gears.length() > 0) gears.append(", ");
+            gears.append(QualitySelector.describe(gear)).append(" at ").append(QualitySelector.bitRateOf(gear));
+        }
+        String line = "Video bitrate limit " + cap + " kept " + after.size() + " of " + before.size()
+                + " gears from " + owner + '#' + member + ": " + gears;
+        Logger.printInfo(() -> line);
+    }
+
     public static Object cacheModel(Object original) {
         // Native parsed objects can retain a previous quality. Rebuild them from the filtered model.
-        return "auto".equals(mode()) ? original : null;
+        return "auto".equals(mode()) && bitrateCap() == 0 ? original : null;
     }
 
     public static Map<?, ?> filterMap(Map<?, ?> original) {
         String mode = mode();
-        if (original == null || "auto".equals(mode)) return original;
+        long cap = bitrateCap();
+        if (original == null || ("auto".equals(mode) && cap == 0)) return original;
         Object raw = original.get("dynamic_video");
         if (!(raw instanceof Map<?, ?>)) return original;
         Map<?, ?> dynamic = (Map<?, ?>) raw;
         Object list = dynamic.get("dynamic_video_list");
         if (!(list instanceof List<?>) || ((List<?>) list).size() < 2) return original;
         List<?> variants = (List<?>) list;
-        int selected = select(variants, mode);
-        if (selected < 0) return original;
+        List<Object> kept = keptVariants(variants, mode, cap);
+        if (kept == null) return original;
         Map<Object, Object> filtered = new LinkedHashMap<>(dynamic);
-        filtered.put("dynamic_video_list", new ArrayList<>(Collections.singletonList(variants.get(selected))));
+        filtered.put("dynamic_video_list", kept);
         Map<Object, Object> result = new LinkedHashMap<>(original);
         result.put("dynamic_video", filtered);
         return result;
@@ -265,11 +325,12 @@ public final class PlaybackQuality {
      */
     private static String filterJson(String original, String owner, String getter) {
         String mode = mode();
-        if (original == null || "auto".equals(mode)) return original;
+        long cap = bitrateCap();
+        if (original == null || ("auto".equals(mode) && cap == 0)) return original;
         // The getter is part of what is cached. Both getters can hand back the same unusable
         // string, and without this the first one to arrive answers for the second and Hook
         // status names only one of them.
-        JsonKey key = new JsonKey(getter, mode, original);
+        JsonKey key = new JsonKey(getter, cap == 0 ? mode : mode + '@' + cap, original);
         synchronized (CACHE) {
             String cached = CACHE.get(key);
             if (cached != null) return cached;
@@ -303,9 +364,11 @@ public final class PlaybackQuality {
                 if (values != null && values.length() > 1) {
                     List<Object> variants = new ArrayList<>();
                     for (int i = 0; i < values.length(); i++) variants.add(values.get(i));
-                    int selected = select(variants, mode);
-                    if (selected >= 0) {
-                        dynamic.put("dynamic_video_list", new JSONArray().put(values.get(selected)));
+                    List<Object> kept = keptVariants(variants, mode, cap);
+                    if (kept != null) {
+                        JSONArray list = new JSONArray();
+                        for (Object variant : kept) list.put(variant);
+                        dynamic.put("dynamic_video_list", list);
                         result = root.toString();
                     }
                 }
@@ -344,11 +407,21 @@ public final class PlaybackQuality {
         parsedForTests = 0;
     }
 
-    private static int select(List<?> variants, String mode) {
+    /** The variants that stay under this quality and limit, or null when the list is fine as it is. */
+    private static List<Object> keptVariants(List<?> variants, String mode, long cap) {
         List<Variant> gears = new ArrayList<>();
         for (int i = 0; i < variants.size(); i++) gears.add(new Variant(variants.get(i), i));
-        Object selected = QualitySelector.choose(gears, mode);
-        return selected == null ? -1 : ((Variant) selected).index;
+        List<?> offered = underCap(gears, cap);
+        Object selected = QualitySelector.choose(offered, mode);
+        List<Object> kept = new ArrayList<>();
+        if (selected != null) {
+            kept.add(variants.get(((Variant) selected).index));
+        } else if (offered != gears) {
+            for (Object gear : offered) kept.add(variants.get(((Variant) gear).index));
+        } else {
+            return null;
+        }
+        return kept;
     }
 
     private static Object value(Object source, String key) {

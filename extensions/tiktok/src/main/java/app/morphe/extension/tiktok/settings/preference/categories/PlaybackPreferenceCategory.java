@@ -519,6 +519,16 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
             addPreference(new ChoicePreference(context, "On mobile data", Settings.PLAYBACK_QUALITY_METERED,
                     new String[]{"No limit", "Highest", "Lowest", "1080p", "720p", "540p", "480p", "360p"},
                     new String[]{"off", "highest", "lowest", "1080", "720", "540", "480", "360"}));
+            String[] limits = {"off", "1", "2", "4", "8", "16"};
+            String[] limitLabels = new String[limits.length];
+            limitLabels[0] = "No limit";
+            for (int i = 1; i < limits.length; i++) {
+                limitLabels[i] = L10n.f(context, "%1$s Mb/s", limits[i]);
+            }
+            addPreference(new ChoicePreference(context, "Video bitrate limit",
+                    Settings.PLAYBACK_BITRATE_LIMIT, limitLabels, limits)
+                    .withNote("A video heavier than this plays a lighter version. "
+                            + "If none fits, it plays its lightest one."));
         }
         if (SettingsStatus.sdrPlaybackEnabled) {
             addPreference(new TogglePreference(context, "Play SDR instead of HDR",

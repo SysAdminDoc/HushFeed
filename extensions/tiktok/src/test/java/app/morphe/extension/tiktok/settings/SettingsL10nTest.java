@@ -3507,6 +3507,8 @@ public class SettingsL10nTest {
     private static boolean isValueRatherThanProse(String text) {
         return text.matches("\\d+p")
                 || text.matches("\\d+(\\.\\d+)?x")
+                // Its key, %1$s Mb/s, is too nearly all placeholder for the template check.
+                || text.matches("\\d+ Mb/s")
                 || text.matches("[A-Za-z]+(/[A-Za-z0-9_-]+)+")
                 || text.matches(".*\\(\\d{5,6}\\)");
     }

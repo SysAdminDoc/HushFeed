@@ -2857,3 +2857,6 @@ Hide the Widget circle,隐藏小组件 (Widget) 圆圈
 The Widget circle at the end of the stories tray goes. TikTok's home screen widget still works.,故事托盘末尾的小组件 (Widget) 圆圈会消失。TikTok 的主屏幕小组件仍可正常使用.
 Hide view counts on profile grids,在个人资料网格上隐藏观看次数
 "Takes the view count and its play icon off each video on profile grids. Dates, lengths and the engagement rate you turned on move up in its place.",从个人资料网格上的每个视频移除观看次数及其播放图标。你开启的日期、时长和互动率会上移到它的位置.
+Video bitrate limit,视频码率上限
+%1$s Mb/s,%1$s Mb/s
+"A video heavier than this plays a lighter version. If none fits, it plays its lightest one.",超过此值的视频会播放较轻的版本。如果都不符合，就播放最轻的版本.

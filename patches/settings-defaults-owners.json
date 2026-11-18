@@ -658,7 +658,8 @@
     ],
     "Playback quality": [
       "PLAYBACK_QUALITY",
-      "PLAYBACK_QUALITY_METERED"
+      "PLAYBACK_QUALITY_METERED",
+      "PLAYBACK_BITRATE_LIMIT"
     ],
     "Playback speed": [
       "REMEMBER_SPEED",

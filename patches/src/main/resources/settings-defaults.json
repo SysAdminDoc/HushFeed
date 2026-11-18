@@ -664,7 +664,8 @@
     ],
     "Playback quality": [
       "playback_quality",
-      "playback_quality_metered"
+      "playback_quality_metered",
+      "playback_bitrate_limit"
     ],
     "Playback speed": [
       "remember_playback_speed",
@@ -3772,6 +3773,12 @@
       "key": "play_sdr",
       "type": "boolean",
       "default": false
+    },
+    "playback_bitrate_limit": {
+      "field": "PLAYBACK_BITRATE_LIMIT",
+      "key": "playback_bitrate_limit",
+      "type": "string",
+      "default": "off"
     },
     "playback_quality": {
       "field": "PLAYBACK_QUALITY",

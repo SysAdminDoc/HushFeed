@@ -6,6 +6,7 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* `Video bitrate limit` keeps a heavy video from eating your data. Anything over the limit plays a lighter version, and videos under it aren't touched (#454).
 * Double tap and Long press can mark the video on screen as not interested, with the same follow-up choices as the button. It needs the Not interested patch (#452).
 * Hushfeed moves to TikTok 47.9.1, and only that one. 47.8.3 isn't supported anymore. Get the 47.9.1 bundle or APK from APKMirror and patch it with your usual signing key.
 

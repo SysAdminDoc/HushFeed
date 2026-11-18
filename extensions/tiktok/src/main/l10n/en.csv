@@ -23,6 +23,7 @@ source,target
 "%1$s (custom, unverified)","%1$s (custom, unverified)"
 %1$s (override returned),%1$s (override returned)
 %1$s (will be returned when requested),%1$s (will be returned when requested)
+%1$s Mb/s,%1$s Mb/s
 %1$s and above,%1$s and above
 %1$s appears more than once in this file.,%1$s appears more than once in this file.
 %1$s day,%1$s day
@@ -170,6 +171,7 @@ A removal is already running,A removal is already running
 "A small label on the feed shows the minutes or videos left of today's budget, whichever is closer to running out.","A small label on the feed shows the minutes or videos left of today's budget, whichever is closer to running out."
 "A soft dark fade behind the clock and status icons, so they stay easy to read over a bright video. Needs See-through status bar.","A soft dark fade behind the clock and status icons, so they stay easy to read over a bright video. Needs See-through status bar."
 A tap on Home or on the For You tab while For You is showing no longer reloads it. The video you're on stays.,A tap on Home or on the For You tab while For You is showing no longer reloads it. The video you're on stays.
+"A video heavier than this plays a lighter version. If none fits, it plays its lightest one.","A video heavier than this plays a lighter version. If none fits, it plays its lightest one."
 A video you paused stays paused when you come back to the app instead of starting again. One you left playing starts as usual. It works on Android 10 and newer.,A video you paused stays paused when you come back to the app instead of starting again. One you left playing starts as usual. It works on Android 10 and newer.
 A web address someone left in a comment can be tapped instead of copied out by hand. Tapping anywhere else in the comment still does what it did.,A web address someone left in a comment can be tapped instead of copied out by hand. Tapping anywhere else in the comment still does what it did.
 "A zone name like Europe/Belgrade, used in place of the country's. Daylight saving follows by itself. Empty means the country's own zone.","A zone name like Europe/Belgrade, used in place of the country's. Daylight saving follows by itself. Empty means the country's own zone."
@@ -2717,6 +2719,7 @@ Video,Video
 Video (MP4),Video (MP4)
 Video ID copied,Video ID copied
 Video and details saved to %1$s,Video and details saved to %1$s
+Video bitrate limit,Video bitrate limit
 Video destination,Video destination
 Video download codec,Video download codec
 Video download quality,Video download quality

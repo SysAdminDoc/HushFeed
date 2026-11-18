@@ -2857,3 +2857,6 @@ Hide the Widget circle,Ẩn vòng tròn Tiện ích (Widget)
 The Widget circle at the end of the stories tray goes. TikTok's home screen widget still works.,Vòng tròn Tiện ích (Widget) ở cuối khay chứa tin sẽ bị gỡ. Tiện ích màn hình chính của TikTok vẫn hoạt động.
 Hide view counts on profile grids,Ẩn số lượt xem trên lưới trang cá nhân
 "Takes the view count and its play icon off each video on profile grids. Dates, lengths and the engagement rate you turned on move up in its place.","Bỏ số lượt xem và biểu tượng phát khỏi từng video trên lưới trang cá nhân. Ngày, thời lượng và tỷ lệ tương tác bạn đã bật sẽ chuyển lên thay chỗ."
+Video bitrate limit,Giới hạn bitrate video
+%1$s Mb/s,%1$s Mb/s
+"A video heavier than this plays a lighter version. If none fits, it plays its lightest one.","Video nặng hơn sẽ phát bản nhẹ hơn. Nếu không có bản nào phù hợp, video sẽ phát bản nhẹ nhất."

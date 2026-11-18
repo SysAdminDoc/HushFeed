@@ -228,6 +228,11 @@ public final class QualitySelector {
         return (name == null || name.isEmpty() ? "unnamed" : name) + (height > 0 ? " " + height + "p" : "");
     }
 
+    /** A gear's bitrate in the unit TikTok gives it, or 0 when it doesn't say. */
+    public static long bitRateOf(Object gear) {
+        return number(gear, "getBitRate", "bitRate");
+    }
+
     /** A gear's size as the shorter side, from its name or its address, or 0. */
     public static int heightOf(Object gear) {
         return height(gear);

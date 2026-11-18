@@ -3015,3 +3015,6 @@ The Widget circle at the end of the stories tray goes. TikTok's home screen widg
 # context: Feed screen settings, a switch under Show video length on profile grids. It removes the view count and the play icon from each video tile on profile grids. If the date, video length or engagement rate are switched on, they take the first line instead.
 Hide view counts on profile grids	Aufrufzahlen im Profilraster ausblenden
 Takes the view count and its play icon off each video on profile grids. Dates, lengths and the engagement rate you turned on move up in its place.	Entfernt im Profilraster bei jedem Video die Aufrufzahl und ihr Abspielsymbol. Daten, Längen und die Interaktionsrate, die du eingeschaltet hast, rücken an ihre Stelle.
+Video bitrate limit	Bitrate-Limit für Videos
+%1$s Mb/s	%1$s Mbit/s
+A video heavier than this plays a lighter version. If none fits, it plays its lightest one.	Ein schwereres Video läuft in einer leichteren Version. Passt keine, läuft die leichteste.

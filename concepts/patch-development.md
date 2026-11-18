@@ -8,7 +8,7 @@ Hushfeed is a Morphe patch bundle, not a TikTok APK. Morphe Manager takes a TikT
 
 Source snapshot: version 0.83.0, 151 patch entries. Those come from gradle.properties and patches-list.json.
 
-Published bundle: version 0.82.0, 147 patches. Those come from patches-bundle.json and the release it names.
+Published bundle: version 0.83.0, 151 patches. Those come from patches-bundle.json and the release it names.
 
 The source runs ahead of the published bundle until the next release ships. The index moves only after a new bundle is published and verified, which is the release sequence described in CONTRIBUTING.md. Do not hand-edit the index to make the two match.
 

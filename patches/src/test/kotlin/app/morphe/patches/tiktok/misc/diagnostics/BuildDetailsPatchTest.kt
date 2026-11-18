@@ -239,7 +239,7 @@ class BuildDetailsPatchTest {
 
     @Test fun `resource choices add only raw metadata dependencies and live retains its existing bytecode`() {
         listOf(p2pRelayBlockerPatch, languagePackPurgerPatch,
-            studioCreationDebloatPatch, hidePlayStoreUpdatePatch, changeAppNamePatch, customLauncherIconPatch,
+            studioCreationDebloatPatch, hidePlayStoreUpdatePatch, changeAppNamePatch,
             trustUserCertificatesPatch).forEach { patch ->
             assertTrue("${patch.name} has no metadata dependency", buildDetailsPatch in dependencies(patch))
             assertEquals("${patch.name} brings more than the build record", emptySet<Patch>(), beyondBuildRecord(patch))
@@ -261,6 +261,15 @@ class BuildDetailsPatchTest {
         assertEquals("AMOLED's own hooks are the palette repaint, the comment bar, the web pages and the switch",
             4, amoledOwn.size)
         assertTrue(amoledOwn.all { it.name == null })
+        // Since Discussion #114 the launcher icon can also be picked in Hushfeed's settings. The
+        // picker's one hook runs only with its option on, but a dependency can't follow an option,
+        // so the patch brings settings and the extension either way, and nothing past them.
+        val picker = customLauncherIconPatch.dependencies.single { settingsPatch in it.dependencies }
+        assertTrue("Custom launcher icon has no metadata dependency",
+            buildDetailsPatch in dependencies(customLauncherIconPatch))
+        assertTrue("the icon picker lost the extension", sharedExtensionPatch in picker.dependencies)
+        assertEquals("Custom launcher icon brings more than its picker", emptySet<Patch>(),
+            beyondBuildRecord(customLauncherIconPatch) - picker - shared)
         // The core asset strip returns out of the content credential service's start before it
         // loads the emptied library (#211). Bytecode too, and just as free of Hushfeed's own code.
         val core = dependencies(coreAssetDebloatPatch)

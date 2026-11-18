@@ -56,6 +56,8 @@ public final class CaptionStyle {
      */
     private static final String[] TEXT_IDS = {"47.9.1:dtc"};
     private static final String[] BACKGROUND_IDS = {"47.9.1:dt6"};
+    /** The feed's progress bar, which the line kept in Clear display stays above. */
+    private static final String[] SEEK_BAR_IDS = {"video_seek_bar"};
     private static final String TEXT = String.join("|", TEXT_IDS);
     private static final String BACKGROUND = String.join("|", BACKGROUND_IDS);
     private static final ResourceIdCache RESOURCE_IDS = new ResourceIdCache();
@@ -435,6 +437,11 @@ public final class CaptionStyle {
     static View strip(View root) {
         int id = identifier(root, BACKGROUND_IDS);
         return id == 0 ? null : root.findViewById(id);
+    }
+
+    /** The progress bar's id, or 0. Only placement depends on it, so a miss isn't reported. */
+    static int seekBarId(View view) {
+        return RESOURCE_IDS.resolve(view.getResources(), view.getContext().getPackageName(), SEEK_BAR_IDS[0], false);
     }
 
     /** Resolves a caption view id by this build's name, saying so once when this build has none. */

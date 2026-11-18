@@ -14,6 +14,7 @@ import android.graphics.Typeface;
 import android.os.Build;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -23,16 +24,27 @@ import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
 import app.morphe.extension.tiktok.settings.Settings;
 import java.lang.ref.WeakReference;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.WeakHashMap;
 
 public final class CaptionTools {
     private static final Map<Object, String> OWNERS = new WeakHashMap<>();
+    /**
+     * The last line each caption view got while its video wasn't the current one. TikTok draws a
+     * video's first caption during the swipe and doesn't send it again, so dropping it left the
+     * kept line empty until the second caption, seconds in (#456).
+     */
+    private static final Map<FrameLayout, String> EARLY_LINES = new WeakHashMap<>();
+    /** With no strip seen, the kept line sits this fraction of the window up, near TikTok's own spot. */
+    private static final int NO_STRIP_DIVISOR = 5;
     private static WeakReference<TextView> overlay = new WeakReference<>(null);
     private static WeakReference<View> captionSource = new WeakReference<>(null);
     private static WeakReference<View> captionStrip = new WeakReference<>(null);
     private static WeakReference<View> observedDecor = new WeakReference<>(null);
+    /** The progress bar the kept line stays above, once one has been found showing. */
+    private static WeakReference<View> seekBar = new WeakReference<>(null);
     private static ViewTreeObserver.OnPreDrawListener preDrawListener;
     private static String currentId, cueId, cue = "";
     private static boolean clear;
@@ -71,8 +83,10 @@ public final class CaptionTools {
         Utils.runOnMainThreadNowOrLater(() -> {
             detachOverlay();
             OWNERS.clear();
+            EARLY_LINES.clear();
             captionSource = new WeakReference<>(null);
             captionStrip = new WeakReference<>(null);
+            seekBar = new WeakReference<>(null);
             stripGap = -1;
             stripGapHeight = 0;
             pendingGap = -1;
@@ -93,8 +107,35 @@ public final class CaptionTools {
             cue = "";
             clear = id != null && id.equals(earlyClearId) && earlyClear;
             earlyClearId = null;
+            takeEarlyLine(id);
             refresh();
         });
+    }
+
+    /** Picks up what the new video's caption view was given before the video became current. */
+    private static void takeEarlyLine(String id) {
+        if (id == null) return;
+        FrameLayout root = null;
+        String line = "";
+        for (Iterator<Map.Entry<FrameLayout, String>> early = EARLY_LINES.entrySet().iterator(); early.hasNext();) {
+            Map.Entry<FrameLayout, String> entry = early.next();
+            FrameLayout candidate = entry.getKey();
+            if (candidate == null || !id.equals(OWNERS.get(candidate))) continue;
+            if (root == null || candidate.isAttachedToWindow()) {
+                root = candidate;
+                line = entry.getValue();
+            }
+            early.remove();
+        }
+        if (root != null) keep(root, id, line);
+    }
+
+    private static void keep(FrameLayout root, String owner, String line) {
+        captionSource = new WeakReference<>(root);
+        captionStrip = new WeakReference<>(CaptionStyle.strip(root));
+        cueId = owner;
+        cue = line;
+        if (Settings.KEEP_CAPTIONS_CLEAR_DISPLAY.get()) attach(root);
     }
 
     public static void onClear(Object aweme, boolean enabled) {
@@ -120,12 +161,15 @@ public final class CaptionTools {
             CaptionStyle.apply(root);
             if (id != null) OWNERS.put(renderer, id);
             String owner = OWNERS.get(renderer);
-            if (owner == null || !owner.equals(currentId)) return;
-            captionSource = new WeakReference<>(root);
-            captionStrip = new WeakReference<>(CaptionStyle.strip(root));
-            cueId = owner;
-            cue = "EXPANDED".equals(String.valueOf(state)) && text != null ? text : "";
-            if (Settings.KEEP_CAPTIONS_CLEAR_DISPLAY.get()) attach(root);
+            if (owner == null) return;
+            // TikTok sends HIDDEN for captions it keeps off this video, text and all.
+            String line = "EXPANDED".equals(String.valueOf(state)) && text != null ? text : "";
+            if (!owner.equals(currentId)) {
+                EARLY_LINES.put(root, line);
+                return;
+            }
+            EARLY_LINES.remove(root);
+            keep(root, owner, line);
             refresh();
         } catch (RuntimeException error) { Logger.printException(() -> "Could not update captions", error); }
     }
@@ -199,8 +243,8 @@ public final class CaptionTools {
         }
         if (text != null) {
             text.setVisibility(View.GONE);
-            if (text.getParent() instanceof android.view.ViewGroup) {
-                ((android.view.ViewGroup) text.getParent()).removeView(text);
+            if (text.getParent() instanceof ViewGroup) {
+                ((ViewGroup) text.getParent()).removeView(text);
             }
         }
     }
@@ -222,7 +266,8 @@ public final class CaptionTools {
                 // It draws on the window's own view, above the daily hold's panel.
                 && !app.morphe.extension.tiktok.wellbeing.SessionBudget.isLocked();
         if (visible) {
-            if (!cue.contentEquals(text.getText())) text.setText(cue);
+            boolean newLine = !cue.contentEquals(text.getText());
+            if (newLine) text.setText(cue);
             int size = CaptionStyle.size();
             float wanted = android.util.TypedValue.applyDimension(android.util.TypedValue.COMPLEX_UNIT_SP,
                     size == 0 ? 18 : size, text.getResources().getDisplayMetrics());
@@ -234,7 +279,7 @@ public final class CaptionTools {
             }
             int color = CaptionStyle.backgroundColor();
             if (!Objects.equals(text.getTag(), color)) { text.setBackgroundColor(color); text.setTag(color); }
-            place(text, decor);
+            place(text, decor, newLine);
         }
         int visibility = visible ? View.VISIBLE : View.GONE;
         if (text.getVisibility() != visibility) text.setVisibility(visibility);
@@ -271,19 +316,56 @@ public final class CaptionTools {
      * then lifts it by the Clear display height, upright or sideways: the landscape height is
      * TikTok's own caption's. TikTok keeps its strip above the description, which Clear display
      * hides, so Caption spot in Clear display can put the line down at the old spot instead
-     * (#428), and the height lifts from there.
+     * (#428), and the height lifts from there. Clear display carried over from the last video can
+     * mean no strip is ever seen, and the line then sits near where TikTok's would. In every case
+     * it stays above a progress bar that's showing (#456).
      */
-    private static void place(TextView text, View decor) {
+    private static void place(TextView text, View decor, boolean findBar) {
         if (!(text.getLayoutParams() instanceof FrameLayout.LayoutParams)) return;
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) text.getLayoutParams();
         boolean low = "bottom".equals(Settings.CAPTION_CLEAR_DISPLAY_SPOT.get());
-        int margin = (low || stripGap < 0 || decor == null || decor.getHeight() != stripGapHeight
-                ? fallbackMargin(text)
-                : Math.max(0, stripGap - decor.getPaddingBottom()))
-                + CaptionStyle.heightPx(text, Settings.CAPTION_CLEAR_DISPLAY_OFFSET);
+        int spot;
+        if (low || decor == null) spot = fallbackMargin(text);
+        else if (stripGap < 0) spot = Math.max(fallbackMargin(text), decor.getHeight() / NO_STRIP_DIVISOR);
+        else if (decor.getHeight() != stripGapHeight) spot = fallbackMargin(text);
+        else spot = Math.max(0, stripGap - decor.getPaddingBottom());
+        int margin = Math.max(spot + CaptionStyle.heightPx(text, Settings.CAPTION_CLEAR_DISPLAY_OFFSET),
+                aboveSeekBar(text, decor, findBar));
         if (params.bottomMargin == margin) return;
         params.bottomMargin = margin;
         text.setLayoutParams(params);
+    }
+
+    /**
+     * The bottom margin that clears the progress bar, or 0 with none showing. The tree is only
+     * searched when the line changes, since this runs on every frame.
+     */
+    private static int aboveSeekBar(View text, View decor, boolean find) {
+        if (decor == null) return 0;
+        View bar = seekBar.get();
+        if (find && (bar == null || !bar.isShown() || bar.getRootView() != decor)) {
+            bar = shownView(decor, CaptionStyle.seekBarId(decor));
+            seekBar = new WeakReference<>(bar);
+        }
+        if (bar == null || !bar.isShown() || bar.getHeight() == 0 || bar.getRootView() != decor) return 0;
+        int[] at = new int[2];
+        bar.getLocationInWindow(at);
+        int gap = decor.getHeight() - at[1];
+        if (gap <= 0 || gap >= decor.getHeight() / 2) return 0;
+        return gap - decor.getPaddingBottom() + Math.round(4 * text.getResources().getDisplayMetrics().density);
+    }
+
+    private static View shownView(View view, int id) {
+        if (id == 0 || view.getVisibility() != View.VISIBLE) return null;
+        if (view.getId() == id) return view;
+        if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) view;
+            for (int i = 0; i < group.getChildCount(); i++) {
+                View found = shownView(group.getChildAt(i), id);
+                if (found != null) return found;
+            }
+        }
+        return null;
     }
 
     /**

@@ -138,6 +138,7 @@ comment/CommentHeaderButtons.java|CLOSE_BUTTON_ID|47.9.1:byi|app|com.ss.android.
 comment/CommentHeaderButtons.java|EXPAND_BUTTON_ID|47.9.1:i56|app|com.ss.android.ugc.aweme.commentv2.actionbar.CommentPageActionBarAssem|on:TuxIconView#5
 captions/CaptionStyle.java|TEXT_IDS|47.9.1:dtc|app|method-string:caption_balancer|at:1
 captions/CaptionStyle.java|BACKGROUND_IDS|47.9.1:dt6|app|layout-method-string:caption_balancer|tag:ConstraintLayout
+captions/CaptionStyle.java|SEEK_BAR_IDS|video_seek_bar|app|com.by.andInflater.detail_feed_video_seek_bar|at:9
 feedfilter/TakoAiFilter.java|SEARCH_TAB_ENTRANCE_ID|tv_tab_tako_entrance|app|layout:com.ss.android.ugc.aweme.search.pages.core.ui.fragment.SearchContainerFragment|tag:TuxTextView
 profile/ProfileTopBar.java|END_ROW_IDS|47.9.1:q43|app|com.ss.android.ugc.profile.platform.business.navbar.assemble.sub.ProfileNavBarBaseComponent|at:2
 profile/ProfileTopBar.java|VIEWS_CAPSULE_IDS|47.9.1:tmx|app|class-method:getIvFootprintFromXml|at:1

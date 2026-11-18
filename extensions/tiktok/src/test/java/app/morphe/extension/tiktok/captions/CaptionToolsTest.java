@@ -768,8 +768,9 @@ public class CaptionToolsTest {
             TextView caption = find(decor, "Before any strip");
             assertNotNull(caption);
             int fallback = Math.round(12 * activity.getResources().getDisplayMetrics().density) * 8;
-            assertEquals("with no strip seen yet the line should keep its old spot",
-                    fallback, ((FrameLayout.LayoutParams) caption.getLayoutParams()).bottomMargin);
+            assertEquals("with no strip seen yet the line should sit about where TikTok's would (#456)",
+                    Math.max(fallback, decor.getHeight() / 5),
+                    ((FrameLayout.LayoutParams) caption.getLayoutParams()).bottomMargin);
 
             CaptionTools.onClear(new Video("first"), false);
             strip.setVisibility(View.VISIBLE);
@@ -908,6 +909,89 @@ public class CaptionToolsTest {
             CaptionTools.onClear(new Video("low"), true);
             lay(decor);
             assertEquals("TikTok's spot didn't come back", tiktokBottom - Math.round(dp(30)), bottom(caption));
+        }
+    }
+
+    /**
+     * #456: TikTok draws a video's first caption during the swipe, before the feed names that
+     * video current, and doesn't send it again. Dropping it left the kept line empty until the
+     * second caption, seconds in. A caption TikTok hides on that video stays hidden.
+     */
+    @Test public void theFirstCaptionDrawnDuringTheSwipeIsKept() {
+        try (var owner = Robolectric.buildActivity(CaptionActivity.class).setup().visible()) {
+            var activity = owner.get();
+            Utils.setContext(activity);
+            FrameLayout content = new FrameLayout(activity);
+            FrameLayout first = new FrameLayout(activity);
+            FrameLayout second = new FrameLayout(activity);
+            FrameLayout third = new FrameLayout(activity);
+            content.addView(first);
+            content.addView(second);
+            content.addView(third);
+            activity.setContentView(content);
+            owner.windowFocusChanged(true);
+            Settings.KEEP_CAPTIONS_CLEAR_DISPLAY.save(true);
+            CaptionTools.onVideoChanged("first");
+            CaptionTools.onCaption(first, "first", "EXPANDED", "First video");
+            CaptionTools.onClear(new Video("first"), true);
+            TextView caption = find(activity.getWindow().getDecorView(), "First video");
+            assertNotNull(caption);
+
+            CaptionTools.onCaption(second, "second", "EXPANDED", "Opening line");
+            assertEquals("the next video's line showed before the swipe landed",
+                    "First video", caption.getText().toString());
+            CaptionTools.onClear(new Video("first"), false);
+            CaptionTools.onClear(new Video("second"), true);
+            CaptionTools.onVideoChanged("second");
+            assertEquals("the line drawn during the swipe was lost", "Opening line", caption.getText().toString());
+            assertEquals(View.VISIBLE, caption.getVisibility());
+
+            CaptionTools.onCaption(third, "third", "HIDDEN", "Already burned into the video");
+            CaptionTools.onClear(new Video("second"), false);
+            CaptionTools.onClear(new Video("third"), true);
+            CaptionTools.onVideoChanged("third");
+            assertEquals("a caption TikTok hides came back", View.GONE, caption.getVisibility());
+        }
+    }
+
+    /**
+     * #456: the kept line covered the progress bar. Whatever spot it was given, it stays above a
+     * bar that's showing, and goes back to that spot when the bar is hidden.
+     */
+    @Test @Config(qualifiers = "w360dp-h780dp-xxhdpi")
+    public void theKeptLineStaysAboveTheProgressBar() {
+        try (var owner = Robolectric.buildActivity(CaptionActivity.class).setup().visible()) {
+            var activity = owner.get();
+            Utils.setContext(activity);
+            int barId = View.generateViewId();
+            CaptionStyle.resolveForTests("video_seek_bar", barId);
+            FrameLayout source = new FrameLayout(activity);
+            View bar = new View(activity);
+            bar.setId(barId);
+            FrameLayout.LayoutParams spot = new FrameLayout.LayoutParams(-1, 30, android.view.Gravity.BOTTOM);
+            spot.bottomMargin = 500;
+            source.addView(bar, spot);
+            activity.setContentView(source);
+            owner.windowFocusChanged(true);
+            Settings.KEEP_CAPTIONS_CLEAR_DISPLAY.save(true);
+            Settings.CAPTION_CLEAR_DISPLAY_SPOT.save("bottom");
+            View decor = activity.getWindow().getDecorView();
+
+            CaptionTools.onVideoChanged("bar");
+            lay(decor);
+            CaptionTools.onCaption(source, "bar", "EXPANDED", "Over the bar");
+            CaptionTools.onClear(new Video("bar"), true);
+            lay(decor);
+            TextView caption = find(decor, "Over the bar");
+            assertNotNull(caption);
+            assertEquals(View.VISIBLE, caption.getVisibility());
+            assertTrue("the kept line covers the progress bar", bottom(caption) <= bottom(bar) - bar.getHeight());
+
+            bar.setVisibility(View.GONE);
+            CaptionTools.onCaption(source, null, "EXPANDED", "No bar now");
+            lay(decor);
+            assertEquals("with the bar hidden the line should go back to its spot",
+                    decor.getHeight() - decor.getPaddingBottom() - Math.round(dp(12)) * 8, bottom(caption));
         }
     }
 

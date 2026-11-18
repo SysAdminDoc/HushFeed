@@ -275,6 +275,23 @@ function Find-WalkNav($Nodes, [string]$Label, [int]$Height) {
     @(Find-UiNode -Nodes $Nodes -Label $Label | Where-Object { $_.Desc -cmatch $Label -and $_.Top -gt $Height * 0.85 }) | Select-Object -First 1
 }
 
+# Whether TikTok's view tree still shows a bottom tab the launch dump found, at the same width.
+# dumpsys reads the tree when uiautomator can't, so a tap on the tab's old spot never lands on
+# a page that covers the tabs.
+function Test-WalkTabShown($Node) {
+    if (-not $Node -or -not $Node.Id) { return $false }
+    [string[]]$tree = Invoke-WalkAdb shell dumpsys activity top
+    $pattern = '\{[0-9a-f]+ V\S{8} \S{8} (-?\d+),-?\d+-(-?\d+),-?\d+ #[0-9a-f]+ app:id/' + [regex]::Escape($Node.Id) + '\}'
+    $inApp = $false
+    foreach ($line in $tree) {
+        if ($line.StartsWith('TASK ')) { $inApp = $line.Contains(":$WalkPackage "); continue }
+        if (-not $inApp) { continue }
+        $m = [regex]::Match($line, $pattern)
+        if ($m.Success -and [int]$m.Groups[2].Value - [int]$m.Groups[1].Value -eq $Node.Right - $Node.Left) { return $true }
+    }
+    return $false
+}
+
 # A feed video's own button (comments, share). LIVE previews in the feed have none, so swipe on
 # until a video shows one.
 function Find-WalkVideoButton([string]$Label, [string]$What, [int]$Width, [int]$Height) {
@@ -327,6 +344,7 @@ function Complete-WalkScreen([string]$Name) {
 # Leaves sheets, pages and the keyboard with Back until the bottom tabs show, never Back from
 # a feed tab itself, which would close TikTok.
 function Restore-WalkTabs([string]$From, [int]$Height) {
+    $standIns = @($script:walkTabNodes); $standIn = 0
     for ($i = 0; $i -lt 6; $i++) {
         Close-WalkKeyboard
         $nodes = Get-WalkScreen "restore-$From" -AllowPause
@@ -335,10 +353,22 @@ function Restore-WalkTabs([string]$From, [int]$Height) {
         # Find-UiNode then stopped the whole walk on $null.Text instead of logging "no Friends tab".
         $foreground = Get-WalkForeground
         if (-not $foreground.StartsWith("$WalkPackage/", [StringComparison]::Ordinal)) { return , @() }
-        # The feed itself, over an item that never stops drawing (a LIVE preview), so no dump
-        # reads it and Back can't move it: swipe on to the next video, as Find-WalkTopNode does.
-        # The 0.83.0 release walk pressed Back over one LIVE for 27 minutes and reached 6 of 27.
+        # The feed itself, where no dump reads and Back can't move it. Back from search, For You
+        # kept sending content changes with its video paused and nothing drawing, so uiautomator
+        # never went idle: the 0.83.0 release walk pressed Back for 27 minutes, then swiped for 27
+        # more, and reached 6 of 27 both times. Another bottom tab ends that. Its spot comes from
+        # the launch dump, checked against dumpsys first. A swipe is left for when no tab shows.
         if (-not $nodes -and $script:feedActivity -and $foreground -eq $script:feedActivity) {
+            $leaveTab = $null
+            while ($standIn -lt $standIns.Count -and -not $leaveTab) {
+                $candidate = $standIns[$standIn]; $standIn++
+                if (Test-WalkTabShown $candidate) { $leaveTab = $candidate }
+            }
+            if ($leaveTab) {
+                Invoke-WalkTap $leaveTab "the $($leaveTab.Desc) tab, since no dump reads the feed after $From" 3500
+                if (-not (Test-WalkAlive "$From tab")) { return , @() }
+                continue
+            }
             Write-WalkLog "swipe on from the feed after $From"
             Invoke-WalkSwipe $script:walkWidth $Height
             if (-not (Test-WalkAlive "$From swipe")) { return , @() }
@@ -530,9 +560,10 @@ try {
         if ($gate) { Invoke-WalkTap $gate "launch gate '$($gate.Text)$($gate.Desc)'" 2500 } else { Start-Sleep -Seconds 2 }
     }
     if (-not $feed) { throw "$appName's bottom tabs never showed after launch." }
-    # Restore-WalkTabs swipes on from a feed item no dump can read, so it needs the feed's
-    # activity and width.
+    # Restore-WalkTabs leaves a feed no dump can read through another bottom tab, or a swipe, so
+    # it needs the feed's activity, its tabs and its width.
     $script:feedActivity = Get-WalkForeground
+    $script:walkTabNodes = @($appProfile.Tabs | ForEach-Object { Find-WalkNav $feed $WalkLabels[$_] $H } | Where-Object { $_ })
     $script:walkWidth = $W
     Complete-WalkScreen 'launch'
 

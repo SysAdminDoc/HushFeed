@@ -96,6 +96,24 @@ public class DramaEpisodesTest {
         assertEquals("the row stands in for both", 6, page.episodes.get(4).number);
     }
 
+    @Test public void aLockedEpisodeWithAnEmptyWholeEpisodeSlotIsListedFromItsPost() throws Exception {
+        // #463: on a drama the account hasn't bought, episodes past the free ones came with a
+        // whole-episode slot holding no post, and the picker stopped at the last free episode.
+        JSONObject emptySlot = item("113", 13, true).put("full_paid_videos_for_partial_preview", new JSONObject());
+        JSONObject slotWithoutId = item("114", 14, true).put("full_paid_videos_for_partial_preview",
+                new JSONObject().put("paid_content_info", new JSONObject().put("is_partial_preview", false)));
+
+        DramaEpisodes.Page page = DramaEpisodes.page(reply(1, true, item("112", 12, false), emptySlot,
+                slotWithoutId), DramaEpisodes.readerForTests);
+
+        List<String> ids = new ArrayList<>();
+        for (DramaEpisodes.Episode episode : page.episodes) ids.add(episode.id);
+        assertEquals(List.of("112", "113", "114"), ids);
+        assertTrue("a locked episode read from its listed post is a preview", page.episodes.get(1).preview);
+        assertEquals(14, page.episodes.get(2).number);
+        assertTrue(page.episodes.get(2).preview);
+    }
+
     @Test public void aRefusalOrNoReplyThrows() throws Exception {
         String refused = new JSONObject().put("status_code", 2483).put("status_msg", "not available").toString();
         try {

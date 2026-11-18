@@ -4,6 +4,7 @@
  */
 package app.morphe.extension.tiktok.download;
 
+import app.morphe.extension.shared.Logger;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
 import app.morphe.extension.tiktok.comment.AccountCountry;
 
@@ -15,6 +16,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -161,24 +163,54 @@ final class DramaEpisodes {
         int status = root.optInt("status_code", 0);
         if (status != 0) throw new IOException("TikTok said " + status + " " + root.optString("status_msg", ""));
         List<Episode> episodes = new ArrayList<>();
+        StringBuilder leftOut = new StringBuilder();
         JSONArray videos = root.optJSONArray("paid_videos");
-        for (int index = 0; videos != null && index < videos.length(); index++) {
+        int rows = videos == null ? 0 : videos.length();
+        for (int index = 0; index < rows; index++) {
             JSONObject item = videos.optJSONObject(index);
             if (item == null || item.optBoolean("is_intro", false)) continue;
-            JSONObject whole = item.optJSONObject("full_paid_videos_for_partial_preview");
-            JSONObject post = whole != null ? whole : item.optJSONObject("aweme");
-            String id = post == null ? null : post.optString("aweme_id", null);
-            if (id == null || id.isEmpty()) continue;
-            Object read = reader.post(post.toString());
-            if (read == null) continue;
-            JSONObject paid = post.optJSONObject("paid_content_info");
-            boolean preview = paid != null && paid.optBoolean("is_partial_preview", false);
-            episodes.add(new Episode(read, id, number(item, paid, index), preview));
+            Episode episode = null;
+            // The whole episode first, then the post as listed: a locked episode's whole-episode
+            // slot can come back without a post in it (#463).
+            for (String slot : POST_SLOTS) {
+                episode = episode(item.optJSONObject(slot), item, index, reader);
+                if (episode != null) break;
+            }
+            if (episode != null) {
+                episodes.add(episode);
+            } else {
+                leftOut.append(" #").append(item.optInt("seq_id", index + 1)).append(' ').append(keys(item));
+            }
         }
         JSONObject info = root.optJSONObject("page_info");
         boolean hasNext = info != null && info.optBoolean("has_next", false);
         int page = info == null ? -1 : info.optInt("curr_page", -1);
+        int kept = episodes.size();
+        Logger.printDebug(() -> "Drama episodes page " + page + ": " + kept + " of " + rows + " rows"
+                + (leftOut.length() == 0 ? "" : ", left out" + leftOut));
         return new Page(episodes, hasNext, page, root.optInt("num_videos", 0));
+    }
+
+    /** Where an episode's post can be in its row, in the order they're tried. */
+    private static final String[] POST_SLOTS = {"full_paid_videos_for_partial_preview", "aweme"};
+
+    /** The row's episode from one post in it, or null when that slot has no readable post. */
+    private static Episode episode(JSONObject post, JSONObject item, int index, Reader reader) throws Exception {
+        String id = post == null ? "" : post.optString("aweme_id", "");
+        if (id.isEmpty()) return null;
+        Object read = reader.post(post.toString());
+        if (read == null) return null;
+        JSONObject paid = post.optJSONObject("paid_content_info");
+        boolean preview = paid != null && paid.optBoolean("is_partial_preview", false);
+        return new Episode(read, id, number(item, paid, index), preview);
+    }
+
+    /** A row's field names, for the log line about rows left out. */
+    private static String keys(JSONObject item) {
+        List<String> names = new ArrayList<>();
+        for (Iterator<String> it = item.keys(); it.hasNext(); ) names.add(it.next());
+        Collections.sort(names);
+        return names.toString();
     }
 
     /** The episode's number: its place in the drama, else the number on it, else its row. */

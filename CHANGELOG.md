@@ -13,6 +13,7 @@ Every Hushfeed release, newest first.
 
 ### Bug Fixes
 
+* The country and date line doesn't get cut off anymore when you open a long caption (#457).
 * `Show the country and date under the caption` keeps the two together on photo posts and on videos with no caption. With no caption they go right under the creator's name (#453).
 
 ### Build

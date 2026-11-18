@@ -341,6 +341,49 @@ public class CaptionLineTest {
     }
 
     @Test
+    public void anOpenedLongCaptionLeavesTheLineItsFullHeight() {
+        Cell cell = new Cell(context, "happypuppies47", true);
+        View spacer = cell.column.getChildAt(1);
+        spacer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 67));
+        cell.caption.setHeight(1320);
+
+        assertTrue(CaptionLine.show(cell.name, cell.root, "United States"));
+        TextView line = cell.line();
+        line.setMinHeight(58);
+        int margin = ((LinearLayout.LayoutParams) line.getLayoutParams()).topMargin;
+
+        measureColumn(cell, 1373);
+        assertEquals(58, line.getMeasuredHeight());
+        assertEquals(67, spacer.getMeasuredHeight());
+        assertEquals(1373 - 58 - margin - 67, cell.block.getMeasuredHeight());
+        assertEquals(1373, cell.column.getMeasuredHeight());
+
+        // With room for everything the caption keeps its own height.
+        measureColumn(cell, 2000);
+        assertEquals(1320, cell.block.getMeasuredHeight());
+
+        // Once the line is gone the block is back the way TikTok left it.
+        CaptionLine.clear();
+        assertEquals(0f, ((LinearLayout.LayoutParams) cell.block.getLayoutParams()).weight, 0f);
+    }
+
+    @Test
+    public void aLineUnderTheRowLeavesTheCaptionBlockAlone() {
+        Cell cell = new Cell(context, "junior", true);
+        assertTrue(CaptionLine.show(cell.name, cell.root, "Brazil"));
+        assertEquals(1f, ((LinearLayout.LayoutParams) cell.block.getLayoutParams()).weight, 0f);
+
+        cell.descRoot.setVisibility(View.GONE);
+        assertTrue(CaptionLine.show(cell.name, cell.root, "Brazil"));
+        assertEquals(0f, ((LinearLayout.LayoutParams) cell.block.getLayoutParams()).weight, 0f);
+    }
+
+    private static void measureColumn(Cell cell, int limit) {
+        cell.column.measure(View.MeasureSpec.makeMeasureSpec(821, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(limit, View.MeasureSpec.AT_MOST));
+    }
+
+    @Test
     public void eachCellGetsItsOwnLineAndOnlyTheVideosShows() {
         try (ActivityController<Activity> controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
             Activity activity = controller.get();

@@ -61,6 +61,14 @@ public final class CaptionLine {
     /** Post times emptied here, with the text each had then, so only those get it back. */
     private static final Map<TextView, CharSequence> HIDDEN = new WeakHashMap<>();
 
+    /**
+     * Caption blocks giving up room to the line. Measured first, an opened long caption takes
+     * nearly the whole column and leaves the line too short to read (#457). With a weight on the
+     * block, what comes after it is measured at full height and only the block shrinks when they
+     * don't all fit.
+     */
+    private static final Set<View> YIELDING = Collections.newSetFromMap(new WeakHashMap<>());
+
     private CaptionLine() {
     }
 
@@ -84,6 +92,7 @@ public final class CaptionLine {
     static boolean show(TextView name, View root, String country) {
         if (name == null) {
             hideOthers(null);
+            giveRoom(null);
             return false;
         }
         TextView postTime = postTimeBeside(name);
@@ -100,7 +109,8 @@ public final class CaptionLine {
                 holder = (View) parent;
             }
         }
-        if (host == null) {
+        boolean underCaption = host != null;
+        if (!underCaption) {
             holder = rowOf(name, postTime, root);
             host = holder == null ? null : (LinearLayout) holder.getParent();
         }
@@ -109,6 +119,7 @@ public final class CaptionLine {
         if (host == null || text == null) {
             putBack(postTime);
             hideOthers(null);
+            giveRoom(null);
             return false;
         }
 
@@ -125,6 +136,7 @@ public final class CaptionLine {
             line.setVisibility(View.VISIBLE);
         }
         hideOthers(line);
+        giveRoom(underCaption ? holder : null);
         return true;
     }
 
@@ -176,6 +188,7 @@ public final class CaptionLine {
             }
         }
         LINES.clear();
+        giveRoom(null);
         for (TextView postTime : new ArrayList<>(HIDDEN.keySet())) {
             putBack(postTime);
         }
@@ -326,6 +339,30 @@ public final class CaptionLine {
                 line.setVisibility(View.GONE);
             }
         }
+    }
+
+    /** Makes {@code block} the one caption block yielding, and hands every other its weight back. */
+    private static void giveRoom(View block) {
+        for (View other : new ArrayList<>(YIELDING)) {
+            if (other != block) {
+                YIELDING.remove(other);
+                reweigh(other, 1, 0);
+            }
+        }
+        if (block != null && !YIELDING.contains(block) && reweigh(block, 0, 1)) {
+            YIELDING.add(block);
+        }
+    }
+
+    private static boolean reweigh(View view, float from, float to) {
+        ViewGroup.LayoutParams params = view.getLayoutParams();
+        if (!(params instanceof LinearLayout.LayoutParams)
+                || ((LinearLayout.LayoutParams) params).weight != from) {
+            return false;
+        }
+        ((LinearLayout.LayoutParams) params).weight = to;
+        view.requestLayout();
+        return true;
     }
 
     /** Gives a post time emptied here its text back, unless TikTok has written it since. */

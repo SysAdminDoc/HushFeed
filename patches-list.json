@@ -1,5 +1,5 @@
 {
-  "version": "v0.82.0",
+  "version": "v0.83.0",
   "appNames": {
     "com.zhiliaoapp.musically": "TikTok"
   },
@@ -730,7 +730,7 @@
     },
     {
       "name": "Always show publish date",
-      "description": "Shows the date a video was posted next to the creator's name, so you can tell how old it is. It can also show the exact time, dates and lengths on profile grids, sort the videos a grid has loaded, start your Liked grid at a year or month you pick, or add a drag handle and jump buttons to long grids. On by default. Turn it off in Hushfeed settings > Feed screen.",
+      "description": "Shows the date a video was posted next to the creator's name, so you can tell how old it is. It can also show the exact time, dates and lengths on profile grids, hide the view counts there, sort the videos a grid has loaded, start your Liked grid at a year or month you pick, or add a drag handle and jump buttons to long grids. On by default. Turn it off in Hushfeed settings > Feed screen.",
       "category": "Feed",
       "use": true,
       "dependencies": [
@@ -823,6 +823,15 @@
         {
           "key": "video_length_on_grid",
           "title": "Default: video length on grid",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_grid_view_count",
+          "title": "Default: hide grid view count",
           "description": null,
           "required": false,
           "type": "kotlin.Boolean",
@@ -5478,6 +5487,24 @@
         {
           "key": "hide_inbox_on_this_day",
           "title": "Default: hide inbox on this day",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_inbox_suggested_lives",
+          "title": "Default: hide inbox suggested lives",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_inbox_widget_guide",
+          "title": "Default: hide inbox widget guide",
           "description": null,
           "required": false,
           "type": "kotlin.Boolean",

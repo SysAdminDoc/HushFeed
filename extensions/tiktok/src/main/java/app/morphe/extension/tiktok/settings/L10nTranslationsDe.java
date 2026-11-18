@@ -15,7 +15,7 @@ final class L10nTranslationsDe {
     }
 
     static Map<String, String> build() {
-        Map<String, String> table = new HashMap<>(5734);
+        Map<String, String> table = new HashMap<>(5738);
         fill0(table);
         fill1(table);
         fill2(table);
@@ -5822,12 +5822,16 @@ final class L10nTranslationsDe {
                 "Funktioniert nur mit YTDLnis (com.deniscerri.ytdl). Wählt Audio oder Video, wenn die Speichern-Schaltfläche ihm einen Link schickt.");
         table.put("Works only with YTDLnis (com.deniscerri.ytdl). Starts the download in the background without showing its download card.",
                 "Funktioniert nur mit YTDLnis (com.deniscerri.ytdl). Startet den Download im Hintergrund, ohne seine Download-Karte zu zeigen.");
+        table.put("Write the month as a word",
+                "Monat als Wort schreiben");
         table.put("Write the username and caption on the video",
                 "Benutzernamen und Beschreibung ins Video schreiben");
         table.put("Write the video's sound beside it, in the format picked under Sound format. Android 10 and later file audio separately, so it lands in Music under the same folder name as your videos.",
                 "Den Ton des Videos daneben speichern, im Format, das unter Tonformat gewählt ist. Ab Android 10 wird Audio getrennt abgelegt, also landet die Datei unter Music im Ordner mit dem Namen deines Videoordners.");
         table.put("Writes TikTok's date by the creator's name day first, like 29.09, with the year after it for an older video. Ages like 2d ago stay as they are.",
                 "Schreibt TikToks Datum neben dem Namen des Creators mit dem Tag zuerst, etwa 29.09, bei älteren Videos mit dem Jahr dahinter. Angaben wie vor 2 T. bleiben, wie sie sind.");
+        table.put("Writes TikTok's date by the creator's name with the month's name, like Oct 12. Day before month makes it 12 Oct.",
+                "Schreibt TikToks Datum neben dem Namen des Creators mit dem Monatsnamen, etwa Oct 12. Mit Tag vor Monat wird daraus 12 Oct.");
         table.put("Writes the date before the time to the second the short way your language does, like 10/7/25.",
                 "Schreibt das Datum vor der sekundengenauen Uhrzeit so kurz, wie deine Sprache es tut, etwa 07.10.25.");
         table.put("Writing",
@@ -5842,13 +5846,13 @@ final class L10nTranslationsDe {
                 "YTDLnis-Downloadtyp");
         table.put("Yellow",
                 "Gelb");
+    }
+
+    private static void fill47(Map<String, String> table) {
         table.put("Yes",
                 "Ja");
         table.put("You can continue now.",
                 "Du kannst jetzt weitermachen.");
-    }
-
-    private static void fill47(Map<String, String> table) {
         table.put("You can pick up to %1$s at a time",
                 "Du kannst höchstens %1$s auf einmal auswählen");
         table.put("You have %1$s. Update the patches in Morphe Manager, then patch TikTok again.",

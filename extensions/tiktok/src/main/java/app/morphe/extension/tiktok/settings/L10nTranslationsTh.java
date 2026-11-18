@@ -15,7 +15,7 @@ final class L10nTranslationsTh {
     }
 
     static Map<String, String> build() {
-        Map<String, String> table = new HashMap<>(5734);
+        Map<String, String> table = new HashMap<>(5738);
         fill0(table);
         fill1(table);
         fill2(table);
@@ -5822,12 +5822,16 @@ final class L10nTranslationsTh {
                 "ใช้งานได้เฉพาะกับ YTDLnis (com.deniscerri.ytdl) เท่านั้น เลือกเสียงหรือวิดีโอเมื่อปุ่มบันทึกส่งลิงก์ไปให้");
         table.put("Works only with YTDLnis (com.deniscerri.ytdl). Starts the download in the background without showing its download card.",
                 "ใช้งานได้เฉพาะกับ YTDLnis (com.deniscerri.ytdl) เท่านั้น เริ่มการดาวน์โหลดในเบื้องหลังโดยไม่แสดงการ์ดดาวน์โหลด");
+        table.put("Write the month as a word",
+                "เขียนเดือนเป็นคำ");
         table.put("Write the username and caption on the video",
                 "เขียนชื่อผู้ใช้และคำบรรยายลงบนวิดีโอ");
         table.put("Write the video's sound beside it, in the format picked under Sound format. Android 10 and later file audio separately, so it lands in Music under the same folder name as your videos.",
                 "บันทึกเสียงของวิดีโอไว้ข้างกันในรูปแบบที่เลือกไว้ใต้รูปแบบเสียง สำหรับ Android 10 ขึ้นไปจะจัดเก็บไฟล์เสียงแยกต่างหาก ดังนั้นไฟล์จะไปอยู่ในโฟลเดอร์ Music ภายใต้ชื่อโฟลเดอร์เดียวกับวิดีโอของคุณ");
         table.put("Writes TikTok's date by the creator's name day first, like 29.09, with the year after it for an older video. Ages like 2d ago stay as they are.",
                 "เขียนวันที่ของ TikTok ข้างชื่อครีเอเตอร์โดยขึ้นต้นด้วยวัน เช่น 29.09 และต่อท้ายด้วยปีสำหรับวิดีโอที่เก่ากว่า อายุอย่าง 2 วันที่แล้ว ยังคงเหมือนเดิม");
+        table.put("Writes TikTok's date by the creator's name with the month's name, like Oct 12. Day before month makes it 12 Oct.",
+                "เขียนวันที่ของ TikTok ข้างชื่อครีเอเตอร์โดยใช้ชื่อเดือน เช่น Oct 12 และวันก่อนเดือนจะทำให้เป็น 12 Oct.");
         table.put("Writes the date before the time to the second the short way your language does, like 10/7/25.",
                 "แสดงวันที่ก่อนเวลาแบบระบุวินาทีในรูปแบบสั้นตามภาษาของคุณ เช่น 10/7/25");
         table.put("Writing",
@@ -5842,13 +5846,13 @@ final class L10nTranslationsTh {
                 "ประเภทการดาวน์โหลด YTDLnis");
         table.put("Yellow",
                 "เหลือง");
+    }
+
+    private static void fill47(Map<String, String> table) {
         table.put("Yes",
                 "ใช่");
         table.put("You can continue now.",
                 "ตอนนี้คุณดำเนินการต่อได้แล้ว");
-    }
-
-    private static void fill47(Map<String, String> table) {
         table.put("You can pick up to %1$s at a time",
                 "คุณสามารถเลือกได้สูงสุด %1$s รายการในแต่ละครั้ง");
         table.put("You have %1$s. Update the patches in Morphe Manager, then patch TikTok again.",

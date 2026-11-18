@@ -15,7 +15,7 @@ final class L10nTranslationsRu {
     }
 
     static Map<String, String> build() {
-        Map<String, String> table = new HashMap<>(6100);
+        Map<String, String> table = new HashMap<>(6104);
         fill0(table);
         fill1(table);
         fill2(table);
@@ -6200,12 +6200,16 @@ final class L10nTranslationsRu {
                 "Работает только с YTDLnis (com.deniscerri.ytdl). Выбирает аудио или видео, когда кнопка сохранения отправляет ему ссылку.");
         table.put("Works only with YTDLnis (com.deniscerri.ytdl). Starts the download in the background without showing its download card.",
                 "Работает только с YTDLnis (com.deniscerri.ytdl). Запускает загрузку в фоне, не показывая его карточку загрузки.");
+        table.put("Write the month as a word",
+                "Писать месяц словом");
         table.put("Write the username and caption on the video",
                 "Писать имя пользователя и описание на видео");
         table.put("Write the video's sound beside it, in the format picked under Sound format. Android 10 and later file audio separately, so it lands in Music under the same folder name as your videos.",
                 "Сохранять звук видео рядом с ним в формате, выбранном в «Формат звука». На Android 10 и новее аудио хранится отдельно и попадает в Music, в папку с тем же именем, что и ваши видео.");
         table.put("Writes TikTok's date by the creator's name day first, like 29.09, with the year after it for an older video. Ages like 2d ago stay as they are.",
                 "Пишет дату TikTok рядом с именем автора, начиная с дня, например 29.09, а для старого видео добавляет год. Возраст вроде 2 дн. назад остаётся как есть.");
+        table.put("Writes TikTok's date by the creator's name with the month's name, like Oct 12. Day before month makes it 12 Oct.",
+                "Пишет дату TikTok рядом с именем автора с названием месяца, например Oct 12. С параметром «День перед месяцем» получится 12 Oct.");
         table.put("Writes the date before the time to the second the short way your language does, like 10/7/25.",
                 "Пишет дату перед временем до секунды так коротко, как принято в вашем языке, например 07.10.2025.");
         table.put("Writing",
@@ -6214,13 +6218,13 @@ final class L10nTranslationsRu {
                 "Описание пишется на видео");
         table.put("Writing the caption on the video: %1$s",
                 "Описание пишется на видео: %1$s");
+    }
+
+    private static void fill50(Map<String, String> table) {
         table.put("YTDLnis background mode",
                 "Фоновый режим YTDLnis");
         table.put("YTDLnis download type",
                 "Тип загрузки YTDLnis");
-    }
-
-    private static void fill50(Map<String, String> table) {
         table.put("Yellow",
                 "Жёлтый");
         table.put("Yes",

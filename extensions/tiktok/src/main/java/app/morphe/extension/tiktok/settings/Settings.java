@@ -942,6 +942,8 @@ public class Settings extends BaseSettings {
             "publish_date_short_date", FALSE, false, Setting.parent(PUBLISH_DATE_EXACT_TIME));
     /** TikTok's date by the creator's name written day first with dots, 29.09 (#438). */
     public static final BooleanSetting PUBLISH_DATE_DAY_FIRST = new BooleanSetting("publish_date_day_first", FALSE);
+    /** TikTok's date by the creator's name with the month as a word, Oct 12, or 12 Oct with day first (#461). */
+    public static final BooleanSetting PUBLISH_DATE_MONTH_NAME = new BooleanSetting("publish_date_month_name", FALSE);
     public static final BooleanSetting PUBLISH_DATE_ON_GRID = new BooleanSetting("publish_date_on_grid", FALSE);
     public static final BooleanSetting VIDEO_LENGTH_ON_GRID = new BooleanSetting("video_length_on_grid", FALSE);
     public static final BooleanSetting HIDE_GRID_VIEW_COUNT = new BooleanSetting("hide_grid_view_count", FALSE);

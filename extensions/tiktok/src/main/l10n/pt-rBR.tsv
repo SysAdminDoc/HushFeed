@@ -3021,3 +3021,5 @@ Import an emoji font file	Importar um arquivo de fonte de emoji
 Remove the imported emoji font	Remover a fonte de emoji importada
 No emoji font is imported	Nenhuma fonte de emoji importada
 %1$s is imported. Turn on Use an imported emoji font to see it.	%1$s foi importado. Ative Usar uma fonte de emoji importada para ver a mudança.
+Write the month as a word	Escrever o mês por extenso
+Writes TikTok's date by the creator's name with the month's name, like Oct 12. Day before month makes it 12 Oct.	Escreve a data do TikTok ao lado do nome do criador com o nome do mês, como Oct 12. Dia antes do mês deixa 12 Oct.

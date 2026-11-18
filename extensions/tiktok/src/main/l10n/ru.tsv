@@ -3204,3 +3204,5 @@ Import an emoji font file	Импортировать файл шрифта эм�
 Remove the imported emoji font	Удалить импортированный шрифт эмодзи
 No emoji font is imported	Шрифт эмодзи не импортирован
 %1$s is imported. Turn on Use an imported emoji font to see it.	%1$s импортирован. Включите Использовать импортированный шрифт эмодзи, чтобы увидеть его.
+Write the month as a word	Писать месяц словом
+Writes TikTok's date by the creator's name with the month's name, like Oct 12. Day before month makes it 12 Oct.	Пишет дату TikTok рядом с именем автора с названием месяца, например Oct 12. С параметром «День перед месяцем» получится 12 Oct.

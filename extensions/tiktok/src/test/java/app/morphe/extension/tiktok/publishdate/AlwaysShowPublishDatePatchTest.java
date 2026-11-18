@@ -153,6 +153,7 @@ public class AlwaysShowPublishDatePatchTest {
         Settings.PUBLISH_DATE_TIME_ZONE.resetToDefault();
         Settings.PUBLISH_DATE_SHORT_DATE.resetToDefault();
         Settings.PUBLISH_DATE_DAY_FIRST.resetToDefault();
+        Settings.PUBLISH_DATE_MONTH_NAME.resetToDefault();
         Settings.PUBLISH_DATE_ON_GRID.resetToDefault();
         Settings.SHOW_ENGAGEMENT_RATE.resetToDefault();
     }
@@ -231,6 +232,27 @@ public class AlwaysShowPublishDatePatchTest {
         assertFalse(exactShort, exactShort.contains("9/29"));
         Settings.PUBLISH_DATE_DAY_FIRST.save(false);
         assertTrue(AlwaysShowPublishDatePatch.postTime("09-29", thisYear).startsWith("9/29/26"));
+    }
+
+    /**
+     * Issue #461: the month as a word, in either order, with the year only where TikTok wrote one.
+     * Ages and a video with no readable time stay TikTok's.
+     */
+    @Test
+    public void theRowDateCanWriteTheMonthAsAWord() {
+        assertEquals(Boolean.FALSE, Settings.PUBLISH_DATE_MONTH_NAME.defaultValue);
+        Post thisYear = new Post(utcSeconds(2026, 9, 29, 14, 5), POSTED_ID);
+        Post older = new Post(utcSeconds(2024, 3, 7, 12, 30), POSTED_ID);
+
+        Settings.PUBLISH_DATE_MONTH_NAME.save(true);
+        assertEquals("Sep 29", AlwaysShowPublishDatePatch.postTime("09-29", thisYear));
+        assertEquals("Mar 7, 2024", AlwaysShowPublishDatePatch.postTime("2024-03-07", older));
+        assertEquals("2d ago", AlwaysShowPublishDatePatch.postTime("2d ago", thisYear));
+        assertEquals("09-29", AlwaysShowPublishDatePatch.postTime("09-29", new Post(0L, null)));
+
+        Settings.PUBLISH_DATE_DAY_FIRST.save(true);
+        assertEquals("29 Sep", AlwaysShowPublishDatePatch.postTime("09-29", thisYear));
+        assertEquals("7 Mar 2024", AlwaysShowPublishDatePatch.postTime("2024-03-07", older));
     }
 
     @Test

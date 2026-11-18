@@ -3021,3 +3021,5 @@ Import an emoji font file	Emoji şrift faylını idxal edin
 Remove the imported emoji font	İdxal edilmiş emoji şriftini silin
 No emoji font is imported	İdxal edilmiş emoji şrifti yoxdur
 %1$s is imported. Turn on Use an imported emoji font to see it.	%1$s idxal edildi. Onu görmək üçün İdxal edilmiş emoji şriftindən istifadə edin ayarını açın.
+Write the month as a word	Ayı sözlə yaz
+Writes TikTok's date by the creator's name with the month's name, like Oct 12. Day before month makes it 12 Oct.	Yaradıcının adının yanındakı TikTok tarixini ayın adı ilə yazır, məsələn Oct 12. Gün aydan əvvəl seçimi onu 12 Oct edir.

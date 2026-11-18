@@ -3268,3 +3268,5 @@ Import an emoji font file	استيراد ملف خط إيموجي
 Remove the imported emoji font	أزل خط الإيموجي المستورد
 No emoji font is imported	لا يوجد خط إيموجي مستورد
 %1$s is imported. Turn on Use an imported emoji font to see it.	تم استيراد %1$s. فعّل «استخدام خط إيموجي مستورد» لرؤيته.
+Write the month as a word	اكتب الشهر بالاسم
+Writes TikTok's date by the creator's name with the month's name, like Oct 12. Day before month makes it 12 Oct.	يكتب تاريخ TikTok بجانب اسم صانع المحتوى باسم الشهر، مثل Oct 12. ويجعله خيار اليوم قبل الشهر 12 Oct.

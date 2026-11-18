@@ -2807,9 +2807,11 @@ Window width needed to enable the layout. Restart TikTok to apply this.,Window w
 "Words, countries and languages","Words, countries and languages"
 Works only with YTDLnis (com.deniscerri.ytdl). Picks audio or video when the save button sends it a link.,Works only with YTDLnis (com.deniscerri.ytdl). Picks audio or video when the save button sends it a link.
 Works only with YTDLnis (com.deniscerri.ytdl). Starts the download in the background without showing its download card.,Works only with YTDLnis (com.deniscerri.ytdl). Starts the download in the background without showing its download card.
+Write the month as a word,Write the month as a word
 Write the username and caption on the video,Write the username and caption on the video
 "Write the video's sound beside it, in the format picked under Sound format. Android 10 and later file audio separately, so it lands in Music under the same folder name as your videos.","Write the video's sound beside it, in the format picked under Sound format. Android 10 and later file audio separately, so it lands in Music under the same folder name as your videos."
 "Writes TikTok's date by the creator's name day first, like 29.09, with the year after it for an older video. Ages like 2d ago stay as they are.","Writes TikTok's date by the creator's name day first, like 29.09, with the year after it for an older video. Ages like 2d ago stay as they are."
+"Writes TikTok's date by the creator's name with the month's name, like Oct 12. Day before month makes it 12 Oct.","Writes TikTok's date by the creator's name with the month's name, like Oct 12. Day before month makes it 12 Oct."
 "Writes the date before the time to the second the short way your language does, like 10/7/25.","Writes the date before the time to the second the short way your language does, like 10/7/25."
 Writing,Writing
 Writing the caption on the video,Writing the caption on the video

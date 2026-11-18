@@ -15,7 +15,7 @@ final class L10nTranslationsAr {
     }
 
     static Map<String, String> build() {
-        Map<String, String> table = new HashMap<>(6222);
+        Map<String, String> table = new HashMap<>(6226);
         fill0(table);
         fill1(table);
         fill2(table);
@@ -6326,25 +6326,29 @@ final class L10nTranslationsAr {
                 "يعمل فقط مع YTDLnis (com.deniscerri.ytdl). يختار الصوت أو الفيديو عندما يرسل له زر الحفظ رابطا.");
         table.put("Works only with YTDLnis (com.deniscerri.ytdl). Starts the download in the background without showing its download card.",
                 "يعمل فقط مع YTDLnis (com.deniscerri.ytdl). يبدأ التنزيل في الخلفية دون إظهار بطاقة التنزيل الخاصة به.");
+        table.put("Write the month as a word",
+                "اكتب الشهر بالاسم");
         table.put("Write the username and caption on the video",
                 "اكتب اسم المستخدم والوصف على الفيديو");
         table.put("Write the video's sound beside it, in the format picked under Sound format. Android 10 and later file audio separately, so it lands in Music under the same folder name as your videos.",
                 "احفظ صوت الفيديو بجانبه، بالصيغة المختارة في تنسيق الصوت. على Android 10 والإصدارات الأحدث يُحفظ الصوت منفصلاً، لذلك يظهر في Music داخل مجلد يحمل اسم مجلد الفيديوهات نفسه.");
         table.put("Writes TikTok's date by the creator's name day first, like 29.09, with the year after it for an older video. Ages like 2d ago stay as they are.",
                 "يكتب تاريخ TikTok بجانب اسم صانع المحتوى باليوم أولًا، مثل 29.09، مع السنة بعده للفيديو الأقدم. تبقى الأعمار مثل منذ يومين كما هي.");
+        table.put("Writes TikTok's date by the creator's name with the month's name, like Oct 12. Day before month makes it 12 Oct.",
+                "يكتب تاريخ TikTok بجانب اسم صانع المحتوى باسم الشهر، مثل Oct 12. ويجعله خيار اليوم قبل الشهر 12 Oct.");
         table.put("Writes the date before the time to the second the short way your language does, like 10/7/25.",
                 "يكتب التاريخ قبل الوقت بالثواني بالطريقة القصيرة التي تستخدمها لغتك، مثل 10/7/25.");
         table.put("Writing",
                 "الكتابة");
         table.put("Writing the caption on the video",
                 "كتابة الوصف على الفيديو");
+    }
+
+    private static void fill51(Map<String, String> table) {
         table.put("Writing the caption on the video: %1$s",
                 "جار كتابة الوصف على الفيديو: %1$s");
         table.put("YTDLnis background mode",
                 "وضع الخلفية في YTDLnis");
-    }
-
-    private static void fill51(Map<String, String> table) {
         table.put("YTDLnis download type",
                 "نوع تنزيل YTDLnis");
         table.put("Yellow",

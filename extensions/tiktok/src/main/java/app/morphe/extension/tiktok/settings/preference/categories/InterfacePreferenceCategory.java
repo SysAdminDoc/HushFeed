@@ -351,6 +351,12 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             ));
             addPreference(new TogglePreference(
                     context,
+                    "Write the month as a word",
+                    "Writes TikTok's date by the creator's name with the month's name, like Oct 12. Day before month makes it 12 Oct.",
+                    Settings.PUBLISH_DATE_MONTH_NAME
+            ));
+            addPreference(new TogglePreference(
+                    context,
                     "Show dates on profile grids",
                     "Show the day each video was posted under its view count on profile grids.",
                     Settings.PUBLISH_DATE_ON_GRID

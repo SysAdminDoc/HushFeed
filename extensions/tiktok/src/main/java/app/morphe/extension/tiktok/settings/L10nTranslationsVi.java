@@ -15,7 +15,7 @@ final class L10nTranslationsVi {
     }
 
     static Map<String, String> build() {
-        Map<String, String> table = new HashMap<>(5734);
+        Map<String, String> table = new HashMap<>(5738);
         fill0(table);
         fill1(table);
         fill2(table);
@@ -5822,12 +5822,16 @@ final class L10nTranslationsVi {
                 "Chỉ hoạt động với YTDLnis (com.deniscerri.ytdl). Tự động chọn âm thanh hoặc video khi nút lưu gửi liên kết đến ứng dụng đó.");
         table.put("Works only with YTDLnis (com.deniscerri.ytdl). Starts the download in the background without showing its download card.",
                 "Chỉ hoạt động với YTDLnis (com.deniscerri.ytdl). Bắt đầu tải xuống ở chế độ nền mà không hiển thị thẻ tải xuống.");
+        table.put("Write the month as a word",
+                "Viết tháng bằng chữ");
         table.put("Write the username and caption on the video",
                 "In tên người dùng và chú thích lên video");
         table.put("Write the video's sound beside it, in the format picked under Sound format. Android 10 and later file audio separately, so it lands in Music under the same folder name as your videos.",
                 "Lưu tên âm thanh của video đi kèm theo định dạng được chọn trong phần Định dạng âm thanh. Trên Android 10 trở lên, tệp âm thanh được lưu riêng biệt vào thư mục Nhạc (Music) dưới cùng tên thư mục với video của bạn.");
         table.put("Writes TikTok's date by the creator's name day first, like 29.09, with the year after it for an older video. Ages like 2d ago stay as they are.",
                 "Ghi ngày của TikTok cạnh tên nhà sáng tạo với ngày đứng trước, như 29.09, kèm năm phía sau cho video cũ hơn. Thời gian như 2 ngày trước vẫn giữ nguyên.");
+        table.put("Writes TikTok's date by the creator's name with the month's name, like Oct 12. Day before month makes it 12 Oct.",
+                "Viết ngày của TikTok cạnh tên nhà sáng tạo bằng tên tháng, như Oct 12. Ngày trước tháng sẽ đổi thành 12 Oct.");
         table.put("Writes the date before the time to the second the short way your language does, like 10/7/25.",
                 "Hiển thị định dạng ngày trước thời gian chính xác đến từng giây theo kiểu viết rút gọn của ngôn ngữ bạn đang dùng, ví dụ như 10/7/25.");
         table.put("Writing",
@@ -5842,13 +5846,13 @@ final class L10nTranslationsVi {
                 "Loại tải xuống YTDLnis");
         table.put("Yellow",
                 "Màu vàng");
+    }
+
+    private static void fill47(Map<String, String> table) {
         table.put("Yes",
                 "Có");
         table.put("You can continue now.",
                 "Bạn có thể tiếp tục ngay bây giờ.");
-    }
-
-    private static void fill47(Map<String, String> table) {
         table.put("You can pick up to %1$s at a time",
                 "Bạn có thể chọn tối đa %1$s mục cùng lúc");
         table.put("You have %1$s. Update the patches in Morphe Manager, then patch TikTok again.",

@@ -2868,3 +2868,5 @@ Import an emoji font file,Impor berkas font emoji
 Remove the imported emoji font,Hapus font emoji yang diimpor
 No emoji font is imported,Belum ada font emoji yang diimpor
 %1$s is imported. Turn on Use an imported emoji font to see it.,%1$s sudah diimpor. Nyalakan Gunakan font emoji yang diimpor untuk melihatnya.
+Write the month as a word,Tulis bulan sebagai kata
+"Writes TikTok's date by the creator's name with the month's name, like Oct 12. Day before month makes it 12 Oct.","Menulis tanggal TikTok di samping nama kreator dengan nama bulan, seperti Oct 12. Hari sebelum bulan membuatnya 12 Oct."

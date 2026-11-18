@@ -15,7 +15,7 @@ final class L10nTranslationsTr {
     }
 
     static Map<String, String> build() {
-        Map<String, String> table = new HashMap<>(5734);
+        Map<String, String> table = new HashMap<>(5738);
         fill0(table);
         fill1(table);
         fill2(table);
@@ -5822,12 +5822,16 @@ final class L10nTranslationsTr {
                 "Yalnızca YTDLnis (com.deniscerri.ytdl) ile çalışır. Kaydet düğmesi ona bağlantı gönderdiğinde ses veya video seçer.");
         table.put("Works only with YTDLnis (com.deniscerri.ytdl). Starts the download in the background without showing its download card.",
                 "Yalnızca YTDLnis (com.deniscerri.ytdl) ile çalışır. İndirmeyi indirme kartını göstermeden arka planda başlatır.");
+        table.put("Write the month as a word",
+                "Ayı yazıyla göster");
         table.put("Write the username and caption on the video",
                 "Kullanıcı adını ve açıklamayı videonun üzerine yaz");
         table.put("Write the video's sound beside it, in the format picked under Sound format. Android 10 and later file audio separately, so it lands in Music under the same folder name as your videos.",
                 "Videonun sesini, Ses biçimi altında seçilen biçimde videonun yanına yaz. Android 10 ve sonrası ses dosyalarını ayrı tutar, bu yüzden dosya Music altında, videolarınla aynı adlı klasöre gider.");
         table.put("Writes TikTok's date by the creator's name day first, like 29.09, with the year after it for an older video. Ages like 2d ago stay as they are.",
                 "TikTok'un içerik üreticisinin adının yanındaki tarihini gün önce yazar, 29.09 gibi, daha eski bir videoda yılı arkasına ekler. 2 g önce gibi süreler olduğu gibi kalır.");
+        table.put("Writes TikTok's date by the creator's name with the month's name, like Oct 12. Day before month makes it 12 Oct.",
+                "Yaratıcının adının yanındaki TikTok tarihini ay adıyla yazar, örneğin Oct 12. Gün aydan önce bunu 12 Oct yapar.");
         table.put("Writes the date before the time to the second the short way your language does, like 10/7/25.",
                 "Saniyesine kadar gösterilen saatten önceki tarihi dilinin kısa biçimiyle yazar, örneğin 7.10.2025.");
         table.put("Writing",
@@ -5842,13 +5846,13 @@ final class L10nTranslationsTr {
                 "YTDLnis indirme türü");
         table.put("Yellow",
                 "Sarı");
+    }
+
+    private static void fill47(Map<String, String> table) {
         table.put("Yes",
                 "Evet");
         table.put("You can continue now.",
                 "Artık devam edebilirsin.");
-    }
-
-    private static void fill47(Map<String, String> table) {
         table.put("You can pick up to %1$s at a time",
                 "Bir seferde en fazla %1$s seçebilirsin");
         table.put("You have %1$s. Update the patches in Morphe Manager, then patch TikTok again.",

@@ -15,7 +15,7 @@ final class L10nTranslationsZh_Hans {
     }
 
     static Map<String, String> build() {
-        Map<String, String> table = new HashMap<>(5734);
+        Map<String, String> table = new HashMap<>(5738);
         fill0(table);
         fill1(table);
         fill2(table);
@@ -5822,12 +5822,16 @@ final class L10nTranslationsZh_Hans {
                 "仅适用于 YTDLnis (com.deniscerri.ytdl)。当保存按钮向其发送链接时选择音频或视频.");
         table.put("Works only with YTDLnis (com.deniscerri.ytdl). Starts the download in the background without showing its download card.",
                 "仅适用于 YTDLnis (com.deniscerri.ytdl)。在后台开始下载，而不显示其下载卡.");
+        table.put("Write the month as a word",
+                "用文字写月份");
         table.put("Write the username and caption on the video",
                 "在视频上写下用户名和标题");
         table.put("Write the video's sound beside it, in the format picked under Sound format. Android 10 and later file audio separately, so it lands in Music under the same folder name as your videos.",
                 "按照在声音格式下选择的格式在其旁边写下视频的声音。 Android 10 及更高版本单独归档音频，因此它位于与视频相同的文件夹名称下的音乐中.");
         table.put("Writes TikTok's date by the creator's name day first, like 29.09, with the year after it for an older video. Ages like 2d ago stay as they are.",
                 "将创作者名字旁的 TikTok 日期写成日在前，如 29.09，较旧的视频后面加上年份。像 2天前 这样的时长保持不变.");
+        table.put("Writes TikTok's date by the creator's name with the month's name, like Oct 12. Day before month makes it 12 Oct.",
+                "将创作者名字旁的 TikTok 日期写成月份名称，如 Oct 12。开启日在月前后则为 12 Oct.");
         table.put("Writes the date before the time to the second the short way your language does, like 10/7/25.",
                 "按照你的语言的缩写方式将时间之前的日期写成秒，例如 10/7/25.");
         table.put("Writing",
@@ -5842,13 +5846,13 @@ final class L10nTranslationsZh_Hans {
                 "YTDLnis 下载类型");
         table.put("Yellow",
                 "黄色");
+    }
+
+    private static void fill47(Map<String, String> table) {
         table.put("Yes",
                 "是的");
         table.put("You can continue now.",
                 "现在可以继续了.");
-    }
-
-    private static void fill47(Map<String, String> table) {
         table.put("You can pick up to %1$s at a time",
                 "你一次最多可以领取 %1$s");
         table.put("You have %1$s. Update the patches in Morphe Manager, then patch TikTok again.",

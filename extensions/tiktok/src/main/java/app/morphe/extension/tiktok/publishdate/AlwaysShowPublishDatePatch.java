@@ -68,7 +68,9 @@ public final class AlwaysShowPublishDatePatch {
 
     private static String exactOrOriginal(String original, Object item) {
         if (!Settings.PUBLISH_DATE_EXACT_TIME.get()) {
-            return Settings.PUBLISH_DATE_DAY_FIRST.get() ? dayFirst(original, item) : original;
+            boolean dayFirst = Settings.PUBLISH_DATE_DAY_FIRST.get();
+            if (Settings.PUBLISH_DATE_MONTH_NAME.get()) return monthName(original, item, dayFirst);
+            return dayFirst ? dayFirst(original, item) : original;
         }
         try {
             long now = System.currentTimeMillis();
@@ -110,6 +112,27 @@ public final class AlwaysShowPublishDatePatch {
             return groups == 2 ? day : day + String.format(Locale.ROOT, ".%02d", posted.get(Calendar.YEAR) % 100);
         } catch (Throwable ex) {
             Logger.printException(() -> "Could not write the date day first", ex);
+            return original;
+        }
+    }
+
+    /**
+     * TikTok's date with the month as a word (#461): "10-12" becomes "Oct 12", or "12 Oct" day
+     * first, in the phone's language. The year stays only where TikTok wrote one, and anything
+     * that isn't all numbers is TikTok's to keep, as in {@link #dayFirst}.
+     */
+    static String monthName(String original, Object item, boolean dayFirst) {
+        try {
+            int groups = numberGroups(original);
+            if (groups < 2 || groups > 3) return original;
+            long seconds = postedAt(item, System.currentTimeMillis());
+            if (seconds <= 0) return original;
+            String pattern = groups == 2
+                    ? (dayFirst ? "d MMM" : "MMM d")
+                    : (dayFirst ? "d MMM y" : "MMM d, y");
+            return new SimpleDateFormat(pattern, Locale.getDefault()).format(new Date(seconds * 1000L));
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Could not write the month as a word", ex);
             return original;
         }
     }

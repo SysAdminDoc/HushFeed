@@ -2866,3 +2866,5 @@ Import an emoji font file,Nhập tệp phông chữ emoji
 Remove the imported emoji font,Xóa phông chữ emoji đã nhập
 No emoji font is imported,Chưa nhập phông chữ emoji nào
 %1$s is imported. Turn on Use an imported emoji font to see it.,"%1$s đã được nhập. Bật ""Sử dụng phông chữ emoji đã nhập"" để xem."
+Write the month as a word,Viết tháng bằng chữ
+"Writes TikTok's date by the creator's name with the month's name, like Oct 12. Day before month makes it 12 Oct.","Viết ngày của TikTok cạnh tên nhà sáng tạo bằng tên tháng, như Oct 12. Ngày trước tháng sẽ đổi thành 12 Oct."

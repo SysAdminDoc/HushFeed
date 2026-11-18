@@ -333,7 +333,17 @@ function Restore-WalkTabs([string]$From, [int]$Height) {
         if (Find-WalkNav $nodes $WalkLabels.Home $Height) { return $nodes }
         # The comma keeps the empty list a list: a bare @() reaches the caller as $null, and
         # Find-UiNode then stopped the whole walk on $null.Text instead of logging "no Friends tab".
-        if (-not (Get-WalkForeground).StartsWith("$WalkPackage/", [StringComparison]::Ordinal)) { return , @() }
+        $foreground = Get-WalkForeground
+        if (-not $foreground.StartsWith("$WalkPackage/", [StringComparison]::Ordinal)) { return , @() }
+        # The feed itself, over an item that never stops drawing (a LIVE preview), so no dump
+        # reads it and Back can't move it: swipe on to the next video, as Find-WalkTopNode does.
+        # The 0.83.0 release walk pressed Back over one LIVE for 27 minutes and reached 6 of 27.
+        if (-not $nodes -and $script:feedActivity -and $foreground -eq $script:feedActivity) {
+            Write-WalkLog "swipe on from the feed after $From"
+            Invoke-WalkSwipe $script:walkWidth $Height
+            if (-not (Test-WalkAlive "$From swipe")) { return , @() }
+            continue
+        }
         $decline = @(Find-UiNode -Nodes $nodes -Label $WalkConsentDeclineLabel | Where-Object Clickable) | Select-Object -First 1
         if ($decline) {
             Invoke-WalkTap $decline "decline '$($decline.Text)' after $From"
@@ -520,6 +530,10 @@ try {
         if ($gate) { Invoke-WalkTap $gate "launch gate '$($gate.Text)$($gate.Desc)'" 2500 } else { Start-Sleep -Seconds 2 }
     }
     if (-not $feed) { throw "$appName's bottom tabs never showed after launch." }
+    # Restore-WalkTabs swipes on from a feed item no dump can read, so it needs the feed's
+    # activity and width.
+    $script:feedActivity = Get-WalkForeground
+    $script:walkWidth = $W
     Complete-WalkScreen 'launch'
 
     # The main feed, with swipes.

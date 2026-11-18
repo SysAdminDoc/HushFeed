@@ -131,7 +131,10 @@ final class DramaEpisodes {
                     added++;
                 }
             }
-            if (!page.hasNext || added == 0) break;
+            if (!page.hasNext) break;
+            // TikTok's list starts at page 1 now: page 0 is empty and says more follow (#463).
+            // Any later page that adds nothing ends the list.
+            if (added == 0 && pages > 0) break;
             // TikTok says which page it sent; the next is the one after, whichever way it counts.
             requested = Math.max(requested, page.page) + 1;
         }

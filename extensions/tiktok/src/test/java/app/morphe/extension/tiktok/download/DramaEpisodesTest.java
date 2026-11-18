@@ -142,6 +142,35 @@ public class DramaEpisodesTest {
         assertEquals("2", asked.get(1).get("requested_page"));
     }
 
+    /** #463: TikTok's list now starts at page 1, and page 0 is empty but says more follow. */
+    @Test public void anEmptyPageZeroThatSaysMoreFollowIsSteppedOver() throws Exception {
+        replies.put("0", reply(0, true));
+        replies.put("1", reply(1, true, item("41", 1, false)));
+        replies.put("2", reply(2, false, item("42", 2, false)));
+
+        List<DramaEpisodes.Episode> episodes = DramaEpisodes.load(1L);
+
+        assertEquals(2, episodes.size());
+        assertEquals("41", episodes.get(0).id);
+        assertEquals(3, asked.size());
+        assertEquals("1", asked.get(1).get("requested_page"));
+        assertEquals("2", asked.get(2).get("requested_page"));
+    }
+
+    @Test public void aSecondEmptyPageEndsTheList() throws Exception {
+        replies.put("0", reply(0, true));
+        replies.put("1", reply(1, true));
+        replies.put("2", reply(2, false, item("51", 1, false)));
+        assertTrue(DramaEpisodes.load(1L).isEmpty());
+        assertEquals("an empty drama isn't asked thirty times", 2, asked.size());
+    }
+
+    @Test public void anEmptyFirstPageWithNothingMoreIsAnEmptyList() throws Exception {
+        replies.put("0", reply(0, false));
+        assertTrue(DramaEpisodes.load(1L).isEmpty());
+        assertEquals(1, asked.size());
+    }
+
     @Test public void aPageWithNothingNewEndsTheList() throws Exception {
         replies.put("0", reply(0, true, item("31", 1, false)));
         replies.put("1", reply(1, true, item("31", 1, false)));

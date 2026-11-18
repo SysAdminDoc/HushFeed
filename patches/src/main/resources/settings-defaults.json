@@ -481,6 +481,7 @@
       "hide_detail_comment_bar",
       "hide_clear_display_controls",
       "keep_clear_display_seek_bar",
+      "fade_caption_opacity",
       "fade_controls_opacity",
       "fade_in_clear_display",
       "invisible_controls_button",
@@ -1859,6 +1860,14 @@
       "key": "external_downloader_package",
       "type": "string",
       "default": ""
+    },
+    "fade_caption_opacity": {
+      "field": "FADE_CAPTION_OPACITY",
+      "key": "fade_caption_opacity",
+      "type": "integer",
+      "default": 100,
+      "minimum": 0,
+      "maximum": 100
     },
     "fade_controls_opacity": {
       "field": "FADE_CONTROLS_OPACITY",

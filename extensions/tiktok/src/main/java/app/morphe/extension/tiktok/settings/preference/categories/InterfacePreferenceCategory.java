@@ -851,6 +851,12 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "Fade the buttons, caption and tabs over the video to this level instead of hiding them. 100 leaves them as TikTok draws them. Faded controls still take taps. At 0 the buttons and caption are hidden, and the tabs stay at 10.",
                     Settings.FADE_CONTROLS_OPACITY, "%1$s%%"
             ));
+            addPreference(new NumberInputPreference(
+                    context,
+                    "Fade the name, date and caption",
+                    "Draws the creator's name, the date, the caption and the music line over the video at this level, and they still take taps. At 100 they follow Fade the video controls. At 0 they're hidden.",
+                    Settings.FADE_CAPTION_OPACITY, "%1$s%%"
+            ));
             addPreference(new TogglePreference(
                     context,
                     "Keep faded controls in Clear display",

@@ -2868,3 +2868,5 @@ No emoji font is imported,Chưa nhập phông chữ emoji nào
 %1$s is imported. Turn on Use an imported emoji font to see it.,"%1$s đã được nhập. Bật ""Sử dụng phông chữ emoji đã nhập"" để xem."
 Write the month as a word,Viết tháng bằng chữ
 "Writes TikTok's date by the creator's name with the month's name, like Oct 12. Day before month makes it 12 Oct.","Viết ngày của TikTok cạnh tên nhà sáng tạo bằng tên tháng, như Oct 12. Ngày trước tháng sẽ đổi thành 12 Oct."
+"Fade the name, date and caption","Làm mờ tên, ngày và chú thích"
+"Draws the creator's name, the date, the caption and the music line over the video at this level, and they still take taps. At 100 they follow Fade the video controls. At 0 they're hidden.","Hiển thị tên nhà sáng tạo, ngày, chú thích và dòng nhạc trên video ở mức này, và vẫn nhấn được. Ở 100 chúng theo Làm mờ điều khiển video. Ở 0 chúng bị ẩn."

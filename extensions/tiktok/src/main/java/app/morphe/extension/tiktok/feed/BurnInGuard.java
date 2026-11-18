@@ -124,6 +124,11 @@ public final class BurnInGuard {
         return dimmed ? IDLE_LEVEL : chosen;
     }
 
+    /** A level of its own under the dim: lowered to the idle level, never raised to it. */
+    static int drawn(int chosen) {
+        return dimmed && chosen > IDLE_LEVEL ? IDLE_LEVEL : chosen;
+    }
+
     /** The place the content is in at {@code now}, in steps of {@link #STEP_DP}. */
     static int[] placeAt(long now) {
         return PLACES[(int) ((now / SHIFT_EVERY_MS) % PLACES.length)];

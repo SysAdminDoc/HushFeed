@@ -273,6 +273,7 @@ public class FeedScreenCoverageTest {
         put("remember_clear_display_on_scroll", YES, YES, NONE);
         put("hide_clear_display_controls", YES, YES, NONE);
         put("keep_clear_display_seek_bar", YES, YES, NONE);
+        put("fade_caption_opacity", YES, YES, NONE);
         put("fade_controls_opacity", YES, YES, NONE);
         put("fade_in_clear_display", YES, YES, NONE);
         // The eye button sits on the main feed alone; an opened video keeps its controls (#374).

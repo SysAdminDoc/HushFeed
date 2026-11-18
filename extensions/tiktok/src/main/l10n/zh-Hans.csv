@@ -2868,3 +2868,5 @@ No emoji font is imported,没有导入表情字体
 %1$s is imported. Turn on Use an imported emoji font to see it.,%1$s 已导入。打开“使用导入的表情字体”即可查看它.
 Write the month as a word,用文字写月份
 "Writes TikTok's date by the creator's name with the month's name, like Oct 12. Day before month makes it 12 Oct.",将创作者名字旁的 TikTok 日期写成月份名称，如 Oct 12。开启日在月前后则为 12 Oct.
+"Fade the name, date and caption",淡化名称、日期和说明文字
+"Draws the creator's name, the date, the caption and the music line over the video at this level, and they still take taps. At 100 they follow Fade the video controls. At 0 they're hidden.",以此级别在视频上显示创作者名称、日期、说明文字和音乐行，它们仍可点按。为 100 时跟随淡入淡出视频控件。为 0 时隐藏.

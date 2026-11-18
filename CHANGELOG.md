@@ -6,6 +6,7 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* `Fade the name, date and caption` gives the creator's name, the date, the caption and the music line their own opacity over the video (#462).
 * `Write the month as a word` shows TikTok's date by the creator's name as Oct 12, or 12 Oct with `Day before month` on (#461).
 * `Use an imported emoji font` draws emoji in a font file you pick, separately from the text font. It's part of `Use system font` and needs Android 12 or newer (#458).
 * `Video bitrate limit` keeps a heavy video from eating your data. Anything over the limit plays a lighter version, and videos under it aren't touched (#454).

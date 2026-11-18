@@ -3023,3 +3023,5 @@ No emoji font is imported	İdxal edilmiş emoji şrifti yoxdur
 %1$s is imported. Turn on Use an imported emoji font to see it.	%1$s idxal edildi. Onu görmək üçün İdxal edilmiş emoji şriftindən istifadə edin ayarını açın.
 Write the month as a word	Ayı sözlə yaz
 Writes TikTok's date by the creator's name with the month's name, like Oct 12. Day before month makes it 12 Oct.	Yaradıcının adının yanındakı TikTok tarixini ayın adı ilə yazır, məsələn Oct 12. Gün aydan əvvəl seçimi onu 12 Oct edir.
+Fade the name, date and caption	Ad, tarix və açıqlamanı solğunlaşdır
+Draws the creator's name, the date, the caption and the music line over the video at this level, and they still take taps. At 100 they follow Fade the video controls. At 0 they're hidden.	Yaradıcının adını, tarixi, açıqlamanı və musiqi sətrini videonun üzərində bu səviyyədə göstərir, onlara toxunmaq yenə mümkündür. 100 olduqda Video idarəetmələrini solğunlaşdır ayarına uyğun olur. 0 olduqda gizlənir.

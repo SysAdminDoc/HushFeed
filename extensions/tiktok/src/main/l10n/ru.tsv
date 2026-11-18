@@ -3206,3 +3206,5 @@ No emoji font is imported	Шрифт эмодзи не импортирован
 %1$s is imported. Turn on Use an imported emoji font to see it.	%1$s импортирован. Включите Использовать импортированный шрифт эмодзи, чтобы увидеть его.
 Write the month as a word	Писать месяц словом
 Writes TikTok's date by the creator's name with the month's name, like Oct 12. Day before month makes it 12 Oct.	Пишет дату TikTok рядом с именем автора с названием месяца, например Oct 12. С параметром «День перед месяцем» получится 12 Oct.
+Fade the name, date and caption	Приглушить имя, дату и подпись
+Draws the creator's name, the date, the caption and the music line over the video at this level, and they still take taps. At 100 they follow Fade the video controls. At 0 they're hidden.	Показывает имя автора, дату, подпись и строку с музыкой поверх видео на этом уровне, и на них по-прежнему можно нажимать. При 100 они следуют настройке Приглушить кнопки поверх видео. При 0 они скрыты.

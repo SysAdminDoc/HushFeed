@@ -94,6 +94,8 @@ public class InvisibleControlsTest {
         Settings.INVISIBLE_CONTROLS_ON.save(false);
         Settings.INVISIBLE_CONTROLS_KEEP_CAPTION.save(false);
         Settings.FADE_CONTROLS_OPACITY.save(100);
+        Settings.FADE_CAPTION_OPACITY.save(100);
+        Settings.BURN_IN_GUARD.resetToDefault();
         Settings.CLEAR_DISPLAY.save(false);
         SettingsStatus.videoOverlaysEnabled = overlays;
         for (String name : NAMES) VideoOverlayHider.resolveForTests(name, 0);
@@ -359,6 +361,78 @@ public class InvisibleControlsTest {
         Settings.INVISIBLE_CONTROLS_KEEP_CAPTION.save(false);
         pass();
         assertGhosted(controls());
+    }
+
+    /** Issue #462: the name, date and caption take their own level and leave the rest alone. */
+    @Test
+    public void theCaptionFrameTakesItsOwnLevel() {
+        assertEquals(100, (int) Settings.FADE_CAPTION_OPACITY.defaultValue);
+        Settings.FADE_CAPTION_OPACITY.save(40);
+        pass();
+        assertEquals(0.4f, frame.getAlpha(), 0.001f);
+        assertTrue("still takes taps", frame.isClickable() && frame.isShown());
+        assertStock(column, cover, search, topTabs, bottomBar);
+
+        Settings.FADE_CONTROLS_OPACITY.save(70);
+        pass();
+        assertEquals("its own level wins over the fade", 0.4f, frame.getAlpha(), 0.001f);
+        assertEquals(0.7f, column.getAlpha(), 0.001f);
+
+        Settings.FADE_CAPTION_OPACITY.save(100);
+        pass();
+        assertEquals("100 follows the fade", 0.7f, frame.getAlpha(), 0.001f);
+
+        Settings.FADE_CONTROLS_OPACITY.save(100);
+        pass();
+        assertStock(controls());
+    }
+
+    @Test
+    public void aCaptionLevelOfZeroTakesOnlyTheFrameAway() {
+        Settings.FADE_CAPTION_OPACITY.save(0);
+        pass();
+        assertEquals(View.INVISIBLE, frame.getVisibility());
+        assertStock(column, cover, search, topTabs, bottomBar);
+
+        Settings.FADE_CAPTION_OPACITY.save(100);
+        pass();
+        assertStock(controls());
+    }
+
+    @Test
+    public void pauseAndTheInvisibleControlsOutrankTheCaptionLevel() {
+        Settings.FADE_CAPTION_OPACITY.save(40);
+        PausedProcess.set(true);
+        pass();
+        assertStock(controls());
+        PausedProcess.set(false);
+
+        Settings.INVISIBLE_CONTROLS_BUTTON.save(true);
+        Settings.INVISIBLE_CONTROLS_ON.save(true);
+        pass();
+        assertGhosted(controls());
+
+        Settings.INVISIBLE_CONTROLS_KEEP_CAPTION.save(true);
+        pass();
+        assertEquals("kept at the reader's own level", 0.4f, frame.getAlpha(), 0.001f);
+        assertGhosted(column, cover, search, topTabs, bottomBar);
+    }
+
+    /** The burn-in dim lowers a caption level above it and never raises one below it. */
+    @Test
+    public void theBurnInDimCapsTheCaptionLevel() {
+        Settings.BURN_IN_GUARD.save(BurnInGuard.DIM);
+        Settings.FADE_CAPTION_OPACITY.save(60);
+        pass();
+        assertEquals(0.6f, frame.getAlpha(), 0.001f);
+
+        Shadows.shadowOf(android.os.Looper.getMainLooper())
+                .idleFor(java.time.Duration.ofMillis(BurnInGuard.IDLE_AFTER_MS));
+        assertEquals(BurnInGuard.IDLE_LEVEL / 100f, frame.getAlpha(), 0.001f);
+
+        Settings.FADE_CAPTION_OPACITY.save(10);
+        pass();
+        assertEquals(0.1f, frame.getAlpha(), 0.001f);
     }
 
     /** With the mode off, a fade of 0 still takes the rail away and holds the tabs at the floor. */

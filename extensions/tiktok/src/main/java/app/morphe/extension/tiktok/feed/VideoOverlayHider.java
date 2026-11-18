@@ -688,6 +688,8 @@ public final class VideoOverlayHider {
             // does nothing, and Pause answers the stock look.
             boolean overlaysOn = !HushfeedPause.isPaused() && SettingsStatus.videoOverlaysEnabled;
             int chosenFade = overlaysOn ? Math.max(0, Math.min(100, Settings.FADE_CONTROLS_OPACITY.get())) : 100;
+            // The caption frame's own level (#462): under 100 it wins over the fade for that frame.
+            int chosenCaption = overlaysOn ? Math.max(0, Math.min(100, Settings.FADE_CAPTION_OPACITY.get())) : 100;
             // With the fade set, Clear display keeps the controls it covers in sight at that
             // level instead of taking them away, and lets taps through them (#84). Across a
             // carried swipe the incoming video's controls show the same way rather than going.
@@ -700,8 +702,12 @@ public final class VideoOverlayHider {
             boolean invisibleOffered = InvisibleControls.offered(activity, overlaysOn, detailPager, clearLive);
             ghostNow = InvisibleControls.ghosting(invisibleOffered);
             fadeLevel = BurnInGuard.pass(activity, ghostNow ? 0 : chosenFade, overlaysOn);
-            anchorLevel = ghostNow && Settings.INVISIBLE_CONTROLS_KEEP_CAPTION.get()
-                    ? (chosenFade > 0 ? chosenFade : 100) : fadeLevel;
+            if (ghostNow) {
+                anchorLevel = !Settings.INVISIBLE_CONTROLS_KEEP_CAPTION.get() ? fadeLevel
+                        : chosenCaption < 100 ? chosenCaption : chosenFade > 0 ? chosenFade : 100;
+            } else {
+                anchorLevel = chosenCaption < 100 ? BurnInGuard.drawn(chosenCaption) : fadeLevel;
+            }
             boolean carryHides = carry && !fadedClear;
             topBarHeld = carryHides && (!RememberClearDisplayPatch.isClearDisplayNow()
                     || RememberClearDisplayPatch.isPageUncleared());
@@ -801,7 +807,7 @@ public final class VideoOverlayHider {
                     || anyRail || !HIDDEN_HERE.isEmpty() || !FADED_HERE.isEmpty() || !WIDGETS_LIFTED.isEmpty()
                     || !SEEK_BARS_LIFTED.isEmpty()
                     || !LIVE_CAPTIONS_LIFTED.isEmpty()
-                    || fadeLevel != 100 || !FADED_TO.isEmpty() || !BAR_ROWS_MOVED.isEmpty()
+                    || fadeLevel != 100 || anchorLevel != 100 || !FADED_TO.isEmpty() || !BAR_ROWS_MOVED.isEmpty()
                     || !CAPTIONS_LIFTED.isEmpty() || !DISCS_LIFTED.isEmpty() || !RAILS_LIFTED.isEmpty()
                     || touchScale != 1f || scaledLastPass || roomAbove > 0) {
                 ViewGroup root = activity.findViewById(android.R.id.content);

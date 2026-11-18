@@ -1219,6 +1219,13 @@ public class Settings extends BaseSettings {
     public static final IntegerSetting FADE_CONTROLS_OPACITY =
             new IntegerSetting("fade_controls_opacity", 100).withRange(0, 100);
     /**
+     * The level the caption frame alone is drawn at: the creator's name, the date, the caption and
+     * the music line (#462). 100 leaves the frame to FADE_CONTROLS_OPACITY, lower wins over it, and
+     * 0 takes the frame out of sight the way a fade of 0 does.
+     */
+    public static final IntegerSetting FADE_CAPTION_OPACITY =
+            new IntegerSetting("fade_caption_opacity", 100).withRange(0, 100);
+    /**
      * Whether a fade between 0 and 100 keeps the controls in sight in Clear display (#84). Off,
      * Clear display takes them away as it does at 100, and the fade only reaches them outside it,
      * for those who want the fade on the feed and Clear display still clear.

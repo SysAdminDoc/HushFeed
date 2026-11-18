@@ -3026,3 +3026,5 @@ No emoji font is imported	ไม่ได้นำเข้าแบบอัก
 %1$s is imported. Turn on Use an imported emoji font to see it.	นำเข้า %1$s แล้ว เปิด "ใช้แบบอักษรอีโมจิที่นำเข้า" เพื่อดูการเปลี่ยนแปลง
 Write the month as a word	เขียนเดือนเป็นคำ
 Writes TikTok's date by the creator's name with the month's name, like Oct 12. Day before month makes it 12 Oct.	เขียนวันที่ของ TikTok ข้างชื่อครีเอเตอร์โดยใช้ชื่อเดือน เช่น Oct 12 และวันก่อนเดือนจะทำให้เป็น 12 Oct.
+Fade the name, date and caption	เฟดชื่อ วันที่ และคำบรรยาย
+Draws the creator's name, the date, the caption and the music line over the video at this level, and they still take taps. At 100 they follow Fade the video controls. At 0 they're hidden.	แสดงชื่อครีเอเตอร์ วันที่ คำบรรยาย และบรรทัดเพลงบนวิดีโอที่ระดับนี้ และยังแตะได้ตามเดิม ที่ 100 จะเป็นไปตาม เฟดตัวควบคุมวิดีโอ. ที่ 0 จะถูกซ่อน

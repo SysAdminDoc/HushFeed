@@ -2870,3 +2870,5 @@ No emoji font is imported,Belum ada font emoji yang diimpor
 %1$s is imported. Turn on Use an imported emoji font to see it.,%1$s sudah diimpor. Nyalakan Gunakan font emoji yang diimpor untuk melihatnya.
 Write the month as a word,Tulis bulan sebagai kata
 "Writes TikTok's date by the creator's name with the month's name, like Oct 12. Day before month makes it 12 Oct.","Menulis tanggal TikTok di samping nama kreator dengan nama bulan, seperti Oct 12. Hari sebelum bulan membuatnya 12 Oct."
+"Fade the name, date and caption","Pudarkan nama, tanggal, dan keterangan"
+"Draws the creator's name, the date, the caption and the music line over the video at this level, and they still take taps. At 100 they follow Fade the video controls. At 0 they're hidden.","Menampilkan nama kreator, tanggal, keterangan, dan baris musik di atas video pada level ini, dan semuanya tetap bisa diketuk. Di 100 mengikuti Pudarkan kontrol video. Di 0 disembunyikan."

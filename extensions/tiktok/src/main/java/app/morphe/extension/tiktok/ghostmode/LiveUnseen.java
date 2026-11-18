@@ -18,6 +18,7 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -61,7 +62,8 @@ public final class LiveUnseen {
     private static final long NEVER = -1;
 
     /** Rooms the eye was tapped in, whose enters go out. Until TikTok is closed. */
-    private static final Set<String> REVEALED = ConcurrentHashMap.newKeySet();
+    private static final Set<String> REVEALED =
+            Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
     /** The latest enter held for each room, guarded by itself. */
     private static final Map<String, HeldEnter> HELD = new LinkedHashMap<>();
     /** When an enter was last held, and when one was last held without a readable room. */

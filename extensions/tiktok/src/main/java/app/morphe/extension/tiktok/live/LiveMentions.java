@@ -15,6 +15,8 @@ import android.os.Build;
 import android.os.SystemClock;
 import android.view.ViewGroup;
 
+import androidx.annotation.RequiresApi;
+
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.Setting;
@@ -253,6 +255,33 @@ public final class LiveMentions {
     }
 
     private static boolean unspacedScript(int c) {
+        return Build.VERSION.SDK_INT >= 24 ? unspacedByScript(c) : unspacedByBlock(c);
+    }
+
+    /** Android 6 has no Character.UnicodeScript, so there the code point's block decides. */
+    private static boolean unspacedByBlock(int c) {
+        Character.UnicodeBlock block;
+        try {
+            block = Character.UnicodeBlock.of(c);
+        } catch (IllegalArgumentException notACodePoint) {
+            return false;
+        }
+        return block == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS
+                || block == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A
+                || block == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B
+                || block == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS
+                || block == Character.UnicodeBlock.HIRAGANA
+                || block == Character.UnicodeBlock.KATAKANA
+                || block == Character.UnicodeBlock.KATAKANA_PHONETIC_EXTENSIONS
+                || block == Character.UnicodeBlock.THAI
+                || block == Character.UnicodeBlock.LAO
+                || block == Character.UnicodeBlock.KHMER
+                || block == Character.UnicodeBlock.KHMER_SYMBOLS
+                || block == Character.UnicodeBlock.MYANMAR;
+    }
+
+    @RequiresApi(24)
+    private static boolean unspacedByScript(int c) {
         Character.UnicodeScript script;
         try {
             script = Character.UnicodeScript.of(c);

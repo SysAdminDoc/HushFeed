@@ -26,6 +26,8 @@ import android.system.ErrnoException;
 import android.system.Os;
 import android.system.OsConstants;
 
+import androidx.annotation.ChecksSdkIntAtLeast;
+
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.InterruptedIOException;
@@ -48,7 +50,6 @@ import app.morphe.extension.tiktok.settings.Settings;
  * shows it: nothing drains it, so it fills. When that happens listening stops and stays off
  * until the switch is turned off and on again.
  */
-@TargetApi(33)
 public final class LiveListen {
     static final int MIN_SDK = 33;
     static final long TICK_MS = 1_000;
@@ -147,6 +148,7 @@ public final class LiveListen {
     private LiveListen() {
     }
 
+    @ChecksSdkIntAtLeast(api = MIN_SDK)
     static boolean supported() {
         return Build.VERSION.SDK_INT >= MIN_SDK;
     }
@@ -258,6 +260,7 @@ public final class LiveListen {
         stopSession();
     }
 
+    @TargetApi(MIN_SDK)
     private static boolean pictureInPicture(Activity activity) {
         return activity.isInPictureInPictureMode();
     }
@@ -267,6 +270,7 @@ public final class LiveListen {
         if (application == null || callbacksOn.get() == application) return;
         callbacksOn = new WeakReference<>(application);
         application.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
+            @TargetApi(MIN_SDK)
             @Override public void onActivityStopped(Activity stopped) {
                 // Out of sight and not in the small window: nobody is watching this room.
                 if (stopped == host.get() && !stopped.isInPictureInPictureMode()) end();
@@ -293,11 +297,13 @@ public final class LiveListen {
         return context.checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
     }
 
+    @TargetApi(MIN_SDK)
     static boolean recognitionAvailable(Context context) {
         return SpeechRecognizer.isOnDeviceRecognitionAvailable(context) || SpeechRecognizer.isRecognitionAvailable(context);
     }
 
     /** The phone's on-device recognizer where it has one, so the room's sound stays on the phone. */
+    @TargetApi(MIN_SDK)
     private static SpeechRecognizer newRecognizer(Context context) {
         return SpeechRecognizer.isOnDeviceRecognitionAvailable(context)
                 ? SpeechRecognizer.createOnDeviceSpeechRecognizer(context)
@@ -617,6 +623,7 @@ public final class LiveListen {
     }
 
     /** A real pipe whose write end never waits, so a recognizer that stops reading can't hold up the sound. */
+    @TargetApi(MIN_SDK)
     static final class OsPipe implements Pipe {
         private final ParcelFileDescriptor read;
         private final ParcelFileDescriptor write;

@@ -177,6 +177,18 @@ public class LiveMentionsTest {
         assertEquals("さくら", LiveMentions.matchingName("さくらさん、ありがとう", names));
     }
 
+    /** Android 6 has no Character.UnicodeScript, so the same names go through the block check. */
+    @Config(sdk = 23)
+    @Test public void scriptsWithoutSpacesMatchInsideTheLineOnAndroidSix() {
+        List<String> names = LiveMentions.namesFrom(null, "小明", "さくら, サクラ, สมชาย, jessie");
+        assertEquals("小明", LiveMentions.matchingName("谢谢小明的礼物", names));
+        assertEquals("さくら", LiveMentions.matchingName("さくらさん、ありがとう", names));
+        assertEquals("サクラ", LiveMentions.matchingName("サクラさん", names));
+        assertEquals("สมชาย", LiveMentions.matchingName("ขอบคุณสมชายครับ", names));
+        assertEquals("jessie", LiveMentions.matchingName("hi Jessie!", names));
+        assertNull(LiveMentions.matchingName("hi jessiebear", names));
+    }
+
     @Test public void shortOwnNamesAreSkippedButNamesYouAddAreKept() {
         List<String> names = LiveMentions.namesFrom("al", "Al", "Bo");
         assertEquals(List.of("bo"), names);

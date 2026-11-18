@@ -28,8 +28,13 @@ public final class NotInterested {
         return null;
     }
 
+    /** The button's tap, for the video playing now. */
     public static void submit() {
-        Object video = CurrentVideoAuthor.getAweme();
+        submit(CurrentVideoAuthor.getAweme());
+    }
+
+    /** Sends the feedback for this video. A gesture passes the one it was made on (#452). */
+    public static void submit(Object video) {
         String id = Reflect.string(video, "getAid", "aid");
         if (id == null) {
             Utils.showToastShort(L10n.t("No video selected. Open a video first."));

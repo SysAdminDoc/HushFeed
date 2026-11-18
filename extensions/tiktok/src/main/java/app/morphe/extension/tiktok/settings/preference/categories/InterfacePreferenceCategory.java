@@ -1018,6 +1018,10 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                 tapLabels.add("Turn Clear display on or off");
                 tapValues.add("clear_display");
             }
+            if (SettingsStatus.notInterestedEnabled) {
+                tapLabels.add("Not interested in this video");
+                tapValues.add("not_interested");
+            }
             String[] tapLabelArray = tapLabels.toArray(new String[0]);
             String[] tapValueArray = tapValues.toArray(new String[0]);
             addPreference(new ChoicePreference(context, "Double tap", Settings.DOUBLE_TAP_ACTION,
@@ -1053,6 +1057,10 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             if (SettingsStatus.automaticClearDisplayEnabled) {
                 pressLabels.add("Turn Clear display on or off");
                 pressValues.add("clear_display");
+            }
+            if (SettingsStatus.notInterestedEnabled) {
+                pressLabels.add("Not interested in this video");
+                pressValues.add("not_interested");
             }
             addPreference(new ChoicePreference(context, "Long press", Settings.LONG_PRESS_ACTION,
                     pressLabels.toArray(new String[0]), pressValues.toArray(new String[0])));

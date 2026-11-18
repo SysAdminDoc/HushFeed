@@ -82,7 +82,8 @@ public final class AlsoFilter {
         offer(activity, CurrentVideoAuthor.getAweme());
     }
 
-    static void offer(Activity activity, Object video) {
+    /** The same for a video a gesture was made on, which needn't be the one playing (#452). */
+    public static void offer(Activity activity, Object video) {
         try {
             if (!enabled() || activity == null || activity.isFinishing() || activity.isDestroyed()) return;
             if (video == null) return;

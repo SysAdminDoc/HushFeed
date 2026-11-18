@@ -219,6 +219,50 @@ public class GestureActionsTest {
         }
     }
 
+    /** #452: Not interested is a choice on both gestures where its patch is in the bundle. */
+    @Test public void notInterestedIsOnBothGesturesOnlyWithItsPatch() throws Exception {
+        try (var controller = Robolectric.buildActivity(TestActivity.class).setup()) {
+            var activity = controller.get();
+            Utils.setContext(activity);
+            SettingsStatus.doubleTapEnabled = true;
+            SettingsStatus.longPressEnabled = true;
+            PreferenceScreen without = activity.getPreferenceManager().createPreferenceScreen(activity);
+            new InterfacePreferenceCategory(activity, without);
+            assertFalse(entryValues(without, "double_tap_action").contains("not_interested"));
+            assertFalse(entryValues(without, "long_press_action").contains("not_interested"));
+            // A backup from a fuller bundle can still carry the choice.
+            assertFalse("nothing could send it", GestureActions.runAction("not_interested"));
+            assertFalse("the 2x hold would be lost", GestureActions.takesLongPress("not_interested"));
+
+            SettingsStatus.notInterestedEnabled = true;
+            PreferenceScreen screen = activity.getPreferenceManager().createPreferenceScreen(activity);
+            new InterfacePreferenceCategory(activity, screen);
+            for (String key : new String[]{"double_tap_action", "long_press_action"}) {
+                ChoicePreference choice = (ChoicePreference) screen.findPreference(key);
+                CharSequence[] values = choice.getEntryValues();
+                assertEquals(key, "not_interested", String.valueOf(values[values.length - 1]));
+                assertEquals(key, values.length, choice.getEntries().length);
+                assertEquals(key, L10n.t("Not interested in this video"),
+                        String.valueOf(choice.getEntries()[values.length - 1]));
+            }
+            assertTrue("the 2x hold would start under the press", GestureActions.takesLongPress("not_interested"));
+
+            // Nothing is on screen, which a LIVE or an ad looks like: the tap is still its own.
+            java.lang.reflect.Method reset =
+                    app.morphe.extension.tiktok.blockauthor.CurrentVideoAuthor.class.getDeclaredMethod("resetForTests");
+            reset.setAccessible(true);
+            reset.invoke(null);
+            Settings.DOUBLE_TAP_ACTION.save("not_interested");
+            ShadowToast.reset();
+            assertTrue("the tap went to TikTok's like", GestureActions.onDoubleTap());
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            assertEquals(L10n.t("No video selected. Open a video first."), ShadowToast.getTextOfLatestToast());
+        } finally {
+            SettingsStatus.notInterestedEnabled = false;
+            Settings.DOUBLE_TAP_ACTION.resetToDefault();
+        }
+    }
+
     /**
      * The two rows offer the same actions, each under its own TikTok default, but for the like:
      * TikTok's own double tap already likes, so Double tap offers Like or unlike instead (#248).

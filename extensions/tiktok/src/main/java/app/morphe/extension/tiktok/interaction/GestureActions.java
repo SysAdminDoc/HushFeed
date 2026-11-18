@@ -32,7 +32,10 @@ import app.morphe.extension.tiktok.download.ExternalDownloader;
 import app.morphe.extension.tiktok.download.FrameSaver;
 import app.morphe.extension.tiktok.share.ShareUrlSanitizer;
 import app.morphe.extension.tiktok.feedfilter.SoundIdentity;
+import app.morphe.extension.tiktok.notinterested.AlsoFilter;
+import app.morphe.extension.tiktok.notinterested.NotInterested;
 import app.morphe.extension.tiktok.settings.Settings;
+import app.morphe.extension.tiktok.settings.SettingsStatus;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.speed.PlaybackSpeedPatch;
 import app.morphe.extension.tiktok.wellbeing.SleepTimer;
@@ -248,7 +251,8 @@ public final class GestureActions {
                 || "copy_sound_link".equals(action) || "youtube_music".equals(action)
                 || "sleep_timer".equals(action) || "save_frame".equals(action)
                 || "save_cover".equals(action) || "clear_display".equals(action)
-                || "open_search".equals(action);
+                || "open_search".equals(action)
+                || ("not_interested".equals(action) && SettingsStatus.notInterestedEnabled);
     }
 
     /**
@@ -426,6 +430,16 @@ public final class GestureActions {
             if (!RememberClearDisplayPatch.toggleFromGesture()) {
                 Utils.showToastShort(L10n.t("Clear display isn't available for this video"));
             }
+            return true;
+        }
+        if ("not_interested".equals(action)) {
+            // The Not interested patch makes the call, so a choice restored into a bundle
+            // without it leaves the gesture to TikTok. It goes to the video the gesture was
+            // made on, which right after a swipe isn't the one still playing (#452).
+            if (!SettingsStatus.notInterestedEnabled) return false;
+            Object video = onScreenAweme();
+            NotInterested.submit(video);
+            Utils.runOnMainThread(() -> AlsoFilter.offer(Utils.getVisibleActivity(), video));
             return true;
         }
         if ("speed_toggle".equals(action)) {

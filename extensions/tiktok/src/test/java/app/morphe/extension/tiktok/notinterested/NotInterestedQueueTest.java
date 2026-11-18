@@ -114,6 +114,23 @@ public class NotInterestedQueueTest {
         Utils.awaitBackgroundTasksForTests();
     }
 
+    /** #452: a gesture sends the video it was made on, even with nothing playing yet. */
+    @Test public void aGestureSendsTheVideoItWasMadeOn() throws Exception {
+        reset();
+        NotInterested.submit();
+        idle();
+        assertEquals("No video selected. Open a video first.", ShadowToast.getTextOfLatestToast());
+
+        ShadowToast.reset();
+        NotInterested.submit(new Clip("aweme-on-screen"));
+        idle();
+        assertNotEquals("the video it was given was ignored",
+                "No video selected. Open a video first.", ShadowToast.getTextOfLatestToast());
+        assertNotEquals(null, ShadowToast.getTextOfLatestToast());
+        Utils.awaitBackgroundTasksForTests();
+        idle();
+    }
+
     private static void idle() {
         Shadows.shadowOf(Looper.getMainLooper()).idle();
     }

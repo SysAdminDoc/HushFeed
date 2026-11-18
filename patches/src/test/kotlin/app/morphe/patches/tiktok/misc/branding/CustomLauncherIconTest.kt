@@ -89,6 +89,30 @@ class CustomLauncherIconTest {
     }
 
     @Test
+    fun `the styles that draw the note alone use the round one`() {
+        val foreground = parse(FOREGROUND.replace(WHITE_NOTE, TIKTOK_NOTE_PATH)).documentElement
+        for (style in listOf(IconStyle.WHITE_ON_BLACK, IconStyle.BLACK_ON_WHITE, IconStyle.MATERIAL_YOU)) {
+            val icon = parse(ADAPTIVE_ICON)
+            restyleAdaptiveIcon(icon, IconLayers(parse(BACKGROUND).documentElement, foreground), style)
+            val root = icon.documentElement
+            assertEquals(style.key, CLEAN_NOTE_PATH, paths(inlineVector(layer(root, "foreground"))).single().first)
+            assertEquals(style.key, CLEAN_NOTE_PATH, paths(inlineVector(layer(root, "monochrome"))).single().first)
+        }
+        assertEquals(
+            "TikTok's own drawable is read, never changed",
+            1,
+            paths(foreground).count { it.first == TIKTOK_NOTE_PATH },
+        )
+    }
+
+    @Test
+    fun `the round note's outline only has smooth joins and real corners`() {
+        fun shallow(data: String) = joinTurns(data).filter { it > 3.0 && it < 60.0 }
+        assertTrue("TikTok's note should show the dents this looks for", shallow(TIKTOK_NOTE_PATH).size >= 4)
+        assertEquals(emptyList<Double>(), shallow(CLEAN_NOTE_PATH))
+    }
+
+    @Test
     fun `black background keeps TikTok's colored note`() {
         val icon = parse(ADAPTIVE_ICON)
         restyleAdaptiveIcon(icon, layers(), IconStyle.BLACK)
@@ -618,6 +642,31 @@ class CustomLauncherIconTest {
 
     private fun paths(vector: Element): List<Pair<String, String>> =
         vector.getElementsByTagName("path").elements().map { it.getAttribute("android:pathData") to it.getAttribute("android:fillColor") }
+
+    /** How far the outline turns, in degrees, where each piece of an M, L, C and Z path meets the next. */
+    private fun joinTurns(data: String): List<Double> {
+        val tokens = Regex("[MLCZ]|-?[0-9.]+").findAll(data).map { it.value }.toList()
+        val pieces = ArrayList<List<Pair<Double, Double>>>()
+        var at = 0
+        var pen = 0.0 to 0.0
+        var start = pen
+        fun point() = (tokens[at].toDouble() to tokens[at + 1].toDouble()).also { at += 2 }
+        while (at < tokens.size) {
+            when (tokens[at++]) {
+                "M" -> { pen = point(); start = pen }
+                "L" -> { val end = point(); pieces += listOf(pen, end); pen = end }
+                "C" -> { val curve = listOf(pen, point(), point(), point()); pieces += curve; pen = curve.last() }
+                "Z" -> if (pen != start) { pieces += listOf(pen, start); pen = start }
+            }
+        }
+        fun heading(from: Pair<Double, Double>, to: Pair<Double, Double>) =
+            Math.toDegrees(Math.atan2(to.second - from.second, to.first - from.first))
+        return pieces.indices.map { index ->
+            val piece = pieces[index]
+            val next = pieces[(index + 1) % pieces.size]
+            Math.abs((heading(next[0], next[1]) - heading(piece[piece.size - 2], piece.last()) + 540.0) % 360.0 - 180.0)
+        }
+    }
 
     private fun write(res: File, path: String, text: String) {
         res.resolve(path).apply { parentFile.mkdirs() }.writeText(text)

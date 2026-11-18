@@ -34,11 +34,32 @@ import org.w3c.dom.Element
 
 private const val DRAWABLE = "android:drawable"
 private const val FILL_COLOR = "android:fillColor"
+private const val PATH_DATA = "android:pathData"
 private const val ADAPTIVE_ICON = "adaptive-icon"
 private const val MONOCHROME = "monochrome"
 
 /** The fill of the note itself in TikTok's foreground; the cyan and red slivers are its echo. */
 internal const val GLYPH_FILL = "#ffffffff"
+
+/**
+ * TikTok's white note, the same on every build checked. Its outline is cut to sit under the cyan
+ * and red echoes, so drawn alone it shows dents along the bowl and the flag (Discussion #114).
+ */
+internal const val TIKTOK_NOTE_PATH =
+    "M61.1,45.3C64.3,47.62 68.1,48.93 72.2,48.9L72.2,42.9C69.83,42.31 67.75,41.04 66.2,39.3" +
+        "C63.73,37.67 61.94,35.1 61.4,32.1L55.7,32.1L55.7,63.6C55.45,67.19 52.53,70.02 49.1,69.9" +
+        "C46.74,70.02 44.58,68.96 43.51,67.22C41.26,66.18 40,63.95 40.1,61.5C40,57.76 42.98,54.79 46.7,54.9" +
+        "C47.33,54.79 47.7,55.2 48.5,55.2L48.5,48.9C40.74,49.1 34.4,55.53 34.4,63.3" +
+        "C34.4,67.22 35.89,70.68 38.3,73.2C40.67,74.93 43.55,75.9 46.7,75.9" +
+        "C54.67,75.9 61.2,69.4 61.1,61.5L61.1,45.3Z"
+
+/** The same note in the same place with round curves, for the styles that draw it alone. */
+internal const val CLEAN_NOTE_PATH =
+    "M61.1,45.3C64.3,47.62 68.1,48.93 72.2,48.9L72.2,42.9C66.8,42.2 62.2,37.5 61.4,32.1" +
+        "L55.7,32.1L55.7,62.4C55.7,66.71 52.21,70.2 47.9,70.2C43.59,70.2 40.1,66.71 40.1,62.4" +
+        "C40.1,58.09 43.59,54.6 47.9,54.6C48.1,54.6 48.3,54.61 48.5,54.63L48.5,48.9" +
+        "C40.6,48.9 34.4,54.94 34.4,62.4C34.4,69.86 40.38,75.9 47.75,75.9" +
+        "C55.12,75.9 61.1,69.86 61.1,62.4L61.1,45.3Z"
 
 /** The drawable a supplied picture is added as. */
 internal const val PICTURE_NAME = "hushfeed_launcher_picture"
@@ -660,7 +681,10 @@ internal fun recolored(target: Document, vector: Element, color: String): Elemen
     return copy
 }
 
-/** A copy of [vector] in [target] that keeps only the note's white paths, filled with [color]. */
+/**
+ * A copy of [vector] in [target] that keeps only the note's white paths, filled with [color].
+ * TikTok's note becomes the round one here, since nothing covers its dents once it's alone.
+ */
 internal fun glyphVector(target: Document, vector: Element, color: String): Element {
     val copy = copyInto(target, vector) { element ->
         element.tagName != "path" || isGlyphFill(element.getAttribute(FILL_COLOR))
@@ -669,7 +693,10 @@ internal fun glyphVector(target: Document, vector: Element, color: String): Elem
     if (paths.isEmpty()) {
         throw PatchException("Custom launcher icon: the icon's foreground has no white note to draw. Nothing was changed.")
     }
-    paths.forEach { it.setAttribute(FILL_COLOR, color) }
+    paths.forEach {
+        it.setAttribute(FILL_COLOR, color)
+        if (it.getAttribute(PATH_DATA) == TIKTOK_NOTE_PATH) it.setAttribute(PATH_DATA, CLEAN_NOTE_PATH)
+    }
     return copy
 }
 

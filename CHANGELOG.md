@@ -6,6 +6,7 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* `Report a newer phone to game LIVE` under App tells TikTok's LIVE server you have a Galaxy S25 Ultra while you set up a LIVE. If the server keeps a game LIVE under 1080p 60fps because of your phone, this gives it another chance. It starts off (#459).
 * `Seconds per photo` now goes up to 300, so a photo can stay on screen for up to five minutes in a video made from a photo post (#465).
 * `Hide the people you may know tag` under Feed screen takes that tag away from beside a creator's name. The Friends and Following labels stay (#462).
 * `Hide stories from accounts you don't follow` clears the recommended stories TikTok mixes into the Inbox's stories tray. Stories from accounts you follow, and your own, stay (#462).

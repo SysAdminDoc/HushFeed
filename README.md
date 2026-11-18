@@ -32,7 +32,7 @@ Most switches start off, so a freshly patched TikTok looks and works the way it 
 
 Hushfeed v0.83.0 contains 151 patches for TikTok 47.8.3. New in this one: TikTok moves to 47.8.3. You can watch LIVEs unseen, remove all your comments at once, play mini dramas in their original audio and pick Hushfeed's own language and theme. It needs Morphe Manager 2.6.0 or newer.
 
-The main branch contains 151 patches, the same set as v0.83.0.
+The main branch contains 152 patches, v0.83.0's set plus `Report a newer phone to game LIVE`.
 
 ## What it changes
 
@@ -220,6 +220,7 @@ Simple mode in Morphe Manager selects 132 of these patches. Each row says what t
 | `Keep the screen's brightness in the camera` | Stops TikTok from turning your screen brighter while you film, edit or post a video. Starts off. Turn it on in Hushfeed settings > App. |
 | `Keep unsent messages` | Keeps a message in your chat when the other person unsends it, instead of removing it, and can mark it as unsent. A button removes the kept messages. Messages you unsend yourself are still removed. Starts off. Turn it on in Hushfeed settings > Inbox. |
 | `Report a newer phone to effects` | Tells TikTok's effects server you have a newer phone, so effects it turns down on older phones get another chance. It says Galaxy S24 Ultra, or the phone you pick or type under it. Starts off. Turn it on in Hushfeed settings > App. |
+| `Report a newer phone to game LIVE` | Tells TikTok's LIVE server you have a Galaxy S25 Ultra while you set up a LIVE, so a game LIVE can offer qualities it holds back from some phones. Starts off. Turn it on in Hushfeed settings > App. |
 | `Keep the screen's refresh rate` | Stops TikTok slowing your screen down to the video's frame rate, so scrolling stays smooth on 90 or 120 Hz phones. TikTok doesn't ask on every phone, and where it doesn't, this changes nothing. Starts off. Turn it on in Hushfeed settings > App. |
 | `Lift text length limits` | Lets you write longer comments, repost notes and bios than the app normally allows. TikTok can still refuse one that's too long. Starts off. Turn it on in Hushfeed settings > Comments. |
 | `Limit background traffic` | Lets you stop TikTok loading upcoming videos ahead of time, which uses less data in the background, but videos may take a moment longer to start. Starts off. Turn it on in Hushfeed settings > App. |

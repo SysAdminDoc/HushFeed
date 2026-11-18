@@ -812,6 +812,15 @@
           "values": null
         },
         {
+          "key": "publish_date_month_name",
+          "title": "Default: publish date month name",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "publish_date_on_grid",
           "title": "Default: publish date on grid",
           "description": null,
@@ -5503,6 +5512,15 @@
           "values": null
         },
         {
+          "key": "hide_inbox_suggested_stories",
+          "title": "Default: hide inbox suggested stories",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "hide_inbox_widget_guide",
           "title": "Default: hide inbox widget guide",
           "description": null,
@@ -6245,6 +6263,15 @@
           "values": null
         },
         {
+          "key": "hide_may_know_tag",
+          "title": "Default: hide may know tag",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "hide_following_live_row",
           "title": "Default: hide following live row",
           "description": null,
@@ -6314,6 +6341,15 @@
           "required": false,
           "type": "kotlin.Boolean",
           "default": false,
+          "values": null
+        },
+        {
+          "key": "fade_caption_opacity",
+          "title": "Default: fade caption opacity",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 100,
           "values": null
         },
         {
@@ -7564,6 +7600,15 @@
           "values": null
         },
         {
+          "key": "live_buttons_in_menu",
+          "title": "Default: live buttons in menu",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "live_button_size",
           "title": "Default: live button size",
           "description": null,
@@ -8701,6 +8746,15 @@
           "type": "kotlin.String",
           "default": "off",
           "values": null
+        },
+        {
+          "key": "playback_bitrate_limit",
+          "title": "Default: playback bitrate limit",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "off",
+          "values": null
         }
       ]
     },
@@ -9496,6 +9550,55 @@
           "required": false,
           "type": "kotlin.String",
           "default": "",
+          "values": null
+        }
+      ]
+    },
+    {
+      "name": "Report a newer phone to game LIVE",
+      "description": "Tells TikTok's LIVE server you have a newer phone while you set up a LIVE, so a game LIVE can offer qualities it holds back from some phones. Starts off. Turn it on in Hushfeed settings > App.",
+      "category": "Interface",
+      "use": true,
+      "dependencies": [
+        "Patch",
+        "Settings"
+      ],
+      "compatiblePackages": {
+        "com.zhiliaoapp.musically": [
+          "47.9.1"
+        ]
+      },
+      "compatibility": [
+        {
+          "name": "TikTok",
+          "packageName": "com.zhiliaoapp.musically",
+          "description": null,
+          "appIconColor": 16657493,
+          "signatures": [
+            "9041803e91bcb814b4b4399fb5c85a91640b755e5e8ba76813814bf4cf2ab5ba"
+          ],
+          "targets": [
+            {
+              "version": "47.9.1",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 2024709010,
+                "ARMEABI_V7A": 2024709010,
+                "X86": 2024709010,
+                "X86_64": 2024709010
+              }
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "report_newer_phone_to_game_live",
+          "title": "Default: report newer phone to game live",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
           "values": null
         }
       ]
@@ -11945,6 +12048,15 @@
         {
           "key": "imported_font",
           "title": "Default: imported font",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "imported_emoji_font",
+          "title": "Default: imported emoji font",
           "description": null,
           "required": false,
           "type": "kotlin.Boolean",

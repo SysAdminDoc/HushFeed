@@ -721,6 +721,9 @@
       "report_newer_phone_to_effects",
       "effect_phone_model"
     ],
+    "Report a newer phone to game LIVE": [
+      "report_newer_phone_to_game_live"
+    ],
     "Resource and battery governor": [
       "block_motion_sensors",
       "stop_benchmark_runs"
@@ -3786,7 +3789,7 @@
       "type": "integer",
       "default": 3,
       "minimum": 1,
-      "maximum": 10
+      "maximum": 300
     },
     "pick_grid_videos": {
       "field": "PICK_GRID_VIDEOS",
@@ -4031,6 +4034,12 @@
     "report_newer_phone_to_effects": {
       "field": "REPORT_NEWER_PHONE_TO_EFFECTS",
       "key": "report_newer_phone_to_effects",
+      "type": "boolean",
+      "default": false
+    },
+    "report_newer_phone_to_game_live": {
+      "field": "REPORT_NEWER_PHONE_TO_GAME_LIVE",
+      "key": "report_newer_phone_to_game_live",
       "type": "boolean",
       "default": false
     },

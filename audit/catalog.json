@@ -10972,6 +10972,44 @@
   "notes": "Issue #176, an experiment. The effect platform sends Build.MODEL as device_type in two configs (EffectConfiguration and DownloadableModelConfig), and the server's API error 2003 (\"The current device is not supported\") is what shows \"This effect doesn't work on this device\". With the switch on the three build sites send SM-S928B instead. Whether the server's verdict moves is unproven: it may also key on the device id. Check on a phone that gets the message (a Redmi A3), with the switch on, by opening an effect that was refused."
  },
  {
+  "name": "Report a newer phone to game LIVE",
+  "category": "Interface",
+  "default": true,
+  "kind": "runtime",
+  "source": [
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/live/GameLiveDevicePatch.kt",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/live/GameLiveDevice.java"
+  ],
+  "settings": [
+   {
+    "key": "report_newer_phone_to_game_live",
+    "default": false,
+    "type": "bool",
+    "row": "Report a newer phone to game LIVE"
+   }
+  ],
+  "surface": "other",
+  "checks": [
+   {
+    "id": "patch-applied",
+    "what": "SettingsStatus.gameLiveDeviceEnabled is true, so the patch is in this APK and the extension loaded it.",
+    "steps": [
+     {
+      "probe": "fields",
+      "extras": {
+       "class": "app.morphe.extension.tiktok.settings.SettingsStatus",
+       "names": "gameLiveDeviceEnabled"
+      },
+      "expect": "\\bgameLiveDeviceEnabled=true\\b",
+      "waitMs": 1500
+     }
+    ],
+    "auto": true
+   }
+  ],
+  "notes": "Issue #459, an experiment. A game LIVE's qualities come from RoomCreateInfo.pushStreamInfoMap, sent by /webcast/room/create_info/ when the Go LIVE page opens. With the switch on, the common-parameter handler swaps device_type for SM-S938B and device_brand for samsung on create_info, room/create and push_stream_info only. Whether the server offers more qualities is unproven: it may key on the device id or the account. The debug log line \"Game LIVE setup: reporting SM-S938B\" shows the swap ran. Check on an account that can go LIVE, Mobile Gaming, on a phone held below 1080p 60fps."
+ },
+ {
   "name": "LIVE controls",
   "category": "Playback",
   "default": true,

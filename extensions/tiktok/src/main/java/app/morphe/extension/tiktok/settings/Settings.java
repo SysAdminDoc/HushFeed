@@ -375,6 +375,12 @@ public class Settings extends BaseSettings {
     /** The model {@link #REPORT_NEWER_PHONE_TO_EFFECTS} reports instead, empty for the Galaxy S24 Ultra. */
     public static final StringSetting EFFECT_PHONE_MODEL =
             new StringSetting("effect_phone_model", "", false, Setting.parent(REPORT_NEWER_PHONE_TO_EFFECTS));
+    /**
+     * Tells the LIVE server the phone is a Galaxy S25 Ultra while a LIVE is set up, so a game LIVE
+     * can be offered the qualities the server holds back from some phones (issue #459).
+     */
+    public static final BooleanSetting REPORT_NEWER_PHONE_TO_GAME_LIVE =
+            new BooleanSetting("report_newer_phone_to_game_live", FALSE);
     // The four Performance patches, in the default selection because each hook asks one of these
     // first. Off until the reader turns one on, and a paused build answers off. The splash, update
     // and traffic hooks act on TikTok's startup tasks, so they need a restart. The animated image

@@ -715,6 +715,9 @@
       "REPORT_NEWER_PHONE_TO_EFFECTS",
       "EFFECT_PHONE_MODEL"
     ],
+    "Report a newer phone to game LIVE": [
+      "REPORT_NEWER_PHONE_TO_GAME_LIVE"
+    ],
     "Resource and battery governor": [
       "BLOCK_MOTION_SENSORS",
       "STOP_BENCHMARK_RUNS"

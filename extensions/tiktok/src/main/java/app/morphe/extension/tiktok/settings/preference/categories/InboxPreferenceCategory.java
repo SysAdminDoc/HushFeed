@@ -35,6 +35,8 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
                 || SettingsStatus.hideSuggestedAccountsEnabled
                 || SettingsStatus.hideInboxStoriesEnabled
                 || SettingsStatus.inboxOnThisDayEnabled
+                || SettingsStatus.inboxSuggestedLivesEnabled
+                || SettingsStatus.inboxWidgetGuideEnabled
                 || SettingsStatus.chatDeclutterEnabled
                 || SettingsStatus.expandActivityListEnabled
                 || SettingsStatus.bundleActivityLikesEnabled

@@ -6,6 +6,7 @@ package app.morphe.extension.tiktok.playback;
 
 import java.util.List;
 
+import app.morphe.extension.shared.Logger;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 
@@ -29,11 +30,15 @@ public final class OriginalAudio {
 
     /** TikTok reads a post's AI dub tracks here; null is a post with none. */
     public static List dubTracks(List tracks) {
-        return on() ? null : tracks;
+        if (tracks == null || tracks.isEmpty() || !on()) return tracks;
+        Logger.printDebug(() -> "Play original audio: left out " + tracks.size() + " dub tracks");
+        return null;
     }
 
     /** TikTok reads a post's dubbed copy here; null is a post with none (#463). */
     public static Object translatedVideo(Object translated) {
-        return on() ? null : translated;
+        if (translated == null || !on()) return translated;
+        Logger.printDebug(() -> "Play original audio: left out a dubbed copy of the video");
+        return null;
     }
 }

@@ -107,8 +107,8 @@ public final class VideoOverlayHider {
     // TikTok's own ids are looked up under the running package, which a cloned build renames
     // along with its resource table (#59). Feature modules keep their original names there.
     private static final String SEARCH_MODULE_PACKAGE = "com.zhiliaoapp.musically.df_search_biz";
-    private static final String[] VISUAL_SEARCH_LAYER_IDS = {"47.9.1:g1"};
-    private static final String[] VISUAL_SEARCH_PILL_IDS = {"47.9.1:d8"};
+    private static final String[] VISUAL_SEARCH_LAYER_IDS = {"47.9.1:i7"};
+    private static final String[] VISUAL_SEARCH_PILL_IDS = {"47.9.1:fd"};
     private static final String[] LIVE_ENTRANCE_IDS = {"47.9.1:kga"};
     /**
      * The block under a LIVE preview in the main feed: the "Tap to watch LIVE" line, the badges,
@@ -132,7 +132,7 @@ public final class VideoOverlayHider {
      * already drops the component in the factory that builds it; this takes the row away if
      * it gets drawn some other way.
      */
-    private static final String[] INTEREST_BUTTONS_IDS = {"47.9.1:llx"};
+    private static final String[] INTEREST_BUTTONS_IDS = {"47.9.1:lr8"};
     private static final String[] TAB_STRIP_IDS = {"47.9.1:v9j"};
     /**
      * The bottom tab bar (Home, Friends, the create button, Inbox, Profile). TikTok takes it away
@@ -177,7 +177,7 @@ public final class VideoOverlayHider {
      * A photo post's Clear display has no such bar, only this close button at the bottom right,
      * inside the cell. TikTok takes it and its parent away as Clear display ends.
      */
-    private static final String[] CLEAR_PHOTO_EXIT_IDS = {"47.9.1:v4d"};
+    private static final String[] CLEAR_PHOTO_EXIT_IDS = {"47.9.1:vaf"};
     /**
      * The anchor row under the caption: a related search, a place, a product or a template.
      * Clear display only fades it, so it stayed tappable while out of sight and a tap near the
@@ -257,7 +257,7 @@ public final class VideoOverlayHider {
      * (#251). Many other layouts reuse the name, so it too counts only as a child of the bar.
      */
     private static final String[] DETAIL_BACK_BUTTON_IDS = {"47.9.1:byi"};
-    private static final String[] DETAIL_COMMENT_BAR_IDS = {"47.9.1:qrs"};
+    private static final String[] DETAIL_COMMENT_BAR_IDS = {"47.9.1:qzd"};
     private static final String[] DETAIL_COMMENT_STRIP_IDS = {"47.9.1:ctn"};
     /**
      * The slot the "Message..." bar goes in on a mutual friend's opened video, where the comment

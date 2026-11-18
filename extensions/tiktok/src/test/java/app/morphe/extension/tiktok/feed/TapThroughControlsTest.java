@@ -71,7 +71,7 @@ public class TapThroughControlsTest {
         VideoOverlayHider.resolveForTests("47.9.1:bwy", FRAME_ID);
         VideoOverlayHider.resolveForTests("videomusiccoverblock", COVER_ID);
         VideoOverlayHider.resolveForTests("47.9.1:lpp", SEARCH_ID);
-        VideoOverlayHider.resolveForTests("47.9.1:v4d", PHOTO_EXIT_ID);
+        VideoOverlayHider.resolveForTests("47.9.1:vaf", PHOTO_EXIT_ID);
         Settings.HIDE_CLEAR_DISPLAY_CONTROLS.save(false);
         overlays = SettingsStatus.videoOverlaysEnabled;
         SettingsStatus.videoOverlaysEnabled = true;
@@ -91,7 +91,7 @@ public class TapThroughControlsTest {
         VideoOverlayHider.resolveForTests("47.9.1:bwy", 0);
         VideoOverlayHider.resolveForTests("videomusiccoverblock", 0);
         VideoOverlayHider.resolveForTests("47.9.1:lpp", 0);
-        VideoOverlayHider.resolveForTests("47.9.1:v4d", 0);
+        VideoOverlayHider.resolveForTests("47.9.1:vaf", 0);
         ClearDisplayShownControls.resetForTests();
     }
 

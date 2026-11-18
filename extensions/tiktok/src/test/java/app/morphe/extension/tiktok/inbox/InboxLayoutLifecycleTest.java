@@ -45,9 +45,9 @@ public class InboxLayoutLifecycleTest {
      * 47.4.3's header, l92, is registered on the header so a list lookup going back to it fails
      * the header tests.
      */
-    private static final String[] RESOURCE_NAMES = {"47.9.1:oxk", "47.4.3:l92", "47.9.1:q79", "47.9.1:u8o", "47.9.1:g5c", "47.9.1:x5u",
-            "user_name", "47.9.1:vao", "47.9.1:bxo", "47.9.1:wej", "tv_request_unread_count", "47.9.1:opi", "zci", "47.9.1:fiq",
-            "47.9.1:kqk", "47.9.1:l8p", "v15", "vid", "47.9.1:l8n"};
+    private static final String[] RESOURCE_NAMES = {"47.9.1:oxk", "47.4.3:l92", "47.9.1:qds", "47.9.1:ueq", "47.9.1:g5c", "47.9.1:x5u",
+            "user_name", "47.9.1:vao", "47.9.1:bxo", "47.9.1:wej", "tv_request_unread_count", "47.9.1:owo", "zci", "47.9.1:fnj",
+            "47.9.1:kvx", "47.9.1:ld0", "v15", "vid", "47.9.1:lcy"};
     private final List<Inbox> inboxes = new ArrayList<>();
     private BooleanSetting[] switches;
 
@@ -246,7 +246,7 @@ public class InboxLayoutLifecycleTest {
         LinearLayout single = chatRow(inbox, "47.9.1:wej", "Sam", true, false);
         LinearLayout group = chatRow(inbox, "47.9.1:wej", "Weekend plans", false, false);
         LinearLayout requests = chatRow(inbox, "47.9.1:wej", "Message requests", false, true);
-        LinearLayout sayHi = chatRow(inbox, "47.9.1:opi", "Andrew", false, false);
+        LinearLayout sayHi = chatRow(inbox, "47.9.1:owo", "Andrew", false, false);
 
         Settings.HIDE_INBOX_CONVERSATIONS.save(true);
         inbox.layout();
@@ -580,10 +580,10 @@ public class InboxLayoutLifecycleTest {
     }
 
     private static TextView addHeading(Inbox inbox, ViewGroup header, int color) {
-        header.setId(id("47.9.1:q79"));
+        header.setId(id("47.9.1:qds"));
         LinearLayout titleWrapper = new LinearLayout(inbox.activity);
         TextView title = new TextView(inbox.activity);
-        title.setId(id("47.9.1:u8o"));
+        title.setId(id("47.9.1:ueq"));
         title.setText("Suggested accounts");
         title.setTextColor(color);
         titleWrapper.addView(title);
@@ -688,17 +688,17 @@ public class InboxLayoutLifecycleTest {
             back.setVisibility(View.GONE);
             header.addView(back, new LinearLayout.LayoutParams(48, 48));
             LinearLayout title = new LinearLayout(activity);
-            status.setId(id("47.9.1:l8p"));
+            status.setId(id("47.9.1:ld0"));
             title.addView(status, new LinearLayout.LayoutParams(-2, 48));
             header.addView(title, new LinearLayout.LayoutParams(-2, 48));
-            addPeople.setId(id("47.9.1:fiq"));
+            addPeople.setId(id("47.9.1:fnj"));
             header.addView(addPeople, new LinearLayout.LayoutParams(48, 48));
             LinearLayout searchWrapper = new LinearLayout(activity);
-            search.setId(id("47.9.1:kqk"));
+            search.setId(id("47.9.1:kvx"));
             searchWrapper.addView(search, new LinearLayout.LayoutParams(48, 48));
             header.addView(searchWrapper, new LinearLayout.LayoutParams(-2, 48));
             root.addView(header, new LinearLayout.LayoutParams(-1, 48));
-            rows.setId(id("47.9.1:l8n"));
+            rows.setId(id("47.9.1:lcy"));
             rows.setOrientation(LinearLayout.VERTICAL);
             root.addView(rows, new LinearLayout.LayoutParams(-1, -1));
             activity.setContentView(root);

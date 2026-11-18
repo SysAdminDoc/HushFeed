@@ -37,8 +37,8 @@ import org.robolectric.shadows.ShadowToast;
 @Config(sdk = 28, qualifiers = "en")
 @LooperMode(LooperMode.Mode.PAUSED)
 public class InboxClearControlTest {
-    private static final String[] RESOURCE_NAMES = {"47.9.1:oxk", "47.9.1:l8n", "47.9.1:q79", "47.9.1:u8o", "47.9.1:g5c",
-            "47.9.1:x5u", "user_name", "47.9.1:vao", "47.9.1:bxo", "47.9.1:wej", "47.9.1:fiq", "47.9.1:kqk", "47.9.1:l8p"};
+    private static final String[] RESOURCE_NAMES = {"47.9.1:oxk", "47.9.1:lcy", "47.9.1:qds", "47.9.1:ueq", "47.9.1:g5c",
+            "47.9.1:x5u", "user_name", "47.9.1:vao", "47.9.1:bxo", "47.9.1:wej", "47.9.1:fnj", "47.9.1:kvx", "47.9.1:ld0"};
     private ActivityController<Activity> owner;
     private Activity activity;
     private LinearLayout rows;
@@ -481,14 +481,14 @@ public class InboxClearControlTest {
         tab.setSelected(true);
         root.addView(tab, new LinearLayout.LayoutParams(-1, 48));
         rows = new LinearLayout(activity);
-        rows.setId(id("47.9.1:l8n"));
+        rows.setId(id("47.9.1:lcy"));
         rows.setOrientation(LinearLayout.VERTICAL);
         root.addView(rows, new LinearLayout.LayoutParams(-1, -1));
         header = new RecordingHeader(activity);
-        header.setId(id("47.9.1:q79"));
+        header.setId(id("47.9.1:qds"));
         header.setOrientation(LinearLayout.HORIZONTAL);
         TextView title = new TextView(activity);
-        title.setId(id("47.9.1:u8o"));
+        title.setId(id("47.9.1:ueq"));
         title.setText("Suggested accounts");
         title.setTextColor(Color.WHITE);
         LinearLayout nativeTitle = new LinearLayout(activity);

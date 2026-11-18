@@ -32,7 +32,7 @@ public class FeedVisibilityTest {
             sheet.addView(title, new FrameLayout.LayoutParams(200, 80));
             content.addView(sheet, new FrameLayout.LayoutParams(500, 700));
             FeedVisibility.resolveForTests(activity.getPackageName(), "47.9.1:q6y", sheet.getId());
-            FeedVisibility.resolveForTests(activity.getPackageName(), "47.9.1:ws0", title.getId());
+            FeedVisibility.resolveForTests(activity.getPackageName(), "47.9.1:wz_", title.getId());
 
             assertTrue(FeedVisibility.isCommentSheetVisible(activity));
             title.setVisibility(View.GONE);
@@ -55,7 +55,7 @@ public class FeedVisibilityTest {
             sheet.addView(title, new FrameLayout.LayoutParams(200, 80));
             content.addView(sheet, new FrameLayout.LayoutParams(500, 700));
             FeedVisibility.resolveForTests(activity.getPackageName(), "47.9.1:q6y", sheet.getId());
-            FeedVisibility.resolveForTests(activity.getPackageName(), "47.9.1:ws0", title.getId());
+            FeedVisibility.resolveForTests(activity.getPackageName(), "47.9.1:wz_", title.getId());
             Shadows.shadowOf(Looper.getMainLooper()).idle();
 
             assertTrue(FeedVisibility.isCommentSheetVisible(activity));

@@ -484,8 +484,8 @@ public class VideoOverlayHiderTest {
         int pillId = 0x7e0a0a62;
         int cameraRowId = 0x7e0a0a63;
         int floatingCardRowId = 0x7e0a0a64;
-        VideoOverlayHider.resolveSearchModuleForTests("47.9.1:g1", layerId);
-        VideoOverlayHider.resolveSearchModuleForTests("47.9.1:d8", pillId);
+        VideoOverlayHider.resolveSearchModuleForTests("47.9.1:i7", layerId);
+        VideoOverlayHider.resolveSearchModuleForTests("47.9.1:fd", pillId);
         VideoOverlayHider.resolveSearchModuleForTests("fb", cameraRowId);
         VideoOverlayHider.resolveSearchModuleForTests("cn", floatingCardRowId);
         try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
@@ -520,7 +520,7 @@ public class VideoOverlayHiderTest {
             assertEquals(View.VISIBLE, floatingCardRow.getVisibility());
         } finally {
             Settings.HIDE_VISUAL_SEARCH.save(false);
-            for (String name : new String[]{"47.9.1:g1", "47.9.1:d8", "fb", "cn"}) {
+            for (String name : new String[]{"47.9.1:i7", "47.9.1:fd", "fb", "cn"}) {
                 VideoOverlayHider.resolveSearchModuleForTests(name, 0);
             }
         }
@@ -1623,7 +1623,7 @@ public class VideoOverlayHiderTest {
     private static final int CELL_ID = 0x7f0a0201;
 
     private static void resolveCommentBarIds() {
-        VideoOverlayHider.resolveForTests("47.9.1:qrs", BAR_ID);
+        VideoOverlayHider.resolveForTests("47.9.1:qzd", BAR_ID);
         VideoOverlayHider.resolveForTests("47.9.1:ctn", STRIP_ID);
         VideoOverlayHider.resolveForTests("viewpager_container", COLUMN_ID);
         // With the cell root known, furniture is looked for inside cells only; the bar and its
@@ -2602,7 +2602,7 @@ public class VideoOverlayHiderTest {
             assertEquals(View.VISIBLE, soundBar.getVisibility());
             assertEquals("the progress bar moved under a bar that stayed", 0f, views[1].getTranslationY(), 0f);
             assertTrue("a sound's page called the comment bar missing: " + HookStatus.missing("overlay"),
-                    HookStatus.missing("overlay").stream().noneMatch(line -> line.contains("47.9.1:qrs")));
+                    HookStatus.missing("overlay").stream().noneMatch(line -> line.contains("47.9.1:qzd")));
 
             // TikTok puts the bar away: a photo with no bar of either kind loses its strip.
             soundBar.setVisibility(View.GONE);
@@ -2704,13 +2704,13 @@ public class VideoOverlayHiderTest {
             main.get().setContentView(pagerColumn(main.get(), new View(main.get())));
             VideoOverlayHider.applyTo(main.get());
             assertTrue("the main feed called the comment bar missing: " + HookStatus.missing("overlay"),
-                    HookStatus.missing("overlay").stream().noneMatch(line -> line.contains("47.9.1:qrs")));
+                    HookStatus.missing("overlay").stream().noneMatch(line -> line.contains("47.9.1:qzd")));
 
             Activity detail = detailController.get();
             detail.setContentView(pagerColumn(detail, new View(detail)));
             VideoOverlayHider.applyTo(detail);
             assertTrue("an opened video without the bar went unreported",
-                    HookStatus.missing("overlay").stream().anyMatch(line -> line.contains("47.9.1:qrs")));
+                    HookStatus.missing("overlay").stream().anyMatch(line -> line.contains("47.9.1:qzd")));
         } finally {
             Settings.HIDE_DETAIL_COMMENT_BAR.save(false);
             HookStatus.clear();
@@ -2900,7 +2900,7 @@ public class VideoOverlayHiderTest {
     @Test
     public void halfTheCommentBarIsNeverHidden() {
         resolveCommentBarIds();
-        VideoOverlayHider.resolveForTests("47.9.1:qrs", 0);
+        VideoOverlayHider.resolveForTests("47.9.1:qzd", 0);
         Settings.HIDE_DETAIL_COMMENT_BAR.save(true);
         try (var noBar = Robolectric.buildActivity(
                      com.ss.android.ugc.aweme.detail.ui.DetailActivity.class).create().start();
@@ -3199,7 +3199,7 @@ public class VideoOverlayHiderTest {
     @Test
     public void aPhotoPostsClearDisplayCloseButtonGoesToo() {
         int photoExitId = 0x7f0a0c04;
-        VideoOverlayHider.resolveForTests("47.9.1:v4d", photoExitId);
+        VideoOverlayHider.resolveForTests("47.9.1:vaf", photoExitId);
         VideoOverlayHider.resolveForTests("view_rootview", CELL_ID);
         Settings.HIDE_CLEAR_DISPLAY_CONTROLS.save(true);
         try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {

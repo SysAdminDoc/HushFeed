@@ -53,7 +53,7 @@ public final class FeedVisibility {
      */
     private static final String[] FRIENDS_TAB_RESOURCE_NAMES = {"47.9.1:oxi"};
     private static final String[] COMMENT_SHEET_RESOURCE_NAMES = {"47.9.1:q6y"};
-    private static final String[] COMMENT_TITLE_RESOURCE_NAMES = {"47.9.1:ws0"};
+    private static final String[] COMMENT_TITLE_RESOURCE_NAMES = {"47.9.1:wz_"};
     // Built once: the sheet check runs on every layout pass of the feed's window.
     private static final String COMMENT_SHEET_DIAGNOSTIC_NAME =
             "sheet (" + joinResourceNames(COMMENT_SHEET_RESOURCE_NAMES) + ")";

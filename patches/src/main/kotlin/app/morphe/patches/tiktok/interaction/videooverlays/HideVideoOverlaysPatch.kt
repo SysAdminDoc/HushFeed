@@ -90,6 +90,15 @@ val hideVideoOverlaysPatch = bytecodePatch(
             println("[$PATCH_NAME] Left out Hide Footnotes on ${packageMetadata.versionName}: ${problem.message}")
             null
         }
+        // The people you may know tag (#462), the same way: required where
+        // MayKnowTagAnchorsTest holds the gate, left out with a note anywhere else.
+        val mayKnowGate = try {
+            MayKnowTagGateFingerprint.method.also { it.requireLocals(PATCH_NAME, 1) }
+        } catch (problem: Exception) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[$PATCH_NAME] Left out the people you may know tag on ${packageMetadata.versionName}: ${problem.message}")
+            null
+        }
         // The Following tab's LIVE and stories row (#262), the same way: required where
         // FollowingSkylightAnchorsTest holds the toggle, left out with a note anywhere else.
         val skylightToggle = try {
@@ -192,6 +201,14 @@ val hideVideoOverlaysPatch = bytecodePatch(
             SettingsStatusLoadFingerprint.method.addInstruction(
                 0,
                 "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableFootnotes()V",
+            )
+        }
+        // Both of the tag's triggers ask this gate, and false is what a video without one gets.
+        if (mayKnowGate != null) {
+            mayKnowGate.hideMayKnowTag(PATCH_NAME)
+            status.addInstruction(
+                0,
+                "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableMayKnowTag()V",
             )
         }
         // The Following row folds through the same toggle TikTok uses when it has nothing to

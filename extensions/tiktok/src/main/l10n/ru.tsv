@@ -3213,3 +3213,5 @@ Takes the Record and Auto tap buttons off the video and puts them in the menu yo
 Auto tap started	Автонажатие запущено
 Hide stories from accounts you don't follow	Скрывать истории аккаунтов, на которые вы не подписаны
 Stories from accounts you don't follow leave the stories tray. Stories from accounts you follow stay.	Истории аккаунтов, на которые вы не подписаны, исчезают из панели историй. Истории аккаунтов, на которые вы подписаны, остаются.
+Hide the people you may know tag	Скрывать метку «Возможно, вы знакомы»
+Hide the small tag next to the creator's name that says you may know them. The video stays.	Скрывает маленькую метку рядом с именем автора о том, что вы можете быть знакомы. Видео остаётся.

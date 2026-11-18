@@ -159,6 +159,32 @@ public class GroupChatBannerTest {
         }
     }
 
+    @Test public void theMayKnowRowShowsOnlyWhereTheGateWasHooked() {
+        boolean before = SettingsStatus.videoOverlaysEnabled;
+        boolean hooked = SettingsStatus.mayKnowTagEnabled;
+        String title = "Hide the people you may know tag";
+        try (var controller = Robolectric.buildActivity(TestActivity.class).setup()) {
+            var activity = controller.get();
+            Utils.setContext(activity);
+            SettingsStatus.videoOverlaysEnabled = true;
+            SettingsStatus.mayKnowTagEnabled = false;
+            PreferenceScreen without = activity.getPreferenceManager().createPreferenceScreen(activity);
+            new InterfacePreferenceCategory(activity, without);
+            assertNull(byTitle(without, title));
+
+            SettingsStatus.mayKnowTagEnabled = true;
+            PreferenceScreen with = activity.getPreferenceManager().createPreferenceScreen(activity);
+            new InterfacePreferenceCategory(activity, with);
+            Preference row = byTitle(with, title);
+            assertNotNull(row);
+            assertNoDashes(row.getSummary().toString());
+            assertEquals(Settings.HIDE_MAY_KNOW_TAG.key, row.getKey());
+        } finally {
+            SettingsStatus.videoOverlaysEnabled = before;
+            SettingsStatus.mayKnowTagEnabled = hooked;
+        }
+    }
+
     private static void assertNoDashes(String text) {
         assertFalse(text, text.indexOf((char) 0x2014) >= 0 || text.indexOf((char) 0x2013) >= 0 || text.contains(" - "));
     }

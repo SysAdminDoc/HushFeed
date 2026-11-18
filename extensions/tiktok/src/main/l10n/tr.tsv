@@ -3030,3 +3030,5 @@ Takes the Record and Auto tap buttons off the video and puts them in the menu yo
 Auto tap started	Otomatik dokunma başladı
 Hide stories from accounts you don't follow	Takip etmediğin hesapların hikayelerini gizle
 Stories from accounts you don't follow leave the stories tray. Stories from accounts you follow stay.	Takip etmediğin hesapların hikayeleri hikaye şeridinden çıkar. Takip ettiğin hesapların hikayeleri kalır.
+Hide the people you may know tag	Tanıyor olabileceğin kişiler etiketini gizle
+Hide the small tag next to the creator's name that says you may know them. The video stays.	İçerik üreticisinin adının yanında onu tanıyor olabileceğini söyleyen küçük etiketi gizler. Video kalır.

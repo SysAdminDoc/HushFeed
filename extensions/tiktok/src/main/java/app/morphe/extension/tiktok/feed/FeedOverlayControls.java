@@ -61,6 +61,16 @@ public final class FeedOverlayControls {
     }
 
     /**
+     * Whether the people you may know tag is withheld (#462). Asked in front of the check both of
+     * the tag's triggers make, so a false there is what a video without the tag already gets.
+     */
+    public static boolean shouldHideMayKnowTag() {
+        boolean hide = Settings.HIDE_MAY_KNOW_TAG.get();
+        HookStatus.bound("may know tag", hide ? "gate closed" : "gate left");
+        return hide;
+    }
+
+    /**
      * Whether the Following tab's LIVE and stories row may open (#262). Asked with TikTok's own
      * isShow at the top of the row's toggle, so false is the fold TikTok does when the row has
      * nothing in it, and with the switch off TikTok's answer comes back untouched.

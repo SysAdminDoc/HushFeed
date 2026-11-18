@@ -86,6 +86,28 @@ public class FeedOverlayControlsTest {
         }
     }
 
+    /** #462: the people you may know tag goes only with its own switch, and Pause brings it back. */
+    @Test public void theMayKnowTagGateIsClosedOnlyByItsOwnSwitchAndHonoursPause() {
+        try {
+            assertEquals(Boolean.FALSE, Settings.HIDE_MAY_KNOW_TAG.defaultValue);
+            Settings.HIDE_FOOTNOTES.save(true);
+            assertFalse("another overlay switch closed the gate", FeedOverlayControls.shouldHideMayKnowTag());
+            Settings.HIDE_FOOTNOTES.save(false);
+            Settings.HIDE_MAY_KNOW_TAG.save(true);
+            assertTrue(FeedOverlayControls.shouldHideMayKnowTag());
+            assertFalse("this switch closed the Footnotes gate", FeedOverlayControls.shouldHideFootnotes());
+            PausedProcess.set(true);
+            assertFalse("a paused Hushfeed still closed the gate", FeedOverlayControls.shouldHideMayKnowTag());
+            PausedProcess.set(false);
+            assertTrue(String.join(" ", HookStatus.report()).contains("may know tag"));
+        } finally {
+            PausedProcess.set(false);
+            HookStatus.clear();
+            Settings.HIDE_MAY_KNOW_TAG.resetToDefault();
+            Settings.HIDE_FOOTNOTES.resetToDefault();
+        }
+    }
+
     /**
      * Issue #262: the Following tab's LIVE row is kept folded only by its own switch. A fold
      * TikTok asked for stays a fold, and Pause hands TikTok's answer back.

@@ -6,6 +6,7 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* `Hide the people you may know tag` under Feed screen takes that tag away from beside a creator's name. The Friends and Following labels stay (#462).
 * `Hide stories from accounts you don't follow` clears the recommended stories TikTok mixes into the Inbox's stories tray. Stories from accounts you follow, and your own, stay (#462).
 * `LIVE buttons in the long-press menu` takes Record and Auto tap off the video and puts them in the menu you get by holding the middle of a LIVE (#359).
 * `Fade the name, date and caption` gives the creator's name, the date, the caption and the music line their own opacity over the video (#462).

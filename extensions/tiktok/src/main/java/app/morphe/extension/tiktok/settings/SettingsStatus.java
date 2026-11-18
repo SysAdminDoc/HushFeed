@@ -798,6 +798,13 @@ public class SettingsStatus {
         footnotesEnabled = true;
     }
 
+    /** Hide video overlays found the people you may know tag's gate and hooked it (#462). */
+    public static boolean mayKnowTagEnabled = false;
+
+    public static void enableMayKnowTag() {
+        mayKnowTagEnabled = true;
+    }
+
     /** Hide video overlays found the Following tab's LIVE and stories row toggle and hooked it (#262). */
     public static boolean followingSkylightEnabled = false;
 

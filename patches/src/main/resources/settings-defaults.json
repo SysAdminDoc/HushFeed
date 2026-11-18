@@ -474,6 +474,7 @@
       "hide_feed_action_bar",
       "hide_feed_surveys",
       "hide_footnotes",
+      "hide_may_know_tag",
       "hide_following_live_row",
       "glass_stories_pill",
       "hide_following_all_button",
@@ -2652,6 +2653,12 @@
     "hide_location_labels": {
       "field": "HIDE_LOCATION_LABELS",
       "key": "hide_location_labels",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_may_know_tag": {
+      "field": "HIDE_MAY_KNOW_TAG",
+      "key": "hide_may_know_tag",
       "type": "boolean",
       "default": false
     },

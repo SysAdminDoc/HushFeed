@@ -581,6 +581,14 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "Hide the question cards TikTok slides over a video near its end, and the buttons that ask if you're interested in it.",
                     Settings.HIDE_FEED_SURVEYS
             ));
+            if (SettingsStatus.mayKnowTagEnabled) {
+                addPreference(new TogglePreference(
+                        context,
+                        "Hide the people you may know tag",
+                        "Hide the small tag next to the creator's name that says you may know them. The video stays.",
+                        Settings.HIDE_MAY_KNOW_TAG
+                ));
+            }
             if (SettingsStatus.footnotesEnabled) {
                 addPreference(new TogglePreference(
                         context,

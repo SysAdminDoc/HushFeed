@@ -216,6 +216,7 @@ public class FeedScreenCoverageTest {
         put("hide_creation_tags", YES, YES, NONE);
         put("hide_feed_surveys", YES, YES, NONE);
         put("hide_footnotes", YES, YES, NONE);
+        put("hide_may_know_tag", YES, YES, NONE);
         // The Following tab's LIVE row is the main feed's; an opened video has none (#262).
         put("hide_following_live_row", YES, NONE, NONE);
         // All and Create sit in the Following row (and the Inbox's, which is no video window).

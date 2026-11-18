@@ -9109,6 +9109,12 @@
     "row": "Hide Footnotes"
    },
    {
+    "key": "hide_may_know_tag",
+    "default": false,
+    "type": "bool",
+    "row": "Hide the people you may know tag"
+   },
+   {
     "key": "hide_following_live_row",
     "default": false,
     "type": "bool",

@@ -1194,6 +1194,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_FEED_SURVEYS = new BooleanSetting("hide_feed_surveys", FALSE);
     /** The Footnotes banner TikTok lays over a video that carries a note. */
     public static final BooleanSetting HIDE_FOOTNOTES = new BooleanSetting("hide_footnotes", FALSE);
+    /** The people you may know tag beside a creator's name on a video (#462). */
+    public static final BooleanSetting HIDE_MAY_KNOW_TAG = new BooleanSetting("hide_may_know_tag", FALSE);
     /** The LIVE and stories row across the top of the Following tab and its count pill (#262). */
     public static final BooleanSetting HIDE_FOLLOWING_LIVE_ROW = new BooleanSetting("hide_following_live_row", FALSE);
     /**

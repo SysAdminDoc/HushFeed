@@ -10,8 +10,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ss.android.ugc.aweme.feed.model.Aweme;
@@ -52,6 +57,7 @@ public class GridViewCountTest {
 
     /** 2025-10-07 15:04:05 UTC. */
     private static final long POSTED = 1_759_849_445L;
+    private static final int BAR_HEIGHT = 150;
 
     public static final class Stats extends AwemeStatistics {
         @Override public long getPlayCount() { return 1000; }
@@ -155,6 +161,46 @@ public class GridViewCountTest {
         ProfileGridCount.show(view, "");
         assertEquals("", view.getText().toString());
         assertArrayEquals(new Drawable[4], view.getCompoundDrawablesRelative());
+    }
+
+    /** The count's view inside TikTok's cell: a weighted child of a bar with a fixed height. */
+    private static TextView countInBar() {
+        Context context = RuntimeEnvironment.getApplication();
+        TextView view = new TextView(context);
+        LinearLayout bar = new LinearLayout(context);
+        bar.addView(view, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+        new FrameLayout(context).addView(bar,
+                new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, BAR_HEIGHT));
+        return view;
+    }
+
+    private static View barOf(TextView view) {
+        return (View) view.getParent();
+    }
+
+    @Test public void aSecondLineLetsTheBarGrowAndKeepsItsHeightAsTheFloor() {
+        TextView view = countInBar();
+        ProfileGridCount.show(view, "1K\nOct 7, 2025 · 0:42");
+        assertEquals(ViewGroup.LayoutParams.WRAP_CONTENT, barOf(view).getLayoutParams().height);
+        assertEquals(BAR_HEIGHT, barOf(view).getMinimumHeight());
+
+        // A recycled cell comes back already grown, and its floor has to survive that.
+        ProfileGridCount.show(view, "1K\n0:42");
+        assertEquals(BAR_HEIGHT, barOf(view).getMinimumHeight());
+    }
+
+    @Test public void aLabelWithoutTheCountCanWrapSoItsBarGrowsToo() {
+        Settings.HIDE_GRID_VIEW_COUNT.save(true);
+        TextView view = countInBar();
+        ProfileGridCount.show(view, "Oct 7, 2025 · 0:42");
+        assertEquals(ViewGroup.LayoutParams.WRAP_CONTENT, barOf(view).getLayoutParams().height);
+    }
+
+    @Test public void aPlainCountLeavesTikToksBarAlone() {
+        TextView view = countInBar();
+        ProfileGridCount.show(view, "1K");
+        assertEquals(BAR_HEIGHT, barOf(view).getLayoutParams().height);
+        assertEquals(0, barOf(view).getMinimumHeight());
     }
 
     @Test public void pauseAndAMissingPatchKeepTheCount() {

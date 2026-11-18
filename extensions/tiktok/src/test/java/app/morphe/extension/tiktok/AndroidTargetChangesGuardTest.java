@@ -109,6 +109,10 @@ public class AndroidTargetChangesGuardTest {
                     "safe: writes the search results' mItems, friendFeedData and, since #12, the "
                             + "Following feed's items field (mItems up to 46.8.3, items from "
                             + "46.9.3), each an instance field on the response the hook was given"),
+            new ReviewedWrites("interaction/DetailAutoAdvance.java", 1,
+                    "safe: fieldOfType() skips static fields, and armProfileQueue writes the state "
+                            + "enum on the background queue session TikTok's trigger was handed, "
+                            + "only for a hushfeed_profile_ scope whose state is still off"),
             new ReviewedWrites("inbox/ActivityLikeBundler.java", 1,
                     "safe: write() refuses a static field, then writes mergeCount and fromUsers on "
                             + "a like row's title template and hasRead on the row and its template, "
@@ -254,8 +258,8 @@ public class AndroidTargetChangesGuardTest {
         // Four LIVE Audio only row writes for #265 on 2026-11-05, two Discover tab writes for #98.
         // The grid search's reshow on 2026-11-10, App lock's watched window list on 2026-11-12.
         // Tap to remove's fixed-list grid copy on 2026-11-17, Group likes per comment's folded rows
-        // the same day.
-        assertEquals("the audit counted twenty-six reflective writes on 2026-11-17", 26, total);
+        // the same day, and the profile background queue's session switch for #292.
+        assertEquals("the audit counted twenty-seven reflective writes on 2026-11-17", 27, total);
     }
 
     @Test

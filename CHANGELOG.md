@@ -15,6 +15,7 @@ Every Hushfeed release, newest first.
 
 ### Bug Fixes
 
+* Patching no longer stops at `Settings` when TikTok's Open Debug row can't be found. You lose only the Hushfeed row in TikTok's settings, and holding Home still opens the page (#460).
 * The note on the `White on black`, `Black on white` and `Material You` app icons, and on themed icons, has clean round edges now. TikTok's own note has dents that its colored echoes normally cover.
 * `Keep captions in Clear display` shows a video's first caption right away, sits near TikTok's own caption spot when it hasn't seen one yet, and stays above the progress bar (#456).
 * The country and date line doesn't get cut off anymore when you open a long caption (#457).

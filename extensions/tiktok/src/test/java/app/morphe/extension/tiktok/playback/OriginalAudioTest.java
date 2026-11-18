@@ -74,6 +74,23 @@ public class OriginalAudioTest {
         assertSame(dubs, OriginalAudio.dubTracks(dubs));
     }
 
+    /** The dubbed copy of a video follows the same switch as the dub tracks (#463). */
+    @Test public void theDubbedCopyOfAVideoGoesAwayOnlyWhileTheSwitchIsOn() {
+        Object copy = new Object();
+        assertSame(copy, OriginalAudio.translatedVideo(copy));
+
+        Settings.ORIGINAL_AUDIO.save(true);
+        assertNull(OriginalAudio.translatedVideo(copy));
+        assertNull(OriginalAudio.translatedVideo(null));
+
+        setPaused(true);
+        assertSame(copy, OriginalAudio.translatedVideo(copy));
+        setPaused(false);
+
+        SettingsStatus.originalAudioEnabled = false;
+        assertSame(copy, OriginalAudio.translatedVideo(copy));
+    }
+
     private static void setPaused(boolean value) {
         ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess",
                 ClassParameter.from(boolean.class, value));

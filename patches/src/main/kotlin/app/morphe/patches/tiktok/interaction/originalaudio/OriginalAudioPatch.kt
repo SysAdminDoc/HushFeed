@@ -20,13 +20,15 @@ import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 private const val PATCH = "Play original audio"
 internal const val ORIGINAL_AUDIO = "Lapp/morphe/extension/tiktok/playback/OriginalAudio;"
 internal const val AUDIO = "Lcom/ss/android/ugc/aweme/feed/model/Audio;"
+internal const val AWEME = "Lcom/ss/android/ugc/aweme/feed/model/Aweme;"
+internal const val TRANSLATED_VIDEO = "Lcom/ss/android/ugc/aweme/feed/model/video/TranslatedVideo;"
 
 /**
  * A post's AI dub tracks (TtsInfos, one per language). The feed model keeps its real name on
  * every build, and every reader of the list goes through this getter: the dub decision made
  * before a video plays (it needs a track in the app's language), the player's audio track list,
  * the "AI dubbed" label and the switch to the dubbed track on a playing video. Nothing else reads
- * the field, so a post whose getter answers null has no dub anywhere in TikTok.
+ * the field. This is one of a dub's two routes; [TranslatedVideoFingerprint] is the other.
  */
 internal object DubTracksFingerprint : Fingerprint(
     definingClass = AUDIO,
@@ -36,22 +38,45 @@ internal object DubTracksFingerprint : Fingerprint(
 )
 
 /**
- * Hands the getter's answer to the extension right before it's returned. A range call is used
- * because the returned register isn't guaranteed to be below v16.
+ * A post's dubbed copy, a whole second video with the dub already in its sound (#463). The dub
+ * decision takes this route even for a post with no dub tracks, and while it is chosen
+ * `Aweme.getVideo` answers with this copy's video. Every reader goes through this getter except
+ * the model converter, so a post whose getter answers null plays its own video.
  */
-internal fun MutableMethod.passDubTracksThroughExtension() {
+internal object TranslatedVideoFingerprint : Fingerprint(
+    definingClass = AWEME,
+    name = "getTranslatedVideo",
+    returnType = TRANSLATED_VIDEO,
+    parameters = emptyList(),
+)
+
+/**
+ * Runs [smali] for the returned register right before each return of a getter. Calls made from
+ * it use a range because the returned register isn't guaranteed to be below v16.
+ */
+private fun MutableMethod.beforeEachReturn(getter: String, smali: (Int) -> String) {
     val returns = implementation!!.instructions.withIndex().filter { it.value.opcode == Opcode.RETURN_OBJECT }
-    if (returns.isEmpty()) throw PatchException("$PATCH: the dub track getter has no return.")
+    if (returns.isEmpty()) throw PatchException("$PATCH: the $getter getter has no return.")
     for ((index, instruction) in returns.sortedByDescending { it.index }) {
-        val register = (instruction as OneRegisterInstruction).registerA
-        addInstructions(
-            index,
-            """
-                invoke-static/range {v$register .. v$register}, $ORIGINAL_AUDIO->dubTracks(Ljava/util/List;)Ljava/util/List;
-                move-result-object v$register
-            """,
-        )
+        addInstructions(index, smali((instruction as OneRegisterInstruction).registerA))
     }
+}
+
+/** Hands the dub track list to the extension right before it's returned. */
+internal fun MutableMethod.passDubTracksThroughExtension() = beforeEachReturn("dub track") { register ->
+    """
+        invoke-static/range {v$register .. v$register}, $ORIGINAL_AUDIO->dubTracks(Ljava/util/List;)Ljava/util/List;
+        move-result-object v$register
+    """
+}
+
+/** Hands the dubbed copy to the extension, which takes it as a plain object, before it's returned. */
+internal fun MutableMethod.passTranslatedVideoThroughExtension() = beforeEachReturn("translated video") { register ->
+    """
+        invoke-static/range {v$register .. v$register}, $ORIGINAL_AUDIO->translatedVideo(Ljava/lang/Object;)Ljava/lang/Object;
+        move-result-object v$register
+        check-cast v$register, $TRANSLATED_VIDEO
+    """
 }
 
 @Suppress("unused")
@@ -67,11 +92,13 @@ val originalAudioPatch = bytecodePatch(
     compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
-        val getter = DubTracksFingerprint.method
+        val dubTracks = DubTracksFingerprint.method
+        val translatedVideo = TranslatedVideoFingerprint.method
         SettingsStatusLoadFingerprint.method.addInstruction(
             0,
             "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableOriginalAudio()V",
         )
-        getter.passDubTracksThroughExtension()
+        dubTracks.passDubTracksThroughExtension()
+        translatedVideo.passTranslatedVideoThroughExtension()
     }
 }

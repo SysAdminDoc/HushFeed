@@ -141,7 +141,7 @@ private fun writersOf(
  * helper there and 47.0.3 builds the row text inline, so the anchor is the check, not what follows.
  *
  * The hook asks the method's VideoItemParams for its video again, which is the item the time was
- * read from: 47.8.3 reads the time twice and the second read's long lands on the item's register.
+ * read from: 47.9.1 reads the time twice and the second read's long lands on the item's register.
  * So the parameter must never be written, the item must come from its getAweme(), every path into
  * the hook has to come through the read, and nothing may jump straight to the hooked instruction,
  * which would skip it.

@@ -117,7 +117,7 @@ public class FeatureGateLabRestartRowTest {
             settle();
 
             assertTrue(lab.runLabChangeForTests(() -> {
-                FeatureGateLabUndo.applyPreset("47.8.3", "hashtag_limit", catalog);
+                FeatureGateLabUndo.applyPreset("47.9.1", "hashtag_limit", catalog);
                 return "";
             }));
             settle();
@@ -167,12 +167,12 @@ public class FeatureGateLabRestartRowTest {
         return (TextView) row;
     }
 
-    /** The shipped 47.8.3 entries the hashtag preset writes, as FeatureGateCommentAndPublishPresetsTest reads them. */
+    /** The shipped 47.9.1 entries the hashtag preset writes, as FeatureGateCommentAndPublishPresetsTest reads them. */
     private static Map<String, FeatureGateCatalog.Entry> presetCatalog() throws Exception {
-        BuildNames.setRunningBuildForTests("47.8.3");
+        BuildNames.setRunningBuildForTests("47.9.1");
         Map<String, FeatureGateCatalog.Entry> catalog = new LinkedHashMap<>();
         Map<String, String> types = new LinkedHashMap<>();
-        for (FeatureGateCatalog.Entry entry : FeatureGateCatalog.readStaticCatalog("47.8.3")) {
+        for (FeatureGateCatalog.Entry entry : FeatureGateCatalog.readStaticCatalog("47.9.1")) {
             if (entry.manager.equals("abmock") && (entry.key.equals("studio_publish_limit_hashtag_switch")
                     || entry.key.equals("studio_publish_hashtag_max_limit"))) {
                 catalog.put(entry.identity(), entry);

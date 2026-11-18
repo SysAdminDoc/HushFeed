@@ -79,7 +79,7 @@ class RegistrationPackageAnchorsTest {
                     return@filter false
                 }
                 val key = lastWrite(instructions, (call as FiveRegisterInstruction).registerD, at)?.let { instructions[it] }
-                key?.opcode == Opcode.CONST_STRING &&
+                (key?.opcode == Opcode.CONST_STRING || key?.opcode == Opcode.CONST_STRING_JUMBO) &&
                     ((key as ReferenceInstruction).reference as StringReference).string == PACKAGE_KEY
             }
             assertEquals("writes under the package key", 2, packageKeyed.size)

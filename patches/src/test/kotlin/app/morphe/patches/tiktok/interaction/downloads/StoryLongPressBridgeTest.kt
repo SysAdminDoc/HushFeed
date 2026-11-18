@@ -47,39 +47,39 @@ class StoryLongPressBridgeTest {
     fun theSaveTakesThePanelsPlaceAfterTikToksPause() {
         // Clean 46.2.3 LX/0Qet.LIZ, including its monitor/interceptor branches. 47.7.3's
         // LX/0754 is the same body under other names.
-        val method = method("LX/0dpC;", "LIZ", 4, """
-            iget-object v1, p0, LX/0dpC;->LL:LX/049L;
-            iget-object v0, v1, LX/049L;->LLJIJIL:LX/0RQL;
+        val method = method("LX/0PRN;", "LIZ", 4, """
+            iget-object v1, p0, LX/0PRN;->LL:LX/0QOq;
+            iget-object v0, v1, LX/0QOq;->LLJIJIL:LX/0R27;
             const/4 v2, 0x1
             if-eqz v0, :listener
-            iput-boolean v2, v1, LX/049L;->LLJJ:Z
-            invoke-interface { v0 }, LX/0RQL;->Mf()V
-            iget-object v0, p0, LX/0dpC;->LL:LX/049L;
+            iput-boolean v2, v1, LX/0QOq;->LLJJ:Z
+            invoke-interface { v0 }, LX/0R27;->Mf()V
+            iget-object v0, p0, LX/0PRN;->LL:LX/0QOq;
             invoke-virtual { v0 }, Landroid/view/View;->getParent()Landroid/view/ViewParent;
             move-result-object v0
             if-eqz v0, :listener
             invoke-interface { v0, v2 }, Landroid/view/ViewParent;->requestDisallowInterceptTouchEvent(Z)V
             :listener
-            iget-object v1, p0, LX/0dpC;->LL:LX/049L;
-            iget-object v0, v1, LX/049L;->LLIZLLLIL:LX/0PYw;
+            iget-object v1, p0, LX/0PRN;->LL:LX/0QOq;
+            iget-object v0, v1, LX/0QOq;->LLIZLLLIL:LX/0PYw;
             if-eqz v0, :done
-            iget-object v0, v1, LX/049L;->LLJILJIL:LX/0QS2;
+            iget-object v0, v1, LX/0QOq;->LLJILJIL:LX/0QS2;
             if-eqz v0, :notify
             invoke-interface { v0 }, LX/0QS2;->gi()Z
             move-result v0
             if-eqz v0, :notify
             return-void
             :notify
-            iget-object v0, p0, LX/0dpC;->LL:LX/049L;
+            iget-object v0, p0, LX/0PRN;->LL:LX/0QOq;
             invoke-virtual { v0 }, Landroid/view/View;->getParent()Landroid/view/ViewParent;
             move-result-object v0
             if-eqz v0, :coordinates
             invoke-interface { v0, v2 }, Landroid/view/ViewParent;->requestDisallowInterceptTouchEvent(Z)V
             :coordinates
-            iget-object v0, p0, LX/0dpC;->LL:LX/049L;
-            iget-object v2, v0, LX/049L;->LLIZLLLIL:LX/0PYw;
-            iget v1, v0, LX/049L;->LL:F
-            iget v0, v0, LX/049L;->LLILLL:F
+            iget-object v0, p0, LX/0PRN;->LL:LX/0QOq;
+            iget-object v2, v0, LX/0QOq;->LLIZLLLIL:LX/0PYw;
+            iget v1, v0, LX/0QOq;->LL:F
+            iget v0, v0, LX/0QOq;->LLILLL:F
             invoke-interface { v2, v1, v0 }, LX/0PYw;->LIZ(FF)V
             :done
             return-void
@@ -91,7 +91,7 @@ class StoryLongPressBridgeTest {
 
         val pause = method.interceptStoryLongPress()
 
-        assertEquals("LX/0RQL;", pause.definingClass)
+        assertEquals("LX/0R27;", pause.definingClass)
         assertEquals("Mf", pause.name)
         val instructions = method.implementation!!.instructions.toList()
         assertEquals(4, method.implementation!!.registerCount)
@@ -124,7 +124,7 @@ class StoryLongPressBridgeTest {
 
     @Test
     fun theReleaseAsksThePickerFirstAndNamesItself() {
-        // 47.8.3's LongPressMonitorComponent.Gb, cut to its first lines: v5 is this.
+        // 47.9.1's LongPressMonitorComponent.Gb, cut to its first lines: v5 is this.
         val method = method("Lcom/ss/android/ugc/aweme/story/feed/collection/component/LongPressMonitorComponent;", "Gb", 6, """
             invoke-virtual { v5 }, Lcom/ss/android/ugc/aweme/story/feed/collection/component/LongPressMonitorComponent;->Ti()Z
             move-result v0

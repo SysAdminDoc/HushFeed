@@ -30,7 +30,7 @@ internal const val MESSAGE_TIMES = "Lapp/morphe/extension/tiktok/inbox/MessageTi
 private const val MESSAGE_CELLS = "Lcom/ss/android/ugc/aweme/im/sdk/chat/messagelist/skeleton/cell/"
 
 /**
- * The two slots that bind a chat message row. They keep their names on 47.8.3, and each binds a row
+ * The two slots that bind a chat message row. They keep their names on 47.9.1, and each binds a row
  * through one method that takes the row's item and sets the row's padding from TikTok's spacing.
  */
 internal val MESSAGE_ROW_SLOTS = listOf(

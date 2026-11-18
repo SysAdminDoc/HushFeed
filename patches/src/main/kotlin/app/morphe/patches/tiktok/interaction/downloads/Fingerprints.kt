@@ -155,7 +155,7 @@ internal object PhotoMediaStoreInsertFingerprint : Fingerprint(
 /**
  * The copy that puts a saved image or video into the gallery.
  *
- * <p>It was `LX/0Mqc;` and it delegated to `LX/05w6;`, both written here. They are `LX/0N0m;` and
+ * <p>It was `LX/0Mqc;` and it delegated to `LX/10mq;`, both written here. They are `LX/0M8i;` and
  * `LX/0LEM;` on 46.8.3. The six-parameter signature and the three media types together name one
  * method on all three builds without either, and what is left of the delegation check is that the
  * two MediaStore inserts it calls are on one class, whatever that class is called.
@@ -208,7 +208,7 @@ private const val PREVIEW_COMMENT_STICKER = "Lcom/ss/android/ugc/aweme/comment/m
 /**
  * Where the tapped comment sticker's StickerItem comes from in the preview coroutine: the
  * coroutine's own CommentStickerStruct field, read right into the static converter that builds
- * the item (0hUa.LLJJIJIIJIL and 0Hgs.LIZ on TikTok 47.8.3). The converter only reads the
+ * the item (0hUa.LLJJIJIIJIL and 0Hgs.LIZ on TikTok 47.9.1). The converter only reads the
  * struct, so calling it again before each bind hands the extension the same sticker.
  */
 internal data class StickerPreviewSource(val struct: FieldReference, val convert: MethodReference)

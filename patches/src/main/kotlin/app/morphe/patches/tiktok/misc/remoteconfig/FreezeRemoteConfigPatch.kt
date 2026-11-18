@@ -22,7 +22,7 @@ internal const val REMOTE_CONFIG_SWITCH =
 /**
  * The store of a whole A/B settings response. It parses a response that already arrived, then
  * writes its feature flags into the values TikTok reads, logging each step under these names.
- * 47.8.3 has the same code twice, `X.0GTG.LIZ` for FetchABTestCommonTask and a runnable's `LIZ$0`
+ * 47.9.1 has the same code twice, `X.0GTG.LIZ` for FetchABTestCommonTask and a runnable's `LIZ$0`
  * for FetchABTestCommonRequest, so [responseStores] takes every match.
  */
 internal object ResponseStoreFingerprint : Fingerprint(
@@ -33,7 +33,7 @@ internal object ResponseStoreFingerprint : Fingerprint(
 )
 
 /**
- * The store of one chunk of a chunked response (`X.1TpM.LIZ`, which FetchABTestCommonChunkTask's
+ * The store of one chunk of a chunked response (`X.1S1V.LIZ`, which FetchABTestCommonChunkTask's
  * runnable calls). It merges the chunk into what was stored before and saves the result.
  */
 internal object ChunkStoreFingerprint : Fingerprint(
@@ -44,7 +44,7 @@ internal object ChunkStoreFingerprint : Fingerprint(
 )
 
 /**
- * The store of a chunk on the optimized path (`X.08fe.LIZLLL`), which the chunk observer's onNext
+ * The store of a chunk on the optimized path (`X.0835.LIZLLL`), which the chunk observer's onNext
  * calls with the parsed chunk. It writes the typed values itself or hands them to the main AB
  * store, so it's the one point every optimized chunk passes.
  */

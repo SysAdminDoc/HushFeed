@@ -192,12 +192,8 @@ class StickerCreatorPatchTest {
         method.addInstructions(
             0,
             """
-                sget-object v0, Lcom/ss/android/ugc/aweme/im/sticker/api/IMStickerApi;->LIZ:Ljava/lang/Object;
-                check-cast v0, Lcom/ss/android/ugc/aweme/im/sticker/api/IMStickerApi;
-                invoke-interface { v0 }, Lcom/ss/android/ugc/aweme/im/sticker/api/IMStickerApi;->getImStickerStoreService()LX/Store;
-                move-result-object v0
                 const/4 p0, 0x0
-                invoke-interface { v0, p0 }, LX/Store;->LJIILIIL(Ljava/lang/String;)Z
+                invoke-static { p0 }, LX/Gate;->LIZLLL(Lcom/ss/android/ugc/aweme/profile/model/User;)Z
                 move-result v1
                 return v1
             """,
@@ -272,8 +268,7 @@ class StickerCreatorPatchTest {
     /** The page's shape: store check into v0, [between], the curated page with the uid in v1, [after]. */
     private fun stickerPage(between: String, after: String = "") = MutableMethod(
         ImmutableMethod(
-            PROFILE_STICKER_PAGE, "onViewCreated",
-            listOf(ImmutableMethodParameter("Landroid/view/View;", null, null), ImmutableMethodParameter("Landroid/os/Bundle;", null, null)),
+            PROFILE_STICKER_PAGE, "GZ", emptyList(),
             "V", AccessFlags.PUBLIC.value, null, null, ImmutableMethodImplementation(7, emptyList(), null, null),
         ),
     ).apply {

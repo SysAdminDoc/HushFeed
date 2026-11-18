@@ -24,7 +24,7 @@ class OptionListsTest {
         assertResults(two, "LX/0toW;", 2)
 
         val four = holderInit(
-            "LX/0hQh;",
+            "LX/174D;",
             listOf(
                 "LJFF" to listOf(50, 100, 150, 200),
                 "LJI" to listOf(60, 120, 240, 480),
@@ -32,7 +32,7 @@ class OptionListsTest {
                 "LJIIIIZZ" to listOf(50, 150, 200),
             ),
         )
-        assertResults(four, "LX/0hQh;", 4)
+        assertResults(four, "LX/174D;", 4)
     }
 
     @Test
@@ -79,7 +79,7 @@ class OptionListsTest {
                 body.append("const/4 v3, $index\n")
                 body.append("aput-object v2, v1, v3\n")
             }
-            body.append("invoke-static {v1}, LX/0jXv;->LJIIJJI([Ljava/lang/Object;)Ljava/util/List;\n")
+            body.append("invoke-static {v1}, LX/0oDe;->LJIIJJI([Ljava/lang/Object;)Ljava/util/List;\n")
             body.append("move-result-object v0\n")
             body.append("sput-object v0, $holder->$field:Ljava/util/List;\n")
         }

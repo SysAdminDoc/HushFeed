@@ -25,7 +25,7 @@ import java.util.WeakHashMap;
  *
  * <p>TikTok targets SDK 36, so its window is edge to edge, and a host near the top of each page pads
  * its bottom by the navigation bar's height: the feed's tab host, and the frame an opened video's
- * pager sits in (Login2, 47.8.3: 1552 of 1600 in both). With the bar over the video clear, the
+ * pager sits in (Login2, 47.9.1: 1552 of 1600 in both). With the bar over the video clear, the
  * gesture bar sat on a strip of the host's black under the picture.
  *
  * <p>The bar on top of the video (the feed's tabs, an opened video's comment bar) hangs in a mask

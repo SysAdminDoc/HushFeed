@@ -21,8 +21,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-private const val STRATEGY = "LX/18Q3;"
-private const val ENTRY = "LX/09eb;"
+private const val STRATEGY = "LX/0mAZ;"
+private const val ENTRY = "LX/071z;"
 
 class AutoScrollLoadStrategyTest {
     @Test
@@ -100,7 +100,7 @@ class AutoScrollLoadStrategyTest {
         storeIntoEntry: Boolean = true,
     ) = MutableMethod(
         ImmutableMethod(
-            "LX/0aC7;", "invoke", listOf(ImmutableMethodParameter("Ljava/lang/Object;", null, null)),
+            "LX/0gtQ;", "invoke", listOf(ImmutableMethodParameter("Ljava/lang/Object;", null, null)),
             "Ljava/lang/Object;",
             AccessFlags.PUBLIC.value or AccessFlags.FINAL.value, null, null,
             ImmutableMethodImplementation(

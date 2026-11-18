@@ -38,7 +38,7 @@ public final class CaptionTools {
     private static boolean clear;
     /**
      * TikTok's clear display signal for a video that isn't the current one yet, and what it said.
-     * With clear display carried over a swipe, 47.8.3 clears the incoming video about 25 ms before
+     * With clear display carried over a swipe, 47.9.1 clears the incoming video about 25 ms before
      * the feed names it current, so the signal was dropped and the kept line came back on the
      * first video only (#428). The next video change takes it when it names that video.
      */

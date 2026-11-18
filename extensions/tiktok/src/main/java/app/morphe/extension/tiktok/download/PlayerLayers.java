@@ -29,7 +29,7 @@ import java.util.List;
  * calls the first helper too, but the player goes straight to the helpers, so those are what the
  * patch hands here, and the layer's own Surface is what PixelCopy reads.
  *
- * <p>The LIVE player does the same without TTPlayerSurface: on 47.8.3 it builds a Live-n layer on
+ * <p>The LIVE player does the same without TTPlayerSurface: on 47.9.1 it builds a Live-n layer on
  * SurfaceControl itself and hangs it under the LIVE cell's SurfaceView (the S22, 2026-11-11, #259).
  * Its hook hands over that layer's Surface, which stands in for the player here.
  *

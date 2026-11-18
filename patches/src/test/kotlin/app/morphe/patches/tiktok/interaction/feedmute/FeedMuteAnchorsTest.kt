@@ -52,8 +52,8 @@ class FeedMuteAnchorsTest {
             assertEquals("$TT_VIDEO_ENGINE->play()V", (first as ReferenceInstruction).reference.toString())
 
             val members = resolveFeedMuteMembers(play, setIsMute, abandon, request) { classes[it] }
-            // 47.8.3's TTVideoEngine reaches the impl through the engine interface it implements.
-            assertEquals("$version: the mute forwarder", "$TT_VIDEO_ENGINE->LJIILJJIL(Z)V",
+            // 47.9.1's TTVideoEngine reaches the impl through the engine interface it implements.
+            assertEquals("$version: the mute forwarder", "$TT_VIDEO_ENGINE->LJII(Z)V",
                 "${members.setMute.definingClass}->${members.setMute.name}(${members.setMute.parameterTypes.joinToString("")})${members.setMute.returnType}")
             val session = classes.getValue(members.session)
             val sessionRequest = session.methods.single { it.name == members.sessionRequest && it.parameterTypes.isEmpty() }
@@ -63,10 +63,11 @@ class FeedMuteAnchorsTest {
             assertTrue("$version: the engine's play() is on the engine the members name",
                 play.definingClass == members.engine)
 
-            // 47.5.3 inlined the session's give-up into the player's release(), so the patch adds
-            // a copy of the block to the session. Every member it names must exist as named, and
-            // the smali compiler must have kept all 33 instructions (it drops what won't fit).
-            val synthesized = version == "47.8.3"
+            // A build that inlines the session's give-up into the player's release() (47.5.3 to
+            // 47.8.3) gets a copy of the block added to the session. Every member it names must
+            // exist as named, and the smali compiler must have kept all 33 instructions (it drops
+            // what won't fit). 47.9.1 has the give-up on the session itself.
+            val synthesized = abandon.definingClass != members.session
             assertEquals("$version: the give-up is copied onto the session", synthesized, members.sessionAbandonBody != null)
             assertEquals("$version: the bridge's give-up name", if (synthesized) SESSION_ABANDON else abandon.name,
                 members.sessionAbandon)

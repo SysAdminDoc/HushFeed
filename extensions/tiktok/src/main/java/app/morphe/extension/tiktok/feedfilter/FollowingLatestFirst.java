@@ -171,6 +171,14 @@ public final class FollowingLatestFirst {
         }
     }
 
+    /**
+     * The saved list TikTok just read for that restore, or null when {@link #skipSavedFirstVideo}
+     * says to leave it out.
+     */
+    public static Object restoredCache(Object saved) {
+        return skipSavedFirstVideo() ? null : saved;
+    }
+
     /** Puts an order into TikTok's list. True when the list TikTok reads now holds it. */
     interface OrderWriter {
         boolean write(List order);

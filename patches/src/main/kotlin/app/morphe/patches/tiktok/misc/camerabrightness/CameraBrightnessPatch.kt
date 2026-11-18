@@ -82,7 +82,7 @@ internal object OldBrightnessBoostStartFingerprint : Fingerprint(
  */
 
 /**
- * The fill light's automatic full brightness on the record screen (`LX/1SYY;->LLLLLLZ()V`), made
+ * The fill light's automatic full brightness on the record screen (`LX/1FHg;->LLLLLLZ()V`), made
  * by FrontFlashAdjustmentCoordinator. It runs only while the fill light config allows it.
  */
 internal object FillLightFullBrightnessFingerprint : Fingerprint(
@@ -96,7 +96,7 @@ internal object FillLightFullBrightnessFingerprint : Fingerprint(
 )
 
 /**
- * The record screen's front flash (`LX/1SYd;->LLLLLLL()V`), another scene. Its first instruction
+ * The record screen's front flash (`LX/1FNX;->LLLLLLL()V`), another scene. Its first instruction
  * reads its own "already raised" flag, which tells it from the fill light above.
  */
 internal object FrontFlashSceneFingerprint : Fingerprint(
@@ -133,7 +133,7 @@ internal object TakoFlashOnFingerprint : Fingerprint(
 )
 
 /**
- * The avatar camera's flash (`LX/0dLv;->LIZIZ(...)Ljava/lang/Object;`, a suspend function). It
+ * The avatar camera's flash (`LX/0WzS;->LIZIZ(...)Ljava/lang/Object;`, a suspend function). It
  * stores the brighter of the phone's brightness setting and its own config value, not a plain
  * 1.0, so it's told by the int-to-float of that setting before the store and its alpha fade.
  */

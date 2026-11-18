@@ -36,7 +36,7 @@ public class RepostDiagnosticsTest {
     }
 
     /**
-     * 47.8.3's parsed response: the raw response in LIZ, the body in LIZIZ, and a success check
+     * 47.9.1's parsed response: the raw response in LIZ, the body in LIZIZ, and a success check
      * (LIZIZ()) that only asks the raw response. There's no LIZ() code getter any more.
      */
     public static final class Parsed {

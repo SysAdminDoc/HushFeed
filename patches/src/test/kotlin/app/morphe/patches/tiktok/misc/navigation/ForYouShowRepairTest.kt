@@ -40,14 +40,14 @@ class ForYouShowRepairTest {
     private val bundleType = "Landroid/os/Bundle;"
 
     /**
-     * Home's own switch to For You and For You's show as 47.8.3 names them, the members the S22
+     * Home's own switch to For You and For You's show as 47.9.1 names them, the members the S22
      * trace proved on 47.6.3 found again by the same reads. A change in what the reads land on
      * shows here before it reaches a phone.
      */
     private val proved4773 = mapOf(
-        "nodeOf" to "S43", "container" to "LL", "current" to "LLJJJJJIL", "shown" to "LLJJJJLIIL",
+        "nodeOf" to "J93", "container" to "LL", "current" to "LLJJJJJIL", "shown" to "LLJJJJLIIL",
         "dispatch" to "LJJII", "visibleListeners" to "LLJJJJJIL", "switchListeners" to "LLJJJJLIIL",
-        "hoxOf" to "M43", "containerTagOf" to "T43", "panel" to "LLJJJJJIL",
+        "hoxOf" to "D93", "containerTagOf" to "K93", "panel" to "LLJJJJJIL",
     )
 
     /** Each stub as the extension declares it: parameter types, then the return type. */
@@ -91,7 +91,7 @@ class ForYouShowRepairTest {
             assertEquals(calls.activityOf.returnType, calls.hoxOf.parameterTypes.single().toString())
             assertTrue("$version: For You is a kind of ${calls.fragmentBase}", ancestors(app, FOR_YOU_FRAGMENT).contains(calls.fragmentBase))
             assertTrue("$version: the panel is a kind of ${calls.hintOwner}", ancestors(app, calls.panel.type).contains(calls.hintOwner))
-            if (version == "47.8.3") {
+            if (version == "47.9.1") {
                 val read = mapOf(
                     "nodeOf" to calls.nodeOf.name, "container" to calls.container.name, "current" to calls.current.name,
                     "shown" to calls.shown.name, "dispatch" to calls.dispatch.name,

@@ -37,8 +37,8 @@ class SettingsIconSelectorTest {
         val carriers = listOf(
             action("LX/AdBrowserSettings;", gear),
             action("LX/AdBrowserSettingsForSpark;", gear, additionalIcon = 0x7f010999),
-            action("LX/UnrelatedKey;", 0x7f010777, key = "share_setting"),
-            action("LX/WrongInterface;", 0x7f010666, interfaceType = OTHER_ACTION),
+            action("LX/UnrelatedKey;", 0x7f0107aa, key = "share_setting"),
+            action("LX/WrongInterface;", 0x7f010668, interfaceType = OTHER_ACTION),
         )
 
         assertEquals(gear, resolveSettingsIconResourceId(renderer(), carriers))
@@ -137,7 +137,7 @@ class SettingsIconSelectorTest {
     private fun action(
         type: String,
         icon: Int,
-        alternate: Int = 0x7f010777,
+        alternate: Int = 0x7f0107aa,
         additionalIcon: Int? = null,
         iconInstructions: String? = null,
         keyInstructions: String? = null,

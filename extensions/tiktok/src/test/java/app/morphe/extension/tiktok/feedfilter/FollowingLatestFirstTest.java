@@ -404,6 +404,16 @@ public class FollowingLatestFirstTest {
     }
 
     @Test
+    public void theRestoreGetsNoCacheOnlyWithTheSwitchOn() {
+        Object saved = new Object();
+        assertEquals(saved, FollowingLatestFirst.restoredCache(saved));
+
+        FollowingLatestFirst.resetForTests();
+        Settings.FOLLOWING_LATEST_FIRST.save(true);
+        assertEquals(null, FollowingLatestFirst.restoredCache(saved));
+    }
+
+    @Test
     public void pausedKeepsTheSavedFirstVideo() {
         Settings.FOLLOWING_LATEST_FIRST.save(true);
         setPaused(true);

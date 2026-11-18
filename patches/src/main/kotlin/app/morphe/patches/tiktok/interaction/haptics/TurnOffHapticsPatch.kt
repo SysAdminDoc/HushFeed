@@ -49,7 +49,7 @@ internal val VIBRATIONS = mapOf(
  * to the framework's attachBaseContext, before any activity exists, as App lock does. Android
  * plays the long press buzz itself once a long click listener answers true, in framework code
  * no call site reaches. Wrapping each listener where TikTok sets it took 443 rewrites in 281
- * classes on 47.8.3, nearly all of them classes nothing else touches, and each one patched is
+ * classes on 47.9.1, nearly all of them classes nothing else touches, and each one patched is
  * held in memory to the end (#339). The windows see the finger instead.
  */
 internal fun hapticsInstallIndex(method: Method): Int {

@@ -176,7 +176,7 @@ internal val playerLayerPatch = bytecodePatch {
             }
             // From the last, so the earlier indexes still point where they did. The hook steps over
             // itself when the call's boolean is false, the path where no layer was built. 47.7.3 made
-            // that path jump to the call itself; 47.8.3 jumps to the long's load just before it.
+            // that path jump to the call itself; 47.9.1 jumps to the long's load just before it.
             calls.sortedByDescending { it.index }.forEach { call ->
                 val skip = "hush_live_no_layer_${call.index}"
                 addInstructionsWithLabels(

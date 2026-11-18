@@ -47,12 +47,12 @@ class TabModelListAnchorTest {
             addInstructionsWithLabels(
                 0,
                 """
-                    invoke-static {}, LX/03Ww;->LIZJ()Z
+                    invoke-static {}, LX/03F2;->LIZJ()Z
                     move-result v0
                     if-eqz v0, :fill
-                    iget-object v0, p0, $assem->LLLFFI:LX/06Cb;
+                    iget-object v0, p0, $assem->LLLFFI:LX/1Qan;
                     if-eqz v0, :fill
-                    iget-object v0, v0, LX/06Cb;->LJIIZILJ:Ljava/lang/ThreadLocal;
+                    iget-object v0, v0, LX/1Qan;->LJIIZILJ:Ljava/lang/ThreadLocal;
                     invoke-virtual { v0 }, Ljava/lang/ThreadLocal;->get()Ljava/lang/Object;
                     move-result-object v0
                     check-cast v0, Ljava/util/List;
@@ -100,7 +100,7 @@ class TabModelListAnchorTest {
                     if-eqz v0, :done
                     iget-object v2, p0, $assem->LLJJJJ:$list
                     iget-object v1, p0, $assem->LLJJJJJIL:$list
-                    invoke-static { v2, v1 }, LX/1HZ4;->LIZ(Ljava/util/List;Ljava/util/List;)V
+                    invoke-static { v2, v1 }, LX/19QB;->LIZ(Ljava/util/List;Ljava/util/List;)V
                     :done
                     iget-object v0, p0, $assem->LLJJJJ:$list
                     return-object v0

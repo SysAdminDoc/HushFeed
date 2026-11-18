@@ -58,10 +58,10 @@ private const val PROFILE_UID = "getFromProfileUid"
 internal const val PAGE_UID = "getUid"
 private val SCOPE_READS = setOf("getVideoCollectionId", PROFILE_UID, "isOwnCollection")
 
-/** Where the player records which page owns the video it selects (09j5.LJ on 47.8.3). */
+/** Where the player records which page owns the video it selects (09j5.LJ on 47.9.1). */
 internal object QueueOwnerOnSelectFingerprint : Fingerprint(strings = listOf(OWNER_ON_SELECT))
 
-/** Where a play request checks which page asked for it (05pf.LIZ on 47.8.3). */
+/** Where a play request checks which page asked for it (05pf.LIZ on 47.9.1). */
 internal object QueueOwnerOnPlayFingerprint : Fingerprint(strings = listOf(OWNER_ON_PLAY))
 
 /** TikTok's own move to the next video on screen, on a page with a background queue. */
@@ -77,7 +77,7 @@ internal object QueueModeFingerprint : Fingerprint(
 )
 
 /**
- * TikTok's trigger as the app leaves the screen (BackgroundPlayServiceImpl.LJII on 47.8.3). On a
+ * TikTok's trigger as the app leaves the screen (BackgroundPlayServiceImpl.LJII on 47.9.1). On a
  * page with a queue key it arms that queue and skips the one-video session, but only once the
  * queue's session was turned on, which TikTok's own switch does for your collections alone.
  */
@@ -111,7 +111,7 @@ internal fun queueArmHook(check: QueueSessionCheck) =
 private fun Instruction.isStaticCall() = opcode == Opcode.INVOKE_STATIC || opcode == Opcode.INVOKE_STATIC_RANGE
 
 /**
- * TikTok's key for a page's background queue (0ACn.LJJI on 47.8.3): static, the page's
+ * TikTok's key for a page's background queue (0ACn.LJJI on 47.9.1): static, the page's
  * parameters in, and a String out made from the page's collection, profile and own-collection
  * reads. It answers only for your own collections.
  */

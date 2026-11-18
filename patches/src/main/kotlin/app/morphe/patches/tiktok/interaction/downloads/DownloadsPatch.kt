@@ -351,7 +351,7 @@ val downloadsPatch = bytecodePatch(
                 )
             }
 
-            // TikTok 47.8.3 builds the StickerItem from the coroutine's CommentStickerStruct and
+            // TikTok 47.9.1 builds the StickerItem from the coroutine's CommentStickerStruct and
             // keeps it in no register up to the binds, so each bind builds it again from p0.
             val source = stickerPreviewSource()
                 ?: throw PatchException("Downloads: the sticker preview source builds no StickerItem from its struct.")

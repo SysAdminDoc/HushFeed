@@ -63,13 +63,13 @@ public class ProfileTabWatchHistoryTest {
         bar.addView(profile, new FrameLayout.LayoutParams(216, 138));
         content.addView(bar, new FrameLayout.LayoutParams(-1, 138, Gravity.BOTTOM));
         activity.setContentView(content);
-        FeedVisibility.resolveForTests(activity.getPackageName(), "47.8.3:oqf", PROFILE_ID);
+        FeedVisibility.resolveForTests(activity.getPackageName(), "47.9.1:oxl", PROFILE_ID);
     }
 
     @After public void tearDown() {
         PausedProcess.set(false);
         HomeTabSettingsShortcut.resetForTests();
-        FeedVisibility.resolveForTests(activity.getPackageName(), "47.8.3:oqf", 0);
+        FeedVisibility.resolveForTests(activity.getPackageName(), "47.9.1:oxl", 0);
         ReflectionHelpers.setStaticField(SettingsStatus.class, "feedNavigationEnabled", false);
         Settings.PROFILE_TAB_OPENS_WATCH_HISTORY.resetToDefault();
         Settings.PROFILE_TAB_SWITCHES_ACCOUNTS.resetToDefault();

@@ -99,7 +99,7 @@ internal const val STORY_READS_EXTENSION = "Lapp/morphe/extension/tiktok/ghostmo
 /**
  * TikTok working out a person's story ring (#427). It takes the person's story status, or on
  * another branch each story's viewed flag, and its answer goes into the status store the inbox,
- * the profile and the feed all draw their rings from. R8 names it (47.8.3 LX/0CxQ;->LJI); its
+ * the profile and the feed all draw their rings from. R8 names it (47.9.1 LX/0ADW;->LJFF); its
  * log line and its three model parameters find it.
  */
 internal object StoryStatusComputeFingerprint : Fingerprint(
@@ -138,7 +138,7 @@ internal const val LIVE_UNSEEN_BUTTON_EXTENSION = "Lapp/morphe/extension/tiktok/
  * USER_CLOSE_CLICK, PLAYER_ERROR and the rest keep their names), a message and a code. A failed
  * room enter reaches it as ENTER_FAILED, and it then shows the "Unstable connection" toast and
  * slides on to the next LIVE. Its log lines for a paid room and the jump to another room are
- * only in this method on 47.8.3.
+ * only in this method on 47.9.1.
  */
 internal object LiveRoomLeaveFingerprint : Fingerprint(
     definingClass = LIVE_PLAY_FRAGMENT,
@@ -151,7 +151,7 @@ internal object LiveRoomLeaveFingerprint : Fingerprint(
  * The LIVE room page's room enter (#420), which takes the room id and whether a tap opened it.
  * It makes the enter's callback from the page and the room id, keeps it on the page, and hands
  * it to the page's send. That callback's success builds the room's chat, host bar and close
- * button. Its log keys for the enter's start time and the pre-enter cache meet only here on 47.8.3.
+ * button. Its log keys for the enter's start time and the pre-enter cache meet only here on 47.9.1.
  */
 internal object LiveRoomEnterFingerprint : Fingerprint(
     definingClass = LIVE_PLAY_FRAGMENT,

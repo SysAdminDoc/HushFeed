@@ -57,14 +57,15 @@ internal object InboxFilterTabListFingerprint : Fingerprint(
 )
 
 /**
- * Whether the pop-up about the upgraded creator Inbox may show. It offers itself once the mode
- * reads creator and the account hasn't seen it, which the shown tabs would otherwise bring about.
+ * The Inbox fragment's one way to the pop-up about the upgraded creator Inbox, given the account
+ * and the kind of guide. It offers itself once the mode reads creator and the account hasn't seen
+ * it, which the shown tabs would otherwise bring about. 47.8.3 asked a canShow method on the guide
+ * for this, and 47.9.1 has no such method left to answer for it.
  */
-internal object ProInboxGuideCanShowFingerprint : Fingerprint(
-    name = "canShow",
-    returnType = "Z",
-    parameters = listOf(),
-    strings = listOf("shown_pro_creator_upgrade_guide:"),
+internal object ProInboxGuideShowFingerprint : Fingerprint(
+    returnType = "V",
+    parameters = listOf("Ljava/lang/String;", "L"),
+    strings = listOf("tryShowProfessionalInboxUpgradeGuidePopup, uid: "),
 )
 
 private fun Instruction.typeReference() = ((this as? ReferenceInstruction)?.reference as? TypeReference)?.type
@@ -127,9 +128,9 @@ internal class InboxFilterTabHooks(
     private val castIndex = inboxModeCast(tabs, modeType)
 
     init {
-        // The pop-up's guard answers into v0. R8 can hand a boolean back in the register `this`
-        // came in, which leaves no local, and that has to be refused here with the other two
-        // checks, while nothing is written and the patch can still leave the switch out.
+        // The pop-up's guard takes its answer in v0, so the method needs a local. One without
+        // has to be refused here with the other two checks, while nothing is written and the
+        // patch can still leave the switch out.
         guide.requireLocals("Inbox filters", 1)
     }
 
@@ -141,10 +142,7 @@ internal class InboxFilterTabHooks(
         guide.guardAtEntry(
             patch,
             "invoke-static {}, $FILTER_TABS_EXTENSION->hideProInboxGuide()Z",
-            """
-                const/4 v0, 0x0
-                return v0
-            """,
+            "return-void",
         )
     }
 
@@ -160,5 +158,5 @@ internal fun inboxFilterTabHooks() = InboxFilterTabHooks(
     InboxModeProducerFingerprint.classDef,
     InboxModeGetterFingerprint.method,
     InboxFilterTabListFingerprint.method,
-    ProInboxGuideCanShowFingerprint.method,
+    ProInboxGuideShowFingerprint.method,
 )

@@ -133,7 +133,7 @@ public class DetailAutoAdvanceQueueTest {
         assertFalse(DetailAutoAdvance.backgroundNext(false, new Object(), "a"));
     }
 
-    /** TikTok's queue session as 47.8.3 lays it out: obfuscated fields, the scene and the state among them. */
+    /** TikTok's queue session as 47.9.1 lays it out: obfuscated fields, the scene and the state among them. */
     private static final class Session {
         private final String LIZ = "owner";
         private final ScopedBgPlayScene LIZIZ;

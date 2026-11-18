@@ -220,7 +220,7 @@ public class AlwaysShowPublishDatePatchTest {
         assertEquals("09-29", AlwaysShowPublishDatePatch.postTime("09-29", new Post(0L, null)));
 
         // The time to the second puts the day first too: the switch sits under Short date, and on
-        // the S22 (47.8.3) the short date still read 11/15/26 with it on.
+        // the S22 (47.9.1) the short date still read 11/15/26 with it on.
         Settings.PUBLISH_DATE_EXACT_TIME.save(true);
         String exact = AlwaysShowPublishDatePatch.postTime("09-29", thisYear);
         assertTrue(exact, exact.startsWith("29 Sep 2026 "));

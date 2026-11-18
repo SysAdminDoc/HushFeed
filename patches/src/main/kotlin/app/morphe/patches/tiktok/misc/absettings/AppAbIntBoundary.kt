@@ -73,9 +73,9 @@ internal val APP_AB_TYPED_SHAPES = APP_AB_SHAPES - APP_AB_RAW
  * <p>Every 47.x build carries two such classes. The [MAIN] one has all seven getters and is the
  * one the patches hooked alone through 46.x. The [TWIN] has the six typed getters with the same
  * parameters (so the same key registers) but no raw one, reads through a store of its own, and is
- * where nearly every gate read lands: on 47.8.3 `Lsp4/m;` takes 6,299 int reads and 7,026 boolean
+ * where nearly every gate read lands: on 47.9.1 `Lwq4/m;` takes about 6,300 int reads and 7,200 boolean
  * reads to `LX/03JE;`'s four and four. 47.1.4 has `LX/032I;` beside `LX/02yF;`, 47.7.3 `LX/03OH;`
- * beside `LX/03J6;`. A hook on the main class alone never saw `basic_vv_batch_size`, the Favorites
+ * beside `LX/05c1;`. A hook on the main class alone never saw `basic_vv_batch_size`, the Favorites
  * gates or the surface view gate.
  */
 internal enum class AppAbRole { MAIN, TWIN }
@@ -91,7 +91,7 @@ internal fun appAbRole(classDef: ClassDef): AppAbRole? {
 
 /**
  * The class's typed object getter: `(String key, boolean, boolean, Class type, int)`, `LJIIJ` on
- * 47.8.3. Every generated accessor for a class-typed gate ends here, with the key in p1 and the
+ * 47.9.1. Every generated accessor for a class-typed gate ends here, with the key in p1 and the
  * class in p4, both only copied out and never written. It isn't one of [APP_AB_SHAPES], which name
  * the class; this one is looked up on it.
  */

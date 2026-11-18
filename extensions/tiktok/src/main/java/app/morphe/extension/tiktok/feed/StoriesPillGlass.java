@@ -23,7 +23,7 @@ import java.util.WeakHashMap;
  * ({@link GlassVideoBlur}); below that, or until a strip has been read, it is the plain glass.
  *
  * <p>TikTok paints the pill (the overlay pass's Following story target, a FrameLayout) with one
- * GradientDrawable, 15% black with a hairline (Login2, 47.8.3). The pass hands each pill it finds
+ * GradientDrawable, 15% black with a hairline (Login2, 47.9.1). The pass hands each pill it finds
  * to {@link #apply}, which swaps that background for {@link Glass} and puts TikTok's own back once
  * the switch is off or Hushfeed is paused. A background TikTok set since is never overwritten.
  */

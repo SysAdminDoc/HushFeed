@@ -27,7 +27,7 @@ class SearchHistoryFixturesTest {
     @Test
     fun `each declared host has exactly one history recorder and no manual search log`() {
         val expected = mapOf(
-            "47.8.3" to "LX/0Eoq;",
+            "47.9.1" to "LX/0CRB;",
         )
         assertEquals(Fixtures.declaredVersions().toSet(), expected.keys)
         Fixtures.forEachDeclared { apk ->
@@ -71,17 +71,17 @@ class SearchHistoryFixturesTest {
 
     @Test
     fun `the delete method and a changed recorder are not taken for the record method`() {
-        val delete = method("LX/0FpE;", listOf(SEARCH_HISTORY, "Ljava/lang/String;"), static = false,
+        val delete = method("LX/0FcT;", listOf(SEARCH_HISTORY, "Ljava/lang/String;"), static = false,
             "const-string v0, \"deleteSearchHistory, repo = \"\nreturn-void")
         assertFalse(isSearchHistoryRecorder(delete))
-        val renamedTag = method("LX/0FpE;", listOf(SEARCH_HISTORY, "Ljava/lang/String;"), static = false,
+        val renamedTag = method("LX/0FcT;", listOf(SEARCH_HISTORY, "Ljava/lang/String;"), static = false,
             "const-string v0, \"recordSearchHistoryV2, repo:\"\nreturn-void")
         assertFalse("the tag is matched whole", isSearchHistoryRecorder(renamedTag))
         // The tag on its own is not what the host loads: every line opens with it and a comma.
-        val bareTag = method("LX/0FpE;", listOf(SEARCH_HISTORY, "Ljava/lang/String;"), static = false,
+        val bareTag = method("LX/0FcT;", listOf(SEARCH_HISTORY, "Ljava/lang/String;"), static = false,
             "const-string v0, \"recordSearchHistory\"\nreturn-void")
         assertFalse(isSearchHistoryRecorder(bareTag))
-        val record = method("LX/0FpE;", listOf(SEARCH_HISTORY, "Ljava/lang/String;"), static = false,
+        val record = method("LX/0FcT;", listOf(SEARCH_HISTORY, "Ljava/lang/String;"), static = false,
             "const-string v0, \"recordSearchHistory, repo:\"\nreturn-void")
         assertTrue(isSearchHistoryRecorder(record))
     }
@@ -89,7 +89,7 @@ class SearchHistoryFixturesTest {
     @Test
     fun `a writer without a free local refuses the guard before writing it`() {
         val full = MutableMethod(ImmutableMethod(
-            "LX/0FpE;", "LIZ", listOf(ImmutableMethodParameter(SEARCH_HISTORY, null, null),
+            "LX/0FcT;", "LIZ", listOf(ImmutableMethodParameter(SEARCH_HISTORY, null, null),
                 ImmutableMethodParameter("Ljava/lang/String;", null, null)), "V",
             AccessFlags.PUBLIC.value, null, null,
             ImmutableMethodImplementation(3, listOf(ImmutableInstruction10x(Opcode.RETURN_VOID)), null, null),

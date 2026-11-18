@@ -23,6 +23,7 @@ import app.morphe.patches.tiktok.misc.extension.MainActivityOnCreateFingerprint
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.navigation.MainNewIntentFingerprint
 import app.morphe.patches.tiktok.misc.navigation.writes
+import app.morphe.patches.tiktok.misc.optimizer.isBranchTarget
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.patches.tiktok.misc.theme.declaredVersions
@@ -334,7 +335,7 @@ val feedFilterPatch = bytecodePatch(
         // The same handler fills the LIVE rows outside the feed: the Following tab's row of
         // creators who are LIVE, the Inbox's LIVE line and the feed behind it, a push's room
         // (#212). The provider (p0) names which with its request type, through the getter the
-        // handler (on 47.8.3 the provider method it calls) uses right after loading
+        // handler (on 47.9.1 the provider method it calls) uses right after loading
         // following_window_live_cell_loadmore to compare the two, so the filter gets the type as
         // well and leaves those rows to the block list. At index 0 no local holds anything yet,
         // so v1 and v2 carry the arguments into reach.
@@ -704,7 +705,7 @@ val feedFilterPatch = bytecodePatch(
         }
 
         // The view model swaps the served list in only when it holds as many tabs as TikTok's own
-        // default list, and otherwise keeps the default with every tab on it (47.8.3), so the
+        // default list, and otherwise keeps the default with every tab on it (47.9.1), so the
         // same tabs go from the default at each of its fills. The source list is filtered before
         // the clear-and-add-all, so the fallback the setup hands on is the filtered one too.
         SearchDefaultTabsFillFingerprint.method.apply {
@@ -1200,25 +1201,32 @@ internal fun MutableMethod.raiseFollowFeedFirstReadCount() {
 /**
  * Latest first on Following (#226): on a cold start TikTok restores the Following list it saved
  * last run and shows that list's first post as the first video, then loads the fresh list under
- * it, so the saved post played first and the newest posts were sorted below it. While the switch
- * is on the extension answers true and the hook hands the restore a null cache, which is the path
- * TikTok takes when nothing was saved: it logs "no_cache" and the fresh read fills the feed.
+ * it, so the saved post played first and the newest posts were sorted below it. The hook passes
+ * the cache TikTok just read through the extension, which answers null while the switch is on. That
+ * is the path TikTok takes when nothing was saved: it logs "no_cache" and the fresh read fills the
+ * feed. Straight line and in the cache's own register, since refreshList has no spare one to trust.
  */
 internal fun MutableMethod.skipSavedFollowingFirstVideo() {
-    requireLocals("Following saved first video", 1)
-    if (parameterTypes.firstOrNull()?.toString() != FOLLOWING_CACHE_DESCRIPTOR) {
-        throw PatchException("Following saved first video: $name does not take the saved cache first")
+    val instructions = implementationOrPatchException("Following saved first video").instructions.toList()
+    val reads = instructions.indices.filter { index ->
+        instructions[index].opcode == Opcode.INVOKE_STATIC &&
+            instructions[index].getReference<MethodReference>()?.let {
+                it.returnType == FOLLOWING_CACHE_DESCRIPTOR && it.parameterTypes.isEmpty()
+            } == true &&
+            instructions.getOrNull(index + 1)?.opcode == Opcode.MOVE_RESULT_OBJECT
     }
-    addInstructionsWithLabels(
-        0,
+    val read = reads.singleOrNull()
+        ?: throw PatchException("Following saved first video: $name reads the saved cache ${reads.size} times, expected once")
+    val cache = (instructions[read + 1] as OneRegisterInstruction).registerA
+    if (cache > 15) throw PatchException("Following saved first video: the cache's register v$cache doesn't fit the hook")
+    if (isBranchTarget(read + 2)) throw PatchException("Following saved first video: something lands right after the cache read")
+    addInstructions(
+        read + 2,
         """
-            invoke-static {}, $FOLLOWING_LATEST_FIRST_CLASS_DESCRIPTOR->skipSavedFirstVideo()Z
-            move-result v0
-            if-eqz v0, :morphe_keep_saved_following
-            const/4 v0, 0x0
-            move-object/from16 p1, v0
+            invoke-static { v$cache }, $FOLLOWING_LATEST_FIRST_CLASS_DESCRIPTOR->restoredCache(Ljava/lang/Object;)Ljava/lang/Object;
+            move-result-object v$cache
+            check-cast v$cache, $FOLLOWING_CACHE_DESCRIPTOR
         """,
-        ExternalLabel("morphe_keep_saved_following", getInstruction(0)),
     )
 }
 
@@ -1504,7 +1512,7 @@ private fun MutableMethod.filterChainedCacheDelivery(
     // The block used to do its work in the payload's own register, so both labels it re-enters
     // at were reached with a boolean sitting in a register the native path holds a reference in.
     // On 46.2.3 the instruction at each label writes that register before anything reads it
-    // (index 6 and index 8 of LX/0jNU;->LIZ), so nothing was actually wrong; the block no longer
+    // (index 6 and index 8 of LX/0o5x;->LIZ), so nothing was actually wrong; the block no longer
     // depends on the host doing that. A register of its own also leaves the payload read the
     // patcher branched on exactly as the host wrote it.
     val scratchRegister = getFreeRegisterProvider(

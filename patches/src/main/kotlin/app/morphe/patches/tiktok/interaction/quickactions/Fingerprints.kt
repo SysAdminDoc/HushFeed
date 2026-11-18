@@ -36,7 +36,7 @@ internal object ExposedEmojiPanelTriggerFingerprint : Fingerprint(
 /**
  * The typing sticker recommendation row owned by {@code TypingStickerRecommendAssem}. Its lone
  * {@code void(boolean)} method is the show/hide boundary and binds
- * {@code id/typing_sticker_recommend_view} ({@code 0x7f0a9893} on 47.8.3).
+ * {@code id/typing_sticker_recommend_view} ({@code 0x7f0a996d} on 47.9.1).
  */
 internal object TypingStickerRecommendVisibilityFingerprint : Fingerprint(
     definingClass = COMMENT_TYPING_STICKER_RECOMMEND_ASSEM,

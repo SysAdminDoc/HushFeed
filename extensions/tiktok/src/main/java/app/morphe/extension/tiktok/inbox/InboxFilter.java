@@ -69,20 +69,20 @@ import java.util.WeakHashMap;
  * </pre>
  */
 public final class InboxFilter {
-    private static final String[] LIST_IDS = {"47.8.3:l8n"};
-    private static final String[] SYSTEM_ROW_IDS = {"47.8.3:v4m"};
-    private static final String[] CHAT_ROW_IDS = {"47.8.3:w8_"};
+    private static final String[] LIST_IDS = {"47.9.1:l8n"};
+    private static final String[] SYSTEM_ROW_IDS = {"47.9.1:vao"};
+    private static final String[] CHAT_ROW_IDS = {"47.9.1:wej"};
     private static final String[] MESSAGE_REQUESTS_IDS = {"tv_request_unread_count"};
-    private static final String[] SAY_HI_ROW_IDS = {"47.8.3:opi"};
-    private static final String[] SYSTEM_ROW_TITLE_IDS = {"47.8.3:btc"};
+    private static final String[] SAY_HI_ROW_IDS = {"47.9.1:opi"};
+    private static final String[] SYSTEM_ROW_TITLE_IDS = {"47.9.1:bxo"};
     private static final String[] USER_ROW_TITLE_IDS = {"user_name"};
-    private static final String[] STORIES_TITLE_IDS = {"47.8.3:wym"};
-    private static final String[] SUGGESTED_HEADER_IDS = {"47.8.3:q79"};
-    private static final String[] SUGGESTED_TITLE_IDS = {"47.8.3:u8o"};
-    private static final String[] SUGGESTED_REMOVE_IDS = {"47.8.3:g0j"};
-    private static final String[] HEADER_ADD_PEOPLE_IDS = {"47.8.3:fiq"};
-    private static final String[] HEADER_SEARCH_IDS = {"47.8.3:kqk"};
-    private static final String[] HEADER_ACTIVITY_STATUS_IDS = {"47.8.3:l8p"};
+    private static final String[] STORIES_TITLE_IDS = {"47.9.1:x5u"};
+    private static final String[] SUGGESTED_HEADER_IDS = {"47.9.1:q79"};
+    private static final String[] SUGGESTED_TITLE_IDS = {"47.9.1:u8o"};
+    private static final String[] SUGGESTED_REMOVE_IDS = {"47.9.1:g5c"};
+    private static final String[] HEADER_ADD_PEOPLE_IDS = {"47.9.1:fiq"};
+    private static final String[] HEADER_SEARCH_IDS = {"47.9.1:kqk"};
+    private static final String[] HEADER_ACTIVITY_STATUS_IDS = {"47.9.1:l8p"};
 
     /** One dismissal at a time, so bulk clearing does not hammer TikTok's API. */
     private static final long DISMISS_INTERVAL_MS = 300L;

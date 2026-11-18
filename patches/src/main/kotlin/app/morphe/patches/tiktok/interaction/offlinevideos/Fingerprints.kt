@@ -28,7 +28,7 @@ internal object OfflineModeDetailViewCreatedFingerprint : Fingerprint(
 )
 
 /**
- * The download limit choices, which are an enum. Its class was written here as `LX/0mE9;` and is
+ * The download limit choices, which are an enum. Its class was written here as `LX/18Qt;` and is
  * `LX/14Jp;` on 46.7.3 and `LX/189v;` on 46.8.3; the constants it declares are the same eight on
  * all three and no other enum in the app declares them.
  */

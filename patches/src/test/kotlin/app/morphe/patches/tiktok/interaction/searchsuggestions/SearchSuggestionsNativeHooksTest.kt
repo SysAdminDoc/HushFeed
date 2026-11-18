@@ -23,8 +23,8 @@ import org.junit.Test
 class SearchSuggestionsNativeHooksTest {
     @Test
     fun `both native first-screen branches pass their actual result through the hook`() {
-        val method = method("LX/16M6;", "LIZ", emptyList(), "Z", 3, true, """
-            sget v2, LX/16M6;->LIZIZ:I
+        val method = method("LX/18ml;", "LIZ", emptyList(), "Z", 3, true, """
+            sget v2, LX/18ml;->LIZIZ:I
             const/4 v1, 0x1
             if-eq v2, v1, :result
             const/4 v0, 0x2
@@ -50,11 +50,11 @@ class SearchSuggestionsNativeHooksTest {
 
     @Test
     fun `initial parameter hook receives the original key and object without losing native work`() {
-        val method = method("LX/0Csq;", "LIZ", listOf("Ljava/lang/String;"), "Ljava/lang/Object;", 3, true, """
-            invoke-static {}, LX/0BVt;->LJ()LX/0BVt;
+        val method = method("LX/0DgI;", "LIZ", listOf("Ljava/lang/String;"), "Ljava/lang/Object;", 3, true, """
+            invoke-static {}, LX/09aC;->LJ()LX/09aC;
             move-result-object v1
             const/4 v0, 0x0
-            invoke-virtual {v1, p0, v0}, LX/0BVt;->LJIIJJI(Ljava/lang/String;Z)Ljava/lang/Object;
+            invoke-virtual {v1, p0, v0}, LX/09aC;->LJIIJJI(Ljava/lang/String;Z)Ljava/lang/Object;
             move-result-object v0
             return-object v0
         """)
@@ -84,11 +84,11 @@ class SearchSuggestionsNativeHooksTest {
             "Lcom/ss/android/ugc/aweme/search/middle/DynamicSingleIntermediateFragmentNew;", "GS",
             listOf("Lcom/ss/android/ugc/aweme/search/middle/SearchStartViewModel;", "Ljava/lang/Boolean;"),
             "V", 21, false, """
-                invoke-static {}, LX/0CrN;->LJIIIZ()LX/0CrN;
+                invoke-static {}, LX/0DaE;->LJIIIZ()LX/0DaE;
                 move-result-object v8
                 const/16 v0, 0x7c00
                 const-string v1, "show_suggest_search_words"
-                invoke-virtual {v8, v0, v13, v1, v5}, LX/0CrN;->LJIIJJI(IILjava/lang/String;Z)I
+                invoke-virtual {v8, v0, v13, v1, v5}, LX/0DaE;->LJIIJJI(IILjava/lang/String;Z)I
                 move-result v0
                 invoke-virtual {v2, v1, v0}, Lorg/json/JSONObject;->put(Ljava/lang/String;I)Lorg/json/JSONObject;
                 const-string v1, "is_lynx_request_suggest"
@@ -169,9 +169,9 @@ class SearchSuggestionsNativeHooksTest {
                     val args = indices.map { registers[it] }
                     pending = when (target.definingClass) {
                         "Lapp/morphe/extension/tiktok/search/SearchSuggestions;" -> filter(target.name, args)
-                        "LX/0BVt;", "LX/0CrN;" -> if (target.name == "LJIIJJI") {
+                        "LX/09aC;", "LX/0DaE;" -> if (target.name == "LJIIJJI") {
                             assertEquals(1, ++nativeReads)
-                            assertEquals(if (target.definingClass == "LX/0BVt;") initial[2]
+                            assertEquals(if (target.definingClass == "LX/09aC;") initial[2]
                                 else "show_suggest_search_words", args[args.size - 2])
                             nativeValue
                         } else Any()

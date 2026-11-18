@@ -18,7 +18,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 
 /** The log line TikTok writes when a phone low on space shortens the lifetime. Only the calculation writes it. */
-internal const val OFFLINE_LIFETIME_LOG = "resolveExpiredIntervalMs: low-storage override="
+internal const val OFFLINE_LIFETIME_LOG = "resolveExpiredIntervalMs: low-storage tier override="
 
 /** When the offline page was last opened, which picks between TikTok's two fallback lifetimes. */
 internal const val OFFLINE_DETAIL_VISIT_KEY = "key_last_enter_offline_detail_timestamp"

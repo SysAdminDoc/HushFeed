@@ -64,7 +64,7 @@ class NativeCoordinateLongPressHookTest {
             }
             val event = instructions.first { instruction ->
                 val ref = (instruction as? ReferenceInstruction)?.reference as? MethodReference
-                ref?.definingClass == "LX/0SHa;" && ref.name == "<init>"
+                ref?.definingClass == "LX/0SCW;" && ref.name == "<init>"
             } as FiveRegisterInstruction
             assertEquals(listOf(2, 4, 1, 5, 0),
                 listOf(event.registerC, event.registerD, event.registerE, event.registerF, event.registerG))
@@ -99,16 +99,16 @@ class NativeCoordinateLongPressHookTest {
             if-nez v0, :event_type
             const-string v0, ""
             :event_type
-            invoke-static { v0 }, LX/0CZZ;->LIZ(Ljava/lang/String;)Z
+            invoke-static { v0 }, LX/0BX8;->LIZ(Ljava/lang/String;)Z
             move-result v0
             if-eqz v0, :done
-            new-instance v2, LX/0SHa;
+            new-instance v2, LX/0SCW;
             iget-object v0, p0, $owner->LIZ:Lcom/ss/android/ugc/aweme/feed/model/BaseFeedPageParams;
             iget v1, v0, Lcom/ss/android/ugc/aweme/feed/model/BaseFeedPageParams;->awemeFromPage:I
             $identity
             :event
-            invoke-direct { v2, p1, v1, p2, v0 }, LX/0SHa;-><init>(FIFI)V
-            invoke-static { v2 }, LX/0BgR;->LIZ(Lcom/ss/android/ugc/governance/eventbus/IEvent;)Lcom/ss/android/ugc/governance/eventbus/IEvent;
+            invoke-direct { v2, p1, v1, p2, v0 }, LX/0SCW;-><init>(FIFI)V
+            invoke-static { v2 }, LX/09PJ;->LIZ(Lcom/ss/android/ugc/governance/eventbus/IEvent;)Lcom/ss/android/ugc/governance/eventbus/IEvent;
             :done
             return-void
             $nullContext

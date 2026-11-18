@@ -141,7 +141,7 @@ class AppIconPickerTest {
     }.toString()
 
     private companion object {
-        /** TikTok's launcher entry as 47.8.3 declares it, with the deep-link filter beside it. */
+        /** TikTok's launcher entry as 47.9.1 declares it, with the deep-link filter beside it. */
         val MANIFEST = """
             <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.zhiliaoapp.musically">
                 <application android:icon="@mipmap/c" android:roundIcon="@mipmap/c" android:label="@string/app_name">

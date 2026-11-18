@@ -22,7 +22,7 @@ private const val END_ICON = "setButtonEndIconDrawable"
 
 /**
  * The share sheet's create-group bar shows or hides its "Send to new group" button in one (Z)V
- * method (47.8.3 X.0IBZ.LIZJ), the only one of that shape that puts the picked people's avatars
+ * method (47.9.1 X.0Hwj.LIZJ), the only one of that shape that puts the picked people's avatars
  * on a button's end icon.
  */
 internal fun isNewGroupButtonToggle(method: Method): Boolean =

@@ -63,9 +63,10 @@ internal class WatchedDeleteCalls(
 
 /**
  * Reads the three calls off the clean-up. The delete is the one static (List)V of the clean-up's
- * own class it invokes. The question is the static ()Object whose answer lands in the register
- * that delete is handed, the nearest one before it, since other calls answer into other registers
- * on the way. The flag is the boolean of the clean-up's own class it reads, every read the same.
+ * own class it invokes. The question is the nearest static ()Object before it. TikTok hands the
+ * delete a batch cut from that answer, so the delete's list has to come from a static
+ * (Iterable, int) take of the register the question answered into. The flag is the boolean of the
+ * clean-up's own class it reads, every read the same.
  */
 internal fun watchedDeleteCalls(cleanup: Method, patch: String): WatchedDeleteCalls {
     val owner = cleanup.definingClass
@@ -88,18 +89,28 @@ internal fun watchedDeleteCalls(cleanup: Method, patch: String): WatchedDeleteCa
         else -> throw PatchException("$patch: the delete call in $owner->${cleanup.name} names no register.")
     }
 
-    val asked = (deleteIndex - 1 downTo 1).firstOrNull { index ->
-        val result = instructions[index]
+    fun answeredBy(index: Int, matches: (MethodReference) -> Boolean): Boolean {
         val call = instructions[index - 1]
-        result.opcode == Opcode.MOVE_RESULT_OBJECT &&
-            (result as OneRegisterInstruction).registerA == handed &&
+        return instructions[index].opcode == Opcode.MOVE_RESULT_OBJECT &&
             (call.opcode == Opcode.INVOKE_STATIC || call.opcode == Opcode.INVOKE_STATIC_RANGE) &&
-            call.getReference<MethodReference>()?.let {
-                it.parameterTypes.isEmpty() && it.returnType == "Ljava/lang/Object;"
-            } == true
+            call.getReference<MethodReference>()?.let(matches) == true
+    }
+
+    val asked = (deleteIndex - 1 downTo 1).firstOrNull { index ->
+        answeredBy(index) { it.parameterTypes.isEmpty() && it.returnType == "Ljava/lang/Object;" }
     } ?: throw PatchException(
-        "$patch: nothing static answers v$handed before the delete in $owner->${cleanup.name}.",
+        "$patch: nothing static answers the watched question before the delete in $owner->${cleanup.name}.",
     )
+    val answer = (instructions[asked] as OneRegisterInstruction).registerA
+    val batch = (deleteIndex - 1 downTo 1).firstOrNull { index ->
+        answeredBy(index) {
+            it.returnType == "Ljava/util/List;" &&
+                it.parameterTypes.map(CharSequence::toString) == listOf("Ljava/lang/Iterable;", "I")
+        } && (instructions[index] as OneRegisterInstruction).registerA == handed
+    }
+    if ((batch?.let { instructions[it - 1] as? FiveRegisterInstruction })?.registerC != answer) {
+        throw PatchException("$patch: the delete in $owner->${cleanup.name} isn't handed a batch of the watched answer.")
+    }
     val watched = instructions[asked - 1].getReference<MethodReference>()!!
 
     val flags = instructions.filter { it.opcode == Opcode.SGET_BOOLEAN }

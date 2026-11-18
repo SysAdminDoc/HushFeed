@@ -56,8 +56,8 @@ private fun Method.stickerMethodCalls(): List<MethodReference> =
 
 /**
  * StickerApiV2's im/sticker/save: type, uri, width, height, tags, source, create source, the
- * canvas text (null when there is none, new on 47.8.3) and the continuation. R8 renames it
- * (LIZIZ on TikTok 47.8.3).
+ * canvas text (null when there is none, new on 47.9.1) and the continuation. R8 renames it
+ * (LIZIZ on TikTok 47.9.1).
  */
 internal fun MethodReference.isStickerSaveCall(): Boolean {
     val parameters = parameterTypes.map { it.toString() }
@@ -105,9 +105,9 @@ internal object StickerServerParameterFingerprint : Fingerprint(
 )
 
 /**
- * The DM canvas saver (0hMc.LIZIZ on TikTok 47.8.3): it saves a
+ * The DM canvas saver (0hMc.LIZIZ on TikTok 47.9.1): it saves a
  * drawing through im/sticker/save and adds the answer to Saved. Every call the bridges make comes
- * out of it. 47.8.3 grew its parameters from four to nine (the canvas text, flags and two
+ * out of it. 47.9.1 grew its parameters from four to nine (the canvas text, flags and two
  * callbacks), and a sibling in the same class that posts to the sticker store carries
  * "dm_ai_canvas" too, so the save and the Saved store call are what pick it, not its parameters.
  */
@@ -294,9 +294,10 @@ internal fun MutableClass.swapStickerStubs(calls: StickerCreatorCalls) {
 }
 
 /**
- * The profile's Stickers tab gate (0Pvq.LIZ on TikTok 47.8.3, #214): static, takes the User, asks
- * the IM sticker store whether the profile owns a sticker set and otherwise reads the profile's own
- * showStickerTab flag. 47.6.3 read only the flag.
+ * The profile's Stickers tab gate (0OB3.LIZIZ on TikTok 47.9.1, #214): static, takes the User, asks
+ * the IM sticker store's Z(Z) check and on yes returns a helper of its own class that asks whether
+ * the profile owns a sticker set. Otherwise it reads the profile's own showStickerTab flag. 47.6.3
+ * read only the flag.
  */
 internal fun Method.isProfileStickerTabGate(): Boolean {
     if (!AccessFlags.STATIC.isSet(accessFlags) || returnType != "Z" ||
@@ -320,14 +321,10 @@ internal object ProfileStickerTabFingerprint : Fingerprint(
 internal fun MutableMethod.keepProfileStickerTab() {
     val code = implementation?.instructions?.toList()
         ?: throw PatchException("Create stickers: the Stickers tab gate has no code")
-    val store = code.firstNotNullOfOrNull {
-        ((it as? ReferenceInstruction)?.reference as? MethodReference)
-            ?.takeIf { call -> call.definingClass == IM_STICKER_API && call.name == "getImStickerStoreService" }
-    }?.returnType ?: throw PatchException("Create stickers: the Stickers tab gate has no sticker store")
     val owned = code.indices.filter { index ->
         val call = (code[index] as? ReferenceInstruction)?.reference as? MethodReference
-        code[index].opcode == Opcode.INVOKE_INTERFACE && call != null && call.definingClass == store &&
-            call.returnType == "Z" && call.parameterTypes.map { it.toString() } == listOf(STICKER_STRING) &&
+        code[index].opcode == Opcode.INVOKE_STATIC && call != null && call.definingClass == definingClass &&
+            call.returnType == "Z" && call.parameterTypes.map { it.toString() } == listOf(PROFILE_USER) &&
             code.getOrNull(index + 1)?.opcode == Opcode.MOVE_RESULT && code.getOrNull(index + 2)?.opcode == Opcode.RETURN &&
             (code[index + 1] as OneRegisterInstruction).registerA == (code[index + 2] as OneRegisterInstruction).registerA
     }
@@ -350,17 +347,28 @@ internal fun MutableMethod.keepProfileStickerTab() {
     )
 }
 
-/** The Stickers tab's page on a profile, which picks TikTok's curated set page or the sticker sets pager. */
+/**
+ * The Stickers tab's page on a profile, the no-argument method onViewCreated hands the work to, which
+ * picks TikTok's curated set page or the sticker sets pager. It's the one that asks for the curated
+ * page, by the (uid, view model key, is self) call that returns a Fragment.
+ */
 internal object ProfileStickerPageFingerprint : Fingerprint(
     definingClass = PROFILE_STICKER_PAGE,
-    name = "onViewCreated",
     returnType = "V",
-    parameters = listOf("Landroid/view/View;", "Landroid/os/Bundle;"),
+    parameters = listOf(),
+    custom = { method, _ ->
+        method.implementation?.instructions?.any { instruction ->
+            ((instruction as? ReferenceInstruction)?.reference as? MethodReference)?.let {
+                it.returnType == "Landroidx/fragment/app/Fragment;" &&
+                    it.parameterTypes.map(CharSequence::toString) == listOf(STICKER_STRING, STICKER_STRING, "Z")
+            } == true
+        } == true
+    },
 )
 
 /**
  * Hands the page's curated-set experiment answer to ProfileStickerTab with the profile's uid, right
- * after it's read. 47.8.3 asks the sticker store's Z(Z) check, then on yes asks the store for the
+ * after it's read. 47.9.1 asks the sticker store's Z(Z) check, then on yes asks the store for the
  * curated page with (uid, view model key, is self); on no it builds the 47.6.3 sticker sets pager.
  */
 internal fun MutableMethod.keepProfileStickerPage() {

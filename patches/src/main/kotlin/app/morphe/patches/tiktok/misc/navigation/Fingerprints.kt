@@ -79,7 +79,7 @@ private fun Method.isOnlyTabModelList(classDef: ClassDef, scene: String) =
         classDef.methods.count { it.isTabModelList(classDef, scene) } == 1
 
 /**
- * The bottom tab icon's badge setters. The icon class is renamed on every build (`LX/0tdv;` on
+ * The bottom tab icon's badge setters. The icon class is renamed on every build (`LX/0psF;` on
  * 46.2.3, `LX/066P;` on 47.0.3), but its setters keep their names, and each is the one method of
  * that name and shape in the app. Every show of the red count (Inbox) or the dot (Profile) goes
  * through them; the callers that fetch the views themselves animate them and write no visibility.
@@ -527,11 +527,13 @@ internal object FeedButtonStateFingerprint : Fingerprint(
  * TikTok's handler for a hold on a bottom tab, where holding Profile opens the account switcher
  * sheet: ProfileTabLongPressHandlerImpl's observer of the tab tag the long press posts. It checks
  * the tag is "USER", logs long_press_profile_tab and shows the sheet with the
- * switch_account_long_press source, which nothing else on 47.8.3 loads.
+ * switch_account_long_press source, which nothing else on 47.9.1 loads. 47.9.1 merged the
+ * observer into a shared class as a static method taking the observer first, which leaves the
+ * tag in p1 as before.
  */
 internal object ProfileTabSwitcherFingerprint : Fingerprint(
     returnType = "V",
-    parameters = listOf("Ljava/lang/Object;"),
+    parameters = listOf("L", "Ljava/lang/Object;"),
     strings = listOf("USER", "long_press_profile_tab", "switch_account_long_press"),
 )
 

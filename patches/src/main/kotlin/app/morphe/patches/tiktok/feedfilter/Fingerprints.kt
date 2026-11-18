@@ -129,7 +129,7 @@ internal fun com.android.tools.smali.dexlib2.iface.instruction.Instruction.isMod
 /**
  * Where a list the reader opened from a grid becomes the list TikTok's profile model plays: a
  * collection, or another grid handing its loaded videos to the video page (X.0OfL.LJIIL on 47.1.4,
- * called through X.0OfH from the collection click and one other grid). It copies the grid's list
+ * called through X.0OeN from the collection click and one other grid). It copies the grid's list
  * into the model's FeedItemList with setItems, then writes the paging on it. That FeedItemList
  * carries no profile uid and no profile parse saw it, so its getItems read ran the main feed's
  * rules (#135). R8 names the class and method; the shape and the maxCursor write name it.
@@ -162,7 +162,7 @@ internal object OpenedListFillFingerprint : Fingerprint(
  * The Following feed's loader: the static method that builds a `FollowFeedList` from the request
  * and reads its items back. It took the request and a cache on 47.5.3 (`LX/0NMJ;->LIZ`) and
  * five on 47.6.3 (`LX/0NHh;->LIZ`, a tag, a cursor and a count joining), and four on 47.7.2
- * (`LX/1Pba;->LIZ`, the cache gone), so only
+ * (`LX/0VYz;->LIZ`, the cache gone), so only
  * "more than one" is asked of the parameter list. The one-argument cache lookup beside it also
  * reads the items, but never logs the "feed" it was asked for.
  */
@@ -211,12 +211,13 @@ internal const val FOLLOWING_CACHE_DESCRIPTOR =
 /**
  * The Following feed's restore of the list TikTok saved last run ([skipSavedFollowingFirstVideo]).
  * It takes the saved cache, checks its age against FollowingCacheConfigModel.expiredTime and shows
- * the saved list's first post. R8 names the class and method; the cache and its fields keep their
- * real names.
+ * the saved list's first post. 47.9.1 inlined all of it into the list's refreshList; the cache and
+ * its fields keep their real names.
  */
 internal object FollowingCacheRestoreFingerprint : Fingerprint(
+    name = "refreshList",
     returnType = "V",
-    parameters = listOf(FOLLOWING_CACHE_DESCRIPTOR, "Ljava/util/List;", "Z"),
+    parameters = listOf("[Ljava/lang/Object;"),
     // The field the custom check needs, so the patcher's index finds the few methods reading it.
     filters = listOf(fieldAccess(definingClass = FOLLOWING_CACHE_DESCRIPTOR, name = "updateTime")),
     custom = { method, _ ->
@@ -1148,7 +1149,7 @@ internal fun Instruction.isTabListFill(): Boolean =
  * The static setup each search results page runs before its strip: it fills TikTok's own default
  * tab list (tab infos that keep their key in their name field) from the local tab config, or from
  * TikTok's choose and reorder tabs, each time through one clear-and-add-all helper, and hands that
- * list on as the strip's fallback. On 47.8.3 the strip's view model takes the served list only
+ * list on as the strip's fallback. On 47.9.1 the strip's view model takes the served list only
  * when it holds as many tabs as this default and keeps the default otherwise, so tabs the served
  * list loses have to go from this one too. R8-named class and method with real-named parameters;
  * the one static taking them that asks for the choose and reorder view model.
@@ -1405,7 +1406,7 @@ internal object ShareGuideFingerprint : Fingerprint(
  * int, the booleans and the default-argument mask last. Only the number of booleans is left
  * open, since 47.5.3 added a fifth one ({@code LX/0IkF;->LJJLIIJ}).
  *
- * <p>47.8.3 ({@code LX/0Jyf;->LJJZZI}) added a sixth boolean and an int after them, answers an
+ * <p>47.9.1 ({@code LX/0Jur;->LJLIIIL}) added a sixth boolean and an int after them, answers an
  * int instead of nothing, and moved the request-type comparison that loads the two strings into
  * an instance method of the provider ({@code LJLIL(I)V}) that the handler calls with the page's
  * size, so the strings are looked for in the handler or in that method (see
@@ -1441,7 +1442,7 @@ private fun Method.loadsLiveRequestTypes(): Boolean {
 /**
  * Where the LIVE page handler compares its provider's request type with the LIVE rows' names:
  * the handler itself through 47.7.3, or the one method of the [provider] it calls virtually
- * that loads both names (47.8.3's {@code LJLIL(I)V}). Null when neither loads them.
+ * that loads both names (47.9.1's {@code LJLIL(I)V}). Null when neither loads them.
  */
 internal fun Method.liveRequestTypeCheck(provider: ClassDef): Method? {
     if (loadsLiveRequestTypes()) return this

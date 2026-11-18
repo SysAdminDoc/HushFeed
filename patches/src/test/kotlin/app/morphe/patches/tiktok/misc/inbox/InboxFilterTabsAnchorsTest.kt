@@ -71,7 +71,7 @@ class InboxFilterTabsAnchorsTest {
             assertEquals("$version: the tab list is the manager's", manager.type, tabLists.single().first.type)
             inboxModeCast(tabLists.single().second, getter.returnType)
 
-            val guides = matches(classes, ProInboxGuideCanShowFingerprint)
+            val guides = matches(classes, ProInboxGuideShowFingerprint)
             assertEquals("$version creator Inbox pop-up", 1, guides.size)
             val guide: Method = guides.single().second
             assertTrue("$version: the pop-up check has a local for its answer",
@@ -89,7 +89,7 @@ class InboxFilterTabsAnchorsTest {
                 .toList()
             val (manager, getter) = matches(classes, InboxModeGetterFingerprint).single()
             val tabList = matches(classes, InboxFilterTabListFingerprint).single().second
-            val guideCheck = matches(classes, ProInboxGuideCanShowFingerprint).single().second
+            val guideCheck = matches(classes, ProInboxGuideShowFingerprint).single().second
             val mode = getter.returnType
 
             val getterBefore = getter.implementation!!.instructions.toList()

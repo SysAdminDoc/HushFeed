@@ -10,12 +10,12 @@ import java.util.regex.Pattern;
 /**
  * TikTok's player log, which a release build keeps silent. TTVideoEngine writes its per-video
  * choices, the {@code bytevc1:..., bytevc1DecodeHardare:...} line among them, through one static
- * logger: a boolean switch and a listener field on one holder class (X.03cG's LIZ and LIZIZ on
- * 47.8.3). A line goes only to that listener, so the switch alone shows nothing. This sets the
+ * logger: a boolean switch and a listener field on one holder class (X.0417's LIZ and LIZIZ on
+ * 47.9.1). A line goes only to that listener, so the switch alone shows nothing. This sets the
  * switch and puts a listener in the field that writes each line to logcat under HushfeedTTPlayer
  * and hands it on to the listener TikTok had, if any; {@code -e on false} puts both back. The
  * holder and its fields are renamed on every build, so they come in as extras:
- * {@code -e action playerlog -e holder X.03cG -e flag LIZ -e sink LIZIZ -e on true}.
+ * {@code -e action playerlog -e holder X.0417 -e flag LIZ -e sink LIZIZ -e on true}.
  * Addresses in a line are masked, so a video's URL and its tokens don't reach the log, and
  * {@code -e match bytevc1,decod} keeps only lines holding one of those words, in any case.
  */

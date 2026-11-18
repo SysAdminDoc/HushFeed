@@ -12,7 +12,6 @@ import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -40,8 +39,8 @@ class ProfileTabSwitcherAnchorsTest {
             }
             assertEquals("${apk.name}: ${taken.map { "${it.first.type}->${it.second.name}" }}", 1, taken.size)
             val handler = taken.single().second
-            assertFalse("${apk.name}: the handler is static, so p1 would not be the tag",
-                AccessFlags.STATIC.isSet(handler.accessFlags))
+            assertTrue("${apk.name}: the handler is static with the observer first, so p1 is the tag",
+                AccessFlags.STATIC.isSet(handler.accessFlags) && handler.parameterTypes.size == 2)
             val implementation = handler.implementation!!
             assertTrue("${apk.name}: the handler has no local register for the answer",
                 implementation.registerCount - 2 >= 1)

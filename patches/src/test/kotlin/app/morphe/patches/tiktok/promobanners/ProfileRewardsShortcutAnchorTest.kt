@@ -42,7 +42,7 @@ class ProfileRewardsShortcutAnchorTest {
             """
                 move-object v0, p1
                 check-cast v0, Lcom/bytedance/tux/icon/TuxIconView;
-                const v1, 0x7f0a8a54
+                const v1, 0x7f0a8b25
                 invoke-virtual { v0, v1 }, Landroid/view/View;->setId(I)V
                 iget-object v1, v2, $model->iconUrl:Ljava/lang/String;
                 return-object v0

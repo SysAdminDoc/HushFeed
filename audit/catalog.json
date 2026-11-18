@@ -839,7 +839,7 @@
     "auto": true
    }
   ],
-  "notes": "SecurePopupProbe builds one of TikTok's own Compose popups with its obfuscated classes (X.010u, X.01nR, X.010s, X.01sF on 47.8.3), so a TikTok build that renames them makes the action fail with an exception line instead of 'ok'; that means the probe needs updating, not that the patch is broken. The popup is shown on top of the feed for a moment and removed by secure-popup-close; it is a controlled test view, not a screen capture. Circle to Search itself is a system gesture and is a review item."
+  "notes": "SecurePopupProbe builds one of TikTok's own Compose popups with its obfuscated classes (X.014u, X.01pR, X.014s, X.01u4 on 47.9.1), so a TikTok build that renames them makes the action fail with an exception line instead of 'ok'; that means the probe needs updating, not that the patch is broken. The popup is shown on top of the feed for a moment and removed by secure-popup-close; it is a controlled test view, not a screen capture. Circle to Search itself is a system gesture and is a review item."
  },
  {
   "name": "Always show publish date",
@@ -4939,7 +4939,7 @@
   "checks": [
    {
     "id": "record-and-report",
-    "what": "A recording starts, TikTok's gate reads during a few feed swipes are captured, and the report names the 47.8.3 target with at least one gate.",
+    "what": "A recording starts, TikTok's gate reads during a few feed swipes are captured, and the report names the 47.9.1 target with at least one gate.",
     "steps": [
      {
       "open": "feed"
@@ -9861,7 +9861,7 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.03Yy",
+       "holder": "X.04B4",
        "getter": "LJIILIIL",
        "gap": "1200"
       },
@@ -9924,7 +9924,7 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.03Yy",
+       "holder": "X.04B4",
        "getter": "LJIILIIL",
        "gap": "1200"
       },
@@ -10246,7 +10246,7 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.03Yy",
+       "holder": "X.04B4",
        "getter": "LJIILIIL",
        "gap": "1500"
       },
@@ -11303,7 +11303,7 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.03Yy",
+       "holder": "X.04B4",
        "getter": "LJIILIIL",
        "gap": "1500"
       },
@@ -12309,7 +12309,7 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.03Yy",
+       "holder": "X.04B4",
        "getter": "LJIILIIL",
        "gap": "1500"
       },
@@ -12668,7 +12668,7 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.03Yy",
+       "holder": "X.04B4",
        "getter": "LJIILIIL",
        "gap": "1000"
       },
@@ -12697,7 +12697,7 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.03Yy",
+       "holder": "X.04B4",
        "getter": "LJIILIIL",
        "gap": "1000"
       },
@@ -13641,7 +13641,7 @@
     "auto": true
    }
   ],
-  "notes": "The strip empties the effect and VE SDK plugin libraries for both ABIs; 47.8.3's split bundle carries both arm64 copies. The face model (#285: face effects and Retouch lost the face), libEffectCreatorJni (#285: All effects closed TikTok) and the camera feature dex (libdex_*.so) stay on purpose. On the S22 2026-11-08 with the plugins empty, the camera, Retouch, a face effect, All effects, effect search, the Create tab and the editor all worked and TikTok never tried to load either plugin. The camera walk is not scripted: it uses the camera, and a crash dialog on the audit phone costs a restart."
+  "notes": "The strip empties the effect and VE SDK plugin libraries for both ABIs; 47.9.1's split bundle has neither library in either ABI, so there the strip has nothing to empty. The face model (#285: face effects and Retouch lost the face), libEffectCreatorJni (#285: All effects closed TikTok) and the camera feature dex (libdex_*.so) stay on purpose. On the S22 2026-11-08 with the plugins empty, the camera, Retouch, a face effect, All effects, effect search, the Create tab and the editor all worked and TikTok never tried to load either plugin. The camera walk is not scripted: it uses the camera, and a crash dialog on the audit phone costs a restart."
  },
  {
   "name": "Remove unused language packs",
@@ -14021,7 +14021,7 @@
      {
       "probe": "playerspeed",
       "extras": {
-       "holder": "X.03Yy",
+       "holder": "X.04B4",
        "getter": "LJIILIIL",
        "gap": "300"
       },
@@ -15390,7 +15390,7 @@
      {
       "probe": "countformat",
       "extras": {
-       "class": "X.0G9f",
+       "class": "X.0FMh",
        "method": "LIZIZ",
        "count": "123456"
       },
@@ -15399,7 +15399,7 @@
      {
       "probe": "countformat",
       "extras": {
-       "class": "X.0HG7",
+       "class": "X.0HSz",
        "method": "LIZ",
        "count": "123456"
       },
@@ -15413,7 +15413,7 @@
      {
       "probe": "countformat",
       "extras": {
-       "class": "X.0G9f",
+       "class": "X.0FMh",
        "method": "LIZIZ",
        "count": "123456"
       },
@@ -15422,7 +15422,7 @@
      {
       "probe": "countformat",
       "extras": {
-       "class": "X.0HG7",
+       "class": "X.0HSz",
        "method": "LIZ",
        "count": "123456"
       },

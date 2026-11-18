@@ -253,7 +253,7 @@ private val SET_TEXT_PARAMETERS = listOf("Ljava/lang/CharSequence;")
 /**
  * Where each holder count goes on screen: the first TextView.setText(CharSequence) after the
  * count's hook, which TikTok runs right after putting the play icon in front of the same view
- * (0OMJ.c6 on 47.8.3). Nothing between the hook and that call may rewrite the text's register or
+ * (0OMJ.c6 on 47.9.1). Nothing between the hook and that call may rewrite the text's register or
  * leave the stretch, so the call sets exactly the count the hook answered. Taken before any hook
  * goes in, in the same order as [HolderCountSites.sites].
  */

@@ -34,7 +34,7 @@ private const val VIDEOS_TAB = "profile_tab_public_post"
  */
 internal object ProfileTabTypesFingerprint : Fingerprint(
     returnType = TAB_LIST,
-    parameters = listOf(PROFILE_TAB_USER, TAB_LIST),
+    parameters = listOf(TAB_LIST, PROFILE_TAB_USER),
     strings = listOf(VIDEOS_TAB, "repost_biz"),
 )
 

@@ -41,7 +41,7 @@ class FollowDiagnosticsCallTest {
     @Test
     fun `user observation stream is never treated as a follow request`() {
         for (invoke in listOf("invoke-interface {v1, v2}", "invoke-interface/range {v1 .. v2}")) {
-            assertUnchanged(caller("$invoke, $userService->LJFF($string)LX/0sQU;"))
+            assertUnchanged(caller("$invoke, $userService->LJFF($string)LX/1Awu;"))
         }
     }
 
@@ -52,7 +52,7 @@ class FollowDiagnosticsCallTest {
             val method = caller(
                 "invoke-interface/range {v$firstRegister .. v${firstRegister + 11}}, " +
                     "Lcom/ss/android/ugc/aweme/userservice/jedi/model/JediFollowApi;->" +
-                    "followWithRetrofitPost(${jediParameters.joinToString("")})LX/0sQU;",
+                    "followWithRetrofitPost(${jediParameters.joinToString("")})LX/1Awu;",
                 resultRegister = 1,
             )
             val original = method.implementation!!.instructions.toList()

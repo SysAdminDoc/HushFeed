@@ -61,8 +61,7 @@ public final class ProfileGridCount {
     public static void show(TextView view, CharSequence text) {
         view.setText(text);
         boolean hide = hidesViews();
-        if (hide || (text != null && TextUtils.indexOf(text, '
-') >= 0)) {
+        if (hide || (text != null && TextUtils.indexOf(text, '\n') >= 0)) {
             fitBar(view);
         }
         if (!hide) {

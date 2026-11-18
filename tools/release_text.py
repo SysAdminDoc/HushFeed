@@ -1,7 +1,7 @@
 """Release text for Hushfeed: the CHANGELOG cut, GitHub notes, the guide and the index.
 
   py -3.13 tools/release_text.py cut --version 0.70.0 [--date 2026-10-09]
-  py -3.13 tools/release_text.py github-notes --version 0.70.0 --intro FILE --checked FILE --out FILE
+  py -3.13 tools/release_text.py github-notes --version 0.70.0 --intro FILE --out FILE
   py -3.13 tools/release_text.py guide [--date 2026-10-09]
   py -3.13 tools/release_text.py index --version 0.70.0 --created 2026-10-09T17:03:42
         --readme-summary FILE --bundle-summary FILE --device-line TEXT [--apk 47.8.3=PATH] [--fixture-dirs DIR;DIR]
@@ -168,14 +168,15 @@ def manager_floor() -> str:
     return match.group(1)
 
 
-# GitHub notes name the CHANGELOG's ### groups the way the other Hush releases do.
-NOTE_GROUPS = {"Features": "New in this release", "Fixes": "Fixes", "Changes": "Other changes",
-               "Build": "Behind the scenes"}
+# GitHub notes name the CHANGELOG's ### groups the way the other Hush releases do. Build bullets
+# stay in the CHANGELOG only: the notes are for the people patching TikTok.
+NOTE_GROUPS = {"Features": "New in this release", "Fixes": "Fixes", "Changes": "Other changes"}
+LEFT_OUT = {"Build"}
 
 
 def github_notes(args) -> None:
-    """The release body: summary, every bullet under its group, the changelog link, update steps
-    and what was checked."""
+    """The release body: summary, every user-facing bullet under its group, the changelog link and
+    update steps."""
     body = section(read(CHANGELOG), args.version + " (")
     if body is None:
         fail(f"CHANGELOG has no published {args.version}")
@@ -183,6 +184,8 @@ def github_notes(args) -> None:
     count = 0
     for block in grouped_changelog(body).split("\n\n### "):
         name, _, lines = block.removeprefix("### ").partition("\n\n")
+        if name in LEFT_OUT:
+            continue
         items = ["- " + item[2:] for item in bullets(lines)]
         parts.append(NOTE_GROUPS.get(name, name) + "\n\n" + "\n".join(items))
         count += len(items)
@@ -195,7 +198,6 @@ def github_notes(args) -> None:
                  "login and settings carry over.")
     parts.append("The `.mpp` download is a patch bundle, not a TikTok APK. "
                  "[Installation instructions](https://github.com/SysAdminDoc/hushfeed#install).")
-    parts.append("What was checked\n\n" + read(Path(args.checked)).strip())
     notes = undash("\n\n".join(parts) + "\n")
     write(Path(args.out), notes)
     print(f"[release] notes for {args.version}: {count} CHANGELOG bullets, {len(notes)} characters")
@@ -511,7 +513,7 @@ def main() -> None:
     p.add_argument("--date")
     p.set_defaults(run=cut)
     p = sub.add_parser("github-notes")
-    for name in ("--version", "--intro", "--checked", "--out"):
+    for name in ("--version", "--intro", "--out"):
         p.add_argument(name, required=True)
     p.set_defaults(run=github_notes)
     p = sub.add_parser("guide")

@@ -4,6 +4,10 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+### Build
+
+* The GitHub release notes leave out the Build changes and the What was checked list now. Build changes are still listed here in the changelog.
+
 ## 0.83.0 (2026-11-17)
 
 ### Features

@@ -20,8 +20,7 @@
 
 .PARAMETER Summary
     The release text. Paragraphs before the first heading are the notes intro. Optional sections:
-    "## README", "## Manager" and "## Checked" (bullets added under the generated list). Missing
-    sections fall back to the first paragraph.
+    "## README" and "## Manager". Missing sections fall back to the first paragraph.
 #>
 [CmdletBinding()]
 param(
@@ -124,8 +123,8 @@ function Get-Apk([string]$Package, [string]$PackageVersion) {
 
 function Read-ReleaseText {
     $text = (Get-Content -LiteralPath (Join-Path $stateDir 'summary.md') -Raw) -replace "`r`n", "`n"
-    $parts = @{ Intro = ($text -split '(?m)^## ', 2)[0].Trim(); README = ''; Manager = ''; Checked = '' }
-    foreach ($match in [regex]::Matches($text, '(?ms)^## (README|Manager|Checked)\s*\n(.*?)(?=^## |\z)')) {
+    $parts = @{ Intro = ($text -split '(?m)^## ', 2)[0].Trim(); README = ''; Manager = '' }
+    foreach ($match in [regex]::Matches($text, '(?ms)^## (README|Manager)\s*\n(.*?)(?=^## |\z)')) {
         $parts[$match.Groups[1].Value] = $match.Groups[2].Value.Trim()
     }
     if (-not $parts.README) { $parts.README = ($parts.Intro -split "`n`n", 2)[0] }
@@ -300,13 +299,8 @@ function Step-walk {
 
 function Step-publish {
     $text = Read-ReleaseText
-    $checked = @(foreach ($walk in $state.walks.Values) {
-        "* All $($walk.patches) $($walk.app) patches applied to $($walk.app) $($walk.version) with none failing."
-        "* This exact bundle was patched onto $($walk.app) $($walk.version) and run on $($walk.device). A walk through the whole app opened $($walk.screens) screens with no crash."
-    }) -join "`n"
-    if ($text.Checked) { $checked += "`n" + $text.Checked }
     $notes = Join-Path $stateDir 'notes.md'
-    Invoke-ReleaseText github-notes --version $Version --intro (Write-Text 'intro.txt' $text.Intro) --checked (Write-Text 'checked.txt' $checked) --out $notes
+    Invoke-ReleaseText github-notes --version $Version --intro (Write-Text 'intro.txt' $text.Intro) --out $notes
     $head = (git.exe -C $work rev-parse HEAD).Trim()
     $remote = ((git.exe -C $work ls-remote origin "refs/tags/$tag") -split '\s+')[0]
     if ($remote -and $remote -ne $head) { throw "$tag on GitHub is $remote, not $head, from a publish that stopped before a fix went in. While the release is still a draft, delete that tag with git -C $work push origin :refs/tags/$tag and rerun." }

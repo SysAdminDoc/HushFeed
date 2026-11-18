@@ -11,6 +11,10 @@ Every Hushfeed release, newest first.
 * Double tap and Long press can mark the video on screen as not interested, with the same follow-up choices as the button. It needs the Not interested patch (#452).
 * Hushfeed moves to TikTok 47.9.1, and only that one. 47.8.3 isn't supported anymore. Get the 47.9.1 bundle or APK from APKMirror and patch it with your usual signing key.
 
+### Bug Fixes
+
+* `Show the country and date under the caption` keeps the two together on photo posts and on videos with no caption. With no caption they go right under the creator's name (#453).
+
 ### Build
 
 * The GitHub release notes leave out the Build changes and the What was checked list now. Build changes are still listed here in the changelog.

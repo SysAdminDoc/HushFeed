@@ -3025,3 +3025,6 @@ Write the month as a word	Ayı yazıyla göster
 Writes TikTok's date by the creator's name with the month's name, like Oct 12. Day before month makes it 12 Oct.	Yaratıcının adının yanındaki TikTok tarihini ay adıyla yazar, örneğin Oct 12. Gün aydan önce bunu 12 Oct yapar.
 Fade the name, date and caption	Adı, tarihi ve açıklamayı soluklaştır
 Draws the creator's name, the date, the caption and the music line over the video at this level, and they still take taps. At 100 they follow Fade the video controls. At 0 they're hidden.	İçerik üreticisinin adını, tarihi, açıklamayı ve müzik satırını videonun üzerinde bu düzeyde gösterir, onlara yine dokunulabilir. 100 olunca Video kontrollerini soluklaştır ayarını izler. 0 olunca gizlenir.
+LIVE buttons in the long-press menu	LIVE düğmeleri uzun basma menüsünde
+Takes the Record and Auto tap buttons off the video and puts them in the menu you get by holding the middle of a LIVE.	Kaydet ve Otomatik dokunma düğmelerini videodan kaldırır ve bir LIVE'ın ortasına basılı tutunca açılan menüye koyar.
+Auto tap started	Otomatik dokunma başladı

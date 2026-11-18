@@ -2870,3 +2870,6 @@ Write the month as a word,用文字写月份
 "Writes TikTok's date by the creator's name with the month's name, like Oct 12. Day before month makes it 12 Oct.",将创作者名字旁的 TikTok 日期写成月份名称，如 Oct 12。开启日在月前后则为 12 Oct.
 "Fade the name, date and caption",淡化名称、日期和说明文字
 "Draws the creator's name, the date, the caption and the music line over the video at this level, and they still take taps. At 100 they follow Fade the video controls. At 0 they're hidden.",以此级别在视频上显示创作者名称、日期、说明文字和音乐行，它们仍可点按。为 100 时跟随淡入淡出视频控件。为 0 时隐藏.
+LIVE buttons in the long-press menu,长按菜单中的 LIVE 按钮
+Takes the Record and Auto tap buttons off the video and puts them in the menu you get by holding the middle of a LIVE.,将记录和自动点击按钮从视频上移到长按 LIVE 中间时出现的菜单中.
+Auto tap started,自动点击已开始

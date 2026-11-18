@@ -36,6 +36,7 @@ internal const val OWNED_SHARE_ACTIONS = "Lapp/morphe/extension/tiktok/share/Own
 internal const val SHARE_BLOCK_AUTHOR = "Lapp/morphe/extension/tiktok/share/ShareBlockAuthor;"
 internal const val SHARE_SAVE_COVER = "Lapp/morphe/extension/tiktok/share/ShareSaveCover;"
 internal const val SHARE_LIVE_QUALITY = "Lapp/morphe/extension/tiktok/share/ShareLiveQuality;"
+internal const val SHARE_LIVE_BUTTONS = "Lapp/morphe/extension/tiktok/share/ShareLiveButtons;"
 internal const val SHARE_MAKE_STICKER = "Lapp/morphe/extension/tiktok/share/ShareMakeSticker;"
 internal const val SHARE_SAVE_EPISODES = "Lapp/morphe/extension/tiktok/share/ShareSaveEpisodes;"
 private const val BLOCK = "Owned share actions"

@@ -11024,6 +11024,12 @@
     "row": "Auto tap in LIVE rooms"
    },
    {
+    "key": "live_buttons_in_menu",
+    "default": false,
+    "type": "bool",
+    "row": "LIVE buttons in the long-press menu"
+   },
+   {
     "key": "live_button_size",
     "default": "48",
     "type": "string",

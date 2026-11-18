@@ -17,6 +17,7 @@ import app.morphe.patches.tiktok.misc.settings.configurableBytecodePatch as byte
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patcher.util.smali.ExternalLabel
 import app.morphe.patches.shared.compat.AppCompatibilities
+import app.morphe.patches.tiktok.interaction.sharesheet.SHARE_LIVE_BUTTONS
 import app.morphe.patches.tiktok.interaction.sharesheet.SHARE_LIVE_QUALITY
 import app.morphe.patches.tiktok.interaction.sharesheet.addOwnedShareAction
 import app.morphe.patches.tiktok.interaction.sharesheet.ownedShareActionsPatch
@@ -2983,6 +2984,8 @@ val liveControlsPatch = bytecodePatch(
         // A LIVE room's share sheet is the regular one with itemType "live", so the recording
         // quality row rides the same finished-row hook Block this creator and Save cover use (#203).
         addOwnedShareAction(SHARE_LIVE_QUALITY)
+        // Record and Auto tap ride it too, for people who want them off the video (#359).
+        addOwnedShareAction(SHARE_LIVE_BUTTONS)
     }
 }
 

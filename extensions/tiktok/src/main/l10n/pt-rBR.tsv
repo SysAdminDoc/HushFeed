@@ -3025,3 +3025,6 @@ Write the month as a word	Escrever o mês por extenso
 Writes TikTok's date by the creator's name with the month's name, like Oct 12. Day before month makes it 12 Oct.	Escreve a data do TikTok ao lado do nome do criador com o nome do mês, como Oct 12. Dia antes do mês deixa 12 Oct.
 Fade the name, date and caption	Esmaecer nome, data e legenda
 Draws the creator's name, the date, the caption and the music line over the video at this level, and they still take taps. At 100 they follow Fade the video controls. At 0 they're hidden.	Mostra o nome do criador, a data, a legenda e a linha da música sobre o vídeo nesse nível, e eles continuam recebendo toques. Em 100 seguem Esmaecer os controles do vídeo. Em 0 ficam ocultos.
+LIVE buttons in the long-press menu	Botões de LIVE no menu de toque longo
+Takes the Record and Auto tap buttons off the video and puts them in the menu you get by holding the middle of a LIVE.	Tira os botões Gravar e Toque automático do vídeo e os coloca no menu que aparece ao tocar e segurar o meio de uma LIVE.
+Auto tap started	Toque automático iniciado

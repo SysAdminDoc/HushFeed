@@ -347,7 +347,22 @@ public final class LivePanelTheme {
      * features.
      */
     public static void liveMenu(android.app.Dialog dialog) {
+        liveMenuShown = new WeakReference<>(dialog);
         liveMenu(dialog, 0);
+    }
+
+    private static WeakReference<android.app.Dialog> liveMenuShown = new WeakReference<>(null);
+
+    /** Closes LIVE's long-press menu if it's up, for a row that acts on the room behind it (#359). */
+    public static void closeLiveMenu() {
+        try {
+            android.app.Dialog dialog = liveMenuShown.get();
+            if (dialog != null && dialog.isShowing()) {
+                dialog.dismiss();
+            }
+        } catch (Throwable failure) {
+            Logger.printException(() -> "Could not close the LIVE menu", failure);
+        }
     }
 
     private static void liveMenu(android.app.Dialog dialog, int attempt) {

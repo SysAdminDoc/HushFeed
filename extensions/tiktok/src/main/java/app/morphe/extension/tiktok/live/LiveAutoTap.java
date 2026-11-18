@@ -108,6 +108,37 @@ public final class LiveAutoTap {
         return SettingsStatus.liveControlsEnabled && Settings.LIVE_AUTO_TAP.get() && !Setting.isPaused();
     }
 
+    /** True while Auto tap is offered in the menu from holding the middle of a LIVE (#359). */
+    public static boolean inMenu() {
+        return enabled() && Settings.LIVE_BUTTONS_IN_MENU.get();
+    }
+
+    /** What Auto tap's row in that menu says, which is what a tap on it will do. */
+    public static String menuLabel() {
+        return loop != null ? L10n.t("Stop tapping this LIVE") : L10n.t("Auto tap");
+    }
+
+    /**
+     * Auto tap's row was tapped. With no chip to show it, a toast says what happened. Taps wait for
+     * the menu to close, like they wait for any panel, and an earlier run's last tap is forgotten
+     * so the menu holding the window isn't taken for something that tap opened.
+     */
+    public static void menuTap() {
+        try {
+            if (loop != null) {
+                stop(End.STOPPED);
+                Utils.showToastShort(L10n.t("Auto tap stopped"));
+                return;
+            }
+            lastTapAt = 0;
+            start();
+            if (loop != null) Utils.showToastShort(L10n.t("Auto tap started"));
+        } catch (Throwable failure) {
+            Logger.printException(() -> "Could not use Auto tap from the LIVE menu", failure);
+            stop(End.FAILED);
+        }
+    }
+
     /** The rate a stored value asks for, held between 1 and 8 taps a second. */
     static int rate(String value) {
         int parsed;
@@ -585,6 +616,10 @@ public final class LiveAutoTap {
     }
 
     private static void showChip(Activity activity) {
+        if (Settings.LIVE_BUTTONS_IN_MENU.get()) {
+            removeChip();
+            return;
+        }
         if (chip != null && chip.getContext() == activity && chip.getParent() != null
                 && !LiveRecordChip.drawnAtOtherSize(chip)) return;
         removeChip();

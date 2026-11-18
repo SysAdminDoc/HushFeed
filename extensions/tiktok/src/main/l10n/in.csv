@@ -2872,3 +2872,6 @@ Write the month as a word,Tulis bulan sebagai kata
 "Writes TikTok's date by the creator's name with the month's name, like Oct 12. Day before month makes it 12 Oct.","Menulis tanggal TikTok di samping nama kreator dengan nama bulan, seperti Oct 12. Hari sebelum bulan membuatnya 12 Oct."
 "Fade the name, date and caption","Pudarkan nama, tanggal, dan keterangan"
 "Draws the creator's name, the date, the caption and the music line over the video at this level, and they still take taps. At 100 they follow Fade the video controls. At 0 they're hidden.","Menampilkan nama kreator, tanggal, keterangan, dan baris musik di atas video pada level ini, dan semuanya tetap bisa diketuk. Di 100 mengikuti Pudarkan kontrol video. Di 0 disembunyikan."
+LIVE buttons in the long-press menu,Tombol LIVE di menu tekan lama
+Takes the Record and Auto tap buttons off the video and puts them in the menu you get by holding the middle of a LIVE.,Memindahkan tombol Rekam dan Ketuk otomatis dari video ke menu yang muncul saat menekan lama bagian tengah LIVE.
+Auto tap started,Ketuk otomatis dimulai

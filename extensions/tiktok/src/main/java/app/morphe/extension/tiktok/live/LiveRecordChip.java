@@ -173,6 +173,24 @@ public final class LiveRecordChip {
         return SettingsStatus.liveControlsEnabled && Settings.RECORD_LIVE.get() && !Setting.isPaused();
     }
 
+    /** True while Record is offered in the menu from holding the middle of a LIVE (#359). */
+    public static boolean inMenu() {
+        return enabled() && Settings.LIVE_BUTTONS_IN_MENU.get();
+    }
+
+    /** What Record's row in that menu says, which is what a tap on it will do. */
+    public static String menuLabel() {
+        if (saving) return L10n.t("Saving the recording");
+        if (recorder != null && recorder.recording()) return L10n.t("Stop recording this LIVE");
+        return L10n.t("Record");
+    }
+
+    /** Record's row was tapped: the chip's tap, plus word of a save, which no chip is there to show. */
+    public static void menuTap() {
+        onChipTap();
+        if (saving) Utils.showToastShort(L10n.t("Saving the recording"));
+    }
+
     /** Called as a LIVE room's page begins to resume, with that page. */
     public static void noteRoomFragment(Object fragment) {
         try {
@@ -358,6 +376,10 @@ public final class LiveRecordChip {
     }
 
     private static void showChip(Activity activity) {
+        if (Settings.LIVE_BUTTONS_IN_MENU.get()) {
+            removeChip();
+            return;
+        }
         if (chip != null && chip.getContext() == activity && chip.getParent() != null
                 && !drawnAtOtherSize(chip)) return;
         removeChip();
@@ -1071,8 +1093,11 @@ public final class LiveRecordChip {
                 refresh();
                 stayClear(activity);
             }
-            // Keep watching while a recording runs or the chip is up; a new resume restarts it.
-            if (recorder != null || (showing && chip != null)) scheduleTick();
+            // Keep watching while a recording runs or the button is offered, on the video or in
+            // the menu; a new resume restarts it.
+            if (recorder != null || (showing && (chip != null || Settings.LIVE_BUTTONS_IN_MENU.get()))) {
+                scheduleTick();
+            }
         } catch (Throwable failure) {
             Logger.printException(() -> "Could not check the LIVE room", failure);
         }

@@ -889,6 +889,11 @@ public class Settings extends BaseSettings {
     /** How big Hushfeed's buttons in a LIVE room are, in dp (#359). Read as a room's buttons are drawn. */
     public static final StringSetting LIVE_BUTTON_SIZE = new StringSetting("live_button_size", "48");
     /**
+     * Keeps Record and Auto tap off the video and offers them in the menu from holding the middle
+     * of a LIVE (#359). Read as a room's buttons are drawn and as the menu opens, so no restart.
+     */
+    public static final BooleanSetting LIVE_BUTTONS_IN_MENU = new BooleanSetting("live_buttons_in_menu", FALSE);
+    /**
      * Alerts you when your name comes up in a LIVE (#424); the LIVE controls patch. Read on each
      * message the room gets, so no restart.
      */

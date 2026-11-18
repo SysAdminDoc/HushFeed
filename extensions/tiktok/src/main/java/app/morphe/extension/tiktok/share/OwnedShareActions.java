@@ -20,7 +20,7 @@ public final class OwnedShareActions {
     public static boolean owns(Object action) {
         return ShareBlockAuthor.owns(action) || ShareSaveCover.owns(action)
                 || ShareLiveQuality.owns(action) || ShareMakeSticker.owns(action)
-                || ShareSaveEpisodes.owns(action);
+                || ShareSaveEpisodes.owns(action) || ShareLiveButtons.owns(action);
     }
 
     public static String key(Object action) {
@@ -28,6 +28,7 @@ public final class OwnedShareActions {
         if (key == null) key = ShareSaveCover.key(action);
         if (key == null) key = ShareMakeSticker.key(action);
         if (key == null) key = ShareSaveEpisodes.key(action);
+        if (key == null) key = ShareLiveButtons.key(action);
         return key != null ? key : ShareLiveQuality.key(action);
     }
 
@@ -36,6 +37,7 @@ public final class OwnedShareActions {
         if (label == null) label = ShareSaveCover.label(action);
         if (label == null) label = ShareMakeSticker.label(action);
         if (label == null) label = ShareSaveEpisodes.label(action);
+        if (label == null) label = ShareLiveButtons.label(action);
         return label != null ? label : ShareLiveQuality.label(action);
     }
 
@@ -44,6 +46,7 @@ public final class OwnedShareActions {
                 || ShareSaveCover.click(action, context, sharePackage)
                 || ShareMakeSticker.click(action, context, sharePackage)
                 || ShareSaveEpisodes.click(action, context, sharePackage)
+                || ShareLiveButtons.click(action, context, sharePackage)
                 || ShareLiveQuality.click(action, context, sharePackage);
     }
 
@@ -65,6 +68,7 @@ public final class OwnedShareActions {
         ShareSaveCover.bindIcon(action, image);
         ShareMakeSticker.bindIcon(action, image);
         ShareSaveEpisodes.bindIcon(action, image);
+        ShareLiveButtons.bindIcon(action, image);
         ShareLiveQuality.bindIcon(action, image);
     }
 

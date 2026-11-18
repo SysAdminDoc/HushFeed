@@ -587,6 +587,7 @@
       "live_record_source",
       "live_auto_tap",
       "live_auto_tap_rate",
+      "live_buttons_in_menu",
       "live_button_size",
       "live_audio_only",
       "live_name_alerts",
@@ -3260,6 +3261,12 @@
       "key": "live_button_size",
       "type": "string",
       "default": "48"
+    },
+    "live_buttons_in_menu": {
+      "field": "LIVE_BUTTONS_IN_MENU",
+      "key": "live_buttons_in_menu",
+      "type": "boolean",
+      "default": false
     },
     "live_feed_countries": {
       "field": "LIVE_FEED_COUNTRIES",

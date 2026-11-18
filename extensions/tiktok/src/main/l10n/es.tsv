@@ -3028,3 +3028,5 @@ Draws the creator's name, the date, the caption and the music line over the vide
 LIVE buttons in the long-press menu	Botones de LIVE en el menú de pulsación larga
 Takes the Record and Auto tap buttons off the video and puts them in the menu you get by holding the middle of a LIVE.	Quita los botones Grabar y Toque automático del vídeo y los pone en el menú que aparece al mantener pulsado el centro de un LIVE.
 Auto tap started	Toque automático iniciado
+Hide stories from accounts you don't follow	Ocultar historias de cuentas que no sigues
+Stories from accounts you don't follow leave the stories tray. Stories from accounts you follow stay.	Las historias de cuentas que no sigues salen de la bandeja de historias. Las historias de cuentas que sigues se quedan.

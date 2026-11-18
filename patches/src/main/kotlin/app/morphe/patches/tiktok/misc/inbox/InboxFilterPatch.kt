@@ -110,6 +110,13 @@ val inboxFilterPatch = bytecodePatch(
             println("[$PATCH_NAME] Left out the suggested LIVEs switch on ${packageMetadata.versionName}: ${problem.message}")
             null
         }
+        val storyBind = try {
+            StoryInboxBindFingerprint.method
+        } catch (problem: Exception) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[$PATCH_NAME] Left out the suggested stories switch on ${packageMetadata.versionName}: ${problem.message}")
+            null
+        }
         val widgetGuide = try {
             StoryWidgetGuideBindFingerprint.method
         } catch (problem: Exception) {
@@ -211,6 +218,14 @@ val inboxFilterPatch = bytecodePatch(
             SettingsStatusLoadFingerprint.method.addInstruction(
                 0,
                 "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableInboxSuggestedLives()V",
+            )
+        }
+        // Stories from accounts the viewer doesn't follow, in the same tray (#462).
+        if (storyBind != null) {
+            storyBind.reportInboxStoryBind(PATCH_NAME)
+            SettingsStatusLoadFingerprint.method.addInstruction(
+                0,
+                "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableInboxSuggestedStories()V",
             )
         }
         if (widgetGuide != null) {

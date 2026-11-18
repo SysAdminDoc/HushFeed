@@ -36,6 +36,7 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
                 || SettingsStatus.hideInboxStoriesEnabled
                 || SettingsStatus.inboxOnThisDayEnabled
                 || SettingsStatus.inboxSuggestedLivesEnabled
+                || SettingsStatus.inboxSuggestedStoriesEnabled
                 || SettingsStatus.inboxWidgetGuideEnabled
                 || SettingsStatus.chatDeclutterEnabled
                 || SettingsStatus.expandActivityListEnabled
@@ -200,6 +201,14 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
                     "Hide LIVEs from accounts you don't follow",
                     "LIVEs from accounts you don't follow leave the stories tray. LIVEs from accounts you follow stay.",
                     Settings.HIDE_INBOX_SUGGESTED_LIVES
+            ));
+        }
+        if (SettingsStatus.inboxSuggestedStoriesEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Hide stories from accounts you don't follow",
+                    "Stories from accounts you don't follow leave the stories tray. Stories from accounts you follow stay.",
+                    Settings.HIDE_INBOX_SUGGESTED_STORIES
             ));
         }
         if (SettingsStatus.inboxWidgetGuideEnabled) {

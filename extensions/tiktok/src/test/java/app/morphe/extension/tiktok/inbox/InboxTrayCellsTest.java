@@ -83,6 +83,35 @@ public class InboxTrayCellsTest {
         }
     }
 
+    /** TikTok's story item, which answers for itself the way its LIVE items do. */
+    public static final class StoryItem {
+        private final boolean me;
+        private final boolean unfollow;
+        private final Object user;
+
+        StoryItem(boolean me, boolean unfollow, Object user) {
+            this.me = me;
+            this.unfollow = unfollow;
+            this.user = user;
+        }
+
+        public boolean isMe() {
+            return me;
+        }
+
+        public boolean isUnfollow() {
+            return unfollow;
+        }
+
+        public Object getUser() {
+            return user;
+        }
+    }
+
+    private static StoryItem story(boolean unfollow) {
+        return new StoryItem(false, unfollow, new Object());
+    }
+
     public static final class TestActivity extends PreferenceActivity {
         @Override public void onCreate(android.os.Bundle state) {
             setTheme(android.R.style.Theme_Material_NoActionBar);
@@ -110,6 +139,7 @@ public class InboxTrayCellsTest {
     @After public void tearDown() {
         HookStatus.clear();
         Settings.HIDE_INBOX_SUGGESTED_LIVES.resetToDefault();
+        Settings.HIDE_INBOX_SUGGESTED_STORIES.resetToDefault();
         Settings.HIDE_INBOX_WIDGET_GUIDE.resetToDefault();
         owner.close();
     }
@@ -168,6 +198,85 @@ public class InboxTrayCellsTest {
         layOut();
         assertEquals(View.VISIBLE, live.getVisibility());
         assertEquals(CELL_WIDTH, live.getWidth());
+    }
+
+    @Test public void aRecommendedStoryStaysUntilTheSwitchIsOn() {
+        assertFalse(Settings.HIDE_INBOX_SUGGESTED_STORIES.defaultValue);
+        View circle = tray.getChildAt(0);
+        InboxFilter.onStoryCellBound(new Cell(circle), story(true));
+        layOut();
+        assertEquals(View.VISIBLE, circle.getVisibility());
+        assertEquals(CELL_WIDTH, circle.getWidth());
+    }
+
+    @Test public void aStoryFromAnAccountYouDontFollowGivesUpItsPlace() {
+        Settings.HIDE_INBOX_SUGGESTED_STORIES.save(true);
+        View circle = tray.getChildAt(0);
+        InboxFilter.onStoryCellBound(new Cell(circle), story(true));
+        layOut();
+        assertCollapsed(circle);
+        assertEquals("a gap was left where the story was", MARGIN, tray.getChildAt(1).getLeft());
+        assertTrue(String.join(" ", HookStatus.report()).contains("suggested stories"));
+    }
+
+    @Test public void storiesFromAccountsYouFollowStay() {
+        Settings.HIDE_INBOX_SUGGESTED_STORIES.save(true);
+        View circle = tray.getChildAt(0);
+        InboxFilter.onStoryCellBound(new Cell(circle), story(false));
+        layOut();
+        assertEquals(View.VISIBLE, circle.getVisibility());
+        assertEquals(CELL_WIDTH, circle.getWidth());
+    }
+
+    /** TikTok's isUnfollow() says true for both of these, and neither is a recommendation. */
+    @Test public void yourOwnCircleAndAnItemWithNoAccountStay() {
+        Settings.HIDE_INBOX_SUGGESTED_STORIES.save(true);
+        View own = tray.getChildAt(0);
+        InboxFilter.onStoryCellBound(new Cell(own), new StoryItem(true, true, new Object()));
+        View noAccount = tray.getChildAt(1);
+        InboxFilter.onStoryCellBound(new Cell(noAccount), new StoryItem(false, true, null));
+        View unknown = tray.getChildAt(2);
+        InboxFilter.onStoryCellBound(new Cell(unknown), new LiveItem(true));
+        InboxFilter.onStoryCellBound(new Cell(unknown), null);
+        layOut();
+        assertEquals(CELL_WIDTH, own.getWidth());
+        assertEquals(CELL_WIDTH, noAccount.getWidth());
+        assertEquals(CELL_WIDTH, unknown.getWidth());
+    }
+
+    @Test public void aRecycledStoryCellGetsItsSizeBack() {
+        Settings.HIDE_INBOX_SUGGESTED_STORIES.save(true);
+        View circle = tray.getChildAt(0);
+        Cell cell = new Cell(circle);
+        InboxFilter.onStoryCellBound(cell, story(true));
+        InboxFilter.onStoryCellBound(cell, story(false));
+        layOut();
+        assertRestored(circle);
+    }
+
+    @Test public void theStoriesRowShowsOnlyWhereTheBindWasHooked() {
+        boolean inbox = SettingsStatus.inboxFilterEnabled;
+        boolean stories = SettingsStatus.inboxSuggestedStoriesEnabled;
+        String title = "Hide stories from accounts you don't follow";
+        try (var controller = Robolectric.buildActivity(TestActivity.class).setup()) {
+            var activity = controller.get();
+            Utils.setContext(activity);
+            SettingsStatus.inboxFilterEnabled = true;
+            SettingsStatus.inboxSuggestedStoriesEnabled = false;
+            PreferenceScreen without = activity.getPreferenceManager().createPreferenceScreen(activity);
+            new InboxPreferenceCategory(activity, without);
+            assertNull(byTitle(without, title));
+
+            SettingsStatus.inboxSuggestedStoriesEnabled = true;
+            PreferenceScreen with = activity.getPreferenceManager().createPreferenceScreen(activity);
+            new InboxPreferenceCategory(activity, with);
+            Preference row = byTitle(with, title);
+            assertNotNull(row);
+            assertEquals(Settings.HIDE_INBOX_SUGGESTED_STORIES.key, row.getKey());
+        } finally {
+            SettingsStatus.inboxFilterEnabled = inbox;
+            SettingsStatus.inboxSuggestedStoriesEnabled = stories;
+        }
     }
 
     @Test public void theWidgetCircleGoesAndComesBack() {

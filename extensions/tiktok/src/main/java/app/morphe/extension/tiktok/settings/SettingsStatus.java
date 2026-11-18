@@ -848,6 +848,13 @@ public class SettingsStatus {
         inboxSuggestedLivesEnabled = true;
     }
 
+    /** Hide inbox items found the stories tray's story cell on this build and hooked its bind. */
+    public static boolean inboxSuggestedStoriesEnabled = false;
+
+    public static void enableInboxSuggestedStories() {
+        inboxSuggestedStoriesEnabled = true;
+    }
+
     /** Hide inbox items found the stories tray's Widget cell on this build and hooked its bind. */
     public static boolean inboxWidgetGuideEnabled = false;
 

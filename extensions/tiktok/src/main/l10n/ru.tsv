@@ -3211,3 +3211,5 @@ Draws the creator's name, the date, the caption and the music line over the vide
 LIVE buttons in the long-press menu	Кнопки LIVE в меню долгого нажатия
 Takes the Record and Auto tap buttons off the video and puts them in the menu you get by holding the middle of a LIVE.	Убирает кнопки Запись и Автонажатие с видео и помещает их в меню, которое открывается при долгом нажатии на середину LIVE.
 Auto tap started	Автонажатие запущено
+Hide stories from accounts you don't follow	Скрывать истории аккаунтов, на которые вы не подписаны
+Stories from accounts you don't follow leave the stories tray. Stories from accounts you follow stay.	Истории аккаунтов, на которые вы не подписаны, исчезают из панели историй. Истории аккаунтов, на которые вы подписаны, остаются.

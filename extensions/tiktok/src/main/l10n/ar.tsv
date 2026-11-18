@@ -3275,3 +3275,5 @@ Draws the creator's name, the date, the caption and the music line over the vide
 LIVE buttons in the long-press menu	أزرار LIVE في قائمة الضغط المطول
 Takes the Record and Auto tap buttons off the video and puts them in the menu you get by holding the middle of a LIVE.	يزيل زري تسجيل والنقر التلقائي من الفيديو ويضعهما في القائمة التي تظهر عند الضغط مطولا على وسط LIVE.
 Auto tap started	بدأ النقر التلقائي
+Hide stories from accounts you don't follow	إخفاء القصص من حسابات لا تتابعها
+Stories from accounts you don't follow leave the stories tray. Stories from accounts you follow stay.	تختفي القصص من الحسابات التي لا تتابعها من شريط القصص. تبقى القصص من الحسابات التي تتابعها.

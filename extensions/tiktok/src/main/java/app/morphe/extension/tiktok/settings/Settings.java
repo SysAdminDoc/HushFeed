@@ -1422,6 +1422,9 @@ public class Settings extends BaseSettings {
     /** LIVEs in the Inbox's stories tray from accounts the viewer doesn't follow (#449). */
     public static final BooleanSetting HIDE_INBOX_SUGGESTED_LIVES =
             new BooleanSetting("hide_inbox_suggested_lives", FALSE);
+    /** Stories in the Inbox's tray from accounts the viewer doesn't follow (#462). */
+    public static final BooleanSetting HIDE_INBOX_SUGGESTED_STORIES =
+            new BooleanSetting("hide_inbox_suggested_stories", FALSE);
     /** The Widget circle at the end of the Inbox's stories tray (#449). */
     public static final BooleanSetting HIDE_INBOX_WIDGET_GUIDE =
             new BooleanSetting("hide_inbox_widget_guide", FALSE);

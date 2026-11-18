@@ -189,6 +189,12 @@ public final class InboxFilter {
                 if (cell.getKey() != null) setCellHidden(cell.getKey(), hide && Boolean.TRUE.equals(cell.getValue()));
             }
         }
+        if (!STORY_CELLS.isEmpty()) {
+            boolean hide = Settings.HIDE_INBOX_SUGGESTED_STORIES.get();
+            for (Map.Entry<View, Boolean> cell : STORY_CELLS.entrySet()) {
+                if (cell.getKey() != null) setCellHidden(cell.getKey(), hide && Boolean.TRUE.equals(cell.getValue()));
+            }
+        }
         if (!WIDGET_GUIDE_CELLS.isEmpty()) {
             boolean hide = Settings.HIDE_INBOX_WIDGET_GUIDE.get();
             for (View cell : WIDGET_GUIDE_CELLS.keySet()) {
@@ -203,6 +209,8 @@ public final class InboxFilter {
      * suggested account to a followed one; each bind writes the answer for the item it shows.
      */
     private static final WeakHashMap<View, Boolean> LIVE_CELLS = new WeakHashMap<>();
+    /** Story circles in the tray, each with whether its account is one the viewer doesn't follow (#462). */
+    private static final WeakHashMap<View, Boolean> STORY_CELLS = new WeakHashMap<>();
     /** The Widget circle at the end of the tray (#449). */
     private static final WeakHashMap<View, Boolean> WIDGET_GUIDE_CELLS = new WeakHashMap<>();
 
@@ -232,6 +240,35 @@ public final class InboxFilter {
      */
     static boolean isSuggestedLive(Object item) {
         return Boolean.TRUE.equals(app.morphe.extension.tiktok.blockauthor.Reflect.invoke(item, "isUnfollow"));
+    }
+
+    /**
+     * Called at the top of TikTok's bind of a story circle in the tray, with the item it's about
+     * to show. Stories from accounts the viewer doesn't follow go; the rest stay where they are.
+     */
+    public static void onStoryCellBound(Object cell, Object item) {
+        try {
+            Object found = app.morphe.extension.tiktok.blockauthor.Reflect.readField(cell, "itemView");
+            if (!(found instanceof View)) return;
+            View view = (View) found;
+            boolean suggested = isSuggestedStory(item);
+            STORY_CELLS.put(view, suggested);
+            boolean hide = suggested && Settings.HIDE_INBOX_SUGGESTED_STORIES.get();
+            HookStatus.bound("suggested stories", hide ? "cell hidden" : suggested ? "suggested, left" : "followed, left");
+            setCellHidden(view, hide);
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Story cell bind failed", ex);
+        }
+    }
+
+    /**
+     * {@code isUnfollow()} is also true for the viewer's own circle, whose follow status is always
+     * zero, and for an item with no account, so both are ruled out first and stay showing.
+     */
+    static boolean isSuggestedStory(Object item) {
+        return Boolean.FALSE.equals(app.morphe.extension.tiktok.blockauthor.Reflect.invoke(item, "isMe"))
+                && app.morphe.extension.tiktok.blockauthor.Reflect.invoke(item, "getUser") != null
+                && isSuggestedLive(item);
     }
 
     /** Called at the top of TikTok's bind of the Widget circle at the end of the stories tray. */

@@ -412,6 +412,7 @@
       "hide_inbox_stories",
       "hide_inbox_on_this_day",
       "hide_inbox_suggested_lives",
+      "hide_inbox_suggested_stories",
       "hide_inbox_widget_guide",
       "hide_inbox_new_followers",
       "hide_inbox_activity",
@@ -2573,6 +2574,12 @@
     "hide_inbox_suggested_lives": {
       "field": "HIDE_INBOX_SUGGESTED_LIVES",
       "key": "hide_inbox_suggested_lives",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_inbox_suggested_stories": {
+      "field": "HIDE_INBOX_SUGGESTED_STORIES",
+      "key": "hide_inbox_suggested_stories",
       "type": "boolean",
       "default": false
     },

@@ -3031,3 +3031,5 @@ Draws the creator's name, the date, the caption and the music line over the vide
 LIVE buttons in the long-press menu	ปุ่ม LIVE ในเมนูกดค้าง
 Takes the Record and Auto tap buttons off the video and puts them in the menu you get by holding the middle of a LIVE.	นำปุ่ม บันทึก และ แตะอัตโนมัติ ออกจากวิดีโอ แล้วไปไว้ในเมนูที่เปิดขึ้นเมื่อกดค้างตรงกลาง LIVE
 Auto tap started	เริ่มแตะอัตโนมัติแล้ว
+Hide stories from accounts you don't follow	ซ่อนสตอรี่จากบัญชีที่คุณไม่ได้ติดตาม
+Stories from accounts you don't follow leave the stories tray. Stories from accounts you follow stay.	สตอรี่จากบัญชีที่คุณไม่ได้ติดตามจะหายไปจากถาดสตอรี่ ส่วนสตอรี่จากบัญชีที่คุณติดตามยังคงอยู่

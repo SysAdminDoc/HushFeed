@@ -102,6 +102,48 @@ class InboxTrayCellsAnchorsTest {
         }
     }
 
+    @Test
+    fun `the story cell goes to the extension first with an item that can say whose it is`() {
+        Fixtures.forEachDeclared { apk ->
+            val version = Fixtures.versionOf(apk)
+            val classes = classesOf(apk)
+            val native = bindOf(version, classes, STORY_INBOX_CELL, StoryInboxBindFingerprint)
+            assertFalse("$version: the story bind is static", AccessFlags.STATIC.isSet(native.accessFlags))
+            assertEquals("$version: the story bind takes the item and its payloads", 2, native.parameterTypes.size)
+
+            val cast = native.implementation!!.instructions.first { it.opcode == Opcode.CHECK_CAST }
+            val itemType = cast.getReference<TypeReference>()!!.type
+            val item = classes[itemType]
+            assertNotNull("$version: no $itemType", item)
+            for ((name, returns) in listOf(
+                "isUnfollow" to "Z",
+                "isMe" to "Z",
+                "getUser" to "Lcom/ss/android/ugc/aweme/profile/model/User;",
+            )) {
+                assertTrue(
+                    "$version: $itemType has no $name()",
+                    item!!.methods.any {
+                        it.name == name && it.returnType == returns && it.parameterTypes.isEmpty() &&
+                            !AccessFlags.STATIC.isSet(it.accessFlags)
+                    },
+                )
+            }
+
+            val (first, body) = hooked(native) { reportInboxStoryBind("Hide inbox items") }
+            val call = first.getReference<MethodReference>()!!
+            assertEquals(FILTER, call.definingClass)
+            assertEquals("onStoryCellBound", call.name)
+            assertEquals(
+                listOf("Ljava/lang/Object;", "Ljava/lang/Object;"),
+                call.parameterTypes.map(CharSequence::toString),
+            )
+            val registers = first as FiveRegisterInstruction
+            assertEquals("$version: the cell and the item go over", 2, registers.registerCount)
+            assertEquals(body.registerCount - 3, registers.registerC)
+            assertEquals(body.registerCount - 2, registers.registerD)
+        }
+    }
+
     /** Hooks a copy of [native] and checks the hook is the one new instruction, ahead of TikTok's body. */
     private fun hooked(
         native: com.android.tools.smali.dexlib2.iface.Method,
@@ -131,7 +173,7 @@ class InboxTrayCellsAnchorsTest {
         return taken.single()
     }
 
-    private val cellTypes = setOf(INBOX_LIVE_CELL, INBOX_LIVE_DOUBLE_CELL, WIDGET_GUIDE_CELL)
+    private val cellTypes = setOf(INBOX_LIVE_CELL, INBOX_LIVE_DOUBLE_CELL, WIDGET_GUIDE_CELL, STORY_INBOX_CELL)
 
     /** The three cells, then each class a LIVE cell casts its item to and that class's superclasses. */
     private fun classesOf(apk: java.io.File): Map<String, ClassDef> {

@@ -49,6 +49,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public final class SlideshowVideo {
     /** Frames a second. A still doesn't need more, and a 35-photo post has to fit the job's time. */
     static final int FPS = 15;
+    /** The longest the row lets a photo stay on screen (#465). */
+    static final int MAX_SECONDS_PER_PHOTO = 300;
+    /** A photo that would take more frames than this gets a lower rate, which a still never shows. */
+    private static final int FRAMES_PER_PHOTO = 150;
+    private static final int MIN_FPS = 2;
+    /** Sound is encoded at least this many times faster than it plays. */
+    private static final long SOUND_SPEED = 5;
     static final int KEYFRAME_SECONDS = 1;
     /** The frame a portrait photo fills, as long and short sides. Landscape turns it round. */
     static final int LONG_SIDE = 1920;
@@ -399,6 +406,8 @@ public final class SlideshowVideo {
 
     private static File cutSound(Context app, List<String> sources, long lengthUs, List<File> temporary)
             throws IOException {
+        // A long video's sound takes longer to encode than the time a save starts with.
+        MediaBudget.deadline().allowAtLeast(soundWorkMs(lengthUs));
         File fetched = temp(app, temporary, ".tmp");
         RemoteMedia.fetch(sources, fetched, RemoteMedia.Kind.AUDIO);
         File track = temp(app, temporary, ".m4a");
@@ -421,6 +430,7 @@ public final class SlideshowVideo {
     private static void drawPhotos(Context app, List<List<String>> photos, int seconds, File output,
             SaveProgress progress, Set<Integer> postStarts) throws IOException {
         int perPhoto = framesPerPhoto(seconds);
+        int fps = frameRate(seconds);
         long total = (long) perPhoto * photos.size();
         boolean joined = postStarts.size() > 1;
         SlideshowEncoder encoder = null;
@@ -432,11 +442,14 @@ public final class SlideshowVideo {
                 if (progress.isCancelled() || (joined && MediaBudget.cancelled())) {
                     throw new MediaBudget.StopException("Photo video cancelled", MediaBudget.StopException.Reason.CANCELLED);
                 }
-                if (joined && i > 0 && postStarts.contains(i)) MediaBudget.deadline().allowAtLeast(MediaBudget.JOB_DEADLINE_MS);
+                // Photos held for a long time each get the time a save gets, as each post does.
+                if (i > 0 && (fps < FPS || (joined && postStarts.contains(i)))) {
+                    MediaBudget.deadline().allowAtLeast(MediaBudget.JOB_DEADLINE_MS);
+                }
                 Bitmap photo = fetchPhoto(app, photos.get(i), encoder == null ? null : new int[]{encoder.width, encoder.height}, i + 1);
                 try {
                     if (encoder == null) {
-                        encoder = SlideshowEncoder.open(output, frameSizes(photo.getWidth(), photo.getHeight()), FPS);
+                        encoder = SlideshowEncoder.open(output, frameSizes(photo.getWidth(), photo.getHeight()), fps);
                         frame = Bitmap.createBitmap(encoder.width, encoder.height, Bitmap.Config.ARGB_8888);
                         canvas = new Canvas(frame);
                     }
@@ -512,11 +525,24 @@ public final class SlideshowVideo {
 
     /** The setting, held to what the row offers, in case a restored backup carried something else. */
     static int seconds(int setting) {
-        return Math.max(1, Math.min(10, setting));
+        return Math.max(1, Math.min(MAX_SECONDS_PER_PHOTO, setting));
+    }
+
+    /**
+     * The video's frame rate. Up to ten seconds a photo it's {@link #FPS}. Past that it drops so a
+     * photo costs about the same to draw however long it stays, since nothing moves in a still.
+     */
+    static int frameRate(int seconds) {
+        return Math.max(MIN_FPS, Math.min(FPS, FRAMES_PER_PHOTO / Math.max(1, seconds)));
     }
 
     static int framesPerPhoto(int seconds) {
-        return seconds * FPS;
+        return seconds * frameRate(seconds);
+    }
+
+    /** The time to leave for fetching and encoding a sound of this length. */
+    static long soundWorkMs(long lengthUs) {
+        return lengthUs / 1000L / SOUND_SPEED;
     }
 
     /** When frame {@code index} shows, counted from zero, in nanoseconds. */

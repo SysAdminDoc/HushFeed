@@ -123,10 +123,29 @@ public class SlideshowVideoTest {
         assertEquals(1, SlideshowVideo.sampleSize(10, 10, 0, 0));
     }
 
+    /** Up to ten seconds nothing changes; past that the rate drops and the length stays exact (#465). */
+    @Test public void aPhotoHeldForMinutesTakesAboutTheFramesOfAShortOne() {
+        assertEquals(15, SlideshowVideo.frameRate(1));
+        assertEquals(15, SlideshowVideo.frameRate(10));
+        assertEquals(150, SlideshowVideo.framesPerPhoto(10));
+        assertEquals(13, SlideshowVideo.frameRate(11));
+        assertEquals(2, SlideshowVideo.frameRate(60));
+        assertEquals(120, SlideshowVideo.framesPerPhoto(60));
+        assertEquals(2, SlideshowVideo.frameRate(300));
+        assertEquals(600, SlideshowVideo.framesPerPhoto(300));
+        for (int seconds : new int[]{1, 7, 10, 11, 37, 60, 149, 300}) {
+            int fps = SlideshowVideo.frameRate(seconds);
+            assertEquals("video length at " + seconds + " seconds", seconds * 1_000_000_000L,
+                    SlideshowVideo.presentationTimeNs(SlideshowVideo.framesPerPhoto(seconds), fps));
+        }
+        assertEquals(60_000L, SlideshowVideo.soundWorkMs(300_000_000L));
+    }
+
     @Test public void timingFollowsTheSettingAndTheSoundIsCutInWholeSamples() {
         assertEquals(1, SlideshowVideo.seconds(0));
         assertEquals(3, SlideshowVideo.seconds(3));
-        assertEquals(10, SlideshowVideo.seconds(60));
+        assertEquals(60, SlideshowVideo.seconds(60));
+        assertEquals(300, SlideshowVideo.seconds(5000));
         assertEquals(3, (int) Settings.PHOTO_VIDEO_SECONDS.defaultValue);
         assertFalse(Settings.DOWNLOAD_PHOTOS_AS_VIDEO.defaultValue);
 

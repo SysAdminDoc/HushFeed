@@ -164,7 +164,7 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting KEEP_PHOTOS_AS_SENT = new BooleanSetting("keep_photos_as_sent", FALSE);
     public static final BooleanSetting DOWNLOAD_PHOTOS_AS_VIDEO = new BooleanSetting("download_photos_as_video", FALSE);
     public static final IntegerSetting PHOTO_VIDEO_SECONDS = new IntegerSetting("photo_video_seconds", 3, false,
-            Setting.parent(DOWNLOAD_PHOTOS_AS_VIDEO)).withRange(1, 10);
+            Setting.parent(DOWNLOAD_PHOTOS_AS_VIDEO)).withRange(1, 300);
     public static final BooleanSetting DOWNLOAD_AUDIO_TRACK = new BooleanSetting("download_audio_track", FALSE);
     /**
      * "original" keeps a saved sound in TikTok's own container; "opus" makes an .ogg where the

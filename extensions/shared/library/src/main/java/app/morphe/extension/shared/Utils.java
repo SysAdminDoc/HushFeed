@@ -316,7 +316,7 @@ public class Utils {
     public static boolean runOnOwnThread(String name, Runnable task) {
         backgroundTasksInFlight.incrementAndGet();
         try {
-            // Made inside the catch too: with the heap full, the Thread object itself can fail.
+            // Made inside the try too: with the heap full, the Thread object itself can fail.
             Thread thread = new Thread(() -> {
                 try {
                     runAndLogFailure(task);
@@ -330,7 +330,12 @@ public class Utils {
         } catch (OutOfMemoryError noThread) {
             // Android reports a thread it couldn't create as an OutOfMemoryError.
             backgroundTasksInFlight.decrementAndGet();
-            Logger.printException(() -> "Could not start " + name, noThread);
+            try {
+                Logger.printException(() -> "Could not start " + name, noThread);
+            } catch (OutOfMemoryError noLog) {
+                // The log line allocates too. The caller still has to hear false and let go of
+                // its turn, so a heap with no room for it loses the line, not the answer.
+            }
             return false;
         }
     }

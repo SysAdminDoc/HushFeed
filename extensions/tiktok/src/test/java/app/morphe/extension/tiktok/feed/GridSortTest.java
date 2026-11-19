@@ -2459,7 +2459,8 @@ public class GridSortTest {
                 assertEquals(GridSort.LABELS[i], String.valueOf(list.getEntries()[i]));
             }
             String summary = String.valueOf(row.getSummary());
-            assertTrue(summary, summary.contains("pinned") && summary.contains("up to 300 videos")
+            // #180: the note kept saying 300 after the cap went to 1,000.
+            assertTrue(summary, summary.contains("pinned") && summary.contains("up to 1,000 videos")
                     && summary.contains("top corner"));
         }
     }

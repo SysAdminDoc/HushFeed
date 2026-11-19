@@ -15,6 +15,7 @@ import app.morphe.extension.shared.settings.IntegerSetting;
 import app.morphe.extension.tiktok.captions.CaptionStyle;
 import app.morphe.extension.tiktok.feed.BurnInGuard;
 import app.morphe.extension.tiktok.feed.FeedTextSize;
+import app.morphe.extension.tiktok.feed.GridSort;
 import app.morphe.extension.tiktok.interaction.TapConfirmation;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
@@ -381,7 +382,8 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                                 "Most liked first", "Least liked first"},
                         new String[]{"off", "newest", "oldest", "longest", "shortest", "most_viewed",
                                 "least_viewed", "most_liked", "least_liked"})
-                        .withNote("Sorts a profile or Liked grid with pinned videos first. While an order is on, the grid keeps loading by itself up to 300 videos, so the order covers more than the first screen. A button in the grid's top corner changes the order right there."));
+                        .withNote(L10n.f(context, "Sorts a profile or Liked grid with pinned videos first. While an order is on, the grid keeps loading by itself up to %1$s videos, so the order covers more than the first screen. A button in the grid's top corner changes the order right there.",
+                                java.text.NumberFormat.getIntegerInstance().format(GridSort.LOAD_CAP))));
                 addPreference(new TogglePreference(
                         context,
                         "Sort pinned videos with the rest",

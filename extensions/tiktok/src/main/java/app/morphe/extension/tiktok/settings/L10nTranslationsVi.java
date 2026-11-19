@@ -4605,8 +4605,8 @@ final class L10nTranslationsVi {
                 "Sắp xếp video đã ghim cùng các video khác");
         table.put("Sort this grid",
                 "Sắp xếp lưới này");
-        table.put("Sorts a profile or Liked grid with pinned videos first. While an order is on, the grid keeps loading by itself up to 300 videos, so the order covers more than the first screen. A button in the grid's top corner changes the order right there.",
-                "Sắp xếp lưới trang cá nhân hoặc video đã thích với các video được ghim ở vị trí đầu tiên. Khi bật sắp xếp, lưới sẽ tự động tải thêm tối đa 300 video để phạm vi sắp xếp bao quát hơn màn hình đầu tiên. Nút bấm ở góc trên của lưới cho phép thay đổi thứ tự ngay tại chỗ.");
+        table.put("Sorts a profile or Liked grid with pinned videos first. While an order is on, the grid keeps loading by itself up to %1$s videos, so the order covers more than the first screen. A button in the grid's top corner changes the order right there.",
+                "Sắp xếp lưới trang cá nhân hoặc video đã thích với các video được ghim ở vị trí đầu tiên. Khi bật sắp xếp, lưới sẽ tự động tải thêm tối đa %1$s video để phạm vi sắp xếp bao quát hơn màn hình đầu tiên. Nút bấm ở góc trên của lưới cho phép thay đổi thứ tự ngay tại chỗ.");
         table.put("Sorts the videos on a sound's page the same way, loading up to 300 of them while an order is on.",
                 "Sắp xếp video trên trang của một âm thanh theo cùng cách, tải tối đa 300 video khi đang chọn một thứ tự.");
         table.put("Sound",

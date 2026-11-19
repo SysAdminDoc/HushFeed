@@ -2395,7 +2395,7 @@ Most viewed first	ยอดดูมากที่สุดก่อน
 Least viewed first	ยอดดูน้อยที่สุดก่อน
 Most liked first	ถูกใจมากที่สุดก่อน
 Least liked first	ถูกใจน้อยที่สุดก่อน
-Sorts a profile or Liked grid with pinned videos first. While an order is on, the grid keeps loading by itself up to 300 videos, so the order covers more than the first screen. A button in the grid's top corner changes the order right there.	จัดเรียงตารางโปรไฟล์หรือตารางที่ถูกใจโดยแสดงวิดีโอที่ปักหมุดไว้ก่อน เมื่อเปิดใช้งานการจัดลำดับ ตารางจะโหลดวิดีโออัตโนมัติสูงสุด 300 วิดีโอ เพื่อให้การจัดลำดับครอบคลุมมากกว่าหน้าจอแรก ปุ่มที่มุมบนของตารางสามารถเปลี่ยนลำดับได้จากตรงนั้นทันที
+Sorts a profile or Liked grid with pinned videos first. While an order is on, the grid keeps loading by itself up to %1$s videos, so the order covers more than the first screen. A button in the grid's top corner changes the order right there.	จัดเรียงตารางโปรไฟล์หรือตารางที่ถูกใจโดยแสดงวิดีโอที่ปักหมุดไว้ก่อน เมื่อเปิดใช้งานการจัดลำดับ ตารางจะโหลดวิดีโออัตโนมัติสูงสุด %1$s วิดีโอ เพื่อให้การจัดลำดับครอบคลุมมากกว่าหน้าจอแรก ปุ่มที่มุมบนของตารางสามารถเปลี่ยนลำดับได้จากตรงนั้นทันที
 Sort loaded videos on Liked grids	จัดเรียงวิดีโอที่โหลดแล้วในตารางที่ถูกใจ
 Sort loaded videos on sound pages	จัดเรียงวิดีโอที่โหลดแล้วในหน้าเสียง
 Sorts the videos on a sound's page the same way, loading up to 300 of them while an order is on.	จัดเรียงวิดีโอในหน้าของเสียงในลักษณะเดียวกัน โดยจะโหลดสูงสุด 300 วิดีโอเมื่อเปิดใช้งานการจัดลำดับ

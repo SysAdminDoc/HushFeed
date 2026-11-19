@@ -4605,8 +4605,8 @@ final class L10nTranslationsTh {
                 "เรียงวิดีโอที่ปักหมุดไปพร้อมกับวิดีโออื่น");
         table.put("Sort this grid",
                 "จัดเรียงตารางนี้");
-        table.put("Sorts a profile or Liked grid with pinned videos first. While an order is on, the grid keeps loading by itself up to 300 videos, so the order covers more than the first screen. A button in the grid's top corner changes the order right there.",
-                "จัดเรียงตารางโปรไฟล์หรือตารางที่ถูกใจโดยแสดงวิดีโอที่ปักหมุดไว้ก่อน เมื่อเปิดใช้งานการจัดลำดับ ตารางจะโหลดวิดีโออัตโนมัติสูงสุด 300 วิดีโอ เพื่อให้การจัดลำดับครอบคลุมมากกว่าหน้าจอแรก ปุ่มที่มุมบนของตารางสามารถเปลี่ยนลำดับได้จากตรงนั้นทันที");
+        table.put("Sorts a profile or Liked grid with pinned videos first. While an order is on, the grid keeps loading by itself up to %1$s videos, so the order covers more than the first screen. A button in the grid's top corner changes the order right there.",
+                "จัดเรียงตารางโปรไฟล์หรือตารางที่ถูกใจโดยแสดงวิดีโอที่ปักหมุดไว้ก่อน เมื่อเปิดใช้งานการจัดลำดับ ตารางจะโหลดวิดีโออัตโนมัติสูงสุด %1$s วิดีโอ เพื่อให้การจัดลำดับครอบคลุมมากกว่าหน้าจอแรก ปุ่มที่มุมบนของตารางสามารถเปลี่ยนลำดับได้จากตรงนั้นทันที");
         table.put("Sorts the videos on a sound's page the same way, loading up to 300 of them while an order is on.",
                 "จัดเรียงวิดีโอในหน้าของเสียงในลักษณะเดียวกัน โดยจะโหลดสูงสุด 300 วิดีโอเมื่อเปิดใช้งานการจัดลำดับ");
         table.put("Sound",

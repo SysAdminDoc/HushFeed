@@ -134,9 +134,10 @@ public final class GridSort {
 
     /**
      * The most videos a sorted grid loads by itself. Past this the reader's scrolling loads more.
-     * 300 left a long profile's oldest and longest videos out of the order (#180).
+     * 300 left a long profile's oldest and longest videos out of the order (#180). The settings
+     * note formats this in, so it can't drift from the cap again.
      */
-    static final int LOAD_CAP = 1000;
+    public static final int LOAD_CAP = 1000;
     /** The pause before asking for the next page, so a long profile isn't fetched in one burst. */
     static final long NEXT_PAGE_DELAY_MS = 100;
     /** How many videos a page asks for. The server answers 50 with about 30, up from about 16 for 18. */

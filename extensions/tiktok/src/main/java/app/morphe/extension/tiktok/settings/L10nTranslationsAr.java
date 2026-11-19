@@ -5037,8 +5037,8 @@ final class L10nTranslationsAr {
                 "رتّب الفيديوهات المثبتة مع البقية");
         table.put("Sort this grid",
                 "فرز هذه الشبكة");
-        table.put("Sorts a profile or Liked grid with pinned videos first. While an order is on, the grid keeps loading by itself up to 300 videos, so the order covers more than the first screen. A button in the grid's top corner changes the order right there.",
-                "يرتب شبكة الملف الشخصي أو شبكة أعجبني بحيث تكون الفيديوهات المثبتة أولا. أثناء تفعيل الترتيب، تستمر الشبكة بالتحميل تلقائيا حتى 300 فيديو، بحيث يغطي الترتيب أكثر من الشاشة الأولى. زر في الزاوية العلوية للشبكة يغير الترتيب من هناك مباشرة.");
+        table.put("Sorts a profile or Liked grid with pinned videos first. While an order is on, the grid keeps loading by itself up to %1$s videos, so the order covers more than the first screen. A button in the grid's top corner changes the order right there.",
+                "يرتب شبكة الملف الشخصي أو شبكة أعجبني بحيث تكون الفيديوهات المثبتة أولا. أثناء تفعيل الترتيب، تستمر الشبكة بالتحميل تلقائيا حتى %1$s فيديو، بحيث يغطي الترتيب أكثر من الشاشة الأولى. زر في الزاوية العلوية للشبكة يغير الترتيب من هناك مباشرة.");
         table.put("Sorts the videos on a sound's page the same way, loading up to 300 of them while an order is on.",
                 "يفرز مقاطع الفيديو في صفحة الصوت بالطريقة نفسها، ويحمّل ما يصل إلى 300 مقطعًا منها أثناء تفعيل الترتيب.");
         table.put("Sound",

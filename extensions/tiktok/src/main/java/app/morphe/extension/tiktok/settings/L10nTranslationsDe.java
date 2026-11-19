@@ -4605,8 +4605,8 @@ final class L10nTranslationsDe {
                 "Angeheftete Videos mit einsortieren");
         table.put("Sort this grid",
                 "Dieses Raster sortieren");
-        table.put("Sorts a profile or Liked grid with pinned videos first. While an order is on, the grid keeps loading by itself up to 300 videos, so the order covers more than the first screen. A button in the grid's top corner changes the order right there.",
-                "Sortiert ein Profil- oder Gefällt-mir-Raster, angeheftete Videos bleiben vorn. Solange eine Reihenfolge gewählt ist, lädt das Raster von selbst bis zu 300 Videos nach, damit die Reihenfolge mehr als den ersten Bildschirm erfasst. Eine Schaltfläche in der oberen Ecke des Rasters ändert die Reihenfolge direkt dort.");
+        table.put("Sorts a profile or Liked grid with pinned videos first. While an order is on, the grid keeps loading by itself up to %1$s videos, so the order covers more than the first screen. A button in the grid's top corner changes the order right there.",
+                "Sortiert ein Profil- oder Gefällt-mir-Raster, angeheftete Videos bleiben vorn. Solange eine Reihenfolge gewählt ist, lädt das Raster von selbst bis zu %1$s Videos nach, damit die Reihenfolge mehr als den ersten Bildschirm erfasst. Eine Schaltfläche in der oberen Ecke des Rasters ändert die Reihenfolge direkt dort.");
         table.put("Sorts the videos on a sound's page the same way, loading up to 300 of them while an order is on.",
                 "Sortiert die Videos auf der Seite eines Sounds genauso und lädt bis zu 300 davon, solange eine Reihenfolge gewählt ist.");
         table.put("Sound",

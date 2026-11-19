@@ -384,7 +384,9 @@ public class SettingsL10nTest {
     @Test public void noKeyCarriesALimitThatLivesInACodeConstant() throws Exception {
         java.util.regex.Pattern limit = java.util.regex.Pattern.compile(
                 "\\bfour seconds\\b|\\b4,?096\\b|\\b10,?000\\b|\\b256 KB\\b|\\b64 KB\\b|\\b1-1000\\b"
-                        + "|\\b12 to 48\\b|\\b0\\.5 to 3\\b|\\b8 (?:comma-separated )?speeds\\b");
+                        + "|\\b12 to 48\\b|\\b0\\.5 to 3\\b|\\b8 (?:comma-separated )?speeds\\b"
+                        // GridSort.LOAD_CAP: the grid sort note still said 300 after #180 raised it.
+                        + "|\\b(?:300|1,?000) videos\\b");
         List<String> offenders = new ArrayList<>();
         for (String key : readTable(ENGLISH_BASE).keySet()) {
             if (limit.matcher(key).find()) offenders.add(key);

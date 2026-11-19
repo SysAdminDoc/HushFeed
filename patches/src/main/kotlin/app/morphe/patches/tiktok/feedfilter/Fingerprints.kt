@@ -336,8 +336,24 @@ internal object ColdStartGoldenCacheFingerprint : Fingerprint(
 )
 
 /** The call descriptor of a cold-start cache method, as an invoke site names it. */
-internal fun Method.coldStartCall(): String =
+internal fun MethodReference.coldStartCall(): String =
     "$definingClass->$name(${parameterTypes.joinToString("")})$returnType"
+
+/**
+ * The static calls [orchestrator] makes to methods answering a flag, the golden and the offline
+ * method aside: where R8 outlines one of the orchestrator's own stores. 47.9.2 moved the cold
+ * cache's parse and store into `LX/04jO;->LIZIZ(Ljava/lang/String;)Z`, which stores the parsed list
+ * and answers whether one came back, the same hit flag the orchestrator branches on. A caller keeps
+ * the ones whose method holds a FeedItemList store.
+ */
+internal fun coldStartHelperCalls(orchestrator: Method, golden: Method, offline: Method): List<MethodReference> {
+    val cacheMethods = setOf(golden.coldStartCall(), offline.coldStartCall())
+    return orchestrator.implementation?.instructions?.toList().orEmpty()
+        .filter { it.opcode == Opcode.INVOKE_STATIC || it.opcode == Opcode.INVOKE_STATIC_RANGE }
+        .mapNotNull { it.getReference<MethodReference>() }
+        .filter { it.returnType == "Z" && it.coldStartCall() !in cacheMethods }
+        .distinctBy { it.coldStartCall() }
+}
 
 /**
  * The methods that call both the golden and the offline cache method, those two aside: the cold
@@ -350,7 +366,10 @@ internal fun <M : Method> coldStartOrchestrators(golden: Method, offline: Method
     }.keys.toList()
 }
 
-/** The cold start's FeedItemList stores: the orchestrator's, the golden method's and the offline method's. */
+/**
+ * The cold start's FeedItemList stores: the orchestrator's (one of them in a helper it calls on
+ * 47.9.2, see [coldStartHelperCalls]), the golden method's and the offline method's.
+ */
 internal const val COLD_START_STORES = 5
 
 internal object ColdStartOfflineCacheFingerprint : Fingerprint(

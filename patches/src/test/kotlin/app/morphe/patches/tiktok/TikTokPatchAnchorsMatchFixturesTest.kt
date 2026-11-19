@@ -7,6 +7,7 @@ import app.morphe.patches.tiktok.feedfilter.TAKO_COMMENT_TOP_BAR_BRIDGE
 import app.morphe.patches.tiktok.feedfilter.TAKO_COMMENT_TOP_BAR_SERVICE
 import app.morphe.patches.tiktok.feedfilter.COLD_START_STORES
 import app.morphe.patches.tiktok.feedfilter.coldStartCall
+import app.morphe.patches.tiktok.feedfilter.coldStartHelperCalls
 import app.morphe.patches.tiktok.feedfilter.coldStartOrchestrators
 import app.morphe.patches.tiktok.feedfilter.countColdStartFeedItemListStores
 import app.morphe.patches.tiktok.feedfilter.isCommentTopBarCanShow
@@ -1419,7 +1420,17 @@ class TikTokPatchAnchorsMatchFixturesTest {
                 }.toMap()
             val orchestrators = coldStartOrchestrators(goldenCache.single(), offlineCache.single(), calls)
             assertEquals("${apk.name}: cold-start orchestrators", 1, orchestrators.size)
-            val coldMethods = (goldenCache + offlineCache + orchestrators).distinctBy { it.anchorSignature() }
+            // And the static helpers holding a store R8 outlined out of the orchestrator.
+            val helperCalls = coldStartHelperCalls(orchestrators.single(), goldenCache.single(), offlineCache.single())
+            val helperTypes = helperCalls.map { it.definingClass }.toSet()
+            val helperCallNames = helperCalls.map { it.coldStartCall() }.toSet()
+            val helpers = container.dexEntryNames.asSequence()
+                .flatMap { container.getEntry(it)!!.dexFile.classes.asSequence() }
+                .filter { it.type in helperTypes }
+                .flatMap { it.methods.asSequence() }
+                .filter { it.coldStartCall() in helperCallNames && it.countColdStartFeedItemListStores() > 0 }
+                .toList()
+            val coldMethods = (goldenCache + offlineCache + orchestrators + helpers).distinctBy { it.anchorSignature() }
             assertEquals(
                 "${apk.name}: cold-cache FeedItemList stores",
                 COLD_START_STORES,

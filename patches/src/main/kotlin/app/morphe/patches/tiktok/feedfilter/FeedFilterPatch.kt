@@ -523,7 +523,8 @@ val feedFilterPatch = bytecodePatch(
         // The golden cache method, the offline cache method and the orchestrator that runs them
         // both. The golden hit-cache step is a method of its own with one store, and the two parse
         // stores sit in an orchestrator that calls the golden and the offline method in turn, five
-        // stores in all. (Up to 47.0.3 the golden method ran the cold start itself.)
+        // stores in all. (Up to 47.0.3 the golden method ran the cold start itself. 47.9.2 moved
+        // one of the orchestrator's stores into a static helper it calls.)
         val golden = ColdStartGoldenCacheFingerprint.method
         val offline = ColdStartOfflineCacheFingerprint.method
         val orchestrators = findColdStartOrchestrators(golden, offline)
@@ -533,7 +534,15 @@ val feedFilterPatch = bytecodePatch(
                     "where one orchestrator was expected",
             )
         }
-        val coldStartMethods = (listOf(golden, offline) + orchestrators).distinctBy { method ->
+        // A store R8 outlined out of the orchestrator is filtered where it now sits. Each helper is
+        // read before it is made mutable, since the orchestrator calls dozens of static flags.
+        val outlinedStores = coldStartHelperCalls(orchestrators.single(), golden, offline).mapNotNull { call ->
+            val owner = classDefByOrNull(call.definingClass) ?: return@mapNotNull null
+            val helper = owner.methods.firstOrNull { it.coldStartCall() == call.coldStartCall() }
+            if (helper == null || helper.countColdStartFeedItemListStores() == 0) return@mapNotNull null
+            mutableClassDefBy(call.definingClass).findMutableMethodOf(call)
+        }
+        val coldStartMethods = (listOf(golden, offline) + orchestrators + outlinedStores).distinctBy { method ->
             "${method.definingClass}->${method.name}${method.parameterTypes}${method.returnType}"
         }
         coldStartMethods.forEach { method ->

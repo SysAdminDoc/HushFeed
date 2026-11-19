@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
@@ -45,6 +46,7 @@ import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.diagnostics.DiagnosticEvent;
 import app.morphe.extension.shared.diagnostics.DiagnosticRedactor;
+import app.morphe.extension.shared.diagnostics.ExitTraces;
 import app.morphe.extension.shared.diagnostics.BuildDetails;
 import app.morphe.extension.shared.diagnostics.OtherBundles;
 import app.morphe.extension.shared.settings.BaseSettings;
@@ -83,6 +85,8 @@ public final class LogBufferManager {
     private static final int BUFFER_MAX_SIZE = 10_000;
     private static final int CLIPBOARD_MAX_CHARS = 60_000;
     private static final int CRASH_MAX_BYTES = 64_000;
+    /** Characters of exit traces in one report: one full trace and most of a second. */
+    static final int EXIT_TRACE_MAX_CHARS = 12_000;
     private static final String CRASH_FILE = "morphe_java_crash_report_v1.txt";
     private static final String NPTH_CRASH_FILE = "morphe_npth_crash_report_v1.txt";
 
@@ -553,7 +557,9 @@ public final class LogBufferManager {
      * behind either. One line turns an unexplained restart into something a maintainer can act on.
      *
      * <p>The last five, newest first, one line each: a single exit can't show a pattern, such as
-     * a memory kill every time a LIVE opens.
+     * a memory kill every time a LIVE opens. An ANR, or a native crash from Android 12 on, also
+     * gets the stack Android kept with it ({@link ExitTraces}), within
+     * {@link #EXIT_TRACE_MAX_CHARS} for the whole section.
      *
      * <p>Read only from API 30, where the history exists at all. It follows the same filter as
      * the hook table, because it is the same kind of evidence.
@@ -585,6 +591,8 @@ public final class LogBufferManager {
             }
             Collections.sort(exits, (a, b) -> Long.compare(b.getTimestamp(), a.getTimestamp()));
             StringBuilder lines = new StringBuilder();
+            int traceChars = 0;
+            boolean traceCapped = false;
             for (ApplicationExitInfo exit : exits.subList(0, Math.min(5, exits.size()))) {
                 if (lines.length() > 0) lines.append('\n');
                 lines.append("at: ").append(utcOf(exit.getTimestamp()))
@@ -594,6 +602,33 @@ public final class LogBufferManager {
                 String description = exit.getDescription();
                 if (description != null && !description.isEmpty()) {
                     lines.append(", description: ").append(description.replace('\n', ' '));
+                }
+                // A freeze or a native crash leaves no Java exception, so the stack Android kept
+                // with the record is the only one there is. Indented under its exit, within one
+                // budget for the whole section.
+                boolean anr = exit.getReason() == ApplicationExitInfo.REASON_ANR;
+                boolean nativeCrash = exit.getReason() == ApplicationExitInfo.REASON_CRASH_NATIVE
+                        && Build.VERSION.SDK_INT >= 31;
+                if (traceCapped || !(anr || nativeCrash)) continue;
+                List<String> trace;
+                try (InputStream stream = exit.getTraceInputStream()) {
+                    if (stream == null) {
+                        trace = Collections.singletonList("trace: none kept");
+                    } else {
+                        trace = anr ? ExitTraces.anr(stream, exit.getPid()) : ExitTraces.nativeCrash(stream);
+                    }
+                } catch (Throwable unreadable) {
+                    trace = Collections.singletonList(
+                            "trace: unreadable (" + unreadable.getClass().getSimpleName() + ")");
+                }
+                for (String traceLine : trace) {
+                    if (traceChars + traceLine.length() + 3 > EXIT_TRACE_MAX_CHARS) {
+                        lines.append("\n  trace: cut here, the section is at its size cap");
+                        traceCapped = true;
+                        break;
+                    }
+                    lines.append("\n  ").append(traceLine);
+                    traceChars += traceLine.length() + 3;
                 }
             }
             return DiagnosticRedactor.redact(lines.toString());
@@ -621,6 +656,9 @@ public final class LogBufferManager {
             case 14: return "FREEZER";
             case 15: return "PACKAGE_STATE_CHANGE";
             case 16: return "PACKAGE_UPDATED";
+            // Android 17: the memory limiter's kill, and an exit the system flagged as abnormal.
+            case 17: return "MEMORY_LIMITER";
+            case 18: return "ANOMALY";
             case 0: return "UNKNOWN";
             default: return "REASON " + reason;
         }

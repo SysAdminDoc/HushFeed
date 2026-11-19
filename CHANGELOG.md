@@ -29,6 +29,7 @@ Every Hushfeed release, newest first.
 
 ### Bug Fixes
 
+* When the phone was too short of memory to start a save, an export or a report copy, that one could stay busy and ignore every later tap until TikTok restarted. Now only that try is lost.
 * `Copy quick report` puts the report together in the background, so the settings page no longer stalls while it reads saved crashes. The other patch bundles line is filled in on the first copy too, where it used to ask you to copy again.
 * Native crash lines in the diagnostic report keep their function names. A name like `HttpNetworkSession::GetSocketPool` read as a session value and was blanked.
 * The Feature gate lab's list of TikTok settings is right where TikTok's code branches. A few entries were named after a setting loaded on another path, or showed another setting's default, and some settings read after a jump weren't listed at all.

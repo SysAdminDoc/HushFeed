@@ -133,6 +133,56 @@ public class LogBufferManagerExportTest {
         }
     }
 
+    @Test public void aSecondTapWhileACopyIsBeingBuiltStartsNothing() throws Exception {
+        Context context = RuntimeEnvironment.getApplication();
+        app.morphe.extension.shared.Utils.setContext(context);
+        app.morphe.extension.shared.diagnostics.HookStatus.clear();
+        LogBufferManager.clearLogBuffer();
+        // A miss makes the report worth sending, so the sections are read at all.
+        app.morphe.extension.shared.diagnostics.HookStatus.missingViewId("comments", "jlk");
+        // The section holds the first copy's build until both taps are in. It stays registered
+        // for the sandbox's life, so it goes quiet after the test instead of being taken out.
+        java.util.concurrent.atomic.AtomicBoolean holding = new java.util.concurrent.atomic.AtomicBoolean(true);
+        java.util.concurrent.CountDownLatch inside = new java.util.concurrent.CountDownLatch(1);
+        java.util.concurrent.CountDownLatch release = new java.util.concurrent.CountDownLatch(1);
+        java.util.Set<Thread> builders = java.util.Collections.synchronizedSet(new java.util.HashSet<>());
+        LogBufferManager.registerReportSection(new LogBufferManager.ReportSection() {
+            @Override public String title() {
+                return "held copy";
+            }
+
+            @Override public java.util.List<String> lines() {
+                if (!holding.get()) return java.util.Collections.emptyList();
+                builders.add(Thread.currentThread());
+                inside.countDown();
+                try {
+                    release.await(10, java.util.concurrent.TimeUnit.SECONDS);
+                } catch (InterruptedException interrupted) {
+                    Thread.currentThread().interrupt();
+                }
+                return java.util.Collections.singletonList("held line");
+            }
+        });
+        try {
+            LogBufferManager.exportToClipboard();
+            assertTrue("the first copy is being built",
+                    inside.await(10, java.util.concurrent.TimeUnit.SECONDS));
+            LogBufferManager.exportToClipboard();
+            release.countDown();
+            app.morphe.extension.shared.Utils.awaitBackgroundTasksForTests();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertEquals("the second tap built a report of its own", 1, builders.size());
+            android.content.ClipboardManager clipboard =
+                    (android.content.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            assertTrue(clipboard.getPrimaryClip().getItemAt(0).getText().toString().contains("held line"));
+        } finally {
+            holding.set(false);
+            release.countDown();
+            app.morphe.extension.shared.diagnostics.HookStatus.clear();
+            LogBufferManager.clearLogBuffer();
+        }
+    }
+
     @Test public void aQuickCopyThatDiesOfAnErrorSaysSoAndTheNextCopyWorks() throws Exception {
         // An Error while the report is built (OutOfMemoryError, StackOverflowError) used to end
         // the copy thread with a log line and nothing on screen.

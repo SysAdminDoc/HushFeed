@@ -315,15 +315,16 @@ public class Utils {
      */
     public static boolean runOnOwnThread(String name, Runnable task) {
         backgroundTasksInFlight.incrementAndGet();
-        Thread thread = new Thread(() -> {
-            try {
-                runAndLogFailure(task);
-            } finally {
-                backgroundTasksInFlight.decrementAndGet();
-            }
-        }, name);
-        thread.setDaemon(true);
         try {
+            // Made inside the catch too: with the heap full, the Thread object itself can fail.
+            Thread thread = new Thread(() -> {
+                try {
+                    runAndLogFailure(task);
+                } finally {
+                    backgroundTasksInFlight.decrementAndGet();
+                }
+            }, name);
+            thread.setDaemon(true);
             thread.start();
             return true;
         } catch (OutOfMemoryError noThread) {

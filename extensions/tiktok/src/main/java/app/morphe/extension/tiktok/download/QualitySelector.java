@@ -6,11 +6,15 @@
  */
 package app.morphe.extension.tiktok.download;
 
+import android.util.Base64;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
 import app.morphe.extension.tiktok.settings.Settings;
 import com.ss.android.ugc.aweme.base.model.UrlModel;
 import java.util.ArrayList;
 import java.util.List;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,7 +35,146 @@ public final class QualitySelector {
         Object raw = Reflect.invoke(video, "getRawBitRate");
         if (raw == null) raw = Reflect.readField(video, "bitRateList");
         if (raw == null) raw = Reflect.readField(video, "bitRate");
-        return raw;
+        if (!(raw instanceof List<?>)) {
+            List<Object> combined = new ArrayList<>(modelGears(video));
+            for (SourceGear source : sources(video)) {
+                if (hasUsableAddress(source) && !sameRendition(combined, source)) combined.add(source);
+            }
+            return combined;
+        }
+
+        List<Object> combined = new ArrayList<>((List<?>) raw);
+        for (SourceGear model : modelGears(video)) {
+            if (!sameRendition(combined, model)) combined.add(model);
+        }
+        return combined;
+    }
+
+    /** Every saved-file candidate: native gears, stored model variants and video-owned sources. */
+    static List<Object> allGears(Object video) {
+        List<Object> combined = new ArrayList<>();
+        Object raw = rawGears(video);
+        if (raw instanceof List<?>) combined.addAll((List<?>) raw);
+        for (SourceGear source : sources(video)) {
+            if (hasUsableAddress(source) && !sameRendition(combined, source)) combined.add(source);
+        }
+        return combined;
+    }
+
+    private static boolean sameRendition(List<?> gears, SourceGear candidate) {
+        int candidateHeight = height(candidate);
+        long candidateSize = size(candidate);
+        for (Object gear : gears) {
+            if (height(gear) == candidateHeight && codec(gear) == codec(candidate)) {
+                long gearSize = size(gear);
+                if (candidateSize == 0 || gearSize == 0 || candidateSize == gearSize) return true;
+            }
+        }
+        return false;
+    }
+
+    static List<SourceGear> modelGears(Object video) {
+        List<SourceGear> found = new ArrayList<>();
+        if (video == null) return found;
+        collectModel(new String[]{"getVideoModelStr", "videoModelStr"}, video, found);
+        collectModel(new String[]{"getDashVideoModelStr", "dashVideoModelStr"}, video, found);
+        return found;
+    }
+
+    private static void collectModel(String[] names, Object video, List<SourceGear> found) {
+        Object raw = Reflect.property(video, names[0], names[1]);
+        if (!(raw instanceof String) || ((String) raw).isEmpty()) return;
+        try {
+            JSONObject root = new JSONObject((String) raw);
+            collectVariantArray(root.optJSONArray("dynamic_video_list"), found);
+            JSONObject dynamic = root.optJSONObject("dynamic_video");
+            if (dynamic != null) collectVariantArray(dynamic.optJSONArray("dynamic_video_list"), found);
+            for (String key : new String[]{"video_list", "play_list", "origin_video"}) {
+                collectVariantArray(root.optJSONArray(key), found);
+                collectVariantObject(root.optJSONObject(key), found);
+            }
+        } catch (JSONException ignored) {
+            // A model that is not JSON is ignored; native gears remain authoritative.
+        }
+    }
+
+    private static void collectVariantArray(JSONArray variants, List<SourceGear> found) {
+        if (variants == null) return;
+        for (int i = 0; i < variants.length(); i++) {
+            collectVariantObject(variants.optJSONObject(i), found);
+        }
+    }
+
+    private static void collectVariantObject(JSONObject variant, List<SourceGear> found) {
+        if (variant == null) return;
+        List<String> urls = new ArrayList<>();
+        for (String key : new String[]{"main_url", "backup_url_1", "backup_url_2", "backup_url_3"}) {
+            Object url = variant.opt(key);
+            if (url instanceof String && !((String) url).isEmpty()) {
+                String decoded = decodeUrl((String) url);
+                if (!decoded.isEmpty()) urls.add(decoded);
+            }
+        }
+        JSONObject playAddr = variant.optJSONObject("play_addr");
+        if (playAddr != null) {
+            JSONArray urlList = playAddr.optJSONArray("url_list");
+            if (urlList != null) {
+                for (int i = 0; i < urlList.length(); i++) {
+                    String url = urlList.optString(i);
+                    String decoded = decodeUrl(url);
+                    if (!decoded.isEmpty() && !urls.contains(decoded)) urls.add(decoded);
+                }
+            }
+            mergeModelAddress(variant, playAddr, urls, found);
+            return;
+        }
+        mergeModelAddress(variant, null, urls, found);
+    }
+
+    private static String decodeUrl(String value) {
+        if (value == null || value.isEmpty()) return "";
+        String trimmed = value.trim();
+        if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+        try {
+            byte[] decoded = Base64.decode(trimmed, Base64.DEFAULT);
+            String url = new String(decoded, java.nio.charset.StandardCharsets.UTF_8).trim();
+            return url.startsWith("http://") || url.startsWith("https://") ? url : "";
+        } catch (RuntimeException ignored) {
+            try {
+                byte[] decoded = Base64.decode(trimmed, Base64.URL_SAFE);
+                String url = new String(decoded, java.nio.charset.StandardCharsets.UTF_8).trim();
+                return url.startsWith("http://") || url.startsWith("https://") ? url : "";
+            } catch (RuntimeException ignoredAgain) {
+                return "";
+            }
+        }
+    }
+
+    private static void mergeModelAddress(JSONObject variant, JSONObject playAddr,
+                                          List<String> urls, List<SourceGear> found) {
+        if (urls.isEmpty()) return;
+        String name = variant.optString("gear_name");
+        if (name.isEmpty()) name = "model_variant";
+        int width = valueInt(variant, "vwidth");
+        int height = valueInt(variant, "vheight");
+        long size = valueLong(variant, "size");
+        if (playAddr != null) {
+            if (width == 0) width = valueInt(playAddr, "width");
+            if (height == 0) height = valueInt(playAddr, "height");
+            if (size == 0) size = valueLong(playAddr, "size");
+        }
+        int codec = name.endsWith("_1") ? 1 : name.endsWith("_2") ? 2 : 0;
+        found.add(new SourceGear(name, new ModelAddress(urls, width, height, size), codec));
+    }
+
+    private static int valueInt(JSONObject object, String key) {
+        Object value = object == null ? null : object.opt(key);
+        return value instanceof Number ? ((Number) value).intValue() : 0;
+    }
+
+    private static long valueLong(JSONObject object, String key) {
+        Object value = object == null ? null : object.opt(key);
+        return value instanceof Number ? ((Number) value).longValue() : 0;
     }
 
     /**
@@ -65,6 +208,9 @@ public final class QualitySelector {
             {"play_addr_h264", "getPlayAddrH264", "playAddrValue", "0"},
             {"h264_play_addr", "getH264PlayAddr", "h264PlayAddrValue", "0"},
             {"play_addr_bytevc1", "getPlayAddrBytevc1", "playAddrBytevc1Value", "1"},
+            {"download_no_watermark", "getDownloadNoWatermarkAddr", "downloadNoWatermarkAddr", "0"},
+            {"new_download_addr", "getNewDownloadAddr", "newDownloadAddr", "0"},
+            {"ui_alike_download_addr", "getUIAlikeDownloadAddr", "uiAlikeAddr", "0"},
     };
 
     /**
@@ -80,7 +226,82 @@ public final class QualitySelector {
             if (address == null) address = Reflect.invoke(video, source[1]);
             found.add(new SourceGear(source[0], address, Integer.parseInt(source[3])));
         }
+        Object misc = Reflect.property(video, "getMiscDownloadAddrs", "miscDownloadAddrs");
+        if (misc instanceof String && !((String) misc).isEmpty()) {
+            try {
+                collectMiscSources(new JSONObject((String) misc), "misc_download_addr", found);
+            } catch (JSONException ignored) {
+                // The diagnostic report already carries malformed misc address strings.
+            }
+        }
         return found;
+    }
+
+    private static void collectMiscSources(JSONObject root, String name, List<SourceGear> found) {
+        JSONArray names = root.names();
+        if (names == null) return;
+        for (int i = 0; i < names.length(); i++) {
+            String key = names.optString(i);
+            Object value = root.opt(key);
+            if (value instanceof JSONObject) {
+                JSONObject object = (JSONObject) value;
+                Object rawUrls = object.opt("url_list");
+                if (rawUrls instanceof JSONArray) {
+                    List<String> urls = new ArrayList<>();
+                    JSONArray urlList = (JSONArray) rawUrls;
+                    for (int j = 0; j < urlList.length(); j++) {
+                        String url = urlList.optString(j);
+                        if (!url.isEmpty()) urls.add(url);
+                    }
+                    if (!urls.isEmpty()) {
+                        int width = object.optInt("width");
+                        int height = object.optInt("height");
+                        int size = object.optInt("size");
+                        found.add(new SourceGear(name + '_' + key,
+                                new MiscAddress(urls, width, height, size), 0));
+                    }
+                }
+                collectMiscSources(object, name + '_' + key, found);
+            }
+        }
+    }
+
+    private static final class MiscAddress extends UrlModel {
+        private final List<String> urls;
+        private final int width;
+        private final int height;
+        private final long size;
+
+        private MiscAddress(List<String> urls, int width, int height, int size) {
+            this.urls = urls;
+            this.width = width;
+            this.height = height;
+            this.size = size;
+        }
+
+        public List<String> getUrlList() { return urls; }
+        public int getWidth() { return width; }
+        public int getHeight() { return height; }
+        public long getSize() { return size; }
+    }
+
+    private static final class ModelAddress extends UrlModel {
+        private final List<String> urls;
+        private final int width;
+        private final int height;
+        private final long size;
+
+        private ModelAddress(List<String> urls, int width, int height, long size) {
+            this.urls = urls;
+            this.width = width;
+            this.height = height;
+            this.size = size;
+        }
+
+        public List<String> getUrlList() { return urls; }
+        public int getWidth() { return width; }
+        public int getHeight() { return height; }
+        public long getSize() { return size; }
     }
 
     public static UrlModel download(Object video) {

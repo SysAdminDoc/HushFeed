@@ -8,6 +8,7 @@ Every Hushfeed release, newest first.
 
 * `Report a newer phone to game LIVE` under App tells TikTok's LIVE server you have a Galaxy S25 Ultra while you set up a LIVE. If the server keeps a game LIVE under 1080p 60fps because of your phone, this gives it another chance. It starts off (#459).
 * `Seconds per photo` now goes up to 300, so a photo can stay on screen for up to five minutes in a video made from a photo post (#465).
+* `Sort pinned videos with the rest` lets a profile's sort put pinned videos in the order with everything else, so Newest first shows them at the date they were posted instead of at the top. It starts off (#466).
 * `Hide the people you may know tag` under Feed screen takes that tag away from beside a creator's name. The Friends and Following labels stay (#462).
 * `Hide stories from accounts you don't follow` clears the recommended stories TikTok mixes into the Inbox's stories tray. Stories from accounts you follow, and your own, stay (#462).
 * `LIVE buttons in the long-press menu` takes Record and Auto tap off the video and puts them in the menu you get by holding the middle of a LIVE (#359).

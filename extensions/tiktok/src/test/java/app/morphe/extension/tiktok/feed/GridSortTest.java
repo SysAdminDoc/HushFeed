@@ -147,6 +147,7 @@ public class GridSortTest {
         Settings.FAVORITES_GRID_SORT.resetToDefault();
         Settings.COLLECTION_GRID_SORT.resetToDefault();
         Settings.SOUND_GRID_SORT.resetToDefault();
+        Settings.SORT_PINNED_WITH_REST.resetToDefault();
         SettingsStatus.gridSortEnabled = gridSortEnabled;
         SettingsStatus.likedGridSortEnabled = likedGridSortEnabled;
         SettingsStatus.soundGridSortEnabled = soundGridSortEnabled;
@@ -197,6 +198,21 @@ public class GridSortTest {
         // Pinned a and p stay first as TikTok has them, then the rest by time, 0 (no time) last.
         assertEquals("apecdfb", order("newest", grid()));
         assertEquals("apfcdeb", order("oldest", grid()));
+    }
+
+    @Test public void pinnedVideosCanBeSortedInWithTheRest() {
+        assertEquals("sort_pinned_with_rest", Settings.SORT_PINNED_WITH_REST.key);
+        assertFalse(Settings.SORT_PINNED_WITH_REST.defaultValue);
+        Settings.SORT_PINNED_WITH_REST.save(true);
+        // a (100) and p (50) take their dates' places; b, with no time, still goes last.
+        assertEquals("ecdfapb", order("newest", grid()));
+        assertEquals("pafcdeb", order("oldest", grid()));
+        assertEquals("eacdfpb", order("longest", grid()));
+        Settings.COLLECTION_GRID_SORT.save("newest");
+        assertEquals("a folder's headers stay in front", "XYecdfapb",
+                ids(GridSort.collectionData(new GridAdapter(), folder())));
+        Settings.SORT_PINNED_WITH_REST.save(false);
+        assertEquals("apecdfb", order("newest", grid()));
     }
 
     @Test public void longestAndShortest() {

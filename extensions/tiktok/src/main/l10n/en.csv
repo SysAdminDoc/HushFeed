@@ -1663,6 +1663,7 @@ Pill corners,Pill corners
 Pill height,Pill height
 Pill is the wide bubble with a row of dots under the speed. Circle is a small round dial with a notch for each speed around its edge.,Pill is the wide bubble with a row of dots under the speed. Circle is a small round dial with a notch for each speed around its edge.
 Pin more chats,Pin more chats
+"Pinned videos take their place in the order instead of staying at the top, so Newest first puts them at the date they were posted.","Pinned videos take their place in the order instead of staying at the top, so Newest first puts them at the date they were posted."
 Places,Places
 Play,Play
 Play SDR instead of HDR,Play SDR instead of HDR
@@ -2207,6 +2208,7 @@ Sort loaded videos on Favorites grids,Sort loaded videos on Favorites grids
 Sort loaded videos on Liked grids,Sort loaded videos on Liked grids
 Sort loaded videos on profile grids,Sort loaded videos on profile grids
 Sort loaded videos on sound pages,Sort loaded videos on sound pages
+Sort pinned videos with the rest,Sort pinned videos with the rest
 Sort this grid,Sort this grid
 "Sorts a profile or Liked grid with pinned videos first. While an order is on, the grid keeps loading by itself up to 300 videos, so the order covers more than the first screen. A button in the grid's top corner changes the order right there.","Sorts a profile or Liked grid with pinned videos first. While an order is on, the grid keeps loading by itself up to 300 videos, so the order covers more than the first screen. A button in the grid's top corner changes the order right there."
 "Sorts the videos on a sound's page the same way, loading up to 300 of them while an order is on.","Sorts the videos on a sound's page the same way, loading up to 300 of them while an order is on."

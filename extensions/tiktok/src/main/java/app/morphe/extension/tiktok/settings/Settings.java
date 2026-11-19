@@ -960,6 +960,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_GRID_VIEW_COUNT = new BooleanSetting("hide_grid_view_count", FALSE);
     /** How loaded profile and Liked grids are ordered (#180): off, or one of the orders in GridSort. */
     public static final StringSetting PROFILE_GRID_SORT = new StringSetting("profile_grid_sort", "off");
+    /** A sorted grid puts pinned videos in the chosen order with the rest instead of first (#466). */
+    public static final BooleanSetting SORT_PINNED_WITH_REST = new BooleanSetting("sort_pinned_with_rest", FALSE);
     /** The Liked tab's own order (#180): "profile" follows PROFILE_GRID_SORT, otherwise one of GridSort's orders. */
     public static final StringSetting LIKED_GRID_SORT = new StringSetting("liked_grid_sort", "profile");
     /** The Favorites tab's own order (#180): "profile" follows PROFILE_GRID_SORT, otherwise one of GridSort's orders. */

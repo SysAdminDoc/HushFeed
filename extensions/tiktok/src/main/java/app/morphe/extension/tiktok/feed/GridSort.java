@@ -1520,12 +1520,18 @@ public final class GridSort {
         }
     }
 
-    /** A new list: the pinned videos first as TikTok has them, then the rest by [by]. */
+    /**
+     * A new list: the pinned videos first as TikTok has them, then the rest by [by]. With Sort
+     * pinned videos with the rest on, pinned videos are sorted in like any other (#466); a
+     * folder's header rows stay in front either way.
+     */
     static List<Object> sort(List<?> list, Comparator<Object> by) {
         List<Object> pinned = new ArrayList<>();
         List<Object> rest = new ArrayList<>();
+        boolean pinnedFirst = !Settings.SORT_PINNED_WITH_REST.get();
         for (Object item : list) {
-            (isPinned(item) ? pinned : rest).add(item);
+            boolean front = isPinned(item) && (pinnedFirst || GridPicker.wrapsPost(item));
+            (front ? pinned : rest).add(item);
         }
         // List.sort is stable, so equal values and missing ones stay in TikTok's order.
         Collections.sort(rest, by);
